@@ -54,8 +54,6 @@ void Settings::load()
     LOAD_DEF(editNewElem, Bool, true);
     LOAD_DEF(useSystemDialogs, Bool, true);
     LOAD_DEF(elemAutoLabel, Bool, true);
-    LOAD_DEF(dontSaveWindows, Bool, false);
-    LOAD_DEF(ignoreSavedWindows, Bool, false);
     //LOAD_DEF(maxRecentFiles, Int, 10);
 
     s.beginGroup("States");
@@ -77,8 +75,6 @@ void Settings::save()
     SAVE(editNewElem)
     SAVE(useSystemDialogs)
     SAVE(elemAutoLabel)
-    SAVE(dontSaveWindows)
-    SAVE(ignoreSavedWindows)
     //SAVE(maxRecentFiles)
 
     s.beginGroup("States");

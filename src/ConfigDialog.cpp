@@ -47,11 +47,9 @@ QWidget* ConfigDialog::createGeneralPage()
     auto page = new Ori::Dlg::BasicConfigPage(tr("Behaviour"), ":/config_pages/general");
 
     groupOptions = new Ori::Widgets::OptionsGroup(tr("Options"), {
-        tr("Edit just now created element"),
+        tr("Edit just created element"),
         tr("Automatically generate labels for new elements"),
-        tr("Use system open/save file dialogs"),
-        tr("Do not store function windows in schema file"),
-        tr("Do not load function windows from schema file")
+        tr("Use system open/save file dialogs")
     });
 
     page->add({groupOptions});
@@ -98,8 +96,6 @@ void ConfigDialog::populate()
     groupOptions->setOption(0, settings.editNewElem);
     groupOptions->setOption(1, settings.elemAutoLabel);
     groupOptions->setOption(2, settings.useSystemDialogs);
-    groupOptions->setOption(3, settings.dontSaveWindows);
-    groupOptions->setOption(4, settings.ignoreSavedWindows);
     //sedMruLength->setValue(settings.maxRecentFiles);
 
     //// view
@@ -115,8 +111,6 @@ void ConfigDialog::collect()
     settings.editNewElem = groupOptions->option(0);
     settings.elemAutoLabel = groupOptions->option(1);
     settings.useSystemDialogs = groupOptions->option(2);
-    settings.dontSaveWindows = groupOptions->option(3);
-    settings.ignoreSavedWindows = groupOptions->option(4);
     //settings.maxRecentFiles = sedMruLength->value();
 
     //// view

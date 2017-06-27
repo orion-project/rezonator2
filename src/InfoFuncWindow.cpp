@@ -38,6 +38,8 @@ InfoFuncWindow::InfoFuncWindow(InfoFunction *func, QWidget *parent) :
     Ori::Gui::layoutV(this, 0, 0, {toolbar(), Ori::Gui::layoutV(3, 0, {_editor})});
 
     resize(WINDOW_W, WINDOW_H);
+    if (parent)
+        move(parent->pos() + parent->rect().center() - rect().center());
     // TODO: iterate through all the information windows and move this if it overlaps some of existed
 
     updateResultText();

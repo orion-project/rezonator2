@@ -22,8 +22,6 @@ public:
     bool showBackground;      ///< Show background image in main window.
     bool useSystemDialogs;    ///< Use native open/save file dialogs.
     bool elemAutoLabel;       ///< Automatically generate labels for new elements.
-    bool dontSaveWindows;     ///< Do not store function windows in schema file.
-    bool ignoreSavedWindows;  ///< Do not load saved function windows from schema file.
     //int maxRecentFiles;       ///< Recent files list length.
 
     // states
