@@ -1,0 +1,29 @@
+[PREFERENCES]
+Version=1.2
+Title=Empty schema
+HasTitle=1
+Notes="Multi-line comment is not supported"
+Units\Linear=mm
+Units\Beamsize=mkm
+Units\Lambda=A
+Units\Angle=min
+SchemaKind=2
+Wavelen=1064
+SolveEpsilon=1
+DifferentiateSplit=100
+StabCalcWay=0
+RootLocateSplit=10
+ParamExp=5
+ParamDig=3
+ResulExp=5
+ResulDig=3
+ParamZerofill=0
+ResulZerofill=0
+Pump\ParamsKind=5
+Pump\Param1T=1.2
+Pump\Param1S=2.3
+Pump\Param2T=4.5
+Pump\Param2S=5.6
+Pump\QualT=50.3
+Pump\QualS=46.5
+

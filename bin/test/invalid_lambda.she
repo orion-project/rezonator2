@@ -1,0 +1,8 @@
+[PREFERENCES]
+Version=1.2
+Units\Linear=mm
+Units\Beamsize=mkm
+Units\Lambda=A
+Units\Angle=min
+SchemaKind=2
+Wavelen=1064,5
