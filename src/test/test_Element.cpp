@@ -109,36 +109,6 @@ TEST_METHOD(Element_hasParams)
     ASSERT_IS_TRUE(el.hasParams())
 }
 
-//TEST_METHOD(ElementRange_makeParams)
-//{
-//    DECLARE_ELEMENT(TestRange, ElementRange) DECLARE_ELEMENT_END
-
-//    TestRange el;
-//    ASSERT_EQ_INT(el.params().size(), 2);
-//    ASSERT_IS_NOT_NULL(el.paramLength())
-//    ASSERT_IS_NOT_NULL(el.paramIor())
-//    ASSERT_EQ_PTR(el1->length()->dim(), Z::Dims::linear())
-//    ASSERT_EQ_PTR(el1->length()->owner(), el1)
-
-//    delete el1;
-//}
-
-//TEST_METHOD(ElementRangeN_makeParams)
-//{
-// DECLARE_ELEMENT(TestRangeN, ElementRangeN) DECLARE_ELEMENT_END
-//    TestRangeN el;
-//    ASSERT_IS_TRUE(el.params().isEmpty());
-
-//    TestRangeN* el1 = (TestRangeN*)el.create();
-//    ASSERT_EQ_INT(el1->params().size(), 2);
-//    ASSERT_EQ_PTR(el1->length()->dim(), Z::Dims::linear())
-//    ASSERT_EQ_PTR(el1->length()->owner(), el1)
-//    ASSERT_EQ_PTR(el1->ior()->dim(), Z::Dims::none())
-//    ASSERT_EQ_PTR(el1->ior()->owner(), el1)
-
-//    delete el1;
-//}
-
 //------------------------------------------------------------------------------
 
 TEST_METHOD(Element_unlock_calculates_matrix)
@@ -292,26 +262,6 @@ TEST_METHOD(ElementOwner_setParam_must_raise_event)
 
 //------------------------------------------------------------------------------
 
-/*TEST_METHOD(elemCopyPaste)
-{
-    ASSERT_IS_NOT_NULL(test);
-
-//    Element *elem = makeTestElement();
-//    Z::Clipboard::copyElement(elem);
-
-//    Element *elem1 = Z::Clipboard::pasteElement();
-//    ASSERT_IS_TRUE(elem1 != NULL);
-//    if (elem1 != NULL)
-//    {
-//        compareElements(test, elem1, elem);
-//        delete elem1;
-//    }
-
-//    delete elem;
-}*/
-
-////////////////////////////////////////////////////////////////////////////////
-
 TEST_GROUP("Element",
     ADD_TEST(Element_ctor_generates_id),
 
@@ -320,8 +270,6 @@ TEST_GROUP("Element",
 
     ADD_TEST(Element_addParam),
     ADD_TEST(Element_hasParams),
-//    ADD_TEST(ElementRange_makeParams),
-//    ADD_TEST(ElementRangeN_makeParams),
 
     ADD_TEST(Element_unlock_calculates_matrix),
     ADD_TEST(Element_unlock_does_not_raise_events),

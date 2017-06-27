@@ -71,37 +71,33 @@ TEST_METHOD(Value_compare)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/*
-#define ASSERT_VALUE_TS(value, t, s)\
-    ASSERT_EQ_DBL(value.T, t)\
-    ASSERT_EQ_DBL(value.S, s)
 
 TEST_METHOD(ValueTS_constructors)
 {
     Z::ValueTS v0;
-    ASSERT_VALUE_TS(v0, 0, 0)
+    ASSERT_VALUE_T_S(v0, 0, 0)
 
     Z::ValueTS v1(10, 20);
-    ASSERT_VALUE_TS(v1, 10, 20)
+    ASSERT_VALUE_T_S(v1, 10, 20)
 
     Z::ValueTS v2(v1);
-    ASSERT_VALUE_TS(v2, 10, 20)
+    ASSERT_VALUE_T_S(v2, 10, 20)
 
     Z::ValueTS v3(&v1);
-    ASSERT_VALUE_TS(v3, 10, 20)
+    ASSERT_VALUE_T_S(v3, 10, 20)
 }
 
 TEST_METHOD(ValueTS_assign)
 {
     Z::ValueTS v1;
     v1 = 10;
-    ASSERT_VALUE_TS(v1, 10, 10)
+    ASSERT_VALUE_T_S(v1, 10, 10)
 
     Z::ValueTS v2;
     v2.set(10, 20);
-    ASSERT_VALUE_TS(v2, 10, 20)
+    ASSERT_VALUE_T_S(v2, 10, 20)
 }
-*/
+
 ////////////////////////////////////////////////////////////////////////////////
 
 TEST_GROUP("Values",
@@ -109,8 +105,8 @@ TEST_GROUP("Values",
     ADD_TEST(Value_toSi),
     ADD_TEST(Value_equality),
     ADD_TEST(Value_compare),
-//    ADD_TEST(ValueTS_constructors),
-//    ADD_TEST(ValueTS_assign),
+    ADD_TEST(ValueTS_constructors),
+    ADD_TEST(ValueTS_assign),
 )
 
 } // namespace ValuesTests

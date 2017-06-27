@@ -99,9 +99,9 @@ TEST_METHOD(save_and_load_all_elements)
 
 //------------------------------------------------------------------------------
 
-/*namespace save_and_load_storable_clients {
+namespace save_and_load_storable_clients {
 
-class TestSchemaStorable : public ISchemaStorable
+/*class TestSchemaStorable : public ISchemaStorable
 {
 public:
     QString savedType, testValue;
@@ -124,11 +124,12 @@ public:
     void readSuccess() override { readSuccessWasCalled = true; }
 
     static SchemaStorable* constructor(Schema*) { return new TestSchemaStorable; }
-};
+};*/
 
 TEST_METHOD(success_scenario)
 {
-    QString fileName("./test/_tmp_storables.shex");
+    ASSERT_FAIL("TODO")
+    /*QString fileName("./test/_tmp_storables.shex");
 
     Schema schema1;
     TestSchemaStorable client1;
@@ -145,14 +146,14 @@ TEST_METHOD(success_scenario)
     ASSERT_EQ_INT(clients2.size(), 1)
     auto client2 = clients2.first();
     ASSERT_EQ_STR(client2->testValue, client1.testValue)
-    ASSERT_IS_TRUE(client2->readSuccessWasCalled);
+    ASSERT_IS_TRUE(client2->readSuccessWasCalled);*/
 }
 
 
 bool __schemaStorable_readFailed = false;
 bool __schemaStorable_destructed = false;
 
-class TestSchemaStorableFailed : public ISchemaStorable
+/*class TestSchemaStorableFailed : public ISchemaStorable
 {
 public:
     ~TestSchemaStorableFailed() { __schemaStorable_destructed = true; }
@@ -165,11 +166,12 @@ public:
     void readFailed() override { __schemaStorable_readFailed = true; }
 
     static SchemaStorable* constructor(Schema*) { return new TestSchemaStorableFailed; }
-};
+};*/
 
 TEST_METHOD(failed_scenario)
 {
-    QString fileName("./test/_tmp_storables_failed.shex");
+    ASSERT_FAIL("TODO")
+    /*QString fileName("./test/_tmp_storables_failed.shex");
 
     Schema schema1;
     TestSchemaStorableFailed client1;
@@ -184,17 +186,17 @@ TEST_METHOD(failed_scenario)
     LOAD_SCHEMA(schema2, fileName)
     ASSERT_EQ_INT(schema2.clients().items().size(), 0)
     ASSERT_IS_TRUE(__schemaStorable_readFailed)
-    ASSERT_IS_TRUE(__schemaStorable_destructed)
+    ASSERT_IS_TRUE(__schemaStorable_destructed)*/
 }
 
 } // namespace SchemaStorableTests
-*/
+
 //------------------------------------------------------------------------------
 
-/*
 TEST_METHOD(schemaEventsSaveAndLoad)
 {
-    ASSERT_IS_NOT_NULL(test);
+    ASSERT_FAIL("TODO")
+    /*ASSERT_IS_NOT_NULL(test);
 
     CString fileName = "./test/for_events.shex";
 
@@ -225,10 +227,8 @@ TEST_METHOD(schemaEventsSaveAndLoad)
     ASSERT_IS_FALSE(schema2.modified());
     ASSERT_ARE_EQUAL(schema2.elements().size(), schema1.elements().size());
     for (int i = 0; i < schema2.elements().size(); i++)
-        ASSERT_EQUAL_ELEMS(schema2.elements().at(i), schema1.elements().at(i));
-
+        ASSERT_EQUAL_ELEMS(schema2.elements().at(i), schema1.elements().at(i));*/
 }
-*/
 
 TEST_METHOD(read_write_schema_version)
 {
@@ -302,8 +302,10 @@ TEST_METHOD(set_default_pump_when_no_pump_node)
 
 TEST_GROUP("Read/write schema data",
     ADD_TEST(save_and_load_all_elements),
-//    ADD_TEST(save_and_load_storable_clients::success_scenario),
-//    ADD_TEST(save_and_load_storable_clients::failed_scenario),
+    ADD_TEST(save_and_load_storable_clients::success_scenario),
+    ADD_TEST(save_and_load_storable_clients::failed_scenario),
+    ADD_TEST(schemaEventsSaveAndLoad),
+    ADD_TEST(read_write_schema_version),
     ADD_TEST(write_read_pump),
     ADD_TEST(set_default_pump_when_no_pump_node)
 )
