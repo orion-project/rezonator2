@@ -1,9 +1,9 @@
 #include "CalcManager.h"
-#include "InfoFuncWindow.h"
 #include "WindowsManager.h"
-//#include "funcs_window/CausticWindow.h"
-//#include "funcs_window/StabilityMapWindow.h"
-//#include "funcs_window/StabilityMap2DWindow.h"
+#include "funcs_window/InfoFuncWindow.h"
+#include "funcs_window/CausticWindow.h"
+#include "funcs_window/StabilityMapWindow.h"
+#include "funcs_window/StabilityMap2DWindow.h"
 
 template <class TWindow> SchemaWindow* windowConstructor(Schema* schema)
 {
@@ -18,9 +18,9 @@ template <class TWindow, class TFunction> void registerWindowConstructor()
 CalcManager::CalcManager(Schema *schema, QWidget *parent) :
     QObject(parent), _parent(parent), _schema(schema)
 {
-//    registerWindowConstructor<StabilityMapWindow, StabilityMapFunction>();
-//    registerWindowConstructor<StabilityMap2DWindow, StabilityMap2DFunction>();
-//    registerWindowConstructor<CausticWindow, CausticFunction>();
+    registerWindowConstructor<StabilityMapWindow, StabilityMapFunction>();
+    registerWindowConstructor<StabilityMap2DWindow, StabilityMap2DFunction>();
+    registerWindowConstructor<CausticWindow, CausticFunction>();
 }
 
 void CalcManager::funcSummary()
@@ -48,12 +48,12 @@ void CalcManager::funcMultBkwd()
 
 void CalcManager::funcStabMap()
 {
-    //showPlotFunc<StabilityMapWindow>();
+    showPlotFunc<StabilityMapWindow>();
 }
 
 void CalcManager::funcStabMap2d()
 {
-    //showPlotFunc<StabilityMap2DWindow>();
+    showPlotFunc<StabilityMap2DWindow>();
 }
 
 void CalcManager::funcRepRate()
@@ -64,7 +64,7 @@ void CalcManager::funcRepRate()
 
 void CalcManager::funcCaustic()
 {
-    //showPlotFunc<CausticWindow>();
+    showPlotFunc<CausticWindow>();
 }
 
 void CalcManager::showInfoFunc(InfoFunction* func)

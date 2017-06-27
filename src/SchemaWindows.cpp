@@ -178,7 +178,7 @@ void SchemaMdiArea::appendChild(BasicMdiChild* window)
             window->init();
             window->show();
         }
-        else setActiveSubWindow(window);
+        setActiveSubWindow(window);
     }
 }
 

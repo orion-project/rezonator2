@@ -1,10 +1,10 @@
-#ifndef INFOFUNCWINDOW_H
-#define INFOFUNCWINDOW_H
+#ifndef INFO_FUNC_WINDOW_H
+#define INFO_FUNC_WINDOW_H
 
 #include <QWidget>
 
-#include "funcs/InfoFunctions.h"
-#include "SchemaWindows.h"
+#include "../funcs/InfoFunctions.h"
+#include "../SchemaWindows.h"
 
 QT_BEGIN_NAMESPACE
 class QTextBrowser;
@@ -60,4 +60,4 @@ private:
 #define INFO_FUNC_1(func_class, arg1) \
     (new InfoFuncWindow(new InfoFunc ## func_class(schema(), arg1), this))->show();
 
-#endif // INFOFUNCWINDOW_H
+#endif // INFO_FUNC_WINDOW_H

@@ -64,7 +64,6 @@ HEADERS += \
     src/funcs/InfoFunctions.h \
     src/funcs/PlotFunction.h \
     src/HelpSystem.h \
-    src/InfoFuncWindow.h \
     src/io/ISchemaStorable.h \
     src/io/SchemaFile.h \
     src/io/SchemaReaderIni.h \
@@ -103,7 +102,17 @@ HEADERS += \
     src/widgets/VariableEditor.h \
     src/widgets/VariableRangeWidget.h \
     src/widgets/WidgetResult.h \
-    src/WindowsManager.h
+    src/WindowsManager.h \
+    src/funcs_meat/StabilityMapFunction.h \
+    src/funcs_meat/StabilityMap2DFunction.h \
+    src/funcs_meat/CausticFunction.h \
+    src/funcs_storable/StabilityMapStorable.h \
+    src/funcs_window/CausticWindow.h \
+    src/funcs_window/InfoFuncWindow.h \
+    src/funcs_window/PlotFuncWindow.h \
+    src/funcs_window/PlotFuncWindowStorable.h \
+    src/funcs_window/StabilityMap2DWindow.h \
+    src/funcs_window/StabilityMapWindow.h
 
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -133,7 +142,6 @@ SOURCES += \
     src/funcs/InfoFunctions.cpp \
     src/funcs/PlotFunction.cpp \
     src/HelpSystem.cpp \
-    src/InfoFuncWindow.cpp \
     src/io/SchemaFile.cpp \
     src/io/SchemaReaderIni.cpp \
     src/io/SchemaReaderXml.cpp \
@@ -185,4 +193,13 @@ SOURCES += \
     src/widgets/VariableEditor.cpp \
     src/widgets/VariableRangeWidget.cpp \
     src/widgets/WidgetResult.cpp \
-    src/WindowsManager.cpp
+    src/WindowsManager.cpp \
+    src/funcs_meat/StabilityMapFunction.cpp \
+    src/funcs_meat/StabilityMap2DFunction.cpp \
+    src/funcs_meat/CausticFunction.cpp \
+    src/funcs_window/CausticWindow.cpp \
+    src/funcs_window/InfoFuncWindow.cpp \
+    src/funcs_window/PlotFuncWindow.cpp \
+    src/funcs_window/PlotFuncWindowStorable.cpp \
+    src/funcs_window/StabilityMap2DWindow.cpp \
+    src/funcs_window/StabilityMapWindow.cpp
