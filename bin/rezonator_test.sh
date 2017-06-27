@@ -1,0 +1,3 @@
+#!/bin/sh
+
+./rezonator test

@@ -1,0 +1,22 @@
+<rezonatorSchema version="2.0">
+    <trip>SP</trip>
+    <title></title>
+    <comment></comment>
+    <lambda>980</lambda>
+    <units Dim_Linear="mm" Dim_Angle="deg" Dim_Beamsize="mkm" Dim_Lambda="nm"/>
+    <pump mode="PumpMode_TwoSections">
+        <param1 S="0" T="0"/>
+        <param2 S="600" T="500"/>
+        <param3 S="100" T="100"/>
+    </pump>
+    <elements>
+        <element type="ElemEmptyRange">
+            <label>L1</label>
+            <title></title>
+            <options disabled="0"/>
+            <params>
+                <param name="L">100</param>
+            </params>
+        </element>
+    </elements>
+</rezonatorSchema>

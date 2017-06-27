@@ -1,0 +1,33 @@
+#include "Appearance.h"
+#include "UnitWidgets.h"
+#include "ValueEditor.h"
+#include "helpers/OriWidgets.h"
+#include "widgets/OriValueEdit.h"
+
+ValueEditor::ValueEditor(QWidget *parent) : QWidget(parent)
+{
+    Ori::Gui::layoutH(this, 0, Ori::Gui::borderWidth(), {
+        _valueEditor = new Ori::Widgets::ValueEdit,
+        _unitsSelector = new UnitComboBox
+    });
+
+    Z::Gui::setValueFont(_valueEditor);
+    _valueEditor->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+
+    connect(_valueEditor, &QLineEdit::textEdited, [this]{emit this->valueChanged();});
+
+    connect(_unitsSelector, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+        [this]{emit this->valueChanged();});
+}
+
+void ValueEditor::setValue(const Z::Value& value)
+{
+    _valueEditor->setValue(value.value());
+    _unitsSelector->populate(Z::Units::guessDim(value.unit()));
+    _unitsSelector->setSelectedUnit(value.unit());
+}
+
+Z::Value ValueEditor::value() const
+{
+    return Z::Value(_valueEditor->value(), _unitsSelector->selectedUnit());
+}

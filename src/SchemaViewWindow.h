@@ -1,0 +1,69 @@
+#ifndef SCHEMA_WINDOW_H
+#define SCHEMA_WINDOW_H
+
+#include "SchemaWindows.h"
+#include "core/Schema.h"
+#include "core/Element.h"
+
+QT_BEGIN_NAMESPACE
+class QMenu;
+class QAction;
+QT_END_NAMESPACE
+
+/**
+    Basic window containing visual representation of schema (element list, layout)
+    and holding actions controlling the schema (append, remove elements, etc.).
+*/
+class SchemaViewWindow: public SchemaMdiChild, public EditableWindow
+{
+    Q_OBJECT
+
+public:
+    SchemaViewWindow(Schema*);
+    ~SchemaViewWindow();
+
+    ///// inherits from SchemaWindow
+    //WindowRole role() const override { return SchemaViewRole; }
+
+    ///// inherits from BasicMdiChild
+    QList<QMenu*> menus() override { return { menuElement }; }
+
+    ///// inherits from SchemaListener
+    void elementCreated(Schema*, Element*) override;
+
+    ///// inherits from EditableWindow
+    bool canCopy() override;
+    bool canPaste() override { return true; }
+
+private:
+    QAction *actnElemAdd, *actnElemInsertBefore, *actnElemInsertAfter, *actnElemProp,
+        *actnElemMatr, *actnElemMatrAll, *actnElemDelete, *actnEditCopy, *actnEditPaste;
+
+    QMenu *menuElement, *menuContext;
+
+    class SchemaLayout *_layout;
+    class SchemaTable *_table;
+
+    bool _pasteMode = false;
+
+    void createActions();
+    void createMenuBar();
+    void createToolBar();
+
+    void editElement(Element* elem);
+
+private slots:
+    void actionElemAdd();
+    void actionElemInsertBefore();
+    void actionElemInsertAfter();
+    void actionElemProp();
+    void actionElemMatr();
+    void actionElemMatrAll();
+    void actionElemDelete();
+
+    ///// inherits from EditableWindow
+    void copy() override;
+    void paste() override;
+};
+
+#endif // SCHEMA_WINDOW_H

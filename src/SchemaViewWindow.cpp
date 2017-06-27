@@ -1,0 +1,224 @@
+#include "ElementsCatalogDialog.h"
+#include "ElementPropsDialog.h"
+#include "SchemaViewWindow.h"
+#include "InfoFuncWindow.h"
+#include "core/ElementsCatalog.h"
+//#include "core/SchemaReaderXml.h" // for paste
+//#include "core/SchemaWriterXml.h" // for copy
+#include "widgets/SchemaLayout.h"
+#include "widgets/SchemaTable.h"
+#include "helpers/OriWidgets.h"
+#include "helpers/OriDialogs.h"
+
+#include <QAction>
+#include <QApplication>
+#include <QClipboard>
+#include <QIcon>
+#include <QMenu>
+#include <QSplitter>
+#include <QToolBar>
+#include <QToolButton>
+
+SchemaViewWindow::SchemaViewWindow(Schema *owner) : SchemaMdiChild(owner)
+{
+    setWindowTitle(tr("Schema", "Window title"));
+    setWindowIcon(QIcon(":/window_icons/schema"));
+    setAttribute(Qt::WA_DeleteOnClose, false);
+
+    _table = new SchemaTable(owner);
+    _layout = new SchemaLayout(owner);
+
+    setContent(Ori::Gui::splitterV(_table, _layout, 2, 20));
+
+    ///////// create control
+    createActions();
+    createMenuBar();
+    createToolBar();
+
+    schema()->registerListener(_table);
+    schema()->registerListener(_layout);
+    schema()->selection().registerSelector(_table);
+
+    connect(_table, SIGNAL(doubleClicked(Element*)), this, SLOT(actionElemProp()));
+    _table->setContextMenu(menuContext);
+}
+
+SchemaViewWindow::~SchemaViewWindow()
+{
+    schema()->unregisterListener(_layout);
+    schema()->unregisterListener(_table);
+    schema()->selection().unregisterSelector(_table);
+    delete _table;
+    delete _layout;
+}
+
+void SchemaViewWindow::createActions()
+{
+    #define A_ Ori::Gui::action
+
+    actnElemAdd = A_(tr("A&ppend..."), this, SLOT(actionElemAdd()), ":/toolbar/elem_add", Qt::CTRL | Qt::Key_Insert);
+    actnElemInsertBefore = A_(tr("Create &Before Selection..."), this, SLOT(actionElemInsertBefore()), ":/toolbar/elem_insert_before", Qt::CTRL | Qt::SHIFT | Qt::Key_Insert);
+    actnElemInsertAfter = A_(tr("Create &After Selection..."), this, SLOT(actionElemInsertAfter()), ":/toolbar/elem_insert_after", Qt::CTRL | Qt::ALT | Qt::Key_Insert);
+    actnElemProp = A_(tr("&Properties..."), this, SLOT(actionElemProp()), ":/toolbar/elem_prop", Qt::Key_Enter);
+    actnElemMatr = A_(tr("&Matrix"), this, SLOT(actionElemMatr()), ":/toolbar/elem_matr", Qt::SHIFT | Qt::Key_Enter);
+    actnElemMatrAll = A_(tr("&Show All Matrices"), this, SLOT(actionElemMatrAll()));
+    actnElemDelete = A_(tr("&Delete"), this, SLOT(actionElemDelete()), ":/toolbar/elem_delete", Qt::CTRL | Qt::Key_Delete);
+
+    actnEditCopy = A_(tr("&Copy", "Edit action"), this, SLOT(copy()), ":/toolbar/edit_copy");
+    actnEditPaste = A_(tr("&Paste", "Edit action"), this, SLOT(paste()), ":/toolbar/edit_paste");
+}
+
+void SchemaViewWindow::createMenuBar()
+{
+    menuElement = Ori::Gui::menu(tr("E&lement"), this,
+        { actnElemAdd, actnElemInsertBefore, actnElemInsertAfter, 0, actnElemProp,
+          actnElemMatr, actnElemMatrAll, 0, actnElemDelete });
+
+    menuContext = Ori::Gui::menu(this,
+        { actnElemProp, actnElemMatr, 0, actnElemInsertBefore, actnElemInsertAfter, 0,
+          actnEditCopy, actnEditPaste, 0, actnElemDelete });
+}
+
+void SchemaViewWindow::createToolBar()
+{
+    populateToolbar({ Ori::Gui::textToolButton(actnElemAdd), actnElemInsertBefore,
+                      actnElemInsertAfter, 0, Ori::Gui::textToolButton(actnElemProp),
+                      actnElemMatr, 0, actnElemDelete });
+}
+
+void SchemaViewWindow::editElement(Element* elem)
+{
+    if (Z::Dlgs::elementProps(elem, this))
+        schema()->events().raise(SchemaEvents::ElemChanged, elem);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//                             Element actions
+
+void SchemaViewWindow::actionElemAdd()
+{
+    Element *elem = Z::Dlgs::createElement();
+    if (elem)
+        schema()->insertElement(elem, -1, true);
+}
+
+void SchemaViewWindow::actionElemInsertBefore()
+{
+    Element *elem = Z::Dlgs::createElement();
+    if (elem)
+        schema()->insertElement(elem, _table->currentRow(), true);
+}
+
+void SchemaViewWindow::actionElemInsertAfter()
+{
+    Element *elem = Z::Dlgs::createElement();
+    if (elem)
+    {
+        QVector<int> rows = _table->selectedRows();
+        schema()->insertElement(elem, rows.isEmpty()? 0: rows.last()+1, true);
+    }
+}
+
+void SchemaViewWindow::actionElemProp()
+{
+    if (_table->hasSelection())
+        editElement(_table->selected());
+}
+
+void SchemaViewWindow::actionElemMatr()
+{
+    Elements elems = _table->selection();
+    if (!elems.isEmpty())
+    {
+        if (elems.size() == 1)
+            INFO_FUNC_1(Matrix, elems.at(0))
+        else
+            INFO_FUNC_1(Matrices, elems);
+    }
+}
+
+void SchemaViewWindow::actionElemMatrAll()
+{
+    if (!schema()->isEmpty())
+        INFO_FUNC_1(Matrices, schema()->elements());
+}
+
+void SchemaViewWindow::actionElemDelete()
+{
+    Elements elements = _table->selection();
+    if (elements.isEmpty()) return;
+
+    QString elemTitles;
+    for (int i = 0; i < elements.size(); i++)
+        elemTitles += elements[i]->displayLabelTitle() + "\n";
+    if (Ori::Dlg::ok(tr("Confirm deletion:\n\n%1").arg(elemTitles.trimmed())))
+        for (int i = 0; i < elements.size(); i++)
+        {
+            schema()->deleteElement(elements[i], true);
+            delete elements[i];
+        }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//                               Schema events
+
+void SchemaViewWindow::elementCreated(Schema*, Element *elem)
+{
+    if (!_pasteMode && Settings::instance().elemAutoLabel)
+        // TODO disable elemChanged event from inside of elemCreated
+        Z::Utils::generateLabel(elem);
+
+    if (!_pasteMode && Settings::instance().editNewElem)
+        editElement(elem);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool SchemaViewWindow::canCopy() { return _table->hasSelection(); }
+
+void SchemaViewWindow::copy()
+{
+// TODO
+//    Elements elems = _table->selection();
+//    if (!elems.empty())
+//    {
+//        Schema *tmp_schema = new Schema;
+//        for (int i = 0; i < elems.size(); i++)
+//        {
+//            Element *elem = ElementsCatalog::instance().create(elems.at(i)->type());
+//            elem->params().setValues(elems.at(i)->params().getValues());
+//            tmp_schema->insertElement(elem, -1, false);
+//        }
+//        QString text;
+//        SchemaWriterXml file(tmp_schema);
+//        file.write(&text);
+//        QApplication::clipboard()->setText(text);
+//        delete tmp_schema;
+//    }
+}
+
+void SchemaViewWindow::paste()
+{
+// TODO
+//    QString text = QApplication::clipboard()->text();
+//    if (!text.isEmpty())
+//    {
+//        Schema tmp_schema;
+//        SchemaReaderXml file(&tmp_schema);
+//        file.read(text);
+//        if (file.ok() && tmp_schema.count() > 0)
+//        {
+//            int count = tmp_schema.count();
+//            Element* elems[count];
+//            for (int i = 0; i < count; i++)
+//                elems[i] = tmp_schema.element(i);
+//            _pasteMode = true;
+//            for (int i = 0; i < count; i++)
+//            {
+//                tmp_schema.deleteElement(elems[i], false);
+//                schema()->insertElement(elems[i], -1, true);
+//            }
+//            _pasteMode = false;
+//        }
+//    }
+}

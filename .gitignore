@@ -29,11 +29,11 @@ Makefile*
 # QtCreator
 
 *.autosave
-
-# QtCtreator Qml
 *.qmlproject.user
 *.qmlproject.user.*
-
-# QtCtreator CMake
 CMakeLists.txt.user*
 
+# Output files
+bin/rezonator
+*.exe
+*.log
