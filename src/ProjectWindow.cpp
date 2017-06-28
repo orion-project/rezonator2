@@ -6,7 +6,6 @@
 #include "SchemaViewWindow.h"
 #include "WindowsManager.h"
 #include "core/Format.h"
-//#include "core/Calculator.h"
 #include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
 #include "helpers/OriWindows.h"
@@ -40,8 +39,6 @@
 #define STATUS_STABIL 3
 #define STATUS_FILE 4
 
-//void showBeamCalculatorWindow(); // BeamCalculatorWindow.cpp
-
 ProjectWindow::ProjectWindow() : QMainWindow(), SchemaToolWindow(new Schema())
 {
     Ori::Wnd::setWindowIcon(this, ":/window_icons/main");
@@ -49,10 +46,12 @@ ProjectWindow::ProjectWindow() : QMainWindow(), SchemaToolWindow(new Schema())
     _calculations = new CalcManager(schema(), this);
     _operations = new ProjectOperations(schema(), this, _calculations);
 
+    auto schemaViewWindow = new SchemaViewWindow(schema(), _calculations);
+
     loadSettings();
 
     _mdiArea = new SchemaMdiArea;
-    _mdiArea->appendChild(new SchemaViewWindow(schema()));
+    _mdiArea->appendChild(schemaViewWindow);
     setCentralWidget(_mdiArea);
 
     connect(_mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(updateMenuBar()));

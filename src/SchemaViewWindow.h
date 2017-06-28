@@ -10,6 +10,8 @@ class QMenu;
 class QAction;
 QT_END_NAMESPACE
 
+class CalcManager;
+
 /**
     Basic window containing visual representation of schema (element list, layout)
     and holding actions controlling the schema (append, remove elements, etc.).
@@ -19,19 +21,16 @@ class SchemaViewWindow: public SchemaMdiChild, public EditableWindow
     Q_OBJECT
 
 public:
-    SchemaViewWindow(Schema*);
+    SchemaViewWindow(Schema*, CalcManager*);
     ~SchemaViewWindow();
 
-    ///// inherits from SchemaWindow
-    //WindowRole role() const override { return SchemaViewRole; }
-
-    ///// inherits from BasicMdiChild
+    // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return { menuElement }; }
 
-    ///// inherits from SchemaListener
+    // inherits from SchemaListener
     void elementCreated(Schema*, Element*) override;
 
-    ///// inherits from EditableWindow
+    // inherits from EditableWindow
     bool canCopy() override;
     bool canPaste() override { return true; }
 
@@ -43,6 +42,7 @@ private:
 
     class SchemaLayout *_layout;
     class SchemaTable *_table;
+    CalcManager* _calculations;
 
     bool _pasteMode = false;
 
@@ -57,11 +57,9 @@ private slots:
     void actionElemInsertBefore();
     void actionElemInsertAfter();
     void actionElemProp();
-    void actionElemMatr();
-    void actionElemMatrAll();
     void actionElemDelete();
 
-    ///// inherits from EditableWindow
+    // inherits from EditableWindow
     void copy() override;
     void paste() override;
 };

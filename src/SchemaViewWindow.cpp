@@ -1,10 +1,8 @@
 #include "ElementsCatalogDialog.h"
 #include "ElementPropsDialog.h"
 #include "SchemaViewWindow.h"
-#include "InfoFuncWindow.h"
+#include "CalcManager.h"
 #include "core/ElementsCatalog.h"
-//#include "core/SchemaReaderXml.h" // for paste
-//#include "core/SchemaWriterXml.h" // for copy
 #include "widgets/SchemaLayout.h"
 #include "widgets/SchemaTable.h"
 #include "helpers/OriWidgets.h"
@@ -19,7 +17,7 @@
 #include <QToolBar>
 #include <QToolButton>
 
-SchemaViewWindow::SchemaViewWindow(Schema *owner) : SchemaMdiChild(owner)
+SchemaViewWindow::SchemaViewWindow(Schema *owner, CalcManager *calcs) : SchemaMdiChild(owner), _calculations(calcs)
 {
     setWindowTitle(tr("Schema", "Window title"));
     setWindowIcon(QIcon(":/window_icons/schema"));
@@ -60,8 +58,8 @@ void SchemaViewWindow::createActions()
     actnElemInsertBefore = A_(tr("Create &Before Selection..."), this, SLOT(actionElemInsertBefore()), ":/toolbar/elem_insert_before", Qt::CTRL | Qt::SHIFT | Qt::Key_Insert);
     actnElemInsertAfter = A_(tr("Create &After Selection..."), this, SLOT(actionElemInsertAfter()), ":/toolbar/elem_insert_after", Qt::CTRL | Qt::ALT | Qt::Key_Insert);
     actnElemProp = A_(tr("&Properties..."), this, SLOT(actionElemProp()), ":/toolbar/elem_prop", Qt::Key_Enter);
-    actnElemMatr = A_(tr("&Matrix"), this, SLOT(actionElemMatr()), ":/toolbar/elem_matr", Qt::SHIFT | Qt::Key_Enter);
-    actnElemMatrAll = A_(tr("&Show All Matrices"), this, SLOT(actionElemMatrAll()));
+    actnElemMatr = A_(tr("&Matrix"), _calculations, SLOT(funcShowMatrices()), ":/toolbar/elem_matr", Qt::SHIFT | Qt::Key_Enter);
+    actnElemMatrAll = A_(tr("&Show All Matrices"), _calculations, SLOT(funcShowAllMatrices()));
     actnElemDelete = A_(tr("&Delete"), this, SLOT(actionElemDelete()), ":/toolbar/elem_delete", Qt::CTRL | Qt::Key_Delete);
 
     actnEditCopy = A_(tr("&Copy", "Edit action"), this, SLOT(copy()), ":/toolbar/edit_copy");
@@ -92,7 +90,7 @@ void SchemaViewWindow::editElement(Element* elem)
         schema()->events().raise(SchemaEvents::ElemChanged, elem);
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                             Element actions
 
 void SchemaViewWindow::actionElemAdd()
@@ -125,24 +123,6 @@ void SchemaViewWindow::actionElemProp()
         editElement(_table->selected());
 }
 
-void SchemaViewWindow::actionElemMatr()
-{
-    Elements elems = _table->selection();
-    if (!elems.isEmpty())
-    {
-        if (elems.size() == 1)
-            INFO_FUNC_1(Matrix, elems.at(0))
-        else
-            INFO_FUNC_1(Matrices, elems);
-    }
-}
-
-void SchemaViewWindow::actionElemMatrAll()
-{
-    if (!schema()->isEmpty())
-        INFO_FUNC_1(Matrices, schema()->elements());
-}
-
 void SchemaViewWindow::actionElemDelete()
 {
     Elements elements = _table->selection();
@@ -159,7 +139,7 @@ void SchemaViewWindow::actionElemDelete()
         }
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                               Schema events
 
 void SchemaViewWindow::elementCreated(Schema*, Element *elem)
@@ -172,7 +152,7 @@ void SchemaViewWindow::elementCreated(Schema*, Element *elem)
         editElement(elem);
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 bool SchemaViewWindow::canCopy() { return _table->hasSelection(); }
 

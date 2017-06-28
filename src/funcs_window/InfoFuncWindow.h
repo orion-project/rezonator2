@@ -3,7 +3,6 @@
 
 #include <QWidget>
 
-#include "../funcs/InfoFunctions.h"
 #include "../SchemaWindows.h"
 
 QT_BEGIN_NAMESPACE
@@ -13,7 +12,7 @@ class QAction;
 QT_END_NAMESPACE
 
 class Schema;
-
+class InfoFunction;
 class FrozenStateButton;
 
 class InfoFuncWindow : public QWidget, public SchemaToolWindow
@@ -53,11 +52,5 @@ private:
 
     QString paperColor();
 };
-
-#define INFO_FUNC(func_class) \
-    (new InfoFuncWindow(new InfoFunc ## func_class(schema()), this))->show();
-
-#define INFO_FUNC_1(func_class, arg1) \
-    (new InfoFuncWindow(new InfoFunc ## func_class(schema(), arg1), this))->show();
 
 #endif // INFO_FUNC_WINDOW_H

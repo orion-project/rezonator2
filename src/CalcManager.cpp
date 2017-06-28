@@ -1,5 +1,6 @@
 #include "CalcManager.h"
 #include "WindowsManager.h"
+#include "funcs/InfoFunctions.h"
 #include "funcs_window/InfoFuncWindow.h"
 #include "funcs_window/CausticWindow.h"
 #include "funcs_window/StabilityMapWindow.h"
@@ -65,6 +66,24 @@ void CalcManager::funcRepRate()
 void CalcManager::funcCaustic()
 {
     showPlotFunc<CausticWindow>();
+}
+
+void CalcManager::funcShowMatrices()
+{
+    auto elems = schema()->selectedElements();
+    if (!elems.isEmpty())
+    {
+        if (elems.size() == 1)
+            showInfoFunc(new InfoFuncMatrix(schema(), elems.at(0)));
+        else
+            showInfoFunc(new InfoFuncMatrices(schema(), elems));
+    }
+}
+
+void CalcManager::funcShowAllMatrices()
+{
+    if (!schema()->isEmpty())
+        showInfoFunc(new InfoFuncMatrices(schema(), schema()->elements()));
 }
 
 void CalcManager::showInfoFunc(InfoFunction* func)

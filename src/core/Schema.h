@@ -101,9 +101,9 @@ private:
 /**
     Interface of element selector.
     A widged displaying schema elements can allow user to select one or several
-    elements by mouse or keyboard (like SchemaTable does). This widged can
-    implement this interface and register itself as SchemaCursor in a schema
-    Then any others will be able to obtain selected element(s)
+    elements by mouse or keyboard (like SchemaTable does). This widged can implement this interface
+    and register itself in a schema via `schema->selection().registerSelector(selecting_widget)`
+    Then any others will be able to obtain selected element(s) via `schema->selectedElements()`
     without any redundant knowledge about who exactly made this selection.
 */
 class ElementSelector

@@ -1,6 +1,7 @@
 #include "InfoFuncWindow.h"
 #include "../core/Schema.h"
 #include "../HelpSystem.h"
+#include "../funcs/InfoFunctions.h"
 #include "../widgets/FrozenStateButton.h"
 #include "widgets/OriFlatToolBar.h"
 #include "helpers/OriWidgets.h"

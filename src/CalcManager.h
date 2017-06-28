@@ -1,7 +1,11 @@
 #ifndef CALC_MANAGER_H
 #define CALC_MANAGER_H
 
-#include <QWidget>
+#include <QObject>
+
+QT_BEGIN_NAMESPACE
+class QWidget;
+QT_END_NAMESPACE
 
 class Schema;
 class InfoFunction;
@@ -24,6 +28,8 @@ public slots:
     void funcStabMap2d();
     void funcRepRate();
     void funcCaustic();
+    void funcShowMatrices();
+    void funcShowAllMatrices();
 
 private:
     QWidget* _parent;
