@@ -24,7 +24,7 @@ public:
 
     ///// inherited from BasicConfigDialog
     virtual void populate() override;
-    virtual void collect() override;
+    virtual bool collect() override;
 
 private:
     Ori::Widgets::OptionsGroup *groupOptions;

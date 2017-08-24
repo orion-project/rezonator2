@@ -38,3 +38,4 @@ bin/test/_tmp*
 bin/rezonator
 *.exe
 *.log
+tmp

@@ -43,12 +43,12 @@ ProjectWindow::ProjectWindow() : QMainWindow(), SchemaToolWindow(new Schema())
 {
     Ori::Wnd::setWindowIcon(this, ":/window_icons/main");
 
+    loadSettings();
+
     _calculations = new CalcManager(schema(), this);
     _operations = new ProjectOperations(schema(), this, _calculations);
 
     auto schemaViewWindow = new SchemaViewWindow(schema(), _calculations);
-
-    loadSettings();
 
     _mdiArea = new SchemaMdiArea;
     _mdiArea->appendChild(schemaViewWindow);
@@ -70,6 +70,8 @@ ProjectWindow::ProjectWindow() : QMainWindow(), SchemaToolWindow(new Schema())
     updateMenuBar();
     updateStatusInfo();
     updateStability();
+
+    _mdiToolbar->subWindowActivated(schemaViewWindow);
 
     QTimer::singleShot(200, _operations, SLOT(checkCmdLine()));
 }
@@ -197,7 +199,8 @@ void ProjectWindow::createToolBars()
 
     addToolBar(makeToolBar(tr("Tools"), { /*actnToolsBeamCalc,*/ 0, actnWndProtocol }));
 
-    addToolBar(Qt::BottomToolBarArea, new Ori::Widgets::MdiToolBar(tr("Windows"), _mdiArea));
+    _mdiToolbar = new Ori::Widgets::MdiToolBar(tr("Windows"), _mdiArea);
+    addToolBar(Qt::BottomToolBarArea, _mdiToolbar);
 }
 
 void ProjectWindow::createStatusBar()
@@ -364,7 +367,7 @@ void ProjectWindow::actionHelpAbout()
     auto text = tr(
                 "<p><font size=4><b>%1 %2.%3</b></font>"
                 "<p>Built on %5 at %6 from revision %4"
-                "<p>Copyright (C) 2006-2015 by Chunosov N.&nbsp;I."
+                "<p>Copyright (C) 2006-2017 by Chunosov N.&nbsp;I."
                 "<p>Web: <a href='{www}'>{www}</a>"
                 "<p>E-mail: <a href='mailto://{email}'>{email}</a>"
                 "<p>Credits: <a href='http://www.qcustomplot.com/'>QCustomPlot</a>, "

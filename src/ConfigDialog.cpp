@@ -103,7 +103,7 @@ void ConfigDialog::populate()
     groupView->setOption(1, settings.showBackground);
 }
 
-void ConfigDialog::collect()
+bool ConfigDialog::collect()
 {
     Settings &settings = Settings::instance();
 
@@ -118,4 +118,6 @@ void ConfigDialog::collect()
     settings.showBackground = groupView->option(1);
 
     settings.save();
+
+    return true;
 }

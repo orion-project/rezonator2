@@ -4,13 +4,17 @@
 #include "AppSettings.h"
 #include "core/Schema.h"
 
+#include <QMdiArea>
+#include <QMdiSubWindow>
+
 QT_BEGIN_NAMESPACE
 class QMenu;
 class QToolBar;
 class QVBoxLayout;
 QT_END_NAMESPACE
 
-////////////////////////////////////////////////////////////////////////////////
+
+//------------------------------------------------------------------------------
 /**
     Interface of a window which can process editing commands.
     Project window holds editing commands. When an editing command is invoked,
@@ -31,7 +35,7 @@ public:
 };
 
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 /**
     Base class for any windows dealing with schema.
     Each SchemaWindow is registered in WindowsManager when constructed.
@@ -59,7 +63,7 @@ private:
     Schema* _schema;
 };
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 class SchemaToolWindow : public SchemaWindow, public SettingsListener
 {
@@ -80,9 +84,7 @@ private:
     QList<QToolBar*> _toolbars;
 };
 
-////////////////////////////////////////////////////////////////////////////////
-#include <QMdiSubWindow>
-
+//------------------------------------------------------------------------------
 /**
     Basic mdi-child window.
     Base class for windows presenting schema related data in MDI area of project window.
@@ -147,7 +149,7 @@ signals:
     void closing();
 };
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 class SchemaMdiChild : public BasicMdiChild, public SchemaWindow
 {
@@ -155,8 +157,7 @@ public:
     SchemaMdiChild(Schema* schema, InitOptions options = 0);
 };
 
-////////////////////////////////////////////////////////////////////////////////
-#include <QMdiArea>
+//------------------------------------------------------------------------------
 
 class SchemaMdiArea : public QMdiArea, public SettingsListener
 {

@@ -24,6 +24,7 @@ namespace Ori {
 
     namespace Widgets {
         class MruMenu;
+        class MdiToolBar;
     }
 }
 
@@ -34,9 +35,6 @@ class ProjectWindow : public QMainWindow, public SchemaToolWindow
 public:
     ProjectWindow();
     ~ProjectWindow();
-
-    ///// inherits from SchemaWindow
-    //WindowRole role() const { return ProjectWindowRole; }
 
     ///// inherits from SchemaListener
     void schemaChanged(Schema*);
@@ -75,6 +73,7 @@ private:
     Ori::Styler* _styler;
     Ori::Translator* _translator;
     Ori::Widgets::MruMenu* _mruMenu;
+    Ori::Widgets::MdiToolBar* _mdiToolbar;
     Ori::MruFileList *_mruList;
 
     void createActions();
