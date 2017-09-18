@@ -8,6 +8,7 @@
 #include "core/Schema.h"
 #include "core/Protocol.h"
 #include "widgets/ParamEditor.h"
+#include "widgets/OriOptionsGroup.h"
 #include "helpers/OriDialogs.h"
 #include "tools/OriWaitCursor.h"
 
@@ -250,3 +251,18 @@ void ProjectOperations::setupWavelength()
                                     schema()->wavelength().name(), ":/window_icons/wavelength");
 }
 
+void ProjectOperations::setupTripType()
+{
+    Ori::Widgets::OptionsGroup group(true);
+    group.setTitle(tr("Round trip type"));
+    group.addOption(Schema::SW, "SW - Standing wave");
+    group.addOption(Schema::RR, "RR - Ring resonator");
+    group.addOption(Schema::SP, "SP - Single pass system");
+    group.setOption(schema()->tripType());
+    // TODO extend showDialog method to accept help topic
+    // TODO showDialog resets widget's layout margins as it has their own layout, but for QGroupBox both margins should be.
+    // TODO get rid of Ori::Dialog methods; finish and switch to fluent like Ori::Dialog helper instead
+    // e.g.: Ori::Dialog(group).{there are lot of options could be set here}.exec()
+    if (Ori::Dlg::showDialog(&group))
+        schema()->setTripType(Schema::TripType(group.option()));
+}

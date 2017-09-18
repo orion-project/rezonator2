@@ -51,7 +51,7 @@ private:
           *menuLangs, *menuStyles;
 
     QAction *actnFileNew, *actnFileOpen, *actnFileExit, *actnFileSave, *actnFileSaveCopy,
-            *actnFileSaveAs, /* *actnFileProp,*/ *actnFilePump, *actnFileLambda, *actnFileSummary;
+            *actnFileSaveAs, *actnFileTripType, *actnFilePump, *actnFileLambda, *actnFileSummary;
 
     QAction *actnEditCut, *actnEditCopy,
             *actnEditPaste, *actnEditSelectAll;

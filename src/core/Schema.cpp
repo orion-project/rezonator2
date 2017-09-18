@@ -192,3 +192,10 @@ void Schema::parameterChanged(Z::ParameterBase *param)
     if (param == &_wavelength)
         _events.raise(SchemaEvents::LambdaChanged);
 }
+
+void Schema::setTripType(TripType value)
+{
+    if (_tripType == value) return;
+    _tripType = value;
+    _events.raise(SchemaEvents::ParamsChanged);
+}

@@ -68,9 +68,19 @@ class SchemaEvents
 public:
     enum Event
     {
-        Created, Deleted, Changed, Saved, Loading, Loaded,
-        ElemCreated, ElemChanged, ElemDeleting, ElemDeleted,
-        ParamsChanged, LambdaChanged
+        Created,       ///< Schema just was created, called from constructor
+        Deleted,       ///< Schema was deleted, called from destructor
+        Changed,       ///< General event when something was changed,
+                       ///< can be called after anothed changing event, if it configured.
+        Saved,         ///< Schema was saved
+        Loading,       ///< Schema is turned into Loading state
+        Loaded,        ///< Loading is completed
+        ElemCreated,   ///< New element was added to schema
+        ElemChanged,   ///< Element's params changed
+        ElemDeleting,  ///< Element is being deleted from schema
+        ElemDeleted,   ///< Element was deleted from schema
+        ParamsChanged, ///< Some schema parameter was changed (e.g. TripType)
+        LambdaChanged, ///< Schema wavelength was changed
     };
 
     void raise(Event event, Element* element = nullptr) const;
@@ -152,7 +162,7 @@ public:
     Z::Parameter& wavelength() { return _wavelength; }
 
     TripType tripType() const { return _tripType; }
-    void setTripType(TripType value) { _tripType = value; }
+    void setTripType(TripType value);
     inline bool isSW() const { return _tripType == SW; }
     inline bool isRR() const { return _tripType == RR; }
     inline bool isSP() const { return _tripType == SP; }

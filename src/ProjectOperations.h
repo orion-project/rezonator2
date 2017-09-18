@@ -31,6 +31,7 @@ public slots:
     void setupSchema();
     void setupPump();
     void setupWavelength();
+    void setupTripType();
 
 signals:
     void fileNameSelected(const QString& fileName);

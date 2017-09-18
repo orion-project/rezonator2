@@ -32,12 +32,13 @@
 #include <QToolButton>
 #include <QUrl>
 
-#define STATUS_COUNT 5
 #define STATUS_ELEMS 0
 #define STATUS_MODIF 1
 #define STATUS_LAMBDA 2
-#define STATUS_STABIL 3
-#define STATUS_FILE 4
+#define STATUS_TRIPTYPE 3
+#define STATUS_STABIL 4
+#define STATUS_FILE 5
+#define STATUS_COUNT 6
 
 ProjectWindow::ProjectWindow() : QMainWindow(), SchemaToolWindow(new Schema())
 {
@@ -116,8 +117,8 @@ void ProjectWindow::createActions()
     actnFileSave = A_(tr("&Save"), _operations, SLOT(saveSchemaFile()), ":/toolbar/schema_save", QKeySequence::Save);
     actnFileSaveAs = A_(tr("Save &As..."), _operations, SLOT(saveSchemaFileAs()), 0, QKeySequence::SaveAs);
     actnFileSaveCopy = A_(tr("Save &Copy..."), _operations, SLOT(saveSchemaFileCopy()));
-    //actnFileProp = _a(tr("P&roperties..."), _operations, SLOT(setupSchema()), ":/toolbar/schema_prop", Qt::Key_F11);
     actnFileLambda = A_(tr("Change &Wavelength..."), _operations, SLOT(setupWavelength()), ":/toolbar/wavelength", Qt::Key_F10);
+    actnFileTripType = A_(tr("Change &Trip Type..."), _operations, SLOT(setupTripType()));
     actnFilePump = A_(tr("Setup &Input Beam..."), _operations, SLOT(setupPump()), ":/toolbar/schema_pump", Qt::Key_F9);
     actnFileSummary = A_(tr("Summar&y..."), _calculations, SLOT(funcSummary()), ":/toolbar/schema_summary", Qt::CTRL | Qt::Key_I);
     actnFileExit = A_(tr("E&xit"), qApp, SLOT(closeAllWindows()), 0, Qt::CTRL | Qt::Key_Q);
@@ -163,8 +164,8 @@ void ProjectWindow::createMenuBar()
 
     menuFile = Ori::Gui::menu(tr("&File"), this,
         { actnFileNew, actnFileOpen, _mruMenu, 0, actnFileSave,
-          actnFileSaveAs, actnFileSaveCopy, 0, /*actnFileProp,*/
-          actnFileLambda, actnFilePump, actnFileSummary, 0, actnFileExit });
+          actnFileSaveAs, actnFileSaveCopy, 0,
+          actnFileLambda, actnFileTripType, actnFilePump, actnFileSummary, 0, actnFileExit });
 
     menuEdit = Ori::Gui::menu(tr("&Edit"), this,
         { actnEditCut, actnEditCopy, actnEditPaste, 0, actnEditSelectAll });
@@ -191,7 +192,7 @@ void ProjectWindow::createToolBars()
 {
     addToolBar(makeToolBar(tr("File"),
         { actnFileNew, Ori::Gui::menuToolButton(_mruMenu, actnFileOpen),
-          actnFileSave, 0, /*actnFileProp,*/ actnFilePump, actnFileSummary }));
+          actnFileSave, 0, actnFilePump, actnFileSummary }));
 
     addToolBar(makeToolBar(tr("Edit"), { actnEditCut, actnEditCopy, actnEditPaste }));
 
@@ -209,6 +210,7 @@ void ProjectWindow::createStatusBar()
 {
     auto status = new Ori::Widgets::StatusBar(STATUS_COUNT);
     status->connect(STATUS_LAMBDA, SIGNAL(doubleClicked()), _operations, SLOT(setupWavelength()));
+    status->connect(STATUS_TRIPTYPE, SIGNAL(doubleClicked()), _operations, SLOT(setupTripType()));
     status->connect(STATUS_STABIL, SIGNAL(doubleClicked()), _operations, SLOT(setupPump()));
     setStatusBar(status);
 }
@@ -271,6 +273,8 @@ void ProjectWindow::updateStatusInfo()
     else status->setText(STATUS_MODIF, tr("Modified", "Status text"));
 
     status->setText(STATUS_LAMBDA, schema()->wavelength().str());
+
+    status->setText(STATUS_TRIPTYPE, schema()->isRR() ? "RR" : schema()->isSP() ? "SP" : "SW");
 
     if (schema()->fileName().isEmpty()) status->clear(STATUS_FILE);
     else status->setText(STATUS_FILE, schema()->fileName());
