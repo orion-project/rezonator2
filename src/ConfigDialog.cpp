@@ -48,8 +48,7 @@ QWidget* ConfigDialog::createGeneralPage()
 
     groupOptions = new Ori::Widgets::OptionsGroup(tr("Options"), {
         tr("Edit just created element"),
-        tr("Automatically generate labels for new elements"),
-        tr("Use system open/save file dialogs")
+        tr("Automatically generate labels for new elements")
     });
 
     page->add({groupOptions});
@@ -63,7 +62,9 @@ QWidget* ConfigDialog::createViewPage()
     ///////// group box "Options"
     groupView = new Ori::Widgets::OptionsGroup(tr("Options"), {
         tr("Use small toolbar images"),
-        tr("Show background image")
+        tr("Show background image"),
+        tr("Use native menu bar (restart required)"),
+        tr("Use system open/save file dialogs")
     });
 
     ///////// group box "Lists length"
@@ -95,12 +96,13 @@ void ConfigDialog::populate()
     //// options
     groupOptions->setOption(0, settings.editNewElem);
     groupOptions->setOption(1, settings.elemAutoLabel);
-    groupOptions->setOption(2, settings.useSystemDialogs);
     //sedMruLength->setValue(settings.maxRecentFiles);
 
     //// view
     groupView->setOption(0, settings.smallToolbarImages);
     groupView->setOption(1, settings.showBackground);
+    groupView->setOption(2, settings.useNativeMenuBar);
+    groupView->setOption(3, settings.useSystemDialogs);
 }
 
 bool ConfigDialog::collect()
@@ -110,12 +112,13 @@ bool ConfigDialog::collect()
     //// options
     settings.editNewElem = groupOptions->option(0);
     settings.elemAutoLabel = groupOptions->option(1);
-    settings.useSystemDialogs = groupOptions->option(2);
     //settings.maxRecentFiles = sedMruLength->value();
 
     //// view
     settings.smallToolbarImages = groupView->option(0);
     settings.showBackground = groupView->option(1);
+    settings.useNativeMenuBar = groupView->option(2);
+    settings.useSystemDialogs = groupView->option(3);
 
     settings.save();
 

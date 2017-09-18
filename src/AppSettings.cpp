@@ -49,10 +49,11 @@ void Settings::load()
     s.beginGroup("View");
     LOAD_DEF(smallToolbarImages, Bool, false);
     LOAD_DEF(showBackground, Bool, true);
+    LOAD_DEF(useNativeMenuBar, Bool, true);
+    LOAD_DEF(useSystemDialogs, Bool, true);
 
     s.beginGroup("Options");
     LOAD_DEF(editNewElem, Bool, true);
-    LOAD_DEF(useSystemDialogs, Bool, true);
     LOAD_DEF(elemAutoLabel, Bool, true);
     //LOAD_DEF(maxRecentFiles, Int, 10);
 
@@ -70,10 +71,11 @@ void Settings::save()
     s.beginGroup("View");
     SAVE(smallToolbarImages)
     SAVE(showBackground)
+    SAVE(useNativeMenuBar)
+    SAVE(useSystemDialogs)
 
     s.beginGroup("Options");
     SAVE(editNewElem)
-    SAVE(useSystemDialogs)
     SAVE(elemAutoLabel)
     //SAVE(maxRecentFiles)
 

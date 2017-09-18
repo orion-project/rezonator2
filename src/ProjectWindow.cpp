@@ -157,6 +157,8 @@ void ProjectWindow::createActions()
 
 void ProjectWindow::createMenuBar()
 {
+    menuBar()->setNativeMenuBar(Settings::instance().useNativeMenuBar);
+
     _mruMenu = new Ori::Widgets::MruMenu(tr("Recent &Files"), _mruList, this);
 
     menuFile = Ori::Gui::menu(tr("&File"), this,
