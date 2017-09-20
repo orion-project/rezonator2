@@ -246,9 +246,13 @@ void ProjectOperations::setupPump()
 void ProjectOperations::setupWavelength()
 {
     ParamEditor editor(&schema()->wavelength(), false);
-    // TODO extend showDialogWithPromptH method to accept help topic
-    Ori::Dlg::showDialogWithPromptH(tr("Enter new wavelength:"), &editor,
-                                    schema()->wavelength().name(), ":/window_icons/wavelength");
+    Ori::Dlg::Dialog(&editor)
+            .withTitle(schema()->wavelength().name())
+            .withHelpTopic("setup_wavelength") // TODO help topic
+            .withIconPath(":/window_icons/wavelength")
+            .withHorizontalPrompt(tr("Enter new wavelength:"))
+            .connectOkToContentApply()
+            .exec();
 }
 
 void ProjectOperations::setupTripType()
@@ -259,10 +263,9 @@ void ProjectOperations::setupTripType()
     group.addOption(Schema::RR, "RR - Ring resonator");
     group.addOption(Schema::SP, "SP - Single pass system");
     group.setOption(schema()->tripType());
-    // TODO extend showDialog method to accept help topic
-    // TODO showDialog resets widget's layout margins as it has their own layout, but for QGroupBox both margins should be.
-    // TODO get rid of Ori::Dialog methods; finish and switch to fluent like Ori::Dialog helper instead
-    // e.g.: Ori::Dialog(group).{there are lot of options could be set here}.exec()
-    if (Ori::Dlg::showDialog(&group))
+    auto dlg = Ori::Dlg::Dialog(&group)
+            .withHelpTopic("setup_round_trip") // TODO help topic
+            .withContentToButtonsSpacingFactor(2);
+    if (dlg.exec())
         schema()->setTripType(Schema::TripType(group.option()));
 }
