@@ -152,9 +152,9 @@ QString CausticFunction::calculatePoint(const double& arg)
     Z::ValueTS value;
     switch (_schema->tripType())
     {
-    case Schema::SW: break; // TODO
-    case Schema::RR: break; // TODO
-    case Schema::SP: value = calculateSP(); break;
+    case TripType::SW: break; // TODO
+    case TripType::RR: break; // TODO
+    case TripType::SP: value = calculateSP(); break;
     }
 
     return QString::fromUtf8("ω<sub>T</sub>: %1; ω<sub>S</sub>: %2")

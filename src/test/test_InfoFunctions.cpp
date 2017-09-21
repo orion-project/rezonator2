@@ -12,11 +12,11 @@ namespace InfoFunctionsTests {
 TEST_METHOD(InfoFuncRepetitionRate_RR_must_be_twice_of_SW)
 {
     Schema rr;
-    rr.setTripType(Schema::RR);
+    rr.setTripType(TripType::RR);
     rr.insertElement(new ElemEmptyRange);
 
     Schema sw;
-    sw.setTripType(Schema::SW);
+    sw.setTripType(TripType::SW);
     sw.insertElement(new ElemEmptyRange);
 
     InfoFuncRepetitionRate rate_rr(&rr);

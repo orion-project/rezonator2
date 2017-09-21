@@ -35,8 +35,6 @@ private:
     void writeElements(QDomElement& root);
     void writeElement(QDomElement& root, Element *elem);
     void writeWindows(QDomElement& root);
-
-    static QString tripTypeStr(Schema::TripType tripType);
 };
 
 #endif // SCHEMA_WRITER_XML_H

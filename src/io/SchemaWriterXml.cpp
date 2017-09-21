@@ -45,20 +45,9 @@ void SchemaWriterXml::writeInternal()
     writeWindows(root);
 }
 
-QString SchemaWriterXml::tripTypeStr(Schema::TripType tripType)
-{
-    switch (tripType)
-    {
-    case Schema::SW: return "SW";
-    case Schema::RR: return "RR";
-    case Schema::SP: return "SP";
-    }
-    return QString();
-}
-
 void SchemaWriterXml::writeGeneral(QDomElement& root)
 {
-    _writer->writeText(root, "trip", tripTypeStr(_schema->tripType()));
+    _writer->writeText(root, "trip", TripTypes::info(_schema->tripType()).alias());
     _writer->writeParameter(root, &_schema->wavelength());
 }
 

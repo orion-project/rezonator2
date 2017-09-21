@@ -56,15 +56,16 @@ void SchemaReaderXml::readGeneral(QDomElement& root)
     _reader->readParameter(root, &_schema->wavelength());
 }
 
-Schema::TripType SchemaReaderXml::readTripType(QDomElement root, const QString& name)
+TripType SchemaReaderXml::readTripType(QDomElement root, const QString& name)
 {
-    auto trip = _reader->readText(root, name);
-    if (trip == "SW") return Schema::SW;
-    if (trip == "RR") return Schema::RR;
-    if (trip == "SP") return Schema::SP;
-    _reader->warning(root, qApp->translate("IO",
-        "Unknown schema trip type: '%1'. SW is ised instead.").arg(trip));
-    return Schema::SW;
+    bool ok;
+    auto tripTypeStr = _reader->readText(root, name);
+    auto tripType = TripTypes::find(tripTypeStr, &ok);
+    if (!ok)
+        _reader->warning(root, qApp->translate("IO",
+            "Unknown schema trip type: '%1'. %2 is ised instead.")
+                .arg(tripTypeStr, TripTypes::info(tripType).alias()));
+    return tripType;
 }
 
 //#define READ_PUMP_MODE(mode, param1, param2, param3)\

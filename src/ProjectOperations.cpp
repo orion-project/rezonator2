@@ -248,7 +248,7 @@ void ProjectOperations::setupWavelength()
     ParamEditor editor(&schema()->wavelength(), false);
     Ori::Dlg::Dialog(&editor)
             .withTitle(schema()->wavelength().name())
-            .withHelpTopic("setup_wavelength") // TODO help topic
+            .withHelpTopic("") // TODO help topic
             .withIconPath(":/window_icons/wavelength")
             .withHorizontalPrompt(tr("Enter new wavelength:"))
             .connectOkToContentApply()
@@ -259,13 +259,12 @@ void ProjectOperations::setupTripType()
 {
     Ori::Widgets::OptionsGroup group(true);
     group.setTitle(tr("Round trip type"));
-    group.addOption(Schema::SW, "SW - Standing wave");
-    group.addOption(Schema::RR, "RR - Ring resonator");
-    group.addOption(Schema::SP, "SP - Single pass system");
-    group.setOption(schema()->tripType());
+    for (TripType tripType : TripTypes::all())
+        group.addOption(int(tripType), TripTypes::info(tripType).fullHeader());
+    group.setOption(int(schema()->tripType()));
     auto dlg = Ori::Dlg::Dialog(&group)
-            .withHelpTopic("setup_round_trip") // TODO help topic
+            .withHelpTopic("") // TODO help topic
             .withContentToButtonsSpacingFactor(2);
     if (dlg.exec())
-        schema()->setTripType(Schema::TripType(group.option()));
+        schema()->setTripType(TripTypes::find(group.option()));
 }

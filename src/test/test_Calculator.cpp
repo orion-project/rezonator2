@@ -13,9 +13,9 @@ DECLARE_ELEMENT(TestElemRange, ElementRange) DECLARE_ELEMENT_END
 #define EL_MID 2
 #define EL_END 3
 
-#define SW Schema::SW
-#define SP Schema::SP
-#define RR Schema::RR
+#define SW TripType::SW
+#define SP TripType::SP
+#define RR TripType::RR
 
 void populateSchema(Schema* schema, int ref, Element* ref_elem)
 {
@@ -37,14 +37,14 @@ void populateSchema(Schema* schema, int ref, Element* ref_elem)
 ////////////////////////////////////////////////////////////////////////////////
 
 #define ASSERT_ROUND_TRIP_SIZE\
-    if (tripType == Schema::SW)\
+    if (tripType == SW)\
         ASSERT_EQ_INT(calc.roundTrip().size(), schema.count()*2-2)\
-    else if (tripType == Schema::SP)\
+    else if (tripType == SP)\
         ASSERT_EQ_INT(calc.roundTrip().size(), ref+1)\
-    else if (tripType == Schema::RR)\
+    else if (tripType == RR)\
         ASSERT_EQ_INT(calc.roundTrip().size(), schema.count())
 
-TEST_CASE_METHOD(rt, Schema::TripType tripType, int ref, QString expected)
+TEST_CASE_METHOD(rt, TripType tripType, int ref, QString expected)
 {
     PREPARE_ROUND_TRIP(new TestElem)
 
@@ -83,7 +83,7 @@ TEST_CASE(rt_rr_end, rt, RR, EL_END, "3 2 1 0")
     ASSERT_EQ_PTR(calc.matrsT().last(), calc.roundTrip().last()->pMt())\
     ASSERT_EQ_PTR(calc.matrsS().last(), calc.roundTrip().last()->pMs())
 
-TEST_CASE_METHOD(rt_matrs_nosplit, Schema::TripType tripType, int ref, bool range, bool split)
+TEST_CASE_METHOD(rt_matrs_nosplit, TripType tripType, int ref, bool range, bool split)
 {
     PREPARE_ROUND_TRIP((range? ((Element*)new TestElemRange): ((Element*)new TestElem)))
 
@@ -123,7 +123,7 @@ TEST_CASE(rt_rr_matrs_range_nosplit_end,   rt_matrs_nosplit, RR, EL_END, true, f
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE_METHOD(rt_matrs_sw_rr, Schema::TripType tripType, int ref)
+TEST_CASE_METHOD(rt_matrs_sw_rr, TripType tripType, int ref)
 {
     PREPARE_ROUND_TRIP(new TestElemRange)
 
@@ -138,7 +138,7 @@ TEST_CASE_METHOD(rt_matrs_sw_rr, Schema::TripType tripType, int ref)
 
 TEST_CASE_METHOD(rt_matrs_sp, int ref)
 {
-    Schema::TripType tripType = Schema::SP;
+    TripType tripType = SP;
     PREPARE_ROUND_TRIP(new TestElemRange)
 
     calc.calcRoundTrip(true);
@@ -152,7 +152,7 @@ TEST_CASE_METHOD(rt_matrs_sp, int ref)
 
 TEST_CASE_METHOD(rt_matrs_sp_beg, int ref)
 {
-    Schema::TripType tripType = Schema::SP;
+    TripType tripType = SP;
     PREPARE_ROUND_TRIP(new TestElemRange)
 
     calc.calcRoundTrip(true);

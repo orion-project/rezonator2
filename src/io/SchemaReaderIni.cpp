@@ -33,14 +33,14 @@ Z::Unit parseAngular(const QString& s, Z::Unit def)
     return map.contains(s)? map[s]: def;
 }
 
-Schema::TripType parseTripType(int s)
+TripType parseTripType(int s)
 {
     switch (s)
     {
-    case 1: return Schema::RR;
-    case 2: return Schema::SP;
+    case 1: return TripType::RR;
+    case 2: return TripType::SP;
     }
-    return Schema::SW;
+    return TripType::SW;
 }
 
 QString parseElemType(const QString& oldType, const Ori::Version& version)

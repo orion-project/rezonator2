@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QMap>
 
+#include "CommonTypes.h"
 #include "Element.h"
 #include "Parameters.h"
 #include "Pump.h"
@@ -145,14 +146,6 @@ private:
 class Schema : public ElementOwner, public Z::ParameterOwner
 {
 public:
-    enum TripType
-    {
-        SW, ///< Standing wave system
-        RR, ///< Ring resonator
-        SP  ///< Single pass system
-    };
-
-public:
     Schema();
     virtual ~Schema();
 
@@ -163,10 +156,10 @@ public:
 
     TripType tripType() const { return _tripType; }
     void setTripType(TripType value);
-    inline bool isSW() const { return _tripType == SW; }
-    inline bool isRR() const { return _tripType == RR; }
-    inline bool isSP() const { return _tripType == SP; }
-    inline bool isResonator() const { return _tripType == SW || _tripType == RR; }
+    inline bool isSW() const { return _tripType == TripType::SW; }
+    inline bool isRR() const { return _tripType == TripType::RR; }
+    inline bool isSP() const { return _tripType == TripType::SP; }
+    inline bool isResonator() const { return _tripType == TripType::SW || _tripType == TripType::RR; }
 
     const Z::Pump::Params& pump() const { return _pump; }
     void setPump(const Z::Pump::Params& pump);
@@ -203,7 +196,7 @@ private:
     SchemaSelection _selection;
     QString _fileName;
     QString _title, _comment;
-    TripType _tripType = SW;
+    TripType _tripType = TripType::SW;
     Z::Parameter _wavelength;
     Z::Pump::Params _pump;
 

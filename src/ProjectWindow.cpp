@@ -249,7 +249,7 @@ void ProjectWindow::updateMenuBar()
 
 void ProjectWindow::updateActions()
 {
-    bool isSchemaSP = schema()->tripType() == Schema::SP;
+    bool isSchemaSP = schema()->isSP();
 
     actnFilePump->setEnabled(isSchemaSP);
     actnFilePump->setVisible(isSchemaSP);
@@ -274,7 +274,9 @@ void ProjectWindow::updateStatusInfo()
 
     status->setText(STATUS_LAMBDA, schema()->wavelength().str());
 
-    status->setText(STATUS_TRIPTYPE, schema()->isRR() ? "RR" : schema()->isSP() ? "SP" : "SW");
+    auto tripTypeInfo = TripTypes::info(schema()->tripType());
+    status->setText(STATUS_TRIPTYPE, tripTypeInfo.alias());
+    status->setToolTip(STATUS_TRIPTYPE, tripTypeInfo.toolTip());
 
     if (schema()->fileName().isEmpty()) status->clear(STATUS_FILE);
     else status->setText(STATUS_FILE, schema()->fileName());
@@ -282,45 +284,35 @@ void ProjectWindow::updateStatusInfo()
 
 void ProjectWindow::updateStability()
 {
-    auto status = dynamic_cast<Ori::Widgets::StatusBar*>(statusBar());
-    Schema::TripType tripType = schema()->tripType();
-    QString icon, hint;
-    switch (tripType)
+    auto status = qobject_cast<Ori::Widgets::StatusBar*>(statusBar());
+    auto tripTypeInfo = TripTypes::info(schema()->tripType());
+    QString icon = tripTypeInfo.smallIconPath();
+    QString hint = tripTypeInfo.toolTip();
+    if (schema()->isResonator())
     {
-    case Schema::SW:
-        icon = ":/triptype16/SW";
-        hint = tr("Standing wave system (SW)");
-        break;
-    case Schema::RR:
-        icon = ":/triptype16/RR";
-        hint = tr("Ring resonator (RR)");
-        break;
-    case Schema::SP:
-        icon = ":/triptype16/SP";
-        hint = tr("Single pass system (SP)");
-        // TODO: show pump params in tooltip
-        break;
+        // TODO: show instability
+//        bool stableT, stableS;
+//        Calc::isStable(schema(), stableT, stableS);
+//        if (!stableT && !stableS)
+//        {
+//            icon += "_unstable";
+//            hint += '\n' + tr("System is unstable");
+//        }
+//        else if (!stableT)
+//        {
+//            icon += "_unstable_T";
+//            hint += '\n' + tr("System is unstable in T-plane");
+//        }
+//        else if (!stableS)
+//        {
+//            icon += "_unstable_S";
+//            hint += '\n' + tr("System is unstable in S-plane");
+//        }
     }
-/*    if (tripType == Schema::SW || tripType == Schema::RR)
+    else if (schema()->isSP())
     {
-        bool stableT, stableS;
-        Calc::isStable(schema(), stableT, stableS);
-        if (!stableT && !stableS)
-        {
-            icon += "_unstable";
-            hint += '\n' + tr("System is unstable");
-        }
-        else if (!stableT)
-        {
-            icon += "_unstable_T";
-            hint += '\n' + tr("System is unstable in T-plane");
-        }
-        else if (!stableS)
-        {
-            icon += "_unstable_S";
-            hint += '\n' + tr("System is unstable in S-plane");
-        }
-    }*/
+        // TODO: show pump params in tooltip
+    }
     status->setIcon(STATUS_STABIL, icon);
     status->setToolTip(STATUS_STABIL, hint);
 }

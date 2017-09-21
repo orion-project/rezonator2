@@ -18,9 +18,9 @@ void Calculator::calcRoundTrip(bool splitRange)
 
     switch (_schema->tripType())
     {
-    case Schema::SW: calcRoundTripSW(); break;
-    case Schema::RR: calcRoundTripRR(); break;
-    case Schema::SP: calcRoundTripSP(); break;
+    case TripType::SW: calcRoundTripSW(); break;
+    case TripType::RR: calcRoundTripRR(); break;
+    case TripType::SP: calcRoundTripSP(); break;
     }
 }
 

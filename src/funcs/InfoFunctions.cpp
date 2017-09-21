@@ -148,7 +148,7 @@ QString InfoFuncRepetitionRate::calculate()
                 "length (ranges, crystals, etc.), or their total length is zero.");
 
     _result = Z::Const::LightSpeed / L;
-    if (schema()->tripType() == Schema::SW) _result /= 2.0;
+    if (schema()->isSW()) _result /= 2.0;
 
     Z::PrefixedValue freq(_result, Z::Units::Hz()); // convert to suitable kHz, MHz, etc.
 

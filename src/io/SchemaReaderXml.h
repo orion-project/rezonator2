@@ -37,7 +37,7 @@ private:
     void readElement(QDomElement& root);
     void readStorables(QDomElement& root);
 
-    Schema::TripType readTripType(QDomElement root, const QString& name);
+    TripType readTripType(QDomElement root, const QString& name);
 };
 
 #endif // SCHEMA_READER_XML_H

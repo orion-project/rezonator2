@@ -114,13 +114,13 @@ TEST_METHOD(read_general)
 
     //ASSERT_EQ_STR(schema.title(), "Empty schema")
     //ASSERT_EQ_STR(schema.comment(), "Multi-line comment is not supported")
-    ASSERT_EQ_INT(schema.tripType(), Schema::SP)
+    ASSERT_EQ_INT(schema.tripType(), TripType::SP)
     ASSERT_Z_VALUE(schema.wavelength().value(), 1064, Z::Units::Ao())
 }
 
 TEST_CASE_METHOD(read_schema, const QString& fileName,
     Z::Unit expectedLinearUnit, Z::Unit expectedAngularUnit, Z::Unit expectedLambdaUnit,
-    Schema::TripType expectedTripType)
+    TripType expectedTripType)
 {
     Z::Unit lin = expectedLinearUnit;
     Z::Unit ang = expectedAngularUnit;
@@ -217,8 +217,8 @@ TEST_CASE_METHOD(read_schema, const QString& fileName,
     // TODO: check grin lens
 }
 
-TEST_CASE(read_schema_1_1, read_schema, "all_elems_ver-1-1.she", Z::Units::mm(), Z::Units::deg(), Z::Units::nm(), Schema::RR)
-TEST_CASE(read_schema_1_2, read_schema, "all_elems_ver-1-2.she", Z::Units::mkm(), Z::Units::amin(), Z::Units::mkm(), Schema::SP)
+TEST_CASE(read_schema_1_1, read_schema, "all_elems_ver-1-1.she", Z::Units::mm(), Z::Units::deg(), Z::Units::nm(), TripType::RR)
+TEST_CASE(read_schema_1_2, read_schema, "all_elems_ver-1-2.she", Z::Units::mkm(), Z::Units::amin(), Z::Units::mkm(), TripType::SP)
 
 ////////////////////////////////////////////////////////////////////////////////
 

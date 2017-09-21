@@ -112,7 +112,8 @@ HEADERS += \
     src/funcs_window/PlotFuncWindow.h \
     src/funcs_window/PlotFuncWindowStorable.h \
     src/funcs_window/StabilityMap2DWindow.h \
-    src/funcs_window/StabilityMapWindow.h
+    src/funcs_window/StabilityMapWindow.h \
+    src/core/CommonTypes.h
 
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -202,4 +203,5 @@ SOURCES += \
     src/funcs_window/PlotFuncWindow.cpp \
     src/funcs_window/PlotFuncWindowStorable.cpp \
     src/funcs_window/StabilityMap2DWindow.cpp \
-    src/funcs_window/StabilityMapWindow.cpp
+    src/funcs_window/StabilityMapWindow.cpp \
+    src/core/CommonTypes.cpp
