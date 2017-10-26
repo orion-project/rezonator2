@@ -19,7 +19,7 @@ public:
 
 public:
     Protocol(RecordType recordType): _recordType(recordType) {}
-    ~Protocol();
+    ~Protocol() { writeToHtmlLog(); }
 
     inline Protocol& operator << (const char* v) { write(v); return *this; }
     inline Protocol& operator << (const QString& v) { write(v); return *this; }
@@ -27,13 +27,17 @@ public:
     inline Protocol& operator << (int v) { write(QString::number(v)); return *this; }
     inline Protocol& operator << (long v) { write(QString::number(v)); return *this; }
     inline Protocol& operator << (long long v) { write(QString::number(v)); return *this; }
-    inline Protocol& operator << (bool v) { write(v? "true": "false"); return *this; }
+    inline Protocol& operator << (bool v) { write(v? QStringLiteral("true"): QStringLiteral("false")); return *this; }
 
     inline void write(const QString& str) { _record.append(str).append(' '); }
 
 private:
     QString _record;
     RecordType _recordType;
+
+    QString sanitizedHtml() const;
+    QString messageFormat() const;
+    void writeToHtmlLog();
 };
 
 } // namespace Z

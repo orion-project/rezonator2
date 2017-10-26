@@ -1,16 +1,15 @@
 <rezonatorSchema version="2">
-    <options tripType="2"/>
+    <trip>SP</trip>
     <title>Single lens</title>
     <comment></comment>
-    <lambda>0.64</lambda>
-    <units linear="cm" angular="°" lambda="µm" beamsize="mm"/>
+    <lambda value="0.64" unit="mkm"/>
     <elements>
         <element type="ElemEmptyRange">
             <label>L1</label>
             <title>Distance from light source to lens</title>
             <options disabled="0"/>
             <params>
-                <param name="L">5</param>
+                <L value="5" unit="cm"/>
             </params>
         </element>
         <element type="ElemThinLens">
@@ -18,8 +17,8 @@
             <title></title>
             <options disabled="0"/>
             <params>
-                <param name="F">5</param>
-                <param name="Alpha">0.261799387799149</param>
+                <F value="5" unit="cm"/>
+                <Alpha value="0.261799387799149" unit="deg"/>
             </params>
         </element>
         <element type="ElemEmptyRange">
@@ -27,7 +26,7 @@
             <title></title>
             <options disabled="0"/>
             <params>
-                <param name="L">7</param>
+                <L value="7" unit="cm"/>
             </params>
         </element>
     </elements>

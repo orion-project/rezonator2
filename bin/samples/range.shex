@@ -2,8 +2,7 @@
     <trip>SP</trip>
     <title></title>
     <comment></comment>
-    <lambda>980</lambda>
-    <units Dim_Linear="mm" Dim_Angle="deg" Dim_Beamsize="mkm" Dim_Lambda="nm"/>
+    <lambda value="980" unit="nm"/>
     <pump mode="PumpMode_TwoSections">
         <param1 S="0" T="0"/>
         <param2 S="600" T="500"/>
@@ -15,7 +14,7 @@
             <title></title>
             <options disabled="0"/>
             <params>
-                <param name="L">100</param>
+                <L value="100" unit="mm"/>
             </params>
         </element>
     </elements>

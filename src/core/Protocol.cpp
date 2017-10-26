@@ -13,18 +13,32 @@ void Protocol::setView(QPlainTextEdit* view)
     isEnabled = view;
 }
 
-Protocol::~Protocol()
+void Protocol::writeToHtmlLog()
 {
-    if (!__logView) return;
+    if (__logView)
+        __logView->appendHtml(messageFormat().arg(sanitizedHtml()));
+}
 
+QString Protocol::sanitizedHtml() const
+{
+    return QString(_record)
+            .replace(QStringLiteral("<"), QStringLiteral("&lt;"))
+            .replace(QStringLiteral(">"), QStringLiteral("&gt;"))
+            .replace(QStringLiteral("\n"), QStringLiteral("<br>"))
+            .replace(QStringLiteral("    "), QStringLiteral("&nbsp;&nbsp;&nbsp;&nbsp;"));
+}
+
+QString Protocol::messageFormat() const
+{
     switch (_recordType)
     {
-    case Report: __logView->appendHtml("<b>" + _record + "</b>"); break;
-    case Info: __logView->appendPlainText(_record); break;
-    case Note: __logView->appendHtml("<font color=gray>" + _record + "</font>"); break;
-    case Error: __logView->appendHtml("<font color=red>" + _record + "</font>"); break;
-    case Warning: __logView->appendHtml("<font color=magenta>" + _record + "</font>"); break;
+    case Report:  return QStringLiteral("<p><b>R: %1</b></p>");
+    case Info:    return QStringLiteral("<p>I: %1</p>");
+    case Note:    return QStringLiteral("<p><font color=gray>N: %1</font></p>");
+    case Error:   return QStringLiteral("<p><font color=red>E: %1</font></p>");
+    case Warning: return QStringLiteral("<p><font color=magenta>W: %1</font></p>");
     }
+    return QString();
 }
 
 } // namespace Z
