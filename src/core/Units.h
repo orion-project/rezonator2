@@ -26,6 +26,7 @@ public:
     virtual QString name() const = 0;
     virtual double toSi(const double& value) const = 0;
     virtual double fromSi(const double& value) const = 0;
+    virtual Unit siUnit() const = 0;
 };
 
 class _Dim_

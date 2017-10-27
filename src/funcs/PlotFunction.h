@@ -58,7 +58,7 @@ protected:
     void setError(const QString& error);
 
     void clearResults();
-    bool prepareResults(int& points, double& step);
+    bool prepareResults(Z::PlottingRange range);
     bool prepareCalculator(Element* ref, bool splitRange = false);
 
 //    Element* argElement();

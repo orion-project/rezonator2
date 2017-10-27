@@ -13,23 +13,25 @@ inline QString translateUnits(const char* s)
 #endif
 }
 
-#define DEFINE_UNIT(_unit_, _unit_name_, _to_si_formula_, _from_si_formula_)\
-    class _Unit_ ## _unit_ : public _Unit_\
+#define DEFINE_UNIT(_unit_, _unit_name_, _to_si_formula_, _from_si_formula_, _si_unit_)\
+    Unit _unit_(); \
+    class _Unit_##_unit_ : public _Unit_\
     {\
     public:\
         QString alias() const override { return QStringLiteral(#_unit_); }\
         QString name() const override { return translateUnits(_unit_name_); }\
         double toSi(const double& v) const override { return _to_si_formula_; }\
         double fromSi(const double& v) const override { return _from_si_formula_; }\
+        Unit siUnit() const override { return _si_unit_(); }\
     };\
     Unit _unit_()\
     {\
-        static _Unit_ ## _unit_ u;\
+        static _Unit_##_unit_ u;\
         return &u;\
     }
 
 #define DEFINE_DIM(_dim_, _dim_name_, ...)\
-    class _Dim_ ## _dim_ : public _Dim_\
+    class _Dim_##_dim_ : public _Dim_\
     {\
     public:\
         QString alias() const override { return QStringLiteral(#_dim_); }\
@@ -42,7 +44,7 @@ inline QString translateUnits(const char* s)
     };\
     Dim _dim_()\
     {\
-        static _Dim_ ## _dim_ dim;\
+        static _Dim_##_dim_ dim;\
         return &dim;\
     }
 
@@ -58,21 +60,21 @@ Unit _Dim_::unitByAlias(const QString& alias) const
 
 namespace Units {
 
-DEFINE_UNIT(none, "", v, v)
+DEFINE_UNIT(none, "", v, v, none)
 
-DEFINE_UNIT(Ao, QT_TRANSLATE_NOOP_UTF8("Units", "Å"), v * 1e-10, v * 1e+10)
-DEFINE_UNIT(nm, QT_TRANSLATE_NOOP_UTF8("Units", "nm"), v * 1e-9, v * 1e+9)
-DEFINE_UNIT(mkm, QT_TRANSLATE_NOOP_UTF8("Units", "µm"), v * 1e-6, v * 1e+6)
-DEFINE_UNIT(mm, QT_TRANSLATE_NOOP_UTF8("Units", "mm"), v * 0.001, v * 1000)
-DEFINE_UNIT(cm, QT_TRANSLATE_NOOP_UTF8("Units", "cm"), v * 0.01, v * 100)
-DEFINE_UNIT(m, QT_TRANSLATE_NOOP_UTF8("Units", "m"), v, v)
+DEFINE_UNIT(m, QT_TRANSLATE_NOOP_UTF8("Units", "m"), v, v, m) // SI-unit must be first
+DEFINE_UNIT(Ao, QT_TRANSLATE_NOOP_UTF8("Units", "Å"), v * 1e-10, v * 1e+10, m)
+DEFINE_UNIT(nm, QT_TRANSLATE_NOOP_UTF8("Units", "nm"), v * 1e-9, v * 1e+9, m)
+DEFINE_UNIT(mkm, QT_TRANSLATE_NOOP_UTF8("Units", "µm"), v * 1e-6, v * 1e+6, m)
+DEFINE_UNIT(mm, QT_TRANSLATE_NOOP_UTF8("Units", "mm"), v * 0.001, v * 1000, m)
+DEFINE_UNIT(cm, QT_TRANSLATE_NOOP_UTF8("Units", "cm"), v * 0.01, v * 100, m)
 
-DEFINE_UNIT(mrad, QT_TRANSLATE_NOOP_UTF8("Units", "mrad"), v * 0.001, v * 1000)
-DEFINE_UNIT(rad, QT_TRANSLATE_NOOP_UTF8("Units", "rad"), v, v)
-DEFINE_UNIT(amin, QT_TRANSLATE_NOOP_UTF8("Units", "′"), v / 60.0 * M_PI / 180.0, v * 180 / M_PI * 60)
-DEFINE_UNIT(deg, QT_TRANSLATE_NOOP_UTF8("Units", "°"), v * M_PI / 180.0, v * 180.0 / M_PI)
+DEFINE_UNIT(rad, QT_TRANSLATE_NOOP_UTF8("Units", "rad"), v, v, rad) // SI-unit must be first
+DEFINE_UNIT(mrad, QT_TRANSLATE_NOOP_UTF8("Units", "mrad"), v * 0.001, v * 1000, rad)
+DEFINE_UNIT(amin, QT_TRANSLATE_NOOP_UTF8("Units", "′"), v / 60.0 * M_PI / 180.0, v * 180 / M_PI * 60, rad)
+DEFINE_UNIT(deg, QT_TRANSLATE_NOOP_UTF8("Units", "°"), v * M_PI / 180.0, v * 180.0 / M_PI, rad)
 
-DEFINE_UNIT(Hz, QT_TRANSLATE_NOOP_UTF8("Units", "Hz"), v, v)
+DEFINE_UNIT(Hz, QT_TRANSLATE_NOOP_UTF8("Units", "Hz"), v, v, Hz) // SI-unit must be first
 
 } // namespace Units
 

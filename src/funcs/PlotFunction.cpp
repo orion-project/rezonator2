@@ -54,21 +54,19 @@ void PlotFunction::setError(const QString& error)
     _errorText = error;
 }
 
-bool PlotFunction::prepareResults(int& points, double& step)
+bool PlotFunction::prepareResults(Z::PlottingRange range)
 {
-    /*_errorText.clear();
+    _errorText.clear();
     _range.reset();
-    _arg.calculate(points, step);
-    Z_INFO("start:" << _arg.start << "| stop:" << _arg.stop <<
-           "| step:" << step << "| points:" << points);
-    if (points < 2)
+    Z_INFO(range.str());
+    if (range.points() < 2)
     {
         setError(qApp->translate("Calc error", "Too few points for plotting"));
         clearResults();
         return false;
     }
-    _x_t = QVector<double>(points), _y_t = QVector<double>(points);
-    _x_s = QVector<double>(points), _y_s = QVector<double>(points);*/
+    _x_t = QVector<double>(range.points()), _y_t = QVector<double>(range.points());
+    _x_s = QVector<double>(range.points()), _y_s = QVector<double>(range.points());
     return true;
 }
 

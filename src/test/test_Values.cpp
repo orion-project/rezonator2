@@ -30,6 +30,7 @@ public:
         const_cast<TestUnit*>(this)->processedValue = value; return value;
     }
     double fromSi(const double&) const override { return 0; }
+    Unit siUnit() const override { return nullptr; }
 };
 
 TEST_METHOD(Value_toSi)
