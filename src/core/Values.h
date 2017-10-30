@@ -35,6 +35,9 @@ public:
     bool operator <= (const Value& v) const { return toSi() <= v.toSi(); }
     bool operator <= (const double& v) const { return toSi() <= v; }
 
+    QString toStoredStr() const;
+    bool fromStoredStr(const QString& s);
+
 private:
     double _value;
     Unit _unit;

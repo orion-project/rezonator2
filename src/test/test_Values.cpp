@@ -1,5 +1,6 @@
 #include "testing/OriTestBase.h"
 #include "../core/Values.h"
+#include "../core/Units.h"
 #include "TestUtils.h"
 
 namespace Z {
@@ -11,10 +12,10 @@ namespace ValuesTests {
 TEST_METHOD(Value_ctor)
 {
     Z::Value v1(3.14, Z::Units::mkm());
-    ASSERT_Z_VALUE(v1, 3.14, Z::Units::mkm())
+    ASSERT_Z_VALUE_AND_UNIT(v1, 3.14, Z::Units::mkm())
 
     Z::Value v2(v1);
-    ASSERT_Z_VALUE(v2, 3.14, Z::Units::mkm())
+    ASSERT_Z_VALUE_AND_UNIT(v2, 3.14, Z::Units::mkm())
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,6 +72,20 @@ TEST_METHOD(Value_compare)
     ASSERT_IS_TRUE(_(3.14)_cm <= _(3.14)_cm)
 }
 
+TEST_METHOD(Value_storedStr)
+{
+    for (Z::Dim dim : Z::Dims::dims())
+        for (Z::Unit unit : dim->units())
+        {
+            auto sourceValue = Z::Value(frand(-1000, 1000), unit);
+            auto storedStr = sourceValue.toStoredStr();
+            TEST_LOG(sourceValue.str() + " -> " + storedStr)
+            Z::Value restoredValue;
+            ASSERT_IS_TRUE(restoredValue.fromStoredStr(storedStr))
+            ASSERT_Z_VALUE(restoredValue, sourceValue)
+        }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 TEST_METHOD(ValueTS_constructors)
@@ -106,6 +121,7 @@ TEST_GROUP("Values",
     ADD_TEST(Value_toSi),
     ADD_TEST(Value_equality),
     ADD_TEST(Value_compare),
+    ADD_TEST(Value_storedStr),
     ADD_TEST(ValueTS_constructors),
     ADD_TEST(ValueTS_assign),
 )

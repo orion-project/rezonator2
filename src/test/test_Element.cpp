@@ -95,7 +95,7 @@ TEST_METHOD(Element_addParam)
     Z::Parameter* p = el.params().at(0);
     ASSERT_EQ_PTR(p->dim(), Z::Dims::linear())
     ASSERT_EQ_PTR(p->owner(), &el)
-    ASSERT_Z_VALUE(p->value(), 3.14, Z::Units::mkm())
+    ASSERT_Z_VALUE_AND_UNIT(p->value(), 3.14, Z::Units::mkm())
 }
 
 TEST_METHOD(Element_hasParams)

@@ -8,6 +8,9 @@ namespace Z {
 /// Formats a value for display in logs (qDebug and Protocol)
 inline QString str(const double& v) { return QString::number(v, 'g', 16); }
 
+/// Formats a value to be stored into file (settings files, schema files)
+inline QString storedStr(const double& v) { return QString::number(v, 'g', 16); }
+
 inline QString str(bool v) { return v? "true": "false"; }
 
 /// Format a value to be displayed to user

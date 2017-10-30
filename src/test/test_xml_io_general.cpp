@@ -207,11 +207,11 @@ TEST_METHOD(readBoolAttributeDef)
     \
     Z::Parameter p(Z::Dims::linear(), "L", "", "", "");\
     p.setValue(Z::Value(100, Z::Units::mm()));\
-    ASSERT_Z_VALUE(p.value(), 100, Z::Units::mm())\
+    ASSERT_Z_VALUE_AND_UNIT(p.value(), 100, Z::Units::mm())\
     \
     file.readParameter(file.root, &p);\
     LOG_SCHEMA_FILE(file)\
-    ASSERT_Z_VALUE(p.value(), 100, Z::Units::mm()) // value unchanged
+    ASSERT_Z_VALUE_AND_UNIT(p.value(), 100, Z::Units::mm()) // value unchanged
 
 TEST_METHOD(readParameter_no_parameter_node) {
     test_read_parameter_invalid_case("<root><R value=\"3.14\" unit=\"cm\"/></root>")
@@ -243,10 +243,10 @@ TEST_METHOD(readParameter)
 
     Z::Parameter p(Z::Dims::linear(), "L", "", "", "");
     p.setValue(Z::Value(100, Z::Units::mm()));
-    ASSERT_Z_VALUE(p.value(), 100, Z::Units::mm())
+    ASSERT_Z_VALUE_AND_UNIT(p.value(), 100, Z::Units::mm())
 
     file.readParameter(file.root, &p);
-    ASSERT_Z_VALUE(p.value(), 3.14, Z::Units::cm())
+    ASSERT_Z_VALUE_AND_UNIT(p.value(), 3.14, Z::Units::cm())
 }
 
 TEST_METHOD(writeParameter_readParameter)
@@ -264,7 +264,7 @@ TEST_METHOD(writeParameter_readParameter)
 
     // change value
     p.setValue(Z::Value(100, Z::Units::mm()));
-    ASSERT_Z_VALUE(p.value(), 100, Z::Units::mm())
+    ASSERT_Z_VALUE_AND_UNIT(p.value(), 100, Z::Units::mm())
 
     // load
     TestXmlReader file2(xml);
@@ -272,7 +272,7 @@ TEST_METHOD(writeParameter_readParameter)
     LOG_SCHEMA_FILE(file2)
 
     // value must be restored
-    ASSERT_Z_VALUE(p.value(), 3.14, Z::Units::cm())
+    ASSERT_Z_VALUE_AND_UNIT(p.value(), 3.14, Z::Units::cm())
 }
 
 TEST_METHOD(writeParameters_readParameters)
@@ -304,9 +304,9 @@ TEST_METHOD(writeParameters_readParameters)
     LOG_SCHEMA_FILE(file2)
 
     // values must be restored
-    ASSERT_Z_VALUE(p1.value(), 3.14, Z::Units::mkm())
-    ASSERT_Z_VALUE(p2.value(), 2.15, Z::Units::amin())
-    ASSERT_Z_VALUE(p3.value(), 1.16, Z::Units::none())
+    ASSERT_Z_VALUE_AND_UNIT(p1.value(), 3.14, Z::Units::mkm())
+    ASSERT_Z_VALUE_AND_UNIT(p2.value(), 2.15, Z::Units::amin())
+    ASSERT_Z_VALUE_AND_UNIT(p3.value(), 1.16, Z::Units::none())
 }
 
 ////////////////////////////////////////////////////////////////////////////////

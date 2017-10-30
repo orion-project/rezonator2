@@ -137,8 +137,6 @@ TEST_METHOD(prefix_name_tr)
     }
 }
 
-//------------------------------------------------------------------------------
-
 TEST_METHOD(guessDim)
 {
     for (Z::Unit u : Z::Dims::linear()->units())
@@ -147,6 +145,17 @@ TEST_METHOD(guessDim)
         ASSERT_EQ_PTR(Z::Units::guessDim(u), Z::Dims::angular());
     for (Z::Unit u : Z::Dims::none()->units())
         ASSERT_EQ_PTR(Z::Units::guessDim(u), Z::Dims::none());
+}
+
+TEST_METHOD(findByAlias)
+{
+    for (Z::Dim dim : Z::Dims::dims())
+        for (Z::Unit unit : dim->units())
+        {
+            auto foundUnit = Z::Units::findByAlias(unit->alias());
+            ASSERT_EQ_PTR(foundUnit, unit)
+        }
+    ASSERT_IS_NULL(Z::Units::findByAlias("there is not such unit"))
 }
 
 //------------------------------------------------------------------------------
@@ -161,7 +170,8 @@ TEST_GROUP("Units",
     ADD_TEST(none_unitByAlias),
     ADD_TEST(simplify),
     ADD_TEST(prefix_name_tr),
-    ADD_TEST(guessDim)
+    ADD_TEST(guessDim),
+    ADD_TEST(findByAlias)
 )
 
 } // namespace UnitsTests

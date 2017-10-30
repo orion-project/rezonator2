@@ -30,7 +30,11 @@ inline double frand(double min, double max)
 #define ASSERT_MATRIX_IS_UNITY(m) ASSERT_MATRIX_IS(m, 1.0, 0.0, 0.0, 1.0)
 #define ASSERT_MATRIX_IS_NOT_UNITY(m) ASSERT_MATRIX_IS_NOT(m, 1.0, 0.0, 0.0, 1.0)
 
-#define ASSERT_Z_VALUE(v, expected_value, expected_unit)\
+#define ASSERT_Z_VALUE(v, expected)\
+    ASSERT_EQ_DBL(v.value(), expected.value())\
+    ASSERT_EQ_PTR(v.unit(), expected.unit())
+
+#define ASSERT_Z_VALUE_AND_UNIT(v, expected_value, expected_unit)\
     ASSERT_EQ_DBL(v.value(), expected_value)\
     ASSERT_EQ_PTR(v.unit(), expected_unit)
 

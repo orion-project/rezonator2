@@ -86,6 +86,9 @@ Prefix simplify(double &value);
 /// E.g.: mm -> linear, deg -> angular, none -> none
 Z::Dim guessDim(Z::Unit unit);
 
+/// Returns unit by its alias or null if not found.
+Unit findByAlias(const QString& alias);
+
 } // namespace Units
 
 } // namespace Z

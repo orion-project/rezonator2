@@ -55,8 +55,8 @@ struct Variable
     Z::Parameter* parameter = nullptr; ///< Element's parameter which value is varied.
     VariableRange range;               ///< Variation settings.
 
-//    void load(QSettings*, Schema* schema);
-//    void save(QSettings*);
+    void load(QSettings*, Schema*);
+    void save(QSettings*);
 
     QString str() const;
 };

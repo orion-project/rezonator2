@@ -39,7 +39,7 @@ namespace SchemaReaderIniTests {
     double expected_value_in_units = expected_value;\
     if (p->dim() == Z::Dims::angular())\
         expected_value_in_units = expected_unit->fromSi(expected_value);\
-    ASSERT_Z_VALUE(p->value(), expected_value_in_units, expected_unit)\
+    ASSERT_Z_VALUE_AND_UNIT(p->value(), expected_value_in_units, expected_unit)\
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -115,7 +115,7 @@ TEST_METHOD(read_general)
     //ASSERT_EQ_STR(schema.title(), "Empty schema")
     //ASSERT_EQ_STR(schema.comment(), "Multi-line comment is not supported")
     ASSERT_EQ_INT(schema.tripType(), TripType::SP)
-    ASSERT_Z_VALUE(schema.wavelength().value(), 1064, Z::Units::Ao())
+    ASSERT_Z_VALUE_AND_UNIT(schema.wavelength().value(), 1064, Z::Units::Ao())
 }
 
 TEST_CASE_METHOD(read_schema, const QString& fileName,
@@ -129,7 +129,7 @@ TEST_CASE_METHOD(read_schema, const QString& fileName,
     READ_SCHEMA(fileName)
 
     TEST_LOG(schema.wavelength().str())
-    ASSERT_Z_VALUE(schema.wavelength().value(), 1064, expectedLambdaUnit)
+    ASSERT_Z_VALUE_AND_UNIT(schema.wavelength().value(), 1064, expectedLambdaUnit)
     ASSERT_EQ_INT(schema.tripType(), expectedTripType)
 
     Element *elem;
