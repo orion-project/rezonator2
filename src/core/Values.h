@@ -17,7 +17,6 @@ public:
     Unit unit() const { return _unit; }
 
     QString str() const;
-    QString strDebug() const;
 
     double toSi() const { return _unit->toSi(_value); }
 

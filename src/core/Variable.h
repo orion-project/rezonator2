@@ -3,13 +3,13 @@
 
 #include <QString>
 
-#include "Values.h"
 #include "Parameters.h"
 
 class Element;
+class Schema;
 
 QT_BEGIN_NAMESPACE
-//class QSettings;
+class QSettings;
 QT_END_NAMESPACE
 
 namespace Z {
@@ -35,6 +35,7 @@ public:
     friend class VariableRange;
 };
 
+/// Defines a range for plotting functions in arbitrary units.
 struct VariableRange
 {
     Z::Value start;         ///< Initial parameter value.
@@ -44,35 +45,20 @@ struct VariableRange
     bool useStep = false;   ///< Use step value instead of points number.
 
     PlottingRange plottingRange() const;
+    QString str() const;
 };
 
-
+/// Argument of plottings functions.
 struct Variable
 {
-    Element* element = nullptr;
-    Z::Parameter* parameter = nullptr;
-    VariableRange range;
+    Element* element = nullptr;        ///< An element whose parameter value is varied.
+    Z::Parameter* parameter = nullptr; ///< Element's parameter which value is varied.
+    VariableRange range;               ///< Variation settings.
 
-/*REMOVE
-//    int element;            ///< Element index.
-//    int param;              ///< Parameter index.
-//    double start;           ///< Initial parameter value.
-//    double stop;            ///< Final parameter value.
-//    double step;            ///< Parameter variation step.
-//    int points;             ///< Amount of points.
-//    bool useStep;           ///< Use step value instead of points number. */
-
-    //Variable(): element(-1), param(-1), start(0), stop(0), step(0), points(1), useStep(true) {}
-
-    //REMOVE double range() const { return stop - start; }
-
-    /// Calculates points number and distance between points (step) to plotting a graph.
-    //REMOVE void calculate(int& points, double& step);
-
-//    void load(QSettings*);
+//    void load(QSettings*, Schema* schema);
 //    void save(QSettings*);
 
-//    QString str() const;
+    QString str() const;
 };
 
 } // namespace Z

@@ -9,11 +9,6 @@ namespace Z {
 
 QString Value::str() const
 {
-    return Z::format(_value) % _unit->name();
-}
-
-QString Value::strDebug() const
-{
     return Z::str(_value) % _unit->name();
 }
 
@@ -28,7 +23,7 @@ PrefixedValue::PrefixedValue(double value, Unit unit) : _value(value), _unit(uni
 
 QString PrefixedValue::str() const
 {
-    return Z::format(_value) % ' ' % Z::Units::prefixNameTr(_prefix) % _unit->name();
+    return Z::str(_value) % Z::Units::prefixNameTr(_prefix) % _unit->name();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

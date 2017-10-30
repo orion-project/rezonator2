@@ -65,8 +65,8 @@ Element* createTestElem(Element* type)
         auto __p1 = elem1->params().at(__i);                                    \
         auto __p2 = elem2->params().at(__i);                                    \
         test->logMessage(QString("%1: %2 ?= %3").arg(__p1->name())              \
-                                                .arg(__p1->value().strDebug())  \
-                                                .arg(__p2->value().strDebug()));\
+                                                .arg(__p1->value().str())       \
+                                                .arg(__p2->value().str()));     \
         ASSERT_EQ_DBL(__p1->value().value(), __p2->value().value());            \
         ASSERT_EQ_PTR(__p1->value().unit(), __p2->value().unit());              \
     }                                                                           \
