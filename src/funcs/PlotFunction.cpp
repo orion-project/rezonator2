@@ -35,18 +35,21 @@ PlotFunction::~PlotFunction()
     if (_calc) delete _calc;
 }
 
-//void PlotFunction::loadParams(QSettings *settings, const Elements& elems)
-//{
-//    FuncHelpers::openGroup(settings, alias());
-//    FuncHelpers::loadVariable(settings, schema(), _arg, elems);
-//}
-
-//void PlotFunction::saveParams(QSettings *settings, bool canDeleteSettings)
-//{
-//    FuncHelpers::openGroup(settings, alias());
-//    FuncHelpers::saveVariable(settings, schema(), _arg);
-//    if (canDeleteSettings) delete settings;
-//}
+bool PlotFunction::checkArguments()
+{
+    // These are not user involved errors, so translation is not required.
+    if (!_arg.element)
+    {
+        setError("No variable element is set (PlotFunction.arg.element == null)");
+        return false;
+    }
+    if (!_arg.parameter)
+    {
+        setError("No variable parameter is set (PlotFunction.arg.parameter == null)");
+        return false;
+    }
+    return true;
+}
 
 void PlotFunction::setError(const QString& error)
 {
@@ -57,7 +60,6 @@ void PlotFunction::setError(const QString& error)
 bool PlotFunction::prepareResults(Z::PlottingRange range)
 {
     _errorText.clear();
-    _range.reset();
     Z_INFO(range.str());
     if (range.points() < 2)
     {
@@ -65,6 +67,7 @@ bool PlotFunction::prepareResults(Z::PlottingRange range)
         clearResults();
         return false;
     }
+    _range.set(range.start(), range.stop());
     _x_t = QVector<double>(range.points()), _y_t = QVector<double>(range.points());
     _x_s = QVector<double>(range.points()), _y_s = QVector<double>(range.points());
     return true;
@@ -91,15 +94,6 @@ bool PlotFunction::prepareCalculator(Element* ref, bool splitRange)
     }
     return true;
 }
-
-//Element* PlotFunction::argElement()
-//{
-//    auto elem = _schema->element(_arg.element);
-//    if (!elem)
-//        setError(qApp->translate("Calc error",
-//            "There is no element with index %1 in the schema").arg(_arg.element));
-//    return elem;
-//}
 
 //ElementRange* PlotFunction::argElementRange()
 //{

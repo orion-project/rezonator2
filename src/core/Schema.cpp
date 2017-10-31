@@ -150,6 +150,14 @@ Element* Schema::elementById(int id) const
     return nullptr;
 }
 
+Element* Schema::elementByLabel(const QString& label) const
+{
+    foreach (Element *elem, _items)
+        if (elem->label() == label)
+            return elem;
+    return nullptr;
+}
+
 void Schema::insertElement(Element* elem, int index, bool event)
 {
     if (isValid(index))

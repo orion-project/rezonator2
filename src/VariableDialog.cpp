@@ -5,6 +5,7 @@
 #include "widgets/VariableRangeWidget.h"
 #include "widgets/VariableEditor.h"
 #include "helpers/OriDialogs.h"
+#include "tools/OriSettings.h"
 
 #include <QDialogButtonBox>
 #include <QGroupBox>
@@ -13,12 +14,28 @@
 namespace Z {
 namespace Dlgs {
 
-bool editVariable(QWidget *parent, Schema *schema, Variable *var, const QString& title)
+bool editVariable(QWidget *parent, Schema *schema, Variable *var, const QString& title, const QString &settingsGroup)
 {
+    if (!var->element && !settingsGroup.isEmpty())
+    {
+        Ori::Settings settings;
+        settings.beginGroup(settingsGroup);
+        var->load(settings.settings(), schema);
+    }
+
     VariableDialog dialog(parent, schema, var);
     dialog.setWindowTitle(title);
     dialog.exec();
-    return dialog.result() == QDialog::Accepted;
+    bool ok = dialog.result() == QDialog::Accepted;
+
+    if (ok && !settingsGroup.isEmpty())
+    {
+        Ori::Settings settings;
+        settings.beginGroup(settingsGroup);
+        var->save(settings.settings());
+    }
+
+    return ok;
 }
 
 bool editVariables(QWidget *parent, Schema *schema, Variable *var1, Variable *var2, const QString& title)

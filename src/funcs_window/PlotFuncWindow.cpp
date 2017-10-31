@@ -391,6 +391,7 @@ void PlotFuncWindow::showRoundTrip()
 
 void PlotFuncWindow::schemaChanged(Schema*)
 {
+    qDebug() << "PlotFuncWindow::schemaChanged";
     update();
 }
 

@@ -1,8 +1,8 @@
-#include <QAction>
-
 #include "StabilityMapWindow.h"
 #include "../VariableDialog.h"
 #include "../widgets/Plot.h"
+
+#include <QAction>
 
 StabilityMapWindow::StabilityMapWindow(Schema *schema) :
     PlotFuncWindowStorable(new StabilityMapFunction(schema))
@@ -26,7 +26,7 @@ void StabilityMapWindow::createControl()
 
 bool StabilityMapWindow::configure(QWidget* parent)
 {
-    return Z::Dlgs::editVariable(parent, schema(), function()->arg(), tr("Variable"));
+    return Z::Dlgs::editVariable(parent, schema(), function()->arg(), tr("Variable"), FUNC_SETTINGS_GROUP(function()));
 }
 
 void StabilityMapWindow::autolimitsStability()

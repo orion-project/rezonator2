@@ -9,6 +9,20 @@
 class Calculator;
 class Schema;
 
+/**
+    Backups and restores parameter value, and prevents multiple elementChanged events.
+*/
+class BackupAndLock
+{
+public:
+    BackupAndLock(Element* elem, Z::Parameter* param): _elem(elem), _param(param), _backup(param->value()) { _elem->lock();}
+    ~BackupAndLock() { _param->setValue(_backup); _elem->unlock(); }
+private:
+    Element* _elem;
+    Z::Parameter* _param;
+    Z::Value _backup;
+};
+
 class FunctionRange
 {
 public:
@@ -32,8 +46,7 @@ public:
     PlotFunction(Schema *schema) : FunctionBase(schema) {}
     ~PlotFunction();
 
-//    virtual void loadParams(QSettings*, const Elements&);
-//    virtual void saveParams(QSettings*, bool canDeleteSettings = false);
+    virtual bool checkArguments();
 
     virtual void calculate() {}
     virtual QString calculateNotables() { return QString(); }
@@ -54,6 +67,7 @@ protected:
     Calculator* _calc = nullptr;
     QVector<double> _x_t, _y_t, _x_s, _y_s;
     FunctionRange _range;
+    Z::Value _backupValue;
 
     void setError(const QString& error);
 
@@ -61,7 +75,6 @@ protected:
     bool prepareResults(Z::PlottingRange range);
     bool prepareCalculator(Element* ref, bool splitRange = false);
 
-//    Element* argElement();
 //    ElementRange* argElementRange();
 
 private:

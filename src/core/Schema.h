@@ -169,6 +169,7 @@ public:
     const Elements& elements() const { return _items; }
     Element* element(int index) const;
     Element* elementById(int id) const;
+    Element* elementByLabel(const QString& label) const;
     int indexOf(Element *elem) const { return _items.indexOf(elem); }
     bool isEmpty() const { return _items.size() == 0; }
 

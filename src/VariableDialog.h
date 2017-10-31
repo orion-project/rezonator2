@@ -69,7 +69,7 @@ protected slots:
 namespace Z {
 namespace Dlgs {
 
-bool editVariable(QWidget *parent, Schema *schema, Variable *var, const QString& title);
+bool editVariable(QWidget *parent, Schema *schema, Variable *var, const QString& title, const QString& settingsGroup = QString());
 bool editVariables(QWidget *parent, Schema *schema, Variable *var1, Variable *var2, const QString& title);
 bool editVariable_ElementRange(QWidget *parent, Schema *schema, Variable *var, const QString& title);
 

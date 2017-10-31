@@ -3,14 +3,11 @@
 
 void StabilityMapFunction::calculate()
 {
+    if (!checkArguments()) return;
+
     auto elem = arg()->element;
-    if (!elem) return;
-
     auto param = arg()->parameter;
-    if (!param) return;
-
-    auto backupValue = param->value();
-    elem->lock(); // prevent multiple elementChanged events
+    BackupAndLock locker(elem, param);
 
     auto range = arg()->range.plottingRange();
     if (!prepareResults(range)) return;
@@ -40,9 +37,6 @@ void StabilityMapFunction::calculate()
         index++;
         x = qMin(x + range.step(), range.stop());
     }
-
-    param->setValue(backupValue); // restore original value
-    elem->unlock();
 }
 
 QString StabilityMapFunction::calculateNotables()
