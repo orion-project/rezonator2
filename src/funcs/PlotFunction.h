@@ -49,8 +49,19 @@ public:
     virtual bool checkArguments();
 
     virtual void calculate() {}
+
+    /// Defines if function can calculate notable values. See @ref calculateNotables().
+    virtual bool hasNotables() const { return false; }
+
+    /// Calculate some notable values.
+    /// E.g. for stability maps these values are stability boundaries,
+    /// for caustic these are waist radius and position.
     virtual QString calculateNotables() { return QString(); }
+
     virtual QString calculatePoint(const double&) { return QString(); }
+
+    /// Defines if function can show its result as data table.
+    virtual bool hasDataTable() const { return true; }
 
     virtual int resultCount(Z::WorkPlane) const { return 1; }
     virtual const QVector<double>& resultX(Z::WorkPlane plane, int) const { return plane == Z::Plane_T? _x_t: _x_s; }

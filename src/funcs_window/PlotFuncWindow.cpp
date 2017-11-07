@@ -1,5 +1,6 @@
 #include "PlotFuncWindow.h"
 #include "../core/Protocol.h"
+#include "../funcs/InfoFunctions.h"
 #include "../widgets/Plot.h"
 #include "../widgets/FrozenStateButton.h"
 #include "../widgets/GraphDataGrid.h"
@@ -34,7 +35,7 @@ FunctionModeButton::FunctionModeButton(const QString& icon, const QString& text,
 //                                PlotFuncWindow
 //------------------------------------------------------------------------------
 
-PlotFuncWindow::PlotFuncWindow(PlotFunction *func, MakeParamsPanel makeParamsPanel) :
+PlotFuncWindow::PlotFuncWindow(PlotFunction *func, MakeParamsPanelFunc makeParamsPanel) :
     SchemaMdiChild(func->schema()), _function(func), _makeParamsPanel(makeParamsPanel)
 {
     setWindowTitle(_function->name());
@@ -53,7 +54,7 @@ PlotFuncWindow::~PlotFuncWindow()
 
 void PlotFuncWindow::createActions()
 {
-    ////////////////// Plot
+    //---------------- Plot
     actnUpdate = new QAction(tr("Update", "Plot action"), this);
     actnUpdate->setShortcut(Qt::Key_F5);
     actnUpdate->setIcon(QIcon(":/toolbar/update"));
@@ -79,6 +80,8 @@ void PlotFuncWindow::createActions()
     connect(actnShowS, SIGNAL(triggered()), this, SLOT(showS()));
     connect(actnShowTS, SIGNAL(triggered()), this, SLOT(showTS()));
 
+    actnShowTS->setVisible(false); //< TODO:NEXT_VER
+
     actnShowRoundTrip = new QAction(tr("Show Round-trip", "Plot action"), this);
     connect(actnShowRoundTrip, SIGNAL(triggered()), this, SLOT(showRoundTrip()));
 
@@ -88,7 +91,7 @@ void PlotFuncWindow::createActions()
     actnFreeze->setIcon(QIcon(":/toolbar/freeze"));
     connect(actnFreeze, SIGNAL(toggled(bool)), this, SLOT(freeze(bool)));
 
-    ////////////////// Limits
+    //---------------- Limits
     actnAutolimits = new QAction(tr("&Automatic Limits for Both Axes", "Plot action"), this);
     actnAutolimits->setIcon(QIcon(":/toolbar/limits_auto"));
     connect(actnAutolimits, SIGNAL(triggered()), this, SLOT(autolimits()));
@@ -136,7 +139,12 @@ void PlotFuncWindow::createContent()
 {
     _splitter = new QSplitter(Qt::Horizontal);
 
-    _leftPanel = new PlotParamsPanel(_splitter, _makeParamsPanel);
+    PlotParamsPanelCtorOptions opts;
+    opts.splitter = _splitter;
+    opts.hasInfoPanel = function()->hasNotables();
+    opts.hasDataGrid = function()->hasDataTable();
+    opts.makeParamsPanel = _makeParamsPanel;
+    _leftPanel = new PlotParamsPanel(opts);
     connect(_leftPanel, SIGNAL(updateNotables()), this, SLOT(updateNotables()));
     connect(_leftPanel, SIGNAL(updateDataGrid()), this, SLOT(updateDataGrid()));
 
@@ -209,8 +217,7 @@ void PlotFuncWindow::showT()
     if (!actnShowT->isChecked() && !actnShowS->isChecked())
         actnShowS->setChecked(true);
     updateVisibilityTS();
-    // TODO Schema.ModifiedForms := True;
-    // TODO DoTSModeChanged(OldMode, GetModeTS);
+    // TODO:NEXT-VER Schema.ModifiedForms := True;
 }
 
 void PlotFuncWindow::showS()
@@ -220,8 +227,7 @@ void PlotFuncWindow::showS()
     if (!actnShowS->isChecked() && !actnShowT->isChecked())
         actnShowT->setChecked(true);
     updateVisibilityTS();
-    // TODO Schema.ModifiedForms := True;
-    // TODO DoTSModeChanged(OldMode, GetModeTS);
+    // TODO:NEXT-VER Schema.ModifiedForms := True;
 }
 
 void PlotFuncWindow::showTS()
@@ -230,9 +236,7 @@ void PlotFuncWindow::showTS()
 
     updateTSModeActions();
     updateVisibilityTS();
-    // TODO UpdateFlippedS(actnGraphShowTS.Checked);
-    // TODO Schema.ModifiedForms := True;
-    // TODO DoTSModeChanged(OldMode, GetModeTS);
+    // TODO:NEXT-VER Schema.ModifiedForms := True;
 }
 
 void PlotFuncWindow::updateVisibilityTS()
@@ -281,25 +285,17 @@ void PlotFuncWindow::updateCursorInfo()
     if (_frozen)
     {
         _cursorPanel->update();
-        // TODO calculate by interpolating between existing graph points
+        // TODO:NEXT-VER calculate by interpolating between existing graph points
         return;
     }
     _cursorPanel->update(_function->calculatePoint(_cursor->position().x()));
-}
-
-void PlotFuncWindow::updateFrozenInfo()
-{
-// TODO
-//    if (_frozen)
-//        _buttonFrozenInfo->setInfo(schema()->describe());
 }
 
 void PlotFuncWindow::updateWithParams()
 {
     if (configure(this))
     {
-        // TODO Schema.ModifiedForms := True;
-        // TODO _function->saveParams(Settings::instance().open(), true);
+        // TODO:NEXT-VER Schema.ModifiedForms := True;
         update();
     }
 }
@@ -419,7 +415,7 @@ void PlotFuncWindow::freeze(bool frozen)
     actnUpdate->setEnabled(!_frozen);
     actnUpdateParams->setEnabled(!_frozen);
     actnFrozenInfo->setVisible(_frozen);
-    updateFrozenInfo();
+    _buttonFrozenInfo->setInfo(InfoFuncSummary(schema()).calculate());
     if (!_frozen and _needRecalc)
         update();
 }

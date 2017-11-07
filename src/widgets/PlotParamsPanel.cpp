@@ -8,29 +8,32 @@
 
 #define DEFAULT_PANEL_W 200
 
-PlotParamsPanel::PlotParamsPanel(QSplitter *splitter, MakePanel makeParamsPanel, QWidget *parent) :
-    QStackedWidget(parent), _splitter(splitter)
+PlotParamsPanel::PlotParamsPanel(PlotParamsPanelCtorOptions options, QWidget *parent) :
+    QStackedWidget(parent), _splitter(options.splitter)
 {
-    initPanel(tr("Show Special Points"), ":/misc16/points",
-        []()->QWidget*{ return new QTextBrowser; },
-        [](PlotParamsPanel* self){ emit self->updateNotables(); });
+    if (options.hasInfoPanel)
+        _infoPanelIndex = initPanel(tr("Show Special Points"), ":/misc16/points",
+            /* makeWidget: */ []()->QWidget*{ return new QTextBrowser; },
+            /* onActivate: */ [](PlotParamsPanel* self){ emit self->updateNotables(); });
 
-    initPanel(tr("Show Data Table"), ":/misc16/table",
-        []()->QWidget*{ return new GraphDataGrid; },
-        [](PlotParamsPanel* self){ emit self->updateDataGrid(); });
+    if (options.hasDataGrid)
+        _dataGridIndex = initPanel(tr("Show Data Table"), ":/misc16/table",
+            /* makeWidget: */ []()->QWidget*{ return new GraphDataGrid; },
+            /* onActivate: */ [](PlotParamsPanel* self){ emit self->updateDataGrid(); });
 
-    if (makeParamsPanel)
-        initPanel(tr("Additional Parameters"), ":/misc16/params", makeParamsPanel, nullptr);
+    if (options.makeParamsPanel)
+        initPanel(tr("Additional Parameters"), ":/misc16/params", options.makeParamsPanel, nullptr);
 
     setVisible(false); // all actions unchecked
 }
 
-void PlotParamsPanel::initPanel(const QString& title, const char* icon, MakePanel make, ActivatePanel activate)
+int PlotParamsPanel::initPanel(const QString& title, const char* icon, MakePanelFunc makeWidget, ActivatePanelFunc onActivate)
 {
     auto action = new QAction(QIcon(icon), title, this);
     connect(action, SIGNAL(triggered()), this, SLOT(showPanel()));
     action->setCheckable(true);
-    _panels.append({action, nullptr, DEFAULT_PANEL_W, make, activate});
+    _panels.append({action, nullptr, DEFAULT_PANEL_W, makeWidget, onActivate});
+    return _panels.size()-1;
 }
 
 void PlotParamsPanel::placeIn(QToolBar* toolbar)
@@ -55,8 +58,8 @@ void PlotParamsPanel::showPanel()
                     _splitter->width() - _splitter->handleWidth() - panel.size);
                 setCurrentWidget(panel.widget);
                 show();
-                if (panel.activate)
-                    panel.activate(this);
+                if (panel.onActivate)
+                    panel.onActivate(this);
                 break;
             }
     }
@@ -80,4 +83,14 @@ void PlotParamsPanel::saveActiveSize()
             panel.size = _splitter->sizes().first();
             break;
         }
+}
+
+QTextBrowser* PlotParamsPanel::infoPanel() const
+{
+    return _infoPanelIndex < 0? nullptr: qobject_cast<QTextBrowser*>(_panels.at(_infoPanelIndex).widget);
+}
+
+GraphDataGrid* PlotParamsPanel::dataGrid() const
+{
+    return _dataGridIndex < 0? nullptr: qobject_cast<GraphDataGrid*>(_panels.at(_dataGridIndex).widget);
 }

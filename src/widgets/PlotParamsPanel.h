@@ -12,20 +12,28 @@ QT_END_NAMESPACE
 
 class GraphDataGrid;
 
-typedef QWidget* (*MakePanel)();
-typedef void (*ActivatePanel)(class PlotParamsPanel*);
+typedef QWidget* (*MakePanelFunc)();
+typedef void (*ActivatePanelFunc)(class PlotParamsPanel*);
+
+struct PlotParamsPanelCtorOptions
+{
+    QSplitter *splitter;
+    bool hasInfoPanel;
+    bool hasDataGrid;
+    MakePanelFunc makeParamsPanel;
+};
 
 class PlotParamsPanel : public QStackedWidget
 {
     Q_OBJECT
 
 public:
-    explicit PlotParamsPanel(QSplitter *splitter, MakePanel makeParamsPanel, QWidget *parent = 0);
+    explicit PlotParamsPanel(PlotParamsPanelCtorOptions options, QWidget *parent = 0);
 
     void placeIn(QToolBar* toolbar);
 
-    QTextBrowser* infoPanel() const { return (QTextBrowser*)_panels.at(0).widget; }
-    GraphDataGrid* dataGrid() const { return (GraphDataGrid*)_panels.at(1).widget; }
+    QTextBrowser* infoPanel() const;
+    GraphDataGrid* dataGrid() const;
 
 signals:
     void updateDataGrid();
@@ -40,13 +48,15 @@ private:
         QAction* action;
         QWidget* widget;
         int size;
-        MakePanel makeWidget;
-        ActivatePanel activate;
+        MakePanelFunc makeWidget;
+        ActivatePanelFunc onActivate;
     };
     QVector<PanelInfo> _panels;
+    int _infoPanelIndex = -1;
+    int _dataGridIndex = -1;
     QSplitter* _splitter;
 
-    void initPanel(const QString &title, const char *icon, MakePanel make, ActivatePanel activate);
+    int initPanel(const QString &title, const char *icon, MakePanelFunc makeWidget, ActivatePanelFunc onActivate);
     void saveActiveSize();
 };
 

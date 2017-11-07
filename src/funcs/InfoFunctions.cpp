@@ -171,7 +171,7 @@ QString InfoFuncSummary::calculate()
 
     str += schema()->wavelength().str();
 
-// TODO if (schema()->tripType() == Schema::SP) str += pumpStr();
+// TODO:NEXT-VER if (schema()->tripType() == Schema::SP) str += pumpStr();
 
     return str;
 }

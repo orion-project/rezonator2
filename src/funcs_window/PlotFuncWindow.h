@@ -29,7 +29,7 @@ class PlotFunction;
 class PlotParamsPanel;
 class SchemaStorable;
 
-typedef QWidget* (*MakeParamsPanel)();
+typedef QWidget* (*MakeParamsPanelFunc)();
 
 //------------------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ class PlotFuncWindow : public SchemaMdiChild
     Q_OBJECT
 
 public:
-    explicit PlotFuncWindow(PlotFunction*, MakeParamsPanel makeParamsPanel = nullptr);
+    explicit PlotFuncWindow(PlotFunction*, MakeParamsPanelFunc makeParamsPanel = nullptr);
     ~PlotFuncWindow();
 
     PlotFunction* function() const { return _function; }
@@ -94,7 +94,7 @@ protected:
     QLabel* _pointsCountInfo;
     Ori::Widgets::ImagedLabel *_infoText;
     FrozenStateButton* _buttonFrozenInfo;
-    MakeParamsPanel _makeParamsPanel;
+    MakeParamsPanelFunc _makeParamsPanel;
     bool _autolimitsRequest = false;
     bool _isFirstTime = true;
 
@@ -115,7 +115,6 @@ protected:
     void updateTSModeActions();
     void updateAxesTitles();
     void updateGraphs(Z::WorkPlane);
-    void updateFrozenInfo();
 
     void showInfo(const QString& text, const QString& icon = QString());
 
