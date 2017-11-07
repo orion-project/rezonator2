@@ -12,7 +12,7 @@ QT_END_NAMESPACE
 
 class GraphDataGrid;
 
-typedef QWidget* (*MakePanelFunc)();
+typedef QWidget* (*MakePanelFunc)(class PlotParamsPanel*);
 typedef void (*ActivatePanelFunc)(class PlotParamsPanel*);
 
 struct PlotParamsPanelCtorOptions
@@ -20,7 +20,7 @@ struct PlotParamsPanelCtorOptions
     QSplitter *splitter;
     bool hasInfoPanel;
     bool hasDataGrid;
-    MakePanelFunc makeParamsPanel;
+    bool hasOptionsPanel;
 };
 
 class PlotParamsPanel : public QStackedWidget
@@ -34,10 +34,14 @@ public:
 
     QTextBrowser* infoPanel() const;
     GraphDataGrid* dataGrid() const;
+    QWidget* optionsPanel() const;
+
+    void setOptionsPanelEnabled(bool on);
 
 signals:
     void updateDataGrid();
     void updateNotables();
+    QWidget* optionsPanelRequired();
 
 private slots:
     void showPanel();
@@ -54,7 +58,9 @@ private:
     QVector<PanelInfo> _panels;
     int _infoPanelIndex = -1;
     int _dataGridIndex = -1;
+    int _optionsPanelIndex = -1;
     QSplitter* _splitter;
+    bool _optionsPanelEnabled = true;
 
     int initPanel(const QString &title, const char *icon, MakePanelFunc makeWidget, ActivatePanelFunc onActivate);
     void saveActiveSize();

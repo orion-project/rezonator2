@@ -152,16 +152,17 @@ void Calculator::multMatrix()
     }
 }
 
-double Calculator::stabilityT() const
+double Calculator::calcStability(double half_of_A_plus_D) const
 {
-    // TODO: process another stability calculation ways
-    return (_mt.A + _mt.D) * 0.5;
-}
+    switch (_stabilityCalcMode)
+    {
+    case StabilityCalcMode::Normal:
+        return half_of_A_plus_D;
 
-double Calculator::stabilityS() const
-{
-    // TODO: process another stability calculation ways
-    return (_ms.A + _ms.D) * 0.5;
+    case StabilityCalcMode::Squared:
+        return 1 - half_of_A_plus_D * half_of_A_plus_D;
+    }
+    return 0;
 }
 
 QString Calculator::roundTripStr() const
@@ -172,9 +173,9 @@ QString Calculator::roundTripStr() const
     return res;
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                               namespace Calc
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 namespace Calc {
 

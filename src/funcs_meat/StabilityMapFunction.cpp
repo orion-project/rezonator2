@@ -12,6 +12,7 @@ void StabilityMapFunction::calculate()
     auto range = arg()->range.plottingRange();
     if (!prepareResults(range)) return;
     if (!prepareCalculator(elem)) return;
+    _calc->setStabilityCalcMode(stabilityCalcMode());
 
     int index = 0;
     double x = range.start();
@@ -37,9 +38,4 @@ void StabilityMapFunction::calculate()
         index++;
         x = qMin(x + range.step(), range.stop());
     }
-}
-
-QString StabilityMapFunction::calculateNotables()
-{
-    return QString();
 }

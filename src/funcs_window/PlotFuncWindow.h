@@ -29,8 +29,6 @@ class PlotFunction;
 class PlotParamsPanel;
 class SchemaStorable;
 
-typedef QWidget* (*MakeParamsPanelFunc)();
-
 //------------------------------------------------------------------------------
 
 class FunctionModeButton : public QToolButton
@@ -47,12 +45,34 @@ private:
 
 //------------------------------------------------------------------------------
 
+class FuncOptionsPanel : public QWidget
+{
+    Q_OBJECT
+
+public:
+    FuncOptionsPanel();
+
+protected:
+    QMap<int, FunctionModeButton*> _modeButtons;
+
+    virtual int currentFunctionMode() const { return 0; }
+    virtual void functionModeChanged(int mode) { Q_UNUSED(mode); }
+
+    QWidget* makeSectionHeader(const QString& title);
+    QWidget* makeModeButton(const QString& icon, const QString& text, int mode);
+
+private:
+    void modeButtonClicked();
+};
+
+//------------------------------------------------------------------------------
+
 class PlotFuncWindow : public SchemaMdiChild
 {
     Q_OBJECT
 
 public:
-    explicit PlotFuncWindow(PlotFunction*, MakeParamsPanelFunc makeParamsPanel = nullptr);
+    explicit PlotFuncWindow(PlotFunction*);
     ~PlotFuncWindow();
 
     PlotFunction* function() const { return _function; }
@@ -94,7 +114,6 @@ protected:
     QLabel* _pointsCountInfo;
     Ori::Widgets::ImagedLabel *_infoText;
     FrozenStateButton* _buttonFrozenInfo;
-    MakeParamsPanelFunc _makeParamsPanel;
     bool _autolimitsRequest = false;
     bool _isFirstTime = true;
 
@@ -122,6 +141,8 @@ protected:
 
     void debug_LogGraphsCount();
 
+    virtual QWidget* makeOptionsPanel() { return nullptr; }
+
 private slots:
     void showT();
     void showS();
@@ -132,6 +153,8 @@ private slots:
     void updateCursorInfo();
     void showRoundTrip();
     void freeze(bool);
+
+    QWidget* optionsPanelRequired();
 };
 
 #endif // PLOT_FUNC_WINDOW_H

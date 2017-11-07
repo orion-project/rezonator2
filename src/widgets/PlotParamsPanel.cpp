@@ -13,16 +13,18 @@ PlotParamsPanel::PlotParamsPanel(PlotParamsPanelCtorOptions options, QWidget *pa
 {
     if (options.hasInfoPanel)
         _infoPanelIndex = initPanel(tr("Show Special Points"), ":/misc16/points",
-            /* makeWidget: */ []()->QWidget*{ return new QTextBrowser; },
+            /* makeWidget: */ [](PlotParamsPanel*)->QWidget*{ return new QTextBrowser; },
             /* onActivate: */ [](PlotParamsPanel* self){ emit self->updateNotables(); });
 
     if (options.hasDataGrid)
         _dataGridIndex = initPanel(tr("Show Data Table"), ":/misc16/table",
-            /* makeWidget: */ []()->QWidget*{ return new GraphDataGrid; },
+            /* makeWidget: */ [](PlotParamsPanel*)->QWidget*{ return new GraphDataGrid; },
             /* onActivate: */ [](PlotParamsPanel* self){ emit self->updateDataGrid(); });
 
-    if (options.makeParamsPanel)
-        initPanel(tr("Additional Parameters"), ":/misc16/params", options.makeParamsPanel, nullptr);
+    if (options.hasOptionsPanel)
+        _optionsPanelIndex = initPanel(tr("Show Options"), ":/misc16/params",
+            /* makeWidget: */ [](PlotParamsPanel* self)->QWidget*{ return emit self->optionsPanelRequired(); },
+            /* onActivate: */ nullptr);
 
     setVisible(false); // all actions unchecked
 }
@@ -53,13 +55,22 @@ void PlotParamsPanel::showPanel()
             if (panel.action == action)
             {
                 if (!panel.widget)
-                    addWidget(panel.widget = panel.makeWidget());
+                {
+                    panel.widget = panel.makeWidget(this);
+                    Q_ASSERT(panel.widget != nullptr);
+                    addWidget(panel.widget);
+                }
                 _splitter->setSizes(QList<int>() << panel.size <<
                     _splitter->width() - _splitter->handleWidth() - panel.size);
                 setCurrentWidget(panel.widget);
                 show();
                 if (panel.onActivate)
                     panel.onActivate(this);
+
+                // options panel can be disabled if function is frozen
+                if (panel.widget == optionsPanel())
+                    panel.widget->setEnabled(_optionsPanelEnabled);
+
                 break;
             }
     }
@@ -93,4 +104,17 @@ QTextBrowser* PlotParamsPanel::infoPanel() const
 GraphDataGrid* PlotParamsPanel::dataGrid() const
 {
     return _dataGridIndex < 0? nullptr: qobject_cast<GraphDataGrid*>(_panels.at(_dataGridIndex).widget);
+}
+
+QWidget* PlotParamsPanel::optionsPanel() const
+{
+    return _optionsPanelIndex < 0? nullptr: _panels.at(_optionsPanelIndex).widget;
+}
+
+void PlotParamsPanel::setOptionsPanelEnabled(bool on)
+{
+    _optionsPanelEnabled = on;
+    auto panel = optionsPanel();
+    if (panel)
+        panel->setEnabled(on);
 }

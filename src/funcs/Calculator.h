@@ -14,8 +14,10 @@ public:
     void reset();
     bool isEmpty() { return _roundTrip.isEmpty(); }
 
-    double stabilityT() const;
-    double stabilityS() const;
+    inline double stabilityT() const { return calcStability((_mt.A + _mt.D) * 0.5); }
+    inline double stabilityS() const { return calcStability((_ms.A + _ms.D) * 0.5); }
+    StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }
+    void setStabilityCalcMode(StabilityCalcMode mode) { _stabilityCalcMode = mode; }
 
     inline Element* reference() const { return _reference; }
     inline Schema* owner() const { return _schema; }
@@ -47,6 +49,8 @@ protected:
      /// Reference element for round-trip calculation.
     Element* _reference;
 
+    StabilityCalcMode _stabilityCalcMode = StabilityCalcMode::Normal;
+
 private:
     bool _splitRange = false;
     void calcRoundTripSW();
@@ -54,9 +58,11 @@ private:
     void calcRoundTripSP();
     void collectMatrices();
     void collectMatricesSP();
+
+    double calcStability(double half_of_A_plus_D) const;
 };
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 namespace Calc {
 

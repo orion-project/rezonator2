@@ -32,11 +32,41 @@ FunctionModeButton::FunctionModeButton(const QString& icon, const QString& text,
 }
 
 //------------------------------------------------------------------------------
+//                                FunctionParamsPanel
+//------------------------------------------------------------------------------
+
+FuncOptionsPanel::FuncOptionsPanel() : QWidget()
+{
+}
+
+QWidget* FuncOptionsPanel::makeSectionHeader(const QString& title)
+{
+    auto header = new QLabel(QString("<b>%1:</b>").arg(title));
+    header->setContentsMargins(6, 6, 6, 6);
+    return header;
+}
+
+QWidget* FuncOptionsPanel::makeModeButton(const QString& icon, const QString& text, int mode)
+{
+    auto button = new FunctionModeButton(icon, text, mode);
+    connect(button, &FunctionModeButton::clicked, this, &FuncOptionsPanel::modeButtonClicked);
+    _modeButtons.insert(mode, button);
+    return button;
+}
+
+void FuncOptionsPanel::modeButtonClicked()
+{
+    auto button = qobject_cast<FunctionModeButton*>(sender());
+    if (button && currentFunctionMode() != button->mode())
+        functionModeChanged(button->mode());
+}
+
+//------------------------------------------------------------------------------
 //                                PlotFuncWindow
 //------------------------------------------------------------------------------
 
-PlotFuncWindow::PlotFuncWindow(PlotFunction *func, MakeParamsPanelFunc makeParamsPanel) :
-    SchemaMdiChild(func->schema()), _function(func), _makeParamsPanel(makeParamsPanel)
+PlotFuncWindow::PlotFuncWindow(PlotFunction *func) :
+    SchemaMdiChild(func->schema()), _function(func)
 {
     setWindowTitle(_function->name());
 
@@ -143,10 +173,11 @@ void PlotFuncWindow::createContent()
     opts.splitter = _splitter;
     opts.hasInfoPanel = function()->hasNotables();
     opts.hasDataGrid = function()->hasDataTable();
-    opts.makeParamsPanel = _makeParamsPanel;
+    opts.hasOptionsPanel = function()->hasOptions();
     _leftPanel = new PlotParamsPanel(opts);
-    connect(_leftPanel, SIGNAL(updateNotables()), this, SLOT(updateNotables()));
-    connect(_leftPanel, SIGNAL(updateDataGrid()), this, SLOT(updateDataGrid()));
+    connect(_leftPanel, &PlotParamsPanel::updateNotables, this, &PlotFuncWindow::updateNotables);
+    connect(_leftPanel, &PlotParamsPanel::updateDataGrid, this, &PlotFuncWindow::updateDataGrid);
+    connect(_leftPanel, &PlotParamsPanel::optionsPanelRequired, this, &PlotFuncWindow::optionsPanelRequired);
 
     auto toolbar = new Ori::Widgets::FlatToolBar;
     toolbar->setIconSize(QSize(16, 16));
@@ -382,7 +413,7 @@ void PlotFuncWindow::graphSelected(Graph *graph)
 
 void PlotFuncWindow::showRoundTrip()
 {
-
+    // TODO:NEXT-VER
 }
 
 void PlotFuncWindow::schemaChanged(Schema*)
@@ -416,7 +447,16 @@ void PlotFuncWindow::freeze(bool frozen)
     actnUpdateParams->setEnabled(!_frozen);
     actnFrozenInfo->setVisible(_frozen);
     _buttonFrozenInfo->setInfo(InfoFuncSummary(schema()).calculate());
+    _leftPanel->setOptionsPanelEnabled(!_frozen);
     if (!_frozen and _needRecalc)
         update();
 }
 
+QWidget* PlotFuncWindow::optionsPanelRequired()
+{
+    auto panel = makeOptionsPanel();
+    if (!panel)
+        qCritical() << "Function" << function()->alias() << "declared with "
+            "hasOptions=true but its window does not provide options panel";
+    return panel;
+}

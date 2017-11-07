@@ -63,6 +63,9 @@ public:
     /// Defines if function can show its result as data table.
     virtual bool hasDataTable() const { return true; }
 
+    /// Defines if function has additional params besides of variable argument.
+    virtual bool hasOptions() const { return false; }
+
     virtual int resultCount(Z::WorkPlane) const { return 1; }
     virtual const QVector<double>& resultX(Z::WorkPlane plane, int) const { return plane == Z::Plane_T? _x_t: _x_s; }
     virtual const QVector<double>& resultY(Z::WorkPlane plane, int) const { return plane == Z::Plane_T? _y_t: _y_s; }

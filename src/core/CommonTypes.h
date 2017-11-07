@@ -38,4 +38,12 @@ private:
     static const TripTypeInfo& SP();
 };
 
+/// How to calculate stability parameter from round-trip matrix
+enum class StabilityCalcMode
+{
+    Normal, ///< P = (A + B)/2
+    Squared ///< P = 1 - ((A + D)/2)^2
+};
+
+
 #endif // Z_COMMON_TYPES_H

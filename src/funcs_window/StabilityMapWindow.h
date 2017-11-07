@@ -13,6 +13,14 @@ public:
 
     bool configure(QWidget* parent) override;
 
+    StabilityMapFunction* function() const
+    {
+        return dynamic_cast<StabilityMapFunction*>(PlotFuncWindowStorable::function());
+    }
+
+protected:
+    QWidget* makeOptionsPanel() override;
+
 private:
     QAction *actnStabilityAutolimits;
 
