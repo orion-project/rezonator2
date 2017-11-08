@@ -50,6 +50,8 @@
         <file alias="elem_prop">../img/toolbar/elem_prop.svg</file>
         <file alias="elem_matr">../img/toolbar/elem_matr.svg</file>
         <file alias="elem_delete">../img/toolbar/elem_delete.svg</file>
+        <file alias="formula_stab_normal">../img/toolbar/formula_stab_normal.svg</file>
+        <file alias="formula_stab_squared">../img/toolbar/formula_stab_squared.svg</file>
     </qresource>
     <qresource prefix="/toolbar24">
         <file alias="edit_font_b">../img/font_b_24.png</file>

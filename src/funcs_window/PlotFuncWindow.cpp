@@ -58,7 +58,17 @@ void FuncOptionsPanel::modeButtonClicked()
 {
     auto button = qobject_cast<FunctionModeButton*>(sender());
     if (button && currentFunctionMode() != button->mode())
+    {
         functionModeChanged(button->mode());
+        showCurrentMode();
+    }
+}
+
+void FuncOptionsPanel::showCurrentMode()
+{
+    auto mode = currentFunctionMode();
+    for (auto button : _modeButtons)
+        button->setChecked(button->mode() == mode);
 }
 
 //------------------------------------------------------------------------------
@@ -122,9 +132,10 @@ void PlotFuncWindow::createActions()
     connect(actnFreeze, SIGNAL(toggled(bool)), this, SLOT(freeze(bool)));
 
     //---------------- Limits
+    /*TODO:NEXT-VER
     actnAutolimits = new QAction(tr("&Automatic Limits for Both Axes", "Plot action"), this);
     actnAutolimits->setIcon(QIcon(":/toolbar/limits_auto"));
-    connect(actnAutolimits, SIGNAL(triggered()), this, SLOT(autolimits()));
+    connect(actnAutolimits, SIGNAL(triggered()), this, SLOT(autolimits()));*/
 }
 
 void PlotFuncWindow::createMenuBar()
@@ -139,8 +150,9 @@ void PlotFuncWindow::createMenuBar()
     menuPlot->addSeparator();
     menuPlot->addAction(actnShowRoundTrip);
 
+    /* TODO:NEXT-VER
     menuLimits = new QMenu(tr("&Limits", "Menu title"), this);
-    menuLimits->addAction(actnAutolimits);
+    menuLimits->addAction(actnAutolimits);*/
 
     menuFormat = new QMenu(tr("Fo&rmat", "Menu title"), this);
 }
@@ -161,8 +173,8 @@ void PlotFuncWindow::createToolBar()
     toolbar()->addAction(actnShowT);
     toolbar()->addAction(actnShowS);
     toolbar()->addAction(actnShowTS);
-    toolbar()->addSeparator();
-    toolbar()->addAction(actnAutolimits);
+    /* TODO:NEXT-VER toolbar()->addSeparator();
+    toolbar()->addAction(actnAutolimits); */
 }
 
 void PlotFuncWindow::createContent()
@@ -339,7 +351,7 @@ void PlotFuncWindow::update()
         return;
     }
     calculate();
-    if (_isFirstTime || _autolimitsRequest)
+    //TODO:NEXT-VER if (_isFirstTime || _autolimitsRequest)
         autolimits();
     updateAxesTitles();
     updateNotables();

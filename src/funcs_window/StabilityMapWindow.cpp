@@ -14,10 +14,15 @@ public:
         // TODO: make icons and remove titles
         Ori::Layouts::LayoutV({
             makeSectionHeader(tr("Stability parameter")),
-            makeModeButton(":/toolbar/plot_w", tr("Normal"), int(StabilityCalcMode::Normal)),
-            makeModeButton(":/toolbar/plot_r", tr("Squared"), int(StabilityCalcMode::Squared)),
+            makeModeButton(":/toolbar/formula_stab_normal", QString(), int(StabilityCalcMode::Normal)),
+            makeModeButton(":/toolbar/formula_stab_squared", QString(), int(StabilityCalcMode::Squared)),
             Ori::Layouts::Stretch()
         }).setSpacing(0).setMargin(0).useFor(this);
+
+        for (auto button : _modeButtons)
+            button->setIconSize(QSize(96, 48));
+
+        showCurrentMode();
     }
 
     int currentFunctionMode() const override
@@ -45,6 +50,7 @@ StabilityMapWindow::StabilityMapWindow(Schema *schema) :
 
 void StabilityMapWindow::createControl()
 {
+    /* TODO:NEXT-VER
     actnStabilityAutolimits = new QAction(tr("Y-axis -> Stability Range", "Plot action"), this);
     actnStabilityAutolimits->setIcon(QIcon(":/toolbar/limits_stab"));
     connect(actnStabilityAutolimits, SIGNAL(triggered()), this, SLOT(autolimitsStability()));
@@ -53,7 +59,7 @@ void StabilityMapWindow::createControl()
     menuLimits->addAction(actnStabilityAutolimits);
 
     toolbar()->addSeparator();
-    toolbar()->addAction(actnStabilityAutolimits);
+    toolbar()->addAction(actnStabilityAutolimits);*/
 }
 
 bool StabilityMapWindow::configure(QWidget* parent)
@@ -63,7 +69,16 @@ bool StabilityMapWindow::configure(QWidget* parent)
 
 void StabilityMapWindow::autolimitsStability()
 {
-    _plot->yAxis->setRange(-1, 1); // TODO depending on stability calculation mode
+    switch (function()->stabilityCalcMode())
+    {
+    case StabilityCalcMode::Normal:
+        _plot->yAxis->setRange(-1, 1);
+        break;
+
+    case StabilityCalcMode::Squared:
+        _plot->yAxis->setRange(0, 1);
+        break;
+    }
     _plot->replot();
 }
 

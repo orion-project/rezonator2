@@ -57,6 +57,7 @@ protected:
 
     virtual int currentFunctionMode() const { return 0; }
     virtual void functionModeChanged(int mode) { Q_UNUSED(mode); }
+    void showCurrentMode();
 
     QWidget* makeSectionHeader(const QString& title);
     QWidget* makeModeButton(const QString& icon, const QString& text, int mode);
@@ -85,7 +86,7 @@ public:
     virtual bool configure(QWidget* parent) { Q_UNUSED(parent); return true; }
 
     ///// inherits from BasicMdiChild
-    QList<QMenu*> menus() { return QList<QMenu*>() << menuPlot << menuLimits << menuFormat; }
+    QList<QMenu*> menus() { return QList<QMenu*>() << menuPlot << /* TODO:NEXT-VER menuLimits << */ menuFormat; }
 
     void schemaChanged(Schema*) override;
 
@@ -100,7 +101,7 @@ protected:
     PlotFunction* _function;
     Plot* _plot;
 
-    QMenu *menuPlot, *menuLimits, *menuFormat;
+    QMenu *menuPlot, /* TODO:NEXT-VER *menuLimits,*/ *menuFormat;
 
     /// Calculates function and plots its results.
     virtual void calculate();
@@ -118,7 +119,7 @@ protected:
     bool _isFirstTime = true;
 
     QAction *actnShowT, *actnShowS, *actnShowTS,
-        *actnAutolimits, *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo;
+        /* TODO:NEXT-VER *actnAutolimits ,*/ *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo;
 
     Graph* graphT() const;
     Graph* graphS() const;
