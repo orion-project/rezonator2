@@ -28,7 +28,7 @@ SchemaViewWindow::SchemaViewWindow(Schema *owner, CalcManager *calcs) : SchemaMd
 
     setContent(Ori::Gui::splitterV(_table, _layout, 2, 20));
 
-    ///////// create control
+    // create control
     createActions();
     createMenuBar();
     createToolBar();
@@ -62,8 +62,11 @@ void SchemaViewWindow::createActions()
     actnElemMatrAll = A_(tr("&Show All Matrices"), _calculations, SLOT(funcShowAllMatrices()));
     actnElemDelete = A_(tr("&Delete"), this, SLOT(actionElemDelete()), ":/toolbar/elem_delete", Qt::CTRL | Qt::Key_Delete);
 
+    /* TODO:NEXT-VER
     actnEditCopy = A_(tr("&Copy", "Edit action"), this, SLOT(copy()), ":/toolbar/edit_copy");
-    actnEditPaste = A_(tr("&Paste", "Edit action"), this, SLOT(paste()), ":/toolbar/edit_paste");
+    actnEditPaste = A_(tr("&Paste", "Edit action"), this, SLOT(paste()), ":/toolbar/edit_paste"); */
+
+    #undef A_
 }
 
 void SchemaViewWindow::createMenuBar()
@@ -74,7 +77,7 @@ void SchemaViewWindow::createMenuBar()
 
     menuContext = Ori::Gui::menu(this,
         { actnElemProp, actnElemMatr, 0, actnElemInsertBefore, actnElemInsertAfter, 0,
-          actnEditCopy, actnEditPaste, 0, actnElemDelete });
+          /* TODO:NEXT-VER actnEditCopy, actnEditPaste, 0, */ actnElemDelete });
 }
 
 void SchemaViewWindow::createToolBar()
@@ -158,7 +161,7 @@ bool SchemaViewWindow::canCopy() { return _table->hasSelection(); }
 
 void SchemaViewWindow::copy()
 {
-// TODO
+// TODO:NEXT-VER
 //    Elements elems = _table->selection();
 //    if (!elems.empty())
 //    {
@@ -179,7 +182,7 @@ void SchemaViewWindow::copy()
 
 void SchemaViewWindow::paste()
 {
-// TODO
+// TODO:NEXT-VER
 //    QString text = QApplication::clipboard()->text();
 //    if (!text.isEmpty())
 //    {

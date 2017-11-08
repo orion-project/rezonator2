@@ -36,7 +36,7 @@ public:
     ProjectWindow();
     ~ProjectWindow();
 
-    ///// inherits from SchemaListener
+    // inherits from SchemaListener
     void schemaChanged(Schema*);
     void schemaLoaded(Schema*);
     void schemaSaved(Schema*);
@@ -46,15 +46,15 @@ protected:
     void closeEvent(class QCloseEvent*);
 
 private:
-    QMenu *menuFile, *menuEdit, *menuHelp, *menuWindow, *menuTools,
+    QMenu *menuFile, /* TODO:NEXT-VER *menuEdit, */ *menuHelp, *menuWindow, *menuTools,
           *menuElement, *menuFunctions, *menuView,
           *menuLangs, *menuStyles;
 
     QAction *actnFileNew, *actnFileOpen, *actnFileExit, *actnFileSave, *actnFileSaveCopy,
             *actnFileSaveAs, *actnFileTripType, *actnFilePump, *actnFileLambda, *actnFileSummary;
 
-    QAction *actnEditCut, *actnEditCopy,
-            *actnEditPaste, *actnEditSelectAll;
+    /* TODO:NEXT-VER QAction *actnEditCut, *actnEditCopy,
+            *actnEditPaste, *actnEditSelectAll; */
 
     QAction *actnFuncRoundTrip, *actnFuncStabMap, *actnFuncStabMap2d,
             *actnFuncRepRate, *actnFuncMultFwd, *actnFuncMultBkwd,
@@ -99,7 +99,11 @@ private slots:
     void showProtocolWindow();
     void showBeamCalculator();
 
+    /// Slot connected to @c mdiArea::subWindowActivated() signal.
+    /// This method is automatically called when mdiArea changes active widget.
     void updateMenuBar();
+
+    /// Updates MDI windows menu. This methods called when "Window" menu popups.
     void updateWindowMenu();
 };
 

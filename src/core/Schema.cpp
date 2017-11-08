@@ -107,8 +107,7 @@ Schema::Schema()
     _wavelength.setValue(Z::Value(980, Z::Units::nm()));
     _wavelength.setOwner(this);
 
-    // TODO init default units
-    // TODO init default pump
+    // TODO:NEXT-VER init default pump
 
     _events._schema = this;
     _events.raise(SchemaEvents::Created);
@@ -121,7 +120,7 @@ Schema::~Schema()
     foreach (Element *elem, _items) delete elem;
 }
 
-// TODO make test
+// TODO:NEXT-VER make test
 void Schema::setPump(const Z::Pump::Params& pump)
 {
     _pump = pump;
@@ -191,8 +190,7 @@ void Schema::deleteElement(int index, bool event)
     if (event)
         _events.raise(SchemaEvents::ElemDeleted, elem);
 
-    // TODO delete elem ?
-    // TODO rename to extractElem or smth like, if no real deletion needed
+    // TODO delete elem? rename to extractElem or smth like, if no real deletion needed
 }
 
 void Schema::parameterChanged(Z::ParameterBase *param)

@@ -68,25 +68,28 @@ TripType SchemaReaderXml::readTripType(QDomElement root, const QString& name)
     return tripType;
 }
 
-//#define READ_PUMP_MODE(mode, param1, param2, param3)\
-//{\
-//    auto node = nodePump.firstChildElement(#mode);\
-//    if (!node.isNull())\
-//    {\
-//        if (!_reader->readValueTS(node, #param1, pump.mode.param1) ||\
-//            !_reader->readValueTS(node, #param2, pump.mode.param2) ||\
-//            !_reader->readValueTS(node, #param3, pump.mode.param3))\
-//        {\
-//            report(Issue::BadPumpParams, #mode);\
-//            setDefaultPumpParams(_schema, pump, Z::PumpMode_## mode);\
-//        }\
-//    }\
-//    else setDefaultPumpParams(_schema, pump, Z::PumpMode_## mode);\
-//}
+// TODO:NEXT-VER
+#define READ_PUMP_MODE(mode, param1, param2, param3)\
+{\
+    auto node = nodePump.firstChildElement(#mode);\
+    if (!node.isNull())\
+    {\
+        if (!_reader->readValueTS(node, #param1, pump.mode.param1) ||\
+            !_reader->readValueTS(node, #param2, pump.mode.param2) ||\
+            !_reader->readValueTS(node, #param3, pump.mode.param3))\
+        {\
+            report(Issue::BadPumpParams, #mode);\
+            setDefaultPumpParams(_schema, pump, Z::PumpMode_## mode);\
+        }\
+    }\
+    else setDefaultPumpParams(_schema, pump, Z::PumpMode_## mode);\
+}
 
 void SchemaReaderXml::readPump(QDomElement& root)
 {
-// TODO
+    Q_UNUSED(root)
+
+// TODO:NEXT-VER
 //    if (_schema->tripType() != Schema::TripType::SP)
 //        disableReport(); // no messages for resonators
 

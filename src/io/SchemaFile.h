@@ -4,8 +4,6 @@
 #include "../core/Schema.h"
 #include "z_io_report.h"
 
-////////////////////////////////////////////////////////////////////////////////
-
 class SchemaLoadingProcess
 {
 public:
@@ -27,9 +25,9 @@ private:
     QString _fileName;
 };
 
-////////////////////////////////////////////////////////////////////////////////
-/// Base class for schema reader/writer.
-///
+/**
+    Base class for schema reader/writer.
+*/
 class SchemaFile
 {
 public:
@@ -49,8 +47,6 @@ protected:
     QString _fileName;
     Z::IO::Report _report;
 };
-
-////////////////////////////////////////////////////////////////////////////////
 
 #endif // SCHEMA_FILE_H
 

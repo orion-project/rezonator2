@@ -123,10 +123,11 @@ void ProjectWindow::createActions()
     actnFileSummary = A_(tr("Summar&y..."), _calculations, SLOT(funcSummary()), ":/toolbar/schema_summary", Qt::CTRL | Qt::Key_I);
     actnFileExit = A_(tr("E&xit"), qApp, SLOT(closeAllWindows()), 0, Qt::CTRL | Qt::Key_Q);
 
+    /* TODO:NEXT-VER
     actnEditCut = A_(tr("Cu&t"), _mdiArea, SLOT(editableChild_Cut()), ":/toolbar/cut", QKeySequence::Cut);
     actnEditCopy = A_(tr("&Copy"), _mdiArea, SLOT(editableChild_Copy()), ":/toolbar/copy", QKeySequence::Copy);
     actnEditPaste = A_(tr("&Paste"), _mdiArea, SLOT(editableChild_Paste()), ":/toolbar/paste", QKeySequence::Paste);
-    actnEditSelectAll = A_(tr("Select &All"), _mdiArea, SLOT(editableChild_SelectAll()), 0, QKeySequence::SelectAll);
+    actnEditSelectAll = A_(tr("Select &All"), _mdiArea, SLOT(editableChild_SelectAll()), 0, QKeySequence::SelectAll); */
 
     actnFuncRoundTrip = A_(tr("&Round-trip Matrix"), _calculations, SLOT(funcRoundTrip()), ":/toolbar/func_round_trip");
     actnFuncMultFwd = A_(tr("Multiply Selected &Forward"), _calculations, SLOT(funcMultFwd()));
@@ -137,7 +138,7 @@ void ProjectWindow::createActions()
     actnFuncCaustic = A_(tr("&Caustic..."), _calculations, SLOT(funcCaustic()), ":/toolbar/func_caustic");
 
     actnToolsCatalog = A_(tr("&Elements Catalog"), this, SLOT(showElementsCatalog()), ":/toolbar/catalog");
-    //actnToolsBeamCalc = _a(tr("&Beam Calculator"), this, SLOT(showBeamCalculator()), ":/toolbar/gauss");
+    // TODO:NEXT-VER actnToolsBeamCalc = _a(tr("&Beam Calculator"), this, SLOT(showBeamCalculator()), ":/toolbar/gauss");
     actnToolsPrefs = A_(tr("Pre&ferences..."), this, SLOT(showPreferences()), ":/toolbar/options");
 
     actnWndSchema = A_(tr("Show &Schema Window"), _mdiArea, SLOT(activateChild()), ":/toolbar/schema", Qt::Key_F12);
@@ -151,9 +152,12 @@ void ProjectWindow::createActions()
     actnHelpHomepage = A_(tr("&Visit Homepage"), this, SLOT(actionHelpHomePage()));
     actnHelpAbout = A_(tr("&About..."), this, SLOT(actionHelpAbout()));
 
+    actnHelpUpdates->setVisible(false); //< TODO:NEXT-VER
+
+    /* TODO:NEXT-VER
     actnFileSave->setEnabled(false);
     actnEditCut->setVisible(false);
-    actnEditCut->setEnabled(false);
+    actnEditCut->setEnabled(false); */
 }
 
 void ProjectWindow::createMenuBar()
@@ -167,8 +171,8 @@ void ProjectWindow::createMenuBar()
           actnFileSaveAs, actnFileSaveCopy, 0,
           actnFileLambda, actnFileTripType, actnFilePump, actnFileSummary, 0, actnFileExit });
 
-    menuEdit = Ori::Gui::menu(tr("&Edit"), this,
-        { actnEditCut, actnEditCopy, actnEditPaste, 0, actnEditSelectAll });
+    /* TODO:NEXT-VER menuEdit = Ori::Gui::menu(tr("&Edit"), this,
+        { actnEditCut, actnEditCopy, actnEditPaste, 0, actnEditSelectAll }); */
 
     menuView = Ori::Gui::menu(tr("&View"), this,
         { new Ori::Widgets::StylesMenu(_styler),
@@ -194,13 +198,13 @@ void ProjectWindow::createToolBars()
         { actnFileNew, Ori::Gui::menuToolButton(_mruMenu, actnFileOpen),
           actnFileSave, 0, actnFilePump, actnFileSummary }));
 
-    addToolBar(makeToolBar(tr("Edit"), { actnEditCut, actnEditCopy, actnEditPaste }));
+    // TODO:NEXT-VER addToolBar(makeToolBar(tr("Edit"), { actnEditCut, actnEditCopy, actnEditPaste }));
 
     addToolBar(makeToolBar(tr("Functions"),
         { actnFuncRoundTrip, 0, actnFuncStabMap, actnFuncStabMap2d, 0, actnFuncCaustic, 0,
           actnFuncRepRate }));
 
-    addToolBar(makeToolBar(tr("Tools"), { /*actnToolsBeamCalc,*/ 0, actnWndProtocol }));
+    // TODO:NEXT-VER addToolBar(makeToolBar(tr("Tools"), { actnToolsBeamCalc }));
 
     _mdiToolbar = new Ori::Widgets::MdiToolBar(tr("Windows"), _mdiArea);
     addToolBar(Qt::BottomToolBarArea, _mdiToolbar);
@@ -220,23 +224,21 @@ void ProjectWindow::updateTitle()
     Ori::Wnd::setWindowFilePath(this, schema()->fileName());
 }
 
-/// Slot connected to @c mdiArea::subWindowActivated() signal.
-/// This method automatically called when mdiArea changes active widget.
-///
 void ProjectWindow::updateMenuBar()
 {
     BasicMdiChild* child = _mdiArea->activeChild();
+    /* TODO:NEXT-VER
     EditableWindow* editable = _mdiArea->activeEditableChild();
 
     actnEditCut->setEnabled(editable);
     actnEditCopy->setEnabled(editable);
     actnEditPaste->setEnabled(editable);
-    actnEditSelectAll->setEnabled(editable);
+    actnEditSelectAll->setEnabled(editable); */
 
     QMenuBar* menuBar = this->menuBar();
     menuBar->clear();
     menuBar->addMenu(menuFile);
-    menuBar->addMenu(menuEdit);
+    // TODO:NEXT-VER menuBar->addMenu(menuEdit);
     menuBar->addMenu(menuView);
     menuBar->addMenu(menuFunctions);
     if (child)
@@ -254,7 +256,7 @@ void ProjectWindow::updateActions()
     actnFilePump->setEnabled(isSchemaSP);
     actnFilePump->setVisible(isSchemaSP);
     actnFuncStabMap->setVisible(!isSchemaSP);
-    actnFuncStabMap2d->setVisible(!isSchemaSP);
+    actnFuncStabMap2d->setVisible(false /* TODO:NEXT-VER !isSchemaSP */);
     actnFileSave->setEnabled(schema()->modified());
 }
 
@@ -311,13 +313,12 @@ void ProjectWindow::updateStability()
     }
     else if (schema()->isSP())
     {
-        // TODO: show pump params in tooltip
+        // TODO:NEXT-VER show pump params in tooltip
     }
     status->setIcon(STATUS_STABIL, icon);
     status->setToolTip(STATUS_STABIL, hint);
 }
 
-/// Updates mdi windows menu. This methods called when "Window" menu popups.
 void ProjectWindow::updateWindowMenu()
 {
     Ori::Gui::populate(menuWindow, {actnWndSchema, actnWndProtocol, 0, actnWndClose,
@@ -333,7 +334,7 @@ void ProjectWindow::closeEvent(QCloseEvent* ce)
         ce->ignore();
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                             Tools actions
 
 void ProjectWindow::showElementsCatalog()
@@ -348,10 +349,10 @@ void ProjectWindow::showPreferences()
 
 void ProjectWindow::showBeamCalculator()
 {
-    //showBeamCalculatorWindow();
+    // TODO:NEXT-VER showBeamCalculatorWindow();
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                             Help actions
 
 void ProjectWindow::actionHelpAbout()
@@ -365,11 +366,11 @@ void ProjectWindow::actionHelpAbout()
     auto text = tr(
                 "<p><font size=4><b>%1 %2.%3</b></font>"
                 "<p>Built on %5 at %6 from revision %4"
-                "<p>Copyright (C) 2006-2017 by Chunosov N.&nbsp;I."
+                "<p>Chunosov N.&nbsp;I. (C) 2006-2017"
                 "<p>Web: <a href='{www}'>{www}</a>"
                 "<p>E-mail: <a href='mailto://{email}'>{email}</a>"
-                "<p>Credits: <a href='http://www.qcustomplot.com/'>QCustomPlot</a>, "
-                "<a href='http://muparser.beltoforion.de/'>muparser</a>"
+                "<p>Credits: <a href='http://www.qcustomplot.com/'>QCustomPlot</a>"
+          // TODO:NEXT-VER    ", <a href='http://muparser.beltoforion.de/'>muparser</a>"
                 "<p>The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING "
                 "THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE."
                 "<br>&nbsp;")
@@ -392,10 +393,10 @@ void ProjectWindow::actionHelpHomePage()
 
 void ProjectWindow::actionHelpUpdate()
 {
-    // TODO
+    // TODO:NEXT-VER
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                               Window action
 
 void ProjectWindow::showProtocolWindow()
@@ -403,7 +404,7 @@ void ProjectWindow::showProtocolWindow()
     _mdiArea->appendChild(ProtocolWindow::create());
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                               Schema events
 
 void ProjectWindow::schemaChanged(Schema* s)

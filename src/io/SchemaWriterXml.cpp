@@ -40,7 +40,7 @@ void SchemaWriterXml::writeInternal()
     root.setAttribute("version", Z::IO::Utils::currentVersion().str());
 
     writeGeneral(root);
-//    writePump(root);
+// TODO:NEXT-VER writePump(root);
     writeElements(root);
     writeWindows(root);
 }
@@ -51,18 +51,21 @@ void SchemaWriterXml::writeGeneral(QDomElement& root)
     _writer->writeParameter(root, &_schema->wavelength());
 }
 
-//#define WRITE_PUMP_MODE(mode, param1, param2, param3) \
-//{\
-//    auto node = document()->createElement(# mode);\
-//    writeValueTS(node, # param1, _schema->pumpParams().mode.param1);\
-//    writeValueTS(node, # param2, _schema->pumpParams().mode.param2);\
-//    writeValueTS(node, # param3, _schema->pumpParams().mode.param3);\
-//    nodePump.appendChild(node);\
-//}
+// TODO:NEXT-VER
+#define WRITE_PUMP_MODE(mode, param1, param2, param3) \
+{\
+    auto node = document()->createElement(# mode);\
+    writeValueTS(node, # param1, _schema->pumpParams().mode.param1);\
+    writeValueTS(node, # param2, _schema->pumpParams().mode.param2);\
+    writeValueTS(node, # param3, _schema->pumpParams().mode.param3);\
+    nodePump.appendChild(node);\
+}
 
 void SchemaWriterXml::writePump(QDomElement& root)
 {
-// TODO
+    Q_UNUSED(root)
+
+// TODO:NEXT-VER
 //    auto nodePump = document()->createElement("pump");
 //    nodePump.setAttribute("mode", ENUM_ITEM_NAME(Z::Pump::PumpMode, _schema->pump().mode));
 
@@ -98,7 +101,7 @@ void SchemaWriterXml::writeElement(QDomElement& root, Element *elem)
     if (elem->hasParams())
         _writer->writeParameters(nodeElem, "params", elem->params());
 
-    // TODO: write misalignments
+    // TODO:NEXT-VER: write misalignments
 }
 
 void SchemaWriterXml::writeWindows(QDomElement& root)

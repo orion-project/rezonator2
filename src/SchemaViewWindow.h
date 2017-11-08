@@ -36,7 +36,7 @@ public:
 
 private:
     QAction *actnElemAdd, *actnElemInsertBefore, *actnElemInsertAfter, *actnElemProp,
-        *actnElemMatr, *actnElemMatrAll, *actnElemDelete, *actnEditCopy, *actnEditPaste;
+        *actnElemMatr, *actnElemMatrAll, *actnElemDelete/*, TODO:NEXT-VER *actnEditCopy, *actnEditPaste */;
 
     QMenu *menuElement, *menuContext;
 

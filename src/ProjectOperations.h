@@ -28,7 +28,6 @@ public slots:
     bool saveSchemaFileAs();
     void saveSchemaFileCopy();
     void checkCmdLine();
-    void setupSchema();
     void setupPump();
     void setupWavelength();
     void setupTripType();

@@ -1,5 +1,5 @@
-#ifndef FORMAT_H
-#define FORMAT_H
+#ifndef Z_FORMAT_H
+#define Z_FORMAT_H
 
 #include <QString>
 
@@ -16,12 +16,6 @@ inline QString str(bool v) { return v? "true": "false"; }
 /// Format a value to be displayed to user
 inline QString format(const double& v) { return QString::number(v); }
 
-/// Format a named value with units to be displayed to user
-//inline QString formatParam(const QString& name, const double& value, const QString& unit)
-//{
-//    return name % " = " % format(value) % unit;
-//}
-
 namespace Strs {
 
 inline QString lambda() { return QStringLiteral("λ"); }
@@ -36,4 +30,4 @@ inline QChar multX() { return QChar(0x00D7); }
 } // namespace Fmt
 } // namespace Z
 
-#endif // FORMAT_H
+#endif // Z_FORMAT_H

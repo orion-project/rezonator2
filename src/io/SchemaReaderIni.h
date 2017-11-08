@@ -34,14 +34,12 @@ private:
 
     void readGeneral(IniSection &ini);
     void readLambda(IniSection &ini);
-    void readUnits(IniSection &ini);
+    void readUnits();
     void readPump(IniSection &ini);
     void readElements();
     void readElement(const QString& section);
 
     Z::Unit paramUnit(Z::Parameter* param) const;
-
-    //bool readPumpMode(IniSection &section, Z::Pump::Params &pump);
 };
 
 #endif // SCHEMA_READER_INI_H

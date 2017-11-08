@@ -26,7 +26,7 @@ QFileDialog::Options fileDialogOptions()
     return options;
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 ProjectOperations::ProjectOperations(Schema *schema, QWidget *parent, CalcManager *calcManager) :
     QObject(parent), _parent(parent), _schema(schema), _calcManager(calcManager)
@@ -229,13 +229,9 @@ bool ProjectOperations::canClose()
     return true;
 }
 
-void ProjectOperations::setupSchema()
-{
-    //Z::Dlgs::schemaParams(_parent, schema());
-}
-
 void ProjectOperations::setupPump()
 {
+// TODO:NEXT-VER
 //    if (schema()->tripType() == Schema::SP)
 //        if (Z::Dlgs::pumpParams(_parent, schema()))
 //        {
@@ -259,8 +255,12 @@ void ProjectOperations::setupTripType()
 {
     Ori::Widgets::OptionsGroup group(true);
     group.setTitle(tr("Round trip type"));
-    for (TripType tripType : TripTypes::all())
-        group.addOption(int(tripType), TripTypes::info(tripType).fullHeader());
+
+    /* TODO:NEXT-VER for (TripType tripType : TripTypes::all())
+        group.addOption(int(tripType), TripTypes::info(tripType).fullHeader()); */
+    group.addOption(int(TripType::SW), TripTypes::info(TripType::SW).fullHeader());
+    group.addOption(int(TripType::RR), TripTypes::info(TripType::RR).fullHeader());
+
     group.setOption(int(schema()->tripType()));
     auto dlg = Ori::Dlg::Dialog(&group)
             .withHelpTopic("") // TODO help topic

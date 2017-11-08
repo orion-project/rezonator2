@@ -201,10 +201,10 @@ private:
     Z::Parameter _wavelength;
     Z::Pump::Params _pump;
 
-    ///// inherits from ElementOwner
+    // inherits from ElementOwner
     void elementChanged(Element *elem) override { _events.raise(SchemaEvents::ElemChanged, elem); }
 
-    ///// inherits from ParameterOwner
+    // inherits from ParameterOwner
     void parameterChanged(Z::ParameterBase *param) override;
 
     inline bool isValid(int index) const { return index >= 0 && index < _items.size(); }

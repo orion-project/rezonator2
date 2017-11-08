@@ -6,7 +6,7 @@
 #include "../core/Elements.h"
 #include "../core/ElementsCatalog.h"
 #include "../core/Parameters.h"
-//#include "../core/Pump.h"
+// TODO:NEXT-VER #include "../core/Pump.h"
 
 namespace OldSchema {
 
@@ -61,7 +61,7 @@ QString parseElemType(const QString& oldType, const Ori::Version& version)
           {"TElemMatrix",            ElemMatrix::_type_() },
           {"TElemPoint",             ElemPoint::_type_() },
       });
-    // TODO load grin-lens
+    // TODO:NEXT-VER load grin-lens
 
     auto type = oldType;
     if (version.less(1, 2))
@@ -73,9 +73,9 @@ QString parseElemType(const QString& oldType, const Ori::Version& version)
 
 } // namespace OldSchema
 
-////////////////////////////////////////////////////////////////////////////////
-///                             IniSection
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+//                             IniSection
+//------------------------------------------------------------------------------
 
 class IniSection
 {
@@ -135,9 +135,9 @@ private:
     QString _group;
 };
 
-////////////////////////////////////////////////////////////////////////////////
-///                             SchemaReaderIni
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+//                             SchemaReaderIni
+//------------------------------------------------------------------------------
 
 SchemaReaderIni::SchemaReaderIni(Schema *schema, const QString &fileName) : SchemaFile(schema, fileName)
 {
@@ -170,7 +170,7 @@ void SchemaReaderIni::read()
     SchemaLoadingProcess p(_schema, _fileName);
 
     readGeneral(ini);
-    readUnits(ini);
+    readUnits();
     readLambda(ini);
     readPump(ini);
     readElements();
@@ -179,10 +179,10 @@ void SchemaReaderIni::read()
 
 void SchemaReaderIni::readGeneral(IniSection& ini)
 {
-    //_schema->setComment(ini.getString("Notes"));
-    //_schema->setTitle(ini.getString("Title"));
+    // TODO:? _schema->setComment(ini.getString("Notes"));
+    // TODO:? _schema->setTitle(ini.getString("Title"));
     _schema->setTripType(OldSchema::parseTripType(ini.getInt("SchemaKind", 0)));
-    // TODO load calculation precision
+    // TODO:? load calculation precision
 }
 
 void SchemaReaderIni::readLambda(IniSection& ini)
@@ -195,8 +195,9 @@ void SchemaReaderIni::readLambda(IniSection& ini)
         _report.warning(qApp->translate("IO", "Invalid value for wavelength is stored in file."));
 }
 
-void SchemaReaderIni::readUnits(IniSection& ini)
+void SchemaReaderIni::readUnits()
 {
+    // Units section is inside of PREFERENCES section, so it should be opened before calling this func
     IniSection section(_file, "Units");
     _linearUnit = OldSchema::parseLinear(section.getString("Linear"), Z::Units::mm());
     _angularUnit = OldSchema::parseAngular(section.getString("Angle"), Z::Units::deg());
@@ -208,8 +209,8 @@ void SchemaReaderIni::readPump(IniSection& ini)
 {
     Q_UNUSED(ini)
 
-// TODO load pump from ini
- /*   Z::Def::setDefaultPump(_schema);
+ /* TODO:NEXT-VER load pump from ini
+    Z::Def::setDefaultPump(_schema);
 
     if (_schema->tripType() != Schema::SP) return;
 
@@ -315,8 +316,6 @@ void SchemaReaderIni::readElement(const QString &section)
     elem->setTitle(ini.getString("Title"));
     elem->setDisabled(ini.getBool("Disabled"));
 
-    //info(qApp->translate("IO", "Loading element %1").arg(elem->displayLabel()));
-
     for (Z::Parameter* param : elem->params())
     {
         bool ok;
@@ -324,11 +323,6 @@ void SchemaReaderIni::readElement(const QString &section)
         if (!ok)
         {
             // IOR does not stored in old schemas for empty ranges
-            // TODO: remove! we does not store IOR for empty ranges too!
-            /*auto emptyRange = Z::Utils::asRange(elem);
-            if (emptyRange && param == emptyRange->paramIor())
-                continue;*/
-
             _report.warning(qApp->translate("IO",
                 "Invalid value for parameter %1 is stored in file, default value is used").arg(param->alias()));
             continue;
@@ -348,7 +342,7 @@ void SchemaReaderIni::readElement(const QString &section)
         auto res = param->verify(value);
         if (!res.isEmpty())
         {
-            // TODO make test to show this message when validation will be
+            // TODO:TEST make test to show this message when validation will be
             _report.warning(qApp->translate("IO",
                 "Value %1 is unacceptable for parameter %2: %3").arg(value.str()).arg(param->alias()).arg(res));
             continue;
@@ -356,7 +350,7 @@ void SchemaReaderIni::readElement(const QString &section)
 
         param->setValue(value);
     }
-    // TODO: load misalignments
+    // TODO:NEXT-VER load misalignments
 }
 
 Z::Unit SchemaReaderIni::paramUnit(Z::Parameter* param) const
