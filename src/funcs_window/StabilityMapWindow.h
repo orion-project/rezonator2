@@ -22,7 +22,7 @@ protected:
     QWidget* makeOptionsPanel() override;
 
 private:
-    // TODO:NEXT-VER QAction *actnStabilityAutolimits;
+    QAction *actnStabilityAutolimits;
 
     void createControl();
 

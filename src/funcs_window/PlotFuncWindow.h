@@ -85,8 +85,8 @@ public:
     /// Edits function parameters through dialog.
     virtual bool configure(QWidget* parent) { Q_UNUSED(parent); return true; }
 
-    ///// inherits from BasicMdiChild
-    QList<QMenu*> menus() { return QList<QMenu*>() << menuPlot << /* TODO:NEXT-VER menuLimits << */ menuFormat; }
+    // inherits from BasicMdiChild
+    QList<QMenu*> menus() { return QList<QMenu*>() << menuPlot << menuLimits /* TODO:NEXT-VER << menuFormat*/; }
 
     void schemaChanged(Schema*) override;
 
@@ -101,7 +101,7 @@ protected:
     PlotFunction* _function;
     Plot* _plot;
 
-    QMenu *menuPlot, /* TODO:NEXT-VER *menuLimits,*/ *menuFormat;
+    QMenu *menuPlot, *menuLimits, *menuFormat;
 
     /// Calculates function and plots its results.
     virtual void calculate();
@@ -115,11 +115,11 @@ protected:
     QLabel* _pointsCountInfo;
     Ori::Widgets::ImagedLabel *_infoText;
     FrozenStateButton* _buttonFrozenInfo;
-    bool _autolimitsRequest = false;
+    bool _autolimitsRequest = false; ///< If autolimits requested after next update.
     bool _isFirstTime = true;
 
     QAction *actnShowT, *actnShowS, *actnShowTS,
-        /* TODO:NEXT-VER *actnAutolimits ,*/ *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo;
+        *actnAutolimits, *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo;
 
     Graph* graphT() const;
     Graph* graphS() const;

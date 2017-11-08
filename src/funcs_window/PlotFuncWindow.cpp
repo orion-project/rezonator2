@@ -132,10 +132,9 @@ void PlotFuncWindow::createActions()
     connect(actnFreeze, SIGNAL(toggled(bool)), this, SLOT(freeze(bool)));
 
     //---------------- Limits
-    /*TODO:NEXT-VER
     actnAutolimits = new QAction(tr("&Automatic Limits for Both Axes", "Plot action"), this);
     actnAutolimits->setIcon(QIcon(":/toolbar/limits_auto"));
-    connect(actnAutolimits, SIGNAL(triggered()), this, SLOT(autolimits()));*/
+    connect(actnAutolimits, SIGNAL(triggered()), this, SLOT(autolimits()));
 }
 
 void PlotFuncWindow::createMenuBar()
@@ -150,9 +149,8 @@ void PlotFuncWindow::createMenuBar()
     menuPlot->addSeparator();
     menuPlot->addAction(actnShowRoundTrip);
 
-    /* TODO:NEXT-VER
     menuLimits = new QMenu(tr("&Limits", "Menu title"), this);
-    menuLimits->addAction(actnAutolimits);*/
+    menuLimits->addAction(actnAutolimits);
 
     menuFormat = new QMenu(tr("Fo&rmat", "Menu title"), this);
 }
@@ -173,8 +171,8 @@ void PlotFuncWindow::createToolBar()
     toolbar()->addAction(actnShowT);
     toolbar()->addAction(actnShowS);
     toolbar()->addAction(actnShowTS);
-    /* TODO:NEXT-VER toolbar()->addSeparator();
-    toolbar()->addAction(actnAutolimits); */
+    toolbar()->addSeparator();
+    toolbar()->addAction(actnAutolimits);
 }
 
 void PlotFuncWindow::createContent()
