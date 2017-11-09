@@ -87,7 +87,10 @@ void Writer::writeValueTS(QDomElement& root, const QString &name, const Z::Value
 
 void Writer::writeVariable(QDomElement& root, const QString& name, const Z::Variable *var)
 {
-// TODO
+    Q_UNUSED(root)
+    Q_UNUSED(name)
+    Q_UNUSED(var)
+// TODO:NEXT-VER
 //    auto node = makeNode(root, name);
 //    writeValueNode(node, "element", "index", string(var->element));
 //    writeValueNode(node, "param", "index", string(var->param));

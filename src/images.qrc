@@ -39,7 +39,7 @@
         <file alias="schema_pump">../img/toolbar/schema_pump.svg</file>
         <file alias="schema_open">../img/toolbar/schema_open.svg</file>
         <file alias="schema_new">../img/toolbar/schema_new.svg</file>
-        <file alias="schema_save">../img/toolbar/schema_save.svg</file>
+        <file alias="schema_save">../img/toolbar/save.svg</file>
         <file alias="catalog">../img/toolbar/elements.svg</file>
         <file alias="schema">../img/icon/icon_schema.svg</file>
         <file alias="wavelength">../img/toolbar/wavelength.svg</file>

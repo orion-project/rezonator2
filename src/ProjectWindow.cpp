@@ -357,16 +357,11 @@ void ProjectWindow::showBeamCalculator()
 
 void ProjectWindow::actionHelpAbout()
 {
-#ifdef SVN_REV
-    auto rev = QLatin1String(SVN_REV);
-#else
-    auto rev = QLatin1Literal("??");
-#endif
     auto title = tr("About %1").arg(qApp->applicationName());
     auto text = tr(
-                "<p><font size=4><b>%1 %2.%3</b></font>"
-                "<p>Built on %5 at %6 from revision %4"
-                "<p>Chunosov N.&nbsp;I. (C) 2006-2017"
+                "<p><font size=4><b>{app} {ver_major}.{ver_minor}</b></font>"
+                "<p>Build {ver_major}.{ver_minor}.{ver_build} ({build_date} {build_time})"
+                "<p>Chunosov N.&nbsp;I. © 2006-2017"
                 "<p>Web: <a href='{www}'>{www}</a>"
                 "<p>E-mail: <a href='mailto://{email}'>{email}</a>"
                 "<p>Credits: <a href='http://www.qcustomplot.com/'>QCustomPlot</a>"
@@ -374,10 +369,14 @@ void ProjectWindow::actionHelpAbout()
                 "<p>The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING "
                 "THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE."
                 "<br>&nbsp;")
-            .arg(qApp->applicationName()).arg(APP_VER_MAJOR).arg(APP_VER_MINOR)
-            .arg(rev).arg(BUILDDATE).arg(BUILDTIME);
-    text = text.replace("{www}", Z::Strs::homepage());
-    text = text.replace("{email}", Z::Strs::email());
+            .replace("{app}", qApp->applicationName())
+            .replace("{ver_major}", QString::number(APP_VER_MAJOR))
+            .replace("{ver_minor}", QString::number(APP_VER_MINOR))
+            .replace("{ver_build}", QString::number(APP_VER_BUILD))
+            .replace("{build_date}", BUILDDATE)
+            .replace("{build_time}", BUILDTIME)
+            .replace("{www}", Z::Strs::homepage())
+            .replace("{email}", Z::Strs::email());
     QMessageBox about(QMessageBox::NoIcon, title, text, QMessageBox::Ok, this);
     about.setIconPixmap(QPixmap(":/window_icons/main").
         scaled(64, 64, Qt::KeepAspectRatio, Qt::SmoothTransformation));

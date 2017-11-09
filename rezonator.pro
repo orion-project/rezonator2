@@ -11,14 +11,11 @@ include($$ORION"orion_testing.pri")
 include($$ORION"orion_tests.pri")
 include($$ORION"orion_svg.pri")
 
-DEFINES += "_USE_MATH_DEFINES"
-
 DESTDIR = $$_PRO_FILE_PWD_/bin
 
 DEFINES += "APP_VER_MAJOR=2"
 DEFINES += "APP_VER_MINOR=0"
-DEFINES += "APP_VER_BUILD=0" # TODO
-DEFINES += "SVN_REV=0" # TODO eliminate
+DEFINES += "APP_VER_BUILD=0" # TODO get from git tag
 
 win32 {
     DEFINES += "BUILDDATE=\"\\\"$$system(date /T)\\\"\""
@@ -28,6 +25,8 @@ else {
     DEFINES += "BUILDDATE=\"\\\"$$system(date '+%F')\\\"\""
     DEFINES += "BUILDTIME=\"\\\"$$system(date '+%T')\\\"\""
 }
+
+win32: RC_FILE = src/app.rc
 
 #TRANSLATIONS = $$DESTDIR/languages/rezonator_ru.ts
 

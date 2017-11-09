@@ -167,8 +167,9 @@ void Reader::readValueTS(QDomElement& root, const QString& name, Z::ValueTS& val
 
 void Reader::readVariable(QDomElement& root, const QString& name, Z::Variable* var)
 {
+    Q_UNUSED(var)
     GET_NODE(node, root, name)
-    // TODO
+    // TODO:NEXT-VER
 }
 
 } // namespace XML

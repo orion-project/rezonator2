@@ -1,5 +1,6 @@
 #include "CalcManager.h"
 #include "WindowsManager.h"
+#include "core/Protocol.h"
 #include "funcs/InfoFunctions.h"
 #include "funcs_window/InfoFuncWindow.h"
 #include "funcs_window/CausticWindow.h"
@@ -16,6 +17,13 @@ template <class TWindow, class TFunction> void registerWindowConstructor()
     WindowsManager::registerConstructor(TFunction::_alias_(), windowConstructor<TWindow>);
 }
 
+#define RETURN_IF_SCHEMA_EMPTY \
+    if (schema()->isEmpty()) \
+    { \
+        Z_INFO("Schema is empty"); \
+        return; \
+    }
+
 CalcManager::CalcManager(Schema *schema, QWidget *parent) :
     QObject(parent), _parent(parent), _schema(schema)
 {
@@ -31,20 +39,20 @@ void CalcManager::funcSummary()
 
 void CalcManager::funcRoundTrip()
 {
-    if (!schema()->isEmpty())
-        showInfoFunc(new InfoFuncMatrixRT(schema(), schema()->selectedElement()));
+    RETURN_IF_SCHEMA_EMPTY
+    showInfoFunc(new InfoFuncMatrixRT(schema(), schema()->selectedElement()));
 }
 
 void CalcManager::funcMultFwd()
 {
-    if (!schema()->isEmpty())
-        showInfoFunc(new InfoFuncMatrixMultFwd(schema(), schema()->selectedElements()));
+    RETURN_IF_SCHEMA_EMPTY
+    showInfoFunc(new InfoFuncMatrixMultFwd(schema(), schema()->selectedElements()));
 }
 
 void CalcManager::funcMultBkwd()
 {
-    if (!schema()->isEmpty())
-        showInfoFunc(new InfoFuncMatrixMultBkwd(schema(), schema()->selectedElements()));
+    RETURN_IF_SCHEMA_EMPTY
+    showInfoFunc(new InfoFuncMatrixMultBkwd(schema(), schema()->selectedElements()));
 }
 
 void CalcManager::funcStabMap()
@@ -59,8 +67,8 @@ void CalcManager::funcStabMap2d()
 
 void CalcManager::funcRepRate()
 {
-    if (!schema()->isEmpty())
-        showInfoFunc(new InfoFuncRepetitionRate(schema()));
+    RETURN_IF_SCHEMA_EMPTY
+    showInfoFunc(new InfoFuncRepetitionRate(schema()));
 }
 
 void CalcManager::funcCaustic()
@@ -70,20 +78,23 @@ void CalcManager::funcCaustic()
 
 void CalcManager::funcShowMatrices()
 {
+    RETURN_IF_SCHEMA_EMPTY
     auto elems = schema()->selectedElements();
-    if (!elems.isEmpty())
+    if (elems.isEmpty())
     {
-        if (elems.size() == 1)
-            showInfoFunc(new InfoFuncMatrix(schema(), elems.at(0)));
-        else
-            showInfoFunc(new InfoFuncMatrices(schema(), elems));
+        Z_INFO("No elements selected");
+        return;
     }
+    if (elems.size() == 1)
+        showInfoFunc(new InfoFuncMatrix(schema(), elems.at(0)));
+    else
+        showInfoFunc(new InfoFuncMatrices(schema(), elems));
 }
 
 void CalcManager::funcShowAllMatrices()
 {
-    if (!schema()->isEmpty())
-        showInfoFunc(new InfoFuncMatrices(schema(), schema()->elements()));
+    RETURN_IF_SCHEMA_EMPTY
+    showInfoFunc(new InfoFuncMatrices(schema(), schema()->elements()));
 }
 
 void CalcManager::showInfoFunc(InfoFunction* func)
@@ -93,8 +104,7 @@ void CalcManager::showInfoFunc(InfoFunction* func)
 
 template <class TWindow> void CalcManager::showPlotFunc()
 {
-    if (schema()->isEmpty()) return;
-
+    RETURN_IF_SCHEMA_EMPTY
     auto wnd = new TWindow(schema());
     if (wnd->configure(_parent))
     {
