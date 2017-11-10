@@ -43,33 +43,30 @@ public:
 class SchemaWindow : public SchemaListener
 {
 public:
-
-//    enum WindowRole
-//    {
-//        DefaultRole,
-//        ProjectWindowRole,
-//        SchemaViewRole
-//    };
-
     SchemaWindow(Schema *owner);
     ~SchemaWindow();
 
     /// Returns schema shown by this window.
     inline Schema* schema() { return _schema; }
-
-//    virtual WindowRole role() const { return DefaultRole; }
-
 private:
     Schema* _schema;
 };
 
 //------------------------------------------------------------------------------
-
+/**
+    Base class for popup windows presenting schema related data.
+    For example, these are information function windows.
+    This base class does not make derived class to be a widget,
+    so derived should also be inherited from some QWidget class,
+    see @ref SchemaMdiChild or @ref InfoFuncWindow for example.
+*/
 class SchemaToolWindow : public SchemaWindow, public SettingsListener
 {
 public:
     SchemaToolWindow(Schema *owner);
 
+    /// Inherited from @ref SettingsListener.
+    /// Function is called when application settings are changed.
     void settingsChanged() override;
 
     QToolBar* makeToolBar(bool flat = false);
@@ -86,12 +83,10 @@ private:
 
 //------------------------------------------------------------------------------
 /**
-    Basic mdi-child window.
-    Base class for windows presenting schema related data in MDI area of project window.
-    For example SchemaViewWindow showing schema elements list or any window presenting
-    calculation results (plot windows, table windows).
-    \note We inherits BasicMdiChild from QMdiSubWindow not from QWidget to allow
-    for each type of child mdi-window to have its own icon. When simple QWidget is
+    Base class for windows which are displayed in MDI area of project window.
+
+    @note We inherit BasicMdiChild from QMdiSubWindow not from QWidget to allow
+    each type of child mdi-window to have its own icon. When simple QWidget is
     inserted into QMdiArea then default QMdiSubWindow is created and it uses default
     application icon.
 */
@@ -105,7 +100,7 @@ public:
     {
         /// Do not create default widget to set as central area.
         /// Ancestors can create its own widget instead of default
-        /// (\see BasicMdiChild::setContent).
+        /// (See @ref BasicMdiChild::setContent).
         initNoDefaultWidget = 0x01,
 
         /// Do not create default toolbar. Default toolbar is inserted into
@@ -124,15 +119,20 @@ public:
     /// inserted at end of main window menu bar, before Help and Window menus.
     virtual QList<QMenu*> menus() { return QList<QMenu*>(); }
 
-    /// Default toolbar of MDI-child window.
+    /// Returns default toolbar of MDI-child window
+    /// or nullptr if one was not created (see @ref InitOption::initNoToolBar).
     QToolBar* toolbar() const { return _toolbar; }
 
+    /// Appends items into default toolbar, if one was created (see @ref InitOption::initNoToolBar).
     void populateToolbar(std::initializer_list<QObject*> items);
 
     void setContent(QWidget *content, int row = -1);
 
+    /// @ref SchemaMdiArea calls this function after subwindow was insterted into MDI-area.
     virtual void init() {}
 
+    /// Inherited from @ref SettingsListener.
+    /// Function is called when application settings are changed.
     void settingsChanged() override;
 
 protected:
@@ -150,7 +150,11 @@ signals:
 };
 
 //------------------------------------------------------------------------------
-
+/**
+    Base class for windows presenting schema related data in MDI area of project window.
+    For example SchemaViewWindow showing schema elements list or any window presenting
+    calculation results (plot windows, table windows).
+*/
 class SchemaMdiChild : public BasicMdiChild, public SchemaWindow
 {
 public:

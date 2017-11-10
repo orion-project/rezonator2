@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QEvent>
 #include <QMenu>
+#include <QTimer>
 #include <QToolButton>
 
 //------------------------------------------------------------------------------
@@ -179,6 +180,14 @@ void SchemaMdiArea::appendChild(BasicMdiChild* window)
             window->show();
         }
         setActiveSubWindow(window);
+
+#ifdef Q_OS_LINUX
+        // WORKAROUND: For some reasons, on Ubuntu (Unity and xfce) previous subwindow
+        // is activated again after this window was activated. So we have to reactivate
+        // it one more time slightly later. Reactivating can't help if done immediately,
+        // but there is ugly flikering if delay is too long, should be better solution.
+        QTimer::singleShot(100, [window, this](){ setActiveSubWindow(window); });
+#endif
     }
 }
 
