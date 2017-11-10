@@ -14,8 +14,6 @@
 #include <QMessageBox>
 #include <QTabWidget>
 
-////////////////////////////////////////////////////////////////////////////////
-
 namespace Z {
 namespace Dlgs {
 
@@ -39,9 +37,9 @@ bool elementProps(Element *elem, QWidget *parent)
 } // namespace Z
 
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                             ElementPropsDialog
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 int __savedTabIndex = 0;
 
@@ -54,7 +52,7 @@ ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : Rezonat
     setAttribute(Qt::WA_DeleteOnClose);
     connect(this, SIGNAL(finished(int)), this, SLOT(dialogFinished(int)));
 
-    ///////// common props
+    // common props
     _editorLabel = new QLineEdit;
     _editorTitle = new QLineEdit;
     Ori::Gui::adjustFont(_editorLabel);
@@ -64,17 +62,17 @@ ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : Rezonat
     layoutCommon->addRow(tr("Label:"), _editorLabel);
     layoutCommon->addRow(tr("Title:"), _editorTitle);
 
-    ///////// parameters tab-set
+    // parameters tab-set
     _tabs = new QTabWidget;
-    _tabs->addTab(initPageOther(), tr("Other"));
+    // TODO:NEXT-VER _tabs->addTab(initPageOther(), tr("Other"));
     _tabs->addTab(initPageOutline(), tr("Outline"));
 
     mainLayout()->addLayout(layoutCommon);
     mainLayout()->addSpacing(6);
     mainLayout()->addWidget(_tabs);
 
-//    paramRejected = false;
-//    backupParams = element->params().getValues();
+//TODO    paramRejected = false;
+//TODO    backupParams = element->params().getValues();
 
     _editorLabel->setFocus();
 }
@@ -98,11 +96,12 @@ void ElementPropsDialog::setPageParams(QWidget* pageParams)
     _tabs->insertTab(0, pageParams, tr("Parameters"));
 }
 
+/* TODO:NEXT-VER
 QWidget* ElementPropsDialog::initPageOther()
 {
     return Ori::Gui::widgetV({
         _disabled = new QCheckBox(tr("Ignore this element in calculations")), 0 });
-}
+} */
 
 QWidget* ElementPropsDialog::initPageOutline()
 {
@@ -115,7 +114,7 @@ void ElementPropsDialog::populate()
 {
     _editorLabel->setText(_element->label());
     _editorTitle->setText(_element->title());
-    _disabled->setChecked(_element->disabled());
+    // TODO:NEXT-VER _disabled->setChecked(_element->disabled());
 
     populateParams();
 }
@@ -126,7 +125,7 @@ void ElementPropsDialog::collect()
 
     _element->setLabel(_editorLabel->text());
     _element->setTitle(_editorTitle->text());
-    _element->setDisabled(_disabled->isChecked());
+    // TODO:NEXT-VER _element->setDisabled(_disabled->isChecked());
 
     collectParams();
 
@@ -141,7 +140,7 @@ void ElementPropsDialog::collect()
     //paramRejected = false;
 }
 
-//void ElementPropsDialog::valueRejected(Z::Parameter *param, double value, const char *reason)
+//TODO void ElementPropsDialog::valueRejected(Z::Parameter *param, double value, const char *reason)
 //{
 //    Q_UNUSED(value)
 //    paramRejected = true;
@@ -152,14 +151,12 @@ void ElementPropsDialog::collect()
 
 void ElementPropsDialog::dialogFinished(int result)
 {
-//    if (result == QDialog::Rejected)
+//TODO    if (result == QDialog::Rejected)
 //        element->params().setValues(backupParams);
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
-//                           ElementPropsDialog_None
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 ElementPropsDialog_None::ElementPropsDialog_None(Element *elem, QWidget *parent) : ElementPropsDialog(elem, parent)
 {
@@ -169,10 +166,7 @@ ElementPropsDialog_None::ElementPropsDialog_None(Element *elem, QWidget *parent)
     setPageParams(label);
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-//                           ElementPropsDialog_List
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 ElementPropsDialog_List::ElementPropsDialog_List(Element *elem, QWidget *parent) : ElementPropsDialog(elem, parent)
 {
@@ -196,10 +190,7 @@ void ElementPropsDialog_List::collectParams()
     _editors->apply();
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-//                           ElementPropsDialog_Abcd
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 ElementPropsDialog_Abcd::ElementPropsDialog_Abcd(Element *elem, QWidget *parent) : ElementPropsDialog(elem, parent)
 {

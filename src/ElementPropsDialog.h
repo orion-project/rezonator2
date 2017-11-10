@@ -38,19 +38,19 @@ private:
     Element *_element;
     QTabWidget *_tabs;
     QLineEdit *_editorLabel, *_editorTitle;
-    QCheckBox *_disabled;
-    //Z::NamedValues backupParams;
-    //bool paramRejected;
+    // TODO:NEXT-VER QCheckBox *_disabled;
+    //TODO Z::NamedValues backupParams;
+    //TODO bool paramRejected;
 
-    QWidget* initPageOther();
+    // TODO:NEXT-VER QWidget* initPageOther();
     QWidget* initPageOutline();
 
 private slots:
-    //void valueRejected(Z::Parameter *param, double value, const char* reason);
+    //TODO void valueRejected(Z::Parameter *param, double value, const char* reason);
     void dialogFinished(int result);
 };
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 class ElementPropsDialog_None : public ElementPropsDialog
 {
@@ -60,7 +60,7 @@ public:
     explicit ElementPropsDialog_None(Element *elem, QWidget *parent = 0);
 };
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 class ElementPropsDialog_List : public ElementPropsDialog
 {
@@ -77,7 +77,7 @@ private:
     ParamsEditor* _editors;
 };
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 class ElementPropsDialog_Abcd : public ElementPropsDialog
 {
@@ -94,7 +94,7 @@ private:
     ParamsEditorAbcd *_editorMt, *_editorMs;
 };
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 namespace Z {
 namespace Dlgs {
@@ -106,7 +106,5 @@ bool elementProps(class Element *elem, QWidget *parent = 0);
 
 } // namespace Dlgs
 } // namespace Z
-
-////////////////////////////////////////////////////////////////////////////////
 
 #endif // ELEMENT_PROP_DLG_H

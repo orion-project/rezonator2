@@ -170,8 +170,6 @@ class SchemaMdiArea : public QMdiArea, public SettingsListener
 public:
     explicit SchemaMdiArea(QWidget *parent = 0);
 
-    void populateMenu(QMenu*);
-
     BasicMdiChild* activeChild() const;
     EditableWindow* activeEditableChild() const;
 
@@ -187,6 +185,10 @@ public slots:
     void editableChild_Copy();
     void editableChild_Paste();
     void editableChild_SelectAll();
+
+    /// Slot that should be connected to signal aboutToShow() of menu 'Window'
+    /// to populate it with actions allowing subwindow activation.
+    void populateWindowMenu();
 
 private:
     void updateBackground();

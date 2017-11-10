@@ -34,6 +34,10 @@ public:
     bool canCopy() override;
     bool canPaste() override { return true; }
 
+protected:
+    // SchemaViewWindow is always visible and can't be closed.
+    void closeEvent(QCloseEvent *event) override { event->ignore(); }
+
 private:
     QAction *actnElemAdd, *actnElemInsertBefore, *actnElemInsertAfter, *actnElemProp,
         *actnElemMatr, *actnElemMatrAll, *actnElemDelete/*, TODO:NEXT-VER *actnEditCopy, *actnEditPaste */;

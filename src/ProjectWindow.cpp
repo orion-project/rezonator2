@@ -49,10 +49,10 @@ ProjectWindow::ProjectWindow() : QMainWindow(), SchemaToolWindow(new Schema())
     _calculations = new CalcManager(schema(), this);
     _operations = new ProjectOperations(schema(), this, _calculations);
 
-    auto schemaViewWindow = new SchemaViewWindow(schema(), _calculations);
+    _schemaWindow = new SchemaViewWindow(schema(), _calculations);
 
     _mdiArea = new SchemaMdiArea;
-    _mdiArea->appendChild(schemaViewWindow);
+    _mdiArea->appendChild(_schemaWindow);
     setCentralWidget(_mdiArea);
 
     connect(_mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(updateMenuBar()));
@@ -72,7 +72,7 @@ ProjectWindow::ProjectWindow() : QMainWindow(), SchemaToolWindow(new Schema())
     updateStatusInfo();
     updateStability();
 
-    _mdiToolbar->subWindowActivated(schemaViewWindow);
+    _mdiToolbar->subWindowActivated(_schemaWindow);
 
     QTimer::singleShot(200, _operations, SLOT(checkCmdLine()));
 }
@@ -141,7 +141,9 @@ void ProjectWindow::createActions()
     // TODO:NEXT-VER actnToolsBeamCalc = _a(tr("&Beam Calculator"), this, SLOT(showBeamCalculator()), ":/toolbar/gauss");
     actnToolsPrefs = A_(tr("Pre&ferences..."), this, SLOT(showPreferences()), ":/toolbar/options");
 
-    actnWndSchema = A_(tr("Show &Schema Window"), _mdiArea, SLOT(activateChild()), ":/toolbar/schema", Qt::Key_F12);
+    // These common window actions must not have data (action->data()), as data presense indicates that
+    // this action is for activation of specific subwindow and _mdiArea is responsible for it.
+    actnWndSchema = A_(tr("Show &Schema Window"), this, SLOT(showSchemaWindow()), ":/toolbar/schema", Qt::Key_F12);
     actnWndProtocol = A_(tr("Show &Protocol Window"), this, SLOT(showProtocolWindow()), ":/toolbar/protocol");
     actnWndClose = A_(tr("Cl&ose"), _mdiArea, SLOT(closeActiveSubWindow()));
     actnWndCloseAll = A_(tr("Close &All"), _mdiArea, SLOT(closeAllSubWindows()), ":/toolbar/windows_close");
@@ -158,6 +160,8 @@ void ProjectWindow::createActions()
     actnFileSave->setEnabled(false);
     actnEditCut->setVisible(false);
     actnEditCut->setEnabled(false); */
+
+    #undef A_
 }
 
 void ProjectWindow::createMenuBar()
@@ -178,17 +182,18 @@ void ProjectWindow::createMenuBar()
         { new Ori::Widgets::StylesMenu(_styler),
           new Ori::Widgets::LanguagesMenu(_translator, ":/toolbar16/langs") });
 
-    menuFunctions = Ori::Gui::menu(tr("F&unctions"),
+    menuFunctions = Ori::Gui::menu(tr("F&unctions"), this,
         { actnFuncRoundTrip, actnFuncMultFwd, actnFuncMultBkwd, 0, actnFuncStabMap,
           actnFuncStabMap2d, 0, actnFuncCaustic, 0, actnFuncRepRate });
 
-    menuTools = Ori::Gui::menu(tr("&Tools", "Menu title"),
-        { /*actnToolsBeamCalc,*/ actnToolsCatalog, 0, actnToolsPrefs });
+    menuTools = Ori::Gui::menu(tr("&Tools", "Menu title"), this,
+        { /*TODO:NEXT-VER actnToolsBeamCalc,*/ actnToolsCatalog, 0, actnToolsPrefs });
 
-    menuWindow = Ori::Gui::menu(tr("&Window"), {});
-    connect(menuWindow, SIGNAL(aboutToShow()), this, SLOT(updateWindowMenu()));
+    menuWindow = Ori::Gui::menu(tr("&Window"), this,
+        { actnWndSchema, actnWndProtocol, 0, actnWndClose, actnWndCloseAll, 0, actnWndTile, actnWndCascade, 0 });
+    connect(menuWindow, SIGNAL(aboutToShow()), _mdiArea, SLOT(populateWindowMenu()));
 
-    menuHelp = Ori::Gui::menu(tr("&Help"),
+    menuHelp = Ori::Gui::menu(tr("&Help"), this,
         { actnHelpUpdates, actnHelpHomepage, 0, actnHelpAbout });
 }
 
@@ -319,13 +324,6 @@ void ProjectWindow::updateStability()
     status->setToolTip(STATUS_STABIL, hint);
 }
 
-void ProjectWindow::updateWindowMenu()
-{
-    Ori::Gui::populate(menuWindow, {actnWndSchema, actnWndProtocol, 0, actnWndClose,
-                                    actnWndCloseAll, 0, actnWndTile, actnWndCascade, 0});
-    _mdiArea->populateMenu(menuWindow);
-}
-
 void ProjectWindow::closeEvent(QCloseEvent* ce)
 {
     if (_operations->canClose())
@@ -401,6 +399,11 @@ void ProjectWindow::actionHelpUpdate()
 void ProjectWindow::showProtocolWindow()
 {
     _mdiArea->appendChild(ProtocolWindow::create());
+}
+
+void ProjectWindow::showSchemaWindow()
+{
+    _mdiArea->activateChild(_schemaWindow);
 }
 
 //------------------------------------------------------------------------------

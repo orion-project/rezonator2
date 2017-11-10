@@ -13,9 +13,10 @@ class QMenu;
 class QToolBar;
 QT_END_NAMESPACE
 
-class SchemaMdiArea;
-class ProjectOperations;
 class CalcManager;
+class ProjectOperations;
+class SchemaMdiArea;
+class SchemaViewWindow;
 
 namespace Ori {
     class Styler;
@@ -75,6 +76,7 @@ private:
     Ori::Widgets::MruMenu* _mruMenu;
     Ori::Widgets::MdiToolBar* _mdiToolbar;
     Ori::MruFileList *_mruList;
+    SchemaViewWindow* _schemaWindow;
 
     void createActions();
     void createMenuBar();
@@ -97,14 +99,12 @@ private slots:
     void showElementsCatalog();
     void showPreferences();
     void showProtocolWindow();
+    void showSchemaWindow();
     void showBeamCalculator();
 
     /// Slot connected to @c mdiArea::subWindowActivated() signal.
     /// This method is automatically called when mdiArea changes active widget.
     void updateMenuBar();
-
-    /// Updates MDI windows menu. This methods called when "Window" menu popups.
-    void updateWindowMenu();
 };
 
 #endif // PROJECT_WINDOW_H

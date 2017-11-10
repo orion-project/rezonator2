@@ -194,7 +194,9 @@ void SchemaMdiArea::appendChild(BasicMdiChild* window)
 
 void SchemaMdiArea::activateChild()
 {
-    activateChild(qobject_cast<QAction*>(sender())->data().value<QWidget*>());
+    auto action = qobject_cast<QAction*>(sender());
+    auto window = reinterpret_cast<BasicMdiChild*>(action->data().value<void*>());
+    activateChild(window);
 }
 
 void SchemaMdiArea::activateChild(QWidget *window)
@@ -239,16 +241,47 @@ void SchemaMdiArea::editableChild_SelectAll()
     if (w) w->selectAll();
 }
 
-void SchemaMdiArea::populateMenu(QMenu* menu)
+void SchemaMdiArea::populateWindowMenu()
 {
-    foreach (QMdiSubWindow* window, subWindowList())
-        if (window->isVisible())
-        {
-            auto action = menu->addAction(window->windowTitle(), this, SLOT(activateChild()));
-            action->setCheckable(true);
-            action->setChecked(window == activeSubWindow());
-            action->setData(QVariant::fromValue((QWidget*)window));
-        }
+    QMenu* menu = qobject_cast<QMenu*>(sender());
+    if (!menu) return;
+
+    auto subWindows = subWindowList();
+
+    // Remove action of windows that are no more exist
+    for (auto action : menu->actions())
+    {
+        if (action->data().isNull()) continue;
+        // If we interpret variant data as QMdiSubWindow*, Qt seems to call for some of their
+        // methods, and app is crashed because of window is already deleted. So use plain void*.
+        auto window = reinterpret_cast<QMdiSubWindow*>(action->data().value<void*>());
+        if (subWindows.contains(window)) continue;
+        menu->removeAction(action);
+        delete action;
+    }
+
+    // Append actions for windows that are not in menu
+    auto actions = menu->actions();
+    auto activeWindow = activeSubWindow();
+    for (auto window : subWindows)
+    {
+        if (!window->isVisible()) continue;
+
+        bool windowInMenu = false;
+        for (auto action: actions)
+            if (action->data().value<void*>() == window)
+            {
+                action->setChecked(window == activeWindow);
+                windowInMenu = true;
+                break;
+            }
+        if (windowInMenu) continue;
+
+        auto action = menu->addAction(window->windowTitle(), this, SLOT(activateChild()));
+        action->setCheckable(true);
+        action->setChecked(window == activeWindow);
+        action->setData(QVariant::fromValue<void*>(window));
+    }
 }
 
 void SchemaMdiArea::settingsChanged()
