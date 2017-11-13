@@ -46,7 +46,7 @@ public:
     void readParameter(QDomElement& root, Z::Parameter *param);
     void readParameters(QDomElement& root, const QString& name, const Z::Parameters& params);
 
-    void readValueTS(QDomElement& root, const QString& name, Z::ValueTS& value);
+    void readValueTS(QDomElement& root, const QString& name, Z::PointTS& value);
     void readVariable(QDomElement& root, const QString& name, Z::Variable* var);
 
     void warning(const QDomElement& node, const QString& message);

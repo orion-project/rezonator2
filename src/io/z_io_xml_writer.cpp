@@ -78,7 +78,7 @@ void Writer::writeParameters(QDomElement& root, const QString& name, const Z::Pa
         writeParameter(node, param);
 }
 
-void Writer::writeValueTS(QDomElement& root, const QString &name, const Z::ValueTS& value)
+void Writer::writeValueTS(QDomElement& root, const QString &name, const Z::PointTS& value)
 {
     auto node = makeNode(root, name);
     node.setAttribute("T", string(value.T));

@@ -62,7 +62,7 @@ void CausticFunction::calculate()
 
 bool CausticFunction::prepareSP()
 {
-// TODO
+// TODO:NEXT-VER
 //    const Z::Pump::Params& pump = _schema->pump();
 
 //    auto error = pump.verify();
@@ -83,7 +83,7 @@ bool CausticFunction::prepareSP()
 
 void CausticFunction::prepareSP_vector()
 {
-// TODO
+// TODO:NEXT-VER
 //    const Z::Pump::Params& pump = _schema->pump();
 //    const Z::Units::Set& units = _schema->units();
 //    double r_t = units.beamsize2linear(pump.vector.radius().T);
@@ -98,7 +98,7 @@ void CausticFunction::prepareSP_vector()
 
 void CausticFunction::prepareSP_sections()
 {
-// TODO
+// TODO:NEXT-VER
 //    const Z::Pump::Params& pump = _schema->pump();
 //    const Z::Units::Set& units = _schema->units();
 //    double r1_t = units.beamsize2linear(pump.sections.radius_1().T);
@@ -111,11 +111,11 @@ void CausticFunction::prepareSP_sections()
 //    _pumpMode = Pump_Ray;
 }
 
-Z::ValueTS CausticFunction::calculateSP()
+Z::PointTS CausticFunction::calculateSP()
 {
     //const Z::Units::Set& units = _schema->units();
-    Z::ValueTS result;
-    /* TODO switch (_pumpMode)
+    Z::PointTS result;
+    /* TODO:NEXT-VER switch (_pumpMode)
     {
     case Pump_Ray:
         Z::RayVector ray_t(_ray_in_t, _calc->Mt());
@@ -149,7 +149,7 @@ QString CausticFunction::calculatePoint(const double& arg)
     _elem->setSubRange(arg);
     _calc->multMatrix();
 
-    Z::ValueTS value;
+    Z::PointTS value;
     switch (_schema->tripType())
     {
     case TripType::SW: break; // TODO
@@ -159,10 +159,5 @@ QString CausticFunction::calculatePoint(const double& arg)
 
     return QString::fromUtf8("ω<sub>T</sub>: %1; ω<sub>S</sub>: %2")
             .arg(Z::format(value.T), Z::format(value.S));
-}
-
-QString CausticFunction::calculateNotables()
-{
-    return QString();
 }
 

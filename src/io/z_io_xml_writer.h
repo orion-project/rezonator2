@@ -49,7 +49,7 @@ public:
     void writeParameters(QDomElement& root, const QString& name, const Z::Parameters& params);
 
     /// Write T and S values (<root><name T="value.T" S="value.S"></root>)
-    void writeValueTS(QDomElement& root, const QString& name, const Z::ValueTS& value);
+    void writeValueTS(QDomElement& root, const QString& name, const Z::PointTS& value);
 
     void writeVariable(QDomElement& root, const QString& name, const Z::Variable* var);
 

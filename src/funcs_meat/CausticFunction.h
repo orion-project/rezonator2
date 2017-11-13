@@ -6,7 +6,7 @@
 class CausticFunction : public PlotFunction
 {
 public:
-    enum Mode { Beamsize, Curvature, Angle, };
+    enum Mode { Beamsize, CurvatureRadius, Angle, };
 
     FUNC_ALIAS("Caustic")
     FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Caustic"))
@@ -14,7 +14,7 @@ public:
     CausticFunction(Schema *schema) : PlotFunction(schema) {}
 
     void calculate() override;
-    QString calculateNotables() override;
+    bool hasOptions() const override { return true; }
     QString calculatePoint(const double& arg) override;
 
     Mode mode() const { return _mode; }
@@ -31,7 +31,7 @@ private:
     bool prepareSP();
     void prepareSP_vector();
     void prepareSP_sections();
-    Z::ValueTS calculateSP();
+    Z::PointTS calculateSP();
 };
 
 #endif // CAUSTIC_FUNCTION_H

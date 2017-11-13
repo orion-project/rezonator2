@@ -66,7 +66,7 @@ QString PrefixedValue::str() const
 //                                  ValueTS
 ////////////////////////////////////////////////////////////////////////////////
 
-QString ValueTS::str() const
+QString PointTS::str() const
 {
     return QString("[T: %1; S: %2]").arg(Z::str(T), Z::str(S));
 }

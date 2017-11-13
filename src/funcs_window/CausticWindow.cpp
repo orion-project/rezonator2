@@ -17,7 +17,7 @@ CausticParamsPanel::CausticParamsPanel(CausticWindow *window): _window(window)
     Ori::Gui::layoutV(this, 0, 0, {
         modeHeader,
         makeModeButton(":/toolbar/plot_w", tr("Beam radius"), CausticFunction::Mode::Beamsize),
-        makeModeButton(":/toolbar/plot_r", tr("Wavefront curvature radius"), CausticFunction::Mode::Curvature),
+        makeModeButton(":/toolbar/plot_r", tr("Wavefront curvature radius"), CausticFunction::Mode::CurvatureRadius),
         makeModeButton(":/toolbar/plot_v", QString(), CausticFunction::Mode::Angle),
         0
     });
@@ -69,13 +69,13 @@ void CausticParamsPanel::prepareModes()
 void CausticParamsPanel::prepareModes_ray()
 {
     _modeButtons[CausticFunction::Mode::Angle]->setText(tr("Axial angle"));
-    _modeButtons[CausticFunction::Mode::Curvature]->setVisible(false); // there is no sense
+    _modeButtons[CausticFunction::Mode::CurvatureRadius]->setVisible(false); // there is no sense
 }
 
 void CausticParamsPanel::prepareModes_gauss()
 {
     _modeButtons[CausticFunction::Mode::Angle]->setText(tr("Angular spread "));
-    _modeButtons[CausticFunction::Mode::Curvature]->setVisible(true);
+    _modeButtons[CausticFunction::Mode::CurvatureRadius]->setVisible(true);
 }
 
 void CausticParamsPanel::showMode()

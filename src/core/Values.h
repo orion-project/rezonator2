@@ -60,15 +60,15 @@ private:
 
 //------------------------------------------------------------------------------
 
-struct ValueTS
+struct PointTS
 {
     double T;
     double S;
 
-    ValueTS() : T(0), S(0) {}
-    ValueTS(const double& t, const double& s) : T(t), S(s) {}
-    ValueTS(const ValueTS& other) : T(other.T), S(other.S) {}
-    ValueTS(const ValueTS* other) : T(other->T), S(other->S) {}
+    PointTS() : T(0), S(0) {}
+    PointTS(const double& t, const double& s) : T(t), S(s) {}
+    PointTS(const PointTS& other) : T(other.T), S(other.S) {}
+    PointTS(const PointTS* other) : T(other->T), S(other->S) {}
 
     void operator =(const double& v) { T = v, S = v; }
 

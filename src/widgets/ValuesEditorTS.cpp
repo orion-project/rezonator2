@@ -92,7 +92,7 @@ double ValueEditorTS::valueS() const
     return _editorS->value();
 }
 
-void ValueEditorTS::setValue(Z::ValueTS *value)
+void ValueEditorTS::setValue(Z::PointTS *value)
 {
     _value = value;
     if (!value) return;
@@ -207,7 +207,7 @@ ValuesEditorTS::ValuesEditorTS(QWidget *parent) : QVBoxLayout(parent)
         e->symbolLabel()->setFixedWidth(max_w);
 }*/
 
-void ValuesEditorTS::addEditor(int id, Z::ValueTS *value = nullptr)
+void ValuesEditorTS::addEditor(int id, Z::PointTS *value = nullptr)
 {
     if (!_editors.contains(id))
     {
@@ -242,7 +242,7 @@ void ValuesEditorTS::setValueS(int id, const double& value)
     if (editor) editor->setValueS(value);
 }
 
-void ValuesEditorTS::setValue(int id, Z::ValueTS *value)
+void ValuesEditorTS::setValue(int id, Z::PointTS *value)
 {
     if (!value) return;
     auto editor = getEditor(id);

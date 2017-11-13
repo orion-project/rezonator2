@@ -158,7 +158,7 @@ void Reader::readParameters(QDomElement& root, const QString& name, const Z::Par
         readParameter(node, param);
 }
 
-void Reader::readValueTS(QDomElement& root, const QString& name, Z::ValueTS& value)
+void Reader::readValueTS(QDomElement& root, const QString& name, Z::PointTS& value)
 {
     GET_NODE(node, root, name)
     readDoubleAttribute(node, "T", value.T);

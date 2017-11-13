@@ -90,26 +90,26 @@ TEST_METHOD(Value_storedStr)
 
 TEST_METHOD(ValueTS_constructors)
 {
-    Z::ValueTS v0;
+    Z::PointTS v0;
     ASSERT_VALUE_T_S(v0, 0, 0)
 
-    Z::ValueTS v1(10, 20);
+    Z::PointTS v1(10, 20);
     ASSERT_VALUE_T_S(v1, 10, 20)
 
-    Z::ValueTS v2(v1);
+    Z::PointTS v2(v1);
     ASSERT_VALUE_T_S(v2, 10, 20)
 
-    Z::ValueTS v3(&v1);
+    Z::PointTS v3(&v1);
     ASSERT_VALUE_T_S(v3, 10, 20)
 }
 
 TEST_METHOD(ValueTS_assign)
 {
-    Z::ValueTS v1;
+    Z::PointTS v1;
     v1 = 10;
     ASSERT_VALUE_T_S(v1, 10, 10)
 
-    Z::ValueTS v2;
+    Z::PointTS v2;
     v2.set(10, 20);
     ASSERT_VALUE_T_S(v2, 10, 20)
 }

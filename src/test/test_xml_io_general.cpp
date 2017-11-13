@@ -315,7 +315,7 @@ TEST_METHOD(readValueTS)
 {
     TestXmlReader file("<root><node T=\"3.14\" S=\"2.73\"/></root>");
 
-    Z::ValueTS val;
+    Z::PointTS val;
     file.readValueTS(file.root, "node", val);
     ASSERT_VALUE_T_S(val, 3.14, 2.73);
 
@@ -328,9 +328,9 @@ TEST_METHOD(readValueTS)
 TEST_METHOD(writeValueTS)
 {
     TestXmlWriter writer;
-    Z::ValueTS saved1(M_PI, M_E);
-    Z::ValueTS saved2(M_PI*1e100, M_E*1e-100);
-    Z::ValueTS saved3(-M_PI*1e100, -M_E*1e-100);
+    Z::PointTS saved1(M_PI, M_E);
+    Z::PointTS saved2(M_PI*1e100, M_E*1e-100);
+    Z::PointTS saved3(-M_PI*1e100, -M_E*1e-100);
     writer.writeValueTS(writer.root, "value1", saved1);
     writer.writeValueTS(writer.root, "value2", saved2);
     writer.writeValueTS(writer.root, "value3", saved3);
@@ -342,7 +342,7 @@ TEST_METHOD(writeValueTS)
     LOG_SCHEMA_FILE(reader)
     ASSERT_IS_TRUE(reader.ok())
 
-    Z::ValueTS loaded1, loaded2, loaded3;
+    Z::PointTS loaded1, loaded2, loaded3;
     reader.readValueTS(reader.root, "value1", loaded1);
     reader.readValueTS(reader.root, "value2", loaded2);
     reader.readValueTS(reader.root, "value3", loaded3);

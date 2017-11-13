@@ -15,7 +15,7 @@ namespace Widgets {
     class ValueEdit;
 }}
 namespace Z {
-    struct ValueTS;
+    struct PointTS;
 }
 
 class ValueEditorTS : public QWidget
@@ -28,7 +28,7 @@ public:
     double valueS() const;
     void setValueT(const double& value);
     void setValueS(const double& value);
-    void setValue(Z::ValueTS *value);
+    void setValue(Z::PointTS *value);
     void setLabel(const QString& label);
     void setSymbol(const QString& symbol);
     QLabel* symbolLabel() const { return _symbol; }
@@ -41,7 +41,7 @@ signals:
     void goingFocusNext();
     void goingFocusPrev();
 private:
-    Z::ValueTS *_value = nullptr;
+    Z::PointTS *_value = nullptr;
     Ori::Widgets::ValueEdit *_editorT, *_editorS;
     QLabel *_label, *_symbol;
 private slots:
@@ -54,12 +54,12 @@ class ValuesEditorTS : public QVBoxLayout
     Q_OBJECT
 public:
     explicit ValuesEditorTS(QWidget *parent = 0);
-    void addEditor(int id, Z::ValueTS *value);
+    void addEditor(int id, Z::PointTS *value);
     double valueT(int id) const;
     double valueS(int id) const;
     void setValueT(int id, const double& value);
     void setValueS(int id, const double& value);
-    void setValue(int id, Z::ValueTS *value);
+    void setValue(int id, Z::PointTS *value);
     void setLabel(int id, const QString& label);
     void setSymbol(int id, const QString& symbol);
     void setVisible(int id, bool visible);
