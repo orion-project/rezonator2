@@ -27,6 +27,8 @@ public:
 
     Z::Parameter* parameter() const { return _param; }
 
+    QString verify() const;
+
     QWidget* labelName() const;
     QWidget* labelLabel() const;
     QWidget* valueEditor() const;
@@ -36,7 +38,6 @@ signals:
     void focused();
     void goingFocusNext();
     void goingFocusPrev();
-    //void valueRejected(Z::Parameter *param, double value, const char* reason);
 
 public slots:
     void populate();
@@ -58,7 +59,7 @@ private slots:
     void editorKeyPressed(int key);
 };
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 class ParamsEditor : public QWidget
 {
@@ -72,8 +73,7 @@ public:
     void focus();
     void focus(Z::Parameter *param);
 
-signals:
-    //void paramRejected(Z::Parameter *param, double value, const char* reason);
+    QString verify() const;
 
 public slots:
     void apply();
@@ -92,10 +92,9 @@ private slots:
     void paramFocused();
     void focusNextParam();
     void focusPrevParam();
-    //void valueRejected(Z::Parameter *param, double value, const char* reason);
 };
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 class ParamsEditorAbcd : public QGroupBox
 {

@@ -3,6 +3,43 @@
 
 #include <math.h>
 
+// TODO:NEXT-VER in general case all parameters units should be verified too.
+// But currenly we have verification only in that places which always use correct uints (e.g. Element props dialog).
+
+class CurvatureRadiusVerifier : public Z::ValueVerifier
+{
+public:
+    bool enabled() const override { return true; }
+    QString verify(const Z::Value& value) const override
+    {
+        if (value.value() == 0)
+            return qApp->translate("Param", "Curvature radius can not be zero.");
+        return QString();
+    }
+};
+
+class FocalLengthVerifier : public Z::ValueVerifier
+{
+public:
+    bool enabled() const override { return true; }
+    QString verify(const Z::Value& value) const override
+    {
+        if (value.value() == 0)
+            return qApp->translate("Param", "Focal length can not be zero.");
+        return QString();
+    }
+};
+
+CurvatureRadiusVerifier* globalCurvatureRadiusVerifier()
+{
+    static CurvatureRadiusVerifier v; return &v;
+}
+
+FocalLengthVerifier* globalFocalLengthVerifier()
+{
+    static FocalLengthVerifier v; return &v;
+}
+
 //------------------------------------------------------------------------------
 //                             ElemEmptyRange
 
@@ -67,6 +104,8 @@ ElemCurveMirror::ElemCurveMirror()
                               qApp->translate("Param", "Zero angle is normal incidence."));
     addParam(_radius, 100, Z::Units::mm());
     addParam(_alpha, 0, Z::Units::deg());
+
+    _radius->setVerifier(globalCurvatureRadiusVerifier());
 }
 
 void ElemCurveMirror::calcMatrixInternal()
@@ -74,18 +113,6 @@ void ElemCurveMirror::calcMatrixInternal()
     _mt.assign(1, 0, -2.0 / radius() / cos(alpha()), 1);
     _ms.assign(1, 0, -2.0 / radius() * cos(alpha()), 1);
 }
-
-/* TODO validation
-const char* ElemCurveMirror::checkParameter(Z::Parameter *param, double newValue) const
-{
-    Q_UNUSED(param)
-    Q_UNUSED(newValue)
-    // TODO check param
-//    if (param->index == MIRROR_R && newValue == 0.0)
-//        return QT_TRANSLATE_NOOP("Parameter error",
-//                                 "Curvature radius of the mirror can not be zero.");
-    return nullptr;
-}*/
 
 //------------------------------------------------------------------------------
 //                                ElemThinLens
@@ -100,6 +127,8 @@ ElemThinLens::ElemThinLens()
                               qApp->translate("Param", "Zero angle is normal incidence."));
     addParam(_focus, 100, Z::Units::mm());
     addParam(_alpha, 0, Z::Units::deg());
+
+    _focus->setVerifier(globalFocalLengthVerifier());
 }
 
 void ElemThinLens::calcMatrixInternal()
@@ -107,17 +136,6 @@ void ElemThinLens::calcMatrixInternal()
     _mt.assign(1.0, 0.0, -1.0 / focus() / cos(alpha()), 1.0);
     _ms.assign(1.0, 0.0, -1.0 / focus() * cos(alpha()), 1.0);
 }
-
-/*const char* ElemThinLens::checkParameter(Z::Parameter *param, double newValue) const
-{
-    Q_UNUSED(param)
-    Q_UNUSED(newValue)
-    // TODO check param
-//    if (param->index == LENS_F && newValue == 0.0)
-//        return QT_TRANSLATE_NOOP("Parameter error",
-//                                 "Focal length of the lens can not be zero.");
-    return nullptr;
-}*/
 
 //------------------------------------------------------------------------------
 //                              ElemCylinderLensT
@@ -304,7 +322,7 @@ void ElemMatrix::setMatrix(int offset, const double& a, const double& b, const d
     params().at(offset+3)->setValue(Z::Value(d, Z::Units::none()));
 }
 
-// TODO checkParameter(): can A and D be 0 and what does it mean?
+// TODO:NEXT-VER checkParameter(): can A and D be 0 and what does it mean?
 
 void ElemMatrix::calcMatrixInternal()
 {

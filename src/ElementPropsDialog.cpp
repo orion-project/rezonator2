@@ -50,7 +50,6 @@ ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : Rezonat
     setWindowTitle(_element->typeName());
     setWindowIcon(QIcon(":/window_icons/element"));
     setAttribute(Qt::WA_DeleteOnClose);
-    connect(this, SIGNAL(finished(int)), this, SLOT(dialogFinished(int)));
 
     // common props
     _editorLabel = new QLineEdit;
@@ -70,9 +69,6 @@ ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : Rezonat
     mainLayout()->addLayout(layoutCommon);
     mainLayout()->addSpacing(6);
     mainLayout()->addWidget(_tabs);
-
-//TODO    paramRejected = false;
-//TODO    backupParams = element->params().getValues();
 
     _editorLabel->setFocus();
 }
@@ -121,40 +117,25 @@ void ElementPropsDialog::populate()
 
 void ElementPropsDialog::collect()
 {
-    _element->lock();
+    auto res = verifyParams();
+    if (!res.isEmpty())
+    {
+        _tabs->setCurrentIndex(0);
+        // TODO:NEXT-VER extend verification result with param ref and focus invalid param editor
+        QMessageBox::warning(this, qApp->applicationName(), res);
+        return;
+    }
+
+    ElementLocker locker(_element);
 
     _element->setLabel(_editorLabel->text());
     _element->setTitle(_editorTitle->text());
     // TODO:NEXT-VER _element->setDisabled(_disabled->isChecked());
 
     collectParams();
-
-    _element->unlock();
-
-    //if (!paramRejected)
-//    {
-        accept();
-        close();
-//    }
-
-    //paramRejected = false;
+    accept();
+    close();
 }
-
-//TODO void ElementPropsDialog::valueRejected(Z::Parameter *param, double value, const char *reason)
-//{
-//    Q_UNUSED(value)
-//    paramRejected = true;
-//    tabs->setCurrentIndex(0);
-//    editorParams->focus(param);
-//    QMessageBox::warning(this, qApp->applicationName(), qApp->translate("Schema errors", reason));
-//}
-
-void ElementPropsDialog::dialogFinished(int result)
-{
-//TODO    if (result == QDialog::Rejected)
-//        element->params().setValues(backupParams);
-}
-
 
 //------------------------------------------------------------------------------
 
@@ -171,9 +152,6 @@ ElementPropsDialog_None::ElementPropsDialog_None(Element *elem, QWidget *parent)
 ElementPropsDialog_List::ElementPropsDialog_List(Element *elem, QWidget *parent) : ElementPropsDialog(elem, parent)
 {
     _editors = new ParamsEditor(&elem->params());
-    // TODO validation
-//    connect(editorParams, SIGNAL(paramRejected(Z::Parameter*,double,const char*)),
-//        this, SLOT(valueRejected(Z::Parameter*,double,const char*)));
 
     setPageParams(_editors);
 
@@ -188,6 +166,11 @@ void ElementPropsDialog_List::populateParams()
 void ElementPropsDialog_List::collectParams()
 {
     _editors->apply();
+}
+
+QString ElementPropsDialog_List::verifyParams() const
+{
+    return _editors->verify();
 }
 
 //------------------------------------------------------------------------------

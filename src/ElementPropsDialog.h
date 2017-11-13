@@ -31,6 +31,7 @@ protected:
 
     virtual void populateParams() {}
     virtual void collectParams() {}
+    virtual QString verifyParams() const { return QString(); }
 
     void setPageParams(QWidget* pageParams);
 
@@ -39,15 +40,9 @@ private:
     QTabWidget *_tabs;
     QLineEdit *_editorLabel, *_editorTitle;
     // TODO:NEXT-VER QCheckBox *_disabled;
-    //TODO Z::NamedValues backupParams;
-    //TODO bool paramRejected;
 
     // TODO:NEXT-VER QWidget* initPageOther();
     QWidget* initPageOutline();
-
-private slots:
-    //TODO void valueRejected(Z::Parameter *param, double value, const char* reason);
-    void dialogFinished(int result);
 };
 
 //------------------------------------------------------------------------------
@@ -72,6 +67,7 @@ public:
 protected:
     void populateParams() override;
     void collectParams() override;
+    virtual QString verifyParams() const override;
 
 private:
     ParamsEditor* _editors;

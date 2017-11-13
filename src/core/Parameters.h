@@ -14,7 +14,9 @@ enum class ParamsEditor { None, List, ABCD };
 class ParameterBase;
 
 //------------------------------------------------------------------------------
-/// Base class for objects who want to own parameters.
+/**
+    Base class for objects who want to own parameters.
+*/
 class ParameterOwner
 {
 public:
@@ -108,31 +110,27 @@ public:
     void setValue(const TValue& value);
 
     QString verify(const TValue& value);
-    void setVerifier(const ValueVerifierBase<TValue>& verifier) { _verifier = verifier; }
+    void setVerifier(ValueVerifierBase<TValue>* verifier) { _verifier = verifier; }
 
     QString str() const override;
 
 private:
     TValue _value;
-    ValueVerifierBase<TValue> _verifier;
+    ValueVerifierBase<TValue> *_verifier = nullptr;
 };
 
 //------------------------------------------------------------------------------
-/// Container for list of parameters.
-///
+/**
+    Container for list of parameters.
+*/
 template <class TParam> class ParametersList : public QVector<TParam*>
 {
 public:
     ParametersList(): QVector<TParam*>() {}
     ParametersList(const QVector<TParam*>& other) : QVector<TParam*>(other) {}
-//    ParametersList(int size): QVector<TParam*>(size) {}
     ParametersList(std::initializer_list<TParam*> args): QVector<TParam*>(args) {}
-//    ~ParametersList() { for (int i = 0; i < QVector<TParam*>::size(); i++) delete QVector<TParam*>::at(i); }
 
     TParam* byAlias(const QString& alias);
-
-    //NamedValues getValues();
-    //void setValues(const NamedValues& values);
 
     ParametersList mid(int pos, int len) const
     {

@@ -5,7 +5,6 @@
 
 #include <QApplication>
 
-////////////////////////////////////////////////////////////////////////////////
 DECLARE_ELEMENT(ElemEmptyRange, ElementRange)
     TYPE_NAME(qApp->translate("Elements", "Empty space"))
     DEFAULT_LABEL("L")
@@ -13,7 +12,8 @@ DECLARE_ELEMENT(ElemEmptyRange, ElementRange)
     SUB_RANGE
 DECLARE_ELEMENT_END
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+
 DECLARE_ELEMENT(ElemMediumRange, ElementMedium)
     TYPE_NAME(qApp->translate("Elements", "Space filled with medium"))
     DEFAULT_LABEL("L")
@@ -21,7 +21,8 @@ DECLARE_ELEMENT(ElemMediumRange, ElementMedium)
     SUB_RANGE
 DECLARE_ELEMENT_END
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+
 DECLARE_ELEMENT(ElemPlate, ElementMedium)
     TYPE_NAME(qApp->translate("Elements", "Plate of matter"))
     DEFAULT_LABEL("Cr")
@@ -29,14 +30,16 @@ DECLARE_ELEMENT(ElemPlate, ElementMedium)
     SUB_RANGE
 DECLARE_ELEMENT_END
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+
 DECLARE_ELEMENT(ElemFlatMirror, Element)
     TYPE_NAME(qApp->translate("Elements", "Flat mirror"))
     DEFAULT_LABEL("M")
     PARAMS_EDITOR(None)
 DECLARE_ELEMENT_END
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+
 DECLARE_ELEMENT(ElemCurveMirror, Element)
     ElemCurveMirror();
     TYPE_NAME(qApp->translate("Elements", "Spherical mirror"))
@@ -49,7 +52,8 @@ private:
     Z::Parameter *_radius, *_alpha;
 DECLARE_ELEMENT_END
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+
 DECLARE_ELEMENT(ElemThinLens, Element)
     ElemThinLens();
     TYPE_NAME(qApp->translate("Elements", "Thin lens"))
@@ -62,21 +66,24 @@ protected:
     Z::Parameter *_focus, *_alpha;
 DECLARE_ELEMENT_END
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+
 DECLARE_ELEMENT(ElemCylinderLensT, ElemThinLens)
     TYPE_NAME(qApp->translate("Elements", "Thin cylindrical tangential lens"))
     DEFAULT_LABEL("F")
     CALC_MATRIX
 DECLARE_ELEMENT_END
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+
 DECLARE_ELEMENT(ElemCylinderLensS, ElemThinLens)
     TYPE_NAME(qApp->translate("Elements", "Thin cylindrical sagittal lens"))
     DEFAULT_LABEL("F")
     CALC_MATRIX
 DECLARE_ELEMENT_END
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+
 DECLARE_ELEMENT(ElemTiltedCrystal, ElementMedium)
     ElemTiltedCrystal();
     TYPE_NAME(qApp->translate("Elements", "Tilted plane-parallel crystal"))
@@ -88,7 +95,8 @@ protected:
     Z::Parameter *_alpha;
 DECLARE_ELEMENT_END
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+
 DECLARE_ELEMENT(ElemTiltedPlate, ElemTiltedCrystal)
     TYPE_NAME(qApp->translate("Elements", "Tilted plane-parallel plate"))
     DEFAULT_LABEL("Cr")
@@ -97,7 +105,8 @@ DECLARE_ELEMENT(ElemTiltedPlate, ElemTiltedCrystal)
     AXIS_LEN
 DECLARE_ELEMENT_END
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+
 DECLARE_ELEMENT(ElemBrewsterCrystal, ElementMedium)
     TYPE_NAME(qApp->translate("Elements", "Brewster plane-parallel crystal"))
     DEFAULT_LABEL("Cr")
@@ -105,7 +114,8 @@ DECLARE_ELEMENT(ElemBrewsterCrystal, ElementMedium)
     SUB_RANGE
 DECLARE_ELEMENT_END
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+
 DECLARE_ELEMENT(ElemBrewsterPlate, ElementMedium)
     TYPE_NAME(qApp->translate("Elements", "Brewster plane-parallel plate"))
     DEFAULT_LABEL("Cr")
@@ -114,7 +124,8 @@ DECLARE_ELEMENT(ElemBrewsterPlate, ElementMedium)
     AXIS_LEN
 DECLARE_ELEMENT_END
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+
 DECLARE_ELEMENT(ElemMatrix, Element)
     ElemMatrix();
     TYPE_NAME(qApp->translate("Elements", "Custom element-matrix"))
@@ -128,7 +139,8 @@ private:
     void setMatrix(int offset, const double& a, const double& b, const double& c, const double& d);
 DECLARE_ELEMENT_END
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+
 DECLARE_ELEMENT(ElemPoint, Element)
     TYPE_NAME(qApp->translate("Elements", "Point"))
     DEFAULT_LABEL("El")

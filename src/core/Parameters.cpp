@@ -3,9 +3,9 @@
 
 namespace Z {
 
-//////////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------------
 //                                ParameterBase
-//////////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------------
 
 ParameterBase::ParameterBase() : _dim(Z::Dims::none()), _visible(false)
 {
@@ -17,16 +17,13 @@ ParameterBase::ParameterBase(Z::Dim dim, const QString& alias, const QString& la
 {
 }
 
-//////////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------------
 //                            ValuedParameter<TValue>
-//////////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------------
 
 template <class TValue>
 void ValuedParameter<TValue>::setValue(const TValue& value)
 {
-    if (!verify(value).isEmpty())
-        return;
-
     _value = value;
 
     if (_owner)
@@ -36,7 +33,7 @@ void ValuedParameter<TValue>::setValue(const TValue& value)
 template <class TValue>
 QString ValuedParameter<TValue>::verify(const TValue& value)
 {
-    return _verifier.enabled()? _verifier.verify(value): QString();
+    return _verifier && _verifier->enabled()? _verifier->verify(value): QString();
 }
 
 template <class TValue>
@@ -49,9 +46,9 @@ template void Parameter::setValue(const Z::Value& value);
 template QString Parameter::verify(const Z::Value& value);
 template QString Parameter::str() const;
 
-//////////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------------
 //                               ParametersList<TParam>
-//////////////////////////////////////////////////////////////////////////////////
+//--------------------------------------------------------------------------------
 
 template <class TParam> QString ParametersList<TParam>::str() const
 {
@@ -64,13 +61,6 @@ template <class TParam> QString ParametersList<TParam>::str() const
     return s.join("; ");
 }
 
-
-//Parameter* Parameters::operator[](int index)
-//{
-//    if (index < 0 || index >= this->size()) return nullptr;
-//    return const_cast<Parameter*>(&(this->at(index)));
-//}
-
 template <class TParam> TParam* ParametersList<TParam>::byAlias(const QString& alias)
 {
     for (int i = 0; i < this->size(); i++)
@@ -78,21 +68,6 @@ template <class TParam> TParam* ParametersList<TParam>::byAlias(const QString& a
             return const_cast<TParam*>(this->at(i));
     return nullptr;
 }
-
-//NamedValues Parameters::getValues()
-//{
-//    NamedValues values;
-//    for (const Z::Parameter& param : *this)
-//        values.insert(param.name, param.value);
-//    return values;
-//}
-
-//void Parameters::setValues(const NamedValues& values)
-//{
-//    for (Z::Parameter& param : *this)
-//        if (values.contains(param.name))
-//            param.value = values[param.name];
-//}
 
 template QString Parameters::str() const;
 template Parameter* Parameters::byAlias(const QString& alias);

@@ -10,9 +10,9 @@
 #include <QDebug>
 #include <QLabel>
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                                ParamEditor
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 ParamEditor::ParamEditor(Z::Parameter *param, bool showName) : QWidget(0)
 {
@@ -56,16 +56,30 @@ void ParamEditor::populate()
     _unitsSelector->setSelectedUnit(_param->value().unit());
 }
 
+QString ParamEditor::verify() const
+{
+    if (!_valueEditor->ok())
+        return tr("Ivalid number format");
+
+    Z::Value value(_valueEditor->value(), _unitsSelector->selectedUnit());
+
+    return _param->verify(value);
+}
+
 void ParamEditor::apply()
 {
-    if (_valueEditor->ok())
-        _param->setValue(Z::Value(_valueEditor->value(), _unitsSelector->selectedUnit()));
+    if (!_valueEditor->ok()) return;
 
-// TODO validate value
-//    auto value = _editor->value();
-//    auto result = _param->setValue(value, _param->unit);
-//    if (result)
-//        emit valueRejected(_param, value, result);
+    Z::Value value(_valueEditor->value(), _unitsSelector->selectedUnit());
+
+    auto res = _param->verify(value);
+    if (!res.isEmpty())
+    {
+        qWarning() << "Parameter value should be verified before applying";
+        return;
+    }
+
+    _param->setValue(value);
 }
 
 void ParamEditor::focus()
@@ -112,9 +126,9 @@ QWidget* ParamEditor::labelLabel() const { return _labelLabel; }
 QWidget* ParamEditor::valueEditor() const { return _valueEditor; }
 QWidget* ParamEditor::unitsSelector() const { return _unitsSelector; }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                                ParamsEditor
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 ParamsEditor::ParamsEditor(Z::Parameters *params, QWidget *parent) : QWidget(parent), _params(params)
 {
@@ -124,12 +138,9 @@ ParamsEditor::ParamsEditor(Z::Parameters *params, QWidget *parent) : QWidget(par
     {
         if (!param->visible()) continue;
         auto editor = new ParamEditor(param, false);
-        connect(editor, SIGNAL(focused()), this, SLOT(paramFocused()));
-        connect(editor, SIGNAL(goingFocusNext()), this, SLOT(focusNextParam()));
-        connect(editor, SIGNAL(goingFocusPrev()), this, SLOT(focusPrevParam()));
-// TODO validate value
-//        connect(editor, SIGNAL(valueRejected(Z::Parameter*,double,const char*)),
-//            this, SLOT(valueRejected(Z::Parameter*,double,const char*)));
+        connect(editor, &ParamEditor::focused, this, &ParamsEditor::paramFocused);
+        connect(editor, &ParamEditor::goingFocusNext, this, &ParamsEditor::focusNextParam);
+        connect(editor, &ParamEditor::goingFocusPrev, this, &ParamsEditor::focusPrevParam);
         _editors.append(editor);
         layoutParams->addWidget(editor);
     }
@@ -238,16 +249,20 @@ void ParamsEditor::focusPrevParam()
     }
 }
 
-// TODO validation
-//void ParamsEditor::valueRejected(Z::Parameter *param, double value, const char *reason)
-//{
-//    emit paramRejected(param, value, reason);
-//    reinterpret_cast<ParamEditor*>(sender())->populate(); // show unchanged value if rejected
-//}
+QString ParamsEditor::verify() const
+{
+    QStringList errs;
+    for (auto editor: _editors)
+    {
+        auto res = editor->verify();
+        if (!res.isEmpty()) errs << res;
+    }
+    return errs.isEmpty()? QString(): errs.join('\n');
+}
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                              ParamsEditorAbcd
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 ParamsEditorAbcd::ParamsEditorAbcd(const QString& title, const Z::Parameters &params) : QGroupBox(title, 0), _params(params)
 {
