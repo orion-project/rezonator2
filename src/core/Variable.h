@@ -14,7 +14,9 @@ QT_END_NAMESPACE
 
 namespace Z {
 
-/// Defines a range for plotting functions in SI-units.
+/**
+    Defines a range for plotting functions in SI-units.
+*/
 class PlottingRange
 {
 private:
@@ -35,7 +37,9 @@ public:
     friend class VariableRange;
 };
 
-/// Defines a range for plotting functions in arbitrary units.
+/**
+    Defines a range for plotting functions in arbitrary units.
+*/
 struct VariableRange
 {
     Z::Value start;         ///< Initial parameter value.
@@ -48,7 +52,9 @@ struct VariableRange
     QString str() const;
 };
 
-/// Argument of plottings functions.
+/**
+    Argument of plottings functions.
+*/
 struct Variable
 {
     Element* element = nullptr;        ///< An element whose parameter value is varied.

@@ -121,7 +121,7 @@ void ElementPropsDialog::collect()
     if (!res.isEmpty())
     {
         _tabs->setCurrentIndex(0);
-        // TODO:NEXT-VER extend verification result with param ref and focus invalid param editor
+        // TODO:NEXT-VER use class WidgetResult to be able to focus invalid param editor
         QMessageBox::warning(this, qApp->applicationName(), res);
         return;
     }

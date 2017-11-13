@@ -14,7 +14,7 @@ public:
     CausticFunction(Schema *schema) : PlotFunction(schema) {}
 
     void calculate() override;
-    bool hasOptions() const override { return true; }
+    //bool hasOptions() const override { return true; }
     QString calculatePoint(const double& arg) override;
 
     Mode mode() const { return _mode; }
@@ -31,7 +31,8 @@ private:
     bool prepareSP();
     void prepareSP_vector();
     void prepareSP_sections();
-    Z::PointTS calculateSP();
+    Z::PointTS calculateSinglePass();
+    Z::PointTS calculateResonator();
 };
 
 #endif // CAUSTIC_FUNCTION_H

@@ -24,7 +24,7 @@ namespace ElementsTests {
 #define ASSERT_MULT_M1_M2(L)\
     const double L1 = L*0.2;\
     const double L2 = L*0.8;\
-    elem->setSubRange(L1);\
+    elem->setSubRangeSI(L1);\
     auto mt = elem->Mt2() * elem->Mt1();\
     auto ms = elem->Ms2() * elem->Ms1();\
     ASSERT_EQ_MATRIX(mt, elem->Mt())\
@@ -39,9 +39,9 @@ TEST_METHOD(EmptyRange)
     SET_PARAM(L, 88, mm)
 
     const double L = 0.088;
-    ASSERT_EQ_DBL(elem->length(), L)
-    ASSERT_EQ_DBL(elem->axisLength(), L)
-    ASSERT_EQ_DBL(elem->opticalPath(), L)
+    ASSERT_EQ_DBL(elem->lengthSI(), L)
+    ASSERT_EQ_DBL(elem->axisLengthSI(), L)
+    ASSERT_EQ_DBL(elem->opticalPathSI(), L)
 
     ASSERT_MATRIX_IS(elem->Mt(), 1, L, 0, 1)
     ASSERT_EQ_MATRIX(elem->Ms(), elem->Mt())
@@ -61,10 +61,10 @@ TEST_METHOD(MediumRange)
 
     const double L = 0.088;
     const double n = 1.2;
-    ASSERT_EQ_DBL(elem->length(), L)
+    ASSERT_EQ_DBL(elem->lengthSI(), L)
     ASSERT_EQ_DBL(elem->ior(), n)
-    ASSERT_EQ_DBL(elem->axisLength(), L)
-    ASSERT_EQ_DBL(elem->opticalPath(), L*n)
+    ASSERT_EQ_DBL(elem->axisLengthSI(), L)
+    ASSERT_EQ_DBL(elem->opticalPathSI(), L*n)
 
     ASSERT_MATRIX_IS(elem->Mt(), 1, L, 0, 1)
     ASSERT_EQ_MATRIX(elem->Ms(), elem->Mt())
@@ -84,10 +84,10 @@ TEST_METHOD(Plate)
 
     const double L = 0.088;
     const double n = 1.2;
-    ASSERT_EQ_DBL(elem->length(), L)
+    ASSERT_EQ_DBL(elem->lengthSI(), L)
     ASSERT_EQ_DBL(elem->ior(), n)
-    ASSERT_EQ_DBL(elem->axisLength(), L)
-    ASSERT_EQ_DBL(elem->opticalPath(), L*n)
+    ASSERT_EQ_DBL(elem->axisLengthSI(), L)
+    ASSERT_EQ_DBL(elem->opticalPathSI(), L*n)
 
     ASSERT_MATRIX_IS(elem->Mt(), 1, L/n, 0, 1)
     ASSERT_EQ_MATRIX(elem->Ms(), elem->Mt())
@@ -169,11 +169,11 @@ TEST_METHOD(TiltedCrystal)
     const double L = 0.0045;
     const double a = DEG_TO_RAD(15);
     const double n = 1.5;
-    ASSERT_EQ_DBL(elem->length(), L)
+    ASSERT_EQ_DBL(elem->lengthSI(), L)
     ASSERT_EQ_DBL(elem->ior(), n)
     ASSERT_EQ_DBL(elem->alpha(), a)
-    ASSERT_EQ_DBL(elem->axisLength(), L)
-    ASSERT_EQ_DBL(elem->opticalPath(), L*n)
+    ASSERT_EQ_DBL(elem->axisLengthSI(), L)
+    ASSERT_EQ_DBL(elem->opticalPathSI(), L*n)
 
     // B = n * L * cos(a)^2 / ( n^2 - sin(a)^2 )
     ASSERT_MATRIX_IS(elem->Mt(), 1, n * L * SQR(cos(a)) / ( n*n - SQR(sin(a)) ), 0, 1)
@@ -193,11 +193,11 @@ TEST_METHOD(TiltedPlate)
     const double a = DEG_TO_RAD(15);
     const double n = 1.5;
     const double L_eff = L/cos( asin( sin(a) / n ) );
-    ASSERT_EQ_DBL(elem->length(), L)
+    ASSERT_EQ_DBL(elem->lengthSI(), L)
     ASSERT_EQ_DBL(elem->ior(), n)
     ASSERT_EQ_DBL(elem->alpha(), a)
-    ASSERT_EQ_DBL(elem->axisLength(), L_eff)
-    ASSERT_EQ_DBL(elem->opticalPath(), L_eff*n)
+    ASSERT_EQ_DBL(elem->axisLengthSI(), L_eff)
+    ASSERT_EQ_DBL(elem->opticalPathSI(), L_eff*n)
 
     double s = n*n - SQR(sin(a));
     ASSERT_MATRIX_IS(elem->Mt(), 1, L * n*n * (1 - SQR(sin(a))) / sqrt(s*s*s), 0, 1)
@@ -215,8 +215,8 @@ TEST_METHOD(BrewsterCrystal)
     const double L = 0.0045;
     const double n = 1.5;
     ASSERT_EQ_DBL(elem->ior(), n)
-    ASSERT_EQ_DBL(elem->axisLength(), L)
-    ASSERT_EQ_DBL(elem->opticalPath(), L*n)
+    ASSERT_EQ_DBL(elem->axisLengthSI(), L)
+    ASSERT_EQ_DBL(elem->opticalPathSI(), L*n)
 
     ASSERT_MATRIX_IS(elem->Mt(), 1, L/(n*n*n), 0, 1)
     ASSERT_MATRIX_IS(elem->Ms(), 1, L/n, 0, 1)
@@ -234,8 +234,8 @@ TEST_METHOD(BrewsterPlate)
     const double n = 1.5;
     const double L_eff = L * sqrt(n * n + 1) / n;
     ASSERT_EQ_DBL(elem->ior(), n)
-    ASSERT_EQ_DBL(elem->axisLength(), L_eff)
-    ASSERT_EQ_DBL(elem->opticalPath(), L_eff*n)
+    ASSERT_EQ_DBL(elem->axisLengthSI(), L_eff)
+    ASSERT_EQ_DBL(elem->opticalPathSI(), L_eff*n)
 
     ASSERT_MATRIX_IS(elem->Mt(), 1, L*sqrt(n*n + 1)/(n*n*n*n), 0, 1)
     ASSERT_MATRIX_IS(elem->Ms(), 1, L*sqrt(n*n + 1)/(n*n), 0, 1)

@@ -129,6 +129,7 @@ void VariableEditor_ElementRange::populate(Z::Variable *var)
 void VariableEditor_ElementRange::collect(Z::Variable *var)
 {
     var->element = _elemSelector->selectedElement();
+    var->parameter = Z::Utils::asRange(var->element)->paramLength();
     var->range = _rangeEditor->range();
 }
 

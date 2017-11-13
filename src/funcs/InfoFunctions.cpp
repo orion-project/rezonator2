@@ -129,7 +129,7 @@ QString InfoFuncRepetitionRate::calculate()
         if (range && !range->disabled())
         {
             count++;
-            L += range->opticalPath();
+            L += range->opticalPathSI();
 
             QString mult_ior;
             auto medium = Z::Utils::asMedium(range);
@@ -139,7 +139,7 @@ QString InfoFuncRepetitionRate::calculate()
                 count++; // elem should be printed even if it is single
             }
             parts += QString::fromLatin1("<b>%1</b>%2<font color=gray><i>(%3)</i></font>")
-                .arg(Z::format(range->axisLength()), mult_ior, range->displayLabel());
+                .arg(Z::format(range->axisLengthSI()), mult_ior, range->displayLabel());
         }
     }
 

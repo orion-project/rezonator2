@@ -8,44 +8,64 @@
 #include <math.h>
 
 void CausticFunction::calculate()
-{/* TODO
-    Z_REPORT("CALCULATE" << alias())
+{
+    if (!checkArguments()) return;
 
-    _elem = argElementRange();
-    if (!_elem) return;
+    auto elem = arg()->element;
+    auto param = arg()->parameter;
+    BackupAndLock locker(elem, param);
 
-    _arg.start = 0;
-    _arg.stop = _elem->axisLength();
-
-    int points;
-    double step;
-    if (!prepareResults(points, step)) return;
-    if (!prepareCalculator(_elem, true)) return;
+    auto tmp_range = arg()->range;
+    //tmp_range.stop = arg()->element;
+    auto range = tmp_range.plottingRange();
+    if (!prepareResults(range)) return;
+    if (!prepareCalculator(elem)) return;
 
     auto tripType = _schema->tripType();
     switch (tripType)
     {
-    case Schema::SW: break; // TODO
-    case Schema::RR: break; // TODO
-    case Schema::SP: if (!prepareSP()) return; break;
+    case TripType::SW: break; // TODO
+    case TripType::RR: break; // TODO
+    case TripType::SP: if (!prepareSP()) return; break;
     }
 
+    int index = 0;
+    double x = range.start();
+    while (index < range.points())
+    {
+        auto value = Z::Value(x, range.unit());
+
+        //_elem->setSubRangeSI(value);
+        _calc->multMatrix();
+
+        Z::PointTS res;
+        switch (tripType)
+        {
+        case TripType::SW:
+        case TripType::RR: res = calculateResonator(); break;
+        case TripType::SP: res = calculateSinglePass(); break;
+        }
+
+        // TODO convert from SI to some units
+        _x_t[index] = x, _y_t[index] = res.T;
+        _x_s[index] = x, _y_s[index] = res.S;
+
+        index++;
+        x = qMin(x + range.step(), range.stop());
+    }
+}
+
+/*void CausticFunction::calculate()
+{
     int index = 0;
     double arg = 0;
     while (index < points)
     {
         Z_INFO("Point:" << index << "| Argument:" << arg)
 
-        _elem->setSubRange(arg);
         _calc->multMatrix();
 
-        Z::ValueTS value;
-        switch (tripType)
-        {
-        case Schema::SW: break; // TODO
-        case Schema::RR: break; // TODO
-        case Schema::SP: value = calculateSP(); break;
-        }
+
 
         _x_t[index] = arg; _y_t[index] = value.T;
         _x_s[index] = arg; _y_s[index] = value.S;
@@ -57,8 +77,8 @@ void CausticFunction::calculate()
     }
 
     _range.set(0, _arg.stop);
-    Z_INFO("Range:" << _range.str())*/
-}
+    Z_INFO("Range:" << _range.str())
+}*/
 
 bool CausticFunction::prepareSP()
 {
@@ -111,7 +131,7 @@ void CausticFunction::prepareSP_sections()
 //    _pumpMode = Pump_Ray;
 }
 
-Z::PointTS CausticFunction::calculateSP()
+Z::PointTS CausticFunction::calculateSinglePass()
 {
     //const Z::Units::Set& units = _schema->units();
     Z::PointTS result;
@@ -142,8 +162,17 @@ Z::PointTS CausticFunction::calculateSP()
     return result;
 }
 
+Z::PointTS CausticFunction::calculateResonator()
+{
+    return Z::PointTS {1.1, 1.2};
+}
+
 QString CausticFunction::calculatePoint(const double& arg)
 {
+    Q_UNUSED(arg)
+    return QString();
+
+/* TODO:NEXT-VER
     if (!_elem || !_calc || !_range.has(arg)) return QString();
 
     _elem->setSubRange(arg);
@@ -154,10 +183,10 @@ QString CausticFunction::calculatePoint(const double& arg)
     {
     case TripType::SW: break; // TODO
     case TripType::RR: break; // TODO
-    case TripType::SP: value = calculateSP(); break;
+    case TripType::SP: value = calculateSinglePass(); break;
     }
 
     return QString::fromUtf8("ω<sub>T</sub>: %1; ω<sub>S</sub>: %2")
-            .arg(Z::format(value.T), Z::format(value.S));
+            .arg(Z::format(value.T), Z::format(value.S)); */
 }
 

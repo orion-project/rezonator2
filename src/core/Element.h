@@ -30,19 +30,20 @@
     void calcMatrixInternal() override;
 
 #define SUB_RANGE\
-    void setSubRange(double value) override;
+    void setSubRangeSI(double value) override;
 
 #define CHECK_PARAM\
     const char* checkParameter(Z::Parameter *param, double newValue) const;
 
 #define AXIS_LEN\
-    double axisLength() const override;
+    double axisLengthSI() const override;
 
 class Element;
 
 //------------------------------------------------------------------------------
-/// Base class for objects who wish to own optical elements.
-///
+/**
+    Base class for objects who wish to own optical elements.
+*/
 class ElementOwner
 {
 public:
@@ -53,8 +54,9 @@ public:
 };
 
 //------------------------------------------------------------------------------
-/// Base class for all optical elements.
-///
+/**
+    Base class for all optical elements.
+*/
 class Element : public Z::ParameterOwner
 {
 public:
@@ -143,12 +145,13 @@ protected:
 typedef QVector<Element*> Elements;
 
 //------------------------------------------------------------------------------
-/// Base class for elements having length.
-///
+/**
+    Base class for elements having length.
+*/
 class ElementRange : public Element
 {
 public:
-    virtual void setSubRange(double value) { Q_UNUSED(value) }
+    virtual void setSubRangeSI(double value) { Q_UNUSED(value) }
     const Z::Matrix& Mt1() const { return _mt1; }
     const Z::Matrix& Ms1() const { return _ms1; }
     const Z::Matrix& Mt2() const { return _mt2; }
@@ -159,10 +162,10 @@ public:
     const Z::Matrix* pMs2() const { return &_ms2; }
 
     Z::Parameter* paramLength() const { return _length; }
-    double length() const { return _length->value().toSi(); }
+    double lengthSI() const { return _length->value().toSi(); }
 
-    virtual double axisLength() const { return length(); }
-    virtual double opticalPath() const { return axisLength(); }
+    virtual double axisLengthSI() const { return lengthSI(); }
+    virtual double opticalPathSI() const { return axisLengthSI(); }
 
 protected:
     ElementRange();
@@ -173,15 +176,16 @@ protected:
 };
 
 //------------------------------------------------------------------------------
-/// Base class for elements having length and refraction.
-///
+/**
+    Base class for elements having length and refraction.
+*/
 class ElementMedium : public ElementRange
 {
 public:
     Z::Parameter* paramIor() const { return _ior; }
     double ior() const { return _ior->value().value(); }
 
-    double opticalPath() const override { return axisLength() * ior(); }
+    double opticalPathSI() const override { return axisLengthSI() * ior(); }
 
 protected:
     ElementMedium();
@@ -207,9 +211,10 @@ private:
 };
 
 //------------------------------------------------------------------------------
-/// Generator of automatical labels for elements.
-/// Automatical label consist of a prefix like 'M', 'L', etc. and index.
-///
+/**
+    Generator of automatical labels for elements.
+    Automatical label consist of a prefix like 'M', 'L', etc. and index.
+*/
 class ElementsNamer : public Singleton<ElementsNamer>
 {
 public:

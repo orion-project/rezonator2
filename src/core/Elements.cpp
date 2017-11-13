@@ -45,15 +45,15 @@ FocalLengthVerifier* globalFocalLengthVerifier()
 
 void ElemEmptyRange::calcMatrixInternal()
 {
-    _mt.assign(1, length(), 0, 1);
+    _mt.assign(1, lengthSI(), 0, 1);
     _ms = _mt;
 }
 
-void ElemEmptyRange::setSubRange(double value)
+void ElemEmptyRange::setSubRangeSI(double value)
 {
     _mt1.assign(1, value, 0, 1);
     _ms1 = _mt1;
-    _mt2.assign(1, length() - value, 0, 1);
+    _mt2.assign(1, lengthSI() - value, 0, 1);
     _ms2 = _mt2;
 }
 
@@ -62,15 +62,15 @@ void ElemEmptyRange::setSubRange(double value)
 
 void ElemMediumRange::calcMatrixInternal()
 {
-    _mt.assign(1, length(), 0, 1);
+    _mt.assign(1, lengthSI(), 0, 1);
     _ms = _mt;
 }
 
-void ElemMediumRange::setSubRange(double value)
+void ElemMediumRange::setSubRangeSI(double value)
 {
     _mt1.assign(1, value, 0, 1);
     _ms1 = _mt1;
-    _mt2.assign(1, length() - value, 0, 1);
+    _mt2.assign(1, lengthSI() - value, 0, 1);
     _ms2 = _mt2;
 }
 
@@ -79,15 +79,15 @@ void ElemMediumRange::setSubRange(double value)
 
 void ElemPlate::calcMatrixInternal()
 {
-    _mt.assign(1, length() / ior(), 0, 1);
+    _mt.assign(1, lengthSI() / ior(), 0, 1);
     _ms = _mt;
 }
 
-void ElemPlate::setSubRange(double value)
+void ElemPlate::setSubRangeSI(double value)
 {
     _mt1.assign(1, value / ior(), 0, 1/ior());
     _ms1 = _mt1;
-    _mt2.assign(1, length() - value, 0, ior());
+    _mt2.assign(1, lengthSI() - value, 0, ior());
     _ms2 = _mt2;
 }
 
@@ -168,7 +168,7 @@ ElemTiltedCrystal::ElemTiltedCrystal()
 
 void ElemTiltedCrystal::calcMatrixInternal()
 {
-    double L = length();
+    double L = lengthSI();
     double a = alpha();
     double n = ior();
 
@@ -176,7 +176,7 @@ void ElemTiltedCrystal::calcMatrixInternal()
     _ms.assign(1, L / n, 0, 1);
 }
 
-void ElemTiltedCrystal::setSubRange(double value)
+void ElemTiltedCrystal::setSubRangeSI(double value)
 {
     double n = ior();
     double cos_a = cos(alpha());
@@ -184,7 +184,7 @@ void ElemTiltedCrystal::setSubRange(double value)
     double cos_ab = cos_a / cos_b;
     double cos_ba = cos_b / cos_a;
     double L1 = value;
-    double L2 = length() - value;
+    double L2 = lengthSI() - value;
 
     //  --> /:: -->  half lengh * input to medium
     _mt1.assign(cos_ba, L1/n * cos_ab, 0, 1/n * cos_ab);
@@ -200,7 +200,7 @@ void ElemTiltedCrystal::setSubRange(double value)
 
 void ElemTiltedPlate::calcMatrixInternal()
 {
-    double L = length();
+    double L = lengthSI();
     double n = ior();
     double sin_a = sin(alpha());
     double s = n*n - sin_a*sin_a;
@@ -209,7 +209,7 @@ void ElemTiltedPlate::calcMatrixInternal()
     _ms.assign(1, L / sqrt(s), 0, 1);
 }
 
-void ElemTiltedPlate::setSubRange(double value)
+void ElemTiltedPlate::setSubRangeSI(double value)
 {
     double n = ior();
     double cos_a = cos(alpha());
@@ -217,7 +217,7 @@ void ElemTiltedPlate::setSubRange(double value)
     double cos_ab = cos_a / cos_b;
     double cos_ba = cos_b / cos_a;
     double L1 = value;
-    double L2 = axisLength() - L1;
+    double L2 = axisLengthSI() - L1;
 
     //  --> /:: -->  half lengh * input to medium
     _mt1.assign(cos_ba, L1/n * cos_ab, 0, 1/n * cos_ab);
@@ -228,9 +228,9 @@ void ElemTiltedPlate::setSubRange(double value)
     _ms2.assign(1, L2, 0, n);
 }
 
-double ElemTiltedPlate::axisLength() const
+double ElemTiltedPlate::axisLengthSI() const
 {
-    return length() / cos( asin( sin( alpha() ) / ior() ) );
+    return lengthSI() / cos( asin( sin( alpha() ) / ior() ) );
 }
 
 //------------------------------------------------------------------------------
@@ -238,18 +238,18 @@ double ElemTiltedPlate::axisLength() const
 
 void ElemBrewsterCrystal::calcMatrixInternal()
 {
-    double L = length();
+    double L = lengthSI();
     double n = ior();
 
     _ms.assign(1, L / n, 0, 1);
     _mt.assign(1, _ms.B / SQR(n), 0, 1);
 }
 
-void ElemBrewsterCrystal::setSubRange(double value)
+void ElemBrewsterCrystal::setSubRangeSI(double value)
 {
     double n = ior();
     double L1 = value;
-    double L2 = length() - L1;
+    double L2 = lengthSI() - L1;
 
     //  --> /:: -->  half lengh * input to medium
     _mt1.assign(n, L1/n/n, 0, 1/n/n);
@@ -267,14 +267,14 @@ void ElemBrewsterPlate::calcMatrixInternal()
 {
     double n = ior();
 
-    _ms.assign(1, axisLength() / n, 0, 1);
+    _ms.assign(1, axisLengthSI() / n, 0, 1);
     _mt.assign(1, _ms.B / SQR(n), 0, 1);
 }
 
-void ElemBrewsterPlate::setSubRange(double value)
+void ElemBrewsterPlate::setSubRangeSI(double value)
 {
     double L1 = value;
-    double L2 = axisLength() - L1;
+    double L2 = axisLengthSI() - L1;
     double n = ior();
 
     //  --> /:: -->  half lengh * input to medium
@@ -286,11 +286,11 @@ void ElemBrewsterPlate::setSubRange(double value)
     _ms2.assign(1, L2, 0, n);
 }
 
-double ElemBrewsterPlate::axisLength() const
+double ElemBrewsterPlate::axisLengthSI() const
 {
     // L_eff = L / cos( asin( sin( atan(n) )/n ) ) = L * Sqrt(n^2 + 1) / n
     double n = ior();
-    return length() * sqrt(n*n + 1) / n;
+    return lengthSI() * sqrt(n*n + 1) / n;
 }
 
 //------------------------------------------------------------------------------
