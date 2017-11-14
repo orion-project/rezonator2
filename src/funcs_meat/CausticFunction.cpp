@@ -5,37 +5,40 @@
 #include "../funcs/Calculator.h"
 #include "../core/Protocol.h"
 
-#include <math.h>
-
 void CausticFunction::calculate()
 {
     if (!checkArguments()) return;
 
     auto elem = arg()->element;
     auto param = arg()->parameter;
-    BackupAndLock locker(elem, param);
 
-    auto tmp_range = arg()->range;
-    //tmp_range.stop = arg()->element;
-    auto range = tmp_range.plottingRange();
+    auto rangeElem = Z::Utils::asRange(elem);
+    if (!rangeElem)
+    {
+        setError("CausticFunction.arg.element is not range");
+        return;
+    }
+
+    _wavelenSI = schema()->wavelength().value().toSi();
+
+    auto tmpRange = arg()->range;
+    tmpRange.stop = Z::Value(rangeElem->axisLengthSI(), Z::Units::m());
+    auto range = tmpRange.plottingRange();
     if (!prepareResults(range)) return;
-    if (!prepareCalculator(elem)) return;
+    if (!prepareCalculator(elem, true)) return;
 
     auto tripType = _schema->tripType();
-    switch (tripType)
-    {
-    case TripType::SW: break; // TODO
-    case TripType::RR: break; // TODO
-    case TripType::SP: if (!prepareSP()) return; break;
-    }
+    if (tripType == TripType::SP)
+        if (!prepareSP()) return;
+
+    BackupAndLock locker(elem, param);
 
     int index = 0;
     double x = range.start();
+    auto argUnit = param->value().unit();
     while (index < range.points())
     {
-        auto value = Z::Value(x, range.unit());
-
-        //_elem->setSubRangeSI(value);
+        rangeElem->setSubRangeSI(x);
         _calc->multMatrix();
 
         Z::PointTS res;
@@ -46,39 +49,17 @@ void CausticFunction::calculate()
         case TripType::SP: res = calculateSinglePass(); break;
         }
 
-        // TODO convert from SI to some units
-        _x_t[index] = x, _y_t[index] = res.T;
-        _x_s[index] = x, _y_s[index] = res.S;
+        Z_INFO(index << x << res.T << res.S);
+
+        convertFromSiToModeUnits(res);
+
+        _x_t[index] = argUnit->fromSi(x), _y_t[index] = res.T;
+        _x_s[index] = argUnit->fromSi(x), _y_s[index] = res.S;
 
         index++;
         x = qMin(x + range.step(), range.stop());
     }
 }
-
-/*void CausticFunction::calculate()
-{
-    int index = 0;
-    double arg = 0;
-    while (index < points)
-    {
-        Z_INFO("Point:" << index << "| Argument:" << arg)
-
-        _calc->multMatrix();
-
-
-
-        _x_t[index] = arg; _y_t[index] = value.T;
-        _x_s[index] = arg; _y_s[index] = value.S;
-
-        index++;
-        arg += step;
-        if (arg > _arg.stop)
-            arg = _arg.stop;
-    }
-
-    _range.set(0, _arg.stop);
-    Z_INFO("Range:" << _range.str())
-}*/
 
 bool CausticFunction::prepareSP()
 {
@@ -131,7 +112,7 @@ void CausticFunction::prepareSP_sections()
 //    _pumpMode = Pump_Ray;
 }
 
-Z::PointTS CausticFunction::calculateSinglePass()
+Z::PointTS CausticFunction::calculateSinglePass() const
 {
     //const Z::Units::Set& units = _schema->units();
     Z::PointTS result;
@@ -162,9 +143,45 @@ Z::PointTS CausticFunction::calculateSinglePass()
     return result;
 }
 
-Z::PointTS CausticFunction::calculateResonator()
+Z::PointTS CausticFunction::calculateResonator() const
 {
-    return Z::PointTS {1.1, 1.2};
+#define CALC_TS_POINT(func) return Z::PointTS(func(_calc->Mt()), func(_calc->Ms()))
+
+    switch (_mode)
+    {
+    case BeamRadius: CALC_TS_POINT(calculateResonator_beamRadius);
+    case FontRadius: CALC_TS_POINT(calculateResonator_frontRadius);
+    case HalfAngle: CALC_TS_POINT(calculateResonator_halfAngle);
+    }
+    return Z::PointTS();
+
+#undef CALC_TS_POINT
+}
+
+// TODO:NEXT-VER should be in Calculator as it can be reused by another functions, e.g. BeamParamsAtElems
+double CausticFunction::calculateResonator_beamRadius(const Z::Matrix& m) const
+{
+    double p = 1 - SQR((m.A + m.D) * 0.5);
+    if (p <= 0) return NAN;
+    double w2 = _wavelenSI * qAbs(m.B) * M_1_PI / sqrt(p);
+    if (w2 < 0) return NAN;
+    return sqrt(w2);
+}
+
+// TODO:NEXT-VER should be in Calculator as it can be reused by another functions, e.g. BeamParamsAtElems
+double CausticFunction::calculateResonator_frontRadius(const Z::Matrix& m) const
+{
+    if (m.D != m.A)
+        return 2 * m.B / (m.D - m.A);
+    return (m.B < 0) ? -INFINITY : +INFINITY;
+}
+
+// TODO:NEXT-VER should be in Calculator as it can be reused by another functions, e.g. BeamParamsAtElems
+double CausticFunction::calculateResonator_halfAngle(const Z::Matrix& m) const
+{
+    double p = 4.0 - SQR(m.A + m.D);
+    if (p <= 0) return NAN;
+    return sqrt(_wavelenSI * M_1_PI * 2.0 * qAbs(m.C) / sqrt(p));
 }
 
 QString CausticFunction::calculatePoint(const double& arg)
@@ -188,5 +205,26 @@ QString CausticFunction::calculatePoint(const double& arg)
 
     return QString::fromUtf8("ω<sub>T</sub>: %1; ω<sub>S</sub>: %2")
             .arg(Z::format(value.T), Z::format(value.S)); */
+}
+
+void CausticFunction::convertFromSiToModeUnits(Z::PointTS& point) const
+{
+    switch (_mode)
+    {
+    case BeamRadius:
+        point.T = _beamsizeUnit->fromSi(point.T);
+        point.S = _beamsizeUnit->fromSi(point.S);
+        break;
+
+    case FontRadius:
+        point.T = _curvatureUnit->fromSi(point.T);
+        point.S = _curvatureUnit->fromSi(point.S);
+        break;
+
+    case HalfAngle:
+        point.T = _angleUnit->fromSi(point.T);
+        point.S = _angleUnit->fromSi(point.S);
+        break;
+    }
 }
 

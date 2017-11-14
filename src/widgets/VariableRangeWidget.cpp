@@ -138,7 +138,8 @@ VariableRangeWidget_ElementRange::VariableRangeWidget_ElementRange() : QGridLayo
 
 void VariableRangeWidget_ElementRange::setRange(const Z::VariableRange& var)
 {
-    _max = var.stop;
+    _start = var.start;
+    _stop = var.stop;
 
     edStep->setValue(var.step);
     sePoints->setValue(var.points);
@@ -151,8 +152,8 @@ void VariableRangeWidget_ElementRange::setRange(const Z::VariableRange& var)
 Z::VariableRange VariableRangeWidget_ElementRange::range()
 {
     Z::VariableRange range;
-    range.start = 0;
-    range.stop = _max;
+    range.start = _start;
+    range.stop = _stop;
     range.step = edStep->value();
     range.points = sePoints->value();
     range.useStep = rbStep->isChecked();
@@ -166,8 +167,8 @@ WidgetResult VariableRangeWidget_ElementRange::verify()
     if (res.useStep && res.step <= 0)
         return WidgetResult::fail(edStep, tr("Value of <b>step</b> must be greater than zero."));
 
-    if (res.useStep && res.step >= _max)
-        return WidgetResult::fail(edStep, tr("<b>Step</b> must be less than element length (%1).").arg(_max.str()));
+    if (res.useStep && res.step >= _stop)
+        return WidgetResult::fail(edStep, tr("<b>Step</b> must be less than element length (%1).").arg(_stop.str()));
 
     return WidgetResult::ok();
 }

@@ -94,15 +94,3 @@ bool PlotFunction::prepareCalculator(Element* ref, bool splitRange)
     }
     return true;
 }
-
-//ElementRange* PlotFunction::argElementRange()
-//{
-//    auto elem = argElement();
-//    if (!elem)
-//        return nullptr;
-//    auto range = Z::Utils::asRange(elem);
-//    if (!range)
-//        setError(qApp->translate("Calc error",
-//            "Element %1 is not a range").arg(elem->displayLabel()));
-//    return range;
-//}

@@ -11,7 +11,6 @@ public:
     StabilityMapOptionsPanel(StabilityMapWindow* window) : FuncOptionsPanel(), _window(window)
     {
         // TODO: check if these strings are translated
-        // TODO: make icons and remove titles
         Ori::Layouts::LayoutV({
             makeSectionHeader(tr("Stability parameter")),
             makeModeButton(":/toolbar/formula_stab_normal", tr("Normal"), int(StabilityCalcMode::Normal)),

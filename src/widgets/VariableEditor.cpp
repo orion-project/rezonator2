@@ -106,7 +106,7 @@ void VariableEditor_ElementRange::guessRange()
 
     // TODO restore or guess step
     Z::VariableRange range;
-    range.start = 0;
+    range.start = Z::Value(0, param->value().unit());
     range.stop = param->value();
     range.step = Z::Value(0, param->value().unit());
     _rangeEditor->setRange(range);
@@ -131,6 +131,7 @@ void VariableEditor_ElementRange::collect(Z::Variable *var)
     var->element = _elemSelector->selectedElement();
     var->parameter = Z::Utils::asRange(var->element)->paramLength();
     var->range = _rangeEditor->range();
+    qDebug() << "range.start" << var->range.start.str();
 }
 
 WidgetResult VariableEditor_ElementRange::verify()

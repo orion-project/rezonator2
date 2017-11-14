@@ -4,86 +4,44 @@
 #include "CausticWindow.h"
 #include "../VariableDialog.h"
 #include "helpers/OriWidgets.h"
+#include "helpers/OriLayouts.h"
 
 //------------------------------------------------------------------------------
 //                              CausticParamsPanel
 //------------------------------------------------------------------------------
 
-CausticParamsPanel::CausticParamsPanel(CausticWindow *window): _window(window)
+class CausticOptionsPanel : public FuncOptionsPanel
 {
-    auto modeHeader = new QLabel(tr("<b>Function mode:</b>"));
-    modeHeader->setContentsMargins(6, 6, 6, 6);
-
-    Ori::Gui::layoutV(this, 0, 0, {
-        modeHeader,
-        makeModeButton(":/toolbar/plot_w", tr("Beam radius"), CausticFunction::Mode::Beamsize),
-        makeModeButton(":/toolbar/plot_r", tr("Wavefront curvature radius"), CausticFunction::Mode::CurvatureRadius),
-        makeModeButton(":/toolbar/plot_v", QString(), CausticFunction::Mode::Angle),
-        0
-    });
-
-    prepareModes();
-    showMode();
-}
-
-QWidget* CausticParamsPanel::makeModeButton(const QString& icon, const QString& text, int mode)
-{
-    auto b = new FunctionModeButton(icon, text, mode);
-    connect(b, SIGNAL(clicked()), this, SLOT(modeClicked()));
-    _modeButtons.insert(mode, b);
-    return b;
-}
-
-void CausticParamsPanel::modeClicked()
-{
-    auto button = qobject_cast<FunctionModeButton*>(sender());
-    if (button)
+public:
+    CausticOptionsPanel(CausticWindow *window) : FuncOptionsPanel(), _window(window)
     {
-        if (_window->function()->mode() != button->mode())
-        {
-            _window->function()->setMode(CausticFunction::Mode(button->mode()));
-            _window->requestAutolimits();
-            _window->update();
-        }
-        showMode();
+        // TODO: check if these strings are translated
+        Ori::Layouts::LayoutV({
+            makeSectionHeader(tr("Function mode")),
+            makeModeButton(":/toolbar/plot_w", tr("Beam radius"), int(CausticFunction::Mode::BeamRadius)),
+            makeModeButton(":/toolbar/plot_r", tr("Wavefront curvature radius"), int(CausticFunction::Mode::FontRadius)),
+            makeModeButton(":/toolbar/plot_v", tr("Beam divergence angle"), int(CausticFunction::Mode::HalfAngle)),
+            Ori::Layouts::Stretch()
+        }).setSpacing(0).setMargin(0).useFor(this);
+
+        showCurrentMode();
     }
-}
 
-void CausticParamsPanel::prepareModes()
-{
-// TODO
-//    if (_window->schema()->tripType() == Schema::SP)
-//        switch (_window->schema()->pumpParams().mode)
-//        {
-//        case Z::PumpMode_vector:
-//        case Z::PumpMode_sections:
-//            prepareModes_ray();
-//            break;
-//        default:
-//            prepareModes_gauss();
-//            break;
-//        }
-//    else prepareModes_gauss();
-}
+    int currentFunctionMode() const override
+    {
+        return int(_window->function()->mode());
+    }
 
-void CausticParamsPanel::prepareModes_ray()
-{
-    _modeButtons[CausticFunction::Mode::Angle]->setText(tr("Axial angle"));
-    _modeButtons[CausticFunction::Mode::CurvatureRadius]->setVisible(false); // there is no sense
-}
+    void functionModeChanged(int mode) override
+    {
+        _window->function()->setMode(CausticFunction::Mode(mode));
+        _window->requestAutolimits();
+        _window->update();
+    }
 
-void CausticParamsPanel::prepareModes_gauss()
-{
-    _modeButtons[CausticFunction::Mode::Angle]->setText(tr("Angular spread "));
-    _modeButtons[CausticFunction::Mode::CurvatureRadius]->setVisible(true);
-}
-
-void CausticParamsPanel::showMode()
-{
-    auto mode = _window->function()->mode();
-    for (auto b : _modeButtons)
-        b->setChecked(b->mode() == mode);
-}
+private:
+    CausticWindow* _window;
+};
 
 //------------------------------------------------------------------------------
 //                                CausticWindow
@@ -99,16 +57,16 @@ bool CausticWindow::configure(QWidget* parent)
     return Z::Dlgs::editVariable_ElementRange(parent, schema(), function()->arg(), tr("Range"));
 }
 
-//QWidget* CausticWindow::makeParamsPanel()
-//{
-//    return nullptr;
-//    // TODO check segfault at program closing
-//    // return _paramsPanel? _paramsPanel: _paramsPanel = new CausticParamsPanel(this);
-//}
+QWidget* CausticWindow::makeOptionsPanel()
+{
+    return new CausticOptionsPanel(this);
+}
 
 void CausticWindow::schemaParamsChanged(Schema *schema)
 {
-// TODO
+    Q_UNUSED(schema)
+
+// TODO:NEXT-VER
 //    if (schema->tripType() == Schema::SP)
 //        switch (schema->pumpParams().mode)
 //        {

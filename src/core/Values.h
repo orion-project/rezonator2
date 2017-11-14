@@ -21,7 +21,6 @@ public:
     double toSi() const { return _unit->toSi(_value); }
 
     void operator = (const Value& v) { _value = v._value, _unit = v._unit; }
-    void operator = (const double& v) { _value = v, _unit = Z::Units::m(); }
     bool operator == (const Value& v) const { return Double(toSi()).is(v.toSi()); }
     bool operator == (const double& v) const { return Double(toSi()).is(v); }
     bool operator != (const Value& v) const { return Double(toSi()).isNot(v.toSi()); }

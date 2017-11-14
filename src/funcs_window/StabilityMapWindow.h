@@ -13,10 +13,7 @@ public:
 
     bool configure(QWidget* parent) override;
 
-    StabilityMapFunction* function() const
-    {
-        return dynamic_cast<StabilityMapFunction*>(PlotFuncWindowStorable::function());
-    }
+    StabilityMapFunction* function() const { return (StabilityMapFunction*)_function; }
 
 protected:
     QWidget* makeOptionsPanel() override;

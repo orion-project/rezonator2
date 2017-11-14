@@ -55,7 +55,7 @@ public:
     WidgetResult verify();
 
 private:
-    Z::Value _max;
+    Z::Value _start, _stop;
     QSpinBox *sePoints;
     QRadioButton *rbStep, *rbPoints;
     ValueEditor *edStep;

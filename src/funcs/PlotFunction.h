@@ -89,8 +89,6 @@ protected:
     bool prepareResults(Z::PlottingRange range);
     bool prepareCalculator(Element* ref, bool splitRange = false);
 
-//    ElementRange* argElementRange();
-
 private:
     QString _errorText;
 };
