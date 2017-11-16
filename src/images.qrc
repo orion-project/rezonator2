@@ -135,6 +135,13 @@
 
         <file alias="plot">../img/icon_plot_16.png</file>
     </qresource>
+    <qresource prefix="/icons">
+        <file alias="stability_ok">../img/icon/stability_ok.svg</file>
+        <file alias="stability_err">../img/icon/stability_err.svg</file>
+        <file alias="trip_type_rr">../img/icon/schema_type_rr.svg</file>
+        <file alias="trip_type_sp">../img/icon/schema_type_sp.svg</file>
+        <file alias="trip_type_sw">../img/icon/schema_type_sw.svg</file>
+    </qresource>
     <qresource prefix="/misc10">
         <file alias="more_vert">../img/misc_more_vert_10.png</file>
         <file alias="less_vert">../img/misc_less_vert_10.png</file>
@@ -152,17 +159,6 @@
     </qresource>
     <qresource prefix="/misc32">
         <file alias="glass_pattern">../img/glass_pattern_32.png</file>
-    </qresource>
-    <qresource prefix="/triptype16">
-        <file alias="SP">../img/schema_SP_16.png</file>
-        <file alias="SW">../img/schema_SW_16.png</file>
-        <file alias="SW_unstable">../img/schema_SW_unstable_16.png</file>
-        <file alias="SW_unstable_T">../img/schema_SW_unstable_T_16.png</file>
-        <file alias="SW_unstable_S">../img/schema_SW_unstable_S_16.png</file>
-        <file alias="RR">../img/schema_RR_16.png</file>
-        <file alias="RR_unstable">../img/schema_RR_unstable_16.png</file>
-        <file alias="RR_unstable_T">../img/schema_RR_unstable_T_16.png</file>
-        <file alias="RR_unstable_S">../img/schema_RR_unstable_S_16.png</file>
     </qresource>
     <qresource prefix="/drawing">
         <file alias="pump_waist">../img/drawing/pump_waist.png</file>

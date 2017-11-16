@@ -17,7 +17,7 @@ public:
     QString alias() const;
     QString toolTip() const;
     QString fullHeader() const;
-    QString smallIconPath() const;
+    QString iconPath() const;
 private:
     struct TripTypeInfoPrivate* _info;
     TripTypeInfo(struct TripTypeInfoPrivate* info): _info(info) {}

@@ -6,6 +6,7 @@
 #include "SchemaViewWindow.h"
 #include "WindowsManager.h"
 #include "core/Format.h"
+#include "funcs/Calculator.h"
 #include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
 #include "helpers/OriWindows.h"
@@ -282,7 +283,7 @@ void ProjectWindow::updateStatusInfo()
     status->setText(STATUS_LAMBDA, schema()->wavelength().str());
 
     auto tripTypeInfo = TripTypes::info(schema()->tripType());
-    status->setText(STATUS_TRIPTYPE, tripTypeInfo.alias());
+    status->setIcon(STATUS_TRIPTYPE, tripTypeInfo.iconPath());
     status->setToolTip(STATUS_TRIPTYPE, tripTypeInfo.toolTip());
 
     if (schema()->fileName().isEmpty()) status->clear(STATUS_FILE);
@@ -292,31 +293,33 @@ void ProjectWindow::updateStatusInfo()
 void ProjectWindow::updateStability()
 {
     auto status = qobject_cast<Ori::Widgets::StatusBar*>(statusBar());
-    auto tripTypeInfo = TripTypes::info(schema()->tripType());
-    QString icon = tripTypeInfo.smallIconPath();
-    QString hint = tripTypeInfo.toolTip();
+    QString icon, hint;
     if (schema()->isResonator())
     {
-        // TODO: show instability
-//        bool stableT, stableS;
-//        Calc::isStable(schema(), stableT, stableS);
-//        if (!stableT && !stableS)
-//        {
-//            icon += "_unstable";
-//            hint += '\n' + tr("System is unstable");
-//        }
-//        else if (!stableT)
-//        {
-//            icon += "_unstable_T";
-//            hint += '\n' + tr("System is unstable in T-plane");
-//        }
-//        else if (!stableS)
-//        {
-//            icon += "_unstable_S";
-//            hint += '\n' + tr("System is unstable in S-plane");
-//        }
+        bool stableT, stableS;
+        Calc::isStable(schema(), stableT, stableS);
+        if (!stableT && !stableS)
+        {
+            icon = QStringLiteral(":/icons/stability_err");
+            hint = tr("System is unstable");
+        }
+        else if (!stableT)
+        {
+            icon = QStringLiteral(":/icons/stability_err");
+            hint = tr("System is unstable in T-plane");
+        }
+        else if (!stableS)
+        {
+            icon = QStringLiteral(":/icons/stability_err");
+            hint = tr("System is unstable in S-plane");
+        }
+        else
+        {
+            icon = QStringLiteral(":/icons/stability_ok");
+            hint = tr("System is stable");
+        }
     }
-    else if (schema()->isSP())
+    else
     {
         // TODO:NEXT-VER show pump params in tooltip
     }
