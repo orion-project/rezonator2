@@ -53,34 +53,12 @@
         <file alias="formula_stab_normal">../img/toolbar/formula_stab_normal.svg</file>
         <file alias="formula_stab_squared">../img/toolbar/formula_stab_squared.svg</file>
     </qresource>
-    <qresource prefix="/toolbar24">
-        <file alias="edit_font_b">../img/font_b_24.png</file>
-        <file alias="edit_font_i">../img/font_i_24.png</file>
-        <file alias="edit_font_u">../img/font_u_24.png</file>
-        <file alias="edit_font_dlg">../img/font_dlg_24.png</file>
-        <file alias="edit_align_left">../img/align_left_24.png</file>
-        <file alias="edit_align_right">../img/align_right_24.png</file>
-        <file alias="edit_align_center">../img/align_center_24.png</file>
-        <file alias="symbol_greek_big">../img/symbol_omega_big_24.png</file>
-        <file alias="symbol_greek_sm">../img/symbol_omega_sm_24.png</file>
-        <file alias="symbol_subscript">../img/symbol_subscript_24.png</file>
-        <file alias="symbol_superscript">../img/symbol_superscript_24.png</file>
-        <file alias="symbol_dlg">../img/symbol_dlg_24.png</file>
-    </qresource>
     <qresource prefix="/toolbar16">
-        <file alias="edit_font_b">../img/font_b_16.png</file>
-        <file alias="edit_font_i">../img/font_i_16.png</file>
-        <file alias="edit_font_u">../img/font_u_16.png</file>
-        <file alias="edit_font_dlg">../img/font_dlg_16.png</file>
-        <file alias="edit_align_left">../img/align_left_16.png</file>
-        <file alias="edit_align_right">../img/align_right_16.png</file>
-        <file alias="edit_align_center">../img/align_center_16.png</file>
-        <file alias="symbol_greek_big">../img/symbol_omega_big_16.png</file>
-        <file alias="symbol_greek_sm">../img/symbol_omega_sm_16.png</file>
-        <file alias="symbol_subscript">../img/symbol_subscript_16.png</file>
-        <file alias="symbol_superscript">../img/symbol_superscript_16.png</file>
-        <file alias="symbol_dlg">../img/symbol_dlg_16.png</file>
         <file alias="langs">../img/view_langs_16.png</file>
+        <file alias="points">../img/misc_point_16.png</file>
+        <file alias="table">../img/misc_table_16.png</file>
+        <file alias="params">../img/misc_params_16.png</file>
+        <file alias="plot_tracing">../img/plot_tracing_16.png</file>
     </qresource>
     <qresource prefix="/elems">
         <file alias="ElemUnknown">../elems/ElemUnknown.svg</file>
@@ -132,8 +110,6 @@
         <file alias="options">../img/icon/icon_settings.svg</file>
         <file alias="wavelength">../img/icon/icon_wavelength.svg</file>
         <file alias="element">../img/icon/icon_element.svg</file>
-
-        <file alias="plot">../img/icon_plot_16.png</file>
     </qresource>
     <qresource prefix="/icons">
         <file alias="stability_ok">../img/icon/stability_ok.svg</file>
@@ -143,19 +119,10 @@
         <file alias="trip_type_sw">../img/icon/schema_type_sw.svg</file>
     </qresource>
     <qresource prefix="/misc10">
-        <file alias="more_vert">../img/misc_more_vert_10.png</file>
-        <file alias="less_vert">../img/misc_less_vert_10.png</file>
         <file alias="ts_link">../img/ts_equals_10.png</file>
         <file alias="ts_t2s">../img/ts_T2S_10.png</file>
         <file alias="ts_s2t">../img/ts_S2T_10.png</file>
         <file alias="ts_swap">../img/ts_swap_10.png</file>
-    </qresource>
-    <qresource prefix="/misc16">
-        <file alias="points">../img/misc_point_16.png</file>
-        <file alias="table">../img/misc_table_16.png</file>
-        <file alias="params">../img/misc_params_16.png</file>
-        <file alias="lock">../img/misc_lock_16.png</file>
-        <file alias="plot_tracing">../img/plot_tracing_16.png</file>
     </qresource>
     <qresource prefix="/misc32">
         <file alias="glass_pattern">../img/glass_pattern_32.png</file>

@@ -23,7 +23,6 @@ public:
     bool useSystemDialogs;    ///< Use native open/save file dialogs.
     bool elemAutoLabel;       ///< Automatically generate labels for new elements.
     bool useNativeMenuBar;    ///< Use menu bar specfic to Ubuntu Unity or MacOS (on sceern's top).
-    //int maxRecentFiles;       ///< Recent files list length.
 
     // states
     QString schemaFileDlgOpenPath, schemaFileDlgOpenFilter;

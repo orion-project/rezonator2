@@ -64,7 +64,7 @@ void CursorPanel::createActions()
     actnCursorFollow->setText(tr("Follow Mouse", "Plot action"));
     actnCursorFollow->setCheckable(true);
     actnCursorFollow->setShortcut(Qt::Key_F7);
-    actnCursorFollow->setIcon(QIcon(":/misc16/plot_tracing"));
+    actnCursorFollow->setIcon(QIcon(":/toolbar16/plot_tracing"));
     connect(actnCursorFollow, SIGNAL(toggled(bool)), _cursor, SLOT(setFollowMouse(bool)));
 
     actnCursorSetX = new QAction(this);

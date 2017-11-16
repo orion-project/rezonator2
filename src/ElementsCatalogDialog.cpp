@@ -43,9 +43,9 @@ void showElementsCatalog()
 } // namespace Dlgs
 } // namespace Z
 
-///////////////////////////////////////////////////////////////////////////////
+//-----------------------------------------------------------------------------
 //                            ElementsCatalogDialog
-////////////////////////////////////////////////////////////////////////////////
+//-----------------------------------------------------------------------------
 
 ElementsCatalogDialog::ElementsCatalogDialog(CatalogMode mode, QWidget *parent) : QDialog(parent)
 {
@@ -54,18 +54,18 @@ ElementsCatalogDialog::ElementsCatalogDialog(CatalogMode mode, QWidget *parent) 
     if (mode == CatalogMode_View)
         setAttribute(Qt::WA_DeleteOnClose);
 
-    ///////// category tabs
+    // category tabs
     tabs = new QTabWidget;
     for (auto category : ElementsCatalog::instance().categories())
         tabs->addTab(new QWidget, category);
     connect(tabs, SIGNAL(currentChanged(int)), this, SLOT(categorySelected(int)));
 
-    ///////// main layout
+    // main layout
     QVBoxLayout *layoutMain = new QVBoxLayout;
     layoutMain->addWidget(tabs);
     setLayout(layoutMain);
 
-    ///////// buttons
+    // buttons
     if (mode == CatalogMode_Selector)
     {
         QDialogButtonBox *buttons = new QDialogButtonBox(
@@ -75,21 +75,24 @@ ElementsCatalogDialog::ElementsCatalogDialog(CatalogMode mode, QWidget *parent) 
         layoutMain->addWidget(buttons);
     }
 
-    ///////// preview
+    // preview
     drawing = new Ori::Widgets::SvgView(QString());
 
-    ///////// element list
+    // element list
     elements = new ElementTypesListView;
     connect(elements, SIGNAL(elementSelected(QString)), this, SLOT(loadDrawing(QString)));
-    connect(elements, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(accept()));
-    connect(elements, SIGNAL(enterPressed()), this, SLOT(accept()));
+    if (mode == CatalogMode_Selector)
+    {
+        connect(elements, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(accept()));
+        connect(elements, SIGNAL(enterPressed()), this, SLOT(accept()));
+    }
 
-    ///////// page
+    // page
     layoutPage = new QVBoxLayout;
     layoutPage->addWidget(Ori::Gui::splitterH(elements, drawing));
     layoutPage->setMargin(layoutMain->spacing()/2+1);
 
-    ///////// initial view
+    // initial view
     categorySelected(0);
     elements->setFocus();
     resize(600, 400); // TODO store and restore size

@@ -59,7 +59,7 @@ void GraphDataGrid::contextMenuEvent(QContextMenuEvent* event)
     if (!_contextMenu)
     {
         _contextMenu = new QMenu(this);
-        _contextMenu->addAction(QIcon(":/toolbar16/edit_copy"), tr("Copy"), this, SLOT(copy()));
+        _contextMenu->addAction(QIcon(":/toolbar/copy"), tr("Copy"), this, SLOT(copy()));
         _contextMenu->addAction(tr("Select All"), this, SLOT(selectAll()));
     }
     _contextMenu->popup(mapToGlobal(event->pos()));

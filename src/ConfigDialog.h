@@ -22,7 +22,7 @@ public:
     ConfigDialog(QWidget* parent);
     ~ConfigDialog();
 
-    ///// inherited from BasicConfigDialog
+    // inherited from BasicConfigDialog
     virtual void populate() override;
     virtual bool collect() override;
 

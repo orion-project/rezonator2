@@ -7,8 +7,6 @@
 #include <QIcon>
 #include <QSpinBox>
 
-////////////////////////////////////////////////////////////////////////////////
-
 namespace Z {
 namespace Dlg {
 
@@ -21,9 +19,9 @@ bool appConfig(QWidget *parent)
 } // namespace Dlgs
 } // namespace Z
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                              ConfigDialog
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 int ConfigDialog::_savedTabIndex = 0;
 
@@ -59,23 +57,13 @@ QWidget* ConfigDialog::createViewPage()
 {
     auto page = new Ori::Dlg::BasicConfigPage(tr("Interface"), ":/config_pages/view");
 
-    ///////// group box "Options"
+    // group box "Options"
     groupView = new Ori::Widgets::OptionsGroup(tr("Options"), {
         tr("Use small toolbar images"),
         tr("Show background image"),
         tr("Use native menu bar (restart required)"),
         tr("Use system open/save file dialogs")
     });
-
-    ///////// group box "Lists length"
-//    sedMruLength = new QSpinBox;
-//    sedMruLength->setRange(0, 99);
-
-//    auto layoutLists = new QFormLayout;
-//    layoutLists->addRow(tr("Recent files list length:"), sedMruLength);
-
-//    auto groupLists = new QGroupBox(tr("Lists length"));
-//    groupLists->setLayout(layoutLists);
 
     page->add({groupView});
     return page;
@@ -93,12 +81,11 @@ void ConfigDialog::populate()
 {
     Settings &settings = Settings::instance();
 
-    //// options
+    // options
     groupOptions->setOption(0, settings.editNewElem);
     groupOptions->setOption(1, settings.elemAutoLabel);
-    //sedMruLength->setValue(settings.maxRecentFiles);
 
-    //// view
+    // view
     groupView->setOption(0, settings.smallToolbarImages);
     groupView->setOption(1, settings.showBackground);
     groupView->setOption(2, settings.useNativeMenuBar);
@@ -109,12 +96,11 @@ bool ConfigDialog::collect()
 {
     Settings &settings = Settings::instance();
 
-    //// options
+    // options
     settings.editNewElem = groupOptions->option(0);
     settings.elemAutoLabel = groupOptions->option(1);
-    //settings.maxRecentFiles = sedMruLength->value();
 
-    //// view
+    // view
     settings.smallToolbarImages = groupView->option(0);
     settings.showBackground = groupView->option(1);
     settings.useNativeMenuBar = groupView->option(2);

@@ -10,9 +10,9 @@ namespace Dlg {
 #endif
 
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                              SettingsListener
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 SettingsListener::SettingsListener()
 {
@@ -25,9 +25,9 @@ SettingsListener::~SettingsListener()
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                               Settings
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 #define LOAD(option, type)\
     option = s.settings()->value(QStringLiteral(#option)).to ## type();
@@ -55,7 +55,6 @@ void Settings::load()
     s.beginGroup("Options");
     LOAD_DEF(editNewElem, Bool, true);
     LOAD_DEF(elemAutoLabel, Bool, true);
-    //LOAD_DEF(maxRecentFiles, Int, 10);
 
     s.beginGroup("States");
     LOAD(schemaFileDlgOpenPath, String);
@@ -77,7 +76,6 @@ void Settings::save()
     s.beginGroup("Options");
     SAVE(editNewElem)
     SAVE(elemAutoLabel)
-    //SAVE(maxRecentFiles)
 
     s.beginGroup("States");
     SAVE(schemaFileDlgOpenPath)
