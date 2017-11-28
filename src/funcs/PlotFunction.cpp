@@ -27,6 +27,38 @@ QString FunctionRange::str() const
 }
 
 //------------------------------------------------------------------------------
+//                              PlotFuncResultSet
+//------------------------------------------------------------------------------
+
+void PlotFuncResultSet::reset()
+{
+    resultIndex = 0;
+    results.resize(1);
+    isBroken = false;
+}
+
+void PlotFuncResultSet::addPoint(double x, double y)
+{
+    if (std::isnan(y))
+    {
+        isBroken = true;
+    }
+    else
+    {
+        if (isBroken)
+        {
+           isBroken = false;
+           results.resize(results.size()+1);
+           resultIndex++;
+           qDebug() << "new line started";
+        }
+        qDebug() << x << y;
+        results[resultIndex].x.append(x);
+        results[resultIndex].y.append(y);
+    }
+}
+
+//------------------------------------------------------------------------------
 //                                 PlotFunction
 //------------------------------------------------------------------------------
 
@@ -68,16 +100,14 @@ bool PlotFunction::prepareResults(Z::PlottingRange range)
         return false;
     }
     _range.set(range.start(), range.stop());
-    _x_t = QVector<double>(range.points()), _y_t = QVector<double>(range.points());
-    _x_s = QVector<double>(range.points()), _y_s = QVector<double>(range.points());
-    _resultPointIndex = 0;
+    clearResults();
     return true;
 }
 
 void PlotFunction::clearResults()
 {
-    _x_t.clear(); _x_s.clear();
-    _y_t.clear(); _y_s.clear();
+    _resultsT.reset();
+    _resultsS.reset();
 }
 
 bool PlotFunction::prepareCalculator(Element* ref, bool splitRange)
@@ -98,8 +128,18 @@ bool PlotFunction::prepareCalculator(Element* ref, bool splitRange)
 
 void PlotFunction::addResultPoint(double x, double y_t, double y_s)
 {
-    qDebug() << _resultPointIndex << x << y_t << y_s;
-    _x_t[_resultPointIndex] = x, _y_t[_resultPointIndex] = y_t;
-    _x_s[_resultPointIndex] = x, _y_s[_resultPointIndex] = y_s;
-    _resultPointIndex++;
+    _resultsT.addPoint(x, y_t);
+    _resultsS.addPoint(x, y_s);
 }
+
+const PlotFuncResultSet* PlotFunction::results(Z::WorkPlane plane) const
+{
+    switch (plane)
+    {
+    case Z::Plane_T: return &_resultsT;
+    case Z::Plane_S: return &_resultsS;
+    }
+    qCritical() << "Unknown Z::WorkPlane" << int(plane);
+    return nullptr;
+}
+

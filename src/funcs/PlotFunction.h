@@ -41,6 +41,16 @@ struct PlotFuncResult
     QVector<double> x, y;
 };
 
+struct PlotFuncResultSet
+{
+    QVector<PlotFuncResult> results;
+    int resultIndex;
+    bool isBroken;
+
+    void reset();
+    void addPoint(double x, double y);
+};
+
 /**
     Base class for all plotting functions.
     Plotting function is a function presenting its calculation results in graphical form.
@@ -71,9 +81,16 @@ public:
     /// Defines if function has additional params besides of variable argument.
     virtual bool hasOptions() const { return false; }
 
-    virtual int resultCount(Z::WorkPlane) const { return 1; }
-    virtual const QVector<double>& resultX(Z::WorkPlane plane, int) const { return plane == Z::Plane_T? _x_t: _x_s; }
-    virtual const QVector<double>& resultY(Z::WorkPlane plane, int) const { return plane == Z::Plane_T? _y_t: _y_s; }
+    /// Returns calculated results count for specific workplane - T or S
+    /// Function can calculate more than one result if plot is splitted into several parts.
+    /// For example plot of curvature radius of caustic function has a pole at waist,
+    /// where it changes its value from positive to negative infinity or vice versa.
+    /// At this point, one plot part will be ended and a new one new will be started.
+    /// See @ref addResultPoint()
+    virtual int resultCount(Z::WorkPlane plane) const { return results(plane)->results.size(); }
+
+    /// Returns calculated results for specific workplane - T or S
+    virtual const PlotFuncResult& result(Z::WorkPlane plane, int index) const { return results(plane)->results.at(index); }
 
     bool ok() const { return _errorText.isEmpty(); }
     const QString& errorText() const { return _errorText; }
@@ -84,18 +101,18 @@ public:
 protected:
     Z::Variable _arg;
     Calculator* _calc = nullptr;
-    QVector<double> _x_t, _y_t, _x_s, _y_s;
+    PlotFuncResultSet _resultsT, _resultsS;
     FunctionRange _range;
     Z::Value _backupValue;
-    int _resultPointIndex;
 
     void setError(const QString& error);
 
     void clearResults();
     bool prepareResults(Z::PlottingRange range);
     void addResultPoint(double x, double y_t, double y_s);
-    void addResultPoint(const double& x, const Z::PointTS& point) { addResultPoint(x, point.T, point.S); }
+    void addResultPoint(double x, const Z::PointTS& point) { addResultPoint(x, point.T, point.S); }
     bool prepareCalculator(Element* ref, bool splitRange = false);
+    const PlotFuncResultSet *results(Z::WorkPlane plane) const;
 
 private:
     QString _errorText;

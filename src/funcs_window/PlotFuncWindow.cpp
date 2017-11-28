@@ -396,7 +396,8 @@ void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
             graphs.append(g);
         }
         else g = graphs[i];
-        g->setData(_function->resultX(plane, i), _function->resultY(plane, i));
+        auto result = _function->result(plane, i);
+        g->setData(result.x, result.y);
         if (g->parentPlot() != _plot)
             _plot->addPlottable(g);
     }
