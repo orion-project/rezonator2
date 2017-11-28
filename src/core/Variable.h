@@ -26,13 +26,15 @@ private:
     double _range;
     int _points;
     Unit _unit;
+    QVector<double> _values;
 public:
     double start() const { return _start; } ///< Initial parameter value.
     double stop() const { return _stop; }   ///< Final parameter value.
     double step() const { return _step; }   ///< Parameter variation step.
-    double range() const { return _range; } ///< Whole plotting range
+    double range() const { return _range; } ///< Whole plotting range.
     int points() const { return _points; }  ///< Amount of points.
-    Unit unit() const { return _unit; }     ///< Unit of measurements for all values
+    Unit unit() const { return _unit; }     ///< Unit of measurements for all values.
+    const QVector<double>& values() const { return _values; } ///< Values of points.
     QString str() const;
     friend class VariableRange;
 };

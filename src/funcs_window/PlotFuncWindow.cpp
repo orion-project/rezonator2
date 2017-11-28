@@ -195,6 +195,7 @@ void PlotFuncWindow::createContent()
     toolbar->addSeparator();
 
     _plot = new Plot;
+    _plot->legend->setVisible(false);
     _plot->setAutoAddPlottableToLegend(false);
     connect(_plot, SIGNAL(graphSelected(Graph*)), this, SLOT(graphSelected(Graph*)));
 
@@ -231,6 +232,7 @@ void PlotFuncWindow::createStatusBar()
     setContent(statusBar);
 }
 
+/*
 Graph* PlotFuncWindow::graphT() const
 {
     foreach (Graph *g, _graphsT)
@@ -244,12 +246,13 @@ Graph* PlotFuncWindow::graphS() const
         if (g->parentPlot() == _plot && g->visible()) return g;
     return nullptr;
 }
-
+*/
 Graph* PlotFuncWindow::selectedGraph() const
 {
     QList<Graph*> graphs = _plot->selectedGraphs();
     return graphs.isEmpty()? nullptr: graphs.first();
 }
+
 
 void PlotFuncWindow::showT()
 {
@@ -393,11 +396,6 @@ void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
             graphs.append(g);
         }
         else g = graphs[i];
-        if (i == 0)
-        {
-            g->addToLegend();
-            g->setName(plane == Z::Plane_T? "T": "S");
-        }
         g->setData(_function->resultX(plane, i), _function->resultY(plane, i));
         if (g->parentPlot() != _plot)
             _plot->addPlottable(g);

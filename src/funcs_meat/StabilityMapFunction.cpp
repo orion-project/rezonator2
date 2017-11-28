@@ -1,4 +1,5 @@
 #include "StabilityMapFunction.h"
+#include "../core/Protocol.h"
 #include "../funcs/Calculator.h"
 
 void StabilityMapFunction::calculate()
@@ -14,9 +15,7 @@ void StabilityMapFunction::calculate()
     if (!prepareCalculator(elem)) return;
     _calc->setStabilityCalcMode(stabilityCalcMode());
 
-    int index = 0;
-    double x = range.start();
-    while (index < range.points())
+    for (auto x : range.values())
     {
         auto value = Z::Value(x, range.unit());
 
@@ -32,10 +31,6 @@ void StabilityMapFunction::calculate()
         param->setValue(value);
         _calc->multMatrix();
 
-        _x_t[index] = x, _y_t[index] = _calc->stabilityT();
-        _x_s[index] = x, _y_s[index] = _calc->stabilityS();
-
-        index++;
-        x = qMin(x + range.step(), range.stop());
+        addResultPoint(x, _calc->stabilityT(), _calc->stabilityS());
     }
 }

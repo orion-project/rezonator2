@@ -121,8 +121,8 @@ protected:
     QAction *actnShowT, *actnShowS, *actnShowTS,
         *actnAutolimits, *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo;
 
-    Graph* graphT() const;
-    Graph* graphS() const;
+//    Graph* graphT() const;
+//    Graph* graphS() const;
     Graph* selectedGraph() const;
 
     void createActions();

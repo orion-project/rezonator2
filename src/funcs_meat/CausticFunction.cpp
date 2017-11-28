@@ -33,10 +33,8 @@ void CausticFunction::calculate()
 
     BackupAndLock locker(elem, param);
 
-    int index = 0;
-    double x = range.start();
     auto argUnit = param->value().unit();
-    while (index < range.points())
+    for (auto x : range.values())
     {
         rangeElem->setSubRangeSI(x);
         _calc->multMatrix();
@@ -49,15 +47,8 @@ void CausticFunction::calculate()
         case TripType::SP: res = calculateSinglePass(); break;
         }
 
-        Z_INFO(index << x << res.T << res.S);
-
         convertFromSiToModeUnits(res);
-
-        _x_t[index] = argUnit->fromSi(x), _y_t[index] = res.T;
-        _x_s[index] = argUnit->fromSi(x), _y_s[index] = res.S;
-
-        index++;
-        x = qMin(x + range.step(), range.stop());
+        addResultPoint(argUnit->fromSi(x), res);
     }
 }
 

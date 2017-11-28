@@ -70,6 +70,7 @@ bool PlotFunction::prepareResults(Z::PlottingRange range)
     _range.set(range.start(), range.stop());
     _x_t = QVector<double>(range.points()), _y_t = QVector<double>(range.points());
     _x_s = QVector<double>(range.points()), _y_s = QVector<double>(range.points());
+    _resultPointIndex = 0;
     return true;
 }
 
@@ -93,4 +94,12 @@ bool PlotFunction::prepareCalculator(Element* ref, bool splitRange)
         return false;
     }
     return true;
+}
+
+void PlotFunction::addResultPoint(double x, double y_t, double y_s)
+{
+    qDebug() << _resultPointIndex << x << y_t << y_s;
+    _x_t[_resultPointIndex] = x, _y_t[_resultPointIndex] = y_t;
+    _x_s[_resultPointIndex] = x, _y_s[_resultPointIndex] = y_s;
+    _resultPointIndex++;
 }

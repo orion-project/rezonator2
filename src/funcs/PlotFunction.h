@@ -36,6 +36,11 @@ public:
     QString str() const;
 };
 
+struct PlotFuncResult
+{
+    QVector<double> x, y;
+};
+
 /**
     Base class for all plotting functions.
     Plotting function is a function presenting its calculation results in graphical form.
@@ -82,11 +87,14 @@ protected:
     QVector<double> _x_t, _y_t, _x_s, _y_s;
     FunctionRange _range;
     Z::Value _backupValue;
+    int _resultPointIndex;
 
     void setError(const QString& error);
 
     void clearResults();
     bool prepareResults(Z::PlottingRange range);
+    void addResultPoint(double x, double y_t, double y_s);
+    void addResultPoint(const double& x, const Z::PointTS& point) { addResultPoint(x, point.T, point.S); }
     bool prepareCalculator(Element* ref, bool splitRange = false);
 
 private:

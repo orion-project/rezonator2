@@ -41,6 +41,18 @@ PlottingRange VariableRange::plottingRange() const
         res._points = points;
         res._step = res.range() / double(points - 1);
     }
+
+    // Calc all point values
+    double x = res.start();
+    auto values = QVector<double>(res.points());
+    for (int i = 0; i < res.points(); i++)
+    {
+        values[i] = x;
+        x += res.step();
+    }
+    values[res.points()-1] = res.stop();
+    res._values = values;
+
     return res;
 }
 
