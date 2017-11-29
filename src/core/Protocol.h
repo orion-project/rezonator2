@@ -42,6 +42,7 @@ private:
 
 } // namespace Z
 
+// TODO: not sure what difference between REPORT, INFO and NOTE. Seems to be overkill.
 #define Z_REPORT(p) if (Z::Protocol::isEnabled) { Z::Protocol(Z::Protocol::Report) << p; }
 #define Z_INFO(p) if (Z::Protocol::isEnabled) { Z::Protocol(Z::Protocol::Info) << p; }
 #define Z_NOTE(p) if (Z::Protocol::isEnabled) { Z::Protocol(Z::Protocol::Note) << p; }

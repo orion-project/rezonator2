@@ -34,33 +34,63 @@ void PlotFuncResultSet::reset()
 {
     resultIndex = 0;
     results.resize(1);
-    isBroken = false;
+    results[0].clear();
+    isSegmentEnded = false;
+    makeNewSegment = false;
 }
 
 void PlotFuncResultSet::addPoint(double x, double y)
 {
-    if (std::isnan(y))
+    if (std::isnan(y) || std::isinf(y))
     {
-        isBroken = true;
+        int segmentLen = results[resultIndex].x.size();
+        if (!isSegmentEnded && segmentLen > 0)
+        {
+            Z_INFO(id << "line segment ended at" << x << "points count:" << segmentLen);
+            isSegmentEnded = true;
+            if (segmentLen < 2)
+            {
+                Z_INFO(id << "segment is too short, skipped");
+                results[resultIndex].clear();
+                makeNewSegment = false;
+            }
+            else makeNewSegment = true;
+        }
     }
     else
     {
-        if (isBroken)
+        if (isSegmentEnded)
         {
-           isBroken = false;
-           results.resize(results.size()+1);
-           resultIndex++;
-           qDebug() << "new line started";
+            isSegmentEnded = false;
+            if (makeNewSegment)
+            {
+                results.resize(results.size()+1);
+                resultIndex++;
+            }
+            Z_INFO(id << "line continued with new segment at" << x)
         }
-        qDebug() << x << y;
-        results[resultIndex].x.append(x);
-        results[resultIndex].y.append(y);
+        //Z_INFO(id << "point" << x << y);
+        results[resultIndex].append(x, y);
     }
+}
+
+int PlotFuncResultSet::allPointsCount() const
+{
+    int count = 0;
+    for (const PlotFuncResult& result : results)
+        count += result.x.size();
+    return count;
 }
 
 //------------------------------------------------------------------------------
 //                                 PlotFunction
 //------------------------------------------------------------------------------
+
+PlotFunction::PlotFunction(Schema *schema) : FunctionBase(schema)
+{
+    _resultsT.id = QStringLiteral("T");
+    _resultsS.id = QStringLiteral("S");
+}
 
 PlotFunction::~PlotFunction()
 {
@@ -89,10 +119,17 @@ void PlotFunction::setError(const QString& error)
     _errorText = error;
 }
 
+void PlotFunction::clearResults()
+{
+    _resultsT.reset();
+    _resultsS.reset();
+}
+
 bool PlotFunction::prepareResults(Z::PlottingRange range)
 {
-    _errorText.clear();
+    Z_REPORT(name());
     Z_INFO(range.str());
+    _errorText.clear();
     if (range.points() < 2)
     {
         setError(qApp->translate("Calc error", "Too few points for plotting"));
@@ -104,10 +141,13 @@ bool PlotFunction::prepareResults(Z::PlottingRange range)
     return true;
 }
 
-void PlotFunction::clearResults()
+void PlotFunction::finishResults()
 {
-    _resultsT.reset();
-    _resultsS.reset();
+    int totalCountT = _resultsT.allPointsCount();
+    int totalCountS = _resultsS.allPointsCount();
+    Z_INFO("Total points count: T =" << totalCountT << "S =" << totalCountS);
+    if (totalCountT == 0 && totalCountS == 0)
+        setError(qApp->translate("Calc error", "No one valid point was calculated"));
 }
 
 bool PlotFunction::prepareCalculator(Element* ref, bool splitRange)

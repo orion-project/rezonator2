@@ -8,7 +8,16 @@
 #include "../widgets/PlotParamsPanel.h"
 #include "widgets/OriFlatToolBar.h"
 #include "widgets/OriLabels.h"
+#include "widgets/OriStatusBar.h"
 #include "../../libs/qcustomplot/qcpcursor.h"
+
+enum PlotWindowStatusPanels
+{
+    STATUS_POINTS,
+    STATUS_INFO,
+
+    STATUS_PANELS_COUNT,
+};
 
 //------------------------------------------------------------------------------
 //                              FunctionModeButton
@@ -217,36 +226,10 @@ void PlotFuncWindow::createContent()
 
 void PlotFuncWindow::createStatusBar()
 {
-    _pointsCountInfo = new QLabel;
-    auto margins = _pointsCountInfo->contentsMargins();
-    margins.setLeft(6);
-    margins.setRight(6);
-    _pointsCountInfo->setContentsMargins(margins);
-
-    _infoText = new Ori::Widgets::ImagedLabel;
-
-    QStatusBar *statusBar = new QStatusBar;
-    statusBar->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
-    statusBar->addWidget(_pointsCountInfo);
-    statusBar->addWidget(_infoText);
-    setContent(statusBar);
+    _statusBar = new Ori::Widgets::StatusBar(STATUS_PANELS_COUNT);
+    setContent(_statusBar);
 }
 
-/*
-Graph* PlotFuncWindow::graphT() const
-{
-    foreach (Graph *g, _graphsT)
-        if (g->parentPlot() == _plot && g->visible()) return g;
-    return nullptr;
-}
-
-Graph* PlotFuncWindow::graphS() const
-{
-    foreach (Graph *g, _graphsS)
-        if (g->parentPlot() == _plot && g->visible()) return g;
-    return nullptr;
-}
-*/
 Graph* PlotFuncWindow::selectedGraph() const
 {
     QList<Graph*> graphs = _plot->selectedGraphs();
@@ -370,13 +353,14 @@ void PlotFuncWindow::calculate()
     if (!_function->ok())
     {
         debug_LogGraphsCount();
-        _infoText->setContent(_function->errorText(), ":/toolbar/error");
+        _statusBar->setText(STATUS_INFO, _function->errorText());
+        _statusBar->highlightError(STATUS_INFO);
         for (Graph* g : _graphsT) if (g->parentPlot() == _plot) _plot->removeGraph(g);
         for (Graph* g : _graphsS) if (g->parentPlot() == _plot) _plot->removeGraph(g);
     }
     else
     {
-        _infoText->clear();
+        _statusBar->clear(STATUS_INFO);
         updateGraphs(Z::Plane_T);
         updateGraphs(Z::Plane_S);
     }
@@ -415,9 +399,9 @@ void PlotFuncWindow::graphSelected(Graph *graph)
     updateDataGrid();
 
     if (graph)
-        _pointsCountInfo->setText(tr("Points: %1").arg(graph->data()->count()));
+        _statusBar->setText(STATUS_POINTS, tr("Points: %1").arg(graph->data()->count()));
     else
-        _pointsCountInfo->clear();
+        _statusBar->clear(STATUS_POINTS);
 }
 
 void PlotFuncWindow::showRoundTrip()

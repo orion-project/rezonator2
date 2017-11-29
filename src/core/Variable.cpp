@@ -8,7 +8,7 @@ namespace Z {
 
 QString PlottingRange::str() const
 {
-    return QString("start=%1%6, stop=%2%6, range=%3%6, step=%4%6, points=%5%6")
+    return QString("start=%1%6, stop=%2%6, range=%3%6, step=%4%6, points=%5")
             .arg(_start).arg(_stop).arg(_range).arg(_step).arg(_points).arg(_unit->alias());
 }
 

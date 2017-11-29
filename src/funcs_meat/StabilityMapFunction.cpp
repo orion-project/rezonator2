@@ -33,4 +33,6 @@ void StabilityMapFunction::calculate()
 
         addResultPoint(x, _calc->stabilityT(), _calc->stabilityS());
     }
+
+    finishResults();
 }

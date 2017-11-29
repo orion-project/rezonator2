@@ -39,16 +39,22 @@ public:
 struct PlotFuncResult
 {
     QVector<double> x, y;
+
+    void clear() { x.clear(); y.clear(); }
+    void append(double ax, double ay) { x.append(ax); y.append(ay); }
 };
 
 struct PlotFuncResultSet
 {
+    QString id;
     QVector<PlotFuncResult> results;
     int resultIndex;
-    bool isBroken;
+    bool isSegmentEnded;
+    bool makeNewSegment;
 
     void reset();
     void addPoint(double x, double y);
+    int allPointsCount() const;
 };
 
 /**
@@ -58,7 +64,7 @@ struct PlotFuncResultSet
 class PlotFunction : public FunctionBase
 {
 public:
-    PlotFunction(Schema *schema) : FunctionBase(schema) {}
+    PlotFunction(Schema *schema);
     ~PlotFunction();
 
     virtual bool checkArguments();
@@ -82,10 +88,10 @@ public:
     virtual bool hasOptions() const { return false; }
 
     /// Returns calculated results count for specific workplane - T or S
-    /// Function can calculate more than one result if plot is splitted into several parts.
+    /// Function can calculate more than one result if plot is splitted into segments.
     /// For example plot of curvature radius of caustic function has a pole at waist,
     /// where it changes its value from positive to negative infinity or vice versa.
-    /// At this point, one plot part will be ended and a new one new will be started.
+    /// At this point, one plot segment will be ended and a new one will be started.
     /// See @ref addResultPoint()
     virtual int resultCount(Z::WorkPlane plane) const { return results(plane)->results.size(); }
 
@@ -109,6 +115,7 @@ protected:
 
     void clearResults();
     bool prepareResults(Z::PlottingRange range);
+    void finishResults();
     void addResultPoint(double x, double y_t, double y_s);
     void addResultPoint(double x, const Z::PointTS& point) { addResultPoint(x, point.T, point.S); }
     bool prepareCalculator(Element* ref, bool splitRange = false);

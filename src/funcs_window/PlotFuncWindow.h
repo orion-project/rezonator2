@@ -19,7 +19,8 @@ typedef QCPGraph Graph;
 
 namespace Ori {
 namespace Widgets {
-class ImagedLabel;
+//class ImagedLabel;
+class StatusBar;
 }}
 
 class CursorPanel;
@@ -112,8 +113,7 @@ protected:
     QCPCursor* _cursor;
     CursorPanel* _cursorPanel;
     QSplitter* _splitter;
-    QLabel* _pointsCountInfo;
-    Ori::Widgets::ImagedLabel *_infoText;
+    Ori::Widgets::StatusBar* _statusBar;
     FrozenStateButton* _buttonFrozenInfo;
     bool _autolimitsRequest = false; ///< If autolimits requested after next update.
     bool _isFirstTime = true;
@@ -121,8 +121,6 @@ protected:
     QAction *actnShowT, *actnShowS, *actnShowTS,
         *actnAutolimits, *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo;
 
-//    Graph* graphT() const;
-//    Graph* graphS() const;
     Graph* selectedGraph() const;
 
     void createActions();

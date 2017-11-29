@@ -18,7 +18,6 @@ void CausticFunction::calculate()
         setError("CausticFunction.arg.element is not range");
         return;
     }
-
     _wavelenSI = schema()->wavelength().value().toSi();
 
     auto tmpRange = arg()->range;
@@ -50,6 +49,8 @@ void CausticFunction::calculate()
         convertFromSiToModeUnits(res);
         addResultPoint(argUnit->fromSi(x), res);
     }
+
+    finishResults();
 }
 
 bool CausticFunction::prepareSP()
