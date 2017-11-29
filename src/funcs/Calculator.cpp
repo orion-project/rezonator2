@@ -152,6 +152,27 @@ void Calculator::multMatrix()
     }
 }
 
+Z::PointTS Calculator::stability() const
+{
+    return {
+        calcStability((_mt.A + _mt.D) * 0.5),
+        calcStability((_ms.A + _ms.D) * 0.5)
+    };
+}
+
+Z::ValueTS<bool> Calculator::isStable() const
+{
+    return {
+        isStable((_mt.A + _mt.D) * 0.5),
+        isStable((_ms.A + _ms.D) * 0.5)
+    };
+}
+
+bool Calculator::isStable(double half_of_A_plus_D) const
+{
+    return (half_of_A_plus_D > -1) && (half_of_A_plus_D < 1);
+}
+
 double Calculator::calcStability(double half_of_A_plus_D) const
 {
     switch (_stabilityCalcMode)
@@ -179,15 +200,12 @@ QString Calculator::roundTripStr() const
 
 namespace Calc {
 
-void isStable(Schema *schema, bool& t, bool& s)
+Z::ValueTS<bool> isStable(Schema *schema)
 {
     Calculator c(schema);
     c.calcRoundTrip();
     c.multMatrix();
-    double pt = c.stabilityT();
-    double ps = c.stabilityS();
-    t = pt > -1 && pt < 1;
-    s = ps > -1 && ps < 1;
+    return c.isStable();
 }
 
 } // namespace Calc

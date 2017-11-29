@@ -88,8 +88,8 @@ int PlotFuncResultSet::allPointsCount() const
 
 PlotFunction::PlotFunction(Schema *schema) : FunctionBase(schema)
 {
-    _resultsT.id = QStringLiteral("T");
-    _resultsS.id = QStringLiteral("S");
+    _results.T.id = QStringLiteral("T");
+    _results.S.id = QStringLiteral("S");
 }
 
 PlotFunction::~PlotFunction()
@@ -121,8 +121,8 @@ void PlotFunction::setError(const QString& error)
 
 void PlotFunction::clearResults()
 {
-    _resultsT.reset();
-    _resultsS.reset();
+    _results.T.reset();
+    _results.S.reset();
 }
 
 bool PlotFunction::prepareResults(Z::PlottingRange range)
@@ -143,8 +143,8 @@ bool PlotFunction::prepareResults(Z::PlottingRange range)
 
 void PlotFunction::finishResults()
 {
-    int totalCountT = _resultsT.allPointsCount();
-    int totalCountS = _resultsS.allPointsCount();
+    int totalCountT = _results.T.allPointsCount();
+    int totalCountS = _results.S.allPointsCount();
     Z_INFO("Total points count: T =" << totalCountT << "S =" << totalCountS);
     if (totalCountT == 0 && totalCountS == 0)
         setError(qApp->translate("Calc error", "No one valid point was calculated"));
@@ -168,16 +168,16 @@ bool PlotFunction::prepareCalculator(Element* ref, bool splitRange)
 
 void PlotFunction::addResultPoint(double x, double y_t, double y_s)
 {
-    _resultsT.addPoint(x, y_t);
-    _resultsS.addPoint(x, y_s);
+    _results.T.addPoint(x, y_t);
+    _results.S.addPoint(x, y_s);
 }
 
 const PlotFuncResultSet* PlotFunction::results(Z::WorkPlane plane) const
 {
     switch (plane)
     {
-    case Z::Plane_T: return &_resultsT;
-    case Z::Plane_S: return &_resultsS;
+    case Z::Plane_T: return &_results.T;
+    case Z::Plane_S: return &_results.S;
     }
     qCritical() << "Unknown Z::WorkPlane" << int(plane);
     return nullptr;

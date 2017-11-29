@@ -92,7 +92,7 @@ public:
     /// For example plot of curvature radius of caustic function has a pole at waist,
     /// where it changes its value from positive to negative infinity or vice versa.
     /// At this point, one plot segment will be ended and a new one will be started.
-    /// See @ref addResultPoint()
+    /// See @ref PlotFuncResultSet::addPoint()
     virtual int resultCount(Z::WorkPlane plane) const { return results(plane)->results.size(); }
 
     /// Returns calculated results for specific workplane - T or S
@@ -107,7 +107,7 @@ public:
 protected:
     Z::Variable _arg;
     Calculator* _calc = nullptr;
-    PlotFuncResultSet _resultsT, _resultsS;
+    Z::ValueTS<PlotFuncResultSet> _results;
     FunctionRange _range;
     Z::Value _backupValue;
 

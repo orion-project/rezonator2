@@ -59,22 +59,25 @@ private:
 
 //------------------------------------------------------------------------------
 
-struct PointTS
+template <typename TValue>
+struct ValueTS
 {
-    double T;
-    double S;
+    TValue T {};
+    TValue S {};
 
-    PointTS() : T(0), S(0) {}
-    PointTS(const double& t, const double& s) : T(t), S(s) {}
-    PointTS(const PointTS& other) : T(other.T), S(other.S) {}
-    PointTS(const PointTS* other) : T(other->T), S(other->S) {}
+    ValueTS() {}
+    ValueTS(const TValue& t, const TValue& s) : T(t), S(s) {}
+    ValueTS(const ValueTS& other) : T(other.T), S(other.S) {}
+    ValueTS(const ValueTS* other) : T(other->T), S(other->S) {}
 
-    void operator =(const double& v) { T = v, S = v; }
+    void operator =(const TValue& v) { T = v, S = v; }
 
-    void set(const double& t, const double& s) { T = t, S = s; }
+    void set(const TValue& t, const TValue& s) { T = t, S = s; }
 
-    QString str() const;
+    QString str() const { return QString(); }
 };
+
+using PointTS = ValueTS<double>;
 
 //------------------------------------------------------------------------------
 

@@ -14,8 +14,8 @@ public:
     void reset();
     bool isEmpty() { return _roundTrip.isEmpty(); }
 
-    inline double stabilityT() const { return calcStability((_mt.A + _mt.D) * 0.5); }
-    inline double stabilityS() const { return calcStability((_ms.A + _ms.D) * 0.5); }
+    Z::PointTS stability() const;
+    Z::ValueTS<bool> isStable() const;
     StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }
     void setStabilityCalcMode(StabilityCalcMode mode) { _stabilityCalcMode = mode; }
 
@@ -60,13 +60,14 @@ private:
     void collectMatricesSP();
 
     double calcStability(double half_of_A_plus_D) const;
+    bool isStable(double half_of_A_plus_D) const;
 };
 
 //------------------------------------------------------------------------------
 
 namespace Calc {
 
-void isStable(Schema *schema, bool& t, bool& s);
+Z::ValueTS<bool> isStable(Schema *schema);
 
 } // namespace Calc
 

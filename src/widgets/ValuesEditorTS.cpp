@@ -1,5 +1,4 @@
 #include "ValuesEditorTS.h"
-#include "../core/Values.h"
 #include "widgets/OriValueEdit.h"
 
 #include <QApplication>
@@ -12,8 +11,7 @@
 #define EDITOR_W 128
 #define EDITOR_SPACING 1
 
-////////////////////////////////////////////////////////////////////////////////
-
+namespace {
 QToolButton* makeButton(const QString& tooltip, const QString& icon, QObject* reciever, const char* slot)
 {
     auto b = new QToolButton;
@@ -27,10 +25,11 @@ QToolButton* makeButton(const QString& tooltip, const QString& icon, QObject* re
     reciever->connect(b, SIGNAL(clicked()), reciever, slot);
     return b;
 }
+}
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                                ValueEditorTS
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 ValueEditorTS::ValueEditorTS(QWidget *parent) : QWidget(parent)
 {
@@ -157,9 +156,9 @@ void ValueEditorTS::editorKeyPressed(int key)
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                                ValueEditorsTS
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 QLabel* makeHeaderLabel(const QString& title)
 {

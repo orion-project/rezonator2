@@ -1,6 +1,8 @@
 #ifndef VALUESEDITORTS_H
 #define VALUESEDITORTS_H
 
+#include "../core/Values.h"
+
 #include <QMap>
 #include <QWidget>
 #include <QVBoxLayout>
@@ -14,9 +16,6 @@ namespace Ori {
 namespace Widgets {
     class ValueEdit;
 }}
-namespace Z {
-    struct PointTS;
-}
 
 class ValueEditorTS : public QWidget
 {

@@ -31,7 +31,7 @@ void StabilityMapFunction::calculate()
         param->setValue(value);
         _calc->multMatrix();
 
-        addResultPoint(x, _calc->stabilityT(), _calc->stabilityS());
+        addResultPoint(x, _calc->stability());
     }
 
     finishResults();

@@ -33,13 +33,17 @@
 #include <QToolButton>
 #include <QUrl>
 
-#define STATUS_ELEMS 0
-#define STATUS_MODIF 1
-#define STATUS_LAMBDA 2
-#define STATUS_TRIPTYPE 3
-#define STATUS_STABIL 4
-#define STATUS_FILE 5
-#define STATUS_COUNT 6
+enum ProjectWindowStatusPanels
+{
+    STATUS_ELEMS,
+    STATUS_MODIF,
+    STATUS_LAMBDA,
+    STATUS_TRIPTYPE,
+    STATUS_STABIL,
+    STATUS_FILE,
+
+    STATUS_PANELS_COUNT,
+};
 
 ProjectWindow::ProjectWindow() : QMainWindow(), SchemaToolWindow(new Schema())
 {
@@ -218,7 +222,7 @@ void ProjectWindow::createToolBars()
 
 void ProjectWindow::createStatusBar()
 {
-    auto status = new Ori::Widgets::StatusBar(STATUS_COUNT);
+    auto status = new Ori::Widgets::StatusBar(STATUS_PANELS_COUNT);
     status->connect(STATUS_LAMBDA, SIGNAL(doubleClicked()), _operations, SLOT(setupWavelength()));
     status->connect(STATUS_TRIPTYPE, SIGNAL(doubleClicked()), _operations, SLOT(setupTripType()));
     status->connect(STATUS_STABIL, SIGNAL(doubleClicked()), _operations, SLOT(setupPump()));
@@ -296,19 +300,18 @@ void ProjectWindow::updateStability()
     QString icon, hint;
     if (schema()->isResonator())
     {
-        bool stableT, stableS;
-        Calc::isStable(schema(), stableT, stableS);
-        if (!stableT && !stableS)
+        auto stable = Calc::isStable(schema());
+        if (!stable.T && !stable.S)
         {
             icon = QStringLiteral(":/icons/stability_err");
             hint = tr("System is unstable");
         }
-        else if (!stableT)
+        else if (!stable.T)
         {
             icon = QStringLiteral(":/icons/stability_err");
             hint = tr("System is unstable in T-plane");
         }
-        else if (!stableS)
+        else if (!stable.S)
         {
             icon = QStringLiteral(":/icons/stability_err");
             hint = tr("System is unstable in S-plane");

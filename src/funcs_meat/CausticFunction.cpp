@@ -32,11 +32,25 @@ void CausticFunction::calculate()
 
     BackupAndLock locker(elem, param);
 
+    bool stabilityChecked = false;
     auto argUnit = param->value().unit();
     for (auto x : range.values())
     {
         rangeElem->setSubRangeSI(x);
         _calc->multMatrix();
+
+        // After the first round-trip was calculated,
+        // we should check if system is unstable
+        if (!stabilityChecked)
+        {
+            stabilityChecked = true;
+            auto stab = _calc->isStable();
+            if (!stab.T && !stab.S)
+            {
+                setError(qApp->translate("Calc error", "System is unstable, can't calculate caustic"));
+                return;
+            }
+        }
 
         Z::PointTS res;
         switch (tripType)

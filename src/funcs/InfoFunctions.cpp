@@ -103,7 +103,10 @@ QString InfoFuncMatrixRT::calculate()
                 Z::Format::linkViewMatrix(c.reference()));
 
     if (schema()->isResonator())
-        result += formatStability('T', c.stabilityT()) % formatStability('S', c.stabilityS());
+    {
+        auto stab = c.stability();
+        result += formatStability('T', stab.T) % formatStability('S', stab.S);
+    }
 
     return result;
 }
