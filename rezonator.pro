@@ -13,9 +13,13 @@ include($$ORION"orion_svg.pri")
 
 DESTDIR = $$_PRO_FILE_PWD_/bin
 
-DEFINES += "APP_VER_MAJOR=2"
-DEFINES += "APP_VER_MINOR=0"
-DEFINES += "APP_VER_BUILD=0" # TODO get from git tag
+include(release/version.pri)
+DEFINES += "APP_VER_MAJOR=$$APP_VER_MAJOR"
+DEFINES += "APP_VER_MINOR=$$APP_VER_MINOR"
+DEFINES += "APP_VER_BUILD=$$APP_VER_BUILD"
+DEFINES += "APP_VER_COMMITS=$$APP_VER_COMMITS"
+DEFINES += "APP_VER_CODENAME=\"\\\"$$APP_VER_CODENAME\\\"\""
+DEFINES += "APP_VER_SHA=\"\\\"$$APP_VER_SHA\\\"\""
 
 win32 {
     DEFINES += "BUILDDATE=\"\\\"$$system(date /T)\\\"\""

@@ -363,24 +363,30 @@ void ProjectWindow::actionHelpAbout()
 {
     auto title = tr("About %1").arg(qApp->applicationName());
     auto text = tr(
-                "<p><font size=4><b>{app} {ver_major}.{ver_minor}</b></font>"
-                "<p>Build {ver_major}.{ver_minor}.{ver_build} ({build_date} {build_time})"
-                "<p>Chunosov N.&nbsp;I. © 2006-2017"
+                "<p><font size=4><b>{app} {ver_short}</b></font>"
+                "<p>Version: {ver_long}-<b>{ver_codename}</b>"
+                "<p>Built: {build_date}"
+                "<p>Revision: <a href='{ver_link}'>{ver_sha}</a>"
+                "<p>Copyright: Chunosov N.&nbsp;I. © 2006-2017"
                 "<p>Web: <a href='{www}'>{www}</a>"
                 "<p>E-mail: <a href='mailto://{email}'>{email}</a>"
                 "<p>Credits: <a href='http://www.qcustomplot.com/'>QCustomPlot</a>"
           // TODO:NEXT-VER    ", <a href='http://muparser.beltoforion.de/'>muparser</a>"
+                "<p>{app} is open-source laser resonator calculation tool, its "
+                "source code is located at <a href='{www_sources}'>{www_sources}</a>."
                 "<p>The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING "
                 "THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE."
-                "<br>&nbsp;")
+                )
             .replace("{app}", qApp->applicationName())
-            .replace("{ver_major}", QString::number(APP_VER_MAJOR))
-            .replace("{ver_minor}", QString::number(APP_VER_MINOR))
-            .replace("{ver_build}", QString::number(APP_VER_BUILD))
-            .replace("{build_date}", BUILDDATE)
-            .replace("{build_time}", BUILDTIME)
+            .replace("{ver_short}", Z::Strs::appVersionShort())
+            .replace("{ver_long}", Z::Strs::appVersionLong())
+            .replace("{ver_codename}", Z::Strs::appVersionCodename())
+            .replace("{build_date}", Z::Strs::appVersionDate())
+            .replace("{ver_link}", Z::Strs::appVersionLink())
+            .replace("{ver_sha}", Z::Strs::appVersionSHA())
             .replace("{www}", Z::Strs::homepage())
-            .replace("{email}", Z::Strs::email());
+            .replace("{email}", Z::Strs::email())
+            .replace("{www_sources}", Z::Strs::sourcepage());
     QMessageBox about(QMessageBox::NoIcon, title, text, QMessageBox::Ok, this);
     about.setIconPixmap(QPixmap(":/window_icons/main").
         scaled(64, 64, Qt::KeepAspectRatio, Qt::SmoothTransformation));
