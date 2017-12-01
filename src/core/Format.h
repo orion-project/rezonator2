@@ -47,7 +47,6 @@ inline QString appVersionCodename() { return QString::fromLatin1(APP_VER_CODENAM
 inline QString appVersionDate() { return QString("%1 %2").arg(BUILDDATE).arg(BUILDTIME); }
 inline QString appVersionSHA() { return QString::fromLatin1(APP_VER_SHA); }
 
-
 } // namespace Fmt
 } // namespace Z
 

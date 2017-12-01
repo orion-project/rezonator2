@@ -1,0 +1,24 @@
+1 VERSIONINFO
+PRODUCTVERSION 	{v1},{v2},{v3},{v4}
+FILEVERSION    	{v1},{v2},{v3},{v4}
+FILEOS         	0x4
+FILETYPE       	0
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName",      "orion-project.org\0"
+            VALUE "FileVersion",      "{v1}.{v2}.{v3}.{v4}\0"
+            VALUE "InternalName",     "rezonator\0"
+            VALUE "LegalCopyright",   "Chunosov N.I. © 2006-2017\0"
+            VALUE "OriginalFilename", "rezonator.exe\0"
+            VALUE "ProductName",      "rezonator\0"
+            VALUE "ProductVersion",   "{v1}.{v2}.{v3}.{v4}\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252 /* English */
+    END
+END

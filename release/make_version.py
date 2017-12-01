@@ -7,6 +7,7 @@
 '''
 
 import os
+import re
 import subprocess
 
 def execute(cmdline, join_stdout = True):
@@ -37,7 +38,14 @@ def get_latest_version_tag():
                     latest_tag = tag
                     latest_sha = tag_sha
     return latest_tag.strip(), latest_sha.strip()
-                
+
+def get_file_text(file_name):
+    with open(file_name, 'r') as f:
+        return f.read()
+
+def set_file_text(file_name, text):
+    with open(file_name, 'w') as f:
+        f.write(text)
 
 if __name__ == '__main__':
     # Navigate to repository dir
@@ -53,7 +61,8 @@ if __name__ == '__main__':
     if not tag or not tag_sha:
         print 'ERROR: No version tags found'
         exit
-    print 'Latest version tag:', tag, tag_sha
+    print 'Latest version tag:', tag
+    print 'Tag commit:', tag_sha
 
     # Split tag name into version numbers
     tag_parts = tag.split('-')
@@ -77,5 +86,32 @@ if __name__ == '__main__':
     # We have version now
     print 'Version:', version_major, version_minor, version_build, commits_after_tag, codename
 
-    # TODO Update version.pri
-    # TODO Update version.rc
+    # Update version.pri
+    print 'Updating version.pri'
+    file_name = 'release/version.pri'
+    text = get_file_text(file_name)
+
+    def replace(key, value):
+        global text
+        text = re.sub('^' + key + '=.+$', key + '=' + value, text, 1, re.MULTILINE)
+
+    replace('APP_VER_MAJOR', version_major)
+    replace('APP_VER_MINOR', version_minor)
+    replace('APP_VER_BUILD', version_build)
+    replace('APP_VER_COMMITS', commits_after_tag)
+    replace('APP_VER_CODENAME', codename)
+    replace('APP_VER_SHA', latest_sha)
+    set_file_text(file_name, text)
+    
+    # Update version.rc
+    print 'Updating version.rc'
+    text = get_file_text('release/version.rc.template')
+    text = text.replace('{v1}', version_major)
+    text = text.replace('{v2}', version_minor)
+    text = text.replace('{v3}', version_build)
+    text = text.replace('{v4}', commits_after_tag)
+    text = text.replace('{codename}', codename)
+    text = text.replace('{sha}', latest_sha)
+    set_file_text('release/version.rc', text)
+
+    print 'OK'

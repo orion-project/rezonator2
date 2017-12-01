@@ -383,7 +383,7 @@ void ProjectWindow::actionHelpAbout()
             .replace("{ver_codename}", Z::Strs::appVersionCodename())
             .replace("{build_date}", Z::Strs::appVersionDate())
             .replace("{ver_link}", Z::Strs::appVersionLink())
-            .replace("{ver_sha}", Z::Strs::appVersionSHA())
+            .replace("{ver_sha}", Z::Strs::appVersionSHA().left(7))
             .replace("{www}", Z::Strs::homepage())
             .replace("{email}", Z::Strs::email())
             .replace("{www_sources}", Z::Strs::sourcepage());

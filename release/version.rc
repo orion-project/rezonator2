@@ -1,11 +1,6 @@
-// Setting the Application Icon
-// http://doc.qt.digia.com/qt/appicon.html
-
-IDI_ICON1 ICON DISCARDABLE "../img/icon/icon_main_2.ico"
-
 1 VERSIONINFO
-PRODUCTVERSION 	2,0,$WCREV$,0
-FILEVERSION    	2,0,$WCREV$,0
+PRODUCTVERSION 	2,0,0,2
+FILEVERSION    	2,0,0,2
 FILEOS         	0x4
 FILETYPE       	0
 BEGIN
@@ -14,12 +9,12 @@ BEGIN
         BLOCK "040904B0"
         BEGIN
             VALUE "CompanyName",      "orion-project.org\0"
-            VALUE "FileVersion",      "2.0.$WCREV$.0\0"
+            VALUE "FileVersion",      "2.0.0.2\0"
             VALUE "InternalName",     "rezonator\0"
-            VALUE "LegalCopyright",   "Chunosov N.I. © 2006-2014\0"
+            VALUE "LegalCopyright",   "Chunosov N.I. © 2006-2017\0"
             VALUE "OriginalFilename", "rezonator.exe\0"
             VALUE "ProductName",      "rezonator\0"
-            VALUE "ProductVersion",   "2.0.$WCREV$.0\0"
+            VALUE "ProductVersion",   "2.0.0.2\0"
         END
     END
     BLOCK "VarFileInfo"
