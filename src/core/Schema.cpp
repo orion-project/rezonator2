@@ -36,10 +36,10 @@ void SchemaEvents::raise(Event event, Element* element) const
 {
     if (!_enabled) return;
 
-    auto eventProps = propsOf(event);
+    const EventProps& eventProps = propsOf(event);
     Z_REPORT("SchemaEvent:" << eventProps.name)
 
-    if (eventProps.nextState != SchemaState::Current)
+    if (int(eventProps.nextState) != SchemaState::Current)
         _schema->state().set(eventProps.nextState);
 
     auto listeners = _schema->clients().get<SchemaListener>();

@@ -11,7 +11,7 @@ QT_END_NAMESPACE
 #include "../core/Parameters.h"
 
 namespace Z {
-class Variable;
+struct Variable;
 
 namespace IO {
 class Report;

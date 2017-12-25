@@ -4,6 +4,10 @@
 #include "../io/z_io_xml_writer.h"
 #include "TestUtils.h"
 
+#ifdef Q_OS_MACOS
+#include <cmath>
+#endif
+
 #include <QtXml/QDomDocument>
 
 namespace Z {

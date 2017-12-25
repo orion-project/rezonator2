@@ -2,6 +2,10 @@
 #include "../core/Units.h"
 #include "TestUtils.h"
 
+#ifdef Q_OS_MACOS
+#include <cmath>
+#endif
+
 using namespace Z::Units;
 
 namespace Z {

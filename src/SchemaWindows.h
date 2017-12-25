@@ -136,9 +136,9 @@ public:
     void settingsChanged() override;
 
 protected:
-    void closeEvent(class QCloseEvent*) { emit closing(); }
+    void closeEvent(class QCloseEvent*) override { emit closing(); }
 
-    QSize sizeHint() const { return QSize(640, 480); }
+    QSize sizeHint() const override { return QSize(640, 480); }
 
 private:
     QVBoxLayout* _layout = nullptr;

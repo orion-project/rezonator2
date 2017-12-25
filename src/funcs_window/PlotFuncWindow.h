@@ -87,7 +87,7 @@ public:
     virtual bool configure(QWidget* parent) { Q_UNUSED(parent); return true; }
 
     // inherits from BasicMdiChild
-    QList<QMenu*> menus() { return QList<QMenu*>() << menuPlot << menuLimits /* TODO:NEXT-VER << menuFormat*/; }
+    QList<QMenu*> menus() override { return QList<QMenu*>() << menuPlot << menuLimits /* TODO:NEXT-VER << menuFormat*/; }
 
     void schemaChanged(Schema*) override;
 

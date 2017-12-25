@@ -35,7 +35,7 @@ CMakeLists.txt.user*
 
 # Output files
 bin/test/_tmp*
-bin/rezonator
+bin/rezonator*
 *.exe
 *.log
 tmp

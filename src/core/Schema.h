@@ -164,13 +164,13 @@ public:
     const Z::Pump::Params& pump() const { return _pump; }
     void setPump(const Z::Pump::Params& pump);
 
-    int count() const { return _items.size(); }
+    int count() const override { return _items.size(); }
     int enabledCount() const;
     const Elements& elements() const { return _items; }
     Element* element(int index) const;
     Element* elementById(int id) const;
     Element* elementByLabel(const QString& label) const;
-    int indexOf(Element *elem) const { return _items.indexOf(elem); }
+    int indexOf(Element *elem) const override { return _items.indexOf(elem); }
     bool isEmpty() const { return _items.size() == 0; }
 
     SchemaEvents& events() { return _events; }

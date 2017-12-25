@@ -36,7 +36,7 @@ public:
     Unit unit() const { return _unit; }     ///< Unit of measurements for all values.
     const QVector<double>& values() const { return _values; } ///< Values of points.
     QString str() const;
-    friend class VariableRange;
+    friend struct VariableRange;
 };
 
 /**

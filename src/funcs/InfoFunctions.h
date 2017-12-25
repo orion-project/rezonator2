@@ -14,8 +14,8 @@ class InfoFuncMatrix : public InfoFunction
 {
 public:
     InfoFuncMatrix(Schema*, Element*);
-    QString calculate();
-    FunctionState elementDeleting(Element *elem);
+    QString calculate() override;
+    FunctionState elementDeleting(Element *elem) override;
     FUNC_NAME(qApp->translate("Func", "Element's Matrices"))
 private:
     Element* _element;
@@ -27,8 +27,8 @@ class InfoFuncMatrices : public InfoFunction
 {
 public:
     InfoFuncMatrices(Schema*, const Elements&);
-    QString calculate();
-    FunctionState elementDeleting(Element*);
+    QString calculate() override;
+    FunctionState elementDeleting(Element*) override;
     FUNC_NAME(qApp->translate("Func", "Elements' Matrices"))
 protected:
     Elements _elements;
@@ -40,7 +40,7 @@ class InfoFuncMatrixMultFwd : public InfoFuncMatrices
 {
 public:
     InfoFuncMatrixMultFwd(Schema*, const Elements&);
-    QString calculate();
+    QString calculate() override;
     FUNC_NAME(qApp->translate("Func", "Matrix Product"))
 };
 
@@ -56,8 +56,8 @@ class InfoFuncMatrixRT : public InfoFunction
 {
 public:
     InfoFuncMatrixRT(Schema*, Element*);
-    QString calculate();
-    FunctionState elementDeleting(Element*);
+    QString calculate() override;
+    FunctionState elementDeleting(Element*) override;
     FUNC_NAME(qApp->translate("Func", "Round-trip Matrix"))
 private:
     Element* _element;
@@ -70,7 +70,7 @@ class InfoFuncRepetitionRate : public InfoFunction
 {
 public:
     InfoFuncRepetitionRate(Schema *schema) : InfoFunction(schema) {}
-    QString calculate();
+    QString calculate() override;
     FUNC_NAME(qApp->translate("Func", "Intermode Beats Frequency"))
     double result() const { return _result; }
 private:
@@ -83,7 +83,7 @@ class InfoFuncSummary : public InfoFunction
 {
 public:
     InfoFuncSummary(Schema *schema) : InfoFunction(schema) {}
-    QString calculate();
+    QString calculate() override;
     FUNC_NAME(qApp->translate("Func", "Schema Summary"))
 };
 

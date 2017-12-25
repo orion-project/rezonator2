@@ -21,15 +21,12 @@ public:
     void setMode(Mode mode) { _mode = mode; }
 
 private:
-    enum { Pump_Gauss, Pump_Ray } _pumpMode;
-
     Mode _mode = Mode::BeamRadius;
     Z::Complex _q_in_t, _q_in_s; // input complex ROC
     Z::RayVector _ray_in_t, _ray_in_s; // input ray vector
     Z::Unit _beamsizeUnit = Z::Units::mkm(); // TODO: make configurable
     Z::Unit _curvatureUnit = Z::Units::m(); // TODO: make configurable
     Z::Unit _angleUnit = Z::Units::deg(); // TODO: make configurable
-    ElementRange* _elem;
     double _wavelenSI = 0;
 
     bool prepareSP();
