@@ -30,12 +30,12 @@ inline QChar multX() { return QChar(0x00D7); }
 
 inline QString appVersionShort()
 {
-    return QString("%1.%2.%3").arg(APP_VER_MAJOR).arg(APP_VER_MINOR).arg(APP_VER_BUILD);
+    return QString("%1.%2.%3").arg(APP_VER_MAJOR).arg(APP_VER_MINOR).arg(APP_VER_MICRO);
 }
 
 inline QString appVersionLong()
 {
-    return QString("%1.%2.%3.%4").arg(APP_VER_MAJOR).arg(APP_VER_MINOR).arg(APP_VER_BUILD).arg(APP_VER_COMMITS);
+    return QString("%1.%2.%3.%4").arg(APP_VER_MAJOR).arg(APP_VER_MINOR).arg(APP_VER_MICRO).arg(APP_VER_COMMITS);
 }
 
 inline QString appVersionLink()

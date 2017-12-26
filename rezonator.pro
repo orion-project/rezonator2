@@ -16,7 +16,7 @@ DESTDIR = $$_PRO_FILE_PWD_/bin
 include(release/version.pri)
 DEFINES += "APP_VER_MAJOR=$$APP_VER_MAJOR"
 DEFINES += "APP_VER_MINOR=$$APP_VER_MINOR"
-DEFINES += "APP_VER_BUILD=$$APP_VER_BUILD"
+DEFINES += "APP_VER_MICRO=$$APP_VER_MICRO"
 DEFINES += "APP_VER_COMMITS=$$APP_VER_COMMITS"
 DEFINES += "APP_VER_CODENAME=\"\\\"$$APP_VER_CODENAME\\\"\""
 DEFINES += "APP_VER_SHA=\"\\\"$$APP_VER_SHA\\\"\""
@@ -31,8 +31,8 @@ else {
 }
 
 win32 {
-    RC_FILE = src/app.rc
-    RC_FILE = release/version.rc
+    RC_FILE += src/app.rc
+    RC_FILE += release/version.rc
 }
 
 #TRANSLATIONS = $$DESTDIR/languages/rezonator_ru.ts
