@@ -31,8 +31,7 @@ else {
 }
 
 win32 {
-    RC_FILE += src/app.rc
-    RC_FILE += release/version.rc
+    RC_FILE = release/version.rc
 }
 
 #TRANSLATIONS = $$DESTDIR/languages/rezonator_ru.ts
