@@ -9,12 +9,7 @@
 #include "helpers/OriDialogs.h"
 
 #include <QAction>
-#include <QApplication>
-#include <QClipboard>
-#include <QIcon>
-#include <QMenu>
 #include <QSplitter>
-#include <QToolBar>
 #include <QToolButton>
 
 SchemaViewWindow::SchemaViewWindow(Schema *owner, CalcManager *calcs) : SchemaMdiChild(owner), _calculations(calcs)
@@ -28,7 +23,6 @@ SchemaViewWindow::SchemaViewWindow(Schema *owner, CalcManager *calcs) : SchemaMd
 
     setContent(Ori::Gui::splitterV(_table, _layout, 2, 20));
 
-    // create control
     createActions();
     createMenuBar();
     createToolBar();
