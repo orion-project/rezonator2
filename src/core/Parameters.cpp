@@ -53,9 +53,9 @@ template QString Parameter::str() const;
 template <class TParam> QString ParametersList<TParam>::str() const
 {
     QStringList s;
-    for (int i = 0; i < QVector<TParam*>::size(); i++)
+    for (int i = 0; i < this->size(); i++)
     {
-        auto p = QVector<TParam*>::at(i);
+        auto p = this->at(i);
         if (p->visible()) s << p->str();
     }
     return s.join("; ");
@@ -65,11 +65,18 @@ template <class TParam> TParam* ParametersList<TParam>::byAlias(const QString& a
 {
     for (int i = 0; i < this->size(); i++)
         if (this->at(i)->alias() == alias)
-            return const_cast<TParam*>(this->at(i));
+            return (*this)[i];
     return nullptr;
 }
 
+template <class TParam> TParam* ParametersList<TParam>::byIndex(int index)
+{
+    return (index >= 0 && index < this->size())? (*this)[index]: nullptr;
+}
+
+// Template implementations for ParametersList<ValuedParameter<Value> > aka Parameters
 template QString Parameters::str() const;
 template Parameter* Parameters::byAlias(const QString& alias);
+template Parameter* Parameters::byIndex(int index);
 
 } // namespace Z

@@ -13,7 +13,7 @@ Element::Element()
 
 Element::~Element()
 {
-    for (auto p: _params) delete p;
+    qDeleteAll(_params);
 
     setOwner(nullptr);
 }

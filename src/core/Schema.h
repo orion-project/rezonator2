@@ -189,6 +189,8 @@ public:
     Element* selectedElement() const { return _selection.element(); }
     Elements selectedElements() const { return _selection.elements(); }
 
+    Z::Parameters* params() { return &_params; }
+
 private:
     Elements _items;
     SchemaEvents _events;
@@ -199,6 +201,7 @@ private:
     QString _title, _comment;
     TripType _tripType = TripType::SW;
     Z::Parameter _wavelength;
+    Z::Parameters _params;
     Z::Pump::Params _pump;
 
     // inherits from ElementOwner

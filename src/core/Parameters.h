@@ -97,6 +97,9 @@ template <typename TValue> class ValuedParameter : public ParameterBase
 public:
     ValuedParameter() : ParameterBase() {}
 
+    ValuedParameter(Z::Dim dim, const QString& alias) :
+        ParameterBase(dim, alias, "", "", "", "") {}
+
     ValuedParameter(Z::Dim dim, const QString& alias, const QString& label, const QString& name) :
         ParameterBase(dim, alias, label, name, "", "") {}
 
@@ -131,6 +134,7 @@ public:
     ParametersList(std::initializer_list<TParam*> args): QVector<TParam*>(args) {}
 
     TParam* byAlias(const QString& alias);
+    TParam* byIndex(int index);
 
     ParametersList mid(int pos, int len) const
     {

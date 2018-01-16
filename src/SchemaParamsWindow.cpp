@@ -1,6 +1,7 @@
 #include "SchemaParamsWindow.h"
 #include "widgets/SchemaParamsTable.h"
 #include "helpers/OriWidgets.h"
+#include "helpers/OriDialogs.h"
 
 #include <QAction>
 #include <QToolButton>
@@ -27,8 +28,8 @@ SchemaParamsWindow::SchemaParamsWindow(Schema *owner) : SchemaMdiChild(owner)
     createMenuBar();
     createToolBar();
 
-    connect(_table, &SchemaParamsTable::doubleClicked, this, &SchemaParamsWindow::actionParamSet);
-    //_table->setContextMenu(_contextMenu);
+    connect(_table, SIGNAL(doubleClicked(Z::Parameter*)), this, SLOT(actionParamSet()));
+    _table->setContextMenu(_contextMenu);
 }
 
 SchemaParamsWindow::~SchemaParamsWindow()
@@ -64,7 +65,18 @@ void SchemaParamsWindow::createToolBar()
 
 void SchemaParamsWindow::actionParamAdd()
 {
-    // TODO
+    QString alias = Ori::Dlg::inputText(tr("Parameter name"), QString());
+    if (alias.isEmpty()) return;
+
+    // TODO set dimension
+    // TODO check alias uniqueness
+    // TODO check alias should be valid identifier (as C++ variable name)
+
+    auto param = new Z::Parameter(Z::Dims::none(), alias);
+    param->setOwner(schema());
+    param->setValue(Z::Value(0, Z::Units::none()));
+    schema()->params()->append(param);
+    _table->parameterCreated(param);
 }
 
 void SchemaParamsWindow::actionParamDelete()

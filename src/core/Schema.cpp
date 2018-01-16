@@ -117,7 +117,8 @@ Schema::~Schema()
 {
     _events.raise(SchemaEvents::Deleted);
 
-    foreach (Element *elem, _items) delete elem;
+    qDeleteAll(_items);
+    qDeleteAll(_params);
 }
 
 // TODO:NEXT-VER make test
