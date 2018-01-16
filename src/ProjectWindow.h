@@ -64,7 +64,7 @@ private:
     QAction  /* *actnToolsBeamCalc,*/ *actnToolsCatalog, *actnToolsPrefs;
 
     QAction *actnWndClose, *actnWndCloseAll, *actnWndTile, *actnWndCascade,
-            *actnWndSchema, *actnWndProtocol;
+            *actnWndSchema, *actnWndParams, *actnWndProtocol;
 
     QAction *actnHelpUpdates, *actnHelpHomepage, *actnHelpAbout;
 
@@ -101,6 +101,7 @@ private slots:
     void showProtocolWindow();
     void showSchemaWindow();
     void showBeamCalculator();
+    void showParamsWindow();
 
     /// Slot connected to @c mdiArea::subWindowActivated() signal.
     /// This method is automatically called when mdiArea changes active widget.

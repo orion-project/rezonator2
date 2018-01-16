@@ -110,6 +110,7 @@
         <file alias="options">../img/icon/icon_settings.svg</file>
         <file alias="wavelength">../img/icon/icon_wavelength.svg</file>
         <file alias="element">../img/icon/icon_element.svg</file>
+        <file alias="parameter">../img/icon/icon_parameter.svg</file>
     </qresource>
     <qresource prefix="/icons">
         <file alias="stability_ok">../img/icon/stability_ok.svg</file>
