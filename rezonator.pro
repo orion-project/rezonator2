@@ -100,7 +100,6 @@ HEADERS += \
     src/widgets/Plot.h \
     src/widgets/PlotParamsPanel.h \
     src/widgets/SchemaLayout.h \
-    src/widgets/SchemaTable.h \
     src/widgets/UnitWidgets.h \
     src/widgets/ValueEditor.h \
     src/widgets/ValuesEditorTS.h \
@@ -119,7 +118,10 @@ HEADERS += \
     src/funcs_window/StabilityMap2DWindow.h \
     src/funcs_window/StabilityMapWindow.h \
     src/core/CommonTypes.h \
-    src/SchemaParamsWindow.h
+    src/SchemaParamsWindow.h \
+    src/widgets/PixmapItemDelegate.h \
+    src/widgets/SchemaParamsTable.h \
+    src/widgets/SchemaElemsTable.h
 
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -193,7 +195,6 @@ SOURCES += \
     src/widgets/Plot.cpp \
     src/widgets/PlotParamsPanel.cpp \
     src/widgets/SchemaLayout.cpp \
-    src/widgets/SchemaTable.cpp \
     src/widgets/UnitWidgets.cpp \
     src/widgets/ValueEditor.cpp \
     src/widgets/ValuesEditorTS.cpp \
@@ -211,4 +212,6 @@ SOURCES += \
     src/funcs_window/StabilityMap2DWindow.cpp \
     src/funcs_window/StabilityMapWindow.cpp \
     src/core/CommonTypes.cpp \
-    src/SchemaParamsWindow.cpp
+    src/SchemaParamsWindow.cpp \
+    src/widgets/SchemaParamsTable.cpp \
+    src/widgets/SchemaElemsTable.cpp

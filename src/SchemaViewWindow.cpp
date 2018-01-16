@@ -4,7 +4,7 @@
 #include "CalcManager.h"
 #include "core/ElementsCatalog.h"
 #include "widgets/SchemaLayout.h"
-#include "widgets/SchemaTable.h"
+#include "widgets/SchemaElemsTable.h"
 #include "helpers/OriWidgets.h"
 #include "helpers/OriDialogs.h"
 
@@ -23,7 +23,7 @@ SchemaViewWindow::SchemaViewWindow(Schema *owner, CalcManager *calcs) : SchemaMd
     setWindowIcon(QIcon(":/window_icons/schema"));
     setAttribute(Qt::WA_DeleteOnClose, false);
 
-    _table = new SchemaTable(owner);
+    _table = new SchemaElemsTable(owner);
     _layout = new SchemaLayout(owner);
 
     setContent(Ori::Gui::splitterV(_table, _layout, 2, 20));

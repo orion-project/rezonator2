@@ -1,51 +1,15 @@
-#include "SchemaTable.h"
+#include "SchemaElemsTable.h"
 #include "ElementImagesProvider.h"
+#include "PixmapItemDelegate.h"
 
+#include <QDebug>
 #include <QHeaderView>
-#include <QItemDelegate>
 #include <QMenu>
-#include <QPainter>
 #include <QVariant>
 
-////////////////////////////////////////////////////////////////////////////////
-//                              PixmapDelegate
-//
-/// Simple delegate class to painting pixmaps in table cells.
-////////////////////////////////////////////////////////////////////////////////
-
-class PixmapDelegate : public QItemDelegate
-{
-public:
-    PixmapDelegate(QSize size, QWidget *parent = 0) : QItemDelegate(parent), _iconSize(size)
-    {}
-
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex& index) const
-    {
-        if (index.data().canConvert<QPixmap>())
-        {
-            if (option.state & QStyle::State_Selected)
-                painter->fillRect(option.rect, option.palette.highlight());
-            painter->drawPixmap(
-                QRect(option.rect.left()+2, option.rect.top()+2, _iconSize.width(), _iconSize.height()),
-                index.data().value<QPixmap>(), QRect(0, 0, _iconSize.width(), _iconSize.height()));
-        }
-        else
-            QItemDelegate::paint(painter, option, index);
-    }
-
-private:
-    QSize _iconSize;
-};
-
-
-////////////////////////////////////////////////////////////////////////////////
-//                              SchemaTable
-////////////////////////////////////////////////////////////////////////////////
-
-SchemaTable::SchemaTable(Schema *schema, QWidget *parent) : QTableWidget(0, 4, parent)
+SchemaElemsTable::SchemaElemsTable(Schema *schema, QWidget *parent) : QTableWidget(0, COL_COUNT, parent)
 {
     _schema = schema;
-    _contextMenu = 0;
 
     auto iconSize = ElementImagesProvider::instance().iconSize();
 
@@ -53,21 +17,13 @@ SchemaTable::SchemaTable(Schema *schema, QWidget *parent) : QTableWidget(0, 4, p
     setContextMenuPolicy(Qt::CustomContextMenu);
     setAlternatingRowColors(true);
     setSelectionBehavior(QAbstractItemView::SelectRows);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     horizontalHeader()->setSectionResizeMode(COL_IMAGE, QHeaderView::Fixed);
+    horizontalHeader()->setMinimumSectionSize(iconSize.width()+4);
     horizontalHeader()->resizeSection(COL_IMAGE, iconSize.width()+4);
     horizontalHeader()->setSectionResizeMode(COL_LABEL, QHeaderView::ResizeToContents);
     horizontalHeader()->setSectionResizeMode(COL_PARAMS, QHeaderView::ResizeToContents);
     horizontalHeader()->setSectionResizeMode(COL_TITLE, QHeaderView::Stretch);
-#else
-    horizontalHeader()->setResizeMode(QHeaderView::Stretch);
-    horizontalHeader()->setResizeMode(COL_IMAGE, QHeaderView::Fixed);
-    horizontalHeader()->resizeSection(COL_IMAGE, iconSize.width()+4);
-    horizontalHeader()->setResizeMode(COL_LABEL, QHeaderView::ResizeToContents);
-    horizontalHeader()->setResizeMode(COL_PARAMS, QHeaderView::ResizeToContents);
-    horizontalHeader()->setResizeMode(COL_TITLE, QHeaderView::Stretch);
-#endif
     horizontalHeader()->setHighlightSections(false);
     setHorizontalHeaderLabels({ tr("Typ"), tr("Label"), tr("Parameters"), tr("Title") });
 
@@ -75,41 +31,37 @@ SchemaTable::SchemaTable(Schema *schema, QWidget *parent) : QTableWidget(0, 4, p
     connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
 }
 
-SchemaTable::~SchemaTable()
-{
-}
-
-void SchemaTable::adjustColumns()
+void SchemaElemsTable::adjustColumns()
 {
     resizeColumnToContents(COL_LABEL);
     resizeColumnToContents(COL_PARAMS);
 }
 
-void SchemaTable::doubleClicked(QTableWidgetItem*)
+void SchemaElemsTable::doubleClicked(QTableWidgetItem*)
 {
     Element* elem = selected();
     if (elem)
         emit doubleClicked(elem);
 }
 
-void SchemaTable::showContextMenu(const QPoint& pos)
+void SchemaElemsTable::showContextMenu(const QPoint& pos)
 {
     if (_contextMenu)
         _contextMenu->popup(mapToGlobal(pos));
 }
 
-Element* SchemaTable::selected() const
+Element* SchemaElemsTable::selected() const
 {
     int index = currentRow();
     return (index >= 0 and index < schema()->count())? schema()->element(index): 0;
 }
 
-void SchemaTable::setSelected(Element *elem)
+void SchemaElemsTable::setSelected(Element *elem)
 {
     setCurrentCell(_schema->indexOf(elem), 0);
 }
 
-Elements SchemaTable::selection() const
+Elements SchemaElemsTable::selection() const
 {
     Elements elements;
     QVector<int> rows = selectedRows();
@@ -118,7 +70,7 @@ Elements SchemaTable::selection() const
     return elements;
 }
 
-QVector<int> SchemaTable::selectedRows() const
+QVector<int> SchemaElemsTable::selectedRows() const
 {
     QVector<int> result;
     QList<QTableWidgetSelectionRange> selection = selectedRanges();
@@ -128,12 +80,12 @@ QVector<int> SchemaTable::selectedRows() const
     return result;
 }
 
-bool SchemaTable::hasSelection() const
+bool SchemaElemsTable::hasSelection() const
 {
     return currentRow() > -1;
 }
 
-void SchemaTable::populate()
+void SchemaElemsTable::populate()
 {
     clearContents();
     setRowCount(schema()->count());
@@ -146,7 +98,7 @@ void SchemaTable::populate()
     adjustColumns();
 }
 
-void SchemaTable::createRow(Element *elem, int row)
+void SchemaElemsTable::createRow(Element *elem, int row)
 {
     QTableWidgetItem *it = new QTableWidgetItem();
     it->setData(0, QPixmap(ElementImagesProvider::instance().iconPath(elem->type())));
@@ -167,7 +119,7 @@ void SchemaTable::createRow(Element *elem, int row)
     setItem(row, COL_TITLE, it);
 }
 
-void SchemaTable::populateRow(Element *elem, int row)
+void SchemaElemsTable::populateRow(Element *elem, int row)
 {
     item(row, COL_LABEL)->setText(elem->label());
     item(row, COL_PARAMS)->setText(elem->params().str());
@@ -178,18 +130,18 @@ void SchemaTable::populateRow(Element *elem, int row)
     item(row, COL_TITLE)->setForeground(color);
 }
 
-void SchemaTable::populateParams()
+void SchemaElemsTable::populateParams()
 {
     for (int i = 0; i < schema()->count(); i++)
         item(i, COL_PARAMS)->setText(schema()->element(i)->params().str());
 }
 
-void SchemaTable::schemaLoaded(Schema*)
+void SchemaElemsTable::schemaLoaded(Schema*)
 {
     populate();
 }
 
-void SchemaTable::schemaParamsChanged(Schema*)
+void SchemaElemsTable::schemaParamsChanged(Schema*)
 {
     // the only interesting event - units of measurements
     // has been changed and element descriptors as well
@@ -197,13 +149,13 @@ void SchemaTable::schemaParamsChanged(Schema*)
     adjustColumns();
 }
 
-void SchemaTable::elementCreated(Schema*, Element* elem)
+void SchemaElemsTable::elementCreated(Schema*, Element* elem)
 {
     populate();
     setSelected(elem);
 }
 
-void SchemaTable::elementChanged(Schema *schema, Element *elem)
+void SchemaElemsTable::elementChanged(Schema *schema, Element *elem)
 {
     int index = schema->indexOf(elem);
     if (index >= 0 && index < rowCount())
@@ -213,7 +165,7 @@ void SchemaTable::elementChanged(Schema *schema, Element *elem)
     }
 }
 
-void SchemaTable::elementDeleting(Schema *schema, Element *elem)
+void SchemaElemsTable::elementDeleting(Schema *schema, Element *elem)
 {
     int index = schema->indexOf(elem);
     if (index >= 0 && index < rowCount())

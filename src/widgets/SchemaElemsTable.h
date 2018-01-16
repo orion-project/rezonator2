@@ -1,60 +1,53 @@
-#ifndef SCHEMATABLE_H
-#define SCHEMATABLE_H
+#ifndef SCHEMA_ELEMS_TABLE_H
+#define SCHEMA_ELEMS_TABLE_H
 
 #include <QTableWidget>
 
 #include "../core/Schema.h"
 #include "../core/Element.h"
 
-#define COL_IMAGE 0
-#define COL_LABEL 1
-#define COL_PARAMS 2
-#define COL_TITLE 3
-
 /**
     Widget presenting a schema in table view.
 */
-class SchemaTable:
-        public QTableWidget,
-        public SchemaListener,
-        public ElementSelector
+class SchemaElemsTable: public QTableWidget, public SchemaListener, public ElementSelector
 {
     Q_OBJECT
 
 public:
-    explicit SchemaTable(Schema *schema, QWidget *parent = 0);
-    ~SchemaTable();
+    explicit SchemaElemsTable(Schema *schema, QWidget *parent = 0);
 
     void populateParams();
     void setContextMenu(QMenu *menu) { _contextMenu = menu; }
 
     Schema* schema() const { return _schema; }
 
-    Element* selected() const;
+    Element* selected() const override;
     void setSelected(Element*);
 
-    Elements selection() const;
+    Elements selection() const override;
     QVector<int> selectedRows() const;
 
     bool hasSelection() const;
 
-    ///// inherits from SchemaListener
-    void schemaLoaded(Schema*);
-    void elementCreated(Schema*, Element*);
-    void elementChanged(Schema*, Element*);
-    void elementDeleting(Schema*, Element*);
-    void schemaParamsChanged(Schema*);
+    // inherits from SchemaListener
+    void schemaLoaded(Schema*) override;
+    void elementCreated(Schema*, Element*) override;
+    void elementChanged(Schema*, Element*) override;
+    void elementDeleting(Schema*, Element*) override;
+    void schemaParamsChanged(Schema*) override;
 
 signals:
     void doubleClicked(Element*);
-    
+
 private slots:
     void doubleClicked(class QTableWidgetItem*);
     void showContextMenu(const QPoint&);
 
 private:
+    enum { COL_IMAGE, COL_LABEL, COL_PARAMS, COL_TITLE, COL_COUNT };
+
     Schema *_schema;
-    QMenu *_contextMenu;
+    QMenu *_contextMenu = nullptr;
 
     void adjustColumns();
     void populate();
@@ -62,4 +55,4 @@ private:
     void populateRow(Element *elem, int row);
 };
 
-#endif // SCHEMATABLE_H
+#endif // SCHEMA_ELEMS_TABLE_H

@@ -45,7 +45,7 @@ private:
     QMenu *menuElement, *menuContext;
 
     class SchemaLayout *_layout;
-    class SchemaTable *_table;
+    class SchemaElemsTable *_table;
     CalcManager* _calculations;
 
     bool _pasteMode = false;

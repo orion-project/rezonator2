@@ -34,6 +34,7 @@
         <file alias="gauss_pos_z">../img/toolbar/gauss_pos_z.svg</file>
         <file alias="gauss_full_z">../img/toolbar/gauss_full_z.svg</file>
         <file alias="options">../img/toolbar/settings.svg</file>
+        <file alias="parameter">../img/toolbar/parameter.svg</file>
         <file alias="schema_summary">../img/toolbar/schema_summary.svg</file>
         <file alias="schema_prop">../img/toolbar/schema_prop.svg</file>
         <file alias="schema_pump">../img/toolbar/schema_pump.svg</file>

@@ -16,6 +16,8 @@ private:
     ~SchemaParamsWindow();
 
     static SchemaParamsWindow* _instance;
+
+    class SchemaParamsTable* _table;
 };
 
 #endif // SCHEMA_PARAMS_WINDOW_H
