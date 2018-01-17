@@ -5,12 +5,13 @@
 
 #include "../core/Schema.h"
 
-class SchemaParamsTable : public QTableWidget, public SchemaListener
+class SchemaParamsTable : public QTableWidget, public SchemaListener, public Z::ParameterListener
 {
     Q_OBJECT
 
 public:
     SchemaParamsTable(Schema *schema, QWidget *parent = 0);
+    ~SchemaParamsTable();
 
     void setContextMenu(QMenu *menu) { _contextMenu = menu; }
 
@@ -21,6 +22,9 @@ public:
 
     // inherits from SchemaListener
     void schemaLoaded(Schema*) override;
+
+    // inherits from Z::ParameterListener
+    void parameterChanged(Z::ParameterBase*) override;
 
     void parameterCreated(Z::Parameter*);
 

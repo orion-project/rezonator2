@@ -84,6 +84,17 @@ TEST_METHOD(Parameters_byIndex)
     ASSERT_IS_NULL(params.byIndex(2));
 }
 
+TEST_METHOD(Parameters_byPointer)
+{
+    Z::Parameter p1(Z::Dims::none(), "p1", "", "");
+    Z::Parameter p2(Z::Dims::none(), "p2", "", "");
+    Z::Parameter p3(Z::Dims::none(), "p3", "", "");
+    Z::Parameters params { &p1, &p2 };
+    ASSERT_EQ_PTR(params.byPointer(&p1), &p1);
+    ASSERT_EQ_PTR(params.byPointer(&p2), &p2);
+    ASSERT_IS_NULL(params.byPointer(&p3));
+}
+
 //------------------------------------------------------------------------------
 
 namespace ParameterFilterTests {
@@ -114,6 +125,7 @@ TEST_GROUP("Parameters",
     ADD_TEST(ParameterListener_parameterChanged),
     ADD_TEST(Parameters_byAlias),
     ADD_TEST(Parameters_byIndex),
+    ADD_TEST(Parameters_byPointer),
     ADD_GROUP(ParameterFilterTests),
 )
 

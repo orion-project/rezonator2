@@ -54,7 +54,8 @@ template QString Parameter::str() const;
 //                               ParametersList<TParam>
 //--------------------------------------------------------------------------------
 
-template <class TParam> QString ParametersList<TParam>::str() const
+template <class TParam>
+QString ParametersList<TParam>::str() const
 {
     QStringList s;
     for (int i = 0; i < this->size(); i++)
@@ -65,7 +66,8 @@ template <class TParam> QString ParametersList<TParam>::str() const
     return s.join("; ");
 }
 
-template <class TParam> TParam* ParametersList<TParam>::byAlias(const QString& alias)
+template <class TParam>
+TParam* ParametersList<TParam>::byAlias(const QString& alias)
 {
     for (int i = 0; i < this->size(); i++)
         if (this->at(i)->alias() == alias)
@@ -73,14 +75,25 @@ template <class TParam> TParam* ParametersList<TParam>::byAlias(const QString& a
     return nullptr;
 }
 
-template <class TParam> TParam* ParametersList<TParam>::byIndex(int index)
+template <class TParam>
+TParam* ParametersList<TParam>::byIndex(int index)
 {
     return (index >= 0 && index < this->size())? (*this)[index]: nullptr;
+}
+
+template <class TParam>
+TParam* ParametersList<TParam>::byPointer(void *param)
+{
+    for (int i = 0; i < this->size(); i++)
+        if (this->at(i) == param)
+            return (*this)[i];
+    return nullptr;
 }
 
 // Template implementations for ParametersList<ValuedParameter<Value> > aka Parameters
 template QString Parameters::str() const;
 template Parameter* Parameters::byAlias(const QString& alias);
 template Parameter* Parameters::byIndex(int index);
+template Parameter* Parameters::byPointer(void *param);
 
 } // namespace Z

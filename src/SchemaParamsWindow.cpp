@@ -1,5 +1,6 @@
 #include "SchemaParamsWindow.h"
 #include "widgets/SchemaParamsTable.h"
+#include "widgets/ParamEditor.h"
 #include "helpers/OriWidgets.h"
 #include "helpers/OriDialogs.h"
 
@@ -85,5 +86,12 @@ void SchemaParamsWindow::actionParamDelete()
 
 void SchemaParamsWindow::actionParamSet()
 {
-    // TOOD
+    auto p = _table->selected();
+    if (!p) return;
+
+    ParamEditor editor(p, false);
+    Ori::Dlg::Dialog(&editor)
+            .withTitle(p->alias())
+            .connectOkToContentApply()
+            .exec();
 }

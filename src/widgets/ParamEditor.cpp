@@ -20,6 +20,10 @@ ParamEditor::ParamEditor(Z::Parameter *param, bool showName) : QWidget(0)
 
     int def_spacing = Ori::Gui::layoutSpacing();
 
+    auto label = param->label();
+    if (label.isEmpty())
+        label = param->alias();
+
     auto layout = Ori::Gui::layoutH(this, 0, 0, {});
     if (showName)
         Ori::Gui::populate(layout, {
@@ -27,7 +31,7 @@ ParamEditor::ParamEditor(Z::Parameter *param, bool showName) : QWidget(0)
             Ori::Gui::spacing(2 * def_spacing),
         });
     Ori::Gui::populate(layout, {
-        _labelLabel = Z::Gui::symbolLabel(param->label() % " = "),
+        _labelLabel = Z::Gui::symbolLabel(label % " = "),
         _valueEditor = new Ori::Widgets::ValueEdit,
         Ori::Gui::spacing(Ori::Gui::borderWidth()),
         _unitsSelector = new UnitComboBox(_param->dim()),

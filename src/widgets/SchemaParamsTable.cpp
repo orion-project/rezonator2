@@ -29,6 +29,12 @@ SchemaParamsTable::SchemaParamsTable(Schema *schema, QWidget *parent) : QTableWi
     connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
 }
 
+SchemaParamsTable::~SchemaParamsTable()
+{
+    for (auto p: *(schema()->params()))
+        p->removeListener(this);
+}
+
 void SchemaParamsTable::adjustColumns()
 {
     resizeColumnToContents(COL_ALIAS);
@@ -64,7 +70,8 @@ void SchemaParamsTable::populate()
     setRowCount(schema()->params()->size());
     for (int row = 0; row < schema()->params()->size(); row++)
     {
-        auto param = schema()->params()->at(row);
+        auto param = schema()->params()->byIndex(row);
+        param->addListener(this);
         createRow(param, row);
         populateRow(param, row);
     }
@@ -115,4 +122,13 @@ void SchemaParamsTable::parameterCreated(Z::Parameter *param)
     createRow(param, row);
     populateRow(param, row);
     setSelected(param);
+    param->addListener(this);
+}
+
+void SchemaParamsTable::parameterChanged(Z::ParameterBase* param)
+{
+    auto p = dynamic_cast<Z::Parameter*>(param);
+    auto row = schema()->params()->indexOf(p);
+    if (row >= 0)
+        item(row, COL_VALUE)->setText(p->value().str());
 }

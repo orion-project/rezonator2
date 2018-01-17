@@ -133,6 +133,7 @@ public:
 
     TParam* byAlias(const QString& alias);
     TParam* byIndex(int index);
+    TParam* byPointer(void *param);
 
     ParametersList mid(int pos, int len) const
     {

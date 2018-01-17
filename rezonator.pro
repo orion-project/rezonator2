@@ -121,7 +121,8 @@ HEADERS += \
     src/SchemaParamsWindow.h \
     src/widgets/PixmapItemDelegate.h \
     src/widgets/SchemaParamsTable.h \
-    src/widgets/SchemaElemsTable.h
+    src/widgets/SchemaElemsTable.h \
+    src/core/Formula.h
 
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -214,4 +215,5 @@ SOURCES += \
     src/core/CommonTypes.cpp \
     src/SchemaParamsWindow.cpp \
     src/widgets/SchemaParamsTable.cpp \
-    src/widgets/SchemaElemsTable.cpp
+    src/widgets/SchemaElemsTable.cpp \
+    src/core/Formula.cpp
