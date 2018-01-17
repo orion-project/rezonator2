@@ -3,6 +3,8 @@
 
 #include "Parameters.h"
 
+#include <QMap>
+
 namespace Z {
 
 class Formula
@@ -12,8 +14,24 @@ public:
 
     void calculate();
 
+    Parameter* target() { return _target; }
+
 private:
     Parameter* _target;
+};
+
+//------------------------------------------------------------------------------
+
+class Formulas
+{
+public:
+    Formula* get(Parameter*);
+    void put(Formula*);
+    void free(Parameter*);
+    void clear();
+
+private:
+    QMap<Parameter*, Formula*> _items;
 };
 
 } // namespace Z

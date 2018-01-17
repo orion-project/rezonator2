@@ -119,6 +119,7 @@ Schema::~Schema()
 
     qDeleteAll(_items);
     qDeleteAll(_params);
+    _formulas.clear();
 }
 
 // TODO:NEXT-VER make test

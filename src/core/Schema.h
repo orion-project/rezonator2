@@ -7,6 +7,7 @@
 
 #include "CommonTypes.h"
 #include "Element.h"
+#include "Formula.h"
 #include "Parameters.h"
 #include "Pump.h"
 #include "SchemaClient.h"
@@ -190,6 +191,7 @@ public:
     Elements selectedElements() const { return _selection.elements(); }
 
     Z::Parameters* params() { return &_params; }
+    Z::Formulas* formulas() { return &_formulas; }
 
 private:
     Elements _items;
@@ -202,6 +204,7 @@ private:
     TripType _tripType = TripType::SW;
     Z::Parameter _wavelength;
     Z::Parameters _params;
+    Z::Formulas _formulas;
     Z::Pump::Params _pump;
 
     // inherits from ElementOwner

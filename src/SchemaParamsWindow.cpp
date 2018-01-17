@@ -84,14 +84,39 @@ void SchemaParamsWindow::actionParamDelete()
     // TODO
 }
 
+struct ParamEditResult
+{
+    bool ok = false;
+    Z::Formula* formula = nullptr;
+};
+
+ParamEditResult editParamValue(Z::Parameter* param, Z::Formula* formula)
+{
+    ParamEditor editor(param, false);
+    ParamEditResult res;
+    res.ok = Ori::Dlg::Dialog(&editor)
+                .withTitle(param->alias())
+                .connectOkToContentApply()
+                .exec();
+    return res;
+}
+
 void SchemaParamsWindow::actionParamSet()
 {
-    auto p = _table->selected();
-    if (!p) return;
+    auto param = _table->selected();
+    if (!param) return;
 
-    ParamEditor editor(p, false);
-    Ori::Dlg::Dialog(&editor)
-            .withTitle(p->alias())
-            .connectOkToContentApply()
-            .exec();
+    auto oldFormula = schema()->formulas()->get(param);
+    auto res = editParamValue(param, oldFormula);
+    if (res.ok)
+    {
+        auto newFormula = res.formula;
+        if (newFormula != oldFormula)
+        {
+            if (!newFormula)
+                schema()->formulas()->free(param);
+            else
+                schema()->formulas()->put(newFormula);
+        }
+    }
 }
