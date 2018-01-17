@@ -16,8 +16,16 @@ public:
 
     Parameter* target() { return _target; }
 
+    const QString& code() const { return _code; }
+    void setCode(const QString& code) { _code = code; }
+
+    bool ok() const { return _status.isEmpty(); }
+    const QString& status() const { return _status; }
+
 private:
     Parameter* _target;
+    QString _code;
+    QString _status;
 };
 
 //------------------------------------------------------------------------------

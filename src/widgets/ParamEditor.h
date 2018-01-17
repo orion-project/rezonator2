@@ -18,12 +18,13 @@ namespace Widgets {
 
 class UnitComboBox;
 
-class ParamEditor : public QWidget
+class ParamEditor : public QWidget, public Z::ParameterListener
 {
     Q_OBJECT
 
 public:
     explicit ParamEditor(Z::Parameter* param, bool showName = true);
+    ~ParamEditor();
 
     Z::Parameter* parameter() const { return _param; }
 
@@ -33,6 +34,8 @@ public:
     QWidget* labelLabel() const;
     QWidget* valueEditor() const;
     QWidget* unitsSelector() const;
+
+    void parameterChanged(Z::ParameterBase*) override { populate(); }
 
 signals:
     void focused();

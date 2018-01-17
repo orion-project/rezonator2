@@ -9,14 +9,16 @@
 #include <QBoxLayout>
 #include <QDebug>
 #include <QLabel>
+#include <QPushButton>
 
 //------------------------------------------------------------------------------
 //                                ParamEditor
 //------------------------------------------------------------------------------
 
-ParamEditor::ParamEditor(Z::Parameter *param, bool showName) : QWidget(0)
+ParamEditor::ParamEditor(Z::Parameter *param, bool showName) : QWidget()
 {
     _param = param;
+    _param->addListener(this);
 
     int def_spacing = Ori::Gui::layoutSpacing();
 
@@ -34,7 +36,7 @@ ParamEditor::ParamEditor(Z::Parameter *param, bool showName) : QWidget(0)
         _labelLabel = Z::Gui::symbolLabel(label % " = "),
         _valueEditor = new Ori::Widgets::ValueEdit,
         Ori::Gui::spacing(Ori::Gui::borderWidth()),
-        _unitsSelector = new UnitComboBox(_param->dim()),
+        _unitsSelector = new UnitComboBox(_param->dim())
     });
 
     Z::Gui::setValueFont(_valueEditor);
@@ -52,6 +54,11 @@ ParamEditor::ParamEditor(Z::Parameter *param, bool showName) : QWidget(0)
     connect(_unitsSelector, SIGNAL(focused(bool)), this, SLOT(editorFocused(bool)));
 
     _valueEditor->selectAll();
+}
+
+ParamEditor::~ParamEditor()
+{
+    _param->removeListener(this);
 }
 
 void ParamEditor::populate()

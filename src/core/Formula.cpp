@@ -4,8 +4,20 @@ namespace Z {
 
 void Formula::calculate()
 {
-    // TODO
-    _target->setValue(Value(0, Units::none()));
+    if (_code.isEmpty())
+    {
+        _status = "Formula is empty";
+        return;
+    }
+    bool ok;
+    double value = _code.toDouble(&ok);
+    if (!ok)
+    {
+        _status = "Invalid double value";
+        return;
+    }
+    _target->setValue(Value(value, Units::none()));
+    _status.clear();
 }
 
 //------------------------------------------------------------------------------
