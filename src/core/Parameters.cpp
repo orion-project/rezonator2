@@ -17,6 +17,12 @@ ParameterBase::ParameterBase(Z::Dim dim, const QString& alias, const QString& la
 {
 }
 
+void ParameterBase::notifyListeners()
+{
+    for (auto listener: _listeners)
+        listener->parameterChanged(this);
+}
+
 //--------------------------------------------------------------------------------
 //                            ValuedParameter<TValue>
 //--------------------------------------------------------------------------------
@@ -25,9 +31,7 @@ template <class TValue>
 void ValuedParameter<TValue>::setValue(const TValue& value)
 {
     _value = value;
-
-    if (_owner)
-        _owner->parameterChanged(this);
+    notifyListeners();
 }
 
 template <class TValue>

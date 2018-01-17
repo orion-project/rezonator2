@@ -11,11 +11,18 @@ DECLARE_ELEMENT(TestElement, Element)
     {
         addParam(new Z::Parameter(Z::Dims::linear(), "", "",  ""), 3.14, Z::Units::mkm());
     }
+
     bool matrixCalculated = false;
     void calcMatrixInternal() override {
         _mt.assign(11, 12, 13, 14);
         _ms.assign(21, 22, 23, 24);
         matrixCalculated = true;
+    }
+
+    Z::ParameterBase* changedParam = nullptr;
+    void parameterChanged(ParameterBase *p) override {
+        Element::parameterChanged(p);
+        changedParam = p;
     }
 DECLARE_ELEMENT_END
 
@@ -87,15 +94,23 @@ TEST_METHOD(ElementsNamer_generateLabel_via_helper)
 
 //------------------------------------------------------------------------------
 
-TEST_METHOD(Element_addParam)
+TEST_METHOD(Element_must_add_param_in_ctor)
 {
     TestElement el;
     ASSERT_EQ_INT(el.params().size(), 1)
 
     Z::Parameter* p = el.params().at(0);
     ASSERT_EQ_PTR(p->dim(), Z::Dims::linear())
-    ASSERT_EQ_PTR(p->owner(), &el)
     ASSERT_Z_VALUE_AND_UNIT(p->value(), 3.14, Z::Units::mkm())
+}
+
+TEST_METHOD(Element_must_listen_its_params)
+{
+    TestElement el;
+    ASSERT_IS_NULL(el.changedParam);
+
+    el.params().at(0)->setValue(Z::Value(1, Z::Units::mm()));
+    ASSERT_EQ_PTR(el.changedParam, el.params().at(0));
 }
 
 TEST_METHOD(Element_hasParams)
@@ -268,7 +283,8 @@ TEST_GROUP("Element",
     ADD_TEST(ElementsNamer_generateLabel),
     ADD_TEST(ElementsNamer_generateLabel_via_helper),
 
-    ADD_TEST(Element_addParam),
+    ADD_TEST(Element_must_add_param_in_ctor),
+    ADD_TEST(Element_must_listen_its_params),
     ADD_TEST(Element_hasParams),
 
     ADD_TEST(Element_unlock_calculates_matrix),

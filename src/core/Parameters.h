@@ -15,14 +15,11 @@ class ParameterBase;
 
 //------------------------------------------------------------------------------
 /**
-    Base class for objects who want to own parameters.
+    Base class for objects who want to listen to parameter updates.
 */
-class ParameterOwner
+class ParameterListener
 {
 public:
-    /// Check parameter value before it actually will be assigned.
-    //virtual QString checkParameter(ParameterBase*, double) const { return QString(); }
-
     /// Method is called when a new value has been assigned for a parameter.
     virtual void parameterChanged(ParameterBase*) {}
 };
@@ -57,8 +54,8 @@ public:
 
     virtual QString str() const = 0;
 
-    void setOwner(ParameterOwner* owner) { _owner = owner; }
-    ParameterOwner* owner() const { return _owner; }
+    void addListener(ParameterListener* listener) { _listeners.append(listener); }
+    void removeListener(ParameterListener* listener) { _listeners.removeAll(listener); }
 
 protected:
     ParameterBase();
@@ -73,12 +70,13 @@ protected:
 
     virtual ~ParameterBase() {}
 
-    ParameterOwner* _owner = nullptr;
+    void notifyListeners();
 
 private:
     Z::Dim _dim;
     QString _alias, _label, _name, _description, _category;
     bool _visible;
+    QVector<ParameterListener*> _listeners;
 };
 
 //------------------------------------------------------------------------------

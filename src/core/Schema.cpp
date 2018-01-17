@@ -105,7 +105,7 @@ Schema::Schema()
 {
     _wavelength = Z::Parameter(Z::Dims::linear(), "lambda", Z::Strs::lambda(), /*qApp->translate("Param", "Wavelength")*/QString());
     _wavelength.setValue(Z::Value(980, Z::Units::nm()));
-    _wavelength.setOwner(this);
+    _wavelength.addListener(this);
 
     // TODO:NEXT-VER init default pump
 

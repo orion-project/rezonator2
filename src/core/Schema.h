@@ -143,7 +143,7 @@ private:
 
 //------------------------------------------------------------------------------
 
-class Schema : public ElementOwner, public Z::ParameterOwner
+class Schema : public ElementOwner, public Z::ParameterListener
 {
 public:
     Schema();
@@ -207,7 +207,7 @@ private:
     // inherits from ElementOwner
     void elementChanged(Element *elem) override { _events.raise(SchemaEvents::ElemChanged, elem); }
 
-    // inherits from ParameterOwner
+    // inherits from ParameterListener
     void parameterChanged(Z::ParameterBase *param) override;
 
     inline bool isValid(int index) const { return index >= 0 && index < _items.size(); }

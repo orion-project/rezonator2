@@ -40,7 +40,7 @@ TEST_METHOD(Parameter_setValue_getValue)
 
 //------------------------------------------------------------------------------
 
-class TestParamOwner : public Z::ParameterOwner
+class TestParamListener : public Z::ParameterListener
 {
 public:
     QString changedParam;
@@ -51,15 +51,15 @@ public:
     }
 };
 
-TEST_METHOD(ParameterOwner_parameterChanged)
+TEST_METHOD(ParameterListener_parameterChanged)
 {
-    TestParamOwner owner;
+    TestParamListener listener;
     Z::Parameter p(Z::Dims::linear(), "", "param1", "");
-    p.setOwner(&owner);
+    p.addListener(&listener);
 
-    owner.changedParam.clear();
+    listener.changedParam.clear();
     p.setValue(Z::Value(100, Z::Units::mm()));
-    ASSERT_IS_TRUE(owner.changedParam == p.name());
+    ASSERT_EQ_STR(listener.changedParam, p.name());
 }
 
 //------------------------------------------------------------------------------
@@ -69,10 +69,19 @@ TEST_METHOD(Parameters_byAlias)
     Z::Parameter p1(Z::Dims::none(), "p1", "", "");
     Z::Parameter p2(Z::Dims::none(), "p2", "", "");
     Z::Parameters params { &p1, &p2 };
-    ASSERT_EQ_INT(params.size(), 2);
-    ASSERT_IS_NOT_NULL(params.byAlias("p1"));
-    ASSERT_IS_NOT_NULL(params.byAlias("p2"));
+    ASSERT_EQ_PTR(params.byAlias("p1"), &p1);
+    ASSERT_EQ_PTR(params.byAlias("p2"), &p2);
     ASSERT_IS_NULL(params.byAlias("p3"));
+}
+
+TEST_METHOD(Parameters_byIndex)
+{
+    Z::Parameter p1(Z::Dims::none(), "p1", "", "");
+    Z::Parameter p2(Z::Dims::none(), "p2", "", "");
+    Z::Parameters params { &p1, &p2 };
+    ASSERT_EQ_PTR(params.byIndex(0), &p1);
+    ASSERT_EQ_PTR(params.byIndex(1), &p2);
+    ASSERT_IS_NULL(params.byIndex(2));
 }
 
 //------------------------------------------------------------------------------
@@ -102,8 +111,9 @@ TEST_GROUP("Parameters",
     ADD_TEST(Parameter_ctor_default),
     ADD_TEST(Parameter_ctor_params),
     ADD_TEST(Parameter_setValue_getValue),
-    ADD_TEST(ParameterOwner_parameterChanged),
+    ADD_TEST(ParameterListener_parameterChanged),
     ADD_TEST(Parameters_byAlias),
+    ADD_TEST(Parameters_byIndex),
     ADD_GROUP(ParameterFilterTests),
 )
 

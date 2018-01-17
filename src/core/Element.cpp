@@ -57,7 +57,7 @@ QString Element::displayLabelTitle()
 int Element::addParam(Z::Parameter *param, const double& value, Z::Unit unit)
 {
     param->setValue(Z::Value(value, unit));
-    param->setOwner(this); // after setValue(), suppress parameterChanged()
+    param->addListener(this); // do it after setValue() to suppress parameterChanged()
     _params.append(param);
     return _params.size()-1;
 }

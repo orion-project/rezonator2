@@ -57,7 +57,7 @@ public:
 /**
     Base class for all optical elements.
 */
-class Element : public Z::ParameterOwner
+class Element : public Z::ParameterListener
 {
 public:
     virtual ~Element();

@@ -73,7 +73,6 @@ void SchemaParamsWindow::actionParamAdd()
     // TODO check alias should be valid identifier (as C++ variable name)
 
     auto param = new Z::Parameter(Z::Dims::none(), alias);
-    param->setOwner(schema());
     param->setValue(Z::Value(0, Z::Units::none()));
     schema()->params()->append(param);
     _table->parameterCreated(param);
