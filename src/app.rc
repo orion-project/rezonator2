@@ -1,4 +1,4 @@
 // Setting the Application Icon
-// http://doc.qt.digia.com/qt/appicon.html
+// http://doc.qt.io/archives/qt-4.8/appicon.html
 
 IDI_ICON1 ICON DISCARDABLE "../img/icon/icon_main_2.ico"

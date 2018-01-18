@@ -1,6 +1,12 @@
+// Seems Qt can't use several RC-files, so we have to mix version info and app icon setting.
+
+// Setting the Application Icon (http://doc.qt.io/qt-5/appicon.html)
+IDI_ICON1 ICON DISCARDABLE "../img/icon/icon_main_2.ico"
+
+// Setting the Version Info
 1 VERSIONINFO
-PRODUCTVERSION 	2,0,0,2
-FILEVERSION    	2,0,0,2
+PRODUCTVERSION 	2,0,0,42
+FILEVERSION    	2,0,0,42
 FILEOS         	0x4
 FILETYPE       	0
 BEGIN
@@ -9,12 +15,12 @@ BEGIN
         BLOCK "040904B0"
         BEGIN
             VALUE "CompanyName",      "orion-project.org\0"
-            VALUE "FileVersion",      "2.0.0.2\0"
+            VALUE "FileVersion",      "2.0.0.42\0"
             VALUE "InternalName",     "rezonator\0"
-            VALUE "LegalCopyright",   "Chunosov N.I. © 2006-2017\0"
+            VALUE "LegalCopyright",   "Chunosov N.I. (c) 2006-2017\0"
             VALUE "OriginalFilename", "rezonator.exe\0"
             VALUE "ProductName",      "rezonator\0"
-            VALUE "ProductVersion",   "2.0.0.2\0"
+            VALUE "ProductVersion",   "2.0.0.42\0"
         END
     END
     BLOCK "VarFileInfo"
