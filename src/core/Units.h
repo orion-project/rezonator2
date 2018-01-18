@@ -35,6 +35,7 @@ public:
     virtual QString alias() const = 0;
     virtual QString name() const = 0;
     virtual UnitList units() const = 0;
+    virtual Unit siUnit() const = 0;
     Unit unitByAlias(const QString& alias) const;
 };
 

@@ -42,6 +42,16 @@ private:
     QMap<Parameter*, Formula*> _items;
 };
 
+//------------------------------------------------------------------------------
+
+namespace FormulaUtils {
+
+/// Checks if string is valid variable name for usage in formulas.
+/// Validity criteria are same as for C++ variable names.
+bool isValidVariableName(const QString& s);
+
+} // namespace ParameterUtils
+
 } // namespace Z
 
 #endif // FORMULA_H

@@ -1,10 +1,15 @@
 #include "SchemaParamsWindow.h"
 #include "widgets/SchemaParamsTable.h"
 #include "widgets/FormulaEditor.h"
+#include "widgets/UnitWidgets.h"
 #include "helpers/OriWidgets.h"
 #include "helpers/OriDialogs.h"
 
+#include <QDebug>
 #include <QAction>
+#include <QFormLayout>
+#include <QLabel>
+#include <QLineEdit>
 #include <QToolButton>
 
 SchemaParamsWindow* SchemaParamsWindow::_instance = nullptr;
@@ -29,7 +34,7 @@ SchemaParamsWindow::SchemaParamsWindow(Schema *owner) : SchemaMdiChild(owner)
     createMenuBar();
     createToolBar();
 
-    connect(_table, SIGNAL(doubleClicked(Z::Parameter*)), this, SLOT(actionParamSet()));
+    connect(_table, SIGNAL(doubleClicked(Z::Parameter*)), this, SLOT(setParameterValue()));
     _table->setContextMenu(_contextMenu);
 }
 
@@ -42,9 +47,9 @@ void SchemaParamsWindow::createActions()
 {
     #define A_ Ori::Gui::action
 
-    _actnParamAdd = A_(tr("&Create..."), this, SLOT(actionParamAdd()), ":/toolbar/param_add", Qt::CTRL | Qt::Key_Insert);
-    _actnParamDelete = A_(tr("&Delete"), this, SLOT(actionParamDelete()), ":/toolbar/param_delete", Qt::CTRL | Qt::Key_Delete);
-    _actnParamSet = A_(tr("&Set..."), this, SLOT(actionParamSet()), ":/toolbar/param_set", Qt::Key_Enter);
+    _actnParamAdd = A_(tr("&Create..."), this, SLOT(createParameter()), ":/toolbar/param_add", Qt::CTRL | Qt::Key_Insert);
+    _actnParamDelete = A_(tr("&Delete"), this, SLOT(deleteParameter()), ":/toolbar/param_delete", Qt::CTRL | Qt::Key_Delete);
+    _actnParamSet = A_(tr("&Set..."), this, SLOT(setParameterValue()), ":/toolbar/param_set", Qt::Key_Enter);
 
     #undef A_
 }
@@ -64,36 +69,58 @@ void SchemaParamsWindow::createToolBar()
         Ori::Gui::textToolButton(_actnParamSet), 0, _actnParamDelete });
 }
 
-void SchemaParamsWindow::actionParamAdd()
+void SchemaParamsWindow::createParameter()
 {
-    QString alias = Ori::Dlg::inputText(tr("Parameter name"), QString());
-    if (alias.isEmpty()) return;
+    auto aliasEditor = new QLineEdit;
+    auto dimEditor = new DimComboBox;
 
-    // TODO set dimension
-    // TODO check alias uniqueness
-    // TODO check alias should be valid identifier (as C++ variable name)
+    QWidget editor;
+    auto layout = new QFormLayout(&editor);
+    layout->setMargin(0);
+    layout->addRow(new QLabel(tr("Name")), aliasEditor);
+    layout->addRow(new QLabel(tr("Dim")), dimEditor);
 
-    auto param = new Z::Parameter(Z::Dims::none(), alias);
-    param->setValue(Z::Value(0, Z::Units::none()));
-    schema()->params()->append(param);
-    _table->parameterCreated(param);
+    auto verifyFunc = [&](){
+        auto alias = aliasEditor->text().trimmed();
+        if (alias.isEmpty())
+            return tr("Parameter name can't be empty");
+        if (schema()->params()->byAlias(alias))
+            return tr("Parameter '%1' already exists").arg(alias);
+        if (!Z::FormulaUtils::isValidVariableName(alias))
+            return tr("Parameter name '%1' is invalid").arg(alias);
+        return QString();
+    };
 
-    actionParamSet();
+    if (Ori::Dlg::Dialog(&editor)
+                .withTitle(tr("Create Parameter"))
+                .withContentToButtonsSpacingFactor(3)
+                .withVerification(verifyFunc)
+                .exec())
+    {
+        auto dim = dimEditor->selectedDim();
+        auto name = aliasEditor->text().trimmed();
+        auto param = new Z::Parameter(dim, name);
+        param->setValue(Z::Value(0, dim->siUnit()));
+        schema()->params()->append(param);
+        _table->parameterCreated(param);
+
+        setParameterValue();
+    }
 }
 
-void SchemaParamsWindow::actionParamDelete()
+void SchemaParamsWindow::deleteParameter()
 {
     // TODO
 }
 
-void SchemaParamsWindow::actionParamSet()
+void SchemaParamsWindow::setParameterValue()
 {
     auto param = _table->selected();
     if (!param) return;
 
     FormulaEditor editor(param, schema()->formulas());
     Ori::Dlg::Dialog(&editor)
-                .withTitle(param->alias())
+                .withTitle(tr("Set value"))
                 .withContentToButtonsSpacingFactor(2)
                 .connectOkToContentApply()
                 .exec();

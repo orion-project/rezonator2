@@ -22,9 +22,9 @@ public:
     QList<QMenu*> menus() override { return { _windowMenu }; }
 
 private slots:
-    void actionParamAdd();
-    void actionParamDelete();
-    void actionParamSet();
+    void createParameter();
+    void deleteParameter();
+    void setParameterValue();
 
 private:
     explicit SchemaParamsWindow(Schema*);

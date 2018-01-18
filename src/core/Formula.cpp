@@ -1,5 +1,9 @@
 #include "Formula.h"
 
+#include <cassert>
+
+#include <QRegExp>
+
 namespace Z {
 
 void Formula::calculate()
@@ -16,7 +20,7 @@ void Formula::calculate()
         _status = "Invalid double value";
         return;
     }
-    _target->setValue(Value(value, Units::none()));
+    _target->setValue(Value(value, _target->value().unit()));
     _status.clear();
 }
 
@@ -37,7 +41,7 @@ Formula* Formulas::get(Parameter* p)
 {
     if (_items.contains(p))
     {
-        Q_ASSERT(_items[p]->target() == p);
+        assert(_items[p]->target() == p);
         return _items[p];
     }
     return nullptr;
@@ -58,5 +62,17 @@ void Formulas::clear()
     qDeleteAll(_items.values());
     _items.clear();
 }
+
+//------------------------------------------------------------------------------
+
+namespace FormulaUtils {
+
+bool isValidVariableName(const QString& s)
+{
+    static QRegExp r("^[a-zA-Z_][a-zA-Z_0-9]*$");
+    return r.exactMatch(s);
+}
+
+} // namespace ParameterUtils
 
 } // namespace Z

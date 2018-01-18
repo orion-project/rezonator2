@@ -5,6 +5,9 @@
 
 #include <QComboBox>
 
+/**
+    Combo-box displaying list of units of specific dimension.
+*/
 class UnitComboBox : public QComboBox
 {
     Q_OBJECT
@@ -27,6 +30,26 @@ protected:
 
 private:
     Z::Unit unitAt(int index) const;
+};
+
+
+/**
+    Combo-box displaying list of available dimensions.
+*/
+class DimComboBox : public QComboBox
+{
+    Q_OBJECT
+
+public:
+    DimComboBox(QWidget* parent = 0);
+
+    Z::Dim selectedDim() const;
+    void setSelectedDim(Z::Dim dim);
+
+private:
+    void populate();
+
+    Z::Dim dimAt(int index) const;
 };
 
 #endif // UNIT_WIDGETS_H

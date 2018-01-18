@@ -11,7 +11,7 @@ namespace Z {
 
 QString Value::str() const
 {
-    return Z::str(_value) % _unit->name();
+    return Z::str(_value) % ' ' % _unit->name();
 }
 
 QString Value::toStoredStr() const

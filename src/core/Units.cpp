@@ -30,7 +30,7 @@ inline QString translateUnits(const char* s)
         return &u;\
     }
 
-#define DEFINE_DIM(_dim_, _dim_name_, ...)\
+#define DEFINE_DIM(_dim_, _dim_name_, _si_unit_, ...)\
     class _Dim_##_dim_ : public _Dim_\
     {\
     public:\
@@ -41,6 +41,7 @@ inline QString translateUnits(const char* s)
             static QList<Unit> unitList({__VA_ARGS__});\
             return unitList;\
         }\
+        Unit siUnit() const override { return _si_unit_; }\
     };\
     Dim _dim_()\
     {\
@@ -80,11 +81,11 @@ DEFINE_UNIT(Hz, QT_TRANSLATE_NOOP_UTF8("Units", "Hz"), v, v, Hz) // SI-unit must
 
 namespace Dims {
 
-DEFINE_DIM(none, QT_TRANSLATE_NOOP("Units", "Dimensionless"),
+DEFINE_DIM(none, QT_TRANSLATE_NOOP("Units", "Dimensionless"), UNIT(none),
     UNIT(none),
 )
 
-DEFINE_DIM(linear, QT_TRANSLATE_NOOP("Units", "Linear"),
+DEFINE_DIM(linear, QT_TRANSLATE_NOOP("Units", "Linear"), UNIT(m),
     UNIT(Ao),
     UNIT(nm),
     UNIT(mkm),
@@ -93,7 +94,7 @@ DEFINE_DIM(linear, QT_TRANSLATE_NOOP("Units", "Linear"),
     UNIT(m),
 )
 
-DEFINE_DIM(angular, QT_TRANSLATE_NOOP("Units", "Angular"),
+DEFINE_DIM(angular, QT_TRANSLATE_NOOP("Units", "Angular"), UNIT(rad),
     UNIT(mrad),
     UNIT(rad),
     UNIT(amin),
