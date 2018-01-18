@@ -2,16 +2,32 @@ QT += core gui xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
+#------------------------------------------------------------
+# Definition of output
+
 TARGET = rezonator
 TEMPLATE = app
+DESTDIR = $$_PRO_FILE_PWD_/bin
 
+#------------------------------------------------------------
+# Submodules
+
+# orion
 ORION = $$_PRO_FILE_PWD_/orion/
 include($$ORION"orion.pri")
 include($$ORION"orion_testing.pri")
 include($$ORION"orion_tests.pri")
 include($$ORION"orion_svg.pri")
 
-DESTDIR = $$_PRO_FILE_PWD_/bin
+# muparser
+# http://beltoforion.de/article.php?a=muparser
+# https://github.com/beltoforion/muparser/
+MUPARSER=$$_PRO_FILE_PWD_/libs/muparser
+LIBS += -L$$MUPARSER/lib -lmuparser
+INCLUDEPATH += $$MUPARSER/include
+
+#------------------------------------------------------------
+# Version information
 
 include(release/version.pri)
 DEFINES += "APP_VER_MAJOR=$$APP_VER_MAJOR"
@@ -34,7 +50,13 @@ win32 {
     RC_FILE = release/version.rc
 }
 
+#------------------------------------------------------------
+# Translation
+
 #TRANSLATIONS = $$DESTDIR/languages/rezonator_ru.ts
+
+#------------------------------------------------------------
+# Sources
 
 RESOURCES += \
     src/images.qrc

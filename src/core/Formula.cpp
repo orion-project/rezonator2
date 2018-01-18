@@ -1,5 +1,9 @@
 #include "Formula.h"
 
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#include "muParser.h"
+#pragma GCC diagnostic warning "-Wdeprecated-declarations"
+
 #include <cassert>
 
 #include <QRegExp>
@@ -13,15 +17,19 @@ void Formula::calculate()
         _status = "Formula is empty";
         return;
     }
-    bool ok;
-    double value = _code.toDouble(&ok);
-    if (!ok)
+    auto unit = _target->value().unit();
+    try
     {
-        _status = "Invalid double value";
-        return;
+        mu::Parser p;
+        p.SetExpr(_code.toStdString());
+        double value = p.Eval();
+        _target->setValue(Value(value, unit));
+        _status.clear();
     }
-    _target->setValue(Value(value, _target->value().unit()));
-    _status.clear();
+    catch (mu::Parser::exception_type &e)
+    {
+        _status = QString::fromStdString(e.GetMsg());
+    }
 }
 
 //------------------------------------------------------------------------------
