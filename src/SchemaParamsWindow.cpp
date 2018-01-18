@@ -93,6 +93,7 @@ void SchemaParamsWindow::createParameter()
 
     if (Ori::Dlg::Dialog(&editor)
                 .withTitle(tr("Create Parameter"))
+                .withIconPath(":/window_icons/parameter")
                 .withContentToButtonsSpacingFactor(3)
                 .withVerification(verifyFunc)
                 .exec())
@@ -121,6 +122,7 @@ void SchemaParamsWindow::setParameterValue()
     FormulaEditor editor(param, schema()->formulas());
     Ori::Dlg::Dialog(&editor)
                 .withTitle(tr("Set value"))
+                .withIconPath(":/window_icons/parameter")
                 .withContentToButtonsSpacingFactor(2)
                 .connectOkToContentApply()
                 .exec();

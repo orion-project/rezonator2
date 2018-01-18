@@ -4,6 +4,7 @@
 #include "SchemaWindows.h"
 
 QT_BEGIN_NAMESPACE
+class QMenu;
 class QPlainTextEdit;
 QT_END_NAMESPACE
 
@@ -16,12 +17,16 @@ public:
 
     static ProtocolWindow* create();
 
+    // inherits from BasicMdiChild
+    QList<QMenu*> menus() override { return { _windowMenu }; }
+
 private:
     explicit ProtocolWindow();
 
     static ProtocolWindow* _instance;
 
     QPlainTextEdit* _log;
+    QMenu* _windowMenu;
 };
 
 #endif // PROTOCOL_WINDOW_H

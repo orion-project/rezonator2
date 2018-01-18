@@ -1,4 +1,5 @@
 #include "Formula.h"
+#include "Protocol.h"
 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #include "muParser.h"
@@ -15,6 +16,7 @@ void Formula::calculate()
     if (_code.isEmpty())
     {
         _status = "Formula is empty";
+        Z_ERROR(QString("Empty formula for param '%1'").arg(_target->alias()));
         return;
     }
     auto unit = _target->value().unit();
@@ -29,6 +31,7 @@ void Formula::calculate()
     catch (mu::Parser::exception_type &e)
     {
         _status = QString::fromStdString(e.GetMsg());
+        Z_ERROR(QString("Bad formula for param '%1': %2").arg(_target->alias()).arg(_status));
     }
 }
 

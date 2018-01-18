@@ -11,6 +11,36 @@
 #include <QTimer>
 #include <QToolButton>
 
+namespace Z {
+namespace WindowUtils {
+
+QSize toolbarIconSize()
+{
+    return Settings::instance().smallToolbarImages? QSize(16,16): QSize(24,24);
+}
+
+void adjustIconSize(QToolBar* toolbar)
+{
+    adjustIconSize(toolbar, toolbarIconSize());
+}
+
+void adjustIconSize(QToolBar* toolbar, const QSize& iconSize)
+{
+    toolbar->setIconSize(iconSize);
+
+    for (auto a: toolbar->actions())
+    {
+        auto w = toolbar->widgetForAction(a);
+        auto b = qobject_cast<QToolButton*>(w);
+        if (b) b->setIconSize(iconSize);
+    }
+
+    toolbar->adjustSize();
+}
+
+} // namespace WindowUtils
+} // namespace Z
+
 //------------------------------------------------------------------------------
 //                               SchemaWindow
 //------------------------------------------------------------------------------
@@ -28,27 +58,6 @@ SchemaWindow::~SchemaWindow()
 }
 
 //------------------------------------------------------------------------------
-
-QSize toolbarIconSize()
-{
-    return Settings::instance().smallToolbarImages? QSize(16,16): QSize(24,24);
-}
-
-void adjustIconSize(QToolBar* toolbar, const QSize& iconSize)
-{
-    toolbar->setIconSize(iconSize);
-
-    for (auto a: toolbar->actions())
-    {
-        auto w = toolbar->widgetForAction(a);
-        auto b = qobject_cast<QToolButton*>(w);
-        if (b) b->setIconSize(iconSize);
-    }
-
-    toolbar->adjustSize();
-}
-
-//------------------------------------------------------------------------------
 //                               SchemaToolWindow
 //------------------------------------------------------------------------------
 
@@ -59,7 +68,7 @@ SchemaToolWindow::SchemaToolWindow(Schema *owner) : SchemaWindow(owner)
 QToolBar* SchemaToolWindow::makeToolBar(const QString& title, bool flat)
 {
     QToolBar* toolbar = flat? new Ori::Widgets::FlatToolBar(title): new QToolBar(title);
-    toolbar->setIconSize(toolbarIconSize());
+    toolbar->setIconSize(Z::WindowUtils::toolbarIconSize());
     toolbar->setObjectName("toolBar_" % title);
     _toolbars << toolbar;
     return toolbar;
@@ -82,9 +91,8 @@ QToolBar* SchemaToolWindow::makeToolBar(const std::initializer_list<QObject*>& i
 
 void SchemaToolWindow::settingsChanged()
 {
-    auto iconSize = toolbarIconSize();
     for (auto toolbar: _toolbars)
-        adjustIconSize(toolbar, iconSize);
+        Z::WindowUtils::adjustIconSize(toolbar);
 }
 
 //------------------------------------------------------------------------------
@@ -105,7 +113,7 @@ BasicMdiChild::BasicMdiChild(InitOptions options) : QMdiSubWindow()
         if (!options.testFlag(initNoToolBar))
         {
             _toolbar = new Ori::Widgets::FlatToolBar;
-            _toolbar->setIconSize(toolbarIconSize());
+            _toolbar->setIconSize(Z::WindowUtils::toolbarIconSize());
             _layout->addWidget(_toolbar);
         }
     }
@@ -132,7 +140,7 @@ void BasicMdiChild::setContent(QWidget *content, int row)
 void BasicMdiChild::settingsChanged()
 {
     if (_toolbar)
-        adjustIconSize(_toolbar, toolbarIconSize());
+        Z::WindowUtils::adjustIconSize(_toolbar);
 }
 
 //------------------------------------------------------------------------------

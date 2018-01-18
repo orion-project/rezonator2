@@ -223,6 +223,7 @@ void ProjectWindow::createToolBars()
     // TODO:NEXT-VER addToolBar(makeToolBar(tr("Tools"), { actnToolsBeamCalc }));
 
     _mdiToolbar = new Ori::Widgets::MdiToolBar(tr("Windows"), _mdiArea);
+    Z::WindowUtils::adjustIconSize(_mdiToolbar);
     addToolBar(Qt::BottomToolBarArea, _mdiToolbar);
 }
 
@@ -342,6 +343,12 @@ void ProjectWindow::closeEvent(QCloseEvent* ce)
         ce->accept();
     else
         ce->ignore();
+}
+
+void ProjectWindow::settingsChanged()
+{
+    SchemaToolWindow::settingsChanged();
+    Z::WindowUtils::adjustIconSize(_mdiToolbar);
 }
 
 //------------------------------------------------------------------------------

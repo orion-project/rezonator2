@@ -13,6 +13,17 @@ class QToolBar;
 class QVBoxLayout;
 QT_END_NAMESPACE
 
+//------------------------------------------------------------------------------
+
+namespace Z {
+namespace WindowUtils {
+
+QSize toolbarIconSize();
+void adjustIconSize(QToolBar* toolbar);
+void adjustIconSize(QToolBar* toolbar, const QSize& iconSize);
+
+} // namespace WindowUtils
+} // namespace Z
 
 //------------------------------------------------------------------------------
 /**
@@ -48,6 +59,7 @@ public:
 
     /// Returns schema shown by this window.
     inline Schema* schema() { return _schema; }
+
 private:
     Schema* _schema;
 };

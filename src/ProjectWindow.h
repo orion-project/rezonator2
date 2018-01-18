@@ -43,6 +43,9 @@ public:
     void schemaSaved(Schema*);
     void schemaParamsChanged(Schema*) { updateTitle(); }
 
+    // inherited from SettingsListener.
+    void settingsChanged() override;
+
 protected:
     void closeEvent(class QCloseEvent*);
 

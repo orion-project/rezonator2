@@ -2,6 +2,7 @@
 #include "core/Protocol.h"
 #include "helpers/OriWidgets.h"
 
+#include <QMenu>
 #include <QPlainTextEdit>
 
 ProtocolWindow* ProtocolWindow::_instance = nullptr;
@@ -15,7 +16,7 @@ ProtocolWindow* ProtocolWindow::create()
 
 ProtocolWindow::ProtocolWindow() : BasicMdiChild(InitOptions(initNoDefaultWidget))
 {
-    setWindowTitle(tr("Protocol", "Window title"));
+    setWindowTitle(tr("Protocol"));
     setWindowIcon(QIcon(":/toolbar/protocol"));
 
     _log = new QPlainTextEdit;
@@ -24,6 +25,9 @@ ProtocolWindow::ProtocolWindow() : BasicMdiChild(InitOptions(initNoDefaultWidget
     Ori::Gui::setFontMonospace(_log);
 
     setContent(_log);
+
+    _windowMenu = new QMenu(tr("Protocol"), this);
+    _windowMenu->addAction(tr("Clear"), [&](){ _log->clear(); });
 
     Z::Protocol::setView(_log);
 }
