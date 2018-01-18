@@ -4,7 +4,7 @@
 StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
     PlotFuncWindowStorable(new StabilityMap2DFunction(schema))
 {
-    setWindowIcon(QIcon(":/toolbar/func_stab_map_2d"));
+    setTitleAndIcon(function()->name(), ":/toolbar/func_stab_map_2d");
 }
 
 bool StabilityMap2DWindow::configure(QWidget* parent)

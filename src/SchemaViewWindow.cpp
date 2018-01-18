@@ -19,8 +19,7 @@
 
 SchemaViewWindow::SchemaViewWindow(Schema *owner, CalcManager *calcs) : SchemaMdiChild(owner), _calculations(calcs)
 {
-    setWindowTitle(tr("Schema", "Window title"));
-    setWindowIcon(QIcon(":/window_icons/schema"));
+    setTitleAndIcon(tr("Schema", "Window title"), ":/window_icons/schema");
     setAttribute(Qt::WA_DeleteOnClose, false);
 
     _table = new SchemaTable(owner);
@@ -89,7 +88,7 @@ void SchemaViewWindow::createToolBar()
 
 void SchemaViewWindow::editElement(Element* elem)
 {
-    if (Z::Dlgs::elementProps(elem, this))
+    if (Z::Dlgs::elementProps(elem))
         schema()->events().raise(SchemaEvents::ElemChanged, elem);
 }
 

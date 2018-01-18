@@ -118,6 +118,18 @@ void BasicMdiChild::populateToolbar(std::initializer_list<QObject*> items)
     Ori::Gui::populate(_toolbar, items);
 }
 
+void BasicMdiChild::setTitleAndIcon(const QString& title, const char* iconPath)
+{
+#ifdef Q_OS_MACOS
+    // On MacOS the title and icon of MDI-child are tightly glued together
+    // and that looks ugly, so we simulate intendation with space
+    setWindowTitle(" " + title);
+#else
+    setWindowTitle(title);
+#endif
+    setWindowIcon(QIcon(iconPath));
+}
+
 void BasicMdiChild::setContent(QWidget *content, int row)
 {
     if (content)
@@ -292,7 +304,7 @@ void SchemaMdiArea::settingsChanged()
 void SchemaMdiArea::updateBackground()
 {
     if (Settings::instance().showBackground)
-        setBackground(QBrush(QPixmap(qApp->applicationDirPath() + "/background.bmp")));
+        setBackground(QBrush(QPixmap(":/misc/mdi_background")));
     else
         setBackground(QBrush(palette().color(QPalette::Background)));
 }

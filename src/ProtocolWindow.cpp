@@ -15,8 +15,7 @@ ProtocolWindow* ProtocolWindow::create()
 
 ProtocolWindow::ProtocolWindow() : BasicMdiChild(InitOptions(initNoDefaultWidget))
 {
-    setWindowTitle(tr("Protocol", "Window title"));
-    setWindowIcon(QIcon(":/toolbar/protocol"));
+    setTitleAndIcon(tr("Protocol", "Window title"), ":/toolbar/protocol");
 
     _log = new QPlainTextEdit;
     _log->setReadOnly(true);

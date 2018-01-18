@@ -1,7 +1,7 @@
 #ifndef ELEMENT_SELECTOR_H
 #define ELEMENT_SELECTOR_H
 
-#include <QDialog>
+#include "RezonatorDialog.h"
 
 QT_BEGIN_NAMESPACE
 class QVBoxLayout;
@@ -15,7 +15,7 @@ namespace Widgets {
 
 class Element;
 
-class ElementsCatalogDialog : public QDialog
+class ElementsCatalogDialog : public RezonatorDialog
 {
     Q_OBJECT
 

@@ -28,7 +28,10 @@ int ConfigDialog::_savedTabIndex = 0;
 ConfigDialog::ConfigDialog(QWidget* parent) : Ori::Dlg::BasicConfigDialog(parent)
 {
     setWindowTitle(tr("Preferences"));
+#ifndef Q_OS_MACOS
+    // TODO: make setTitleAndIcon method in BasicConfigDialog
     setWindowIcon(QIcon(":/window_icons/options"));
+#endif
 
     createPages({createGeneralPage(), createViewPage()});
 

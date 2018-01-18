@@ -87,8 +87,6 @@ void FuncOptionsPanel::showCurrentMode()
 PlotFuncWindow::PlotFuncWindow(PlotFunction *func) :
     SchemaMdiChild(func->schema()), _function(func)
 {
-    setWindowTitle(_function->name());
-
     createActions();
     createMenuBar();
     createToolBar();

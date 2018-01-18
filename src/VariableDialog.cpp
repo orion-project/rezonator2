@@ -61,7 +61,7 @@ bool editVariable_ElementRange(QWidget *parent, Schema *schema, Variable *var, c
 //                              VariableDialog
 
 VariableDialog::VariableDialog(QWidget *parent, Schema *schema, Z::Variable *var)
-    : RezonatorDialog(parent), _var(var)
+    : RezonatorDialog(DontDeleteOnClose, parent), _var(var)
 {
     setObjectName("VariableDialog");
 
@@ -86,7 +86,7 @@ void VariableDialog::collect()
 //                              VariableDialog2
 
 VariableDialog2::VariableDialog2(QWidget *parent, Schema *schema, Z::Variable *var1, Z::Variable *var2)
-    : RezonatorDialog(parent), _var1(var1), _var2(var2)
+    : RezonatorDialog(DontDeleteOnClose, parent), _var1(var1), _var2(var2)
 {
     setObjectName("VariableDialog2");
 
@@ -134,7 +134,7 @@ void VariableDialog2::collect()
 //                            VariableDialog_range
 
 VariableDialog_ElementRange::VariableDialog_ElementRange(QWidget *parent, Schema *schema, Z::Variable *var)
-    : RezonatorDialog(parent), _var(var)
+    : RezonatorDialog(DontDeleteOnClose, parent), _var(var)
 {
     setObjectName("VariableDialog_ElementRange");
 

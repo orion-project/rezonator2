@@ -127,6 +127,9 @@
     <qresource prefix="/misc32">
         <file alias="glass_pattern">../img/glass_pattern_32.png</file>
     </qresource>
+    <qresource prefix="/misc">
+        <file alias="mdi_background">../img/background.bmp</file>
+    </qresource>
     <qresource prefix="/drawing">
         <file alias="pump_waist">../img/drawing/pump_waist.png</file>
         <file alias="pump_front">../img/drawing/pump_front.png</file>

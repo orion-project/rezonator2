@@ -12,8 +12,19 @@ class RezonatorDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit RezonatorDialog(QWidget *parent = 0);
+    enum Option {
+        NoOptions = 0x00,
+        OmitButtonsPanel = 0x01,
+        UseHelpButton = 0x02,
+        DontDeleteOnClose = 0x04,
+    };
+    Q_DECLARE_FLAGS(Options, Option)
+
+public:
+    explicit RezonatorDialog(Options options = NoOptions, QWidget *parent = 0);
     ~RezonatorDialog();
+
+    void setTitleAndIcon(const QString& title, const char* iconPath);
 
     QVBoxLayout* mainLayout() const { return _mainLayout; }
 
@@ -23,8 +34,14 @@ protected slots:
 protected:
     void showEvent(QShowEvent *event);
 
+    virtual QString helpTopic() const { return ""; }
+
 private:
     QVBoxLayout* _mainLayout;
+
+    void showHelp();
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(RezonatorDialog::Options)
 
 #endif // REZONATOR_DIALOG_H
