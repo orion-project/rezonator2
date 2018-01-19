@@ -1,6 +1,4 @@
-QT += core gui xml
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
+QT += core gui xml widgets printsupport
 
 #------------------------------------------------------------
 # Definition of output
@@ -13,11 +11,11 @@ DESTDIR = $$_PRO_FILE_PWD_/bin
 # Submodules
 
 # orion
-ORION = $$_PRO_FILE_PWD_/orion/
-include($$ORION"orion.pri")
-include($$ORION"orion_testing.pri")
-include($$ORION"orion_tests.pri")
-include($$ORION"orion_svg.pri")
+ORION = $$_PRO_FILE_PWD_/orion
+include($$ORION/orion.pri)
+include($$ORION/orion_testing.pri)
+include($$ORION/orion_tests.pri)
+include($$ORION/orion_svg.pri)
 
 # muparser
 # http://beltoforion.de/article.php?a=muparser
@@ -46,9 +44,7 @@ else {
     DEFINES += "BUILDTIME=\"\\\"$$system(date '+%T')\\\"\""
 }
 
-win32 {
-    RC_FILE = release/version.rc
-}
+win32: RC_FILE = release/version.rc
 
 #------------------------------------------------------------
 # Translation
