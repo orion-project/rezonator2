@@ -27,6 +27,12 @@ ParamEditor::ParamEditor(Z::Parameter *param, bool showName) : QWidget()
         label = param->alias();
 
     auto layout = Ori::Gui::layoutH(this, 0, 0, {});
+
+#ifdef Q_OS_MACOS
+    // It looks ok on other platforms, but lack of spacing is evident on mac
+    Ori::Gui::populate(layout, { new QLabel(" ") });
+#endif
+
     if (showName)
         Ori::Gui::populate(layout, {
             _labelName = new QLabel(param->name()),

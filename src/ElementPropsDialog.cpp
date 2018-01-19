@@ -43,13 +43,12 @@ bool elementProps(Element *elem, QWidget *parent)
 
 int __savedTabIndex = 0;
 
-ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : RezonatorDialog(parent)
+ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : RezonatorDialog(NoOptions, parent)
 {
     _element = elem;
 
-    setWindowTitle(_element->typeName());
-    setWindowIcon(QIcon(":/window_icons/element"));
-    setAttribute(Qt::WA_DeleteOnClose);
+    setTitleAndIcon(_element->typeName(), ":/window_icons/element");
+    setObjectName("ElementPropsDialog");
 
     // common props
     _editorLabel = new QLineEdit;

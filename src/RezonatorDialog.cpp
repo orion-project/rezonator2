@@ -2,24 +2,35 @@
 
 #include <QApplication>
 #include <QBoxLayout>
+#include <QDebug>
 #include <QDialogButtonBox>
+#include <QIcon>
 
 QMap<QString, QByteArray> __savedGeometry_RezonatorDialog;
 
-RezonatorDialog::RezonatorDialog(QWidget* parent) : QDialog(parent? parent: qApp->activeWindow())
+RezonatorDialog::RezonatorDialog(Options options, QWidget* parent) : QDialog(parent? parent: qApp->activeWindow())
 {
-    _mainLayout = new QVBoxLayout;
-    _mainLayout->setMargin(0);
-
-    auto buttonBox = new QDialogButtonBox(
-        QDialogButtonBox::Ok | QDialogButtonBox::Cancel
-        /* TODO provide help topic | QDialogButtonBox::Help */);
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(collect()));
-    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+    if (!(options & DontDeleteOnClose))
+        setAttribute(Qt::WA_DeleteOnClose);
 
     auto layout = new QVBoxLayout(this);
+
+    _mainLayout = new QVBoxLayout;
+    _mainLayout->setMargin(0);
     layout->addLayout(_mainLayout);
-    layout->addWidget(buttonBox);
+
+    if (!(options & OmitButtonsPanel))
+    {
+        auto buttons = QDialogButtonBox::Ok | QDialogButtonBox::Cancel;
+        if (options & UseHelpButton)
+            buttons |= QDialogButtonBox::Help;
+        auto buttonBox = new QDialogButtonBox(buttons);
+        connect(buttonBox, SIGNAL(accepted()), this, SLOT(collect()));
+        connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+        if (options & UseHelpButton)
+            connect(buttonBox, &QDialogButtonBox::helpRequested, this, &RezonatorDialog::showHelp);
+        layout->addWidget(buttonBox);
+    }
 }
 
 RezonatorDialog::~RezonatorDialog()
@@ -29,6 +40,17 @@ RezonatorDialog::~RezonatorDialog()
         __savedGeometry_RezonatorDialog[name] = saveGeometry();
 }
 
+void RezonatorDialog::setTitleAndIcon(const QString& title, const char* iconPath)
+{
+    setWindowTitle(title);
+#ifdef Q_OS_MACOS
+    // On MacOS the icon of active dialog overrides application icon on the dock.
+    Q_UNUSED(iconPath)
+#else
+    setWindowIcon(QIcon(iconPath));
+#endif
+}
+
 void RezonatorDialog::showEvent(QShowEvent *event)
 {
     QDialog::showEvent(event);
@@ -36,4 +58,12 @@ void RezonatorDialog::showEvent(QShowEvent *event)
     auto name = objectName();
     if (__savedGeometry_RezonatorDialog.contains(name))
         restoreGeometry(__savedGeometry_RezonatorDialog[name]);
+    else if (!prefferedSize().isEmpty())
+        resize(prefferedSize());
+}
+
+void RezonatorDialog::showHelp()
+{
+    // TODO:NEXT-VER
+    qDebug() << "show help" << helpTopic();
 }

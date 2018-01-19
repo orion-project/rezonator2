@@ -10,6 +10,7 @@
 #include <QFormLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QTimer>
 #include <QToolButton>
 
 SchemaParamsWindow* SchemaParamsWindow::_instance = nullptr;
@@ -105,7 +106,7 @@ void SchemaParamsWindow::createParameter()
         schema()->params()->append(param);
         _table->parameterCreated(param);
 
-        setParameterValue();
+        QTimer::singleShot(100, [&](){ setParameterValue(); });
     }
 }
 

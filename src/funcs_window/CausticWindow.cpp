@@ -49,7 +49,7 @@ private:
 
 CausticWindow::CausticWindow(Schema *schema) : PlotFuncWindowStorable(new CausticFunction(schema))
 {
-    setWindowIcon(QIcon(":/toolbar/func_caustic"));
+    setTitleAndIcon(function()->name(), ":/toolbar/func_caustic");
 }
 
 bool CausticWindow::configure(QWidget* parent)

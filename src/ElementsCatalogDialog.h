@@ -1,7 +1,7 @@
 #ifndef ELEMENT_SELECTOR_H
 #define ELEMENT_SELECTOR_H
 
-#include <QDialog>
+#include "RezonatorDialog.h"
 
 QT_BEGIN_NAMESPACE
 class QVBoxLayout;
@@ -15,7 +15,7 @@ namespace Widgets {
 
 class Element;
 
-class ElementsCatalogDialog : public QDialog
+class ElementsCatalogDialog : public RezonatorDialog
 {
     Q_OBJECT
 
@@ -29,6 +29,9 @@ public:
     ElementsCatalogDialog(CatalogMode mode, QWidget* parent = 0);
 
     QString selected() const;
+
+protected:
+    QSize prefferedSize() const override { return QSize(600, 400); }
 
 private:
     class ElementTypesListView *elements;

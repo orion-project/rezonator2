@@ -15,9 +15,14 @@
 namespace Z {
 namespace Dlgs {
 
+// TODO: ElementsCatalog should be QWidget, not QDialog.
+// In CatalogMode_View mode it should be displayed as tool window (Qt::Tool),
+// as this type of window is not overlapped by main window on MacOS.
+// In CatalogMode_Selector it should be displayed via Ori::Dialog or like that.
+
 bool selectElementType(QString& type)
 {
-    ElementsCatalogDialog catalog(ElementsCatalogDialog::CatalogMode_Selector, qApp->activeWindow());
+    ElementsCatalogDialog catalog(ElementsCatalogDialog::CatalogMode_Selector);
     if (catalog.exec() == QDialog::Accepted)
     {
         type = catalog.selected();
@@ -36,7 +41,10 @@ Element* createElement()
 
 void showElementsCatalog()
 {
-    auto catalog = new ElementsCatalogDialog(ElementsCatalogDialog::CatalogMode_View, qApp->activeWindow());
+    auto catalog = new ElementsCatalogDialog(ElementsCatalogDialog::CatalogMode_View);
+    // NOTE: on MacOS popup window can by overlapped by main window
+    // It seems be normal for MacOS, e.g. file info window is opened by Finder
+    // and can be overlapped by Finder main window so we can't activate it again.
     catalog->show();
 }
 
@@ -47,33 +55,18 @@ void showElementsCatalog()
 //                            ElementsCatalogDialog
 //-----------------------------------------------------------------------------
 
-ElementsCatalogDialog::ElementsCatalogDialog(CatalogMode mode, QWidget *parent) : QDialog(parent)
+ElementsCatalogDialog::ElementsCatalogDialog(CatalogMode mode, QWidget *parent)
+    : RezonatorDialog(mode == CatalogMode_View ? OmitButtonsPanel : DontDeleteOnClose, parent)
 {
-    setWindowTitle(tr("Elements Catalog"));
-    setWindowIcon(QIcon(":/window_icons/catalog"));
-    if (mode == CatalogMode_View)
-        setAttribute(Qt::WA_DeleteOnClose);
+    setTitleAndIcon(tr("Elements Catalog"), ":/window_icons/catalog");
+    setObjectName("ElementsCatalogDialog");
 
     // category tabs
     tabs = new QTabWidget;
     for (auto category : ElementsCatalog::instance().categories())
         tabs->addTab(new QWidget, category);
     connect(tabs, SIGNAL(currentChanged(int)), this, SLOT(categorySelected(int)));
-
-    // main layout
-    QVBoxLayout *layoutMain = new QVBoxLayout;
-    layoutMain->addWidget(tabs);
-    setLayout(layoutMain);
-
-    // buttons
-    if (mode == CatalogMode_Selector)
-    {
-        QDialogButtonBox *buttons = new QDialogButtonBox(
-        QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Help);
-        qApp->connect(buttons, SIGNAL(accepted()), this, SLOT(accept()));
-        qApp->connect(buttons, SIGNAL(rejected()), this, SLOT(reject()));
-        layoutMain->addWidget(buttons);
-    }
+    mainLayout()->addWidget(tabs);
 
     // preview
     drawing = new Ori::Widgets::SvgView(QString());
@@ -90,12 +83,11 @@ ElementsCatalogDialog::ElementsCatalogDialog(CatalogMode mode, QWidget *parent) 
     // page
     layoutPage = new QVBoxLayout;
     layoutPage->addWidget(Ori::Gui::splitterH(elements, drawing));
-    layoutPage->setMargin(layoutMain->spacing()/2+1);
+    layoutPage->setMargin(mainLayout()->spacing()/2+1);
 
     // initial view
     categorySelected(0);
     elements->setFocus();
-    resize(600, 400); // TODO store and restore size
 }
 
 void ElementsCatalogDialog::categorySelected(int index)

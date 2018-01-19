@@ -138,6 +138,7 @@ public:
     /// Appends items into default toolbar, if one was created (see @ref InitOption::initNoToolBar).
     void populateToolbar(std::initializer_list<QObject*> items);
 
+    void setTitleAndIcon(const QString& title, const char* iconPath);
     void setContent(QWidget *content, int row = -1);
 
     /// @ref SchemaMdiArea calls this function after subwindow was insterted into MDI-area.
