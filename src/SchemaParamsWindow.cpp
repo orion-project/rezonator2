@@ -1,4 +1,5 @@
 #include "SchemaParamsWindow.h"
+#include "widgets/Appearance.h"
 #include "widgets/SchemaParamsTable.h"
 #include "widgets/FormulaEditor.h"
 #include "widgets/UnitWidgets.h"
@@ -73,6 +74,8 @@ void SchemaParamsWindow::createToolBar()
 void SchemaParamsWindow::createParameter()
 {
     auto aliasEditor = new QLineEdit;
+    Z::Gui::setValueFont(aliasEditor);
+
     auto dimEditor = new DimComboBox;
 
     QWidget editor;

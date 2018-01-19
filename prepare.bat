@@ -32,13 +32,8 @@ if %ERRORLEVEL% neq 0 (
     echo set PATH=C:\Qt\Tools\mingw530_32\bin;%%PATH%%
 	goto end
 )
-%MAKE% -fmakefile.mingw SHARED=1 DEBUG=0
-
-:muparser_install
-echo ------------------------
-echo Copy to bin...
-
-copy /Y /B %MUPARSER%\lib\muparser.dll %PROJ_BIN%
+rem Build static lib because of dll does not provide C++ interface, only plain C
+%MAKE% -fmakefile.mingw SHARED=0 DEBUG=0
 
 :end
 cd %PROJ_ROOT%

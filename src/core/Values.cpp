@@ -11,6 +11,10 @@ namespace Z {
 
 QString Value::str() const
 {
+    if (_unit == Z::Units::deg())
+        return Z::str(_value) % _unit->name();
+    if (_unit == Z::Units::rad())
+        return Z::str(_value);
     return Z::str(_value) % ' ' % _unit->name();
 }
 

@@ -1,9 +1,10 @@
 #include "ElementPropsDialog.h"
 #include "core/Element.h"
+#include "widgets/Appearance.h"
 #include "widgets/ElementImagesProvider.h"
 #include "widgets/ParamEditor.h"
 #include "widgets/OriSvgView.h"
-#include "helpers/OriWidgets.h"
+#include "helpers/OriLayouts.h"
 
 #include <QApplication>
 #include <QCheckBox>
@@ -53,8 +54,8 @@ ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : Rezonat
     // common props
     _editorLabel = new QLineEdit;
     _editorTitle = new QLineEdit;
-    Ori::Gui::adjustFont(_editorLabel);
-    Ori::Gui::adjustFont(_editorTitle);
+    Z::Gui::setValueFont(_editorLabel);
+    Z::Gui::setValueFont(_editorTitle);
 
     auto layoutCommon = new QFormLayout;
     layoutCommon->addRow(tr("Label:"), _editorLabel);
@@ -176,10 +177,10 @@ QString ElementPropsDialog_List::verifyParams() const
 
 ElementPropsDialog_Abcd::ElementPropsDialog_Abcd(Element *elem, QWidget *parent) : ElementPropsDialog(elem, parent)
 {
-    setPageParams(Ori::Gui::widgetV({
+    setPageParams(Ori::Layouts::LayoutV({
         _editorMt = new ParamsEditorAbcd(QString("T"), elem->params().mid(0, 4)),
         _editorMs = new ParamsEditorAbcd(QString("S"), elem->params().mid(4, 4))
-    }));
+    }).makeWidget());
 
     _editorMt->focus();
 }

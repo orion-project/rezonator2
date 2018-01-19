@@ -5,6 +5,7 @@ UnitComboBox::UnitComboBox(QWidget* parent) : QComboBox(parent)
 {
     setEnabled(false);
     setFixedWidth(Z::Gui::unitsSelectorWidth());
+    Z::Gui::setValueFont(this);
 }
 
 UnitComboBox::UnitComboBox(Z::Dim dim, QWidget* parent) : UnitComboBox(parent)
@@ -57,6 +58,7 @@ void UnitComboBox::focusOutEvent(QFocusEvent *e)
 DimComboBox::DimComboBox(QWidget* parent) : QComboBox(parent)
 {
     populate();
+    Z::Gui::setValueFont(this);
 }
 
 void DimComboBox::populate()
