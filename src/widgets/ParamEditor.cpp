@@ -41,7 +41,7 @@ ParamEditor::ParamEditor(Z::Parameter *param, bool showName) : QWidget()
     Ori::Gui::populate(layout, {
         _labelLabel = Z::Gui::symbolLabel(label % " = "),
         _valueEditor = new Ori::Widgets::ValueEdit,
-        Ori::Gui::spacing(Ori::Gui::borderWidth()),
+        Ori::Gui::spacing(3),
         _unitsSelector = new UnitComboBox(_param->dim())
     });
 

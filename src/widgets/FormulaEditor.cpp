@@ -3,6 +3,9 @@
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 
+#include <cassert>
+
+#include <QDebug>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMenu>
@@ -31,7 +34,11 @@ FormulaEditor::FormulaEditor(Z::Parameter *param, Z::Formulas *formulas, QWidget
     auto optionsButton = new QPushButton;
     optionsButton->setFlat(true);
     optionsButton->setIcon(QIcon(":/toolbar/options"));
-    optionsButton->setMenu(menu);
+    optionsButton->setFixedWidth(24);
+    connect(optionsButton, &QPushButton::clicked, [menu, optionsButton](){
+        // button->setMenu() crashes the app on MacOS when button is clicked, so show manually
+        menu->popup(optionsButton->mapToGlobal(optionsButton->rect().bottomLeft()));
+    });
 
     Ori::Layouts::LayoutV({
         Ori::Layouts::LayoutH({
@@ -48,12 +55,11 @@ FormulaEditor::FormulaEditor(Z::Parameter *param, Z::Formulas *formulas, QWidget
 
     if (_hasFormula)
         _codeEditor->setFocus();
-}
 
-FormulaEditor::~FormulaEditor()
-{
-    delete _tmpParam;
-    if (_tmpFormula) delete _tmpFormula;
+    // NOTE: _tmpParam must be parented after _paramEditor to be deleted in last turn.
+    // While it's ok on GCC to delete _tmpParam manually in ~FormulaEditor(), but on LLVM (MacOS)
+    // this destructor seems to be called BEFORE parent's one, and _tmpParam is freed too early.
+    new OwnedPayload<Z::Parameter>(_tmpParam, this);
 }
 
 void FormulaEditor::addFormula()
@@ -75,10 +81,11 @@ void FormulaEditor::createCodeEditor()
     enum { ROW_VALUE, ROW_CODE, ROW_STATUS };
 
     _tmpFormula = new Z::Formula(_tmpParam);
+    new OwnedPayload<Z::Formula>(_tmpFormula, this);
     if (_formula)
         _tmpFormula->setCode(_formula->code());
 
-    Q_ASSERT(_codeEditor == nullptr);
+    assert(_codeEditor == nullptr);
     _codeEditor = new QTextEdit;
     _codeEditor->setAcceptRichText(false);
     _codeEditor->setPlainText(_tmpFormula->code());
@@ -86,12 +93,12 @@ void FormulaEditor::createCodeEditor()
     qobject_cast<QVBoxLayout*>(layout())->insertWidget(ROW_CODE, _codeEditor);
     connect(_codeEditor, &QTextEdit::textChanged, this, &FormulaEditor::formulaCodeChanged);
 
-    Q_ASSERT(_formulaStatus == nullptr);
+    assert(_formulaStatus == nullptr);
     _formulaStatus = new QLabel;
     _formulaStatus->setWordWrap(true);
     qobject_cast<QVBoxLayout*>(layout())->insertWidget(ROW_STATUS, _formulaStatus);
 
-    Q_ASSERT(_recalcTimer == nullptr);
+    assert(_recalcTimer == nullptr);
     _recalcTimer = new QTimer(this);
     _recalcTimer->setInterval(250);
     _recalcTimer->setSingleShot(true);

@@ -38,16 +38,16 @@ public:
     ~ProjectWindow();
 
     // inherits from SchemaListener
-    void schemaChanged(Schema*);
-    void schemaLoaded(Schema*);
-    void schemaSaved(Schema*);
-    void schemaParamsChanged(Schema*) { updateTitle(); }
+    void schemaChanged(Schema*) override;
+    void schemaLoaded(Schema*) override;
+    void schemaSaved(Schema*) override;
+    void schemaParamsChanged(Schema*) override { updateTitle(); }
 
     // inherited from SettingsListener.
     void settingsChanged() override;
 
 protected:
-    void closeEvent(class QCloseEvent*);
+    void closeEvent(class QCloseEvent*) override;
 
 private:
     QMenu *menuFile, /* TODO:NEXT-VER *menuEdit, */ *menuHelp, *menuWindow, *menuTools,

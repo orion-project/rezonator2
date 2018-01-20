@@ -14,13 +14,24 @@ QT_END_NAMESPACE
 
 class ParamEditor;
 
+// TODO move to more common location
+template <class T> class OwnedPayload : public QObject
+{
+public:
+    OwnedPayload(T* payload, QObject* parent) : QObject(parent), _payload(payload) {}
+    ~OwnedPayload() { delete _payload; }
+    T* payload() const { return _payload; }
+private:
+    T* _payload;
+};
+
+
 class FormulaEditor : public QWidget
 {
     Q_OBJECT
 
 public:
     explicit FormulaEditor(Z::Parameter* param, Z::Formulas* formulas, QWidget *parent = nullptr);
-    ~FormulaEditor();
 
 public slots:
     void apply();

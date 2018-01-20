@@ -81,7 +81,7 @@ DEFINE_UNIT(Hz, QT_TRANSLATE_NOOP_UTF8("Units", "Hz"), v, v, Hz) // SI-unit must
 
 namespace Dims {
 
-DEFINE_DIM(none, QT_TRANSLATE_NOOP("Units", "Dimensionless"), UNIT(none),
+DEFINE_DIM(none, QT_TRANSLATE_NOOP("Units", "None"), UNIT(none),
     UNIT(none),
 )
 

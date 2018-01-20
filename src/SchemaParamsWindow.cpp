@@ -6,7 +6,6 @@
 #include "helpers/OriWidgets.h"
 #include "helpers/OriDialogs.h"
 
-#include <QDebug>
 #include <QAction>
 #include <QFormLayout>
 #include <QLabel>
@@ -25,8 +24,7 @@ SchemaParamsWindow* SchemaParamsWindow::create(Schema* owner)
 
 SchemaParamsWindow::SchemaParamsWindow(Schema *owner) : SchemaMdiChild(owner)
 {
-    setWindowTitle(tr("Parameters", "Window title"));
-    setWindowIcon(QIcon(":/window_icons/parameter"));
+    setTitleAndIcon(tr("Parameters"), ":/window_icons/parameter");
 
     _table = new SchemaParamsTable(owner);
 
