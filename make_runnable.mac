@@ -1,0 +1,10 @@
+#!/bin/sh
+
+install_name_tool -id \
+    @executable_path/../Frameworks/libmuparser.2.dylib \
+    bin/rezonator.app/Contents/Frameworks/libmuparser.2.dylib
+
+install_name_tool -change \
+    /usr/local/lib/libmuparser.2.dylib \
+    @executable_path/../Frameworks/libmuparser.2.dylib \
+    bin/rezonator.app/Contents/MacOS/rezonator
