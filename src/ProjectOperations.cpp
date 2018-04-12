@@ -5,6 +5,7 @@
 #include "io/SchemaReaderIni.h"
 #include "io/SchemaReaderXml.h"
 #include "io/SchemaWriterXml.h"
+#include "io/SchemaWriterJson.h"
 #include "core/Schema.h"
 #include "core/Protocol.h"
 #include "widgets/ParamEditor.h"
@@ -146,13 +147,13 @@ bool ProjectOperations::saveSchemaFile(const QString& fileName)
 
     Ori::WaitCursor wc;
 
-    SchemaWriterXml writer(schema(), fileName);
-    writer.write();
+    SchemaWriterJson(schema()).writeToFile(fileName);
 
-    if (!writer.report().IsEmpty())
-        writeProtocol(writer.report(), tr("There are messages while saving project."));
+    //if (!writer.report().IsEmpty())
+      //  writeProtocol(writer.report(), tr("There are messages while saving project."));
 
-    return writer.ok();
+    //return writer.ok();
+    return true;
 }
 
 bool ProjectOperations::saveSchemaFileAs()
@@ -171,13 +172,13 @@ void ProjectOperations::saveSchemaFileCopy()
 
     Ori::WaitCursor wc;
 
-    SchemaWriterXml writer(schema());
+    SchemaWriterJson writer(schema());
     QString text = writer.writeToString();
 
-    if (!writer.report().IsEmpty())
-        writeProtocol(writer.report(), tr("There are messages while saving copy of project."));
+    //if (!writer.report().IsEmpty())
+      //  writeProtocol(writer.report(), tr("There are messages while saving copy of project."));
 
-    if (writer.ok())
+//    if (writer.ok())
     {
         auto res = saveText(text, fileName);
         if (!res.isEmpty())

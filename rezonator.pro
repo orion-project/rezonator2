@@ -142,7 +142,8 @@ HEADERS += \
     src/widgets/SchemaElemsTable.h \
     src/core/Formula.h \
     src/widgets/FormulaEditor.h \
-    src/widgets/ParamsEditor.h
+    src/widgets/ParamsEditor.h \
+    src/io/SchemaWriterJson.h
 
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -238,4 +239,5 @@ SOURCES += \
     src/widgets/SchemaElemsTable.cpp \
     src/core/Formula.cpp \
     src/widgets/FormulaEditor.cpp \
-    src/widgets/ParamsEditor.cpp
+    src/widgets/ParamsEditor.cpp \
+    src/io/SchemaWriterJson.cpp
