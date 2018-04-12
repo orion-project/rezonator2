@@ -101,8 +101,10 @@ void SchemaParamsWindow::createParameter()
                 .exec())
     {
         auto dim = dimEditor->selectedDim();
-        auto name = aliasEditor->text().trimmed();
-        auto param = new Z::Parameter(dim, name);
+        auto alias = aliasEditor->text().trimmed();
+        auto label = alias;
+        auto name = alias;
+        auto param = new Z::Parameter(dim, alias, label, name);
         param->setValue(Z::Value(0, dim->siUnit()));
         schema()->params()->append(param);
         _table->parameterCreated(param);

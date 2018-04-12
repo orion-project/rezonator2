@@ -1,5 +1,6 @@
 #include "ElementPropsDialog.h"
 #include "core/Element.h"
+#include "core/Schema.h"
 #include "widgets/Appearance.h"
 #include "widgets/ElementImagesProvider.h"
 #include "widgets/ParamsEditor.h"
@@ -151,7 +152,12 @@ ElementPropsDialog_None::ElementPropsDialog_None(Element *elem, QWidget *parent)
 
 ElementPropsDialog_List::ElementPropsDialog_List(Element *elem, QWidget *parent) : ElementPropsDialog(elem, parent)
 {
-    _editors = new ParamsEditor(&elem->params());
+    auto schema = dynamic_cast<Schema*>(elem->owner());
+
+    ParamsEditor::Options opts(&elem->params());
+    opts.globalParams = schema ? schema->params() : nullptr;
+
+    _editors = new ParamsEditor(opts);
 
     setPageParams(_editors);
 

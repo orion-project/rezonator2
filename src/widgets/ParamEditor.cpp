@@ -44,16 +44,15 @@ public:
 //                              ParamEditor
 //------------------------------------------------------------------------------
 
-ParamEditor::ParamEditor(Z::Parameter *param, Options opts) : QWidget()
+ParamEditor::ParamEditor(Options opts) : QWidget(), _param(opts.param), _globalParams(opts.globalParams)
 {
-    _param = param;
     _param->addListener(this);
 
     int def_spacing = Ori::Gui::layoutSpacing();
 
-    auto paramLabel = param->label();
+    auto paramLabel = _param->label();
     if (paramLabel.isEmpty())
-        paramLabel = param->alias();
+        paramLabel = _param->alias();
 
     auto layout = Ori::Layouts::LayoutH({})
             .setMargin(0)
@@ -67,7 +66,7 @@ ParamEditor::ParamEditor(Z::Parameter *param, Options opts) : QWidget()
 
     if (opts.showName)
        layout.add({
-            _labelName = new QLabel(param->name()),
+            _labelName = new QLabel(_param->name()),
             Ori::Layouts::Space(def_spacing * 2)
        });
 
@@ -190,8 +189,18 @@ QWidget* ParamEditor::unitsSelector() const { return _unitsSelector; }
 
 void ParamEditor::linkToGlobalParameter()
 {
+
+
     QListWidget paramsList;
     paramsList.addItem(tr("(none)"));
+    for (int i = 0; i < _globalParams->size(); i++)
+    {
+        const Z::Parameter* p = _globalParams->at(i);
+        if (p->dim() == _param->dim())
+        {
+            paramsList.addItem(p->str() + " <b>param</b>");
+        }
+    }
     // TODO populate list
     paramsList.setCurrentRow(0);
 

@@ -24,12 +24,23 @@ class ParamEditor : public QWidget, public Z::ParameterListener
 
 public:
     struct Options {
+        /// Target editing parameter.
+        Z::Parameter* param;
+
+        /// Global params are used to link target parameter to.
+        /// Must be set when @a allowLinking is enabled.
+        Z::Parameters* globalParams = nullptr;
+
+        /// Show full parameter name before its alias.
         bool showName = false;
+
+        /// Enable linking target param to global params.
         bool allowLinking = false;
-        Options() {}
+
+        Options(Z::Parameter* p) : param(p) {}
     };
 
-    explicit ParamEditor(Z::Parameter* param, Options opts = Options());
+    explicit ParamEditor(Options opts);
     ~ParamEditor();
 
     Z::Parameter* parameter() const { return _param; }
@@ -58,6 +69,7 @@ protected:
 
 private:
     Z::Parameter* _param;
+    Z::Parameters* _globalParams;
     Ori::Widgets::ValueEdit* _valueEditor;
     UnitComboBox* _unitsSelector;
     QLabel* _labelName = nullptr;

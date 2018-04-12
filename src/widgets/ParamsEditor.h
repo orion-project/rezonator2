@@ -17,7 +17,20 @@ class ParamsEditor : public QWidget
     Q_OBJECT
 
 public:
-    explicit ParamsEditor(Z::Parameters *params, QWidget *parent = 0);
+    struct Options
+    {
+        /// Target editing parameters
+        Z::Parameters *params;
+
+        /// Global parameters to which tagets can be linked
+        Z::Parameters *globalParams = nullptr;
+
+        Options(Z::Parameters *p) : params(p) {}
+    };
+
+
+public:
+    explicit ParamsEditor(Options opts, QWidget *parent = 0);
 
     void populate();
 
