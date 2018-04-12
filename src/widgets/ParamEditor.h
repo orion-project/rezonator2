@@ -2,20 +2,20 @@
 #define PARAM_EDITOR_H
 
 #include <QWidget>
-#include <QGroupBox>
 
 #include "../core/Parameters.h"
 
 QT_BEGIN_NAMESPACE
 class QLabel;
+class QPushButton;
 QT_END_NAMESPACE
 
 namespace Ori {
 namespace Widgets {
-    class InfoPanel;
     class ValueEdit;
 }}
 
+class LinkButton;
 class UnitComboBox;
 
 class ParamEditor : public QWidget, public Z::ParameterListener
@@ -23,7 +23,13 @@ class ParamEditor : public QWidget, public Z::ParameterListener
     Q_OBJECT
 
 public:
-    explicit ParamEditor(Z::Parameter* param, bool showName = true);
+    struct Options {
+        bool showName = false;
+        bool allowLinking = false;
+        Options() {}
+    };
+
+    explicit ParamEditor(Z::Parameter* param, Options opts = Options());
     ~ParamEditor();
 
     Z::Parameter* parameter() const { return _param; }
@@ -56,62 +62,13 @@ private:
     UnitComboBox* _unitsSelector;
     QLabel* _labelName = nullptr;
     QLabel* _labelLabel = nullptr;
+    LinkButton* _linkButton = nullptr;
+
+    void linkToGlobalParameter();
 
 private slots:
     void editorFocused(bool focus);
     void editorKeyPressed(int key);
-};
-
-//------------------------------------------------------------------------------
-
-class ParamsEditor : public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit ParamsEditor(Z::Parameters *params, QWidget *parent = 0);
-
-    void populate();
-
-    void focus();
-    void focus(Z::Parameter *param);
-
-    QString verify() const;
-
-public slots:
-    void apply();
-
-protected:
-    void showEvent(QShowEvent*) override;
-
-private:
-    Z::Parameters* _params;
-    QList<ParamEditor*> _editors;
-    Ori::Widgets::InfoPanel* _infoPanel;
-
-    void adjustEditors();
-
-private slots:
-    void paramFocused();
-    void focusNextParam();
-    void focusPrevParam();
-};
-
-//------------------------------------------------------------------------------
-
-class ParamsEditorAbcd : public QGroupBox
-{
-    Q_OBJECT
-
-public:
-    explicit ParamsEditorAbcd(const QString& title, const Z::Parameters& params);
-    void apply();
-    void populate();
-    void focus();
-
-private:
-    Z::Parameters _params;
-    QVector<Ori::Widgets::ValueEdit*> _editors;
 };
 
 #endif // PARAM_EDITOR_H
