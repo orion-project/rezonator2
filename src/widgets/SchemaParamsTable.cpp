@@ -72,16 +72,15 @@ void SchemaParamsTable::populate()
     {
         auto param = schema()->params()->byIndex(row);
         param->addListener(this);
-        createRow(param, row);
+        createRow(row);
         populateRow(param, row);
     }
     adjustColumns();
 }
 
-void SchemaParamsTable::createRow(Z::Parameter *param, int row)
+void SchemaParamsTable::createRow(int row)
 {
     QTableWidgetItem *it = new QTableWidgetItem();
-    //TODO it->setData(0, QPixmap(ElementImagesProvider::instance().iconPath(elem->type())));
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_IMAGE, it);
 
@@ -106,6 +105,7 @@ void SchemaParamsTable::createRow(Z::Parameter *param, int row)
 
 void SchemaParamsTable::populateRow(Z::Parameter *param, int row)
 {
+    // TODO set icon depending on whether param is formula
     item(row, COL_ALIAS)->setText(param->alias());
     item(row, COL_VALUE)->setText(param->value().str());
     item(row, COL_ANNOTATION)->setText(param->description());
@@ -120,7 +120,7 @@ void SchemaParamsTable::parameterCreated(Z::Parameter *param)
 {
     int row = rowCount();
     setRowCount(row+1);
-    createRow(param, row);
+    createRow(row);
     populateRow(param, row);
     setSelected(param);
     param->addListener(this);

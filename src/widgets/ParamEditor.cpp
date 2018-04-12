@@ -62,7 +62,7 @@ ParamEditor::ParamEditor(Z::Parameter *param, Options opts) : QWidget()
 
 #ifdef Q_OS_MACOS
     // It looks ok on other platforms, but lack of spacing is evident on mac
-    layout.add(new QLabel(" "))
+    layout.add(new QLabel(" "));
 #endif
 
     if (opts.showName)

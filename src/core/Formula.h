@@ -7,14 +7,17 @@
 
 namespace Z {
 
-class Formula
+class Formula : public ParameterListener
 {
 public:
     Formula(Parameter* target): _target(target) {}
+    virtual ~Formula() {}
 
+    bool prepare(Parameters &availableDeps);
     void calculate();
 
     Parameter* target() { return _target; }
+    const Z::Parameters& deps() { return _deps; }
 
     const QString& code() const { return _code; }
     void setCode(const QString& code) { _code = code; }
@@ -22,8 +25,13 @@ public:
     bool ok() const { return _status.isEmpty(); }
     const QString& status() const { return _status; }
 
+    void addDep(Parameter* param);
+
+    void parameterChanged(ParameterBase*) override { calculate(); }
+
 private:
     Parameter* _target;
+    Parameters _deps;
     QString _code;
     QString _status;
 };

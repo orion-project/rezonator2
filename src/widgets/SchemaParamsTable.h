@@ -43,7 +43,7 @@ private:
 
     void adjustColumns();
     void populate();
-    void createRow(Z::Parameter *param, int row);
+    void createRow(int row);
     void populateRow(Z::Parameter *param, int row);
 };
 
