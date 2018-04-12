@@ -7,6 +7,7 @@
 
 QT_BEGIN_NAMESPACE
 class QLabel;
+class QPushButton;
 QT_END_NAMESPACE
 
 namespace Ori {
@@ -14,6 +15,7 @@ namespace Widgets {
     class ValueEdit;
 }}
 
+class LinkButton;
 class UnitComboBox;
 
 class ParamEditor : public QWidget, public Z::ParameterListener
@@ -23,6 +25,7 @@ class ParamEditor : public QWidget, public Z::ParameterListener
 public:
     struct Options {
         bool showName = false;
+        bool allowLinking = false;
         Options() {}
     };
 
@@ -59,6 +62,9 @@ private:
     UnitComboBox* _unitsSelector;
     QLabel* _labelName = nullptr;
     QLabel* _labelLabel = nullptr;
+    LinkButton* _linkButton = nullptr;
+
+    void linkToGlobalParameter();
 
 private slots:
     void editorFocused(bool focus);

@@ -9,13 +9,18 @@
 
 ParamsEditor::ParamsEditor(Z::Parameters *params, QWidget *parent) : QWidget(parent), _params(params)
 {
+    // NOTE: Currently ParamsEditor is only used in element properties dialog
+    // so we can set suitable options here. But in general options should be passed from client.
+    ParamEditor::Options paramEditorOpts;
+    paramEditorOpts.allowLinking = true;
+
     auto layoutParams = Ori::Layouts::LayoutV({}).setMargin(0).setSpacing(0);
     for (auto param : *_params)
     {
         // TODO use parameters filter
         if (!param->visible()) continue;
 
-        auto editor = new ParamEditor(param);
+        auto editor = new ParamEditor(param, paramEditorOpts);
         connect(editor, &ParamEditor::focused, this, &ParamsEditor::paramFocused);
         connect(editor, &ParamEditor::goingFocusNext, this, &ParamsEditor::focusNextParam);
         connect(editor, &ParamEditor::goingFocusPrev, this, &ParamsEditor::focusPrevParam);
