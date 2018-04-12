@@ -28,6 +28,7 @@ public:
     inline Protocol& operator << (long v) { write(QString::number(v)); return *this; }
     inline Protocol& operator << (long long v) { write(QString::number(v)); return *this; }
     inline Protocol& operator << (bool v) { write(v? QStringLiteral("true"): QStringLiteral("false")); return *this; }
+    inline Protocol& operator << (const std::string& v) { write(QString::fromStdString(v)); return *this; }
 
     inline void write(const QString& str) { _record.append(str).append(' '); }
 
