@@ -2,7 +2,7 @@
 #include "core/Element.h"
 #include "widgets/Appearance.h"
 #include "widgets/ElementImagesProvider.h"
-#include "widgets/ParamEditor.h"
+#include "widgets/ParamsEditor.h"
 #include "widgets/OriSvgView.h"
 #include "helpers/OriLayouts.h"
 
