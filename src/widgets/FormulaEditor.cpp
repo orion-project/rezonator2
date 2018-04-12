@@ -29,7 +29,7 @@ FormulaEditor::FormulaEditor(Z::Parameter *param, Z::Formulas *formulas, QWidget
     _actnRemoveFormula = menu->addAction(tr("Remove formula"), this, &FormulaEditor::removeFormula);
     _actnRemoveFormula->setVisible(false);
 
-    _paramEditor = new ParamEditor(_tmpParam, false);
+    _paramEditor = new ParamEditor(_tmpParam);
 
     auto optionsButton = new QPushButton;
     optionsButton->setFlat(true);

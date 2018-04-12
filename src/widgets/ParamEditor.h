@@ -21,7 +21,12 @@ class ParamEditor : public QWidget, public Z::ParameterListener
     Q_OBJECT
 
 public:
-    explicit ParamEditor(Z::Parameter* param, bool showName = true);
+    struct Options {
+        bool showName = false;
+        Options() {}
+    };
+
+    explicit ParamEditor(Z::Parameter* param, Options opts = Options());
     ~ParamEditor();
 
     Z::Parameter* parameter() const { return _param; }
@@ -59,8 +64,5 @@ private slots:
     void editorFocused(bool focus);
     void editorKeyPressed(int key);
 };
-
-//------------------------------------------------------------------------------
-
 
 #endif // PARAM_EDITOR_H

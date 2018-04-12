@@ -15,7 +15,7 @@ ParamsEditor::ParamsEditor(Z::Parameters *params, QWidget *parent) : QWidget(par
         // TODO use parameters filter
         if (!param->visible()) continue;
 
-        auto editor = new ParamEditor(param, false);
+        auto editor = new ParamEditor(param);
         connect(editor, &ParamEditor::focused, this, &ParamsEditor::paramFocused);
         connect(editor, &ParamEditor::goingFocusNext, this, &ParamsEditor::focusNextParam);
         connect(editor, &ParamEditor::goingFocusPrev, this, &ParamsEditor::focusPrevParam);
@@ -33,31 +33,6 @@ ParamsEditor::ParamsEditor(Z::Parameters *params, QWidget *parent) : QWidget(par
                           })
             .setMargin(0)
             .useFor(this);
-}
-
-void ParamsEditor::showEvent(QShowEvent *e)
-{
-    QWidget::showEvent(e);
-    adjustEditors();
-}
-
-void ParamsEditor::adjustEditors()
-{
-    int w_name = 0, w_label = 0, w_unit = 0;
-    for (auto editor: _editors)
-    {
-        if (editor->labelName())
-            w_name = qMax(w_name, editor->labelName()->width());
-        if (editor->labelLabel())
-            w_label = qMax(w_label, editor->labelLabel()->width());
-        w_unit = qMax(w_unit, editor->unitsSelector()->width());
-    }
-    for (auto editor: _editors)
-    {
-        if (w_name > 0) editor->labelName()->setFixedWidth(w_name);
-        if (w_label > 0) editor->labelLabel()->setFixedWidth(w_label);
-        if (w_unit > 0) editor->unitsSelector()->setFixedWidth(w_unit);
-    }
 }
 
 void ParamsEditor::populate()

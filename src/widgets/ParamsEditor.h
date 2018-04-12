@@ -29,9 +29,6 @@ public:
 public slots:
     void apply();
 
-protected:
-    void showEvent(QShowEvent*) override;
-
 private:
     Z::Parameters* _params;
     QList<ParamEditor*> _editors;

@@ -241,7 +241,7 @@ void ProjectOperations::setupPump()
 
 void ProjectOperations::setupWavelength()
 {
-    ParamEditor editor(&schema()->wavelength(), false);
+    ParamEditor editor(&schema()->wavelength());
     Ori::Dlg::Dialog(&editor)
             .withTitle(schema()->wavelength().name())
             .withHelpTopic("") // TODO help topic

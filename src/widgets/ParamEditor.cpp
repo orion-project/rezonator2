@@ -9,7 +9,7 @@
 #include <QDebug>
 #include <QLabel>
 
-ParamEditor::ParamEditor(Z::Parameter *param, bool showName) : QWidget()
+ParamEditor::ParamEditor(Z::Parameter *param, Options opts) : QWidget()
 {
     _param = param;
     _param->addListener(this);
@@ -30,7 +30,7 @@ ParamEditor::ParamEditor(Z::Parameter *param, bool showName) : QWidget()
     layout.add(new QLabel(" "))
 #endif
 
-    if (showName)
+    if (opts.showName)
         layout.add({
                        _labelName = new QLabel(param->name()),
                        Ori::Layouts::Space(def_spacing * 2)
