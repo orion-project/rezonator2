@@ -1,8 +1,6 @@
 #ifndef Z_IO_UTILS_H
 #define Z_IO_UTILS_H
 
-#include <QString>
-
 #include "core/OriVersion.h"
 
 namespace Z {

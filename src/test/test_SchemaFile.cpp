@@ -1,5 +1,4 @@
 #include "testing/OriTestBase.h"
-#include "../io/SchemaFile.h"
 #include "TestSchemaListener.h"
 #include "TestUtils.h"
 
@@ -11,6 +10,7 @@ namespace SchemaFileTests {
 
 TEST_METHOD(SchemaLoadingProcess_must_assign_file_name)
 {
+/*
     Schema schema;
     ASSERT_IS_TRUE(schema.fileName().isEmpty())
     {
@@ -18,10 +18,12 @@ TEST_METHOD(SchemaLoadingProcess_must_assign_file_name)
         ASSERT_IS_TRUE(schema.fileName().isEmpty())
     }
     ASSERT_EQ_STR(schema.fileName(), "test_file")
+*/
 }
 
 TEST_METHOD(SchemaLoadingProcess_must_raise_events)
 {
+/*
     SCHEMA_AND_LISTENER
     {
         SchemaLoadingProcess p(&schema, "");
@@ -30,10 +32,12 @@ TEST_METHOD(SchemaLoadingProcess_must_raise_events)
         listener.reset();
     }
     ASSERT_LISTENER_EVENT(EVENT(Loaded))
+*/
 }
 
 TEST_METHOD(SchemaLoadingProcess_must_block_events)
 {
+/*
     SCHEMA_AND_LISTENER
     {
         SchemaLoadingProcess p(&schema, "");
@@ -48,6 +52,7 @@ TEST_METHOD(SchemaLoadingProcess_must_block_events)
 
     schema.events().raise(EVENT(Changed));
     ASSERT_LISTENER_EVENT(EVENT(Changed))
+*/
 }
 
 ////////////////////////////////////////////////////////////////////////////////

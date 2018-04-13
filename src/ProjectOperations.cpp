@@ -3,8 +3,7 @@
 #include "ProjectOperations.h"
 #include "io/z_io_utils.h"
 #include "io/SchemaReaderIni.h"
-#include "io/SchemaReaderXml.h"
-#include "io/SchemaWriterXml.h"
+#include "io/SchemaReaderJson.h"
 #include "io/SchemaWriterJson.h"
 #include "core/Schema.h"
 #include "core/Protocol.h"
@@ -95,17 +94,30 @@ void ProjectOperations::openSchemaFile(const QString& fileName)
     }
 
     Ori::WaitCursor wc;
+    Z::Report report;
 
-    SchemaFile* reader = Z::IO::Utils::isOldSchema(fileName)
-        ? (SchemaFile*) new SchemaReaderIni(schema(), fileName)
-        : (SchemaFile*) new SchemaReaderXml(schema(), fileName);
+    schema()->events().raise(SchemaEvents::Loading);
+    schema()->events().disable();
 
-    reader->read();
+    if (Z::IO::Utils::isOldSchema(fileName))
+    {
+        SchemaReaderIni reader(schema(), fileName);
+        reader.read();
+        report = reader.report();
+    }
+    else
+    {
+        SchemaReaderJson reader(schema());
+        reader.readFromFile(fileName);
+        report = reader.report();
+    }
 
-    if (!reader->report().IsEmpty())
-        writeProtocol(reader->report(), tr("There are messages while loading project."));
+    if (!report.IsEmpty())
+        writeProtocol(report, tr("There are messages while loading project."));
 
-    delete reader;
+    schema()->setFileName(fileName);
+    schema()->events().enable();
+    schema()->events().raise(SchemaEvents::Loaded);
 }
 
 void ProjectOperations::writeProtocol(const Z::Report& report, const QString& message)
@@ -147,13 +159,19 @@ bool ProjectOperations::saveSchemaFile(const QString& fileName)
 
     Ori::WaitCursor wc;
 
-    SchemaWriterJson(schema()).writeToFile(fileName);
+    SchemaWriterJson writer(schema());
+    writer.writeToFile(fileName);
 
-    //if (!writer.report().IsEmpty())
-      //  writeProtocol(writer.report(), tr("There are messages while saving project."));
+    if (!writer.report().IsEmpty())
+        writeProtocol(writer.report(), tr("There are messages while saving project."));
 
-    //return writer.ok();
-    return true;
+    if (!writer.report().hasErrors())
+    {
+        schema()->setFileName(fileName);
+        schema()->events().raise(SchemaEvents::Saved);
+    }
+
+    return writer.report().hasErrors();
 }
 
 bool ProjectOperations::saveSchemaFileAs()
@@ -173,28 +191,10 @@ void ProjectOperations::saveSchemaFileCopy()
     Ori::WaitCursor wc;
 
     SchemaWriterJson writer(schema());
-    QString text = writer.writeToString();
+    writer.writeToFile(fileName);
 
-    //if (!writer.report().IsEmpty())
-      //  writeProtocol(writer.report(), tr("There are messages while saving copy of project."));
-
-//    if (writer.ok())
-    {
-        auto res = saveText(text, fileName);
-        if (!res.isEmpty())
-            Ori::Dlg::error(tr("Error while saving copy of project:\n\n%1").arg(res));
-    }
-}
-
-QString ProjectOperations::saveText(const QString& text, const QString& fileName)
-{
-    QFile file(fileName);
-    if (!file.open(QFile::WriteOnly | QFile::Text))
-        return file.errorString();
-    QTextStream stream(&file);
-    stream << text;
-    file.close();
-    return QString();
+    if (!writer.report().IsEmpty())
+        writeProtocol(writer.report(), tr("There are messages while saving copy of project."));
 }
 
 void ProjectOperations::checkCmdLine()

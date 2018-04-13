@@ -42,8 +42,6 @@ void SchemaReaderXml::readInternal()
     if (version > Z::IO::Utils::currentVersion())
         return _report.error_Version(version, Z::IO::Utils::currentVersion());
 
-    SchemaLoadingProcess p(_schema, _fileName);
-
     readGeneral(root);
     readPump(root);
     readElements(root);

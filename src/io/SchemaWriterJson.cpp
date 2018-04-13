@@ -31,26 +31,30 @@ SchemaWriterJson::SchemaWriterJson(Schema *schema) : _schema(schema)
 {
 }
 
+void SchemaWriterJson::writeToFile(const QString &fileName)
+{
+    auto text = writeToString();
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly | QFile::Text))
+        return _report.error(file.errorString());
+    QTextStream stream(&file);
+    stream << text;
+    file.close();
+}
+
 QString SchemaWriterJson::writeToString()
 {
     QJsonObject root;
     root["schema_version"] = Z::IO::Utils::currentVersion().str();
 
     writeGeneral(root);
+    writeGlobalParams(root);
     writePump(root);
     writeElements(root);
     writeWindows(root);
 
     QJsonDocument doc(root);
     return doc.toJson();
-}
-
-void SchemaWriterJson::writeToFile(const QString &fileName)
-{
-    QFile(fileName).write(writeToString().toUtf8());
-
-    _schema->setFileName(fileName);
-    _schema->events().raise(SchemaEvents::Saved);
 }
 
 void SchemaWriterJson::writeGeneral(QJsonObject& root)
@@ -60,11 +64,13 @@ void SchemaWriterJson::writeGeneral(QJsonObject& root)
     root["named_params"] = QJsonObject({
         { "lambda", writeParamValue(&_schema->wavelength()) }
     });
+}
 
-    QJsonArray globalParams;
+void SchemaWriterJson::writeGlobalParams(QJsonObject& root)
+{
+    QJsonObject globalParams;
     for (Z::Parameter *p : *_schema->params())
-        globalParams.append(QJsonObject({
-            { "alias", p->alias() },
+        globalParams[p->alias()] = QJsonObject({
             { "label", p->label() },
             { "name", p->name() },
             { "descr", p->description() },
@@ -73,7 +79,7 @@ void SchemaWriterJson::writeGeneral(QJsonObject& root)
             { "dim", p->dim()->alias() },
             { "value", p->value().value() },
             { "unit", p->value().unit()->alias() },
-        }));
+        });
     root["global_params"] = globalParams;
 }
 

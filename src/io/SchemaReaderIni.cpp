@@ -167,8 +167,6 @@ void SchemaReaderIni::read()
     if (_version < OldSchema::minVersion() || _version > OldSchema::maxVersion())
         return _report.error_Version(_version, OldSchema::minVersion(), OldSchema::maxVersion());
 
-    SchemaLoadingProcess p(_schema, _fileName);
-
     readGeneral(ini);
     readUnits();
     readLambda(ini);

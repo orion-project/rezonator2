@@ -44,8 +44,6 @@ private:
     QString getSaveFileName();
     QString getOpenFileName();
 
-    QString saveText(const QString& text, const QString& fileName);
-
     void writeProtocol(const Z::Report& report, const QString &message);
 };
 
