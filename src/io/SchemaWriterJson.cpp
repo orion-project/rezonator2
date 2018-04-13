@@ -1,8 +1,11 @@
 #include "SchemaWriterJson.h"
 
 #include "z_io_utils.h"
+#include "ISchemaStorable.h"
 #include "../core/Schema.h"
+#include "../WindowsManager.h"
 
+#include <QApplication>
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -126,19 +129,22 @@ void SchemaWriterJson::writeElement(QJsonObject& root, Element *elem)
 
 void SchemaWriterJson::writeWindows(QJsonObject& root)
 {
-/* TODO
-    auto windowsNode = _writer->makeNode(root, "windows");
-
+    QJsonArray windowsJson;
     auto windows = WindowsManager::instance().schemaWindows(_schema);
     for (auto window : windows)
     {
         auto storable = dynamic_cast<ISchemaStorable*>(window);
         if (!storable) continue;
 
-        auto node = _writer->makeNode(windowsNode, "window");
-        node.setAttribute("type", storable->type());
-        storable->write(_writer, node);
+        QJsonObject windowJson;
+        windowJson["type"] = storable->type();
+        QString res = storable->write(windowJson);
+        if (res.isEmpty())
+            windowsJson.append(windowJson);
+        else
+            _report.warning(qApp->translate("IO",
+                "Unable to save window of type '%1': %2").arg(storable->type(), res));
     }
-*/
+    root["windows"] = windowsJson;
 }
 

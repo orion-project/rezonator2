@@ -14,9 +14,8 @@ class ISchemaStorable
 {
 public:
     virtual QString type() const = 0;
-
-    virtual void write(QJsonObject& root) = 0;
-    virtual bool read(QJsonObject& root) = 0;
+    virtual QString write(QJsonObject& root) = 0;
+    virtual QString read(const QJsonObject& root) = 0;
 };
 
 #endif // Z_SCHEMA_STORABLE_H

@@ -31,7 +31,8 @@ private:
     void readPump(const QJsonObject& root);
     void readElements(const QJsonObject& root);
     void readElement(const QJsonObject& root);
-    void readStorables(const QJsonObject& root);
+    void readWindows(const QJsonObject& root);
+    void readWindow(const QJsonObject& root);
 };
 
 #endif // SCHEMA_READER_JSON_H

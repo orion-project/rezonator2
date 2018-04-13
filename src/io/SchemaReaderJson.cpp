@@ -1,8 +1,10 @@
 #include "SchemaReaderJson.h"
 
 #include "z_io_utils.h"
+#include "ISchemaStorable.h"
 #include "../core/Schema.h"
 #include "../core/ElementsCatalog.h"
+#include "../WindowsManager.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -112,7 +114,7 @@ void SchemaReaderJson::readFromUtf8(const QByteArray& data)
     readGlobalParams(root);
     readPump(root);
     readElements(root);
-    readStorables(root);
+    readWindows(root);
 }
 
 #define WITH_JSON_VALUE(value, root, key)\
@@ -286,42 +288,34 @@ void SchemaReaderJson::readElement(const QJsonObject& root)
     // TODO: read misalignments
 }
 
-void SchemaReaderJson::readStorables(const QJsonObject& root)
+void SchemaReaderJson::readWindows(const QJsonObject& root)
 {
-    // TODO
-/*
-    auto windowsNode = root.firstChildElement("windows");
-    for (auto node = windowsNode.firstChildElement("window");
-         !node.isNull(); node = node.nextSiblingElement("window"))
+    WITH_JSON_VALUE(windowsJson, root, "elements")
+        for (auto it = windowsJson.array().begin(); it != windowsJson.array().end(); it++)
+            readWindow((*it).toObject());
+}
+
+void SchemaReaderJson::readWindow(const QJsonObject& root)
+{
+    auto type = root["type"].toString();
+    auto ctor = WindowsManager::getConstructor(type);
+    if (!ctor)
+        return _report.warning(qApp->translate("IO",
+            "Unable to load window of unknown type '%1', skipped.").arg(type));
+
+    SchemaWindow* window = ctor(_schema);
+    ISchemaStorable* storable = dynamic_cast<ISchemaStorable*>(window);
+    if (!storable)
+        return _report.warning(qApp->translate("IO",
+            "Window of type '%1' is stored in file but it is not known how to load it, skipped.").arg(type));
+
+    QString res = storable->read(root);
+    if (res.isEmpty())
+        WindowsManager::instance().show(window);
+    else
     {
-        auto type = node.attribute("type");
-        auto ctor = WindowsManager::getConstructor(type);
-        if (!ctor)
-        {
-            _reader->warning(node, qApp->translate("IO",
-                "Unable to load window of unknown type '%1', skipped.").arg(type));
-            continue;
-        }
-
-        SchemaWindow* window = ctor(schema());
-        ISchemaStorable* storable = dynamic_cast<ISchemaStorable*>(window);
-        if (!storable)
-        {
-            _reader->warning(node, qApp->translate("IO",
-                "Window of type '%1' is found stored in file but no amymore known how to load it, skipped.").arg(type));
-            continue;
-        }
-
-        if (storable->read(_reader, node))
-        {
-            WindowsManager::instance().show(window);
-        }
-        else
-        {
-            _reader->warning(node, qApp->translate("IO",
-                "Window of type '%1' was not loaded.").arg(type));
-            delete window;
-        }
+        _report.warning(qApp->translate("IO",
+            "Unable to load window of type '%1': %2").arg(type, res));
+        delete window;
     }
-*/
 }
