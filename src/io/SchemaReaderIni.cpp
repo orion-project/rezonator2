@@ -12,7 +12,7 @@
 namespace OldSchema {
 
 Ori::Version maxVersion() { return Ori::Version(1, 2); }
-Ori::Version minVersion() { return Ori::Version(1, 1); }
+Ori::Version minVersion() { return Ori::Version(1, 0); }
 
 Z::Unit parseLinear(const QString& s, Z::Unit def)
 {
@@ -65,7 +65,13 @@ QString parseElemType(const QString& oldType, const Ori::Version& version)
     // TODO:NEXT-VER load grin-lens
 
     auto type = oldType;
-    if (version.less(1, 2))
+    if (version.match(1, 0))
+    {
+        if (type == "TElemRange") type = "TElemPlate";
+        else if (type == "TElemThinLensCylS") type = "TElemThinCylinderLensS";
+        else if (type == "TElemThinLensCylT") type = "TElemThinCylinderLensT";
+    }
+    else if (version.less(1, 2))
     {
         if (type == "TElemCustom") type = "TElemMatrix";
     }
@@ -158,7 +164,7 @@ void SchemaReaderIni::readFromFile(const QString &fileName)
                 .arg(_version.str(), OldSchema::minVersion().str(), OldSchema::maxVersion().str()));
 
     readGeneral(ini);
-    readUnits();
+    readUnits(ini);
     readLambda(ini);
     readPump(ini);
     readElements();
@@ -185,14 +191,33 @@ void SchemaReaderIni::readLambda(IniSection& ini)
         _report.warning(qApp->translate("IO", "Invalid value for wavelength is stored in file."));
 }
 
-void SchemaReaderIni::readUnits()
+void SchemaReaderIni::readUnits(IniSection& ini)
 {
     // Units section is inside of PREFERENCES section, so it should be opened before calling this func
-    IniSection section(_file, "Units");
-    _linearUnit = OldSchema::parseLinear(section.getString("Linear"), Z::Units::mm());
-    _angularUnit = OldSchema::parseAngular(section.getString("Angle"), Z::Units::deg());
-    _beamsizeUnit = OldSchema::parseLinear(section.getString("Beamsize"), Z::Units::mkm());
-    _lambdaUnit = OldSchema::parseLinear(section.getString("Lambda"), Z::Units::nm());
+
+    // There are only two linear units in V1 - mm and mkm
+    // Wavelength is always nm, and beamsize is always mkm
+    if (_version.match(1, 0))
+    {
+        _linearUnit = (ini.getInt("LinearUnits", 0)) == 0 ? Z::Units::mm() : Z::Units::mkm();
+        switch (ini.getInt("AngleUnits", 0))
+        {
+        case 1: _angularUnit = Z::Units::deg(); break;
+        case 2: _angularUnit = Z::Units::mrad(); break;
+        case 3: _angularUnit = Z::Units::amin(); break;
+        default:_angularUnit = Z::Units::rad(); break;
+        }
+        _beamsizeUnit = Z::Units::mkm();
+        _lambdaUnit = Z::Units::nm();
+    }
+    else
+    {
+         IniSection section(_file, "Units");
+        _linearUnit = OldSchema::parseLinear(section.getString("Linear"), Z::Units::mm());
+        _angularUnit = OldSchema::parseAngular(section.getString("Angle"), Z::Units::deg());
+        _beamsizeUnit = OldSchema::parseLinear(section.getString("Beamsize"), Z::Units::mkm());
+        _lambdaUnit = OldSchema::parseLinear(section.getString("Lambda"), Z::Units::nm());
+    }
 }
 
 void SchemaReaderIni::readPump(IniSection& ini)

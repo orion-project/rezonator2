@@ -38,7 +38,7 @@ private:
 
     void readGeneral(IniSection &ini);
     void readLambda(IniSection &ini);
-    void readUnits();
+    void readUnits(IniSection &ini);
     void readPump(IniSection &ini);
     void readElements();
     void readElement(const QString& section);
