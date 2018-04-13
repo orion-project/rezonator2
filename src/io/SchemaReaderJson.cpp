@@ -191,7 +191,62 @@ void SchemaReaderJson::readGlobalParam(const QJsonObject& root, const QString &a
 
 void SchemaReaderJson::readPump(const QJsonObject& root)
 {
-    // TODO
+    // TODO:NEXT-VER
+/*
+    #define READ_PUMP_MODE(mode, param1, param2, param3)\
+    {\
+        auto node = nodePump.firstChildElement(#mode);\
+        if (!node.isNull())\
+        {\
+            if (!_reader->readValueTS(node, #param1, pump.mode.param1) ||\
+                !_reader->readValueTS(node, #param2, pump.mode.param2) ||\
+                !_reader->readValueTS(node, #param3, pump.mode.param3))\
+            {\
+                report(Issue::BadPumpParams, #mode);\
+                setDefaultPumpParams(_schema, pump, Z::PumpMode_## mode);\
+            }\
+        }\
+        else setDefaultPumpParams(_schema, pump, Z::PumpMode_## mode);\
+    }
+*/
+    // TODO:NEXT-VER
+    //    if (_schema->tripType() != Schema::TripType::SP)
+    //        disableReport(); // no messages for resonators
+
+    //    BREAKABLE_BLOCK
+    //    {
+    //        auto nodePump = root.firstChildElement("pump");
+    //        if (nodePump.isNull())
+    //        {
+    //            report(Issue::NoPump);
+    //            // TODO
+    //            //setDefaultPump(_schema);
+    //            break;
+    //        }
+
+    //        bool ok;
+    //        auto modeName = nodePump.attribute("mode");
+    //        auto mode = ENUM_ITEM_BY_NAME(Z::Pump::PumpMode, modeName, &ok);
+    //        if (!ok)
+    //        {
+    //            report(Issue::UnknownPumpMode, modeName);
+    //            // TODO
+    //            //setDefaultPump(_schema);
+    //            break;
+    //        }
+
+    //        /* TODO
+    //        Z::Pump::Params pump;
+    //        pump.mode = mode;
+    //        READ_PUMP_MODE(waist, radius, distance, mi)
+    //        READ_PUMP_MODE(front, radius, curvature, mi)
+    //        READ_PUMP_MODE(complex, re, im, mi)
+    //        READ_PUMP_MODE(icomplex, re, im, mi)
+    //        READ_PUMP_MODE(vector, radius, angle, distance)
+    //        READ_PUMP_MODE(sections, radius_1, radius_2, distance)
+    //        _schema->setPump(pump);*/
+    //    }
+    //    enableReport();
 }
 
 void SchemaReaderJson::readElements(const QJsonObject& root)
@@ -234,4 +289,39 @@ void SchemaReaderJson::readElement(const QJsonObject& root)
 void SchemaReaderJson::readStorables(const QJsonObject& root)
 {
     // TODO
+/*
+    auto windowsNode = root.firstChildElement("windows");
+    for (auto node = windowsNode.firstChildElement("window");
+         !node.isNull(); node = node.nextSiblingElement("window"))
+    {
+        auto type = node.attribute("type");
+        auto ctor = WindowsManager::getConstructor(type);
+        if (!ctor)
+        {
+            _reader->warning(node, qApp->translate("IO",
+                "Unable to load window of unknown type '%1', skipped.").arg(type));
+            continue;
+        }
+
+        SchemaWindow* window = ctor(schema());
+        ISchemaStorable* storable = dynamic_cast<ISchemaStorable*>(window);
+        if (!storable)
+        {
+            _reader->warning(node, qApp->translate("IO",
+                "Window of type '%1' is found stored in file but no amymore known how to load it, skipped.").arg(type));
+            continue;
+        }
+
+        if (storable->read(_reader, node))
+        {
+            WindowsManager::instance().show(window);
+        }
+        else
+        {
+            _reader->warning(node, qApp->translate("IO",
+                "Window of type '%1' was not loaded.").arg(type));
+            delete window;
+        }
+    }
+*/
 }

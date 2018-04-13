@@ -1,6 +1,8 @@
 #ifndef Z_TEST_UTILS_H
 #define Z_TEST_UTILS_H
 
+#include <cmath>
+
 inline double frand(double min, double max)
 {
     return min + (double(qrand()) / double(RAND_MAX)) * (max - min);

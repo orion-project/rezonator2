@@ -1,10 +1,8 @@
-#include <QAction>
-#include <QtXml/QDomDocument>
-
 #include "PlotFuncWindowStorable.h"
-#include "../io/z_io_xml_reader.h"
-#include "../io/z_io_xml_writer.h"
+
 #include "../widgets/CursorPanel.h"
+
+#include <QAction>
 
 #define TAG_TS_MODE "mode"
 #define TS_MODE_TS_FLIP "T-S"
@@ -16,27 +14,32 @@ PlotFuncWindowStorable::PlotFuncWindowStorable(PlotFunction *func) : PlotFuncWin
 {
 }
 
-bool PlotFuncWindowStorable::read(Z::IO::XML::Reader* reader, QDomElement& root)
+bool PlotFuncWindowStorable::read(QJsonObject &root)
 {
+    /* TODO
     QDomElement nodeFunc, nodeWnd;
     return
-        reader->getNode(root, "function", nodeFunc) &&
-            readFunction(reader, root) &&
-        reader->getNode(root, "window", nodeWnd) &&
-            readWindowGeneral(reader, nodeWnd) &&
-            readWindowSpecific(reader, nodeWnd);
+        root->getNode(root, "function", nodeFunc) &&
+            readFunction(root, root) &&
+        root->getNode(root, "window", nodeWnd) &&
+            readWindowGeneral(root, nodeWnd) &&
+            readWindowSpecific(root, nodeWnd);
+            */
+   return true;
 }
 
-void PlotFuncWindowStorable::write(Z::IO::XML::Writer* writer, QDomElement& root)
+void PlotFuncWindowStorable::write(QJsonObject &root)
 {
-    auto nodeFunc = writer->makeNode(root, "function");
-    writeFunction(writer, nodeFunc);
+    /* TODO
+    auto nodeFunc = root->makeNode(root, "function");
+    writeFunction(root, nodeFunc);
 
-    auto nodeWnd = writer->makeNode(root, "window");
-    writeWindowGeneral(writer, nodeWnd);
-    writeWindowSpecific(writer, nodeWnd);
+    auto nodeWnd = root->makeNode(root, "window");
+    writeWindowGeneral(root, nodeWnd);
+    writeWindowSpecific(root, nodeWnd);
+    */
 }
-
+/*
 bool PlotFuncWindowStorable::readWindowGeneral(Z::IO::XML::Reader* reader, QDomElement& root)
 {
     readTSMode(reader, root);
@@ -107,3 +110,4 @@ void PlotFuncWindowStorable::writeCursor(Z::IO::XML::Writer* writer, QDomElement
     node.setAttribute("enabled", _cursorPanel->enabled());
     node.setAttribute("mode", _cursorPanel->mode());
 }
+*/

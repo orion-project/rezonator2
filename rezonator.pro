@@ -1,4 +1,4 @@
-QT += core gui xml widgets printsupport
+QT += core gui widgets printsupport
 
 #------------------------------------------------------------
 # Definition of output
@@ -88,14 +88,8 @@ HEADERS += \
     src/funcs/PlotFunction.h \
     src/HelpSystem.h \
     src/io/ISchemaStorable.h \
-    src/io/SchemaFile.h \
     src/io/SchemaReaderIni.h \
-    src/io/SchemaReaderXml.h \
-    src/io/SchemaWriterXml.h \
-    src/io/z_io_report.h \
     src/io/z_io_utils.h \
-    src/io/z_io_xml_reader.h \
-    src/io/z_io_xml_writer.h \
     src/ProjectOperations.h \
     src/ProjectWindow.h \
     src/ProtocolWindow.h \
@@ -174,14 +168,8 @@ SOURCES += \
     src/funcs/InfoFunctions.cpp \
     src/funcs/PlotFunction.cpp \
     src/HelpSystem.cpp \
-    src/io/SchemaFile.cpp \
     src/io/SchemaReaderIni.cpp \
-    src/io/SchemaReaderXml.cpp \
-    src/io/SchemaWriterXml.cpp \
-    src/io/z_io_report.cpp \
     src/io/z_io_utils.cpp \
-    src/io/z_io_xml_reader.cpp \
-    src/io/z_io_xml_writer.cpp \
     src/main.cpp \
     src/ProjectOperations.cpp \
     src/ProjectWindow.cpp \
@@ -200,12 +188,9 @@ SOURCES += \
     src/test/test_Parameters.cpp \
     src/test/test_Report.cpp \
     src/test/test_Schema.cpp \
-    src/test/test_SchemaFile.cpp \
     src/test/test_SchemaReaderIni.cpp \
     src/test/test_Units.cpp \
     src/test/test_Values.cpp \
-    src/test/test_xml_io_general.cpp \
-    src/test/test_xml_io_schema.cpp \
     src/VariableDialog.cpp \
     src/widgets/Appearance.cpp \
     src/widgets/CursorPanel.cpp \

@@ -86,6 +86,17 @@ void SchemaWriterJson::writeGlobalParams(QJsonObject& root)
 void SchemaWriterJson::writePump(QJsonObject &root)
 {
     // TODO:NEXT-VER
+    //    auto nodePump = document()->createElement("pump");
+    //    nodePump.setAttribute("mode", ENUM_ITEM_NAME(Z::Pump::PumpMode, _schema->pump().mode));
+
+    //    WRITE_PUMP_MODE(waist, radius, distance, mi)
+    //    WRITE_PUMP_MODE(front, radius, curvature, mi)
+    //    WRITE_PUMP_MODE(complex, re, im, mi)
+    //    WRITE_PUMP_MODE(icomplex, re, im, mi)
+    //    WRITE_PUMP_MODE(vector, radius, angle, distance)
+    //    WRITE_PUMP_MODE(sections, radius_1, radius_2, distance)
+
+    //    root.appendChild(nodePump);
 }
 
 void SchemaWriterJson::writeElements(QJsonObject& root)
@@ -115,6 +126,19 @@ void SchemaWriterJson::writeElement(QJsonObject& root, Element *elem)
 
 void SchemaWriterJson::writeWindows(QJsonObject& root)
 {
+/* TODO
+    auto windowsNode = _writer->makeNode(root, "windows");
 
+    auto windows = WindowsManager::instance().schemaWindows(_schema);
+    for (auto window : windows)
+    {
+        auto storable = dynamic_cast<ISchemaStorable*>(window);
+        if (!storable) continue;
+
+        auto node = _writer->makeNode(windowsNode, "window");
+        node.setAttribute("type", storable->type());
+        storable->write(_writer, node);
+    }
+*/
 }
 

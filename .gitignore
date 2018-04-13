@@ -4,6 +4,7 @@ bin/rezonator
 bin/rezonator.app
 bin/rezonator.exe
 bin/*muparser*
+*.autosave
 *.user
 *.exe
 *.log

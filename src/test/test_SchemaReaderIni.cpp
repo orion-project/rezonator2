@@ -19,8 +19,8 @@ namespace SchemaReaderIniTests {
 
 #define READ_AND_ASSERT(file_name)\
     TEST_FILE(fullFileName, file_name)\
-    SchemaReaderIni file(&schema, fullFileName);\
-    file.read();\
+    SchemaReaderIni file(&schema);\
+    file.readFromFile(fullFileName);\
     LOG_SCHEMA_FILE(file)\
     ASSERT_IS_TRUE(file.ok())
 
@@ -46,20 +46,19 @@ namespace SchemaReaderIniTests {
 
 TEST_METHOD(file_not_exists)
 {
-    SchemaReaderIni file(0, "some_not_existed_file_name");
+    SchemaReaderIni file(nullptr);
+    file.readFromFile("some_not_existed_file_name");
     LOG_SCHEMA_FILE(file)
     ASSERT_IS_FALSE(file.ok())
-    file.read(); // nothing happens
-    file.write(); // nothing happens
 }
 
 TEST_CASE_METHOD(test_read_invalid_she_file, const QString& file_name)
 {
     Schema s;
     TEST_FILE(fileName, file_name)
-    SchemaReaderIni file(&s, fileName);
+    SchemaReaderIni file(&s);
     ASSERT_IS_TRUE(file.ok())
-    file.read();
+    file.readFromFile(fileName);
     LOG_SCHEMA_FILE(file)
     ASSERT_IS_FALSE(file.ok())
 }
@@ -102,8 +101,8 @@ TEST_METHOD(read_general)
 {
     TEST_FILE(fileName, "no_elems.she")
     SCHEMA_AND_LISTENER
-    SchemaReaderIni file(&schema, fileName);
-    file.read();
+    SchemaReaderIni file(&schema);
+    file.readFromFile(fileName);
     LOG_SCHEMA_FILE(file)
     ASSERT_IS_TRUE(file.ok())
     ASSERT_EQ_STR(schema.fileName(), fileName)

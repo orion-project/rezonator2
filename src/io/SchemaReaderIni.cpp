@@ -1,12 +1,13 @@
+#include "SchemaReaderIni.h"
+
+#include "../core/Schema.h"
+#include "../core/Elements.h"
+#include "../core/ElementsCatalog.h"
+// TODO:NEXT-VER #include "../core/Pump.h"
+
 #include <QFile>
 #include <QSettings>
 #include <QVariant>
-
-#include "SchemaReaderIni.h"
-#include "../core/Elements.h"
-#include "../core/ElementsCatalog.h"
-#include "../core/Parameters.h"
-// TODO:NEXT-VER #include "../core/Pump.h"
 
 namespace OldSchema {
 
@@ -139,33 +140,22 @@ private:
 //                             SchemaReaderIni
 //------------------------------------------------------------------------------
 
-SchemaReaderIni::SchemaReaderIni(Schema *schema, const QString &fileName) : SchemaFile(schema, fileName)
+void SchemaReaderIni::readFromFile(const QString &fileName)
 {
-    // QSettings creates a new file if it not exists, so we should check it first
+    // QSettings creates a new file if it does't exists, so we should check it first
     if (!QFile::exists(fileName))
-    {
-        _report.error(qApp->translate("IO", "File not found: %1").arg(fileName));
-        return;
-    }
+        return _report.error(qApp->translate("IO", "File not found: %1").arg(fileName));
     _file = new QSettings(fileName, QSettings::IniFormat);
-}
-
-SchemaReaderIni::~SchemaReaderIni()
-{
-    if (_file) delete _file;
-}
-
-void SchemaReaderIni::read()
-{
-    if (!_file) return;
 
     IniSection ini(_file, "PREFERENCES");
     if (!ini.opened())
-        return _report.error_InvalidFile(qApp->translate("IO", "main section not found"));
+        return _report.error(qApp->translate("IO", "Invalid file: main section not found"));
 
     _version = Ori::Version(ini.getString("Version"));
     if (_version < OldSchema::minVersion() || _version > OldSchema::maxVersion())
-        return _report.error_Version(_version, OldSchema::minVersion(), OldSchema::maxVersion());
+        return _report.error(qApp->translate("IO",
+            "File version %1 is not supported, supported versions: %2 - %3")
+                .arg(_version.str(), OldSchema::minVersion().str(), OldSchema::maxVersion().str()));
 
     readGeneral(ini);
     readUnits();
@@ -173,6 +163,8 @@ void SchemaReaderIni::read()
     readPump(ini);
     readElements();
     readWindows();
+
+    delete _file;
 }
 
 void SchemaReaderIni::readGeneral(IniSection& ini)
@@ -304,7 +296,9 @@ void SchemaReaderIni::readElement(const QString &section)
     auto oldType = ini.getString("Type", "NULL");
     auto newType = OldSchema::parseElemType(oldType, _version);
     auto elem = ElementsCatalog::instance().create(newType);
-    if (!elem) return _report.warning_UnknownElem(oldType);
+    if (!elem)
+        return _report.warning(qApp->translate("IO",
+            "Unknown element type '%1', element skipped").arg(oldType));
 
     _schema->insertElement(elem, -1, false);
 
@@ -361,4 +355,9 @@ Z::Unit SchemaReaderIni::paramUnit(Z::Parameter* param) const
         return Z::Units::rad();
 
     return Z::Units::none();
+}
+
+void SchemaReaderIni::readWindows()
+{
+    // TODO
 }

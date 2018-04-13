@@ -101,8 +101,8 @@ void ProjectOperations::openSchemaFile(const QString& fileName)
 
     if (Z::IO::Utils::isOldSchema(fileName))
     {
-        SchemaReaderIni reader(schema(), fileName);
-        reader.read();
+        SchemaReaderIni reader(schema());
+        reader.readFromFile(fileName);
         report = reader.report();
     }
     else

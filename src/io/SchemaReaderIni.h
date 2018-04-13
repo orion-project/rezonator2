@@ -1,30 +1,34 @@
 #ifndef SCHEMA_READER_INI_H
 #define SCHEMA_READER_INI_H
 
-#include "SchemaFile.h"
+#include "../core/Parameters.h"
+#include "../core/Report.h"
+#include "core/OriVersion.h"
 
 QT_BEGIN_NAMESPACE
 class QSettings;
 QT_END_NAMESPACE
 
 class IniSection;
+class Schema;
 
 /**
     Methods for reading schema and elements from INI file.
     For backward compatibility with reZonator 1.* version.
 */
-class SchemaReaderIni : public SchemaFile
+class SchemaReaderIni
 {
 public:
-    SchemaReaderIni(Schema *schema, const QString& fileName);
-    ~SchemaReaderIni();
+    SchemaReaderIni(Schema *schema) : _schema(schema) {}
 
-    void read() override;
+    void readFromFile(const QString& fileName);
 
-protected:
-    virtual void readWindows() {}
+    const Z::Report& report() const { return _report; }
+    bool ok() const { return !_report.hasErrors(); }
 
 private:
+    Schema* _schema;
+    Z::Report _report;
     QSettings *_file = nullptr;
     Ori::Version _version;
     Z::Unit _linearUnit;
@@ -38,6 +42,7 @@ private:
     void readPump(IniSection &ini);
     void readElements();
     void readElement(const QString& section);
+    void readWindows();
 
     Z::Unit paramUnit(Z::Parameter* param) const;
 };
