@@ -29,6 +29,8 @@ QString readParamValue(const QJsonObject& json, Z::Parameter* param)
     return QString();
 }
 
+/// Json value wrapper allowing to track value path inside file.
+/// Path can be useful for logging when reading of some value fails.
 class JsonValue
 {
 public:
@@ -77,15 +79,16 @@ private:
 
 using namespace Z::IO::Json;
 
-SchemaReaderJson::SchemaReaderJson(Schema *schema) : _schema(schema)
-{
-}
+//------------------------------------------------------------------------------
+//                           SchemaReaderJson
+//------------------------------------------------------------------------------
 
 void SchemaReaderJson::readFromFile(const QString& fileName)
 {
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        return _report.error(file.errorString());
+        return _report.error(qApp->translate("IO",
+            "Unable to open file for reading: %1").arg(file.errorString()));
     readFromUtf8(file.readAll());
     file.close();
 }
@@ -100,7 +103,8 @@ void SchemaReaderJson::readFromUtf8(const QByteArray& data)
     QJsonParseError error;
     QJsonDocument doc = QJsonDocument::fromJson(data, &error);
     if (doc.isNull())
-        return _report.error(error.errorString());
+        return _report.error(qApp->translate("IO",
+            "Unable to parse file: %1").arg(error.errorString()));
 
     QJsonObject root = doc.object();
 
@@ -193,6 +197,8 @@ void SchemaReaderJson::readGlobalParam(const QJsonObject& root, const QString &a
 
 void SchemaReaderJson::readPump(const QJsonObject& root)
 {
+    Q_UNUSED(root)
+
     // TODO:NEXT-VER
 /*
     #define READ_PUMP_MODE(mode, param1, param2, param3)\
@@ -290,7 +296,7 @@ void SchemaReaderJson::readElement(const QJsonObject& root)
 
 void SchemaReaderJson::readWindows(const QJsonObject& root)
 {
-    WITH_JSON_VALUE(windowsJson, root, "elements")
+    WITH_JSON_VALUE(windowsJson, root, "windows")
         for (auto it = windowsJson.array().begin(); it != windowsJson.array().end(); it++)
             readWindow((*it).toObject());
 }

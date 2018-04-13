@@ -1,19 +1,10 @@
 #include "PlotFuncWindowStorable.h"
 
 #include "../widgets/CursorPanel.h"
+#include "../io/z_io_utils.h"
 
 #include <QAction>
 #include <QJsonObject>
-
-#define TAG_TS_MODE "mode"
-#define TS_MODE_TS_FLIP "T-S"
-#define TS_MODE_T_AND_S "T+S"
-#define TS_MODE_T "T"
-#define TS_MODE_S "S"
-
-PlotFuncWindowStorable::PlotFuncWindowStorable(PlotFunction *func) : PlotFuncWindow(func)
-{
-}
 
 QString PlotFuncWindowStorable::read(const QJsonObject &root)
 {
@@ -52,73 +43,31 @@ QString PlotFuncWindowStorable::write(QJsonObject &root)
 
 QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root)
 {
-    readTSMode(root);
-    readCursor(root);
+    auto mode = root["ts_mode"].toString();
+    bool modeT = true, modeS = true;
+    if (mode == "T") modeS = false;
+    else if (mode == "S") modeT = false;
+    actnShowT->setChecked(modeT);
+    actnShowS->setChecked(modeS);
+    actnShowTS->setChecked(root["ts_flipped"].toBool());
+    updateTSModeActions();
+    updateVisibilityTS();
+
+    _cursorPanel->setEnabled(root["cursor_enabled"].toBool(true));
+    _cursorPanel->setMode(Z::IO::Utils::enumFromStr(root["cursor_mode"].toString(), CursorPanel::Both));
+
     return QString();
 }
 
 QString PlotFuncWindowStorable::writeWindowGeneral(QJsonObject& root) const
 {
-    writeTSMode(root);
-    writeCursor(root);
-    return QString();
-}
-
-void PlotFuncWindowStorable::readTSMode(const QJsonObject& root)
-{/*
-    QDomElement node;
-    if (reader->getNode(root, "ts-mode", node))
-    {
-        auto mode = node.attribute("mode");
-        if (mode == "T+S")
-        {
-            actnShowT->setChecked(true);
-            actnShowS->setChecked(true);
-        }
-        else if (mode == "T")
-        {
-            actnShowT->setChecked(true);
-            actnShowS->setChecked(false);
-        }
-        else
-        {
-            actnShowT->setChecked(false);
-            actnShowS->setChecked(true);
-        }
-        actnShowTS->setChecked(reader->readBoolAttributeDef(node, "flipped", false));
-    }
-    else
-    {
-        actnShowT->setChecked(true);
-        actnShowS->setChecked(true);
-    }
-    updateTSModeActions();
-    updateVisibilityTS();
-*/}
-
-void PlotFuncWindowStorable::readCursor(const QJsonObject& root)
-{/*
-    QDomElement node;
-    if (reader->getNode(root, "cursor", node))
-    {
-        _cursorPanel->setEnabled(reader->readBoolAttributeDef(node, "enabled", true));
-        _cursorPanel->setMode(CursorPanel::Mode(reader->readIntAttributeDef(node, "mode", CursorPanel::Both)));
-    }
-*/}
-
-void PlotFuncWindowStorable::writeTSMode(QJsonObject& root) const
-{/*
-    auto node = writer->makeNode(root, "ts-mode");
     bool modeT = actnShowT->isChecked();
     bool modeS = actnShowS->isChecked();
-    node.setAttribute("mode", (modeT && modeS)? "T+S": (modeT ? "T" : "S"));
-    node.setAttribute("flipped", actnShowTS->isChecked());
-*/}
+    root["ts_mode"] = (modeT && modeS)? "T+S": (modeT ? "T" : "S");
+    root["ts_flipped"] = actnShowTS->isChecked();
 
-void PlotFuncWindowStorable::writeCursor(QJsonObject& root) const
-{/*
-    auto node = writer->makeNode(root, "cursor");
-    node.setAttribute("enabled", _cursorPanel->enabled());
-    node.setAttribute("mode", _cursorPanel->mode());
-*/}
+    root["cursor_enabled"] = _cursorPanel->enabled();
+    root["cursor_mode"] = Z::IO::Utils::enumToStr(_cursorPanel->mode());
 
+    return QString();
+}

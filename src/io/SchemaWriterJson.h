@@ -13,7 +13,7 @@ class Schema;
 class SchemaWriterJson
 {
 public:
-    SchemaWriterJson(Schema *schema);
+    SchemaWriterJson(Schema *schema) : _schema(schema) {}
 
     void writeToFile(const QString& fileName);
     QString writeToString();

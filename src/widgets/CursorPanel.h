@@ -6,14 +6,13 @@
 class PlotFunction;
 class QCPCursor;
 
-////////////////////////////////////////////////////////////////////////////////
-
 class CursorPanel : public QTextBrowser
 {
     Q_OBJECT
 
 public:
     enum Mode { Both, Vertical, Horizontal };
+    Q_ENUM(Mode)
 
 public:
     explicit CursorPanel(PlotFunction *func, QCPCursor *cursor);
@@ -51,7 +50,5 @@ private slots:
     void setCursorY();
     void setCursorShape();
 };
-
-////////////////////////////////////////////////////////////////////////////////
 
 #endif // CURSOR_PANEL_H

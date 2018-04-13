@@ -64,8 +64,8 @@ ProjectWindow::ProjectWindow() : QMainWindow(), SchemaToolWindow(new Schema())
     connect(_mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(updateMenuBar()));
     connect(WindowsManager::instancePtr(), SIGNAL(showMdiSubWindow(QWidget*)), _mdiArea, SLOT(appendChild(QWidget*)));
     connect(_mruList, SIGNAL(clicked(QString)), _operations, SLOT(openSchemaFile(QString)));
-    connect(_operations, SIGNAL(fileNameSelected(QString)), _mruList, SLOT(append(QString)));
-    connect(_operations, SIGNAL(protocolRequired()), this, SLOT(showProtocolWindow()));
+    connect(_operations, &ProjectOperations::fileNameSelected, _mruList, &Ori::MruFileList::append);
+    connect(_operations, &ProjectOperations::protocolRequired, this, &ProjectWindow::showProtocolWindow);
 
     createActions();
     createMenuBar();

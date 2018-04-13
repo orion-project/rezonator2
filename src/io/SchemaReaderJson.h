@@ -13,7 +13,7 @@ class Schema;
 class SchemaReaderJson
 {
 public:
-    SchemaReaderJson(Schema *schema);
+    SchemaReaderJson(Schema *schema) : _schema(schema) {}
 
     void readFromFile(const QString& fileName);
     void readFromString(const QString& text);

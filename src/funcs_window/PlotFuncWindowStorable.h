@@ -7,7 +7,7 @@
 class PlotFuncWindowStorable : public PlotFuncWindow, public ISchemaStorable
 {
 public:
-    PlotFuncWindowStorable(PlotFunction* func);
+    PlotFuncWindowStorable(PlotFunction* func) : PlotFuncWindow(func) {}
 
     // implementation of ISchemaStorable
     QString type() const override { return _function->alias(); }
@@ -23,11 +23,6 @@ protected:
 private:
     QString readWindowGeneral(const QJsonObject& root);
     QString writeWindowGeneral(QJsonObject& root) const;
-
-    void readTSMode(const QJsonObject& root);
-    void readCursor(const QJsonObject& root);
-    void writeTSMode(QJsonObject& root) const;
-    void writeCursor(QJsonObject& root) const;
 };
 
 #endif // PlotFuncWindowStorable_H

@@ -30,16 +30,17 @@ QJsonObject writeParamValue(Z::Parameter* param)
 
 using namespace Z::IO::Json;
 
-SchemaWriterJson::SchemaWriterJson(Schema *schema) : _schema(schema)
-{
-}
+//------------------------------------------------------------------------------
+//                           SchemaWriterJson
+//------------------------------------------------------------------------------
 
 void SchemaWriterJson::writeToFile(const QString &fileName)
 {
     auto text = writeToString();
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly | QFile::Text))
-        return _report.error(file.errorString());
+        return _report.error(qApp->translate("IO",
+            "Unable to open file for writing: %1").arg(file.errorString()));
     QTextStream stream(&file);
     stream << text;
     file.close();
@@ -88,6 +89,8 @@ void SchemaWriterJson::writeGlobalParams(QJsonObject& root)
 
 void SchemaWriterJson::writePump(QJsonObject &root)
 {
+    Q_UNUSED(root)
+
     // TODO:NEXT-VER
     //    auto nodePump = document()->createElement("pump");
     //    nodePump.setAttribute("mode", ENUM_ITEM_NAME(Z::Pump::PumpMode, _schema->pump().mode));
