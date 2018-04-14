@@ -8,7 +8,7 @@ class CustomPrefs
 public:
     CustomPrefs() = delete;
 
-    static void load();
+    static void load(const QString& appConfigFile);
 
     static void setRecentDim(const QString& key, Z::Dim dim);
     static Z::Dim recentDim(const QString& key);

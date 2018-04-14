@@ -103,7 +103,7 @@ void ProjectWindow::loadSettings()
 
     Settings::instance().load();
 
-    CustomPrefs::load();
+    CustomPrefs::load(s.settings()->fileName());
 }
 
 void ProjectWindow::saveSettings()

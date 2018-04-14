@@ -1,31 +1,24 @@
 #include "CustomPrefs.h"
-#include "tools/OriSettings.h"
 
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
-#include <QFileInfo>
-#include <QTextStream>
+#include <QFile>
 
 namespace CustomData {
 
 QJsonObject __customData;
+QString __storagePath;
 
-QString storagePath()
+void load(const QString& storagePath)
 {
-    // TODO use local path in portabe mode, or user profile path otherwise
-    // TODO change ext, not just append it
-    return Ori::Settings::localIniPath() + ".json";
-}
+    __storagePath = storagePath;
 
-void load()
-{
-    auto path = storagePath();
-    QFile file(path);
+    QFile file(__storagePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        qWarning() << "Unable to load custom prefs" << path << file.errorString();
+        qWarning() << "Unable to load custom prefs" << __storagePath << file.errorString();
         return;
     }
     __customData = QJsonDocument::fromJson(file.readAll()).object();
@@ -33,11 +26,10 @@ void load()
 
 void save()
 {
-    auto path = storagePath();
-    QFile file(path);
+    QFile file(__storagePath);
     if (!file.open(QFile::WriteOnly | QFile::Text))
     {
-        qWarning() << "Unable to save custom prefs" << path << file.errorString();
+        qWarning() << "Unable to save custom prefs" << __storagePath << file.errorString();
         return;
     }
     QTextStream(&file) << QJsonDocument(__customData).toJson();
@@ -73,9 +65,13 @@ void increaseCounterKey(const QString& counterObjKey, const QString& counterKey)
 
 using namespace CustomData;
 
-void CustomPrefs::load()
+//------------------------------------------------------------------------------
+//                                CustomPrefs
+//------------------------------------------------------------------------------
+
+void CustomPrefs::load(const QString &appConfigFile)
 {
-    ::load();
+    ::load(appConfigFile.section('.', 0, -2) + ".prefs.json");
 }
 
 void CustomPrefs::setRecentDim(const QString& key, Z::Dim dim)
