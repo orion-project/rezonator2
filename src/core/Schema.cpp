@@ -195,12 +195,25 @@ void Schema::deleteElement(int index, bool event)
         _events.raise(SchemaEvents::ElemDeleting, elem);
 
     _items.remove(index);
-    elem->setOwner(nullptr);
+
+    // Remove link driving this elements' params
+    for (auto param: elem->params())
+    {
+        // In theory, can be many links directing to this param.
+        // But as it's meaningless, we can't make more than one by UI-restrictions.
+        // Links are made in ElementPropsDialog -> ParamsEditor -> ParamEditor.
+        auto link = _paramLinks.byTarget(param);
+        if (link)
+        {
+            _paramLinks.removeOne(link);
+            delete link;
+        }
+    }
 
     if (event)
         _events.raise(SchemaEvents::ElemDeleted, elem);
 
-    // TODO delete elem? rename to extractElem or smth like, if no real deletion needed
+    delete elem;
 }
 
 void Schema::parameterChanged(Z::ParameterBase *param)

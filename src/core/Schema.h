@@ -211,6 +211,7 @@ public:
     Elements selectedElements() const { return _selection.elements(); }
 
     Z::Parameters* params() { return &_params; }
+    Z::ParamLinks* paramLinks() { return &_paramLinks; }
     Z::Formulas* formulas() { return &_formulas; }
 
 private:
@@ -224,6 +225,7 @@ private:
     TripType _tripType = TripType::SW;
     Z::Parameter _wavelength;
     Z::Parameters _params;
+    Z::ParamLinks _paramLinks;
     Z::Formulas _formulas;
     Z::Pump::Params _pump;
 

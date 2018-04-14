@@ -128,7 +128,8 @@ void SchemaParamsWindow::deleteParameter()
     auto param = _table->selected();
     if (!param) return;
 
-    // TODO
+    // TODO search for schema()->paramLinks()->bySource(param) and remove links
+    // TODO remove parameter
 
     schema()->events().raise(SchemaEvents::CustomParamDeleted, param);
 }

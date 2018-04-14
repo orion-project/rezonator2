@@ -129,10 +129,7 @@ void SchemaViewWindow::actionElemDelete()
         elemTitles += elements[i]->displayLabelTitle() + "\n";
     if (Ori::Dlg::ok(tr("Confirm deletion:\n\n%1").arg(elemTitles.trimmed())))
         for (int i = 0; i < elements.size(); i++)
-        {
             schema()->deleteElement(elements[i], true);
-            delete elements[i];
-        }
 }
 
 //------------------------------------------------------------------------------
