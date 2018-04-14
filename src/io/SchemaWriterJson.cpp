@@ -52,7 +52,7 @@ QString SchemaWriterJson::writeToString()
     root["schema_version"] = Z::IO::Utils::currentVersion().str();
 
     writeGeneral(root);
-    writeGlobalParams(root);
+    writeCustomParams(root);
     writePump(root);
     writeElements(root);
     writeWindows(root);
@@ -65,16 +65,16 @@ void SchemaWriterJson::writeGeneral(QJsonObject& root)
 {
     root["trip_type"] = TripTypes::info(_schema->tripType()).alias();
 
-    root["named_params"] = QJsonObject({
+    root["builtin_params"] = QJsonObject({
         { "lambda", writeParamValue(&_schema->wavelength()) }
     });
 }
 
-void SchemaWriterJson::writeGlobalParams(QJsonObject& root)
+void SchemaWriterJson::writeCustomParams(QJsonObject& root)
 {
-    QJsonObject globalParams;
+    QJsonObject customParams;
     for (Z::Parameter *p : *_schema->params())
-        globalParams[p->alias()] = QJsonObject({
+        customParams[p->alias()] = QJsonObject({
             { "label", p->label() },
             { "name", p->name() },
             { "descr", p->description() },
@@ -84,7 +84,7 @@ void SchemaWriterJson::writeGlobalParams(QJsonObject& root)
             { "value", p->value().value() },
             { "unit", p->value().unit()->alias() },
         });
-    root["global_params"] = globalParams;
+    root["custom_params"] = customParams;
 }
 
 void SchemaWriterJson::writePump(QJsonObject &root)

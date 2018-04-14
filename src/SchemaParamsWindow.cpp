@@ -1,4 +1,6 @@
 #include "SchemaParamsWindow.h"
+
+#include "CustomPrefs.h"
 #include "widgets/Appearance.h"
 #include "widgets/SchemaParamsTable.h"
 #include "widgets/FormulaEditor.h"
@@ -27,20 +29,22 @@ SchemaParamsWindow::SchemaParamsWindow(Schema *owner) : SchemaMdiChild(owner)
     setTitleAndIcon(tr("Parameters"), ":/window_icons/parameter");
 
     _table = new SchemaParamsTable(owner);
-
     setContent(_table);
 
     createActions();
     createMenuBar();
     createToolBar();
 
-    connect(_table, SIGNAL(doubleClicked(Z::Parameter*)), this, SLOT(setParameterValue()));
     _table->setContextMenu(_contextMenu);
+    connect(_table, SIGNAL(doubleClicked(Z::Parameter*)), this, SLOT(setParameterValue()));
+    schema()->registerListener(_table);
 }
 
 SchemaParamsWindow::~SchemaParamsWindow()
 {
     _instance = nullptr;
+
+    schema()->unregisterListener(_table);
 }
 
 void SchemaParamsWindow::createActions()
@@ -75,6 +79,7 @@ void SchemaParamsWindow::createParameter()
     Z::Gui::setValueFont(aliasEditor);
 
     auto dimEditor = new DimComboBox;
+    dimEditor->setSelectedDim(CustomPrefs::recentDim("global_param_dim"));
 
     QWidget editor;
     auto layout = new QFormLayout(&editor);
@@ -105,17 +110,27 @@ void SchemaParamsWindow::createParameter()
         auto label = alias;
         auto name = alias;
         auto param = new Z::Parameter(dim, alias, label, name);
-        param->setValue(Z::Value(0, dim->siUnit()));
+        auto unit = CustomPrefs::recentUnit("global_param_unit", dim);
+        param->setValue(Z::Value(0, unit));
         schema()->params()->append(param);
-        _table->parameterCreated(param);
 
+        CustomPrefs::setRecentDim("global_param_dim", dim);
+
+        schema()->events().raise(SchemaEvents::CustomParamCreated, param);
+
+        _isSettingValueForNewParam = true;
         QTimer::singleShot(100, [&](){ setParameterValue(); });
     }
 }
 
 void SchemaParamsWindow::deleteParameter()
 {
+    auto param = _table->selected();
+    if (!param) return;
+
     // TODO
+
+    schema()->events().raise(SchemaEvents::CustomParamDeleted, param);
 }
 
 void SchemaParamsWindow::setParameterValue()
@@ -124,10 +139,18 @@ void SchemaParamsWindow::setParameterValue()
     if (!param) return;
 
     FormulaEditor editor(param, schema()->formulas());
-    Ori::Dlg::Dialog(&editor)
+    bool ok = Ori::Dlg::Dialog(&editor)
                 .withTitle(tr("Set value"))
                 .withIconPath(":/window_icons/parameter")
                 .withContentToButtonsSpacingFactor(2)
                 .connectOkToContentApply()
                 .exec();
+    if (ok)
+        schema()->events().raise(SchemaEvents::CustomParamChanged, param);
+
+    if (_isSettingValueForNewParam)
+    {
+        _isSettingValueForNewParam = false;
+        CustomPrefs::setRecentUnit("global_param_unit", param->value().unit());
+    }
 }

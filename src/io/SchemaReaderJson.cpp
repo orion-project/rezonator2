@@ -36,7 +36,7 @@ class JsonValue
 public:
     JsonValue(const QJsonObject& root, const QString& key)
     {
-        _path = key;
+        _path = "/" + key;
         initObj(root, key);
     }
 
@@ -60,16 +60,22 @@ private:
     void initObj(const QJsonObject& root, const QString& key)
     {
         if (!root.contains(key))
-            _msg = "Key not found: " + _path;
+        {
+            _msg = QString("Key not found: '%1'").arg(_path);
+            return;
+        }
         QJsonValue value = root[key];
-        if (_msg.isEmpty() && (value.isNull() || value.isUndefined()))
-            _msg = "Value is not set: " + _path;
+        if (value.isNull() || value.isUndefined())
+        {
+            _msg = QString("Value is not set at '%1'").arg(_path);
+            return;
+        }
         if (value.isArray())
             _array = value.toArray();
         else if (value.isObject())
             _obj = value.toObject();
         else
-            _msg = "Unsupported value type: " + _path;
+            _msg = QString("Unsupported value type at '%1'").arg(_path);
     }
 };
 
@@ -115,7 +121,7 @@ void SchemaReaderJson::readFromUtf8(const QByteArray& data)
                 .arg(version.str(), Z::IO::Utils::currentVersion().str()));
 
     readGeneral(root);
-    readGlobalParams(root);
+    readCustomParams(root);
     readPump(root);
     readElements(root);
     readWindows(root);
@@ -140,7 +146,7 @@ void SchemaReaderJson::readGeneral(const QJsonObject& root)
     _schema->setTripType(tripType);
 
     // Read named parameters
-    WITH_JSON_VALUE(paramsJson, root, "named_params")
+    WITH_JSON_VALUE(paramsJson, root, "builtin_params")
     {
         // Read lambda
         WITH_JSON_VALUE(lambdaJson, paramsJson, "lambda")
@@ -152,33 +158,27 @@ void SchemaReaderJson::readGeneral(const QJsonObject& root)
     }
 }
 
-void SchemaReaderJson::readGlobalParams(const QJsonObject& root)
+void SchemaReaderJson::readCustomParams(const QJsonObject& root)
 {
-    WITH_JSON_VALUE(paramsJson, root, "global_params")
+    WITH_JSON_VALUE(paramsJson, root, "custom_params")
     {
         for (const QString& paramAlias : paramsJson.obj().keys())
         {
             WITH_JSON_VALUE(paramJson, paramsJson, paramAlias)
             {
-                readGlobalParam(paramJson.obj(), paramAlias);
+                readCustomParam(paramJson.obj(), paramAlias);
             }
         }
     }
 }
 
-void SchemaReaderJson::readGlobalParam(const QJsonObject& root, const QString &alias)
+void SchemaReaderJson::readCustomParam(const QJsonObject& root, const QString &alias)
 {
     auto dimStr = root["dim"].toString();
-    Z::Dim dim = nullptr;
-    for (auto d: Z::Dims::dims())
-        if (d->alias() == dimStr)
-        {
-            dim = d;
-            break;
-        }
+    Z::Dim dim = Z::Dims::findByAlias(dimStr);
     if (!dim)
         return _report.warning(qApp->translate("IO",
-            "Unknown dimension '%1' of global parameter '%2'").arg(dimStr, alias));
+            "Unknown dimension '%1' of custom parameter '%2'").arg(dimStr, alias));
 
     auto param = new Z::Parameter(
         dim,

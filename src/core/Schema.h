@@ -37,6 +37,10 @@ public:
     virtual void elementDeleted(Schema*, Element*) {}
     virtual void schemaParamsChanged(Schema*) {}
     virtual void schemaLambdaChanged(Schema*) {}
+    virtual void customParamCreated(Schema*, Z::Parameter*) {}
+    virtual void customParamEdited(Schema*, Z::Parameter*) {}
+    virtual void customParamChanged(Schema*, Z::Parameter*) {}
+    virtual void customParamDeleted(Schema*, Z::Parameter*) {}
 };
 
 //------------------------------------------------------------------------------
@@ -68,6 +72,15 @@ private:
 class SchemaEvents
 {
 public:
+    /**
+        @brief Event types that can be sent to schema listeners.
+
+        Steps to add new event:
+        1) Add new enum member here
+        2) Add new notification method to @a SchemaListener interface
+        3) Add calling of that method to @a SchemaEvents::notify() method
+        4) Define props of new event in @a SchemaEvents::propsOf() method
+    */
     enum Event
     {
         Created,       ///< Schema just was created, called from constructor
@@ -77,15 +90,22 @@ public:
         Saved,         ///< Schema was saved
         Loading,       ///< Schema is turned into Loading state
         Loaded,        ///< Loading is completed
+
         ElemCreated,   ///< New element was added to schema
         ElemChanged,   ///< Element's params changed
         ElemDeleting,  ///< Element is being deleted from schema
         ElemDeleted,   ///< Element was deleted from schema
+
         ParamsChanged, ///< Some schema parameter was changed (e.g. TripType)
         LambdaChanged, ///< Schema wavelength was changed
+
+        CustomParamCreated, ///< New custom parameter was created
+        CustomParamEdited,  ///< Custom parameter was edited (e.g. description changed, but not value)
+        CustomParamChanged, ///< Value of custom parameter was changed
+        CustomParamDeleted, ///< Custom parameter was deleted
     };
 
-    void raise(Event event, Element* element = nullptr) const;
+    void raise(Event event, void* param = nullptr) const;
 
     void enable() { _enabled = true; }
     void disable() { _enabled = false; }
@@ -106,7 +126,7 @@ private:
     };
     static const EventProps& propsOf(Event event);
 
-    void notify(SchemaListener* listener, SchemaEvents::Event event, Element* element) const;
+    void notify(SchemaListener* listener, SchemaEvents::Event event, void* param) const;
 };
 
 //------------------------------------------------------------------------------

@@ -59,6 +59,14 @@ Unit _Dim_::unitByAlias(const QString& alias) const
     return nullptr;
 }
 
+Unit _Dim_::unitByAliasOrSi(const QString& alias) const
+{
+    auto unit = unitByAlias(alias);
+    return unit ? unit : siUnit();
+}
+
+//------------------------------------------------------------------------------
+
 namespace Units {
 
 DEFINE_UNIT(none, "", v, v, none)
@@ -78,6 +86,8 @@ DEFINE_UNIT(deg, QT_TRANSLATE_NOOP_UTF8("Units", "°"), v * M_PI / 180.0, v * 18
 DEFINE_UNIT(Hz, QT_TRANSLATE_NOOP_UTF8("Units", "Hz"), v, v, Hz) // SI-unit must be first
 
 } // namespace Units
+
+//------------------------------------------------------------------------------
 
 namespace Dims {
 
@@ -107,9 +117,23 @@ DimList dims()
     return dims;
 }
 
+Dim findByAlias(const QString& alias)
+{
+    for (auto dim : dims())
+        if (dim->alias() == alias)
+            return dim;
+    return nullptr;
+}
+
+Dim findByAliasOrNone(const QString& alias)
+{
+    auto dim = findByAlias(alias);
+    return dim ? dim : none();
+}
+
 } // namespace Dims
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 namespace Units {
 
@@ -161,7 +185,5 @@ Unit findByAlias(const QString& alias)
 }
 
 } // namespace Units
-
-////////////////////////////////////////////////////////////////////////////////
 
 } // namespace Z

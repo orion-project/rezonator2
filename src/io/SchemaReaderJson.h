@@ -26,8 +26,8 @@ private:
     Z::Report _report;
 
     void readGeneral(const QJsonObject& root);
-    void readGlobalParams(const QJsonObject& root);
-    void readGlobalParam(const QJsonObject& root, const QString& alias);
+    void readCustomParams(const QJsonObject& root);
+    void readCustomParam(const QJsonObject& root, const QString& alias);
     void readPump(const QJsonObject& root);
     void readElements(const QJsonObject& root);
     void readElement(const QJsonObject& root);

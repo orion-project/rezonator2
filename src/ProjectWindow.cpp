@@ -1,4 +1,5 @@
 #include "CalcManager.h"
+#include "CustomPrefs.h"
 #include "ElementsCatalogDialog.h"
 #include "ProjectWindow.h"
 #include "ProjectOperations.h"
@@ -101,6 +102,8 @@ void ProjectWindow::loadSettings()
     _mruList->load(s.settings());
 
     Settings::instance().load();
+
+    CustomPrefs::load();
 }
 
 void ProjectWindow::saveSettings()

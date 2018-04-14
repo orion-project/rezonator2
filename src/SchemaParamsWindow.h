@@ -35,6 +35,7 @@ private:
 
     QAction *_actnParamAdd, *_actnParamDelete, *_actnParamSet;
     QMenu *_windowMenu, *_contextMenu;
+    bool _isSettingValueForNewParam = false;
 
     void createActions();
     void createMenuBar();

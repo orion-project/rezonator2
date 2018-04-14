@@ -39,6 +39,9 @@ private:
     StabilityMapWindow* _window;
 };
 
+//------------------------------------------------------------------------------
+//                            StabilityMapWindow
+//------------------------------------------------------------------------------
 
 StabilityMapWindow::StabilityMapWindow(Schema *schema) :
     PlotFuncWindowStorable(new StabilityMapFunction(schema))

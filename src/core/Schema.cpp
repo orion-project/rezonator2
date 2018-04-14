@@ -32,7 +32,7 @@ void SchemaState::set(State state)
 #define INIT_EVENT(event, raise_changed, next_state)\
     {event, EventProps{QString(# event), raise_changed, (SchemaState::State)next_state}}
 
-void SchemaEvents::raise(Event event, Element* element) const
+void SchemaEvents::raise(Event event, void *param) const
 {
     if (!_enabled) return;
 
@@ -45,7 +45,7 @@ void SchemaEvents::raise(Event event, Element* element) const
     auto listeners = _schema->clients().get<SchemaListener>();
 
     for (SchemaListener* listener : listeners)
-        notify(listener, event, element);
+        notify(listener, event, param);
 
     if (eventProps.shouldRaiseChanged)
     {
@@ -59,26 +59,30 @@ const SchemaEvents::EventProps& SchemaEvents::propsOf(Event event)
 {
     static QMap<Event, EventProps> _props(
     {
-        //                      | Should also | New state which
-        //                      | raise event | schema obtains
-        //                      | 'Changed'   | with this event
-        INIT_EVENT(Created,       true,         SchemaState::New      ),
-        INIT_EVENT(Deleted,       false,        SchemaState::Current  ),
-        INIT_EVENT(Changed,       false,        SchemaState::Modified ),
-        INIT_EVENT(Saved,         true,         SchemaState::None     ),
-        INIT_EVENT(Loading,       false,        SchemaState::Loading  ),
-        INIT_EVENT(Loaded,        true,         SchemaState::None     ),
-        INIT_EVENT(ElemCreated,   true,         SchemaState::Modified ),
-        INIT_EVENT(ElemChanged,   true,         SchemaState::Modified ),
-        INIT_EVENT(ElemDeleting,  false,        SchemaState::Current  ),
-        INIT_EVENT(ElemDeleted,   true,         SchemaState::Modified ),
-        INIT_EVENT(ParamsChanged, true,         SchemaState::Modified ),
-        INIT_EVENT(LambdaChanged, true,         SchemaState::Modified )
+        //                           | Should also | New state which
+        //                           | raise event | schema obtains
+        //                           | 'Changed'   | with this event
+        INIT_EVENT(Created,            true,         SchemaState::New      ),
+        INIT_EVENT(Deleted,            false,        SchemaState::Current  ),
+        INIT_EVENT(Changed,            false,        SchemaState::Modified ),
+        INIT_EVENT(Saved,              true,         SchemaState::None     ),
+        INIT_EVENT(Loading,            false,        SchemaState::Loading  ),
+        INIT_EVENT(Loaded,             true,         SchemaState::None     ),
+        INIT_EVENT(ElemCreated,        true,         SchemaState::Modified ),
+        INIT_EVENT(ElemChanged,        true,         SchemaState::Modified ),
+        INIT_EVENT(ElemDeleting,       false,        SchemaState::Current  ),
+        INIT_EVENT(ElemDeleted,        true,         SchemaState::Modified ),
+        INIT_EVENT(ParamsChanged,      true,         SchemaState::Modified ),
+        INIT_EVENT(LambdaChanged,      true,         SchemaState::Modified ),
+        INIT_EVENT(CustomParamCreated, true,         SchemaState::Modified ),
+        INIT_EVENT(CustomParamEdited,  true,         SchemaState::Modified ),
+        INIT_EVENT(CustomParamChanged, true,         SchemaState::Modified ),
+        INIT_EVENT(CustomParamDeleted, true,         SchemaState::Modified ),
     });
     return _props[event];
 }
 
-void SchemaEvents::notify(SchemaListener* listener, SchemaEvents::Event event, Element* element) const
+void SchemaEvents::notify(SchemaListener* listener, SchemaEvents::Event event, void *param) const
 {
     switch (event)
     {
@@ -88,12 +92,16 @@ void SchemaEvents::notify(SchemaListener* listener, SchemaEvents::Event event, E
     case Saved: listener->schemaSaved(_schema); break;
     case Loading: listener->schemaLoading(_schema); break;
     case Loaded: listener->schemaLoaded(_schema); break;
-    case ElemCreated: listener->elementCreated(_schema, element); break;
-    case ElemChanged: listener->elementChanged(_schema, element); break;
-    case ElemDeleting: listener->elementDeleting(_schema, element); break;
-    case ElemDeleted: listener->elementDeleted(_schema, element); break;
+    case ElemCreated: listener->elementCreated(_schema, reinterpret_cast<Element*>(param)); break;
+    case ElemChanged: listener->elementChanged(_schema, reinterpret_cast<Element*>(param)); break;
+    case ElemDeleting: listener->elementDeleting(_schema, reinterpret_cast<Element*>(param)); break;
+    case ElemDeleted: listener->elementDeleted(_schema, reinterpret_cast<Element*>(param)); break;
     case ParamsChanged: listener->schemaParamsChanged(_schema); break;
     case LambdaChanged: listener->schemaLambdaChanged(_schema); break;
+    case CustomParamCreated: listener->customParamCreated(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
+    case CustomParamEdited: listener->customParamEdited(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
+    case CustomParamChanged: listener->customParamChanged(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
+    case CustomParamDeleted: listener->customParamDeleted(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
     };
 }
 

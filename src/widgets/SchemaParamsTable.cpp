@@ -27,6 +27,8 @@ SchemaParamsTable::SchemaParamsTable(Schema *schema, QWidget *parent) : QTableWi
 
     connect(this, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(doubleClicked(QTableWidgetItem*)));
     connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
+
+    populate();
 }
 
 SchemaParamsTable::~SchemaParamsTable()
@@ -116,7 +118,7 @@ void SchemaParamsTable::schemaLoaded(Schema*)
     populate();
 }
 
-void SchemaParamsTable::parameterCreated(Z::Parameter *param)
+void SchemaParamsTable::customParamCreated(Schema*, Z::Parameter* param)
 {
     int row = rowCount();
     setRowCount(row+1);

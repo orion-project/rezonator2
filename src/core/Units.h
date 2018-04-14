@@ -37,7 +37,10 @@ public:
     virtual UnitList units() const = 0;
     virtual Unit siUnit() const = 0;
     Unit unitByAlias(const QString& alias) const;
+    Unit unitByAliasOrSi(const QString& alias) const;
 };
+
+//------------------------------------------------------------------------------
 
 namespace Units {
 
@@ -59,6 +62,8 @@ DECLARE_UNIT(Hz)
 
 } // namespace Units
 
+//------------------------------------------------------------------------------
+
 namespace Dims {
 
 DECLARE_DIM(none)
@@ -67,9 +72,15 @@ DECLARE_DIM(angular)
 
 DimList dims();
 
+/// Returns dim by its alias or null if not found.
+Dim findByAlias(const QString& alias);
+
+/// Returns dim by its alias or Dims::none if not found.
+Dim findByAliasOrNone(const QString& alias);
+
 } // namespace Dims
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 namespace Units {
 
