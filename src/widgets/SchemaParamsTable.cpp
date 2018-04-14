@@ -1,4 +1,6 @@
 #include "SchemaParamsTable.h"
+
+#include "Appearance.h"
 #include "ElementImagesProvider.h"
 #include "PixmapItemDelegate.h"
 
@@ -83,14 +85,13 @@ void SchemaParamsTable::populate()
 void SchemaParamsTable::createRow(int row)
 {
     QTableWidgetItem *it = new QTableWidgetItem();
+    // TODO set different icon for formula-driven parameters
+    it->setData(0, QIcon(":/toolbar/parameter").pixmap(24, 24));
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_IMAGE, it);
 
     it = new QTableWidgetItem();
-    auto f = it->font();
-    f.setBold(true);
-    f.setPointSize(f.pointSize()+2);
-    it->setFont(f);
+    Z::Gui::setSymbolFont(it);
     it->setTextAlignment(Qt::AlignCenter);
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_ALIAS, it);

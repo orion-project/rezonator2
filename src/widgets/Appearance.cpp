@@ -7,23 +7,23 @@
 namespace Z {
 namespace Gui {
 
-void setValueFont(QWidget *widget)
+void adjustValueFont(QFont& f)
 {
-    QFont f = widget->font();
     if (f.pointSize() < 10)
-    {
         f.setPointSize(10);
-        widget->setFont(f);
-    }
 }
 
-void setSymbolFont(QWidget *widget)
+void adjustSymbolFont(QFont& f)
 {
-    QFont f = widget->font();
     f.setBold(true);
+#ifdef Q_OS_MAC
+    // 14pt font looks too small compared to those on Ubuntu (Unity, xfce) or Windows.
+    // At least on Macbook Air, can't check other devices.
+    f.setPointSize(16);
+#else
     f.setPointSize(14);
+#endif
     f.setFamily("Times New Roman");
-    widget->setFont(f);
 }
 
 QLabel* symbolLabel(const QString& text)

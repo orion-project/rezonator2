@@ -1,4 +1,6 @@
 #include "SchemaElemsTable.h"
+
+#include "Appearance.h"
 #include "ElementImagesProvider.h"
 #include "PixmapItemDelegate.h"
 
@@ -106,10 +108,7 @@ void SchemaElemsTable::createRow(Element *elem, int row)
     setItem(row, COL_IMAGE, it);
 
     it = new QTableWidgetItem();
-    auto f = it->font();
-    f.setBold(true);
-    f.setPointSize(f.pointSize()+2);
-    it->setFont(f);
+    Z::Gui::setSymbolFont(it);
     it->setTextAlignment(Qt::AlignCenter);
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_LABEL, it);

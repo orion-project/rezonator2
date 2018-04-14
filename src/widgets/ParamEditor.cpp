@@ -189,16 +189,18 @@ QWidget* ParamEditor::unitsSelector() const { return _unitsSelector; }
 
 void ParamEditor::linkToGlobalParameter()
 {
-
-
     QListWidget paramsList;
-    paramsList.addItem(tr("(none)"));
+    paramsList.setAlternatingRowColors(true);
+    paramsList.addItem(new QListWidgetItem(QIcon(":/toolbar/param_delete"), tr("(none)")));
     for (int i = 0; i < _globalParams->size(); i++)
     {
-        const Z::Parameter* p = _globalParams->at(i);
-        if (p->dim() == _param->dim())
+        const Z::Parameter* param = _globalParams->at(i);
+        if (param->dim() == _param->dim())
         {
-            paramsList.addItem(p->str() + " <b>param</b>");
+            // TODO set different icon for formula-driven parameters
+            auto item = new QListWidgetItem(QIcon(":/toolbar/parameter"), param->str());
+            item->setData(Qt::UserRole, i);
+            paramsList.addItem(item);
         }
     }
     // TODO populate list
