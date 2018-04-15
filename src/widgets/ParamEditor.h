@@ -31,6 +31,10 @@ public:
         /// Must be set when @a allowLinking is enabled.
         Z::Parameters* globalParams = nullptr;
 
+        /// Container for links to global parameters.
+        /// Must be set when @a allowLinking is enabled.
+        Z::ParamLinks* paramLinks = nullptr;
+
         /// Show full parameter name before its alias.
         bool showName = false;
 
@@ -45,6 +49,7 @@ public:
 
     Z::Parameter* parameter() const { return _param; }
 
+
     QString verify() const;
 
     QWidget* labelName() const;
@@ -58,6 +63,7 @@ signals:
     void focused();
     void goingFocusNext();
     void goingFocusPrev();
+    void editorInfoChanged();
 
 public slots:
     void populate();
@@ -69,14 +75,19 @@ protected:
 
 private:
     Z::Parameter* _param;
+    Z::Parameter* _linkSource = nullptr;
     Z::Parameters* _globalParams;
+    Z::ParamLinks* _paramLinks;
     Ori::Widgets::ValueEdit* _valueEditor;
     UnitComboBox* _unitsSelector;
     QLabel* _labelName = nullptr;
     QLabel* _labelLabel = nullptr;
     LinkButton* _linkButton = nullptr;
+    QString _editorInfo;
 
     void linkToGlobalParameter();
+    void showValue(Z::Parameter *param);
+    void setIsLinked(bool on);
 
 private slots:
     void editorFocused(bool focus);

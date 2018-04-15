@@ -19,11 +19,14 @@ class ParamsEditor : public QWidget
 public:
     struct Options
     {
-        /// Target editing parameters
+        /// Target editing parameters.
         Z::Parameters *params;
 
-        /// Global parameters to which tagets can be linked
+        /// Global parameters to which tagets can be linked.
         Z::Parameters *globalParams = nullptr;
+
+        /// Container for links to global parameters.
+        Z::ParamLinks *paramLinks = nullptr;
 
         Options(Z::Parameters *p) : params(p) {}
     };

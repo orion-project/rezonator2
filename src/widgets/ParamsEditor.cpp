@@ -20,6 +20,7 @@ ParamsEditor::ParamsEditor(Options opts, QWidget *parent) : QWidget(parent), _pa
         // so we can set suitable options here. But in general options should be passed from client.
         o.allowLinking = true;
         o.globalParams = opts.globalParams;
+        o.paramLinks = opts.paramLinks;
         auto editor = new ParamEditor(o);
         connect(editor, &ParamEditor::focused, this, &ParamsEditor::paramFocused);
         connect(editor, &ParamEditor::goingFocusNext, this, &ParamsEditor::focusNextParam);

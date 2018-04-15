@@ -23,7 +23,7 @@ public:
     {
         setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         Z::Gui::setSymbolFont(this);
-        setLabel("");
+        showLinkSource(nullptr);
     }
 
     QSize sizeHint() const override
@@ -31,9 +31,9 @@ public:
         return QSize(10, 10);
     }
 
-    void setLabel(const QString& label)
+    void showLinkSource(Z::Parameter *param)
     {
-        QString text = label.isEmpty() ? QString("=") : ("= " + label + " =");
+        QString text = param ? ("= " + param->alias() + " =") : QString("=");
         int w = fontMetrics().width(text);
         setFixedWidth(w + 2*Ori::Gui::layoutSpacing());
         setText(text);
@@ -44,9 +44,16 @@ public:
 //                              ParamEditor
 //------------------------------------------------------------------------------
 
-ParamEditor::ParamEditor(Options opts) : QWidget(), _param(opts.param), _globalParams(opts.globalParams)
+ParamEditor::ParamEditor(Options opts)
+    : QWidget(), _param(opts.param), _globalParams(opts.globalParams), _paramLinks(opts.paramLinks)
 {
     _param->addListener(this);
+
+    if (_paramLinks)
+    {
+        auto link = _paramLinks->byTarget(_param);
+        if (link) _linkSource = link->source();
+    }
 
     int def_spacing = Ori::Gui::layoutSpacing();
 
@@ -79,6 +86,7 @@ ParamEditor::ParamEditor(Options opts) : QWidget(), _param(opts.param), _globalP
         _labelLabel->setText(paramLabel); // remove '='
         _linkButton = new LinkButton;
         _linkButton->setToolTip(tr("Link to global parameter"));
+        _linkButton->showLinkSource(_linkSource);
         connect(_linkButton, &QPushButton::clicked, this, &ParamEditor::linkToGlobalParameter);
         layout.add({ Ori::Layouts::Space(3), _linkButton, Ori::Layouts::Space(3) });
     }
@@ -95,6 +103,7 @@ ParamEditor::ParamEditor(Options opts) : QWidget(), _param(opts.param), _globalP
     int hs = def_spacing / 2 + 1;
     setContentsMargins(def_spacing, hs, hs, hs);
 
+    setIsLinked(_linkSource);
     populate();
 
     _valueEditor->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
@@ -113,8 +122,34 @@ ParamEditor::~ParamEditor()
 
 void ParamEditor::populate()
 {
-    _valueEditor->setValue(_param->value().value());
-    _unitsSelector->setSelectedUnit(_param->value().unit());
+    showValue(_param);
+}
+
+void ParamEditor::showValue(Z::Parameter *param)
+{
+    _valueEditor->setValue(param->value().value());
+    _unitsSelector->setSelectedUnit(param->value().unit());
+}
+
+void ParamEditor::setIsLinked(bool on)
+{
+    _valueEditor->setReadOnly(on);
+    _unitsSelector->setEnabled(!on);
+
+    QFont f = _valueEditor->font();
+    f.setItalic(on);
+    _valueEditor->setFont(f);
+    /*QPalette p = _valueEditor->palette();
+    if (on)
+    {
+        QColor colorBase = p.color(QPalette::Base);
+        QColor colorLinked = QColor(colorBase.red() * 0.7,
+                                    colorBase.green() * 0.7,
+                                    colorBase.blue() * 0.7 + 255* 0.3,
+                                    255);
+        p.setColor(QPalette::Base, colorLinked);
+    }
+    _valueEditor->setPalette(p);*/
 }
 
 QString ParamEditor::verify() const
@@ -136,8 +171,38 @@ void ParamEditor::apply()
     auto res = _param->verify(value);
     if (!res.isEmpty())
     {
+        // TODO let know to the user somehow about this
         qWarning() << "Parameter value should be verified before applying";
         return;
+    }
+
+    if (_paramLinks)
+    {
+        auto oldLink = _paramLinks->byTarget(_param);
+        if (oldLink)
+        {
+            // Link has been removed
+            if (!_linkSource)
+            {
+                _paramLinks->removeOne(oldLink);
+                delete oldLink;
+            }
+            // Link has been changed
+            else if (oldLink->source() != _linkSource)
+            {
+                _paramLinks->removeOne(oldLink);
+                delete oldLink;
+                auto newLink = new Z::ParamLink(_linkSource, _param);
+                _paramLinks->append(newLink);
+            }
+            // Else link has not been changed
+        }
+        // New link has been added
+        else if (_linkSource)
+        {
+            auto newLink = new Z::ParamLink(_linkSource, _param);
+            _paramLinks->append(newLink);
+        }
     }
 
     _param->setValue(value);
@@ -191,7 +256,10 @@ void ParamEditor::linkToGlobalParameter()
 {
     QListWidget paramsList;
     paramsList.setAlternatingRowColors(true);
-    paramsList.addItem(new QListWidgetItem(QIcon(":/toolbar/param_delete"), tr("(none)")));
+    auto item = new QListWidgetItem(QIcon(":/toolbar/param_delete"), tr("(none)"));
+    item->setData(Qt::UserRole, -1);
+    paramsList.addItem(item);
+    int selectedRow = 0;
     for (int i = 0; i < _globalParams->size(); i++)
     {
         const Z::Parameter* param = _globalParams->at(i);
@@ -201,24 +269,23 @@ void ParamEditor::linkToGlobalParameter()
             auto item = new QListWidgetItem(QIcon(":/toolbar/parameter"), param->str());
             item->setData(Qt::UserRole, i);
             paramsList.addItem(item);
+            if (param == _linkSource)
+                selectedRow = paramsList.count()-1;
         }
     }
-    // TODO populate list
-    paramsList.setCurrentRow(0);
+    paramsList.setCurrentRow(selectedRow);
 
     if (Ori::Dlg::Dialog(&paramsList)
             .withTitle(_linkButton->toolTip())
             .withOkSignal(SIGNAL(itemDoubleClicked(QListWidgetItem*)))
             .exec())
     {
-        int row = paramsList.currentRow();
-        if (row == 0)
-        {
-            // TODO remove link
-        }
-        else
-        {
-            // TODO add new link
-        }
+        auto item = paramsList.currentItem();
+        if (!item) return;
+        int paramIndex = item->data(Qt::UserRole).toInt();
+        _linkSource = (paramIndex >= 0) ? _globalParams->at(paramIndex) : nullptr;
+        _linkButton->showLinkSource(_linkSource);
+        setIsLinked(_linkSource);
+        showValue(_linkSource ? _linkSource : _param);
     }
 }
