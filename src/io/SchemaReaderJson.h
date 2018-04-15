@@ -31,6 +31,8 @@ private:
     void readPump(const QJsonObject& root);
     void readElements(const QJsonObject& root);
     void readElement(const QJsonObject& root);
+    void readParamLinks(const QJsonObject& root);
+    void readParamLink(const QJsonObject& root);
     void readWindows(const QJsonObject& root);
     void readWindow(const QJsonObject& root);
 };

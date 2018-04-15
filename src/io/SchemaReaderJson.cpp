@@ -124,6 +124,7 @@ void SchemaReaderJson::readFromUtf8(const QByteArray& data)
     readCustomParams(root);
     readPump(root);
     readElements(root);
+    readParamLinks(root);
     readWindows(root);
 }
 
@@ -292,6 +293,37 @@ void SchemaReaderJson::readElement(const QJsonObject& root)
     }
 
     // TODO: read misalignments
+}
+
+void SchemaReaderJson::readParamLinks(const QJsonObject& root)
+{
+    WITH_JSON_VALUE(linksJson, root, "param_links")
+        for (auto it = linksJson.array().begin(); it != linksJson.array().end(); it++)
+            readParamLink((*it).toObject());
+}
+
+void SchemaReaderJson::readParamLink(const QJsonObject& root)
+{
+    auto targetElemIndex = root["target_elem"].toInt();
+    auto targetElem = _schema->element(targetElemIndex);
+    if (!targetElem)
+        return _report.warning(qApp->translate("IO",
+            "Unable to load link: element with index %1 not found").arg(targetElemIndex));
+
+    auto targetParamAlias = root["target_param"].toString();
+    auto targetParam = targetElem->params().byAlias(targetParamAlias);
+    if (!targetParam)
+        return _report.warning(qApp->translate("IO",
+            "Unable to load link: parameter '%1' not found in elemenet #%2")
+                .arg(targetParamAlias).arg(targetElem->displayLabel()));
+
+    auto sourceParamAlias = root["source_param"].toString();
+    auto sourceParam = _schema->params()->byAlias(sourceParamAlias);
+    if (!sourceParam)
+        return _report.warning(qApp->translate("IO",
+            "Unable to load link: parameter '%1' not found in custom params").arg(sourceParamAlias));
+
+    _schema->paramLinks()->append(new Z::ParamLink(sourceParam, targetParam));
 }
 
 void SchemaReaderJson::readWindows(const QJsonObject& root)

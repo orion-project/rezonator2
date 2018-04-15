@@ -29,6 +29,7 @@ private:
     void writePump(QJsonObject &root);
     void writeElements(QJsonObject& root);
     void writeElement(QJsonObject& root, Element *elem);
+    void writeParamLinks(QJsonObject& root);
     void writeWindows(QJsonObject& root);
 };
 

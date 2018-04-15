@@ -139,17 +139,6 @@ void ParamEditor::setIsLinked(bool on)
     QFont f = _valueEditor->font();
     f.setItalic(on);
     _valueEditor->setFont(f);
-    /*QPalette p = _valueEditor->palette();
-    if (on)
-    {
-        QColor colorBase = p.color(QPalette::Base);
-        QColor colorLinked = QColor(colorBase.red() * 0.7,
-                                    colorBase.green() * 0.7,
-                                    colorBase.blue() * 0.7 + 255* 0.3,
-                                    255);
-        p.setColor(QPalette::Base, colorLinked);
-    }
-    _valueEditor->setPalette(p);*/
 }
 
 QString ParamEditor::verify() const

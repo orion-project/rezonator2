@@ -55,6 +55,7 @@ QString SchemaWriterJson::writeToString()
     writeCustomParams(root);
     writePump(root);
     writeElements(root);
+    writeParamLinks(root);
     writeWindows(root);
 
     QJsonDocument doc(root);
@@ -128,6 +129,29 @@ void SchemaWriterJson::writeElement(QJsonObject& root, Element *elem)
     for (Z::Parameter* p : elem->params())
         paramsJson[p->alias()] = writeParamValue(p);
     root["params"] = paramsJson;
+}
+
+void SchemaWriterJson::writeParamLinks(QJsonObject& root)
+{
+    QJsonArray linksJson;
+    for (const Z::ParamLink *link : *_schema->paramLinks())
+        for (int i = 0; i < _schema->elements().size(); i++)
+        {
+            bool saved = false;
+            for (const Z::Parameter *targetParam: _schema->element(i)->params())
+                if (targetParam == link->target())
+                {
+                    linksJson.append(QJsonObject({
+                        { "target_elem", i },
+                        { "target_param", targetParam->alias() },
+                        { "source_param", link->source()->alias() },
+                    }));
+                    saved = true;
+                    break;
+                }
+            if (saved) break;
+        }
+    root["param_links"] = linksJson;
 }
 
 void SchemaWriterJson::writeWindows(QJsonObject& root)
