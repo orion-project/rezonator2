@@ -158,11 +158,15 @@ void SchemaWriterJson::writeParamLinks(QJsonObject& root)
 void SchemaWriterJson::writeFormulas(QJsonObject& root)
 {
     QJsonArray formulasJson;
-    for (const Z::Formula *formula : _schema->formulas()->items().values())
+    for (Z::Formula *formula : _schema->formulas()->items().values())
     {
         QJsonObject formulaJson;
+        formulaJson["target_param"] = formula->target()->alias();
         formulaJson["code"] = formula->code();
-        // TODO this is stub! save target and deps params
+        QJsonArray depsJson;
+        for (auto dep : formula->deps())
+            depsJson.append(dep->alias());
+        formulaJson["param_deps"] = depsJson;
         formulasJson.append(formulaJson);
     }
     root["formulas"] = formulasJson;

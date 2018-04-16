@@ -125,6 +125,7 @@ void SchemaReaderJson::readFromUtf8(const QByteArray& data)
     readPump(root);
     readElements(root);
     readParamLinks(root);
+    readFormulas(root);
     readWindows(root);
 }
 
@@ -335,8 +336,31 @@ void SchemaReaderJson::readFormulas(const QJsonObject& root)
 
 void SchemaReaderJson::readFormula(const QJsonObject& root)
 {
-    Q_UNUSED(root)
-    // TODO
+    auto targetAlias = root["target_param"].toString();
+    auto targetParam = _schema->params()->byAlias(targetAlias);
+    if (!targetParam)
+        return _report.warning(qApp->translate("IO",
+            "Unable to find target parameter '%1' for formula, formula skipped").arg(targetAlias));
+
+    auto formula = new Z::Formula(targetParam);
+    formula->setCode(root["code"].toString());
+
+    WITH_JSON_VALUE(depsJson, root, "param_deps")
+        for (auto it = depsJson.array().begin(); it != depsJson.array().end(); it++)
+        {
+            auto depAlias = (*it).toString();
+            auto depParam = _schema->params()->byAlias(depAlias);
+            if (!depParam)
+            {
+                _report.warning(qApp->translate("IO",
+                    "Unable to find parameter '%1' required by formula driving parameter '%2'")
+                        .arg(depAlias, targetAlias));
+                continue;
+            }
+            formula->addDep(depParam);
+        }
+
+    _schema->formulas()->put(formula);
 }
 
 void SchemaReaderJson::readWindows(const QJsonObject& root)
