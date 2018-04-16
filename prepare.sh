@@ -2,42 +2,51 @@
 
 PROJ_ROOT=${PWD}
 PROJ_BIN=${PWD}/bin
+LIBS_DIR=${PROJ_ROOT}/libs
 
-echo "-----------------------------------------------------------------"
-echo "Prepare muparser"
+function prepare_lua() {
+  echo "-----------------------------------------------------------------"
+  echo "Prepare Lua"
 
-MUPARSER=${PROJ_ROOT}/libs/muparser
-MUPARSER_LIB=libmuparser.so.2
+  LUA_DIR=lua-5.3.4
+  LUA_PACKAGE=lua-5.3.4.tar.gz
 
-echo "------------------------"
-echo "Clone repo"
+  if [ -f ${LIBS_DIR}/${LUA_PACKAGE} ]; then
+    rm ${LIBS_DIR}/${LUA_PACKAGE}
+  fi
+  if [ -d ${LIBS_DIR}/${LUA_DIR} ]; then
+    rm -rfd ${LIBS_DIR}/${LUA_DIR}
+  fi
 
-if [ -d ${MUPARSER} ]; then
-    rm -rf ${MUPARSER}
-fi
-mkdir ${MUPARSER}
-git clone https://github.com/beltoforion/muparser ${MUPARSER}
-cd ${MUPARSER}
-git checkout v2.2.5
+  echo "------------------------"
+  echo "Download sources"
 
-echo "------------------------"
-echo "Build"
+  cd ${LIBS_DIR}
+  wget http://www.lua.org/ftp/${LUA_PACKAGE}
 
-./configure
-make
+  echo "------------------------"
+  echo "Unpack sources"
 
-echo "------------------------"
-echo "Copy to bin"
+  tar zxf ${LUA_PACKAGE}
+  rm ${LUA_PACKAGE}
+  cd ${LUA_DIR}
 
-if [ -f ${PROJ_BIN}/${MUPARSER_LIB} ]; then
-    rm ${PROJ_BIN}/${MUPARSER_LIB}
-fi
-ln -s ${MUPARSER}/lib/${MUPARSER_LIB} ${PROJ_BIN}/${MUPARSER_LIB}
+  echo "------------------------"
+  echo "Build"
 
-echo "-----------------------------------------------------------------"
-echo "Marking executable files"
+  # sudo apt-get install libreadline-dev
+  make linux test
+}
 
-cd ${PROJ_BIN}
-chmod +x rezonator.sh
-chmod +x rezonator_test.sh
-chmod +x rezonator_test_nogui.sh
+function mark_executables() {
+  echo "-----------------------------------------------------------------"
+  echo "Marking executable files"
+
+  cd ${PROJ_BIN}
+  chmod +x rezonator.sh
+  chmod +x rezonator_test.sh
+  chmod +x rezonator_test_nogui.sh
+}
+
+prepare_lua
+mark_executables

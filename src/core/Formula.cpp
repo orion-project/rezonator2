@@ -1,87 +1,85 @@
 #include "Formula.h"
 #include "Protocol.h"
-/*
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#include "muParser.h"
-#pragma GCC diagnostic warning "-Wdeprecated-declarations"
-*/
+
+extern "C" {
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+}
+
 #include <cassert>
 
+#include <QApplication>
 #include <QRegExp>
 
 namespace Z {
 
 bool Formula::prepare(Parameters& availableDeps)
-{/*
-    if (_code.isEmpty())
-    {
-        _status = "Formula is empty";
-        Z_ERROR(QString("Empty formula for param '%1'").arg(_target->alias()));
-        return false;
-    }
-    try
-    {
-
-    }
-    catch (mu::ParserError &e)
-    {
-        if (e.GetCode() == mu::ecUNASSIGNABLE_TOKEN)
-        {
-            auto depName = QString::fromStdString(e.GetToken());
-            if (depName.isEmpty())
-            {
-                _status = QString::fromStdString(e.GetMsg());
-                Z_ERROR(QString("Bad formula for param '%1': %2 (code=%3, pos=%4, token=%5)")
-                        .arg(_target->alias()).arg(_status).arg(e.GetCode()).arg(e.GetPos())
-                        .arg(QString::fromStdString(e.GetToken())));
-            }
-            auto dep = availableDeps.byAlias(depName);
-            if (!dep)
-            {
-                _status = QString::fromStdString(e.GetMsg());
-                Z_ERROR(QString("Bad formula for param '%1': %2 (code=%3, pos=%4, token=%5)")
-                        .arg(_target->alias()).arg(_status).arg(e.GetCode()).arg(e.GetPos())
-                        .arg(QString::fromStdString(e.GetToken())));
-            }
-        }
-        else
-        {
-            _status = QString::fromStdString(e.GetMsg());
-            Z_ERROR(QString("Bad formula for param '%1': %2 (code=%3, pos=%4, token=%5)")
-                    .arg(_target->alias()).arg(_status).arg(e.GetCode()).arg(e.GetPos())
-                    .arg(QString::fromStdString(e.GetToken())));
-        }
-    }*/
+{
+    Q_UNUSED(availableDeps)
     return false;
 }
 
 void Formula::calculate()
-{/*
+{
     if (_code.isEmpty())
     {
-        _status = "Formula is empty";
+        _status = qApp->translate("Formula", "Formula is empty");
         Z_ERROR(QString("Empty formula for param '%1'").arg(_target->alias()));
         return;
     }
-    auto unit = _target->value().unit();
-    try
-    {
-        mu::Parser p;
-        p.SetExpr(_code.toStdString());
 
-        // TODO: add names and values for deps
-        double value = p.Eval();
-        _target->setValue(Value(value, unit));
-        _status.clear();
-    }
-    catch (mu::ParserError &e)
+    lua_State *L = luaL_newstate();
+    if (!L)
     {
-        _status = QString::fromStdString(e.GetMsg());
-        Z_ERROR(QString("Bad formula for param '%1': %2 (code=%3, pos=%4, token=%5)")
-                .arg(_target->alias()).arg(_status).arg(e.GetCode()).arg(e.GetPos())
-                .arg(QString::fromStdString(e.GetToken())));
+        _status = qApp->translate("Formula", "Not enough memory to create formula parser");
+        Z_ERROR(QString("Bad formula for param '%1'").arg(_target->alias(), _status));
+        return;
     }
-*/}
+
+    luaL_openlibs(L);
+
+    #define RESULT_VAR "result"
+
+    // TODO: add names and values for deps
+
+    static QRegExp resultVar(RESULT_VAR "\\s*=");
+    QString code = _code;
+    int pos = code.indexOf(resultVar);
+    if (pos < 0) code = (RESULT_VAR "=") + code;
+
+    int res = luaL_loadstring(L, code.toLatin1().data());
+    if (res == LUA_OK)
+    {
+        res = lua_pcall(L, 0, 0, 0);
+        if (res == LUA_OK)
+        {
+            int valueType = lua_getglobal(L, RESULT_VAR);
+            if (valueType == LUA_TNUMBER)
+            {
+                auto value = lua_tonumber(L, -1);
+                auto unit = _target->value().unit();
+                _target->setValue(Value(value, unit));
+                _status.clear();
+            }
+            else
+                _status = qApp->translate("Formula", "Result value is not a number");
+        }
+    }
+    if (res != LUA_OK)
+    {
+        _status = QString(lua_tostring(L, -1));
+        if (_status.isEmpty())
+            _status = qApp->tr("Formula", "Unknown error, code=%1").arg(res);
+    }
+
+    if (!_status.isEmpty())
+        Z_ERROR(QString("Bad formula for param '%1': %2").arg(_target->alias(), _status));
+
+    lua_close(L);
+
+    #undef RESULT_VAR
+}
 
 void Formula::addDep(Parameter* param)
 {

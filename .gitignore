@@ -1,4 +1,4 @@
-libs/muparser
+libs/lua-*
 bin/test/_tmp*
 bin/rezonator
 bin/rezonator.app

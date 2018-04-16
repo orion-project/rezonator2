@@ -17,12 +17,11 @@ include($$ORION/orion_testing.pri)
 include($$ORION/orion_tests.pri)
 include($$ORION/orion_svg.pri)
 
-# muparser
-# http://beltoforion.de/article.php?a=muparser
-# https://github.com/beltoforion/muparser/
-#MUPARSER=$$_PRO_FILE_PWD_/libs/muparser
-#LIBS += -L$$MUPARSER/lib -lmuparser
-#INCLUDEPATH += $$MUPARSER/include
+# lua
+LUA = $$_PRO_FILE_PWD_/libs/lua-5.3.4
+INCLUDEPATH += $$LUA/src
+LIBS += -L$$LUA/src -llua
+LIBS += -ldl
 
 #------------------------------------------------------------
 # Version information
