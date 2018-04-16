@@ -138,7 +138,8 @@ HEADERS += \
     src/io/SchemaReaderJson.h \
     src/CustomPrefs.h \
     src/io/ISchemaWindowStorable.h \
-    src/widgets/ParamEditorEx.h
+    src/widgets/ParamEditorEx.h \
+    src/widgets/FormulaEditor.h
 
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -228,4 +229,5 @@ SOURCES += \
     src/io/SchemaWriterJson.cpp \
     src/io/SchemaReaderJson.cpp \
     src/CustomPrefs.cpp \
-    src/widgets/ParamEditorEx.cpp
+    src/widgets/ParamEditorEx.cpp \
+    src/widgets/FormulaEditor.cpp

@@ -1,16 +1,13 @@
 #include "ParamEditorEx.h"
+
+#include "FormulaEditor.h"
 #include "ParamEditor.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 
-#include <cassert>
-
 #include <QDebug>
-#include <QLabel>
 #include <QLineEdit>
 #include <QMenu>
-#include <QTextEdit>
-#include <QTimer>
 #include <QPushButton>
 
 ParamEditorEx::ParamEditorEx(Z::Parameter *param, Z::Formulas *formulas, QWidget *parent) : QWidget(parent)
@@ -54,7 +51,7 @@ ParamEditorEx::ParamEditorEx(Z::Parameter *param, Z::Formulas *formulas, QWidget
     toggleFormulaView();
 
     if (_hasFormula)
-        _codeEditor->setFocus();
+        _formulaEditor->setFocus();
 
     // NOTE: _tmpParam must be parented after _paramEditor to be deleted in last turn.
     // While it's ok on GCC to delete _tmpParam manually in ~FormulaEditor(), but on LLVM (MacOS)
@@ -66,7 +63,7 @@ void ParamEditorEx::addFormula()
 {
     _hasFormula = true;
     toggleFormulaView();
-    _codeEditor->setFocus();
+    _formulaEditor->setFocus();
 }
 
 void ParamEditorEx::removeFormula()
@@ -76,54 +73,30 @@ void ParamEditorEx::removeFormula()
     _paramEditor->setFocus();
 }
 
-void ParamEditorEx::createCodeEditor()
+void ParamEditorEx::createFormulaEditor()
 {
-    enum { ROW_VALUE, ROW_CODE, ROW_STATUS };
+    enum { ROW_VALUE, ROW_CODE };
 
     _tmpFormula = new Z::Formula(_tmpParam);
     new OwnedPayload<Z::Formula>(_tmpFormula, this);
     if (_formula)
         _tmpFormula->setCode(_formula->code());
 
-    assert(_codeEditor == nullptr);
-    _codeEditor = new QTextEdit;
-    _codeEditor->setAcceptRichText(false);
-    _codeEditor->setPlainText(_tmpFormula->code());
-    Ori::Gui::setFontMonospace(_codeEditor);
-    qobject_cast<QVBoxLayout*>(layout())->insertWidget(ROW_CODE, _codeEditor);
-    connect(_codeEditor, &QTextEdit::textChanged, this, &ParamEditorEx::formulaCodeChanged);
-
-    assert(_formulaStatus == nullptr);
-    _formulaStatus = new QLabel;
-    _formulaStatus->setWordWrap(true);
-    qobject_cast<QVBoxLayout*>(layout())->insertWidget(ROW_STATUS, _formulaStatus);
-
-    assert(_recalcTimer == nullptr);
-    _recalcTimer = new QTimer(this);
-    _recalcTimer->setInterval(250);
-    _recalcTimer->setSingleShot(true);
-    connect(_recalcTimer, &QTimer::timeout, this, &ParamEditorEx::calculateFormula);
+    _formulaEditor = new FormulaEditor(_tmpFormula);
+    qobject_cast<QVBoxLayout*>(layout())->insertWidget(ROW_CODE, _formulaEditor);
 }
 
 void ParamEditorEx::toggleFormulaView()
 {
     if (_hasFormula && !_tmpFormula)
-        createCodeEditor();
+        createFormulaEditor();
 
-    if (_codeEditor)
-        _codeEditor->setVisible(_hasFormula);
-    if (_formulaStatus)
-        _formulaStatus->setVisible(_hasFormula);
+    if (_formulaEditor)
+        _formulaEditor->setVisible(_hasFormula);
 
     _actnAddFormula->setVisible(!_hasFormula);
     _actnRemoveFormula->setVisible(_hasFormula);
     qobject_cast<QLineEdit*>(_paramEditor->valueEditor())->setReadOnly(_hasFormula);
-
-    if (_hasFormula)
-    {
-        _tmpFormula->calculate();
-        showFormulaStatus();
-    }
 }
 
 void ParamEditorEx::apply()
@@ -147,30 +120,4 @@ void ParamEditorEx::apply()
         _paramEditor->apply();
     }
     _param->setValue(_tmpParam->value());
-}
-
-void ParamEditorEx::calculateFormula()
-{
-    _tmpFormula->setCode(_codeEditor->toPlainText());
-    _tmpFormula->calculate();
-    showFormulaStatus();
-}
-
-void ParamEditorEx::formulaCodeChanged()
-{
-    _recalcTimer->start();
-}
-
-void ParamEditorEx::showFormulaStatus()
-{
-    if (_tmpFormula->ok())
-    {
-        _formulaStatus->setText("OK");
-        _formulaStatus->setStyleSheet("QLabel{background:LightGreen;padding:3px}");
-    }
-    else
-    {
-        _formulaStatus->setText(_tmpFormula->status());
-        _formulaStatus->setStyleSheet("QLabel{background:LightCoral;padding:3px}");
-    }
 }

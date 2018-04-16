@@ -7,12 +7,10 @@
 
 QT_BEGIN_NAMESPACE
 class QAction;
-class QLabel;
-class QTimer;
-class QTextEdit;
 QT_END_NAMESPACE
 
 class ParamEditor;
+class FormulaEditor;
 
 // TODO move to more common location
 template <class T> class OwnedPayload : public QObject
@@ -44,19 +42,15 @@ private:
     Z::Formula *_tmpFormula = nullptr;
     Z::Formulas *_formulas;
     QAction *_actnAddFormula, *_actnRemoveFormula;
-    QTextEdit *_codeEditor = nullptr;
-    QLabel *_formulaStatus = nullptr;
-    QTimer *_recalcTimer = nullptr;
     ParamEditor *_paramEditor;
+    FormulaEditor *_formulaEditor = nullptr;
     bool _hasFormula = false;
 
     void populate();
     void addFormula();
     void removeFormula();
-    void createCodeEditor();
+    void createFormulaEditor();
     void toggleFormulaView();
-    void formulaCodeChanged();
-    void showFormulaStatus();
     void calculateFormula();
 };
 
