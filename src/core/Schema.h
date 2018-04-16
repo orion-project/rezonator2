@@ -203,8 +203,8 @@ public:
     void unregisterListener(SchemaListener* listener) { _clients.remove(listener); }
 
     void insertElement(Element* elem, int index = -1, bool event = true);
-    void deleteElement(Element* elem, bool event = true);
-    void deleteElement(int index, bool event = true);
+    void deleteElement(Element* elem, bool event = true, bool free = true);
+    void deleteElement(int index, bool event = true, bool free = true);
 
     SchemaSelection& selection() { return _selection; }
     Element* selectedElement() const { return _selection.element(); }

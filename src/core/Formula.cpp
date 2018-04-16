@@ -1,10 +1,10 @@
 #include "Formula.h"
 #include "Protocol.h"
-
+/*
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #include "muParser.h"
 #pragma GCC diagnostic warning "-Wdeprecated-declarations"
-
+*/
 #include <cassert>
 
 #include <QRegExp>
@@ -12,7 +12,7 @@
 namespace Z {
 
 bool Formula::prepare(Parameters& availableDeps)
-{
+{/*
     if (_code.isEmpty())
     {
         _status = "Formula is empty";
@@ -51,12 +51,12 @@ bool Formula::prepare(Parameters& availableDeps)
                     .arg(_target->alias()).arg(_status).arg(e.GetCode()).arg(e.GetPos())
                     .arg(QString::fromStdString(e.GetToken())));
         }
-    }
+    }*/
     return false;
 }
 
 void Formula::calculate()
-{
+{/*
     if (_code.isEmpty())
     {
         _status = "Formula is empty";
@@ -81,7 +81,7 @@ void Formula::calculate()
                 .arg(_target->alias()).arg(_status).arg(e.GetCode()).arg(e.GetPos())
                 .arg(QString::fromStdString(e.GetToken())));
     }
-}
+*/}
 
 void Formula::addDep(Parameter* param)
 {

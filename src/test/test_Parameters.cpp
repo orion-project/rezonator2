@@ -12,19 +12,19 @@ TEST_METHOD(Parameter_ctor_default)
 {
     Z::Parameter p;
     ASSERT_EQ_PTR(p.dim(), Z::Dims::none())
-    ASSERT_IS_FALSE(p.visible())
+    ASSERT_IS_TRUE(p.visible())
 }
 
 TEST_METHOD(Parameter_ctor_params)
 {
-    Z::Parameter p(Z::Dims::linear(), "alias", "label", "name", "description", "category", true);
+    Z::Parameter p(Z::Dims::linear(), "alias", "label", "name", "description", "category", false);
     ASSERT_EQ_PTR(p.dim(), Z::Dims::linear())
     ASSERT_EQ_STR(p.alias(), "alias")
     ASSERT_EQ_STR(p.label(), "label")
     ASSERT_EQ_STR(p.name(), "name")
     ASSERT_EQ_STR(p.description(), "description")
     ASSERT_EQ_STR(p.category(), "category")
-    ASSERT_IS_TRUE(p.visible())
+    ASSERT_IS_FALSE(p.visible())
 }
 
 TEST_METHOD(Parameter_setValue_getValue)
@@ -104,10 +104,10 @@ TEST_METHOD(ParameterFilterVisible_check)
     Z::ParameterFilterVisible filter;
 
     Z::Parameter p;
-    ASSERT_IS_FALSE(filter.check(&p));
-
-    p.setVisible(true);
     ASSERT_IS_TRUE(filter.check(&p));
+
+    p.setVisible(false);
+    ASSERT_IS_FALSE(filter.check(&p));
 }
 
 TEST_GROUP("ParameterFilter",

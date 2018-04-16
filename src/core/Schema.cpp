@@ -180,12 +180,12 @@ void Schema::insertElement(Element* elem, int index, bool event)
         _events.raise(SchemaEvents::ElemCreated, elem);
 }
 
-void Schema::deleteElement(Element* elem, bool event)
+void Schema::deleteElement(Element* elem, bool event, bool free)
 {
-    deleteElement(_items.indexOf(elem), event);
+    deleteElement(_items.indexOf(elem), event, free);
 }
 
-void Schema::deleteElement(int index, bool event)
+void Schema::deleteElement(int index, bool event, bool free)
 {
     if (!isValid(index)) return;
 
@@ -195,6 +195,7 @@ void Schema::deleteElement(int index, bool event)
         _events.raise(SchemaEvents::ElemDeleting, elem);
 
     _items.remove(index);
+    elem->setOwner(nullptr);
 
     // Remove link driving this elements' params
     for (auto param: elem->params())
@@ -213,7 +214,8 @@ void Schema::deleteElement(int index, bool event)
     if (event)
         _events.raise(SchemaEvents::ElemDeleted, elem);
 
-    delete elem;
+    if (free)
+        delete elem;
 }
 
 void Schema::parameterChanged(Z::ParameterBase *param)

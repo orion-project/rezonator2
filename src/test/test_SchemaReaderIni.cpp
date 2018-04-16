@@ -42,7 +42,7 @@ namespace SchemaReaderIniTests {
     ASSERT_Z_VALUE_AND_UNIT(p->value(), expected_value_in_units, expected_unit)\
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 TEST_METHOD(file_not_exists)
 {
@@ -95,7 +95,7 @@ TEST_METHOD(read_invalid_elem_param)
     ASSERT_EQ_INT(schema.elements().count(), 1)
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 TEST_METHOD(read_general)
 {
@@ -105,11 +105,7 @@ TEST_METHOD(read_general)
     file.readFromFile(fileName);
     LOG_SCHEMA_FILE(file)
     ASSERT_IS_TRUE(file.ok())
-    ASSERT_EQ_STR(schema.fileName(), fileName)
     ASSERT_IS_TRUE(schema.isEmpty())
-    ASSERT_IS_FALSE(schema.modified())
-    ASSERT_SCHEMA_STATE(STATE(None))
-    ASSERT_LISTENER(nullptr, EVENT(Loading), EVENT(Loaded), EVENT(Changed))
 
     //ASSERT_EQ_STR(schema.title(), "Empty schema")
     //ASSERT_EQ_STR(schema.comment(), "Multi-line comment is not supported")
@@ -219,7 +215,7 @@ TEST_CASE_METHOD(read_schema, const QString& fileName,
 TEST_CASE(read_schema_1_1, read_schema, "all_elems_ver-1-1.she", Z::Units::mm(), Z::Units::deg(), Z::Units::nm(), TripType::RR)
 TEST_CASE(read_schema_1_2, read_schema, "all_elems_ver-1-2.she", Z::Units::mkm(), Z::Units::amin(), Z::Units::mkm(), TripType::SP)
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 TEST_GROUP("SchemaReaderIni",
     ADD_TEST(file_not_exists),

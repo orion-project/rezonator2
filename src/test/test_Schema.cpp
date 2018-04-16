@@ -9,7 +9,7 @@ namespace Z {
 namespace Test {
 namespace SchemaTests {
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 DECLARE_ELEMENT(TestElement, Element)
     Ori::Test::TestBase *test = nullptr;
@@ -26,7 +26,7 @@ DECLARE_ELEMENT_END
     for (int i = 0; i < elem_count; i++ )\
         schema.insertElement(new TestElement, -1, false);
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 TEST_METHOD(constructor)
 {
@@ -71,7 +71,7 @@ TEST_METHOD(destructor_with_no_events)
     ASSERT_LISTENER_NO_EVENTS
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 #define RAISE_EVENT(event, elem)                                             \
     TEST_LOG(#event)                                                         \
@@ -136,7 +136,7 @@ TEST_METHOD(raise_all_events)
     ASSERT_LISTENER(nullptr, EVENT(LambdaChanged), EVENT(Changed))
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 TEST_METHOD(set_wavelength_must_raise_event)
 {
@@ -162,7 +162,7 @@ TEST_METHOD(elementById)
         ASSERT_EQ_PTR(schema.elementById(e->id()), e);
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 TEST_METHOD(insertElement_must_increase_count)
 {
@@ -190,7 +190,7 @@ TEST_METHOD(insertElement_must_raise_events_and_change_state)
     ASSERT_LISTENER(el1, EVENT(ElemCreated), EVENT(Changed))
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 TEST_METHOD(deleteElement_must_not_fail_when_invalid_elem)
 {
@@ -217,13 +217,13 @@ TEST_METHOD(deleteElement_must_decrease_count)
 
     // by index
     TAKE_ELEM_PTR(el1, 0)
-    schema.deleteElement(0);
+    schema.deleteElement(0, false, false);
     ASSERT_ELEM_COUNT(1)
     ASSERT_EQ_INT(schema.indexOf(el1), -1)
 
     // by pointer
     TAKE_ELEM_PTR(el2, 0)
-    schema.deleteElement(el2);
+    schema.deleteElement(el2, false, false);
     ASSERT_ELEM_COUNT(0)
     ASSERT_EQ_INT(schema.indexOf(el2), -1)
 }
@@ -236,12 +236,12 @@ TEST_METHOD(deleteElement_must_reset_element_owner)
 
     // by index
     TAKE_ELEM_PTR(el1, 0)
-    schema.deleteElement(0);
+    schema.deleteElement(0, false, false);
     ASSERT_IS_NULL(el1->owner())
 
     // by pointer
     TAKE_ELEM_PTR(el2, 0)
-    schema.deleteElement(el2);
+    schema.deleteElement(el2, false, false);
     ASSERT_IS_NULL(el2->owner())
 }
 
@@ -252,13 +252,13 @@ TEST_METHOD(deleteElement_with_lockEvents)
 
     // by index
     TAKE_ELEM_PTR(el1, 0)
-    schema.deleteElement(0, true);
+    schema.deleteElement(0, true, false);
     ASSERT_LISTENER_NO_EVENTS
     ASSERT_SCHEMA_STATE(STATE(New))
 
     // by pointer
     TAKE_ELEM_PTR(el2, 0)
-    schema.deleteElement(el2, true);
+    schema.deleteElement(el2, true, false);
     ASSERT_LISTENER_NO_EVENTS
     ASSERT_SCHEMA_STATE(STATE(New))
 }
@@ -270,13 +270,13 @@ TEST_METHOD(deleteElement_with_events_false)
 
     // by index
     TAKE_ELEM_PTR(el1, 0)
-    schema.deleteElement(0, false);
+    schema.deleteElement(0, false, false);
     ASSERT_LISTENER_NO_EVENTS
     ASSERT_SCHEMA_STATE(STATE(New))
 
     // by pointer
     TAKE_ELEM_PTR(el2, 0)
-    schema.deleteElement(el2, false);
+    schema.deleteElement(el2, false, false);
     ASSERT_LISTENER_NO_EVENTS
     ASSERT_SCHEMA_STATE(STATE(New))
 }
@@ -285,7 +285,7 @@ TEST_METHOD(deleteElement_by_index_with_events)
 {
     PREPARE_SCHEMA_ELEMS(1)
     TAKE_ELEM_PTR(el, 0)
-    schema.deleteElement(0, true);
+    schema.deleteElement(0, true, false);
     ASSERT_SCHEMA_STATE(STATE(Modified))
     ASSERT_LISTENER(el, EVENT(ElemDeleting), EVENT(ElemDeleted), EVENT(Changed))
 }
@@ -294,12 +294,12 @@ TEST_METHOD(deleteElement_by_pointer_with_events)
 {
     PREPARE_SCHEMA_ELEMS(1)
     TAKE_ELEM_PTR(el, 0)
-    schema.deleteElement(el, true);
+    schema.deleteElement(el, true, false);
     ASSERT_SCHEMA_STATE(STATE(Modified))
     ASSERT_LISTENER(el, EVENT(ElemDeleting), EVENT(ElemDeleted), EVENT(Changed))
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 TEST_GROUP("Schema",
     ADD_TEST(constructor),

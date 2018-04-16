@@ -20,9 +20,9 @@ include($$ORION/orion_svg.pri)
 # muparser
 # http://beltoforion.de/article.php?a=muparser
 # https://github.com/beltoforion/muparser/
-MUPARSER=$$_PRO_FILE_PWD_/libs/muparser
-LIBS += -L$$MUPARSER/lib -lmuparser
-INCLUDEPATH += $$MUPARSER/include
+#MUPARSER=$$_PRO_FILE_PWD_/libs/muparser
+#LIBS += -L$$MUPARSER/lib -lmuparser
+#INCLUDEPATH += $$MUPARSER/include
 
 #------------------------------------------------------------
 # Version information
