@@ -3,13 +3,20 @@
 
 #include "SchemaWindows.h"
 #include "core/Schema.h"
+#include "io/ISchemaWindowStorable.h"
 
 QT_BEGIN_NAMESPACE
 class QMenu;
 class QAction;
 QT_END_NAMESPACE
 
-class SchemaParamsWindow : public SchemaMdiChild
+namespace SchemaParamsWindowStorable
+{
+const QString windowType("SchemaParams");
+SchemaWindow* createWindow(Schema* schema);
+}
+
+class SchemaParamsWindow : public SchemaMdiChild, public ISchemaWindowStorable
 {
     Q_OBJECT
 
@@ -20,6 +27,9 @@ public:
 
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return { _windowMenu }; }
+
+    // inherits from ISchemaWindowStorable
+    QString storableType() const override { return SchemaParamsWindowStorable::windowType; }
 
 private slots:
     void createParameter();

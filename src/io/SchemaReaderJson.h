@@ -33,6 +33,8 @@ private:
     void readElement(const QJsonObject& root);
     void readParamLinks(const QJsonObject& root);
     void readParamLink(const QJsonObject& root);
+    void readFormulas(const QJsonObject& root);
+    void readFormula(const QJsonObject& root);
     void readWindows(const QJsonObject& root);
     void readWindow(const QJsonObject& root);
 };

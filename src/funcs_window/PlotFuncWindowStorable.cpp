@@ -6,7 +6,7 @@
 #include <QAction>
 #include <QJsonObject>
 
-QString PlotFuncWindowStorable::read(const QJsonObject &root)
+QString PlotFuncWindowStorable::storableRead(const QJsonObject &root)
 {
     auto funcJson = root["function"].toObject();
     QString res = readFunction(funcJson);
@@ -22,7 +22,7 @@ QString PlotFuncWindowStorable::read(const QJsonObject &root)
    return QString();
 }
 
-QString PlotFuncWindowStorable::write(QJsonObject &root)
+QString PlotFuncWindowStorable::storableWrite(QJsonObject &root)
 {
     QJsonObject funcJson;
     QString res = writeFunction(funcJson);

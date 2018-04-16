@@ -2,17 +2,17 @@
 #define PlotFuncWindowStorable_H
 
 #include "PlotFuncWindow.h"
-#include "../io/ISchemaStorable.h"
+#include "../io/ISchemaWindowStorable.h"
 
-class PlotFuncWindowStorable : public PlotFuncWindow, public ISchemaStorable
+class PlotFuncWindowStorable : public PlotFuncWindow, public ISchemaWindowStorable
 {
 public:
     PlotFuncWindowStorable(PlotFunction* func) : PlotFuncWindow(func) {}
 
-    // implementation of ISchemaStorable
-    QString type() const override { return _function->alias(); }
-    QString read(const QJsonObject& root) override;
-    QString write(QJsonObject& root) override;
+    // implementation of ISchemaWindowStorable
+    QString storableType() const override { return _function->alias(); }
+    QString storableRead(const QJsonObject& root) override;
+    QString storableWrite(QJsonObject& root) override;
 
 protected:
     virtual QString readFunction(const QJsonObject& root) { Q_UNUSED(root);  return QString(); }

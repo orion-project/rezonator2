@@ -46,6 +46,8 @@ public:
     void free(Parameter*);
     void clear();
 
+    QMap<Parameter*, Formula*>& items() { return _items; }
+
 private:
     QMap<Parameter*, Formula*> _items;
 };

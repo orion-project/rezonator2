@@ -127,7 +127,7 @@ void PlotFunction::clearResults()
 
 bool PlotFunction::prepareResults(Z::PlottingRange range)
 {
-    Z_REPORT(name());
+    Z_REPORT("Calc:" << name());
     Z_INFO(range.str());
     _errorText.clear();
     if (range.points() < 2)

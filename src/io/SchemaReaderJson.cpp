@@ -1,7 +1,7 @@
 #include "SchemaReaderJson.h"
 
 #include "z_io_utils.h"
-#include "ISchemaStorable.h"
+#include "ISchemaWindowStorable.h"
 #include "../core/Schema.h"
 #include "../core/ElementsCatalog.h"
 #include "../WindowsManager.h"
@@ -326,6 +326,19 @@ void SchemaReaderJson::readParamLink(const QJsonObject& root)
     _schema->paramLinks()->append(new Z::ParamLink(sourceParam, targetParam));
 }
 
+void SchemaReaderJson::readFormulas(const QJsonObject& root)
+{
+    WITH_JSON_VALUE(formulasJson, root, "formulas")
+        for (auto it = formulasJson.array().begin(); it != formulasJson.array().end(); it++)
+            readFormula((*it).toObject());
+}
+
+void SchemaReaderJson::readFormula(const QJsonObject& root)
+{
+    Q_UNUSED(root)
+    // TODO
+}
+
 void SchemaReaderJson::readWindows(const QJsonObject& root)
 {
     WITH_JSON_VALUE(windowsJson, root, "windows")
@@ -342,12 +355,12 @@ void SchemaReaderJson::readWindow(const QJsonObject& root)
             "Unable to load window of unknown type '%1', skipped.").arg(type));
 
     SchemaWindow* window = ctor(_schema);
-    ISchemaStorable* storable = dynamic_cast<ISchemaStorable*>(window);
+    ISchemaWindowStorable* storable = dynamic_cast<ISchemaWindowStorable*>(window);
     if (!storable)
         return _report.warning(qApp->translate("IO",
             "Window of type '%1' is stored in file but it is not known how to load it, skipped.").arg(type));
 
-    QString res = storable->read(root);
+    QString res = storable->storableRead(root);
     if (res.isEmpty())
         WindowsManager::instance().show(window);
     else

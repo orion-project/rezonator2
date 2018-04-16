@@ -81,6 +81,8 @@ ProjectWindow::ProjectWindow() : QMainWindow(), SchemaToolWindow(new Schema())
 
     _mdiToolbar->subWindowActivated(_schemaWindow);
 
+    WindowsManager::registerConstructor(SchemaParamsWindowStorable::windowType, SchemaParamsWindowStorable::createWindow);
+
     QTimer::singleShot(200, _operations, SLOT(checkCmdLine()));
 }
 

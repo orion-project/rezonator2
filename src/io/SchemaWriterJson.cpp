@@ -1,7 +1,7 @@
 #include "SchemaWriterJson.h"
 
 #include "z_io_utils.h"
-#include "ISchemaStorable.h"
+#include "ISchemaWindowStorable.h"
 #include "../core/Schema.h"
 #include "../WindowsManager.h"
 
@@ -56,6 +56,7 @@ QString SchemaWriterJson::writeToString()
     writePump(root);
     writeElements(root);
     writeParamLinks(root);
+    writeFormulas(root);
     writeWindows(root);
 
     QJsonDocument doc(root);
@@ -154,23 +155,36 @@ void SchemaWriterJson::writeParamLinks(QJsonObject& root)
     root["param_links"] = linksJson;
 }
 
+void SchemaWriterJson::writeFormulas(QJsonObject& root)
+{
+    QJsonArray formulasJson;
+    for (const Z::Formula *formula : _schema->formulas()->items().values())
+    {
+        QJsonObject formulaJson;
+        formulaJson["code"] = formula->code();
+        // TODO this is stub! save target and deps params
+        formulasJson.append(formulaJson);
+    }
+    root["formulas"] = formulasJson;
+}
+
 void SchemaWriterJson::writeWindows(QJsonObject& root)
 {
     QJsonArray windowsJson;
     auto windows = WindowsManager::instance().schemaWindows(_schema);
     for (auto window : windows)
     {
-        auto storable = dynamic_cast<ISchemaStorable*>(window);
+        auto storable = dynamic_cast<ISchemaWindowStorable*>(window);
         if (!storable) continue;
 
         QJsonObject windowJson;
-        windowJson["type"] = storable->type();
-        QString res = storable->write(windowJson);
+        windowJson["type"] = storable->storableType();
+        QString res = storable->storableWrite(windowJson);
         if (res.isEmpty())
             windowsJson.append(windowJson);
         else
             _report.warning(qApp->translate("IO",
-                "Unable to save window of type '%1': %2").arg(storable->type(), res));
+                "Unable to save window of type '%1': %2").arg(storable->storableType(), res));
     }
     root["windows"] = windowsJson;
 }

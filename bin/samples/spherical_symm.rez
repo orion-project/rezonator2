@@ -1,0 +1,98 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 1026
+        }
+    },
+    "custom_params": {
+        "R0": {
+            "category": "",
+            "descr": "",
+            "dim": "linear",
+            "label": "R0",
+            "name": "R0",
+            "unit": "mm",
+            "value": 50,
+            "visible": true
+        }
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "M1",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 0
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 50
+                }
+            },
+            "title": "Back mirror",
+            "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 80
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M2",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 0
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 50
+                }
+            },
+            "title": "Output mirror",
+            "type": "ElemCurveMirror"
+        }
+    ],
+    "formulas": [
+    ],
+    "param_links": [
+        {
+            "source_param": "R0",
+            "target_elem": 0,
+            "target_param": "R"
+        },
+        {
+            "source_param": "R0",
+            "target_elem": 2,
+            "target_param": "R"
+        }
+    ],
+    "schema_version": "2.0",
+    "trip_type": "SW",
+    "windows": [
+        {
+            "function": {
+            },
+            "type": "StabMap",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "ts_flipped": false,
+                "ts_mode": "T+S"
+            }
+        },
+        {
+            "type": "SchemaParams"
+        }
+    ]
+}

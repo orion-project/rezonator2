@@ -87,7 +87,6 @@ HEADERS += \
     src/funcs/InfoFunctions.h \
     src/funcs/PlotFunction.h \
     src/HelpSystem.h \
-    src/io/ISchemaStorable.h \
     src/io/SchemaReaderIni.h \
     src/io/z_io_utils.h \
     src/ProjectOperations.h \
@@ -139,7 +138,8 @@ HEADERS += \
     src/widgets/ParamsEditor.h \
     src/io/SchemaWriterJson.h \
     src/io/SchemaReaderJson.h \
-    src/CustomPrefs.h
+    src/CustomPrefs.h \
+    src/io/ISchemaWindowStorable.h
 
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \

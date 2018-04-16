@@ -1,6 +1,7 @@
 #include "SchemaParamsWindow.h"
 
 #include "CustomPrefs.h"
+#include "WindowsManager.h"
 #include "widgets/Appearance.h"
 #include "widgets/SchemaParamsTable.h"
 #include "widgets/FormulaEditor.h"
@@ -14,6 +15,18 @@
 #include <QLineEdit>
 #include <QTimer>
 #include <QToolButton>
+
+namespace SchemaParamsWindowStorable
+{
+    SchemaWindow* createWindow(Schema* schema)
+    {
+        return SchemaParamsWindow::create(schema);
+    }
+} // namespace SchemaParamsWindowStorable
+
+//------------------------------------------------------------------------------
+//                             SchemaParamsWindow
+//------------------------------------------------------------------------------
 
 SchemaParamsWindow* SchemaParamsWindow::_instance = nullptr;
 
