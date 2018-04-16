@@ -4,7 +4,7 @@
 #include "WindowsManager.h"
 #include "widgets/Appearance.h"
 #include "widgets/SchemaParamsTable.h"
-#include "widgets/FormulaEditor.h"
+#include "widgets/ParamEditorEx.h"
 #include "widgets/UnitWidgets.h"
 #include "helpers/OriWidgets.h"
 #include "helpers/OriDialogs.h"
@@ -152,7 +152,7 @@ void SchemaParamsWindow::setParameterValue()
     auto param = _table->selected();
     if (!param) return;
 
-    FormulaEditor editor(param, schema()->formulas());
+    ParamEditorEx editor(param, schema()->formulas());
     bool ok = Ori::Dlg::Dialog(&editor)
                 .withTitle(tr("Set value"))
                 .withIconPath(":/window_icons/parameter")

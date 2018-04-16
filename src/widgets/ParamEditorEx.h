@@ -25,13 +25,15 @@ private:
     T* _payload;
 };
 
-
-class FormulaEditor : public QWidget
+/**
+    Extended parameter editor that can handle parameter and its formula.
+*/
+class ParamEditorEx : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit FormulaEditor(Z::Parameter* param, Z::Formulas* formulas, QWidget *parent = nullptr);
+    explicit ParamEditorEx(Z::Parameter* param, Z::Formulas* formulas, QWidget *parent = nullptr);
 
 public slots:
     void apply();

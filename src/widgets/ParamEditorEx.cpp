@@ -1,4 +1,4 @@
-#include "FormulaEditor.h"
+#include "ParamEditorEx.h"
 #include "ParamEditor.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
@@ -13,7 +13,7 @@
 #include <QTimer>
 #include <QPushButton>
 
-FormulaEditor::FormulaEditor(Z::Parameter *param, Z::Formulas *formulas, QWidget *parent) : QWidget(parent)
+ParamEditorEx::ParamEditorEx(Z::Parameter *param, Z::Formulas *formulas, QWidget *parent) : QWidget(parent)
 {
     _param = param;
     _tmpParam = new Z::Parameter(param->dim(), param->alias());
@@ -25,8 +25,8 @@ FormulaEditor::FormulaEditor(Z::Parameter *param, Z::Formulas *formulas, QWidget
     _hasFormula = _formula;
 
     auto menu = new QMenu(this);
-    _actnAddFormula = menu->addAction(tr("Add formula"), this, &FormulaEditor::addFormula);
-    _actnRemoveFormula = menu->addAction(tr("Remove formula"), this, &FormulaEditor::removeFormula);
+    _actnAddFormula = menu->addAction(tr("Add formula"), this, &ParamEditorEx::addFormula);
+    _actnRemoveFormula = menu->addAction(tr("Remove formula"), this, &ParamEditorEx::removeFormula);
     _actnRemoveFormula->setVisible(false);
 
     _paramEditor = new ParamEditor(_tmpParam);
@@ -62,21 +62,21 @@ FormulaEditor::FormulaEditor(Z::Parameter *param, Z::Formulas *formulas, QWidget
     new OwnedPayload<Z::Parameter>(_tmpParam, this);
 }
 
-void FormulaEditor::addFormula()
+void ParamEditorEx::addFormula()
 {
     _hasFormula = true;
     toggleFormulaView();
     _codeEditor->setFocus();
 }
 
-void FormulaEditor::removeFormula()
+void ParamEditorEx::removeFormula()
 {
     _hasFormula = false;
     toggleFormulaView();
     _paramEditor->setFocus();
 }
 
-void FormulaEditor::createCodeEditor()
+void ParamEditorEx::createCodeEditor()
 {
     enum { ROW_VALUE, ROW_CODE, ROW_STATUS };
 
@@ -91,7 +91,7 @@ void FormulaEditor::createCodeEditor()
     _codeEditor->setPlainText(_tmpFormula->code());
     Ori::Gui::setFontMonospace(_codeEditor);
     qobject_cast<QVBoxLayout*>(layout())->insertWidget(ROW_CODE, _codeEditor);
-    connect(_codeEditor, &QTextEdit::textChanged, this, &FormulaEditor::formulaCodeChanged);
+    connect(_codeEditor, &QTextEdit::textChanged, this, &ParamEditorEx::formulaCodeChanged);
 
     assert(_formulaStatus == nullptr);
     _formulaStatus = new QLabel;
@@ -102,10 +102,10 @@ void FormulaEditor::createCodeEditor()
     _recalcTimer = new QTimer(this);
     _recalcTimer->setInterval(250);
     _recalcTimer->setSingleShot(true);
-    connect(_recalcTimer, &QTimer::timeout, this, &FormulaEditor::calculateFormula);
+    connect(_recalcTimer, &QTimer::timeout, this, &ParamEditorEx::calculateFormula);
 }
 
-void FormulaEditor::toggleFormulaView()
+void ParamEditorEx::toggleFormulaView()
 {
     if (_hasFormula && !_tmpFormula)
         createCodeEditor();
@@ -126,7 +126,7 @@ void FormulaEditor::toggleFormulaView()
     }
 }
 
-void FormulaEditor::apply()
+void ParamEditorEx::apply()
 {
     if (_hasFormula)
     {
@@ -149,19 +149,19 @@ void FormulaEditor::apply()
     _param->setValue(_tmpParam->value());
 }
 
-void FormulaEditor::calculateFormula()
+void ParamEditorEx::calculateFormula()
 {
     _tmpFormula->setCode(_codeEditor->toPlainText());
     _tmpFormula->calculate();
     showFormulaStatus();
 }
 
-void FormulaEditor::formulaCodeChanged()
+void ParamEditorEx::formulaCodeChanged()
 {
     _recalcTimer->start();
 }
 
-void FormulaEditor::showFormulaStatus()
+void ParamEditorEx::showFormulaStatus()
 {
     if (_tmpFormula->ok())
     {
