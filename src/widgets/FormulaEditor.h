@@ -18,6 +18,7 @@ public:
     explicit FormulaEditor(Z::Formula *formula, QWidget *parent = nullptr);
 
     void setFocus();
+    void calculate();
 
 private:
     Z::Formula *_formula;
@@ -27,7 +28,6 @@ private:
 
     void codeChanged();
     void showStatus();
-    void calculate();
 };
 
 #endif // FORMULA_EDITOR_H

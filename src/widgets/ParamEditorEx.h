@@ -1,5 +1,5 @@
-#ifndef FORMULAEDITOR_H
-#define FORMULAEDITOR_H
+#ifndef PARAM_EDITOR_EX_H
+#define PARAM_EDITOR_EX_H
 
 #include <QWidget>
 
@@ -12,17 +12,6 @@ QT_END_NAMESPACE
 class ParamEditor;
 class FormulaEditor;
 
-// TODO move to more common location
-template <class T> class OwnedPayload : public QObject
-{
-public:
-    OwnedPayload(T* payload, QObject* parent) : QObject(parent), _payload(payload) {}
-    ~OwnedPayload() { delete _payload; }
-    T* payload() const { return _payload; }
-private:
-    T* _payload;
-};
-
 /**
     Extended parameter editor that can handle parameter and its formula.
 */
@@ -32,6 +21,7 @@ class ParamEditorEx : public QWidget
 
 public:
     explicit ParamEditorEx(Z::Parameter* param, Z::Formulas* formulas, QWidget *parent = nullptr);
+    ~ParamEditorEx();
 
 public slots:
     void apply();
@@ -54,4 +44,4 @@ private:
     void calculateFormula();
 };
 
-#endif // FORMULAEDITOR_H
+#endif // PARAM_EDITOR_EX_H

@@ -52,11 +52,16 @@ ParamEditorEx::ParamEditorEx(Z::Parameter *param, Z::Formulas *formulas, QWidget
 
     if (_hasFormula)
         _formulaEditor->setFocus();
+}
 
-    // NOTE: _tmpParam must be parented after _paramEditor to be deleted in last turn.
-    // While it's ok on GCC to delete _tmpParam manually in ~FormulaEditor(), but on LLVM (MacOS)
-    // this destructor seems to be called BEFORE parent's one, and _tmpParam is freed too early.
-    new OwnedPayload<Z::Parameter>(_tmpParam, this);
+ParamEditorEx::~ParamEditorEx()
+{
+    // Delete editor manually to be sure it is deleted BEFORE _tmpParam
+    // It's because of editor uses its param in destructor and param must be still valid.
+    delete _paramEditor;
+    delete _tmpParam;
+    if (_tmpFormula)
+        delete _tmpFormula;
 }
 
 void ParamEditorEx::addFormula()
@@ -78,7 +83,6 @@ void ParamEditorEx::createFormulaEditor()
     enum { ROW_VALUE, ROW_CODE };
 
     _tmpFormula = new Z::Formula(_tmpParam);
-    new OwnedPayload<Z::Formula>(_tmpFormula, this);
     if (_formula)
         _tmpFormula->setCode(_formula->code());
 
@@ -97,6 +101,9 @@ void ParamEditorEx::toggleFormulaView()
     _actnAddFormula->setVisible(!_hasFormula);
     _actnRemoveFormula->setVisible(_hasFormula);
     qobject_cast<QLineEdit*>(_paramEditor->valueEditor())->setReadOnly(_hasFormula);
+
+    if (_hasFormula)
+        _formulaEditor->calculate();
 }
 
 void ParamEditorEx::apply()
