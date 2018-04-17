@@ -42,6 +42,7 @@ private:
     void createFormulaEditor();
     void toggleFormulaView();
     void calculateFormula();
+    void unitChanged(Z::Unit unit);
 };
 
 #endif // PARAM_EDITOR_EX_H

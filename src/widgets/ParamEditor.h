@@ -49,7 +49,6 @@ public:
 
     Z::Parameter* parameter() const { return _param; }
 
-
     QString verify() const;
 
     QWidget* labelName() const;
@@ -57,13 +56,15 @@ public:
     QWidget* valueEditor() const;
     QWidget* unitsSelector() const;
 
-    void parameterChanged(Z::ParameterBase*) override { populate(); }
+    // Implements Z::ParameterListener
+    void parameterChanged(Z::ParameterBase*) override;
 
 signals:
     void focused();
     void goingFocusNext();
     void goingFocusPrev();
     void editorInfoChanged();
+    void unitChanged(Z::Unit unit);
 
 public slots:
     void populate();

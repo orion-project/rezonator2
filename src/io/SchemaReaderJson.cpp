@@ -184,12 +184,12 @@ void SchemaReaderJson::readCustomParam(const QJsonObject& root, const QString &a
 
     auto param = new Z::Parameter(
         dim,
-        alias,
-        root["label"].toString(),
-        root["name"].toString(),
+        alias, // alias
+        alias, // label
+        alias, // name
         root["descr"].toString(),
         root["category"].toString(),
-        root["visible"].toBool(true)
+        true // true
     );
 
     readParamValue(root, param);

@@ -9,8 +9,12 @@ namespace Gui {
 
 void adjustValueFont(QFont& f)
 {
+#if defined(Q_OS_MAC)
+    f.setPointSize(14);
+#else
     if (f.pointSize() < 10)
         f.setPointSize(10);
+#endif
 }
 
 void adjustSymbolFont(QFont& f)
@@ -25,6 +29,21 @@ void adjustSymbolFont(QFont& f)
 #endif
     f.setFamily("Times New Roman");
 }
+
+void adjustCodeEditorFont(QFont &f)
+{
+#if defined(Q_OS_WIN)
+    f.setFamily("Courier New");
+    f.setPointSize(10);
+#elif defined(Q_OS_MAC)
+    f.setFamily("Monaco");
+    f.setPointSize(13);
+#else
+    f.setFamily("monospace");
+    f.setPointSize(10);
+#endif
+}
+
 
 QLabel* symbolLabel(const QString& text)
 {

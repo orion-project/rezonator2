@@ -110,7 +110,8 @@ ParamEditor::ParamEditor(Options opts)
 
     connect(_valueEditor, SIGNAL(focused(bool)), this, SLOT(editorFocused(bool)));
     connect(_valueEditor, SIGNAL(keyPressed(int)), this, SLOT(editorKeyPressed(int)));
-    connect(_unitsSelector, SIGNAL(focused(bool)), this, SLOT(editorFocused(bool)));
+    connect(_unitsSelector, &UnitComboBox::focused, this,  &ParamEditor::editorFocused);
+    connect(_unitsSelector, &UnitComboBox::unitChanged, this, &ParamEditor::unitChanged);
 
     _valueEditor->selectAll();
 }
@@ -118,6 +119,11 @@ ParamEditor::ParamEditor(Options opts)
 ParamEditor::~ParamEditor()
 {
     _param->removeListener(this);
+}
+
+void ParamEditor::parameterChanged(Z::ParameterBase*)
+{
+    populate();
 }
 
 void ParamEditor::populate()
@@ -135,10 +141,7 @@ void ParamEditor::setIsLinked(bool on)
 {
     _valueEditor->setReadOnly(on);
     _unitsSelector->setEnabled(!on);
-
-    QFont f = _valueEditor->font();
-    f.setItalic(on);
-    _valueEditor->setFont(f);
+    Z::Gui::setFontStyle(_valueEditor, false, on);
 }
 
 QString ParamEditor::verify() const

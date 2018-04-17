@@ -6,6 +6,10 @@ UnitComboBox::UnitComboBox(QWidget* parent) : QComboBox(parent)
     setEnabled(false);
     setFixedWidth(Z::Gui::unitsSelectorWidth());
     Z::Gui::setValueFont(this);
+
+    connect(this, QOverload<int>::of(&QComboBox::currentIndexChanged), [&](int index){
+        if (index >= 0 && _enableChangeEvent) emit unitChanged(unitAt(index));
+    });
 }
 
 UnitComboBox::UnitComboBox(Z::Dim dim, QWidget* parent) : UnitComboBox(parent)
@@ -15,10 +19,12 @@ UnitComboBox::UnitComboBox(Z::Dim dim, QWidget* parent) : UnitComboBox(parent)
 
 void UnitComboBox::populate(Z::Dim dim)
 {
+    _enableChangeEvent = false;
     clear();
     setEnabled(dim != Z::Dims::none());
     for (auto unit: dim->units())
         addItem(unit->name(), qVariantFromValue((void*)unit));
+    _enableChangeEvent = true;
 }
 
 Z::Unit UnitComboBox::selectedUnit() const
@@ -28,17 +34,19 @@ Z::Unit UnitComboBox::selectedUnit() const
 
 void UnitComboBox::setSelectedUnit(Z::Unit unit)
 {
+    _enableChangeEvent = false;
     for (int i = 0; i < count(); i++)
         if (unitAt(i) == unit)
         {
             setCurrentIndex(i);
-            return;
+            break;
         }
+    _enableChangeEvent = true;
 }
 
 Z::Unit UnitComboBox::unitAt(int index) const
 {
-    return (Z::Unit)itemData(index).value<void*>();
+    return reinterpret_cast<Z::Unit>(itemData(index).value<void*>());
 }
 
 void UnitComboBox::focusInEvent(QFocusEvent *e)

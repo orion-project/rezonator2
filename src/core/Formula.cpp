@@ -42,6 +42,8 @@ void Formula::calculate()
     #define RESULT_VAR "result"
 
     // TODO: add names and values for deps
+    // TODO: convert value to SI when add
+    // TODO: add math functions to global namespace
 
     static QRegExp resultVar(RESULT_VAR "\\s*=");
     QString code = _code;
@@ -57,8 +59,9 @@ void Formula::calculate()
             int valueType = lua_getglobal(L, RESULT_VAR);
             if (valueType == LUA_TNUMBER)
             {
-                auto value = lua_tonumber(L, -1);
+                auto valueSi = lua_tonumber(L, -1);
                 auto unit = _target->value().unit();
+                auto value = unit->fromSi(valueSi);
                 _target->setValue(Value(value, unit));
                 _status.clear();
             }

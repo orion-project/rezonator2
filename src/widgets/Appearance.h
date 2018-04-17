@@ -14,16 +14,37 @@ namespace Gui {
 
 void adjustSymbolFont(QFont& f);
 void adjustValueFont(QFont& f);
+void adjustCodeEditorFont(QFont& f);
 
-template <class T> void setSymbolFont(T* target) {
+template <class T> void setSymbolFont(T* target)
+{
     QFont f = target->font();
     adjustSymbolFont(f);
     target->setFont(f);
 }
 
-template <class T> void setValueFont(T* target) {
+template <class T> void setValueFont(T* target)
+{
     QFont f = target->font();
     adjustValueFont(f);
+    target->setFont(f);
+}
+
+template <class T> void setCodeEditorFont(T* target)
+{
+    QFont f = target->font();
+    adjustCodeEditorFont(f);
+    target->setFont(f);
+}
+
+template <class T> void setFontStyle(T* target,
+    bool bold, bool italic = false, bool underline = false, bool strikeout = false)
+{
+    QFont f = target->font();
+    f.setBold(bold);
+    f.setItalic(italic);
+    f.setUnderline(underline);
+    f.setStrikeOut(strikeout);
     target->setFont(f);
 }
 

@@ -1,5 +1,6 @@
 #include "ParamEditorEx.h"
 
+#include "Appearance.h"
 #include "FormulaEditor.h"
 #include "ParamEditor.h"
 #include "helpers/OriLayouts.h"
@@ -87,6 +88,7 @@ void ParamEditorEx::createFormulaEditor()
         _tmpFormula->setCode(_formula->code());
 
     _formulaEditor = new FormulaEditor(_tmpFormula);
+    connect(_paramEditor, &ParamEditor::unitChanged, this, &ParamEditorEx::unitChanged);
     qobject_cast<QVBoxLayout*>(layout())->insertWidget(ROW_CODE, _formulaEditor);
 }
 
@@ -100,7 +102,10 @@ void ParamEditorEx::toggleFormulaView()
 
     _actnAddFormula->setVisible(!_hasFormula);
     _actnRemoveFormula->setVisible(_hasFormula);
-    qobject_cast<QLineEdit*>(_paramEditor->valueEditor())->setReadOnly(_hasFormula);
+
+    auto valueEditor = qobject_cast<QLineEdit*>(_paramEditor->valueEditor());
+    Z::Gui::setFontStyle(valueEditor, false, _hasFormula);
+    valueEditor->setReadOnly(_hasFormula);
 
     if (_hasFormula)
         _formulaEditor->calculate();
@@ -128,3 +133,11 @@ void ParamEditorEx::apply()
     }
     _param->setValue(_tmpParam->value());
 }
+
+void ParamEditorEx::unitChanged(Z::Unit unit)
+{
+    // Assign new unit to the param in order to formula can consider it when calculate
+    _tmpParam->setValue(Z::Value(_tmpParam->value().value(), unit));
+    _formulaEditor->calculate();
+}
+

@@ -1,20 +1,26 @@
 #include "FormulaEditor.h"
 
 #include "Appearance.h"
-#include "helpers/OriWidgets.h"
 #include "helpers/OriLayouts.h"
 
 #include <QLabel>
 #include <QTextEdit>
 #include <QTimer>
 
+#define RECALCULATE_AFTER_TYPE_INTERVAL_MS 250
+
 FormulaEditor::FormulaEditor(Z::Formula *formula, QWidget *parent) : QTabWidget(parent), _formula(formula)
 {
+    _recalcTimer = new QTimer(this);
+    _recalcTimer->setSingleShot(true);
+    _recalcTimer->setInterval(RECALCULATE_AFTER_TYPE_INTERVAL_MS);
+    connect(_recalcTimer, &QTimer::timeout, this, &FormulaEditor::calculate);
+
     _codeEditor = new QTextEdit;
     _codeEditor->setAcceptRichText(false);
     _codeEditor->setPlainText(_formula->code());
-    Ori::Gui::setFontMonospace(_codeEditor);
-    connect(_codeEditor, &QTextEdit::textChanged, this, &FormulaEditor::codeChanged);
+    Z::Gui::setCodeEditorFont(_codeEditor);
+    connect(_codeEditor, &QTextEdit::textChanged, _recalcTimer, QOverload<>::of(&QTimer::start));
 
     _statusLabel = new QLabel;
     _statusLabel->setWordWrap(true);
@@ -24,14 +30,6 @@ FormulaEditor::FormulaEditor(Z::Formula *formula, QWidget *parent) : QTabWidget(
 
     addTab(codeTab, tr("Code"));
     addTab(paramsTab, tr("Params"));
-
-    _recalcTimer = new QTimer(this);
-    _recalcTimer->setInterval(250);
-    _recalcTimer->setSingleShot(true);
-    connect(_recalcTimer, &QTimer::timeout, this, &FormulaEditor::calculate);
-
-    _formula->calculate();
-    showStatus();
 }
 
 void FormulaEditor::setFocus()
@@ -40,13 +38,10 @@ void FormulaEditor::setFocus()
     _codeEditor->setFocus();
 }
 
-void FormulaEditor::codeChanged()
+void FormulaEditor::calculate()
 {
-    _recalcTimer->start();
-}
-
-void FormulaEditor::showStatus()
-{
+    _formula->setCode(_codeEditor->toPlainText());
+    _formula->calculate();
     if (_formula->ok())
     {
         _statusLabel->setText("OK");
@@ -57,11 +52,4 @@ void FormulaEditor::showStatus()
         _statusLabel->setText(_formula->status());
         _statusLabel->setStyleSheet("QLabel{background:LightCoral;padding:3px}");
     }
-}
-
-void FormulaEditor::calculate()
-{
-    _formula->setCode(_codeEditor->toPlainText());
-    _formula->calculate();
-    showStatus();
 }

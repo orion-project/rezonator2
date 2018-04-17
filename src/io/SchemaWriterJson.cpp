@@ -77,11 +77,7 @@ void SchemaWriterJson::writeCustomParams(QJsonObject& root)
     QJsonObject customParams;
     for (Z::Parameter *p : *_schema->params())
         customParams[p->alias()] = QJsonObject({
-            { "label", p->label() },
-            { "name", p->name() },
             { "descr", p->description() },
-            { "category", p->category() },
-            { "visible", p->visible() },
             { "dim", p->dim()->alias() },
             { "value", p->value().value() },
             { "unit", p->value().unit()->alias() },

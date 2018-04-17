@@ -114,6 +114,7 @@ void SchemaElemsTable::createRow(Element *elem, int row)
     setItem(row, COL_LABEL, it);
 
     it = new QTableWidgetItem();
+    Z::Gui::setValueFont(it);
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_PARAMS, it);
 

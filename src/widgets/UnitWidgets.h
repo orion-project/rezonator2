@@ -24,11 +24,16 @@ public:
 signals:
     void focused(bool focus);
 
+    /// Signal raises when user changes selection.
+    /// It doesn't raise when selection is changed programmatically via @a setSelectedUnit().
+    void unitChanged(Z::Unit unit);
+
 protected:
-    virtual void focusInEvent(QFocusEvent *e);
-    virtual void focusOutEvent(QFocusEvent *e);
+    void focusInEvent(QFocusEvent *e) override;
+    void focusOutEvent(QFocusEvent *e) override;
 
 private:
+    bool _enableChangeEvent = true;
     Z::Unit unitAt(int index) const;
 };
 
