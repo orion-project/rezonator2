@@ -152,7 +152,8 @@ void SchemaParamsWindow::setParameterValue()
     auto param = _table->selected();
     if (!param) return;
 
-    ParamEditorEx editor(param, schema()->formulas());
+    auto globalParams = schema()->globalParams();
+    ParamEditorEx editor(param, schema()->formulas(), &globalParams);
     bool ok = Ori::Dlg::Dialog(&editor)
                 .withTitle(tr("Set value"))
                 .withIconPath(":/window_icons/parameter")

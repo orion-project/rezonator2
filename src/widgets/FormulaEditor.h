@@ -10,21 +10,47 @@ class QLabel;
 class QTextEdit;
 QT_END_NAMESPACE
 
+class ParamsListWidget;
+
 class FormulaEditor : public QTabWidget
 {
     Q_OBJECT
 
 public:
-    explicit FormulaEditor(Z::Formula *formula, QWidget *parent = nullptr);
+    struct Options
+    {
+        /// Editing formula.
+        Z::Formula *formula;
+
+        /// Actual target parameter of formula.
+        /// It can diferent from formula.target() because of formula can drive temporary param,
+        /// but this actual param is required to check deps to globals for circular links.
+        Z::Parameter *targetParam = nullptr;
+
+        /// List of global parameter formula can depends on.
+        Z::Parameters *globalParams = nullptr;
+    };
+
+public:
+    explicit FormulaEditor(Options opts, QWidget *parent = nullptr);
 
     void setFocus();
     void calculate();
 
 private:
     Z::Formula *_formula;
+    Z::Parameter *_targetParam;
+    Z::Parameters *_globalParams;
     QTextEdit *_codeEditor;
     QLabel *_statusLabel;
     QTimer *_recalcTimer;
+    ParamsListWidget *_paramsList;
+
+    QWidget* makeEditorTab();
+    QWidget* makeParamsTab();
+
+    void addParam();
+    void removeParam();
 };
 
 #endif // FORMULA_EDITOR_H

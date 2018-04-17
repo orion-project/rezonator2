@@ -1,5 +1,6 @@
 #include "Appearance.h"
 #include "ParamEditor.h"
+#include "ParamsListWidget.h"
 #include "UnitWidgets.h"
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
@@ -9,7 +10,6 @@
 
 #include <QDebug>
 #include <QLabel>
-#include <QListWidget>
 #include <QPushButton>
 
 //------------------------------------------------------------------------------
@@ -246,38 +246,20 @@ QWidget* ParamEditor::unitsSelector() const { return _unitsSelector; }
 
 void ParamEditor::linkToGlobalParameter()
 {
-    QListWidget paramsList;
-    paramsList.setAlternatingRowColors(true);
-    auto item = new QListWidgetItem(QIcon(":/toolbar/param_delete"), tr("(none)"));
-    item->setData(Qt::UserRole, -1);
-    paramsList.addItem(item);
-    int selectedRow = 0;
-    for (int i = 0; i < _globalParams->size(); i++)
-    {
-        const Z::Parameter* param = _globalParams->at(i);
+    Z::Parameters availableParams;
+    for (auto param : *_globalParams)
         if (param->dim() == _param->dim())
-        {
-            // TODO set different icon for formula-driven parameters
-            auto item = new QListWidgetItem(QIcon(":/toolbar/parameter"), param->str());
-            item->setData(Qt::UserRole, i);
-            paramsList.addItem(item);
-            if (param == _linkSource)
-                selectedRow = paramsList.count()-1;
-        }
-    }
-    paramsList.setCurrentRow(selectedRow);
+            availableParams.append(param);
+    if (availableParams.isEmpty())
+        return Ori::Dlg::info(tr("There are no parameters to link to"));
+    availableParams.insert(0, ParamsListWidget::noneParam());
 
-    if (Ori::Dlg::Dialog(&paramsList)
-            .withTitle(_linkButton->toolTip())
-            .withOkSignal(SIGNAL(itemDoubleClicked(QListWidgetItem*)))
-            .exec())
-    {
-        auto item = paramsList.currentItem();
-        if (!item) return;
-        int paramIndex = item->data(Qt::UserRole).toInt();
-        _linkSource = (paramIndex >= 0) ? _globalParams->at(paramIndex) : nullptr;
-        _linkButton->showLinkSource(_linkSource);
-        setIsLinked(_linkSource);
-        showValue(_linkSource ? _linkSource : _param);
-    }
+    auto selected = _linkSource ? _linkSource : ParamsListWidget::noneParam();
+    selected = ParamsListWidget::selectParamDlg(&availableParams, selected, _linkButton->toolTip());
+    if (!selected) return;
+
+    _linkSource = selected != ParamsListWidget::noneParam() ? selected : nullptr;
+    _linkButton->showLinkSource(_linkSource);
+    setIsLinked(_linkSource);
+    showValue(_linkSource ? _linkSource : _param);
 }

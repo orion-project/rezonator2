@@ -11,13 +11,11 @@
 #include <QMenu>
 #include <QPushButton>
 
-ParamEditorEx::ParamEditorEx(Z::Parameter *param, Z::Formulas *formulas, QWidget *parent) : QWidget(parent)
+ParamEditorEx::ParamEditorEx(Z::Parameter *param, Z::Formulas *formulas, Z::Parameters *globalParams, QWidget *parent)
+    : QWidget(parent), _param(param), _formulas(formulas), _globalParams(globalParams)
 {
-    _param = param;
     _tmpParam = new Z::Parameter(param->dim(), param->alias());
     _tmpParam->setValue(param->value());
-
-    _formulas = formulas;
 
     _formula = _formulas->get(_param);
     _hasFormula = _formula;
@@ -87,7 +85,11 @@ void ParamEditorEx::createFormulaEditor()
     if (_formula)
         _tmpFormula->setCode(_formula->code());
 
-    _formulaEditor = new FormulaEditor(_tmpFormula);
+    FormulaEditor::Options opts;
+    opts.formula = _tmpFormula;
+    opts.targetParam = _param;
+    opts.globalParams = _globalParams;
+    _formulaEditor = new FormulaEditor(opts);
     connect(_paramEditor, &ParamEditor::unitChanged, this, &ParamEditorEx::unitChanged);
     qobject_cast<QVBoxLayout*>(layout())->insertWidget(ROW_CODE, _formulaEditor);
 }

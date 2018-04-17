@@ -230,3 +230,10 @@ void Schema::setTripType(TripType value)
     _tripType = value;
     _events.raise(SchemaEvents::ParamsChanged);
 }
+
+Z::Parameters Schema::globalParams() const
+{
+    Z::Parameters list(_params);
+    list << const_cast<Z::Parameter*>(&_wavelength);
+    return list;
+}

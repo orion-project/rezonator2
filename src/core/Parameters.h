@@ -162,6 +162,9 @@ class PhysicalParameter : public ValuedParameter<Value>
 public:
     PhysicalParameter() : ValuedParameter() {}
 
+    PhysicalParameter(const QString& alias) :
+        ValuedParameter(alias, "", "", "", "", true) {}
+
     PhysicalParameter(Dim dim,
                       const QString& alias) :
         ValuedParameter(alias, "", "", "", "", true), _dim(dim) {}
@@ -235,7 +238,9 @@ public:
             qWarning() << "Param link" << str() << "Unable to set value to target, verification failed" << res;
     }
 
-    QString str() const { return _source->alias() % " --> " % _target->alias(); }
+    /// Source and target here are named meaning data flow: value is transfered from source to target.
+    /// But arrow is drawn meaning 'target parameter is linked to source parameter'.
+    QString str() const { return _source->alias() % " <-- " % _target->alias(); }
 
     TParam* source() const { return _source; }
     TParam* target() const { return _target; }
@@ -262,23 +267,23 @@ public:
 //------------------------------------------------------------------------------
 /**
     Generic container for list of parameters.
-    It's just vector with several additional methods.
+    It's just list with several additional methods.
 */
 template <class TParam>
-class ParametersList : public QVector<TParam*>
+class ParametersList : public QList<TParam*>
 {
 public:
-    ParametersList(): QVector<TParam*>() {}
-    ParametersList(const QVector<TParam*>& other) : QVector<TParam*>(other) {}
-    ParametersList(std::initializer_list<TParam*> args): QVector<TParam*>(args) {}
+    ParametersList(): QList<TParam*>() {}
+    ParametersList(const QList<TParam*>& other) : QList<TParam*>(other) {}
+    ParametersList(std::initializer_list<TParam*> args): QList<TParam*>(args) {}
 
-    TParam* byAlias(const QString& alias);
-    TParam* byIndex(int index);
-    TParam* byPointer(void *param);
+    TParam* byAlias(const QString& alias) const;
+    TParam* byIndex(int index) const;
+    TParam* byPointer(void *param) const;
 
     ParametersList mid(int pos, int len) const
     {
-        return ParametersList(QVector<TParam*>::mid(pos, len));
+        return ParametersList(QList<TParam*>::mid(pos, len));
     }
 
     QString str() const;

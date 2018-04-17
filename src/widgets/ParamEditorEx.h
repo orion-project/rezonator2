@@ -20,7 +20,7 @@ class ParamEditorEx : public QWidget
     Q_OBJECT
 
 public:
-    explicit ParamEditorEx(Z::Parameter* param, Z::Formulas* formulas, QWidget *parent = nullptr);
+    explicit ParamEditorEx(Z::Parameter* param, Z::Formulas* formulas, Z::Parameters *globalParams, QWidget *parent = nullptr);
     ~ParamEditorEx();
 
 public slots:
@@ -31,6 +31,7 @@ private:
     Z::Formula *_formula = nullptr;
     Z::Formula *_tmpFormula = nullptr;
     Z::Formulas *_formulas;
+    Z::Parameters *_globalParams;
     QAction *_actnAddFormula, *_actnRemoveFormula;
     ParamEditor *_paramEditor;
     FormulaEditor *_formulaEditor = nullptr;

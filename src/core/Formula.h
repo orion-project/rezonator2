@@ -26,6 +26,7 @@ public:
     const QString& status() const { return _status; }
 
     void addDep(Parameter* param);
+    void removeDep(Parameter* param);
 
     void parameterChanged(ParameterBase*) override { calculate(); }
 

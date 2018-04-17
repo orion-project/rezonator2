@@ -90,6 +90,12 @@ void Formula::addDep(Parameter* param)
     param->addListener(this);
 }
 
+void Formula::removeDep(Parameter* param)
+{
+    param->removeListener(this);
+    _deps.removeAll(param);
+}
+
 //------------------------------------------------------------------------------
 
 void Formulas::put(Formula* f)

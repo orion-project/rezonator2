@@ -214,6 +214,10 @@ public:
     Z::ParamLinks* paramLinks() { return &_paramLinks; }
     Z::Formulas* formulas() { return &_formulas; }
 
+    /// Returns list of global params that can be used as link sources or formula deps.
+    /// It contains custom params and some of builtin params.
+    Z::Parameters globalParams() const;
+
 private:
     Elements _items;
     SchemaEvents _events;
