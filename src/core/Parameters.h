@@ -36,7 +36,7 @@ public:
     /// Storable name of parameter.
     const QString& alias() const { return _alias; }
 
-    /// Label of parameter. E.g.: L, alpha, n<sub>0</sub>.
+    /// Label of parameter. E.g.: `L`, `alpha`, `n<sub>0</sub>`.
     /// Can contains some html tags (subscript or superscript).
     const QString& label() const { return _label; }
 
