@@ -27,6 +27,7 @@ public:
 
     void addDep(Parameter* param);
     void removeDep(Parameter* param);
+    void assignDeps(const Formula *formula);
 
     void parameterChanged(ParameterBase*) override { calculate(); }
 

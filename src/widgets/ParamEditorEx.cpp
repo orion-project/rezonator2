@@ -83,8 +83,10 @@ void ParamEditorEx::createFormulaEditor()
 
     _tmpFormula = new Z::Formula(_tmpParam);
     if (_formula)
+    {
         _tmpFormula->setCode(_formula->code());
-
+        _tmpFormula->assignDeps(_formula);
+    }
     FormulaEditor::Options opts;
     opts.formula = _tmpFormula;
     opts.targetParam = _param;
@@ -123,6 +125,7 @@ void ParamEditorEx::apply()
             _formulas->put(_formula);
         }
         _formula->setCode(_tmpFormula->code());
+        _formula->assignDeps(_tmpFormula);
     }
     else
     {

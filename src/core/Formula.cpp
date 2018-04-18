@@ -96,6 +96,14 @@ void Formula::removeDep(Parameter* param)
     _deps.removeAll(param);
 }
 
+void Formula::assignDeps(const Formula *formula)
+{
+    while (!_deps.isEmpty())
+        removeDep(_deps.first());
+    for (auto dep : formula->_deps)
+        addDep(dep);
+}
+
 //------------------------------------------------------------------------------
 
 void Formulas::put(Formula* f)

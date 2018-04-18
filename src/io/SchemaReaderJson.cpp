@@ -345,11 +345,12 @@ void SchemaReaderJson::readFormula(const QJsonObject& root)
     auto formula = new Z::Formula(targetParam);
     formula->setCode(root["code"].toString());
 
+    auto globalParams = _schema->globalParams();
     WITH_JSON_VALUE(depsJson, root, "param_deps")
         for (auto it = depsJson.array().begin(); it != depsJson.array().end(); it++)
         {
             auto depAlias = (*it).toString();
-            auto depParam = _schema->params()->byAlias(depAlias);
+            auto depParam = globalParams.byAlias(depAlias);
             if (!depParam)
             {
                 _report.warning(qApp->translate("IO",
