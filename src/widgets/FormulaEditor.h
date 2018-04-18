@@ -45,12 +45,14 @@ private:
     QLabel *_statusLabel;
     QTimer *_recalcTimer;
     ParamsListWidget *_paramsList;
+    int _tabIndexCode, _tabIndexParams;
 
     QWidget* makeEditorTab();
     QWidget* makeParamsTab();
 
     void addParam();
     void removeParam();
+    void showParamsCount();
 };
 
 #endif // FORMULA_EDITOR_H

@@ -14,6 +14,12 @@ extern "C" {
 
 namespace Z {
 
+Formula::~Formula()
+{
+    for (Z::Parameter* dep : _deps)
+        dep->removeListener(this);
+}
+
 bool Formula::prepare(Parameters& availableDeps)
 {
     Q_UNUSED(availableDeps)
@@ -41,9 +47,13 @@ void Formula::calculate()
 
     #define RESULT_VAR "result"
 
-    // TODO: add names and values for deps
-    // TODO: convert value to SI when add
     // TODO: add math functions to global namespace
+
+    for (Z::Parameter* dep : _deps)
+    {
+        lua_pushnumber(L, dep->value().toSi());
+        lua_setglobal(L, dep->alias().toLatin1().data());
+    }
 
     static QRegExp resultVar(RESULT_VAR "\\s*=");
     QString code = _code;

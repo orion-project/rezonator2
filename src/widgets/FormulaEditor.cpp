@@ -24,8 +24,10 @@ FormulaEditor::FormulaEditor(Options opts, QWidget *parent)
     _recalcTimer->setInterval(RECALCULATE_AFTER_TYPE_INTERVAL_MS);
     connect(_recalcTimer, &QTimer::timeout, this, &FormulaEditor::calculate);
 
-    addTab(makeEditorTab(), tr("Code"));
-    addTab(makeParamsTab(), tr("Params"));
+    _tabIndexCode = addTab(makeEditorTab(), tr("Code"));
+    _tabIndexParams = addTab(makeParamsTab(), tr("Params"));
+
+    showParamsCount();
 }
 
 QWidget* FormulaEditor::makeEditorTab()
@@ -79,6 +81,8 @@ void FormulaEditor::addParam()
     // TODO check for circular dependencies
     _formula->addDep(param);
     _paramsList->addParamItem(param, true);
+
+    showParamsCount();
     calculate();
 }
 
@@ -90,12 +94,13 @@ void FormulaEditor::removeParam()
     _formula->removeDep(param);
     delete _paramsList->currentItem();
 
+    showParamsCount();
     calculate();
 }
 
 void FormulaEditor::setFocus()
 {
-    setCurrentIndex(0);
+    setCurrentIndex(_tabIndexParams);
     // TODO it doesn't work, editor is not focused...
     _codeEditor->setFocus();
 }
@@ -108,10 +113,21 @@ void FormulaEditor::calculate()
     {
         _statusLabel->setText("OK");
         _statusLabel->setStyleSheet("QLabel{background:LightGreen;padding:3px}");
+        setTabIcon(_tabIndexCode, QIcon(":/toolbar/ok"));
     }
     else
     {
         _statusLabel->setText(_formula->status());
         _statusLabel->setStyleSheet("QLabel{background:LightCoral;padding:3px}");
+        setTabIcon(_tabIndexCode, QIcon(":/toolbar/error"));
     }
+}
+
+void FormulaEditor::showParamsCount()
+{
+    auto title = tr("Params");
+    int count = _formula->deps().size();
+    if (count > 0)
+        title += QString(" (%1)").arg(count);
+    setTabText(_tabIndexParams, title);
 }
