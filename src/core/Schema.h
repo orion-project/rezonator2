@@ -19,7 +19,7 @@ class Schema;
     Schema listener interface.
     Any object who wants "listen" any schema changes or other events should
     implements this interface and registers himself as listener in a schema
-    through the method Schema::registerListener(). Schema will call appropriate
+    through the method @a Schema::registerListener(). Schema will call appropriate
     method of interface when something occures.
 */
 class SchemaListener : public SchemaClient
@@ -69,18 +69,19 @@ private:
 
 //------------------------------------------------------------------------------
 
+/**
+    Schema event system.
+
+    Steps to add new event:
+    1. Add new member to @a SchemaEvents enum.
+    2. Add new notification method to @a SchemaListener interface.
+    3. Add calling of that method to @a SchemaEvents::notify() method.
+    4. Define props of new event in @a SchemaEvents::propsOf() method.
+*/
 class SchemaEvents
 {
 public:
-    /**
-        @brief Event types that can be sent to schema listeners.
-
-        Steps to add new event:
-        1) Add new enum member here
-        2) Add new notification method to @a SchemaListener interface
-        3) Add calling of that method to @a SchemaEvents::notify() method
-        4) Define props of new event in @a SchemaEvents::propsOf() method
-    */
+    /// Event types that can be sent to schema listeners.
     enum Event
     {
         Created,       ///< Schema just was created, called from constructor
@@ -133,8 +134,8 @@ private:
 /**
     Interface of element selector.
     A widged displaying schema elements can allow user to select one or several
-    elements by mouse or keyboard (like SchemaTable does). This widged can implement this interface
-    and register itself in a schema via `schema->selection().registerSelector(selecting_widget)`
+    elements by mouse or keyboard (like @a SchemaElemsTable does). This widged can implement this interface
+    and register itself in a schema via `schema->selection().registerSelector(selecting_widget)`.
     Then any others will be able to obtain selected element(s) via `schema->selectedElements()`
     without any redundant knowledge about who exactly made this selection.
 */
