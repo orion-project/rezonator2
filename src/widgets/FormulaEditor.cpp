@@ -46,13 +46,15 @@ QWidget* FormulaEditor::makeEditorTab()
 
 QWidget* FormulaEditor::makeParamsTab()
 {
-    auto buttonAdd = new QPushButton("+");
+    auto buttonAdd = new QPushButton;
     buttonAdd->setFixedSize(32, 32);
+    buttonAdd->setIcon(QIcon(":/toolbar/plus"));
     buttonAdd->setToolTip(tr("Add parameter"));
     connect(buttonAdd, &QPushButton::clicked, this, &FormulaEditor::addParam);
 
-    auto buttonRemove = new QPushButton("-");
+    auto buttonRemove = new QPushButton;
     buttonRemove->setFixedSize(32, 32);
+    buttonRemove->setIcon(QIcon(":/toolbar/delete"));
     buttonRemove->setToolTip(tr("Remove parameter"));
     connect(buttonRemove, &QPushButton::clicked, this, &FormulaEditor::removeParam);
 

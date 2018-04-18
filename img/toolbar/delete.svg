@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   width="16"
+   height="16"
+   id="svg2428">
+  <defs
+     id="defs2430">
+    <linearGradient
+       gradientTransform="matrix(0.85521001,0,0,0.8552595,-3.9729401,-3.9736379)"
+       xlink:href="#linearGradient3376-3"
+       id="linearGradient3382"
+       x1="8"
+       y1="19"
+       x2="20"
+       y2="8"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       id="linearGradient3376-3">
+      <stop
+         style="stop-color:#cd3232;stop-opacity:1;"
+         offset="0"
+         id="stop3378-6" />
+      <stop
+         style="stop-color:#e08e8e;stop-opacity:1;"
+         offset="1"
+         id="stop3380-7" />
+    </linearGradient>
+  </defs>
+  <metadata
+     id="metadata2433">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     style="fill:url(#linearGradient3382);fill-opacity:1;fill-rule:evenodd;stroke:#661b1b;stroke-width:0.60631502px;stroke-linecap:butt;stroke-linejoin:round;stroke-opacity:1"
+     d="M 10.565628,7.9999993 15.69689,2.8684437 13.131259,0.30266585 7.9999996,5.4342209 2.8687406,0.30266585 0.3031104,2.8684437 5.4343696,7.9999993 0.3031104,13.131555 l 2.5656302,2.565779 5.131259,-5.131557 5.1312594,5.131557 2.565631,-2.565779 -5.131262,-5.1315557 z"
+     id="path2604-5" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#edbaba;stroke-width:0.90947247;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     d="m 2.0135306,13.131555 4.27605,-4.2762964 c 0.855209,-0.8552593 0,-1.710519 0,-1.710519 l -4.27605,-4.2762959"
+     id="path3384-3" />
+</svg>

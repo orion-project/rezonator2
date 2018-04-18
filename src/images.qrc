@@ -22,6 +22,9 @@
         <file alias="error">../img/toolbar/error.svg</file>
         <file alias="help">../img/toolbar/help.svg</file>
         <file alias="info">../img/toolbar/info.svg</file>
+        <file alias="ok">../img/toolbar/ok.svg</file>
+        <file alias="delete">../img/toolbar/delete.svg</file>
+        <file alias="plus">../img/toolbar/plus.svg</file>
         <file alias="freeze">../img/toolbar/freeze.svg</file>
         <file alias="frozen_info">../img/toolbar/freeze_info.svg</file>
         <file alias="gauss">../img/toolbar/gauss.svg</file>
@@ -58,11 +61,11 @@
         <file alias="formula_stab_squared">../img/toolbar/formula_stab_squared.svg</file>
     </qresource>
     <qresource prefix="/toolbar16">
-        <file alias="langs">../img/view_langs_16.png</file>
-        <file alias="points">../img/misc_point_16.png</file>
-        <file alias="table">../img/misc_table_16.png</file>
-        <file alias="params">../img/misc_params_16.png</file>
-        <file alias="plot_tracing">../img/plot_tracing_16.png</file>
+        <file alias="langs">../img/toolbar16/flags.png</file>
+        <file alias="points">../img/toolbar16/graph_point.png</file>
+        <file alias="table">../img/toolbar16/table.png</file>
+        <file alias="params">../img/toolbar16/params.png</file>
+        <file alias="plot_tracing">../img/toolbar16/plot_tracing.png</file>
     </qresource>
     <qresource prefix="/elems">
         <file alias="ElemUnknown">../elems/ElemUnknown.svg</file>

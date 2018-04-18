@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   width="256"
+   height="256"
+   id="svg7748"
+   version="1.0">
+  <defs
+     id="defs7750">
+    <linearGradient
+       id="linearGradient3376">
+      <stop
+         style="stop-color:#3282cd;stop-opacity:1;"
+         offset="0"
+         id="stop3378" />
+      <stop
+         style="stop-color:#8ec0e0;stop-opacity:1;"
+         offset="1"
+         id="stop3380" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#linearGradient3376"
+       id="linearGradient5849"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(6.967514,6.9710392,-7.0436144,7.0471779,131.63705,-84.585398)"
+       x1="8"
+       y1="19"
+       x2="20"
+       y2="8" />
+  </defs>
+  <metadata
+     id="metadata7753">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     id="path2604"
+     d="m 151.38122,151.45207 81.99427,0.11424 0,-61.583924 -81.99427,0 0,-82.0357876 -61.495729,3e-6 0,82.0357846 -81.8801186,5e-6 -0.2282999,61.583889 82.1084185,0 0,81.97866 61.495729,0 z"
+     style="fill:url(#linearGradient5849);fill-opacity:1;fill-rule:evenodd;stroke:#324c6b;stroke-width:10;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  <path
+     id="path3384"
+     d="m 22.881634,104.98057 71.744996,0 c 10.24931,0 10.24931,-10.254491 10.24931,-10.254491 l 0,-71.78129"
+     style="fill:none;stroke:#ffffff;stroke-width:15;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.48684214" />
+</svg>
