@@ -48,9 +48,6 @@ ParamEditorEx::ParamEditorEx(Z::Parameter *param, Z::Formulas *formulas, Z::Para
     .useFor(this);
 
     toggleFormulaView();
-
-    if (_hasFormula)
-        _formulaEditor->setFocus();
 }
 
 ParamEditorEx::~ParamEditorEx()
@@ -113,7 +110,10 @@ void ParamEditorEx::toggleFormulaView()
     valueEditor->setReadOnly(_hasFormula);
 
     if (_hasFormula)
+    {
         _formulaEditor->calculate();
+        _formulaEditor->setFocus();
+    }
 }
 
 void ParamEditorEx::apply()

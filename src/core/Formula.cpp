@@ -46,6 +46,7 @@ void Formula::calculate()
     luaL_openlibs(L);
 
     #define RESULT_VAR "result"
+    #define FORMULA_ID "formula"
 
     // TODO: add math functions to global namespace
 
@@ -60,7 +61,8 @@ void Formula::calculate()
     int pos = code.indexOf(resultVar);
     if (pos < 0) code = (RESULT_VAR "=") + code;
 
-    int res = luaL_loadstring(L, code.toLatin1().data());
+    auto codeBytes = code.toLatin1();
+    int res = luaL_loadbufferx(L, codeBytes.data(), codeBytes.size(), FORMULA_ID, "t");
     if (res == LUA_OK)
     {
         res = lua_pcall(L, 0, 0, 0);
@@ -82,8 +84,23 @@ void Formula::calculate()
     if (res != LUA_OK)
     {
         _status = QString(lua_tostring(L, -1));
+
+        if (!_status.isEmpty())
+        {
+            // Clean up error message which looks like
+            // [string "formula"]:1: <useful message>
+            static QString prefix("[string \"" FORMULA_ID "\"]:");
+            if (_status.startsWith(prefix))
+                _status.remove(0, prefix.length());
+            int pos = _status.indexOf(':');
+            if (pos >= 0)
+                _status.remove(0, pos+2);
+        }
+
         if (_status.isEmpty())
             _status = qApp->tr("Formula", "Unknown error, code=%1").arg(res);
+        else
+            _status = qApp->tr("Error: %1").arg(_status);
     }
 
     if (!_status.isEmpty())

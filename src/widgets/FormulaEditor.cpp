@@ -106,7 +106,7 @@ void FormulaEditor::removeParam()
 
 void FormulaEditor::setFocus()
 {
-    setCurrentIndex(_tabIndexParams);
+    setCurrentIndex(_tabIndexCode);
     // TODO it doesn't work, editor is not focused...
     _codeEditor->setFocus();
 }
