@@ -35,7 +35,7 @@ SchemaParamsTable::SchemaParamsTable(Schema *schema, QWidget *parent) : QTableWi
 
 SchemaParamsTable::~SchemaParamsTable()
 {
-    for (auto p: *(schema()->params()))
+    for (auto p: *(schema()->customParams()))
         p->removeListener(this);
 }
 
@@ -60,21 +60,21 @@ void SchemaParamsTable::showContextMenu(const QPoint& pos)
 
 Z::Parameter* SchemaParamsTable::selected() const
 {
-    return schema()->params()->byIndex(currentRow());
+    return schema()->customParams()->byIndex(currentRow());
 }
 
 void SchemaParamsTable::setSelected(Z::Parameter *param)
 {
-    setCurrentCell(_schema->params()->indexOf(param), 0);
+    setCurrentCell(_schema->customParams()->indexOf(param), 0);
 }
 
 void SchemaParamsTable::populate()
 {
     clearContents();
-    setRowCount(schema()->params()->size());
-    for (int row = 0; row < schema()->params()->size(); row++)
+    setRowCount(schema()->customParams()->size());
+    for (int row = 0; row < schema()->customParams()->size(); row++)
     {
-        auto param = schema()->params()->byIndex(row);
+        auto param = schema()->customParams()->byIndex(row);
         param->addListener(this);
         createRow(row);
         populateRow(param, row);
@@ -109,9 +109,14 @@ void SchemaParamsTable::createRow(int row)
 
 void SchemaParamsTable::populateRow(Z::Parameter *param, int row)
 {
-    // TODO set icon depending on whether param is formula
     item(row, COL_ALIAS)->setText(param->alias());
-    item(row, COL_VALUE)->setText(param->value().str());
+
+    auto it = item(row, COL_VALUE);
+    auto f = it->font();
+    f.setItalic(param->valueDriver() == Z::ParamValueDriver::Formula);
+    it->setFont(f);
+    it->setText(param->value().str());
+
     item(row, COL_ANNOTATION)->setText(param->description());
 }
 
@@ -130,10 +135,25 @@ void SchemaParamsTable::customParamCreated(Schema*, Z::Parameter* param)
     param->addListener(this);
 }
 
+void SchemaParamsTable::customParamDeleting(Schema*, Z::Parameter* param)
+{
+    auto p = dynamic_cast<Z::Parameter*>(param);
+    auto row = schema()->customParams()->indexOf(p);
+    if (row >= 0)
+    {
+        removeRow(row);
+        adjustColumns();
+    }
+}
+
 void SchemaParamsTable::parameterChanged(Z::ParameterBase* param)
 {
     auto p = dynamic_cast<Z::Parameter*>(param);
-    auto row = schema()->params()->indexOf(p);
+    auto row = schema()->customParams()->indexOf(p);
     if (row >= 0)
-        item(row, COL_VALUE)->setText(p->value().str());
+    {
+        populateRow(reinterpret_cast<Z::Parameter*>(param), row);
+        adjustColumns();
+    }
 }
+

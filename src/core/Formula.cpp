@@ -14,8 +14,14 @@ extern "C" {
 
 namespace Z {
 
+Formula::Formula(Parameter* target): _target(target)
+{
+    _target->setValueDriver(ParamValueDriver::Formula);
+}
+
 Formula::~Formula()
 {
+    _target->setValueDriver(ParamValueDriver::None);
     for (Z::Parameter* dep : _deps)
         dep->removeListener(this);
 }
@@ -191,6 +197,19 @@ bool Formulas::ifDependsOn(Parameter *whichParam, Parameter *onParam) const
     return false;
 }
 
+Parameters Formulas::dependentParams(Parameter *whichParam) const
+{
+    Parameters result;
+    for (Formula *formula : _items.values())
+        for (Parameter *param : formula->deps())
+            if (param == whichParam)
+            {
+                if (!result.contains(formula->target()))
+                    result << formula->target();
+                break;
+            }
+    return result;
+}
 
 //------------------------------------------------------------------------------
 

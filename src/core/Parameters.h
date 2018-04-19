@@ -109,6 +109,19 @@ public:
 };
 
 //------------------------------------------------------------------------------
+
+/**
+    Enum defines how a parameter value is produced.
+*/
+enum class ParamValueDriver
+{
+    None,    ///< Parameter has its own value.
+    Link,    ///< Value is taken from another parameter.
+    Formula, ///< Value is calcilated by a formula.
+};
+
+//------------------------------------------------------------------------------
+
 /**
     Base class template for parameters having value.
 */
@@ -137,6 +150,9 @@ public:
     /// Parameter does not take ownership on verifier.
     void setVerifier(ValueVerifierBase<Value>* verifier) { _verifier = verifier; }
 
+    ParamValueDriver valueDriver() const { return _valueDriver; }
+    void setValueDriver(ParamValueDriver driver) { _valueDriver = driver; }
+
 protected:
     ValuedParameter() : ParameterBase() {}
 
@@ -151,6 +167,7 @@ protected:
 private:
     Value _value;
     ValueVerifierBase<Value> *_verifier = nullptr;
+    ParamValueDriver _valueDriver = ParamValueDriver::None;
 };
 
 //------------------------------------------------------------------------------
@@ -215,12 +232,14 @@ public:
     ParameterLink(TParam *source, TParam *target) : _source(source), _target(target)
     {
         _source->addListener(this);
+        _target->setValueDriver(ParamValueDriver::Link);
         apply();
     }
 
     virtual ~ParameterLink()
     {
         _source->removeListener(this);
+        _target->setValueDriver(ParamValueDriver::None);
     }
 
     void parameterChanged(ParameterBase *param) override

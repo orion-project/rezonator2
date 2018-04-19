@@ -23,6 +23,7 @@ public:
     // inherits from SchemaListener
     void schemaLoaded(Schema*) override;
     void customParamCreated(Schema*, Z::Parameter*) override;
+    void customParamDeleting(Schema*, Z::Parameter*) override;
 
     // inherits from Z::ParameterListener
     void parameterChanged(Z::ParameterBase*) override;

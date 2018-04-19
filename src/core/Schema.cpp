@@ -78,6 +78,7 @@ const SchemaEvents::EventProps& SchemaEvents::propsOf(Event event)
         INIT_EVENT(CustomParamEdited,  true,         SchemaState::Modified ),
         INIT_EVENT(CustomParamChanged, true,         SchemaState::Modified ),
         INIT_EVENT(CustomParamDeleted, true,         SchemaState::Modified ),
+        INIT_EVENT(CustomParamDeleting,true,         SchemaState::Current  ),
     });
     return _props[event];
 }
@@ -101,6 +102,7 @@ void SchemaEvents::notify(SchemaListener* listener, SchemaEvents::Event event, v
     case CustomParamCreated: listener->customParamCreated(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
     case CustomParamEdited: listener->customParamEdited(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
     case CustomParamChanged: listener->customParamChanged(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
+    case CustomParamDeleting: listener->customParamDeleting(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
     case CustomParamDeleted: listener->customParamDeleted(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
     };
 }
@@ -126,7 +128,7 @@ Schema::~Schema()
     _events.raise(SchemaEvents::Deleted);
 
     qDeleteAll(_items);
-    qDeleteAll(_params);
+    qDeleteAll(_customParams);
     _formulas.clear();
 }
 
@@ -233,7 +235,7 @@ void Schema::setTripType(TripType value)
 
 Z::Parameters Schema::globalParams() const
 {
-    Z::Parameters list(_params);
+    Z::Parameters list(_customParams);
     list << const_cast<Z::Parameter*>(&_wavelength);
     return list;
 }

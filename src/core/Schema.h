@@ -40,6 +40,7 @@ public:
     virtual void customParamCreated(Schema*, Z::Parameter*) {}
     virtual void customParamEdited(Schema*, Z::Parameter*) {}
     virtual void customParamChanged(Schema*, Z::Parameter*) {}
+    virtual void customParamDeleting(Schema*, Z::Parameter*) {}
     virtual void customParamDeleted(Schema*, Z::Parameter*) {}
 };
 
@@ -103,6 +104,7 @@ public:
         CustomParamCreated, ///< New custom parameter was created
         CustomParamEdited,  ///< Custom parameter was edited (e.g. description changed, but not value)
         CustomParamChanged, ///< Value of custom parameter was changed
+        CustomParamDeleting,///< Custom param is about to be deleted
         CustomParamDeleted, ///< Custom parameter was deleted
     };
 
@@ -211,12 +213,18 @@ public:
     Element* selectedElement() const { return _selection.element(); }
     Elements selectedElements() const { return _selection.elements(); }
 
-    Z::Parameters* params() { return &_params; }
+    /// Adiitional params that can be added by user and used in formulas.
+    Z::Parameters* customParams() { return &_customParams; }
+
+    /// Linst of all links which bind elements' parameter to schema parameters.
     Z::ParamLinks* paramLinks() { return &_paramLinks; }
+
+    /// List of all formulas operated on schema parameters.
     Z::Formulas* formulas() { return &_formulas; }
 
     /// Returns list of global params that can be used as link sources or formula deps.
     /// It contains custom params and some of builtin params.
+    /// This list is not stored in schema and collect parameters at each call.
     Z::Parameters globalParams() const;
 
 private:
@@ -229,7 +237,7 @@ private:
     QString _title, _comment;
     TripType _tripType = TripType::SW;
     Z::Parameter _wavelength;
-    Z::Parameters _params;
+    Z::Parameters _customParams;
     Z::ParamLinks _paramLinks;
     Z::Formulas _formulas;
     Z::Pump::Params _pump;

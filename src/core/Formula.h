@@ -10,7 +10,7 @@ namespace Z {
 class Formula : public ParameterListener
 {
 public:
-    Formula(Parameter* target): _target(target) {}
+    Formula(Parameter* target);
     virtual ~Formula();
 
     bool prepare(Parameters &availableDeps);
@@ -52,6 +52,9 @@ public:
 
     /// Checks if `whichParam` depends on `onParam`.
     bool ifDependsOn(Parameter *whichParam, Parameter *onParam) const;
+
+    /// Returns list of parameter which depends on specified parameter.
+    Parameters dependentParams(Parameter *whichParam) const;
 
 private:
     QMap<Parameter*, Formula*> _items;

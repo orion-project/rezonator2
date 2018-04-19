@@ -104,7 +104,7 @@ void SchemaParamsWindow::createParameter()
         auto alias = aliasEditor->text().trimmed();
         if (alias.isEmpty())
             return tr("Parameter name can't be empty");
-        if (schema()->params()->byAlias(alias))
+        if (schema()->customParams()->byAlias(alias))
             return tr("Parameter '%1' already exists").arg(alias);
         if (!Z::FormulaUtils::isValidVariableName(alias))
             return tr("Parameter name '%1' is invalid").arg(alias);
@@ -125,7 +125,7 @@ void SchemaParamsWindow::createParameter()
         auto param = new Z::Parameter(dim, alias, label, name);
         auto unit = CustomPrefs::recentUnit("global_param_unit", dim);
         param->setValue(Z::Value(0, unit));
-        schema()->params()->append(param);
+        schema()->customParams()->append(param);
 
         CustomPrefs::setRecentDim("global_param_dim", dim);
 
@@ -138,13 +138,43 @@ void SchemaParamsWindow::createParameter()
 
 void SchemaParamsWindow::deleteParameter()
 {
-    auto param = _table->selected();
-    if (!param) return;
+    auto deletingParam = _table->selected();
+    if (!deletingParam) return;
 
-    // TODO search for schema()->paramLinks()->bySource(param) and remove links
-    // TODO remove parameter
+    // Check if there are dependent parameters via formulas
+    Z::Parameters dependentParams = schema()->formulas()->dependentParams(deletingParam);
+    if (!dependentParams.isEmpty())
+    {
+        QStringList dependentAliases;
+        for (Z::Parameter *param : dependentParams)
+            dependentAliases << "<b>" % param->alias() % "</b>";
+        return Ori::Dlg::info(
+            tr("Can't delete paremeter '%1' because there are global parameters depending on it:<br><br>%2")
+                .arg(deletingParam->alias(), dependentAliases.join(", ")));
+    }
 
-    schema()->events().raise(SchemaEvents::CustomParamDeleted, param);
+    // Check if there are dependent parameters via links
+    Z::ParamLink *dependentLink = schema()->paramLinks()->bySource(deletingParam);
+    if (dependentLink)
+    {
+        QStringList dependentParams;
+        for (Element *elem : schema()->elements())
+            for (Z::Parameter *param : elem->params())
+                if (param == dependentLink->target())
+                    dependentParams << tr("Element <b>%1</b>, parameter <b>%2</b>").arg(elem->label(), param->label());
+        if (!dependentParams.isEmpty())
+            return Ori::Dlg::info(
+                tr("Can't delete paremeter '%1' because there are element parameters depending on it:<br><br>%2")
+                    .arg(deletingParam->alias(), dependentParams.join("<br>")));
+    }
+
+    if (Ori::Dlg::ok(tr("Confirm deletion of parameter '%1'").arg(deletingParam->alias())))
+    {
+        schema()->events().raise(SchemaEvents::CustomParamDeleting, deletingParam);
+        schema()->formulas()->free(deletingParam);
+        schema()->customParams()->removeOne(deletingParam);
+        schema()->events().raise(SchemaEvents::CustomParamDeleted, deletingParam);
+    }
 }
 
 void SchemaParamsWindow::setParameterValue()

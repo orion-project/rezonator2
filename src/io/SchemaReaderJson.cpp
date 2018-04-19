@@ -194,7 +194,7 @@ void SchemaReaderJson::readCustomParam(const QJsonObject& root, const QString &a
 
     readParamValue(root, param);
 
-    _schema->params()->append(param);
+    _schema->customParams()->append(param);
 }
 
 void SchemaReaderJson::readPump(const QJsonObject& root)
@@ -319,7 +319,7 @@ void SchemaReaderJson::readParamLink(const QJsonObject& root)
                 .arg(targetParamAlias).arg(targetElem->displayLabel()));
 
     auto sourceParamAlias = root["source_param"].toString();
-    auto sourceParam = _schema->params()->byAlias(sourceParamAlias);
+    auto sourceParam = _schema->customParams()->byAlias(sourceParamAlias);
     if (!sourceParam)
         return _report.warning(qApp->translate("IO",
             "Unable to load link: parameter '%1' not found in custom params").arg(sourceParamAlias));
@@ -337,7 +337,7 @@ void SchemaReaderJson::readFormulas(const QJsonObject& root)
 void SchemaReaderJson::readFormula(const QJsonObject& root)
 {
     auto targetAlias = root["target_param"].toString();
-    auto targetParam = _schema->params()->byAlias(targetAlias);
+    auto targetParam = _schema->customParams()->byAlias(targetAlias);
     if (!targetParam)
         return _report.warning(qApp->translate("IO",
             "Unable to find target parameter '%1' for formula, formula skipped").arg(targetAlias));

@@ -42,6 +42,12 @@ void ParamsListWidget::addParamItem(Z::Parameter* param, bool select)
         // TODO set different icon for formula-driven parameters
         item = new QListWidgetItem(QIcon(":/toolbar/parameter"), param->str());
     item->setData(Qt::UserRole, QVariant::fromValue<void*>(reinterpret_cast<void*>(param)));
+    if (param->valueDriver() != Z::ParamValueDriver::None)
+    {
+        auto f = item->font();
+        f.setItalic(true);
+        item->setFont(f);
+    }
     addItem(item);
 
     if (select)
