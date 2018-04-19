@@ -29,6 +29,10 @@ public:
 
         /// List of global parameter formula can depends on.
         Z::Parameters *globalParams = nullptr;
+
+        /// List of all formulas.
+        /// It is used to check circular dependencies when appending params as formula deps.
+        Z::Formulas *formulas = nullptr;
     };
 
 public:
@@ -41,6 +45,7 @@ private:
     Z::Formula *_formula;
     Z::Parameter *_targetParam;
     Z::Parameters *_globalParams;
+    Z::Formulas *_formulas;
     QTextEdit *_codeEditor;
     QLabel *_statusLabel;
     QTimer *_recalcTimer;

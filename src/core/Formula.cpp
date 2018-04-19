@@ -153,6 +153,28 @@ void Formulas::clear()
     _items.clear();
 }
 
+bool Formulas::ifDependsOn(Parameter *whichParam, Parameter *onParam) const
+{
+    if (!_items.contains(whichParam))
+        return false;
+
+    auto formula = _items[whichParam];
+    if (formula->deps().isEmpty())
+        return false;
+
+    for (auto param : formula->deps())
+    {
+        if (param == onParam)
+            return true;
+
+        if (ifDependsOn(param, onParam))
+            return true;
+    }
+
+    return false;
+}
+
+
 //------------------------------------------------------------------------------
 
 namespace FormulaUtils {
