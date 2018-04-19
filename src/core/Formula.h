@@ -50,6 +50,9 @@ public:
 
     QMap<Parameter*, Formula*>& items() { return _items; }
 
+    /// Checks if `whichParam` depends on `onParam`.
+    bool ifDependsOn(Parameter *whichParam, Parameter *onParam) const;
+
 private:
     QMap<Parameter*, Formula*> _items;
 };

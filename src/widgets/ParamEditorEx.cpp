@@ -91,6 +91,7 @@ void ParamEditorEx::createFormulaEditor()
     opts.formula = _tmpFormula;
     opts.targetParam = _param;
     opts.globalParams = _globalParams;
+    opts.formulas = _formulas;
     _formulaEditor = new FormulaEditor(opts);
     connect(_paramEditor, &ParamEditor::unitChanged, this, &ParamEditorEx::unitChanged);
     qobject_cast<QVBoxLayout*>(layout())->insertWidget(ROW_CODE, _formulaEditor);

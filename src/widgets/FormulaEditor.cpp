@@ -15,7 +15,7 @@ using namespace Ori::Layouts;
 #define RECALCULATE_AFTER_TYPE_INTERVAL_MS 250
 
 FormulaEditor::FormulaEditor(Options opts, QWidget *parent)
-    : QTabWidget(parent), _formula(opts.formula), _globalParams(opts.globalParams)
+    : QTabWidget(parent), _formula(opts.formula), _globalParams(opts.globalParams), _formulas(opts.formulas)
 {
     _targetParam = opts.targetParam ? opts.targetParam : _formula->target();
 
@@ -79,6 +79,10 @@ void FormulaEditor::addParam()
 
     auto param = ParamsListWidget::selectParamDlg(&availableParams, tr("Add global parameter"));
     if (!param) return;
+
+    if (_formulas && _formulas->ifDependsOn(param, _targetParam))
+        return Ori::Dlg::warning(
+            tr("Can't append parameter '%1' as it makes circular dependencies").arg(param->alias()));
 
     // TODO check for circular dependencies
     _formula->addDep(param);
