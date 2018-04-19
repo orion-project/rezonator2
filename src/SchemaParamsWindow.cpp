@@ -67,6 +67,7 @@ void SchemaParamsWindow::createActions()
     _actnParamAdd = A_(tr("&Create..."), this, SLOT(createParameter()), ":/toolbar/param_add", Qt::CTRL | Qt::Key_Insert);
     _actnParamDelete = A_(tr("&Delete"), this, SLOT(deleteParameter()), ":/toolbar/param_delete", Qt::CTRL | Qt::Key_Delete);
     _actnParamSet = A_(tr("&Set..."), this, SLOT(setParameterValue()), ":/toolbar/param_set", Qt::Key_Enter);
+    _actnParamDescr = A_(tr("&Annotate..."), this, SLOT(annotateParameter()), ":/toolbar/param_annotate", Qt::CTRL | Qt::Key_Enter);
 
     #undef A_
 }
@@ -74,16 +75,16 @@ void SchemaParamsWindow::createActions()
 void SchemaParamsWindow::createMenuBar()
 {
     _windowMenu = Ori::Gui::menu(tr("&Parameter"), this,
-        { _actnParamAdd, _actnParamSet, 0, _actnParamDelete });
+        { _actnParamAdd, 0, _actnParamSet, _actnParamDescr, 0, _actnParamDelete });
 
     _contextMenu = Ori::Gui::menu(this,
-        { _actnParamSet, 0, _actnParamDelete });
+        { _actnParamSet, _actnParamDescr, 0, _actnParamDelete });
 }
 
 void SchemaParamsWindow::createToolBar()
 {
-    populateToolbar({ Ori::Gui::textToolButton(_actnParamAdd),
-        Ori::Gui::textToolButton(_actnParamSet), 0, _actnParamDelete });
+    populateToolbar({ Ori::Gui::textToolButton(_actnParamAdd), 0,
+        Ori::Gui::textToolButton(_actnParamSet), _actnParamDescr, 0, _actnParamDelete });
 }
 
 void SchemaParamsWindow::createParameter()
@@ -197,5 +198,19 @@ void SchemaParamsWindow::setParameterValue()
     {
         _isSettingValueForNewParam = false;
         CustomPrefs::setRecentUnit("global_param_unit", param->value().unit());
+    }
+}
+
+void SchemaParamsWindow::annotateParameter()
+{
+    auto param = _table->selected();
+    if (!param) return;
+
+    bool ok;
+    QString descr = Ori::Dlg::inputText(tr("Annotation:"), param->description(), &ok);
+    if (ok)
+    {
+        param->setDescription(descr);
+        schema()->events().raise(SchemaEvents::CustomParamEdited, param);
     }
 }

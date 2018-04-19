@@ -35,6 +35,7 @@ private slots:
     void createParameter();
     void deleteParameter();
     void setParameterValue();
+    void annotateParameter();
 
 private:
     explicit SchemaParamsWindow(Schema*);
@@ -43,7 +44,7 @@ private:
 
     class SchemaParamsTable* _table;
 
-    QAction *_actnParamAdd, *_actnParamDelete, *_actnParamSet;
+    QAction *_actnParamAdd, *_actnParamDelete, *_actnParamSet, *_actnParamDescr;
     QMenu *_windowMenu, *_contextMenu;
     bool _isSettingValueForNewParam = false;
 

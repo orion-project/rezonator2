@@ -24,6 +24,7 @@ public:
     void schemaLoaded(Schema*) override;
     void customParamCreated(Schema*, Z::Parameter*) override;
     void customParamDeleting(Schema*, Z::Parameter*) override;
+    void customParamEdited(Schema*, Z::Parameter*) override;
 
     // inherits from Z::ParameterListener
     void parameterChanged(Z::ParameterBase*) override;
@@ -45,6 +46,7 @@ private:
     void populate();
     void createRow(int row);
     void populateRow(Z::Parameter *param, int row);
+    int findRow(Z::ParameterBase *param);
 };
 
 #endif // SCHEMA_PARAMS_TABLE_H

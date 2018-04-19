@@ -137,23 +137,27 @@ void SchemaParamsTable::customParamCreated(Schema*, Z::Parameter* param)
 
 void SchemaParamsTable::customParamDeleting(Schema*, Z::Parameter* param)
 {
-    auto p = dynamic_cast<Z::Parameter*>(param);
-    auto row = schema()->customParams()->indexOf(p);
-    if (row >= 0)
-    {
-        removeRow(row);
-        adjustColumns();
-    }
+    auto row = findRow(param);
+    if (row < 0) return;
+    removeRow(row);
+    adjustColumns();
 }
 
 void SchemaParamsTable::parameterChanged(Z::ParameterBase* param)
 {
-    auto p = dynamic_cast<Z::Parameter*>(param);
-    auto row = schema()->customParams()->indexOf(p);
-    if (row >= 0)
-    {
-        populateRow(reinterpret_cast<Z::Parameter*>(param), row);
-        adjustColumns();
-    }
+    auto row = findRow(param);
+    if (row < 0) return;
+    populateRow(reinterpret_cast<Z::Parameter*>(param), row);
+    adjustColumns();
+}
+
+void SchemaParamsTable::customParamEdited(Schema*, Z::Parameter* param)
+{
+    parameterChanged(param);
+}
+
+int SchemaParamsTable::findRow(Z::ParameterBase *param)
+{
+    return schema()->customParams()->indexOf(dynamic_cast<Z::Parameter*>(param));
 }
 

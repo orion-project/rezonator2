@@ -45,6 +45,7 @@ public:
 
     /// Description of paramter. Short help string.
     const QString& description() const { return _description; }
+    void setDescription(const QString& value) { _description = value; }
 
     /// Parameter's category (group of parameters).
     const QString& category() const { return _category; }
