@@ -1,7 +1,7 @@
 #include "SchemaParamsTable.h"
 
 #include "Appearance.h"
-#include "ElementImagesProvider.h"
+#include "RichTextItemDelegate.h"
 #include "PixmapItemDelegate.h"
 
 #include <QHeaderView>
@@ -11,12 +11,12 @@ SchemaParamsTable::SchemaParamsTable(Schema *schema, QWidget *parent) : QTableWi
 {
     _schema = schema;
 
-    auto iconSize = ElementImagesProvider::instance().iconSize();
+    QSize iconSize(24, 24);
 
-    setItemDelegate(new PixmapDelegate(iconSize));
     setContextMenuPolicy(Qt::CustomContextMenu);
-    setAlternatingRowColors(true);
     setSelectionBehavior(QAbstractItemView::SelectRows);
+    setItemDelegateForColumn(COL_IMAGE, new PixmapDelegate(iconSize, this));
+    setItemDelegateForColumn(COL_ALIAS, new RichTextItemDelegate(this));
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     horizontalHeader()->setSectionResizeMode(COL_IMAGE, QHeaderView::Fixed);
     horizontalHeader()->setMinimumSectionSize(iconSize.width()+4);
@@ -92,7 +92,7 @@ void SchemaParamsTable::createRow(int row)
 
     it = new QTableWidgetItem();
     Z::Gui::setSymbolFont(it);
-    it->setTextAlignment(Qt::AlignCenter);
+    Z::Gui::setFontStyle(it, false); // make it bold in html content
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_ALIAS, it);
 
@@ -109,7 +109,16 @@ void SchemaParamsTable::createRow(int row)
 
 void SchemaParamsTable::populateRow(Z::Parameter *param, int row)
 {
-    item(row, COL_ALIAS)->setText(param->alias());
+    QString formulaDescr;
+    auto formula = schema()->formulas()->get(param);
+    if (formula && !formula->deps().isEmpty())
+    {
+        QStringList params;
+        for (auto dep : formula->deps())
+            params << dep->alias();
+        formulaDescr = QString(" <i>= f(%1)</i>").arg(params.join(", "));
+    }
+    item(row, COL_ALIAS)->setText(QString("<center><b>%1</b>%2</center>").arg(param->alias(), formulaDescr));
 
     auto it = item(row, COL_VALUE);
     auto f = it->font();

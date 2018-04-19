@@ -140,7 +140,8 @@ HEADERS += \
     src/io/ISchemaWindowStorable.h \
     src/widgets/ParamEditorEx.h \
     src/widgets/FormulaEditor.h \
-    src/widgets/ParamsListWidget.h
+    src/widgets/ParamsListWidget.h \
+    src/widgets/RichTextItemDelegate.h
 
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -232,4 +233,5 @@ SOURCES += \
     src/CustomPrefs.cpp \
     src/widgets/ParamEditorEx.cpp \
     src/widgets/FormulaEditor.cpp \
-    src/widgets/ParamsListWidget.cpp
+    src/widgets/ParamsListWidget.cpp \
+    src/widgets/RichTextItemDelegate.cpp
