@@ -2,7 +2,7 @@
 
 #include "Appearance.h"
 #include "ElementImagesProvider.h"
-#include "PixmapItemDelegate.h"
+#include "RichTextItemDelegate.h"
 
 #include <QDebug>
 #include <QHeaderView>
@@ -15,10 +15,9 @@ SchemaElemsTable::SchemaElemsTable(Schema *schema, QWidget *parent) : QTableWidg
 
     auto iconSize = ElementImagesProvider::instance().iconSize();
 
-    setItemDelegate(new PixmapDelegate(iconSize));
     setContextMenuPolicy(Qt::CustomContextMenu);
-    setAlternatingRowColors(true);
     setSelectionBehavior(QAbstractItemView::SelectRows);
+    setItemDelegateForColumn(COL_PARAMS, new RichTextItemDelegate(this));
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     horizontalHeader()->setSectionResizeMode(COL_IMAGE, QHeaderView::Fixed);
     horizontalHeader()->setMinimumSectionSize(iconSize.width()+4);
@@ -103,7 +102,7 @@ void SchemaElemsTable::populate()
 void SchemaElemsTable::createRow(Element *elem, int row)
 {
     QTableWidgetItem *it = new QTableWidgetItem();
-    it->setData(0, QPixmap(ElementImagesProvider::instance().iconPath(elem->type())));
+    it->setData(Qt::DecorationRole, QPixmap(ElementImagesProvider::instance().iconPath(elem->type())));
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_IMAGE, it);
 
@@ -114,7 +113,6 @@ void SchemaElemsTable::createRow(Element *elem, int row)
     setItem(row, COL_LABEL, it);
 
     it = new QTableWidgetItem();
-    Z::Gui::setValueFont(it);
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_PARAMS, it);
 
@@ -125,8 +123,35 @@ void SchemaElemsTable::createRow(Element *elem, int row)
 
 void SchemaElemsTable::populateRow(Element *elem, int row)
 {
+    auto tableItem = item(row, COL_PARAMS);
+    QStringList paramsInfo;
+    for (Z::Parameter *param : elem->params())
+    {
+        QFont font = tableItem->font();
+        Z::Gui::adjustSymbolFont(font);
+        QString nameStyle = Z::Gui::fontToHtmlStyles(font);
+
+        font = tableItem->font();
+        Z::Gui::adjustValueFont(font);
+        QString valueStyle = Z::Gui::fontToHtmlStyles(font);
+        QString valueStr;
+        auto link = schema()->paramLinks()->byTarget(param);
+        if (link)
+            valueStr = QString(QStringLiteral("<span style='%1; color:%2'>%3</span> = <span style='%4'><i>%5</i></span>"))
+                        .arg(nameStyle,
+                             Z::Gui::globalParamColorHtml(),
+                             link->source()->displayLabel(),
+                             valueStyle,
+                             param->value().displayStr());
+        else
+            valueStr = QString(QStringLiteral("<span style='%1'>%2</span>"))
+                        .arg(valueStyle, param->value().displayStr());
+        paramsInfo << QString(QStringLiteral("<span style='%1'>%2</span> = %3"))
+                        .arg(nameStyle, param->displayLabel(), valueStr);
+    }
+    tableItem->setText(paramsInfo.join(", "));
+
     item(row, COL_LABEL)->setText(elem->label());
-    item(row, COL_PARAMS)->setText(elem->params().str());
     item(row, COL_TITLE)->setText(elem->title());
     const QBrush& color = elem->disabled()? palette().shadow() : palette().text();
     item(row, COL_LABEL)->setForeground(color);

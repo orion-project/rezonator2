@@ -86,7 +86,7 @@ protected:
             listener->parameterChanged(this);
     }
 
-private:
+protected:
     QString _alias, _label, _name, _description, _category;
     bool _visible = true;
     QVector<ParameterListener*> _listeners;
@@ -165,7 +165,7 @@ protected:
                     bool visible) :
         ParameterBase(alias, label, name, description, category, visible) {}
 
-private:
+protected:
     Value _value;
     ValueVerifierBase<Value> *_verifier = nullptr;
     ParamValueDriver _valueDriver = ParamValueDriver::None;
@@ -212,10 +212,22 @@ public:
     /// Measurement units of parameter.
     Dim dim() const { return _dim; }
 
-    /// Returns string representation of parameter.
+    /// Returns simple string representation of parameter.
     QString str() const override
     {
-        return label() % " = " % value().str();
+        return _alias % " = " % _value.str();
+    }
+
+    /// Returns parameter label if presented or alias otherwise.
+    QString displayLabel() const
+    {
+        return _label.isEmpty() ? _alias : _label;
+    }
+
+    /// Returns string representation of parameter suitable for displaying to user.
+    QString displayStr() const
+    {
+        return displayLabel() % " = " % _value.displayStr();
     }
 
 private:

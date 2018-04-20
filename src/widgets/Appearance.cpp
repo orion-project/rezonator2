@@ -20,14 +20,17 @@ void adjustValueFont(QFont& f)
 void adjustSymbolFont(QFont& f)
 {
     f.setBold(true);
-#ifdef Q_OS_MAC
+#if defined(Q_OS_WIN)
+    f.setFamily("Times New Roman");
+#elif defined(Q_OS_MAC)
     // Font looks too small compared to those on Ubuntu (Unity, xfce) or Windows.
     // At least on Macbook Air, can't check other devices. Make it a bit bigger.
     f.setPointSize(16);
+    f.setFamily("Times New Roman");
 #else
     f.setPointSize(13);
+    f.setFamily("serif");
 #endif
-    f.setFamily("Times New Roman");
 }
 
 void adjustCodeEditorFont(QFont &f)
@@ -50,6 +53,20 @@ QLabel* symbolLabel(const QString& text)
     auto label = new QLabel(text);
     setSymbolFont(label);
     return label;
+}
+
+QString fontToHtmlStyles(const QFont& font)
+{
+    QStringList styles;
+    if (font.bold())
+        styles << QStringLiteral("bold");
+    else if (font.italic())
+        styles << QStringLiteral("italic");
+    else
+        styles << QStringLiteral("normal");
+    styles << QString::number(font.pointSize()) % QStringLiteral("pt");
+    styles << font.family();
+    return QStringLiteral("font:") + styles.join(' ');
 }
 
 } // namespace Gui

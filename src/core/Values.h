@@ -18,6 +18,12 @@ public:
 
     QString str() const;
 
+    /// Returns string representation suitable for displaying to user.
+    /// It should not be such as `0.776242642387489237489 mm`
+    /// but more like to `0.776 mm` depending on application preferences.
+    /// It uses @a Z::format() method to prepare value.
+    QString displayStr() const;
+
     double toSi() const { return _unit->toSi(_value); }
 
     void operator = (const Value& v) { _value = v._value, _unit = v._unit; }

@@ -12,10 +12,19 @@ namespace Z {
 QString Value::str() const
 {
     if (_unit == Z::Units::deg())
-        return Z::str(_value) % _unit->name();
+        return Z::str(_value) % _unit->alias();
     if (_unit == Z::Units::rad())
         return Z::str(_value);
-    return Z::str(_value) % ' ' % _unit->name();
+    return Z::str(_value) % ' ' % _unit->alias();
+}
+
+QString Value::displayStr() const
+{
+    if (_unit == Z::Units::deg())
+        return Z::format(_value) % _unit->name();
+    if (_unit == Z::Units::rad())
+        return Z::format(_value);
+    return Z::format(_value) % ' ' % _unit->name();
 }
 
 QString Value::toStoredStr() const

@@ -2,7 +2,6 @@
 
 #include "Appearance.h"
 #include "RichTextItemDelegate.h"
-#include "PixmapItemDelegate.h"
 
 #include <QHeaderView>
 #include <QMenu>
@@ -11,7 +10,6 @@ SchemaParamsTable::SchemaParamsTable(Schema *schema, QWidget *parent) : QTableWi
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionBehavior(QAbstractItemView::SelectRows);
-    setItemDelegateForColumn(COL_IMAGE, new PixmapItemDelegate(this));
     setItemDelegateForColumn(COL_ALIAS, new RichTextItemDelegate(this));
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     horizontalHeader()->setSectionResizeMode(COL_IMAGE, QHeaderView::Fixed);
@@ -113,10 +111,11 @@ void SchemaParamsTable::populateRow(Z::Parameter *param, int row)
             params << dep->alias();
         formulaDescr = QString(" <i>= f(%1)</i>").arg(params.join(", "));
     }
-    item(row, COL_ALIAS)->setText(QString("<center><b>%1</b>%2</center>").arg(param->alias(), formulaDescr));
+    item(row, COL_ALIAS)->setText(QString("<center><b><span style='color:%1'>%2</span></b>%3</center>")
+                                  .arg(Z::Gui::globalParamColorHtml(), param->alias(), formulaDescr));
 
     // Parameter icon
-    auto iconPath = param->valueDriver() == Z::ParamValueDriver::Formula
+    auto iconPath = (param->valueDriver() == Z::ParamValueDriver::Formula)
         ? ":/toolbar/param_formula" : ":/toolbar/parameter";
     item(row, COL_IMAGE)->setData(Qt::DecorationRole, QIcon(iconPath).pixmap(_iconSize, _iconSize));
 
@@ -125,7 +124,7 @@ void SchemaParamsTable::populateRow(Z::Parameter *param, int row)
     auto f = it->font();
     f.setItalic(param->valueDriver() == Z::ParamValueDriver::Formula);
     it->setFont(f);
-    it->setText(param->value().str());
+    it->setText(param->value().displayStr());
 
     // Parameter annotation
     item(row, COL_ANNOTATION)->setText(param->description());

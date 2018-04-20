@@ -129,7 +129,6 @@ HEADERS += \
     src/funcs_window/StabilityMapWindow.h \
     src/core/CommonTypes.h \
     src/SchemaParamsWindow.h \
-    src/widgets/PixmapItemDelegate.h \
     src/widgets/SchemaParamsTable.h \
     src/widgets/SchemaElemsTable.h \
     src/core/Formula.h \

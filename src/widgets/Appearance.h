@@ -2,9 +2,9 @@
 #define APPEARANCE_H
 
 #include <QFont>
+#include <QColor>
 
 QT_BEGIN_NAMESPACE
-class QFont;
 class QLabel;
 class QWidget;
 QT_END_NAMESPACE
@@ -52,6 +52,11 @@ QLabel* symbolLabel(const QString& text);
 
 /// Preferred fixed width of unit selector combo boxes
 inline int unitsSelectorWidth() { return 60; }
+
+QString fontToHtmlStyles(const QFont& font);
+
+inline QString globalParamColorHtml() { return QStringLiteral("#000080"); }
+inline QColor globalParamColor() { return QColor(globalParamColorHtml()); }
 
 } // namespace Gui
 } // namespace Z
