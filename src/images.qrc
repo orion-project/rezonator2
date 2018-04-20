@@ -41,6 +41,8 @@
         <file alias="param_add">../img/toolbar/parameter_add.svg</file>
         <file alias="param_delete">../img/toolbar/parameter_delete.svg</file>
         <file alias="param_set">../img/toolbar/parameter_set.svg</file>
+        <file alias="param_annotate">../img/toolbar/parameter_label.svg</file>
+        <file alias="param_formula">../img/toolbar/parameter_gear.svg</file>
         <file alias="schema_summary">../img/toolbar/schema_summary.svg</file>
         <file alias="schema_prop">../img/toolbar/schema_prop.svg</file>
         <file alias="schema_pump">../img/toolbar/schema_pump.svg</file>

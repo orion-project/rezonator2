@@ -7,20 +7,16 @@
 #include <QHeaderView>
 #include <QMenu>
 
-SchemaParamsTable::SchemaParamsTable(Schema *schema, QWidget *parent) : QTableWidget(0, COL_COUNT, parent)
+SchemaParamsTable::SchemaParamsTable(Schema *schema, QWidget *parent) : QTableWidget(0, COL_COUNT, parent), _schema(schema)
 {
-    _schema = schema;
-
-    QSize iconSize(24, 24);
-
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionBehavior(QAbstractItemView::SelectRows);
-    setItemDelegateForColumn(COL_IMAGE, new PixmapDelegate(iconSize, this));
+    setItemDelegateForColumn(COL_IMAGE, new PixmapItemDelegate(this));
     setItemDelegateForColumn(COL_ALIAS, new RichTextItemDelegate(this));
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     horizontalHeader()->setSectionResizeMode(COL_IMAGE, QHeaderView::Fixed);
-    horizontalHeader()->setMinimumSectionSize(iconSize.width()+4);
-    horizontalHeader()->resizeSection(COL_IMAGE, iconSize.width()+4);
+    horizontalHeader()->setMinimumSectionSize(_iconSize+4);
+    horizontalHeader()->resizeSection(COL_IMAGE, _iconSize+4);
     horizontalHeader()->setSectionResizeMode(COL_ALIAS, QHeaderView::ResizeToContents);
     horizontalHeader()->setSectionResizeMode(COL_VALUE, QHeaderView::ResizeToContents);
     horizontalHeader()->setSectionResizeMode(COL_ANNOTATION, QHeaderView::Stretch);
@@ -85,8 +81,6 @@ void SchemaParamsTable::populate()
 void SchemaParamsTable::createRow(int row)
 {
     QTableWidgetItem *it = new QTableWidgetItem();
-    // TODO set different icon for formula-driven parameters
-    it->setData(0, QIcon(":/toolbar/parameter").pixmap(24, 24));
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_IMAGE, it);
 
@@ -109,6 +103,7 @@ void SchemaParamsTable::createRow(int row)
 
 void SchemaParamsTable::populateRow(Z::Parameter *param, int row)
 {
+    // Parameter alias and formula
     QString formulaDescr;
     auto formula = schema()->formulas()->get(param);
     if (formula && !formula->deps().isEmpty())
@@ -120,12 +115,19 @@ void SchemaParamsTable::populateRow(Z::Parameter *param, int row)
     }
     item(row, COL_ALIAS)->setText(QString("<center><b>%1</b>%2</center>").arg(param->alias(), formulaDescr));
 
+    // Parameter icon
+    auto iconPath = param->valueDriver() == Z::ParamValueDriver::Formula
+        ? ":/toolbar/param_formula" : ":/toolbar/parameter";
+    item(row, COL_IMAGE)->setData(Qt::DecorationRole, QIcon(iconPath).pixmap(_iconSize, _iconSize));
+
+    // Parameter value
     auto it = item(row, COL_VALUE);
     auto f = it->font();
     f.setItalic(param->valueDriver() == Z::ParamValueDriver::Formula);
     it->setFont(f);
     it->setText(param->value().str());
 
+    // Parameter annotation
     item(row, COL_ANNOTATION)->setText(param->description());
 }
 

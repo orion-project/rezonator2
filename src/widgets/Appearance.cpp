@@ -40,7 +40,7 @@ void adjustCodeEditorFont(QFont &f)
     f.setPointSize(13);
 #else
     f.setFamily("monospace");
-    f.setPointSize(10);
+    f.setPointSize(11);
 #endif
 }
 

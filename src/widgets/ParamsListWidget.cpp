@@ -38,8 +38,9 @@ void ParamsListWidget::addParamItem(Z::Parameter* param, bool select)
     QListWidgetItem *item;
     if (param == noneParam())
         item = new QListWidgetItem(QIcon(":/toolbar/param_delete"), param->alias());
+    else if (param->valueDriver() == Z::ParamValueDriver::Formula)
+        item = new QListWidgetItem(QIcon(":/toolbar/param_formula"), param->str());
     else
-        // TODO set different icon for formula-driven parameters
         item = new QListWidgetItem(QIcon(":/toolbar/parameter"), param->str());
     item->setData(Qt::UserRole, QVariant::fromValue<void*>(reinterpret_cast<void*>(param)));
     if (param->valueDriver() != Z::ParamValueDriver::None)

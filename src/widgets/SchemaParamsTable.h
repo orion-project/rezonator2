@@ -47,6 +47,8 @@ private:
     void createRow(int row);
     void populateRow(Z::Parameter *param, int row);
     int findRow(Z::ParameterBase *param);
+
+    const int _iconSize = 24;
 };
 
 #endif // SCHEMA_PARAMS_TABLE_H
