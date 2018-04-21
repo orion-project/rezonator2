@@ -29,12 +29,7 @@ chmod +x ./scripts/prepare_deps.sh
 ```
 
 #### Windows
-Ensure that MinGW `bin` directory is in your `PATH`. It is recommended to use the same MinGW version as Qt uses.
-```
-set PATH=C:\Qt\Tools\mingw530_32\bin;%PATH%
-scripts\prepare_deps.bat
-```
-**TODO:** Update preparation script
+Windows does not provide default command line tools like `wget`, `tar` or `make`, so you have to prepare dependencies using tools you have installed following [these instructions](docs/prepare-deps-win.md).
 
 
 ## Build

@@ -296,7 +296,7 @@ void ProjectWindow::updateStatusInfo()
     if (!schema()->modified()) status->clear(STATUS_MODIF);
     else status->setText(STATUS_MODIF, tr("Modified", "Status text"));
 
-    status->setText(STATUS_LAMBDA, schema()->wavelength().str());
+    status->setText(STATUS_LAMBDA, schema()->wavelength().displayStr());
 
     auto tripTypeInfo = TripTypes::info(schema()->tripType());
     status->setIcon(STATUS_TRIPTYPE, tripTypeInfo.iconPath());
