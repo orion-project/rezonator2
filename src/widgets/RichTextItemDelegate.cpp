@@ -55,6 +55,16 @@ QTextDocument* RichTextItemDelegate::document(const QStyleOptionViewItem &option
     QTextDocument *doc = new QTextDocument;
     doc->setDefaultFont(font);
     doc->setTextWidth(-1);
-    doc->setHtml(index.data(Qt::DisplayRole).toString());
+    QString text = index.data(Qt::DisplayRole).toString();
+    if ((QStyle::State_Selected & option.state) && (QStyle::State_Active & option.state))
+    {
+        // change any explicitly specified color to highlighted text color
+        auto color = option.palette.color(QPalette::HighlightedText);
+        auto colorStyle = QString(QStringLiteral("color:%1")).arg(color.name(QColor::HexRgb));
+        static QRegExp colorEntry("color:\\s*#\\d+"); // only #rrggbb color format is replaced
+        text.replace(colorEntry, colorStyle);
+        text = QString("<span style='%1'>%2</span>").arg(colorStyle, text);
+    }
+    doc->setHtml(text);
     return doc;
 }
