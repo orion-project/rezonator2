@@ -13,8 +13,8 @@ SchemaParamsTable::SchemaParamsTable(Schema *schema, QWidget *parent) : QTableWi
     setItemDelegateForColumn(COL_ALIAS, new RichTextItemDelegate(this));
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     horizontalHeader()->setSectionResizeMode(COL_IMAGE, QHeaderView::Fixed);
-    horizontalHeader()->setMinimumSectionSize(_iconSize+4);
-    horizontalHeader()->resizeSection(COL_IMAGE, _iconSize+4);
+    horizontalHeader()->setMinimumSectionSize(_iconSize+6);
+    horizontalHeader()->resizeSection(COL_IMAGE, _iconSize+6);
     horizontalHeader()->setSectionResizeMode(COL_ALIAS, QHeaderView::ResizeToContents);
     horizontalHeader()->setSectionResizeMode(COL_VALUE, QHeaderView::ResizeToContents);
     horizontalHeader()->setSectionResizeMode(COL_ANNOTATION, QHeaderView::Stretch);
@@ -86,6 +86,7 @@ void SchemaParamsTable::createRow(int row)
     Z::Gui::setSymbolFont(it);
     Z::Gui::setFontStyle(it, false); // make it bold in html content
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    it->setTextAlignment(Qt::AlignHCenter);
     setItem(row, COL_ALIAS, it);
 
     it = new QTableWidgetItem();
@@ -111,23 +112,34 @@ void SchemaParamsTable::populateRow(Z::Parameter *param, int row)
             params << dep->alias();
         formulaDescr = QString(" <i>= f(%1)</i>").arg(params.join(", "));
     }
-    item(row, COL_ALIAS)->setText(QString("<center><b><span style='color:%1'>%2</span></b>%3</center>")
+    item(row, COL_ALIAS)->setText(QStringLiteral("<b><span style='color:%1'>%2</span></b>%3")
                                   .arg(Z::Gui::globalParamColorHtml(), param->alias(), formulaDescr));
 
     // Parameter icon
-    auto iconPath = (param->valueDriver() == Z::ParamValueDriver::Formula)
-        ? ":/toolbar/param_formula" : ":/toolbar/parameter";
-    item(row, COL_IMAGE)->setData(Qt::DecorationRole, QIcon(iconPath).pixmap(_iconSize, _iconSize));
+    auto it = item(row, COL_IMAGE);
+    QString iconPath, toolTip;
+    if (param->valueDriver() == Z::ParamValueDriver::Formula)
+    {
+        iconPath = ":/toolbar/param_formula";
+        toolTip = tr("Formula driven parameter");
+    }
+    else
+    {
+        iconPath = ":/toolbar/parameter";
+        toolTip = tr("Simple parameter");
+    }
+    it->setData(Qt::DecorationRole, QIcon(iconPath).pixmap(_iconSize, _iconSize));
+    it->setToolTip(toolTip);
 
     // Parameter value
-    auto it = item(row, COL_VALUE);
+    it = item(row, COL_VALUE);
     auto f = it->font();
     f.setItalic(param->valueDriver() == Z::ParamValueDriver::Formula);
     it->setFont(f);
-    it->setText(param->value().displayStr());
+    it->setText(" " % param->value().displayStr() % " ");
 
     // Parameter annotation
-    item(row, COL_ANNOTATION)->setText(param->description());
+    item(row, COL_ANNOTATION)->setText("  " % param->description());
 }
 
 void SchemaParamsTable::schemaLoaded(Schema*)

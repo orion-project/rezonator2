@@ -23,8 +23,24 @@ void RichTextItemDelegate::drawDisplay(QPainter *painter, const QStyleOptionView
     QTextDocument *doc = document(option, _paintingIndex);
 
     painter->save();
-    painter->translate(rect.left(), rect.top());
-    doc->drawContents(painter, QRect(0, 0, rect.width(), rect.height()));
+    QRectF textClipRect;
+    qreal textOffsetX;
+    if (Qt::AlignHCenter & option.displayAlignment)
+    {
+        QSizeF docSize = doc->size();
+        textOffsetX = (rect.width() - docSize.width())/2;
+        textClipRect.setRect(0, 0, docSize.width(), rect.height());
+    }
+    else // we don't use another alignments, extend when needed
+    {
+        textOffsetX = 0;
+        textClipRect.setRect(0, 0, rect.width(), rect.height());
+    }
+    // rect.top()+1 is workaround for an issue when rich text is rendered slightly upper
+    // then text in neighbour cell having the same font but not using rich-text delegate.
+    // For example look at elemnets table, columns Label (simple) and Parameters (rich-text).
+    painter->translate(rect.left() + textOffsetX,  rect.top() + 1);
+    doc->drawContents(painter, textClipRect);
     painter->restore();
     delete doc;
 }
@@ -60,10 +76,10 @@ QTextDocument* RichTextItemDelegate::document(const QStyleOptionViewItem &option
     {
         // change any explicitly specified color to highlighted text color
         auto color = option.palette.color(QPalette::HighlightedText);
-        auto colorStyle = QString(QStringLiteral("color:%1")).arg(color.name(QColor::HexRgb));
-        static QRegExp colorEntry("color:\\s*#\\d+"); // only #rrggbb color format is replaced
+        auto colorStyle = QStringLiteral("color:%1").arg(color.name(QColor::HexRgb));
+        static QRegExp colorEntry("color: *#[a-fA-F\\d]+"); // only #rrggbb color format is replaced
         text.replace(colorEntry, colorStyle);
-        text = QString("<span style='%1'>%2</span>").arg(colorStyle, text);
+        text = QStringLiteral("<span style='%1'>%2</span>").arg(colorStyle, text);
     }
     doc->setHtml(text);
     return doc;

@@ -1,5 +1,7 @@
 #include "LayoutView.h"
 
+#include "Appearance.h"
+
 #include <QtMath>
 
 #define RadToDeg(angle) (angle * 180.0 / M_PI)
@@ -40,7 +42,13 @@ QPen getPlanePen()
 
 const QFont& getLabelFont()
 {
-    static QFont f = QFont("Times", 12);
+    static QFont f;
+    static bool fontInited = false;
+    if (!fontInited)
+    {
+        Z::Gui::adjustSymbolFont(f);
+        fontInited = true;
+    }
     return f;
 }
 

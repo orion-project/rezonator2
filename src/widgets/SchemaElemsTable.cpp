@@ -104,6 +104,7 @@ void SchemaElemsTable::createRow(Element *elem, int row)
     QTableWidgetItem *it = new QTableWidgetItem();
     it->setData(Qt::DecorationRole, QPixmap(ElementImagesProvider::instance().iconPath(elem->type())));
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    it->setToolTip(elem->typeName());
     setItem(row, COL_IMAGE, it);
 
     it = new QTableWidgetItem();
@@ -137,22 +138,22 @@ void SchemaElemsTable::populateRow(Element *elem, int row)
         QString valueStr;
         auto link = schema()->paramLinks()->byTarget(param);
         if (link)
-            valueStr = QString(QStringLiteral("<span style='%1; color:%2'>%3</span> = <span style='%4'><i>%5</i></span>"))
+            valueStr = QStringLiteral("<span style='%1; color:%2'>%3</span> = <span style='%4'><i>%5</i></span>")
                         .arg(nameStyle,
                              Z::Gui::globalParamColorHtml(),
                              link->source()->displayLabel(),
                              valueStyle,
                              param->value().displayStr());
         else
-            valueStr = QString(QStringLiteral("<span style='%1'>%2</span>"))
+            valueStr = QStringLiteral("<span style='%1'>%2</span>")
                         .arg(valueStyle, param->value().displayStr());
-        paramsInfo << QString(QStringLiteral("<span style='%1'>%2</span> = %3"))
+        paramsInfo << QStringLiteral("<span style='%1'>%2</span> = %3")
                         .arg(nameStyle, param->displayLabel(), valueStr);
     }
     tableItem->setText(paramsInfo.join(", "));
 
-    item(row, COL_LABEL)->setText(elem->label());
-    item(row, COL_TITLE)->setText(elem->title());
+    item(row, COL_LABEL)->setText(" " % elem->label() % " ");
+    item(row, COL_TITLE)->setText("  " % elem->title());
     const QBrush& color = elem->disabled()? palette().shadow() : palette().text();
     item(row, COL_LABEL)->setForeground(color);
     item(row, COL_PARAMS)->setForeground(color);
