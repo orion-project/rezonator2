@@ -170,14 +170,6 @@ void SchemaElemsTable::schemaLoaded(Schema*)
     populate();
 }
 
-void SchemaElemsTable::schemaParamsChanged(Schema*)
-{
-    // the only interesting event - units of measurements
-    // has been changed and element descriptors as well
-    populateParams();
-    adjustColumns();
-}
-
 void SchemaElemsTable::elementCreated(Schema*, Element* elem)
 {
     populate();

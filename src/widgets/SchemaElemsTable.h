@@ -34,7 +34,6 @@ public:
     void elementCreated(Schema*, Element*) override;
     void elementChanged(Schema*, Element*) override;
     void elementDeleting(Schema*, Element*) override;
-    void schemaParamsChanged(Schema*) override;
 
 signals:
     void doubleClicked(Element*);

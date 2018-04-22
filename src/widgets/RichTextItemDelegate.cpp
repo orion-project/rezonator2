@@ -1,5 +1,6 @@
 #include "RichTextItemDelegate.h"
 
+#include <QDebug>
 #include <QPainter>
 #include <QTextDocument>
 
@@ -17,11 +18,9 @@ void RichTextItemDelegate::drawDisplay(QPainter *painter, const QStyleOptionView
 {
     Q_UNUSED(option);
     Q_UNUSED(text);
-
     Q_ASSERT(_paintingIndex.isValid());
 
     QTextDocument *doc = document(option, _paintingIndex);
-    doc->setTextWidth(rect.width());
 
     painter->save();
     painter->translate(rect.left(), rect.top());
@@ -36,16 +35,15 @@ QSize RichTextItemDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
     if (value.isValid())
         return qvariant_cast<QSize>(value);
 
-    QTextDocument *displayDocument = document(option, index);
-    displayDocument->adjustSize();
+    QTextDocument *doc = document(option, index);
 
     QRect decorationRect = rect(option, index, Qt::DecorationRole);
-    QRect displayRect = QRect(0, 0, displayDocument->size().width(), displayDocument->size().height());
+    QRect displayRect = QRect(0, 0, doc->size().width(), doc->size().height());
     QRect checkRect = rect(option, index, Qt::CheckStateRole);
 
     doLayout(option, &checkRect, &decorationRect, &displayRect, true);
 
-    delete displayDocument;
+    delete doc;
 
     return (decorationRect|displayRect|checkRect).size();
 }
@@ -56,7 +54,7 @@ QTextDocument* RichTextItemDelegate::document(const QStyleOptionViewItem &option
 
     QTextDocument *doc = new QTextDocument;
     doc->setDefaultFont(font);
+    doc->setTextWidth(-1);
     doc->setHtml(index.data(Qt::DisplayRole).toString());
     return doc;
 }
-
