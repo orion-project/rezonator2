@@ -21,7 +21,12 @@ include($$ORION/orion_svg.pri)
 LUA = $$_PRO_FILE_PWD_/libs/lua-5.3.4
 INCLUDEPATH += $$LUA/src
 LIBS += -L$$LUA/src -llua
+win32 {
+}
+else {
+# `dl` is required for Lua
 LIBS += -ldl
+}
 
 #------------------------------------------------------------
 # Version information

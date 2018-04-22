@@ -1,5 +1,6 @@
 #include "ParamsListWidget.h"
 
+#include "Appearance.h"
 #include "helpers/OriDialogs.h"
 
 Z::Parameter *ParamsListWidget::noneParam()
@@ -26,9 +27,15 @@ Z::Parameter* ParamsListWidget::selectParamDlg(const Z::Parameters *params, cons
     return nullptr;
 }
 
-ParamsListWidget::ParamsListWidget(const Z::Parameters *params, QWidget *parent)
-    : QListWidget(parent), _params(params)
+ParamsListWidget::ParamsListWidget(const Z::Parameters *params, QWidget *parent) : QListWidget(parent), _params(params)
 {
+    Z::Gui::setValueFont(this);
+
+#ifdef Q_OS_WIN
+    // Default icon size looks OK on Ubuntu and MacOS but it is too small on Windows
+    setIconSize(QSize(24, 24));
+#endif
+
     for (auto param : *_params)
         addParamItem(param);
 }
@@ -39,9 +46,9 @@ void ParamsListWidget::addParamItem(Z::Parameter* param, bool select)
     if (param == noneParam())
         item = new QListWidgetItem(QIcon(":/toolbar/param_delete"), param->alias());
     else if (param->valueDriver() == Z::ParamValueDriver::Formula)
-        item = new QListWidgetItem(QIcon(":/toolbar/param_formula"), param->str());
+        item = new QListWidgetItem(QIcon(":/toolbar/param_formula"), param->displayStr());
     else
-        item = new QListWidgetItem(QIcon(":/toolbar/parameter"), param->str());
+        item = new QListWidgetItem(QIcon(":/toolbar/parameter"), param->displayStr());
     item->setData(Qt::UserRole, QVariant::fromValue<void*>(reinterpret_cast<void*>(param)));
     if (param->valueDriver() != Z::ParamValueDriver::None)
     {
