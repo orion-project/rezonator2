@@ -36,10 +36,14 @@ void RichTextItemDelegate::drawDisplay(QPainter *painter, const QStyleOptionView
         textOffsetX = 0;
         textClipRect.setRect(0, 0, rect.width(), rect.height());
     }
-    // rect.top()+1 is workaround for an issue when rich text is rendered slightly upper
+    qreal textOffsetY = 0;
+#if defined(Q_OS_WIN) or defined(Q_OS_MAC)
+    // Workaround for an issue when rich text is rendered slightly upper
     // then text in neighbour cell having the same font but not using rich-text delegate.
     // For example look at elemnets table, columns Label (simple) and Parameters (rich-text).
-    painter->translate(rect.left() + textOffsetX,  rect.top() + 1);
+    textOffsetY = 1;
+#endif
+    painter->translate(rect.left() + textOffsetX,  rect.top() + textOffsetY);
     doc->drawContents(painter, textClipRect);
     painter->restore();
     delete doc;
