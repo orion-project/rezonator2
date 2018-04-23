@@ -109,6 +109,7 @@ template <class TWindow> void CalcManager::showPlotFunc()
     if (wnd->configure(_parent))
     {
         WindowsManager::instance().show(wnd);
+        wnd->requestAutolimits();
         wnd->update();
     }
 }

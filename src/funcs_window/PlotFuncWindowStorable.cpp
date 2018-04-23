@@ -1,6 +1,7 @@
 #include "PlotFuncWindowStorable.h"
 
 #include "../widgets/CursorPanel.h"
+#include "../widgets/Plot.h"
 #include "../io/z_io_utils.h"
 
 #include <QAction>
@@ -56,6 +57,18 @@ QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root)
     _cursorPanel->setEnabled(root["cursor_enabled"].toBool(true));
     _cursorPanel->setMode(Z::IO::Utils::enumFromStr(root["cursor_mode"].toString(), CursorPanel::Both));
 
+    auto minX = root["x_min"].toDouble(Double::nan());
+    auto maxX = root["x_max"].toDouble(Double::nan());
+    auto minY = root["y_min"].toDouble(Double::nan());
+    auto maxY = root["y_max"].toDouble(Double::nan());
+    if (std::isnan(minX) || std::isnan(maxX) || std::isnan(minY) || std::isnan(maxY))
+        requestAutolimits();
+    else
+    {
+        _plot->xAxis->setRange(minX, maxX);
+        _plot->yAxis->setRange(minY, maxY);
+    }
+
     return QString();
 }
 
@@ -68,6 +81,13 @@ QString PlotFuncWindowStorable::writeWindowGeneral(QJsonObject& root) const
 
     root["cursor_enabled"] = _cursorPanel->enabled();
     root["cursor_mode"] = Z::IO::Utils::enumToStr(_cursorPanel->mode());
+
+    auto rangeX = _plot->xAxis->range();
+    auto rangeY = _plot->yAxis->range();
+    root["x_min"] = rangeX.lower;
+    root["x_max"] = rangeX.upper;
+    root["y_min"] = rangeY.lower;
+    root["y_max"] = rangeY.upper;
 
     return QString();
 }

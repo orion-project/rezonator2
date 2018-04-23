@@ -332,8 +332,8 @@ void PlotFuncWindow::update()
         return;
     }
     calculate();
-    //TODO:NEXT-VER if (_isFirstTime || _autolimitsRequest)
-        autolimits();
+    if (_autolimitsRequest)
+       autolimits();
     updateAxesTitles();
     updateNotables();
     if (_isFirstTime)
@@ -408,7 +408,6 @@ void PlotFuncWindow::showRoundTrip()
 
 void PlotFuncWindow::schemaChanged(Schema*)
 {
-    qDebug() << "PlotFuncWindow::schemaChanged";
     update();
 }
 
