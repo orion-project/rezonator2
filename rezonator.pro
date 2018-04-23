@@ -145,7 +145,8 @@ HEADERS += \
     src/widgets/ParamEditorEx.h \
     src/widgets/FormulaEditor.h \
     src/widgets/ParamsListWidget.h \
-    src/widgets/RichTextItemDelegate.h
+    src/widgets/RichTextItemDelegate.h \
+    src/io/z_io_json.h
 
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -238,4 +239,5 @@ SOURCES += \
     src/widgets/ParamEditorEx.cpp \
     src/widgets/FormulaEditor.cpp \
     src/widgets/ParamsListWidget.cpp \
-    src/widgets/RichTextItemDelegate.cpp
+    src/widgets/RichTextItemDelegate.cpp \
+    src/io/z_io_json.cpp

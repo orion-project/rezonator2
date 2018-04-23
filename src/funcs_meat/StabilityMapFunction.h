@@ -15,11 +15,11 @@ public:
     void calculate() override;
     bool hasOptions() const override { return true; }
 
-    StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }
-    void setStabilityCalcMode(StabilityCalcMode mode) { _stabilityCalcMode = mode; }
+    Z::Enums::StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }
+    void setStabilityCalcMode(Z::Enums::StabilityCalcMode mode) { _stabilityCalcMode = mode; }
 
 private:
-    StabilityCalcMode _stabilityCalcMode = StabilityCalcMode::Normal;
+    Z::Enums::StabilityCalcMode _stabilityCalcMode = Z::Enums::StabilityCalcMode::Normal;
 };
 
 #endif // STABILITY_MAP_FUNCTION_H

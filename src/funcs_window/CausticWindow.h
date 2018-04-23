@@ -11,14 +11,14 @@ class CausticWindow : public PlotFuncWindowStorable
 public:
     explicit CausticWindow(Schema*);
 
-    bool configure(QWidget* parent) override;
-
     void schemaParamsChanged(Schema*) override;
 
     CausticFunction* function() const { return (CausticFunction*)_function; }
 
 protected:
+    // Implementation of PlotFuncWindow
     QWidget* makeOptionsPanel() override;
+    bool configureInternal(QWidget* parent) override;
 };
 
 #endif // CAUSTIC_WINDOW_H

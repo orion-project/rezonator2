@@ -93,7 +93,6 @@ void ProjectOperations::openSchemaFile(const QString& fileName)
         return;
     }
 
-    Ori::WaitCursor wc;
     Z::Report report;
 
     schema()->events().raise(SchemaEvents::Loading);
@@ -101,12 +100,14 @@ void ProjectOperations::openSchemaFile(const QString& fileName)
 
     if (Z::IO::Utils::isOldSchema(fileName))
     {
+        Ori::WaitCursor wc;
         SchemaReaderIni reader(schema());
         reader.readFromFile(fileName);
         report = reader.report();
     }
     else
     {
+        Ori::WaitCursor wc;
         SchemaReaderJson reader(schema());
         reader.readFromFile(fileName);
         report = reader.report();
@@ -157,11 +158,12 @@ bool ProjectOperations::saveSchemaFile(const QString& fileName)
 {
     Z_REPORT("Saving" << fileName)
 
-    Ori::WaitCursor wc;
 
     SchemaWriterJson writer(schema());
-    writer.writeToFile(fileName);
-
+    {
+        Ori::WaitCursor wc;
+        writer.writeToFile(fileName);
+    }
     if (!writer.report().IsEmpty())
         writeProtocol(writer.report(), tr("There are messages while saving project."));
 

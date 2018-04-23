@@ -52,7 +52,7 @@ CausticWindow::CausticWindow(Schema *schema) : PlotFuncWindowStorable(new Causti
     setTitleAndIcon(function()->name(), ":/toolbar/func_caustic");
 }
 
-bool CausticWindow::configure(QWidget* parent)
+bool CausticWindow::configureInternal(QWidget* parent)
 {
     return Z::Dlgs::editVariable_ElementRange(parent, schema(), function()->arg(), tr("Range"));
 }

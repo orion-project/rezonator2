@@ -1,4 +1,7 @@
 #include "StabilityMapWindow.h"
+
+#include "../io/z_io_utils.h"
+#include "../io/z_io_json.h"
 #include "../VariableDialog.h"
 #include "../widgets/Plot.h"
 #include "helpers/OriLayouts.h"
@@ -13,8 +16,8 @@ public:
         // TODO: check if these strings are translated
         Ori::Layouts::LayoutV({
             makeSectionHeader(tr("Stability parameter")),
-            makeModeButton(":/toolbar/formula_stab_normal", tr("Normal"), int(StabilityCalcMode::Normal)),
-            makeModeButton(":/toolbar/formula_stab_squared", tr("Squared"), int(StabilityCalcMode::Squared)),
+            makeModeButton(":/toolbar/formula_stab_normal", tr("Normal"), int(Z::Enums::StabilityCalcMode::Normal)),
+            makeModeButton(":/toolbar/formula_stab_squared", tr("Squared"), int(Z::Enums::StabilityCalcMode::Squared)),
             Ori::Layouts::Stretch()
         }).setSpacing(0).setMargin(0).useFor(this);
 
@@ -26,12 +29,12 @@ public:
 
     int currentFunctionMode() const override
     {
-        return int(_window->function()->stabilityCalcMode());
+        return static_cast<int>(_window->function()->stabilityCalcMode());
     }
 
     void functionModeChanged(int mode) override
     {
-        _window->function()->setStabilityCalcMode(StabilityCalcMode(mode));
+        _window->function()->setStabilityCalcMode(static_cast<Z::Enums::StabilityCalcMode>(mode));
         _window->update();
     }
 
@@ -63,7 +66,7 @@ void StabilityMapWindow::createControl()
     toolbar()->addAction(actnStabilityAutolimits);
 }
 
-bool StabilityMapWindow::configure(QWidget* parent)
+bool StabilityMapWindow::configureInternal(QWidget* parent)
 {
     // TODO: on MacOS variable dialog take parent's icon and this icon overrides application's icon on the dock
     // Parent could be safely omitted as qApp->activeWindow is used by default,
@@ -75,11 +78,11 @@ void StabilityMapWindow::autolimitsStability()
 {
     switch (function()->stabilityCalcMode())
     {
-    case StabilityCalcMode::Normal:
+    case Z::Enums::StabilityCalcMode::Normal:
         _plot->yAxis->setRange(-1, 1);
         break;
 
-    case StabilityCalcMode::Squared:
+    case Z::Enums::StabilityCalcMode::Squared:
         _plot->yAxis->setRange(0, 1);
         break;
     }
@@ -89,4 +92,21 @@ void StabilityMapWindow::autolimitsStability()
 QWidget* StabilityMapWindow::makeOptionsPanel()
 {
     return new StabilityMapOptionsPanel(this);
+}
+
+QString StabilityMapWindow::readFunction(const QJsonObject& root)
+{
+    function()->setStabilityCalcMode(Z::IO::Utils::enumFromStr(
+        root["stab_calc_mode"].toString(), Z::Enums::StabilityCalcMode::Normal));
+    auto res = Z::IO::Json::readVariable(root["arg"].toObject(), function()->arg(), schema());
+    if (!res.isEmpty())
+        return res;
+    return QString();
+}
+
+QString StabilityMapWindow::writeFunction(QJsonObject& root)
+{
+    root["stab_calc_mode"] = Z::IO::Utils::enumToStr(function()->stabilityCalcMode());
+    root["arg"] = Z::IO::Json::writeVariable(function()->arg(), schema());
+    return QString();
 }

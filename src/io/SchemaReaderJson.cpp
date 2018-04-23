@@ -1,12 +1,12 @@
 #include "SchemaReaderJson.h"
 
 #include "z_io_utils.h"
+#include "z_io_json.h"
 #include "ISchemaWindowStorable.h"
 #include "../core/Schema.h"
 #include "../core/ElementsCatalog.h"
 #include "../WindowsManager.h"
 
-#include <QApplication>
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -17,15 +17,12 @@ namespace Z {
 namespace IO {
 namespace Json {
 
-QString readParamValue(const QJsonObject& json, Z::Parameter* param)
+QString readParamValue(const QJsonObject& json, Parameter* param)
 {
-    auto value = json["value"].toDouble(param->value().value());
-    auto unitStr = json["unit"].toString();
-    auto unit = param->dim()->unitByAlias(unitStr);
-    if (!unit)
-        return qApp->translate("IO",
-            "Unit '%1' is unacceptable for parameter '%2'").arg(unitStr, param->alias());
-    param->setValue(Z::Value(value, unit));
+    auto res = readValue(json, param->dim());
+    if (!res.ok())
+        return QString("Unable to read value for parameter '%1': %2").arg(param->alias(), res.error());
+    param->setValue(res.value());
     return QString();
 }
 
@@ -93,8 +90,7 @@ void SchemaReaderJson::readFromFile(const QString& fileName)
 {
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        return _report.error(qApp->translate("IO",
-            "Unable to open file for reading: %1").arg(file.errorString()));
+        return _report.error(QString("Unable to open file for reading: %1").arg(file.errorString()));
     readFromUtf8(file.readAll());
     file.close();
 }
@@ -109,14 +105,13 @@ void SchemaReaderJson::readFromUtf8(const QByteArray& data)
     QJsonParseError error;
     QJsonDocument doc = QJsonDocument::fromJson(data, &error);
     if (doc.isNull())
-        return _report.error(qApp->translate("IO",
-            "Unable to parse file: %1").arg(error.errorString()));
+        return _report.error(QString("Unable to parse file: %1").arg(error.errorString()));
 
     QJsonObject root = doc.object();
 
     Ori::Version version(root["schema_version"].toString());
     if (version > Z::IO::Utils::currentVersion())
-        return _report.error(qApp->translate("IO",
+        return _report.error(QString(
             "File version %1 is not supported, max supported version: %2")
                 .arg(version.str(), Z::IO::Utils::currentVersion().str()));
 
@@ -142,7 +137,7 @@ void SchemaReaderJson::readGeneral(const QJsonObject& root)
     auto tripTypeStr = root["trip_type"].toString();
     auto tripType = TripTypes::find(tripTypeStr, &ok);
     if (!ok)
-        _report.warning(qApp->translate("IO",
+        _report.warning(QString(
             "Unknown schema trip type: '%1'. %2 is ised instead.")
                 .arg(tripTypeStr, TripTypes::info(tripType).alias()));
     _schema->setTripType(tripType);
@@ -179,7 +174,7 @@ void SchemaReaderJson::readCustomParam(const QJsonObject& root, const QString &a
     auto dimStr = root["dim"].toString();
     Z::Dim dim = Z::Dims::findByAlias(dimStr);
     if (!dim)
-        return _report.warning(qApp->translate("IO",
+        return _report.warning(QString(
             "Unknown dimension '%1' of custom parameter '%2'").arg(dimStr, alias));
 
     auto param = new Z::Parameter(
@@ -189,7 +184,7 @@ void SchemaReaderJson::readCustomParam(const QJsonObject& root, const QString &a
         alias, // name
         root["descr"].toString(),
         root["category"].toString(),
-        true // true
+        true // visible
     );
 
     readParamValue(root, param);
@@ -271,8 +266,7 @@ void SchemaReaderJson::readElement(const QJsonObject& root)
     auto elemType = root["type"].toString();
     auto elem = ElementsCatalog::instance().create(elemType);
     if (!elem)
-        return _report.warning(qApp->translate("IO",
-            "Unknown element type '%1', element skipped").arg(elemType));
+        return _report.warning(QString("Unknown element type '%1', element skipped").arg(elemType));
 
     _schema->insertElement(elem, -1, false);
 
@@ -308,20 +302,20 @@ void SchemaReaderJson::readParamLink(const QJsonObject& root)
     auto targetElemIndex = root["target_elem"].toInt();
     auto targetElem = _schema->element(targetElemIndex);
     if (!targetElem)
-        return _report.warning(qApp->translate("IO",
+        return _report.warning(QString(
             "Unable to load link: element with index %1 not found").arg(targetElemIndex));
 
     auto targetParamAlias = root["target_param"].toString();
     auto targetParam = targetElem->params().byAlias(targetParamAlias);
     if (!targetParam)
-        return _report.warning(qApp->translate("IO",
+        return _report.warning(QString(
             "Unable to load link: parameter '%1' not found in elemenet #%2")
                 .arg(targetParamAlias).arg(targetElem->displayLabel()));
 
     auto sourceParamAlias = root["source_param"].toString();
     auto sourceParam = _schema->customParams()->byAlias(sourceParamAlias);
     if (!sourceParam)
-        return _report.warning(qApp->translate("IO",
+        return _report.warning(QString(
             "Unable to load link: parameter '%1' not found in custom params").arg(sourceParamAlias));
 
     _schema->paramLinks()->append(new Z::ParamLink(sourceParam, targetParam));
@@ -339,7 +333,7 @@ void SchemaReaderJson::readFormula(const QJsonObject& root)
     auto targetAlias = root["target_param"].toString();
     auto targetParam = _schema->customParams()->byAlias(targetAlias);
     if (!targetParam)
-        return _report.warning(qApp->translate("IO",
+        return _report.warning(QString(
             "Unable to find target parameter '%1' for formula, formula skipped").arg(targetAlias));
 
     auto formula = new Z::Formula(targetParam);
@@ -353,7 +347,7 @@ void SchemaReaderJson::readFormula(const QJsonObject& root)
             auto depParam = globalParams.byAlias(depAlias);
             if (!depParam)
             {
-                _report.warning(qApp->translate("IO",
+                _report.warning(QString(
                     "Unable to find parameter '%1' required by formula driving parameter '%2'")
                         .arg(depAlias, targetAlias));
                 continue;
@@ -376,13 +370,13 @@ void SchemaReaderJson::readWindow(const QJsonObject& root)
     auto type = root["type"].toString();
     auto ctor = WindowsManager::getConstructor(type);
     if (!ctor)
-        return _report.warning(qApp->translate("IO",
+        return _report.warning(QString(
             "Unable to load window of unknown type '%1', skipped.").arg(type));
 
     SchemaWindow* window = ctor(_schema);
     ISchemaWindowStorable* storable = dynamic_cast<ISchemaWindowStorable*>(window);
     if (!storable)
-        return _report.warning(qApp->translate("IO",
+        return _report.warning(QString(
             "Window of type '%1' is stored in file but it is not known how to load it, skipped.").arg(type));
 
     QString res = storable->storableRead(root);
@@ -390,8 +384,7 @@ void SchemaReaderJson::readWindow(const QJsonObject& root)
         WindowsManager::instance().show(window);
     else
     {
-        _report.warning(qApp->translate("IO",
-            "Unable to load window of type '%1': %2").arg(type, res));
+        _report.warning(QString("Unable to load window of type '%1': %2").arg(type, res));
         delete window;
     }
 }

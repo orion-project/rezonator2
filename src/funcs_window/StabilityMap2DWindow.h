@@ -11,9 +11,11 @@ class StabilityMap2DWindow : public PlotFuncWindowStorable
 public:
     explicit StabilityMap2DWindow(Schema*);
 
-    bool configure(QWidget* parent) override;
-
     StabilityMap2DFunction* function() const { return (StabilityMap2DFunction*)_function; }
+
+protected:
+    // Implementation of PlotFuncWindow
+    bool configureInternal(QWidget* parent) override;
 };
 
 #endif // WINDOW_STABILITY_MAP_2D_H

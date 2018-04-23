@@ -1,6 +1,7 @@
 #include "SchemaWriterJson.h"
 
 #include "z_io_utils.h"
+#include "z_io_json.h"
 #include "ISchemaWindowStorable.h"
 #include "../core/Schema.h"
 #include "../WindowsManager.h"
@@ -16,12 +17,9 @@ namespace Z {
 namespace IO {
 namespace Json {
 
-QJsonObject writeParamValue(Z::Parameter* param)
+QJsonObject writeParamValue(Parameter* param)
 {
-    return QJsonObject({
-        { "value", param->value().value() },
-        { "unit", param->value().unit()->alias() }
-    });
+    return writeValue(param->value());
 }
 
 } // namespace Json

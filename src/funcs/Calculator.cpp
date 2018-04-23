@@ -177,10 +177,10 @@ double Calculator::calcStability(double half_of_A_plus_D) const
 {
     switch (_stabilityCalcMode)
     {
-    case StabilityCalcMode::Normal:
+    case Z::Enums::StabilityCalcMode::Normal:
         return half_of_A_plus_D;
 
-    case StabilityCalcMode::Squared:
+    case Z::Enums::StabilityCalcMode::Squared:
         return 1 - half_of_A_plus_D * half_of_A_plus_D;
     }
     return 0;

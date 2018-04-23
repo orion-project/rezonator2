@@ -16,8 +16,8 @@ public:
 
     Z::PointTS stability() const;
     Z::ValueTS<bool> isStable() const;
-    StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }
-    void setStabilityCalcMode(StabilityCalcMode mode) { _stabilityCalcMode = mode; }
+    Z::Enums::StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }
+    void setStabilityCalcMode(Z::Enums::StabilityCalcMode mode) { _stabilityCalcMode = mode; }
 
     inline Element* reference() const { return _reference; }
     inline Schema* owner() const { return _schema; }
@@ -49,7 +49,7 @@ protected:
      /// Reference element for round-trip calculation.
     Element* _reference;
 
-    StabilityCalcMode _stabilityCalcMode = StabilityCalcMode::Normal;
+    Z::Enums::StabilityCalcMode _stabilityCalcMode = Z::Enums::StabilityCalcMode::Normal;
 
 private:
     bool _splitRange = false;

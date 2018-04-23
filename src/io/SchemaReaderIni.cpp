@@ -150,16 +150,16 @@ void SchemaReaderIni::readFromFile(const QString &fileName)
 {
     // QSettings creates a new file if it does't exists, so we should check it first
     if (!QFile::exists(fileName))
-        return _report.error(qApp->translate("IO", "File not found: %1").arg(fileName));
+        return _report.error(QString("File not found: %1").arg(fileName));
     _file = new QSettings(fileName, QSettings::IniFormat);
 
     IniSection ini(_file, "PREFERENCES");
     if (!ini.opened())
-        return _report.error(qApp->translate("IO", "Invalid file: main section not found"));
+        return _report.error(QString("Invalid file: main section not found"));
 
     _version = Ori::Version(ini.getString("Version"));
     if (_version < OldSchema::minVersion() || _version > OldSchema::maxVersion())
-        return _report.error(qApp->translate("IO",
+        return _report.error(QString(
             "File version %1 is not supported, supported versions: %2 - %3")
                 .arg(_version.str(), OldSchema::minVersion().str(), OldSchema::maxVersion().str()));
 
@@ -188,7 +188,7 @@ void SchemaReaderIni::readLambda(IniSection& ini)
     if (ok && value > 0)
         _schema->wavelength().setValue(Z::Value(value, _lambdaUnit));
     else
-        _report.warning(qApp->translate("IO", "Invalid value for wavelength is stored in file."));
+        _report.warning(QString("Invalid value for wavelength is stored in file."));
 }
 
 void SchemaReaderIni::readUnits(IniSection& ini)
@@ -313,7 +313,7 @@ void SchemaReaderIni::readElement(const QString &section)
     IniSection ini(_file, section);
     if (!ini.opened())
     {
-        _report.warning(qApp->translate("IO",
+        _report.warning(QString(
             "Section [%1] not found, some elements may not be loaded").arg(section));
         return;
     }
@@ -340,7 +340,7 @@ void SchemaReaderIni::readElement(const QString &section)
         if (!ok)
         {
             // IOR does not stored in old schemas for empty ranges
-            _report.warning(qApp->translate("IO",
+            _report.warning(QString(
                 "Invalid value for parameter %1 is stored in file, default value is used").arg(param->alias()));
             continue;
         }
@@ -360,7 +360,7 @@ void SchemaReaderIni::readElement(const QString &section)
         if (!res.isEmpty())
         {
             // TODO:TEST make test to show this message when validation will be
-            _report.warning(qApp->translate("IO",
+            _report.warning(QString(
                 "Value %1 is unacceptable for parameter %2: %3").arg(value.str()).arg(param->alias()).arg(res));
             continue;
         }

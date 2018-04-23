@@ -234,7 +234,6 @@ Graph* PlotFuncWindow::selectedGraph() const
     return graphs.isEmpty()? nullptr: graphs.first();
 }
 
-
 void PlotFuncWindow::showT()
 {
     Z_NOTE("showT" << actnShowT->isChecked());
@@ -450,4 +449,12 @@ QWidget* PlotFuncWindow::optionsPanelRequired()
         qCritical() << "Function" << function()->alias() << "declared with "
             "hasOptions=true but its window does not provide options panel";
     return panel;
+}
+
+bool PlotFuncWindow::configure(QWidget* parent)
+{
+    bool ok = configureInternal(parent);
+    if (ok)
+        schema()->events().raise(SchemaEvents::Changed);
+    return ok;
 }

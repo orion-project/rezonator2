@@ -84,7 +84,7 @@ public:
     void requestAutolimits() { _autolimitsRequest = true; }
 
     /// Edits function parameters through dialog.
-    virtual bool configure(QWidget* parent) { Q_UNUSED(parent); return true; }
+    bool configure(QWidget* parent);
 
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return QList<QMenu*>() << menuPlot << menuLimits /* TODO:NEXT-VER << menuFormat*/; }
@@ -106,6 +106,8 @@ protected:
 
     /// Calculates function and plots its results.
     virtual void calculate();
+
+    virtual bool configureInternal(QWidget* parent) { Q_UNUSED(parent); return true; }
 
     bool _needRecalc = false, _frozen = false;
     QVector<Graph*> _graphsT, _graphsS;

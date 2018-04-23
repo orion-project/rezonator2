@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QVector>
+#include <QObject>
 
 enum class TripType
 {
@@ -38,12 +39,61 @@ private:
     static const TripTypeInfo& SP();
 };
 
-/// How to calculate stability parameter from round-trip matrix
-enum class StabilityCalcMode
+namespace Z {
+
+/**
+    Commonly used enums.
+*/
+class Enums
 {
-    Normal, ///< P = (A + B)/2
-    Squared ///< P = 1 - ((A + D)/2)^2
+    Q_GADGET
+
+public:
+    /**
+        How to calculate stability parameter from round-trip matrix.
+    */
+    enum StabilityCalcMode
+    {
+        Normal, ///< P = (A + B)/2
+        Squared ///< P = 1 - ((A + D)/2)^2
+    };
+    Q_ENUM(StabilityCalcMode)
+
+    Enums() = delete;
 };
 
+
+/**
+    Helper class holding a result value of some operation or an error message if operation is failed.
+*/
+template <typename TResult> class Result
+{
+public:
+    static Result success(TResult&& value)
+    {
+        Result r;
+        r._value = value;
+        return r;
+    }
+
+    static Result fail(const QString& error)
+    {
+        Result r;
+        r._error = error;
+        return r;
+    }
+
+    bool ok() const { return _error.isEmpty(); }
+    TResult value() const { return _value; }
+    QString error() const { return _error; }
+
+private:
+    Result() {}
+
+    TResult _value;
+    QString _error;
+};
+
+} // namespace Z
 
 #endif // Z_COMMON_TYPES_H

@@ -1,9 +1,12 @@
 #include "InfoFuncWindow.h"
+
 #include "../core/Schema.h"
 #include "../HelpSystem.h"
 #include "../funcs/InfoFunctions.h"
+#include "../widgets/Appearance.h"
 #include "../widgets/FrozenStateButton.h"
 #include "widgets/OriFlatToolBar.h"
+#include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 #include "helpers/OriTools.h"
 #include "helpers/OriDialogs.h"
@@ -31,12 +34,15 @@ InfoFuncWindow::InfoFuncWindow(InfoFunction *func, QWidget *parent) :
     _editor = new QTextBrowser;
     _editor->setReadOnly(true);
     _editor->setOpenLinks(false);
-    Ori::Gui::setFontSizePt(_editor, 10);
+    Z::Gui::setValueFont(_editor);
     connect(_editor, SIGNAL(anchorClicked(QUrl)), this, SLOT(linkClicked(QUrl)));
 
     createToolbar();
 
-    Ori::Gui::layoutV(this, 0, 0, {toolbar(), Ori::Gui::layoutV(3, 0, {_editor})});
+    Ori::Layouts::LayoutV({
+        toolbar(),
+        Ori::Layouts::LayoutV({_editor}).setMargin(3)
+    }).setMargin(0).setSpacing(0).useFor(this);
 
     resize(WINDOW_W, WINDOW_H);
     if (parent)
