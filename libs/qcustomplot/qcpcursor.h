@@ -11,14 +11,15 @@ public:
 public:
     explicit QCPCursor(QCustomPlot *plot);
     QPointF position() const;
-    void setPosition(const double& x, const double& y);
-    void setPositionX(const double& x) { setPosition(x, position().y()); }
-    void setPositionY(const double& y) { setPosition(position().x(), y); }
-    void moveToCenter();
+    void setPosition(const double& x, const double& y, bool replot = true);
+    void setPosition(const QPointF& pos, bool replot = true) { setPosition(pos.x(), pos.y(), replot); }
+    void setPositionX(const double& x, bool replot = true) { setPosition(x, position().y(), replot); }
+    void setPositionY(const double& y, bool replot = true) { setPosition(position().x(), y, replot); }
+    void moveToCenter(bool replot = true);
     inline void pixelPosition(double& x, double& y) const;
-    inline void setPixelPosition(const QPointF& p) { setPixelPosition(p.x(), p.y()); }
-    inline void setPixelPosition(const QPoint& p) { setPixelPosition(p.x(), p.y()); }
-    void setPixelPosition(const double& x, const double& y);
+    inline void setPixelPosition(const QPointF& p, bool replot = true) { setPixelPosition(p.x(), p.y(), replot); }
+    inline void setPixelPosition(const QPoint& p, bool replot = true) { setPixelPosition(p.x(), p.y(), replot); }
+    void setPixelPosition(const double& x, const double& y, bool replot = true);
     bool followMouse() const { return _followMouse; }
     CursorShape shape() const { return _shape; }
     void setShape(CursorShape value);

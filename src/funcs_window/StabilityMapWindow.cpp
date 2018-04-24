@@ -11,7 +11,7 @@
 class StabilityMapOptionsPanel : public FuncOptionsPanel
 {
 public:
-    StabilityMapOptionsPanel(StabilityMapWindow* window) : FuncOptionsPanel(), _window(window)
+    StabilityMapOptionsPanel(StabilityMapWindow* window) : FuncOptionsPanel(window), _window(window)
     {
         // TODO: check if these strings are translated
         Ori::Layouts::LayoutV({
@@ -34,10 +34,7 @@ public:
 
     void functionModeChanged(int mode) override
     {
-        _window->storeLimits(static_cast<int>(_window->function()->stabilityCalcMode()));
         _window->function()->setStabilityCalcMode(static_cast<Z::Enums::StabilityCalcMode>(mode));
-        _window->restoreLimits(mode);
-        _window->update();
     }
 
 private:
@@ -81,14 +78,13 @@ void StabilityMapWindow::autolimitsStability()
     switch (function()->stabilityCalcMode())
     {
     case Z::Enums::StabilityCalcMode::Normal:
-        _plot->yAxis->setRange(-1.05, 1.05);
+        _plot->setLimitsY(-1.05, 1.05);
         break;
 
     case Z::Enums::StabilityCalcMode::Squared:
-        _plot->yAxis->setRange(-0.05, 1.05);
+        _plot->setLimitsY(-0.05, 1.05);
         break;
     }
-    _plot->replot();
 }
 
 QWidget* StabilityMapWindow::makeOptionsPanel()

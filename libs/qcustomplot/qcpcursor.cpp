@@ -125,10 +125,11 @@ QPointF QCPCursor::position() const
     return QPointF(point.key, point.value);
 }
 
-void QCPCursor::setPosition(const double& x, const double& y)
+void QCPCursor::setPosition(const double& x, const double& y, bool replot)
 {
     setData(QVector<double>() << x, QVector<double>() << y);
-    parentPlot()->replot();
+    if (replot)
+        parentPlot()->replot();
     emit positionChanged();
 }
 
@@ -138,17 +139,17 @@ void QCPCursor::pixelPosition(double& x, double& y) const
     coordsToPixels(point.x(), point.y(), x, y);
 }
 
-void QCPCursor::setPixelPosition(const double &x, const double &y)
+void QCPCursor::setPixelPosition(const double &x, const double &y, bool replot)
 {
     double key, value;
     pixelsToCoords(x, y, key, value);
-    setPosition(key, value);
+    setPosition(key, value, replot);
 }
 
-void QCPCursor::moveToCenter()
+void QCPCursor::moveToCenter(bool replot)
 {
     QCPAxisRect *r = parentPlot()->axisRect();
-    setPixelPosition((r->right() + r->left())/2, (r->top() + r->bottom())/2);
+    setPixelPosition((r->right() + r->left())/2, (r->top() + r->bottom())/2, replot);
 }
 
 void QCPCursor::setFollowMouse(bool value)

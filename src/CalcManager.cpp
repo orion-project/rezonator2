@@ -110,6 +110,7 @@ template <class TWindow> void CalcManager::showPlotFunc()
     {
         WindowsManager::instance().show(wnd);
         wnd->requestAutolimits();
+        wnd->requestCenterCursor();
         wnd->update();
     }
 }

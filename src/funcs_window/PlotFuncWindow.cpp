@@ -44,7 +44,7 @@ FunctionModeButton::FunctionModeButton(const QString& icon, const QString& text,
 //                                FunctionParamsPanel
 //------------------------------------------------------------------------------
 
-FuncOptionsPanel::FuncOptionsPanel() : QWidget()
+FuncOptionsPanel::FuncOptionsPanel(PlotFuncWindow *window) : QWidget(), _window(window)
 {
 }
 
@@ -68,7 +68,10 @@ void FuncOptionsPanel::modeButtonClicked()
     auto button = qobject_cast<FunctionModeButton*>(sender());
     if (button && currentFunctionMode() != button->mode())
     {
+        _window->storeView(currentFunctionMode());
         functionModeChanged(button->mode());
+        _window->restoreView(button->mode());
+        _window->update();
         showCurrentMode();
     }
 }
@@ -79,19 +82,6 @@ void FuncOptionsPanel::showCurrentMode()
     for (auto button : _modeButtons)
         button->setChecked(button->mode() == mode);
 }
-
-//------------------------------------------------------------------------------
-//                               PlotFuncWindowData
-//------------------------------------------------------------------------------
-
-namespace PlotFuncWindowData
-{
-
-QMap<int, PlotLimits> __storedlimits;
-
-} // namespace PlotFuncWindowData
-
-using namespace PlotFuncWindowData;
 
 //------------------------------------------------------------------------------
 //                                PlotFuncWindow
@@ -344,17 +334,27 @@ void PlotFuncWindow::update()
         _needRecalc = true;
         return;
     }
-    calculate(!_autolimitsRequest);
+
+    bool replot = not _autolimitsRequest;
+
+    calculate(replot);
+
     if (_autolimitsRequest)
-       autolimits();
+    {
+        _autolimitsRequest = false;
+        _plot->autolimits(true);
+    }
+
+    if (_centerCursorRequested)
+    {
+        _centerCursorRequested = false;
+        _cursor->moveToCenter();
+        // Cursor info will be updated by positionChanged signal
+    }
+    else updateCursorInfo();
+
     updateAxesTitles();
     updateNotables();
-    if (_isFirstTime)
-        _cursor->moveToCenter();
-    else
-        updateCursorInfo();
-    _isFirstTime = false;
-    _autolimitsRequest = false;
 }
 
 void PlotFuncWindow::calculate(bool replot)
@@ -365,8 +365,10 @@ void PlotFuncWindow::calculate(bool replot)
         debug_LogGraphsCount();
         _statusBar->setText(STATUS_INFO, _function->errorText());
         _statusBar->highlightError(STATUS_INFO);
-        for (Graph* g : _graphsT) if (g->parentPlot() == _plot) _plot->removeGraph(g);
-        for (Graph* g : _graphsS) if (g->parentPlot() == _plot) _plot->removeGraph(g);
+        for (Graph* g : _graphsT) if (g->parentPlot() == _plot) _plot->removePlottable(g);
+        for (Graph* g : _graphsS) if (g->parentPlot() == _plot) _plot->removePlottable(g);
+        _graphsT.clear();
+        _graphsS.clear();
     }
     else
     {
@@ -381,7 +383,8 @@ void PlotFuncWindow::calculate(bool replot)
 void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
 {
     QVector<Graph*>& graphs = plane == Z::Plane_T? _graphsT: _graphsS;
-    for (int i = 0; i < _function->resultCount(plane); i++)
+    int resultCount = _function->resultCount(plane);
+    for (int i = 0; i < resultCount; i++)
     {
         Graph *g;
         if (i >= graphs.size())
@@ -396,8 +399,11 @@ void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
         if (g->parentPlot() != _plot)
             _plot->addPlottable(g);
     }
-    for (int i = _function->resultCount(plane); i < graphs.size(); i++)
-        _plot->removePlottable(graphs[i]);
+    while (graphs.size() > resultCount)
+    {
+        _plot->removePlottable(graphs.last());
+        graphs.removeLast();
+    }
 }
 
 QPen PlotFuncWindow::getLineSettings(Z::WorkPlane plane)
@@ -472,15 +478,28 @@ bool PlotFuncWindow::configure(QWidget* parent)
     return ok;
 }
 
-void PlotFuncWindow::storeLimits(int key)
+void PlotFuncWindow::storeView(int key)
 {
-    __storedlimits[key] = _plot->limits();
+    ViewState view;
+    view.limitsX = _plot->limitsX();
+    view.limitsY = _plot->limitsY();
+    view.cursorPos = _cursor->position();
+    _storedView[key] = view;
 }
 
-void PlotFuncWindow::restoreLimits(int key)
+void PlotFuncWindow::restoreView(int key)
 {
-    if (__storedlimits.contains(key))
-        _plot->changeLimits(__storedlimits[key]);
+    if (_storedView.contains(key))
+    {
+        const ViewState& view = _storedView[key];
+        _plot->setLimitsX(view.limitsX, false);
+        _plot->setLimitsY(view.limitsY, false);
+        _cursor->setPosition(view.cursorPos, false);
+    }
     else
+    {
         _autolimitsRequest = true;
+        _centerCursorRequested = true;
+    }
 }
+

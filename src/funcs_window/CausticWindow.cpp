@@ -16,7 +16,7 @@
 class CausticOptionsPanel : public FuncOptionsPanel
 {
 public:
-    CausticOptionsPanel(CausticWindow *window) : FuncOptionsPanel(), _window(window)
+    CausticOptionsPanel(CausticWindow *window) : FuncOptionsPanel(window), _window(window)
     {
         // TODO: check if these strings are translated
         Ori::Layouts::LayoutV({
@@ -32,15 +32,12 @@ public:
 
     int currentFunctionMode() const override
     {
-        return int(_window->function()->mode());
+        return static_cast<int>(_window->function()->mode());
     }
 
     void functionModeChanged(int mode) override
     {
-        _window->storeLimits(static_cast<int>(_window->function()->mode()));
         _window->function()->setMode(static_cast<CausticFunction::Mode>(mode));
-        _window->restoreLimits(mode);
-        _window->update();
     }
 
 private:

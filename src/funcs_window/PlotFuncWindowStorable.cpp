@@ -44,6 +44,7 @@ QString PlotFuncWindowStorable::storableWrite(QJsonObject &root)
 
 QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root)
 {
+    // Restore graphs visibility
     auto mode = root["ts_mode"].toString();
     bool modeT = true, modeS = true;
     if (mode == "T") modeS = false;
@@ -54,9 +55,12 @@ QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root)
     updateTSModeActions();
     updateVisibilityTS();
 
+    // Restore cursor state
     _cursorPanel->setEnabled(root["cursor_enabled"].toBool(true));
     _cursorPanel->setMode(Z::IO::Utils::enumFromStr(root["cursor_mode"].toString(), CursorPanel::Both));
+    requestCenterCursor();
 
+    // Restore plot limits
     auto minX = root["x_min"].toDouble(Double::nan());
     auto maxX = root["x_max"].toDouble(Double::nan());
     auto minY = root["y_min"].toDouble(Double::nan());
@@ -65,8 +69,8 @@ QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root)
         requestAutolimits();
     else
     {
-        _plot->xAxis->setRange(minX, maxX);
-        _plot->yAxis->setRange(minY, maxY);
+        _plot->setLimitsX(minX, maxX, false);
+        _plot->setLimitsY(minY, maxY, false);
     }
 
     return QString();
@@ -74,20 +78,23 @@ QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root)
 
 QString PlotFuncWindowStorable::writeWindowGeneral(QJsonObject& root) const
 {
+    // Store graphs visibility
     bool modeT = actnShowT->isChecked();
     bool modeS = actnShowS->isChecked();
     root["ts_mode"] = (modeT && modeS)? "T+S": (modeT ? "T" : "S");
     root["ts_flipped"] = actnShowTS->isChecked();
 
+    // Store cursor state
     root["cursor_enabled"] = _cursorPanel->enabled();
     root["cursor_mode"] = Z::IO::Utils::enumToStr(_cursorPanel->mode());
 
-    auto rangeX = _plot->xAxis->range();
-    auto rangeY = _plot->yAxis->range();
-    root["x_min"] = rangeX.lower;
-    root["x_max"] = rangeX.upper;
-    root["y_min"] = rangeY.lower;
-    root["y_max"] = rangeY.upper;
+    // Store plot limits
+    auto limitsX = _plot->limitsX();
+    auto limitsY = _plot->limitsY();
+    root["x_min"] = limitsX.first;
+    root["x_max"] = limitsX.second;
+    root["y_min"] = limitsY.first;
+    root["y_max"] = limitsY.second;
 
     return QString();
 }

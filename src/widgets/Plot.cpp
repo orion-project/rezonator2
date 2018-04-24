@@ -55,7 +55,7 @@ void Plot::graphClicked(QCPAbstractPlottable *plottable)
     emit graphSelected(g);
 }
 
-void Plot::autolimits(bool autoReplot)
+void Plot::autolimits(bool replot)
 {
     bool onlyEnlarge = false;
     for (int i = 0; i < graphCount(); i++)
@@ -67,34 +67,30 @@ void Plot::autolimits(bool autoReplot)
             onlyEnlarge = true;
         }
     }
-    changeLimitsX(0.01);
-    changeLimitsY(0.01);
-    if (autoReplot) replot();
+    // Apply safe margins
+    extendLimitsX(0.01, false);
+    extendLimitsY(0.01, false);
+    if (replot) this->replot();
 }
 
-void Plot::changeLimits(QCPAxis* axis, double factor)
+void Plot::extendLimits(QCPAxis* axis, double factor, bool replot)
 {
     auto range = axis->range();
     auto delta = (range.upper - range.lower) * factor;
     range.upper += delta;
     range.lower -= delta;
     axis->setRange(range);
+    if (replot) this->replot();
 }
 
-void Plot::changeLimits(const PlotLimits& limits)
+void Plot::setLimits(QCPAxis* axis, double min, double max, bool replot)
 {
-    xAxis->setRange(limits.minX, limits.maxX);
-    yAxis->setRange(limits.minY, limits.maxY);
+    axis->setRange(qMin(min, max), qMax(min, max));
+    if (replot) this->replot();
 }
 
-PlotLimits Plot::limits() const
+QPair<double, double> Plot::limits(QCPAxis* axis) const
 {
-    auto rangeX = xAxis->range();
-    auto rangeY = yAxis->range();
-    PlotLimits limits;
-    limits.minX = rangeX.lower;
-    limits.maxX = rangeX.upper;
-    limits.minY = rangeY.lower;
-    limits.maxY = rangeY.upper;
-    return limits;
+    auto range = axis->range();
+    return QPair<double, double>(range.lower, range.upper);
 }

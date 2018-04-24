@@ -27,6 +27,7 @@ class CursorPanel;
 class FrozenStateButton;
 class Plot;
 class PlotFunction;
+class PlotFuncWindow;
 class PlotParamsPanel;
 class SchemaStorable;
 
@@ -51,7 +52,7 @@ class FuncOptionsPanel : public QWidget
     Q_OBJECT
 
 public:
-    FuncOptionsPanel();
+    FuncOptionsPanel(PlotFuncWindow *window);
 
 protected:
     QMap<int, FunctionModeButton*> _modeButtons;
@@ -64,6 +65,7 @@ protected:
     QWidget* makeModeButton(const QString& icon, const QString& text, int mode);
 
 private:
+    PlotFuncWindow *_window;
     void modeButtonClicked();
 };
 
@@ -83,6 +85,9 @@ public:
     /// Do autolimits after next update.
     void requestAutolimits() { _autolimitsRequest = true; }
 
+    /// Cursor should be ceneterd after next update.
+    void requestCenterCursor() { _centerCursorRequested = true; }
+
     /// Edits function parameters through dialog.
     bool configure(QWidget* parent);
 
@@ -91,8 +96,8 @@ public:
 
     void schemaChanged(Schema*) override;
 
-    void storeLimits(int key);
-    void restoreLimits(int key);
+    void storeView(int key);
+    void restoreView(int key);
 
 public slots:
     void update();
@@ -121,7 +126,7 @@ protected:
     Ori::Widgets::StatusBar* _statusBar;
     FrozenStateButton* _buttonFrozenInfo;
     bool _autolimitsRequest = false; ///< If autolimits requested after next update.
-    bool _isFirstTime = true;
+    bool _centerCursorRequested = false; ///< If cursor should be centered after next update.
 
     QAction *actnShowT, *actnShowS, *actnShowTS,
         *actnAutolimits, *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo;
@@ -159,6 +164,15 @@ private slots:
     void freeze(bool);
 
     QWidget* optionsPanelRequired();
+
+private:
+    struct ViewState
+    {
+        QPair<double, double> limitsX;
+        QPair<double, double> limitsY;
+        QPointF cursorPos;
+    };
+    QMap<int, ViewState> _storedView;
 };
 
 #endif // PLOT_FUNC_WINDOW_H

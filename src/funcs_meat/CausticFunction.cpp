@@ -34,6 +34,7 @@ void CausticFunction::calculate()
 
     bool stabilityChecked = false;
     auto argUnit = param->value().unit();
+    Z::PointTS prevRes(Double::nan(), Double::nan());
     for (auto x : range.values())
     {
         rangeElem->setSubRangeSI(x);
@@ -60,8 +61,20 @@ void CausticFunction::calculate()
         case TripType::SP: res = calculateSinglePass(); break;
         }
 
+        double argX = argUnit->fromSi(x);
+
+        if (_mode == FontRadius)
+        {
+            // If wavefront radius changes its sign, then we have a pole at waist
+            if (!std::isnan(prevRes.T) && (prevRes.T * res.T) < 0)
+                _results.T.addPoint(argX, Double::nan()); // finish previous segment
+            if (!std::isnan(prevRes.S) && (prevRes.S * res.S) < 0)
+                _results.S.addPoint(argX, Double::nan()); // finish previous segment
+            prevRes = res;
+        }
+
         convertFromSiToModeUnits(res);
-        addResultPoint(argUnit->fromSi(x), res);
+        addResultPoint(argX, res);
     }
 
     finishResults();

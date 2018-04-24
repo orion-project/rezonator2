@@ -5,27 +5,26 @@
 
 typedef QCPGraph Graph;
 
-struct PlotLimits
-{
-    double minX, maxX;
-    double minY, maxY;
-};
-
 class Plot : public QCustomPlot
 {
     Q_OBJECT
+
 public:
     explicit Plot();
 
     QVector<Graph*>& serviceGraphs() { return _serviceGraphs; }
 
-    void changeLimitsX(double factor) { changeLimits(xAxis, factor); }
-    void changeLimitsY(double factor) { changeLimits(yAxis, factor); }
-    void changeLimits(const PlotLimits& limits);
-    PlotLimits limits() const;
+    QPair<double, double> limitsX() const { return limits(xAxis); }
+    QPair<double, double> limitsY() const { return limits(yAxis); }
+    void setLimitsX(const QPair<double, double>& p, bool replot) { setLimitsX(p.first, p.second, replot); }
+    void setLimitsY(const QPair<double, double>& p, bool replot) { setLimitsY(p.first, p.second, replot); }
+    void setLimitsX(double min, double max, bool replot = true) { setLimits(xAxis, min, max, replot); }
+    void setLimitsY(double min, double max, bool replot = true) { setLimits(yAxis, min, max, replot); }
+    void extendLimitsX(double factor, bool replot = true) { extendLimits(xAxis, factor, replot); }
+    void extendLimitsY(double factor, bool replot = true) { extendLimits(yAxis, factor, replot); }
 
 public slots:
-    void autolimits(bool autoReplot = true);
+    void autolimits(bool replot = true);
 
 signals:
     void graphSelected(Graph*);
@@ -41,7 +40,9 @@ private slots:
 private:
     QVector<Graph*> _serviceGraphs;
 
-    void changeLimits(QCPAxis* axis, double factor);
+    QPair<double, double> limits(QCPAxis* axis) const;
+    void extendLimits(QCPAxis* axis, double factor, bool replot);
+    void setLimits(QCPAxis* axis, double min, double max, bool replot);
 };
 
 #endif // PLOT_H
