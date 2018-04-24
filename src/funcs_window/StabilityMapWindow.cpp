@@ -34,7 +34,9 @@ public:
 
     void functionModeChanged(int mode) override
     {
+        _window->storeLimits(static_cast<int>(_window->function()->stabilityCalcMode()));
         _window->function()->setStabilityCalcMode(static_cast<Z::Enums::StabilityCalcMode>(mode));
+        _window->restoreLimits(mode);
         _window->update();
     }
 
@@ -79,11 +81,11 @@ void StabilityMapWindow::autolimitsStability()
     switch (function()->stabilityCalcMode())
     {
     case Z::Enums::StabilityCalcMode::Normal:
-        _plot->yAxis->setRange(-1, 1);
+        _plot->yAxis->setRange(-1.05, 1.05);
         break;
 
     case Z::Enums::StabilityCalcMode::Squared:
-        _plot->yAxis->setRange(0, 1);
+        _plot->yAxis->setRange(-0.05, 1.05);
         break;
     }
     _plot->replot();

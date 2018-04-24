@@ -5,8 +5,11 @@
 
 class CausticFunction : public PlotFunction
 {
+    Q_GADGET
+
 public:
     enum Mode { BeamRadius, FontRadius, HalfAngle, };
+    Q_ENUM(Mode)
 
     FUNC_ALIAS("Caustic")
     FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Caustic"))

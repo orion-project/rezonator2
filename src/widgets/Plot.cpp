@@ -67,5 +67,34 @@ void Plot::autolimits(bool autoReplot)
             onlyEnlarge = true;
         }
     }
+    changeLimitsX(0.01);
+    changeLimitsY(0.01);
     if (autoReplot) replot();
+}
+
+void Plot::changeLimits(QCPAxis* axis, double factor)
+{
+    auto range = axis->range();
+    auto delta = (range.upper - range.lower) * factor;
+    range.upper += delta;
+    range.lower -= delta;
+    axis->setRange(range);
+}
+
+void Plot::changeLimits(const PlotLimits& limits)
+{
+    xAxis->setRange(limits.minX, limits.maxX);
+    yAxis->setRange(limits.minY, limits.maxY);
+}
+
+PlotLimits Plot::limits() const
+{
+    auto rangeX = xAxis->range();
+    auto rangeY = yAxis->range();
+    PlotLimits limits;
+    limits.minX = rangeX.lower;
+    limits.maxX = rangeX.upper;
+    limits.minY = rangeY.lower;
+    limits.maxY = rangeY.upper;
+    return limits;
 }

@@ -81,6 +81,19 @@ void FuncOptionsPanel::showCurrentMode()
 }
 
 //------------------------------------------------------------------------------
+//                               PlotFuncWindowData
+//------------------------------------------------------------------------------
+
+namespace PlotFuncWindowData
+{
+
+QMap<int, PlotLimits> __storedlimits;
+
+} // namespace PlotFuncWindowData
+
+using namespace PlotFuncWindowData;
+
+//------------------------------------------------------------------------------
 //                                PlotFuncWindow
 //------------------------------------------------------------------------------
 
@@ -139,7 +152,7 @@ void PlotFuncWindow::createActions()
     connect(actnFreeze, SIGNAL(toggled(bool)), this, SLOT(freeze(bool)));
 
     //---------------- Limits
-    actnAutolimits = new QAction(tr("&Automatic Limits for Both Axes", "Plot action"), this);
+    actnAutolimits = new QAction(tr("&Fit to graphs", "Plot action"), this);
     actnAutolimits->setIcon(QIcon(":/toolbar/limits_auto"));
     connect(actnAutolimits, SIGNAL(triggered()), this, SLOT(autolimits()));
 }
@@ -331,7 +344,7 @@ void PlotFuncWindow::update()
         _needRecalc = true;
         return;
     }
-    calculate();
+    calculate(!_autolimitsRequest);
     if (_autolimitsRequest)
        autolimits();
     updateAxesTitles();
@@ -344,7 +357,7 @@ void PlotFuncWindow::update()
     _autolimitsRequest = false;
 }
 
-void PlotFuncWindow::calculate()
+void PlotFuncWindow::calculate(bool replot)
 {
     _function->calculate();
     if (!_function->ok())
@@ -361,7 +374,8 @@ void PlotFuncWindow::calculate()
         updateGraphs(Z::Plane_T);
         updateGraphs(Z::Plane_S);
     }
-    _plot->replot();
+    if (replot)
+        _plot->replot();
 }
 
 void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
@@ -456,4 +470,17 @@ bool PlotFuncWindow::configure(QWidget* parent)
     if (ok)
         schema()->events().raise(SchemaEvents::Changed);
     return ok;
+}
+
+void PlotFuncWindow::storeLimits(int key)
+{
+    __storedlimits[key] = _plot->limits();
+}
+
+void PlotFuncWindow::restoreLimits(int key)
+{
+    if (__storedlimits.contains(key))
+        _plot->changeLimits(__storedlimits[key]);
+    else
+        _autolimitsRequest = true;
 }

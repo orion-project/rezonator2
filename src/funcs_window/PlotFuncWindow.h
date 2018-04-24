@@ -91,6 +91,9 @@ public:
 
     void schemaChanged(Schema*) override;
 
+    void storeLimits(int key);
+    void restoreLimits(int key);
+
 public slots:
     void update();
 
@@ -105,7 +108,7 @@ protected:
     QMenu *menuPlot, *menuLimits, *menuFormat;
 
     /// Calculates function and plots its results.
-    virtual void calculate();
+    virtual void calculate(bool replot = true);
 
     virtual bool configureInternal(QWidget* parent) { Q_UNUSED(parent); return true; }
 
