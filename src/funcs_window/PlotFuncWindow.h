@@ -129,7 +129,9 @@ protected:
     bool _centerCursorRequested = false; ///< If cursor should be centered after next update.
 
     QAction *actnShowT, *actnShowS, *actnShowTS,
-        *actnAutolimits, *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo;
+        *actnAutolimits, *actnAutolimitsX, *actnAutolimitsY, *actnSetLimitsX, *actnSetLimitsY,
+        *actnZoomInX, *actnZoomOutX, *actnZoomInY, *actnZoomOutY,
+        *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo;
 
     Graph* selectedGraph() const;
 
@@ -156,7 +158,6 @@ private slots:
     void showT();
     void showS();
     void showTS();
-    void autolimits();
     void updateWithParams();
     void graphSelected(Graph*);
     void updateCursorInfo();

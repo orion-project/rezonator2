@@ -142,9 +142,26 @@ void PlotFuncWindow::createActions()
     connect(actnFreeze, SIGNAL(toggled(bool)), this, SLOT(freeze(bool)));
 
     //---------------- Limits
-    actnAutolimits = new QAction(tr("&Fit to graphs", "Plot action"), this);
-    actnAutolimits->setIcon(QIcon(":/toolbar/limits_auto"));
-    connect(actnAutolimits, SIGNAL(triggered()), this, SLOT(autolimits()));
+    actnAutolimits = new QAction(QIcon(":/toolbar/limits_auto"), tr("Fit to Graphs"), this);
+    connect(actnAutolimits, &QAction::triggered, [&](){ _plot->autolimits(); });
+    actnAutolimitsX = new QAction(QIcon(":/toolbar/limits_auto_x"), tr("Fit to Graphs Over X"), this);
+    connect(actnAutolimitsX, &QAction::triggered, [&](){ _plot->autolimitsX(); });
+    actnAutolimitsY = new QAction(QIcon(":/toolbar/limits_auto_y"), tr("Fit to Graphs Over Y"), this);
+    connect(actnAutolimitsY, &QAction::triggered, [&](){ _plot->autolimitsY(); });
+
+    actnZoomInX = new QAction(QIcon(":/toolbar/limits_zoom_in_x"), tr("Zoom-in Over X"), this);
+    connect(actnZoomInX, &QAction::triggered, [&](){ _plot->extendLimitsX(-0.1); });
+    actnZoomOutX = new QAction(QIcon(":/toolbar/limits_zoom_out_x"), tr("Zoom-out Over X"), this);
+    connect(actnZoomOutX, &QAction::triggered, [&](){ _plot->extendLimitsX(0.1); });
+    actnZoomInY = new QAction(QIcon(":/toolbar/limits_zoom_in_y"), tr("Zoom-in Over Y"), this);
+    connect(actnZoomInY, &QAction::triggered, [&](){ _plot->extendLimitsY(-0.1); });
+    actnZoomOutY = new QAction(QIcon(":/toolbar/limits_zoom_out_y"), tr("Zoom-out Over Y"), this);
+    connect(actnZoomOutY, &QAction::triggered, [&](){ _plot->extendLimitsY(0.1); });
+
+    actnSetLimitsX = new QAction(tr("Set X-axis Limits..."), this);
+    connect(actnSetLimitsX, &QAction::triggered, [&](){ _plot->setLimitsDlgX(); });
+    actnSetLimitsY = new QAction(tr("Set Y-axis Limits..."), this);
+    connect(actnSetLimitsY, &QAction::triggered, [&](){ _plot->setLimitsDlgY(); });
 }
 
 void PlotFuncWindow::createMenuBar()
@@ -160,7 +177,17 @@ void PlotFuncWindow::createMenuBar()
     menuPlot->addAction(actnShowRoundTrip);
 
     menuLimits = new QMenu(tr("&Limits", "Menu title"), this);
+    menuLimits->addAction(actnSetLimitsX);
+    menuLimits->addAction(actnSetLimitsY);
+    menuLimits->addSeparator();
     menuLimits->addAction(actnAutolimits);
+    menuLimits->addAction(actnAutolimitsX);
+    menuLimits->addAction(actnAutolimitsY);
+    menuLimits->addSeparator();
+    menuLimits->addAction(actnZoomInX);
+    menuLimits->addAction(actnZoomOutX);
+    menuLimits->addAction(actnZoomInY);
+    menuLimits->addAction(actnZoomOutY);
 
     menuFormat = new QMenu(tr("Fo&rmat", "Menu title"), this);
 }
@@ -183,6 +210,13 @@ void PlotFuncWindow::createToolBar()
     toolbar()->addAction(actnShowTS);
     toolbar()->addSeparator();
     toolbar()->addAction(actnAutolimits);
+    toolbar()->addAction(actnAutolimitsX);
+    toolbar()->addAction(actnAutolimitsY);
+    toolbar()->addSeparator();
+    toolbar()->addAction(actnZoomInX);
+    toolbar()->addAction(actnZoomOutX);
+    toolbar()->addAction(actnZoomInY);
+    toolbar()->addAction(actnZoomOutY);
 }
 
 void PlotFuncWindow::createContent()
@@ -429,11 +463,6 @@ void PlotFuncWindow::showRoundTrip()
 void PlotFuncWindow::schemaChanged(Schema*)
 {
     update();
-}
-
-void PlotFuncWindow::autolimits()
-{
-    _plot->autolimits();
 }
 
 void PlotFuncWindow::debug_LogGraphsCount()

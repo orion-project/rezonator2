@@ -18,7 +18,13 @@
         <file alias="plot_r">../img/toolbar/plot_r.svg</file>
         <file alias="plot_v">../img/toolbar/plot_v.svg</file>
         <file alias="limits_auto">../img/toolbar/limits_auto.svg</file>
+        <file alias="limits_auto_x">../img/toolbar/limits_auto_x.svg</file>
+        <file alias="limits_auto_y">../img/toolbar/limits_auto_y.svg</file>
         <file alias="limits_stab">../img/toolbar/limits_stab.svg</file>
+        <file alias="limits_zoom_in_x">../img/toolbar/limits_zoom_in_x.svg</file>
+        <file alias="limits_zoom_in_y">../img/toolbar/limits_zoom_in_y.svg</file>
+        <file alias="limits_zoom_out_x">../img/toolbar/limits_zoom_out_x.svg</file>
+        <file alias="limits_zoom_out_y">../img/toolbar/limits_zoom_out_y.svg</file>
         <file alias="error">../img/toolbar/error.svg</file>
         <file alias="help">../img/toolbar/help.svg</file>
         <file alias="info">../img/toolbar/info.svg</file>

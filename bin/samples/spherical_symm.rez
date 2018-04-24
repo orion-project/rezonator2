@@ -7,14 +7,10 @@
     },
     "custom_params": {
         "R0": {
-            "category": "",
             "descr": "",
             "dim": "linear",
-            "label": "R0",
-            "name": "R0",
             "unit": "mm",
-            "value": 50,
-            "visible": true
+            "value": 50
         }
     },
     "elements": [
@@ -81,18 +77,43 @@
     "trip_type": "SW",
     "windows": [
         {
+            "type": "SchemaParams"
+        },
+        {
             "function": {
+                "arg": {
+                    "element_index": 1,
+                    "param": "L",
+                    "range": {
+                        "points": 100,
+                        "start": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 200
+                        },
+                        "use_step": false
+                    }
+                },
+                "stab_calc_mode": "Normal"
             },
             "type": "StabMap",
             "window": {
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
                 "ts_flipped": false,
-                "ts_mode": "T+S"
+                "ts_mode": "T+S",
+                "x_max": 202,
+                "x_min": -2,
+                "y_max": 1.05,
+                "y_min": -1.05
             }
-        },
-        {
-            "type": "SchemaParams"
         }
     ]
 }

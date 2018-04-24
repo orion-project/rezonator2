@@ -10,7 +10,7 @@ QCPCursor::QCPCursor(QCustomPlot *plot) : QCPGraph(plot->xAxis, plot->yAxis),
     setSelectable(false);
     setPen(QPen(QColor::fromRgb(80, 80, 255)));
 
-    connect(plot, SIGNAL(mouseDoubleClick(QMouseEvent*)), this, SLOT(mouseDoubleClick(QMouseEvent*)));
+    connect(plot, SIGNAL(emptySpaceDoubleClicked(QMouseEvent*)), this, SLOT(mouseDoubleClick(QMouseEvent*)));
     connect(plot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress(QMouseEvent*)));
     connect(plot, SIGNAL(mouseRelease(QMouseEvent*)), this, SLOT(mouseRelease(QMouseEvent*)));
     connect(plot, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(mouseMove(QMouseEvent*)));

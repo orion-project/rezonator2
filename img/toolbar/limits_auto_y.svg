@@ -123,24 +123,16 @@
     </rdf:RDF>
   </metadata>
   <path
-     d="M 18.5,-4.22e-6 18.5,24"
-     id="path3305"
-     style="fill:none;stroke:#007eff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.16470589" />
-  <path
-     d="M 6.5,-4.22e-6 6.5,24"
-     id="path3303"
-     style="fill:none;stroke:#007eff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.16470589" />
-  <path
      d="m 0,17.5 24,0"
      id="path3299"
-     style="fill:none;stroke:#007eff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.16470589" />
+     style="fill:none;stroke:#00ff48;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.16470589" />
   <rect
-     width="13"
+     width="24"
      height="13"
-     x="6"
+     x="0"
      y="5"
      id="rect3297"
-     style="fill:#007cff;fill-opacity:0.16666667;fill-rule:nonzero;stroke:none" />
+     style="fill:#00ff4a;fill-opacity:0.16666667;fill-rule:nonzero;stroke:none" />
   <g
      id="g3196">
     <path
@@ -167,19 +159,11 @@
   <path
      d="m 0,17.5 24,0"
      id="path3250"
-     style="fill:none;stroke:#003f80;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1, 1;stroke-dashoffset:0;stroke-opacity:1" />
+     style="fill:none;stroke:#008626;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1, 1;stroke-dashoffset:0;stroke-opacity:1" />
   <path
      d="m 0,5.5 24,0"
      id="path3252"
-     style="fill:none;stroke:#003f80;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1, 1;stroke-dashoffset:0;stroke-opacity:1" />
-  <path
-     d="M 6.5,0.99999578 6.5,25"
-     id="path3258"
-     style="fill:none;stroke:#003f80;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1, 1;stroke-dashoffset:0;stroke-opacity:1" />
-  <path
-     d="M 18.5,0.99999578 18.5,25"
-     id="path3260"
-     style="fill:none;stroke:#003f80;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1, 1;stroke-dashoffset:0;stroke-opacity:1" />
+     style="fill:none;stroke:#008626;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:1, 1;stroke-dashoffset:0;stroke-opacity:1" />
   <g
      transform="translate(0,1)"
      id="g3284">
@@ -196,24 +180,8 @@
        id="path3282"
        style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none" />
   </g>
-  <g
-     transform="matrix(0,-1,1,0,2,24)"
-     id="g3289">
-    <path
-       d="m 12.5,18 0,-15"
-       id="path3291"
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="m 8.5,5 4,-6 4,6"
-       id="path3293"
-       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none" />
-    <path
-       d="m 8.5,16 4,6 4,-6"
-       id="path3295"
-       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none" />
-  </g>
   <path
      d="m 0,5.5 24,0"
      id="path3301"
-     style="fill:none;stroke:#007eff;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.16470588" />
+     style="fill:none;stroke:#00ff48;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.16470588" />
 </svg>
