@@ -83,6 +83,9 @@ ProjectWindow::ProjectWindow() : QMainWindow(), SchemaToolWindow(new Schema())
 
     WindowsManager::registerConstructor(SchemaParamsWindowStorable::windowType, SchemaParamsWindowStorable::createWindow);
 
+    if (Settings::instance().showProtocolAtStart)
+        showProtocolWindow();
+
     QTimer::singleShot(200, _operations, SLOT(checkCmdLine()));
 }
 

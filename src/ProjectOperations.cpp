@@ -1,5 +1,6 @@
 #include "AppSettings.h"
 #include "CalcManager.h"
+#include "CustomPrefs.h"
 #include "ProjectOperations.h"
 #include "io/z_io_utils.h"
 #include "io/SchemaReaderIni.h"
@@ -85,14 +86,13 @@ void ProjectOperations::openSchemaFile()
 
 void ProjectOperations::openSchemaFile(const QString& fileName)
 {
-    Z_REPORT("Loading" << fileName)
-
     if (!schema()->state().isNew())
     {
         QProcess::startDetached(qApp->applicationFilePath() + " \"" + fileName + "\"");
         return;
     }
 
+    Z_REPORT("Loading" << fileName)
     Z::Report report;
 
     schema()->events().raise(SchemaEvents::Loading);

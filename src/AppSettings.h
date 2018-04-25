@@ -23,6 +23,7 @@ public:
     bool useSystemDialogs;    ///< Use native open/save file dialogs.
     bool elemAutoLabel;       ///< Automatically generate labels for new elements.
     bool useNativeMenuBar;    ///< Use menu bar specfic to Ubuntu Unity or MacOS (on sceern's top).
+    bool showProtocolAtStart; ///< Open protocol window just after application started.
 
     // states
     QString schemaFileDlgOpenPath, schemaFileDlgOpenFilter;

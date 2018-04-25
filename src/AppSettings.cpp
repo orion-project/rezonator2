@@ -61,6 +61,9 @@ void Settings::load()
     LOAD(schemaFileDlgOpenFilter, String);
     LOAD(schemaFileDlgSavePath, String);
     LOAD(schemaFileDlgSaveFilter, String);
+
+    s.beginGroup("Debug");
+    LOAD_DEF(showProtocolAtStart, Bool, false);
 }
 
 void Settings::save()
@@ -82,6 +85,9 @@ void Settings::save()
     SAVE(schemaFileDlgOpenFilter)
     SAVE(schemaFileDlgSavePath)
     SAVE(schemaFileDlgSaveFilter)
+
+    s.beginGroup("Debug");
+    SAVE(showProtocolAtStart)
 }
 
 bool Settings::edit(class QWidget *parent)
