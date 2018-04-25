@@ -27,6 +27,7 @@
 #include <QCloseEvent>
 #include <QDesktopServices>
 #include <QDir>
+#include <QLabel>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
@@ -241,6 +242,11 @@ void ProjectWindow::createStatusBar()
     status->connect(STATUS_LAMBDA, SIGNAL(doubleClicked()), _operations, SLOT(setupWavelength()));
     status->connect(STATUS_TRIPTYPE, SIGNAL(doubleClicked()), _operations, SLOT(setupTripType()));
     status->connect(STATUS_STABIL, SIGNAL(doubleClicked()), _operations, SLOT(setupPump()));
+
+    auto versionLabel = new QLabel(Z::Strs::appVersionFull());
+    versionLabel->setForegroundRole(QPalette::Mid);
+    status->addPermanentWidget(versionLabel);
+
     setStatusBar(status);
 }
 
@@ -391,8 +397,8 @@ void ProjectWindow::actionHelpAbout()
                 "<p>Copyright: Chunosov N.&nbsp;I. © 2006-2018"
                 "<p>Web: <a href='{www}'>{www}</a>"
                 "<p>E-mail: <a href='mailto://{email}'>{email}</a>"
-                "<p>Credits: <a href='http://www.qcustomplot.com/'>QCustomPlot</a>"
-                ", <a href='http://muparser.beltoforion.de/'>muparser</a>"
+                "<p>Credits: <a href='http://www.qcustomplot.com'>QCustomPlot</a>"
+                ", <a href='http://lua.org'>Lua</a>"
                 "<p>{app} is open-source laser resonator calculation tool, its "
                 "source code is located at <a href='{www_sources}'>{www_sources}</a>."
                 "<p>The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING "
@@ -450,6 +456,7 @@ void ProjectWindow::showParamsWindow()
 void ProjectWindow::schemaChanged(Schema* s)
 {
     actnFileSave->setEnabled(s->state().isModified());
+    setWindowModified(s->state().isModified());
 
     updateStatusInfo();
     updateTitle();

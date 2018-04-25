@@ -38,6 +38,11 @@ inline QString appVersionLong()
     return QString("%1.%2.%3.%4").arg(APP_VER_MAJOR).arg(APP_VER_MINOR).arg(APP_VER_MICRO).arg(APP_VER_COMMITS);
 }
 
+inline QString appVersionFull()
+{
+    return QString("%1.%2.%3.%4-%5").arg(APP_VER_MAJOR).arg(APP_VER_MINOR).arg(APP_VER_MICRO).arg(APP_VER_COMMITS).arg(APP_VER_CODENAME);
+}
+
 inline QString appVersionLink()
 {
     return QString("%1/tree/%2").arg(sourcepage()).arg(APP_VER_SHA);
