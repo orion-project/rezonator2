@@ -8,8 +8,13 @@
 #include <QFormLayout>
 #include <QLabel>
 
-Plot::Plot() : _safeMargins(Settings::instance().plotSafeMargins)
+Plot::Plot() :
+        _safeMargins(Settings::instance().plotSafeMargins),
+        _numberPrecision(Settings::instance().plotNumberPrecision)
 {
+    yAxis->setNumberPrecision(_numberPrecision);
+    xAxis->setNumberPrecision(_numberPrecision);
+
     legend->setVisible(true);
     setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables |
                     QCP::iSelectAxes | QCP::iSelectItems | QCP::iSelectLegend | QCP::iSelectOther);
@@ -85,10 +90,43 @@ void Plot::autolimits(bool replot)
             onlyEnlarge = true;
         }
     }
-    // Apply safe margins
-    extendLimitsX(_safeMargins, false);
-    extendLimitsY(_safeMargins, false);
+    if (!sanitizeAxisRange(xAxis))
+        extendLimits(xAxis, _safeMargins, false);
+    if (!sanitizeAxisRange(yAxis))
+        extendLimits(yAxis, _safeMargins, false);
     if (replot) this->replot();
+}
+
+bool Plot::sanitizeAxisRange(QCPAxis* axis)
+{
+    auto range = axis->range();
+    if (sanitizeRange(range))
+    {
+        axis->setRange(range);
+        return true;
+    }
+    return false;
+}
+
+bool Plot::sanitizeRange(QCPRange& range)
+{
+    auto epsilon = std::numeric_limits<double>::epsilon();
+    if (range.size() <= epsilon)
+    {
+        if (qAbs(range.lower) <= epsilon)
+        {
+            range.lower = -1;
+            range.upper = 1;
+        }
+        else
+        {
+            double delta = range.lower * _safeMargins;
+            range.lower -= delta;
+            range.upper += delta;
+        }
+        return true;
+    }
+    return false;
 }
 
 void Plot::autolimitsX(bool replot)
@@ -120,13 +158,17 @@ void Plot::extendLimits(QCPAxis* axis, double factor, bool replot)
     auto delta = (range.upper - range.lower) * factor;
     range.upper += delta;
     range.lower -= delta;
+    sanitizeRange(range);
     axis->setRange(range);
     if (replot) this->replot();
 }
 
 void Plot::setLimits(QCPAxis* axis, double min, double max, bool replot)
 {
-    axis->setRange(qMin(min, max), qMax(min, max));
+    QCPRange range(min, max);
+    range.normalize();
+    sanitizeRange(range);
+    axis->setRange(range);
     if (replot) this->replot();
 }
 
@@ -167,6 +209,8 @@ bool Plot::setLimitsDlg(QCPRange& range, const QString& title)
     auto editorMax = new Ori::Widgets::ValueEdit;
     Z::Gui::setValueFont(editorMin);
     Z::Gui::setValueFont(editorMax);
+    editorMin->setNumberPrecision(_numberPrecision);
+    editorMax->setNumberPrecision(_numberPrecision);
     editorMin->setValue(range.lower);
     editorMax->setValue(range.upper);
     editorMin->selectAll();
@@ -179,10 +223,10 @@ bool Plot::setLimitsDlg(QCPRange& range, const QString& title)
 
     if (Ori::Dlg::Dialog(&w).withTitle(title).exec())
     {
-        auto min = editorMin->value();
-        auto max = editorMax->value();
-        range.lower = qMin(min, max);
-        range.upper = qMax(min, max);
+        range.lower = editorMin->value();
+        range.upper = editorMax->value();
+        range.normalize();
+        sanitizeRange(range);
         return true;
     }
     return false;

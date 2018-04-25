@@ -47,11 +47,14 @@ private slots:
 private:
     QVector<Graph*> _serviceGraphs;
     const double _safeMargins;
+    const int _numberPrecision;
 
     QPair<double, double> limits(QCPAxis* axis) const;
     void extendLimits(QCPAxis* axis, double factor, bool replot);
     void setLimits(QCPAxis* axis, double min, double max, bool replot);
     bool setLimitsDlg(QCPRange& range, const QString &title);
+    bool sanitizeAxisRange(QCPAxis* axis);
+    bool sanitizeRange(QCPRange& range);
 };
 
 #endif // PLOT_H

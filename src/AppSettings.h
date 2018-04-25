@@ -28,6 +28,7 @@ public:
                               ///< Set as fraction of limits range: `(max - min) * plotSafeMargins`.
     double plotZoomStep;      ///< Step of zooming for commands Zoom-in / Zoom-out.
                               ///< Set as fraction of limits range: `(max - min) * plotZoomStep`.
+    double plotNumberPrecision; ///< Number of decimal digits used to format axes labels.
 
     void load();
     void save();

@@ -58,6 +58,7 @@ void Settings::load()
     s.beginGroup("Plot");
     LOAD_DEF(plotSafeMargins, Double, 0.01);
     LOAD_DEF(plotZoomStep, Double, 0.1);
+    LOAD_DEF(plotNumberPrecision, Int, 10);
 }
 
 void Settings::save()
@@ -80,6 +81,7 @@ void Settings::save()
     s.beginGroup("Plot");
     SAVE(plotSafeMargins);
     SAVE(plotZoomStep);
+    SAVE(plotNumberPrecision);
 }
 
 bool Settings::edit(class QWidget *parent)
