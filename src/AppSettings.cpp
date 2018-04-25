@@ -38,10 +38,6 @@ SettingsListener::~SettingsListener()
 #define SAVE(option)\
     s.settings()->setValue(QStringLiteral(#option), option);
 
-Settings::Settings()
-{
-}
-
 void Settings::load()
 {
     Ori::Settings s;
@@ -55,12 +51,6 @@ void Settings::load()
     s.beginGroup("Options");
     LOAD_DEF(editNewElem, Bool, true);
     LOAD_DEF(elemAutoLabel, Bool, true);
-
-    s.beginGroup("States");
-    LOAD(schemaFileDlgOpenPath, String);
-    LOAD(schemaFileDlgOpenFilter, String);
-    LOAD(schemaFileDlgSavePath, String);
-    LOAD(schemaFileDlgSaveFilter, String);
 
     s.beginGroup("Debug");
     LOAD_DEF(showProtocolAtStart, Bool, false);
@@ -80,12 +70,6 @@ void Settings::save()
     SAVE(editNewElem)
     SAVE(elemAutoLabel)
 
-    s.beginGroup("States");
-    SAVE(schemaFileDlgOpenPath)
-    SAVE(schemaFileDlgOpenFilter)
-    SAVE(schemaFileDlgSavePath)
-    SAVE(schemaFileDlgSaveFilter)
-
     s.beginGroup("Debug");
     SAVE(showProtocolAtStart)
 }
@@ -96,15 +80,5 @@ bool Settings::edit(class QWidget *parent)
     if (result)
         NOTIFY_LISTENERS(settingsChanged);
     return result;
-}
-
-const QString& Settings::schemaOpenPath() const
-{
-    return schemaFileDlgOpenPath.isEmpty()? schemaFileDlgSavePath: schemaFileDlgOpenPath;
-}
-
-const QString& Settings::schemaSavePath() const
-{
-    return schemaFileDlgSavePath.isEmpty()? schemaFileDlgOpenPath: schemaFileDlgSavePath;
 }
 

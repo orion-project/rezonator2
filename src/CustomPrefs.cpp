@@ -1,6 +1,7 @@
 #include "CustomPrefs.h"
 
 #include <QDebug>
+#include <QDir>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -99,3 +100,33 @@ Z::Unit CustomPrefs::recentUnit(const QString& key, Z::Dim dim)
     return dim->unitByAliasOrSi(unitByDim[dim->alias()].toString());
 }
 
+void CustomPrefs::setRecentDir(const QString& key, const QString& dirOrFile)
+{
+    QString dir;
+    if (QFile::exists(dirOrFile))
+        dir = QFileInfo(dirOrFile).absolutePath();
+    else if (QDir(dirOrFile).exists())
+        dir = QDir(dirOrFile).absolutePath();
+    if (!dir.isEmpty())
+        setRecentStr(key, dir);
+}
+
+QString CustomPrefs::recentDir(const QString& key, const QString& defaultDir)
+{
+    QString dir = recentStr(key, defaultDir);
+    return (dir.isEmpty() || !QDir(dir).exists()) ? QDir::currentPath() : dir;
+}
+
+void CustomPrefs::setRecentStr(const QString& key, const QString& value)
+{
+    if (__customData[key].toString() != value)
+    {
+        __customData[key] = value;
+        save();
+    }
+}
+
+QString CustomPrefs::recentStr(const QString& key, const QString& defaultStr)
+{
+    return __customData[key].toString(defaultStr);
+}

@@ -25,21 +25,12 @@ public:
     bool useNativeMenuBar;    ///< Use menu bar specfic to Ubuntu Unity or MacOS (on sceern's top).
     bool showProtocolAtStart; ///< Open protocol window just after application started.
 
-    // states
-    QString schemaFileDlgOpenPath, schemaFileDlgOpenFilter;
-    QString schemaFileDlgSavePath, schemaFileDlgSaveFilter;
-
     void load();
     void save();
     bool edit(class QWidget *parent);
 
-    const QString& schemaOpenPath() const;
-    const QString& schemaSavePath() const;
-    QString* schemaOpenFilter() { return &schemaFileDlgOpenFilter; }
-    QString* schemaSaveFilter() { return &schemaFileDlgSaveFilter; }
-
 private:
-    Settings();
+    Settings() {}
 
     friend class Singleton<Settings>;
 };

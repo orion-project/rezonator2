@@ -41,18 +41,21 @@ void ProjectOperations::newSchemaFile()
 
 QString ProjectOperations::getOpenFileName()
 {
-    Settings& settings = Settings::instance();
+    QString recentPath = CustomPrefs::recentDir("schema_open_path");
+    QString recentFilter = CustomPrefs::recentStr("schema_open_filter");
+
     auto fileName = QFileDialog::getOpenFileName(_parent,
                                                  tr("Open schema", "Dialog title"),
-                                                 settings.schemaOpenPath(),
+                                                 recentPath,
                                                  Z::IO::Utils::filtersForOpen(),
-                                                 settings.schemaOpenFilter(),
+                                                 &recentFilter,
                                                  fileDialogOptions());
     if (fileName.isEmpty()) return QString();
 
-    settings.schemaFileDlgOpenPath = QFileInfo(fileName).absolutePath();
+    CustomPrefs::setRecentDir("schema_open_path", fileName);
+    CustomPrefs::setRecentStr("schema_open_filter", recentFilter);
 
-    fileName = Z::IO::Utils::refineFileName(fileName, settings.schemaFileDlgOpenFilter);
+    fileName = Z::IO::Utils::refineFileName(fileName, recentFilter);
 
     emit fileNameSelected(fileName);
     return fileName;
@@ -60,18 +63,21 @@ QString ProjectOperations::getOpenFileName()
 
 QString ProjectOperations::getSaveFileName()
 {
-    Settings& settings = Settings::instance();
+    QString recentPath = CustomPrefs::recentDir("schema_save_path");
+    QString recentFilter = CustomPrefs::recentStr("schema_save_filter");
+
     auto fileName = QFileDialog::getSaveFileName(_parent,
                                                  tr("Save Schema", "Dialog title"),
-                                                 settings.schemaSavePath(),
+                                                 recentPath,
                                                  Z::IO::Utils::filtersForSave(),
-                                                 settings.schemaSaveFilter(),
+                                                 &recentFilter,
                                                  fileDialogOptions());
     if (fileName.isEmpty()) return QString();
 
-    settings.schemaFileDlgSavePath = QFileInfo(fileName).absolutePath();
+    CustomPrefs::setRecentDir("schema_save_path", fileName);
+    CustomPrefs::setRecentStr("schema_save_filter", recentFilter);
 
-    fileName = Z::IO::Utils::refineFileName(fileName, settings.schemaFileDlgSaveFilter);
+    fileName = Z::IO::Utils::refineFileName(fileName, recentFilter);
 
     emit fileNameSelected(fileName);
     return fileName;
