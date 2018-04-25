@@ -166,6 +166,7 @@ void ProjectWindow::createActions()
     actnWndTile = A_(tr("&Tile"), _mdiArea, SLOT(tileSubWindows()));
     actnWndCascade = A_(tr("&Cascade"), _mdiArea, SLOT(cascadeSubWindows()));
 
+    actnHelpBugReport = A_(tr("&Send Bug Report"), this, SLOT(actionHelpBugReport()));
     actnHelpUpdates = A_(tr("&Check for Updates"), this, SLOT(actionHelpUpdate()));
     actnHelpHomepage = A_(tr("&Visit Homepage"), this, SLOT(actionHelpHomePage()));
     actnHelpAbout = A_(tr("&About..."), this, SLOT(actionHelpAbout()));
@@ -211,7 +212,7 @@ void ProjectWindow::createMenuBar()
     connect(menuWindow, SIGNAL(aboutToShow()), _mdiArea, SLOT(populateWindowMenu()));
 
     menuHelp = Ori::Gui::menu(tr("&Help"), this,
-        { actnHelpUpdates, actnHelpHomepage, 0, actnHelpAbout });
+        { actnHelpBugReport, actnHelpUpdates, actnHelpHomepage, 0, actnHelpAbout });
 }
 
 void ProjectWindow::createToolBars()
@@ -430,6 +431,11 @@ void ProjectWindow::actionHelpHomePage()
 void ProjectWindow::actionHelpUpdate()
 {
     // TODO:NEXT-VER
+}
+
+void ProjectWindow::actionHelpBugReport()
+{
+    QDesktopServices::openUrl(QUrl(Z::Strs::newIssueUrl()));
 }
 
 //------------------------------------------------------------------------------

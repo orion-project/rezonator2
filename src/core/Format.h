@@ -23,6 +23,7 @@ inline QString alpha() { return QStringLiteral("α"); }
 
 inline QString homepage() { return "http://rezonator.orion-project.org"; }
 inline QString sourcepage() { return "https://github.com/orion-project/rezonator2"; }
+inline QString newIssueUrl() { return "https://github.com/orion-project/rezonator2/issues/new"; }
 inline QString email() { return "rezonator@orion-project.org"; }
 
 inline QChar multDot() { return QChar(0x00B7); }

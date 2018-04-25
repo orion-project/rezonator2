@@ -69,7 +69,7 @@ private:
     QAction *actnWndClose, *actnWndCloseAll, *actnWndTile, *actnWndCascade,
             *actnWndSchema, *actnWndParams, *actnWndProtocol;
 
-    QAction *actnHelpUpdates, *actnHelpHomepage, *actnHelpAbout;
+    QAction *actnHelpBugReport, *actnHelpUpdates, *actnHelpHomepage, *actnHelpAbout;
 
     ProjectOperations* _operations;
     CalcManager* _calculations;
@@ -98,6 +98,7 @@ private slots:
     void actionHelpAbout();
     void actionHelpHomePage();
     void actionHelpUpdate();
+    void actionHelpBugReport();
 
     void showElementsCatalog();
     void showPreferences();

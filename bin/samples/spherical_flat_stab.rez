@@ -1,0 +1,100 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 1026
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "M1",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 0
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 50
+                }
+            },
+            "title": "Back mirror",
+            "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M2",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 0
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 100
+                }
+            },
+            "title": "Output mirror",
+            "type": "ElemCurveMirror"
+        }
+    ],
+    "formulas": [
+    ],
+    "param_links": [
+    ],
+    "schema_version": "2.0",
+    "trip_type": "SW",
+    "windows": [
+        {
+            "function": {
+                "arg": {
+                    "element_index": 0,
+                    "param": "R",
+                    "range": {
+                        "points": 100,
+                        "start": {
+                            "unit": "mm",
+                            "value": 90
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 110
+                        },
+                        "use_step": false
+                    }
+                },
+                "stab_calc_mode": "Normal"
+            },
+            "type": "StabMap",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 110.2,
+                "x_min": 89.8,
+                "y_max": -0.9999999999999998,
+                "y_min": -1
+            }
+        }
+    ]
+}
