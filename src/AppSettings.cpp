@@ -30,13 +30,13 @@ SettingsListener::~SettingsListener()
 //------------------------------------------------------------------------------
 
 #define LOAD(option, type)\
-    option = s.settings()->value(QStringLiteral(#option)).to ## type();
+    option = s.settings()->value(QStringLiteral(#option)).to ## type()
 
 #define LOAD_DEF(option, type, default_value)\
-    option = s.settings()->value(QStringLiteral(#option), default_value).to ## type();
+    option = s.settings()->value(QStringLiteral(#option), default_value).to ## type()
 
 #define SAVE(option)\
-    s.settings()->setValue(QStringLiteral(#option), option);
+    s.settings()->setValue(QStringLiteral(#option), option)
 
 void Settings::load()
 {
@@ -54,6 +54,10 @@ void Settings::load()
 
     s.beginGroup("Debug");
     LOAD_DEF(showProtocolAtStart, Bool, false);
+
+    s.beginGroup("Plot");
+    LOAD_DEF(plotSafeMargins, Double, 0.01);
+    LOAD_DEF(plotZoomStep, Double, 0.1);
 }
 
 void Settings::save()
@@ -61,17 +65,21 @@ void Settings::save()
     Ori::Settings s;
 
     s.beginGroup("View");
-    SAVE(smallToolbarImages)
-    SAVE(showBackground)
-    SAVE(useNativeMenuBar)
-    SAVE(useSystemDialogs)
+    SAVE(smallToolbarImages);
+    SAVE(showBackground);
+    SAVE(useNativeMenuBar);
+    SAVE(useSystemDialogs);
 
     s.beginGroup("Options");
-    SAVE(editNewElem)
-    SAVE(elemAutoLabel)
+    SAVE(editNewElem);
+    SAVE(elemAutoLabel);
 
     s.beginGroup("Debug");
-    SAVE(showProtocolAtStart)
+    SAVE(showProtocolAtStart);
+
+    s.beginGroup("Plot");
+    SAVE(plotSafeMargins);
+    SAVE(plotZoomStep);
 }
 
 bool Settings::edit(class QWidget *parent)

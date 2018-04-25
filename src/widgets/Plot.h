@@ -44,6 +44,7 @@ private slots:
 
 private:
     QVector<Graph*> _serviceGraphs;
+    const double _safeMargins;
 
     QPair<double, double> limits(QCPAxis* axis) const;
     void extendLimits(QCPAxis* axis, double factor, bool replot);

@@ -1,4 +1,6 @@
 #include "PlotFuncWindow.h"
+
+#include "../AppSettings.h"
 #include "../core/Protocol.h"
 #include "../funcs/InfoFunctions.h"
 #include "../widgets/Plot.h"
@@ -87,8 +89,8 @@ void FuncOptionsPanel::showCurrentMode()
 //                                PlotFuncWindow
 //------------------------------------------------------------------------------
 
-PlotFuncWindow::PlotFuncWindow(PlotFunction *func) :
-    SchemaMdiChild(func->schema()), _function(func)
+PlotFuncWindow::PlotFuncWindow(PlotFunction *func) : SchemaMdiChild(func->schema()),
+    _function(func), _zoomStep(Settings::instance().plotZoomStep)
 {
     createActions();
     createMenuBar();
@@ -150,13 +152,13 @@ void PlotFuncWindow::createActions()
     connect(actnAutolimitsY, &QAction::triggered, [&](){ _plot->autolimitsY(); });
 
     actnZoomInX = new QAction(QIcon(":/toolbar/limits_zoom_in_x"), tr("Zoom-in Over X"), this);
-    connect(actnZoomInX, &QAction::triggered, [&](){ _plot->extendLimitsX(-0.1); });
+    connect(actnZoomInX, &QAction::triggered, [&](){ _plot->extendLimitsX(-_zoomStep); });
     actnZoomOutX = new QAction(QIcon(":/toolbar/limits_zoom_out_x"), tr("Zoom-out Over X"), this);
-    connect(actnZoomOutX, &QAction::triggered, [&](){ _plot->extendLimitsX(0.1); });
+    connect(actnZoomOutX, &QAction::triggered, [&](){ _plot->extendLimitsX(_zoomStep); });
     actnZoomInY = new QAction(QIcon(":/toolbar/limits_zoom_in_y"), tr("Zoom-in Over Y"), this);
-    connect(actnZoomInY, &QAction::triggered, [&](){ _plot->extendLimitsY(-0.1); });
+    connect(actnZoomInY, &QAction::triggered, [&](){ _plot->extendLimitsY(-_zoomStep); });
     actnZoomOutY = new QAction(QIcon(":/toolbar/limits_zoom_out_y"), tr("Zoom-out Over Y"), this);
-    connect(actnZoomOutY, &QAction::triggered, [&](){ _plot->extendLimitsY(0.1); });
+    connect(actnZoomOutY, &QAction::triggered, [&](){ _plot->extendLimitsY(_zoomStep); });
 
     actnSetLimitsX = new QAction(tr("Set X-axis Limits..."), this);
     connect(actnSetLimitsX, &QAction::triggered, [&](){ _plot->setLimitsDlgX(); });

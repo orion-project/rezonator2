@@ -1,13 +1,14 @@
 #include "Plot.h"
 
 #include "Appearance.h"
+#include "../AppSettings.h"
 #include "helpers/OriDialogs.h"
 #include "widgets/OriValueEdit.h"
 
 #include <QFormLayout>
 #include <QLabel>
 
-Plot::Plot()
+Plot::Plot() : _safeMargins(Settings::instance().plotSafeMargins)
 {
     legend->setVisible(true);
     setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables |
@@ -85,8 +86,8 @@ void Plot::autolimits(bool replot)
         }
     }
     // Apply safe margins
-    extendLimitsX(0.01, false);
-    extendLimitsY(0.01, false);
+    extendLimitsX(_safeMargins, false);
+    extendLimitsY(_safeMargins, false);
     if (replot) this->replot();
 }
 

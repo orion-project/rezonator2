@@ -174,6 +174,8 @@ private:
         QPointF cursorPos;
     };
     QMap<int, ViewState> _storedView;
+
+    const double _zoomStep;
 };
 
 #endif // PLOT_FUNC_WINDOW_H
