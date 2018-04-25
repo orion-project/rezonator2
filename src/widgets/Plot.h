@@ -14,6 +14,7 @@ public:
 
     QVector<Graph*>& serviceGraphs() { return _serviceGraphs; }
 
+    bool setLimitsDlg();
     bool setLimitsDlgX() { return setLimitsDlg(xAxis); }
     bool setLimitsDlgY() { return setLimitsDlg(yAxis); }
     QPair<double, double> limitsX() const { return limits(xAxis); }
@@ -22,6 +23,7 @@ public:
     void setLimitsY(const QPair<double, double>& p, bool replot) { setLimitsY(p.first, p.second, replot); }
     void setLimitsX(double min, double max, bool replot = true) { setLimits(xAxis, min, max, replot); }
     void setLimitsY(double min, double max, bool replot = true) { setLimits(yAxis, min, max, replot); }
+    void extendLimits(double factor, bool replot = true);
     void extendLimitsX(double factor, bool replot = true) { extendLimits(xAxis, factor, replot); }
     void extendLimitsY(double factor, bool replot = true) { extendLimits(yAxis, factor, replot); }
     void autolimits(bool replot = true);
@@ -49,6 +51,7 @@ private:
     QPair<double, double> limits(QCPAxis* axis) const;
     void extendLimits(QCPAxis* axis, double factor, bool replot);
     void setLimits(QCPAxis* axis, double min, double max, bool replot);
+    bool setLimitsDlg(QCPRange& range, const QString &title);
 };
 
 #endif // PLOT_H

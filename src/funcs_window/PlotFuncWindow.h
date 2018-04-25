@@ -129,8 +129,9 @@ protected:
     bool _centerCursorRequested = false; ///< If cursor should be centered after next update.
 
     QAction *actnShowT, *actnShowS, *actnShowTS,
-        *actnAutolimits, *actnAutolimitsX, *actnAutolimitsY, *actnSetLimitsX, *actnSetLimitsY,
-        *actnZoomInX, *actnZoomOutX, *actnZoomInY, *actnZoomOutY,
+        *actnAutolimits, *actnAutolimitsX, *actnAutolimitsY,
+        *actnSetLimits, *actnSetLimitsX, *actnSetLimitsY,
+        *actnZoomIn, *actnZoomOut, *actnZoomInX, *actnZoomOutX, *actnZoomInY, *actnZoomOutY,
         *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo;
 
     Graph* selectedGraph() const;

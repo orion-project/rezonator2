@@ -107,6 +107,13 @@ void Plot::autolimitsY(bool replot)
     if (replot) this->replot();
 }
 
+void Plot::extendLimits(double factor, bool replot)
+{
+    extendLimitsX(factor, false);
+    extendLimitsY(factor, false);
+    if (replot) this->replot();
+}
+
 void Plot::extendLimits(QCPAxis* axis, double factor, bool replot)
 {
     auto range = axis->range();
@@ -129,9 +136,33 @@ QPair<double, double> Plot::limits(QCPAxis* axis) const
     return QPair<double, double>(range.lower, range.upper);
 }
 
+bool Plot::setLimitsDlg()
+{
+    auto range = xAxis->range();
+    if (setLimitsDlg(range, tr("Limits for X and Y")))
+    {
+        xAxis->setRange(range);
+        yAxis->setRange(range);
+        replot();
+        return true;
+    }
+    return false;
+}
+
 bool Plot::setLimitsDlg(QCPAxis* axis)
 {
     auto range = axis->range();
+    if (setLimitsDlg(range, tr("%1-axis Limits").arg(axis == xAxis ? "X" : "Y")))
+    {
+        axis->setRange(range);
+        replot();
+        return true;
+    }
+    return false;
+}
+
+bool Plot::setLimitsDlg(QCPRange& range, const QString& title)
+{
     auto editorMin = new Ori::Widgets::ValueEdit;
     auto editorMax = new Ori::Widgets::ValueEdit;
     Z::Gui::setValueFont(editorMin);
@@ -146,11 +177,12 @@ bool Plot::setLimitsDlg(QCPAxis* axis)
     layout->addRow(new QLabel("Min"), editorMin);
     layout->addRow(new QLabel("Max"), editorMax);
 
-    if (Ori::Dlg::Dialog(&w)
-            .withTitle(tr("%1-axis Limits").arg(axis == xAxis ? "X" : "Y"))
-            .exec())
+    if (Ori::Dlg::Dialog(&w).withTitle(title).exec())
     {
-        setLimits(axis, editorMin->value(), editorMax->value(), true);
+        auto min = editorMin->value();
+        auto max = editorMax->value();
+        range.lower = qMin(min, max);
+        range.upper = qMax(min, max);
         return true;
     }
     return false;
