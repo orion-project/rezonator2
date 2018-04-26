@@ -5,6 +5,7 @@
 
 #include "FunctionBase.h"
 #include "../core/Variable.h"
+#include "../core/CommonTypes.h"
 
 class Calculator;
 class Schema;

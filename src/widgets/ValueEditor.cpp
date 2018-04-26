@@ -1,15 +1,16 @@
+#include "ValueEditor.h"
+
 #include "Appearance.h"
 #include "UnitWidgets.h"
-#include "ValueEditor.h"
-#include "helpers/OriWidgets.h"
+#include "helpers/OriLayouts.h"
 #include "widgets/OriValueEdit.h"
 
 ValueEditor::ValueEditor(QWidget *parent) : QWidget(parent)
 {
-    Ori::Gui::layoutH(this, 0, Ori::Gui::borderWidth(), {
+    Ori::Layouts::LayoutH({
         _valueEditor = new Ori::Widgets::ValueEdit,
         _unitsSelector = new UnitComboBox
-    });
+    }).setMargin(0).setSpacing(2).useFor(this);
 
     Z::Gui::setValueFont(_valueEditor);
     _valueEditor->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);

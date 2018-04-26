@@ -17,40 +17,41 @@ public:
 class WaistParams : public PumpParams
 {
 public:
-   ValueTS distance;
-   ValueTS waist;
-   PointTS MI;
+   ValueTS distance = ValueTS(100, 100, Units::mm());
+   ValueTS waist = ValueTS(100, 100, Units::mkm());
+   PointTS MI = PointTS(1, 1);
 };
 
 class FrontParams : public PumpParams
 {
 public:
-   ValueTS distance;
-   ValueTS beamsize;
-   PointTS MI;
+   ValueTS beamRadius = ValueTS(1000, 1000, Units::mkm());
+   ValueTS frontRadius = ValueTS(100, 100, Units::mm());
+   PointTS MI = PointTS(1, 1);
 };
 
 class TwoSectionsParams : public PumpParams
 {
 public:
-    ValueTS radius1;
-    ValueTS radius2;
-    ValueTS distance;
+    ValueTS radius1 = ValueTS(100, 100, Units::mkm());
+    ValueTS radius2 = ValueTS(1000, 1000, Units::mkm());
+    ValueTS distance = ValueTS(100, 100, Units::mm());
 };
 
 class RayVectorParams : public PumpParams
 {
 public:
-    ValueTS radius;
-    ValueTS angle;
-    ValueTS distance;
+    ValueTS radius = ValueTS(100, 100, Units::mkm());
+    ValueTS angle = ValueTS(10, 10, Units::deg());
+    ValueTS distance = ValueTS(100, 100, Units::mm());
 };
 
 class ComplexParams : public PumpParams
 {
 public:
-    PairTS<DoublePoint> param;
-    PointTS MI;
+    PointTS real = PointTS(0, 0);
+    PointTS imag = PointTS(0, 0);
+    PointTS MI = PointTS(1, 1);
 };
 
 class Params

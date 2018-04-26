@@ -16,10 +16,6 @@
 class Schema;
 class Calculator;
 
-namespace Z {
-enum WorkPlane { Plane_T, Plane_S };
-}
-
 /**
     Base class for all functions.
 */

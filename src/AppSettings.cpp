@@ -51,6 +51,7 @@ void Settings::load()
     s.beginGroup("Options");
     LOAD_DEF(editNewElem, Bool, true);
     LOAD_DEF(elemAutoLabel, Bool, true);
+    LOAD(defaultTripType, String);
 
     s.beginGroup("Debug");
     LOAD_DEF(showProtocolAtStart, Bool, false);
@@ -74,6 +75,7 @@ void Settings::save()
     s.beginGroup("Options");
     SAVE(editNewElem);
     SAVE(elemAutoLabel);
+    SAVE(defaultTripType);
 
     s.beginGroup("Debug");
     SAVE(showProtocolAtStart);

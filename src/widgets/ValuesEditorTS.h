@@ -2,6 +2,7 @@
 #define VALUESEDITORTS_H
 
 #include "../core/Values.h"
+#include "../core/CommonTypes.h"
 
 #include <QMap>
 #include <QWidget>
@@ -17,61 +18,49 @@ namespace Widgets {
     class ValueEdit;
 }}
 
+class UnitComboBox;
+
 class ValueEditorTS : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ValueEditorTS(QWidget *parent = 0);
-    void collect();
-    double valueT() const;
-    double valueS() const;
-    void setValueT(const double& value);
-    void setValueS(const double& value);
-    void setValue(Z::PointTS *value);
-    void setLabel(const QString& label);
-    void setSymbol(const QString& symbol);
-    QLabel* symbolLabel() const { return _symbol; }
+    explicit ValueEditorTS(const QString& label, const QString& symbol, const Z::ValueTS& value);
+    void setValue(const Z::ValueTS& value);
+    Z::ValueTS value() const;
+    void setFocus(Z::WorkPlane plane);
 public slots:
     void swapValues();
     void assignTtoS();
     void assignStoT();
-    void linkValues();
 signals:
-    void goingFocusNext();
-    void goingFocusPrev();
+    void goingFocusNext(Z::WorkPlane plane);
+    void goingFocusPrev(Z::WorkPlane plane);
 private:
-    Z::PointTS *_value = nullptr;
     Ori::Widgets::ValueEdit *_editorT, *_editorS;
+    UnitComboBox *_unitsSelector;
     QLabel *_label, *_symbol;
 private slots:
     void editorFocused(bool focus);
     void editorKeyPressed(int key);
+    friend class ValuesEditorTS;
 };
 
 class ValuesEditorTS : public QVBoxLayout
 {
     Q_OBJECT
 public:
-    explicit ValuesEditorTS(QWidget *parent = 0);
-    void addEditor(int id, Z::PointTS *value);
-    double valueT(int id) const;
-    double valueS(int id) const;
-    void setValueT(int id, const double& value);
-    void setValueS(int id, const double& value);
-    void setValue(int id, Z::PointTS *value);
-    void setLabel(int id, const QString& label);
-    void setSymbol(int id, const QString& symbol);
-    void setVisible(int id, bool visible);
-    void collect();
-    //void adjustSymbolsWidth();
+    ValuesEditorTS(const QVector<ValueEditorTS*>& editors);
+    ValueEditorTS* firstEditor() { return _editors.first(); }
+    void adjustSymbolsWidth();
 public slots:
     void swapValues();
     void assignTtoS();
     void assignStoT();
-    void linkValues();
 private:
-    QMap<int, ValueEditorTS*> _editors;
-    ValueEditorTS* getEditor(int id) const;
+    QVector<ValueEditorTS*> _editors;
+    QLabel *_headerT, *_headerS, *_unitSpacer;
+    void goingFocusNext(Z::WorkPlane plane);
+    void goingFocusPrev(Z::WorkPlane plane);
 };
 
 #endif // VALUESEDITORTS_H

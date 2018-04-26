@@ -1,4 +1,7 @@
 #include "ValuesEditorTS.h"
+
+#include "Appearance.h"
+#include "UnitWidgets.h"
 #include "widgets/OriValueEdit.h"
 
 #include <QApplication>
@@ -6,10 +9,6 @@
 #include <QLabel>
 #include <QStyle>
 #include <QToolButton>
-#include <QBoxLayout>
-
-#define EDITOR_W 128
-#define EDITOR_SPACING 1
 
 namespace {
 QToolButton* makeButton(const QString& tooltip, const QString& icon, QObject* reciever, const char* slot)
@@ -18,7 +17,7 @@ QToolButton* makeButton(const QString& tooltip, const QString& icon, QObject* re
     b->setFixedWidth(18);
     b->setToolTip(tooltip);
     b->setFocusPolicy(Qt::NoFocus);
-    b->setIcon(QPixmap(":/misc10/"+icon));
+    b->setIcon(QPixmap(icon));
     b->setStyleSheet(
         "QToolButton{background-color:rgba(0,0,0,0);border:none}"
         "QToolButton:hover{background-color:rgba(0,0,0,30);border:none}");
@@ -31,92 +30,63 @@ QToolButton* makeButton(const QString& tooltip, const QString& icon, QObject* re
 //                                ValueEditorTS
 //------------------------------------------------------------------------------
 
-ValueEditorTS::ValueEditorTS(QWidget *parent) : QWidget(parent)
+ValueEditorTS::ValueEditorTS(const QString& label, const QString& symbol, const Z::ValueTS& value) : QWidget()
 {
-    _symbol = new QLabel;
-    QFont f = _symbol->font();
-    f.setBold(true);
-    f.setPointSize(14);
-    f.setFamily("Times New Roman");
-    _symbol->setFont(f);
+    _symbol = new QLabel(symbol);
+    Z::Gui::setSymbolFont(_symbol);
     _symbol->setAlignment(Qt::AlignVCenter);
-    _symbol->setFixedWidth(30);
 
-    _label = new QLabel;
+    _label = new QLabel(label);
     _label->setAlignment(Qt::AlignVCenter);
 
-    auto layout = new QHBoxLayout;
-    layout->setMargin(0);
-    layout->setSpacing(EDITOR_SPACING);
-    layout->addWidget(_label);
-    layout->addStretch();
-    layout->addSpacing(6);
-    layout->addWidget(_symbol);
-    //layout->addSpacing(6);
-    layout->addWidget(_editorT = new Ori::Widgets::ValueEdit);
-    layout->addWidget(makeButton(tr("Assign T value to S"), "ts_t2s", this, SLOT(assignTtoS())));
-    layout->addWidget(makeButton(tr("Swap values"), "ts_swap", this, SLOT(swapValues())));
-    // TODO layout->addWidget(makeButton(tr("Change both values together"), "ts_link", this, SLOT(linkValues())));
-    layout->addWidget(makeButton(tr("Assign S value to T"), "ts_s2t", this, SLOT(assignStoT())));
-    layout->addWidget(_editorS = new Ori::Widgets::ValueEdit);
-    setLayout(layout);
+    _editorT = new Ori::Widgets::ValueEdit;
+    _editorS = new Ori::Widgets::ValueEdit;
+    Z::Gui::setValueFont(_editorT);
+    Z::Gui::setValueFont(_editorS);
 
-    _editorT->setFixedWidth(EDITOR_W);
-    _editorS->setFixedWidth(EDITOR_W);
+    _unitsSelector = new UnitComboBox;
+
     connect(_editorT, SIGNAL(focused(bool)), this, SLOT(editorFocused(bool)));
     connect(_editorT, SIGNAL(keyPressed(int)), this, SLOT(editorKeyPressed(int)));
     connect(_editorS, SIGNAL(focused(bool)), this, SLOT(editorFocused(bool)));
     connect(_editorS, SIGNAL(keyPressed(int)), this, SLOT(editorKeyPressed(int)));
+    connect(_unitsSelector, SIGNAL(focused(bool)), this, SLOT(editorFocused(bool)));
+
+    auto layout = new QHBoxLayout(this);
+    layout->setMargin(0);
+    layout->setSpacing(0);
+    layout->addWidget(_label);
+    layout->addStretch();
+    layout->addSpacing(6);
+    layout->addWidget(_symbol);
+    layout->addSpacing(6);
+    layout->addWidget(_editorT);
+    layout->addWidget(makeButton(tr("Assign T value to S"), ":/misc10/ts_t2s", this, SLOT(assignTtoS())));
+    layout->addWidget(makeButton(tr("Swap values"), ":/misc10/ts_swap", this, SLOT(swapValues())));
+    layout->addWidget(makeButton(tr("Assign S value to T"), ":/misc10/ts_s2t", this, SLOT(assignStoT())));
+    layout->addWidget(_editorS);
+    layout->addSpacing(2);
+    layout->addWidget(_unitsSelector);
 
     int s = style()->pixelMetric(QStyle::PM_LayoutVerticalSpacing);
     int hs = s / 2 + 1;
     setContentsMargins(s, hs, hs, hs);
     setAutoFillBackground(true);
+
+    setValue(value);
 }
 
-void ValueEditorTS::collect()
+void ValueEditorTS::setValue(const Z::ValueTS& value)
 {
-    if (!_value) return;
-    _value->T = valueT();
-    _value->S = valueS();
+    _editorT->setValue(value.rawValueT());
+    _editorS->setValue(value.rawValueS());
+    _unitsSelector->populate(Z::Units::guessDim(value.unit()));
+    _unitsSelector->setSelectedUnit(value.unit());
 }
 
-double ValueEditorTS::valueT() const
+Z::ValueTS ValueEditorTS::value() const
 {
-    return _editorT->value();
-}
-
-double ValueEditorTS::valueS() const
-{
-    return _editorS->value();
-}
-
-void ValueEditorTS::setValue(Z::PointTS *value)
-{
-    _value = value;
-    if (!value) return;
-    setValueT(value->T);
-    setValueS(value->S);
-}
-
-void ValueEditorTS::setValueT(const double& value)
-{
-    _editorT->setValue(value);
-}
-
-void ValueEditorTS::setValueS(const double& value)
-{
-    _editorS->setValue(value);
-}
-
-void ValueEditorTS::setLabel(const QString& label)
-{
-    _label->setText(label);
-}
-
-void ValueEditorTS::setSymbol(const QString& symbol)
-{
-    _symbol->setText(symbol);
+    return Z::ValueTS(_editorT->value(), _editorS->value(), _unitsSelector->selectedUnit());
 }
 
 void ValueEditorTS::swapValues()
@@ -136,11 +106,6 @@ void ValueEditorTS::assignStoT()
     _editorT->setValue(_editorS->value());
 }
 
-void ValueEditorTS::linkValues()
-{
-    // TODO void ValueEditorTS::linkValues()
-}
-
 void ValueEditorTS::editorFocused(bool focus)
 {
     setBackgroundRole(focus? QPalette::Light: QPalette::Window);
@@ -150,153 +115,109 @@ void ValueEditorTS::editorKeyPressed(int key)
 {
     switch (key)
     {
-    case Qt::Key_Up: emit goingFocusPrev(); break;
-    case Qt::Key_Down: emit goingFocusNext(); break;
+    case Qt::Key_Up: emit goingFocusPrev(sender() == _editorT ? Z::Plane_T : Z::Plane_S); break;
+    case Qt::Key_Down: emit goingFocusNext(sender() == _editorT ? Z::Plane_T : Z::Plane_S); break;
     default:;
     }
+}
+
+void ValueEditorTS::setFocus(Z::WorkPlane plane)
+{
+    auto editor = plane == Z::Plane_T ? _editorT : _editorS;
+    editor->setFocus();
+    editor->selectAll();
 }
 
 //------------------------------------------------------------------------------
 //                                ValueEditorsTS
 //------------------------------------------------------------------------------
 
-QLabel* makeHeaderLabel(const QString& title)
-{
-    auto label = new QLabel("<b>" + title + "</b>");
-    label->setFixedWidth(EDITOR_W);
-    label->setAlignment(Qt::AlignHCenter);
-    label->setMargin(0);
-    return label;
-}
-
-ValuesEditorTS::ValuesEditorTS(QWidget *parent) : QVBoxLayout(parent)
+ValuesEditorTS::ValuesEditorTS(const QVector<ValueEditorTS*>& editors) : QVBoxLayout(), _editors(editors)
 {
     setMargin(0);
     setSpacing(0);
 
+    _unitSpacer = new QLabel;
+    _headerT = new QLabel("T");
+    _headerS = new QLabel("S");
+    Z::Gui::setSymbolFont(_headerT);
+    Z::Gui::setSymbolFont(_headerS);
+    _headerT->setAlignment(Qt::AlignHCenter);
+    _headerS->setAlignment(Qt::AlignHCenter);
+
     auto header = new QHBoxLayout;
     header->setMargin(0);
-    header->setSpacing(EDITOR_SPACING);
+    header->setSpacing(0);
     header->addStretch();
-    header->addWidget(makeHeaderLabel("T"));
-    header->addWidget(makeButton(tr("Assign all T values to S"), "ts_t2s", this, SLOT(assignTtoS())));
-    header->addWidget(makeButton(tr("Swap all values"), "ts_swap", this, SLOT(swapValues())));
-    // TODO header->addWidget(makeButton(tr("Change both values together"), "ts_link", this, SLOT(linkValues())));
-    header->addWidget(makeButton(tr("Assign all S values to T"), "ts_s2t", this, SLOT(assignStoT())));
-    header->addWidget(makeHeaderLabel("S"));
+    header->addWidget(_headerT);
+    header->addWidget(makeButton(tr("Assign all T values to S"), ":/misc10/ts_t2s", this, SLOT(assignTtoS())));
+    header->addWidget(makeButton(tr("Swap all values"), ":/misc10/ts_swap", this, SLOT(swapValues())));
+    header->addWidget(makeButton(tr("Assign all S values to T"), ":/misc10/ts_s2t", this, SLOT(assignStoT())));
+    header->addWidget(_headerS);
+    header->addWidget(_unitSpacer);
     addLayout(header);
 
     int s = qApp->style()->pixelMetric(QStyle::PM_LayoutVerticalSpacing);
     int hs = s / 2 + 1; // should be same as margins of ValueEditorTS
     header->setContentsMargins(s, hs, hs, 0);
-}
 
-/*void ValuesEditorTS::adjustSymbolsWidth()
-{
-    int max_w = 0;
-    for (ValueEditorTS* e : _editors.values())
+    for (ValueEditorTS* e : _editors)
     {
-        e->symbolLabel()->setMinimumWidth(0);
-        e->symbolLabel()->setMaximumWidth(QWIDGETSIZE_MAX);
-        qDebug() << e->symbolLabel()->width();
-        if (e->symbolLabel()->width() > max_w)
-            max_w = e->symbolLabel()->width();
+        addWidget(e);
+        connect(e, &ValueEditorTS::goingFocusNext, this, &ValuesEditorTS::goingFocusNext);
+        connect(e, &ValueEditorTS::goingFocusPrev, this, &ValuesEditorTS::goingFocusPrev);
     }
-    for (auto e : _editors.values())
-        e->symbolLabel()->setFixedWidth(max_w);
-}*/
+}
 
-void ValuesEditorTS::addEditor(int id, Z::PointTS *value = nullptr)
+void ValuesEditorTS::adjustSymbolsWidth()
 {
-    if (!_editors.contains(id))
+    int maxSymbolW = 0;
+    int maxEditorW = 0;
+    int maxUnitW = 0;
+    for (ValueEditorTS* e : _editors)
     {
-        auto editor = new ValueEditorTS;
-        _editors.insert(id, editor);
-        addWidget(editor);
+        maxSymbolW = qMax(maxSymbolW, e->_symbol->width());
+        maxEditorW = qMax(maxEditorW, e->_editorT->width());
+        maxEditorW = qMax(maxEditorW, e->_editorS->width());
+        maxUnitW = qMax(maxUnitW, e->_unitsSelector->width());
     }
-    setValue(id, value);
-}
-
-double ValuesEditorTS::valueT(int id) const
-{
-    auto editor = getEditor(id);
-    return editor? editor->valueT(): 0;
-}
-
-double ValuesEditorTS::valueS(int id) const
-{
-    auto editor = getEditor(id);
-    return editor? editor->valueS(): 0;
-}
-
-void ValuesEditorTS::setValueT(int id, const double& value)
-{
-    auto editor = getEditor(id);
-    if (editor) editor->setValueT(value);
-}
-
-void ValuesEditorTS::setValueS(int id, const double& value)
-{
-    auto editor = getEditor(id);
-    if (editor) editor->setValueS(value);
-}
-
-void ValuesEditorTS::setValue(int id, Z::PointTS *value)
-{
-    if (!value) return;
-    auto editor = getEditor(id);
-    if (editor) editor->setValue(value);
-}
-
-void ValuesEditorTS::setLabel(int id, const QString& label)
-{
-    auto editor = getEditor(id);
-    if (editor) editor->setLabel(label);
-}
-
-void ValuesEditorTS::setSymbol(int id, const QString& symbol)
-{
-    auto editor = getEditor(id);
-    if (editor) editor->setSymbol(symbol);
-}
-
-void ValuesEditorTS::setVisible(int id, bool visible)
-{
-    auto editor = getEditor(id);
-    if (editor) editor->setVisible(visible);
-}
-
-ValueEditorTS* ValuesEditorTS::getEditor(int id) const
-{
-    if (!_editors.contains(id))
+    for (ValueEditorTS* e : _editors)
     {
-        qCritical() << "Unable to find editor with id" << id;
-        return nullptr;
+        e->_symbol->setFixedWidth(maxSymbolW);
+        e->_editorT->setFixedWidth(maxEditorW);
+        e->_editorS->setFixedWidth(maxEditorW);
+        e->_unitsSelector->setFixedWidth(maxUnitW);
     }
-    return _editors[id];
-}
-
-void ValuesEditorTS::collect()
-{
-    for (auto e : _editors.values()) e->collect();
+    _unitSpacer->setFixedWidth(maxUnitW+2);
+    _headerS->setFixedWidth(maxEditorW);
+    _headerT->setFixedWidth(maxEditorW);
 }
 
 void ValuesEditorTS::swapValues()
 {
-    for (auto e : _editors.values()) e->swapValues();
+    for (auto e : _editors) e->swapValues();
 }
 
 void ValuesEditorTS::assignTtoS()
 {
-    for (auto e : _editors.values()) e->assignTtoS();
+    for (auto e : _editors) e->assignTtoS();
 }
 
 void ValuesEditorTS::assignStoT()
 {
-    for (auto e : _editors.values()) e->assignStoT();
+    for (auto e : _editors) e->assignStoT();
 }
 
-void ValuesEditorTS::linkValues()
+void ValuesEditorTS::goingFocusNext(Z::WorkPlane plane)
 {
-    for (auto e : _editors.values()) e->linkValues();
+    for (int i = 0; i < _editors.size(); i++)
+        if (_editors.at(i) == sender())
+            return _editors.at(i < _editors.size()-1 ? i+1 : 0)->setFocus(plane);
+}
+
+void ValuesEditorTS::goingFocusPrev(Z::WorkPlane plane)
+{
+    for (int i = 0; i < _editors.size(); i++)
+        if (_editors.at(i) == sender())
+            return _editors.at(i > 0 ? i-1 : _editors.size()-1)->setFocus(plane);
 }

@@ -54,6 +54,10 @@ ProjectWindow::ProjectWindow() : QMainWindow(), SchemaToolWindow(new Schema())
 
     loadSettings();
 
+    schema()->events().disable();
+    schema()->setTripType(TripTypes::find(Settings::instance().defaultTripType));
+    schema()->events().enable();
+
     _calculations = new CalcManager(schema(), this);
     _operations = new ProjectOperations(schema(), this, _calculations);
 

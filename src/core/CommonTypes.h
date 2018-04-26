@@ -5,6 +5,10 @@
 #include <QVector>
 #include <QObject>
 
+namespace Z {
+enum WorkPlane { Plane_T, Plane_S };
+}
+
 enum class TripType
 {
     SW, ///< Standing wave system

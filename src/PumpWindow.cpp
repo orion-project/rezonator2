@@ -1,31 +1,85 @@
 #include "PumpWindow.h"
 
-#include "helpers/OriLayouts.h"
-#include "widgets/ValueEditor.h"
 #include "widgets/ValuesEditorTS.h"
 #include "widgets/OriOptionsGroup.h"
+#include "helpers/OriLayouts.h"
 
 #include <QLabel>
+#include <QTimer>
 
 using namespace Ori::Layouts;
+
+namespace {
+Z::ValueTS makeValue(const Z::PointTS& point)
+{
+    return Z::ValueTS(point.T, point.S, Z::Units::none());
+}
+}
 
 //------------------------------------------------------------------------------
 //                             WaistParamsEditor
 //------------------------------------------------------------------------------
 
-class WaistParamsEditor : public PumpParamsEditor<Z::Pump::WaistParams>
+WaistParamsEditor::WaistParamsEditor(Z::Pump::WaistParams *params) : PumpParamsEditor(), _params(params)
 {
-public:
-    WaistParamsEditor(Z::Pump::WaistParams *params) : PumpParamsEditor(), _params(params)
-    {
-        auto e1 = new ValueEditorTS;
-        auto e2 = new ValueEditorTS;
-        auto e3 = new ValueEditorTS;
-        LayoutV({ e1, e2, e3 }).useFor(this);
-    }
-private:
-    Z::Pump::WaistParams *_params;
-};
+    setLayout(new ValuesEditorTS({
+        _waist = new ValueEditorTS(tr("Waist radius"), "ω<sub>0</sub>", _params->waist),
+        _dist = new ValueEditorTS(tr("Distance to waist"), "z<sub>ω</sub>", _params->distance),
+        _MI = new ValueEditorTS(tr("Beam quality"), "M²", makeValue(_params->MI)),
+    }));
+}
+
+//------------------------------------------------------------------------------
+//                             FrontParamsEditor
+//------------------------------------------------------------------------------
+
+FrontParamsEditor::FrontParamsEditor(Z::Pump::FrontParams *params) : PumpParamsEditor(), _params(params)
+{
+    setLayout(new ValuesEditorTS({
+        _beam = new ValueEditorTS(tr("Beam radius"), "ω", _params->beamRadius),
+        _front = new ValueEditorTS(tr("Wavefront ROC"), "R", _params->frontRadius),
+        _MI = new ValueEditorTS(tr("Beam quality"), "M²", makeValue(_params->MI)),
+    }));
+}
+
+//------------------------------------------------------------------------------
+//                                ComplexParamsEditor
+//------------------------------------------------------------------------------
+
+ComplexParamsEditor::ComplexParamsEditor(Z::Pump::ComplexParams *params) : PumpParamsEditor(), _params(params)
+{
+    setLayout(new ValuesEditorTS({
+        _re = new ValueEditorTS(tr("Real part"), "Re", makeValue(_params->real)),
+        _im = new ValueEditorTS(tr("Imaginary part"), "Im", makeValue(_params->imag)),
+        _MI = new ValueEditorTS(tr("Beam quality"), "M²", makeValue(_params->MI)),
+    }));
+}
+
+//------------------------------------------------------------------------------
+//                                PumpWindow
+//------------------------------------------------------------------------------
+
+RayVectorParamsEditor::RayVectorParamsEditor(Z::Pump::RayVectorParams *params) : PumpParamsEditor(), _params(params)
+{
+    setLayout(new ValuesEditorTS({
+        _radius = new ValueEditorTS(tr("Beam radius"), "y", _params->radius),
+        _angle = new ValueEditorTS(tr("Half angle of divergence"), "V", _params->angle),
+        _dist = new ValueEditorTS(tr("Distance to radius"), "z<sub>y</sub>", _params->distance),
+    }));
+}
+
+//------------------------------------------------------------------------------
+//                                PumpWindow
+//------------------------------------------------------------------------------
+
+TwoSectionsParamsEditor::TwoSectionsParamsEditor(Z::Pump::TwoSectionsParams *params) : PumpParamsEditor(), _params(params)
+{
+    setLayout(new ValuesEditorTS({
+        _radius1 = new ValueEditorTS(tr("Beam radius 1"), "y<sub>1</sub>", _params->radius1),
+        _radius2 = new ValueEditorTS(tr("Beam radius 2"), "y<sub>2</sub>", _params->radius2),
+        _dist = new ValueEditorTS(tr("Distance between"), "z<sub>y</sub>", _params->distance),
+    }));
+}
 
 //------------------------------------------------------------------------------
 //                                PumpWindow
@@ -49,13 +103,11 @@ PumpWindow::PumpWindow(QWidget *parent, Schema *schema) : RezonatorDialog(Option
     _drawing->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     _drawing->setContentsMargins(6, 6, 6, 6);
 
-    _paramEditor = new QWidget;
-
-    auto paramsLayout = LayoutV({_paramEditor, _drawing}).setMargin(0).setSpacing(0);
+    _paramEditorsLayout = LayoutV({_drawing}).setMargin(0).setSpacing(0).boxLayout();
 
     auto groupParams = new QGroupBox;
     groupParams->setTitle("Parameters");
-    groupParams->setLayout(paramsLayout.boxLayout());
+    groupParams->setLayout(_paramEditorsLayout);
 
     // Input mode
     auto groupInputType = new Ori::Widgets::OptionsGroup(tr("Mode"), true);
@@ -85,78 +137,61 @@ void PumpWindow::collect()
 
 void PumpWindow::inputTypeChanged(int mode)
 {
-    auto mode = static_cast<Z::Pump::Params::Mode>(mode);
-
     if (_paramEditors.contains(_params.mode))
         _paramEditors[_params.mode]->setVisible(false);
-    _params.mode = mode;
 
-    QWidget *newParamEditor = nullptr;
-    switch (mode)
+    _params.mode = static_cast<Z::Pump::Params::Mode>(mode);
+
+    PumpParamsEditor *newParamEditor = nullptr;
+
+    switch (_params.mode)
     {
     case Z::Pump::Params::Waist:
         _drawing->setPixmap(QPixmap(":/drawing/pump_waist"));
-        if (!_paramEditors.contains(mode))
+        if (!_paramEditors.contains(_params.mode))
             newParamEditor = new WaistParamsEditor(&_params.waist);
-//        _paramEditors->setSymbol(1, QString::fromUtf8("ω<sub>0</sub>"));
-//        _paramEditors->setSymbol(2, QString::fromUtf8("z<sub>ω</sub>"));
-//        _paramEditors->setSymbol(3, QString::fromUtf8("M²"));
-//        _paramEditors->setLabel(1, tr("Waist radius, %1").arg(_schema->unitNameTr(Z::Units::Dim_Beamsize)));
-//        _paramEditors->setLabel(2, tr("Distance to waist, %1").arg(_schema->unitNameTr(Z::Units::Dim_Linear)));
-//        _paramEditors->setLabel(3, tr("Beam quality (MI)"));
         break;
     case Z::Pump::Params::Front:
         _drawing->setPixmap(QPixmap(":/drawing/pump_front"));
-//        _paramEditors->setSymbol(1, QString::fromUtf8("ω"));
-//        _paramEditors->setSymbol(2, QString::fromUtf8("R"));
-//        _paramEditors->setSymbol(3, QString::fromUtf8("M²"));
-//        _paramEditors->setLabel(1, tr("Beam radius, %1").arg(_schema->unitNameTr(Z::Units::Dim_Beamsize)));
-//        _paramEditors->setLabel(2, tr("Wavefront ROC, %1").arg(_schema->unitNameTr(Z::Units::Dim_Linear)));
-//        _paramEditors->setLabel(3, tr("Beam quality (MI)"));
+        if (!_paramEditors.contains(_params.mode))
+            newParamEditor = new FrontParamsEditor(&_params.front);
         break;
     case Z::Pump::Params::Complex:
         _drawing->setPixmap(QPixmap(":/drawing/pump_complex"));
-//        _paramEditors->setSymbol(1, QString::fromUtf8("Re"));
-//        _paramEditors->setSymbol(2, QString::fromUtf8("Im"));
-//        _paramEditors->setSymbol(3, QString::fromUtf8("M²"));
-//        _paramEditors->setLabel(1, tr("Real part, %1").arg(_schema->unitNameTr(Z::Units::Dim_Linear)));
-//        _paramEditors->setLabel(2, tr("Image part, %1").arg(_schema->unitNameTr(Z::Units::Dim_Linear)));
-//        _paramEditors->setLabel(3, tr("Beam quality (MI)"));
+        if (!_paramEditors.contains(_params.mode))
+            newParamEditor = new ComplexParamsEditor(&_params.complex);
         break;
     case Z::Pump::Params::InvComplex:
         _drawing->setPixmap(QPixmap(":/drawing/pump_complex"));
-//        _paramEditors->setSymbol(1, QString::fromUtf8("Re"));
-//        _paramEditors->setSymbol(2, QString::fromUtf8("Im"));
-//        _paramEditors->setSymbol(3, QString::fromUtf8("M²"));
-//        _paramEditors->setLabel(1, tr("Real part, %1").arg(_schema->unitNameTr(Z::Units::Dim_InvLinear)));
-//        _paramEditors->setLabel(2, tr("Image part, %1").arg(_schema->unitNameTr(Z::Units::Dim_InvLinear)));
-//        _paramEditors->setLabel(3, tr("Beam quality (MI)"));
+        if (!_paramEditors.contains(_params.mode))
+            newParamEditor = new ComplexParamsEditor(&_params.icomplex);
         break;
     case Z::Pump::Params::RayVector:
         _drawing->setPixmap(QPixmap(":/drawing/pump_ray_vector"));
-//        _paramEditors->setSymbol(1, QString::fromUtf8("y"));
-//        _paramEditors->setSymbol(2, QString::fromUtf8("V"));
-//        _paramEditors->setSymbol(3, QString::fromUtf8("z<sub>y</sub>"));
-//        _paramEditors->setLabel(1, tr("Beam radius, %1").arg(_schema->unitNameTr(Z::Units::Dim_Beamsize)));
-//        _paramEditors->setLabel(2, tr("Half angle of divergence, %1").arg(_schema->unitNameTr(Z::Units::Dim_Angle)));
-//        _paramEditors->setLabel(3, tr("Distance to radius, %1").arg(_schema->unitNameTr(Z::Units::Dim_Linear)));
+        if (!_paramEditors.contains(_params.mode))
+            newParamEditor = new RayVectorParamsEditor(&_params.vector);
         break;
     case Z::Pump::Params::TwoSections:
         _drawing->setPixmap(QPixmap(":/drawing/pump_two_section"));
-//        _paramEditors->setSymbol(1, QString::fromUtf8("y<sub>1</sub>"));
-//        _paramEditors->setSymbol(2, QString::fromUtf8("y<sub>2</sub>"));
-//        _paramEditors->setSymbol(3, QString::fromUtf8("z<sub>y</sub>"));
-//        _paramEditors->setLabel(1, tr("Beam radius 1, %1").arg(_schema->unitNameTr(Z::Units::Dim_Beamsize)));
-//        _paramEditors->setLabel(2, tr("Beam radius 2, %1").arg(_schema->unitNameTr(Z::Units::Dim_Beamsize)));
-//        _paramEditors->setLabel(3, tr("Distance between, %1").arg(_schema->unitNameTr(Z::Units::Dim_Linear)));
+        if (!_paramEditors.contains(_params.mode))
+            newParamEditor = new TwoSectionsParamsEditor(&_params.sections);
         break;
     }
 
     if (newParamEditor)
     {
-        qobject_cast<QBoxLayout*>(_paramEditor->layout())->insertWidget(0, newParamEditor);
+        _paramEditorsLayout->insertWidget(0, newParamEditor);
         _paramEditors[_params.mode] = newParamEditor;
+        QTimer::singleShot(0, [newParamEditor](){
+            auto editors = qobject_cast<ValuesEditorTS*>(newParamEditor->layout());
+            editors->firstEditor()->setFocus(Z::Plane_T);
+            editors->adjustSymbolsWidth();
+        });
     }
-    else
+    else if (_paramEditors.contains(_params.mode))
+    {
         _paramEditors[_params.mode]->setVisible(true);
+        auto editors = qobject_cast<ValuesEditorTS*>(_paramEditors[_params.mode]->layout());
+        editors->firstEditor()->setFocus(Z::Plane_T);
+    }
 }
