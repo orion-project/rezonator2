@@ -118,7 +118,7 @@ public:
     void lock();
 
     /// Unlocks element. Calculates new matrix. No events generated here.
-    void unlock();
+    void unlock(bool recalc = true);
 
 protected:
     Element();
@@ -198,16 +198,17 @@ protected:
 class ElementLocker
 {
 public:
-    ElementLocker(Element* elem): _elem(elem)
+    ElementLocker(Element* elem, bool recalc = true): _elem(elem), _recalc(recalc)
     {
         _elem->lock();
     }
     ~ElementLocker()
     {
-        _elem->unlock();
+        _elem->unlock(_recalc);
     }
 private:
-    Element* _elem;
+    Element *_elem;
+    bool _recalc;
 };
 
 //------------------------------------------------------------------------------

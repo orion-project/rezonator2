@@ -10,6 +10,7 @@
 
 #include <QAction>
 #include <QSplitter>
+#include <QTimer>
 #include <QToolButton>
 
 SchemaViewWindow::SchemaViewWindow(Schema *owner, CalcManager *calcs) : SchemaMdiChild(owner), _calculations(calcs)
@@ -138,11 +139,15 @@ void SchemaViewWindow::actionElemDelete()
 void SchemaViewWindow::elementCreated(Schema*, Element *elem)
 {
     if (!_pasteMode && Settings::instance().elemAutoLabel)
-        // TODO disable elemChanged event from inside of elemCreated
+    {
+        // Disable elemChanged event from inside of elemCreated
+        ElementLocker locker(elem, false);
         Z::Utils::generateLabel(elem);
-
+    }
     if (!_pasteMode && Settings::instance().editNewElem)
-        editElement(elem);
+        // All clients should process elementCreated event before elem will be changed,
+        // so run deffered to avoid raise elementChanged from inside of elementCreated.
+        QTimer::singleShot(0, [this, elem](){ this->editElement(elem); });
 }
 
 //------------------------------------------------------------------------------

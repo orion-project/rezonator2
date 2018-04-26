@@ -90,10 +90,11 @@ void Element::lock()
     _locked = true;
 }
 
-void Element::unlock()
+void Element::unlock(bool recalc)
 {
     _locked = false;
-    calcMatrix();
+    if (recalc)
+        calcMatrix();
 }
 
 void Element::setLabel(const QString& value)
