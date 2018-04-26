@@ -285,6 +285,7 @@ void ProjectWindow::updateActions()
 {
     bool isSchemaSP = schema()->isSP();
 
+    actnFileTripType->setIcon(QIcon(TripTypes::info(schema()->tripType()).iconPath()));
     actnFilePump->setEnabled(isSchemaSP);
     actnFilePump->setVisible(isSchemaSP);
     actnFuncStabMap->setVisible(!isSchemaSP);
@@ -458,6 +459,12 @@ void ProjectWindow::showParamsWindow()
 
 //------------------------------------------------------------------------------
 //                               Schema events
+
+void ProjectWindow::schemaParamsChanged(Schema*)
+{
+    updateTitle();
+    updateActions();
+}
 
 void ProjectWindow::schemaChanged(Schema* s)
 {

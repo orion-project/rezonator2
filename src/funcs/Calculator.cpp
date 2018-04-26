@@ -160,7 +160,7 @@ Z::PointTS Calculator::stability() const
     };
 }
 
-Z::ValueTS<bool> Calculator::isStable() const
+Z::PairTS<bool> Calculator::isStable() const
 {
     return {
         isStable((_mt.A + _mt.D) * 0.5),
@@ -200,7 +200,7 @@ QString Calculator::roundTripStr() const
 
 namespace Calc {
 
-Z::ValueTS<bool> isStable(Schema *schema)
+Z::PairTS<bool> isStable(Schema *schema)
 {
     Calculator c(schema);
     c.calcRoundTrip();

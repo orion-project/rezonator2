@@ -146,7 +146,8 @@ HEADERS += \
     src/widgets/FormulaEditor.h \
     src/widgets/ParamsListWidget.h \
     src/widgets/RichTextItemDelegate.h \
-    src/io/z_io_json.h
+    src/io/z_io_json.h \
+    src/PumpWindow.h
 
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -240,4 +241,5 @@ SOURCES += \
     src/widgets/FormulaEditor.cpp \
     src/widgets/ParamsListWidget.cpp \
     src/widgets/RichTextItemDelegate.cpp \
-    src/io/z_io_json.cpp
+    src/io/z_io_json.cpp \
+    src/PumpWindow.cpp

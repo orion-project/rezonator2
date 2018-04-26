@@ -7,10 +7,6 @@
 namespace Z {
 namespace Pump {
 
-Params::Params()
-{
-
-}
 /*
 const Raw& Params::current() const
 {

@@ -107,7 +107,7 @@ public:
 protected:
     Z::Variable _arg;
     Calculator* _calc = nullptr;
-    Z::ValueTS<PlotFuncResultSet> _results;
+    Z::PairTS<PlotFuncResultSet> _results;
     FunctionRange _range;
     Z::Value _backupValue;
 

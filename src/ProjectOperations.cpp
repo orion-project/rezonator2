@@ -2,6 +2,7 @@
 #include "CalcManager.h"
 #include "CustomPrefs.h"
 #include "ProjectOperations.h"
+#include "PumpWindow.h"
 #include "io/z_io_utils.h"
 #include "io/SchemaReaderIni.h"
 #include "io/SchemaReaderJson.h"
@@ -240,12 +241,11 @@ bool ProjectOperations::canClose()
 
 void ProjectOperations::setupPump()
 {
-// TODO:NEXT-VER
-//    if (schema()->tripType() == Schema::SP)
-//        if (Z::Dlgs::pumpParams(_parent, schema()))
-//        {
-//            // TODO
-//        }
+    if (schema()->isSP())
+        if (PumpWindow::edit(_parent, schema()))
+        {
+            // TODO
+        }
 }
 
 void ProjectOperations::setupWavelength()
@@ -265,10 +265,9 @@ void ProjectOperations::setupTripType()
     Ori::Widgets::OptionsGroup group(true);
     group.setTitle(tr("Round trip type"));
 
-    /* TODO:NEXT-VER for (TripType tripType : TripTypes::all())
-        group.addOption(int(tripType), TripTypes::info(tripType).fullHeader()); */
     group.addOption(int(TripType::SW), TripTypes::info(TripType::SW).fullHeader());
     group.addOption(int(TripType::RR), TripTypes::info(TripType::RR).fullHeader());
+    group.addOption(int(TripType::SP), TripTypes::info(TripType::SP).fullHeader());
 
     group.setOption(int(schema()->tripType()));
     auto dlg = Ori::Dlg::Dialog(&group)

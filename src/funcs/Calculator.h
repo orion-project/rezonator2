@@ -15,7 +15,7 @@ public:
     bool isEmpty() { return _roundTrip.isEmpty(); }
 
     Z::PointTS stability() const;
-    Z::ValueTS<bool> isStable() const;
+    Z::PairTS<bool> isStable() const;
     Z::Enums::StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }
     void setStabilityCalcMode(Z::Enums::StabilityCalcMode mode) { _stabilityCalcMode = mode; }
 
@@ -67,7 +67,7 @@ private:
 
 namespace Calc {
 
-Z::ValueTS<bool> isStable(Schema *schema);
+Z::PairTS<bool> isStable(Schema *schema);
 
 } // namespace Calc
 

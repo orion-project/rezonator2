@@ -1,66 +1,79 @@
 #ifndef PUMP_PARAMS_H
 #define PUMP_PARAMS_H
 
-//#include "Types.h"
-//#include "../../orion/core/Templates.h"
+#include "Values.h"
 
-//#include <QString>
+#include <QObject>
 
 namespace Z {
 namespace Pump {
-/*
-DECLARE_ENUM(PumpMode, 0,
-             PumpMode_waist,
-             PumpMode_front,
-             PumpMode_complex,
-             PumpMode_icomplex,
-             PumpMode_vector,
-             PumpMode_sections)
 
-class Raw
+class PumpParams
 {
 public:
-    ValueTS param1;
-    ValueTS param2;
-    ValueTS param3;
-
     virtual QString verify() const { return QString(); }
 };
 
-#define DECLARE_PUMP_PARAMS(class_name, param1_name, param2_name, param3_name)\
-    class class_name : public Raw\
-    {\
-    public:\
-        const ValueTS& param1_name() const { return param1; }\
-        const ValueTS& param2_name() const { return param2; }\
-        const ValueTS& param3_name() const { return param3; }\
-        QString verify() const override;\
-    };
-
-DECLARE_PUMP_PARAMS(Waist, radius, distance, mi)
-DECLARE_PUMP_PARAMS(Front, radius, curvature, mi)
-DECLARE_PUMP_PARAMS(Complex, re, im, mi)
-DECLARE_PUMP_PARAMS(Icomplex, re, im, mi)
-DECLARE_PUMP_PARAMS(Vector, radius, angle, distance)
-DECLARE_PUMP_PARAMS(Sections, radius_1, radius_2, distance)
-*/
-class Params
+class WaistParams : public PumpParams
 {
 public:
-    Params();
+   ValueTS distance;
+   ValueTS waist;
+   PointTS MI;
+};
 
-//    PumpMode mode;
+class FrontParams : public PumpParams
+{
+public:
+   ValueTS distance;
+   ValueTS beamsize;
+   PointTS MI;
+};
 
-//    Waist waist;
-//    Front front;
-//    Complex complex;
-//    Icomplex icomplex;
-//    Vector vector;
-//    Sections sections;
+class TwoSectionsParams : public PumpParams
+{
+public:
+    ValueTS radius1;
+    ValueTS radius2;
+    ValueTS distance;
+};
 
-//    const Raw& current() const;
+class RayVectorParams : public PumpParams
+{
+public:
+    ValueTS radius;
+    ValueTS angle;
+    ValueTS distance;
+};
 
-//    QString verify() const;
+class ComplexParams : public PumpParams
+{
+public:
+    PairTS<DoublePoint> param;
+    PointTS MI;
+};
+
+class Params
+{
+    Q_GADGET
+
+public:
+    enum Mode
+    {
+        Waist, Front, TwoSections, RayVector, Complex, InvComplex
+    };
+    Q_ENUM(Mode)
+
+    Params() {}
+
+    Mode mode = Waist;
+
+    WaistParams waist;
+    FrontParams front;
+    ComplexParams complex;
+    ComplexParams icomplex;
+    RayVectorParams vector;
+    TwoSectionsParams sections;
 };
 
 } // namespace Pump

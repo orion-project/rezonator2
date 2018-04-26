@@ -96,26 +96,26 @@ TEST_METHOD(Value_storedStr)
 
 TEST_METHOD(ValueTS_constructors)
 {
-    Z::ValueTS<int> v0;
+    Z::PairTS<int> v0;
     ASSERT_VALUE_T_S(v0, 0, 0)
 
-    Z::ValueTS<int> v1(10, 20);
+    Z::PairTS<int> v1(10, 20);
     ASSERT_VALUE_T_S(v1, 10, 20)
 
-    Z::ValueTS<int> v2(v1);
+    Z::PairTS<int> v2(v1);
     ASSERT_VALUE_T_S(v2, 10, 20)
 
-    Z::ValueTS<int> v3(&v1);
+    Z::PairTS<int> v3(&v1);
     ASSERT_VALUE_T_S(v3, 10, 20)
 }
 
 TEST_METHOD(ValueTS_assign)
 {
-    Z::ValueTS<int> v1;
+    Z::PairTS<int> v1;
     v1 = 10;
     ASSERT_VALUE_T_S(v1, 10, 10)
 
-    Z::ValueTS<int> v2;
+    Z::PairTS<int> v2;
     v2.set(10, 20);
     ASSERT_VALUE_T_S(v2, 10, 20)
 }

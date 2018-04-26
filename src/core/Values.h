@@ -50,6 +50,14 @@ private:
 
 //------------------------------------------------------------------------------
 
+class ValueTS
+{
+    double _valueT, _valueS;
+    Unit _unit;
+};
+
+//------------------------------------------------------------------------------
+
 class PrefixedValue
 {
 public:
@@ -66,15 +74,15 @@ private:
 //------------------------------------------------------------------------------
 
 template <typename TValue>
-struct ValueTS
+struct PairTS
 {
     TValue T {};
     TValue S {};
 
-    ValueTS() {}
-    ValueTS(const TValue& t, const TValue& s) : T(t), S(s) {}
-    ValueTS(const ValueTS& other) : T(other.T), S(other.S) {}
-    ValueTS(const ValueTS* other) : T(other->T), S(other->S) {}
+    PairTS() {}
+    PairTS(const TValue& t, const TValue& s) : T(t), S(s) {}
+    PairTS(const PairTS& other) : T(other.T), S(other.S) {}
+    PairTS(const PairTS* other) : T(other->T), S(other->S) {}
 
     void operator =(const TValue& v) { T = v, S = v; }
 
@@ -83,7 +91,7 @@ struct ValueTS
     QString str() const { return QString(); }
 };
 
-using PointTS = ValueTS<double>;
+using PointTS = PairTS<double>;
 
 //------------------------------------------------------------------------------
 

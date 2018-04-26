@@ -41,7 +41,7 @@ public:
     void schemaChanged(Schema*) override;
     void schemaLoaded(Schema*) override;
     void schemaSaved(Schema*) override;
-    void schemaParamsChanged(Schema*) override { updateTitle(); }
+    void schemaParamsChanged(Schema*) override;
 
     // inherited from SettingsListener.
     void settingsChanged() override;
