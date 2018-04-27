@@ -5,26 +5,29 @@
 
 namespace Z {
 
+using namespace Units;
+using namespace Strs;
+
 //------------------------------------------------------------------------------
 //                                  Value
 //------------------------------------------------------------------------------
 
 QString Value::str() const
 {
-    if (_unit == Z::Units::deg())
+    if (_unit == deg() || _unit == amin())
         return Z::str(_value) % _unit->alias();
-    if (_unit == Z::Units::rad())
+    if (_unit == rad() || _unit == none())
         return Z::str(_value);
     return Z::str(_value) % ' ' % _unit->alias();
 }
 
 QString Value::displayStr() const
 {
-    if (_unit == Z::Units::deg())
-        return Z::format(_value) % _unit->name();
-    if (_unit == Z::Units::rad())
-        return Z::format(_value);
-    return Z::format(_value) % ' ' % _unit->name();
+    if (_unit == deg() || _unit == amin())
+        return format(_value) % _unit->name();
+    if (_unit == rad() || _unit == none())
+        return format(_value);
+    return format(_value) % ' ' % _unit->name();
 }
 
 QString Value::toStoredStr() const
@@ -59,6 +62,28 @@ bool Value::fromStoredStr(const QString& s)
     _value = value;
     _unit = unit;
     return true;
+}
+
+//------------------------------------------------------------------------------
+//                                  ValueTS
+//------------------------------------------------------------------------------
+
+QString ValueTS::str() const
+{
+    if (_unit == deg() || _unit == amin())
+        return Z::str(_valueT) % _unit->alias() % ' ' % multX() % ' ' % Z::str(_valueS) % _unit->alias();
+    if (_unit == rad() || _unit == none())
+        return Z::str(_valueT) % ' ' % multX() % ' ' % Z::str(_valueS);
+    return Z::str(_valueT) % ' ' % multX() % ' ' % Z::str(_valueS) % ' ' % _unit->alias();
+}
+
+QString ValueTS::displayStr() const
+{
+    if (_unit == deg() || _unit == amin())
+        return format(_valueT) % _unit->alias() % ' ' % multX() % ' ' % format(_valueS) % _unit->alias();
+    if (_unit == rad() || _unit == none())
+        return format(_valueT) % ' ' % multX() % ' ' % format(_valueS);
+    return format(_valueT) % ' ' % multX() % ' ' % format(_valueS) % ' ' % _unit->alias();
 }
 
 //------------------------------------------------------------------------------

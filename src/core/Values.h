@@ -67,6 +67,14 @@ public:
 
     void operator = (const ValueTS& v) { _valueT = v._valueT, _valueS = v._valueS, _unit = v._unit; }
 
+    QString str() const;
+
+    /// Returns string representation suitable for displaying to user.
+    /// It should not be such as `0.776242642387489237489 mm`
+    /// but more like to `0.776 mm` depending on application preferences.
+    /// It uses @a Z::format() method to prepare value.
+    QString displayStr() const;
+
 private:
     double _valueT, _valueS;
     Unit _unit;
