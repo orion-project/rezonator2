@@ -1,69 +1,171 @@
 #include "Pump.h"
-//#include "Units.h"
 
-#include <QApplication>
 #include <QDebug>
 
 namespace Z {
-namespace Pump {
 
-/*
-const Raw& Params::current() const
+using namespace Units;
+
+//--------------------------------------------------------------------------------
+//                                   PumpParams
+//--------------------------------------------------------------------------------
+
+PumpParams::~PumpParams()
 {
-    switch (mode)
-    {
-    case PumpMode_waist: return waist;
-    case PumpMode_front: return front;
-    case PumpMode_complex: return complex;
-    case PumpMode_icomplex: return icomplex;
-    case PumpMode_vector: return vector;
-    case PumpMode_sections: return sections;
-    }
-    qWarning() << "Unknown pump mode" << mode;
-    return waist;
+    for (auto p : _params)
+        delete p;
 }
 
-QString Params::verify() const
+void PumpParams::addParam(ParameterTS *param, double value, Unit unit)
 {
-    return current().verify();
+    param->setValue(ValueTS(value, value, unit));
+    _params.append(param);
 }
 
-QString Waist::verify() const
+//--------------------------------------------------------------------------------
+//                                PumpParams_Waist
+//--------------------------------------------------------------------------------
+
+PumpParams_Waist::PumpParams_Waist()
 {
-    // TODO
-    return QString();
+    _waist = new ParameterTS(Dims::linear(),
+                             QStringLiteral("w_0"),
+                             QStringLiteral("ω<sub>0</sub>"),
+                             qApp->translate("Pump param", "Waist radius"));
+    _distance = new ParameterTS(Dims::linear(),
+                                QStringLiteral("z_w"),
+                                QStringLiteral("z<sub>ω</sub>"),
+                                qApp->translate("Pump param", "Distance to waist"));
+    _MI = new ParameterTS(Dims::linear(),
+                          QStringLiteral("MI"),
+                          QStringLiteral("M²"),
+                          qApp->translate("Pump param", "Beam quality"));
+    addParam(_waist, 100, mkm());
+    addParam(_distance, 100, mm());
+    addParam(_MI, 1);
 }
 
-QString Front::verify() const
+//--------------------------------------------------------------------------------
+//                               PumpParams_Front
+//--------------------------------------------------------------------------------
+
+PumpParams_Front::PumpParams_Front()
 {
-    // TODO
-    return QString();
+    _beamRadius = new ParameterTS(Dims::linear(),
+                                  QStringLiteral("w"),
+                                  QStringLiteral("ω"),
+                                  qApp->translate("Pump param", "Beam radius"));
+    _frontRadius = new ParameterTS(Dims::linear(),
+                                   QStringLiteral("R"),
+                                   QStringLiteral("R"),
+                                   qApp->translate("Pump param", "Wavefront ROC"));
+    _MI = new ParameterTS(Dims::linear(),
+                          QStringLiteral("MI"),
+                          QStringLiteral("M²"),
+                          qApp->translate("Pump param", "Beam quality"));
+    addParam(_beamRadius, 1000, mkm());
+    addParam(_frontRadius, 100, mm());
+    addParam(_MI, 1);
 }
 
-QString Complex::verify() const
+//--------------------------------------------------------------------------------
+//                               PumpParams_TwoSections
+//--------------------------------------------------------------------------------
+
+PumpParams_TwoSections::PumpParams_TwoSections()
 {
-    // TODO
-    return QString();
+    _radius1 = new ParameterTS(Dims::linear(),
+                               QStringLiteral("y_1"),
+                               QStringLiteral("y<sub>1</sub>"),
+                               qApp->translate("Pump param", "Beam radius 1"));
+    _radius2 = new ParameterTS(Dims::linear(),
+                               QStringLiteral("y_2"),
+                               QStringLiteral("y<sub>2</sub>"),
+                               qApp->translate("Pump param", "Beam radius 2"));
+    _distance = new ParameterTS(Dims::linear(),
+                                QStringLiteral("z_y"),
+                                QStringLiteral("z<sub>y</sub>"),
+                                qApp->translate("Pump param", "Distance between"));
+    addParam(_radius1, 100, mkm());
+    addParam(_radius2, 1000, mkm());
+    addParam(_distance, 100, mm());
 }
 
-QString Icomplex::verify() const
+//--------------------------------------------------------------------------------
+//                                PumpParams_RayVector
+//--------------------------------------------------------------------------------
+
+PumpParams_RayVector::PumpParams_RayVector()
 {
-    // TODO
-    return QString();
+    _radius = new ParameterTS(Dims::linear(),
+                              QStringLiteral("y"),
+                              QStringLiteral("y>"),
+                              qApp->translate("Pump param", "Beam radius"));
+    _angle = new ParameterTS(Dims::linear(),
+                             QStringLiteral("V"),
+                             QStringLiteral("V"),
+                             qApp->translate("Pump param", "Half angle of divergence"));
+    _distance = new ParameterTS(Dims::linear(),
+                                QStringLiteral("z_y"),
+                                QStringLiteral("z<sub>y</sub>"),
+                                qApp->translate("Pump param", "Distance to radius"));
+    addParam(_radius, 100, mkm());
+    addParam(_angle, 10, deg());
+    addParam(_distance, 100, mm());
 }
 
-QString Vector::verify() const
+//--------------------------------------------------------------------------------
+//                                PumpParams_Complex
+//--------------------------------------------------------------------------------
+
+PumpParams_Complex::PumpParams_Complex()
 {
-    // TODO
-    return QString();
+    _real = new ParameterTS(Dims::none(),
+                            QStringLiteral("Re"),
+                            QStringLiteral("Re"),
+                            qApp->translate("Pump param", "Real part"));
+    _imag = new ParameterTS(Dims::none(),
+                            QStringLiteral("Im"),
+                            QStringLiteral("Im"),
+                            qApp->translate("Pump param", "Imaginary part"));
+    _MI = new ParameterTS(Dims::none(),
+                          QStringLiteral("MI"),
+                          QStringLiteral("M²"),
+                          qApp->translate("Pump param", "Beam quality"));
+    addParam(_real, 0);
+    addParam(_imag, 0);
+    addParam(_MI, 1);
 }
 
-QString Sections::verify() const
+//--------------------------------------------------------------------------------
+//                                      Pump
+//--------------------------------------------------------------------------------
+
+const QVector<PumpProducer*>& Pump::allPumpProducers()
 {
-    if (distance().T <= 0 || distance().S <= 0)
-        return qApp->translate("Pump error", "Distance between sections must be greater than zero");
-    return QString();
+    static PumpProducer_Waist waist;
+    static PumpProducer_Front front;
+    static PumpProducer_RayVector ray_vector;
+    static PumpProducer_TwoSections sections;
+    static PumpParams_Complex complex;
+    static PumpParams_InvComplex inv_complex;
+    static QVector<PumpProducer*> producers({
+        reinterpret_cast<PumpProducer*>(&waist),
+        reinterpret_cast<PumpProducer*>(&front),
+        reinterpret_cast<PumpProducer*>(&ray_vector),
+        reinterpret_cast<PumpProducer*>(&sections),
+        reinterpret_cast<PumpProducer*>(&complex),
+        reinterpret_cast<PumpProducer*>(&inv_complex),
+    });
+    return producers;
 }
-*/
-} // namespace Pump
+
+PumpProducer* Pump::findByMode(const QString& mode)
+{
+    for (auto producer : allPumpProducers())
+        if (producer->mode() == mode)
+            return producer;
+    return nullptr;
+}
+
 } // namespace Z

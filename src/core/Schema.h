@@ -185,9 +185,6 @@ public:
     inline bool isSP() const { return _tripType == TripType::SP; }
     inline bool isResonator() const { return _tripType == TripType::SW || _tripType == TripType::RR; }
 
-    const Z::Pump::Params& pump() const { return _pump; }
-    void setPump(const Z::Pump::Params& pump);
-
     int count() const override { return _items.size(); }
     int enabledCount() const;
     const Elements& elements() const { return _items; }
@@ -227,6 +224,9 @@ public:
     /// This list is not stored in schema and collect parameters at each call.
     Z::Parameters globalParams() const;
 
+    Z::PumpsList* pumps() { return &_pumps; }
+    Z::PumpParams* activePump() { return _pumps.first(); } // TODO active pump
+
 private:
     Elements _items;
     SchemaEvents _events;
@@ -240,7 +240,7 @@ private:
     Z::Parameters _customParams;
     Z::ParamLinks _paramLinks;
     Z::Formulas _formulas;
-    Z::Pump::Params _pump;
+    Z::PumpsList _pumps;
 
     // inherits from ElementOwner
     void elementChanged(Element *elem) override { _events.raise(SchemaEvents::ElemChanged, elem); }

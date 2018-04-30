@@ -4,14 +4,13 @@
 #include "Units.h"
 #include "core/OriFloatingPoint.h"
 
-#include <complex>
-
 namespace Z {
 
 class Value
 {
 public:
     Value() : _value(0), _unit(Units::none()) {}
+    Value(double value): _value(value), _unit(Units::none()) {}
     Value(double value, Unit unit): _value(value), _unit(unit) {}
     Value(const Value& other): _value(other.value()), _unit(other.unit()) {}
 
@@ -56,6 +55,9 @@ class ValueTS
 {
 public:
     ValueTS() : _valueT(0), _valueS(0), _unit(Units::none()) {}
+    ValueTS(double value) : _valueT(value), _valueS(value), _unit(Units::none()) {}
+    ValueTS(double value, Unit unit) : _valueT(value), _valueS(value), _unit(unit) {}
+    ValueTS(double valueT, double valueS) : _valueT(valueT), _valueS(valueS), _unit(Units::none()) {}
     ValueTS(double valueT, double valueS, Unit unit) : _valueT(valueT), _valueS(valueS), _unit(unit) {}
     ValueTS(const ValueTS& other) : _valueT(other._valueT), _valueS(other._valueS), _unit(other._unit) {}
 
@@ -126,9 +128,6 @@ struct DoublePoint
 
     QString str() const;
 };
-
-using Complex = std::complex<double>;
-using ComplexTS = PairTS<Complex>;
 
 //------------------------------------------------------------------------------
 

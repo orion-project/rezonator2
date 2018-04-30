@@ -133,11 +133,11 @@ Schema::~Schema()
 }
 
 // TODO:NEXT-VER make test
-void Schema::setPump(const Z::Pump::Params& pump)
-{
-    _pump = pump;
-    _events.raise(SchemaEvents::ParamsChanged);
-}
+//void Schema::setPump(const Z::Pump::Params& pump)
+//{
+//    _pump = pump;
+//    _events.raise(SchemaEvents::ParamsChanged);
+//}
 
 int Schema::enabledCount() const
 {

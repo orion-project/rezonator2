@@ -19,7 +19,7 @@ Z::ValueTS makeValue(const Z::PointTS& point)
 //------------------------------------------------------------------------------
 //                             WaistParamsEditor
 //------------------------------------------------------------------------------
-
+/*
 WaistParamsEditor::WaistParamsEditor(Z::Pump::WaistParams *params) : PumpParamsEditor(), _params(params)
 {
     setLayout(new ValuesEditorTS({
@@ -28,11 +28,11 @@ WaistParamsEditor::WaistParamsEditor(Z::Pump::WaistParams *params) : PumpParamsE
         _MI = new ValueEditorTS(tr("Beam quality"), "M²", makeValue(_params->MI)),
     }));
 }
-
+*/
 //------------------------------------------------------------------------------
 //                             FrontParamsEditor
 //------------------------------------------------------------------------------
-
+/*
 FrontParamsEditor::FrontParamsEditor(Z::Pump::FrontParams *params) : PumpParamsEditor(), _params(params)
 {
     setLayout(new ValuesEditorTS({
@@ -41,11 +41,11 @@ FrontParamsEditor::FrontParamsEditor(Z::Pump::FrontParams *params) : PumpParamsE
         _MI = new ValueEditorTS(tr("Beam quality"), "M²", makeValue(_params->MI)),
     }));
 }
-
+*/
 //------------------------------------------------------------------------------
 //                                ComplexParamsEditor
 //------------------------------------------------------------------------------
-
+/*
 ComplexParamsEditor::ComplexParamsEditor(Z::Pump::ComplexParams *params) : PumpParamsEditor(), _params(params)
 {
     setLayout(new ValuesEditorTS({
@@ -54,11 +54,11 @@ ComplexParamsEditor::ComplexParamsEditor(Z::Pump::ComplexParams *params) : PumpP
         _MI = new ValueEditorTS(tr("Beam quality"), "M²", makeValue(_params->MI)),
     }));
 }
-
+*/
 //------------------------------------------------------------------------------
 //                                PumpWindow
 //------------------------------------------------------------------------------
-
+/*
 RayVectorParamsEditor::RayVectorParamsEditor(Z::Pump::RayVectorParams *params) : PumpParamsEditor(), _params(params)
 {
     setLayout(new ValuesEditorTS({
@@ -67,11 +67,11 @@ RayVectorParamsEditor::RayVectorParamsEditor(Z::Pump::RayVectorParams *params) :
         _dist = new ValueEditorTS(tr("Distance to radius"), "z<sub>y</sub>", _params->distance),
     }));
 }
-
+*/
 //------------------------------------------------------------------------------
 //                                PumpWindow
 //------------------------------------------------------------------------------
-
+/*
 TwoSectionsParamsEditor::TwoSectionsParamsEditor(Z::Pump::TwoSectionsParams *params) : PumpParamsEditor(), _params(params)
 {
     setLayout(new ValuesEditorTS({
@@ -80,7 +80,7 @@ TwoSectionsParamsEditor::TwoSectionsParamsEditor(Z::Pump::TwoSectionsParams *par
         _dist = new ValueEditorTS(tr("Distance between"), "z<sub>y</sub>", _params->distance),
     }));
 }
-
+*/
 //------------------------------------------------------------------------------
 //                                PumpWindow
 //------------------------------------------------------------------------------
@@ -95,7 +95,7 @@ PumpWindow::PumpWindow(QWidget *parent, Schema *schema) : RezonatorDialog(Option
 {
     setWindowTitle(tr("Input Beam Parameters"));
     setObjectName("PumpWindow");
-
+/*
     _schema = schema;
     _params = schema->pump();
 
@@ -124,19 +124,19 @@ PumpWindow::PumpWindow(QWidget *parent, Schema *schema) : RezonatorDialog(Option
     auto layoutInput = new QHBoxLayout;
     layoutInput->addWidget(groupInputType);
     layoutInput->addWidget(groupParams);
-    mainLayout()->addLayout(layoutInput);
+    mainLayout()->addLayout(layoutInput);*/
 }
 
 void PumpWindow::collect()
 {
-    _paramEditors[_params.mode]->collect();
-    _schema->setPump(_params);
+    //_paramEditors[_params.mode]->collect();
+    //_schema->setPump(_params);
     accept();
     close();
 }
 
 void PumpWindow::inputTypeChanged(int mode)
-{
+{/*
     if (_paramEditors.contains(_params.mode))
         _paramEditors[_params.mode]->setVisible(false);
 
@@ -194,4 +194,4 @@ void PumpWindow::inputTypeChanged(int mode)
         auto editors = qobject_cast<ValuesEditorTS*>(_paramEditors[_params.mode]->layout());
         editors->firstEditor()->setFocus(Z::Plane_T);
     }
-}
+*/}

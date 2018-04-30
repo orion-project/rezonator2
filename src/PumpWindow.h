@@ -12,7 +12,7 @@ QT_END_NAMESPACE
 class ValueEditorTS;
 
 //------------------------------------------------------------------------------
-
+/*
 class PumpParamsEditor : public QWidget
 {
 public:
@@ -79,7 +79,7 @@ private:
     Z::Pump::TwoSectionsParams *_params;
     ValueEditorTS *_radius1, *_radius2, *_dist;
 };
-
+*/
 //------------------------------------------------------------------------------
 class PumpWindow : public RezonatorDialog
 {
@@ -89,17 +89,17 @@ public:
     static bool edit(QWidget *parent, class Schema* schema);
 
 private slots:
-    void inputTypeChanged(int mode);
+    //void inputTypeChanged(int mode);
     void collect() override;
 
 private:
     explicit PumpWindow(QWidget *parent, class Schema* schema);
-
+/*
     Schema *_schema;
     Z::Pump::Params _params;
     QLabel* _drawing;
     QBoxLayout *_paramEditorsLayout;
-    QMap<Z::Pump::Params::Mode, PumpParamsEditor*> _paramEditors;
+    QMap<Z::Pump::Params::Mode, PumpParamsEditor*> _paramEditors;*/
 };
 
 #endif // PUMP_WINDOW_H

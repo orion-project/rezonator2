@@ -33,6 +33,8 @@ public:
 class ParameterBase
 {
 public:
+    virtual ~ParameterBase() {}
+
     /// Storable name of parameter.
     const QString& alias() const { return _alias; }
 
@@ -56,6 +58,12 @@ public:
     bool visible() const { return _visible; }
     void setVisible(bool v) { _visible = v; }
 
+    /// Returns parameter label if presented or alias otherwise.
+    QString displayLabel() const
+    {
+        return _label.isEmpty() ? _alias : _label;
+    }
+
     /// Returns string representation of parameter.
     virtual QString str() const = 0;
 
@@ -77,8 +85,6 @@ protected:
         _description(description),
         _category(category),
         _visible(visible) {}
-
-    virtual ~ParameterBase() {}
 
     void notifyListeners()
     {
@@ -131,10 +137,10 @@ class ValuedParameter : public ParameterBase
 {
 public:
     /// Get parameter value
-    const Value& value() const { return _value; }
+    const TValue& value() const { return _value; }
 
     /// Set parameter value
-    void setValue(const Value& value)
+    void setValue(const TValue& value)
     {
         _value = value;
         notifyListeners();
@@ -142,14 +148,14 @@ public:
 
     /// Verify parameter value.
     /// Should be called before value assignment.
-    QString verify(const Value& value)
+    QString verify(const TValue& value)
     {
         return _verifier && _verifier->enabled()? _verifier->verify(value): QString();
     }
 
     /// Use verifier for parameter.
     /// Parameter does not take ownership on verifier.
-    void setVerifier(ValueVerifierBase<Value>* verifier) { _verifier = verifier; }
+    void setVerifier(ValueVerifierBase<TValue>* verifier) { _verifier = verifier; }
 
     ParamValueDriver valueDriver() const { return _valueDriver; }
     void setValueDriver(ParamValueDriver driver) { _valueDriver = driver; }
@@ -166,8 +172,8 @@ protected:
         ParameterBase(alias, label, name, description, category, visible) {}
 
 protected:
-    Value _value;
-    ValueVerifierBase<Value> *_verifier = nullptr;
+    TValue _value;
+    ValueVerifierBase<TValue> *_verifier = nullptr;
     ParamValueDriver _valueDriver = ParamValueDriver::None;
 };
 
@@ -175,30 +181,31 @@ protected:
 /**
     Parameter class representing physical values with units of measurement.
 */
-class PhysicalParameter : public ValuedParameter<Value>
+template <typename TValue>
+class PhysicalParameter : public ValuedParameter<TValue>
 {
 public:
-    PhysicalParameter() : ValuedParameter() {}
+    PhysicalParameter() : ValuedParameter<TValue>() {}
 
     PhysicalParameter(const QString& alias) :
-        ValuedParameter(alias, "", "", "", "", true) {}
+        ValuedParameter<TValue>(alias, "", "", "", "", true) {}
 
     PhysicalParameter(Dim dim,
                       const QString& alias) :
-        ValuedParameter(alias, "", "", "", "", true), _dim(dim) {}
+        ValuedParameter<TValue>(alias, "", "", "", "", true), _dim(dim) {}
 
     PhysicalParameter(Dim dim,
                       const QString& alias,
                       const QString& label,
                       const QString& name) :
-        ValuedParameter(alias, label, name, "", "", true), _dim(dim) {}
+        ValuedParameter<TValue>(alias, label, name, "", "", true), _dim(dim) {}
 
     PhysicalParameter(Dim dim,
                       const QString& alias,
                       const QString& label,
                       const QString& name,
                       const QString& description) :
-        ValuedParameter(alias, label, name, description, "", true), _dim(dim) {}
+        ValuedParameter<TValue>(alias, label, name, description, "", true), _dim(dim) {}
 
     PhysicalParameter(Dim dim,
                       const QString& alias,
@@ -207,7 +214,7 @@ public:
                       const QString& description,
                       const QString& category,
                       bool visible = true) :
-        ValuedParameter(alias, label, name, description, category, visible), _dim(dim) {}
+        ValuedParameter<TValue>(alias, label, name, description, category, visible), _dim(dim) {}
 
     /// Measurement units of parameter.
     Dim dim() const { return _dim; }
@@ -215,19 +222,13 @@ public:
     /// Returns simple string representation of parameter.
     QString str() const override
     {
-        return _alias % " = " % _value.str();
-    }
-
-    /// Returns parameter label if presented or alias otherwise.
-    QString displayLabel() const
-    {
-        return _label.isEmpty() ? _alias : _label;
+        return ValuedParameter<TValue>::_alias % " = " % ValuedParameter<TValue>::_value.str();
     }
 
     /// Returns string representation of parameter suitable for displaying to user.
     QString displayStr() const
     {
-        return displayLabel() % " = " % _value.displayStr();
+        return ValuedParameter<TValue>::displayLabel() % " = " % ValuedParameter<TValue>::_value.displayStr();
     }
 
 private:
@@ -323,7 +324,9 @@ public:
 
 //------------------------------------------------------------------------------
 
-typedef PhysicalParameter Parameter;
+typedef PhysicalParameter<Value> Parameter;
+typedef PhysicalParameter<ValueTS> ParameterTS;
+typedef ParametersList<ParameterBase> ParametersBase;
 typedef ParametersList<Parameter> Parameters;
 typedef ParameterLink<Parameter> ParamLink;
 typedef ParameterLinksList<ParamLink> ParamLinks;
