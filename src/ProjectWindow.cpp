@@ -4,6 +4,7 @@
 #include "ProjectWindow.h"
 #include "ProjectOperations.h"
 #include "ProtocolWindow.h"
+#include "PumpWindow.h"
 #include "SchemaViewWindow.h"
 #include "SchemaParamsWindow.h"
 #include "WindowsManager.h"
@@ -162,9 +163,10 @@ void ProjectWindow::createActions()
 
     // These common window actions must not have data (action->data()), as data presense indicates that
     // this action is for activation of specific subwindow and _mdiArea is responsible for it.
-    actnWndSchema = A_(tr("Show &Schema Window"), this, SLOT(showSchemaWindow()), ":/toolbar/schema", Qt::Key_F12);
-    actnWndParams = A_(tr("Show Pa&rameters Window"), this, SLOT(showParamsWindow()), ":/toolbar/parameter", Qt::Key_F11);
-    actnWndProtocol = A_(tr("Show &Protocol Window"), this, SLOT(showProtocolWindow()), ":/toolbar/protocol");
+    actnWndSchema = A_(tr("&Schema"), this, SLOT(showSchemaWindow()), ":/toolbar/schema", Qt::Key_F12);
+    actnWndParams = A_(tr("&Parameters"), this, SLOT(showParamsWindow()), ":/toolbar/parameter", Qt::Key_F11);
+    actnWndPumps = A_(tr("P&umps"), this, SLOT(showPumpsWindow()), ":/toolbar/schema_pump");
+    actnWndProtocol = A_(tr("P&rotocol"), this, SLOT(showProtocolWindow()), ":/toolbar/protocol");
     actnWndClose = A_(tr("Cl&ose"), _mdiArea, SLOT(closeActiveSubWindow()));
     actnWndCloseAll = A_(tr("Close &All"), _mdiArea, SLOT(closeAllSubWindows()), ":/toolbar/windows_close");
     actnWndTile = A_(tr("&Tile"), _mdiArea, SLOT(tileSubWindows()));
@@ -211,7 +213,7 @@ void ProjectWindow::createMenuBar()
         { /*TODO:NEXT-VER actnToolsBeamCalc,*/ actnToolsCatalog, 0, actnToolsPrefs });
 
     menuWindow = Ori::Gui::menu(tr("&Window"), this,
-        { actnWndSchema, actnWndParams, actnWndProtocol, 0,
+        { actnWndSchema, actnWndParams, actnWndPumps, actnWndProtocol, 0,
           actnWndClose, actnWndCloseAll, 0, actnWndTile, actnWndCascade, 0 });
     connect(menuWindow, SIGNAL(aboutToShow()), _mdiArea, SLOT(populateWindowMenu()));
 
@@ -459,6 +461,11 @@ void ProjectWindow::showSchemaWindow()
 void ProjectWindow::showParamsWindow()
 {
     _mdiArea->appendChild(SchemaParamsWindow::create(schema()));
+}
+
+void ProjectWindow::showPumpsWindow()
+{
+    _mdiArea->appendChild(PumpWindow::create(schema()));
 }
 
 //------------------------------------------------------------------------------

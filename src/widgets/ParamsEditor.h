@@ -3,7 +3,6 @@
 
 #include <QGroupBox>
 
-#include "ParamEditor.h"
 #include "../core/Parameters.h"
 
 namespace Ori {
@@ -11,6 +10,10 @@ namespace Widgets {
     class InfoPanel;
     class ValueEdit;
 }}
+
+class ParamEditor;
+class ValueEditorTS;
+class ValuesEditorTS;
 
 class ParamsEditor : public QWidget
 {
@@ -30,7 +33,6 @@ public:
 
         Options(Z::Parameters *p) : params(p) {}
     };
-
 
 public:
     explicit ParamsEditor(Options opts, QWidget *parent = 0);
@@ -60,6 +62,25 @@ private slots:
 
 //------------------------------------------------------------------------------
 
+class ParamsEditorTS : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit ParamsEditorTS(Z::ParametersTS *params, QWidget *parent = 0);
+
+    void adjustSymbolsWidth();
+
+    void collect();
+
+private:
+    Z::ParametersTS *_params;
+    ValuesEditorTS *_valuesEditor;
+    QMap<Z::ParameterTS*, ValueEditorTS*> _editorsMap;
+};
+
+//------------------------------------------------------------------------------
+
 class ParamsEditorAbcd : public QGroupBox
 {
     Q_OBJECT
@@ -74,6 +95,5 @@ private:
     Z::Parameters _params;
     QVector<Ori::Widgets::ValueEdit*> _editors;
 };
-
 
 #endif // PARAMS_EDITOR_H

@@ -132,7 +132,11 @@ void ValueEditorTS::setFocus(Z::WorkPlane plane)
 //                                ValueEditorsTS
 //------------------------------------------------------------------------------
 
-ValuesEditorTS::ValuesEditorTS(const QVector<ValueEditorTS*>& editors) : QVBoxLayout(), _editors(editors)
+ValuesEditorTS::ValuesEditorTS() : ValuesEditorTS(QVector<ValueEditorTS*>())
+{
+}
+
+ValuesEditorTS::ValuesEditorTS(const QVector<ValueEditorTS*>& editors) : QVBoxLayout()
 {
     setMargin(0);
     setSpacing(0);
@@ -161,12 +165,16 @@ ValuesEditorTS::ValuesEditorTS(const QVector<ValueEditorTS*>& editors) : QVBoxLa
     int hs = s / 2 + 1; // should be same as margins of ValueEditorTS
     header->setContentsMargins(s, hs, hs, 0);
 
-    for (ValueEditorTS* e : _editors)
-    {
-        addWidget(e);
-        connect(e, &ValueEditorTS::goingFocusNext, this, &ValuesEditorTS::goingFocusNext);
-        connect(e, &ValueEditorTS::goingFocusPrev, this, &ValuesEditorTS::goingFocusPrev);
-    }
+    for (ValueEditorTS* e : editors)
+        addEditor(e);
+}
+
+void ValuesEditorTS::addEditor(ValueEditorTS *editor)
+{
+    _editors << editor;
+    addWidget(editor);
+    connect(editor, &ValueEditorTS::goingFocusNext, this, &ValuesEditorTS::goingFocusNext);
+    connect(editor, &ValueEditorTS::goingFocusPrev, this, &ValuesEditorTS::goingFocusPrev);
 }
 
 void ValuesEditorTS::adjustSymbolsWidth()

@@ -67,6 +67,9 @@ public:
     /// Returns string representation of parameter.
     virtual QString str() const = 0;
 
+    /// Returns user-friendly string representation of parameter.
+    virtual QString displayStr() const { return str(); }
+
     void addListener(ParameterListener* listener) { _listeners.append(listener); }
     void removeListener(ParameterListener* listener) { _listeners.removeAll(listener); }
 
@@ -226,7 +229,7 @@ public:
     }
 
     /// Returns string representation of parameter suitable for displaying to user.
-    QString displayStr() const
+    QString displayStr() const override
     {
         return ValuedParameter<TValue>::displayLabel() % " = " % ValuedParameter<TValue>::_value.displayStr();
     }
@@ -320,6 +323,7 @@ public:
     }
 
     QString str() const;
+    QString displayStr() const;
 };
 
 //------------------------------------------------------------------------------
@@ -328,6 +332,7 @@ typedef PhysicalParameter<Value> Parameter;
 typedef PhysicalParameter<ValueTS> ParameterTS;
 typedef ParametersList<ParameterBase> ParametersBase;
 typedef ParametersList<Parameter> Parameters;
+typedef ParametersList<ParameterTS> ParametersTS;
 typedef ParameterLink<Parameter> ParamLink;
 typedef ParameterLinksList<ParamLink> ParamLinks;
 typedef ValueVerifierBase<Z::Value> ValueVerifier;

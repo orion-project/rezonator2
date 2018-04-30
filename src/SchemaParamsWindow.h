@@ -2,13 +2,7 @@
 #define SCHEMA_PARAMS_WINDOW_H
 
 #include "SchemaWindows.h"
-#include "core/Schema.h"
 #include "io/ISchemaWindowStorable.h"
-
-QT_BEGIN_NAMESPACE
-class QMenu;
-class QAction;
-QT_END_NAMESPACE
 
 namespace SchemaParamsWindowStorable
 {

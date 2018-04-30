@@ -5,22 +5,24 @@
 
 #include <QApplication>
 
-#define DECLARE_PUMP_PARAMS(mode_type, base_mode) \
-class PumpParams_##mode_type : public base_mode \
+#define DECLARE_PUMP_PARAMS(mode_class, base_mode_class) \
+class PumpParams_##mode_class : public base_mode_class \
 { \
 public: \
-    PumpParams_##mode_type(); \
-    QString mode() const override { return QStringLiteral(# mode_type); }
+    PumpParams_##mode_class(); \
+    QString modeName() const override { return QStringLiteral(# mode_class); }
 
 
-#define DECLARE_PUMP_PARAMS_END(mode_type, mode_name, drawing_path) \
+#define DECLARE_PUMP_PARAMS_END(mode_class, mode_name, drawing_path, icon_path) \
 }; \
-class PumpProducer_##mode_type : public PumpProducer \
+class PumpMode_##mode_class : public PumpMode \
 { \
 public: \
-    PumpParams* makePump() const override { return new PumpParams_##mode_type(); } \
+    PumpParams* makePump() const override { return new PumpParams_##mode_class(); } \
     QString drawingPath() const override { return QStringLiteral(drawing_path); } \
-    QString mode() const { return QStringLiteral(# mode_type); } \
+    QString iconPath() const override { return QStringLiteral(icon_path); } \
+    QString modeName() const override { return QStringLiteral(# mode_class); } \
+    QString displayName() const override { return mode_name; } \
 };
 
 
@@ -38,26 +40,37 @@ class PumpParams
 {
 public:
     virtual ~PumpParams();
-    virtual QString mode() const { return QString(); }
+    virtual QString modeName() const { return QString(); }
+    QString label() const { return _label; }
+    QString title() const { return _title; }
+    ParametersTS* params() { return &_params; }
+    void setLabel(const QString& label) { _label = label; }
+    void setTitle(const QString& title) { _title = title; }
+    QString str() const { return _params.str(); }
+    QString displayStr() const { return _params.displayStr(); }
 protected:
-    ParametersBase _params;
     void addParam(ParameterTS *param, double value, Unit unit = Units::none());
+private:
+    QString _label, _title;
+    ParametersTS _params;
 };
 
 
-class PumpProducer
+class PumpMode
 {
 public:
-    virtual QString mode() const = 0;
+    virtual QString modeName() const = 0;
     virtual PumpParams* makePump() const = 0;
+    virtual QString iconPath() const = 0;
     virtual QString drawingPath() const = 0;
+    virtual QString displayName() const = 0;
 };
 
 
 class Pump {
 public:
-    static const QVector<PumpProducer*> &allPumpProducers();
-    static PumpProducer* findByMode(const QString& mode);
+    static const QVector<PumpMode*> &allModes();
+    static PumpMode* findByModeName(const QString& name);
 };
 
 
@@ -70,7 +83,8 @@ DECLARE_PUMP_PARAMS(Waist, PumpParams)
     PUMP_PARAM(MI)
 DECLARE_PUMP_PARAMS_END(Waist,
                         qApp->translate("Pump mode", "Waist"),
-                        ":/drawing/pump_waist")
+                        ":/drawing/pump_waist",
+                        ":/toolbar/schema_pump")
 
 DECLARE_PUMP_PARAMS(Front, PumpParams)
     PUMP_PARAM(beamRadius)
@@ -78,7 +92,8 @@ DECLARE_PUMP_PARAMS(Front, PumpParams)
     PUMP_PARAM(MI)
 DECLARE_PUMP_PARAMS_END(Front,
                         qApp->translate("Pump mode", "Front"),
-                        ":/drawing/pump_front")
+                        ":/drawing/pump_front",
+                        ":/toolbar/schema_pump")
 
 DECLARE_PUMP_PARAMS(TwoSections, PumpParams)
     PUMP_PARAM(radius1)
@@ -86,7 +101,8 @@ DECLARE_PUMP_PARAMS(TwoSections, PumpParams)
     PUMP_PARAM(distance)
 DECLARE_PUMP_PARAMS_END(TwoSections,
                         qApp->translate("Pump mode", "Two Sections"),
-                        ":/drawing/pump_two_section")
+                        ":/drawing/pump_two_section",
+                        ":/toolbar/schema_pump")
 
 DECLARE_PUMP_PARAMS(RayVector, PumpParams)
     PUMP_PARAM(radius)
@@ -94,7 +110,8 @@ DECLARE_PUMP_PARAMS(RayVector, PumpParams)
     PUMP_PARAM(distance)
 DECLARE_PUMP_PARAMS_END(RayVector,
                         qApp->translate("Pump mode", "Ray Vector"),
-                        ":/drawing/pump_ray_vector")
+                        ":/drawing/pump_ray_vector",
+                        ":/toolbar/schema_pump")
 
 DECLARE_PUMP_PARAMS(Complex, PumpParams)
     PUMP_PARAM(real)
@@ -102,12 +119,14 @@ DECLARE_PUMP_PARAMS(Complex, PumpParams)
     PUMP_PARAM(MI)
 DECLARE_PUMP_PARAMS_END(Complex,
                         qApp->translate("Pump mode", "Complex"),
-                        ":/drawing/pump_complex")
+                        ":/drawing/pump_complex",
+                        ":/toolbar/schema_pump")
 
 DECLARE_PUMP_PARAMS(InvComplex, PumpParams_Complex)
 DECLARE_PUMP_PARAMS_END(InvComplex,
                         qApp->translate("Pump mode", "Inv. Complex"),
-                        ":/drawing/pump_complex")
+                        ":/drawing/pump_complex",
+                        ":/toolbar/schema_pump")
 
 } // namespace Z
 

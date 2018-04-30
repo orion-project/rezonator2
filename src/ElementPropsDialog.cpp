@@ -16,34 +16,23 @@
 #include <QMessageBox>
 #include <QTabWidget>
 
-namespace Z {
-namespace Dlgs {
-
-ElementPropsDialog* editorDlg(Element *elem, QWidget *parent)
-{
-    switch (elem->paramsEditorKind())
-    {
-    case Z::ParamsEditor::None: return new ElementPropsDialog_None(elem, parent);
-    case Z::ParamsEditor::List: return new ElementPropsDialog_List(elem, parent);
-    case Z::ParamsEditor::ABCD: return new ElementPropsDialog_Abcd(elem, parent);
-    }
-    return new ElementPropsDialog(elem);
-}
-
-bool elementProps(Element *elem, QWidget *parent)
-{
-    return editorDlg(elem, parent)->exec() == QDialog::Accepted;
-}
-
-} // namespace Dlgs
-} // namespace Z
-
-
 //------------------------------------------------------------------------------
 //                             ElementPropsDialog
 //------------------------------------------------------------------------------
 
 int __savedTabIndex = 0;
+
+bool ElementPropsDialog::editElement(Element *elem, QWidget *parent)
+{
+    ElementPropsDialog *dlg;
+    switch (elem->paramsEditorKind())
+    {
+    case Z::ParamsEditor::None: dlg = new ElementPropsDialog_None(elem, parent); break;
+    case Z::ParamsEditor::List: dlg = new ElementPropsDialog_List(elem, parent); break;
+    case Z::ParamsEditor::ABCD: dlg = new ElementPropsDialog_Abcd(elem, parent); break;
+    }
+    return dlg->exec() == QDialog::Accepted;
+}
 
 ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : RezonatorDialog(NoOptions, parent)
 {

@@ -1,4 +1,6 @@
 #include "ParamsEditor.h"
+#include "ParamEditor.h"
+#include "ValuesEditorTS.h"
 #include "helpers/OriLayouts.h"
 #include "widgets/OriInfoPanel.h"
 #include "widgets/OriValueEdit.h"
@@ -124,6 +126,39 @@ QString ParamsEditor::verify() const
 }
 
 //------------------------------------------------------------------------------
+//                               ParamsEditorTS
+//------------------------------------------------------------------------------
+
+ParamsEditorTS::ParamsEditorTS(Z::ParametersTS *params, QWidget *parent) : QWidget(parent), _params(params)
+{
+    _valuesEditor = new ValuesEditorTS();
+
+    for (Z::ParameterTS *param : *params)
+    {
+        auto editor = new ValueEditorTS(param->name(), param->label(), param->value());
+        _editorsMap.insert(param, editor);
+        _valuesEditor->addEditor(editor);
+    }
+
+    setLayout(_valuesEditor);
+}
+
+void ParamsEditorTS::adjustSymbolsWidth()
+{
+    _valuesEditor->adjustSymbolsWidth();
+}
+
+void ParamsEditorTS::collect()
+{
+    QMapIterator<Z::ParameterTS*, ValueEditorTS*> it(_editorsMap);
+    while (it.hasNext())
+    {
+        it.next();
+        it.key()->setValue(it.value()->value());
+    }
+}
+
+//------------------------------------------------------------------------------
 //                              ParamsEditorAbcd
 //------------------------------------------------------------------------------
 
@@ -164,4 +199,3 @@ void ParamsEditorAbcd::focus()
 {
     _editors.at(0)->setFocus();
 }
-

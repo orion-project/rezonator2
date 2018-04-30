@@ -2,7 +2,7 @@
 #include "CalcManager.h"
 #include "CustomPrefs.h"
 #include "ProjectOperations.h"
-#include "PumpWindow.h"
+#include "PumpParamsDialog.h"
 #include "io/z_io_utils.h"
 #include "io/SchemaReaderIni.h"
 #include "io/SchemaReaderJson.h"
@@ -241,11 +241,19 @@ bool ProjectOperations::canClose()
 
 void ProjectOperations::setupPump()
 {
-    if (schema()->isSP())
-        if (PumpWindow::edit(_parent, schema()))
-        {
-            // TODO
-        }
+    if (!schema()->isSP()) return;
+
+    if (schema()->pumps()->isEmpty())
+    {
+        auto pump = PumpParamsDialog::makeNewPump();
+        if (!pump) return;
+        schema()->pumps()->append(pump);
+        // TODO raise event
+    }
+    else if (PumpParamsDialog::editPump(schema()->activePump()))
+    {
+        // TODO raise event
+    }
 }
 
 void ProjectOperations::setupWavelength()
@@ -274,5 +282,15 @@ void ProjectOperations::setupTripType()
             .withHelpTopic("") // TODO help topic
             .withContentToButtonsSpacingFactor(2);
     if (dlg.exec())
-        schema()->setTripType(TripTypes::find(group.option()));
+    {
+        auto tripType = TripTypes::find(group.option());
+        if (tripType == TripType::SP && schema()->pumps()->isEmpty())
+        {
+            auto pump = PumpParamsDialog::makeNewPump();
+            if (!pump) return;
+            schema()->pumps()->append(pump);
+            // TODO raise event
+        }
+        schema()->setTripType(tripType);
+    }
 }

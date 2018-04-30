@@ -138,32 +138,40 @@ PumpParams_Complex::PumpParams_Complex()
 }
 
 //--------------------------------------------------------------------------------
+//                              PumpParams_InvComplex
+//--------------------------------------------------------------------------------
+
+PumpParams_InvComplex::PumpParams_InvComplex() : PumpParams_Complex()
+{
+}
+
+//--------------------------------------------------------------------------------
 //                                      Pump
 //--------------------------------------------------------------------------------
 
-const QVector<PumpProducer*>& Pump::allPumpProducers()
+const QVector<PumpMode*>& Pump::allModes()
 {
-    static PumpProducer_Waist waist;
-    static PumpProducer_Front front;
-    static PumpProducer_RayVector ray_vector;
-    static PumpProducer_TwoSections sections;
-    static PumpParams_Complex complex;
-    static PumpParams_InvComplex inv_complex;
-    static QVector<PumpProducer*> producers({
-        reinterpret_cast<PumpProducer*>(&waist),
-        reinterpret_cast<PumpProducer*>(&front),
-        reinterpret_cast<PumpProducer*>(&ray_vector),
-        reinterpret_cast<PumpProducer*>(&sections),
-        reinterpret_cast<PumpProducer*>(&complex),
-        reinterpret_cast<PumpProducer*>(&inv_complex),
+    static PumpMode_Waist waist;
+    static PumpMode_Front front;
+    static PumpMode_RayVector ray_vector;
+    static PumpMode_TwoSections sections;
+    static PumpMode_Complex complex;
+    static PumpMode_InvComplex inv_complex;
+    static QVector<PumpMode*> producers({
+        reinterpret_cast<PumpMode*>(&waist),
+        reinterpret_cast<PumpMode*>(&front),
+        reinterpret_cast<PumpMode*>(&ray_vector),
+        reinterpret_cast<PumpMode*>(&sections),
+        reinterpret_cast<PumpMode*>(&complex),
+        reinterpret_cast<PumpMode*>(&inv_complex),
     });
     return producers;
 }
 
-PumpProducer* Pump::findByMode(const QString& mode)
+PumpMode* Pump::findByModeName(const QString& name)
 {
-    for (auto producer : allPumpProducers())
-        if (producer->mode() == mode)
+    for (auto producer : allModes())
+        if (producer->modeName() == name)
             return producer;
     return nullptr;
 }

@@ -19,6 +19,18 @@ QString ParametersList<TParam>::str() const
 }
 
 template <class TParam>
+QString ParametersList<TParam>::displayStr() const
+{
+    QStringList s;
+    for (int i = 0; i < this->size(); i++)
+    {
+        auto p = this->at(i);
+        if (p->visible()) s << p->displayStr();
+    }
+    return s.join("; ");
+}
+
+template <class TParam>
 TParam* ParametersList<TParam>::byAlias(const QString& alias) const
 {
     for (int i = 0; i < this->size(); i++)
@@ -42,11 +54,23 @@ TParam* ParametersList<TParam>::byPointer(void *param) const
     return nullptr;
 }
 
-// Template implementations for ParametersList<PhysicalParameter> aka Parameters
 template QString Parameters::str() const;
+template QString Parameters::displayStr() const;
 template Parameter* Parameters::byAlias(const QString& alias) const;
 template Parameter* Parameters::byIndex(int index) const;
 template Parameter* Parameters::byPointer(void *param) const;
+
+template QString ParametersBase::str() const;
+template QString ParametersBase::displayStr() const;
+template ParameterBase* ParametersBase::byAlias(const QString& alias) const;
+template ParameterBase* ParametersBase::byIndex(int index) const;
+template ParameterBase* ParametersBase::byPointer(void *param) const;
+
+template QString ParametersTS::str() const;
+template QString ParametersTS::displayStr() const;
+template ParameterTS* ParametersTS::byAlias(const QString& alias) const;
+template ParameterTS* ParametersTS::byIndex(int index) const;
+template ParameterTS* ParametersTS::byPointer(void *param) const;
 
 //--------------------------------------------------------------------------------
 //                           ParameterLinksList<TLink>

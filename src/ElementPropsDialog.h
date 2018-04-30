@@ -23,6 +23,8 @@ public:
 
     void populate();
 
+    static bool editElement(class Element *elem, QWidget *parent = 0);
+
 public slots:
     void collect() override;
 
@@ -91,16 +93,5 @@ private:
 };
 
 //------------------------------------------------------------------------------
-
-namespace Z {
-namespace Dlgs {
-
-#ifndef DLG_ELEM_PROPS
-#define DLG_ELEM_PROPS
-bool elementProps(class Element *elem, QWidget *parent = 0);
-#endif
-
-} // namespace Dlgs
-} // namespace Z
 
 #endif // ELEMENT_PROP_DLG_H

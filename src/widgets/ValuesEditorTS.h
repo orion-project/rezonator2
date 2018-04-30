@@ -49,9 +49,11 @@ class ValuesEditorTS : public QVBoxLayout
 {
     Q_OBJECT
 public:
+    ValuesEditorTS();
     ValuesEditorTS(const QVector<ValueEditorTS*>& editors);
     ValueEditorTS* firstEditor() { return _editors.first(); }
     void adjustSymbolsWidth();
+    void addEditor(ValueEditorTS *editor);
 public slots:
     void swapValues();
     void assignTtoS();
