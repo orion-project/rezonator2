@@ -53,7 +53,6 @@
         <file alias="param_formula">../img/toolbar/parameter_gear.svg</file>
         <file alias="schema_summary">../img/toolbar/schema_summary.svg</file>
         <file alias="schema_prop">../img/toolbar/schema_prop.svg</file>
-        <file alias="schema_pump">../img/toolbar/schema_pump.svg</file>
         <file alias="schema_open">../img/toolbar/schema_open.svg</file>
         <file alias="schema_new">../img/toolbar/schema_new.svg</file>
         <file alias="schema_save">../img/toolbar/save.svg</file>
@@ -69,6 +68,11 @@
         <file alias="elem_delete">../img/toolbar/elem_delete.svg</file>
         <file alias="formula_stab_normal">../img/toolbar/formula_stab_normal.svg</file>
         <file alias="formula_stab_squared">../img/toolbar/formula_stab_squared.svg</file>
+        <file alias="pumps">../img/toolbar/pumps.svg</file>
+        <file alias="pump_edit">../img/toolbar/pump_props.svg</file>
+        <file alias="pump_add">../img/toolbar/pump_add.svg</file>
+        <file alias="pump_delete">../img/toolbar/pump_delete.svg</file>
+        <file alias="pump_on">../img/toolbar/pump_on.svg</file>
     </qresource>
     <qresource prefix="/toolbar16">
         <file alias="langs">../img/toolbar16/flags.png</file>
@@ -128,6 +132,7 @@
         <file alias="wavelength">../img/icon/icon_wavelength.svg</file>
         <file alias="element">../img/icon/icon_element.svg</file>
         <file alias="parameter">../img/icon/icon_parameter.svg</file>
+        <file alias="pump">../img/icon/icon_pump.svg</file>
     </qresource>
     <qresource prefix="/icons">
         <file alias="stability_ok">../img/icon/stability_ok.svg</file>

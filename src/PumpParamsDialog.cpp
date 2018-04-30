@@ -25,7 +25,7 @@ Z::PumpParams* PumpParamsDialog::makeNewPump()
     }
     list.setCurrentRow(0);
     if (Ori::Dlg::Dialog(&list)
-            .withIconPath(":/toolbar/schema_pump")
+            .withIconPath(":/window_icons/pump")
             .withTitle(tr("Select Pump Mode"))
             .exec())
     {
@@ -56,7 +56,7 @@ bool PumpParamsDialog::editPump(Z::PumpParams *params)
 PumpParamsDialog::PumpParamsDialog(Z::PumpParams *params, QWidget *parent)
     : RezonatorDialog(Options(NoOptions), parent), _params(params)
 {
-    setTitleAndIcon(tr("Input Beam Parameters"), ":/toolbar/schema_pump");
+    setTitleAndIcon(tr("Input Beam Parameters"), ":/toolbar/pump_edit");
     setObjectName("PumpDialog");
 
     _editorLabel = new QLineEdit;

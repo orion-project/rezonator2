@@ -139,7 +139,7 @@ void ProjectWindow::createActions()
     actnFileSaveCopy = A_(tr("Save &Copy..."), _operations, SLOT(saveSchemaFileCopy()));
     actnFileLambda = A_(tr("Change &Wavelength..."), _operations, SLOT(setupWavelength()), ":/toolbar/wavelength", Qt::Key_F10);
     actnFileTripType = A_(tr("Change &Trip Type..."), _operations, SLOT(setupTripType()));
-    actnFilePump = A_(tr("Setup &Input Beam..."), _operations, SLOT(setupPump()), ":/toolbar/schema_pump", Qt::Key_F9);
+    actnFilePump = A_(tr("Setup &Input Beam..."), _operations, SLOT(setupPump()), ":/toolbar/pump_edit", Qt::Key_F9);
     actnFileSummary = A_(tr("Summar&y..."), _calculations, SLOT(funcSummary()), ":/toolbar/schema_summary", Qt::CTRL | Qt::Key_I);
     actnFileExit = A_(tr("E&xit"), qApp, SLOT(closeAllWindows()), 0, Qt::CTRL | Qt::Key_Q);
 
@@ -165,7 +165,7 @@ void ProjectWindow::createActions()
     // this action is for activation of specific subwindow and _mdiArea is responsible for it.
     actnWndSchema = A_(tr("&Schema"), this, SLOT(showSchemaWindow()), ":/toolbar/schema", Qt::Key_F12);
     actnWndParams = A_(tr("&Parameters"), this, SLOT(showParamsWindow()), ":/toolbar/parameter", Qt::Key_F11);
-    actnWndPumps = A_(tr("P&umps"), this, SLOT(showPumpsWindow()), ":/toolbar/schema_pump");
+    actnWndPumps = A_(tr("P&umps"), this, SLOT(showPumpsWindow()), ":/toolbar/pumps");
     actnWndProtocol = A_(tr("P&rotocol"), this, SLOT(showProtocolWindow()), ":/toolbar/protocol");
     actnWndClose = A_(tr("Cl&ose"), _mdiArea, SLOT(closeActiveSubWindow()));
     actnWndCloseAll = A_(tr("Close &All"), _mdiArea, SLOT(closeAllSubWindows()), ":/toolbar/windows_close");

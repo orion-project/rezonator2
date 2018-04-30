@@ -24,14 +24,14 @@ int __savedTabIndex = 0;
 
 bool ElementPropsDialog::editElement(Element *elem, QWidget *parent)
 {
-    ElementPropsDialog *dlg;
+    ElementPropsDialog *dlg = nullptr;
     switch (elem->paramsEditorKind())
     {
     case Z::ParamsEditor::None: dlg = new ElementPropsDialog_None(elem, parent); break;
     case Z::ParamsEditor::List: dlg = new ElementPropsDialog_List(elem, parent); break;
     case Z::ParamsEditor::ABCD: dlg = new ElementPropsDialog_Abcd(elem, parent); break;
     }
-    return dlg->exec() == QDialog::Accepted;
+    return dlg && dlg->exec() == QDialog::Accepted;
 }
 
 ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : RezonatorDialog(NoOptions, parent)
