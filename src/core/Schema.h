@@ -42,6 +42,10 @@ public:
     virtual void customParamChanged(Schema*, Z::Parameter*) {}
     virtual void customParamDeleting(Schema*, Z::Parameter*) {}
     virtual void customParamDeleted(Schema*, Z::Parameter*) {}
+    virtual void pumpCreated(Schema*, Z::PumpParams*) {}
+    virtual void pumpChanged(Schema*, Z::PumpParams*) {}
+    virtual void pumpDeleting(Schema*, Z::PumpParams*) {}
+    virtual void pumpDeleted(Schema*, Z::PumpParams*) {}
 };
 
 //------------------------------------------------------------------------------
@@ -106,6 +110,11 @@ public:
         CustomParamChanged, ///< Value of custom parameter was changed
         CustomParamDeleting,///< Custom param is about to be deleted
         CustomParamDeleted, ///< Custom parameter was deleted
+
+        PumpCreated,   ///< New pump was created
+        PumpChanged,   ///< Pump parameters were changed
+        PumpDeleting,  ///< Pump is about to be deleted
+        PumpDeleted,   ///< Pump was deleted
     };
 
     void raise(Event event, void* param = nullptr) const;
@@ -250,6 +259,5 @@ private:
 
     inline bool isValid(int index) const { return index >= 0 && index < _items.size(); }
 };
-
 
 #endif // SCHEMA_H

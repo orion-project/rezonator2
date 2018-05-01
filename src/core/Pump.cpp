@@ -12,8 +12,7 @@ using namespace Units;
 
 PumpParams::~PumpParams()
 {
-    for (auto p : _params)
-        delete p;
+    qDeleteAll(_params);
 }
 
 void PumpParams::addParam(ParameterTS *param, double value, Unit unit)

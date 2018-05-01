@@ -165,7 +165,6 @@ bool ProjectOperations::saveSchemaFile(const QString& fileName)
 {
     Z_REPORT("Saving" << fileName)
 
-
     SchemaWriterJson writer(schema());
     {
         Ori::WaitCursor wc;
@@ -248,11 +247,13 @@ void ProjectOperations::setupPump()
         auto pump = PumpParamsDialog::makeNewPump();
         if (!pump) return;
         schema()->pumps()->append(pump);
-        // TODO raise event
+        schema()->events().raise(SchemaEvents::PumpCreated, pump);
     }
-    else if (PumpParamsDialog::editPump(schema()->activePump()))
+    else
     {
-        // TODO raise event
+        auto pump = schema()->activePump();
+        if (PumpParamsDialog::editPump(pump))
+            schema()->events().raise(SchemaEvents::PumpChanged, pump);
     }
 }
 
@@ -289,7 +290,7 @@ void ProjectOperations::setupTripType()
             auto pump = PumpParamsDialog::makeNewPump();
             if (!pump) return;
             schema()->pumps()->append(pump);
-            // TODO raise event
+            schema()->events().raise(SchemaEvents::PumpCreated, pump);
         }
         schema()->setTripType(tripType);
     }

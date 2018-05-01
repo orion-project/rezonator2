@@ -7,7 +7,6 @@ QT_BEGIN_NAMESPACE
 class QLineEdit;
 QT_END_NAMESPACE
 
-class Schema;
 class ParamsEditorTS;
 namespace Z {
 class PumpParams;

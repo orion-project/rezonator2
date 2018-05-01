@@ -1,5 +1,6 @@
 #include "PumpWindow.h"
 
+#include "PumpParamsDialog.h"
 #include "widgets/Appearance.h"
 #include "widgets/RichTextItemDelegate.h"
 #include "widgets/ValuesEditorTS.h"
@@ -102,12 +103,12 @@ void PumpsTable::createRow(int row)
     it = new QTableWidgetItem();
     Z::Gui::setSymbolFont(it);
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    it->setTextAlignment(Qt::AlignHCenter);
+    it->setTextAlignment(Qt::AlignHCenter | Qt::AlignCenter);
     setItem(row, COL_LABEL, it);
 
     it = new QTableWidgetItem();
     Z::Gui::setValueFont(it);
-    it->setTextAlignment(Qt::AlignCenter);
+    it->setTextAlignment(Qt::AlignHCenter);
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_PARAMS, it);
 
@@ -128,14 +129,40 @@ void PumpsTable::populateRow(Z::PumpParams *pump, int row)
     else
         qCritical() << "Unable to find mode for pump parameters";
 
+    qDebug() << pump->label();
     item(row, COL_LABEL)->setText(pump->label());
-    item(row, COL_PARAMS)->setText(pump->displayStr());
+    item(row, COL_PARAMS)->setText(pump->params()->displayStr());
     item(row, COL_TITLE)->setText("  " % pump->title());
 }
 
 void PumpsTable::schemaLoaded(Schema*)
 {
     populate();
+}
+
+void PumpsTable::pumpCreated(Schema*, Z::PumpParams *pump)
+{
+    int row = rowCount();
+    setRowCount(row+1);
+    createRow(row);
+    populateRow(pump, row);
+    setSelected(pump);
+}
+
+void PumpsTable::pumpChanged(Schema*, Z::PumpParams *pump)
+{
+    auto row = findRow(pump);
+    if (row < 0) return;
+    populateRow(reinterpret_cast<Z::PumpParams*>(pump), row);
+    adjustColumns();
+}
+
+void PumpsTable::pumpDeleting(Schema*, Z::PumpParams *pump)
+{
+    auto row = findRow(pump);
+    if (row < 0) return;
+    removeRow(row);
+    adjustColumns();
 }
 
 int PumpsTable::findRow(Z::PumpParams *pump)
@@ -168,7 +195,7 @@ PumpWindow::PumpWindow(Schema *owner) : SchemaMdiChild(owner)
     createToolBar();
 
     _table->setContextMenu(_contextMenu);
-    connect(_table, SIGNAL(doubleClicked(Z::Parameter*)), this, SLOT(editPump()));
+    connect(_table, SIGNAL(doubleClicked(Z::PumpParams*)), this, SLOT(editPump()));
     schema()->registerListener(_table);
 }
 
@@ -214,12 +241,18 @@ void PumpWindow::createToolBar()
 
 void PumpWindow::createPump()
 {
-
+    auto pump = PumpParamsDialog::makeNewPump();
+    if (!pump) return;
+    schema()->pumps()->append(pump);
+    schema()->events().raise(SchemaEvents::PumpCreated, pump);
 }
 
 void PumpWindow::editPump()
 {
-
+    auto pump = _table->selected();
+    if (!pump) return;
+    if (PumpParamsDialog::editPump(pump))
+        schema()->events().raise(SchemaEvents::PumpChanged, pump);
 }
 
 void PumpWindow::deletePump()

@@ -80,10 +80,10 @@ QString ValueTS::str() const
 QString ValueTS::displayStr() const
 {
     if (_unit == deg() || _unit == amin())
-        return format(_valueT) % _unit->alias() % ' ' % multX() % ' ' % format(_valueS) % _unit->alias();
+        return format(_valueT) % _unit->name() % ' ' % multX() % ' ' % format(_valueS) % _unit->name();
     if (_unit == rad() || _unit == none())
         return format(_valueT) % ' ' % multX() % ' ' % format(_valueS);
-    return format(_valueT) % ' ' % multX() % ' ' % format(_valueS) % ' ' % _unit->alias();
+    return format(_valueT) % ' ' % multX() % ' ' % format(_valueS) % ' ' % _unit->name();
 }
 
 //------------------------------------------------------------------------------

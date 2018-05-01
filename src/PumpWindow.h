@@ -30,6 +30,9 @@ public:
 
     // inherits from SchemaListener
     void schemaLoaded(Schema*) override;
+    void pumpCreated(Schema*, Z::PumpParams*) override;
+    void pumpChanged(Schema*, Z::PumpParams*) override;
+    void pumpDeleting(Schema*, Z::PumpParams*) override;
 
 signals:
     void doubleClicked(Z::PumpParams*);

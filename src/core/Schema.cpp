@@ -79,6 +79,10 @@ const SchemaEvents::EventProps& SchemaEvents::propsOf(Event event)
         INIT_EVENT(CustomParamChanged, true,         SchemaState::Modified ),
         INIT_EVENT(CustomParamDeleted, true,         SchemaState::Modified ),
         INIT_EVENT(CustomParamDeleting,true,         SchemaState::Current  ),
+        INIT_EVENT(PumpCreated,        true,         SchemaState::Modified ),
+        INIT_EVENT(PumpChanged,        true,         SchemaState::Modified ),
+        INIT_EVENT(PumpDeleted,        true,         SchemaState::Modified ),
+        INIT_EVENT(PumpDeleting,       true,         SchemaState::Current  ),
     });
     return _props[event];
 }
@@ -104,6 +108,10 @@ void SchemaEvents::notify(SchemaListener* listener, SchemaEvents::Event event, v
     case CustomParamChanged: listener->customParamChanged(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
     case CustomParamDeleting: listener->customParamDeleting(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
     case CustomParamDeleted: listener->customParamDeleted(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
+    case PumpCreated: listener->pumpCreated(_schema, reinterpret_cast<Z::PumpParams*>(param)); break;
+    case PumpChanged: listener->pumpChanged(_schema, reinterpret_cast<Z::PumpParams*>(param)); break;
+    case PumpDeleting: listener->pumpDeleting(_schema, reinterpret_cast<Z::PumpParams*>(param)); break;
+    case PumpDeleted: listener->pumpDeleted(_schema, reinterpret_cast<Z::PumpParams*>(param)); break;
     };
 }
 
@@ -117,8 +125,6 @@ Schema::Schema()
     _wavelength.setValue(Z::Value(980, Z::Units::nm()));
     _wavelength.addListener(this);
 
-    // TODO:NEXT-VER init default pump
-
     _events._schema = this;
     _events.raise(SchemaEvents::Created);
 }
@@ -131,13 +137,6 @@ Schema::~Schema()
     qDeleteAll(_customParams);
     _formulas.clear();
 }
-
-// TODO:NEXT-VER make test
-//void Schema::setPump(const Z::Pump::Params& pump)
-//{
-//    _pump = pump;
-//    _events.raise(SchemaEvents::ParamsChanged);
-//}
 
 int Schema::enabledCount() const
 {
