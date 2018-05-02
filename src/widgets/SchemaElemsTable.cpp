@@ -18,8 +18,10 @@ SchemaElemsTable::SchemaElemsTable(Schema *schema, QWidget *parent) : QTableWidg
     int paramsOffsetY = 0;
 #if defined(Q_OS_MAC)
     paramsOffsetY = 2;
+#elif defined(Q_OS_LINUX)
+    paramsOffsetY = 1;
 #endif
-    // TODO check linux and windows
+    // TODO check windows
 
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionBehavior(QAbstractItemView::SelectRows);

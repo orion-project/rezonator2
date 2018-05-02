@@ -135,13 +135,19 @@
         <file alias="pump">../img/icon/icon_pump.svg</file>
     </qresource>
     <qresource prefix="/icons">
-        <file alias="pump_on">../img/icon/stability_ok.svg</file>
-        <file alias="pump_off">../img/icon/stability_err.svg</file>
-        <file alias="stability_ok">../img/icon/stability_ok.svg</file>
-        <file alias="stability_err">../img/icon/stability_err.svg</file>
-        <file alias="trip_type_rr">../img/icon/schema_type_rr.svg</file>
-        <file alias="trip_type_sp">../img/icon/schema_type_sp.svg</file>
-        <file alias="trip_type_sw">../img/icon/schema_type_sw.svg</file>
+        <file alias="pump_on">../img/misc/lamp_green.svg</file>
+        <file alias="pump_off">../img/misc/lamp_gray.svg</file>
+        <file alias="pump_waist">../img/toolbar/pump_waist.svg</file>
+        <file alias="pump_front">../img/toolbar/pump_front.svg</file>
+        <file alias="pump_ray_vector">../img/toolbar/pump_ray_vector.svg</file>
+        <file alias="pump_two_sections">../img/toolbar/pump_two_sections.svg</file>
+        <file alias="pump_complex">../img/toolbar/pump_complex.svg</file>
+        <file alias="pump_inv_complex">../img/toolbar/pump_inv_complex.svg</file>
+        <file alias="stability_ok">../img/misc/lamp_green.svg</file>
+        <file alias="stability_err">../img/misc/lamp_red.svg</file>
+        <file alias="trip_type_rr">../img/misc/schema_type_rr.svg</file>
+        <file alias="trip_type_sp">../img/misc/schema_type_sp.svg</file>
+        <file alias="trip_type_sw">../img/misc/schema_type_sw.svg</file>
     </qresource>
     <qresource prefix="/misc10">
         <file alias="ts_link">../img/ts_equals_10.png</file>
@@ -159,7 +165,7 @@
         <file alias="pump_waist">../img/drawing/pump_waist.png</file>
         <file alias="pump_front">../img/drawing/pump_front.png</file>
         <file alias="pump_ray_vector">../img/drawing/pump_ray_vector.png</file>
-        <file alias="pump_two_section">../img/drawing/pump_two_sections.png</file>
+        <file alias="pump_two_sections">../img/drawing/pump_two_sections.png</file>
         <file alias="pump_complex">../img/drawing/pump_complex.png</file>
     </qresource>
 </RCC>

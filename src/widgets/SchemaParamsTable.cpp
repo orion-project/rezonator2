@@ -12,11 +12,11 @@ SchemaParamsTable::SchemaParamsTable(Schema *schema, QWidget *parent) : QTableWi
 #if defined(Q_OS_MAC)
     aliasOffsetY = -1;
 #endif
-    // TODO check linux and windows
+    // TODO check windows
 
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionBehavior(QAbstractItemView::SelectRows);
-    setItemDelegateForColumn(COL_ALIAS, new RichTextItemDelegate(-1, this));
+    setItemDelegateForColumn(COL_ALIAS, new RichTextItemDelegate(aliasOffsetY, this));
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     horizontalHeader()->setSectionResizeMode(COL_IMAGE, QHeaderView::Fixed);
     horizontalHeader()->setMinimumSectionSize(_iconSize+6);
