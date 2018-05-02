@@ -240,7 +240,7 @@ void ProjectWindow::createToolBars()
           actnFuncRepRate }));
 
     addToolBar(makeToolBar(tr("Misc"),
-        { actnWndParams }));
+        { actnWndParams, actnWndPumps }));
 
     // TODO:NEXT-VER addToolBar(makeToolBar(tr("Tools"), { actnToolsBeamCalc }));
 

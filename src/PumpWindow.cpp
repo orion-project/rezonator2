@@ -5,6 +5,7 @@
 #include "widgets/RichTextItemDelegate.h"
 #include "widgets/ValuesEditorTS.h"
 #include "widgets/OriOptionsGroup.h"
+#include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 
@@ -255,7 +256,23 @@ void PumpWindow::editPump()
 
 void PumpWindow::deletePump()
 {
+    if (schema()->isSP() && schema()->pumps()->size() == 1)
+        return Ori::Dlg::info(tr("Unable to delete the last pump in SP schema."));
 
+    auto pump = _table->selected();
+    if (!pump) return;
+
+    auto pumpId = pump->label().isEmpty()
+            ? QString("#%1").arg(schema()->pumps()->indexOf(pump))
+            : QString("'%1'").arg(pump->label());
+
+    if (Ori::Dlg::ok(tr("Confirm deletion of pump %1").arg(pumpId)))
+    {
+        schema()->events().raise(SchemaEvents::PumpDeleting, pump);
+        schema()->pumps()->removeOne(pump);
+        schema()->events().raise(SchemaEvents::PumpDeleted, pump);
+        delete pump;
+    }
 }
 
 void PumpWindow::activatePump()
