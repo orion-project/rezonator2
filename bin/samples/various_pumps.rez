@@ -1,0 +1,163 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 980
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+    ],
+    "formulas": [
+    ],
+    "param_links": [
+    ],
+    "pumps": [
+        {
+            "is_active": false,
+            "label": "P1",
+            "mode": "Waist",
+            "params": {
+                "MI": {
+                    "unit": "none",
+                    "value_s": 1,
+                    "value_t": 1
+                },
+                "w_0": {
+                    "unit": "mkm",
+                    "value_s": 100,
+                    "value_t": 100
+                },
+                "z_w": {
+                    "unit": "mm",
+                    "value_s": 100,
+                    "value_t": 100
+                }
+            },
+            "title": "waist"
+        },
+        {
+            "is_active": true,
+            "label": "P2",
+            "mode": "Front",
+            "params": {
+                "MI": {
+                    "unit": "none",
+                    "value_s": 1,
+                    "value_t": 1
+                },
+                "R": {
+                    "unit": "mm",
+                    "value_s": 100,
+                    "value_t": 100
+                },
+                "w": {
+                    "unit": "mkm",
+                    "value_s": 1000,
+                    "value_t": 1000
+                }
+            },
+            "title": "front"
+        },
+        {
+            "is_active": false,
+            "label": "P3",
+            "mode": "RayVector",
+            "params": {
+                "V": {
+                    "unit": "deg",
+                    "value_s": 10,
+                    "value_t": 10
+                },
+                "y": {
+                    "unit": "mkm",
+                    "value_s": 100,
+                    "value_t": 100
+                },
+                "z_y": {
+                    "unit": "mm",
+                    "value_s": 100,
+                    "value_t": 100
+                }
+            },
+            "title": "ray vector"
+        },
+        {
+            "is_active": false,
+            "label": "P4",
+            "mode": "TwoSections",
+            "params": {
+                "y_1": {
+                    "unit": "mkm",
+                    "value_s": 100,
+                    "value_t": 100
+                },
+                "y_2": {
+                    "unit": "mkm",
+                    "value_s": 1000,
+                    "value_t": 1000
+                },
+                "z_y": {
+                    "unit": "mm",
+                    "value_s": 100,
+                    "value_t": 100
+                }
+            },
+            "title": "two sections"
+        },
+        {
+            "is_active": false,
+            "label": "P5",
+            "mode": "Complex",
+            "params": {
+                "Im": {
+                    "unit": "none",
+                    "value_s": 3,
+                    "value_t": 3
+                },
+                "MI": {
+                    "unit": "none",
+                    "value_s": 5,
+                    "value_t": 5
+                },
+                "Re": {
+                    "unit": "none",
+                    "value_s": 2,
+                    "value_t": 2
+                }
+            },
+            "title": "complex"
+        },
+        {
+            "is_active": false,
+            "label": "P6",
+            "mode": "InvComplex",
+            "params": {
+                "Im": {
+                    "unit": "none",
+                    "value_s": 40,
+                    "value_t": 30
+                },
+                "MI": {
+                    "unit": "none",
+                    "value_s": 60,
+                    "value_t": 50
+                },
+                "Re": {
+                    "unit": "none",
+                    "value_s": 20,
+                    "value_t": 10
+                }
+            },
+            "title": "inv complex"
+        }
+    ],
+    "schema_version": "2.0",
+    "trip_type": "SP",
+    "windows": [
+        {
+            "type": "PumpsWindow"
+        }
+    ]
+}

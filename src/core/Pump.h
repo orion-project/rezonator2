@@ -48,11 +48,14 @@ public:
     void setTitle(const QString& title) { _title = title; }
     QString str() const { return _params.str(); }
     QString displayStr() const { return _params.displayStr(); }
+    bool isActive() const { return _isActive; }
+    void activate(bool on) { _isActive = on; }
 protected:
     void addParam(ParameterTS *param, double value, Unit unit = Units::none());
 private:
     QString _label, _title;
     ParametersTS _params;
+    bool _isActive = false;
 };
 
 

@@ -229,6 +229,7 @@ void SchemaReaderJson::readPump(const QJsonObject& root)
     auto pump = pumpMode->makePump();
     pump->setLabel(root["label"].toString());
     pump->setTitle(root["title"].toString());
+    pump->activate(root["is_active"].toBool());
 
     WITH_JSON_VALUE(paramsJson, root, "params")
     {

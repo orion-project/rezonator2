@@ -93,6 +93,7 @@ void SchemaWriterJson::writePump(QJsonObject &root, Z::PumpParams *pump)
     root["mode"] = mode->modeName();
     root["label"] = pump->label();
     root["title"] = pump->title();
+    root["is_active"] = pump->isActive();
     QJsonObject paramsJson;
     for (Z::ParameterTS* p : *pump->params())
         paramsJson[p->alias()] = writeValueTS(p->value());

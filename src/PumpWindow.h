@@ -46,7 +46,7 @@ private slots:
     void showContextMenu(const QPoint&);
 
 private:
-    enum { COL_IMAGE, COL_LABEL, COL_PARAMS, COL_TITLE, COL_COUNT };
+    enum { COL_IMAGE, COL_ACTIVE, COL_LABEL, COL_PARAMS, COL_TITLE, COL_COUNT };
 
     Schema *_schema;
     QMenu *_contextMenu = nullptr;

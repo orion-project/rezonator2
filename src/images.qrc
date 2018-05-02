@@ -135,6 +135,8 @@
         <file alias="pump">../img/icon/icon_pump.svg</file>
     </qresource>
     <qresource prefix="/icons">
+        <file alias="pump_on">../img/icon/stability_ok.svg</file>
+        <file alias="pump_off">../img/icon/stability_err.svg</file>
         <file alias="stability_ok">../img/icon/stability_ok.svg</file>
         <file alias="stability_err">../img/icon/stability_err.svg</file>
         <file alias="trip_type_rr">../img/icon/schema_type_rr.svg</file>

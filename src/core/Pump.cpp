@@ -98,9 +98,9 @@ PumpParams_RayVector::PumpParams_RayVector()
 {
     _radius = new ParameterTS(Dims::linear(),
                               QStringLiteral("y"),
-                              QStringLiteral("y>"),
+                              QStringLiteral("y"),
                               qApp->translate("Pump param", "Beam radius"));
-    _angle = new ParameterTS(Dims::linear(),
+    _angle = new ParameterTS(Dims::angular(),
                              QStringLiteral("V"),
                              QStringLiteral("V"),
                              qApp->translate("Pump param", "Half angle of divergence"));
@@ -157,12 +157,12 @@ const QVector<PumpMode*>& Pump::allModes()
     static PumpMode_Complex complex;
     static PumpMode_InvComplex inv_complex;
     static QVector<PumpMode*> producers({
-        reinterpret_cast<PumpMode*>(&waist),
-        reinterpret_cast<PumpMode*>(&front),
-        reinterpret_cast<PumpMode*>(&ray_vector),
-        reinterpret_cast<PumpMode*>(&sections),
-        reinterpret_cast<PumpMode*>(&complex),
-        reinterpret_cast<PumpMode*>(&inv_complex),
+        &waist,
+        &front,
+        &ray_vector,
+        &sections,
+        &complex,
+        &inv_complex,
     });
     return producers;
 }

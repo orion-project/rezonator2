@@ -234,7 +234,7 @@ public:
     Z::Parameters globalParams() const;
 
     Z::PumpsList* pumps() { return &_pumps; }
-    Z::PumpParams* activePump() { return _pumps.first(); } // TODO active pump
+    Z::PumpParams* activePump();
 
 private:
     Elements _items;

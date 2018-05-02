@@ -238,3 +238,11 @@ Z::Parameters Schema::globalParams() const
     list << const_cast<Z::Parameter*>(&_wavelength);
     return list;
 }
+
+Z::PumpParams* Schema::activePump()
+{
+    for (Z::PumpParams *pump : _pumps)
+        if (pump->isActive())
+            return pump;
+    return nullptr;
+}

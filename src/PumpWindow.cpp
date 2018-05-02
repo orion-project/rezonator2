@@ -38,15 +38,17 @@ PumpsTable::PumpsTable(Schema* schema, QWidget *parent) : QTableWidget(0, COL_CO
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setItemDelegateForColumn(COL_PARAMS, new RichTextItemDelegate(this));
+    horizontalHeader()->setMinimumSectionSize(_iconSize+6);
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     horizontalHeader()->setSectionResizeMode(COL_IMAGE, QHeaderView::Fixed);
-    horizontalHeader()->setMinimumSectionSize(_iconSize+6);
     horizontalHeader()->resizeSection(COL_IMAGE, _iconSize+6);
+    horizontalHeader()->setSectionResizeMode(COL_ACTIVE, QHeaderView::Fixed);
+    horizontalHeader()->resizeSection(COL_ACTIVE, _iconSize+6);
     horizontalHeader()->setSectionResizeMode(COL_LABEL, QHeaderView::ResizeToContents);
     horizontalHeader()->setSectionResizeMode(COL_PARAMS, QHeaderView::ResizeToContents);
     horizontalHeader()->setSectionResizeMode(COL_TITLE, QHeaderView::Stretch);
     horizontalHeader()->setHighlightSections(false);
-    setHorizontalHeaderLabels({ tr("Typ"), tr("Label"), tr("Params"), tr("Title") });
+    setHorizontalHeaderLabels({ tr("Typ"), tr("On"), tr("Label"), tr("Params"), tr("Title") });
 
     connect(this, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(doubleClicked(QTableWidgetItem*)));
     connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
@@ -102,6 +104,11 @@ void PumpsTable::createRow(int row)
     setItem(row, COL_IMAGE, it);
 
     it = new QTableWidgetItem();
+    it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    it->setTextAlignment(Qt::AlignHCenter | Qt::AlignCenter);
+    setItem(row, COL_ACTIVE, it);
+
+    it = new QTableWidgetItem();
     Z::Gui::setSymbolFont(it);
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     it->setTextAlignment(Qt::AlignHCenter | Qt::AlignCenter);
@@ -129,6 +136,8 @@ void PumpsTable::populateRow(Z::PumpParams *pump, int row)
     else
         qCritical() << "Unable to find mode for pump parameters";
 
+    auto iconPath = pump->isActive() ? ":/icons/pump_on" : ":/icons/pump_off";
+    item(row, COL_ACTIVE)->setData(Qt::DecorationRole, QIcon(iconPath).pixmap(_iconSize, _iconSize));
     item(row, COL_LABEL)->setText(pump->label());
     item(row, COL_PARAMS)->setText(pump->params()->displayStr());
     item(row, COL_TITLE)->setText("  " % pump->title());
@@ -277,5 +286,22 @@ void PumpWindow::deletePump()
 
 void PumpWindow::activatePump()
 {
+    if (schema()->pumps()->size() < 2) return;
 
+    auto pump = _table->selected();
+    if (!pump) return;
+
+    if (pump->isActive()) return;
+
+    auto oldPump = schema()->activePump();
+    if (oldPump)
+    {
+        oldPump->activate(false);
+        _table->pumpChanged(schema(), oldPump);
+    }
+    pump->activate(true);
+    _table->pumpChanged(schema(), pump);
+
+    schema()->events().raise(SchemaEvents::Changed);
+    // TODO raise event 'recalc needed'
 }
