@@ -1,0 +1,57 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 980
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "L1",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        }
+    ],
+    "formulas": [
+    ],
+    "param_links": [
+    ],
+    "pumps": [
+        {
+            "is_active": false,
+            "label": "",
+            "mode": "TwoSections",
+            "params": {
+                "y_1": {
+                    "unit": "mkm",
+                    "value_s": 100,
+                    "value_t": 100
+                },
+                "y_2": {
+                    "unit": "mkm",
+                    "value_s": 600,
+                    "value_t": 500
+                },
+                "z_y": {
+                    "unit": "mm",
+                    "value_s": 100,
+                    "value_t": 100
+                }
+            },
+            "title": ""
+        }
+    ],
+    "schema_version": "2.0",
+    "trip_type": "SP",
+    "windows": [
+    ]
+}

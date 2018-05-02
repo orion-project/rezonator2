@@ -12,7 +12,11 @@ QT_END_NAMESPACE
 namespace Z {
 namespace Gui {
 
+QFont getSymbolFontSm();
+QFont getValueFont();
+
 void adjustSymbolFont(QFont& f);
+void adjustSymbolFontSm(QFont& f);
 void adjustValueFont(QFont& f);
 void adjustCodeEditorFont(QFont& f);
 
@@ -20,6 +24,13 @@ template <class T> void setSymbolFont(T* target)
 {
     QFont f = target->font();
     adjustSymbolFont(f);
+    target->setFont(f);
+}
+
+template <class T> void setSymbolFontSm(T* target)
+{
+    QFont f = target->font();
+    adjustSymbolFontSm(f);
     target->setFont(f);
 }
 

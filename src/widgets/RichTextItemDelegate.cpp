@@ -4,6 +4,10 @@
 #include <QPainter>
 #include <QTextDocument>
 
+RichTextItemDelegate::RichTextItemDelegate(int textOffsetY, QObject *parent) : QItemDelegate(parent), _textOffsetY(textOffsetY)
+{
+}
+
 RichTextItemDelegate::RichTextItemDelegate(QObject *parent) : QItemDelegate(parent)
 {
 }
@@ -36,14 +40,7 @@ void RichTextItemDelegate::drawDisplay(QPainter *painter, const QStyleOptionView
         textOffsetX = 0;
         textClipRect.setRect(0, 0, rect.width(), rect.height());
     }
-    qreal textOffsetY = 0;
-#if defined(Q_OS_WIN) or defined(Q_OS_MAC)
-    // Workaround for an issue when rich text is rendered slightly upper
-    // then text in neighbour cell having the same font but not using rich-text delegate.
-    // For example look at elemnets table, columns Label (simple) and Parameters (rich-text).
-    textOffsetY = 1;
-#endif
-    painter->translate(rect.left() + textOffsetX,  rect.top() + textOffsetY);
+    painter->translate(rect.left() + textOffsetX,  rect.top() + _textOffsetY);
     doc->drawContents(painter, textClipRect);
     painter->restore();
     delete doc;

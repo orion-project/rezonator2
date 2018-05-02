@@ -7,7 +7,7 @@
     },
     "custom_params": {
         "R0": {
-            "descr": "",
+            "descr": "Radius of curvature for both mirrors",
             "dim": "linear",
             "unit": "mm",
             "value": 50
@@ -72,6 +72,8 @@
             "target_elem": 2,
             "target_param": "R"
         }
+    ],
+    "pumps": [
     ],
     "schema_version": "2.0",
     "trip_type": "SW",

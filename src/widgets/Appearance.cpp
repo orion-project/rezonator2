@@ -7,6 +7,20 @@
 namespace Z {
 namespace Gui {
 
+QFont getSymbolFontSm()
+{
+    QFont f = QApplication::font();
+    adjustSymbolFontSm(f);
+    return f;
+}
+
+QFont getValueFont()
+{
+    QFont f = QApplication::font();
+    adjustValueFont(f);
+    return f;
+}
+
 void adjustValueFont(QFont& f)
 {
 #if defined(Q_OS_MAC)
@@ -22,13 +36,28 @@ void adjustSymbolFont(QFont& f)
     f.setBold(true);
 #if defined(Q_OS_WIN)
     f.setPointSize(13);
-    f.setFamily("Times New Roman");
+    f.setFamily(QStringLiteral("Times New Roman"));
 #elif defined(Q_OS_MAC)
-    f.setPointSize(16);
-    f.setFamily("Times New Roman");
+    f.setPointSize(20);
+    f.setFamily(QStringLiteral("Times New Roman"));
 #else
     f.setPointSize(13);
-    f.setFamily("serif");
+    f.setFamily(QStringLiteral("serif"));
+#endif
+}
+
+void adjustSymbolFontSm(QFont& f)
+{
+    f.setBold(true);
+#if defined(Q_OS_WIN)
+    f.setPointSize(13);
+    f.setFamily(QStringLiteral("Times New Roman"));
+#elif defined(Q_OS_MAC)
+    f.setPointSize(16);
+    f.setFamily(QStringLiteral("Times New Roman"));
+#else
+    f.setPointSize(13);
+    f.setFamily(QStringLiteral("serif"));
 #endif
 }
 

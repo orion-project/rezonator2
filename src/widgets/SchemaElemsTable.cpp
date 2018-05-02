@@ -15,9 +15,15 @@ SchemaElemsTable::SchemaElemsTable(Schema *schema, QWidget *parent) : QTableWidg
 
     auto iconSize = ElementImagesProvider::instance().iconSize();
 
+    int paramsOffsetY = 0;
+#if defined(Q_OS_MAC)
+    paramsOffsetY = 2;
+#endif
+    // TODO check linux and windows
+
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionBehavior(QAbstractItemView::SelectRows);
-    setItemDelegateForColumn(COL_PARAMS, new RichTextItemDelegate(this));
+    setItemDelegateForColumn(COL_PARAMS, new RichTextItemDelegate(paramsOffsetY, this));
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     horizontalHeader()->setSectionResizeMode(COL_IMAGE, QHeaderView::Fixed);
     horizontalHeader()->setMinimumSectionSize(iconSize.width()+4);
@@ -122,21 +128,15 @@ void SchemaElemsTable::createRow(Element *elem, int row)
     setItem(row, COL_TITLE, it);
 }
 
-void SchemaElemsTable::populateRow(Element *elem, int row)
+QString formatElemParamsHtml(Schema *schema, Element *elem)
 {
-    auto tableItem = item(row, COL_PARAMS);
+    QString nameStyle = Z::Gui::fontToHtmlStyles(Z::Gui::getSymbolFontSm());
+    QString valueStyle = Z::Gui::fontToHtmlStyles(Z::Gui::getValueFont());
     QStringList paramsInfo;
     for (Z::Parameter *param : elem->params())
     {
-        QFont font = tableItem->font();
-        Z::Gui::adjustSymbolFont(font);
-        QString nameStyle = Z::Gui::fontToHtmlStyles(font);
-
-        font = tableItem->font();
-        Z::Gui::adjustValueFont(font);
-        QString valueStyle = Z::Gui::fontToHtmlStyles(font);
         QString valueStr;
-        auto link = schema()->paramLinks()->byTarget(param);
+        auto link = schema->paramLinks()->byTarget(param);
         if (link)
             valueStr = QStringLiteral("<span style='%1; color:%2'>%3</span> = <span style='%4'><i>%5</i></span>")
                         .arg(nameStyle,
@@ -150,9 +150,13 @@ void SchemaElemsTable::populateRow(Element *elem, int row)
         paramsInfo << QStringLiteral("<span style='%1'>%2</span> = %3")
                         .arg(nameStyle, param->displayLabel(), valueStr);
     }
-    tableItem->setText(paramsInfo.join(", "));
+    return paramsInfo.join(", ");
+}
 
+void SchemaElemsTable::populateRow(Element *elem, int row)
+{
     item(row, COL_LABEL)->setText(" " % elem->label() % " ");
+    item(row, COL_PARAMS)->setText(formatElemParamsHtml(schema(), elem));
     item(row, COL_TITLE)->setText("  " % elem->title());
     const QBrush& color = elem->disabled()? palette().shadow() : palette().text();
     item(row, COL_LABEL)->setForeground(color);

@@ -1,0 +1,76 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 980
+        }
+    },
+    "custom_params": {
+        "Angle": {
+            "descr": "Angular parameter",
+            "dim": "angular",
+            "unit": "deg",
+            "value": 12
+        },
+        "a": {
+            "descr": "Linear parameter",
+            "dim": "linear",
+            "unit": "mm",
+            "value": 100
+        },
+        "b": {
+            "descr": "Parameter is depend on a",
+            "dim": "linear",
+            "unit": "mm",
+            "value": 200
+        }
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "M1",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 12
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 200
+                }
+            },
+            "title": "Element with dependent parameters",
+            "type": "ElemCurveMirror"
+        }
+    ],
+    "formulas": [
+        {
+            "code": "2 * a",
+            "param_deps": [
+                "a"
+            ],
+            "target_param": "b"
+        }
+    ],
+    "param_links": [
+        {
+            "source_param": "b",
+            "target_elem": 0,
+            "target_param": "R"
+        },
+        {
+            "source_param": "Angle",
+            "target_elem": 0,
+            "target_param": "Alpha"
+        }
+    ],
+    "pumps": [
+    ],
+    "schema_version": "2.0",
+    "trip_type": "SW",
+    "windows": [
+        {
+            "type": "SchemaParams"
+        }
+    ]
+}
