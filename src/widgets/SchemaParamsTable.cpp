@@ -86,12 +86,12 @@ void SchemaParamsTable::createRow(int row)
     Z::Gui::setSymbolFont(it);
     Z::Gui::setFontStyle(it, false); // make it bold in html content
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    it->setTextAlignment(Qt::AlignHCenter);
+    it->setTextAlignment(Qt::AlignHCenter | Qt::AlignCenter);
     setItem(row, COL_ALIAS, it);
 
     it = new QTableWidgetItem();
     Z::Gui::setValueFont(it);
-    it->setTextAlignment(Qt::AlignHCenter);
+    it->setTextAlignment(Qt::AlignHCenter | Qt::AlignCenter);
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_VALUE, it);
 

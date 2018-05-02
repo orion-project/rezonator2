@@ -87,7 +87,7 @@ ProjectWindow::ProjectWindow() : QMainWindow(), SchemaToolWindow(new Schema())
 
     _mdiToolbar->subWindowActivated(_schemaWindow);
 
-    WindowsManager::registerConstructor(SchemaParamsWindowStorable::windowType, SchemaParamsWindowStorable::createWindow);
+    registerStorableWindows();
 
     if (Settings::instance().showProtocolAtStart)
         showProtocolWindow();
@@ -98,6 +98,12 @@ ProjectWindow::ProjectWindow() : QMainWindow(), SchemaToolWindow(new Schema())
 ProjectWindow::~ProjectWindow()
 {
     saveSettings();
+}
+
+void ProjectWindow::registerStorableWindows()
+{
+    WindowsManager::registerConstructor(SchemaParamsWindowStorable::windowType, SchemaParamsWindowStorable::createWindow);
+    WindowsManager::registerConstructor(PumpWindowStorable::windowType, PumpWindowStorable::createWindow);
 }
 
 void ProjectWindow::loadSettings()

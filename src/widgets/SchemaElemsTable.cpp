@@ -109,7 +109,7 @@ void SchemaElemsTable::createRow(Element *elem, int row)
 
     it = new QTableWidgetItem();
     Z::Gui::setSymbolFont(it);
-    it->setTextAlignment(Qt::AlignHCenter);
+    it->setTextAlignment(Qt::AlignHCenter | Qt::AlignCenter);
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_LABEL, it);
 

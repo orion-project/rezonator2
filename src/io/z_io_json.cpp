@@ -7,6 +7,27 @@ namespace Z {
 namespace IO {
 namespace Json {
 
+Result<Unit> readUnit(const QJsonObject& json, Dim dim)
+{
+    auto unitStr = json["unit"].toString();
+    Unit unit;
+    if (dim)
+    {
+        unit = dim->unitByAlias(unitStr);
+        if (!unit)
+            return Result<Unit>::fail(QString(
+                "Unit '%1' is unacceptable for dimension '%2'").arg(unitStr, dim->alias()));
+    }
+    else
+    {
+        unit = Units::findByAlias(unitStr);
+        if (!unit)
+            return Result<Unit>::fail(QString(
+                "Unknown unit of measurements: %1").arg(unitStr));
+    }
+    return Result<Unit>::success(unit);
+}
+
 QJsonObject writeValue(const Value& value)
 {
     return QJsonObject({
@@ -18,23 +39,29 @@ QJsonObject writeValue(const Value& value)
 Result<Value> readValue(const QJsonObject& json, Dim dim)
 {
     auto value = json["value"].toDouble();
-    auto unitStr = json["unit"].toString();
-    Unit unit;
-    if (dim)
-    {
-        unit = dim->unitByAlias(unitStr);
-        if (!unit)
-            return Result<Value>::fail(QString(
-                "Unit '%1' is unacceptable for dimension '%2'").arg(unitStr, dim->alias()));
-    }
-    else
-    {
-        unit = Units::findByAlias(unitStr);
-        if (!unit)
-            return Result<Value>::fail(QString(
-                "Unknown unit of measurements: %1").arg(unitStr));
-    }
-    return Result<Value>::success(Value(value, unit));
+    auto unit = readUnit(json, dim);
+    if (!unit.ok())
+        return Result<Value>::fail(unit.error());
+    return Result<Value>::success(Value(value, unit.value()));
+}
+
+QJsonObject writeValueTS(const ValueTS& value)
+{
+    return QJsonObject({
+        { "value_t", value.rawValueT() },
+        { "value_s", value.rawValueS() },
+        { "unit", value.unit()->alias() }
+    });
+}
+
+Result<ValueTS> readValueTS(const QJsonObject& json, Dim dim)
+{
+    auto valueT = json["value_t"].toDouble();
+    auto valueS = json["value_s"].toDouble();
+    auto unit = readUnit(json, dim);
+    if (!unit.ok())
+        return Result<ValueTS>::fail(unit.error());
+    return Result<ValueTS>::success(ValueTS(valueT, valueS, unit.value()));
 }
 
 QJsonObject writeVariableRange(const VariableRange& range)

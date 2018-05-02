@@ -76,6 +76,13 @@ public:
     static Result success(TResult&& value)
     {
         Result r;
+        r._value = std::move(value);
+        return r;
+    }
+
+    static Result success(const TResult& value)
+    {
+        Result r;
         r._value = value;
         return r;
     }

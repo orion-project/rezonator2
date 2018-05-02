@@ -18,6 +18,8 @@ namespace Json {
 
 QJsonObject writeValue(const Value& value);
 Result<Value> readValue(const QJsonObject& json, Dim dim = nullptr);
+QJsonObject writeValueTS(const ValueTS& value);
+Result<ValueTS> readValueTS(const QJsonObject& json, Dim dim = nullptr);
 
 QJsonObject writeVariableRange(const VariableRange& range);
 QString readVariableRange(const QJsonObject& json, VariableRange& range, Dim dim = nullptr);

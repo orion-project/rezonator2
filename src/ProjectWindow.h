@@ -86,6 +86,8 @@ private:
     void createToolBars();
     void createStatusBar();
 
+    void registerStorableWindows();
+
     void updateTitle();
     void updateStatusInfo();
     void updateStability();

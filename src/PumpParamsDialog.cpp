@@ -27,6 +27,7 @@ Z::PumpParams* PumpParamsDialog::makeNewPump()
     if (Ori::Dlg::Dialog(&list)
             .withIconPath(":/window_icons/pump")
             .withTitle(tr("Select Pump Mode"))
+            .withOkSignal(SIGNAL(itemDoubleClicked(QListWidgetItem*)))
             .exec())
     {
         auto selectedItem = list.currentItem();

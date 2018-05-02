@@ -26,6 +26,15 @@ QString readParamValue(const QJsonObject& json, Parameter* param)
     return QString();
 }
 
+QString readParamValueTS(const QJsonObject& json, ParameterTS* param)
+{
+    auto res = readValueTS(json, param->dim());
+    if (!res.ok())
+        return QString("Unable to read value for parameter '%1': %2").arg(param->alias(), res.error());
+    param->setValue(res.value());
+    return QString();
+}
+
 /// Json value wrapper allowing to track value path inside file.
 /// Path can be useful for logging when reading of some value fails.
 class JsonValue
@@ -117,7 +126,7 @@ void SchemaReaderJson::readFromUtf8(const QByteArray& data)
 
     readGeneral(root);
     readCustomParams(root);
-    readPump(root);
+    readPumps(root);
     readElements(root);
     readParamLinks(root);
     readFormulas(root);
@@ -187,71 +196,54 @@ void SchemaReaderJson::readCustomParam(const QJsonObject& root, const QString &a
         true // visible
     );
 
-    readParamValue(root, param);
+    auto res = readParamValue(root, param);
+    if (!res.isEmpty())
+        _report.warning(QString("Reading custom parameter '%1': %2").arg(param->alias(), res));
 
     _schema->customParams()->append(param);
 }
 
+void SchemaReaderJson::readPumps(const QJsonObject& root)
+{
+    if (!root.contains("pumps"))
+    {
+        if (_schema->isSP())
+        {
+            _report.warning("No pumps are stored in file, default pump will be created.");
+            _schema->pumps()->append(Z::Pump::allModes().first()->makePump());
+        }
+        else return;
+    }
+    WITH_JSON_VALUE(pumpsJson, root, "pumps")
+        for (auto it = pumpsJson.array().begin(); it != pumpsJson.array().end(); it++)
+            readPump((*it).toObject());
+}
+
 void SchemaReaderJson::readPump(const QJsonObject& root)
 {
-    Q_UNUSED(root)
+    auto pumpModeName = root["mode"].toString();
+    auto pumpMode = Z::Pump::findByModeName(pumpModeName);
+    if (!pumpMode)
+        return _report.warning(QString("Unknown pump mode '%1', pump skipped").arg(pumpModeName));
 
-    // TODO:NEXT-VER
-/*
-    #define READ_PUMP_MODE(mode, param1, param2, param3)\
-    {\
-        auto node = nodePump.firstChildElement(#mode);\
-        if (!node.isNull())\
-        {\
-            if (!_reader->readValueTS(node, #param1, pump.mode.param1) ||\
-                !_reader->readValueTS(node, #param2, pump.mode.param2) ||\
-                !_reader->readValueTS(node, #param3, pump.mode.param3))\
-            {\
-                report(Issue::BadPumpParams, #mode);\
-                setDefaultPumpParams(_schema, pump, Z::PumpMode_## mode);\
-            }\
-        }\
-        else setDefaultPumpParams(_schema, pump, Z::PumpMode_## mode);\
+    auto pump = pumpMode->makePump();
+    pump->setLabel(root["label"].toString());
+    pump->setTitle(root["title"].toString());
+
+    WITH_JSON_VALUE(paramsJson, root, "params")
+    {
+        for (Z::ParameterTS *param : *pump->params())
+        {
+            WITH_JSON_VALUE(paramJson, paramsJson, param->alias())
+            {
+                auto res = readParamValueTS(paramJson.obj(), param);
+                if (!res.isEmpty())
+                    _report.warning(QString("Reading pump #%1: %2").arg(_schema->pumps()->size()).arg(res));
+            }
+        }
     }
-*/
-    // TODO:NEXT-VER
-    //    if (_schema->tripType() != Schema::TripType::SP)
-    //        disableReport(); // no messages for resonators
 
-    //    BREAKABLE_BLOCK
-    //    {
-    //        auto nodePump = root.firstChildElement("pump");
-    //        if (nodePump.isNull())
-    //        {
-    //            report(Issue::NoPump);
-    //            // TODO
-    //            //setDefaultPump(_schema);
-    //            break;
-    //        }
-
-    //        bool ok;
-    //        auto modeName = nodePump.attribute("mode");
-    //        auto mode = ENUM_ITEM_BY_NAME(Z::Pump::PumpMode, modeName, &ok);
-    //        if (!ok)
-    //        {
-    //            report(Issue::UnknownPumpMode, modeName);
-    //            // TODO
-    //            //setDefaultPump(_schema);
-    //            break;
-    //        }
-
-    //        /* TODO
-    //        Z::Pump::Params pump;
-    //        pump.mode = mode;
-    //        READ_PUMP_MODE(waist, radius, distance, mi)
-    //        READ_PUMP_MODE(front, radius, curvature, mi)
-    //        READ_PUMP_MODE(complex, re, im, mi)
-    //        READ_PUMP_MODE(icomplex, re, im, mi)
-    //        READ_PUMP_MODE(vector, radius, angle, distance)
-    //        READ_PUMP_MODE(sections, radius_1, radius_2, distance)
-    //        _schema->setPump(pump);*/
-    //    }
-    //    enableReport();
+    _schema->pumps()->append(pump);
 }
 
 void SchemaReaderJson::readElements(const QJsonObject& root)
@@ -282,7 +274,9 @@ void SchemaReaderJson::readElement(const QJsonObject& root)
         {
             WITH_JSON_VALUE(paramJson, paramsJson, param->alias())
             {
-                readParamValue(paramJson.obj(), param);
+                auto res = readParamValue(paramJson.obj(), param);
+                if (!res.isEmpty())
+                    _report.warning(QString("Reading element '%1': %2").arg(elem->displayLabel(), res));
             }
         }
     }

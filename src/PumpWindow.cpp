@@ -108,7 +108,6 @@ void PumpsTable::createRow(int row)
 
     it = new QTableWidgetItem();
     Z::Gui::setValueFont(it);
-    it->setTextAlignment(Qt::AlignHCenter);
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_PARAMS, it);
 
@@ -129,7 +128,6 @@ void PumpsTable::populateRow(Z::PumpParams *pump, int row)
     else
         qCritical() << "Unable to find mode for pump parameters";
 
-    qDebug() << pump->label();
     item(row, COL_LABEL)->setText(pump->label());
     item(row, COL_PARAMS)->setText(pump->params()->displayStr());
     item(row, COL_TITLE)->setText("  " % pump->title());

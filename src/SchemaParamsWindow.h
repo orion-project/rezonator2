@@ -4,6 +4,10 @@
 #include "SchemaWindows.h"
 #include "io/ISchemaWindowStorable.h"
 
+/**
+    Implementation of restoreability for @a SchemaParamsWindow.
+    Register it in @a ProjectWindow::registerStorableWindows().
+*/
 namespace SchemaParamsWindowStorable
 {
 const QString windowType("SchemaParams");

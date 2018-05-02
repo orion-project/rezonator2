@@ -35,7 +35,7 @@ PumpParams_Waist::PumpParams_Waist()
                                 QStringLiteral("z_w"),
                                 QStringLiteral("z<sub>ω</sub>"),
                                 qApp->translate("Pump param", "Distance to waist"));
-    _MI = new ParameterTS(Dims::linear(),
+    _MI = new ParameterTS(Dims::none(),
                           QStringLiteral("MI"),
                           QStringLiteral("M²"),
                           qApp->translate("Pump param", "Beam quality"));
@@ -58,7 +58,7 @@ PumpParams_Front::PumpParams_Front()
                                    QStringLiteral("R"),
                                    QStringLiteral("R"),
                                    qApp->translate("Pump param", "Wavefront ROC"));
-    _MI = new ParameterTS(Dims::linear(),
+    _MI = new ParameterTS(Dims::none(),
                           QStringLiteral("MI"),
                           QStringLiteral("M²"),
                           qApp->translate("Pump param", "Beam quality"));

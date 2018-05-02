@@ -13,19 +13,6 @@
 #include <QJsonArray>
 #include <QFile>
 
-namespace Z {
-namespace IO {
-namespace Json {
-
-QJsonObject writeParamValue(Parameter* param)
-{
-    return writeValue(param->value());
-}
-
-} // namespace Json
-} // namespace IO
-} // namespace Z
-
 using namespace Z::IO::Json;
 
 //------------------------------------------------------------------------------
@@ -51,7 +38,7 @@ QString SchemaWriterJson::writeToString()
 
     writeGeneral(root);
     writeCustomParams(root);
-    writePump(root);
+    writePumps(root);
     writeElements(root);
     writeParamLinks(root);
     writeFormulas(root);
@@ -66,7 +53,7 @@ void SchemaWriterJson::writeGeneral(QJsonObject& root)
     root["trip_type"] = TripTypes::info(_schema->tripType()).alias();
 
     root["builtin_params"] = QJsonObject({
-        { "lambda", writeParamValue(&_schema->wavelength()) }
+        { "lambda", writeValue(_schema->wavelength().value()) }
     });
 }
 
@@ -83,22 +70,33 @@ void SchemaWriterJson::writeCustomParams(QJsonObject& root)
     root["custom_params"] = customParams;
 }
 
-void SchemaWriterJson::writePump(QJsonObject &root)
+void SchemaWriterJson::writePumps(QJsonObject &root)
 {
-    Q_UNUSED(root)
+    QJsonArray pumpsJson;
+    for (Z::PumpParams* pump: *_schema->pumps())
+    {
+        QJsonObject pumpJson;
+        writePump(pumpJson, pump);
+        pumpsJson.append(pumpJson);
+    }
+    root["pumps"] = pumpsJson;
+}
 
-    // TODO:NEXT-VER
-    //    auto nodePump = document()->createElement("pump");
-    //    nodePump.setAttribute("mode", ENUM_ITEM_NAME(Z::Pump::PumpMode, _schema->pump().mode));
-
-    //    WRITE_PUMP_MODE(waist, radius, distance, mi)
-    //    WRITE_PUMP_MODE(front, radius, curvature, mi)
-    //    WRITE_PUMP_MODE(complex, re, im, mi)
-    //    WRITE_PUMP_MODE(icomplex, re, im, mi)
-    //    WRITE_PUMP_MODE(vector, radius, angle, distance)
-    //    WRITE_PUMP_MODE(sections, radius_1, radius_2, distance)
-
-    //    root.appendChild(nodePump);
+void SchemaWriterJson::writePump(QJsonObject &root, Z::PumpParams *pump)
+{
+    Z::PumpMode *mode = Z::Pump::findByModeName(pump->modeName());
+    if (!mode)
+    {
+        qCritical() << "Unable to find mode for pump parameters";
+        return;
+    }
+    root["mode"] = mode->modeName();
+    root["label"] = pump->label();
+    root["title"] = pump->title();
+    QJsonObject paramsJson;
+    for (Z::ParameterTS* p : *pump->params())
+        paramsJson[p->alias()] = writeValueTS(p->value());
+    root["params"] = paramsJson;
 }
 
 void SchemaWriterJson::writeElements(QJsonObject& root)
@@ -122,7 +120,7 @@ void SchemaWriterJson::writeElement(QJsonObject& root, Element *elem)
 
     QJsonObject paramsJson;
     for (Z::Parameter* p : elem->params())
-        paramsJson[p->alias()] = writeParamValue(p);
+        paramsJson[p->alias()] = writeValue(p->value());
     root["params"] = paramsJson;
 }
 
@@ -186,4 +184,3 @@ void SchemaWriterJson::writeWindows(QJsonObject& root)
     }
     root["windows"] = windowsJson;
 }
-

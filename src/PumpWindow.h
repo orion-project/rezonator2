@@ -6,6 +6,10 @@
 
 #include <QTableWidget>
 
+/**
+    Implementation of restoreability for @a PumpWindow.
+    Register it in @a ProjectWindow::registerStorableWindows().
+*/
 namespace PumpWindowStorable
 {
 const QString windowType("PumpsWindow");

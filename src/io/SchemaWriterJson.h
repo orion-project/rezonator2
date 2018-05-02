@@ -9,6 +9,9 @@ QT_END_NAMESPACE
 
 class Element;
 class Schema;
+namespace Z {
+class PumpParams;
+}
 
 class SchemaWriterJson
 {
@@ -26,7 +29,8 @@ private:
 
     void writeGeneral(QJsonObject& root);
     void writeCustomParams(QJsonObject& root);
-    void writePump(QJsonObject &root);
+    void writePumps(QJsonObject &root);
+    void writePump(QJsonObject &root, Z::PumpParams *pump);
     void writeElements(QJsonObject& root);
     void writeElement(QJsonObject& root, Element *elem);
     void writeParamLinks(QJsonObject& root);

@@ -28,6 +28,7 @@ private:
     void readGeneral(const QJsonObject& root);
     void readCustomParams(const QJsonObject& root);
     void readCustomParam(const QJsonObject& root, const QString& alias);
+    void readPumps(const QJsonObject& root);
     void readPump(const QJsonObject& root);
     void readElements(const QJsonObject& root);
     void readElement(const QJsonObject& root);
