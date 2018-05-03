@@ -301,7 +301,9 @@ void PumpWindow::activatePump()
     }
     pump->activate(true);
     _table->pumpChanged(schema(), pump);
-
-    schema()->events().raise(SchemaEvents::Changed);
+    // We do not raise PumpChanged event here,
+    // because no significant pump parametes are really changed.
+    // Treat this case as only schema param has been changed.
+    schema()->events().raise(SchemaEvents::ParamsChanged);
     // TODO raise event 'recalc needed'
 }

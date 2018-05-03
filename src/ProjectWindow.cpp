@@ -43,6 +43,7 @@ enum ProjectWindowStatusPanels
     STATUS_MODIF,
     STATUS_LAMBDA,
     STATUS_TRIPTYPE,
+    STATUS_PUMP,
     STATUS_STABIL,
     STATUS_FILE,
 
@@ -325,6 +326,19 @@ void ProjectWindow::updateStatusInfo()
     status->setIcon(STATUS_TRIPTYPE, tripTypeInfo.iconPath());
     status->setToolTip(STATUS_TRIPTYPE, tripTypeInfo.toolTip());
 
+    QString pumpHint, pumpIcon;
+    if (schema()->isSP())
+    {
+        auto pump = schema()->activePump();
+        if (pump)
+            pumpHint = pump->displayStr();
+        auto pumpMode = Z::Pump::findByModeName(pump->modeName());
+        if (pumpMode)
+            pumpIcon = pumpMode->iconPath();
+    }
+    status->setIcon(STATUS_PUMP, pumpIcon);
+    status->setToolTip(STATUS_PUMP, pumpHint);
+
     if (schema()->fileName().isEmpty()) status->clear(STATUS_FILE);
     else status->setText(STATUS_FILE, schema()->fileName());
 }
@@ -477,10 +491,17 @@ void ProjectWindow::showPumpsWindow()
 //------------------------------------------------------------------------------
 //                               Schema events
 
+void ProjectWindow::pumpChanged(Schema *s, Z::PumpParams *pump)
+{
+    if (pump->isActive() && s->isSP())
+        updateStatusInfo();
+}
+
 void ProjectWindow::schemaParamsChanged(Schema*)
 {
     updateTitle();
     updateActions();
+    updateStatusInfo();
 }
 
 void ProjectWindow::schemaChanged(Schema* s)

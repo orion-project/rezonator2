@@ -238,16 +238,29 @@ bool ProjectOperations::canClose()
     return true;
 }
 
+bool createFirstPump(Schema* schema, bool raiseParamsChanged)
+{
+    auto pump = PumpParamsDialog::makeNewPump();
+    if (!pump) return false;
+
+    schema->pumps()->append(pump);
+    schema->events().raise(SchemaEvents::PumpCreated, pump);
+
+    pump->activate(true);
+    if (raiseParamsChanged)
+        schema->events().raise(SchemaEvents::ParamsChanged);
+
+    return true;
+}
+
 void ProjectOperations::setupPump()
 {
     if (!schema()->isSP()) return;
 
     if (schema()->pumps()->isEmpty())
     {
-        auto pump = PumpParamsDialog::makeNewPump();
-        if (!pump) return;
-        schema()->pumps()->append(pump);
-        schema()->events().raise(SchemaEvents::PumpCreated, pump);
+        const bool raiseParamsChanged = true;
+        createFirstPump(schema(), raiseParamsChanged);
     }
     else
     {
@@ -287,10 +300,10 @@ void ProjectOperations::setupTripType()
         auto tripType = TripTypes::find(group.option());
         if (tripType == TripType::SP && schema()->pumps()->isEmpty())
         {
-            auto pump = PumpParamsDialog::makeNewPump();
-            if (!pump) return;
-            schema()->pumps()->append(pump);
-            schema()->events().raise(SchemaEvents::PumpCreated, pump);
+            const bool raiseParamsChanged = false;
+            // ParamsChanged will be raised from setTripType()
+            if (!createFirstPump(schema(), raiseParamsChanged))
+                return;
         }
         schema()->setTripType(tripType);
     }
