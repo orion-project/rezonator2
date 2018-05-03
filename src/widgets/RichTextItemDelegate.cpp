@@ -24,7 +24,7 @@ void RichTextItemDelegate::drawDisplay(QPainter *painter, const QStyleOptionView
     Q_UNUSED(text);
     Q_ASSERT(_paintingIndex.isValid());
 
-    QTextDocument *doc = document(option, _paintingIndex);
+    QTextDocument *doc = document(option, _paintingIndex, false);
 
     painter->save();
     QRectF textClipRect;
@@ -52,7 +52,7 @@ QSize RichTextItemDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
     if (value.isValid())
         return qvariant_cast<QSize>(value);
 
-    QTextDocument *doc = document(option, index);
+    QTextDocument *doc = document(option, index, true);
 
     QRect decorationRect = rect(option, index, Qt::DecorationRole);
     QRect displayRect = QRect(0, 0, doc->size().width(), doc->size().height());
@@ -65,7 +65,7 @@ QSize RichTextItemDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
     return (decorationRect|displayRect|checkRect).size();
 }
 
-QTextDocument* RichTextItemDelegate::document(const QStyleOptionViewItem &option, const QModelIndex& index) const
+QTextDocument* RichTextItemDelegate::document(const QStyleOptionViewItem &option, const QModelIndex& index, bool isMeasuring) const
 {
     QFont font = qvariant_cast<QFont>(index.data(Qt::FontRole)).resolve(option.font);
 
@@ -73,10 +73,12 @@ QTextDocument* RichTextItemDelegate::document(const QStyleOptionViewItem &option
     doc->setDefaultFont(font);
     doc->setTextWidth(-1);
     QString text = index.data(Qt::DisplayRole).toString();
-    if ((QStyle::State_Selected & option.state) && (QStyle::State_Active & option.state))
+    if (!isMeasuring && (QStyle::State_Selected & option.state))
     {
+        //if (QStyle::State_Active & option.state)
         // change any explicitly specified color to highlighted text color
-        auto color = option.palette.color(QPalette::HighlightedText);
+        auto group = QStyle::State_Active & option.state ? QPalette::Active : QPalette::Inactive;
+        auto color = option.palette.color(group, QPalette::HighlightedText);
         auto colorStyle = QStringLiteral("color:%1").arg(color.name(QColor::HexRgb));
         static QRegExp colorEntry("color: *#[a-fA-F\\d]+"); // only #rrggbb color format is replaced
         text.replace(colorEntry, colorStyle);

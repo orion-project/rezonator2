@@ -22,7 +22,7 @@ protected:
     void drawDisplay(QPainter *painter, const QStyleOptionViewItem &option, const QRect &rect, const QString &text) const override;
 
 private:
-    QTextDocument* document(const QStyleOptionViewItem &option, const QModelIndex& index) const;
+    QTextDocument* document(const QStyleOptionViewItem &option, const QModelIndex& index, bool isMeasuring) const;
 
     mutable QModelIndex _paintingIndex;
     int _textOffsetY = 0;
