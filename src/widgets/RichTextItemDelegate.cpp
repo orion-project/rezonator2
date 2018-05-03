@@ -75,7 +75,6 @@ QTextDocument* RichTextItemDelegate::document(const QStyleOptionViewItem &option
     QString text = index.data(Qt::DisplayRole).toString();
     if (!isMeasuring && (QStyle::State_Selected & option.state))
     {
-        //if (QStyle::State_Active & option.state)
         // change any explicitly specified color to highlighted text color
         auto group = QStyle::State_Active & option.state ? QPalette::Active : QPalette::Inactive;
         auto color = option.palette.color(group, QPalette::HighlightedText);

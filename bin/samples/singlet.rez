@@ -1,0 +1,85 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "mkm",
+            "value": 0.64
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "L1",
+            "params": {
+                "L": {
+                    "unit": "cm",
+                    "value": 5
+                }
+            },
+            "title": "Distance from light source to lens",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "F1",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 14.999999999999977
+                },
+                "F": {
+                    "unit": "cm",
+                    "value": 5
+                }
+            },
+            "title": "",
+            "type": "ElemThinLens"
+        },
+        {
+            "is_disabled": false,
+            "label": "L2",
+            "params": {
+                "L": {
+                    "unit": "cm",
+                    "value": 7
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        }
+    ],
+    "formulas": [
+    ],
+    "param_links": [
+    ],
+    "pumps": [
+        {
+            "is_active": true,
+            "label": "",
+            "mode": "RayVector",
+            "params": {
+                "V": {
+                    "unit": "deg",
+                    "value_s": 2.0000000000000004,
+                    "value_t": 14.999999999999977
+                },
+                "y": {
+                    "unit": "mm",
+                    "value_s": 12,
+                    "value_t": 10
+                },
+                "z_y": {
+                    "unit": "cm",
+                    "value_s": 0,
+                    "value_t": 0
+                }
+            },
+            "title": ""
+        }
+    ],
+    "schema_version": "2.0",
+    "trip_type": "SP",
+    "windows": [
+    ]
+}

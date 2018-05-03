@@ -3,11 +3,12 @@
 #include "../core/Schema.h"
 #include "../core/Elements.h"
 #include "../core/ElementsCatalog.h"
-// TODO:NEXT-VER #include "../core/Pump.h"
 
 #include <QFile>
 #include <QSettings>
 #include <QVariant>
+
+using namespace Z;
 
 namespace OldSchema {
 
@@ -77,6 +78,8 @@ QString parseElemType(const QString& oldType, const Ori::Version& version)
     }
     return map.contains(type)? map[type]: QString();
 }
+
+enum PumpMode { Waist, Front, Complex, InvComplex, RayVector, TwoSects };
 
 } // namespace OldSchema
 
@@ -222,71 +225,104 @@ void SchemaReaderIni::readUnits(IniSection& ini)
 
 void SchemaReaderIni::readPump(IniSection& ini)
 {
-    Q_UNUSED(ini)
+    if (!_schema->isSP()) return;
 
- /* TODO:NEXT-VER load pump from ini
-    Z::Def::setDefaultPump(_schema);
-
-    if (_schema->tripType() != Schema::SP) return;
-
-    Z::Pump::Params pump;
-
+    PumpParams *pump = nullptr;
     if (_version.match(1, 0))
     {
         // There are only two pump types in version 1:
         // PumpType = 0 - gauss, 1 - hypergauss
         // PumpSize - beamsize in mkm (circular beam)
         // PumpParam1 - M^2 for hypergauss
-        auto size = ini.getValue("PumpSize", 100);
-        pump.mode = Z::Pump::PumpMode_waist;
-        pump.waist.distance = 0;
-        pump.waist.radius = Z::Units::convert(size, Z::Units::mkm, _schema->unitsBeamsize());
-        pump.waist.mi = ini.getInt("PumpType", 0) == 1? ini.getValue("PumpParam1", 1): 1;
+        PumpParams_Waist *p = new PumpParams_Waist;
+        p->waist()->setValue(ValueTS(ini.getValue("PumpSize", 100), Units::mkm()));
+        p->distance()->setValue(ValueTS(0, Units::mm()));
+        if (ini.getInt("PumpType", 0) == 1)
+            p->MI()->setValue(ValueTS(ini.getValue("PumpParam1", 1)));
+        pump = p;
     }
     else
     {
-        bool ok1, ok2, ok3, ok4, ok5, ok6;
+        bool ok;
         IniSection params(_file, "Pump");
-        int mode = params.getInt("ParamsKind", 0, &ok1);
-        if (!ok1)
-        {
-            report(Issue::NoPump);
-            return;
-        }
+        int mode = params.getInt("ParamsKind", OldSchema::Waist, &ok);
+        if (!ok)
+            return _report.error("Schema is SP, but no pump is stored in the file");
+
+        bool ok1, ok2, ok3, ok4, ok5, ok6;
+        double param1T = params.getValue("Param1T", 100, &ok1);
+        double param1S = params.getValue("Param1S", 100, &ok2);
+        double param2T = params.getValue("Param2T", 0, &ok3);
+        double param2S = params.getValue("Param2S", 0, &ok4);
+        double param3T = params.getValue("QualT", 1, &ok5);
+        double param3S = params.getValue("QualS", 1, &ok6);
+        if (!ok1 || !ok2 || !ok3 || !ok4 || !ok5 || !ok6)
+            return _report.error("Invalid pump parameters are stored in the file");
+
         switch (mode)
         {
-        case 0: pump.mode = Z::Pump::PumpMode_waist; break;
-        case 1: pump.mode = Z::Pump::PumpMode_front; break;
-        case 2: pump.mode = Z::Pump::PumpMode_complex; break;
-        case 3: pump.mode = Z::Pump::PumpMode_icomplex; break;
-        case 4: pump.mode = Z::Pump::PumpMode_vector; break;
-        case 5: pump.mode = Z::Pump::PumpMode_sections; break;
-        default:
-            report(Issue::UnknownPumpMode, QString::number(mode));
-            return;
-        }
-        Z::Pump::Params::Raw *raw = pump.params();
-        raw->param1.T = params.getValue("Param1T", 100, &ok1);
-        raw->param1.S = params.getValue("Param1S", 100, &ok2);
-        raw->param2.T = params.getValue("Param2T", 0, &ok3);
-        raw->param2.S = params.getValue("Param2S", 0, &ok4);
-        raw->param3.T = params.getValue("QualT", 1, &ok5);
-        raw->param3.S = params.getValue("QualS", 1, &ok6);
-        if (!ok1 || !ok2 || !ok3 || !ok4 || !ok5 || !ok6)
-        {
-            report(Issue::BadPumpParams);
-            setDefaultPump(_schema);
-            return;
-        }
-        if (pump.mode == Z::PumpMode_vector)
-        {
-            // old schemas always store angles in rad
-            raw->param2.T = Z::Units::convert(raw->param2.T, Z::Units::rad, _schema->unitsAngle());
-            raw->param2.S = Z::Units::convert(raw->param2.S, Z::Units::rad, _schema->unitsAngle());
-            raw->param3 = 1;
+        case OldSchema::Waist:
+            {
+                PumpParams_Waist *p = new PumpParams_Waist;
+                p->waist()->setValue(ValueTS(param1T, param1S, _beamsizeUnit));
+                p->distance()->setValue(ValueTS(param2T, param2S, _linearUnit));
+                p->MI()->setValue(ValueTS(param3T, param3S));
+                pump = p;
+                break;
+            }
+        case OldSchema::Front:
+            {
+                PumpParams_Front *p = new PumpParams_Front;
+                p->beamRadius()->setValue(ValueTS(param1T, param1S, _beamsizeUnit));
+                p->frontRadius()->setValue(ValueTS(param2T, param2S, _linearUnit));
+                p->MI()->setValue(ValueTS(param3T, param3S));
+                pump = p;
+                break;
+            }
+        case OldSchema::Complex:
+            {
+                PumpParams_Complex *p = new PumpParams_Complex;
+                p->real()->setValue(ValueTS(param1T, param1S, _beamsizeUnit));
+                p->imag()->setValue(ValueTS(param2T, param2S, _beamsizeUnit));
+                p->MI()->setValue(ValueTS(param3T, param3S));
+                pump = p;
+                break;
+            }
+        case OldSchema::InvComplex:
+            {
+                PumpParams_InvComplex *p = new PumpParams_InvComplex;
+                p->real()->setValue(ValueTS(param1T, param1S, _beamsizeUnit));
+                p->imag()->setValue(ValueTS(param2T, param2S, _beamsizeUnit));
+                p->MI()->setValue(ValueTS(param3T, param3S));
+                pump = p;
+                break;
+            }
+        case OldSchema::RayVector:
+            {
+                PumpParams_RayVector *p = new PumpParams_RayVector;
+                p->radius()->setValue(ValueTS(param1T, param1S, _beamsizeUnit));
+                param2T = _angularUnit->fromSi(param2T); // It is stored in rads
+                param2S = _angularUnit->fromSi(param2S); // It is stored in rads
+                p->angle()->setValue(ValueTS(param2T, param2S, _angularUnit));
+                p->distance()->setValue(ValueTS(0, _linearUnit)); // not used
+                pump = p;
+                break;
+            }
+        case OldSchema::TwoSects:
+            {
+                PumpParams_TwoSections *p = new PumpParams_TwoSections;
+                p->radius1()->setValue(ValueTS(param1T, param1S, _beamsizeUnit));
+                p->radius2()->setValue(ValueTS(param2T, param2S, _beamsizeUnit));
+                p->distance()->setValue(ValueTS(param3T, param3S, _linearUnit));
+                pump = p;
+                break;
+            }
         }
     }
-    _schema->setPumpParams(pump);*/
+    if (!pump)
+        return _report.error("Schema is SP, but no pump is stored in the file");
+    pump->activate(true);
+    _schema->pumps()->append(pump);
 }
 
 void SchemaReaderIni::readElements()
@@ -359,7 +395,6 @@ void SchemaReaderIni::readElement(const QString &section)
         auto res = param->verify(value);
         if (!res.isEmpty())
         {
-            // TODO:TEST make test to show this message when validation will be
             _report.warning(QString(
                 "Value %1 is unacceptable for parameter %2: %3").arg(value.str()).arg(param->alias()).arg(res));
             continue;

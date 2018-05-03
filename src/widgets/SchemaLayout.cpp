@@ -56,6 +56,7 @@ void SchemaLayout::populate()
     clear();
     for (Element *elem : _schema->elements())
     {
+        if (elem->disabled()) continue;
         auto layout = _factory.makeLayout(elem);
         if (layout)
         {

@@ -331,10 +331,12 @@ void ProjectWindow::updateStatusInfo()
     {
         auto pump = schema()->activePump();
         if (pump)
+        {
             pumpHint = pump->displayStr();
-        auto pumpMode = Z::Pump::findByModeName(pump->modeName());
-        if (pumpMode)
-            pumpIcon = pumpMode->iconPath();
+            auto pumpMode = Z::Pump::findByModeName(pump->modeName());
+            if (pumpMode)
+                pumpIcon = pumpMode->iconPath();
+        }
     }
     status->setIcon(STATUS_PUMP, pumpIcon);
     status->setToolTip(STATUS_PUMP, pumpHint);

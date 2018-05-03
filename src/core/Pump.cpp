@@ -119,11 +119,11 @@ PumpParams_RayVector::PumpParams_RayVector()
 
 PumpParams_Complex::PumpParams_Complex()
 {
-    _real = new ParameterTS(Dims::none(),
+    _real = new ParameterTS(Dims::linear(),
                             QStringLiteral("Re"),
                             QStringLiteral("Re"),
                             qApp->translate("Pump param", "Real part"));
-    _imag = new ParameterTS(Dims::none(),
+    _imag = new ParameterTS(Dims::linear(),
                             QStringLiteral("Im"),
                             QStringLiteral("Im"),
                             qApp->translate("Pump param", "Imaginary part"));
@@ -131,8 +131,11 @@ PumpParams_Complex::PumpParams_Complex()
                           QStringLiteral("MI"),
                           QStringLiteral("M²"),
                           qApp->translate("Pump param", "Beam quality"));
-    addParam(_real, 0);
-    addParam(_imag, 0);
+
+    // q = [100um - i*32.057um] corresponds to
+    // a beam having waist=100um and lambda=980nm at distance=100mm
+    addParam(_real, 100, mkm());
+    addParam(_imag, -32.057, mkm());
     addParam(_MI, 1);
 }
 
@@ -142,6 +145,10 @@ PumpParams_Complex::PumpParams_Complex()
 
 PumpParams_InvComplex::PumpParams_InvComplex() : PumpParams_Complex()
 {
+    // q = [0.009(um^-1) + i*0.003(um^-1)] nearly corresponds to
+    // a beam having waist=100um and lambda=980nm at distance=100mm
+    real()->setValue(ValueTS(0.009, mkm()));
+    imag()->setValue(ValueTS(0.003, mkm()));
 }
 
 //--------------------------------------------------------------------------------
