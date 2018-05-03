@@ -87,6 +87,8 @@ PumpParamsDialog::PumpParamsDialog(Z::PumpParams *params, QWidget *parent)
     mainLayout()->addSpacing(6);
     mainLayout()->addWidget(_paramsEditor);
     mainLayout()->addWidget(drawing);
+
+    _editorLabel->setFocus();
 }
 
 void PumpParamsDialog::showEvent(QShowEvent *event)

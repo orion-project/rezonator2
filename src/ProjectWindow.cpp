@@ -255,7 +255,7 @@ void ProjectWindow::createStatusBar()
     auto status = new Ori::Widgets::StatusBar(STATUS_PANELS_COUNT);
     status->connect(STATUS_LAMBDA, SIGNAL(doubleClicked()), _operations, SLOT(setupWavelength()));
     status->connect(STATUS_TRIPTYPE, SIGNAL(doubleClicked()), _operations, SLOT(setupTripType()));
-    status->connect(STATUS_STABIL, SIGNAL(doubleClicked()), _operations, SLOT(setupPump()));
+    status->connect(STATUS_PUMP, SIGNAL(doubleClicked()), _operations, SLOT(setupPump()));
 
     auto versionLabel = new QLabel(Z::Strs::appVersionFull());
     versionLabel->setForegroundRole(QPalette::Mid);

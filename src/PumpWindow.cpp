@@ -35,9 +35,17 @@ SchemaWindow* createWindow(Schema* schema)
 
 PumpsTable::PumpsTable(Schema* schema, QWidget *parent) : QTableWidget(0, COL_COUNT, parent), _schema(schema)
 {
+    int paramsOffsetY = 0;
+#if defined(Q_OS_MAC)
+    paramsOffsetY = 2;
+#elif defined(Q_OS_LINUX)
+    paramsOffsetY = 1;
+#endif
+    // TODO check windows
+
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionBehavior(QAbstractItemView::SelectRows);
-    setItemDelegateForColumn(COL_PARAMS, new RichTextItemDelegate(this));
+    setItemDelegateForColumn(COL_PARAMS, new RichTextItemDelegate(paramsOffsetY, this));
     horizontalHeader()->setMinimumSectionSize(_iconSize+6);
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     horizontalHeader()->setSectionResizeMode(COL_IMAGE, QHeaderView::Fixed);
@@ -124,6 +132,21 @@ void PumpsTable::createRow(int row)
     setItem(row, COL_TITLE, it);
 }
 
+QString formatPumpParamsHtml(Z::PumpParams *pump)
+{
+    QString nameStyle = Z::Gui::fontToHtmlStyles(Z::Gui::getSymbolFontSm());
+    QString valueStyle = Z::Gui::fontToHtmlStyles(Z::Gui::getValueFont());
+    QStringList paramsInfo;
+    for (Z::ParameterTS *param : *pump->params())
+    {
+        QString valueStr = QStringLiteral("<span style='%1'>%2</span>")
+                        .arg(valueStyle, param->value().displayStr());
+        paramsInfo << QStringLiteral("<span style='%1'>%2</span> = %3")
+                        .arg(nameStyle, param->displayLabel(), valueStr);
+    }
+    return paramsInfo.join(", ");
+}
+
 void PumpsTable::populateRow(Z::PumpParams *pump, int row)
 {
     auto pumpMode = Z::Pump::findByModeName(pump->modeName());
@@ -139,7 +162,7 @@ void PumpsTable::populateRow(Z::PumpParams *pump, int row)
     auto iconPath = pump->isActive() ? ":/icons/pump_on" : ":/icons/pump_off";
     item(row, COL_ACTIVE)->setData(Qt::DecorationRole, QIcon(iconPath).pixmap(_iconSize, _iconSize));
     item(row, COL_LABEL)->setText(pump->label());
-    item(row, COL_PARAMS)->setText(pump->params()->displayStr());
+    item(row, COL_PARAMS)->setText(formatPumpParamsHtml(pump));
     item(row, COL_TITLE)->setText("  " % pump->title());
 }
 
