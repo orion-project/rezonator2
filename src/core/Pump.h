@@ -87,7 +87,7 @@ DECLARE_PUMP_PARAMS(Waist, PumpParams)
 DECLARE_PUMP_PARAMS_END(Waist,
                         qApp->translate("Pump mode", "Waist"),
                         ":/drawing/pump_waist",
-                        ":/toolbar/schema_pump")
+                        ":/icons/pump_waist")
 
 DECLARE_PUMP_PARAMS(Front, PumpParams)
     PUMP_PARAM(beamRadius)
@@ -96,7 +96,7 @@ DECLARE_PUMP_PARAMS(Front, PumpParams)
 DECLARE_PUMP_PARAMS_END(Front,
                         qApp->translate("Pump mode", "Front"),
                         ":/drawing/pump_front",
-                        ":/toolbar/schema_pump")
+                        ":/icons/pump_front")
 
 DECLARE_PUMP_PARAMS(TwoSections, PumpParams)
     PUMP_PARAM(radius1)
@@ -104,8 +104,8 @@ DECLARE_PUMP_PARAMS(TwoSections, PumpParams)
     PUMP_PARAM(distance)
 DECLARE_PUMP_PARAMS_END(TwoSections,
                         qApp->translate("Pump mode", "Two Sections"),
-                        ":/drawing/pump_two_section",
-                        ":/toolbar/schema_pump")
+                        ":/drawing/pump_two_sections",
+                        ":/icons/pump_two_sections")
 
 DECLARE_PUMP_PARAMS(RayVector, PumpParams)
     PUMP_PARAM(radius)
@@ -114,7 +114,7 @@ DECLARE_PUMP_PARAMS(RayVector, PumpParams)
 DECLARE_PUMP_PARAMS_END(RayVector,
                         qApp->translate("Pump mode", "Ray Vector"),
                         ":/drawing/pump_ray_vector",
-                        ":/toolbar/schema_pump")
+                        ":/icons/pump_ray_vector")
 
 DECLARE_PUMP_PARAMS(Complex, PumpParams)
     PUMP_PARAM(real)
@@ -123,13 +123,13 @@ DECLARE_PUMP_PARAMS(Complex, PumpParams)
 DECLARE_PUMP_PARAMS_END(Complex,
                         qApp->translate("Pump mode", "Complex"),
                         ":/drawing/pump_complex",
-                        ":/toolbar/schema_pump")
+                        ":/icons/pump_complex")
 
 DECLARE_PUMP_PARAMS(InvComplex, PumpParams_Complex)
 DECLARE_PUMP_PARAMS_END(InvComplex,
                         qApp->translate("Pump mode", "Inv. Complex"),
                         ":/drawing/pump_complex",
-                        ":/toolbar/schema_pump")
+                        ":/icons/pump_inv_complex")
 
 } // namespace Z
 
