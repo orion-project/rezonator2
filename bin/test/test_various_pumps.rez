@@ -112,9 +112,9 @@
             "mode": "Complex",
             "params": {
                 "Im": {
-                    "unit": "none",
-                    "value_s": 3,
-                    "value_t": 3
+                    "unit": "mkm",
+                    "value_s": -32.057,
+                    "value_t": -32.057
                 },
                 "MI": {
                     "unit": "none",
@@ -122,9 +122,9 @@
                     "value_t": 5
                 },
                 "Re": {
-                    "unit": "none",
-                    "value_s": 2,
-                    "value_t": 2
+                    "unit": "mkm",
+                    "value_s": 100,
+                    "value_t": 100
                 }
             },
             "title": "complex"
@@ -135,9 +135,9 @@
             "mode": "InvComplex",
             "params": {
                 "Im": {
-                    "unit": "none",
-                    "value_s": 40,
-                    "value_t": 30
+                    "unit": "mkm",
+                    "value_s": 0.003,
+                    "value_t": 0.003
                 },
                 "MI": {
                     "unit": "none",
@@ -145,9 +145,9 @@
                     "value_t": 50
                 },
                 "Re": {
-                    "unit": "none",
-                    "value_s": 20,
-                    "value_t": 10
+                    "unit": "mkm",
+                    "value_s": 0.009,
+                    "value_t": 0.009
                 }
             },
             "title": "inv complex"

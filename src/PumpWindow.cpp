@@ -1,6 +1,7 @@
 #include "PumpWindow.h"
 
 #include "PumpParamsDialog.h"
+#include "core/FormatSchema.h"
 #include "widgets/Appearance.h"
 #include "widgets/RichTextItemDelegate.h"
 #include "widgets/ValuesEditorTS.h"
@@ -132,21 +133,6 @@ void PumpsTable::createRow(int row)
     setItem(row, COL_TITLE, it);
 }
 
-QString formatPumpParamsHtml(Z::PumpParams *pump)
-{
-    QString nameStyle = Z::Gui::fontToHtmlStyles(Z::Gui::getSymbolFontSm());
-    QString valueStyle = Z::Gui::fontToHtmlStyles(Z::Gui::getValueFont());
-    QStringList paramsInfo;
-    for (Z::ParameterTS *param : *pump->params())
-    {
-        QString valueStr = QStringLiteral("<span style='%1'>%2</span>")
-                        .arg(valueStyle, param->value().displayStr());
-        paramsInfo << QStringLiteral("<span style='%1'>%2</span> = %3")
-                        .arg(nameStyle, param->displayLabel(), valueStr);
-    }
-    return paramsInfo.join(", ");
-}
-
 void PumpsTable::populateRow(Z::PumpParams *pump, int row)
 {
     auto pumpMode = Z::Pump::findByModeName(pump->modeName());
@@ -162,7 +148,7 @@ void PumpsTable::populateRow(Z::PumpParams *pump, int row)
     auto iconPath = pump->isActive() ? ":/icons/pump_on" : ":/icons/pump_off";
     item(row, COL_ACTIVE)->setData(Qt::DecorationRole, QIcon(iconPath).pixmap(_iconSize, _iconSize));
     item(row, COL_LABEL)->setText(pump->label());
-    item(row, COL_PARAMS)->setText(formatPumpParamsHtml(pump));
+    item(row, COL_PARAMS)->setText(Z::Fmt::pumpParamsHtml(pump));
     item(row, COL_TITLE)->setText("  " % pump->title());
 }
 

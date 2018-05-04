@@ -13,7 +13,7 @@ public: \
     QString modeName() const override { return QStringLiteral(# mode_class); }
 
 
-#define DECLARE_PUMP_PARAMS_END(mode_class, mode_name, drawing_path, icon_path) \
+#define DECLARE_PUMP_PARAMS_END(mode_class, mode_name, mode_descr, drawing_path, icon_path) \
 }; \
 class PumpMode_##mode_class : public PumpMode \
 { \
@@ -23,6 +23,7 @@ public: \
     QString iconPath() const override { return QStringLiteral(icon_path); } \
     QString modeName() const override { return QStringLiteral(# mode_class); } \
     QString displayName() const override { return mode_name; } \
+    QString description() const override { return mode_descr; } \
 };
 
 
@@ -67,6 +68,7 @@ public:
     virtual QString iconPath() const = 0;
     virtual QString drawingPath() const = 0;
     virtual QString displayName() const = 0;
+    virtual QString description() const = 0;
 };
 
 
@@ -86,6 +88,7 @@ DECLARE_PUMP_PARAMS(Waist, PumpParams)
     PUMP_PARAM(MI)
 DECLARE_PUMP_PARAMS_END(Waist,
                         qApp->translate("Pump mode", "Waist"),
+                        qApp->translate("Pump mode", "Gaussian beam defined by its waist"),
                         ":/drawing/pump_waist",
                         ":/icons/pump_waist")
 
@@ -95,6 +98,7 @@ DECLARE_PUMP_PARAMS(Front, PumpParams)
     PUMP_PARAM(MI)
 DECLARE_PUMP_PARAMS_END(Front,
                         qApp->translate("Pump mode", "Front"),
+                        qApp->translate("Pump mode", "Gaussian beam defined by its front"),
                         ":/drawing/pump_front",
                         ":/icons/pump_front")
 
@@ -104,6 +108,7 @@ DECLARE_PUMP_PARAMS(TwoSections, PumpParams)
     PUMP_PARAM(distance)
 DECLARE_PUMP_PARAMS_END(TwoSections,
                         qApp->translate("Pump mode", "Two Sections"),
+                        qApp->translate("Pump mode", "Ray vector defined by two sections"),
                         ":/drawing/pump_two_sections",
                         ":/icons/pump_two_sections")
 
@@ -113,6 +118,7 @@ DECLARE_PUMP_PARAMS(RayVector, PumpParams)
     PUMP_PARAM(distance)
 DECLARE_PUMP_PARAMS_END(RayVector,
                         qApp->translate("Pump mode", "Ray Vector"),
+                        qApp->translate("Pump mode", "Ray vector defined by radius and angle"),
                         ":/drawing/pump_ray_vector",
                         ":/icons/pump_ray_vector")
 
@@ -122,12 +128,14 @@ DECLARE_PUMP_PARAMS(Complex, PumpParams)
     PUMP_PARAM(MI)
 DECLARE_PUMP_PARAMS_END(Complex,
                         qApp->translate("Pump mode", "Complex"),
+                        qApp->translate("Pump mode", "Gaussian beam defined by complex parameter"),
                         ":/drawing/pump_complex",
                         ":/icons/pump_complex")
 
 DECLARE_PUMP_PARAMS(InvComplex, PumpParams_Complex)
 DECLARE_PUMP_PARAMS_END(InvComplex,
                         qApp->translate("Pump mode", "Inv. Complex"),
+                        qApp->translate("Pump mode", "Gaussian beam defined by inverted complex parameter"),
                         ":/drawing/pump_complex",
                         ":/icons/pump_inv_complex")
 

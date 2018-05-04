@@ -3,6 +3,7 @@
 #include "Appearance.h"
 #include "ElementImagesProvider.h"
 #include "RichTextItemDelegate.h"
+#include "../core/FormatSchema.h"
 
 #include <QDebug>
 #include <QHeaderView>
@@ -130,35 +131,10 @@ void SchemaElemsTable::createRow(Element *elem, int row)
     setItem(row, COL_TITLE, it);
 }
 
-QString formatElemParamsHtml(Schema *schema, Element *elem)
-{
-    QString nameStyle = Z::Gui::fontToHtmlStyles(Z::Gui::getSymbolFontSm());
-    QString valueStyle = Z::Gui::fontToHtmlStyles(Z::Gui::getValueFont());
-    QStringList paramsInfo;
-    for (Z::Parameter *param : elem->params())
-    {
-        QString valueStr;
-        auto link = schema->paramLinks()->byTarget(param);
-        if (link)
-            valueStr = QStringLiteral("<span style='%1; color:%2'>%3</span> = <span style='%4'><i>%5</i></span>")
-                        .arg(nameStyle,
-                             Z::Gui::globalParamColorHtml(),
-                             link->source()->displayLabel(),
-                             valueStyle,
-                             param->value().displayStr());
-        else
-            valueStr = QStringLiteral("<span style='%1'>%2</span>")
-                        .arg(valueStyle, param->value().displayStr());
-        paramsInfo << QStringLiteral("<span style='%1'>%2</span> = %3")
-                        .arg(nameStyle, param->displayLabel(), valueStr);
-    }
-    return paramsInfo.join(", ");
-}
-
 void SchemaElemsTable::populateRow(Element *elem, int row)
 {
     item(row, COL_LABEL)->setText(" " % elem->label() % " ");
-    item(row, COL_PARAMS)->setText(formatElemParamsHtml(schema(), elem));
+    item(row, COL_PARAMS)->setText(Z::Fmt::elemParamsHtml(schema(), elem));
     item(row, COL_TITLE)->setText("  " % elem->title());
     const QBrush& color = elem->disabled()? palette().shadow() : palette().text();
     item(row, COL_LABEL)->setForeground(color);

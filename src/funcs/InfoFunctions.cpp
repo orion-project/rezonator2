@@ -2,6 +2,7 @@
 #include "Calculator.h"
 #include "FormatInfo.h"
 #include "../core/Format.h"
+#include "../core/FormatSchema.h"
 #include "../core/Schema.h"
 
 #include <QApplication>
@@ -167,15 +168,39 @@ QString InfoFuncRepetitionRate::calculate()
 
 QString InfoFuncSummary::calculate()
 {
-    QString str;
+    QStringList strs;
     for (Element* elem : schema()->elements())
         if (!elem->disabled() && elem->hasParams())
-            str += elem->displayLabelTitle() % ": " % elem->params().str() % "<br>";
+        {
+            QStringList elemStrs;
+            elemStrs << QStringLiteral("<font color=maroon>%1</font>").arg(elem->displayLabel());
+            if (elem->hasParams())
+            {
+                elemStrs << ":";
+                elemStrs << Z::Fmt::elemParamsHtml(schema(), elem, false);
+            }
+            if (!elem->title().isEmpty())
+                elemStrs << QStringLiteral("<i>(%1)</i>").arg(elem->title());
+            strs << elemStrs.join(' ');
+        }
 
-    str += schema()->wavelength().str();
+    if (!strs.isEmpty())
+        strs << "";
+    strs << Z::Fmt::paramHtml(&schema()->wavelength());
 
-// TODO:NEXT-VER if (schema()->tripType() == Schema::SP) str += pumpStr();
+    if (schema()->isSP())
+    {
+        auto pump = schema()->activePump();
+        if (pump)
+        {
+            strs << "";
+            strs << qApp->translate("Func", "<b>Input beam:</b>");
+            auto pumpMode = Z::Pump::findByModeName(pump->modeName());
+            if (pumpMode) strs << pumpMode->description();
+            strs << Z::Fmt::pumpParamsHtml(pump);
+        }
+    }
 
-    return str;
+    return strs.join("<br>");
 }
 

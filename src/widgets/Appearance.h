@@ -64,8 +64,6 @@ QLabel* symbolLabel(const QString& text);
 /// Preferred fixed width of unit selector combo boxes
 inline int unitsSelectorWidth() { return 60; }
 
-QString fontToHtmlStyles(const QFont& font);
-
 inline QString globalParamColorHtml() { return QStringLiteral("#000080"); }
 inline QColor globalParamColor() { return QColor(globalParamColorHtml()); }
 

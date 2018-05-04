@@ -148,7 +148,8 @@ HEADERS += \
     src/widgets/RichTextItemDelegate.h \
     src/io/z_io_json.h \
     src/PumpWindow.h \
-    src/PumpParamsDialog.h
+    src/PumpParamsDialog.h \
+    src/core/FormatSchema.h
 
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -244,4 +245,5 @@ SOURCES += \
     src/widgets/RichTextItemDelegate.cpp \
     src/io/z_io_json.cpp \
     src/PumpWindow.cpp \
-    src/PumpParamsDialog.cpp
+    src/PumpParamsDialog.cpp \
+    src/core/FormatSchema.cpp
