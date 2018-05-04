@@ -24,6 +24,7 @@ public:
     void setMode(Mode mode) { _mode = mode; }
 
 private:
+    enum class PumpMode { Gauss, RayVector };
     Mode _mode = Mode::BeamRadius;
     Z::Complex _q_in_t, _q_in_s; // input complex ROC
     Z::RayVector _ray_in_t, _ray_in_s; // input ray vector
@@ -31,10 +32,9 @@ private:
     Z::Unit _curvatureUnit = Z::Units::m(); // TODO: make configurable
     Z::Unit _angleUnit = Z::Units::deg(); // TODO: make configurable
     double _wavelenSI = 0;
+    PumpMode _pumpMode;
 
     bool prepareSP();
-    void prepareSP_vector();
-    void prepareSP_sections();
     inline Z::PointTS calculateSinglePass() const;
     inline Z::PointTS calculateResonator() const;
     double calculateResonator_beamRadius(const Z::Matrix& m) const;

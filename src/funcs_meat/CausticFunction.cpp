@@ -5,6 +5,8 @@
 #include "../funcs/Calculator.h"
 #include "../core/Protocol.h"
 
+using namespace Z;
+
 void CausticFunction::calculate()
 {
     if (!checkArguments()) return;
@@ -32,7 +34,7 @@ void CausticFunction::calculate()
 
     BackupAndLock locker(elem, param);
 
-    bool stabilityChecked = false;
+    bool stabilityChecked = !_schema->isResonator();
     auto argUnit = param->value().unit();
     Z::PointTS prevRes(Double::nan(), Double::nan());
     for (auto x : range.values())
@@ -82,83 +84,80 @@ void CausticFunction::calculate()
 
 bool CausticFunction::prepareSP()
 {
-// TODO:NEXT-VER
-//    const Z::Pump::Params& pump = _schema->pump();
+    PumpParams *pump = _schema->activePump();
+    if (!pump)
+    {
+        setError(qApp->translate("Calc error",
+            "There is no active pump in the schema. "
+            "Use 'Pumps' window to create a new pump or activate one of the existing ones."));
+        return false;
+    }
 
-//    auto error = pump.verify();
-//    if (!error.isEmpty())
-//    {
-//        setError(qApp->translate("Calc error", "Invalid input beam parameters: ") + error);
-//        clearResults();
-//        return false;
-//    }
+    // Calculate beam parameters at first element of the schema.
 
-//    switch (pump.mode)
-//    {
-//    case Z::Pump::PumpMode_vector: prepareSP_vector(); break;
-//    case Z::Pump::PumpMode_sections: prepareSP_sections(); break;
-//    }
-    return true;
-}
+    auto pumpRayVector = dynamic_cast<PumpParams_RayVector*>(pump);
+    if (pumpRayVector)
+    {
+        _pumpMode = PumpMode::RayVector;
+        auto y = pumpRayVector->radius()->value().toSi();
+        auto v = pumpRayVector->angle()->value().toSi();
+        auto z = pumpRayVector->distance()->value().toSi();
+        _ray_in_t.set(y.T + z.T * tan(v.T), v.T);
+        _ray_in_s.set(y.S + z.S * tan(v.S), v.S);
+        Z_INFO("Input rays: T =" << _ray_in_t.str() << "S =" << _ray_in_s.str())
+        return true;
+    }
 
-void CausticFunction::prepareSP_vector()
-{
-// TODO:NEXT-VER
-//    const Z::Pump::Params& pump = _schema->pump();
-//    const Z::Units::Set& units = _schema->units();
-//    double r_t = units.beamsize2linear(pump.vector.radius().T);
-//    double r_s = units.beamsize2linear(pump.vector.radius().S);
-//    double v_t = units.angle2si(pump.vector.angle().T);
-//    double v_s = units.angle2si(pump.vector.angle().S);
-//    _ray_in_t.set(r_t + pump.vector.distance().T*tan(v_t), v_t);
-//    _ray_in_s.set(r_s + pump.vector.distance().T*tan(v_s), v_s);
-//    Z_INFO("Input rays: T =" << _ray_in_t.str() << "S =" << _ray_in_s.str())
-//    _pumpMode = Pump_Ray;
-}
+    auto pumpTwoSections = dynamic_cast<PumpParams_TwoSections*>(pump);
+    if (pumpTwoSections)
+    {
+        _pumpMode = PumpMode::RayVector;
+        auto y1 = pumpTwoSections->radius1()->value().toSi();
+        auto y2 = pumpTwoSections->radius2()->value().toSi();
+        auto z = pumpTwoSections->distance()->value().toSi();
+        Z_INFO("y1:" << y1.T << y1.S << "; y2:" << y2.T << y2.S << "z:" << z.T << z.S)
+        _ray_in_t.set(y2.T, atan((y2.T - y1.T) / z.T));
+        _ray_in_s.set(y2.S, atan((y2.S - y1.S) / z.S));
+        Z_INFO("Input rays: T =" << _ray_in_t.str() << "S =" << _ray_in_s.str())
+        return true;
+    }
 
-void CausticFunction::prepareSP_sections()
-{
-// TODO:NEXT-VER
-//    const Z::Pump::Params& pump = _schema->pump();
-//    const Z::Units::Set& units = _schema->units();
-//    double r1_t = units.beamsize2linear(pump.sections.radius_1().T);
-//    double r2_t = units.beamsize2linear(pump.sections.radius_2().T);
-//    double r1_s = units.beamsize2linear(pump.sections.radius_1().S);
-//    double r2_s = units.beamsize2linear(pump.sections.radius_2().S);
-//    _ray_in_t.set(r2_t, atan((r2_t - r1_t)/pump.sections.distance().T));
-//    _ray_in_s.set(r2_s, atan((r2_s - r1_s)/pump.sections.distance().S));
-//    Z_INFO("Input rays: T =" << _ray_in_t.str() << "S =" << _ray_in_s.str())
-//    _pumpMode = Pump_Ray;
+    setError("Unsupported pump mode");
+    return false;
 }
 
 Z::PointTS CausticFunction::calculateSinglePass() const
 {
-    //const Z::Units::Set& units = _schema->units();
     Z::PointTS result;
-    /* TODO:NEXT-VER switch (_pumpMode)
+    switch (_pumpMode)
     {
-    case Pump_Ray:
-        Z::RayVector ray_t(_ray_in_t, _calc->Mt());
-        Z::RayVector ray_s(_ray_in_s, _calc->Ms());
-        Z_INFO("T =" << ray_t.str() << "S =" << ray_s.str());
-        switch (_mode)
+    case PumpMode::Gauss:
+        // TODO calculate
+        break;
+
+    case PumpMode::RayVector:
         {
-        case Mode::Beamsize:
-            result.set(units.linear2beamsize(ray_t.Y),
-                       units.linear2beamsize(ray_s.Y));
-            break;
+            Z::RayVector ray_t(_ray_in_t, _calc->Mt());
+            Z::RayVector ray_s(_ray_in_s, _calc->Ms());
+            //Z_INFO("T =" << ray_t.str() << "S =" << ray_s.str());
+            switch (_mode)
+            {
+            case BeamRadius:
+                result.set(ray_t.Y, ray_s.Y);
+                break;
 
-        case Mode::Curvature: // there is no sense
-            result.set(0, 0);
-            break;
+            case FontRadius:
+                // TODO calculate
+                result.set(0, 0);
+                break;
 
-        case Mode::Angle:
-            result.set(units.angle2si(ray_t.V),
-                       units.angle2si(ray_s.V));
-            break;
+            case HalfAngle:
+                result.set(ray_t.V, ray_s.V);
+                break;
+            }
         }
         break;
-    }*/
+    }
     return result;
 }
 

@@ -6,6 +6,38 @@
 
 namespace Z {
 
+template <typename TValue>
+struct PairTS
+{
+    TValue T {};
+    TValue S {};
+
+    PairTS() {}
+    PairTS(const TValue& t, const TValue& s) : T(t), S(s) {}
+    PairTS(const PairTS& other) : T(other.T), S(other.S) {}
+    PairTS(const PairTS* other) : T(other->T), S(other->S) {}
+
+    void operator =(const TValue& v) { T = v, S = v; }
+
+    void set(const TValue& t, const TValue& s) { T = t, S = s; }
+
+    QString str() const { return QString(); }
+};
+
+using PointTS = PairTS<double>;
+
+//------------------------------------------------------------------------------
+
+struct DoublePoint
+{
+    double X = 0;
+    double Y = 0;
+
+    QString str() const;
+};
+
+//------------------------------------------------------------------------------
+
 class Value
 {
 public:
@@ -77,6 +109,8 @@ public:
     /// It uses @a Z::format() method to prepare value.
     QString displayStr() const;
 
+    PointTS toSi() const { return PointTS(_unit->toSi(_valueT), _unit->toSi(_valueS)); }
+
 private:
     double _valueT, _valueS;
     Unit _unit;
@@ -95,38 +129,6 @@ private:
     double _value;
     Unit _unit;
     Z::Units::Prefix _prefix;
-};
-
-//------------------------------------------------------------------------------
-
-template <typename TValue>
-struct PairTS
-{
-    TValue T {};
-    TValue S {};
-
-    PairTS() {}
-    PairTS(const TValue& t, const TValue& s) : T(t), S(s) {}
-    PairTS(const PairTS& other) : T(other.T), S(other.S) {}
-    PairTS(const PairTS* other) : T(other->T), S(other->S) {}
-
-    void operator =(const TValue& v) { T = v, S = v; }
-
-    void set(const TValue& t, const TValue& s) { T = t, S = s; }
-
-    QString str() const { return QString(); }
-};
-
-using PointTS = PairTS<double>;
-
-//------------------------------------------------------------------------------
-
-struct DoublePoint
-{
-    double X = 0;
-    double Y = 0;
-
-    QString str() const;
 };
 
 //------------------------------------------------------------------------------

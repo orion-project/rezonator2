@@ -8,6 +8,18 @@
     "custom_params": {
     },
     "elements": [
+        {
+            "is_disabled": false,
+            "label": "L1",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        }
     ],
     "formulas": [
     ],
@@ -38,7 +50,7 @@
             "title": "waist"
         },
         {
-            "is_active": true,
+            "is_active": false,
             "label": "P2",
             "mode": "Front",
             "params": {
@@ -61,23 +73,23 @@
             "title": "front"
         },
         {
-            "is_active": false,
+            "is_active": true,
             "label": "P3",
             "mode": "RayVector",
             "params": {
                 "V": {
-                    "unit": "deg",
-                    "value_s": 10,
+                    "unit": "mrad",
+                    "value_s": 5,
                     "value_t": 10
                 },
                 "y": {
-                    "unit": "mkm",
-                    "value_s": 100,
-                    "value_t": 100
+                    "unit": "mm",
+                    "value_s": 2,
+                    "value_t": 1
                 },
                 "z_y": {
                     "unit": "mm",
-                    "value_s": 100,
+                    "value_s": 120,
                     "value_t": 100
                 }
             },
@@ -89,18 +101,18 @@
             "mode": "TwoSections",
             "params": {
                 "y_1": {
-                    "unit": "mkm",
-                    "value_s": 100,
-                    "value_t": 100
+                    "unit": "mm",
+                    "value_s": 2,
+                    "value_t": 1
                 },
                 "y_2": {
-                    "unit": "mkm",
-                    "value_s": 1000,
-                    "value_t": 1000
+                    "unit": "mm",
+                    "value_s": 2.5,
+                    "value_t": 2
                 },
                 "z_y": {
                     "unit": "mm",
-                    "value_s": 100,
+                    "value_s": 120,
                     "value_t": 100
                 }
             },
@@ -158,6 +170,42 @@
     "windows": [
         {
             "type": "PumpsWindow"
+        },
+        {
+            "function": {
+                "arg": {
+                    "element_index": 0,
+                    "param": "L",
+                    "range": {
+                        "points": 5,
+                        "start": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 100
+                        },
+                        "use_step": false
+                    }
+                },
+                "mode": "BeamRadius"
+            },
+            "type": "Caustic",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 101,
+                "x_min": -1,
+                "y_max": 4000.004717,
+                "y_min": 1989.0336180128877
+            }
         }
     ]
 }
