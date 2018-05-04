@@ -257,7 +257,7 @@ void ProjectWindow::createStatusBar()
     status->connect(STATUS_TRIPTYPE, SIGNAL(doubleClicked()), _operations, SLOT(setupTripType()));
     status->connect(STATUS_PUMP, SIGNAL(doubleClicked()), _operations, SLOT(setupPump()));
 
-    auto versionLabel = new QLabel(Z::Strs::appVersionFull());
+    auto versionLabel = new QLabel(" " % Z::Strs::appVersionFull() % " ");
     versionLabel->setForegroundRole(QPalette::Mid);
     status->addPermanentWidget(versionLabel);
 

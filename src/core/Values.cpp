@@ -101,11 +101,15 @@ QString PrefixedValue::str() const
 }
 
 //------------------------------------------------------------------------------
-//                                  ValueTS
+//                                  PointTS
 //------------------------------------------------------------------------------
 
-template<>
-QString PointTS::str() const
+template<typename TValue> QString PairTS<TValue>::str() const
+{
+    return QString("str() func is indefined");
+}
+
+template<> QString PointTS::str() const
 {
     return QString("[T: %1; S: %2]").arg(Z::str(T), Z::str(S));
 }

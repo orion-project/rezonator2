@@ -47,11 +47,13 @@ public:
     void operator *= (const Matrix &m);
     void operator *= (const Matrix *m);
 
+    /// Transformation of complex ROC by ray matrix
+    Complex multComplexBeam(const Complex& c) const;
+
     QString str() const;
 };
 
 Matrix operator *(const Matrix &m1, const Matrix &m2);
-Complex operator *(const Complex &c, const Matrix &m);
 
 typedef QVector<const Matrix*> MatrixArray;
 

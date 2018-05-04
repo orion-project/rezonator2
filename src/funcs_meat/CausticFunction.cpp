@@ -189,8 +189,8 @@ Z::PointTS CausticFunction::calculateSinglePass() const
     {
     case PumpMode::Gauss:
         {
-            Complex q_out_t = _q_in_t * _calc->Mt();
-            Complex q_out_s = _q_in_s * _calc->Ms();
+            Complex q_out_t = _calc->Mt().multComplexBeam(_q_in_t);
+            Complex q_out_s = _calc->Ms().multComplexBeam(_q_in_s);
 
             BeamCalculator gaussT;
             gaussT.setLambda(_wavelenSI);

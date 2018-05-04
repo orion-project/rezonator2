@@ -7,5 +7,7 @@ bin/rezonator.exe
 *.user
 *.exe
 *.log
+*.pyc
 tmp
 out
+__pycache__

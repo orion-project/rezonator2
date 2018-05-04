@@ -12,11 +12,6 @@ extern const double LightSpeed = 299792458.0; // m/sec, light speed in vacuum
 //                                 Matrix
 //------------------------------------------------------------------------------
 
-Complex operator *(const Complex &c, const Matrix &m)
-{
-    return Complex(0, 0); // TODO
-}
-
 Matrix operator *(const Matrix &m1, const Matrix &m2)
 {
     double a = m1.A * m2.A + m1.B * m2.C;
@@ -48,6 +43,11 @@ void Matrix::operator *= (const Matrix *m)
 QString Matrix::str() const
 {
     return QString("[A=%1; B=%2; C=%3; D=%4]").arg(Z::str(A), Z::str(B), Z::str(C), Z::str(D));
+}
+
+Complex Matrix::multComplexBeam(const Complex& c) const
+{
+    return (c * A + B) / (c * C + D);
 }
 
 //------------------------------------------------------------------------------

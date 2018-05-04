@@ -32,6 +32,7 @@ TEST_METHOD(Matrix_unity)
     ASSERT_MATRIX_IS_UNITY(m)
 }
 
+// Calculation: $PRJECT/calc/mult_matrix.py
 TEST_METHOD(Matrix_multiply)
 {
     Z::Matrix m1(5, 6, 7, 8);
@@ -47,23 +48,28 @@ TEST_METHOD(Matrix_multiply)
     ASSERT_MATRIX_IS(m3, 19.0, 22.0, 43.0, 50.0)
 }
 
-TEST_METHOD(Matrix_multiply_static_matrix)
+// Calculation: $PROJECT/calc/mult_matrix.py
+TEST_METHOD(Matrix_multiply_static)
 {
     Z::Matrix m1(5, 6, 7, 8);
     Z::Matrix m2(1, 2, 3, 4);
 
-    auto m3 = m2 * m1;
-    ASSERT_MATRIX_IS(m3, 19.0, 22.0, 43.0, 50.0)
+    auto m3 = m1 * m2;
+    ASSERT_MATRIX_IS(m3, 23, 34, 31, 46)
+
+    auto m4 = m2 * m1;
+    ASSERT_MATRIX_IS(m4, 19, 22, 43, 50)
 }
 
-TEST_METHOD(Matrix_multiply_static_complex)
+// Calculation: $PROJECT/calc/mult_matrix.py
+TEST_METHOD(Matrix_multComplexBeam)
 {
     Z::Matrix m1(5, 6, 7, 8);
     Z::Complex c1(1, 2);
 
-    auto c2 = c1 * m1;
-    ASSERT_EQ_DBL(c2.real(), 0)
-    ASSERT_EQ_DBL(c2.imag(), 0)
+    auto c2 = m1.multComplexBeam(c1);
+    ASSERT_NEAR_DBL(c2.real(), 0.7244656, 1e-7)
+    ASSERT_NEAR_DBL(c2.imag(), -0.0095012, 1e-7)
 }
 
 //------------------------------------------------------------------------------
@@ -106,8 +112,8 @@ TEST_GROUP("Math",
     ADD_TEST(Matrix_assign),
     ADD_TEST(Matrix_unity),
     ADD_TEST(Matrix_multiply),
-    ADD_TEST(Matrix_multiply_static_matrix),
-    ADD_TEST(Matrix_multiply_static_complex),
+    ADD_TEST(Matrix_multiply_static),
+    ADD_TEST(Matrix_multComplexBeam),
     ADD_TEST(RayVector_constructors),
     ADD_TEST(RayVector_set)
 )

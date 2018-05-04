@@ -217,6 +217,70 @@ TEST_CASE(read_schema_1_2, read_schema, "all_elems_ver-1-2.she", Z::Units::mkm()
 
 //------------------------------------------------------------------------------
 
+#define ASSERT_PUMP_PARAM(param, expected_valueT, expected_valueS, expected_unit)\
+    ASSERT_NEAR_DBL(pump->param()->value().rawValueT(), expected_valueT, 1e-6)\
+    ASSERT_NEAR_DBL(pump->param()->value().rawValueS(), expected_valueS, 1e-6)\
+    ASSERT_UNIT(pump->param()->value().unit(), Z::Units::expected_unit())
+
+#define ASSERT_PUMP(file_name, mode, param1, value1T, value1S, unit1, param2, value2T, value2S, unit2, param3, value3T, value3S, unit3)\
+    READ_SCHEMA(file_name)\
+    ASSERT_IS_NOT_NULL(schema.activePump())\
+    auto pump = dynamic_cast<Z::PumpParams_##mode*>(schema.activePump());\
+    ASSERT_IS_NOT_NULL(pump)\
+    ASSERT_PUMP_PARAM(param1, value1T, value1S, unit1)\
+    ASSERT_PUMP_PARAM(param2, value2T, value2S, unit2)\
+    ASSERT_PUMP_PARAM(param3, value3T, value3S, unit3)
+
+TEST_METHOD(read_pump_waist)
+{
+    ASSERT_PUMP("pump_waist.she", Waist,
+                waist, 120, 130, mkm,
+                distance, 99, 101, mm,
+                MI, 1.01, 1.02, none)
+}
+
+TEST_METHOD(read_pump_front)
+{
+    ASSERT_PUMP("pump_front.she", Front,
+                beamRadius, 432.834155, 463.240637, mkm,
+                frontRadius, 105.638714, 104.887779, mm,
+                MI, 1.35, 1.45, none)
+}
+
+TEST_METHOD(read_pump_ray_vector)
+{
+    ASSERT_PUMP("pump_ray_vector.she", RayVector,
+                radius, 2.5, 3.4, mm,
+                angle, 5.5, 6.8, deg,
+                distance, 0, 0, cm)
+}
+
+TEST_METHOD(read_pump_two_sections)
+{
+    ASSERT_PUMP("pump_two_sections.she", TwoSections,
+                radius1, 9.51, 11.3, mm,
+                radius2, 15.6, 17.99, mm,
+                distance, 105, 104.9, cm)
+}
+
+TEST_METHOD(read_pump_complex)
+{
+    ASSERT_PUMP("pump_complex.she", Complex,
+                real, 102.487, 103.556, mm,
+                imag, -14.602, -11.347, mm,
+                MI, 1.5, 1.7, none)
+}
+
+TEST_METHOD(read_pump_inv_complex)
+{
+    ASSERT_PUMP("pump_inv_complex.she", InvComplex,
+                real, 0.009563, 0.009657, mm,
+                imag, 0.001363, 0.001071, mm,
+                MI, 1.5, 1.7, none)
+}
+
+//------------------------------------------------------------------------------
+
 TEST_GROUP("SchemaReaderIni",
     ADD_TEST(file_not_exists),
     ADD_TEST(read_invalid_section),
@@ -229,6 +293,12 @@ TEST_GROUP("SchemaReaderIni",
     ADD_TEST(read_general),
     ADD_TEST(read_schema_1_1),
     ADD_TEST(read_schema_1_2),
+    ADD_TEST(read_pump_waist),
+    ADD_TEST(read_pump_front),
+    ADD_TEST(read_pump_ray_vector),
+    ADD_TEST(read_pump_two_sections),
+    ADD_TEST(read_pump_complex),
+    ADD_TEST(read_pump_inv_complex),
 )
 
 } // namespace SchemaReaderIniTests

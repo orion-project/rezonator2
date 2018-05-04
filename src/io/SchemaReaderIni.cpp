@@ -282,8 +282,8 @@ void SchemaReaderIni::readPump(IniSection& ini)
         case OldSchema::Complex:
             {
                 PumpParams_Complex *p = new PumpParams_Complex;
-                p->real()->setValue(ValueTS(param1T, param1S, _beamsizeUnit));
-                p->imag()->setValue(ValueTS(param2T, param2S, _beamsizeUnit));
+                p->real()->setValue(ValueTS(param1T, param1S, _linearUnit));
+                p->imag()->setValue(ValueTS(param2T, param2S, _linearUnit));
                 p->MI()->setValue(ValueTS(param3T, param3S));
                 pump = p;
                 break;
@@ -291,8 +291,8 @@ void SchemaReaderIni::readPump(IniSection& ini)
         case OldSchema::InvComplex:
             {
                 PumpParams_InvComplex *p = new PumpParams_InvComplex;
-                p->real()->setValue(ValueTS(param1T, param1S, _beamsizeUnit));
-                p->imag()->setValue(ValueTS(param2T, param2S, _beamsizeUnit));
+                p->real()->setValue(ValueTS(param1T, param1S, _linearUnit));
+                p->imag()->setValue(ValueTS(param2T, param2S, _linearUnit));
                 p->MI()->setValue(ValueTS(param3T, param3S));
                 pump = p;
                 break;

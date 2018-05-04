@@ -21,8 +21,9 @@ SchemaElemsTable::SchemaElemsTable(Schema *schema, QWidget *parent) : QTableWidg
     paramsOffsetY = 2;
 #elif defined(Q_OS_LINUX)
     paramsOffsetY = 1;
+#elif defined(Q_OS_WIN)
+    paramsOffsetY = 2;
 #endif
-    // TODO check windows
 
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionBehavior(QAbstractItemView::SelectRows);

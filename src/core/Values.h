@@ -21,7 +21,7 @@ struct PairTS
 
     void set(const TValue& t, const TValue& s) { T = t, S = s; }
 
-    QString str() const { return QString(); }
+    QString str() const;
 };
 
 using PointTS = PairTS<double>;

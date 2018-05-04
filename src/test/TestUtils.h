@@ -3,13 +3,36 @@
 
 #include <cmath>
 
+namespace Z {
+
 inline double frand(double min, double max)
 {
     return min + (double(qrand()) / double(RAND_MAX)) * (max - min);
 }
 
+inline double trunc(double val, int digits = 7)
+{
+    double rounder = std::pow(10, digits);
+    return double(int(val * rounder)) / rounder;
+}
+
+} // namespace Z
+
 #define RAD_TO_DEG(a) ((a)*180.0/M_PI)
 #define DEG_TO_RAD(a) ((a)*M_PI/180.0)
+
+#define ASSERT_UNIT(unit_given, unit_expected) { \
+    if (unit_given != unit_expected) \
+    { \
+        test->setResult(false); \
+        test->setMessage("Unit is not equal to expected" ); \
+        test->logAssertion("ARE UNITS EQUAL", \
+                           QString("%1 == %2").arg(#unit_given).arg(#unit_expected), \
+                           unit_expected->alias(), \
+                           unit_given->alias(), \
+                           __FILE__, __LINE__); \
+        return; \
+    }}
 
 #define ASSERT_MATRIX_IS(m, a, b, c, d) \
     ASSERT_EQ_DBL((m).A, a); \
@@ -34,11 +57,11 @@ inline double frand(double min, double max)
 
 #define ASSERT_Z_VALUE(v, expected)\
     ASSERT_EQ_DBL(v.value(), expected.value())\
-    ASSERT_EQ_PTR(v.unit(), expected.unit())
+    ASSERT_UNIT(v.unit(), expected.unit())
 
 #define ASSERT_Z_VALUE_AND_UNIT(v, expected_value, expected_unit)\
     ASSERT_EQ_DBL(v.value(), expected_value)\
-    ASSERT_EQ_PTR(v.unit(), expected_unit)
+    ASSERT_UNIT(v.unit(), expected_unit)
 
 #define ASSERT_VALUE_TS(value, expected)\
     ASSERT_EQ_DBL(value.T, expected.T)\
@@ -71,7 +94,7 @@ inline double frand(double min, double max)
 #define ASSERT_ELEM_COUNT(expected_count)\
     ASSERT_EQ_INT(schema.count(), expected_count)
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 #define ASSERT_ELEMENT(elem_index, expected_type, expected_label, expected_title, expected_disabled) { \
     TEST_LOG_SEPARATOR\
@@ -85,12 +108,5 @@ inline double frand(double min, double max)
     ASSERT_EQ_STR(elem->title(), expected_title)\
     ASSERT_IS_TRUE(elem->disabled() == expected_disabled)\
 }
-
-//#define ASSERT_PARAM(param_name, expected_value, expected_unit) {
-//    Z::Parameter* p;
-//    ASSERT_IS_NOT_NULL(p = elem->params().byAlias(param_name))
-//    TEST_LOG(p->str())
-//    ASSERT_Z_VALUE(p->value(), expected_value, Z::Units::expected_unit())
-//}
 
 #endif // Z_TEST_UTILS_H

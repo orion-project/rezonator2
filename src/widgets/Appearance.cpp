@@ -50,7 +50,7 @@ void adjustSymbolFontSm(QFont& f)
 {
     f.setBold(true);
 #if defined(Q_OS_WIN)
-    f.setPointSize(13);
+    f.setPointSize(11);
     f.setFamily(QStringLiteral("Times New Roman"));
 #elif defined(Q_OS_MAC)
     f.setPointSize(16);
