@@ -6,7 +6,7 @@ namespace Z {
 namespace Test {
 namespace MathTests {
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 TEST_METHOD(Matrix_constructors)
 {
@@ -47,7 +47,7 @@ TEST_METHOD(Matrix_multiply)
     ASSERT_MATRIX_IS(m3, 19.0, 22.0, 43.0, 50.0)
 }
 
-TEST_METHOD(Matrix_multiply_static)
+TEST_METHOD(Matrix_multiply_static_matrix)
 {
     Z::Matrix m1(5, 6, 7, 8);
     Z::Matrix m2(1, 2, 3, 4);
@@ -56,7 +56,17 @@ TEST_METHOD(Matrix_multiply_static)
     ASSERT_MATRIX_IS(m3, 19.0, 22.0, 43.0, 50.0)
 }
 
-////////////////////////////////////////////////////////////////////////////////
+TEST_METHOD(Matrix_multiply_static_complex)
+{
+    Z::Matrix m1(5, 6, 7, 8);
+    Z::Complex c1(1, 2);
+
+    auto c2 = c1 * m1;
+    ASSERT_EQ_DBL(c2.real(), 0)
+    ASSERT_EQ_DBL(c2.imag(), 0)
+}
+
+//------------------------------------------------------------------------------
 
 #define ASSERT_VECTOR(vector, y, v)\
     ASSERT_EQ_DBL(vector.Y, y)\
@@ -89,14 +99,15 @@ TEST_METHOD(RayVector_set)
     ASSERT_VECTOR(v2, 10, 20)
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 TEST_GROUP("Math",
     ADD_TEST(Matrix_constructors),
     ADD_TEST(Matrix_assign),
     ADD_TEST(Matrix_unity),
     ADD_TEST(Matrix_multiply),
-    ADD_TEST(Matrix_multiply_static),
+    ADD_TEST(Matrix_multiply_static_matrix),
+    ADD_TEST(Matrix_multiply_static_complex),
     ADD_TEST(RayVector_constructors),
     ADD_TEST(RayVector_set)
 )

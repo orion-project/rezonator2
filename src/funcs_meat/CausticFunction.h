@@ -15,6 +15,7 @@ public:
     FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Caustic"))
 
     CausticFunction(Schema *schema) : PlotFunction(schema) {}
+    ~CausticFunction();
 
     void calculate() override;
     bool hasOptions() const override { return true; }
@@ -32,6 +33,7 @@ private:
     Z::Unit _curvatureUnit = Z::Units::m(); // TODO: make configurable
     Z::Unit _angleUnit = Z::Units::deg(); // TODO: make configurable
     double _wavelenSI = 0;
+    Z::PointTS _MI;
     PumpMode _pumpMode;
 
     bool prepareSP();

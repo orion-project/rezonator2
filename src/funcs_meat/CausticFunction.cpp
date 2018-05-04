@@ -2,10 +2,15 @@
 #include <QDebug>
 
 #include "CausticFunction.h"
+#include "../funcs/BeamCalculator.h"
 #include "../funcs/Calculator.h"
 #include "../core/Protocol.h"
 
 using namespace Z;
+
+CausticFunction::~CausticFunction()
+{
+}
 
 void CausticFunction::calculate()
 {
@@ -95,6 +100,57 @@ bool CausticFunction::prepareSP()
 
     // Calculate beam parameters at first element of the schema.
 
+    auto pumpWaist = dynamic_cast<PumpParams_Waist*>(pump);
+    if (pumpWaist)
+    {
+        _pumpMode = PumpMode::Gauss;
+        auto w = pumpWaist->waist()->value().toSi();
+        auto z = pumpWaist->distance()->value().toSi();
+        _MI = pumpWaist->MI()->value().toSi();
+        BeamCalculator gauss;
+        gauss.setLock(BeamCalculator::Lock::Waist);
+        gauss.setLambda(_wavelenSI);
+        gauss.setW0(w.T);
+        gauss.setZ(z.T);
+        gauss.setM2(_MI.T);
+        gauss.calc();
+        _q_in_t = Complex(gauss.reQ1(), gauss.imQ1());
+        gauss.setW0(w.S);
+        gauss.setZ(z.S);
+        gauss.setM2(_MI.S);
+        gauss.calc();
+        _q_in_s = Complex(gauss.reQ1(), gauss.imQ1());
+    }
+
+    auto pumpFront = dynamic_cast<PumpParams_Front*>(pump);
+    if (pumpFront)
+    {
+        _pumpMode = PumpMode::Gauss;
+        auto w = pumpFront->beamRadius()->value().toSi();
+        auto R = pumpFront->frontRadius()->value().toSi();
+        _MI = pumpFront->MI()->value().toSi();
+        BeamCalculator gauss;
+        gauss.setLock(BeamCalculator::Lock::Front);
+        gauss.setLambda(_wavelenSI);
+        gauss.setW(w.T);
+        gauss.setR(R.T);
+        gauss.setM2(_MI.T);
+        gauss.calc();
+        _q_in_t = Complex(gauss.reQ1(), gauss.imQ1());
+        gauss.setW(w.S);
+        gauss.setR(R.S);
+        gauss.setM2(_MI.S);
+        gauss.calc();
+        _q_in_s = Complex(gauss.reQ1(), gauss.imQ1());
+    }
+
+    // InvComplex should be tested before Complex, because Complex is more generic
+    /*auto pumpInvComplex = dynamic_cast<PumpParams_InvComplex>(pump);
+    if (pumpInvComplex)
+    {
+
+    }*/
+
     auto pumpRayVector = dynamic_cast<PumpParams_RayVector*>(pump);
     if (pumpRayVector)
     {
@@ -132,14 +188,45 @@ Z::PointTS CausticFunction::calculateSinglePass() const
     switch (_pumpMode)
     {
     case PumpMode::Gauss:
-        // TODO calculate
+        {
+            Complex q_out_t = _q_in_t * _calc->Mt();
+            Complex q_out_s = _q_in_s * _calc->Ms();
+
+            BeamCalculator gaussT;
+            gaussT.setLambda(_wavelenSI);
+            gaussT.setLock(BeamCalculator::Lock::Front);
+            gaussT.setReQ1(q_out_t.real());
+            gaussT.setImQ1(q_out_t.imag());
+            gaussT.calc();
+
+            BeamCalculator gaussS;
+            gaussS.setLambda(_wavelenSI);
+            gaussS.setLock(BeamCalculator::Lock::Front);
+            gaussS.setReQ1(q_out_s.real());
+            gaussS.setImQ1(q_out_s.imag());
+            gaussS.calc();
+
+            switch (_mode)
+            {
+            case BeamRadius:
+                result.set(gaussT.w(), gaussS.w());
+                break;
+
+            case FontRadius:
+                result.set(gaussT.R(), gaussS.R());
+                break;
+
+            case HalfAngle:
+                result.set(gaussT.Vs(), gaussS.Vs());
+                break;
+            }
+        }
         break;
 
     case PumpMode::RayVector:
         {
             Z::RayVector ray_t(_ray_in_t, _calc->Mt());
             Z::RayVector ray_s(_ray_in_s, _calc->Ms());
-            //Z_INFO("T =" << ray_t.str() << "S =" << ray_s.str());
             switch (_mode)
             {
             case BeamRadius:

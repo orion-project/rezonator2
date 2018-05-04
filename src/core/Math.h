@@ -51,6 +51,7 @@ public:
 };
 
 Matrix operator *(const Matrix &m1, const Matrix &m2);
+Complex operator *(const Complex &c, const Matrix &m);
 
 typedef QVector<const Matrix*> MatrixArray;
 
