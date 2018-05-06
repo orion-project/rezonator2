@@ -29,7 +29,7 @@ namespace ElementsTests {
 
 //------------------------------------------------------------------------------
 
-// Calculation: $PROJECT/calc/elems_matrices.py
+// Calculation: $PROJECT/calc/Elements.py
 TEST_METHOD(EmptyRange)
 {
     ELEM(EmptyRange, 1)
@@ -49,7 +49,7 @@ TEST_METHOD(EmptyRange)
     ASSERT_MATRIX(s2, 1.0000000, 0.0704000, 0.0000000, 1.0000000)
 }
 
-// Calculation: $PROJECT/calc/elems_matrices.py
+// Calculation: $PROJECT/calc/Elements.py
 TEST_METHOD(MediumRange)
 {
     ELEM(MediumRange, 2)
@@ -101,7 +101,7 @@ TEST_METHOD(FlatMirror)
     ASSERT_MATRIX_IS_UNITY(elem->Ms())
 }
 
-// Calculation: $PROJECT/calc/elems_matrices.py
+// Calculation: $PROJECT/calc/Elements.py
 TEST_METHOD(CurveMirror)
 {
     ELEM(CurveMirror, 2)
@@ -115,7 +115,7 @@ TEST_METHOD(CurveMirror)
     ASSERT_MATRIX(s, 1, 0, -19.3185165, 1)
 }
 
-// Calculation: $PROJECT/calc/elems_matrices.py
+// Calculation: $PROJECT/calc/Elements.py
 TEST_METHOD(ThinLens)
 {
     ELEM(ThinLens, 2)
@@ -128,7 +128,7 @@ TEST_METHOD(ThinLens)
     ASSERT_MATRIX(s, 1, 0, -9.6592583, 1)
 }
 
-// Calculation: $PROJECT/calc/elems_matrices.py
+// Calculation: $PROJECT/calc/Elements.py
 TEST_METHOD(CylinderLensT)
 {
     ELEM(CylinderLensT, 2)
@@ -141,7 +141,7 @@ TEST_METHOD(CylinderLensT)
     ASSERT_MATRIX(s, 1, 0, 0, 1)
 }
 
-// Calculation: $PROJECT/calc/elems_matrices.py
+// Calculation: $PROJECT/calc/Elements.py
 TEST_METHOD(CylinderLensS)
 {
     ELEM(CylinderLensS, 2)

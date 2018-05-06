@@ -32,7 +32,7 @@ TEST_METHOD(Matrix_unity)
     ASSERT_MATRIX_IS_UNITY(m)
 }
 
-// Calculation: $PRJECT/calc/mult_matrix.py
+// Calculation: $PRJECT/calc/Matrix.py
 TEST_METHOD(Matrix_multiply)
 {
     Z::Matrix m1(5, 6, 7, 8);
@@ -48,7 +48,7 @@ TEST_METHOD(Matrix_multiply)
     ASSERT_MATRIX_IS(m3, 19.0, 22.0, 43.0, 50.0)
 }
 
-// Calculation: $PROJECT/calc/mult_matrix.py
+// Calculation: $PROJECT/calc/Matrix.py
 TEST_METHOD(Matrix_multiply_static)
 {
     Z::Matrix m1(5, 6, 7, 8);
@@ -61,7 +61,7 @@ TEST_METHOD(Matrix_multiply_static)
     ASSERT_MATRIX_IS(m4, 19, 22, 43, 50)
 }
 
-// Calculation: $PROJECT/calc/mult_matrix.py
+// Calculation: $PROJECT/calc/Matrix.py
 TEST_METHOD(Matrix_multComplexBeam)
 {
     Z::Matrix m1(5, 6, 7, 8);
