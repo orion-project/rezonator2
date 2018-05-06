@@ -8,10 +8,6 @@
 class Element;
 class Schema;
 
-QT_BEGIN_NAMESPACE
-class QSettings;
-QT_END_NAMESPACE
-
 namespace Z {
 
 /**
@@ -62,9 +58,6 @@ struct Variable
     Element* element = nullptr;        ///< An element whose parameter value is varied.
     Z::Parameter* parameter = nullptr; ///< Element's parameter which value is varied.
     VariableRange range;               ///< Variation settings.
-
-    void load(QSettings*, Schema*);
-    void save(QSettings*);
 
     QString str() const;
 };

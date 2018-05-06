@@ -1,11 +1,13 @@
 #include "VariableDialog.h"
+
+#include "CustomPrefs.h"
 #include "core/Schema.h"
 #include "core/Variable.h"
+#include "io/z_io_json.h"
 #include "widgets/ElemSelectorWidget.h"
 #include "widgets/VariableRangeWidget.h"
 #include "widgets/VariableEditor.h"
 #include "helpers/OriDialogs.h"
-#include "tools/OriSettings.h"
 
 #include <QDialogButtonBox>
 #include <QGroupBox>
@@ -14,27 +16,18 @@
 namespace Z {
 namespace Dlgs {
 
-bool editVariable(QWidget *parent, Schema *schema, Variable *var, const QString& title, const QString &settingsGroup)
+bool editVariable(QWidget *parent, Schema *schema, Variable *var, const QString& title, const QString &recentKey)
 {
-    if (!var->element && !settingsGroup.isEmpty())
-    {
-        Ori::Settings settings;
-        settings.beginGroup(settingsGroup);
-        var->load(settings.settings(), schema);
-    }
+    if (!var->element && !recentKey.isEmpty())
+        Z::IO::Json::readVariablePref(CustomPrefs::recentObj(recentKey), var, schema);
 
     VariableDialog dialog(parent, schema, var);
     dialog.setWindowTitle(title);
     dialog.exec();
     bool ok = dialog.result() == QDialog::Accepted;
 
-    if (ok && !settingsGroup.isEmpty())
-    {
-        Ori::Settings settings;
-        settings.beginGroup(settingsGroup);
-        var->save(settings.settings());
-    }
-
+    if (ok && !recentKey.isEmpty())
+        CustomPrefs::setRecentObj(recentKey, Z::IO::Json::writeVariablePref(var));
     return ok;
 }
 

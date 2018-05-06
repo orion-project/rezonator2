@@ -78,20 +78,6 @@ TEST_METHOD(Value_compare)
 #undef _m
 #undef _cm
 
-TEST_METHOD(Value_storedStr)
-{
-    for (Z::Dim dim : Z::Dims::dims())
-        for (Z::Unit unit : dim->units())
-        {
-            auto sourceValue = Z::Value(frand(-1000, 1000), unit);
-            auto storedStr = sourceValue.toStoredStr();
-            TEST_LOG(sourceValue.str() + " -> " + storedStr)
-            Z::Value restoredValue;
-            ASSERT_IS_TRUE(restoredValue.fromStoredStr(storedStr))
-            ASSERT_Z_VALUE(restoredValue, sourceValue)
-        }
-}
-
 //------------------------------------------------------------------------------
 
 TEST_METHOD(ValueTS_constructors)
@@ -127,7 +113,6 @@ TEST_GROUP("Values",
     ADD_TEST(Value_toSi),
     ADD_TEST(Value_equality),
     ADD_TEST(Value_compare),
-    ADD_TEST(Value_storedStr),
     ADD_TEST(ValueTS_constructors),
     ADD_TEST(ValueTS_assign),
 )

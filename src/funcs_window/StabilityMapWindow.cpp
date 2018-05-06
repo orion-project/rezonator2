@@ -70,7 +70,7 @@ bool StabilityMapWindow::configureInternal(QWidget* parent)
     // TODO: on MacOS variable dialog take parent's icon and this icon overrides application's icon on the dock
     // Parent could be safely omitted as qApp->activeWindow is used by default,
     // Check if parent really required on another platforms and eliminate it if all ok there.
-    return Z::Dlgs::editVariable(parent, schema(), function()->arg(), tr("Variable"), FUNC_SETTINGS_GROUP(function()));
+    return Z::Dlgs::editVariable(parent, schema(), function()->arg(), tr("Variable"), "stab_map");
 }
 
 void StabilityMapWindow::autolimitsStability()

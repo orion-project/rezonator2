@@ -113,4 +113,5 @@ template <class TWindow> void CalcManager::showPlotFunc()
         wnd->requestCenterCursor();
         wnd->update();
     }
+    else delete wnd;
 }
