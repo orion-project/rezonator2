@@ -383,6 +383,13 @@ void ProjectWindow::updateStability()
 
 void ProjectWindow::closeEvent(QCloseEvent* ce)
 {
+    QMainWindow::closeEvent(ce);
+
+    // On MacOS when QMenuBar::setNativeMenuBar(false) this function
+    // is called twice for some reason, but we want to process it only once.
+    if (_closeEventProcessed) return;
+    _closeEventProcessed = true;
+
     if (_operations->canClose())
         ce->accept();
     else
