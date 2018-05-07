@@ -176,7 +176,6 @@ TEST_METHOD(insertElement_must_assign_element_owner)
 {
     Schema schema;
     auto el = new TestElement;
-    ASSERT_IS_NULL(el->owner());
     schema.insertElement(el);
     ASSERT_EQ_PTR(el->owner(), &schema);
 }

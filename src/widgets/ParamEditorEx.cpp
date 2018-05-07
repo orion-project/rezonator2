@@ -109,7 +109,7 @@ void ParamEditorEx::toggleFormulaView()
     Z::Gui::setFontStyle(valueEditor, false, _hasFormula);
     valueEditor->setReadOnly(_hasFormula);
 
-    if (_hasFormula)
+    if (_formulaEditor)
     {
         _formulaEditor->calculate();
         _formulaEditor->setFocus();
