@@ -5,6 +5,7 @@
 #include "../core/ElementsCatalog.h"
 
 #include <QFile>
+#include <QPointer>
 #include <QSettings>
 #include <QVariant>
 
@@ -101,6 +102,7 @@ public:
 
     ~IniSection()
     {
+        if (!_file) return;
         if (!_group.isEmpty() && _file->group() == _group) _file->endGroup();
     }
 
@@ -141,7 +143,7 @@ public:
     bool opened() const { return !_group.isEmpty(); }
 
 private:
-    QSettings* _file;
+    QPointer<QSettings> _file;
     QString _group;
 };
 
