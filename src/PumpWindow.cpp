@@ -230,8 +230,8 @@ void PumpWindow::createActions()
 
     _actnPumpAdd = A_(tr("&Create..."), this, SLOT(createPump()), ":/toolbar/pump_add", Qt::CTRL | Qt::Key_Insert);
     _actnPumpDelete = A_(tr("&Delete"), this, SLOT(deletePump()), ":/toolbar/pump_delete", Qt::CTRL | Qt::Key_Delete);
-    _actnPumpEdit = A_(tr("&Edit..."), this, SLOT(editPump()), ":/toolbar/pump_edit", Qt::Key_Enter);
-    _actnPumpActivate = A_(tr("&Activate..."), this, SLOT(activatePump()), ":/toolbar/pump_on");
+    _actnPumpEdit = A_(tr("&Edit..."), this, SLOT(editPump()), ":/toolbar/pump_edit", Qt::Key_Return);
+    _actnPumpActivate = A_(tr("&Activate..."), this, SLOT(activatePump()), ":/toolbar/pump_on", Qt::CTRL | Qt::Key_Return);
 
     #undef A_
 }
