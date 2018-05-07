@@ -13,10 +13,11 @@
 #include <QGroupBox>
 #include <QLabel>
 
-namespace Z {
-namespace Dlgs {
+//------------------------------------------------------------------------------
+//                              VariableDialog
 
-bool editVariable(QWidget *parent, Schema *schema, Variable *var, const QString& title, const QString &recentKey)
+bool VariableDialog::show(QWidget *parent, Schema *schema, Z::Variable *var,
+                          const QString& title, const QString &recentKey)
 {
     if (!var->element && !recentKey.isEmpty())
         Z::IO::Json::readVariablePref(CustomPrefs::recentObj(recentKey), var, schema);
@@ -30,28 +31,6 @@ bool editVariable(QWidget *parent, Schema *schema, Variable *var, const QString&
         CustomPrefs::setRecentObj(recentKey, Z::IO::Json::writeVariablePref(var));
     return ok;
 }
-
-bool editVariables(QWidget *parent, Schema *schema, Variable *var1, Variable *var2, const QString& title)
-{
-    VariableDialog2 dialog(parent, schema, var1, var2);
-    dialog.setWindowTitle(title);
-    dialog.exec();
-    return dialog.result() == QDialog::Accepted;
-}
-
-bool editVariable_ElementRange(QWidget *parent, Schema *schema, Variable *var, const QString& title)
-{
-    VariableDialog_ElementRange dialog(parent, schema, var);
-    dialog.setWindowTitle(title);
-    dialog.exec();
-    return dialog.result() == QDialog::Accepted;
-}
-
-} // namespace Dlgs
-} // namespace Z
-
-//------------------------------------------------------------------------------
-//                              VariableDialog
 
 VariableDialog::VariableDialog(QWidget *parent, Schema *schema, Z::Variable *var)
     : RezonatorDialog(DontDeleteOnClose, parent), _var(var)
@@ -77,6 +56,29 @@ void VariableDialog::collect()
 
 //------------------------------------------------------------------------------
 //                              VariableDialog2
+
+bool VariableDialog2::show(QWidget *parent, Schema *schema, Z::Variable *var1, Z::Variable *var2,
+                           const QString& title, const QString &recentKey)
+{
+    if (!var1->element && !recentKey.isEmpty())
+    {
+        auto recentObj = CustomPrefs::recentObj(recentKey);
+        Z::IO::Json::readVariablePref(recentObj["var1"].toObject(), var1, schema);
+        Z::IO::Json::readVariablePref(recentObj["var2"].toObject(), var2, schema);
+    }
+
+    VariableDialog2 dialog(parent, schema, var1, var2);
+    dialog.setWindowTitle(title);
+    dialog.exec();
+    bool ok = dialog.result() == QDialog::Accepted;
+
+    if (ok && !recentKey.isEmpty())
+        CustomPrefs::setRecentObj(recentKey, QJsonObject({
+            { "var1", Z::IO::Json::writeVariablePref(var1) },
+            { "var2", Z::IO::Json::writeVariablePref(var2) },
+        }));
+    return ok;
+}
 
 VariableDialog2::VariableDialog2(QWidget *parent, Schema *schema, Z::Variable *var1, Z::Variable *var2)
     : RezonatorDialog(DontDeleteOnClose, parent), _var1(var1), _var2(var2)
@@ -125,6 +127,22 @@ void VariableDialog2::collect()
 
 //------------------------------------------------------------------------------
 //                            VariableDialog_range
+
+bool VariableDialog_ElementRange::show(QWidget *parent, Schema *schema, Z::Variable *var,
+                                       const QString& title, const QString &recentKey)
+{
+    if (!var->element && !recentKey.isEmpty())
+        Z::IO::Json::readVariablePref(CustomPrefs::recentObj(recentKey), var, schema);
+
+    VariableDialog_ElementRange dialog(parent, schema, var);
+    dialog.setWindowTitle(title);
+    dialog.exec();
+    bool ok = dialog.result() == QDialog::Accepted;
+
+    if (ok && !recentKey.isEmpty())
+        CustomPrefs::setRecentObj(recentKey, Z::IO::Json::writeVariablePref(var));
+    return ok;
+}
 
 VariableDialog_ElementRange::VariableDialog_ElementRange(QWidget *parent, Schema *schema, Z::Variable *var)
     : RezonatorDialog(DontDeleteOnClose, parent), _var(var)

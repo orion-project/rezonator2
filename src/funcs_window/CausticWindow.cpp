@@ -55,7 +55,7 @@ CausticWindow::CausticWindow(Schema *schema) : PlotFuncWindowStorable(new Causti
 
 bool CausticWindow::configureInternal(QWidget* parent)
 {
-    return Z::Dlgs::editVariable_ElementRange(parent, schema(), function()->arg(), tr("Range"));
+    return VariableDialog_ElementRange::show(parent, schema(), function()->arg(), tr("Range"), "func_caustic");
 }
 
 QWidget* CausticWindow::makeOptionsPanel()
