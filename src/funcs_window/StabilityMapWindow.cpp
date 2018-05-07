@@ -1,5 +1,6 @@
 #include "StabilityMapWindow.h"
 
+#include "../CustomPrefs.h"
 #include "../io/z_io_utils.h"
 #include "../io/z_io_json.h"
 #include "../VariableDialog.h"
@@ -34,7 +35,9 @@ public:
 
     void functionModeChanged(int mode) override
     {
-        _window->function()->setStabilityCalcMode(static_cast<Z::Enums::StabilityCalcMode>(mode));
+        auto stabCalcMode = static_cast<Z::Enums::StabilityCalcMode>(mode);
+        CustomPrefs::setRecentStr(QStringLiteral("func_stab_map_mode"), Z::Enums::toStr(stabCalcMode));
+        _window->function()->setStabilityCalcMode(stabCalcMode);
     }
 
 private:

@@ -108,6 +108,7 @@ template <class TWindow> void CalcManager::showPlotFunc()
     auto wnd = new TWindow(schema());
     if (wnd->configure(_parent))
     {
+        wnd->function()->loadPrefs();
         WindowsManager::instance().show(wnd);
         wnd->requestAutolimits();
         wnd->requestCenterCursor();

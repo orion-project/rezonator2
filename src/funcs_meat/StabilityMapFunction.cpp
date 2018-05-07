@@ -1,4 +1,6 @@
 #include "StabilityMapFunction.h"
+
+#include "../CustomPrefs.h"
 #include "../core/Protocol.h"
 #include "../funcs/Calculator.h"
 
@@ -38,3 +40,11 @@ void StabilityMapFunction::calculate()
 
     finishResults();
 }
+
+void StabilityMapFunction::loadPrefs()
+{
+    _stabilityCalcMode = Z::Enums::fromStr(
+                CustomPrefs::recentStr(QStringLiteral("func_stab_map_mode")),
+                Z::Enums::StabilityCalcMode::Normal);
+}
+

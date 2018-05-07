@@ -1,6 +1,7 @@
 #ifndef Z_COMMON_TYPES_H
 #define Z_COMMON_TYPES_H
 
+#include <QMetaEnum>
 #include <QString>
 #include <QVector>
 #include <QObject>
@@ -64,6 +65,20 @@ public:
     Q_ENUM(StabilityCalcMode)
 
     Enums() = delete;
+
+    template <typename TEnum>
+    static QString toStr(TEnum value)
+    {
+        return QMetaEnum::fromType<TEnum>().key(value);
+    }
+
+    template <typename TEnum>
+    static TEnum fromStr(const QString& value, TEnum defaultValue)
+    {
+        bool ok;
+        int res = QMetaEnum::fromType<TEnum>().keyToValue(value.toLatin1().data(), &ok);
+        return ok ? TEnum(res) : defaultValue;
+    }
 };
 
 

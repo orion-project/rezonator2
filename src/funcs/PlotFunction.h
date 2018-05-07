@@ -105,6 +105,9 @@ public:
     Z::Variable* arg() { return &_arg; }
     const FunctionRange& range() const { return _range; }
 
+    /// Load custom preferences - recently used modes etc.
+    virtual void loadPrefs() {}
+
 protected:
     Z::Variable _arg;
     Calculator* _calc = nullptr;
