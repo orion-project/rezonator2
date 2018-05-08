@@ -3,7 +3,7 @@
 #include "TestUtils.h"
 
 namespace Z {
-namespace Test {
+namespace Tests {
 namespace MathTests {
 
 //------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ TEST_METHOD(Matrix_assign)
 TEST_METHOD(Matrix_unity)
 {
     Z::Matrix m(1.1, 2.2, 3.3, 4.4);
-    ASSERT_MATRIX_IS_NOT_UNITY(m)
+    ASSERT_MATRIX_IS(m, 1.1, 2.2, 3.3, 4.4)
     m.unity();
     ASSERT_MATRIX_IS_UNITY(m)
 }
@@ -101,7 +101,7 @@ TEST_METHOD(RayVector_set)
     ASSERT_VECTOR(v1, 10, 20)
 
     Z::RayVector v2;
-    v2.set(v1);
+    v2 = v1;
     ASSERT_VECTOR(v2, 10, 20)
 }
 
@@ -119,5 +119,5 @@ TEST_GROUP("Math",
 )
 
 } // namespace MathTests
-} // namespace Test
+} // namespace Tests
 } // namespace Z

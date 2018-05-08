@@ -3,6 +3,8 @@
 
 #include "core/Units.h"
 
+#include <QJsonObject>
+
 class CustomPrefs
 {
 public:
@@ -18,6 +20,8 @@ public:
     static QString recentDir(const QString& key, const QString& defaultDir = QString());
     static void setRecentStr(const QString& key, const QString& value);
     static QString recentStr(const QString& key, const QString& defaultStr = QString());
+    static void setRecentObj(const QString& key, const QJsonObject& obj);
+    static QJsonObject recentObj(const QString& key);
 };
 
 #endif // CUSTOM_PREFS_H

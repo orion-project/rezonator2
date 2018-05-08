@@ -130,3 +130,17 @@ QString CustomPrefs::recentStr(const QString& key, const QString& defaultStr)
 {
     return __customData[key].toString(defaultStr);
 }
+
+void CustomPrefs::setRecentObj(const QString& key, const QJsonObject& obj)
+{
+    if (!__customData.contains(key) || __customData[key].toObject() != obj)
+    {
+        __customData[key] = obj;
+        save();
+    }
+}
+
+QJsonObject CustomPrefs::recentObj(const QString &key)
+{
+    return __customData[key].toObject();
+}

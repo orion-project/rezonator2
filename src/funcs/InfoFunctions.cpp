@@ -1,8 +1,7 @@
 #include "InfoFunctions.h"
-#include "Calculator.h"
+#include "RoundTripCalculator.h"
 #include "FormatInfo.h"
 #include "../core/Format.h"
-#include "../core/FormatSchema.h"
 #include "../core/Schema.h"
 
 #include <QApplication>
@@ -94,7 +93,7 @@ FunctionBase::FunctionState InfoFuncMatrixRT::elementDeleting(Element *elem)
 
 QString InfoFuncMatrixRT::calculate()
 {
-    Calculator c(_schema, _element);
+    RoundTripCalculator c(_schema, _element);
     c.calcRoundTrip();
     c.multMatrix();
 
@@ -177,7 +176,7 @@ QString InfoFuncSummary::calculate()
             if (elem->hasParams())
             {
                 elemStrs << ":";
-                elemStrs << Z::Fmt::elemParamsHtml(schema(), elem, false);
+                elemStrs << Z::Format::elemParamsHtml(schema(), elem, false);
             }
             if (!elem->title().isEmpty())
                 elemStrs << QStringLiteral("<i>(%1)</i>").arg(elem->title());
@@ -186,7 +185,7 @@ QString InfoFuncSummary::calculate()
 
     if (!strs.isEmpty())
         strs << "";
-    strs << Z::Fmt::paramHtml(&schema()->wavelength());
+    strs << Z::Format::paramHtml(&schema()->wavelength());
 
     if (schema()->isSP())
     {
@@ -197,7 +196,7 @@ QString InfoFuncSummary::calculate()
             strs << qApp->translate("Func", "<b>Input beam:</b>");
             auto pumpMode = Z::Pump::findByModeName(pump->modeName());
             if (pumpMode) strs << pumpMode->description();
-            strs << Z::Fmt::pumpParamsHtml(pump);
+            strs << Z::Format::pumpParamsHtml(pump);
         }
     }
 

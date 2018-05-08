@@ -4,10 +4,10 @@
 #include "../core/Schema.h"
 #include "../core/Element.h"
 
-class Calculator
+class RoundTripCalculator
 {
 public:
-    Calculator(Schema *owner, Element *ref = NULL);
+    RoundTripCalculator(Schema *owner, Element *ref = NULL);
 
     void calcRoundTrip(bool splitRange = false);
     void multMatrix();

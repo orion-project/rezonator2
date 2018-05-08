@@ -1,6 +1,6 @@
-#include "Calculator.h"
+#include "RoundTripCalculator.h"
 
-Calculator::Calculator(Schema *owner, Element *ref)
+RoundTripCalculator::RoundTripCalculator(Schema *owner, Element *ref)
 {
     _schema = owner;
     _reference = ref;
@@ -8,7 +8,7 @@ Calculator::Calculator(Schema *owner, Element *ref)
         _reference = _schema->elements().first();
 }
 
-void Calculator::calcRoundTrip(bool splitRange)
+void RoundTripCalculator::calcRoundTrip(bool splitRange)
 {
     _splitRange = splitRange;
 
@@ -24,7 +24,7 @@ void Calculator::calcRoundTrip(bool splitRange)
     }
 }
 
-void Calculator::reset()
+void RoundTripCalculator::reset()
 {
     _roundTrip.clear();
     _matrsT.clear();
@@ -33,7 +33,7 @@ void Calculator::reset()
     _ms.unity();
 }
 
-void Calculator::calcRoundTripSW()
+void RoundTripCalculator::calcRoundTripSW()
 {
     int ref = _schema->indexOf(_reference);
 
@@ -57,7 +57,7 @@ void Calculator::calcRoundTripSW()
     collectMatrices();
 }
 
-void Calculator::calcRoundTripRR()
+void RoundTripCalculator::calcRoundTripRR()
 {
     int ref = _schema->indexOf(_reference);
 
@@ -74,7 +74,7 @@ void Calculator::calcRoundTripRR()
     collectMatrices();
 }
 
-void Calculator::calcRoundTripSP()
+void RoundTripCalculator::calcRoundTripSP()
 {
     int i = _schema->indexOf(_reference);
 
@@ -85,7 +85,7 @@ void Calculator::calcRoundTripSP()
     collectMatricesSP();
 }
 
-void Calculator::collectMatrices()
+void RoundTripCalculator::collectMatrices()
 {
     int i = 0;
     int c = _roundTrip.size();
@@ -116,7 +116,7 @@ void Calculator::collectMatrices()
     }
 }
 
-void Calculator::collectMatricesSP()
+void RoundTripCalculator::collectMatricesSP()
 {
     int i = 0;
     int c = _roundTrip.size();
@@ -141,7 +141,7 @@ void Calculator::collectMatricesSP()
     }
 }
 
-void Calculator::multMatrix()
+void RoundTripCalculator::multMatrix()
 {
     _mt.unity();
     _ms.unity();
@@ -152,7 +152,7 @@ void Calculator::multMatrix()
     }
 }
 
-Z::PointTS Calculator::stability() const
+Z::PointTS RoundTripCalculator::stability() const
 {
     return {
         calcStability((_mt.A + _mt.D) * 0.5),
@@ -160,7 +160,7 @@ Z::PointTS Calculator::stability() const
     };
 }
 
-Z::PairTS<bool> Calculator::isStable() const
+Z::PairTS<bool> RoundTripCalculator::isStable() const
 {
     return {
         isStable((_mt.A + _mt.D) * 0.5),
@@ -168,12 +168,12 @@ Z::PairTS<bool> Calculator::isStable() const
     };
 }
 
-bool Calculator::isStable(double half_of_A_plus_D) const
+bool RoundTripCalculator::isStable(double half_of_A_plus_D) const
 {
     return (half_of_A_plus_D > -1) && (half_of_A_plus_D < 1);
 }
 
-double Calculator::calcStability(double half_of_A_plus_D) const
+double RoundTripCalculator::calcStability(double half_of_A_plus_D) const
 {
     switch (_stabilityCalcMode)
     {
@@ -186,7 +186,7 @@ double Calculator::calcStability(double half_of_A_plus_D) const
     return 0;
 }
 
-QString Calculator::roundTripStr() const
+QString RoundTripCalculator::roundTripStr() const
 {
     QString res;
     for (auto elem : _roundTrip)
@@ -202,7 +202,7 @@ namespace Calc {
 
 Z::PairTS<bool> isStable(Schema *schema)
 {
-    Calculator c(schema);
+    RoundTripCalculator c(schema);
     c.calcRoundTrip();
     c.multMatrix();
     return c.isStable();

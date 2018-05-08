@@ -2,7 +2,7 @@
 #include "../funcs/GaussCalculator.h"
 
 namespace Z {
-namespace Test {
+namespace Tests {
 namespace GaussCalculatorTests {
 
 #define _(p, value) ASSERT_NEAR_DBL(c.p(), value, 1e-7)
@@ -144,5 +144,5 @@ TEST_GROUP("BeamCalculator",
            )
 
 } // namespace GaussCalculatorTests
-} // namespace Test
+} // namespace Tests
 } // namespace Z

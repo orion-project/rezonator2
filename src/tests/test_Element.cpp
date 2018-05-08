@@ -3,7 +3,7 @@
 #include "TestUtils.h"
 
 namespace Z {
-namespace Test {
+namespace Tests {
 namespace ElementTests {
 
 DECLARE_ELEMENT(TestElement, Element)
@@ -167,8 +167,6 @@ TEST_METHOD(Element_setDisabled_must_be_unity_matrix)
     TestElement e;
     e.calcMatrix();
     ASSERT_MATRIX_CALCULATED(e)
-    ASSERT_MATRIX_IS_NOT_UNITY(e.Mt())
-    ASSERT_MATRIX_IS_NOT_UNITY(e.Ms())
 
     RESET_MATRIX(e)
     e.setDisabled(true);
@@ -180,8 +178,6 @@ TEST_METHOD(Element_setDisabled_must_be_unity_matrix)
     e.setDisabled(false);
     e.calcMatrix();
     ASSERT_MATRIX_CALCULATED(e)
-    ASSERT_MATRIX_IS_NOT_UNITY(e.Mt())
-    ASSERT_MATRIX_IS_NOT_UNITY(e.Ms())
 }
 
 TEST_METHOD(Element_setDisabled_must_raise_event)
@@ -306,6 +302,6 @@ TEST_GROUP("Element",
 )
 
 } // namespace ElementTests
-} // namespace Test
+} // namespace Tests
 } // namespace Z
 

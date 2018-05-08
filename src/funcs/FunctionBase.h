@@ -11,10 +11,8 @@
     static QString _alias_() { return s; }\
     QString alias() const override { return s; }
 
-#define FUNC_SETTINGS_GROUP(func) QStringLiteral("Func") + func->alias()
-
 class Schema;
-class Calculator;
+class RoundTripCalculator;
 
 /**
     Base class for all functions.

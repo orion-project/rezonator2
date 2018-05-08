@@ -121,6 +121,25 @@ QString readVariable(const QJsonObject& json, Variable* var, Schema *schema)
     return QString();
 }
 
+QJsonObject writeVariablePref(Variable *var)
+{
+    return QJsonObject({
+        { "element_label", var->element->label() },
+        { "param", var->parameter->alias() },
+        { "range", writeVariableRange(var->range) }
+    });
+}
+
+void readVariablePref(const QJsonObject& json, Variable* var, Schema *schema)
+{
+    var->element = schema->elementByLabel(json["element_label"].toString());
+    if (var->element)
+        var->parameter = var->element->params().byAlias(json["param"].toString());
+    // TODO extract validation logic from variable editor dialog into helper method and use it here
+    // to verify that restored range is valid and suitable for restored element and its parameter.
+    readVariableRange(json["range"].toObject(), var->range);
+}
+
 } // namespace Json
 } // namespace IO
 } // namespace Z

@@ -35,8 +35,9 @@ void WindowsManager::show(SchemaWindow* wnd)
     else
     {
         auto widget = dynamic_cast<QWidget*>(wnd);
-        if (!widget)
+        if (widget)
+            widget->show();
+        else
             qCritical() << "Unable to show window of non-widget type";
-        widget->show();
     }
 }

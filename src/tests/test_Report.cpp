@@ -2,7 +2,7 @@
 #include "../core/Report.h"
 
 namespace Z {
-namespace Test {
+namespace Tests {
 namespace ReportTests {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -39,5 +39,5 @@ TEST_GROUP("Report",
 )
 
 } // namespace ReportTests
-} // namespace Test
+} // namespace Tests
 } // namespace Z

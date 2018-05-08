@@ -18,6 +18,7 @@ struct PairTS
     PairTS(const PairTS* other) : T(other->T), S(other->S) {}
 
     void operator =(const TValue& v) { T = v, S = v; }
+    void operator =(const PairTS<TValue>& other) { T = other.T, S = other.S; }
 
     void set(const TValue& t, const TValue& s) { T = t, S = s; }
 
@@ -72,9 +73,6 @@ public:
     bool operator < (const double& v) const { return toSi() < v; }
     bool operator <= (const Value& v) const { return toSi() <= v.toSi(); }
     bool operator <= (const double& v) const { return toSi() <= v; }
-
-    QString toStoredStr() const;
-    bool fromStoredStr(const QString& s);
 
 private:
     double _value;

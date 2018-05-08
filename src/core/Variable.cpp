@@ -1,8 +1,7 @@
-#include "Format.h"
 #include "Variable.h"
-#include "Schema.h"
 
-#include <QSettings>
+#include "Format.h"
+#include "Schema.h"
 
 namespace Z {
 
@@ -63,30 +62,6 @@ QString VariableRange::str() const
 }
 
 //------------------------------------------------------------------------------
-
-void Variable::load(QSettings *settings, Schema* schema)
-{
-    element = schema->elementByLabel(settings->value("element").toString());
-    parameter = element ? element->params().byAlias(settings->value("parameter").toString()) : nullptr;
-    // TODO extract validation logic from variable editor dialog into helper method and use it here
-    // to verify that restored range is valid and suitable for restored element and its parameter.
-    range.start.fromStoredStr(settings->value("start").toString());
-    range.stop.fromStoredStr(settings->value("stop").toString());
-    range.step.fromStoredStr(settings->value("step").toString());
-    range.points = settings->value("points").toInt();
-    range.useStep = settings->value("useStep").toBool();
-}
-
-void Variable::save(QSettings *settings)
-{
-    settings->setValue("element", element ? element->label() : QString());
-    settings->setValue("parameter", parameter ? parameter->alias() : QString());
-    settings->setValue("start", range.start.toStoredStr());
-    settings->setValue("stop", range.stop.toStoredStr());
-    settings->setValue("step", range.step.toStoredStr());
-    settings->setValue("points", range.points);
-    settings->setValue("useStep", range.useStep);
-}
 
 QString Variable::str() const
 {

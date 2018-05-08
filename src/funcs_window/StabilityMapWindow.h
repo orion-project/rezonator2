@@ -2,7 +2,7 @@
 #define WINDOW_STABILITY_MAP_H
 
 #include "PlotFuncWindowStorable.h"
-#include "../funcs_meat/StabilityMapFunction.h"
+#include "../funcs/StabilityMapFunction.h"
 
 class StabilityMapWindow : public PlotFuncWindowStorable
 {
@@ -21,7 +21,6 @@ protected:
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;
     QString writeFunction(QJsonObject& root) override;
-
 private:
     QAction *actnStabilityAutolimits;
 

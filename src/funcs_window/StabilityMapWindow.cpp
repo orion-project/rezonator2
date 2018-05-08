@@ -1,5 +1,6 @@
 #include "StabilityMapWindow.h"
 
+#include "../CustomPrefs.h"
 #include "../io/z_io_utils.h"
 #include "../io/z_io_json.h"
 #include "../VariableDialog.h"
@@ -34,7 +35,9 @@ public:
 
     void functionModeChanged(int mode) override
     {
-        _window->function()->setStabilityCalcMode(static_cast<Z::Enums::StabilityCalcMode>(mode));
+        auto stabCalcMode = static_cast<Z::Enums::StabilityCalcMode>(mode);
+        CustomPrefs::setRecentStr(QStringLiteral("func_stab_map_mode"), Z::Enums::toStr(stabCalcMode));
+        _window->function()->setStabilityCalcMode(stabCalcMode);
     }
 
 private:
@@ -70,7 +73,7 @@ bool StabilityMapWindow::configureInternal(QWidget* parent)
     // TODO: on MacOS variable dialog take parent's icon and this icon overrides application's icon on the dock
     // Parent could be safely omitted as qApp->activeWindow is used by default,
     // Check if parent really required on another platforms and eliminate it if all ok there.
-    return Z::Dlgs::editVariable(parent, schema(), function()->arg(), tr("Variable"), FUNC_SETTINGS_GROUP(function()));
+    return VariableDialog::show(parent, schema(), function()->arg(), tr("Variable"), "func_stab_map");
 }
 
 void StabilityMapWindow::autolimitsStability()

@@ -3,7 +3,7 @@
 #include "TestUtils.h"
 
 namespace Z {
-namespace Test {
+namespace Tests {
 namespace ParametersTests {
 
 //------------------------------------------------------------------------------
@@ -130,5 +130,5 @@ TEST_GROUP("Parameters",
 )
 
 } // namespace ParametersTests
-} // namespace Test
+} // namespace Tests
 } // namespace Z
