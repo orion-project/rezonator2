@@ -2,7 +2,7 @@
 #include <QDebug>
 
 #include "CausticFunction.h"
-#include "../funcs/BeamCalculator.h"
+#include "../funcs/GaussCalculator.h"
 #include "../funcs/Calculator.h"
 #include "../core/Protocol.h"
 
@@ -107,8 +107,8 @@ bool CausticFunction::prepareSP()
         auto w = pumpWaist->waist()->value().toSi();
         auto z = pumpWaist->distance()->value().toSi();
         _MI = pumpWaist->MI()->value().toSi();
-        BeamCalculator gauss;
-        gauss.setLock(BeamCalculator::Lock::Waist);
+        GaussCalculator gauss;
+        gauss.setLock(GaussCalculator::Lock::Waist);
         gauss.setLambda(_wavelenSI);
         gauss.setW0(w.T);
         gauss.setZ(z.T);
@@ -129,8 +129,8 @@ bool CausticFunction::prepareSP()
         auto w = pumpFront->beamRadius()->value().toSi();
         auto R = pumpFront->frontRadius()->value().toSi();
         _MI = pumpFront->MI()->value().toSi();
-        BeamCalculator gauss;
-        gauss.setLock(BeamCalculator::Lock::Front);
+        GaussCalculator gauss;
+        gauss.setLock(GaussCalculator::Lock::Front);
         gauss.setLambda(_wavelenSI);
         gauss.setW(w.T);
         gauss.setR(R.T);
@@ -192,16 +192,16 @@ Z::PointTS CausticFunction::calculateSinglePass() const
             Complex q_out_t = _calc->Mt().multComplexBeam(_q_in_t);
             Complex q_out_s = _calc->Ms().multComplexBeam(_q_in_s);
 
-            BeamCalculator gaussT;
+            GaussCalculator gaussT;
             gaussT.setLambda(_wavelenSI);
-            gaussT.setLock(BeamCalculator::Lock::Front);
+            gaussT.setLock(GaussCalculator::Lock::Front);
             gaussT.setReQ1(q_out_t.real());
             gaussT.setImQ1(q_out_t.imag());
             gaussT.calc();
 
-            BeamCalculator gaussS;
+            GaussCalculator gaussS;
             gaussS.setLambda(_wavelenSI);
-            gaussS.setLock(BeamCalculator::Lock::Front);
+            gaussS.setLock(GaussCalculator::Lock::Front);
             gaussS.setReQ1(q_out_s.real());
             gaussS.setImQ1(q_out_s.imag());
             gaussS.calc();

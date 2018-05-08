@@ -49,4 +49,4 @@ def transform_q(q1, M):
 
 # Print named result value
 def print_res(name, value):
-  print("{}: {:.7f}".format(name, value))
+  print("{}: {:.7g}".format(name, value))

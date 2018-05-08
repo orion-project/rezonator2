@@ -84,7 +84,6 @@ HEADERS += \
     src/core/Variable.h \
     src/ElementPropsDialog.h \
     src/ElementsCatalogDialog.h \
-    src/funcs/BeamCalculator.h \
     src/funcs/Calculator.h \
     src/funcs/FormatInfo.h \
     src/funcs/FunctionBase.h \
@@ -149,7 +148,8 @@ HEADERS += \
     src/io/z_io_json.h \
     src/PumpWindow.h \
     src/PumpParamsDialog.h \
-    src/core/FormatSchema.h
+    src/core/FormatSchema.h \
+    src/funcs/GaussCalculator.h
 
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -172,7 +172,6 @@ SOURCES += \
     src/core/Variable.cpp \
     src/ElementPropsDialog.cpp \
     src/ElementsCatalogDialog.cpp \
-    src/funcs/BeamCalculator.cpp \
     src/funcs/Calculator.cpp \
     src/funcs/FormatInfo.cpp \
     src/funcs/FunctionBase.cpp \
@@ -246,4 +245,6 @@ SOURCES += \
     src/io/z_io_json.cpp \
     src/PumpWindow.cpp \
     src/PumpParamsDialog.cpp \
-    src/core/FormatSchema.cpp
+    src/core/FormatSchema.cpp \
+    src/test/test_GaussCalculator.cpp \
+    src/funcs/GaussCalculator.cpp

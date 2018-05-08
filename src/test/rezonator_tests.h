@@ -18,6 +18,7 @@ USE_GROUP(SchemaReaderIniTests)                    // test_SchemaReaderIni.cpp
 USE_GROUP(CalculatorTests)                         // test_Calculator.cpp
 USE_GROUP(InfoFunctionsTests)                      // test_InfoFunctions.cpp
 USE_GROUP(ElementSelectorWidgetTests)              // test_ElemSelectorWidget.cpp
+USE_GROUP(GaussCalculatorTests)                    // test_GaussCalculatorTests.cpp
 
 TEST_SUITE(
     ADD_GROUP(Ori::Test::All),
@@ -33,6 +34,7 @@ TEST_SUITE(
     ADD_GROUP(SchemaTests),
     ADD_GROUP(SchemaReaderIniTests),
     ADD_GROUP(CalculatorTests),
+    ADD_GROUP(GaussCalculatorTests),
     ADD_GROUP(InfoFunctionsTests),
     ADD_GROUP(ElementSelectorWidgetTests),
 )
