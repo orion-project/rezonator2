@@ -101,7 +101,7 @@ TEST_METHOD(RayVector_set)
     ASSERT_VECTOR(v1, 10, 20)
 
     Z::RayVector v2;
-    v2.set(v1);
+    v2 = v1;
     ASSERT_VECTOR(v2, 10, 20)
 }
 

@@ -148,7 +148,9 @@ HEADERS += \
     src/io/z_io_json.h \
     src/PumpWindow.h \
     src/PumpParamsDialog.h \
-    src/core/FormatSchema.h
+    src/core/FormatSchema.h \
+    src/funcs/PumpCalculator.h \
+    src/funcs/BeamCalculator1.h
 
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -245,4 +247,6 @@ SOURCES += \
     src/io/z_io_json.cpp \
     src/PumpWindow.cpp \
     src/PumpParamsDialog.cpp \
-    src/core/FormatSchema.cpp
+    src/core/FormatSchema.cpp \
+    src/funcs/PumpCalculator.cpp \
+    src/funcs/BeamCalculator1.cpp

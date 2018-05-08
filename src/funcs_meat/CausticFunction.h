@@ -25,15 +25,33 @@ public:
     void setMode(Mode mode) { _mode = mode; }
 
 private:
-    enum class PumpMode { Gauss, RayVector };
+    /// Mode of input ray description for SP schema.
+    enum class PumpMode
+    {
+        Gauss,    ///< Input beam is a Gaussian beam described by its complex ROC.
+        RayVector ///< Inout beam is a geometric beam describied by it ray vector.
+    };
+
+    /// Wich type of result the function should compute.
     Mode _mode = Mode::BeamRadius;
-    Z::Complex _q_in_t, _q_in_s; // input complex ROC
-    Z::RayVector _ray_in_t, _ray_in_s; // input ray vector
+
+    /// Input complex ROC for PumpMode::Gauss.
+    Z::PairTS<Z::Complex> _inQ;
+
+    /// Input ray vector for PumpMode::RayVector.
+    Z::PairTS<Z::RayVector> _inRay;
+
     Z::Unit _beamsizeUnit = Z::Units::mkm(); // TODO: make configurable
     Z::Unit _curvatureUnit = Z::Units::m(); // TODO: make configurable
     Z::Unit _angleUnit = Z::Units::deg(); // TODO: make configurable
+
+    /// Schema wavelength in SI units.
     double _wavelenSI = 0;
+
+    /// Beam quality parameter for SP schemas.
     Z::PointTS _MI;
+
+    /// A way to calcuate input ray for SP schema.
     PumpMode _pumpMode;
 
     bool prepareSP();

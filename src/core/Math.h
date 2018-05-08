@@ -70,7 +70,8 @@ public:
     RayVector(const RayVector& in, const Matrix& m);
 
     void set(const double& y, const double& v) { Y = y, V = v; }
-    void set(const RayVector& v) { Y = v.Y, V = v.V; }
+
+    void operator = (const RayVector& v) { Y = v.Y, V = v.V; }
 
     QString str() const;
 };
