@@ -2,7 +2,7 @@
 #define CAUSTIC_WINDOW_H
 
 #include "PlotFuncWindowStorable.h"
-#include "../funcs_meat/CausticFunction.h"
+#include "../funcs/CausticFunction.h"
 
 class CausticWindow : public PlotFuncWindowStorable
 {

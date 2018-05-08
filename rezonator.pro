@@ -120,9 +120,9 @@ HEADERS += \
     src/widgets/VariableRangeWidget.h \
     src/widgets/WidgetResult.h \
     src/WindowsManager.h \
-    src/funcs_meat/StabilityMapFunction.h \
-    src/funcs_meat/StabilityMap2DFunction.h \
-    src/funcs_meat/CausticFunction.h \
+    src/funcs/StabilityMapFunction.h \
+    src/funcs/StabilityMap2DFunction.h \
+    src/funcs/CausticFunction.h \
     src/funcs_window/CausticWindow.h \
     src/funcs_window/InfoFuncWindow.h \
     src/funcs_window/PlotFuncWindow.h \
@@ -220,9 +220,9 @@ SOURCES += \
     src/widgets/VariableRangeWidget.cpp \
     src/widgets/WidgetResult.cpp \
     src/WindowsManager.cpp \
-    src/funcs_meat/StabilityMapFunction.cpp \
-    src/funcs_meat/StabilityMap2DFunction.cpp \
-    src/funcs_meat/CausticFunction.cpp \
+    src/funcs/StabilityMapFunction.cpp \
+    src/funcs/StabilityMap2DFunction.cpp \
+    src/funcs/CausticFunction.cpp \
     src/funcs_window/CausticWindow.cpp \
     src/funcs_window/InfoFuncWindow.cpp \
     src/funcs_window/PlotFuncWindow.cpp \

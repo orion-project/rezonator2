@@ -2,7 +2,7 @@
 #define WINDOW_STABILITY_MAP_2D_H
 
 #include "PlotFuncWindowStorable.h"
-#include "../funcs_meat/StabilityMap2DFunction.h"
+#include "../funcs/StabilityMap2DFunction.h"
 
 class StabilityMap2DWindow : public PlotFuncWindowStorable
 {
