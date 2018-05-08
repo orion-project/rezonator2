@@ -125,7 +125,6 @@ HEADERS += \
     src/funcs_meat/StabilityMapFunction.h \
     src/funcs_meat/StabilityMap2DFunction.h \
     src/funcs_meat/CausticFunction.h \
-    src/funcs_storable/StabilityMapStorable.h \
     src/funcs_window/CausticWindow.h \
     src/funcs_window/InfoFuncWindow.h \
     src/funcs_window/PlotFuncWindow.h \
