@@ -1,7 +1,7 @@
 #include "PumpWindow.h"
 
 #include "PumpParamsDialog.h"
-#include "core/FormatSchema.h"
+#include "funcs/FormatInfo.h"
 #include "widgets/Appearance.h"
 #include "widgets/RichTextItemDelegate.h"
 #include "widgets/ValuesEditorTS.h"
@@ -149,7 +149,7 @@ void PumpsTable::populateRow(Z::PumpParams *pump, int row)
     auto iconPath = pump->isActive() ? ":/icons/pump_on" : ":/icons/pump_off";
     item(row, COL_ACTIVE)->setData(Qt::DecorationRole, QIcon(iconPath).pixmap(_iconSize, _iconSize));
     item(row, COL_LABEL)->setText(pump->label());
-    item(row, COL_PARAMS)->setText(Z::Fmt::pumpParamsHtml(pump));
+    item(row, COL_PARAMS)->setText(Z::Format::pumpParamsHtml(pump));
     item(row, COL_TITLE)->setText("  " % pump->title());
 }
 

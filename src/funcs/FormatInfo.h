@@ -1,22 +1,35 @@
-#ifndef FORMATINFO_H
-#define FORMATINFO_H
+#ifndef FORMAT_INFO_H
+#define FORMAT_INFO_H
 
 #include <QString>
-#include <QApplication>
 
-#include "../core/Element.h"
+class Schema;
+class Element;
 
 namespace Z {
+
+class Matrix;
+class PumpParams;
+
 namespace Format {
 
 QString elementTitle(Element *elem);
 QString elementTitleAndMatrices(Element *elem);
+
 QString matrix(const Z::Matrix& m);
 QString matrices(const Z::Matrix& mt, const Z::Matrix& ms);
-QString roundTrip(const Elements &elems, bool hyperlinks = false);
+
+QString roundTrip(const QVector<Element*>& elems, bool hyperlinks = false);
+
 QString linkViewMatrix(Element *elem);
+
+QString elemParamsHtml(Schema *schema, Element *elem, bool showLinksToGlobals = true);
+QString pumpParamsHtml(Z::PumpParams *pump);
+
+template <class TParam>
+QString paramHtml(TParam *param);
 
 } // namespace Format
 } // namespace Z
 
-#endif // FORMATINFO_H
+#endif // FORMAT_INFO_H
