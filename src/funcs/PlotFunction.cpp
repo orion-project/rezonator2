@@ -1,4 +1,4 @@
-#include "Calculator.h"
+#include "RoundTripCalculator.h"
 #include "PlotFunction.h"
 #include "../core/Schema.h"
 #include "../core/Protocol.h"
@@ -154,7 +154,7 @@ bool PlotFunction::prepareCalculator(Element* ref, bool splitRange)
 {
     if (_calc) delete _calc;
 
-    _calc = new Calculator(_schema, ref);
+    _calc = new RoundTripCalculator(_schema, ref);
     _calc->calcRoundTrip(splitRange);
     if (_calc->isEmpty())
     {

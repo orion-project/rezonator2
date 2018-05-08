@@ -15,7 +15,7 @@ USE_GROUP(ElementFilterTests)                      // test_ElementFilter.cpp
 USE_GROUP(ElementsImagesTests)                     // test_ElementsImages.cpp
 USE_GROUP(SchemaTests)                             // test_Schema.cpp
 USE_GROUP(SchemaReaderIniTests)                    // test_SchemaReaderIni.cpp
-USE_GROUP(CalculatorTests)                         // test_Calculator.cpp
+USE_GROUP(RoundTripCalculatorTests)                // test_RoundTripCalculator.cpp
 USE_GROUP(InfoFunctionsTests)                      // test_InfoFunctions.cpp
 USE_GROUP(ElementSelectorWidgetTests)              // test_ElemSelectorWidget.cpp
 
@@ -32,7 +32,7 @@ TEST_SUITE(
     ADD_GROUP(ElementsImagesTests),
     ADD_GROUP(SchemaTests),
     ADD_GROUP(SchemaReaderIniTests),
-    ADD_GROUP(CalculatorTests),
+    ADD_GROUP(RoundTripCalculatorTests),
     ADD_GROUP(InfoFunctionsTests),
     ADD_GROUP(ElementSelectorWidgetTests),
 )

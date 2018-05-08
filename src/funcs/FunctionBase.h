@@ -12,7 +12,7 @@
     QString alias() const override { return s; }
 
 class Schema;
-class Calculator;
+class RoundTripCalculator;
 
 /**
     Base class for all functions.

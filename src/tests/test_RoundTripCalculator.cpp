@@ -1,9 +1,9 @@
 #include "testing/OriTestBase.h"
-#include "../funcs/Calculator.h"
+#include "../funcs/RoundTripCalculator.h"
 
 namespace Z {
 namespace Tests {
-namespace CalculatorTests {
+namespace RoundTripCalculatorTests {
 
 DECLARE_ELEMENT(TestElem, Element) DECLARE_ELEMENT_END
 DECLARE_ELEMENT(TestElemRange, ElementRange) DECLARE_ELEMENT_END
@@ -32,9 +32,9 @@ void populateSchema(Schema* schema, int ref, Element* ref_elem)
     Schema schema;\
     schema.setTripType(tripType);\
     populateSchema(&schema, ref, ref_elem);\
-    Calculator calc(&schema, ref_elem);
+    RoundTripCalculator calc(&schema, ref_elem);
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 #define ASSERT_ROUND_TRIP_SIZE\
     if (tripType == SW)\
@@ -73,7 +73,7 @@ TEST_CASE(rt_rr,     rt, RR, EL_MID, "2 1 0 3")
 TEST_CASE(rt_rr_beg, rt, RR, EL_BEG, "0 3 2 1")
 TEST_CASE(rt_rr_end, rt, RR, EL_END, "3 2 1 0")
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 #define ASSERT_ROUND_TRIP_MATRS\
     ASSERT_EQ_INT(calc.matrsT().size(), calc.roundTrip().size())\
@@ -120,8 +120,6 @@ TEST_CASE(rt_rr_matrs_norange_split_end,   rt_matrs_nosplit, RR, EL_END, false, 
 TEST_CASE(rt_rr_matrs_range_nosplit,       rt_matrs_nosplit, RR, EL_MID, true, false)
 TEST_CASE(rt_rr_matrs_range_nosplit_beg,   rt_matrs_nosplit, RR, EL_BEG, true, false)
 TEST_CASE(rt_rr_matrs_range_nosplit_end,   rt_matrs_nosplit, RR, EL_END, true, false)
-
-////////////////////////////////////////////////////////////////////////////////
 
 TEST_CASE_METHOD(rt_matrs_sw_rr, TripType tripType, int ref)
 {
@@ -174,9 +172,9 @@ TEST_CASE(rt_rr_matrs,     rt_matrs_sw_rr, RR, EL_MID)
 TEST_CASE(rt_rr_matrs_beg, rt_matrs_sw_rr, RR, EL_BEG)
 TEST_CASE(rt_rr_matrs_end, rt_matrs_sw_rr, RR, EL_END)
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
-TEST_GROUP("Calculator",
+TEST_GROUP("Round-trip Calculator",
            ADD_TEST(rt_sw),
            ADD_TEST(rt_sw_beg),
            ADD_TEST(rt_sw_end),
@@ -234,7 +232,7 @@ TEST_GROUP("Calculator",
            ADD_TEST(rt_rr_matrs_end),
 )
 
-} // namespace CalculatorTests
+} // namespace RoundTripCalculatorTests
 } // namespace Tests
 } // namespace Z
 

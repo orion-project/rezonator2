@@ -85,7 +85,6 @@ HEADERS += \
     src/ElementPropsDialog.h \
     src/ElementsCatalogDialog.h \
     src/funcs/BeamCalculator.h \
-    src/funcs/Calculator.h \
     src/funcs/FormatInfo.h \
     src/funcs/FunctionBase.h \
     src/funcs/InfoFunctions.h \
@@ -148,7 +147,8 @@ HEADERS += \
     src/PumpParamsDialog.h \
     src/funcs/PumpCalculator.h \
     src/funcs/BeamCalculator1.h \
-    src/tests/TestSuite.h
+    src/tests/TestSuite.h \
+    src/funcs/RoundTripCalculator.h
 
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -172,7 +172,6 @@ SOURCES += \
     src/ElementPropsDialog.cpp \
     src/ElementsCatalogDialog.cpp \
     src/funcs/BeamCalculator.cpp \
-    src/funcs/Calculator.cpp \
     src/funcs/FormatInfo.cpp \
     src/funcs/FunctionBase.cpp \
     src/funcs/InfoFunctions.cpp \
@@ -187,7 +186,6 @@ SOURCES += \
     src/RezonatorDialog.cpp \
     src/SchemaViewWindow.cpp \
     src/SchemaWindows.cpp \
-    src/tests/test_Calculator.cpp \
     src/tests/test_Element.cpp \
     src/tests/test_ElementFilter.cpp \
     src/tests/test_Elements.cpp \
@@ -246,4 +244,6 @@ SOURCES += \
     src/PumpWindow.cpp \
     src/PumpParamsDialog.cpp \
     src/funcs/PumpCalculator.cpp \
-    src/funcs/BeamCalculator1.cpp
+    src/funcs/BeamCalculator1.cpp \
+    src/tests/test_RoundTripCalculator.cpp \
+    src/funcs/RoundTripCalculator.cpp

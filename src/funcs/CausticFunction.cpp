@@ -5,7 +5,7 @@
 #include "../funcs/BeamCalculator.h"
 #include "../funcs/BeamCalculator1.h"
 #include "../funcs/PumpCalculator.h"
-#include "../funcs/Calculator.h"
+#include "../funcs/RoundTripCalculator.h"
 #include "../core/Protocol.h"
 
 using namespace Z;

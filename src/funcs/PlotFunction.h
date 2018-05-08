@@ -7,7 +7,7 @@
 #include "../core/Variable.h"
 #include "../core/CommonTypes.h"
 
-class Calculator;
+class RoundTripCalculator;
 class Schema;
 
 /**
@@ -110,7 +110,7 @@ public:
 
 protected:
     Z::Variable _arg;
-    Calculator* _calc = nullptr;
+    RoundTripCalculator* _calc = nullptr;
     Z::PairTS<PlotFuncResultSet> _results;
     FunctionRange _range;
     Z::Value _backupValue;

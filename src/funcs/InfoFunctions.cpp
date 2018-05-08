@@ -1,5 +1,5 @@
 #include "InfoFunctions.h"
-#include "Calculator.h"
+#include "RoundTripCalculator.h"
 #include "FormatInfo.h"
 #include "../core/Format.h"
 #include "../core/Schema.h"
@@ -93,7 +93,7 @@ FunctionBase::FunctionState InfoFuncMatrixRT::elementDeleting(Element *elem)
 
 QString InfoFuncMatrixRT::calculate()
 {
-    Calculator c(_schema, _element);
+    RoundTripCalculator c(_schema, _element);
     c.calcRoundTrip();
     c.multMatrix();
 

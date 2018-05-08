@@ -9,7 +9,7 @@
 #include "SchemaParamsWindow.h"
 #include "WindowsManager.h"
 #include "core/Format.h"
-#include "funcs/Calculator.h"
+#include "funcs/RoundTripCalculator.h"
 #include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
 #include "helpers/OriWindows.h"
