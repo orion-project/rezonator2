@@ -6,7 +6,7 @@
 #include <QSharedPointer>
 
 namespace Z {
-namespace Test {
+namespace Tests {
 namespace ElementsTests {
 
 #define ELEM(elem_type, expected_param_count) \
@@ -308,6 +308,6 @@ TEST_GROUP("Elements",
            )
 
 } // namespace ElementsTests
-} // namespace Test
+} // namespace Tests
 } // namespace Z
 

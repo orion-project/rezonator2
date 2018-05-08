@@ -2,7 +2,7 @@
 #include "../funcs/Calculator.h"
 
 namespace Z {
-namespace Test {
+namespace Tests {
 namespace CalculatorTests {
 
 DECLARE_ELEMENT(TestElem, Element) DECLARE_ELEMENT_END
@@ -235,6 +235,6 @@ TEST_GROUP("Calculator",
 )
 
 } // namespace CalculatorTests
-} // namespace Test
+} // namespace Tests
 } // namespace Z
 

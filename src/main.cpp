@@ -1,5 +1,5 @@
 #include "ProjectWindow.h"
-#include "test/rezonator_tests.h"
+#include "tests/TestSuite.h"
 #include "tools/OriDebug.h"
 #include "testing/OriTestManager.h"
 
@@ -13,11 +13,8 @@ int main(int argc, char* argv[])
     app.setApplicationName("reZonator");
     app.setOrganizationName("orion-project.org");
 
-    if (Ori::Test::isTesting())
-        return Ori::Test::run(app, { ADD_SUITE(Z::Test) });
-        // TODO: Segmentation fault (core dumped) после остановки приложения
-        // если оба набора Ori и Z добавлены, даже если тесты не запускались
-        // если только один из них добавлен (любой), то ошибки нет
+    if (Ori::Testing::isTesting())
+        return Ori::Testing::run(app, { ADD_SUITE(Z::Tests) });
 
     ProjectWindow pw;
     pw.show();

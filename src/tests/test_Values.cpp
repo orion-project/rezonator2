@@ -4,8 +4,12 @@
 #include "TestUtils.h"
 
 namespace Z {
-namespace Test {
+namespace Tests {
 namespace ValuesTests {
+
+#define ASSERT_VALUE_T_S(value, expectedT, expectedS)\
+    ASSERT_EQ_DBL(value.T, expectedT)\
+    ASSERT_EQ_DBL(value.S, expectedS)
 
 //------------------------------------------------------------------------------
 
@@ -118,6 +122,6 @@ TEST_GROUP("Values",
 )
 
 } // namespace ValuesTests
-} // namespace Test
+} // namespace Tests
 } // namespace Z
 

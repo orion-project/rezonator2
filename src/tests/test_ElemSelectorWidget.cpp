@@ -5,8 +5,14 @@
 #include "../widgets/ElemSelectorWidget.h"
 
 namespace Z {
-namespace Test {
+namespace Tests {
 namespace ElementSelectorWidgetTests {
+
+#define ASSERT_PTR_LIST(provided, expected)\
+    ASSERT_EQ_INT(provided.size(), expected.size())\
+    for (int i = 0; i < provided.size(); i++) {\
+        ASSERT_EQ_PTR(provided.at(i), expected.at(i))\
+    }
 
 #define TEST_SCHEMA(var)\
     Schema var;\
@@ -240,6 +246,6 @@ TEST_GROUP("Element Selector Widgets",
 )
 
 } // namespace ElementSelectorWidgetTests
-} // namespace Test
+} // namespace Tests
 } // namespace Z
 

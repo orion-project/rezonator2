@@ -2,20 +2,25 @@
 #include "../core/Elements.h"
 #include "../core/Schema.h"
 #include "../io/SchemaReaderIni.h"
-#include "TestSchemaListener.h"
 #include "TestUtils.h"
 
 #include <QApplication>
 #include <QFile>
 
 namespace Z {
-namespace Test {
+namespace Tests {
 namespace SchemaReaderIniTests {
 
 #define TEST_FILE(var, file_name)\
     QString var = qApp->applicationDirPath() % "/test/" % file_name;\
     if (!QFile::exists(var))\
         ASSERT_FAIL("File not exists: " + var)
+
+#define LOG_SCHEMA_FILE(file) {\
+    auto report = file.report().str().trimmed(); \
+    auto message = report.isEmpty()? "    (empty)": report;\
+    test->logMessage("Load report:\n" % message % "\n");\
+}
 
 #define READ_AND_ASSERT(file_name)\
     TEST_FILE(fullFileName, file_name)\
@@ -40,6 +45,19 @@ namespace SchemaReaderIniTests {
     if (p->dim() == Z::Dims::angular())\
         expected_value_in_units = expected_unit->fromSi(expected_value);\
     ASSERT_Z_VALUE_AND_UNIT(p->value(), expected_value_in_units, expected_unit)\
+}
+
+#define ASSERT_ELEMENT(elem_index, expected_type, expected_label, expected_title, expected_disabled) { \
+    TEST_LOG_SEPARATOR\
+    TEST_LOG(QString("Element #%1").arg(elem_index))\
+    ASSERT_IS_TRUE(elem_index < schema.elements().size())\
+    elem = schema.element(elem_index);\
+    TEST_LOG(elem->type())\
+    ASSERT_IS_TYPE(elem, Elem ## expected_type)\
+    TEST_LOG(elem->displayLabelTitle())\
+    ASSERT_EQ_STR(elem->label(), expected_label)\
+    ASSERT_EQ_STR(elem->title(), expected_title)\
+    ASSERT_IS_TRUE(elem->disabled() == expected_disabled)\
 }
 
 //------------------------------------------------------------------------------
@@ -100,7 +118,7 @@ TEST_METHOD(read_invalid_elem_param)
 TEST_METHOD(read_general)
 {
     TEST_FILE(fileName, "no_elems.she")
-    SCHEMA_AND_LISTENER
+    Schema schema;
     SchemaReaderIni file(&schema);
     file.readFromFile(fileName);
     LOG_SCHEMA_FILE(file)
@@ -302,5 +320,5 @@ TEST_GROUP("SchemaReaderIni",
 )
 
 } // namespace SchemaReaderIniTests
-} // namespace Test
+} // namespace Tests
 } // namespace Z

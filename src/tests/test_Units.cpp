@@ -9,8 +9,11 @@
 using namespace Z::Units;
 
 namespace Z {
-namespace Test {
+namespace Tests {
 namespace UnitsTests {
+
+#define RAD_TO_DEG(a) ((a)*180.0/M_PI)
+#define DEG_TO_RAD(a) ((a)*M_PI/180.0)
 
 #define SAME_VALUE(a, b) {                              \
     double left = a;                                    \
@@ -179,5 +182,5 @@ TEST_GROUP("Units",
 )
 
 } // namespace UnitsTests
-} // namespace Test
+} // namespace Tests
 } // namespace Z

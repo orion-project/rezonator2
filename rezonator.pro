@@ -99,9 +99,7 @@ HEADERS += \
     src/RezonatorDialog.h \
     src/SchemaViewWindow.h \
     src/SchemaWindows.h \
-    src/test/rezonator_tests.h \
-    src/test/TestSchemaListener.h \
-    src/test/TestUtils.h \
+    src/tests/TestUtils.h \
     src/VariableDialog.h \
     src/widgets/Appearance.h \
     src/widgets/CursorPanel.h \
@@ -149,7 +147,8 @@ HEADERS += \
     src/PumpWindow.h \
     src/PumpParamsDialog.h \
     src/funcs/PumpCalculator.h \
-    src/funcs/BeamCalculator1.h
+    src/funcs/BeamCalculator1.h \
+    src/tests/TestSuite.h
 
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -188,20 +187,20 @@ SOURCES += \
     src/RezonatorDialog.cpp \
     src/SchemaViewWindow.cpp \
     src/SchemaWindows.cpp \
-    src/test/test_Calculator.cpp \
-    src/test/test_Element.cpp \
-    src/test/test_ElementFilter.cpp \
-    src/test/test_Elements.cpp \
-    src/test/test_ElementsImages.cpp \
-    src/test/test_ElemSelectorWidget.cpp \
-    src/test/test_InfoFunctions.cpp \
-    src/test/test_Math.cpp \
-    src/test/test_Parameters.cpp \
-    src/test/test_Report.cpp \
-    src/test/test_Schema.cpp \
-    src/test/test_SchemaReaderIni.cpp \
-    src/test/test_Units.cpp \
-    src/test/test_Values.cpp \
+    src/tests/test_Calculator.cpp \
+    src/tests/test_Element.cpp \
+    src/tests/test_ElementFilter.cpp \
+    src/tests/test_Elements.cpp \
+    src/tests/test_ElementsImages.cpp \
+    src/tests/test_ElemSelectorWidget.cpp \
+    src/tests/test_InfoFunctions.cpp \
+    src/tests/test_Math.cpp \
+    src/tests/test_Parameters.cpp \
+    src/tests/test_Report.cpp \
+    src/tests/test_Schema.cpp \
+    src/tests/test_SchemaReaderIni.cpp \
+    src/tests/test_Units.cpp \
+    src/tests/test_Values.cpp \
     src/VariableDialog.cpp \
     src/widgets/Appearance.cpp \
     src/widgets/CursorPanel.cpp \

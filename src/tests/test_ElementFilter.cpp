@@ -5,7 +5,7 @@
 #include <QSharedPointer>
 
 namespace Z {
-namespace Test {
+namespace Tests {
 namespace ElementFilterTests {
 
 TEST_METHOD(ElementFilterEnabled_check)
@@ -62,7 +62,7 @@ TEST_GROUP("Element Filter",
 )
 
 } // namespace ElementFilterTests
-} // namespace Test
+} // namespace Tests
 } // namespace Z
 
 

@@ -7,7 +7,7 @@
 #include <QSvgRenderer>
 
 namespace Z {
-namespace Test {
+namespace Tests {
 namespace ElementsImagesTests {
 
 TEST_METHOD(resource_icons)
@@ -71,5 +71,5 @@ TEST_GROUP("Elements Images",
            )
 
 } // namespace ElementsImagesTests
-} // namespace Test
+} // namespace Tests
 } // namespace Z

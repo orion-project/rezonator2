@@ -2,7 +2,7 @@
 #include "tests/orion_tests.h"
 
 namespace Z {
-namespace Test {
+namespace Tests {
 
 USE_GROUP(ReportTests)                             // test_Report.cpp
 USE_GROUP(UnitsTests)                              // test_Units.cpp
@@ -20,7 +20,7 @@ USE_GROUP(InfoFunctionsTests)                      // test_InfoFunctions.cpp
 USE_GROUP(ElementSelectorWidgetTests)              // test_ElemSelectorWidget.cpp
 
 TEST_SUITE(
-    ADD_GROUP(Ori::Test::All),
+    ADD_GROUP(Ori::Tests::All),
     ADD_GROUP(ReportTests),
     ADD_GROUP(UnitsTests),
     ADD_GROUP(MathTests),
@@ -37,6 +37,6 @@ TEST_SUITE(
     ADD_GROUP(ElementSelectorWidgetTests),
 )
 
-} // namespace Test
+} // namespace Tests
 } // namespace Z
 

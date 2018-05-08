@@ -4,7 +4,7 @@
 #include "../core/Elements.h"
 
 namespace Z {
-namespace Test {
+namespace Tests {
 namespace InfoFunctionsTests {
 
 //------------------------------------------------------------------------------
@@ -61,6 +61,6 @@ TEST_GROUP("Information functions",
 )
 
 } // namespace InfoFunctionsTests
-} // namespace Test
+} // namespace Tests
 } // namespace Z
 
