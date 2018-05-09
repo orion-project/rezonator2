@@ -63,8 +63,36 @@ $$ z = \frac R 2 \pm \frac{\sqrt{ R^2 - 4 z_0^2 }}2  $$
 
 $+$ sign is for the far zone, $-$ is for the near zone.
 
-$$ w_0 = \sqrt{ \frac{w^2}{1 + \big( z_0/z \big)^2} } $$
+$$ w_0 = \sqrt{ \frac{w^2}{1 + \big( z/z_0 \big)^2} } $$
 
 $$ M^2 = \frac{ \pi w_0^2 }{ \lambda z_0 }  $$
 
 $$ V_s = \frac{M^2 \lambda}{\pi w_0}  $$
+
+## Change divergence angle
+
+### Lock waist
+With fixed waist radius $w_0$, find such a value of beam quality parameter $M^2$ that yelds to specified angle.
+
+$$ M^2 = \frac{ \pi w_0 V_s } \lambda $$
+
+$$ z_0 = \frac{\pi w_0^2}{M^2 \lambda}  $$
+
+$$ w = w_0 \sqrt{ 1 + \bigg( \frac{z}{z_0} \bigg)^2 } $$ 
+
+$$ R = z \Bigg[ 1 + \bigg( \frac{z_0}{z} \bigg)^2 \Bigg] $$
+
+$$ q^{-1} = \frac 1 R + i \frac{\lambda}{\pi w^2} $$
+
+### Lock front
+For specified $V_s$, find such a distance $z$ and beam quality $M^2$ at which the wavefront ROC keeps its previously calculated value .
+
+How to find $z$: substitute $z_0$ as $w_0/V_s$ into formulas for $w(z)$ and $R(z)$, express $w_0$ from both, equate them and solve against $z$.
+
+$$ z = \frac{w^2}{R V_s^2} $$
+
+$$ z_0 = \sqrt{z (R - z)}  $$
+
+$$ w_0 = \frac{w}{\sqrt{ 1 + \big( z/z_0 \big)^2} } $$
+
+$$ M^2 = \frac{\pi w_0^2}{z_0 \lambda} $$ 

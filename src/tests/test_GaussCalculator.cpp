@@ -81,11 +81,11 @@ TEST_METHOD(change_Z0)
     c.setZone(GaussCalculator::Zone::Far);
     c.calc();
 
-    __(M2, 122.5328, 1e-4)
+    __(M2, 3.210236, 1e-6)
     __(lambda, 1.1e-06, 1e-12)
-    _(w0, 0.0008285287)
+    _(w0, 0.0001341065)
     _(z0, 0.016)
-    _(Vs, 0.05178305)
+    _(Vs, 0.008381658)
     _(z, 0.09885022)
     _(w, 0.0008393119)
     _(R, 0.10144)
@@ -93,54 +93,73 @@ TEST_METHOD(change_Z0)
     _(imQ1, 0.4970454)
     _(reQ, 0.1011828)
     _(imQ, -0.005101664)
-/*
-    c.setZone(BeamCalculator::Zone::Near);
+
+    c.setZone(GaussCalculator::Zone::Near);
     c.calc();
 
-    __(M2, 3.210236, 1e-6)
+    __(M2, 122.5328, 1e-4)
     __(lambda, 1.1e-06, 1e-12)
-    _(w0, 0.0001341065)
+    _(w0, 0.0008285287)
     _(z0, 0.016)
-    _(Vs, 0.008381658)
+    _(Vs, 0.05178305)
     _(z, 0.002589777)
     _(w, 0.0008393119)
     _(R, 0.10144)
     __(reQ1, 9.858044, 1e-6)
     _(imQ1, 0.4970454)
     _(reQ, 0.1011828)
-    _(imQ, -0.005101664)*/
+    _(imQ, -0.005101664)
 }
-/*
-TEST_METHOD(calc_front_vs_Lambda)
+
+TEST_METHOD(change_Vs)
 {
-    BeamCalculator c;
-    c.setLock(BeamCalculator::Lock::Waist);
-    c.setZone(BeamCalculator::Zone::Far);
+    GaussCalculator c;
+    c.setZone(GaussCalculator::Zone::Far);
+    c.setLambda(640e-9);
     c.setW0(100e-6);
     c.setZ(0.1);
-    c.setLambda(980e-9);
+
+    c.setLock(GaussCalculator::Lock::Waist);
+    c.setVs(0.07);
     c.calc();
 
-    _(lambda, 980e-9)
-    _(w0, 100e-6)
-    _(z0, 0.0320571)
-    _(Vs, 0.0031194)
-    _(M2, 1)
+    __(M2, 34.36117, 1e-5)
+    __(lambda, 6.4e-07, 1e-12)
+    _(w0, 0.0001)
+    _(z0, 0.001428571)
+    _(Vs, 0.07)
     _(z, 0.1)
-    _(w, 0.0003276)
-    _(R, 0.1102766)
-    _(imQ, -0.0320571)
-    _(reQ, 0.1000000)
-    _(imQ1, 2.9069704)
-    _(reQ1, 9.0681105)
-}*/
+    _(w, 0.007000714)
+    _(R, 0.1000204)
+    __(reQ1, 9.99796, 1e-6)
+    _(imQ1, 0.004156669)
+    _(reQ, 0.1000204)
+    __(imQ, -4.158365e-05, 1e-9)
+
+    c.setLock(GaussCalculator::Lock::Front);
+    c.setVs(0.08);
+    c.calc();
+
+    __(M2, 1331.382, 1e-3)
+    __(lambda, 6.4e-07, 1e-12)
+    _(w0, 0.003390336)
+    _(z0, 0.04237919)
+    _(Vs, 0.08)
+    _(z, 0.0765625)
+    _(w, 0.007000714)
+    _(R, 0.1000204)
+    __(reQ1, 9.99796, 1e-6)
+    _(imQ1, 0.004156669)
+    _(reQ, 0.1000204)
+    __(imQ, -4.158365e-05, 1e-9)
+}
 
 //------------------------------------------------------------------------------
 
 TEST_GROUP("BeamCalculator",
            ADD_TEST(change_W0),
            ADD_TEST(change_Z0),
-     //      ADD_TEST(calc_front_vs_Lambda),
+           ADD_TEST(change_Vs),
            )
 
 } // namespace GaussCalculatorTests

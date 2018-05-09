@@ -8,132 +8,111 @@ from math import *
 from cmath import *
 from rezonator import *
 
-print('\n----------------------------------')
-print('Change waist:')
-wl = 980e-9  # wavelength
-z = 0.1      # axial distance
-mi = 2       # beam quality
+NAMES = ['mi', 'wl', 'w0', 'z0', 'Vs', 
+         'z', 'w', 'R', 'q_inv', 'q']
 
-print('\nLock waist:')
-w0 = 100e-6 # waist radius
+		 
+def change_W0():
+  print('\n----------------------------------')
+  print('Change waist:')
+  wl = 980e-9
+  z = 0.1
+  mi = 2
 
-z0 = pi * sqr(w0) / mi / wl
-Vs = mi * wl / pi / w0
-w = w0 * sqrt(1 + sqr(z/z0))
-R = z * (1 +  sqr(z0/z))
-q_inv = complex(1/R, wl/pi/sqr(w))
-q = 1 / q_inv
+  print('\nLock waist:')
+  w0 = 100e-6
+  
+  z0 = pi * sqr(w0) / mi / wl
+  Vs = mi * wl / pi / w0
+  w = w0 * sqrt(1 + sqr(z/z0))
+  R = z * (1 +  sqr(z0/z))
+  q_inv = complex(1/R, wl/pi/sqr(w))
+  q = 1 / q_inv
+  
+  for name in NAMES: print_res(name, eval(name))
 
-print_res('MI', mi)
-print_res('wl', wl)
-print_res('w0', w0)
-print_res('z0', z0)
-print_res('Vs', Vs)
-print_res('Vs(deg)', degrees(Vs))
-print_res('z', z)
-print_res('w', w)
-print_res('R', R)
-print_res('q_inv', q_inv)
-print_res('q', q)
+  print('\nLock font:')
+  w0 = 75e-6
+  
+  z = R*(1 - sqr(w0 / w))
+  z0 = sqrt(z * (R - z))
+  mi = pi * sqr(w0) / wl / z0
+  Vs = mi * wl / pi / w0
+  
+  for name in NAMES: print_res(name, eval(name))
 
-print('\nLock font:')
-w0 = 75e-6 # waist radius
 
-z = R*(1 - sqr(w0 / w))
-z0 = sqrt(z * (R - z))
-mi = pi * sqr(w0) / wl / z0
-Vs = mi * wl / pi / w0
+def change_Z0():
+  print('\n----------------------------------')
+  print('Change Rayleigh length:')
 
-print_res('MI', mi)
-print_res('wl', wl)
-print_res('w0', w0)
-print_res('z0', z0)
-print_res('Vs', Vs)
-print_res('Vs(deg)', degrees(Vs))
-print_res('z', z)
-print_res('w', w)
-print_res('R', R)
-print_res('q_inv', q_inv)
-print_res('q', q)
+  wl = 1.1e-6
+  w0 = 100e-6
+  z = 0.1
 
-del mi
-del wl
-del w0
-del z0
-del Vs
-del z
-del w
-del R
-del q_inv
-del q
+  print('\nLock waist:')
+  z0 = 0.012
+  
+  mi = pi * sqr(w0) / wl / z0
+  Vs = mi * wl / pi / w0
+  w = w0 * sqrt(1 + sqr(z/z0))
+  R = z * (1 +  sqr(z0/z))
+  q_inv = complex(1/R, wl/pi/sqr(w))
+  q = 1 / q_inv
+  
+  for name in NAMES: print_res(name, eval(name))
 
-print('\n----------------------------------')
-print('Change Rayleigh length:')
+  print('\nLock font:')
+  z0 = 0.016
 
-wl = 1.1e-6  # wavelength
-w0 = 100e-6  # waist radius
-z = 0.1      # axial distance
+  print('\nFar zone:')
+  z = R/2.0 + sqrt(sqr(R) - 4*sqr(z0))/2.0
+  w0 = sqrt(sqr(w) / (1 + sqr(z / z0)))
+  mi = pi * sqr(w0) / wl / z0
+  Vs = mi * wl / pi / w0
 
-print('\nLock waist:')
-z0 = 0.012
+  for name in NAMES: print_res(name, eval(name))
 
-mi = pi * sqr(w0) / wl / z0
-Vs = mi * wl / pi / w0
-w = w0 * sqrt(1 + sqr(z/z0))
-R = z * (1 +  sqr(z0/z))
-q_inv = complex(1/R, wl/pi/sqr(w))
-q = 1 / q_inv
+  print('\nNear zone:')
+  z = R/2.0 - sqrt(sqr(R) - 4*sqr(z0))/2.0
+  w0 = sqrt(sqr(w) / (1 + sqr(z / z0)))
+  mi = pi * sqr(w0) / wl / z0
+  Vs = mi * wl / pi / w0
 
-print_res('MI', mi)
-print_res('wl', wl)
-print_res('w0', w0)
-print_res('z0', z0)
-print_res('Vs', Vs)
-print_res('Vs(deg)', degrees(Vs))
-print_res('z', z)
-print_res('w', w)
-print_res('R', R)
-print_res('q_inv', q_inv)
-print_res('q', q)
+  for name in NAMES: print_res(name, eval(name))
 
-print('\nLock font:')
-z0 = 0.016
+	
+def change_Vs():
+  print('\n----------------------------------')
+  print('Change divergence angle:')
 
-print('\nFar zone:')
-z = R/2.0 + sqrt(sqr(R) - 4*sqr(z0))/2.0
-print('z={}, z0={}, w={}'.format(z,z0,w))
-#w0 = sqrt(sqr(w) / (1 + sqr(z0 / z)))
-w0 = w / sqrt((1 + sqr(z0 / z)))
-mi = pi * sqr(w0) / wl / z0
-Vs = mi * wl / pi / w0
+  wl = 640e-9
+  w0 = 100e-6
+  z = 0.1
 
-print_res('MI', mi)
-print_res('wl', wl)
-print_res('w0', w0)
-print_res('z0', z0)
-print_res('Vs', Vs)
-print_res('Vs(deg)', degrees(Vs))
-print_res('z', z)
-print_res('w', w)
-print_res('R', R)
-print_res('q_inv', q_inv)
-print_res('q', q)
-'''
-print('\nNear zone:')
-z = R/2.0 - sqrt(sqr(R) - 4*sqr(z0))/2.0
-w0 = sqrt(sqr(w) / (1 + sqr(z0 / z)))
-mi = pi * sqr(w0) / wl / z0
-Vs = mi * wl / pi / w0
+  print('\nLock waist:')
+  Vs = 0.07
 
-print_res('MI', mi)
-print_res('wl', wl)
-print_res('w0', w0)
-print_res('z0', z0)
-print_res('Vs', Vs)
-print_res('Vs(deg)', degrees(Vs))
-print_res('z', z)
-print_res('w', w)
-print_res('R', R)
-print_res('q_inv', q_inv)
-print_res('q', q)
-'''
+  mi = pi * w0 * Vs / wl
+  z0 = pi * sqr(w0) / mi / wl
+  w = w0 * sqrt(1 + sqr(z/z0))
+  R = z * (1 +  sqr(z0/z))
+  q_inv = complex(1/R, wl/pi/sqr(w))
+  q = 1 / q_inv
+
+  for name in NAMES: print_res(name, eval(name))
+
+  print('\nLock font:')
+  Vs = 0.08
+
+  z = sqr(w) / R / sqr(Vs)
+  z0 = sqrt(z * (R - z))
+  w0 = w / sqrt(1 + sqr(z / z0))
+  mi = pi * sqr(w0) / wl / z0
+
+  for name in NAMES: print_res(name, eval(name))
+		
+	
+change_W0()
+change_Z0()
+change_Vs()
