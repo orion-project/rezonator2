@@ -53,11 +53,6 @@ void GaussCalculator::calc()
         {
             LOG_REF(W0, Waist)
             calc_Z0_from_W0_M2();
-            calc_Vs_from_W0_M2();
-            calc_W_from_W0_Z_Z0();
-            calc_R_from_Z_Z0();
-            calc_Q1_from_W_R();
-            calc_Q_from_Q1();
         }
         else
         {
@@ -65,29 +60,31 @@ void GaussCalculator::calc()
             calc_Z_from_R_W_W0();
             calc_Z0_from_R_Z();
             calc_M2_from_W0_Z0();
-            calc_Vs_from_W0_M2();
         }
+        calc_Vs_from_W0_M2();
+        calc_W_from_W0_Z_Z0();
+        calc_R_from_Z_Z0();
+        calc_Q1_from_W_R();
+        calc_Q_from_Q1();
         break;
 
     case Ref::Z0:
         if (_lock == Lock::Waist)
         {
             LOG_REF(Z0, Waist)
-            calc_M2_from_W0_Z0();
-            calc_Vs_from_W0_M2();
-            calc_W_from_W0_Z_Z0();
-            calc_R_from_Z_Z0();
-            calc_Q1_from_W_R();
-            calc_Q_from_Q1();
         }
         else
         {
             LOG_REF(Z0, Front)
             calc_Z_from_R_Z0();
             calc_W0_from_W_Z_Z0();
-            calc_M2_from_W0_Z0();
-            calc_Vs_from_W0_M2();
         }
+        calc_M2_from_W0_Z0();
+        calc_Vs_from_W0_M2();
+        calc_W_from_W0_Z_Z0();
+        calc_R_from_Z_Z0();
+        calc_Q1_from_W_R();
+        calc_Q_from_Q1();
         break;
 
     case Ref::Vs:
@@ -96,10 +93,6 @@ void GaussCalculator::calc()
             LOG_REF(Vs, Waist)
             calc_M2_from_W0_Vs();
             calc_Z0_from_W0_M2();
-            calc_W_from_W0_Z_Z0();
-            calc_R_from_Z_Z0();
-            calc_Q1_from_W_R();
-            calc_Q_from_Q1();
         }
         else
         {
@@ -109,6 +102,10 @@ void GaussCalculator::calc()
             calc_W0_from_W_Z_Z0();
             calc_M2_from_W0_Z0();
         }
+        calc_W_from_W0_Z_Z0();
+        calc_R_from_Z_Z0();
+        calc_Q1_from_W_R();
+        calc_Q_from_Q1();
         break;
 
     case Ref::M2:
@@ -116,20 +113,19 @@ void GaussCalculator::calc()
         {
             LOG_REF(M2, Waist)
             calc_Z0_from_W0_M2();
-            calc_Vs_from_W0_M2();
-            calc_W_from_W0_Z_Z0();
-            calc_R_from_Z_Z0();
-            calc_Q1_from_W_R();
-            calc_Q_from_Q1();
         }
         else
         {
             LOG_REF(M2, Front)
+            calc_Z_from_R_W_M2();
             calc_Z0_from_R_Z();
-            calc_W0_from_W_Z_Z0();
-            calc_M2_from_W0_Z0();
-            calc_Vs_from_W0_M2();
+            calc_W0_from_Z0_M2();
         }
+        calc_Vs_from_W0_M2();
+        calc_W_from_W0_Z_Z0();
+        calc_R_from_Z_Z0();
+        calc_Q1_from_W_R();
+        calc_Q_from_Q1();
         break;
 
     case Ref::Z:
@@ -137,11 +133,6 @@ void GaussCalculator::calc()
         {
             LOG_REF(Z, Waist)
             calc_Z0_from_W0_M2();
-            calc_Vs_from_W0_M2();
-            calc_W_from_W0_Z_Z0();
-            calc_R_from_Z_Z0();
-            calc_Q1_from_W_R();
-            calc_Q_from_Q1();
         }
         else
         {
@@ -149,8 +140,12 @@ void GaussCalculator::calc()
             calc_Z0_from_R_Z();
             calc_W0_from_W_Z_Z0();
             calc_M2_from_W0_Z0();
-            calc_Vs_from_W0_M2();
         }
+        calc_Vs_from_W0_M2();
+        calc_W_from_W0_Z_Z0();
+        calc_R_from_Z_Z0();
+        calc_Q1_from_W_R();
+        calc_Q_from_Q1();
         break;
 
     case Ref::W:
@@ -160,7 +155,6 @@ void GaussCalculator::calc()
             calc_Z0_from_W0_W_Z();
             calc_M2_from_W0_Z0();
             calc_Vs_from_W0_M2();
-            calc_R_from_Z_Z0();
         }
         else
         {
@@ -170,6 +164,7 @@ void GaussCalculator::calc()
             calc_M2_from_W0_Z0();
             calc_Vs_from_W0_M2();
         }
+        calc_R_from_Z_Z0();
         calc_Q1_from_W_R();
         calc_Q_from_Q1();
         break;
@@ -353,4 +348,11 @@ void GaussCalculator::calc_Z_from_W_R_Vs()
 {
     _z = _w*_w / _R / (_Vs*_Vs);
     LOG_VARS("calc_Z_from_W_R_Vs", _w, _R, _Vs, _z)
+}
+
+void GaussCalculator::calc_Z_from_R_W_M2()
+{
+    double tmp = _w*_w*_w*_w * _PI_*_PI_;
+    _z = tmp * _R / (_M2*_M2 * _lambda*_lambda * _R*_R + tmp);
+    LOG_VARS("calc_Z_from_R_W_M2", _w, _R, _M2, _lambda, _z)
 }

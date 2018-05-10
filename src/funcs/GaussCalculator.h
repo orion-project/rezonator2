@@ -93,6 +93,7 @@ private:
     void calc_Z_from_R_Z0();
     void calc_Z_from_R_W_W0();
     void calc_Z_from_W_R_Vs();
+    void calc_Z_from_R_W_M2();
 };
 
 #endif // GAUSS_CALCULATOR_H

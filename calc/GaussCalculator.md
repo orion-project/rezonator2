@@ -1,15 +1,16 @@
 # Gauss calculator tool formulas
 
-*Gauss calculator tool* computes some free parameters of Gaussian beam, when changing one of its parameter and fixing some others. As it is not possible to make all the parameters to be free, we introduce two fixing mode called *Lock waist* and *Lock front*.
+*Gauss Calculator Tool* computes some free parameters of Gaussian beam, when changing one of its parameter and fixing some others. As it is not possible to make all the parameters to be free, we introduce two fixing mode called *Lock waist* and *Lock front*.
 
-- Lock waist - find such values of free parameters at which the beam waist stays constant when one of parameters changes.
-- Lock front - find such values of free parameters at which the wavefront ROC stays constant when one of parameters changes.
+- Lock waist - find such values of free parameters at which the beam waist $w_0$ stays constant when one of parameters changes.
+- Lock front - find such values of free parameters at which the wavefront ROC $R$ and the beam radius $w$ at some axial distance $z$ stay constant when one of parameters changes.
 
 Quadratic equations have two solutions and we have to define a way to point out which solution to take. So the tool has an additional parameter - zone - which can be *Near zone* or *Far zone*.
 
-Test values for the tool is calculated via script `BeamCalculator.py`.
+Test values for the tool is calculated via script `GaussCalculator.py`.
 
-## Change waist
+
+## Change waist $w_0$
 
 ### Lock waist
 
@@ -41,7 +42,8 @@ $$ M^2 = \frac{ \pi w_0^2 }{ \lambda z_0 }  $$
 
 $$ V_s = \frac{M^2 \lambda}{\pi w_0}  $$
 
-## Change Rayleigh length
+
+## Change Rayleigh length $z_0$
 
 ### Lock waist
 With fixed waist radius $w_0$, find a value of the beam quality parameter $M^2$ which yields the specified $z_0$.
@@ -69,7 +71,8 @@ $$ M^2 = \frac{ \pi w_0^2 }{ \lambda z_0 }  $$
 
 $$ V_s = \frac{M^2 \lambda}{\pi w_0}  $$
 
-## Change divergence angle
+
+## Change divergence angle $V_s$
 
 ### Lock waist
 With fixed waist radius $w_0$, find such a value of beam quality parameter $M^2$ that yelds to specified angle.
@@ -96,3 +99,86 @@ $$ z_0 = \sqrt{z (R - z)}  $$
 $$ w_0 = \frac{w}{\sqrt{ 1 + \big( z/z_0 \big)^2} } $$
 
 $$ M^2 = \frac{\pi w_0^2}{z_0 \lambda} $$ 
+
+
+## Change axial distance $z$
+
+### Lock waist
+
+$$ z_0 = \frac{\pi w_0^2}{M^2 \lambda}  $$
+
+$$ V_s = \frac{M^2 \lambda}{\pi w_0}  $$
+
+$$ w = w_0 \sqrt{ 1 + \bigg( \frac{z}{z_0} \bigg)^2 } $$ 
+
+$$ R = z \Bigg[ 1 + \bigg( \frac{z_0}{z} \bigg)^2 \Bigg] $$
+
+$$ q^{-1} = \frac 1 R + i \frac{\lambda}{\pi w^2} $$
+
+### Lock front
+
+$$ z_0 = \sqrt{z (R - z)}  $$
+
+$$ w_0 = \frac{w}{\sqrt{ 1 + \big( z/z_0 \big)^2} } $$
+
+$$ M^2 = \frac{\pi w_0^2}{z_0 \lambda} $$ 
+
+$$ V_s = \frac{M^2 \lambda}{\pi w_0}  $$
+
+
+## Change beam quality $M^2$
+
+### Lock waist
+The same as when waist is changed.
+
+$$ z_0 = \frac{\pi w_0^2}{M^2 \lambda}  $$
+
+$$ V_s = \frac{M^2 \lambda}{\pi w_0}  $$
+
+$$ w = w_0 \sqrt{ 1 + \bigg( \frac{z}{z_0} \bigg)^2 } $$ 
+
+$$ R = z \Bigg[ 1 + \bigg( \frac{z_0}{z} \bigg)^2 \Bigg] $$
+
+$$ q^{-1} = \frac 1 R + i \frac{\lambda}{\pi w^2} $$
+
+### Lock front
+Taking a new value of $M^2$, find such a distance $z$ and waist radius $w_0$ preserving constant wavefront.
+
+How to find $z$: express $w_0^2$ from formula for $R(z)$, substitute the expression into formula for $w(z)$ and solve it against $z$.
+
+$$ z = \frac{w^4 \pi^2 R}{\big(M^2 \lambda R\big)^2 + w^4 \pi^2} $$
+
+$$ z_0 = \sqrt{z (R - z)}  $$
+
+$$ w_0 = \frac{w}{\sqrt{ 1 + \big( z/z_0 \big)^2} } $$
+
+$$ V_s = \frac{M^2 \lambda}{\pi w_0}  $$
+
+
+## Change beam radius $w$
+
+### Lock waist
+
+$$ z_0 = \frac{z w_0}{\sqrt{w^2 - w_0^2}} $$
+
+$$ M^2 = \frac{\pi w_0^2}{z_0 \lambda} $$ 
+
+$$ V_s = \frac{M^2 \lambda}{\pi w_0}  $$
+
+$$ R = z \Bigg[ 1 + \bigg( \frac{z_0}{z} \bigg)^2 \Bigg] $$
+
+$$ q^{-1} = \frac 1 R + i \frac{\lambda}{\pi w^2} $$
+
+### Lock front
+Find a waist radius $w_0$ and beam quality paramater $M^2$ giving specified beam radius at the same axial distance $z$.
+
+$$ z_0 = \sqrt{z (R - z)}  $$
+
+$$ w_0 = \frac{w}{\sqrt{ 1 + \big( z/z_0 \big)^2} } $$
+
+$$ M^2 = \frac{\pi w_0^2}{z_0 \lambda} $$ 
+
+$$ V_s = \frac{M^2 \lambda}{\pi w_0}  $$
+
+$$ q^{-1} = \frac 1 R + i \frac{\lambda}{\pi w^2} $$
+
