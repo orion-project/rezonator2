@@ -2,18 +2,14 @@
 #include "../core/Units.h"
 #include "TestUtils.h"
 
-#ifdef Q_OS_MACOS
-#include <cmath>
-#endif
-
 using namespace Z::Units;
 
 namespace Z {
 namespace Tests {
 namespace UnitsTests {
 
-#define RAD_TO_DEG(a) ((a)*180.0/M_PI)
-#define DEG_TO_RAD(a) ((a)*M_PI/180.0)
+#define RAD_TO_DEG(a) ((a)*180.0/3.14159265358979323846)
+#define DEG_TO_RAD(a) ((a)*3.14159265358979323846/180.0)
 
 #define SAME_VALUE(a, b) {                              \
     double left = a;                                    \
