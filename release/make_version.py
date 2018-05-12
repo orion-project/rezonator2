@@ -86,7 +86,9 @@ if __name__ == '__main__':
         exit
     
     # We have version now
-    print('Version: %s.%s.%s.%s-%s' % (version_major, version_minor, version_micro, commits_after_tag, codename))
+    version_str = '%s.%s.%s.%s-%s' % (version_major, version_minor, version_micro, commits_after_tag, codename)
+    print('Version: %s' % version_str)
+    set_file_text('release/version.txt', version_str)
 
     # Update version.pri
     print('Updating version.pri')
