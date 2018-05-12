@@ -12,7 +12,7 @@ Currently version 2 is working but it is in early alpha state and does not imple
 ## Prepare build environment
 
 ### Clone git repository
-```
+```bash
 git clone https://github.com/orion-project/rezonator2
 cd rezonator2
 git submodule init
@@ -23,7 +23,7 @@ Note that submodules are in 'detached head' state by default.
 ### Prepare third-party libraries
 
 #### Linux/MacOS
-```
+```bash
 chmod +x ./scripts/prepare_deps.sh
 ./scripts/prepare_deps.sh
 ```
@@ -35,12 +35,23 @@ Windows does not provide default command line tools like `wget`, `tar` or `make`
 ## Build
 
 ### Application
-Only building via *Qt Creator IDE* is currently supported. 
-Just open project file `rezonator.pro` in IDE and configure it to use some of installed Qt-kits. 
-Any of modern Qt 5.* kits should suit.
+
+#### Linux
+```bash
+./scripts/make_release_linux.sh -b
+```
+#### MacOS
+    TODO
+#### Windows
+```bash
+scripts\build_release_win.bat
+```
+Ensure that Qt bin directory is in your PATH to make above scripts working. On Windows you have to put MinGW bin directory in PATH too.
+
+Note that above scripts do full rebuild and it takes a while. Use *Qt Creator IDE* to do dev builds. Just open project file `rezonator.pro` in the IDE and configure it to use some of installed Qt-kits. Any of modern Qt 5.8+ kits should suit.
 
 ### Source code documentation
-```
+```bash
 sudo apt install doxygen
 sudo apt install graphviz
 mkdir -p out/src-doc
@@ -51,7 +62,5 @@ doxygen
     TODO
 
 ## Run
-Target file is `bin/rezonator` (Linux) or `bin\rezonator.exe` (Windows). 
+Target file is `bin/rezonator` (Linux), `bin/rezonator.app` (MacOS), or `bin\rezonator.exe` (Windows). 
 
-To run program outside of IDE on Linux, you should use script `bin/rezonator.sh`.
-It modifies `LD_LIBRARY_PATH` environment variable allowing program to load shared libraries from its `bin` directory.
