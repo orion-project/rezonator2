@@ -6,7 +6,7 @@
 
 #define _PI_ 3.14159265358979323846
 
-#define LOG_STAGES
+//#define LOG_STAGES
 
 #ifdef LOG_STAGES
 #define LOG_REF(var, lock)\
@@ -32,11 +32,6 @@ void GaussCalculator::calc()
         {
             LOG_REF(Lambda, Waist)
             calc_Z0_from_W0_M2();
-            calc_Vs_from_W0_M2();
-            calc_W_from_W0_Z_Z0();
-            calc_R_from_Z_Z0();
-            calc_Q1_from_W_R();
-            calc_Q_from_Q1();
         }
         else
         {
@@ -44,8 +39,12 @@ void GaussCalculator::calc()
             calc_Z0_from_R_Z();
             calc_W0_from_W_Z_Z0();
             calc_M2_from_W0_Z0();
-            calc_Vs_from_W0_M2();
         }
+        calc_Vs_from_W0_M2();
+        calc_W_from_W0_Z_Z0();
+        calc_R_from_Z_Z0();
+        calc_Q1_from_W_R();
+        calc_Q_from_Q1();
         break;
 
     case Ref::W0:
@@ -176,7 +175,6 @@ void GaussCalculator::calc()
             calc_Z0_from_R_Z();
             calc_M2_from_W0_Z0();
             calc_Vs_from_W0_M2();
-            calc_W_from_W0_Z_Z0();
         }
         else
         {
@@ -186,6 +184,7 @@ void GaussCalculator::calc()
             calc_M2_from_W0_Z0();
             calc_Vs_from_W0_M2();
         }
+        calc_W_from_W0_Z_Z0();
         calc_Q1_from_W_R();
         calc_Q_from_Q1();
         break;
@@ -198,7 +197,6 @@ void GaussCalculator::calc()
             calc_W_from_Q1();
             calc_R_from_Q1();
             calc_Z_from_R_W_W0();
-            calc_Z0_from_R_Z();
         }
         else
         {
@@ -206,9 +204,9 @@ void GaussCalculator::calc()
             calc_Q1_from_Q();
             calc_W_from_Q1();
             calc_R_from_Q1();
-            calc_Z0_from_R_Z();
-            calc_W0_from_W_Z_Z0();
         }
+        calc_Z0_from_R_Z();
+        calc_W0_from_W_Z_Z0();
         calc_M2_from_W0_Z0();
         calc_Vs_from_W0_M2();
         break;
