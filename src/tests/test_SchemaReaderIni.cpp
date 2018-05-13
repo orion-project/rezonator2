@@ -44,7 +44,7 @@ namespace SchemaReaderIniTests {
     double expected_value_in_units = expected_value;\
     if (p->dim() == Z::Dims::angular())\
         expected_value_in_units = expected_unit->fromSi(expected_value);\
-    ASSERT_Z_VALUE_AND_UNIT(p->value(), expected_value_in_units, expected_unit)\
+    ASSERT_EQ_ZVALUE(p->value(), Z::Value(expected_value_in_units, expected_unit))\
 }
 
 #define ASSERT_ELEMENT(elem_index, expected_type, expected_label, expected_title, expected_disabled) { \
@@ -128,7 +128,7 @@ TEST_METHOD(read_general)
     //ASSERT_EQ_STR(schema.title(), "Empty schema")
     //ASSERT_EQ_STR(schema.comment(), "Multi-line comment is not supported")
     ASSERT_EQ_INT(schema.tripType(), TripType::SP)
-    ASSERT_Z_VALUE_AND_UNIT(schema.wavelength().value(), 1064, Z::Units::Ao())
+    ASSERT_EQ_ZVALUE(schema.wavelength().value(), 1064_Ao)
 }
 
 TEST_CASE_METHOD(read_schema, const QString& fileName,
@@ -142,7 +142,7 @@ TEST_CASE_METHOD(read_schema, const QString& fileName,
     READ_SCHEMA(fileName)
 
     TEST_LOG(schema.wavelength().str())
-    ASSERT_Z_VALUE_AND_UNIT(schema.wavelength().value(), 1064, expectedLambdaUnit)
+    ASSERT_EQ_ZVALUE(schema.wavelength().value(), Z::Value(1064, expectedLambdaUnit))
     ASSERT_EQ_INT(schema.tripType(), expectedTripType)
 
     Element *elem;
@@ -238,7 +238,7 @@ TEST_CASE(read_schema_1_2, read_schema, "all_elems_ver-1-2.she", Z::Units::mkm()
 #define ASSERT_PUMP_PARAM(param, expected_valueT, expected_valueS, expected_unit)\
     ASSERT_NEAR_DBL(pump->param()->value().rawValueT(), expected_valueT, 1e-6)\
     ASSERT_NEAR_DBL(pump->param()->value().rawValueS(), expected_valueS, 1e-6)\
-    ASSERT_UNIT(pump->param()->value().unit(), Z::Units::expected_unit())
+    ASSERT_EQ_UNIT(pump->param()->value().unit(), Z::Units::expected_unit())
 
 #define ASSERT_PUMP(file_name, mode, param1, value1T, value1S, unit1, param2, value2T, value2S, unit2, param3, value3T, value3S, unit3)\
     READ_SCHEMA(file_name)\

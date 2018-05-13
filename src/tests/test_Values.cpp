@@ -16,10 +16,12 @@ namespace ValuesTests {
 TEST_METHOD(Value_ctor)
 {
     Z::Value v1(3.14, Z::Units::mkm());
-    ASSERT_Z_VALUE_AND_UNIT(v1, 3.14, Z::Units::mkm())
+    ASSERT_EQ_DBL(v1.value(), 3.14)
+    ASSERT_EQ_UNIT(v1.unit(), Z::Units::mkm())
 
     Z::Value v2(v1);
-    ASSERT_Z_VALUE_AND_UNIT(v2, 3.14, Z::Units::mkm())
+    ASSERT_EQ_DBL(v1.value(), 3.14)
+    ASSERT_EQ_UNIT(v1.unit(), Z::Units::mkm())
 }
 
 //------------------------------------------------------------------------------
@@ -46,41 +48,33 @@ TEST_METHOD(Value_toSi)
     ASSERT_EQ_DBL(unit.processedValue, v.value());
 }
 
-#define _(val) Z::Value(val,
-#define _m Z::Units::m())
-#define _cm Z::Units::cm())
-
 TEST_METHOD(Value_equality)
 {
-    Z::Value v(_(3.14)_m);
+    Z::Value v(3.14_m);
     ASSERT_IS_TRUE(v == 3.14)
-    ASSERT_IS_TRUE(v == _(3.14)_m)
-    ASSERT_IS_TRUE(v == _(314)_cm)
+    ASSERT_IS_TRUE(v == 3.14_m)
+    ASSERT_IS_TRUE(v == 314_cm)
 
     ASSERT_IS_TRUE(v != 314)
-    ASSERT_IS_TRUE(v != _(314)_m)
-    ASSERT_IS_TRUE(v != _(3.14)_cm)
+    ASSERT_IS_TRUE(v != 314_m)
+    ASSERT_IS_TRUE(v != 3.14_cm)
 }
 
 TEST_METHOD(Value_compare)
 {
-    ASSERT_IS_TRUE(_(3.14)_m > _(3.14)_cm)
+    ASSERT_IS_TRUE(3.14_m > 3.14_cm)
 
-    ASSERT_IS_TRUE(_(3.14)_m > _(3.14)_cm)
-    ASSERT_IS_TRUE(_(3.14)_m >= _(3.14)_cm)
+    ASSERT_IS_TRUE(3.14_m > 3.14_cm)
+    ASSERT_IS_TRUE(3.14_m >= 3.14_cm)
 
-    ASSERT_IS_TRUE(_(3.14)_cm < _(3.14)_m)
-    ASSERT_IS_TRUE(_(3.14)_cm <= _(3.14)_m)
+    ASSERT_IS_TRUE(3.14_cm < 3.14_m)
+    ASSERT_IS_TRUE(3.14_cm <= 3.14_m)
 
-    ASSERT_IS_TRUE(_(3.14)_cm >= _(3.14)_cm)
+    ASSERT_IS_TRUE(3.14_cm >= 3.14_cm)
 
     // For statistics: comparison of 3.14cm fails but 3.141cm passes on Windows MinGW 5.3 x32
-    ASSERT_IS_TRUE(_(3.141)_cm <= _(3.141)_cm)
+    ASSERT_IS_TRUE(3.141_cm <= 3.141_cm)
 }
-
-#undef _
-#undef _m
-#undef _cm
 
 //------------------------------------------------------------------------------
 

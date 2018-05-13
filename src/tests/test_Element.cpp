@@ -101,7 +101,7 @@ TEST_METHOD(Element_must_add_param_in_ctor)
 
     Z::Parameter* p = el.params().at(0);
     ASSERT_EQ_PTR(p->dim(), Z::Dims::linear())
-    ASSERT_Z_VALUE_AND_UNIT(p->value(), 3.14, Z::Units::mkm())
+    ASSERT_EQ_ZVALUE(p->value(), 3.14_mkm)
 }
 
 TEST_METHOD(Element_must_listen_its_params)
@@ -109,7 +109,7 @@ TEST_METHOD(Element_must_listen_its_params)
     TestElement el;
     ASSERT_IS_NULL(el.changedParam);
 
-    el.params().at(0)->setValue(Z::Value(1, Z::Units::mm()));
+    el.params().at(0)->setValue(1_mm);
     ASSERT_EQ_PTR(el.changedParam, el.params().at(0));
 }
 
@@ -246,7 +246,7 @@ TEST_METHOD(Element_setLabel_must_raise_event)
 TEST_METHOD(ElementOwner_setParam_must_recalculate_matrix)
 {
     TestElement elem;
-    elem.params()[0]->setValue(Z::Value(100, Z::Units::mkm()));
+    elem.params()[0]->setValue(100_mkm);
     ASSERT_MATRIX_CALCULATED(elem)
 }
 
@@ -254,7 +254,7 @@ TEST_METHOD(ElementOwner_setParam_must_recalculate_matrix_when_locked)
 {
     TestElement elem;
     elem.lock();
-    elem.params()[0]->setValue(Z::Value(100, Z::Units::mkm()));
+    elem.params()[0]->setValue(100_mkm);
     ASSERT_MATRIX_CALCULATED(elem)
 }
 
@@ -263,11 +263,11 @@ TEST_METHOD(ElementOwner_setParam_must_raise_event)
     ELEMENT_AND_OWNER
 
     elem.lock();
-    elem.params()[0]->setValue(Z::Value(100, Z::Units::mkm()));
+    elem.params()[0]->setValue(100_mkm);
     ASSERT_OWNER_NOT_NOTIFYED
 
     elem.unlock();
-    elem.params()[0]->setValue(Z::Value(150, Z::Units::mm()));
+    elem.params()[0]->setValue(150_mm);
     ASSERT_OWNER_NOTIFYED
 }
 

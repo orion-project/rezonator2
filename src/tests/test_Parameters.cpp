@@ -31,11 +31,11 @@ TEST_METHOD(Parameter_setValue_getValue)
 {
     Z::Parameter p(Z::Dims::linear(), "", "", "");
 
-    p.setValue(Z::Value(100, Z::Units::m()));
-    ASSERT_Z_VALUE_AND_UNIT(p.value(), 100, Z::Units::m())
+    p.setValue(100_m);
+    ASSERT_EQ_ZVALUE(p.value(), 100_m)
 
-    p.setValue(Z::Value(3.14, Z::Units::mm()));
-    ASSERT_Z_VALUE_AND_UNIT(p.value(), 3.14, Z::Units::mm())
+    p.setValue(3.14_mm);
+    ASSERT_EQ_ZVALUE(p.value(), 3.14_mm)
 }
 
 //------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ TEST_METHOD(ParameterListener_parameterChanged)
     p.addListener(&listener);
 
     listener.changedParam.clear();
-    p.setValue(Z::Value(100, Z::Units::mm()));
+    p.setValue(100_mm);
     ASSERT_EQ_STR(listener.changedParam, p.name());
 }
 
