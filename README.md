@@ -36,15 +36,13 @@ Windows does not provide default command line tools like `wget`, `tar` or `make`
 
 ### Application
 
-#### Linux
+#### Linux/MacOS
 ```bash
-./scripts/make_release_linux.sh -b
+./scripts/build_release.sh
 ```
-#### MacOS
-    TODO
 #### Windows
 ```bash
-scripts\build_release_win.bat
+scripts\build_release.bat
 ```
 Ensure that Qt bin directory is in your PATH to make above scripts working. On Windows you have to put MinGW bin directory in PATH too.
 

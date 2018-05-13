@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# Check if qmake in path
+# Check if qmake is in PATH
 QMAKE_VER="$(qmake -v)"
 if [[ -z "${QMAKE_VER}" ]]; then
   echo

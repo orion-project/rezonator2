@@ -1,6 +1,10 @@
 #include "testing/OriTestBase.h"
 #include "../funcs/GaussCalculator.h"
 
+#ifdef Q_OS_MAC
+#include <cmath>
+#endif
+
 // Test values are produced by script $PROJECT/calc/GaussCalculator.py
 
 namespace Z {
@@ -9,7 +13,7 @@ namespace GaussCalculatorTests {
 
 #define _(p, value, order)\
 {\
-    constexpr double epsilon = std::pow(10, -order);\
+    const double epsilon = std::pow(10.0, -order);\
     ASSERT_NEAR_DBL(c.p(), value, epsilon)\
 }
 

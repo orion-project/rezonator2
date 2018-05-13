@@ -51,6 +51,6 @@ if [ -f ../release/version.txt ]; then
 else
   echo
   echo "Warning: Unknown release version."
-  echo "Run ../release/make_version.py script to generate version number."
+  echo "Run release/make_version.py script to generate version number."
 fi
 
