@@ -141,6 +141,7 @@ void ProjectWindow::createActions()
 
     actnFileNew = A_(tr("&New"), _operations, SLOT(newSchemaFile()), ":/toolbar/schema_new", QKeySequence::New);
     actnFileOpen = A_(tr("&Open..."), _operations, SLOT(openSchemaFile()), ":/toolbar/schema_open", QKeySequence::Open);
+    actnFileOpenExample = A_(tr("Open &Example..."), _operations, SLOT(openSchemaExample()));
     actnFileSave = A_(tr("&Save"), _operations, SLOT(saveSchemaFile()), ":/toolbar/schema_save", QKeySequence::Save);
     actnFileSaveAs = A_(tr("Save &As..."), _operations, SLOT(saveSchemaFileAs()), 0, QKeySequence::SaveAs);
     actnFileSaveCopy = A_(tr("Save &Copy..."), _operations, SLOT(saveSchemaFileCopy()));
@@ -201,7 +202,7 @@ void ProjectWindow::createMenuBar()
     _mruMenu = new Ori::Widgets::MruMenu(tr("Recent &Files"), _mruList, this);
 
     menuFile = Ori::Gui::menu(tr("&File"), this,
-        { actnFileNew, actnFileOpen, _mruMenu, 0, actnFileSave,
+        { actnFileNew, actnFileOpen, actnFileOpenExample, _mruMenu, 0, actnFileSave,
           actnFileSaveAs, actnFileSaveCopy, 0,
           actnFileLambda, actnFileTripType, actnFilePump, actnFileSummary, 0, actnFileExit });
 

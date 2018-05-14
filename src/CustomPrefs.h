@@ -22,6 +22,8 @@ public:
     static QString recentStr(const QString& key, const QString& defaultStr = QString());
     static void setRecentObj(const QString& key, const QJsonObject& obj);
     static QJsonObject recentObj(const QString& key);
+    static QSize recentSize(const QString& key, const QSize &defaultSize = QSize());
+    static void setRecentSize(const QString& key, const QSize& size);
 };
 
 #endif // CUSTOM_PREFS_H

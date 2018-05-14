@@ -19,6 +19,7 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QTextStream>
+#include <QListWidget>
 
 QFileDialog::Options fileDialogOptions()
 {
@@ -306,5 +307,40 @@ void ProjectOperations::setupTripType()
                 return;
         }
         schema()->setTripType(tripType);
+    }
+}
+
+void ProjectOperations::openSchemaExample()
+{
+    QString examplesDir = qApp->applicationDirPath() % "/examples";
+    QStringList exampleFiles = QDir(examplesDir).entryList(QDir::Files, QDir::Name);
+#ifdef Q_OS_MAC
+    if (exampleFiles.isEmpty())
+    {
+        // Lock near the application bundle, it is for development mode
+        examplesDir = qApp->applicationDirPath() % "/../../../examples";
+        examplesDir = QDir(examplesDir).absolutePath();
+        exampleFiles = QDir(examplesDir).entryList(QDir::Files, QDir::Name);
+    }
+#endif
+    QListWidget fileList;
+#ifdef Q_OS_WIN
+    // Default icon size looks OK on Ubuntu and MacOS but it is too small on Windows
+    setIconSize(QSize(24, 24));
+#endif
+    for (auto fileName : exampleFiles)
+        fileList.addItem(new QListWidgetItem(QIcon(":/window_icons/schema"), fileName));
+
+    Ori::Dlg::Dialog dlg(&fileList);
+    dlg.withTitle(tr("Open Example Schema"))
+       .withStretchedContent()
+       .withInitialSize(CustomPrefs::recentSize("open_example_dlg_size"))
+       .withOkSignal(SIGNAL(itemDoubleClicked(QListWidgetItem*)));
+    if (dlg.exec())
+    {
+        CustomPrefs::setRecentSize("open_example_dlg_size", dlg.size());
+        QListWidgetItem *selected = fileList.currentItem();
+        if (selected)
+            openSchemaFile(examplesDir % '/' % selected->text());
     }
 }

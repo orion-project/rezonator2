@@ -1,6 +1,7 @@
 #include "ParamsListWidget.h"
 
 #include "Appearance.h"
+#include "../CustomPrefs.h"
 #include "helpers/OriDialogs.h"
 
 Z::Parameter *ParamsListWidget::noneParam()
@@ -19,11 +20,16 @@ Z::Parameter* ParamsListWidget::selectParamDlg(const Z::Parameters *params, cons
     ParamsListWidget paramsList(params);
     if (selected)
         paramsList.setSelectedParam(selected);
-    if (Ori::Dlg::Dialog(&paramsList)
-            .withTitle(title)
-            .withOkSignal(SIGNAL(itemDoubleClicked(QListWidgetItem*)))
-            .exec())
+    Ori::Dlg::Dialog dlg(&paramsList);
+    dlg.withTitle(title)
+       .withStretchedContent()
+       .withInitialSize(CustomPrefs::recentSize("select_param_dlg_size"))
+       .withOkSignal(SIGNAL(itemDoubleClicked(QListWidgetItem*)));
+    if (dlg.exec())
+    {
+        CustomPrefs::setRecentSize("select_param_dlg_size", dlg.size());
         return paramsList.selectedParam();
+    }
     return nullptr;
 }
 

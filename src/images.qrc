@@ -57,7 +57,7 @@
         <file alias="schema_new">../img/toolbar/schema_new.svg</file>
         <file alias="schema_save">../img/toolbar/save.svg</file>
         <file alias="catalog">../img/toolbar/elements.svg</file>
-        <file alias="schema">../img/icon/icon_schema.svg</file>
+        <file alias="schema">../img/toolbar/go_to_schema.svg</file>
         <file alias="wavelength">../img/toolbar/wavelength.svg</file>
         <file alias="windows_close">../img/toolbar/windows_close.svg</file>
         <file alias="elem_add">../img/toolbar/elem_add.svg</file>
@@ -66,8 +66,8 @@
         <file alias="elem_prop">../img/toolbar/elem_prop.svg</file>
         <file alias="elem_matr">../img/toolbar/elem_matr.svg</file>
         <file alias="elem_delete">../img/toolbar/elem_delete.svg</file>
-        <file alias="formula_stab_normal">../img/toolbar/formula_stab_normal.svg</file>
-        <file alias="formula_stab_squared">../img/toolbar/formula_stab_squared.svg</file>
+        <file alias="formula_stab_normal">../img/misc/formula_stab_normal.svg</file>
+        <file alias="formula_stab_squared">../img/misc/formula_stab_squared.svg</file>
         <file alias="pumps">../img/toolbar/pumps.svg</file>
         <file alias="pump_edit">../img/toolbar/pump_props.svg</file>
         <file alias="pump_add">../img/toolbar/pump_add.svg</file>

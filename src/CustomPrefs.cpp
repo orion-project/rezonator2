@@ -144,3 +144,22 @@ QJsonObject CustomPrefs::recentObj(const QString &key)
 {
     return __customData[key].toObject();
 }
+
+QSize CustomPrefs::recentSize(const QString& key, const QSize& defaultSize)
+{
+    if (!__customData.contains(key)) return defaultSize;
+    auto json = __customData[key].toObject();
+    return QSize(json["width"].toInt(), json["height"].toInt());
+}
+
+void CustomPrefs::setRecentSize(const QString& key, const QSize& size)
+{
+    if (recentSize(key) != size)
+    {
+        __customData[key] = QJsonObject({
+            { "width", size.width() },
+            { "height", size.height() }
+        });
+        save();
+    }
+}

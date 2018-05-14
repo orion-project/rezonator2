@@ -32,6 +32,12 @@ public slots:
     void setupWavelength();
     void setupTripType();
 
+    /// Open example schema file.
+    /// We have to have an intended command for opening of example file, because of
+    /// running the application from AppImage (Linux) or application bundle (MacOS)
+    /// user has no access to examples directory via regular open file dialog.
+    void openSchemaExample();
+
 signals:
     void fileNameSelected(const QString& fileName);
     void protocolRequired();
