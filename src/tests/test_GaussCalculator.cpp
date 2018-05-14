@@ -1,9 +1,7 @@
 #include "testing/OriTestBase.h"
 #include "../funcs/GaussCalculator.h"
 
-#ifdef Q_OS_MAC
 #include <cmath>
-#endif
 
 // Test values are produced by script $PROJECT/calc/GaussCalculator.py
 
@@ -530,7 +528,7 @@ TEST_METHOD(change_Lambda)
 
 //------------------------------------------------------------------------------
 
-TEST_GROUP("BeamCalculator",
+TEST_GROUP("Gauss Calculator",
            ADD_TEST(change_W0),
            ADD_TEST(change_Z0_far),
            ADD_TEST(change_Z0_near),

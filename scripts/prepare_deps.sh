@@ -1,4 +1,7 @@
 #! /bin/bash
+#
+# Download and build required third party libs.
+#
 
 PROJ_ROOT=${PWD}
 PROJ_BIN=${PWD}/bin
@@ -62,15 +65,4 @@ function prepare_lua() {
   fi
 }
 
-function mark_executables() {
-  echo "-----------------------------------------------------------------"
-  echo "Marking executable files"
-
-  cd ${PROJ_BIN}
-  chmod +x rezonator.sh
-  chmod +x rezonator_test.sh
-  chmod +x rezonator_test_nogui.sh
-}
-
 prepare_lua
-mark_executables

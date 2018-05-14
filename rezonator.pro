@@ -247,4 +247,7 @@ SOURCES += \
     src/widgets/VariableEditor.cpp \
     src/widgets/VariableRangeWidget.cpp \
     src/widgets/WidgetResult.cpp \
-    src/tests/test_GaussCalculator.cpp
+    src/tests/test_GaussCalculator.cpp \
+    src/tests/test_PumpCalculator.cpp \
+    src/tests/test_BeamCalculator.cpp \
+    src/tests/test_SchemaReaderJson.cpp

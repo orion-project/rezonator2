@@ -1,3 +1,7 @@
+#
+# Common helper functions for other scripts.
+#
+
 import numpy as np
 from math import *
 

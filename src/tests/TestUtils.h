@@ -2,6 +2,11 @@
 #define Z_TEST_UTILS_H
 
 #include "../core/Values.h"
+#include "testing/OriTestBase.h"
+
+//------------------------------------------------------------------------------
+//                         Test data provider helpers
+//------------------------------------------------------------------------------
 
 #define Z_VALUE_LITERAL(unit)\
     inline Z::Value operator "" _##unit(long double value) { return Z::Value(value, Z::Units::unit()); }\
@@ -12,6 +17,10 @@ Z_VALUE_LITERAL(mkm)
 Z_VALUE_LITERAL(mm)
 Z_VALUE_LITERAL(cm)
 Z_VALUE_LITERAL(m)
+
+//------------------------------------------------------------------------------
+//                       Application specific asserts
+//------------------------------------------------------------------------------
 
 #define ASSERT_EQ_UNIT(unit_given, unit_expected) { \
     if (unit_given != unit_expected) \
@@ -37,5 +46,20 @@ Z_VALUE_LITERAL(m)
     ASSERT_EQ_DBL((m).D, d);
 
 #define ASSERT_MATRIX_IS_UNITY(m) ASSERT_MATRIX_IS(m, 1.0, 0.0, 0.0, 1.0)
+
+//------------------------------------------------------------------------------
+//                       Definitions for schema readers
+//------------------------------------------------------------------------------
+
+#define TEST_FILE(var, file_name)\
+    QString var = qApp->applicationDirPath() % "/test/" % file_name;\
+    if (!QFile::exists(var))\
+        ASSERT_FAIL("File not exists: " + var)
+
+#define LOG_SCHEMA_READER(reader) {\
+    auto report = reader.report().str().trimmed(); \
+    auto message = report.isEmpty()? "    (empty)": report;\
+    test->logMessage("Loading report:\n" % message % "\n");\
+}
 
 #endif // Z_TEST_UTILS_H

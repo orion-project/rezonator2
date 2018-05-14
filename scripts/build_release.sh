@@ -1,4 +1,7 @@
 #! /bin/bash
+#
+# Build release version of the application.
+#
 
 # Check if qmake is in PATH
 QMAKE_VER="$(qmake -v)"

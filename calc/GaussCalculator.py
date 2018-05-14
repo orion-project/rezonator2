@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-
+#
 # Script produces validation data for
 # Gauss Calculator Tool tests (../src/test/test_GaussCalculator.cpp).
 # Tool explanation with formulas is in GaussCalculator.md file.
+#
 
 from math import *
 from cmath import *
@@ -11,7 +12,7 @@ from rezonator import *
 NAMES = ['mi', 'wl', 'w0', 'z0', 'Vs', 
          'z', 'w', 'R', 'q_inv', 'q']
 
-		 
+
 def change_W0():
   print('\n----------------------------------')
   print('Change waist:')
@@ -81,7 +82,7 @@ def change_Z0():
 
   for name in NAMES: print_res(name, eval(name))
 
-	
+
 def change_Vs():
   print('\n----------------------------------')
   print('Change divergence angle:')
@@ -112,8 +113,8 @@ def change_Vs():
 
   for name in NAMES: print_res(name, eval(name))
 
-	
-def change_Z():	
+
+def change_Z():
   print('\n----------------------------------')
   print('Change axial distance:')
 
@@ -143,7 +144,7 @@ def change_Z():
 
   for name in NAMES: print_res(name, eval(name))
 
-  
+
 def change_M2():
   print('\n----------------------------------')
   print('Change beam quality:')
@@ -178,7 +179,7 @@ def change_M2():
 
   for name in NAMES: print_res(name, eval(name))
 
-  
+
 def change_W():
   print('\n----------------------------------')
   print('Change beam radius:')
@@ -243,7 +244,7 @@ def change_R():
 
   for name in NAMES: print_res(name, eval(name))
 
-  
+
 def change_Q():
   print('\n----------------------------------')
   print('Change complex ROC:')
@@ -280,7 +281,7 @@ def change_Q():
   
   for name in NAMES: print_res(name, eval(name))
 
-  
+
 def change_Q1_re():
   print('\n----------------------------------')
   print('Change inverted complex ROC (real part):')
@@ -314,7 +315,7 @@ def change_Q1_re():
 
   for name in NAMES: print_res(name, eval(name))
 
-  
+
 def change_Q1_im():
   print('\n----------------------------------')
   print('Change inverted complex ROC (imaginary part):')
@@ -349,7 +350,7 @@ def change_Q1_im():
   q = 1 / q_inv
   
   for name in NAMES: print_res(name, eval(name))
-  
+
 
 def change_Lambda():
   print('\n----------------------------------')
@@ -382,7 +383,7 @@ def change_Lambda():
 
   for name in NAMES: print_res(name, eval(name))
 
-  
+
 change_W0()
 change_Z0()
 change_Vs()

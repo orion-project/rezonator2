@@ -1,4 +1,7 @@
 #! /bin/bash
+#
+# Create redistributable dmg package.
+#
 
 # Check if Qt is in PATH
 if [[ -z "$(qmake -v)" ]]; then

@@ -1,10 +1,14 @@
 #!/usr/bin/env python
-
-'''
-    Script update version information in version.pri and version.rc
-    It searches for the latest git tag starting with "version",
-    supposing this tags has format "version-M.N.K-codename".
-'''
+#
+# Script searches for the latest git tag starting with "version",
+# supposing this tags has format "version-M.N.K-codename",
+# and calculates fourth version digit as a number of commits since tag date.
+# So full current version will be "M.N.K.L-codename".
+#
+# Script updates version information in version.pri and version.rc,
+# and creates version.txt file contaning version string "M.N.K.L-codename"
+# that can be read by another scripts.
+#
 
 import locale
 import os

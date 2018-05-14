@@ -1,4 +1,3 @@
-#include "testing/OriTestBase.h"
 #include "../core/Elements.h"
 #include "../core/Schema.h"
 #include "../io/SchemaReaderIni.h"
@@ -11,31 +10,12 @@ namespace Z {
 namespace Tests {
 namespace SchemaReaderIniTests {
 
-#define TEST_FILE(var, file_name)\
-    QString var = qApp->applicationDirPath() % "/test/" % file_name;\
-    if (!QFile::exists(var))\
-        ASSERT_FAIL("File not exists: " + var)
-
-#define LOG_SCHEMA_FILE(file) {\
-    auto report = file.report().str().trimmed(); \
-    auto message = report.isEmpty()? "    (empty)": report;\
-    test->logMessage("Load report:\n" % message % "\n");\
-}
-
 #define READ_AND_ASSERT(file_name)\
     TEST_FILE(fullFileName, file_name)\
-    SchemaReaderIni file(&schema);\
-    file.readFromFile(fullFileName);\
-    LOG_SCHEMA_FILE(file)\
-    ASSERT_IS_TRUE(file.ok())
-
-#define READ_SCHEMA(file_name)\
-    Schema schema;\
-    READ_AND_ASSERT(file_name)
-
-#define READ_AND_ASSERT_WARNINGS(file_name)\
-    READ_AND_ASSERT(file_name)\
-    ASSERT_IS_TRUE(file.report().hasWarnings())
+    SchemaReaderIni reader(&schema);\
+    reader.readFromFile(fullFileName);\
+    LOG_SCHEMA_READER(reader)\
+    ASSERT_IS_TRUE(reader.ok())
 
 #define ASSERT_PARAM(param_name, expected_value, expected_unit) {\
     Z::Parameter* p;\
@@ -64,21 +44,21 @@ namespace SchemaReaderIniTests {
 
 TEST_METHOD(file_not_exists)
 {
-    SchemaReaderIni file(nullptr);
-    file.readFromFile("some_not_existed_file_name");
-    LOG_SCHEMA_FILE(file)
-    ASSERT_IS_FALSE(file.ok())
+    SchemaReaderIni reader(nullptr);
+    reader.readFromFile("some_not_existed_file_name");
+    LOG_SCHEMA_READER(reader)
+    ASSERT_IS_FALSE(reader.ok())
 }
 
 TEST_CASE_METHOD(test_read_invalid_she_file, const QString& file_name)
 {
     Schema s;
     TEST_FILE(fileName, file_name)
-    SchemaReaderIni file(&s);
-    ASSERT_IS_TRUE(file.ok())
-    file.readFromFile(fileName);
-    LOG_SCHEMA_FILE(file)
-    ASSERT_IS_FALSE(file.ok())
+    SchemaReaderIni reader(&s);
+    ASSERT_IS_TRUE(reader.ok())
+    reader.readFromFile(fileName);
+    LOG_SCHEMA_READER(reader)
+    ASSERT_IS_FALSE(reader.ok())
 }
 TEST_CASE(read_invalid_section,         test_read_invalid_she_file, "invalid_section.she")
 TEST_CASE(read_invalid_version_too_new, test_read_invalid_she_file, "invalid_version_new.she")
@@ -88,28 +68,32 @@ TEST_METHOD(read_invalid_lambda)
 {
     Schema schema;
     schema.wavelength().setValue(Z::Value(640, Z::Units::nm()));
-    READ_AND_ASSERT_WARNINGS("invalid_lambda.she")
+    READ_AND_ASSERT("invalid_lambda.she")
+    ASSERT_IS_TRUE(reader.report().hasWarnings())
     schema.wavelength().setValue(Z::Value(640, Z::Units::nm())); // value unchanged
 }
 
 TEST_METHOD(read_invalid_elem_type)
 {
     Schema schema;
-    READ_AND_ASSERT_WARNINGS("invalid_elem_type.she")
+    READ_AND_ASSERT("invalid_elem_type.she")
+    ASSERT_IS_TRUE(reader.report().hasWarnings())
     ASSERT_IS_TRUE(schema.isEmpty())
 }
 
 TEST_METHOD(read_invalid_elem_section)
 {
     Schema schema;
-    READ_AND_ASSERT_WARNINGS("invalid_elem_section.she")
+    READ_AND_ASSERT("invalid_elem_section.she")
+    ASSERT_IS_TRUE(reader.report().hasWarnings())
     ASSERT_EQ_INT(schema.elements().count(), 2)
 }
 
 TEST_METHOD(read_invalid_elem_param)
 {
     Schema schema;
-    READ_AND_ASSERT_WARNINGS("invalid_elem_param.she")
+    READ_AND_ASSERT("invalid_elem_param.she")
+    ASSERT_IS_TRUE(reader.report().hasWarnings())
     ASSERT_EQ_INT(schema.elements().count(), 1)
 }
 
@@ -117,16 +101,12 @@ TEST_METHOD(read_invalid_elem_param)
 
 TEST_METHOD(read_general)
 {
-    TEST_FILE(fileName, "no_elems.she")
     Schema schema;
-    SchemaReaderIni file(&schema);
-    file.readFromFile(fileName);
-    LOG_SCHEMA_FILE(file)
-    ASSERT_IS_TRUE(file.ok())
+    READ_AND_ASSERT("no_elems.she")
     ASSERT_IS_TRUE(schema.isEmpty())
 
-    //ASSERT_EQ_STR(schema.title(), "Empty schema")
-    //ASSERT_EQ_STR(schema.comment(), "Multi-line comment is not supported")
+    //TODO? ASSERT_EQ_STR(schema.title(), "Empty schema")
+    //TODO? ASSERT_EQ_STR(schema.comment(), "Multi-line comment is not supported")
     ASSERT_EQ_INT(schema.tripType(), TripType::SP)
     ASSERT_EQ_ZVALUE(schema.wavelength().value(), 1064_Ao)
 }
@@ -139,7 +119,8 @@ TEST_CASE_METHOD(read_schema, const QString& fileName,
     Z::Unit ang = expectedAngularUnit;
     Z::Unit none = Z::Units::none();
 
-    READ_SCHEMA(fileName)
+    Schema schema;
+    READ_AND_ASSERT(fileName)
 
     TEST_LOG(schema.wavelength().str())
     ASSERT_EQ_ZVALUE(schema.wavelength().value(), Z::Value(1064, expectedLambdaUnit))
@@ -241,7 +222,8 @@ TEST_CASE(read_schema_1_2, read_schema, "all_elems_ver-1-2.she", Z::Units::mkm()
     ASSERT_EQ_UNIT(pump->param()->value().unit(), Z::Units::expected_unit())
 
 #define ASSERT_PUMP(file_name, mode, param1, value1T, value1S, unit1, param2, value2T, value2S, unit2, param3, value3T, value3S, unit3)\
-    READ_SCHEMA(file_name)\
+    Schema schema;\
+    READ_AND_ASSERT(file_name)\
     ASSERT_IS_NOT_NULL(schema.activePump())\
     auto pump = dynamic_cast<Z::PumpParams_##mode*>(schema.activePump());\
     ASSERT_IS_NOT_NULL(pump)\

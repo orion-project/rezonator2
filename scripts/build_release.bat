@@ -1,3 +1,7 @@
+::
+:: Build release version of the application.
+::
+
 @echo off
 setlocal
 
