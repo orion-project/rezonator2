@@ -20,10 +20,14 @@ cd ${SCRIPT_DIR}/..
 if [ ! -d out ]; then mkdir out; fi
 cd out
 
+# Populate application bundle
 if [ -d AppDir ]; then rm -rdf AppDir; fi
 mkdir AppDir
 cd AppDir
 cp -r ../../bin/rezonator.app .
+if [ "${?}" != "0" ]; then exit 1; fi
+
+# Pack application bundle to dmg
 macdeployqt rezonator.app -dmg
 if [ "${?}" != "0" ]; then exit 1; fi
 

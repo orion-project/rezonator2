@@ -30,8 +30,8 @@ mkdir -p AppDir/usr/lib
 mkdir -p AppDir/usr/share/applications
 mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
 cp ../bin/rezonator AppDir/usr/bin
-cp -r ../bin/samples AppDir/usr/bin
-cp -r ../bin/test AppDir/usr/bin
+cp -r ../bin/examples AppDir/usr/bin
+cp -r ../bin/test_files AppDir/usr/bin
 cp ../release/rezonator.desktop AppDir/usr/share/applications
 cp ../img/icon/icon_main_2_256.png AppDir/usr/share/icons/hicolor/256x256/apps/rezonator.png
 if [ "${?}" != "0" ]; then exit 1; fi

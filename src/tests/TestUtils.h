@@ -51,10 +51,19 @@ Z_VALUE_LITERAL(m)
 //                       Definitions for schema readers
 //------------------------------------------------------------------------------
 
+#ifdef Q_OS_MAC
 #define TEST_FILE(var, file_name)\
-    QString var = qApp->applicationDirPath() % "/test/" % file_name;\
-    if (!QFile::exists(var))\
-        ASSERT_FAIL("File not exists: " + var)
+    QString var = qApp->applicationDirPath() % "/test_files/" % file_name;\
+    if (!QFile::exists(var)) {\
+        // Lock near the application bundle, it is for development mode
+        var = qApp->applicationDirPath() % "/../../../test_files/" % file_name;\
+        if (!QFile::exists(var)) ASSERT_FAIL("File does not exist: " + var)\
+    }
+#else
+#define TEST_FILE(var, file_name)\
+    QString var = qApp->applicationDirPath() % "/test_files/" % file_name;\
+    if (!QFile::exists(var)) ASSERT_FAIL("File does not exist: " + var)
+#endif
 
 #define LOG_SCHEMA_READER(reader) {\
     auto report = reader.report().str().trimmed(); \
