@@ -52,10 +52,10 @@ Z_VALUE_LITERAL(m)
 //------------------------------------------------------------------------------
 
 #ifdef Q_OS_MAC
+// Lock near the application bundle, if file is not found near the executable
 #define TEST_FILE(var, file_name)\
     QString var = qApp->applicationDirPath() % "/test_files/" % file_name;\
     if (!QFile::exists(var)) {\
-        // Lock near the application bundle, it is for development mode
         var = qApp->applicationDirPath() % "/../../../test_files/" % file_name;\
         if (!QFile::exists(var)) ASSERT_FAIL("File does not exist: " + var)\
     }

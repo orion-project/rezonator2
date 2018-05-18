@@ -10,11 +10,13 @@ namespace BeamCalculatorTests {
 TEST_METHOD(calcVector)
 {
     // TODO
+    ASSERT_FAIL("TODO")
 }
 
 TEST_METHOD(calcGauss)
 {
     // TODO
+    ASSERT_FAIL("TODO")
 }
 
 //------------------------------------------------------------------------------

@@ -17,12 +17,12 @@ PairTS<Complex> PumpCalculator::calcFront(PumpParams_Waist *pump, double lambda)
     gauss.setZ(z.T);
     gauss.setM2(mi.T);
     gauss.calc();
-    Complex qT(gauss.reQ1(), gauss.imQ1());
+    Complex qT(gauss.reQ(), gauss.imQ());
     gauss.setW0(w.S);
     gauss.setZ(z.S);
     gauss.setM2(mi.S);
     gauss.calc();
-    Complex qS(gauss.reQ1(), gauss.imQ1());
+    Complex qS(gauss.reQ(), gauss.imQ());
     return PairTS<Complex>(qT, qS);
 }
 
@@ -38,12 +38,12 @@ PairTS<Complex> PumpCalculator::calcFront(PumpParams_Front *pump, double lambda)
     gauss.setR(R.T);
     gauss.setM2(mi.T);
     gauss.calc();
-    Complex qT(gauss.reQ1(), gauss.imQ1());
+    Complex qT(gauss.reQ(), gauss.imQ());
     gauss.setW(w.S);
     gauss.setR(R.S);
     gauss.setM2(mi.S);
     gauss.calc();
-    Complex qS(gauss.reQ1(), gauss.imQ1());
+    Complex qS(gauss.reQ(), gauss.imQ());
     return PairTS<Complex>(qT, qS);
 }
 
@@ -71,16 +71,22 @@ PairTS<Complex> PumpCalculator::calcFront(PumpParams_Complex *pump)
 {
     auto re = pump->real()->value().toSi();
     auto im = pump->imag()->value().toSi();
-    Complex qT(re.T, im.S);
+    Complex qT(re.T, im.T);
     Complex qS(re.S, im.S);
-    return PairTS<Complex>(1.0/qT, 1.0/qS);
+    return PairTS<Complex>(qT, qS);
 }
 
 PairTS<Complex> PumpCalculator::calcFront(PumpParams_InvComplex *pump)
 {
-    auto re = pump->real()->value().toSi();
-    auto im = pump->imag()->value().toSi();
-    Complex qT(re.T, im.S);
-    Complex qS(re.S, im.S);
-    return PairTS<Complex>(qT, qS);
+    // Inverted complex ROC is measured in inverted units (1/m, 1/mm)
+    // and value's unit actually means 1/unit for this case (e.g. mm means 1/mm).
+    // When we want to convert inverted non-SI to inverted SI units
+    // we can use fromSi() function instead as it have inverted action of toSi().
+    double reT = pump->real()->value().unit()->fromSi(pump->real()->value().rawValueT());
+    double imT = pump->imag()->value().unit()->fromSi(pump->imag()->value().rawValueT());
+    double reS = pump->real()->value().unit()->fromSi(pump->real()->value().rawValueS());
+    double imS = pump->imag()->value().unit()->fromSi(pump->imag()->value().rawValueS());
+    Complex qT(reT, imT);
+    Complex qS(reS, imS);
+    return PairTS<Complex>(1.0/qT, 1.0/qS);
 }

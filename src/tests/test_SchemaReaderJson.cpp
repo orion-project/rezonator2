@@ -12,6 +12,7 @@ namespace SchemaReaderJsonTests {
 TEST_METHOD(read_pumps)
 {
     // TODO
+    ASSERT_FAIL("TODO")
 }
 
 //------------------------------------------------------------------------------
