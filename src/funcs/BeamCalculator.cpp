@@ -10,7 +10,7 @@ BeamResult BeamCalculator::calcVector(const RayVector& input, const Matrix& matr
     BeamResult beam;
     beam.beamRadius = output.Y;
     beam.halfAngle = output.V;
-    beam.frontRadius = 0; // TODO calculate
+    beam.frontRadius = output.Y / sin(output.V);
     return beam;
 }
 

@@ -5,6 +5,7 @@
 #include "widgets/ParamsEditor.h"
 #include "helpers/OriDialogs.h"
 
+#include <QHBoxLayout>
 #include <QFormLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -60,16 +61,23 @@ PumpParamsDialog::PumpParamsDialog(Z::PumpParams *params, QWidget *parent)
     setTitleAndIcon(tr("Input Beam Parameters"), ":/toolbar/pump_edit");
     setObjectName("PumpDialog");
 
+    QLabel* iconLabel = new QLabel;
     _editorLabel = new QLineEdit;
     _editorTitle = new QLineEdit;
     Z::Gui::setValueFont(_editorLabel);
     Z::Gui::setValueFont(_editorTitle);
 
-    auto layoutCommon = new QFormLayout;
-    layoutCommon->addRow(tr("Label:"), _editorLabel);
-    layoutCommon->addRow(tr("Title:"), _editorTitle);
+
+    auto layoutLabelTitle = new QFormLayout;
+    layoutLabelTitle->addRow(tr("Label:"), _editorLabel);
+    layoutLabelTitle->addRow(tr("Title:"), _editorTitle);
     _editorLabel->setText(params->label());
     _editorTitle->setText(params->title());
+
+    auto layoutCommon = new QHBoxLayout;
+    layoutCommon->addWidget(iconLabel);
+    layoutCommon->addSpacing(12);
+    layoutCommon->addLayout(layoutLabelTitle);
 
     _paramsEditor = new ParamsEditorTS(params->params());
 
@@ -80,8 +88,13 @@ PumpParamsDialog::PumpParamsDialog(Z::PumpParams *params, QWidget *parent)
     auto drawing = new QLabel;
     drawing->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     drawing->setContentsMargins(6, 6, 6, 6);
+
     if (pumpMode)
+    {
         drawing->setPixmap(QPixmap(pumpMode->drawingPath()));
+        iconLabel->setPixmap(QIcon(pumpMode->iconPath()).pixmap(48, 48));
+        iconLabel->setToolTip(pumpMode->displayName());
+    }
 
     mainLayout()->addLayout(layoutCommon);
     mainLayout()->addSpacing(6);

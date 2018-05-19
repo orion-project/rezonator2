@@ -46,6 +46,12 @@ Z_VALUE_LITERAL(m)
     ASSERT_EQ_DBL((m).C, c); \
     ASSERT_EQ_DBL((m).D, d);
 
+#define ASSERT_MATRIX_NEAR(m, a, b, c, d, eps) \
+    ASSERT_NEAR_DBL((m).A, a, eps); \
+    ASSERT_NEAR_DBL((m).B, b, eps); \
+    ASSERT_NEAR_DBL((m).C, c, eps); \
+    ASSERT_NEAR_DBL((m).D, d, eps);
+
 #define ASSERT_MATRIX_IS_UNITY(m) ASSERT_MATRIX_IS(m, 1.0, 0.0, 0.0, 1.0)
 
 //------------------------------------------------------------------------------

@@ -1,0 +1,94 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 980
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "L1",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 50
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "F1",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": -10
+                },
+                "F": {
+                    "unit": "mm",
+                    "value": 100
+                }
+            },
+            "title": "",
+            "type": "ElemThinLens"
+        },
+        {
+            "is_disabled": false,
+            "label": "L2",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 75
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "Cr1",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 15
+                },
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1.5
+                }
+            },
+            "title": "",
+            "type": "ElemTiltedPlate"
+        },
+        {
+            "is_disabled": false,
+            "label": "L3",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        }
+    ],
+    "formulas": [
+    ],
+    "param_links": [
+    ],
+    "pumps": [
+    ],
+    "schema_version": "2.0",
+    "trip_type": "SP",
+    "windows": [
+    ]
+}

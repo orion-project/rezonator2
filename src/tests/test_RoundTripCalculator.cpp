@@ -1,4 +1,4 @@
-#include "testing/OriTestBase.h"
+#include "TestUtils.h"
 #include "../funcs/RoundTripCalculator.h"
 
 namespace Z {
@@ -174,6 +174,45 @@ TEST_CASE(rt_rr_matrs_end, rt_matrs_sw_rr, RR, EL_END)
 
 //------------------------------------------------------------------------------
 
+// Calculation: $PROJECT/calc/RoundTripCalculator.py
+TEST_METHOD(mult_matrices)
+{
+    Matrix L1_t(1, 0.05, 0, 1);
+    Matrix L1_s = L1_t;
+
+    Matrix F1_t(1, 0, -10.1543, 1);
+    Matrix F1_s(1, 0, -9.84808, 1);
+
+    Matrix L2_t(1, 0.075, 0, 1);
+    Matrix L2_s = L2_t;
+
+    Matrix Cr1_t(1, 0.0650857, 0, 1);
+    Matrix Cr1_s(1, 0.0676818, 0, 1);
+
+    Matrix L3_t(1, 0.1, 0, 1);
+    Matrix L3_s = L3_t;
+
+    Schema schema;
+    class TestRoundTripCalculator : public RoundTripCalculator {
+    public:
+        TestRoundTripCalculator(Schema*s) : RoundTripCalculator(s) {}
+        void addT(std::initializer_list<Matrix*> matrs) {
+            for (auto &m : matrs) _matrsT.append(m);
+        }
+        void addS(std::initializer_list<Matrix*> matrs) {
+            for (auto &m : matrs) _matrsS.append(m);
+        }
+    };
+    TestRoundTripCalculator c(&schema);
+    c.addT({&L3_t, &Cr1_t, &L2_t, &F1_t, &L1_t});
+    c.addS({&L3_s, &Cr1_s, &L2_s, &F1_s, &L1_s});
+    c.multMatrix();
+    ASSERT_MATRIX_NEAR(c.Mt(), -1.4379022, 0.1681906, -10.1543000, 0.4922850, 1e-7)
+    ASSERT_MATRIX_NEAR(c.Ms(), -1.3899498, 0.1731843, -9.8480800, 0.5075960, 1e-7)
+}
+
+//------------------------------------------------------------------------------
+
 TEST_GROUP("Round-trip Calculator",
            ADD_TEST(rt_sw),
            ADD_TEST(rt_sw_beg),
@@ -230,6 +269,9 @@ TEST_GROUP("Round-trip Calculator",
            ADD_TEST(rt_rr_matrs),
            ADD_TEST(rt_rr_matrs_beg),
            ADD_TEST(rt_rr_matrs_end),
+
+
+           ADD_TEST(mult_matrices)
 )
 
 } // namespace RoundTripCalculatorTests
