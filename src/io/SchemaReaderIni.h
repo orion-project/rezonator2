@@ -24,7 +24,6 @@ public:
     void readFromFile(const QString& fileName);
 
     const Z::Report& report() const { return _report; }
-    bool ok() const { return !_report.hasErrors(); }
 
 private:
     Schema* _schema;

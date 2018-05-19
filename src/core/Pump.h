@@ -102,16 +102,6 @@ DECLARE_PUMP_PARAMS_END(Front,
                         ":/drawing/pump_front",
                         ":/icons/pump_front")
 
-DECLARE_PUMP_PARAMS(TwoSections, PumpParams)
-    PUMP_PARAM(radius1)
-    PUMP_PARAM(radius2)
-    PUMP_PARAM(distance)
-DECLARE_PUMP_PARAMS_END(TwoSections,
-                        qApp->translate("Pump mode", "Two Sections"),
-                        qApp->translate("Pump mode", "Ray vector defined by two sections"),
-                        ":/drawing/pump_two_sections",
-                        ":/icons/pump_two_sections")
-
 DECLARE_PUMP_PARAMS(RayVector, PumpParams)
     PUMP_PARAM(radius)
     PUMP_PARAM(angle)
@@ -121,6 +111,16 @@ DECLARE_PUMP_PARAMS_END(RayVector,
                         qApp->translate("Pump mode", "Ray vector defined by radius and angle"),
                         ":/drawing/pump_ray_vector",
                         ":/icons/pump_ray_vector")
+
+DECLARE_PUMP_PARAMS(TwoSections, PumpParams)
+    PUMP_PARAM(radius1)
+    PUMP_PARAM(radius2)
+    PUMP_PARAM(distance)
+DECLARE_PUMP_PARAMS_END(TwoSections,
+                        qApp->translate("Pump mode", "Two Sections"),
+                        qApp->translate("Pump mode", "Ray vector defined by two sections"),
+                        ":/drawing/pump_two_sections",
+                        ":/icons/pump_two_sections")
 
 DECLARE_PUMP_PARAMS(Complex, PumpParams)
     PUMP_PARAM(real)

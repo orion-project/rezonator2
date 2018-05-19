@@ -6,6 +6,11 @@
 
 #include <QTableWidget>
 
+namespace Ori {
+namespace Widgets {
+class StatusBar;
+}}
+
 /**
     Implementation of restoreability for @a PumpWindow.
     Register it in @a ProjectWindow::registerStorableWindows().
@@ -74,27 +79,37 @@ public:
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return { _windowMenu }; }
 
+    // inherits from SchemaListener
+    void schemaLoaded(Schema*) override { showStatusInfo(); }
+
     // inherits from ISchemaWindowStorable
     QString storableType() const override { return PumpWindowStorable::windowType; }
 
-private slots:
+public slots:
     void createPump();
     void deletePump();
     void editPump();
     void activatePump();
 
-private:
+protected:
     explicit PumpWindow(Schema*owner);
+
+    virtual Z::PumpParams* makeNewPumpDlg() const;
+
+private:
     static PumpWindow* _instance;
 
     PumpsTable* _table;
     QAction *_actnPumpAdd, *_actnPumpDelete, *_actnPumpEdit, *_actnPumpActivate;
     QMenu *_windowMenu, *_contextMenu;
+    Ori::Widgets::StatusBar* _statusBar;
     bool _isEditingNewPump = false;
 
     void createActions();
     void createMenuBar();
     void createToolBar();
+    void createStatusBar();
+    void showStatusInfo();
 };
 
 #endif // PUMP_WINDOW_H

@@ -6,6 +6,7 @@
 #include "widgets/RichTextItemDelegate.h"
 #include "widgets/ValuesEditorTS.h"
 #include "widgets/OriOptionsGroup.h"
+#include "widgets/OriStatusBar.h"
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
@@ -15,6 +16,14 @@
 #include <QListWidget>
 #include <QMenu>
 #include <QToolButton>
+
+enum PumpWindowStatusPanels
+{
+    STATUS_PUMPS_COUNT,
+    STATUS_ACTIVE_PUMP,
+
+    STATUS_PANELS_COUNT,
+};
 
 //------------------------------------------------------------------------------
 //                             PumpWindowStorable
@@ -211,10 +220,13 @@ PumpWindow::PumpWindow(Schema *owner) : SchemaMdiChild(owner)
     createActions();
     createMenuBar();
     createToolBar();
+    createStatusBar();
 
     _table->setContextMenu(_contextMenu);
     connect(_table, SIGNAL(doubleClicked(Z::PumpParams*)), this, SLOT(editPump()));
     schema()->registerListener(_table);
+
+    showStatusInfo();
 }
 
 PumpWindow::~PumpWindow()
@@ -257,20 +269,35 @@ void PumpWindow::createToolBar()
     });
 }
 
+void PumpWindow::createStatusBar()
+{
+    _statusBar = new Ori::Widgets::StatusBar(STATUS_PANELS_COUNT);
+    setContent(_statusBar);
+}
+
+Z::PumpParams* PumpWindow::makeNewPumpDlg() const
+{
+    return PumpParamsDialog::makeNewPump();
+}
+
 void PumpWindow::createPump()
 {
-    auto pump = PumpParamsDialog::makeNewPump();
+    auto pump = makeNewPumpDlg();
     if (!pump) return;
     schema()->pumps()->append(pump);
+    if (schema()->pumps()->size() == 1)
+        pump->activate(true);
     schema()->events().raise(SchemaEvents::PumpCreated, pump);
+    showStatusInfo();
 }
 
 void PumpWindow::editPump()
 {
     auto pump = _table->selected();
     if (!pump) return;
-    if (PumpParamsDialog::editPump(pump))
-        schema()->events().raise(SchemaEvents::PumpChanged, pump);
+    if (!PumpParamsDialog::editPump(pump)) return;
+    schema()->events().raise(SchemaEvents::PumpChanged, pump);
+    showStatusInfo();
 }
 
 void PumpWindow::deletePump()
@@ -292,6 +319,7 @@ void PumpWindow::deletePump()
         schema()->events().raise(SchemaEvents::PumpDeleted, pump);
         delete pump;
     }
+    showStatusInfo();
 }
 
 void PumpWindow::activatePump()
@@ -316,4 +344,21 @@ void PumpWindow::activatePump()
     // Treat this case as only schema param has been changed.
     schema()->events().raise(SchemaEvents::ParamsChanged);
     // TODO raise event 'recalc needed'
+
+    showStatusInfo();
+}
+
+void PumpWindow::showStatusInfo()
+{
+    _statusBar->setText(STATUS_PUMPS_COUNT, tr("Pumps: %1").arg(schema()->pumps()->size()));
+
+    auto activePump = schema()->activePump();
+    if (activePump)
+    {
+        QString activePumpStr = activePump->label();
+        if (activePumpStr.isEmpty())
+            activePumpStr = QString("#%1").arg(schema()->pumps()->indexOf(activePump)+1);
+        _statusBar->setText(STATUS_ACTIVE_PUMP, tr("Active pump: %1").arg(activePumpStr));
+    }
+    else _statusBar->clear(STATUS_ACTIVE_PUMP);
 }

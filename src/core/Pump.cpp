@@ -68,29 +68,6 @@ PumpParams_Front::PumpParams_Front()
 }
 
 //--------------------------------------------------------------------------------
-//                               PumpParams_TwoSections
-//--------------------------------------------------------------------------------
-
-PumpParams_TwoSections::PumpParams_TwoSections()
-{
-    _radius1 = new ParameterTS(Dims::linear(),
-                               QStringLiteral("y_1"),
-                               QStringLiteral("y<sub>1</sub>"),
-                               qApp->translate("Pump param", "Beam radius 1"));
-    _radius2 = new ParameterTS(Dims::linear(),
-                               QStringLiteral("y_2"),
-                               QStringLiteral("y<sub>2</sub>"),
-                               qApp->translate("Pump param", "Beam radius 2"));
-    _distance = new ParameterTS(Dims::linear(),
-                                QStringLiteral("z_y"),
-                                QStringLiteral("z<sub>y</sub>"),
-                                qApp->translate("Pump param", "Distance between"));
-    addParam(_radius1, 100, mkm());
-    addParam(_radius2, 1000, mkm());
-    addParam(_distance, 100, mm());
-}
-
-//--------------------------------------------------------------------------------
 //                                PumpParams_RayVector
 //--------------------------------------------------------------------------------
 
@@ -110,6 +87,29 @@ PumpParams_RayVector::PumpParams_RayVector()
                                 qApp->translate("Pump param", "Distance to radius"));
     addParam(_radius, 100, mkm());
     addParam(_angle, 10, deg());
+    addParam(_distance, 100, mm());
+}
+
+//--------------------------------------------------------------------------------
+//                               PumpParams_TwoSections
+//--------------------------------------------------------------------------------
+
+PumpParams_TwoSections::PumpParams_TwoSections()
+{
+    _radius1 = new ParameterTS(Dims::linear(),
+                               QStringLiteral("y_1"),
+                               QStringLiteral("y<sub>1</sub>"),
+                               qApp->translate("Pump param", "Beam radius 1"));
+    _radius2 = new ParameterTS(Dims::linear(),
+                               QStringLiteral("y_2"),
+                               QStringLiteral("y<sub>2</sub>"),
+                               qApp->translate("Pump param", "Beam radius 2"));
+    _distance = new ParameterTS(Dims::linear(),
+                                QStringLiteral("z_y"),
+                                QStringLiteral("z<sub>y</sub>"),
+                                qApp->translate("Pump param", "Distance between"));
+    addParam(_radius1, 100, mkm());
+    addParam(_radius2, 1000, mkm());
     addParam(_distance, 100, mm());
 }
 

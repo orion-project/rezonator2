@@ -15,7 +15,7 @@ namespace SchemaReaderIniTests {
     SchemaReaderIni reader(&schema);\
     reader.readFromFile(fullFileName);\
     LOG_SCHEMA_READER(reader)\
-    ASSERT_IS_TRUE(reader.ok())
+    ASSERT_IS_FALSE(reader.report().hasErrors())
 
 #define ASSERT_PARAM(param_name, expected_value, expected_unit) {\
     Z::Parameter* p;\
@@ -47,7 +47,7 @@ TEST_METHOD(file_not_exists)
     SchemaReaderIni reader(nullptr);
     reader.readFromFile("some_not_existed_file_name");
     LOG_SCHEMA_READER(reader)
-    ASSERT_IS_FALSE(reader.ok())
+    ASSERT_IS_TRUE(reader.report().hasErrors())
 }
 
 TEST_CASE_METHOD(test_read_invalid_she_file, const QString& file_name)
@@ -55,10 +55,10 @@ TEST_CASE_METHOD(test_read_invalid_she_file, const QString& file_name)
     Schema s;
     TEST_FILE(fileName, file_name)
     SchemaReaderIni reader(&s);
-    ASSERT_IS_TRUE(reader.ok())
+    ASSERT_IS_FALSE(reader.report().hasErrors())
     reader.readFromFile(fileName);
     LOG_SCHEMA_READER(reader)
-    ASSERT_IS_FALSE(reader.ok())
+    ASSERT_IS_TRUE(reader.report().hasErrors())
 }
 TEST_CASE(read_invalid_section,         test_read_invalid_she_file, "invalid_section.she")
 TEST_CASE(read_invalid_version_too_new, test_read_invalid_she_file, "invalid_version_new.she")
@@ -67,10 +67,10 @@ TEST_CASE(read_invalid_version_too_old, test_read_invalid_she_file, "invalid_ver
 TEST_METHOD(read_invalid_lambda)
 {
     Schema schema;
-    schema.wavelength().setValue(Z::Value(640, Z::Units::nm()));
+    schema.wavelength().setValue(640_nm);
     READ_AND_ASSERT("invalid_lambda.she")
     ASSERT_IS_TRUE(reader.report().hasWarnings())
-    schema.wavelength().setValue(Z::Value(640, Z::Units::nm())); // value unchanged
+    schema.wavelength().setValue(640_nm); // value unchanged
 }
 
 TEST_METHOD(read_invalid_elem_type)

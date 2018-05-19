@@ -19,7 +19,6 @@ typedef QCPGraph Graph;
 
 namespace Ori {
 namespace Widgets {
-//class ImagedLabel;
 class StatusBar;
 }}
 

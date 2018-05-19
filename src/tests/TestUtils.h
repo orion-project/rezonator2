@@ -13,6 +13,7 @@
     inline Z::Value operator "" _##unit(unsigned long long value) { return Z::Value(value, Z::Units::unit()); }
 
 Z_VALUE_LITERAL(Ao)
+Z_VALUE_LITERAL(nm)
 Z_VALUE_LITERAL(mkm)
 Z_VALUE_LITERAL(mm)
 Z_VALUE_LITERAL(cm)
