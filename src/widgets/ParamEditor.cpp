@@ -1,7 +1,9 @@
-#include "Appearance.h"
 #include "ParamEditor.h"
+
+#include "Appearance.h"
 #include "ParamsListWidget.h"
 #include "UnitWidgets.h"
+
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
@@ -11,6 +13,8 @@
 #include <QDebug>
 #include <QLabel>
 #include <QPushButton>
+
+using Ori::Widgets::ValueEdit;
 
 //------------------------------------------------------------------------------
 //                              LinkButton
@@ -92,7 +96,7 @@ ParamEditor::ParamEditor(Options opts)
     }
 
     layout.add({
-        _valueEditor = new Ori::Widgets::ValueEdit,
+        _valueEditor = new ValueEdit,
         Ori::Layouts::Space(3),
         _unitsSelector = new UnitComboBox(_param->dim())
     });
@@ -108,8 +112,9 @@ ParamEditor::ParamEditor(Options opts)
 
     _valueEditor->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
 
-    connect(_valueEditor, SIGNAL(focused(bool)), this, SLOT(editorFocused(bool)));
-    connect(_valueEditor, SIGNAL(keyPressed(int)), this, SLOT(editorKeyPressed(int)));
+    connect(_valueEditor, &ValueEdit::focused, this, &ParamEditor::editorFocused);
+    connect(_valueEditor, &ValueEdit::keyPressed, this, &ParamEditor::editorKeyPressed);
+    connect(_valueEditor, &ValueEdit::valueEdited, this, &ParamEditor::valueEdited);
     connect(_unitsSelector, &UnitComboBox::focused, this,  &ParamEditor::editorFocused);
     connect(_unitsSelector, &UnitComboBox::unitChanged, this, &ParamEditor::unitChanged);
 
@@ -123,7 +128,7 @@ ParamEditor::~ParamEditor()
 
 void ParamEditor::parameterChanged(Z::ParameterBase*)
 {
-    populate();
+    if (_paramChangedHandlerEnabled) populate();
 }
 
 void ParamEditor::populate()
@@ -144,12 +149,17 @@ void ParamEditor::setIsLinked(bool on)
     Z::Gui::setFontStyle(_valueEditor, false, on);
 }
 
+Z::Value ParamEditor::getValue() const
+{
+    return Z::Value(_valueEditor->value(), _unitsSelector->selectedUnit());
+}
+
 QString ParamEditor::verify() const
 {
     if (!_valueEditor->ok())
         return tr("Ivalid number format");
 
-    Z::Value value(_valueEditor->value(), _unitsSelector->selectedUnit());
+    Z::Value value = getValue();
 
     return _param->verify(value);
 }
@@ -158,7 +168,7 @@ void ParamEditor::apply()
 {
     if (!_valueEditor->ok()) return;
 
-    Z::Value value(_valueEditor->value(), _unitsSelector->selectedUnit());
+    Z::Value value = getValue();
 
     auto res = _param->verify(value);
     if (!res.isEmpty())
@@ -197,7 +207,9 @@ void ParamEditor::apply()
         }
     }
 
+    _paramChangedHandlerEnabled = false;
     _param->setValue(value);
+    _paramChangedHandlerEnabled = true;
 }
 
 void ParamEditor::focus()

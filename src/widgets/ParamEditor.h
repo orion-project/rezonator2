@@ -49,6 +49,10 @@ public:
 
     Z::Parameter* parameter() const { return _param; }
 
+    /// Returns value of the editor.
+    /// This is NOT a value of the edited parameter, at least till `apply()` will be called.
+    Z::Value getValue() const;
+
     QString verify() const;
 
     QWidget* labelName() const;
@@ -64,6 +68,7 @@ signals:
     void goingFocusNext();
     void goingFocusPrev();
     void editorInfoChanged();
+    void valueEdited(double value);
     void unitChanged(Z::Unit unit);
 
 public slots:
@@ -85,12 +90,11 @@ private:
     QLabel* _labelLabel = nullptr;
     LinkButton* _linkButton = nullptr;
     QString _editorInfo;
+    bool _paramChangedHandlerEnabled = true;
 
     void linkToGlobalParameter();
     void showValue(Z::Parameter *param);
     void setIsLinked(bool on);
-
-private slots:
     void editorFocused(bool focus);
     void editorKeyPressed(int key);
 };

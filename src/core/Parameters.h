@@ -199,6 +199,11 @@ public:
 
     PhysicalParameter(Dim dim,
                       const QString& alias,
+                      const QString& label) :
+        ValuedParameter<TValue>(alias, label, "", "", "", true), _dim(dim) {}
+
+    PhysicalParameter(Dim dim,
+                      const QString& alias,
                       const QString& label,
                       const QString& name) :
         ValuedParameter<TValue>(alias, label, name, "", "", true), _dim(dim) {}

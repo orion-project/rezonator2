@@ -149,7 +149,8 @@ HEADERS += \
     src/widgets/VariableEditor.h \
     src/widgets/VariableRangeWidget.h \
     src/widgets/WidgetResult.h \
-    src/tests/TestSchemaListener.h
+    src/tests/TestSchemaListener.h \
+    src/GaussCalculatorWindow.h
 	
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -252,4 +253,5 @@ SOURCES += \
     src/tests/test_PumpCalculator.cpp \
     src/tests/test_BeamCalculator.cpp \
     src/tests/test_SchemaReaderJson.cpp \
-    src/tests/test_PumpWindow.cpp
+    src/tests/test_PumpWindow.cpp \
+    src/GaussCalculatorWindow.cpp

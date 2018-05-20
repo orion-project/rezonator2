@@ -1,3 +1,4 @@
+#include "GaussCalculatorWindow.h"
 #include "ProjectWindow.h"
 #include "tests/TestSuite.h"
 #include "tools/OriDebug.h"
@@ -16,8 +17,15 @@ int main(int argc, char* argv[])
     if (Ori::Testing::isTesting())
         return Ori::Testing::run(app, { ADD_SUITE(Z::Tests) });
 
-    ProjectWindow pw;
-    pw.show();
+    if (QApplication::arguments().contains("gauss"))
+    {
+        GaussCalculatorWindow::showCalcWindow();
+    }
+    else
+    {
+        ProjectWindow pw;
+        pw.show();
+    }
 
     return app.exec();
 }

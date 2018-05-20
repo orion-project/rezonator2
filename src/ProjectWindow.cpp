@@ -1,6 +1,7 @@
 #include "CalcManager.h"
 #include "CustomPrefs.h"
 #include "ElementsCatalogDialog.h"
+#include "GaussCalculatorWindow.h"
 #include "ProjectWindow.h"
 #include "ProjectOperations.h"
 #include "ProtocolWindow.h"
@@ -166,7 +167,7 @@ void ProjectWindow::createActions()
     actnFuncCaustic = A_(tr("&Caustic..."), _calculations, SLOT(funcCaustic()), ":/toolbar/func_caustic");
 
     actnToolsCatalog = A_(tr("&Elements Catalog"), this, SLOT(showElementsCatalog()), ":/toolbar/catalog");
-    // TODO:NEXT-VER actnToolsBeamCalc = _a(tr("&Beam Calculator"), this, SLOT(showBeamCalculator()), ":/toolbar/gauss");
+    actnToolsGaussCalc = A_(tr("&Gauss Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
     actnToolsPrefs = A_(tr("Pre&ferences..."), this, SLOT(showPreferences()), ":/toolbar/options");
 
     // These common window actions must not have data (action->data()), as data presense indicates that
@@ -218,7 +219,7 @@ void ProjectWindow::createMenuBar()
           actnFuncStabMap2d, 0, actnFuncCaustic, 0, actnFuncRepRate });
 
     menuTools = Ori::Gui::menu(tr("&Tools", "Menu title"), this,
-        { /*TODO:NEXT-VER actnToolsBeamCalc,*/ actnToolsCatalog, 0, actnToolsPrefs });
+        { actnToolsGaussCalc, actnToolsCatalog, 0, actnToolsPrefs });
 
     menuWindow = Ori::Gui::menu(tr("&Window"), this,
         { actnWndSchema, actnWndParams, actnWndPumps, actnWndProtocol, 0,
@@ -244,7 +245,7 @@ void ProjectWindow::createToolBars()
     addToolBar(makeToolBar(tr("Misc"),
         { actnWndParams, actnWndPumps }));
 
-    // TODO:NEXT-VER addToolBar(makeToolBar(tr("Tools"), { actnToolsBeamCalc }));
+    addToolBar(makeToolBar(tr("Tools"), { actnToolsGaussCalc }));
 
     _mdiToolbar = new Ori::Widgets::MdiToolBar(tr("Windows"), _mdiArea);
     Z::WindowUtils::adjustIconSize(_mdiToolbar);
@@ -416,9 +417,9 @@ void ProjectWindow::showPreferences()
     Settings::instance().edit(this);
 }
 
-void ProjectWindow::showBeamCalculator()
+void ProjectWindow::showGaussCalculator()
 {
-    // TODO:NEXT-VER showBeamCalculatorWindow();
+    GaussCalculatorWindow::showCalcWindow();
 }
 
 //------------------------------------------------------------------------------
