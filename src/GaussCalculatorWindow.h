@@ -43,20 +43,20 @@ class ExclusiveActionGroup;
 using GaussCalcSetValueFunc = std::mem_fun1_t<void, GaussCalculator, const double&>;
 using GaussCalcGetValueFunc = std::const_mem_fun_t<double, GaussCalculator>;
 
-class GaussCalcParam : public QObject
+class GaussCalcParamEditor : public QObject
 {
     Q_OBJECT
 
 public:
-    GaussCalcParam(GaussCalculator *calc,
-        Z::Dim dim, const QString& alias, const QString& name,
-        GaussCalcSetValueFunc setValue,
-        GaussCalcGetValueFunc getValue);
-    ~GaussCalcParam();
+    GaussCalcParamEditor(Z::Parameter *param, GaussCalculator *calc,
+                   GaussCalcSetValueFunc setValue, GaussCalcGetValueFunc getValue);
+    ~GaussCalcParamEditor();
 
     ParamEditor* editor() const { return _editor; }
 
     void populate();
+
+    bool inverted = false;
 
 signals:
     void calcNeeded();
@@ -87,11 +87,11 @@ private:
     GaussCalculator _calc;
     Plot* _plot;
     QCPGraph *_graphPlusW, *_graphMinusW;
-    QVector<GaussCalcParam*> _params;
+    QVector<GaussCalcParamEditor*> _params;
     QGridLayout *_paramsLayout;
     Ori::Widgets::ExclusiveActionGroup *_plotPlusMinusZ, *_plotPlusMinusW;
+    Z::Parameter *_lambda, *_MI, *_w0, *_z, *_z0, *_Vs, *_w, *_R, *_reQ, *_imQ, *_reQ1, *_imQ1;
 
-    void addParam(int row, int col, GaussCalcParam *param);
     void makeParams();
     QWidget* makeToolbar();
     QWidget* makePlot();

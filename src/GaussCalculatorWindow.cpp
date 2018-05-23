@@ -33,31 +33,30 @@
 //                              GaussCalculatorParam
 //--------------------------------------------------------------------------------
 
-GaussCalcParam::GaussCalcParam(GaussCalculator *calc,
-        Z::Dim dim, const QString& alias, const QString& name,
-        GaussCalcSetValueFunc setValue, GaussCalcGetValueFunc getValue)
-    : QObject(), _calc(calc), _setValueToCalculator(setValue), _getValueFromCalculator(getValue)
+GaussCalcParamEditor::GaussCalcParamEditor(Z::Parameter *param, GaussCalculator *calc,
+                               GaussCalcSetValueFunc setValue, GaussCalcGetValueFunc getValue)
+    : QObject(), _calc(calc), _param(param),
+    _setValueToCalculator(setValue), _getValueFromCalculator(getValue)
 {
-    _param = new Z::Parameter(dim, alias, name);
     _editor = new ParamEditor(ParamEditor::Options(_param));
     connect(_editor, SIGNAL(valueEdited(double)), this, SLOT(paramEdited()));
     connect(_editor, SIGNAL(unitChanged(Z::Unit)), this, SLOT(paramEdited()));
 }
 
-GaussCalcParam::~GaussCalcParam()
+GaussCalcParamEditor::~GaussCalcParamEditor()
 {
     delete _editor;
     delete _param;
 }
 
-void GaussCalcParam::paramEdited()
+void GaussCalcParamEditor::paramEdited()
 {
     _editor->apply();
     _setValueToCalculator(_calc, _param->value().toSi());
     emit calcNeeded();
 }
 
-void GaussCalcParam::populate()
+void GaussCalcParamEditor::populate()
 {
     auto unit = _param->value().unit();
     double value = unit->fromSi(_getValueFromCalculator(_calc));
@@ -152,17 +151,8 @@ void GaussCalculatorWindow::storeState()
     QTextStream(&file) << QJsonDocument(root).toJson();
 }
 
-void GaussCalculatorWindow::addParam(int row, int col, GaussCalcParam *param)
-{
-    _params.append(param);
-    _paramsLayout->addWidget(param->editor(), row, col);
-    connect(param, &GaussCalcParam::calcNeeded, this, &GaussCalculatorWindow::recalc);
-}
-
 void GaussCalculatorWindow::recalc()
 {
-    qDebug() << "CALC" << _calc.lambda();
-
     _calc.calc();
 
     for (auto p : _params)
@@ -171,59 +161,54 @@ void GaussCalculatorWindow::recalc()
 
 void GaussCalculatorWindow::makeParams()
 {
-#define FUNCS(toCalc, fromCalc)\
-    std::mem_fun(&GaussCalculator::toCalc), std::mem_fun(&GaussCalculator::fromCalc)
+#define FUNCS(to_calc_func, from_calc_func)\
+    &_calc, std::mem_fun(&GaussCalculator::to_calc_func), std::mem_fun(&GaussCalculator::from_calc_func)
 
-    addParam(0, 0, new GaussCalcParam(&_calc,
-        Z::Dims::linear(), QStringLiteral("lambda"), QStringLiteral("λ"),
-        FUNCS(setLambda, lambda)));
+#define PARAM(param_var, param_dim, param_alias, param_name, def_value, def_unit)\
+    param_var = new Z::Parameter(Z::Dims::param_dim(), param_alias, param_name);\
+    param_var->setValue(Z::Value(def_value, Z::Units::def_unit()));
 
-    addParam(1, 0, new GaussCalcParam(&_calc,
-        Z::Dims::none(), QStringLiteral("MI"), QStringLiteral("M²"),
-        FUNCS(setM2, M2)));
+    auto addEditor = [&](int row, int col, GaussCalcParamEditor *editor) {
+        _params.append(editor);
+        _paramsLayout->addWidget(editor->editor(), row, col);
+        connect(editor, &GaussCalcParamEditor::calcNeeded, this, &GaussCalculatorWindow::recalc);
+    };
 
-    addParam(2, 0, new GaussCalcParam(&_calc,
-        Z::Dims::linear(), QStringLiteral("w0"), QStringLiteral("ω<sub>0</sub>"),
-        FUNCS(setW0, w0)));
+    PARAM(_lambda, linear, QStringLiteral("lambda"), QStringLiteral("λ"), 980, nm)
+    PARAM(_MI, none, QStringLiteral("MI"), QStringLiteral("M²"), 1, none)
+    PARAM(_w0, linear, QStringLiteral("w0"), QStringLiteral("ω<sub>0</sub>"), 100, mkm)
+    PARAM(_z, linear, QStringLiteral("z"), QStringLiteral("z"), 100, mm)
+    PARAM(_z0, linear, QStringLiteral("z0"), QStringLiteral("z<sub>0</sub>"), 0, mm)
+    PARAM(_Vs, angular, QStringLiteral("Vs"), QStringLiteral("V<sub>s</sub>"), 0, deg)
+    PARAM(_w, linear, QStringLiteral("w"), QStringLiteral("ω"), 0, mkm)
+    PARAM(_R, linear, QStringLiteral("R"), QStringLiteral("R"), 0, mm)
+    PARAM(_reQ, linear, QStringLiteral("q_re"), QStringLiteral("Re(q)"), 0, mm)
+    PARAM(_imQ, linear, QStringLiteral("q_im"), QStringLiteral("Im(q)"), 0, mm)
+    PARAM(_reQ1, linear, QStringLiteral("q1_re"), QStringLiteral("Re(q<sup>-1</sup>)"), 0, mm)
+    PARAM(_imQ1, linear, QStringLiteral("q1_im"), QStringLiteral("Im(q<sup>-1</sup>)"), 0, mm)
 
-    addParam(3, 0, new GaussCalcParam(&_calc,
-        Z::Dims::linear(), QStringLiteral("z"), QStringLiteral("z"),
-        FUNCS(setZ, z)));
+    addEditor(0, 0, new GaussCalcParamEditor(_lambda, FUNCS(setLambda, lambda)));
+    addEditor(1, 0, new GaussCalcParamEditor(_MI, FUNCS(setM2, M2)));
+    addEditor(2, 0, new GaussCalcParamEditor(_w0, FUNCS(setW0, w0)));
+    addEditor(3, 0, new GaussCalcParamEditor(_z, FUNCS(setZ, z)));
 
+    addEditor(0, 1, new GaussCalcParamEditor(_z0, FUNCS(setZ0, z0)));
+    addEditor(1, 1, new GaussCalcParamEditor(_Vs, FUNCS(setVs, Vs)));
+    addEditor(2, 1, new GaussCalcParamEditor(_w, FUNCS(setW, w)));
+    addEditor(3, 1, new GaussCalcParamEditor(_R, FUNCS(setR, R)));
 
-    addParam(0, 1, new GaussCalcParam(&_calc,
-        Z::Dims::linear(), QStringLiteral("z0"), QStringLiteral("z<sub>0</sub>"),
-        FUNCS(setZ0, z0)));
+    addEditor(0, 2, new GaussCalcParamEditor(_reQ, FUNCS(setReQ, reQ)));
+    addEditor(1, 2, new GaussCalcParamEditor(_imQ, FUNCS(setImQ, imQ)));
 
-    addParam(1, 1, new GaussCalcParam(&_calc,
-        Z::Dims::angular(), QStringLiteral("Vs"), QStringLiteral("V<sub>s</sub>"),
-        FUNCS(setVs, Vs)));
+    auto editorReQ1 = new GaussCalcParamEditor(_reQ1, FUNCS(setReQ1, reQ1));
+    editorReQ1->inverted = true;
+    auto editorImQ1 = new GaussCalcParamEditor(_imQ1, FUNCS(setImQ1, imQ1));
+    editorImQ1->inverted = true;
 
-    addParam(2, 1, new GaussCalcParam(&_calc,
-        Z::Dims::linear(), QStringLiteral("w"), QStringLiteral("ω"),
-        FUNCS(setW, w)));
+    addEditor(2, 2, editorReQ1);
+    addEditor(3, 2, editorImQ1);
 
-    addParam(3, 1, new GaussCalcParam(&_calc,
-        Z::Dims::linear(), QStringLiteral("R"), QStringLiteral("R"),
-        FUNCS(setR, R)));
-
-
-    addParam(0, 2, new GaussCalcParam(&_calc,
-        Z::Dims::linear(), QStringLiteral("q_re"), QStringLiteral("Re(q)"),
-        FUNCS(setReQ, reQ)));
-
-    addParam(1, 2, new GaussCalcParam(&_calc,
-        Z::Dims::linear(), QStringLiteral("q_im"), QStringLiteral("Im(q)"),
-        FUNCS(setImQ, imQ)));
-
-    addParam(2, 2, new GaussCalcParam(&_calc,
-        Z::Dims::linear(), QStringLiteral("q1_re"), QStringLiteral("Re(q<sup>-1</sup>)"),
-        FUNCS(setReQ1, reQ1)));
-
-    addParam(3, 2, new GaussCalcParam(&_calc,
-        Z::Dims::linear(), QStringLiteral("q1_im"), QStringLiteral("Im(q<sup>-1</sup>)"),
-        FUNCS(setImQ1, imQ1)));
-
+#undef PARAM
 #undef FUNCS
 }
 
@@ -277,13 +262,13 @@ QWidget* GaussCalculatorWindow::makePlot()
 void GaussCalculatorWindow::zoneSelected(int zone)
 {
     _calc.setZone(GaussCalculator::Zone(zone));
-    //qDebug() << ((_calc.zone() == BeamCalculator::Zone::Near)? "Zone: Near": "Zone: Far");
+    qDebug() << ((_calc.zone() == GaussCalculator::Zone::Near)? "Zone: Near": "Zone: Far");
 }
 
 void GaussCalculatorWindow::lockSelected(int lock)
 {
     _calc.setLock(GaussCalculator::Lock(lock));
-    //qDebug() << ((_calc.lock() == BeamCalculator::Lock::Waist)? "Lock: Waist": "Lock: Front");
+    qDebug() << ((_calc.lock() == GaussCalculator::Lock::Waist)? "Lock: Waist": "Lock: Front");
 }
 
 void GaussCalculatorWindow::updatePlot()
