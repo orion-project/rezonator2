@@ -13,6 +13,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QIcon>
+#include <QTimer>
 
 /*void BeamPlotter::calculate()
 {
@@ -33,10 +34,17 @@
 //                              GaussCalculatorParam
 //--------------------------------------------------------------------------------
 
-GaussCalcParamEditor::GaussCalcParamEditor(Z::Parameter *param, GaussCalculator *calc,
-                               GaussCalcSetValueFunc setValue, GaussCalcGetValueFunc getValue)
-    : QObject(), _calc(calc), _param(param),
-    _setValueToCalculator(setValue), _getValueFromCalculator(getValue)
+GaussCalcParamEditor::GaussCalcParamEditor(Z::Parameter *param,
+                                           GaussCalculator *calc,
+                                           GaussCalcGetValueFunc getValue,
+                                           GaussCalcSetValueFunc setValue,
+                                           bool invertedUnit)
+    : QObject(),
+      _calc(calc),
+      _param(param),
+      _getValueFromCalculator(getValue),
+      _setValueToCalculator(setValue),
+      _invertedUnit(invertedUnit)
 {
     _editor = new ParamEditor(ParamEditor::Options(_param));
     connect(_editor, SIGNAL(valueEdited(double)), this, SLOT(paramEdited()));
@@ -49,18 +57,25 @@ GaussCalcParamEditor::~GaussCalcParamEditor()
     delete _param;
 }
 
+void GaussCalcParamEditor::populate()
+{
+    double valueSi = _getValueFromCalculator(_calc);
+    Z::Unit unit = _param->value().unit();
+    double value = _invertedUnit
+            ? unit->toSi(valueSi)
+            : unit->fromSi(valueSi);
+    _param->setValue(Z::Value(value, unit));
+}
+
 void GaussCalcParamEditor::paramEdited()
 {
     _editor->apply();
-    _setValueToCalculator(_calc, _param->value().toSi());
+    const Z::Value& v = _param->value();
+    double valueSi = _invertedUnit
+            ? v.unit()->fromSi(v.value())
+            : v.unit()->toSi(v.value());
+    _setValueToCalculator(_calc, valueSi);
     emit calcNeeded();
-}
-
-void GaussCalcParamEditor::populate()
-{
-    auto unit = _param->value().unit();
-    double value = unit->fromSi(_getValueFromCalculator(_calc));
-    _param->setValue(Z::Value(value, unit));
 }
 
 //--------------------------------------------------------------------------------
@@ -75,7 +90,7 @@ void GaussCalculatorWindow::showCalcWindow()
 GaussCalculatorWindow::GaussCalculatorWindow(QWidget *parent) : QWidget(parent)
 {
     setAttribute(Qt::WA_DeleteOnClose);
-    setWindowTitle(tr("Gauss Beam Calculator"));
+    setWindowTitle(tr("Gaussian Beam Calculator"));
     setWindowIcon(QIcon(":/window_icons/gauss_calc"));
 
     _paramsLayout = new QGridLayout;
@@ -93,17 +108,11 @@ GaussCalculatorWindow::GaussCalculatorWindow(QWidget *parent) : QWidget(parent)
         .setMargin(0)
         .setSpacing(0)
         .useFor(this);
-/*
-    _editorLambda->setValue(_units.si2lambda(_calc.lambda()));
-
-    _calc.calc();
-
-    populateUnitLabels();
-    populateValues();
-    updatePlot();*/
 
     restoreState();
     Ori::Wnd::moveToScreenCenter(this);
+
+    QTimer::singleShot(0, [this]{ this->recalc(); });
 }
 
 GaussCalculatorWindow::~GaussCalculatorWindow()
@@ -157,16 +166,19 @@ void GaussCalculatorWindow::recalc()
 
     for (auto p : _params)
         p->populate();
+
+    updatePlot();
 }
 
 void GaussCalculatorWindow::makeParams()
 {
-#define FUNCS(to_calc_func, from_calc_func)\
-    &_calc, std::mem_fun(&GaussCalculator::to_calc_func), std::mem_fun(&GaussCalculator::from_calc_func)
+    #define FUNC(func_name) std::mem_fun(&GaussCalculator::func_name)
 
-#define PARAM(param_var, param_dim, param_alias, param_name, def_value, def_unit)\
-    param_var = new Z::Parameter(Z::Dims::param_dim(), param_alias, param_name);\
-    param_var->setValue(Z::Value(def_value, Z::Units::def_unit()));
+    auto addParam = [](Z::Dim dim, const QString& alias, const QString& name, const Z::Value& initialValue) {
+        auto param = new Z::Parameter(dim, alias, name);
+        param->setValue(initialValue);
+        return param;
+    };
 
     auto addEditor = [&](int row, int col, GaussCalcParamEditor *editor) {
         _params.append(editor);
@@ -174,42 +186,35 @@ void GaussCalculatorWindow::makeParams()
         connect(editor, &GaussCalcParamEditor::calcNeeded, this, &GaussCalculatorWindow::recalc);
     };
 
-    PARAM(_lambda, linear, QStringLiteral("lambda"), QStringLiteral("λ"), 980, nm)
-    PARAM(_MI, none, QStringLiteral("MI"), QStringLiteral("M²"), 1, none)
-    PARAM(_w0, linear, QStringLiteral("w0"), QStringLiteral("ω<sub>0</sub>"), 100, mkm)
-    PARAM(_z, linear, QStringLiteral("z"), QStringLiteral("z"), 100, mm)
-    PARAM(_z0, linear, QStringLiteral("z0"), QStringLiteral("z<sub>0</sub>"), 0, mm)
-    PARAM(_Vs, angular, QStringLiteral("Vs"), QStringLiteral("V<sub>s</sub>"), 0, deg)
-    PARAM(_w, linear, QStringLiteral("w"), QStringLiteral("ω"), 0, mkm)
-    PARAM(_R, linear, QStringLiteral("R"), QStringLiteral("R"), 0, mm)
-    PARAM(_reQ, linear, QStringLiteral("q_re"), QStringLiteral("Re(q)"), 0, mm)
-    PARAM(_imQ, linear, QStringLiteral("q_im"), QStringLiteral("Im(q)"), 0, mm)
-    PARAM(_reQ1, linear, QStringLiteral("q1_re"), QStringLiteral("Re(q<sup>-1</sup>)"), 0, mm)
-    PARAM(_imQ1, linear, QStringLiteral("q1_im"), QStringLiteral("Im(q<sup>-1</sup>)"), 0, mm)
+    using namespace Z::Dims;
+    _lambda = addParam(linear(), QStringLiteral("lambda"), QStringLiteral("λ"), 980_nm);
+    _MI = addParam(none(), QStringLiteral("MI"), QStringLiteral("M²"), 1);
+    _w0 = addParam(linear(), QStringLiteral("w0"), QStringLiteral("ω<sub>0</sub>"), 100_mkm);
+    _z = addParam(linear(), QStringLiteral("z"), QStringLiteral("z"), 100_mm);
+    _z0 = addParam(linear(), QStringLiteral("z0"), QStringLiteral("z<sub>0</sub>"), 0_mm);
+    _Vs = addParam(angular(), QStringLiteral("Vs"), QStringLiteral("V<sub>s</sub>"), 0_deg);
+    _w = addParam(linear(), QStringLiteral("w"), QStringLiteral("ω"), 0_mkm);
+    _R = addParam(linear(), QStringLiteral("R"), QStringLiteral("R"), 0_mm);
+    _reQ = addParam(linear(), QStringLiteral("q_re"), QStringLiteral("re(q)"), 0_mm);
+    _imQ = addParam(linear(), QStringLiteral("q_im"), QStringLiteral("im(q)"), 0_mm);
+    _reQ1 = addParam(linear(), QStringLiteral("q1_re"), QStringLiteral("re(1/q)"), 0_mm);
+    _imQ1 = addParam(linear(), QStringLiteral("q1_im"), QStringLiteral("im(1/q)"), 0_mm);
 
-    addEditor(0, 0, new GaussCalcParamEditor(_lambda, FUNCS(setLambda, lambda)));
-    addEditor(1, 0, new GaussCalcParamEditor(_MI, FUNCS(setM2, M2)));
-    addEditor(2, 0, new GaussCalcParamEditor(_w0, FUNCS(setW0, w0)));
-    addEditor(3, 0, new GaussCalcParamEditor(_z, FUNCS(setZ, z)));
+    GaussCalculator *c = &_calc;
+    addEditor(0, 0, new GaussCalcParamEditor(_lambda, c, FUNC(lambda), FUNC(setLambda)));
+    addEditor(1, 0, new GaussCalcParamEditor(_MI, c, FUNC(MI), FUNC(setMI)));
+    addEditor(2, 0, new GaussCalcParamEditor(_w0, c, FUNC(w0), FUNC(setW0)));
+    addEditor(3, 0, new GaussCalcParamEditor(_z, c, FUNC(z), FUNC(setZ)));
+    addEditor(0, 1, new GaussCalcParamEditor(_z0, c, FUNC(z0), FUNC(setZ0)));
+    addEditor(1, 1, new GaussCalcParamEditor(_Vs, c, FUNC(Vs), FUNC(setVs)));
+    addEditor(2, 1, new GaussCalcParamEditor(_w, c, FUNC(w), FUNC(setW)));
+    addEditor(3, 1, new GaussCalcParamEditor(_R, c, FUNC(R), FUNC(setR)));
+    addEditor(0, 2, new GaussCalcParamEditor(_reQ, c, FUNC(reQ), FUNC(setReQ)));
+    addEditor(1, 2, new GaussCalcParamEditor(_imQ, c, FUNC(imQ), FUNC(setImQ)));
+    addEditor(2, 2, new GaussCalcParamEditor(_reQ1, c, FUNC(reQ1), FUNC(setReQ1), true));
+    addEditor(3, 2, new GaussCalcParamEditor(_imQ1, c, FUNC(imQ1), FUNC(setImQ1), true));
 
-    addEditor(0, 1, new GaussCalcParamEditor(_z0, FUNCS(setZ0, z0)));
-    addEditor(1, 1, new GaussCalcParamEditor(_Vs, FUNCS(setVs, Vs)));
-    addEditor(2, 1, new GaussCalcParamEditor(_w, FUNCS(setW, w)));
-    addEditor(3, 1, new GaussCalcParamEditor(_R, FUNCS(setR, R)));
-
-    addEditor(0, 2, new GaussCalcParamEditor(_reQ, FUNCS(setReQ, reQ)));
-    addEditor(1, 2, new GaussCalcParamEditor(_imQ, FUNCS(setImQ, imQ)));
-
-    auto editorReQ1 = new GaussCalcParamEditor(_reQ1, FUNCS(setReQ1, reQ1));
-    editorReQ1->inverted = true;
-    auto editorImQ1 = new GaussCalcParamEditor(_imQ1, FUNCS(setImQ1, imQ1));
-    editorImQ1->inverted = true;
-
-    addEditor(2, 2, editorReQ1);
-    addEditor(3, 2, editorImQ1);
-
-#undef PARAM
-#undef FUNCS
+    #undef FUNC
 }
 
 QWidget* GaussCalculatorWindow::makeToolbar()

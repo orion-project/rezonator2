@@ -17,8 +17,8 @@ struct PairTS
     PairTS(const PairTS& other) : T(other.T), S(other.S) {}
     PairTS(const PairTS* other) : T(other->T), S(other->S) {}
 
-    void operator =(const TValue& v) { T = v, S = v; }
-    void operator =(const PairTS<TValue>& other) { T = other.T, S = other.S; }
+    PairTS& operator = (const TValue& v) { T = v, S = v; return *this; }
+    PairTS& operator = (const PairTS& other) { T = other.T, S = other.S; return *this; }
 
     void set(const TValue& t, const TValue& s) { T = t, S = s; }
 
@@ -47,7 +47,7 @@ public:
     Value(double value, Unit unit): _value(value), _unit(unit) {}
     Value(const Value& other): _value(other.value()), _unit(other.unit()) {}
 
-    const double& value() const { return _value; }
+    double value() const { return _value; }
     Unit unit() const { return _unit; }
 
     QString str() const;
@@ -60,7 +60,7 @@ public:
 
     double toSi() const { return _unit->toSi(_value); }
 
-    void operator = (const Value& v) { _value = v._value, _unit = v._unit; }
+    Value& operator = (const Value& v) { _value = v._value, _unit = v._unit; return *this; }
     bool operator == (const Value& v) const { return Double(toSi()).is(v.toSi()); }
     bool operator == (const double& v) const { return Double(toSi()).is(v); }
     bool operator != (const Value& v) const { return Double(toSi()).isNot(v.toSi()); }
@@ -79,6 +79,32 @@ private:
     Unit _unit;
 };
 
+} // namespace Z
+
+//------------------------------------------------------------------------------
+//                             Value literals
+//
+// They are useful for making values in natural way like:
+//
+// auto v = 100_mkm
+//
+// Should be in global namespace for convenience.
+
+#define Z_VALUE_LITERAL(unit)\
+    inline Z::Value operator "" _##unit(long double value) { return Z::Value(value, Z::Units::unit()); }\
+    inline Z::Value operator "" _##unit(unsigned long long value) { return Z::Value(value, Z::Units::unit()); }
+
+Z_VALUE_LITERAL(Ao)
+Z_VALUE_LITERAL(nm)
+Z_VALUE_LITERAL(mkm)
+Z_VALUE_LITERAL(mm)
+Z_VALUE_LITERAL(cm)
+Z_VALUE_LITERAL(m)
+
+Z_VALUE_LITERAL(deg)
+
+namespace Z {
+
 //------------------------------------------------------------------------------
 
 class ValueTS
@@ -93,11 +119,11 @@ public:
 
     Value valueT() const { return Value(_valueT, _unit); }
     Value valueS() const { return Value(_valueS, _unit); }
-    const double& rawValueT() const { return _valueT; }
-    const double& rawValueS() const { return _valueS; }
+    double rawValueT() const { return _valueT; }
+    double rawValueS() const { return _valueS; }
     Unit unit() const { return _unit; }
 
-    void operator = (const ValueTS& v) { _valueT = v._valueT, _valueS = v._valueS, _unit = v._unit; }
+    ValueTS& operator = (const ValueTS& v) { _valueT = v._valueT, _valueS = v._valueS, _unit = v._unit; return *this; }
 
     QString str() const;
 

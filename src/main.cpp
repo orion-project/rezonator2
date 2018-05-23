@@ -17,15 +17,19 @@ int main(int argc, char* argv[])
     if (Ori::Testing::isTesting())
         return Ori::Testing::run(app, { ADD_SUITE(Z::Tests) });
 
+    int res = 0;
+
     if (QApplication::arguments().contains("gauss"))
     {
         GaussCalculatorWindow::showCalcWindow();
+        res = app.exec();
     }
     else
     {
         ProjectWindow pw;
         pw.show();
+        res = app.exec();
     }
 
-    return app.exec();
+    return res;
 }

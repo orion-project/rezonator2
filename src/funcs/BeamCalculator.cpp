@@ -19,7 +19,7 @@ BeamResult BeamCalculator::calcGauss(const Z::Complex& input, const Z::Matrix& m
     Complex output = matrix.multComplexBeam(input);
 
     GaussCalculator gauss;
-    gauss.setM2(MI);
+    gauss.setMI(MI);
     gauss.setLambda(lambda);
     gauss.setLock(GaussCalculator::Lock::Front);
     gauss.setReQ1(output.real());

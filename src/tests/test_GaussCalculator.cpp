@@ -26,7 +26,7 @@ namespace GaussCalculatorTests {
 TEST_METHOD(change_W0)
 {
     GaussCalculator c;
-    c.setM2(2);
+    c.setMI(2);
     c.setLambda(980e-9);
     c.setZ(0.1);
 
@@ -34,7 +34,7 @@ TEST_METHOD(change_W0)
     c.setW0(100e-6);
     c.calc();
 
-    _(M2, 2, 7)
+    _(MI, 2, 7)
     _(lambda, 9.8e-07, 12)
     _(w0, 0.0001, 7)
     _(z0, 0.01602853, 8)
@@ -51,7 +51,7 @@ TEST_METHOD(change_W0)
     c.setW0(75e-6);
     c.calc();
 
-    _(M2, 1.49164, 5)
+    _(MI, 1.49164, 5)
     _(lambda, 9.8e-07, 12)
     _(w0, 7.5e-05, 7)
     _(z0, 0.01208877, 8)
@@ -76,7 +76,7 @@ TEST_METHOD(change_Z0_far)
     c.setZ0(0.012);
     c.calc();
 
-    _(M2, 2.379994, 5)
+    _(MI, 2.379994, 5)
     _(lambda, 1.1e-06, 12)
     _(w0, 0.0001, 7)
     _(z0, 0.012, 7)
@@ -93,7 +93,7 @@ TEST_METHOD(change_Z0_far)
     c.setZ0(0.016);
     c.calc();
 
-    _(M2, 3.210236, 6)
+    _(MI, 3.210236, 6)
     _(lambda, 1.1e-06, 12)
     _(w0, 0.0001341065, 10)
     _(z0, 0.016, 7)
@@ -118,7 +118,7 @@ TEST_METHOD(change_Z0_near)
     c.setZ0(0.012);
     c.calc();
 
-    _(M2, 2.379994, 5)
+    _(MI, 2.379994, 5)
     _(lambda, 1.1e-06, 12)
     _(w0, 0.0001, 7)
     _(z0, 0.012, 7)
@@ -135,7 +135,7 @@ TEST_METHOD(change_Z0_near)
     c.setZ0(0.016);
     c.calc();
 
-    _(M2, 122.5328, 4)
+    _(MI, 122.5328, 4)
     _(lambda, 1.1e-06, 12)
     _(w0, 0.0008285287, 10)
     _(z0, 0.016, 7)
@@ -160,7 +160,7 @@ TEST_METHOD(change_Vs)
     c.setVs(0.07);
     c.calc();
 
-    _(M2, 34.36117, 5)
+    _(MI, 34.36117, 5)
     _(lambda, 6.4e-07, 12)
     _(w0, 0.0001, 7)
     _(z0, 0.001428571, 9)
@@ -177,7 +177,7 @@ TEST_METHOD(change_Vs)
     c.setVs(0.08);
     c.calc();
 
-    _(M2, 1331.382, 3)
+    _(MI, 1331.382, 3)
     _(lambda, 6.4e-07, 12)
     _(w0, 0.003390336, 9)
     _(z0, 0.04237919, 8)
@@ -195,13 +195,13 @@ TEST_METHOD(change_Z)
 {
     GaussCalculator c;
     c.setLambda(640e-9);
-    c.setM2(2);
+    c.setMI(2);
 
     c.setLock(GaussCalculator::Lock::Waist);
     c.setZ(0.1);
     c.calc();
 
-    _(M2, 2, 5)
+    _(MI, 2, 5)
     _(lambda, 6.4e-07, 12)
     _(w0, 0.0001, 7)
     _(z0, 0.02454369, 8)
@@ -218,7 +218,7 @@ TEST_METHOD(change_Z)
     c.setZ(0.09);
     c.calc();
 
-    _(M2, 3.438376, 6)
+    _(MI, 3.438376, 6)
     _(lambda, 6.4e-07, 12)
     _(w0, 0.0001630965, 10)
     _(z0, 0.0379757, 7)
@@ -232,7 +232,7 @@ TEST_METHOD(change_Z)
     _(imQ, -0.01281806, 8)
 }
 
-TEST_METHOD(change_M2)
+TEST_METHOD(change_MI)
 {
     GaussCalculator c;
     c.setLambda(980e-9);
@@ -240,10 +240,10 @@ TEST_METHOD(change_M2)
     c.setZ(0.1);
 
     c.setLock(GaussCalculator::Lock::Waist);
-    c.setM2(2);
+    c.setMI(2);
     c.calc();
 
-    _(M2, 2, 7)
+    _(MI, 2, 7)
     _(lambda, 9.8e-07, 12)
     _(w0, 0.0001, 7)
     _(z0, 0.01602853, 8)
@@ -257,10 +257,10 @@ TEST_METHOD(change_M2)
     _(imQ, -0.008167705, 9)
 
     c.setLock(GaussCalculator::Lock::Front);
-    c.setM2(1.7);
+    c.setMI(1.7);
     c.calc();
 
-    _(M2, 1.7, 7)
+    _(MI, 1.7, 7)
     _(lambda, 9.8e-07, 12)
     _(w0, 8.529696e-05, 11)
     _(z0, 0.01371962, 8)
@@ -285,7 +285,7 @@ TEST_METHOD(change_W)
     c.setW(600e-6);
     c.calc();
 
-    _(M2, 2.904049, 6)
+    _(MI, 2.904049, 6)
     _(lambda, 6.4e-07, 12)
     _(w0, 0.0001, 7)
     _(z0, 0.01690309, 8)
@@ -302,7 +302,7 @@ TEST_METHOD(change_W)
     c.setW(700e-6);
     c.calc();
 
-    _(M2, 3.952733, 6)
+    _(MI, 3.952733, 6)
     _(lambda, 6.4e-07, 12)
     _(w0, 0.0001166667, 10)
     _(z0, 0.01690309, 8)
@@ -327,7 +327,7 @@ TEST_METHOD(change_R)
     c.setR(0.12);
     c.calc();
 
-    _(M2, 1.097627, 6)
+    _(MI, 1.097627, 6)
     _(lambda, 6.4e-07, 12)
     _(w0, 0.0001, 7)
     _(z0, 0.04472136, 8)
@@ -344,7 +344,7 @@ TEST_METHOD(change_R)
     c.setR(0.11);
     c.calc();
 
-    _(M2, 0.8466979, 7)
+    _(MI, 0.8466979, 7)
     _(lambda, 6.4e-07, 12)
     _(w0, 7.385489e-05, 11)
     _(z0, 0.03162278, 8)
@@ -369,7 +369,7 @@ TEST_METHOD(change_Q)
     c.setImQ(-0.036);
     c.calc();
 
-    _(M2, 1.196226, 6)
+    _(MI, 1.196226, 6)
     _(lambda, 6.4e-07, 12)
     _(w0, 0.0001, 7)
     _(z0, 0.0410352, 7)
@@ -387,7 +387,7 @@ TEST_METHOD(change_Q)
     c.setImQ(-0.040);
     c.calc();
 
-    _(M2, 65.45781, 5)
+    _(MI, 65.45781, 5)
     _(lambda, 6.4e-07, 12)
     _(w0, 0.001922674, 9)
     _(z0, 0.2772169, 7)
@@ -412,7 +412,7 @@ TEST_METHOD(change_Q1_re)
     c.setReQ1(9);
     c.calc();
 
-    _(M2, 1.472622, 6)
+    _(MI, 1.472622, 6)
     _(lambda, 6.4e-07, 12)
     _(w0, 0.0001, 7)
     _(z0, 0.03333333, 8)
@@ -429,7 +429,7 @@ TEST_METHOD(change_Q1_re)
     c.setReQ1(8);
     c.calc();
 
-    _(M2, 1.963495, 6)
+    _(MI, 1.963495, 6)
     _(lambda, 6.4e-07, 12)
     _(w0, 0.0001414214, 10)
     _(z0, 0.05, 3)
@@ -454,7 +454,7 @@ TEST_METHOD(change_Q1_im)
     c.setImQ1(0.05);
     c.calc();
 
-    _(M2, 9.896151, 6)
+    _(MI, 9.896151, 6)
     _(lambda, 6.4e-07, 12)
     _(w0, 0.0001, 7)
     _(z0, 0.00496025, 8)
@@ -471,7 +471,7 @@ TEST_METHOD(change_Q1_im)
     c.setImQ1(0.45);
     c.calc();
 
-    _(M2, 1.099572, 6)
+    _(MI, 1.099572, 6)
     _(lambda, 6.4e-07, 12)
     _(w0, 3.333333e-05, 10)
     _(z0, 0.00496025, 8)
@@ -489,14 +489,14 @@ TEST_METHOD(change_Lambda)
 {
     GaussCalculator c;
     c.setW0(100e-6);
-    c.setM2(2);
+    c.setMI(2);
     c.setZ(0.1);
 
     c.setLock(GaussCalculator::Lock::Waist);
     c.setLambda(980e-9);
     c.calc();
 
-    _(M2, 2, 7)
+    _(MI, 2, 7)
     _(lambda, 9.8e-07, 12)
     _(w0, 0.0001, 7)
     _(z0, 0.01602853, 8)
@@ -513,7 +513,7 @@ TEST_METHOD(change_Lambda)
     c.setLambda(640e-9);
     c.calc();
 
-    _(M2, 3.0625, 4)
+    _(MI, 3.0625, 4)
     _(lambda, 6.4e-07, 12)
     _(w0, 0.0001, 7)
     _(z0, 0.01602853, 8)
@@ -534,7 +534,7 @@ TEST_GROUP("Gauss Calculator",
            ADD_TEST(change_Z0_near),
            ADD_TEST(change_Vs),
            ADD_TEST(change_Z),
-           ADD_TEST(change_M2),
+           ADD_TEST(change_MI),
            ADD_TEST(change_W),
            ADD_TEST(change_R),
            ADD_TEST(change_Q),

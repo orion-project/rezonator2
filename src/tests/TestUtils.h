@@ -5,21 +5,6 @@
 #include "testing/OriTestBase.h"
 
 //------------------------------------------------------------------------------
-//                         Test data provider helpers
-//------------------------------------------------------------------------------
-
-#define Z_VALUE_LITERAL(unit)\
-    inline Z::Value operator "" _##unit(long double value) { return Z::Value(value, Z::Units::unit()); }\
-    inline Z::Value operator "" _##unit(unsigned long long value) { return Z::Value(value, Z::Units::unit()); }
-
-Z_VALUE_LITERAL(Ao)
-Z_VALUE_LITERAL(nm)
-Z_VALUE_LITERAL(mkm)
-Z_VALUE_LITERAL(mm)
-Z_VALUE_LITERAL(cm)
-Z_VALUE_LITERAL(m)
-
-//------------------------------------------------------------------------------
 //                       Application specific asserts
 //------------------------------------------------------------------------------
 

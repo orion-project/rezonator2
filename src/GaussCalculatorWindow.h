@@ -21,9 +21,6 @@ namespace Widgets {
 class ExclusiveActionGroup;
 }}
 
-//using namespace Ori::Gui;
-
-
 //class BeamPlotter
 //{
 //public:
@@ -40,23 +37,24 @@ class ExclusiveActionGroup;
 //    void calculate();
 //};
 
-using GaussCalcSetValueFunc = std::mem_fun1_t<void, GaussCalculator, const double&>;
-using GaussCalcGetValueFunc = std::const_mem_fun_t<double, GaussCalculator>;
-
 class GaussCalcParamEditor : public QObject
 {
     Q_OBJECT
 
 public:
-    GaussCalcParamEditor(Z::Parameter *param, GaussCalculator *calc,
-                   GaussCalcSetValueFunc setValue, GaussCalcGetValueFunc getValue);
+    using GaussCalcGetValueFunc = std::const_mem_fun_t<double, GaussCalculator>;
+    using GaussCalcSetValueFunc = std::mem_fun1_t<void, GaussCalculator, const double&>;
+
+    GaussCalcParamEditor(Z::Parameter *param,
+                         GaussCalculator *calc,
+                         GaussCalcGetValueFunc getValue,
+                         GaussCalcSetValueFunc setValue,
+                         bool invertedUnit = false);
     ~GaussCalcParamEditor();
 
     ParamEditor* editor() const { return _editor; }
 
     void populate();
-
-    bool inverted = false;
 
 signals:
     void calcNeeded();
@@ -68,8 +66,9 @@ private:
     GaussCalculator *_calc;
     Z::Parameter *_param;
     ParamEditor *_editor;
-    GaussCalcSetValueFunc _setValueToCalculator;
     GaussCalcGetValueFunc _getValueFromCalculator;
+    GaussCalcSetValueFunc _setValueToCalculator;
+    bool _invertedUnit;
 };
 
 

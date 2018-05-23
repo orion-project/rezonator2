@@ -213,8 +213,8 @@ $$ V_s = \frac{M^2 \lambda}{\pi w_0}  $$
 $$ q^{-1} = \frac 1 R + i \frac{\lambda}{\pi w^2} $$
 
 
-## Change complex ROC $q$
-Assigning either real or imaginary part of complex ROC, we define both the beam radius $w$ and the wavefront ROC $R$ at the same time.
+## Change complex beam parameter $q$
+Assigning either real or imaginary part of complex beam parameter, we define both the beam radius $w$ and the wavefront ROC $R$ at the same time.
 
 $$ R = \frac{1}{Re\big(q^{-1}\big)} $$
 
@@ -242,7 +242,7 @@ $$ M^2 = \frac{\pi w_0^2}{z_0 \lambda} $$
 $$ V_s = \frac{M^2 \lambda}{\pi w_0}  $$
 
 
-## Change inverted complex ROC
+## Change inverted complex beam parameter
 
 Changing of real part is equivalent to changing of wavefront ROC $R$, and changing of imaginary part is equivalent to changing of beam radius $w$.
 

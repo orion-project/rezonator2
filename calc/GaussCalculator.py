@@ -247,7 +247,7 @@ def change_R():
 
 def change_Q():
   print('\n----------------------------------')
-  print('Change complex ROC:')
+  print('Change complex beam parameter:')
   wl = 640e-9
   w0 = 100e-6
   
@@ -284,7 +284,7 @@ def change_Q():
 
 def change_Q1_re():
   print('\n----------------------------------')
-  print('Change inverted complex ROC (real part):')
+  print('Change inverted complex beam parameter (real part):')
   wl = 640e-9
   w0 = 100e-6
   z = 0.1  
@@ -318,7 +318,7 @@ def change_Q1_re():
 
 def change_Q1_im():
   print('\n----------------------------------')
-  print('Change inverted complex ROC (imaginary part):')
+  print('Change inverted complex beam parameter (imaginary part):')
   wl = 640e-9
   w0 = 100e-6
   z = 0.1  

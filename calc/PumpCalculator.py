@@ -92,7 +92,7 @@ def calcFront_TwoSections():
 
 def calcFront_InvComplex():
   print('\n----------------------------------')
-  print('Inverted complex ROC:')
+  print('Inverted complex beam parameter:')
   q_t = 11 - 30j # 1/m
   print(1.0/q_t)
   q_s = 12 - 40j # 1/m
