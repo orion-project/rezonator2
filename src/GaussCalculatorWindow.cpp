@@ -15,20 +15,32 @@
 #include <QIcon>
 #include <QTimer>
 
-/*void BeamPlotter::calculate()
+void GaussPlotter::calculate()
 {
     valuesZ.clear();
     valuesW.clear();
-    int points = 50;
-    double step = z_max / double(points);
-    for (double z = 0; z <= z_max; z += step)
+    if (qAbs(maxZ-0) <= std::numeric_limits<double>::epsilon())
+        return;
+    const double z0 = M_PI * w0*w0 / lambda;
+    const double sqrZ0 = z0 * z0;
+    const double sqrW0 = w0 * w0;
+    const double step = maxZ / double(points);
+    double z = 0;
+    while (z <= maxZ)
     {
-        double z0 = M_PI * w0*w0 / lambda;
-        double w = sqrt(w0*w0 * (1 + z*z/z0/z0));
-        valuesZ.append(units->si2linear(z));
-        valuesW.append(units->si2beamsize(w));
+        double w = sqrt(sqrW0 * (1 + z*z / sqrZ0));
+        valuesZ.append(unitZ->fromSi(z));
+        valuesW.append(unitW->fromSi(w));
+        z += step;
     }
-}*/
+    if (valuesZ.last() < unitZ->fromSi(maxZ))
+    {
+        z = maxZ;
+        double w = sqrt(sqrW0 * (1 + z*z / sqrZ0));
+        valuesZ.append(unitZ->fromSi(z));
+        valuesW.append(unitW->fromSi(w));
+    }
+}
 
 //--------------------------------------------------------------------------------
 //                              GaussCalculatorParam
@@ -111,7 +123,6 @@ GaussCalculatorWindow::GaussCalculatorWindow(QWidget *parent) : QWidget(parent)
 
     restoreState();
     Ori::Wnd::moveToScreenCenter(this);
-
     QTimer::singleShot(0, [this]{ this->recalc(); });
 }
 
@@ -142,6 +153,13 @@ void GaussCalculatorWindow::restoreState()
     int h = root["window_height"].toInt();
     if (w == 0 || h == 0) w = 750, h = 400;
     resize(w, h);
+
+    _plotPlusMinusZ->setCheckedId(root["plot_minus_z"].toInt());
+    _plotPlusMinusW->setCheckedId(root["plot_minus_w"].toInt());
+    _calcModeLock->setCheckedId(root["lock_mode"].toInt());
+    _calcModeZone->setCheckedId(root["zone_mode"].toInt());
+    _calc.setLock(GaussCalculator::Lock(root["lock_mode"].toInt()));
+    _calc.setZone(GaussCalculator::Zone(root["zone_mode"].toInt()));
 }
 
 void GaussCalculatorWindow::storeState()
@@ -149,6 +167,10 @@ void GaussCalculatorWindow::storeState()
     QJsonObject root;
     root["window_width"] = width();
     root["window_height"] = height();
+    root["plot_minus_z"] = _plotPlusMinusZ->checkedId();
+    root["plot_minus_w"] = _plotPlusMinusW->checkedId();
+    root["lock_mode"] = int(_calc.lock());
+    root["zone_mode"] = int(_calc.zone());
 
     auto fileName = stateFileName();
     QFile file(fileName);
@@ -158,16 +180,6 @@ void GaussCalculatorWindow::storeState()
         return;
     }
     QTextStream(&file) << QJsonDocument(root).toJson();
-}
-
-void GaussCalculatorWindow::recalc()
-{
-    _calc.calc();
-
-    for (auto p : _params)
-        p->populate();
-
-    updatePlot();
 }
 
 void GaussCalculatorWindow::makeParams()
@@ -219,17 +231,17 @@ void GaussCalculatorWindow::makeParams()
 
 QWidget* GaussCalculatorWindow::makeToolbar()
 {
-    auto locks = new Ori::Widgets::ExclusiveActionGroup(this);
-    locks->add(int(GaussCalculator::Lock::Waist), ":/toolbar/gauss_lock_waist", tr("Lock waist"));
-    locks->add(int(GaussCalculator::Lock::Front), ":/toolbar/gauss_lock_front", tr("Lock front"));
-    locks->setCheckedId(int(_calc.lock()));
-    connect(locks, SIGNAL(checked(int)), this, SLOT(lockSelected(int)));
+    _calcModeLock = new Ori::Widgets::ExclusiveActionGroup(this);
+    _calcModeLock->add(int(GaussCalculator::Lock::Waist), ":/toolbar/gauss_lock_waist", tr("Lock waist"));
+    _calcModeLock->add(int(GaussCalculator::Lock::Front), ":/toolbar/gauss_lock_front", tr("Lock front"));
+    _calcModeLock->setCheckedId(int(_calc.lock()));
+    connect(_calcModeLock, SIGNAL(checked(int)), this, SLOT(lockSelected(int)));
 
-    auto zones = new Ori::Widgets::ExclusiveActionGroup(this);
-    zones->add(int(GaussCalculator::Zone::Near), ":/toolbar/gauss_near_zone", tr("Use near-field zone"));
-    zones->add(int(GaussCalculator::Zone::Far), ":/toolbar/gauss_far_zone", tr("Use far-field zone"));
-    zones->setCheckedId(int(_calc.zone()));
-    connect(zones, SIGNAL(checked(int)), this, SLOT(zoneSelected(int)));
+    _calcModeZone = new Ori::Widgets::ExclusiveActionGroup(this);
+    _calcModeZone->add(int(GaussCalculator::Zone::Near), ":/toolbar/gauss_near_zone", tr("Use near-field zone"));
+    _calcModeZone->add(int(GaussCalculator::Zone::Far), ":/toolbar/gauss_far_zone", tr("Use far-field zone"));
+    _calcModeZone->setCheckedId(int(_calc.zone()));
+    connect(_calcModeZone, SIGNAL(checked(int)), this, SLOT(zoneSelected(int)));
 
     _plotPlusMinusZ = new Ori::Widgets::ExclusiveActionGroup(this);
     _plotPlusMinusZ->add(false, ":/toolbar/gauss_pos_z", tr("Plot 0 .. z"));
@@ -242,11 +254,12 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     connect(_plotPlusMinusW, SIGNAL(checked(int)), this, SLOT(updatePlot()));
 
     auto actionHelp = new QAction(QIcon(":/toolbar/help"), tr("Help"), this);
+    actionHelp->setEnabled(false); // TODO:NEXT-VER
 
     auto toolbar = new Ori::Widgets::FlatToolBar;
-    toolbar->addActions(locks->actions());
+    toolbar->addActions(_calcModeLock->actions());
     toolbar->addSeparator();
-    toolbar->addActions(zones->actions());
+    toolbar->addActions(_calcModeZone->actions());
     toolbar->addSeparator();
     toolbar->addActions(_plotPlusMinusZ->actions());
     toolbar->addActions(_plotPlusMinusW->actions());
@@ -258,67 +271,110 @@ QWidget* GaussCalculatorWindow::makeToolbar()
 QWidget* GaussCalculatorWindow::makePlot()
 {
     _plot = new Plot;
+    _plot->legend->setVisible(false);
     _plot->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    _plot->xAxis->setNumberPrecision(6);
+    _plot->yAxis->setNumberPrecision(6);
+
+    _graphAngle1 = _plot->addGraph();
+    _graphAngle2 = _plot->addGraph();
+    _graphAngle3 = _plot->addGraph();
+    _graphAngle4 = _plot->addGraph();
+
     _graphPlusW = _plot->addGraph();
     _graphMinusW = _plot->addGraph();
+
+    QPen anglePen(Qt::gray, 1, Qt::DashLine);
+    _graphAngle1->setPen(anglePen);
+    _graphAngle2->setPen(anglePen);
+    _graphAngle3->setPen(anglePen);
+    _graphAngle4->setPen(anglePen);
+
     return _plot;
 }
 
 void GaussCalculatorWindow::zoneSelected(int zone)
 {
     _calc.setZone(GaussCalculator::Zone(zone));
-    qDebug() << ((_calc.zone() == GaussCalculator::Zone::Near)? "Zone: Near": "Zone: Far");
 }
 
 void GaussCalculatorWindow::lockSelected(int lock)
 {
     _calc.setLock(GaussCalculator::Lock(lock));
-    qDebug() << ((_calc.lock() == GaussCalculator::Lock::Waist)? "Lock: Waist": "Lock: Front");
+}
+
+void GaussCalculatorWindow::recalc()
+{
+    _calc.calc();
+
+    for (auto p : _params)
+        p->populate();
+
+    updatePlot();
 }
 
 void GaussCalculatorWindow::updatePlot()
-{/*
-    _plotter.lambda = _units.lambda2si(_editorLambda->value());
-    _plotter.w0 = _units.beamsize2si(_editorW0->value());
-    _plotter.z_max = _units.linear2si(_editorZ->value());
-    _plotter.M2 = _editorM2->value();
+{
+    _plotter.lambda = _calc.lambda();
+    _plotter.w0 = _calc.w0();
+    _plotter.maxZ = _calc.z();
+    _plotter.MI = _calc.MI();
+    _plotter.unitW = _w->value().unit();
+    _plotter.unitZ = _z->value().unit();
     _plotter.calculate();
 
     bool plotMinusZ = _plotPlusMinusZ->checkedId();
     bool plotMinusW = _plotPlusMinusW->checkedId();
 
     _graphPlusW->clearData();
-    if (plotMinusZ)
-        for (int i = _plotter.valuesZ.size()-1; i >= 0; i--)
-            _graphPlusW->addData(-_plotter.valuesZ.at(i), _plotter.valuesW.at(i));
-    _graphPlusW->addData(_plotter.valuesZ, _plotter.valuesW);
-    _graphPlusW->rescaleAxes(false);
-
     _graphMinusW->clearData();
+    _graphAngle1->clearData();
+    _graphAngle2->clearData();
+    _graphAngle3->clearData();
+    _graphAngle4->clearData();
     _graphMinusW->setVisible(plotMinusW);
+
+    auto addData = [&](QCPGraph *g, double factorZ, double factorW) {
+        for (int i = 0; i < _plotter.valuesZ.size(); i++)
+            g->addData(factorZ * _plotter.valuesZ.at(i), factorW * _plotter.valuesW.at(i));
+    };
+
+    if (plotMinusZ)
+        addData(_graphPlusW, -1, 1);
+    addData(_graphPlusW, 1, 1);
     if (plotMinusW)
     {
         if (plotMinusZ)
-            for (int i = _plotter.valuesZ.size()-1; i >= 0; i--)
-                _graphMinusW->addData(-_plotter.valuesZ.at(i), -_plotter.valuesW.at(i));
-        for (int i = 0; i < _plotter.valuesZ.size(); i++)
-            _graphMinusW->addData(_plotter.valuesZ.at(i), -_plotter.valuesW.at(i));
-        _graphMinusW->rescaleAxes(true);
+            addData(_graphMinusW, -1, -1);
+        addData(_graphMinusW, 1, -1);
     }
+
+    double anglePointZ = _plotter.unitZ->fromSi(_plotter.maxZ);
+    double anglePointW = _plotter.unitW->fromSi(_plotter.maxZ * tan(_calc.Vs()));
+    _graphAngle1->addData(0, 0);
+    _graphAngle1->addData(anglePointZ, anglePointW);
+    if (plotMinusZ)
+    {
+        _graphAngle2->addData(0, 0);
+        _graphAngle2->addData(-anglePointZ, anglePointW);
+    }
+    if (plotMinusZ && plotMinusW)
+    {
+        _graphAngle3->addData(0, 0);
+        _graphAngle3->addData(-anglePointZ, -anglePointW);
+    }
+    if (plotMinusW)
+    {
+        _graphAngle4->addData(0, 0);
+        _graphAngle4->addData(anglePointZ, -anglePointW);
+    }
+
+    double maxZ = _z->value().value();
+    double minZ = plotMinusZ ? -maxZ : 0;
+    double maxW = _w->value().value() * 1.1;
+    double minW = plotMinusW ? -maxW : 0;
+
+    _plot->setLimitsX(minZ, maxZ, false);
+    _plot->setLimitsY(minW, maxW, false);
     _plot->replot();
-*/}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}

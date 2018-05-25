@@ -21,21 +21,22 @@ namespace Widgets {
 class ExclusiveActionGroup;
 }}
 
-//class BeamPlotter
-//{
-//public:
-//    Z::Units::Set* units;
+struct GaussPlotter
+{
+    double lambda;
+    double w0;
+    double maxZ;
+    double MI;
+    Z::Unit unitZ;
+    Z::Unit unitW;
 
-//    double lambda;
-//    double w0;
-//    double z_max;
-//    double M2 = 1;
+    const int points = 50;
 
-//    QVector<double> valuesZ;
-//    QVector<double> valuesW;
+    QVector<double> valuesZ;
+    QVector<double> valuesW;
 
-//    void calculate();
-//};
+    void calculate();
+};
 
 class GaussCalcParamEditor : public QObject
 {
@@ -84,11 +85,13 @@ public:
 
 private:
     GaussCalculator _calc;
+    GaussPlotter _plotter;
     Plot* _plot;
     QCPGraph *_graphPlusW, *_graphMinusW;
+    QCPGraph *_graphAngle1, *_graphAngle2, *_graphAngle3, *_graphAngle4;
     QVector<GaussCalcParamEditor*> _params;
     QGridLayout *_paramsLayout;
-    Ori::Widgets::ExclusiveActionGroup *_plotPlusMinusZ, *_plotPlusMinusW;
+    Ori::Widgets::ExclusiveActionGroup *_calcModeLock, *_calcModeZone,  *_plotPlusMinusZ, *_plotPlusMinusW;
     Z::Parameter *_lambda, *_MI, *_w0, *_z, *_z0, *_Vs, *_w, *_R, *_reQ, *_imQ, *_reQ1, *_imQ1;
 
     void makeParams();
