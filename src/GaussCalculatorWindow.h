@@ -21,22 +21,6 @@ namespace Widgets {
 class ExclusiveActionGroup;
 }}
 
-struct GaussPlotter
-{
-    double lambda;
-    double w0;
-    double maxZ;
-    double MI;
-    Z::Unit unitZ;
-    Z::Unit unitW;
-
-    const int points = 50;
-
-    QVector<double> valuesZ;
-    QVector<double> valuesW;
-
-    void calculate();
-};
 
 class GaussCalcParamEditor : public QObject
 {
@@ -55,7 +39,8 @@ public:
 
     ParamEditor* editor() const { return _editor; }
 
-    void populate();
+    /// Take related value from calculator, apply it to owned parameter and display in editor.
+    void getValueFromCalculator();
 
 signals:
     void calcNeeded();
@@ -73,6 +58,11 @@ private:
 };
 
 
+class GaussGraphV;
+class GaussGraphW;
+class GaussPlotter;
+
+
 class GaussCalculatorWindow : public QWidget, public Z::ParameterListener
 {
     Q_OBJECT
@@ -84,12 +74,13 @@ public:
     static void showCalcWindow();
 
 private:
+    enum PlotMode { PLOT_W, PLOT_R };
     GaussCalculator _calc;
-    GaussPlotter _plotter;
     Plot* _plot;
-    QCPGraph *_graphPlusW, *_graphMinusW;
-    QCPGraph *_graphAngle1, *_graphAngle2, *_graphAngle3, *_graphAngle4;
-    QVector<GaussCalcParamEditor*> _params;
+    std::shared_ptr<GaussPlotter> _plotter;
+    std::shared_ptr<GaussGraphV> _graphV;
+    std::shared_ptr<GaussGraphW> _graphW;
+    QVector<GaussCalcParamEditor*> _paramEditors;
     QGridLayout *_paramsLayout;
     Ori::Widgets::ExclusiveActionGroup *_calcModeLock, *_calcModeZone,  *_plotPlusMinusZ,
         *_plotPlusMinusW, *_plotWR;

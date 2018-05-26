@@ -16,7 +16,7 @@ $$  z_{0,pseudo} = \frac{w_0}{M^2 V_{S,gauss}} = \frac{z_{0,gauss}}{M^2} $$
 
 ## Equivalent Gaussian beam
 
-To describe propagation of pseudo-gaussian beam in free space, it is enough to replace the Rayleigh distance from $z0$ to $z0 / M²$ in formulas for $w(z)$ and $R(z)$ (see formula for [radius of Gaussian beam](#TODO)). It is equivalent to changing of waist size from $w0$ to $w0 / M²$. A beam having such reduced waist size is called *Equivalent Gaussian Beam*. 
+To describe propagation of pseudo-gaussian beam in free space, it is enough to replace the Rayleigh distance from $z_0$ to $z_0 / M^2$ in formulas for $w(z)$ and $R(z)$ (see formula for [radius of Gaussian beam](#TODO)). It is equivalent to changing of waist size from $w_0$ to $w_0 / M^2$. A beam having such reduced waist size is called *Equivalent Gaussian Beam*. 
 
 $$ z_0 \rightarrow \frac{z_0}{M^2} $$
 

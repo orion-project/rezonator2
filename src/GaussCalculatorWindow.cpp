@@ -16,32 +16,71 @@
 #include <QIcon>
 #include <QTimer>
 
-void GaussPlotter::calculate()
+
+class GaussPlotter
 {
-    valuesZ.clear();
-    valuesW.clear();
-    if (qAbs(maxZ-0) <= std::numeric_limits<double>::epsilon())
-        return;
-    const double z0 = M_PI * w0*w0 / lambda / MI;
-    const double sqrZ0 = z0 * z0;
-    const double sqrW0 = w0 * w0;
-    const double step = maxZ / double(points);
-    double z = 0;
-    while (z <= maxZ)
+public:
+    double lambda;
+    double w0;
+    double maxZ;
+    double MI;
+    Z::Unit unitZ;
+    Z::Unit unitW;
+
+    const int points = 50;
+
+    QVector<double> valuesZ;
+    QVector<double> valuesW;
+    QVector<double> valuesW_aux;
+
+    bool isHyper() const
     {
-        double w = sqrt(sqrW0 * (1 + z*z / sqrZ0));
-        valuesZ.append(unitZ->fromSi(z));
-        valuesW.append(unitW->fromSi(w));
-        z += step;
+        return qAbs(MI - 1.0) > std::numeric_limits<double>::epsilon();
     }
-    if (valuesZ.last() < unitZ->fromSi(maxZ))
+
+    void calculate()
     {
-        z = maxZ;
-        double w = sqrt(sqrW0 * (1 + z*z / sqrZ0));
-        valuesZ.append(unitZ->fromSi(z));
-        valuesW.append(unitW->fromSi(w));
+        valuesZ.clear();
+        valuesW.clear();
+        valuesW_aux.clear();
+
+        if (qAbs(maxZ - 0) <= std::numeric_limits<double>::epsilon())
+            return;
+
+        const bool is_hyper = isHyper();
+        const double z0_gauss = M_PI * w0*w0 / lambda;
+        const double z0_hyper = M_PI * w0*w0 / lambda / MI;
+        const double sqrZ0_gauss = z0_gauss * z0_gauss;
+        const double sqrZ0_hyper = z0_hyper * z0_hyper;
+        const double sqrW0 = w0 * w0;
+        const double step = maxZ / double(points);
+        double z = 0;
+
+        auto calcPoint = [&](){
+            valuesZ.append(unitZ->fromSi(z));
+            double w_gauss = sqrt(sqrW0 * (1 + z*z / sqrZ0_gauss));
+            if (is_hyper)
+            {
+                double w_hyper = sqrt(sqrW0 * (1 + z*z / sqrZ0_hyper));
+                valuesW.append(unitW->fromSi(w_hyper));
+                valuesW_aux.append(unitW->fromSi(w_gauss));
+            }
+            else
+                valuesW.append(unitW->fromSi(w_gauss));
+        };
+
+        while (z <= maxZ)
+        {
+            calcPoint();
+            z += step;
+        }
+        if (valuesZ.last() < unitZ->fromSi(maxZ))
+        {
+            z = maxZ;
+            calcPoint();
+        }
     }
-}
+};
 
 //--------------------------------------------------------------------------------
 //                              GaussCalculatorParam
@@ -70,7 +109,7 @@ GaussCalcParamEditor::~GaussCalcParamEditor()
     delete _param;
 }
 
-void GaussCalcParamEditor::populate()
+void GaussCalcParamEditor::getValueFromCalculator()
 {
     double valueSi = _getValueFromCalculator(_calc);
     Z::Unit unit = _param->value().unit();
@@ -90,6 +129,154 @@ void GaussCalcParamEditor::paramEdited()
     _setValueToCalculator(_calc, valueSi);
     emit calcNeeded();
 }
+
+//--------------------------------------------------------------------------------
+//                              GaussGraphsContainer
+//--------------------------------------------------------------------------------
+
+class GaussGraphsContainer
+{
+public:
+    void addItems(Plot* plot, int count, const QPen& pen, const QBrush& brush)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            QCPGraph *g = plot->addGraph();
+            g->setPen(pen);
+            g->setBrush(brush);
+            _items.append(g);
+        }
+    }
+
+    void clearData()
+    {
+        for (QCPGraph *g : _items)
+            g->clearData();
+    }
+
+    QCPGraph* operator[](int index) { return _items[index]; }
+
+private:
+    QVector<QCPGraph*> _items;
+};
+
+//--------------------------------------------------------------------------------
+//                                GaussPlotOptions
+//--------------------------------------------------------------------------------
+
+struct GaussPlotOptions
+{
+    bool plotMinusZ;
+    bool plotMinusY;
+    bool plotW;
+    bool plotR;
+    bool plotV;
+};
+
+//--------------------------------------------------------------------------------
+//                                GaussGraphAngle
+//--------------------------------------------------------------------------------
+
+class GaussGraphV
+{
+public:
+    GaussGraphV(Plot* plot, GaussPlotter *plotter, GaussCalculator *calc) : _plotter(plotter), _calc(calc)
+    {
+        _graphs.addItems(plot, 4, QPen(Qt::gray, 1, Qt::DashLine), Qt::NoBrush);
+    }
+
+    void update(const GaussPlotOptions& options)
+    {
+        _graphs.clearData();
+        if (!options.plotV) return;
+
+        double z = _plotter->unitZ->fromSi(_plotter->maxZ);
+        double w = _plotter->unitW->fromSi(_plotter->maxZ * tan(_calc->Vs()));
+
+        update(_graphs[0], z, w);
+        if (options.plotMinusZ)
+            update(_graphs[1], -z, w);
+        if (options.plotMinusZ && options.plotMinusY)
+            update(_graphs[2], -z, -w);
+        if (options.plotMinusY)
+            update(_graphs[3], z, -w);
+    }
+
+private:
+    void update(QCPGraph *g, const double& x, const double& y)
+    {
+        g->addData(0, 0);
+        g->addData(x, y);
+    }
+
+    GaussPlotter *_plotter;
+    GaussCalculator *_calc;
+    GaussGraphsContainer _graphs;
+};
+
+//--------------------------------------------------------------------------------
+//                                   GaussGraphW
+//--------------------------------------------------------------------------------
+
+class GaussGraphW
+{
+public:
+    GaussGraphW(Plot* plot, GaussPlotter *plotter) : _plotter(plotter)
+    {
+        QColor fillColor(255, 0, 0, 30);
+        _graphs.addItems(plot, 2, QPen(Qt::red), fillColor);
+        _graphs.addItems(plot, 2, Qt::NoPen, fillColor);
+        _graphs.addItems(plot, 2, QPen(Qt::red, 1, Qt::DashLine), Qt::NoBrush);
+        _positiveGraphs = { +1, _graphs[0], _graphs[2], _graphs[4] };
+        _negativeGraphs = { -1, _graphs[1], _graphs[3], _graphs[5] };
+    }
+
+    void update(const GaussPlotOptions& options)
+    {
+        _graphs.clearData();
+        if (!options.plotW) return;
+
+        bool isHyper = _plotter->isHyper();
+        double M = isHyper ? sqrt(_plotter->MI) : 1;
+
+        update(_positiveGraphs, 1, M);
+        if (options.plotMinusZ)
+            update(_positiveGraphs, -1, M);
+        if (options.plotMinusY)
+        {
+            update(_negativeGraphs, 1, M);
+            if (options.plotMinusZ)
+                update(_negativeGraphs, -1, M);
+        }
+    }
+
+private:
+    GaussPlotter *_plotter;
+    GaussGraphsContainer _graphs;
+
+    struct GraphSet
+    {
+        double sign;
+        QCPGraph *main, *gauss, *equiv;
+    };
+    GraphSet _positiveGraphs, _negativeGraphs;
+
+    void update(const GraphSet& set, const double& signZ, const double& M)
+    {
+        bool isHyper = M != 1;
+        for (int i = 0; i < _plotter->valuesZ.size(); i++)
+        {
+            double z = signZ * _plotter->valuesZ.at(i);
+            double w = set.sign * _plotter->valuesW.at(i);
+            set.main->addData(z, w);
+            if (isHyper)
+            {
+                set.gauss->addData(z, set.sign * _plotter->valuesW_aux.at(i));
+                set.equiv->addData(z, w/M);
+            }
+        }
+    }
+};
 
 //--------------------------------------------------------------------------------
 //                              GaussCalculatorWindow
@@ -122,6 +309,10 @@ GaussCalculatorWindow::GaussCalculatorWindow(QWidget *parent) : QWidget(parent)
         .setSpacing(0)
         .useFor(this);
 
+    _plotter.reset(new GaussPlotter);
+    _graphV.reset(new GaussGraphV(_plot, _plotter.get(), &_calc));
+    _graphW.reset(new GaussGraphW(_plot, _plotter.get()));
+
     restoreState();
     Ori::Wnd::moveToScreenCenter(this);
     QTimer::singleShot(0, [this]{ this->recalc(); });
@@ -130,7 +321,7 @@ GaussCalculatorWindow::GaussCalculatorWindow(QWidget *parent) : QWidget(parent)
 GaussCalculatorWindow::~GaussCalculatorWindow()
 {
     storeState();
-    qDeleteAll(_params);
+    qDeleteAll(_paramEditors);
 }
 
 QString GaussCalculatorWindow::stateFileName()
@@ -198,7 +389,7 @@ void GaussCalculatorWindow::makeParams()
     };
 
     auto addEditor = [&](int row, int col, GaussCalcParamEditor *editor) {
-        _params.append(editor);
+        _paramEditors.append(editor);
         _paramsLayout->addWidget(editor->editor(), row, col);
         connect(editor, &GaussCalcParamEditor::calcNeeded, this, &GaussCalculatorWindow::recalc);
     };
@@ -259,8 +450,8 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     connect(_plotPlusMinusW, SIGNAL(checked(int)), this, SLOT(updatePlot()));
 
     _plotWR = new Ori::Widgets::ExclusiveActionGroup(this);
-    _plotWR->add(0, ":/toolbar/plot_w", tr("Plot Beam Radius"));
-    _plotWR->add(1, ":/toolbar/plot_r", tr("Plot Favefront ROC"));
+    _plotWR->add(int(PLOT_W), ":/toolbar/plot_w", tr("Plot Beam Radius"));
+    _plotWR->add(int(PLOT_R), ":/toolbar/plot_r", tr("Plot Favefront ROC"));
     connect(_plotWR, SIGNAL(checked(int)), this, SLOT(updatePlot()));
     _plotV = Ori::Gui::toggledAction(tr("Plot Beam Angle"), this, SLOT(updatePlot()), ":/toolbar/plot_v");
 
@@ -289,21 +480,6 @@ QWidget* GaussCalculatorWindow::makePlot()
     _plot->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     _plot->xAxis->setNumberPrecision(6);
     _plot->yAxis->setNumberPrecision(6);
-
-    _graphAngle1 = _plot->addGraph();
-    _graphAngle2 = _plot->addGraph();
-    _graphAngle3 = _plot->addGraph();
-    _graphAngle4 = _plot->addGraph();
-
-    _graphPlusW = _plot->addGraph();
-    _graphMinusW = _plot->addGraph();
-
-    QPen anglePen(Qt::gray, 1, Qt::DashLine);
-    _graphAngle1->setPen(anglePen);
-    _graphAngle2->setPen(anglePen);
-    _graphAngle3->setPen(anglePen);
-    _graphAngle4->setPen(anglePen);
-
     return _plot;
 }
 
@@ -321,76 +497,37 @@ void GaussCalculatorWindow::recalc()
 {
     _calc.calc();
 
-    for (auto p : _params)
-        p->populate();
+    for (GaussCalcParamEditor *editor : _paramEditors)
+        editor->getValueFromCalculator();
 
     updatePlot();
 }
 
 void GaussCalculatorWindow::updatePlot()
 {
-    _plotter.lambda = _calc.lambda();
-    _plotter.w0 = _calc.w0();
-    _plotter.maxZ = _calc.z();
-    _plotter.MI = _calc.MI();
-    _plotter.unitW = _w->value().unit();
-    _plotter.unitZ = _z->value().unit();
-    _plotter.calculate();
+    _plotter->lambda = _calc.lambda();
+    _plotter->w0 = _calc.w0();
+    _plotter->maxZ = _calc.z();
+    _plotter->MI = qAbs(_calc.MI());
+    _plotter->unitW = _w->value().unit();
+    _plotter->unitZ = _z->value().unit();
+    _plotter->calculate();
 
-    bool plotMinusZ = _plotPlusMinusZ->checkedId();
-    bool plotMinusW = _plotPlusMinusW->checkedId();
+    GaussPlotOptions o;
+    o.plotV = _plotV->isChecked();
+    o.plotW = _plotWR->checkedId() == int(PLOT_W);
+    o.plotR = _plotWR->checkedId() == int(PLOT_R);
+    o.plotMinusZ = _plotPlusMinusZ->checkedId();
+    o.plotMinusY = _plotPlusMinusW->checkedId();
 
-    _graphPlusW->clearData();
-    _graphMinusW->clearData();
-    _graphAngle1->clearData();
-    _graphAngle2->clearData();
-    _graphAngle3->clearData();
-    _graphAngle4->clearData();
-    _graphMinusW->setVisible(plotMinusW);
-
-    auto addData = [&](QCPGraph *g, double factorZ, double factorW) {
-        for (int i = 0; i < _plotter.valuesZ.size(); i++)
-            g->addData(factorZ * _plotter.valuesZ.at(i), factorW * _plotter.valuesW.at(i));
-    };
-
-    if (plotMinusZ)
-        addData(_graphPlusW, -1, 1);
-    addData(_graphPlusW, 1, 1);
-    if (plotMinusW)
-    {
-        if (plotMinusZ)
-            addData(_graphMinusW, -1, -1);
-        addData(_graphMinusW, 1, -1);
-    }
-
-    if (_plotV->isChecked())
-    {
-        double anglePointZ = _plotter.unitZ->fromSi(_plotter.maxZ);
-        double anglePointW = _plotter.unitW->fromSi(_plotter.maxZ * tan(_calc.Vs()));
-        _graphAngle1->addData(0, 0);
-        _graphAngle1->addData(anglePointZ, anglePointW);
-        if (plotMinusZ)
-        {
-            _graphAngle2->addData(0, 0);
-            _graphAngle2->addData(-anglePointZ, anglePointW);
-        }
-        if (plotMinusZ && plotMinusW)
-        {
-            _graphAngle3->addData(0, 0);
-            _graphAngle3->addData(-anglePointZ, -anglePointW);
-        }
-        if (plotMinusW)
-        {
-            _graphAngle4->addData(0, 0);
-            _graphAngle4->addData(anglePointZ, -anglePointW);
-        }
-    }
+    //_graphR->update(o);
+    _graphV->update(o);
+    _graphW->update(o);
 
     double maxZ = _z->value().value();
-    double minZ = plotMinusZ ? -maxZ : 0;
+    double minZ = o.plotMinusZ ? -maxZ : 0;
     double maxW = _w->value().value() * 1.1;
-    double minW = plotMinusW ? -maxW : 0;
-
+    double minW = o.plotMinusY ? -maxW : 0;
     _plot->setLimitsX(minZ, maxZ, false);
     _plot->setLimitsY(minW, maxW, false);
     _plot->replot();
