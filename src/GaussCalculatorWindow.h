@@ -91,8 +91,10 @@ private:
     QCPGraph *_graphAngle1, *_graphAngle2, *_graphAngle3, *_graphAngle4;
     QVector<GaussCalcParamEditor*> _params;
     QGridLayout *_paramsLayout;
-    Ori::Widgets::ExclusiveActionGroup *_calcModeLock, *_calcModeZone,  *_plotPlusMinusZ, *_plotPlusMinusW;
+    Ori::Widgets::ExclusiveActionGroup *_calcModeLock, *_calcModeZone,  *_plotPlusMinusZ,
+        *_plotPlusMinusW, *_plotWR;
     Z::Parameter *_lambda, *_MI, *_w0, *_z, *_z0, *_Vs, *_w, *_R, *_reQ, *_imQ, *_reQ1, *_imQ1;
+    QAction *_plotV;
 
     void makeParams();
     QWidget* makeToolbar();

@@ -5,6 +5,7 @@
 
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWindows.h"
+#include "helpers/OriWidgets.h"
 #include "tools/OriSettings.h"
 #include "widgets/OriActions.h"
 #include "widgets/OriFlatToolBar.h"
@@ -21,7 +22,7 @@ void GaussPlotter::calculate()
     valuesW.clear();
     if (qAbs(maxZ-0) <= std::numeric_limits<double>::epsilon())
         return;
-    const double z0 = M_PI * w0*w0 / lambda;
+    const double z0 = M_PI * w0*w0 / lambda / MI;
     const double sqrZ0 = z0 * z0;
     const double sqrW0 = w0 * w0;
     const double step = maxZ / double(points);
@@ -160,6 +161,8 @@ void GaussCalculatorWindow::restoreState()
     _calcModeZone->setCheckedId(root["zone_mode"].toInt());
     _calc.setLock(GaussCalculator::Lock(root["lock_mode"].toInt()));
     _calc.setZone(GaussCalculator::Zone(root["zone_mode"].toInt()));
+    _plotWR->setCheckedId(root["plot_wr"].toInt());
+    _plotV->setChecked(root.contains("plot_v") ? root["plot_v"].toBool() : true);
 }
 
 void GaussCalculatorWindow::storeState()
@@ -171,6 +174,8 @@ void GaussCalculatorWindow::storeState()
     root["plot_minus_w"] = _plotPlusMinusW->checkedId();
     root["lock_mode"] = int(_calc.lock());
     root["zone_mode"] = int(_calc.zone());
+    root["plot_wr"] = _plotWR->checkedId();
+    root["plot_v"] = _plotV->isChecked();
 
     auto fileName = stateFileName();
     QFile file(fileName);
@@ -253,6 +258,12 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     _plotPlusMinusW->add(true, ":/toolbar/gauss_full_w", tr("Plot -w .. w"));
     connect(_plotPlusMinusW, SIGNAL(checked(int)), this, SLOT(updatePlot()));
 
+    _plotWR = new Ori::Widgets::ExclusiveActionGroup(this);
+    _plotWR->add(0, ":/toolbar/plot_w", tr("Plot Beam Radius"));
+    _plotWR->add(1, ":/toolbar/plot_r", tr("Plot Favefront ROC"));
+    connect(_plotWR, SIGNAL(checked(int)), this, SLOT(updatePlot()));
+    _plotV = Ori::Gui::toggledAction(tr("Plot Beam Angle"), this, SLOT(updatePlot()), ":/toolbar/plot_v");
+
     auto actionHelp = new QAction(QIcon(":/toolbar/help"), tr("Help"), this);
     actionHelp->setEnabled(false); // TODO:NEXT-VER
 
@@ -263,6 +274,9 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     toolbar->addSeparator();
     toolbar->addActions(_plotPlusMinusZ->actions());
     toolbar->addActions(_plotPlusMinusW->actions());
+    toolbar->addSeparator();
+    toolbar->addActions(_plotWR->actions());
+    toolbar->addAction(_plotV);
     toolbar->addSeparator();
     toolbar->addAction(actionHelp);
     return toolbar;
@@ -349,24 +363,27 @@ void GaussCalculatorWindow::updatePlot()
         addData(_graphMinusW, 1, -1);
     }
 
-    double anglePointZ = _plotter.unitZ->fromSi(_plotter.maxZ);
-    double anglePointW = _plotter.unitW->fromSi(_plotter.maxZ * tan(_calc.Vs()));
-    _graphAngle1->addData(0, 0);
-    _graphAngle1->addData(anglePointZ, anglePointW);
-    if (plotMinusZ)
+    if (_plotV->isChecked())
     {
-        _graphAngle2->addData(0, 0);
-        _graphAngle2->addData(-anglePointZ, anglePointW);
-    }
-    if (plotMinusZ && plotMinusW)
-    {
-        _graphAngle3->addData(0, 0);
-        _graphAngle3->addData(-anglePointZ, -anglePointW);
-    }
-    if (plotMinusW)
-    {
-        _graphAngle4->addData(0, 0);
-        _graphAngle4->addData(anglePointZ, -anglePointW);
+        double anglePointZ = _plotter.unitZ->fromSi(_plotter.maxZ);
+        double anglePointW = _plotter.unitW->fromSi(_plotter.maxZ * tan(_calc.Vs()));
+        _graphAngle1->addData(0, 0);
+        _graphAngle1->addData(anglePointZ, anglePointW);
+        if (plotMinusZ)
+        {
+            _graphAngle2->addData(0, 0);
+            _graphAngle2->addData(-anglePointZ, anglePointW);
+        }
+        if (plotMinusZ && plotMinusW)
+        {
+            _graphAngle3->addData(0, 0);
+            _graphAngle3->addData(-anglePointZ, -anglePointW);
+        }
+        if (plotMinusW)
+        {
+            _graphAngle4->addData(0, 0);
+            _graphAngle4->addData(anglePointZ, -anglePointW);
+        }
     }
 
     double maxZ = _z->value().value();
