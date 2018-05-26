@@ -5,7 +5,6 @@
 
 #include <functional>
 
-#include "funcs/GaussCalculator.h"
 #include "core/Parameters.h"
 
 QT_BEGIN_NAMESPACE
@@ -21,6 +20,11 @@ namespace Widgets {
 class ExclusiveActionGroup;
 }}
 
+class GaussCalculator;
+class GaussGraphV;
+class GaussGraphW;
+class GaussGraphR;
+class GaussPlotter;
 
 class GaussCalcParamEditor : public QObject
 {
@@ -58,11 +62,6 @@ private:
 };
 
 
-class GaussGraphV;
-class GaussGraphW;
-class GaussPlotter;
-
-
 class GaussCalculatorWindow : public QWidget, public Z::ParameterListener
 {
     Q_OBJECT
@@ -74,20 +73,19 @@ public:
     static void showCalcWindow();
 
 private:
-    enum PlotMode { PLOT_W, PLOT_R };
-    GaussCalculator _calc;
     Plot* _plot;
+    std::shared_ptr<GaussCalculator> _calc;
     std::shared_ptr<GaussPlotter> _plotter;
     std::shared_ptr<GaussGraphV> _graphV;
     std::shared_ptr<GaussGraphW> _graphW;
+    std::shared_ptr<GaussGraphR> _graphR;
     QVector<GaussCalcParamEditor*> _paramEditors;
-    QGridLayout *_paramsLayout;
     Ori::Widgets::ExclusiveActionGroup *_calcModeLock, *_calcModeZone,  *_plotPlusMinusZ,
         *_plotPlusMinusW, *_plotWR;
     Z::Parameter *_lambda, *_MI, *_w0, *_z, *_z0, *_Vs, *_w, *_R, *_reQ, *_imQ, *_reQ1, *_imQ1;
     QAction *_plotV;
 
-    void makeParams();
+    void makeParams(QGridLayout *paramsLayout);
     QWidget* makeToolbar();
     QWidget* makePlot();
 

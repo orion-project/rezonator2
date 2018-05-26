@@ -39,6 +39,7 @@ $$ \Downarrow $$
 $$ w_{pseudo}(z) = M \times w_{equiv}(z)  $$
 
 ## Algorithm of computing
+
 The program uses next algorithm for calculation of propagation of pseudo-gaussian beams: 
 
 * Equivalent size of source of input emission is calculated. It is $M$ times less than specified in dialog of parameters of input beam. 
@@ -50,5 +51,6 @@ The program uses next algorithm for calculation of propagation of pseudo-gaussia
 ![](./img/beam_pseudogauss.png)
 
 ## See also:
+
 [Gaussian Beam](#TODO)
 

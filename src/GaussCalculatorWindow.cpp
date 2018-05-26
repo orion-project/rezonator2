@@ -1,5 +1,6 @@
 #include "GaussCalculatorWindow.h"
 
+#include "funcs/GaussCalculator.h"
 #include "widgets/Plot.h"
 #include "widgets/ParamEditor.h"
 
@@ -16,6 +17,9 @@
 #include <QIcon>
 #include <QTimer>
 
+namespace {
+enum PlotMode { PLOT_W, PLOT_R };
+}
 
 class GaussPlotter
 {
@@ -25,13 +29,15 @@ public:
     double maxZ;
     double MI;
     Z::Unit unitZ;
-    Z::Unit unitW;
+    Z::Unit unitY;
+    PlotMode mode;
 
     const int points = 50;
 
     QVector<double> valuesZ;
-    QVector<double> valuesW;
-    QVector<double> valuesW_aux;
+    QVector<double> valuesMain;
+    QVector<double> valuesGauss;
+    QVector<double> valuesEquiv;
 
     bool isHyper() const
     {
@@ -41,32 +47,47 @@ public:
     void calculate()
     {
         valuesZ.clear();
-        valuesW.clear();
-        valuesW_aux.clear();
+        valuesMain.clear();
+        valuesGauss.clear();
+        valuesEquiv.clear();
 
         if (qAbs(maxZ - 0) <= std::numeric_limits<double>::epsilon())
             return;
 
         const bool is_hyper = isHyper();
-        const double z0_gauss = M_PI * w0*w0 / lambda;
-        const double z0_hyper = M_PI * w0*w0 / lambda / MI;
+        const double sqrW0 = w0 * w0;
+        const double sqrW0_equiv = sqrW0 / MI;
+        const double z0_gauss = M_PI * sqrW0 / lambda;
+        const double z0_hyper = M_PI * sqrW0_equiv / lambda;
         const double sqrZ0_gauss = z0_gauss * z0_gauss;
         const double sqrZ0_hyper = z0_hyper * z0_hyper;
-        const double sqrW0 = w0 * w0;
         const double step = maxZ / double(points);
-        double z = 0;
+        double z = mode == PLOT_W ? 0 : step;
 
         auto calcPoint = [&](){
             valuesZ.append(unitZ->fromSi(z));
-            double w_gauss = sqrt(sqrW0 * (1 + z*z / sqrZ0_gauss));
+
+            double y_gauss = (mode == PLOT_W) ?
+                        sqrt(sqrW0 * (1 + z*z / sqrZ0_gauss)) :
+                        z * (1 + sqrZ0_gauss / z*z);
+
             if (is_hyper)
             {
-                double w_hyper = sqrt(sqrW0 * (1 + z*z / sqrZ0_hyper));
-                valuesW.append(unitW->fromSi(w_hyper));
-                valuesW_aux.append(unitW->fromSi(w_gauss));
+                double y_hyper;
+                if (mode == PLOT_W)
+                {
+                   y_hyper = sqrt(sqrW0 * (1 + z*z / sqrZ0_hyper));
+                   double y_equiv = sqrt(sqrW0_equiv * (1 + z*z / sqrZ0_hyper));
+                   valuesEquiv.append(unitY->fromSi(y_equiv));
+                }
+                else
+                    y_hyper = z * (1 + sqrZ0_hyper / z*z);
+
+                valuesMain.append(unitY->fromSi(y_hyper));
+                valuesGauss.append(unitY->fromSi(y_gauss));
             }
             else
-                valuesW.append(unitW->fromSi(w_gauss));
+                valuesMain.append(unitY->fromSi(y_gauss));
         };
 
         while (z <= maxZ)
@@ -144,6 +165,8 @@ public:
             QCPGraph *g = plot->addGraph();
             g->setPen(pen);
             g->setBrush(brush);
+            g->setSelectedPen(QPen());
+            g->setSelectedBrush(brush);
             _items.append(g);
         }
     }
@@ -174,7 +197,7 @@ struct GaussPlotOptions
 };
 
 //--------------------------------------------------------------------------------
-//                                GaussGraphAngle
+//                                 GaussGraphV
 //--------------------------------------------------------------------------------
 
 class GaussGraphV
@@ -191,7 +214,7 @@ public:
         if (!options.plotV) return;
 
         double z = _plotter->unitZ->fromSi(_plotter->maxZ);
-        double w = _plotter->unitW->fromSi(_plotter->maxZ * tan(_calc->Vs()));
+        double w = _plotter->unitY->fromSi(_plotter->maxZ * tan(_calc->Vs()));
 
         update(_graphs[0], z, w);
         if (options.plotMinusZ)
@@ -215,7 +238,7 @@ private:
 };
 
 //--------------------------------------------------------------------------------
-//                                   GaussGraphW
+//                                 GaussGraphW
 //--------------------------------------------------------------------------------
 
 class GaussGraphW
@@ -237,16 +260,15 @@ public:
         if (!options.plotW) return;
 
         bool isHyper = _plotter->isHyper();
-        double M = isHyper ? sqrt(_plotter->MI) : 1;
 
-        update(_positiveGraphs, 1, M);
+        update(_positiveGraphs, 1, isHyper);
         if (options.plotMinusZ)
-            update(_positiveGraphs, -1, M);
+            update(_positiveGraphs, -1, isHyper);
         if (options.plotMinusY)
         {
-            update(_negativeGraphs, 1, M);
+            update(_negativeGraphs, 1, isHyper);
             if (options.plotMinusZ)
-                update(_negativeGraphs, -1, M);
+                update(_negativeGraphs, -1, isHyper);
         }
     }
 
@@ -261,19 +283,68 @@ private:
     };
     GraphSet _positiveGraphs, _negativeGraphs;
 
-    void update(const GraphSet& set, const double& signZ, const double& M)
+    void update(const GraphSet& set, const double& signZ, bool isHyper)
     {
-        bool isHyper = M != 1;
         for (int i = 0; i < _plotter->valuesZ.size(); i++)
         {
             double z = signZ * _plotter->valuesZ.at(i);
-            double w = set.sign * _plotter->valuesW.at(i);
-            set.main->addData(z, w);
+            set.main->addData(z, set.sign * _plotter->valuesMain.at(i));
             if (isHyper)
             {
-                set.gauss->addData(z, set.sign * _plotter->valuesW_aux.at(i));
-                set.equiv->addData(z, w/M);
+                set.gauss->addData(z, set.sign * _plotter->valuesGauss.at(i));
+                set.equiv->addData(z, set.sign * _plotter->valuesEquiv.at(i));
             }
+        }
+    }
+};
+
+//--------------------------------------------------------------------------------
+//                                 GaussGraphR
+//--------------------------------------------------------------------------------
+
+class GaussGraphR
+{
+public:
+    GaussGraphR(Plot* plot, GaussPlotter *plotter) : _plotter(plotter)
+    {
+        QColor fillColor(0, 0, 255, 30);
+        _graphs.addItems(plot, 2, QPen(Qt::blue), fillColor);
+        _graphs.addItems(plot, 2, Qt::NoPen, fillColor);
+        _positiveGraphs = { +1, _graphs[0], _graphs[2] };
+        _negativeGraphs = { -1, _graphs[1], _graphs[3] };
+    }
+
+    void update(const GaussPlotOptions& options)
+    {
+        _graphs.clearData();
+        if (!options.plotR) return;
+
+        bool isHyper = _plotter->isHyper();
+
+        update(_positiveGraphs, 1, isHyper);
+        if (options.plotMinusY && options.plotMinusZ)
+            update(_negativeGraphs, -1, isHyper);
+    }
+
+private:
+    GaussPlotter *_plotter;
+    GaussGraphsContainer _graphs;
+
+    struct GraphSet
+    {
+        double sign;
+        QCPGraph *main, *gauss;
+    };
+    GraphSet _positiveGraphs, _negativeGraphs;
+
+    void update(const GraphSet& set, const double& signZ, bool isHyper)
+    {
+        for (int i = 0; i < _plotter->valuesZ.size(); i++)
+        {
+            double z = signZ * _plotter->valuesZ.at(i);
+            set.main->addData(z, set.sign * _plotter->valuesMain.at(i));
+            if (isHyper)
+                set.gauss->addData(z, set.sign * _plotter->valuesGauss.at(i));
         }
     }
 };
@@ -293,25 +364,27 @@ GaussCalculatorWindow::GaussCalculatorWindow(QWidget *parent) : QWidget(parent)
     setWindowTitle(tr("Gaussian Beam Calculator"));
     setWindowIcon(QIcon(":/window_icons/gauss_calc"));
 
-    _paramsLayout = new QGridLayout;
-    _paramsLayout->setMargin(12);
-    _paramsLayout->setHorizontalSpacing(12);
-    _paramsLayout->setVerticalSpacing(0);
+    _calc.reset(new GaussCalculator);
+    _plotter.reset(new GaussPlotter);
 
-    makeParams();
+    QGridLayout *paramsLayout = new QGridLayout;
+    paramsLayout->setMargin(12);
+    paramsLayout->setHorizontalSpacing(12);
+    paramsLayout->setVerticalSpacing(0);
+    makeParams(paramsLayout);
 
     Ori::Layouts::LayoutV({
             makeToolbar(),
             makePlot(),
-            _paramsLayout,
+            paramsLayout,
         })
         .setMargin(0)
         .setSpacing(0)
         .useFor(this);
 
-    _plotter.reset(new GaussPlotter);
-    _graphV.reset(new GaussGraphV(_plot, _plotter.get(), &_calc));
+    _graphV.reset(new GaussGraphV(_plot, _plotter.get(), _calc.get()));
     _graphW.reset(new GaussGraphW(_plot, _plotter.get()));
+    _graphR.reset(new GaussGraphR(_plot, _plotter.get()));
 
     restoreState();
     Ori::Wnd::moveToScreenCenter(this);
@@ -350,8 +423,8 @@ void GaussCalculatorWindow::restoreState()
     _plotPlusMinusW->setCheckedId(root["plot_minus_w"].toInt());
     _calcModeLock->setCheckedId(root["lock_mode"].toInt());
     _calcModeZone->setCheckedId(root["zone_mode"].toInt());
-    _calc.setLock(GaussCalculator::Lock(root["lock_mode"].toInt()));
-    _calc.setZone(GaussCalculator::Zone(root["zone_mode"].toInt()));
+    _calc->setLock(GaussCalculator::Lock(root["lock_mode"].toInt()));
+    _calc->setZone(GaussCalculator::Zone(root["zone_mode"].toInt()));
     _plotWR->setCheckedId(root["plot_wr"].toInt());
     _plotV->setChecked(root.contains("plot_v") ? root["plot_v"].toBool() : true);
 }
@@ -363,8 +436,8 @@ void GaussCalculatorWindow::storeState()
     root["window_height"] = height();
     root["plot_minus_z"] = _plotPlusMinusZ->checkedId();
     root["plot_minus_w"] = _plotPlusMinusW->checkedId();
-    root["lock_mode"] = int(_calc.lock());
-    root["zone_mode"] = int(_calc.zone());
+    root["lock_mode"] = int(_calc->lock());
+    root["zone_mode"] = int(_calc->zone());
     root["plot_wr"] = _plotWR->checkedId();
     root["plot_v"] = _plotV->isChecked();
 
@@ -378,7 +451,7 @@ void GaussCalculatorWindow::storeState()
     QTextStream(&file) << QJsonDocument(root).toJson();
 }
 
-void GaussCalculatorWindow::makeParams()
+void GaussCalculatorWindow::makeParams(QGridLayout *paramsLayout)
 {
     #define FUNC(func_name) std::mem_fun(&GaussCalculator::func_name)
 
@@ -390,7 +463,7 @@ void GaussCalculatorWindow::makeParams()
 
     auto addEditor = [&](int row, int col, GaussCalcParamEditor *editor) {
         _paramEditors.append(editor);
-        _paramsLayout->addWidget(editor->editor(), row, col);
+        paramsLayout->addWidget(editor->editor(), row, col);
         connect(editor, &GaussCalcParamEditor::calcNeeded, this, &GaussCalculatorWindow::recalc);
     };
 
@@ -408,7 +481,7 @@ void GaussCalculatorWindow::makeParams()
     _reQ1 = addParam(linear(), QStringLiteral("q1_re"), QStringLiteral("re(1/q)"), 0_mm);
     _imQ1 = addParam(linear(), QStringLiteral("q1_im"), QStringLiteral("im(1/q)"), 0_mm);
 
-    GaussCalculator *c = &_calc;
+    GaussCalculator *c = _calc.get();
     addEditor(0, 0, new GaussCalcParamEditor(_lambda, c, FUNC(lambda), FUNC(setLambda)));
     addEditor(1, 0, new GaussCalcParamEditor(_MI, c, FUNC(MI), FUNC(setMI)));
     addEditor(2, 0, new GaussCalcParamEditor(_w0, c, FUNC(w0), FUNC(setW0)));
@@ -430,13 +503,13 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     _calcModeLock = new Ori::Widgets::ExclusiveActionGroup(this);
     _calcModeLock->add(int(GaussCalculator::Lock::Waist), ":/toolbar/gauss_lock_waist", tr("Lock waist"));
     _calcModeLock->add(int(GaussCalculator::Lock::Front), ":/toolbar/gauss_lock_front", tr("Lock front"));
-    _calcModeLock->setCheckedId(int(_calc.lock()));
+    _calcModeLock->setCheckedId(int(_calc->lock()));
     connect(_calcModeLock, SIGNAL(checked(int)), this, SLOT(lockSelected(int)));
 
     _calcModeZone = new Ori::Widgets::ExclusiveActionGroup(this);
     _calcModeZone->add(int(GaussCalculator::Zone::Near), ":/toolbar/gauss_near_zone", tr("Use near-field zone"));
     _calcModeZone->add(int(GaussCalculator::Zone::Far), ":/toolbar/gauss_far_zone", tr("Use far-field zone"));
-    _calcModeZone->setCheckedId(int(_calc.zone()));
+    _calcModeZone->setCheckedId(int(_calc->zone()));
     connect(_calcModeZone, SIGNAL(checked(int)), this, SLOT(zoneSelected(int)));
 
     _plotPlusMinusZ = new Ori::Widgets::ExclusiveActionGroup(this);
@@ -485,17 +558,17 @@ QWidget* GaussCalculatorWindow::makePlot()
 
 void GaussCalculatorWindow::zoneSelected(int zone)
 {
-    _calc.setZone(GaussCalculator::Zone(zone));
+    _calc->setZone(GaussCalculator::Zone(zone));
 }
 
 void GaussCalculatorWindow::lockSelected(int lock)
 {
-    _calc.setLock(GaussCalculator::Lock(lock));
+    _calc->setLock(GaussCalculator::Lock(lock));
 }
 
 void GaussCalculatorWindow::recalc()
 {
-    _calc.calc();
+    _calc->calc();
 
     for (GaussCalcParamEditor *editor : _paramEditors)
         editor->getValueFromCalculator();
@@ -505,30 +578,35 @@ void GaussCalculatorWindow::recalc()
 
 void GaussCalculatorWindow::updatePlot()
 {
-    _plotter->lambda = _calc.lambda();
-    _plotter->w0 = _calc.w0();
-    _plotter->maxZ = _calc.z();
-    _plotter->MI = qAbs(_calc.MI());
-    _plotter->unitW = _w->value().unit();
+    PlotMode mode = PlotMode(_plotWR->checkedId());
+
+    _plotter->mode = mode;
+    _plotter->lambda = _calc->lambda();
+    _plotter->w0 = _calc->w0();
+    _plotter->maxZ = _calc->z();
+    _plotter->MI = qAbs(_calc->MI());
     _plotter->unitZ = _z->value().unit();
+    _plotter->unitY = (mode == PLOT_W ? _w : _R)->value().unit();
     _plotter->calculate();
 
     GaussPlotOptions o;
     o.plotV = _plotV->isChecked();
-    o.plotW = _plotWR->checkedId() == int(PLOT_W);
-    o.plotR = _plotWR->checkedId() == int(PLOT_R);
+    o.plotW = mode == PLOT_W;
+    o.plotR = mode == PLOT_R;
     o.plotMinusZ = _plotPlusMinusZ->checkedId();
     o.plotMinusY = _plotPlusMinusW->checkedId();
 
-    //_graphR->update(o);
     _graphV->update(o);
     _graphW->update(o);
+    _graphR->update(o);
 
     double maxZ = _z->value().value();
     double minZ = o.plotMinusZ ? -maxZ : 0;
-    double maxW = _w->value().value() * 1.1;
-    double minW = o.plotMinusY ? -maxW : 0;
+    double maxY = mode == PLOT_W
+            ? _w->value().value() * 1.1
+            : qMax(_plotter->valuesMain.first(), _plotter->valuesMain.last());
+    double minY = o.plotMinusY ? -maxY : 0;
     _plot->setLimitsX(minZ, maxZ, false);
-    _plot->setLimitsY(minW, maxW, false);
+    _plot->setLimitsY(minY, maxY, false);
     _plot->replot();
 }
