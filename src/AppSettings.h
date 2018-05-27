@@ -2,6 +2,7 @@
 #define APP_SETTINGS_H
 
 #include "core/OriTemplates.h"
+#include <QSize>
 
 class SettingsListener
 {
@@ -35,10 +36,15 @@ public:
     void save();
     bool edit(class QWidget *parent);
 
+    QSize toolbarIconSize() const;
+
 private:
     Settings() {}
 
     friend class Singleton<Settings>;
+
+    int toolbarIconSizeSmall;
+    int toolbarIconSizeBig;
 };
 
 #endif // APP_SETTINGS_H

@@ -21,10 +21,11 @@ void UnitComboBox::populate(Z::Dim dim)
 {
     _enableChangeEvent = false;
     clear();
-    setEnabled(dim != Z::Dims::none());
     for (auto unit: dim->units())
         addItem(unit->name(), qVariantFromValue((void*)unit));
+    _isEmptyOrSingleItem = count() < 2;
     _enableChangeEvent = true;
+    setEnabled(true);
 }
 
 Z::Unit UnitComboBox::selectedUnit() const
@@ -59,6 +60,11 @@ void UnitComboBox::focusOutEvent(QFocusEvent *e)
 {
     QComboBox::focusOutEvent(e);
     emit focused(false);
+}
+
+void UnitComboBox::setEnabled(bool on)
+{
+    QComboBox::setEnabled(!_isEmptyOrSingleItem && on);
 }
 
 //------------------------------------------------------------------------------

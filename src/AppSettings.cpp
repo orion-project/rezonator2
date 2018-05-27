@@ -47,6 +47,8 @@ void Settings::load()
     LOAD_DEF(showBackground, Bool, true);
     LOAD_DEF(useNativeMenuBar, Bool, true);
     LOAD_DEF(useSystemDialogs, Bool, true);
+    LOAD_DEF(toolbarIconSizeSmall, Int, 16);
+    LOAD_DEF(toolbarIconSizeBig, Int, 24);
 
     s.beginGroup("Options");
     LOAD_DEF(editNewElem, Bool, true);
@@ -90,7 +92,13 @@ bool Settings::edit(class QWidget *parent)
 {
     bool result = Z::Dlg::appConfig(parent);
     if (result)
-        NOTIFY_LISTENERS(settingsChanged);
+        notify(&SettingsListener::settingsChanged);
     return result;
 }
 
+QSize Settings::toolbarIconSize() const
+{
+    return smallToolbarImages ?
+        QSize(toolbarIconSizeSmall, toolbarIconSizeSmall) :
+        QSize(toolbarIconSizeBig, toolbarIconSizeBig);
+}

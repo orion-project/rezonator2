@@ -21,6 +21,8 @@ public:
     Z::Unit selectedUnit() const;
     void setSelectedUnit(Z::Unit unit);
 
+    void setEnabled(bool on);
+
 signals:
     void focused(bool focus);
 
@@ -34,6 +36,7 @@ protected:
 
 private:
     bool _enableChangeEvent = true;
+    bool _isEmptyOrSingleItem = true;
     Z::Unit unitAt(int index) const;
 };
 

@@ -19,6 +19,8 @@ int main(int argc, char* argv[])
 
     int res = 0;
 
+    Settings::instance().load();
+
     if (QApplication::arguments().contains("gauss"))
     {
         GaussCalculatorWindow::showCalcWindow();

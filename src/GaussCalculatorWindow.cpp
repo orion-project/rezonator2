@@ -1,5 +1,6 @@
 #include "GaussCalculatorWindow.h"
 
+#include "AppSettings.h"
 #include "funcs/GaussCalculator.h"
 #include "widgets/Plot.h"
 #include "widgets/ParamEditor.h"
@@ -633,18 +634,11 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     actionHelp->setEnabled(false); // TODO:NEXT-VER
 
     auto toolbar = new Ori::Widgets::FlatToolBar;
-    toolbar->addActions(_calcModeLock->actions());
-    toolbar->addSeparator();
-    toolbar->addActions(_calcModeZone->actions());
-    toolbar->addSeparator();
-    toolbar->addActions(_plotPlusMinusZ->actions());
-    toolbar->addActions(_plotPlusMinusW->actions());
-    toolbar->addSeparator();
-    toolbar->addActions(_plotWR->actions());
-    toolbar->addAction(_plotV);
-    toolbar->addAction(_plotZ0);
-    toolbar->addSeparator();
-    toolbar->addAction(actionHelp);
+    toolbar->setIconSize(Settings::instance().toolbarIconSize());
+    Ori::Gui::populate(toolbar, {
+        _calcModeLock, 0, _calcModeZone, 0, _plotPlusMinusZ, _plotPlusMinusW, 0,
+        _plotWR, _plotV, _plotZ0, 0, actionHelp
+    });
     return toolbar;
 }
 
@@ -672,8 +666,13 @@ void GaussCalculatorWindow::recalc()
 {
     _calc->calc();
 
+    // When recalc is initiated by changing a parameter
+    // do not take value of this parameter from calculator
+    // as it will interfere user input.
+    auto changingEditor = sender();
     for (GaussCalcParamEditor *editor : _paramEditors)
-        editor->getValueFromCalculator();
+        if (editor != changingEditor)
+            editor->getValueFromCalculator();
 
     updatePlot();
 }

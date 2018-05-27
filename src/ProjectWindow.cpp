@@ -120,8 +120,6 @@ void ProjectWindow::loadSettings()
     _mruList = new Ori::MruFileList(this);
     _mruList->load(s.settings());
 
-    Settings::instance().load();
-
     CustomPrefs::load(s.settings()->fileName());
 }
 
@@ -132,8 +130,6 @@ void ProjectWindow::saveSettings()
     s.setValue("style", _styler->currentStyle());
     s.setValue("language", _translator->currentLanguage());
     s.storeWindowGeometry("mainWindow", this);
-
-    Settings::instance().save();
 }
 
 void ProjectWindow::createActions()
