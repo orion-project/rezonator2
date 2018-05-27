@@ -44,32 +44,48 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
+  <path
+     d="m 10.498706,24 0,-24"
+     id="path3089"
+     style="fill:none;stroke:#b50000;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1" />
   <g
-     id="layer6" />
+     id="layer6"
+     style="display:inline" />
   <g
-     transform="translate(0,-0.20338984)"
      id="layer5"
-     style="display:inline">
-    <g
-       transform="scale(1.1469476,0.87187942)"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:13.17296696px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';text-align:start;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#e00005;fill-opacity:1;stroke:none"
-       id="text13317">
-      <path
-         d="m 8.5283565,23.010792 0.5660259,0 0.2894451,1.382904 c 1.1573675,1.150827 4.8070825,0.633506 3.5955515,-1.415064 -1.342822,-2.270569 -4.4028455,-0.976377 -4.3995656,-3.717762 0.00379,-3.167515 3.4605126,-2.430852 5.4351356,-2.051841 l 0,2.051844 -0.572458,0 -0.289445,-1.183509 c -1.145902,-0.667202 -3.4449294,-0.98789 -3.171032,0.713965 0.420413,2.612223 4.572517,1.04217 4.611825,4.245194 0.04428,3.608317 -4.017558,2.7744 -6.0654825,2.28983 z"
-         id="path4164" />
-    </g>
+     style="display:none">
+    <text
+       x="5.9327812"
+       y="13.279749"
+       transform="scale(1.1328754,0.8827096)"
+       id="text13317"
+       xml:space="preserve"
+       style="font-size:17.97815323px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"><tspan
+         x="5.9327812"
+         y="13.279749"
+         id="tspan13323">S</tspan></text>
+    <path
+       d="m 4,17.000267 c 8.802697,0.26229 13.999999,-3 18.999999,-7.9999992"
+       id="path13321"
+       style="fill:none;stroke:#ff0005;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline" />
   </g>
   <g
      id="layer4"
-     style="display:inline">
-    <g
-       transform="scale(1.0879872,0.91912847)"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:13.13114357px;line-height:125%;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Bold';text-align:start;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#008107;fill-opacity:1;stroke:none"
-       id="text13310">
-      <path
-         d="m 10.027221,10.879872 0,-0.468053 1.36569,-0.173116 0,-7.2772693 c -0.815996,-0.024528 -1.5984866,0.030839 -2.3915608,0.128234 l -0.1731156,1.5965111 -0.5834639,0 0,-2.4043842 8.3544333,0 0,2.4043842 -0.589875,0 -0.173116,-1.5965111 C 15.006675,2.9673064 14.235525,2.9746265 13.419005,2.9742571 l 0,7.2644459 1.365691,0.173116 0,0.468053 z"
-         id="path4161" />
-    </g>
+     style="display:none">
+    <text
+       x="6.4893255"
+       y="13.345381"
+       transform="scale(1.1121151,0.8991875)"
+       id="text13310"
+       xml:space="preserve"
+       style="font-size:18.46151543px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"><tspan
+         x="6.4893255"
+         y="13.345381"
+         id="tspan13312">T</tspan></text>
+    <path
+       d="M 4.000001,17 C 12.802698,17.26229 18,14 23,9"
+       id="path13314"
+       style="fill:none;stroke:#008107;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline" />
   </g>
   <g
      id="layer2"
@@ -94,29 +110,15 @@
          y="9.6627493"
          id="tspan13306">ω</tspan></text>
   </g>
-  <g
-     id="layer3"
-     style="display:none">
-    <path
-       d="M 5,0 C 5.3889246,8.1174473 5.7825075,18 9,18 14,18 23,8 23,8"
-       id="path13302"
-       style="fill:none;stroke:#ff4300;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline" />
-    <text
-       x="6.2948327"
-       y="13.344278"
-       transform="scale(1.1120232,0.8992618)"
-       id="text13296"
-       xml:space="preserve"
-       style="font-size:18.46304131px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;display:inline;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"><tspan
-         x="6.2948327"
-         y="13.344278"
-         id="tspan13300">R</tspan></text>
-  </g>
+  <path
+     d="M 5,0 C 5.3889246,8.1174473 7.2925999,18.035955 10.510092,18.035955 15.510092,18.035955 23,8 23,8"
+     id="path13302"
+     style="display:inline;fill:none;stroke:#00a529;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   <g
      id="layer1"
      style="display:inline">
     <g
-       transform="translate(0,-6.987912)"
+       transform="translate(0,1)"
        id="g10100">
       <path
          d="m 0,19.5 23,0"
@@ -140,4 +142,19 @@
          style="fill:none;stroke:#182e6d;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1" />
     </g>
   </g>
+  <g
+     transform="translate(0.83050766,0)"
+     id="text4163"
+     style="font-style:normal;font-weight:normal;font-size:15.01473522px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1">
+    <path
+       id="path4182"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15.01473522px;line-height:125%;font-family:'Bitstream Vera Serif';-inkscape-font-specification:'Bitstream Vera Serif, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start"
+       d="m 11.948225,9.0102698 0,-0.6305018 5.391196,-6.3783299 -3.863655,0 -0.501558,1.3489802 -0.453539,0 0.177967,-2.1334414 6.683415,0 0,0.6305016 -5.391196,6.3856613 3.932472,0 0.287637,-1.4149629 0.496824,0 0,2.1920929 z" />
+  </g>
+  <circle
+     r="1.6911274"
+     cy="8.1233158"
+     cx="20.811974"
+     id="path4179"
+     style="opacity:1;fill:none;fill-opacity:0.34210528;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
 </svg>

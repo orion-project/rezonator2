@@ -30,7 +30,6 @@ public:
     double MI;
     Z::Unit unitZ;
     Z::Unit unitY;
-    PlotMode mode;
 
     const int points = 50;
 
@@ -39,22 +38,22 @@ public:
     QVector<double> valuesGauss;
     QVector<double> valuesEquiv;
 
-    bool isHyper() const
-    {
-        return qAbs(MI - 1.0) > std::numeric_limits<double>::epsilon();
-    }
-
-    void calculate()
+    void cleanData()
     {
         valuesZ.clear();
         valuesMain.clear();
         valuesGauss.clear();
         valuesEquiv.clear();
+    }
 
-        if (qAbs(maxZ - 0) <= std::numeric_limits<double>::epsilon())
-            return;
+    bool isHyper() const
+    {
+        return qAbs(MI - 1.0) > std::numeric_limits<double>::epsilon();
+    }
 
-        const bool is_hyper = isHyper();
+    void calculateW()
+    {
+        const bool hyper = isHyper();
         const double sqrW0 = w0 * w0;
         const double sqrW0_equiv = sqrW0 / MI;
         const double z0_gauss = M_PI * sqrW0 / lambda;
@@ -62,38 +61,73 @@ public:
         const double sqrZ0_gauss = z0_gauss * z0_gauss;
         const double sqrZ0_hyper = z0_hyper * z0_hyper;
         const double step = maxZ / double(points);
-        double z = mode == PLOT_W ? 0 : step;
+        double z = 0;
 
         auto calcPoint = [&](){
-            valuesZ.append(unitZ->fromSi(z));
-
-            double y_gauss = (mode == PLOT_W) ?
-                        sqrt(sqrW0 * (1 + z*z / sqrZ0_gauss)) :
-                        z * (1 + sqrZ0_gauss / z*z);
-
-            if (is_hyper)
+            double w_gauss = sqrt(sqrW0 * (1 + z*z / sqrZ0_gauss));
+            if (hyper)
             {
-                double y_hyper;
-                if (mode == PLOT_W)
-                {
-                   y_hyper = sqrt(sqrW0 * (1 + z*z / sqrZ0_hyper));
-                   double y_equiv = sqrt(sqrW0_equiv * (1 + z*z / sqrZ0_hyper));
-                   valuesEquiv.append(unitY->fromSi(y_equiv));
-                }
-                else
-                    y_hyper = z * (1 + sqrZ0_hyper / z*z);
-
-                valuesMain.append(unitY->fromSi(y_hyper));
-                valuesGauss.append(unitY->fromSi(y_gauss));
+                double w_hyper = sqrt(sqrW0 * (1 + z*z / sqrZ0_hyper));
+                double w_equiv = sqrt(sqrW0_equiv * (1 + z*z / sqrZ0_hyper));
+                valuesEquiv.append(unitY->fromSi(w_equiv));
+                valuesMain.append(unitY->fromSi(w_hyper));
+                valuesGauss.append(unitY->fromSi(w_gauss));
             }
             else
-                valuesMain.append(unitY->fromSi(y_gauss));
+                valuesMain.append(unitY->fromSi(w_gauss));
+            valuesZ.append(unitZ->fromSi(z));
         };
 
         while (z <= maxZ)
         {
             calcPoint();
             z += step;
+        }
+        if (valuesZ.last() < unitZ->fromSi(maxZ))
+        {
+            z = maxZ;
+            calcPoint();
+        }
+    }
+
+    void calculateR()
+    {
+        const bool hyper = isHyper();
+        const double z0_gauss = M_PI * w0*w0 / lambda;
+        const double z0_hyper = z0_gauss / MI;
+        const double sqrZ0_gauss = z0_gauss * z0_gauss;
+        const double sqrZ0_hyper = z0_hyper * z0_hyper;
+        double z;
+
+        auto calcPoint = [&](){
+            double R_gauss = z * (1.0 + sqrZ0_gauss / (z*z));
+            if (hyper)
+            {
+                double R_hyper = z * (1 + sqrZ0_hyper / (z*z));
+                valuesMain.append(unitY->fromSi(R_hyper));
+                valuesGauss.append(unitY->fromSi(R_gauss));
+            }
+            else
+                valuesMain.append(unitY->fromSi(R_gauss));
+            valuesZ.append(unitZ->fromSi(z));
+        };
+
+        // Wavefront ROC is changed faster than beam radius
+        // so we should calc additional points to make graph more smooth.
+        double step = z0_gauss / double(2*points);
+        z = step;
+        while (z <= z0_gauss)
+        {
+            calcPoint();
+            z += step;
+        }
+        z = z0_gauss;
+        calcPoint();
+        step = (maxZ - z0_gauss) / double(points);
+        while (z <= maxZ)
+        {
+            z += step;
+            calcPoint();
         }
         if (valuesZ.last() < unitZ->fromSi(maxZ))
         {
@@ -165,7 +199,11 @@ public:
             QCPGraph *g = plot->addGraph();
             g->setPen(pen);
             g->setBrush(brush);
-            g->setSelectedPen(QPen());
+            QPen selectedPen(pen);
+            selectedPen.setColor(Qt::black);
+            if (selectedPen.style() == Qt::NoPen)
+                selectedPen.setStyle(Qt::DotLine);
+            g->setSelectedPen(selectedPen);
             g->setSelectedBrush(brush);
             _items.append(g);
         }
@@ -194,6 +232,65 @@ struct GaussPlotOptions
     bool plotW;
     bool plotR;
     bool plotV;
+    bool plotZ0;
+};
+
+//--------------------------------------------------------------------------------
+//                                 GaussGraphV
+//--------------------------------------------------------------------------------
+
+class GaussGraphZ0
+{
+public:
+    GaussGraphZ0(Plot* plot, GaussPlotter *plotter, GaussCalculator *calc) : _plotter(plotter), _calc(calc)
+    {
+        QPen penMain(Qt::gray, 2, Qt::DashLine);
+        QPen penGauss(Qt::gray, 1, Qt::DashLine);
+        _main.pos = makeLine(plot, penMain);
+        _main.neg = makeLine(plot, penMain);
+        _gauss.pos = makeLine(plot, penGauss);
+        _gauss.neg = makeLine(plot, penGauss);
+    }
+
+    void update(const GaussPlotOptions& options)
+    {
+        _main.pos->setVisible(options.plotZ0);
+        _main.neg->setVisible(options.plotZ0 && options.plotMinusZ);
+        _gauss.pos->setVisible(false);
+        _gauss.neg->setVisible(false);
+        if (!options.plotZ0) return;
+        double z0 = _plotter->unitZ->fromSi(_calc->z0());
+        _main.pos->point1->setCoords(z0, 0);
+        _main.pos->point2->setCoords(z0, 1);
+        _main.neg->point1->setCoords(-z0, 0);
+        _main.neg->point2->setCoords(-z0, 1);
+        if (_plotter->isHyper())
+        {
+            _gauss.pos->setVisible(true);
+            _gauss.neg->setVisible(options.plotMinusZ);
+            z0 *= _plotter->MI;
+            _gauss.pos->point1->setCoords(z0, 0);
+            _gauss.pos->point2->setCoords(z0, 1);
+            _gauss.neg->point1->setCoords(-z0, 0);
+            _gauss.neg->point2->setCoords(-z0, 1);
+        }
+    }
+
+private:
+    GaussPlotter *_plotter;
+    GaussCalculator *_calc;
+    struct LineSet { QCPItemStraightLine *pos, *neg; };
+    LineSet _main, _gauss;
+
+    static QCPItemStraightLine* makeLine(Plot* plot, const QPen& pen)
+    {
+        QCPItemStraightLine *line = new QCPItemStraightLine(plot);
+        line->setPen(pen);
+        QPen selectedPen(pen);
+        selectedPen.setColor(Qt::black);
+        line->setSelectedPen(selectedPen);
+        return line;
+    }
 };
 
 //--------------------------------------------------------------------------------
@@ -382,6 +479,7 @@ GaussCalculatorWindow::GaussCalculatorWindow(QWidget *parent) : QWidget(parent)
         .setSpacing(0)
         .useFor(this);
 
+    _graphZ0.reset(new GaussGraphZ0(_plot, _plotter.get(), _calc.get()));
     _graphV.reset(new GaussGraphV(_plot, _plotter.get(), _calc.get()));
     _graphW.reset(new GaussGraphW(_plot, _plotter.get()));
     _graphR.reset(new GaussGraphR(_plot, _plotter.get()));
@@ -427,6 +525,7 @@ void GaussCalculatorWindow::restoreState()
     _calc->setZone(GaussCalculator::Zone(root["zone_mode"].toInt()));
     _plotWR->setCheckedId(root["plot_wr"].toInt());
     _plotV->setChecked(root.contains("plot_v") ? root["plot_v"].toBool() : true);
+    _plotZ0->setChecked(root.contains("plot_z0") ? root["plot_z0"].toBool() : true);
 }
 
 void GaussCalculatorWindow::storeState()
@@ -440,6 +539,7 @@ void GaussCalculatorWindow::storeState()
     root["zone_mode"] = int(_calc->zone());
     root["plot_wr"] = _plotWR->checkedId();
     root["plot_v"] = _plotV->isChecked();
+    root["plot_z0"] = _plotZ0->isChecked();
 
     auto fileName = stateFileName();
     QFile file(fileName);
@@ -527,6 +627,7 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     _plotWR->add(int(PLOT_R), ":/toolbar/plot_r", tr("Plot Favefront ROC"));
     connect(_plotWR, SIGNAL(checked(int)), this, SLOT(updatePlot()));
     _plotV = Ori::Gui::toggledAction(tr("Plot Beam Angle"), this, SLOT(updatePlot()), ":/toolbar/plot_v");
+    _plotZ0 = Ori::Gui::toggledAction(tr("Plot Rayleigh Distance"), this, SLOT(updatePlot()), ":/toolbar/plot_z0");
 
     auto actionHelp = new QAction(QIcon(":/toolbar/help"), tr("Help"), this);
     actionHelp->setEnabled(false); // TODO:NEXT-VER
@@ -541,6 +642,7 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     toolbar->addSeparator();
     toolbar->addActions(_plotWR->actions());
     toolbar->addAction(_plotV);
+    toolbar->addAction(_plotZ0);
     toolbar->addSeparator();
     toolbar->addAction(actionHelp);
     return toolbar;
@@ -580,31 +682,42 @@ void GaussCalculatorWindow::updatePlot()
 {
     PlotMode mode = PlotMode(_plotWR->checkedId());
 
-    _plotter->mode = mode;
-    _plotter->lambda = _calc->lambda();
-    _plotter->w0 = _calc->w0();
-    _plotter->maxZ = _calc->z();
-    _plotter->MI = qAbs(_calc->MI());
-    _plotter->unitZ = _z->value().unit();
-    _plotter->unitY = (mode == PLOT_W ? _w : _R)->value().unit();
-    _plotter->calculate();
+    _plotter->cleanData();
+    if (qAbs(_calc->z()) > std::numeric_limits<double>::epsilon())
+    {
+        _plotter->MI = qAbs(_calc->MI());
+        _plotter->w0 = _calc->w0();
+        _plotter->maxZ = _calc->z();
+        _plotter->lambda = _calc->lambda();
+        _plotter->unitZ = _z->value().unit();
+        if (mode == PLOT_W)
+        {
+            _plotter->unitY = _w->value().unit();
+            _plotter->calculateW();
+        }
+        else
+        {
+            _plotter->unitY = _R->value().unit();
+            _plotter->calculateR();
+        }
+    }
 
     GaussPlotOptions o;
+    o.plotZ0 = _plotZ0->isChecked();
     o.plotV = _plotV->isChecked();
     o.plotW = mode == PLOT_W;
     o.plotR = mode == PLOT_R;
     o.plotMinusZ = _plotPlusMinusZ->checkedId();
     o.plotMinusY = _plotPlusMinusW->checkedId();
 
+    _graphZ0->update(o);
     _graphV->update(o);
     _graphW->update(o);
     _graphR->update(o);
 
     double maxZ = _z->value().value();
     double minZ = o.plotMinusZ ? -maxZ : 0;
-    double maxY = mode == PLOT_W
-            ? _w->value().value() * 1.1
-            : qMax(_plotter->valuesMain.first(), _plotter->valuesMain.last());
+    double maxY = (mode == PLOT_W ? _w : _R)->value().value() * 1.1;
     double minY = o.plotMinusY ? -maxY : 0;
     _plot->setLimitsX(minZ, maxZ, false);
     _plot->setLimitsY(minY, maxY, false);

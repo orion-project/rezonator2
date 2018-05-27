@@ -4,6 +4,7 @@
 #include <QWidget>
 
 #include <functional>
+#include <memory>
 
 #include "core/Parameters.h"
 
@@ -21,6 +22,7 @@ class ExclusiveActionGroup;
 }}
 
 class GaussCalculator;
+class GaussGraphZ0;
 class GaussGraphV;
 class GaussGraphW;
 class GaussGraphR;
@@ -76,6 +78,7 @@ private:
     Plot* _plot;
     std::shared_ptr<GaussCalculator> _calc;
     std::shared_ptr<GaussPlotter> _plotter;
+    std::shared_ptr<GaussGraphZ0> _graphZ0;
     std::shared_ptr<GaussGraphV> _graphV;
     std::shared_ptr<GaussGraphW> _graphW;
     std::shared_ptr<GaussGraphR> _graphR;
@@ -83,7 +86,7 @@ private:
     Ori::Widgets::ExclusiveActionGroup *_calcModeLock, *_calcModeZone,  *_plotPlusMinusZ,
         *_plotPlusMinusW, *_plotWR;
     Z::Parameter *_lambda, *_MI, *_w0, *_z, *_z0, *_Vs, *_w, *_R, *_reQ, *_imQ, *_reQ1, *_imQ1;
-    QAction *_plotV;
+    QAction *_plotV, *_plotZ0;
 
     void makeParams(QGridLayout *paramsLayout);
     QWidget* makeToolbar();
