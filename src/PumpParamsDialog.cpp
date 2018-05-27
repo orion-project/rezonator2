@@ -58,7 +58,12 @@ bool PumpParamsDialog::editPump(Z::PumpParams *params)
 PumpParamsDialog::PumpParamsDialog(Z::PumpParams *params, QWidget *parent)
     : RezonatorDialog(Options(NoOptions), parent), _params(params)
 {
-    setTitleAndIcon(tr("Input Beam Parameters"), ":/toolbar/pump_edit");
+    auto pumpMode = Z::Pump::findByModeName(params->modeName());
+    if (!pumpMode)
+        qCritical() << "Unable to find mode for pump parameters";
+
+    auto pumpModeStr = pumpMode ? pumpMode->displayName() : QString();
+    setTitleAndIcon(tr("Input Beam Parameters (%1)").arg(pumpModeStr), ":/toolbar/pump_edit");
     setObjectName("PumpDialog");
 
     QLabel* iconLabel = new QLabel;
@@ -66,7 +71,6 @@ PumpParamsDialog::PumpParamsDialog(Z::PumpParams *params, QWidget *parent)
     _editorTitle = new QLineEdit;
     Z::Gui::setValueFont(_editorLabel);
     Z::Gui::setValueFont(_editorTitle);
-
 
     auto layoutLabelTitle = new QFormLayout;
     layoutLabelTitle->addRow(tr("Label:"), _editorLabel);
@@ -80,10 +84,6 @@ PumpParamsDialog::PumpParamsDialog(Z::PumpParams *params, QWidget *parent)
     layoutCommon->addLayout(layoutLabelTitle);
 
     _paramsEditor = new ParamsEditorTS(params->params());
-
-    auto pumpMode = Z::Pump::findByModeName(params->modeName());
-    if (!pumpMode)
-        qCritical() << "Unable to find mode for pump parameters";
 
     auto drawing = new QLabel;
     drawing->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);

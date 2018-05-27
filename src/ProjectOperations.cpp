@@ -326,7 +326,7 @@ void ProjectOperations::openSchemaExample()
     QListWidget fileList;
 #ifdef Q_OS_WIN
     // Default icon size looks OK on Ubuntu and MacOS but it is too small on Windows
-    setIconSize(QSize(24, 24));
+    fileList.setIconSize(QSize(24, 24));
 #endif
     for (auto fileName : exampleFiles)
         fileList.addItem(new QListWidgetItem(QIcon(":/window_icons/schema"), fileName));

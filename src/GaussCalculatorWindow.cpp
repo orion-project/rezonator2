@@ -54,7 +54,7 @@ public:
 
     void calculateW()
     {
-        const bool hyper = isHyper();
+        const bool is_hyper = isHyper();
         const double sqrW0 = w0 * w0;
         const double sqrW0_equiv = sqrW0 / MI;
         const double z0_gauss = M_PI * sqrW0 / lambda;
@@ -66,7 +66,7 @@ public:
 
         auto calcPoint = [&](){
             double w_gauss = sqrt(sqrW0 * (1 + z*z / sqrZ0_gauss));
-            if (hyper)
+            if (is_hyper)
             {
                 double w_hyper = sqrt(sqrW0 * (1 + z*z / sqrZ0_hyper));
                 double w_equiv = sqrt(sqrW0_equiv * (1 + z*z / sqrZ0_hyper));
@@ -93,7 +93,7 @@ public:
 
     void calculateR()
     {
-        const bool hyper = isHyper();
+        const bool is_hyper = isHyper();
         const double z0_gauss = M_PI * w0*w0 / lambda;
         const double z0_hyper = z0_gauss / MI;
         const double sqrZ0_gauss = z0_gauss * z0_gauss;
@@ -102,7 +102,7 @@ public:
 
         auto calcPoint = [&](){
             double R_gauss = z * (1.0 + sqrZ0_gauss / (z*z));
-            if (hyper)
+            if (is_hyper)
             {
                 double R_hyper = z * (1 + sqrZ0_hyper / (z*z));
                 valuesMain.append(unitY->fromSi(R_hyper));
@@ -647,8 +647,6 @@ QWidget* GaussCalculatorWindow::makePlot()
     _plot = new Plot;
     _plot->legend->setVisible(false);
     _plot->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    _plot->xAxis->setNumberPrecision(6);
-    _plot->yAxis->setNumberPrecision(6);
     return _plot;
 }
 
