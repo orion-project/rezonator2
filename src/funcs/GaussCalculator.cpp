@@ -2,13 +2,10 @@
 
 #include <complex>
 
-#include <QDebug>
-
-#define _PI_ 3.14159265358979323846
-
-#define LOG_STAGES
+//#define LOG_STAGES
 
 #ifdef LOG_STAGES
+#include <QDebug>
 #define LOG_REF(var, lock)\
     qDebug() << "Ref::"#var << "Lock::"#lock;
 #define LOG_VARS(method, ...)\
@@ -233,7 +230,7 @@ void GaussCalculator::calc()
 
 void GaussCalculator::calc_Vs_from_W0_MI()
 {
-    _Vs = _MI * _lambda / _PI_ / _w0;
+    _Vs = _MI * _lambda / M_PI / _w0;
     LOG_VARS("calc_Vs_from_W0_M2", _MI, _lambda, _w0, _Vs)
 }
 
@@ -252,7 +249,7 @@ void GaussCalculator::calc_R_from_Z_Z0()
 void GaussCalculator::calc_Q1_from_W_R()
 {
     _re_q1 = 1 / _R;
-    _im_q1 = _lambda / _PI_ / (_w*_w);
+    _im_q1 = _lambda / M_PI / (_w*_w);
     LOG_VARS("calc_Q1_from_W_R", _R, _lambda, _w, _re_q1, _im_q1)
 }
 
@@ -276,7 +273,7 @@ void GaussCalculator::calc_Q1_from_Q()
 
 void GaussCalculator::calc_W_from_Q1()
 {
-    _w = sqrt(_lambda / _PI_ / _im_q1);
+    _w = sqrt(_lambda / M_PI / _im_q1);
     LOG_VARS("calc_W_from_Q1", _lambda, _im_q1, _w)
 }
 
@@ -288,19 +285,19 @@ void GaussCalculator::calc_R_from_Q1()
 
 void GaussCalculator::calc_MI_from_W0_Z0()
 {
-    _MI = _PI_ * (_w0*_w0) / _lambda / _z0;
+    _MI = M_PI * (_w0*_w0) / _lambda / _z0;
     LOG_VARS("calc_M2_from_W0_Z0", _w0, _lambda, _z0, _MI)
 }
 
 void GaussCalculator::calc_MI_from_W0_Vs()
 {
-    _MI = _PI_ * _w0 * _Vs / _lambda;
+    _MI = M_PI * _w0 * _Vs / _lambda;
     LOG_VARS("calc_M2_from_W0_Vs", _w0, _lambda, _Vs, _MI)
 }
 
 void GaussCalculator::calc_Z0_from_W0_MI()
 {
-    _z0 = _PI_ * (_w0*_w0) / _lambda / _MI;
+    _z0 = M_PI * (_w0*_w0) / _lambda / _MI;
     LOG_VARS("calc_Z0_from_W0_M2", _w0, _lambda, _MI, _z0)
 }
 
@@ -324,7 +321,7 @@ void GaussCalculator::calc_W0_from_W_Z_Z0()
 
 void GaussCalculator::calc_W0_from_Z0_MI()
 {
-    _w0 = sqrt(_z0 * _lambda * _MI / _PI_);
+    _w0 = sqrt(_z0 * _lambda * _MI / M_PI);
     LOG_VARS("calc_W0_from_Z0_M2", _z0, _lambda, _MI, _w0)
 }
 
@@ -356,7 +353,7 @@ void GaussCalculator::calc_Z_from_W_R_Vs()
 
 void GaussCalculator::calc_Z_from_R_W_MI()
 {
-    double tmp = _w*_w*_w*_w * _PI_*_PI_;
+    double tmp = _w*_w*_w*_w * M_PI*M_PI;
     _z = tmp * _R / (_MI*_MI * _lambda*_lambda * _R*_R + tmp);
     LOG_VARS("calc_Z_from_R_W_M2", _w, _R, _MI, _lambda, _z)
 }

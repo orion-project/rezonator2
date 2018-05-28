@@ -71,6 +71,7 @@ TEST_METHOD(change_Z0_far)
     c.setZone(GaussCalculator::Zone::Far);
     c.setLambda(1.1e-6);
     c.setW0(100e-6);
+    c.setZ(0.1);
 
     c.setLock(GaussCalculator::Lock::Waist);
     c.setZ0(0.012);
@@ -113,6 +114,7 @@ TEST_METHOD(change_Z0_near)
     c.setZone(GaussCalculator::Zone::Near);
     c.setLambda(1.1e-6);
     c.setW0(100e-6);
+    c.setZ(0.1);
 
     c.setLock(GaussCalculator::Lock::Waist);
     c.setZ0(0.012);
@@ -194,6 +196,7 @@ TEST_METHOD(change_Vs)
 TEST_METHOD(change_Z)
 {
     GaussCalculator c;
+    c.setW0(100e-6);
     c.setLambda(640e-9);
     c.setMI(2);
 
