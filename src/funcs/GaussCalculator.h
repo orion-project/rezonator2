@@ -23,6 +23,8 @@ public:
     enum class Lock {Waist, Front};
     enum class Zone {Near, Far};
 
+    GaussCalculator();
+
     void calc();
 
     double lambda() const { return _lambda; }
@@ -58,18 +60,18 @@ public:
 private:
     enum class Ref {Lambda, W0, Z0, Vs, MI, Z, W, R, Q, Q1Im, Q1Re};
 
-    double _MI = 1.0;         ///< Beam quality parameter.
-    double _z0 = 0.0;         ///< Rayleight range.
-    double _w0 = 100e-6;      ///< Waist radius.
-    double _Vs = 0.0;         ///< Half of the divergence angle in the far field.
-    double _z = 0.1;          ///< Axial distance from the waist to wavefront.
-    double _w = 0.0;          ///< Beam radius at distance z from the waist.
-    double _R = 0.0;          ///< Wavefront ROC at distance z from the waist.
-    double _re_q = 0.0;       ///< Real part of the complex beam parameter at distance z.
-    double _im_q = 0.0;       ///< Imaginary part of the complex beam parameter at distance z.
-    double _re_q1 = 0.0;      ///< Real part of the inverted complex beam parameter at distance z.
-    double _im_q1 = 0.0;      ///< Imaginary part of the inverted complex beam parameter at distance z.
-    double _lambda = 0.98e-6; ///< Wavelength.
+    double _MI;               ///< Beam quality parameter.
+    double _z0;               ///< Rayleight range.
+    double _w0;               ///< Waist radius.
+    double _Vs;               ///< Half of the divergence angle in the far field.
+    double _z;                ///< Axial distance from the waist to wavefront.
+    double _w;                ///< Beam radius at distance z from the waist.
+    double _R;                ///< Wavefront ROC at distance z from the waist.
+    double _re_q;             ///< Real part of the complex beam parameter at distance z.
+    double _im_q;             ///< Imaginary part of the complex beam parameter at distance z.
+    double _re_q1;            ///< Real part of the inverted complex beam parameter at distance z.
+    double _im_q1;            ///< Imaginary part of the inverted complex beam parameter at distance z.
+    double _lambda;           ///< Wavelength.
     Lock _lock = Lock::Waist; ///< Defines wich group of parameters should be fixed.
     Zone _zone = Zone::Far;   ///< Define wich solution of quadratic equation for z(R)
                               ///< should be taken. It is used in `Lock::Front` mode.

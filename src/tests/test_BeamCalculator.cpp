@@ -24,9 +24,9 @@ TEST_METHOD(calcGauss)
     const double MI = 2;
     Matrix matrix(-1.3899498, 0.1731843, -9.8480800, 0.5075960);
     auto beam = BeamCalculator::calcGauss(q, matrix, lambda, MI);
-    ASSERT_NEAR_DBL(beam.beamRadius, 0.0002070907, 1e-10)
+    ASSERT_NEAR_DBL(beam.beamRadius, 0.000207090, 1e-9)
+    ASSERT_NEAR_DBL(beam.frontRadius, -0.076248, 1e-6)
     ASSERT_NEAR_DBL(beam.halfAngle, 0.004056169, 1e-9)
-    ASSERT_NEAR_DBL(beam.frontRadius, -0.07624884, 1e-8)
 }
 
 //------------------------------------------------------------------------------

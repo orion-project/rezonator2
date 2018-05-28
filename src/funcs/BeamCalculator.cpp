@@ -2,6 +2,8 @@
 
 #include "GaussCalculator.h"
 
+#include <QDebug>
+
 using namespace Z;
 
 BeamResult BeamCalculator::calcVector(const RayVector& input, const Matrix& matrix)
@@ -22,13 +24,13 @@ BeamResult BeamCalculator::calcGauss(const Z::Complex& input, const Z::Matrix& m
     gauss.setMI(MI);
     gauss.setLambda(lambda);
     gauss.setLock(GaussCalculator::Lock::Front);
-    gauss.setReQ1(output.real());
-    gauss.setImQ1(output.imag());
+    gauss.setReQ(output.real());
+    gauss.setImQ(output.imag());
     gauss.calc();
 
     BeamResult beam;
     beam.beamRadius = gauss.w();
-    beam.halfAngle = gauss.R();
-    beam.frontRadius = gauss.Vs();
+    beam.halfAngle = gauss.Vs();
+    beam.frontRadius = gauss.R();
     return beam;
 }
