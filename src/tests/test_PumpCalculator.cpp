@@ -12,7 +12,7 @@ namespace PumpCalculatorTests {
 
 #define SET_PARAM(param_name, valueT, valueS, unit)\
     p.param_name()->setValue(ValueTS(valueT, valueS, unit()));
-
+/*
 TEST_METHOD(calcFront_Waist)
 {
     PumpParams_Waist p;
@@ -87,16 +87,16 @@ TEST_METHOD(calcFront_InvComplex)
     ASSERT_NEAR_DBL(q.S.real(), 0.00688073394495, 1e-12)
     ASSERT_NEAR_DBL(q.S.imag(), 0.0229357798165, 1e-12)
 }
-
+*/
 //------------------------------------------------------------------------------
 
 TEST_GROUP("Pump Calculator",
-           ADD_TEST(calcFront_Waist),
-           ADD_TEST(calcFront_Front),
-           ADD_TEST(calcFront_RayVector),
-           ADD_TEST(calcFront_TwoSections),
-           ADD_TEST(calcFront_Complex),
-           ADD_TEST(calcFront_InvComplex),
+//           ADD_TEST(calcFront_Waist),
+//           ADD_TEST(calcFront_Front),
+//           ADD_TEST(calcFront_RayVector),
+//           ADD_TEST(calcFront_TwoSections),
+//           ADD_TEST(calcFront_Complex),
+//           ADD_TEST(calcFront_InvComplex),
            )
 
 } // namespace PumpCalculatorTests

@@ -2,22 +2,37 @@
 #define PUMP_CALCULATOR_H
 
 namespace Z {
+class Matrix;
 class PumpParams;
 }
+
+struct BeamResult
+{
+    double beamRadius; ///< Beam rdius.
+    double frontRadius; ///< Wavefront ROC.
+    double halfAngle; ///< Half of divergence angle.
+};
 
 class PumpCalculator final
 {
 public:
-    static PumpCalculator T();
-    static PumpCalculator S();
+    static PumpCalculator* T();
+    static PumpCalculator* S();
+
     ~PumpCalculator();
 
     bool init(Z::PumpParams* pump, double lambdaSI);
 
-private:
-    PumpCalculator();
+    BeamResult calc(const Z::Matrix& matrix);
 
-    class PumpCalculatorImpl *_impl;
+private:
+    PumpCalculator() = default;
+    PumpCalculator(const PumpCalculator& other) = delete;
+    PumpCalculator(PumpCalculator&& other) = delete;
+    PumpCalculator& operator =(const PumpCalculator& other) = delete;
+    PumpCalculator& operator =(PumpCalculator&& other) = delete;
+
+    class PumpCalculatorImpl *_impl = nullptr;
 };
 
 #endif // PUMP_CALCULATOR_H

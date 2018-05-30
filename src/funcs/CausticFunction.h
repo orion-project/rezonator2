@@ -3,6 +3,8 @@
 
 #include "../funcs/PlotFunction.h"
 
+class PumpCalculator;
+
 class CausticFunction : public PlotFunction
 {
     Q_GADGET
@@ -25,21 +27,8 @@ public:
     void setMode(Mode mode) { _mode = mode; }
 
 private:
-    /// Mode of input ray description for SP schema.
-    enum class PumpMode
-    {
-        Gauss,    ///< Input beam is a Gaussian beam described by its complex ROC.
-        RayVector ///< Inout beam is a geometric beam describied by it ray vector.
-    };
-
     /// Wich type of result the function should compute.
     Mode _mode = Mode::BeamRadius;
-
-    /// Input complex ROC for PumpMode::Gauss.
-    Z::PairTS<Z::Complex> _inQ;
-
-    /// Input ray vector for PumpMode::RayVector.
-    Z::PairTS<Z::RayVector> _inRay;
 
     Z::Unit _beamsizeUnit = Z::Units::mkm(); // TODO: make configurable
     Z::Unit _curvatureUnit = Z::Units::m(); // TODO: make configurable
@@ -48,11 +37,7 @@ private:
     /// Schema wavelength in SI units.
     double _wavelenSI = 0;
 
-    /// Beam quality parameter for SP schemas.
-    Z::PointTS _MI;
-
-    /// A way to calcuate input ray for SP schema.
-    PumpMode _pumpMode;
+    Z::PairTS<std::shared_ptr<PumpCalculator>> _pumpCalc;
 
     bool prepareSP();
     inline Z::PointTS calculateSinglePass() const;

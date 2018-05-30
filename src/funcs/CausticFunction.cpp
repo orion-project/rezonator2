@@ -89,7 +89,7 @@ void CausticFunction::calculate()
 }
 
 bool CausticFunction::prepareSP()
-{
+{    
     PumpParams *pump = _schema->activePump();
     if (!pump)
     {
@@ -98,96 +98,34 @@ bool CausticFunction::prepareSP()
             "Use 'Pumps' window to create a new pump or activate one of the existing ones."));
         return false;
     }
-
-    // Calculate beam parameters at first element of the schema.
-
-    auto pumpWaist = dynamic_cast<PumpParams_Waist*>(pump);
-    if (pumpWaist)
+    if (!_pumpCalc.T) _pumpCalc.T.reset(PumpCalculator::T());
+    if (!_pumpCalc.S) _pumpCalc.S.reset(PumpCalculator::S());
+    if (!_pumpCalc.T->init(pump, _wavelenSI) ||
+        !_pumpCalc.S->init(pump, _wavelenSI))
     {
-        _pumpMode = PumpMode::Gauss;
-        _inQ = PumpCalculator::calcFront(pumpWaist, _wavelenSI);
-        _MI = pumpWaist->MI()->value().toSi();
-        return true;
+        setError("Unsupported pump mode");
+        return false;
     }
-
-    auto pumpFront = dynamic_cast<PumpParams_Front*>(pump);
-    if (pumpFront)
-    {
-        _pumpMode = PumpMode::Gauss;
-        _inQ = PumpCalculator::calcFront(pumpFront, _wavelenSI);
-        _MI = pumpWaist->MI()->value().toSi();
-        return true;
-    }
-
-    // InvComplex should be tested before Complex, because Complex is more generic
-    auto pumpInvComplex = dynamic_cast<PumpParams_InvComplex*>(pump);
-    if (pumpInvComplex)
-    {
-        _pumpMode = PumpMode::Gauss;
-        _inQ = PumpCalculator::calcFront(pumpInvComplex);
-        _MI = pumpWaist->MI()->value().toSi();
-        return true;
-    }
-
-    auto pumpComplex = dynamic_cast<PumpParams_Complex*>(pump);
-    if (pumpComplex)
-    {
-        _pumpMode = PumpMode::Gauss;
-        _inQ = PumpCalculator::calcFront(pumpComplex);
-        _MI = pumpWaist->MI()->value().toSi();
-        return true;
-    }
-
-    auto pumpRayVector = dynamic_cast<PumpParams_RayVector*>(pump);
-    if (pumpRayVector)
-    {
-        _pumpMode = PumpMode::RayVector;
-        _inRay = PumpCalculator::calcFront(pumpRayVector);
-        Z_INFO("Input rays: T =" << _inRay.T.str() << "S =" << _inRay.S.str())
-        return true;
-    }
-
-    auto pumpTwoSections = dynamic_cast<PumpParams_TwoSections*>(pump);
-    if (pumpTwoSections)
-    {
-        _pumpMode = PumpMode::RayVector;
-        _inRay = PumpCalculator::calcFront(pumpTwoSections);
-        Z_INFO("Input rays: T =" << _inRay.T.str() << "S =" << _inRay.S.str())
-        return true;
-    }
-
-    setError("Unsupported pump mode");
-    return false;
+    return true;
 }
 
 Z::PointTS CausticFunction::calculateSinglePass() const
 {
-    BeamResult beamT, beamS;
-    Z::PointTS result;
-    switch (_pumpMode)
-    {
-    case PumpMode::Gauss:
-        beamT = BeamCalculator::calcGauss(_inQ.T, _calc->Mt(), _wavelenSI, _MI.T);
-        beamS = BeamCalculator::calcGauss(_inQ.S, _calc->Ms(), _wavelenSI, _MI.S);
-        break;
-    case PumpMode::RayVector:
-        beamT = BeamCalculator::calcVector(_inRay.T, _calc->Mt());
-        beamS = BeamCalculator::calcVector(_inRay.S, _calc->Ms());
-        break;
-    }
+    BeamResult beamT = _pumpCalc.T->calc(_calc->Mt());
+    BeamResult beamS = _pumpCalc.S->calc(_calc->Ms());
     switch (_mode)
     {
     case BeamRadius:
-        result.set(beamT.beamRadius, beamS.beamRadius);
-        break;
+        return { beamT.beamRadius, beamS.beamRadius };
+
     case FontRadius:
-        result.set(beamT.frontRadius, beamS.frontRadius);
-        break;
+        return { beamT.frontRadius, beamS.frontRadius };
+
     case HalfAngle:
-        result.set(beamT.halfAngle, beamS.halfAngle);
-        break;
+        return { beamT.halfAngle, beamS.halfAngle };
     }
-    return result;
+    qCritical() << "Unsupported caustic result mode";
+    return { NAN, NAN };
 }
 
 Z::PointTS CausticFunction::calculateResonator() const

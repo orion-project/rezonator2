@@ -1,6 +1,5 @@
 #include "PumpCalculator.h"
 
-#include "GaussCalculator.h"
 #include "../core/Math.h"
 #include "../core/Pump.h"
 
@@ -13,26 +12,27 @@ using namespace Z;
 class PumpCalculatorImpl final
 {
     friend class PumpCalculator;
+    using GetPumpParam = std::const_mem_fun_t<double, Z::ValueTS>;
 
-    std::const_mem_fun_t<double, Z::ValueTS> getPumpParam;
+    PumpCalculatorImpl(GetPumpParam f) : getPumpParam(f) {}
+
+    GetPumpParam getPumpParam;
     enum { GAUSS, RAY_VECTOR } mode;
     double lambda;
     double MI;
-    union {
-        Complex Q;
-        RayVector ray;
-    } input;
+    Complex inputQ {0, 0};
+    RayVector inputRay {0, 0};
 
     inline double paramValueSI(ParameterTS* param)
     {
-        return param->value().unit()->toSi(getPumpParam(param->value()));
+        return param->value().unit()->toSi(getPumpParam(&param->value()));
     }
 
     inline double paramValueInvSI(ParameterTS* param)
     {
         // When one wants to convert inverted non-SI to inverted SI units,
         // one can use fromSi() function as it have inverted action of toSi().
-        return param->value().unit()->fromSi(getPumpParam(param->value()));
+        return param->value().unit()->fromSi(getPumpParam(&param->value()));
     }
 
     template <class TPumpParams>
@@ -47,65 +47,96 @@ class PumpCalculatorImpl final
     void initInput(PumpParams_Waist *pump)
     {
         mode = GAUSS;
-        MI = getPumpParam(pump->MI()->value());
-        GaussCalculator gauss;
-        gauss.setLock(GaussCalculator::Lock::Waist);
-        gauss.setLambda(lambda);
-        gauss.setW0(paramValueSI(pump->waist()));
-        gauss.setZ(paramValueSI(pump->distance()));
-        gauss.setMI(MI);
-        gauss.calc();
-        input.Q = Complex(gauss.reQ(), gauss.imQ());
+        MI = qAbs(getPumpParam(&pump->MI()->value()));
+        const double z = paramValueSI(pump->distance());
+        const double w0_hyper = paramValueSI(pump->waist());
+        const double w0_equiv_2 = SQR(w0_hyper) / MI;
+        const double z0_equiv = M_PI * w0_equiv_2 / lambda;
+        const double R_equiv = z * (1 + SQR(z0_equiv / z));
+        const double w_equiv_2 = w0_equiv_2 * (1 + SQR(z / z0_equiv));
+        inputQ = 1.0 / Complex(1.0 / R_equiv, lambda / M_PI / w_equiv_2);
     }
 
     void initInput(PumpParams_Front *pump)
     {
         mode = GAUSS;
-        MI = getPumpParam(pump->MI()->value());
-        GaussCalculator gauss;
-        gauss.setLock(GaussCalculator::Lock::Front);
-        gauss.setLambda(lambda);
-        gauss.setW(paramValueSI(pump->beamRadius()));
-        gauss.setR(paramValueSI(pump->frontRadius()));
-        gauss.setMI(MI);
-        gauss.calc();
-        input.Q = Complex(gauss.reQ(), gauss.imQ());
+        MI = qAbs(getPumpParam(&pump->MI()->value()));
+        const double w_hyper = paramValueSI(pump->beamRadius());
+        const double w_equiv_2 = SQR(w_hyper) / MI;
+        const double R_equiv = paramValueSI(pump->frontRadius());
+        inputQ = 1.0 / Complex(1.0 / R_equiv, lambda / M_PI / w_equiv_2);
     }
 
     void initInput(PumpParams_RayVector *pump)
     {
         mode = RAY_VECTOR;
-        auto y = paramValueSI(pump->radius());
-        auto v = paramValueSI(pump->angle());
-        auto z = paramValueSI(pump->distance());
-        input.ray.set(y + z * tan(v), v);
+        const double y = paramValueSI(pump->radius());
+        const double v = paramValueSI(pump->angle());
+        const double z = paramValueSI(pump->distance());
+        inputRay.set(y + z * tan(v), v);
     }
 
     void initInput(PumpParams_TwoSections *pump)
     {
         mode = RAY_VECTOR;
-        auto y1 = paramValueSI(pump->radius1());
-        auto y2 = paramValueSI(pump->radius2());
-        auto z = paramValueSI(pump->distance());
-        input.ray.set(y2, atan((y2 - y1) / z));
+        const double y1 = paramValueSI(pump->radius1());
+        const double y2 = paramValueSI(pump->radius2());
+        const double z = paramValueSI(pump->distance());
+        inputRay.set(y2, atan((y2 - y1) / z));
     }
 
     void initInput(PumpParams_Complex *pump)
     {
         mode = GAUSS;
-        MI = getPumpParam(pump->MI()->value());
-        input.Q = Complex(paramValueSI(pump->real()),
-                          paramValueSI(pump->imag()));
+        MI = qAbs(getPumpParam(&pump->MI()->value()));
+        Complex q_inv_hyper = 1.0 / Complex(paramValueSI(pump->real()),
+                                            paramValueSI(pump->imag()));
+        inputQ = 1.0 / Complex(q_inv_hyper.real(),
+                               q_inv_hyper.imag() * MI);
     }
 
     void initInput(PumpParams_InvComplex *pump)
     {
         mode = GAUSS;
-        MI = getPumpParam(pump->MI()->value());
+        MI = qAbs(getPumpParam(&pump->MI()->value()));
         // Inverted complex beam parameter is measured in inverted units (1/m, 1/mm)
         // and value's unit actually means 1/unit for this case (e.g. mm means 1/mm).
-        input.Q = 1.0 / Complex(paramValueInvSI(pump->real()),
-                                paramValueInvSI(pump->imag()));
+        inputQ = 1.0 / Complex(paramValueInvSI(pump->real()),
+                               paramValueInvSI(pump->imag()) * MI);
+    }
+
+    BeamResult calcVector(const Matrix& matrix)
+    {
+        RayVector output(inputRay, matrix);
+        BeamResult beam;
+        beam.beamRadius = output.Y;
+        beam.halfAngle = output.V;
+        beam.frontRadius = output.Y / sin(output.V);
+        return beam;
+    }
+
+    BeamResult calcGauss(const Matrix& matrix)
+    {
+        Complex q_inv = 1.0 / matrix.multComplexBeam(inputQ);
+        const double R = 1.0 / q_inv.real();
+        const double w_equiv_2 = lambda / M_PI / q_inv.imag();
+        const double w_hyper = sqrt(w_equiv_2 * MI);
+
+        // see GaussCalculator for next formulas
+        // calc_Z_from_R_W_MI(), calc_Z0_from_R_Z()
+        const double tmp = SQR(w_equiv_2 * M_PI);
+        const double z = tmp * R / (SQR(lambda * R) + tmp);
+        const double z0_equiv = sqrt(z * (R - z));
+
+        const double z0_hyper = z0_equiv;
+        const double w0_hyper = sqrt(z0_hyper * MI * lambda / M_PI);
+        const double Vs_hyper = w0_hyper / z0_hyper;
+
+        BeamResult beam;
+        beam.beamRadius = w_hyper;
+        beam.halfAngle = Vs_hyper;
+        beam.frontRadius = R;
+        return beam;
     }
 };
 
@@ -113,27 +144,23 @@ class PumpCalculatorImpl final
 //                                PumpCalculator
 //--------------------------------------------------------------------------------
 
-PumpCalculator PumpCalculator::T()
+PumpCalculator* PumpCalculator::T()
 {
-    PumpCalculator c;
-    c._impl->getPumpParam = std::mem_fun(&ValueTS::rawValueT);
+    PumpCalculator *c = new PumpCalculator();
+    c->_impl = new PumpCalculatorImpl(std::mem_fun(&ValueTS::rawValueT));
     return c;
 }
 
-PumpCalculator PumpCalculator::S()
+PumpCalculator* PumpCalculator::S()
 {
-    PumpCalculator c;
-    c._impl->getPumpParam = std::mem_fun(&ValueTS::rawValueS);
+    PumpCalculator *c = new PumpCalculator();
+    c->_impl = new PumpCalculatorImpl(std::mem_fun(&ValueTS::rawValueS));
     return c;
-}
-
-PumpCalculator::PumpCalculator() : _impl(new PumpCalculatorImpl)
-{
 }
 
 PumpCalculator::~PumpCalculator()
 {
-    delete _impl;
+    if (_impl) delete _impl;
 }
 
 bool PumpCalculator::init(Z::PumpParams* pump, double lambdaSI)
@@ -149,3 +176,17 @@ bool PumpCalculator::init(Z::PumpParams* pump, double lambdaSI)
            _impl->initInput<PumpParams_TwoSections>(pump);
 }
 
+BeamResult PumpCalculator::calc(const Z::Matrix& matrix)
+{
+    switch (_impl->mode)
+    {
+    case PumpCalculatorImpl::GAUSS:
+        return _impl->calcGauss(matrix);
+
+    case PumpCalculatorImpl::RAY_VECTOR:
+        return _impl->calcVector(matrix);
+    }
+
+    qCritical() << "Unsupported pump calculation mode" << int(_impl->mode);
+    return { NAN, NAN, NAN };
+}

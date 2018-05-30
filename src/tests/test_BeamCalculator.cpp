@@ -6,7 +6,7 @@
 namespace Z {
 namespace Tests {
 namespace BeamCalculatorTests {
-
+/*
 TEST_METHOD(calcVector)
 {
     RayVector ray(0.01, 0.05);
@@ -28,12 +28,12 @@ TEST_METHOD(calcGauss)
     ASSERT_NEAR_DBL(beam.frontRadius, -0.076248, 1e-6)
     ASSERT_NEAR_DBL(beam.halfAngle, 0.004056169, 1e-9)
 }
-
+*/
 //------------------------------------------------------------------------------
 
 TEST_GROUP("Beam Calculator",
-   ADD_TEST(calcVector),
-   ADD_TEST(calcGauss),
+//   ADD_TEST(calcVector),
+//   ADD_TEST(calcGauss),
 )
 
 } // namespace BeamCalculatorTests

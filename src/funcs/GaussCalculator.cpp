@@ -21,7 +21,7 @@
 #endif
 
 GaussCalculator::GaussCalculator() :
-    _MI(NAN), _z0(NAN), _w0(NAN), _Vs(NAN), _z(NAN), _w(NAN), _R(NAN),
+    _MI(1), _z0(NAN), _w0(NAN), _Vs(NAN), _z(NAN), _w(NAN), _R(NAN),
     _re_q(NAN), _im_q(NAN), _re_q1(NAN), _im_q1(NAN), _lambda(NAN)
 {
 }
