@@ -1,6 +1,8 @@
 #ifndef PUMP_CALCULATOR_H
 #define PUMP_CALCULATOR_H
 
+#include <memory>
+
 namespace Z {
 class Matrix;
 class PumpParams;
@@ -16,8 +18,8 @@ struct BeamResult
 class PumpCalculator final
 {
 public:
-    static PumpCalculator* T();
-    static PumpCalculator* S();
+    static std::shared_ptr<PumpCalculator> T();
+    static std::shared_ptr<PumpCalculator> S();
 
     ~PumpCalculator();
 

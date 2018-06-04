@@ -2,7 +2,6 @@
 #include <QDebug>
 
 #include "CausticFunction.h"
-#include "../funcs/BeamCalculator.h"
 #include "../funcs/PumpCalculator.h"
 #include "../funcs/RoundTripCalculator.h"
 #include "../core/Protocol.h"
@@ -98,8 +97,8 @@ bool CausticFunction::prepareSP()
             "Use 'Pumps' window to create a new pump or activate one of the existing ones."));
         return false;
     }
-    if (!_pumpCalc.T) _pumpCalc.T.reset(PumpCalculator::T());
-    if (!_pumpCalc.S) _pumpCalc.S.reset(PumpCalculator::S());
+    if (!_pumpCalc.T) _pumpCalc.T = PumpCalculator::T();
+    if (!_pumpCalc.S) _pumpCalc.S = PumpCalculator::S();
     if (!_pumpCalc.T->init(pump, _wavelenSI) ||
         !_pumpCalc.S->init(pump, _wavelenSI))
     {

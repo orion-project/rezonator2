@@ -144,18 +144,18 @@ class PumpCalculatorImpl final
 //                                PumpCalculator
 //--------------------------------------------------------------------------------
 
-PumpCalculator* PumpCalculator::T()
+std::shared_ptr<PumpCalculator> PumpCalculator::T()
 {
     PumpCalculator *c = new PumpCalculator();
     c->_impl = new PumpCalculatorImpl(std::mem_fun(&ValueTS::rawValueT));
-    return c;
+    return std::shared_ptr<PumpCalculator>(c);
 }
 
-PumpCalculator* PumpCalculator::S()
+std::shared_ptr<PumpCalculator> PumpCalculator::S()
 {
     PumpCalculator *c = new PumpCalculator();
     c->_impl = new PumpCalculatorImpl(std::mem_fun(&ValueTS::rawValueS));
-    return c;
+    return std::shared_ptr<PumpCalculator>(c);
 }
 
 PumpCalculator::~PumpCalculator()

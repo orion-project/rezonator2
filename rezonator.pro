@@ -99,7 +99,6 @@ HEADERS += \
     src/core/Units.h \
     src/core/Values.h \
     src/core/Variable.h \
-    src/funcs/BeamCalculator.h \
     src/funcs/CausticFunction.h \
     src/funcs/FormatInfo.h \
     src/funcs/FunctionBase.h \
@@ -188,7 +187,6 @@ SOURCES += \
     src/core/Units.cpp \
     src/core/Values.cpp \
     src/core/Variable.cpp \
-    src/funcs/BeamCalculator.cpp \
     src/funcs/CausticFunction.cpp \
     src/funcs/FormatInfo.cpp \
     src/funcs/FunctionBase.cpp \
@@ -251,7 +249,6 @@ SOURCES += \
     src/widgets/WidgetResult.cpp \
     src/tests/test_GaussCalculator.cpp \
     src/tests/test_PumpCalculator.cpp \
-    src/tests/test_BeamCalculator.cpp \
     src/tests/test_SchemaReaderJson.cpp \
     src/tests/test_PumpWindow.cpp \
     src/GaussCalculatorWindow.cpp

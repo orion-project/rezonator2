@@ -61,6 +61,7 @@ public:
     double toSi() const { return _unit->toSi(_value); }
 
     Value& operator = (const Value& v) { _value = v._value, _unit = v._unit; return *this; }
+    Value operator - () const { return Value(-_value, _unit); }
     bool operator == (const Value& v) const { return Double(toSi()).is(v.toSi()); }
     bool operator == (const double& v) const { return Double(toSi()).is(v); }
     bool operator != (const Value& v) const { return Double(toSi()).isNot(v.toSi()); }
@@ -116,6 +117,7 @@ public:
     ValueTS(double valueT, double valueS) : _valueT(valueT), _valueS(valueS), _unit(Units::none()) {}
     ValueTS(double valueT, double valueS, Unit unit) : _valueT(valueT), _valueS(valueS), _unit(unit) {}
     ValueTS(const ValueTS& other) : _valueT(other._valueT), _valueS(other._valueS), _unit(other._unit) {}
+    ValueTS(const Value& v) : _valueT(v.value()), _valueS(v.value()), _unit(v.unit()) {}
 
     Value valueT() const { return Value(_valueT, _unit); }
     Value valueS() const { return Value(_valueS, _unit); }
@@ -124,6 +126,8 @@ public:
     Unit unit() const { return _unit; }
 
     ValueTS& operator = (const ValueTS& v) { _valueT = v._valueT, _valueS = v._valueS, _unit = v._unit; return *this; }
+    ValueTS& operator = (const Value& v) { _valueT = v.value(), _valueS = v.value(), _unit = v.unit(); return *this; }
+    ValueTS operator - () const { return ValueTS(-_valueT, -_valueS, _unit); }
 
     QString str() const;
 
