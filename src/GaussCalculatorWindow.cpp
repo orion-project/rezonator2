@@ -25,12 +25,12 @@ enum PlotMode { PLOT_W, PLOT_R };
 class GaussPlotter
 {
 public:
-    double lambda;
-    double w0;
-    double maxZ;
-    double MI;
-    Z::Unit unitZ;
-    Z::Unit unitY;
+    double lambda = NAN;
+    double w0 = NAN;
+    double maxZ = NAN;
+    double MI = NAN;
+    Z::Unit unitZ = nullptr;
+    Z::Unit unitY = nullptr;
 
     const int points = 50;
 
@@ -155,6 +155,7 @@ GaussCalcParamEditor::GaussCalcParamEditor(Z::Parameter *param,
       _invertedUnit(invertedUnit)
 {
     _editor = new ParamEditor(ParamEditor::Options(_param));
+    _setValueToCalculator(_calc, paramValueSI());
     connect(_editor, SIGNAL(valueEdited(double)), this, SLOT(paramEdited()));
     connect(_editor, SIGNAL(unitChanged(Z::Unit)), this, SLOT(paramEdited()));
 }
@@ -178,12 +179,16 @@ void GaussCalcParamEditor::getValueFromCalculator()
 void GaussCalcParamEditor::paramEdited()
 {
     _editor->apply();
+    _setValueToCalculator(_calc, paramValueSI());
+    emit calcNeeded();
+}
+
+double GaussCalcParamEditor::paramValueSI() const
+{
     const Z::Value& v = _param->value();
-    double valueSi = _invertedUnit
+    return _invertedUnit
             ? v.unit()->fromSi(v.value())
             : v.unit()->toSi(v.value());
-    _setValueToCalculator(_calc, valueSi);
-    emit calcNeeded();
 }
 
 //--------------------------------------------------------------------------------
@@ -487,6 +492,9 @@ GaussCalculatorWindow::GaussCalculatorWindow(QWidget *parent) : QWidget(parent)
 
     restoreState();
     Ori::Wnd::moveToScreenCenter(this);
+
+    _updatesEnabled = true;
+    _calc->setRef(GaussCalculator::Ref::W0);
     QTimer::singleShot(0, [this]{ this->recalc(); });
 }
 
@@ -677,26 +685,22 @@ void GaussCalculatorWindow::recalc()
 
 void GaussCalculatorWindow::updatePlot()
 {
+    if (!_updatesEnabled) return;
+
     PlotMode mode = PlotMode(_plotWR->checkedId());
 
+    _plotter->MI = qAbs(_calc->MI());
+    _plotter->w0 = _calc->w0();
+    _plotter->maxZ = _calc->z();
+    _plotter->lambda = _calc->lambda();
+    _plotter->unitZ = _z->value().unit();
+    _plotter->unitY = (mode == PLOT_W ? _w : _R)->value().unit();
     _plotter->cleanData();
     if (qAbs(_calc->z()) > std::numeric_limits<double>::epsilon())
     {
-        _plotter->MI = qAbs(_calc->MI());
-        _plotter->w0 = _calc->w0();
-        _plotter->maxZ = _calc->z();
-        _plotter->lambda = _calc->lambda();
-        _plotter->unitZ = _z->value().unit();
         if (mode == PLOT_W)
-        {
-            _plotter->unitY = _w->value().unit();
             _plotter->calculateW();
-        }
-        else
-        {
-            _plotter->unitY = _R->value().unit();
-            _plotter->calculateR();
-        }
+        else _plotter->calculateR();
     }
 
     GaussPlotOptions o;

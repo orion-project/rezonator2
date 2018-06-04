@@ -22,6 +22,7 @@ class GaussCalculator
 public:
     enum class Lock {Waist, Front};
     enum class Zone {Near, Far};
+    enum class Ref {Lambda, W0, Z0, Vs, MI, Z, W, R, Q, Q1Im, Q1Re};
 
     GaussCalculator();
 
@@ -56,10 +57,9 @@ public:
     void setImQ1(const double& value) { _im_q1 = value, _ref = Ref::Q1Im; }
     void setLock(Lock value) { _lock = value; }
     void setZone(Zone value) { _zone = value; }
+    void setRef(Ref value) { _ref = value; }
 
 private:
-    enum class Ref {Lambda, W0, Z0, Vs, MI, Z, W, R, Q, Q1Im, Q1Re};
-
     double _MI;               ///< Beam quality parameter.
     double _z0;               ///< Rayleight range.
     double _w0;               ///< Waist radius.

@@ -61,6 +61,8 @@ private:
     GaussCalcGetValueFunc _getValueFromCalculator;
     GaussCalcSetValueFunc _setValueToCalculator;
     bool _invertedUnit;
+
+    double paramValueSI() const;
 };
 
 
@@ -87,6 +89,7 @@ private:
         *_plotPlusMinusW, *_plotWR;
     Z::Parameter *_lambda, *_MI, *_w0, *_z, *_z0, *_Vs, *_w, *_R, *_reQ, *_imQ, *_reQ1, *_imQ1;
     QAction *_plotV, *_plotZ0;
+    bool _updatesEnabled = false;
 
     void makeParams(QGridLayout *paramsLayout);
     QWidget* makeToolbar();
