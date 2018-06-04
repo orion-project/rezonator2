@@ -18,7 +18,6 @@ class PumpCalculatorImpl final
 
     GetPumpParam getPumpParam;
     enum { GAUSS, RAY_VECTOR } mode;
-    double lambda;
     double MI;
     Complex inputQ {0, 0};
     RayVector inputRay {0, 0};
@@ -35,16 +34,16 @@ class PumpCalculatorImpl final
         return param->value().unit()->fromSi(getPumpParam(&param->value()));
     }
 
-    template <class TPumpParams>
-    bool initInput(Z::PumpParams* pump)
+    template <class TPumpParams, typename ...Lambda>
+    bool initInput(Z::PumpParams* pump, Lambda ...lambda)
     {
         auto p = dynamic_cast<TPumpParams*>(pump);
         if (!p) return false;
-        initInput(p);
+        initInput(p, lambda...);
         return true;
     }
 
-    void initInput(PumpParams_Waist *pump)
+    void initInput(PumpParams_Waist *pump, double lambda)
     {
         mode = GAUSS;
         MI = qAbs(getPumpParam(&pump->MI()->value()));
@@ -52,12 +51,19 @@ class PumpCalculatorImpl final
         const double w0_hyper = paramValueSI(pump->waist());
         const double w0_equiv_2 = SQR(w0_hyper) / MI;
         const double z0_equiv = M_PI * w0_equiv_2 / lambda;
-        const double R_equiv = z * (1 + SQR(z0_equiv / z));
         const double w_equiv_2 = w0_equiv_2 * (1 + SQR(z / z0_equiv));
-        inputQ = 1.0 / Complex(1.0 / R_equiv, lambda / M_PI / w_equiv_2);
+        if (Double(z).almostEqual(Double(0)))
+        {
+            inputQ = 1.0 / Complex(0, lambda / M_PI / w_equiv_2);
+        }
+        else
+        {
+            const double R_equiv = z * (1 + SQR(z0_equiv / z));
+            inputQ = 1.0 / Complex(1.0 / R_equiv, lambda / M_PI / w_equiv_2);
+        }
     }
 
-    void initInput(PumpParams_Front *pump)
+    void initInput(PumpParams_Front *pump, double lambda)
     {
         mode = GAUSS;
         MI = qAbs(getPumpParam(&pump->MI()->value()));
@@ -115,7 +121,7 @@ class PumpCalculatorImpl final
         return beam;
     }
 
-    BeamResult calcGauss(const Matrix& matrix)
+    BeamResult calcGauss(const Matrix& matrix, double lambda)
     {
         Complex q_inv = 1.0 / matrix.multComplexBeam(inputQ);
         const double R = 1.0 / q_inv.real();
@@ -165,23 +171,21 @@ PumpCalculator::~PumpCalculator()
 
 bool PumpCalculator::init(Z::PumpParams* pump, double lambdaSI)
 {
-    _impl->lambda = lambdaSI;
-
     // InvComplex should be tested before Complex, because Complex is more generic
-    return _impl->initInput<PumpParams_Waist>(pump) ||
-           _impl->initInput<PumpParams_Front>(pump) ||
+    return _impl->initInput<PumpParams_Waist>(pump, lambdaSI) ||
+           _impl->initInput<PumpParams_Front>(pump, lambdaSI) ||
            _impl->initInput<PumpParams_InvComplex>(pump) ||
            _impl->initInput<PumpParams_Complex>(pump) ||
            _impl->initInput<PumpParams_RayVector>(pump) ||
            _impl->initInput<PumpParams_TwoSections>(pump);
 }
 
-BeamResult PumpCalculator::calc(const Z::Matrix& matrix)
+BeamResult PumpCalculator::calc(const Z::Matrix& matrix, double lambdaSI)
 {
     switch (_impl->mode)
     {
     case PumpCalculatorImpl::GAUSS:
-        return _impl->calcGauss(matrix);
+        return _impl->calcGauss(matrix, lambdaSI);
 
     case PumpCalculatorImpl::RAY_VECTOR:
         return _impl->calcVector(matrix);

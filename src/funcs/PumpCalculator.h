@@ -24,8 +24,7 @@ public:
     ~PumpCalculator();
 
     bool init(Z::PumpParams* pump, double lambdaSI);
-
-    BeamResult calc(const Z::Matrix& matrix);
+    BeamResult calc(const Z::Matrix& matrix, double lambdaSI);
 
 private:
     PumpCalculator() = default;

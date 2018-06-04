@@ -25,7 +25,11 @@ void CausticFunction::calculate()
         setError("CausticFunction.arg.element is not range");
         return;
     }
+
     _wavelenSI = schema()->wavelength().value().toSi();
+    auto medium = Z::Utils::asMedium(elem);
+    if (medium)
+        _wavelenSI /= medium->ior();
 
     auto tmpRange = arg()->range;
     tmpRange.stop = Z::Value(rangeElem->axisLengthSI(), Z::Units::m());
@@ -99,8 +103,11 @@ bool CausticFunction::prepareSP()
     }
     if (!_pumpCalc.T) _pumpCalc.T = PumpCalculator::T();
     if (!_pumpCalc.S) _pumpCalc.S = PumpCalculator::S();
-    if (!_pumpCalc.T->init(pump, _wavelenSI) ||
-        !_pumpCalc.S->init(pump, _wavelenSI))
+    // Cached _wavelenSI can be reduced in order to account medium IOR,
+    // but pump is supposed to be in air, so get wavelength from schema.
+    const double lambda = schema()->wavelength().value().toSi();
+    if (!_pumpCalc.T->init(pump, lambda) ||
+        !_pumpCalc.S->init(pump, lambda))
     {
         setError("Unsupported pump mode");
         return false;
@@ -110,8 +117,8 @@ bool CausticFunction::prepareSP()
 
 Z::PointTS CausticFunction::calculateSinglePass() const
 {
-    BeamResult beamT = _pumpCalc.T->calc(_calc->Mt());
-    BeamResult beamS = _pumpCalc.S->calc(_calc->Ms());
+    BeamResult beamT = _pumpCalc.T->calc(_calc->Mt(), _wavelenSI);
+    BeamResult beamS = _pumpCalc.S->calc(_calc->Ms(), _wavelenSI);
     switch (_mode)
     {
     case BeamRadius:
