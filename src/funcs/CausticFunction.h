@@ -3,6 +3,8 @@
 
 #include "../funcs/PlotFunction.h"
 
+#include <memory>
+
 class PumpCalculator;
 
 class CausticFunction : public PlotFunction
