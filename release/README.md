@@ -2,7 +2,7 @@
 
 This directory contains some stuff used during preparation of release version of the application and making redistributable packages.
 
-** Version format**
+**Version format**
 
 ```
 MAJOR . MINOR . MICRO . COMMITS [-CODENAME]
@@ -35,7 +35,7 @@ Push updated version info to be able to build package having the same version on
 
 Build package:
 
-```bush
+```bash
 ./scripts/build_release.sh
 ./scripts/make_package_linux.sh
 ```

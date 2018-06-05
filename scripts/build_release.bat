@@ -28,10 +28,6 @@ set SCRIPT_DIR=%~dp0
 cd %SCRIPT_DIR%\..\out
 
 echo.
-echo Updating version number...
-python ..\release\make_version.py
-
-echo.
 echo Building...
 if exist BuildDir rmdir /S /Q BuildDir
 mkdir BuildDir

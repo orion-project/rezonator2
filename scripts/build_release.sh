@@ -25,10 +25,6 @@ if [ ! -d out ]; then mkdir out; fi
 cd out
 
 echo
-echo "Updating version number..."
-python ../release/make_version.py
-  
-echo
 echo "Building..."
 if [ -d BuildDir ]; then rm -rdf BuildDir; fi
 mkdir BuildDir
