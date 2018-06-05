@@ -9,13 +9,13 @@ APP_VER_MAJOR=2
 APP_VER_MINOR=0
 
 # K-part of version
-APP_VER_MICRO=0
+APP_VER_MICRO=1
 
 # Number of commits since tag was set
-APP_VER_COMMITS=130
+APP_VER_COMMITS=0
 
 # codename part of version
-APP_VER_CODENAME=alpha0
+APP_VER_CODENAME=alpha1
 
 # git commit id
-APP_VER_SHA=e8e6eb1feb97bf1267e3cdbaeb6eab8fe1ee4932
+APP_VER_SHA=6670cd73b9a17606c121530f8ad8cbef64251ec8

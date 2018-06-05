@@ -1,12 +1,17 @@
 # reZonator 2
 
-[reZonator](http://rezonator.orion-project.org) is a software for designing laser resonators 
-and calculation the propagation of light beams (as gaussian so as ray vectors) in complex optical systems. 
+[reZonator](http://rezonator.orion-project.org) is software for designing of laser resonators and calculation of light beam propagation (as gaussian so as ray vectors) in complex optical systems. 
 
 This is official port of reZonator to [Qt](qt.io) framework. The goal is to make it open-source and cross-platform.
 
-Currently version 2 is working but it is in early alpha state and does not implement most functions of version 1.
-[Here](http://rezonator.orion-project.org/index.php?page=ver2) are some details and prebuild packages.
+Currently version 2 is in alpha state, but it implements most important functions of version 1:
+
+* Reading of project files (schemas) from version 1.
+* Stability calculation for resonators (standing-wave and ring).
+* Caustic calculation for resonators and single-pass systems.
+
+
+[Here](http://rezonator.orion-project.org/index.php?page=ver2) are some details and prebuild packages for Windows, Linux and MacOS.
 
 
 ## Prepare build environment
@@ -44,7 +49,7 @@ Windows does not provide default command line tools like `wget`, `tar` or `make`
 ```bash
 scripts\build_release.bat
 ```
-Ensure that Qt bin directory is in your PATH to make above scripts working. On Windows you have to put MinGW bin directory in PATH too.
+Ensure that Qt bin directory is in your `PATH` to make above scripts working. On Windows you have to put MinGW `bin` directory into the `PATH` too.
 
 Note that above scripts do full rebuild and it takes a while. Use *Qt Creator IDE* to do dev builds. Just open project file `rezonator.pro` in the IDE and configure it to use some of installed Qt-kits. Any of modern Qt 5.8+ kits should suit.
 
