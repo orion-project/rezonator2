@@ -11,7 +11,7 @@ Currently version 2 is in alpha state, but it implements most important function
 * Caustic calculation for resonators and single-pass systems.
 
 
-[Here](http://rezonator.orion-project.org/index.php?page=ver2) are some details and prebuild packages for Windows, Linux and MacOS.
+[Here](http://rezonator.orion-project.org/index.php?page=ver2) are some details and prebuild packages for Windows, Linux.
 
 
 ## Prepare build environment
