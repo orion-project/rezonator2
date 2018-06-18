@@ -30,8 +30,8 @@ SchemaElemsTable::SchemaElemsTable(Schema *schema, QWidget *parent) : QTableWidg
     setItemDelegateForColumn(COL_PARAMS, new RichTextItemDelegate(paramsOffsetY, this));
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     horizontalHeader()->setSectionResizeMode(COL_IMAGE, QHeaderView::Fixed);
-    horizontalHeader()->setMinimumSectionSize(iconSize.width()+4);
-    horizontalHeader()->resizeSection(COL_IMAGE, iconSize.width()+4);
+    horizontalHeader()->setMinimumSectionSize(iconSize.width()+6);
+    horizontalHeader()->resizeSection(COL_IMAGE, iconSize.width()+6);
     horizontalHeader()->setSectionResizeMode(COL_LABEL, QHeaderView::ResizeToContents);
     horizontalHeader()->setSectionResizeMode(COL_PARAMS, QHeaderView::ResizeToContents);
     horizontalHeader()->setSectionResizeMode(COL_TITLE, QHeaderView::Stretch);

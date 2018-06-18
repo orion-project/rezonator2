@@ -2,6 +2,7 @@
 #include "ElementImagesProvider.h"
 
 #include <QKeyEvent>
+#include <QPainter>
 
 ElementTypesListView::ElementTypesListView(QWidget *parent) : QListWidget(parent)
 {
@@ -25,11 +26,27 @@ void ElementTypesListView::keyPressEvent(QKeyEvent *event)
 
 void ElementTypesListView::populate(Elements elems)
 {
+    static QMap<QString, QIcon> elemIcons;
+
     blockSignals(true);
     clear();
     foreach (Element *elem, elems)
     {
-        auto it = new QListWidgetItem(QIcon(iconPath(elem)), elem->typeName());
+        if (!elemIcons.contains(elem->type()))
+        {
+            // Make icons with margins for better look here
+            QIcon defaultIcon(ElementImagesProvider::instance().iconPath(elem->type()));
+            QSize defaultSize = ElementImagesProvider::instance().iconSize();
+            QSize thisSize = iconSize();
+            QPixmap thisPixmap(thisSize);
+            thisPixmap.fill(Qt::transparent);
+            int marginX = (thisSize.width() - defaultSize.width()) / 2;
+            int marginY = (thisSize.height() - defaultSize.height()) / 2;
+            QPainter painter(&thisPixmap);
+            painter.drawPixmap(marginX, marginY, defaultSize.width(), defaultSize.height(), defaultIcon.pixmap(defaultSize));
+            elemIcons.insert(elem->type(), QIcon(thisPixmap));
+        }
+        auto it = new QListWidgetItem(elemIcons[elem->type()], elem->typeName());
         it->setData(Qt::UserRole, elem->type());
         addItem(it);
     }
@@ -54,7 +71,7 @@ void ElementTypesListView::adjust()
                  style()->pixelMetric(QStyle::PM_ScrollBarExtent) +
                  style()->pixelMetric(QStyle::PM_DefaultFrameWidth) * 2;
     setMinimumWidth(max_width);
-    setMinimumHeight(iconSize.height() + spacing() * 2 +
+    setMinimumHeight(iconSize.height() + spacing() * 2 + 4 +
                      style()->pixelMetric(QStyle::PM_DefaultFrameWidth) * 2);
 }
 
@@ -78,12 +95,10 @@ QString ElementTypesListView::elemType(QListWidgetItem *item) const
     return item->data(Qt::UserRole).toString();
 }
 
-QString ElementTypesListView::iconPath(Element* elem) const
-{
-    return ElementImagesProvider::instance().iconPath(elem->type());
-}
-
 QSize ElementTypesListView::iconSize() const
 {
-    return ElementImagesProvider::instance().iconSize();
+    QSize size = ElementImagesProvider::instance().iconSize();
+    size.rheight() += 4;
+    size.rwidth() += 4;
+    return size;
 }

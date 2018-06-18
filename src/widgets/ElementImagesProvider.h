@@ -11,9 +11,9 @@ class Element;
 class ElementImagesProvider: public Singleton<ElementImagesProvider>
 {
 public:
-    QSize iconSize() const { return QSize(28, 28); }
-    QString iconPath(const QString& elemType) const { return ":/elems28/" % elemType; }
-    QString drawingPath(const QString& elemType) const { return ":/elems/" % elemType; }
+    QSize iconSize() const { return QSize(24, 24); }
+    QString iconPath(const QString& elemType) const { return ":/elem_icon/" % elemType; }
+    QString drawingPath(const QString& elemType) const { return ":/elem_drawing/" % elemType; }
 
 protected:
     ElementImagesProvider() {}
