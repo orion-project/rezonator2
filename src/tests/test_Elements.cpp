@@ -32,12 +32,15 @@ namespace ElementsTests {
 // Calculation: $PROJECT/calc/Elements.py
 TEST_METHOD(EmptyRange)
 {
-    ELEM(EmptyRange, 1)
+    ELEM(EmptyRange, 2)
     SET_PARAM(L, 88, mm)
 
     ASSERT_RAW_PARAM(lengthSI, 0.088)
     ASSERT_RAW_PARAM(axisLengthSI, 0.088)
     ASSERT_RAW_PARAM(opticalPathSI, 0.088)
+    ASSERT_RAW_PARAM(ior, 1)
+
+    ASSERT_IS_FALSE(elem->paramIor()->visible())
 
     ASSERT_MATRIX(t, 1, 0.088, 0, 1)
     ASSERT_MATRIX(s, 1, 0.088, 0, 1)

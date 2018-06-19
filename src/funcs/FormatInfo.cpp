@@ -104,6 +104,8 @@ QString elemParamsHtml(Schema *schema, Element *elem, bool showLinksToGlobals)
     QStringList paramsInfo;
     for (Z::Parameter *param : elem->params())
     {
+        if (!Z::Utils::defaultParamFilter()->check(param)) continue;
+
         if (showLinksToGlobals)
         {
             QString valueStr;

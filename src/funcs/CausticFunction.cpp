@@ -26,10 +26,7 @@ void CausticFunction::calculate()
         return;
     }
 
-    _wavelenSI = schema()->wavelength().value().toSi();
-    auto medium = Z::Utils::asMedium(elem);
-    if (medium)
-        _wavelenSI /= medium->ior();
+    _wavelenSI = schema()->wavelength().value().toSi() / rangeElem->ior();
 
     auto tmpRange = arg()->range;
     tmpRange.stop = Z::Value(rangeElem->axisLengthSI(), Z::Units::m());

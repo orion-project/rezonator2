@@ -135,10 +135,9 @@ QString InfoFuncRepetitionRate::calculate()
             L += range->opticalPathSI();
 
             QString mult_ior;
-            auto medium = Z::Utils::asMedium(range);
-            if (medium and Double(medium->ior()).isNot(1))
+            if (Double(range->ior()).isNot(1))
             {
-                mult_ior = Z::Strs::multX() % Z::format(medium->ior());
+                mult_ior = Z::Strs::multX() % Z::format(range->ior());
                 count++; // elem should be printed even if it is single
             }
             parts += QString::fromLatin1("<b>%1</b>%2<font color=gray><i>(%3)</i></font>")

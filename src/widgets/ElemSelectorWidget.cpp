@@ -1,5 +1,6 @@
-#include "Appearance.h"
 #include "ElemSelectorWidget.h"
+
+#include "Appearance.h"
 
 #include <QLabel>
 

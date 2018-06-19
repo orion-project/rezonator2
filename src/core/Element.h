@@ -152,6 +152,7 @@ class ElementRange : public Element
 {
 public:
     virtual void setSubRangeSI(double value) { Q_UNUSED(value) }
+
     const Z::Matrix& Mt1() const { return _mt1; }
     const Z::Matrix& Ms1() const { return _ms1; }
     const Z::Matrix& Mt2() const { return _mt2; }
@@ -162,10 +163,12 @@ public:
     const Z::Matrix* pMs2() const { return &_ms2; }
 
     Z::Parameter* paramLength() const { return _length; }
+    Z::Parameter* paramIor() const { return _ior; }
     double lengthSI() const { return _length->value().toSi(); }
+    double ior() const { return _ior->value().value(); }
 
     virtual double axisLengthSI() const { return lengthSI(); }
-    virtual double opticalPathSI() const { return axisLengthSI(); }
+    virtual double opticalPathSI() const { return axisLengthSI()* ior(); }
 
 protected:
     ElementRange();
@@ -173,28 +176,19 @@ protected:
     Z::Matrix _mt1, _mt2;
     Z::Matrix _ms1, _ms2;
     Z::Parameter *_length;
-};
-
-//------------------------------------------------------------------------------
-/**
-    Base class for elements having length and refraction.
-*/
-class ElementMedium : public ElementRange
-{
-public:
-    Z::Parameter* paramIor() const { return _ior; }
-    double ior() const { return _ior->value().value(); }
-
-    double opticalPathSI() const override { return axisLengthSI() * ior(); }
-
-protected:
-    ElementMedium();
-
     Z::Parameter *_ior;
 };
 
 //------------------------------------------------------------------------------
+/**
+    Base class for elements representing an interface between two media.
+*/
+class ElementInterface : public Element
+{
 
+};
+
+//------------------------------------------------------------------------------
 class ElementLocker
 {
 public:
@@ -237,9 +231,10 @@ namespace Utils {
 
 void generateLabel(Element *elem);
 inline bool isRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
-inline bool isMedium(Element *elem) { return dynamic_cast<ElementMedium*>(elem); }
 inline ElementRange* asRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
-inline ElementMedium* asMedium(Element *elem) { return dynamic_cast<ElementMedium*>(elem); }
+
+/// Gives a filter of parameters for regular users' usage.
+ParameterFilter* defaultParamFilter();
 
 } // namespace Utils
 } // namespace Z

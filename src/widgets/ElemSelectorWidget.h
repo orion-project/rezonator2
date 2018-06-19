@@ -5,19 +5,19 @@
 #include <QGridLayout>
 
 #include "WidgetResult.h"
-#include "../core/ElementFilter.h"
 #include "../core/Schema.h"
+#include "../core/ElementFilter.h"
 
 //------------------------------------------------------------------------------
-/// Combo-box widget which allows to choose one of schema elements.
-///
+/**
+    Combo-box widget which allows to choose one of schema elements.
+*/
 class ElemSelectorWidget : public QComboBox
 {
     Q_OBJECT
 
 public:
     explicit ElemSelectorWidget(Schema* schema, ElementFilter* filter = nullptr);
-    ~ElemSelectorWidget() { if (_filter) delete _filter; }
 
     Element* selectedElement() const;
     void setSelectedElement(Element *elem);
@@ -33,15 +33,15 @@ private:
 
 
 //------------------------------------------------------------------------------
-/// Combo-box widget which allows to choose one of parameter of element.
-///
+/**
+    Combo-box widget which allows to choose one of parameter of element.
+*/
 class ParamSelectorWidget : public QComboBox
 {
     Q_OBJECT
 
 public:
     explicit ParamSelectorWidget(Z::ParameterFilter* filter = nullptr);
-    ~ParamSelectorWidget() { if (_filter) delete _filter; }
 
     void populate(Element*);
 
@@ -59,8 +59,9 @@ private:
 
 
 //------------------------------------------------------------------------------
-/// Layout combinig \ref ElemSelectorWidget and \ref ParamSelectorWidget together.
-///
+/**
+    Layout combinig \ref ElemSelectorWidget and \ref ParamSelectorWidget together.
+*/
 class ElemAndParamSelector : public QGridLayout
 {
     Q_OBJECT

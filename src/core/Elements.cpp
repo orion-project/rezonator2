@@ -60,6 +60,11 @@ void ElemEmptyRange::setSubRangeSI(double value)
 //------------------------------------------------------------------------------
 //                             ElemMediaRange
 
+ElemMediumRange::ElemMediumRange() : ElementRange()
+{
+    _ior->setVisible(true);
+}
+
 void ElemMediumRange::calcMatrixInternal()
 {
     _mt.assign(1, lengthSI(), 0, 1);
@@ -76,6 +81,11 @@ void ElemMediumRange::setSubRangeSI(double value)
 
 //------------------------------------------------------------------------------
 //                                ElemPlate
+
+ElemPlate::ElemPlate() : ElementRange()
+{
+    _ior->setVisible(true);
+}
 
 void ElemPlate::calcMatrixInternal()
 {
@@ -158,8 +168,10 @@ void ElemCylinderLensS::calcMatrixInternal()
 //------------------------------------------------------------------------------
 //                             ElemTiltedCrystal
 
-ElemTiltedCrystal::ElemTiltedCrystal()
+ElemTiltedCrystal::ElemTiltedCrystal() : ElementRange()
 {
+    _ior->setVisible(true);
+
     _alpha = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Alpha"), Z::Strs::alpha(),
                               qApp->translate("Param", "Angle of incidence "),
                               qApp->translate("Param", "Zero angle is normal incidence."));
@@ -236,6 +248,11 @@ double ElemTiltedPlate::axisLengthSI() const
 //------------------------------------------------------------------------------
 //                            ElemBrewsterCrystal
 
+ElemBrewsterCrystal::ElemBrewsterCrystal() : ElementRange()
+{
+    _ior->setVisible(true);
+}
+
 void ElemBrewsterCrystal::calcMatrixInternal()
 {
     double L = lengthSI();
@@ -262,6 +279,11 @@ void ElemBrewsterCrystal::setSubRangeSI(double value)
 
 //------------------------------------------------------------------------------
 //                             ElemBrewsterPlate
+
+ElemBrewsterPlate::ElemBrewsterPlate() : ElementRange()
+{
+    _ior->setVisible(true);
+}
 
 void ElemBrewsterPlate::calcMatrixInternal()
 {

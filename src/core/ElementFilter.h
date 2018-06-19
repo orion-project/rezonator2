@@ -12,7 +12,11 @@ public:
     virtual bool check(Element*) = 0;
 };
 
-typedef Ori::Filter<Element*, ElementFilterCondition> ElementFilter;
+class ElementFilter : public Ori::Filter<Element*, ElementFilterCondition>
+{
+public:
+    ElementFilter(std::initializer_list<ElementFilterCondition*> conditions): Filter(conditions) {}
+};
 
 #define DECLARE_ELEM_FILTER(class_name)\
     class class_name: public ElementFilterCondition\

@@ -11,8 +11,9 @@ class Schema;
 class VariableRangeWidget;
 class VariableRangeWidget_ElementRange;
 
+class ElementFilter;
 namespace Z {
-    struct Variable;
+struct Variable;
 }
 
 class VariableEditor : public QVBoxLayout
@@ -32,6 +33,7 @@ private slots:
 private:
     ElemAndParamSelector* _elemSelector;
     VariableRangeWidget* _rangeEditor;
+    std::shared_ptr<ElementFilter> _elemFilter;
 };
 
 
@@ -52,6 +54,7 @@ private slots:
 private:
     ElemSelectorWidget* _elemSelector;
     VariableRangeWidget_ElementRange* _rangeEditor;
+    std::shared_ptr<ElementFilter> _elemFilter;
 };
 
 

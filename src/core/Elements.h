@@ -14,7 +14,8 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemMediumRange, ElementMedium)
+DECLARE_ELEMENT(ElemMediumRange, ElementRange)
+    ElemMediumRange();
     TYPE_NAME(qApp->translate("Elements", "Space filled with medium"))
     DEFAULT_LABEL("L")
     CALC_MATRIX
@@ -23,7 +24,8 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemPlate, ElementMedium)
+DECLARE_ELEMENT(ElemPlate, ElementRange)
+    ElemPlate();
     TYPE_NAME(qApp->translate("Elements", "Plate of matter"))
     DEFAULT_LABEL("Cr")
     CALC_MATRIX
@@ -84,7 +86,7 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemTiltedCrystal, ElementMedium)
+DECLARE_ELEMENT(ElemTiltedCrystal, ElementRange)
     ElemTiltedCrystal();
     TYPE_NAME(qApp->translate("Elements", "Tilted plane-parallel crystal"))
     DEFAULT_LABEL("Cr")
@@ -107,7 +109,8 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemBrewsterCrystal, ElementMedium)
+DECLARE_ELEMENT(ElemBrewsterCrystal, ElementRange)
+    ElemBrewsterCrystal();
     TYPE_NAME(qApp->translate("Elements", "Brewster plane-parallel crystal"))
     DEFAULT_LABEL("Cr")
     CALC_MATRIX
@@ -116,7 +119,8 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemBrewsterPlate, ElementMedium)
+DECLARE_ELEMENT(ElemBrewsterPlate, ElementRange)
+    ElemBrewsterPlate();
     TYPE_NAME(qApp->translate("Elements", "Brewster plane-parallel plate"))
     DEFAULT_LABEL("Cr")
     CALC_MATRIX

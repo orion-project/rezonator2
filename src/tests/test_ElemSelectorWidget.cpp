@@ -1,6 +1,7 @@
 #include "testing/OriTestBase.h"
 #include "TestUtils.h"
 #include "../core/Elements.h"
+#include "../core/ElementFilter.h"
 #include "../core/Schema.h"
 #include "../widgets/ElemSelectorWidget.h"
 
@@ -47,7 +48,8 @@ TEST_METHOD(must_use_filter)
 {
     TEST_SCHEMA(schema)
     auto condition = new TestElemFilter<true>();
-    ElemSelectorWidget target(&schema, new ElementFilter({condition}));
+    std::shared_ptr<ElementFilter> f(new ElementFilter({condition}));
+    ElemSelectorWidget target(&schema, f.get());
     ASSERT_PTR_LIST(condition->checkedElems, schema.elements())
     ASSERT_PTR_LIST(target.elements(), schema.elements())
     ASSERT_EQ_INT(target.count(), schema.count())
@@ -57,7 +59,8 @@ TEST_METHOD(must_respect_filter)
 {
     TEST_SCHEMA(schema)
     auto condition = new TestElemFilter<false>();
-    ElemSelectorWidget target(&schema, new ElementFilter({condition}));
+    std::shared_ptr<ElementFilter> f(new ElementFilter({condition}));
+    ElemSelectorWidget target(&schema, f.get());
     ASSERT_PTR_LIST(condition->checkedElems, schema.elements())
     ASSERT_EQ_INT(target.elements().size(), 0)
     ASSERT_EQ_INT(target.count(), 0)

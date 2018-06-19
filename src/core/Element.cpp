@@ -127,17 +127,15 @@ ElementRange::ElementRange()
     _length =  new Z::Parameter(Z::Dims::linear(),
                                 QStringLiteral("L"), QStringLiteral("L"),
                                 qApp->translate("Param", "Length"));
-    addParam(_length, 100, Z::Units::mm());
-}
-
-//------------------------------------------------------------------------------
-//                               ElementRangeN
-
-ElementMedium::ElementMedium()
-{
     _ior = new Z::Parameter(Z::Dims::none(),
                             QStringLiteral("n"), QStringLiteral("n"),
                             qApp->translate("Param", "Index of refraction"));
+
+    // It is internal parameter by default,
+    // and should be explicitly revealed by derived elements
+    _ior->setVisible(false);
+
+    addParam(_length, 100, Z::Units::mm());
     addParam(_ior, 1, Z::Units::none());
 }
 
@@ -164,6 +162,12 @@ namespace Utils {
 void generateLabel(Element *elem)
 {
     elem->setLabel(ElementsNamer::instance().generateLabel(elem->labelPrefix()));
+}
+
+ParameterFilter* defaultParamFilter()
+{
+    static ParameterFilter filter({ new ParameterFilterVisible });
+    return &filter;
 }
 
 } // namespace Utils
