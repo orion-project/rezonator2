@@ -161,6 +161,7 @@ void ProjectWindow::createActions()
     actnFuncStabMap2d = A_(tr("&2D Stability Map..."), _calculations, SLOT(funcStabMap2d()), ":/toolbar/func_stab_map_2d");
     actnFuncRepRate = A_(tr("&Intermode Beats Frequency"), _calculations, SLOT(funcRepRate()), ":/toolbar/func_reprate");
     actnFuncCaustic = A_(tr("&Caustic..."), _calculations, SLOT(funcCaustic()), ":/toolbar/func_caustic");
+    actnFuncMultiCaustic = A_(tr("&Multicaustic..."), _calculations, SLOT(funcMultiCaustic()), ":/toolbar/func_multi_caustic");
 
     actnToolsCatalog = A_(tr("&Elements Catalog"), this, SLOT(showElementsCatalog()), ":/toolbar/catalog");
     actnToolsGaussCalc = A_(tr("&Gauss Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
@@ -212,7 +213,7 @@ void ProjectWindow::createMenuBar()
 
     menuFunctions = Ori::Gui::menu(tr("F&unctions"), this,
         { actnFuncRoundTrip, actnFuncMultFwd, actnFuncMultBkwd, 0, actnFuncStabMap,
-          actnFuncStabMap2d, 0, actnFuncCaustic, 0, actnFuncRepRate });
+          actnFuncStabMap2d, 0, actnFuncCaustic, actnFuncMultiCaustic, 0, actnFuncRepRate });
 
     menuTools = Ori::Gui::menu(tr("&Tools", "Menu title"), this,
         { actnToolsGaussCalc, actnToolsCatalog, 0, actnToolsPrefs });
@@ -235,7 +236,7 @@ void ProjectWindow::createToolBars()
     // TODO:NEXT-VER addToolBar(makeToolBar(tr("Edit"), { actnEditCut, actnEditCopy, actnEditPaste }));
 
     addToolBar(makeToolBar(tr("Functions"),
-        { actnFuncRoundTrip, 0, actnFuncStabMap, actnFuncStabMap2d, 0, actnFuncCaustic, 0,
+        { actnFuncRoundTrip, 0, actnFuncStabMap, actnFuncStabMap2d, 0, actnFuncCaustic, actnFuncMultiCaustic, 0,
           actnFuncRepRate }));
 
     addToolBar(makeToolBar(tr("Misc"),

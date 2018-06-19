@@ -4,6 +4,7 @@
 #include "funcs/InfoFunctions.h"
 #include "funcs_window/InfoFuncWindow.h"
 #include "funcs_window/CausticWindow.h"
+#include "funcs_window/MultiCausticWindow.h"
 #include "funcs_window/StabilityMapWindow.h"
 #include "funcs_window/StabilityMap2DWindow.h"
 
@@ -74,6 +75,11 @@ void CalcManager::funcRepRate()
 void CalcManager::funcCaustic()
 {
     showPlotFunc<CausticWindow>();
+}
+
+void CalcManager::funcMultiCaustic()
+{
+    showPlotFunc<MultiCausticWindow>();
 }
 
 void CalcManager::funcShowMatrices()
