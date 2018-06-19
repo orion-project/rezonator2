@@ -22,7 +22,7 @@ void populateVariableEditorLayout(QVBoxLayout* layout, QLayout* elemSelector, QL
 
 VariableEditor::VariableEditor(Schema *schema) : QVBoxLayout()
 {
-    _elemFilter.reset(new ElementFilter({ new ElementFilterHasVisibleParams, new ElementFilterEnabled }));
+    _elemFilter.reset(ElementFilter::make<ElementFilterHasVisibleParams, ElementFilterEnabled>());
     _elemSelector = new ElemAndParamSelector(schema, _elemFilter.get(), Z::Utils::defaultParamFilter());
 
     _rangeEditor = new VariableRangeWidget;
@@ -78,7 +78,7 @@ WidgetResult VariableEditor::verify()
 
 VariableEditor_ElementRange::VariableEditor_ElementRange(Schema *schema) : QVBoxLayout()
 {
-    _elemFilter.reset(new ElementFilter({ new ElementFilterIsRange, new ElementFilterEnabled }));
+    _elemFilter.reset(ElementFilter::make<ElementFilterIsRange, ElementFilterEnabled>());
     _elemSelector = new ElemSelectorWidget(schema, _elemFilter.get());
     _rangeEditor = new VariableRangeWidget_ElementRange;
 
