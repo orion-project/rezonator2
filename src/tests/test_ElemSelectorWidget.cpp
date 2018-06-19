@@ -5,6 +5,8 @@
 #include "../core/Schema.h"
 #include "../widgets/ElemSelectorWidget.h"
 
+#include <memory>
+
 namespace Z {
 namespace Tests {
 namespace ElementSelectorWidgetTests {

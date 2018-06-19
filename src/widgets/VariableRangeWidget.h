@@ -23,7 +23,7 @@ namespace Widgets {
     class ValueEdit;
 }}
 
-class VariableRangeWidget : public QGridLayout
+class VariableRangeWidget : public QGridLayout // TODO rename, this is not a widget
 {
     Q_OBJECT
 
@@ -42,7 +42,7 @@ private:
 };
 
 
-class VariableRangeWidget_ElementRange : public QGridLayout
+class VariableRangeWidget_ElementRange : public QGridLayout // TODO rename, this is not a widget
 {
     Q_OBJECT
 

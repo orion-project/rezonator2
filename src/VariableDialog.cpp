@@ -12,6 +12,7 @@
 #include <QDialogButtonBox>
 #include <QGroupBox>
 #include <QLabel>
+#include <QListWidget>
 
 //------------------------------------------------------------------------------
 //                              VariableDialog
@@ -126,7 +127,7 @@ void VariableDialog2::collect()
 }
 
 //------------------------------------------------------------------------------
-//                            VariableDialog_range
+//                         VariableDialog_ElementRange
 
 bool VariableDialog_ElementRange::show(QWidget *parent, Schema *schema, Z::Variable *var,
                                        const QString& title, const QString &recentKey)
@@ -163,5 +164,46 @@ void VariableDialog_ElementRange::collect()
     if (!res) return res.show(this);
 
     _varEditor->collect(_var);
+    accept();
+}
+
+//------------------------------------------------------------------------------
+//                         VariableDialog_ElementRanges
+
+bool VariableDialog_MultiElementRange::show(QWidget *parent, Schema *schema/*, Z::Variable *var*/,
+                                            const QString& title, const QString &recentKey)
+{
+    //if (!var->element && !recentKey.isEmpty())
+      //  Z::IO::Json::readVariablePref(CustomPrefs::recentObj(recentKey), var, schema);
+
+    VariableDialog_MultiElementRange dialog(parent, schema/*, var*/);
+    dialog.setWindowTitle(title);
+    dialog.exec();
+    bool ok = dialog.result() == QDialog::Accepted;
+
+    //if (ok && !recentKey.isEmpty())
+      //  CustomPrefs::setRecentObj(recentKey, Z::IO::Json::writeVariablePref(var));
+    return ok;
+}
+
+VariableDialog_MultiElementRange::VariableDialog_MultiElementRange(QWidget *parent, Schema *schema/*, Z::Variable *var*/)
+    : RezonatorDialog(DontDeleteOnClose, parent)//, _var(var)
+{
+    setObjectName("VariableDialog_ElementRanges");
+
+    _varEditor = new VariableEditor_MultiElementRange(schema);
+    //_varEditor->populate(var);
+
+    mainLayout()->addLayout(_varEditor);
+    mainLayout()->addSpacing(8);
+    mainLayout()->addStretch();
+}
+
+void VariableDialog_MultiElementRange::collect()
+{
+    /*auto res = _varEditor->verify();
+    if (!res) return res.show(this);
+
+    _varEditor->collect(_var);*/
     accept();
 }

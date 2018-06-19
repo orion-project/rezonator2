@@ -5,6 +5,8 @@
 
 #include "WidgetResult.h"
 
+#include <memory>
+
 class ElemAndParamSelector;
 class ElemSelectorWidget;
 class Schema;
@@ -15,6 +17,11 @@ class ElementFilter;
 namespace Z {
 struct Variable;
 }
+
+QT_BEGIN_NAMESPACE
+class QListWidget;
+QT_END_NAMESPACE
+
 
 class VariableEditor : public QVBoxLayout
 {
@@ -57,5 +64,18 @@ private:
     std::shared_ptr<ElementFilter> _elemFilter;
 };
 
+
+class VariableEditor_MultiElementRange : public QVBoxLayout
+{
+    Q_OBJECT
+
+public:
+    explicit VariableEditor_MultiElementRange(Schema *schema);
+
+private:
+    QListWidget *_elemsSelector;
+    VariableRangeWidget_ElementRange* _rangeEditor;
+    std::shared_ptr<ElementFilter> _elemFilter;
+};
 
 #endif // VARIABLE_EDITOR_H

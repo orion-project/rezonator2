@@ -1,4 +1,5 @@
 #include "VariableEditor.h"
+
 #include "ElemSelectorWidget.h"
 #include "VariableRangeWidget.h"
 #include "../core/Variable.h"
@@ -6,16 +7,18 @@
 #include <QApplication>
 #include <QGroupBox>
 #include <QLabel>
+#include <QListWidget>
 
-void populateVariableEditorLayout(QVBoxLayout* layout, QLayout* elemSelector, QLayout* rangeEditor, const QString& rangeTitle)
+namespace {
+
+QGroupBox* groupBox(const QString& title, QLayout* layout)
 {
-    auto groupRange = new QGroupBox(rangeTitle);
-    groupRange->setLayout(rangeEditor);
-
-    layout->addLayout(elemSelector);
-    layout->addSpacing(8);
-    layout->addWidget(groupRange);
+    auto group = new QGroupBox(title);
+    group->setLayout(layout);
+    return group;
 }
+
+} // namespace
 
 //------------------------------------------------------------------------------
 //                                VariableEditor
@@ -29,7 +32,9 @@ VariableEditor::VariableEditor(Schema *schema) : QVBoxLayout()
 
     connect(_elemSelector, SIGNAL(selectionChanged()), this, SLOT(guessRange()));
 
-    populateVariableEditorLayout(this, _elemSelector, _rangeEditor, tr("Variation"));
+    addLayout(_elemSelector);
+    addSpacing(8);
+    addWidget(groupBox(tr("Variation"), _rangeEditor));
 }
 
 void VariableEditor::guessRange()
@@ -90,7 +95,9 @@ VariableEditor_ElementRange::VariableEditor_ElementRange(Schema *schema) : QVBox
     layoutElement->addWidget(_elemSelector);
     layoutElement->setStretch(2, 1);
 
-    populateVariableEditorLayout(this, layoutElement, _rangeEditor, tr("Plot accuracy"));
+    addLayout(layoutElement);
+    addSpacing(8);
+    addWidget(groupBox(tr("Plot accuracy"), _rangeEditor));
 }
 
 void VariableEditor_ElementRange::guessRange()
@@ -137,4 +144,20 @@ WidgetResult VariableEditor_ElementRange::verify()
 {
     auto res = _elemSelector->verify();
     return res ? _rangeEditor->verify() : res;
+}
+
+//------------------------------------------------------------------------------
+//                          VariableEditor_ElementRanges
+
+VariableEditor_MultiElementRange::VariableEditor_MultiElementRange(Schema *schema) : QVBoxLayout()
+{
+    _elemFilter.reset(ElementFilter::make<ElementFilterIsRange, ElementFilterEnabled>());
+    _elemsSelector = new QListWidget();
+    _rangeEditor = new VariableRangeWidget_ElementRange;
+
+    //connect(_elemsSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(guessRange()));
+
+    addWidget(_elemsSelector);
+    addSpacing(8);
+    addWidget(groupBox(tr("Plot accuracy"), _rangeEditor));
 }
