@@ -146,7 +146,7 @@ typedef QVector<Element*> Elements;
 
 //------------------------------------------------------------------------------
 /**
-    Base class for elements having length.
+    The base class for elements having length and optional IOR.
 */
 class ElementRange : public Element
 {
@@ -181,11 +181,34 @@ protected:
 
 //------------------------------------------------------------------------------
 /**
-    Base class for elements representing an interface between two media.
+    The base class for elements representing an interface between two media.
+    An interface element is characterized by two IORs - `ior1` and `ior2`.
+    Where `ior1` is IOR of a medium at 'the left' of the interface (medium 1),
+    and `ior2` is IOR of a medium at 'the right' of the interface (medium 2).
+    Element has two set of matrices - IN and OUT matrices.
+    Default matrices are taken when beam passes from the medium 1 to the medium 2,
+    inverted matrices are taken when beam passes from the medium 2 to the medium 1.
+    Which set of matrices should be taken is defined by @a RoundTripCalculator.
 */
 class ElementInterface : public Element
 {
+public:
+    const Z::Matrix& Mt_inv() const { return _mt_inv; }
+    const Z::Matrix& Ms_inv() const { return _ms_inv; }
+    const Z::Matrix* pMt_inv() const { return &_mt_inv; }
+    const Z::Matrix* pMs_inv() const { return &_ms_inv; }
 
+    Z::Parameter* paramIor1() const { return _ior1; }
+    Z::Parameter* paramIor2() const { return _ior2; }
+
+    double ior1() const { return _ior1->value().value(); }
+    double ior2() const { return _ior2->value().value(); }
+
+protected:
+    ElementInterface();
+
+    Z::Matrix _mt_inv, _ms_inv;
+    Z::Parameter *_ior1, *_ior2;
 };
 
 //------------------------------------------------------------------------------

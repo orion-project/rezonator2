@@ -151,4 +151,12 @@ DECLARE_ELEMENT(ElemPoint, Element)
     PARAMS_EDITOR(None)
 DECLARE_ELEMENT_END
 
+//------------------------------------------------------------------------------
+
+DECLARE_ELEMENT(ElemNormalInterface, ElementInterface)
+    TYPE_NAME(qApp->translate("Elements", "Normal interface"))
+    DEFAULT_LABEL("I")
+    CALC_MATRIX
+DECLARE_ELEMENT_END
+
 #endif // ELEMENTS_H

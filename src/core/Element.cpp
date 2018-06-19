@@ -140,6 +140,22 @@ ElementRange::ElementRange()
 }
 
 //------------------------------------------------------------------------------
+//                            ElementInterface
+
+ElementInterface::ElementInterface()
+{
+    _ior1 = new Z::Parameter(Z::Dims::none(),
+                            QStringLiteral("n1"), QStringLiteral("n1"),
+                            qApp->translate("Param", "Index of refraction (left medium)"));
+    _ior2 = new Z::Parameter(Z::Dims::none(),
+                            QStringLiteral("n2"), QStringLiteral("n2"),
+                            qApp->translate("Param", "Index of refraction (right medium)"));
+
+    addParam(_ior1, 1, Z::Units::none());
+    addParam(_ior2, 1, Z::Units::none());
+}
+
+//------------------------------------------------------------------------------
 //                              ElementsNamer
 
 QString ElementsNamer::generateLabel(const QString& prefix)

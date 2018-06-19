@@ -353,3 +353,18 @@ void ElemMatrix::calcMatrixInternal()
     _ms.assign(_params.at(4)->value().value(), _params.at(5)->value().value(),
                _params.at(6)->value().value(), _params.at(7)->value().value());
 }
+
+//------------------------------------------------------------------------------
+//                             ElemNormalInterface
+
+void ElemNormalInterface::calcMatrixInternal()
+{
+    const double n1 = ior1();
+    const double n2 = ior2();
+
+    _mt.assign(1, 0, 0, n1 / n2);
+    _ms = _mt;
+
+    _mt_inv.assign(1, 0, 0, n2 / n1);
+    _ms_inv = _mt_inv;
+}

@@ -84,7 +84,6 @@
         <file alias="plot_tracing">../img/toolbar16/plot_tracing.png</file>
     </qresource>
     <qresource prefix="/elem_drawing">
-        <file alias="ElemUnknown">../img/elem/ElemUnknown.svg</file>
         <file alias="ElemEmptyRange">../img/elem/ElemEmptyRange.svg</file>
         <file alias="ElemMediumRange">../img/elem/ElemMediumRange.svg</file>
         <file alias="ElemPlate">../img/elem/ElemPlate.svg</file>

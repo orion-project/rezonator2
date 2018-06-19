@@ -24,11 +24,12 @@ ElementsCatalog::ElementsCatalog()
 
     auto categoryIntf = qApp->translate("Elements", "Media and interfaces");
     registerElement(categoryIntf, new ElemMediumRange);
+    registerElement(categoryIntf, new ElemNormalInterface);
 }
 
 ElementsCatalog::~ElementsCatalog()
 {
-    foreach (Element *elem, _elements) delete elem;
+    qDeleteAll(_elements);
 }
 
 void ElementsCatalog::registerElement(const QString &category, Element *elem)
