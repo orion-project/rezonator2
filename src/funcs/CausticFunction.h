@@ -19,7 +19,6 @@ public:
     FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Caustic"))
 
     CausticFunction(Schema *schema) : PlotFunction(schema) {}
-    ~CausticFunction();
 
     void calculate() override;
     bool hasOptions() const override { return true; }

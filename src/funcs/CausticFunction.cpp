@@ -8,28 +8,22 @@
 
 using namespace Z;
 
-CausticFunction::~CausticFunction()
-{
-}
-
 void CausticFunction::calculate()
 {
-    if (!checkArguments()) return;
+    if (!checkArgElem()) return;
 
-    auto elem = arg()->element;
-    auto param = arg()->parameter;
-
-    auto rangeElem = Z::Utils::asRange(elem);
-    if (!rangeElem)
+    auto elem = Z::Utils::asRange(arg()->element);
+    if (!elem)
     {
         setError("CausticFunction.arg.element is not range");
         return;
     }
+    auto param = elem->paramLength();
 
-    _wavelenSI = schema()->wavelength().value().toSi() / rangeElem->ior();
+    _wavelenSI = schema()->wavelength().value().toSi() / elem->ior();
 
     auto tmpRange = arg()->range;
-    tmpRange.stop = Z::Value(rangeElem->axisLengthSI(), Z::Units::m());
+    tmpRange.stop = Z::Value(elem->axisLengthSI(), Z::Units::m());
     auto range = tmpRange.plottingRange();
     if (!prepareResults(range)) return;
     if (!prepareCalculator(elem, true)) return;
@@ -45,7 +39,7 @@ void CausticFunction::calculate()
     Z::PointTS prevRes(Double::nan(), Double::nan());
     for (auto x : range.values())
     {
-        rangeElem->setSubRangeSI(x);
+        elem->setSubRangeSI(x);
         _calc->multMatrix();
 
         // After the first round-trip was calculated,

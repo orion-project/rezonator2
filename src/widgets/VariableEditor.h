@@ -27,7 +27,7 @@ namespace VariableEditor {
 
 /**
     The variable editor that can choose one of schema elements' parameters
-    and set variation of this parameter and a number of points for plotting.
+    and set variation of this parameter and the number of points for plotting.
 */
 class ElementEd : public QVBoxLayout
 {
@@ -52,7 +52,7 @@ private:
 //------------------------------------------------------------------------------
 /**
     The variable editor that can choose one of range elements
-    and set a number of points for plotting inside selected element.
+    and set the number of points for plotting inside the selected element.
 */
 class ElementRangeEd : public QVBoxLayout
 {
@@ -77,7 +77,7 @@ private:
 //------------------------------------------------------------------------------
 /**
     The variable editor that can choose several of range elements
-    and set a number of points for plotting inside each of selected elements.
+    and set the number of points for plotting inside each of selected elements.
 */
 class MultiElementRangeEd : public QVBoxLayout
 {

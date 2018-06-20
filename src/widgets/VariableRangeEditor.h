@@ -26,8 +26,8 @@ namespace Widgets {
 namespace VariableRangeEditor {
 
 /**
-    The whole variable range editor that allows to assign
-    a starting and an ending values of the range and a number of points.
+    The full variable range editor that allows to assign
+     starting and ending value of the range and the number of points.
 */
 class GeneralRangeEd : public QGridLayout
 {
@@ -48,8 +48,8 @@ private:
 };
 
 /**
-    The variable range editor that only allows to set a number of points,
-    but not whether a starting and an ending values.
+    The variable range editor that only allows to set the number of points,
+    but not starting or ending value.
 */
 class PointsRangeEd : public QGridLayout
 {

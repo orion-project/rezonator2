@@ -150,6 +150,7 @@ WidgetResult ElementRangeEd::verify()
 struct ElemData
 {
     Element* elem;
+    Z::VariableRange range;
 };
 
 MultiElementRangeEd::MultiElementRangeEd(Schema *schema) : QVBoxLayout()
@@ -164,7 +165,15 @@ MultiElementRangeEd::MultiElementRangeEd(Schema *schema) : QVBoxLayout()
         ElementFilter::make<ElementFilterIsRange, ElementFilterEnabled>());
     for (auto elem : schema->elements())
         if (elemFilter->check(elem))
-            _itemsData.append(new ElemData { elem });
+        {
+            auto data = new ElemData;
+            data->elem = elem;
+            data->range.start = 0;
+            data->range.stop = Z::Utils::asRange(elem)->paramLength()->value();
+            data->range.useStep = false;
+            data->range.points = 100;
+            _itemsData.append(data);
+        }
 
     // Fill elements selector
     for (const ElemData* itemData: _itemsData)
@@ -191,7 +200,18 @@ void MultiElementRangeEd::populateVars(const QVector<Z::Variable>& vars)
 
 QVector<Z::Variable> MultiElementRangeEd::collectVars() const
 {
-    return QVector<Z::Variable>(); // TODO
+    QVector<Z::Variable> vars;
+    for (int i = 0; i < _elemsSelector->count(); i++)
+    {
+        if (_elemsSelector->item(i)->checkState() == Qt::Checked)
+        {
+            Z::Variable var;
+            var.element = _itemsData.at(i)->elem;
+            var.range = _itemsData.at(i)->range;
+            vars.append(var);
+        }
+    }
+    return vars;
 }
 
 WidgetResult MultiElementRangeEd::verify()

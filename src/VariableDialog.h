@@ -32,7 +32,7 @@ protected:
 //------------------------------------------------------------------------------
 /**
     The function argument dialog that can choose one of schema element's parameters
-    and set variation of this parameter and a number of points for plotting.
+    and set variation of this parameter and the number of points for plotting.
 */
 class ElementDlg : public VariableDlg
 {
@@ -52,7 +52,7 @@ protected slots:
 //------------------------------------------------------------------------------
 /**
     The function arguments dialog that can choose two different parameters
-    and set variation of each parameter and a number of points for plotting.
+    and set variation of each parameter and the number of points for plotting.
 */
 class TwoElemensDlg : public VariableDlg
 {
@@ -72,7 +72,7 @@ protected slots:
 //------------------------------------------------------------------------------
 /**
     The function arguments dialog that can choose one of range elements
-    and set a number of points for plotting inside selected element.
+    and set the number of points for plotting inside of selected element.
 */
 class ElementRangeDlg : public VariableDlg
 {
@@ -92,7 +92,7 @@ protected slots:
 //------------------------------------------------------------------------------
 /**
     The function arguments dialog that can choose several of range elements
-    and set a number of points for plotting inside each of selected elements.
+    and set the number of points for plotting inside each of selected elements.
 */
 class MultiElementRangeDlg : public VariableDlg
 {

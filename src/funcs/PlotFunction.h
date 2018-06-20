@@ -99,6 +99,8 @@ public:
     /// Returns calculated results for specific workplane - T or S
     virtual const PlotFuncResult& result(Z::WorkPlane plane, int index) const { return results(plane)->results.at(index); }
 
+    void clearResults();
+
     bool ok() const { return _errorText.isEmpty(); }
     const QString& errorText() const { return _errorText; }
 
@@ -117,13 +119,14 @@ protected:
 
     void setError(const QString& error);
 
-    void clearResults();
     bool prepareResults(Z::PlottingRange range);
     void finishResults();
     void addResultPoint(double x, double y_t, double y_s);
     void addResultPoint(double x, const Z::PointTS& point) { addResultPoint(x, point.T, point.S); }
     bool prepareCalculator(Element* ref, bool splitRange = false);
     const PlotFuncResultSet *results(Z::WorkPlane plane) const;
+    bool checkArgElem();
+    bool checkArgParam();
 
 private:
     QString _errorText;
