@@ -14,16 +14,18 @@
 #include <QLabel>
 #include <QListWidget>
 
+namespace VariableDialog {
+
 //------------------------------------------------------------------------------
 //                              VariableDialog
 
-bool VariableDialog::show(Schema *schema, Z::Variable *var,
-                          const QString& title, const QString &recentKey)
+bool ElementDlg::show(Schema *schema, Z::Variable *var,
+                      const QString& title, const QString &recentKey)
 {
     if (!var->element && !recentKey.isEmpty())
         Z::IO::Json::readVariablePref(CustomPrefs::recentObj(recentKey), var, schema);
 
-    VariableDialog dialog(schema, var);
+    ElementDlg dialog(schema, var);
     dialog.setWindowTitle(title);
     dialog.exec();
     bool ok = dialog.result() == QDialog::Accepted;
@@ -33,7 +35,7 @@ bool VariableDialog::show(Schema *schema, Z::Variable *var,
     return ok;
 }
 
-VariableDialog::VariableDialog(Schema *schema, Z::Variable *var)
+ElementDlg::ElementDlg(Schema *schema, Z::Variable *var)
     : RezonatorDialog(DontDeleteOnClose), _var(var)
 {
     setObjectName("VariableDialog");
@@ -46,7 +48,7 @@ VariableDialog::VariableDialog(Schema *schema, Z::Variable *var)
     mainLayout()->addStretch();
 }
 
-void VariableDialog::collect()
+void ElementDlg::collect()
 {
     auto res = _varEditor->verify();
     if (!res) return res.show(this);
@@ -58,8 +60,8 @@ void VariableDialog::collect()
 //------------------------------------------------------------------------------
 //                              VariableDialog2
 
-bool VariableDialog2::show(Schema *schema, Z::Variable *var1, Z::Variable *var2,
-                           const QString& title, const QString &recentKey)
+bool TwoElemensDlg::show(Schema *schema, Z::Variable *var1, Z::Variable *var2,
+                         const QString& title, const QString &recentKey)
 {
     if (!var1->element && !recentKey.isEmpty())
     {
@@ -68,7 +70,7 @@ bool VariableDialog2::show(Schema *schema, Z::Variable *var1, Z::Variable *var2,
         Z::IO::Json::readVariablePref(recentObj["var2"].toObject(), var2, schema);
     }
 
-    VariableDialog2 dialog(schema, var1, var2);
+    TwoElemensDlg dialog(schema, var1, var2);
     dialog.setWindowTitle(title);
     dialog.exec();
     bool ok = dialog.result() == QDialog::Accepted;
@@ -81,7 +83,7 @@ bool VariableDialog2::show(Schema *schema, Z::Variable *var1, Z::Variable *var2,
     return ok;
 }
 
-VariableDialog2::VariableDialog2(Schema *schema, Z::Variable *var1, Z::Variable *var2)
+TwoElemensDlg::TwoElemensDlg(Schema *schema, Z::Variable *var1, Z::Variable *var2)
     : RezonatorDialog(DontDeleteOnClose), _var1(var1), _var2(var2)
 {
     setObjectName("VariableDialog2");
@@ -107,7 +109,7 @@ VariableDialog2::VariableDialog2(Schema *schema, Z::Variable *var1, Z::Variable 
     mainLayout()->addStretch();
 }
 
-void VariableDialog2::collect()
+void TwoElemensDlg::collect()
 {
     auto res1 = _varEditor1->verify();
     if (!res1) return res1.show(this);
@@ -129,13 +131,13 @@ void VariableDialog2::collect()
 //------------------------------------------------------------------------------
 //                         VariableDialog_ElementRange
 
-bool VariableDialog_ElementRange::show(Schema *schema, Z::Variable *var,
-                                       const QString& title, const QString &recentKey)
+bool ElementRangeDlg::show(Schema *schema, Z::Variable *var,
+                           const QString& title, const QString &recentKey)
 {
     if (!var->element && !recentKey.isEmpty())
         Z::IO::Json::readVariablePref(CustomPrefs::recentObj(recentKey), var, schema);
 
-    VariableDialog_ElementRange dialog(schema, var);
+    ElementRangeDlg dialog(schema, var);
     dialog.setWindowTitle(title);
     dialog.exec();
     bool ok = dialog.result() == QDialog::Accepted;
@@ -145,7 +147,7 @@ bool VariableDialog_ElementRange::show(Schema *schema, Z::Variable *var,
     return ok;
 }
 
-VariableDialog_ElementRange::VariableDialog_ElementRange(Schema *schema, Z::Variable *var)
+ElementRangeDlg::ElementRangeDlg(Schema *schema, Z::Variable *var)
     : RezonatorDialog(DontDeleteOnClose), _var(var)
 {
     setObjectName("VariableDialog_ElementRange");
@@ -158,7 +160,7 @@ VariableDialog_ElementRange::VariableDialog_ElementRange(Schema *schema, Z::Vari
     mainLayout()->addStretch();
 }
 
-void VariableDialog_ElementRange::collect()
+void ElementRangeDlg::collect()
 {
     auto res = _varEditor->verify();
     if (!res) return res.show(this);
@@ -170,13 +172,13 @@ void VariableDialog_ElementRange::collect()
 //------------------------------------------------------------------------------
 //                         VariableDialog_ElementRanges
 
-bool VariableDialog_MultiElementRange::show(Schema *schema/*, Z::Variable *var*/,
-                                            const QString& title, const QString &recentKey)
+bool MultiElementRangeDlg::show(Schema *schema/*, Z::Variable *var*/,
+                                const QString& title, const QString &recentKey)
 {
     //if (!var->element && !recentKey.isEmpty())
       //  Z::IO::Json::readVariablePref(CustomPrefs::recentObj(recentKey), var, schema);
 
-    VariableDialog_MultiElementRange dialog(schema/*, var*/);
+    MultiElementRangeDlg dialog(schema/*, var*/);
     dialog.setWindowTitle(title);
     dialog.exec();
     bool ok = dialog.result() == QDialog::Accepted;
@@ -186,7 +188,7 @@ bool VariableDialog_MultiElementRange::show(Schema *schema/*, Z::Variable *var*/
     return ok;
 }
 
-VariableDialog_MultiElementRange::VariableDialog_MultiElementRange(Schema *schema/*, Z::Variable *var*/)
+MultiElementRangeDlg::MultiElementRangeDlg(Schema *schema/*, Z::Variable *var*/)
     : RezonatorDialog(DontDeleteOnClose)//, _var(var)
 {
     setObjectName("VariableDialog_ElementRanges");
@@ -198,7 +200,7 @@ VariableDialog_MultiElementRange::VariableDialog_MultiElementRange(Schema *schem
     mainLayout()->addSpacing(8);
 }
 
-void VariableDialog_MultiElementRange::collect()
+void MultiElementRangeDlg::collect()
 {
     /*auto res = _varEditor->verify();
     if (!res) return res.show(this);
@@ -206,3 +208,5 @@ void VariableDialog_MultiElementRange::collect()
     _varEditor->collect(_var);*/
     accept();
 }
+
+} // namespace VariableDialog

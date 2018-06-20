@@ -11,12 +11,14 @@ namespace Z {
 struct Variable;
 }
 
+namespace VariableDialog {
+
 //------------------------------------------------------------------------------
 /**
     The function parameters dialog that can choose one of parameters
     and set variation of this parameter and number of points for plotting.
 */
-class VariableDialog : public RezonatorDialog
+class ElementDlg : public RezonatorDialog
 {
     Q_OBJECT
 
@@ -24,7 +26,7 @@ public:
     static bool show(Schema *schema, Z::Variable *var,
                      const QString& title, const QString& recentKey);
 private:
-    explicit VariableDialog(Schema*, Z::Variable*);
+    explicit ElementDlg(Schema*, Z::Variable*);
 
     Z::Variable* _var;
     VariableEditor* _varEditor;
@@ -38,7 +40,7 @@ protected slots:
     The function parameters dialog that can choose two different parameters
     and set variation of each parameter and number of points for plotting.
 */
-class VariableDialog2 : public RezonatorDialog
+class TwoElemensDlg : public RezonatorDialog
 {
     Q_OBJECT
 
@@ -46,7 +48,7 @@ public:
     static bool show(Schema *schema, Z::Variable *var1, Z::Variable *var2,
                      const QString& title, const QString& recentKey);
 private:
-    explicit VariableDialog2(Schema*, Z::Variable*, Z::Variable*);
+    explicit TwoElemensDlg(Schema*, Z::Variable*, Z::Variable*);
 
     Z::Variable *_var1, *_var2;
     VariableEditor *_varEditor1, *_varEditor2;
@@ -60,7 +62,7 @@ protected slots:
     The function parameters dialog that can choose one of range elements
     and set number of points for plotting inside selected element.
 */
-class VariableDialog_ElementRange : public RezonatorDialog
+class ElementRangeDlg : public RezonatorDialog
 {
     Q_OBJECT
 
@@ -68,7 +70,7 @@ public:
     static bool show(Schema *schema, Z::Variable *var,
                      const QString& title, const QString& recentKey);
 private:
-    explicit VariableDialog_ElementRange(Schema*, Z::Variable*);
+    explicit ElementRangeDlg(Schema*, Z::Variable*);
 
     Z::Variable* _var;
     VariableEditor_ElementRange* _varEditor;
@@ -82,7 +84,7 @@ protected slots:
     The function parameters dialog that can choose several of range elements
     and set number of points for plotting inside each of selected elements.
 */
-class VariableDialog_MultiElementRange : public RezonatorDialog
+class MultiElementRangeDlg : public RezonatorDialog
 {
     Q_OBJECT
 
@@ -90,7 +92,7 @@ public:
     static bool show(Schema *schema/*, Z::Variable *var*/,
                      const QString& title, const QString& recentKey);
 private:
-    explicit VariableDialog_MultiElementRange(Schema*/*, Z::Variable**/);
+    explicit MultiElementRangeDlg(Schema*/*, Z::Variable**/);
 
     //Z::Variable* _var;
     VariableEditor_MultiElementRange *_varEditor;
@@ -98,5 +100,7 @@ private:
 protected slots:
     void collect();
 };
+
+} // namespace VariableDialog
 
 #endif // VARIABLE_DLG_H
