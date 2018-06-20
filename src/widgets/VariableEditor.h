@@ -21,6 +21,7 @@ class PointsRangeEd;
 
 QT_BEGIN_NAMESPACE
 class QListWidget;
+class QListWidgetItem;
 QT_END_NAMESPACE
 
 namespace VariableEditor {
@@ -89,12 +90,15 @@ public:
 
     WidgetResult verify();
     void populateVars(const QVector<Z::Variable> &vars);
-    QVector<Z::Variable> collectVars() const;
+    QVector<Z::Variable> collectVars();
 
 private:
     QListWidget *_elemsSelector;
     VariableRangeEditor::PointsRangeEd* _rangeEditor;
-    QVector<struct ElemData*> _itemsData;
+    QVector<struct ElemItemData*> _itemsData;
+
+    void currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+    void itemDoubleClicked(QListWidgetItem *item);
 };
 
 } // namespace VariableEditor

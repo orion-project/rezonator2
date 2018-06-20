@@ -147,9 +147,10 @@ WidgetResult ElementRangeEd::verify()
 //------------------------------------------------------------------------------
 //                              MultiElementRangeEd
 
-struct ElemData
+struct ElemItemData
 {
-    Element* elem;
+    Element* element;
+    QListWidgetItem* item;
     Z::VariableRange range;
 };
 
@@ -158,7 +159,8 @@ MultiElementRangeEd::MultiElementRangeEd(Schema *schema) : QVBoxLayout()
     _elemsSelector = new QListWidget;
     _rangeEditor = new VariableRangeEditor::PointsRangeEd;
 
-    //connect(_elemsSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(guessRange()));
+    connect(_elemsSelector, &QListWidget::currentItemChanged, this, &MultiElementRangeEd::currentItemChanged);
+    connect(_elemsSelector, &QListWidget::itemDoubleClicked, this, &MultiElementRangeEd::itemDoubleClicked);
 
     // Collect available elements data
     std::shared_ptr<ElementFilter> elemFilter(
@@ -166,25 +168,29 @@ MultiElementRangeEd::MultiElementRangeEd(Schema *schema) : QVBoxLayout()
     for (auto elem : schema->elements())
         if (elemFilter->check(elem))
         {
-            auto data = new ElemData;
-            data->elem = elem;
+            auto data = new ElemItemData;
+            data->element = elem;
             data->range.start = 0;
             data->range.stop = Z::Utils::asRange(elem)->paramLength()->value();
+            data->range.step = data->range.stop / 100.0;
             data->range.useStep = false;
             data->range.points = 100;
             _itemsData.append(data);
         }
 
     // Fill elements selector
-    for (const ElemData* itemData: _itemsData)
+    for (int i = 0; i < _itemsData.size(); i++)
     {
-        auto item = new QListWidgetItem(itemData->elem->displayLabelTitle());
+        auto itemData = _itemsData.at(i);
+        auto item = new QListWidgetItem(itemData->element->displayLabelTitle());
         item->setCheckState(Qt::Unchecked);
+        item->setData(Qt::UserRole, i);
+        itemData->item = item;
         _elemsSelector->addItem(item);
     }
 
     addWidget(_elemsSelector);
-    addSpacing(8);
+    addSpacing(4);
     addWidget(groupBox(tr("Plot accuracy"), _rangeEditor));
 }
 
@@ -195,28 +201,56 @@ MultiElementRangeEd::~MultiElementRangeEd()
 
 void MultiElementRangeEd::populateVars(const QVector<Z::Variable>& vars)
 {
-    // TODO
+    for (const Z::Variable& var : vars)
+        for (ElemItemData* data : _itemsData)
+            if (data->element == var.element)
+            {
+                data->item->setCheckState(Qt::Checked);
+                data->range = var.range;
+            }
+    _elemsSelector->setCurrentRow(0);
 }
 
-QVector<Z::Variable> MultiElementRangeEd::collectVars() const
+QVector<Z::Variable> MultiElementRangeEd::collectVars()
 {
+    // Save currently editing range
+    currentItemChanged(nullptr, _elemsSelector->currentItem());
+
     QVector<Z::Variable> vars;
     for (int i = 0; i < _elemsSelector->count(); i++)
-    {
         if (_elemsSelector->item(i)->checkState() == Qt::Checked)
         {
+            int dataIndex = _elemsSelector->item(i)->data(Qt::UserRole).toInt();
             Z::Variable var;
-            var.element = _itemsData.at(i)->elem;
-            var.range = _itemsData.at(i)->range;
+            var.element = _itemsData.at(dataIndex)->element;
+            var.range = _itemsData.at(dataIndex)->range;
             vars.append(var);
         }
-    }
     return vars;
 }
 
 WidgetResult MultiElementRangeEd::verify()
 {
     return WidgetResult::ok(); // TODO
+}
+
+void MultiElementRangeEd::currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
+{
+    if (previous)
+    {
+        int prevIndex = previous->data(Qt::UserRole).toInt();
+        _itemsData.at(prevIndex)->range = _rangeEditor->range();
+    }
+    if (current)
+    {
+        int curIndex = current->data(Qt::UserRole).toInt();
+        _rangeEditor->setRange(_itemsData.at(curIndex)->range);
+    }
+}
+
+void MultiElementRangeEd::itemDoubleClicked(QListWidgetItem *item)
+{
+    item->setCheckState(item->checkState() == Qt::Unchecked ? Qt::Checked : Qt::Unchecked);
 }
 
 } // namespace VariableEditor

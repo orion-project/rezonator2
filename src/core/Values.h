@@ -62,6 +62,8 @@ public:
 
     Value& operator = (const Value& v) { _value = v._value, _unit = v._unit; return *this; }
     Value operator - () const { return Value(-_value, _unit); }
+    Value operator * (const double& v) const { return Value(_value * v, _unit); }
+    Value operator / (const double& v) const { return Value(_value / v, _unit); }
     bool operator == (const Value& v) const { return Double(toSi()).is(v.toSi()); }
     bool operator == (const double& v) const { return Double(toSi()).is(v); }
     bool operator != (const Value& v) const { return Double(toSi()).isNot(v.toSi()); }

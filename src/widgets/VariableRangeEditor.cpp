@@ -33,8 +33,11 @@ struct PointsEditor
         editor->setRange(MIN_POINTS_COUNT, MAX_POINTS_COUNT);
         Z::Gui::setValueFont(editor);
 
-        layout = Ori::Gui::layoutH(0, 0, {
-            editor, Ori::Gui::spacing(Ori::Gui::borderWidth() + Z::Gui::unitsSelectorWidth()) });
+        layout = new QHBoxLayout;
+        layout->setMargin(0);
+        layout->setSpacing(0);
+        layout->addWidget(editor);
+        layout->addSpacing(Ori::Gui::borderWidth() + Z::Gui::unitsSelectorWidth());
 
         qApp->connect(editor, SIGNAL(valueChanged(int)), flag, SLOT(click()));
     }
