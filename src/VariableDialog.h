@@ -4,12 +4,12 @@
 #include "RezonatorDialog.h"
 
 class Schema;
-class VariableEditor;
-class VariableEditor_ElementRange;
 namespace Z {
 struct Variable;
 }
-namespace VariableEditors {
+namespace VariableEditor {
+class ElementEd;
+class ElementRangeEd;
 class MultiElementRangeEd;
 }
 
@@ -31,8 +31,8 @@ protected:
 
 //------------------------------------------------------------------------------
 /**
-    The function argument dialog that can choose one of parameters
-    and set variation of this parameter and number of points for plotting.
+    The function argument dialog that can choose one of schema element's parameters
+    and set variation of this parameter and a number of points for plotting.
 */
 class ElementDlg : public VariableDlg
 {
@@ -43,7 +43,7 @@ public:
 
 private:
     Z::Variable* _var;
-    VariableEditor* _varEditor;
+    VariableEditor::ElementEd* _varEditor;
 
 protected slots:
     void collect();
@@ -52,7 +52,7 @@ protected slots:
 //------------------------------------------------------------------------------
 /**
     The function arguments dialog that can choose two different parameters
-    and set variation of each parameter and number of points for plotting.
+    and set variation of each parameter and a number of points for plotting.
 */
 class TwoElemensDlg : public VariableDlg
 {
@@ -63,7 +63,7 @@ public:
 
 private:
     Z::Variable *_var1, *_var2;
-    VariableEditor *_varEditor1, *_varEditor2;
+    VariableEditor::ElementEd *_varEditor1, *_varEditor2;
 
 protected slots:
     void collect();
@@ -72,7 +72,7 @@ protected slots:
 //------------------------------------------------------------------------------
 /**
     The function arguments dialog that can choose one of range elements
-    and set number of points for plotting inside selected element.
+    and set a number of points for plotting inside selected element.
 */
 class ElementRangeDlg : public VariableDlg
 {
@@ -83,7 +83,7 @@ public:
 
 private:
     Z::Variable* _var;
-    VariableEditor_ElementRange* _varEditor;
+    VariableEditor::ElementRangeEd* _varEditor;
 
 protected slots:
     void collect();
@@ -92,7 +92,7 @@ protected slots:
 //------------------------------------------------------------------------------
 /**
     The function arguments dialog that can choose several of range elements
-    and set number of points for plotting inside each of selected elements.
+    and set a number of points for plotting inside each of selected elements.
 */
 class MultiElementRangeDlg : public VariableDlg
 {
@@ -103,7 +103,7 @@ public:
 
 private:
     QVector<Z::Variable>& _vars;
-    VariableEditors::MultiElementRangeEd *_varEditor;
+    VariableEditor::MultiElementRangeEd *_varEditor;
 
 protected slots:
     void collect();

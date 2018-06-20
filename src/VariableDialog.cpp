@@ -41,7 +41,7 @@ ElementDlg::ElementDlg(Schema *schema, Z::Variable *var,
     if (!var->element && !recentKey.isEmpty())
         Z::IO::Json::readVariablePref(CustomPrefs::recentObj(recentKey), var, schema);
 
-    _varEditor = new VariableEditor(schema);
+    _varEditor = new VariableEditor::ElementEd(schema);
     _varEditor->populate(var);
 
     mainLayout()->addLayout(_varEditor);
@@ -75,10 +75,10 @@ TwoElemensDlg::TwoElemensDlg(Schema *schema, Z::Variable *var1, Z::Variable *var
         Z::IO::Json::readVariablePref(recentObj["var2"].toObject(), var2, schema);
     }
 
-    _varEditor1 = new VariableEditor(schema);
+    _varEditor1 = new VariableEditor::ElementEd(schema);
     _varEditor1->populate(var1);
 
-    _varEditor2 = new VariableEditor(schema);
+    _varEditor2 = new VariableEditor::ElementEd(schema);
     _varEditor2->populate(var2);
 
     QGroupBox *groupVar1 = new QGroupBox(tr("Variable 1 (X)"));
@@ -131,7 +131,7 @@ ElementRangeDlg::ElementRangeDlg(Schema *schema, Z::Variable *var,
     if (!var->element && !recentKey.isEmpty())
         Z::IO::Json::readVariablePref(CustomPrefs::recentObj(recentKey), var, schema);
 
-    _varEditor = new VariableEditor_ElementRange(schema);
+    _varEditor = new VariableEditor::ElementRangeEd(schema);
     _varEditor->populate(var);
 
     mainLayout()->addLayout(_varEditor);
@@ -158,7 +158,7 @@ MultiElementRangeDlg::MultiElementRangeDlg(Schema *schema, QVector<Z::Variable>&
                                            const QString &title, const QString &recentKey)
     : VariableDlg(title, recentKey), _vars(vars)
 {
-    _varEditor = new VariableEditors::MultiElementRangeEd(schema);
+    _varEditor = new VariableEditor::MultiElementRangeEd(schema);
     _varEditor->populateVars(vars);
 
     mainLayout()->addLayout(_varEditor);

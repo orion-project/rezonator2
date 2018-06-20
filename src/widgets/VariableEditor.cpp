@@ -9,7 +9,7 @@
 #include <QLabel>
 #include <QListWidget>
 
-namespace {
+namespace VariableEditor {
 
 QGroupBox* groupBox(const QString& title, QLayout* layout)
 {
@@ -18,12 +18,10 @@ QGroupBox* groupBox(const QString& title, QLayout* layout)
     return group;
 }
 
-} // local namespace
-
 //------------------------------------------------------------------------------
-//                                VariableEditor
+//                                ElementEd
 
-VariableEditor::VariableEditor(Schema *schema) : QVBoxLayout()
+ElementEd::ElementEd(Schema *schema) : QVBoxLayout()
 {
     _elemFilter.reset(ElementFilter::make<ElementFilterHasVisibleParams, ElementFilterEnabled>());
     _elemSelector = new ElemAndParamSelector(schema, _elemFilter.get(), Z::Utils::defaultParamFilter());
@@ -37,7 +35,7 @@ VariableEditor::VariableEditor(Schema *schema) : QVBoxLayout()
     addWidget(groupBox(tr("Variation"), _rangeEditor));
 }
 
-void VariableEditor::guessRange()
+void ElementEd::guessRange()
 {
     auto param = _elemSelector->selectedParameter();
     if (!param) return;
@@ -50,7 +48,7 @@ void VariableEditor::guessRange()
     _rangeEditor->setRange(range);
 }
 
-void VariableEditor::populate(Z::Variable *var)
+void ElementEd::populate(Z::Variable *var)
 {
     if (var->element) // edit variable
     {
@@ -65,23 +63,23 @@ void VariableEditor::populate(Z::Variable *var)
     }
 }
 
-void VariableEditor::collect(Z::Variable *var)
+void ElementEd::collect(Z::Variable *var)
 {
     var->element = _elemSelector->selectedElement();
     var->parameter = _elemSelector->selectedParameter();
     var->range = _rangeEditor->range();
 }
 
-WidgetResult VariableEditor::verify()
+WidgetResult ElementEd::verify()
 {
     auto res = _elemSelector->verify();
     return res ? _rangeEditor->verify() : res;
 }
 
 //------------------------------------------------------------------------------
-//                          VariableEditor_ElementRange
+//                              ElementRangeEd
 
-VariableEditor_ElementRange::VariableEditor_ElementRange(Schema *schema) : QVBoxLayout()
+ElementRangeEd::ElementRangeEd(Schema *schema) : QVBoxLayout()
 {
     _elemFilter.reset(ElementFilter::make<ElementFilterIsRange, ElementFilterEnabled>());
     _elemSelector = new ElemSelectorWidget(schema, _elemFilter.get());
@@ -100,7 +98,7 @@ VariableEditor_ElementRange::VariableEditor_ElementRange(Schema *schema) : QVBox
     addWidget(groupBox(tr("Plot accuracy"), _rangeEditor));
 }
 
-void VariableEditor_ElementRange::guessRange()
+void ElementRangeEd::guessRange()
 {
     auto elem = _elemSelector->selectedElement();
     if (!elem) return;
@@ -118,7 +116,7 @@ void VariableEditor_ElementRange::guessRange()
     _rangeEditor->setRange(range);
 }
 
-void VariableEditor_ElementRange::populate(Z::Variable *var)
+void ElementRangeEd::populate(Z::Variable *var)
 {
     if (var->element) // edit variable
     {
@@ -132,7 +130,7 @@ void VariableEditor_ElementRange::populate(Z::Variable *var)
     }
 }
 
-void VariableEditor_ElementRange::collect(Z::Variable *var)
+void ElementRangeEd::collect(Z::Variable *var)
 {
     var->element = _elemSelector->selectedElement();
     var->parameter = Z::Utils::asRange(var->element)->paramLength();
@@ -140,7 +138,7 @@ void VariableEditor_ElementRange::collect(Z::Variable *var)
     qDebug() << "range.start" << var->range.start.str();
 }
 
-WidgetResult VariableEditor_ElementRange::verify()
+WidgetResult ElementRangeEd::verify()
 {
     auto res = _elemSelector->verify();
     return res ? _rangeEditor->verify() : res;
@@ -148,8 +146,6 @@ WidgetResult VariableEditor_ElementRange::verify()
 
 //------------------------------------------------------------------------------
 //                              MultiElementRangeEd
-
-namespace VariableEditors {
 
 struct ElemData
 {

@@ -20,13 +20,18 @@ QT_BEGIN_NAMESPACE
 class QListWidget;
 QT_END_NAMESPACE
 
+namespace VariableEditor {
 
-class VariableEditor : public QVBoxLayout
+/**
+    The variable editor that can choose one of schema elements' parameters
+    and set variation of this parameter and a number of points for plotting.
+*/
+class ElementEd : public QVBoxLayout
 {
     Q_OBJECT
 
 public:
-    explicit VariableEditor(Schema *schema);
+    explicit ElementEd(Schema *schema);
 
     WidgetResult verify();
     void populate(Z::Variable *var);
@@ -41,13 +46,17 @@ private:
     std::shared_ptr<ElementFilter> _elemFilter;
 };
 
-
-class VariableEditor_ElementRange : public QVBoxLayout
+//------------------------------------------------------------------------------
+/**
+    The variable editor that can choose one of range elements
+    and set a number of points for plotting inside selected element.
+*/
+class ElementRangeEd : public QVBoxLayout
 {
     Q_OBJECT
 
 public:
-    explicit VariableEditor_ElementRange(Schema *schema);
+    explicit ElementRangeEd(Schema *schema);
 
     WidgetResult verify();
     void populate(Z::Variable *var);
@@ -62,8 +71,11 @@ private:
     std::shared_ptr<ElementFilter> _elemFilter;
 };
 
-namespace VariableEditors {
-
+//------------------------------------------------------------------------------
+/**
+    The variable editor that can choose several of range elements
+    and set a number of points for plotting inside each of selected elements.
+*/
 class MultiElementRangeEd : public QVBoxLayout
 {
     Q_OBJECT
