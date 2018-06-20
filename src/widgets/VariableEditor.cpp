@@ -18,7 +18,7 @@ QGroupBox* groupBox(const QString& title, QLayout* layout)
     return group;
 }
 
-} // namespace
+} // local namespace
 
 //------------------------------------------------------------------------------
 //                                VariableEditor
@@ -149,15 +149,40 @@ WidgetResult VariableEditor_ElementRange::verify()
 //------------------------------------------------------------------------------
 //                          VariableEditor_ElementRanges
 
+struct ElemData
+{
+    Element* elem;
+};
+
 VariableEditor_MultiElementRange::VariableEditor_MultiElementRange(Schema *schema) : QVBoxLayout()
 {
-    _elemFilter.reset(ElementFilter::make<ElementFilterIsRange, ElementFilterEnabled>());
     _elemsSelector = new QListWidget();
     _rangeEditor = new VariableRangeWidget_ElementRange;
 
     //connect(_elemsSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(guessRange()));
 
+    // Collect available elements data
+    std::shared_ptr<ElementFilter> elemFilter(
+        ElementFilter::make<ElementFilterIsRange, ElementFilterEnabled>());
+    for (auto elem : schema->elements())
+        if (elemFilter->check(elem))
+            _itemsData.append(new ElemData { elem });
+
+    // Fill elements selector
+    for (const ElemData* itemData: _itemsData)
+    {
+        auto item = new QListWidgetItem(itemData->elem->displayLabelTitle());
+        item->setCheckState(Qt::Unchecked);
+        _elemsSelector->addItem(item);
+    }
+
     addWidget(_elemsSelector);
     addSpacing(8);
     addWidget(groupBox(tr("Plot accuracy"), _rangeEditor));
 }
+
+VariableEditor_MultiElementRange::~VariableEditor_MultiElementRange()
+{
+    qDeleteAll(_itemsData);
+}
+

@@ -377,9 +377,12 @@ void SchemaReaderIni::readElement(const QString &section)
         double tmp = ini.getValue("Param_" + param->alias(), 0, &ok);
         if (!ok)
         {
-            // IOR does not stored in old schemas for empty ranges
-            _report.warning(QString(
-                "Invalid value for parameter %1 is stored in file, default value is used").arg(param->alias()));
+            // IOR is not stored in old schemas for empty ranges so there is no issue if that
+            auto emptyRange = dynamic_cast<ElemEmptyRange*>(elem);
+            if (!emptyRange || param != emptyRange->paramIor())
+                _report.warning(QString("Invalid value for parameter %1 of element %2 "
+                                        "is stored in file, default value is used")
+                                        .arg(param->alias(), elem->displayLabel()));
             continue;
         }
 
@@ -398,7 +401,8 @@ void SchemaReaderIni::readElement(const QString &section)
         if (!res.isEmpty())
         {
             _report.warning(QString(
-                "Value %1 is unacceptable for parameter %2: %3").arg(value.str()).arg(param->alias()).arg(res));
+                "Value %1 is unacceptable for parameter %2 of element %3: %4")
+                    .arg(value.str(), param->alias(), elem->displayLabel(), res));
             continue;
         }
 

@@ -2,6 +2,7 @@
 #define VARIABLE_EDITOR_H
 
 #include <QVBoxLayout>
+#include <QVector>
 
 #include "WidgetResult.h"
 
@@ -71,11 +72,12 @@ class VariableEditor_MultiElementRange : public QVBoxLayout
 
 public:
     explicit VariableEditor_MultiElementRange(Schema *schema);
+    ~VariableEditor_MultiElementRange();
 
 private:
     QListWidget *_elemsSelector;
     VariableRangeWidget_ElementRange* _rangeEditor;
-    std::shared_ptr<ElementFilter> _elemFilter;
+    QVector<struct ElemData*> _itemsData;
 };
 
 #endif // VARIABLE_EDITOR_H

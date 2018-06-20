@@ -196,7 +196,6 @@ VariableDialog_MultiElementRange::VariableDialog_MultiElementRange(QWidget *pare
 
     mainLayout()->addLayout(_varEditor);
     mainLayout()->addSpacing(8);
-    mainLayout()->addStretch();
 }
 
 void VariableDialog_MultiElementRange::collect()
