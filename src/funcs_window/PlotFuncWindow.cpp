@@ -368,7 +368,7 @@ void PlotFuncWindow::updateCursorInfo()
 
 void PlotFuncWindow::updateWithParams()
 {
-    if (configure(this))
+    if (configure())
     {
         // TODO:NEXT-VER Schema.ModifiedForms := True;
         update();
@@ -513,9 +513,9 @@ QWidget* PlotFuncWindow::optionsPanelRequired()
     return panel;
 }
 
-bool PlotFuncWindow::configure(QWidget* parent)
+bool PlotFuncWindow::configure()
 {
-    bool ok = configureInternal(parent);
+    bool ok = configureInternal();
     if (ok)
         schema()->events().raise(SchemaEvents::Changed);
     return ok;

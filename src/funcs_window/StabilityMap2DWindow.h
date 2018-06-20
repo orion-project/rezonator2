@@ -15,7 +15,7 @@ public:
 
 protected:
     // Implementation of PlotFuncWindow
-    bool configureInternal(QWidget* parent) override;
+    bool configureInternal() override;
 };
 
 #endif // WINDOW_STABILITY_MAP_2D_H

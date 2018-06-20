@@ -88,7 +88,7 @@ public:
     void requestCenterCursor() { _centerCursorRequested = true; }
 
     /// Edits function parameters through dialog.
-    bool configure(QWidget* parent);
+    bool configure();
 
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return QList<QMenu*>() << menuPlot << menuLimits /* TODO:NEXT-VER << menuFormat*/; }
@@ -114,7 +114,7 @@ protected:
     /// Calculates function and plots its results.
     virtual void calculate(bool replot = true);
 
-    virtual bool configureInternal(QWidget* parent) { Q_UNUSED(parent); return true; }
+    virtual bool configureInternal() { return true; }
 
     bool _needRecalc = false, _frozen = false;
     QVector<Graph*> _graphsT, _graphsS;

@@ -15,7 +15,7 @@ public:
 
 protected:
     // Implementation of PlotFuncWindow
-    bool configureInternal(QWidget* parent) override;
+    bool configureInternal() override;
 };
 
 #endif // MULTI_CAUSTIC_WINDOW_H

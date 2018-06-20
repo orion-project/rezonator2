@@ -8,8 +8,8 @@ StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
     setTitleAndIcon(function()->name(), ":/toolbar/func_stab_map_2d");
 }
 
-bool StabilityMap2DWindow::configureInternal(QWidget* parent)
+bool StabilityMap2DWindow::configureInternal()
 {
-    return VariableDialog2::show(parent, schema(), function()->paramX(), function()->paramY(),
+    return VariableDialog2::show(schema(), function()->paramX(), function()->paramY(),
         tr("Contour Stability Map Parameters"), "func_stab_map_2d");
 }

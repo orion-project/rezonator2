@@ -9,7 +9,7 @@ MultiCausticWindow::MultiCausticWindow(Schema *schema): PlotFuncWindowStorable(n
     setTitleAndIcon(function()->name(), ":/toolbar/func_multi_caustic");
 }
 
-bool MultiCausticWindow::configureInternal(QWidget* parent)
+bool MultiCausticWindow::configureInternal()
 {
-    return VariableDialog_MultiElementRange::show(parent, schema()/*, function()->arg()*/, tr("Ranges"), "func_multi_caustic");
+    return VariableDialog_MultiElementRange::show(schema()/*, function()->arg()*/, tr("Ranges"), "func_multi_caustic");
 }

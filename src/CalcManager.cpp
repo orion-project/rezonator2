@@ -112,7 +112,7 @@ template <class TWindow> void CalcManager::showPlotFunc()
 {
     RETURN_IF_SCHEMA_EMPTY
     auto wnd = new TWindow(schema());
-    if (wnd->configure(_parent))
+    if (wnd->configure())
     {
         wnd->function()->loadPrefs();
         WindowsManager::instance().show(wnd);

@@ -18,7 +18,7 @@ public:
 protected:
     // Implementation of PlotFuncWindow
     QWidget* makeOptionsPanel() override;
-    bool configureInternal(QWidget* parent) override;
+    bool configureInternal() override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;
