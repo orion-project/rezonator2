@@ -5,7 +5,7 @@
 #include "core/Variable.h"
 #include "io/z_io_json.h"
 #include "widgets/ElemSelectorWidget.h"
-#include "widgets/VariableRangeWidget.h"
+#include "widgets/VariableRangeEditor.h"
 #include "widgets/VariableEditor.h"
 #include "helpers/OriDialogs.h"
 

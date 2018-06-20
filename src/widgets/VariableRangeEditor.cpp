@@ -1,5 +1,6 @@
+#include "VariableRangeEditor.h"
+
 #include "Appearance.h"
-#include "VariableRangeWidget.h"
 #include "ValueEditor.h"
 #include "../core/Element.h"
 #include "../core/Variable.h"
@@ -12,8 +13,10 @@
 #include <QRadioButton>
 #include <QSpinBox>
 
-#define MIN_POINTS_COUNT 3
-#define MAX_POINTS_COUNT 10000
+namespace VariableRangeEditor {
+
+static const int MIN_POINTS_COUNT = 3;
+static const int MAX_POINTS_COUNT = 10000;
 
 struct PointsEditor
 {
@@ -52,9 +55,9 @@ struct StepEditor
 };
 
 //------------------------------------------------------------------------------
-//                            VariableRangeWidget
+//                                 GeneralRangeEd
 
-VariableRangeWidget::VariableRangeWidget() : QGridLayout()
+GeneralRangeEd::GeneralRangeEd() : QGridLayout()
 {
     edStart = new ValueEditor;
     edStop = new ValueEditor;
@@ -78,7 +81,7 @@ VariableRangeWidget::VariableRangeWidget() : QGridLayout()
     addWidget(rbPoints, 3, 0);
 }
 
-void VariableRangeWidget::setRange(const Z::VariableRange& var)
+void GeneralRangeEd::setRange(const Z::VariableRange& var)
 {
     edStart->setValue(var.start);
     edStop->setValue(var.stop);
@@ -90,7 +93,7 @@ void VariableRangeWidget::setRange(const Z::VariableRange& var)
         rbPoints->setChecked(true);
 }
 
-Z::VariableRange VariableRangeWidget::range()
+Z::VariableRange GeneralRangeEd::range()
 {
     Z::VariableRange range;
     range.start = edStart->value();
@@ -101,7 +104,7 @@ Z::VariableRange VariableRangeWidget::range()
     return range;
 }
 
-WidgetResult VariableRangeWidget::verify()
+WidgetResult GeneralRangeEd::verify()
 {
     auto res = range();
 
@@ -118,9 +121,9 @@ WidgetResult VariableRangeWidget::verify()
 }
 
 //------------------------------------------------------------------------------
-//                       VariableRangeWidget_ElementRange
+//                                 PointsRangeEd
 
-VariableRangeWidget_ElementRange::VariableRangeWidget_ElementRange() : QGridLayout()
+PointsRangeEd::PointsRangeEd() : QGridLayout()
 {
     StepEditor step;
     edStep = step.editor;
@@ -136,7 +139,7 @@ VariableRangeWidget_ElementRange::VariableRangeWidget_ElementRange() : QGridLayo
     addWidget(rbPoints, 1, 0);
 }
 
-void VariableRangeWidget_ElementRange::setRange(const Z::VariableRange& var)
+void PointsRangeEd::setRange(const Z::VariableRange& var)
 {
     _start = var.start;
     _stop = var.stop;
@@ -149,7 +152,7 @@ void VariableRangeWidget_ElementRange::setRange(const Z::VariableRange& var)
         rbPoints->setChecked(true);
 }
 
-Z::VariableRange VariableRangeWidget_ElementRange::range()
+Z::VariableRange PointsRangeEd::range()
 {
     Z::VariableRange range;
     range.start = _start;
@@ -160,7 +163,7 @@ Z::VariableRange VariableRangeWidget_ElementRange::range()
     return range;
 }
 
-WidgetResult VariableRangeWidget_ElementRange::verify()
+WidgetResult PointsRangeEd::verify()
 {
     auto res = range();
 
@@ -172,3 +175,5 @@ WidgetResult VariableRangeWidget_ElementRange::verify()
 
     return WidgetResult::ok();
 }
+
+} // namespace VariableRangeEditor

@@ -146,12 +146,12 @@ HEADERS += \
     src/widgets/ValueEditor.h \
     src/widgets/ValuesEditorTS.h \
     src/widgets/VariableEditor.h \
-    src/widgets/VariableRangeWidget.h \
     src/widgets/WidgetResult.h \
     src/tests/TestSchemaListener.h \
     src/GaussCalculatorWindow.h \
     src/funcs_window/MultiCausticWindow.h \
-    src/funcs/MultiCausticFunction.h
+    src/funcs/MultiCausticFunction.h \
+    src/widgets/VariableRangeEditor.h
 	
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -247,7 +247,6 @@ SOURCES += \
     src/widgets/ValueEditor.cpp \
     src/widgets/ValuesEditorTS.cpp \
     src/widgets/VariableEditor.cpp \
-    src/widgets/VariableRangeWidget.cpp \
     src/widgets/WidgetResult.cpp \
     src/tests/test_GaussCalculator.cpp \
     src/tests/test_PumpCalculator.cpp \
@@ -255,4 +254,5 @@ SOURCES += \
     src/tests/test_PumpWindow.cpp \
     src/GaussCalculatorWindow.cpp \
     src/funcs_window/MultiCausticWindow.cpp \
-    src/funcs/MultiCausticFunction.cpp
+    src/funcs/MultiCausticFunction.cpp \
+    src/widgets/VariableRangeEditor.cpp

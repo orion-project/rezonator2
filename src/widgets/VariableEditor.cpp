@@ -1,7 +1,7 @@
 #include "VariableEditor.h"
 
 #include "ElemSelectorWidget.h"
-#include "VariableRangeWidget.h"
+#include "VariableRangeEditor.h"
 #include "../core/Variable.h"
 
 #include <QApplication>
@@ -26,7 +26,7 @@ ElementEd::ElementEd(Schema *schema) : QVBoxLayout()
     _elemFilter.reset(ElementFilter::make<ElementFilterHasVisibleParams, ElementFilterEnabled>());
     _elemSelector = new ElemAndParamSelector(schema, _elemFilter.get(), Z::Utils::defaultParamFilter());
 
-    _rangeEditor = new VariableRangeWidget;
+    _rangeEditor = new VariableRangeEditor::GeneralRangeEd;
 
     connect(_elemSelector, SIGNAL(selectionChanged()), this, SLOT(guessRange()));
 
@@ -83,7 +83,7 @@ ElementRangeEd::ElementRangeEd(Schema *schema) : QVBoxLayout()
 {
     _elemFilter.reset(ElementFilter::make<ElementFilterIsRange, ElementFilterEnabled>());
     _elemSelector = new ElemSelectorWidget(schema, _elemFilter.get());
-    _rangeEditor = new VariableRangeWidget_ElementRange;
+    _rangeEditor = new VariableRangeEditor::PointsRangeEd;
 
     connect(_elemSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(guessRange()));
 
@@ -154,8 +154,8 @@ struct ElemData
 
 MultiElementRangeEd::MultiElementRangeEd(Schema *schema) : QVBoxLayout()
 {
-    _elemsSelector = new QListWidget();
-    _rangeEditor = new VariableRangeWidget_ElementRange;
+    _elemsSelector = new QListWidget;
+    _rangeEditor = new VariableRangeEditor::PointsRangeEd;
 
     //connect(_elemsSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(guessRange()));
 

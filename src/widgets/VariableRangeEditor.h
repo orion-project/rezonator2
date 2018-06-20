@@ -23,12 +23,18 @@ namespace Widgets {
     class ValueEdit;
 }}
 
-class VariableRangeWidget : public QGridLayout // TODO rename, this is not a widget
+namespace VariableRangeEditor {
+
+/**
+    The whole variable range editor that allows to assign
+    a starting and an ending values of the range and a number of points.
+*/
+class GeneralRangeEd : public QGridLayout
 {
     Q_OBJECT
 
 public:
-    VariableRangeWidget();
+    GeneralRangeEd();
 
     Z::VariableRange range();
     void setRange(const Z::VariableRange& var);
@@ -41,13 +47,16 @@ private:
     ValueEditor *edStart, *edStop, *edStep;
 };
 
-
-class VariableRangeWidget_ElementRange : public QGridLayout // TODO rename, this is not a widget
+/**
+    The variable range editor that only allows to set a number of points,
+    but not whether a starting and an ending values.
+*/
+class PointsRangeEd : public QGridLayout
 {
     Q_OBJECT
 
 public:
-    VariableRangeWidget_ElementRange();
+    PointsRangeEd();
 
     Z::VariableRange range();
     void setRange(const Z::VariableRange& var);
@@ -60,5 +69,7 @@ private:
     QRadioButton *rbStep, *rbPoints;
     ValueEditor *edStep;
 };
+
+} // namespace VariableRangeEditor
 
 #endif // VARIABLE_RANGE_WIDGET_H

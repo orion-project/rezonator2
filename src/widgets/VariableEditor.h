@@ -13,8 +13,11 @@ class ElemAndParamSelector;
 class ElemSelectorWidget;
 class ElementFilter;
 class Schema;
-class VariableRangeWidget;
-class VariableRangeWidget_ElementRange;
+
+namespace VariableRangeEditor {
+class GeneralRangeEd;
+class PointsRangeEd;
+}
 
 QT_BEGIN_NAMESPACE
 class QListWidget;
@@ -42,7 +45,7 @@ private slots:
 
 private:
     ElemAndParamSelector* _elemSelector;
-    VariableRangeWidget* _rangeEditor;
+    VariableRangeEditor::GeneralRangeEd* _rangeEditor;
     std::shared_ptr<ElementFilter> _elemFilter;
 };
 
@@ -67,7 +70,7 @@ private slots:
 
 private:
     ElemSelectorWidget* _elemSelector;
-    VariableRangeWidget_ElementRange* _rangeEditor;
+    VariableRangeEditor::PointsRangeEd* _rangeEditor;
     std::shared_ptr<ElementFilter> _elemFilter;
 };
 
@@ -90,7 +93,7 @@ public:
 
 private:
     QListWidget *_elemsSelector;
-    VariableRangeWidget_ElementRange* _rangeEditor;
+    VariableRangeEditor::PointsRangeEd* _rangeEditor;
     QVector<struct ElemData*> _itemsData;
 };
 
