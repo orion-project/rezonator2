@@ -6,9 +6,11 @@
 class Schema;
 class VariableEditor;
 class VariableEditor_ElementRange;
-class VariableEditor_MultiElementRange;
 namespace Z {
 struct Variable;
+}
+namespace VariableEditors {
+class MultiElementRangeEd;
 }
 
 namespace VariableDialog {
@@ -97,11 +99,11 @@ class MultiElementRangeDlg : public VariableDlg
     Q_OBJECT
 
 public:
-    explicit MultiElementRangeDlg(Schema*/*, Z::Variable**/, const QString& title, const QString& recentKey);
+    explicit MultiElementRangeDlg(Schema*, QVector<Z::Variable>&, const QString& title, const QString& recentKey);
 
 private:
-    //Z::Variable* _var;
-    VariableEditor_MultiElementRange *_varEditor;
+    QVector<Z::Variable>& _vars;
+    VariableEditors::MultiElementRangeEd *_varEditor;
 
 protected slots:
     void collect();

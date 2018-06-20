@@ -147,14 +147,16 @@ WidgetResult VariableEditor_ElementRange::verify()
 }
 
 //------------------------------------------------------------------------------
-//                          VariableEditor_ElementRanges
+//                              MultiElementRangeEd
+
+namespace VariableEditors {
 
 struct ElemData
 {
     Element* elem;
 };
 
-VariableEditor_MultiElementRange::VariableEditor_MultiElementRange(Schema *schema) : QVBoxLayout()
+MultiElementRangeEd::MultiElementRangeEd(Schema *schema) : QVBoxLayout()
 {
     _elemsSelector = new QListWidget();
     _rangeEditor = new VariableRangeWidget_ElementRange;
@@ -181,8 +183,24 @@ VariableEditor_MultiElementRange::VariableEditor_MultiElementRange(Schema *schem
     addWidget(groupBox(tr("Plot accuracy"), _rangeEditor));
 }
 
-VariableEditor_MultiElementRange::~VariableEditor_MultiElementRange()
+MultiElementRangeEd::~MultiElementRangeEd()
 {
     qDeleteAll(_itemsData);
 }
 
+void MultiElementRangeEd::populateVars(const QVector<Z::Variable>& vars)
+{
+    // TODO
+}
+
+QVector<Z::Variable> MultiElementRangeEd::collectVars() const
+{
+    return QVector<Z::Variable>(); // TODO
+}
+
+WidgetResult MultiElementRangeEd::verify()
+{
+    return WidgetResult::ok(); // TODO
+}
+
+} // namespace VariableEditor

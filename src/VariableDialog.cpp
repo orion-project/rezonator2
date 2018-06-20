@@ -154,12 +154,12 @@ void ElementRangeDlg::collect()
 //------------------------------------------------------------------------------
 //                              MultiElementRangeDlg
 
-MultiElementRangeDlg::MultiElementRangeDlg(Schema *schema/*, Z::Variable *var*/,
+MultiElementRangeDlg::MultiElementRangeDlg(Schema *schema, QVector<Z::Variable>& vars,
                                            const QString &title, const QString &recentKey)
-    : VariableDlg(title, recentKey)//, _var(var)
+    : VariableDlg(title, recentKey), _vars(vars)
 {
-    _varEditor = new VariableEditor_MultiElementRange(schema);
-    //_varEditor->populate(var);
+    _varEditor = new VariableEditors::MultiElementRangeEd(schema);
+    _varEditor->populateVars(vars);
 
     mainLayout()->addLayout(_varEditor);
     mainLayout()->addSpacing(8);
@@ -167,10 +167,10 @@ MultiElementRangeDlg::MultiElementRangeDlg(Schema *schema/*, Z::Variable *var*/,
 
 void MultiElementRangeDlg::collect()
 {
-    /*auto res = _varEditor->verify();
+    auto res = _varEditor->verify();
     if (!res) return res.show(this);
 
-    _varEditor->collect(_var);*/
+    _vars = _varEditor->collectVars();
     accept();
 }
 

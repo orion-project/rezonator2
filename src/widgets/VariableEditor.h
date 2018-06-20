@@ -5,19 +5,16 @@
 #include <QVector>
 
 #include "WidgetResult.h"
+#include "../core/Variable.h"
 
 #include <memory>
 
 class ElemAndParamSelector;
 class ElemSelectorWidget;
+class ElementFilter;
 class Schema;
 class VariableRangeWidget;
 class VariableRangeWidget_ElementRange;
-
-class ElementFilter;
-namespace Z {
-struct Variable;
-}
 
 QT_BEGIN_NAMESPACE
 class QListWidget;
@@ -65,19 +62,26 @@ private:
     std::shared_ptr<ElementFilter> _elemFilter;
 };
 
+namespace VariableEditors {
 
-class VariableEditor_MultiElementRange : public QVBoxLayout
+class MultiElementRangeEd : public QVBoxLayout
 {
     Q_OBJECT
 
 public:
-    explicit VariableEditor_MultiElementRange(Schema *schema);
-    ~VariableEditor_MultiElementRange();
+    explicit MultiElementRangeEd(Schema *schema);
+    ~MultiElementRangeEd();
+
+    WidgetResult verify();
+    void populateVars(const QVector<Z::Variable> &vars);
+    QVector<Z::Variable> collectVars() const;
 
 private:
     QListWidget *_elemsSelector;
     VariableRangeWidget_ElementRange* _rangeEditor;
     QVector<struct ElemData*> _itemsData;
 };
+
+} // namespace VariableEditor
 
 #endif // VARIABLE_EDITOR_H
