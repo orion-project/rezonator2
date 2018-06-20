@@ -10,6 +10,6 @@ StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
 
 bool StabilityMap2DWindow::configureInternal()
 {
-    return VariableDialog::TwoElemensDlg::show(schema(), function()->paramX(), function()->paramY(),
-        tr("Contour Stability Map Parameters"), "func_stab_map_2d");
+    return VariableDialog::TwoElemensDlg(schema(), function()->paramX(), function()->paramY(),
+        tr("Contour Stability Map Parameters"), "func_stab_map_2d").run();
 }

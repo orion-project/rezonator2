@@ -70,7 +70,7 @@ void StabilityMapWindow::createControl()
 
 bool StabilityMapWindow::configureInternal()
 {
-    return VariableDialog::ElementDlg::show(schema(), function()->arg(), tr("Variable"), "func_stab_map");
+    return VariableDialog::ElementDlg(schema(), function()->arg(), tr("Variable"), "func_stab_map").run();
 }
 
 void StabilityMapWindow::autolimitsStability()

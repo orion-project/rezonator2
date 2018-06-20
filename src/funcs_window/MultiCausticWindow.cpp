@@ -11,5 +11,5 @@ MultiCausticWindow::MultiCausticWindow(Schema *schema): PlotFuncWindowStorable(n
 
 bool MultiCausticWindow::configureInternal()
 {
-    return VariableDialog::MultiElementRangeDlg::show(schema()/*, function()->arg()*/, tr("Ranges"), "func_multi_caustic");
+    return VariableDialog::MultiElementRangeDlg(schema()/*, function()->arg()*/, tr("Ranges"), "func_multi_caustic").run();
 }

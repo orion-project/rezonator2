@@ -16,13 +16,17 @@
 
 namespace VariableDialog {
 
-VariableDlg::VariableDlg(const QString& windowTitle, const QString& objectName) : RezonatorDialog(DontDeleteOnClose)
+//------------------------------------------------------------------------------
+//                              VariableDlg
+
+VariableDlg::VariableDlg(const QString& windowTitle, const QString& recentKey)
+    : RezonatorDialog(DontDeleteOnClose), _recentKey(recentKey)
 {
     setWindowTitle(windowTitle);
-    setObjectName(objectName);
+    setObjectName(recentKey);
 }
 
-bool VariableDlg::execute()
+bool VariableDlg::run()
 {
     return exec() == QDialog::Accepted;
 }
@@ -30,23 +34,13 @@ bool VariableDlg::execute()
 //------------------------------------------------------------------------------
 //                              ElementDlg
 
-bool ElementDlg::show(Schema *schema, Z::Variable *var,
-                      const QString& title, const QString &recentKey)
+ElementDlg::ElementDlg(Schema *schema, Z::Variable *var,
+                       const QString &title, const QString &recentKey)
+    : VariableDlg(title, recentKey), _var(var)
 {
     if (!var->element && !recentKey.isEmpty())
         Z::IO::Json::readVariablePref(CustomPrefs::recentObj(recentKey), var, schema);
 
-    bool ok = ElementDlg(schema, var, title).execute();
-
-    if (ok && !recentKey.isEmpty())
-        CustomPrefs::setRecentObj(recentKey, Z::IO::Json::writeVariablePref(var));
-
-    return ok;
-}
-
-ElementDlg::ElementDlg(Schema *schema, Z::Variable *var, const QString &title)
-    : VariableDlg(title, "ElementDlg"), _var(var)
-{
     _varEditor = new VariableEditor(schema);
     _varEditor->populate(var);
 
@@ -62,13 +56,17 @@ void ElementDlg::collect()
 
     _varEditor->collect(_var);
     accept();
+
+    if (!_recentKey.isEmpty())
+        CustomPrefs::setRecentObj(_recentKey, Z::IO::Json::writeVariablePref(_var));
 }
 
 //------------------------------------------------------------------------------
 //                              TwoElemensDlg
 
-bool TwoElemensDlg::show(Schema *schema, Z::Variable *var1, Z::Variable *var2,
-                         const QString& title, const QString &recentKey)
+TwoElemensDlg::TwoElemensDlg(Schema *schema, Z::Variable *var1, Z::Variable *var2,
+                             const QString& title, const QString& recentKey)
+    : VariableDlg(title, recentKey), _var1(var1), _var2(var2)
 {
     if (!var1->element && !recentKey.isEmpty())
     {
@@ -77,20 +75,6 @@ bool TwoElemensDlg::show(Schema *schema, Z::Variable *var1, Z::Variable *var2,
         Z::IO::Json::readVariablePref(recentObj["var2"].toObject(), var2, schema);
     }
 
-    bool ok = TwoElemensDlg(schema, var1, var2, title).execute();
-
-    if (ok && !recentKey.isEmpty())
-        CustomPrefs::setRecentObj(recentKey, QJsonObject({
-            { "var1", Z::IO::Json::writeVariablePref(var1) },
-            { "var2", Z::IO::Json::writeVariablePref(var2) },
-        }));
-
-    return ok;
-}
-
-TwoElemensDlg::TwoElemensDlg(Schema *schema, Z::Variable *var1, Z::Variable *var2, const QString& title)
-    : VariableDlg(title, "TwoElemensDlg"), _var1(var1), _var2(var2)
-{
     _varEditor1 = new VariableEditor(schema);
     _varEditor1->populate(var1);
 
@@ -129,28 +113,24 @@ void TwoElemensDlg::collect()
     _varEditor1->collect(_var1);
     _varEditor2->collect(_var2);
     accept();
+
+    if (!_recentKey.isEmpty())
+        CustomPrefs::setRecentObj(_recentKey, QJsonObject({
+            { "var1", Z::IO::Json::writeVariablePref(_var1) },
+            { "var2", Z::IO::Json::writeVariablePref(_var2) },
+        }));
 }
 
 //------------------------------------------------------------------------------
 //                         ElementRangeDlg
 
-bool ElementRangeDlg::show(Schema *schema, Z::Variable *var,
-                           const QString& title, const QString &recentKey)
+ElementRangeDlg::ElementRangeDlg(Schema *schema, Z::Variable *var,
+                                 const QString& title, const QString& recentKey)
+    : VariableDlg(title, recentKey), _var(var)
 {
     if (!var->element && !recentKey.isEmpty())
         Z::IO::Json::readVariablePref(CustomPrefs::recentObj(recentKey), var, schema);
 
-    bool ok = ElementRangeDlg(schema, var, title).execute();
-
-    if (ok && !recentKey.isEmpty())
-        CustomPrefs::setRecentObj(recentKey, Z::IO::Json::writeVariablePref(var));
-
-    return ok;
-}
-
-ElementRangeDlg::ElementRangeDlg(Schema *schema, Z::Variable *var, const QString& title)
-    : VariableDlg(title, "ElementRangeDlg"), _var(var)
-{
     _varEditor = new VariableEditor_ElementRange(schema);
     _varEditor->populate(var);
 
@@ -166,26 +146,17 @@ void ElementRangeDlg::collect()
 
     _varEditor->collect(_var);
     accept();
+
+    if (!_recentKey.isEmpty())
+        CustomPrefs::setRecentObj(_recentKey, Z::IO::Json::writeVariablePref(_var));
 }
 
 //------------------------------------------------------------------------------
 //                              MultiElementRangeDlg
 
-bool MultiElementRangeDlg::show(Schema *schema/*, Z::Variable *var*/,
-                                const QString& title, const QString &recentKey)
-{
-    //if (!var->element && !recentKey.isEmpty())
-      //  Z::IO::Json::readVariablePref(CustomPrefs::recentObj(recentKey), var, schema);
-
-    bool ok = MultiElementRangeDlg(schema/*, var*/, title).execute();
-
-    //if (ok && !recentKey.isEmpty())
-      //  CustomPrefs::setRecentObj(recentKey, Z::IO::Json::writeVariablePref(var));
-    return ok;
-}
-
-MultiElementRangeDlg::MultiElementRangeDlg(Schema *schema/*, Z::Variable *var*/, const QString &title)
-    : VariableDlg(title, "MultiElementRangeDlg")//, _var(var)
+MultiElementRangeDlg::MultiElementRangeDlg(Schema *schema/*, Z::Variable *var*/,
+                                           const QString &title, const QString &recentKey)
+    : VariableDlg(title, recentKey)//, _var(var)
 {
     _varEditor = new VariableEditor_MultiElementRange(schema);
     //_varEditor->populate(var);
