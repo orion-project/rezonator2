@@ -16,8 +16,19 @@
 
 namespace VariableDialog {
 
+VariableDlg::VariableDlg(const QString& windowTitle, const QString& objectName) : RezonatorDialog(DontDeleteOnClose)
+{
+    setWindowTitle(windowTitle);
+    setObjectName(objectName);
+}
+
+bool VariableDlg::execute()
+{
+    return exec() == QDialog::Accepted;
+}
+
 //------------------------------------------------------------------------------
-//                              VariableDialog
+//                              ElementDlg
 
 bool ElementDlg::show(Schema *schema, Z::Variable *var,
                       const QString& title, const QString &recentKey)
@@ -25,21 +36,17 @@ bool ElementDlg::show(Schema *schema, Z::Variable *var,
     if (!var->element && !recentKey.isEmpty())
         Z::IO::Json::readVariablePref(CustomPrefs::recentObj(recentKey), var, schema);
 
-    ElementDlg dialog(schema, var);
-    dialog.setWindowTitle(title);
-    dialog.exec();
-    bool ok = dialog.result() == QDialog::Accepted;
+    bool ok = ElementDlg(schema, var, title).execute();
 
     if (ok && !recentKey.isEmpty())
         CustomPrefs::setRecentObj(recentKey, Z::IO::Json::writeVariablePref(var));
+
     return ok;
 }
 
-ElementDlg::ElementDlg(Schema *schema, Z::Variable *var)
-    : RezonatorDialog(DontDeleteOnClose), _var(var)
+ElementDlg::ElementDlg(Schema *schema, Z::Variable *var, const QString &title)
+    : VariableDlg(title, "ElementDlg"), _var(var)
 {
-    setObjectName("VariableDialog");
-
     _varEditor = new VariableEditor(schema);
     _varEditor->populate(var);
 
@@ -58,7 +65,7 @@ void ElementDlg::collect()
 }
 
 //------------------------------------------------------------------------------
-//                              VariableDialog2
+//                              TwoElemensDlg
 
 bool TwoElemensDlg::show(Schema *schema, Z::Variable *var1, Z::Variable *var2,
                          const QString& title, const QString &recentKey)
@@ -70,24 +77,20 @@ bool TwoElemensDlg::show(Schema *schema, Z::Variable *var1, Z::Variable *var2,
         Z::IO::Json::readVariablePref(recentObj["var2"].toObject(), var2, schema);
     }
 
-    TwoElemensDlg dialog(schema, var1, var2);
-    dialog.setWindowTitle(title);
-    dialog.exec();
-    bool ok = dialog.result() == QDialog::Accepted;
+    bool ok = TwoElemensDlg(schema, var1, var2, title).execute();
 
     if (ok && !recentKey.isEmpty())
         CustomPrefs::setRecentObj(recentKey, QJsonObject({
             { "var1", Z::IO::Json::writeVariablePref(var1) },
             { "var2", Z::IO::Json::writeVariablePref(var2) },
         }));
+
     return ok;
 }
 
-TwoElemensDlg::TwoElemensDlg(Schema *schema, Z::Variable *var1, Z::Variable *var2)
-    : RezonatorDialog(DontDeleteOnClose), _var1(var1), _var2(var2)
+TwoElemensDlg::TwoElemensDlg(Schema *schema, Z::Variable *var1, Z::Variable *var2, const QString& title)
+    : VariableDlg(title, "TwoElemensDlg"), _var1(var1), _var2(var2)
 {
-    setObjectName("VariableDialog2");
-
     _varEditor1 = new VariableEditor(schema);
     _varEditor1->populate(var1);
 
@@ -129,7 +132,7 @@ void TwoElemensDlg::collect()
 }
 
 //------------------------------------------------------------------------------
-//                         VariableDialog_ElementRange
+//                         ElementRangeDlg
 
 bool ElementRangeDlg::show(Schema *schema, Z::Variable *var,
                            const QString& title, const QString &recentKey)
@@ -137,21 +140,17 @@ bool ElementRangeDlg::show(Schema *schema, Z::Variable *var,
     if (!var->element && !recentKey.isEmpty())
         Z::IO::Json::readVariablePref(CustomPrefs::recentObj(recentKey), var, schema);
 
-    ElementRangeDlg dialog(schema, var);
-    dialog.setWindowTitle(title);
-    dialog.exec();
-    bool ok = dialog.result() == QDialog::Accepted;
+    bool ok = ElementRangeDlg(schema, var, title).execute();
 
     if (ok && !recentKey.isEmpty())
         CustomPrefs::setRecentObj(recentKey, Z::IO::Json::writeVariablePref(var));
+
     return ok;
 }
 
-ElementRangeDlg::ElementRangeDlg(Schema *schema, Z::Variable *var)
-    : RezonatorDialog(DontDeleteOnClose), _var(var)
+ElementRangeDlg::ElementRangeDlg(Schema *schema, Z::Variable *var, const QString& title)
+    : VariableDlg(title, "ElementRangeDlg"), _var(var)
 {
-    setObjectName("VariableDialog_ElementRange");
-
     _varEditor = new VariableEditor_ElementRange(schema);
     _varEditor->populate(var);
 
@@ -170,7 +169,7 @@ void ElementRangeDlg::collect()
 }
 
 //------------------------------------------------------------------------------
-//                         VariableDialog_ElementRanges
+//                              MultiElementRangeDlg
 
 bool MultiElementRangeDlg::show(Schema *schema/*, Z::Variable *var*/,
                                 const QString& title, const QString &recentKey)
@@ -178,21 +177,16 @@ bool MultiElementRangeDlg::show(Schema *schema/*, Z::Variable *var*/,
     //if (!var->element && !recentKey.isEmpty())
       //  Z::IO::Json::readVariablePref(CustomPrefs::recentObj(recentKey), var, schema);
 
-    MultiElementRangeDlg dialog(schema/*, var*/);
-    dialog.setWindowTitle(title);
-    dialog.exec();
-    bool ok = dialog.result() == QDialog::Accepted;
+    bool ok = MultiElementRangeDlg(schema/*, var*/, title).execute();
 
     //if (ok && !recentKey.isEmpty())
       //  CustomPrefs::setRecentObj(recentKey, Z::IO::Json::writeVariablePref(var));
     return ok;
 }
 
-MultiElementRangeDlg::MultiElementRangeDlg(Schema *schema/*, Z::Variable *var*/)
-    : RezonatorDialog(DontDeleteOnClose)//, _var(var)
+MultiElementRangeDlg::MultiElementRangeDlg(Schema *schema/*, Z::Variable *var*/, const QString &title)
+    : VariableDlg(title, "MultiElementRangeDlg")//, _var(var)
 {
-    setObjectName("VariableDialog_ElementRanges");
-
     _varEditor = new VariableEditor_MultiElementRange(schema);
     //_varEditor->populate(var);
 
