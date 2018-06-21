@@ -14,6 +14,7 @@ QVector<Z::Variable> MultiCausticFunction::args() const
     return args;
 }
 
+// TODO ensure if all subfunctions have the same _argumentUnit
 void MultiCausticFunction::setArgs(const QVector<Z::Variable>& args)
 {
     QList<CausticFunction*> funcs;

@@ -18,7 +18,6 @@ void CausticFunction::calculate()
         setError("CausticFunction.arg.element is not range");
         return;
     }
-    auto param = elem->paramLength();
 
     _wavelenSI = schema()->wavelength().value().toSi() / elem->ior();
 
@@ -32,10 +31,9 @@ void CausticFunction::calculate()
     if (tripType == TripType::SP)
         if (!prepareSP()) return;
 
-    BackupAndLock locker(elem, param);
+    BackupAndLock locker(elem, elem->paramLength());
 
     bool stabilityChecked = !_schema->isResonator();
-    auto argUnit = param->value().unit();
     Z::PointTS prevRes(Double::nan(), Double::nan());
     for (auto x : range.values())
     {
@@ -63,7 +61,7 @@ void CausticFunction::calculate()
         case TripType::SP: res = calculateSinglePass(); break;
         }
 
-        double argX = argUnit->fromSi(x);
+        double argX = _argumentUnit->fromSi(x);
 
         if (_mode == FontRadius)
         {

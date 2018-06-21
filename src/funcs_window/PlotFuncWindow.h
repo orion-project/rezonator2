@@ -154,6 +154,8 @@ protected:
 
     virtual QWidget* makeOptionsPanel() { return nullptr; }
 
+    virtual void fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *graph, int resultIndex);
+
 private slots:
     void showT();
     void showS();

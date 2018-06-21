@@ -16,6 +16,7 @@ public:
 protected:
     // Implementation of PlotFuncWindow
     bool configureInternal() override;
+    void fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *graph, int resultIndex) override;
 };
 
 #endif // MULTI_CAUSTIC_WINDOW_H

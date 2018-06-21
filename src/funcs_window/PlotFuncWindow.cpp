@@ -442,8 +442,7 @@ void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
             graphs.append(g);
         }
         else g = graphs[i];
-        auto result = _function->result(plane, i);
-        g->setData(result.x, result.y);
+        fillGraphWithFunctionResults(plane, g, i);
         if (g->parentPlot() != _plot)
             _plot->addPlottable(g);
     }
@@ -452,6 +451,12 @@ void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
         _plot->removePlottable(graphs.last());
         graphs.removeLast();
     }
+}
+
+void PlotFuncWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *graph, int resultIndex)
+{
+    auto result = _function->result(plane, resultIndex);
+    graph->setData(result.x, result.y);
 }
 
 QPen PlotFuncWindow::getLineSettings(Z::WorkPlane plane)

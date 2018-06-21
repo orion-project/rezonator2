@@ -21,6 +21,8 @@ public:
     QVector<Z::Variable> args() const;
     void setArgs(const QVector<Z::Variable>& args);
 
+    QList<CausticFunction*> funcs() { return _funcs; }
+
 private:
     QList<CausticFunction*> _funcs;
 };

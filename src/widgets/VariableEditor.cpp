@@ -170,9 +170,9 @@ MultiElementRangeEd::MultiElementRangeEd(Schema *schema) : QVBoxLayout()
         {
             auto data = new ElemItemData;
             data->element = elem;
-            data->range.start = 0;
             data->range.stop = Z::Utils::asRange(elem)->paramLength()->value();
-            data->range.step = data->range.stop / 100.0;
+            data->range.start = data->range.stop * 0.0; // this preserves units
+            data->range.step = data->range.stop / 100.0; // this preserves units
             data->range.useStep = false;
             data->range.points = 100;
             _itemsData.append(data);
