@@ -18,9 +18,9 @@ class Schema;
 /**
     Schema listener interface.
     Any object who wants "listen" any schema changes or other events should
-    implements this interface and registers himself as listener in a schema
-    through the method @a Schema::registerListener(). Schema will call appropriate
-    method of interface when something occures.
+    implement this interface and registers himself as a listener in a schema
+    through the method @a Schema::registerListener(). The schema will call
+    appropriate method of the interface when something occurs.
 */
 class SchemaListener : public SchemaClient
 {
@@ -77,8 +77,8 @@ private:
 /**
     Schema event system.
 
-    Steps to add new event:
-    1. Add new member to @a SchemaEvents enum.
+    Steps to add a new event:
+    1. Add a new member to @a SchemaEvents enum.
     2. Add new notification method to @a SchemaListener interface.
     3. Add calling of that method to @a SchemaEvents::notify() method.
     4. Define props of new event in @a SchemaEvents::propsOf() method.
@@ -89,10 +89,10 @@ public:
     /// Event types that can be sent to schema listeners.
     enum Event
     {
-        Created,       ///< Schema just was created, called from constructor
+        Created,       ///< Schema just was created, called from the constructor
         Deleted,       ///< Schema was deleted, called from destructor
-        Changed,       ///< General event when something was changed,
-                       ///< can be called after anothed changing event, if it configured.
+        Changed,       ///< The general event when something was changed,
+                       ///< can be called after another changing event if it configured.
         Saved,         ///< Schema was saved
         Loading,       ///< Schema is turned into Loading state
         Loaded,        ///< Loading is completed
@@ -143,9 +143,9 @@ private:
 
 //------------------------------------------------------------------------------
 /**
-    Interface of element selector.
-    A widged displaying schema elements can allow user to select one or several
-    elements by mouse or keyboard (like @a SchemaElemsTable does). This widged can implement this interface
+    The interface of element selector.
+    A widget displaying schema elements can allow a user to select one or several
+    elements by mouse or keyboard (like @a SchemaElemsTable does). This widget can implement this interface
     and register itself in a schema via `schema->selection().registerSelector(selecting_widget)`.
     Then any others will be able to obtain selected element(s) via `schema->selectedElements()`
     without any redundant knowledge about who exactly made this selection.
@@ -159,7 +159,7 @@ public:
 
 /**
     Safe-guard for ElementSelector.
-    Allows to register/unregister a selector and provides null-pointer check when taking selection.
+    Allows to register/unregister a selector and provides null-pointer check when making a selection.
 */
 class SchemaSelection
 {
@@ -228,9 +228,9 @@ public:
     /// List of all formulas operated on schema parameters.
     Z::Formulas* formulas() { return &_formulas; }
 
-    /// Returns list of global params that can be used as link sources or formula deps.
-    /// It contains custom params and some of builtin params.
-    /// This list is not stored in schema and collect parameters at each call.
+    /// Returns a list of global params that can be used as link sources or formula dependencies.
+    /// It contains custom params and some of the built-in parameters.
+    /// This list is not stored in a schema and collect parameters at each call.
     Z::Parameters globalParams() const;
 
     Z::PumpsList* pumps() { return &_pumps; }

@@ -185,9 +185,9 @@ protected:
     An interface element is characterized by two IORs - `ior1` and `ior2`.
     Where `ior1` is IOR of a medium at 'the left' of the interface (medium 1),
     and `ior2` is IOR of a medium at 'the right' of the interface (medium 2).
-    Element has two set of matrices - IN and OUT matrices.
-    Default matrices are taken when beam passes from the medium 1 to the medium 2,
-    inverted matrices are taken when beam passes from the medium 2 to the medium 1.
+    The element has two sets of matrices - IN and OUT matrices.
+    Default matrices are taken when a beam passes from the medium 1 to the medium 2,
+    inverted matrices are taken when the beam passes from the medium 2 to the medium 1.
     Which set of matrices should be taken is defined by @a RoundTripCalculator.
 */
 class ElementInterface : public Element

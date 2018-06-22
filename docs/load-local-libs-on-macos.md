@@ -1,8 +1,8 @@
 # How to load local libs on MacOS
 
-This is example of how to load `muparser` library located in application bundle.
+This is an example of how to load `muparser` library located in the application bundle.
 
-Libraries should be placed into `Frameworks` subdir of application bundle.
+Libraries should be placed into `Frameworks` subdirectory of the application bundle.
 
 Then we have to use `install_name_tool` to adjust resolving rules in application executable file:
 

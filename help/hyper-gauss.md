@@ -1,6 +1,6 @@
 # Calculation of Hyper-Gaussian Beams 
 
-Algorithm for calculation of hyper-Gaussian beams is applied to analyze single-pass systems (SP) when divergence parameter ($M^2$) of input beam is set to a value greater than one. 
+Algorithm for calculation of hyper-Gaussian beams is applied to analyze single-pass systems (SP) when divergence parameter ($M^2$) of the input beam set to a value greater than one. 
 
 ## Hyper-Gaussian beam
 
@@ -18,7 +18,7 @@ $$  z_{0,hyper} = \frac{w_0}{M^2 V_{S,gauss}} = \frac{z_{0,gauss}}{M^2} $$
 
 ## Equivalent Gaussian beam
 
-To describe propagation of hyper-Gaussian beam in free space, it is enough to replace the Rayleigh distance $z_0$ with $z_0 / M^2$ in formulas for $w(z)$ and $R(z)$:
+To describe the propagation of hyper-Gaussian beam in free space, it is enough to replace the Rayleigh distance $z_0$ with $z_0 / M^2$ in formulas for $w(z)$ and $R(z)$:
 
 $$ w_{hyper}(z) = w_0 \sqrt{ 1 + \bigg( \frac{z}{z_{0,hyper}} \bigg)^2 }
  = w_0 \sqrt{ 1 + \bigg( \frac{z M^2}{z_{0,gauss}} \bigg)^2 } $$ 
@@ -62,11 +62,11 @@ Because equivalent Gaussian beam is a normal Gaussian beam, its complex paramete
 
 The program uses next algorithm for calculation of propagation of hyper-Gaussian beams: 
 
-1. Equivalent size of input beam is calculated. It is $M$ times less than specified in the dialog of input beam parameters. 
+1. Equivalent size of the input beam is calculated. It is $M$ times less than specified in the dialog of input beam parameters. 
 
 2. Propagation of equivalent Gaussian beam is calculated. 
 
-3. Characteristics of resulting hyper-Gaussian beam are calculated. Its radius is $M$ times greater than radius of equivalent beam and radius of wavefront curvature is equal to that. 
+3. Characteristics of the resulting hyper-Gaussian beam are calculated. Its radius is $M$ times greater than the radius of equivalent beam and radius of wavefront curvature is equal to that. 
 
 ![Calculation of hyper-Gaussian beams](./img/beam_pseudogauss.png)
 

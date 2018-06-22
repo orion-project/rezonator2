@@ -72,7 +72,7 @@ protected slots:
 //------------------------------------------------------------------------------
 /**
     The function arguments dialog that can choose one of range elements
-    and set the number of points for plotting inside of selected element.
+    and set the number of points for plotting inside of a selected element.
 */
 class ElementRangeDlg : public VariableDlg
 {

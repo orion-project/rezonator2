@@ -1,8 +1,11 @@
 # Schema file format
-Some thoughts about different schema formats.
+
+There are some thoughts about different schema formats.
 
 ## INI
-Old INI-based schema format is compact and easy to read but it lacks of features like nested objects structure.
+
+Old INI-based schema format is compact and easy to read, but it lacks features like nested objects structure.
+
 ```
 [PREFERENCES]
 Version=1.2
@@ -41,7 +44,9 @@ Param_L=7
 ```
 
 ## XML
+
 So new XML-based format was chosen. It's less compact because of repeated tag names and it requires additional dep QtXml, but it is a part of framework anyway.
+
 ```
 <rezonatorSchema version="2">
     <trip>SP</trip>
@@ -79,7 +84,9 @@ So new XML-based format was chosen. It's less compact because of repeated tag na
 ```
 
 ## JSON
-Can also be easily read as by Qt classes as from another frameworks if needed - Python, JavaScript. It has not repeated tags unlike XML, and supports nested objects and arrays.
+
+Can also be easily read as by Qt classes as from other frameworks if needed - Python, JavaScript. It has not repeated tags unlike XML and supports nested objects and arrays.
+
 ```
 {
   "schema_version": "2",
@@ -138,7 +145,9 @@ Can also be easily read as by Qt classes as from another frameworks if needed - 
 }
 ```
 ## Protopbuf
-[Google Protobuf](https://github.com/google/protobuf) my be the most powerful and descriptive format alongside with its compactness (especially in binary format). Unlike JSON it avoid a lot of doubleqouotes and commas everywehere. But as obvious drawback we need an external dependency to build the app. But it can be linked statically, so it is not required in runtime. Also some changes in app object classes can be required to involve a full power of automatical serialization/deserialization.
+
+[Google Protobuf](https://github.com/google/protobuf) may be the most powerful and descriptive format alongside with its compactness (especially in binary format). Unlike JSON it avoids a lot of double quotes and commas everywhere. But as the obvious drawback, we need an external dependency to build the app. But it can be linked statically, so it is not required at runtime. Also, some changes in app object classes can be required to involve a full power of automatical serialization/deserialization.
+
 ```
 schema_version: "2"
 trip_type: "SP"
@@ -188,4 +197,4 @@ element {
 ```
 
 ## Summary
-Currently XML is fine enought, but seems that JSON can be optimal format for schema storage. There are not too much pros actually so additional experiment should be carried out to clarify if schema loading/saving code could be simplified with this format or not.
+Currently, XML is fine enough but seems that JSON can be optimal format for schema storage. There are not too many pros actually so additional experiment should be carried out to clarify if schema loading/saving code could be simplified with this format or not.
