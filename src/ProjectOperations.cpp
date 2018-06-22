@@ -158,7 +158,12 @@ bool ProjectOperations::saveSchemaFile()
 {
     auto fileName = schema()->fileName();
     if (fileName.isEmpty() || Z::IO::Utils::isOldSchema(fileName))
-        return saveSchemaFileAs();
+    {
+        if (Ori::Dlg::yes(tr("The schema is of old format and can not be saved, "
+                             "would you like to save it as a file in the new format?")))
+            return saveSchemaFileAs();
+        return false;
+    }
     return saveSchemaFile(fileName);
 }
 

@@ -244,9 +244,11 @@ QVector<Z::Variable> MultiElementRangeEd::collectVars()
         if (_elemsSelector->item(i)->checkState() == Qt::Checked)
         {
             int dataIndex = _elemsSelector->item(i)->data(Qt::UserRole).toInt();
+            const ElemItemData *itemData = _itemsData.at(dataIndex);
             Z::Variable var;
-            var.element = _itemsData.at(dataIndex)->element;
-            var.range = _itemsData.at(dataIndex)->range;
+            var.element = itemData->element;
+            var.parameter = itemData->element->paramLength();
+            var.range = itemData->range;
             vars.append(var);
         }
     return vars;

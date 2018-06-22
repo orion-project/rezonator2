@@ -31,6 +31,7 @@ CalcManager::CalcManager(Schema *schema, QWidget *parent) :
     registerWindowConstructor<StabilityMapWindow, StabilityMapFunction>();
     registerWindowConstructor<StabilityMap2DWindow, StabilityMap2DFunction>();
     registerWindowConstructor<CausticWindow, CausticFunction>();
+    registerWindowConstructor<MultiCausticWindow, MultiCausticFunction>();
 }
 
 void CalcManager::funcSummary()

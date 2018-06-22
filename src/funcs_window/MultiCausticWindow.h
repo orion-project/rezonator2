@@ -21,6 +21,10 @@ protected:
     void fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *graph, int resultIndex) override;
     void afterUpdate() override;
 
+    // Implementation of PlotFuncWindowStorable
+    QString readFunction(const QJsonObject& root) override;
+    QString writeFunction(QJsonObject& root) override;
+
 private:
     QList<QCPItemStraightLine*> _elemBoundMarkers;
 

@@ -80,3 +80,31 @@ QCPItemStraightLine* MultiCausticWindow::makeElemBoundMarker() const
     plot()->addItem(line);
     return line;
 }
+
+QString MultiCausticWindow::readFunction(const QJsonObject& root)
+{
+    QVector<Z::Variable> args;
+    QJsonArray argsJson = root["args"].toArray();
+    for (auto it = argsJson.begin(); it != argsJson.end(); it++)
+    {
+        Z::Variable arg;
+        auto res = Z::IO::Json::readVariable((*it).toObject(), &arg, schema());
+        if (!res.isEmpty())
+            return res;
+        args.append(arg);
+    }
+    function()->setArgs(args);
+    return QString();
+}
+
+QString MultiCausticWindow::writeFunction(QJsonObject& root)
+{
+    QJsonArray argsJson;
+    for (const Z::Variable& arg : function()->args())
+    {
+        qDebug() << "SAVNIG" << arg.str();
+        argsJson.append(Z::IO::Json::writeVariable(&arg, schema()));
+    }
+    root["args"] = argsJson;
+    return QString();
+}

@@ -91,7 +91,7 @@ QString readVariableRange(const QJsonObject& json, VariableRange& range, Dim dim
     return QString();
 }
 
-QJsonObject writeVariable(Variable *var, Schema *schema)
+QJsonObject writeVariable(const Variable *var, Schema *schema)
 {
     return QJsonObject({
         { "element_index", schema->indexOf(var->element) },
