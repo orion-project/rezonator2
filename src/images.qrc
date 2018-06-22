@@ -78,6 +78,9 @@
         <file alias="windows_close">../img/toolbar/windows_close.svg</file>
     </qresource>
     <qresource prefix="/toolbar16">
+        <file alias="check_all">../img/toolbar16/check_all.png</file>
+        <file alias="check_invert">../img/toolbar16/check_invert.png</file>
+        <file alias="check_none">../img/toolbar16/check_none.png</file>
         <file alias="langs">../img/toolbar16/flags.png</file>
         <file alias="points">../img/toolbar16/graph_point.png</file>
         <file alias="table">../img/toolbar16/table.png</file>

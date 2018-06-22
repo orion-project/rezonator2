@@ -136,16 +136,33 @@ PointsRangeEd::PointsRangeEd() : QGridLayout()
     sePoints = points.editor;
     rbPoints = points.flag;
 
-    addWidget(edStep, 0, 1); // before radio-buttons meaning tab-order
-    addLayout(points.layout, 1, 1);
-    addWidget(rbStep, 0, 0);
-    addWidget(rbPoints, 1, 0);
+    const int row0 = 0;
+    const int row1 = 1;
+    const int row2 = 2;
+    const int col0 = 0;
+    const int col1 = 1;
+
+    auto stopValueLabel = new QLabel(tr("Plottable length:"));
+    Z::Gui::setFontStyle(stopValueLabel, false, true);
+
+    _stopValueLabel = new QLabel;
+    Z::Gui::setValueFont(_stopValueLabel);
+    Z::Gui::setFontStyle(_stopValueLabel, false, true);
+
+    addWidget(stopValueLabel, row0, col0);
+    addWidget(_stopValueLabel, row0, col1);
+    addWidget(edStep, row1, col1); // before radio-buttons meaning tab-order
+    addLayout(points.layout, row2, col1);
+    addWidget(rbStep, row1, col0);
+    addWidget(rbPoints, row2, col0);
 }
 
 void PointsRangeEd::setRange(const Z::VariableRange& var)
 {
     _start = var.start;
     _stop = var.stop;
+
+    _stopValueLabel->setText(_stop.displayStr());
 
     edStep->setValue(var.step);
     sePoints->setValue(var.points);

@@ -20,6 +20,7 @@ class PointsRangeEd;
 }
 
 QT_BEGIN_NAMESPACE
+class QCheckBox;
 class QListWidget;
 class QListWidgetItem;
 QT_END_NAMESPACE
@@ -92,13 +93,21 @@ public:
     void populateVars(const QVector<Z::Variable> &vars);
     QVector<Z::Variable> collectVars();
 
+private slots:
+    void selectAllElements();
+    void deselectAllElements();
+    void invertElementsSelection();
+
 private:
     QListWidget *_elemsSelector;
     VariableRangeEditor::PointsRangeEd* _rangeEditor;
     QVector<struct ElemItemData*> _itemsData;
+    QCheckBox *_sameSettings;
 
     void currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
-    void itemDoubleClicked(QListWidgetItem *item);
+    void invertCheckState(QListWidgetItem *item);
+    void showRangeInEditor(QListWidgetItem *item);
+    void saveEditedRange(QListWidgetItem *item);
 };
 
 } // namespace VariableEditor

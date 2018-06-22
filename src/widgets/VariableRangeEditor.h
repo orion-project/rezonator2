@@ -68,6 +68,7 @@ private:
     QSpinBox *sePoints;
     QRadioButton *rbStep, *rbPoints;
     ValueEditor *edStep;
+    QLabel *_stopValueLabel;
 };
 
 } // namespace VariableRangeEditor

@@ -403,6 +403,7 @@ void PlotFuncWindow::update()
 
     updateAxesTitles();
     updateNotables();
+    afterUpdate();
 }
 
 void PlotFuncWindow::calculate(bool replot)

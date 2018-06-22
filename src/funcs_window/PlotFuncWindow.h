@@ -116,6 +116,8 @@ protected:
 
     virtual bool configureInternal() { return true; }
 
+    virtual void afterUpdate() {}
+
     bool _needRecalc = false, _frozen = false;
     QVector<Graph*> _graphsT, _graphsS;
     PlotParamsPanel* _leftPanel;

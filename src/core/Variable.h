@@ -46,6 +46,9 @@ struct VariableRange
     int points = 100;       ///< Amount of points.
     bool useStep = false;   ///< Use step value instead of points number.
 
+    /// Assigns only points number related values, but does not change start and stop.
+    void assignPoints(const VariableRange& other);
+
     PlottingRange plottingRange() const;
     QString str() const;
 };

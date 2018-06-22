@@ -55,6 +55,13 @@ PlottingRange VariableRange::plottingRange() const
     return res;
 }
 
+void VariableRange::assignPoints(const VariableRange& other)
+{
+    step = other.step;
+    points = other.points;
+    useStep = other.useStep;
+}
+
 QString VariableRange::str() const
 {
     return QString("start: %1; stop: %2; step: %3; points: %4; useStep: %5")
