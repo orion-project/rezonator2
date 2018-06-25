@@ -257,6 +257,8 @@ inline bool isRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
 inline ElementRange* asRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
 
 /// Gives a filter of parameters for regular users' usage.
+/// These are parameters that can be edited in Element properties dialog,
+/// or they can be selected as functions' arguments.
 ParameterFilter* defaultParamFilter();
 
 } // namespace Utils

@@ -258,6 +258,11 @@ private:
     void parameterChanged(Z::ParameterBase *param) override;
 
     inline bool isValid(int index) const { return index >= 0 && index < _items.size(); }
+
+    /// Remove links driving this elements' params
+    void removeParamLinks(Element* elem);
+
+    void relinkInterfaces();
 };
 
 #endif // SCHEMA_H

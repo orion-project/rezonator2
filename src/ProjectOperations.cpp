@@ -157,13 +157,12 @@ void ProjectOperations::writeProtocol(const Z::Report& report, const QString& me
 bool ProjectOperations::saveSchemaFile()
 {
     auto fileName = schema()->fileName();
-    if (fileName.isEmpty() || Z::IO::Utils::isOldSchema(fileName))
-    {
-        if (Ori::Dlg::yes(tr("The schema is of old format and can not be saved, "
-                             "would you like to save it as a file in the new format?")))
-            return saveSchemaFileAs();
-        return false;
-    }
+    if (fileName.isEmpty())
+        return saveSchemaFileAs();
+    if (Z::IO::Utils::isOldSchema(fileName))
+        return Ori::Dlg::yes(tr("The schema is of old format and can not be saved, "
+                                "would you like to save it as a file in the new format?"))
+            && saveSchemaFileAs();
     return saveSchemaFile(fileName);
 }
 

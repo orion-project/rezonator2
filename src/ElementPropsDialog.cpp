@@ -20,16 +20,29 @@
 //                             ElementPropsDialog
 //------------------------------------------------------------------------------
 
+namespace {
 int __savedTabIndex = 0;
+}
 
 bool ElementPropsDialog::editElement(Element *elem, QWidget *parent)
 {
     ElementPropsDialog *dlg = nullptr;
     switch (elem->paramsEditorKind())
     {
-    case Z::ParamsEditor::None: dlg = new ElementPropsDialog_None(elem, parent); break;
-    case Z::ParamsEditor::List: dlg = new ElementPropsDialog_List(elem, parent); break;
-    case Z::ParamsEditor::ABCD: dlg = new ElementPropsDialog_Abcd(elem, parent); break;
+    case Z::ParamsEditor::None:
+        dlg = new ElementPropsDialog_None(elem, parent);
+        break;
+
+    case Z::ParamsEditor::List:
+        if (Z::Utils::defaultParamFilter()->count(elem->params()) == 0)
+            dlg = new ElementPropsDialog_None(elem, parent);
+        else
+            dlg = new ElementPropsDialog_List(elem, parent);
+        break;
+
+    case Z::ParamsEditor::ABCD:
+        dlg = new ElementPropsDialog_Abcd(elem, parent);
+        break;
     }
     return dlg && dlg->exec() == QDialog::Accepted;
 }
@@ -132,6 +145,7 @@ void ElementPropsDialog::collect()
 ElementPropsDialog_None::ElementPropsDialog_None(Element *elem, QWidget *parent) : ElementPropsDialog(elem, parent)
 {
     auto label = new QLabel(tr("Element has no editable parameters"));
+    label->setMargin(6);
     label->setAlignment(Qt::AlignCenter);
 
     setPageParams(label);

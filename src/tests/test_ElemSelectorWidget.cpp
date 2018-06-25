@@ -106,11 +106,16 @@ TEST_GROUP("ElemSelectorWidget",
 
 namespace ParamSelectorWidgetTests {
 
-template<bool Result> class TestParamFilter : public Z::ParameterFilterCondition
+template<bool Result>
+class TestParamFilter : public Z::ParameterFilterCondition
 {
 public:
     QVector<Z::Parameter*> checkedParams;
-    bool check(Z::Parameter *p) override { checkedParams.append(p); return Result; }
+    bool check(Z::Parameter *p) const override
+    {
+        const_cast<TestParamFilter*>(this)->checkedParams.append(p);
+        return Result;
+    }
 };
 
 namespace populate {

@@ -177,6 +177,8 @@ void Schema::insertElement(Element* elem, int index, bool event)
 
     elem->setOwner(this);
 
+    relinkInterfaces();
+
     if (event)
         _events.raise(SchemaEvents::ElemCreated, elem);
 }
@@ -198,19 +200,8 @@ void Schema::deleteElement(int index, bool event, bool free)
     _items.remove(index);
     elem->setOwner(nullptr);
 
-    // Remove link driving this elements' params
-    for (auto param: elem->params())
-    {
-        // In theory, can be many links directing to this param.
-        // But as it's meaningless, we can't make more than one by UI-restrictions.
-        // Links are made in ElementPropsDialog -> ParamsEditor -> ParamEditor.
-        auto link = _paramLinks.byTarget(param);
-        if (link)
-        {
-            _paramLinks.removeOne(link);
-            delete link;
-        }
-    }
+    relinkInterfaces();
+    removeParamLinks(elem);
 
     if (event)
         _events.raise(SchemaEvents::ElemDeleted, elem);
@@ -245,4 +236,60 @@ Z::PumpParams* Schema::activePump()
         if (pump->isActive())
             return pump;
     return nullptr;
+}
+
+void Schema::removeParamLinks(Element* elem)
+{
+    for (auto param: elem->params())
+    {
+        while (auto link = _paramLinks.byTarget(param))
+        {
+            _paramLinks.removeOne(link);
+            delete link;
+        }
+        while (auto link = _paramLinks.bySource(param))
+        {
+            _paramLinks.removeOne(link);
+            delete link;
+        }
+    }
+}
+
+void Schema::relinkInterfaces()
+{
+    int elemCount = _items.size();
+    for (int i = 0; i < elemCount; i++)
+    {
+        ElementInterface *iface = dynamic_cast<ElementInterface*>(_items.at(i));
+        if (!iface) continue;
+
+        ElementLocker locker(iface);
+
+        removeParamLinks(iface);
+
+        ElementRange *left = nullptr;
+        ElementRange *right = nullptr;
+
+        if (i == 0)
+        {
+            if (tripType() == TripType::RR)
+                left = dynamic_cast<ElementRange*>(_items.at(elemCount-1));
+        }
+        else left = dynamic_cast<ElementRange*>(_items.at(i-1));
+        if (left)
+            _paramLinks.append(new Z::ParamLink(left->paramIor(), iface->paramIor1()));
+        else
+            iface->paramIor1()->setValue(1);
+
+        if (i == elemCount - 1)
+        {
+            if (tripType() == TripType::RR)
+                right = dynamic_cast<ElementRange*>(_items.at(0));
+        }
+        else right = dynamic_cast<ElementRange*>(_items.at(i+1));
+        if (right)
+            _paramLinks.append(new Z::ParamLink(right->paramIor(), iface->paramIor2()));
+        else
+            iface->paramIor2()->setValue(1);
+    }
 }

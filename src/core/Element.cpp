@@ -151,6 +151,11 @@ ElementInterface::ElementInterface()
                             QStringLiteral("n2"), QStringLiteral("n2"),
                             qApp->translate("Param", "Index of refraction (right medium)"));
 
+    // These parameters can't be directly assigned,
+    // their values are taked from neighboub range elements
+    _ior1->setVisible(false);
+    _ior2->setVisible(false);
+
     addParam(_ior1, 1, Z::Units::none());
     addParam(_ior2, 1, Z::Units::none());
 }

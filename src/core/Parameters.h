@@ -293,13 +293,13 @@ private:
 //------------------------------------------------------------------------------
 /**
     Generic container for list of parameter links.
-    It's just vector with several additional methods.
+    It's just a list with several additional methods.
 */
 template <class TLink>
-class ParameterLinksList : public QVector<TLink*>
+class ParameterLinksList : public QList<TLink*>
 {
 public:
-    ParameterLinksList(): QVector<TLink*>() {}
+    ParameterLinksList(): QList<TLink*>() {}
 
     TLink* bySource(void *source) const;
     TLink* byTarget(void *target) const;
@@ -347,16 +347,17 @@ typedef ValueVerifierBase<Z::Value> ValueVerifier;
 class ParameterFilterCondition {
 public:
     virtual ~ParameterFilterCondition() {}
-    virtual bool check(Parameter*) = 0;
+    virtual bool check(Parameter*) const = 0;
 };
 
-typedef Ori::Filter<Parameter*, ParameterFilterCondition> ParameterFilter;
 
 class ParameterFilterVisible : public ParameterFilterCondition
 {
 public:
-    bool check(Parameter* p) override { return p->visible(); }
+    bool check(Parameter* p) const override { return p->visible(); }
 };
+
+typedef Ori::Filter<Parameter*, ParameterFilterCondition> ParameterFilter;
 
 } // namespace Z
 

@@ -55,6 +55,10 @@ void showElementsCatalog()
 //                            ElementsCatalogDialog
 //-----------------------------------------------------------------------------
 
+namespace {
+int __savedTabIndex = 0;
+}
+
 ElementsCatalogDialog::ElementsCatalogDialog(CatalogMode mode, QWidget *parent)
     : RezonatorDialog(mode == CatalogMode_View ? OmitButtonsPanel : DontDeleteOnClose, parent)
 {
@@ -86,8 +90,14 @@ ElementsCatalogDialog::ElementsCatalogDialog(CatalogMode mode, QWidget *parent)
     layoutPage->setMargin(mainLayout()->spacing()/2+1);
 
     // initial view
-    categorySelected(0);
+    tabs->setCurrentIndex(__savedTabIndex);
+    categorySelected(__savedTabIndex);
     elements->setFocus();
+}
+
+ElementsCatalogDialog::~ElementsCatalogDialog()
+{
+    __savedTabIndex = tabs->currentIndex();
 }
 
 void ElementsCatalogDialog::categorySelected(int index)

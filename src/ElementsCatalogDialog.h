@@ -27,6 +27,7 @@ public:
     };
 
     ElementsCatalogDialog(CatalogMode mode, QWidget* parent = 0);
+    ~ElementsCatalogDialog();
 
     QString selected() const;
 
