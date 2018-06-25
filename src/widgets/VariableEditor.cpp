@@ -108,13 +108,10 @@ void ElementRangeEd::guessRange()
     auto elemRange = Z::Utils::asRange(elem);
     if (!elemRange) return;
 
-    auto param = elemRange->paramLength();
-    auto unit = param->value().unit();
-
     // TODO restore or guess step
     Z::VariableRange range;
-    range.start = Z::Value(0, unit);
-    range.stop = Z::Value(unit->fromSi(elemRange->axisLengthSI()), unit);
+    range.stop = Z::Utils::getRangeStop(elemRange);
+    range.start = range.stop * 0.0;
     range.step = range.stop / 100.0;
     _rangeEditor->setRange(range);
 }
@@ -187,8 +184,7 @@ MultiElementRangeEd::MultiElementRangeEd(Schema *schema) : QVBoxLayout()
         {
             auto data = new ElemItemData;
             data->element = Z::Utils::asRange(elem);
-            auto unit = data->element->paramLength()->value().unit();
-            data->range.stop = Z::Value(unit->fromSi(data->element->axisLengthSI()), unit);
+            data->range.stop = Z::Utils::getRangeStop(data->element);
             data->range.start = data->range.stop * 0.0; // this preserves units
             data->range.step = data->range.stop / 100.0; // this preserves units
             data->range.useStep = false;

@@ -112,7 +112,7 @@ protected:
     QMenu *menuPlot, *menuLimits, *menuFormat;
 
     /// Calculates function and plots its results.
-    virtual void calculate(bool replot = true);
+    virtual void calculate();
 
     virtual bool configureInternal() { return true; }
 

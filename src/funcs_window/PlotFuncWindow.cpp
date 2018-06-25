@@ -383,14 +383,12 @@ void PlotFuncWindow::update()
         return;
     }
 
-    bool replot = not _autolimitsRequest;
-
-    calculate(replot);
+    calculate();
 
     if (_autolimitsRequest)
     {
         _autolimitsRequest = false;
-        _plot->autolimits(true);
+        _plot->autolimits(false);
     }
 
     if (_centerCursorRequested)
@@ -404,9 +402,11 @@ void PlotFuncWindow::update()
     updateAxesTitles();
     updateNotables();
     afterUpdate();
+
+    _plot->replot();
 }
 
-void PlotFuncWindow::calculate(bool replot)
+void PlotFuncWindow::calculate()
 {
     _function->calculate();
     if (!_function->ok())
@@ -425,8 +425,6 @@ void PlotFuncWindow::calculate(bool replot)
         updateGraphs(Z::Plane_T);
         updateGraphs(Z::Plane_S);
     }
-    if (replot)
-        _plot->replot();
 }
 
 void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)

@@ -81,6 +81,22 @@ QCPItemStraightLine* MultiCausticWindow::makeElemBoundMarker() const
     return line;
 }
 
+void MultiCausticWindow::elementChanged(Schema*, Element* elem)
+{
+    auto args = function()->args();
+    for (Z::Variable& arg : args)
+        if (arg.element == elem)
+        {
+            auto newStop = Z::Utils::getRangeStop(Z::Utils::asRange(elem));
+            if (newStop != arg.range.stop)
+            {
+                arg.range.stop = newStop;
+                function()->setArgs(args);
+                return;
+            }
+        }
+}
+
 QString MultiCausticWindow::readFunction(const QJsonObject& root)
 {
     QVector<Z::Variable> args;
@@ -101,10 +117,7 @@ QString MultiCausticWindow::writeFunction(QJsonObject& root)
 {
     QJsonArray argsJson;
     for (const Z::Variable& arg : function()->args())
-    {
-        qDebug() << "SAVNIG" << arg.str();
         argsJson.append(Z::IO::Json::writeVariable(&arg, schema()));
-    }
     root["args"] = argsJson;
     return QString();
 }

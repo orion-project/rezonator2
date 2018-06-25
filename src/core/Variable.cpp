@@ -78,4 +78,17 @@ QString Variable::str() const
             .arg(range.str());
 }
 
+//------------------------------------------------------------------------------
+
+namespace Utils {
+
+Z::Value getRangeStop(ElementRange *element)
+{
+    auto unit = element->paramLength()->value().unit();
+    return Z::Value(unit->fromSi(element->axisLengthSI()), unit);
+}
+
+} // namespace Utils
+
+
 } // namespace Z

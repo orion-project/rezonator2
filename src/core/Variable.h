@@ -6,6 +6,7 @@
 #include "Parameters.h"
 
 class Element;
+class ElementRange;
 class Schema;
 
 namespace Z {
@@ -64,6 +65,14 @@ struct Variable
 
     QString str() const;
 };
+
+
+namespace Utils {
+
+/// The function returns the stop value of the range according to axis length of a range element.
+Z::Value getRangeStop(ElementRange *element);
+
+} // namespace Utils
 
 } // namespace Z
 

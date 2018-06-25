@@ -15,6 +15,9 @@ public:
 
     MultiCausticFunction* function() const { return (MultiCausticFunction*)_function; }
 
+    // inherits from SchemaListener
+    void elementChanged(Schema*, Element*) override;
+
 protected:
     // Implementation of PlotFuncWindow
     bool configureInternal() override;
