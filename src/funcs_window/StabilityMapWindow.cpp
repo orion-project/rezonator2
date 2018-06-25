@@ -1,5 +1,6 @@
 #include "StabilityMapWindow.h"
 
+#include "FuncOptionsPanel.h"
 #include "../CustomPrefs.h"
 #include "../io/z_io_utils.h"
 #include "../io/z_io_json.h"

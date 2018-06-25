@@ -11,8 +11,6 @@ class CausticWindow : public PlotFuncWindowStorable
 public:
     explicit CausticWindow(Schema*);
 
-    void schemaParamsChanged(Schema*) override;
-
     CausticFunction* function() const { return (CausticFunction*)_function; }
 
 protected:

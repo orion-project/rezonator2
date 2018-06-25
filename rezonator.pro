@@ -151,7 +151,9 @@ HEADERS += \
     src/GaussCalculatorWindow.h \
     src/funcs_window/MultiCausticWindow.h \
     src/funcs/MultiCausticFunction.h \
-    src/widgets/VariableRangeEditor.h
+    src/widgets/VariableRangeEditor.h \
+    src/funcs_window/CausticOptionsPanel.h \
+    src/funcs_window/FuncOptionsPanel.h
 	
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -255,4 +257,5 @@ SOURCES += \
     src/GaussCalculatorWindow.cpp \
     src/funcs_window/MultiCausticWindow.cpp \
     src/funcs/MultiCausticFunction.cpp \
-    src/widgets/VariableRangeEditor.cpp
+    src/widgets/VariableRangeEditor.cpp \
+    src/funcs_window/FuncOptionsPanel.cpp

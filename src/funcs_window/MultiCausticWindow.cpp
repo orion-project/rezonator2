@@ -1,5 +1,6 @@
 #include "MultiCausticWindow.h"
 
+#include "CausticOptionsPanel.h"
 #include "../VariableDialog.h"
 #include "../funcs/CausticFunction.h"
 #include "../io/z_io_utils.h"
@@ -20,6 +21,11 @@ bool MultiCausticWindow::configureInternal()
     if (ok)
         function()->setArgs(args);
     return ok;
+}
+
+QWidget* MultiCausticWindow::makeOptionsPanel()
+{
+    return new CausticOptionsPanel<MultiCausticWindow>(this);
 }
 
 void MultiCausticWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *graph, int resultIndex)

@@ -1,5 +1,4 @@
 #include "MultiCausticFunction.h"
-#include "CausticFunction.h"
 
 MultiCausticFunction::~MultiCausticFunction()
 {
@@ -12,6 +11,17 @@ QVector<Z::Variable> MultiCausticFunction::args() const
     for (auto func : _funcs)
         args.append(*(func->arg()));
     return args;
+}
+
+CausticFunction::Mode MultiCausticFunction::mode() const
+{
+    return _funcs.first()->mode();
+}
+
+void MultiCausticFunction::setMode(CausticFunction::Mode mode)
+{
+    for (CausticFunction *func : _funcs)
+        func->setMode(mode);
 }
 
 // TODO ensure if all subfunctions have the same _argumentUnit

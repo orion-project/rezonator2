@@ -6,7 +6,7 @@
 #include "PlotParamsPanel.h"
 #include "GraphDataGrid.h"
 
-#define DEFAULT_PANEL_W 200
+#define DEFAULT_PANEL_W 150
 
 PlotParamsPanel::PlotParamsPanel(PlotParamsPanelCtorOptions options, QWidget *parent) :
     QStackedWidget(parent), _splitter(options.splitter)

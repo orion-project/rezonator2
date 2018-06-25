@@ -20,6 +20,7 @@ public:
 
 protected:
     // Implementation of PlotFuncWindow
+    QWidget* makeOptionsPanel() override;
     bool configureInternal() override;
     void fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *graph, int resultIndex) override;
     void afterUpdate() override;
