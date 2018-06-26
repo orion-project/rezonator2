@@ -8,156 +8,180 @@ namespace RoundTripCalculatorTests {
 DECLARE_ELEMENT(TestElem, Element) DECLARE_ELEMENT_END
 DECLARE_ELEMENT(TestElemRange, ElementRange) DECLARE_ELEMENT_END
 
-#define EL_COUNT 4
-#define EL_BEG 0
-#define EL_MID 2
-#define EL_END 3
+static const int EL_COUNT = 4;
+static const int EL_BEG = 0;
+static const int EL_MID = 2;
+static const int EL_END = 3;
 
-#define SW TripType::SW
-#define SP TripType::SP
-#define RR TripType::RR
+static const TripType SW = TripType::SW;
+static const TripType SP = TripType::SP;
+static const TripType RR = TripType::RR;
 
-void populateSchema(Schema* schema, int ref, Element* ref_elem)
+#define BOOL_PARAM(param_name) \
+    struct param_name { \
+        param_name(bool v) : value(v) {} \
+        operator bool() const { return value; } \
+        bool value; \
+    };
+
+struct TestData
 {
-    for (int i = 0; i < EL_COUNT; i++)
+    QSharedPointer<Schema> schema;
+    QSharedPointer<RoundTripCalculator> calc;
+
+    TestData(TripType tripType, int refIndex, Element* refElem)
     {
-        Element* el = (i == ref)? ref_elem: new TestElem;
-        el->setLabel(QString::number(i));
-        schema->insertElement(el);
+        schema.reset(new Schema);
+        schema->setTripType(tripType);
+
+        for (int i = 0; i < EL_COUNT; i++)
+        {
+            Element* el = (i == refIndex)? refElem: new TestElem;
+            el->setLabel(QString::number(i));
+            schema->insertElement(el);
+        }
+
+        calc.reset(new RoundTripCalculator(schema.data(), refElem));
     }
-}
-
-#define PREPARE_ROUND_TRIP(make_ref_elem)\
-    auto ref_elem = make_ref_elem;\
-    Schema schema;\
-    schema.setTripType(tripType);\
-    populateSchema(&schema, ref, ref_elem);\
-    RoundTripCalculator calc(&schema, ref_elem);
+};
 
 //------------------------------------------------------------------------------
+//
+// Test which elements are contained in the round-trip.
 
-#define ASSERT_ROUND_TRIP_SIZE\
-    if (tripType == SW)\
-        ASSERT_EQ_INT(calc.roundTrip().size(), schema.count()*2-2)\
-    else if (tripType == SP)\
-        ASSERT_EQ_INT(calc.roundTrip().size(), ref+1)\
-    else if (tripType == RR)\
-        ASSERT_EQ_INT(calc.roundTrip().size(), schema.count())
-
-TEST_CASE_METHOD(rt, TripType tripType, int ref, QString expected)
+TEST_CASE_METHOD(rt_elems, TripType tripType, int refIndex, QString expectedRoundTripDescr)
 {
-    PREPARE_ROUND_TRIP(new TestElem)
+    auto refElem = new TestElem;
+    TestData d(tripType, refIndex, refElem);
 
-    calc.calcRoundTrip(true);
-    TEST_LOG(calc.roundTripStr())
-    ASSERT_ROUND_TRIP_SIZE
-    ASSERT_EQ_STR(calc.roundTripStr().trimmed(), expected)
-    ASSERT_EQ_PTR(calc.roundTrip().first(), ref_elem)
+    int expectedRoundTripSize;
+    switch (tripType)
+    {
+    case SW: expectedRoundTripSize = d.schema->count()*2 - 2; break;
+    case SP: expectedRoundTripSize = refIndex + 1; break;
+    case RR: expectedRoundTripSize = d.schema->count();
+    }
 
-    calc.calcRoundTrip(false);
-    TEST_LOG(calc.roundTripStr())
-    ASSERT_ROUND_TRIP_SIZE
-    ASSERT_EQ_STR(calc.roundTripStr().trimmed(), expected)
-    ASSERT_EQ_PTR(calc.roundTrip().first(), ref_elem)
+    d.calc->calcRoundTrip(true);
+    TEST_LOG(d.calc->roundTripStr())
+    ASSERT_EQ_INT(d.calc->roundTrip().size(), expectedRoundTripSize)
+    ASSERT_EQ_STR(d.calc->roundTripStr().trimmed(), expectedRoundTripDescr)
+    ASSERT_EQ_PTR(d.calc->roundTrip().first(), refElem)
+
+    d.calc->calcRoundTrip(false);
+    TEST_LOG(d.calc->roundTripStr())
+    ASSERT_EQ_INT(d.calc->roundTrip().size(), expectedRoundTripSize)
+    ASSERT_EQ_STR(d.calc->roundTripStr().trimmed(), expectedRoundTripDescr)
+    ASSERT_EQ_PTR(d.calc->roundTrip().first(), refElem)
 }
 
-TEST_CASE(rt_sw,     rt, SW, EL_MID, "2 1 0 1 2 3")
-TEST_CASE(rt_sw_beg, rt, SW, EL_BEG, "0 1 2 3 2 1")
-TEST_CASE(rt_sw_end, rt, SW, EL_END, "3 2 1 0 1 2")
+TEST_CASE(rt_sw_elems,     rt_elems, SW, EL_MID, "2 1 0 1 2 3")
+TEST_CASE(rt_sw_elems_beg, rt_elems, SW, EL_BEG, "0 1 2 3 2 1")
+TEST_CASE(rt_sw_elems_end, rt_elems, SW, EL_END, "3 2 1 0 1 2")
 
-TEST_CASE(rt_sp,     rt, SP, EL_MID, "2 1 0")
-TEST_CASE(rt_sp_beg, rt, SP, EL_BEG, "0")
-TEST_CASE(rt_sp_end, rt, SP, EL_END, "3 2 1 0")
+TEST_CASE(rt_sp_elems,     rt_elems, SP, EL_MID, "2 1 0")
+TEST_CASE(rt_sp_elems_beg, rt_elems, SP, EL_BEG, "0")
+TEST_CASE(rt_sp_elems_end, rt_elems, SP, EL_END, "3 2 1 0")
 
-TEST_CASE(rt_rr,     rt, RR, EL_MID, "2 1 0 3")
-TEST_CASE(rt_rr_beg, rt, RR, EL_BEG, "0 3 2 1")
-TEST_CASE(rt_rr_end, rt, RR, EL_END, "3 2 1 0")
+TEST_CASE(rt_rr_elems,     rt_elems, RR, EL_MID, "2 1 0 3")
+TEST_CASE(rt_rr_elems_beg, rt_elems, RR, EL_BEG, "0 3 2 1")
+TEST_CASE(rt_rr_elems_end, rt_elems, RR, EL_END, "3 2 1 0")
 
 //------------------------------------------------------------------------------
+//
+// Test which end matrices are contained in the round-trip
+// when splitting of the reference range element is not required
+// or the reference element is not a range so splitting is impossible.
 
-#define ASSERT_ROUND_TRIP_MATRS\
-    ASSERT_EQ_INT(calc.matrsT().size(), calc.roundTrip().size())\
-    ASSERT_EQ_INT(calc.matrsS().size(), calc.roundTrip().size())\
-    ASSERT_EQ_PTR(calc.matrsT().first(), ref_elem->pMt())\
-    ASSERT_EQ_PTR(calc.matrsS().first(), ref_elem->pMs())\
-    ASSERT_EQ_PTR(calc.matrsT().last(), calc.roundTrip().last()->pMt())\
-    ASSERT_EQ_PTR(calc.matrsS().last(), calc.roundTrip().last()->pMs())
-
-TEST_CASE_METHOD(rt_matrs_nosplit, TripType tripType, int ref, bool range, bool split)
+BOOL_PARAM(UseRange)
+BOOL_PARAM(DoSplit)
+TEST_CASE_METHOD(rt_matrs_nosplit, TripType tripType, int refIndex, UseRange&& useRangeAsRef, DoSplit&& doSplitRefRange)
 {
-    PREPARE_ROUND_TRIP((range? ((Element*)new TestElemRange): ((Element*)new TestElem)))
+    auto refElem = useRangeAsRef ? (Element*)(new TestElemRange) : (Element*)(new TestElem);
+    TestData d(tripType, refIndex, refElem);
 
-    calc.calcRoundTrip(split);
-    ASSERT_ROUND_TRIP_MATRS
+    d.calc->calcRoundTrip(doSplitRefRange);
+    ASSERT_EQ_INT(d.calc->matrsT().size(), d.calc->roundTrip().size())
+    ASSERT_EQ_INT(d.calc->matrsS().size(), d.calc->roundTrip().size())
+    ASSERT_EQ_PTR(d.calc->matrsT().first(), refElem->pMt())
+    ASSERT_EQ_PTR(d.calc->matrsS().first(), refElem->pMs())
+    ASSERT_EQ_PTR(d.calc->matrsT().last(), d.calc->roundTrip().last()->pMt())
+    ASSERT_EQ_PTR(d.calc->matrsS().last(), d.calc->roundTrip().last()->pMs())
 }
 
-TEST_CASE(rt_sw_matrs_norange_nopslit,     rt_matrs_nosplit, SW, EL_MID, false, false)
-TEST_CASE(rt_sw_matrs_norange_nopslit_beg, rt_matrs_nosplit, SW, EL_BEG, false, false)
-TEST_CASE(rt_sw_matrs_norange_nopslit_end, rt_matrs_nosplit, SW, EL_END, false, false)
-TEST_CASE(rt_sw_matrs_norange_split,       rt_matrs_nosplit, SW, EL_MID, false, true)
-TEST_CASE(rt_sw_matrs_norange_split_beg,   rt_matrs_nosplit, SW, EL_BEG, false, true)
-TEST_CASE(rt_sw_matrs_norange_split_end,   rt_matrs_nosplit, SW, EL_END, false, true)
-TEST_CASE(rt_sw_matrs_range_nosplit,       rt_matrs_nosplit, SW, EL_MID, true, false)
-TEST_CASE(rt_sw_matrs_range_nosplit_beg,   rt_matrs_nosplit, SW, EL_BEG, true, false)
-TEST_CASE(rt_sw_matrs_range_nosplit_end,   rt_matrs_nosplit, SW, EL_END, true, false)
+TEST_CASE(rt_sw_matrs_norange_nopslit,     rt_matrs_nosplit, SW, EL_MID, UseRange(false), DoSplit(false))
+TEST_CASE(rt_sw_matrs_norange_nopslit_beg, rt_matrs_nosplit, SW, EL_BEG, UseRange(false), DoSplit(false))
+TEST_CASE(rt_sw_matrs_norange_nopslit_end, rt_matrs_nosplit, SW, EL_END, UseRange(false), DoSplit(false))
+TEST_CASE(rt_sw_matrs_norange_split,       rt_matrs_nosplit, SW, EL_MID, UseRange(false), DoSplit(true))
+TEST_CASE(rt_sw_matrs_norange_split_beg,   rt_matrs_nosplit, SW, EL_BEG, UseRange(false), DoSplit(true))
+TEST_CASE(rt_sw_matrs_norange_split_end,   rt_matrs_nosplit, SW, EL_END, UseRange(false), DoSplit(true))
+TEST_CASE(rt_sw_matrs_range_nosplit,       rt_matrs_nosplit, SW, EL_MID, UseRange(true), DoSplit(false))
+TEST_CASE(rt_sw_matrs_range_nosplit_beg,   rt_matrs_nosplit, SW, EL_BEG, UseRange(true), DoSplit(false))
+TEST_CASE(rt_sw_matrs_range_nosplit_end,   rt_matrs_nosplit, SW, EL_END, UseRange(true), DoSplit(false))
 
-TEST_CASE(rt_sp_matrs_norange_nopslit,     rt_matrs_nosplit, SP, EL_MID, false, false)
-TEST_CASE(rt_sp_matrs_norange_nopslit_beg, rt_matrs_nosplit, SP, EL_BEG, false, false)
-TEST_CASE(rt_sp_matrs_norange_nopslit_end, rt_matrs_nosplit, SP, EL_END, false, false)
-TEST_CASE(rt_sp_matrs_norange_split,       rt_matrs_nosplit, SP, EL_MID, false, true)
-TEST_CASE(rt_sp_matrs_norange_split_beg,   rt_matrs_nosplit, SP, EL_BEG, false, true)
-TEST_CASE(rt_sp_matrs_norange_split_end,   rt_matrs_nosplit, SP, EL_END, false, true)
-TEST_CASE(rt_sp_matrs_range_nosplit,       rt_matrs_nosplit, SP, EL_MID, true, false)
-TEST_CASE(rt_sp_matrs_range_nosplit_beg,   rt_matrs_nosplit, SP, EL_BEG, true, false)
-TEST_CASE(rt_sp_matrs_range_nosplit_end,   rt_matrs_nosplit, SP, EL_END, true, false)
+TEST_CASE(rt_sp_matrs_norange_nopslit,     rt_matrs_nosplit, SP, EL_MID, UseRange(false), DoSplit(false))
+TEST_CASE(rt_sp_matrs_norange_nopslit_beg, rt_matrs_nosplit, SP, EL_BEG, UseRange(false), DoSplit(false))
+TEST_CASE(rt_sp_matrs_norange_nopslit_end, rt_matrs_nosplit, SP, EL_END, UseRange(false), DoSplit(false))
+TEST_CASE(rt_sp_matrs_norange_split,       rt_matrs_nosplit, SP, EL_MID, UseRange(false), DoSplit(true))
+TEST_CASE(rt_sp_matrs_norange_split_beg,   rt_matrs_nosplit, SP, EL_BEG, UseRange(false), DoSplit(true))
+TEST_CASE(rt_sp_matrs_norange_split_end,   rt_matrs_nosplit, SP, EL_END, UseRange(false), DoSplit(true))
+TEST_CASE(rt_sp_matrs_range_nosplit,       rt_matrs_nosplit, SP, EL_MID, UseRange(true), DoSplit(false))
+TEST_CASE(rt_sp_matrs_range_nosplit_beg,   rt_matrs_nosplit, SP, EL_BEG, UseRange(true), DoSplit(false))
+TEST_CASE(rt_sp_matrs_range_nosplit_end,   rt_matrs_nosplit, SP, EL_END, UseRange(true), DoSplit(false))
 
-TEST_CASE(rt_rr_matrs_norange_nopslit,     rt_matrs_nosplit, RR, EL_MID, false, false)
-TEST_CASE(rt_rr_matrs_norange_nopslit_beg, rt_matrs_nosplit, RR, EL_BEG, false, false)
-TEST_CASE(rt_rr_matrs_norange_nopslit_end, rt_matrs_nosplit, RR, EL_END, false, false)
-TEST_CASE(rt_rr_matrs_norange_split,       rt_matrs_nosplit, RR, EL_MID, false, true)
-TEST_CASE(rt_rr_matrs_norange_split_beg,   rt_matrs_nosplit, RR, EL_BEG, false, true)
-TEST_CASE(rt_rr_matrs_norange_split_end,   rt_matrs_nosplit, RR, EL_END, false, true)
-TEST_CASE(rt_rr_matrs_range_nosplit,       rt_matrs_nosplit, RR, EL_MID, true, false)
-TEST_CASE(rt_rr_matrs_range_nosplit_beg,   rt_matrs_nosplit, RR, EL_BEG, true, false)
-TEST_CASE(rt_rr_matrs_range_nosplit_end,   rt_matrs_nosplit, RR, EL_END, true, false)
+TEST_CASE(rt_rr_matrs_norange_nopslit,     rt_matrs_nosplit, RR, EL_MID, UseRange(false), DoSplit(false))
+TEST_CASE(rt_rr_matrs_norange_nopslit_beg, rt_matrs_nosplit, RR, EL_BEG, UseRange(false), DoSplit(false))
+TEST_CASE(rt_rr_matrs_norange_nopslit_end, rt_matrs_nosplit, RR, EL_END, UseRange(false), DoSplit(false))
+TEST_CASE(rt_rr_matrs_norange_split,       rt_matrs_nosplit, RR, EL_MID, UseRange(false), DoSplit(true))
+TEST_CASE(rt_rr_matrs_norange_split_beg,   rt_matrs_nosplit, RR, EL_BEG, UseRange(false), DoSplit(true))
+TEST_CASE(rt_rr_matrs_norange_split_end,   rt_matrs_nosplit, RR, EL_END, UseRange(false), DoSplit(true))
+TEST_CASE(rt_rr_matrs_range_nosplit,       rt_matrs_nosplit, RR, EL_MID, UseRange(true), DoSplit(false))
+TEST_CASE(rt_rr_matrs_range_nosplit_beg,   rt_matrs_nosplit, RR, EL_BEG, UseRange(true), DoSplit(false))
+TEST_CASE(rt_rr_matrs_range_nosplit_end,   rt_matrs_nosplit, RR, EL_END, UseRange(true), DoSplit(false))
 
-TEST_CASE_METHOD(rt_matrs_sw_rr, TripType tripType, int ref)
+//------------------------------------------------------------------------------
+//
+// Test which matrices are the round-trip ends
+// when the reference element is a range and range split is required.
+
+TEST_CASE_METHOD(rt_matrs_sw_rr, TripType tripType, int refIndex)
 {
-    PREPARE_ROUND_TRIP(new TestElemRange)
+    ElementRange *refElem = new TestElemRange;
+    TestData d(tripType, refIndex, refElem);
 
-    calc.calcRoundTrip(true);
-    ASSERT_EQ_INT(calc.matrsT().size(), calc.roundTrip().size()+1)
-    ASSERT_EQ_INT(calc.matrsS().size(), calc.roundTrip().size()+1)
-    ASSERT_EQ_PTR(calc.matrsT().first(), ref_elem->pMt1())
-    ASSERT_EQ_PTR(calc.matrsS().first(), ref_elem->pMs1())
-    ASSERT_EQ_PTR(calc.matrsT().last(), ref_elem->pMt2())
-    ASSERT_EQ_PTR(calc.matrsS().last(), ref_elem->pMs2())
+    d.calc->calcRoundTrip(true);
+    ASSERT_EQ_INT(d.calc->matrsT().size(), d.calc->roundTrip().size()+1)
+    ASSERT_EQ_INT(d.calc->matrsS().size(), d.calc->roundTrip().size()+1)
+    ASSERT_EQ_PTR(d.calc->matrsT().first(), refElem->pMt1())
+    ASSERT_EQ_PTR(d.calc->matrsS().first(), refElem->pMs1())
+    ASSERT_EQ_PTR(d.calc->matrsT().last(), refElem->pMt2())
+    ASSERT_EQ_PTR(d.calc->matrsS().last(), refElem->pMs2())
 }
 
-TEST_CASE_METHOD(rt_matrs_sp, int ref)
+TEST_CASE_METHOD(rt_matrs_sp, int refIndex)
 {
-    TripType tripType = SP;
-    PREPARE_ROUND_TRIP(new TestElemRange)
+    ElementRange *refElem = new TestElemRange;
+    TestData d(SP, refIndex, refElem);
 
-    calc.calcRoundTrip(true);
-    ASSERT_EQ_INT(calc.matrsT().size(), calc.roundTrip().size())
-    ASSERT_EQ_INT(calc.matrsS().size(), calc.roundTrip().size())
-    ASSERT_EQ_PTR(calc.matrsT().first(), ref_elem->pMt1())
-    ASSERT_EQ_PTR(calc.matrsS().first(), ref_elem->pMs1())
-    ASSERT_EQ_PTR(calc.matrsT().last(), calc.roundTrip().last()->pMt())
-    ASSERT_EQ_PTR(calc.matrsS().last(), calc.roundTrip().last()->pMs())
+    d.calc->calcRoundTrip(true);
+    ASSERT_EQ_INT(d.calc->matrsT().size(), d.calc->roundTrip().size())
+    ASSERT_EQ_INT(d.calc->matrsS().size(), d.calc->roundTrip().size())
+    ASSERT_EQ_PTR(d.calc->matrsT().first(), refElem->pMt1())
+    ASSERT_EQ_PTR(d.calc->matrsS().first(), refElem->pMs1())
+    ASSERT_EQ_PTR(d.calc->matrsT().last(), d.calc->roundTrip().last()->pMt())
+    ASSERT_EQ_PTR(d.calc->matrsS().last(), d.calc->roundTrip().last()->pMs())
 }
 
-TEST_CASE_METHOD(rt_matrs_sp_beg, int ref)
+TEST_CASE_METHOD(rt_matrs_sp_beg, int refIndex)
 {
-    TripType tripType = SP;
-    PREPARE_ROUND_TRIP(new TestElemRange)
+    ElementRange *refElem = new TestElemRange;
+    TestData d(SP, refIndex, refElem);
 
-    calc.calcRoundTrip(true);
-    ASSERT_EQ_INT(calc.matrsT().size(), 1)
-    ASSERT_EQ_INT(calc.matrsS().size(), 1)
-    ASSERT_EQ_PTR(calc.matrsT().first(), ref_elem->pMt1())
-    ASSERT_EQ_PTR(calc.matrsS().first(), ref_elem->pMs1())
+    d.calc->calcRoundTrip(true);
+    ASSERT_EQ_INT(d.calc->matrsT().size(), 1)
+    ASSERT_EQ_INT(d.calc->matrsS().size(), 1)
+    ASSERT_EQ_PTR(d.calc->matrsT().first(), refElem->pMt1())
+    ASSERT_EQ_PTR(d.calc->matrsS().first(), refElem->pMs1())
 }
 
 TEST_CASE(rt_sw_matrs,     rt_matrs_sw_rr, SW, EL_MID)
@@ -214,17 +238,15 @@ TEST_METHOD(mult_matrices)
 //------------------------------------------------------------------------------
 
 TEST_GROUP("Round-trip Calculator",
-           ADD_TEST(rt_sw),
-           ADD_TEST(rt_sw_beg),
-           ADD_TEST(rt_sw_end),
-
-           ADD_TEST(rt_sp),
-           ADD_TEST(rt_sp_beg),
-           ADD_TEST(rt_sp_end),
-
-           ADD_TEST(rt_rr),
-           ADD_TEST(rt_rr_beg),
-           ADD_TEST(rt_rr_end),
+           ADD_TEST(rt_sw_elems),
+           ADD_TEST(rt_sw_elems_beg),
+           ADD_TEST(rt_sw_elems_end),
+           ADD_TEST(rt_sp_elems),
+           ADD_TEST(rt_sp_elems_beg),
+           ADD_TEST(rt_sp_elems_end),
+           ADD_TEST(rt_rr_elems),
+           ADD_TEST(rt_rr_elems_beg),
+           ADD_TEST(rt_rr_elems_end),
 
 
            ADD_TEST(rt_sw_matrs_norange_nopslit),
