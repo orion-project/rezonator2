@@ -1,4 +1,5 @@
 #include "TestUtils.h"
+#include "../core/Elements.h"
 #include "../funcs/RoundTripCalculator.h"
 
 namespace Z {
@@ -19,10 +20,21 @@ static const TripType RR = TripType::RR;
 
 #define BOOL_PARAM(param_name) \
     struct param_name { \
-        param_name(bool v) : value(v) {} \
+        explicit param_name(bool v) : value(v) {} \
         operator bool() const { return value; } \
         bool value; \
     };
+
+#define INT_PARAM(param_name) \
+    struct param_name { \
+        explicit param_name(int v) : value(v) {} \
+        operator int() const { return value; } \
+        int value; \
+    };
+
+BOOL_PARAM(UseRange)
+BOOL_PARAM(DoSplit)
+INT_PARAM(RefIndex)
 
 struct TestData
 {
@@ -43,11 +55,24 @@ struct TestData
 
         calc.reset(new RoundTripCalculator(schema.data(), refElem));
     }
+
+    TestData(TripType tripType, RefIndex&& refIndex, std::initializer_list<Element*> elems)
+    {
+        schema.reset(new Schema);
+        schema->setTripType(tripType);
+
+        for (auto elem : elems)
+            schema->insertElement(elem);
+
+        calc.reset(new RoundTripCalculator(schema.data(), schema->element(refIndex)));
+    }
 };
 
 //------------------------------------------------------------------------------
-//
-// Test which elements are contained in the round-trip.
+/**
+    Test which elements are contained in the round-trip.
+*/
+namespace RoundTripElements {
 
 TEST_CASE_METHOD(rt_elems, TripType tripType, int refIndex, QString expectedRoundTripDescr)
 {
@@ -87,14 +112,27 @@ TEST_CASE(rt_rr_elems,     rt_elems, RR, EL_MID, "2 1 0 3")
 TEST_CASE(rt_rr_elems_beg, rt_elems, RR, EL_BEG, "0 3 2 1")
 TEST_CASE(rt_rr_elems_end, rt_elems, RR, EL_END, "3 2 1 0")
 
-//------------------------------------------------------------------------------
-//
-// Test which end matrices are contained in the round-trip
-// when splitting of the reference range element is not required
-// or the reference element is not a range so splitting is impossible.
+TEST_GROUP("Elements in round-trip",
+           ADD_TEST(rt_sw_elems),
+           ADD_TEST(rt_sw_elems_beg),
+           ADD_TEST(rt_sw_elems_end),
+           ADD_TEST(rt_sp_elems),
+           ADD_TEST(rt_sp_elems_beg),
+           ADD_TEST(rt_sp_elems_end),
+           ADD_TEST(rt_rr_elems),
+           ADD_TEST(rt_rr_elems_beg),
+           ADD_TEST(rt_rr_elems_end),
+           )
+}
 
-BOOL_PARAM(UseRange)
-BOOL_PARAM(DoSplit)
+//------------------------------------------------------------------------------
+/**
+    Test which end matrices are contained in the round-trip
+    when splitting of the reference range element is not required
+    or the reference element is not a range so splitting is impossible.
+*/
+namespace RoundTripEndMatrices_NoRange_NoSplit {
+
 TEST_CASE_METHOD(rt_matrs_nosplit, TripType tripType, int refIndex, UseRange&& useRangeAsRef, DoSplit&& doSplitRefRange)
 {
     auto refElem = useRangeAsRef ? (Element*)(new TestElemRange) : (Element*)(new TestElem);
@@ -139,10 +177,45 @@ TEST_CASE(rt_rr_matrs_range_nosplit,       rt_matrs_nosplit, RR, EL_MID, UseRang
 TEST_CASE(rt_rr_matrs_range_nosplit_beg,   rt_matrs_nosplit, RR, EL_BEG, UseRange(true), DoSplit(false))
 TEST_CASE(rt_rr_matrs_range_nosplit_end,   rt_matrs_nosplit, RR, EL_END, UseRange(true), DoSplit(false))
 
+TEST_GROUP("Round-trip end matrices (no range, no-split)",
+           ADD_TEST(rt_sw_matrs_norange_nopslit),
+           ADD_TEST(rt_sw_matrs_norange_nopslit_beg),
+           ADD_TEST(rt_sw_matrs_norange_nopslit_end),
+           ADD_TEST(rt_sw_matrs_norange_split),
+           ADD_TEST(rt_sw_matrs_norange_split_beg),
+           ADD_TEST(rt_sw_matrs_norange_split_end),
+           ADD_TEST(rt_sw_matrs_range_nosplit),
+           ADD_TEST(rt_sw_matrs_range_nosplit_beg),
+           ADD_TEST(rt_sw_matrs_range_nosplit_end),
+
+           ADD_TEST(rt_sp_matrs_norange_nopslit),
+           ADD_TEST(rt_sp_matrs_norange_nopslit_beg),
+           ADD_TEST(rt_sp_matrs_norange_nopslit_end),
+           ADD_TEST(rt_sp_matrs_norange_split),
+           ADD_TEST(rt_sp_matrs_norange_split_beg),
+           ADD_TEST(rt_sp_matrs_norange_split_end),
+           ADD_TEST(rt_sp_matrs_range_nosplit),
+           ADD_TEST(rt_sp_matrs_range_nosplit_beg),
+           ADD_TEST(rt_sp_matrs_range_nosplit_end),
+
+           ADD_TEST(rt_rr_matrs_norange_nopslit),
+           ADD_TEST(rt_rr_matrs_norange_nopslit_beg),
+           ADD_TEST(rt_rr_matrs_norange_nopslit_end),
+           ADD_TEST(rt_rr_matrs_norange_split),
+           ADD_TEST(rt_rr_matrs_norange_split_beg),
+           ADD_TEST(rt_rr_matrs_norange_split_end),
+           ADD_TEST(rt_rr_matrs_range_nosplit),
+           ADD_TEST(rt_rr_matrs_range_nosplit_beg),
+           ADD_TEST(rt_rr_matrs_range_nosplit_end),
+           )
+}
+
 //------------------------------------------------------------------------------
-//
-// Test which matrices are the round-trip ends
-// when the reference element is a range and range split is required.
+/**
+    Test which matrices are the round-trip ends
+    when the reference element is a range and range split is required.
+*/
+namespace RoundTripEndMatrices_RangeSplit {
 
 TEST_CASE_METHOD(rt_matrs_sw_rr, TripType tripType, int refIndex)
 {
@@ -188,15 +261,31 @@ TEST_CASE(rt_sw_matrs,     rt_matrs_sw_rr, SW, EL_MID)
 TEST_CASE(rt_sw_matrs_beg, rt_matrs_sw_rr, SW, EL_BEG)
 TEST_CASE(rt_sw_matrs_end, rt_matrs_sw_rr, SW, EL_END)
 
-TEST_CASE(rt_sp_matrs,     rt_matrs_sp,          EL_MID)
-TEST_CASE(rt_sp_matrs_beg, rt_matrs_sp_beg,      EL_BEG)
-TEST_CASE(rt_sp_matrs_end, rt_matrs_sp,          EL_END)
+TEST_CASE(rt_sp_matrs,     rt_matrs_sp,        EL_MID)
+TEST_CASE(rt_sp_matrs_beg, rt_matrs_sp_beg,    EL_BEG)
+TEST_CASE(rt_sp_matrs_end, rt_matrs_sp,        EL_END)
 
 TEST_CASE(rt_rr_matrs,     rt_matrs_sw_rr, RR, EL_MID)
 TEST_CASE(rt_rr_matrs_beg, rt_matrs_sw_rr, RR, EL_BEG)
 TEST_CASE(rt_rr_matrs_end, rt_matrs_sw_rr, RR, EL_END)
 
+TEST_GROUP("Round-trip end matrices (range split)",
+           ADD_TEST(rt_sw_matrs),
+           ADD_TEST(rt_sw_matrs_beg),
+           ADD_TEST(rt_sw_matrs_end),
+
+           ADD_TEST(rt_sp_matrs),
+           ADD_TEST(rt_sp_matrs_beg),
+           ADD_TEST(rt_sp_matrs_end),
+
+           ADD_TEST(rt_rr_matrs),
+           ADD_TEST(rt_rr_matrs_beg),
+           ADD_TEST(rt_rr_matrs_end),
+           )
+}
 //------------------------------------------------------------------------------
+
+namespace GeneralFuncs {
 
 // Calculation: $PROJECT/calc/RoundTripCalculator.py
 TEST_METHOD(mult_matrices)
@@ -235,67 +324,83 @@ TEST_METHOD(mult_matrices)
     ASSERT_MATRIX_NEAR(c.Ms(), -1.3899498, 0.1731843, -9.8480800, 0.5075960, 1e-7)
 }
 
+TEST_GROUP("General functionality",
+           ADD_TEST(mult_matrices),
+           )
+}
+//------------------------------------------------------------------------------
+/**
+    Test that a schema containig a compisite element combined from interfaces
+    gives the same round-trip matrix as the schema containig regular analog of the initerfaced element.
+*/
+namespace InterfacedElements {
+
+template <typename TElement>
+Element* makeElem(const QString& label, QMap<QString, Z::Value>&& paramValues)
+{
+    TElement *elem = new TElement;
+    elem->setLabel(label);
+    QMapIterator<QString, Z::Value> p(paramValues);
+    while (p.hasNext())
+    {
+        p.next();
+        elem->params().byAlias(p.key())->setValue(p.value());
+    }
+    return elem;
+}
+
+TEST_CASE_METHOD(rt_ifaces_normal_full, TripType tripType)
+{
+    TestData d1(tripType, RefIndex(2), {
+                    makeElem<ElemEmptyRange>("L1", {{ "L", 100.0_mm }}),
+                    makeElem<ElemPlate>("Cr", {{ "L", 100.0_mm }, { "n", 2 }}),
+                    makeElem<ElemEmptyRange>("L2", {{ "L", 100.0_mm }}),
+                });
+
+    TestData d2(tripType, RefIndex(4), {
+                    makeElem<ElemEmptyRange>("L1", {{ "L", 100.0_mm }}),
+                    makeElem<ElemNormalInterface>("Cr_in", {{"n1", 1}, {"n2", 2}}),
+                    makeElem<ElemMediumRange>("Cr", {{ "L", 100.0_mm }, { "n", 2 }}),
+                    makeElem<ElemNormalInterface>("Cr_out", {{"n1", 2}, {"n2", 1}}),
+                    makeElem<ElemEmptyRange>("L2", {{ "L", 100.0_mm }}),
+                });
+
+    d1.calc->calcRoundTrip(false);
+    d1.calc->multMatrix();
+    TEST_LOG(d1.calc->roundTripStr());
+    TEST_LOG("Mt = " + d1.calc->Mt().str());
+    TEST_LOG("Ms = " + d1.calc->Ms().str());
+
+    d2.calc->calcRoundTrip(false);
+    d2.calc->multMatrix();
+    TEST_LOG(d2.calc->roundTripStr());
+    TEST_LOG("Mt = " + d2.calc->Mt().str());
+    TEST_LOG("Ms = " + d2.calc->Ms().str());
+
+    ASSERT_EQ_MATRIX(d1.calc->Mt(), d2.calc->Mt());
+    ASSERT_EQ_MATRIX(d1.calc->Ms(), d2.calc->Ms());
+}
+
+TEST_CASE(rt_ifaces_normal_full_sw, rt_ifaces_normal_full, SW)
+TEST_CASE(rt_ifaces_normal_full_rr, rt_ifaces_normal_full, RR)
+TEST_CASE(rt_ifaces_normal_full_sp, rt_ifaces_normal_full, SP)
+
+TEST_GROUP("Compisite interfaced elements",
+           ADD_TEST(rt_ifaces_normal_full_sw),
+           ADD_TEST(rt_ifaces_normal_full_rr),
+           ADD_TEST(rt_ifaces_normal_full_sp),
+           )
+}
+
 //------------------------------------------------------------------------------
 
 TEST_GROUP("Round-trip Calculator",
-           ADD_TEST(rt_sw_elems),
-           ADD_TEST(rt_sw_elems_beg),
-           ADD_TEST(rt_sw_elems_end),
-           ADD_TEST(rt_sp_elems),
-           ADD_TEST(rt_sp_elems_beg),
-           ADD_TEST(rt_sp_elems_end),
-           ADD_TEST(rt_rr_elems),
-           ADD_TEST(rt_rr_elems_beg),
-           ADD_TEST(rt_rr_elems_end),
-
-
-           ADD_TEST(rt_sw_matrs_norange_nopslit),
-           ADD_TEST(rt_sw_matrs_norange_nopslit_beg),
-           ADD_TEST(rt_sw_matrs_norange_nopslit_end),
-           ADD_TEST(rt_sw_matrs_norange_split),
-           ADD_TEST(rt_sw_matrs_norange_split_beg),
-           ADD_TEST(rt_sw_matrs_norange_split_end),
-           ADD_TEST(rt_sw_matrs_range_nosplit),
-           ADD_TEST(rt_sw_matrs_range_nosplit_beg),
-           ADD_TEST(rt_sw_matrs_range_nosplit_end),
-
-           ADD_TEST(rt_sp_matrs_norange_nopslit),
-           ADD_TEST(rt_sp_matrs_norange_nopslit_beg),
-           ADD_TEST(rt_sp_matrs_norange_nopslit_end),
-           ADD_TEST(rt_sp_matrs_norange_split),
-           ADD_TEST(rt_sp_matrs_norange_split_beg),
-           ADD_TEST(rt_sp_matrs_norange_split_end),
-           ADD_TEST(rt_sp_matrs_range_nosplit),
-           ADD_TEST(rt_sp_matrs_range_nosplit_beg),
-           ADD_TEST(rt_sp_matrs_range_nosplit_end),
-
-           ADD_TEST(rt_rr_matrs_norange_nopslit),
-           ADD_TEST(rt_rr_matrs_norange_nopslit_beg),
-           ADD_TEST(rt_rr_matrs_norange_nopslit_end),
-           ADD_TEST(rt_rr_matrs_norange_split),
-           ADD_TEST(rt_rr_matrs_norange_split_beg),
-           ADD_TEST(rt_rr_matrs_norange_split_end),
-           ADD_TEST(rt_rr_matrs_range_nosplit),
-           ADD_TEST(rt_rr_matrs_range_nosplit_beg),
-           ADD_TEST(rt_rr_matrs_range_nosplit_end),
-
-
-           ADD_TEST(rt_sw_matrs),
-           ADD_TEST(rt_sw_matrs_beg),
-           ADD_TEST(rt_sw_matrs_end),
-
-           ADD_TEST(rt_sp_matrs),
-           ADD_TEST(rt_sp_matrs_beg),
-           ADD_TEST(rt_sp_matrs_end),
-
-           ADD_TEST(rt_rr_matrs),
-           ADD_TEST(rt_rr_matrs_beg),
-           ADD_TEST(rt_rr_matrs_end),
-
-
-           ADD_TEST(mult_matrices)
-)
-
+           ADD_GROUP(RoundTripElements),
+           ADD_GROUP(RoundTripEndMatrices_NoRange_NoSplit),
+           ADD_GROUP(RoundTripEndMatrices_RangeSplit),
+           ADD_GROUP(GeneralFuncs),
+           ADD_GROUP(InterfacedElements),
+           )
 } // namespace RoundTripCalculatorTests
 } // namespace Tests
 } // namespace Z

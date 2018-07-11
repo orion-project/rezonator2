@@ -188,10 +188,10 @@ double RoundTripCalculator::calcStability(double half_of_A_plus_D) const
 
 QString RoundTripCalculator::roundTripStr() const
 {
-    QString res;
+    QStringList res;
     for (auto elem : _roundTrip)
-        res += QString("%1 ").arg(elem? elem->displayLabel(): "null");
-    return res;
+        res << elem->displayLabel();
+    return res.join(' ');
 }
 
 //------------------------------------------------------------------------------

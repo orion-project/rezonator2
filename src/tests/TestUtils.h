@@ -25,6 +25,12 @@
     ASSERT_EQ_DBL(v.value(), expected_value.value())\
     ASSERT_EQ_UNIT(v.unit(), expected_value.unit())
 
+#define ASSERT_EQ_MATRIX(m, expected_m)\
+    ASSERT_EQ_DBL((m).A, (expected_m).A); \
+    ASSERT_EQ_DBL((m).B, (expected_m).B); \
+    ASSERT_EQ_DBL((m).C, (expected_m).C); \
+    ASSERT_EQ_DBL((m).D, (expected_m).D);
+
 #define ASSERT_MATRIX_IS(m, a, b, c, d) \
     ASSERT_EQ_DBL((m).A, a); \
     ASSERT_EQ_DBL((m).B, b); \
