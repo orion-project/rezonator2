@@ -37,19 +37,19 @@ void RoundTripCalculator::calcRoundTripSW()
 {
     int ref = _schema->indexOf(_reference);
 
-    // from reference element to first
+    // from the reference element to the first one
     int i = ref;
     while (i > 0)
         _roundTrip.push_back(_schema->element(i--));
 
-    // from first to last
+    // from the first element to the last one
     int c = _schema->count();
-    if (ref == c-1) c--; // if last is reference then skip it
+    if (ref == c-1) c--; // if the last is the reference then skip it
 
     while (i < c)
-        _roundTrip.push_back(_schema->element(i++));
+        _roundTrip.push_back({ _schema->element(i++), true });
 
-    // from last to reference
+    // from the last element to the reference one
     i -= 2;
     while (i > ref)
         _roundTrip.push_back(_schema->element(i--));
@@ -61,12 +61,12 @@ void RoundTripCalculator::calcRoundTripRR()
 {
     int ref = _schema->indexOf(_reference);
 
-    // from reference element to first
+    // from the reference element to the first one
     int i = ref;
     while (i >= 0)
         _roundTrip.push_back(_schema->element(i--));
 
-    // from last to reference
+    // from the last element to the reference one
     i = _schema->count()-1;
     while (i > ref)
         _roundTrip.push_back(_schema->element(i--));
@@ -78,7 +78,7 @@ void RoundTripCalculator::calcRoundTripSP()
 {
     int i = _schema->indexOf(_reference);
 
-    // from reference element to first
+    // from the reference element to the first one
     while (i >= 0)
         _roundTrip.push_back(_schema->element(i--));
 
@@ -93,22 +93,31 @@ void RoundTripCalculator::collectMatrices()
     ElementRange *range = nullptr;
     if (_splitRange)
         range = Z::Utils::asRange(_reference);
-    // part of range from current point to next element
+    // part of the range from current point to the next element
     if (range)
     {
         _matrsT.push_back(range->pMt1());
         _matrsS.push_back(range->pMs1());
         i++;
     }
-    // all other element as whole
+    // all other elements as a whole
     while (i < c)
     {
-        auto elem = _roundTrip[i];
-        _matrsT.push_back(elem->pMt());
-        _matrsS.push_back(elem->pMs());
+        const auto& item = _roundTrip.at(i);
+        auto iface = Z::Utils::asInterface(item.element);
+        if (iface && item.secondPass)
+        {
+            _matrsT.push_back(iface->pMt_inv());
+            _matrsS.push_back(iface->pMs_inv());
+        }
+        else
+        {
+            _matrsT.push_back(item.element->pMt());
+            _matrsS.push_back(item.element->pMs());
+        }
         i++;
     }
-    // remaining part of range under investigation
+    // remaining part of the range under investigation
     if (range)
     {
         _matrsT.push_back(range->pMt2());
@@ -123,7 +132,7 @@ void RoundTripCalculator::collectMatricesSP()
     // part of range from current point to next element
     if (_splitRange && i < c)
     {
-        auto range = Z::Utils::asRange(_roundTrip.at(i));
+        auto range = Z::Utils::asRange(_roundTrip.at(i).element);
         if (range)
         {
             _matrsT.push_back(range->pMt1());
@@ -134,9 +143,9 @@ void RoundTripCalculator::collectMatricesSP()
     // all other element as whole
     while (i < c)
     {
-        auto elem = _roundTrip.at(i);
-        _matrsT.push_back(elem->pMt());
-        _matrsS.push_back(elem->pMs());
+        const auto& item = _roundTrip.at(i);
+        _matrsT.push_back(item.element->pMt());
+        _matrsS.push_back(item.element->pMs());
         i++;
     }
 }
@@ -186,11 +195,19 @@ double RoundTripCalculator::calcStability(double half_of_A_plus_D) const
     return 0;
 }
 
+Elements RoundTripCalculator::roundTrip() const
+{
+    Elements elements;
+    for (auto& item : _roundTrip)
+        elements.append(item.element);
+    return elements;
+}
+
 QString RoundTripCalculator::roundTripStr() const
 {
     QStringList res;
-    for (auto elem : _roundTrip)
-        res << elem->displayLabel();
+    for (auto& item : _roundTrip)
+        res << item.element->displayLabel();
     return res.join(' ');
 }
 

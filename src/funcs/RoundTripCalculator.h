@@ -25,14 +25,10 @@ public:
     inline const Z::Matrix& Ms() const { return _ms; }
     inline const Z::MatrixArray& matrsT() const { return _matrsT; }
     inline const Z::MatrixArray& matrsS() const { return _matrsS; }
-    inline const Elements& roundTrip() const { return _roundTrip; }
+    Elements roundTrip() const;
     QString roundTripStr() const;
 
 protected:
-    /// Array of elements in order of round-trip.
-    /// Valid only after calcRoundTrip() call.
-    Elements _roundTrip;
-
     /// Array of T-matrices for production (round-trip).
     /// Valid only after calcRoundTrip() call.
     Z::MatrixArray _matrsT;
@@ -52,6 +48,25 @@ protected:
     Z::Enums::StabilityCalcMode _stabilityCalcMode = Z::Enums::StabilityCalcMode::Normal;
 
 private:
+    struct RoundTripElemInfo
+    {
+        Element* element;
+
+        /// In SW schemas beam passes each element twice
+        /// and the second time passes it in opposite direction than the first time.
+        /// It is importand to know which pass it is,
+        /// in order to choose a proper matrix of interface element.
+        bool secondPass = false;
+
+        RoundTripElemInfo() = default;
+        RoundTripElemInfo(Element* e): element(e) {}
+        RoundTripElemInfo(Element* e, bool second): element(e), secondPass(second) {}
+    };
+
+    /// Array of elements in order of round-trip.
+    /// Valid only after calcRoundTrip() call.
+    QVector<RoundTripElemInfo> _roundTrip;
+
     bool _splitRange = false;
     void calcRoundTripSW();
     void calcRoundTripRR();

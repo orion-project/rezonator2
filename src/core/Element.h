@@ -142,7 +142,7 @@ protected:
     virtual Element* create() const = 0;
 };
 
-typedef QVector<Element*> Elements;
+typedef QList<Element*> Elements;
 
 //------------------------------------------------------------------------------
 /**
@@ -255,6 +255,8 @@ namespace Utils {
 void generateLabel(Element *elem);
 inline bool isRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
 inline ElementRange* asRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
+inline bool isInterface(Element *elem) { return dynamic_cast<ElementInterface*>(elem); }
+inline ElementInterface* asInterface(Element *elem) { return dynamic_cast<ElementInterface*>(elem); }
 
 /// Gives a filter of parameters for regular users' usage.
 /// These are parameters that can be edited in Element properties dialog,

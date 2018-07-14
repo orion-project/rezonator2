@@ -41,7 +41,7 @@ QString linkViewMatrix(Element *elem)
             .arg(elem->id()).arg(elem->displayLabel());
 }
 
-QString roundTrip(const QVector<Element*>& elems, bool hyperlinks)
+QString roundTrip(const QList<Element*>& elems, bool hyperlinks)
 {
     QString result = "";
     for (int i = 0; i < elems.size(); i++)

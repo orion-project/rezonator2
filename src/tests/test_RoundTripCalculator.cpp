@@ -316,6 +316,7 @@ TEST_METHOD(mult_matrices)
             for (auto &m : matrs) _matrsS.append(m);
         }
     };
+
     TestRoundTripCalculator c(&schema);
     c.addT({&L3_t, &Cr1_t, &L2_t, &F1_t, &L1_t});
     c.addS({&L3_s, &Cr1_s, &L2_s, &F1_s, &L1_s});
@@ -385,7 +386,7 @@ TEST_CASE(rt_ifaces_normal_full_sw, rt_ifaces_normal_full, SW)
 TEST_CASE(rt_ifaces_normal_full_rr, rt_ifaces_normal_full, RR)
 TEST_CASE(rt_ifaces_normal_full_sp, rt_ifaces_normal_full, SP)
 
-TEST_GROUP("Compisite interfaced elements",
+TEST_GROUP("Composite interfaced elements",
            ADD_TEST(rt_ifaces_normal_full_sw),
            ADD_TEST(rt_ifaces_normal_full_rr),
            ADD_TEST(rt_ifaces_normal_full_sp),

@@ -19,7 +19,7 @@ QString elementTitleAndMatrices(Element *elem);
 QString matrix(const Z::Matrix& m);
 QString matrices(const Z::Matrix& mt, const Z::Matrix& ms);
 
-QString roundTrip(const QVector<Element*>& elems, bool hyperlinks = false);
+QString roundTrip(const QList<Element *> &elems, bool hyperlinks = false);
 
 QString linkViewMatrix(Element *elem);
 

@@ -197,7 +197,7 @@ void Schema::deleteElement(int index, bool event, bool free)
     if (event)
         _events.raise(SchemaEvents::ElemDeleting, elem);
 
-    _items.remove(index);
+    _items.removeAt(index);
     elem->setOwner(nullptr);
 
     relinkInterfaces();
