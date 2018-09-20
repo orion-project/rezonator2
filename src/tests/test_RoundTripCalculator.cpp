@@ -56,7 +56,7 @@ struct TestData
         calc.reset(new RoundTripCalculator(schema.data(), refElem));
     }
 
-    TestData(TripType tripType, RefIndex&& refIndex, std::initializer_list<Element*> elems)
+    TestData(TripType tripType, const RefIndex& refIndex, std::initializer_list<Element*> elems)
     {
         schema.reset(new Schema);
         schema->setTripType(tripType);
@@ -350,15 +350,16 @@ Element* makeElem(const QString& label, QMap<QString, Z::Value>&& paramValues)
     return elem;
 }
 
-TEST_CASE_METHOD(rt_ifaces_normal_full, TripType tripType)
+TEST_CASE_METHOD(rt_ifaces_normal_full, TripType tripType, const RefIndex& refIndex)
 {
-    TestData d1(tripType, RefIndex(2), {
+    TestData d1(tripType, refIndex, {
                     makeElem<ElemEmptyRange>("L1", {{ "L", 100.0_mm }}),
                     makeElem<ElemPlate>("Cr", {{ "L", 100.0_mm }, { "n", 2 }}),
                     makeElem<ElemEmptyRange>("L2", {{ "L", 100.0_mm }}),
                 });
 
-    TestData d2(tripType, RefIndex(4), {
+    int equivaletRefIndexForInterfaces = int(refIndex) * 2;
+    TestData d2(tripType, RefIndex(equivaletRefIndexForInterfaces), {
                     makeElem<ElemEmptyRange>("L1", {{ "L", 100.0_mm }}),
                     makeElem<ElemNormalInterface>("Cr_in", {{"n1", 1}, {"n2", 2}}),
                     makeElem<ElemMediumRange>("Cr", {{ "L", 100.0_mm }, { "n", 2 }}),
@@ -382,12 +383,16 @@ TEST_CASE_METHOD(rt_ifaces_normal_full, TripType tripType)
     ASSERT_EQ_MATRIX(d1.calc->Ms(), d2.calc->Ms());
 }
 
-TEST_CASE(rt_ifaces_normal_full_sw, rt_ifaces_normal_full, SW)
-TEST_CASE(rt_ifaces_normal_full_rr, rt_ifaces_normal_full, RR)
-TEST_CASE(rt_ifaces_normal_full_sp, rt_ifaces_normal_full, SP)
+TEST_CASE(rt_ifaces_normal_full_sw_0, rt_ifaces_normal_full, SW, RefIndex(0))
+TEST_CASE(rt_ifaces_normal_full_sw_1, rt_ifaces_normal_full, SW, RefIndex(1))
+TEST_CASE(rt_ifaces_normal_full_sw_2, rt_ifaces_normal_full, SW, RefIndex(2))
+TEST_CASE(rt_ifaces_normal_full_rr, rt_ifaces_normal_full, RR, RefIndex(0))
+TEST_CASE(rt_ifaces_normal_full_sp, rt_ifaces_normal_full, SP, RefIndex(0))
 
 TEST_GROUP("Composite interfaced elements",
-           ADD_TEST(rt_ifaces_normal_full_sw),
+           ADD_TEST(rt_ifaces_normal_full_sw_0),
+           ADD_TEST(rt_ifaces_normal_full_sw_1),
+           ADD_TEST(rt_ifaces_normal_full_sw_2),
            ADD_TEST(rt_ifaces_normal_full_rr),
            ADD_TEST(rt_ifaces_normal_full_sp),
            )
