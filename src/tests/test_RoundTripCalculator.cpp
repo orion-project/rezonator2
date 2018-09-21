@@ -329,42 +329,56 @@ TEST_GROUP("General functionality",
            ADD_TEST(mult_matrices),
            )
 }
+
 //------------------------------------------------------------------------------
-/**
-    Test that a schema containig a compisite element combined from interfaces
-    gives the same round-trip matrix as the schema containig regular analog of the initerfaced element.
-*/
-namespace InterfacedElements {
 
 template <typename TElement>
-Element* makeElem(const QString& label, QMap<QString, Z::Value>&& paramValues)
-{
+Element* makeElem(const QString& label, const QString& paramStr) {
     TElement *elem = new TElement;
     elem->setLabel(label);
-    QMapIterator<QString, Z::Value> p(paramValues);
-    while (p.hasNext())
-    {
-        p.next();
-        elem->params().byAlias(p.key())->setValue(p.value());
+    for (auto part : paramStr.split(';')) {
+        auto keyValue = part.split('=');
+        if (keyValue.size() != 2) continue;
+        auto key = keyValue.at(0).trimmed();
+        auto value = keyValue.at(1).trimmed();
+        auto param = elem->params().byAlias(key);
+        if (!param) continue;
+        param->setValue(Z::Value::parse(value));
     }
     return elem;
 }
 
-TEST_CASE_METHOD(rt_ifaces_normal_full, TripType tripType, const RefIndex& refIndex)
+TEST_METHOD(Helper_makeElem)
 {
-    TestData d1(tripType, refIndex, {
-                    makeElem<ElemEmptyRange>("L1", {{ "L", 100.0_mm }}),
-                    makeElem<ElemPlate>("Cr", {{ "L", 100.0_mm }, { "n", 2 }}),
-                    makeElem<ElemEmptyRange>("L2", {{ "L", 100.0_mm }}),
+    Element* elem = makeElem<ElemEmptyRange>("Label_1", "L = 56.7cm");
+    ASSERT_IS_NOT_NULL(elem)
+    ASSERT_EQ_STR(elem->type(), "ElemEmptyRange")
+    ASSERT_EQ_STR(elem->label(), "Label_1")
+    ASSERT_EQ_ZVALUE(elem->params().byAlias("L")->value(), 56.7_cm)
+}
+
+
+//------------------------------------------------------------------------------
+/**
+    Test that a schema containig a composite element combined from interfaces
+    gives the same round-trip matrix as the schema containig regular analog of the interfaced element.
+*/
+namespace InterfacedElements {
+
+TEST_CASE_METHOD(rt_ifaces_normal, TripType tripType, const RefIndex& refIndex1, const RefIndex& refIndex2)
+{
+    TestData d1(tripType, refIndex1, {
+                    makeElem<ElemEmptyRange>("L1", "L = 100mm"),
+                    makeElem<ElemPlate>("Cr", "L=100mm; n = 2"),
+                    makeElem<ElemEmptyRange>("L2", "L = 100mm"),
                 });
 
-    int equivaletRefIndexForInterfaces = int(refIndex) * 2;
-    TestData d2(tripType, RefIndex(equivaletRefIndexForInterfaces), {
-                    makeElem<ElemEmptyRange>("L1", {{ "L", 100.0_mm }}),
-                    makeElem<ElemNormalInterface>("Cr_in", {{"n1", 1}, {"n2", 2}}),
-                    makeElem<ElemMediumRange>("Cr", {{ "L", 100.0_mm }, { "n", 2 }}),
-                    makeElem<ElemNormalInterface>("Cr_out", {{"n1", 2}, {"n2", 1}}),
-                    makeElem<ElemEmptyRange>("L2", {{ "L", 100.0_mm }}),
+    TestData d2(tripType, refIndex2, {
+                    makeElem<ElemEmptyRange>("L1", "L = 100mm"),
+                    makeElem<ElemNormalInterface>("Cr_in", "n1 = 1; n2 = 2"),
+                    makeElem<ElemMediumRange>("Cr", "L = 100mm; n = 2"),
+                    makeElem<ElemNormalInterface>("Cr_out", "n1 = 2; n2 = 1"),
+                    makeElem<ElemEmptyRange>("L2", "L = 100mm"),
                 });
 
     d1.calc->calcRoundTrip(false);
@@ -383,18 +397,26 @@ TEST_CASE_METHOD(rt_ifaces_normal_full, TripType tripType, const RefIndex& refIn
     ASSERT_EQ_MATRIX(d1.calc->Ms(), d2.calc->Ms());
 }
 
-TEST_CASE(rt_ifaces_normal_full_sw_0, rt_ifaces_normal_full, SW, RefIndex(0))
-TEST_CASE(rt_ifaces_normal_full_sw_1, rt_ifaces_normal_full, SW, RefIndex(1))
-TEST_CASE(rt_ifaces_normal_full_sw_2, rt_ifaces_normal_full, SW, RefIndex(2))
-TEST_CASE(rt_ifaces_normal_full_rr, rt_ifaces_normal_full, RR, RefIndex(0))
-TEST_CASE(rt_ifaces_normal_full_sp, rt_ifaces_normal_full, SP, RefIndex(0))
+TEST_CASE(rt_ifaces_normal_sw_0, rt_ifaces_normal, SW, RefIndex(0), RefIndex(0))
+TEST_CASE(rt_ifaces_normal_sw_1, rt_ifaces_normal, SW, RefIndex(1), RefIndex(3))
+TEST_CASE(rt_ifaces_normal_sw_2, rt_ifaces_normal, SW, RefIndex(2), RefIndex(4))
+TEST_CASE(rt_ifaces_normal_rr_0, rt_ifaces_normal, RR, RefIndex(0), RefIndex(0))
+TEST_CASE(rt_ifaces_normal_rr_1, rt_ifaces_normal, RR, RefIndex(1), RefIndex(3))
+TEST_CASE(rt_ifaces_normal_rr_2, rt_ifaces_normal, RR, RefIndex(2), RefIndex(4))
+TEST_CASE(rt_ifaces_normal_sp_0, rt_ifaces_normal, SP, RefIndex(0), RefIndex(0))
+TEST_CASE(rt_ifaces_normal_sp_1, rt_ifaces_normal, SP, RefIndex(1), RefIndex(3))
+TEST_CASE(rt_ifaces_normal_sp_2, rt_ifaces_normal, SP, RefIndex(2), RefIndex(4))
 
 TEST_GROUP("Composite interfaced elements",
-           ADD_TEST(rt_ifaces_normal_full_sw_0),
-           ADD_TEST(rt_ifaces_normal_full_sw_1),
-           ADD_TEST(rt_ifaces_normal_full_sw_2),
-           ADD_TEST(rt_ifaces_normal_full_rr),
-           ADD_TEST(rt_ifaces_normal_full_sp),
+           ADD_TEST(rt_ifaces_normal_sw_0),
+           ADD_TEST(rt_ifaces_normal_sw_1),
+           ADD_TEST(rt_ifaces_normal_sw_2),
+           ADD_TEST(rt_ifaces_normal_rr_0),
+           ADD_TEST(rt_ifaces_normal_rr_1),
+           ADD_TEST(rt_ifaces_normal_rr_2),
+           ADD_TEST(rt_ifaces_normal_sp_0),
+           ADD_TEST(rt_ifaces_normal_sp_1),
+           ADD_TEST(rt_ifaces_normal_sp_2),
            )
 }
 
@@ -406,6 +428,7 @@ TEST_GROUP("Round-trip Calculator",
            ADD_GROUP(RoundTripEndMatrices_RangeSplit),
            ADD_GROUP(GeneralFuncs),
            ADD_GROUP(InterfacedElements),
+           ADD_TEST(Helper_makeElem),
            )
 } // namespace RoundTripCalculatorTests
 } // namespace Tests

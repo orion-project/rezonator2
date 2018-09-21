@@ -30,6 +30,21 @@ QString Value::displayStr() const
     return format(_value) % ' ' % _unit->name();
 }
 
+Value Value::parse(const QString& valueStr)
+{
+    int i = 0;
+    for (; i < valueStr.size(); i++)
+        if (valueStr.at(i).isLetter())
+            break;
+    bool ok = false;
+    double value = QStringRef(&valueStr, 0, i).toDouble(&ok);
+    if (!ok) return Value();
+    auto unitStr = valueStr.right(valueStr.length()-i);
+    auto unit = unitStr.isEmpty() ? none(): findByAlias(unitStr);
+    if (!unit) return Value();
+    return Value(value, unit);
+}
+
 //------------------------------------------------------------------------------
 //                                  ValueTS
 //------------------------------------------------------------------------------

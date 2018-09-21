@@ -41,21 +41,39 @@ TEST_METHOD(Value_ctor_from_numbers)
     ASSERT_VALUE_UNIT(v2, 4, none)
 }
 
+TEST_METHOD(Value_parse)
+{
+    auto v1 = Value::parse("100mm");
+    ASSERT_VALUE_UNIT(v1, 100, mm)
+
+    auto v2 = Value::parse("100");
+    ASSERT_VALUE_UNIT(v2, 100, none)
+
+    auto v3 = Value::parse("100dd");
+    ASSERT_VALUE_UNIT(v3, 0, none)
+
+    auto v4 = Value::parse("100.1mm");
+    ASSERT_VALUE_UNIT(v4, 100.1, mm)
+
+    auto v5 = Value::parse("100,1mm");
+    ASSERT_VALUE_UNIT(v5, 0, none)
+}
+
 //------------------------------------------------------------------------------
 
-class TestUnit : public Z::_Unit_
-{
+class TestUnit : public Z::_Unit_ {
 public:
     double processedValue = 0;
     QString alias() const override { return ""; }
     QString name() const override { return ""; }
-    double toSi(const double& value) const override
-    {
-        const_cast<TestUnit*>(this)->processedValue = value; return value;
-    }
+    double toSi(const double& value) const override;
     double fromSi(const double&) const override { return 0; }
     Unit siUnit() const override { return nullptr; }
 };
+
+double TestUnit::toSi(const double& value) const {
+    const_cast<TestUnit*>(this)->processedValue = value; return value;
+}
 
 TEST_METHOD(Value_toSi)
 {
@@ -151,6 +169,7 @@ TEST_GROUP("Values",
     ADD_TEST(Value_ctor_value_unit),
     ADD_TEST(Value_ctor_copy),
     ADD_TEST(Value_ctor_from_numbers),
+    ADD_TEST(Value_parse),
     ADD_TEST(Value_toSi),
     ADD_TEST(Value_literals_int),
     ADD_TEST(Value_literals_double),

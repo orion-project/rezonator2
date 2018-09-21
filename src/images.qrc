@@ -102,6 +102,7 @@
         <file alias="ElemTiltedPlate">../img/elem/ElemTiltedPlate.svg</file>
         <file alias="ElemMatrix">../img/elem/ElemMatrix.svg</file>
         <file alias="ElemPoint">../img/elem/ElemPoint.svg</file>
+        <file alias="ElemNormalInterface">../img/elem/ElemNormalInterface.svg</file>
     </qresource>
     <qresource prefix="/elem_icon">
         <file alias="ElemEmptyRange">../img/elem/ElemEmptyRange24.svg</file>
@@ -118,6 +119,7 @@
         <file alias="ElemTiltedCrystal">../img/elem/ElemTiltedCrystal24.svg</file>
         <file alias="ElemTiltedPlate">../img/elem/ElemTiltedPlate24.svg</file>
         <file alias="ElemPoint">../img/elem/ElemPoint24.svg</file>
+        <file alias="ElemNormalInterface">../img/elem/ElemNormalInterface24.svg</file>
     </qresource>
     <qresource prefix="/config_pages">
         <file alias="view">../img/opts_window_24.png</file>

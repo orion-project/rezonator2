@@ -50,7 +50,7 @@
 //------------------------------------------------------------------------------
 
 #ifdef Q_OS_MAC
-// Lock near the application bundle, if file is not found near the executable
+// Look near the application bundle, if file is not found near the executable
 #define TEST_FILE(var, file_name)\
     QString var = qApp->applicationDirPath() % "/test_files/" % file_name;\
     if (!QFile::exists(var)) {\

@@ -77,6 +77,8 @@ public:
     bool operator <= (const Value& v) const { return toSi() <= v.toSi(); }
     bool operator <= (const double& v) const { return toSi() <= v; }
 
+    static Value parse(const QString& valueStr);
+
 private:
     double _value;
     Unit _unit;
