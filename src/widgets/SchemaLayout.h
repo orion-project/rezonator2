@@ -7,55 +7,12 @@
 #include <QGraphicsItem>
 #include <QGraphicsView>
 
-//------------------------------------------------------------------------------
+class ElementView;
 
-/**
-    Graphical representation of single element.
-*/
-class ElementView : public QGraphicsItem
-{
-public:
-    ElementView(Element* elem): QGraphicsItem(), _element(elem){}
-    ~ElementView() override {}
+namespace ElementViewFactory {
+ElementView* makeElementView(Element *elem);
+}
 
-    Element *element() const { return _element; }
-
-    virtual void init() = 0;
-
-    QRectF boundingRect() const override;
-
-    qreal width() const { return 2*HW; }
-    qreal height() const { return 2*HH; }
-    qreal halfw() const { return HW; }
-    qreal halfh() const { return HH; }
-
-protected:
-    Element* _element;
-
-    qreal HW;
-    qreal HH = 40;
-};
-
-//------------------------------------------------------------------------------
-
-class ElementViewMaker
-{
-public:
-    virtual ~ElementViewMaker();
-    virtual ElementView *make(Element*) = 0;
-};
-
-class ElementViewFactory
-{
-public:
-    ElementViewFactory();
-    ~ElementViewFactory();
-    ElementView* makeView(Element*) const;
-private:
-    QMap<QString, ElementViewMaker*> _makers;
-};
-
-//------------------------------------------------------------------------------
 /**
     Graphical representation of a schema.
 */
@@ -79,8 +36,7 @@ protected:
 private:
     Schema *_schema;
     QVector<ElementView*> _elements;
-    ElementViewFactory _factory;
-    class OpticalAxisView *_axis;
+    ElementView *_axis;
     QMap<ElementView*, QGraphicsTextItem*> _elemLabels;
 
     void addElementView(ElementView *elem);
