@@ -11,10 +11,11 @@ class ElementLayout
 {
 public:
     ElementLayout(Element* elem): _element(elem) { }
-    virtual ~ElementLayout() { }
+    virtual ~ElementLayout();
     Element *element() const { return _element; }
     virtual int viewCount() { return 1; }
     virtual ElementView* view(int) { return _view; }
+    virtual void init() = 0;
 
 protected:
     Element* _element;
@@ -26,7 +27,7 @@ protected:
 class ElementLayoutMaker
 {
 public:
-    virtual ~ElementLayoutMaker() {}
+    virtual ~ElementLayoutMaker();
     virtual ElementLayout *make(Element*) = 0;
 };
 
@@ -72,7 +73,7 @@ private:
     {                                                                           \
     public:                                                                     \
         elem_type ## Layout(Element *elem) : ElementLayout(elem) { init(); }    \
-        void init();
+        void init() override;
 
 #define DECLARE_ELEMENT_LAYOUT_END(elem_type)  };                               \
     class elem_type ## LayoutMaker : public ElementLayoutMaker                  \

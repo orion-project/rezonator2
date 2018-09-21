@@ -18,12 +18,12 @@ class ElementPropsDialog : public RezonatorDialog
     Q_OBJECT
 
 public:
-    explicit ElementPropsDialog(Element *elem, QWidget *parent = 0);
-    ~ElementPropsDialog();
+    explicit ElementPropsDialog(Element *elem, QWidget *parent = nullptr);
+    ~ElementPropsDialog() override;
 
     void populate();
 
-    static bool editElement(class Element *elem, QWidget *parent = 0);
+    static bool editElement(class Element *elem, QWidget *parent = nullptr);
 
 public slots:
     void collect() override;
@@ -54,7 +54,7 @@ class ElementPropsDialog_None : public ElementPropsDialog
     Q_OBJECT
 
 public:
-    explicit ElementPropsDialog_None(Element *elem, QWidget *parent = 0);
+    explicit ElementPropsDialog_None(Element *elem, QWidget *parent = nullptr);
 };
 
 //------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ class ElementPropsDialog_List : public ElementPropsDialog
     Q_OBJECT
 
 public:
-    explicit ElementPropsDialog_List(Element *elem, QWidget *parent = 0);
+    explicit ElementPropsDialog_List(Element *elem, QWidget *parent = nullptr);
 
 protected:
     void populateParams() override;
@@ -82,7 +82,7 @@ class ElementPropsDialog_Abcd : public ElementPropsDialog
     Q_OBJECT
 
 public:
-    explicit ElementPropsDialog_Abcd(Element *elem, QWidget *parent = 0);
+    explicit ElementPropsDialog_Abcd(Element *elem, QWidget *parent = nullptr);
 
 protected:
     void populateParams() override;

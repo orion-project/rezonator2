@@ -4,7 +4,7 @@
 
 namespace Z {
 
-QPlainTextEdit* __logView;
+static QPlainTextEdit* __logView;
 bool Protocol::isEnabled;
 
 void Protocol::setView(QPlainTextEdit* view)

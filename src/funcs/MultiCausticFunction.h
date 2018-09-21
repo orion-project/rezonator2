@@ -12,7 +12,7 @@ public:
     FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Multicaustic"))
 
     MultiCausticFunction(Schema *schema) : PlotFunction(schema) {}
-    ~MultiCausticFunction();
+    ~MultiCausticFunction() override;
 
     void calculate() override;
     bool hasOptions() const override { return true; }

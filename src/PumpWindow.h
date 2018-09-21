@@ -28,7 +28,7 @@ class PumpsTable : public QTableWidget, public SchemaListener
     Q_OBJECT
 
 public:
-    PumpsTable(Schema *schema, QWidget *parent = 0);
+    PumpsTable(Schema *schema, QWidget *parent = nullptr);
 
     void setContextMenu(QMenu *menu) { _contextMenu = menu; }
 
@@ -74,7 +74,7 @@ class PumpWindow : public SchemaMdiChild, public ISchemaWindowStorable
 public:
     static PumpWindow* create(Schema*);
 
-    ~PumpWindow();
+    ~PumpWindow() override;
 
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return { _windowMenu }; }

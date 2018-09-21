@@ -35,7 +35,7 @@ class ProjectWindow : public QMainWindow, public SchemaToolWindow
 
 public:
     ProjectWindow();
-    ~ProjectWindow();
+    ~ProjectWindow() override;
 
     // inherits from SchemaListener
     void schemaChanged(Schema*) override;

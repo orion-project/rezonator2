@@ -37,7 +37,7 @@ class PlotFuncWindow : public SchemaMdiChild
 
 public:
     explicit PlotFuncWindow(PlotFunction*);
-    ~PlotFuncWindow();
+    ~PlotFuncWindow() override;
 
     PlotFunction* function() const { return _function; }
     Plot* plot() const { return _plot; }

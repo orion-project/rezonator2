@@ -26,7 +26,7 @@ namespace SchemaTests {
 
 DECLARE_ELEMENT(TestElement, Element)
     Ori::Testing::TestBase *test = nullptr;
-    ~TestElement()
+    ~TestElement() override
     {
         if (!test) return;
         TEST_LOG("~TestElement() " + label())

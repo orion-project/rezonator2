@@ -251,20 +251,20 @@ void PumpWindow::createActions()
 void PumpWindow::createMenuBar()
 {
     _windowMenu = Ori::Gui::menu(tr("&Pump"), this,
-        { _actnPumpAdd, 0, _actnPumpEdit, _actnPumpActivate, 0, _actnPumpDelete });
+        { _actnPumpAdd, nullptr, _actnPumpEdit, _actnPumpActivate, nullptr, _actnPumpDelete });
 
     _contextMenu = Ori::Gui::menu(this,
-        { _actnPumpEdit, _actnPumpActivate, 0, _actnPumpDelete });
+        { _actnPumpEdit, _actnPumpActivate, nullptr, _actnPumpDelete });
 }
 
 void PumpWindow::createToolBar()
 {
     populateToolbar({
         Ori::Gui::textToolButton(_actnPumpAdd),
-        0,
+        nullptr,
         Ori::Gui::textToolButton(_actnPumpEdit),
         Ori::Gui::textToolButton(_actnPumpActivate),
-        0,
+        nullptr,
         _actnPumpDelete
     });
 }

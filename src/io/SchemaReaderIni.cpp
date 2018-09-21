@@ -120,7 +120,7 @@ public:
         return _file->value(key, def).toBool();
     }
 
-    double getValue(const QString& key, double def, bool* ok = 0)
+    double getValue(const QString& key, double def, bool* ok = nullptr)
     {
         if (!_file->contains(key))
         {
@@ -130,7 +130,7 @@ public:
         return _file->value(key, def).toDouble(ok);
     }
 
-    int getInt(const QString& key, int def, bool* ok = 0)
+    int getInt(const QString& key, int def, bool* ok = nullptr)
     {
         if (!_file->contains(key))
         {

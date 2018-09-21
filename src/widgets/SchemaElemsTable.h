@@ -14,7 +14,7 @@ class SchemaElemsTable: public QTableWidget, public SchemaListener, public Eleme
     Q_OBJECT
 
 public:
-    explicit SchemaElemsTable(Schema *schema, QWidget *parent = 0);
+    explicit SchemaElemsTable(Schema *schema, QWidget *parent = nullptr);
 
     void populateParams();
     void setContextMenu(QMenu *menu) { _contextMenu = menu; }

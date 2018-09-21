@@ -31,7 +31,7 @@ public:
     double max = 0;
     bool empty = true;
     void reset() { empty = true; min = max = 0; }
-    void set(const double& v1, const double& v2) { empty = false, min = v1, max = v2; }
+    void set(const double& v1, const double& v2) { empty = false; min = v1; max = v2; }
     bool has(const double& v) const { return !empty && v >= min && v <= max; }
     void fit(const double& v);
     QString str() const;

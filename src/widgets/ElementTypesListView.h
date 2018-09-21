@@ -10,7 +10,7 @@ class ElementTypesListView : public QListWidget
     Q_OBJECT
 
 public:
-    explicit ElementTypesListView(QWidget *parent = 0);
+    explicit ElementTypesListView(QWidget *parent = nullptr);
     
     void populate(Elements elems);
     const QString selected() const;

@@ -35,7 +35,7 @@ public:
     };
 
 public:
-    explicit ParamsEditor(Options opts, QWidget *parent = 0);
+    explicit ParamsEditor(Options opts, QWidget *parent = nullptr);
 
     void populate();
 
@@ -67,7 +67,7 @@ class ParamsEditorTS : public QWidget
     Q_OBJECT
 
 public:
-    explicit ParamsEditorTS(Z::ParametersTS *params, QWidget *parent = 0);
+    explicit ParamsEditorTS(Z::ParametersTS *params, QWidget *parent = nullptr);
 
     void adjustSymbolsWidth();
 

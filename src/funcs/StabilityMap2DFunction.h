@@ -14,6 +14,10 @@ public:
     Z::Variable* paramX() { return &_paramX; }
     Z::Variable* paramY() { return &_paramY; }
 
+    void calculate() override;
+    bool hasOptions() const override { return true; }
+    void loadPrefs() override;
+
 private:
     Z::Variable _paramX, _paramY;
 };

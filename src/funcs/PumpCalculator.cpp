@@ -192,5 +192,5 @@ BeamResult PumpCalculator::calc(const Z::Matrix& matrix, double lambdaSI)
     }
 
     qCritical() << "Unsupported pump calculation mode" << int(_impl->mode);
-    return { NAN, NAN, NAN };
+    return { Double::nan(), Double::nan(), Double::nan() };
 }

@@ -10,8 +10,8 @@ class SchemaParamsTable : public QTableWidget, public SchemaListener, public Z::
     Q_OBJECT
 
 public:
-    SchemaParamsTable(Schema *schema, QWidget *parent = 0);
-    ~SchemaParamsTable();
+    SchemaParamsTable(Schema *schema, QWidget *parent = nullptr);
+    ~SchemaParamsTable() override;
 
     void setContextMenu(QMenu *menu) { _contextMenu = menu; }
 

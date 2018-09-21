@@ -37,7 +37,7 @@ class TestElemOwner : public ElementOwner
 public:
     bool changed = false;
     Element *element = nullptr;
-    void elementChanged(Element *e) override { element = e, changed = true; }
+    void elementChanged(Element *e) override { element = e; changed = true; }
 };
 
 #define ELEMENT_AND_OWNER\

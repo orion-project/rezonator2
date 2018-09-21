@@ -15,7 +15,7 @@ class CalcManager : public QObject
     Q_OBJECT
 
 public:
-    explicit CalcManager(Schema *schema, QWidget *parent = 0);
+    explicit CalcManager(Schema *schema, QWidget *parent = nullptr);
 
     Schema* schema() const { return _schema; }
 

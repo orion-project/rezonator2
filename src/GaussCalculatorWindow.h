@@ -71,7 +71,7 @@ class GaussCalculatorWindow : public QWidget, public Z::ParameterListener
     Q_OBJECT
 
 public:
-    explicit GaussCalculatorWindow(QWidget *parent = 0);
+    explicit GaussCalculatorWindow(QWidget *parent = nullptr);
     ~GaussCalculatorWindow();
 
     static void showCalcWindow();

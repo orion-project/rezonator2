@@ -162,7 +162,7 @@ void ParamsEditorTS::collect()
 //                              ParamsEditorAbcd
 //------------------------------------------------------------------------------
 
-ParamsEditorAbcd::ParamsEditorAbcd(const QString& title, const Z::Parameters &params) : QGroupBox(title, 0), _params(params)
+ParamsEditorAbcd::ParamsEditorAbcd(const QString& title, const Z::Parameters &params) : QGroupBox(title, nullptr), _params(params)
 {
     if (_params.size() != 4) return;
 

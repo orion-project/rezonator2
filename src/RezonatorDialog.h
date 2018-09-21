@@ -23,7 +23,7 @@ public:
     Q_DECLARE_FLAGS(Options, Option)
 
 public:
-    explicit RezonatorDialog(Options options = NoOptions, QWidget *parent = 0);
+    explicit RezonatorDialog(Options options = NoOptions, QWidget *parent = nullptr);
     ~RezonatorDialog();
 
     void setTitleAndIcon(const QString& title, const char* iconPath);

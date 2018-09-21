@@ -120,7 +120,7 @@ Z::PointTS CausticFunction::calculateSinglePass() const
         return { beamT.halfAngle, beamS.halfAngle };
     }
     qCritical() << "Unsupported caustic result mode";
-    return { NAN, NAN };
+    return { Double::nan(), Double::nan() };
 }
 
 Z::PointTS CausticFunction::calculateResonator() const
@@ -142,25 +142,25 @@ Z::PointTS CausticFunction::calculateResonator() const
 double CausticFunction::calculateResonator_beamRadius(const Z::Matrix& m) const
 {
     double p = 1 - SQR((m.A + m.D) * 0.5);
-    if (p <= 0) return NAN;
+    if (p <= 0) return Double::nan();
     double w2 = _wavelenSI * qAbs(m.B) * M_1_PI / sqrt(p);
-    if (w2 < 0) return NAN;
+    if (w2 < 0) return Double::nan();
     return sqrt(w2);
 }
 
 // TODO:NEXT-VER should be in Calculator as it can be reused by another functions, e.g. BeamParamsAtElems
 double CausticFunction::calculateResonator_frontRadius(const Z::Matrix& m) const
 {
-    if (m.D != m.A)
+    if (!Double(m.D).is(m.A))
         return 2 * m.B / (m.D - m.A);
-    return (m.B < 0) ? -INFINITY : +INFINITY;
+    return (m.B < 0) ? -Double::infinity() : +Double::infinity();
 }
 
 // TODO:NEXT-VER should be in Calculator as it can be reused by another functions, e.g. BeamParamsAtElems
 double CausticFunction::calculateResonator_halfAngle(const Z::Matrix& m) const
 {
     double p = 4.0 - SQR(m.A + m.D);
-    if (p <= 0) return NAN;
+    if (p <= 0) return Double::nan();
     return sqrt(_wavelenSI * M_1_PI * 2.0 * qAbs(m.C) / sqrt(p));
 }
 

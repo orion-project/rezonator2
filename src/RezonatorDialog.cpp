@@ -6,7 +6,7 @@
 #include <QDialogButtonBox>
 #include <QIcon>
 
-QMap<QString, QByteArray> __savedGeometry_RezonatorDialog;
+static QMap<QString, QByteArray> __savedGeometry_RezonatorDialog;
 
 RezonatorDialog::RezonatorDialog(Options options, QWidget* parent) : QDialog(parent? parent: qApp->activeWindow())
 {

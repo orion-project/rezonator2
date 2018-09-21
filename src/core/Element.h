@@ -24,7 +24,7 @@
     const QString typeName() const override { static QString _name_ = name; return _name_; }
 
 #define PARAMS_EDITOR(editor)\
-    Z::ParamsEditor paramsEditorKind() override { return Z::ParamsEditor::editor; }
+    Z::ParamsEditor paramsEditorKind() const override { return Z::ParamsEditor::editor; }
 
 #define CALC_MATRIX\
     void calcMatrixInternal() override;
@@ -47,6 +47,7 @@ class Element;
 class ElementOwner
 {
 public:
+    virtual ~ElementOwner();
     virtual void elementChanged(Element*) {}
     virtual int indexOf(Element*) const { return -1; }
     virtual int count() const { return 0; }
@@ -60,7 +61,7 @@ public:
 class Element : public Z::ParameterListener
 {
 public:
-    virtual ~Element();
+    ~Element() override;
 
     ElementOwner* owner() const { return _owner; }
     void setOwner(ElementOwner *owner);
@@ -108,7 +109,7 @@ public:
     const Z::Matrix* pMs() const { return &_ms; }
 
     /// Preferable parameter editor kind for this element.
-    virtual Z::ParamsEditor paramsEditorKind() { return Z::ParamsEditor::List; }
+    virtual Z::ParamsEditor paramsEditorKind() const { return Z::ParamsEditor::List; }
 
     bool disabled() const { return _disabled; }
     void setDisabled(bool value);
@@ -123,13 +124,13 @@ public:
 protected:
     Element();
 
-    Z::Parameters _params;
     ElementOwner* _owner = nullptr; ///< Pointer to an object who owns this element.
-    bool _disabled = false;
-    bool _locked = false;
     QString _label, _title;
     Z::Matrix _mt, _ms;
     int _id;
+    bool _disabled = false;
+    bool _locked = false;
+    Z::Parameters _params;
 
     virtual void calcMatrixInternal();
 

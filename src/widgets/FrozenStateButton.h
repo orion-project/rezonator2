@@ -15,8 +15,8 @@ class FrozenStateButton : public QToolButton
     Q_OBJECT
 
 public:
-    explicit FrozenStateButton(const QString& title, const char* icon, QWidget *parent = 0);
-    explicit FrozenStateButton(QWidget *parent = 0);
+    explicit FrozenStateButton(const QString& title, const char* icon, QWidget *parent = nullptr);
+    explicit FrozenStateButton(QWidget *parent = nullptr);
 
     void setInfo(const QString&);
 

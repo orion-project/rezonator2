@@ -22,7 +22,7 @@ class SchemaViewWindow: public SchemaMdiChild, public EditableWindow
 
 public:
     SchemaViewWindow(Schema*, CalcManager*);
-    ~SchemaViewWindow();
+    ~SchemaViewWindow() override;
 
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return { menuElement }; }

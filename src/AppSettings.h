@@ -8,7 +8,7 @@ class SettingsListener
 {
 public:
     SettingsListener();
-    ~SettingsListener();
+    virtual ~SettingsListener();
 
     virtual void settingsChanged() {}
 };
@@ -29,7 +29,7 @@ public:
                               ///< Set as fraction of limits range: `(max - min) * plotSafeMargins`.
     double plotZoomStep;      ///< Step of zooming for commands Zoom-in / Zoom-out.
                               ///< Set as fraction of limits range: `(max - min) * plotZoomStep`.
-    double plotNumberPrecision; ///< Number of decimal digits used to format axes labels.
+    int plotNumberPrecision;  ///< Number of decimal digits used to format axes labels.
     QString defaultTripType;  ///< New schemas should be created having this trip-type.
 
     void load();

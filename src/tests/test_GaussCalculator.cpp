@@ -18,7 +18,7 @@ namespace GaussCalculatorTests {
 #else
 #define _(p, value, order)\
 {\
-    constexpr double epsilon = std::pow(10.0, -order);\
+    const double epsilon = std::pow(10.0, -order);\
     ASSERT_NEAR_DBL(c.p(), value, epsilon)\
 }
 #endif

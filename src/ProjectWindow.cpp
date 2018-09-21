@@ -140,13 +140,13 @@ void ProjectWindow::createActions()
     actnFileOpen = A_(tr("&Open..."), _operations, SLOT(openSchemaFile()), ":/toolbar/schema_open", QKeySequence::Open);
     actnFileOpenExample = A_(tr("Open &Example..."), _operations, SLOT(openSchemaExample()));
     actnFileSave = A_(tr("&Save"), _operations, SLOT(saveSchemaFile()), ":/toolbar/schema_save", QKeySequence::Save);
-    actnFileSaveAs = A_(tr("Save &As..."), _operations, SLOT(saveSchemaFileAs()), 0, QKeySequence::SaveAs);
+    actnFileSaveAs = A_(tr("Save &As..."), _operations, SLOT(saveSchemaFileAs()), nullptr, QKeySequence::SaveAs);
     actnFileSaveCopy = A_(tr("Save &Copy..."), _operations, SLOT(saveSchemaFileCopy()));
     actnFileLambda = A_(tr("Change &Wavelength..."), _operations, SLOT(setupWavelength()), ":/toolbar/wavelength", Qt::Key_F10);
     actnFileTripType = A_(tr("Change &Trip Type..."), _operations, SLOT(setupTripType()));
     actnFilePump = A_(tr("Setup &Input Beam..."), _operations, SLOT(setupPump()), ":/toolbar/pump_edit", Qt::Key_F9);
     actnFileSummary = A_(tr("Summar&y..."), _calculations, SLOT(funcSummary()), ":/toolbar/schema_summary", Qt::CTRL | Qt::Key_I);
-    actnFileExit = A_(tr("E&xit"), qApp, SLOT(closeAllWindows()), 0, Qt::CTRL | Qt::Key_Q);
+    actnFileExit = A_(tr("E&xit"), qApp, SLOT(closeAllWindows()), nullptr, Qt::CTRL | Qt::Key_Q);
 
     /* TODO:NEXT-VER
     actnEditCut = A_(tr("Cu&t"), _mdiArea, SLOT(editableChild_Cut()), ":/toolbar/cut", QKeySequence::Cut);
@@ -200,9 +200,9 @@ void ProjectWindow::createMenuBar()
     _mruMenu = new Ori::Widgets::MruMenu(tr("Recent &Files"), _mruList, this);
 
     menuFile = Ori::Gui::menu(tr("&File"), this,
-        { actnFileNew, actnFileOpen, actnFileOpenExample, _mruMenu, 0, actnFileSave,
-          actnFileSaveAs, actnFileSaveCopy, 0,
-          actnFileLambda, actnFileTripType, actnFilePump, actnFileSummary, 0, actnFileExit });
+        { actnFileNew, actnFileOpen, actnFileOpenExample, _mruMenu, nullptr, actnFileSave,
+          actnFileSaveAs, actnFileSaveCopy, nullptr,
+          actnFileLambda, actnFileTripType, actnFilePump, actnFileSummary, nullptr, actnFileExit });
 
     /* TODO:NEXT-VER menuEdit = Ori::Gui::menu(tr("&Edit"), this,
         { actnEditCut, actnEditCopy, actnEditPaste, 0, actnEditSelectAll }); */
@@ -212,31 +212,31 @@ void ProjectWindow::createMenuBar()
           new Ori::Widgets::LanguagesMenu(_translator, ":/toolbar16/langs") });
 
     menuFunctions = Ori::Gui::menu(tr("F&unctions"), this,
-        { actnFuncRoundTrip, actnFuncMultFwd, actnFuncMultBkwd, 0, actnFuncStabMap,
-          actnFuncStabMap2d, 0, actnFuncCaustic, actnFuncMultiCaustic, 0, actnFuncRepRate });
+        { actnFuncRoundTrip, actnFuncMultFwd, actnFuncMultBkwd, nullptr, actnFuncStabMap,
+          actnFuncStabMap2d, nullptr, actnFuncCaustic, actnFuncMultiCaustic, nullptr, actnFuncRepRate });
 
     menuTools = Ori::Gui::menu(tr("&Tools", "Menu title"), this,
-        { actnToolsGaussCalc, actnToolsCatalog, 0, actnToolsPrefs });
+        { actnToolsGaussCalc, actnToolsCatalog, nullptr, actnToolsPrefs });
 
     menuWindow = Ori::Gui::menu(tr("&Window"), this,
-        { actnWndSchema, actnWndParams, actnWndPumps, actnWndProtocol, 0,
-          actnWndClose, actnWndCloseAll, 0, actnWndTile, actnWndCascade, 0 });
+        { actnWndSchema, actnWndParams, actnWndPumps, actnWndProtocol, nullptr,
+          actnWndClose, actnWndCloseAll, nullptr, actnWndTile, actnWndCascade, nullptr });
     connect(menuWindow, SIGNAL(aboutToShow()), _mdiArea, SLOT(populateWindowMenu()));
 
     menuHelp = Ori::Gui::menu(tr("&Help"), this,
-        { actnHelpBugReport, actnHelpUpdates, actnHelpHomepage, 0, actnHelpAbout });
+        { actnHelpBugReport, actnHelpUpdates, actnHelpHomepage, nullptr, actnHelpAbout });
 }
 
 void ProjectWindow::createToolBars()
 {
     addToolBar(makeToolBar(tr("File"),
         { actnFileNew, Ori::Gui::menuToolButton(_mruMenu, actnFileOpen),
-          actnFileSave, 0, actnFilePump, actnFileSummary }));
+          actnFileSave, nullptr, actnFilePump, actnFileSummary }));
 
     // TODO:NEXT-VER addToolBar(makeToolBar(tr("Edit"), { actnEditCut, actnEditCopy, actnEditPaste }));
 
     addToolBar(makeToolBar(tr("Functions"),
-        { actnFuncRoundTrip, 0, actnFuncStabMap, actnFuncStabMap2d, 0, actnFuncCaustic, actnFuncMultiCaustic, 0,
+        { actnFuncRoundTrip, nullptr, actnFuncStabMap, actnFuncStabMap2d, nullptr, actnFuncCaustic, actnFuncMultiCaustic, nullptr,
           actnFuncRepRate }));
 
     addToolBar(makeToolBar(tr("Misc"),

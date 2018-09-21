@@ -26,8 +26,16 @@ QString linkViewMatrix(Element *elem);
 QString elemParamsHtml(Schema *schema, Element *elem, bool showLinksToGlobals = true);
 QString pumpParamsHtml(Z::PumpParams *pump);
 
+QString nameStyle();
+QString valueStyle();
+
 template <class TParam>
-QString paramHtml(TParam *param);
+QString paramHtml(TParam *param)
+{
+    return QStringLiteral(
+        "<nobr><span style='%1'>%2</span><span style='%3'> = %4</span></nobr>")
+        .arg(nameStyle(), param->displayLabel(), valueStyle(), param->value().displayStr());
+}
 
 } // namespace Format
 } // namespace Z

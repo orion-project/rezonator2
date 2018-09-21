@@ -60,7 +60,7 @@ public:
 
     double toSi() const { return _unit->toSi(_value); }
 
-    Value& operator = (const Value& v) { _value = v._value, _unit = v._unit; return *this; }
+    Value& operator = (const Value& v) { _value = v._value; _unit = v._unit; return *this; }
     Value operator - () const { return Value(-_value, _unit); }
     Value operator * (const double& v) const { return Value(_value * v, _unit); }
     Value operator / (const double& v) const { return Value(_value / v, _unit); }
@@ -94,8 +94,8 @@ private:
 // Should be in global namespace for convenience.
 
 #define Z_VALUE_LITERAL(unit)\
-    inline Z::Value operator "" _##unit(long double value) { return Z::Value(value, Z::Units::unit()); }\
-    inline Z::Value operator "" _##unit(unsigned long long value) { return Z::Value(value, Z::Units::unit()); }
+    inline Z::Value operator "" _##unit(long double value) { return Z::Value(double(value), Z::Units::unit()); }\
+    inline Z::Value operator "" _##unit(unsigned long long value) { return Z::Value(double(value), Z::Units::unit()); }
 
 Z_VALUE_LITERAL(Ao)
 Z_VALUE_LITERAL(nm)
@@ -127,8 +127,8 @@ public:
     double rawValueS() const { return _valueS; }
     Unit unit() const { return _unit; }
 
-    ValueTS& operator = (const ValueTS& v) { _valueT = v._valueT, _valueS = v._valueS, _unit = v._unit; return *this; }
-    ValueTS& operator = (const Value& v) { _valueT = v.value(), _valueS = v.value(), _unit = v.unit(); return *this; }
+    ValueTS& operator = (const ValueTS& v) { _valueT = v._valueT; _valueS = v._valueS; _unit = v._unit; return *this; }
+    ValueTS& operator = (const Value& v) { _valueT = v.value(); _valueS = v.value(); _unit = v.unit(); return *this; }
     ValueTS operator - () const { return ValueTS(-_valueT, -_valueS, _unit); }
 
     QString str() const;

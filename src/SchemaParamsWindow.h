@@ -21,7 +21,7 @@ class SchemaParamsWindow : public SchemaMdiChild, public ISchemaWindowStorable
 public:
     static SchemaParamsWindow* create(Schema*);
 
-    ~SchemaParamsWindow();
+    ~SchemaParamsWindow() override;
 
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return { _windowMenu }; }

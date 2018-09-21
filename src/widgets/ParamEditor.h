@@ -45,7 +45,7 @@ public:
     };
 
     explicit ParamEditor(Options opts);
-    ~ParamEditor();
+    ~ParamEditor() override;
 
     Z::Parameter* parameter() const { return _param; }
 

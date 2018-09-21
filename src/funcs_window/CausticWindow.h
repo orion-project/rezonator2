@@ -11,7 +11,7 @@ class CausticWindow : public PlotFuncWindowStorable
 public:
     explicit CausticWindow(Schema*);
 
-    CausticFunction* function() const { return (CausticFunction*)_function; }
+    CausticFunction* function() const { return dynamic_cast<CausticFunction*>(_function); }
 
 protected:
     // Implementation of PlotFuncWindow

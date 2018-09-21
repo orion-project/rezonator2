@@ -20,7 +20,7 @@ class ConfigDialog : public Ori::Dlg::BasicConfigDialog
 
 public:
     ConfigDialog(QWidget* parent);
-    ~ConfigDialog();
+    ~ConfigDialog() override;
 
     // inherited from BasicConfigDialog
     virtual void populate() override;

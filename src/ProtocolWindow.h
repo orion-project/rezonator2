@@ -13,7 +13,7 @@ class ProtocolWindow : public BasicMdiChild
     Q_OBJECT
 
 public:
-    ~ProtocolWindow();
+    ~ProtocolWindow() override;
 
     static ProtocolWindow* create();
 

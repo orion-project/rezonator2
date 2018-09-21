@@ -32,9 +32,9 @@ public:
 private:
     WidgetResult() {}
 
-    bool _result = true;
     QWidget* _widget = nullptr;
     QString _message = QString();
+    bool _result = true;
 
     QWidget* findFocusable(QWidget*);
 };

@@ -28,7 +28,7 @@ class PlotParamsPanel : public QStackedWidget
     Q_OBJECT
 
 public:
-    explicit PlotParamsPanel(PlotParamsPanelCtorOptions options, QWidget *parent = 0);
+    explicit PlotParamsPanel(PlotParamsPanelCtorOptions options, QWidget *parent = nullptr);
 
     void placeIn(QToolBar* toolbar);
 

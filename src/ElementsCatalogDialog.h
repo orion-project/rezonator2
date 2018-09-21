@@ -26,8 +26,8 @@ public:
         CatalogMode_View
     };
 
-    ElementsCatalogDialog(CatalogMode mode, QWidget* parent = 0);
-    ~ElementsCatalogDialog();
+    ElementsCatalogDialog(CatalogMode mode, QWidget* parent = nullptr);
+    ~ElementsCatalogDialog() override;
 
     QString selected() const;
 

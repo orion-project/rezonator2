@@ -10,40 +10,48 @@
 
 #include <QAction>
 
+//------------------------------------------------------------------------------
+//                            StabilityMapOptionsPanel
+//------------------------------------------------------------------------------
+
 class StabilityMapOptionsPanel : public FuncOptionsPanel
 {
 public:
-    StabilityMapOptionsPanel(StabilityMapWindow* window) : FuncOptionsPanel(window), _window(window)
-    {
-        // TODO: check if these strings are translated
-        Ori::Layouts::LayoutV({
-            makeSectionHeader(tr("Stability parameter")),
-            makeModeButton(":/toolbar/formula_stab_normal", tr("Normal"), int(Z::Enums::StabilityCalcMode::Normal)),
-            makeModeButton(":/toolbar/formula_stab_squared", tr("Squared"), int(Z::Enums::StabilityCalcMode::Squared)),
-            Ori::Layouts::Stretch()
-        }).setSpacing(0).setMargin(0).useFor(this);
-
-        for (auto button : _modeButtons)
-            button->setIconSize(QSize(96, 48));
-
-        showCurrentMode();
-    }
-
-    int currentFunctionMode() const override
-    {
-        return static_cast<int>(_window->function()->stabilityCalcMode());
-    }
-
-    void functionModeChanged(int mode) override
-    {
-        auto stabCalcMode = static_cast<Z::Enums::StabilityCalcMode>(mode);
-        CustomPrefs::setRecentStr(QStringLiteral("func_stab_map_mode"), Z::Enums::toStr(stabCalcMode));
-        _window->function()->setStabilityCalcMode(stabCalcMode);
-    }
+    StabilityMapOptionsPanel(StabilityMapWindow* window);
+    int currentFunctionMode() const override;
+    void functionModeChanged(int mode) override;
 
 private:
     StabilityMapWindow* _window;
 };
+
+StabilityMapOptionsPanel::StabilityMapOptionsPanel(StabilityMapWindow* window) : FuncOptionsPanel(window), _window(window)
+{
+    // TODO: check if these strings are translated
+    Ori::Layouts::LayoutV({
+        makeSectionHeader(tr("Stability parameter")),
+        makeModeButton(":/toolbar/formula_stab_normal", tr("Normal"), int(Z::Enums::StabilityCalcMode::Normal)),
+        makeModeButton(":/toolbar/formula_stab_squared", tr("Squared"), int(Z::Enums::StabilityCalcMode::Squared)),
+        Ori::Layouts::Stretch()
+    }).setSpacing(0).setMargin(0).useFor(this);
+
+    for (auto button : _modeButtons)
+        button->setIconSize(QSize(96, 48));
+
+    showCurrentMode();
+}
+
+int StabilityMapOptionsPanel::currentFunctionMode() const
+{
+    return static_cast<int>(_window->function()->stabilityCalcMode());
+}
+
+void StabilityMapOptionsPanel::functionModeChanged(int mode)
+{
+    auto stabCalcMode = static_cast<Z::Enums::StabilityCalcMode>(mode);
+    CustomPrefs::setRecentStr(QStringLiteral("func_stab_map_mode"), Z::Enums::toStr(stabCalcMode));
+    _window->function()->setStabilityCalcMode(stabCalcMode);
+}
 
 //------------------------------------------------------------------------------
 //                            StabilityMapWindow

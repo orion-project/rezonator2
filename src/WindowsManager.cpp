@@ -2,7 +2,7 @@
 
 #include "core/Schema.h"
 
-QMap<QString, WindowsManager::Constructor> __schemaWindowCtors;
+static QMap<QString, WindowsManager::Constructor> __schemaWindowCtors;
 
 void WindowsManager::registerConstructor(const QString& type, WindowsManager::Constructor ctor)
 {

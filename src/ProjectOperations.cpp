@@ -23,7 +23,7 @@
 
 QFileDialog::Options fileDialogOptions()
 {
-    QFileDialog::Options options = 0;
+    QFileDialog::Options options = nullptr;
     if (!Settings::instance().useSystemDialogs)
         options |= QFileDialog::DontUseNativeDialog;
     return options;

@@ -30,7 +30,7 @@ void SchemaState::set(State state)
 //------------------------------------------------------------------------------
 
 #define INIT_EVENT(event, raise_changed, next_state)\
-    {event, EventProps{QString(# event), raise_changed, (SchemaState::State)next_state}}
+    {event, EventProps{QString(# event), raise_changed, static_cast<SchemaState::State>(next_state)}}
 
 void SchemaEvents::raise(Event event, void *param) const
 {
@@ -113,6 +113,14 @@ void SchemaEvents::notify(SchemaListener* listener, SchemaEvents::Event event, v
     case PumpDeleting: listener->pumpDeleting(_schema, reinterpret_cast<Z::PumpParams*>(param)); break;
     case PumpDeleted: listener->pumpDeleted(_schema, reinterpret_cast<Z::PumpParams*>(param)); break;
     };
+}
+
+//------------------------------------------------------------------------------
+//                                 ElementSelector
+//------------------------------------------------------------------------------
+
+ElementSelector::~ElementSelector()
+{
 }
 
 //------------------------------------------------------------------------------

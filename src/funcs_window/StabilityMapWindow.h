@@ -11,7 +11,7 @@ class StabilityMapWindow : public PlotFuncWindowStorable
 public:
     explicit StabilityMapWindow(Schema*);
 
-    StabilityMapFunction* function() const { return (StabilityMapFunction*)_function; }
+    StabilityMapFunction* function() const { return dynamic_cast<StabilityMapFunction*>(_function); }
 
 protected:
     // Implementation of PlotFuncWindow

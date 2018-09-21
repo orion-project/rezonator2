@@ -20,6 +20,8 @@ class ParameterBase;
 class ParameterListener
 {
 public:
+    virtual ~ParameterListener();
+
     /// Method is called when a new value has been assigned for a parameter.
     virtual void parameterChanged(ParameterBase*) {}
 };
@@ -33,7 +35,7 @@ public:
 class ParameterBase
 {
 public:
-    virtual ~ParameterBase() {}
+    virtual ~ParameterBase();
 
     /// Storable name of parameter.
     const QString& alias() const { return _alias; }
@@ -109,6 +111,8 @@ template <typename TValue>
 class ValueVerifierBase
 {
 public:
+    virtual ~ValueVerifierBase() {}
+
     /// When verifier is not enabled, parameters should not use it for verification.
     virtual bool enabled() const { return false; }
 
@@ -301,8 +305,21 @@ class ParameterLinksList : public QList<TLink*>
 public:
     ParameterLinksList(): QList<TLink*>() {}
 
-    TLink* bySource(void *source) const;
-    TLink* byTarget(void *target) const;
+    TLink* bySource(void *source) const
+    {
+        for (TLink *link : *this)
+            if (link->source() == source)
+                return link;
+        return nullptr;
+    }
+
+    TLink* byTarget(void *target) const
+    {
+        for (TLink *link : *this)
+            if (link->target() == target)
+                return link;
+        return nullptr;
+    }
 };
 
 //------------------------------------------------------------------------------
@@ -318,17 +335,53 @@ public:
     ParametersList(const QList<TParam*>& other) : QList<TParam*>(other) {}
     ParametersList(std::initializer_list<TParam*> args): QList<TParam*>(args) {}
 
-    TParam* byAlias(const QString& alias) const;
-    TParam* byIndex(int index) const;
-    TParam* byPointer(void *param) const;
+    TParam* byAlias(const QString& alias) const
+    {
+        for (int i = 0; i < this->size(); i++)
+            if (this->at(i)->alias() == alias)
+                return (*this)[i];
+        return nullptr;
+    }
+
+    TParam* byIndex(int index) const
+    {
+        return (index >= 0 && index < this->size())? (*this)[index]: nullptr;
+    }
+
+    TParam* byPointer(void *param) const
+    {
+        for (int i = 0; i < this->size(); i++)
+            if (this->at(i) == param)
+                return (*this)[i];
+        return nullptr;
+    }
 
     ParametersList mid(int pos, int len) const
     {
         return ParametersList(QList<TParam*>::mid(pos, len));
     }
 
-    QString str() const;
-    QString displayStr() const;
+    QString str() const
+    {
+        QStringList s;
+        for (int i = 0; i < this->size(); i++)
+        {
+            auto p = this->at(i);
+            if (p->visible()) s << p->str();
+        }
+        return s.join("; ");
+    }
+
+    QString displayStr() const
+    {
+        QStringList s;
+        for (int i = 0; i < this->size(); i++)
+        {
+            auto p = this->at(i);
+            if (p->visible()) s << p->displayStr();
+        }
+        return s.join("; ");
+    }
 };
 
 //------------------------------------------------------------------------------
@@ -346,7 +399,7 @@ typedef ValueVerifierBase<Z::Value> ValueVerifier;
 
 class ParameterFilterCondition {
 public:
-    virtual ~ParameterFilterCondition() {}
+    virtual ~ParameterFilterCondition();
     virtual bool check(Parameter*) const = 0;
 };
 

@@ -1,14 +1,17 @@
-#include "RoundTripCalculator.h"
 #include "FunctionBase.h"
 #include "../core/Schema.h"
-#include "../core/Protocol.h"
-
-#include <QApplication>
 
 //------------------------------------------------------------------------------
 //                                 FunctionBase
 //------------------------------------------------------------------------------
+FunctionBase::~FunctionBase()
+{
 
+}
+
+//------------------------------------------------------------------------------
+//                                 InfoFunction
+//------------------------------------------------------------------------------
 FunctionBase::FunctionState InfoFunction::elementDeleting(Element*)
 {
     return _schema->count() == 1? Dead: Ok; // last element is deleting

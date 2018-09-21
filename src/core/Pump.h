@@ -54,8 +54,8 @@ public:
 protected:
     void addParam(ParameterTS *param, double value, Unit unit = Units::none());
 private:
-    QString _label, _title;
     ParametersTS _params;
+    QString _label, _title;
     bool _isActive = false;
 };
 
@@ -63,6 +63,7 @@ private:
 class PumpMode
 {
 public:
+    virtual ~PumpMode();
     virtual QString modeName() const = 0;
     virtual PumpParams* makePump() const = 0;
     virtual QString iconPath() const = 0;

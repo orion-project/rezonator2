@@ -11,7 +11,7 @@ class StabilityMap2DWindow : public PlotFuncWindowStorable
 public:
     explicit StabilityMap2DWindow(Schema*);
 
-    StabilityMap2DFunction* function() const { return (StabilityMap2DFunction*)_function; }
+    StabilityMap2DFunction* function() const { return dynamic_cast<StabilityMap2DFunction*>(_function); }
 
 protected:
     // Implementation of PlotFuncWindow

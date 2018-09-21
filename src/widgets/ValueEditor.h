@@ -17,7 +17,7 @@ class ValueEditor : public QWidget
     Q_OBJECT
 
 public:
-    explicit ValueEditor(QWidget *parent = 0);
+    explicit ValueEditor(QWidget *parent = nullptr);
 
     void setValue(const Z::Value& value);
     Z::Value value() const;

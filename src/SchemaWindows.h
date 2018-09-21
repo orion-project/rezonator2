@@ -36,6 +36,7 @@ void adjustIconSize(QToolBar* toolbar, const QSize& iconSize);
 class EditableWindow
 {
 public:
+    virtual ~EditableWindow();
     virtual bool canCut() { return false; }
     virtual bool canCopy() { return false; }
     virtual bool canPaste() { return false; }
@@ -123,7 +124,7 @@ public:
     typedef QFlags<InitOption> InitOptions;
 
 public:
-    BasicMdiChild(InitOptions options = 0);
+    BasicMdiChild(InitOptions options = InitOptions());
 
     /// Additional menu for main window menu bar.
     /// These additional menus is shown when mdi-child window is activated.
@@ -171,7 +172,7 @@ signals:
 class SchemaMdiChild : public BasicMdiChild, public SchemaWindow
 {
 public:
-    SchemaMdiChild(Schema* schema, InitOptions options = 0);
+    SchemaMdiChild(Schema* schema, InitOptions options = InitOptions());
 };
 
 //------------------------------------------------------------------------------
@@ -181,7 +182,7 @@ class SchemaMdiArea : public QMdiArea, public SettingsListener
     Q_OBJECT
 
 public:
-    explicit SchemaMdiArea(QWidget *parent = 0);
+    explicit SchemaMdiArea(QWidget *parent = nullptr);
 
     BasicMdiChild* activeChild() const;
     EditableWindow* activeEditableChild() const;

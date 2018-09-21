@@ -55,7 +55,7 @@ QSize RichTextItemDelegate::sizeHint(const QStyleOptionViewItem &option, const Q
     QTextDocument *doc = document(option, index, true);
 
     QRect decorationRect = rect(option, index, Qt::DecorationRole);
-    QRect displayRect = QRect(0, 0, doc->size().width(), doc->size().height());
+    QRect displayRect = QRect(0, 0, int(doc->size().width()), int(doc->size().height()));
     QRect checkRect = rect(option, index, Qt::CheckStateRole);
 
     doLayout(option, &checkRect, &decorationRect, &displayRect, true);

@@ -23,26 +23,30 @@ using Ori::Widgets::ValueEdit;
 class LinkButton : public QPushButton
 {
 public:
-    LinkButton() : QPushButton()
-    {
-        setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-        Z::Gui::setSymbolFont(this);
-        showLinkSource(nullptr);
-    }
-
-    QSize sizeHint() const override
-    {
-        return QSize(10, 10);
-    }
-
-    void showLinkSource(Z::Parameter *param)
-    {
-        QString text = param ? ("= " + param->alias() + " =") : QString("=");
-        int w = fontMetrics().width(text);
-        setFixedWidth(w + 2*Ori::Gui::layoutSpacing());
-        setText(text);
-    }
+    LinkButton();
+    QSize sizeHint() const;
+    void showLinkSource(Z::Parameter *param);
 };
+
+LinkButton::LinkButton() : QPushButton()
+{
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    Z::Gui::setSymbolFont(this);
+    showLinkSource(nullptr);
+}
+
+QSize LinkButton::sizeHint() const
+{
+    return QSize(10, 10);
+}
+
+void LinkButton::showLinkSource(Z::Parameter *param)
+{
+    QString text = param ? ("= " + param->alias() + " =") : QString("=");
+    int w = fontMetrics().width(text);
+    setFixedWidth(w + 2*Ori::Gui::layoutSpacing());
+    setText(text);
+}
 
 //------------------------------------------------------------------------------
 //                              ParamEditor

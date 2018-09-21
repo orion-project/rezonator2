@@ -22,17 +22,17 @@ namespace {
 enum PlotMode { PLOT_W, PLOT_R };
 }
 
+const int points = 50;
+
 class GaussPlotter
 {
 public:
-    double lambda = NAN;
-    double w0 = NAN;
-    double maxZ = NAN;
-    double MI = NAN;
+    double lambda = std::numeric_limits<double>::quiet_NaN();
+    double w0 = std::numeric_limits<double>::quiet_NaN();
+    double maxZ = std::numeric_limits<double>::quiet_NaN();
+    double MI = std::numeric_limits<double>::quiet_NaN();
     Z::Unit unitZ = nullptr;
     Z::Unit unitY = nullptr;
-
-    const int points = 50;
 
     QVector<double> valuesZ;
     QVector<double> valuesMain;
@@ -523,7 +523,11 @@ void GaussCalculatorWindow::restoreState()
 
     int w = root["window_width"].toInt();
     int h = root["window_height"].toInt();
-    if (w == 0 || h == 0) w = 750, h = 400;
+    if (w == 0 || h == 0)
+    {
+        w = 750;
+        h = 400;
+    }
     resize(w, h);
 
     _plotPlusMinusZ->setCheckedId(root["plot_minus_z"].toInt());
@@ -644,8 +648,8 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     auto toolbar = new Ori::Widgets::FlatToolBar;
     toolbar->setIconSize(Settings::instance().toolbarIconSize());
     Ori::Gui::populate(toolbar, {
-        _calcModeLock, 0, _calcModeZone, 0, _plotPlusMinusZ, _plotPlusMinusW, 0,
-        _plotWR, _plotV, _plotZ0, 0, actionHelp
+        _calcModeLock, nullptr, _calcModeZone, nullptr, _plotPlusMinusZ, _plotPlusMinusW, nullptr,
+        _plotWR, _plotV, _plotZ0, nullptr, actionHelp
     });
     return toolbar;
 }

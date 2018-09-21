@@ -13,11 +13,13 @@ inline QString translateUnits(const char* s)
 #endif
 }
 
+
 #define DEFINE_UNIT(_unit_, _unit_name_, _to_si_formula_, _from_si_formula_, _si_unit_)\
     Unit _unit_(); \
     class _Unit_##_unit_ : public _Unit_\
     {\
     public:\
+        ~_Unit_##_unit_() override; \
         QString alias() const override { return QStringLiteral(#_unit_); }\
         QString name() const override { return translateUnits(_unit_name_); }\
         double toSi(const double& v) const override { return _to_si_formula_; }\
@@ -28,12 +30,14 @@ inline QString translateUnits(const char* s)
     {\
         static _Unit_##_unit_ u;\
         return &u;\
-    }
+    }\
+    _Unit_##_unit_::~_Unit_##_unit_() {} // out-of-line virtual function definition
 
 #define DEFINE_DIM(_dim_, _dim_name_, _si_unit_, ...)\
     class _Dim_##_dim_ : public _Dim_\
     {\
     public:\
+        ~_Dim_##_dim_() override; \
         QString alias() const override { return QStringLiteral(#_dim_); }\
         QString name() const override { return translateUnits(_dim_name_); }\
         UnitList units() const override\
@@ -47,9 +51,18 @@ inline QString translateUnits(const char* s)
     {\
         static _Dim_##_dim_ dim;\
         return &dim;\
-    }
+    }\
+    _Dim_##_dim_::~_Dim_##_dim_() {} // out-of-line virtual function definition
 
 namespace Z {
+
+_Unit_::~_Unit_()
+{
+}
+
+_Dim_::~_Dim_()
+{
+}
 
 Unit _Dim_::unitByAlias(const QString& alias) const
 {
@@ -146,8 +159,8 @@ QString prefixNameTr(Prefix prefix)
     case Prefix_Mega: return QApplication::translate("Units", "M", "Decimal prefix");
     case Prefix_Giga: return QApplication::translate("Units", "G", "Decimal prefix");
     case Prefix_Tera: return QApplication::translate("Units", "T", "Decimal prefix");
-    default: return "prefix?";
     }
+    return QString();
 }
 
 const double PrefixValues[ENUM_COUNT(Prefix)] = { 1, 1e3, 1e6, 1e9, 1e12 };

@@ -20,10 +20,10 @@ class InfoFuncWindow : public QWidget, public SchemaToolWindow
     Q_OBJECT
 
 public:
-    explicit InfoFuncWindow(InfoFunction *func, QWidget *parent = 0);
-    ~InfoFuncWindow();
+    explicit InfoFuncWindow(InfoFunction *func, QWidget *parent = nullptr);
+    ~InfoFuncWindow() override;
 
-    static void open(InfoFunction *func, QWidget* parent = 0);
+    static void open(InfoFunction *func, QWidget* parent = nullptr);
 
 protected:
     void schemaChanged(Schema*) override { processCalc(); }

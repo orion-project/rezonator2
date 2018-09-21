@@ -28,7 +28,7 @@ public:
     };
 public:
     FunctionBase(Schema *schema) : _schema(schema) {}
-    virtual ~FunctionBase() {}
+    virtual ~FunctionBase();
 
     Schema* schema() const { return _schema; }
 

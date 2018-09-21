@@ -64,7 +64,7 @@ void SchemaElemsTable::showContextMenu(const QPoint& pos)
 Element* SchemaElemsTable::selected() const
 {
     int index = currentRow();
-    return (index >= 0 and index < schema()->count())? schema()->element(index): 0;
+    return (index >= 0 and index < schema()->count())? schema()->element(index): nullptr;
 }
 
 void SchemaElemsTable::setSelected(Element *elem)

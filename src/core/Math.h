@@ -36,12 +36,12 @@ public:
 
     void unity()
     {
-        A = 1.0, B = 0.0, C = 0.0, D = 1.0;
+        A = 1.0; B = 0.0; C = 0.0; D = 1.0;
     }
 
     void assign(double a, double b, double c, double d)
     {
-        A = a, B = b, C = c, D = d;
+        A = a; B = b; C = c; D = d;
     }
 
     void operator *= (const Matrix &m);
@@ -69,9 +69,9 @@ public:
     RayVector(const RayVector& v): Y(v.Y), V(v.V) {}
     RayVector(const RayVector& in, const Matrix& m);
 
-    void set(const double& y, const double& v) { Y = y, V = v; }
+    void set(const double& y, const double& v) { Y = y; V = v; }
 
-    void operator = (const RayVector& v) { Y = v.Y, V = v.V; }
+    void operator = (const RayVector& v) { Y = v.Y; V = v.V; }
 
     QString str() const;
 };

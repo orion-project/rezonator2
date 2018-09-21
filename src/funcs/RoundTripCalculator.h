@@ -7,7 +7,7 @@
 class RoundTripCalculator
 {
 public:
-    RoundTripCalculator(Schema *owner, Element *ref = NULL);
+    RoundTripCalculator(Schema *owner, Element *ref = nullptr);
 
     void calcRoundTrip(bool splitRange = false);
     void multMatrix();

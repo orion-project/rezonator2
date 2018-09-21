@@ -161,7 +161,7 @@ void ElementRangeView::paint(QPainter *painter, const QStyleOptionGraphicsItem*,
 
 void OpticalAxisView::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
-    painter->drawLine(-HW, 0, HW, 0);
+    painter->drawLine(QLineF(-HW, 0, HW, 0));
 }
 
 
@@ -237,9 +237,9 @@ void ElemMatrixView::paint(QPainter *painter, const QStyleOptionGraphicsItem*, Q
 {
     painter->setPen(getGlassPen());
     painter->fillRect(boundingRect(), getMirrorBrush());
-    painter->drawRect(-HW, -HH, 2*HW, 2*HH);
-    painter->drawLine(0, -HH, 0, HH);
-    painter->drawLine(-HW, 0, HW, 0);
+    painter->drawRect(QRectF(-HW, -HH, 2*HW, 2*HH));
+    painter->drawLine(QLineF(0, -HH, 0, HH));
+    painter->drawLine(QLineF(-HW, 0, HW, 0));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -250,8 +250,8 @@ void ElemMediumRangeView::paint(QPainter *painter, const QStyleOptionGraphicsIte
 {
     painter->fillRect(boundingRect(), getGlassBrush());
     painter->setPen(getGlassPen());
-    painter->drawLine(-HW, -HH, HW, -HH);
-    painter->drawLine(-HW, HH, HW, HH);
+    painter->drawLine(QLineF(-HW, -HH, HW, -HH));
+    painter->drawLine(QLineF(-HW, HH, HW, HH));
 }
 
 
@@ -278,7 +278,7 @@ void ElemFlatMirrorView::paint(QPainter *painter, const QStyleOptionGraphicsItem
         painter->setPen(getPlanePen());
         break;
     }
-    painter->drawLine(x, -HH, x, HH);
+    painter->drawLine(QLineF(x, -HH, x, HH));
 }
 
 
@@ -321,7 +321,12 @@ void CurvedElementView::paint(QPainter *painter, const QStyleOptionGraphicsItem*
 
     case PlaneConvexMirror:
         painter->setBrush(getMirrorBrush());
-        // no break
+        rightSurface = QRectF(HW - 2*ROC, -ROC, 2*ROC, 2*ROC);
+        path.moveTo(HW - sagitta, HH);
+        path.arcTo(rightSurface, 360-startAngle, sweepAngle);
+        path.lineTo(-HW, -HH);
+        path.lineTo(-HW, HH);
+        break;
 
     case PlaneConvexLens:
         rightSurface = QRectF(HW - 2*ROC, -ROC, 2*ROC, 2*ROC);
@@ -333,7 +338,12 @@ void CurvedElementView::paint(QPainter *painter, const QStyleOptionGraphicsItem*
 
     case PlaneConcaveMirror:
         painter->setBrush(getMirrorBrush());
-        // no break
+        rightSurface = QRectF(HW - sagitta, -ROC, 2*ROC, 2*ROC);
+        path.moveTo(HW, -HH);
+        path.arcTo(rightSurface, 180-startAngle, sweepAngle);
+        path.lineTo(-HW, HH);
+        path.lineTo(-HW, -HH);
+        break;
 
     case PlaneConcaveLens:
         rightSurface = QRectF(HW - sagitta, -ROC, 2*ROC, 2*ROC);
@@ -345,7 +355,12 @@ void CurvedElementView::paint(QPainter *painter, const QStyleOptionGraphicsItem*
 
     case ConcavePlaneMirror:
         painter->setBrush(getMirrorBrush());
-        // no break
+        leftSurface = QRectF(-HW + sagitta - 2*ROC, -ROC, 2*ROC, 2*ROC);
+        path.moveTo(-HW, HH);
+        path.arcTo(leftSurface, 360-startAngle, sweepAngle);
+        path.lineTo(HW, -HH);
+        path.lineTo(HW, HH);
+        break;
 
     case ConcavePlaneLens:
         leftSurface = QRectF(-HW + sagitta - 2*ROC, -ROC, 2*ROC, 2*ROC);
@@ -357,7 +372,12 @@ void CurvedElementView::paint(QPainter *painter, const QStyleOptionGraphicsItem*
 
     case ConvexPlaneMirror:
         painter->setBrush(getMirrorBrush());
-        // no break
+        leftSurface = QRectF(-HW, -ROC, 2*ROC, 2*ROC);
+        path.moveTo(-HW + sagitta, -HH);
+        path.arcTo(leftSurface, 180-startAngle, sweepAngle);
+        path.lineTo(HW, HH);
+        path.lineTo(HW, -HH);
+        break;
 
     case ConvexPlaneLens:
         leftSurface = QRectF(-HW, -ROC, 2*ROC, 2*ROC);
@@ -366,8 +386,6 @@ void CurvedElementView::paint(QPainter *painter, const QStyleOptionGraphicsItem*
         path.lineTo(HW, HH);
         path.lineTo(HW, -HH);
         break;
-
-    default: break;
     }
     path.closeSubpath();
 
@@ -386,23 +404,24 @@ void CurvedElementView::paint(QPainter *painter, const QStyleOptionGraphicsItem*
         switch (_paintMode)
         {
         case PlaneConvexMirror:
-            painter->drawArc(rightSurface, 16*(360-startAngle), 16*sweepAngle);
+            painter->drawArc(rightSurface, int(16*(360-startAngle)), int(16*sweepAngle));
             break;
 
         case PlaneConcaveMirror:
-            painter->drawArc(rightSurface, 16*(180-startAngle), 16*sweepAngle);
+            painter->drawArc(rightSurface, int(16*(180-startAngle)), int(16*sweepAngle));
             break;
 
         case ConcavePlaneMirror:
-            painter->drawArc(leftSurface, 16*(360-startAngle), 16*sweepAngle);
+            painter->drawArc(leftSurface, int(16*(360-startAngle)), int(16*sweepAngle));
             break;
 
         case ConvexPlaneMirror:
-            painter->drawArc(leftSurface, 16*(180-startAngle), 16*sweepAngle);
+            painter->drawArc(leftSurface, int(16*(180-startAngle)), int(16*sweepAngle));
             break;
 
         default: break;
         }
+        break;
     }
     default: break;
     }

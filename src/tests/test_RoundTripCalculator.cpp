@@ -79,7 +79,7 @@ TEST_CASE_METHOD(rt_elems, TripType tripType, int refIndex, QString expectedRoun
     auto refElem = new TestElem;
     TestData d(tripType, refIndex, refElem);
 
-    int expectedRoundTripSize;
+    int expectedRoundTripSize = -1;
     switch (tripType)
     {
     case SW: expectedRoundTripSize = d.schema->count()*2 - 2; break;
@@ -135,7 +135,7 @@ namespace RoundTripEndMatrices_NoRange_NoSplit {
 
 TEST_CASE_METHOD(rt_matrs_nosplit, TripType tripType, int refIndex, UseRange&& useRangeAsRef, DoSplit&& doSplitRefRange)
 {
-    auto refElem = useRangeAsRef ? (Element*)(new TestElemRange) : (Element*)(new TestElem);
+    auto refElem = useRangeAsRef ? dynamic_cast<Element*>(new TestElemRange) : dynamic_cast<Element*>(new TestElem);
     TestData d(tripType, refIndex, refElem);
 
     d.calc->calcRoundTrip(doSplitRefRange);

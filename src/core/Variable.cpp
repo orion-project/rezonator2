@@ -31,7 +31,7 @@ PlottingRange VariableRange::plottingRange() const
         // int((10.0 - 0.0) / 3.0) + 1 = 4 points: 0 3 6 9 10
         res._step = qMin(step.toSi(), res.range());
         Q_ASSERT(res.step() > 0);
-        res._points = res.range() / res.step();
+        res._points = int(res.range() / res.step());
     }
     else
     {

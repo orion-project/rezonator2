@@ -2,6 +2,7 @@
 #include "Format.h"
 
 #include <math.h>
+#include "core/OriFloatingPoint.h"
 
 // TODO:NEXT-VER in general case all parameters units should be verified too.
 // But currenly we have verification only in that places which always use correct uints (e.g. Element props dialog).
@@ -10,25 +11,29 @@ class CurvatureRadiusVerifier : public Z::ValueVerifier
 {
 public:
     bool enabled() const override { return true; }
-    QString verify(const Z::Value& value) const override
-    {
-        if (value.value() == 0)
-            return qApp->translate("Param", "Curvature radius can not be zero.");
-        return QString();
-    }
+    QString verify(const Z::Value& value) const override;
 };
 
 class FocalLengthVerifier : public Z::ValueVerifier
 {
 public:
     bool enabled() const override { return true; }
-    QString verify(const Z::Value& value) const override
-    {
-        if (value.value() == 0)
-            return qApp->translate("Param", "Focal length can not be zero.");
-        return QString();
-    }
+    QString verify(const Z::Value& value) const override;
 };
+
+QString CurvatureRadiusVerifier::verify(const Z::Value& value) const
+{
+    if (Double(value.value()).is(0))
+        return qApp->translate("Param", "Curvature radius can not be zero.");
+    return QString();
+}
+
+QString FocalLengthVerifier::verify(const Z::Value& value) const
+{
+    if (Double(value.value()).is(0))
+        return qApp->translate("Param", "Focal length can not be zero.");
+    return QString();
+}
 
 CurvatureRadiusVerifier* globalCurvatureRadiusVerifier()
 {

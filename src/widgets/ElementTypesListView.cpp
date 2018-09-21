@@ -18,6 +18,8 @@ void ElementTypesListView::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Return:
     case Qt::Key_Enter:
         emit enterPressed();
+        QListWidget::keyPressEvent(event);
+        break;
 
     default:
         QListWidget::keyPressEvent(event);

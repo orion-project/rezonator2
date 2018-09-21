@@ -8,14 +8,14 @@ class Element;
 class ElementFilterCondition
 {
 public:
-    virtual ~ElementFilterCondition() {}
+    virtual ~ElementFilterCondition();
     virtual bool check(Element*) = 0;
 };
 
 class ElementFilter : public Ori::Filter<Element*, ElementFilterCondition>
 {
 public:
-    ElementFilter(std::initializer_list<ElementFilterCondition*> conditions): Filter(conditions) {}
+    ElementFilter(std::initializer_list<ElementFilterCondition*> conditions);
 
     template <typename ...TCondition>
     static ElementFilter* make()

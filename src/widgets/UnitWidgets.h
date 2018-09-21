@@ -13,8 +13,8 @@ class UnitComboBox : public QComboBox
     Q_OBJECT
 
 public:
-    UnitComboBox(QWidget* parent = 0);
-    UnitComboBox(Z::Dim dim, QWidget* parent = 0);
+    UnitComboBox(QWidget* parent = nullptr);
+    UnitComboBox(Z::Dim dim, QWidget* parent = nullptr);
 
     void populate(Z::Dim dim);
 
@@ -49,7 +49,7 @@ class DimComboBox : public QComboBox
     Q_OBJECT
 
 public:
-    DimComboBox(QWidget* parent = 0);
+    DimComboBox(QWidget* parent = nullptr);
 
     Z::Dim selectedDim() const;
     void setSelectedDim(Z::Dim dim);

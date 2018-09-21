@@ -22,6 +22,7 @@ typedef const QList<Dim>& DimList;
 class _Unit_
 {
 public:
+    virtual ~_Unit_();
     virtual QString alias() const = 0;
     virtual QString name() const = 0;
     virtual double toSi(const double& value) const = 0;
@@ -32,6 +33,7 @@ public:
 class _Dim_
 {
 public:
+    virtual ~_Dim_();
     virtual QString alias() const = 0;
     virtual QString name() const = 0;
     virtual UnitList units() const = 0;

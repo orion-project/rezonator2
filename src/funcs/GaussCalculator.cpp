@@ -2,6 +2,8 @@
 
 #include <complex>
 
+#include "core/OriFloatingPoint.h"
+
 //#define LOG_STAGES
 
 #ifdef LOG_STAGES
@@ -21,8 +23,18 @@
 #endif
 
 GaussCalculator::GaussCalculator() :
-    _MI(1), _z0(NAN), _w0(NAN), _Vs(NAN), _z(NAN), _w(NAN), _R(NAN),
-    _re_q(NAN), _im_q(NAN), _re_q1(NAN), _im_q1(NAN), _lambda(NAN)
+    _MI(1),
+    _z0(Double::nan()),
+    _w0(Double::nan()),
+    _Vs(Double::nan()),
+    _z(Double::nan()),
+    _w(Double::nan()),
+    _R(Double::nan()),
+    _re_q(Double::nan()),
+    _im_q(Double::nan()),
+    _re_q1(Double::nan()),
+    _im_q1(Double::nan()),
+    _lambda(Double::nan())
 {
 }
 

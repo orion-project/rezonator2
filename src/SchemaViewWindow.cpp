@@ -66,19 +66,19 @@ void SchemaViewWindow::createActions()
 void SchemaViewWindow::createMenuBar()
 {
     menuElement = Ori::Gui::menu(tr("E&lement"), this,
-        { actnElemAdd, actnElemInsertBefore, actnElemInsertAfter, 0, actnElemProp,
-          actnElemMatr, actnElemMatrAll, 0, actnElemDelete });
+        { actnElemAdd, actnElemInsertBefore, actnElemInsertAfter, nullptr, actnElemProp,
+          actnElemMatr, actnElemMatrAll, nullptr, actnElemDelete });
 
     menuContext = Ori::Gui::menu(this,
-        { actnElemProp, actnElemMatr, 0, actnElemInsertBefore, actnElemInsertAfter, 0,
-          /* TODO:NEXT-VER actnEditCopy, actnEditPaste, 0, */ actnElemDelete });
+        { actnElemProp, actnElemMatr, nullptr, actnElemInsertBefore, actnElemInsertAfter, nullptr,
+          /* TODO:NEXT-VER actnEditCopy, actnEditPaste, nullptr, */ actnElemDelete });
 }
 
 void SchemaViewWindow::createToolBar()
 {
     populateToolbar({ Ori::Gui::textToolButton(actnElemAdd), actnElemInsertBefore,
-                      actnElemInsertAfter, 0, Ori::Gui::textToolButton(actnElemProp),
-                      actnElemMatr, 0, actnElemDelete });
+                      actnElemInsertAfter, nullptr, Ori::Gui::textToolButton(actnElemProp),
+                      actnElemMatr, nullptr, actnElemDelete });
 }
 
 void SchemaViewWindow::editElement(Element* elem)

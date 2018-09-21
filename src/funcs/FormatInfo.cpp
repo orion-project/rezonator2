@@ -137,16 +137,6 @@ QString pumpParamsHtml(Z::PumpParams *pump)
     return paramsInfo.join(", ");
 }
 
-template <class TParam>
-QString paramHtml(TParam *param)
-{
-    return QStringLiteral(
-        "<nobr><span style='%1'>%2</span><span style='%3'> = %4</span></nobr>")
-        .arg(nameStyle(), param->displayLabel(), valueStyle(), param->value().displayStr());
-}
-template QString paramHtml(Z::Parameter *param);
-template QString paramHtml(Z::ParameterTS *param);
-
 } // namespace Format
 } // namespace Z
 

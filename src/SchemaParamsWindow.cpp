@@ -75,16 +75,16 @@ void SchemaParamsWindow::createActions()
 void SchemaParamsWindow::createMenuBar()
 {
     _windowMenu = Ori::Gui::menu(tr("&Parameter"), this,
-        { _actnParamAdd, 0, _actnParamSet, _actnParamDescr, 0, _actnParamDelete });
+        { _actnParamAdd, nullptr, _actnParamSet, _actnParamDescr, nullptr, _actnParamDelete });
 
     _contextMenu = Ori::Gui::menu(this,
-        { _actnParamSet, _actnParamDescr, 0, _actnParamDelete });
+        { _actnParamSet, _actnParamDescr, nullptr, _actnParamDelete });
 }
 
 void SchemaParamsWindow::createToolBar()
 {
-    populateToolbar({ Ori::Gui::textToolButton(_actnParamAdd), 0,
-        Ori::Gui::textToolButton(_actnParamSet), _actnParamDescr, 0, _actnParamDelete });
+    populateToolbar({ Ori::Gui::textToolButton(_actnParamAdd), nullptr,
+        Ori::Gui::textToolButton(_actnParamSet), _actnParamDescr, nullptr, _actnParamDelete });
 }
 
 void SchemaParamsWindow::createParameter()

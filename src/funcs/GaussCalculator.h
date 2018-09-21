@@ -43,18 +43,18 @@ public:
     Lock lock() const { return _lock; }
     Zone zone() const { return _zone; }
 
-    void setLambda(const double& value) { _lambda = value, _ref = Ref::Lambda; }
-    void setW0(const double& value) { _w0 = value, _ref = Ref::W0; }
-    void setZ0(const double& value) { _z0 = value, _ref = Ref::Z0; }
-    void setVs(const double& value) { _Vs = value, _ref = Ref::Vs; }
-    void setMI(const double& value) { _MI = value, _ref = Ref::MI; }
-    void setZ(const double& value) { _z = value, _ref = Ref::Z; }
-    void setW(const double& value) { _w = value, _ref = Ref::W; }
-    void setR(const double& value) { _R = value, _ref = Ref::R; }
-    void setReQ(const double& value) { _re_q = value, _ref = Ref::Q; }
-    void setImQ(const double& value) { _im_q = value, _ref = Ref::Q; }
-    void setReQ1(const double& value) { _re_q1 = value, _ref = Ref::Q1Re; }
-    void setImQ1(const double& value) { _im_q1 = value, _ref = Ref::Q1Im; }
+    void setLambda(const double& value) { _lambda = value; _ref = Ref::Lambda; }
+    void setW0(const double& value) { _w0 = value; _ref = Ref::W0; }
+    void setZ0(const double& value) { _z0 = value; _ref = Ref::Z0; }
+    void setVs(const double& value) { _Vs = value; _ref = Ref::Vs; }
+    void setMI(const double& value) { _MI = value; _ref = Ref::MI; }
+    void setZ(const double& value) { _z = value; _ref = Ref::Z; }
+    void setW(const double& value) { _w = value; _ref = Ref::W; }
+    void setR(const double& value) { _R = value; _ref = Ref::R; }
+    void setReQ(const double& value) { _re_q = value; _ref = Ref::Q; }
+    void setImQ(const double& value) { _im_q = value; _ref = Ref::Q; }
+    void setReQ1(const double& value) { _re_q1 = value; _ref = Ref::Q1Re; }
+    void setImQ1(const double& value) { _im_q1 = value; _ref = Ref::Q1Im; }
     void setLock(Lock value) { _lock = value; }
     void setZone(Zone value) { _zone = value; }
     void setRef(Ref value) { _ref = value; }

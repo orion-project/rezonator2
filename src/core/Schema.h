@@ -153,6 +153,7 @@ private:
 class ElementSelector
 {
 public:
+    virtual ~ElementSelector();
     virtual Element* selected() const { return nullptr; }
     virtual Elements selection() const { return Elements(); }
 };
@@ -180,7 +181,7 @@ class Schema : public ElementOwner, public Z::ParameterListener
 {
 public:
     Schema();
-    virtual ~Schema();
+    ~Schema() override;
 
     const QString& fileName() const { return _fileName; }
     void setFileName(const QString& fileName) { _fileName = fileName; }

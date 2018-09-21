@@ -9,8 +9,8 @@
 
 namespace CustomData {
 
-QJsonObject __customData;
-QString __storagePath;
+static QJsonObject __customData;
+static QString __storagePath;
 
 void load(const QString& storagePath)
 {

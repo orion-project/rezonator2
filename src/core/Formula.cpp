@@ -68,7 +68,7 @@ void Formula::calculate()
     if (pos < 0) code = (RESULT_VAR "=") + code;
 
     auto codeBytes = code.toLatin1();
-    int res = luaL_loadbufferx(L, codeBytes.data(), codeBytes.size(), FORMULA_ID, "t");
+    int res = luaL_loadbufferx(L, codeBytes.data(), static_cast<size_t>(codeBytes.size()), FORMULA_ID, "t");
     if (res == LUA_OK)
     {
         res = lua_pcall(L, 0, 0, 0);

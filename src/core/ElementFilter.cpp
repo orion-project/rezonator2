@@ -1,6 +1,16 @@
 #include "ElementFilter.h"
 #include "Element.h"
 
+ElementFilterCondition::~ElementFilterCondition()
+{
+}
+
+
+ElementFilter::ElementFilter(std::initializer_list<ElementFilterCondition*> conditions): Filter(conditions)
+{
+}
+
+
 bool ElementFilterEnabled::check(Element *elem)
 {
     return !elem->disabled();
