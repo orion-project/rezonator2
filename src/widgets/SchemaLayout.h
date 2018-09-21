@@ -1,134 +1,93 @@
-#ifndef SCHEMALAYOUT_H
-#define SCHEMALAYOUT_H
+#ifndef SCHEMA_LAYOUT_H
+#define SCHEMA_LAYOUT_H
 
-#include "LayoutView.h"
 #include "../core/Schema.h"
 #include "../core/Elements.h"
 
-////////////////////////////////////////////////////////////////////////////////
+#include <QGraphicsItem>
+#include <QGraphicsView>
 
-class ElementLayout
+//------------------------------------------------------------------------------
+
+/**
+    Graphical representation of single element.
+*/
+class ElementView : public QGraphicsItem
 {
 public:
-    ElementLayout(Element* elem): _element(elem) { }
-    virtual ~ElementLayout();
+    ElementView(Element* elem): QGraphicsItem(), _element(elem){}
+    ~ElementView() override {}
+
     Element *element() const { return _element; }
-    virtual int viewCount() { return 1; }
-    virtual ElementView* view(int) { return _view; }
+
     virtual void init() = 0;
+
+    QRectF boundingRect() const override;
+
+    qreal width() const { return 2*HW; }
+    qreal height() const { return 2*HH; }
+    qreal halfw() const { return HW; }
+    qreal halfh() const { return HH; }
 
 protected:
     Element* _element;
-    ElementView* _view;
+
+    qreal HW;
+    qreal HH = 40;
 };
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
-class ElementLayoutMaker
+class ElementViewMaker
 {
 public:
-    virtual ~ElementLayoutMaker();
-    virtual ElementLayout *make(Element*) = 0;
+    virtual ~ElementViewMaker();
+    virtual ElementView *make(Element*) = 0;
 };
 
-class ElementLayoutFactory
+class ElementViewFactory
 {
 public:
-    ElementLayoutFactory();
-    ~ElementLayoutFactory();
-    ElementLayout* makeLayout(Element*) const;
+    ElementViewFactory();
+    ~ElementViewFactory();
+    ElementView* makeView(Element*) const;
 private:
-    QMap<QString, ElementLayoutMaker*> _makers;
+    QMap<QString, ElementViewMaker*> _makers;
 };
 
-////////////////////////////////////////////////////////////////////////////////
-
-class SchemaLayout :
-        public LayoutView,
-        public SchemaListener
+//------------------------------------------------------------------------------
+/**
+    Graphical representation of a schema.
+*/
+class SchemaLayout : public QGraphicsView, public SchemaListener
 {
 public:
-    SchemaLayout(Schema *schema);
-    ~SchemaLayout();
+    explicit SchemaLayout(Schema *schema, QWidget* parent = nullptr);
+    ~SchemaLayout() override;
 
-    ///// inherits from SchemaListener
-    void schemaLoaded(Schema*) { populate(); }
-    void elementCreated(Schema*, Element*) { populate(); }
-    void elementChanged(Schema*, Element*) { populate(); }
-    void elementDeleted(Schema*, Element*) { populate(); }
+    // inherits from SchemaListener
+    void schemaLoaded(Schema*) override { populate(); }
+    void elementCreated(Schema*, Element*) override { populate(); }
+    void elementChanged(Schema*, Element*) override { populate(); }
+    void elementDeleted(Schema*, Element*) override { populate(); }
+
+protected:
+    QGraphicsScene _scene;
+
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     Schema *_schema;
-    QVector<ElementLayout*> _elements;
-    ElementLayoutFactory _factory;
+    QVector<ElementView*> _elements;
+    ElementViewFactory _factory;
+    class OpticalAxisView *_axis;
+    QMap<ElementView*, QGraphicsTextItem*> _elemLabels;
 
+    void addElementView(ElementView *elem);
+    void addLabelView(ElementView* elem);
     void populate();
     void clear();
+    void adjustRanges(int fullWidth);
 };
 
-////////////////////////////////////////////////////////////////////////////////
-
-#define DECLARE_ELEMENT_LAYOUT(elem_type)                                       \
-    class elem_type ## Layout : public ElementLayout                            \
-    {                                                                           \
-    public:                                                                     \
-        elem_type ## Layout(Element *elem) : ElementLayout(elem) { init(); }    \
-        void init() override;
-
-#define DECLARE_ELEMENT_LAYOUT_END(elem_type)  };                               \
-    class elem_type ## LayoutMaker : public ElementLayoutMaker                  \
-    {                                                                           \
-    public:                                                                     \
-        ElementLayout* make(Element* elem) override                             \
-        {                                                                       \
-            return new elem_type ## Layout(elem);                               \
-        }                                                                       \
-    };                                                                          \
-
-////////////////////////////////////////////////////////////////////////////////
-
-DECLARE_ELEMENT_LAYOUT(ElemEmptyRange)
-DECLARE_ELEMENT_LAYOUT_END(ElemEmptyRange)
-
-DECLARE_ELEMENT_LAYOUT(ElemMediumRange)
-DECLARE_ELEMENT_LAYOUT_END(ElemMediumRange)
-
-DECLARE_ELEMENT_LAYOUT(ElemPlate)
-DECLARE_ELEMENT_LAYOUT_END(ElemPlate)
-
-DECLARE_ELEMENT_LAYOUT(ElemFlatMirror)
-DECLARE_ELEMENT_LAYOUT_END(ElemFlatMirror)
-
-DECLARE_ELEMENT_LAYOUT(ElemCurveMirror)
-DECLARE_ELEMENT_LAYOUT_END(ElemCurveMirror)
-
-DECLARE_ELEMENT_LAYOUT(ElemThinLens)
-DECLARE_ELEMENT_LAYOUT_END(ElemThinLens)
-
-DECLARE_ELEMENT_LAYOUT(ElemCylinderLensT)
-DECLARE_ELEMENT_LAYOUT_END(ElemCylinderLensT)
-
-DECLARE_ELEMENT_LAYOUT(ElemCylinderLensS)
-DECLARE_ELEMENT_LAYOUT_END(ElemCylinderLensS)
-
-DECLARE_ELEMENT_LAYOUT(ElemTiltedCrystal)
-DECLARE_ELEMENT_LAYOUT_END(ElemTiltedCrystal)
-
-DECLARE_ELEMENT_LAYOUT(ElemTiltedPlate)
-DECLARE_ELEMENT_LAYOUT_END(ElemTiltedPlate)
-
-DECLARE_ELEMENT_LAYOUT(ElemBrewsterCrystal)
-DECLARE_ELEMENT_LAYOUT_END(ElemBrewsterCrystal)
-
-DECLARE_ELEMENT_LAYOUT(ElemBrewsterPlate)
-DECLARE_ELEMENT_LAYOUT_END(ElemBrewsterPlate)
-
-DECLARE_ELEMENT_LAYOUT(ElemMatrix)
-DECLARE_ELEMENT_LAYOUT_END(ElemMatrix)
-
-DECLARE_ELEMENT_LAYOUT(ElemPoint)
-DECLARE_ELEMENT_LAYOUT_END(ElemPoint)
-
-////////////////////////////////////////////////////////////////////////////////
-
-#endif // SCHEMALAYOUT_H
+#endif // SCHEMA_LAYOUT_H

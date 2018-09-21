@@ -7,30 +7,6 @@
 class ElementView;
 class OpticalAxisView;
 
-class LayoutView : public QGraphicsView
-{
-    Q_OBJECT
-
-public:
-    explicit LayoutView(QWidget *parent = 0);
-    
-    void add(ElementView *elem);
-    void clear();
-
-signals:
-    
-public slots:
-
-protected:
-    QGraphicsScene _scene;
-
-private:
-    QList<ElementView*> _elems;
-    OpticalAxisView *_axis;
-    QMap<ElementView*, QGraphicsTextItem*> _elemLabels;
-    void addLabel(ElementView* elem);
-};
-
 class ElementView : public QGraphicsItem
 {
 public:
@@ -40,30 +16,27 @@ public:
         SlopePlus,
         SlopeMinus
     };
-    ElementView() { HH = 40; _slope = SlopeNone; _slopeAngle = 15; }
+    ElementView() {}
+
     const QString& label() const { return _label; }
     void setLabel(const QString& value) { _label = value; }
+
     Slope slope() const { return _slope; }
     void setSlope(Slope value) { _slope = value; }
-    qreal width() const { return 2*HW; }
-    qreal height() const { return 2*HH; }
-    qreal halfw() const { return HW; }
-    qreal halfh() const { return HH; }
-    virtual QRectF boundingRect() const;
+
+
 protected:
     void slopePainter(QPainter *painter);
     QString _label;
-    Slope _slope;
-    qreal _slopeAngle;
-    qreal HW;
-    qreal HH;
+    Slope _slope = SlopeNone;
+    qreal _slopeAngle = 15;
 };
 
 
 class ElementRangeView : public ElementView
 {
 public:
-    ElementRangeView() { HW = 50, HH = 5; }
+    ElementRangeView() { HW = 50; HH = 5; }
     virtual void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
     qreal length() const { return 2*HW; }
     void setLength(const qreal &value) { HW = value / 2.0; }
@@ -74,13 +47,6 @@ class ElemMediumRangeView : public ElementView
 {
 public:
     ElemMediumRangeView() { HW = 30; }
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*);
-};
-
-
-class OpticalAxisView : public ElementRangeView
-{
-public:
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*);
 };
 

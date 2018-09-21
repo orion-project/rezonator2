@@ -3,12 +3,15 @@
 #include "Appearance.h"
 
 #include <QtMath>
+#include <QDebug>
 
 #define RadToDeg(angle) (angle * 180.0 / M_PI)
 #define DegToRad(angle) (angle / 180.0 * M_PI)
 #define Sqr(x) (x*x)
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+
+namespace {
 
 QBrush getGlassBrush()
 {
@@ -40,85 +43,17 @@ QPen getPlanePen()
     return p;
 }
 
-const QFont& getLabelFont()
-{
-    static QFont f;
-    static bool fontInited = false;
-    if (!fontInited)
-    {
-        Z::Gui::adjustSymbolFont(f);
-        fontInited = true;
-    }
-    return f;
-}
-
 const QFont& getMarkTSFont()
 {
     static QFont f = QFont("Arial", 8, QFont::Bold);
     return f;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-//                               LayoutView
-////////////////////////////////////////////////////////////////////////////////
+} // namespace
 
-LayoutView::LayoutView(QWidget *parent) : QGraphicsView(parent)
-{
-    _axis = new OpticalAxisView;
-    _axis->setZValue(1000);
-    _scene.addItem(_axis);
-
-    setRenderHint(QPainter::Antialiasing, true);
-    setScene(&_scene);
-}
-
-void LayoutView::add(ElementView *elem)
-{
-    if (!_elems.isEmpty())
-    {
-        ElementView *last = _elems.last();
-        elem->setPos(last->x() + last->halfw() + elem->halfw(), 0);
-    }
-    else
-        elem->setPos(0, 0);
-
-    _elems.append(elem);
-
-    qreal fullWidth = 0;
-    foreach (ElementView *elem, _elems)
-        fullWidth += elem->width();
-
-    _axis->setLength(fullWidth + 20);
-    _axis->setX(_axis->halfw() - _elems.first()->halfw() - 10);
-
-    _scene.addItem(elem);
-
-    addLabel(elem);
-}
-
-void LayoutView::addLabel(ElementView* elem)
-{
-    QGraphicsTextItem *label = _scene.addText(elem->label());
-    label->setZValue(1000 + _elems.count());
-    label->setFont(getLabelFont());
-    QRectF r = label->boundingRect();
-    label->setX(elem->x() - r.width() / 2.0);
-    label->setY(elem->y() - elem->halfh() - r.height());
-    _elemLabels.insert(elem, label);
-}
-
-void LayoutView::clear()
-{
-    _scene.removeItem(_axis);
-    _scene.clear();
-    _elems.clear();
-    _elemLabels.clear();
-    _scene.addItem(_axis);
-}
-
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                             ElementView
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void ElementView::slopePainter(QPainter *painter)
 {
@@ -136,15 +71,9 @@ void ElementView::slopePainter(QPainter *painter)
     }
 }
 
-QRectF ElementView::boundingRect() const
-{
-    return QRectF(-HW, -HH, 2*HW, 2*HH);
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                             ElementRangeView
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void ElementRangeView::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
@@ -155,19 +84,9 @@ void ElementRangeView::paint(QPainter *painter, const QStyleOptionGraphicsItem*,
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
-//                             OpticalAxisView
-////////////////////////////////////////////////////////////////////////////////
-
-void OpticalAxisView::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
-{
-    painter->drawLine(QLineF(-HW, 0, HW, 0));
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                               ElemPlateView
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void ElemPlateView::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
@@ -180,9 +99,9 @@ void ElemPlateView::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QW
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                           ElemTiltedCrystalView
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void ElemTiltedCrystalView::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
@@ -218,9 +137,9 @@ void ElemTiltedCrystalView::paint(QPainter *painter, const QStyleOptionGraphicsI
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                             ElemPointView
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void ElemPointView::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
@@ -229,9 +148,9 @@ void ElemPointView::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QW
     painter->drawEllipse(boundingRect());
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                           ElemMatrixView
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void ElemMatrixView::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
@@ -242,9 +161,9 @@ void ElemMatrixView::paint(QPainter *painter, const QStyleOptionGraphicsItem*, Q
     painter->drawLine(QLineF(-HW, 0, HW, 0));
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                           ElemMediumRangeView
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void ElemMediumRangeView::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
@@ -255,9 +174,9 @@ void ElemMediumRangeView::paint(QPainter *painter, const QStyleOptionGraphicsIte
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                             ElemFlatMirrorView
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void ElemFlatMirrorView::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
@@ -282,9 +201,9 @@ void ElemFlatMirrorView::paint(QPainter *painter, const QStyleOptionGraphicsItem
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                             ElemCurveMirrorView
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void CurvedElementView::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {

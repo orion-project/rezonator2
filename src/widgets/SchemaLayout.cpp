@@ -1,57 +1,173 @@
 #include "SchemaLayout.h"
 
-ElementLayout::~ElementLayout()
+#include "Appearance.h"
+
+namespace {
+
+const QFont& getLabelFont()
+{
+    static QFont f;
+    static bool fontInited = false;
+    if (!fontInited)
+    {
+        Z::Gui::adjustSymbolFont(f);
+        fontInited = true;
+    }
+    return f;
+}
+
+} // namespace
+
+//------------------------------------------------------------------------------
+//                             ElementView
+//------------------------------------------------------------------------------
+
+QRectF ElementView::boundingRect() const
+{
+    return QRectF(-HW, -HH, 2*HW, 2*HH);
+}
+
+//------------------------------------------------------------------------------
+//                             OpticalAxisView
+//------------------------------------------------------------------------------
+
+class OpticalAxisView : public ElementView
+{
+public:
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override
+    {
+        painter->drawLine(QLineF(-HW, 0, HW, 0));
+    }
+};
+
+
+//------------------------------------------------------------------------------
+
+#define DECLARE_ELEMENT_LAYOUT(elem_type) \
+    class elem_type ## View : public ElementView { \
+    public: \
+        elem_type ## View(Element *elem) : ElementView(elem) { init(); } \
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override; \
+        void init() override;
+
+#define DECLARE_ELEMENT_LAYOUT_END(elem_type)  }; \
+    class elem_type ## ViewMaker : public ElementViewMaker { \
+    public: \
+        ElementView* make(Element* elem) override; \
+    }; \
+    ElementView* elem_type ## ViewMaker::make(Element* elem) { \
+        return new elem_type ## View(elem); \
+    }
+
+DECLARE_ELEMENT_LAYOUT(ElemEmptyRange)
+DECLARE_ELEMENT_LAYOUT_END(ElemEmptyRange)
+
+DECLARE_ELEMENT_LAYOUT(ElemMediumRange)
+DECLARE_ELEMENT_LAYOUT_END(ElemMediumRange)
+
+DECLARE_ELEMENT_LAYOUT(ElemPlate)
+DECLARE_ELEMENT_LAYOUT_END(ElemPlate)
+
+DECLARE_ELEMENT_LAYOUT(ElemFlatMirror)
+DECLARE_ELEMENT_LAYOUT_END(ElemFlatMirror)
+
+DECLARE_ELEMENT_LAYOUT(ElemCurveMirror)
+DECLARE_ELEMENT_LAYOUT_END(ElemCurveMirror)
+
+DECLARE_ELEMENT_LAYOUT(ElemThinLens)
+DECLARE_ELEMENT_LAYOUT_END(ElemThinLens)
+
+DECLARE_ELEMENT_LAYOUT(ElemCylinderLensT)
+DECLARE_ELEMENT_LAYOUT_END(ElemCylinderLensT)
+
+DECLARE_ELEMENT_LAYOUT(ElemCylinderLensS)
+DECLARE_ELEMENT_LAYOUT_END(ElemCylinderLensS)
+
+DECLARE_ELEMENT_LAYOUT(ElemTiltedCrystal)
+DECLARE_ELEMENT_LAYOUT_END(ElemTiltedCrystal)
+
+DECLARE_ELEMENT_LAYOUT(ElemTiltedPlate)
+DECLARE_ELEMENT_LAYOUT_END(ElemTiltedPlate)
+
+DECLARE_ELEMENT_LAYOUT(ElemBrewsterCrystal)
+DECLARE_ELEMENT_LAYOUT_END(ElemBrewsterCrystal)
+
+DECLARE_ELEMENT_LAYOUT(ElemBrewsterPlate)
+DECLARE_ELEMENT_LAYOUT_END(ElemBrewsterPlate)
+
+DECLARE_ELEMENT_LAYOUT(ElemMatrix)
+DECLARE_ELEMENT_LAYOUT_END(ElemMatrix)
+
+DECLARE_ELEMENT_LAYOUT(ElemPoint)
+DECLARE_ELEMENT_LAYOUT_END(ElemPoint)
+
+
+void ElemEmptyRangeView::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
+{
+    Q_UNUSED(painter)
+}
+
+//------------------------------------------------------------------------------
+//                             ElementLayoutMaker
+//------------------------------------------------------------------------------
+
+ElementViewMaker::~ElementViewMaker()
 {
 }
 
-ElementLayoutMaker::~ElementLayoutMaker()
-{
-}
-
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                             ElementLayoutMakers
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
-#define ELEMENT_LAYOUT_MAKER(elem_type)                             \
-{                                                                   \
-    elem_type elem;                                                 \
-    _makers[elem.type()] = new (elem_type ## LayoutMaker);    \
-}
-
-ElementLayoutFactory::ElementLayoutFactory()
+ElementViewFactory::ElementViewFactory()
 {
-    ELEMENT_LAYOUT_MAKER(ElemEmptyRange);
-    ELEMENT_LAYOUT_MAKER(ElemMediumRange);
-    ELEMENT_LAYOUT_MAKER(ElemPlate);
-    ELEMENT_LAYOUT_MAKER(ElemFlatMirror);
-    ELEMENT_LAYOUT_MAKER(ElemCurveMirror);
-    ELEMENT_LAYOUT_MAKER(ElemThinLens);
-    ELEMENT_LAYOUT_MAKER(ElemCylinderLensT);
-    ELEMENT_LAYOUT_MAKER(ElemCylinderLensS);
-    ELEMENT_LAYOUT_MAKER(ElemTiltedCrystal);
-    ELEMENT_LAYOUT_MAKER(ElemTiltedPlate);
-    ELEMENT_LAYOUT_MAKER(ElemBrewsterCrystal);
-    ELEMENT_LAYOUT_MAKER(ElemBrewsterPlate);
-    ELEMENT_LAYOUT_MAKER(ElemMatrix);
-    ELEMENT_LAYOUT_MAKER(ElemPoint);
+    #define ELEMENT_VIEW_MAKER(elem_type) { \
+        elem_type elem; \
+        _makers[elem.type()] = new (elem_type ## ViewMaker); \
+    }
+
+    ELEMENT_VIEW_MAKER(ElemEmptyRange);
+    ELEMENT_VIEW_MAKER(ElemMediumRange);
+    ELEMENT_VIEW_MAKER(ElemPlate);
+    ELEMENT_VIEW_MAKER(ElemFlatMirror);
+    ELEMENT_VIEW_MAKER(ElemCurveMirror);
+    ELEMENT_VIEW_MAKER(ElemThinLens);
+    ELEMENT_VIEW_MAKER(ElemCylinderLensT);
+    ELEMENT_VIEW_MAKER(ElemCylinderLensS);
+    ELEMENT_VIEW_MAKER(ElemTiltedCrystal);
+    ELEMENT_VIEW_MAKER(ElemTiltedPlate);
+    ELEMENT_VIEW_MAKER(ElemBrewsterCrystal);
+    ELEMENT_VIEW_MAKER(ElemBrewsterPlate);
+    ELEMENT_VIEW_MAKER(ElemMatrix);
+    ELEMENT_VIEW_MAKER(ElemPoint);
+
+    #undef ELEMENT_VIEW_MAKER
 }
 
-ElementLayoutFactory::~ElementLayoutFactory()
+ElementViewFactory::~ElementViewFactory()
 {
-    for (auto maker : _makers.values()) delete maker;
+    qDeleteAll(_makers.values());
 }
 
-ElementLayout* ElementLayoutFactory::makeLayout(Element *elem) const
+ElementView* ElementViewFactory::makeView(Element *elem) const
 {
-    return _makers.contains(elem->type()) ? _makers[elem->type()]->make(elem):  nullptr;
+    if (!_makers.contains(elem->type()))
+        return nullptr;
+    return _makers[elem->type()]->make(elem);
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 //                               SchemaLayout
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
-SchemaLayout::SchemaLayout(Schema *schema) : _schema(schema)
+SchemaLayout::SchemaLayout(Schema *schema, QWidget* parent) : QGraphicsView(parent), _schema(schema)
 {
+    _axis = new OpticalAxisView;
+    _axis->setZValue(1000);
+    _scene.addItem(_axis);
+
+    setRenderHint(QPainter::Antialiasing, true);
+    setScene(&_scene);
 }
 
 SchemaLayout::~SchemaLayout()
@@ -68,23 +184,71 @@ void SchemaLayout::populate()
         auto layout = _factory.makeLayout(elem);
         if (layout)
         {
-            for (int j = 0; j < layout->viewCount(); j++)
-                this->add(layout->view(j));
+            addElementView(layout->view());
             _elements.append(layout);
         }
     }
 }
 
+void SchemaLayout::addElementView(ElementView *elem)
+{
+    if (!_elems.isEmpty())
+    {
+        ElementView *last = _elems.last();
+        elem->setPos(last->x() + last->halfw() + elem->halfw(), 0);
+    }
+    else
+        elem->setPos(0, 0);
+
+    _elems.append(elem);
+
+    qreal fullWidth = 0;
+    foreach (ElementView *elem, _elems)
+        fullWidth += elem->width();
+
+    _axis->setLength(fullWidth + 20);
+    _axis->setX(_axis->halfw() - _elems.first()->halfw() - 10);
+
+    _scene.addItem(elem);
+
+    addLabelView(elem);
+}
+
+void SchemaLayout::addLabelView(ElementView* elem)
+{
+    QGraphicsTextItem *label = _scene.addText(elem->label());
+    label->setZValue(1000 + _elems.count());
+    label->setFont(getLabelFont());
+    QRectF r = label->boundingRect();
+    label->setX(elem->x() - r.width() / 2.0);
+    label->setY(elem->y() - elem->halfh() - r.height());
+    _elemLabels.insert(elem, label);
+}
+
 void SchemaLayout::clear()
 {
-    LayoutView::clear();
-    for (auto elem : _elements) delete elem;
+    _scene.removeItem(_axis);
+    _scene.clear();
+    _elems.clear();
+    _elemLabels.clear();
+    _scene.addItem(_axis);
+    qDeleteAll(_elements);
     _elements.clear();
 }
 
-////////////////////////////////////////////////////////////////////////////////
+void SchemaLayout::resizeEvent(QResizeEvent *event)
+{
+    adjustRanges(event->size().width());
+}
+
+void SchemaLayout::adjustRanges(int fullWidth)
+{
+    //for (ElementView *elemView: _elems)
+}
+
+//------------------------------------------------------------------------------
 //                              Element Layouts
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void ElemEmptyRangeLayout::init()
 {
@@ -92,7 +256,7 @@ void ElemEmptyRangeLayout::init()
     _view->setLabel(_element->label());
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void ElemMediumRangeLayout::init()
 {
@@ -100,7 +264,7 @@ void ElemMediumRangeLayout::init()
     _view->setLabel(_element->label());
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void ElemPlateLayout::init()
 {
@@ -108,7 +272,7 @@ void ElemPlateLayout::init()
     _view->setLabel(_element->label());
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void ElemFlatMirrorLayout::init()
 {
@@ -127,7 +291,7 @@ void ElemFlatMirrorLayout::init()
     _view->setLabel(_element->label());
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void ElemCurveMirrorLayout::init()
 {
@@ -160,7 +324,7 @@ void ElemCurveMirrorLayout::init()
     _view->setLabel(_element->label());
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void ElemThinLensLayout::init()
 {
@@ -180,7 +344,7 @@ void ElemThinLensLayout::init()
     _view->setLabel(_element->label());
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void ElemCylinderLensTLayout::init()
 {
@@ -201,7 +365,7 @@ void ElemCylinderLensTLayout::init()
     _view->setLabel(_element->label());
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void ElemCylinderLensSLayout::init()
 {
@@ -222,7 +386,7 @@ void ElemCylinderLensSLayout::init()
     _view->setLabel(_element->label());
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void ElemTiltedCrystalLayout::init()
 {
@@ -238,7 +402,7 @@ void ElemTiltedCrystalLayout::init()
     _view->setLabel(_element->label());
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 void ElemTiltedPlateLayout::init()
 {
