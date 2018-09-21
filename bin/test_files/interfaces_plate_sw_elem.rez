@@ -1,0 +1,102 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 980
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "M1",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 0
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 100
+                }
+            },
+            "title": "",
+            "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L1",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 50
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "Cr1",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 10
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemPlate"
+        },
+        {
+            "is_disabled": false,
+            "label": "L2",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 150
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M2",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 0
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 100
+                }
+            },
+            "title": "",
+            "type": "ElemCurveMirror"
+        }
+    ],
+    "formulas": [
+    ],
+    "param_links": [
+    ],
+    "pumps": [
+    ],
+    "schema_version": "2.0",
+    "trip_type": "SW",
+    "windows": [
+    ]
+}
