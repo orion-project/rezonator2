@@ -7,11 +7,44 @@
 #include <QGraphicsItem>
 #include <QGraphicsView>
 
-class ElementView;
+/**
+    Graphical representation of single element.
+*/
+class ElementLayout : public QGraphicsItem
+{
+public:
+    enum Slope
+    {
+        SlopeNone,
+        SlopePlus,
+        SlopeMinus
+    };
 
-namespace ElementViewFactory {
-ElementView* makeElementView(Element *elem);
-}
+    ElementLayout(Element* elem);
+    ~ElementLayout() override;
+
+    Element* element() const { return _element; }
+
+    virtual void init() = 0;
+
+    QRectF boundingRect() const override;
+
+    qreal halfW() const { return HW; }
+    qreal halfH() const { return HH; }
+    void setHalfSize(qreal hw, qreal hh) { HW = hw; HH = hh; }
+    void setSlope(Slope slope) { _slope = slope; }
+    void setSlope(double elementAngle);
+    void setSlopeAngle(qreal angle) { _slopeAngle = angle; }
+
+protected:
+    Element* _element;
+    Slope _slope = SlopeNone;
+    qreal _slopeAngle = 15;
+    qreal HW;
+    qreal HH;
+
+    void slopePainter(QPainter *painter);
+};
 
 /**
     Graphical representation of a schema.
@@ -35,15 +68,19 @@ protected:
 
 private:
     Schema *_schema;
-    QVector<ElementView*> _elements;
-    ElementView *_axis;
-    QMap<ElementView*, QGraphicsTextItem*> _elemLabels;
+    ElementLayout *_axis;
+    QVector<ElementLayout*> _elements;
+    QMap<ElementLayout*, QGraphicsTextItem*> _elemLabels;
 
-    void addElementView(ElementView *elem);
-    void addLabelView(ElementView* elem);
+    void addElement(ElementLayout *elem);
     void populate();
     void clear();
     void adjustRanges(int fullWidth);
 };
+
+
+namespace ElementLayoutFactory {
+ElementLayout* make(Element *elem);
+}
 
 #endif // SCHEMA_LAYOUT_H

@@ -47,22 +47,20 @@ TEST_METHOD(resource_outlines)
 TEST_METHOD(layouts)
 {
     bool ok = true;
-    ElementLayoutFactory factory;
     for (auto elem : ElementsCatalog::instance().elements())
     {
         TEST_LOG(elem->type())
-        auto layout = factory.makeLayout(elem);
+        QSharedPointer<ElementLayout> layout(ElementLayoutFactory::make(elem));
         if (!layout)
         {
             TEST_LOG("    no layout")
             ok = false;
         }
-        else delete layout;
     }
     if (!ok) ASSERT_FAIL("Not all elements have layout")
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
 
 TEST_GROUP("Elements Images",
            ADD_TEST(resource_icons),

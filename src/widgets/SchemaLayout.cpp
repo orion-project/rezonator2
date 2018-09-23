@@ -61,64 +61,32 @@ const QFont& getLabelFont()
 } // namespace
 
 //------------------------------------------------------------------------------
-//                             ElementView
+//                             ElementLayout
 //------------------------------------------------------------------------------
 
-/**
-    Graphical representation of single element.
-*/
-class ElementView : public QGraphicsItem
-{
-public:
-    enum Slope
-    {
-        SlopeNone,
-        SlopePlus,
-        SlopeMinus
-    };
+ElementLayout::ElementLayout(Element* elem): QGraphicsItem(), _element(elem) {}
+ElementLayout::~ElementLayout() {}
 
-    ElementView(Element* elem): QGraphicsItem(), element(elem){}
-    ~ElementView() override {}
-
-    virtual void init() = 0;
-
-    QRectF boundingRect() const override;
-
-    qreal width() const { return 2*HW; }
-    qreal height() const { return 2*HH; }
-    qreal halfw() const { return HW; }
-    qreal halfh() const { return HH; }
-
-    Element* element;
-    Slope slope = SlopeNone;
-    qreal slopeAngle = 15;
-    qreal HW;
-    qreal HH;
-
-    void initSlope(double angle);
-    void slopePainter(QPainter *painter);
-};
-
-QRectF ElementView::boundingRect() const
+QRectF ElementLayout::boundingRect() const
 {
     return QRectF(-HW, -HH, 2*HW, 2*HH);
 }
 
-void ElementView::initSlope(double angle)
+void ElementLayout::setSlope(double elementAngle)
 {
-    if (angle > 0)
-        slope = SlopePlus;
-    else if (angle < 0)
-        slope = SlopeMinus;
+    if (elementAngle > 0)
+        _slope = SlopePlus;
+    else if (elementAngle < 0)
+        _slope = SlopeMinus;
     else
-        slope = SlopeNone;
+        _slope = SlopeNone;
 }
 
-void ElementView::slopePainter(QPainter *painter)
+void ElementLayout::slopePainter(QPainter *painter)
 {
-    if (slope != SlopeNone)
+    if (_slope != SlopeNone)
     {
-        qreal angle = (slope == SlopePlus)? slopeAngle: -slopeAngle;
+        qreal angle = (_slope == SlopePlus)? _slopeAngle: -_slopeAngle;
         QTransform t = painter->transform();
         t.rotate(angle);
         painter->setTransform(t);
@@ -132,54 +100,54 @@ void ElementView::slopePainter(QPainter *painter)
 
 //------------------------------------------------------------------------------
 
-#define DECLARE_ELEMENT_VIEW_BEGIN \
-class View : public ElementView { \
+#define DECLARE_ELEMENT_LAYOUT_BEGIN \
+class Layout : public ElementLayout { \
 public: \
-    View(Element *elem) : ElementView(elem) {} \
+    Layout(Element *elem) : ElementLayout(elem) {} \
     void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override; \
     void init() override;
-#define DECLARE_ELEMENT_VIEW_END };
-#define ELEMENT_VIEW_INIT void View::init()
-#define ELEMENT_VIEW_PAINT void View::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
+#define DECLARE_ELEMENT_LAYOUT_END };
+#define ELEMENT_LAYOUT_INIT void Layout::init()
+#define ELEMENT_LAYOUT_PAINT void Layout::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 
 //------------------------------------------------------------------------------
-namespace OpticalAxisView {
-    DECLARE_ELEMENT_VIEW_BEGIN
-    DECLARE_ELEMENT_VIEW_END
+namespace OpticalAxisLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_VIEW_INIT {
+    ELEMENT_LAYOUT_INIT {
         HW = 50; HH = 5;
     }
 
-    ELEMENT_VIEW_PAINT {
+    ELEMENT_LAYOUT_PAINT {
         painter->drawLine(QLineF(-HW, 0, HW, 0));
     }
 }
 
 //------------------------------------------------------------------------------
-namespace ElemEmptyRangeView {
-    DECLARE_ELEMENT_VIEW_BEGIN
-    DECLARE_ELEMENT_VIEW_END
+namespace ElemEmptyRangeLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_VIEW_INIT {
+    ELEMENT_LAYOUT_INIT {
         HW = 50; HH = 5;
     }
 
-    ELEMENT_VIEW_PAINT {
+    ELEMENT_LAYOUT_PAINT {
         Q_UNUSED(painter)
     }
 }
 
 //------------------------------------------------------------------------------
-namespace ElemMediumRangeView {
-    DECLARE_ELEMENT_VIEW_BEGIN
-    DECLARE_ELEMENT_VIEW_END
+namespace ElemMediumRangeLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_VIEW_INIT {
+    ELEMENT_LAYOUT_INIT {
         HW = 30; HH = 40;
     }
 
-    ELEMENT_VIEW_PAINT {
+    ELEMENT_LAYOUT_PAINT {
         painter->fillRect(boundingRect(), getGlassBrush());
         painter->setPen(getGlassPen());
         painter->drawLine(QLineF(-HW, -HH, HW, -HH));
@@ -188,15 +156,15 @@ namespace ElemMediumRangeView {
 }
 
 //------------------------------------------------------------------------------
-namespace ElemPlateView {
-    DECLARE_ELEMENT_VIEW_BEGIN
-    DECLARE_ELEMENT_VIEW_END
+namespace ElemPlateLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_VIEW_INIT {
+    ELEMENT_LAYOUT_INIT {
         HW = 25; HH = 40;
     }
 
-    ELEMENT_VIEW_PAINT {
+    ELEMENT_LAYOUT_PAINT {
         painter->setPen(getGlassPen());
         painter->setBrush(getGlassBrush());
         painter->drawRect(boundingRect());
@@ -204,26 +172,26 @@ namespace ElemPlateView {
 }
 
 //------------------------------------------------------------------------------
-namespace ElemFlatMirrorView {
-    DECLARE_ELEMENT_VIEW_BEGIN
+namespace ElemFlatMirrorLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
         enum {
             PlaceMiddle,
             PlaceLeft,
             PlaceRight
         } place = PlaceMiddle;
-    DECLARE_ELEMENT_VIEW_END
+    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_VIEW_INIT {
+    ELEMENT_LAYOUT_INIT {
         HW = 7; HH = 40;
-        if (!element->owner()) return;
-        int index = element->owner()->indexOf(element);
+        if (!_element->owner()) return;
+        int index = _element->owner()->indexOf(_element);
         if (index <= 0)
             place = PlaceLeft;
-        else if (index >= element->owner()->count()-1)
+        else if (index >= _element->owner()->count()-1)
             place = PlaceRight;
     }
 
-    ELEMENT_VIEW_PAINT {
+    ELEMENT_LAYOUT_PAINT {
         qreal x = 0;
         switch (place) {
         case PlaceLeft:
@@ -244,8 +212,8 @@ namespace ElemFlatMirrorView {
 }
 
 //------------------------------------------------------------------------------
-namespace CurvedElementView {
-    DECLARE_ELEMENT_VIEW_BEGIN
+namespace CurvedElementLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
         enum {
             ConvexLens,         //      ()
             ConcaveLens,        //      )(
@@ -264,13 +232,13 @@ namespace CurvedElementView {
             MarkS
         } markTS;
         qreal ROC = 100;
-    DECLARE_ELEMENT_VIEW_END
+    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_VIEW_INIT {
+    ELEMENT_LAYOUT_INIT {
         HW = 10; HH = 40;
     }
 
-    ELEMENT_VIEW_PAINT {
+    ELEMENT_LAYOUT_PAINT {
         painter->setBrush(getGlassBrush());
         painter->setPen(getGlassPen());
 
@@ -408,113 +376,113 @@ namespace CurvedElementView {
 }
 
 //------------------------------------------------------------------------------
-namespace ElemCurveMirrorView {
-    DECLARE_ELEMENT_VIEW_BEGIN
-        QSharedPointer<CurvedElementView::View> view;
-    DECLARE_ELEMENT_VIEW_END
+namespace ElemCurveMirrorLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+        QSharedPointer<CurvedElementLayout::Layout> layout;
+    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_VIEW_INIT {
-        ElemCurveMirror *mirror = dynamic_cast<ElemCurveMirror*>(element);
-        if (!mirror || !element->owner()) return;
-        view.reset(new CurvedElementView::View(nullptr));
-        view->initSlope(mirror->alpha());
-        int index = element->owner()->indexOf(element);
+    ELEMENT_LAYOUT_INIT {
+        ElemCurveMirror *mirror = dynamic_cast<ElemCurveMirror*>(_element);
+        if (!mirror || !_element->owner()) return;
+        layout.reset(new CurvedElementLayout::Layout(nullptr));
+        layout->setSlope(mirror->alpha());
+        int index = _element->owner()->indexOf(_element);
         if (index <= 0)
-            view->paintMode = mirror->radius() > 0
-                ? CurvedElementView::View::PlaneConcaveMirror
-                : CurvedElementView::View::PlaneConvexMirror;
-        else if (index >= element->owner()->count()-1)
-            view->paintMode = mirror->radius() > 0
-                ? CurvedElementView::View::ConcavePlaneMirror
-                : CurvedElementView::View::ConvexPlaneMirror;
+            layout->paintMode = mirror->radius() > 0
+                ? CurvedElementLayout::Layout::PlaneConcaveMirror
+                : CurvedElementLayout::Layout::PlaneConvexMirror;
+        else if (index >= _element->owner()->count()-1)
+            layout->paintMode = mirror->radius() > 0
+                ? CurvedElementLayout::Layout::ConcavePlaneMirror
+                : CurvedElementLayout::Layout::ConvexPlaneMirror;
         else
-            view->paintMode = mirror->radius() > 0
-                ? CurvedElementView::View::ConvexLens
-                : CurvedElementView::View::ConcaveLens;
+            layout->paintMode = mirror->radius() > 0
+                ? CurvedElementLayout::Layout::ConvexLens
+                : CurvedElementLayout::Layout::ConcaveLens;
     }
 
-    ELEMENT_VIEW_PAINT {
-        if (view) view->paint(painter, nullptr, nullptr);
+    ELEMENT_LAYOUT_PAINT {
+        if (layout) layout->paint(painter, nullptr, nullptr);
     }
 }
 
 //------------------------------------------------------------------------------
-namespace ElemThinLensView {
-    DECLARE_ELEMENT_VIEW_BEGIN
-        QSharedPointer<CurvedElementView::View> view;
-    DECLARE_ELEMENT_VIEW_END
+namespace ElemThinLensLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+        QSharedPointer<CurvedElementLayout::Layout> layout;
+    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_VIEW_INIT {
-        ElemThinLens *lens = dynamic_cast<ElemThinLens*>(element);
+    ELEMENT_LAYOUT_INIT {
+        ElemThinLens *lens = dynamic_cast<ElemThinLens*>(_element);
         if (!lens) return;
-        view.reset(new CurvedElementView::View(nullptr));
-        view->initSlope(lens->alpha());
-        view->paintMode = lens->focus() > 0
-                       ? CurvedElementView::View::ConvexLens
-                       : CurvedElementView::View::ConcaveLens;
+        layout.reset(new CurvedElementLayout::Layout(nullptr));
+        layout->setSlope(lens->alpha());
+        layout->paintMode = lens->focus() > 0
+                       ? CurvedElementLayout::Layout::ConvexLens
+                       : CurvedElementLayout::Layout::ConcaveLens;
     }
 
-    ELEMENT_VIEW_PAINT {
-        view->paint(painter, nullptr, nullptr);
+    ELEMENT_LAYOUT_PAINT {
+        layout->paint(painter, nullptr, nullptr);
     }
 }
 
 //------------------------------------------------------------------------------
-namespace ElemCylinderLensTView {
-    DECLARE_ELEMENT_VIEW_BEGIN
-        QSharedPointer<CurvedElementView::View> view;
-    DECLARE_ELEMENT_VIEW_END
+namespace ElemCylinderLensTLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+        QSharedPointer<CurvedElementLayout::Layout> layout;
+    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_VIEW_INIT {
-        auto lens = dynamic_cast<ElemCylinderLensT*>(element);
+    ELEMENT_LAYOUT_INIT {
+        auto lens = dynamic_cast<ElemCylinderLensT*>(_element);
         if (!lens) return;
-        view.reset(new CurvedElementView::View(nullptr));
-        view->initSlope(lens->alpha());
-        view->markTS = CurvedElementView::View::MarkT;
-        view->paintMode = lens->focus() > 0
-                           ? CurvedElementView::View::ConvexLens
-                           : CurvedElementView::View::ConcaveLens;
+        layout.reset(new CurvedElementLayout::Layout(nullptr));
+        layout->setSlope(lens->alpha());
+        layout->markTS = CurvedElementLayout::Layout::MarkT;
+        layout->paintMode = lens->focus() > 0
+                           ? CurvedElementLayout::Layout::ConvexLens
+                           : CurvedElementLayout::Layout::ConcaveLens;
     }
 
-    ELEMENT_VIEW_PAINT {
-        if (view) view->paint(painter, nullptr, nullptr);
+    ELEMENT_LAYOUT_PAINT {
+        if (layout) layout->paint(painter, nullptr, nullptr);
     }
 }
 
 //------------------------------------------------------------------------------
-namespace ElemCylinderLensSView {
-    DECLARE_ELEMENT_VIEW_BEGIN
-        QSharedPointer<CurvedElementView::View> view;
-    DECLARE_ELEMENT_VIEW_END
+namespace ElemCylinderLensSLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+        QSharedPointer<CurvedElementLayout::Layout> layout;
+    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_VIEW_INIT {
-        auto lens = dynamic_cast<ElemCylinderLensS*>(element);
+    ELEMENT_LAYOUT_INIT {
+        auto lens = dynamic_cast<ElemCylinderLensS*>(_element);
         if (!lens) return;
-        view.reset(new CurvedElementView::View(nullptr));
-        view->initSlope(lens->alpha());
-        view->markTS = CurvedElementView::View::MarkS;
-        view->paintMode = lens->focus() > 0
-                ? CurvedElementView::View::ConvexLens
-                : CurvedElementView::View::ConcaveLens;
+        layout.reset(new CurvedElementLayout::Layout(nullptr));
+        layout->setSlope(lens->alpha());
+        layout->markTS = CurvedElementLayout::Layout::MarkS;
+        layout->paintMode = lens->focus() > 0
+                ? CurvedElementLayout::Layout::ConvexLens
+                : CurvedElementLayout::Layout::ConcaveLens;
     }
 
-    ELEMENT_VIEW_PAINT {
-        if (view) view->paint(painter, nullptr, nullptr);
+    ELEMENT_LAYOUT_PAINT {
+        if (layout) layout->paint(painter, nullptr, nullptr);
     }
 }
 
 //------------------------------------------------------------------------------
-namespace CrystalElementView {
-    DECLARE_ELEMENT_VIEW_BEGIN
-    DECLARE_ELEMENT_VIEW_END
+namespace CrystalElementLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_VIEW_INIT {}
+    ELEMENT_LAYOUT_INIT {}
 
-    ELEMENT_VIEW_PAINT {
-        qreal cline = HH * qTan(DegToRad(slopeAngle));
+    ELEMENT_LAYOUT_PAINT {
+        qreal cline = HH * qTan(DegToRad(_slopeAngle));
 
         QPainterPath path;
-        switch (slope)
+        switch (_slope)
         {
         case SlopeNone:
             path.addRect(boundingRect());
@@ -544,38 +512,38 @@ namespace CrystalElementView {
 }
 
 //------------------------------------------------------------------------------
-namespace ElemTiltedCrystalView {
-    DECLARE_ELEMENT_VIEW_BEGIN
-        QSharedPointer<CrystalElementView::View> view;
-    DECLARE_ELEMENT_VIEW_END
+namespace ElemTiltedCrystalLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+        QSharedPointer<CrystalElementLayout::Layout> layout;
+    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_VIEW_INIT {
+    ELEMENT_LAYOUT_INIT {
         HW = 15; HH = 40;
-        auto crystal = dynamic_cast<ElemTiltedCrystal*>(element);
+        auto crystal = dynamic_cast<ElemTiltedCrystal*>(_element);
         if (!crystal) return;
-        view.reset(new CrystalElementView::View(nullptr));
-        view->initSlope(crystal->alpha());
-        view->HW = HW; view->HH = HH;
+        layout.reset(new CrystalElementLayout::Layout(nullptr));
+        layout->setSlope(crystal->alpha());
+        layout->setHalfSize(HW, HH);
     }
 
-    ELEMENT_VIEW_PAINT {
-        if (view) view->paint(painter, nullptr, nullptr);
+    ELEMENT_LAYOUT_PAINT {
+        if (layout) layout->paint(painter, nullptr, nullptr);
     }
 }
 
 //------------------------------------------------------------------------------
-namespace ElemTiltedPlateView {
-    DECLARE_ELEMENT_VIEW_BEGIN
-    DECLARE_ELEMENT_VIEW_END
+namespace ElemTiltedPlateLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_VIEW_INIT {
+    ELEMENT_LAYOUT_INIT {
         HW = 15; HH = 40;
-        auto plate = dynamic_cast<ElemTiltedPlate*>(element);
+        auto plate = dynamic_cast<ElemTiltedPlate*>(_element);
         if (!plate) return;
-        initSlope(plate->alpha());
+        setSlope(plate->alpha());
     }
 
-    ELEMENT_VIEW_PAINT {
+    ELEMENT_LAYOUT_PAINT {
         painter->setPen(getGlassPen());
         painter->setBrush(getGlassBrush());
         slopePainter(painter);
@@ -584,33 +552,34 @@ namespace ElemTiltedPlateView {
 }
 
 //------------------------------------------------------------------------------
-namespace ElemBrewsterCrystalView {
-    DECLARE_ELEMENT_VIEW_BEGIN
-        QSharedPointer<CrystalElementView::View> view;
-    DECLARE_ELEMENT_VIEW_END
+namespace ElemBrewsterCrystalLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+        QSharedPointer<CrystalElementLayout::Layout> layout;
+    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_VIEW_INIT {
-        view.reset(new CrystalElementView::View(nullptr));
+    ELEMENT_LAYOUT_INIT {
         HW = 30; HH = 30;
-        view->HW = HW; view->HH = HH;
-        view->slopeAngle = 40; view->slope = SlopePlus;
+        layout.reset(new CrystalElementLayout::Layout(nullptr));
+        layout->setHalfSize(HW, HH);
+        layout->setSlopeAngle(40);
+        layout->setSlope(SlopePlus);
     }
 
-    ELEMENT_VIEW_PAINT {
-        if (view) view->paint(painter, nullptr, nullptr);
+    ELEMENT_LAYOUT_PAINT {
+        if (layout) layout->paint(painter, nullptr, nullptr);
     }
 }
 
 //------------------------------------------------------------------------------
-namespace ElemBrewsterPlateView {
-    DECLARE_ELEMENT_VIEW_BEGIN
-    DECLARE_ELEMENT_VIEW_END
+namespace ElemBrewsterPlateLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_VIEW_INIT {
-        HW = 15; slopeAngle = 40; slope = SlopePlus;
+    ELEMENT_LAYOUT_INIT {
+        HW = 15; _slopeAngle = 40; _slope = SlopePlus;
     }
 
-    ELEMENT_VIEW_PAINT {
+    ELEMENT_LAYOUT_PAINT {
         painter->setPen(getGlassPen());
         painter->setBrush(getGlassBrush());
         slopePainter(painter);
@@ -619,15 +588,15 @@ namespace ElemBrewsterPlateView {
 }
 
 //------------------------------------------------------------------------------
-namespace ElemMatrixView {
-    DECLARE_ELEMENT_VIEW_BEGIN
-    DECLARE_ELEMENT_VIEW_END
+namespace ElemMatrixLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_VIEW_INIT {
+    ELEMENT_LAYOUT_INIT {
         HH = 15; HW = 15;
     }
 
-    ELEMENT_VIEW_PAINT {
+    ELEMENT_LAYOUT_PAINT {
         painter->setPen(getGlassPen());
         painter->fillRect(boundingRect(), getMirrorBrush());
         painter->drawRect(QRectF(-HW, -HH, 2*HW, 2*HH));
@@ -637,15 +606,15 @@ namespace ElemMatrixView {
 }
 
 //------------------------------------------------------------------------------
-namespace ElemPointView {
-    DECLARE_ELEMENT_VIEW_BEGIN
-    DECLARE_ELEMENT_VIEW_END
+namespace ElemPointLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_VIEW_INIT {
+    ELEMENT_LAYOUT_INIT {
         HH = 3; HW = 3;
     }
 
-    ELEMENT_VIEW_PAINT {
+    ELEMENT_LAYOUT_PAINT {
         painter->setPen(getGlassPen());
         painter->setBrush(Qt::black);
         painter->drawEllipse(boundingRect());
@@ -653,14 +622,14 @@ namespace ElemPointView {
 }
 
 //------------------------------------------------------------------------------
-namespace ElemNormalInterfaceView {
-    DECLARE_ELEMENT_VIEW_BEGIN
-    DECLARE_ELEMENT_VIEW_END
+namespace ElemNormalInterfaceLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_VIEW_INIT {
+    ELEMENT_LAYOUT_INIT {
     }
 
-    ELEMENT_VIEW_PAINT {
+    ELEMENT_LAYOUT_PAINT {
     }
 }
 
@@ -668,8 +637,9 @@ namespace ElemNormalInterfaceView {
 //                               SchemaLayout
 //------------------------------------------------------------------------------
 
-SchemaLayout::SchemaLayout(Schema *schema, QWidget* parent) : QGraphicsView(parent), _schema(schema) {
-    _axis = new OpticalAxisView::View(nullptr);
+SchemaLayout::SchemaLayout(Schema *schema, QWidget* parent) : QGraphicsView(parent), _schema(schema)
+{
+    _axis = new OpticalAxisLayout::Layout(nullptr);
     _axis->setZValue(1000);
     _scene.addItem(_axis);
 
@@ -677,54 +647,51 @@ SchemaLayout::SchemaLayout(Schema *schema, QWidget* parent) : QGraphicsView(pare
     setScene(&_scene);
 }
 
-SchemaLayout::~SchemaLayout() {
+SchemaLayout::~SchemaLayout()
+{
     clear();
 }
 
-void SchemaLayout::populate() {
+void SchemaLayout::populate()
+{
     clear();
     for (Element *elem : _schema->elements()) {
         if (elem->disabled()) continue;
-        auto view = ElementViewFactory::makeElementView(elem);
-        if (view) {
-            view->init();
-            addElementView(view);
+        auto Layout = ElementLayoutFactory::make(elem);
+        if (Layout) {
+            Layout->init();
+            addElement(Layout);
         }
     }
 }
 
-void SchemaLayout::addElementView(ElementView *elem)
+void SchemaLayout::addElement(ElementLayout *elem)
 {
     if (!_elements.isEmpty())
     {
-        ElementView *last = _elements.last();
-        elem->setPos(last->x() + last->halfw() + elem->halfw(), 0);
+        ElementLayout *last = _elements.last();
+        elem->setPos(last->x() + last->halfW() + elem->halfW(), 0);
     }
     else
         elem->setPos(0, 0);
 
     _elements.append(elem);
 
-    qreal fullWidth = 0;
-    foreach (ElementView *elem, _elements)
-        fullWidth += elem->width();
+    qreal fullHW = 0;
+    for (ElementLayout *elem : _elements)
+        fullHW += elem->halfW();
 
-    _axis->setLength(fullWidth + 20);
-    _axis->setX(_axis->halfw() - _elements.first()->halfw() - 10);
+    _axis->setHalfSize(fullHW + 20, _axis->halfH());
+    _axis->setX(_axis->halfW() - _elements.first()->halfW() - 10);
 
     _scene.addItem(elem);
 
-    addLabelView(elem);
-}
-
-void SchemaLayout::addLabelView(ElementView* elem)
-{
     QGraphicsTextItem *label = _scene.addText(elem->element()->label());
     label->setZValue(1000 + _elements.count());
     label->setFont(getLabelFont());
     QRectF r = label->boundingRect();
     label->setX(elem->x() - r.width() / 2.0);
-    label->setY(elem->y() - elem->halfh() - r.height());
+    label->setY(elem->y() - elem->halfW() - r.height());
     _elemLabels.insert(elem, label);
 }
 
@@ -745,44 +712,44 @@ void SchemaLayout::resizeEvent(QResizeEvent *event)
 
 void SchemaLayout::adjustRanges(int fullWidth)
 {
-    //for (ElementView *elemView: _elems)
+    //for (ElementLayout *elemLayout: _elems)
 }
 
 //------------------------------------------------------------------------------
-//                             ElementViewFactory
+//                             ElementLayoutFactory
 //------------------------------------------------------------------------------
 
-namespace ElementViewFactory {
+namespace ElementLayoutFactory {
 
-static QMap<QString, std::function<ElementView*(Element*)>> __factoryMethods;
+static QMap<QString, std::function<ElementLayout*(Element*)>> __factoryMethods;
 
-template <class TElement, class TView> void registerView() {
+template <class TElement, class TLayout> void registerLayout() {
     TElement tmp;
-    __factoryMethods.insert(tmp.type(), [](Element*e) { return new TView(e); });
+    __factoryMethods.insert(tmp.type(), [](Element*e) { return new TLayout(e); });
 }
 
-ElementView* makeElementView(Element *elem) {
+ElementLayout* makeElementLayout(Element *elem) {
     if (__factoryMethods.empty()) {
-        registerView<ElemEmptyRange, ElemEmptyRangeView::View>();
-        registerView<ElemMediumRange, ElemMediumRangeView::View>();
-        registerView<ElemPlate, ElemPlateView::View>();
-        registerView<ElemFlatMirror, ElemFlatMirrorView::View>();
-        registerView<ElemCurveMirror, ElemCurveMirrorView::View>();
-        registerView<ElemThinLens, ElemEmptyRangeView::View>();
-        registerView<ElemEmptyRange, ElemThinLensView::View>();
-        registerView<ElemCylinderLensT, ElemCylinderLensTView::View>();
-        registerView<ElemCylinderLensS, ElemCylinderLensSView::View>();
-        registerView<ElemTiltedCrystal, ElemTiltedCrystalView::View>();
-        registerView<ElemTiltedPlate, ElemTiltedPlateView::View>();
-        registerView<ElemBrewsterCrystal, ElemBrewsterCrystalView::View>();
-        registerView<ElemBrewsterPlate, ElemBrewsterPlateView::View>();
-        registerView<ElemMatrix, ElemMatrixView::View>();
-        registerView<ElemPoint, ElemPointView::View>();
-        registerView<ElemNormalInterface, ElemNormalInterfaceView::View>();
+        registerLayout<ElemEmptyRange, ElemEmptyRangeLayout::Layout>();
+        registerLayout<ElemMediumRange, ElemMediumRangeLayout::Layout>();
+        registerLayout<ElemPlate, ElemPlateLayout::Layout>();
+        registerLayout<ElemFlatMirror, ElemFlatMirrorLayout::Layout>();
+        registerLayout<ElemCurveMirror, ElemCurveMirrorLayout::Layout>();
+        registerLayout<ElemThinLens, ElemEmptyRangeLayout::Layout>();
+        registerLayout<ElemEmptyRange, ElemThinLensLayout::Layout>();
+        registerLayout<ElemCylinderLensT, ElemCylinderLensTLayout::Layout>();
+        registerLayout<ElemCylinderLensS, ElemCylinderLensSLayout::Layout>();
+        registerLayout<ElemTiltedCrystal, ElemTiltedCrystalLayout::Layout>();
+        registerLayout<ElemTiltedPlate, ElemTiltedPlateLayout::Layout>();
+        registerLayout<ElemBrewsterCrystal, ElemBrewsterCrystalLayout::Layout>();
+        registerLayout<ElemBrewsterPlate, ElemBrewsterPlateLayout::Layout>();
+        registerLayout<ElemMatrix, ElemMatrixLayout::Layout>();
+        registerLayout<ElemPoint, ElemPointLayout::Layout>();
+        registerLayout<ElemNormalInterface, ElemNormalInterfaceLayout::Layout>();
     }
     if (!__factoryMethods.contains(elem->type()))
         return nullptr;
     return __factoryMethods[elem->type()](elem);
 }
 
-} // namespace ElementViewFactory
+} // namespace ElementLayoutFactory

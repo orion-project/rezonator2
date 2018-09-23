@@ -131,7 +131,6 @@ HEADERS += \
     src/widgets/FormulaEditor.h \
     src/widgets/FrozenStateButton.h \
     src/widgets/GraphDataGrid.h \
-    src/widgets/LayoutView.h \
     src/widgets/ParamEditor.h \
     src/widgets/ParamEditorEx.h \
     src/widgets/ParamsEditor.h \
@@ -234,7 +233,6 @@ SOURCES += \
     src/widgets/FormulaEditor.cpp \
     src/widgets/FrozenStateButton.cpp \
     src/widgets/GraphDataGrid.cpp \
-    src/widgets/LayoutView.cpp \
     src/widgets/ParamEditor.cpp \
     src/widgets/ParamEditorEx.cpp \
     src/widgets/ParamsEditor.cpp \
