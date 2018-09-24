@@ -75,7 +75,7 @@ private:
     void addElement(ElementLayout *elem);
     void populate();
     void clear();
-    void adjustRanges(int fullWidth);
+    void centerView();
 };
 
 

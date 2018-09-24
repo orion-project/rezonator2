@@ -116,7 +116,6 @@ namespace OpticalAxisLayout {
     DECLARE_ELEMENT_LAYOUT_END
 
     ELEMENT_LAYOUT_INIT {
-        HW = 50; HH = 5;
     }
 
     ELEMENT_LAYOUT_PAINT {
@@ -230,7 +229,7 @@ namespace CurvedElementLayout {
             MarkNone,
             MarkT,
             MarkS
-        } markTS;
+        } markTS = MarkNone;
         qreal ROC = 100;
     DECLARE_ELEMENT_LAYOUT_END
 
@@ -385,6 +384,7 @@ namespace ElemCurveMirrorLayout {
         ElemCurveMirror *mirror = dynamic_cast<ElemCurveMirror*>(_element);
         if (!mirror || !_element->owner()) return;
         layout.reset(new CurvedElementLayout::Layout(nullptr));
+        layout->init();
         layout->setSlope(mirror->alpha());
         int index = _element->owner()->indexOf(_element);
         if (index <= 0)
@@ -399,6 +399,7 @@ namespace ElemCurveMirrorLayout {
             layout->paintMode = mirror->radius() > 0
                 ? CurvedElementLayout::Layout::ConvexLens
                 : CurvedElementLayout::Layout::ConcaveLens;
+        HW = layout->halfW(); HH = layout->halfH();
     }
 
     ELEMENT_LAYOUT_PAINT {
@@ -627,9 +628,12 @@ namespace ElemNormalInterfaceLayout {
     DECLARE_ELEMENT_LAYOUT_END
 
     ELEMENT_LAYOUT_INIT {
+        HW = 1.5; HH = 40;
     }
 
     ELEMENT_LAYOUT_PAINT {
+        painter->setPen(getGlassPen());
+        painter->drawLine(QLineF(0, -HH, 0, HH));
     }
 }
 
@@ -644,6 +648,8 @@ SchemaLayout::SchemaLayout(Schema *schema, QWidget* parent) : QGraphicsView(pare
     _scene.addItem(_axis);
 
     setRenderHint(QPainter::Antialiasing, true);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     setScene(&_scene);
 }
 
@@ -654,15 +660,34 @@ SchemaLayout::~SchemaLayout()
 
 void SchemaLayout::populate()
 {
+    setUpdatesEnabled(false);
+
     clear();
     for (Element *elem : _schema->elements()) {
         if (elem->disabled()) continue;
-        auto Layout = ElementLayoutFactory::make(elem);
-        if (Layout) {
-            Layout->init();
-            addElement(Layout);
+        auto layout = ElementLayoutFactory::make(elem);
+        if (layout) {
+            layout->init();
+            addElement(layout);
         }
     }
+
+    // Calculate axis length and position.
+    // The first element is at zero position.
+    qreal fullW = 0;
+    qreal firstHW = -1;
+    for (ElementLayout *elem : _elements) {
+        fullW += 2*elem->halfW();
+        if (firstHW < 0)
+            firstHW = elem->halfW();
+    }
+    const qreal axisMargin = 10;
+    fullW += axisMargin + axisMargin;
+    _axis->setHalfSize(fullW/2, 5);
+    _axis->setX(fullW/2 - firstHW - axisMargin);
+
+    centerView();
+    setUpdatesEnabled(true);
 }
 
 void SchemaLayout::addElement(ElementLayout *elem)
@@ -676,22 +701,15 @@ void SchemaLayout::addElement(ElementLayout *elem)
         elem->setPos(0, 0);
 
     _elements.append(elem);
-
-    qreal fullHW = 0;
-    for (ElementLayout *elem : _elements)
-        fullHW += elem->halfW();
-
-    _axis->setHalfSize(fullHW + 20, _axis->halfH());
-    _axis->setX(_axis->halfW() - _elements.first()->halfW() - 10);
-
     _scene.addItem(elem);
 
+    // Add element label
     QGraphicsTextItem *label = _scene.addText(elem->element()->label());
     label->setZValue(1000 + _elements.count());
     label->setFont(getLabelFont());
     QRectF r = label->boundingRect();
     label->setX(elem->x() - r.width() / 2.0);
-    label->setY(elem->y() - elem->halfW() - r.height());
+    label->setY(elem->y() - elem->halfH() - r.height());
     _elemLabels.insert(elem, label);
 }
 
@@ -701,18 +719,23 @@ void SchemaLayout::clear()
     _scene.clear();
     _elemLabels.clear();
     _scene.addItem(_axis);
-    qDeleteAll(_elements);
     _elements.clear();
 }
 
 void SchemaLayout::resizeEvent(QResizeEvent *event)
 {
-    adjustRanges(event->size().width());
+    QGraphicsView::resizeEvent(event);
+    centerView();
 }
 
-void SchemaLayout::adjustRanges(int fullWidth)
+void SchemaLayout::centerView()
 {
-    //for (ElementLayout *elemLayout: _elems)
+    QRectF r;
+    for (ElementLayout *elem : _elements)
+        r = r.united(elem->boundingRect());
+    for (QGraphicsTextItem *item : _elemLabels.values())
+        r = r.united(item->boundingRect());
+    centerOn(r.center());
 }
 
 //------------------------------------------------------------------------------
@@ -728,7 +751,7 @@ template <class TElement, class TLayout> void registerLayout() {
     __factoryMethods.insert(tmp.type(), [](Element*e) { return new TLayout(e); });
 }
 
-ElementLayout* makeElementLayout(Element *elem) {
+ElementLayout* make(Element *elem) {
     if (__factoryMethods.empty()) {
         registerLayout<ElemEmptyRange, ElemEmptyRangeLayout::Layout>();
         registerLayout<ElemMediumRange, ElemMediumRangeLayout::Layout>();
@@ -736,7 +759,6 @@ ElementLayout* makeElementLayout(Element *elem) {
         registerLayout<ElemFlatMirror, ElemFlatMirrorLayout::Layout>();
         registerLayout<ElemCurveMirror, ElemCurveMirrorLayout::Layout>();
         registerLayout<ElemThinLens, ElemEmptyRangeLayout::Layout>();
-        registerLayout<ElemEmptyRange, ElemThinLensLayout::Layout>();
         registerLayout<ElemCylinderLensT, ElemCylinderLensTLayout::Layout>();
         registerLayout<ElemCylinderLensS, ElemCylinderLensSLayout::Layout>();
         registerLayout<ElemTiltedCrystal, ElemTiltedCrystalLayout::Layout>();
