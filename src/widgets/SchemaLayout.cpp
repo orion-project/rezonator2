@@ -938,7 +938,6 @@ void SchemaLayout::addElement(ElementLayout *elem)
     _elements.append(elem);
     _scene.addItem(elem);
 
-    qDebug() << "add";
     // Add element label
     QGraphicsTextItem *label = _scene.addText(elem->element()->label());
     label->setZValue(1000 + _elements.count());
@@ -950,8 +949,8 @@ void SchemaLayout::addElement(ElementLayout *elem)
     qreal minY = labelY;
     for (int prevIndex = _elements.size()-2; prevIndex >= 0; prevIndex--) {
         auto prevLabel = _elemLabels[_elements.at(prevIndex)];
-        const auto prevRect = prevLabel->boundingRect();
-        if (labelX <= prevLabel->x() + prevRect.width() + 3 &&
+        auto prevRect = prevLabel->boundingRect();
+        if (labelX <= prevLabel->x() + prevRect.width() &&
             labelY <= prevLabel->y() && labelY > prevLabel->y() - prevRect.height())
             labelY = minY - prevRect.height()*0.75;
         else minY = qMin(minY, prevLabel->y());
