@@ -248,6 +248,11 @@ private:
 };
 
 //------------------------------------------------------------------------------
+
+enum ParameterLinkOption {
+    ParamLink_NonStorable = 0x01,
+};
+
 /**
     Parameter link listen for source parameter and assigns its value to target parameter.
 */
@@ -290,8 +295,12 @@ public:
     TParam* source() const { return _source; }
     TParam* target() const { return _target; }
 
+    void setOption(ParameterLinkOption option) { _options |= option; }
+    bool hasOption(ParameterLinkOption option) const { return _options & option; }
+
 private:
     TParam *_source, *_target;
+    int _options = 0;
 };
 
 //------------------------------------------------------------------------------

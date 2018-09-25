@@ -285,7 +285,11 @@ void Schema::relinkInterfaces()
         }
         else left = dynamic_cast<ElementRange*>(_items.at(i-1));
         if (left)
-            _paramLinks.append(new Z::ParamLink(left->paramIor(), iface->paramIor1()));
+        {
+            auto link = new Z::ParamLink(left->paramIor(), iface->paramIor1());
+            link->setOption(Z::ParamLink_NonStorable);
+            _paramLinks.append(link);
+        }
         else
             iface->paramIor1()->setValue(1);
 
@@ -296,7 +300,11 @@ void Schema::relinkInterfaces()
         }
         else right = dynamic_cast<ElementRange*>(_items.at(i+1));
         if (right)
-            _paramLinks.append(new Z::ParamLink(right->paramIor(), iface->paramIor2()));
+        {
+            auto link = new Z::ParamLink(right->paramIor(), iface->paramIor2());
+            link->setOption(Z::ParamLink_NonStorable);
+            _paramLinks.append(link);
+        }
         else
             iface->paramIor2()->setValue(1);
     }

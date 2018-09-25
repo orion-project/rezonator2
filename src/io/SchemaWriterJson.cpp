@@ -129,6 +129,9 @@ void SchemaWriterJson::writeParamLinks(QJsonObject& root)
 {
     QJsonArray linksJson;
     for (const Z::ParamLink *link : *_schema->paramLinks())
+    {
+        if (link->hasOption(Z::ParamLink_NonStorable)) continue;
+
         for (int i = 0; i < _schema->elements().size(); i++)
         {
             bool saved = false;
@@ -145,6 +148,7 @@ void SchemaWriterJson::writeParamLinks(QJsonObject& root)
                 }
             if (saved) break;
         }
+    }
     root["param_links"] = linksJson;
 }
 

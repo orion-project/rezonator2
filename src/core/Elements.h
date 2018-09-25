@@ -133,7 +133,7 @@ DECLARE_ELEMENT_END
 DECLARE_ELEMENT(ElemMatrix, Element)
     ElemMatrix();
     TYPE_NAME(qApp->translate("Elements", "Custom element-matrix"))
-    DEFAULT_LABEL("El")
+    DEFAULT_LABEL("C")
     PARAMS_EDITOR(ABCD)
     CALC_MATRIX
     void makeParam(const QString& name, const double& value);
@@ -147,7 +147,7 @@ DECLARE_ELEMENT_END
 
 DECLARE_ELEMENT(ElemPoint, Element)
     TYPE_NAME(qApp->translate("Elements", "Point"))
-    DEFAULT_LABEL("El")
+    DEFAULT_LABEL("P")
     PARAMS_EDITOR(None)
 DECLARE_ELEMENT_END
 

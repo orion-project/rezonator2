@@ -191,7 +191,10 @@ bool ProjectOperations::saveSchemaFileAs()
 {
     auto fileName = getSaveFileName();
     if (fileName.isEmpty()) return false;
-    return saveSchemaFile(fileName);
+    bool ok = saveSchemaFile(fileName);
+    if (ok) // add to MRU list
+        emit fileNameSelected(fileName);
+    return ok;
 }
 
 void ProjectOperations::saveSchemaFileCopy()

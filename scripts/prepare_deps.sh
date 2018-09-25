@@ -3,6 +3,9 @@
 # Download and build required third party libs.
 #
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd ${SCRIPT_DIR}/..
+
 PROJ_ROOT=${PWD}
 PROJ_BIN=${PWD}/bin
 LIBS_DIR=${PROJ_ROOT}/libs
@@ -37,7 +40,7 @@ function prepare_lua() {
   elif [ "$PLATFORM" == "linux" ]; then
     wget $LUA_URL
   else
-    echo "Uknown how to download for platform $PLATFORM"
+    echo "Unknown how to download for platform $PLATFORM"
     exit -1
   fi
 
@@ -60,6 +63,7 @@ function prepare_lua() {
   elif [ "$PLATFORM" == "linux" ]; then
     # I've only tested it on Ubuntu and additional dep is required 
     # which seems not to be installed by default
+    echo "sudo is required to install dependencies"
     sudo apt-get install libreadline-dev
     make linux test
   fi

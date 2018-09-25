@@ -1,0 +1,110 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 980
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "L2",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "I1",
+            "params": {
+                "R": {
+                    "unit": "mm",
+                    "value": -100
+                },
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemSphericalInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "L3",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemMediumRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "I3",
+            "params": {
+                "R": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemSphericalInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "L1",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        }
+    ],
+    "formulas": [
+    ],
+    "param_links": [
+    ],
+    "pumps": [
+    ],
+    "schema_version": "2.0",
+    "trip_type": "SP",
+    "windows": [
+    ]
+}
