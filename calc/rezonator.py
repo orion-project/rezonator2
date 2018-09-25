@@ -39,9 +39,9 @@ def compare_abcd(id, M1, M2, epsilon = 1e-7):
   C = abs(C1 - C2) < epsilon
   D = abs(D1 - D2) < epsilon
   if not A or not B or not C or not D:
-    print(id + ": FAIL ({}, {}, {}, {})".format(A, B, C, D))
+    print(id + ": (+/-{}) ** FAIL ** ({}, {}, {}, {})".format(epsilon, A, B, C, D))
   else:
-    print(id + ': OK')
+    print(id + ': (+/-{}) ** OK **'.format(epsilon))
 
   
 # Transformation of complex ROC by ray matrix    

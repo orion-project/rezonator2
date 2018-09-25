@@ -289,6 +289,30 @@ TEST_METHOD(grin_lens)
 
 } */
 
+// Calculation: $PROJECT/calc/ThickLens.py
+TEST_METHOD(ThickLens)
+{
+    ELEM(ThickLens, 4)
+    SET_PARAM(L, 10, mm)
+    SET_PARAM(n, 1.5, none)
+    SET_PARAM(R1, -90, mm)
+    SET_PARAM(R2, 150, mm)
+
+    ASSERT_RAW_PARAM(ior, 1.5)
+    ASSERT_RAW_PARAM(lengthSI, 0.01)
+    ASSERT_RAW_PARAM(axisLengthSI, 0.01)
+    ASSERT_RAW_PARAM(opticalPathSI, 0.015)
+
+    ASSERT_MATRIX(t, 0.9629630, 0.0066667, -8.7654321, 0.9777778)
+    ASSERT_MATRIX(s, 0.9629630, 0.0066667, -8.7654321, 0.9777778)
+
+    elem->setSubRangeSI(0.002);
+    ASSERT_MATRIX(t1, 0.9925926, 0.0013333, -3.7037037, 0.6666667)
+    ASSERT_MATRIX(s1, 0.9925926, 0.0013333, -3.7037037, 0.6666667)
+    ASSERT_MATRIX(t2, 1.0000000, 0.0080000, -3.3333333, 1.4733333)
+    ASSERT_MATRIX(s2, 1.0000000, 0.0080000, -3.3333333, 1.4733333)
+}
+
 //------------------------------------------------------------------------------
 
 TEST_GROUP("Elements",
@@ -308,6 +332,7 @@ TEST_GROUP("Elements",
            ADD_TEST(Matrix2),
            ADD_TEST(Point),
            // TODO ADD_TEST(grin_lens),
+           ADD_TEST(ThickLens)
            )
 
 } // namespace ElementsTests

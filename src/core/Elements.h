@@ -159,4 +159,50 @@ DECLARE_ELEMENT(ElemNormalInterface, ElementInterface)
     CALC_MATRIX
 DECLARE_ELEMENT_END
 
+//------------------------------------------------------------------------------
+
+DECLARE_ELEMENT(ElemBrewsterInterface, ElementInterface)
+    TYPE_NAME(qApp->translate("Elements", "Brewster interface"))
+    DEFAULT_LABEL("I")
+    CALC_MATRIX
+DECLARE_ELEMENT_END
+
+//------------------------------------------------------------------------------
+
+DECLARE_ELEMENT(ElemTiltedInterface, ElementInterface)
+    ElemTiltedInterface();
+    TYPE_NAME(qApp->translate("Elements", "Tilted interface"))
+    DEFAULT_LABEL("I")
+    CALC_MATRIX
+    double alpha() const { return _alpha->value().toSi(); }
+protected:
+    Z::Parameter *_alpha;
+DECLARE_ELEMENT_END
+
+//------------------------------------------------------------------------------
+
+DECLARE_ELEMENT(ElemSphericalInterface, ElementInterface)
+    ElemSphericalInterface();
+    TYPE_NAME(qApp->translate("Elements", "Spherical interface"))
+    DEFAULT_LABEL("I")
+    CALC_MATRIX
+    double radius() const { return _radius->value().toSi(); }
+private:
+    Z::Parameter *_radius;
+DECLARE_ELEMENT_END
+
+//------------------------------------------------------------------------------
+
+DECLARE_ELEMENT(ElemThickLens, ElementRange)
+    ElemThickLens();
+    TYPE_NAME(qApp->translate("Elements", "Thick lens"))
+    DEFAULT_LABEL("L")
+    CALC_MATRIX
+    SUB_RANGE
+    double radius1() const { return _radius1->value().toSi(); }
+    double radius2() const { return _radius2->value().toSi(); }
+private:
+    Z::Parameter *_radius1, *_radius2;
+DECLARE_ELEMENT_END
+
 #endif // ELEMENTS_H

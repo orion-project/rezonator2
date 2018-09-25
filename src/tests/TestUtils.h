@@ -31,6 +31,12 @@
     ASSERT_EQ_DBL((m).C, (expected_m).C); \
     ASSERT_EQ_DBL((m).D, (expected_m).D);
 
+#define ASSERT_NEAR_MATRIX(m, expected_m, eps)\
+    ASSERT_NEAR_DBL((m).A, (expected_m).A, eps); \
+    ASSERT_NEAR_DBL((m).B, (expected_m).B, eps); \
+    ASSERT_NEAR_DBL((m).C, (expected_m).C, eps); \
+    ASSERT_NEAR_DBL((m).D, (expected_m).D, eps);
+
 #define ASSERT_MATRIX_IS(m, a, b, c, d) \
     ASSERT_EQ_DBL((m).A, a); \
     ASSERT_EQ_DBL((m).B, b); \

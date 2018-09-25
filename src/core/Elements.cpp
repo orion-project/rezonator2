@@ -185,9 +185,9 @@ ElemTiltedCrystal::ElemTiltedCrystal() : ElementRange()
 
 void ElemTiltedCrystal::calcMatrixInternal()
 {
-    double L = lengthSI();
-    double a = alpha();
-    double n = ior();
+    const double L = lengthSI();
+    const double a = alpha();
+    const double n = ior();
 
     _mt.assign(1, L * n * SQR(cos(a)) / (SQR(n) - SQR(sin(a))), 0.0, 1.0);
     _ms.assign(1, L / n, 0, 1);
@@ -195,13 +195,13 @@ void ElemTiltedCrystal::calcMatrixInternal()
 
 void ElemTiltedCrystal::setSubRangeSI(double value)
 {
-    double n = ior();
-    double cos_a = cos(alpha());
-    double cos_b = cos(asin(sin(alpha()) / n)); // cosine of angle inside medium
-    double cos_ab = cos_a / cos_b;
-    double cos_ba = cos_b / cos_a;
-    double L1 = value;
-    double L2 = lengthSI() - value;
+    const double n = ior();
+    const double cos_a = cos(alpha());
+    const double cos_b = cos(asin(sin(alpha()) / n)); // cosine of angle inside medium
+    const double cos_ab = cos_a / cos_b;
+    const double cos_ba = cos_b / cos_a;
+    const double L1 = value;
+    const double L2 = lengthSI() - value;
 
     //  --> /:: -->  half lengh * input to medium
     _mt1.assign(cos_ba, L1/n * cos_ab, 0, 1/n * cos_ab);
@@ -217,10 +217,10 @@ void ElemTiltedCrystal::setSubRangeSI(double value)
 
 void ElemTiltedPlate::calcMatrixInternal()
 {
-    double L = lengthSI();
-    double n = ior();
-    double sin_a = sin(alpha());
-    double s = n*n - sin_a*sin_a;
+    const double L = lengthSI();
+    const double n = ior();
+    const double sin_a = sin(alpha());
+    const double s = n*n - sin_a*sin_a;
 
     _mt.assign(1, L * n*n * (1 - sin_a*sin_a) / sqrt(s*s*s), 0, 1);
     _ms.assign(1, L / sqrt(s), 0, 1);
@@ -228,13 +228,13 @@ void ElemTiltedPlate::calcMatrixInternal()
 
 void ElemTiltedPlate::setSubRangeSI(double value)
 {
-    double n = ior();
-    double cos_a = cos(alpha());
-    double cos_b = cos(asin( sin(alpha()) / n)); // cosine of angle inside medium
-    double cos_ab = cos_a / cos_b;
-    double cos_ba = cos_b / cos_a;
-    double L1 = value;
-    double L2 = axisLengthSI() - L1;
+    const double n = ior();
+    const double cos_a = cos(alpha());
+    const double cos_b = cos(asin( sin(alpha()) / n)); // cosine of angle inside medium
+    const double cos_ab = cos_a / cos_b;
+    const double cos_ba = cos_b / cos_a;
+    const double L1 = value;
+    const double L2 = axisLengthSI() - L1;
 
     //  --> /:: -->  half lengh * input to medium
     _mt1.assign(cos_ba, L1/n * cos_ab, 0, 1/n * cos_ab);
@@ -260,8 +260,8 @@ ElemBrewsterCrystal::ElemBrewsterCrystal() : ElementRange()
 
 void ElemBrewsterCrystal::calcMatrixInternal()
 {
-    double L = lengthSI();
-    double n = ior();
+    const double L = lengthSI();
+    const double n = ior();
 
     _ms.assign(1, L / n, 0, 1);
     _mt.assign(1, _ms.B / SQR(n), 0, 1);
@@ -269,9 +269,9 @@ void ElemBrewsterCrystal::calcMatrixInternal()
 
 void ElemBrewsterCrystal::setSubRangeSI(double value)
 {
-    double n = ior();
-    double L1 = value;
-    double L2 = lengthSI() - L1;
+    const double n = ior();
+    const double L1 = value;
+    const double L2 = lengthSI() - L1;
 
     //  --> /:: -->  half lengh * input to medium
     _mt1.assign(n, L1/n/n, 0, 1/n/n);
@@ -292,7 +292,7 @@ ElemBrewsterPlate::ElemBrewsterPlate() : ElementRange()
 
 void ElemBrewsterPlate::calcMatrixInternal()
 {
-    double n = ior();
+    const double n = ior();
 
     _ms.assign(1, axisLengthSI() / n, 0, 1);
     _mt.assign(1, _ms.B / SQR(n), 0, 1);
@@ -300,9 +300,9 @@ void ElemBrewsterPlate::calcMatrixInternal()
 
 void ElemBrewsterPlate::setSubRangeSI(double value)
 {
-    double L1 = value;
-    double L2 = axisLengthSI() - L1;
-    double n = ior();
+    const double L1 = value;
+    const double L2 = axisLengthSI() - L1;
+    const double n = ior();
 
     //  --> /:: -->  half lengh * input to medium
     _mt1.assign(n, L1/n/n, 0, 1/n/n);
@@ -316,7 +316,7 @@ void ElemBrewsterPlate::setSubRangeSI(double value)
 double ElemBrewsterPlate::axisLengthSI() const
 {
     // L_eff = L / cos( asin( sin( atan(n) )/n ) ) = L * Sqrt(n^2 + 1) / n
-    double n = ior();
+    const double n = ior();
     return lengthSI() * sqrt(n*n + 1) / n;
 }
 
@@ -372,4 +372,128 @@ void ElemNormalInterface::calcMatrixInternal()
 
     _mt_inv.assign(1, 0, 0, n2 / n1);
     _ms_inv = _mt_inv;
+}
+
+//------------------------------------------------------------------------------
+//                             ElemBrewsterInterface
+
+void ElemBrewsterInterface::calcMatrixInternal()
+{
+    const double n1 = ior1();
+    const double n2 = ior2();
+
+    _mt.assign(n2/n1, 0, 0, (n1/n2)*(n1/n2));
+    _ms.assign(1, 0, 0, n1/n2);
+
+    _mt_inv.assign(n1/n2, 0, 0, (n2/n1)*(n2/n1));
+    _ms_inv.assign(1, 0, 0, n2/n1);
+}
+
+//------------------------------------------------------------------------------
+//                             ElemTiltedInterface
+
+ElemTiltedInterface::ElemTiltedInterface() : ElementInterface()
+{
+    _alpha = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Alpha"), Z::Strs::alpha(),
+                              qApp->translate("Param", "Angle of incidence "),
+                              qApp->translate("Param", "Zero angle is normal incidence. "
+                              "Negative value sets angle from the side of medium <i>n<sub>2</sub></i>."));
+    addParam(_alpha, 0, Z::Units::deg());
+}
+
+void ElemTiltedInterface::calcMatrixInternal()
+{
+    const double n1 = ior1();
+    const double n2 = ior2();
+    const double angle = alpha();
+    /*    \ |
+       n1  \| alpha      Positive angle value means we set angle Alpha (angle at the side of medium n1)
+     -------+-------     Negative angle value means we set angle Beta (angle at the side of medium n2)
+      beta  |\   n2
+            | \          */
+    const double cos_a = angle < 0 ? cos(asin( sin(angle) * n2 / n1)) : cos(angle);
+    const double cos_b = angle < 0 ? cos(angle): cos(asin( sin(angle) * n1 / n2));
+
+    _mt.assign(cos_b/cos_a, 0, 0, (n1/n2)*(cos_a/cos_b));
+    _ms.assign(1, 0, 0, n1/n2);
+
+    _mt_inv.assign(cos_a/cos_b, 0, 0, (n2/n1)*(cos_b/cos_a));
+    _ms_inv.assign(1, 0, 0, n2/n1);
+}
+
+//------------------------------------------------------------------------------
+//                             ElemSphericalInterface
+
+ElemSphericalInterface::ElemSphericalInterface() : ElementInterface()
+{
+    _radius = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R"), QStringLiteral("R"),
+                               qApp->translate("Param", "Radius of curvature"),
+                               qApp->translate("Param", ""));
+    addParam(_radius, 100, Z::Units::mm());
+
+    _radius->setVerifier(globalCurvatureRadiusVerifier());
+}
+
+void ElemSphericalInterface::calcMatrixInternal()
+{
+    const double n1 = ior1();
+    const double n2 = ior2();
+    const double R = radius();
+
+    _mt.assign(1, 0, (n2-n1)/R/n2, n1/n2);
+    _ms = _mt;
+
+    _mt_inv.assign(1, 0, (n1-n2)/(-R)/n1, n2/n1);
+    _ms_inv = _mt_inv;
+}
+
+//------------------------------------------------------------------------------
+//                             ElemThickLens
+
+ElemThickLens::ElemThickLens() : ElementRange()
+{
+    _ior->setVisible(true);
+
+    _radius1 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R1"), QStringLiteral("R1"),
+                               qApp->translate("Param", "Left radius of curvature"));
+    _radius2 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R2"), QStringLiteral("R2"),
+                               qApp->translate("Param", "Right radius of curvature"));
+    addParam(_radius1, -100, Z::Units::mm());
+    addParam(_radius2, 100, Z::Units::mm());
+
+    _radius1->setVerifier(globalCurvatureRadiusVerifier());
+    _radius2->setVerifier(globalCurvatureRadiusVerifier());
+}
+
+void ElemThickLens::calcMatrixInternal()
+{
+    const double L = lengthSI();
+    const double n = ior();
+    const double R1 = radius1();
+    const double R2 = radius2();
+
+    const double A = 1 + (L/R1)*(n-1)/n;
+    const double B = L/n;
+    const double C = (n-1)*(1/R1 - 1/R2) - L/R1/R2*(n-1)*(n-1)/n;
+    const double D = 1 - (L/R2)*(n-1)/n;
+
+    _ms.assign(A, B, C, D);
+    _mt.assign(A, B, C, D);
+}
+
+void ElemThickLens::setSubRangeSI(double value)
+{
+    const double n = ior();
+    const double L1 = value;
+    const double L2 = lengthSI() - L1;
+    const double R1 = radius1();
+    const double R2 = radius2();
+
+    //  --> (:: -->  half lengh * input to medium
+    _mt1.assign(1 + L1*(n-1)/R1/n, L1/n, (n-1)/R1/n, 1/n);
+    _ms1 = _mt1;
+
+    //  --> ::) -->  output from media * half length
+    _mt2.assign(1, L2, (1-n)/R2, L2*(1-n)/R2 + n);
+    _ms2 = _mt2;
 }

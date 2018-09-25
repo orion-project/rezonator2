@@ -11,8 +11,6 @@ ElementsCatalog::ElementsCatalog()
     registerElement(categoryCommon, new ElemFlatMirror);
     registerElement(categoryCommon, new ElemCurveMirror);
     registerElement(categoryCommon, new ElemThinLens);
-    registerElement(categoryCommon, new ElemCylinderLensT);
-    registerElement(categoryCommon, new ElemCylinderLensS);
     registerElement(categoryCommon, new ElemTiltedCrystal);
     registerElement(categoryCommon, new ElemTiltedPlate);
     registerElement(categoryCommon, new ElemBrewsterCrystal);
@@ -21,10 +19,16 @@ ElementsCatalog::ElementsCatalog()
     auto categoryAux = qApp->translate("Elements", "Additional elements");
     registerElement(categoryAux, new ElemMatrix);
     registerElement(categoryAux, new ElemPoint);
+    registerElement(categoryAux, new ElemThickLens);
+    registerElement(categoryAux, new ElemCylinderLensT);
+    registerElement(categoryAux, new ElemCylinderLensS);
 
     auto categoryIntf = qApp->translate("Elements", "Media and interfaces");
     registerElement(categoryIntf, new ElemMediumRange);
     registerElement(categoryIntf, new ElemNormalInterface);
+    registerElement(categoryIntf, new ElemBrewsterInterface);
+    registerElement(categoryIntf, new ElemTiltedInterface);
+    registerElement(categoryIntf, new ElemSphericalInterface);
 }
 
 ElementsCatalog::~ElementsCatalog()

@@ -342,7 +342,10 @@ Element* makeElem(const QString& label, const QString& paramStr) {
         auto key = keyValue.at(0).trimmed();
         auto value = keyValue.at(1).trimmed();
         auto param = elem->params().byAlias(key);
-        if (!param) continue;
+        if (!param) {
+            qWarning() << "makeElem(): Unknown param alias:" << key;
+            continue;
+        }
         param->setValue(Z::Value::parse(value));
     }
     return elem;
@@ -365,6 +368,14 @@ TEST_METHOD(Helper_makeElem)
 */
 namespace InterfacedElements {
 
+#define RUN_TEST_DATA(d) \
+    d.calc->calcRoundTrip(false); \
+    d.calc->multMatrix(); \
+    TEST_LOG(d.calc->roundTripStr()); \
+    TEST_LOG("Mt = " + d.calc->Mt().str()); \
+    TEST_LOG("Ms = " + d.calc->Ms().str());
+
+namespace Normal {
 TEST_CASE_METHOD(rt_ifaces_normal, TripType tripType, const RefIndex& refIndex1, const RefIndex& refIndex2)
 {
     TestData d1(tripType, refIndex1, {
@@ -372,7 +383,6 @@ TEST_CASE_METHOD(rt_ifaces_normal, TripType tripType, const RefIndex& refIndex1,
                     makeElem<ElemPlate>("Cr", "L=100mm; n = 2"),
                     makeElem<ElemEmptyRange>("L2", "L = 100mm"),
                 });
-
     TestData d2(tripType, refIndex2, {
                     makeElem<ElemEmptyRange>("L1", "L = 100mm"),
                     makeElem<ElemNormalInterface>("Cr_in", "n1 = 1; n2 = 2"),
@@ -380,19 +390,8 @@ TEST_CASE_METHOD(rt_ifaces_normal, TripType tripType, const RefIndex& refIndex1,
                     makeElem<ElemNormalInterface>("Cr_out", "n1 = 2; n2 = 1"),
                     makeElem<ElemEmptyRange>("L2", "L = 100mm"),
                 });
-
-    d1.calc->calcRoundTrip(false);
-    d1.calc->multMatrix();
-    TEST_LOG(d1.calc->roundTripStr());
-    TEST_LOG("Mt = " + d1.calc->Mt().str());
-    TEST_LOG("Ms = " + d1.calc->Ms().str());
-
-    d2.calc->calcRoundTrip(false);
-    d2.calc->multMatrix();
-    TEST_LOG(d2.calc->roundTripStr());
-    TEST_LOG("Mt = " + d2.calc->Mt().str());
-    TEST_LOG("Ms = " + d2.calc->Ms().str());
-
+    RUN_TEST_DATA(d1)
+    RUN_TEST_DATA(d2)
     ASSERT_EQ_MATRIX(d1.calc->Mt(), d2.calc->Mt());
     ASSERT_EQ_MATRIX(d1.calc->Ms(), d2.calc->Ms());
 }
@@ -407,18 +406,171 @@ TEST_CASE(rt_ifaces_normal_sp_0, rt_ifaces_normal, SP, RefIndex(0), RefIndex(0))
 TEST_CASE(rt_ifaces_normal_sp_1, rt_ifaces_normal, SP, RefIndex(1), RefIndex(3))
 TEST_CASE(rt_ifaces_normal_sp_2, rt_ifaces_normal, SP, RefIndex(2), RefIndex(4))
 
-TEST_GROUP("Composite interfaced elements",
-           ADD_TEST(rt_ifaces_normal_sw_0),
-           ADD_TEST(rt_ifaces_normal_sw_1),
-           ADD_TEST(rt_ifaces_normal_sw_2),
-           ADD_TEST(rt_ifaces_normal_rr_0),
-           ADD_TEST(rt_ifaces_normal_rr_1),
-           ADD_TEST(rt_ifaces_normal_rr_2),
-           ADD_TEST(rt_ifaces_normal_sp_0),
-           ADD_TEST(rt_ifaces_normal_sp_1),
-           ADD_TEST(rt_ifaces_normal_sp_2),
-           )
+TEST_GROUP("Normal",
+    ADD_TEST(rt_ifaces_normal_sw_0),
+    ADD_TEST(rt_ifaces_normal_sw_1),
+    ADD_TEST(rt_ifaces_normal_sw_2),
+    ADD_TEST(rt_ifaces_normal_rr_0),
+    ADD_TEST(rt_ifaces_normal_rr_1),
+    ADD_TEST(rt_ifaces_normal_rr_2),
+    ADD_TEST(rt_ifaces_normal_sp_0),
+    ADD_TEST(rt_ifaces_normal_sp_1),
+    ADD_TEST(rt_ifaces_normal_sp_2),
+)
+} // namespace Normal
+
+namespace Brewster {
+// Calculation: $PROJECT/calc/RoundTripCalculator.py (def mult_matrices_interface_brewster)
+TEST_CASE_METHOD(rt_ifaces_brewster, TripType tripType, const RefIndex& refIndex1, const RefIndex& refIndex2)
+{
+    TestData d1(tripType, refIndex1, {
+                    makeElem<ElemEmptyRange>("L1", "L = 100mm"),
+                    makeElem<ElemBrewsterCrystal>("Cr", "L=100mm; n = 2"),
+                    makeElem<ElemEmptyRange>("L2", "L = 100mm"),
+                });
+    TestData d2(tripType, refIndex2, {
+                    makeElem<ElemEmptyRange>("L1", "L = 100mm"),
+                    makeElem<ElemBrewsterInterface>("Cr_in", "n1 = 1; n2 = 2"),
+                    makeElem<ElemMediumRange>("Cr", "L = 100mm; n = 2"),
+                    makeElem<ElemBrewsterInterface>("Cr_out", "n1 = 2; n2 = 1"),
+                    makeElem<ElemEmptyRange>("L2", "L = 100mm"),
+                });
+    RUN_TEST_DATA(d1)
+    RUN_TEST_DATA(d2)
+    ASSERT_EQ_MATRIX(d1.calc->Mt(), d2.calc->Mt());
+    ASSERT_EQ_MATRIX(d1.calc->Ms(), d2.calc->Ms());
 }
+
+TEST_CASE(rt_ifaces_brewster_sw_0, rt_ifaces_brewster, SW, RefIndex(0), RefIndex(0))
+TEST_CASE(rt_ifaces_brewster_sw_1, rt_ifaces_brewster, SW, RefIndex(1), RefIndex(3))
+TEST_CASE(rt_ifaces_brewster_sw_2, rt_ifaces_brewster, SW, RefIndex(2), RefIndex(4))
+TEST_CASE(rt_ifaces_brewster_rr_0, rt_ifaces_brewster, RR, RefIndex(0), RefIndex(0))
+TEST_CASE(rt_ifaces_brewster_rr_1, rt_ifaces_brewster, RR, RefIndex(1), RefIndex(3))
+TEST_CASE(rt_ifaces_brewster_rr_2, rt_ifaces_brewster, RR, RefIndex(2), RefIndex(4))
+TEST_CASE(rt_ifaces_brewster_sp_0, rt_ifaces_brewster, SP, RefIndex(0), RefIndex(0))
+TEST_CASE(rt_ifaces_brewster_sp_1, rt_ifaces_brewster, SP, RefIndex(1), RefIndex(3))
+TEST_CASE(rt_ifaces_brewster_sp_2, rt_ifaces_brewster, SP, RefIndex(2), RefIndex(4))
+
+TEST_GROUP("Brewster",
+    ADD_TEST(rt_ifaces_brewster_sw_0),
+    ADD_TEST(rt_ifaces_brewster_sw_1),
+    ADD_TEST(rt_ifaces_brewster_sw_2),
+    ADD_TEST(rt_ifaces_brewster_rr_0),
+    ADD_TEST(rt_ifaces_brewster_rr_1),
+    ADD_TEST(rt_ifaces_brewster_rr_2),
+    ADD_TEST(rt_ifaces_brewster_sp_0),
+    ADD_TEST(rt_ifaces_brewster_sp_1),
+    ADD_TEST(rt_ifaces_brewster_sp_2),
+)
+} // namespace Brewster
+
+namespace Tilted {
+TEST_CASE_METHOD(rt_ifaces_tilted, TripType tripType, const RefIndex& refIndex1, const RefIndex& refIndex2)
+{
+    TestData d1(tripType, refIndex1, {
+                    makeElem<ElemEmptyRange>("L1", "L = 100mm"),
+                    makeElem<ElemTiltedCrystal>("Cr", "L=100mm; n = 2; Alpha=1rad"),
+                    makeElem<ElemEmptyRange>("L2", "L = 100mm"),
+                });
+    TestData d2(tripType, refIndex2, {
+                    makeElem<ElemEmptyRange>("L1", "L = 100mm"),
+                    makeElem<ElemTiltedInterface>("Cr_in", "n1 = 1; n2 = 2; Alpha=1rad"),
+                    makeElem<ElemMediumRange>("Cr", "L = 100mm; n = 2"),
+                    makeElem<ElemTiltedInterface>("Cr_out", QString("n1 = 2; n2 = 1; Alpha=%1rad").arg(asin(sin(1)/2.0))),
+                    makeElem<ElemEmptyRange>("L2", "L = 100mm"),
+                });
+    TestData d3(tripType, refIndex2, {
+                    makeElem<ElemEmptyRange>("L1", "L = 100mm"),
+                    makeElem<ElemTiltedInterface>("Cr_in", "n1 = 1; n2 = 2; Alpha=1rad"),
+                    makeElem<ElemMediumRange>("Cr", "L = 100mm; n = 2"),
+                    makeElem<ElemTiltedInterface>("Cr_out", "n1 = 2; n2 = 1; Alpha=-1rad"),
+                    makeElem<ElemEmptyRange>("L2", "L = 100mm"),
+                });
+    RUN_TEST_DATA(d1)
+    RUN_TEST_DATA(d2)
+    RUN_TEST_DATA(d3)
+    ASSERT_NEAR_MATRIX(d1.calc->Mt(), d2.calc->Mt(), 1e-6);
+    ASSERT_NEAR_MATRIX(d1.calc->Ms(), d2.calc->Ms(), 1e-6);
+    ASSERT_NEAR_MATRIX(d1.calc->Mt(), d3.calc->Mt(), 1e-6);
+    ASSERT_NEAR_MATRIX(d1.calc->Ms(), d3.calc->Ms(), 1e-6);
+}
+
+TEST_CASE(rt_ifaces_tilted_sw_0, rt_ifaces_tilted, SW, RefIndex(0), RefIndex(0))
+TEST_CASE(rt_ifaces_tilted_sw_1, rt_ifaces_tilted, SW, RefIndex(1), RefIndex(3))
+TEST_CASE(rt_ifaces_tilted_sw_2, rt_ifaces_tilted, SW, RefIndex(2), RefIndex(4))
+TEST_CASE(rt_ifaces_tilted_rr_0, rt_ifaces_tilted, RR, RefIndex(0), RefIndex(0))
+TEST_CASE(rt_ifaces_tilted_rr_1, rt_ifaces_tilted, RR, RefIndex(1), RefIndex(3))
+TEST_CASE(rt_ifaces_tilted_rr_2, rt_ifaces_tilted, RR, RefIndex(2), RefIndex(4))
+TEST_CASE(rt_ifaces_tilted_sp_0, rt_ifaces_tilted, SP, RefIndex(0), RefIndex(0))
+TEST_CASE(rt_ifaces_tilted_sp_1, rt_ifaces_tilted, SP, RefIndex(1), RefIndex(3))
+TEST_CASE(rt_ifaces_tilted_sp_2, rt_ifaces_tilted, SP, RefIndex(2), RefIndex(4))
+
+TEST_GROUP("Tilted",
+    ADD_TEST(rt_ifaces_tilted_sw_0),
+    ADD_TEST(rt_ifaces_tilted_sw_1),
+    ADD_TEST(rt_ifaces_tilted_sw_2),
+    ADD_TEST(rt_ifaces_tilted_rr_0),
+    ADD_TEST(rt_ifaces_tilted_rr_1),
+    ADD_TEST(rt_ifaces_tilted_rr_2),
+    ADD_TEST(rt_ifaces_tilted_sp_0),
+    ADD_TEST(rt_ifaces_tilted_sp_1),
+    ADD_TEST(rt_ifaces_tilted_sp_2),
+)
+} // namespace Tilted
+
+namespace Shperical {
+TEST_CASE_METHOD(rt_ifaces_spherical, TripType tripType, const RefIndex& refIndex1, const RefIndex& refIndex2)
+{
+    TestData d1(tripType, refIndex1, {
+                    makeElem<ElemEmptyRange>("L1", "L = 100mm"),
+                    makeElem<ElemThickLens>("Cr", "L=100mm; n = 2; R1=-90mm; R2=150mm"),
+                    makeElem<ElemEmptyRange>("L2", "L = 100mm"),
+                });
+    TestData d2(tripType, refIndex2, {
+                    makeElem<ElemEmptyRange>("L1", "L = 100mm"),
+                    makeElem<ElemSphericalInterface>("Cr_in", "n1 = 1; n2 = 2; R=-90mm"),
+                    makeElem<ElemMediumRange>("Cr", "L = 100mm; n = 2"),
+                    makeElem<ElemSphericalInterface>("Cr_out", "n1 = 2; n2 = 1; R=150mm"),
+                    makeElem<ElemEmptyRange>("L2", "L = 100mm"),
+                });
+    RUN_TEST_DATA(d1)
+    RUN_TEST_DATA(d2)
+    ASSERT_EQ_MATRIX(d1.calc->Mt(), d2.calc->Mt());
+    ASSERT_EQ_MATRIX(d1.calc->Ms(), d2.calc->Ms());
+}
+
+TEST_CASE(rt_ifaces_spherical_sw_0, rt_ifaces_spherical, SW, RefIndex(0), RefIndex(0))
+TEST_CASE(rt_ifaces_spherical_sw_1, rt_ifaces_spherical, SW, RefIndex(1), RefIndex(3))
+TEST_CASE(rt_ifaces_spherical_sw_2, rt_ifaces_spherical, SW, RefIndex(2), RefIndex(4))
+TEST_CASE(rt_ifaces_spherical_rr_0, rt_ifaces_spherical, RR, RefIndex(0), RefIndex(0))
+TEST_CASE(rt_ifaces_spherical_rr_1, rt_ifaces_spherical, RR, RefIndex(1), RefIndex(3))
+TEST_CASE(rt_ifaces_spherical_rr_2, rt_ifaces_spherical, RR, RefIndex(2), RefIndex(4))
+TEST_CASE(rt_ifaces_spherical_sp_0, rt_ifaces_spherical, SP, RefIndex(0), RefIndex(0))
+TEST_CASE(rt_ifaces_spherical_sp_1, rt_ifaces_spherical, SP, RefIndex(1), RefIndex(3))
+TEST_CASE(rt_ifaces_spherical_sp_2, rt_ifaces_spherical, SP, RefIndex(2), RefIndex(4))
+
+TEST_GROUP("Spherical",
+    ADD_TEST(rt_ifaces_spherical_sw_0),
+    ADD_TEST(rt_ifaces_spherical_sw_1),
+    ADD_TEST(rt_ifaces_spherical_sw_2),
+    ADD_TEST(rt_ifaces_spherical_rr_0),
+    ADD_TEST(rt_ifaces_spherical_rr_1),
+    ADD_TEST(rt_ifaces_spherical_rr_2),
+    ADD_TEST(rt_ifaces_spherical_sp_0),
+    ADD_TEST(rt_ifaces_spherical_sp_1),
+    ADD_TEST(rt_ifaces_spherical_sp_2),
+)
+} // namespace Shperical
+
+#undef RUN_TEST_DATA
+
+TEST_GROUP("Composite interfaced elements",
+    ADD_GROUP(Normal),
+    ADD_GROUP(Brewster),
+    ADD_GROUP(Tilted),
+    ADD_GROUP(Shperical),
+)
+} // namespace InterfacedElements
 
 //------------------------------------------------------------------------------
 
