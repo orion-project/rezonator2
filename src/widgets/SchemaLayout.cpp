@@ -638,6 +638,194 @@ namespace ElemNormalInterfaceLayout {
 }
 
 //------------------------------------------------------------------------------
+namespace InterfaceElementLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+    private:
+        enum NeighbourKind {
+            NeighbourUnknown,
+            NeighbourAir,
+            NeighbourMedium,
+        };
+        enum {
+            BetweenRanges,
+            BetweenMedia,
+            MediumRight,
+            MediumLeft,
+        } position = BetweenMedia;
+        enum {
+            PlaneSurface,
+            SphericalSurface,
+        } surface = PlaneSurface;
+        qreal ROC = 100;
+        QRectF surfaceRect;
+        QPainterPath fillPath, drawPath;
+        NeighbourKind getNeighbour(Schema* schema, int index) const;
+        void addSurface(QPainterPath &path) const;
+        void paintSpherical(QPainter *painter) const;
+        void paintPlane(QPainter *painter) const;
+    DECLARE_ELEMENT_LAYOUT_END
+
+    Layout::NeighbourKind Layout::getNeighbour(Schema* schema, int index) const {
+        auto elem = schema->element(index);
+        if (!elem) return NeighbourUnknown;
+
+        auto medium = dynamic_cast<ElemMediumRange*>(elem);
+        if (medium) return NeighbourMedium;
+
+        auto air = dynamic_cast<ElemEmptyRange*>(elem);
+        if (air) return NeighbourAir;
+
+        return NeighbourUnknown;
+    }
+
+    ELEMENT_LAYOUT_INIT {
+        auto schema = dynamic_cast<Schema*>(_element->owner());
+        if (!schema) return;
+
+        auto index = schema->indexOf(_element);
+        auto left = getNeighbour(schema, index-1);
+        auto right = getNeighbour(schema, index+1);
+        if (left == NeighbourAir && right == NeighbourAir)
+            position = BetweenRanges;
+        else if (left == NeighbourMedium && right == NeighbourMedium)
+            position = BetweenMedia;
+        else if (left == NeighbourAir && right == NeighbourMedium)
+            position = MediumRight;
+        else if (left == NeighbourMedium && right == NeighbourAir)
+            position = MediumLeft;
+
+        auto spherical = dynamic_cast<ElemSphericalInterface*>(_element);
+        if (spherical) {
+            surface = SphericalSurface;
+            qreal sagitta = ROC - qSqrt(Sqr(ROC) - Sqr(HH));
+            qreal startAngle = RadToDeg(qAsin(HH / ROC));
+            qreal sweepAngle = 2*startAngle;
+            if (spherical->radius() > 0) {
+
+            }
+            else {
+
+            }
+            surfaceRect = rightSurface : leftSurface;
+        }
+    }
+
+    void Layout::addSurface(QPainterPath &path) const {
+    }
+
+    void Layout::paintSpherical(QPainter *painter) const {
+        qreal sagitta = ROC - qSqrt(Sqr(ROC) - Sqr(HH));
+        qreal startAngle = RadToDeg(qAsin(HH / ROC));
+        qreal sweepAngle = 2*startAngle;
+
+        QPainterPath path;
+        QRectF rightSurface(HW - 2*ROC, -ROC, 2*ROC, 2*ROC);
+        QRectF leftSurface(-HW, -ROC, 2*ROC, 2*ROC);
+
+        switch (position) {
+        case BetweenRanges:
+            break;
+        }
+        path.moveTo(HW - sagitta, HH);
+        path.arcTo(rightSurface, 360-startAngle, sweepAngle);
+
+    }
+
+    void Layout::paintPlane(QPainter *painter) const {
+        switch (position) {
+        case BetweenRanges:
+            painter->setPen(getGlassPen());
+            painter->drawLine(QLineF(HW, -HH, -HW, HH));
+            break;
+
+        case BetweenMedia:
+            painter->fillRect(boundingRect(), getGlassBrush());
+            painter->setPen(getGlassPen());
+            painter->drawLine(QLineF(-HW, -HH, HW, -HH));
+            painter->drawLine(QLineF(HW, -HH, -HW, HH));
+            painter->drawLine(QLineF(-HW, HH, HW, HH));
+            break;
+
+        case MediumLeft: {
+                QPainterPath path;
+                path.moveTo(-HW, -HH);
+                path.lineTo(HW, -HH);
+                path.lineTo(-HW, HH);
+                path.closeSubpath();
+                painter->fillPath(path, getGlassBrush());
+
+                painter->setPen(getGlassPen());
+                painter->drawLine(QLineF(-HW, -HH, HW, -HH));
+                painter->drawLine(QLineF(HW, -HH, -HW, HH));
+            }
+            break;
+
+        case MediumRight: {
+                QPainterPath path;
+                path.moveTo(HW, -HH);
+                path.lineTo(-HW, HH);
+                path.lineTo(HW, HH);
+                path.closeSubpath();
+                painter->fillPath(path, getGlassBrush());
+
+                painter->setPen(getGlassPen());
+                painter->drawLine(QLineF(HW, -HH, -HW, HH));
+                painter->drawLine(QLineF(-HW, HH, HW, HH));
+            }
+            break;
+        }
+    }
+
+    ELEMENT_LAYOUT_PAINT {
+        switch (surface) {
+        case PlaneSurface:
+            paintPlane(painter);
+            break;
+
+        case SphericalSurface:
+            paintSpherical(painter);
+            break;
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+namespace ElemBrewsterInterfaceLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+        QSharedPointer<InterfaceElementLayout::Layout> layout;
+    DECLARE_ELEMENT_LAYOUT_END
+
+    ELEMENT_LAYOUT_INIT {
+        HW = 30; HH = 40;
+        layout.reset(new InterfaceElementLayout::Layout(_element));
+        layout->setHalfSize(HW, HH);
+        layout->init();
+    }
+
+    ELEMENT_LAYOUT_PAINT {
+        layout->paint(painter, nullptr, nullptr);
+    }
+}
+
+//------------------------------------------------------------------------------
+namespace ElemTiltedInterfaceLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+        QSharedPointer<InterfaceElementLayout::Layout> layout;
+    DECLARE_ELEMENT_LAYOUT_END
+
+    ELEMENT_LAYOUT_INIT {
+        HW = 15; HH = 40;
+        layout.reset(new InterfaceElementLayout::Layout(_element));
+        layout->setHalfSize(HW, HH);
+        layout->init();
+    }
+
+    ELEMENT_LAYOUT_PAINT {
+        layout->paint(painter, nullptr, nullptr);
+    }
+}
+
+//------------------------------------------------------------------------------
 //                               SchemaLayout
 //------------------------------------------------------------------------------
 
@@ -663,7 +851,9 @@ void SchemaLayout::populate()
     setUpdatesEnabled(false);
 
     clear();
-    for (Element *elem : _schema->elements()) {
+
+    for (int i = 0; i < _schema->count(); i++) {
+        Element *elem = _schema->element(i);
         if (elem->disabled()) continue;
         auto layout = ElementLayoutFactory::make(elem);
         if (layout) {
@@ -768,6 +958,8 @@ ElementLayout* make(Element *elem) {
         registerLayout<ElemMatrix, ElemMatrixLayout::Layout>();
         registerLayout<ElemPoint, ElemPointLayout::Layout>();
         registerLayout<ElemNormalInterface, ElemNormalInterfaceLayout::Layout>();
+        registerLayout<ElemBrewsterInterface, ElemBrewsterInterfaceLayout::Layout>();
+        registerLayout<ElemTiltedInterface, ElemTiltedInterfaceLayout::Layout>();
     }
     if (!__factoryMethods.contains(elem->type()))
         return nullptr;
