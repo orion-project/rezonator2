@@ -36,11 +36,14 @@ BOOL_PARAM(UseRange)
 BOOL_PARAM(DoSplit)
 INT_PARAM(RefIndex)
 
+/// Test schema and its round-trip calculator.
 struct TestData
 {
     QSharedPointer<Schema> schema;
     QSharedPointer<RoundTripCalculator> calc;
 
+    /// Make a test schema containing `EL_COUNT` of `TestElem`s.
+    /// Only element at `refIndex` will be a specified `refElem`.
     TestData(TripType tripType, int refIndex, Element* refElem)
     {
         schema.reset(new Schema);
@@ -56,6 +59,7 @@ struct TestData
         calc.reset(new RoundTripCalculator(schema.data(), refElem));
     }
 
+    /// Make a test schema from specified list of elements.
     TestData(TripType tripType, const RefIndex& refIndex, std::initializer_list<Element*> elems)
     {
         schema.reset(new Schema);
@@ -143,8 +147,28 @@ TEST_CASE_METHOD(rt_matrs_nosplit, TripType tripType, int refIndex, UseRange&& u
     ASSERT_EQ_INT(d.calc->matrsS().size(), d.calc->roundTrip().size())
     ASSERT_EQ_PTR(d.calc->matrsT().first(), refElem->pMt())
     ASSERT_EQ_PTR(d.calc->matrsS().first(), refElem->pMs())
-    ASSERT_EQ_PTR(d.calc->matrsT().last(), d.calc->roundTrip().last()->pMt())
-    ASSERT_EQ_PTR(d.calc->matrsS().last(), d.calc->roundTrip().last()->pMs())
+    if (tripType == SW && refIndex == d.schema->count()-1)
+    {
+        // In SW-schemas, if the reference element is the last one in the schema
+        // then the last element of the round-trip will be an element
+        // before-the-last in the schema and from back-propagation stage:
+        //
+        //          Forward part of round-trip
+        //        <=== M3 <==== M2 <===== M1 <==== M0 (round-trip begin)
+        //
+        //   schema:  [  ]-----[  ]------[  ]-----[  ] (the last is ref)
+        //
+        //        ==========> M4_inv ==> M5_inv (round-trip end)
+        //          Backward part of round-trip (inv matrices are taken)
+        //
+        ASSERT_EQ_PTR(d.calc->matrsT().last(), d.calc->roundTrip().last()->pMt_inv())
+        ASSERT_EQ_PTR(d.calc->matrsS().last(), d.calc->roundTrip().last()->pMs_inv())
+    }
+    else
+    {
+        ASSERT_EQ_PTR(d.calc->matrsT().last(), d.calc->roundTrip().last()->pMt())
+        ASSERT_EQ_PTR(d.calc->matrsS().last(), d.calc->roundTrip().last()->pMs())
+    }
 }
 
 TEST_CASE(rt_sw_matrs_norange_nopslit,     rt_matrs_nosplit, SW, EL_MID, UseRange(false), DoSplit(false))
@@ -518,7 +542,7 @@ TEST_GROUP("Tilted",
 )
 } // namespace Tilted
 
-namespace Shperical {
+namespace Spherical {
 TEST_CASE_METHOD(rt_ifaces_spherical, TripType tripType, const RefIndex& refIndex1, const RefIndex& refIndex2)
 {
     TestData d1(tripType, refIndex1, {
@@ -568,7 +592,7 @@ TEST_GROUP("Composite interfaced elements",
     ADD_GROUP(Normal),
     ADD_GROUP(Brewster),
     ADD_GROUP(Tilted),
-    ADD_GROUP(Shperical),
+    ADD_GROUP(Spherical),
 )
 } // namespace InterfacedElements
 

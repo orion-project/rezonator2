@@ -25,6 +25,15 @@ D = 1 - L/R2*(n-1)/n
 M_full = make_abcd(A, B, C, D)
 print_abcd("M(pre)", M_full)
 
+R1_inv = -R2
+R2_inv = -R1
+A = 1 + L/R1_inv*(n-1)/n
+B = L/n
+C = (n-1)*(1/R1_inv - 1/R2_inv) - L/R1_inv/R2_inv*(n-1)*(n-1)/n
+D = 1 - L/R2_inv*(n-1)/n
+M_full_inv = make_abcd(A, B, C, D)
+print_abcd("M(pre, inv)", M_full_inv)
+
 print('----------------------------------')
 print('Product of 4 matrices')
 

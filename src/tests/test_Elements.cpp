@@ -50,6 +50,8 @@ TEST_METHOD(EmptyRange)
     ASSERT_MATRIX(s1, 1.0000000, 0.0176000, 0.0000000, 1.0000000)
     ASSERT_MATRIX(t2, 1.0000000, 0.0704000, 0.0000000, 1.0000000)
     ASSERT_MATRIX(s2, 1.0000000, 0.0704000, 0.0000000, 1.0000000)
+    ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
+    ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
 
 // Calculation: $PROJECT/calc/Elements.py
@@ -72,6 +74,8 @@ TEST_METHOD(MediumRange)
     ASSERT_MATRIX(s1, 1.0000000, 0.0176000, 0.0000000, 1.0000000)
     ASSERT_MATRIX(t2, 1.0000000, 0.0704000, 0.0000000, 1.0000000)
     ASSERT_MATRIX(s2, 1.0000000, 0.0704000, 0.0000000, 1.0000000)
+    ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
+    ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
 
 // Calculation: $PROJECT/calc/ElemPlate.py
@@ -94,6 +98,8 @@ TEST_METHOD(Plate)
     ASSERT_MATRIX(s1, 1.0000000, 0.0146667, 0.0000000, 0.8333333)
     ASSERT_MATRIX(t2, 1.0000000, 0.0704000, 0.0000000, 1.2000000)
     ASSERT_MATRIX(s2, 1.0000000, 0.0704000, 0.0000000, 1.2000000)
+    ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
+    ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
 
 TEST_METHOD(FlatMirror)
@@ -102,6 +108,8 @@ TEST_METHOD(FlatMirror)
     elem->calcMatrix();
     ASSERT_MATRIX_IS_UNITY(elem->Mt())
     ASSERT_MATRIX_IS_UNITY(elem->Ms())
+    ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
+    ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
 
 // Calculation: $PROJECT/calc/Elements.py
@@ -116,6 +124,8 @@ TEST_METHOD(CurveMirror)
     ASSERT_RAW_PARAM(alpha, 0.2617994)
     ASSERT_MATRIX(t, 1, 0, -20.7055236, 1)
     ASSERT_MATRIX(s, 1, 0, -19.3185165, 1)
+    ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
+    ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
 
 // Calculation: $PROJECT/calc/Elements.py
@@ -129,6 +139,8 @@ TEST_METHOD(ThinLens)
     ASSERT_RAW_PARAM(alpha, 0.2617994)
     ASSERT_MATRIX(t, 1, 0, -10.3527618, 1)
     ASSERT_MATRIX(s, 1, 0, -9.6592583, 1)
+    ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
+    ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
 
 // Calculation: $PROJECT/calc/Elements.py
@@ -142,6 +154,8 @@ TEST_METHOD(CylinderLensT)
     ASSERT_RAW_PARAM(alpha, 0.2617994)
     ASSERT_MATRIX(t, 1, 0, -10.3527618, 1)
     ASSERT_MATRIX(s, 1, 0, 0, 1)
+    ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
+    ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
 
 // Calculation: $PROJECT/calc/Elements.py
@@ -155,6 +169,8 @@ TEST_METHOD(CylinderLensS)
     ASSERT_RAW_PARAM(alpha, 0.2617994)
     ASSERT_MATRIX(t, 1, 0, 0, 1)
     ASSERT_MATRIX(s, 1, 0, -9.6592583, 1)
+    ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
+    ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
 
 // Calculation: $PROJECT/calc/ElemTiltedCrystal.py
@@ -179,6 +195,8 @@ TEST_METHOD(TiltedCrystal)
     ASSERT_MATRIX(s1, 1.0000000, 0.0006000, 0.0000000, 0.6666667)
     ASSERT_MATRIX(t2, 0.9806339, 0.0035303, 0.0000000, 1.5296228)
     ASSERT_MATRIX(s2, 1.0000000, 0.0036000, 0.0000000, 1.5000000)
+    ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
+    ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
 
 // Calculation: $PROJECT/calc/ElemTiltedPlate.py
@@ -203,6 +221,8 @@ TEST_METHOD(TiltedPlate)
     ASSERT_MATRIX(s1, 1.0000000, 0.0006091, 0.0000000, 0.6666667)
     ASSERT_MATRIX(t2, 0.9806339, 0.0035840, 0.0000000, 1.5296228)
     ASSERT_MATRIX(s2, 1.0000000, 0.0036548, 0.0000000, 1.5000000)
+    ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
+    ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
 
 // Calculation: $PROJECT/calc/ElemBrewsterCrystal.py
@@ -225,6 +245,8 @@ TEST_METHOD(BrewsterCrystal)
     ASSERT_MATRIX(s1, 1.0000000, 0.0006000, 0.0000000, 0.6666667)
     ASSERT_MATRIX(t2, 0.6666667, 0.0024000, 0.0000000, 2.2500000)
     ASSERT_MATRIX(s2, 1.0000000, 0.0036000, 0.0000000, 1.5000000)
+    ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
+    ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
 
 // Calculation: $PROJECT/calc/ElemBrewsterPlate.py
@@ -247,6 +269,8 @@ TEST_METHOD(BrewsterPlate)
     ASSERT_MATRIX(s1, 1.0000000, 0.0007211, 0.0000000, 0.6666667)
     ASSERT_MATRIX(t2, 0.6666667, 0.0028844, 0.0000000, 2.2500000)
     ASSERT_MATRIX(s2, 1.0000000, 0.0043267, 0.0000000, 1.5000000)
+    ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
+    ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
 
 TEST_METHOD(Matrix1)
@@ -257,6 +281,8 @@ TEST_METHOD(Matrix1)
 
     ASSERT_MATRIX(t, 1.1, 2.2, 3.3, 4.4)
     ASSERT_MATRIX(s, 5.5, 6.6, 7.7, 8.8)
+    ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
+    ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
 
 TEST_METHOD(Matrix2)
@@ -273,6 +299,8 @@ TEST_METHOD(Matrix2)
 
     ASSERT_MATRIX(t, 1.1, 2.2, 3.3, 4.4)
     ASSERT_MATRIX(s, 5.5, 6.6, 7.7, 8.8)
+    ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
+    ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
 
 TEST_METHOD(Point)
@@ -281,6 +309,8 @@ TEST_METHOD(Point)
     elem->calcMatrix();
     ASSERT_MATRIX_IS_UNITY(elem->Mt())
     ASSERT_MATRIX_IS_UNITY(elem->Ms())
+    ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
+    ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
 
 /* TODO
@@ -305,6 +335,8 @@ TEST_METHOD(ThickLens)
 
     ASSERT_MATRIX(t, 0.9629630, 0.0066667, -8.7654321, 0.9777778)
     ASSERT_MATRIX(s, 0.9629630, 0.0066667, -8.7654321, 0.9777778)
+    ASSERT_MATRIX(t_inv, 0.9777778, 0.0066667, -8.7654321, 0.9629630)
+    ASSERT_MATRIX(s_inv, 0.9777778, 0.0066667, -8.7654321, 0.9629630)
 
     elem->setSubRangeSI(0.002);
     ASSERT_MATRIX(t1, 0.9925926, 0.0013333, -3.7037037, 0.6666667)

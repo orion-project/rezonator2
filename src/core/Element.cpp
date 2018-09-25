@@ -82,6 +82,8 @@ void Element::calcMatrix()
     {
         _mt.unity();
         _ms.unity();
+        _mt_inv.unity();
+        _ms_inv.unity();
     }
     else calcMatrixInternal();
 }
@@ -90,6 +92,8 @@ void Element::calcMatrixInternal()
 {
     _mt.unity();
     _ms.unity();
+    _mt_inv.unity();
+    _ms_inv.unity();
 }
 
 void Element::lock()

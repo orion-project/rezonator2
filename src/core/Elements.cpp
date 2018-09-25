@@ -52,6 +52,8 @@ void ElemEmptyRange::calcMatrixInternal()
 {
     _mt.assign(1, lengthSI(), 0, 1);
     _ms = _mt;
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 void ElemEmptyRange::setSubRangeSI(double value)
@@ -74,6 +76,8 @@ void ElemMediumRange::calcMatrixInternal()
 {
     _mt.assign(1, lengthSI(), 0, 1);
     _ms = _mt;
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 void ElemMediumRange::setSubRangeSI(double value)
@@ -96,6 +100,8 @@ void ElemPlate::calcMatrixInternal()
 {
     _mt.assign(1, lengthSI() / ior(), 0, 1);
     _ms = _mt;
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 void ElemPlate::setSubRangeSI(double value)
@@ -127,6 +133,8 @@ void ElemCurveMirror::calcMatrixInternal()
 {
     _mt.assign(1, 0, -2.0 / radius() / cos(alpha()), 1);
     _ms.assign(1, 0, -2.0 / radius() * cos(alpha()), 1);
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -150,6 +158,8 @@ void ElemThinLens::calcMatrixInternal()
 {
     _mt.assign(1.0, 0.0, -1.0 / focus() / cos(alpha()), 1.0);
     _ms.assign(1.0, 0.0, -1.0 / focus() * cos(alpha()), 1.0);
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -159,6 +169,8 @@ void ElemCylinderLensT::calcMatrixInternal()
 {
     _mt.assign(1.0, 0.0, -1.0 / focus() / cos(alpha()), 1.0);
     _ms.unity();
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -168,6 +180,8 @@ void ElemCylinderLensS::calcMatrixInternal()
 {
     _mt.unity();
     _ms.assign(1.0, 0.0, -1.0 / focus() * cos(alpha()), 1.0);
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -191,6 +205,8 @@ void ElemTiltedCrystal::calcMatrixInternal()
 
     _mt.assign(1, L * n * SQR(cos(a)) / (SQR(n) - SQR(sin(a))), 0.0, 1.0);
     _ms.assign(1, L / n, 0, 1);
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 void ElemTiltedCrystal::setSubRangeSI(double value)
@@ -224,6 +240,8 @@ void ElemTiltedPlate::calcMatrixInternal()
 
     _mt.assign(1, L * n*n * (1 - sin_a*sin_a) / sqrt(s*s*s), 0, 1);
     _ms.assign(1, L / sqrt(s), 0, 1);
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 void ElemTiltedPlate::setSubRangeSI(double value)
@@ -265,6 +283,8 @@ void ElemBrewsterCrystal::calcMatrixInternal()
 
     _ms.assign(1, L / n, 0, 1);
     _mt.assign(1, _ms.B / SQR(n), 0, 1);
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 void ElemBrewsterCrystal::setSubRangeSI(double value)
@@ -296,6 +316,8 @@ void ElemBrewsterPlate::calcMatrixInternal()
 
     _ms.assign(1, axisLengthSI() / n, 0, 1);
     _mt.assign(1, _ms.B / SQR(n), 0, 1);
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 void ElemBrewsterPlate::setSubRangeSI(double value)
@@ -357,6 +379,8 @@ void ElemMatrix::calcMatrixInternal()
                _params.at(2)->value().value(), _params.at(3)->value().value());
     _ms.assign(_params.at(4)->value().value(), _params.at(5)->value().value(),
                _params.at(6)->value().value(), _params.at(7)->value().value());
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -428,7 +452,8 @@ ElemSphericalInterface::ElemSphericalInterface() : ElementInterface()
 {
     _radius = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R"), QStringLiteral("R"),
                                qApp->translate("Param", "Radius of curvature"),
-                               qApp->translate("Param", ""));
+                               qApp->translate("Param", "Negative value means left-bulged surface, "
+                                                        "positive value means right-bulged surface."));
     addParam(_radius, 100, Z::Units::mm());
 
     _radius->setVerifier(globalCurvatureRadiusVerifier());
@@ -455,9 +480,13 @@ ElemThickLens::ElemThickLens() : ElementRange()
     _ior->setVisible(true);
 
     _radius1 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R1"), QStringLiteral("R1"),
-                               qApp->translate("Param", "Left radius of curvature"));
+                                qApp->translate("Param", "Left radius of curvature"),
+                                qApp->translate("Param", "Negative value means left-bulged surface, "
+                                                         "positive value means right-bulged surface."));
     _radius2 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R2"), QStringLiteral("R2"),
-                               qApp->translate("Param", "Right radius of curvature"));
+                                qApp->translate("Param", "Right radius of curvature"),
+                                qApp->translate("Param", "Negative value means left-bulged surface, "
+                                                         "positive value means right-bulged surface."));
     addParam(_radius1, -100, Z::Units::mm());
     addParam(_radius2, 100, Z::Units::mm());
 
@@ -477,8 +506,19 @@ void ElemThickLens::calcMatrixInternal()
     const double C = (n-1)*(1/R1 - 1/R2) - L/R1/R2*(n-1)*(n-1)/n;
     const double D = 1 - (L/R2)*(n-1)/n;
 
-    _ms.assign(A, B, C, D);
     _mt.assign(A, B, C, D);
+    _ms = _mt;
+
+    const double R1_inv = -R2;
+    const double R2_inv = -R1;
+
+    const double A_inv = 1 + (L/R1_inv)*(n-1)/n;
+    const double B_inv = L/n;
+    const double C_inv = (n-1)*(1/R1_inv - 1/R2_inv) - L/R1_inv/R2_inv*(n-1)*(n-1)/n;
+    const double D_inv = 1 - (L/R2_inv)*(n-1)/n;
+
+    _mt_inv.assign(A_inv, B_inv, C_inv, D_inv);
+    _ms_inv = _mt_inv;
 }
 
 void ElemThickLens::setSubRangeSI(double value)

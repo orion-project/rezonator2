@@ -57,6 +57,21 @@ public:
 //------------------------------------------------------------------------------
 /**
     Base class for all optical elements.
+
+    Each element has two set of matrices - one for forward propagation
+    and other for back propagtion (named `*-inv` matrices). Back propagation process
+    only involved in SW schemas where beam travels each element (but the endings) twice:
+
+    ```
+           \\|       forward propagation             |//
+       end \\| ====================================> |// end
+    mirror \\|-----[//]------[\\]----()----[\\\]-----|// mirror
+           \\| <==================================== |//
+           \\|         back propagation              |//
+    ```
+
+    Most of the lements are symmetrical and inverted set of matrices are the same as the forward set.
+    But there are several elements having these sets different (@see ThickLens, interface elements).
 */
 class Element : public Z::ParameterListener
 {
@@ -107,6 +122,10 @@ public:
     const Z::Matrix& Ms() const { return _ms; }
     const Z::Matrix* pMt() const { return &_mt; }
     const Z::Matrix* pMs() const { return &_ms; }
+    const Z::Matrix& Mt_inv() const { return _mt_inv; }
+    const Z::Matrix& Ms_inv() const { return _ms_inv; }
+    const Z::Matrix* pMt_inv() const { return &_mt_inv; }
+    const Z::Matrix* pMs_inv() const { return &_ms_inv; }
 
     /// Preferable parameter editor kind for this element.
     virtual Z::ParamsEditor paramsEditorKind() const { return Z::ParamsEditor::List; }
@@ -127,6 +146,7 @@ protected:
     ElementOwner* _owner = nullptr; ///< Pointer to an object who owns this element.
     QString _label, _title;
     Z::Matrix _mt, _ms;
+    Z::Matrix _mt_inv, _ms_inv;
     int _id;
     bool _disabled = false;
     bool _locked = false;
@@ -186,29 +206,18 @@ protected:
     An interface element is characterized by two IORs - `ior1` and `ior2`.
     Where `ior1` is IOR of a medium at 'the left' of the interface (medium 1),
     and `ior2` is IOR of a medium at 'the right' of the interface (medium 2).
-    The element has two sets of matrices - IN and OUT matrices.
-    Default matrices are taken when a beam passes from the medium 1 to the medium 2,
-    inverted matrices are taken when the beam passes from the medium 2 to the medium 1.
-    Which set of matrices should be taken is defined by @a RoundTripCalculator.
 */
 class ElementInterface : public Element
 {
 public:
-    const Z::Matrix& Mt_inv() const { return _mt_inv; }
-    const Z::Matrix& Ms_inv() const { return _ms_inv; }
-    const Z::Matrix* pMt_inv() const { return &_mt_inv; }
-    const Z::Matrix* pMs_inv() const { return &_ms_inv; }
-
     Z::Parameter* paramIor1() const { return _ior1; }
     Z::Parameter* paramIor2() const { return _ior2; }
-
     double ior1() const { return _ior1->value().value(); }
     double ior2() const { return _ior2->value().value(); }
 
 protected:
     ElementInterface();
 
-    Z::Matrix _mt_inv, _ms_inv;
     Z::Parameter *_ior1, *_ior2;
 };
 

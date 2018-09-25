@@ -35,7 +35,7 @@ void RoundTripCalculator::reset()
 
 void RoundTripCalculator::calcRoundTripSW()
 {
-    int ref = _schema->indexOf(_reference);
+    const int ref = _schema->indexOf(_reference);
 
     // from the reference element to the first one
     int i = ref;
@@ -44,10 +44,16 @@ void RoundTripCalculator::calcRoundTripSW()
 
     // from the first element to the last one
     int c = _schema->count();
-    if (ref == c-1) c--; // if the last is the reference then skip it
+    // if the last is the reference then skip it because it is already added
+    if (ref == c-1) c--;
 
-    while (i < c)
-        _roundTrip.push_back({ _schema->element(i++), true });
+    while (i < c) {
+        // end elements of SW-schema should not be treated
+        // as "second-passed" because of they are passed ony once
+        bool secondPass = (i != 0) && (i != _schema->count()-1);
+
+        _roundTrip.push_back({ _schema->element(i++), secondPass });
+    }
 
     // from the last element to the reference one
     i -= 2;
@@ -104,11 +110,10 @@ void RoundTripCalculator::collectMatrices()
     while (i < c)
     {
         const auto& item = _roundTrip.at(i);
-        auto iface = Z::Utils::asInterface(item.element);
-        if (iface && item.secondPass)
+        if (item.secondPass)
         {
-            _matrsT.push_back(iface->pMt_inv());
-            _matrsS.push_back(iface->pMs_inv());
+            _matrsT.push_back(item.element->pMt_inv());
+            _matrsS.push_back(item.element->pMs_inv());
         }
         else
         {
