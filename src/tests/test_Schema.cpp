@@ -313,6 +313,105 @@ TEST_METHOD(deleteElement_by_pointer_with_events)
 
 //------------------------------------------------------------------------------
 
+DECLARE_ELEMENT(TestRange, ElementRange)
+DECLARE_ELEMENT_END
+
+DECLARE_ELEMENT(TestInterface, ElementInterface)
+DECLARE_ELEMENT_END
+
+TEST_METHOD(ElementInterface_must_be_linked_to_neighbours)
+{
+    Schema s;
+
+    // [0:intf1]
+    auto intf1 = new TestInterface;
+    s.insertElement(intf1);
+    ASSERT_EQ_DBL(intf1->ior1(), 1)
+    ASSERT_EQ_DBL(intf1->ior2(), 1)
+
+    // Left range must be linked to `n1`
+    // [0:medium1][1:intf1]
+    auto medium1 = new TestRange;
+    medium1->paramIor()->setValue(2);
+    s.insertElement(medium1, 0);
+    ASSERT_EQ_INT(s.paramLinks()->size(), 1);
+    ASSERT_EQ_DBL(intf1->ior1(), 2)
+    ASSERT_EQ_DBL(intf1->ior2(), 1)
+
+    // Right range must be linked to `n2`
+    // [0:medium1][1:intf1][2:medium2]
+    auto medium2 = new TestRange;
+    medium2->paramIor()->setValue(3);
+    s.insertElement(medium2);
+    ASSERT_EQ_INT(s.paramLinks()->size(), 2);
+    ASSERT_EQ_DBL(intf1->ior1(), 2)
+    ASSERT_EQ_DBL(intf1->ior2(), 3)
+
+    // Change of left range must change `n1`
+    medium1->paramIor()->setValue(2.5);
+    ASSERT_EQ_DBL(intf1->ior1(), 2.5)
+    ASSERT_EQ_DBL(intf1->ior2(), 3)
+
+    // Change of right range must change `n2`
+    medium2->paramIor()->setValue(3.5);
+    ASSERT_EQ_DBL(intf1->ior1(), 2.5)
+    ASSERT_EQ_DBL(intf1->ior2(), 3.5)
+
+    // Insertion of non-range element must break a link to the interface,
+    // reset `n1`, and change of left range must not change `n1` anymore
+    // [0:medium1][1:elem1][2:intf1][3:medium2]
+    auto elem1 = new TestElement;
+    s.insertElement(elem1, 1);
+    ASSERT_EQ_INT(s.paramLinks()->size(), 1);
+    ASSERT_EQ_DBL(intf1->ior1(), 1)
+    medium1->paramIor()->setValue(2);
+    ASSERT_EQ_DBL(intf1->ior1(), 1)
+    ASSERT_EQ_DBL(intf1->ior2(), 3.5)
+
+    // Insertion of non-range element must break a link to the interface,
+    // reset `n2`, and change of right range must not change `n2` anymore
+    // [0:medium1][1:elem1][2:intf1][3:elem2][4:medium2]
+    auto elem2 = new TestElement;
+    s.insertElement(elem2, 3);
+    ASSERT_EQ_INT(s.paramLinks()->size(), 0);
+    ASSERT_EQ_DBL(intf1->ior2(), 1)
+    medium2->paramIor()->setValue(3);
+    ASSERT_EQ_DBL(intf1->ior1(), 1)
+    ASSERT_EQ_DBL(intf1->ior2(), 1)
+}
+
+TEST_METHOD(ElementInterface_must_be_unlinked_after_deletion_of_itself)
+{
+    Schema s;
+
+    auto intf1 = new TestInterface;
+    s.insertElement(intf1);
+
+    auto medium1 = new TestRange;
+    s.insertElement(medium1, 0);
+    ASSERT_EQ_INT(s.paramLinks()->size(), 1);
+
+    s.deleteElement(intf1);
+    ASSERT_EQ_INT(s.paramLinks()->size(), 0);
+}
+
+TEST_METHOD(ElementInterface_must_be_unlinked_after_deletion_of_neighbour)
+{
+    Schema s;
+
+    auto intf1 = new TestInterface;
+    s.insertElement(intf1);
+
+    auto medium1 = new TestRange;
+    s.insertElement(medium1, 0);
+    ASSERT_EQ_INT(s.paramLinks()->size(), 1);
+
+    s.deleteElement(medium1);
+    ASSERT_EQ_INT(s.paramLinks()->size(), 0);
+}
+
+//------------------------------------------------------------------------------
+
 TEST_GROUP("Schema",
     ADD_TEST(constructor),
     ADD_TEST(destructor_must_raise_event),
@@ -332,6 +431,9 @@ TEST_GROUP("Schema",
     ADD_TEST(deleteElement_with_events_false),
     ADD_TEST(deleteElement_by_index_with_events),
     ADD_TEST(deleteElement_by_pointer_with_events),
+    ADD_TEST(ElementInterface_must_be_linked_to_neighbours),
+    ADD_TEST(ElementInterface_must_be_unlinked_after_deletion_of_itself),
+    ADD_TEST(ElementInterface_must_be_unlinked_after_deletion_of_neighbour),
 )
 
 } // namespace SchemaTests
