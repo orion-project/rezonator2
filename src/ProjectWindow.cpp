@@ -256,7 +256,7 @@ void ProjectWindow::createStatusBar()
     status->connect(STATUS_TRIPTYPE, SIGNAL(doubleClicked()), _operations, SLOT(setupTripType()));
     status->connect(STATUS_PUMP, SIGNAL(doubleClicked()), _operations, SLOT(setupPump()));
 
-    auto versionLabel = new QLabel(" " % Z::Strs::appVersionFull() % " ");
+    auto versionLabel = new QLabel(" " % Z::Strs::appVersion() % " ");
     versionLabel->setForegroundRole(QPalette::Mid);
     status->addPermanentWidget(versionLabel);
 
@@ -430,10 +430,8 @@ void ProjectWindow::actionHelpAbout()
 {
     auto title = tr("About %1").arg(qApp->applicationName());
     auto text = tr(
-                "<p><font size=4><b>{app} {ver_short}</b></font>"
-                "<p>Version: {ver_long}-<b>{ver_codename}</b>"
+                "<p><font size=4><b>{app} {app_ver}</b></font>"
                 "<p>Built: {build_date}"
-                "<p>Revision: <a href='{ver_link}'>{ver_sha}</a>"
                 "<p>Copyright: Chunosov N.&nbsp;I. © 2006-2018"
                 "<p>Web: <a href='{www}'>{www}</a>"
                 "<p>E-mail: <a href='mailto://{email}'>{email}</a>"
@@ -445,12 +443,8 @@ void ProjectWindow::actionHelpAbout()
                 "THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE."
                 )
             .replace("{app}", qApp->applicationName())
-            .replace("{ver_short}", Z::Strs::appVersionShort())
-            .replace("{ver_long}", Z::Strs::appVersionLong())
-            .replace("{ver_codename}", Z::Strs::appVersionCodename())
+            .replace("{app_ver}", Z::Strs::appVersion())
             .replace("{build_date}", Z::Strs::appVersionDate())
-            .replace("{ver_link}", Z::Strs::appVersionLink())
-            .replace("{ver_sha}", Z::Strs::appVersionSHA().left(7))
             .replace("{www}", Z::Strs::homepage())
             .replace("{email}", Z::Strs::email())
             .replace("{www_sources}", Z::Strs::sourcepage());

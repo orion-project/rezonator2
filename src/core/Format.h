@@ -29,29 +29,12 @@ inline QString email() { return "rezonator@orion-project.org"; }
 inline QChar multDot() { return QChar(0x00B7); }
 inline QChar multX() { return QChar(0x00D7); }
 
-inline QString appVersionShort()
+inline QString appVersion()
 {
-    return QString("%1.%2.%3").arg(APP_VER_MAJOR).arg(APP_VER_MINOR).arg(APP_VER_MICRO);
+    return QString("%1.%2.%3-%4").arg(APP_VER_MAJOR).arg(APP_VER_MINOR).arg(APP_VER_PATCH).arg(APP_VER_CODENAME);
 }
 
-inline QString appVersionLong()
-{
-    return QString("%1.%2.%3.%4").arg(APP_VER_MAJOR).arg(APP_VER_MINOR).arg(APP_VER_MICRO).arg(APP_VER_COMMITS);
-}
-
-inline QString appVersionFull()
-{
-    return QString("%1.%2.%3.%4-%5").arg(APP_VER_MAJOR).arg(APP_VER_MINOR).arg(APP_VER_MICRO).arg(APP_VER_COMMITS).arg(APP_VER_CODENAME);
-}
-
-inline QString appVersionLink()
-{
-    return QString("%1/tree/%2").arg(sourcepage()).arg(APP_VER_SHA);
-}
-
-inline QString appVersionCodename() { return QString::fromLatin1(APP_VER_CODENAME); }
 inline QString appVersionDate() { return QString("%1 %2").arg(BUILDDATE).arg(BUILDTIME); }
-inline QString appVersionSHA() { return QString::fromLatin1(APP_VER_SHA); }
 
 } // namespace Strs
 } // namespace Z
