@@ -285,7 +285,7 @@ void PlotFuncWindow::calculate()
     _function->calculate();
     if (!_function->ok())
     {
-        debug_LogGraphsCount();
+        //debug_LogGraphsCount();
         _statusBar->setText(STATUS_INFO, _function->errorText());
         _statusBar->highlightError(STATUS_INFO);
         for (Graph* g : _graphsT) if (g->parentPlot() == _plot) _plot->removePlottable(g);

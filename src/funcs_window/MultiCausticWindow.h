@@ -13,7 +13,7 @@ class MultiCausticWindow : public PlotFuncWindowStorable
 public:
     explicit MultiCausticWindow(Schema*);
 
-    MultiCausticFunction* function() const { return (MultiCausticFunction*)_function; }
+    MultiCausticFunction* function() const { return dynamic_cast<MultiCausticFunction*>(_function); }
 
     // inherits from SchemaListener
     void elementChanged(Schema*, Element*) override;

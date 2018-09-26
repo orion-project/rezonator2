@@ -53,6 +53,7 @@ void MultiCausticFunction::setArgs(const QVector<Z::Variable>& args)
 
 void MultiCausticFunction::calculate()
 {
+    setError(QString());
     for (CausticFunction *func : _funcs)
     {
         func->calculate();
