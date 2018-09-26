@@ -2,7 +2,7 @@
 
 ## `*.odf`
 *LibreOffice Math* files containing formula code.
-Formula images exported via print-screen at scale **150%**.
+Formula images are exported via print-screen at scale **150%**.
 
 ## `*.svg`
 *Inkscape* drawings for elements. These are used when additional stuff is needed to hint formula parameters. In general, drawings are in `../elems` directory.

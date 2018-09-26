@@ -13,10 +13,10 @@ namespace ElementsTests {
     QSharedPointer<Elem ## elem_type> elem(new Elem ## elem_type);\
     ASSERT_EQ_INT(elem->params().size(), expected_param_count)
 
-#define SET_PARAM(name, value, unit)\
+#define SET_PARAM(name, value, unit) { \
     auto param_##name = elem->params().byAlias(#name);\
     ASSERT_IS_NOT_NULL(param_##name)\
-    param_##name->setValue(Z::Value(value, Z::Units::unit()));
+    param_##name->setValue(Z::Value(value, Z::Units::unit())); }
 
 #define ASSERT_RAW_PARAM(param, value)\
     ASSERT_NEAR_DBL(elem->param(), value, 1e-7)
@@ -345,6 +345,66 @@ TEST_METHOD(ThickLens)
     ASSERT_MATRIX(s2, 1.0000000, 0.0080000, -3.3333333, 1.4733333)
 }
 
+// Calculation: $PROJECT/calc/Elements.py
+TEST_METHOD(NormalInterface)
+{
+    ELEM(NormalInterface, 2)
+    SET_PARAM(n1, 1.6, none)
+    SET_PARAM(n2, 3.7, none)
+
+    ASSERT_MATRIX(t, 1.0000000, 0.0000000, 0.0000000, 0.4324324)
+    ASSERT_MATRIX(s, 1.0000000, 0.0000000, 0.0000000, 0.4324324)
+    ASSERT_MATRIX(t_inv, 1.0000000, 0.0000000, 0.0000000, 2.3125000)
+    ASSERT_MATRIX(s_inv, 1.0000000, 0.0000000, 0.0000000, 2.3125000)
+}
+
+// Calculation: $PROJECT/calc/Elements.py
+TEST_METHOD(BrewsterInterface)
+{
+    ELEM(BrewsterInterface, 2)
+    SET_PARAM(n1, 1.6, none)
+    SET_PARAM(n2, 3.7, none)
+
+    ASSERT_MATRIX(t, 2.3125000, 0.0000000, 0.0000000, 0.1869978)
+    ASSERT_MATRIX(s, 1.0000000, 0.0000000, 0.0000000, 0.4324324)
+    ASSERT_MATRIX(t_inv, 0.4324324, 0.0000000, 0.0000000, 5.3476562)
+    ASSERT_MATRIX(s_inv, 1.0000000, 0.0000000, 0.0000000, 2.3125000)
+}
+
+// Calculation: $PROJECT/calc/Elements.py
+TEST_METHOD(TiltedInterface)
+{
+    ELEM(TiltedInterface, 3)
+    SET_PARAM(n1, 1.6, none)
+    SET_PARAM(n2, 3.7, none)
+    SET_PARAM(Alpha, 15, deg)
+
+    ASSERT_MATRIX(t, 1.0287716, 0.0000000, 0.0000000, 0.4203386)
+    ASSERT_MATRIX(s, 1.0000000, 0.0000000, 0.0000000, 0.4324324)
+    ASSERT_MATRIX(t_inv, 0.9720331, 0.0000000, 0.0000000, 2.3790342)
+    ASSERT_MATRIX(s_inv, 1.0000000, 0.0000000, 0.0000000, 2.3125000)
+
+    SET_PARAM(Alpha, -15, deg)
+    ASSERT_MATRIX(t, 1.2057365, 0.0000000, 0.0000000, 0.3586459)
+    ASSERT_MATRIX(s, 1.0000000, 0.0000000, 0.0000000, 0.4324324)
+    ASSERT_MATRIX(t_inv, 0.8293686, 0.0000000, 0.0000000, 2.7882656)
+    ASSERT_MATRIX(s_inv, 1.0000000, 0.0000000, 0.0000000, 2.3125000)
+}
+
+// Calculation: $PROJECT/calc/Elements.py
+TEST_METHOD(SphericalInterface)
+{
+    ELEM(SphericalInterface, 3)
+    SET_PARAM(n1, 1.7, none)
+    SET_PARAM(n2, 3.8, none)
+    SET_PARAM(R, 90, cm)
+
+    ASSERT_MATRIX(t, 1.0000000, 0.0000000, 0.6140351, 0.4473684)
+    ASSERT_MATRIX(s, 1.0000000, 0.0000000, 0.6140351, 0.4473684)
+    ASSERT_MATRIX(t_inv, 1.0000000, 0.0000000, 1.3725490, 2.2352941)
+    ASSERT_MATRIX(s_inv, 1.0000000, 0.0000000, 1.3725490, 2.2352941)
+}
+
 //------------------------------------------------------------------------------
 
 TEST_GROUP("Elements",
@@ -364,7 +424,11 @@ TEST_GROUP("Elements",
            ADD_TEST(Matrix2),
            ADD_TEST(Point),
            // TODO ADD_TEST(grin_lens),
-           ADD_TEST(ThickLens)
+           ADD_TEST(ThickLens),
+           ADD_TEST(NormalInterface),
+           ADD_TEST(BrewsterInterface),
+           ADD_TEST(TiltedInterface),
+           ADD_TEST(SphericalInterface),
            )
 
 } // namespace ElementsTests

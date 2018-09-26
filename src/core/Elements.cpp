@@ -436,7 +436,7 @@ void ElemTiltedInterface::calcMatrixInternal()
       beta  |\   n2
             | \          */
     const double cos_a = angle < 0 ? cos(asin( sin(angle) * n2 / n1)) : cos(angle);
-    const double cos_b = angle < 0 ? cos(angle): cos(asin( sin(angle) * n1 / n2));
+    const double cos_b = angle < 0 ? cos(qAbs(angle)): cos(asin( sin(angle) * n1 / n2));
 
     _mt.assign(cos_b/cos_a, 0, 0, (n1/n2)*(cos_a/cos_b));
     _ms.assign(1, 0, 0, n1/n2);
