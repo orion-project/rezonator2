@@ -10,7 +10,7 @@
     "elements": [
         {
             "is_disabled": false,
-            "label": "L1",
+            "label": "d1",
             "params": {
                 "L": {
                     "unit": "mm",
@@ -26,7 +26,7 @@
         },
         {
             "is_disabled": false,
-            "label": "I1",
+            "label": "s1",
             "params": {
                 "n1": {
                     "unit": "none",
@@ -42,7 +42,7 @@
         },
         {
             "is_disabled": false,
-            "label": "L2",
+            "label": "d3",
             "params": {
                 "L": {
                     "unit": "mm",
@@ -58,7 +58,7 @@
         },
         {
             "is_disabled": false,
-            "label": "I2",
+            "label": "s2",
             "params": {
                 "n1": {
                     "unit": "none",
@@ -74,7 +74,7 @@
         },
         {
             "is_disabled": false,
-            "label": "L3",
+            "label": "d2",
             "params": {
                 "L": {
                     "unit": "mm",

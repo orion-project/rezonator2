@@ -10,7 +10,7 @@
     "elements": [
         {
             "is_disabled": false,
-            "label": "L1",
+            "label": "d1",
             "params": {
                 "L": {
                     "unit": "mm",
@@ -26,7 +26,7 @@
         },
         {
             "is_disabled": false,
-            "label": "Cr1",
+            "label": "G1",
             "params": {
                 "L": {
                     "unit": "mm",
@@ -42,7 +42,7 @@
         },
         {
             "is_disabled": false,
-            "label": "L2",
+            "label": "d2",
             "params": {
                 "L": {
                     "unit": "mm",

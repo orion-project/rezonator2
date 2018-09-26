@@ -110,7 +110,7 @@ void RoundTripCalculator::collectMatrices()
     while (i < c)
     {
         const auto& item = _roundTrip.at(i);
-        if (item.secondPass && item.element->hasOption(Element_Asymmetrical))
+        if (item.secondPass)
         {
             _matrsT.push_back(item.element->pMt_inv());
             _matrsS.push_back(item.element->pMs_inv());
