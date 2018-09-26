@@ -55,6 +55,13 @@ public:
 };
 
 //------------------------------------------------------------------------------
+
+enum ElementOption {
+    /// Element can calculate two set of matrices
+    /// one for forward propagation and other for back propagtion.
+    Element_Asymmetrical = 0x01,
+};
+
 /**
     Base class for all optical elements.
 
@@ -72,6 +79,7 @@ public:
 
     Most of the lements are symmetrical and inverted set of matrices are the same as the forward set.
     But there are several elements having these sets different (@see ThickLens, interface elements).
+    They have option @a Element_Asymmetrical.
 */
 class Element : public Z::ParameterListener
 {
@@ -140,6 +148,9 @@ public:
     /// Unlocks element. Calculates new matrix. No events generated here.
     void unlock(bool recalc = true);
 
+    void setOption(ElementOption option) { _options |= option; }
+    bool hasOption(ElementOption option) const { return _options & option; }
+
 protected:
     Element();
 
@@ -151,6 +162,7 @@ protected:
     bool _disabled = false;
     bool _locked = false;
     Z::Parameters _params;
+    int _options = 0;
 
     virtual void calcMatrixInternal();
 

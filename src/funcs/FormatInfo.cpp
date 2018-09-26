@@ -24,15 +24,24 @@ QString matrix(const Z::Matrix& m)
 
 QString matrices(const Z::Matrix& mt, const Z::Matrix& ms)
 {
-    const char *matricesFmtString =
-        "<table cellpadding=6 valign=middle><tr>"
-            "<td><b>M<sub>T</sub>&nbsp;&nbsp;=</b></td>"
-            "<td>%1</td>"
-            "<td>&nbsp;</td>"
-            "<td><b>M<sub>S</sub>&nbsp;&nbsp;=</b></td>"
-            "<td>%2</td>"
-        "</tr></table>";
-    return  QString::fromLatin1(matricesFmtString).arg(matrix(mt), matrix(ms));
+    static const char *matricesFmtString =
+        "<table cellpadding=6 valign=middle>"
+            "<tr>"
+                "<td><b>M<sub>T</sub>&nbsp;&nbsp;=</b></td>"
+                "<td>%1</td>"
+                "<td><b>M<sub>S</sub>&nbsp;&nbsp;=</b></td>"
+                "<td>%2</td>"
+                "<td>"
+                    "<p>&Delta;<sub>T</sub> = %3"
+                    "<p>&Delta;<sub>S</sub> = %4"
+                "</td>"
+            "</tr>"
+        "</table>";
+    return QString::fromLatin1(matricesFmtString)
+            .arg(matrix(mt))
+            .arg(matrix(ms))
+            .arg(mt.det())
+            .arg(ms.det());
 }
 
 QString linkViewMatrix(Element *elem)
@@ -66,10 +75,13 @@ QString elementTitleAndMatrices(Element *elem)
 {
     QString result;
     if (elem->disabled())
-        result += "<div style='color: gray'>";
+        result += QStringLiteral("<div style='color: gray'>");
     result += elementTitle(elem) + matrices(elem->Mt(), elem->Ms());
+    if (elem->hasOption(Element_Asymmetrical))
+        result += QStringLiteral("<p>") + qApp->translate("Z::Format", "Back-propagation matrices:") +
+                matrices(elem->Mt_inv(), elem->Ms_inv());
     if (elem->disabled())
-        result += "</div>";
+        result += QStringLiteral("</div>");
     return result;
 }
 

@@ -25,10 +25,14 @@ public:
     bool elemAutoLabel;       ///< Automatically generate labels for new elements.
     bool useNativeMenuBar;    ///< Use menu bar specfic to Ubuntu Unity or MacOS (on sceern's top).
     bool showProtocolAtStart; ///< Open protocol window just after application started.
-    double plotSafeMargins;   ///< Extra space around graphs when plot limits are fitted to graphs.
-                              ///< Set as fraction of limits range: `(max - min) * plotSafeMargins`.
-    double plotZoomStep;      ///< Step of zooming for commands Zoom-in / Zoom-out.
-                              ///< Set as fraction of limits range: `(max - min) * plotZoomStep`.
+    double plotSafeMarginsPercentX; ///< Extra space around graphs when plot limits are fitted to graphs.
+                                    ///< Set as fraction of limits range: `(max - min) * plotSafeMargins/100`.
+    double plotSafeMarginsPercentY; ///< Extra space around graphs when plot limits are fitted to graphs.
+                                    ///< Set as fraction of limits range: `(max - min) * plotSafeMargins/100`.
+    double plotZoomStepPercentX; ///< Step of zooming for commands Zoom-in / Zoom-out.
+                                 ///< Set as fraction of limits range: `(max - min) * plotZoomStep/100`.
+    double plotZoomStepPercentY; ///< Step of zooming for commands Zoom-in / Zoom-out.
+                                 ///< Set as fraction of limits range: `(max - min) * plotZoomStep/100`.
     int plotNumberPrecision;  ///< Number of decimal digits used to format axes labels.
     QString defaultTripType;  ///< New schemas should be created having this trip-type.
 

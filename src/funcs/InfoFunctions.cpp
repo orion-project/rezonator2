@@ -48,7 +48,7 @@ QString InfoFuncMatrices::calculate()
 }
 
 //------------------------------------------------------------------------------
-//                             InfoFuncMatrixProduct
+//                             InfoFuncMatrixMultFwd
 
 InfoFuncMatrixMultFwd::InfoFuncMatrixMultFwd(Schema *schema, const Elements& elems)
     : InfoFuncMatrices(schema, elems) {}
@@ -67,6 +67,9 @@ QString InfoFuncMatrixMultFwd::calculate()
                 Z::Format::roundTrip(_elements, true),
                 Z::Format::matrices(mt, ms));
 }
+
+//------------------------------------------------------------------------------
+//                             InfoFuncMatrixMultBkwd
 
 InfoFuncMatrixMultBkwd::InfoFuncMatrixMultBkwd(Schema *schema, const Elements& elems)
     : InfoFuncMatrixMultFwd(schema, elems)

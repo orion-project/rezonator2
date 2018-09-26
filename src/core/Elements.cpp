@@ -492,6 +492,8 @@ ElemThickLens::ElemThickLens() : ElementRange()
 
     _radius1->setVerifier(globalCurvatureRadiusVerifier());
     _radius2->setVerifier(globalCurvatureRadiusVerifier());
+
+    setOption(Element_Asymmetrical);
 }
 
 void ElemThickLens::calcMatrixInternal()

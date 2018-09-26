@@ -1,6 +1,7 @@
 #ifndef VARIABLE_EDITOR_H
 #define VARIABLE_EDITOR_H
 
+#include <QWidget>
 #include <QVBoxLayout>
 #include <QVector>
 
@@ -81,7 +82,7 @@ private:
     The variable editor that can choose several of range elements
     and set the number of points for plotting inside each of selected elements.
 */
-class MultiElementRangeEd : public QVBoxLayout
+class MultiElementRangeEd : public QWidget
 {
     Q_OBJECT
 

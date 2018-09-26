@@ -17,8 +17,8 @@
 #include <QClipboard>
 #include <QTextBrowser>
 
-#define WINDOW_W 500
-#define WINDOW_H 210
+static const int WINDOW_W = 540;
+static const int WINDOW_H = 260;
 
 void InfoFuncWindow::open(InfoFunction *func, QWidget* parent)
 {

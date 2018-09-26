@@ -169,6 +169,8 @@ ElementInterface::ElementInterface()
 
     addParam(_ior1, 1, Z::Units::none());
     addParam(_ior2, 1, Z::Units::none());
+
+    setOption(Element_Asymmetrical);
 }
 
 //------------------------------------------------------------------------------

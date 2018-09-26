@@ -153,7 +153,7 @@ struct ElemItemData
     Z::VariableRange range;
 };
 
-MultiElementRangeEd::MultiElementRangeEd(Schema *schema) : QVBoxLayout()
+MultiElementRangeEd::MultiElementRangeEd(Schema *schema) : QWidget()
 {
     _elemsSelector = new QListWidget;
     _elemsSelector->addAction(action("", this, SLOT(selectAllElements()), "", Qt::CTRL+Qt::Key_A));
@@ -209,9 +209,12 @@ MultiElementRangeEd::MultiElementRangeEd(Schema *schema) : QVBoxLayout()
     _rangeEditor = new VariableRangeEditor::PointsRangeEd;
     _rangeEditor->addWidget(_sameSettings, _rangeEditor->rowCount()+1, 0, 1, _rangeEditor->columnCount());
 
-    addLayout(elemsSelector);
-    addSpacing(4);
-    addWidget(group(tr("Plot accuracy"), _rangeEditor));
+    auto layout = new QVBoxLayout;
+    layout->setMargin(0);
+    layout->addLayout(elemsSelector);
+    layout->addSpacing(4);
+    layout->addWidget(group(tr("Plot accuracy"), _rangeEditor));
+    setLayout(layout);
 }
 
 MultiElementRangeEd::~MultiElementRangeEd()
@@ -252,6 +255,15 @@ QVector<Z::Variable> MultiElementRangeEd::collectVars()
 
 WidgetResult MultiElementRangeEd::verify()
 {
+    int checkedCount = 0;
+    for (int i = 0; i < _elemsSelector->count(); i++)
+        if (_elemsSelector->item(i)->checkState() == Qt::Checked)
+            checkedCount++;
+
+    if (checkedCount == 0)
+        return WidgetResult::fail(_elemsSelector,
+            tr("No elements are chosen.\nYou should mark at least one element."));
+
     return WidgetResult::ok(); // TODO
 }
 

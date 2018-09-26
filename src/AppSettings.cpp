@@ -59,8 +59,10 @@ void Settings::load()
     LOAD_DEF(showProtocolAtStart, Bool, false);
 
     s.beginGroup("Plot");
-    LOAD_DEF(plotSafeMargins, Double, 0.01);
-    LOAD_DEF(plotZoomStep, Double, 0.1);
+    LOAD_DEF(plotSafeMarginsPercentX, Double, 1);
+    LOAD_DEF(plotSafeMarginsPercentY, Double, 5);
+    LOAD_DEF(plotZoomStepPercentX, Double, 1);
+    LOAD_DEF(plotZoomStepPercentY, Double, 1);
     LOAD_DEF(plotNumberPrecision, Int, 10);
 }
 
@@ -83,8 +85,10 @@ void Settings::save()
     SAVE(showProtocolAtStart);
 
     s.beginGroup("Plot");
-    SAVE(plotSafeMargins);
-    SAVE(plotZoomStep);
+    SAVE(plotSafeMarginsPercentX);
+    SAVE(plotSafeMarginsPercentY);
+    SAVE(plotZoomStepPercentX);
+    SAVE(plotZoomStepPercentY);
     SAVE(plotNumberPrecision);
 }
 

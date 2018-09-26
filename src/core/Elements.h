@@ -7,7 +7,7 @@
 
 DECLARE_ELEMENT(ElemEmptyRange, ElementRange)
     TYPE_NAME(qApp->translate("Elements", "Empty space"))
-    DEFAULT_LABEL("L")
+    DEFAULT_LABEL("d")
     CALC_MATRIX
     SUB_RANGE
 DECLARE_ELEMENT_END
@@ -17,7 +17,7 @@ DECLARE_ELEMENT_END
 DECLARE_ELEMENT(ElemMediumRange, ElementRange)
     ElemMediumRange();
     TYPE_NAME(qApp->translate("Elements", "Space filled with medium"))
-    DEFAULT_LABEL("L")
+    DEFAULT_LABEL("d")
     CALC_MATRIX
     SUB_RANGE
 DECLARE_ELEMENT_END
@@ -27,7 +27,7 @@ DECLARE_ELEMENT_END
 DECLARE_ELEMENT(ElemPlate, ElementRange)
     ElemPlate();
     TYPE_NAME(qApp->translate("Elements", "Plate of matter"))
-    DEFAULT_LABEL("Cr")
+    DEFAULT_LABEL("G")
     CALC_MATRIX
     SUB_RANGE
 DECLARE_ELEMENT_END
@@ -89,7 +89,7 @@ DECLARE_ELEMENT_END
 DECLARE_ELEMENT(ElemTiltedCrystal, ElementRange)
     ElemTiltedCrystal();
     TYPE_NAME(qApp->translate("Elements", "Tilted plane-parallel crystal"))
-    DEFAULT_LABEL("Cr")
+    DEFAULT_LABEL("G")
     CALC_MATRIX
     SUB_RANGE
     double alpha() const { return _alpha->value().toSi(); }
@@ -101,7 +101,7 @@ DECLARE_ELEMENT_END
 
 DECLARE_ELEMENT(ElemTiltedPlate, ElemTiltedCrystal)
     TYPE_NAME(qApp->translate("Elements", "Tilted plane-parallel plate"))
-    DEFAULT_LABEL("Cr")
+    DEFAULT_LABEL("G")
     CALC_MATRIX
     SUB_RANGE
     AXIS_LEN
@@ -112,7 +112,7 @@ DECLARE_ELEMENT_END
 DECLARE_ELEMENT(ElemBrewsterCrystal, ElementRange)
     ElemBrewsterCrystal();
     TYPE_NAME(qApp->translate("Elements", "Brewster plane-parallel crystal"))
-    DEFAULT_LABEL("Cr")
+    DEFAULT_LABEL("G")
     CALC_MATRIX
     SUB_RANGE
 DECLARE_ELEMENT_END
@@ -122,7 +122,7 @@ DECLARE_ELEMENT_END
 DECLARE_ELEMENT(ElemBrewsterPlate, ElementRange)
     ElemBrewsterPlate();
     TYPE_NAME(qApp->translate("Elements", "Brewster plane-parallel plate"))
-    DEFAULT_LABEL("Cr")
+    DEFAULT_LABEL("G")
     CALC_MATRIX
     SUB_RANGE
     AXIS_LEN
@@ -155,7 +155,7 @@ DECLARE_ELEMENT_END
 
 DECLARE_ELEMENT(ElemNormalInterface, ElementInterface)
     TYPE_NAME(qApp->translate("Elements", "Normal interface"))
-    DEFAULT_LABEL("I")
+    DEFAULT_LABEL("s")
     CALC_MATRIX
 DECLARE_ELEMENT_END
 
@@ -163,7 +163,7 @@ DECLARE_ELEMENT_END
 
 DECLARE_ELEMENT(ElemBrewsterInterface, ElementInterface)
     TYPE_NAME(qApp->translate("Elements", "Brewster interface"))
-    DEFAULT_LABEL("I")
+    DEFAULT_LABEL("s")
     CALC_MATRIX
 DECLARE_ELEMENT_END
 
@@ -172,7 +172,7 @@ DECLARE_ELEMENT_END
 DECLARE_ELEMENT(ElemTiltedInterface, ElementInterface)
     ElemTiltedInterface();
     TYPE_NAME(qApp->translate("Elements", "Tilted interface"))
-    DEFAULT_LABEL("I")
+    DEFAULT_LABEL("s")
     CALC_MATRIX
     double alpha() const { return _alpha->value().toSi(); }
 protected:
@@ -184,7 +184,7 @@ DECLARE_ELEMENT_END
 DECLARE_ELEMENT(ElemSphericalInterface, ElementInterface)
     ElemSphericalInterface();
     TYPE_NAME(qApp->translate("Elements", "Spherical interface"))
-    DEFAULT_LABEL("I")
+    DEFAULT_LABEL("s")
     CALC_MATRIX
     double radius() const { return _radius->value().toSi(); }
 private:
@@ -196,7 +196,7 @@ DECLARE_ELEMENT_END
 DECLARE_ELEMENT(ElemThickLens, ElementRange)
     ElemThickLens();
     TYPE_NAME(qApp->translate("Elements", "Thick lens"))
-    DEFAULT_LABEL("L")
+    DEFAULT_LABEL("F")
     CALC_MATRIX
     SUB_RANGE
     double radius1() const { return _radius1->value().toSi(); }

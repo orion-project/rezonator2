@@ -9,7 +9,10 @@
 #include <QLabel>
 
 Plot::Plot() :
-        _safeMargins(Settings::instance().plotSafeMargins),
+        _safeMarginsX(Settings::instance().plotSafeMarginsPercentX/100.0),
+        _safeMarginsY(Settings::instance().plotSafeMarginsPercentY/100.0),
+        _zoomStepX(Settings::instance().plotZoomStepPercentX/100.0),
+        _zoomStepY(Settings::instance().plotZoomStepPercentY/100.0),
         _numberPrecision(Settings::instance().plotNumberPrecision)
 {
     yAxis->setNumberPrecision(_numberPrecision);
@@ -91,16 +94,16 @@ void Plot::autolimits(bool replot)
         }
     }
     if (!sanitizeAxisRange(xAxis))
-        extendLimits(xAxis, _safeMargins, false);
+        extendLimits(xAxis, _safeMarginsX, false);
     if (!sanitizeAxisRange(yAxis))
-        extendLimits(yAxis, _safeMargins, false);
+        extendLimits(yAxis, _safeMarginsY, false);
     if (replot) this->replot();
 }
 
 bool Plot::sanitizeAxisRange(QCPAxis* axis)
 {
     auto range = axis->range();
-    if (sanitizeRange(range))
+    if (sanitizeRange(range, safeMargins(axis)))
     {
         axis->setRange(range);
         return true;
@@ -108,7 +111,7 @@ bool Plot::sanitizeAxisRange(QCPAxis* axis)
     return false;
 }
 
-bool Plot::sanitizeRange(QCPRange& range)
+bool Plot::sanitizeRange(QCPRange& range, double safeMargin)
 {
     auto epsilon = std::numeric_limits<double>::epsilon();
     if (range.size() <= epsilon)
@@ -120,7 +123,7 @@ bool Plot::sanitizeRange(QCPRange& range)
         }
         else
         {
-            double delta = range.lower * _safeMargins;
+            double delta = range.lower * safeMargin;
             range.lower -= delta;
             range.upper += delta;
         }
@@ -158,8 +161,7 @@ void Plot::extendLimits(QCPAxis* axis, double factor, bool replot)
     auto delta = (range.upper - range.lower) * factor;
     range.upper += delta;
     range.lower -= delta;
-    sanitizeRange(range);
-    axis->setRange(range);
+    setAxisRange(axis, range);
     if (replot) this->replot();
 }
 
@@ -167,8 +169,7 @@ void Plot::setLimits(QCPAxis* axis, double min, double max, bool replot)
 {
     QCPRange range(min, max);
     range.normalize();
-    sanitizeRange(range);
-    axis->setRange(range);
+    setAxisRange(axis, range);
     if (replot) this->replot();
 }
 
@@ -178,13 +179,25 @@ QPair<double, double> Plot::limits(QCPAxis* axis) const
     return QPair<double, double>(range.lower, range.upper);
 }
 
+double Plot::safeMargins(QCPAxis* axis)
+{
+    return axis == xAxis ? _safeMarginsX : _safeMarginsY;
+}
+
+void Plot::setAxisRange(QCPAxis* axis, const QCPRange& range)
+{
+    auto r = range;
+    sanitizeRange(r, safeMargins(axis));
+    axis->setRange(r);
+}
+
 bool Plot::setLimitsDlg()
 {
     auto range = xAxis->range();
     if (setLimitsDlg(range, tr("Limits for X and Y")))
     {
-        xAxis->setRange(range);
-        yAxis->setRange(range);
+        setAxisRange(xAxis, range);
+        setAxisRange(yAxis, range);
         replot();
         return true;
     }
@@ -196,7 +209,7 @@ bool Plot::setLimitsDlg(QCPAxis* axis)
     auto range = axis->range();
     if (setLimitsDlg(range, tr("%1-axis Limits").arg(axis == xAxis ? "X" : "Y")))
     {
-        axis->setRange(range);
+        setAxisRange(axis, range);
         replot();
         return true;
     }
@@ -226,7 +239,6 @@ bool Plot::setLimitsDlg(QCPRange& range, const QString& title)
         range.lower = editorMin->value();
         range.upper = editorMax->value();
         range.normalize();
-        sanitizeRange(range);
         return true;
     }
     return false;

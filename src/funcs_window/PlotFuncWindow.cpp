@@ -8,10 +8,13 @@
 #include "../widgets/GraphDataGrid.h"
 #include "../widgets/CursorPanel.h"
 #include "../widgets/PlotParamsPanel.h"
+#include "helpers/OriWidgets.h"
 #include "widgets/OriFlatToolBar.h"
 #include "widgets/OriLabels.h"
 #include "widgets/OriStatusBar.h"
 #include "../../libs/qcustomplot/qcpcursor.h"
+
+using namespace Ori::Gui;
 
 enum PlotWindowStatusPanels
 {
@@ -21,13 +24,12 @@ enum PlotWindowStatusPanels
     STATUS_PANELS_COUNT,
 };
 
-PlotFuncWindow::PlotFuncWindow(PlotFunction *func) : SchemaMdiChild(func->schema()),
-    _function(func), _zoomStep(Settings::instance().plotZoomStep)
+PlotFuncWindow::PlotFuncWindow(PlotFunction *func) : SchemaMdiChild(func->schema()), _function(func)
 {
+    createContent();
     createActions();
     createMenuBar();
     createToolBar();
-    createContent();
     createStatusBar();
 }
 
@@ -38,131 +40,71 @@ PlotFuncWindow::~PlotFuncWindow()
 
 void PlotFuncWindow::createActions()
 {
-    //---------------- Plot
-    actnUpdate = new QAction(tr("Update", "Plot action"), this);
-    actnUpdate->setShortcut(Qt::Key_F5);
-    actnUpdate->setIcon(QIcon(":/toolbar/update"));
-    connect(actnUpdate, SIGNAL(triggered()), this, SLOT(update()));
+    actnUpdate = action(tr("Update"), this, SLOT(update()), ":/toolbar/update", Qt::Key_F5);
+    actnUpdateParams = action(tr("Update With Params..."), this, SLOT(updateWithParams()), ":/toolbar/update_params", Qt::CTRL | Qt::Key_F5);
 
-    actnUpdateParams = new QAction(tr("Update With Params...", "Plot action"), this);
-    actnUpdateParams->setShortcut(Qt::CTRL | Qt::Key_F5);
-    actnUpdateParams->setIcon(QIcon(":/toolbar/update_params"));
-    connect(actnUpdateParams, SIGNAL(triggered()), this, SLOT(updateWithParams()));
-
-    actnShowT = new QAction(tr("Show &T-plane", "Plot action"), this);
-    actnShowS = new QAction(tr("Show &S-plane", "Plot action"), this);
-    actnShowTS = new QAction(tr("TS-flipped Mode", "Plot action"), this);
+    actnShowT = action(tr("Show &T-plane"), this, SLOT(showT()), ":/toolbar/plot_t");
+    actnShowS = action(tr("Show &S-plane"), this, SLOT(showS()), ":/toolbar/plot_s");
+    actnShowTS = action(tr("TS-flipped Mode"), this, SLOT(showTS()), ":/toolbar/plot_ts");
     actnShowT->setCheckable(true);
     actnShowS->setCheckable(true);
     actnShowTS->setCheckable(true);
     actnShowT->setChecked(true);
     actnShowS->setChecked(true);
-    actnShowS->setIcon(QIcon(":/toolbar/plot_s"));
-    actnShowT->setIcon(QIcon(":/toolbar/plot_t"));
-    actnShowTS->setIcon(QIcon(":/toolbar/plot_ts"));
-    connect(actnShowT, SIGNAL(triggered()), this, SLOT(showT()));
-    connect(actnShowS, SIGNAL(triggered()), this, SLOT(showS()));
-    connect(actnShowTS, SIGNAL(triggered()), this, SLOT(showTS()));
 
     actnShowTS->setVisible(false); //< TODO:NEXT_VER
 
-    actnShowRoundTrip = new QAction(tr("Show Round-trip", "Plot action"), this);
-    connect(actnShowRoundTrip, SIGNAL(triggered()), this, SLOT(showRoundTrip()));
+    actnShowRoundTrip = action(tr("Show Round-trip"), this, SLOT(showRoundTrip()));
 
-    actnFreeze = new QAction(tr("Freeze", "Function actions"), this);
-    actnFreeze->setShortcut(Qt::CTRL | Qt::Key_F);
-    actnFreeze->setCheckable(true);
-    actnFreeze->setIcon(QIcon(":/toolbar/freeze"));
-    connect(actnFreeze, SIGNAL(toggled(bool)), this, SLOT(freeze(bool)));
+    actnFreeze = toggledAction(tr("Freeze"), this, SLOT(freeze(bool)), ":/toolbar/freeze", Qt::CTRL | Qt::Key_F);
 
-    //---------------- Limits
-    actnAutolimits = new QAction(QIcon(":/toolbar/limits_auto"), tr("Fit to Graphs"), this);
-    connect(actnAutolimits, &QAction::triggered, [&](){ _plot->autolimits(); });
-    actnAutolimitsX = new QAction(QIcon(":/toolbar/limits_auto_x"), tr("Fit to Graphs Over X"), this);
-    connect(actnAutolimitsX, &QAction::triggered, [&](){ _plot->autolimitsX(); });
-    actnAutolimitsY = new QAction(QIcon(":/toolbar/limits_auto_y"), tr("Fit to Graphs Over Y"), this);
-    connect(actnAutolimitsY, &QAction::triggered, [&](){ _plot->autolimitsY(); });
+    actnAutolimits = action(tr("Fit to Graphs"), _plot, SLOT(autolimits()), ":/toolbar/limits_auto");
+    actnAutolimitsX = action(tr("Fit to Graphs Over X"), _plot, SLOT(autolimitsX()), ":/toolbar/limits_auto_x");
+    actnAutolimitsY = action(tr("Fit to Graphs Over Y"), _plot, SLOT(autolimitsY()), ":/toolbar/limits_auto_y");
 
-    actnZoomIn = new QAction(QIcon(":/toolbar/limits_zoom_in"), tr("Zoom-in"), this);
-    connect(actnZoomIn, &QAction::triggered, [&](){ _plot->extendLimits(-_zoomStep); });
-    actnZoomOut = new QAction(QIcon(":/toolbar/limits_zoom_out"), tr("Zoom-out"), this);
-    connect(actnZoomOut, &QAction::triggered, [&](){ _plot->extendLimits(_zoomStep); });
-    actnZoomInX = new QAction(QIcon(":/toolbar/limits_zoom_in_x"), tr("Zoom-in Over X"), this);
-    connect(actnZoomInX, &QAction::triggered, [&](){ _plot->extendLimitsX(-_zoomStep); });
-    actnZoomOutX = new QAction(QIcon(":/toolbar/limits_zoom_out_x"), tr("Zoom-out Over X"), this);
-    connect(actnZoomOutX, &QAction::triggered, [&](){ _plot->extendLimitsX(_zoomStep); });
-    actnZoomInY = new QAction(QIcon(":/toolbar/limits_zoom_in_y"), tr("Zoom-in Over Y"), this);
-    connect(actnZoomInY, &QAction::triggered, [&](){ _plot->extendLimitsY(-_zoomStep); });
-    actnZoomOutY = new QAction(QIcon(":/toolbar/limits_zoom_out_y"), tr("Zoom-out Over Y"), this);
-    connect(actnZoomOutY, &QAction::triggered, [&](){ _plot->extendLimitsY(_zoomStep); });
+    actnZoomIn = action(tr("Zoom-in"), _plot, SLOT(zoomIn()), ":/toolbar/limits_zoom_in");
+    actnZoomOut = action(tr("Zoom-out"), _plot, SLOT(zoomOut()), ":/toolbar/limits_zoom_out");
+    actnZoomInX = action(tr("Zoom-in Over X"), _plot, SLOT(zoomInX()), ":/toolbar/limits_zoom_in_x");
+    actnZoomOutX = action(tr("Zoom-out Over X"), _plot, SLOT(zoomOutX()), ":/toolbar/limits_zoom_out_x");
+    actnZoomInY = action(tr("Zoom-in Over Y"), _plot, SLOT(zoomInY()), ":/toolbar/limits_zoom_in_y");
+    actnZoomOutY = action(tr("Zoom-out Over Y"), _plot, SLOT(zoomOutY()), ":/toolbar/limits_zoom_out_y");
 
-    actnSetLimits = new QAction(tr("Set Limits..."), this);
-    connect(actnSetLimits, &QAction::triggered, [&](){ _plot->setLimitsDlg(); });
-    actnSetLimitsX = new QAction(tr("Set X-axis Limits..."), this);
-    connect(actnSetLimitsX, &QAction::triggered, [&](){ _plot->setLimitsDlgX(); });
-    actnSetLimitsY = new QAction(tr("Set Y-axis Limits..."), this);
-    connect(actnSetLimitsY, &QAction::triggered, [&](){ _plot->setLimitsDlgY(); });
+    actnSetLimits = action(tr("Set Limits..."), _plot, SLOT(setLimitsDlg()));
+    actnSetLimitsX = action(tr("Set X-axis Limits..."), _plot, SLOT(setLimitsDlgX()));
+    actnSetLimitsY = action(tr("Set Y-axis Limits..."), _plot, SLOT(setLimitsDlgY()));
 }
 
 void PlotFuncWindow::createMenuBar()
 {
-    menuPlot = new QMenu(tr("&Plot", "Menu title"), this);
-    menuPlot->addAction(actnUpdate);
-    menuPlot->addAction(actnUpdateParams);
-    menuPlot->addSeparator();
-    menuPlot->addAction(actnShowT);
-    menuPlot->addAction(actnShowS);
-    menuPlot->addAction(actnShowTS);
-    menuPlot->addSeparator();
-    menuPlot->addAction(actnShowRoundTrip);
+    menuPlot = menu(tr("&Plot", "Menu title"), this, {
+        actnUpdate, actnUpdateParams, nullptr, actnShowT, actnShowS, actnShowTS, nullptr, actnShowRoundTrip
+    });
 
-    menuLimits = new QMenu(tr("&Limits", "Menu title"), this);
-    menuLimits->addAction(actnSetLimits);
-    menuLimits->addAction(actnAutolimits);
-    menuLimits->addAction(actnZoomIn);
-    menuLimits->addAction(actnZoomOut);
-    menuLimits->addSeparator();
-    menuLimits->addAction(actnSetLimitsX);
-    menuLimits->addAction(actnAutolimitsX);
-    menuLimits->addAction(actnZoomInX);
-    menuLimits->addAction(actnZoomOutX);
-    menuLimits->addSeparator();
-    menuLimits->addAction(actnSetLimitsY);
-    menuLimits->addAction(actnAutolimitsY);
-    menuLimits->addAction(actnZoomInY);
-    menuLimits->addAction(actnZoomOutY);
+    menuLimits = menu(tr("&Limits", "Menu title"), this, {
+        actnSetLimits, actnAutolimits, actnZoomIn, actnZoomOut, nullptr,
+        actnSetLimitsX, actnAutolimitsX, actnZoomInX, actnZoomOutX, nullptr,
+        actnSetLimitsY, actnAutolimitsY, actnZoomInY, actnZoomOutY
+    });
 
-    menuFormat = new QMenu(tr("Fo&rmat", "Menu title"), this);
+    menuFormat = menu(tr("Fo&rmat", "Menu title"), this, {
+        // TODO
+    });
 }
 
 void PlotFuncWindow::createToolBar()
 {
-    toolbar()->addAction(actnUpdate);
-    toolbar()->addAction(actnUpdateParams);
-    toolbar()->addSeparator();
-    toolbar()->addAction(actnFreeze);
-
     _buttonFrozenInfo = new FrozenStateButton;
     _buttonFrozenInfo->setToolTip(tr("Frozen info", "Function actions"));
     _buttonFrozenInfo->setIcon(QIcon(":/toolbar/frozen_info"));
-    actnFrozenInfo = toolbar()->addWidget(_buttonFrozenInfo);
 
-    toolbar()->addSeparator();
-    toolbar()->addAction(actnShowT);
-    toolbar()->addAction(actnShowS);
-    toolbar()->addAction(actnShowTS);
-    toolbar()->addSeparator();
-    toolbar()->addAction(actnAutolimits);
-    toolbar()->addAction(actnZoomIn);
-    toolbar()->addAction(actnZoomOut);
-    toolbar()->addSeparator();
-    toolbar()->addAction(actnAutolimitsX);
-    toolbar()->addAction(actnZoomInX);
-    toolbar()->addAction(actnZoomOutX);
-    toolbar()->addSeparator();
-    toolbar()->addAction(actnAutolimitsY);
-    toolbar()->addAction(actnZoomInY);
-    toolbar()->addAction(actnZoomOutY);
+    populate(toolbar(), {
+        actnUpdate, actnUpdateParams, nullptr,
+        actnFreeze, _buttonFrozenInfo, nullptr,
+        actnShowT, actnShowS, actnShowTS, nullptr,
+        actnAutolimits, actnZoomIn, actnZoomOut, nullptr,
+        actnAutolimitsX, actnZoomInX, actnZoomOutX, nullptr,
+        actnAutolimitsY, actnZoomInY, actnZoomOutY,
+    });
 }
 
 void PlotFuncWindow::createContent()
@@ -433,7 +375,7 @@ void PlotFuncWindow::freeze(bool frozen)
     _frozen = frozen;
     actnUpdate->setEnabled(!_frozen);
     actnUpdateParams->setEnabled(!_frozen);
-    actnFrozenInfo->setVisible(_frozen);
+    _buttonFrozenInfo->setVisible(_frozen);
     _buttonFrozenInfo->setInfo(InfoFuncSummary(schema()).calculate());
     _leftPanel->setOptionsPanelEnabled(!_frozen);
     if (!_frozen and _needRecalc)

@@ -161,7 +161,7 @@ MultiElementRangeDlg::MultiElementRangeDlg(Schema *schema, QVector<Z::Variable>&
     _varEditor = new VariableEditor::MultiElementRangeEd(schema);
     _varEditor->populateVars(vars);
 
-    mainLayout()->addLayout(_varEditor);
+    mainLayout()->addWidget(_varEditor);
     mainLayout()->addSpacing(8);
 }
 

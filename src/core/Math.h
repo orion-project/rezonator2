@@ -51,6 +51,8 @@ public:
     Complex multComplexBeam(const Complex& c) const;
 
     QString str() const;
+
+    double det() const;
 };
 
 Matrix operator *(const Matrix &m1, const Matrix &m2);

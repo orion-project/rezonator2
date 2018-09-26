@@ -50,6 +50,11 @@ Complex Matrix::multComplexBeam(const Complex& c) const
     return (c * A + B) / (c * C + D);
 }
 
+double Matrix::det() const
+{
+    return A * D - B * C;
+}
+
 //------------------------------------------------------------------------------
 //                                RayVector
 //------------------------------------------------------------------------------
