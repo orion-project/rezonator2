@@ -103,10 +103,17 @@ Z::Unit CustomPrefs::recentUnit(const QString& key, Z::Dim dim)
 void CustomPrefs::setRecentDir(const QString& key, const QString& dirOrFile)
 {
     QString dir;
+    // Existing file
     if (QFile::exists(dirOrFile))
         dir = QFileInfo(dirOrFile).absolutePath();
+    // Existing dir
     else if (QDir(dirOrFile).exists())
         dir = QDir(dirOrFile).absolutePath();
+    // Non-existing (a new) file
+    else {
+        auto dir1 = QFileInfo(dirOrFile).absoluteDir();
+        if (dir1.exists()) dir = dir1.absolutePath();
+    }
     if (!dir.isEmpty())
         setRecentStr(key, dir);
 }

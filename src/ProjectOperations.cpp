@@ -184,7 +184,7 @@ bool ProjectOperations::saveSchemaFile(const QString& fileName)
         schema()->events().raise(SchemaEvents::Saved);
     }
 
-    return writer.report().hasErrors();
+    return !writer.report().hasErrors();
 }
 
 bool ProjectOperations::saveSchemaFileAs()

@@ -143,12 +143,6 @@ void SchemaElemsTable::populateRow(Element *elem, int row)
     item(row, COL_TITLE)->setForeground(color);
 }
 
-void SchemaElemsTable::populateParams()
-{
-    for (int i = 0; i < schema()->count(); i++)
-        item(i, COL_PARAMS)->setText(schema()->element(i)->params().str());
-}
-
 void SchemaElemsTable::schemaLoaded(Schema*)
 {
     populate();

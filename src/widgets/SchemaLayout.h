@@ -36,6 +36,8 @@ public:
     void setSlope(double elementAngle);
     void setSlopeAngle(qreal angle) { _slopeAngle = angle; }
 
+    void makeElemToolTip();
+
 protected:
     Element* _element;
     Slope _slope = SlopeNone;

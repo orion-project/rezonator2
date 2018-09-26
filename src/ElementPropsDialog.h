@@ -30,6 +30,7 @@ public slots:
 
 protected:
     void showEvent(QShowEvent*) override;
+    QSize prefferedSize() const override { return QSize(300, 400); }
 
     virtual void populateParams() {}
     virtual void collectParams() {}

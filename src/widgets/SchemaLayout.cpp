@@ -1,10 +1,11 @@
 #include "SchemaLayout.h"
 
 #include "Appearance.h"
+#include "../funcs/FormatInfo.h"
 
 #include <QtMath>
 
-#define Sqr(x) (x*x)
+#define Sqr(x) ((x)*(x))
 
 namespace {
 
@@ -62,8 +63,26 @@ const QFont& getLabelFont()
 //                             ElementLayout
 //------------------------------------------------------------------------------
 
-ElementLayout::ElementLayout(Element* elem): QGraphicsItem(), _element(elem) {}
-ElementLayout::~ElementLayout() {}
+ElementLayout::ElementLayout(Element* elem): QGraphicsItem(), _element(elem)
+{
+}
+
+ElementLayout::~ElementLayout()
+{
+}
+
+void ElementLayout::makeElemToolTip()
+{
+    if (!_element) return;
+    auto schema = dynamic_cast<Schema*>(_element->owner());
+    if (!schema) return;
+    setToolTip(QString("#%1 <b>%2</b> <i>(%3)</i><br>%4")
+               .arg(schema->indexOf(_element)+1)
+               .arg(_element->label())
+               .arg(_element->typeName())
+               .arg(Z::Format::elemParamsHtml(schema, _element))
+               );
+}
 
 QRectF ElementLayout::boundingRect() const
 {
@@ -210,44 +229,47 @@ namespace ElemFlatMirrorLayout {
 
 //------------------------------------------------------------------------------
 namespace CurvedElementLayout {
+    enum CurvedForm {
+        FormUnknown,
+        ConvexLens,         //      ()
+        ConcaveLens,        //      )(
+        ConvexConcaveLens,  //      ((
+        ConcaveConvexLens,  //      ))
+        PlaneConvexMirror,  //      |)
+        PlaneConvexLens,    //      |)
+        PlaneConcaveMirror, //      |(
+        PlaneConcaveLens,   //      |(
+        ConvexPlaneMirror,  //      (|
+        ConvexPlaneLens,    //      (|
+        ConcavePlaneMirror, //      )|
+        ConcavePlaneLens    //      )|
+    };
+
     DECLARE_ELEMENT_LAYOUT_BEGIN
-        enum {
-            ConvexLens,         //      ()
-            ConcaveLens,        //      )(
-            PlaneConvexMirror,  //      |)
-            PlaneConvexLens,    //      |)
-            PlaneConcaveMirror, //      |(
-            PlaneConcaveLens,   //      |(
-            ConvexPlaneMirror,  //      (|
-            ConvexPlaneLens,    //      (|
-            ConcavePlaneMirror, //      )|
-            ConcavePlaneLens    //      )|
-        } paintMode;
-        enum {
-            MarkNone,
-            MarkT,
-            MarkS
-        } markTS = MarkNone;
-        qreal ROC = 100;
+        CurvedForm paintMode = FormUnknown;
+        void paintCornerMark(QPainter *painter, const QString& mark) const;
     DECLARE_ELEMENT_LAYOUT_END
 
     ELEMENT_LAYOUT_INIT {
-        HW = 10; HH = 40;
     }
 
     ELEMENT_LAYOUT_PAINT {
         painter->setBrush(getGlassBrush());
         painter->setPen(getGlassPen());
 
-        qreal sagitta = ROC - qSqrt(Sqr(ROC) - Sqr(HH));
-        qreal startAngle = qRadiansToDegrees(qAsin(HH / ROC));
-        qreal sweepAngle = 2*startAngle;
+        const qreal ROC = 100;
+        const qreal sagitta = ROC - qSqrt(Sqr(ROC) - Sqr(HH));
+        const qreal startAngle = qRadiansToDegrees(qAsin(HH / ROC));
+        const qreal sweepAngle = 2*startAngle;
 
         QPainterPath path;
         QRectF rightSurface;
         QRectF leftSurface;
 
         switch (paintMode) {
+        case FormUnknown:
+            break;
+
         case ConvexLens: // ()
             rightSurface = QRectF(HW - 2*ROC, -ROC, 2*ROC, 2*ROC);
             leftSurface = QRectF(-HW, -ROC, 2*ROC, 2*ROC);
@@ -264,6 +286,24 @@ namespace CurvedElementLayout {
             path.arcTo(rightSurface, 180-startAngle, sweepAngle);
             path.lineTo(-HW, HH);
             path.arcTo(leftSurface, 360-startAngle, sweepAngle);
+            break;
+
+        case ConvexConcaveLens: // ((
+            leftSurface = QRectF(-HW, -ROC, 2*ROC, 2*ROC);
+            rightSurface = QRectF(HW - sagitta, -ROC, 2*ROC, 2*ROC);
+            path.moveTo(-HW + sagitta, -HH);
+            path.arcTo(leftSurface, 180-startAngle, sweepAngle);
+            path.lineTo(HW, HH);
+            path.arcTo(rightSurface, 180+startAngle, -sweepAngle);
+            break;
+
+        case ConcaveConvexLens: // ))
+            leftSurface = QRectF(-HW + sagitta - 2*ROC, -ROC, 2*ROC, 2*ROC);
+            rightSurface = QRectF(HW - 2*ROC, -ROC, 2*ROC, 2*ROC);
+            path.moveTo(-HW, -HH);
+            path.arcTo(leftSurface, startAngle, -sweepAngle);
+            path.lineTo(HW - sagitta, HH);
+            path.arcTo(rightSurface, -startAngle, sweepAngle);
             break;
 
         case PlaneConvexMirror:
@@ -362,13 +402,13 @@ namespace CurvedElementLayout {
 
         default: break;
         }
+    }
 
-        if (markTS != MarkNone) {
-            auto p = boundingRect().bottomRight();
-            p.setX(p.x()-qreal(HW)/2.0);
-            painter->setFont(getMarkTSFont());
-            painter->drawText(p, MarkT? QStringLiteral("T"): QStringLiteral("S"));
-        }
+    void Layout::paintCornerMark(QPainter *painter, const QString& mark) const {
+        auto p = boundingRect().bottomRight();
+        p.setX(p.x()-qreal(HW)/2.0);
+        painter->setFont(getMarkTSFont());
+        painter->drawText(p, mark);
     }
 }
 
@@ -379,25 +419,26 @@ namespace ElemCurveMirrorLayout {
     DECLARE_ELEMENT_LAYOUT_END
 
     ELEMENT_LAYOUT_INIT {
+        HW = 10; HH = 40;
         ElemCurveMirror *mirror = dynamic_cast<ElemCurveMirror*>(_element);
         if (!mirror || !_element->owner()) return;
         layout.reset(new CurvedElementLayout::Layout(nullptr));
-        layout->init();
+        layout->setHalfSize(HW, HH);
         layout->setSlope(mirror->alpha());
         int index = _element->owner()->indexOf(_element);
         if (index <= 0)
             layout->paintMode = mirror->radius() > 0
-                ? CurvedElementLayout::Layout::PlaneConcaveMirror
-                : CurvedElementLayout::Layout::PlaneConvexMirror;
+                ? CurvedElementLayout::PlaneConcaveMirror
+                : CurvedElementLayout::PlaneConvexMirror;
         else if (index >= _element->owner()->count()-1)
             layout->paintMode = mirror->radius() > 0
-                ? CurvedElementLayout::Layout::ConcavePlaneMirror
-                : CurvedElementLayout::Layout::ConvexPlaneMirror;
+                ? CurvedElementLayout::ConcavePlaneMirror
+                : CurvedElementLayout::ConvexPlaneMirror;
         else
             layout->paintMode = mirror->radius() > 0
-                ? CurvedElementLayout::Layout::ConvexLens
-                : CurvedElementLayout::Layout::ConcaveLens;
-        HW = layout->halfW(); HH = layout->halfH();
+                ? CurvedElementLayout::ConvexLens
+                : CurvedElementLayout::ConcaveLens;
+        layout->init();
     }
 
     ELEMENT_LAYOUT_PAINT {
@@ -412,18 +453,20 @@ namespace ElemThinLensLayout {
     DECLARE_ELEMENT_LAYOUT_END
 
     ELEMENT_LAYOUT_INIT {
-        ElemThinLens *lens = dynamic_cast<ElemThinLens*>(_element);
+        HW = 10; HH = 40;
+        auto lens = dynamic_cast<ElemThinLens*>(_element);
         if (!lens) return;
         layout.reset(new CurvedElementLayout::Layout(nullptr));
+        layout->setHalfSize(HW, HH);
         layout->setSlope(lens->alpha());
         layout->paintMode = lens->focus() > 0
-                       ? CurvedElementLayout::Layout::ConvexLens
-                       : CurvedElementLayout::Layout::ConcaveLens;
-        HW = layout->halfW(); HH = layout->halfH();
+                       ? CurvedElementLayout::ConvexLens
+                       : CurvedElementLayout::ConcaveLens;
+        layout->init();
     }
 
     ELEMENT_LAYOUT_PAINT {
-        layout->paint(painter, nullptr, nullptr);
+        if (layout) layout->paint(painter, nullptr, nullptr);
     }
 }
 
@@ -434,19 +477,23 @@ namespace ElemCylinderLensTLayout {
     DECLARE_ELEMENT_LAYOUT_END
 
     ELEMENT_LAYOUT_INIT {
+        HW = 10; HH = 40;
         auto lens = dynamic_cast<ElemCylinderLensT*>(_element);
         if (!lens) return;
         layout.reset(new CurvedElementLayout::Layout(nullptr));
+        layout->setHalfSize(HW, HH);
         layout->setSlope(lens->alpha());
-        layout->markTS = CurvedElementLayout::Layout::MarkT;
         layout->paintMode = lens->focus() > 0
-                           ? CurvedElementLayout::Layout::ConvexLens
-                           : CurvedElementLayout::Layout::ConcaveLens;
-        HW = layout->halfW(); HH = layout->halfH();
+                           ? CurvedElementLayout::ConvexLens
+                           : CurvedElementLayout::ConcaveLens;
+        layout->init();
     }
 
     ELEMENT_LAYOUT_PAINT {
-        if (layout) layout->paint(painter, nullptr, nullptr);
+        if (layout) {
+            layout->paint(painter, nullptr, nullptr);
+            layout->paintCornerMark(painter, QStringLiteral("T"));
+        }
     }
 }
 
@@ -457,19 +504,23 @@ namespace ElemCylinderLensSLayout {
     DECLARE_ELEMENT_LAYOUT_END
 
     ELEMENT_LAYOUT_INIT {
+        HW = 10; HH = 40;
         auto lens = dynamic_cast<ElemCylinderLensS*>(_element);
         if (!lens) return;
         layout.reset(new CurvedElementLayout::Layout(nullptr));
+        layout->setHalfSize(HW, HH);
         layout->setSlope(lens->alpha());
-        layout->markTS = CurvedElementLayout::Layout::MarkS;
         layout->paintMode = lens->focus() > 0
-                ? CurvedElementLayout::Layout::ConvexLens
-                : CurvedElementLayout::Layout::ConcaveLens;
-        HW = layout->halfW(); HH = layout->halfH();
+                ? CurvedElementLayout::ConvexLens
+                : CurvedElementLayout::ConcaveLens;
+        layout->init();
     }
 
     ELEMENT_LAYOUT_PAINT {
-        if (layout) layout->paint(painter, nullptr, nullptr);
+        if (layout) {
+            layout->paint(painter, nullptr, nullptr);
+            layout->paintCornerMark(painter, QStringLiteral("S"));
+        }
     }
 }
 
@@ -526,6 +577,7 @@ namespace ElemTiltedCrystalLayout {
         layout.reset(new CrystalElementLayout::Layout(nullptr));
         layout->setSlope(crystal->alpha());
         layout->setHalfSize(HW, HH);
+        layout->init();
     }
 
     ELEMENT_LAYOUT_PAINT {
@@ -565,6 +617,7 @@ namespace ElemBrewsterCrystalLayout {
         layout->setHalfSize(HW, HH);
         layout->setSlopeAngle(40);
         layout->setSlope(SlopePlus);
+        layout->init();
     }
 
     ELEMENT_LAYOUT_PAINT {
@@ -871,6 +924,36 @@ namespace ElemSphericalInterfaceLayout {
 }
 
 //------------------------------------------------------------------------------
+namespace ElemThickLensLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+        QSharedPointer<CurvedElementLayout::Layout> layout;
+    DECLARE_ELEMENT_LAYOUT_END
+
+    ELEMENT_LAYOUT_INIT {
+        HW = 25; HH=40;
+        auto lens = dynamic_cast<ElemThickLens*>(_element);
+        if (!lens) return;
+        layout.reset(new CurvedElementLayout::Layout(nullptr));
+        layout->setHalfSize(HW, HH);
+        auto R1 = lens->radius1();
+        auto R2 = lens->radius2();
+        if (R1 < 0 && R2 > 0) // ()
+            layout->paintMode = CurvedElementLayout::ConvexLens;
+        else if (R1 > 0 && R2 < 0) // )(
+            layout->paintMode = CurvedElementLayout::ConcaveLens;
+        else if (R1 < 0 && R2 < 0) // ((
+            layout->paintMode = CurvedElementLayout::ConvexConcaveLens;
+        else if (R1 > 0 && R2 > 0) // ))
+            layout->paintMode = CurvedElementLayout::ConcaveConvexLens;
+        layout->init();
+    }
+
+    ELEMENT_LAYOUT_PAINT {
+        if (layout) layout->paint(painter, nullptr, nullptr);
+    }
+}
+
+//------------------------------------------------------------------------------
 //                               SchemaLayout
 //------------------------------------------------------------------------------
 
@@ -902,6 +985,7 @@ void SchemaLayout::populate()
         if (elem->disabled()) continue;
         auto layout = ElementLayoutFactory::make(elem);
         if (layout) {
+            layout->makeElemToolTip();
             layout->init();
             addElement(layout);
         }
@@ -942,6 +1026,7 @@ void SchemaLayout::addElement(ElementLayout *elem)
     QGraphicsTextItem *label = _scene.addText(elem->element()->label());
     label->setZValue(1000 + _elements.count());
     label->setFont(getLabelFont());
+    label->setToolTip(elem->toolTip());
     // Try to position new label avoiding overlapping with previous labels
     QRectF r = label->boundingRect();
     qreal labelX = elem->x() - r.width() / 2.0;
@@ -1005,7 +1090,7 @@ ElementLayout* make(Element *elem) {
         registerLayout<ElemPlate, ElemPlateLayout::Layout>();
         registerLayout<ElemFlatMirror, ElemFlatMirrorLayout::Layout>();
         registerLayout<ElemCurveMirror, ElemCurveMirrorLayout::Layout>();
-        registerLayout<ElemThinLens, ElemEmptyRangeLayout::Layout>();
+        registerLayout<ElemThinLens, ElemThinLensLayout::Layout>();
         registerLayout<ElemCylinderLensT, ElemCylinderLensTLayout::Layout>();
         registerLayout<ElemCylinderLensS, ElemCylinderLensSLayout::Layout>();
         registerLayout<ElemTiltedCrystal, ElemTiltedCrystalLayout::Layout>();
@@ -1018,6 +1103,7 @@ ElementLayout* make(Element *elem) {
         registerLayout<ElemBrewsterInterface, ElemBrewsterInterfaceLayout::Layout>();
         registerLayout<ElemTiltedInterface, ElemTiltedInterfaceLayout::Layout>();
         registerLayout<ElemSphericalInterface, ElemSphericalInterfaceLayout::Layout>();
+        registerLayout<ElemThickLens, ElemThickLensLayout::Layout>();
     }
     if (!__factoryMethods.contains(elem->type()))
         return nullptr;
