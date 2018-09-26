@@ -4,41 +4,24 @@ This directory contains some stuff used during preparation of release version of
 
 **Version format**
 
-Version numbers are
 ```
-MAJOR . MINOR . MICRO . COMMITS [-CODENAME]
-```
-
-and corresponding git tag should have format:
-```
-version-MAJOR.MINOR.MICRO-CODENAME
+MAJOR . MINOR . PATCH [-CODENAME]
 ```
 
-e.g.:
-```
-version-2.0.1-alpha1
-```
+See: [Semantic Versioning](https://semver.org)
+
 
 **Prepare new release**
 
-* Make new release tag
+* Decide version numbers for new release
 
-Increase at least one of `MAJOR`, `MINOR` or `MICRO` numbers when create a new release tag.
+Increase at least one of `MAJOR`, `MINOR` or `MICRO` numbers when create a new release.
 
-```bash
-git tag -a version-2.0.2-alpha2 -m 'Short version description'
-git push origin version-2.0.2-alpha2
-```
-
-* Update version info that will be built into the application:
+* Update version info that will be built into the application
  
 ```bash
- ./release/make_version.py
+ ./release/make_version.py 2.0.2-alpha2
 ```
-
-The script searches for the latest git tag having the format described above, then it extracts version numbers from the tag and puts them into files `version.pri`, `version.rc` and `version.txt`.
-
-`COMMITS` version number is calculated as a number of commits since the release tag. When a new release tag is created the `COMMITS` number is reset. `COMMITS` identifies intermediate (bugfix) releases between tagged releases. E.g.: `2.0.0.13-alpha0 -> ... -> 2.0.0.42-alpha0 -> 2.0.1.0-alpha1`
 
 * Push updated version info to be able to build package having the same version on other platforms:
 
@@ -61,4 +44,11 @@ git pull --prune --tags
 git pull
 ./scripts/build_release.sh
 ./scripts/make_package_macos.sh
+```
+
+* Make new release tag
+
+```bash
+git tag -a v2.0.2-alpha2 -m 'Short version description'
+git push origin v2.0.2-alpha2
 ```
