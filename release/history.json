@@ -1,0 +1,52 @@
+{
+  "history": [
+    {
+      "version": "2.0.2-alpha2",
+      "date": "2018-09-27",
+      "changes": [
+        {
+          "text": "Multicaustic function."
+        },
+        {
+          "text": "New element: Thick Lens."
+        },
+        {
+          "text": "Interface elements (surfaces): Normal, Brewster, Tilted, Spherical."
+        }
+      ]
+    },
+    {
+      "version": "2.0.1-alpha1",
+      "date": "2018-06-05",
+      "changes": [
+        {
+          "text": "Gaussian Beam Calculator tool with beam plotting ability."
+        },
+        {
+          "text": "It is able to append several pumps and activate them in course."
+        },
+        {
+          "text": "Global schema parameters driven by custom Lua formulas."
+        },
+        {
+          "text": "It's able to link elements' parameters to global schema parameters to change them in a complex way."
+        }
+      ]
+    },
+    {
+      "version": "2.0.0-alpha0",
+      "date": "2017-12-27",
+      "changes": [
+        {
+          "text": "The first preview release having Caustic and Stability Map functions."
+        },
+        {
+          "text": "New json-based format of schema files."
+        },
+        {
+          "text": "Can read schema files of version 1 (only elements, no function windows)."
+        }
+      ]
+    }
+  ]
+}
