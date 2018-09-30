@@ -434,8 +434,9 @@ void PlotFuncWindow::restoreView(int key)
 QString PlotFuncWindow::displayWindowTitle() const
 {
     if (_windowIndex > 0)
-        return QString("%1 (%2)").arg(function()->name(), _windowIndex);
+        return QString("%1 (%2)").arg(function()->name()).arg(_windowIndex);
     return function()->name();
 }
+
 
 

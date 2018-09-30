@@ -631,7 +631,7 @@ namespace ElemBrewsterPlateLayout {
     DECLARE_ELEMENT_LAYOUT_END
 
     ELEMENT_LAYOUT_INIT {
-        HW = 15; _slopeAngle = 40; _slope = SlopePlus;
+        HW = 15; HH = 40; _slopeAngle = 40; _slope = SlopePlus;
     }
 
     ELEMENT_LAYOUT_PAINT {

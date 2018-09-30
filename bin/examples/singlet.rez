@@ -15,6 +15,10 @@
                 "L": {
                     "unit": "cm",
                     "value": 5
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
                 }
             },
             "title": "Distance from light source to lens",
@@ -43,6 +47,10 @@
                 "L": {
                     "unit": "cm",
                     "value": 7
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
                 }
             },
             "title": "",
@@ -81,5 +89,63 @@
     "schema_version": "2.0",
     "trip_type": "SP",
     "windows": [
+        {
+            "function": {
+                "args": [
+                    {
+                        "element_index": 0,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "cm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "cm",
+                                "value": 0.05
+                            },
+                            "stop": {
+                                "unit": "cm",
+                                "value": 5
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 2,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "cm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "cm",
+                                "value": 0.05
+                            },
+                            "stop": {
+                                "unit": "cm",
+                                "value": 7.000000000000001
+                            },
+                            "use_step": false
+                        }
+                    }
+                ]
+            },
+            "type": "Multicaustic",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "window_index": 0,
+                "x_max": 121.2,
+                "x_min": -1.2,
+                "y_max": 24364.416145290357,
+                "y_min": -3673.4124720336167
+            }
+        }
     ]
 }
