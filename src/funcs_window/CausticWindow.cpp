@@ -12,7 +12,6 @@
 
 CausticWindow::CausticWindow(Schema *schema) : PlotFuncWindowStorable(new CausticFunction(schema))
 {
-    setTitleAndIcon(function()->name(), ":/toolbar/func_caustic");
 }
 
 bool CausticWindow::configureInternal()

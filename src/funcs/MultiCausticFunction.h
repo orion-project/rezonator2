@@ -16,6 +16,7 @@ public:
 
     void calculate() override;
     bool hasOptions() const override { return true; }
+    const char* iconPath() const override { return ":/toolbar/func_multi_caustic"; }
     int resultCount(Z::WorkPlane plane) const override;
     const PlotFuncResult& result(Z::WorkPlane plane, int index) const override;
 

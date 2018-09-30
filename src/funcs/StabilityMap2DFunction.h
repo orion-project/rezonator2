@@ -17,6 +17,7 @@ public:
     void calculate() override;
     bool hasOptions() const override { return true; }
     void loadPrefs() override;
+    const char* iconPath() const override { return ":/toolbar/func_stab_map_2d"; }
 
 private:
     Z::Variable _paramX, _paramY;

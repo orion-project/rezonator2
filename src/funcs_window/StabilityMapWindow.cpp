@@ -60,7 +60,6 @@ void StabilityMapOptionsPanel::functionModeChanged(int mode)
 StabilityMapWindow::StabilityMapWindow(Schema *schema) :
     PlotFuncWindowStorable(new StabilityMapFunction(schema))
 {
-    setTitleAndIcon(function()->name(), ":/toolbar/func_stab_map");
     createControl();
 }
 

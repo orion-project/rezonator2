@@ -26,6 +26,8 @@ enum PlotWindowStatusPanels
 
 PlotFuncWindow::PlotFuncWindow(PlotFunction *func) : SchemaMdiChild(func->schema()), _function(func)
 {
+    setTitleAndIcon(function()->name(), function()->iconPath());
+
     createContent();
     createActions();
     createMenuBar();

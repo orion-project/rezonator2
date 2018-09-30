@@ -23,6 +23,7 @@ public:
     void calculate() override;
     bool hasOptions() const override { return true; }
     QString calculatePoint(const double& arg) override;
+    const char* iconPath() const override { return ":/toolbar/func_caustic"; }
 
     Mode mode() const { return _mode; }
     void setMode(Mode mode) { _mode = mode; }

@@ -75,6 +75,10 @@ public:
     /// Defines if function can calculate notable values. See @ref calculateNotables().
     virtual bool hasNotables() const { return false; }
 
+    /// Returns a path to function icon.
+    /// Icon can be used to display in window title or menus.
+    virtual const char* iconPath() const { return ""; }
+
     /// Calculate some notable values.
     /// E.g. for stability maps these values are stability boundaries,
     /// for caustic these are waist radius and position.
