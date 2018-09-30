@@ -384,19 +384,26 @@ void ProjectWindow::closeEvent(QCloseEvent* ce)
 {
     QMainWindow::closeEvent(ce);
 
-#ifdef Q_OS_MAC
-    // On MacOS when QMenuBar::setNativeMenuBar(false) this function
-    // is called twice for some reason, but we want to process it only once.
-    if (menuBar()->isNativeMenuBar()) {
-        if (_closeEventProcessed) return;
-        _closeEventProcessed = true;
-    }
-#endif
+    // Workaround: on MacOS this function is called twice for some reason,
+    // but we want to process it only once. This solution can handle it.
 
-    if (_operations->canClose())
+    if (_forceClosing) {
         ce->accept();
-    else
-        ce->ignore();
+        return;
+    }
+
+    ce->ignore();
+
+    if (_closingInProgress) return;
+
+    _closingInProgress = true;
+    QTimer::singleShot(0, [&](){
+        if (_operations->canClose()) {
+            _forceClosing = true;
+            close();
+        }
+        _closingInProgress = false;
+    });
 }
 
 void ProjectWindow::settingsChanged()

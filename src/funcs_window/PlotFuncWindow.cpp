@@ -24,9 +24,14 @@ enum PlotWindowStatusPanels
     STATUS_PANELS_COUNT,
 };
 
+QMap<QString, int> PlotFuncWindow::_windowIndeces;
+
 PlotFuncWindow::PlotFuncWindow(PlotFunction *func) : SchemaMdiChild(func->schema()), _function(func)
 {
-    setTitleAndIcon(function()->name(), function()->iconPath());
+    _windowIndex = _windowIndeces[function()->name()];
+    _windowIndeces[function()->name()] = _windowIndex+1;
+
+    setTitleAndIcon(displayWindowTitle(), function()->iconPath());
 
     createContent();
     createActions();
@@ -425,4 +430,12 @@ void PlotFuncWindow::restoreView(int key)
         _centerCursorRequested = true;
     }
 }
+
+QString PlotFuncWindow::displayWindowTitle() const
+{
+    if (_windowIndex > 0)
+        return QString("%1 (%2)").arg(function()->name(), _windowIndex);
+    return function()->name();
+}
+
 

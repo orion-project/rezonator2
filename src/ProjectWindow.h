@@ -82,7 +82,8 @@ private:
     Ori::Widgets::MdiToolBar* _mdiToolbar;
     Ori::MruFileList *_mruList;
     SchemaViewWindow* _schemaWindow;
-    bool _closeEventProcessed = false;
+    bool _forceClosing = false;
+    bool _closingInProgress = false;
 
     void createActions();
     void createMenuBar();

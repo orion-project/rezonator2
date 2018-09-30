@@ -69,6 +69,9 @@ protected slots:
 protected:
     PlotFunction* _function;
     Plot* _plot;
+    int _windowIndex = 0;
+
+    static QMap<QString, int> _windowIndeces;
 
     QMenu *menuPlot, *menuLimits, *menuFormat;
 
@@ -110,6 +113,8 @@ protected:
     void updateGraphs(Z::WorkPlane);
 
     void showInfo(const QString& text, const QString& icon = QString());
+
+    QString displayWindowTitle() const;
 
     QPen getLineSettings(Z::WorkPlane);
 
