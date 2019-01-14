@@ -100,18 +100,30 @@ void PlotFuncWindow::createMenuBar()
 
 void PlotFuncWindow::createToolBar()
 {
-    _buttonFrozenInfo = new FrozenStateButton;
-    _buttonFrozenInfo->setToolTip(tr("Frozen info", "Function actions"));
-    _buttonFrozenInfo->setIcon(QIcon(":/toolbar/frozen_info"));
+    _buttonFrozenInfo = new FrozenStateButton(tr("Frozen info"), "frozen_info");
 
-    populate(toolbar(), {
-        actnUpdate, actnUpdateParams, nullptr,
-        actnFreeze, _buttonFrozenInfo, nullptr,
-        actnShowT, actnShowS, actnShowTS, nullptr,
-        actnAutolimits, actnZoomIn, actnZoomOut, nullptr,
-        actnAutolimitsX, actnZoomInX, actnZoomOutX, nullptr,
-        actnAutolimitsY, actnZoomInY, actnZoomOutY,
-    });
+    auto t = toolbar();
+    t->addAction(actnUpdate);
+    t->addAction(actnUpdateParams);
+    t->addSeparator();
+    t->addAction(actnFreeze);
+    actnFrozenInfo = t->addWidget(_buttonFrozenInfo);
+    t->addSeparator();
+    t->addAction(actnShowT);
+    t->addAction(actnShowS);
+    t->addAction(actnShowTS);
+    t->addSeparator();
+    t->addAction(actnAutolimits);
+    t->addAction(actnZoomIn);
+    t->addAction(actnZoomOut);
+    t->addSeparator();
+    t->addAction(actnAutolimitsX);
+    t->addAction(actnZoomInX);
+    t->addAction(actnZoomOutX);
+    t->addSeparator();
+    t->addAction(actnAutolimitsY);
+    t->addAction(actnZoomInY);
+    t->addAction(actnZoomOutY);
 }
 
 void PlotFuncWindow::createContent()
@@ -382,7 +394,7 @@ void PlotFuncWindow::freeze(bool frozen)
     _frozen = frozen;
     actnUpdate->setEnabled(!_frozen);
     actnUpdateParams->setEnabled(!_frozen);
-    _buttonFrozenInfo->setVisible(_frozen);
+    actnFrozenInfo->setVisible(_frozen);
     _buttonFrozenInfo->setInfo(InfoFuncSummary(schema()).calculate());
     _leftPanel->setOptionsPanelEnabled(!_frozen);
     if (!_frozen and _needRecalc)

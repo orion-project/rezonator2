@@ -1004,7 +1004,6 @@ void SchemaLayout::populate()
     fullW += axisMargin + axisMargin;
     _axis->setHalfSize(fullW/2, 5);
     _axis->setX(fullW/2 - firstHW - axisMargin);
-
     centerView();
     setUpdatesEnabled(true);
 }
