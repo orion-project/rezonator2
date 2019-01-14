@@ -4,7 +4,7 @@ bin/rezonator
 bin/rezonator.app
 bin/rezonator.exe
 *.autosave
-*.user
+*.user*
 *.exe
 *.log
 *.pyc

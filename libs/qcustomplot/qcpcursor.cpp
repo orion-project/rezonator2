@@ -51,6 +51,9 @@ void QCPCursor::mouseRelease(QMouseEvent*)
 {
     _dragX = false;
     _dragY = false;
+#ifdef Q_OS_MAC
+    parentPlot()->skipDragging = false;
+#endif
 }
 
 void QCPCursor::mouseMove(QMouseEvent *evt)
@@ -94,6 +97,9 @@ void QCPCursor::mouseMove(QMouseEvent *evt)
             _canDragY = (_shape == HorizontalLine || _shape == CrossLines)
                     && mouseX > r->left()
                     && mouseX < r->right() && qAbs(cursorY - mouseY) <= 2;
+#ifdef Q_OS_MAC
+            parentPlot()->skipDragging = _canDragX or _canDragY;
+#endif
             QApplication::restoreOverrideCursor();
             if (_canDragX && _canDragY)
                 QApplication::setOverrideCursor(Qt::SizeAllCursor);

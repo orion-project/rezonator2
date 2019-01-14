@@ -12488,8 +12488,13 @@ int QCPAxisRect::calculateAutoMargin(QCP::MarginSide side)
 */
 void QCPAxisRect::mousePressEvent(QMouseEvent *event)
 {
+#ifdef Q_OS_MAC
+  auto button = Qt::LeftButton;
+#else
+  auto button = Qt::MiddleButton;
+#endif
   mDragStart = event->pos(); // need this even when not LeftButton is pressed, to determine in releaseEvent whether it was a full click (no position change between press and release)
-  if (event->buttons() & Qt::MiddleButton)
+  if (event->buttons() & button)
   {
     mDragging = true;
     // initialize antialiasing backup in case we start dragging:
@@ -12519,7 +12524,7 @@ void QCPAxisRect::mousePressEvent(QMouseEvent *event)
 void QCPAxisRect::mouseMoveEvent(QMouseEvent *event)
 {
   // Mouse range dragging interaction:
-  if (mDragging && mParentPlot->interactions().testFlag(QCP::iRangeDrag))
+  if (mDragging && mParentPlot->interactions().testFlag(QCP::iRangeDrag) && !mParentPlot->skipDragging)
   {
     if (mRangeDrag.testFlag(Qt::Horizontal))
     {
