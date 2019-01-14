@@ -30,6 +30,10 @@ class PlotFuncWindow;
 class PlotParamsPanel;
 class SchemaStorable;
 
+enum class ElemDeletionReaction {
+    None,
+    Close
+};
 
 class PlotFuncWindow : public SchemaMdiChild
 {
@@ -54,10 +58,15 @@ public:
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return QList<QMenu*>() << menuPlot << menuLimits /* TODO:NEXT-VER << menuFormat*/; }
 
+    // Implementation of SchemaListener
     void schemaChanged(Schema*) override;
+    void elementDeleting(Schema*, Element*) override;
 
     void storeView(int key);
     void restoreView(int key);
+
+    /// Returns what will happen if one or all the elements are deleted.
+    virtual ElemDeletionReaction reactElemDeletion(const Elements&);
 
 public slots:
     void update();
@@ -123,6 +132,8 @@ protected:
     virtual QWidget* makeOptionsPanel() { return nullptr; }
 
     virtual void fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *graph, int resultIndex);
+
+    void disableAndClose();
 
 private slots:
     void showT();

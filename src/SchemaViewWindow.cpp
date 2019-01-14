@@ -2,7 +2,9 @@
 #include "ElementPropsDialog.h"
 #include "SchemaViewWindow.h"
 #include "CalcManager.h"
+#include "WindowsManager.h"
 #include "core/ElementsCatalog.h"
+#include "funcs_window/PlotFuncWindow.h"
 #include "widgets/SchemaLayout.h"
 #include "widgets/SchemaElemsTable.h"
 #include "helpers/OriWidgets.h"
@@ -125,12 +127,40 @@ void SchemaViewWindow::actionElemDelete()
     Elements elements = _table->selection();
     if (elements.isEmpty()) return;
 
-    QString elemTitles;
+    QStringList confirmation;
+    confirmation << tr("Deleting elements:") << "";
+
+    // List deleting elements
     for (int i = 0; i < elements.size(); i++)
-        elemTitles += elements[i]->displayLabelTitle() + "\n";
-    if (Ori::Dlg::ok(tr("Confirm deletion:\n\n%1").arg(elemTitles.trimmed())))
-        for (int i = 0; i < elements.size(); i++)
-            schema()->deleteElement(elements[i], true);
+        confirmation << QString("<b>%1</b>").arg(elements[i]->displayLabelTitle());
+
+    // Check dependent windows
+    bool warningAdded = false;
+    for (auto window : WindowsManager::instance().schemaWindows(schema()))
+    {
+        auto plotWindow = dynamic_cast<PlotFuncWindow*>(window);
+        if (!plotWindow) continue;
+        auto reaction = plotWindow->reactElemDeletion(elements);
+        if (reaction == ElemDeletionReaction::Close)
+        {
+            if (!warningAdded)
+            {
+                warningAdded = true;
+                confirmation << ""
+                             << tr("Some of the opened function windows")
+                             << tr("depend on listed elements and will close:")
+                             << "";
+            }
+            confirmation << QString("<b>%1</b>").arg(plotWindow->windowTitle());
+        }
+    }
+
+    confirmation << "" <<  tr("Confirm deletion.");
+
+    if (!Ori::Dlg::ok(confirmation.join("<br>"))) return;
+
+    for (int i = 0; i < elements.size(); i++)
+        schema()->deleteElement(elements[i], true);
 }
 
 //------------------------------------------------------------------------------

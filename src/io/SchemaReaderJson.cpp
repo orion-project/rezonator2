@@ -371,8 +371,12 @@ void SchemaReaderJson::readWindow(const QJsonObject& root)
     SchemaWindow* window = ctor(_schema);
     ISchemaWindowStorable* storable = dynamic_cast<ISchemaWindowStorable*>(window);
     if (!storable)
-        return _report.warning(QString(
+    {
+        _report.warning(QString(
             "Window of type '%1' is stored in file but it is not known how to load it, skipped.").arg(type));
+        delete window;
+        return;
+    }
 
     QString res = storable->storableRead(root);
     if (res.isEmpty())

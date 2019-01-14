@@ -21,6 +21,7 @@ protected:
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;
     QString writeFunction(QJsonObject& root) override;
+
 private:
     QAction *actnStabilityAutolimits;
 

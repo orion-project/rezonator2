@@ -31,6 +31,10 @@
                 "L": {
                     "unit": "mm",
                     "value": 80
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
                 }
             },
             "title": "",
@@ -56,6 +60,8 @@
     "formulas": [
     ],
     "param_links": [
+    ],
+    "pumps": [
     ],
     "schema_version": "2.0",
     "trip_type": "SW",
@@ -89,7 +95,47 @@
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
                 "ts_flipped": false,
-                "ts_mode": "T+S"
+                "ts_mode": "T+S",
+                "x_max": 202,
+                "x_min": -2,
+                "y_max": 6.143876665632598,
+                "y_min": -107.02142852926728
+            }
+        },
+        {
+            "function": {
+                "arg": {
+                    "element_index": 1,
+                    "param": "L",
+                    "range": {
+                        "points": 100,
+                        "start": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 4.2
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 420
+                        },
+                        "use_step": false
+                    }
+                },
+                "mode": "BeamRadius"
+            },
+            "type": "Caustic",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 80.8,
+                "x_min": -0.8,
+                "y_max": 243.9983227393093,
+                "y_min": 82.08429485825303
             }
         }
     ]

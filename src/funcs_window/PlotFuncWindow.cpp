@@ -438,5 +438,21 @@ QString PlotFuncWindow::displayWindowTitle() const
     return function()->name();
 }
 
+ElemDeletionReaction PlotFuncWindow::reactElemDeletion(const Elements& elems)
+{
+    return elems.contains(function()->arg()->element)
+            ? ElemDeletionReaction::Close
+            : ElemDeletionReaction::None;
+}
 
+void PlotFuncWindow::elementDeleting(Schema*, Element* elem)
+{
+    if (function()->arg()->element == elem)
+        disableAndClose();
+}
 
+void PlotFuncWindow::disableAndClose()
+{
+    _frozen = true; // disable updates
+    QTimer::singleShot(0, [this]{this->close();});
+}

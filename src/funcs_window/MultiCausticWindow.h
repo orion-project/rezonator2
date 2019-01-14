@@ -17,6 +17,7 @@ public:
 
     // inherits from SchemaListener
     void elementChanged(Schema*, Element*) override;
+    void elementDeleting(Schema*, Element*) override;
 
 protected:
     // Implementation of PlotFuncWindow
@@ -24,6 +25,7 @@ protected:
     bool configureInternal() override;
     void fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *graph, int resultIndex) override;
     void afterUpdate() override;
+    ElemDeletionReaction reactElemDeletion(const Elements&) override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;

@@ -2,6 +2,11 @@
 #include "WindowsManager.h"
 #include "core/Protocol.h"
 #include "funcs/InfoFunctions.h"
+#include "funcs/CausticFunction.h"
+#include "funcs/MultiCausticFunction.h"
+#include "funcs/StabilityMapFunction.h"
+#include "funcs/StabilityMap2DFunction.h"
+#include "funcs_window/PlotFuncWindow.h"
 #include "funcs_window/InfoFuncWindow.h"
 #include "funcs_window/CausticWindow.h"
 #include "funcs_window/MultiCausticWindow.h"
@@ -59,12 +64,12 @@ void CalcManager::funcMultBkwd()
 
 void CalcManager::funcStabMap()
 {
-    showPlotFunc<StabilityMapWindow>();
+    showPlotFunc<StabilityMapFunction>();
 }
 
 void CalcManager::funcStabMap2d()
 {
-    showPlotFunc<StabilityMap2DWindow>();
+    showPlotFunc<StabilityMap2DFunction>();
 }
 
 void CalcManager::funcRepRate()
@@ -75,12 +80,12 @@ void CalcManager::funcRepRate()
 
 void CalcManager::funcCaustic()
 {
-    showPlotFunc<CausticWindow>();
+    showPlotFunc<CausticFunction>();
 }
 
 void CalcManager::funcMultiCaustic()
 {
-    showPlotFunc<MultiCausticWindow>();
+    showPlotFunc<MultiCausticFunction>();
 }
 
 void CalcManager::funcShowMatrices()
@@ -109,17 +114,26 @@ void CalcManager::showInfoFunc(InfoFunction* func)
     InfoFuncWindow::open(func, _parent);
 }
 
-template <class TWindow> void CalcManager::showPlotFunc()
+template <class TFunction> void CalcManager::showPlotFunc()
 {
     RETURN_IF_SCHEMA_EMPTY
-    auto wnd = new TWindow(schema());
-    if (wnd->configure())
+
+    auto ctor = WindowsManager::getConstructor(TFunction::_alias_());
+    if (!ctor) return;
+
+    auto wnd = ctor(schema());
+    if (!wnd) return;
+
+    auto plotWnd = dynamic_cast<PlotFuncWindow*>(wnd);
+    if (!plotWnd or !plotWnd->configure())
     {
-        wnd->function()->loadPrefs();
-        WindowsManager::instance().show(wnd);
-        wnd->requestAutolimits();
-        wnd->requestCenterCursor();
-        wnd->update();
+        delete wnd;
+        return;
     }
-    else delete wnd;
+
+    plotWnd->function()->loadPrefs();
+    WindowsManager::instance().show(wnd);
+    plotWnd->requestAutolimits();
+    plotWnd->requestCenterCursor();
+    plotWnd->update();
 }

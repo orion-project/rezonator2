@@ -16,6 +16,10 @@ public:
 protected:
     // Implementation of PlotFuncWindow
     bool configureInternal() override;
+    ElemDeletionReaction reactElemDeletion(const Elements&) override;
+
+    // Implementation of SchemaListener
+    void elementDeleting(Schema*, Element*) override;
 };
 
 #endif // WINDOW_STABILITY_MAP_2D_H

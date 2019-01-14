@@ -102,6 +102,28 @@ void MultiCausticWindow::elementChanged(Schema*, Element* elem)
         }
 }
 
+void MultiCausticWindow::elementDeleting(Schema*, Element* elem)
+{
+    bool needUpdate = false;
+    auto args = function()->args();
+    for (int i = 0; i < args.size(); i++)
+    {
+        if (args.at(i).element == elem)
+        {
+            needUpdate = true;
+            args.remove(i);
+            break;
+        }
+    }
+    if (needUpdate)
+    {
+        if (args.empty())
+            disableAndClose();
+        else
+            function()->setArgs(args);
+    }
+}
+
 QString MultiCausticWindow::readFunction(const QJsonObject& root)
 {
     QVector<Z::Variable> args;
@@ -125,4 +147,17 @@ QString MultiCausticWindow::writeFunction(QJsonObject& root)
         argsJson.append(Z::IO::Json::writeVariable(&arg, schema()));
     root["args"] = argsJson;
     return QString();
+}
+
+ElemDeletionReaction MultiCausticWindow::reactElemDeletion(const Elements& elems)
+{
+    int deletingArgsCount = 0;
+    for (const Z::Variable& arg : function()->args())
+    {
+        if (elems.contains(arg.element))
+            deletingArgsCount++;
+    }
+    if (deletingArgsCount == function()->args().size())
+        return ElemDeletionReaction::Close;
+    return ElemDeletionReaction::None;
 }
