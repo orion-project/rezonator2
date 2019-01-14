@@ -174,29 +174,9 @@ ElementInterface::ElementInterface()
 }
 
 //------------------------------------------------------------------------------
-//                              ElementsNamer
-
-QString ElementsNamer::generateLabel(const QString& prefix)
-{
-    int index = _autoLabels[prefix];
-    _autoLabels.insert(prefix, ++index);
-    return prefix + QString::number(index);
-}
-
-void ElementsNamer::reset()
-{
-    _autoLabels.clear();
-}
-
-//------------------------------------------------------------------------------
 //                                Z::Utils
 namespace Z {
 namespace Utils {
-
-void generateLabel(Element *elem)
-{
-    elem->setLabel(ElementsNamer::instance().generateLabel(elem->labelPrefix()));
-}
 
 ParameterFilter* defaultParamFilter()
 {

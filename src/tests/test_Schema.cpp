@@ -3,6 +3,9 @@
 
 #include <memory>
 
+#pragma GCC diagnostic ignored "-Wweak-vtables"
+#pragma GCC diagnostic ignored "-Wpadded"
+
 namespace Z {
 namespace Tests {
 namespace SchemaTests {
@@ -32,6 +35,7 @@ DECLARE_ELEMENT(TestElement, Element)
         TEST_LOG("~TestElement() " + label())
         test->data().insert(label(), true);
     }
+    DEFAULT_LABEL("hhh")
 DECLARE_ELEMENT_END
 
 #define PREPARE_SCHEMA_ELEMS(elem_count)\
@@ -82,6 +86,42 @@ TEST_METHOD(destructor_with_no_events)
     delete schema;
     ASSERT_IS_NULL(listener.schema)
     ASSERT_LISTENER_NO_EVENTS
+}
+
+//------------------------------------------------------------------------------
+
+DECLARE_ELEMENT(LabeledElement1, Element) DEFAULT_LABEL("hhh") DECLARE_ELEMENT_END
+DECLARE_ELEMENT(LabeledElement2, Element) DEFAULT_LABEL("ggg") DECLARE_ELEMENT_END
+
+TEST_METHOD(generateLabel_first_elem)
+{
+    Schema s;
+    auto e1 = new LabeledElement1;
+    s.insertElement(e1);
+    s.generateLabel(e1);
+    ASSERT_EQ_STR(e1->label(), "hhh1");
+
+    auto e2 = new LabeledElement2;
+    s.insertElement(e2);
+    s.generateLabel(e2);
+    ASSERT_EQ_STR(e2->label(), "ggg1");
+}
+
+TEST_METHOD(generateLabel_next_elem)
+{
+    Schema s;
+    s.insertElement(new LabeledElement1);
+    s.insertElement(new LabeledElement2);
+    s.generateLabel(s.element(0));
+    s.generateLabel(s.element(1));
+
+    LabeledElement1 e1;
+    s.generateLabel(&e1);
+    ASSERT_EQ_STR(e1.label(), "hhh2");
+
+    LabeledElement2 e2;
+    s.generateLabel(&e2);
+    ASSERT_EQ_STR(e2.label(), "ggg2");
 }
 
 //------------------------------------------------------------------------------
@@ -417,6 +457,8 @@ TEST_GROUP("Schema",
     ADD_TEST(destructor_must_raise_event),
     ADD_TEST(destructor_with_no_events),
     ADD_TEST(destructor_must_delete_elements),
+    ADD_TEST(generateLabel_first_elem),
+    ADD_TEST(generateLabel_next_elem),
     ADD_TEST(raise_all_events),
     ADD_TEST(set_wavelength_must_raise_event),
     ADD_TEST(enabledCount),

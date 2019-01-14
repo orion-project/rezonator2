@@ -309,3 +309,21 @@ void Schema::relinkInterfaces()
             iface->paramIor2()->setValue(1);
     }
 }
+
+void Schema::generateLabel(Element* elem)
+{
+    int maxElemNum = 0;
+    auto prefix = elem->labelPrefix();
+    for (const Element* e : _items)
+    {
+        if (e != elem and e->label().startsWith(prefix))
+        {
+            QStringRef ref(&e->label(), prefix.length(), e->label().length() - prefix.length());
+            bool isInt = false;
+            int elemNum = ref.toInt(&isInt);
+            if (isInt && elemNum > maxElemNum)
+                maxElemNum = elemNum;
+        }
+    }
+    elem->setLabel(QString("%1%2").arg(prefix).arg(maxElemNum+1));
+}

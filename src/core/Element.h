@@ -251,30 +251,11 @@ private:
 };
 
 //------------------------------------------------------------------------------
-/**
-    Generator of automatical labels for elements.
-    Automatical label consist of a prefix like 'M', 'L', etc. and index.
-*/
-class ElementsNamer : public Singleton<ElementsNamer>
-{
-public:
-    QString generateLabel(const QString& prefix);
-    void reset();
-
-private:
-    QMap<QString, int> _autoLabels;
-
-    friend class Singleton<ElementsNamer>;
-};
-
-
-//------------------------------------------------------------------------------
 //                                Z::Utils
 
 namespace Z {
 namespace Utils {
 
-void generateLabel(Element *elem);
 inline bool isRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
 inline ElementRange* asRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
 inline bool isInterface(Element *elem) { return dynamic_cast<ElementInterface*>(elem); }

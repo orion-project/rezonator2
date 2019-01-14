@@ -2,6 +2,10 @@
 #include "../core/Element.h"
 #include "TestUtils.h"
 
+#pragma GCC diagnostic ignored "-Wweak-vtables"
+#pragma GCC diagnostic ignored "-Wpadded"
+#pragma GCC diagnostic ignored "-Wunused-member-function"
+
 namespace Z {
 namespace Tests {
 namespace ElementTests {
@@ -63,33 +67,6 @@ TEST_METHOD(Element_ctor_generates_id)
     ASSERT_IS_TRUE(e1.id() > 0)
     ASSERT_IS_TRUE(e2.id() > e1.id())
     ASSERT_IS_TRUE(e3.id() > e2.id())
-}
-
-//------------------------------------------------------------------------------
-
-TEST_METHOD(ElementsNamer_generateLabel)
-{
-    ElementsNamer::instance().reset();
-    ASSERT_EQ_STR(ElementsNamer::instance().generateLabel("L"), "L1");
-    ASSERT_EQ_STR(ElementsNamer::instance().generateLabel("M"), "M1");
-    ASSERT_EQ_STR(ElementsNamer::instance().generateLabel("L"), "L2");
-    ASSERT_EQ_STR(ElementsNamer::instance().generateLabel("M"), "M2");
-}
-
-TEST_METHOD(ElementsNamer_generateLabel_via_helper)
-{
-    DECLARE_ELEMENT(TestElementWithLabel, Element)
-        DEFAULT_LABEL("TestElement")
-    DECLARE_ELEMENT_END
-
-    TestElementWithLabel e1, e2;
-    ASSERT_IS_TRUE(e1.label().isEmpty())
-    ASSERT_IS_TRUE(e2.label().isEmpty())
-    ElementsNamer::instance().reset();
-    Z::Utils::generateLabel(&e1);
-    Z::Utils::generateLabel(&e2);
-    ASSERT_EQ_STR(e1.label(), "TestElement1");
-    ASSERT_EQ_STR(e2.label(), "TestElement2");
 }
 
 //------------------------------------------------------------------------------
@@ -275,9 +252,6 @@ TEST_METHOD(ElementOwner_setParam_must_raise_event)
 
 TEST_GROUP("Element",
     ADD_TEST(Element_ctor_generates_id),
-
-    ADD_TEST(ElementsNamer_generateLabel),
-    ADD_TEST(ElementsNamer_generateLabel_via_helper),
 
     ADD_TEST(Element_must_add_param_in_ctor),
     ADD_TEST(Element_must_listen_its_params),

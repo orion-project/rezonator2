@@ -237,6 +237,10 @@ public:
     Z::PumpsList* pumps() { return &_pumps; }
     Z::PumpParams* activePump();
 
+    /// Makes automatic label for given element.
+    /// Automatical label consist of a prefix like 'M', 'L', etc. and index.
+    void generateLabel(Element* elem);
+
 private:
     Elements _items;
     SchemaEvents _events;

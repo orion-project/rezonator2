@@ -172,7 +172,7 @@ void SchemaViewWindow::elementCreated(Schema*, Element *elem)
     {
         // Disable elemChanged event from inside of elemCreated
         ElementLocker locker(elem, false);
-        Z::Utils::generateLabel(elem);
+        schema()->generateLabel(elem);
     }
     if (!_pasteMode && Settings::instance().editNewElem)
         // All clients should process elementCreated event before elem will be changed,

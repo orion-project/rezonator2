@@ -37,6 +37,10 @@
                 "L": {
                     "unit": "mm",
                     "value": 80
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
                 }
             },
             "title": "",
