@@ -258,3 +258,6 @@ SOURCES += \
     src/funcs_window/FuncOptionsPanel.cpp \
     src/io/ISchemaWindowStorable.cpp \
     src/StartWindow.cpp
+
+DISTFILES += \
+    src/StartWindow.qss

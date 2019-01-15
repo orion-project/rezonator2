@@ -3,6 +3,10 @@
 
 #include <QWidget>
 
+QT_BEGIN_NAMESPACE
+class QBoxLayout;
+QT_END_NAMESPACE
+
 class StartWindow : public QWidget
 {
     Q_OBJECT
@@ -15,6 +19,7 @@ private:
     QWidget* makeMruPanel();
     QWidget* makeTipsPanel();
     QWidget* makeToolsPanel();
+    QWidget* makePanel(QBoxLayout* layout);
     QWidget* makeHeader(const QString& title);
     QWidget* makeButton(const QString& iconPath, const QString& title, const char* slot);
 
@@ -22,6 +27,7 @@ private:
 
 private slots:
     void toolGaussCalc();
+    void editStyleSheet();
 };
 
 #endif // START_WINDOW_H

@@ -2,17 +2,22 @@
 #include "ProjectWindow.h"
 #include "GaussCalculatorWindow.h"
 #include "core/CommonTypes.h"
+#include "widgets/Appearance.h"
 #include "helpers/OriWindows.h"
 #include "helpers/OriLayouts.h"
 
+#include <QApplication>
 #include <QLabel>
 #include <QPushButton>
+#include <QResource>
 #include <QToolButton>
+#include <QPlainTextEdit>
 
 using namespace Ori::Layouts;
 
 StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
 {
+    setWindowTitle(qApp->applicationName());
     Ori::Wnd::setWindowIcon(this, ":/window_icons/main");
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -24,6 +29,9 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
         }),
         makeTipsPanel()
     }).useFor(this);
+
+    setStyleSheet(QString::fromLatin1(reinterpret_cast<const char*>(
+        QResource(":/style/StartWindow").data())));
 }
 
 QWidget* StartWindow::makeButton(const QString& iconPath, const QString& title, const char* slot)
@@ -40,7 +48,7 @@ QWidget* StartWindow::makeButton(const QString& iconPath, const QString& title, 
 
 QWidget* StartWindow::makeActionsPanel()
 {
-    return LayoutV({
+    return makePanel(LayoutV({
         makeHeader(tr("Actions")),
         makeButton(":/toolbar/schema_open", tr("Open Schema File"), nullptr),
         makeButton(":/toolbar/schema_open", tr("Open Example Schema"), nullptr), // TODO make different icon
@@ -48,43 +56,51 @@ QWidget* StartWindow::makeActionsPanel()
         makeButton(TripTypes::info(TripType::RR).iconPath(), tr("Create Ring Resonator"), nullptr),
         makeButton(TripTypes::info(TripType::SP).iconPath(), tr("Create Single-pass System"), nullptr),
         Stretch()
-    }).makeWidget();
+    }).boxLayout());
 }
 
 QWidget* StartWindow::makeMruPanel()
 {
-    return LayoutV({
+    return makePanel(LayoutV({
         makeHeader(tr("Open Recent Schema")),
         Stretch()
-    }).makeWidget();
+    }).boxLayout());
 }
 
 QWidget* StartWindow::makeTipsPanel()
 {
-    return LayoutV({
+    return makePanel(LayoutV({
         makeHeader(tr("Whether You Know What")),
         Stretch()
-    }).makeWidget();
+    }).boxLayout());
 }
 
 QWidget* StartWindow::makeToolsPanel()
 {
-    auto buttonGauss = makeButton(":/toolbar/gauss_calculator", tr("Gauss Calculator"), SLOT(toolGaussCalc()));
-
-    return LayoutV({
+    return makePanel(LayoutV({
         makeHeader(tr("Tools")),
-        buttonGauss,
+        makeButton(":/toolbar/gauss_calculator", tr("Gauss Calculator"), SLOT(toolGaussCalc())),
+        makeButton(":/toolbar/protocol", tr("Edit Stylesheet"), SLOT(editStyleSheet())),
         Stretch()
-    }).makeWidget();
+    }).boxLayout());
+}
+
+QWidget* StartWindow::makePanel(QBoxLayout* layout)
+{
+    auto panel = new QWidget;
+    panel->setProperty("role", "panel");
+    panel->setLayout(layout);
+    return panel;
 }
 
 QWidget* StartWindow::makeHeader(const QString& title)
 {
     auto label = new QLabel(title);
-    auto font = label->font();
-    font.setPointSize(font.pointSize() + 3);
-    font.setBold(true);
-    label->setFont(font);
+    label->setProperty("role", "header");
+//    auto font = label->font();
+//    font.setPointSize(font.pointSize() + 3);
+//    font.setBold(true);
+//    label->setFont(font);
     return label;
 }
 
@@ -97,4 +113,31 @@ void StartWindow::makeNewSchema()
 void StartWindow::toolGaussCalc()
 {
     GaussCalculatorWindow::showCalcWindow();
+}
+
+void StartWindow::editStyleSheet()
+{
+    auto editor = new QPlainTextEdit;
+    auto font = editor->font();
+    Z::Gui::adjustCodeEditorFont(font);
+    editor->setFont(font);
+
+    editor->setPlainText(this->styleSheet());
+    auto applyButton = new QPushButton("Apply");
+    connect(applyButton, &QPushButton::clicked, [this, editor]{
+         this->setStyleSheet(editor->toPlainText());
+    });
+
+    auto wnd = LayoutV({
+        editor,
+        LayoutH({
+            Stretch(),
+            applyButton
+        }).setMargin(6)
+    }).setMargin(3).setSpacing(0).makeWidget();
+    wnd->setAttribute(Qt::WA_DeleteOnClose);
+    wnd->setWindowTitle("Stylesheet Editor");
+    wnd->setWindowIcon(QIcon(":/toolbar/protocol"));
+    wnd->resize(600, 600);
+    wnd->show();
 }

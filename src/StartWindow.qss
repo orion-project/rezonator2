@@ -1,0 +1,24 @@
+QToolButton {
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 5px;
+  border-color: white;
+  padding: 5px;
+}
+QToolButton:hover {
+  border-color: silver;
+  background-color: qlineargradient(
+    x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #f6f7fa, stop: 1 #dadbde);
+}
+
+QWidget[role=panel] {
+  background-color: white;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 5px;
+  border-color: silver;
+}
+
+QLabel[role="header"] {
+  font: bold 14pt
+}

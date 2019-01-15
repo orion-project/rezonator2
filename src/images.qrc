@@ -183,4 +183,7 @@
         <file alias="pump_two_sections">../img/drawing/pump_two_sections.png</file>
         <file alias="pump_complex">../img/drawing/pump_complex.png</file>
     </qresource>
+    <qresource prefix="/style">
+        <file alias="StartWindow">StartWindow.qss</file>
+    </qresource>
 </RCC>
