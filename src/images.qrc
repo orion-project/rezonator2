@@ -2,6 +2,7 @@
     <qresource prefix="/toolbar">
         <file alias="catalog">../img/toolbar/elements.svg</file>
         <file alias="copy">../img/toolbar/copy.svg</file>
+        <file alias="copy_all">../img/toolbar/copy_all.svg</file>
         <file alias="cut">../img/toolbar/cut.svg</file>
         <file alias="delete">../img/toolbar/delete.svg</file>
         <file alias="elem_add">../img/toolbar/elem_add.svg</file>

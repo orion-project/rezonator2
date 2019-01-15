@@ -207,8 +207,8 @@ void ProjectWindow::createMenuBar()
     /* TODO:NEXT-VER menuEdit = Ori::Gui::menu(tr("&Edit"), this,
         { actnEditCut, actnEditCopy, actnEditPaste, 0, actnEditSelectAll }); */
 
-    _stylesMenu = new Ori::Widgets::StylesMenu(_styler);
-    _langsMenu = new Ori::Widgets::LanguagesMenu(_translator, ":/toolbar16/langs");
+    _stylesMenu = new Ori::Widgets::StylesMenu(_styler, this);
+    _langsMenu = new Ori::Widgets::LanguagesMenu(_translator, ":/toolbar16/langs", this);
     menuView = new QMenu(tr("&View"), this);
 
     menuFunctions = Ori::Gui::menu(tr("F&unctions"), this,
@@ -283,12 +283,15 @@ void ProjectWindow::updateMenuBar()
 
     // Update View menu
     menuView->clear();
-    auto viewActions = child->viewActions();
-    if (!viewActions.empty())
+    if (child)
     {
-        for (auto action : viewActions)
-            menuView->addAction(action);
-        menuView->addSeparator();
+        auto viewActions = child->viewActions();
+        if (!viewActions.empty())
+        {
+            for (auto action : viewActions)
+                menuView->addAction(action);
+            menuView->addSeparator();
+        }
     }
     menuView->addMenu(_stylesMenu);
     menuView->addMenu(_langsMenu);

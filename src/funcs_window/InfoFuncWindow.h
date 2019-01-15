@@ -35,6 +35,7 @@ private slots:
     void help();
     void processCalc();
     void linkClicked(const class QUrl&);
+    void copyAll();
 
 private:
     QTextBrowser *_editor;

@@ -68,6 +68,8 @@ void InfoFuncWindow::createToolbar()
     actnFrozenInfo = toolbar->addWidget(buttonFrozenInfo = new FrozenStateButton(tr("Frozen info"), "frozen_info"));
     toolbar->addSeparator();
     toolbar->addAction(Ori::Gui::action(tr("Copy"), _editor, SLOT(copy()), ":/toolbar/copy", Qt::Key_Copy));
+    auto actnCopyAll = Ori::Gui::action(tr("Copy All"), this, SLOT(copyAll()), ":/toolbar/copy_all");
+    toolbar->addWidget(Ori::Gui::textToolButton(actnCopyAll));
     toolbar->addSeparator();
     toolbar->addAction(Ori::Gui::action(tr("Help"), this, SLOT(help()), ":/toolbar/help", Qt::Key_Help));
 }
@@ -153,3 +155,7 @@ void InfoFuncWindow::linkClicked(const QUrl& url)
     }
 }
 
+void InfoFuncWindow::copyAll()
+{
+    qApp->clipboard()->setText(_editor->toHtml());
+}

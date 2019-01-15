@@ -16,7 +16,7 @@ MultiCausticWindow::MultiCausticWindow(Schema *schema): PlotFuncWindowStorable(n
 
 void MultiCausticWindow::createActions()
 {
-    _actnElemBoundMarkers = new QAction(tr("Element bound markers"));
+    _actnElemBoundMarkers = new QAction(tr("Element bound markers"), this);
     _actnElemBoundMarkers->setCheckable(true);
     _actnElemBoundMarkers->setChecked(true);
     connect(_actnElemBoundMarkers, &QAction::toggled, this, &MultiCausticWindow::toggleElementBoundMarkers);
