@@ -1,5 +1,6 @@
 #include "GaussCalculatorWindow.h"
 #include "ProjectWindow.h"
+#include "StartWindow.h"
 #include "tests/TestSuite.h"
 #include "tools/OriDebug.h"
 #include "testing/OriTestManager.h"
@@ -28,8 +29,11 @@ int main(int argc, char* argv[])
     }
     else
     {
-        ProjectWindow pw;
-        pw.show();
+        (new StartWindow)->show();
+
+        //ProjectWindow projWindow;
+        //projWindow.show();
+
         res = app.exec();
     }
 

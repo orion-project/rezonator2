@@ -53,6 +53,7 @@ enum ProjectWindowStatusPanels
 
 ProjectWindow::ProjectWindow() : QMainWindow(), SchemaToolWindow(new Schema())
 {
+    setAttribute(Qt::WA_DeleteOnClose);
     Ori::Wnd::setWindowIcon(this, ":/window_icons/main");
 
     loadSettings();

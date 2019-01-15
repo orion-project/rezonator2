@@ -150,7 +150,8 @@ HEADERS += \
     src/funcs/MultiCausticFunction.h \
     src/widgets/VariableRangeEditor.h \
     src/funcs_window/CausticOptionsPanel.h \
-    src/funcs_window/FuncOptionsPanel.h
+    src/funcs_window/FuncOptionsPanel.h \
+    src/StartWindow.h
 	
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -255,4 +256,5 @@ SOURCES += \
     src/funcs/MultiCausticFunction.cpp \
     src/widgets/VariableRangeEditor.cpp \
     src/funcs_window/FuncOptionsPanel.cpp \
-    src/io/ISchemaWindowStorable.cpp
+    src/io/ISchemaWindowStorable.cpp \
+    src/StartWindow.cpp
