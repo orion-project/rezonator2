@@ -63,14 +63,14 @@
     ],
     "pumps": [
         {
-            "is_active": true,
+            "is_active": false,
             "label": "P1",
             "mode": "RayVector",
             "params": {
                 "V": {
-                    "unit": "deg",
-                    "value_s": 2.0000000000000004,
-                    "value_t": 14.999999999999977
+                    "unit": "mrad",
+                    "value_s": 0.016,
+                    "value_t": 0.02
                 },
                 "y": {
                     "unit": "mm",
@@ -86,7 +86,7 @@
             "title": "Geometric pump"
         },
         {
-            "is_active": false,
+            "is_active": true,
             "label": "P2",
             "mode": "Waist",
             "params": {
@@ -96,14 +96,14 @@
                     "value_t": 1
                 },
                 "w_0": {
-                    "unit": "mkm",
-                    "value_s": 150,
-                    "value_t": 100
+                    "unit": "mm",
+                    "value_s": 12,
+                    "value_t": 10
                 },
                 "z_w": {
                     "unit": "mm",
-                    "value_s": 100,
-                    "value_t": 100
+                    "value_s": 0,
+                    "value_t": 0
                 }
             },
             "title": "Gaussian pump"
@@ -164,10 +164,10 @@
                 "elem_bound_markers": true,
                 "ts_flipped": false,
                 "ts_mode": "T+S",
-                "x_max": 121.19999999999999,
-                "x_min": -1.2000000000000028,
-                "y_max": 24364.416145290357,
-                "y_min": -3673.4124720336167
+                "x_max": 121.2,
+                "x_min": -1.2,
+                "y_max": 12825.485795619688,
+                "y_min": -5317.601708013425
             }
         },
         {
