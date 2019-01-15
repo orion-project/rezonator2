@@ -307,6 +307,7 @@
             "window": {
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
+                "elem_bound_markers": false,
                 "ts_flipped": false,
                 "ts_mode": "T+S",
                 "x_max": 1567.325475717625,

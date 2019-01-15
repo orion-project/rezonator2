@@ -207,9 +207,9 @@ void ProjectWindow::createMenuBar()
     /* TODO:NEXT-VER menuEdit = Ori::Gui::menu(tr("&Edit"), this,
         { actnEditCut, actnEditCopy, actnEditPaste, 0, actnEditSelectAll }); */
 
-    menuView = Ori::Gui::menu(tr("&View"), this,
-        { new Ori::Widgets::StylesMenu(_styler),
-          new Ori::Widgets::LanguagesMenu(_translator, ":/toolbar16/langs") });
+    _stylesMenu = new Ori::Widgets::StylesMenu(_styler);
+    _langsMenu = new Ori::Widgets::LanguagesMenu(_translator, ":/toolbar16/langs");
+    menuView = new QMenu(tr("&View"), this);
 
     menuFunctions = Ori::Gui::menu(tr("F&unctions"), this,
         { actnFuncRoundTrip, actnFuncMultFwd, actnFuncMultBkwd, nullptr, actnFuncStabMap,
@@ -271,7 +271,9 @@ void ProjectWindow::updateTitle()
 void ProjectWindow::updateMenuBar()
 {
     BasicMdiChild* child = _mdiArea->activeChild();
+
     /* TODO:NEXT-VER
+    // Update Edit menu
     EditableWindow* editable = _mdiArea->activeEditableChild();
 
     actnEditCut->setEnabled(editable);
@@ -279,6 +281,19 @@ void ProjectWindow::updateMenuBar()
     actnEditPaste->setEnabled(editable);
     actnEditSelectAll->setEnabled(editable); */
 
+    // Update View menu
+    menuView->clear();
+    auto viewActions = child->viewActions();
+    if (!viewActions.empty())
+    {
+        for (auto action : viewActions)
+            menuView->addAction(action);
+        menuView->addSeparator();
+    }
+    menuView->addMenu(_stylesMenu);
+    menuView->addMenu(_langsMenu);
+
+    // Update menu bar
     QMenuBar* menuBar = this->menuBar();
     menuBar->clear();
     menuBar->addMenu(menuFile);
@@ -286,7 +301,7 @@ void ProjectWindow::updateMenuBar()
     menuBar->addMenu(menuView);
     menuBar->addMenu(menuFunctions);
     if (child)
-        foreach (QMenu* menu, child->menus())
+        for (QMenu* menu : child->menus())
             menuBar->addMenu(menu);
     menuBar->addMenu(menuTools);
     menuBar->addMenu(menuWindow);

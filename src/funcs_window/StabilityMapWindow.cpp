@@ -65,15 +65,23 @@ StabilityMapWindow::StabilityMapWindow(Schema *schema) :
 
 void StabilityMapWindow::createControl()
 {
-    actnStabilityAutolimits = new QAction(tr("Y-axis -> Stability Range", "Plot action"), this);
-    actnStabilityAutolimits->setIcon(QIcon(":/toolbar/limits_stab"));
-    connect(actnStabilityAutolimits, SIGNAL(triggered()), this, SLOT(autolimitsStability()));
+    _actnStabilityAutolimits = new QAction(tr("Y-axis -> Stability Range", "Plot action"), this);
+    _actnStabilityAutolimits->setIcon(QIcon(":/toolbar/limits_stab"));
+    connect(_actnStabilityAutolimits, &QAction::triggered, this, &StabilityMapWindow::autolimitsStability);
+
+    _actnStabBoundMarkers = new QAction(tr("Stability bound markers"));
+    _actnStabBoundMarkers->setCheckable(true);
+    _actnStabBoundMarkers->setChecked(true);
+    connect(_actnStabBoundMarkers, &QAction::toggled, this, &StabilityMapWindow::toggleStabBoundMarkers);
 
     menuLimits->addSeparator();
-    menuLimits->addAction(actnStabilityAutolimits);
+    menuLimits->addAction(_actnStabilityAutolimits);
 
     toolbar()->addSeparator();
-    toolbar()->addAction(actnStabilityAutolimits);
+    toolbar()->addAction(_actnStabilityAutolimits);
+
+    _stabBoundMarkerLow = makeStabBoundMarker();
+    _stabBoundMarkerTop = makeStabBoundMarker();
 }
 
 bool StabilityMapWindow::configureInternal()
@@ -115,4 +123,55 @@ QString StabilityMapWindow::writeFunction(QJsonObject& root)
     root["stab_calc_mode"] = Z::IO::Utils::enumToStr(function()->stabilityCalcMode());
     root["arg"] = Z::IO::Json::writeVariable(function()->arg(), schema());
     return QString();
+}
+
+QString StabilityMapWindow::readWindowSpecific(const QJsonObject& root)
+{
+    _actnStabBoundMarkers->setChecked(root["stab_bound_markers"].toBool(true));
+    return QString();
+}
+
+QString StabilityMapWindow::writeWindowSpecific(QJsonObject& root)
+{
+    root["stab_bound_markers"] = _actnStabBoundMarkers->isChecked();
+    return QString();
+}
+
+void StabilityMapWindow::afterUpdate()
+{
+    updateStabBoundMarkers();
+}
+
+void StabilityMapWindow::updateStabBoundMarkers()
+{
+    _stabBoundMarkerTop->point1->setCoords(0, 1);
+    _stabBoundMarkerTop->point2->setCoords(1, 1);
+    _stabBoundMarkerTop->setVisible(_actnStabBoundMarkers->isChecked());
+
+    double low = function()->stabilityCalcMode() == Z::Enums::StabilityCalcMode::Normal ? -1 : 0;
+    _stabBoundMarkerLow->point1->setCoords(0, low);
+    _stabBoundMarkerLow->point2->setCoords(1, low);
+    _stabBoundMarkerLow->setVisible(_actnStabBoundMarkers->isChecked());
+}
+
+QCPItemStraightLine* StabilityMapWindow::makeStabBoundMarker() const
+{
+    QCPItemStraightLine *line = new QCPItemStraightLine(plot());
+    line->setPen(QPen(Qt::magenta, 1, Qt::DashLine)); // TODO make configurable
+    line->setSelectable(false);
+    plot()->addItem(line);
+    return line;
+}
+
+QList<QAction*> StabilityMapWindow::viewActions()
+{
+    return {_actnStabBoundMarkers};
+}
+
+void StabilityMapWindow::toggleStabBoundMarkers(bool on)
+{
+    _stabBoundMarkerLow->setVisible(on);
+    _stabBoundMarkerTop->setVisible(on);
+    plot()->replot();
+    schema()->events().raise(SchemaEvents::Changed);
 }

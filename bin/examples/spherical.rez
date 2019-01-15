@@ -88,18 +88,19 @@
                         "use_step": false
                     }
                 },
-                "stab_calc_mode": "Squared"
+                "stab_calc_mode": "Normal"
             },
             "type": "StabMap",
             "window": {
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
+                "stab_bound_markers": false,
                 "ts_flipped": false,
                 "ts_mode": "T+S",
                 "x_max": 202,
                 "x_min": -2,
-                "y_max": 6.143876665632598,
-                "y_min": -107.02142852926728
+                "y_max": 1.05,
+                "y_min": -1.05
             }
         },
         {

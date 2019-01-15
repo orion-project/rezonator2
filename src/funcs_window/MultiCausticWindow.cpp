@@ -11,6 +11,15 @@
 
 MultiCausticWindow::MultiCausticWindow(Schema *schema): PlotFuncWindowStorable(new MultiCausticFunction(schema))
 {
+    createActions();
+}
+
+void MultiCausticWindow::createActions()
+{
+    _actnElemBoundMarkers = new QAction(tr("Element bound markers"));
+    _actnElemBoundMarkers->setCheckable(true);
+    _actnElemBoundMarkers->setChecked(true);
+    connect(_actnElemBoundMarkers, &QAction::toggled, this, &MultiCausticWindow::toggleElementBoundMarkers);
 }
 
 bool MultiCausticWindow::configureInternal()
@@ -70,6 +79,7 @@ void MultiCausticWindow::updateElementBoundMarkers()
         else marker = makeElemBoundMarker();
         marker->point1->setCoords(offset, 0);
         marker->point2->setCoords(offset, 1);
+        marker->setVisible(_actnElemBoundMarkers->isChecked());
         markers.append(marker);
     }
     for (auto oldMarker : _elemBoundMarkers)
@@ -149,6 +159,18 @@ QString MultiCausticWindow::writeFunction(QJsonObject& root)
     return QString();
 }
 
+QString MultiCausticWindow::readWindowSpecific(const QJsonObject& root)
+{
+    _actnElemBoundMarkers->setChecked(root["elem_bound_markers"].toBool(true));
+    return QString();
+}
+
+QString MultiCausticWindow::writeWindowSpecific(QJsonObject& root)
+{
+    root["elem_bound_markers"] = _actnElemBoundMarkers->isChecked();
+    return QString();
+}
+
 ElemDeletionReaction MultiCausticWindow::reactElemDeletion(const Elements& elems)
 {
     int deletingArgsCount = 0;
@@ -160,4 +182,17 @@ ElemDeletionReaction MultiCausticWindow::reactElemDeletion(const Elements& elems
     if (deletingArgsCount == function()->args().size())
         return ElemDeletionReaction::Close;
     return ElemDeletionReaction::None;
+}
+
+QList<QAction*> MultiCausticWindow::viewActions()
+{
+    return {_actnElemBoundMarkers};
+}
+
+void MultiCausticWindow::toggleElementBoundMarkers(bool on)
+{
+    for (auto marker : _elemBoundMarkers)
+        marker->setVisible(on);
+    plot()->replot();
+    schema()->events().raise(SchemaEvents::Changed);
 }

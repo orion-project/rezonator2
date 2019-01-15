@@ -126,11 +126,15 @@ public:
 public:
     BasicMdiChild(InitOptions options = InitOptions());
 
-    /// Additional menu for main window menu bar.
-    /// These additional menus is shown when mdi-child window is activated.
-    /// Index is varied from 0 to menuCount()-1. Additional menus are tipicaly
-    /// inserted at end of main window menu bar, before Help and Window menus.
+    /// Returns additional menu for main window menu bar.
+    /// These additional menus is shown when MDI-child window is activated.
+    /// Additional menus are tipicaly inserted at end of main window menu bar,
+    /// before Help and Window menus.
     virtual QList<QMenu*> menus() { return QList<QMenu*>(); }
+
+    /// Returns additional actions for View menu.
+    /// These actions are inserted into View menu when MDI-child window is activated.
+    virtual QList<QAction*> viewActions() { return QList<QAction*>(); }
 
     /// Returns default toolbar of MDI-child window
     /// or nullptr if one was not created (see @ref InitOption::initNoToolBar).

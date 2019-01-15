@@ -15,9 +15,12 @@ public:
 
     MultiCausticFunction* function() const { return dynamic_cast<MultiCausticFunction*>(_function); }
 
-    // inherits from SchemaListener
+    // Implementation of SchemaListener
     void elementChanged(Schema*, Element*) override;
     void elementDeleting(Schema*, Element*) override;
+
+    // Implementation of BasicMdiChild
+    QList<QAction*> viewActions() override;
 
 protected:
     // Implementation of PlotFuncWindow
@@ -30,11 +33,17 @@ protected:
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;
     QString writeFunction(QJsonObject& root) override;
+    QString readWindowSpecific(const QJsonObject& root) override;
+    QString writeWindowSpecific(QJsonObject& root) override;
 
 private:
     QList<QCPItemStraightLine*> _elemBoundMarkers;
+    QAction* _actnElemBoundMarkers;
+
+    void createActions();
 
     void updateElementBoundMarkers();
+    void toggleElementBoundMarkers(bool on);
 
     QCPItemStraightLine* makeElemBoundMarker() const;
 };

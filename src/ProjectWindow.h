@@ -26,6 +26,8 @@ namespace Ori {
     namespace Widgets {
         class MruMenu;
         class MdiToolBar;
+        class StylesMenu;
+        class LanguagesMenu;
     }
 }
 
@@ -80,6 +82,8 @@ private:
     Ori::Translator* _translator;
     Ori::Widgets::MruMenu* _mruMenu;
     Ori::Widgets::MdiToolBar* _mdiToolbar;
+    Ori::Widgets::StylesMenu* _stylesMenu;
+    Ori::Widgets::LanguagesMenu* _langsMenu;
     Ori::MruFileList *_mruList;
     SchemaViewWindow* _schemaWindow;
     bool _forceClosing = false;
