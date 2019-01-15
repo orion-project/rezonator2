@@ -28,6 +28,8 @@ QT_END_NAMESPACE
 class ISchemaWindowStorable
 {
 public:
+    virtual ~ISchemaWindowStorable();
+
     /// Returns unique object type key.
     ///
     /// This key is used to find an window constructor in @a WindowsManager
@@ -42,13 +44,13 @@ public:
     /// By default, only fact of window existence will be saved.
     /// Function should return error text if window can't be stored, or empty string when all is OK.
     ///
-    virtual QString storableWrite(QJsonObject& root) { Q_UNUSED(root); return QString(); }
+    virtual QString storableWrite(QJsonObject& root);
 
     /// Derived function should implement all restoring logic.
     /// By default, default constructed window will be restored.
     /// Function should return error text if window can't be restored, or empty string when all is OK.
     ///
-    virtual QString storableRead(const QJsonObject& root) { Q_UNUSED(root); return QString(); }
+    virtual QString storableRead(const QJsonObject& root);
 };
 
 #endif // Z_SCHEMA_STORABLE_H

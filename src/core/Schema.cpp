@@ -83,6 +83,7 @@ const SchemaEvents::EventProps& SchemaEvents::propsOf(Event event)
         INIT_EVENT(PumpChanged,        true,         SchemaState::Modified ),
         INIT_EVENT(PumpDeleted,        true,         SchemaState::Modified ),
         INIT_EVENT(PumpDeleting,       true,         SchemaState::Current  ),
+        INIT_EVENT(RecalRequred,       false,        SchemaState::Current  ),
     });
     return _props[event];
 }
@@ -112,6 +113,7 @@ void SchemaEvents::notify(SchemaListener* listener, SchemaEvents::Event event, v
     case PumpChanged: listener->pumpChanged(_schema, reinterpret_cast<Z::PumpParams*>(param)); break;
     case PumpDeleting: listener->pumpDeleting(_schema, reinterpret_cast<Z::PumpParams*>(param)); break;
     case PumpDeleted: listener->pumpDeleted(_schema, reinterpret_cast<Z::PumpParams*>(param)); break;
+    case RecalRequred: listener->recalcRequired(_schema); break;
     };
 }
 
@@ -188,7 +190,10 @@ void Schema::insertElement(Element* elem, int index, bool event)
     relinkInterfaces();
 
     if (event)
+    {
         _events.raise(SchemaEvents::ElemCreated, elem);
+        _events.raise(SchemaEvents::RecalRequred);
+    }
 }
 
 void Schema::deleteElement(Element* elem, bool event, bool free)
@@ -212,7 +217,10 @@ void Schema::deleteElement(int index, bool event, bool free)
     removeParamLinks(elem);
 
     if (event)
+    {
         _events.raise(SchemaEvents::ElemDeleted, elem);
+        _events.raise(SchemaEvents::RecalRequred);
+    }
 
     if (free)
         delete elem;
@@ -221,7 +229,10 @@ void Schema::deleteElement(int index, bool event, bool free)
 void Schema::parameterChanged(Z::ParameterBase *param)
 {
     if (param == &_wavelength)
+    {
         _events.raise(SchemaEvents::LambdaChanged);
+        _events.raise(SchemaEvents::RecalRequred);
+    }
 }
 
 void Schema::setTripType(TripType value)
@@ -229,6 +240,7 @@ void Schema::setTripType(TripType value)
     if (_tripType == value) return;
     _tripType = value;
     _events.raise(SchemaEvents::ParamsChanged);
+    _events.raise(SchemaEvents::RecalRequred);
 }
 
 Z::Parameters Schema::globalParams() const

@@ -86,7 +86,10 @@ void SchemaViewWindow::createToolBar()
 void SchemaViewWindow::editElement(Element* elem)
 {
     if (ElementPropsDialog::editElement(elem))
+    {
         schema()->events().raise(SchemaEvents::ElemChanged, elem);
+        schema()->events().raise(SchemaEvents::RecalRequred);
+    }
 }
 
 //------------------------------------------------------------------------------

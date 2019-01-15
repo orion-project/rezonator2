@@ -127,6 +127,7 @@ void ProjectOperations::openSchemaFile(const QString& fileName)
     schema()->setFileName(fileName);
     schema()->events().enable();
     schema()->events().raise(SchemaEvents::Loaded);
+    schema()->events().raise(SchemaEvents::RecalRequred);
 }
 
 void ProjectOperations::writeProtocol(const Z::Report& report, const QString& message)
@@ -274,7 +275,10 @@ void ProjectOperations::setupPump()
     {
         auto pump = schema()->activePump();
         if (PumpParamsDialog::editPump(pump))
+        {
             schema()->events().raise(SchemaEvents::PumpChanged, pump);
+            schema()->events().raise(SchemaEvents::RecalRequred);
+        }
     }
 }
 

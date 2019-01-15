@@ -59,7 +59,7 @@ public:
     QList<QMenu*> menus() override { return QList<QMenu*>() << menuPlot << menuLimits /* TODO:NEXT-VER << menuFormat*/; }
 
     // Implementation of SchemaListener
-    void schemaChanged(Schema*) override;
+    void recalcRequired(Schema*) override;
     void elementDeleting(Schema*, Element*) override;
 
     void storeView(int key);

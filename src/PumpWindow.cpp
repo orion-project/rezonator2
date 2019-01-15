@@ -285,9 +285,12 @@ void PumpWindow::createPump()
     auto pump = makeNewPumpDlg();
     if (!pump) return;
     schema()->pumps()->append(pump);
-    if (schema()->pumps()->size() == 1)
+    bool isFirstPump = schema()->pumps()->size() == 1;
+    if (isFirstPump)
         pump->activate(true);
     schema()->events().raise(SchemaEvents::PumpCreated, pump);
+    if (isFirstPump)
+        schema()->events().raise(SchemaEvents::RecalRequred);
     showStatusInfo();
 }
 
@@ -297,6 +300,8 @@ void PumpWindow::editPump()
     if (!pump) return;
     if (!PumpParamsDialog::editPump(pump)) return;
     schema()->events().raise(SchemaEvents::PumpChanged, pump);
+    if (pump->isActive())
+        schema()->events().raise(SchemaEvents::RecalRequred);
     showStatusInfo();
 }
 
@@ -317,6 +322,8 @@ void PumpWindow::deletePump()
         schema()->events().raise(SchemaEvents::PumpDeleting, pump);
         schema()->pumps()->removeOne(pump);
         schema()->events().raise(SchemaEvents::PumpDeleted, pump);
+        if (pump->isActive())
+            schema()->events().raise(SchemaEvents::RecalRequred);
         delete pump;
     }
     showStatusInfo();
@@ -324,8 +331,6 @@ void PumpWindow::deletePump()
 
 void PumpWindow::activatePump()
 {
-    if (schema()->pumps()->size() < 2) return;
-
     auto pump = _table->selected();
     if (!pump) return;
 
@@ -339,11 +344,8 @@ void PumpWindow::activatePump()
     }
     pump->activate(true);
     _table->pumpChanged(schema(), pump);
-    // We do not raise PumpChanged event here,
-    // because no significant pump parametes are really changed.
-    // Treat this case as only schema param has been changed.
-    schema()->events().raise(SchemaEvents::ParamsChanged);
-    // TODO raise event 'recalc needed'
+    schema()->events().raise(SchemaEvents::Changed);
+    schema()->events().raise(SchemaEvents::RecalRequred);
 
     showStatusInfo();
 }

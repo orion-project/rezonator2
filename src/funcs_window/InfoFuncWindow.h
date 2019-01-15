@@ -26,8 +26,7 @@ public:
     static void open(InfoFunction *func, QWidget* parent = nullptr);
 
 protected:
-    void schemaChanged(Schema*) override { processCalc(); }
-    void schemaLoaded(Schema*) override { processCalc(); }
+    void recalcRequired(Schema*) override { processCalc(); }
     void elementDeleting(Schema*, Element*) override;
 
 private slots:

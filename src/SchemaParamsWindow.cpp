@@ -192,7 +192,10 @@ void SchemaParamsWindow::setParameterValue()
                 .connectOkToContentApply()
                 .exec();
     if (ok)
+    {
         schema()->events().raise(SchemaEvents::CustomParamChanged, param);
+        schema()->events().raise(SchemaEvents::RecalRequred);
+    }
 
     if (_isSettingValueForNewParam)
     {

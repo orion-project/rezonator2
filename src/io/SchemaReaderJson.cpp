@@ -373,7 +373,7 @@ void SchemaReaderJson::readWindow(const QJsonObject& root)
     if (!storable)
     {
         _report.warning(QString(
-            "Window of type '%1' is stored in file but it is not known how to load it, skipped.").arg(type));
+            "A window of type '%1' is stored in the file but it is unknown how to load it, skipped.").arg(type));
         delete window;
         return;
     }

@@ -254,4 +254,5 @@ SOURCES += \
     src/funcs_window/MultiCausticWindow.cpp \
     src/funcs/MultiCausticFunction.cpp \
     src/widgets/VariableRangeEditor.cpp \
-    src/funcs_window/FuncOptionsPanel.cpp
+    src/funcs_window/FuncOptionsPanel.cpp \
+    src/io/ISchemaWindowStorable.cpp

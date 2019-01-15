@@ -371,7 +371,7 @@ void PlotFuncWindow::showRoundTrip()
     // TODO:NEXT-VER
 }
 
-void PlotFuncWindow::schemaChanged(Schema*)
+void PlotFuncWindow::recalcRequired(Schema*)
 {
     update();
 }
@@ -459,6 +459,9 @@ ElemDeletionReaction PlotFuncWindow::reactElemDeletion(const Elements& elems)
 
 void PlotFuncWindow::elementDeleting(Schema*, Element* elem)
 {
+    // TODO:NEXT-VER: see InfoFuncWindow::elementDeleting() and implement similar behaviour.
+    // Current behaviour is ok for now as full FunctionBase::Dead processing
+    // requires an ability of saving of frozen data.
     if (function()->arg()->element == elem)
         disableAndClose();
 }

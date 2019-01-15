@@ -98,6 +98,8 @@ QCPItemStraightLine* MultiCausticWindow::makeElemBoundMarker() const
 
 void MultiCausticWindow::elementChanged(Schema*, Element* elem)
 {
+    // Only modify the set of arguments, don't recalculate here,
+    // recalculation will be done later on the intended event.
     auto args = function()->args();
     for (Z::Variable& arg : args)
         if (arg.element == elem)

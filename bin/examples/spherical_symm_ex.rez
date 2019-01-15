@@ -2,10 +2,22 @@
     "builtin_params": {
         "lambda": {
             "unit": "nm",
-            "value": 1026
+            "value": 980
         }
     },
     "custom_params": {
+        "F0": {
+            "descr": "Focus length for both mirrors",
+            "dim": "linear",
+            "unit": "mm",
+            "value": 30
+        },
+        "R0": {
+            "descr": "Radius of curvature for both mirrors",
+            "dim": "linear",
+            "unit": "mm",
+            "value": 60
+        }
     },
     "elements": [
         {
@@ -18,7 +30,7 @@
                 },
                 "R": {
                     "unit": "mm",
-                    "value": 50
+                    "value": 60
                 }
             },
             "title": "Back mirror",
@@ -50,7 +62,7 @@
                 },
                 "R": {
                     "unit": "mm",
-                    "value": 70
+                    "value": 60
                 }
             },
             "title": "Output mirror",
@@ -58,14 +70,34 @@
         }
     ],
     "formulas": [
+        {
+            "code": "2 * F0",
+            "param_deps": [
+                "F0"
+            ],
+            "target_param": "R0"
+        }
     ],
     "param_links": [
+        {
+            "source_param": "R0",
+            "target_elem": 0,
+            "target_param": "R"
+        },
+        {
+            "source_param": "R0",
+            "target_elem": 2,
+            "target_param": "R"
+        }
     ],
     "pumps": [
     ],
     "schema_version": "2.0",
     "trip_type": "SW",
     "windows": [
+        {
+            "type": "SchemaParams"
+        },
         {
             "function": {
                 "arg": {
@@ -94,49 +126,13 @@
             "window": {
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
-                "stab_bound_markers": false,
+                "stab_bound_markers": true,
                 "ts_flipped": false,
                 "ts_mode": "T+S",
                 "x_max": 202,
                 "x_min": -2,
                 "y_max": 1.05,
                 "y_min": -1.05
-            }
-        },
-        {
-            "function": {
-                "arg": {
-                    "element_index": 1,
-                    "param": "L",
-                    "range": {
-                        "points": 100,
-                        "start": {
-                            "unit": "mm",
-                            "value": 0
-                        },
-                        "step": {
-                            "unit": "mm",
-                            "value": 4.2
-                        },
-                        "stop": {
-                            "unit": "mm",
-                            "value": 420
-                        },
-                        "use_step": false
-                    }
-                },
-                "mode": "BeamRadius"
-            },
-            "type": "Caustic",
-            "window": {
-                "cursor_enabled": true,
-                "cursor_mode": "Both",
-                "ts_flipped": false,
-                "ts_mode": "T+S",
-                "x_max": 80.8,
-                "x_min": -0.8,
-                "y_max": 243.9983227393092,
-                "y_min": 82.08429485825306
             }
         }
     ]

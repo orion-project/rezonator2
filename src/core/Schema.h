@@ -46,6 +46,7 @@ public:
     virtual void pumpChanged(Schema*, Z::PumpParams*) {}
     virtual void pumpDeleting(Schema*, Z::PumpParams*) {}
     virtual void pumpDeleted(Schema*, Z::PumpParams*) {}
+    virtual void recalcRequired(Schema*) {}
 };
 
 //------------------------------------------------------------------------------
@@ -115,6 +116,8 @@ public:
         PumpChanged,   ///< Pump parameters were changed
         PumpDeleting,  ///< Pump is about to be deleted
         PumpDeleted,   ///< Pump was deleted
+
+        RecalRequred,  ///< Something is done that requires recalculation of all functions
     };
 
     void raise(Event event, void* param = nullptr) const;
