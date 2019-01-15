@@ -78,6 +78,11 @@ Elements SchemaElemsTable::selection() const
     QVector<int> rows = selectedRows();
     for (int i = 0; i < rows.count(); i++)
         elements.append(schema()->element(rows[i]));
+    if (elements.empty())
+    {
+        auto elem = selected();
+        if (elem) elements << elem;
+    }
     return elements;
 }
 

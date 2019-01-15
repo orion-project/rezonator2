@@ -37,8 +37,6 @@ void Plot::mouseDoubleClickEvent(QMouseEvent *event)
 
 void Plot::mousePressEvent(QMouseEvent *event)
 {
-    QCustomPlot::mousePressEvent(event);
-
     // if an axis is selected, only allow the direction of that axis to be dragged
     // if no axis is selected, both directions may be dragged
     if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
@@ -47,12 +45,12 @@ void Plot::mousePressEvent(QMouseEvent *event)
         axisRect()->setRangeDrag(yAxis->orientation());
     else
         axisRect()->setRangeDrag(Qt::Horizontal | Qt::Vertical);
+
+    QCustomPlot::mousePressEvent(event);
 }
 
 void Plot::wheelEvent(QWheelEvent *event)
 {
-    QCustomPlot::wheelEvent(event);
-
     // if an axis is selected, only allow the direction of that axis to be zoomed
     // if no axis is selected, both directions may be zoomed
     if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
@@ -61,6 +59,8 @@ void Plot::wheelEvent(QWheelEvent *event)
         axisRect()->setRangeZoom(yAxis->orientation());
     else
         axisRect()->setRangeZoom(Qt::Horizontal | Qt::Vertical);
+
+    QCustomPlot::wheelEvent(event);
 }
 
 void Plot::plotSelectionChanged()
