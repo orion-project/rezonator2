@@ -1,5 +1,5 @@
 #include "CalcManager.h"
-#include "CustomPrefs.h"
+#include "CommonData.h"
 #include "ElementsCatalogDialog.h"
 #include "GaussCalculatorWindow.h"
 #include "ProjectWindow.h"
@@ -15,8 +15,8 @@
 #include "helpers/OriWidgets.h"
 #include "helpers/OriWindows.h"
 #include "tools/OriMruList.h"
-#include "tools/OriStyler.h"
-#include "tools/OriTranslator.h"
+//#include "tools/OriStyler.h"
+//#include "tools/OriTranslator.h"
 #include "tools/OriSettings.h"
 #include "widgets/OriLangsMenu.h"
 #include "widgets/OriMruMenu.h"
@@ -74,8 +74,8 @@ ProjectWindow::ProjectWindow(Schema* s) : QMainWindow(), SchemaToolWindow(s ? s 
 
     connect(_mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(updateMenuBar()));
     connect(WindowsManager::instancePtr(), SIGNAL(showMdiSubWindow(QWidget*)), _mdiArea, SLOT(appendChild(QWidget*)));
-    connect(_mruList, SIGNAL(clicked(QString)), _operations, SLOT(openSchemaFile(QString)));
-    connect(_operations, &ProjectOperations::fileNameSelected, _mruList, &Ori::MruFileList::append);
+    connect(CommonData::instance()->mruList(), SIGNAL(clicked(QString)), _operations, SLOT(openSchemaFile(QString)));
+    connect(_operations, &ProjectOperations::fileNameSelected, CommonData::instance()->mruList(), &Ori::MruFileList::append);
     connect(_operations, &ProjectOperations::protocolRequired, this, &ProjectWindow::showProtocolWindow);
 
     createActions();
@@ -114,23 +114,13 @@ void ProjectWindow::loadSettings()
 {
     Ori::Settings s;
     s.beginGroup("View");
-    _styler = new Ori::Styler(s.strValue("style"), this);
-    _translator = new Ori::Translator(s.strValue("language"), this);
     s.restoreWindowGeometry("mainWindow", this);
-
-    s.beginGroup("States");
-    _mruList = new Ori::MruFileList(this);
-    _mruList->load(s.settings());
-
-    CustomPrefs::load(s.settings()->fileName());
 }
 
 void ProjectWindow::saveSettings()
 {
     Ori::Settings s;
     s.beginGroup("View");
-    s.setValue("style", _styler->currentStyle());
-    s.setValue("language", _translator->currentLanguage());
     s.storeWindowGeometry("mainWindow", this);
 }
 
@@ -199,7 +189,7 @@ void ProjectWindow::createMenuBar()
 {
     menuBar()->setNativeMenuBar(Settings::instance().useNativeMenuBar);
 
-    _mruMenu = new Ori::Widgets::MruMenu(tr("Recent &Files"), _mruList, this);
+    _mruMenu = new Ori::Widgets::MruMenu(tr("Recent &Files"), CommonData::instance()->mruList(), this);
 
     menuFile = Ori::Gui::menu(tr("&File"), this,
         { actnFileNew, actnFileOpen, actnFileOpenExample, _mruMenu, nullptr, actnFileSave,
@@ -209,8 +199,8 @@ void ProjectWindow::createMenuBar()
     /* TODO:NEXT-VER menuEdit = Ori::Gui::menu(tr("&Edit"), this,
         { actnEditCut, actnEditCopy, actnEditPaste, 0, actnEditSelectAll }); */
 
-    _stylesMenu = new Ori::Widgets::StylesMenu(_styler, this);
-    _langsMenu = new Ori::Widgets::LanguagesMenu(_translator, ":/toolbar16/langs", this);
+    _stylesMenu = new Ori::Widgets::StylesMenu(CommonData::instance()->styler(), this);
+    _langsMenu = new Ori::Widgets::LanguagesMenu(CommonData::instance()->translator(), ":/toolbar16/langs", this);
     menuView = new QMenu(tr("&View"), this);
 
     menuFunctions = Ori::Gui::menu(tr("F&unctions"), this,

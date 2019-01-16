@@ -151,7 +151,8 @@ HEADERS += \
     src/widgets/VariableRangeEditor.h \
     src/funcs_window/CausticOptionsPanel.h \
     src/funcs_window/FuncOptionsPanel.h \
-    src/StartWindow.h
+    src/StartWindow.h \
+    src/CommonData.h
 	
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -257,7 +258,8 @@ SOURCES += \
     src/widgets/VariableRangeEditor.cpp \
     src/funcs_window/FuncOptionsPanel.cpp \
     src/io/ISchemaWindowStorable.cpp \
-    src/StartWindow.cpp
+    src/StartWindow.cpp \
+    src/CommonData.cpp
 
 DISTFILES += \
     src/StartWindow.qss \

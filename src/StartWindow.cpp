@@ -1,28 +1,68 @@
 #include "StartWindow.h"
+#include "CommonData.h"
 #include "ProjectWindow.h"
 #include "GaussCalculatorWindow.h"
 #include "core/CommonTypes.h"
+#include "tools/OriMruList.h"
 #include "widgets/Appearance.h"
 #include "helpers/OriWindows.h"
 #include "helpers/OriLayouts.h"
 
 #include <QApplication>
+#include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLabel>
-#include <QPushButton>
+#include <QPainter>
 #include <QPlainTextEdit>
+#include <QPushButton>
 #include <QResource>
 #include <QToolButton>
+#include <QScrollArea>
+#include <QScrollBar>
+#include <QStyleOption>
 
 using namespace Ori::Layouts;
 
 namespace {
     const int TIP_IMG_PREVIEW_H = 100;
     const int TIP_IMG_PREVIEW_W = 200;
+    const int MAX_MRU_PATH_LEN = 60;
     QJsonArray __tips;
 }
+
+MruItemWidget::MruItemWidget(const QFileInfo& fileInfo) : QWidget()
+{
+    auto labelFileName = new QLabel(fileInfo.baseName());
+    labelFileName->setProperty("role", "mru_file_name");
+
+    auto filePath = fileInfo.filePath();
+    auto labelFilePath = new QLabel;
+    if (filePath.length() > MAX_MRU_PATH_LEN)
+    {
+        filePath = "..." + filePath.right(MAX_MRU_PATH_LEN);
+        labelFilePath->setToolTip(fileInfo.filePath());
+    }
+    labelFilePath->setText(filePath);
+    labelFilePath->setProperty("role", "mru_file_path");
+
+    LayoutV({labelFileName, labelFilePath}).setMargin(5).setSpacing(0).useFor(this);
+
+    QSizePolicy policy;
+    policy.setControlType(QSizePolicy::ToolButton);
+    setSizePolicy(policy);
+}
+
+// Paint event should overriden to apply styles heets
+void MruItemWidget::paintEvent(QPaintEvent*)
+{
+    QStyleOption opt;
+    opt.init(this);
+    QPainter p(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
+}
+
 
 StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
 {
@@ -68,13 +108,48 @@ QWidget* StartWindow::actionsPanel()
 
 QWidget* StartWindow::mruPanel()
 {
-    auto emptyLabel = new QLabel(tr("There are no recently opened files yet."));
-    //emptyLabel->setWordWrap(true);
-    emptyLabel->setObjectName("mru_empty_stub");
-    emptyLabel->setAlignment(Qt::AlignHCenter);
+    auto items = CommonData::instance()->mruList()->items();
+    if (items.isEmpty())
+        return mruPanelEmpty();
+
+    QVector<QFileInfo> files;
+    for (const QString& item : items)
+    {
+        QFileInfo file(item);
+        if (file.exists()) files << file;
+    }
+    if (files.isEmpty())
+        return mruPanelEmpty();
+
+    auto layout = new QVBoxLayout;
+    layout->setMargin(0);
+    layout->setSpacing(0);
+    for (const QFileInfo& file : files)
+        layout->addWidget(new MruItemWidget(file));
+
+    auto mruWidget = new QWidget;
+    mruWidget->setLayout(layout);
+    mruWidget->setObjectName("mru_widget");
+
+    auto mruScroll = new QScrollArea;
+    mruScroll->setWidget(mruWidget);
+    mruScroll->horizontalScrollBar()->setDisabled(true);
+    mruScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     return panel(LayoutV({
-        header(tr("Open Recent Schema")),
+         header(tr("Recent")),
+         mruScroll,
+         Stretch()
+    }).boxLayout());
+}
+
+QWidget* StartWindow::mruPanelEmpty()
+{
+    auto emptyLabel = new QLabel(tr("There are no recently opened files yet."));
+    emptyLabel->setObjectName("mru_empty_stub");
+
+    return panel(LayoutV({
+        header(tr("Recent")),
         Stretch(),
         emptyLabel,
         Stretch(),
@@ -118,7 +193,7 @@ QWidget* StartWindow::tipsPanel()
 
     return panel(LayoutH({
         LayoutV({
-            header(tr("Whether You Know What")),
+            header(tr("Tips")),
             _tipText,
             Stretch(),
             LayoutH({

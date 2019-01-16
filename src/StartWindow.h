@@ -7,7 +7,19 @@ QT_BEGIN_NAMESPACE
 class QLabel;
 class QBoxLayout;
 class QJsonObject;
+class QFileInfo;
 QT_END_NAMESPACE
+
+class MruItemWidget : public QWidget
+{
+   Q_OBJECT
+
+public:
+    explicit MruItemWidget(const QFileInfo& fileInfo);
+
+protected:
+    void paintEvent(QPaintEvent*);
+};
 
 class StartWindow : public QWidget
 {
@@ -19,6 +31,7 @@ public:
 private:
     QWidget* actionsPanel();
     QWidget* mruPanel();
+    QWidget* mruPanelEmpty();
     QWidget* tipsPanel();
     QWidget* toolsPanel();
     QWidget* panel(QBoxLayout* layout);

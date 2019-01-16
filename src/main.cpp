@@ -1,3 +1,4 @@
+#include "CommonData.h"
 #include "GaussCalculatorWindow.h"
 #include "ProjectWindow.h"
 #include "StartWindow.h"
@@ -21,6 +22,9 @@ int main(int argc, char* argv[])
     int res = 0;
 
     Settings::instance().load();
+
+    // CommonData will be used via its instance pointer
+    CommonData commonData;
 
     if (QApplication::arguments().contains("gauss"))
     {

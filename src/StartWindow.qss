@@ -1,10 +1,8 @@
 QToolButton {
-  border-style: solid;
-  border-width: 1px;
+  border: 1px solid white;
   border-radius: 5px;
-  border-color: white;
   padding: 5px;
-  font-size: 11pt;
+  font-size: 12px;
   color: #335;
 }
 
@@ -22,7 +20,7 @@ QToolButton:hover {
 QToolButton[role=tip_button] {
   border-color: #dadbde;
   padding: 1px 10px;
-  font-size: 9pt;
+  font-size: 10px;
 }
 
 QToolButton[role=tip_button]:hover {
@@ -38,18 +36,62 @@ QWidget[role=panel] {
 }
 
 QLabel[role=header] {
-  font: bold 13pt;
+  font: bold 16px;
   color: #557;
 }
 
-QLabel#tip_text {
-  font-size: 11pt;
+#tip_text {
+  font-size: 13px;
   padding: 6px;
   color: #225
 }
 
-QLabel#mru_empty_stub {
-  font-size: 11pt;
+#mru_empty_stub {
+  font-size: 12px;
   padding: 10px;
   color: silver;
+}
+
+QLabel[role=mru_file_name] {
+  font: bold 13px;
+  color: #559;
+}
+
+QLabel[role=mru_file_path] {
+  font-size: 11px;
+  color: #779;
+}
+
+MruItemWidget:hover {
+  border: 1px solid #dadbde;
+  border-radius: 5px;
+  background-color: qlineargradient(
+    x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fefefe, stop: 1 #f6f7f9);
+}
+
+QScrollArea {
+  border-style: none;
+  background-color: white;
+}
+
+#mru_widget {
+  background-color: white;
+  margin-right: 20px;
+}
+
+QScrollBar:vertical {
+  background-color: white;
+  width: 10px;
+}
+QScrollBar::handle:vertical {
+  border: 1px solid #dadbde;
+  border-radius: 5px;
+  background-color: #f6f7fa;
+  min-height: 20px;
+}
+QScrollBar::add-line:vertical {
+  height: 0;
+}
+QScrollBar::sub-line:vertical {
+  height: 0;
 }
