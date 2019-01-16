@@ -29,6 +29,7 @@ int main(int argc, char* argv[])
     }
     else
     {
+        // TODO check if filename is given
         (new StartWindow)->show();
 
         //ProjectWindow projWindow;

@@ -4,7 +4,9 @@
 #include <QWidget>
 
 QT_BEGIN_NAMESPACE
+class QLabel;
 class QBoxLayout;
+class QJsonObject;
 QT_END_NAMESPACE
 
 class StartWindow : public QWidget
@@ -15,19 +17,27 @@ public:
     explicit StartWindow(QWidget *parent = nullptr);
 
 private:
-    QWidget* makeActionsPanel();
-    QWidget* makeMruPanel();
-    QWidget* makeTipsPanel();
-    QWidget* makeToolsPanel();
-    QWidget* makePanel(QBoxLayout* layout);
-    QWidget* makeHeader(const QString& title);
-    QWidget* makeButton(const QString& iconPath, const QString& title, const char* slot);
-
-    void makeNewSchema();
+    QWidget* actionsPanel();
+    QWidget* mruPanel();
+    QWidget* tipsPanel();
+    QWidget* toolsPanel();
+    QWidget* panel(QBoxLayout* layout);
+    QWidget* header(const QString& title);
+    QWidget* button(const QString& iconPath, const QString& title, const char* slot);
 
 private slots:
-    void toolGaussCalc();
+    void makeSchemaSW();
+    void makeSchemaRR();
+    void makeSchemaSP();
+    void showGaussCalculator();
     void editStyleSheet();
+    void showNextTip();
+    void showPrevTip();
+
+private:
+    QLabel *_tipText, *_tipPreview;
+
+    void showTip(const QJsonObject& tip);
 };
 
 #endif // START_WINDOW_H

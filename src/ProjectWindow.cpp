@@ -51,7 +51,7 @@ enum ProjectWindowStatusPanels
     STATUS_PANELS_COUNT,
 };
 
-ProjectWindow::ProjectWindow() : QMainWindow(), SchemaToolWindow(new Schema())
+ProjectWindow::ProjectWindow(Schema* s) : QMainWindow(), SchemaToolWindow(s ? s : new Schema())
 {
     setAttribute(Qt::WA_DeleteOnClose);
     Ori::Wnd::setWindowIcon(this, ":/window_icons/main");
@@ -59,7 +59,8 @@ ProjectWindow::ProjectWindow() : QMainWindow(), SchemaToolWindow(new Schema())
     loadSettings();
 
     schema()->events().disable();
-    schema()->setTripType(TripTypes::find(Settings::instance().defaultTripType));
+    if (!s)
+        schema()->setTripType(TripTypes::find(Settings::instance().defaultTripType));
     schema()->events().enable();
 
     _calculations = new CalcManager(schema(), this);

@@ -186,4 +186,8 @@
     <qresource prefix="/style">
         <file alias="StartWindow">StartWindow.qss</file>
     </qresource>
+    <qresource prefix="/tips">
+        <file alias="list">tips.json</file>
+        <file alias="edit_cursor_values">../img/tips/edit_cursor_values.png</file>
+    </qresource>
 </RCC>

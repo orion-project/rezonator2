@@ -260,4 +260,5 @@ SOURCES += \
     src/StartWindow.cpp
 
 DISTFILES += \
-    src/StartWindow.qss
+    src/StartWindow.qss \
+    src/tips.json

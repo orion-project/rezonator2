@@ -4,11 +4,29 @@ QToolButton {
   border-radius: 5px;
   border-color: white;
   padding: 5px;
+  font-size: 11pt;
+  color: #335;
 }
+
+QToolButton:focus {
+  border-color: #dadbde;
+  background-color: #f6f7fa;
+}
+
 QToolButton:hover {
   border-color: silver;
   background-color: qlineargradient(
     x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #f6f7fa, stop: 1 #dadbde);
+}
+
+QToolButton[role=tip_button] {
+  border-color: #dadbde;
+  padding: 1px 10px;
+  font-size: 9pt;
+}
+
+QToolButton[role=tip_button]:hover {
+  border-color: silver;
 }
 
 QWidget[role=panel] {
@@ -19,6 +37,19 @@ QWidget[role=panel] {
   border-color: silver;
 }
 
-QLabel[role="header"] {
-  font: bold 14pt
+QLabel[role=header] {
+  font: bold 13pt;
+  color: #557;
+}
+
+QLabel#tip_text {
+  font-size: 11pt;
+  padding: 6px;
+  color: #225
+}
+
+QLabel#mru_empty_stub {
+  font-size: 11pt;
+  padding: 10px;
+  color: silver;
 }
