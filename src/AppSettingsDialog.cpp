@@ -1,4 +1,4 @@
-#include "ConfigDialog.h"
+#include "AppSettingsDialog.h"
 #include "AppSettings.h"
 #include "widgets/OriOptionsGroup.h"
 
@@ -10,9 +10,9 @@
 namespace Z {
 namespace Dlg {
 
-bool appConfig(QWidget *parent)
+bool editAppSettings(QWidget *parent)
 {
-    ConfigDialog dialog(parent);
+    AppSettingsDialog dialog(parent);
     return dialog.exec() == QDialog::Accepted;
 }
 
@@ -23,40 +23,29 @@ bool appConfig(QWidget *parent)
 //                              ConfigDialog
 //------------------------------------------------------------------------------
 
-int ConfigDialog::_savedTabIndex = 0;
-
-ConfigDialog::ConfigDialog(QWidget* parent) : Ori::Dlg::BasicConfigDialog(parent)
+AppSettingsDialog::AppSettingsDialog(QWidget* parent) : Ori::Dlg::BasicConfigDialog(parent)
 {
-    setWindowTitle(tr("Preferences"));
-#ifndef Q_OS_MACOS
-    // TODO: make setTitleAndIcon method in BasicConfigDialog
-    setWindowIcon(QIcon(":/window_icons/options"));
-#endif
+    setObjectName("AppSettingsDialog");
+    setTitleAndIcon(tr("Preferences"), ":/window_icons/options");
 
     createPages({createGeneralPage(), createViewPage()});
-
-    setCurrentPageIndex(_savedTabIndex);
 }
 
-ConfigDialog::~ConfigDialog()
-{
-    _savedTabIndex = currentPageIndex();
-}
-
-QWidget* ConfigDialog::createGeneralPage()
+QWidget* AppSettingsDialog::createGeneralPage()
 {
     auto page = new Ori::Dlg::BasicConfigPage(tr("Behaviour"), ":/config_pages/general");
 
     groupOptions = new Ori::Widgets::OptionsGroup(tr("Options"), {
         tr("Edit just created element"),
-        tr("Automatically generate labels for new elements")
+        tr("Automatically generate labels for new elements"),
+        tr("Show start window after application run")
     });
 
     page->add({groupOptions});
     return page;
 }
 
-QWidget* ConfigDialog::createViewPage()
+QWidget* AppSettingsDialog::createViewPage()
 {
     auto page = new Ori::Dlg::BasicConfigPage(tr("Interface"), ":/config_pages/view");
 
@@ -72,7 +61,7 @@ QWidget* ConfigDialog::createViewPage()
     return page;
 }
 
-QWidget* ConfigDialog::createLayoutPage()
+QWidget* AppSettingsDialog::createLayoutPage()
 {
     QWidget *page = new QWidget;
     page->setWindowTitle(tr("Layout"));
@@ -80,13 +69,14 @@ QWidget* ConfigDialog::createLayoutPage()
     return page;
 }
 
-void ConfigDialog::populate()
+void AppSettingsDialog::populate()
 {
     Settings &settings = Settings::instance();
 
     // options
     groupOptions->setOption(0, settings.editNewElem);
     groupOptions->setOption(1, settings.elemAutoLabel);
+    groupOptions->setOption(2, settings.showStartWindow);
 
     // view
     groupView->setOption(0, settings.smallToolbarImages);
@@ -95,13 +85,14 @@ void ConfigDialog::populate()
     groupView->setOption(3, settings.useSystemDialogs);
 }
 
-bool ConfigDialog::collect()
+bool AppSettingsDialog::collect()
 {
     Settings &settings = Settings::instance();
 
     // options
     settings.editNewElem = groupOptions->option(0);
     settings.elemAutoLabel = groupOptions->option(1);
+    settings.showStartWindow = groupOptions->option(2);
 
     // view
     settings.smallToolbarImages = groupView->option(0);

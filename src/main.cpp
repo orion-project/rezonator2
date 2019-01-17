@@ -48,6 +48,13 @@ int main(int argc, char* argv[])
         return app.exec();
     }
 
+    // Open empty project window in start window is disabled
+    if (!Settings::instance().showStartWindow)
+    {
+        (new ProjectWindow(nullptr, ""))->show();
+        return app.exec();
+    }
+
     // Start normally
     (new StartWindow)->show();
     return app.exec();

@@ -5,7 +5,7 @@
 #define DLG_APP_CONFIG
 namespace Z {
 namespace Dlg {
-    bool appConfig(class QWidget *parent); // ConfigDialog.cpp
+    bool editAppSettings(class QWidget *parent); // ConfigDialog.cpp
 }}
 #endif
 
@@ -54,6 +54,7 @@ void Settings::load()
     LOAD_DEF(editNewElem, Bool, true);
     LOAD_DEF(elemAutoLabel, Bool, true);
     LOAD(defaultTripType, String);
+    LOAD_DEF(showStartWindow, Bool, true);
 
     s.beginGroup("Debug");
     LOAD_DEF(showProtocolAtStart, Bool, false);
@@ -80,6 +81,7 @@ void Settings::save()
     SAVE(editNewElem);
     SAVE(elemAutoLabel);
     SAVE(defaultTripType);
+    SAVE(showStartWindow);
 
     s.beginGroup("Debug");
     SAVE(showProtocolAtStart);
@@ -94,7 +96,7 @@ void Settings::save()
 
 bool Settings::edit(class QWidget *parent)
 {
-    bool result = Z::Dlg::appConfig(parent);
+    bool result = Z::Dlg::editAppSettings(parent);
     if (result)
         notify(&SettingsListener::settingsChanged);
     return result;

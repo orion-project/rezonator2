@@ -26,8 +26,12 @@ class MruStartItem : public CustomCssWidget
 public:
     explicit MruStartItem(const QFileInfo& fileInfo);
 
+signals:
+    void onFileOpen(const QString& filePath);
+
 protected:
-    void resizeEvent(QResizeEvent *event) override;
+    void resizeEvent(QResizeEvent* event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
     QString _filePath, _displayFilePath;
@@ -61,6 +65,7 @@ public:
 
 private:
     void makeEmpty();
+    void openFile(const QString& filePath);
 };
 
 //------------------------------------------------------------------------------
@@ -111,6 +116,7 @@ signals:
 private slots:
     void showGaussCalculator();
     void editStyleSheet();
+    void editAppSettings();
 };
 
 //------------------------------------------------------------------------------
@@ -121,6 +127,7 @@ class StartWindow : public QWidget
 
 public:
     explicit StartWindow(QWidget *parent = nullptr);
+    ~StartWindow();
 
 private:
     void editStyleSheet();

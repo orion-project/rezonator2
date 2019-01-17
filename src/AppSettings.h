@@ -35,6 +35,7 @@ public:
                                  ///< Set as fraction of limits range: `(max - min) * plotZoomStep/100`.
     int plotNumberPrecision;  ///< Number of decimal digits used to format axes labels.
     QString defaultTripType;  ///< New schemas should be created having this trip-type.
+    bool showStartWindow;     ///< Show StartWindow after app started instead of opening ProjectWindow.
 
     void load();
     void save();

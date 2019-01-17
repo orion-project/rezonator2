@@ -2,9 +2,11 @@
 #include "CommonData.h"
 #include "ProjectWindow.h"
 #include "GaussCalculatorWindow.h"
+#include "AppSettingsDialog.h"
 #include "core/CommonTypes.h"
-#include "tools/OriMruList.h"
 #include "widgets/Appearance.h"
+#include "tools/OriMruList.h"
+#include "tools/OriSettings.h"
 #include "helpers/OriWindows.h"
 #include "helpers/OriLayouts.h"
 
@@ -93,6 +95,13 @@ void MruStartItem::resizeEvent(QResizeEvent *event)
     }
 }
 
+void MruStartItem::mouseReleaseEvent(QMouseEvent* event)
+{
+    QWidget::mouseReleaseEvent(event);
+
+    emit onFileOpen(_filePath);
+}
+
 //------------------------------------------------------------------------------
 //                               StartPanel
 //------------------------------------------------------------------------------
@@ -151,7 +160,11 @@ MruStartPanel::MruStartPanel() : StartPanel("panel_mru")
     layout->setMargin(0);
     layout->setSpacing(0);
     for (const QFileInfo& file : files)
-        layout->addWidget(new MruStartItem(file));
+    {
+        auto itemWidget = new MruStartItem(file);
+        connect(itemWidget, &MruStartItem::onFileOpen, this, &MruStartPanel::openFile);
+        layout->addWidget(itemWidget);
+    }
 
     auto mruWidget = new QWidget;
     mruWidget->setLayout(layout);
@@ -182,6 +195,12 @@ void MruStartPanel::makeEmpty()
         emptyLabel,
         Stretch(),
     }).useFor(this);
+}
+
+void MruStartPanel::openFile(const QString& filePath)
+{
+    emit onClose();
+    (new ProjectWindow(nullptr, filePath))->show();
 }
 
 //------------------------------------------------------------------------------
@@ -322,7 +341,7 @@ ToolsStartPanel::ToolsStartPanel() : StartPanel("panel_tools")
         makeHeader(tr("Tools")),
         makeButton(":/toolbar/gauss_calculator", tr("Gauss Calculator"), SLOT(showGaussCalculator())),
         makeButton(":/toolbar/protocol", tr("Edit Stylesheet"), SLOT(editStyleSheet())),
-        makeButton(":/toolbar/options", tr("Edit Settings"), nullptr),
+        makeButton(":/toolbar/options", tr("Edit Settings"), SLOT(editAppSettings())),
         Stretch()
     }).useFor(this);
 }
@@ -335,6 +354,11 @@ void ToolsStartPanel::showGaussCalculator()
 void ToolsStartPanel::editStyleSheet()
 {
     emit onEditStyleSheet();
+}
+
+void ToolsStartPanel::editAppSettings()
+{
+    Z::Dlg::editAppSettings(this);
 }
 
 //------------------------------------------------------------------------------
@@ -377,6 +401,17 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
 
     setStyleSheet(QString::fromLatin1(reinterpret_cast<const char*>(
         QResource(":/style/StartWindow").data())));
+
+    Ori::Settings s;
+    s.beginGroup("View");
+    s.restoreWindowGeometry("startWindow", this);
+}
+
+StartWindow::~StartWindow()
+{
+    Ori::Settings s;
+    s.beginGroup("View");
+    s.storeWindowGeometry("startWindow", this);
 }
 
 void StartWindow::editStyleSheet()

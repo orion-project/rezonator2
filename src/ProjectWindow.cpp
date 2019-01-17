@@ -15,8 +15,6 @@
 #include "helpers/OriWidgets.h"
 #include "helpers/OriWindows.h"
 #include "tools/OriMruList.h"
-//#include "tools/OriStyler.h"
-//#include "tools/OriTranslator.h"
 #include "tools/OriSettings.h"
 #include "widgets/OriLangsMenu.h"
 #include "widgets/OriMruMenu.h"

@@ -64,7 +64,6 @@ HEADERS += \
     libs/qcustomplot/qcustomplot.h \
     src/AppSettings.h \
     src/CalcManager.h \
-    src/ConfigDialog.h \
     src/CustomPrefs.h \
     src/ElementPropsDialog.h \
     src/ElementsCatalogDialog.h \
@@ -152,14 +151,14 @@ HEADERS += \
     src/funcs_window/CausticOptionsPanel.h \
     src/funcs_window/FuncOptionsPanel.h \
     src/StartWindow.h \
-    src/CommonData.h
+    src/CommonData.h \
+    src/AppSettingsDialog.h
 	
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
     libs/qcustomplot/qcustomplot.cpp \
     src/AppSettings.cpp \
     src/CalcManager.cpp \
-    src/ConfigDialog.cpp \
     src/CustomPrefs.cpp \
     src/ElementPropsDialog.cpp \
     src/ElementsCatalogDialog.cpp \
@@ -259,7 +258,8 @@ SOURCES += \
     src/funcs_window/FuncOptionsPanel.cpp \
     src/io/ISchemaWindowStorable.cpp \
     src/StartWindow.cpp \
-    src/CommonData.cpp
+    src/CommonData.cpp \
+    src/AppSettingsDialog.cpp
 
 DISTFILES += \
     src/StartWindow.qss \

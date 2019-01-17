@@ -4,6 +4,10 @@
             "id": "edit_cursor_values",
             "text": "You can click X or Y value in the cursor panel and type an exact value to move the cursor to.",
             "image": ":/tips/edit_cursor_values"
+        },
+        {
+            "id": "disable_start_window",
+            "text": "You can disable this start window using respective flag in application settings dialog.",
         }
     ]
 }

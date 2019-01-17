@@ -14,13 +14,12 @@ namespace Widgets {
     class OptionsGroup;
 }}
 
-class ConfigDialog : public Ori::Dlg::BasicConfigDialog
+class AppSettingsDialog : public Ori::Dlg::BasicConfigDialog
 {
     Q_OBJECT
 
 public:
-    ConfigDialog(QWidget* parent);
-    ~ConfigDialog() override;
+    AppSettingsDialog(QWidget* parent);
 
     // inherited from BasicConfigDialog
     virtual void populate() override;
@@ -36,8 +35,6 @@ private:
     QWidget* createLayoutPage();
     void fillLangsCombo();
     void fillStylesCombo();
-
-    static int _savedTabIndex;
 };
 
 #ifndef DLG_APP_CONFIG
@@ -45,7 +42,7 @@ private:
 namespace Z {
 namespace Dlg {
 
-bool appConfig(QWidget* parent);
+bool editAppSettings(QWidget* parent);
 
 } // namespace Dlg
 } // namespace Z
