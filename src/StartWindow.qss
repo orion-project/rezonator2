@@ -62,12 +62,12 @@ QLabel[role=mru_file_path] {
   color: #779;
 }
 
-MruItemWidget {
+MruStartItem {
   min-height: 44px;
   max-height: 44px;
 }
 
-MruItemWidget:hover {
+MruStartItem:hover {
   border: 1px solid #dadbde;
   border-radius: 5px;
   background-color: qlineargradient(

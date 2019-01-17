@@ -19,12 +19,12 @@ protected:
 
 //------------------------------------------------------------------------------
 
-class MruItemWidget : public CustomCssWidget
+class MruStartItem : public CustomCssWidget
 {
     Q_OBJECT
 
 public:
-    explicit MruItemWidget(const QFileInfo& fileInfo);
+    explicit MruStartItem(const QFileInfo& fileInfo);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -36,7 +36,23 @@ private:
 
 //------------------------------------------------------------------------------
 
-class MruStartPanel : public CustomCssWidget
+class StartPanel : public CustomCssWidget
+{
+    Q_OBJECT
+
+protected:
+    explicit StartPanel(const QString& objectName);
+
+    QWidget* makeHeader(const QString& title);
+    QWidget* makeButton(const QString& iconPath, const QString& title, const char* slot);
+
+signals:
+    void onClose();
+};
+
+//------------------------------------------------------------------------------
+
+class MruStartPanel : public StartPanel
 {
     Q_OBJECT
 
@@ -49,6 +65,56 @@ private:
 
 //------------------------------------------------------------------------------
 
+class TipsStartPanel : public StartPanel
+{
+    Q_OBJECT
+
+public:
+    explicit TipsStartPanel();
+    ~TipsStartPanel();
+
+private:
+    QLabel *_tipText, *_tipPreview;
+
+    void showNextTip();
+    void showPrevTip();
+    void showTip(const QJsonObject& tip);
+};
+
+//------------------------------------------------------------------------------
+
+class ActionsStartPanel : public StartPanel
+{
+    Q_OBJECT
+
+public:
+    explicit ActionsStartPanel();
+
+private slots:
+    void makeSchemaSW();
+    void makeSchemaRR();
+    void makeSchemaSP();
+};
+
+//------------------------------------------------------------------------------
+
+class ToolsStartPanel : public StartPanel
+{
+    Q_OBJECT
+
+public:
+    explicit ToolsStartPanel();
+
+signals:
+    void onEditStyleSheet();
+
+private slots:
+    void showGaussCalculator();
+    void editStyleSheet();
+};
+
+//------------------------------------------------------------------------------
+
 class StartWindow : public QWidget
 {
     Q_OBJECT
@@ -57,25 +123,7 @@ public:
     explicit StartWindow(QWidget *parent = nullptr);
 
 private:
-    QWidget* actionsPanel();
-    QWidget* tipsPanel();
-    QWidget* toolsPanel();
-    QWidget* panel(const QString& name, QBoxLayout* layout);
-    QWidget* button(const QString& iconPath, const QString& title, const char* slot);
-
-private slots:
-    void makeSchemaSW();
-    void makeSchemaRR();
-    void makeSchemaSP();
-    void showGaussCalculator();
     void editStyleSheet();
-    void showNextTip();
-    void showPrevTip();
-
-private:
-    QLabel *_tipText, *_tipPreview;
-
-    void showTip(const QJsonObject& tip);
 };
 
 #endif // START_WINDOW_H
