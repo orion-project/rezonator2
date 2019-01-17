@@ -10,16 +10,44 @@ class QJsonObject;
 class QFileInfo;
 QT_END_NAMESPACE
 
-class MruItemWidget : public QWidget
+class CustomCssWidget : public QWidget
 {
-   Q_OBJECT
+protected:
+    // Paint event should overriden to apply styles heets
+    void paintEvent(QPaintEvent*) override;
+};
+
+//------------------------------------------------------------------------------
+
+class MruItemWidget : public CustomCssWidget
+{
+    Q_OBJECT
 
 public:
     explicit MruItemWidget(const QFileInfo& fileInfo);
 
 protected:
-    void paintEvent(QPaintEvent*);
+    void resizeEvent(QResizeEvent *event) override;
+
+private:
+    QString _filePath, _displayFilePath;
+    QLabel* _filePathLabel;
 };
+
+//------------------------------------------------------------------------------
+
+class MruStartPanel : public CustomCssWidget
+{
+    Q_OBJECT
+
+public:
+    explicit MruStartPanel();
+
+private:
+    void makeEmpty();
+};
+
+//------------------------------------------------------------------------------
 
 class StartWindow : public QWidget
 {
@@ -30,12 +58,9 @@ public:
 
 private:
     QWidget* actionsPanel();
-    QWidget* mruPanel();
-    QWidget* mruPanelEmpty();
     QWidget* tipsPanel();
     QWidget* toolsPanel();
-    QWidget* panel(QBoxLayout* layout);
-    QWidget* header(const QString& title);
+    QWidget* panel(const QString& name, QBoxLayout* layout);
     QWidget* button(const QString& iconPath, const QString& title, const char* slot);
 
 private slots:

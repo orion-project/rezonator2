@@ -28,34 +28,21 @@ using namespace Ori::Layouts;
 namespace {
     const int TIP_IMG_PREVIEW_H = 100;
     const int TIP_IMG_PREVIEW_W = 200;
-    const int MAX_MRU_PATH_LEN = 60;
     QJsonArray __tips;
-}
 
-MruItemWidget::MruItemWidget(const QFileInfo& fileInfo) : QWidget()
-{
-    auto labelFileName = new QLabel(fileInfo.baseName());
-    labelFileName->setProperty("role", "mru_file_name");
-
-    auto filePath = fileInfo.filePath();
-    auto labelFilePath = new QLabel;
-    if (filePath.length() > MAX_MRU_PATH_LEN)
+    QWidget* makeHeader(const QString& title)
     {
-        filePath = "..." + filePath.right(MAX_MRU_PATH_LEN);
-        labelFilePath->setToolTip(fileInfo.filePath());
+        auto label = new QLabel(title);
+        label->setProperty("role", "header");
+        return label;
     }
-    labelFilePath->setText(filePath);
-    labelFilePath->setProperty("role", "mru_file_path");
-
-    LayoutV({labelFileName, labelFilePath}).setMargin(5).setSpacing(0).useFor(this);
-
-    QSizePolicy policy;
-    policy.setControlType(QSizePolicy::ToolButton);
-    setSizePolicy(policy);
 }
 
-// Paint event should overriden to apply styles heets
-void MruItemWidget::paintEvent(QPaintEvent*)
+//------------------------------------------------------------------------------
+//                               CustomCssWidget
+//------------------------------------------------------------------------------
+
+void CustomCssWidget::paintEvent(QPaintEvent*)
 {
     QStyleOption opt;
     opt.init(this);
@@ -63,6 +50,114 @@ void MruItemWidget::paintEvent(QPaintEvent*)
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }
 
+//------------------------------------------------------------------------------
+//                               MruItemWidget
+//------------------------------------------------------------------------------
+
+MruItemWidget::MruItemWidget(const QFileInfo& fileInfo)
+{
+    _filePath = fileInfo.filePath();
+
+    // There is some weird logic when Qt calculates the size of scroll area,
+    // so we need to add some spaces to accout width of vertical scroll bar.
+    _displayFilePath = _filePath + "      ";
+
+    auto labelFileName = new QLabel(fileInfo.baseName());
+    labelFileName->setProperty("role", "mru_file_name");
+
+    _filePathLabel = new QLabel;
+    _filePathLabel->setText(_displayFilePath);
+    _filePathLabel->setProperty("role", "mru_file_path");
+
+    LayoutV({labelFileName, _filePathLabel}).setMargin(5).setSpacing(0).useFor(this);
+}
+
+void MruItemWidget::resizeEvent(QResizeEvent *event)
+{
+    QWidget::resizeEvent(event);
+
+    QFontMetrics metrix(_filePathLabel->font());
+    int width = _filePathLabel->width();
+    if (metrix.width(_filePath) > width)
+    {
+        _filePathLabel->setText(metrix.elidedText(_filePath, Qt::ElideLeft, width));
+        setToolTip(_filePath);
+    }
+    else
+    {
+        _filePathLabel->setText(_displayFilePath);
+        setToolTip("");
+    }
+}
+
+//------------------------------------------------------------------------------
+//                               MruPanel
+//------------------------------------------------------------------------------
+
+MruStartPanel::MruStartPanel()
+{
+    setObjectName("panel_mru");
+    setProperty("role", "panel");
+
+    auto items = CommonData::instance()->mruList()->items();
+    if (items.isEmpty())
+    {
+        makeEmpty();
+        return;
+    }
+
+    QVector<QFileInfo> files;
+    for (const QString& item : items)
+    {
+        QFileInfo file(item);
+        if (file.exists()) files << file;
+    }
+    if (files.isEmpty())
+    {
+        makeEmpty();
+        return;
+    }
+
+    auto layout = new QVBoxLayout;
+    layout->setMargin(0);
+    layout->setSpacing(0);
+    for (const QFileInfo& file : files)
+        layout->addWidget(new MruItemWidget(file));
+
+    auto mruWidget = new QWidget;
+    mruWidget->setLayout(layout);
+    mruWidget->setObjectName("mru_widget");
+    mruWidget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
+
+    auto mruScroll = new QScrollArea;
+    mruScroll->setWidget(mruWidget);
+    mruScroll->horizontalScrollBar()->setDisabled(true);
+    mruScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    mruScroll->setWidgetResizable(true);
+
+    LayoutV({
+         makeHeader(tr("Recent")),
+         mruScroll,
+         Stretch()
+    }).useFor(this);
+}
+
+void MruStartPanel::makeEmpty()
+{
+    auto emptyLabel = new QLabel(tr("There are no recently opened files yet."));
+    emptyLabel->setObjectName("mru_empty_stub");
+
+    LayoutV({
+        makeHeader(tr("Recent")),
+        Stretch(),
+        emptyLabel,
+        Stretch(),
+    }).useFor(this);
+}
+
+//------------------------------------------------------------------------------
+//                               StartWindow
+//------------------------------------------------------------------------------
 
 StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
 {
@@ -77,7 +172,7 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
             LayoutH({
                 Stretch(),
                 actionsPanel(),
-                mruPanel(),
+                new MruStartPanel,
                 toolsPanel(),
                 Stretch(),
             }).setSpacing(20),
@@ -95,64 +190,14 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
 
 QWidget* StartWindow::actionsPanel()
 {
-    return panel(LayoutV({
-        header(tr("Actions")),
+    return panel("panel_actions", LayoutV({
+        makeHeader(tr("Actions")),
         button(":/toolbar/schema_open", tr("Open Schema File"), nullptr),
         button(":/toolbar/schema_open", tr("Open Example Schema"), nullptr), // TODO make different icon
         button(TripTypes::info(TripType::SW).iconPath(), tr("Make Standing-Wave Resonator"), SLOT(makeSchemaSW())),
         button(TripTypes::info(TripType::RR).iconPath(), tr("Make Ring Resonator"), SLOT(makeSchemaRR())),
         button(TripTypes::info(TripType::SP).iconPath(), tr("Make Single-Pass System"), SLOT(makeSchemaSP())),
         Stretch()
-    }).boxLayout());
-}
-
-QWidget* StartWindow::mruPanel()
-{
-    auto items = CommonData::instance()->mruList()->items();
-    if (items.isEmpty())
-        return mruPanelEmpty();
-
-    QVector<QFileInfo> files;
-    for (const QString& item : items)
-    {
-        QFileInfo file(item);
-        if (file.exists()) files << file;
-    }
-    if (files.isEmpty())
-        return mruPanelEmpty();
-
-    auto layout = new QVBoxLayout;
-    layout->setMargin(0);
-    layout->setSpacing(0);
-    for (const QFileInfo& file : files)
-        layout->addWidget(new MruItemWidget(file));
-
-    auto mruWidget = new QWidget;
-    mruWidget->setLayout(layout);
-    mruWidget->setObjectName("mru_widget");
-
-    auto mruScroll = new QScrollArea;
-    mruScroll->setWidget(mruWidget);
-    mruScroll->horizontalScrollBar()->setDisabled(true);
-    mruScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    return panel(LayoutV({
-         header(tr("Recent")),
-         mruScroll,
-         Stretch()
-    }).boxLayout());
-}
-
-QWidget* StartWindow::mruPanelEmpty()
-{
-    auto emptyLabel = new QLabel(tr("There are no recently opened files yet."));
-    emptyLabel->setObjectName("mru_empty_stub");
-
-    return panel(LayoutV({
-        header(tr("Recent")),
-        Stretch(),
-        emptyLabel,
-        Stretch(),
     }).boxLayout());
 }
 
@@ -191,9 +236,9 @@ QWidget* StartWindow::tipsPanel()
     nextButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
     connect(nextButton, SIGNAL(clicked()), this, SLOT(showNextTip()));
 
-    return panel(LayoutH({
+    return panel("panel_tips", LayoutH({
         LayoutV({
-            header(tr("Tips")),
+            makeHeader(tr("Tips")),
             _tipText,
             Stretch(),
             LayoutH({
@@ -208,8 +253,8 @@ QWidget* StartWindow::tipsPanel()
 
 QWidget* StartWindow::toolsPanel()
 {
-    return panel(LayoutV({
-        header(tr("Tools")),
+    return panel("panel_tools", LayoutV({
+        makeHeader(tr("Tools")),
         button(":/toolbar/gauss_calculator", tr("Gauss Calculator"), SLOT(showGaussCalculator())),
         button(":/toolbar/protocol", tr("Edit Stylesheet"), SLOT(editStyleSheet())),
         button(":/toolbar/options", tr("Edit Settings"), nullptr),
@@ -217,19 +262,13 @@ QWidget* StartWindow::toolsPanel()
     }).boxLayout());
 }
 
-QWidget* StartWindow::panel(QBoxLayout* layout)
+QWidget* StartWindow::panel(const QString& name, QBoxLayout* layout)
 {
     auto panel = new QWidget;
     panel->setProperty("role", "panel");
+    panel->setObjectName(name);
     panel->setLayout(layout);
     return panel;
-}
-
-QWidget* StartWindow::header(const QString& title)
-{
-    auto label = new QLabel(title);
-    label->setProperty("role", "header");
-    return label;
 }
 
 QWidget* StartWindow::button(const QString& iconPath, const QString& title, const char* slot)
@@ -283,7 +322,7 @@ namespace {
         s->events().disable();
         s->setTripType(tripType);
         s->events().enable();
-        (new ProjectWindow(s))->show();
+        (new ProjectWindow(s, QString()))->show();
     }
 }
 

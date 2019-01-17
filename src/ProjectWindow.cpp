@@ -51,17 +51,22 @@ enum ProjectWindowStatusPanels
     STATUS_PANELS_COUNT,
 };
 
-ProjectWindow::ProjectWindow(Schema* s) : QMainWindow(), SchemaToolWindow(s ? s : new Schema())
+ProjectWindow::ProjectWindow(Schema* readySchema, const QString &fileName) :
+    QMainWindow(), SchemaToolWindow(readySchema ? readySchema : new Schema())
 {
     setAttribute(Qt::WA_DeleteOnClose);
     Ori::Wnd::setWindowIcon(this, ":/window_icons/main");
 
-    loadSettings();
+    Ori::Settings s;
+    s.beginGroup("View");
+    s.restoreWindowGeometry("mainWindow", this);
 
-    schema()->events().disable();
-    if (!s)
+    if (!readySchema)
+    {
+        schema()->events().disable();
         schema()->setTripType(TripTypes::find(Settings::instance().defaultTripType));
-    schema()->events().enable();
+        schema()->events().enable();
+    }
 
     _calculations = new CalcManager(schema(), this);
     _operations = new ProjectOperations(schema(), this, _calculations);
@@ -96,32 +101,23 @@ ProjectWindow::ProjectWindow(Schema* s) : QMainWindow(), SchemaToolWindow(s ? s 
     if (Settings::instance().showProtocolAtStart)
         showProtocolWindow();
 
-    QTimer::singleShot(200, _operations, SLOT(checkCmdLine()));
+    if (!fileName.isEmpty())
+        QTimer::singleShot(200, [this, fileName]{
+            this->_operations->openSchemaFile(fileName);
+        });
 }
 
 ProjectWindow::~ProjectWindow()
 {
-    saveSettings();
+    Ori::Settings s;
+    s.beginGroup("View");
+    s.storeWindowGeometry("mainWindow", this);
 }
 
 void ProjectWindow::registerStorableWindows()
 {
     WindowsManager::registerConstructor(SchemaParamsWindowStorable::windowType, SchemaParamsWindowStorable::createWindow);
     WindowsManager::registerConstructor(PumpWindowStorable::windowType, PumpWindowStorable::createWindow);
-}
-
-void ProjectWindow::loadSettings()
-{
-    Ori::Settings s;
-    s.beginGroup("View");
-    s.restoreWindowGeometry("mainWindow", this);
-}
-
-void ProjectWindow::saveSettings()
-{
-    Ori::Settings s;
-    s.beginGroup("View");
-    s.storeWindowGeometry("mainWindow", this);
 }
 
 void ProjectWindow::createActions()

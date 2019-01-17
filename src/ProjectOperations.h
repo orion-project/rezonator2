@@ -27,7 +27,6 @@ public slots:
     bool saveSchemaFile(const QString& fileName);
     bool saveSchemaFileAs();
     void saveSchemaFileCopy();
-    void checkCmdLine();
     void setupPump();
     void setupWavelength();
     void setupTripType();

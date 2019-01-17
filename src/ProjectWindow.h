@@ -36,7 +36,7 @@ class ProjectWindow : public QMainWindow, public SchemaToolWindow
     Q_OBJECT
 
 public:
-    ProjectWindow(Schema* = nullptr);
+    ProjectWindow(Schema* readySchema, const QString& fileName);
     ~ProjectWindow() override;
 
     // inherits from SchemaListener
@@ -98,9 +98,6 @@ private:
     void updateStatusInfo();
     void updateStability();
     void updateActions();
-
-    void loadSettings();
-    void saveSettings();
 
 private slots:
     void actionHelpAbout();

@@ -53,13 +53,18 @@ QLabel[role=header] {
 }
 
 QLabel[role=mru_file_name] {
-  font: bold 13px;
-  color: #559;
+  font: bold 14px;
+  color: #446;
 }
 
 QLabel[role=mru_file_path] {
   font-size: 11px;
   color: #779;
+}
+
+MruItemWidget {
+  min-height: 44px;
+  max-height: 44px;
 }
 
 MruItemWidget:hover {
@@ -81,11 +86,12 @@ QScrollArea {
 
 QScrollBar:vertical {
   background-color: white;
-  width: 10px;
+  width: 15px;
+  margin-left: 6px;
 }
 QScrollBar::handle:vertical {
   border: 1px solid #dadbde;
-  border-radius: 5px;
+  border-radius: 4px;
   background-color: #f6f7fa;
   min-height: 20px;
 }
@@ -94,4 +100,12 @@ QScrollBar::add-line:vertical {
 }
 QScrollBar::sub-line:vertical {
   height: 0;
+}
+
+#panel_tips {
+  max-height: 115px;
+}
+
+#panel_mru {
+  min-width: 350px;
 }

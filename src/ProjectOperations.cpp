@@ -214,17 +214,6 @@ void ProjectOperations::saveSchemaFileCopy()
         writeProtocol(writer.report(), tr("There are messages while saving copy of project."));
 }
 
-void ProjectOperations::checkCmdLine()
-{
-    QStringList args = QApplication::arguments();
-    for (int i = 1; i < args.count(); i++)
-        if (QFileInfo(args[i]).exists())
-        {
-            openSchemaFile(args[i]);
-            break;
-        }
-}
-
 bool ProjectOperations::canClose()
 {
     if (schema()->modified())
