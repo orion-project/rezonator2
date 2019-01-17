@@ -8,6 +8,7 @@ QT_BEGIN_NAMESPACE
 class QLabel;
 class QBoxLayout;
 class QFileInfo;
+class QMovie;
 QT_END_NAMESPACE
 
 class CustomCssWidget : public QWidget
@@ -77,7 +78,10 @@ class TipsStartPanel : public StartPanel
 public:
     explicit TipsStartPanel(QLabel* tipImage);
 
+    void closeTipImage();
+
 private:
+    QMovie* _movie = nullptr;
     QJsonObject _tips;
     QLabel *_tipText, *_tipPreview, *_tipImage;
     QString _imagePath;
@@ -92,6 +96,8 @@ private:
     void showPrevTip();
     void showTip();
     void enlargePreview();
+    void handleMovieStarted();
+    void showTipImage(const QPixmap& pixmap);
 };
 
 //------------------------------------------------------------------------------
@@ -146,6 +152,7 @@ private:
     QLabel *_tipImage;
 
     void editStyleSheet();
+    void loadStyleSheet();
 };
 
 #endif // START_WINDOW_H

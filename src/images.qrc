@@ -133,10 +133,6 @@
     <qresource prefix="/config_pages">
         <file alias="view">../img/opts_window_24.png</file>
         <file alias="general">../img/opts_gears_24.png</file>
-        <file alias="units">../img/opts_caliper_24.png</file>
-        <file alias="comment">../img/opts_notepad_24.png</file>
-        <file alias="calc">../img/opts_calculator_48.png</file>
-        <file alias="layout">../img/opts_layout_48.png</file>
     </qresource>
     <qresource prefix="/window_icons">
         <file alias="main">../img/icon/icon_main_2.svg</file>
@@ -188,6 +184,7 @@
     </qresource>
     <qresource prefix="/tips">
         <file alias="list">tips.json</file>
-        <file alias="edit_cursor_values">../img/tips/edit_cursor_values.png</file>
+        <file alias="edit_cursor_values.gif">../img/tips/edit_cursor_values.gif</file>
+        <file alias="enlarge_tip_preview.png">../img/tips/enlarge_tip_preview.png</file>
     </qresource>
 </RCC>

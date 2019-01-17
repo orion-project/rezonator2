@@ -26,6 +26,7 @@
 #include <QScrollBar>
 #include <QStyleOption>
 #include <QToolButton>
+#include <QMovie>
 
 using namespace Ori::Layouts;
 
@@ -175,6 +176,7 @@ MruStartPanel::MruStartPanel() : StartPanel("panel_mru")
         connect(itemWidget, &MruStartItem::onFileOpen, this, &MruStartPanel::openFile);
         layout->addWidget(itemWidget);
     }
+    layout->addStretch();
 
     auto mruWidget = new QWidget;
     mruWidget->setLayout(layout);
@@ -192,12 +194,13 @@ MruStartPanel::MruStartPanel() : StartPanel("panel_mru")
          makeHeader(tr("Recent")),
          mruScroll,
          Stretch()
-    }).useFor(this);
+    }).setMargin(10).setSpacing(10).useFor(this);
 }
 
 void MruStartPanel::makeEmpty()
 {
     auto emptyLabel = new QLabel(tr("There are no recently opened files yet."));
+    emptyLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     emptyLabel->setObjectName("mru_empty_stub");
 
     LayoutV({
@@ -255,10 +258,10 @@ TipsStartPanel::TipsStartPanel(QLabel *tipImage) : StartPanel("panel_tips")
                 prevButton,
                 nextButton,
                 Stretch()
-            }),
-        }),
+            }).setMargin(0).setSpacing(5),
+        }).setMargin(0).setSpacing(10),
         _tipPreview
-    }).useFor(this);
+    }).setMargin(10).setSpacing(10).useFor(this);
 
     loadTips();
     showNextTip();
@@ -310,11 +313,15 @@ void TipsStartPanel::showPrevTip()
 
 void TipsStartPanel::showTip()
 {
+    if (_tipImage->isVisible()) closeTipImage();
+
     auto tip = _tips[_ids.at(_index)].toObject();
 
-    _imagePath = tip["image"].toString();
-    if (!_imagePath.isEmpty())
+    auto imageFile = tip["image"].toString();
+    if (!imageFile.isEmpty())
     {
+        static QString path(":/tips/");
+        _imagePath = path + imageFile;
         auto preview = QPixmap(_imagePath)
                 .scaled(TIP_IMG_PREVIEW_W,
                         TIP_IMG_PREVIEW_H,
@@ -325,6 +332,7 @@ void TipsStartPanel::showTip()
     }
     else
     {
+        _imagePath.clear();
         _tipPreview->clear();
         _tipPreview->setVisible(false);
     }
@@ -334,12 +342,44 @@ void TipsStartPanel::showTip()
 
 void TipsStartPanel::enlargePreview()
 {
-    QPixmap pixmap(_imagePath);
+    static QString gif(".gif");
+    if (_imagePath.endsWith(gif, Qt::CaseInsensitive))
+    {
+        if (!_movie)
+        {
+            _movie = new QMovie(this);
+            connect(_movie, &QMovie::started, this, &TipsStartPanel::handleMovieStarted);
+        }
+        _movie->setFileName(_imagePath);
+        _tipImage->setMovie(_movie);
+        _movie->start();
+    }
+    else
+    {
+        QPixmap pixmap(_imagePath);
+        _tipImage->setPixmap(pixmap);
+        showTipImage(pixmap);
+    }
+}
+
+void TipsStartPanel::handleMovieStarted()
+{
+    showTipImage(_movie->currentPixmap());
+}
+
+void TipsStartPanel::showTipImage(const QPixmap& pixmap)
+{
     auto imageSize = pixmap.size();
     _tipImage->resize(imageSize.width() + 20, imageSize.height() + 20);
-    _tipImage->setPixmap(pixmap);
     _tipImage->setVisible(true);
     adjustTipImagePosition(_tipImage);
+}
+
+void TipsStartPanel::closeTipImage()
+{
+    if (_movie) _movie->stop();
+    _tipImage->setVisible(false);
+    _tipImage->clear();
 }
 
 //------------------------------------------------------------------------------
@@ -356,7 +396,7 @@ ActionsStartPanel::ActionsStartPanel() : StartPanel("panel_actions")
         makeButton(TripTypes::info(TripType::RR).iconPath(), tr("Make Ring Resonator"), SLOT(makeSchemaRR())),
         makeButton(TripTypes::info(TripType::SP).iconPath(), tr("Make Single-Pass System"), SLOT(makeSchemaSP())),
         Stretch()
-    }).useFor(this);
+    }).setMargin(10).setSpacing(10).useFor(this);
 };
 
 void ActionsStartPanel::openSchemaFile()
@@ -405,7 +445,7 @@ ToolsStartPanel::ToolsStartPanel() : StartPanel("panel_tools")
         makeButton(":/toolbar/protocol", tr("Edit Stylesheet"), SLOT(editStyleSheet())),
         makeButton(":/toolbar/options", tr("Edit Settings"), SLOT(editAppSettings())),
         Stretch()
-    }).useFor(this);
+    }).setMargin(10).setSpacing(10).useFor(this);
 }
 
 void ToolsStartPanel::showGaussCalculator()
@@ -436,10 +476,6 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
     auto tipImage = new Ori::Widgets::Label;
     tipImage->setObjectName("tip_image");
     tipImage->setCursor(Qt::PointingHandCursor);
-    connect(tipImage, &Ori::Widgets::Label::clicked, [tipImage]{
-        tipImage->setVisible(false);
-        tipImage->clear();
-    });
     _tipImage = tipImage;
 
     auto actionsPanel = new ActionsStartPanel;
@@ -453,6 +489,12 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
         this->editStyleSheet();
     });
 
+    auto tipsPanel = new TipsStartPanel(tipImage);
+
+    connect(tipImage, &Ori::Widgets::Label::clicked, [tipsPanel]{
+        tipsPanel->closeTipImage();
+    });
+
     LayoutH({
         Stretch(),
         LayoutV({
@@ -464,7 +506,7 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
                 toolsPanel,
                 Stretch(),
             }).setSpacing(20),
-            new TipsStartPanel(tipImage),
+            tipsPanel,
             Stretch(),
         }).setSpacing(20),
         Stretch(),
@@ -473,8 +515,7 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
     // Should be after all widgets to overlay them
     tipImage->setParent(this);
 
-    setStyleSheet(QString::fromLatin1(reinterpret_cast<const char*>(
-        QResource(":/style/StartWindow").data())));
+    loadStyleSheet();
 
     Ori::Settings s;
     s.beginGroup("View");
@@ -519,4 +560,28 @@ void StartWindow::resizeEvent(QResizeEvent* event)
 {
     QWidget::resizeEvent(event);
     adjustTipImagePosition(_tipImage);
+}
+
+void StartWindow::loadStyleSheet()
+{
+    QFile file(":/style/StartWindow");
+    bool ok = file.open(QIODevice::ReadOnly);
+    if (!ok)
+    {
+        qWarning() << "Unable to load style from resources" << file.errorString();
+        return;
+    }
+    QByteArray data = file.readAll();
+    if (data.isEmpty())
+    {
+        qWarning() << "Unable to load style from resources: read data is empty";
+        return;
+    }
+    QString styleSheet = data;
+    if (styleSheet.isEmpty())
+    {
+        qWarning() << "Unable to load style from resources: data can't be converter to string";
+        return;
+    }
+    setStyleSheet(styleSheet);
 }

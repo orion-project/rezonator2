@@ -17,12 +17,15 @@ void load(const QString& storagePath)
     __storagePath = storagePath;
 
     QFile file(__storagePath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (file.exists())
     {
-        qWarning() << "Unable to load custom prefs" << __storagePath << file.errorString();
-        return;
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            qWarning() << "Unable to load custom prefs" << __storagePath << file.errorString();
+            return;
+        }
+        __customData = QJsonDocument::fromJson(file.readAll()).object();
     }
-    __customData = QJsonDocument::fromJson(file.readAll()).object();
 }
 
 void save()

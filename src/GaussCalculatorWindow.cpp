@@ -516,10 +516,13 @@ void GaussCalculatorWindow::restoreState()
 
     auto fileName = stateFileName();
     QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        qWarning() << "GaussCalculatorWindow: failed to load state" << fileName << file.errorString();
-    else
-        root = QJsonDocument::fromJson(file.readAll()).object();
+    if (file.exists())
+    {
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+            qWarning() << "GaussCalculatorWindow: failed to load state" << fileName << file.errorString();
+        else
+            root = QJsonDocument::fromJson(file.readAll()).object();
+    }
 
     int w = root["window_width"].toInt();
     int h = root["window_height"].toInt();

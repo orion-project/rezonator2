@@ -1,12 +1,13 @@
 {
     "edit_cursor_values": {
         "text": "You can click X or Y value in the cursor panel and type an exact value to move the cursor to.",
-        "image": ":/tips/edit_cursor_values"
+        "image": "edit_cursor_values.gif"
     },
     "disable_start_window": {
-        "text": "You can disable this start window using respective flag in application settings dialog."
+        "text": "You can disable this start window using the respective flag in the application settings dialog."
     },
     "enlarge_tip_preview": {
-        "text": "You can enlarge this small preview image by clicking it -->"
+        "text": "You can enlarge these small preview images by clicking them. Also, some of them are animated! →",
+        "image": "enlarge_tip_preview.png"
     }
 }
