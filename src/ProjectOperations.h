@@ -19,6 +19,16 @@ public:
     Schema* schema() const { return _schema; }
     bool canClose();
 
+    static QString getSaveFileName(QWidget *parent);
+    static QString getOpenFileName(QWidget *parent);
+
+    /// Open example schema file.
+    /// We have to have an intended command for opening of example file, because of
+    /// running the application from AppImage (Linux) or application bundle (MacOS)
+    /// user has no access to examples directory via regular open file dialog.
+    static QString selectSchemaExample();
+
+
 public slots:
     void newSchemaFile();
     void openSchemaFile();
@@ -31,23 +41,13 @@ public slots:
     void setupWavelength();
     void setupTripType();
 
-    /// Open example schema file.
-    /// We have to have an intended command for opening of example file, because of
-    /// running the application from AppImage (Linux) or application bundle (MacOS)
-    /// user has no access to examples directory via regular open file dialog.
-    void openSchemaExample();
-
 signals:
-    void fileNameSelected(const QString& fileName);
     void protocolRequired();
 
 private:
     QWidget* _parent;
     Schema* _schema;
     CalcManager* _calcManager;
-
-    QString getSaveFileName();
-    QString getOpenFileName();
 
     void writeProtocol(const Z::Report& report, const QString &message);
 };

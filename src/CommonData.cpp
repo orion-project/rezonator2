@@ -40,3 +40,9 @@ CommonData::~CommonData()
 
     _instance = nullptr;
 }
+
+void CommonData::addFileToMruList(const QString& fileName)
+{
+    _mruList->append(fileName);
+}
+

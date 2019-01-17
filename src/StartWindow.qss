@@ -74,7 +74,7 @@ MruStartItem:hover {
     x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fefefe, stop: 1 #f6f7f9);
 }
 
-QScrollArea {
+#mru_scroll_area  {
   border-style: none;
   background-color: white;
 }
@@ -84,21 +84,24 @@ QScrollArea {
   margin-right: 20px;
 }
 
-QScrollBar:vertical {
+#mru_scroll_area QScrollBar:vertical {
   background-color: white;
   width: 15px;
   margin-left: 6px;
 }
-QScrollBar::handle:vertical {
+
+#mru_scroll_area QScrollBar::handle:vertical {
   border: 1px solid #dadbde;
   border-radius: 4px;
   background-color: #f6f7fa;
   min-height: 20px;
 }
-QScrollBar::add-line:vertical {
+
+#mru_scroll_area QScrollBar::add-line:vertical {
   height: 0;
 }
-QScrollBar::sub-line:vertical {
+
+#mru_scroll_area QScrollBar::sub-line:vertical {
   height: 0;
 }
 

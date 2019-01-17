@@ -1,6 +1,7 @@
 #include "AppSettings.h"
 #include "CalcManager.h"
 #include "CustomPrefs.h"
+#include "CommonData.h"
 #include "ProjectOperations.h"
 #include "PumpParamsDialog.h"
 #include "io/z_io_utils.h"
@@ -41,12 +42,12 @@ void ProjectOperations::newSchemaFile()
     QProcess::startDetached(qApp->applicationFilePath());
 }
 
-QString ProjectOperations::getOpenFileName()
+QString ProjectOperations::getOpenFileName(QWidget* parent)
 {
     QString recentPath = CustomPrefs::recentDir("schema_open_path");
     QString recentFilter = CustomPrefs::recentStr("schema_open_filter");
 
-    auto fileName = QFileDialog::getOpenFileName(_parent,
+    auto fileName = QFileDialog::getOpenFileName(parent,
                                                  tr("Open schema", "Dialog title"),
                                                  recentPath,
                                                  Z::IO::Utils::filtersForOpen(),
@@ -59,16 +60,16 @@ QString ProjectOperations::getOpenFileName()
 
     fileName = Z::IO::Utils::refineFileName(fileName, recentFilter);
 
-    emit fileNameSelected(fileName);
+    CommonData::instance()->addFileToMruList(fileName);
     return fileName;
 }
 
-QString ProjectOperations::getSaveFileName()
+QString ProjectOperations::getSaveFileName(QWidget* parent)
 {
     QString recentPath = CustomPrefs::recentDir("schema_save_path");
     QString recentFilter = CustomPrefs::recentStr("schema_save_filter");
 
-    auto fileName = QFileDialog::getSaveFileName(_parent,
+    auto fileName = QFileDialog::getSaveFileName(parent,
                                                  tr("Save Schema", "Dialog title"),
                                                  recentPath,
                                                  Z::IO::Utils::filtersForSave(),
@@ -81,13 +82,13 @@ QString ProjectOperations::getSaveFileName()
 
     fileName = Z::IO::Utils::refineFileName(fileName, recentFilter);
 
-    emit fileNameSelected(fileName);
+    CommonData::instance()->addFileToMruList(fileName);
     return fileName;
 }
 
 void ProjectOperations::openSchemaFile()
 {
-    auto fileName = getOpenFileName();
+    auto fileName = getOpenFileName(_parent);
     if (fileName.isEmpty()) return;
     openSchemaFile(fileName);
 }
@@ -190,17 +191,17 @@ bool ProjectOperations::saveSchemaFile(const QString& fileName)
 
 bool ProjectOperations::saveSchemaFileAs()
 {
-    auto fileName = getSaveFileName();
+    auto fileName = getSaveFileName(_parent);
     if (fileName.isEmpty()) return false;
     bool ok = saveSchemaFile(fileName);
-    if (ok) // add to MRU list
-        emit fileNameSelected(fileName);
+    if (ok)
+        CommonData::instance()->addFileToMruList(fileName);
     return ok;
 }
 
 void ProjectOperations::saveSchemaFileCopy()
 {
-    auto fileName = getSaveFileName();
+    auto fileName = getSaveFileName(_parent);
     if (fileName.isEmpty()) return;
 
     Z_REPORT("Saving copy" << fileName)
@@ -310,7 +311,7 @@ void ProjectOperations::setupTripType()
     }
 }
 
-void ProjectOperations::openSchemaExample()
+QString ProjectOperations::selectSchemaExample()
 {
     QString examplesDir = qApp->applicationDirPath() % "/examples";
     QStringList exampleFiles = QDir(examplesDir).entryList(QDir::Files, QDir::Name);
@@ -331,6 +332,8 @@ void ProjectOperations::openSchemaExample()
     for (auto fileName : exampleFiles)
         fileList.addItem(new QListWidgetItem(QIcon(":/window_icons/schema"), fileName));
 
+    QString fileName;
+
     Ori::Dlg::Dialog dlg(&fileList);
     dlg.withTitle(tr("Open Example Schema"))
        .withStretchedContent()
@@ -341,6 +344,8 @@ void ProjectOperations::openSchemaExample()
         CustomPrefs::setRecentSize("open_example_dlg_size", dlg.size());
         QListWidgetItem *selected = fileList.currentItem();
         if (selected)
-            openSchemaFile(examplesDir % '/' % selected->text());
+            fileName = examplesDir % '/' % selected->text();
     }
+
+    return fileName;
 }

@@ -81,6 +81,7 @@ public:
 private:
     QLabel *_tipText, *_tipPreview;
 
+    void loadTips();
     void showNextTip();
     void showPrevTip();
     void showTip(const QJsonObject& tip);
@@ -96,6 +97,8 @@ public:
     explicit ActionsStartPanel();
 
 private slots:
+    void openSchemaFile();
+    void openSchemaExample();
     void makeSchemaSW();
     void makeSchemaRR();
     void makeSchemaSP();

@@ -7,7 +7,7 @@
         },
         {
             "id": "disable_start_window",
-            "text": "You can disable this start window using respective flag in application settings dialog.",
+            "text": "You can disable this start window using respective flag in application settings dialog."
         }
     ]
 }

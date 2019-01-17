@@ -23,6 +23,8 @@ public:
     Ori::Translator* translator() { return _translator; }
     Ori::MruFileList* mruList() { return _mruList; }
 
+    void addFileToMruList(const QString& fileName);
+
 private:
     static CommonData* _instance;
 

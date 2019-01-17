@@ -1,14 +1,17 @@
 #include "StartWindow.h"
-#include "CommonData.h"
-#include "ProjectWindow.h"
-#include "GaussCalculatorWindow.h"
+
 #include "AppSettingsDialog.h"
+#include "CommonData.h"
+#include "GaussCalculatorWindow.h"
+#include "ProjectOperations.h"
+#include "ProjectWindow.h"
 #include "core/CommonTypes.h"
 #include "widgets/Appearance.h"
-#include "tools/OriMruList.h"
-#include "tools/OriSettings.h"
+
 #include "helpers/OriWindows.h"
 #include "helpers/OriLayouts.h"
+#include "tools/OriMruList.h"
+#include "tools/OriSettings.h"
 
 #include <QApplication>
 #include <QFileInfo>
@@ -20,10 +23,10 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QResource>
-#include <QToolButton>
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QStyleOption>
+#include <QToolButton>
 
 using namespace Ori::Layouts;
 
@@ -172,6 +175,7 @@ MruStartPanel::MruStartPanel() : StartPanel("panel_mru")
     mruWidget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
 
     auto mruScroll = new QScrollArea;
+    mruScroll->setObjectName("mru_scroll_area");
     mruScroll->setWidget(mruWidget);
     mruScroll->horizontalScrollBar()->setDisabled(true);
     mruScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -209,21 +213,6 @@ void MruStartPanel::openFile(const QString& filePath)
 
 TipsStartPanel::TipsStartPanel() : StartPanel("panel_tips")
 {
-    QJsonParseError error;
-    QByteArray data = reinterpret_cast<const char*>(QResource(":/tips/list").data());
-    QJsonDocument doc = QJsonDocument::fromJson(data, &error);
-    if (doc.isNull())
-    {
-        qWarning() << "Unable to load tips from resources" << error.errorString();
-        return;
-    }
-    __tips = doc.object()["items"].toArray();
-    if (__tips.isEmpty())
-    {
-        qWarning() << "Unable to get array of tips from resources";
-        return;
-    }
-
     _tipText = new QLabel;
     _tipText->setObjectName("tip_text");
     _tipText->setWordWrap(true);
@@ -256,12 +245,31 @@ TipsStartPanel::TipsStartPanel() : StartPanel("panel_tips")
         _tipPreview
     }).useFor(this);
 
+    loadTips();
     showNextTip();
 }
 
 TipsStartPanel::~TipsStartPanel()
 {
     __tips = QJsonArray(); // free data
+}
+
+void TipsStartPanel::loadTips()
+{
+    QJsonParseError error;
+    QByteArray data = reinterpret_cast<const char*>(QResource(":/tips/list").data());
+    QJsonDocument doc = QJsonDocument::fromJson(data, &error);
+    if (doc.isNull())
+    {
+        _tipText->setText("ERROR: Unable to load tips from resources: " + error.errorString());
+        return;
+    }
+    __tips = doc.object()["items"].toArray();
+    if (__tips.isEmpty())
+    {
+        _tipText->setText("ERROR: Unable to get tips from resources: tips list is empty");
+        return;
+    }
 }
 
 void TipsStartPanel::showNextTip()
@@ -304,14 +312,30 @@ ActionsStartPanel::ActionsStartPanel() : StartPanel("panel_actions")
 {
     LayoutV({
         makeHeader(tr("Actions")),
-        makeButton(":/toolbar/schema_open", tr("Open Schema File"), nullptr),
-        makeButton(":/toolbar/schema_open", tr("Open Example Schema"), nullptr), // TODO make different icon
+        makeButton(":/toolbar/schema_open", tr("Open Schema File"), SLOT(openSchemaFile())),
+        makeButton(":/toolbar/schema_open", tr("Open Example Schema"), SLOT(openSchemaExample())), // TODO make different icon
         makeButton(TripTypes::info(TripType::SW).iconPath(), tr("Make Standing-Wave Resonator"), SLOT(makeSchemaSW())),
         makeButton(TripTypes::info(TripType::RR).iconPath(), tr("Make Ring Resonator"), SLOT(makeSchemaRR())),
         makeButton(TripTypes::info(TripType::SP).iconPath(), tr("Make Single-Pass System"), SLOT(makeSchemaSP())),
         Stretch()
     }).useFor(this);
 };
+
+void ActionsStartPanel::openSchemaFile()
+{
+    auto fileName = ProjectOperations::getOpenFileName(this);
+    if (fileName.isEmpty()) return;
+    emit onClose();
+    (new ProjectWindow(nullptr, fileName))->show();
+}
+
+void ActionsStartPanel::openSchemaExample()
+{
+    auto fileName = ProjectOperations::selectSchemaExample();
+    if (fileName.isEmpty()) return;
+    emit onClose();
+    (new ProjectWindow(nullptr, fileName))->show();
+}
 
 void ActionsStartPanel::makeSchemaSW()
 {

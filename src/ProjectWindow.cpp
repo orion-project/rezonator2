@@ -1,8 +1,9 @@
+#include "ProjectWindow.h"
+
 #include "CalcManager.h"
 #include "CommonData.h"
 #include "ElementsCatalogDialog.h"
 #include "GaussCalculatorWindow.h"
-#include "ProjectWindow.h"
 #include "ProjectOperations.h"
 #include "ProtocolWindow.h"
 #include "PumpWindow.h"
@@ -11,6 +12,7 @@
 #include "WindowsManager.h"
 #include "core/Format.h"
 #include "funcs/RoundTripCalculator.h"
+
 #include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
 #include "helpers/OriWindows.h"
@@ -78,7 +80,6 @@ ProjectWindow::ProjectWindow(Schema* readySchema, const QString &fileName) :
     connect(_mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(updateMenuBar()));
     connect(WindowsManager::instancePtr(), SIGNAL(showMdiSubWindow(QWidget*)), _mdiArea, SLOT(appendChild(QWidget*)));
     connect(CommonData::instance()->mruList(), SIGNAL(clicked(QString)), _operations, SLOT(openSchemaFile(QString)));
-    connect(_operations, &ProjectOperations::fileNameSelected, CommonData::instance()->mruList(), &Ori::MruFileList::append);
     connect(_operations, &ProjectOperations::protocolRequired, this, &ProjectWindow::showProtocolWindow);
 
     createActions();
@@ -124,7 +125,7 @@ void ProjectWindow::createActions()
 
     actnFileNew = A_(tr("&New"), _operations, SLOT(newSchemaFile()), ":/toolbar/schema_new", QKeySequence::New);
     actnFileOpen = A_(tr("&Open..."), _operations, SLOT(openSchemaFile()), ":/toolbar/schema_open", QKeySequence::Open);
-    actnFileOpenExample = A_(tr("Open &Example..."), _operations, SLOT(openSchemaExample()));
+    actnFileOpenExample = A_(tr("Open &Example..."), this, SLOT(openSchemaExample()));
     actnFileSave = A_(tr("&Save"), _operations, SLOT(saveSchemaFile()), ":/toolbar/schema_save", QKeySequence::Save);
     actnFileSaveAs = A_(tr("Save &As..."), _operations, SLOT(saveSchemaFileAs()), nullptr, QKeySequence::SaveAs);
     actnFileSaveCopy = A_(tr("Save &Copy..."), _operations, SLOT(saveSchemaFileCopy()));
@@ -415,6 +416,17 @@ void ProjectWindow::settingsChanged()
     SchemaToolWindow::settingsChanged();
     Z::WindowUtils::adjustIconSize(_mdiToolbar);
 }
+
+//------------------------------------------------------------------------------
+//                             File actions
+
+void ProjectWindow::openSchemaExample()
+{
+    auto fileName = ProjectOperations::selectSchemaExample();
+    if (fileName.isEmpty()) return;
+    _operations->openSchemaFile(fileName);
+}
+
 
 //------------------------------------------------------------------------------
 //                             Tools actions

@@ -113,6 +113,8 @@ private slots:
     void showParamsWindow();
     void showPumpsWindow();
 
+    void openSchemaExample();
+
     /// Slot connected to @c mdiArea::subWindowActivated() signal.
     /// This method is automatically called when mdiArea changes active widget.
     void updateMenuBar();
