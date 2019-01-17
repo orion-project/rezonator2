@@ -12,12 +12,11 @@
 #include "helpers/OriLayouts.h"
 #include "tools/OriMruList.h"
 #include "tools/OriSettings.h"
+#include "widgets/OriLabels.h"
 
 #include <QApplication>
 #include <QFileInfo>
-#include <QJsonArray>
 #include <QJsonDocument>
-#include <QJsonObject>
 #include <QLabel>
 #include <QPainter>
 #include <QPlainTextEdit>
@@ -31,11 +30,6 @@
 using namespace Ori::Layouts;
 
 namespace {
-    const int TIP_IMG_PREVIEW_H = 100;
-    const int TIP_IMG_PREVIEW_W = 200;
-
-    QJsonArray __tips;
-
     void makeSchema(TripType tripType)
     {
         auto s = new Schema();
@@ -43,6 +37,19 @@ namespace {
         s->setTripType(tripType);
         s->events().enable();
         (new ProjectWindow(s, QString()))->show();
+    }
+
+    void adjustTipImagePosition(QLabel* tipImage)
+    {
+        if (!tipImage->isVisible()) return;
+
+        auto parent = qobject_cast<QWidget*>(tipImage->parent());
+        if (!parent) return;
+
+        auto parentSize = parent->size();
+        auto labelSize = tipImage->size();
+        tipImage->move(parentSize.width() - labelSize.width() - 10,
+                       parentSize.height() - labelSize.height() - 10);
     }
 }
 
@@ -211,13 +218,21 @@ void MruStartPanel::openFile(const QString& filePath)
 //                             TipsStartPanel
 //------------------------------------------------------------------------------
 
-TipsStartPanel::TipsStartPanel() : StartPanel("panel_tips")
+TipsStartPanel::TipsStartPanel(QLabel *tipImage) : StartPanel("panel_tips")
 {
     _tipText = new QLabel;
     _tipText->setObjectName("tip_text");
     _tipText->setWordWrap(true);
 
-    _tipPreview = new QLabel;
+    _tipImage = tipImage;
+    _tipImage->setVisible(false);
+
+    auto tipPreview = new Ori::Widgets::Label;
+    tipPreview->setVisible(false);
+    tipPreview->setCursor(Qt::PointingHandCursor);
+    tipPreview->setToolTip(tr("Click to enlarge"));
+    connect(tipPreview, &Ori::Widgets::Label::clicked, this, &TipsStartPanel::enlargePreview);
+    _tipPreview = tipPreview;
 
     auto prevButton = new QToolButton;
     prevButton->setProperty("role", "tip_button");
@@ -249,11 +264,7 @@ TipsStartPanel::TipsStartPanel() : StartPanel("panel_tips")
     showNextTip();
 }
 
-TipsStartPanel::~TipsStartPanel()
-{
-    __tips = QJsonArray(); // free data
-}
-
+// TODO: when will be a lot of tips: check if it takes a while and move to separate thread
 void TipsStartPanel::loadTips()
 {
     QJsonParseError error;
@@ -264,44 +275,71 @@ void TipsStartPanel::loadTips()
         _tipText->setText("ERROR: Unable to load tips from resources: " + error.errorString());
         return;
     }
-    __tips = doc.object()["items"].toArray();
-    if (__tips.isEmpty())
+    _tips = doc.object();
+
+    // Randomize tips order
+    auto keys = _tips.keys();
+    while (!keys.isEmpty())
     {
-        _tipText->setText("ERROR: Unable to get tips from resources: tips list is empty");
-        return;
+        int index = qrand() % keys.size();
+        _ids << keys.at(index);
+        keys.removeAt(index);
     }
+    _index = _ids.isEmpty() ? -1 : 0;
 }
 
 void TipsStartPanel::showNextTip()
 {
-    if (__tips.isEmpty()) return;
+    if (_index < 0) return;
 
-    // TODO
-    showTip(__tips.first().toObject());
+    _index++;
+    if (_index > _ids.size()-1) _index = 0;
+
+    showTip();
 }
 
 void TipsStartPanel::showPrevTip()
 {
-    if (__tips.isEmpty()) return;
+    if (_index < 0) return;
 
-    // TODO
+    _index--;
+    if (_index < 0) _index = _ids.size()-1;
+
+    showTip();
 }
 
-void TipsStartPanel::showTip(const QJsonObject& tip)
+void TipsStartPanel::showTip()
 {
-    auto imagePath = tip["image"].toString();
-    if (!imagePath.isEmpty())
+    auto tip = _tips[_ids.at(_index)].toObject();
+
+    _imagePath = tip["image"].toString();
+    if (!_imagePath.isEmpty())
     {
-        auto preview = QPixmap(imagePath)
+        auto preview = QPixmap(_imagePath)
                 .scaled(TIP_IMG_PREVIEW_W,
                         TIP_IMG_PREVIEW_H,
                         Qt::KeepAspectRatio,
                         Qt::SmoothTransformation);
         _tipPreview->setPixmap(preview);
+        _tipPreview->setVisible(true);
     }
-    else _tipPreview->clear();
+    else
+    {
+        _tipPreview->clear();
+        _tipPreview->setVisible(false);
+    }
 
     _tipText->setText(tip["text"].toString());
+}
+
+void TipsStartPanel::enlargePreview()
+{
+    QPixmap pixmap(_imagePath);
+    auto imageSize = pixmap.size();
+    _tipImage->resize(imageSize.width() + 20, imageSize.height() + 20);
+    _tipImage->setPixmap(pixmap);
+    _tipImage->setVisible(true);
+    adjustTipImagePosition(_tipImage);
 }
 
 //------------------------------------------------------------------------------
@@ -391,9 +429,18 @@ void ToolsStartPanel::editAppSettings()
 
 StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
 {
+    setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle(qApp->applicationName());
     Ori::Wnd::setWindowIcon(this, ":/window_icons/main");
-    setAttribute(Qt::WA_DeleteOnClose);
+
+    auto tipImage = new Ori::Widgets::Label;
+    tipImage->setObjectName("tip_image");
+    tipImage->setCursor(Qt::PointingHandCursor);
+    connect(tipImage, &Ori::Widgets::Label::clicked, [tipImage]{
+        tipImage->setVisible(false);
+        tipImage->clear();
+    });
+    _tipImage = tipImage;
 
     auto actionsPanel = new ActionsStartPanel;
     connect(actionsPanel, &ActionsStartPanel::onClose, this, &StartWindow::close);
@@ -417,11 +464,14 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
                 toolsPanel,
                 Stretch(),
             }).setSpacing(20),
-            new TipsStartPanel,
+            new TipsStartPanel(tipImage),
             Stretch(),
         }).setSpacing(20),
         Stretch(),
     }).setMargin(20).useFor(this);
+
+    // Should be after all widgets to overlay them
+    tipImage->setParent(this);
 
     setStyleSheet(QString::fromLatin1(reinterpret_cast<const char*>(
         QResource(":/style/StartWindow").data())));
@@ -463,4 +513,10 @@ void StartWindow::editStyleSheet()
     wnd->setWindowIcon(QIcon(":/toolbar/protocol"));
     wnd->resize(600, 600);
     wnd->show();
+}
+
+void StartWindow::resizeEvent(QResizeEvent* event)
+{
+    QWidget::resizeEvent(event);
+    adjustTipImagePosition(_tipImage);
 }

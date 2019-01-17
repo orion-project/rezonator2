@@ -2,11 +2,11 @@
 #define START_WINDOW_H
 
 #include <QWidget>
+#include <QJsonObject>
 
 QT_BEGIN_NAMESPACE
 class QLabel;
 class QBoxLayout;
-class QJsonObject;
 class QFileInfo;
 QT_END_NAMESPACE
 
@@ -75,16 +75,23 @@ class TipsStartPanel : public StartPanel
     Q_OBJECT
 
 public:
-    explicit TipsStartPanel();
-    ~TipsStartPanel();
+    explicit TipsStartPanel(QLabel* tipImage);
 
 private:
-    QLabel *_tipText, *_tipPreview;
+    QJsonObject _tips;
+    QLabel *_tipText, *_tipPreview, *_tipImage;
+    QString _imagePath;
+    QStringList _ids;
+    int _index = -1;
+
+    const int TIP_IMG_PREVIEW_H = 100;
+    const int TIP_IMG_PREVIEW_W = 200;
 
     void loadTips();
     void showNextTip();
     void showPrevTip();
-    void showTip(const QJsonObject& tip);
+    void showTip();
+    void enlargePreview();
 };
 
 //------------------------------------------------------------------------------
@@ -130,9 +137,14 @@ class StartWindow : public QWidget
 
 public:
     explicit StartWindow(QWidget *parent = nullptr);
-    ~StartWindow();
+    ~StartWindow() override;
+
+protected:
+    void resizeEvent(QResizeEvent* event) override;
 
 private:
+    QLabel *_tipImage;
+
     void editStyleSheet();
 };
 

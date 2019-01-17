@@ -11,6 +11,8 @@
 
 int main(int argc, char* argv[])
 {
+    qsrand(static_cast<uint>(std::time(nullptr)));
+
     //Ori::Debug::installMessageHandler();
 
     QApplication app(argc, argv);

@@ -427,7 +427,6 @@ void ProjectWindow::openSchemaExample()
     _operations->openSchemaFile(fileName);
 }
 
-
 //------------------------------------------------------------------------------
 //                             Tools actions
 

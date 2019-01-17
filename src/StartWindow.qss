@@ -5,110 +5,95 @@ QToolButton {
   font-size: 12px;
   color: #335;
 }
-
 QToolButton:focus {
   border-color: #dadbde;
   background-color: #f6f7fa;
 }
-
 QToolButton:hover {
   border-color: silver;
   background-color: qlineargradient(
     x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #f6f7fa, stop: 1 #dadbde);
 }
-
 QToolButton[role=tip_button] {
   border-color: #dadbde;
   padding: 1px 10px;
   font-size: 10px;
 }
-
 QToolButton[role=tip_button]:hover {
   border-color: silver;
 }
-
 QWidget[role=panel] {
   background-color: white;
-  border-style: solid;
-  border-width: 1px;
+  border: 1px solid silver;
   border-radius: 5px;
-  border-color: silver;
 }
-
 QLabel[role=header] {
   font: bold 16px;
   color: #557;
 }
-
 #tip_text {
   font-size: 13px;
   padding: 6px;
   color: #225
 }
-
+#tip_image {
+  background-color: white;
+  border: 1px solid silver;
+  border-radius: 6px;
+  padding-left: 9px;
+}
 #mru_empty_stub {
   font-size: 12px;
   padding: 10px;
   color: silver;
 }
-
 QLabel[role=mru_file_name] {
   font: bold 14px;
   color: #446;
 }
-
 QLabel[role=mru_file_path] {
   font-size: 11px;
   color: #779;
 }
-
 MruStartItem {
   min-height: 44px;
   max-height: 44px;
 }
-
 MruStartItem:hover {
   border: 1px solid #dadbde;
   border-radius: 5px;
   background-color: qlineargradient(
     x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fefefe, stop: 1 #f6f7f9);
 }
-
 #mru_scroll_area  {
   border-style: none;
   background-color: white;
 }
-
 #mru_widget {
   background-color: white;
   margin-right: 20px;
 }
-
 #mru_scroll_area QScrollBar:vertical {
   background-color: white;
   width: 15px;
   margin-left: 6px;
 }
-
 #mru_scroll_area QScrollBar::handle:vertical {
   border: 1px solid #dadbde;
   border-radius: 4px;
   background-color: #f6f7fa;
   min-height: 20px;
 }
-
 #mru_scroll_area QScrollBar::add-line:vertical {
   height: 0;
 }
-
 #mru_scroll_area QScrollBar::sub-line:vertical {
   height: 0;
 }
-
 #panel_tips {
+  min-height: 115px;
   max-height: 115px;
 }
-
 #panel_mru {
   min-width: 350px;
 }
