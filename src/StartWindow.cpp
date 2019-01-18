@@ -313,6 +313,8 @@ void TipsStartPanel::showPrevTip()
 
 void TipsStartPanel::showTip()
 {
+    static QString tipImagesPath(":/tips/");
+
     if (_tipImage->isVisible()) closeTipImage();
 
     auto tip = _tips[_ids.at(_index)].toObject();
@@ -320,21 +322,26 @@ void TipsStartPanel::showTip()
     auto imageFile = tip["image"].toString();
     if (!imageFile.isEmpty())
     {
-        static QString path(":/tips/");
-        _imagePath = path + imageFile;
-        auto preview = QPixmap(_imagePath)
-                .scaled(TIP_IMG_PREVIEW_W,
-                        TIP_IMG_PREVIEW_H,
-                        Qt::KeepAspectRatio,
-                        Qt::SmoothTransformation);
+        auto previewFile = tip["preview"].toString();
+        if (previewFile.isEmpty())
+            previewFile = imageFile;
+        auto previewPath = tipImagesPath + previewFile;
+        auto preview = QPixmap(previewPath);
+        if (preview.width() != TIP_IMG_PREVIEW_W or
+            preview.height() != TIP_IMG_PREVIEW_H)
+            preview = preview.scaled(TIP_IMG_PREVIEW_W,
+                                     TIP_IMG_PREVIEW_H,
+                                     Qt::KeepAspectRatio,
+                                     Qt::SmoothTransformation);
         _tipPreview->setPixmap(preview);
         _tipPreview->setVisible(true);
+        _imagePath = tipImagesPath + imageFile;
     }
     else
     {
-        _imagePath.clear();
-        _tipPreview->clear();
         _tipPreview->setVisible(false);
+        _tipPreview->clear();
+        _imagePath.clear();
     }
 
     _tipText->setText(tip["text"].toString());

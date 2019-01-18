@@ -8,6 +8,7 @@
     },
     "enlarge_tip_preview": {
         "text": "You can enlarge these small preview images by clicking them. Also, some of them are animated! →",
-        "image": "enlarge_tip_preview.png"
+        "preview": "enlarge_tip_preview.png",
+        "image": "enlarge_tip_preview.gif"
     }
 }

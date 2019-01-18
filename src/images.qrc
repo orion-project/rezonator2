@@ -185,6 +185,7 @@
     <qresource prefix="/tips">
         <file alias="list">tips.json</file>
         <file alias="edit_cursor_values.gif">../img/tips/edit_cursor_values.gif</file>
+        <file alias="enlarge_tip_preview.gif">../img/tips/enlarge_tip_preview.gif</file>
         <file alias="enlarge_tip_preview.png">../img/tips/enlarge_tip_preview.png</file>
     </qresource>
 </RCC>
