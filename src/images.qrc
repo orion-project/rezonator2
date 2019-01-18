@@ -187,5 +187,8 @@
         <file alias="edit_cursor_values.gif">../img/tips/edit_cursor_values.gif</file>
         <file alias="enlarge_tip_preview.gif">../img/tips/enlarge_tip_preview.gif</file>
         <file alias="enlarge_tip_preview.png">../img/tips/enlarge_tip_preview.png</file>
+        <file alias="drag_plot.gif">../img/tips/drag_plot.gif</file>
+        <file alias="scale_plot.gif">../img/tips/scale_plot.gif</file>
+        <file alias="limit_plot_operations_to_axis.gif">../img/tips/limit_plot_operations_to_axis.gif</file>
     </qresource>
 </RCC>

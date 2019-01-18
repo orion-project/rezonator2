@@ -58,18 +58,18 @@
         "text": "Формулы пользовательских параметров рассчитываются в единицах измерения SI."
     },
     "drag_plot": {
-        "todo": true,
-        "text": "Можно перетаскивать график удерживая нажатым колесо мыши.",
+        "text": "You can <b>pan a plot</b> by moving the mouse holding the middle button.",
+        "image": "drag_plot.gif",
         "see_also": ["scale_plot", "limit_plot_operations_to_axis"]
     },
     "scale_plot": {
-        "todo": true,
-        "text": "Можно масштабировать график вращая колесо мыши.",
+        "text": "You can <b>scale a plot</b> by mouse wheel.",
+        "image": "scale_plot.gif",
         "see_also": ["drag_plot", "limit_plot_operations_to_axis"]
     },
     "limit_plot_operations_to_axis": {
-        "todo": true,
-        "text": "Если выделить ось графика, то масштабирование колесом мыши будет происходить только вдоль этой оси.",
+        "text": "Clicking on one of the plot axes you <b>restrict plot scaling and panning</b> only to this axis.",
+        "image": "limit_plot_operations_to_axis.gif",
         "see_also": ["drag_plot", "scale_plot"]
     },
     "additional_func_params": {
