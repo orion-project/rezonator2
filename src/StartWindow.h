@@ -94,7 +94,8 @@ private:
     void loadTips();
     void showNextTip();
     void showPrevTip();
-    void showTip();
+    void showTip(const QJsonObject& tip);
+    void chooseAndShowTip();
     void enlargePreview();
     void handleMovieStarted();
     void showTipImage(const QPixmap& pixmap);

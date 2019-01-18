@@ -1,14 +1,83 @@
 {
     "edit_cursor_values": {
-        "text": "You can click X or Y value in the cursor panel and type an exact value to move the cursor to.",
-        "image": "edit_cursor_values.gif"
+        "text": "You can click X or Y value in the cursor panel and type an exact value to <b>move the cursor</b> to.",
+        "image": "edit_cursor_values.gif",
+        "see_also": ["toggle_cursor_lines"]
+    },
+    "toggle_cursor_lines": {
+        "todo": true,
+        "text": "Можно переключать вид курсора.",
+        "see_also": ["edit_cursor_values"]
     },
     "disable_start_window": {
-        "text": "You can disable this start window using the respective flag in the application settings dialog."
+        "text": "You can <b>disable this start window</b> using the respective flag in the application settings dialog."
     },
     "enlarge_tip_preview": {
-        "text": "You can enlarge these small preview images by clicking them. Also, some of them are animated! →",
+        "text": "You can <b>enlarge these small preview images</b> by clicking them. Also, some of them are animated! →",
         "preview": "enlarge_tip_preview.png",
         "image": "enlarge_tip_preview.gif"
+    },
+    "change_units_by_hotkeys": {
+        "todo": true,
+        "text": "TODO: Можно изменять единицы измерения горячими клавишами."
+    },
+    "add_global_param": {
+        "todo": true,
+        "text": "Можно добавить пользовательский параметр и задать для него формулу.",
+        "see_also": ["link_elem_param_to_global", "formulas_in_si"]
+    },
+    "link_elem_param_to_global": {
+        "todo": true,
+        "text": "Можно залинковать параметр элемента на пользовательский параметр схемы.",
+        "see_also": ["add_global_param"]
+    },
+    "edit_lambda_status_bar": {
+        "todo": true,
+        "text": "Можно двойным кликом в строке состояния открыть диалог длины волны."
+    },
+    "edit_trip_type_status_bar": {
+        "todo": true,
+        "text": "Можно двойным кликом в строке состояния открыть диалог типа схемы."
+    },
+    "edit_pump_status_bar": {
+        "todo": true,
+        "text": "Можно двойным кликом в строке состояния открыть диалог параметров накачки.",
+        "see_also": ["several_pumps"]
+    },
+    "several_pumps": {
+        "todo": true,
+        "text": "Можно иметь несколько вариантов накачек и переключаться между ними.",
+        "see_also": ["edit_pump_status_bar"]
+    },
+    "save_schema_copy": {
+        "todo": true,
+        "text": "Можно сохранить копию текущей схемы в отдельное место."
+    },
+    "formulas_in_si": {
+        "todo": true,
+        "text": "Формулы пользовательских параметров рассчитываются в единицах измерения SI."
+    },
+    "drag_plot": {
+        "todo": true,
+        "text": "Можно перетаскивать график удерживая нажатым колесо мыши.",
+        "see_also": ["scale_plot", "limit_plot_operations_to_axis"]
+    },
+    "scale_plot": {
+        "todo": true,
+        "text": "Можно масштабировать график вращая колесо мыши.",
+        "see_also": ["drag_plot", "limit_plot_operations_to_axis"]
+    },
+    "limit_plot_operations_to_axis": {
+        "todo": true,
+        "text": "Если выделить ось графика, то масштабирование колесом мыши будет происходить только вдоль этой оси.",
+        "see_also": ["drag_plot", "scale_plot"]
+    },
+    "additional_func_params": {
+        "todo": true,
+        "text": "Функции имеют панель дополнительных параметров"
+    },
+    "tool_gauss_calc": {
+        "todo": true,
+        "text": "You can visualize and calculate common parameters of the Gaussian beam using <b>Gauss Calculator</b> tool."
     }
 }

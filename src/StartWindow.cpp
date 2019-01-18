@@ -1,5 +1,6 @@
 #include "StartWindow.h"
 
+#include "AppSettings.h"
 #include "AppSettingsDialog.h"
 #include "CommonData.h"
 #include "GaussCalculatorWindow.h"
@@ -16,6 +17,7 @@
 
 #include <QApplication>
 #include <QFileInfo>
+#include <QInputDialog>
 #include <QJsonDocument>
 #include <QLabel>
 #include <QPainter>
@@ -237,28 +239,42 @@ TipsStartPanel::TipsStartPanel(QLabel *tipImage) : StartPanel("panel_tips")
     connect(tipPreview, &Ori::Widgets::Label::clicked, this, &TipsStartPanel::enlargePreview);
     _tipPreview = tipPreview;
 
+    auto buttonsLayout = new QHBoxLayout;
+    buttonsLayout->setMargin(0);
+    buttonsLayout->setSpacing(5);
+
     auto prevButton = new QToolButton;
     prevButton->setProperty("role", "tip_button");
     prevButton->setText(tr("Prev Tip"));
     prevButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
     connect(prevButton, &QToolButton::clicked, this, &TipsStartPanel::showPrevTip);
+    buttonsLayout->addWidget(prevButton);
 
     auto nextButton = new QToolButton;
     nextButton->setProperty("role", "tip_button");
     nextButton->setText(tr("Next Tip"));
     nextButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
     connect(nextButton, &QToolButton::clicked, this, &TipsStartPanel::showNextTip);
+    buttonsLayout->addWidget(nextButton);
+
+    if (Settings::instance().isDevMode)
+    {
+        auto chooseTipButton = new QToolButton;
+        chooseTipButton->setProperty("role", "tip_button");
+        chooseTipButton->setText(tr("Choose Tip"));
+        chooseTipButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+        connect(chooseTipButton, &QToolButton::clicked, this, &TipsStartPanel::chooseAndShowTip);
+        buttonsLayout->addWidget(chooseTipButton);
+    }
+
+    buttonsLayout->addStretch();
 
     LayoutH({
         LayoutV({
             makeHeader(tr("Tips")),
             _tipText,
             Stretch(),
-            LayoutH({
-                prevButton,
-                nextButton,
-                Stretch()
-            }).setMargin(0).setSpacing(5),
+            buttonsLayout,
         }).setMargin(0).setSpacing(10),
         _tipPreview
     }).setMargin(10).setSpacing(10).useFor(this);
@@ -285,8 +301,11 @@ void TipsStartPanel::loadTips()
     while (!keys.isEmpty())
     {
         int index = qrand() % keys.size();
-        _ids << keys.at(index);
+        auto key = keys.at(index);
         keys.removeAt(index);
+        auto tip = _tips[key].toObject();
+        if (tip["todo"].toBool()) continue;
+        _ids << key;
     }
     _index = _ids.isEmpty() ? -1 : 0;
 }
@@ -298,7 +317,7 @@ void TipsStartPanel::showNextTip()
     _index++;
     if (_index > _ids.size()-1) _index = 0;
 
-    showTip();
+    showTip(_tips[_ids.at(_index)].toObject());
 }
 
 void TipsStartPanel::showPrevTip()
@@ -308,16 +327,14 @@ void TipsStartPanel::showPrevTip()
     _index--;
     if (_index < 0) _index = _ids.size()-1;
 
-    showTip();
+    showTip(_tips[_ids.at(_index)].toObject());
 }
 
-void TipsStartPanel::showTip()
+void TipsStartPanel::showTip(const QJsonObject &tip)
 {
     static QString tipImagesPath(":/tips/");
 
     if (_tipImage->isVisible()) closeTipImage();
-
-    auto tip = _tips[_ids.at(_index)].toObject();
 
     auto imageFile = tip["image"].toString();
     if (!imageFile.isEmpty())
@@ -389,6 +406,13 @@ void TipsStartPanel::closeTipImage()
     _tipImage->clear();
 }
 
+void TipsStartPanel::chooseAndShowTip()
+{
+    auto id = QInputDialog::getText(this, "", "Enter tip id");
+    if (id.isEmpty()) return;
+    showTip(_tips[id].toObject());
+}
+
 //------------------------------------------------------------------------------
 //                            ActionsStartPanel
 //------------------------------------------------------------------------------
@@ -446,13 +470,15 @@ void ActionsStartPanel::makeSchemaSP()
 
 ToolsStartPanel::ToolsStartPanel() : StartPanel("panel_tools")
 {
-    LayoutV({
-        makeHeader(tr("Tools")),
-        makeButton(":/toolbar/gauss_calculator", tr("Gauss Calculator"), SLOT(showGaussCalculator())),
-        makeButton(":/toolbar/protocol", tr("Edit Stylesheet"), SLOT(editStyleSheet())),
-        makeButton(":/toolbar/options", tr("Edit Settings"), SLOT(editAppSettings())),
-        Stretch()
-    }).setMargin(10).setSpacing(10).useFor(this);
+    auto layout = new QVBoxLayout(this);
+    layout->setMargin(10);
+    layout->setSpacing(10);
+    layout->addWidget(makeHeader(tr("Tools")));
+    layout->addWidget(makeButton(":/toolbar/gauss_calculator", tr("Gauss Calculator"), SLOT(showGaussCalculator())));
+    if (Settings::instance().isDevMode)
+        layout->addWidget(makeButton(":/toolbar/protocol", tr("Edit Stylesheet"), SLOT(editStyleSheet())));
+    layout->addWidget(makeButton(":/toolbar/options", tr("Edit Settings"), SLOT(editAppSettings())));
+    layout->addStretch();
 }
 
 void ToolsStartPanel::showGaussCalculator()

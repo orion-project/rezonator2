@@ -37,6 +37,8 @@ public:
     QString defaultTripType;  ///< New schemas should be created having this trip-type.
     bool showStartWindow;     ///< Show StartWindow after app started instead of opening ProjectWindow.
 
+    bool isDevMode = false;
+
     void load();
     void save();
     bool edit(class QWidget *parent);

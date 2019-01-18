@@ -23,13 +23,16 @@ int main(int argc, char* argv[])
     if (Ori::Testing::isTesting())
         return Ori::Testing::run(app, { ADD_SUITE(Z::Tests) });
 
+    QStringList args = QApplication::arguments();
+
     Settings::instance().load();
+    Settings::instance().isDevMode = args.contains("dev_mode");
 
     // CommonData will be used via its instance pointer
     CommonData commonData;
 
     // Run gauss calculator tool if requested
-    if (QApplication::arguments().contains("gauss"))
+    if (args.contains("gauss"))
     {
         GaussCalculatorWindow::showCalcWindow();
         return app.exec();
@@ -37,7 +40,6 @@ int main(int argc, char* argv[])
 
     // Open a file if given
     QString fileName;
-    QStringList args = QApplication::arguments();
     for (int i = 1; i < args.count(); i++)
         if (QFileInfo(args[i]).exists())
         {
