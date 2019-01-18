@@ -1,21 +1,21 @@
 {
     "edit_cursor_values": {
-        "text": "You can click X or Y value in the cursor panel and type an exact value to <b>move the cursor</b> to.",
+        "text": "You can <b>move the cursor</b> by dragging its lines or clicking X or Y value in the cursor panel and typing an <b>exact value</b> to move the cursor to. Double click moves the cursor into the click position.",
         "image": "edit_cursor_values.gif",
         "see_also": ["toggle_cursor_lines"]
     },
     "toggle_cursor_lines": {
-        "todo": true,
-        "text": "Можно переключать вид курсора.",
+        "text": "It is possible to <b>toggle cursor lines</b> and force the cursor to <b>follow the mouse</b> without holding any button. Double click moves the cursor into the click position.",
+        "image": "toggle_cursor_lines.gif",
         "see_also": ["edit_cursor_values"]
     },
     "disable_start_window": {
-        "text": "You can <b>disable this start window</b> using the respective flag in the application settings dialog."
+        "text": "You can <b>disable this start window</b> using the respective flag in the application settings dialog. If so, the project window with empty schema will be opened at program start."
     },
     "enlarge_tip_preview": {
-        "text": "You can <b>enlarge these small preview images</b> by clicking them. Also, some of them are animated! →",
+        "text": "You can <b>enlarge</b> these small <b>preview images</b> by clicking them.  →<br>Also, some of them are animated!",
         "preview": "enlarge_tip_preview.png",
-        "image": "enlarge_tip_preview.gif"
+        "image": "limit_plot_operations_to_axis.gif"
     },
     "change_units_by_hotkeys": {
         "todo": true,
@@ -31,18 +31,9 @@
         "text": "Можно залинковать параметр элемента на пользовательский параметр схемы.",
         "see_also": ["add_global_param"]
     },
-    "edit_lambda_status_bar": {
-        "todo": true,
-        "text": "Можно двойным кликом в строке состояния открыть диалог длины волны."
-    },
-    "edit_trip_type_status_bar": {
-        "todo": true,
-        "text": "Можно двойным кликом в строке состояния открыть диалог типа схемы."
-    },
-    "edit_pump_status_bar": {
-        "todo": true,
-        "text": "Можно двойным кликом в строке состояния открыть диалог параметров накачки.",
-        "see_also": ["several_pumps"]
+    "active_status_bar": {
+        "text": "You can invoke commands double clicking different items of the status bar - edit wavelength, change schema trip type, set up the active pump.",
+        "image": "active_status_bar.gif"
     },
     "several_pumps": {
         "todo": true,
@@ -57,27 +48,22 @@
         "todo": true,
         "text": "Формулы пользовательских параметров рассчитываются в единицах измерения SI."
     },
-    "drag_plot": {
-        "text": "You can <b>pan a plot</b> by moving the mouse holding the middle button.",
-        "image": "drag_plot.gif",
-        "see_also": ["scale_plot", "limit_plot_operations_to_axis"]
-    },
-    "scale_plot": {
-        "text": "You can <b>scale a plot</b> by mouse wheel.",
-        "image": "scale_plot.gif",
-        "see_also": ["drag_plot", "limit_plot_operations_to_axis"]
+    "drag_scale_plot": {
+        "text": "You can <b>pan</b> a plot by moving the mouse holding the middle button and <b>scale</b> it with the mouse wheel.",
+        "image": "drag_scale_plot.gif",
+        "see_also": ["limit_plot_operations_to_axis"]
     },
     "limit_plot_operations_to_axis": {
         "text": "Clicking on one of the plot axes you <b>restrict plot scaling and panning</b> only to this axis.",
         "image": "limit_plot_operations_to_axis.gif",
-        "see_also": ["drag_plot", "scale_plot"]
+        "see_also": ["drag_scale_plot"]
     },
     "additional_func_params": {
         "todo": true,
         "text": "Функции имеют панель дополнительных параметров"
     },
     "tool_gauss_calc": {
-        "todo": true,
-        "text": "You can visualize and calculate common parameters of the Gaussian beam using <b>Gauss Calculator</b> tool."
+        "text": "You can visualize and calculate common parameters of the Gaussian beam using <b>Gauss Calculator</b> tool.",
+        "image": "tool_gauss_calc.gif"
     }
 }

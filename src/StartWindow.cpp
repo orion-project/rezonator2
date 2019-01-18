@@ -233,6 +233,7 @@ TipsStartPanel::TipsStartPanel(QLabel *tipImage) : StartPanel("panel_tips")
     _tipImage->setVisible(false);
 
     auto tipPreview = new Ori::Widgets::Label;
+    tipPreview->setObjectName("tip_preview");
     tipPreview->setVisible(false);
     tipPreview->setCursor(Qt::PointingHandCursor);
     tipPreview->setToolTip(tr("Click to enlarge"));
@@ -286,8 +287,15 @@ TipsStartPanel::TipsStartPanel(QLabel *tipImage) : StartPanel("panel_tips")
 // TODO: when will be a lot of tips: check if it takes a while and move to separate thread
 void TipsStartPanel::loadTips()
 {
+    QFile file(":/tips/list");
+    bool ok = file.open(QIODevice::ReadOnly);
+    if (!ok)
+    {
+        qWarning() << "Unable to load tips from resources" << file.errorString();
+        return;
+    }
+    QByteArray data = file.readAll();
     QJsonParseError error;
-    QByteArray data = reinterpret_cast<const char*>(QResource(":/tips/list").data());
     QJsonDocument doc = QJsonDocument::fromJson(data, &error);
     if (doc.isNull())
     {
@@ -502,6 +510,7 @@ void ToolsStartPanel::editAppSettings()
 
 StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
 {
+    setObjectName("start_window");
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle(qApp->applicationName());
     Ori::Wnd::setWindowIcon(this, ":/window_icons/main");

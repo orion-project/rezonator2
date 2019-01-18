@@ -41,9 +41,15 @@ QLabel[role=header] {
 }
 
 #tip_text {
-  font-size: 14px;
-  padding: 6px;
+  font-family: Arial;
+  font-size: 15px;
+  padding-left: 6px;
+  padding-right: 6px;
   color: #225
+}
+
+#tip_preview {
+  margin-right: 5px;
 }
 
 #tip_image {
@@ -113,8 +119,8 @@ MruStartItem:hover {
 }
 
 #panel_tips {
-  min-height: 120px;
-  max-height: 120px;
+  min-height: 130px;
+  max-height: 130px;
 }
 
 #panel_mru {
