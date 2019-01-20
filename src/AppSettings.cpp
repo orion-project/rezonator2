@@ -55,6 +55,7 @@ void Settings::load()
     LOAD_DEF(elemAutoLabel, Bool, true);
     LOAD(defaultTripType, String);
     LOAD_DEF(showStartWindow, Bool, true);
+    LOAD_DEF(mruSchemaCount, Int, 16);
 
     s.beginGroup("Debug");
     LOAD_DEF(showProtocolAtStart, Bool, false);
@@ -82,6 +83,7 @@ void Settings::save()
     SAVE(elemAutoLabel);
     SAVE(defaultTripType);
     SAVE(showStartWindow);
+    SAVE(mruSchemaCount);
 
     s.beginGroup("Debug");
     SAVE(showProtocolAtStart);

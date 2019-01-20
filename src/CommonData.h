@@ -1,6 +1,8 @@
 #ifndef COMMONDATA_H
 #define COMMONDATA_H
 
+#include "AppSettings.h"
+
 #include <QObject>
 
 namespace Ori {
@@ -9,13 +11,13 @@ namespace Ori {
     class MruFileList;
 }
 
-class CommonData : public QObject
+class CommonData : public QObject, public SettingsListener
 {
     Q_OBJECT
 
 public:
     explicit CommonData(QObject *parent = nullptr);
-    ~CommonData();
+    ~CommonData() override;
 
     static CommonData* instance() { return _instance; }
 
@@ -24,6 +26,9 @@ public:
     Ori::MruFileList* mruList() { return _mruList; }
 
     void addFileToMruList(const QString& fileName);
+
+    // Implementation of SettingsListener
+    void settingsChanged() override;
 
 private:
     static CommonData* _instance;

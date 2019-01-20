@@ -40,6 +40,7 @@ void QCPCursor::mouseDoubleClick(QMouseEvent *evt)
 
 void QCPCursor::mousePress(QMouseEvent *evt)
 {
+    if (!visible()) return;
     if (evt->button() == Qt::LeftButton)
     {
         if (_canDragX) _dragX = true;
@@ -49,6 +50,7 @@ void QCPCursor::mousePress(QMouseEvent *evt)
 
 void QCPCursor::mouseRelease(QMouseEvent*)
 {
+    if (!visible()) return;
     _dragX = false;
     _dragY = false;
 #ifdef Q_OS_MAC
@@ -58,6 +60,7 @@ void QCPCursor::mouseRelease(QMouseEvent*)
 
 void QCPCursor::mouseMove(QMouseEvent *evt)
 {
+    if (!visible()) return;
     if (_followMouse)
     {
         setPixelPosition(evt->pos());
