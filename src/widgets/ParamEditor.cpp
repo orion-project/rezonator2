@@ -5,14 +5,14 @@
 #include "UnitWidgets.h"
 
 #include "helpers/OriDialogs.h"
-#include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 #include "helpers/OriTools.h"
 #include "widgets/OriValueEdit.h"
 
 #include <QDebug>
+#include <QHBoxLayout>
 #include <QLabel>
-#include <QPushButton>
+#include <QToolButton>
 
 using Ori::Widgets::ValueEdit;
 
@@ -20,15 +20,19 @@ using Ori::Widgets::ValueEdit;
 //                              LinkButton
 //------------------------------------------------------------------------------
 
-class LinkButton : public QPushButton
+// QPushButton looks ugly on "macintosh" style, it looses its standard view
+// and can't calcutale its size propely (even fixed size).
+// QToolButton can't be focused by tab but looks the same on all styles so use it.
+// TODO: add Ctrl+= shortcut to invoke the button, it will be even more usable than tabbing it.
+class LinkButton : public QToolButton
 {
 public:
     LinkButton();
-    QSize sizeHint() const;
+    QSize sizeHint() const override;
     void showLinkSource(Z::Parameter *param);
 };
 
-LinkButton::LinkButton() : QPushButton()
+LinkButton::LinkButton() : QToolButton()
 {
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     Z::Gui::setSymbolFont(this);
@@ -44,7 +48,7 @@ void LinkButton::showLinkSource(Z::Parameter *param)
 {
     QString text = param ? ("= " + param->alias() + " =") : QString("=");
     int w = fontMetrics().width(text);
-    setFixedWidth(w + 2*Ori::Gui::layoutSpacing());
+    setFixedWidth(w + 2 * Ori::Gui::layoutSpacing());
     setText(text);
 }
 
@@ -52,8 +56,8 @@ void LinkButton::showLinkSource(Z::Parameter *param)
 //                              ParamEditor
 //------------------------------------------------------------------------------
 
-ParamEditor::ParamEditor(Options opts)
-    : QWidget(), _param(opts.param), _globalParams(opts.globalParams), _paramLinks(opts.paramLinks)
+ParamEditor::ParamEditor(Options opts) : QWidget(),
+    _param(opts.param), _globalParams(opts.globalParams), _paramLinks(opts.paramLinks)
 {
     _param->addListener(this);
 
@@ -69,25 +73,19 @@ ParamEditor::ParamEditor(Options opts)
     if (paramLabel.isEmpty())
         paramLabel = _param->alias();
 
-    auto layout = Ori::Layouts::LayoutH({})
-            .setMargin(0)
-            .setSpacing(0)
-            .useFor(this);
-
-#ifdef Q_OS_MACOS
-    // It looks ok on other platforms, but lack of spacing is evident on mac
-    layout.add(new QLabel(" "));
-#endif
+    auto layout = new QHBoxLayout(this);
+    layout->setMargin(0);
+    layout->setSpacing(0);
 
     if (opts.showName)
-       layout.add({
-            _labelName = new QLabel(_param->name()),
-            Ori::Layouts::Space(def_spacing * 2)
-       });
+    {
+        _labelName = new QLabel(_param->name());
+        layout->addWidget(_labelName);
+        layout->addSpacing(def_spacing * 2);
+    }
 
-    layout.add(
-        _labelLabel = Z::Gui::symbolLabel(paramLabel % " = ")
-    );
+    _labelLabel = Z::Gui::symbolLabel(paramLabel % " = ");
+    layout->addWidget(_labelLabel);
 
     if (opts.allowLinking)
     {
@@ -95,15 +93,17 @@ ParamEditor::ParamEditor(Options opts)
         _linkButton = new LinkButton;
         _linkButton->setToolTip(tr("Link to global parameter"));
         _linkButton->showLinkSource(_linkSource);
-        connect(_linkButton, &QPushButton::clicked, this, &ParamEditor::linkToGlobalParameter);
-        layout.add({ Ori::Layouts::Space(3), _linkButton, Ori::Layouts::Space(3) });
+        connect(_linkButton, &QToolButton::clicked, this, &ParamEditor::linkToGlobalParameter);
+        layout->addSpacing(def_spacing);
+        layout->addWidget(_linkButton);
+        layout->addSpacing(def_spacing);
     }
 
-    layout.add({
-        _valueEditor = new ValueEdit,
-        Ori::Layouts::Space(3),
-        _unitsSelector = new UnitComboBox(_param->dim())
-    });
+    _valueEditor = new ValueEdit;
+    _unitsSelector = new UnitComboBox(_param->dim());
+    layout->addWidget(_valueEditor);
+    layout->addSpacing(3);
+    layout->addWidget(_unitsSelector);
 
     Z::Gui::setValueFont(_valueEditor);
 

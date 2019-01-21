@@ -3,7 +3,9 @@
 #include "Appearance.h"
 #include "../funcs/FormatInfo.h"
 
+#include <QClipboard>
 #include <QtMath>
+#include <QMenu>
 
 #define Sqr(x) ((x)*(x))
 
@@ -1004,7 +1006,12 @@ void SchemaLayout::populate()
     fullW += axisMargin + axisMargin;
     _axis->setHalfSize(fullW/2, 5);
     _axis->setX(fullW/2 - firstHW - axisMargin);
-    centerView();
+
+    auto r = _scene.itemsBoundingRect();
+    r.adjust(-10, -10, 10, 10);
+    _scene.setSceneRect(r);
+    centerView(r);
+
     setUpdatesEnabled(true);
 }
 
@@ -1056,17 +1063,38 @@ void SchemaLayout::clear()
 void SchemaLayout::resizeEvent(QResizeEvent *event)
 {
     QGraphicsView::resizeEvent(event);
-    centerView();
+    centerView(QRectF());
 }
 
-void SchemaLayout::centerView()
+void SchemaLayout::centerView(const QRectF& rect)
 {
-    QRectF r;
-    for (ElementLayout *elem : _elements)
-        r = r.united(elem->boundingRect());
-    for (QGraphicsTextItem *item : _elemLabels.values())
-        r = r.united(item->boundingRect());
+    QRectF r = rect.isEmpty() ? _scene.itemsBoundingRect(): rect;
     centerOn(r.center());
+}
+
+void SchemaLayout::contextMenuEvent(QContextMenuEvent *event)
+{
+    if (!_menu) _menu = createContextMenu();
+    _menu->popup(this->mapToGlobal(event->pos()));
+}
+
+QMenu* SchemaLayout::createContextMenu()
+{
+    auto menu = new QMenu(this);
+    menu->addAction(QIcon(":/toolbar/copy"), tr("Copy"), this, &SchemaLayout::copyImage);
+    return menu;
+}
+
+void SchemaLayout::copyImage()
+{
+    QImage image(_scene.sceneRect().size().toSize(), QImage::Format_RGB32);
+    image.fill(Qt::white);
+
+    QPainter painter(&image);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    _scene.render(&painter);
+
+    qApp->clipboard()->setImage(image);
 }
 
 //------------------------------------------------------------------------------

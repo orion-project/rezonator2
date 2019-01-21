@@ -53,6 +53,8 @@ protected:
 */
 class SchemaLayout : public QGraphicsView, public SchemaListener
 {
+    Q_OBJECT
+
 public:
     explicit SchemaLayout(Schema *schema, QWidget* parent = nullptr);
     ~SchemaLayout() override;
@@ -67,17 +69,21 @@ protected:
     QGraphicsScene _scene;
 
     void resizeEvent(QResizeEvent *event) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
 
 private:
     Schema *_schema;
     ElementLayout *_axis;
     QVector<ElementLayout*> _elements;
     QMap<ElementLayout*, QGraphicsTextItem*> _elemLabels;
+    QMenu* _menu = nullptr;
 
     void addElement(ElementLayout *elem);
     void populate();
     void clear();
-    void centerView();
+    void centerView(const QRectF&);
+    QMenu* createContextMenu();
+    void copyImage();
 };
 
 

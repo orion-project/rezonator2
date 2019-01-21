@@ -7,7 +7,6 @@
 
 QT_BEGIN_NAMESPACE
 class QLabel;
-class QPushButton;
 QT_END_NAMESPACE
 
 namespace Ori {
