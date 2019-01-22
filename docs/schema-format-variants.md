@@ -45,7 +45,7 @@ Param_L=7
 
 ## XML
 
-So new XML-based format was chosen. It's less compact because of repeated tag names and it requires additional dep QtXml, but it is a part of framework anyway.
+So new XML-based format was chosen. It's less compact because of repeated tag names and it requires additional dep QtXml, but it is a part of the framework anyway.
 
 ```
 <rezonatorSchema version="2">
@@ -198,3 +198,7 @@ element {
 
 ## Summary
 Currently, XML is fine enough but seems that JSON can be optimal format for schema storage. There are not too many pros actually so additional experiment should be carried out to clarify if schema loading/saving code could be simplified with this format or not.
+
+## Summary +1
+New schema format was changed to JSON.
+ 
