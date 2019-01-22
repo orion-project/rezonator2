@@ -24,7 +24,7 @@ The document describes only part of sections and keys that are needed to load sc
 Schema format version. Versions 1, 1.1 and 1.2 are supported.
 
 ### Title
-Dysplayed title of the schema. *Not supported in reZonator-2*.
+Displayed title of the schema. *Not supported in reZonator-2*.
 
 ### HasTitle
 Defines if `Title` key is vaid. Can be 0 or 1. *Not supported in reZonator-2*.
@@ -68,18 +68,18 @@ For `Version` > 1. Unit of measurement of beams' radii. Supported values are `A`
 For `Version` > 1. Unit of measurement of wavelength. Supported values are `A`, `nm`, `mkm`, `mm`, `cm`, `m`.
 
 ### Units\Angle
-For `Version` > 1. Unit of measurement of angulare values. Supported values are `rad`, `deg`, `mrad`, `min`.
+For `Version` > 1. Unit of measurement of angular values. Supported values are `rad`, `deg`, `mrad`, `min`.
 
 **NB:** This unit only defines how values are displayed in the program. Angular values are always stored in schema files **in radians**.
 
 ### PumpType
-Only for `Version=1`. Defines pump kind for SP schemas. 
+Only for `Version=1`. Defines input beam kind for SP schemas. 
 
-* 0 - pump beam is gaussisan beam
-* 1 - pump beam is hypergaussian beam
+* 0 - input beam is gaussisan beam
+* 1 - input beam is hypergaussian beam
 
 ### PumpSize
-Only for `Version=1`. Pump beam radius in micrometers.
+Only for `Version=1`. Beam radius in micrometers.
 
 ### PumpParam1
 Only for `Version=1`. Beam quality parameter MI when `PumpType=1`.
@@ -145,21 +145,21 @@ Element type:
 * TElemCurveMirror
 * TElemEmptyRange
 * TElemMediaRange
-* TElemPlate (For `Version` > 1)
+* TElemPlate (for `Version` > 1)
 * TElemBrewsterCrystal
 * TElemBrewsterPlate
 * TElemTiltedCrystal
 * TElemTiltedPlate
 * TElemThinLens
-* TElemThinCylinderLensT (For `Version` > 1)
-* TElemThinCylinderLensS (For `Version` > 1)
+* TElemThinCylinderLensT (for `Version` > 1)
+* TElemThinCylinderLensS (for `Version` > 1)
 * TElemMatrix
 * TElemPoint
 * TElemThinLensCylT (only for `Version=1`, --> TElemThinCylinderLensT)
 * TElemThinLensCylS (only for `Version=1`, --> TElemThinCylinderLensS)
 * TElemRange (only for `Version=1`, --> TElemPlate)
-* TElemCustom (For `Version` < 1.2, --> TElemMatrix)
-* TElemMatrix (For `Version` >= 1)
+* TElemCustom (for `Version` < 1.2, --> TElemMatrix)
+* TElemMatrix (for `Version` >= 1)
 
 ### Alias
 Element label.
@@ -171,7 +171,7 @@ Element title.
 Can be 0 or 1. If `Disabled=1`, element will be ignored in calculation.
 
 ### Param_...
-Element parameter value. Key name is `Param_` + parameter name, e.g. `Param_L`, `Param_n`. Names of parameters of each element can be picked up from Element Catalog.
+Values of element parameters. Each key name is `Param_` + parameter name, e.g. `Param_L`, `Param_n`. Names of parameters of each element can be picked up from Element Catalog.
 
 - Values of linear parameters are stored in `LinearUnits` or `Units\Linear` depending on `Version`.
 
