@@ -1,128 +1,23 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   width="24"
-   height="24"
-   id="svg11119"
-   version="1.0">
-  <defs
-     id="defs11121">
-    <linearGradient
-       id="linearGradient3261">
-      <stop
-         style="stop-color:#dbf6ff;stop-opacity:1;"
-         offset="0"
-         id="stop3263" />
-      <stop
-         style="stop-color:#7ddcfd;stop-opacity:1;"
-         offset="1"
-         id="stop3265" />
-    </linearGradient>
-    <marker
-       orient="auto"
-       refY="0.0"
-       refX="0.0"
-       id="Arrow1Lend"
-       style="overflow:visible;">
-      <path
-         id="path7033"
-         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;"
-         transform="scale(0.8) rotate(180) translate(12.5,0)" />
-    </marker>
-    <linearGradient
-       xlink:href="#linearGradient3261"
-       id="linearGradient9130"
-       x1="15.913273"
-       y1="1.0419451"
-       x2="4.8921361"
-       y2="23"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(1,0,0,1.0222222,3.977439,-0.2666666)" />
-    <linearGradient
-       xlink:href="#linearGradient4242"
-       id="linearGradient3267"
-       x1="12"
-       y1="0"
-       x2="12"
-       y2="24"
-       gradientUnits="userSpaceOnUse"
-       spreadMethod="pad"
-       gradientTransform="scale(0.49999998,0.99999996)" />
-    <linearGradient
-       id="linearGradient4242">
-      <stop
-         id="stop4244"
-         offset="0"
-         style="stop-color:#e4ffdb;stop-opacity:1" />
-      <stop
-         id="stop4246"
-         offset="1"
-         style="stop-color:#99fdc8;stop-opacity:1" />
-    </linearGradient>
-    <linearGradient
-       xlink:href="#linearGradient3261"
-       id="linearGradient4240"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.49999998,0,0,0.99999996,11.999999,-24.000001)"
-       spreadMethod="pad"
-       x1="12"
-       y1="0"
-       x2="12"
-       y2="24" />
-  </defs>
-  <metadata
-     id="metadata11124">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <path
-     id="rect4238"
-     d="M 5.0786375,-24 24,-24 24,0 16,0 Z"
-     style="opacity:1;fill:url(#linearGradient4240);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.95999998;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     transform="scale(1,-1)" />
-  <path
-     d="m 23.060942,6.0349586 -5,-5 0,0 m 3,6 -3.830508,-3.779661"
-     style="fill:none;fill-rule:evenodd;stroke:#00b4ff;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
-     id="path3248" />
-  <path
-     id="path3257"
-     style="fill:none;fill-rule:evenodd;stroke:#00b4ff;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 15.159715,21.979624 -4.084746,-4.033898 m 2.084746,5.033898 -3.9830511,-3.881356" />
-  <path
-     id="rect3213"
-     d="M 0,0 16,0 4.885408,24 0,24 Z"
-     style="opacity:1;fill:url(#linearGradient3267);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.95999998;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-  <path
-     d="m 1.5231207,16.968473 3.118644,-2.915254 M 2.6078664,19.03627 6.7943068,15.154914"
-     style="fill:none;fill-rule:evenodd;stroke:#00c8aa;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
-     id="path3255" />
-  <path
-     id="path14040"
-     d="m 20.772793,11.186372 1.602496,5.387482 -5.466296,1.573424"
-     style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-  <path
-     style="fill:url(#linearGradient9130);fill-opacity:1;fill-rule:evenodd;stroke:#00b4ff;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-     d="M 5.2229836,23.500001 16.123741,0.5000005"
-     id="path19877" />
-  <path
-     id="path13067"
-     d="m -0.06370962,10.501252 11.15297062,0 10.536294,5.519715"
-     style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:3;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:none" />
-  <path
-     id="path4268"
-     style="fill:none;fill-rule:evenodd;stroke:#00c8aa;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 3.3536292,4.7142357 3.118644,-2.915254 m -2.0338983,4.983051 4.1864404,-3.881356" />
+<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <linearGradient id="a">
+    <stop offset="0" stop-color="#dbf6ff"/>
+    <stop offset="1" stop-color="#7ddcfd"/>
+  </linearGradient>
+  <linearGradient id="b" gradientTransform="matrix(1 0 0 1.0222222 3.977439 -.266667)" gradientUnits="userSpaceOnUse" x1="15.913273" x2="4.892136" xlink:href="#a" y1="1.041945" y2="23"/>
+  <linearGradient id="c" gradientTransform="scale(.49999998 .99999996)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="12" x2="12" y1="0" y2="24">
+    <stop offset="0" stop-color="#e4ffdb"/>
+    <stop offset="1" stop-color="#99fdc8"/>
+  </linearGradient>
+  <linearGradient id="d" gradientTransform="matrix(.49999998 0 0 .99999996 11.999999 -24.000001)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="12" x2="12" xlink:href="#a" y1="0" y2="24"/>
+  <path d="m5.0786375-24h18.9213625v24h-8z" fill="url(#d)" transform="scale(1 -1)"/>
+  <path d="m23.060942 6.0349586-5-5m3 6-3.830508-3.779661" fill="none" stroke="#00b4ff" stroke-linecap="round"/>
+  <path d="m15.159715 21.979624-4.084746-4.033898m2.084746 5.033898-3.9830511-3.881356" fill="none" stroke="#00b4ff" stroke-linecap="round"/>
+  <path d="m0 0h16l-11.114592 24h-4.885408z" fill="url(#c)"/>
+  <g stroke-linecap="round">
+    <path d="m1.5231207 16.968473 3.118644-2.915254m-2.0338983 4.983051 4.1864404-3.881356" fill="none" stroke="#00c8aa"/>
+    <path d="m20.772793 11.186372 1.602496 5.387482-5.466296 1.573424" fill="none" stroke="#f00" stroke-linejoin="round" stroke-width="3"/>
+    <path d="m5.2229836 23.500001 10.9007574-23.0000005" fill="url(#b)" fill-rule="evenodd" stroke="#00b4ff"/>
+    <path d="m-.06370962 10.501252h11.15297062l10.536294 5.519715" fill="none" stroke="#f00" stroke-width="3"/>
+    <path d="m3.3536292 4.7142357 3.118644-2.915254m-2.0338983 4.983051 4.1864404-3.881356" fill="none" stroke="#00c8aa"/>
+  </g>
 </svg>

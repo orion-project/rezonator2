@@ -1,104 +1,26 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   version="1.0"
-   width="200"
-   height="128"
-   id="svg2714">
-  <defs
-     id="defs2716" />
-  <g
-     transform="translate(28,-2)"
-     id="layer1">
-    <path
-       d="M 24.5,8 L 24.5,123"
-       id="path2726"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    <path
-       d="M 120,8 L 30,68 L 120,123"
-       id="path2728"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:7;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    <path
-       d="M 25,67.5 L 120,67.5"
-       id="path2730"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:8, 2, 1, 2;stroke-dashoffset:0;stroke-opacity:1" />
-    <path
-       d="M 25,18 L 15,8"
-       id="path2732"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="M 25,24 L 15,14"
-       id="path3504"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="M 25,30 L 15,20"
-       id="path3506"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="M 25,36 L 15,26"
-       id="path3508"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="M 25,42 L 15,32"
-       id="path3510"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="M 25,48 L 15,38"
-       id="path3512"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="M 25,54 L 15,44"
-       id="path3514"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="M 25,60 L 15,50"
-       id="path3516"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="M 25,66 L 15,56"
-       id="path3518"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="M 25,72 L 15,62"
-       id="path3520"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="M 25,78 L 15,68"
-       id="path3522"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="M 25,84 L 15,74"
-       id="path3524"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="M 25,90 L 15,80"
-       id="path3526"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="M 25,96 L 15,86"
-       id="path3528"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="M 25,102 L 15,92"
-       id="path3530"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="M 25,108 L 15,98"
-       id="path3532"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="M 25,114 L 15,104"
-       id="path3534"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="M 25,120 L 15,110"
-       id="path3536"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       d="M 100,123 L 120,123 L 110,103"
-       id="path3540"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:7;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+<svg height="128" width="200" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="#000" transform="translate(28 -2)">
+    <path d="m24.5 8v115" stroke-width="3"/>
+    <path d="m120 8-90 60 90 55" stroke-width="7"/>
+    <path d="m25 67.5h95" stroke-dasharray="8 2 1 2"/>
+    <path d="m25 18-10-10"/>
+    <path d="m25 24-10-10"/>
+    <path d="m25 30-10-10"/>
+    <path d="m25 36-10-10"/>
+    <path d="m25 42-10-10"/>
+    <path d="m25 48-10-10"/>
+    <path d="m25 54-10-10"/>
+    <path d="m25 60-10-10"/>
+    <path d="m25 66-10-10"/>
+    <path d="m25 72-10-10"/>
+    <path d="m25 78-10-10"/>
+    <path d="m25 84-10-10"/>
+    <path d="m25 90-10-10"/>
+    <path d="m25 96-10-10"/>
+    <path d="m25 102-10-10"/>
+    <path d="m25 108-10-10"/>
+    <path d="m25 114-10-10"/>
+    <path d="m25 120-10-10"/>
+    <path d="m100 123h20l-10-20" stroke-linecap="round" stroke-width="7"/>
   </g>
 </svg>
