@@ -66,6 +66,9 @@ void Settings::load()
     LOAD_DEF(plotZoomStepPercentX, Double, 1);
     LOAD_DEF(plotZoomStepPercentY, Double, 1);
     LOAD_DEF(plotNumberPrecision, Int, 10);
+
+    s.beginGroup("Layout");
+    LOAD_DEF(layoutExportTransparent, Bool, false);
 }
 
 void Settings::save()
@@ -94,6 +97,9 @@ void Settings::save()
     SAVE(plotZoomStepPercentX);
     SAVE(plotZoomStepPercentY);
     SAVE(plotNumberPrecision);
+
+    s.beginGroup("Layout");
+    SAVE(layoutExportTransparent);
 }
 
 bool Settings::edit(class QWidget *parent)

@@ -88,6 +88,12 @@
         <file alias="params">../img/toolbar16/params.png</file>
         <file alias="plot_tracing">../img/toolbar16/plot_tracing.png</file>
     </qresource>
+    <qresource prefix="/toolbar10">
+        <file alias="ts_link">../img/toolbar10/ts_equals.png</file>
+        <file alias="ts_t2s">../img/toolbar10/ts_T2S.png</file>
+        <file alias="ts_s2t">../img/toolbar10/ts_S2T.png</file>
+        <file alias="ts_swap">../img/toolbar10/ts_swap.png</file>
+    </qresource>
     <qresource prefix="/elem_drawing">
         <file alias="ElemEmptyRange">../img/elem/ElemEmptyRange.svg</file>
         <file alias="ElemMediumRange">../img/elem/ElemMediumRange.svg</file>
@@ -131,46 +137,39 @@
         <file alias="ElemThickLens">../img/elem/ElemThickLens24.svg</file>
     </qresource>
     <qresource prefix="/config_pages">
-        <file alias="view">../img/opts_window_24.png</file>
-        <file alias="general">../img/opts_gears_24.png</file>
+        <file alias="view">../img/misc/opts_window.svg</file>
+        <file alias="general">../img/misc/opts_gear.svg</file>
+        <file alias="layout">../img/misc/opts_layout.svg</file>
     </qresource>
     <qresource prefix="/window_icons">
-        <file alias="main">../img/icon/icon_main_2.svg</file>
-        <file alias="schema">../img/icon/icon_schema.svg</file>
-        <file alias="catalog">../img/icon/icon_elements.svg</file>
-        <file alias="gauss_calc">../img/icon/icon_gauss.svg</file>
-        <file alias="options">../img/icon/icon_settings.svg</file>
-        <file alias="wavelength">../img/icon/icon_wavelength.svg</file>
-        <file alias="element">../img/icon/icon_element.svg</file>
-        <file alias="parameter">../img/icon/icon_parameter.svg</file>
-        <file alias="pump">../img/icon/icon_pump.svg</file>
+        <file alias="main">../img/icon/main_2.svg</file>
+        <file alias="schema">../img/icon/schema.svg</file>
+        <file alias="catalog">../img/icon/elements.svg</file>
+        <file alias="gauss_calc">../img/icon/gauss.svg</file>
+        <file alias="options">../img/icon/settings.svg</file>
+        <file alias="wavelength">../img/icon/wavelength.svg</file>
+        <file alias="element">../img/icon/element.svg</file>
+        <file alias="parameter">../img/icon/parameter.svg</file>
+        <file alias="pump">../img/icon/pump.svg</file>
     </qresource>
     <qresource prefix="/icons">
         <file alias="pump_on">../img/misc/lamp_green.svg</file>
         <file alias="pump_off">../img/misc/lamp_gray.svg</file>
-        <file alias="pump_waist">../img/toolbar/pump_waist.svg</file>
-        <file alias="pump_front">../img/toolbar/pump_front.svg</file>
-        <file alias="pump_ray_vector">../img/toolbar/pump_ray_vector.svg</file>
-        <file alias="pump_two_sections">../img/toolbar/pump_two_sections.svg</file>
-        <file alias="pump_complex">../img/toolbar/pump_complex.svg</file>
-        <file alias="pump_inv_complex">../img/toolbar/pump_inv_complex.svg</file>
+        <file alias="pump_waist">../img/misc/pump_waist.svg</file>
+        <file alias="pump_front">../img/misc/pump_front.svg</file>
+        <file alias="pump_ray_vector">../img/misc/pump_ray_vector.svg</file>
+        <file alias="pump_two_sections">../img/misc/pump_two_sections.svg</file>
+        <file alias="pump_complex">../img/misc/pump_complex.svg</file>
+        <file alias="pump_inv_complex">../img/misc/pump_inv_complex.svg</file>
         <file alias="stability_ok">../img/misc/lamp_green.svg</file>
         <file alias="stability_err">../img/misc/lamp_red.svg</file>
         <file alias="trip_type_rr">../img/misc/schema_type_rr.svg</file>
         <file alias="trip_type_sp">../img/misc/schema_type_sp.svg</file>
         <file alias="trip_type_sw">../img/misc/schema_type_sw.svg</file>
     </qresource>
-    <qresource prefix="/misc10">
-        <file alias="ts_link">../img/ts_equals_10.png</file>
-        <file alias="ts_t2s">../img/ts_T2S_10.png</file>
-        <file alias="ts_s2t">../img/ts_S2T_10.png</file>
-        <file alias="ts_swap">../img/ts_swap_10.png</file>
-    </qresource>
-    <qresource prefix="/misc32">
-        <file alias="glass_pattern">../img/glass_pattern_32.png</file>
-    </qresource>
     <qresource prefix="/misc">
-        <file alias="mdi_background">../img/background.bmp</file>
+        <file alias="glass_pattern">../img/misc/glass_pattern.png</file>
+        <file alias="mdi_background">../img/misc/background.bmp</file>
     </qresource>
     <qresource prefix="/drawing">
         <file alias="pump_waist">../img/drawing/pump_waist.png</file>

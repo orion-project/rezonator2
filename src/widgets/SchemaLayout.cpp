@@ -1,6 +1,7 @@
 #include "SchemaLayout.h"
 
 #include "Appearance.h"
+#include "../AppSettings.h"
 #include "../funcs/FormatInfo.h"
 
 #include <QClipboard>
@@ -13,7 +14,7 @@ namespace {
 
 QBrush getGlassBrush()
 {
-    static QBrush b = QBrush(QPixmap(":/misc32/glass_pattern"));
+    static QBrush b = QBrush(QPixmap(":/misc/glass_pattern"));
     return b;
 }
 
@@ -1087,8 +1088,8 @@ QMenu* SchemaLayout::createContextMenu()
 
 void SchemaLayout::copyImage()
 {
-    QImage image(_scene.sceneRect().size().toSize(), QImage::Format_RGB32);
-    image.fill(Qt::white);
+    QImage image(_scene.sceneRect().size().toSize(), QImage::Format_ARGB32);
+    image.fill(Settings::instance().layoutExportTransparent ? Qt::transparent : Qt::white);
 
     QPainter painter(&image);
     painter.setRenderHint(QPainter::Antialiasing, true);

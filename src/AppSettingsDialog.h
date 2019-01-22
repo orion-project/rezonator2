@@ -28,6 +28,7 @@ public:
 private:
     Ori::Widgets::OptionsGroup *groupOptions;
     Ori::Widgets::OptionsGroup *groupView;
+    Ori::Widgets::OptionsGroup *groupLayoutExport;
     QSpinBox *mruCount;
 
     QWidget* createGeneralPage();

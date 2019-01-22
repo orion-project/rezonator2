@@ -38,6 +38,8 @@ public:
     bool showStartWindow;     ///< Show StartWindow after app started instead of opening ProjectWindow.
     int mruSchemaCount;
 
+    bool layoutExportTransparent; ///< Use transparent background in exported images of layout.
+
     bool isDevMode = false;
 
     void load();

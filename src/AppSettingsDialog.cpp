@@ -26,10 +26,16 @@ bool editAppSettings(QWidget *parent)
 
 AppSettingsDialog::AppSettingsDialog(QWidget* parent) : Ori::Dlg::BasicConfigDialog(parent)
 {
+    pageListIconSize = QSize(48, 48);
+
     setObjectName("AppSettingsDialog");
     setTitleAndIcon(tr("Preferences"), ":/window_icons/options");
 
-    createPages({createGeneralPage(), createViewPage()});
+    createPages({
+                    createGeneralPage(),
+                    createViewPage(),
+                    createLayoutPage()
+                });
 }
 
 QWidget* AppSettingsDialog::createGeneralPage()
@@ -69,9 +75,14 @@ QWidget* AppSettingsDialog::createViewPage()
 
 QWidget* AppSettingsDialog::createLayoutPage()
 {
-    QWidget *page = new QWidget;
-    page->setWindowTitle(tr("Layout"));
-    page->setWindowIcon(QIcon(":/config_pages/layout"));
+    auto page = new Ori::Dlg::BasicConfigPage(tr("Layout"), ":/config_pages/layout");
+
+    // group box "Options"
+    groupLayoutExport = new Ori::Widgets::OptionsGroup(tr("Image export options"), {
+        tr("Use transparent background"),
+    });
+
+    page->add({groupLayoutExport});
     return page;
 }
 
@@ -90,6 +101,9 @@ void AppSettingsDialog::populate()
     groupView->setOption(1, settings.showBackground);
     groupView->setOption(2, settings.useNativeMenuBar);
     groupView->setOption(3, settings.useSystemDialogs);
+
+    // layout
+    groupLayoutExport->setOption(0, settings.layoutExportTransparent);
 }
 
 bool AppSettingsDialog::collect()
@@ -108,7 +122,9 @@ bool AppSettingsDialog::collect()
     settings.useNativeMenuBar = groupView->option(2);
     settings.useSystemDialogs = groupView->option(3);
 
+    // layout
     settings.save();
+    settings.layoutExportTransparent = groupView->option(1);
 
     return true;
 }

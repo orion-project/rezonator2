@@ -61,9 +61,9 @@ ValueEditorTS::ValueEditorTS(const QString& label, const QString& symbol, const 
     layout->addWidget(_symbol);
     layout->addSpacing(6);
     layout->addWidget(_editorT);
-    layout->addWidget(makeButton(tr("Assign T value to S"), ":/misc10/ts_t2s", this, SLOT(assignTtoS())));
-    layout->addWidget(makeButton(tr("Swap values"), ":/misc10/ts_swap", this, SLOT(swapValues())));
-    layout->addWidget(makeButton(tr("Assign S value to T"), ":/misc10/ts_s2t", this, SLOT(assignStoT())));
+    layout->addWidget(makeButton(tr("Assign T value to S"), ":/toolbar10/ts_t2s", this, SLOT(assignTtoS())));
+    layout->addWidget(makeButton(tr("Swap values"), ":/toolbar10/ts_swap", this, SLOT(swapValues())));
+    layout->addWidget(makeButton(tr("Assign S value to T"), ":/toolbar10/ts_s2t", this, SLOT(assignStoT())));
     layout->addWidget(_editorS);
     layout->addSpacing(2);
     layout->addWidget(_unitsSelector);
