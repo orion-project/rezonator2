@@ -2,7 +2,7 @@
 Version=1.2
 Title=Single lens
 HasTitle=1
-Notes=
+Notes="Example schema","containing single focusing lens."
 Units\Linear=cm
 Units\Beamsize=mm
 Units\Lambda=mkm

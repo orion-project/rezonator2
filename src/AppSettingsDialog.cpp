@@ -48,7 +48,7 @@ QWidget* AppSettingsDialog::createGeneralPage()
         tr("Show start window after application run")
     });
 
-    page->add({groupOptions});
+    page->add({groupOptions, page->stretch()});
     return page;
 }
 
@@ -64,7 +64,7 @@ QWidget* AppSettingsDialog::createViewPage()
         tr("Use system open/save file dialogs")
     });
 
-    page->add({groupView});
+    page->add({groupView, page->stretch()});
     return page;
 }
 
@@ -77,7 +77,7 @@ QWidget* AppSettingsDialog::createLayoutPage()
         tr("Use transparent background"),
     });
 
-    page->add({groupLayoutExport});
+    page->add({groupLayoutExport, page->stretch()});
     return page;
 }
 

@@ -30,7 +30,7 @@ Title of the schema displaying in the window title bar.
 Defines if `Title` key is vaid. Can be 0 or 1.
 
 ### Notes
-Text notes for the schema, comment. *Not supported in reZonator-2*.
+Text notes for the schema, comment.
 
 ### SchemaKind
 Round-trip type.

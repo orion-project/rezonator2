@@ -61,7 +61,7 @@ private:
 
     QAction *actnFileNew, *actnFileOpen, *actnFileExit, *actnFileSave, *actnFileSaveCopy,
             *actnFileSaveAs, *actnFileTripType, *actnFilePump, *actnFileLambda, *actnFileSummary,
-            *actnFileOpenExample;
+            *actnFileOpenExample, *actnFileProps;
 
     /* TODO:NEXT-VER QAction *actnEditCut, *actnEditCopy,
             *actnEditPaste, *actnEditSelectAll; */

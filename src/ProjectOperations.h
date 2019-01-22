@@ -44,6 +44,7 @@ public slots:
     void setupPump();
     void setupWavelength();
     void setupTripType();
+    void editSchemaProps();
 
 signals:
     void protocolRequired();

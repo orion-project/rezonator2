@@ -128,6 +128,7 @@ void ProjectWindow::createActions()
     actnFileTripType = A_(tr("Change &Trip Type..."), _operations, SLOT(setupTripType()));
     actnFilePump = A_(tr("Setup &Input Beam..."), _operations, SLOT(setupPump()), ":/toolbar/pump_edit", Qt::Key_F9);
     actnFileSummary = A_(tr("Summar&y..."), _calculations, SLOT(funcSummary()), ":/toolbar/schema_summary", Qt::CTRL | Qt::Key_I);
+    actnFileProps = A_(tr("Prop&erties..."), _operations, SLOT(editSchemaProps()), ":/toolbar/schema_prop");
     actnFileExit = A_(tr("E&xit"), qApp, SLOT(closeAllWindows()), nullptr, Qt::CTRL | Qt::Key_Q);
 
     /* TODO:NEXT-VER
@@ -147,7 +148,7 @@ void ProjectWindow::createActions()
 
     actnToolsCatalog = A_(tr("&Elements Catalog"), this, SLOT(showElementsCatalog()), ":/toolbar/catalog");
     actnToolsGaussCalc = A_(tr("&Gauss Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
-    actnToolsPrefs = A_(tr("Pre&ferences..."), this, SLOT(showPreferences()), ":/toolbar/options");
+    actnToolsPrefs = A_(tr("Pre&ferences..."), this, SLOT(showPreferences()), ":/toolbar/settings");
 
     // These common window actions must not have data (action->data()), as data presense indicates that
     // this action is for activation of specific subwindow and _mdiArea is responsible for it.
@@ -184,7 +185,7 @@ void ProjectWindow::createMenuBar()
     menuFile = Ori::Gui::menu(tr("&File"), this,
         { actnFileNew, actnFileOpen, actnFileOpenExample, _mruMenu, nullptr, actnFileSave,
           actnFileSaveAs, actnFileSaveCopy, nullptr,
-          actnFileLambda, actnFileTripType, actnFilePump, actnFileSummary, nullptr, actnFileExit });
+          actnFileProps, actnFileTripType, actnFileLambda, actnFilePump, actnFileSummary, nullptr, actnFileExit });
 
     /* TODO:NEXT-VER menuEdit = Ori::Gui::menu(tr("&Edit"), this,
         { actnEditCut, actnEditCopy, actnEditPaste, 0, actnEditSelectAll }); */
@@ -213,7 +214,7 @@ void ProjectWindow::createToolBars()
 {
     addToolBar(makeToolBar(tr("File"),
         { actnFileNew, Ori::Gui::menuToolButton(_mruMenu, actnFileOpen),
-          actnFileSave, nullptr, actnFilePump, actnFileSummary }));
+          actnFileSave, nullptr, actnFileProps, actnFilePump, actnFileSummary }));
 
     // TODO:NEXT-VER addToolBar(makeToolBar(tr("Edit"), { actnEditCut, actnEditCopy, actnEditPaste }));
 

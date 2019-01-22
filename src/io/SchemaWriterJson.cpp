@@ -50,6 +50,8 @@ QString SchemaWriterJson::writeToString()
 
 void SchemaWriterJson::writeGeneral(QJsonObject& root)
 {
+    root["title"] = _schema->title();
+    root["notes"] = _schema->notes();
     root["trip_type"] = TripTypes::info(_schema->tripType()).alias();
 
     root["builtin_params"] = QJsonObject({

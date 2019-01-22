@@ -492,7 +492,7 @@ ToolsStartPanel::ToolsStartPanel() : StartPanel("panel_tools")
     layout->addWidget(makeButton(":/toolbar/gauss_calculator", tr("Gauss Calculator"), SLOT(showGaussCalculator())));
     if (Settings::instance().isDevMode)
         layout->addWidget(makeButton(":/toolbar/protocol", tr("Edit Stylesheet"), SLOT(editStyleSheet())));
-    layout->addWidget(makeButton(":/toolbar/options", tr("Edit Settings"), SLOT(editAppSettings())));
+    layout->addWidget(makeButton(":/toolbar/settings", tr("Edit Settings"), SLOT(editAppSettings())));
     layout->addStretch();
 }
 

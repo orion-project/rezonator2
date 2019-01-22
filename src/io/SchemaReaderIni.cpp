@@ -140,6 +140,15 @@ public:
         return _file->value(key, def).toInt(ok);
     }
 
+    QString getText(const QString& key, const QVariant& def = QVariant())
+    {
+        QStringList targetLines;
+        QStringList sourceLines = _file->value(key, def).toStringList();
+        for (const QString& line: sourceLines)
+            targetLines << QString::fromLocal8Bit(line.toLatin1().data());
+        return targetLines.join('\n');
+    }
+
     bool opened() const { return !_group.isEmpty(); }
 
 private:
@@ -180,7 +189,7 @@ void SchemaReaderIni::readFromFile(const QString &fileName)
 
 void SchemaReaderIni::readGeneral(IniSection& ini)
 {
-    // TODO:? _schema->setComment(ini.getString("Notes"));
+    _schema->setNotes(ini.getText("Notes"));
     if (ini.getBool("HasTitle"))
         _schema->setTitle(ini.getString("Title"));
     _schema->setTripType(OldSchema::parseTripType(ini.getInt("SchemaKind", 0)));

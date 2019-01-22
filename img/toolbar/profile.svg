@@ -1,0 +1,27 @@
+<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <linearGradient id="a">
+    <stop offset="0" stop-color="#305080"/>
+    <stop offset="1" stop-color="#5b79a4"/>
+  </linearGradient>
+  <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="-.5" x2="24.5" xlink:href="#a" y1="21.5" y2="21.5"/>
+  <linearGradient id="c" gradientUnits="userSpaceOnUse" x1="20" x2="20" y1="19" y2="24">
+    <stop offset="0" stop-color="#5080e0"/>
+    <stop offset="1" stop-color="#4058a0"/>
+  </linearGradient>
+  <linearGradient id="d" gradientUnits="userSpaceOnUse" x1="22.410208" x2="19.5" xlink:href="#a" y1="21.5" y2="21.5"/>
+  <radialGradient id="e" cx="9.5" cy="14.5" gradientUnits="userSpaceOnUse" r="8">
+    <stop offset="0" stop-color="#fc0"/>
+    <stop offset="1" stop-color="#fc0" stop-opacity=".142045"/>
+  </radialGradient>
+  <g transform="translate(0 -7)">
+    <path d="m0 21.5h23" fill="none" stroke="url(#b)"/>
+    <path d="m20 19.5 3 2-3 2" fill="url(#d)" fill-rule="evenodd" stroke="url(#c)" stroke-linecap="round"/>
+  </g>
+  <g transform="matrix(0 -1 1 0 -12 25)">
+    <path d="m2 21.5h21" fill="none" stroke="url(#b)"/>
+    <path d="m20 19.5 3 2-3 2" fill="url(#d)" fill-rule="evenodd" stroke="url(#c)" stroke-linecap="round"/>
+  </g>
+  <path d="m17 14.5a7.5 7.5 0 1 1 -15 0 7.5 7.5 0 1 1 15 0z" style="fill-rule:evenodd;stroke:#ff9c00;stroke-width:.935674;stroke-linecap:round;stroke-linejoin:round;fill:url(#e)" transform="matrix(1.1422222 0 0 1 -1.417444 0)"/>
+  <path d="m19 11 .749999-1.0000002v-3.9999998h-1.749999l-.499 1v-2h6.097106v2l-.598107-1h-1.749999v3.9999998l.75 1.0000002z"/>
+  <path d="m3.125 1.03125c-.7008057.0375344-1.4458998.2936919-1.84375.90625-.38212204.5507038-.29822019 1.3466301.1875 1.8125.5682062.5093854 1.4010171.7462204 2.03125.75s1.4404547.1714575 1.4375.6875c-.0030196.5273844-.4463751.8189605-1.5.8125-1.0536164-.0064604-1.3456115-.514282-1.4375-1h-1c-.0022236.7065226.470189 1.3789738 1.09375 1.6875.5615841.2524279 1.1701482.3165963 1.78125.28125.7008057-.0375344 1.4458998-.2936921 1.84375-.90625.3821221-.5507038.3294703-1.3466301-.15625-1.8125-.5682062-.5093854-1.4322671-.7462204-2.0625-.75s-1.4404546-.1714575-1.4375-.6875c.0030196-.5273844.4236907-.8161838 1.4773157-.8097235 1.0536164.0064604 1.3682957.5115055 1.4601843.9972235h1c.0022236-.7065226-.4389391-1.3789736-1.0625-1.6875-.5615841-.2524279-1.201398-.3165962-1.8125-.28125z"/>
+</svg>

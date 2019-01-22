@@ -141,6 +141,9 @@ void SchemaReaderJson::readFromUtf8(const QByteArray& data)
 
 void SchemaReaderJson::readGeneral(const QJsonObject& root)
 {
+    _schema->setTitle(root["title"].toString());
+    _schema->setNotes(root["notes"].toString());
+
     // Read trip type
     bool ok;
     auto tripTypeStr = root["trip_type"].toString();

@@ -192,6 +192,9 @@ public:
     const QString& title() const { return _title; }
     void setTitle(const QString& title) { _title = title; }
 
+    const QString& notes() const { return _notes; }
+    void setNotes(const QString& notes) { _notes = notes; }
+
     Z::Parameter& wavelength() { return _wavelength; }
 
     TripType tripType() const { return _tripType; }
@@ -254,7 +257,7 @@ private:
     SchemaClients _clients;
     SchemaSelection _selection;
     QString _fileName;
-    QString _title, _comment;
+    QString _title, _notes;
     TripType _tripType = TripType::SW;
     Z::Parameter _wavelength;
     Z::Parameters _customParams;

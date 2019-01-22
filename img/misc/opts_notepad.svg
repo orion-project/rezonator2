@@ -1,0 +1,30 @@
+<svg height="32" width="32" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <linearGradient id="a">
+    <stop offset="0" stop-color="#92b1de"/>
+    <stop offset="1" stop-color="#525f96"/>
+  </linearGradient>
+  <linearGradient id="b">
+    <stop offset="0" stop-color="#fdffff"/>
+    <stop offset="1" stop-color="#b2d3fa"/>
+  </linearGradient>
+  <linearGradient id="c" gradientTransform="matrix(.62407203 0 0 .59364677 1.005855 16.777034)" gradientUnits="userSpaceOnUse" x1="29" x2="15" xlink:href="#b" y1="9" y2="39"/>
+  <linearGradient id="d" gradientTransform="matrix(.62407203 0 0 .59364677 1.005855 16.777034)" gradientUnits="userSpaceOnUse" x1="18" x2="28" xlink:href="#a" y1="4" y2="44"/>
+  <linearGradient id="e" gradientTransform="matrix(.62407203 0 0 .59909024 1.835289 19.320794)" gradientUnits="userSpaceOnUse" x1="29" x2="15" xlink:href="#b" y1="9" y2="39"/>
+  <linearGradient id="f" gradientTransform="matrix(.62407203 0 0 .59909024 1.835289 19.320794)" gradientUnits="userSpaceOnUse" x1="18" x2="28" xlink:href="#a" y1="4" y2="44"/>
+  <g transform="translate(0 -16)">
+    <path d="m28.670386 26.509877-16.225872-5.391812c-1.248144 3.594542-4.3685042 11.879569-9.9851529 19.068652l16.8499449 5.990902c5.616648-5.990902 8.404037-13.757228 9.36108-19.667742z" fill="url(#e)" fill-rule="evenodd" stroke="url(#f)" stroke-linejoin="round" stroke-width=".624072"/>
+    <path d="m11.615079 18.557974c-1.248143 3.561881-4.3685033 11.871431-9.9851516 18.995192l16.8499446 5.928685c5.616648-5.936468 8.404037-13.723451 9.36108-19.58026zm1.852714 1.872216c.516731 0 .812627.559169.643575 1.248144-.169052.688976-.731413 1.248144-1.248145 1.248144-.516731 0-.793124-.559168-.624072-1.248144.169053-.688975.711911-1.248144 1.228642-1.248144zm3.588414 1.306651c.516732 0 .793125.559168.624072 1.248144-.169052.688975-.731412 1.248144-1.248144 1.248144-.516731 0-.793124-.559169-.624072-1.248144.169052-.688976.731413-1.248144 1.248144-1.248144zm3.685926 1.189637c.516731 0 .812626.559169.643574 1.248144-.169053.688976-.731412 1.248144-1.248144 1.248144s-.793124-.559168-.624072-1.248144c.169052-.688975.71191-1.248144 1.228642-1.248144zm4.036966 1.540678c.516731 0 .793124.559169.624072 1.248144-.169053.688976-.731413 1.248144-1.248144 1.248144-.516733 0-.793125-.559168-.624072-1.248144.169051-.688975.731412-1.248144 1.248144-1.248144z" fill="url(#c)" fill-rule="evenodd" stroke="url(#d)" stroke-linejoin="round" stroke-width=".624072"/>
+    <g fill="none">
+      <path d="m7.7330565 12.973158a2 3 0 1 1 2.2644374-2.823022" stroke="#000" stroke-width=".996658" transform="matrix(.80356044 0 -.22298711 .7047118 10.447296 12.633695)"/>
+      <path d="m7.7330565 12.973158a2 3 0 1 1 2.2644374-2.823022" stroke="#000" stroke-width=".996658" transform="matrix(.80356044 0 -.22298711 .7047118 14.052159 13.782147)"/>
+      <path d="m7.7330565 12.973158a2 3 0 1 1 2.2644374-2.823022" stroke="#000" stroke-width=".996658" transform="matrix(.80356044 0 -.22298711 .7047118 17.732789 14.998389)"/>
+      <path d="m7.7330565 12.973158a2 3 0 1 1 2.2644374-2.823022" stroke="#000" stroke-width=".996658" transform="matrix(.80356044 0 -.22298711 .7047118 21.800227 16.342238)"/>
+      <path d="m5.5677621 37.964022c5.5827529-6.061275 8.1986719-14.164242 8.1986719-14.164242" stroke="#f00" stroke-linecap="round" stroke-opacity=".469697" stroke-width=".312036"/>
+      <path d="m10.671993 24.501612 14.164242 4.434301" opacity=".517094" stroke="#000" stroke-linecap="round" stroke-width=".312036"/>
+      <path d="m9.651147 27.277038 14.164242 4.434301" opacity=".517094" stroke="#000" stroke-linecap="round" stroke-width=".312036"/>
+      <path d="m8.4388921 29.861055 14.1642419 4.434301" opacity=".517094" stroke="#000" stroke-linecap="round" stroke-width=".312036"/>
+      <path d="m6.971426 32.668382 14.164242 4.434301" opacity=".517094" stroke="#000" stroke-linecap="round" stroke-width=".312036"/>
+      <path d="m5.1530436 35.284301 14.1642414 4.4343" opacity=".517094" stroke="#000" stroke-linecap="round" stroke-width=".312036"/>
+    </g>
+  </g>
+</svg>

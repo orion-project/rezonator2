@@ -1,19 +1,22 @@
+#include "ProjectOperations.h"
+
 #include "AppSettings.h"
 #include "CalcManager.h"
-#include "CustomPrefs.h"
 #include "CommonData.h"
-#include "ProjectOperations.h"
+#include "CustomPrefs.h"
 #include "PumpParamsDialog.h"
-#include "io/z_io_utils.h"
+#include "SchemaPropsDialog.h"
+#include "core/Schema.h"
+#include "core/Protocol.h"
 #include "io/SchemaReaderIni.h"
 #include "io/SchemaReaderJson.h"
 #include "io/SchemaWriterJson.h"
-#include "core/Schema.h"
-#include "core/Protocol.h"
-#include "widgets/ParamEditor.h"
-#include "widgets/OriOptionsGroup.h"
+#include "io/z_io_utils.h"
+
 #include "helpers/OriDialogs.h"
 #include "tools/OriWaitCursor.h"
+#include "widgets/ParamEditor.h"
+#include "widgets/OriOptionsGroup.h"
 
 #include <QApplication>
 #include <QFileDialog>
@@ -375,4 +378,9 @@ QString ProjectOperations::selectSchemaExample()
     }
 
     return fileName;
+}
+
+void ProjectOperations::editSchemaProps()
+{
+   Z::Dlg::editSchemaProps(_parent, schema());
 }

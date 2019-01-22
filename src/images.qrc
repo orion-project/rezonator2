@@ -45,7 +45,8 @@
         <file alias="limits_zoom_out_y">../img/toolbar/limits_zoom_out_y.svg</file>
         <file alias="limits_zoom_out">../img/toolbar/limits_zoom_out.svg</file>
         <file alias="ok">../img/toolbar/ok.svg</file>
-        <file alias="options">../img/toolbar/settings.svg</file>
+        <file alias="options">../img/toolbar/options.svg</file>
+        <file alias="settings">../img/toolbar/settings.svg</file>
         <file alias="param_add">../img/toolbar/parameter_add.svg</file>
         <file alias="param_annotate">../img/toolbar/parameter_label.svg</file>
         <file alias="param_delete">../img/toolbar/parameter_delete.svg</file>
@@ -137,9 +138,10 @@
         <file alias="ElemThickLens">../img/elem/ElemThickLens24.svg</file>
     </qresource>
     <qresource prefix="/config_pages">
-        <file alias="view">../img/misc/opts_window.svg</file>
         <file alias="general">../img/misc/opts_gear.svg</file>
         <file alias="layout">../img/misc/opts_layout.svg</file>
+        <file alias="note">../img/misc/opts_notepad.svg</file>
+        <file alias="view">../img/misc/opts_window.svg</file>
     </qresource>
     <qresource prefix="/window_icons">
         <file alias="main">../img/icon/main_2.svg</file>

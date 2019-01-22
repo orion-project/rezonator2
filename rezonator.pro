@@ -152,7 +152,8 @@ HEADERS += \
     src/funcs_window/FuncOptionsPanel.h \
     src/StartWindow.h \
     src/CommonData.h \
-    src/AppSettingsDialog.h
+    src/AppSettingsDialog.h \
+    src/SchemaPropsDialog.h
 	
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -259,7 +260,8 @@ SOURCES += \
     src/io/ISchemaWindowStorable.cpp \
     src/StartWindow.cpp \
     src/CommonData.cpp \
-    src/AppSettingsDialog.cpp
+    src/AppSettingsDialog.cpp \
+    src/SchemaPropsDialog.cpp
 
 DISTFILES += \
     src/StartWindow.qss \
