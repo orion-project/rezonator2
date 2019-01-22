@@ -1,5 +1,6 @@
 #include "CommonData.h"
 #include "GaussCalculatorWindow.h"
+#include "ProjectOperations.h"
 #include "ProjectWindow.h"
 #include "StartWindow.h"
 #include "tests/TestSuite.h"
@@ -38,24 +39,41 @@ int main(int argc, char* argv[])
         return app.exec();
     }
 
+    // Treat given file as example
+    bool isExample = false;
+    for (int i = 0; i < args.count(); i++)
+    {
+        if (args.at(i) == "example")
+        {
+            isExample = true;
+            args.removeAt(i);
+            break;
+        }
+    }
+
     // Open a file if given
     QString fileName;
     for (int i = 1; i < args.count(); i++)
-        if (QFileInfo(args[i]).exists())
+        if (QFileInfo(args.at(i)).exists())
         {
-            fileName = args[i];
+            fileName = args.at(i);
             break;
         }
     if (!fileName.isEmpty())
     {
-        (new ProjectWindow(nullptr, fileName))->show();
+        auto projectWindow = new ProjectWindow(nullptr);
+        projectWindow->show();
+        if (isExample)
+            projectWindow->operations()->openExampleFile(fileName);
+        else
+            projectWindow->operations()->openSchemaFile(fileName);
         return app.exec();
     }
 
     // Open empty project window in start window is disabled
     if (!Settings::instance().showStartWindow)
     {
-        (new ProjectWindow(nullptr, ""))->show();
+        (new ProjectWindow)->show();
         return app.exec();
     }
 

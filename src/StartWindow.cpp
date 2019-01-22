@@ -39,7 +39,7 @@ namespace {
         s->events().disable();
         s->setTripType(tripType);
         s->events().enable();
-        (new ProjectWindow(s, QString()))->show();
+        (new ProjectWindow(s))->show();
     }
 
     void adjustTipImagePosition(QLabel* tipImage)
@@ -216,7 +216,9 @@ void MruStartPanel::makeEmpty()
 void MruStartPanel::openFile(const QString& filePath)
 {
     emit onClose();
-    (new ProjectWindow(nullptr, filePath))->show();
+    auto projectWindow = new ProjectWindow(nullptr);
+    projectWindow->show();
+    projectWindow->operations()->openSchemaFile(filePath);
 }
 
 //------------------------------------------------------------------------------
@@ -428,12 +430,13 @@ void TipsStartPanel::chooseAndShowTip()
 ActionsStartPanel::ActionsStartPanel() : StartPanel("panel_actions")
 {
     LayoutV({
-        makeHeader(tr("Actions")),
-        makeButton(":/toolbar/schema_open", tr("Open Schema File"), SLOT(openSchemaFile())),
-        makeButton(":/toolbar/schema_open", tr("Open Example Schema"), SLOT(openSchemaExample())), // TODO make different icon
-        makeButton(TripTypes::info(TripType::SW).iconPath(), tr("Make Standing-Wave Resonator"), SLOT(makeSchemaSW())),
-        makeButton(TripTypes::info(TripType::RR).iconPath(), tr("Make Ring Resonator"), SLOT(makeSchemaRR())),
-        makeButton(TripTypes::info(TripType::SP).iconPath(), tr("Make Single-Pass System"), SLOT(makeSchemaSP())),
+        makeHeader(tr("Open")),
+        makeButton(":/toolbar/schema_open", tr("Schema File"), SLOT(openSchemaFile())),
+        makeButton(":/toolbar/schema_open", tr("Example Schema"), SLOT(openSchemaExample())), // TODO make different icon
+        makeHeader(tr("Create")),
+        makeButton(TripTypes::info(TripType::SW).iconPath(), tr("Standing-Wave Resonator"), SLOT(makeSchemaSW())),
+        makeButton(TripTypes::info(TripType::RR).iconPath(), tr("Ring Resonator"), SLOT(makeSchemaRR())),
+        makeButton(TripTypes::info(TripType::SP).iconPath(), tr("Single-Pass System"), SLOT(makeSchemaSP())),
         Stretch()
     }).setMargin(10).setSpacing(10).useFor(this);
 };
@@ -443,7 +446,9 @@ void ActionsStartPanel::openSchemaFile()
     auto fileName = ProjectOperations::getOpenFileName(this);
     if (fileName.isEmpty()) return;
     emit onClose();
-    (new ProjectWindow(nullptr, fileName))->show();
+    auto projectWindow = new ProjectWindow;
+    projectWindow->show();
+    projectWindow->operations()->openSchemaFile(fileName);
 }
 
 void ActionsStartPanel::openSchemaExample()
@@ -451,7 +456,9 @@ void ActionsStartPanel::openSchemaExample()
     auto fileName = ProjectOperations::selectSchemaExample();
     if (fileName.isEmpty()) return;
     emit onClose();
-    (new ProjectWindow(nullptr, fileName))->show();
+    auto projectWindow = new ProjectWindow;
+    projectWindow->show();
+    projectWindow->operations()->openExampleFile(fileName);
 }
 
 void ActionsStartPanel::makeSchemaSW()

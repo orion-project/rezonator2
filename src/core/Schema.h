@@ -189,6 +189,9 @@ public:
     const QString& fileName() const { return _fileName; }
     void setFileName(const QString& fileName) { _fileName = fileName; }
 
+    const QString& title() const { return _title; }
+    void setTitle(const QString& title) { _title = title; }
+
     Z::Parameter& wavelength() { return _wavelength; }
 
     TripType tripType() const { return _tripType; }

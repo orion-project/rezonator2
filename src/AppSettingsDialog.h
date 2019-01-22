@@ -5,8 +5,6 @@
 
 QT_BEGIN_NAMESPACE
 class QComboBox;
-class QSpinBox;
-class OptionsGroup;
 QT_END_NAMESPACE
 
 namespace Ori {
@@ -29,7 +27,6 @@ private:
     Ori::Widgets::OptionsGroup *groupOptions;
     Ori::Widgets::OptionsGroup *groupView;
     Ori::Widgets::OptionsGroup *groupLayoutExport;
-    QSpinBox *mruCount;
 
     QWidget* createGeneralPage();
     QWidget* createViewPage();

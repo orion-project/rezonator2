@@ -24,10 +24,10 @@ The document describes only part of sections and keys that are needed to load sc
 Schema format version. Versions 1, 1.1 and 1.2 are supported.
 
 ### Title
-Displayed title of the schema. *Not supported in reZonator-2*.
+Title of the schema displaying in the window title bar.
 
 ### HasTitle
-Defines if `Title` key is vaid. Can be 0 or 1. *Not supported in reZonator-2*.
+Defines if `Title` key is vaid. Can be 0 or 1.
 
 ### Notes
 Text notes for the schema, comment. *Not supported in reZonator-2*.

@@ -86,6 +86,13 @@ QString ProjectOperations::getSaveFileName(QWidget* parent)
     return fileName;
 }
 
+void ProjectOperations::openExampleFile(const QString& fileName)
+{
+    OpenFileOptions opts;
+    opts.isExample = true;
+    openSchemaFile(fileName, opts);
+}
+
 void ProjectOperations::openSchemaFile()
 {
     auto fileName = getOpenFileName(_parent);
@@ -95,9 +102,19 @@ void ProjectOperations::openSchemaFile()
 
 void ProjectOperations::openSchemaFile(const QString& fileName)
 {
+    openSchemaFile(fileName, OpenFileOptions());
+}
+
+void ProjectOperations::openSchemaFile(const QString& fileName, const OpenFileOptions& opts)
+{
     if (!schema()->state().isNew())
     {
-        QProcess::startDetached(qApp->applicationFilePath() + " \"" + fileName + "\"");
+        QStringList args;
+        args << qApp->applicationFilePath();
+        if (opts.isExample)
+            args << "example";
+        args << " \"" + fileName + "\"";
+        QProcess::startDetached(args.join(' '));
         return;
     }
 
@@ -125,7 +142,17 @@ void ProjectOperations::openSchemaFile(const QString& fileName)
     if (!report.IsEmpty())
         writeProtocol(report, tr("There are messages while loading project."));
 
-    schema()->setFileName(fileName);
+    if (opts.isExample)
+    {
+        QFileInfo fileInfo(fileName);
+        schema()->setTitle(fileInfo.baseName());
+        // Don't set file name as we don't want to overwrite examples,
+        // and we don't want to show unexpected paths
+        // somewhere in /tmp if the program is launched from AppImage
+        // or somewhere inside of application bundle if we are on MacOS
+    }
+    else
+        schema()->setFileName(fileName);
     schema()->events().enable();
     schema()->events().raise(SchemaEvents::Loaded);
     schema()->events().raise(SchemaEvents::RecalRequred);

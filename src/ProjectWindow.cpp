@@ -51,7 +51,7 @@ enum ProjectWindowStatusPanels
     STATUS_PANELS_COUNT,
 };
 
-ProjectWindow::ProjectWindow(Schema* readySchema, const QString &fileName) :
+ProjectWindow::ProjectWindow(Schema* readySchema) :
     QMainWindow(), SchemaToolWindow(readySchema ? readySchema : new Schema())
 {
     setAttribute(Qt::WA_DeleteOnClose);
@@ -99,11 +99,6 @@ ProjectWindow::ProjectWindow(Schema* readySchema, const QString &fileName) :
 
     if (Settings::instance().showProtocolAtStart)
         showProtocolWindow();
-
-    if (!fileName.isEmpty())
-        QTimer::singleShot(200, [this, fileName]{
-            this->_operations->openSchemaFile(fileName);
-        });
 }
 
 ProjectWindow::~ProjectWindow()
@@ -252,7 +247,10 @@ void ProjectWindow::createStatusBar()
 
 void ProjectWindow::updateTitle()
 {
-    Ori::Wnd::setWindowFilePath(this, schema()->fileName());
+    if (!schema()->title().isEmpty())
+        Ori::Wnd::setWindowProject(this, schema()->title());
+    else
+        Ori::Wnd::setWindowFilePath(this, schema()->fileName());
 }
 
 void ProjectWindow::updateMenuBar()
@@ -424,7 +422,7 @@ void ProjectWindow::openSchemaExample()
 {
     auto fileName = ProjectOperations::selectSchemaExample();
     if (fileName.isEmpty()) return;
-    _operations->openSchemaFile(fileName);
+    _operations->openExampleFile(fileName);
 }
 
 //------------------------------------------------------------------------------

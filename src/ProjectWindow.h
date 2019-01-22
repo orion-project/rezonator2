@@ -36,7 +36,7 @@ class ProjectWindow : public QMainWindow, public SchemaToolWindow
     Q_OBJECT
 
 public:
-    ProjectWindow(Schema* readySchema, const QString& fileName);
+    ProjectWindow(Schema* readySchema = nullptr);
     ~ProjectWindow() override;
 
     // inherits from SchemaListener
@@ -48,6 +48,8 @@ public:
 
     // inherited from SettingsListener.
     void settingsChanged() override;
+
+    ProjectOperations* operations() { return _operations; }
 
 protected:
     void closeEvent(class QCloseEvent*) override;

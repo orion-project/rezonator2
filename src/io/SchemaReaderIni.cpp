@@ -181,7 +181,8 @@ void SchemaReaderIni::readFromFile(const QString &fileName)
 void SchemaReaderIni::readGeneral(IniSection& ini)
 {
     // TODO:? _schema->setComment(ini.getString("Notes"));
-    // TODO:? _schema->setTitle(ini.getString("Title"));
+    if (ini.getBool("HasTitle"))
+        _schema->setTitle(ini.getString("Title"));
     _schema->setTripType(OldSchema::parseTripType(ini.getInt("SchemaKind", 0)));
     // TODO:? load calculation precision
 }

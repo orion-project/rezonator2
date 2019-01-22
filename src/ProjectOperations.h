@@ -10,6 +10,10 @@ namespace Z {
     class Report;
 }
 
+struct OpenFileOptions {
+    bool isExample = false;
+};
+
 class ProjectOperations : public QObject
 {
     Q_OBJECT
@@ -28,13 +32,13 @@ public:
     /// user has no access to examples directory via regular open file dialog.
     static QString selectSchemaExample();
 
-
 public slots:
     void newSchemaFile();
     void openSchemaFile();
     void openSchemaFile(const QString& fileName);
-    bool saveSchemaFile();
+    void openExampleFile(const QString& fileName);
     bool saveSchemaFile(const QString& fileName);
+    bool saveSchemaFile();
     bool saveSchemaFileAs();
     void saveSchemaFileCopy();
     void setupPump();
@@ -50,6 +54,7 @@ private:
     CalcManager* _calcManager;
 
     void writeProtocol(const Z::Report& report, const QString &message);
+    void openSchemaFile(const QString& fileName, const OpenFileOptions& opts);
 };
 
 #endif // PROJECT_OPERATIONS_H

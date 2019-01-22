@@ -48,12 +48,7 @@ QWidget* AppSettingsDialog::createGeneralPage()
         tr("Show start window after application run")
     });
 
-    mruCount = new QSpinBox;
-    auto mruLayout = new QFormLayout;
-    mruLayout->setMargin(10);
-    mruLayout->addRow(tr("Max count of recent files to remember:"), mruCount);
-
-    page->add({groupOptions, mruLayout});
+    page->add({groupOptions});
     return page;
 }
 
@@ -94,7 +89,6 @@ void AppSettingsDialog::populate()
     groupOptions->setOption(0, settings.editNewElem);
     groupOptions->setOption(1, settings.elemAutoLabel);
     groupOptions->setOption(2, settings.showStartWindow);
-    mruCount->setValue(settings.mruSchemaCount);
 
     // view
     groupView->setOption(0, settings.smallToolbarImages);
@@ -114,7 +108,6 @@ bool AppSettingsDialog::collect()
     settings.editNewElem = groupOptions->option(0);
     settings.elemAutoLabel = groupOptions->option(1);
     settings.showStartWindow = groupOptions->option(2);
-    settings.mruSchemaCount = mruCount->value();
 
     // view
     settings.smallToolbarImages = groupView->option(0);

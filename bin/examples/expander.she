@@ -1,6 +1,7 @@
 [PREFERENCES]
 Version=1.1
-HasTitle=0
+HasTitle=1
+Title=Beam expander
 Notes=
 Units\Linear=mm
 Units\Beamsize=mkm
