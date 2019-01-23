@@ -106,6 +106,13 @@ class MultiElementSelectorWidget : public QWidget
 public:
     explicit MultiElementSelectorWidget(Schema* schema, ElementFilter *filter = nullptr);
 
+    Elements allElements() const;
+    Elements selected() const;
+    Element* current() const;
+    void select(Element*);
+    void setCurrentRow(int index);
+    int selectedCount() const;
+
 signals:
     void currentElementChanged(Element* current, Element* previous);
 
@@ -116,11 +123,12 @@ private slots:
 
 private:
     QListWidget* _elemsSelector;
-    //QMap<Element*, QListWidgetItem*> _itemsMap;
+    QMap<Element*, QListWidgetItem*> _itemsMap;
 
     void populate(Schema* schema, ElementFilter *filter);
     void currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
     void invertCheckState(QListWidgetItem *item);
+    Element* element(QListWidgetItem *item) const;
 };
 
 #endif // ELEM_SELECTOR_WIDGET_H

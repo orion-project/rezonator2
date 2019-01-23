@@ -14,6 +14,7 @@ class ElemAndParamSelector;
 class ElemSelectorWidget;
 class ElementFilter;
 class Schema;
+class MultiElementSelectorWidget;
 
 namespace VariableRangeEditor {
 class GeneralRangeEd;
@@ -88,27 +89,20 @@ class MultiElementRangeEd : public QWidget
 
 public:
     explicit MultiElementRangeEd(Schema *schema);
-    ~MultiElementRangeEd();
 
     WidgetResult verify();
     void populateVars(const QVector<Z::Variable> &vars);
     QVector<Z::Variable> collectVars();
 
-private slots:
-    void selectAllElements();
-    void deselectAllElements();
-    void invertElementsSelection();
-
 private:
-    QListWidget *_elemsSelector;
+    MultiElementSelectorWidget *_elemsSelector;
     VariableRangeEditor::PointsRangeEd* _rangeEditor;
-    QVector<struct ElemItemData*> _itemsData;
+    QMap<Element*, Z::VariableRange> _elemRanges;
     QCheckBox *_sameSettings;
 
-    void currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
-    void invertCheckState(QListWidgetItem *item);
-    void showRangeInEditor(QListWidgetItem *item);
-    void saveEditedRange(QListWidgetItem *item);
+    void currentElementChanged(Element *current, Element *previous);
+    void showRangeInEditor(Element *elem);
+    void saveEditedRange(Element *elem);
 };
 
 } // namespace VariableEditor

@@ -1,6 +1,5 @@
 #include "VariableEditor.h"
 
-#include "ElementImagesProvider.h"
 #include "ElemSelectorWidget.h"
 #include "VariableRangeEditor.h"
 #include "../core/Variable.h"
@@ -146,62 +145,25 @@ WidgetResult ElementRangeEd::verify()
 //------------------------------------------------------------------------------
 //                              MultiElementRangeEd
 
-struct ElemItemData
-{
-    ElementRange* element;
-    QListWidgetItem* item;
-    Z::VariableRange range;
-};
-
 MultiElementRangeEd::MultiElementRangeEd(Schema *schema) : QWidget()
 {
-    _elemsSelector = new QListWidget;
-    _elemsSelector->addAction(action("", this, SLOT(selectAllElements()), "", Qt::CTRL+Qt::Key_A));
-    _elemsSelector->addAction(action("", this, SLOT(deselectAllElements()), "", Qt::CTRL+Qt::Key_D));
-    _elemsSelector->addAction(action("", this, SLOT(invertElementsSelection()), "", Qt::CTRL+Qt::Key_I));
-    connect(_elemsSelector, &QListWidget::currentItemChanged, this, &MultiElementRangeEd::currentItemChanged);
-    connect(_elemsSelector, &QListWidget::itemDoubleClicked, this, &MultiElementRangeEd::invertCheckState);
-    connect(_elemsSelector, &QListWidget::itemClicked, [&](QListWidgetItem *item){
-        if (!item->isSelected()) _elemsSelector->setCurrentItem(item); });
-
-    auto elemsSelector = LayoutH({
-        _elemsSelector,
-        LayoutV({
-            iconToolButton(tr("Select All"), ":/toolbar16/check_all", this, SLOT(selectAllElements())),
-            iconToolButton(tr("Select None"), ":/toolbar16/check_none", this, SLOT(deselectAllElements())),
-            iconToolButton(tr("Invert Selection"), ":/toolbar16/check_invert", this, SLOT(invertElementsSelection())),
-            Stretch()
-        })
-    })
-    .setMargin(0)
-    .boxLayout();
-
-    // Collect available elements data
     std::shared_ptr<ElementFilter> elemFilter(
         ElementFilter::make<ElementFilterIsRange, ElementFilterEnabled>());
-    for (auto elem : schema->elements())
-        if (elemFilter->check(elem))
-        {
-            auto data = new ElemItemData;
-            data->element = Z::Utils::asRange(elem);
-            data->range.stop = Z::Utils::getRangeStop(data->element);
-            data->range.start = data->range.stop * 0.0; // this preserves units
-            data->range.step = data->range.stop / 100.0; // this preserves units
-            data->range.useStep = false;
-            data->range.points = 100;
-            _itemsData.append(data);
-        }
 
-    // Fill elements selector
-    for (int i = 0; i < _itemsData.size(); i++)
+    _elemsSelector = new MultiElementSelectorWidget(schema, elemFilter.get());
+    connect(_elemsSelector, &MultiElementSelectorWidget::currentElementChanged,
+            this, &MultiElementRangeEd::currentElementChanged);
+
+    // Make default ranges for all elements
+    for (auto elem : _elemsSelector->allElements())
     {
-        auto itemData = _itemsData.at(i);
-        auto item = new QListWidgetItem("  " + itemData->element->displayLabelTitle());
-        item->setIcon(QIcon(ElementImagesProvider::instance().iconPath(itemData->element->type())));
-        item->setCheckState(Qt::Unchecked);
-        item->setData(Qt::UserRole, i);
-        itemData->item = item;
-        _elemsSelector->addItem(item);
+        Z::VariableRange range;
+        range.stop = Z::Utils::getRangeStop(Z::Utils::asRange(elem));
+        range.start = Z::Value(0, range.stop.unit());
+        range.step = range.stop / 100.0;
+        range.useStep = false;
+        range.points = 100;
+        _elemRanges[elem] = range;
     }
 
     _sameSettings = new QCheckBox(tr("Use these settings for all elements"));
@@ -211,108 +173,68 @@ MultiElementRangeEd::MultiElementRangeEd(Schema *schema) : QWidget()
 
     auto layout = new QVBoxLayout;
     layout->setMargin(0);
-    layout->addLayout(elemsSelector);
+    layout->addWidget(_elemsSelector);
     layout->addSpacing(4);
     layout->addWidget(group(tr("Plot accuracy"), _rangeEditor));
     setLayout(layout);
 }
 
-MultiElementRangeEd::~MultiElementRangeEd()
-{
-    qDeleteAll(_itemsData);
-}
-
 void MultiElementRangeEd::populateVars(const QVector<Z::Variable>& vars)
 {
     for (const Z::Variable& var : vars)
-        for (ElemItemData* data : _itemsData)
-            if (data->element == var.element)
-            {
-                data->item->setCheckState(Qt::Checked);
-                data->range = var.range;
-            }
+        if (_elemRanges.contains(var.element))
+        {
+            _elemsSelector->select(var.element);
+            _elemRanges[var.element] = var.range;
+        }
     _elemsSelector->setCurrentRow(0);
 }
 
 QVector<Z::Variable> MultiElementRangeEd::collectVars()
 {
-    saveEditedRange(_elemsSelector->currentItem());
+    saveEditedRange(_elemsSelector->current());
 
     QVector<Z::Variable> vars;
-    for (int i = 0; i < _elemsSelector->count(); i++)
-        if (_elemsSelector->item(i)->checkState() == Qt::Checked)
-        {
-            int dataIndex = _elemsSelector->item(i)->data(Qt::UserRole).toInt();
-            const ElemItemData *itemData = _itemsData.at(dataIndex);
-            Z::Variable var;
-            var.element = itemData->element;
-            var.parameter = itemData->element->paramLength();
-            var.range = itemData->range;
-            vars.append(var);
-        }
+    for (auto elem : _elemsSelector->selected())
+    {
+        Z::Variable var;
+        var.element = elem;
+        var.parameter = Z::Utils::asRange(elem)->paramLength();
+        var.range = _elemRanges[elem];
+        vars.append(var);
+    }
     return vars;
 }
 
 WidgetResult MultiElementRangeEd::verify()
 {
-    int checkedCount = 0;
-    for (int i = 0; i < _elemsSelector->count(); i++)
-        if (_elemsSelector->item(i)->checkState() == Qt::Checked)
-            checkedCount++;
-
-    if (checkedCount == 0)
+    if (_elemsSelector->selectedCount() == 0)
         return WidgetResult::fail(_elemsSelector,
             tr("No elements are chosen.\nYou should mark at least one element."));
 
     return WidgetResult::ok(); // TODO
 }
 
-void MultiElementRangeEd::currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
+void MultiElementRangeEd::currentElementChanged(Element *current, Element *previous)
 {
     saveEditedRange(previous);
     showRangeInEditor(current);
 }
 
-void MultiElementRangeEd::showRangeInEditor(QListWidgetItem *item)
+void MultiElementRangeEd::showRangeInEditor(Element *elem)
 {
-    if (!item) return;
-    int itemIndex = item->data(Qt::UserRole).toInt();
-    _rangeEditor->setRange(_itemsData.at(itemIndex)->range);
+    if (_elemRanges.contains(elem))
+        _rangeEditor->setRange(_elemRanges[elem]);
 }
 
-void MultiElementRangeEd::saveEditedRange(QListWidgetItem *item)
+void MultiElementRangeEd::saveEditedRange(Element *elem)
 {
-    if (!item) return;
-    int itemIndex = item->data(Qt::UserRole).toInt();
     auto newRange = _rangeEditor->range();
     if (_sameSettings->isChecked())
-        for (ElemItemData *itemData : _itemsData)
-            itemData->range.assignPoints(newRange);
-    else
-        _itemsData.at(itemIndex)->range.assignPoints(newRange);
-}
-
-void MultiElementRangeEd::invertCheckState(QListWidgetItem *item)
-{
-    item->setCheckState(item->checkState() == Qt::Unchecked ? Qt::Checked : Qt::Unchecked);
-}
-
-void MultiElementRangeEd::selectAllElements()
-{
-    for (int i = 0; i < _elemsSelector->count(); i++)
-        _elemsSelector->item(i)->setCheckState(Qt::Checked);
-}
-
-void MultiElementRangeEd::deselectAllElements()
-{
-    for (int i = 0; i < _elemsSelector->count(); i++)
-        _elemsSelector->item(i)->setCheckState(Qt::Unchecked);
-}
-
-void MultiElementRangeEd::invertElementsSelection()
-{
-    for (int i = 0; i < _elemsSelector->count(); i++)
-        invertCheckState(_elemsSelector->item(i));
+        for (auto elem : _elemRanges.keys())
+            _elemRanges[elem].assignPoints(newRange);
+    else if (_elemRanges.contains(elem))
+        _elemRanges[elem].assignPoints(newRange);
 }
 
 } // namespace VariableEditor

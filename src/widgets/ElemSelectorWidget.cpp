@@ -159,16 +159,19 @@ void MultiElementSelectorWidget::populate(Schema* schema, ElementFilter *filter)
         item->setIcon(QIcon(Z::Utils::elemIconPath(elem)));
         item->setCheckState(Qt::Unchecked);
         item->setData(Qt::UserRole, QVariant::fromValue<void*>(elem));
-        //_itemsMap[elem] = item;
+        _itemsMap[elem] = item;
         _elemsSelector->addItem(item);
     }
 }
 
+Element* MultiElementSelectorWidget::element(QListWidgetItem *item) const
+{
+    return item ? reinterpret_cast<Element*>(item->data(Qt::UserRole).value<void*>()) : nullptr;
+}
+
 void MultiElementSelectorWidget::currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
-    auto cur = reinterpret_cast<Element*>(current->data(Qt::UserRole).value<void*>());
-    auto prev = reinterpret_cast<Element*>(previous->data(Qt::UserRole).value<void*>());
-    emit currentElementChanged(cur, prev);
+    emit currentElementChanged(element(current), element(previous));
 }
 
 void MultiElementSelectorWidget::invertCheckState(QListWidgetItem *item)
@@ -192,4 +195,43 @@ void MultiElementSelectorWidget::invertElementsSelection()
 {
     for (int i = 0; i < _elemsSelector->count(); i++)
         invertCheckState(_elemsSelector->item(i));
+}
+
+Elements MultiElementSelectorWidget::allElements() const
+{
+   return _itemsMap.keys();
+}
+
+void MultiElementSelectorWidget::select(Element* elem)
+{
+    if (_itemsMap.contains(elem))
+        _itemsMap[elem]->setCheckState(Qt::Checked);
+}
+
+Elements MultiElementSelectorWidget::selected() const
+{
+    Elements res;
+    for (int i = 0; i < _elemsSelector->count(); i++)
+        if (_elemsSelector->item(i)->checkState() == Qt::Checked)
+            res << element(_elemsSelector->item(i));
+    return res;
+}
+
+int MultiElementSelectorWidget::selectedCount() const
+{
+    int count = 0;
+    for (int i = 0; i < _elemsSelector->count(); i++)
+        if (_elemsSelector->item(i)->checkState() == Qt::Checked)
+            count++;
+    return count;
+}
+
+Element* MultiElementSelectorWidget::current() const
+{
+    return element(_elemsSelector->currentItem());
+}
+
+void MultiElementSelectorWidget::setCurrentRow(int index)
+{
+    _elemsSelector->setCurrentRow(index);
 }
