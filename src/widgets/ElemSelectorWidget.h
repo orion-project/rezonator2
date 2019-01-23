@@ -4,11 +4,15 @@
 #include <QComboBox>
 #include <QGridLayout>
 
+QT_BEGIN_NAMESPACE
+class QListWidget;
+class QListWidgetItem;
+QT_END_NAMESPACE
+
 #include "WidgetResult.h"
 #include "../core/Schema.h"
 #include "../core/ElementFilter.h"
 
-//------------------------------------------------------------------------------
 /**
     Combo-box widget which allows to choose one of schema elements.
 */
@@ -32,7 +36,6 @@ private:
 };
 
 
-//------------------------------------------------------------------------------
 /**
     Combo-box widget which allows to choose one of parameter of element.
 */
@@ -58,7 +61,6 @@ private:
 };
 
 
-//------------------------------------------------------------------------------
 /**
     Layout combinig \ref ElemSelectorWidget and \ref ParamSelectorWidget together.
 */
@@ -91,6 +93,34 @@ private:
 private slots:
     void currentElemChanged(int);
     void currentParamChanged(int);
+};
+
+
+/**
+    List widget which allows to choose one of schema elements.
+*/
+class MultiElementSelectorWidget : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit MultiElementSelectorWidget(Schema* schema, ElementFilter *filter = nullptr);
+
+signals:
+    void currentElementChanged(Element* current, Element* previous);
+
+private slots:
+    void selectAllElements();
+    void deselectAllElements();
+    void invertElementsSelection();
+
+private:
+    QListWidget* _elemsSelector;
+    //QMap<Element*, QListWidgetItem*> _itemsMap;
+
+    void populate(Schema* schema, ElementFilter *filter);
+    void currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+    void invertCheckState(QListWidgetItem *item);
 };
 
 #endif // ELEM_SELECTOR_WIDGET_H

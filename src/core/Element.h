@@ -266,6 +266,12 @@ inline ElementInterface* asInterface(Element *elem) { return dynamic_cast<Elemen
 /// or they can be selected as functions' arguments.
 ParameterFilter* defaultParamFilter();
 
+inline QSize elemIconSize() { return QSize(24, 24); }
+inline QString elemIconPath(const QString& elemType) { return ":/elem_icon/" % elemType; }
+inline QString elemIconPath(Element* elem) { return elemIconPath(elem->type()); }
+inline QString elemDrawingPath(const QString& elemType) { return ":/elem_drawing/" % elemType; }
+
+
 } // namespace Utils
 } // namespace Z
 

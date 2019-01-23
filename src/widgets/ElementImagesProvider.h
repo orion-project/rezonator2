@@ -8,6 +8,7 @@
 
 class Element;
 
+// TODO remove this class to make things simpler, use utils functions in Element.h
 class ElementImagesProvider: public Singleton<ElementImagesProvider>
 {
 public:

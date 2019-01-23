@@ -1,11 +1,16 @@
 #include "ElemSelectorWidget.h"
 
 #include "Appearance.h"
+#include "helpers/OriLayouts.h"
+#include "helpers/OriWidgets.h"
 
 #include <QLabel>
+#include <QListWidget>
+#include <QToolButton>
 
 //------------------------------------------------------------------------------
 //                              ElemSelectorWidget
+//------------------------------------------------------------------------------
 
 ElemSelectorWidget::ElemSelectorWidget(Schema* schema, ElementFilter *filter) : QComboBox(), _filter(filter)
 {
@@ -38,6 +43,7 @@ WidgetResult ElemSelectorWidget::verify()
 
 //------------------------------------------------------------------------------
 //                             ParamsSelectorWidget
+//------------------------------------------------------------------------------
 
 ParamSelectorWidget::ParamSelectorWidget(Z::ParameterFilter* filter) : QComboBox(), _filter(filter)
 {
@@ -78,6 +84,7 @@ WidgetResult ParamSelectorWidget::verify()
 
 //------------------------------------------------------------------------------
 //                             ElemAndParamSelector
+//------------------------------------------------------------------------------
 
 ElemAndParamSelector::ElemAndParamSelector(
     Schema *schema, ElementFilter *elemFilter, Z::ParameterFilter* paramFilter)
@@ -110,4 +117,79 @@ WidgetResult ElemAndParamSelector::verify()
 {
     auto res = _elemSelector->verify();
     return res ? _paramSelector->verify() : res;
+}
+
+//------------------------------------------------------------------------------
+//                           MultiElementSelectorWidget
+//------------------------------------------------------------------------------
+
+MultiElementSelectorWidget::MultiElementSelectorWidget(Schema* schema, ElementFilter *filter) : QWidget()
+{
+    _elemsSelector = new QListWidget;
+    _elemsSelector->addAction(Ori::Gui::action("", this, SLOT(selectAllElements()), "", Qt::CTRL+Qt::Key_A));
+    _elemsSelector->addAction(Ori::Gui::action("", this, SLOT(deselectAllElements()), "", Qt::CTRL+Qt::Key_D));
+    _elemsSelector->addAction(Ori::Gui::action("", this, SLOT(invertElementsSelection()), "", Qt::CTRL+Qt::Key_I));
+    connect(_elemsSelector, &QListWidget::currentItemChanged, this, &MultiElementSelectorWidget::currentItemChanged);
+    connect(_elemsSelector, &QListWidget::itemDoubleClicked, this, &MultiElementSelectorWidget::invertCheckState);
+    connect(_elemsSelector, &QListWidget::itemClicked, [&](QListWidgetItem *item){
+        if (!item->isSelected()) _elemsSelector->setCurrentItem(item); });
+
+    Ori::Layouts::LayoutH({
+        _elemsSelector,
+        Ori::Layouts::LayoutV({
+            Ori::Gui::iconToolButton(tr("Select All"), ":/toolbar16/check_all", this, SLOT(selectAllElements())),
+            Ori::Gui::iconToolButton(tr("Select None"), ":/toolbar16/check_none", this, SLOT(deselectAllElements())),
+            Ori::Gui::iconToolButton(tr("Invert Selection"), ":/toolbar16/check_invert", this, SLOT(invertElementsSelection())),
+            Ori::Layouts::Stretch()
+        })
+    })
+    .setMargin(0)
+    .useFor(this);
+
+    populate(schema, filter);
+}
+
+void MultiElementSelectorWidget::populate(Schema* schema, ElementFilter *filter)
+{
+    for (auto elem : schema->elements())
+    {
+        if (filter and !filter->check(elem)) continue;
+
+        auto item = new QListWidgetItem(elem->displayLabelTitle());
+        item->setIcon(QIcon(Z::Utils::elemIconPath(elem)));
+        item->setCheckState(Qt::Unchecked);
+        item->setData(Qt::UserRole, QVariant::fromValue<void*>(elem));
+        //_itemsMap[elem] = item;
+        _elemsSelector->addItem(item);
+    }
+}
+
+void MultiElementSelectorWidget::currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
+{
+    auto cur = reinterpret_cast<Element*>(current->data(Qt::UserRole).value<void*>());
+    auto prev = reinterpret_cast<Element*>(previous->data(Qt::UserRole).value<void*>());
+    emit currentElementChanged(cur, prev);
+}
+
+void MultiElementSelectorWidget::invertCheckState(QListWidgetItem *item)
+{
+    item->setCheckState(item->checkState() == Qt::Unchecked ? Qt::Checked : Qt::Unchecked);
+}
+
+void MultiElementSelectorWidget::selectAllElements()
+{
+    for (int i = 0; i < _elemsSelector->count(); i++)
+        _elemsSelector->item(i)->setCheckState(Qt::Checked);
+}
+
+void MultiElementSelectorWidget::deselectAllElements()
+{
+    for (int i = 0; i < _elemsSelector->count(); i++)
+        _elemsSelector->item(i)->setCheckState(Qt::Unchecked);
+}
+
+void MultiElementSelectorWidget::invertElementsSelection()
+{
+    for (int i = 0; i < _elemsSelector->count(); i++)
+        invertCheckState(_elemsSelector->item(i));
 }
