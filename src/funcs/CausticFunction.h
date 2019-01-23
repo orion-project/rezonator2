@@ -1,7 +1,7 @@
 #ifndef CAUSTIC_FUNCTION_H
 #define CAUSTIC_FUNCTION_H
 
-#include "../funcs/PlotFunction.h"
+#include "PlotFunction.h"
 
 #include <memory>
 

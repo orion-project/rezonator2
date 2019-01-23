@@ -31,6 +31,7 @@ public slots:
     void funcMultiCaustic();
     void funcShowMatrices();
     void funcShowAllMatrices();
+    void funcBeamOverStab();
 
 private:
     QWidget* _parent;

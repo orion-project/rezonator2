@@ -153,7 +153,9 @@ HEADERS += \
     src/StartWindow.h \
     src/CommonData.h \
     src/AppSettingsDialog.h \
-    src/SchemaPropsDialog.h
+    src/SchemaPropsDialog.h \
+    src/funcs/BeamOverStabFunction.h \
+    src/funcs_window/BeamOverStabWindow.h
 	
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -261,7 +263,9 @@ SOURCES += \
     src/StartWindow.cpp \
     src/CommonData.cpp \
     src/AppSettingsDialog.cpp \
-    src/SchemaPropsDialog.cpp
+    src/SchemaPropsDialog.cpp \
+    src/funcs/BeamOverStabFunction.cpp \
+    src/funcs_window/BeamOverStabWindow.cpp
 
 DISTFILES += \
     src/StartWindow.qss \

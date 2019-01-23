@@ -1,7 +1,7 @@
 #ifndef STABILITY_MAP_2D_FUNCTION_H
 #define STABILITY_MAP_2D_FUNCTION_H
 
-#include "../funcs/PlotFunction.h"
+#include "PlotFunction.h"
 
 class StabilityMap2DFunction : public PlotFunction
 {

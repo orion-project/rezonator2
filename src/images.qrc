@@ -17,6 +17,7 @@
         <file alias="formula_stab_squared">../img/misc/formula_stab_squared.svg</file>
         <file alias="freeze">../img/toolbar/freeze.svg</file>
         <file alias="frozen_info">../img/toolbar/freeze_info.svg</file>
+        <file alias="func_beam_over_stab">../img/toolbar/func_beamsz_stab.svg</file>
         <file alias="func_caustic">../img/toolbar/func_caustic.svg</file>
         <file alias="func_multi_caustic">../img/toolbar/func_multi_caustic.svg</file>
         <file alias="func_reprate">../img/toolbar/func_reprate.svg</file>

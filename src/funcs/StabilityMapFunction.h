@@ -2,7 +2,7 @@
 #define STABILITY_MAP_FUNCTION_H
 
 #include "../core/CommonTypes.h"
-#include "../funcs/PlotFunction.h"
+#include "PlotFunction.h"
 
 class StabilityMapFunction : public PlotFunction
 {
