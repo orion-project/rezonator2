@@ -1082,7 +1082,7 @@ void SchemaLayout::contextMenuEvent(QContextMenuEvent *event)
 QMenu* SchemaLayout::createContextMenu()
 {
     auto menu = new QMenu(this);
-    menu->addAction(QIcon(":/toolbar/copy"), tr("Copy"), this, &SchemaLayout::copyImage);
+    menu->addAction(QIcon(":/toolbar/copy_img"), tr("Copy Image"), this, &SchemaLayout::copyImage);
     return menu;
 }
 

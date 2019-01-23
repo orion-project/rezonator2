@@ -432,7 +432,7 @@ ActionsStartPanel::ActionsStartPanel() : StartPanel("panel_actions")
     LayoutV({
         makeHeader(tr("Open")),
         makeButton(":/toolbar/schema_open", tr("Schema File"), SLOT(openSchemaFile())),
-        makeButton(":/toolbar/schema_open", tr("Example Schema"), SLOT(openSchemaExample())), // TODO make different icon
+        makeButton(":/toolbar/schema_sample", tr("Example Schema"), SLOT(openSchemaExample())),
         makeHeader(tr("Create")),
         makeButton(TripTypes::info(TripType::SW).iconPath(), tr("Standing-Wave Resonator"), SLOT(makeSchemaSW())),
         makeButton(TripTypes::info(TripType::RR).iconPath(), tr("Ring Resonator"), SLOT(makeSchemaRR())),

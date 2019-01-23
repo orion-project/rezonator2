@@ -3,6 +3,8 @@
 ## `./_tmp`
 Images used as shape sources, some obsolete images, or images moved from rezonator-1 but not used yet.
 
+**TODO:** Should be eliminated. Move used images to respective dirs and delete unused ones.
+
 ## `./drawing`
 Images that are used as tips/infos/descriptions in the application.
 
@@ -17,8 +19,6 @@ Images of formulas of elements' matrices.
 
 ## `./misc`
 This dir should contain images that are nor toolbar glyphs or window icons.
-
-**TODO:** Should be eliminated. Move used images to respective dirs and delete unused ones.
 
 ## `./tips`
 Images displayed at start window in Tips section.

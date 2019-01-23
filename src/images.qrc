@@ -3,6 +3,7 @@
         <file alias="catalog">../img/toolbar/elements.svg</file>
         <file alias="copy">../img/toolbar/copy.svg</file>
         <file alias="copy_all">../img/toolbar/copy_all.svg</file>
+        <file alias="copy_img">../img/toolbar/copy_img.svg</file>
         <file alias="cut">../img/toolbar/cut.svg</file>
         <file alias="delete">../img/toolbar/delete.svg</file>
         <file alias="elem_add">../img/toolbar/elem_add.svg</file>
@@ -72,6 +73,7 @@
         <file alias="schema_open">../img/toolbar/schema_open.svg</file>
         <file alias="schema_prop">../img/toolbar/schema_prop.svg</file>
         <file alias="schema_save">../img/toolbar/save.svg</file>
+        <file alias="schema_sample">../img/toolbar/schema_sample.svg</file>
         <file alias="schema_summary">../img/toolbar/schema_summary.svg</file>
         <file alias="schema">../img/toolbar/go_to_schema.svg</file>
         <file alias="update_params">../img/toolbar/update_params.svg</file>
