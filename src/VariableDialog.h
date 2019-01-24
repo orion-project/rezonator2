@@ -6,6 +6,7 @@
 
 class Schema;
 class ElemSelectorWidget;
+class ElemAndParamSelector;
 namespace Z {
 struct Variable;
 }
@@ -15,6 +16,7 @@ class ElementRangeEd;
 class MultiElementRangeEd;
 }
 namespace VariableRangeEditor {
+    class GeneralRangeEd;
     class PointsRangeEd;
 }
 
@@ -34,31 +36,10 @@ protected:
     QString _recentKey;
 };
 
-//------------------------------------------------------------------------------
-/**
-    The function argument dialog that can choose one of schema element's parameters
-    and set variation of this parameter and the number of points for plotting.
-*/
-class ElementDlg : public VariableDlg
-{
-    Q_OBJECT
-
-public:
-    explicit ElementDlg(Schema*, Z::Variable*, const QString& title, const QString& recentKey);
-
-private:
-    Z::Variable* _var;
-    VariableEditor::ElementEd* _varEditor;
-
-protected slots:
-    void collect();
-};
-
-//------------------------------------------------------------------------------
 /**
     The function arguments dialog that can choose two different parameters
     and set variation of each parameter and the number of points for plotting.
-*/
+*//*
 class TwoElemensDlg : public VariableDlg
 {
     Q_OBJECT
@@ -73,7 +54,7 @@ private:
 protected slots:
     void collect();
 };
-
+*/
 } // namespace VariableDialog
 
 #endif // VARIABLE_DLG_H

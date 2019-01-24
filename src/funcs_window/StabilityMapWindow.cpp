@@ -4,11 +4,90 @@
 #include "../CustomPrefs.h"
 #include "../io/z_io_utils.h"
 #include "../io/z_io_json.h"
-#include "../VariableDialog.h"
 #include "../widgets/Plot.h"
+#include "../widgets/ElemSelectorWidget.h"
+#include "../widgets/VariableRangeEditor.h"
+
 #include "helpers/OriLayouts.h"
+#include "helpers/OriWidgets.h"
 
 #include <QAction>
+
+//------------------------------------------------------------------------------
+//                              StabilityParamsDlg
+//------------------------------------------------------------------------------
+
+StabilityParamsDlg::StabilityParamsDlg(Schema *schema, Z::Variable *var)
+    : RezonatorDialog(DontDeleteOnClose), _var(var)
+{
+    setWindowTitle(tr("Variable"));
+    setObjectName("StabilityParamsDlg");
+
+    if (!var->element && !_recentKey.isEmpty())
+        Z::IO::Json::readVariablePref(CustomPrefs::recentObj(_recentKey), var, schema);
+
+    std::shared_ptr<ElementFilter> elemFilter(
+        ElementFilter::make<ElementFilterHasVisibleParams, ElementFilterEnabled>());
+    _elemSelector = new ElemAndParamSelector(schema, elemFilter.get(), Z::Utils::defaultParamFilter());
+
+    _rangeEditor = new VariableRangeEditor::GeneralRangeEd;
+
+    connect(_elemSelector, SIGNAL(selectionChanged()), this, SLOT(guessRange()));
+
+    mainLayout()->addLayout(_elemSelector);
+    mainLayout()->addSpacing(8);
+    mainLayout()->addWidget(Ori::Gui::group(tr("Variation"), _rangeEditor));
+    mainLayout()->addSpacing(8);
+    mainLayout()->addStretch();
+
+    populate();
+}
+
+void StabilityParamsDlg::collect()
+{
+    auto res = _elemSelector->verify();
+    if (!res) return res.show(this);
+
+    res = _rangeEditor->verify();
+    if (!res) return res.show(this);
+
+    _var->element = _elemSelector->selectedElement();
+    _var->parameter = _elemSelector->selectedParameter();
+    _var->range = _rangeEditor->range();
+
+    accept();
+
+    if (!_recentKey.isEmpty())
+        CustomPrefs::setRecentObj(_recentKey, Z::IO::Json::writeVariablePref(_var));
+}
+
+void StabilityParamsDlg::guessRange()
+{
+    auto param = _elemSelector->selectedParameter();
+    if (!param) return;
+
+    // TODO restore or guess range limits and step
+    Z::VariableRange range;
+    range.start = param->value();
+    range.stop = param->value();
+    range.step = param->value() * 0;
+    _rangeEditor->setRange(range);
+}
+
+void StabilityParamsDlg::populate()
+{
+    if (_var->element) // edit variable
+    {
+        _elemSelector->setSelectedElement(_var->element);
+        _elemSelector->setSelectedParameter(_var->parameter);
+        _rangeEditor->setRange(_var->range);
+    }
+    else // 'create' variable
+    {
+        // TODO guess or restore from settings
+        guessRange();
+    }
+}
 
 //------------------------------------------------------------------------------
 //                            StabilityMapOptionsPanel
@@ -54,7 +133,7 @@ void StabilityMapOptionsPanel::functionModeChanged(int mode)
 }
 
 //------------------------------------------------------------------------------
-//                            StabilityMapWindow
+//                             StabilityMapWindow
 //------------------------------------------------------------------------------
 
 StabilityMapWindow::StabilityMapWindow(Schema *schema) :
@@ -86,7 +165,7 @@ void StabilityMapWindow::createControl()
 
 bool StabilityMapWindow::configureInternal()
 {
-    return VariableDialog::ElementDlg(schema(), function()->arg(), tr("Variable"), "func_stab_map").run();
+    return StabilityParamsDlg(schema(), function()->arg()).run();
 }
 
 void StabilityMapWindow::autolimitsStability()

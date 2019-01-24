@@ -2,9 +2,14 @@
 #define WINDOW_STABILITY_MAP_H
 
 #include "PlotFuncWindowStorable.h"
+#include "../RezonatorDialog.h"
 #include "../funcs/StabilityMapFunction.h"
 
+class ElemAndParamSelector;
 class QCPItemStraightLine;
+namespace VariableRangeEditor {
+    class GeneralRangeEd;
+}
 
 class StabilityMapWindow : public PlotFuncWindowStorable
 {
@@ -42,6 +47,33 @@ private:
     QCPItemStraightLine* makeStabBoundMarker() const;
 
     void autolimitsStability();
+};
+
+
+/**
+    The function argument dialog that can choose one of schema element's parameters
+    and set variation of this parameter and the number of points for plotting.
+*/
+class StabilityParamsDlg : public RezonatorDialog
+{
+    Q_OBJECT
+
+public:
+    explicit StabilityParamsDlg(Schema*, Z::Variable*);
+
+protected slots:
+    void collect();
+
+private slots:
+    void guessRange();
+
+private:
+    Z::Variable* _var;
+    ElemAndParamSelector* _elemSelector;
+    VariableRangeEditor::GeneralRangeEd* _rangeEditor;
+    QString _recentKey = "func_stab_map";
+
+    void populate();
 };
 
 #endif // WINDOW_STABILITY_MAP_H

@@ -141,7 +141,6 @@ HEADERS += \
     src/widgets/UnitWidgets.h \
     src/widgets/ValueEditor.h \
     src/widgets/ValuesEditorTS.h \
-    src/widgets/VariableEditor.h \
     src/widgets/WidgetResult.h \
     src/tests/TestSchemaListener.h \
     src/GaussCalculatorWindow.h \
@@ -248,7 +247,6 @@ SOURCES += \
     src/widgets/UnitWidgets.cpp \
     src/widgets/ValueEditor.cpp \
     src/widgets/ValuesEditorTS.cpp \
-    src/widgets/VariableEditor.cpp \
     src/widgets/WidgetResult.cpp \
     src/tests/test_GaussCalculator.cpp \
     src/tests/test_PumpCalculator.cpp \

@@ -8,7 +8,6 @@
 #include "io/z_io_json.h"
 #include "widgets/ElemSelectorWidget.h"
 #include "widgets/VariableRangeEditor.h"
-#include "widgets/VariableEditor.h"
 #include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
 
@@ -37,36 +36,10 @@ bool VariableDlg::run()
 //------------------------------------------------------------------------------
 //                              ElementDlg
 
-ElementDlg::ElementDlg(Schema *schema, Z::Variable *var,
-                       const QString &title, const QString &recentKey)
-    : VariableDlg(title, recentKey), _var(var)
-{
-    if (!var->element && !recentKey.isEmpty())
-        Z::IO::Json::readVariablePref(CustomPrefs::recentObj(recentKey), var, schema);
-
-    _varEditor = new VariableEditor::ElementEd(schema);
-    _varEditor->populate(var);
-
-    mainLayout()->addLayout(_varEditor);
-    mainLayout()->addSpacing(8);
-    mainLayout()->addStretch();
-}
-
-void ElementDlg::collect()
-{
-    auto res = _varEditor->verify();
-    if (!res) return res.show(this);
-
-    _varEditor->collect(_var);
-    accept();
-
-    if (!_recentKey.isEmpty())
-        CustomPrefs::setRecentObj(_recentKey, Z::IO::Json::writeVariablePref(_var));
-}
 
 //------------------------------------------------------------------------------
 //                              TwoElemensDlg
-
+/*
 TwoElemensDlg::TwoElemensDlg(Schema *schema, Z::Variable *var1, Z::Variable *var2,
                              const QString& title, const QString& recentKey)
     : VariableDlg(title, recentKey), _var1(var1), _var2(var2)
@@ -123,5 +96,5 @@ void TwoElemensDlg::collect()
             { "var2", Z::IO::Json::writeVariablePref(_var2) },
         }));
 }
-
+*/
 } // namespace VariableDialog
