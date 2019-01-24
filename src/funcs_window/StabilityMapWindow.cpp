@@ -28,11 +28,11 @@ StabilityParamsDlg::StabilityParamsDlg(Schema *schema, Z::Variable *var)
 
     std::shared_ptr<ElementFilter> elemFilter(
         ElementFilter::make<ElementFilterHasVisibleParams, ElementFilterEnabled>());
+
     _elemSelector = new ElemAndParamSelector(schema, elemFilter.get(), Z::Utils::defaultParamFilter());
+    connect(_elemSelector, SIGNAL(selectionChanged()), this, SLOT(guessRange()));
 
     _rangeEditor = new VariableRangeEditor::GeneralRangeEd;
-
-    connect(_elemSelector, SIGNAL(selectionChanged()), this, SLOT(guessRange()));
 
     mainLayout()->addLayout(_elemSelector);
     mainLayout()->addSpacing(8);
@@ -41,6 +41,21 @@ StabilityParamsDlg::StabilityParamsDlg(Schema *schema, Z::Variable *var)
     mainLayout()->addStretch();
 
     populate();
+}
+
+void StabilityParamsDlg::populate()
+{
+    if (_var->element) // edit variable
+    {
+        _elemSelector->setSelectedElement(_var->element);
+        _elemSelector->setSelectedParameter(_var->parameter);
+        _rangeEditor->setRange(_var->range);
+    }
+    else // 'create' variable
+    {
+        // TODO guess or restore from settings
+        guessRange();
+    }
 }
 
 void StabilityParamsDlg::collect()
@@ -72,21 +87,6 @@ void StabilityParamsDlg::guessRange()
     range.stop = param->value();
     range.step = param->value() * 0;
     _rangeEditor->setRange(range);
-}
-
-void StabilityParamsDlg::populate()
-{
-    if (_var->element) // edit variable
-    {
-        _elemSelector->setSelectedElement(_var->element);
-        _elemSelector->setSelectedParameter(_var->parameter);
-        _rangeEditor->setRange(_var->range);
-    }
-    else // 'create' variable
-    {
-        // TODO guess or restore from settings
-        guessRange();
-    }
 }
 
 //------------------------------------------------------------------------------

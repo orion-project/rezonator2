@@ -308,7 +308,7 @@ void ProjectWindow::updateActions()
     actnFilePump->setEnabled(isSchemaSP);
     actnFilePump->setVisible(isSchemaSP);
     actnFuncStabMap->setVisible(!isSchemaSP);
-    actnFuncStabMap2d->setVisible(false /* TODO:NEXT-VER !isSchemaSP */);
+    actnFuncStabMap2d->setVisible(!isSchemaSP /* TODO:NEXT-VER !isSchemaSP */);
     actnFileSave->setEnabled(schema()->modified());
 }
 

@@ -62,7 +62,7 @@ public:
     explicit StabilityParamsDlg(Schema*, Z::Variable*);
 
 protected slots:
-    void collect();
+    void collect() override;
 
 private slots:
     void guessRange();

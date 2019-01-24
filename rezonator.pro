@@ -77,7 +77,6 @@ HEADERS += \
     src/SchemaParamsWindow.h \
     src/SchemaViewWindow.h \
     src/SchemaWindows.h \
-    src/VariableDialog.h \
     src/WindowsManager.h \
     src/core/CommonTypes.h \
     src/core/Element.h \
@@ -174,7 +173,6 @@ SOURCES += \
     src/SchemaParamsWindow.cpp \
     src/SchemaViewWindow.cpp \
     src/SchemaWindows.cpp \
-    src/VariableDialog.cpp \
     src/WindowsManager.cpp \
     src/core/CommonTypes.cpp \
     src/core/Element.cpp \
