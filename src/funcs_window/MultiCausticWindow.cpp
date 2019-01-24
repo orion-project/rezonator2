@@ -1,7 +1,6 @@
 #include "MultiCausticWindow.h"
 
 #include "CausticOptionsPanel.h"
-#include "../VariableDialog.h"
 #include "../funcs/CausticFunction.h"
 #include "../io/z_io_utils.h"
 #include "../io/z_io_json.h"
@@ -12,7 +11,10 @@
 #include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
 
+#include <QAction>
+#include <QCheckBox>
 #include <QDebug>
+#include <QGroupBox>
 
 //------------------------------------------------------------------------------
 //                              MultiCausticParamsDlg
@@ -21,8 +23,8 @@
 MultiCausticParamsDlg::MultiCausticParamsDlg(Schema *schema, const QVector<Z::Variable>& vars)
     : RezonatorDialog(DontDeleteOnClose)
 {
-    setWindowTitle(tr("Select ranges"));
-    setObjectName("func_multi_caustic");
+    setWindowTitle(tr("Ranges"));
+    setObjectName("MultiCausticParamsDlg");
 
     std::shared_ptr<ElementFilter> elemFilter(
         ElementFilter::make<ElementFilterIsRange, ElementFilterEnabled>());
@@ -38,7 +40,7 @@ MultiCausticParamsDlg::MultiCausticParamsDlg(Schema *schema, const QVector<Z::Va
 
     mainLayout()->addWidget(_elemsSelector);
     mainLayout()->addWidget(Ori::Gui::group(tr("Plot accuracy"), _rangeEditor));
-    mainLayout()->addSpacing(6);
+    mainLayout()->addSpacing(8);
 
     populate(vars);
 
@@ -56,7 +58,7 @@ void MultiCausticParamsDlg::populate(const QVector<Z::Variable>& vars)
         for (const Z::Variable& var : vars)
             if (var.element == elem)
             {
-                _elemsSelector->select(elem);
+                _elemsSelector->selectElement(elem);
                 _elemRanges[elem] = var.range;
                 hasRange = true;
                 break;
@@ -78,9 +80,9 @@ void MultiCausticParamsDlg::populate(const QVector<Z::Variable>& vars)
 
 void MultiCausticParamsDlg::collect()
 {
-    saveEditedRange(_elemsSelector->current());
+    saveEditedRange(_elemsSelector->currentElement());
 
-    auto selectedElems = _elemsSelector->selected();
+    auto selectedElems = _elemsSelector->selectedElements();
     if (selectedElems.isEmpty())
     {
         Ori::Dlg::warning(tr("No elements are chosen.\nYou should mark at least one element."));

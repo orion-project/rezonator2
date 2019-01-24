@@ -2,8 +2,10 @@
 #define VARIABLE_DLG_H
 
 #include "RezonatorDialog.h"
+#include "widgets/WidgetResult.h"
 
 class Schema;
+class ElemSelectorWidget;
 namespace Z {
 struct Variable;
 }
@@ -11,6 +13,9 @@ namespace VariableEditor {
 class ElementEd;
 class ElementRangeEd;
 class MultiElementRangeEd;
+}
+namespace VariableRangeEditor {
+    class PointsRangeEd;
 }
 
 namespace VariableDialog {
@@ -64,26 +69,6 @@ public:
 private:
     Z::Variable *_var1, *_var2;
     VariableEditor::ElementEd *_varEditor1, *_varEditor2;
-
-protected slots:
-    void collect();
-};
-
-//------------------------------------------------------------------------------
-/**
-    The function arguments dialog that can choose one of range elements
-    and set the number of points for plotting inside of a selected element.
-*/
-class ElementRangeDlg : public VariableDlg
-{
-    Q_OBJECT
-
-public:
-    explicit ElementRangeDlg(Schema*, Z::Variable*, const QString& title, const QString& recentKey);
-
-private:
-    Z::Variable* _var;
-    VariableEditor::ElementRangeEd* _varEditor;
 
 protected slots:
     void collect();

@@ -1,14 +1,104 @@
 #include "CausticWindow.h"
 
 #include "CausticOptionsPanel.h"
+#include "../CustomPrefs.h"
 #include "../io/z_io_utils.h"
 #include "../io/z_io_json.h"
-#include "../VariableDialog.h"
+#include "../widgets/ElemSelectorWidget.h"
+#include "../widgets/VariableRangeEditor.h"
+
 #include "helpers/OriWidgets.h"
 #include "helpers/OriLayouts.h"
 
-#include <QBoxLayout>
+#include <QGroupBox>
 #include <QLabel>
+
+//------------------------------------------------------------------------------
+//                           CausticParamsDlg
+//------------------------------------------------------------------------------
+
+CausticParamsDlg::CausticParamsDlg(Schema *schema, Z::Variable *var)
+    : RezonatorDialog(DontDeleteOnClose), _var(var)
+{
+    setWindowTitle(tr("Range"));
+    setObjectName("CausticParamsDlg");
+
+    if (!var->element and !_recentKey.isEmpty())
+        Z::IO::Json::readVariablePref(CustomPrefs::recentObj(_recentKey), var, schema);
+
+    std::shared_ptr<ElementFilter> filter(
+        ElementFilter::make<ElementFilterIsRange, ElementFilterEnabled>());
+
+    _elemSelector = new ElemSelectorWidget(schema, filter.get());
+    connect(_elemSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(guessRange()));
+
+    _rangeEditor = new VariableRangeEditor::PointsRangeEd;
+
+    auto layoutElement = new QHBoxLayout;
+    layoutElement->addWidget(new QLabel(tr("Element")));
+    layoutElement->addSpacing(8);
+    layoutElement->addWidget(_elemSelector);
+    layoutElement->setStretch(2, 1);
+
+    mainLayout()->addLayout(layoutElement);
+    mainLayout()->addSpacing(8);
+    mainLayout()->addWidget(Ori::Gui::group(tr("Plot accuracy"), _rangeEditor));
+    mainLayout()->addSpacing(8);
+    mainLayout()->addStretch();
+
+    populate();
+}
+
+void CausticParamsDlg::populate()
+{
+    if (_var->element) // edit variable
+    {
+        _elemSelector->setSelectedElement(_var->element);
+        _rangeEditor->setRange(_var->range);
+    }
+    else // 'create' variable
+    {
+        // TODO guess or restore from settings
+        guessRange();
+    }
+}
+
+void CausticParamsDlg::collect()
+{
+    auto res = _elemSelector->verify();
+    if (!res) return res.show(this);
+
+    res = _rangeEditor->verify();
+    if (!res) return res.show(this);
+
+    _var->element = _elemSelector->selectedElement();
+    _var->parameter = Z::Utils::asRange(_var->element)->paramLength();
+    _var->range = _rangeEditor->range();
+    accept();
+
+    if (!_recentKey.isEmpty())
+        CustomPrefs::setRecentObj(_recentKey, Z::IO::Json::writeVariablePref(_var));
+}
+
+void CausticParamsDlg::guessRange()
+{
+    auto elem = _elemSelector->selectedElement();
+    if (!elem) return;
+
+    auto elemRange = Z::Utils::asRange(elem);
+    if (!elemRange) return;
+
+    // TODO restore or guess step
+    Z::VariableRange range;
+    range.stop = Z::Utils::getRangeStop(elemRange);
+    range.start = range.stop * 0.0;
+    range.step = range.stop / 100.0;
+    _rangeEditor->setRange(range);
+}
+
+//------------------------------------------------------------------------------
+//                                CausticWindow
+//------------------------------------------------------------------------------
 
 CausticWindow::CausticWindow(Schema *schema) : PlotFuncWindowStorable(new CausticFunction(schema))
 {
@@ -16,7 +106,7 @@ CausticWindow::CausticWindow(Schema *schema) : PlotFuncWindowStorable(new Causti
 
 bool CausticWindow::configureInternal()
 {
-    return VariableDialog::ElementRangeDlg(schema(), function()->arg(), tr("Range"), "func_caustic").run();
+    return CausticParamsDlg(schema(), function()->arg()).run();
 }
 
 QWidget* CausticWindow::makeOptionsPanel()

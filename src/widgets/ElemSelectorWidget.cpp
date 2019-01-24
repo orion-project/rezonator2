@@ -202,13 +202,13 @@ Elements MultiElementSelectorWidget::allElements() const
    return _itemsMap.keys();
 }
 
-void MultiElementSelectorWidget::select(Element* elem)
+void MultiElementSelectorWidget::selectElement(Element* elem)
 {
     if (_itemsMap.contains(elem))
         _itemsMap[elem]->setCheckState(Qt::Checked);
 }
 
-Elements MultiElementSelectorWidget::selected() const
+Elements MultiElementSelectorWidget::selectedElements() const
 {
     Elements res;
     for (int i = 0; i < _elemsSelector->count(); i++)
@@ -217,7 +217,7 @@ Elements MultiElementSelectorWidget::selected() const
     return res;
 }
 
-Element* MultiElementSelectorWidget::current() const
+Element* MultiElementSelectorWidget::currentElement() const
 {
     return element(_elemsSelector->currentItem());
 }
