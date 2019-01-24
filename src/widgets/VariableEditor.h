@@ -14,7 +14,6 @@ class ElemAndParamSelector;
 class ElemSelectorWidget;
 class ElementFilter;
 class Schema;
-class MultiElementSelectorWidget;
 
 namespace VariableRangeEditor {
 class GeneralRangeEd;
@@ -76,33 +75,6 @@ private:
     ElemSelectorWidget* _elemSelector;
     VariableRangeEditor::PointsRangeEd* _rangeEditor;
     std::shared_ptr<ElementFilter> _elemFilter;
-};
-
-//------------------------------------------------------------------------------
-/**
-    The variable editor that can choose several of range elements
-    and set the number of points for plotting inside each of selected elements.
-*/
-class MultiElementRangeEd : public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit MultiElementRangeEd(Schema *schema);
-
-    WidgetResult verify();
-    void populateVars(const QVector<Z::Variable> &vars);
-    QVector<Z::Variable> collectVars();
-
-private:
-    MultiElementSelectorWidget *_elemsSelector;
-    VariableRangeEditor::PointsRangeEd* _rangeEditor;
-    QMap<Element*, Z::VariableRange> _elemRanges;
-    QCheckBox *_sameSettings;
-
-    void currentElementChanged(Element *current, Element *previous);
-    void showRangeInEditor(Element *elem);
-    void saveEditedRange(Element *elem);
 };
 
 } // namespace VariableEditor

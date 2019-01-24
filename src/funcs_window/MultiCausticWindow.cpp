@@ -6,8 +6,11 @@
 #include "../io/z_io_utils.h"
 #include "../io/z_io_json.h"
 #include "../widgets/Plot.h"
+#include "../widgets/ElemSelectorWidget.h"
+#include "../widgets/VariableRangeEditor.h"
 
-#include "../widgets/VariableEditor.h"
+#include "helpers/OriDialogs.h"
+#include "helpers/OriWidgets.h"
 
 #include <QDebug>
 
@@ -15,26 +18,105 @@
 //                              MultiCausticParamsDlg
 //------------------------------------------------------------------------------
 
-MultiCausticParamsDlg::MultiCausticParamsDlg(Schema *schema, QVector<Z::Variable>& vars)
-    : RezonatorDialog(DontDeleteOnClose), _vars(vars)
+MultiCausticParamsDlg::MultiCausticParamsDlg(Schema *schema, const QVector<Z::Variable>& vars)
+    : RezonatorDialog(DontDeleteOnClose)
 {
     setWindowTitle(tr("Select ranges"));
     setObjectName("func_multi_caustic");
 
-    _varEditor = new VariableEditor::MultiElementRangeEd(schema);
-    _varEditor->populateVars(vars);
+    std::shared_ptr<ElementFilter> elemFilter(
+        ElementFilter::make<ElementFilterIsRange, ElementFilterEnabled>());
 
-    mainLayout()->addWidget(_varEditor);
-    mainLayout()->addSpacing(8);
+    _elemsSelector = new MultiElementSelectorWidget(schema, elemFilter.get());
+    connect(_elemsSelector, &MultiElementSelectorWidget::currentElementChanged,
+            this, &MultiCausticParamsDlg::currentElementChanged);
+
+    _sameSettings = new QCheckBox(tr("Use these settings for all elements"));
+
+    _rangeEditor = new VariableRangeEditor::PointsRangeEd;
+    _rangeEditor->addWidget(_sameSettings, _rangeEditor->rowCount()+1, 0, 1, _rangeEditor->columnCount());
+
+    mainLayout()->addWidget(_elemsSelector);
+    mainLayout()->addWidget(Ori::Gui::group(tr("Plot accuracy"), _rangeEditor));
+    mainLayout()->addSpacing(6);
+
+    populate(vars);
+
+    _elemsSelector->setCurrentRow(0);
+    _elemsSelector->setFocus();
+}
+
+void MultiCausticParamsDlg::populate(const QVector<Z::Variable>& vars)
+{
+    for (auto elem : _elemsSelector->allElements())
+    {
+        bool hasRange = false;
+
+        // Use given range for element
+        for (const Z::Variable& var : vars)
+            if (var.element == elem)
+            {
+                _elemsSelector->select(elem);
+                _elemRanges[elem] = var.range;
+                hasRange = true;
+                break;
+            }
+
+        // Make default range for the element if there is not given one
+        if (!hasRange)
+        {
+            Z::VariableRange range;
+            range.stop = Z::Utils::getRangeStop(Z::Utils::asRange(elem));
+            range.start = Z::Value(0, range.stop.unit());
+            range.step = range.stop / 100.0;
+            range.useStep = false;
+            range.points = 100;
+            _elemRanges[elem] = range;
+        }
+    }
 }
 
 void MultiCausticParamsDlg::collect()
 {
-    auto res = _varEditor->verify();
-    if (!res) return res.show(this);
+    saveEditedRange(_elemsSelector->current());
 
-    _vars = _varEditor->collectVars();
+    auto selectedElems = _elemsSelector->selected();
+    if (selectedElems.isEmpty())
+    {
+        Ori::Dlg::warning(tr("No elements are chosen.\nYou should mark at least one element."));
+        _elemsSelector->setFocus();
+        return;
+    }
+
+    _result.clear();
+    for (auto elem : selectedElems)
+    {
+        Z::Variable var;
+        var.element = elem;
+        var.parameter = Z::Utils::asRange(elem)->paramLength();
+        var.range = _elemRanges[elem];
+        _result.append(var);
+    }
+
     accept();
+}
+
+void MultiCausticParamsDlg::currentElementChanged(Element *current, Element *previous)
+{
+    saveEditedRange(previous);
+
+    if (_elemRanges.contains(current))
+        _rangeEditor->setRange(_elemRanges[current]);
+}
+
+void MultiCausticParamsDlg::saveEditedRange(Element *elem)
+{
+    auto newRange = _rangeEditor->range();
+    if (_sameSettings->isChecked())
+        for (auto elem : _elemRanges.keys())
+            _elemRanges[elem].assignPoints(newRange);
+    else if (_elemRanges.contains(elem))
+        _elemRanges[elem].assignPoints(newRange);
 }
 
 //------------------------------------------------------------------------------
@@ -56,11 +138,13 @@ void MultiCausticWindow::createActions()
 
 bool MultiCausticWindow::configureInternal()
 {
-    auto args = function()->args();
-    bool ok = MultiCausticParamsDlg(schema(), args).run();
-    if (ok)
-        function()->setArgs(args);
-    return ok;
+    MultiCausticParamsDlg dlg(schema(), function()->args());
+    if (dlg.run())
+    {
+        function()->setArgs(dlg.result());
+        return true;
+    }
+    return false;
 }
 
 QWidget* MultiCausticWindow::makeOptionsPanel()

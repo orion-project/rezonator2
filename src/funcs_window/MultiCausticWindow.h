@@ -5,7 +5,15 @@
 #include "../RezonatorDialog.h"
 #include "../funcs/MultiCausticFunction.h"
 
+QT_BEGIN_NAMESPACE
+class QCheckBox;
+QT_END_NAMESPACE
+
 class QCPItemStraightLine;
+class MultiElementSelectorWidget;
+namespace VariableRangeEditor {
+    class PointsRangeEd;
+}
 
 class MultiCausticWindow : public PlotFuncWindowStorable
 {
@@ -50,10 +58,6 @@ private:
 };
 
 
-namespace VariableEditor {
-    class MultiElementRangeEd;
-}
-
 /**
     The function arguments dialog that can choose several of range elements
     and set the number of points for plotting inside each of selected elements.
@@ -63,14 +67,25 @@ class MultiCausticParamsDlg : public RezonatorDialog
     Q_OBJECT
 
 public:
-    explicit MultiCausticParamsDlg(Schema*, QVector<Z::Variable>&);
+    explicit MultiCausticParamsDlg(Schema*, const QVector<Z::Variable>&);
 
-private:
-    QVector<Z::Variable>& _vars;
-    VariableEditor::MultiElementRangeEd *_varEditor;
+    const QVector<Z::Variable>& result() const { return _result; }
 
 protected slots:
-    void collect();
+    void collect() override;
+
+private:
+    QVector<Z::Variable> _result;
+    MultiElementSelectorWidget *_elemsSelector;
+    VariableRangeEditor::PointsRangeEd* _rangeEditor;
+    QMap<Element*, Z::VariableRange> _elemRanges;
+    QCheckBox *_sameSettings;
+
+    void populate(const QVector<Z::Variable>& vars);
+
+private:
+    void currentElementChanged(Element *current, Element *previous);
+    void saveEditedRange(Element *elem);
 };
 
 #endif // MULTI_CAUSTIC_WINDOW_H

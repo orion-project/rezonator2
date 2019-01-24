@@ -217,15 +217,6 @@ Elements MultiElementSelectorWidget::selected() const
     return res;
 }
 
-int MultiElementSelectorWidget::selectedCount() const
-{
-    int count = 0;
-    for (int i = 0; i < _elemsSelector->count(); i++)
-        if (_elemsSelector->item(i)->checkState() == Qt::Checked)
-            count++;
-    return count;
-}
-
 Element* MultiElementSelectorWidget::current() const
 {
     return element(_elemsSelector->currentItem());

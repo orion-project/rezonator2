@@ -111,7 +111,6 @@ public:
     Element* current() const;
     void select(Element*);
     void setCurrentRow(int index);
-    int selectedCount() const;
 
 signals:
     void currentElementChanged(Element* current, Element* previous);
