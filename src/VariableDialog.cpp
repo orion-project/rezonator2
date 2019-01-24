@@ -151,27 +151,4 @@ void ElementRangeDlg::collect()
         CustomPrefs::setRecentObj(_recentKey, Z::IO::Json::writeVariablePref(_var));
 }
 
-//------------------------------------------------------------------------------
-//                              MultiElementRangeDlg
-
-MultiElementRangeDlg::MultiElementRangeDlg(Schema *schema, QVector<Z::Variable>& vars,
-                                           const QString &title, const QString &recentKey)
-    : VariableDlg(title, recentKey), _vars(vars)
-{
-    _varEditor = new VariableEditor::MultiElementRangeEd(schema);
-    _varEditor->populateVars(vars);
-
-    mainLayout()->addWidget(_varEditor);
-    mainLayout()->addSpacing(8);
-}
-
-void MultiElementRangeDlg::collect()
-{
-    auto res = _varEditor->verify();
-    if (!res) return res.show(this);
-
-    _vars = _varEditor->collectVars();
-    accept();
-}
-
 } // namespace VariableDialog

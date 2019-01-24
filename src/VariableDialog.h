@@ -89,26 +89,6 @@ protected slots:
     void collect();
 };
 
-//------------------------------------------------------------------------------
-/**
-    The function arguments dialog that can choose several of range elements
-    and set the number of points for plotting inside each of selected elements.
-*/
-class MultiElementRangeDlg : public VariableDlg
-{
-    Q_OBJECT
-
-public:
-    explicit MultiElementRangeDlg(Schema*, QVector<Z::Variable>&, const QString& title, const QString& recentKey);
-
-private:
-    QVector<Z::Variable>& _vars;
-    VariableEditor::MultiElementRangeEd *_varEditor;
-
-protected slots:
-    void collect();
-};
-
 } // namespace VariableDialog
 
 #endif // VARIABLE_DLG_H

@@ -31,6 +31,8 @@ public:
     /// The layout that should be used to place content in.
     QVBoxLayout* mainLayout() const { return _mainLayout; }
 
+    bool run();
+
 protected slots:
     virtual void collect() { accept(); }
 

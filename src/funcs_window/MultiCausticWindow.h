@@ -2,6 +2,7 @@
 #define MULTI_CAUSTIC_WINDOW_H
 
 #include "PlotFuncWindowStorable.h"
+#include "../RezonatorDialog.h"
 #include "../funcs/MultiCausticFunction.h"
 
 class QCPItemStraightLine;
@@ -46,6 +47,30 @@ private:
     void toggleElementBoundMarkers(bool on);
 
     QCPItemStraightLine* makeElemBoundMarker() const;
+};
+
+
+namespace VariableEditor {
+    class MultiElementRangeEd;
+}
+
+/**
+    The function arguments dialog that can choose several of range elements
+    and set the number of points for plotting inside each of selected elements.
+*/
+class MultiCausticParamsDlg : public RezonatorDialog
+{
+    Q_OBJECT
+
+public:
+    explicit MultiCausticParamsDlg(Schema*, QVector<Z::Variable>&);
+
+private:
+    QVector<Z::Variable>& _vars;
+    VariableEditor::MultiElementRangeEd *_varEditor;
+
+protected slots:
+    void collect();
 };
 
 #endif // MULTI_CAUSTIC_WINDOW_H

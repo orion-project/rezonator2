@@ -7,7 +7,39 @@
 #include "../io/z_io_json.h"
 #include "../widgets/Plot.h"
 
+#include "../widgets/VariableEditor.h"
+
 #include <QDebug>
+
+//------------------------------------------------------------------------------
+//                              MultiCausticParamsDlg
+//------------------------------------------------------------------------------
+
+MultiCausticParamsDlg::MultiCausticParamsDlg(Schema *schema, QVector<Z::Variable>& vars)
+    : RezonatorDialog(DontDeleteOnClose), _vars(vars)
+{
+    setWindowTitle(tr("Select ranges"));
+    setObjectName("func_multi_caustic");
+
+    _varEditor = new VariableEditor::MultiElementRangeEd(schema);
+    _varEditor->populateVars(vars);
+
+    mainLayout()->addWidget(_varEditor);
+    mainLayout()->addSpacing(8);
+}
+
+void MultiCausticParamsDlg::collect()
+{
+    auto res = _varEditor->verify();
+    if (!res) return res.show(this);
+
+    _vars = _varEditor->collectVars();
+    accept();
+}
+
+//------------------------------------------------------------------------------
+//                              MultiCausticWindow
+//------------------------------------------------------------------------------
 
 MultiCausticWindow::MultiCausticWindow(Schema *schema): PlotFuncWindowStorable(new MultiCausticFunction(schema))
 {
@@ -25,7 +57,7 @@ void MultiCausticWindow::createActions()
 bool MultiCausticWindow::configureInternal()
 {
     auto args = function()->args();
-    bool ok = VariableDialog::MultiElementRangeDlg(schema(), args, tr("Ranges"), "func_multi_caustic").run();
+    bool ok = MultiCausticParamsDlg(schema(), args).run();
     if (ok)
         function()->setArgs(args);
     return ok;

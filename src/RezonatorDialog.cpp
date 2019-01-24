@@ -67,3 +67,8 @@ void RezonatorDialog::showHelp()
     // TODO:NEXT-VER
     qDebug() << "show help" << helpTopic();
 }
+
+bool RezonatorDialog::run()
+{
+    return exec() == QDialog::Accepted;
+}
