@@ -1,55 +1,71 @@
 #include "Clipboard.h"
 
+#include "../core/Report.h"
+#include "SchemaWriterJson.h"
+#include "SchemaReaderJson.h"
+
+#include <QApplication>
+#include <QClipboard>
+#include <QDebug>
+#include <QJsonDocument>
+#include <QJsonObject>
+
 namespace Z {
 namespace IO {
 namespace Clipboard {
 
-void copyElements(const QList<Element*>& elements)
-{
-    // TODO:NEXT-VER
-    //    Elements elems = _table->selection();
-    //    if (!elems.empty())
-    //    {
-    //        Schema *tmp_schema = new Schema;
-    //        for (int i = 0; i < elems.size(); i++)
-    //        {
-    //            Element *elem = ElementsCatalog::instance().create(elems.at(i)->type());
-    //            elem->params().setValues(elems.at(i)->params().getValues());
-    //            tmp_schema->insertElement(elem, -1, false);
-    //        }
-    //        QString text;
-    //        SchemaWriterXml file(tmp_schema);
-    //        file.write(&text);
-    //        QApplication::clipboard()->setText(text);
-    //        delete tmp_schema;
-    //    }
+const QString Z_CLIPBOARD_DATA_ELEMENTS = "application/x-rezonator2-mime;value=elements";
 
+void setElements(const QList<Element*>& elements)
+{
+    QJsonObject root;
+    root["data_type"] = Z_CLIPBOARD_DATA_ELEMENTS;
+
+    Z::IO::Json::writeElements(root, elements);
+
+    qApp->clipboard()->setText(QJsonDocument(root).toJson());
 }
 
-void pasteElements(Schema* schema)
+QJsonObject getClipboradData(const QString& expectedType)
 {
-    // TODO:NEXT-VER
-    //    QString text = QApplication::clipboard()->text();
-    //    if (!text.isEmpty())
-    //    {
-    //        Schema tmp_schema;
-    //        SchemaReaderXml file(&tmp_schema);
-    //        file.read(text);
-    //        if (file.ok() && tmp_schema.count() > 0)
-    //        {
-    //            int count = tmp_schema.count();
-    //            Element* elems[count];
-    //            for (int i = 0; i < count; i++)
-    //                elems[i] = tmp_schema.element(i);
-    //            _pasteMode = true;
-    //            for (int i = 0; i < count; i++)
-    //            {
-    //                tmp_schema.deleteElement(elems[i], false);
-    //                schema()->insertElement(elems[i], -1, true);
-    //            }
-    //            _pasteMode = false;
-    //        }
-    //    }
+    QString text = qApp->clipboard()->text();
+    if (text.isEmpty()) {
+        qDebug() << "Clipboard doesn't contain a text data";
+        return QJsonObject();
+    }
+
+    QJsonParseError error;
+    QJsonDocument doc = QJsonDocument::fromJson(text.toUtf8(), &error);
+    if (doc.isNull())
+    {
+        qDebug() << "Clipboard text is not a valid JSON object" << error.errorString();
+        return QJsonObject();
+    }
+
+    QJsonObject root = doc.object();
+    QString dataType = root["data_type"].toString();
+    if (dataType != expectedType)
+    {
+        qDebug() << "There is no data of appropriate type in Clipboard"
+                 << "Expected type:" << expectedType
+                 << "Actual type:" << dataType;
+        return QJsonObject();
+    }
+
+    return root;
+}
+
+QList<Element*> getElements()
+{
+    QJsonObject root = getClipboradData(Z_CLIPBOARD_DATA_ELEMENTS);
+    if (root.isEmpty()) return {};
+
+    Z::Report report;
+    auto elems = Z::IO::Json::readElements(root, &report);
+    if (!report.isEmpty())
+        qDebug() << report.str();
+
+    return elems;
 }
 
 } // namespace Clipboard

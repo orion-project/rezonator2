@@ -4,14 +4,13 @@
 #include <QList>
 
 class Element;
-class Schema;
 
 namespace Z {
 namespace IO {
 namespace Clipboard {
 
-void copyElements(const QList<Element*>& elements);
-void pasteElements(Schema* schema);
+void setElements(const QList<Element*>& elements);
+QList<Element*> getElements();
 
 } // namespace Clipboard
 } // namespace IO

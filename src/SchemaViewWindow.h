@@ -8,6 +8,7 @@
 QT_BEGIN_NAMESPACE
 class QMenu;
 class QAction;
+class QShortcut;
 QT_END_NAMESPACE
 
 class CalcManager;
@@ -31,7 +32,7 @@ public:
     void elementCreated(Schema*, Element*) override;
 
     // inherits from EditableWindow
-    bool canCopy() override;
+    bool canCopy() override { return true; }
     bool canPaste() override { return true; }
 
 public slots:
@@ -43,10 +44,12 @@ protected:
     void closeEvent(QCloseEvent *event) override { event->ignore(); }
 
 private:
-    QAction *actnElemAdd, *actnElemInsertBefore, *actnElemInsertAfter, *actnElemProp,
+    QAction *actnElemAdd, *actnElemMoveUp, *actnElemMoveDown, *actnElemProp,
         *actnElemMatr, *actnElemMatrAll, *actnElemDelete, *actnEditCopy, *actnEditPaste;
 
-    QMenu *menuElement, *menuContext;
+    QMenu *menuElement, *menuContextElement, *menuContextLastRow;
+
+    QShortcut* shortcutAddFromLastRow;
 
     class SchemaLayout *_layout;
     class SchemaElemsTable *_table;
@@ -62,10 +65,12 @@ private:
 
 private slots:
     void actionElemAdd();
-    void actionElemInsertBefore();
-    void actionElemInsertAfter();
+    void actionElemMoveUp();
+    void actionElemMoveDown();
     void actionElemProp();
     void actionElemDelete();
+    void rowDoubleClicked(Element*);
+    void currentCellChanged(int currentRow, int, int, int);
 };
 
 #endif // SCHEMA_WINDOW_H

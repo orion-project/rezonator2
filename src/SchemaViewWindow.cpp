@@ -13,6 +13,7 @@
 
 #include <QAction>
 #include <QSplitter>
+#include <QShortcut>
 #include <QTimer>
 #include <QToolButton>
 
@@ -34,8 +35,10 @@ SchemaViewWindow::SchemaViewWindow(Schema *owner, CalcManager *calcs) : SchemaMd
     schema()->registerListener(_layout);
     schema()->selection().registerSelector(_table);
 
-    connect(_table, SIGNAL(doubleClicked(Element*)), this, SLOT(actionElemProp()));
-    _table->setContextMenu(menuContext);
+    connect(_table, SIGNAL(doubleClicked(Element*)), this, SLOT(rowDoubleClicked(Element*)));
+    connect(_table, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(currentCellChanged(int, int, int, int)));
+    _table->elementContextMenu = menuContextElement;
+    _table->lastRowContextMenu = menuContextLastRow;
 }
 
 SchemaViewWindow::~SchemaViewWindow()
@@ -52,8 +55,8 @@ void SchemaViewWindow::createActions()
     #define A_ Ori::Gui::action
 
     actnElemAdd = A_(tr("A&ppend..."), this, SLOT(actionElemAdd()), ":/toolbar/elem_add", Qt::CTRL | Qt::Key_Insert);
-    actnElemInsertBefore = A_(tr("Create &Before Selection..."), this, SLOT(actionElemInsertBefore()), ":/toolbar/elem_insert_before", Qt::CTRL | Qt::SHIFT | Qt::Key_Insert);
-    actnElemInsertAfter = A_(tr("Create &After Selection..."), this, SLOT(actionElemInsertAfter()), ":/toolbar/elem_insert_after", Qt::CTRL | Qt::ALT | Qt::Key_Insert);
+    actnElemMoveUp = A_(tr("Move Selected &Up"), this, SLOT(actionElemMoveUo()), ":/toolbar/elem_insert_before");
+    actnElemMoveDown = A_(tr("Move Selected &Down"), this, SLOT(actionElemMoveDown()), ":/toolbar/elem_insert_after");
     actnElemProp = A_(tr("&Properties..."), this, SLOT(actionElemProp()), ":/toolbar/elem_prop", Qt::Key_Return);
     actnElemMatr = A_(tr("&Matrix"), _calculations, SLOT(funcShowMatrices()), ":/toolbar/elem_matr", Qt::SHIFT | Qt::Key_Return);
     actnElemMatrAll = A_(tr("&Show All Matrices"), _calculations, SLOT(funcShowAllMatrices()));
@@ -62,24 +65,30 @@ void SchemaViewWindow::createActions()
     actnEditCopy = A_(tr("&Copy", "Edit action"), this, SLOT(copy()), ":/toolbar/copy");
     actnEditPaste = A_(tr("&Paste", "Edit action"), this, SLOT(paste()), ":/toolbar/paste");
 
+    shortcutAddFromLastRow = new QShortcut(Qt::Key_Return, this);
+    connect(shortcutAddFromLastRow, SIGNAL(activated()), this, SLOT(actionElemAdd()));
+
     #undef A_
 }
 
 void SchemaViewWindow::createMenuBar()
 {
     menuElement = Ori::Gui::menu(tr("E&lement"), this,
-        { actnElemAdd, actnElemInsertBefore, actnElemInsertAfter, nullptr, actnElemProp,
+        { actnElemAdd, nullptr, actnElemMoveUp, actnElemMoveDown, nullptr, actnElemProp,
           actnElemMatr, actnElemMatrAll, nullptr, actnElemDelete });
 
-    menuContext = Ori::Gui::menu(this,
-        { actnElemProp, actnElemMatr, nullptr, actnElemInsertBefore, actnElemInsertAfter, nullptr,
+    menuContextElement = Ori::Gui::menu(this,
+        { actnElemProp, actnElemMatr, nullptr,
           actnEditCopy, actnEditPaste, nullptr, actnElemDelete });
+
+    menuContextLastRow = Ori::Gui::menu(this,
+        { actnElemAdd, actnEditPaste });
 }
 
 void SchemaViewWindow::createToolBar()
 {
-    populateToolbar({ Ori::Gui::textToolButton(actnElemAdd), actnElemInsertBefore,
-                      actnElemInsertAfter, nullptr, Ori::Gui::textToolButton(actnElemProp),
+    populateToolbar({ Ori::Gui::textToolButton(actnElemAdd), nullptr, actnElemMoveUp,
+                      actnElemMoveDown, nullptr, Ori::Gui::textToolButton(actnElemProp),
                       actnElemMatr, nullptr, actnElemDelete });
 }
 
@@ -92,6 +101,14 @@ void SchemaViewWindow::editElement(Element* elem)
     }
 }
 
+void SchemaViewWindow::rowDoubleClicked(Element *elem)
+{
+    if (elem)
+        editElement(elem);
+    else
+        actionElemAdd();
+}
+
 //------------------------------------------------------------------------------
 //                             Element actions
 
@@ -99,30 +116,23 @@ void SchemaViewWindow::actionElemAdd()
 {
     Element *elem = Z::Dlgs::createElement();
     if (elem)
-        schema()->insertElement(elem, -1, true);
-}
-
-void SchemaViewWindow::actionElemInsertBefore()
-{
-    Element *elem = Z::Dlgs::createElement();
-    if (elem)
         schema()->insertElement(elem, _table->currentRow(), true);
 }
 
-void SchemaViewWindow::actionElemInsertAfter()
+void SchemaViewWindow::actionElemMoveUp()
 {
-    Element *elem = Z::Dlgs::createElement();
-    if (elem)
-    {
-        QVector<int> rows = _table->selectedRows();
-        schema()->insertElement(elem, rows.isEmpty()? 0: rows.last()+1, true);
-    }
+    // TODO
+}
+
+void SchemaViewWindow::actionElemMoveDown()
+{
+    // TODO
 }
 
 void SchemaViewWindow::actionElemProp()
 {
-    if (_table->hasSelection())
-        editElement(_table->selected());
+    auto elem = _table->selected();
+    if (elem) editElement(elem);
 }
 
 void SchemaViewWindow::actionElemDelete()
@@ -185,19 +195,29 @@ void SchemaViewWindow::elementCreated(Schema*, Element *elem)
 
 //------------------------------------------------------------------------------
 
-bool SchemaViewWindow::canCopy()
-{
-    return _table->hasSelection();
-}
-
 void SchemaViewWindow::copy()
 {
-    Z::IO::Clipboard::copyElements(_table->selection());
+    Z::IO::Clipboard::setElements(_table->selection());
 }
 
 void SchemaViewWindow::paste()
 {
+    auto elems = Z::IO::Clipboard::getElements();
+    if (elems.isEmpty()) return;
+
     _pasteMode = true;
-    Z::IO::Clipboard::pasteElements(schema());
+    // TODO
     _pasteMode = false;
+}
+
+void SchemaViewWindow::currentCellChanged(int currentRow, int, int, int)
+{
+    bool hasElem = currentRow < _table->rowCount() - 1;
+    actnElemProp->setEnabled(hasElem);
+    actnElemMatr->setEnabled(hasElem);
+    actnElemDelete->setEnabled(hasElem);
+    actnEditCopy->setEnabled(hasElem);
+    actnElemMoveUp->setEnabled(hasElem);
+    actnElemMoveDown->setEnabled(hasElem);
+    shortcutAddFromLastRow->setEnabled(!hasElem);
 }

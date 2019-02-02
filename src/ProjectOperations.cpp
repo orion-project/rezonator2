@@ -142,7 +142,7 @@ void ProjectOperations::openSchemaFile(const QString& fileName, const OpenFileOp
         report = reader.report();
     }
 
-    if (!report.IsEmpty())
+    if (!report.isEmpty())
         writeProtocol(report, tr("There are messages while loading project."));
 
     if (opts.isExample)
@@ -207,7 +207,7 @@ bool ProjectOperations::saveSchemaFile(const QString& fileName)
         Ori::WaitCursor wc;
         writer.writeToFile(fileName);
     }
-    if (!writer.report().IsEmpty())
+    if (!writer.report().isEmpty())
         writeProtocol(writer.report(), tr("There are messages while saving project."));
 
     if (!writer.report().hasErrors())
@@ -241,7 +241,7 @@ void ProjectOperations::saveSchemaFileCopy()
     SchemaWriterJson writer(schema());
     writer.writeToFile(fileName);
 
-    if (!writer.report().IsEmpty())
+    if (!writer.report().isEmpty())
         writeProtocol(writer.report(), tr("There are messages while saving copy of project."));
 }
 

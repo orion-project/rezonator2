@@ -39,7 +39,7 @@ QString SchemaWriterJson::writeToString()
     writeGeneral(root);
     writeCustomParams(root);
     writePumps(root);
-    writeElements(root);
+    writeElements(root, _schema->elements());
     writeParamLinks(root);
     writeFormulas(root);
     writeWindows(root);
@@ -99,31 +99,6 @@ void SchemaWriterJson::writePump(QJsonObject &root, Z::PumpParams *pump)
     QJsonObject paramsJson;
     for (Z::ParameterTS* p : *pump->params())
         paramsJson[p->alias()] = writeValueTS(p->value());
-    root["params"] = paramsJson;
-}
-
-void SchemaWriterJson::writeElements(QJsonObject& root)
-{
-    QJsonArray elemsJson;
-    for (Element* elem: _schema->elements())
-    {
-        QJsonObject elemJson;
-        writeElement(elemJson, elem);
-        elemsJson.append(elemJson);
-    }
-    root["elements"] = elemsJson;
-}
-
-void SchemaWriterJson::writeElement(QJsonObject& root, Element *elem)
-{
-    root["type"] = elem->type();
-    root["label"] = elem->label();
-    root["title"] = elem->title();
-    root["is_disabled"] = elem->disabled();
-
-    QJsonObject paramsJson;
-    for (Z::Parameter* p : elem->params())
-        paramsJson[p->alias()] = writeValue(p->value());
     root["params"] = paramsJson;
 }
 
@@ -191,3 +166,36 @@ void SchemaWriterJson::writeWindows(QJsonObject& root)
     }
     root["windows"] = windowsJson;
 }
+
+namespace Z {
+namespace IO {
+namespace Json {
+
+void writeElements(QJsonObject& root, const QList<Element*>& elements)
+{
+    QJsonArray elemsJson;
+    for (Element* elem: elements)
+    {
+        QJsonObject elemJson;
+        writeElement(elemJson, elem);
+        elemsJson.append(elemJson);
+    }
+    root["elements"] = elemsJson;
+}
+
+void writeElement(QJsonObject& root, Element *elem)
+{
+    root["type"] = elem->type();
+    root["label"] = elem->label();
+    root["title"] = elem->title();
+    root["is_disabled"] = elem->disabled();
+
+    QJsonObject paramsJson;
+    for (Z::Parameter* p : elem->params())
+        paramsJson[p->alias()] = writeValue(p->value());
+    root["params"] = paramsJson;
+}
+
+} // namespace Json
+} // namespace IO
+} // namespace Z

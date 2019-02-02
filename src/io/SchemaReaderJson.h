@@ -30,8 +30,6 @@ private:
     void readCustomParam(const QJsonObject& root, const QString& alias);
     void readPumps(const QJsonObject& root);
     void readPump(const QJsonObject& root);
-    void readElements(const QJsonObject& root);
-    void readElement(const QJsonObject& root);
     void readParamLinks(const QJsonObject& root);
     void readParamLink(const QJsonObject& root);
     void readFormulas(const QJsonObject& root);
@@ -39,5 +37,16 @@ private:
     void readWindows(const QJsonObject& root);
     void readWindow(const QJsonObject& root);
 };
+
+namespace Z {
+namespace IO {
+namespace Json {
+
+QList<Element*> readElements(const QJsonObject& root, Z::Report* report);
+Element* readElement(const QJsonObject& root, Z::Report* report);
+
+} // namespace Json
+} // namespace IO
+} // namespace Z
 
 #endif // SCHEMA_READER_JSON_H

@@ -40,6 +40,9 @@ SchemaElemsTable::SchemaElemsTable(Schema *schema, QWidget *parent) : QTableWidg
 
     connect(this, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(doubleClicked(QTableWidgetItem*)));
     connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
+
+    setRowCount(1);
+    fillPlaceholderRow();
 }
 
 void SchemaElemsTable::adjustColumns()
@@ -50,15 +53,13 @@ void SchemaElemsTable::adjustColumns()
 
 void SchemaElemsTable::doubleClicked(QTableWidgetItem*)
 {
-    Element* elem = selected();
-    if (elem)
-        emit doubleClicked(elem);
+    emit doubleClicked(selected());
 }
 
 void SchemaElemsTable::showContextMenu(const QPoint& pos)
 {
-    if (_contextMenu)
-        _contextMenu->popup(mapToGlobal(pos));
+    auto menu = (currentRow() < rowCount() - 1) ? elementContextMenu : lastRowContextMenu;
+    if (menu) menu->popup(mapToGlobal(pos));
 }
 
 Element* SchemaElemsTable::selected() const
@@ -92,25 +93,28 @@ QVector<int> SchemaElemsTable::selectedRows() const
     QList<QTableWidgetSelectionRange> selection = selectedRanges();
     for (int i = 0; i < selection.count(); i++)
         for (int j = selection.at(i).topRow(); j <= selection.at(i).bottomRow(); j++)
-            result.append(j);
+            if (j < rowCount()-1)
+                result.append(j);
     return result;
 }
 
 bool SchemaElemsTable::hasSelection() const
 {
-    return currentRow() > -1;
+    int row = currentRow();
+    return row > -1 && row < rowCount()-1;
 }
 
 void SchemaElemsTable::populate()
 {
     clearContents();
-    setRowCount(schema()->count());
+    setRowCount(schema()->count() + 1);
     for (int row = 0; row < schema()->count(); row++)
     {
         Element *elem = schema()->element(row);
         createRow(elem, row);
         populateRow(elem, row);
     }
+    fillPlaceholderRow();
     adjustColumns();
 }
 
@@ -148,6 +152,31 @@ void SchemaElemsTable::populateRow(Element *elem, int row)
     item(row, COL_TITLE)->setForeground(color);
 }
 
+void SchemaElemsTable::fillPlaceholderRow()
+{
+    int row = rowCount() - 1;
+
+    QTableWidgetItem *it = new QTableWidgetItem();
+    //it->setData(Qt::DecorationRole, QPixmap(":/toolbar/elem_add"));
+    it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    setItem(row, COL_IMAGE, it);
+
+    it = new QTableWidgetItem();
+    it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    setItem(row, COL_LABEL, it);
+
+    it = new QTableWidgetItem();
+    it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    setItem(row, COL_PARAMS, it);
+
+    it = new QTableWidgetItem();
+    Z::Gui::setFontStyle(it, false, true);
+    it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    it->setForeground(QColor(0, 0, 0, 30));
+    it->setText(tr("Double click here to append new element"));
+    setItem(row, COL_TITLE, it);
+}
+
 void SchemaElemsTable::schemaLoaded(Schema*)
 {
     populate();
@@ -162,7 +191,7 @@ void SchemaElemsTable::elementCreated(Schema*, Element* elem)
 void SchemaElemsTable::elementChanged(Schema *schema, Element *elem)
 {
     int index = schema->indexOf(elem);
-    if (index >= 0 && index < rowCount())
+    if (index >= 0 && index < rowCount()-1)
     {
         populateRow(elem, index);
         adjustColumns();
@@ -172,9 +201,10 @@ void SchemaElemsTable::elementChanged(Schema *schema, Element *elem)
 void SchemaElemsTable::elementDeleting(Schema *schema, Element *elem)
 {
     int index = schema->indexOf(elem);
-    if (index >= 0 && index < rowCount())
+    if (index >= 0 && index < rowCount()-1)
     {
         removeRow(index);
         adjustColumns();
     }
 }
+
