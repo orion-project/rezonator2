@@ -131,11 +131,10 @@ void ProjectWindow::createActions()
     actnFileProps = A_(tr("Prop&erties..."), _operations, SLOT(editSchemaProps()), ":/toolbar/schema_prop");
     actnFileExit = A_(tr("E&xit"), qApp, SLOT(closeAllWindows()), nullptr, Qt::CTRL | Qt::Key_Q);
 
-    /* TODO:NEXT-VER
     actnEditCut = A_(tr("Cu&t"), _mdiArea, SLOT(editableChild_Cut()), ":/toolbar/cut", QKeySequence::Cut);
     actnEditCopy = A_(tr("&Copy"), _mdiArea, SLOT(editableChild_Copy()), ":/toolbar/copy", QKeySequence::Copy);
     actnEditPaste = A_(tr("&Paste"), _mdiArea, SLOT(editableChild_Paste()), ":/toolbar/paste", QKeySequence::Paste);
-    actnEditSelectAll = A_(tr("Select &All"), _mdiArea, SLOT(editableChild_SelectAll()), 0, QKeySequence::SelectAll); */
+    actnEditSelectAll = A_(tr("Select &All"), _mdiArea, SLOT(editableChild_SelectAll()), nullptr, QKeySequence::SelectAll);
 
     actnFuncRoundTrip = A_(tr("&Round-trip Matrix"), _calculations, SLOT(funcRoundTrip()), ":/toolbar/func_round_trip");
     actnFuncMultFwd = A_(tr("Multiply Selected &Forward"), _calculations, SLOT(funcMultFwd()));
@@ -187,8 +186,8 @@ void ProjectWindow::createMenuBar()
           actnFileSaveAs, actnFileSaveCopy, nullptr,
           actnFileProps, actnFileTripType, actnFileLambda, actnFilePump, actnFileSummary, nullptr, actnFileExit });
 
-    /* TODO:NEXT-VER menuEdit = Ori::Gui::menu(tr("&Edit"), this,
-        { actnEditCut, actnEditCopy, actnEditPaste, 0, actnEditSelectAll }); */
+    menuEdit = Ori::Gui::menu(tr("&Edit"), this,
+        { actnEditCut, actnEditCopy, actnEditPaste, nullptr, actnEditSelectAll });
 
     _stylesMenu = new Ori::Widgets::StylesMenu(CommonData::instance()->styler(), this);
     _langsMenu = new Ori::Widgets::LanguagesMenu(CommonData::instance()->translator(), ":/toolbar16/langs", this);
@@ -216,11 +215,11 @@ void ProjectWindow::createToolBars()
         { actnFileNew, Ori::Gui::menuToolButton(_mruMenu, actnFileOpen),
           actnFileSave, nullptr, actnFileProps, actnFilePump, actnFileSummary }));
 
-    // TODO:NEXT-VER addToolBar(makeToolBar(tr("Edit"), { actnEditCut, actnEditCopy, actnEditPaste }));
+    addToolBar(makeToolBar(tr("Edit"), { actnEditCut, actnEditCopy, actnEditPaste }));
 
     addToolBar(makeToolBar(tr("Functions"),
-        { actnFuncRoundTrip, nullptr, actnFuncStabMap, actnFuncStabMap2d, nullptr, actnFuncCaustic, actnFuncMultiCaustic, nullptr,
-          actnFuncRepRate }));
+        { actnFuncRoundTrip, nullptr, actnFuncStabMap, actnFuncStabMap2d, nullptr,
+          actnFuncCaustic, actnFuncMultiCaustic, nullptr, actnFuncRepRate }));
 
     addToolBar(makeToolBar(tr("Misc"),
         { actnWndParams, actnWndPumps }));
@@ -258,14 +257,14 @@ void ProjectWindow::updateMenuBar()
 {
     BasicMdiChild* child = _mdiArea->activeChild();
 
-    /* TODO:NEXT-VER
     // Update Edit menu
     EditableWindow* editable = _mdiArea->activeEditableChild();
-
-    actnEditCut->setEnabled(editable);
-    actnEditCopy->setEnabled(editable);
-    actnEditPaste->setEnabled(editable);
-    actnEditSelectAll->setEnabled(editable); */
+    if (editable)
+    {
+        actnEditCut->setEnabled(editable->canCut());
+        actnEditCopy->setEnabled(editable->canCopy());
+        actnEditPaste->setEnabled(editable->canPaste());
+    }
 
     // Update View menu
     menuView->clear();
@@ -286,7 +285,8 @@ void ProjectWindow::updateMenuBar()
     QMenuBar* menuBar = this->menuBar();
     menuBar->clear();
     menuBar->addMenu(menuFile);
-    // TODO:NEXT-VER menuBar->addMenu(menuEdit);
+    if (editable)
+        menuBar->addMenu(menuEdit);
     menuBar->addMenu(menuView);
     menuBar->addMenu(menuFunctions);
     if (child)

@@ -1,8 +1,8 @@
 #include "CausticWindow.h"
 
 #include "CausticOptionsPanel.h"
-#include "../io/z_io_utils.h"
-#include "../io/z_io_json.h"
+#include "../io/CommonUtils.h"
+#include "../io/JsonUtils.h"
 #include "../VariableDialog.h"
 #include "helpers/OriWidgets.h"
 #include "helpers/OriLayouts.h"

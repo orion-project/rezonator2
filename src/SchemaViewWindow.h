@@ -34,13 +34,17 @@ public:
     bool canCopy() override;
     bool canPaste() override { return true; }
 
+public slots:
+    void copy() override;
+    void paste() override;
+
 protected:
     // SchemaViewWindow is always visible and can't be closed.
     void closeEvent(QCloseEvent *event) override { event->ignore(); }
 
 private:
     QAction *actnElemAdd, *actnElemInsertBefore, *actnElemInsertAfter, *actnElemProp,
-        *actnElemMatr, *actnElemMatrAll, *actnElemDelete/*, TODO:NEXT-VER *actnEditCopy, *actnEditPaste */;
+        *actnElemMatr, *actnElemMatrAll, *actnElemDelete, *actnEditCopy, *actnEditPaste;
 
     QMenu *menuElement, *menuContext;
 
@@ -62,10 +66,6 @@ private slots:
     void actionElemInsertAfter();
     void actionElemProp();
     void actionElemDelete();
-
-    // inherits from EditableWindow
-    void copy() override;
-    void paste() override;
 };
 
 #endif // SCHEMA_WINDOW_H

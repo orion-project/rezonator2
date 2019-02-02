@@ -1,7 +1,7 @@
 #include "SchemaReaderJson.h"
 
-#include "z_io_utils.h"
-#include "z_io_json.h"
+#include "CommonUtils.h"
+#include "JsonUtils.h"
 #include "ISchemaWindowStorable.h"
 #include "../core/Schema.h"
 #include "../core/ElementsCatalog.h"

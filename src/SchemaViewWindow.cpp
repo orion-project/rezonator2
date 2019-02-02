@@ -3,6 +3,7 @@
 #include "SchemaViewWindow.h"
 #include "CalcManager.h"
 #include "WindowsManager.h"
+#include "io/Clipboard.h"
 #include "core/ElementsCatalog.h"
 #include "funcs_window/PlotFuncWindow.h"
 #include "widgets/SchemaLayout.h"
@@ -58,9 +59,8 @@ void SchemaViewWindow::createActions()
     actnElemMatrAll = A_(tr("&Show All Matrices"), _calculations, SLOT(funcShowAllMatrices()));
     actnElemDelete = A_(tr("&Delete"), this, SLOT(actionElemDelete()), ":/toolbar/elem_delete", Qt::CTRL | Qt::Key_Delete);
 
-    /* TODO:NEXT-VER
-    actnEditCopy = A_(tr("&Copy", "Edit action"), this, SLOT(copy()), ":/toolbar/edit_copy");
-    actnEditPaste = A_(tr("&Paste", "Edit action"), this, SLOT(paste()), ":/toolbar/edit_paste"); */
+    actnEditCopy = A_(tr("&Copy", "Edit action"), this, SLOT(copy()), ":/toolbar/copy");
+    actnEditPaste = A_(tr("&Paste", "Edit action"), this, SLOT(paste()), ":/toolbar/paste");
 
     #undef A_
 }
@@ -73,7 +73,7 @@ void SchemaViewWindow::createMenuBar()
 
     menuContext = Ori::Gui::menu(this,
         { actnElemProp, actnElemMatr, nullptr, actnElemInsertBefore, actnElemInsertAfter, nullptr,
-          /* TODO:NEXT-VER actnEditCopy, actnEditPaste, nullptr, */ actnElemDelete });
+          actnEditCopy, actnEditPaste, nullptr, actnElemDelete });
 }
 
 void SchemaViewWindow::createToolBar()
@@ -185,51 +185,19 @@ void SchemaViewWindow::elementCreated(Schema*, Element *elem)
 
 //------------------------------------------------------------------------------
 
-bool SchemaViewWindow::canCopy() { return _table->hasSelection(); }
+bool SchemaViewWindow::canCopy()
+{
+    return _table->hasSelection();
+}
 
 void SchemaViewWindow::copy()
 {
-// TODO:NEXT-VER
-//    Elements elems = _table->selection();
-//    if (!elems.empty())
-//    {
-//        Schema *tmp_schema = new Schema;
-//        for (int i = 0; i < elems.size(); i++)
-//        {
-//            Element *elem = ElementsCatalog::instance().create(elems.at(i)->type());
-//            elem->params().setValues(elems.at(i)->params().getValues());
-//            tmp_schema->insertElement(elem, -1, false);
-//        }
-//        QString text;
-//        SchemaWriterXml file(tmp_schema);
-//        file.write(&text);
-//        QApplication::clipboard()->setText(text);
-//        delete tmp_schema;
-//    }
+    Z::IO::Clipboard::copyElements(_table->selection());
 }
 
 void SchemaViewWindow::paste()
 {
-// TODO:NEXT-VER
-//    QString text = QApplication::clipboard()->text();
-//    if (!text.isEmpty())
-//    {
-//        Schema tmp_schema;
-//        SchemaReaderXml file(&tmp_schema);
-//        file.read(text);
-//        if (file.ok() && tmp_schema.count() > 0)
-//        {
-//            int count = tmp_schema.count();
-//            Element* elems[count];
-//            for (int i = 0; i < count; i++)
-//                elems[i] = tmp_schema.element(i);
-//            _pasteMode = true;
-//            for (int i = 0; i < count; i++)
-//            {
-//                tmp_schema.deleteElement(elems[i], false);
-//                schema()->insertElement(elems[i], -1, true);
-//            }
-//            _pasteMode = false;
-//        }
-//    }
+    _pasteMode = true;
+    Z::IO::Clipboard::pasteElements(schema());
+    _pasteMode = false;
 }

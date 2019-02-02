@@ -3,7 +3,7 @@
 #include "CustomPrefs.h"
 #include "core/Schema.h"
 #include "core/Variable.h"
-#include "io/z_io_json.h"
+#include "io/JsonUtils.h"
 #include "widgets/ElemSelectorWidget.h"
 #include "widgets/VariableRangeEditor.h"
 #include "widgets/VariableEditor.h"
