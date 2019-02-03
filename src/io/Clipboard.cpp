@@ -9,37 +9,48 @@
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QMimeData>
 
 namespace Z {
 namespace IO {
 namespace Clipboard {
 
-const QString Z_CLIPBOARD_DATA_ELEMENTS = "application/x-rezonator2-mime;value=elements";
+const QString Z_CLIPBOARD_MIME_TYPE = "application/x-rezonator2-mime";
+const QString Z_CLIPBOARD_DATA_ELEMENTS = Z_CLIPBOARD_MIME_TYPE + ";value=elements";
 
-void setElements(const QList<Element*>& elements)
+void setClipboardData(QJsonObject& root, const QString& dataType)
 {
-    QJsonObject root;
-    root["data_type"] = Z_CLIPBOARD_DATA_ELEMENTS;
+    root["data_type"] = dataType;
 
-    Z::IO::Json::writeElements(root, elements);
+    QString text = QJsonDocument(root).toJson();
 
-    qApp->clipboard()->setText(QJsonDocument(root).toJson());
+    auto mimeData = new QMimeData;
+    mimeData->setData(Z_CLIPBOARD_MIME_TYPE, text.toUtf8());
+    qApp->clipboard()->setMimeData(mimeData);
 }
 
 QJsonObject getClipboradData(const QString& expectedType)
 {
-    QString text = qApp->clipboard()->text();
-    if (text.isEmpty()) {
-        qDebug() << "Clipboard doesn't contain a text data";
-        return QJsonObject();
+    auto mimeData = qApp->clipboard()->mimeData();
+    if (!mimeData)
+    {
+        qDebug() << "Clipboard doesn't contain a data";
+        return {};
+    }
+
+    auto data = mimeData->data(Z_CLIPBOARD_MIME_TYPE);
+    if (data.isNull())
+    {
+        qDebug() << "Clipboard doesn't contain a data of suitable mime-type" << Z_CLIPBOARD_MIME_TYPE;
+        return {};
     }
 
     QJsonParseError error;
-    QJsonDocument doc = QJsonDocument::fromJson(text.toUtf8(), &error);
+    QJsonDocument doc = QJsonDocument::fromJson(data, &error);
     if (doc.isNull())
     {
         qDebug() << "Clipboard text is not a valid JSON object" << error.errorString();
-        return QJsonObject();
+        return {};
     }
 
     QJsonObject root = doc.object();
@@ -49,10 +60,17 @@ QJsonObject getClipboradData(const QString& expectedType)
         qDebug() << "There is no data of appropriate type in Clipboard"
                  << "Expected type:" << expectedType
                  << "Actual type:" << dataType;
-        return QJsonObject();
+        return {};
     }
 
     return root;
+}
+
+void setElements(const QList<Element*>& elements)
+{
+    QJsonObject root;
+    Z::IO::Json::writeElements(root, elements);
+    setClipboardData(root, Z_CLIPBOARD_DATA_ELEMENTS);
 }
 
 QList<Element*> getElements()
