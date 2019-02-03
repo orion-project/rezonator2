@@ -73,7 +73,7 @@ private slots:
     void actionElemProp();
     void actionElemDelete();
     void rowDoubleClicked(Element*);
-    void currentCellChanged(int currentRow, int, int, int);
+    void currentCellChanged(int curRow, int, int prevRow, int);
 };
 
 #endif // SCHEMA_WINDOW_H

@@ -31,6 +31,7 @@ public:
     virtual void schemaSaved(Schema*) {}
     virtual void schemaLoading(Schema*) {}
     virtual void schemaLoaded(Schema*) {}
+    virtual void schemaRebuilt(Schema*) {}
     virtual void elementCreated(Schema*, Element*) {}
     virtual void elementChanged(Schema*, Element*) {}
     virtual void elementDeleting(Schema*, Element*) {}
@@ -97,6 +98,7 @@ public:
         Saved,         ///< Schema was saved
         Loading,       ///< Schema is turned into Loading state
         Loaded,        ///< Loading is completed
+        Rebuilt,       ///< Elements were rearranged
 
         ElemCreated,   ///< New element was added to schema
         ElemChanged,   ///< Element's params changed
@@ -251,6 +253,10 @@ public:
     /// Automatical label consist of a prefix like 'M', 'L', etc. and index.
     void generateLabel(Element* elem);
 
+    void moveElementUp(Element* elem);
+    void moveElementDown(Element* elem);
+    void flip();
+
 private:
     Elements _items;
     SchemaEvents _events;
@@ -278,6 +284,8 @@ private:
     void removeParamLinks(Element* elem);
 
     void relinkInterfaces();
+
+    void shiftElement(int index, const std::function<int(int)> &getTargetIndex);
 };
 
 #endif // SCHEMA_H

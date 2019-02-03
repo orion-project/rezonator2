@@ -68,6 +68,7 @@ const SchemaEvents::EventProps& SchemaEvents::propsOf(Event event)
         INIT_EVENT(Saved,              true,         SchemaState::None     ),
         INIT_EVENT(Loading,            false,        SchemaState::Loading  ),
         INIT_EVENT(Loaded,             true,         SchemaState::None     ),
+        INIT_EVENT(Rebuilt,            true,         SchemaState::Modified ),
         INIT_EVENT(ElemCreated,        true,         SchemaState::Modified ),
         INIT_EVENT(ElemChanged,        true,         SchemaState::Modified ),
         INIT_EVENT(ElemDeleting,       false,        SchemaState::Current  ),
@@ -98,6 +99,7 @@ void SchemaEvents::notify(SchemaListener* listener, SchemaEvents::Event event, v
     case Saved: listener->schemaSaved(_schema); break;
     case Loading: listener->schemaLoading(_schema); break;
     case Loaded: listener->schemaLoaded(_schema); break;
+    case Rebuilt: listener->schemaRebuilt(_schema); break;
     case ElemCreated: listener->elementCreated(_schema, reinterpret_cast<Element*>(param)); break;
     case ElemChanged: listener->elementChanged(_schema, reinterpret_cast<Element*>(param)); break;
     case ElemDeleting: listener->elementDeleting(_schema, reinterpret_cast<Element*>(param)); break;
@@ -180,6 +182,8 @@ Element* Schema::elementByLabel(const QString& label) const
 
 void Schema::insertElement(Element* elem, int index, bool event)
 {
+    if (!elem) return;
+
     if (isValid(index))
         _items.insert(index, elem);
     else
@@ -366,4 +370,39 @@ void Schema::generateLabel(Element* elem)
         }
     }
     elem->setLabel(QString("%1%2").arg(prefix).arg(maxElemNum+1));
+}
+
+void Schema::shiftElement(int index, const std::function<int(int)>& getTargetIndex)
+{
+    if (!isValid(index)) return;
+    if (_items.size() == 1) return;
+    _items.swap(index, getTargetIndex(index));
+    relinkInterfaces();
+    _events.raise(SchemaEvents::Rebuilt);
+    _events.raise(SchemaEvents::RecalRequred);
+}
+
+void Schema::moveElementUp(Element *elem)
+{
+    shiftElement(indexOf(elem), [&](int index){
+        return index == 0 ? _items.size() - 1 : index - 1;
+    });
+}
+
+void Schema::moveElementDown(Element *elem)
+{
+    shiftElement(indexOf(elem), [&](int index){
+        return index == _items.size() - 1 ? 0 : index + 1;
+    });
+}
+
+void Schema::flip()
+{
+    int size = _items.size();
+    if (size < 2) return;
+    for (int i = 0; i < size / 2; i++)
+        _items.swap(i, size - 1 - i);
+    relinkInterfaces();
+    _events.raise(SchemaEvents::Rebuilt);
+    _events.raise(SchemaEvents::RecalRequred);
 }

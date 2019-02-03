@@ -70,7 +70,8 @@ private:
             *actnFuncRepRate, *actnFuncMultFwd, *actnFuncMultBkwd,
             *actnFuncCaustic, *actnFuncMultiCaustic;
 
-    QAction  *actnToolsGaussCalc, *actnToolsCatalog, *actnToolsPrefs;
+    QAction  *actnToolsGaussCalc, *actnToolsCatalog, *actnToolsPrefs,
+             *actnToolFlipSchema;
 
     QAction *actnWndClose, *actnWndCloseAll, *actnWndTile, *actnWndCascade,
             *actnWndSchema, *actnWndParams, *actnWndProtocol, *actnWndPumps;
@@ -116,6 +117,8 @@ private slots:
     void showPumpsWindow();
 
     void openSchemaExample();
+
+    void flipSchema();
 
     /// Slot connected to @c mdiArea::subWindowActivated() signal.
     /// This method is automatically called when mdiArea changes active widget.

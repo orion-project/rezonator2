@@ -76,7 +76,7 @@ void SchemaElemsTable::setSelected(Element *elem)
 Elements SchemaElemsTable::selection() const
 {
     Elements elements;
-    QVector<int> rows = selectedRows();
+    QList<int> rows = selectedRows();
     for (int i = 0; i < rows.count(); i++)
         elements.append(schema()->element(rows[i]));
     if (elements.empty())
@@ -87,9 +87,9 @@ Elements SchemaElemsTable::selection() const
     return elements;
 }
 
-QVector<int> SchemaElemsTable::selectedRows() const
+QList<int> SchemaElemsTable::selectedRows() const
 {
-    QVector<int> result;
+    QList<int> result;
     QList<QTableWidgetSelectionRange> selection = selectedRanges();
     for (int i = 0; i < selection.count(); i++)
         for (int j = selection.at(i).topRow(); j <= selection.at(i).bottomRow(); j++)
@@ -104,6 +104,11 @@ bool SchemaElemsTable::hasSelection() const
     return row > -1 && row < rowCount()-1;
 }
 
+// TODO: This method should be optimized, it takes 0.1 - 0.2s for schema of 7 elements.
+// For comparison, SchemaLayout::populate() takes about a couple of ms on the same schema.
+// When click "Move Up" or "Move Down" one can see the table really hangs for a little while.
+// Maybe it worth to refuse using QTableWidget and switch to QTableView with custom model.
+// Event single call of populateRow()/adjustColumns() takes about 10ms.
 void SchemaElemsTable::populate()
 {
     clearContents();
@@ -178,6 +183,11 @@ void SchemaElemsTable::fillPlaceholderRow()
 }
 
 void SchemaElemsTable::schemaLoaded(Schema*)
+{
+    populate();
+}
+
+void SchemaElemsTable::schemaRebuilt(Schema*)
 {
     populate();
 }

@@ -55,8 +55,8 @@ void SchemaViewWindow::createActions()
     #define A_ Ori::Gui::action
 
     actnElemAdd = A_(tr("A&ppend..."), this, SLOT(actionElemAdd()), ":/toolbar/elem_add", Qt::CTRL | Qt::Key_Insert);
-    actnElemMoveUp = A_(tr("Move Selected &Up"), this, SLOT(actionElemMoveUp()), ":/toolbar/elem_insert_before");
-    actnElemMoveDown = A_(tr("Move Selected &Down"), this, SLOT(actionElemMoveDown()), ":/toolbar/elem_insert_after");
+    actnElemMoveUp = A_(tr("Move Selected &Up"), this, SLOT(actionElemMoveUp()), ":/toolbar/elem_move_up");
+    actnElemMoveDown = A_(tr("Move Selected &Down"), this, SLOT(actionElemMoveDown()), ":/toolbar/elem_move_down");
     actnElemProp = A_(tr("&Properties..."), this, SLOT(actionElemProp()), ":/toolbar/elem_prop", Qt::Key_Return);
     actnElemMatr = A_(tr("&Matrix"), _calculations, SLOT(funcShowMatrices()), ":/toolbar/elem_matr", Qt::SHIFT | Qt::Key_Return);
     actnElemMatrAll = A_(tr("&Show All Matrices"), _calculations, SLOT(funcShowAllMatrices()));
@@ -121,12 +121,22 @@ void SchemaViewWindow::actionElemAdd()
 
 void SchemaViewWindow::actionElemMoveUp()
 {
-    // TODO
+    auto elem = _table->selected();
+    if (elem)
+    {
+        schema()->moveElementUp(elem);
+        _table->setSelected(elem);
+    }
 }
 
 void SchemaViewWindow::actionElemMoveDown()
 {
-    // TODO
+    auto elem = _table->selected();
+    if (elem)
+    {
+        schema()->moveElementDown(elem);
+        _table->setSelected(elem);
+    }
 }
 
 void SchemaViewWindow::actionElemProp()
@@ -224,9 +234,11 @@ void SchemaViewWindow::selectAll()
 
 //------------------------------------------------------------------------------
 
-void SchemaViewWindow::currentCellChanged(int currentRow, int, int, int)
+void SchemaViewWindow::currentCellChanged(int curRow, int, int prevRow, int)
 {
-    bool hasElem = currentRow < _table->rowCount() - 1;
+    int lastRow = _table->rowCount() - 1;
+    if (curRow < lastRow && prevRow < lastRow) return;
+    bool hasElem = curRow < lastRow;
     actnElemProp->setEnabled(hasElem);
     actnElemMatr->setEnabled(hasElem);
     actnElemDelete->setEnabled(hasElem);

@@ -149,6 +149,7 @@ void ProjectWindow::createActions()
     actnToolsCatalog = A_(tr("&Elements Catalog"), this, SLOT(showElementsCatalog()), ":/toolbar/catalog");
     actnToolsGaussCalc = A_(tr("&Gauss Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
     actnToolsPrefs = A_(tr("Pre&ferences..."), this, SLOT(showPreferences()), ":/toolbar/settings");
+    actnToolFlipSchema = A_(tr("Flip Schema"), this, SLOT(flipSchema()));
 
     // These common window actions must not have data (action->data()), as data presense indicates that
     // this action is for activation of specific subwindow and _mdiArea is responsible for it.
@@ -199,7 +200,8 @@ void ProjectWindow::createMenuBar()
           actnFuncStabMap2d, nullptr, actnFuncCaustic, actnFuncMultiCaustic, nullptr, actnFuncRepRate });
 
     menuTools = Ori::Gui::menu(tr("&Tools", "Menu title"), this,
-        { actnToolsGaussCalc, actnToolsCatalog, nullptr, actnToolsPrefs });
+        { actnToolFlipSchema, nullptr,
+          actnToolsGaussCalc, actnToolsCatalog, nullptr, actnToolsPrefs });
 
     menuWindow = Ori::Gui::menu(tr("&Window"), this,
         { actnWndSchema, actnWndParams, actnWndPumps, actnWndProtocol, nullptr,
@@ -212,8 +214,7 @@ void ProjectWindow::createMenuBar()
 
 void ProjectWindow::createToolBars()
 {
-    auto toolbar = new Ori::Widgets::FlatToolBar;
-    Ori::Gui::populate(toolbar, {
+    addToolBar(makeToolBar({
         actnFileNew, Ori::Gui::menuToolButton(_mruMenu, actnFileOpen),
         actnFileSave, nullptr, actnFileProps, actnFilePump, actnFileSummary , nullptr,
         actnEditCut, actnEditCopy, actnEditPaste, nullptr,
@@ -221,8 +222,7 @@ void ProjectWindow::createToolBars()
         actnFuncCaustic, actnFuncMultiCaustic, nullptr, actnFuncRepRate, nullptr,
         actnWndParams, actnWndPumps, nullptr,
         actnToolsGaussCalc
-    });
-    addToolBar(toolbar);
+    }, true));
 
     _mdiToolbar = new Ori::Widgets::MdiToolBar(tr("Windows"), _mdiArea);
     Z::WindowUtils::adjustIconSize(_mdiToolbar);
@@ -451,6 +451,12 @@ void ProjectWindow::showGaussCalculator()
     GaussCalculatorWindow::showCalcWindow();
 }
 
+void ProjectWindow::flipSchema()
+{
+    if (Ori::Dlg::yes(tr("Do you want to rearrange elements in the opposite order?")))
+        schema()->flip();
+}
+
 //------------------------------------------------------------------------------
 //                             Help actions
 
@@ -563,3 +569,4 @@ void ProjectWindow::schemaSaved(Schema*)
     updateStatusInfo();
     updateTitle();
 }
+

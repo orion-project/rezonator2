@@ -24,12 +24,13 @@ public:
     void setSelected(Element*);
 
     Elements selection() const override;
-    QVector<int> selectedRows() const;
+    QList<int> selectedRows() const;
 
     bool hasSelection() const;
 
     // inherits from SchemaListener
     void schemaLoaded(Schema*) override;
+    void schemaRebuilt(Schema*) override;
     void elementCreated(Schema*, Element*) override;
     void elementChanged(Schema*, Element*) override;
     void elementDeleting(Schema*, Element*) override;
