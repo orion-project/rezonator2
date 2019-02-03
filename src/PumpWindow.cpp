@@ -376,7 +376,7 @@ void PumpWindow::clonePump()
 
     auto newPump = pumpMode->makePump();
     if (Settings::instance().pumpAutoLabel)
-        Z::Utils::generateLabel(schema(), pump);
+        Z::Utils::generateLabel(schema(), newPump);
     else newPump->setLabel(pump->label());
     newPump->setTitle(pump->title());
     for (int i = 0; i < pump->params()->size(); i++)
