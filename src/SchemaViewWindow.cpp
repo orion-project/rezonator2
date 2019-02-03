@@ -195,6 +195,11 @@ void SchemaViewWindow::elementCreated(Schema*, Element *elem)
 
 //------------------------------------------------------------------------------
 
+bool SchemaViewWindow::canCopy()
+{
+    return _table->hasSelection();
+}
+
 void SchemaViewWindow::copy()
 {
     Z::IO::Clipboard::setElements(_table->selection());
@@ -211,6 +216,13 @@ void SchemaViewWindow::paste()
     schema()->insertElements(elems, _table->currentRow(), doEvents, doLabels);
     _pasteMode = false;
 }
+
+void SchemaViewWindow::selectAll()
+{
+    _table->selectAll();
+}
+
+//------------------------------------------------------------------------------
 
 void SchemaViewWindow::currentCellChanged(int currentRow, int, int, int)
 {

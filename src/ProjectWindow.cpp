@@ -18,6 +18,7 @@
 #include "helpers/OriWindows.h"
 #include "tools/OriMruList.h"
 #include "tools/OriSettings.h"
+#include "widgets/OriFlatToolBar.h"
 #include "widgets/OriLangsMenu.h"
 #include "widgets/OriMruMenu.h"
 #include "widgets/OriMdiToolBar.h"
@@ -211,20 +212,17 @@ void ProjectWindow::createMenuBar()
 
 void ProjectWindow::createToolBars()
 {
-    addToolBar(makeToolBar(tr("File"),
-        { actnFileNew, Ori::Gui::menuToolButton(_mruMenu, actnFileOpen),
-          actnFileSave, nullptr, actnFileProps, actnFilePump, actnFileSummary }));
-
-    addToolBar(makeToolBar(tr("Edit"), { actnEditCut, actnEditCopy, actnEditPaste }));
-
-    addToolBar(makeToolBar(tr("Functions"),
-        { actnFuncRoundTrip, nullptr, actnFuncStabMap, actnFuncStabMap2d, nullptr,
-          actnFuncCaustic, actnFuncMultiCaustic, nullptr, actnFuncRepRate }));
-
-    addToolBar(makeToolBar(tr("Misc"),
-        { actnWndParams, actnWndPumps }));
-
-    addToolBar(makeToolBar(tr("Tools"), { actnToolsGaussCalc }));
+    auto toolbar = new Ori::Widgets::FlatToolBar;
+    Ori::Gui::populate(toolbar, {
+        actnFileNew, Ori::Gui::menuToolButton(_mruMenu, actnFileOpen),
+        actnFileSave, nullptr, actnFileProps, actnFilePump, actnFileSummary , nullptr,
+        actnEditCut, actnEditCopy, actnEditPaste, nullptr,
+        actnFuncRoundTrip, nullptr, actnFuncStabMap, actnFuncStabMap2d, nullptr,
+        actnFuncCaustic, actnFuncMultiCaustic, nullptr, actnFuncRepRate, nullptr,
+        actnWndParams, actnWndPumps, nullptr,
+        actnToolsGaussCalc
+    });
+    addToolBar(toolbar);
 
     _mdiToolbar = new Ori::Widgets::MdiToolBar(tr("Windows"), _mdiArea);
     Z::WindowUtils::adjustIconSize(_mdiToolbar);
@@ -253,18 +251,27 @@ void ProjectWindow::updateTitle()
         Ori::Wnd::setWindowFilePath(this, schema()->fileName());
 }
 
+namespace  {
+
+void activateEditAction(QAction* action, EditableWindow* wnd, EditableWindow::SupportedCommand cmd)
+{
+    bool on = wnd && wnd->supportedCommands().testFlag(cmd);
+    action->setEnabled(on);
+    action->setVisible(on);
+}
+
+} // namespace
+
 void ProjectWindow::updateMenuBar()
 {
     BasicMdiChild* child = _mdiArea->activeChild();
 
     // Update Edit menu
     EditableWindow* editable = _mdiArea->activeEditableChild();
-    if (editable)
-    {
-        actnEditCut->setEnabled(editable->canCut());
-        actnEditCopy->setEnabled(editable->canCopy());
-        actnEditPaste->setEnabled(editable->canPaste());
-    }
+    activateEditAction(actnEditCut, editable, EditableWindow::EditCmd_Cut);
+    activateEditAction(actnEditCopy, editable, EditableWindow::EditCmd_Copy);
+    activateEditAction(actnEditPaste, editable, EditableWindow::EditCmd_Paste);
+    activateEditAction(actnEditSelectAll, editable, EditableWindow::EditCmd_SelectAll);
 
     // Update View menu
     menuView->clear();

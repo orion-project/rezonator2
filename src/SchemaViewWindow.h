@@ -32,8 +32,11 @@ public:
     void elementCreated(Schema*, Element*) override;
 
     // inherits from EditableWindow
-    bool canCopy() override { return true; }
+    SupportedCommands supportedCommands() override {
+        return EditCmd_Copy | EditCmd_Paste | EditCmd_SelectAll; }
+    bool canCopy() override;
     bool canPaste() override { return true; }
+    void selectAll() override;
 
 public slots:
     void copy() override;
