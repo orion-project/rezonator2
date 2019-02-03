@@ -1,6 +1,7 @@
 #include "Format.h"
 #include "Protocol.h"
 #include "Schema.h"
+#include "Utils.h"
 
 //------------------------------------------------------------------------------
 //                                SchemaState
@@ -215,7 +216,7 @@ void Schema::insertElements(const Elements& elems, int index, bool event, bool g
         elem->setOwner(this);
 
         if (generateLabels)
-            generateLabel(elem);
+            Z::Utils::generateLabel(this, elem);
     }
 
     relinkInterfaces();
@@ -354,24 +355,6 @@ void Schema::relinkInterfaces()
     }
 }
 
-void Schema::generateLabel(Element* elem)
-{
-    int maxElemNum = 0;
-    auto prefix = elem->labelPrefix();
-    for (const Element* e : _items)
-    {
-        if (e != elem and e->label().startsWith(prefix))
-        {
-            QStringRef ref(&e->label(), prefix.length(), e->label().length() - prefix.length());
-            bool isInt = false;
-            int elemNum = ref.toInt(&isInt);
-            if (isInt && elemNum > maxElemNum)
-                maxElemNum = elemNum;
-        }
-    }
-    elem->setLabel(QString("%1%2").arg(prefix).arg(maxElemNum+1));
-}
-
 void Schema::shiftElement(int index, const std::function<int(int)>& getTargetIndex)
 {
     if (!isValid(index)) return;
@@ -406,3 +389,31 @@ void Schema::flip()
     _events.raise(SchemaEvents::Rebuilt);
     _events.raise(SchemaEvents::RecalRequred);
 }
+
+//------------------------------------------------------------------------------
+//                                Z::Utils
+//------------------------------------------------------------------------------
+
+namespace Z {
+namespace Utils {
+
+void generateLabel(Schema* schema, Element* elem)
+{
+    QStringList labels;
+    for (const auto e : schema->elements())
+        if (e != elem)
+            labels << e->label();
+    elem->setLabel(generateLabel(elem->labelPrefix(), labels));
+}
+
+void generateLabel(Schema* schema, PumpParams* pump)
+{
+    QStringList labels;
+    for (const auto p : *schema->pumps())
+        if (p != pump)
+            labels << p->label();
+    pump->setLabel(generateLabel(Pump::labelPrefix(), labels));
+}
+
+} // namespace Utils
+} // namespace Z

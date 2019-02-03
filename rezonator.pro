@@ -154,7 +154,8 @@ HEADERS += \
     src/SchemaPropsDialog.h \
     src/io/JsonUtils.h \
     src/io/CommonUtils.h \
-    src/io/Clipboard.h
+    src/io/Clipboard.h \
+    src/core/Utils.h
 	
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -263,7 +264,8 @@ SOURCES += \
     src/SchemaPropsDialog.cpp \
     src/io/JsonUtils.cpp \
     src/io/CommonUtils.cpp \
-    src/io/Clipboard.cpp
+    src/io/Clipboard.cpp \
+    src/core/Utils.cpp
 
 DISTFILES += \
     src/StartWindow.qss \

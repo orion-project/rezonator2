@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/toolbar">
         <file alias="catalog">../img/toolbar/elements.svg</file>
+        <file alias="clone">../img/toolbar/clone.svg</file>
         <file alias="copy">../img/toolbar/copy.svg</file>
         <file alias="copy_all">../img/toolbar/copy_all.svg</file>
         <file alias="copy_img">../img/toolbar/copy_img.svg</file>

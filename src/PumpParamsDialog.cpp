@@ -36,15 +36,7 @@ Z::PumpParams* PumpParamsDialog::makeNewPump()
 
         auto modeName = selectedItem->data(Qt::UserRole).toString();
         auto mode = Z::Pump::findByModeName(modeName);
-        if (!mode) return nullptr;
-
-        Z::PumpParams *pump = mode->makePump();
-        if (!editPump(pump))
-        {
-            delete pump;
-            return nullptr;
-        }
-        return pump;
+        return mode ? mode->makePump() : nullptr;
     }
     return nullptr;
 }

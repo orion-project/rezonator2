@@ -22,7 +22,7 @@ public:
     PumpParams *pump;
 
 protected:
-    PumpParams* makeNewPumpDlg() const override { return pump; }
+    PumpParams* makeNewPumpDlg() override { return pump; }
 };
 
 //------------------------------------------------------------------------------

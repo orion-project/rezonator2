@@ -77,6 +77,7 @@ class Pump {
 public:
     static const QVector<PumpMode*> &allModes();
     static PumpMode* findByModeName(const QString& name);
+    static QString labelPrefix();
 };
 
 
