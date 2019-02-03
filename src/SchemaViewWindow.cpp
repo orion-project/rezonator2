@@ -55,7 +55,7 @@ void SchemaViewWindow::createActions()
     #define A_ Ori::Gui::action
 
     actnElemAdd = A_(tr("A&ppend..."), this, SLOT(actionElemAdd()), ":/toolbar/elem_add", Qt::CTRL | Qt::Key_Insert);
-    actnElemMoveUp = A_(tr("Move Selected &Up"), this, SLOT(actionElemMoveUo()), ":/toolbar/elem_insert_before");
+    actnElemMoveUp = A_(tr("Move Selected &Up"), this, SLOT(actionElemMoveUp()), ":/toolbar/elem_insert_before");
     actnElemMoveDown = A_(tr("Move Selected &Down"), this, SLOT(actionElemMoveDown()), ":/toolbar/elem_insert_after");
     actnElemProp = A_(tr("&Properties..."), this, SLOT(actionElemProp()), ":/toolbar/elem_prop", Qt::Key_Return);
     actnElemMatr = A_(tr("&Matrix"), _calculations, SLOT(funcShowMatrices()), ":/toolbar/elem_matr", Qt::SHIFT | Qt::Key_Return);
@@ -206,7 +206,9 @@ void SchemaViewWindow::paste()
     if (elems.isEmpty()) return;
 
     _pasteMode = true;
-    // TODO
+    bool doEvents = true;
+    bool doLabels = Settings::instance().elemAutoLabelPasted;
+    schema()->insertElements(elems, _table->currentRow(), doEvents, doLabels);
     _pasteMode = false;
 }
 

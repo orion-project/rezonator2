@@ -136,8 +136,8 @@ void SchemaReaderJson::readFromUtf8(const QByteArray& data)
     readCustomParams(root);
     readPumps(root);
 
-    for (auto elem : readElements(root, &_report))
-        _schema->insertElement(elem, -1, false);
+    auto elems = readElements(root, &_report);
+    _schema->insertElements(elems, -1, false, false);
 
     readParamLinks(root);
     readFormulas(root);

@@ -222,6 +222,7 @@ public:
     void unregisterListener(SchemaListener* listener) { _clients.remove(listener); }
 
     void insertElement(Element* elem, int index = -1, bool event = true);
+    void insertElements(const Elements& elems, int index, bool event, bool generateLabels);
     void deleteElement(Element* elem, bool event = true, bool free = true);
     void deleteElement(int index, bool event = true, bool free = true);
 

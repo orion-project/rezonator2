@@ -196,6 +196,34 @@ void Schema::insertElement(Element* elem, int index, bool event)
     }
 }
 
+void Schema::insertElements(const Elements& elems, int index, bool event, bool generateLabels)
+{
+    int insert = isValid(index);
+    for (int i = 0; i < elems.size(); i++)
+    {
+        auto elem = elems.at(i);
+
+        if (insert)
+            _items.insert(index + i, elem);
+        else
+            _items.append(elem);
+
+        elem->setOwner(this);
+
+        if (generateLabels)
+            generateLabel(elem);
+    }
+
+    relinkInterfaces();
+
+    if (event)
+    {
+        for (auto elem : elems)
+            _events.raise(SchemaEvents::ElemCreated, elem);
+        _events.raise(SchemaEvents::RecalRequred);
+    }
+}
+
 void Schema::deleteElement(Element* elem, bool event, bool free)
 {
     deleteElement(_items.indexOf(elem), event, free);
