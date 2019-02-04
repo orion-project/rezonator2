@@ -2,6 +2,7 @@
 #define PLOT_H
 
 #include "../../libs/qcustomplot/qcustomplot.h"
+#include "PlotUtils.h"
 
 typedef QCPGraph Graph;
 
@@ -14,10 +15,10 @@ public:
 
     QVector<Graph*>& serviceGraphs() { return _serviceGraphs; }
 
-    QPair<double, double> limitsX() const { return limits(xAxis); }
-    QPair<double, double> limitsY() const { return limits(yAxis); }
-    void setLimitsX(const QPair<double, double>& p, bool replot) { setLimitsX(p.first, p.second, replot); }
-    void setLimitsY(const QPair<double, double>& p, bool replot) { setLimitsY(p.first, p.second, replot); }
+    AxisLimits limitsX() const { return limits(xAxis); }
+    AxisLimits limitsY() const { return limits(yAxis); }
+    void setLimitsX(const AxisLimits& p, bool replot) { setLimitsX(p.min, p.max, replot); }
+    void setLimitsY(const AxisLimits& p, bool replot) { setLimitsY(p.min, p.max, replot); }
     void setLimitsX(double min, double max, bool replot = true) { setLimits(xAxis, min, max, replot); }
     void setLimitsY(double min, double max, bool replot = true) { setLimits(yAxis, min, max, replot); }
     void extendLimits(double factor, bool replot = true);
@@ -71,7 +72,7 @@ private:
     const double _zoomStepY;
     const int _numberPrecision;
 
-    QPair<double, double> limits(QCPAxis* axis) const;
+    AxisLimits limits(QCPAxis* axis) const;
     void extendLimits(QCPAxis* axis, double factor, bool replot);
     void setLimits(QCPAxis* axis, double min, double max, bool replot);
     bool setLimitsDlg(QCPRange& range, const QString &title);

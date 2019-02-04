@@ -155,7 +155,8 @@ HEADERS += \
     src/io/JsonUtils.h \
     src/io/CommonUtils.h \
     src/io/Clipboard.h \
-    src/core/Utils.h
+    src/core/Utils.h \
+    src/widgets/PlotUtils.h
 	
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -265,7 +266,8 @@ SOURCES += \
     src/io/JsonUtils.cpp \
     src/io/CommonUtils.cpp \
     src/io/Clipboard.cpp \
-    src/core/Utils.cpp
+    src/core/Utils.cpp \
+    src/widgets/PlotUtils.cpp
 
 DISTFILES += \
     src/StartWindow.qss \

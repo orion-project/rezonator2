@@ -5,6 +5,7 @@
 
 #include "../SchemaWindows.h"
 #include "../funcs/PlotFunction.h"
+#include "../widgets/PlotUtils.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -81,20 +82,6 @@ protected:
     PlotFunction* _function;
     Z::Unit _unitX = Z::Units::none();
     Z::Unit _unitY = Z::Units::none();
-    int _windowIndex = 0;
-
-    static QMap<QString, int> _windowIndeces;
-
-    QMenu *menuPlot, *menuLimits, *menuFormat, *menuAxisX, *menuAxisY;
-
-    /// Calculates function and plots its results.
-    virtual void calculate();
-
-    virtual bool configureInternal() { return true; }
-
-    virtual void afterUpdate() {}
-
-    bool _needRecalc = false, _frozen = false;
     QVector<Graph*> _graphsT, _graphsS;
     PlotParamsPanel* _leftPanel;
     QCPCursor* _cursor;
@@ -104,13 +91,34 @@ protected:
     FrozenStateButton* _buttonFrozenInfo;
     bool _autolimitsRequest = false; ///< If autolimits requested after next update.
     bool _centerCursorRequested = false; ///< If cursor should be centered after next update.
+    bool _needRecalc = false;
+    bool _frozen = false;
     UnitsMenu *_unitsMenuX, *_unitsMenuY;
-
+    QMenu *menuPlot, *menuLimits, *menuFormat, *menuAxisX, *menuAxisY;
     QAction *actnShowT, *actnShowS, *actnShowTS,
         *actnAutolimits, *actnAutolimitsX, *actnAutolimitsY,
         *actnSetLimits, *actnSetLimitsX, *actnSetLimitsY,
         *actnZoomIn, *actnZoomOut, *actnZoomInX, *actnZoomOutX, *actnZoomInY, *actnZoomOutY,
         *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo;
+
+    int _windowIndex = 0;
+    static QMap<QString, int> _windowIndeces;
+
+    struct ViewState
+    {
+        AxisLimits limitsX;
+        AxisLimits limitsY;
+        Z::Unit unitX, unitY;
+        QPointF cursorPos;
+    };
+    QMap<int, ViewState> _storedView;
+
+    /// Calculates function and plots its results.
+    virtual void calculate();
+
+    virtual bool configureInternal() { return true; }
+
+    virtual void afterUpdate() {}
 
     Graph* selectedGraph() const;
 
@@ -158,13 +166,6 @@ private slots:
     QWidget* optionsPanelRequired();
 
 private:
-    struct ViewState
-    {
-        QPair<double, double> limitsX;
-        QPair<double, double> limitsY;
-        QPointF cursorPos;
-    };
-    QMap<int, ViewState> _storedView;
 
     void setUnitX(Z::Unit unit);
     void setUnitY(Z::Unit unit);

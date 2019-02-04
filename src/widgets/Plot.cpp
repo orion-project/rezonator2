@@ -201,10 +201,10 @@ void Plot::setLimits(QCPAxis* axis, double min, double max, bool replot)
     if (replot) this->replot();
 }
 
-QPair<double, double> Plot::limits(QCPAxis* axis) const
+AxisLimits Plot::limits(QCPAxis* axis) const
 {
     auto range = axis->range();
-    return QPair<double, double>(range.lower, range.upper);
+    return AxisLimits(range.lower, range.upper);
 }
 
 double Plot::safeMargins(QCPAxis* axis)

@@ -491,20 +491,30 @@ void PlotFuncWindow::storeView(int key)
     view.limitsX = _plot->limitsX();
     view.limitsY = _plot->limitsY();
     view.cursorPos = _cursor->position();
+    view.unitX = _unitX;
+    view.unitY = _unitY;
     _storedView[key] = view;
 }
 
 void PlotFuncWindow::restoreView(int key)
 {
+    qDebug() << "Restore mode" << key;
     if (_storedView.contains(key))
     {
         const ViewState& view = _storedView[key];
+        _unitX = view.unitX;
+        _unitY = view.unitY;
         _plot->setLimitsX(view.limitsX, false);
         _plot->setLimitsY(view.limitsY, false);
         _cursor->setPosition(view.cursorPos, false);
+        qDebug() << "x" << view.limitsX.str() << "y" << view.limitsY.str();
     }
     else
     {
+        qDebug() << "non";
+        // Units for the view will be guessed from dim on first request
+        _unitX = Z::Units::none();
+        _unitY = Z::Units::none();
         _autolimitsRequest = true;
         _centerCursorRequested = true;
     }
@@ -563,8 +573,8 @@ void PlotFuncWindow::setUnitX(Z::Unit unit)
     if (function()->ok())
     {
         auto limits = _plot->limitsX();
-        limits.first = unit->fromSi(oldUnit->toSi(limits.first));
-        limits.second = unit->fromSi(oldUnit->toSi(limits.second));
+        limits.min = unit->fromSi(oldUnit->toSi(limits.min));
+        limits.max = unit->fromSi(oldUnit->toSi(limits.max));
         updateGraphs(Z::WorkPlane::Plane_T);
         updateGraphs(Z::WorkPlane::Plane_S);
         _plot->setLimitsX(limits, true);
@@ -580,8 +590,8 @@ void PlotFuncWindow::setUnitY(Z::Unit unit)
     if (function()->ok())
     {
         auto limits = _plot->limitsY();
-        limits.first = unit->fromSi(oldUnit->toSi(limits.first));
-        limits.second = unit->fromSi(oldUnit->toSi(limits.second));
+        limits.min = unit->fromSi(oldUnit->toSi(limits.min));
+        limits.max = unit->fromSi(oldUnit->toSi(limits.max));
         updateGraphs(Z::WorkPlane::Plane_T);
         updateGraphs(Z::WorkPlane::Plane_S);
         _plot->setLimitsY(limits, true);

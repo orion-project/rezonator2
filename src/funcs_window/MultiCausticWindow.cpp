@@ -60,7 +60,7 @@ void MultiCausticWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, Graph 
             return;
         }
         resultIndex1 = resultIndex2;
-        offset += func->argumentUnit()->fromSi(func->arg()->range.stop.toSi());
+        offset += func->arg()->range.stop.toSi();
     }
 }
 
@@ -76,7 +76,7 @@ void MultiCausticWindow::updateElementBoundMarkers()
     auto funcs = function()->funcs();
     for (int i = 0; i < funcs.size()-1; i++)
     {
-        offset += funcs.at(i)->argumentUnit()->fromSi(funcs.at(i)->arg()->range.stop.toSi());
+        offset += funcs.at(i)->arg()->range.stop.toSi();
         QCPItemStraightLine* marker;
         if (!_elemBoundMarkers.isEmpty())
         {

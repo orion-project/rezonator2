@@ -61,19 +61,38 @@ QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root)
     requestCenterCursor();
 
     // Restore plot limits
-    auto minX = root["x_min"].toDouble(Double::nan());
-    auto maxX = root["x_max"].toDouble(Double::nan());
-    auto minY = root["y_min"].toDouble(Double::nan());
-    auto maxY = root["y_max"].toDouble(Double::nan());
-    if (std::isnan(minX) || std::isnan(maxX) || std::isnan(minY) || std::isnan(maxY))
+    AxisLimits limitsX { root["x_min"].toDouble(Double::nan()),
+                         root["x_max"].toDouble(Double::nan()) };
+    AxisLimits limitsY { root["y_min"].toDouble(Double::nan()),
+                         root["y_max"].toDouble(Double::nan()) };
+    if (limitsX.isInvalid() || limitsY.isInvalid())
         requestAutolimits();
     else
     {
-        _plot->setLimitsX(minX, maxX, false);
-        _plot->setLimitsY(minY, maxY, false);
+        _plot->setLimitsX(limitsX, false);
+        _plot->setLimitsY(limitsY, false);
     }
     _unitX = Z::Units::findByAlias(root["x_unit"].toString(), Z::Units::none());
     _unitY = Z::Units::findByAlias(root["y_unit"].toString(), Z::Units::none());
+
+    // Restore view states
+    QJsonArray viewsJson = root["stored_views"].toArray();
+    for (auto it = viewsJson.begin(); it != viewsJson.end(); it++)
+    {
+        QJsonObject viewJson = (*it).toObject();
+        auto mode = viewJson["mode"].toInt(-1);
+        if (mode < 0) continue;
+        ViewState state;
+        state.limitsX = { viewJson["x_min"].toDouble(Double::nan()),
+                          viewJson["x_max"].toDouble(Double::nan()) };
+        state.limitsY = { viewJson["y_min"].toDouble(Double::nan()),
+                          viewJson["y_max"].toDouble(Double::nan()) };
+        if (state.limitsX.isInvalid() or state.limitsY.isInvalid())
+            continue;
+        state.unitX = Z::Units::findByAlias(viewJson["x_unit"].toString(), Z::Units::none());
+        state.unitY = Z::Units::findByAlias(viewJson["y_unit"].toString(), Z::Units::none());
+        _storedView.insert(mode, state);
+    }
 
     return QString();
 }
@@ -93,12 +112,38 @@ QString PlotFuncWindowStorable::writeWindowGeneral(QJsonObject& root) const
     // Store plot limits
     auto limitsX = _plot->limitsX();
     auto limitsY = _plot->limitsY();
-    root["x_min"] = limitsX.first;
-    root["x_max"] = limitsX.second;
+    root["x_min"] = limitsX.min;
+    root["x_max"] = limitsX.max;
     root["x_unit"] = _unitX->alias();
-    root["y_min"] = limitsY.first;
-    root["y_max"] = limitsY.second;
+    root["y_min"] = limitsY.min;
+    root["y_max"] = limitsY.max;
     root["y_unit"] = _unitY->alias();
+
+    // Store view states
+    QJsonArray viewsJson;
+    for (int key : _storedView.keys())
+    {
+        auto view = _storedView[key];
+        viewsJson.append(QJsonObject{
+            { "mode", key },
+            { "x_min", view.limitsX.min },
+            { "x_max", view.limitsX.max },
+            { "x_unit", view.unitX->alias() },
+            { "y_min", view.limitsY.min },
+            { "y_max", view.limitsY.max },
+            { "y_unit", view.unitY->alias() },
+        });
+//        QJsonObject viewJson;
+//        viewJson["mode"] = key;
+//        viewJson["x_min"] = view.limitsX.min;
+//        viewJson["x_max"] = view.limitsX.max;
+//        viewJson["x_unit"] = view.unitX->alias();
+//        viewJson["y_min"] = view.limitsY.min;
+//        viewJson["y_max"] = view.limitsY.max;
+//        viewJson["y_unit"] = view.unitY->alias();
+//        viewsJson.append(viewJson);
+    }
+    root["stored_views"] = viewsJson;
 
     return QString();
 }
