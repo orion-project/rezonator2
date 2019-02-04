@@ -1,8 +1,8 @@
 #include "StabilityMap2DWindow.h"
 
 #include "../CustomPrefs.h"
-#include "../io/z_io_utils.h"
-#include "../io/z_io_json.h"
+#include "../io/CommonUtils.h"
+#include "../io/JsonUtils.h"
 #include "../widgets/Plot.h"
 #include "../widgets/ElemSelectorWidget.h"
 #include "../widgets/VariableRangeEditor.h"

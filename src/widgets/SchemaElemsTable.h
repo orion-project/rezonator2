@@ -17,7 +17,6 @@ public:
     explicit SchemaElemsTable(Schema *schema, QWidget *parent = nullptr);
 
     void populateParams();
-    void setContextMenu(QMenu *menu) { _contextMenu = menu; }
 
     Schema* schema() const { return _schema; }
 
@@ -25,15 +24,19 @@ public:
     void setSelected(Element*);
 
     Elements selection() const override;
-    QVector<int> selectedRows() const;
+    QList<int> selectedRows() const;
 
     bool hasSelection() const;
 
     // inherits from SchemaListener
     void schemaLoaded(Schema*) override;
+    void schemaRebuilt(Schema*) override;
     void elementCreated(Schema*, Element*) override;
     void elementChanged(Schema*, Element*) override;
     void elementDeleting(Schema*, Element*) override;
+
+    QMenu *elementContextMenu = nullptr;
+    QMenu *lastRowContextMenu = nullptr;
 
 signals:
     void doubleClicked(Element*);
@@ -46,12 +49,12 @@ private:
     enum { COL_IMAGE, COL_LABEL, COL_PARAMS, COL_TITLE, COL_COUNT };
 
     Schema *_schema;
-    QMenu *_contextMenu = nullptr;
 
     void adjustColumns();
     void populate();
     void createRow(Element *elem, int row);
     void populateRow(Element *elem, int row);
+    void fillPlaceholderRow();
 };
 
 #endif // SCHEMA_ELEMS_TABLE_H

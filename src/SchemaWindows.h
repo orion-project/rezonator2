@@ -36,7 +36,18 @@ void adjustIconSize(QToolBar* toolbar, const QSize& iconSize);
 class EditableWindow
 {
 public:
+    enum SupportedCommand {
+        EditCmd_None = 0x00,
+        EditCmd_Cut = 0x01,
+        EditCmd_Copy = 0x02,
+        EditCmd_Paste = 0x04,
+        EditCmd_SelectAll = 0x08
+    };
+    Q_DECLARE_FLAGS(SupportedCommands, SupportedCommand)
+
     virtual ~EditableWindow();
+
+    virtual SupportedCommands supportedCommands() { return EditCmd_None; }
     virtual bool canCut() { return false; }
     virtual bool canCopy() { return false; }
     virtual bool canPaste() { return false; }
@@ -46,6 +57,7 @@ public:
     virtual void selectAll() {}
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(EditableWindow::SupportedCommands)
 
 //------------------------------------------------------------------------------
 /**

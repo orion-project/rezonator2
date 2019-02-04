@@ -55,7 +55,7 @@ protected:
     void closeEvent(class QCloseEvent*) override;
 
 private:
-    QMenu *menuFile, /* TODO:NEXT-VER *menuEdit, */ *menuHelp, *menuWindow, *menuTools,
+    QMenu *menuFile, *menuEdit, *menuHelp, *menuWindow, *menuTools,
           *menuElement, *menuFunctions, *menuView,
           *menuLangs, *menuStyles;
 
@@ -63,14 +63,15 @@ private:
             *actnFileSaveAs, *actnFileTripType, *actnFilePump, *actnFileLambda, *actnFileSummary,
             *actnFileOpenExample, *actnFileProps;
 
-    /* TODO:NEXT-VER QAction *actnEditCut, *actnEditCopy,
-            *actnEditPaste, *actnEditSelectAll; */
+    QAction *actnEditCut, *actnEditCopy,
+            *actnEditPaste, *actnEditSelectAll;
 
     QAction *actnFuncRoundTrip, *actnFuncStabMap, *actnFuncStabMap2d,
             *actnFuncRepRate, *actnFuncMultFwd, *actnFuncMultBkwd,
             *actnFuncCaustic, *actnFuncMultiCaustic, *actnFuncBeamOverStab;
 
-    QAction  *actnToolsGaussCalc, *actnToolsCatalog, *actnToolsPrefs;
+    QAction  *actnToolsGaussCalc, *actnToolsCatalog, *actnToolsPrefs,
+             *actnToolFlipSchema;
 
     QAction *actnWndClose, *actnWndCloseAll, *actnWndTile, *actnWndCascade,
             *actnWndSchema, *actnWndParams, *actnWndProtocol, *actnWndPumps;
@@ -116,6 +117,8 @@ private slots:
     void showPumpsWindow();
 
     void openSchemaExample();
+
+    void flipSchema();
 
     /// Slot connected to @c mdiArea::subWindowActivated() signal.
     /// This method is automatically called when mdiArea changes active widget.

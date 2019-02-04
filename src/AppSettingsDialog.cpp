@@ -44,7 +44,9 @@ QWidget* AppSettingsDialog::createGeneralPage()
 
     groupOptions = new Ori::Widgets::OptionsGroup(tr("Options"), {
         tr("Edit just created element"),
-        tr("Automatically generate labels for new elements"),
+        tr("Generate labels for created elements"),
+        tr("Generate labels for pasted elements"),
+        tr("Generate labels for new pumps"),
         tr("Show start window after application run")
     });
 
@@ -88,7 +90,9 @@ void AppSettingsDialog::populate()
     // options
     groupOptions->setOption(0, settings.editNewElem);
     groupOptions->setOption(1, settings.elemAutoLabel);
-    groupOptions->setOption(2, settings.showStartWindow);
+    groupOptions->setOption(2, settings.elemAutoLabelPasted);
+    groupOptions->setOption(3, settings.pumpAutoLabel);
+    groupOptions->setOption(4, settings.showStartWindow);
 
     // view
     groupView->setOption(0, settings.smallToolbarImages);
@@ -107,7 +111,9 @@ bool AppSettingsDialog::collect()
     // options
     settings.editNewElem = groupOptions->option(0);
     settings.elemAutoLabel = groupOptions->option(1);
-    settings.showStartWindow = groupOptions->option(2);
+    settings.elemAutoLabelPasted = groupOptions->option(2);
+    settings.pumpAutoLabel = groupOptions->option(3);
+    settings.showStartWindow = groupOptions->option(4);
 
     // view
     settings.smallToolbarImages = groupView->option(0);

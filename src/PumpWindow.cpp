@@ -244,6 +244,7 @@ void PumpWindow::createActions()
     _actnPumpDelete = A_(tr("&Delete"), this, SLOT(deletePump()), ":/toolbar/pump_delete", Qt::CTRL | Qt::Key_Delete);
     _actnPumpEdit = A_(tr("&Edit..."), this, SLOT(editPump()), ":/toolbar/pump_edit", Qt::Key_Return);
     _actnPumpActivate = A_(tr("&Activate..."), this, SLOT(activatePump()), ":/toolbar/pump_on", Qt::CTRL | Qt::Key_Return);
+    _actnPumpClone = A_(tr("C&lone"), this, SLOT(clonePump()), ":/toolbar/clone");
 
     #undef A_
 }
@@ -251,7 +252,7 @@ void PumpWindow::createActions()
 void PumpWindow::createMenuBar()
 {
     _windowMenu = Ori::Gui::menu(tr("&Pump"), this,
-        { _actnPumpAdd, nullptr, _actnPumpEdit, _actnPumpActivate, nullptr, _actnPumpDelete });
+        { _actnPumpAdd, _actnPumpClone, nullptr, _actnPumpEdit, _actnPumpActivate, nullptr, _actnPumpDelete });
 
     _contextMenu = Ori::Gui::menu(this,
         { _actnPumpEdit, _actnPumpActivate, nullptr, _actnPumpDelete });
@@ -261,6 +262,7 @@ void PumpWindow::createToolBar()
 {
     populateToolbar({
         Ori::Gui::textToolButton(_actnPumpAdd),
+        Ori::Gui::textToolButton(_actnPumpClone),
         nullptr,
         Ori::Gui::textToolButton(_actnPumpEdit),
         Ori::Gui::textToolButton(_actnPumpActivate),
@@ -275,15 +277,22 @@ void PumpWindow::createStatusBar()
     setContent(_statusBar);
 }
 
-Z::PumpParams* PumpWindow::makeNewPumpDlg() const
+Z::PumpParams* PumpWindow::makeNewPumpDlg()
 {
-    return PumpParamsDialog::makeNewPump();
+    auto pump = PumpParamsDialog::makeNewPump();
+    if (!pump) return nullptr;
+    if (Settings::instance().pumpAutoLabel)
+        Z::Utils::generateLabel(schema(), pump);
+    if (!PumpParamsDialog::editPump(pump))
+    {
+        delete pump;
+        return nullptr;
+    }
+    return pump;
 }
 
-void PumpWindow::createPump()
+void PumpWindow::addNewPump(Z::PumpParams* pump)
 {
-    auto pump = makeNewPumpDlg();
-    if (!pump) return;
     schema()->pumps()->append(pump);
     bool isFirstPump = schema()->pumps()->size() == 1;
     if (isFirstPump)
@@ -292,6 +301,13 @@ void PumpWindow::createPump()
     if (isFirstPump)
         schema()->events().raise(SchemaEvents::RecalRequred);
     showStatusInfo();
+}
+
+void PumpWindow::createPump()
+{
+    auto pump = makeNewPumpDlg();
+    if (!pump) return;
+    addNewPump(pump);
 }
 
 void PumpWindow::editPump()
@@ -348,6 +364,25 @@ void PumpWindow::activatePump()
     schema()->events().raise(SchemaEvents::RecalRequred);
 
     showStatusInfo();
+}
+
+void PumpWindow::clonePump()
+{
+    auto pump = _table->selected();
+    if (!pump) return;
+
+    auto pumpMode = Z::Pump::findByModeName(pump->modeName());
+    if (!pumpMode) return;
+
+    auto newPump = pumpMode->makePump();
+    if (Settings::instance().pumpAutoLabel)
+        Z::Utils::generateLabel(schema(), newPump);
+    else newPump->setLabel(pump->label());
+    newPump->setTitle(pump->title());
+    for (int i = 0; i < pump->params()->size(); i++)
+        newPump->params()->byIndex(i)->setValue(pump->params()->at(i)->value());
+
+    addNewPump(newPump);
 }
 
 void PumpWindow::showStatusInfo()

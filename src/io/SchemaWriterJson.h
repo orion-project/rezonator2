@@ -31,11 +31,20 @@ private:
     void writeCustomParams(QJsonObject& root);
     void writePumps(QJsonObject &root);
     void writePump(QJsonObject &root, Z::PumpParams *pump);
-    void writeElements(QJsonObject& root);
-    void writeElement(QJsonObject& root, Element *elem);
     void writeParamLinks(QJsonObject& root);
     void writeFormulas(QJsonObject& root);
     void writeWindows(QJsonObject& root);
 };
+
+namespace Z {
+namespace IO {
+namespace Json {
+
+void writeElements(QJsonObject& root, const QList<Element*>& elements);
+void writeElement(QJsonObject& root, Element *elem);
+
+} // namespace Json
+} // namespace IO
+} // namespace Z
 
 #endif // SCHEMA_WRITER_JSON_H

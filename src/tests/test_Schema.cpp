@@ -3,7 +3,6 @@
 
 #include <memory>
 
-#pragma GCC diagnostic ignored "-Wweak-vtables"
 #pragma GCC diagnostic ignored "-Wpadded"
 
 namespace Z {
@@ -98,12 +97,12 @@ TEST_METHOD(generateLabel_first_elem)
     Schema s;
     auto e1 = new LabeledElement1;
     s.insertElement(e1);
-    s.generateLabel(e1);
+    Z::Utils::generateLabel(&s, e1);
     ASSERT_EQ_STR(e1->label(), "hhh1");
 
     auto e2 = new LabeledElement2;
     s.insertElement(e2);
-    s.generateLabel(e2);
+    Z::Utils::generateLabel(&s, e2);
     ASSERT_EQ_STR(e2->label(), "ggg1");
 }
 
@@ -112,15 +111,15 @@ TEST_METHOD(generateLabel_next_elem)
     Schema s;
     s.insertElement(new LabeledElement1);
     s.insertElement(new LabeledElement2);
-    s.generateLabel(s.element(0));
-    s.generateLabel(s.element(1));
+    Z::Utils::generateLabel(&s, s.element(0));
+    Z::Utils::generateLabel(&s, s.element(1));
 
     LabeledElement1 e1;
-    s.generateLabel(&e1);
+    Z::Utils::generateLabel(&s, &e1);
     ASSERT_EQ_STR(e1.label(), "hhh2");
 
     LabeledElement2 e2;
-    s.generateLabel(&e2);
+    Z::Utils::generateLabel(&s, &e2);
     ASSERT_EQ_STR(e2.label(), "ggg2");
 }
 

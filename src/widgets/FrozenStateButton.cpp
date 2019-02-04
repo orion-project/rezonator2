@@ -1,4 +1,6 @@
 #include "FrozenStateButton.h"
+
+#include "Appearance.h"
 #include "helpers/OriWidgets.h"
 
 #include <QApplication>
@@ -62,7 +64,7 @@ FrozenStatePopup::FrozenStatePopup(FrozenStateButton *owner) : QFrame(owner, Qt:
     setFrameShape(QFrame::Box);
 
     textInfo = new QLabel;
-    Ori::Gui::setFontSizePt(textInfo, 10);
+    Z::Gui::setValueFont(textInfo);
 
     QToolButton *buttonCopy = new QToolButton;
     buttonCopy->setIcon(QPixmap(":/toolbar/copy"));

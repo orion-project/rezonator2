@@ -23,6 +23,8 @@ public:
     bool showBackground;      ///< Show background image in main window.
     bool useSystemDialogs;    ///< Use native open/save file dialogs.
     bool elemAutoLabel;       ///< Automatically generate labels for new elements.
+    bool elemAutoLabelPasted; ///< Automatically generate labels for pasted elements.
+    bool pumpAutoLabel;       ///< Automatically generate labels for new pumps.
     bool useNativeMenuBar;    ///< Use menu bar specfic to Ubuntu Unity or MacOS (on sceern's top).
     bool showProtocolAtStart; ///< Open protocol window just after application started.
     double plotSafeMarginsPercentX; ///< Extra space around graphs when plot limits are fitted to graphs.

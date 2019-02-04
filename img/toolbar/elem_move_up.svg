@@ -1,0 +1,23 @@
+<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <filter id="a" height="1.247969" width="1.23089" x="-.115445" y="-.123985">
+    <feGaussianBlur stdDeviation=".33319131"/>
+  </filter>
+  <linearGradient id="b" gradientTransform="matrix(.50472392 0 0 .50479899 .275034 11.84509)" gradientUnits="userSpaceOnUse" x1="3.417697" x2="23.230306" y1="12.191525" y2="12.191525">
+    <stop offset="0" stop-color="#0e0f55"/>
+    <stop offset="1" stop-color="#a5a6f1"/>
+  </linearGradient>
+  <linearGradient id="c" gradientTransform="matrix(.5282165 0 0 .52829506 1.513039 12.776285)" gradientUnits="userSpaceOnUse" x1="2.21273" x2="18.562609" y1="9.886662" y2="9.886662">
+    <stop offset="0" stop-color="#0e0f55"/>
+    <stop offset="1" stop-color="#6a6de8"/>
+  </linearGradient>
+  <path d="m0 12h24v12h-24z" fill="#89b2f4"/>
+  <path d="m11.621383 17.999359a4.6214061 4.6220934 0 1 1 -9.2428122 0 4.6214061 4.6220934 0 1 1 9.2428122 0z" fill="#7fe1ff" stroke="url(#b)" stroke-width=".757142"/>
+  <path d="m10.804198 18.310112a3.4047707 3.4930108 0 1 1 -6.8095411 0 3.4047707 3.4930108 0 1 1 6.8095411 0z" fill="#42a5c9" stroke-width=".468776"/>
+  <path d="m5.9690392 14.513068a.64220732 1.8207547 42.786817 1 1 -2.4875681 2.658934.64220732 1.8207547 42.786817 1 1 2.4875681-2.658934z" fill="#fff" stroke-width=".359832"/>
+  <path d="m10.397799 16.248938a2.907956 3.5824995 41.790064 1 1 -5.1204757 4.999562 2.907956 3.5824995 41.790064 1 1 5.1204757-4.999562z" fill="#7fe1ff" stroke-width=".495166"/>
+  <path d="m11.186061 17.999359a4.1860838 4.1867064 0 1 1 -8.3721676 0 4.1860838 4.1867064 0 1 1 8.3721676 0z" fill="none" opacity=".657407" stroke="url(#c)" stroke-width=".264108"/>
+  <path d="m18.681998 15.595762a2.9268398 3.6230018 0 1 1 -5.853679 0 2.9268398 3.6230018 0 1 1 5.853679 0z" fill="#d2edf7" filter="url(#a)" transform="matrix(.67802206 .40882642 -.51581808 .67548526 5.424374 1.920452)"/>
+  <path d="m9.9183681 18.876126a.49158929 1.394526 47.46961 1 1 -2.0299127 1.910326.49158929 1.394526 47.46961 1 1 2.0299127-1.910326z" fill="#fff" stroke-width=".275519"/>
+  <path d="m14.5 19.500001v-14.014966h-2.066339l5.000981-4.4413358 5.045633 4.4413358-1.99524.02993.02993 13.985034z" fill="#f16174" fill-rule="evenodd" stroke="#bf0808"/>
+  <path d="m15.763865 17.991767v-12.9999979" fill="none" stroke="#ffacac" stroke-linecap="round"/>
+</svg>

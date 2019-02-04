@@ -2,9 +2,7 @@
 #include "../core/Element.h"
 #include "TestUtils.h"
 
-#pragma GCC diagnostic ignored "-Wweak-vtables"
 #pragma GCC diagnostic ignored "-Wpadded"
-#pragma GCC diagnostic ignored "-Wunused-member-function"
 
 namespace Z {
 namespace Tests {

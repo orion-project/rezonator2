@@ -1,6 +1,7 @@
 #include "Format.h"
 #include "Protocol.h"
 #include "Schema.h"
+#include "Utils.h"
 
 //------------------------------------------------------------------------------
 //                                SchemaState
@@ -68,6 +69,7 @@ const SchemaEvents::EventProps& SchemaEvents::propsOf(Event event)
         INIT_EVENT(Saved,              true,         SchemaState::None     ),
         INIT_EVENT(Loading,            false,        SchemaState::Loading  ),
         INIT_EVENT(Loaded,             true,         SchemaState::None     ),
+        INIT_EVENT(Rebuilt,            true,         SchemaState::Modified ),
         INIT_EVENT(ElemCreated,        true,         SchemaState::Modified ),
         INIT_EVENT(ElemChanged,        true,         SchemaState::Modified ),
         INIT_EVENT(ElemDeleting,       false,        SchemaState::Current  ),
@@ -98,6 +100,7 @@ void SchemaEvents::notify(SchemaListener* listener, SchemaEvents::Event event, v
     case Saved: listener->schemaSaved(_schema); break;
     case Loading: listener->schemaLoading(_schema); break;
     case Loaded: listener->schemaLoaded(_schema); break;
+    case Rebuilt: listener->schemaRebuilt(_schema); break;
     case ElemCreated: listener->elementCreated(_schema, reinterpret_cast<Element*>(param)); break;
     case ElemChanged: listener->elementChanged(_schema, reinterpret_cast<Element*>(param)); break;
     case ElemDeleting: listener->elementDeleting(_schema, reinterpret_cast<Element*>(param)); break;
@@ -180,6 +183,8 @@ Element* Schema::elementByLabel(const QString& label) const
 
 void Schema::insertElement(Element* elem, int index, bool event)
 {
+    if (!elem) return;
+
     if (isValid(index))
         _items.insert(index, elem);
     else
@@ -192,6 +197,34 @@ void Schema::insertElement(Element* elem, int index, bool event)
     if (event)
     {
         _events.raise(SchemaEvents::ElemCreated, elem);
+        _events.raise(SchemaEvents::RecalRequred);
+    }
+}
+
+void Schema::insertElements(const Elements& elems, int index, bool event, bool generateLabels)
+{
+    int insert = isValid(index);
+    for (int i = 0; i < elems.size(); i++)
+    {
+        auto elem = elems.at(i);
+
+        if (insert)
+            _items.insert(index + i, elem);
+        else
+            _items.append(elem);
+
+        elem->setOwner(this);
+
+        if (generateLabels)
+            Z::Utils::generateLabel(this, elem);
+    }
+
+    relinkInterfaces();
+
+    if (event)
+    {
+        for (auto elem : elems)
+            _events.raise(SchemaEvents::ElemCreated, elem);
         _events.raise(SchemaEvents::RecalRequred);
     }
 }
@@ -322,20 +355,65 @@ void Schema::relinkInterfaces()
     }
 }
 
-void Schema::generateLabel(Element* elem)
+void Schema::shiftElement(int index, const std::function<int(int)>& getTargetIndex)
 {
-    int maxElemNum = 0;
-    auto prefix = elem->labelPrefix();
-    for (const Element* e : _items)
-    {
-        if (e != elem and e->label().startsWith(prefix))
-        {
-            QStringRef ref(&e->label(), prefix.length(), e->label().length() - prefix.length());
-            bool isInt = false;
-            int elemNum = ref.toInt(&isInt);
-            if (isInt && elemNum > maxElemNum)
-                maxElemNum = elemNum;
-        }
-    }
-    elem->setLabel(QString("%1%2").arg(prefix).arg(maxElemNum+1));
+    if (!isValid(index)) return;
+    if (_items.size() == 1) return;
+    _items.swap(index, getTargetIndex(index));
+    relinkInterfaces();
+    _events.raise(SchemaEvents::Rebuilt);
+    _events.raise(SchemaEvents::RecalRequred);
 }
+
+void Schema::moveElementUp(Element *elem)
+{
+    shiftElement(indexOf(elem), [&](int index){
+        return index == 0 ? _items.size() - 1 : index - 1;
+    });
+}
+
+void Schema::moveElementDown(Element *elem)
+{
+    shiftElement(indexOf(elem), [&](int index){
+        return index == _items.size() - 1 ? 0 : index + 1;
+    });
+}
+
+void Schema::flip()
+{
+    int size = _items.size();
+    if (size < 2) return;
+    for (int i = 0; i < size / 2; i++)
+        _items.swap(i, size - 1 - i);
+    relinkInterfaces();
+    _events.raise(SchemaEvents::Rebuilt);
+    _events.raise(SchemaEvents::RecalRequred);
+}
+
+//------------------------------------------------------------------------------
+//                                Z::Utils
+//------------------------------------------------------------------------------
+
+namespace Z {
+namespace Utils {
+
+void generateLabel(Schema* schema, Element* elem)
+{
+    QStringList labels;
+    for (const auto e : schema->elements())
+        if (e != elem)
+            labels << e->label();
+    elem->setLabel(generateLabel(elem->labelPrefix(), labels));
+}
+
+void generateLabel(Schema* schema, PumpParams* pump)
+{
+    QStringList labels;
+    for (const auto p : *schema->pumps())
+        if (p != pump)
+            labels << p->label();
+    pump->setLabel(generateLabel(Pump::labelPrefix(), labels));
+}
+
+} // namespace Utils
+} // namespace Z

@@ -1,7 +1,7 @@
 #include "SchemaReaderJson.h"
 
-#include "z_io_utils.h"
-#include "z_io_json.h"
+#include "CommonUtils.h"
+#include "JsonUtils.h"
 #include "ISchemaWindowStorable.h"
 #include "../core/Schema.h"
 #include "../core/ElementsCatalog.h"
@@ -40,22 +40,30 @@ QString readParamValueTS(const QJsonObject& json, ParameterTS* param)
 class JsonValue
 {
 public:
-    JsonValue(const QJsonObject& root, const QString& key)
+    JsonValue(const QJsonObject& root, const QString& key, Z::Report* report)
     {
         _path = "/" + key;
         initObj(root, key);
+
+        if (!_msg.isEmpty() and report)
+            report->warning(_msg);
     }
 
-    JsonValue(const JsonValue& root, const QString& key)
+    JsonValue(const JsonValue& root, const QString& key, Z::Report* report)
     {
         _path = root._path % '/' % key;
         initObj(root.obj(), key);
+
+        if (!_msg.isEmpty() and report)
+            report->warning(_msg);
     }
 
     QString msg() const { return _msg; }
 
     const QJsonObject& obj() const { return _obj; }
     const QJsonArray& array() const { return _array; }
+
+    operator bool() const { return _msg.isEmpty(); }
 
 private:
     QString _path;
@@ -127,17 +135,14 @@ void SchemaReaderJson::readFromUtf8(const QByteArray& data)
     readGeneral(root);
     readCustomParams(root);
     readPumps(root);
-    readElements(root);
+
+    auto elems = readElements(root, &_report);
+    _schema->insertElements(elems, -1, false, false);
+
     readParamLinks(root);
     readFormulas(root);
     readWindows(root);
 }
-
-#define WITH_JSON_VALUE(value, root, key)\
-    JsonValue value(root, key);\
-    if (!value.msg().isEmpty())\
-        _report.warning(value.msg());\
-    else
 
 void SchemaReaderJson::readGeneral(const QJsonObject& root)
 {
@@ -155,10 +160,12 @@ void SchemaReaderJson::readGeneral(const QJsonObject& root)
     _schema->setTripType(tripType);
 
     // Read named parameters
-    WITH_JSON_VALUE(paramsJson, root, "builtin_params")
+    JsonValue paramsJson(root, "builtin_params", &_report);
+    if (paramsJson)
     {
         // Read lambda
-        WITH_JSON_VALUE(lambdaJson, paramsJson, "lambda")
+        JsonValue lambdaJson(paramsJson, "lambda", &_report);
+        if (lambdaJson)
         {
             QString res = readParamValue(lambdaJson.obj(), &_schema->wavelength());
             if (!res.isEmpty())
@@ -169,11 +176,13 @@ void SchemaReaderJson::readGeneral(const QJsonObject& root)
 
 void SchemaReaderJson::readCustomParams(const QJsonObject& root)
 {
-    WITH_JSON_VALUE(paramsJson, root, "custom_params")
+    JsonValue paramsJson(root, "custom_params", &_report);
+    if (paramsJson)
     {
         for (const QString& paramAlias : paramsJson.obj().keys())
         {
-            WITH_JSON_VALUE(paramJson, paramsJson, paramAlias)
+            JsonValue paramJson(paramsJson, paramAlias, &_report);
+            if (paramJson)
             {
                 readCustomParam(paramJson.obj(), paramAlias);
             }
@@ -217,7 +226,8 @@ void SchemaReaderJson::readPumps(const QJsonObject& root)
         }
         else return;
     }
-    WITH_JSON_VALUE(pumpsJson, root, "pumps")
+    JsonValue pumpsJson(root, "pumps", &_report);
+    if (pumpsJson)
         for (auto it = pumpsJson.array().begin(); it != pumpsJson.array().end(); it++)
             readPump((*it).toObject());
 }
@@ -234,11 +244,13 @@ void SchemaReaderJson::readPump(const QJsonObject& root)
     pump->setTitle(root["title"].toString());
     pump->activate(root["is_active"].toBool());
 
-    WITH_JSON_VALUE(paramsJson, root, "params")
+    JsonValue paramsJson(root, "params", &_report);
+    if (paramsJson)
     {
         for (Z::ParameterTS *param : *pump->params())
         {
-            WITH_JSON_VALUE(paramJson, paramsJson, param->alias())
+            JsonValue paramJson(paramsJson, param->alias(), &_report);
+            if (paramJson)
             {
                 auto res = readParamValueTS(paramJson.obj(), param);
                 if (!res.isEmpty())
@@ -250,47 +262,10 @@ void SchemaReaderJson::readPump(const QJsonObject& root)
     _schema->pumps()->append(pump);
 }
 
-void SchemaReaderJson::readElements(const QJsonObject& root)
-{
-    WITH_JSON_VALUE(elemsJson, root, "elements")
-        for (auto it = elemsJson.array().begin(); it != elemsJson.array().end(); it++)
-            readElement((*it).toObject());
-}
-
-void SchemaReaderJson::readElement(const QJsonObject& root)
-{
-    auto elemType = root["type"].toString();
-    auto elem = ElementsCatalog::instance().create(elemType);
-    if (!elem)
-        return _report.warning(QString("Unknown element type '%1', element skipped").arg(elemType));
-
-    _schema->insertElement(elem, -1, false);
-
-    ElementLocker lock(elem);
-
-    elem->setLabel(root["label"].toString());
-    elem->setTitle(root["title"].toString());
-    elem->setDisabled(root["is_disabled"].toBool());
-
-    WITH_JSON_VALUE(paramsJson, root, "params")
-    {
-        for (Z::Parameter *param : elem->params())
-        {
-            WITH_JSON_VALUE(paramJson, paramsJson, param->alias())
-            {
-                auto res = readParamValue(paramJson.obj(), param);
-                if (!res.isEmpty())
-                    _report.warning(QString("Reading element '%1': %2").arg(elem->displayLabel(), res));
-            }
-        }
-    }
-
-    // TODO: read misalignments
-}
-
 void SchemaReaderJson::readParamLinks(const QJsonObject& root)
 {
-    WITH_JSON_VALUE(linksJson, root, "param_links")
+    JsonValue linksJson(root, "param_links", &_report);
+    if (linksJson)
         for (auto it = linksJson.array().begin(); it != linksJson.array().end(); it++)
             readParamLink((*it).toObject());
 }
@@ -321,7 +296,8 @@ void SchemaReaderJson::readParamLink(const QJsonObject& root)
 
 void SchemaReaderJson::readFormulas(const QJsonObject& root)
 {
-    WITH_JSON_VALUE(formulasJson, root, "formulas")
+    JsonValue formulasJson(root, "formulas", &_report);
+    if (formulasJson)
         for (auto it = formulasJson.array().begin(); it != formulasJson.array().end(); it++)
             readFormula((*it).toObject());
 }
@@ -338,7 +314,8 @@ void SchemaReaderJson::readFormula(const QJsonObject& root)
     formula->setCode(root["code"].toString());
 
     auto globalParams = _schema->globalParams();
-    WITH_JSON_VALUE(depsJson, root, "param_deps")
+    JsonValue depsJson(root, "param_deps", &_report);
+    if (depsJson)
         for (auto it = depsJson.array().begin(); it != depsJson.array().end(); it++)
         {
             auto depAlias = (*it).toString();
@@ -358,7 +335,8 @@ void SchemaReaderJson::readFormula(const QJsonObject& root)
 
 void SchemaReaderJson::readWindows(const QJsonObject& root)
 {
-    WITH_JSON_VALUE(windowsJson, root, "windows")
+    JsonValue windowsJson(root, "windows", &_report);
+    if (windowsJson)
         for (auto it = windowsJson.array().begin(); it != windowsJson.array().end(); it++)
             readWindow((*it).toObject());
 }
@@ -390,3 +368,60 @@ void SchemaReaderJson::readWindow(const QJsonObject& root)
         delete window;
     }
 }
+
+namespace Z {
+namespace IO {
+namespace Json {
+
+QList<Element*> readElements(const QJsonObject& root, Z::Report* report)
+{
+    QList<Element*> elems;
+    JsonValue elemsJson(root, "elements", report);
+    if (elemsJson)
+        for (auto it = elemsJson.array().begin(); it != elemsJson.array().end(); it++)
+        {
+            auto elem = readElement((*it).toObject(), report);
+            if (elem) elems << elem;
+        }
+    return elems;
+}
+
+Element* readElement(const QJsonObject& root, Z::Report* report)
+{
+    auto elemType = root["type"].toString();
+    auto elem = ElementsCatalog::instance().create(elemType);
+    if (!elem)
+    {
+        report->warning(QString("Unknown element type '%1', element skipped").arg(elemType));
+        return nullptr;
+    }
+
+    ElementLocker lock(elem);
+
+    elem->setLabel(root["label"].toString());
+    elem->setTitle(root["title"].toString());
+    elem->setDisabled(root["is_disabled"].toBool());
+
+    JsonValue paramsJson(root, "params", report);
+    if (paramsJson)
+    {
+        for (Z::Parameter *param : elem->params())
+        {
+            JsonValue paramJson(paramsJson, param->alias(), report);
+            if (paramJson)
+            {
+                auto res = readParamValue(paramJson.obj(), param);
+                if (!res.isEmpty())
+                    report->warning(QString("Reading element '%1': %2").arg(elem->displayLabel(), res));
+            }
+        }
+    }
+
+    // TODO: read misalignments
+
+    return elem;
+}
+
+} // namespace Json
+} // namespace IO
+} // namespace Z

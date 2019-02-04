@@ -8,6 +8,7 @@
 QT_BEGIN_NAMESPACE
 class QMenu;
 class QAction;
+class QShortcut;
 QT_END_NAMESPACE
 
 class CalcManager;
@@ -31,18 +32,27 @@ public:
     void elementCreated(Schema*, Element*) override;
 
     // inherits from EditableWindow
+    SupportedCommands supportedCommands() override {
+        return EditCmd_Copy | EditCmd_Paste | EditCmd_SelectAll; }
     bool canCopy() override;
     bool canPaste() override { return true; }
+    void selectAll() override;
+
+public slots:
+    void copy() override;
+    void paste() override;
 
 protected:
     // SchemaViewWindow is always visible and can't be closed.
     void closeEvent(QCloseEvent *event) override { event->ignore(); }
 
 private:
-    QAction *actnElemAdd, *actnElemInsertBefore, *actnElemInsertAfter, *actnElemProp,
-        *actnElemMatr, *actnElemMatrAll, *actnElemDelete/*, TODO:NEXT-VER *actnEditCopy, *actnEditPaste */;
+    QAction *actnElemAdd, *actnElemMoveUp, *actnElemMoveDown, *actnElemProp,
+        *actnElemMatr, *actnElemMatrAll, *actnElemDelete, *actnEditCopy, *actnEditPaste;
 
-    QMenu *menuElement, *menuContext;
+    QMenu *menuElement, *menuContextElement, *menuContextLastRow;
+
+    QShortcut* shortcutAddFromLastRow;
 
     class SchemaLayout *_layout;
     class SchemaElemsTable *_table;
@@ -58,14 +68,12 @@ private:
 
 private slots:
     void actionElemAdd();
-    void actionElemInsertBefore();
-    void actionElemInsertAfter();
+    void actionElemMoveUp();
+    void actionElemMoveDown();
     void actionElemProp();
     void actionElemDelete();
-
-    // inherits from EditableWindow
-    void copy() override;
-    void paste() override;
+    void rowDoubleClicked(Element*);
+    void currentCellChanged(int curRow, int, int prevRow, int);
 };
 
 #endif // SCHEMA_WINDOW_H

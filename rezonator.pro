@@ -115,8 +115,6 @@ HEADERS += \
     src/io/SchemaReaderIni.h \
     src/io/SchemaReaderJson.h \
     src/io/SchemaWriterJson.h \
-    src/io/z_io_json.h \
-    src/io/z_io_utils.h \
     src/tests/TestSuite.h \
     src/tests/TestUtils.h \
     src/widgets/Appearance.h \
@@ -153,7 +151,11 @@ HEADERS += \
     src/AppSettingsDialog.h \
     src/SchemaPropsDialog.h \
     src/funcs/BeamOverStabFunction.h \
-    src/funcs_window/BeamOverStabWindow.h
+    src/funcs_window/BeamOverStabWindow.h \
+    src/io/JsonUtils.h \
+    src/io/CommonUtils.h \
+    src/io/Clipboard.h \
+    src/core/Utils.h
 	
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -208,8 +210,6 @@ SOURCES += \
     src/io/SchemaReaderIni.cpp \
     src/io/SchemaReaderJson.cpp \
     src/io/SchemaWriterJson.cpp \
-    src/io/z_io_json.cpp \
-    src/io/z_io_utils.cpp \
     src/main.cpp \
     src/tests/test_ElemSelectorWidget.cpp \
     src/tests/test_Element.cpp \
@@ -261,7 +261,11 @@ SOURCES += \
     src/AppSettingsDialog.cpp \
     src/SchemaPropsDialog.cpp \
     src/funcs/BeamOverStabFunction.cpp \
-    src/funcs_window/BeamOverStabWindow.cpp
+    src/funcs_window/BeamOverStabWindow.cpp \
+    src/io/JsonUtils.cpp \
+    src/io/CommonUtils.cpp \
+    src/io/Clipboard.cpp \
+    src/core/Utils.cpp
 
 DISTFILES += \
     src/StartWindow.qss \

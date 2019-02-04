@@ -53,6 +53,8 @@ void Settings::load()
     s.beginGroup("Options");
     LOAD_DEF(editNewElem, Bool, true);
     LOAD_DEF(elemAutoLabel, Bool, true);
+    LOAD_DEF(elemAutoLabelPasted, Bool, true);
+    LOAD_DEF(pumpAutoLabel, Bool, true);
     LOAD(defaultTripType, String);
     LOAD_DEF(showStartWindow, Bool, true);
     LOAD_DEF(mruSchemaCount, Int, 16);
@@ -84,6 +86,8 @@ void Settings::save()
     s.beginGroup("Options");
     SAVE(editNewElem);
     SAVE(elemAutoLabel);
+    SAVE(elemAutoLabelPasted);
+    SAVE(pumpAutoLabel);
     SAVE(defaultTripType);
     SAVE(showStartWindow);
     SAVE(mruSchemaCount);

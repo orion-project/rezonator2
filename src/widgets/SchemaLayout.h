@@ -61,6 +61,7 @@ public:
 
     // inherits from SchemaListener
     void schemaLoaded(Schema*) override { populate(); }
+    void schemaRebuilt(Schema*) override { populate(); }
     void elementCreated(Schema*, Element*) override { populate(); }
     void elementChanged(Schema*, Element*) override { populate(); }
     void elementDeleted(Schema*, Element*) override { populate(); }

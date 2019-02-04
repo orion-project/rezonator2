@@ -11,7 +11,7 @@
 #include "io/SchemaReaderIni.h"
 #include "io/SchemaReaderJson.h"
 #include "io/SchemaWriterJson.h"
-#include "io/z_io_utils.h"
+#include "io/CommonUtils.h"
 
 #include "helpers/OriDialogs.h"
 #include "tools/OriWaitCursor.h"
@@ -142,7 +142,7 @@ void ProjectOperations::openSchemaFile(const QString& fileName, const OpenFileOp
         report = reader.report();
     }
 
-    if (!report.IsEmpty())
+    if (!report.isEmpty())
         writeProtocol(report, tr("There are messages while loading project."));
 
     if (opts.isExample)
@@ -207,7 +207,7 @@ bool ProjectOperations::saveSchemaFile(const QString& fileName)
         Ori::WaitCursor wc;
         writer.writeToFile(fileName);
     }
-    if (!writer.report().IsEmpty())
+    if (!writer.report().isEmpty())
         writeProtocol(writer.report(), tr("There are messages while saving project."));
 
     if (!writer.report().hasErrors())
@@ -241,7 +241,7 @@ void ProjectOperations::saveSchemaFileCopy()
     SchemaWriterJson writer(schema());
     writer.writeToFile(fileName);
 
-    if (!writer.report().IsEmpty())
+    if (!writer.report().isEmpty())
         writeProtocol(writer.report(), tr("There are messages while saving copy of project."));
 }
 

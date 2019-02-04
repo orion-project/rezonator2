@@ -90,17 +90,18 @@ public slots:
     void deletePump();
     void editPump();
     void activatePump();
+    void clonePump();
 
 protected:
     explicit PumpWindow(Schema*owner);
 
-    virtual Z::PumpParams* makeNewPumpDlg() const;
+    virtual Z::PumpParams* makeNewPumpDlg();
 
 private:
     static PumpWindow* _instance;
 
     PumpsTable* _table;
-    QAction *_actnPumpAdd, *_actnPumpDelete, *_actnPumpEdit, *_actnPumpActivate;
+    QAction *_actnPumpAdd, *_actnPumpDelete, *_actnPumpEdit, *_actnPumpActivate, *_actnPumpClone;
     QMenu *_windowMenu, *_contextMenu;
     Ori::Widgets::StatusBar* _statusBar;
     bool _isEditingNewPump = false;
@@ -110,6 +111,7 @@ private:
     void createToolBar();
     void createStatusBar();
     void showStatusInfo();
+    void addNewPump(Z::PumpParams* pump);
 };
 
 #endif // PUMP_WINDOW_H

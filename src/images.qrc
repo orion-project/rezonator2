@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/toolbar">
         <file alias="catalog">../img/toolbar/elements.svg</file>
+        <file alias="clone">../img/toolbar/clone.svg</file>
         <file alias="copy">../img/toolbar/copy.svg</file>
         <file alias="copy_all">../img/toolbar/copy_all.svg</file>
         <file alias="copy_img">../img/toolbar/copy_img.svg</file>
@@ -8,8 +9,8 @@
         <file alias="delete">../img/toolbar/delete.svg</file>
         <file alias="elem_add">../img/toolbar/elem_add.svg</file>
         <file alias="elem_delete">../img/toolbar/elem_delete.svg</file>
-        <file alias="elem_insert_after">../img/toolbar/elem_insert_after.svg</file>
-        <file alias="elem_insert_before">../img/toolbar/elem_insert_before.svg</file>
+        <file alias="elem_move_up">../img/toolbar/elem_move_up.svg</file>
+        <file alias="elem_move_down">../img/toolbar/elem_move_down.svg</file>
         <file alias="elem_matr">../img/toolbar/elem_matr.svg</file>
         <file alias="elem_prop">../img/toolbar/elem_prop.svg</file>
         <file alias="error">../img/toolbar/error.svg</file>

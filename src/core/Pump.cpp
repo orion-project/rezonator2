@@ -190,4 +190,9 @@ PumpMode* Pump::findByModeName(const QString& name)
     return nullptr;
 }
 
+QString Pump::labelPrefix()
+{
+    return QStringLiteral("P");
+}
+
 } // namespace Z

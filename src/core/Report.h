@@ -31,7 +31,7 @@ public:
     bool hasWarnings() const { return hasEvents(Event::Warning); }
     bool hasErrors() const { return hasEvents(Event::Error); }
     bool hasInfo() const { return hasEvents(Event::Info); }
-    bool IsEmpty() const { return _events.isEmpty(); }
+    bool isEmpty() const { return _events.isEmpty(); }
 
     void info(const QString& message);
     void warning(const QString& message);

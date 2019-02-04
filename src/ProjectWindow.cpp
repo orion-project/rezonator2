@@ -18,6 +18,7 @@
 #include "helpers/OriWindows.h"
 #include "tools/OriMruList.h"
 #include "tools/OriSettings.h"
+#include "widgets/OriFlatToolBar.h"
 #include "widgets/OriLangsMenu.h"
 #include "widgets/OriMruMenu.h"
 #include "widgets/OriMdiToolBar.h"
@@ -131,11 +132,10 @@ void ProjectWindow::createActions()
     actnFileProps = A_(tr("Prop&erties..."), _operations, SLOT(editSchemaProps()), ":/toolbar/schema_prop");
     actnFileExit = A_(tr("E&xit"), qApp, SLOT(closeAllWindows()), nullptr, Qt::CTRL | Qt::Key_Q);
 
-    /* TODO:NEXT-VER
     actnEditCut = A_(tr("Cu&t"), _mdiArea, SLOT(editableChild_Cut()), ":/toolbar/cut", QKeySequence::Cut);
     actnEditCopy = A_(tr("&Copy"), _mdiArea, SLOT(editableChild_Copy()), ":/toolbar/copy", QKeySequence::Copy);
     actnEditPaste = A_(tr("&Paste"), _mdiArea, SLOT(editableChild_Paste()), ":/toolbar/paste", QKeySequence::Paste);
-    actnEditSelectAll = A_(tr("Select &All"), _mdiArea, SLOT(editableChild_SelectAll()), 0, QKeySequence::SelectAll); */
+    actnEditSelectAll = A_(tr("Select &All"), _mdiArea, SLOT(editableChild_SelectAll()), nullptr, QKeySequence::SelectAll);
 
     actnFuncRoundTrip = A_(tr("&Round-trip Matrix"), _calculations, SLOT(funcRoundTrip()), ":/toolbar/func_round_trip");
     actnFuncMultFwd = A_(tr("Multiply Selected &Forward"), _calculations, SLOT(funcMultFwd()));
@@ -150,6 +150,7 @@ void ProjectWindow::createActions()
     actnToolsCatalog = A_(tr("&Elements Catalog"), this, SLOT(showElementsCatalog()), ":/toolbar/catalog");
     actnToolsGaussCalc = A_(tr("&Gauss Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
     actnToolsPrefs = A_(tr("Pre&ferences..."), this, SLOT(showPreferences()), ":/toolbar/settings");
+    actnToolFlipSchema = A_(tr("Flip Schema"), this, SLOT(flipSchema()));
 
     // These common window actions must not have data (action->data()), as data presense indicates that
     // this action is for activation of specific subwindow and _mdiArea is responsible for it.
@@ -188,8 +189,8 @@ void ProjectWindow::createMenuBar()
           actnFileSaveAs, actnFileSaveCopy, nullptr,
           actnFileProps, actnFileTripType, actnFileLambda, actnFilePump, actnFileSummary, nullptr, actnFileExit });
 
-    /* TODO:NEXT-VER menuEdit = Ori::Gui::menu(tr("&Edit"), this,
-        { actnEditCut, actnEditCopy, actnEditPaste, 0, actnEditSelectAll }); */
+    menuEdit = Ori::Gui::menu(tr("&Edit"), this,
+        { actnEditCut, actnEditCopy, actnEditPaste, nullptr, actnEditSelectAll });
 
     _stylesMenu = new Ori::Widgets::StylesMenu(CommonData::instance()->styler(), this);
     _langsMenu = new Ori::Widgets::LanguagesMenu(CommonData::instance()->translator(), ":/toolbar16/langs", this);
@@ -201,7 +202,8 @@ void ProjectWindow::createMenuBar()
           actnFuncBeamOverStab, nullptr, actnFuncRepRate });
 
     menuTools = Ori::Gui::menu(tr("&Tools", "Menu title"), this,
-        { actnToolsGaussCalc, actnToolsCatalog, nullptr, actnToolsPrefs });
+        { actnToolFlipSchema, nullptr,
+          actnToolsGaussCalc, actnToolsCatalog, nullptr, actnToolsPrefs });
 
     menuWindow = Ori::Gui::menu(tr("&Window"), this,
         { actnWndSchema, actnWndParams, actnWndPumps, actnWndProtocol, nullptr,
@@ -214,21 +216,15 @@ void ProjectWindow::createMenuBar()
 
 void ProjectWindow::createToolBars()
 {
-    addToolBar(makeToolBar(tr("File"),
-        { actnFileNew, Ori::Gui::menuToolButton(_mruMenu, actnFileOpen),
-          actnFileSave, nullptr, actnFileProps, actnFilePump, actnFileSummary }));
-
-    // TODO:NEXT-VER addToolBar(makeToolBar(tr("Edit"), { actnEditCut, actnEditCopy, actnEditPaste }));
-
-    addToolBar(makeToolBar(tr("Functions"),
-        { actnFuncRoundTrip, nullptr, actnFuncStabMap, actnFuncStabMap2d,
-          actnFuncBeamOverStab, actnFuncCaustic, actnFuncMultiCaustic, nullptr,
-          actnFuncRepRate }));
-
-    addToolBar(makeToolBar(tr("Misc"),
-        { actnWndParams, actnWndPumps }));
-
-    addToolBar(makeToolBar(tr("Tools"), { actnToolsGaussCalc }));
+    addToolBar(makeToolBar({
+        actnFileNew, Ori::Gui::menuToolButton(_mruMenu, actnFileOpen),
+        actnFileSave, nullptr, actnFileProps, actnFilePump, actnFileSummary , nullptr,
+        actnEditCut, actnEditCopy, actnEditPaste, nullptr,
+        actnFuncRoundTrip, nullptr, actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamOverStab, nullptr,
+        actnFuncCaustic, actnFuncMultiCaustic, nullptr, actnFuncRepRate, nullptr,
+        actnWndParams, actnWndPumps, nullptr,
+        actnToolsGaussCalc
+    }, true));
 
     _mdiToolbar = new Ori::Widgets::MdiToolBar(tr("Windows"), _mdiArea);
     Z::WindowUtils::adjustIconSize(_mdiToolbar);
@@ -257,18 +253,27 @@ void ProjectWindow::updateTitle()
         Ori::Wnd::setWindowFilePath(this, schema()->fileName());
 }
 
+namespace  {
+
+void activateEditAction(QAction* action, EditableWindow* wnd, EditableWindow::SupportedCommand cmd)
+{
+    bool on = wnd && wnd->supportedCommands().testFlag(cmd);
+    action->setEnabled(on);
+    action->setVisible(on);
+}
+
+} // namespace
+
 void ProjectWindow::updateMenuBar()
 {
     BasicMdiChild* child = _mdiArea->activeChild();
 
-    /* TODO:NEXT-VER
     // Update Edit menu
     EditableWindow* editable = _mdiArea->activeEditableChild();
-
-    actnEditCut->setEnabled(editable);
-    actnEditCopy->setEnabled(editable);
-    actnEditPaste->setEnabled(editable);
-    actnEditSelectAll->setEnabled(editable); */
+    activateEditAction(actnEditCut, editable, EditableWindow::EditCmd_Cut);
+    activateEditAction(actnEditCopy, editable, EditableWindow::EditCmd_Copy);
+    activateEditAction(actnEditPaste, editable, EditableWindow::EditCmd_Paste);
+    activateEditAction(actnEditSelectAll, editable, EditableWindow::EditCmd_SelectAll);
 
     // Update View menu
     menuView->clear();
@@ -289,7 +294,8 @@ void ProjectWindow::updateMenuBar()
     QMenuBar* menuBar = this->menuBar();
     menuBar->clear();
     menuBar->addMenu(menuFile);
-    // TODO:NEXT-VER menuBar->addMenu(menuEdit);
+    if (editable)
+        menuBar->addMenu(menuEdit);
     menuBar->addMenu(menuView);
     menuBar->addMenu(menuFunctions);
     if (child)
@@ -447,6 +453,12 @@ void ProjectWindow::showGaussCalculator()
     GaussCalculatorWindow::showCalcWindow();
 }
 
+void ProjectWindow::flipSchema()
+{
+    if (Ori::Dlg::yes(tr("Do you want to rearrange elements in the opposite order?")))
+        schema()->flip();
+}
+
 //------------------------------------------------------------------------------
 //                             Help actions
 
@@ -559,3 +571,4 @@ void ProjectWindow::schemaSaved(Schema*)
     updateStatusInfo();
     updateTitle();
 }
+
