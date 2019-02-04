@@ -8,6 +8,7 @@
 #include "../widgets/GraphDataGrid.h"
 #include "../widgets/CursorPanel.h"
 #include "../widgets/PlotParamsPanel.h"
+#include "../widgets/UnitWidgets.h"
 #include "helpers/OriWidgets.h"
 #include "widgets/OriFlatToolBar.h"
 #include "widgets/OriLabels.h"
@@ -96,6 +97,15 @@ void PlotFuncWindow::createMenuBar()
     menuFormat = menu(tr("Fo&rmat", "Menu title"), this, {
         // TODO
     });
+
+    _unitsMenuX = new UnitsMenu(tr("X-axis Unit"));
+    _unitsMenuY = new UnitsMenu(tr("Y-axis Unit"));
+    _plot->menuAxisX = menu(this, {_unitsMenuX->menu(), nullptr, actnSetLimitsX, actnAutolimitsX});
+    _plot->menuAxisY = menu(this, {_unitsMenuY->menu(), nullptr, actnSetLimitsY, actnAutolimitsY});
+    connect(_plot->menuAxisX, &QMenu::aboutToShow, [this](){ _unitsMenuX->setUnit(getUnitX()); });
+    connect(_plot->menuAxisY, &QMenu::aboutToShow, [this](){ _unitsMenuY->setUnit(getUnitY()); });
+    connect(_unitsMenuX, &UnitsMenu::unitChanged, this, &PlotFuncWindow::unitXChanged);
+    connect(_unitsMenuY, &UnitsMenu::unitChanged, this, &PlotFuncWindow::unitYChanged);
 }
 
 void PlotFuncWindow::createToolBar()
@@ -149,6 +159,7 @@ void PlotFuncWindow::createContent()
     _plot->legend->setVisible(false);
     _plot->setAutoAddPlottableToLegend(false);
     connect(_plot, SIGNAL(graphSelected(Graph*)), this, SLOT(graphSelected(Graph*)));
+
 
     _cursor = new QCPCursor(_plot);
     connect(_cursor, SIGNAL(positionChanged()), this, SLOT(updateCursorInfo()));
@@ -348,7 +359,37 @@ void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
 void PlotFuncWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *graph, int resultIndex)
 {
     auto result = _function->result(plane, resultIndex);
-    graph->setData(result.x, result.y);
+    int count = result.pointsCount();
+    auto xs = result.x();
+    auto ys = result.y();
+    auto unitX = getUnitX();
+    auto unitY = getUnitY();
+    auto data = new QCPDataMap;
+    for (int i = 0; i < count; i++)
+    {
+        // TODO: possible optimization: extract unit's SI factor before loop
+        // and replace the call of virtual method with simple multiplication
+        double x = unitX->fromSi(xs.at(i));
+        double y = unitY->fromSi(ys.at(i));
+        data->insert(x, QCPData(x, y));
+    }
+    graph->setData(data, false);
+}
+
+Z::Unit PlotFuncWindow::getUnitX() const
+{
+    auto defUnit = function()->defaultUnitX();
+    auto thisDim = Z::Units::guessDim(_unitX);
+    auto funcDim = Z::Units::guessDim(defUnit);
+    return thisDim == funcDim ? _unitX : defUnit;
+}
+
+Z::Unit PlotFuncWindow::getUnitY() const
+{
+    auto defUnit = function()->defaultUnitY();
+    auto thisDim = Z::Units::guessDim(_unitY);
+    auto funcDim = Z::Units::guessDim(defUnit);
+    return thisDim == funcDim ? _unitY : defUnit;
 }
 
 QPen PlotFuncWindow::getLineSettings(Z::WorkPlane plane)
@@ -470,4 +511,38 @@ void PlotFuncWindow::disableAndClose()
 {
     _frozen = true; // disable updates
     QTimer::singleShot(0, [this]{this->close();});
+}
+
+void PlotFuncWindow::unitXChanged(Z::Unit unit)
+{
+    auto oldUnit = getUnitX();
+    if (oldUnit == unit) return;
+    _unitX = unit;
+    if (function()->ok())
+    {
+        auto limits = _plot->limitsX();
+        limits.first = unit->fromSi(oldUnit->toSi(limits.first));
+        limits.second = unit->fromSi(oldUnit->toSi(limits.second));
+        updateGraphs(Z::WorkPlane::Plane_T);
+        updateGraphs(Z::WorkPlane::Plane_S);
+        _plot->setLimitsX(limits, true);
+        schema()->markModified();
+    }
+}
+
+void PlotFuncWindow::unitYChanged(Z::Unit unit)
+{
+    auto oldUnit = getUnitY();
+    if (oldUnit == unit) return;
+    _unitY = unit;
+    if (function()->ok())
+    {
+        auto limits = _plot->limitsY();
+        limits.first = unit->fromSi(oldUnit->toSi(limits.first));
+        limits.second = unit->fromSi(oldUnit->toSi(limits.second));
+        updateGraphs(Z::WorkPlane::Plane_T);
+        updateGraphs(Z::WorkPlane::Plane_S);
+        _plot->setLimitsY(limits, true);
+        schema()->markModified();
+    }
 }

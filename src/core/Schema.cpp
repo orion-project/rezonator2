@@ -390,6 +390,11 @@ void Schema::flip()
     _events.raise(SchemaEvents::RecalRequred);
 }
 
+void Schema::markModified()
+{
+    _events.raise(SchemaEvents::Changed);
+}
+
 //------------------------------------------------------------------------------
 //                                Z::Utils
 //------------------------------------------------------------------------------

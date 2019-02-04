@@ -29,6 +29,7 @@ class PlotFunction;
 class PlotFuncWindow;
 class PlotParamsPanel;
 class SchemaStorable;
+class UnitsMenu;
 
 enum class ElemDeletionReaction {
     None,
@@ -76,13 +77,15 @@ protected slots:
     virtual void updateDataGrid();
 
 protected:
-    PlotFunction* _function;
     Plot* _plot;
+    PlotFunction* _function;
+    Z::Unit _unitX = Z::Units::none();
+    Z::Unit _unitY = Z::Units::none();
     int _windowIndex = 0;
 
     static QMap<QString, int> _windowIndeces;
 
-    QMenu *menuPlot, *menuLimits, *menuFormat;
+    QMenu *menuPlot, *menuLimits, *menuFormat, *menuAxisX, *menuAxisY;
 
     /// Calculates function and plots its results.
     virtual void calculate();
@@ -101,6 +104,7 @@ protected:
     FrozenStateButton* _buttonFrozenInfo;
     bool _autolimitsRequest = false; ///< If autolimits requested after next update.
     bool _centerCursorRequested = false; ///< If cursor should be centered after next update.
+    UnitsMenu *_unitsMenuX, *_unitsMenuY;
 
     QAction *actnShowT, *actnShowS, *actnShowTS,
         *actnAutolimits, *actnAutolimitsX, *actnAutolimitsY,
@@ -135,6 +139,9 @@ protected:
 
     void disableAndClose();
 
+    Z::Unit getUnitX() const;
+    Z::Unit getUnitY() const;
+
 private slots:
     void showT();
     void showS();
@@ -155,6 +162,9 @@ private:
         QPointF cursorPos;
     };
     QMap<int, ViewState> _storedView;
+
+    void unitXChanged(Z::Unit unit);
+    void unitYChanged(Z::Unit unit);
 };
 
 #endif // PLOT_FUNC_WINDOW_H

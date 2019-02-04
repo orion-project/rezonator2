@@ -1,6 +1,13 @@
 #include "Appearance.h"
 #include "UnitWidgets.h"
 
+#include <QDebug>
+#include <QMenu>
+
+//------------------------------------------------------------------------------
+//                              UnitComboBox
+//------------------------------------------------------------------------------
+
 UnitComboBox::UnitComboBox(QWidget* parent) : QComboBox(parent)
 {
     setEnabled(false);
@@ -22,7 +29,7 @@ void UnitComboBox::populate(Z::Dim dim)
     _enableChangeEvent = false;
     clear();
     for (auto unit: dim->units())
-        addItem(unit->name(), qVariantFromValue((void*)unit));
+        addItem(unit->name(), qVariantFromValue(unit));
     _isEmptyOrSingleItem = count() < 2;
     _enableChangeEvent = true;
     setEnabled(true);
@@ -47,7 +54,7 @@ void UnitComboBox::setSelectedUnit(Z::Unit unit)
 
 Z::Unit UnitComboBox::unitAt(int index) const
 {
-    return reinterpret_cast<Z::Unit>(itemData(index).value<void*>());
+    return itemData(index).value<Z::Unit>();
 }
 
 void UnitComboBox::focusInEvent(QFocusEvent *e)
@@ -68,6 +75,8 @@ void UnitComboBox::setEnabled(bool on)
 }
 
 //------------------------------------------------------------------------------
+//                             DimComboBox
+//------------------------------------------------------------------------------
 
 DimComboBox::DimComboBox(QWidget* parent) : QComboBox(parent)
 {
@@ -79,7 +88,7 @@ void DimComboBox::populate()
 {
     clear();
     for (auto dim: Z::Dims::dims())
-        addItem(dim->name(), qVariantFromValue((void*)dim));
+        addItem(dim->name(), qVariantFromValue(dim));
 }
 
 Z::Dim DimComboBox::selectedDim() const
@@ -99,5 +108,56 @@ void DimComboBox::setSelectedDim(Z::Dim dim)
 
 Z::Dim DimComboBox::dimAt(int index) const
 {
-    return (Z::Dim)itemData(index).value<void*>();
+    return itemData(index).value<Z::Dim>();
+}
+
+//------------------------------------------------------------------------------
+//                                  UnitsMenu
+//------------------------------------------------------------------------------
+
+UnitsMenu::UnitsMenu(const QString &title, QObject* parent) : QObject(parent)
+{
+    _menu = new QMenu(title);
+}
+
+UnitsMenu::~UnitsMenu()
+{
+    delete _menu;
+}
+
+void UnitsMenu::setUnit(Z::Unit unit)
+{
+    if (unit == Z::Units::none())
+    {
+        _menu->setEnabled(false);
+        return;
+    }
+    _menu->setEnabled(true);
+    auto dim = Z::Units::guessDim(unit);
+    if (dim != _dim || _menu->isEmpty())
+    {
+        _dim = dim;
+        populate();
+    }
+    for (auto action : _menu->actions())
+        action->setChecked(action->data().value<Z::Unit>() == unit);
+}
+
+void UnitsMenu::populate()
+{
+    _menu->clear();
+    for (auto unit : _dim->units())
+    {
+        auto action = _menu->addAction(unit->name());
+        action->setData(qVariantFromValue(unit));
+        action->setCheckable(true);
+        connect(action, &QAction::triggered, this, &UnitsMenu::actionTriggered);
+    }
+}
+
+void UnitsMenu::actionTriggered()
+{
+    auto action = qobject_cast<QAction*>(sender());
+    qDebug() << "checked" << action->data().value<Z::Unit>()->name();
+    emit unitChanged(action->data().value<Z::Unit>());
 }

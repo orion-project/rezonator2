@@ -48,8 +48,15 @@ void MultiCausticWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, Graph 
         {
             auto result = func->result(plane, resultIndex - resultIndex1);
             graph->clearData();
-            for (int i = 0; i < result.x.size(); i++)
-                graph->addData(result.x.at(i) + offset, result.y.at(i));
+            int count = result.pointsCount();
+            auto xs = result.x();
+            auto ys = result.y();
+            for (int i = 0; i < count; i++)
+            {
+                double x = xs.at(i);
+                double y = ys.at(i);
+                graph->addData(x + offset, y);
+            }
             return;
         }
         resultIndex1 = resultIndex2;

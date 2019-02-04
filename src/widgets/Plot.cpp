@@ -26,6 +26,17 @@ Plot::Plot() :
     connect(this, SIGNAL(axisDoubleClick(QCPAxis*,QCPAxis::SelectablePart,QMouseEvent*)), this, SLOT(setLimitsDlg(QCPAxis*)));
 }
 
+Plot::PlotPart Plot::selectedPart() const
+{
+    if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
+        return PlotPart::AxisX;
+
+    if (yAxis->selectedParts().testFlag(QCPAxis::spAxis))
+        return PlotPart::AxisY;
+
+    return PlotPart::None;
+}
+
 void Plot::mouseDoubleClickEvent(QMouseEvent *event)
 {
     QCustomPlot::mouseDoubleClickEvent(event);
@@ -39,13 +50,16 @@ void Plot::mousePressEvent(QMouseEvent *event)
 {
     // if an axis is selected, only allow the direction of that axis to be dragged
     // if no axis is selected, both directions may be dragged
-    if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
+    switch (selectedPart()) {
+    case PlotPart::AxisX:
         axisRect()->setRangeDrag(xAxis->orientation());
-    else if (yAxis->selectedParts().testFlag(QCPAxis::spAxis))
+        break;
+    case PlotPart::AxisY:
         axisRect()->setRangeDrag(yAxis->orientation());
-    else
+        break;
+    default:
         axisRect()->setRangeDrag(Qt::Horizontal | Qt::Vertical);
-
+    }
     QCustomPlot::mousePressEvent(event);
 }
 
@@ -53,14 +67,28 @@ void Plot::wheelEvent(QWheelEvent *event)
 {
     // if an axis is selected, only allow the direction of that axis to be zoomed
     // if no axis is selected, both directions may be zoomed
-    if (xAxis->selectedParts().testFlag(QCPAxis::spAxis))
+    switch (selectedPart()) {
+    case PlotPart::AxisX:
         axisRect()->setRangeZoom(xAxis->orientation());
-    else if (yAxis->selectedParts().testFlag(QCPAxis::spAxis))
+        break;
+    case PlotPart::AxisY:
         axisRect()->setRangeZoom(yAxis->orientation());
-    else
+        break;
+    default:
         axisRect()->setRangeZoom(Qt::Horizontal | Qt::Vertical);
-
+    }
     QCustomPlot::wheelEvent(event);
+}
+
+void Plot::contextMenuEvent(QContextMenuEvent *event)
+{
+    QMenu* menu = nullptr;
+    QPointF pos(event->x(), event->y());
+    if (xAxis->getPartAt(pos) != QCPAxis::spNone)
+        menu = menuAxisX;
+    else if (yAxis->getPartAt(pos) != QCPAxis::spNone)
+        menu = menuAxisY;
+    if (menu) menu->popup(event->globalPos());
 }
 
 void Plot::plotSelectionChanged()

@@ -24,6 +24,9 @@ public:
     void extendLimitsX(double factor, bool replot = true) { extendLimits(xAxis, factor, replot); }
     void extendLimitsY(double factor, bool replot = true) { extendLimits(yAxis, factor, replot); }
 
+    QMenu *menuAxisX = nullptr;
+    QMenu *menuAxisY = nullptr;
+
 public slots:
     void autolimits(bool replot = true);
     void autolimitsX(bool replot = true);
@@ -43,6 +46,7 @@ signals:
     void emptySpaceDoubleClicked(QMouseEvent *event);
 
 protected:
+    void contextMenuEvent(QContextMenuEvent *event) override;
     void mouseDoubleClickEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
@@ -53,6 +57,13 @@ private slots:
     bool setLimitsDlg(QCPAxis* axis);
 
 private:
+    enum class PlotPart
+    {
+        None,
+        AxisX,
+        AxisY
+    };
+
     QVector<Graph*> _serviceGraphs;
     const double _safeMarginsX;
     const double _safeMarginsY;
@@ -68,6 +79,7 @@ private:
     bool sanitizeRange(QCPRange& range, double safeMargin);
     void setAxisRange(QCPAxis* axis, const QCPRange &range);
     double safeMargins(QCPAxis* axis);
+    PlotPart selectedPart() const;
 };
 
 #endif // PLOT_H

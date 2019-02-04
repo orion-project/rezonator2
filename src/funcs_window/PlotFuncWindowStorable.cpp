@@ -72,6 +72,8 @@ QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root)
         _plot->setLimitsX(minX, maxX, false);
         _plot->setLimitsY(minY, maxY, false);
     }
+    _unitX = Z::Units::findByAlias(root["x_unit"].toString(), Z::Units::none());
+    _unitY = Z::Units::findByAlias(root["y_unit"].toString(), Z::Units::none());
 
     return QString();
 }
@@ -93,8 +95,10 @@ QString PlotFuncWindowStorable::writeWindowGeneral(QJsonObject& root) const
     auto limitsY = _plot->limitsY();
     root["x_min"] = limitsX.first;
     root["x_max"] = limitsX.second;
+    root["x_unit"] = _unitX->alias();
     root["y_min"] = limitsY.first;
     root["y_max"] = limitsY.second;
+    root["y_unit"] = _unitY->alias();
 
     return QString();
 }
