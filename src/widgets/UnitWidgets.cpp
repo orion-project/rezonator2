@@ -1,6 +1,7 @@
 #include "Appearance.h"
 #include "UnitWidgets.h"
 
+#include <QActionGroup>
 #include <QDebug>
 #include <QMenu>
 
@@ -115,9 +116,11 @@ Z::Dim DimComboBox::dimAt(int index) const
 //                                  UnitsMenu
 //------------------------------------------------------------------------------
 
-UnitsMenu::UnitsMenu(const QString &title, QObject* parent) : QObject(parent)
+UnitsMenu::UnitsMenu(QObject* parent) : QObject(parent)
 {
-    _menu = new QMenu(title);
+    _menu = new QMenu;
+    _actions = new QActionGroup(this);
+    _actions->setExclusive(true);
 }
 
 UnitsMenu::~UnitsMenu()
@@ -127,6 +130,8 @@ UnitsMenu::~UnitsMenu()
 
 void UnitsMenu::setUnit(Z::Unit unit)
 {
+    if (_unit == unit) return;
+    _unit = unit;
     if (unit == Z::Units::none())
     {
         _menu->setEnabled(false);
@@ -140,7 +145,11 @@ void UnitsMenu::setUnit(Z::Unit unit)
         populate();
     }
     for (auto action : _menu->actions())
-        action->setChecked(action->data().value<Z::Unit>() == unit);
+        if (action->data().value<Z::Unit>() == unit)
+        {
+            action->setChecked(true);
+            break;
+        }
 }
 
 void UnitsMenu::populate()
@@ -152,12 +161,12 @@ void UnitsMenu::populate()
         action->setData(qVariantFromValue(unit));
         action->setCheckable(true);
         connect(action, &QAction::triggered, this, &UnitsMenu::actionTriggered);
+        _actions->addAction(action);
     }
 }
 
 void UnitsMenu::actionTriggered()
 {
     auto action = qobject_cast<QAction*>(sender());
-    qDebug() << "checked" << action->data().value<Z::Unit>()->name();
     emit unitChanged(action->data().value<Z::Unit>());
 }

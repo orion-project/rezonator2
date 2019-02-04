@@ -84,8 +84,20 @@ void PlotFuncWindow::createActions()
 
 void PlotFuncWindow::createMenuBar()
 {
+    _unitsMenuX = new UnitsMenu(this);
+    _unitsMenuY = new UnitsMenu(this);
+    connect(_unitsMenuX, &UnitsMenu::unitChanged, this, &PlotFuncWindow::setUnitX);
+    connect(_unitsMenuY, &UnitsMenu::unitChanged, this, &PlotFuncWindow::setUnitY);
+
     menuPlot = menu(tr("&Plot", "Menu title"), this, {
-        actnUpdate, actnUpdateParams, nullptr, actnShowT, actnShowS, actnShowTS, nullptr, actnShowRoundTrip
+        actnUpdate, actnUpdateParams, nullptr, actnShowT, actnShowS, actnShowTS, nullptr,
+        _unitsMenuX->menu(), _unitsMenuY->menu(), nullptr, actnShowRoundTrip
+    });
+    connect(menuPlot, &QMenu::aboutToShow, [this](){
+        _unitsMenuX->menu()->setTitle("X-axis Unit");
+        _unitsMenuY->menu()->setTitle("Y-axis Unit");
+        _unitsMenuX->setUnit(getUnitX());
+        _unitsMenuY->setUnit(getUnitY());
     });
 
     menuLimits = menu(tr("&Limits", "Menu title"), this, {
@@ -98,14 +110,28 @@ void PlotFuncWindow::createMenuBar()
         // TODO
     });
 
-    _unitsMenuX = new UnitsMenu(tr("X-axis Unit"));
-    _unitsMenuY = new UnitsMenu(tr("Y-axis Unit"));
-    _plot->menuAxisX = menu(this, {_unitsMenuX->menu(), nullptr, actnSetLimitsX, actnAutolimitsX});
-    _plot->menuAxisY = menu(this, {_unitsMenuY->menu(), nullptr, actnSetLimitsY, actnAutolimitsY});
-    connect(_plot->menuAxisX, &QMenu::aboutToShow, [this](){ _unitsMenuX->setUnit(getUnitX()); });
-    connect(_plot->menuAxisY, &QMenu::aboutToShow, [this](){ _unitsMenuY->setUnit(getUnitY()); });
-    connect(_unitsMenuX, &UnitsMenu::unitChanged, this, &PlotFuncWindow::unitXChanged);
-    connect(_unitsMenuY, &UnitsMenu::unitChanged, this, &PlotFuncWindow::unitYChanged);
+    auto menuX = new QMenu;
+    menuX->addMenu(_unitsMenuX->menu());
+    menuX->addSeparator();
+    menuX->addAction(tr("Limits..."), _plot, SLOT(setLimitsDlgX()));
+    menuX->addAction(QIcon(":/toolbar/limits_auto_x"), tr("Fit to Graphs"), _plot, SLOT(autolimitsX()));
+    connect(menuX, &QMenu::aboutToShow, [this](){
+        _unitsMenuX->menu()->setTitle(tr("Unit"));
+        _unitsMenuX->setUnit(getUnitX());
+    });
+
+    auto menuY = new QMenu;
+    menuY->addMenu(_unitsMenuY->menu());
+    menuY->addSeparator();
+    menuY->addAction(tr("Limits..."), _plot, SLOT(setLimitsDlgY()));
+    menuY->addAction(QIcon(":/toolbar/limits_auto_y"), tr("Fit to Graphs"), _plot, SLOT(autolimitsY()));
+    connect(menuY, &QMenu::aboutToShow, [this](){
+        _unitsMenuY->menu()->setTitle(tr("Unit"));
+        _unitsMenuY->setUnit(getUnitY());
+    });
+
+    _plot->menuAxisX = menuX;
+    _plot->menuAxisY = menuY;
 }
 
 void PlotFuncWindow::createToolBar()
@@ -176,6 +202,22 @@ void PlotFuncWindow::createContent()
     setContent(toolbar);
     setContent(_splitter);
 }
+
+void PlotFuncWindow::updateUnitsMenus()
+{
+
+}
+
+void PlotFuncWindow::updateUnitsMenuX()
+{
+
+}
+
+void PlotFuncWindow::updateUnitsMenuY()
+{
+
+}
+
 
 void PlotFuncWindow::createStatusBar()
 {
@@ -376,22 +418,6 @@ void PlotFuncWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *gra
     graph->setData(data, false);
 }
 
-Z::Unit PlotFuncWindow::getUnitX() const
-{
-    auto defUnit = function()->defaultUnitX();
-    auto thisDim = Z::Units::guessDim(_unitX);
-    auto funcDim = Z::Units::guessDim(defUnit);
-    return thisDim == funcDim ? _unitX : defUnit;
-}
-
-Z::Unit PlotFuncWindow::getUnitY() const
-{
-    auto defUnit = function()->defaultUnitY();
-    auto thisDim = Z::Units::guessDim(_unitY);
-    auto funcDim = Z::Units::guessDim(defUnit);
-    return thisDim == funcDim ? _unitY : defUnit;
-}
-
 QPen PlotFuncWindow::getLineSettings(Z::WorkPlane plane)
 {
     return plane == Z::Plane_T? QPen(Qt::darkGreen): QPen(Qt::red);
@@ -513,7 +539,23 @@ void PlotFuncWindow::disableAndClose()
     QTimer::singleShot(0, [this]{this->close();});
 }
 
-void PlotFuncWindow::unitXChanged(Z::Unit unit)
+Z::Unit PlotFuncWindow::getUnitX() const
+{
+    auto defUnit = function()->defaultUnitX();
+    auto thisDim = Z::Units::guessDim(_unitX);
+    auto funcDim = Z::Units::guessDim(defUnit);
+    return thisDim == funcDim ? _unitX : defUnit;
+}
+
+Z::Unit PlotFuncWindow::getUnitY() const
+{
+    auto defUnit = function()->defaultUnitY();
+    auto thisDim = Z::Units::guessDim(_unitY);
+    auto funcDim = Z::Units::guessDim(defUnit);
+    return thisDim == funcDim ? _unitY : defUnit;
+}
+
+void PlotFuncWindow::setUnitX(Z::Unit unit)
 {
     auto oldUnit = getUnitX();
     if (oldUnit == unit) return;
@@ -530,7 +572,7 @@ void PlotFuncWindow::unitXChanged(Z::Unit unit)
     }
 }
 
-void PlotFuncWindow::unitYChanged(Z::Unit unit)
+void PlotFuncWindow::setUnitY(Z::Unit unit)
 {
     auto oldUnit = getUnitY();
     if (oldUnit == unit) return;

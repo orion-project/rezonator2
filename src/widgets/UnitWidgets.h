@@ -6,6 +6,7 @@
 #include <QComboBox>
 
 QT_BEGIN_NAMESPACE
+class QActionGroup;
 class QMenu;
 QT_END_NAMESPACE
 
@@ -70,7 +71,7 @@ class UnitsMenu : public QObject
     Q_OBJECT
 
 public:
-    UnitsMenu(const QString& title, QObject *parent = nullptr);
+    UnitsMenu(QObject *parent = nullptr);
     ~UnitsMenu();
 
     QMenu* menu() const { return _menu; }
@@ -80,14 +81,14 @@ public:
 signals:
     void unitChanged(Z::Unit unit);
 
-private slots:
-    void actionTriggered();
-
 private:
     QMenu* _menu;
-    Z::Dim _dim;
+    QActionGroup* _actions;
+    Z::Dim _dim = nullptr;
+    Z::Unit _unit = nullptr;
 
     void populate();
+    void actionTriggered();
 };
 
 #endif // UNIT_WIDGETS_H

@@ -151,6 +151,9 @@ private slots:
     void updateCursorInfo();
     void showRoundTrip();
     void freeze(bool);
+    void updateUnitsMenus();
+    void updateUnitsMenuX();
+    void updateUnitsMenuY();
 
     QWidget* optionsPanelRequired();
 
@@ -163,8 +166,8 @@ private:
     };
     QMap<int, ViewState> _storedView;
 
-    void unitXChanged(Z::Unit unit);
-    void unitYChanged(Z::Unit unit);
+    void setUnitX(Z::Unit unit);
+    void setUnitY(Z::Unit unit);
 };
 
 #endif // PLOT_FUNC_WINDOW_H
