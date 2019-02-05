@@ -1,8 +1,10 @@
 #include "ElemSelectorWidget.h"
 
 #include "Appearance.h"
+#include "ValueEditor.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
+#include "widgets/OriValueEdit.h"
 
 #include <QLabel>
 #include <QListWidget>
@@ -225,4 +227,49 @@ Element* MultiElementSelectorWidget::currentElement() const
 void MultiElementSelectorWidget::setCurrentRow(int index)
 {
     _elemsSelector->setCurrentRow(index);
+}
+
+//------------------------------------------------------------------------------
+//                         ElementOffsetSelectorWidget
+//------------------------------------------------------------------------------
+
+ElemOffsetSelectorWidget::ElemOffsetSelectorWidget(Schema* schema, ElementFilter* filter)
+{
+    _elemSelector = new ElemSelectorWidget(schema, filter);
+    connect(_elemSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(currentElemChanged(int)));
+
+    _lengthTitle = new QLabel(tr("Length"));
+    Z::Gui::setFontStyle(_lengthTitle, false, true);
+
+    _lengthLabel = new QLabel;
+    Z::Gui::setValueFont(_lengthLabel);
+    Z::Gui::setFontStyle(_lengthLabel, false, true);
+
+    _offsetTitle = new QLabel(tr("Offset"));
+    _offsetEditor = new ValueEditor;
+
+    setColumnStretch(1, 1);
+    addWidget(new QLabel(tr("Element")), 0, 0); addWidget(_elemSelector, 0, 1);
+    addWidget(_lengthTitle, 1, 0); addWidget(_lengthLabel, 1, 1);
+    addWidget(_offsetTitle, 2, 0); addWidget(_offsetEditor, 2, 1);
+}
+
+void ElemOffsetSelectorWidget::currentElemChanged(int)
+{
+    auto range = Z::Utils::asRange(selectedElement());
+    _lengthTitle->setEnabled(range);
+    _lengthLabel->setEnabled(range);
+    _offsetTitle->setEnabled(range);
+    _offsetEditor->setEnabled(range);
+    if (range)
+    {
+        auto unit = range->paramLength()->value().unit();
+        auto axisLength = Z::Value(unit->fromSi(range->axisLengthSI()), unit);
+        _lengthLabel->setText(axisLength.displayStr());
+    }
+    else
+    {
+        _lengthLabel->setText(QStringLiteral("N/A"));
+        _offsetEditor->setValue(0);
+    }
 }

@@ -4,7 +4,7 @@
 #include "ValueEditor.h"
 #include "../core/Element.h"
 #include "../core/Variable.h"
-#include "widgets/OriValueEdit.h"
+//#include "widgets/OriValueEdit.h"
 #include "helpers/OriWidgets.h"
 
 #include <QApplication>

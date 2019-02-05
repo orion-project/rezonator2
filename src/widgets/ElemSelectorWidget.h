@@ -4,17 +4,20 @@
 #include <QComboBox>
 #include <QGridLayout>
 
-QT_BEGIN_NAMESPACE
-class QListWidget;
-class QListWidgetItem;
-QT_END_NAMESPACE
-
 #include "WidgetResult.h"
 #include "../core/Schema.h"
 #include "../core/ElementFilter.h"
 
+QT_BEGIN_NAMESPACE
+class QLabel;
+class QListWidget;
+class QListWidgetItem;
+QT_END_NAMESPACE
+
+class ValueEditor;
+
 /**
-    Combo-box widget which allows to choose one of schema elements.
+    Combo-box widget for choosing one of schema elements.
 */
 class ElemSelectorWidget : public QComboBox
 {
@@ -37,7 +40,7 @@ private:
 
 
 /**
-    Combo-box widget which allows to choose one of parameter of element.
+    Combo-box widget for choosing one of parameter of element.
 */
 class ParamSelectorWidget : public QComboBox
 {
@@ -128,6 +131,29 @@ private:
     void currentItemChanged(QListWidgetItem *currentElement, QListWidgetItem *previous);
     void invertCheckState(QListWidgetItem *item);
     Element* element(QListWidgetItem *item) const;
+};
+
+
+class ElemOffsetSelectorWidget : public QGridLayout
+{
+    Q_OBJECT
+
+public:
+    explicit ElemOffsetSelectorWidget(Schema* schema, ElementFilter* filter = nullptr);
+
+    Element* selectedElement() const { return _elemSelector->selectedElement(); }
+    void setSelectedElement(Element *elem) { _elemSelector->setSelectedElement(elem); }
+
+
+    WidgetResult verify();
+
+private:
+    ElemSelectorWidget* _elemSelector;
+    QLabel *_lengthTitle, *_lengthLabel, *_offsetTitle;
+    ValueEditor* _offsetEditor;
+
+private slots:
+    void currentElemChanged(int);
 };
 
 #endif // ELEM_SELECTOR_WIDGET_H
