@@ -187,13 +187,14 @@ Z::Unit CausticFunction::defaultUnitX() const
     return _arg.parameter->value().unit();
 }
 
-Z::Unit CausticFunction::defaultUnitY() const
+Z::Unit CausticFunction::defaultUnitsForMode(CausticFunction::Mode mode)
 {
-    // TODO: Preferable units for each mode can be restored from CustomPrefs
-    switch (_mode)
+    // TODO: Preferable units for each mode can be stored and restored from CustomPrefs
+    switch (mode)
     {
-    case BeamRadius: return Z::Units::mkm();
-    case FontRadius: return Z::Units::m();
-    case HalfAngle: return Z::Units::deg();
+    case CausticFunction::BeamRadius: return Z::Units::mkm();
+    case CausticFunction::FontRadius: return Z::Units::m();
+    case CausticFunction::HalfAngle: return Z::Units::deg();
     }
+    return Z::Units::none();
 }

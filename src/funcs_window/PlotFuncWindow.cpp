@@ -49,7 +49,8 @@ PlotFuncWindow::~PlotFuncWindow()
 void PlotFuncWindow::createActions()
 {
     actnUpdate = action(tr("Update"), this, SLOT(update()), ":/toolbar/update", Qt::Key_F5);
-    actnUpdateParams = action(tr("Update With Params..."), this, SLOT(updateWithParams()), ":/toolbar/update_params", Qt::CTRL | Qt::Key_F5);
+    actnUpdateParams = action(tr("Update With Params..."), this,
+        SLOT(updateWithParams()), ":/toolbar/update_params", Qt::CTRL | Qt::Key_F5);
 
     actnShowT = action(tr("Show &T-plane"), this, SLOT(showT()), ":/toolbar/plot_t");
     actnShowS = action(tr("Show &S-plane"), this, SLOT(showS()), ":/toolbar/plot_s");
@@ -498,7 +499,6 @@ void PlotFuncWindow::storeView(int key)
 
 void PlotFuncWindow::restoreView(int key)
 {
-    qDebug() << "Restore mode" << key;
     if (_storedView.contains(key))
     {
         const ViewState& view = _storedView[key];
@@ -507,11 +507,9 @@ void PlotFuncWindow::restoreView(int key)
         _plot->setLimitsX(view.limitsX, false);
         _plot->setLimitsY(view.limitsY, false);
         _cursor->setPosition(view.cursorPos, false);
-        qDebug() << "x" << view.limitsX.str() << "y" << view.limitsY.str();
     }
     else
     {
-        qDebug() << "non";
         // Units for the view will be guessed from dim on first request
         _unitX = Z::Units::none();
         _unitY = Z::Units::none();
@@ -577,8 +575,10 @@ void PlotFuncWindow::setUnitX(Z::Unit unit)
         limits.max = unit->fromSi(oldUnit->toSi(limits.max));
         updateGraphs(Z::WorkPlane::Plane_T);
         updateGraphs(Z::WorkPlane::Plane_S);
-        _plot->setLimitsX(limits, true);
+        _plot->setLimitsX(limits, false);
+        afterSetUnitsX(oldUnit, unit);
         schema()->markModified();
+        _plot->replot();
     }
 }
 
@@ -594,7 +594,9 @@ void PlotFuncWindow::setUnitY(Z::Unit unit)
         limits.max = unit->fromSi(oldUnit->toSi(limits.max));
         updateGraphs(Z::WorkPlane::Plane_T);
         updateGraphs(Z::WorkPlane::Plane_S);
-        _plot->setLimitsY(limits, true);
+        _plot->setLimitsY(limits, false);
+        afterSetUnitsY(oldUnit, unit);
         schema()->markModified();
+        _plot->replot();
     }
 }

@@ -91,3 +91,13 @@ const PlotFuncResult& MultiCausticFunction::result(Z::WorkPlane plane, int index
     qCritical() << errorMsg;
     throw std::runtime_error(errorMsg.toStdString()); // let it crash
 }
+
+Z::Unit MultiCausticFunction::defaultUnitX() const
+{
+    return _funcs.first()->arg()->parameter->value().unit();
+}
+
+Z::Unit MultiCausticFunction::defaultUnitY() const
+{
+    return CausticFunction::defaultUnitsForMode(mode());
+}

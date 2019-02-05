@@ -28,6 +28,7 @@ protected:
     bool configureInternal() override;
     void fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *graph, int resultIndex) override;
     void afterUpdate() override;
+    void afterSetUnitsX(Z::Unit old, Z::Unit cur) override;
     ElemDeletionReaction reactElemDeletion(const Elements&) override;
 
     // Implementation of PlotFuncWindowStorable

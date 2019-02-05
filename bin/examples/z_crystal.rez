@@ -171,11 +171,13 @@
     ],
     "formulas": [
     ],
+    "notes": "",
     "param_links": [
     ],
     "pumps": [
     ],
     "schema_version": "2.0",
+    "title": "",
     "trip_type": "SW",
     "windows": [
         {
@@ -307,13 +309,35 @@
             "window": {
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
-                "elem_bound_markers": false,
+                "elem_bound_markers": true,
+                "stored_views": [
+                    {
+                        "mode": 0,
+                        "x_max": 1.5673254757176251,
+                        "x_min": -0.01551807401700619,
+                        "x_unit": "m",
+                        "y_max": 0.8541937267491662,
+                        "y_min": 0.01107861360634381,
+                        "y_unit": "mm"
+                    },
+                    {
+                        "mode": 1,
+                        "x_max": 156.1350887762218,
+                        "x_min": -2.1492661972412748,
+                        "x_unit": "cm",
+                        "y_max": 10.00000000000001,
+                        "y_min": -9.999999999999996,
+                        "y_unit": "none"
+                    }
+                ],
                 "ts_flipped": false,
                 "ts_mode": "T+S",
-                "x_max": 1567.325475717625,
-                "x_min": -15.518074017006189,
-                "y_max": 854.1937267491661,
-                "y_min": 11.078613606343811
+                "x_max": 1.5673254757176251,
+                "x_min": -0.01551807401700619,
+                "x_unit": "m",
+                "y_max": 0.8541937267491662,
+                "y_min": 0.01107861360634381,
+                "y_unit": "mm"
             }
         }
     ]

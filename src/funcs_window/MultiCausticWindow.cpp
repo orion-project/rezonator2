@@ -38,6 +38,8 @@ QWidget* MultiCausticWindow::makeOptionsPanel()
 
 void MultiCausticWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *graph, int resultIndex)
 {
+    auto unitX = getUnitX();
+    auto unitY = getUnitY();
     int resultIndex1 = 0;
     double offset = 0;
     for (CausticFunction* func : function()->funcs())
@@ -47,16 +49,19 @@ void MultiCausticWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, Graph 
         if (resultIndex >= resultIndex1 && resultIndex < resultIndex2)
         {
             auto result = func->result(plane, resultIndex - resultIndex1);
-            graph->clearData();
             int count = result.pointsCount();
             auto xs = result.x();
             auto ys = result.y();
+            auto data = new QCPDataMap;
             for (int i = 0; i < count; i++)
             {
-                double x = xs.at(i);
-                double y = ys.at(i);
-                graph->addData(x + offset, y);
+                // TODO: possible optimization: extract unit's SI factor before loop
+                // and replace the call of virtual method with simple multiplication
+                double x = unitX->fromSi(xs.at(i) + offset);
+                double y = unitY->fromSi(ys.at(i));
+                data->insert(x, QCPData(x, y));
             }
+            graph->setData(data, false);
             return;
         }
         resultIndex1 = resultIndex2;
@@ -69,8 +74,16 @@ void MultiCausticWindow::afterUpdate()
     updateElementBoundMarkers();
 }
 
+void MultiCausticWindow::afterSetUnitsX(Z::Unit old, Z::Unit cur)
+{
+    Q_UNUSED(old)
+    Q_UNUSED(cur)
+    updateElementBoundMarkers();
+}
+
 void MultiCausticWindow::updateElementBoundMarkers()
 {
+    auto unitX = getUnitX();
     double offset = 0;
     QList<QCPItemStraightLine*> markers;
     auto funcs = function()->funcs();
@@ -84,8 +97,9 @@ void MultiCausticWindow::updateElementBoundMarkers()
             _elemBoundMarkers.removeFirst();
         }
         else marker = makeElemBoundMarker();
-        marker->point1->setCoords(offset, 0);
-        marker->point2->setCoords(offset, 1);
+        double x = unitX->fromSi(offset);
+        marker->point1->setCoords(x, 0);
+        marker->point2->setCoords(x, 1);
         marker->setVisible(_actnElemBoundMarkers->isChecked());
         markers.append(marker);
     }

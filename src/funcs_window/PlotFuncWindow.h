@@ -119,6 +119,8 @@ protected:
     virtual bool configureInternal() { return true; }
 
     virtual void afterUpdate() {}
+    virtual void afterSetUnitsX(Z::Unit old, Z::Unit cur) { Q_UNUSED(old) Q_UNUSED(cur) }
+    virtual void afterSetUnitsY(Z::Unit old, Z::Unit cur) { Q_UNUSED(old) Q_UNUSED(cur) }
 
     Graph* selectedGraph() const;
 

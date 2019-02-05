@@ -29,7 +29,9 @@ public:
     void setMode(Mode mode) { _mode = mode; }
 
     Z::Unit defaultUnitX() const override;
-    Z::Unit defaultUnitY() const override;
+    Z::Unit defaultUnitY() const override { return defaultUnitsForMode(_mode); }
+
+    static Z::Unit defaultUnitsForMode(CausticFunction::Mode);
 
 private:
     /// Wich type of result the function should compute.
