@@ -3,6 +3,7 @@
 #include "../AppSettings.h"
 #include "../core/Protocol.h"
 #include "../funcs/InfoFunctions.h"
+#include "../widgets/Appearance.h"
 #include "../widgets/Plot.h"
 #include "../widgets/FrozenStateButton.h"
 #include "../widgets/GraphDataGrid.h"
@@ -112,6 +113,12 @@ void PlotFuncWindow::createMenuBar()
     });
 
     auto menuX = new QMenu;
+    auto titleX = new QWidgetAction(this);
+    auto labelX = new QLabel(tr("Axis X"));
+    labelX->setMargin(6);
+    Z::Gui::setFontStyle(labelX, true);
+    titleX->setDefaultWidget(labelX);
+    menuX->addAction(titleX);
     menuX->addMenu(_unitsMenuX->menu());
     menuX->addSeparator();
     menuX->addAction(tr("Limits..."), _plot, SLOT(setLimitsDlgX()));
@@ -122,6 +129,12 @@ void PlotFuncWindow::createMenuBar()
     });
 
     auto menuY = new QMenu;
+    auto titleY = new QWidgetAction(this);
+    auto labelY = new QLabel(tr("Axis Y"));
+    labelY->setMargin(6);
+    Z::Gui::setFontStyle(labelY, true);
+    titleY->setDefaultWidget(labelY);
+    menuY->addAction(titleY);
     menuY->addMenu(_unitsMenuY->menu());
     menuY->addSeparator();
     menuY->addAction(tr("Limits..."), _plot, SLOT(setLimitsDlgY()));
