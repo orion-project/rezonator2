@@ -153,13 +153,12 @@ Element type:
 * TElemThinLens
 * TElemThinCylinderLensT (for `Version` > 1)
 * TElemThinCylinderLensS (for `Version` > 1)
-* TElemMatrix
 * TElemPoint
 * TElemThinLensCylT (only for `Version=1`, --> TElemThinCylinderLensT)
 * TElemThinLensCylS (only for `Version=1`, --> TElemThinCylinderLensS)
 * TElemRange (only for `Version=1`, --> TElemPlate)
 * TElemCustom (for `Version` < 1.2, --> TElemMatrix)
-* TElemMatrix (for `Version` >= 1)
+* TElemMatrix (for `Version` >= 1.2)
 
 ### Alias
 Element label.
