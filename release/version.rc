@@ -1,8 +1,3 @@
-// Seems Qt can't use several RC-files, so we have to mix version info and app icon setting.
-
-// Setting the Application Icon (http://doc.qt.io/qt-5/appicon.html)
-IDI_ICON1 ICON DISCARDABLE "../img/icon/icon_main_2.ico"
-
 // Setting the Version Info
 1 VERSIONINFO
 PRODUCTVERSION 	2,0,2,0

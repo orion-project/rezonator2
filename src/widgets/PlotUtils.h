@@ -16,4 +16,9 @@ struct AxisLimits
     QString str() const;
 };
 
+namespace TitlePlaceholder
+{
+    QString defaultTitle();
+}
+
 #endif // PLOT_UTILS_H

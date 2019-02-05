@@ -12,25 +12,21 @@ GraphDataGrid::GraphDataGrid() : QTableWidget()
     setSelectionMode(QAbstractItemView::ContiguousSelection);
     setEditTriggers(QAbstractItemView::NoEditTriggers);
     setColumnCount(2);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
     horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
     horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
-#else
-    horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
-    horizontalHeader()->setResizeMode(1, QHeaderView::Stretch);
-#endif
     setHorizontalHeaderLabels({ "X", "Y" });
 }
 
-void GraphDataGrid::setData(const QList<QCPData>& data)
+void GraphDataGrid::setData(QSharedPointer<QCPGraphDataContainer> data)
 {
-    if (rowCount() != data.size())
-        setRowCount(data.size());
-    for (int i = 0; i < data.size(); i++)
+    int size = data->size();
+    if (rowCount() != size)
+        setRowCount(size);
+    for (int i = 0; i < size; i++)
     {
-        auto point = data.at(i);
-        auto str_x = Z::format(point.key);
-        auto str_y = Z::format(point.value);
+        auto point = data->at(i);
+        auto str_x = Z::format(point->key);
+        auto str_y = Z::format(point->value);
         auto it = item(i, 0);
         if (!it)
         {

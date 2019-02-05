@@ -18,11 +18,17 @@ Plot::Plot() :
     yAxis->setNumberPrecision(_numberPrecision);
     xAxis->setNumberPrecision(_numberPrecision);
 
+    // Secondary axes only form frame rect
+    xAxis2->setVisible(true);
+    yAxis2->setVisible(true);
+    xAxis2->setTicks(false);
+    yAxis2->setTicks(false);
+
     legend->setVisible(true);
     setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables |
                     QCP::iSelectAxes | QCP::iSelectItems | QCP::iSelectLegend | QCP::iSelectOther);
     connect(this, SIGNAL(selectionChangedByUser()), this, SLOT(plotSelectionChanged()));
-    connect(this, SIGNAL(plottableClick(QCPAbstractPlottable*,QMouseEvent*)), this, SLOT(graphClicked(QCPAbstractPlottable*)));
+    connect(this, SIGNAL(plottableClick(QCPAbstractPlottable*,int,QMouseEvent*)), this, SLOT(graphClicked(QCPAbstractPlottable*)));
     connect(this, SIGNAL(axisDoubleClick(QCPAxis*,QCPAxis::SelectablePart,QMouseEvent*)), this, SLOT(setLimitsDlg(QCPAxis*)));
 }
 
@@ -104,7 +110,7 @@ void Plot::plotSelectionChanged()
 
 void Plot::graphClicked(QCPAbstractPlottable *plottable)
 {
-    auto g = dynamic_cast<Graph*>(plottable);
+    auto g = dynamic_cast<QCPGraph*>(plottable);
     if (_serviceGraphs.contains(g)) g = nullptr;
     emit graphSelected(g);
 }
@@ -271,3 +277,25 @@ bool Plot::setLimitsDlg(QCPRange& range, const QString& title)
     }
     return false;
 }
+
+//void Plot::setTitleVisible(bool on)
+//{
+//    if (_title && on) return;
+//    if (on)
+//    {
+//        _title = new QCPTextElement(this, "", QFont("sans", 14, QFont::Bold));
+//        _title->setSelectable(true);
+//        // TODO restore title format
+
+//        plotLayout()->insertRow(0);
+//        plotLayout()->addElement(0, 0, _title);
+//        connect(_title, &QCPTextElement::doubleClicked, [this](){ emit editTitleRequest(); });
+//    }
+//    else
+//    {
+//        // TODO backup title format
+//        plotLayout()->remove(_title);
+//        plotLayout()->simplify();
+//        _title = nullptr;
+//    }
+//}

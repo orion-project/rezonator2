@@ -46,7 +46,7 @@ else {
     DEFINES += "BUILDTIME=\"\\\"$$system(date '+%T')\\\"\""
 }
 
-win32: RC_FILE = release/version.rc
+win32: RC_FILE = src/app.rc
 
 #------------------------------------------------------------
 # Translation

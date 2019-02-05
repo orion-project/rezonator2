@@ -159,7 +159,6 @@ QCPItemStraightLine* StabilityMapWindow::makeStabBoundMarker() const
     QCPItemStraightLine *line = new QCPItemStraightLine(plot());
     line->setPen(QPen(Qt::magenta, 1, Qt::DashLine)); // TODO make configurable
     line->setSelectable(false);
-    plot()->addItem(line);
     return line;
 }
 
@@ -174,4 +173,9 @@ void StabilityMapWindow::toggleStabBoundMarkers(bool on)
     _stabBoundMarkerTop->setVisible(on);
     plot()->replot();
     schema()->events().raise(SchemaEvents::Changed);
+}
+
+QString StabilityMapWindow::getDefaultTitle() const
+{
+    return tr("Stability Parameter");
 }

@@ -11,3 +11,10 @@ QString AxisLimits::str() const
 {
     return QString("%1 - %2").arg(min).arg(max);
 }
+
+
+namespace TitlePlaceholder {
+
+QString defaultTitle() { return QStringLiteral("{default_title}"); }
+
+} // namespace TitlePlaceholder

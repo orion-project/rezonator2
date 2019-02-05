@@ -9,7 +9,7 @@ class GraphDataGrid : public QTableWidget
     Q_OBJECT
 public:
     explicit GraphDataGrid();
-    void setData(const QList<QCPData>& data);
+    void setData(QSharedPointer<QCPGraphDataContainer> data);
 public slots:
     void copy();
 protected:

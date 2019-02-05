@@ -16,7 +16,6 @@ QT_END_NAMESPACE
 
 class QCPCursor;
 class QCPGraph;
-typedef QCPGraph Graph;
 
 namespace Ori {
 namespace Widgets {
@@ -82,7 +81,10 @@ protected:
     PlotFunction* _function;
     Z::Unit _unitX = Z::Units::none();
     Z::Unit _unitY = Z::Units::none();
-    QVector<Graph*> _graphsT, _graphsS;
+    QString title = TitlePlaceholder::defaultTitle();
+    QString titleX = TitlePlaceholder::defaultTitle();
+    QString titleY = TitlePlaceholder::defaultTitle();
+    QVector<QCPGraph*> _graphsT, _graphsS;
     PlotParamsPanel* _leftPanel;
     QCPCursor* _cursor;
     CursorPanel* _cursorPanel;
@@ -110,19 +112,21 @@ protected:
         AxisLimits limitsY;
         Z::Unit unitX, unitY;
         QPointF cursorPos;
+        QString title, titleX, titleY;
     };
     QMap<int, ViewState> _storedView;
 
     /// Calculates function and plots its results.
     virtual void calculate();
-
     virtual bool configureInternal() { return true; }
-
     virtual void afterUpdate() {}
     virtual void afterSetUnitsX(Z::Unit old, Z::Unit cur) { Q_UNUSED(old) Q_UNUSED(cur) }
     virtual void afterSetUnitsY(Z::Unit old, Z::Unit cur) { Q_UNUSED(old) Q_UNUSED(cur) }
+    virtual QString getDefaultTitle() const { return QString(); }
+    virtual QString getDefaultTitleX() const { return QString(); }
+    virtual QString getDefaultTitleY() const { return QString(); }
 
-    Graph* selectedGraph() const;
+    QCPGraph* selectedGraph() const;
 
     void createActions();
     void createMenuBar();
@@ -132,7 +136,10 @@ protected:
 
     void updateVisibilityTS();
     void updateTSModeActions();
-    void updateAxesTitles();
+    void updateTitles();
+    void updateTitle();
+    void updateTitleX();
+    void updateTitleY();
     void updateGraphs(Z::WorkPlane);
 
     void showInfo(const QString& text, const QString& icon = QString());
@@ -145,7 +152,7 @@ protected:
 
     virtual QWidget* makeOptionsPanel() { return nullptr; }
 
-    virtual void fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *graph, int resultIndex);
+    virtual void fillGraphWithFunctionResults(Z::WorkPlane plane, QCPGraph *graph, int resultIndex);
 
     void disableAndClose();
 
@@ -157,20 +164,17 @@ private slots:
     void showS();
     void showTS();
     void updateWithParams();
-    void graphSelected(Graph*);
-    void updateCursorInfo();
     void showRoundTrip();
     void freeze(bool);
-    void updateUnitsMenus();
-    void updateUnitsMenuX();
-    void updateUnitsMenuY();
 
     QWidget* optionsPanelRequired();
 
 private:
-
     void setUnitX(Z::Unit unit);
     void setUnitY(Z::Unit unit);
+
+    void graphSelected(QCPGraph *);
+    void updateCursorInfo();
 };
 
 #endif // PLOT_FUNC_WINDOW_H

@@ -92,7 +92,7 @@ void PlotFuncWindow::createMenuBar()
     connect(_unitsMenuY, &UnitsMenu::unitChanged, this, &PlotFuncWindow::setUnitY);
 
     menuPlot = menu(tr("&Plot", "Menu title"), this, {
-        actnUpdate, actnUpdateParams, nullptr, actnShowT, actnShowS, actnShowTS, nullptr,
+        actnUpdate, actnUpdateParams, actnFreeze, nullptr, actnShowT, actnShowS, actnShowTS, nullptr,
         _unitsMenuX->menu(), _unitsMenuY->menu(), nullptr, actnShowRoundTrip
     });
     connect(menuPlot, &QMenu::aboutToShow, [this](){
@@ -198,11 +198,11 @@ void PlotFuncWindow::createContent()
     _plot = new Plot;
     _plot->legend->setVisible(false);
     _plot->setAutoAddPlottableToLegend(false);
-    connect(_plot, SIGNAL(graphSelected(Graph*)), this, SLOT(graphSelected(Graph*)));
+    connect(_plot, &Plot::graphSelected, this, &PlotFuncWindow::graphSelected);
 
 
     _cursor = new QCPCursor(_plot);
-    connect(_cursor, SIGNAL(positionChanged()), this, SLOT(updateCursorInfo()));
+    connect(_cursor, &QCPCursor::positionChanged, this, &PlotFuncWindow::updateCursorInfo);
     _plot->serviceGraphs().append(_cursor);
 
     _cursorPanel = new CursorPanel(_function, _cursor);
@@ -217,31 +217,15 @@ void PlotFuncWindow::createContent()
     setContent(_splitter);
 }
 
-void PlotFuncWindow::updateUnitsMenus()
-{
-
-}
-
-void PlotFuncWindow::updateUnitsMenuX()
-{
-
-}
-
-void PlotFuncWindow::updateUnitsMenuY()
-{
-
-}
-
-
 void PlotFuncWindow::createStatusBar()
 {
     _statusBar = new Ori::Widgets::StatusBar(STATUS_PANELS_COUNT);
     setContent(_statusBar);
 }
 
-Graph* PlotFuncWindow::selectedGraph() const
+QCPGraph *PlotFuncWindow::selectedGraph() const
 {
-    QList<Graph*> graphs = _plot->selectedGraphs();
+    auto graphs = _plot->selectedGraphs();
     return graphs.isEmpty()? nullptr: graphs.first();
 }
 
@@ -278,8 +262,8 @@ void PlotFuncWindow::updateVisibilityTS()
 {
     bool t = actnShowT->isChecked() || actnShowTS->isChecked();
     bool s = actnShowS->isChecked() || actnShowTS->isChecked();
-    foreach (Graph *g, _graphsT) g->setVisible(t);
-    foreach (Graph *g, _graphsS) g->setVisible(s);
+    for (auto g : _graphsT) g->setVisible(t);
+    for (auto g : _graphsS) g->setVisible(s);
     _plot->replot();
 }
 
@@ -300,7 +284,24 @@ void PlotFuncWindow::updateNotables()
         _leftPanel->infoPanel()->setHtml(_function->calculateNotables());
 }
 
-void PlotFuncWindow::updateAxesTitles()
+void PlotFuncWindow::updateTitles()
+{
+    updateTitle();
+    updateTitleX();
+    updateTitleY();
+}
+
+void PlotFuncWindow::updateTitle()
+{
+    // TODO
+}
+
+void PlotFuncWindow::updateTitleX()
+{
+    // TODO
+}
+
+void PlotFuncWindow::updateTitleY()
 {
     // TODO
 }
@@ -309,9 +310,9 @@ void PlotFuncWindow::updateDataGrid()
 {
     if (_leftPanel->dataGrid() && _leftPanel->dataGrid()->isVisible())
     {
-        Graph *graph = selectedGraph();
+        auto graph = selectedGraph();
         if (graph)
-            _leftPanel->dataGrid()->setData(graph->data()->values());
+            _leftPanel->dataGrid()->setData(graph->data());
     }
 }
 
@@ -328,11 +329,7 @@ void PlotFuncWindow::updateCursorInfo()
 
 void PlotFuncWindow::updateWithParams()
 {
-    if (configure())
-    {
-        // TODO:NEXT-VER Schema.ModifiedForms := True;
-        update();
-    }
+    if (configure()) update();
 }
 
 void PlotFuncWindow::update()
@@ -359,7 +356,7 @@ void PlotFuncWindow::update()
     }
     else updateCursorInfo();
 
-    updateAxesTitles();
+    updateTitles();
     updateNotables();
     afterUpdate();
 
@@ -374,8 +371,8 @@ void PlotFuncWindow::calculate()
         //debug_LogGraphsCount();
         _statusBar->setText(STATUS_INFO, _function->errorText());
         _statusBar->highlightError(STATUS_INFO);
-        for (Graph* g : _graphsT) if (g->parentPlot() == _plot) _plot->removePlottable(g);
-        for (Graph* g : _graphsS) if (g->parentPlot() == _plot) _plot->removePlottable(g);
+        for (auto g : _graphsT) _plot->removePlottable(g);
+        for (auto g : _graphsS) _plot->removePlottable(g);
         _graphsT.clear();
         _graphsS.clear();
     }
@@ -389,11 +386,11 @@ void PlotFuncWindow::calculate()
 
 void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
 {
-    QVector<Graph*>& graphs = plane == Z::Plane_T? _graphsT: _graphsS;
+    QVector<QCPGraph*>& graphs = plane == Z::Plane_T? _graphsT: _graphsS;
     int resultCount = _function->resultCount(plane);
     for (int i = 0; i < resultCount; i++)
     {
-        Graph *g;
+        QCPGraph *g;
         if (i >= graphs.size())
         {
             g = _plot->addGraph();
@@ -402,8 +399,6 @@ void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
         }
         else g = graphs[i];
         fillGraphWithFunctionResults(plane, g, i);
-        if (g->parentPlot() != _plot)
-            _plot->addPlottable(g);
     }
     while (graphs.size() > resultCount)
     {
@@ -412,7 +407,7 @@ void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
     }
 }
 
-void PlotFuncWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *graph, int resultIndex)
+void PlotFuncWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, QCPGraph *graph, int resultIndex)
 {
     auto result = _function->result(plane, resultIndex);
     int count = result.pointsCount();
@@ -420,16 +415,16 @@ void PlotFuncWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *gra
     auto ys = result.y();
     auto unitX = getUnitX();
     auto unitY = getUnitY();
-    auto data = new QCPDataMap;
+    QSharedPointer<QCPGraphDataContainer> data(new QCPGraphDataContainer);
     for (int i = 0; i < count; i++)
     {
         // TODO: possible optimization: extract unit's SI factor before loop
         // and replace the call of virtual method with simple multiplication
         double x = unitX->fromSi(xs.at(i));
         double y = unitY->fromSi(ys.at(i));
-        data->insert(x, QCPData(x, y));
+        data->add(QCPGraphData(x, y));
     }
-    graph->setData(data, false);
+    graph->setData(data);
 }
 
 QPen PlotFuncWindow::getLineSettings(Z::WorkPlane plane)
@@ -437,12 +432,12 @@ QPen PlotFuncWindow::getLineSettings(Z::WorkPlane plane)
     return plane == Z::Plane_T? QPen(Qt::darkGreen): QPen(Qt::red);
 }
 
-void PlotFuncWindow::graphSelected(Graph *graph)
+void PlotFuncWindow::graphSelected(QCPGraph *graph)
 {
     updateDataGrid();
 
     if (graph)
-        _statusBar->setText(STATUS_POINTS, tr("Points: %1").arg(graph->data()->count()));
+        _statusBar->setText(STATUS_POINTS, tr("Points: %1").arg(graph->data()->size()));
     else
         _statusBar->clear(STATUS_POINTS);
 }

@@ -36,7 +36,7 @@ QWidget* MultiCausticWindow::makeOptionsPanel()
     return new CausticOptionsPanel<MultiCausticWindow>(this);
 }
 
-void MultiCausticWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *graph, int resultIndex)
+void MultiCausticWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, QCPGraph *graph, int resultIndex)
 {
     auto unitX = getUnitX();
     auto unitY = getUnitY();
@@ -52,16 +52,16 @@ void MultiCausticWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, Graph 
             int count = result.pointsCount();
             auto xs = result.x();
             auto ys = result.y();
-            auto data = new QCPDataMap;
+            QSharedPointer<QCPGraphDataContainer> data(new QCPGraphDataContainer);
             for (int i = 0; i < count; i++)
             {
                 // TODO: possible optimization: extract unit's SI factor before loop
                 // and replace the call of virtual method with simple multiplication
                 double x = unitX->fromSi(xs.at(i) + offset);
                 double y = unitY->fromSi(ys.at(i));
-                data->insert(x, QCPData(x, y));
+                data->add(QCPGraphData(x, y));
             }
-            graph->setData(data, false);
+            graph->setData(data);
             return;
         }
         resultIndex1 = resultIndex2;
@@ -113,7 +113,6 @@ QCPItemStraightLine* MultiCausticWindow::makeElemBoundMarker() const
     QCPItemStraightLine *line = new QCPItemStraightLine(plot());
     line->setPen(QPen(Qt::magenta, 1, Qt::DashLine)); // TODO make configurable
     line->setSelectable(false);
-    plot()->addItem(line);
     return line;
 }
 

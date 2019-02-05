@@ -16,9 +16,9 @@ public:
     void setPositionX(const double& x, bool replot = true) { setPosition(x, position().y(), replot); }
     void setPositionY(const double& y, bool replot = true) { setPosition(position().x(), y, replot); }
     void moveToCenter(bool replot = true);
-    inline void pixelPosition(double& x, double& y) const;
-    inline void setPixelPosition(const QPointF& p, bool replot = true) { setPixelPosition(p.x(), p.y(), replot); }
-    inline void setPixelPosition(const QPoint& p, bool replot = true) { setPixelPosition(p.x(), p.y(), replot); }
+    void pixelPosition(double& x, double& y) const;
+    void setPixelPosition(const QPointF& p, bool replot = true) { setPixelPosition(p.x(), p.y(), replot); }
+    void setPixelPosition(const QPoint& p, bool replot = true) { setPixelPosition(p.x(), p.y(), replot); }
     void setPixelPosition(const double& x, const double& y, bool replot = true);
     bool followMouse() const { return _followMouse; }
     CursorShape shape() const { return _shape; }
@@ -29,12 +29,13 @@ public slots:
 signals:
     void positionChanged();
 protected:
-    void drawLinePlot(QCPPainter *painter, QVector<QPointF>*) const override;
+    void draw(QCPPainter *painter) override;
+    void mouseDoubleClickEvent(QMouseEvent *event, const QVariant &details) override;
 private:
-    bool _followMouse;
-    bool _canDragX, _canDragY;
-    bool _dragX, _dragY;
-    CursorShape _shape;
+    bool _followMouse = false;
+    bool _canDragX = false, _canDragY = false;
+    bool _dragX = false, _dragY = false;
+    CursorShape _shape = CrossLines;
 private slots:
     void mouseDoubleClick(QMouseEvent*);
     void mouseMove(QMouseEvent*);

@@ -3,7 +3,6 @@
 
 #include <memory>
 
-#pragma GCC diagnostic ignored "-Wweak-vtables"
 #pragma GCC diagnostic ignored "-Wpadded"
 
 namespace Z {

@@ -4,8 +4,6 @@
 #include "../../libs/qcustomplot/qcustomplot.h"
 #include "PlotUtils.h"
 
-typedef QCPGraph Graph;
-
 class Plot : public QCustomPlot
 {
     Q_OBJECT
@@ -13,7 +11,7 @@ class Plot : public QCustomPlot
 public:
     explicit Plot();
 
-    QVector<Graph*>& serviceGraphs() { return _serviceGraphs; }
+    QVector<QCPGraph*>& serviceGraphs() { return _serviceGraphs; }
 
     AxisLimits limitsX() const { return limits(xAxis); }
     AxisLimits limitsY() const { return limits(yAxis); }
@@ -24,6 +22,9 @@ public:
     void extendLimits(double factor, bool replot = true);
     void extendLimitsX(double factor, bool replot = true) { extendLimits(xAxis, factor, replot); }
     void extendLimitsY(double factor, bool replot = true) { extendLimits(yAxis, factor, replot); }
+
+    bool isTitleVisible() const;
+    void setTitleVisible(bool on);
 
     QMenu *menuAxisX = nullptr;
     QMenu *menuAxisY = nullptr;
@@ -43,7 +44,7 @@ public slots:
     void zoomOutY() { extendLimitsY(_zoomStepY); }
 
 signals:
-    void graphSelected(Graph*);
+    void graphSelected(QCPGraph*);
     void emptySpaceDoubleClicked(QMouseEvent *event);
 
 protected:
@@ -65,7 +66,7 @@ private:
         AxisY
     };
 
-    QVector<Graph*> _serviceGraphs;
+    QVector<QCPGraph*> _serviceGraphs;
     const double _safeMarginsX;
     const double _safeMarginsY;
     const double _zoomStepX;
