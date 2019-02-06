@@ -23,8 +23,12 @@ public:
     void extendLimitsX(double factor, bool replot = true) { extendLimits(xAxis, factor, replot); }
     void extendLimitsY(double factor, bool replot = true) { extendLimits(yAxis, factor, replot); }
 
-    bool isTitleVisible() const;
-    void setTitleVisible(bool on);
+//    bool isTitleVisible() const { return _title; }
+//    void setTitleVisible(bool on);
+//    QString title() const;
+//    void setTitle(const QString& title);
+
+    QCPTextElement* title() { return _title; }
 
     QMenu *menuAxisX = nullptr;
     QMenu *menuAxisY = nullptr;
@@ -66,6 +70,8 @@ private:
         AxisY
     };
 
+    QCPTextElement* _title;
+    QString _titleText;
     QVector<QCPGraph*> _serviceGraphs;
     const double _safeMarginsX;
     const double _safeMarginsY;

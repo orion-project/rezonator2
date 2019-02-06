@@ -24,6 +24,8 @@ protected:
     bool configureInternal() override;
     void afterUpdate() override;
     QString getDefaultTitle() const override;
+    QString getDefaultTitleX() const override;
+    QString getDefaultTitleY() const override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;

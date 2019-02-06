@@ -177,5 +177,34 @@ void StabilityMapWindow::toggleStabBoundMarkers(bool on)
 
 QString StabilityMapWindow::getDefaultTitle() const
 {
-    return tr("Stability Parameter");
+    return tr("Stability Map");
+}
+
+QString StabilityMapWindow::getDefaultTitleX() const
+{
+    auto arg = function()->arg();
+    auto unit = getUnitX();
+    if (unit == Z::Units::none())
+        return QStringLiteral("%1, %2")
+                .arg(arg->element->displayLabelTitle())
+                .arg(arg->parameter->name());
+    return QStringLiteral("%1, %2 (%3)")
+            .arg(arg->element->displayLabelTitle())
+            .arg(arg->parameter->label())
+            .arg(unit->name());
+}
+
+QString StabilityMapWindow::getDefaultTitleY() const
+{
+    QString stabCalcMode;
+    switch (function()->stabilityCalcMode())
+    {
+    case Z::Enums::StabilityCalcMode::Normal:
+        stabCalcMode = QStringLiteral("(A + B)/2");
+        break;
+    case Z::Enums::StabilityCalcMode::Squared:
+        stabCalcMode = QStringLiteral("1 - ((A + D)/2)²");
+        break;
+    }
+    return tr("Stability Parameter %1").arg(stabCalcMode);
 }

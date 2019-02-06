@@ -25,11 +25,27 @@ Plot::Plot() :
     yAxis2->setTicks(false);
 
     legend->setVisible(true);
+
     setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables |
                     QCP::iSelectAxes | QCP::iSelectItems | QCP::iSelectLegend | QCP::iSelectOther);
     connect(this, SIGNAL(selectionChangedByUser()), this, SLOT(plotSelectionChanged()));
     connect(this, SIGNAL(plottableClick(QCPAbstractPlottable*,int,QMouseEvent*)), this, SLOT(graphClicked(QCPAbstractPlottable*)));
     connect(this, SIGNAL(axisDoubleClick(QCPAxis*,QCPAxis::SelectablePart,QMouseEvent*)), this, SLOT(setLimitsDlg(QCPAxis*)));
+
+    // TODO make font customizable
+    auto f = font();
+
+    f.setPointSize(14);
+    _title = new QCPTextElement(this);
+    _title->setFont(f);
+    _title->setSelectable(true);
+    _title->setMargins({10, 10, 10, 0});
+    plotLayout()->insertRow(0);
+    plotLayout()->addElement(0, 0, _title);
+
+    f.setPointSize(10);
+    xAxis->setLabelFont(f);
+    yAxis->setLabelFont(f);
 }
 
 Plot::PlotPart Plot::selectedPart() const
@@ -283,13 +299,16 @@ bool Plot::setLimitsDlg(QCPRange& range, const QString& title)
 //    if (_title && on) return;
 //    if (on)
 //    {
-//        _title = new QCPTextElement(this, "", QFont("sans", 14, QFont::Bold));
+//        // There is nothing to show
+//        if (_titleText.isEmpty()) return;
+
+//        _title = new QCPTextElement(this, "", QFont("sans", 14, QFont::Bold)); // TODO make font customizable
 //        _title->setSelectable(true);
 //        // TODO restore title format
 
 //        plotLayout()->insertRow(0);
 //        plotLayout()->addElement(0, 0, _title);
-//        connect(_title, &QCPTextElement::doubleClicked, [this](){ emit editTitleRequest(); });
+//        //connect(_title, &QCPTextElement::doubleClicked, [this](){ emit editTitleRequest(); });
 //    }
 //    else
 //    {

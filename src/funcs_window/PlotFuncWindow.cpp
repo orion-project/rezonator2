@@ -293,17 +293,26 @@ void PlotFuncWindow::updateTitles()
 
 void PlotFuncWindow::updateTitle()
 {
-    // TODO
+    QString title = _title;
+    title.replace(TitlePlaceholder::defaultTitle(), getDefaultTitle());
+    title = formatTitleSpecial(title);
+    _plot->title()->setText(title);
 }
 
 void PlotFuncWindow::updateTitleX()
 {
-    // TODO
+    QString title = _titleX;
+    title.replace(TitlePlaceholder::defaultTitle(), getDefaultTitleX());
+    title = formatTitleSpecial(title);
+    _plot->xAxis->setLabel(title);
 }
 
 void PlotFuncWindow::updateTitleY()
 {
-    // TODO
+    QString title = _titleY;
+    title.replace(TitlePlaceholder::defaultTitle(), getDefaultTitleY());
+    title = formatTitleSpecial(title);
+    _plot->yAxis->setLabel(title);
 }
 
 void PlotFuncWindow::updateDataGrid()
@@ -584,6 +593,7 @@ void PlotFuncWindow::setUnitX(Z::Unit unit)
         updateGraphs(Z::WorkPlane::Plane_T);
         updateGraphs(Z::WorkPlane::Plane_S);
         _plot->setLimitsX(limits, false);
+        updateTitleX();
         afterSetUnitsX(oldUnit, unit);
         schema()->markModified();
         _plot->replot();
@@ -603,6 +613,7 @@ void PlotFuncWindow::setUnitY(Z::Unit unit)
         updateGraphs(Z::WorkPlane::Plane_T);
         updateGraphs(Z::WorkPlane::Plane_S);
         _plot->setLimitsY(limits, false);
+        updateTitleY();
         afterSetUnitsY(oldUnit, unit);
         schema()->markModified();
         _plot->replot();

@@ -81,9 +81,9 @@ protected:
     PlotFunction* _function;
     Z::Unit _unitX = Z::Units::none();
     Z::Unit _unitY = Z::Units::none();
-    QString title = TitlePlaceholder::defaultTitle();
-    QString titleX = TitlePlaceholder::defaultTitle();
-    QString titleY = TitlePlaceholder::defaultTitle();
+    QString _title = TitlePlaceholder::defaultTitle();
+    QString _titleX = TitlePlaceholder::defaultTitle();
+    QString _titleY = TitlePlaceholder::defaultTitle();
     QVector<QCPGraph*> _graphsT, _graphsS;
     PlotParamsPanel* _leftPanel;
     QCPCursor* _cursor;
@@ -125,6 +125,7 @@ protected:
     virtual QString getDefaultTitle() const { return QString(); }
     virtual QString getDefaultTitleX() const { return QString(); }
     virtual QString getDefaultTitleY() const { return QString(); }
+    virtual QString formatTitleSpecial(const QString& title) const { return title; }
 
     QCPGraph* selectedGraph() const;
 
