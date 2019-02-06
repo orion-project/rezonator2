@@ -67,6 +67,7 @@ void PlotFuncWindow::createActions()
     actnShowTS->setVisible(false); //< TODO:NEXT_VER
 
     actnShowRoundTrip = action(tr("Show Round-trip"), this, SLOT(showRoundTrip()));
+    actnShowRoundTrip->setVisible(false);
 
     actnFreeze = toggledAction(tr("Freeze"), this, SLOT(freeze(bool)), ":/toolbar/freeze", Qt::CTRL | Qt::Key_F);
 

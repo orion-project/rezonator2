@@ -307,6 +307,8 @@ bool Plot::setLimitsDlg(QCPRange& range, const QString& title)
     return false;
 }
 
+// TODO invisible title takes a room anyway and one can see empty space above the graph
+// so we need to extract the title from layout when it is invisible
 //void Plot::setTitleVisible(bool on)
 //{
 //    if (_title && on) return;

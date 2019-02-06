@@ -141,7 +141,7 @@ QString InfoFuncRepetitionRate::calculate()
             if (Double(range->ior()).isNot(1))
             {
                 mult_ior = Z::Strs::multX() % Z::format(range->ior());
-                count++; // elem should be printed even if it is single
+                count++; // when n != 1 then the sum should be printed even if it is the only element
             }
             parts += QString::fromLatin1("<b>%1</b>%2<font color=gray><i>(%3)</i></font>")
                 .arg(Z::format(range->axisLengthSI()), mult_ior, range->displayLabel());
@@ -160,8 +160,17 @@ QString InfoFuncRepetitionRate::calculate()
     QString sum = "<b>" % Z::format(L) % Z::Units::m()->name() % "</b>";
     if (count > 1) sum = parts.join(" + ") % " = " % sum;
 
-    return QString::fromLatin1("<p style='font-size:12pt'><b>%1</b><p>%2:<br>%3")
-            .arg(freq.str(), qApp->translate("Func", "Total cavity length"), sum);
+#ifdef Q_OS_MAC
+    const int freqFontSize = 16;
+#else
+    const int freqFontSize = 12;
+#endif
+    return QStringLiteral("<p style='font-size:%1pt'><b>%2</b>"
+                          "<p>%3:<br>%4")
+            .arg(freqFontSize)
+            .arg(freq.format())
+            .arg(qApp->translate("Func", "Total cavity length"))
+            .arg(sum);
 }
 
 //------------------------------------------------------------------------------

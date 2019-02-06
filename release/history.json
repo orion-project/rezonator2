@@ -14,13 +14,16 @@
           "text": "Can read Title and Notes fields from schema files of version 1."
         },
         {
-          "text": "Copy/paste command for elements, Clone command for pumps."
+          "text": "Copy/paste commands for elements, Clone command for pumps."
         },
         {
           "text": "Move Up/Move Down commands for elements."
         },
         {
           "text": "Can select different units for plot axes."
+        },
+        {
+          "text": "Can make default titles for plots and plots' axes."
         }
       ]
     },

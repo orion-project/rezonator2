@@ -156,6 +156,7 @@ public:
     PrefixedValue(double value, Unit unit);
 
     QString str() const;
+    QString format() const;
 
 private:
     double _value;

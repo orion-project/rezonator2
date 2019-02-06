@@ -241,6 +241,7 @@ void SchemaViewWindow::currentCellChanged(int curRow, int, int prevRow, int)
     bool hasElem = curRow < lastRow;
     actnElemProp->setEnabled(hasElem);
     actnElemMatr->setEnabled(hasElem);
+    actnElemMatrAll->setEnabled(hasElem);
     actnElemDelete->setEnabled(hasElem);
     actnEditCopy->setEnabled(hasElem);
     actnElemMoveUp->setEnabled(hasElem);

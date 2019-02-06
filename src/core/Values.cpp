@@ -81,6 +81,11 @@ QString PrefixedValue::str() const
     return Z::str(_value) % Z::Units::prefixNameTr(_prefix) % _unit->name();
 }
 
+QString PrefixedValue::format() const
+{
+    return Z::format(_value) % Z::Units::prefixNameTr(_prefix) % _unit->name();
+}
+
 //------------------------------------------------------------------------------
 //                                  PointTS
 //------------------------------------------------------------------------------
