@@ -206,5 +206,5 @@ QString StabilityMapWindow::getDefaultTitleY() const
         stabCalcMode = QStringLiteral("1 - ((A + D)/2)²");
         break;
     }
-    return tr("Stability Parameter %1").arg(stabCalcMode);
+    return tr("Stability parameter: %1").arg(stabCalcMode);
 }

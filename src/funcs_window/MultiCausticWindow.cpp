@@ -218,3 +218,43 @@ void MultiCausticWindow::toggleElementBoundMarkers(bool on)
     plot()->replot();
     schema()->events().raise(SchemaEvents::Changed);
 }
+
+QString MultiCausticWindow::getDefaultTitle() const
+{
+    switch (function()->mode())
+    {
+    case CausticFunction::Mode::BeamRadius:
+        return tr("Beam Radius");
+    case CausticFunction::Mode::FontRadius:
+        return tr("Wavefront Curvature Radius");
+    case CausticFunction::Mode::HalfAngle:
+        return tr("Half of Divergence Angle");
+    }
+    return QString();
+}
+
+QString MultiCausticWindow::getDefaultTitleX() const
+{
+    QStringList strs;
+    for (auto arg : function()->args())
+        strs << arg.element->displayLabel();
+    return QStringLiteral("%1 (%2)").arg(strs.join(QStringLiteral(", ")), getUnitX()->name());
+}
+
+QString MultiCausticWindow::getDefaultTitleY() const
+{
+    QString title;
+    switch (function()->mode())
+    {
+    case CausticFunction::Mode::BeamRadius:
+        title = tr("Beam radius");
+        break;
+    case CausticFunction::Mode::FontRadius:
+        title = tr("Wavefront curvature radius");
+        break;
+    case CausticFunction::Mode::HalfAngle:
+        title = tr("Half of divergence angle");
+        break;
+    }
+    return QStringLiteral("%1 (%2)").arg(title, getUnitY()->name());
+}

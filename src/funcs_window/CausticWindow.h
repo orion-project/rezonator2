@@ -17,6 +17,9 @@ protected:
     // Implementation of PlotFuncWindow
     QWidget* makeOptionsPanel() override;
     bool configureInternal() override;
+    QString getDefaultTitle() const override;
+    QString getDefaultTitleX() const override;
+    QString getDefaultTitleY() const override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;
