@@ -142,6 +142,7 @@ protected:
     void updateTitleX();
     void updateTitleY();
     void updateGraphs(Z::WorkPlane);
+    void updateStatusUnits();
 
     void showInfo(const QString& text, const QString& icon = QString());
 

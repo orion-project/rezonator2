@@ -23,6 +23,8 @@ Plot::Plot() :
     yAxis2->setVisible(true);
     xAxis2->setTicks(false);
     yAxis2->setTicks(false);
+    xAxis2->setSelectableParts({});
+    yAxis2->setSelectableParts({});
 
     legend->setVisible(true);
 

@@ -20,6 +20,8 @@ using namespace Ori::Gui;
 
 enum PlotWindowStatusPanels
 {
+    STATUS_UNIT_X,
+    STATUS_UNIT_Y,
     STATUS_POINTS,
     STATUS_INFO,
 
@@ -220,6 +222,14 @@ void PlotFuncWindow::createContent()
 void PlotFuncWindow::createStatusBar()
 {
     _statusBar = new Ori::Widgets::StatusBar(STATUS_PANELS_COUNT);
+    _statusBar->connect(STATUS_UNIT_X, &QWidget::customContextMenuRequested, [this](const QPoint& p){
+        _unitsMenuX->setUnit(getUnitX());
+        _unitsMenuX->menu()->popup(_statusBar->mapToGlobal(STATUS_UNIT_X, p));
+    });
+    _statusBar->connect(STATUS_UNIT_Y, &QWidget::customContextMenuRequested, [this](const QPoint& p){
+        _unitsMenuY->setUnit(getUnitY());
+        _unitsMenuY->menu()->popup(_statusBar->mapToGlobal(STATUS_UNIT_Y, p));
+    });
     setContent(_statusBar);
 }
 
@@ -315,6 +325,16 @@ void PlotFuncWindow::updateTitleY()
     _plot->yAxis->setLabel(title);
 }
 
+void PlotFuncWindow::updateStatusUnits()
+{
+    auto unitX = getUnitX();
+    auto unitY = getUnitY();
+    _statusBar->setText(STATUS_UNIT_X, QStringLiteral("X: ") + (
+        unitX == Z::Units::none() ? QStringLiteral("n/a") : unitX->name()));
+    _statusBar->setText(STATUS_UNIT_Y, QStringLiteral("Y: ") + (
+        unitY == Z::Units::none() ? QStringLiteral("n/a") : unitY->name()));
+}
+
 void PlotFuncWindow::updateDataGrid()
 {
     if (_leftPanel->dataGrid() && _leftPanel->dataGrid()->isVisible())
@@ -366,6 +386,7 @@ void PlotFuncWindow::update()
     else updateCursorInfo();
 
     updateTitles();
+    updateStatusUnits();
     updateNotables();
     afterUpdate();
 
@@ -594,6 +615,7 @@ void PlotFuncWindow::setUnitX(Z::Unit unit)
         updateGraphs(Z::WorkPlane::Plane_S);
         _plot->setLimitsX(limits, false);
         updateTitleX();
+        updateStatusUnits();
         afterSetUnitsX(oldUnit, unit);
         schema()->markModified();
         _plot->replot();
@@ -614,6 +636,7 @@ void PlotFuncWindow::setUnitY(Z::Unit unit)
         updateGraphs(Z::WorkPlane::Plane_S);
         _plot->setLimitsY(limits, false);
         updateTitleY();
+        updateStatusUnits();
         afterSetUnitsY(oldUnit, unit);
         schema()->markModified();
         _plot->replot();
