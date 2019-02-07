@@ -2,20 +2,16 @@
 
 #include <QApplication>
 
-QCPCursor::QCPCursor(QCustomPlot *plot) : QCPGraph(plot->xAxis, plot->yAxis),
-    _followMouse(false), _canDragX(false), _canDragY(false),
-    _dragX(false), _dragY(false), _shape(CrossLines)
+QCPCursor::QCPCursor(QCustomPlot *plot) : QCPGraph(plot->xAxis, plot->yAxis)
 {
     setAntialiased(false);
-    setSelectable(false);
-    setPen(QPen(QColor::fromRgb(80, 80, 255)));
+    setPen(QPen(QColor::fromRgb(80, 80, 255))); // TODO make customizable
 
     connect(plot, SIGNAL(emptySpaceDoubleClicked(QMouseEvent*)), this, SLOT(mouseDoubleClick(QMouseEvent*)));
     connect(plot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress(QMouseEvent*)));
     connect(plot, SIGNAL(mouseRelease(QMouseEvent*)), this, SLOT(mouseRelease(QMouseEvent*)));
     connect(plot, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(mouseMove(QMouseEvent*)));
 
-    plot->addPlottable(this);
     removeFromLegend();
     setPosition(0, 0);
 }
@@ -32,9 +28,15 @@ void QCPCursor::setShape(CursorShape value)
     parentPlot()->replot();
 }
 
+void QCPCursor::mouseDoubleClickEvent(QMouseEvent *event, const QVariant &details)
+{
+    Q_UNUSED(details)
+    _followMouse = false;
+    setPixelPosition(event->pos());
+}
+
 void QCPCursor::mouseDoubleClick(QMouseEvent *evt)
 {
-    _followMouse = false;
     setPixelPosition(evt->pos());
 }
 
@@ -114,9 +116,9 @@ void QCPCursor::mouseMove(QMouseEvent *evt)
     }
 }
 
-void QCPCursor::drawLinePlot(QCPPainter *painter, QVector<QPointF>*) const
+void QCPCursor::draw(QCPPainter *painter)
 {
-    painter->setPen(mainPen());
+    painter->setPen(mPen);
     painter->setBrush(Qt::NoBrush);
 
     double x, y;
@@ -130,8 +132,8 @@ void QCPCursor::drawLinePlot(QCPPainter *painter, QVector<QPointF>*) const
 
 QPointF QCPCursor::position() const
 {
-    const QCPData& point = data()->constBegin().value();
-    return QPointF(point.key, point.value);
+    auto point = data()->constBegin();
+    return QPointF(point->key, point->value);
 }
 
 void QCPCursor::setPosition(const double& x, const double& y, bool replot)

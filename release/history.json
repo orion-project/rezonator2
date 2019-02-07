@@ -1,6 +1,33 @@
 {
   "history": [
     {
+      "version": "2.0.3-alpha3",
+      "date": "?",
+      "changes": [
+        {
+          "text": "Start window with MRU, actions, tools and tips panels.",
+        },
+        {
+          "text": "Schema properties dialog.",
+        },
+        {
+          "text": "Can read Title and Notes fields from schema files of version 1."
+        },
+        {
+          "text": "Copy/paste commands for elements, Clone command for pumps."
+        },
+        {
+          "text": "Move Up/Move Down commands for elements."
+        },
+        {
+          "text": "Can select different units for plot axes."
+        },
+        {
+          "text": "Can make default titles for plots and plots' axes."
+        }
+      ]
+    },
+    {
       "version": "2.0.2-alpha2",
       "date": "2018-09-27",
       "changes": [

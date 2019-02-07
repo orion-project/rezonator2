@@ -205,12 +205,13 @@ public:
             QCPGraph *g = plot->addGraph();
             g->setPen(pen);
             g->setBrush(brush);
-            QPen selectedPen(pen);
-            selectedPen.setColor(Qt::black);
-            if (selectedPen.style() == Qt::NoPen)
-                selectedPen.setStyle(Qt::DotLine);
-            g->setSelectedPen(selectedPen);
-            g->setSelectedBrush(brush);
+// TODO restore after upgrade to QCustomPlot 2.0.1
+//            QPen selectedPen(pen);
+//            selectedPen.setColor(Qt::black);
+//            if (selectedPen.style() == Qt::NoPen)
+//                selectedPen.setStyle(Qt::DotLine);
+//            g->setSelectedPen(selectedPen);
+//            g->setSelectedBrush(brush);
             _items.append(g);
         }
     }
@@ -218,7 +219,7 @@ public:
     void clearData()
     {
         for (QCPGraph *g : _items)
-            g->clearData();
+            g->data()->clear();
     }
 
     QCPGraph* operator[](int index) { return _items[index]; }

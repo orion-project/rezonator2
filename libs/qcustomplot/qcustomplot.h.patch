@@ -1,0 +1,12 @@
+diff --git a/libs/qcustomplot/qcustomplot.h b/libs/qcustomplot/qcustomplot.h
+index 3b046e5..ba418c3 100644
+--- a/libs/qcustomplot/qcustomplot.h
++++ b/libs/qcustomplot/qcustomplot.h
+@@ -3738,6 +3738,7 @@ public:
+   
+   QCPAxis *xAxis, *yAxis, *xAxis2, *yAxis2;
+   QCPLegend *legend;
++  bool skipDragging = false;
+   
+ signals:
+   void mouseDoubleClick(QMouseEvent *event);

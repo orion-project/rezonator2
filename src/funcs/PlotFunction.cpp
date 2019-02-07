@@ -43,7 +43,7 @@ void PlotFuncResultSet::addPoint(double x, double y)
 {
     if (std::isnan(y) || std::isinf(y))
     {
-        int segmentLen = results[resultIndex].x.size();
+        int segmentLen = results.at(resultIndex).pointsCount();
         if (!isSegmentEnded && segmentLen > 0)
         {
             Z_INFO(id << "line segment ended at" << x << "points count:" << segmentLen);
@@ -78,7 +78,7 @@ int PlotFuncResultSet::allPointsCount() const
 {
     int count = 0;
     for (const PlotFuncResult& result : results)
-        count += result.x.size();
+        count += result.pointsCount();
     return count;
 }
 

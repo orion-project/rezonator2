@@ -253,6 +253,8 @@ public:
     void moveElementDown(Element* elem);
     void flip();
 
+    void markModified();
+
 private:
     Elements _items;
     SchemaEvents _events;

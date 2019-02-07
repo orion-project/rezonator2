@@ -42,8 +42,12 @@ public:
     Unit unitByAliasOrSi(const QString& alias) const;
 };
 
-//------------------------------------------------------------------------------
+} // namespace Z
 
+Q_DECLARE_METATYPE(Z::Unit);
+Q_DECLARE_METATYPE(Z::Dim);
+
+namespace Z {
 namespace Units {
 
 DECLARE_UNIT(none)
@@ -63,8 +67,6 @@ DECLARE_UNIT(deg)
 DECLARE_UNIT(Hz)
 
 } // namespace Units
-
-//------------------------------------------------------------------------------
 
 namespace Dims {
 
@@ -101,10 +103,8 @@ Prefix simplify(double &value);
 Z::Dim guessDim(Z::Unit unit);
 
 /// Returns unit by its alias or null if not found.
-Unit findByAlias(const QString& alias);
-
+Unit findByAlias(const QString& alias, Z::Unit defaultUnit = nullptr);
 } // namespace Units
-
 } // namespace Z
 
 #endif // UNITS_H

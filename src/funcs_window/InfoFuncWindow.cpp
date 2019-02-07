@@ -71,7 +71,7 @@ void InfoFuncWindow::createToolbar()
     auto actnCopyAll = Ori::Gui::action(tr("Copy All"), this, SLOT(copyAll()), ":/toolbar/copy_all");
     toolbar->addWidget(Ori::Gui::textToolButton(actnCopyAll));
     toolbar->addSeparator();
-    toolbar->addAction(Ori::Gui::action(tr("Help"), this, SLOT(help()), ":/toolbar/help", Qt::Key_Help));
+    //toolbar->addAction(Ori::Gui::action(tr("Help"), this, SLOT(help()), ":/toolbar/help", Qt::Key_Help));
 }
 
 void InfoFuncWindow::updateFrozenInfo()

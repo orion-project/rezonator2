@@ -187,14 +187,14 @@ Dim guessDim(Unit unit)
     return Dims::none();
 }
 
-Unit findByAlias(const QString& alias)
+Unit findByAlias(const QString& alias, Unit defaultUnit)
 {
     for (const Dim& dim : Dims::dims())
     {
         Unit unit = dim->unitByAlias(alias);
         if (unit) return unit;
     }
-    return nullptr;
+    return defaultUnit;
 }
 
 } // namespace Units

@@ -6,8 +6,6 @@
 #include "../funcs/RoundTripCalculator.h"
 #include "../core/Protocol.h"
 
-using namespace Z;
-
 void CausticFunction::calculate()
 {
     if (!checkArgElem()) return;
@@ -61,20 +59,17 @@ void CausticFunction::calculate()
         case TripType::SP: res = calculateSinglePass(); break;
         }
 
-        double argX = _argumentUnit->fromSi(x);
-
         if (_mode == FontRadius)
         {
             // If wavefront radius changes its sign, then we have a pole at waist
             if (!std::isnan(prevRes.T) && (prevRes.T * res.T) < 0)
-                _results.T.addPoint(argX, Double::nan()); // finish previous segment
+                _results.T.addPoint(x, Double::nan()); // finish previous segment
             if (!std::isnan(prevRes.S) && (prevRes.S * res.S) < 0)
-                _results.S.addPoint(argX, Double::nan()); // finish previous segment
+                _results.S.addPoint(x, Double::nan()); // finish previous segment
             prevRes = res;
         }
 
-        convertFromSiToModeUnits(res);
-        addResultPoint(argX, res);
+        addResultPoint(x, res);
     }
 
     finishResults();
@@ -82,7 +77,7 @@ void CausticFunction::calculate()
 
 bool CausticFunction::prepareSP()
 {    
-    PumpParams *pump = _schema->activePump();
+    Z::PumpParams *pump = _schema->activePump();
     if (!pump)
     {
         setError(qApp->translate("Calc error",
@@ -187,24 +182,19 @@ QString CausticFunction::calculatePoint(const double& arg)
             .arg(Z::format(value.T), Z::format(value.S)); */
 }
 
-void CausticFunction::convertFromSiToModeUnits(Z::PointTS& point) const
+Z::Unit CausticFunction::defaultUnitX() const
 {
-    switch (_mode)
-    {
-    case BeamRadius:
-        point.T = _beamsizeUnit->fromSi(point.T);
-        point.S = _beamsizeUnit->fromSi(point.S);
-        break;
-
-    case FontRadius:
-        point.T = _curvatureUnit->fromSi(point.T);
-        point.S = _curvatureUnit->fromSi(point.S);
-        break;
-
-    case HalfAngle:
-        point.T = _angleUnit->fromSi(point.T);
-        point.S = _angleUnit->fromSi(point.S);
-        break;
-    }
+    return _arg.parameter->value().unit();
 }
 
+Z::Unit CausticFunction::defaultUnitsForMode(CausticFunction::Mode mode)
+{
+    // TODO: Preferable units for each mode can be stored and restored from CustomPrefs
+    switch (mode)
+    {
+    case CausticFunction::BeamRadius: return Z::Units::mkm();
+    case CausticFunction::FontRadius: return Z::Units::m();
+    case CausticFunction::HalfAngle: return Z::Units::deg();
+    }
+    return Z::Units::none();
+}

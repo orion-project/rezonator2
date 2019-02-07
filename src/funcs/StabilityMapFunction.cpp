@@ -17,8 +17,6 @@ void StabilityMapFunction::calculate()
     if (!prepareCalculator(elem)) return;
     _calc->setStabilityCalcMode(stabilityCalcMode());
 
-    auto targetUnitX = arg()->range.start.unit();
-
     for (auto x : range.values())
     {
         auto value = Z::Value(x, range.unit());
@@ -35,7 +33,7 @@ void StabilityMapFunction::calculate()
         param->setValue(value);
         _calc->multMatrix();
 
-        addResultPoint(targetUnitX->fromSi(x), _calc->stability());
+        addResultPoint(x, _calc->stability());
     }
 
     finishResults();
@@ -46,5 +44,10 @@ void StabilityMapFunction::loadPrefs()
     _stabilityCalcMode = Z::Enums::fromStr(
                 CustomPrefs::recentStr(QStringLiteral("func_stab_map_mode")),
                 Z::Enums::StabilityCalcMode::Normal);
+}
+
+Z::Unit StabilityMapFunction::defaultUnitX() const
+{
+    return _arg.range.start.unit();
 }
 

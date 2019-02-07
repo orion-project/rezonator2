@@ -5,6 +5,11 @@
 
 #include <QComboBox>
 
+QT_BEGIN_NAMESPACE
+class QActionGroup;
+class QMenu;
+QT_END_NAMESPACE
+
 /**
     Combo-box displaying list of units of specific dimension.
 */
@@ -58,6 +63,32 @@ private:
     void populate();
 
     Z::Dim dimAt(int index) const;
+};
+
+
+class UnitsMenu : public QObject
+{
+    Q_OBJECT
+
+public:
+    UnitsMenu(QObject *parent = nullptr);
+    ~UnitsMenu();
+
+    QMenu* menu() const { return _menu; }
+
+    void setUnit(Z::Unit unit);
+
+signals:
+    void unitChanged(Z::Unit unit);
+
+private:
+    QMenu* _menu;
+    QActionGroup* _actions;
+    Z::Dim _dim = nullptr;
+    Z::Unit _unit = nullptr;
+
+    void populate();
+    void actionTriggered();
 };
 
 #endif // UNIT_WIDGETS_H

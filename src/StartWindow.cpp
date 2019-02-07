@@ -219,6 +219,7 @@ void MruStartPanel::openFile(const QString& filePath)
     auto projectWindow = new ProjectWindow(nullptr);
     projectWindow->show();
     projectWindow->operations()->openSchemaFile(filePath);
+    CommonData::instance()->mruList()->append(filePath);
 }
 
 //------------------------------------------------------------------------------

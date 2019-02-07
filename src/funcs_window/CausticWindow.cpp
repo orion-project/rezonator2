@@ -129,3 +129,41 @@ QString CausticWindow::writeFunction(QJsonObject& root)
     root["arg"] = Z::IO::Json::writeVariable(function()->arg(), schema());
     return QString();
 }
+
+QString CausticWindow::getDefaultTitle() const
+{
+    switch (function()->mode())
+    {
+    case CausticFunction::Mode::BeamRadius:
+        return tr("Beam Radius");
+    case CausticFunction::Mode::FontRadius:
+        return tr("Wavefront Curvature Radius");
+    case CausticFunction::Mode::HalfAngle:
+        return tr("Half of Divergence Angle");
+    }
+    return QString();
+}
+
+QString CausticWindow::getDefaultTitleX() const
+{
+    auto elem = function()->arg()->element;
+    return QStringLiteral("%1 (%2)").arg(elem->displayLabelTitle(), getUnitX()->name());
+}
+
+QString CausticWindow::getDefaultTitleY() const
+{
+    QString title;
+    switch (function()->mode())
+    {
+    case CausticFunction::Mode::BeamRadius:
+        title = tr("Beam radius");
+        break;
+    case CausticFunction::Mode::FontRadius:
+        title = tr("Wavefront curvature radius");
+        break;
+    case CausticFunction::Mode::HalfAngle:
+        title = tr("Half of divergence angle");
+        break;
+    }
+    return QStringLiteral("%1 (%2)").arg(title, getUnitY()->name());
+}

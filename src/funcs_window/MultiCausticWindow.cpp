@@ -154,8 +154,10 @@ QWidget* MultiCausticWindow::makeOptionsPanel()
     return new CausticOptionsPanel<MultiCausticWindow>(this);
 }
 
-void MultiCausticWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *graph, int resultIndex)
+void MultiCausticWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, QCPGraph *graph, int resultIndex)
 {
+    auto unitX = getUnitX();
+    auto unitY = getUnitY();
     int resultIndex1 = 0;
     double offset = 0;
     for (CausticFunction* func : function()->funcs())
@@ -165,13 +167,23 @@ void MultiCausticWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, Graph 
         if (resultIndex >= resultIndex1 && resultIndex < resultIndex2)
         {
             auto result = func->result(plane, resultIndex - resultIndex1);
-            graph->clearData();
-            for (int i = 0; i < result.x.size(); i++)
-                graph->addData(result.x.at(i) + offset, result.y.at(i));
+            int count = result.pointsCount();
+            auto xs = result.x();
+            auto ys = result.y();
+            QSharedPointer<QCPGraphDataContainer> data(new QCPGraphDataContainer);
+            for (int i = 0; i < count; i++)
+            {
+                // TODO: possible optimization: extract unit's SI factor before loop
+                // and replace the call of virtual method with simple multiplication
+                double x = unitX->fromSi(xs.at(i) + offset);
+                double y = unitY->fromSi(ys.at(i));
+                data->add(QCPGraphData(x, y));
+            }
+            graph->setData(data);
             return;
         }
         resultIndex1 = resultIndex2;
-        offset += func->argumentUnit()->fromSi(func->arg()->range.stop.toSi());
+        offset += func->arg()->range.stop.toSi();
     }
 }
 
@@ -180,14 +192,22 @@ void MultiCausticWindow::afterUpdate()
     updateElementBoundMarkers();
 }
 
+void MultiCausticWindow::afterSetUnitsX(Z::Unit old, Z::Unit cur)
+{
+    Q_UNUSED(old)
+    Q_UNUSED(cur)
+    updateElementBoundMarkers();
+}
+
 void MultiCausticWindow::updateElementBoundMarkers()
 {
+    auto unitX = getUnitX();
     double offset = 0;
     QList<QCPItemStraightLine*> markers;
     auto funcs = function()->funcs();
     for (int i = 0; i < funcs.size()-1; i++)
     {
-        offset += funcs.at(i)->argumentUnit()->fromSi(funcs.at(i)->arg()->range.stop.toSi());
+        offset += funcs.at(i)->arg()->range.stop.toSi();
         QCPItemStraightLine* marker;
         if (!_elemBoundMarkers.isEmpty())
         {
@@ -195,8 +215,9 @@ void MultiCausticWindow::updateElementBoundMarkers()
             _elemBoundMarkers.removeFirst();
         }
         else marker = makeElemBoundMarker();
-        marker->point1->setCoords(offset, 0);
-        marker->point2->setCoords(offset, 1);
+        double x = unitX->fromSi(offset);
+        marker->point1->setCoords(x, 0);
+        marker->point2->setCoords(x, 1);
         marker->setVisible(_actnElemBoundMarkers->isChecked());
         markers.append(marker);
     }
@@ -210,7 +231,6 @@ QCPItemStraightLine* MultiCausticWindow::makeElemBoundMarker() const
     QCPItemStraightLine *line = new QCPItemStraightLine(plot());
     line->setPen(QPen(Qt::magenta, 1, Qt::DashLine)); // TODO make configurable
     line->setSelectable(false);
-    plot()->addItem(line);
     return line;
 }
 
@@ -315,4 +335,44 @@ void MultiCausticWindow::toggleElementBoundMarkers(bool on)
         marker->setVisible(on);
     plot()->replot();
     schema()->events().raise(SchemaEvents::Changed);
+}
+
+QString MultiCausticWindow::getDefaultTitle() const
+{
+    switch (function()->mode())
+    {
+    case CausticFunction::Mode::BeamRadius:
+        return tr("Beam Radius");
+    case CausticFunction::Mode::FontRadius:
+        return tr("Wavefront Curvature Radius");
+    case CausticFunction::Mode::HalfAngle:
+        return tr("Half of Divergence Angle");
+    }
+    return QString();
+}
+
+QString MultiCausticWindow::getDefaultTitleX() const
+{
+    QStringList strs;
+    for (auto arg : function()->args())
+        strs << arg.element->displayLabel();
+    return QStringLiteral("%1 (%2)").arg(strs.join(QStringLiteral(", ")), getUnitX()->name());
+}
+
+QString MultiCausticWindow::getDefaultTitleY() const
+{
+    QString title;
+    switch (function()->mode())
+    {
+    case CausticFunction::Mode::BeamRadius:
+        title = tr("Beam radius");
+        break;
+    case CausticFunction::Mode::FontRadius:
+        title = tr("Wavefront curvature radius");
+        break;
+    case CausticFunction::Mode::HalfAngle:
+        title = tr("Half of divergence angle");
+        break;
+    }
+    return QStringLiteral("%1 (%2)").arg(title, getUnitY()->name());
 }

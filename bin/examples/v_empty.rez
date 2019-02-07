@@ -1,0 +1,195 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 1000
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "M_back",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 5.000000000000002
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 30
+                }
+            },
+            "title": "Back mirror",
+            "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L_foc",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 56
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "Focusing range",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M_foc",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 5.000000000000002
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 50
+                }
+            },
+            "title": "Focusing mirror",
+            "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 420
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "Folding range",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M_out",
+            "params": {
+            },
+            "title": "Output mirror",
+            "type": "ElemFlatMirror"
+        }
+    ],
+    "formulas": [
+    ],
+    "notes": "",
+    "param_links": [
+    ],
+    "pumps": [
+    ],
+    "schema_version": "2.0",
+    "title": "",
+    "trip_type": "SW",
+    "windows": [
+        {
+            "function": {
+                "arg": {
+                    "element_index": 1,
+                    "param": "L",
+                    "range": {
+                        "points": 1000,
+                        "start": {
+                            "unit": "mm",
+                            "value": 24
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 60
+                        },
+                        "use_step": false
+                    }
+                },
+                "stab_calc_mode": "Squared"
+            },
+            "type": "StabMap",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "stab_bound_markers": true,
+                "stored_views": [
+                ],
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 6.0360000000000005,
+                "x_min": 2.3640000000000003,
+                "x_unit": "cm",
+                "y_max": 1.05,
+                "y_min": -0.05,
+                "y_unit": "none"
+            }
+        },
+        {
+            "function": {
+                "arg": {
+                    "element_index": 1,
+                    "param": "L",
+                    "range": {
+                        "points": 1000,
+                        "start": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0.56
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 56
+                        },
+                        "use_step": false
+                    }
+                },
+                "mode": "FontRadius"
+            },
+            "type": "Caustic",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "stored_views": [
+                    {
+                        "mode": 0,
+                        "x_max": 3.6263313984335968,
+                        "x_min": 2.3730993123906847,
+                        "x_unit": "cm",
+                        "y_max": 0.17916508944714626,
+                        "y_min": -0.07619764377621936,
+                        "y_unit": "mm"
+                    },
+                    {
+                        "mode": 1,
+                        "x_max": 40.98306635004107,
+                        "x_min": 19.087314599874663,
+                        "x_unit": "none",
+                        "y_max": 1.0996596796582745,
+                        "y_min": -1.272574780006655,
+                        "y_unit": "cm"
+                    }
+                ],
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 40.98306635004107,
+                "x_min": 19.087314599874663,
+                "x_unit": "none",
+                "y_max": 1.0996596796582745,
+                "y_min": -1.272574780006655,
+                "y_unit": "cm"
+            }
+        }
+    ]
+}

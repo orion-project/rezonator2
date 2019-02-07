@@ -39,10 +39,14 @@ public:
 
 struct PlotFuncResult
 {
-    QVector<double> x, y;
-
-    void clear() { x.clear(); y.clear(); }
-    void append(double ax, double ay) { x.append(ax); y.append(ay); }
+public:
+    const QVector<double>& x() const { return _x; }
+    const QVector<double>& y() const { return _y; }
+    int pointsCount() const { return _x.size(); }
+    void clear() { _x.clear(); _y.clear(); }
+    void append(double ax, double ay) { _x.append(ax); _y.append(ay); }
+private:
+    QVector<double> _x, _y;
 };
 
 struct PlotFuncResultSet
@@ -113,6 +117,9 @@ public:
 
     /// Load custom preferences - recently used modes etc.
     virtual void loadPrefs() {}
+
+    virtual Z::Unit defaultUnitX() const { return Z::Units::none(); }
+    virtual Z::Unit defaultUnitY() const { return Z::Units::none(); }
 
 protected:
     Z::Variable _arg;

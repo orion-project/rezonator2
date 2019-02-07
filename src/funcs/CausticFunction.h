@@ -28,16 +28,14 @@ public:
     Mode mode() const { return _mode; }
     void setMode(Mode mode) { _mode = mode; }
 
-    Z::Unit argumentUnit() const { return _argumentUnit; }
+    Z::Unit defaultUnitX() const override;
+    Z::Unit defaultUnitY() const override { return defaultUnitsForMode(_mode); }
+
+    static Z::Unit defaultUnitsForMode(CausticFunction::Mode);
 
 private:
     /// Wich type of result the function should compute.
     Mode _mode = Mode::BeamRadius;
-
-    Z::Unit _beamsizeUnit = Z::Units::mkm(); // TODO: make configurable
-    Z::Unit _curvatureUnit = Z::Units::m(); // TODO: make configurable
-    Z::Unit _angleUnit = Z::Units::deg(); // TODO: make configurable
-    Z::Unit _argumentUnit = Z::Units::mm(); // TODO: make configurable
 
     /// Schema wavelength in SI units.
     double _wavelenSI = 0;

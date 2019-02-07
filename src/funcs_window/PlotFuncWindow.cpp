@@ -3,11 +3,13 @@
 #include "../AppSettings.h"
 #include "../core/Protocol.h"
 #include "../funcs/InfoFunctions.h"
+#include "../widgets/Appearance.h"
 #include "../widgets/Plot.h"
 #include "../widgets/FrozenStateButton.h"
 #include "../widgets/GraphDataGrid.h"
 #include "../widgets/CursorPanel.h"
 #include "../widgets/PlotParamsPanel.h"
+#include "../widgets/UnitWidgets.h"
 #include "helpers/OriWidgets.h"
 #include "widgets/OriFlatToolBar.h"
 #include "widgets/OriLabels.h"
@@ -18,6 +20,8 @@ using namespace Ori::Gui;
 
 enum PlotWindowStatusPanels
 {
+    STATUS_UNIT_X,
+    STATUS_UNIT_Y,
     STATUS_POINTS,
     STATUS_INFO,
 
@@ -48,7 +52,8 @@ PlotFuncWindow::~PlotFuncWindow()
 void PlotFuncWindow::createActions()
 {
     actnUpdate = action(tr("Update"), this, SLOT(update()), ":/toolbar/update", Qt::Key_F5);
-    actnUpdateParams = action(tr("Update With Params..."), this, SLOT(updateWithParams()), ":/toolbar/update_params", Qt::CTRL | Qt::Key_F5);
+    actnUpdateParams = action(tr("Update With Params..."), this,
+        SLOT(updateWithParams()), ":/toolbar/update_params", Qt::CTRL | Qt::Key_F5);
 
     actnShowT = action(tr("Show &T-plane"), this, SLOT(showT()), ":/toolbar/plot_t");
     actnShowS = action(tr("Show &S-plane"), this, SLOT(showS()), ":/toolbar/plot_s");
@@ -62,6 +67,7 @@ void PlotFuncWindow::createActions()
     actnShowTS->setVisible(false); //< TODO:NEXT_VER
 
     actnShowRoundTrip = action(tr("Show Round-trip"), this, SLOT(showRoundTrip()));
+    actnShowRoundTrip->setVisible(false);
 
     actnFreeze = toggledAction(tr("Freeze"), this, SLOT(freeze(bool)), ":/toolbar/freeze", Qt::CTRL | Qt::Key_F);
 
@@ -83,8 +89,20 @@ void PlotFuncWindow::createActions()
 
 void PlotFuncWindow::createMenuBar()
 {
+    _unitsMenuX = new UnitsMenu(this);
+    _unitsMenuY = new UnitsMenu(this);
+    connect(_unitsMenuX, &UnitsMenu::unitChanged, this, &PlotFuncWindow::setUnitX);
+    connect(_unitsMenuY, &UnitsMenu::unitChanged, this, &PlotFuncWindow::setUnitY);
+
     menuPlot = menu(tr("&Plot", "Menu title"), this, {
-        actnUpdate, actnUpdateParams, nullptr, actnShowT, actnShowS, actnShowTS, nullptr, actnShowRoundTrip
+        actnUpdate, actnUpdateParams, actnFreeze, nullptr, actnShowT, actnShowS, actnShowTS, nullptr,
+        _unitsMenuX->menu(), _unitsMenuY->menu(), nullptr, actnShowRoundTrip
+    });
+    connect(menuPlot, &QMenu::aboutToShow, [this](){
+        _unitsMenuX->menu()->setTitle("X-axis Unit");
+        _unitsMenuY->menu()->setTitle("Y-axis Unit");
+        _unitsMenuX->setUnit(getUnitX());
+        _unitsMenuY->setUnit(getUnitY());
     });
 
     menuLimits = menu(tr("&Limits", "Menu title"), this, {
@@ -96,6 +114,41 @@ void PlotFuncWindow::createMenuBar()
     menuFormat = menu(tr("Fo&rmat", "Menu title"), this, {
         // TODO
     });
+
+    auto menuX = new QMenu;
+    auto titleX = new QWidgetAction(this);
+    auto labelX = new QLabel(tr("Axis X"));
+    labelX->setMargin(6);
+    Z::Gui::setFontStyle(labelX, true);
+    titleX->setDefaultWidget(labelX);
+    menuX->addAction(titleX);
+    menuX->addMenu(_unitsMenuX->menu());
+    menuX->addSeparator();
+    menuX->addAction(tr("Limits..."), _plot, SLOT(setLimitsDlgX()));
+    menuX->addAction(QIcon(":/toolbar/limits_auto_x"), tr("Fit to Graphs"), _plot, SLOT(autolimitsX()));
+    connect(menuX, &QMenu::aboutToShow, [this](){
+        _unitsMenuX->menu()->setTitle(tr("Unit"));
+        _unitsMenuX->setUnit(getUnitX());
+    });
+
+    auto menuY = new QMenu;
+    auto titleY = new QWidgetAction(this);
+    auto labelY = new QLabel(tr("Axis Y"));
+    labelY->setMargin(6);
+    Z::Gui::setFontStyle(labelY, true);
+    titleY->setDefaultWidget(labelY);
+    menuY->addAction(titleY);
+    menuY->addMenu(_unitsMenuY->menu());
+    menuY->addSeparator();
+    menuY->addAction(tr("Limits..."), _plot, SLOT(setLimitsDlgY()));
+    menuY->addAction(QIcon(":/toolbar/limits_auto_y"), tr("Fit to Graphs"), _plot, SLOT(autolimitsY()));
+    connect(menuY, &QMenu::aboutToShow, [this](){
+        _unitsMenuY->menu()->setTitle(tr("Unit"));
+        _unitsMenuY->setUnit(getUnitY());
+    });
+
+    _plot->menuAxisX = menuX;
+    _plot->menuAxisY = menuY;
 }
 
 void PlotFuncWindow::createToolBar()
@@ -148,10 +201,11 @@ void PlotFuncWindow::createContent()
     _plot = new Plot;
     _plot->legend->setVisible(false);
     _plot->setAutoAddPlottableToLegend(false);
-    connect(_plot, SIGNAL(graphSelected(Graph*)), this, SLOT(graphSelected(Graph*)));
+    connect(_plot, &Plot::graphSelected, this, &PlotFuncWindow::graphSelected);
+
 
     _cursor = new QCPCursor(_plot);
-    connect(_cursor, SIGNAL(positionChanged()), this, SLOT(updateCursorInfo()));
+    connect(_cursor, &QCPCursor::positionChanged, this, &PlotFuncWindow::updateCursorInfo);
     _plot->serviceGraphs().append(_cursor);
 
     _cursorPanel = new CursorPanel(_function, _cursor);
@@ -169,12 +223,20 @@ void PlotFuncWindow::createContent()
 void PlotFuncWindow::createStatusBar()
 {
     _statusBar = new Ori::Widgets::StatusBar(STATUS_PANELS_COUNT);
+    _statusBar->connect(STATUS_UNIT_X, &QWidget::customContextMenuRequested, [this](const QPoint& p){
+        _unitsMenuX->setUnit(getUnitX());
+        _unitsMenuX->menu()->popup(_statusBar->mapToGlobal(STATUS_UNIT_X, p));
+    });
+    _statusBar->connect(STATUS_UNIT_Y, &QWidget::customContextMenuRequested, [this](const QPoint& p){
+        _unitsMenuY->setUnit(getUnitY());
+        _unitsMenuY->menu()->popup(_statusBar->mapToGlobal(STATUS_UNIT_Y, p));
+    });
     setContent(_statusBar);
 }
 
-Graph* PlotFuncWindow::selectedGraph() const
+QCPGraph *PlotFuncWindow::selectedGraph() const
 {
-    QList<Graph*> graphs = _plot->selectedGraphs();
+    auto graphs = _plot->selectedGraphs();
     return graphs.isEmpty()? nullptr: graphs.first();
 }
 
@@ -211,8 +273,8 @@ void PlotFuncWindow::updateVisibilityTS()
 {
     bool t = actnShowT->isChecked() || actnShowTS->isChecked();
     bool s = actnShowS->isChecked() || actnShowTS->isChecked();
-    foreach (Graph *g, _graphsT) g->setVisible(t);
-    foreach (Graph *g, _graphsS) g->setVisible(s);
+    for (auto g : _graphsT) g->setVisible(t);
+    for (auto g : _graphsS) g->setVisible(s);
     _plot->replot();
 }
 
@@ -233,18 +295,54 @@ void PlotFuncWindow::updateNotables()
         _leftPanel->infoPanel()->setHtml(_function->calculateNotables());
 }
 
-void PlotFuncWindow::updateAxesTitles()
+void PlotFuncWindow::updateTitles()
 {
-    // TODO
+    updateTitle();
+    updateTitleX();
+    updateTitleY();
+}
+
+void PlotFuncWindow::updateTitle()
+{
+    QString title = _title;
+    title.replace(TitlePlaceholder::defaultTitle(), getDefaultTitle());
+    title = formatTitleSpecial(title);
+    _plot->title()->setText(title);
+}
+
+void PlotFuncWindow::updateTitleX()
+{
+    QString title = _titleX;
+    title.replace(TitlePlaceholder::defaultTitle(), getDefaultTitleX());
+    title = formatTitleSpecial(title);
+    _plot->xAxis->setLabel(title);
+}
+
+void PlotFuncWindow::updateTitleY()
+{
+    QString title = _titleY;
+    title.replace(TitlePlaceholder::defaultTitle(), getDefaultTitleY());
+    title = formatTitleSpecial(title);
+    _plot->yAxis->setLabel(title);
+}
+
+void PlotFuncWindow::updateStatusUnits()
+{
+    auto unitX = getUnitX();
+    auto unitY = getUnitY();
+    _statusBar->setText(STATUS_UNIT_X, QStringLiteral("X: ") + (
+        unitX == Z::Units::none() ? QStringLiteral("n/a") : unitX->name()));
+    _statusBar->setText(STATUS_UNIT_Y, QStringLiteral("Y: ") + (
+        unitY == Z::Units::none() ? QStringLiteral("n/a") : unitY->name()));
 }
 
 void PlotFuncWindow::updateDataGrid()
 {
     if (_leftPanel->dataGrid() && _leftPanel->dataGrid()->isVisible())
     {
-        Graph *graph = selectedGraph();
+        auto graph = selectedGraph();
         if (graph)
-            _leftPanel->dataGrid()->setData(graph->data()->values());
+            _leftPanel->dataGrid()->setData(graph->data());
     }
 }
 
@@ -261,11 +359,7 @@ void PlotFuncWindow::updateCursorInfo()
 
 void PlotFuncWindow::updateWithParams()
 {
-    if (configure())
-    {
-        // TODO:NEXT-VER Schema.ModifiedForms := True;
-        update();
-    }
+    if (configure()) update();
 }
 
 void PlotFuncWindow::update()
@@ -292,7 +386,8 @@ void PlotFuncWindow::update()
     }
     else updateCursorInfo();
 
-    updateAxesTitles();
+    updateTitles();
+    updateStatusUnits();
     updateNotables();
     afterUpdate();
 
@@ -307,8 +402,8 @@ void PlotFuncWindow::calculate()
         //debug_LogGraphsCount();
         _statusBar->setText(STATUS_INFO, _function->errorText());
         _statusBar->highlightError(STATUS_INFO);
-        for (Graph* g : _graphsT) if (g->parentPlot() == _plot) _plot->removePlottable(g);
-        for (Graph* g : _graphsS) if (g->parentPlot() == _plot) _plot->removePlottable(g);
+        for (auto g : _graphsT) _plot->removePlottable(g);
+        for (auto g : _graphsS) _plot->removePlottable(g);
         _graphsT.clear();
         _graphsS.clear();
     }
@@ -322,11 +417,11 @@ void PlotFuncWindow::calculate()
 
 void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
 {
-    QVector<Graph*>& graphs = plane == Z::Plane_T? _graphsT: _graphsS;
+    QVector<QCPGraph*>& graphs = plane == Z::Plane_T? _graphsT: _graphsS;
     int resultCount = _function->resultCount(plane);
     for (int i = 0; i < resultCount; i++)
     {
-        Graph *g;
+        QCPGraph *g;
         if (i >= graphs.size())
         {
             g = _plot->addGraph();
@@ -335,8 +430,6 @@ void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
         }
         else g = graphs[i];
         fillGraphWithFunctionResults(plane, g, i);
-        if (g->parentPlot() != _plot)
-            _plot->addPlottable(g);
     }
     while (graphs.size() > resultCount)
     {
@@ -345,10 +438,24 @@ void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
     }
 }
 
-void PlotFuncWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *graph, int resultIndex)
+void PlotFuncWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, QCPGraph *graph, int resultIndex)
 {
     auto result = _function->result(plane, resultIndex);
-    graph->setData(result.x, result.y);
+    int count = result.pointsCount();
+    auto xs = result.x();
+    auto ys = result.y();
+    auto unitX = getUnitX();
+    auto unitY = getUnitY();
+    QSharedPointer<QCPGraphDataContainer> data(new QCPGraphDataContainer);
+    for (int i = 0; i < count; i++)
+    {
+        // TODO: possible optimization: extract unit's SI factor before loop
+        // and replace the call of virtual method with simple multiplication
+        double x = unitX->fromSi(xs.at(i));
+        double y = unitY->fromSi(ys.at(i));
+        data->add(QCPGraphData(x, y));
+    }
+    graph->setData(data);
 }
 
 QPen PlotFuncWindow::getLineSettings(Z::WorkPlane plane)
@@ -356,12 +463,12 @@ QPen PlotFuncWindow::getLineSettings(Z::WorkPlane plane)
     return plane == Z::Plane_T? QPen(Qt::darkGreen): QPen(Qt::red);
 }
 
-void PlotFuncWindow::graphSelected(Graph *graph)
+void PlotFuncWindow::graphSelected(QCPGraph *graph)
 {
     updateDataGrid();
 
     if (graph)
-        _statusBar->setText(STATUS_POINTS, tr("Points: %1").arg(graph->data()->count()));
+        _statusBar->setText(STATUS_POINTS, tr("Points: %1").arg(graph->data()->size()));
     else
         _statusBar->clear(STATUS_POINTS);
 }
@@ -424,6 +531,8 @@ void PlotFuncWindow::storeView(int key)
     view.limitsX = _plot->limitsX();
     view.limitsY = _plot->limitsY();
     view.cursorPos = _cursor->position();
+    view.unitX = _unitX;
+    view.unitY = _unitY;
     _storedView[key] = view;
 }
 
@@ -432,12 +541,17 @@ void PlotFuncWindow::restoreView(int key)
     if (_storedView.contains(key))
     {
         const ViewState& view = _storedView[key];
+        _unitX = view.unitX;
+        _unitY = view.unitY;
         _plot->setLimitsX(view.limitsX, false);
         _plot->setLimitsY(view.limitsY, false);
         _cursor->setPosition(view.cursorPos, false);
     }
     else
     {
+        // Units for the view will be guessed from dim on first request
+        _unitX = Z::Units::none();
+        _unitY = Z::Units::none();
         _autolimitsRequest = true;
         _centerCursorRequested = true;
     }
@@ -470,4 +584,62 @@ void PlotFuncWindow::disableAndClose()
 {
     _frozen = true; // disable updates
     QTimer::singleShot(0, [this]{this->close();});
+}
+
+Z::Unit PlotFuncWindow::getUnitX() const
+{
+    auto defUnit = function()->defaultUnitX();
+    auto thisDim = Z::Units::guessDim(_unitX);
+    auto funcDim = Z::Units::guessDim(defUnit);
+    return thisDim == funcDim ? _unitX : defUnit;
+}
+
+Z::Unit PlotFuncWindow::getUnitY() const
+{
+    auto defUnit = function()->defaultUnitY();
+    auto thisDim = Z::Units::guessDim(_unitY);
+    auto funcDim = Z::Units::guessDim(defUnit);
+    return thisDim == funcDim ? _unitY : defUnit;
+}
+
+void PlotFuncWindow::setUnitX(Z::Unit unit)
+{
+    auto oldUnit = getUnitX();
+    if (oldUnit == unit) return;
+    _unitX = unit;
+    if (function()->ok())
+    {
+        auto limits = _plot->limitsX();
+        limits.min = unit->fromSi(oldUnit->toSi(limits.min));
+        limits.max = unit->fromSi(oldUnit->toSi(limits.max));
+        updateGraphs(Z::WorkPlane::Plane_T);
+        updateGraphs(Z::WorkPlane::Plane_S);
+        _plot->setLimitsX(limits, false);
+        updateTitleX();
+        updateStatusUnits();
+        afterSetUnitsX(oldUnit, unit);
+        schema()->markModified();
+        _plot->replot();
+    }
+}
+
+void PlotFuncWindow::setUnitY(Z::Unit unit)
+{
+    auto oldUnit = getUnitY();
+    if (oldUnit == unit) return;
+    _unitY = unit;
+    if (function()->ok())
+    {
+        auto limits = _plot->limitsY();
+        limits.min = unit->fromSi(oldUnit->toSi(limits.min));
+        limits.max = unit->fromSi(oldUnit->toSi(limits.max));
+        updateGraphs(Z::WorkPlane::Plane_T);
+        updateGraphs(Z::WorkPlane::Plane_S);
+        _plot->setLimitsY(limits, false);
+        updateTitleY();
+        updateStatusUnits();
+        afterSetUnitsY(oldUnit, unit);
+        schema()->markModified();
+        _plot->replot();
+    }
 }

@@ -5,6 +5,7 @@
 
 #include "../SchemaWindows.h"
 #include "../funcs/PlotFunction.h"
+#include "../widgets/PlotUtils.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -15,7 +16,6 @@ QT_END_NAMESPACE
 
 class QCPCursor;
 class QCPGraph;
-typedef QCPGraph Graph;
 
 namespace Ori {
 namespace Widgets {
@@ -29,6 +29,7 @@ class PlotFunction;
 class PlotFuncWindow;
 class PlotParamsPanel;
 class SchemaStorable;
+class UnitsMenu;
 
 enum class ElemDeletionReaction {
     None,
@@ -76,23 +77,14 @@ protected slots:
     virtual void updateDataGrid();
 
 protected:
-    PlotFunction* _function;
     Plot* _plot;
-    int _windowIndex = 0;
-
-    static QMap<QString, int> _windowIndeces;
-
-    QMenu *menuPlot, *menuLimits, *menuFormat;
-
-    /// Calculates function and plots its results.
-    virtual void calculate();
-
-    virtual bool configureInternal() { return true; }
-
-    virtual void afterUpdate() {}
-
-    bool _needRecalc = false, _frozen = false;
-    QVector<Graph*> _graphsT, _graphsS;
+    PlotFunction* _function;
+    Z::Unit _unitX = Z::Units::none();
+    Z::Unit _unitY = Z::Units::none();
+    QString _title = TitlePlaceholder::defaultTitle();
+    QString _titleX = TitlePlaceholder::defaultTitle();
+    QString _titleY = TitlePlaceholder::defaultTitle();
+    QVector<QCPGraph*> _graphsT, _graphsS;
     PlotParamsPanel* _leftPanel;
     QCPCursor* _cursor;
     CursorPanel* _cursorPanel;
@@ -101,14 +93,41 @@ protected:
     FrozenStateButton* _buttonFrozenInfo;
     bool _autolimitsRequest = false; ///< If autolimits requested after next update.
     bool _centerCursorRequested = false; ///< If cursor should be centered after next update.
-
+    bool _needRecalc = false;
+    bool _frozen = false;
+    UnitsMenu *_unitsMenuX, *_unitsMenuY;
+    QMenu *menuPlot, *menuLimits, *menuFormat, *menuAxisX, *menuAxisY;
     QAction *actnShowT, *actnShowS, *actnShowTS,
         *actnAutolimits, *actnAutolimitsX, *actnAutolimitsY,
         *actnSetLimits, *actnSetLimitsX, *actnSetLimitsY,
         *actnZoomIn, *actnZoomOut, *actnZoomInX, *actnZoomOutX, *actnZoomInY, *actnZoomOutY,
         *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo;
 
-    Graph* selectedGraph() const;
+    int _windowIndex = 0;
+    static QMap<QString, int> _windowIndeces;
+
+    struct ViewState
+    {
+        AxisLimits limitsX;
+        AxisLimits limitsY;
+        Z::Unit unitX, unitY;
+        QPointF cursorPos;
+        QString title, titleX, titleY;
+    };
+    QMap<int, ViewState> _storedView;
+
+    /// Calculates function and plots its results.
+    virtual void calculate();
+    virtual bool configureInternal() { return true; }
+    virtual void afterUpdate() {}
+    virtual void afterSetUnitsX(Z::Unit old, Z::Unit cur) { Q_UNUSED(old) Q_UNUSED(cur) }
+    virtual void afterSetUnitsY(Z::Unit old, Z::Unit cur) { Q_UNUSED(old) Q_UNUSED(cur) }
+    virtual QString getDefaultTitle() const { return QString(); }
+    virtual QString getDefaultTitleX() const { return QString(); }
+    virtual QString getDefaultTitleY() const { return QString(); }
+    virtual QString formatTitleSpecial(const QString& title) const { return title; }
+
+    QCPGraph* selectedGraph() const;
 
     void createActions();
     void createMenuBar();
@@ -118,8 +137,12 @@ protected:
 
     void updateVisibilityTS();
     void updateTSModeActions();
-    void updateAxesTitles();
+    void updateTitles();
+    void updateTitle();
+    void updateTitleX();
+    void updateTitleY();
     void updateGraphs(Z::WorkPlane);
+    void updateStatusUnits();
 
     void showInfo(const QString& text, const QString& icon = QString());
 
@@ -131,30 +154,29 @@ protected:
 
     virtual QWidget* makeOptionsPanel() { return nullptr; }
 
-    virtual void fillGraphWithFunctionResults(Z::WorkPlane plane, Graph *graph, int resultIndex);
+    virtual void fillGraphWithFunctionResults(Z::WorkPlane plane, QCPGraph *graph, int resultIndex);
 
     void disableAndClose();
+
+    Z::Unit getUnitX() const;
+    Z::Unit getUnitY() const;
 
 private slots:
     void showT();
     void showS();
     void showTS();
     void updateWithParams();
-    void graphSelected(Graph*);
-    void updateCursorInfo();
     void showRoundTrip();
     void freeze(bool);
 
     QWidget* optionsPanelRequired();
 
 private:
-    struct ViewState
-    {
-        QPair<double, double> limitsX;
-        QPair<double, double> limitsY;
-        QPointF cursorPos;
-    };
-    QMap<int, ViewState> _storedView;
+    void setUnitX(Z::Unit unit);
+    void setUnitY(Z::Unit unit);
+
+    void graphSelected(QCPGraph *);
+    void updateCursorInfo();
 };
 
 #endif // PLOT_FUNC_WINDOW_H
