@@ -154,9 +154,9 @@ ValuesEditorTS::ValuesEditorTS(const QVector<ValueEditorTS*>& editors) : QVBoxLa
     header->setSpacing(0);
     header->addStretch();
     header->addWidget(_headerT);
-    header->addWidget(makeButton(tr("Assign all T values to S"), ":/misc10/ts_t2s", this, SLOT(assignTtoS())));
-    header->addWidget(makeButton(tr("Swap all values"), ":/misc10/ts_swap", this, SLOT(swapValues())));
-    header->addWidget(makeButton(tr("Assign all S values to T"), ":/misc10/ts_s2t", this, SLOT(assignStoT())));
+    header->addWidget(makeButton(tr("Assign all T values to S"), ":/toolbar10/ts_t2s", this, SLOT(assignTtoS())));
+    header->addWidget(makeButton(tr("Swap all values"), ":/toolbar10/ts_swap", this, SLOT(swapValues())));
+    header->addWidget(makeButton(tr("Assign all S values to T"), ":/toolbar10/ts_s2t", this, SLOT(assignStoT())));
     header->addWidget(_headerS);
     header->addWidget(_unitSpacer);
     addLayout(header);
