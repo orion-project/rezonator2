@@ -150,13 +150,13 @@ HEADERS += \
     src/CommonData.h \
     src/AppSettingsDialog.h \
     src/SchemaPropsDialog.h \
-    src/funcs/BeamOverStabFunction.h \
-    src/funcs_window/BeamOverStabWindow.h \
     src/io/JsonUtils.h \
     src/io/CommonUtils.h \
     src/io/Clipboard.h \
     src/core/Utils.h \
-    src/widgets/PlotUtils.h
+    src/widgets/PlotUtils.h \
+    src/funcs/BeamVariationFunction.h \
+    src/funcs_window/BeamVariationWindow.h
 	
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -261,13 +261,13 @@ SOURCES += \
     src/CommonData.cpp \
     src/AppSettingsDialog.cpp \
     src/SchemaPropsDialog.cpp \
-    src/funcs/BeamOverStabFunction.cpp \
-    src/funcs_window/BeamOverStabWindow.cpp \
     src/io/JsonUtils.cpp \
     src/io/CommonUtils.cpp \
     src/io/Clipboard.cpp \
     src/core/Utils.cpp \
-    src/widgets/PlotUtils.cpp
+    src/widgets/PlotUtils.cpp \
+    src/funcs/BeamVariationFunction.cpp \
+    src/funcs_window/BeamVariationWindow.cpp
 
 DISTFILES += \
     src/StartWindow.qss \

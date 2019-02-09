@@ -6,9 +6,7 @@
 #include "../funcs/StabilityMap2DFunction.h"
 
 class ElemAndParamSelector;
-namespace VariableRangeEditor {
-    class GeneralRangeEd;
-}
+class GeneralRangeEditor;
 
 QT_BEGIN_NAMESPACE
 class QGroupBox;
@@ -44,7 +42,7 @@ class StabilityMap2DParamsDlg : public RezonatorDialog
     struct VarEditor {
         Z::Variable *var;
         ElemAndParamSelector *elemSelector;
-        VariableRangeEditor::GeneralRangeEd *rangeEditor;
+        GeneralRangeEditor *rangeEditor;
         QGroupBox *groupBox;
     };
 

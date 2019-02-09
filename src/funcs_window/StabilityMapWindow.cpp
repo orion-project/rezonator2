@@ -32,7 +32,7 @@ StabilityParamsDlg::StabilityParamsDlg(Schema *schema, Z::Variable *var)
     _elemSelector = new ElemAndParamSelector(schema, elemFilter.get(), Z::Utils::defaultParamFilter());
     connect(_elemSelector, SIGNAL(selectionChanged()), this, SLOT(guessRange()));
 
-    _rangeEditor = new VariableRangeEditor::GeneralRangeEd;
+    _rangeEditor = new GeneralRangeEditor;
 
     mainLayout()->addLayout(_elemSelector);
     mainLayout()->addSpacing(8);

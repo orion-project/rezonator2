@@ -35,7 +35,7 @@ MultiCausticParamsDlg::MultiCausticParamsDlg(Schema *schema, const QVector<Z::Va
 
     _sameSettings = new QCheckBox(tr("Use these settings for all elements"));
 
-    _rangeEditor = new VariableRangeEditor::PointsRangeEd;
+    _rangeEditor = new PointsRangeEditor;
     _rangeEditor->addWidget(_sameSettings, _rangeEditor->rowCount()+1, 0, 1, _rangeEditor->columnCount());
 
     mainLayout()->addWidget(_elemsSelector);

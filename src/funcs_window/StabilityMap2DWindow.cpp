@@ -50,7 +50,7 @@ void StabilityMap2DParamsDlg::makeControls(const QString &title, Schema* schema,
     editor->elemSelector = new ElemAndParamSelector(schema, elemFilter.get(), Z::Utils::defaultParamFilter());
     connect(editor->elemSelector, &ElemAndParamSelector::selectionChanged, [this, editor]{ this->guessRange(editor); });
 
-    editor->rangeEditor = new VariableRangeEditor::GeneralRangeEd;
+    editor->rangeEditor = new GeneralRangeEditor;
 
     editor->groupBox = new QGroupBox(title);
 

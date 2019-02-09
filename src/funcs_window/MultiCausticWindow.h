@@ -11,9 +11,7 @@ QT_END_NAMESPACE
 
 class QCPItemStraightLine;
 class MultiElementSelectorWidget;
-namespace VariableRangeEditor {
-    class PointsRangeEd;
-}
+class PointsRangeEditor;
 
 class MultiCausticWindow : public PlotFuncWindowStorable
 {
@@ -81,7 +79,7 @@ protected slots:
 private:
     QVector<Z::Variable> _result;
     MultiElementSelectorWidget *_elemsSelector;
-    VariableRangeEditor::PointsRangeEd* _rangeEditor;
+    PointsRangeEditor* _rangeEditor;
     QMap<Element*, Z::VariableRange> _elemRanges;
     QCheckBox *_sameSettings;
 

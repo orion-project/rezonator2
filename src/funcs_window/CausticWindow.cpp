@@ -31,7 +31,7 @@ CausticParamsDlg::CausticParamsDlg(Schema *schema, Z::Variable *var)
     _elemSelector = new ElemSelectorWidget(schema, filter.get());
     connect(_elemSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(guessRange()));
 
-    _rangeEditor = new VariableRangeEditor::PointsRangeEd;
+    _rangeEditor = new PointsRangeEditor;
 
     auto layoutElement = new QHBoxLayout;
     layoutElement->addWidget(new QLabel(tr("Element")));

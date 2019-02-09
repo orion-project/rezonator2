@@ -34,8 +34,8 @@ cd out
 
 echo.
 echo ***** Building...
-if exist release rmdir /S /Q release
-mkdir release
-cd release
+if exist build rmdir /S /Q build
+mkdir build
+cd build
 qmake -config release ..\..\rezonator.pro
 mingw32-make

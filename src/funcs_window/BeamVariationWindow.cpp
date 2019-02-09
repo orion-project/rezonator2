@@ -1,4 +1,4 @@
-#include "BeamOverStabWindow.h"
+#include "BeamVariationWindow.h"
 
 #include "../CustomPrefs.h"
 #include "../io/JsonUtils.h"
@@ -9,10 +9,10 @@
 #include "helpers/OriWidgets.h"
 
 //------------------------------------------------------------------------------
-//                             BeamOverStabParamsDlg
+//                             BeamVariationParamsDlg
 //------------------------------------------------------------------------------
 
-BeamOverStabParamsDlg::BeamOverStabParamsDlg(Schema *schema, Z::Variable *var)
+BeamVariationParamsDlg::BeamVariationParamsDlg(Schema *schema, Z::Variable *var)
     : RezonatorDialog(DontDeleteOnClose), _var(var)
 {
     setWindowTitle(tr("Variable"));
@@ -29,7 +29,7 @@ BeamOverStabParamsDlg::BeamOverStabParamsDlg(Schema *schema, Z::Variable *var)
 
     _placeSelector = new ElemOffsetSelectorWidget(schema, elemFilter.get());
 
-    _rangeEditor = new VariableRangeEditor::GeneralRangeEd;
+    _rangeEditor = new GeneralRangeEditor;
 
     mainLayout()->addLayout(_elemSelector);
     mainLayout()->addSpacing(8);
@@ -42,32 +42,32 @@ BeamOverStabParamsDlg::BeamOverStabParamsDlg(Schema *schema, Z::Variable *var)
     populate();
 }
 
-void BeamOverStabParamsDlg::populate()
+void BeamVariationParamsDlg::populate()
 {
 
 }
 
-void BeamOverStabParamsDlg::collect()
+void BeamVariationParamsDlg::collect()
 {
 
 }
 
-void BeamOverStabParamsDlg::guessRange()
+void BeamVariationParamsDlg::guessRange()
 {
 
 }
 
 //------------------------------------------------------------------------------
-//                              BeamOverStabWindow
+//                              BeamVariationWindow
 //------------------------------------------------------------------------------
 
-BeamOverStabWindow::BeamOverStabWindow(Schema *schema)
-    : PlotFuncWindowStorable(new BeamOverStabFunction(schema))
+BeamVariationWindow::BeamVariationWindow(Schema *schema)
+    : PlotFuncWindowStorable(new BeamVariationFunction(schema))
 {
 
 }
 
-bool BeamOverStabWindow::configureInternal()
+bool BeamVariationWindow::configureInternal()
 {
-    return BeamOverStabParamsDlg(schema(), function()->arg()).run();
+    return BeamVariationParamsDlg(schema(), function()->arg()).run();
 }

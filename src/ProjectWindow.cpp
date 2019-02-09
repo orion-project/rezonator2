@@ -145,7 +145,7 @@ void ProjectWindow::createActions()
     actnFuncRepRate = A_(tr("&Intermode Beats Frequency"), _calculations, SLOT(funcRepRate()), ":/toolbar/func_reprate");
     actnFuncCaustic = A_(tr("&Caustic..."), _calculations, SLOT(funcCaustic()), ":/toolbar/func_caustic");
     actnFuncMultiCaustic = A_(tr("&Multicaustic..."), _calculations, SLOT(funcMultiCaustic()), ":/toolbar/func_multi_caustic");
-    actnFuncBeamOverStab = A_(tr("&Beam Over Stability..."), _calculations, SLOT(funcBeamOverStab()), ":/toolbar/func_beam_over_stab");
+    actnFuncBeamVariation = A_(tr("&Beamsize Variation..."), _calculations, SLOT(funcBeamVariation()), ":/toolbar/func_beam_variation");
 
     actnToolsCatalog = A_(tr("&Elements Catalog"), this, SLOT(showElementsCatalog()), ":/toolbar/catalog");
     actnToolsGaussCalc = A_(tr("&Gauss Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
@@ -199,7 +199,7 @@ void ProjectWindow::createMenuBar()
     menuFunctions = Ori::Gui::menu(tr("F&unctions"), this,
         { actnFuncRoundTrip, actnFuncMultFwd, actnFuncMultBkwd, nullptr, actnFuncStabMap,
           actnFuncStabMap2d, nullptr, actnFuncCaustic, actnFuncMultiCaustic,
-          actnFuncBeamOverStab, nullptr, actnFuncRepRate });
+          actnFuncBeamVariation, nullptr, actnFuncRepRate });
 
     menuTools = Ori::Gui::menu(tr("&Tools", "Menu title"), this,
         { actnToolFlipSchema, nullptr,
@@ -220,7 +220,7 @@ void ProjectWindow::createToolBars()
         actnFileNew, Ori::Gui::menuToolButton(_mruMenu, actnFileOpen),
         actnFileSave, nullptr, actnFileProps, actnFilePump, actnFileSummary , nullptr,
         actnEditCut, actnEditCopy, actnEditPaste, nullptr,
-        actnFuncRoundTrip, nullptr, actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamOverStab, nullptr,
+        actnFuncRoundTrip, nullptr, actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamVariation, nullptr,
         actnFuncCaustic, actnFuncMultiCaustic, nullptr, actnFuncRepRate, nullptr,
         actnWndParams, actnWndPumps, nullptr,
         actnToolsGaussCalc

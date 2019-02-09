@@ -6,13 +6,14 @@
 #include "funcs/MultiCausticFunction.h"
 #include "funcs/StabilityMapFunction.h"
 #include "funcs/StabilityMap2DFunction.h"
+#include "funcs/BeamVariationFunction.h"
 #include "funcs_window/PlotFuncWindow.h"
 #include "funcs_window/InfoFuncWindow.h"
 #include "funcs_window/CausticWindow.h"
 #include "funcs_window/MultiCausticWindow.h"
 #include "funcs_window/StabilityMapWindow.h"
 #include "funcs_window/StabilityMap2DWindow.h"
-#include "funcs_window/BeamOverStabWindow.h"
+#include "funcs_window/BeamVariationWindow.h"
 
 template <class TWindow> SchemaWindow* windowConstructor(Schema* schema)
 {
@@ -38,7 +39,7 @@ CalcManager::CalcManager(Schema *schema, QWidget *parent) :
     registerWindowConstructor<StabilityMap2DWindow, StabilityMap2DFunction>();
     registerWindowConstructor<CausticWindow, CausticFunction>();
     registerWindowConstructor<MultiCausticWindow, MultiCausticFunction>();
-    registerWindowConstructor<BeamOverStabWindow, BeamOverStabFunction>();
+    registerWindowConstructor<BeamVariationWindow, BeamVariationFunction>();
 }
 
 void CalcManager::funcSummary()
@@ -90,9 +91,9 @@ void CalcManager::funcMultiCaustic()
     showPlotFunc<MultiCausticFunction>();
 }
 
-void CalcManager::funcBeamOverStab()
+void CalcManager::funcBeamVariation()
 {
-    showPlotFunc<BeamOverStabFunction>();
+    showPlotFunc<BeamVariationFunction>();
 }
 
 void CalcManager::funcShowMatrices()

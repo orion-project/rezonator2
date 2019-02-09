@@ -7,9 +7,7 @@
 
 class ElemAndParamSelector;
 class QCPItemStraightLine;
-namespace VariableRangeEditor {
-    class GeneralRangeEd;
-}
+class GeneralRangeEditor;
 
 class StabilityMapWindow : public PlotFuncWindowStorable
 {
@@ -73,7 +71,7 @@ private slots:
 private:
     Z::Variable* _var;
     ElemAndParamSelector* _elemSelector;
-    VariableRangeEditor::GeneralRangeEd* _rangeEditor;
+    GeneralRangeEditor* _rangeEditor;
     QString _recentKey = "func_stab_map";
 
     void populate();

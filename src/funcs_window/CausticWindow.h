@@ -6,9 +6,7 @@
 #include "../funcs/CausticFunction.h"
 
 class ElemSelectorWidget;
-namespace VariableRangeEditor {
-    class PointsRangeEd;
-}
+class PointsRangeEditor;
 
 class CausticWindow : public PlotFuncWindowStorable
 {
@@ -53,7 +51,7 @@ private slots:
 private:
     Z::Variable* _var;
     ElemSelectorWidget* _elemSelector;
-    VariableRangeEditor::PointsRangeEd* _rangeEditor;
+    PointsRangeEditor* _rangeEditor;
     QString _recentKey = "func_caustic";
 
     void populate();
