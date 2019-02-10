@@ -1,4 +1,5 @@
 #include "TestUtils.h"
+#include "../core/Schema.h"
 #include "../core/Elements.h"
 #include "../funcs/RoundTripCalculator.h"
 

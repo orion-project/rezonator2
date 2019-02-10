@@ -1,10 +1,13 @@
+#include "CausticFunction.h"
+
+#include "../core/Protocol.h"
+#include "../core/Schema.h"
+#include "PumpCalculator.h"
+#include "RoundTripCalculator.h"
+#include "AbcdBeamCalculator.h"
+
 #include <QApplication>
 #include <QDebug>
-
-#include "CausticFunction.h"
-#include "../funcs/PumpCalculator.h"
-#include "../funcs/RoundTripCalculator.h"
-#include "../core/Protocol.h"
 
 void CausticFunction::calculate()
 {
@@ -26,8 +29,10 @@ void CausticFunction::calculate()
     if (!prepareCalculator(elem, true)) return;
 
     auto tripType = _schema->tripType();
-    if (tripType == TripType::SP)
-        if (!prepareSP()) return;
+    bool prepared = tripType == TripType::SP
+            ? prepareSinglePass()
+            : prepareResonator();
+    if (!prepared) return;
 
     BackupAndLock locker(elem, elem->paramLength());
 
@@ -75,7 +80,7 @@ void CausticFunction::calculate()
     finishResults();
 }
 
-bool CausticFunction::prepareSP()
+bool CausticFunction::prepareSinglePass()
 {    
     Z::PumpParams *pump = _schema->activePump();
     if (!pump)
@@ -99,20 +104,22 @@ bool CausticFunction::prepareSP()
     return true;
 }
 
+bool CausticFunction::prepareResonator()
+{
+    if (!_beamCalc) _beamCalc.reset(new AbcdBeamCalculator);
+    _beamCalc->setWavelenSI(_wavelenSI);
+    return true;
+}
+
 Z::PointTS CausticFunction::calculateSinglePass() const
 {
     BeamResult beamT = _pumpCalc.T->calc(_calc->Mt(), _wavelenSI);
     BeamResult beamS = _pumpCalc.S->calc(_calc->Ms(), _wavelenSI);
     switch (_mode)
     {
-    case BeamRadius:
-        return { beamT.beamRadius, beamS.beamRadius };
-
-    case FontRadius:
-        return { beamT.frontRadius, beamS.frontRadius };
-
-    case HalfAngle:
-        return { beamT.halfAngle, beamS.halfAngle };
+    case BeamRadius: return { beamT.beamRadius, beamS.beamRadius };
+    case FontRadius: return { beamT.frontRadius, beamS.frontRadius };
+    case HalfAngle: return { beamT.halfAngle, beamS.halfAngle };
     }
     qCritical() << "Unsupported caustic result mode";
     return { Double::nan(), Double::nan() };
@@ -120,43 +127,14 @@ Z::PointTS CausticFunction::calculateSinglePass() const
 
 Z::PointTS CausticFunction::calculateResonator() const
 {
-#define CALC_TS_POINT(func) return Z::PointTS(func(_calc->Mt()), func(_calc->Ms()))
-
     switch (_mode)
     {
-    case BeamRadius: CALC_TS_POINT(calculateResonator_beamRadius);
-    case FontRadius: CALC_TS_POINT(calculateResonator_frontRadius);
-    case HalfAngle: CALC_TS_POINT(calculateResonator_halfAngle);
+    case BeamRadius: return _beamCalc->beamRadius(_calc->Mt(), _calc->Ms());
+    case FontRadius: return _beamCalc->frontRadius(_calc->Mt(), _calc->Ms());
+    case HalfAngle: return _beamCalc->halfAngle(_calc->Mt(), _calc->Ms());
     }
+    qCritical() << "Unsupported caustic result mode";
     return Z::PointTS();
-
-#undef CALC_TS_POINT
-}
-
-// TODO:NEXT-VER should be in Calculator as it can be reused by another functions, e.g. BeamParamsAtElems
-double CausticFunction::calculateResonator_beamRadius(const Z::Matrix& m) const
-{
-    double p = 1 - SQR((m.A + m.D) * 0.5);
-    if (p <= 0) return Double::nan();
-    double w2 = _wavelenSI * qAbs(m.B) * M_1_PI / sqrt(p);
-    if (w2 < 0) return Double::nan();
-    return sqrt(w2);
-}
-
-// TODO:NEXT-VER should be in Calculator as it can be reused by another functions, e.g. BeamParamsAtElems
-double CausticFunction::calculateResonator_frontRadius(const Z::Matrix& m) const
-{
-    if (!Double(m.D).is(m.A))
-        return 2 * m.B / (m.D - m.A);
-    return (m.B < 0) ? -Double::infinity() : +Double::infinity();
-}
-
-// TODO:NEXT-VER should be in Calculator as it can be reused by another functions, e.g. BeamParamsAtElems
-double CausticFunction::calculateResonator_halfAngle(const Z::Matrix& m) const
-{
-    double p = 4.0 - SQR(m.A + m.D);
-    if (p <= 0) return Double::nan();
-    return sqrt(_wavelenSI * M_1_PI * 2.0 * qAbs(m.C) / sqrt(p));
 }
 
 QString CausticFunction::calculatePoint(const double& arg)

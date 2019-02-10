@@ -156,7 +156,8 @@ HEADERS += \
     src/core/Utils.h \
     src/widgets/PlotUtils.h \
     src/funcs/BeamVariationFunction.h \
-    src/funcs_window/BeamVariationWindow.h
+    src/funcs_window/BeamVariationWindow.h \
+    src/funcs/AbcdBeamCalculator.h
 	
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
@@ -267,7 +268,8 @@ SOURCES += \
     src/core/Utils.cpp \
     src/widgets/PlotUtils.cpp \
     src/funcs/BeamVariationFunction.cpp \
-    src/funcs_window/BeamVariationWindow.cpp
+    src/funcs_window/BeamVariationWindow.cpp \
+    src/funcs/AbcdBeamCalculator.cpp
 
 DISTFILES += \
     src/StartWindow.qss \

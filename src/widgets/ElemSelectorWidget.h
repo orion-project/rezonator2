@@ -144,6 +144,8 @@ public:
     Element* selectedElement() const { return _elemSelector->selectedElement(); }
     void setSelectedElement(Element *elem) { _elemSelector->setSelectedElement(elem); }
 
+    Z::Value offset() const;
+    void setOffset(const Z::Value& offset);
 
     WidgetResult verify();
 

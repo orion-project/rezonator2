@@ -31,7 +31,7 @@ class BeamVariationParamsDlg : public RezonatorDialog
     Q_OBJECT
 
 public:
-    explicit BeamVariationParamsDlg(Schema*, Z::Variable*);
+    explicit BeamVariationParamsDlg(Schema*, Z::Variable*, Z::PlotPosition *pos);
 
 protected slots:
     void collect() override;
@@ -40,11 +40,13 @@ private slots:
     void guessRange();
 
 private:
+    Schema* _schema;
     Z::Variable* _var;
+    Z::PlotPosition* _pos;
     ElemAndParamSelector* _elemSelector;
     ElemOffsetSelectorWidget* _placeSelector;
     GeneralRangeEditor* _rangeEditor;
-    QString _recentKey = "func_beam_vs_stab";
+    QString _recentKey = "func_beam_variation";
 
     void populate();
 };

@@ -1,8 +1,14 @@
 #ifndef CALCULATOR_H
 #define CALCULATOR_H
 
-#include "../core/Schema.h"
-#include "../core/Element.h"
+#include "../core/CommonTypes.h"
+#include "../core/Math.h"
+#include "../core/Values.h"
+
+#include <QString>
+
+class Schema;
+class Element;
 
 class RoundTripCalculator
 {
@@ -25,7 +31,7 @@ public:
     inline const Z::Matrix& Ms() const { return _ms; }
     inline const Z::MatrixArray& matrsT() const { return _matrsT; }
     inline const Z::MatrixArray& matrsS() const { return _matrsS; }
-    Elements roundTrip() const;
+    QList<Element*> roundTrip() const;
     QString roundTripStr() const;
 
 protected:

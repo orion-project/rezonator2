@@ -6,6 +6,7 @@
 #include <memory>
 
 class PumpCalculator;
+class AbcdBeamCalculator;
 
 class CausticFunction : public PlotFunction
 {
@@ -24,12 +25,11 @@ public:
     bool hasOptions() const override { return true; }
     QString calculatePoint(const double& arg) override;
     const char* iconPath() const override { return ":/toolbar/func_caustic"; }
+    Z::Unit defaultUnitX() const override;
+    Z::Unit defaultUnitY() const override { return defaultUnitsForMode(_mode); }
 
     Mode mode() const { return _mode; }
     void setMode(Mode mode) { _mode = mode; }
-
-    Z::Unit defaultUnitX() const override;
-    Z::Unit defaultUnitY() const override { return defaultUnitsForMode(_mode); }
 
     static Z::Unit defaultUnitsForMode(CausticFunction::Mode);
 
@@ -41,14 +41,12 @@ private:
     double _wavelenSI = 0;
 
     Z::PairTS<std::shared_ptr<PumpCalculator>> _pumpCalc;
+    std::shared_ptr<AbcdBeamCalculator> _beamCalc;
 
-    bool prepareSP();
+    bool prepareSinglePass();
+    bool prepareResonator();
     inline Z::PointTS calculateSinglePass() const;
     inline Z::PointTS calculateResonator() const;
-    double calculateResonator_beamRadius(const Z::Matrix& m) const;
-    double calculateResonator_frontRadius(const Z::Matrix &m) const;
-    double calculateResonator_halfAngle(const Z::Matrix &m) const;
-    void convertFromSiToModeUnits(Z::PointTS& point) const;
 };
 
 #endif // CAUSTIC_FUNCTION_H

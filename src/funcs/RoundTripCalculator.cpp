@@ -1,5 +1,8 @@
 #include "RoundTripCalculator.h"
 
+#include "../core/Schema.h"
+#include "../core/Element.h"
+
 RoundTripCalculator::RoundTripCalculator(Schema *owner, Element *ref)
 {
     _schema = owner;
@@ -200,7 +203,7 @@ double RoundTripCalculator::calcStability(double half_of_A_plus_D) const
     return 0;
 }
 
-Elements RoundTripCalculator::roundTrip() const
+QList<Element*> RoundTripCalculator::roundTrip() const
 {
     Elements elements;
     for (auto& item : _roundTrip)

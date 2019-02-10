@@ -119,13 +119,13 @@ WidgetResult GeneralRangeEditor::verify()
     auto res = range();
 
     if (res.start >= res.stop)
-        return WidgetResult::fail(edStart, tr("<b>Starting value</b> of variable must be less than its end value."));
+        return WidgetResult::fail(edStart, tr("The starting value of the variable must be less than its end value."));
 
     if (res.useStep && res.step <= 0)
-        return WidgetResult::fail(edStep, tr("Value of <b>step</b> must be greater than zero."));
+        return WidgetResult::fail(edStep, tr("Value of step must be greater than zero."));
 
     if (res.useStep && res.step >= (res.stop.toSi() - res.start.toSi()))
-        return WidgetResult::fail(edStep, tr("<b>Step</b> must be less than variation range."));
+        return WidgetResult::fail(edStep, tr("The step must be less than the variation range."));
 
     return WidgetResult::ok();
 }
@@ -196,10 +196,10 @@ WidgetResult PointsRangeEditor::verify()
     auto res = range();
 
     if (res.useStep && res.step <= 0)
-        return WidgetResult::fail(edStep, tr("Value of <b>step</b> must be greater than zero."));
+        return WidgetResult::fail(edStep, tr("Value of step must be greater than zero."));
 
     if (res.useStep && res.step >= _stop)
-        return WidgetResult::fail(edStep, tr("<b>Step</b> must be less than element length (%1).").arg(_stop.str()));
+        return WidgetResult::fail(edStep, tr("The step must be less than element length (%1).").arg(_stop.str()));
 
     return WidgetResult::ok();
 }

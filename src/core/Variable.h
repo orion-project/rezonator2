@@ -67,6 +67,12 @@ struct Variable
 };
 
 
+struct PlotPosition
+{
+    Element* element = nullptr;
+    Z::Value offset = 0;
+};
+
 namespace Utils {
 
 /// The function returns the stop value of the range according to axis length of a range element.

@@ -12,14 +12,11 @@
 //                             BeamVariationParamsDlg
 //------------------------------------------------------------------------------
 
-BeamVariationParamsDlg::BeamVariationParamsDlg(Schema *schema, Z::Variable *var)
-    : RezonatorDialog(DontDeleteOnClose), _var(var)
+BeamVariationParamsDlg::BeamVariationParamsDlg(Schema *schema, Z::Variable *var, Z::PlotPosition *pos)
+    : RezonatorDialog(DontDeleteOnClose), _schema(schema), _var(var), _pos(pos)
 {
     setWindowTitle(tr("Variable"));
-    setObjectName("StabilityParamsDlg");
-
-    if (!var->element && !_recentKey.isEmpty())
-        Z::IO::Json::readVariablePref(CustomPrefs::recentObj(_recentKey), var, schema);
+    setObjectName("BeamVariationParamsDlg");
 
     std::shared_ptr<ElementFilter> elemFilter(
         ElementFilter::make<ElementFilterHasVisibleParams, ElementFilterEnabled>());
@@ -44,17 +41,61 @@ BeamVariationParamsDlg::BeamVariationParamsDlg(Schema *schema, Z::Variable *var)
 
 void BeamVariationParamsDlg::populate()
 {
+    if (!_var->element) // create variable
+    {
+        QJsonObject pref = CustomPrefs::recentObj(_recentKey);
 
+        Z::IO::Json::readVariablePref(pref, _var, _schema);
+
+        _pos->element = _schema->elementByLabel(pref["plot_position_label"].toString());
+        auto offset = Z::IO::Json::readValue(pref["offset"].toObject(), Z::Dims::linear());
+        _pos->offset = offset.ok() ? offset.value() : 0_mm;
+    }
+
+    _elemSelector->setSelectedElement(_var->element);
+    _elemSelector->setSelectedParameter(_var->parameter);
+    _rangeEditor->setRange(_var->range);
+    _placeSelector->setSelectedElement(_pos->element);
+    _placeSelector->setOffset(_pos->offset);
 }
 
 void BeamVariationParamsDlg::collect()
 {
+    auto res = _elemSelector->verify();
+    if (!res) return res.show(this);
 
+    res = _rangeEditor->verify();
+    if (!res) return res.show(this);
+
+    res = _placeSelector->verify();
+    if (!res) return res.show(this);
+
+    _var->element = _elemSelector->selectedElement();
+    _var->parameter = _elemSelector->selectedParameter();
+    _var->range = _rangeEditor->range();
+
+    _pos->element = _placeSelector->selectedElement();
+    _pos->offset = _placeSelector->offset();
+
+    accept();
+
+    QJsonObject pref = Z::IO::Json::writeVariablePref(_var);
+    pref["plot_position_label"] = _pos->element->label();
+    pref["offset"] = Z::IO::Json::writeValue(_pos->offset);
+    CustomPrefs::setRecentObj(_recentKey, pref);
 }
 
 void BeamVariationParamsDlg::guessRange()
 {
+    auto param = _elemSelector->selectedParameter();
+    if (!param) return;
 
+    // TODO restore or guess range limits and step
+    Z::VariableRange range;
+    range.start = param->value();
+    range.stop = param->value();
+    range.step = param->value() * 0;
+    _rangeEditor->setRange(range);
 }
 
 //------------------------------------------------------------------------------
@@ -69,5 +110,5 @@ BeamVariationWindow::BeamVariationWindow(Schema *schema)
 
 bool BeamVariationWindow::configureInternal()
 {
-    return BeamVariationParamsDlg(schema(), function()->arg()).run();
+    return BeamVariationParamsDlg(schema(), function()->arg(), function()->pos()).run();
 }

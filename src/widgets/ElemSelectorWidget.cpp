@@ -64,7 +64,13 @@ void ParamSelectorWidget::populate(Element *elem)
                 _parameters.append(param);
 
     for (auto param : _parameters)
-        addItem(param->name());
+    {
+        auto display = param->label();
+        auto name = param->name();
+        if (!name.isEmpty())
+            display += QString(" (%1)").arg(name);
+        addItem(display);
+    }
 }
 
 Z::Parameter* ParamSelectorWidget::selectedParameter() const
@@ -247,6 +253,7 @@ ElemOffsetSelectorWidget::ElemOffsetSelectorWidget(Schema* schema, ElementFilter
 
     _offsetTitle = new QLabel(tr("Offset"));
     _offsetEditor = new ValueEditor;
+    currentElemChanged(-1);
 
     setColumnStretch(1, 1);
     addWidget(new QLabel(tr("Element")), 0, 0); addWidget(_elemSelector, 0, 1);
@@ -266,10 +273,44 @@ void ElemOffsetSelectorWidget::currentElemChanged(int)
         auto unit = range->paramLength()->value().unit();
         auto axisLength = Z::Value(unit->fromSi(range->axisLengthSI()), unit);
         _lengthLabel->setText(axisLength.displayStr());
+        _offsetEditor->setValue(Z::Value(0, unit));
     }
     else
     {
         _lengthLabel->setText(QStringLiteral("N/A"));
         _offsetEditor->setValue(0);
     }
+}
+
+Z::Value ElemOffsetSelectorWidget::offset() const
+{
+    return _offsetEditor->value();
+}
+
+void ElemOffsetSelectorWidget::setOffset(const Z::Value& offset)
+{
+    _offsetEditor->setValue(offset);
+}
+
+WidgetResult ElemOffsetSelectorWidget::verify()
+{
+    auto elem = selectedElement();
+    if (!elem)
+        WidgetResult::fail(_elemSelector, tr("An element must be selected."));
+
+    auto range = Z::Utils::asRange(elem);
+    if (!range) return WidgetResult::ok();
+
+    auto length = range->paramLength()->value();
+    auto offset = this->offset();
+
+    if (offset < 0)
+        return WidgetResult::fail(_offsetEditor,
+            tr("The offset value cannot be less than zero."));
+
+    if (offset > length)
+        return WidgetResult::fail(_offsetEditor,
+            tr("The offset cannot be greater than element length."));
+
+    return WidgetResult::ok();
 }
