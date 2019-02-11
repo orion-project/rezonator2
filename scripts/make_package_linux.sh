@@ -11,12 +11,19 @@ if [ ! -d out ]; then mkdir out; fi
 cd out
 
 # Download linuxdeplyqt if none
-# https://github.com/probonopd/linuxdeployqt
-LINUXDEPLOYQT=linuxdeployqt-continuous-x86_64.AppImage
+# Download linuxdeplyqt if none (https://github.com/probonopd/linuxdeployqt)
+# NOTE: It've broken compatibility with newer OS versions forsing to stick at Ubuntu 14 LTS.
+# See discussion here: https://github.com/probonopd/linuxdeployqt/issues/340
+# But I have nor a machine running Trusty or a wish to stick at Qt 5.5 
+# (the last supported for Trusty) so have to use a more relaxed 5th version of the tool.
+#LINUXDEPLOYQT=linuxdeployqt-continuous-x86_64.AppImage
+#LINUXDEPLOYQT_URL=https://github.com/probonopd/linuxdeployqt/releases/download/continuous/${LINUXDEPLOYQT}
+LINUXDEPLOYQT=linuxdeployqt-5-x86_64.AppImage
+LINUXDEPLOYQT_URL=https://github.com/probonopd/linuxdeployqt/releases/download/5/${LINUXDEPLOYQT}  
 if [ ! -f ${LINUXDEPLOYQT} ]; then
   echo
   echo "Downloading ${LINUXDEPLOYQT}..."
-  wget -c https://github.com/probonopd/linuxdeployqt/releases/download/continuous/${LINUXDEPLOYQT}
+  wget -c ${LINUXDEPLOYQT_URL}
   chmod a+x ${LINUXDEPLOYQT}
   if [ "${?}" != "0" ]; then exit 1; fi
 fi
@@ -33,7 +40,7 @@ cp ../bin/rezonator AppDir/usr/bin
 cp -r ../bin/examples AppDir/usr/bin
 cp -r ../bin/test_files AppDir/usr/bin
 cp ../release/rezonator.desktop AppDir/usr/share/applications
-cp ../img/icon/icon_main_2_256.png AppDir/usr/share/icons/hicolor/256x256/apps/rezonator.png
+cp ../img/icon/main_2_256.png AppDir/usr/share/icons/hicolor/256x256/apps/rezonator.png
 if [ "${?}" != "0" ]; then exit 1; fi
 
 # Run linuxdeplyqt on the AppDir

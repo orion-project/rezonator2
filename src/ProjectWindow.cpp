@@ -468,7 +468,7 @@ void ProjectWindow::actionHelpAbout()
     auto text = tr(
                 "<p><font size=4><b>{app} {app_ver}</b></font>"
                 "<p>Built: {build_date}"
-                "<p>Copyright: Chunosov N.&nbsp;I. © 2006-2018"
+                "<p>Copyright: Chunosov N.&nbsp;I. © 2006-2019"
                 "<p>Web: <a href='{www}'>{www}</a>"
                 "<p>E-mail: <a href='mailto://{email}'>{email}</a>"
                 "<p>Credits: <a href='http://www.qcustomplot.com'>QCustomPlot</a>"

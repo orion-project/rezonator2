@@ -2,7 +2,7 @@
   "history": [
     {
       "version": "2.0.3-alpha3",
-      "date": "?",
+      "date": "2019-02-11",
       "changes": [
         {
           "text": "The start window with MRU, actions, tools and tips panels.",
