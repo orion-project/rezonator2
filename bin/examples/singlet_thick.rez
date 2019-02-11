@@ -1,0 +1,261 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "mkm",
+            "value": 0.64
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "L1",
+            "params": {
+                "L": {
+                    "unit": "cm",
+                    "value": 5
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "Distance from light source to lens",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "s1",
+            "params": {
+                "R": {
+                    "unit": "mm",
+                    "value": -100
+                },
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 2.5
+                }
+            },
+            "title": "",
+            "type": "ElemSphericalInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "d1",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 10
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 2.5
+                }
+            },
+            "title": "",
+            "type": "ElemMediumRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "s2",
+            "params": {
+                "R": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n1": {
+                    "unit": "none",
+                    "value": 2.5
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemSphericalInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "L2",
+            "params": {
+                "L": {
+                    "unit": "cm",
+                    "value": 7
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        }
+    ],
+    "formulas": [
+    ],
+    "notes": "Example schema containing single focusing lens and two variants of input beam - gaussian and ray vector - having similar parameter but different 'nature'.",
+    "param_links": [
+    ],
+    "pumps": [
+        {
+            "is_active": false,
+            "label": "P1",
+            "mode": "RayVector",
+            "params": {
+                "V": {
+                    "unit": "mrad",
+                    "value_s": 0.016,
+                    "value_t": 0.02
+                },
+                "y": {
+                    "unit": "mm",
+                    "value_s": 12,
+                    "value_t": 10
+                },
+                "z_y": {
+                    "unit": "cm",
+                    "value_s": 0,
+                    "value_t": 0
+                }
+            },
+            "title": "Geometric pump"
+        },
+        {
+            "is_active": true,
+            "label": "P2",
+            "mode": "Waist",
+            "params": {
+                "MI": {
+                    "unit": "none",
+                    "value_s": 1,
+                    "value_t": 1
+                },
+                "w_0": {
+                    "unit": "mm",
+                    "value_s": 12,
+                    "value_t": 10
+                },
+                "z_w": {
+                    "unit": "mm",
+                    "value_s": 0,
+                    "value_t": 0
+                }
+            },
+            "title": "Gaussian pump"
+        }
+    ],
+    "schema_version": "2.0",
+    "title": "Single Lens",
+    "trip_type": "SP",
+    "windows": [
+        {
+            "function": {
+                "args": [
+                    {
+                        "element_index": 0,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "cm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "cm",
+                                "value": 0.05
+                            },
+                            "stop": {
+                                "unit": "cm",
+                                "value": 5
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 2,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "cm",
+                                "value": 0.05
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 10
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 4,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "cm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "cm",
+                                "value": 0.05
+                            },
+                            "stop": {
+                                "unit": "cm",
+                                "value": 7.000000000000001
+                            },
+                            "use_step": false
+                        }
+                    }
+                ]
+            },
+            "type": "Multicaustic",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "elem_bound_markers": true,
+                "stored_views": [
+                    {
+                        "mode": 0,
+                        "x_max": 12.120000000000001,
+                        "x_min": -0.12000000000000002,
+                        "x_unit": "none",
+                        "y_max": 12.825485795619688,
+                        "y_min": -5.317601708013425,
+                        "y_unit": "mm"
+                    },
+                    {
+                        "mode": 1,
+                        "x_max": 12.119494949494952,
+                        "x_min": -0.06898989898989902,
+                        "x_unit": "none",
+                        "y_max": 1038769694.7150226,
+                        "y_min": -49465223.612086974,
+                        "y_unit": "none"
+                    }
+                ],
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 13.13,
+                "x_min": -0.13,
+                "x_unit": "none",
+                "y_max": 13.818957390655939,
+                "y_min": -0.5901051499496285,
+                "y_unit": "mm"
+            }
+        },
+        {
+            "type": "PumpsWindow"
+        }
+    ]
+}

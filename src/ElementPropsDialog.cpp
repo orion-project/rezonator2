@@ -106,7 +106,7 @@ QWidget* ElementPropsDialog::initPageOutline()
 {
     auto outline = new Ori::Widgets::SvgView;
     outline->load(ElementImagesProvider::instance().drawingPath(_element->type()));
-    return outline;
+    return Ori::Layouts::LayoutV({outline}).setMargin(3).makeWidget();
 }
 
 void ElementPropsDialog::populate()

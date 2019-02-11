@@ -23,6 +23,7 @@ public:
     MultiCausticFunction* function() const { return dynamic_cast<MultiCausticFunction*>(_function); }
 
     // Implementation of SchemaListener
+    void schemaRebuilt(Schema*) override;
     void elementChanged(Schema*, Element*) override;
     void elementDeleting(Schema*, Element*) override;
 

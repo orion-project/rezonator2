@@ -234,6 +234,20 @@ QCPItemStraightLine* MultiCausticWindow::makeElemBoundMarker() const
     return line;
 }
 
+void MultiCausticWindow::schemaRebuilt(Schema* schema)
+{
+    // We only have to ensure all arguments are in the same order as schema elements.
+    // Don't recalculate here, recalculation will be done later on the intended event.
+    QMap<Element*, Z::Variable> oldArgs;
+    for (auto arg : function()->args())
+        oldArgs.insert(arg.element, arg);
+    QVector<Z::Variable> newArgs;
+    for (auto elem : schema->elements())
+        if (oldArgs.contains(elem))
+            newArgs.append(oldArgs[elem]);
+    function()->setArgs(newArgs);
+}
+
 void MultiCausticWindow::elementChanged(Schema*, Element* elem)
 {
     // Only modify the set of arguments, don't recalculate here,
