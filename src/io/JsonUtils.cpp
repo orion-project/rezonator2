@@ -140,6 +140,15 @@ void readVariablePref(const QJsonObject& json, Variable* var, Schema *schema)
     readVariableRange(json["range"].toObject(), var->range);
 }
 
+Result<Element*> readElemByIndex(const QJsonObject& json, const QString& key, Schema *schema)
+{
+    int elemIndex = json[key].toInt(-1);
+    Element* elem = schema->element(elemIndex);
+    if (!elem)
+        return Result<Element*>::fail(QString("There is no element with index %1").arg(elemIndex));
+    return Result<Element*>::success(elem);
+}
+
 } // namespace Json
 } // namespace IO
 } // namespace Z

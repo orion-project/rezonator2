@@ -24,7 +24,7 @@ BeamVariationParamsDlg::BeamVariationParamsDlg(Schema *schema, Z::Variable *var,
     _elemSelector = new ElemAndParamSelector(schema, elemFilter.get(), Z::Utils::defaultParamFilter());
     connect(_elemSelector, SIGNAL(selectionChanged()), this, SLOT(guessRange()));
 
-    _placeSelector = new ElemOffsetSelectorWidget(schema, elemFilter.get());
+    _placeSelector = new ElemOffsetSelectorWidget(schema, nullptr);
 
     _rangeEditor = new GeneralRangeEditor;
 
@@ -111,4 +111,66 @@ BeamVariationWindow::BeamVariationWindow(Schema *schema)
 bool BeamVariationWindow::configureInternal()
 {
     return BeamVariationParamsDlg(schema(), function()->arg(), function()->pos()).run();
+}
+
+QString BeamVariationWindow::getDefaultTitle() const
+{
+    return tr("Beam Radius Variation");
+}
+
+QString BeamVariationWindow::getDefaultTitleX() const
+{
+    auto arg = function()->arg();
+    auto unit = getUnitX();
+    if (unit == Z::Units::none())
+        return QStringLiteral("%1, %2")
+                .arg(arg->element->displayLabelTitle())
+                .arg(arg->parameter->name());
+    return QStringLiteral("%1, %2 (%3)")
+            .arg(arg->element->displayLabelTitle())
+            .arg(arg->parameter->label())
+            .arg(unit->name());
+}
+
+QString BeamVariationWindow::getDefaultTitleY() const
+{
+    auto elem = function()->pos()->element;
+    auto range = Z::Utils::asRange(elem);
+    if (range)
+        return tr("Beam radius at %1 +%2, (%3)")
+            .arg(elem->label())
+            .arg(function()->pos()->offset.displayStr())
+            .arg(getUnitY()->name());
+    return tr("Beam radius at %1, (%2)")
+        .arg(elem->label())
+        .arg(getUnitY()->name());
+}
+
+QString BeamVariationWindow::readFunction(const QJsonObject& root)
+{
+    auto res = Z::IO::Json::readVariable(root["arg"].toObject(), function()->arg(), schema());
+    if (!res.isEmpty())
+        return res;
+
+    auto pos = root["pos"].toObject();
+
+    auto elem = Z::IO::Json::readElemByIndex(pos, "element_index", schema());
+    if (!elem.ok()) return elem.error();
+
+    auto offset = Z::IO::Json::readValue(pos["offset"].toObject());
+    if (!offset.ok()) return offset.error();
+
+    function()->pos()->element = elem.value();
+    function()->pos()->offset = offset.value();
+    return QString();
+}
+
+QString BeamVariationWindow::writeFunction(QJsonObject& root)
+{
+    root["arg"] = Z::IO::Json::writeVariable(function()->arg(), schema());
+    root["pos"] = QJsonObject({
+        { "element_index", schema()->indexOf(function()->pos()->element) },
+        { "offset", Z::IO::Json::writeValue(function()->pos()->offset) },
+    });
+    return QString();
 }

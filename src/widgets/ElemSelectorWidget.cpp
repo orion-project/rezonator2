@@ -65,10 +65,10 @@ void ParamSelectorWidget::populate(Element *elem)
 
     for (auto param : _parameters)
     {
-        auto display = param->label();
         auto name = param->name();
-        if (!name.isEmpty())
-            display += QString(" (%1)").arg(name);
+        auto display = name.isEmpty()
+            ? QStringLiteral("%1 = %2").arg(param->label()).arg(param->value().displayStr())
+            : QStringLiteral("%1 (%2) = %3").arg(param->label()).arg(name).arg(param->value().displayStr());
         addItem(display);
     }
 }

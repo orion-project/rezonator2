@@ -1,0 +1,174 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 1040
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "M_out",
+            "params": {
+            },
+            "title": "output mirror",
+            "type": "ElemFlatMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 400
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "folding range",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M_foc",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 10.000000000000004
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 50
+                }
+            },
+            "title": "dichroic mirror",
+            "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L_foc",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 24.6
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "focusing range",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "Cr",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 1.6
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 2
+                }
+            },
+            "title": "brewsetr crystal",
+            "type": "ElemBrewsterPlate"
+        },
+        {
+            "is_disabled": false,
+            "label": "L_cr",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 29.9
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M_back",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 0
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 30
+                }
+            },
+            "title": "output range",
+            "type": "ElemCurveMirror"
+        }
+    ],
+    "formulas": [
+    ],
+    "notes": "",
+    "param_links": [
+    ],
+    "pumps": [
+    ],
+    "schema_version": "2.0",
+    "title": "",
+    "trip_type": "SW",
+    "windows": [
+        {
+            "function": {
+                "arg": {
+                    "element_index": 6,
+                    "param": "R",
+                    "range": {
+                        "points": 1000,
+                        "start": {
+                            "unit": "mm",
+                            "value": 25
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 35
+                        },
+                        "use_step": false
+                    }
+                },
+                "pos": {
+                    "element_index": 3,
+                    "offset": {
+                        "unit": "cm",
+                        "value": 1
+                    }
+                }
+            },
+            "type": "BeamVariation",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "stored_views": [
+                ],
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 30.11311311311385,
+                "x_min": 28.275275275275746,
+                "x_unit": "none",
+                "y_max": 1085.8307344560008,
+                "y_min": 275.11270191249866,
+                "y_unit": "none"
+            }
+        }
+    ]
+}

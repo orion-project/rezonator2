@@ -7,6 +7,7 @@
 #include <QJsonObject>
 
 class Schema;
+class Element;
 
 namespace Z {
 
@@ -27,6 +28,8 @@ QJsonObject writeVariable(const Variable *var, Schema *schema);
 QString readVariable(const QJsonObject& json, Variable *var, Schema *schema);
 QJsonObject writeVariablePref(Variable *var);
 void readVariablePref(const QJsonObject& json, Variable *var, Schema *schema);
+
+Result<Element*> readElemByIndex(const QJsonObject& json, const QString& key, Schema *schema);
 
 } // namespace Json
 } // namespace IO

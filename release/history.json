@@ -5,7 +5,7 @@
       "date": "?",
       "changes": [
         {
-          "text": "Start window with MRU, actions, tools and tips panels.",
+          "text": "The start window with MRU, actions, tools and tips panels.",
         },
         {
           "text": "Schema properties dialog.",
@@ -24,6 +24,9 @@
         },
         {
           "text": "Can make default titles for plots and plots' axes."
+        },
+        {
+          "text": "Beam Variation function."
         }
       ]
     },
