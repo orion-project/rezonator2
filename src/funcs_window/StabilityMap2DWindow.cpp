@@ -16,20 +16,13 @@
 //------------------------------------------------------------------------------
 
 StabilityMap2DParamsDlg::StabilityMap2DParamsDlg(Schema *schema, Z::Variable *var1, Z::Variable *var2)
-    : RezonatorDialog(DontDeleteOnClose)
+    : RezonatorDialog(DontDeleteOnClose), _schema(schema)
 {
-    setWindowTitle(tr("Contour Stability Map Parameters"));
+    setWindowTitle(tr("2D Stability Map Parameters"));
     setObjectName("StabilityMap2DPropsDlg");
 
     _editor1.var = var1;
     _editor2.var = var2;
-
-    if (!var1->element && !_recentKey.isEmpty())
-    {
-        auto recentObj = CustomPrefs::recentObj(_recentKey);
-        Z::IO::Json::readVariablePref(recentObj["var1"].toObject(), var1, schema);
-        Z::IO::Json::readVariablePref(recentObj["var2"].toObject(), var2, schema);
-    }
 
     makeControls(tr("Variable 1 (X)"), schema, &_editor1);
     makeControls(tr("Variable 2 (Y)"), schema, &_editor2);
@@ -38,8 +31,7 @@ StabilityMap2DParamsDlg::StabilityMap2DParamsDlg(Schema *schema, Z::Variable *va
     mainLayout()->addSpacing(8);
     mainLayout()->addStretch();
 
-    populate(&_editor1);
-    populate(&_editor2);
+    populate();
 }
 
 void StabilityMap2DParamsDlg::makeControls(const QString &title, Schema* schema, VarEditor* editor)
@@ -62,19 +54,23 @@ void StabilityMap2DParamsDlg::makeControls(const QString &title, Schema* schema,
     }).useFor(editor->groupBox);
 }
 
+void StabilityMap2DParamsDlg::populate()
+{
+    if (!_editor1.var->element || !_editor2.var->element)
+    {
+        auto recentObj = CustomPrefs::recentObj(_recentKey);
+        Z::IO::Json::readVariablePref(recentObj["var1"].toObject(), _editor1.var, _schema);
+        Z::IO::Json::readVariablePref(recentObj["var2"].toObject(), _editor2.var, _schema);
+    }
+    populate(&_editor1);
+    populate(&_editor2);
+}
+
 void StabilityMap2DParamsDlg::populate(VarEditor* editor)
 {
-    if (editor->var->element) // edit variable
-    {
-        editor->elemSelector->setSelectedElement(editor->var->element);
-        editor->elemSelector->setSelectedParameter(editor->var->parameter);
-        editor->rangeEditor->setRange(editor->var->range);
-    }
-    else // 'create' variable
-    {
-        // TODO guess or restore from settings
-        guessRange(editor);
-    }
+    editor->elemSelector->setSelectedElement(editor->var->element);
+    editor->elemSelector->setSelectedParameter(editor->var->parameter);
+    editor->rangeEditor->setRange(editor->var->range);
 }
 
 void StabilityMap2DParamsDlg::collect(VarEditor* editor, Z::Variable *var)
@@ -102,18 +98,17 @@ void StabilityMap2DParamsDlg::collect()
     collect(&_editor1, &tmp1);
     collect(&_editor2, &tmp2);
     if (tmp1.element == tmp2.element && tmp1.parameter == tmp2.parameter)
-        return Ori::Dlg::warning(tr("Variables must be different"));
+        return Ori::Dlg::warning(tr("X-variation can't be the same as Y"));
 
     collect(&_editor1, _editor1.var);
     collect(&_editor2, _editor2.var);
 
     accept();
 
-    if (!_recentKey.isEmpty())
-        CustomPrefs::setRecentObj(_recentKey, QJsonObject({
-            { "var1", Z::IO::Json::writeVariablePref(_editor1.var) },
-            { "var2", Z::IO::Json::writeVariablePref(_editor2.var) },
-        }));
+    CustomPrefs::setRecentObj(_recentKey, QJsonObject({
+        { "var1", Z::IO::Json::writeVariablePref(_editor1.var) },
+        { "var2", Z::IO::Json::writeVariablePref(_editor2.var) },
+    }));
 }
 
 void StabilityMap2DParamsDlg::guessRange(VarEditor* editor)
@@ -136,6 +131,26 @@ void StabilityMap2DParamsDlg::guessRange(VarEditor* editor)
 StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
     PlotFuncWindowStorable(new StabilityMap2DFunction(schema))
 {
+    _graphT = new QCPColorMap(_plot->xAxis, _plot->yAxis);
+
+    QCPColorScale *colorScale = new QCPColorScale(_plot);
+    auto colorAxis = colorScale->axis();
+    colorAxis->setLabel(tr("Stability parameter"));
+    colorAxis->setLabelFont(_plot->xAxis->labelFont());
+    colorAxis->setSelectedLabelFont(_plot->xAxis->selectedLabelFont());
+
+    // TODO: should be a row below the title, it can be 0 or 1, depending on if title is visible
+    _plot->plotLayout()->addElement(1, 1, colorScale);
+
+    _graphT->setColorScale(colorScale);
+    _graphT->setGradient(QCPColorGradient::gpGeography);
+
+    // Make sure the axis rect and color scale synchronize their bottom and top margins:
+    QCPMarginGroup *marginGroup = new QCPMarginGroup(_plot);
+    _plot->axisRect()->setMarginGroup(QCP::msBottom|QCP::msTop, marginGroup);
+    colorScale->setMarginGroup(QCP::msBottom|QCP::msTop, marginGroup);
+
+    function()->graphT = _graphT;
 }
 
 bool StabilityMap2DWindow::configureInternal()
@@ -156,4 +171,40 @@ void StabilityMap2DWindow::elementDeleting(Schema*, Element* elem)
     if (function()->paramX()->element == elem or
         function()->paramY()->element == elem)
         disableAndClose();
+}
+
+void StabilityMap2DWindow::updateGraphs()
+{
+    // rescale the data dimension (color) such that all data points lie in the span visualized by the color gradient:
+    _graphT->rescaleDataRange();
+    _plot->rescaleAxes();
+}
+
+QString StabilityMap2DWindow::getDefaultTitle() const
+{
+    return tr("2D Stability Map");
+}
+
+namespace  {
+QString getDefaultAxisTitle(const Z::Variable* arg, Z::Unit unit)
+{
+    if (unit == Z::Units::none())
+        return QStringLiteral("%1, %2")
+                .arg(arg->element->displayLabelTitle())
+                .arg(arg->parameter->name());
+    return QStringLiteral("%1, %2 (%3)")
+            .arg(arg->element->displayLabelTitle())
+            .arg(arg->parameter->label())
+            .arg(unit->name());
+}
+} // namespace
+
+QString StabilityMap2DWindow::getDefaultTitleX() const
+{
+    return getDefaultAxisTitle(function()->paramX(), getUnitX());
+}
+
+QString StabilityMap2DWindow::getDefaultTitleY() const
+{
+    return getDefaultAxisTitle(function()->paramY(), getUnitY());
 }

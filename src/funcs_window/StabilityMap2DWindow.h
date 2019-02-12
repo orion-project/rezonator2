@@ -7,6 +7,7 @@
 
 class ElemAndParamSelector;
 class GeneralRangeEditor;
+class QCPColorMap;
 
 QT_BEGIN_NAMESPACE
 class QGroupBox;
@@ -25,9 +26,16 @@ protected:
     // Implementation of PlotFuncWindow
     bool configureInternal() override;
     ElemDeletionReaction reactElemDeletion(const Elements&) override;
+    void updateGraphs() override;
+    QString getDefaultTitle() const override;
+    QString getDefaultTitleX() const override;
+    QString getDefaultTitleY() const override;
 
     // Implementation of SchemaListener
     void elementDeleting(Schema*, Element*) override;
+
+private:
+    QCPColorMap *_graphT, *_graphS;
 };
 
 
@@ -53,11 +61,13 @@ protected slots:
     void collect() override;
 
 private:
+    Schema* _schema;
     VarEditor _editor1, _editor2;
     QString _recentKey = "func_stab_map_2d";
 
     void makeControls(const QString& title, Schema *schema, VarEditor* editor);
     void guessRange(VarEditor* editor);
+    void populate();
     void populate(VarEditor* editor);
     void collect(VarEditor* editor, Z::Variable *var);
 };

@@ -410,9 +410,14 @@ void PlotFuncWindow::calculate()
     else
     {
         _statusBar->clear(STATUS_INFO);
-        updateGraphs(Z::Plane_T);
-        updateGraphs(Z::Plane_S);
+        updateGraphs();
     }
+}
+
+void PlotFuncWindow::updateGraphs()
+{
+    updateGraphs(Z::Plane_T);
+    updateGraphs(Z::Plane_S);
 }
 
 void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)

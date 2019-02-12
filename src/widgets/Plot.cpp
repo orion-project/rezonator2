@@ -146,6 +146,7 @@ void Plot::graphClicked(QCPAbstractPlottable *plottable)
 
 void Plot::autolimits(bool replot)
 {
+    if (graphCount() == 0) return;
     bool onlyEnlarge = false;
     for (int i = 0; i < graphCount(); i++)
     {
