@@ -21,10 +21,10 @@ if [ ! -d out ]; then mkdir out; fi
 cd out
 
 # Populate application bundle
-if [ -d AppDir ]; then rm -rdf AppDir; fi
-mkdir AppDir
-cd AppDir
-cp -r ../../bin/rezonator.app .
+if [ -f rezonator.app ]; then rm rezonator.app ; fi
+cp -r ../bin/rezonator.app .
+cp -r ../bin/examples ./rezonator.app/Contents/MacOS
+cp -r ../bin/test_files ./rezonator.app/Contents/MacOS
 if [ "${?}" != "0" ]; then exit 1; fi
 
 # Pack application bundle to dmg
@@ -32,9 +32,9 @@ macdeployqt rezonator.app -dmg
 if [ "${?}" != "0" ]; then exit 1; fi
 
 # Rename resulting file to contain version
-if [ -f ../../release/version.txt ]; then
-  VERSION="$(cat ../../release/version.txt)"
-  cp rezonator.dmg rezonator-${VERSION}.dmg
+if [ -f ../release/version.txt ]; then
+  VERSION="$(cat ../release/version.txt)"
+  mv rezonator.dmg rezonator-${VERSION}.dmg
 else
   echo
   echo "Warning: Unknown release version."

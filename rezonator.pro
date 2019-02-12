@@ -47,6 +47,7 @@ else {
 }
 
 win32: RC_FILE = src/app.rc
+macx: ICON = img/icon/main_2.icns
 
 #------------------------------------------------------------
 # Translation
