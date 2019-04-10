@@ -157,10 +157,13 @@ void Plot::autolimits(bool replot)
             onlyEnlarge = true;
         }
     }
-    if (!sanitizeAxisRange(xAxis))
-        extendLimits(xAxis, _safeMarginsX, false);
-    if (!sanitizeAxisRange(yAxis))
-        extendLimits(yAxis, _safeMarginsY, false);
+    if (useSafeMargins)
+    {
+        if (!sanitizeAxisRange(xAxis))
+            extendLimits(xAxis, _safeMarginsX, false);
+        if (!sanitizeAxisRange(yAxis))
+            extendLimits(yAxis, _safeMarginsY, false);
+    }
     if (replot) this->replot();
 }
 

@@ -207,6 +207,8 @@ void PlotFuncWindow::createContent()
     _cursor = new QCPCursor(_plot);
     connect(_cursor, &QCPCursor::positionChanged, this, &PlotFuncWindow::updateCursorInfo);
     _plot->serviceGraphs().append(_cursor);
+    auto axesLayer = _plot->layer(QStringLiteral("axes"));
+    if (axesLayer) _cursor->setLayer(axesLayer);
 
     _cursorPanel = new CursorPanel(_function, _cursor);
     _cursorPanel->setAutoUpdateInfo(false);

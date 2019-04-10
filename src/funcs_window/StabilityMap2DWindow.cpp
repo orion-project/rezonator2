@@ -139,11 +139,13 @@ StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
     colorAxis->setLabelFont(_plot->xAxis->labelFont());
     colorAxis->setSelectedLabelFont(_plot->xAxis->selectedLabelFont());
 
-    // TODO: should be a row below the title, it can be 0 or 1, depending on if title is visible
-    _plot->plotLayout()->addElement(1, 1, colorScale);
+    _plot->plotLayout()->addElement(_plot->axisRectRow(), _plot->axisRectCol() + 1, colorScale);
+
+    _plot->useSafeMargins = false;
 
     _graphT->setColorScale(colorScale);
-    _graphT->setGradient(QCPColorGradient::gpGeography);
+    _graphT->setGradient(QCPColorGradient::gpJet);
+    _graphT->setSelectable(QCP::stNone);
 
     // Make sure the axis rect and color scale synchronize their bottom and top margins:
     QCPMarginGroup *marginGroup = new QCPMarginGroup(_plot);

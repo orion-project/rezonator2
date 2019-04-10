@@ -33,6 +33,12 @@ public:
     QMenu *menuAxisX = nullptr;
     QMenu *menuAxisY = nullptr;
 
+    bool useSafeMargins = true;
+
+    // TODO: should be a row below the title, it can be 0 or 1, depending on if title is visible
+    int axisRectRow() const { return 1; }
+    int axisRectCol() const { return 0; }
+
 public slots:
     void autolimits(bool replot = true);
     void autolimitsX(bool replot = true);
