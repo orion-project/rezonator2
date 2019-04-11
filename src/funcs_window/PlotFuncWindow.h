@@ -127,6 +127,8 @@ protected:
     virtual QString getDefaultTitleX() const { return QString(); }
     virtual QString getDefaultTitleY() const { return QString(); }
     virtual QString formatTitleSpecial(const QString& title) const { return title; }
+    virtual void storeViewInternal(int key) { Q_UNUSED(key) }
+    virtual void restoreViewInternal(int key) { Q_UNUSED(key) }
 
     QCPGraph* selectedGraph() const;
 

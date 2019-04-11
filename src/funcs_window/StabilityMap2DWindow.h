@@ -25,12 +25,15 @@ public:
 
 protected:
     // Implementation of PlotFuncWindow
+    QWidget* makeOptionsPanel() override;
     bool configureInternal() override;
     ElemDeletionReaction reactElemDeletion(const Elements&) override;
     void updateGraphs() override;
     QString getDefaultTitle() const override;
     QString getDefaultTitleX() const override;
     QString getDefaultTitleY() const override;
+    void storeViewInternal(int key) override;
+    void restoreViewInternal(int key) override;
 
     // Implementation of SchemaListener
     void elementDeleting(Schema*, Element*) override;
@@ -40,6 +43,13 @@ private:
     QAction* _actnStabilityAutolimits;
     QCPColorScale *_colorScale;
     bool _isFirstCalc = true;
+
+    struct ViewState
+    {
+        AxisLimits limitsZ;
+        QString titleZ;
+    };
+    QMap<int, ViewState> _auxStoredView;
 
     void createControl();
     void autolimitsStability(bool replot);

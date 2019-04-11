@@ -15,10 +15,13 @@ public:
 
     AxisLimits limitsX() const { return limits(xAxis); }
     AxisLimits limitsY() const { return limits(yAxis); }
+    AxisLimits limits(QCPAxis* axis) const;
     void setLimitsX(const AxisLimits& p, bool replot) { setLimitsX(p.min, p.max, replot); }
     void setLimitsY(const AxisLimits& p, bool replot) { setLimitsY(p.min, p.max, replot); }
     void setLimitsX(double min, double max, bool replot = true) { setLimits(xAxis, min, max, replot); }
     void setLimitsY(double min, double max, bool replot = true) { setLimits(yAxis, min, max, replot); }
+    void setLimits(QCPAxis* axis, const AxisLimits& p, bool replot) { setLimits(axis, p.min, p.max, replot); }
+    void setLimits(QCPAxis* axis, double min, double max, bool replot);
     void extendLimits(double factor, bool replot = true);
     void extendLimitsX(double factor, bool replot = true) { extendLimits(xAxis, factor, replot); }
     void extendLimitsY(double factor, bool replot = true) { extendLimits(yAxis, factor, replot); }
@@ -86,9 +89,7 @@ private:
     const double _zoomStepY;
     const int _numberPrecision;
 
-    AxisLimits limits(QCPAxis* axis) const;
     void extendLimits(QCPAxis* axis, double factor, bool replot);
-    void setLimits(QCPAxis* axis, double min, double max, bool replot);
     bool setLimitsDlg(QCPRange& range, const QString &title);
     bool sanitizeAxisRange(QCPAxis* axis);
     bool sanitizeRange(QCPRange& range, double safeMargin);

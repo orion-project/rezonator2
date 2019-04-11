@@ -17,7 +17,8 @@ public:
     Z::Variable* paramY() { return &_paramY; }
 
     void calculate() override;
-    //bool hasOptions() const override { return true; }
+    bool hasOptions() const override { return true; }
+    bool hasDataTable() const override { return false; }
     void loadPrefs() override;
     const char* iconPath() const override { return ":/toolbar/func_stab_map_2d"; }
     Z::Unit defaultUnitX() const override;

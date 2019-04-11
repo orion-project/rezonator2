@@ -2,6 +2,8 @@
 
 #include "RoundTripCalculator.h"
 
+#include "../CustomPrefs.h"
+
 #include "libs/qcustomplot/qcustomplot.h"
 
 void StabilityMap2DFunction::calculate()
@@ -49,7 +51,9 @@ void StabilityMap2DFunction::calculate()
 
 void StabilityMap2DFunction::loadPrefs()
 {
-    // TODO
+    _stabilityCalcMode = Z::Enums::fromStr(
+                CustomPrefs::recentStr(QStringLiteral("func_stab_2d_map_mode")),
+                Z::Enums::StabilityCalcMode::Normal);
 }
 
 bool StabilityMap2DFunction::checkArg(Z::Variable* arg)

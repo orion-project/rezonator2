@@ -1,5 +1,7 @@
 #include "StabilityMap2DWindow.h"
 
+#include "FuncOptionsPanel.h"
+
 #include "../CustomPrefs.h"
 #include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
@@ -125,6 +127,49 @@ void StabilityMap2DParamsDlg::guessRange(VarEditor* editor)
 }
 
 //------------------------------------------------------------------------------
+//                            StabilityMapOptionsPanel
+//------------------------------------------------------------------------------
+
+class StabilityMap2DOptionsPanel : public FuncOptionsPanel
+{
+public:
+    StabilityMap2DOptionsPanel(StabilityMap2DWindow* window);
+    int currentFunctionMode() const override;
+    void functionModeChanged(int mode) override;
+
+private:
+    StabilityMap2DWindow* _window;
+};
+
+StabilityMap2DOptionsPanel::StabilityMap2DOptionsPanel(StabilityMap2DWindow* window) : FuncOptionsPanel(window), _window(window)
+{
+    // TODO: check if these strings are translated
+    Ori::Layouts::LayoutV({
+        makeSectionHeader(tr("Stability parameter")),
+        makeModeButton(":/toolbar/formula_stab_normal", tr("Normal"), int(Z::Enums::StabilityCalcMode::Normal)),
+        makeModeButton(":/toolbar/formula_stab_squared", tr("Squared"), int(Z::Enums::StabilityCalcMode::Squared)),
+        Ori::Layouts::Stretch()
+    }).setSpacing(0).setMargin(0).useFor(this);
+
+    for (auto button : _modeButtons)
+        button->setIconSize(QSize(96, 48));
+
+    showCurrentMode();
+}
+
+int StabilityMap2DOptionsPanel::currentFunctionMode() const
+{
+    return static_cast<int>(_window->function()->stabilityCalcMode());
+}
+
+void StabilityMap2DOptionsPanel::functionModeChanged(int mode)
+{
+    auto stabCalcMode = static_cast<Z::Enums::StabilityCalcMode>(mode);
+    CustomPrefs::setRecentStr(QStringLiteral("func_stab_2d_map_mode"), Z::Enums::toStr(stabCalcMode));
+    _window->function()->setStabilityCalcMode(stabCalcMode);
+}
+
+//------------------------------------------------------------------------------
 //                             StabilityMap2DWindow
 //------------------------------------------------------------------------------
 
@@ -171,6 +216,10 @@ void StabilityMap2DWindow::createControl()
     toolbar()->addAction(_actnStabilityAutolimits);
 }
 
+QWidget* StabilityMap2DWindow::makeOptionsPanel()
+{
+    return new StabilityMap2DOptionsPanel(this);
+}
 
 bool StabilityMap2DWindow::configureInternal()
 {
@@ -243,4 +292,20 @@ void StabilityMap2DWindow::autolimitsStability(bool replot)
         break;
     }
     if (replot) _plot->replot();
+}
+
+void StabilityMap2DWindow::storeViewInternal(int key)
+{
+    ViewState view;
+    view.limitsZ = _plot->limits(_colorScale->axis());
+    _auxStoredView[key] = view;
+}
+
+void StabilityMap2DWindow::restoreViewInternal(int key)
+{
+    if (_storedView.contains(key))
+    {
+        const ViewState& view = _auxStoredView[key];
+        _plot->setLimits(_colorScale->axis(), view.limitsZ, false);
+    }
 }

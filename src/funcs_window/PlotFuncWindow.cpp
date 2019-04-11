@@ -541,6 +541,7 @@ void PlotFuncWindow::storeView(int key)
     view.unitX = _unitX;
     view.unitY = _unitY;
     _storedView[key] = view;
+    storeViewInternal(key);
 }
 
 void PlotFuncWindow::restoreView(int key)
@@ -562,6 +563,7 @@ void PlotFuncWindow::restoreView(int key)
         _autolimitsRequest = true;
         _centerCursorRequested = true;
     }
+    restoreViewInternal(key);
 }
 
 QString PlotFuncWindow::displayWindowTitle() const
