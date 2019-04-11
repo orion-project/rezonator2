@@ -133,15 +133,6 @@ QString PlotFuncWindowStorable::writeWindowGeneral(QJsonObject& root) const
             { "y_max", view.limitsY.max },
             { "y_unit", view.unitY->alias() },
         });
-//        QJsonObject viewJson;
-//        viewJson["mode"] = key;
-//        viewJson["x_min"] = view.limitsX.min;
-//        viewJson["x_max"] = view.limitsX.max;
-//        viewJson["x_unit"] = view.unitX->alias();
-//        viewJson["y_min"] = view.limitsY.min;
-//        viewJson["y_max"] = view.limitsY.max;
-//        viewJson["y_unit"] = view.unitY->alias();
-//        viewsJson.append(viewJson);
     }
     root["stored_views"] = viewsJson;
 

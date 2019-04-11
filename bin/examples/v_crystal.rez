@@ -169,6 +169,98 @@
                 "y_min": 275.11270191249866,
                 "y_unit": "none"
             }
+        },
+        {
+            "function": {
+                "arg_x": {
+                    "element_index": 1,
+                    "param": "L",
+                    "range": {
+                        "points": 100,
+                        "start": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 400
+                        },
+                        "use_step": false
+                    }
+                },
+                "arg_y": {
+                    "element_index": 5,
+                    "param": "L",
+                    "range": {
+                        "points": 100,
+                        "start": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 40
+                        },
+                        "use_step": false
+                    }
+                },
+                "stab_calc_mode": "Normal"
+            },
+            "type": "StabMap2D",
+            "window": {
+                "aux_stored_views": [
+                    {
+                        "mode": 0,
+                        "z_max": 1.05,
+                        "z_min": -1.05
+                    },
+                    {
+                        "mode": 1,
+                        "z_max": 1.05,
+                        "z_min": -0.05
+                    }
+                ],
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "stored_views": [
+                    {
+                        "mode": 0,
+                        "x_max": 0.4,
+                        "x_min": 0,
+                        "x_unit": "none",
+                        "y_max": 0.04,
+                        "y_min": 0,
+                        "y_unit": "none"
+                    },
+                    {
+                        "mode": 1,
+                        "x_max": 0.4,
+                        "x_min": 0,
+                        "x_unit": "none",
+                        "y_max": 0.04,
+                        "y_min": 0,
+                        "y_unit": "none"
+                    }
+                ],
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 0.4,
+                "x_min": 0,
+                "x_unit": "none",
+                "y_max": 0.04,
+                "y_min": 0,
+                "y_unit": "none",
+                "z_max": 1.05,
+                "z_min": -1.05
+            }
         }
     ]
 }

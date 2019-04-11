@@ -35,6 +35,12 @@ protected:
     void storeViewInternal(int key) override;
     void restoreViewInternal(int key) override;
 
+    // Implementation of PlotFuncWindowStorable
+    QString readFunction(const QJsonObject& root) override;
+    QString writeFunction(QJsonObject& root) override;
+    QString readWindowSpecific(const QJsonObject& root) override;
+    QString writeWindowSpecific(QJsonObject& root) override;
+
     // Implementation of SchemaListener
     void elementDeleting(Schema*, Element*) override;
 
@@ -42,7 +48,7 @@ private:
     QCPColorMap *_graphT, *_graphS;
     QAction* _actnStabilityAutolimits;
     QCPColorScale *_colorScale;
-    bool _isFirstCalc = true;
+    bool _zAutolimitsRequest = true;
 
     struct ViewState
     {

@@ -243,10 +243,10 @@ void StabilityMap2DWindow::elementDeleting(Schema*, Element* elem)
 
 void StabilityMap2DWindow::updateGraphs()
 {
-    if (_isFirstCalc)
+    if (_zAutolimitsRequest)
     {
         autolimitsStability(false);
-        _isFirstCalc = false;
+        _zAutolimitsRequest = false;
     }
 }
 
@@ -308,4 +308,76 @@ void StabilityMap2DWindow::restoreViewInternal(int key)
         const ViewState& view = _auxStoredView[key];
         _plot->setLimits(_colorScale->axis(), view.limitsZ, false);
     }
+    else
+        _zAutolimitsRequest = true;
 }
+
+QString StabilityMap2DWindow::readFunction(const QJsonObject& root)
+{
+    function()->setStabilityCalcMode(Z::IO::Utils::enumFromStr(
+        root["stab_calc_mode"].toString(), Z::Enums::StabilityCalcMode::Normal));
+    auto resX = Z::IO::Json::readVariable(root["arg_x"].toObject(), function()->paramX(), schema());
+    if (!resX.isEmpty()) return resX;
+    auto resY = Z::IO::Json::readVariable(root["arg_y"].toObject(), function()->paramY(), schema());
+    if (!resY.isEmpty()) return resY;
+    return QString();
+}
+
+QString StabilityMap2DWindow::writeFunction(QJsonObject& root)
+{
+    root["stab_calc_mode"] = Z::IO::Utils::enumToStr(function()->stabilityCalcMode());
+    root["arg_x"] = Z::IO::Json::writeVariable(function()->paramX(), schema());
+    root["arg_y"] = Z::IO::Json::writeVariable(function()->paramY(), schema());
+    return QString();
+}
+
+QString StabilityMap2DWindow::readWindowSpecific(const QJsonObject& root)
+{
+    // Restore plot limits
+    AxisLimits limitsZ { root["z_min"].toDouble(Double::nan()),
+                         root["z_max"].toDouble(Double::nan()) };
+    _zAutolimitsRequest = limitsZ.isInvalid();
+    if (!_zAutolimitsRequest)
+        _plot->setLimits(_colorScale->axis(), limitsZ, false);
+
+    // Restore view states
+    QJsonArray viewsJson = root["aux_stored_views"].toArray();
+    for (auto it = viewsJson.begin(); it != viewsJson.end(); it++)
+    {
+        QJsonObject viewJson = (*it).toObject();
+        auto mode = viewJson["mode"].toInt(-1);
+        if (mode < 0) continue;
+        ViewState state;
+        state.limitsZ = { viewJson["z_min"].toDouble(Double::nan()),
+                          viewJson["z_max"].toDouble(Double::nan()) };
+        if (state.limitsZ.isInvalid())
+            continue;
+        _auxStoredView.insert(mode, state);
+    }
+
+    return QString();
+}
+
+QString StabilityMap2DWindow::writeWindowSpecific(QJsonObject& root)
+{
+    // Store plot limits
+    auto limitsZ = _plot->limits(_colorScale->axis());
+    root["z_min"] = limitsZ.min;
+    root["z_max"] = limitsZ.max;
+
+    // Store view states
+    QJsonArray viewsJson;
+    for (int key : _auxStoredView.keys())
+    {
+        auto view = _auxStoredView[key];
+        viewsJson.append(QJsonObject{
+            { "mode", key },
+            { "z_min", view.limitsZ.min },
+            { "z_max", view.limitsZ.max },
+        });
+    }
+    root["aux_stored_views"] = viewsJson;
+
+    return QString();
+}
+
