@@ -45,7 +45,7 @@ protected:
     void elementDeleting(Schema*, Element*) override;
 
 private:
-    QCPColorMap *_graphT, *_graphS;
+    QCPColorMap *_graph;
     QAction* _actnStabilityAutolimits;
     QCPColorScale *_colorScale;
     bool _zAutolimitsRequest = true;

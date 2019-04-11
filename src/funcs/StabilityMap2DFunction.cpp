@@ -14,37 +14,41 @@ void StabilityMap2DFunction::calculate()
     BackupAndLock lockerX(_paramX.element, _paramX.parameter);
     BackupAndLock lockerY(_paramY.element, _paramY.parameter);
 
-    auto rangeX = _paramX.range.plottingRange();
-    auto rangeY = _paramY.range.plottingRange();
+    _rangeX = _paramX.range.plottingRange();
+    _rangeY = _paramY.range.plottingRange();
 
     if (!prepareCalculator(_paramX.element)) return;
     _calc->setStabilityCalcMode(stabilityCalcMode());
 
-    int nx = rangeX.points();
-    int ny = rangeY.points();
-    auto unitX = rangeX.unit();
-    auto unitY = rangeY.unit();
+    int nx = _rangeX.points();
+    int ny = _rangeY.points();
+    auto unitX = _rangeX.unit();
+    auto unitY = _rangeY.unit();
 
-    auto data = graphT->data();
+    int pointsCount = nx * ny;
+    if (_resultsT.size() != pointsCount)
+    {
+        _resultsT.resize(pointsCount);
+        _resultsS.resize(pointsCount);
+    }
 
-    data->setSize(nx, ny);
-    data->setRange({rangeX.start(), rangeX.stop()}, {rangeY.start(), rangeY.stop()});
+    auto valuesX = _rangeX.values();
+    auto valuesY = _rangeY.values();
 
-    double valueX, valueY;
     for (int ix = 0; ix < nx; ix++)
     {
-        data->cellToCoord(ix, 0, &valueX, nullptr);
-        _paramX.parameter->setValue({valueX, unitX});
+        _paramX.parameter->setValue({valuesX.at(ix), unitX});
 
         for (int iy = 0; iy < ny; iy++)
         {
-            data->cellToCoord(ix, iy, nullptr, &valueY);
-            _paramY.parameter->setValue({valueY, unitY});
+            _paramY.parameter->setValue({valuesY.at(iy), unitY});
 
             _calc->multMatrix();
 
             auto stab = _calc->stability();
-            data->setCell(ix, iy, stab.T);
+            int index = ix * ny + iy;
+            _resultsT[index] = stab.T;
+            _resultsS[index] = stab.S;
         }
     }
 }

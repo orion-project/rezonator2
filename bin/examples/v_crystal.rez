@@ -212,7 +212,7 @@
                         "use_step": false
                     }
                 },
-                "stab_calc_mode": "Normal"
+                "stab_calc_mode": "Squared"
             },
             "type": "StabMap2D",
             "window": {
@@ -233,33 +233,33 @@
                 "stored_views": [
                     {
                         "mode": 0,
-                        "x_max": 0.4,
+                        "x_max": 400,
                         "x_min": 0,
                         "x_unit": "none",
-                        "y_max": 0.04,
+                        "y_max": 40,
                         "y_min": 0,
                         "y_unit": "none"
                     },
                     {
                         "mode": 1,
-                        "x_max": 0.4,
+                        "x_max": 40,
                         "x_min": 0,
-                        "x_unit": "none",
-                        "y_max": 0.04,
+                        "x_unit": "cm",
+                        "y_max": 4,
                         "y_min": 0,
-                        "y_unit": "none"
+                        "y_unit": "cm"
                     }
                 ],
                 "ts_flipped": false,
                 "ts_mode": "T+S",
-                "x_max": 0.4,
+                "x_max": 40,
                 "x_min": 0,
-                "x_unit": "none",
-                "y_max": 0.04,
+                "x_unit": "cm",
+                "y_max": 4,
                 "y_min": 0,
-                "y_unit": "none",
+                "y_unit": "cm",
                 "z_max": 1.05,
-                "z_min": -1.05
+                "z_min": -0.05
             }
         }
     ]

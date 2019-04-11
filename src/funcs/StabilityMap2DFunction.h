@@ -3,8 +3,6 @@
 
 #include "PlotFunction.h"
 
-class QCPColorMap;
-
 class StabilityMap2DFunction : public PlotFunction
 {
 public:
@@ -16,6 +14,11 @@ public:
     Z::Variable* paramX() { return &_paramX; }
     Z::Variable* paramY() { return &_paramY; }
 
+    const Z::PlottingRange& rangeX() const { return _rangeX; }
+    const Z::PlottingRange& rangeY() const { return _rangeY; }
+    const QVector<double>& resultsT() const { return _resultsT; }
+    const QVector<double>& resultsS() const { return _resultsS; }
+
     void calculate() override;
     bool hasOptions() const override { return true; }
     bool hasDataTable() const override { return false; }
@@ -24,14 +27,14 @@ public:
     Z::Unit defaultUnitX() const override;
     Z::Unit defaultUnitY() const override;
 
-    QCPColorMap *graphT = nullptr, *graphS = nullptr;
-
     Z::Enums::StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }
     void setStabilityCalcMode(Z::Enums::StabilityCalcMode mode) { _stabilityCalcMode = mode; }
 
 private:
     Z::Variable _paramX, _paramY;
     Z::Enums::StabilityCalcMode _stabilityCalcMode = Z::Enums::StabilityCalcMode::Normal;
+    QVector<double> _resultsT, _resultsS;
+    Z::PlottingRange _rangeX, _rangeY;
 
     bool checkArg(Z::Variable* arg);
 };

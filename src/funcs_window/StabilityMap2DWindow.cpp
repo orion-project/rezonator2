@@ -176,7 +176,11 @@ void StabilityMap2DOptionsPanel::functionModeChanged(int mode)
 StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
     PlotFuncWindowStorable(new StabilityMap2DFunction(schema))
 {
-    _graphT = new QCPColorMap(_plot->xAxis, _plot->yAxis);
+    _plot->useSafeMargins = false;
+    // We have to do this way because QCPColorMap::rescaleAxes() seems not working as expected
+    _plot->excludeServiceGraphsFromAutolimiting = false;
+
+    _graph = new QCPColorMap(_plot->xAxis, _plot->yAxis);
 
     _colorScale = new QCPColorScale(_plot);
     auto colorAxis = _colorScale->axis();
@@ -185,20 +189,14 @@ StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
     colorAxis->setSelectedLabelFont(_plot->xAxis->selectedLabelFont());
     _plot->plotLayout()->addElement(_plot->axisRectRow(), _plot->axisRectCol() + 1, _colorScale);
 
-    _plot->useSafeMargins = false;
-    // We have to do this way because QCPColorMap::rescaleAxes() seems not working as expected
-    _plot->excludeServiceGraphsFromAutolimiting = false;
-
-    _graphT->setColorScale(_colorScale);
-    _graphT->setGradient(QCPColorGradient::gpJet);
-    _graphT->setSelectable(QCP::stNone);
+    _graph->setColorScale(_colorScale);
+    _graph->setGradient(QCPColorGradient::gpJet);
+    _graph->setSelectable(QCP::stNone);
 
     // Make sure the axis rect and color scale synchronize their bottom and top margins:
     QCPMarginGroup *marginGroup = new QCPMarginGroup(_plot);
     _plot->axisRect()->setMarginGroup(QCP::msBottom|QCP::msTop, marginGroup);
     _colorScale->setMarginGroup(QCP::msBottom|QCP::msTop, marginGroup);
-
-    function()->graphT = _graphT;
 
     createControl();
 }
@@ -243,6 +241,26 @@ void StabilityMap2DWindow::elementDeleting(Schema*, Element* elem)
 
 void StabilityMap2DWindow::updateGraphs()
 {
+    auto f = function();
+    auto rangeX = f->rangeX();
+    auto rangeY = f->rangeY();
+    int nx = rangeX.points();
+    int ny = rangeY.points();
+    auto resultsT = f->resultsT();
+    auto resultsS = f->resultsS();
+
+    auto data = _graph->data();
+    data->setSize(nx, ny);
+
+    auto unitX = getUnitX();
+    auto unitY = getUnitY();
+    data->setRange({ unitX->fromSi(rangeX.start()), unitX->fromSi(rangeX.stop()) },
+                   { unitY->fromSi(rangeY.start()), unitY->fromSi(rangeY.stop()) });
+
+    for (int ix = 0; ix < nx; ix++)
+        for (int iy = 0; iy < ny; iy++)
+            data->setCell(ix, iy, resultsT.at(ix * ny + iy));
+
     if (_zAutolimitsRequest)
     {
         autolimitsStability(false);

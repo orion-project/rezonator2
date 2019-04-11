@@ -621,8 +621,7 @@ void PlotFuncWindow::setUnitX(Z::Unit unit)
         auto limits = _plot->limitsX();
         limits.min = unit->fromSi(oldUnit->toSi(limits.min));
         limits.max = unit->fromSi(oldUnit->toSi(limits.max));
-        updateGraphs(Z::WorkPlane::Plane_T);
-        updateGraphs(Z::WorkPlane::Plane_S);
+        updateGraphs();
         _plot->setLimitsX(limits, false);
         updateTitleX();
         updateStatusUnits();
@@ -642,8 +641,7 @@ void PlotFuncWindow::setUnitY(Z::Unit unit)
         auto limits = _plot->limitsY();
         limits.min = unit->fromSi(oldUnit->toSi(limits.min));
         limits.max = unit->fromSi(oldUnit->toSi(limits.max));
-        updateGraphs(Z::WorkPlane::Plane_T);
-        updateGraphs(Z::WorkPlane::Plane_S);
+        updateGraphs();
         _plot->setLimitsY(limits, false);
         updateTitleY();
         updateStatusUnits();
