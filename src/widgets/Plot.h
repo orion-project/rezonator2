@@ -34,6 +34,7 @@ public:
     QMenu *menuAxisY = nullptr;
 
     bool useSafeMargins = true;
+    bool excludeServiceGraphsFromAutolimiting = true;
 
     // TODO: should be a row below the title, it can be 0 or 1, depending on if title is visible
     int axisRectRow() const { return 1; }
@@ -94,6 +95,7 @@ private:
     void setAxisRange(QCPAxis* axis, const QCPRange &range);
     double safeMargins(QCPAxis* axis);
     PlotPart selectedPart() const;
+    QString getAxisTitle(QCPAxis* axis) const;
 };
 
 #endif // PLOT_H

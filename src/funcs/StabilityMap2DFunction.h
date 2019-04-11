@@ -25,8 +25,12 @@ public:
 
     QCPColorMap *graphT = nullptr, *graphS = nullptr;
 
+    Z::Enums::StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }
+    void setStabilityCalcMode(Z::Enums::StabilityCalcMode mode) { _stabilityCalcMode = mode; }
+
 private:
     Z::Variable _paramX, _paramY;
+    Z::Enums::StabilityCalcMode _stabilityCalcMode = Z::Enums::StabilityCalcMode::Normal;
 
     bool checkArg(Z::Variable* arg);
 };

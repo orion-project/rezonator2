@@ -133,27 +133,44 @@ StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
 {
     _graphT = new QCPColorMap(_plot->xAxis, _plot->yAxis);
 
-    QCPColorScale *colorScale = new QCPColorScale(_plot);
-    auto colorAxis = colorScale->axis();
-    colorAxis->setLabel(tr("Stability parameter"));
+    _colorScale = new QCPColorScale(_plot);
+    auto colorAxis = _colorScale->axis();
+    colorAxis->setLabel(tr("Stability Parameter"));
     colorAxis->setLabelFont(_plot->xAxis->labelFont());
     colorAxis->setSelectedLabelFont(_plot->xAxis->selectedLabelFont());
-
-    _plot->plotLayout()->addElement(_plot->axisRectRow(), _plot->axisRectCol() + 1, colorScale);
+    _plot->plotLayout()->addElement(_plot->axisRectRow(), _plot->axisRectCol() + 1, _colorScale);
 
     _plot->useSafeMargins = false;
+    // We have to do this way because QCPColorMap::rescaleAxes() seems not working as expected
+    _plot->excludeServiceGraphsFromAutolimiting = false;
 
-    _graphT->setColorScale(colorScale);
+    _graphT->setColorScale(_colorScale);
     _graphT->setGradient(QCPColorGradient::gpJet);
     _graphT->setSelectable(QCP::stNone);
 
     // Make sure the axis rect and color scale synchronize their bottom and top margins:
     QCPMarginGroup *marginGroup = new QCPMarginGroup(_plot);
     _plot->axisRect()->setMarginGroup(QCP::msBottom|QCP::msTop, marginGroup);
-    colorScale->setMarginGroup(QCP::msBottom|QCP::msTop, marginGroup);
+    _colorScale->setMarginGroup(QCP::msBottom|QCP::msTop, marginGroup);
 
     function()->graphT = _graphT;
+
+    createControl();
 }
+
+void StabilityMap2DWindow::createControl()
+{
+    _actnStabilityAutolimits = new QAction(tr("Z-axis -> Stability Range", "Plot action"), this);
+    _actnStabilityAutolimits->setIcon(QIcon(":/toolbar/limits_stab"));
+    connect(_actnStabilityAutolimits, &QAction::triggered, [this](){autolimitsStability(true);});
+
+    menuLimits->addSeparator();
+    menuLimits->addAction(_actnStabilityAutolimits);
+
+    toolbar()->addSeparator();
+    toolbar()->addAction(_actnStabilityAutolimits);
+}
+
 
 bool StabilityMap2DWindow::configureInternal()
 {
@@ -177,9 +194,11 @@ void StabilityMap2DWindow::elementDeleting(Schema*, Element* elem)
 
 void StabilityMap2DWindow::updateGraphs()
 {
-    // rescale the data dimension (color) such that all data points lie in the span visualized by the color gradient:
-    _graphT->rescaleDataRange();
-    _plot->rescaleAxes();
+    if (_isFirstCalc)
+    {
+        autolimitsStability(false);
+        _isFirstCalc = false;
+    }
 }
 
 QString StabilityMap2DWindow::getDefaultTitle() const
@@ -209,4 +228,19 @@ QString StabilityMap2DWindow::getDefaultTitleX() const
 QString StabilityMap2DWindow::getDefaultTitleY() const
 {
     return getDefaultAxisTitle(function()->paramY(), getUnitY());
+}
+
+void StabilityMap2DWindow::autolimitsStability(bool replot)
+{
+    switch (function()->stabilityCalcMode())
+    {
+    case Z::Enums::StabilityCalcMode::Normal:
+        _colorScale->axis()->setRange(-1.05, 1.05);
+        break;
+
+    case Z::Enums::StabilityCalcMode::Squared:
+        _colorScale->axis()->setRange(-0.05, 1.05);
+        break;
+    }
+    if (replot) _plot->replot();
 }

@@ -8,6 +8,7 @@
 class ElemAndParamSelector;
 class GeneralRangeEditor;
 class QCPColorMap;
+class QCPColorScale;
 
 QT_BEGIN_NAMESPACE
 class QGroupBox;
@@ -36,6 +37,12 @@ protected:
 
 private:
     QCPColorMap *_graphT, *_graphS;
+    QAction* _actnStabilityAutolimits;
+    QCPColorScale *_colorScale;
+    bool _isFirstCalc = true;
+
+    void createControl();
+    void autolimitsStability(bool replot);
 };
 
 

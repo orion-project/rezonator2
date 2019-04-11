@@ -16,6 +16,7 @@ void StabilityMap2DFunction::calculate()
     auto rangeY = _paramY.range.plottingRange();
 
     if (!prepareCalculator(_paramX.element)) return;
+    _calc->setStabilityCalcMode(stabilityCalcMode());
 
     int nx = rangeX.points();
     int ny = rangeY.points();
@@ -28,7 +29,6 @@ void StabilityMap2DFunction::calculate()
     data->setRange({rangeX.start(), rangeX.stop()}, {rangeY.start(), rangeY.stop()});
 
     double valueX, valueY;
-
     for (int ix = 0; ix < nx; ix++)
     {
         data->cellToCoord(ix, 0, &valueX, nullptr);
