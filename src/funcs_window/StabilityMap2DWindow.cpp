@@ -176,6 +176,11 @@ void StabilityMap2DOptionsPanel::functionModeChanged(int mode)
 StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
     PlotFuncWindowStorable(new StabilityMap2DFunction(schema))
 {
+    _exclusiveModeTS = true;
+    actnShowTS->setVisible(false);
+    actnShowT->setChecked(true);
+    actnShowS->setChecked(false);
+
     _plot->useSafeMargins = false;
     // We have to do this way because QCPColorMap::rescaleAxes() seems not working as expected
     _plot->excludeServiceGraphsFromAutolimiting = false;
@@ -241,6 +246,17 @@ void StabilityMap2DWindow::elementDeleting(Schema*, Element* elem)
 
 void StabilityMap2DWindow::updateGraphs()
 {
+    fillGraph();
+
+    if (_zAutolimitsRequest)
+    {
+        autolimitsStability(false);
+        _zAutolimitsRequest = false;
+    }
+}
+
+void StabilityMap2DWindow::fillGraph()
+{
     auto f = function();
     auto rangeX = f->rangeX();
     auto rangeY = f->rangeY();
@@ -248,6 +264,7 @@ void StabilityMap2DWindow::updateGraphs()
     int ny = rangeY.points();
     auto resultsT = f->resultsT();
     auto resultsS = f->resultsS();
+    auto results = actnShowS->isChecked() ? resultsS : resultsT;
 
     auto data = _graph->data();
     data->setSize(nx, ny);
@@ -259,13 +276,7 @@ void StabilityMap2DWindow::updateGraphs()
 
     for (int ix = 0; ix < nx; ix++)
         for (int iy = 0; iy < ny; iy++)
-            data->setCell(ix, iy, resultsT.at(ix * ny + iy));
-
-    if (_zAutolimitsRequest)
-    {
-        autolimitsStability(false);
-        _zAutolimitsRequest = false;
-    }
+            data->setCell(ix, iy, results.at(ix * ny + iy));
 }
 
 QString StabilityMap2DWindow::getDefaultTitle() const
@@ -312,14 +323,14 @@ void StabilityMap2DWindow::autolimitsStability(bool replot)
     if (replot) _plot->replot();
 }
 
-void StabilityMap2DWindow::storeViewInternal(int key)
+void StabilityMap2DWindow::storeViewSpecific(int key)
 {
     ViewState view;
     view.limitsZ = _plot->limits(_colorScale->axis());
     _auxStoredView[key] = view;
 }
 
-void StabilityMap2DWindow::restoreViewInternal(int key)
+void StabilityMap2DWindow::restoreViewSpecific(int key)
 {
     if (_storedView.contains(key))
     {
@@ -328,6 +339,11 @@ void StabilityMap2DWindow::restoreViewInternal(int key)
     }
     else
         _zAutolimitsRequest = true;
+}
+
+void StabilityMap2DWindow::updateVisibiityTSSpecific()
+{
+    fillGraph();
 }
 
 QString StabilityMap2DWindow::readFunction(const QJsonObject& root)

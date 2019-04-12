@@ -246,20 +246,22 @@ void PlotFuncWindow::showT()
 {
     Z_NOTE("showT" << actnShowT->isChecked());
 
-    if (!actnShowT->isChecked() && !actnShowS->isChecked())
+    if (_exclusiveModeTS)
+        actnShowS->setChecked(!actnShowT->isChecked());
+    else if (!actnShowT->isChecked() && !actnShowS->isChecked())
         actnShowS->setChecked(true);
     updateVisibilityTS();
-    // TODO:NEXT-VER Schema.ModifiedForms := True;
 }
 
 void PlotFuncWindow::showS()
 {
     Z_NOTE("showS" << actnShowS->isChecked());
 
-    if (!actnShowS->isChecked() && !actnShowT->isChecked())
+    if (_exclusiveModeTS)
+        actnShowT->setChecked(!actnShowS->isChecked());
+    else if (!actnShowS->isChecked() && !actnShowT->isChecked())
         actnShowT->setChecked(true);
     updateVisibilityTS();
-    // TODO:NEXT-VER Schema.ModifiedForms := True;
 }
 
 void PlotFuncWindow::showTS()
@@ -277,6 +279,7 @@ void PlotFuncWindow::updateVisibilityTS()
     bool s = actnShowS->isChecked() || actnShowTS->isChecked();
     for (auto g : _graphsT) g->setVisible(t);
     for (auto g : _graphsS) g->setVisible(s);
+    updateVisibiityTSSpecific();
     _plot->replot();
 }
 
@@ -541,7 +544,7 @@ void PlotFuncWindow::storeView(int key)
     view.unitX = _unitX;
     view.unitY = _unitY;
     _storedView[key] = view;
-    storeViewInternal(key);
+    storeViewSpecific(key);
 }
 
 void PlotFuncWindow::restoreView(int key)
@@ -563,7 +566,7 @@ void PlotFuncWindow::restoreView(int key)
         _autolimitsRequest = true;
         _centerCursorRequested = true;
     }
-    restoreViewInternal(key);
+    restoreViewSpecific(key);
 }
 
 QString PlotFuncWindow::displayWindowTitle() const
