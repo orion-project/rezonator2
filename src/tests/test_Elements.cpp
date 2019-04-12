@@ -319,7 +319,7 @@ TEST_METHOD(grin_lens)
 
 } */
 
-// Calculation: $PROJECT/calc/ThickLens.py
+// Calculation: $PROJECT/calc/ElemThickLens.py
 TEST_METHOD(ThickLens)
 {
     ELEM(ThickLens, 4)
