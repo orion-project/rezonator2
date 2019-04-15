@@ -38,6 +38,7 @@ Windows does not provide default command line tools like `wget`, `tar` or `make`
 
 
 ## Build
+Where it is possible commands are the same for different OS, with some exception e.g. Windows doesn't have `sudo` command and you have to rum `cmd` as Administrator instead. 
 
 ### Application
 
@@ -62,7 +63,7 @@ doxygen
 ```
 
 ### User manual
-    TODO
+See [building documentation](./help/README.md).
 
 ## Run
 Target file is `bin/rezonator` (Linux), `bin/rezonator.app` (MacOS), or `bin\rezonator.exe` (Windows). 
