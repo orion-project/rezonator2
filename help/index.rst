@@ -5,8 +5,10 @@ reZonator2 Documentation
 ========================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
+
+   hyper_gauss
 
 
 Indices and tables

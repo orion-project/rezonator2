@@ -28,6 +28,9 @@ release = '2.0.4-alpha4'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
+    # TODO: download MathJax library and make it available offline
+    # http://www.sphinx-doc.org/en/master/usage/extensions/math.html
+    'sphinx.ext.mathjax'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
