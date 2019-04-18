@@ -23,3 +23,26 @@ extensions = [
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['img', '.DS_Store']
+
+primary_domain = None
+
+rst_prolog = """
+.. |para| replace:: \ \
+"""
+
+# -- Options for HTML output -------------------------------------------------
+
+html_theme = 'agogo'
+html_theme_options = {
+  'headerbg': '#204a87',
+  'footerbg': '#2e3436'
+}
+
+html_title = 'reZonator2 Manual'
+
+# TODO: make header on transparent background
+html_logo = '../img/rezonator_header.png'
+
+html_favicon = '../img/icon/main_2.ico'
+html_add_permalinks = ''
+html_copy_source = False

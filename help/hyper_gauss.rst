@@ -7,12 +7,17 @@ Calculation of Hyper-Gaussian Beams
 
 Algorithm for calculation of hyper-Gaussian beams is applied to analyze single-pass systems (SP) when divergence parameter (|MI|) of the input beam set to a value greater than one.
 
+.. index:: single: hyper-gaussian beam
+.. index:: single: pseudo-gaussian beam
+
 Hyper-Gaussian beam
 -------------------
 
-Hypergaussian beam in reZonator is defined as a beam whose divergence is |MI| times greater than divergence of a Gaussian beam having the same waist radius. Therefore its Rayleigh distance is |MI| times less.
+Hyper-Gaussian beam in reZonator is defined as a beam whose divergence is |MI| times greater than divergence of a Gaussian beam having the same waist radius. Therefore its Rayleigh distance is |MI| times less.
 
 	.. image:: img/hypergauss_formula_1.png
+
+.. index:: single: equivalent gaussian beam
 
 Equivalent Gaussian beam
 ------------------------
@@ -55,8 +60,8 @@ The program uses next algorithm for calculation of propagation of hyper-Gaussian
 #. Characteristics of the resulting hyper-Gaussian beam are calculated. Its radius is *M* times greater than the radius of equivalent beam and radius of wavefront curvature is equal to that. 
 
 	.. image:: ./img/hypergauss_algorithm.png
-   
-See also:
----------
 
-[Gaussian Beam](#TODO)
+   
+**See Also**
+
+:doc:`gauss`

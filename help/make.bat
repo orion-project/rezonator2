@@ -21,6 +21,9 @@ cd %SCRIPT_DIR%\..
 set SOURCE_DIR=.\help
 set TARGET_DIR=.\out\help
 
+::python -m sphinx -b html %SOURCE_DIR% %TARGET_DIR%
+::goto :eof
+
 python -m sphinx -b qthelp %SOURCE_DIR% %TARGET_DIR%
 
 qhelpgenerator %TARGET_DIR%\rezonator2.qhcp

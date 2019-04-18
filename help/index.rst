@@ -8,12 +8,11 @@ reZonator2 Documentation
    :maxdepth: 1
    :caption: Contents:
 
-   hyper_gauss
+   handbook
 
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
