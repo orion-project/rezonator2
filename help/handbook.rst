@@ -7,5 +7,6 @@ Handbook
 
    gauss
    matrix_optics
+   round_trip_matrix
    hyper_gauss
    

@@ -83,7 +83,7 @@ Calculation of beam radius at the waist of the self-conformed beam from componen
 Rayleigh Distance
 -----------------
 
-Calculation of the :ref:`Rayleigh distance <gauss-confocal>` of the self-conformed beam from round-trip matrix components:
+Calculation of the :ref:`Rayleigh distance <gauss_confocal>` of the self-conformed beam from round-trip matrix components:
 
     .. image:: img/abcd_z0.png
     

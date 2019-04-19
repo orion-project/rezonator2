@@ -64,7 +64,7 @@ Variation of the radius of wavefront curvature along the beam propagation axis:
     .. image:: img/gauss_front_z.png
     
    
-.. _gauss-confocal:
+.. _gauss_confocal:
 .. index:: single: rayleigh distance
 .. index:: single: far-field zone
 .. index:: single: near-field zone
