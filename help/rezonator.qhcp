@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<QHelpCollectionProject version="1.0">
+    <assistant>
+        <title>reZonator Manual</title>
+        <applicationIcon>../../img/icon/main_2_256.png</applicationIcon>
+        <cacheDirectory>orion-project.org/rezonator</cacheDirectory>
+        <homePage>qthelp://org.orion-project.rezonator/doc/index.html</homePage>
+        <startPage>qthelp://org.orion-project.rezonator/doc/index.html</startPage>
+        <aboutMenuText>
+            <text>About reZonator</text>
+        </aboutMenuText>
+        <aboutDialog>
+            <file>../../help/about.txt</file>
+            <icon>../../img/icon/main_2_48.svg</icon>
+        </aboutDialog>
+        <enableDocumentationManager>false</enableDocumentationManager>
+        <enableAddressBar>false</enableAddressBar>
+        <enableFilterFunctionality>false</enableFilterFunctionality>
+    </assistant>
+    <docFiles>
+        <generate>
+            <file>
+                <input>rezonator.qhp</input>
+                <output>rezonator.qch</output>
+            </file>
+        </generate>
+        <register>
+            <file>rezonator.qch</file>
+        </register>
+    </docFiles>
+</QHelpCollectionProject>

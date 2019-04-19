@@ -3,8 +3,8 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'rezonator2'
-copyright = '2019, Nikolay Chunosov'
+project = 'rezonator'
+copyright = '2006-2019, Nikolay Chunosov'
 author = 'Nikolay Chunosov'
 
 # The full version, including alpha/beta/rc tags
@@ -29,6 +29,10 @@ primary_domain = None
 rst_prolog = """
 .. |para| replace:: \ \
 """
+
+# -- Options for QtHelp output -----------------------------------------------
+
+qthelp_namespace = 'org.orion-project.rezonator'
 
 # -- Options for HTML output -------------------------------------------------
 
