@@ -114,7 +114,7 @@ The beam radius and the radius of curvature can be expressed from the complex ra
     .. image:: img/gauss_q_r_w.png
     
 
-**See Also**
+.. seealso::
 
-:doc:`matrix_optics`, :doc:`hyper_gauss`
+    :doc:`matrix_optics`, :doc:`hyper_gauss`
 

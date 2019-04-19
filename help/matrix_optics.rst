@@ -96,6 +96,6 @@ Calculation of half of the spread angle of the self-conformed beam from componen
     .. image:: img/abcd_vs.png
     
  
-**See Also**
+.. seealso::
 
-:doc:`gauss`
+    :doc:`gauss`

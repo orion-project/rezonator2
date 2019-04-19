@@ -36,5 +36,5 @@ python3 -m sphinx -b qthelp ${SOURCE_DIR} ${TARGET_DIR}
 
 ${HELP_TOOL} ${TARGET_DIR}/rezonator2.qhcp
 
-${ASSISTANT} -collectionFile ${TARGET_DIR}/rezonator2.qhc
+${ASSISTANT} -collectionFile ${TARGET_DIR}/rezonator2.qhc -style fusion
 

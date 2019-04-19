@@ -1,12 +1,13 @@
 .. rezonator2 documentation master file, created by
    sphinx-quickstart on Mon Apr 15 13:18:19 2019.
 
+########################
 reZonator2 Documentation
-========================
+########################
 
 .. toctree::
    :maxdepth: 1
-   :caption: Contents:
+   :caption: Table of Contents:
 
    handbook
 

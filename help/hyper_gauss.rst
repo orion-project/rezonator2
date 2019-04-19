@@ -62,6 +62,6 @@ The program uses next algorithm for calculation of propagation of hyper-Gaussian
 	.. image:: ./img/hypergauss_algorithm.png
 
    
-**See Also**
+.. seealso::
 
-:doc:`gauss`
+    :doc:`gauss`

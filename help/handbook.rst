@@ -1,9 +1,10 @@
+********
 Handbook
-========
+********
 
 .. toctree::
    :maxdepth: 1
-   :caption: Contents:
+   :caption: Table of Contents:
 
    gauss
    matrix_optics
