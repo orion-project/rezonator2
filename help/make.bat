@@ -26,8 +26,10 @@ set TARGET_DIR=.\out\help
 
 python -m sphinx -b qthelp %SOURCE_DIR% %TARGET_DIR%
 
-qhelpgenerator %TARGET_DIR%\rezonator2.qhcp
+copy /Y %SOURCE_DIR%\rezonator.qhcp %TARGET_DIR%
 
-assistant -collectionFile %TARGET_DIR%\rezonator2.qhc
+qhelpgenerator %TARGET_DIR%\rezonator.qhcp
+
+assistant -collectionFile %TARGET_DIR%\rezonator.qhc -style fusion
 
 :eof

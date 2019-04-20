@@ -468,7 +468,7 @@ void ProjectWindow::actionHelpAbout()
     auto text = tr(
                 "<p><font size=4><b>{app} {app_ver}</b></font>"
                 "<p>Built: {build_date}"
-                "<p>Copyright: Chunosov N.&nbsp;I. © 2006-2019"
+                "<p>Copyright: Chunosov N.&nbsp;I. © 2006-{app_year}"
                 "<p>Web: <a href='{www}'>{www}</a>"
                 "<p>E-mail: <a href='mailto://{email}'>{email}</a>"
                 "<p>Credits: <a href='http://www.qcustomplot.com'>QCustomPlot</a>"
@@ -480,6 +480,7 @@ void ProjectWindow::actionHelpAbout()
                 )
             .replace("{app}", qApp->applicationName())
             .replace("{app_ver}", Z::Strs::appVersion())
+            .replace("{app_year}", Z::Strs::appVersionYear())
             .replace("{build_date}", Z::Strs::appVersionDate())
             .replace("{www}", Z::Strs::homepage())
             .replace("{email}", Z::Strs::email())

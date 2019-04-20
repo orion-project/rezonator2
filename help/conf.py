@@ -1,15 +1,23 @@
 # Configuration file for the Sphinx documentation builder.
 # http://www.sphinx-doc.org/en/master/config
 
+import os
+import datetime
+
+def get_file_text(file_name):
+    with open(file_name, 'r') as f:
+        return f.read()
+
+def set_file_text(file_name, text):
+    with open(file_name, 'w') as f:
+        f.write(text)
+
 # -- Project information -----------------------------------------------------
 
 project = 'rezonator'
-copyright = '2006-2019, Nikolay Chunosov'
 author = 'Nikolay Chunosov'
-
-# The full version, including alpha/beta/rc tags
-# TODO: change version automatically when run release script
-release = '2.0.4-alpha4'
+copyright = '2006-{}, {}'.format(datetime.datetime.now().year, author)
+release = get_file_text(os.path.join('..', 'release', 'version.txt'))
 
 
 # -- General configuration ---------------------------------------------------
@@ -34,6 +42,14 @@ rst_prolog = """
 
 qthelp_namespace = 'org.orion-project.rezonator'
 
+# The alabaster theme looks cool in Assistant,
+# but plus/minus buttons on the toolbar stop working - they only change the size of headers, not of all the text
+# and font configuration page in settings dialog becomes useless - it can't change the font of the theme
+# qthelp_theme = 'alabaster'
+# qthelp_theme_options = {
+#   'show_powered_by': False
+# }
+
 # -- Options for HTML output -------------------------------------------------
 
 html_theme = 'agogo'
@@ -50,3 +66,12 @@ html_logo = '../img/rezonator_header.png'
 html_favicon = '../img/icon/main_2.ico'
 html_add_permalinks = ''
 html_copy_source = False
+
+html_show_copyright = False
+
+#-----------------------------------------------------------------------------
+
+about_text = get_file_text('about.html')
+about_text = about_text.replace('VERSION', release)
+about_text = about_text.replace('COPYRIGHT', copyright)
+set_file_text(os.path.join('..', 'out', 'help', 'about.html'), about_text)

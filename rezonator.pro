@@ -32,19 +32,8 @@ LIBS += -ldl
 # Version information
 
 include(release/version.pri)
-DEFINES += "APP_VER_MAJOR=$$APP_VER_MAJOR"
-DEFINES += "APP_VER_MINOR=$$APP_VER_MINOR"
-DEFINES += "APP_VER_PATCH=$$APP_VER_PATCH"
-DEFINES += "APP_VER_CODENAME=\"\\\"$$APP_VER_CODENAME\\\"\""
 
-win32 {
-    DEFINES += "BUILDDATE=\"\\\"$$system(date /T)\\\"\""
-    DEFINES += "BUILDTIME=\"\\\"$$system(time /T)\\\"\""
-}
-else {
-    DEFINES += "BUILDDATE=\"\\\"$$system(date '+%F')\\\"\""
-    DEFINES += "BUILDTIME=\"\\\"$$system(date '+%T')\\\"\""
-}
+#------------------------------------------------------------
 
 win32: RC_FILE = src/app.rc
 macx: ICON = img/icon/main_2.icns

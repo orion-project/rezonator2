@@ -2,20 +2,20 @@
 <QHelpCollectionProject version="1.0">
     <assistant>
         <title>reZonator Manual</title>
-        <applicationIcon>../../img/icon/main_2_256.png</applicationIcon>
+        <applicationIcon>../../img/icon/help_256.png</applicationIcon>
         <cacheDirectory>orion-project.org/rezonator</cacheDirectory>
         <homePage>qthelp://org.orion-project.rezonator/doc/index.html</homePage>
         <startPage>qthelp://org.orion-project.rezonator/doc/index.html</startPage>
         <aboutMenuText>
-            <text>About reZonator</text>
+            <text>About reZonator Manual</text>
         </aboutMenuText>
         <aboutDialog>
-            <file>../../help/about.txt</file>
-            <icon>../../img/icon/main_2_48.svg</icon>
+            <file>about.html</file>
+            <icon>../../img/icon/help_96.png</icon>
         </aboutDialog>
-        <enableDocumentationManager>false</enableDocumentationManager>
         <enableAddressBar>false</enableAddressBar>
         <enableFilterFunctionality>false</enableFilterFunctionality>
+        <enableDocumentationManager>false</enableDocumentationManager>
     </assistant>
     <docFiles>
         <generate>
