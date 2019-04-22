@@ -7,13 +7,13 @@ Elements
 
 Elements are construction blocks of any schema in reZonator.
 
-The element can describe a general optical component such as a :doc:`mirror <matrix/ElemCurveMirror>` or :doc:`crystal <matrix/ElemBrewsterCrystal>`. Additionally, the element can express some physical but non-material entity - a :doc:`distance <matrix/ElemEmptyRange>` between optical components, for example. Finally, the element can also be some helper virtual object - :doc:`point <matrix/ElemPoint>`, for example.
+The element can describe a general optical component such as a :doc:`mirror <matrix/ElemCurveMirror>` or :doc:`crystal <matrix/ElemBrewsterCrystal>`. Additionally, it can express some physical but non-material entity - a :doc:`distance <matrix/ElemEmptyRange>` between optical components, for example. Finally, it can also serve as some virtual helper object - :doc:`point <matrix/ElemPoint>`, for example.
 
-reZonator supports a number of standard elements. They all are contained in the :doc:`catalog` and can be put into a schema from it.
+reZonator supports a set of standard elements organized in a :doc:`catalog`.
 
-The application utilizes conventional ABCD-matrix approach (by Kogelnik and Li) to compute the propagation of paraxial Gaussian beams through an element.  In calculations each element is represented by its :doc:`ray matrix <elem_matrs>`.
+The application utilizes conventional ABCD-matrix approach (by Kogelnik and Li) to compute the propagation of paraxial Gaussian beams through an element.  In calculations, each element represented by its :doc:`ray matrix <elem_matrs>`.
 
-You have not to assign matrices for element manually. Instead, you have to provide values for some typical element parameters - a focal length for a lens, thickness and refractive index for a crystal and so on. And the software will automatically compute element matrices based on these parameters' values.
+You don't have to assign matrices for elements manually. Instead, you can provide values for some typical element parameters - a focal length of a lens, thickness and refractive index for a crystal, and so on. The software will automatically compute element matrices based on these parameter values.
 
 .. toctree::
    :maxdepth: 1

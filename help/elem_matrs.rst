@@ -8,11 +8,11 @@ Elements Matrices
 .. |M_lf| replace:: *M*\ :sup:`LF`
 .. |M_rt| replace:: *M*\ :sup:`RT`
 
-reZonator utilizes conventional ABCD-matrix approach (by Kogelnik and Li) to compute the :ref:`propagation <propagation_dir>` of paraxial :doc:`Gaussian beams <gauss>` through an element. Each element is represented in calculations by its ray matrix.
+reZonator utilizes conventional ABCD-matrix approach (by Kogelnik and Li) to compute the :ref:`propagation <propagation_dir>` of paraxial :doc:`Gaussian beams <gauss>` through an element. Each element represented in calculations by its ray matrix.
 
-In most cases, there are two ray matrices for each element - one for tangential and another for sagittal :ref:`working planes <working_planes>`. These are so-called *T-matrix* and *S-matrix*, and they denoted as |Mt| and |Ms| respectively.
+At least, there are two ray matrices for each element - one for tangential and another for sagittal :ref:`working planes <working_planes>`. These are so-called *T-matrix* and *S-matrix*, and they denoted as |Mt| and |Ms| respectively.
 
-For some elements, there are more matrices which are used in some specific calculations. For example, elements that have the length parameter also have two additional matrix set. The first one describes beam propagation from outside of the left edge of the element to some position inside the element. The second one describes propagation from that position to outside of the right edge of the element. These matrices are used for computation of beam traveling through the interior of an optical element. They are denoted as |M_lf| and |M_rt| respectively.
+Several elements have more matrices using in some specific calculations. For example, elements that have the length parameter also have two additional matrix set. The first one describes beam propagation from outside of the left edge of the element to some position inside the element. The second one describes propagation from that position to outside of the right edge of the element. These matrices are used for computation of beam traveling through the interior of an optical element. They are denoted as |M_lf| and |M_rt| respectively.
 
 .. _interface_elems:
 

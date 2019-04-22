@@ -14,7 +14,7 @@ An interface can be concave or convex depending on the sign of the radius of cur
     
 .. warning::
 
-    The left and the right adjacent elements of an interface element should be either :doc:`ElemEmptyRange` or :doc:`ElemMediaRange`. reZonator doesn't complain if it is not, but you can get incorrect results.
+    The left and the right adjacent elements of an interface element should be either :doc:`ElemEmptyRange` or :doc:`ElemMediaRange`. reZonator doesn't complain if they are not, but you can get incorrect results.
     
 .. seealso::
 
