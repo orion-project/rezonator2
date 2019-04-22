@@ -20,6 +20,7 @@ cd %SCRIPT_DIR%\..
 
 set SOURCE_DIR=.\help
 set TARGET_DIR=.\out\help
+set BIN_DIR=.\bin
 
 ::python -m sphinx -b html %SOURCE_DIR% %TARGET_DIR%
 ::goto :eof
@@ -30,6 +31,9 @@ copy /Y %SOURCE_DIR%\rezonator.qhcp %TARGET_DIR%
 
 qhelpgenerator %TARGET_DIR%\rezonator.qhcp
 
-assistant -collectionFile %TARGET_DIR%\rezonator.qhc -style fusion
+move %TARGET_DIR%\rezonator.qch %BIN_DIR%
+move %TARGET_DIR%\rezonator.qhc %BIN_DIR%
+
+assistant -collectionFile %BIN_DIR%\rezonator.qhc -style fusion
 
 :eof

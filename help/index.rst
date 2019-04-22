@@ -9,6 +9,7 @@ reZonator2 Documentation
    :maxdepth: 1
    :caption: Table of Contents:
 
+   elements 
    handbook
 
 

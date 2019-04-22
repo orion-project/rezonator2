@@ -1,0 +1,51 @@
+<NotepadPlus>
+    <Project name="rezonator">
+        <File name="README.md" />
+        <Folder name="scripts">
+            <File name="make.sh" />
+            <File name="make.bat" />
+            <File name="conf.py" />
+        </Folder>
+        <Folder name="rst">
+            <File name="index.rst" />
+            <Folder name="elems">
+                <Folder name="matrix">
+                    <File name="matrix\ElemEmptyRange.rst" />
+                    <File name="matrix\ElemPlate.rst" />
+                    <File name="matrix\ElemFlatMirror.rst" />
+                    <File name="matrix\ElemThinLens.rst" />
+                    <File name="matrix\ElemCurveMirror.rst" />
+                    <File name="matrix\ElemThinCylinderLensT.rst" />
+                    <File name="matrix\ElemThinCylinderLensS.rst" />
+                    <File name="matrix\ElemTiltedCrystal.rst" />
+                    <File name="matrix\ElemTiltedPlate.rst" />
+                    <File name="matrix\ElemBrewsterCrystal.rst" />
+                    <File name="matrix\ElemBrewsterPlate.rst" />
+                    <File name="matrix\ElemMediaRange.rst" />
+                    <File name="matrix\ElemPoint.rst" />
+                    <File name="matrix\ElemGrinLens.rst" />
+                    <File name="matrix\ElemMatrix.rst" />
+                    <File name="matrix\ElemSphericalInterface.rst" />
+                    <File name="matrix\ElemNormalInterface.rst" />
+                    <File name="matrix\ElemBrewsterInterface.rst" />
+                    <File name="matrix\ElemTiltedInterface.rst" />
+                    <File name="matrix\ElemThickLens.rst" />
+                </Folder>
+                <File name="elements.rst" />
+                <File name="elem_matrs.rst" />
+            </Folder>
+            <Folder name="handbook">
+                <File name="handbook.rst" />
+                <File name="glossary.rst" />
+                <File name="gauss.rst" />
+                <File name="hyper_gauss.rst" />
+                <File name="matrix_optics.rst" />
+                <File name="round_trip_matrix.rst" />
+            </Folder>
+        </Folder>
+        <Folder name="qch">
+            <File name="rezonator.qhcp" />
+            <File name="about.html" />
+        </Folder>
+    </Project>
+</NotepadPlus>

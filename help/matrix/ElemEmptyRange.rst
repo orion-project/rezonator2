@@ -1,0 +1,15 @@
+.. index:: single: space
+.. index:: single: empty space
+
+Empty Space
+===========
+
+Empty space is a distance between two reference planes in the air (*n* = 1).
+
+Matrices for tangential and sagittal planes are the same.
+
+    .. image:: ElemEmptyRange.png
+
+.. seealso::
+
+    :doc:`../elem_matrs`, :doc:`../catalog`, :doc:`../elem_props`

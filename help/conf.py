@@ -69,7 +69,7 @@ html_copy_source = False
 
 html_show_copyright = False
 
-#-----------------------------------------------------------------------------
+#------------------------------------------------
 
 about_text = get_file_text('about.html')
 about_text = about_text.replace('VERSION', release)

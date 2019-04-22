@@ -14,9 +14,6 @@ Element drawings and icons.
 ## `./icon`
 Images that are used as window header icons.
 
-## `./matrix`
-Images of formulas of elements' matrices.
-
 ## `./misc`
 This dir should contain images that are nor toolbar glyphs or window icons.
 

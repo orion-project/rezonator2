@@ -5,6 +5,8 @@
 Round-trip Matrix Calculation
 =============================
 
+The :doc:`ray-matrix <elem_matrs>` formalism supposes the elements' matrices are multiplied one-by-one in the direction opposite to the beam :ref:`propagation direction <propagation_dir>`.
+
 General elements
 ----------------
 
@@ -137,3 +139,10 @@ If the schema is the :ref:`single-pass system <schema_kind_sp>`, then matrices f
 Sample result (M4 is the reference element): 
 
     M0 = |M4_1| × M3 × M2 × M1
+
+
+|para|
+
+.. seealso::
+
+    :doc:`elem_matrs`
