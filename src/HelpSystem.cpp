@@ -5,8 +5,10 @@
 #include "helpers/OriDialogs.h"
 
 #include <QApplication>
+#include <QDebug>
 #include <QDesktopServices>
 #include <QMessageBox>
+#include <QProcess>
 #include <QPushButton>
 #include <QUrl>
 
@@ -31,7 +33,8 @@ HelpSystem* HelpSystem::instance()
 
 void HelpSystem::showContents()
 {
-
+    if (!_assistant) startAssistant();
+    if (!_assistant) return;
 }
 
 void HelpSystem::showIndex()
@@ -87,6 +90,21 @@ void HelpSystem::showAbout()
     about.exec();
 }
 
+void HelpSystem::startAssistant()
+{
+    QProcess *process = new QProcess;
+    QStringList args;
+    args << QLatin1String("-collectionFile")
+         << QLatin1String("rezonator.qhc") // TODO: make full path
+         << QLatin1String("-enableRemoteControl");
+    process->start(QLatin1String("assistant"), args);
+    if (!process->waitForStarted())
+    {
+        qCritical() << "Unable to start Assistant process";
+        delete process;
+    }
+    _assistant = process;
+}
 
 namespace Help {
 

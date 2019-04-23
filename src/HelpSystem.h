@@ -3,6 +3,10 @@
 
 #include <QObject>
 
+QT_BEGIN_NAMESPACE
+class QProcess;
+QT_END_NAMESPACE
+
 namespace Z {
 
 class HelpSystem : public QObject
@@ -26,6 +30,9 @@ private:
     HelpSystem();
 
     QWidget* _parent = nullptr;
+    QProcess* _assistant = nullptr;
+
+    void startAssistant();
 };
 
 namespace Help {

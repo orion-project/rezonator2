@@ -29,16 +29,12 @@
 #include <QAction>
 #include <QApplication>
 #include <QCloseEvent>
-#include <QDesktopServices>
 #include <QDir>
 #include <QLabel>
 #include <QMenu>
 #include <QMenuBar>
-#include <QMessageBox>
-#include <QPushButton>
 #include <QTimer>
 #include <QToolButton>
-#include <QUrl>
 
 enum ProjectWindowStatusPanels
 {
@@ -168,7 +164,7 @@ void ProjectWindow::createActions()
 
     auto help = Z::HelpSystem::instance();
     actnHelpContent = A_(tr("&Contents"), help, SLOT(showContents()));
-    actnHelpContent = A_(tr("&Index"), help, SLOT(showIndex()));
+    actnHelpIndex = A_(tr("&Index"), help, SLOT(showIndex()));
     actnHelpBugReport = A_(tr("&Send Bug Report"), help, SLOT(sendBugReport()));
     actnHelpUpdates = A_(tr("Check for &Updates"), help, SLOT(checkUpdates()));
     actnHelpHomepage = A_(tr("&Visit Homepage"), help, SLOT(visitHomePage()));
@@ -215,7 +211,9 @@ void ProjectWindow::createMenuBar()
     connect(menuWindow, SIGNAL(aboutToShow()), _mdiArea, SLOT(populateWindowMenu()));
 
     menuHelp = Ori::Gui::menu(tr("&Help"), this,
-        { actnHelpBugReport, actnHelpUpdates, actnHelpHomepage, nullptr, actnHelpAbout });
+        { actnHelpContent, actnHelpIndex, nullptr,
+          actnHelpBugReport, actnHelpUpdates, actnHelpHomepage, nullptr,
+          actnHelpAbout });
 }
 
 void ProjectWindow::createToolBars()
