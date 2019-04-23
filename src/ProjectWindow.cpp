@@ -4,6 +4,7 @@
 #include "CommonData.h"
 #include "ElementsCatalogDialog.h"
 #include "GaussCalculatorWindow.h"
+#include "HelpSystem.h"
 #include "ProjectOperations.h"
 #include "ProtocolWindow.h"
 #include "PumpWindow.h"
@@ -71,6 +72,8 @@ ProjectWindow::ProjectWindow(Schema* readySchema) :
 
     _calculations = new CalcManager(schema(), this);
     _operations = new ProjectOperations(schema(), this, _calculations);
+
+    Z::HelpSystem::instance()->setParent(this);
 
     _schemaWindow = new SchemaViewWindow(schema(), _calculations);
 
@@ -150,7 +153,7 @@ void ProjectWindow::createActions()
     actnToolsCatalog = A_(tr("&Elements Catalog"), this, SLOT(showElementsCatalog()), ":/toolbar/catalog");
     actnToolsGaussCalc = A_(tr("&Gauss Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
     actnToolsPrefs = A_(tr("Pre&ferences..."), this, SLOT(showPreferences()), ":/toolbar/settings");
-    actnToolFlipSchema = A_(tr("Flip Schema"), this, SLOT(flipSchema()));
+    actnToolFlipSchema = A_(tr("&Flip Schema"), this, SLOT(flipSchema()));
 
     // These common window actions must not have data (action->data()), as data presense indicates that
     // this action is for activation of specific subwindow and _mdiArea is responsible for it.
@@ -163,12 +166,13 @@ void ProjectWindow::createActions()
     actnWndTile = A_(tr("&Tile"), _mdiArea, SLOT(tileSubWindows()));
     actnWndCascade = A_(tr("&Cascade"), _mdiArea, SLOT(cascadeSubWindows()));
 
-    actnHelpBugReport = A_(tr("&Send Bug Report"), this, SLOT(actionHelpBugReport()));
-    actnHelpUpdates = A_(tr("&Check for Updates"), this, SLOT(actionHelpUpdate()));
-    actnHelpHomepage = A_(tr("&Visit Homepage"), this, SLOT(actionHelpHomePage()));
-    actnHelpAbout = A_(tr("&About..."), this, SLOT(actionHelpAbout()));
-
-    actnHelpUpdates->setVisible(false); //< TODO:NEXT-VER
+    auto help = Z::HelpSystem::instance();
+    actnHelpContent = A_(tr("&Contents"), help, SLOT(showContents()));
+    actnHelpContent = A_(tr("&Index"), help, SLOT(showIndex()));
+    actnHelpBugReport = A_(tr("&Send Bug Report"), help, SLOT(sendBugReport()));
+    actnHelpUpdates = A_(tr("Check for &Updates"), help, SLOT(checkUpdates()));
+    actnHelpHomepage = A_(tr("&Visit Homepage"), help, SLOT(visitHomePage()));
+    actnHelpAbout = A_(tr("&About..."), help, SLOT(showAbout()));
 
     /* TODO:NEXT-VER
     actnFileSave->setEnabled(false);
@@ -457,55 +461,6 @@ void ProjectWindow::flipSchema()
 {
     if (Ori::Dlg::yes(tr("Do you want to rearrange elements in the opposite order?")))
         schema()->flip();
-}
-
-//------------------------------------------------------------------------------
-//                             Help actions
-
-void ProjectWindow::actionHelpAbout()
-{
-    auto title = tr("About %1").arg(qApp->applicationName());
-    auto text = tr(
-                "<p><font size=4><b>{app} {app_ver}</b></font>"
-                "<p>Built: {build_date}"
-                "<p>Copyright: Chunosov N.&nbsp;I. © 2006-{app_year}"
-                "<p>Web: <a href='{www}'>{www}</a>"
-                "<p>E-mail: <a href='mailto://{email}'>{email}</a>"
-                "<p>Credits: <a href='http://www.qcustomplot.com'>QCustomPlot</a>"
-                ", <a href='http://lua.org'>Lua</a>"
-                "<p>{app} is open-source laser resonator calculation tool, its "
-                "source code is located at <a href='{www_sources}'>{www_sources}</a>."
-                "<p>The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING "
-                "THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE."
-                )
-            .replace("{app}", qApp->applicationName())
-            .replace("{app_ver}", Z::Strs::appVersion())
-            .replace("{app_year}", Z::Strs::appVersionYear())
-            .replace("{build_date}", Z::Strs::appVersionDate())
-            .replace("{www}", Z::Strs::homepage())
-            .replace("{email}", Z::Strs::email())
-            .replace("{www_sources}", Z::Strs::sourcepage());
-    QMessageBox about(QMessageBox::NoIcon, title, text, QMessageBox::Ok, this);
-    about.setIconPixmap(QPixmap(":/window_icons/main").
-        scaled(64, 64, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    auto button = about.addButton(tr("About Qt"), QMessageBox::ActionRole);
-    connect(button, SIGNAL(clicked()), qApp, SLOT(aboutQt()));
-    about.exec();
-}
-
-void ProjectWindow::actionHelpHomePage()
-{
-    QDesktopServices::openUrl(QUrl(Z::Strs::homepage()));
-}
-
-void ProjectWindow::actionHelpUpdate()
-{
-    // TODO:NEXT-VER
-}
-
-void ProjectWindow::actionHelpBugReport()
-{
-    QDesktopServices::openUrl(QUrl(Z::Strs::newIssueUrl()));
 }
 
 //------------------------------------------------------------------------------
