@@ -134,6 +134,7 @@ private slots:
     void showGaussCalculator();
     void editStyleSheet();
     void editAppSettings();
+    void showUserManual();
 };
 
 //------------------------------------------------------------------------------

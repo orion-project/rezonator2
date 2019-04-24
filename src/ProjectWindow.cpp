@@ -163,9 +163,9 @@ void ProjectWindow::createActions()
     actnWndCascade = A_(tr("&Cascade"), _mdiArea, SLOT(cascadeSubWindows()));
 
     auto help = Z::HelpSystem::instance();
-    actnHelpContent = A_(tr("&Contents"), help, SLOT(showContents()));
+    actnHelpContent = A_(tr("&Contents"), help, SLOT(showContents()), ":/toolbar/help");
     actnHelpIndex = A_(tr("&Index"), help, SLOT(showIndex()));
-    actnHelpBugReport = A_(tr("&Send Bug Report"), help, SLOT(sendBugReport()));
+    actnHelpBugReport = A_(tr("&Send Bug Report"), help, SLOT(sendBugReport()), ":/toolbar/bug");
     actnHelpUpdates = A_(tr("Check for &Updates"), help, SLOT(checkUpdates()));
     actnHelpHomepage = A_(tr("&Visit Homepage"), help, SLOT(visitHomePage()));
     actnHelpAbout = A_(tr("&About..."), help, SLOT(showAbout()));

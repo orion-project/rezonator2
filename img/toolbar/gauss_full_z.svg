@@ -2,10 +2,12 @@
   <path d="m0 6 7 4h9l8-4v8.5h-24z" fill="#ff4300" fill-opacity=".360784"/>
   <g fill="none">
     <path d="m0 6c7 6 17 6 24 0" stroke="#ff4300" stroke-linecap="round" stroke-width="1.5"/>
-    <g stroke="#182e6d" transform="matrix(0 -1 1 0 -7 24)">
-      <path d="m0 19.5h23"/>
-      <path d="m20 17 3 2.5-3 2.5" stroke-linecap="round"/>
+    <g stroke="#182e6d">
+      <g transform="matrix(0 -1 1 0 -7 24)">
+        <path d="m0 19.5h23"/>
+        <path d="m20 17 3 2.5-3 2.5" stroke-linecap="round"/>
+      </g>
+      <path d="m0 14.5h24"/>
     </g>
-    <path d="m0 14.5h24" stroke="#182e6d"/>
   </g>
 </svg>

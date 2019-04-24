@@ -18,6 +18,8 @@
     <path d="m20.5 14.509366v5.981268l-11 .0094v-11h6.012912" fill="url(#e)" stroke="url(#f)" stroke-dashoffset="21.443998" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="m20.974934 14h-4.974934v-4.9300016" fill="url(#d)"/>
   </g>
-  <path d="m20.5 14.5-5-.000114v-4.999886" fill="none" stroke="url(#c)" stroke-linecap="square" stroke-linejoin="round"/>
-  <path d="m1.5100926 1.4924316h20.9974764v20.9974764h-20.9974764z" fill="none" stroke="#ca2727" stroke-dasharray="1 2" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="none" stroke-linejoin="round">
+    <path d="m20.5 14.5-5-.000114v-4.999886" stroke="url(#c)" stroke-linecap="square"/>
+    <path d="m1.5100926 1.4924316h20.9974764v20.9974764h-20.9974764z" stroke="#ca2727" stroke-dasharray="1 2" stroke-linecap="round"/>
+  </g>
 </svg>

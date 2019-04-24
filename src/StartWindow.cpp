@@ -4,6 +4,7 @@
 #include "AppSettingsDialog.h"
 #include "CommonData.h"
 #include "GaussCalculatorWindow.h"
+#include "HelpSystem.h"
 #include "ProjectOperations.h"
 #include "ProjectWindow.h"
 #include "core/CommonTypes.h"
@@ -494,6 +495,7 @@ ToolsStartPanel::ToolsStartPanel() : StartPanel("panel_tools")
     if (Settings::instance().isDevMode)
         layout->addWidget(makeButton(":/toolbar/protocol", tr("Edit Stylesheet"), SLOT(editStyleSheet())));
     layout->addWidget(makeButton(":/toolbar/settings", tr("Edit Settings"), SLOT(editAppSettings())));
+    layout->addWidget(makeButton(":/toolbar/help", tr("Show Manual"), SLOT(showUserManual())));
     layout->addStretch();
 }
 
@@ -510,6 +512,11 @@ void ToolsStartPanel::editStyleSheet()
 void ToolsStartPanel::editAppSettings()
 {
     Z::Dlg::editAppSettings(this);
+}
+
+void ToolsStartPanel::showUserManual()
+{
+    Z::HelpSystem::instance()->showContents();
 }
 
 //------------------------------------------------------------------------------

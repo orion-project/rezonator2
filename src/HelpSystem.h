@@ -32,7 +32,8 @@ private:
     QWidget* _parent = nullptr;
     QProcess* _assistant = nullptr;
 
-    void startAssistant();
+    bool startAssistant();
+    void closeAssistant();
 };
 
 namespace Help {

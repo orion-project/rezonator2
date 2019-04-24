@@ -9,9 +9,11 @@
     <stop offset="1" stop-color="#4058a0"/>
   </linearGradient>
   <linearGradient id="d" gradientUnits="userSpaceOnUse" x1="22.410208" x2="19.5" xlink:href="#a" y1="21.5" y2="21.5"/>
-  <path d="m18.5-.00000422v24.00000422" fill="none" stroke="#007eff" stroke-opacity=".164706"/>
-  <path d="m6.5-.00000422v24.00000422" fill="none" stroke="#007eff" stroke-opacity=".164706"/>
-  <path d="m0 17.5h24" fill="none" stroke="#007eff" stroke-opacity=".164706"/>
+  <g fill="none" stroke="#007eff" stroke-opacity=".164706">
+    <path d="m18.5-.00000422v24.00000422"/>
+    <path d="m6.5-.00000422v24.00000422"/>
+    <path d="m0 17.5h24"/>
+  </g>
   <path d="m6 5h13v13h-13z" fill="#007cff" fill-opacity=".166667"/>
   <path d="m0 21.5h23" fill="none" stroke="url(#b)"/>
   <path d="m20 19.5 3 2-3 2" fill="url(#d)" fill-rule="evenodd" stroke="url(#c)" stroke-linecap="round"/>
@@ -19,11 +21,11 @@
     <path d="m0 21.5h23" fill="none" stroke="url(#b)"/>
     <path d="m20 19.5 3 2-3 2" fill="url(#d)" fill-rule="evenodd" stroke="url(#c)" stroke-linecap="round"/>
   </g>
-  <g fill="none">
-    <path d="m0 17.5h24" stroke="#003f80" stroke-dasharray="1 1"/>
-    <path d="m0 5.5h24" stroke="#003f80" stroke-dasharray="1 1"/>
-    <path d="m6.5.99999578v24.00000422" stroke="#003f80" stroke-dasharray="1 1"/>
-    <path d="m18.5.99999578v24.00000422" stroke="#003f80" stroke-dasharray="1 1"/>
+  <g fill="none" stroke="#003f80" stroke-dasharray="1 1">
+    <path d="m0 17.5h24"/>
+    <path d="m0 5.5h24"/>
+    <path d="m6.5.99999578v24.00000422"/>
+    <path d="m18.5.99999578v24.00000422"/>
   </g>
   <g transform="translate(0 1)">
     <path d="m12.5 18v-15" fill="none" stroke="#000"/>

@@ -3,8 +3,8 @@
     <stop offset="0" stop-color="#725236"/>
     <stop offset="1" stop-color="#826044"/>
   </linearGradient>
-  <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="142.72044669215" x2="23.27107111634" xlink:href="#a" y1="146.55130836203" y2="80.33572237705"/>
-  <linearGradient id="c" gradientUnits="userSpaceOnUse" x1="71.71703377337" x2="19.21537596558" xlink:href="#a" y1="34.6398848493" y2="18.65680973202"/>
+  <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="142.720447" x2="23.271071" xlink:href="#a" y1="146.551308" y2="80.335722"/>
+  <linearGradient id="c" gradientUnits="userSpaceOnUse" x1="71.717034" x2="19.215376" xlink:href="#a" y1="34.639885" y2="18.65681"/>
   <linearGradient id="d" gradientUnits="userSpaceOnUse" x1="37.240556" x2="70.857534" y1="113.058919" y2="113.616049">
     <stop offset="0" stop-color="#fff"/>
     <stop offset="1" stop-color="#fff" stop-opacity="0"/>

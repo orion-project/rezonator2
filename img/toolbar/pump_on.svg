@@ -11,19 +11,19 @@
   </linearGradient>
   <g fill-rule="evenodd">
     <path d="m79 48.651786h117.55549v-46.809079l58.51133 70.587386-58.51133 69.839817v-46.80906h-117.55549z" fill="#f00" opacity=".358"/>
-    <path d="m0 8.864073h63.404658l15.595342 16.383182v93.618115l-15.595342 16.38319h-63.404658" fill="url(#a)" opacity=".697" stroke="#2d77e6" stroke-linejoin="round" stroke-width="5"/>
-    <path d="m-4.3873252 122.72053v-51.022262h-136.3773548l-.22756 51.022162z" fill="#2e95b7" stroke="#2c5461" stroke-linejoin="round" stroke-width="7.726"/>
+    <g stroke-linejoin="round">
+      <path d="m0 8.864073h63.404658l15.595342 16.383182v93.618115l-15.595342 16.38319h-63.404658" fill="url(#a)" opacity=".697" stroke="#2d77e6" stroke-width="5"/>
+      <path d="m-4.3873252 122.72053v-51.022262h-136.3773548l-.22756 51.022162z" fill="#2e95b7" stroke="#2c5461" stroke-width="7.726"/>
+    </g>
   </g>
   <circle cx="-190.8485" cy="97.002869" fill="#2e95b7" r="23.799551" stroke="#2c5461" stroke-linejoin="round" stroke-width="7.726057"/>
   <circle cx="-198.37582" cy="88.306679" fill="#fff" fill-opacity=".47451" r="9.34841"/>
-  <g transform="matrix(1.1037224 0 0 1.1037224 -280.1993 -134.71596)">
-    <g stroke-linejoin="round">
-      <path d="m248.10788 177.61644v-46.22744h-123.56128l-.20618 46.22735z" fill="#2e95b7" fill-rule="evenodd" stroke="#2c5461" stroke-width="6.999949"/>
-      <path d="m135.42608 142.14326h101.47294" fill="none" stroke="#fff" stroke-linecap="round" stroke-opacity=".473684" stroke-width="11.095"/>
-      <circle cx="79.169418" cy="154.3156" fill="#2e95b7" r="21.562986" stroke="#2c5461" stroke-width="7"/>
-    </g>
-    <circle cx="72.349464" cy="146.43663" fill="#fff" fill-opacity=".47451" r="8.469893"/>
+  <g stroke-linejoin="round" transform="matrix(1.1037224 0 0 1.1037224 -280.1993 -134.71596)">
+    <path d="m248.10788 177.61644v-46.22744h-123.56128l-.20618 46.22735z" fill="#2e95b7" fill-rule="evenodd" stroke="#2c5461" stroke-width="6.999949"/>
+    <path d="m135.42608 142.14326h101.47294" fill="none" stroke="#fff" stroke-linecap="round" stroke-opacity=".473684" stroke-width="11.095"/>
+    <circle cx="79.169418" cy="154.3156" fill="#2e95b7" r="21.562986" stroke="#2c5461" stroke-width="7"/>
   </g>
+  <circle cx="-200.34557595521" cy="26.90942871151" fill="#fff" fill-opacity=".47451" r="9.3484106297" stroke-width="1.1037224"/>
   <rect fill="url(#b)" height="136.74115" ry="66.991753" stroke="#2c5461" stroke-linejoin="round" stroke-width="8.692757" width="228.19131" x="23.195393" y="114.74895"/>
   <circle cx="178.23143" cy="180.10442" fill="#a9dae9" r="49.046589"/>
   <path d="m19.199291 177.11914c-.10724 1.52861-.182434 3.06539-.182434 4.62109v2.75782c0 37.11343 31.009464 66.99218 69.527381 66.99218h97.772112c38.51792 0 69.52739-29.87875 69.52739-66.99218v-2.75782c0-1.55569-.0732-3.09249-.18041-4.62109-2.45075 34.93882-32.44338 62.37109-69.34698 62.37109h-97.772112c-36.903574 0-66.894166-27.4323-69.344947-62.37109z" fill="#fff" fill-opacity=".25"/>

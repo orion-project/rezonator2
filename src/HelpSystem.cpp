@@ -33,13 +33,23 @@ HelpSystem* HelpSystem::instance()
 
 void HelpSystem::showContents()
 {
-    if (!_assistant) startAssistant();
-    if (!_assistant) return;
+    if (!startAssistant()) return;
+
+    QByteArray commands;
+    commands.append("show contents;");
+    commands.append("expandToc 2;");
+    commands.append("setSource qthelp://org.orion-project.rezonator/doc/index.html;");
+    commands.append("syncContents\n");
+    _assistant->write(commands);
 }
 
 void HelpSystem::showIndex()
 {
+    if (!startAssistant()) return;
 
+    QByteArray commands;
+    commands.append("show index\n");
+    _assistant->write(commands);
 }
 
 void HelpSystem::visitHomePage()
@@ -90,20 +100,40 @@ void HelpSystem::showAbout()
     about.exec();
 }
 
-void HelpSystem::startAssistant()
+bool HelpSystem::startAssistant()
 {
-    QProcess *process = new QProcess;
+    if (_assistant && _assistant->state() == QProcess::Running)
+        return true;
+
+    if (_assistant) delete _assistant;
+
+    QString appDir = qApp->applicationDirPath();
+    QProcess *process = new QProcess(this);
     QStringList args;
-    args << QLatin1String("-collectionFile")
-         << QLatin1String("rezonator.qhc") // TODO: make full path
-         << QLatin1String("-enableRemoteControl");
-    process->start(QLatin1String("assistant"), args);
-    if (!process->waitForStarted())
+    args << "-collectionFile" << appDir + "/rezonator.qhc"
+         << "-enableRemoteControl"
+         << "-style" << "fusion";
+    process->start(appDir + "/assistant", args);
+    if (!process->waitForStarted(5000))
     {
-        qCritical() << "Unable to start Assistant process";
+        QMessageBox::critical(_parent, qApp->applicationName(), "Unable to start Assistant process");
         delete process;
+        return false;
     }
+    connect(qApp, &QApplication::aboutToQuit, this, &HelpSystem::closeAssistant);
     _assistant = process;
+    return true;
+}
+
+void HelpSystem::closeAssistant()
+{
+    if (_assistant->state() == QProcess::Running)
+    {
+        _assistant->terminate();
+        _assistant->waitForFinished(5000);
+    }
+    delete _assistant;
+    _assistant = nullptr;
 }
 
 namespace Help {

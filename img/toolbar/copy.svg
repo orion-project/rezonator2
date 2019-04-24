@@ -36,11 +36,13 @@
     <path d="m5 12.5h4" stroke="url(#m)"/>
   </g>
   <path d="m21.5 14.113638v7.386362h-12v-13h6.393443" style="fill-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-dashoffset:21.443998;fill:url(#k);stroke:url(#l)"/>
-  <path d="m12 18.5h4" fill="none" stroke="url(#j)" stroke-linecap="square"/>
-  <path d="m12 16.5h6" fill="none" stroke="url(#i)" stroke-linecap="square"/>
-  <path d="m12 14.5h6" fill="none" stroke="url(#h)" stroke-linecap="square"/>
-  <path d="m12 10.5h6" fill="none" stroke="url(#g)" stroke-linecap="square"/>
-  <path d="m12 12.5h6" fill="none" stroke="url(#f)" stroke-linecap="square"/>
+  <g fill="none" stroke-linecap="square">
+    <path d="m12 18.5h4" stroke="url(#j)"/>
+    <path d="m12 16.5h6" stroke="url(#i)"/>
+    <path d="m12 14.5h6" stroke="url(#h)"/>
+    <path d="m12 10.5h6" stroke="url(#g)"/>
+    <path d="m12 12.5h6" stroke="url(#f)"/>
+  </g>
   <path d="m22 13h-5v-5" fill="url(#e)" fill-rule="evenodd"/>
   <path d="m21.5 13.5h-5v-5" fill="none" stroke="url(#d)" stroke-linecap="square" stroke-linejoin="round"/>
 </svg>

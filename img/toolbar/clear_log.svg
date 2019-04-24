@@ -14,13 +14,15 @@
   <g transform="translate(0 -24)">
     <g stroke-linecap="round">
       <path d="m2.5 26.500002h19v11.740569l-7.475339 7.259431h-11.524661z" fill="url(#a)" stroke="url(#b)" stroke-opacity=".691542"/>
-      <path d="m7.156018 44v-16" fill="none" stroke="#f00" stroke-opacity=".469697" stroke-width=".312036"/>
-      <path d="m5 30.843982h14" fill="none" opacity=".517094" stroke="#000" stroke-width=".312036"/>
-      <path d="m5 33.843982h14" fill="none" opacity=".517094" stroke="#000" stroke-width=".312036"/>
-      <path d="m5 36.843982h14" fill="none" opacity=".517094" stroke="#000" stroke-width=".312036"/>
-      <path d="m5 39.843982h14" fill="none" opacity=".517094" stroke="#000" stroke-width=".312036"/>
-      <path d="m5 42.843982h14" fill="none" opacity=".517094" stroke="#000" stroke-width=".312036"/>
-      <path d="m12 22 4-4-4-4 2-2 4 4 4-4" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="2" transform="translate(0 24)"/>
+      <g fill="none">
+        <path d="m7.156018 44v-16" stroke="#f00" stroke-opacity=".469697" stroke-width=".312036"/>
+        <path d="m5 30.843982h14" opacity=".517094" stroke="#000" stroke-width=".312036"/>
+        <path d="m5 33.843982h14" opacity=".517094" stroke="#000" stroke-width=".312036"/>
+        <path d="m5 36.843982h14" opacity=".517094" stroke="#000" stroke-width=".312036"/>
+        <path d="m5 39.843982h14" opacity=".517094" stroke="#000" stroke-width=".312036"/>
+        <path d="m5 42.843982h14" opacity=".517094" stroke="#000" stroke-width=".312036"/>
+        <path d="m12 22 4-4-4-4 2-2 4 4 4-4" stroke="#fff" stroke-linejoin="round" stroke-width="2" transform="translate(0 24)"/>
+      </g>
     </g>
     <g stroke-linejoin="round" transform="matrix(.631579 0 0 .6384772 16.312369 28.805193)">
       <path d="m5.6748065 20.566127 5.9999995-6-2.9999995-3-6 6-6-6-3 3 5.99999996 6-5.99999996 6 3 3 6-6 6 6 2.9999995-3z" fill="url(#c)" fill-rule="evenodd" stroke="#661b1b"/>

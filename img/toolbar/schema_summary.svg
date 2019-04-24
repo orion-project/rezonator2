@@ -12,9 +12,11 @@
   <linearGradient id="e" gradientTransform="matrix(1.0781097 0 0 1.0317953 4.187562 3.300046)" gradientUnits="userSpaceOnUse" x1="4.593023" x2="16.453487" xlink:href="#d" y1="2.660808" y2="16.978306"/>
   <linearGradient id="f" gradientTransform="matrix(1.0781097 0 0 1.0317953 4.187562 3.300046)" gradientUnits="userSpaceOnUse" x1="16.453487" x2="4.593023" xlink:href="#c" y1="2.660808" y2="16.978306"/>
   <path d="m.5.5h17v18h-17z" style="fill-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-dashoffset:21.443998;fill:url(#b);stroke:url(#a)"/>
-  <path d="m3.5000004 1.5000002v4" fill="none" stroke="#373737"/>
-  <path d="m15.5 13.499999v4" fill="none" stroke="#3a3a3a"/>
-  <path d="m4.0000004 3.5000002h10.9999996l-11.9999996 11.9999998h10.9999996" fill="none" opacity=".7" stroke="#f00" stroke-linejoin="round"/>
+  <g fill="none">
+    <path d="m3.5000004 1.5000002v4" stroke="#373737"/>
+    <path d="m15.5 13.499999v4" stroke="#3a3a3a"/>
+    <path d="m4.0000004 3.5000002h10.9999996l-11.9999996 11.9999998h10.9999996" opacity=".7" stroke="#f00" stroke-linejoin="round"/>
+  </g>
   <g fill-rule="evenodd">
     <path d="m4.5324684 7.9999992h3l3.9999996 4.9999998h-3z" fill="#4aadff" fill-opacity=".784314"/>
     <path d="m21.5 6.5v15h-13v-15z" fill="url(#e)" stroke="url(#f)" stroke-dashoffset="21.443998" stroke-linecap="round" stroke-linejoin="round"/>

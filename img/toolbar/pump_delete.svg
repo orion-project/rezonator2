@@ -5,14 +5,16 @@
     <stop offset=".40000001" stop-color="#418af9"/>
     <stop offset="1" stop-color="#aecbf8"/>
   </linearGradient>
-  <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="109.2612286" x2="219.292417" y1="209.6624553" y2="108.8005326">
+  <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="109.261229" x2="219.292417" y1="209.662455" y2="108.800533">
     <stop offset="0" stop-color="#cd3232"/>
     <stop offset="1" stop-color="#e08e8e"/>
   </linearGradient>
   <g fill-rule="evenodd">
     <path d="m79 48.651786h117.55549v-46.809079l58.51133 70.587386-58.51133 69.839817v-46.80906h-117.55549z" fill="#009a21" opacity=".358"/>
-    <path d="m0 8.864073h63.404658l15.595342 16.383182v93.618115l-15.595342 16.38319h-63.404658" fill="url(#a)" opacity=".697" stroke="#2d77e6" stroke-linejoin="round" stroke-width="5"/>
-    <path d="m191.78463 163.81617 55.0156-55.01559-27.5078-27.507793-55.01559 55.015583-55.01559-55.015583-27.507807 27.507793 55.015597 55.01559-55.015597 55.01559 27.507807 27.5078 55.01559-55.0156 55.01559 55.0156 27.5078-27.5078z" fill="url(#b)" stroke="#661b1b" stroke-linejoin="round" stroke-width="9.169266"/>
+    <g stroke-linejoin="round">
+      <path d="m0 8.864073h63.404658l15.595342 16.383182v93.618115l-15.595342 16.38319h-63.404658" fill="url(#a)" opacity=".697" stroke="#2d77e6" stroke-width="5"/>
+      <path d="m191.78463 163.81617 55.0156-55.01559-27.5078-27.507793-55.01559 55.015583-55.01559-55.015583-27.507807 27.507793 55.015597 55.01559-55.015597 55.01559 27.507807 27.5078 55.01559-55.0156 55.01559 55.0156 27.5078-27.5078z" fill="url(#b)" stroke="#661b1b" stroke-width="9.169266"/>
+    </g>
   </g>
   <path d="m100.09198 218.83176 45.84633-45.84633c9.16926-9.16926 0-18.33853 0-18.33853l-45.84633-45.84632" fill="none" stroke="#edbaba" stroke-linecap="round" stroke-linejoin="round" stroke-width="13.753899"/>
 </svg>

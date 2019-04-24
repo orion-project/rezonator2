@@ -3,7 +3,7 @@
     <stop offset="0" stop-color="#93edb4"/>
     <stop offset="1" stop-color="#31a181"/>
   </radialGradient>
-  <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="13.9090903" x2="13.6704539375" y1="22.49921135" y2="1.85716599375">
+  <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="13.90909" x2="13.670454" y1="22.499211" y2="1.857166">
     <stop offset="0" stop-color="#2d6857"/>
     <stop offset="1" stop-color="#38b792"/>
   </linearGradient>

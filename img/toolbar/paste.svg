@@ -39,22 +39,24 @@
     <stop offset="1" stop-color="#a47c38"/>
   </linearGradient>
   <g stroke-linejoin="round">
-    <rect height="15.200001" rx=".642254" ry=".562963" style="fill-rule:evenodd;stroke-width:1.2;stroke-linecap:square;stroke-dashoffset:21.443998;fill:url(#f);stroke:url(#e)" width="15.200001" x="2.4" y="3.399999"/>
-    <path d="m5.5 5.511182h9l-2-2v-2h-5v2z" fill="url(#g)" fill-rule="evenodd" stroke="url(#r)"/>
-    <path d="m12.288818 5h-5.488818l1.1565496-1v-2" fill="none" stroke="#fffbab" stroke-linecap="round" stroke-width=".6"/>
-    <path d="m4 7.1h11v10h-11z" style="opacity:.5;fill-rule:evenodd;stroke:#fffffd;stroke-width:.6;stroke-linecap:round;stroke-dashoffset:21.443998;fill:url(#h)"/>
-  </g>
-  <g>
-    <path d="m7.974 18v-9.6421726h6.792332l5.744409 5.6421726" fill="none" opacity=".5" stroke="#000" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="m20.6 14.584809v7.015191h-12.200441v-13h6.000441" style="fill-rule:evenodd;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round;stroke-dashoffset:21.443998;fill:url(#p);stroke:url(#q)"/>
-    <g fill="none">
-      <path d="m10.999559 11.5h6" stroke="url(#o)" stroke-linecap="square"/>
-      <path d="m10.999559 19.5h6" stroke="url(#n)" stroke-linecap="square"/>
-      <path d="m10.999559 17.5h6" stroke="url(#m)" stroke-linecap="square"/>
-      <path d="m10.999559 13.5h6" stroke="url(#l)" stroke-linecap="square"/>
-      <path d="m10.999559 15.5h6" stroke="url(#k)" stroke-linecap="square"/>
+    <g>
+      <rect height="15.200001" rx=".642254" ry=".562963" style="fill-rule:evenodd;stroke-width:1.2;stroke-linecap:square;stroke-dashoffset:21.443998;fill:url(#f);stroke:url(#e)" width="15.200001" x="2.4" y="3.399999"/>
+      <path d="m5.5 5.511182h9l-2-2v-2h-5v2z" fill="url(#g)" fill-rule="evenodd" stroke="url(#r)"/>
+      <g stroke-linecap="round" stroke-width=".6">
+        <path d="m12.288818 5h-5.488818l1.1565496-1v-2" fill="none" stroke="#fffbab"/>
+        <path d="m4 7.1h11v10h-11z" fill="url(#h)" fill-rule="evenodd" opacity=".5" stroke="#fffffd" stroke-dashoffset="21.443998"/>
+      </g>
     </g>
-    <path d="m20.945246 14.099999h-6.048882v-5.8578265" fill="url(#j)" fill-rule="evenodd"/>
-    <path d="m20.6 14.599999h-6.2v-5.999999" fill="none" stroke="url(#i)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"/>
+    <path d="m7.974 18v-9.6421726h6.792332l5.744409 5.6421726" fill="none" opacity=".5" stroke="#000" stroke-linecap="round"/>
+    <path d="m20.6 14.584809v7.015191h-12.200441v-13h6.000441" style="fill-rule:evenodd;stroke-width:1.2;stroke-linecap:round;stroke-dashoffset:21.443998;fill:url(#p);stroke:url(#q)"/>
   </g>
+  <g fill="none" stroke-linecap="square">
+    <path d="m10.999559 11.5h6" stroke="url(#o)"/>
+    <path d="m10.999559 19.5h6" stroke="url(#n)"/>
+    <path d="m10.999559 17.5h6" stroke="url(#m)"/>
+    <path d="m10.999559 13.5h6" stroke="url(#l)"/>
+    <path d="m10.999559 15.5h6" stroke="url(#k)"/>
+  </g>
+  <path d="m20.945246 14.099999h-6.048882v-5.8578265" fill="url(#j)" fill-rule="evenodd"/>
+  <path d="m20.6 14.599999h-6.2v-5.999999" fill="none" stroke="url(#i)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"/>
 </svg>

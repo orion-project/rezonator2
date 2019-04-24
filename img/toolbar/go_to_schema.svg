@@ -31,8 +31,10 @@
     <path d="m-43.799999-5.799999h16.799999v17.799999h-16.799999z" fill="url(#d)" fill-rule="evenodd" stroke="url(#e)" stroke-dashoffset="21.443998" stroke-width="1.2"/>
     <rect fill="url(#a)" height="20.35721" rx="1.425765" ry="1.554279" stroke="#6b6868" stroke-linejoin="round" stroke-width="1.000729" width="18.999271" x="4.500365" y="1.142426"/>
     <path d="m5.9227662.49640614h16.1544678c.790204 0 1.42636.71929086 1.42636 1.61275956v1.3944281h-19.0071879v-1.3944281c0-.8934687.6361565-1.61275956 1.4263601-1.61275956z" fill="url(#c)" stroke="url(#b)" stroke-width=".992812"/>
-    <path d="m20.597353 3.6294897a.63516068.58979207 0 1 1 -1.270321 0 .63516068.58979207 0 1 1 1.270321 0z" fill="#fcfdff" stroke="#f1fcff" stroke-linejoin="round" transform="translate(-2.185384 -1.136759)"/>
-    <path d="m20.597353 3.6294897a.63516068.58979207 0 1 1 -1.270321 0 .63516068.58979207 0 1 1 1.270321 0z" fill="#fcfdff" stroke="#f1fcff" stroke-linejoin="round" transform="translate(.907245 -1.136759)"/>
+    <g fill="#fcfdff" stroke="#f1fcff" stroke-linejoin="round">
+      <path d="m20.597353 3.6294897a.63516068.58979207 0 1 1 -1.270321 0 .63516068.58979207 0 1 1 1.270321 0z" transform="translate(-2.185384 -1.136759)"/>
+      <path d="m20.597353 3.6294897a.63516068.58979207 0 1 1 -1.270321 0 .63516068.58979207 0 1 1 1.270321 0z" transform="translate(.907245 -1.136759)"/>
+    </g>
   </g>
   <path d="m20.5 15.5v4" fill="none" stroke="#363636"/>
   <path d="m7.7768095 7.5000002h12.9999995l-12.776809 9.9999998h12" fill="none" stroke="#7f7f7f" stroke-linejoin="round"/>

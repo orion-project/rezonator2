@@ -3,13 +3,17 @@
     <feGaussianBlur stdDeviation=".97295539"/>
   </filter>
   <g fill-rule="evenodd">
-    <path d="m37 4c-12 5-23 5-23 5v6s11 0 23 5" fill="#fc0" stroke="#ff9c00"/>
-    <path d="m18 5c-7 4-24 4-24 4v6s17-1 24 4" fill="#fc0" stroke="#ff9c00"/>
-    <path d="m8 3c-7 5-24 5-24 5v8s17 0 24 5" fill="#fc0" stroke="#ff9c00"/>
+    <g fill="#fc0" stroke="#ff9c00">
+      <path d="m37 4c-12 5-23 5-23 5v6s11 0 23 5"/>
+      <path d="m18 5c-7 4-24 4-24 4v6s17-1 24 4"/>
+      <path d="m8 3c-7 5-24 5-24 5v8s17 0 24 5"/>
+    </g>
     <path d="m21.36599 14.495678v-4.9971188l-22.3659901-.3405369.0000001 4.9971187z" fill="#ffea93" filter="url(#a)" transform="matrix(1.7437189 -.01218755 0 .8004613 -13.256281 2.65717)"/>
   </g>
-  <path d="m8 0v8" fill="none" stroke="#182e6d" stroke-linecap="round" stroke-opacity=".845455" stroke-width="2"/>
-  <path d="m8 16v8" fill="none" stroke="#182e6d" stroke-linecap="round" stroke-opacity=".845455" stroke-width="2"/>
-  <path d="m18 0v9" fill="none" stroke="#182e6d" stroke-linecap="round" stroke-opacity=".845455" stroke-width="2"/>
-  <path d="m18 15v9" fill="none" stroke="#182e6d" stroke-linecap="round" stroke-opacity=".845455" stroke-width="2"/>
+  <g fill="none" stroke="#182e6d" stroke-linecap="round" stroke-opacity=".845455" stroke-width="2">
+    <path d="m8 0v8"/>
+    <path d="m8 16v8"/>
+    <path d="m18 0v9"/>
+    <path d="m18 15v9"/>
+  </g>
 </svg>

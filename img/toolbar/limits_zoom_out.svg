@@ -5,7 +5,7 @@
   </linearGradient>
   <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="-.5" x2="17.99222" xlink:href="#a" y1="21.5" y2="21.5"/>
   <linearGradient id="c" gradientUnits="userSpaceOnUse" x1="23.273118" x2="20.36291" xlink:href="#a" y1="21.5" y2="21.5"/>
-  <linearGradient id="d" gradientUnits="userSpaceOnUse" x1="15.27701206504" x2="6.99847412675" y1="20.53894052759" y2="8.71245730976">
+  <linearGradient id="d" gradientUnits="userSpaceOnUse" x1="15.277012" x2="6.998474" y1="20.538941" y2="8.712457">
     <stop offset="0" stop-color="#0e0f55"/>
     <stop offset="1" stop-color="#a5a6f1"/>
   </linearGradient>

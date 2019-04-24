@@ -10,12 +10,12 @@
   <linearGradient id="c" gradientTransform="matrix(11.784984 0 0 11.170911 -4.783301 -238.05091)" gradientUnits="userSpaceOnUse" x1="4" x2="19" xlink:href="#b" y1="3" y2="21"/>
   <linearGradient id="d" gradientTransform="matrix(11.784984 0 0 11.170911 -4.783301 -238.05091)" gradientUnits="userSpaceOnUse" x1="4" x2="19" xlink:href="#a" y1="3" y2="21"/>
   <linearGradient id="e" gradientTransform="matrix(9.54386 0 0 4.2251086 18.245612 -209.55845)" gradientUnits="userSpaceOnUse" x1="11.500001" x2="11.500001" xlink:href="#a" y1="19.934425" y2="2.262295"/>
-  <linearGradient id="f" gradientUnits="userSpaceOnUse" x1="33.2000031" x2="73.2000061" xlink:href="#b" y1="-19.999991" y2="-19.999991"/>
-  <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="33.2000031" x2="73.2000061" xlink:href="#a" y1="-19.999991" y2="-19.999991"/>
-  <linearGradient id="h" gradientUnits="userSpaceOnUse" x1="73.8666731" x2="113.8666761" xlink:href="#b" y1="-19.999991" y2="-19.999991"/>
-  <linearGradient id="i" gradientUnits="userSpaceOnUse" x1="73.8666731" x2="113.8666761" xlink:href="#a" y1="-19.999991" y2="-19.999991"/>
-  <linearGradient id="j" gradientUnits="userSpaceOnUse" x1="116.5333431" x2="156.5333461" xlink:href="#b" y1="-19.999991" y2="-19.999991"/>
-  <linearGradient id="k" gradientUnits="userSpaceOnUse" x1="116.5333431" x2="156.5333461" xlink:href="#a" y1="-19.999991" y2="-19.999991"/>
+  <linearGradient id="f" gradientUnits="userSpaceOnUse" x1="33.200003" x2="73.200006" xlink:href="#b" y1="-19.999991" y2="-19.999991"/>
+  <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="33.200003" x2="73.200006" xlink:href="#a" y1="-19.999991" y2="-19.999991"/>
+  <linearGradient id="h" gradientUnits="userSpaceOnUse" x1="73.866673" x2="113.866676" xlink:href="#b" y1="-19.999991" y2="-19.999991"/>
+  <linearGradient id="i" gradientUnits="userSpaceOnUse" x1="73.866673" x2="113.866676" xlink:href="#a" y1="-19.999991" y2="-19.999991"/>
+  <linearGradient id="j" gradientUnits="userSpaceOnUse" x1="116.533343" x2="156.533346" xlink:href="#b" y1="-19.999991" y2="-19.999991"/>
+  <linearGradient id="k" gradientUnits="userSpaceOnUse" x1="116.533343" x2="156.533346" xlink:href="#a" y1="-19.999991" y2="-19.999991"/>
   <linearGradient id="l" gradientTransform="matrix(10.666668 0 0 8.0000006 120.53334 -140)" gradientUnits="userSpaceOnUse" x1="3.5" x2="8.5" y1="15" y2="15">
     <stop offset="0" stop-color="#fffefd"/>
     <stop offset="1" stop-color="#fabcb2"/>
@@ -33,10 +33,12 @@
       <rect fill="url(#c)" height="245.75999" rx="16.072895" ry="17.497763" stroke="url(#d)" stroke-linecap="round" stroke-linejoin="round" stroke-width="10.24" width="207.70688" x="18.786665" y="-226.87999"/>
       <rect fill="url(#n)" height="146.56277" rx="11.638516" ry="12.439422" stroke="url(#e)" stroke-linecap="round" stroke-linejoin="round" stroke-width="5" width="168.45021" x="37.333328" y="-205.33334"/>
       <path d="m39.749173-125.91212v-12.11385c56.279278-4.45197 112.226207-17.67192 163.532457-49.87014v111.85413c-51.30625-32.19822-107.253179-45.41817-163.532457-49.87014z" fill="#fcf900" fill-opacity=".342105"/>
-      <rect fill="url(#f)" height="32" rx="3.741872" ry="5.277612" stroke="url(#g)" stroke-linecap="round" stroke-linejoin="round" stroke-width="7" width="32" x="37.200001" y="-36"/>
-      <rect fill="url(#h)" height="32" rx="3.741872" ry="5.277612" stroke="url(#i)" stroke-linecap="round" stroke-linejoin="round" stroke-width="7" width="32" x="77.866661" y="-36"/>
-      <rect fill="url(#j)" height="32" rx="3.741872" ry="5.277612" stroke="url(#k)" stroke-linecap="round" stroke-linejoin="round" stroke-width="7" width="32" x="120.53333" y="-36"/>
-      <rect fill="url(#l)" height="32" rx="4.989163" ry="5.277612" stroke="url(#m)" stroke-linecap="round" stroke-linejoin="round" stroke-width="7" width="42.666668" x="163.19998" y="-36"/>
+      <g stroke-linecap="round" stroke-linejoin="round" stroke-width="7">
+        <rect fill="url(#f)" height="32" rx="3.741872" ry="5.277612" stroke="url(#g)" width="32" x="37.200001" y="-36"/>
+        <rect fill="url(#h)" height="32" rx="3.741872" ry="5.277612" stroke="url(#i)" width="32" x="77.866661" y="-36"/>
+        <rect fill="url(#j)" height="32" rx="3.741872" ry="5.277612" stroke="url(#k)" width="32" x="120.53333" y="-36"/>
+        <rect fill="url(#l)" height="32" rx="4.989163" ry="5.277612" stroke="url(#m)" width="42.666668" x="163.19998" y="-36"/>
+      </g>
     </g>
     <path d="m45.090909-125.91212c56.279281 4.45197 101.421011 17.67192 152.727261 49.87014m-152.727261-61.98399c56.279281-4.45197 101.421011-17.67192 152.727261-49.87014" fill="none" stroke="#fcf900" stroke-linecap="round" stroke-opacity=".690789" stroke-width="10"/>
   </g>
