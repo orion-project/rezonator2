@@ -95,6 +95,7 @@ protected:
     bool _centerCursorRequested = false; ///< If cursor should be centered after next update.
     bool _needRecalc = false;
     bool _frozen = false;
+    bool _exclusiveModeTS = false;
     UnitsMenu *_unitsMenuX, *_unitsMenuY;
     QMenu *menuPlot, *menuLimits, *menuFormat, *menuAxisX, *menuAxisY;
     QAction *actnShowT, *actnShowS, *actnShowTS,
@@ -119,6 +120,7 @@ protected:
     /// Calculates function and plots its results.
     virtual void calculate();
     virtual bool configureInternal() { return true; }
+    virtual void updateGraphs();
     virtual void afterUpdate() {}
     virtual void afterSetUnitsX(Z::Unit old, Z::Unit cur) { Q_UNUSED(old) Q_UNUSED(cur) }
     virtual void afterSetUnitsY(Z::Unit old, Z::Unit cur) { Q_UNUSED(old) Q_UNUSED(cur) }
@@ -126,6 +128,11 @@ protected:
     virtual QString getDefaultTitleX() const { return QString(); }
     virtual QString getDefaultTitleY() const { return QString(); }
     virtual QString formatTitleSpecial(const QString& title) const { return title; }
+    virtual void storeViewSpecific(int key) { Q_UNUSED(key) }
+    virtual void restoreViewSpecific(int key) { Q_UNUSED(key) }
+    virtual void updateVisibiityTSSpecific() {}
+    virtual QWidget* makeOptionsPanel() { return nullptr; }
+    virtual void fillGraphWithFunctionResults(Z::WorkPlane plane, QCPGraph *graph, int resultIndex);
 
     QCPGraph* selectedGraph() const;
 
@@ -151,10 +158,6 @@ protected:
     QPen getLineSettings(Z::WorkPlane);
 
     void debug_LogGraphsCount();
-
-    virtual QWidget* makeOptionsPanel() { return nullptr; }
-
-    virtual void fillGraphWithFunctionResults(Z::WorkPlane plane, QCPGraph *graph, int resultIndex);
 
     void disableAndClose();
 

@@ -2,7 +2,7 @@
 
 #include "../CustomPrefs.h"
 #include "../core/Protocol.h"
-#include "../funcs/RoundTripCalculator.h"
+#include "RoundTripCalculator.h"
 
 void StabilityMapFunction::calculate()
 {
@@ -20,15 +20,6 @@ void StabilityMapFunction::calculate()
     for (auto x : range.values())
     {
         auto value = Z::Value(x, range.unit());
-
-        /*TODO auto error = param->verify(value);
-        if (error)
-        {
-            setError(qApp->translate("Calc error", "Failed to assign %1 = %2%3: %4")
-                    .arg(param.name).arg(value).arg(param.unitStr())
-                    .arg(qApp->translate("Param error", error)));
-            break;
-        }*/
 
         param->setValue(value);
         _calc->multMatrix();

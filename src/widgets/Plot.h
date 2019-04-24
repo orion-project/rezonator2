@@ -15,10 +15,13 @@ public:
 
     AxisLimits limitsX() const { return limits(xAxis); }
     AxisLimits limitsY() const { return limits(yAxis); }
+    AxisLimits limits(QCPAxis* axis) const;
     void setLimitsX(const AxisLimits& p, bool replot) { setLimitsX(p.min, p.max, replot); }
     void setLimitsY(const AxisLimits& p, bool replot) { setLimitsY(p.min, p.max, replot); }
     void setLimitsX(double min, double max, bool replot = true) { setLimits(xAxis, min, max, replot); }
     void setLimitsY(double min, double max, bool replot = true) { setLimits(yAxis, min, max, replot); }
+    void setLimits(QCPAxis* axis, const AxisLimits& p, bool replot) { setLimits(axis, p.min, p.max, replot); }
+    void setLimits(QCPAxis* axis, double min, double max, bool replot);
     void extendLimits(double factor, bool replot = true);
     void extendLimitsX(double factor, bool replot = true) { extendLimits(xAxis, factor, replot); }
     void extendLimitsY(double factor, bool replot = true) { extendLimits(yAxis, factor, replot); }
@@ -32,6 +35,13 @@ public:
 
     QMenu *menuAxisX = nullptr;
     QMenu *menuAxisY = nullptr;
+
+    bool useSafeMargins = true;
+    bool excludeServiceGraphsFromAutolimiting = true;
+
+    // TODO: should be a row below the title, it can be 0 or 1, depending on if title is visible
+    int axisRectRow() const { return 1; }
+    int axisRectCol() const { return 0; }
 
 public slots:
     void autolimits(bool replot = true);
@@ -79,15 +89,14 @@ private:
     const double _zoomStepY;
     const int _numberPrecision;
 
-    AxisLimits limits(QCPAxis* axis) const;
     void extendLimits(QCPAxis* axis, double factor, bool replot);
-    void setLimits(QCPAxis* axis, double min, double max, bool replot);
     bool setLimitsDlg(QCPRange& range, const QString &title);
     bool sanitizeAxisRange(QCPAxis* axis);
     bool sanitizeRange(QCPRange& range, double safeMargin);
     void setAxisRange(QCPAxis* axis, const QCPRange &range);
     double safeMargins(QCPAxis* axis);
     PlotPart selectedPart() const;
+    QString getAxisTitle(QCPAxis* axis) const;
 };
 
 #endif // PLOT_H

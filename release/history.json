@@ -1,14 +1,23 @@
 {
   "history": [
     {
+      "version": "2.0.4-alpha4",
+      "date": "????-??-??",
+      "changes": [
+        {
+          "text": "2D Stability Map function"
+        }
+      ]
+    },
+    {
       "version": "2.0.3-alpha3",
       "date": "2019-02-11",
       "changes": [
         {
-          "text": "The start window with MRU, actions, tools and tips panels.",
+          "text": "The start window with MRU, actions, tools and tips panels."
         },
         {
-          "text": "Schema properties dialog.",
+          "text": "Schema properties dialog."
         },
         {
           "text": "Can read Title and Notes fields from schema files of version 1."

@@ -146,20 +146,31 @@ void Plot::graphClicked(QCPAbstractPlottable *plottable)
 
 void Plot::autolimits(bool replot)
 {
-    bool onlyEnlarge = false;
-    for (int i = 0; i < graphCount(); i++)
+    if (graphCount() == 0) return;
+
+    if (excludeServiceGraphsFromAutolimiting)
     {
-        auto g = graph(i);
-        if (g && !_serviceGraphs.contains(g))
+        bool onlyEnlarge = false;
+        for (int i = 0; i < graphCount(); i++)
         {
-            g->rescaleAxes(onlyEnlarge);
-            onlyEnlarge = true;
+            auto g = graph(i);
+            if (g && !_serviceGraphs.contains(g))
+            {
+                g->rescaleAxes(onlyEnlarge);
+                onlyEnlarge = true;
+            }
         }
     }
-    if (!sanitizeAxisRange(xAxis))
-        extendLimits(xAxis, _safeMarginsX, false);
-    if (!sanitizeAxisRange(yAxis))
-        extendLimits(yAxis, _safeMarginsY, false);
+    else rescaleAxes(true);
+
+    if (useSafeMargins)
+    {
+        if (!sanitizeAxisRange(xAxis))
+            extendLimits(xAxis, _safeMarginsX, false);
+        if (!sanitizeAxisRange(yAxis))
+            extendLimits(yAxis, _safeMarginsY, false);
+    }
+
     if (replot) this->replot();
 }
 
@@ -267,10 +278,20 @@ bool Plot::setLimitsDlg()
     return false;
 }
 
+QString Plot::getAxisTitle(QCPAxis* axis) const
+{
+   if (axis == xAxis)
+       return tr("X-axis");
+   if (axis == yAxis)
+       return tr("Y-axis");
+   auto label = axis->label();
+   return label.isEmpty() ? tr("Axis") : label;
+}
+
 bool Plot::setLimitsDlg(QCPAxis* axis)
 {
     auto range = axis->range();
-    if (setLimitsDlg(range, tr("%1-axis Limits").arg(axis == xAxis ? "X" : "Y")))
+    if (setLimitsDlg(range, tr("%1 Limits").arg(getAxisTitle(axis))))
     {
         setAxisRange(axis, range);
         replot();

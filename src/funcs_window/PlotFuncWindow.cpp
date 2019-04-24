@@ -207,6 +207,8 @@ void PlotFuncWindow::createContent()
     _cursor = new QCPCursor(_plot);
     connect(_cursor, &QCPCursor::positionChanged, this, &PlotFuncWindow::updateCursorInfo);
     _plot->serviceGraphs().append(_cursor);
+    auto axesLayer = _plot->layer(QStringLiteral("axes"));
+    if (axesLayer) _cursor->setLayer(axesLayer);
 
     _cursorPanel = new CursorPanel(_function, _cursor);
     _cursorPanel->setAutoUpdateInfo(false);
@@ -244,20 +246,22 @@ void PlotFuncWindow::showT()
 {
     Z_NOTE("showT" << actnShowT->isChecked());
 
-    if (!actnShowT->isChecked() && !actnShowS->isChecked())
+    if (_exclusiveModeTS)
+        actnShowS->setChecked(!actnShowT->isChecked());
+    else if (!actnShowT->isChecked() && !actnShowS->isChecked())
         actnShowS->setChecked(true);
     updateVisibilityTS();
-    // TODO:NEXT-VER Schema.ModifiedForms := True;
 }
 
 void PlotFuncWindow::showS()
 {
     Z_NOTE("showS" << actnShowS->isChecked());
 
-    if (!actnShowS->isChecked() && !actnShowT->isChecked())
+    if (_exclusiveModeTS)
+        actnShowT->setChecked(!actnShowS->isChecked());
+    else if (!actnShowS->isChecked() && !actnShowT->isChecked())
         actnShowT->setChecked(true);
     updateVisibilityTS();
-    // TODO:NEXT-VER Schema.ModifiedForms := True;
 }
 
 void PlotFuncWindow::showTS()
@@ -275,6 +279,7 @@ void PlotFuncWindow::updateVisibilityTS()
     bool s = actnShowS->isChecked() || actnShowTS->isChecked();
     for (auto g : _graphsT) g->setVisible(t);
     for (auto g : _graphsS) g->setVisible(s);
+    updateVisibiityTSSpecific();
     _plot->replot();
 }
 
@@ -410,9 +415,14 @@ void PlotFuncWindow::calculate()
     else
     {
         _statusBar->clear(STATUS_INFO);
-        updateGraphs(Z::Plane_T);
-        updateGraphs(Z::Plane_S);
+        updateGraphs();
     }
+}
+
+void PlotFuncWindow::updateGraphs()
+{
+    updateGraphs(Z::Plane_T);
+    updateGraphs(Z::Plane_S);
 }
 
 void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
@@ -534,6 +544,7 @@ void PlotFuncWindow::storeView(int key)
     view.unitX = _unitX;
     view.unitY = _unitY;
     _storedView[key] = view;
+    storeViewSpecific(key);
 }
 
 void PlotFuncWindow::restoreView(int key)
@@ -555,6 +566,7 @@ void PlotFuncWindow::restoreView(int key)
         _autolimitsRequest = true;
         _centerCursorRequested = true;
     }
+    restoreViewSpecific(key);
 }
 
 QString PlotFuncWindow::displayWindowTitle() const
@@ -612,8 +624,7 @@ void PlotFuncWindow::setUnitX(Z::Unit unit)
         auto limits = _plot->limitsX();
         limits.min = unit->fromSi(oldUnit->toSi(limits.min));
         limits.max = unit->fromSi(oldUnit->toSi(limits.max));
-        updateGraphs(Z::WorkPlane::Plane_T);
-        updateGraphs(Z::WorkPlane::Plane_S);
+        updateGraphs();
         _plot->setLimitsX(limits, false);
         updateTitleX();
         updateStatusUnits();
@@ -633,8 +644,7 @@ void PlotFuncWindow::setUnitY(Z::Unit unit)
         auto limits = _plot->limitsY();
         limits.min = unit->fromSi(oldUnit->toSi(limits.min));
         limits.max = unit->fromSi(oldUnit->toSi(limits.max));
-        updateGraphs(Z::WorkPlane::Plane_T);
-        updateGraphs(Z::WorkPlane::Plane_S);
+        updateGraphs();
         _plot->setLimitsY(limits, false);
         updateTitleY();
         updateStatusUnits();
