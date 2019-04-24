@@ -19,8 +19,7 @@ Several elements have more matrices using in some specific calculations. For exa
 Interface elements have no their own index of refraction. Instead, they take indexes of adjacent elements to calculate their matrices. So there is some obvious suggestion about the placement of an interface element in the schema - the left and the right adjacent elements of the interface should be either :doc:`matrix/ElemEmptyRange` or :doc:`matrix/ElemMediaRange`. reZonator doesn't complain if it is not, but then one can't count on correct results.
 
 
-Common Elements
----------------
+**Common Elements**
 
 .. toctree::
    
@@ -34,8 +33,7 @@ Common Elements
    matrix/ElemBrewsterCrystal
    matrix/ElemBrewsterPlate
    
-Additional Elements
--------------------
+**Additional Elements**
 
 .. toctree::
 
@@ -46,8 +44,7 @@ Additional Elements
    matrix/ElemThinCylinderLensT
    matrix/ElemThinCylinderLensS
    
-Media and Interfaces
---------------------
+**Media and Interfaces**
 
 .. toctree::
 

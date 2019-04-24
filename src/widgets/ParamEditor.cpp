@@ -228,9 +228,8 @@ void ParamEditor::editorFocused(bool focus)
 
     if (focus)
     {
-        p.setColor(QPalette::Button, Ori::Color::blend(p.color(QPalette::Button), p.color(QPalette::Light), 0.5));
+        p.setColor(QPalette::Background, Ori::Color::blend(p.color(QPalette::Button), p.color(QPalette::Highlight), 0.2));
         setAutoFillBackground(true);
-        setBackgroundRole(QPalette::Button);
         emit focused();
     }
     else

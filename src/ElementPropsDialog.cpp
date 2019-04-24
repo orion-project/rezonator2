@@ -47,7 +47,7 @@ bool ElementPropsDialog::editElement(Element *elem, QWidget *parent)
     return dlg && dlg->exec() == QDialog::Accepted;
 }
 
-ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : RezonatorDialog(NoOptions, parent)
+ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : RezonatorDialog(UseHelpButton, parent)
 {
     _element = elem;
 
@@ -138,6 +138,11 @@ void ElementPropsDialog::collect()
     collectParams();
     accept();
     close();
+}
+
+QString ElementPropsDialog::helpTopic() const
+{
+   return "matrix/" % _element->type() % ".html";
 }
 
 //------------------------------------------------------------------------------

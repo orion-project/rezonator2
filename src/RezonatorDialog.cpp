@@ -1,5 +1,7 @@
 #include "RezonatorDialog.h"
 
+#include "HelpSystem.h"
+
 #include <QApplication>
 #include <QBoxLayout>
 #include <QDebug>
@@ -12,6 +14,10 @@ RezonatorDialog::RezonatorDialog(Options options, QWidget* parent) : QDialog(par
 {
     if (!(options & DontDeleteOnClose))
         setAttribute(Qt::WA_DeleteOnClose);
+
+    auto flags = windowFlags();
+    flags.setFlag(Qt::WindowContextHelpButtonHint, false);
+    setWindowFlags(flags);
 
     auto layout = new QVBoxLayout(this);
 
@@ -64,8 +70,11 @@ void RezonatorDialog::showEvent(QShowEvent *event)
 
 void RezonatorDialog::showHelp()
 {
-    // TODO:NEXT-VER
-    qDebug() << "show help" << helpTopic();
+    auto topic = helpTopic();
+    if (topic.isEmpty())
+        Z::HelpSystem::instance()->showContents();
+    else
+        Z::HelpSystem::instance()->showTopic(topic);
 }
 
 bool RezonatorDialog::run()

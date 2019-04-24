@@ -36,6 +36,10 @@ primary_domain = None
 
 rst_prolog = """
 .. |para| replace:: \ \
+
+.. role:: elem_param
+
+.. role:: math_var
 """
 
 # -- Options for QtHelp output -----------------------------------------------
@@ -69,9 +73,13 @@ html_copy_source = False
 
 html_show_copyright = False
 
+html_static_path = ['styles']
+
 #------------------------------------------------
 
 about_text = get_file_text('about.html')
 about_text = about_text.replace('VERSION', release)
 about_text = about_text.replace('COPYRIGHT', copyright)
-set_file_text(os.path.join('..', 'out', 'help', 'about.html'), about_text)
+target_dir = os.path.join('..', 'out', 'help')
+if not os.path.isdir(target_dir): os.mkdir(target_dir)
+set_file_text(os.path.join(target_dir, 'about.html'), about_text)

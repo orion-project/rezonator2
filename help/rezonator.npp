@@ -42,10 +42,17 @@
                 <File name="matrix_optics.rst" />
                 <File name="round_trip_matrix.rst" />
             </Folder>
+            <Folder name="funcs">
+                <File name="functions.rst" />
+                <File name="func_reprate.rst" />
+            </Folder>
         </Folder>
         <Folder name="qch">
             <File name="rezonator.qhcp" />
             <File name="about.html" />
+        </Folder>
+        <Folder name="styles">
+            <File name="styles\pygments.css" />
         </Folder>
     </Project>
 </NotepadPlus>

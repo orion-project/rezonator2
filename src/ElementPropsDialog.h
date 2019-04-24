@@ -36,6 +36,8 @@ protected:
     virtual void collectParams() {}
     virtual QString verifyParams() const { return QString(); }
 
+    QString helpTopic() const override;
+
     void setPageParams(QWidget* pageParams);
 
 private:

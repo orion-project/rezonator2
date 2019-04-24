@@ -1,0 +1,18 @@
+/* rezonator styles */
+
+span.menuselection {
+    color: maroon;
+    font-style: italic;
+}
+
+span.elem-param {
+    color: #555;
+    font-weight: bold;
+}
+
+span.math-var {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 1.2em;
+}
+

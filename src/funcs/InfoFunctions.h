@@ -71,6 +71,7 @@ class InfoFuncRepetitionRate : public InfoFunction
 public:
     InfoFuncRepetitionRate(Schema *schema) : InfoFunction(schema) {}
     QString calculate() override;
+    QString helpTopic() const override { return QStringLiteral("func_reprate.html"); }
     FUNC_NAME(qApp->translate("Func", "Intermode Beats Frequency"))
     double result() const { return _result; }
 private:

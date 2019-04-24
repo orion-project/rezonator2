@@ -91,7 +91,7 @@ public:
 
     int id() const { return _id; }
 
-    /// Function returns type of element, e.g. "FlatMirror".
+    /// Function returns type of element, e.g. "ElemFlatMirror".
     /// Type is used for internal identification of element class like true class name.
     virtual const QString type() const = 0;
 

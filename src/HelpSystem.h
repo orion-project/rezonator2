@@ -18,6 +18,8 @@ public:
 
     void setParent(QWidget* parent) { _parent = parent; }
 
+    void showTopic(const QString& topic);
+
 public slots:
     void showContents();
     void showIndex();
@@ -36,11 +38,6 @@ private:
     void closeAssistant();
 };
 
-namespace Help {
-
-void show(const QString& topic);
-
-} // namespace Help
 } // namespace Z
 
 #endif // Z_HELP_SYSTEM_H

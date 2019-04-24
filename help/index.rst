@@ -9,12 +9,15 @@ reZonator2 Documentation
    :maxdepth: 1
    :caption: Table of Contents:
 
-   elements 
+   elements
+   functions
    handbook
 
 
-Indices and tables
-==================
+.. only:: builder_html
 
-* :ref:`genindex`
-* :ref:`search`
+    Indices and tables
+    ==================
+
+    * :ref:`genindex`
+    * :ref:`search`

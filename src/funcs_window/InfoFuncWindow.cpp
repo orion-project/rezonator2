@@ -67,11 +67,12 @@ void InfoFuncWindow::createToolbar()
     toolbar->addAction(actnFreeze = Ori::Gui::toggledAction(tr("Freeze"), this, SLOT(freeze(bool)), ":/toolbar/freeze", Qt::CTRL | Qt::Key_F));
     actnFrozenInfo = toolbar->addWidget(buttonFrozenInfo = new FrozenStateButton(tr("Frozen info"), "frozen_info"));
     toolbar->addSeparator();
-    toolbar->addAction(Ori::Gui::action(tr("Copy"), _editor, SLOT(copy()), ":/toolbar/copy", Qt::Key_Copy));
+    toolbar->addAction(Ori::Gui::action(tr("Copy"), _editor, SLOT(copy()), ":/toolbar/copy", QKeySequence::Copy));
     auto actnCopyAll = Ori::Gui::action(tr("Copy All"), this, SLOT(copyAll()), ":/toolbar/copy_all");
     toolbar->addWidget(Ori::Gui::textToolButton(actnCopyAll));
     toolbar->addSeparator();
-    //toolbar->addAction(Ori::Gui::action(tr("Help"), this, SLOT(help()), ":/toolbar/help", Qt::Key_Help));
+    if (!_function->helpTopic().isEmpty())
+        toolbar->addAction(Ori::Gui::action(tr("Help"), this, SLOT(help()), ":/toolbar/help"));
 }
 
 void InfoFuncWindow::updateFrozenInfo()
@@ -137,7 +138,7 @@ void InfoFuncWindow::freeze(bool frozen)
 
 void InfoFuncWindow::help()
 {
-    Z::Help::show(_function->helpTopic());
+    Z::HelpSystem::instance()->showTopic(_function->helpTopic());
 }
 
 void InfoFuncWindow::linkClicked(const QUrl& url)

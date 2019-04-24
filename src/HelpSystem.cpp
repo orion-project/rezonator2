@@ -37,9 +37,8 @@ void HelpSystem::showContents()
 
     QByteArray commands;
     commands.append("show contents;");
-    commands.append("expandToc 2;");
-    commands.append("setSource qthelp://org.orion-project.rezonator/doc/index.html;");
-    commands.append("syncContents\n");
+    commands.append("expandToc 3;");
+    commands.append("setSource qthelp://org.orion-project.rezonator/doc/index.html\n");
     _assistant->write(commands);
 }
 
@@ -50,6 +49,51 @@ void HelpSystem::showIndex()
     QByteArray commands;
     commands.append("show index\n");
     _assistant->write(commands);
+}
+
+void HelpSystem::showTopic(const QString& topic)
+{
+    if (!startAssistant()) return;
+
+    QByteArray commands;
+    commands.append("setSource qthelp://org.orion-project.rezonator/doc/" % topic % '\n');
+    _assistant->write(commands);
+}
+
+bool HelpSystem::startAssistant()
+{
+    if (_assistant && _assistant->state() == QProcess::Running)
+        return true;
+
+    if (_assistant) delete _assistant;
+
+    QString appDir = qApp->applicationDirPath();
+    QProcess *process = new QProcess(this);
+    QStringList args;
+    args << "-collectionFile" << appDir + "/rezonator.qhc"
+         << "-enableRemoteControl"
+         << "-style" << "fusion";
+    process->start(appDir + "/assistant", args);
+    if (!process->waitForStarted(5000))
+    {
+        QMessageBox::critical(_parent, qApp->applicationName(), "Unable to start Assistant process");
+        delete process;
+        return false;
+    }
+    connect(qApp, &QApplication::aboutToQuit, this, &HelpSystem::closeAssistant);
+    _assistant = process;
+    return true;
+}
+
+void HelpSystem::closeAssistant()
+{
+    if (_assistant->state() == QProcess::Running)
+    {
+        _assistant->terminate();
+        _assistant->waitForFinished(5000);
+    }
+    delete _assistant;
+    _assistant = nullptr;
 }
 
 void HelpSystem::visitHomePage()
@@ -100,48 +144,4 @@ void HelpSystem::showAbout()
     about.exec();
 }
 
-bool HelpSystem::startAssistant()
-{
-    if (_assistant && _assistant->state() == QProcess::Running)
-        return true;
-
-    if (_assistant) delete _assistant;
-
-    QString appDir = qApp->applicationDirPath();
-    QProcess *process = new QProcess(this);
-    QStringList args;
-    args << "-collectionFile" << appDir + "/rezonator.qhc"
-         << "-enableRemoteControl"
-         << "-style" << "fusion";
-    process->start(appDir + "/assistant", args);
-    if (!process->waitForStarted(5000))
-    {
-        QMessageBox::critical(_parent, qApp->applicationName(), "Unable to start Assistant process");
-        delete process;
-        return false;
-    }
-    connect(qApp, &QApplication::aboutToQuit, this, &HelpSystem::closeAssistant);
-    _assistant = process;
-    return true;
-}
-
-void HelpSystem::closeAssistant()
-{
-    if (_assistant->state() == QProcess::Running)
-    {
-        _assistant->terminate();
-        _assistant->waitForFinished(5000);
-    }
-    delete _assistant;
-    _assistant = nullptr;
-}
-
-namespace Help {
-
-void show(const QString& topic)
-{
-    Ori::Dlg::info(topic); // TODO: show help
-}
-
-} // namespace Help
 } // namespace Z
