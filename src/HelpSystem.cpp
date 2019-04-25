@@ -7,6 +7,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QDesktopServices>
+#include <QFile>
 #include <QMessageBox>
 #include <QProcess>
 #include <QPushButton>
@@ -68,14 +69,32 @@ bool HelpSystem::startAssistant()
     if (_assistant) delete _assistant;
 
     QString appDir = qApp->applicationDirPath();
+
+    QString assistantFile = appDir + "/assistant";
+    if (!QFile::exists(assistantFile))
+    {
+        qCritical() << "Help viewer not found" << assistantFile;
+        QMessageBox::critical(_parent, qApp->applicationName(), "Help viewer not found");
+        return false;
+    }
+
+    QString helpFile = appDir + "/rezonator.qhc";
+    if (!QFile::exists(helpFile))
+    {
+        qCritical() << "Help file not found" << helpFile;
+        QMessageBox::critical(_parent, qApp->applicationName(), "Help file not found");
+        return false;
+    }
+
     QProcess *process = new QProcess(this);
     QStringList args;
-    args << "-collectionFile" << appDir + "/rezonator.qhc"
+    args << "-collectionFile" << helpFile
          << "-enableRemoteControl"
          << "-style" << "fusion";
-    process->start(appDir + "/assistant", args);
+    process->start(assistantFile, args);
     if (!process->waitForStarted(5000))
     {
+        qCritical() << "Unable to start Assistant process" << process->errorString();
         QMessageBox::critical(_parent, qApp->applicationName(), "Unable to start Assistant process");
         delete process;
         return false;

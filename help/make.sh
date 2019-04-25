@@ -23,7 +23,12 @@ cd ${SCRIPT_DIR}/..
 
 SOURCE_DIR=./help
 TARGET_DIR=./out/help
-BIN_DIR=./bin
+
+if [ "$(uname)" == "Darwin" ]; then
+  BIN_DIR=./bin/rezonator.app/Contents/MacOS
+else
+  BIN_DIR=./bin
+fi
 
 echo
 echo "Building html files..."
@@ -48,15 +53,15 @@ HELP_TOOL_PATH="$(which ${HELP_TOOL})"
 HELP_TOOL_DIR="$(dirname ${HELP_TOOL_PATH})"
 if [ "$(uname)" == "Darwin" ]; then
   ASSISTANT_SOURCE=${HELP_TOOL_DIR}/Assistant.app/Contents/MacOS/Assistant
-  ASSISTANT_TARGET=${BIN_DIR}/rezonator.app/Contents/MacOS/Assistant
 else
   ASSISTANT_SOURCE=${HELP_TOOL_DIR}/assistant
-  ASSISTANT_TARGET=${BIN_DIR}/assistant
 fi
 echo "Assistant path is ${ASSISTANT_SOURCE}"
+
+ASSISTANT_TARGET=${BIN_DIR}/assistant
 if [ ! -f ${ASSISTANT_TARGET} ]; then
   echo "Copy Assistant app to bin dir..."
-  cp -T ${ASSISTANT_SOURCE} ${ASSISTANT_TARGET}
+  cp ${ASSISTANT_SOURCE} ${ASSISTANT_TARGET}
 fi
 if [ "${?}" != "0" ]; then exit 1; fi
 
