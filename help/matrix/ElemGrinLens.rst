@@ -4,7 +4,7 @@
 GRIN Lens
 =========
 
-GRIN lens is plane-parallel piece of material with gradual variation of refractive index that produces lensing effect. The element has similar matrices for both work planes, but gradient constants can be set independently for tangential and sagittal planes.
+GRIN lens is a plane-parallel piece of material with a gradual variation of refractive index that produces lensing effect. The element has similar matrices for both work planes, but gradient constants can be set independently for tangential and sagittal planes.
 
 Beam propagation inside the medium also can be calculated.
 

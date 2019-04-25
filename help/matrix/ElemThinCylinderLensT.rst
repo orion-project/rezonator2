@@ -4,7 +4,7 @@
 Tangential Cylindrical Thin Lens
 ================================
 
-Tangential cylindrical lens acts just like a general :doc:`thin lens <ElemThinLens>` but transforms a beam only in the :ref:`tangential plane <working_planes>`. In the other plane it has a unity matrix and does not affect the beam.
+The tangential cylindrical lens acts just like a general :doc:`thin lens <ElemThinLens>` but transforms a beam only in the :ref:`tangential plane <working_planes>`. In the other, plane it has a unity matrix and does not affect the beam.
 
     .. image:: ElemThinCylinderLensT.png
 

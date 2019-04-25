@@ -40,7 +40,16 @@ rst_prolog = """
 .. role:: elem_param
 
 .. role:: math_var
+
+.. role:: app_name
+
+.. role:: app_name_z
+
+.. |rezonator| replace:: :app_name:`re`\ :app_name_z:`Z`\ :app_name:`onator`
+
+.. default-role:: math_var
 """
+
 
 # -- Options for QtHelp output -----------------------------------------------
 

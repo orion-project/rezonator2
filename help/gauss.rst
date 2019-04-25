@@ -3,7 +3,7 @@
 Gaussian Beam
 =============
 
-.. |z0| replace:: *z*\ :sub:`0`
+.. |z0| replace:: `z`\ :sub:`0`
 
 The Gaussian beam is the model for a beam of coherent emission having diffraction spreading. The energy of the beam concentrates close to its axis (the paraxial beam) and quickly falls off in a transverse direction. Radial decay of the beam intensity is properly characterized by the Gaussian function. Such a beam is the most accurate diffraction approximation for a single light ray.
 
@@ -72,7 +72,7 @@ Variation of the radius of wavefront curvature along the beam propagation axis:
 Rayleigh Distance
 -----------------
 
-The Rayleigh distance is the distance at which the radius of wavefront curvature is minimal (therefore curvature is maximal) and the spot area is twice greater than the waist area. Distances *z* > |z0| are called the **far-field zone**. Distances *z* < |z0| are called the **near-field zone**.
+The Rayleigh distance is the distance at which the radius of wavefront curvature is minimal (therefore curvature is maximal) and the spot area is twice greater than the waist area. Distances `z` > |z0| are called the **far-field zone**. Distances `z` < |z0| are called the **near-field zone**.
 
     .. image:: img/gauss_z0.png
 
@@ -105,7 +105,7 @@ Angular spread of the Gaussian beam is given by the asymptotic angle of divergen
 Complex Radius of Curvature
 ---------------------------
 
-The complex radius of curvature *q(z)* is related to the beam radius *w(z)* and the radius of curvature *R(z)* by the definition:
+The complex radius of curvature `q(z)` is related to the beam radius `w(z)` and the radius of curvature `R(z)` by the definition:
 
     .. image:: img/gauss_q.png
     

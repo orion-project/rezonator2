@@ -4,10 +4,10 @@
 Thick Lens
 ==========
 
-.. |R1| replace:: *R*\ :sub:`1`
-.. |R2| replace:: *R*\ :sub:`2`
+.. |R1| replace:: `R`\ :sub:`1`
+.. |R2| replace:: `R`\ :sub:`2`
 
-Thick lens element can be parameterized with length *L* and index of refraction *n*. Also, it has two radii of curvature |R1| and |R2| for its left and right surfaces.
+Thick lens element can be parameterized with length `L` and index of refraction `n`. Also, it has two radii of curvature |R1| and |R2| for its left and right surfaces.
 
 Lens surface's ROC can be concave or convex depending on the sign of the radius of curvature. The positive direction of the curvature is from left to right, and it corresponds to the primary beam :ref:`propagation direction <propagation_dir>` in the schema.
 

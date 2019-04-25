@@ -5,7 +5,7 @@
 Spherical Mirror
 ================
 
-The spherical mirror has the same radii of curvature *R* for both tangential and sagittal planes. Matrices for both planes are equal too when the beam falls on the mirror at the normal angle. When incident beam inclined at angle *α*, then matrices for T and S planes differ. 
+The spherical mirror has the same radii of curvature `R` for both tangential and sagittal planes. Matrices for both planes are equal too when the beam falls on the mirror at the normal angle. When incident beam inclined at angle `α`, then matrices for T and S planes differ. 
 
 A spherical mirror can be concave or convex depending on the sign of radius of curvature. The sign of ROC is not related to the beam :ref:`propagation direction <propagation_dir>` but only governs how the mirror transforms the beam’s wavefront. 
 

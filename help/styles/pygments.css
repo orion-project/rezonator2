@@ -1,4 +1,4 @@
-/* rezonator styles */
+/* reZonator styles */
 
 span.menuselection {
     color: maroon;
@@ -14,5 +14,13 @@ span.math-var {
     font-family: Georgia, serif;
     font-style: italic;
     font-size: 1.2em;
+}
+
+span.app-name {
+    color: navy;
+}
+
+span.app-name-z {
+    color: red;
 }
 

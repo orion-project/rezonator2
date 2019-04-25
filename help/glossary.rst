@@ -7,7 +7,7 @@ Glossary
 Propagation Direction
 ---------------------
 
-reZonator supposes a beam propagating from left to right in the schema. For :ref:`single-pass <schema_kind_sp>` schema, it is as if a light source would be located just before the leftmost element of the schema and is directed to the right side.
+|rezonator| supposes a beam propagating from left to right in the schema. For :ref:`single-pass <schema_kind_sp>` schema, it is as if a light source would be located just before the leftmost element of the schema and is directed to the right side.
 
     .. image:: img/propagation_sp.png
 

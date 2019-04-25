@@ -3,7 +3,7 @@
 Tilted Plane-parallel Plate
 ===========================
 
-Tilted plane-parallel plate is characterized by its thick *L*, index of refraction *n*, and beam falling angle *α*. The element is similar to :doc:`ElemBrewsterPlate` but the falling angle is not fixed and can be set via the element parameter.
+Tilted plane-parallel plate is characterized by its thick `L`, index of refraction `n`, and beam falling angle `α`. The element is similar to :doc:`ElemBrewsterPlate` but the falling angle is not fixed and can be set via the element parameter.
 
 Full element
 

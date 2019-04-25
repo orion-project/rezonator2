@@ -3,7 +3,7 @@
 Tilted Plane-parallel Crystal
 =============================
 
-Tilted plane-parallel crystal characterizes by its length *L*, index of refraction *n*, and beam falling angle *α*. The element is similar to :doc:`ElemBrewsterCrystal`, but the falling angle not fixed and can be set via the element parameter. 
+Tilted plane-parallel crystal characterizes by its length `L`, index of refraction `n`, and beam falling angle `α`. The element is similar to :doc:`ElemBrewsterCrystal`, but the falling angle not fixed and can be set via the element parameter. 
 
 Full element
 

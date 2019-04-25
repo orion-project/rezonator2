@@ -16,7 +16,7 @@ For :ref:`ring resonator<schema_kind_rr>` (RR):
 
     .. image:: img/func_reprate_rr.png
 
-Where :math_var:`c` is the speed of light, and :math_var:`L` is calculated as the  sum of lengths of all elements having parameter :elem_param:`Length`  
+Where `c` is the speed of light, and `L` is calculated as the  sum of lengths of all elements having parameter :elem_param:`Length`  
 
 List of elements participating in total resonator length is shown in function's window.
 

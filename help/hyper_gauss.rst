@@ -1,9 +1,9 @@
 Calculation of Hyper-Gaussian Beams
 ===================================
 
-.. |MI| replace:: *M* :sup:`2`
-.. |z0| replace:: *z*\ :sub:`0`
-.. |w0| replace:: *w*\ :sub:`0`
+.. |MI| replace:: `M`\ :sup:`2`
+.. |z0| replace:: `z`\ :sub:`0`
+.. |w0| replace:: `w`\ :sub:`0`
 
 Algorithm for calculation of hyper-Gaussian beams is applied to analyze single-pass systems (SP) when divergence parameter (|MI|) of the input beam set to a value greater than one.
 
@@ -13,7 +13,7 @@ Algorithm for calculation of hyper-Gaussian beams is applied to analyze single-p
 Hyper-Gaussian beam
 -------------------
 
-Hyper-Gaussian beam in reZonator is defined as a beam whose divergence is |MI| times greater than divergence of a Gaussian beam having the same waist radius. Therefore its Rayleigh distance is |MI| times less.
+Hyper-Gaussian beam in |rezonator| is defined as a beam whose divergence is |MI| times greater than divergence of a Gaussian beam having the same waist radius. Therefore its :ref:`Rayleigh distance<gauss_confocal>` is |MI| times less.
 
 	.. image:: img/hypergauss_formula_1.png
 
@@ -22,11 +22,11 @@ Hyper-Gaussian beam in reZonator is defined as a beam whose divergence is |MI| t
 Equivalent Gaussian beam
 ------------------------
 
-To describe the propagation of hyper-Gaussian beam in free space, it is enough to replace the Rayleigh distance |z0| with |z0|/|MI| in formulas for *w(z)* and *R(z)*:
+To describe the propagation of hyper-Gaussian beam in free space, it is enough to replace the Rayleigh distance |z0| with |z0|/|MI| in formulas for `w(z)` and `R(z)`:
 
 	.. image:: img/hypergauss_formula_2.png
 
-It is equivalent to changing waist size from |w0| to |w0|/*M*: 
+It is equivalent to changing waist size from |w0| to |w0|/`M`: 
 
 	.. image:: img/hypergauss_formula_3.png
 
@@ -38,11 +38,11 @@ Then we can express waist radius of hyper-Gaussian beam in terms of equivalent G
 
 	.. image:: img/hypergauss_formula_5.png
 
-And substitute it into formulas for *w(z)* and *R(z)*:
+And substitute it into formulas for `w(z)` and `R(z)`:
 
 	.. image:: img/hypergauss_formula_6.png
 
-Since equivalent Gaussian beam has the same Rayleigh distance as hyper-Gaussian beam, its radius is *M* times less than radius of original beam not only at the waist but anywhere. 
+Since equivalent Gaussian beam has the same Rayleigh distance as hyper-Gaussian beam, its radius is `M` times less than radius of original beam not only at the waist but anywhere. 
 
 	.. image:: img/hypergauss_formula_7.png
 
@@ -53,11 +53,11 @@ Algorithm of computing
 
 The program uses next algorithm for calculation of propagation of hyper-Gaussian beams: 
 
-#. Equivalent size of the input beam is calculated. It is *M* times less than specified in the dialog of input beam parameters. 
+#. Equivalent size of the input beam is calculated. It is `M` times less than specified in the dialog of input beam parameters. 
 
 #. Propagation of equivalent Gaussian beam is calculated. 
 
-#. Characteristics of the resulting hyper-Gaussian beam are calculated. Its radius is *M* times greater than the radius of equivalent beam and radius of wavefront curvature is equal to that. 
+#. Characteristics of the resulting hyper-Gaussian beam are calculated. Its radius is `M` times greater than the radius of equivalent beam and radius of wavefront curvature is equal to that. 
 
 	.. image:: ./img/hypergauss_algorithm.png
 
