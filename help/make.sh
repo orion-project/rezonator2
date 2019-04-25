@@ -8,7 +8,7 @@ HELP_TOOL=qcollectiongenerator
 HELP_TOOL_VER="$(${HELP_TOOL} -v)"
 if [[ -z "${HELP_TOOL_VER}" ]]; then
   echo
-  echo "ERROR: qmake is not found in PATH."
+  echo "ERROR: ${HELP_TOOL} is not found in PATH."
   echo "Find Qt installation and update your PATH like:"
   echo 'export PATH=/home/user/Qt/5.10.0/gcc_64/bin:$PATH'
   echo 'and run this script again.'

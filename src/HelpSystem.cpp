@@ -1,6 +1,7 @@
 #include "HelpSystem.h"
 
 #include "core/Format.h"
+#include "core/Protocol.h"
 
 #include "helpers/OriDialogs.h"
 
@@ -63,42 +64,48 @@ void HelpSystem::showTopic(const QString& topic)
 
 bool HelpSystem::startAssistant()
 {
-    if (_assistant && _assistant->state() == QProcess::Running)
-        return true;
+    if (_assistant)
+    {
+        if (_assistant->state() == QProcess::Running) return true;
 
-    if (_assistant) delete _assistant;
+        delete _assistant;
+        _assistant = nullptr;
+    }
 
     QString appDir = qApp->applicationDirPath();
-
+    QString helpFile = appDir + "/rezonator.qhc";
+#ifdef Q_OS_WIN
+    QString assistantFile = appDir + "/assistant.exe";
+#else
     QString assistantFile = appDir + "/assistant";
+#endif
+    Z_INFO("Help file:" << helpFile);
+    Z_INFO("Help viewer:" << assistantFile);
+
     if (!QFile::exists(assistantFile))
     {
-        qCritical() << "Help viewer not found" << assistantFile;
+        Z_ERROR("Help viewer not found");
         QMessageBox::critical(_parent, qApp->applicationName(), "Help viewer not found");
         return false;
     }
 
-    QString helpFile = appDir + "/rezonator.qhc";
     if (!QFile::exists(helpFile))
     {
-        qCritical() << "Help file not found" << helpFile;
+        Z_ERROR("Help file not found");
         QMessageBox::critical(_parent, qApp->applicationName(), "Help file not found");
         return false;
     }
 
     QProcess *process = new QProcess(this);
-    QStringList args;
-    args << "-collectionFile" << helpFile
-         << "-enableRemoteControl"
-         << "-style" << "fusion";
-    process->start(assistantFile, args);
+    process->start(assistantFile, {"-collectionFile", helpFile, "-enableRemoteControl", "-style", "fusion"});
     if (!process->waitForStarted(5000))
     {
-        qCritical() << "Unable to start Assistant process" << process->errorString();
-        QMessageBox::critical(_parent, qApp->applicationName(), "Unable to start Assistant process");
+        Z_ERROR("Failed to start help viewer" << process->errorString());
+        QMessageBox::critical(_parent, qApp->applicationName(), "Failed to start help viewer");
         delete process;
         return false;
     }
+    Z_INFO("Help viewer PID:" << process->processId());
     connect(qApp, &QApplication::aboutToQuit, this, &HelpSystem::closeAssistant);
     _assistant = process;
     return true;

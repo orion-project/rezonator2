@@ -5,35 +5,74 @@
 @echo off
 setlocal
 
-where /Q qhelpgenerator
+set HELP_TOOL=qhelpgenerator.exe
+
+where /Q %HELP_TOOL%
 if %ERRORLEVEL% neq 0 (
 	echo.
-	echo ERROR: qhelpgenerator is not found in PATH
+	echo ERROR: %HELP_TOOL% is not found in PATH
 	echo Find Qt installation and update your PATH like:
     echo set PATH=c:\Qt\5.12.0\mingw73_64\bin;%%PATH%%
 	goto :eof
 )
-qhelpgenerator -v
+%HELP_TOOL% -v
+
 
 set SCRIPT_DIR=%~dp0
 cd %SCRIPT_DIR%\..
+
 
 set SOURCE_DIR=.\help
 set TARGET_DIR=.\out\help
 set BIN_DIR=.\bin
 
+
+echo.
+echo ***** Building html files...
 ::python -m sphinx -b html %SOURCE_DIR% %TARGET_DIR%
 ::goto :eof
 
 python -m sphinx -b qthelp %SOURCE_DIR% %TARGET_DIR%
+if %ERRORLEVEL% neq 0 goto :eof
 
+
+echo.
+echo ***** Building qt-help files...
 copy /Y %SOURCE_DIR%\rezonator.qhcp %TARGET_DIR%
+%HELP_TOOL% %TARGET_DIR%\rezonator.qhcp
+if %ERRORLEVEL% neq 0 goto :eof
 
-qhelpgenerator %TARGET_DIR%\rezonator.qhcp
 
+echo.
+echo ***** Move built help files to bin dir...
 move %TARGET_DIR%\rezonator.qch %BIN_DIR%
 move %TARGET_DIR%\rezonator.qhc %BIN_DIR%
+if %ERRORLEVEL% neq 0 goto :eof
 
+
+echo.
+echo ***** Checking Assistant app...
+for %%G in ("%path:;=" "%") do (
+    if exist %%G"\%HELP_TOOL%" (
+	    set HELP_TOOL_DIR=%%G
+		goto :qt_dir_found
+	)
+)
+echo ERROR: unable to locate %HELP_TOOL% and get Assistant path
+goto :eof
+:qt_dir_found
+set ASSISTANT_SOURCE=%HELP_TOOL_DIR%\assistant.exe
+echo Assistant path is %ASSISTANT_SOURCE%
+
+set ASSISTANT_TARGET=%BIN_DIR%\assistant.exe
+if not exist "%ASSISTANT_TARGET%" (
+    echo Copy Assistant app to bin dir...
+    copy %ASSISTANT_SOURCE% %BIN_DIR%
+)
+
+
+echo.
+echo ***** Running Assistant...
 assistant -collectionFile %BIN_DIR%\rezonator.qhc -style fusion
 
 :eof

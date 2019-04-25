@@ -1,7 +1,4 @@
-# rezonator doesn't use sql but Qt Assistant does
-# Add sql here to force deployment programs (e.g. macdeployqt)
-# track the dependency and copy required plugin to the target dir
-QT += core gui widgets printsupport sql
+QT += core gui widgets printsupport
 
 #------------------------------------------------------------
 # Definition of output

@@ -31,30 +31,52 @@ echo ***** Qt dir is %QT_DIR%
 set SCRIPT_DIR=%~dp0
 cd %SCRIPT_DIR%\..
 
+echo.
 echo ***** Create out dir if none
 if not exist "out\" mkdir out
 cd out
 
+echo.
 echo ***** Recreate target dir if already exists
 if exist "redist\" rmdir /S /Q redist
 mkdir redist
 cd redist
 
-echo ***** Running windeployqt...
-windeployqt ..\..\bin\rezonator.exe --dir . --no-translations --no-system-d3d-compiler --no-opengl-sw
+set BIN_DIR=..\..\bin
 
-echo ***** Copy additional files which are ignored by windeployqt for some reason
-copy /Y %QT_DIR%\libgcc_s_seh-1.dll
-copy /Y %QT_DIR%\"libstdc++-6.dll"
-copy /Y %QT_DIR%\libwinpthread-1.dll
+echo.
+echo ***** Running windeployqt...
+windeployqt %BIN_DIR%\rezonator.exe --dir . --no-translations --no-system-d3d-compiler --no-opengl-sw
+windeployqt %QT_DIR%\assistant.exe --dir . --no-translations --no-system-d3d-compiler --no-opengl-sw
+
+echo.
+echo ***** Copy additional files ignored by windeployqt...
+copy %QT_DIR%\assistant.exe
+copy %QT_DIR%\libgcc_s_seh-1.dll
+copy %QT_DIR%\"libstdc++-6.dll"
+copy %QT_DIR%\libwinpthread-1.dll
+
+echo.
+echo ***** Clean some excessive files...
 if exist libEGL.dll del libEGL.dll
 if exist libGLESV2.dll del libGLESV2.dll
+if exist sqldrivers\qsqlmysql.dll del sqldrivers\qsqlmysql.dll
+if exist sqldrivers\qsqlodbc.dll del sqldrivers\qsqlodbc.dll
+if exist sqldrivers\qsqlpsql.dll del sqldrivers\qsqlpsql.dll
+if exist imageformats\qicns.dll del imageformats\qicns.dll
+if exist imageformats\qtga.dll del imageformats\qtga.dll
+if exist imageformats\qtiff.dll del imageformats\qtiff.dll
+if exist imageformats\qwbmp.dll del imageformats\qwbmp.dll
+if exist imageformats\qwebp.dll del imageformats\qwebp.dll
 
-echo ***** Copying project files...
-copy /Y ..\..\bin\rezonator.exe
-copy /Y ..\..\bin\rezonator_test.bat
-copy /Y ..\..\bin\rezonator_test_nogui.bat
-if not exist "examples\" mkdir examples
-if not exist "test_files\" mkdir test_files
-copy /Y ..\..\bin\examples\*.* examples
-copy /Y ..\..\bin\test_files\*.* test_files
+echo.
+echo ***** Copy project files...
+copy %BIN_DIR%\rezonator.exe
+copy %BIN_DIR%\rezonator_test.bat
+copy %BIN_DIR%\rezonator_test_nogui.bat
+mkdir examples
+mkdir test_files
+copy %BIN_DIR%\examples\*.* examples
+copy %BIN_DIR%\test_files\*.* test_files
+copy %BIN_DIR%\rezonator.qch
+copy %BIN_DIR%\rezonator.qhc
