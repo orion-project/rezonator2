@@ -23,7 +23,7 @@ cd ${SCRIPT_DIR}/..
 
 SOURCE_DIR=./help
 TARGET_DIR=./out/help
-BIN_DIR=./out/bin
+BIN_DIR=./bin
 
 if [ "$(uname)" == "Darwin" ]; then
   HELP_TOOL_PATH="$(which ${HELP_TOOL})"
@@ -35,9 +35,11 @@ fi
 
 python3 -m sphinx -b qthelp ${SOURCE_DIR} ${TARGET_DIR}
 
-# TODO: make help icon and about text
 cp ${SOURCE_DIR}/rezonator.qhcp ${TARGET_DIR}
 
 ${HELP_TOOL} ${TARGET_DIR}/rezonator.qhcp
 
-${ASSISTANT} -collectionFile ${TARGET_DIR}/rezonator.qhc -style fusion
+mv ${TARGET_DIR}/rezonator.qhc ${BIN_DIR}
+mv ${TARGET_DIR}/rezonator.qch ${BIN_DIR}
+
+${ASSISTANT} -collectionFile ${BIN_DIR}/rezonator.qhc -style fusion

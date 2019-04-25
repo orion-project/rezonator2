@@ -1,4 +1,9 @@
-/* reZonator styles */
+/*
+  reZonator styles
+  pigments.css is the default css file for syntax highlightning.
+  We don't use syntax highlightning in this manual
+  so it is easy to use this file for some app specific styles
+*/
 
 span.menuselection {
     color: maroon;

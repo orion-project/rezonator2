@@ -5,7 +5,10 @@
       "date": "????-??-??",
       "changes": [
         {
-          "text": "2D Stability Map function"
+          "text": "2D Stability Map function."
+        },
+        {
+          "text": "Intergation with Qt Assistant and initial help pages."
         }
       ]
     },
