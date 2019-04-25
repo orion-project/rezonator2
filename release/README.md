@@ -1,6 +1,6 @@
 # Release
 
-This directory contains some stuff used during preparation of release version of the application and making redistributable packages. 
+This directory contains some stuff used during preparation of release version of the application and making redistributable packages.
 
 Commands for running scripts suppose that current dir is the project root - a directory containing `rezonator.pro` file.
 
@@ -20,7 +20,7 @@ See: [Semantic Versioning](https://semver.org)
 Increase at least one of `MAJOR`, `MINOR` or `MICRO` numbers when create a new release.
 
 * Update version info that will be built into the application
- 
+
 ```bash
  ./release/make_version.py 2.0.2-alpha2
 ```
@@ -45,6 +45,7 @@ git push origin v2.0.2-alpha2
 git pull --prune --tags
 git pull
 ./scripts/build_release.sh
+./help/make.sh
 ./scripts/make_package_linux.sh
 ```
 
@@ -56,6 +57,7 @@ Target package is `./out/rezonator-{version}.AppImage`
 git pull --prune --tags
 git pull
 ./scripts/build_release.sh
+./help/make.sh
 ./scripts/make_package_macos.sh
 ```
 
@@ -67,6 +69,7 @@ Target package is `./out/rezonator-{version}.dmg`
 git pull --prune --tags
 git pull
 scripts\build_release.bat
+help\make.bat
 scripts\make_package_win.bat
 ```
 

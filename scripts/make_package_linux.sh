@@ -14,12 +14,12 @@ cd out
 # Download linuxdeplyqt if none (https://github.com/probonopd/linuxdeployqt)
 # NOTE: It've broken compatibility with newer OS versions forsing to stick at Ubuntu 14 LTS.
 # See discussion here: https://github.com/probonopd/linuxdeployqt/issues/340
-# But I have nor a machine running Trusty or a wish to stick at Qt 5.5 
+# But I have nor a machine running Trusty or a wish to stick at Qt 5.5
 # (the last supported for Trusty) so have to use a more relaxed 5th version of the tool.
 #LINUXDEPLOYQT=linuxdeployqt-continuous-x86_64.AppImage
 #LINUXDEPLOYQT_URL=https://github.com/probonopd/linuxdeployqt/releases/download/continuous/${LINUXDEPLOYQT}
 LINUXDEPLOYQT=linuxdeployqt-5-x86_64.AppImage
-LINUXDEPLOYQT_URL=https://github.com/probonopd/linuxdeployqt/releases/download/5/${LINUXDEPLOYQT}  
+LINUXDEPLOYQT_URL=https://github.com/probonopd/linuxdeployqt/releases/download/5/${LINUXDEPLOYQT}
 if [ ! -f ${LINUXDEPLOYQT} ]; then
   echo
   echo "Downloading ${LINUXDEPLOYQT}..."
@@ -37,6 +37,9 @@ mkdir -p AppDir/usr/lib
 mkdir -p AppDir/usr/share/applications
 mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
 cp ../bin/rezonator AppDir/usr/bin
+cp ../bin/assistant AppDir/usr/bin
+cp ../bin/rezonator.qch AppDir/usr/bin
+cp ../bin/rezonator.qhc AppDir/usr/bin
 cp -r ../bin/examples AppDir/usr/bin
 cp -r ../bin/test_files AppDir/usr/bin
 cp ../release/rezonator.desktop AppDir/usr/share/applications

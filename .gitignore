@@ -5,6 +5,7 @@ bin/rezonator.app
 bin/rezonator.exe
 bin/rezonator.qch
 bin/rezonator.qhc
+bin/assistant*
 *.autosave
 *.user*
 *.exe
