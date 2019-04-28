@@ -106,13 +106,37 @@ bool HelpSystem::startAssistant()
         return false;
     }
     Z_INFO("Help viewer PID:" << process->processId());
+    connect(process, SIGNAL(finished(int)), this, SLOT(assistantFinished(int)));
+    connect(process, &QProcess::readyReadStandardOutput, this, &HelpSystem::readStdout);
+    connect(process, &QProcess::readyReadStandardError, this, &HelpSystem::readStderr);
     connect(qApp, &QApplication::aboutToQuit, this, &HelpSystem::closeAssistant);
     _assistant = process;
     return true;
 }
 
+void HelpSystem::readStdout()
+{
+    Z_INFO("Help viewer stdout:" << QString::fromLocal8Bit(_assistant->readAllStandardOutput()));
+}
+
+void HelpSystem::readStderr()
+{
+    Z_INFO("Help viewer stderr:" << QString::fromLocal8Bit(_assistant->readAllStandardError()));
+}
+
+void HelpSystem::assistantFinished(int exitCode)
+{
+    Z_INFO("Help viewer finished, exit code" << exitCode);
+    if (_assistant)
+    {
+        delete _assistant;
+        _assistant = nullptr;
+    }
+}
+
 void HelpSystem::closeAssistant()
 {
+    if (!_assistant) return;
     if (_assistant->state() == QProcess::Running)
     {
         _assistant->terminate();

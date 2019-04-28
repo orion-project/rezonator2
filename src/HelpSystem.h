@@ -28,6 +28,11 @@ public slots:
     void checkUpdates();
     void showAbout();
 
+private slots:
+    void assistantFinished(int exitCode);
+    void readStdout();
+    void readStderr();
+
 private:
     HelpSystem();
 
