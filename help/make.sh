@@ -3,15 +3,31 @@
 # Build application manual.
 #
 
+# https://misc.flogisoft.com/bash/tip_colors_and_formatting
+COLOR_HEADER=$"\033[95m"
+COLOR_OKBLUE=$"\033[94m"
+COLOR_OKGREEN=$"\033[92m"
+COLOR_WARNING=$"\033[93m"
+COLOR_FAIL=$"\033[91m"
+COLOR_BOLD=$"\033[1m"
+COLOR_UNDERLINE=$"\033[4m"
+COLOR_RESET=$"\033[0m"
+
+print_header() {
+  echo
+  echo -e "${COLOR_HEADER}$1${COLOR_RESET}"
+}
+
 # Check if Qt is in PATH
 HELP_TOOL=qcollectiongenerator
 HELP_TOOL_VER="$(${HELP_TOOL} -v)"
 if [[ -z "${HELP_TOOL_VER}" ]]; then
   echo
-  echo "ERROR: ${HELP_TOOL} is not found in PATH."
+  echo -e "${COLOR_FAIL}ERROR: ${HELP_TOOL} is not found in PATH.${COLOR_RESET}"
   echo "Find Qt installation and update your PATH like:"
-  echo 'export PATH=/home/user/Qt/5.10.0/gcc_64/bin:$PATH'
-  echo 'and run this script again.'
+  echo -e "${COLOR_BOLD}export PATH=/home/user/Qt/5.10.0/gcc_64/bin:\$PATH${COLOR_RESET}"
+  echo "and run this script again."
+  echo
   exit
 else
   echo
@@ -31,19 +47,16 @@ else
 fi
 
 build_help_files() {
-  echo
-  echo "Building html files..."
+  print_header "Building html files..."
   python3 -m sphinx -b qthelp ${SOURCE_DIR} ${TARGET_DIR}
   if [ "${?}" != "0" ]; then exit 1; fi
 
-  echo
-  echo "Building qt-help files..."
+  print_header "Building qt-help files..."
   cp ${SOURCE_DIR}/rezonator.qhcp ${TARGET_DIR}
   ${HELP_TOOL} ${TARGET_DIR}/rezonator.qhcp
   if [ "${?}" != "0" ]; then exit 1; fi
 
-  echo
-  echo "Move built help files to bin dir..."
+  print_header "Move built help files to bin dir..."
   mv ${TARGET_DIR}/rezonator.qhc ${BIN_DIR}
   mv ${TARGET_DIR}/rezonator.qch ${BIN_DIR}
   if [ "${?}" != "0" ]; then exit 1; fi
@@ -51,8 +64,7 @@ build_help_files() {
 
 
 prepare_assistant() {
-  echo
-  echo "Checking Assistant app..."
+  print_header "Checking Assistant app..."
   HELP_TOOL_PATH="$(which ${HELP_TOOL})"
   HELP_TOOL_DIR="$(dirname ${HELP_TOOL_PATH})"
   if [ "$(uname)" == "Darwin" ]; then
@@ -68,10 +80,10 @@ prepare_assistant() {
     echo "Already there"
     return
   fi
-  
+
   echo "Copy Assistant app to bin dir..."
   cp ${ASSISTANT_SOURCE} ${ASSISTANT_TARGET}
-  
+
   echo "Modify Asisstant's RPATH to make it runnable on dev system outside of Qt Creator..."
   if [ "$(uname)" == "Darwin" ]; then
     # There are two LC_RPATH sections in rezonator exe and only one has absolute path
@@ -82,15 +94,19 @@ prepare_assistant() {
     echo "RPATH=${REZONATOR_RPATH}"
     install_name_tool -add_rpath ${REZONATOR_RPATH} ${ASSISTANT_TARGET}
   else
-    echo "TODO"
-  fi 
-  if [ "${?}" != "0" ]; then exit 1; fi 
+    # Example of line: "  RPATH                /home/user/Qt/5.10.0/gcc_64/lib"
+    REZONATOR_RPATH="$(objdump -x ${BIN_DIR}/rezonator | grep RPATH | sed -e 's/^\s*RPATH\s*//')"
+    echo "RPATH=${REZONATOR_RPATH}"
+    # sudo apt install patchelf
+    # Even with `--force-rpath` it sets not `RPATH` but `RUNPATH`, but it's works anyway
+    patchelf --force-rpath --set-rpath "${REZONATOR_RPATH}" ${BIN_DIR}/assistant
+  fi
+  if [ "${?}" != "0" ]; then exit 1; fi
 }
 
 
 run_assistant() {
-  echo
-  echo "Running Assistant..."
+  print_header "Running Assistant..."
   ${ASSISTANT_TARGET} -collectionFile ${BIN_DIR}/rezonator.qhc -style fusion
 }
 
@@ -100,3 +116,7 @@ build_help_files
 prepare_assistant
 
 run_assistant
+
+echo
+echo -e "${COLOR_OKGREEN}Done${COLOR_RESET}"
+echo
