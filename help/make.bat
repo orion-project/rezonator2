@@ -1,12 +1,13 @@
-::
-:: Build application manual.
-::
-
 @echo off
 setlocal
 
+echo Build application manual.
+
+
 set HELP_TOOL=qhelpgenerator.exe
 
+echo.
+echo ***** Check if Qt is in PATH
 where /Q %HELP_TOOL%
 if %ERRORLEVEL% neq 0 (
 	echo.
@@ -27,6 +28,7 @@ set TARGET_DIR=.\out\help
 set BIN_DIR=.\bin
 
 
+
 echo.
 echo ***** Building html files...
 ::python -m sphinx -b html %SOURCE_DIR% %TARGET_DIR%
@@ -36,6 +38,7 @@ python -m sphinx -b qthelp %SOURCE_DIR% %TARGET_DIR%
 if %ERRORLEVEL% neq 0 goto :eof
 
 
+
 echo.
 echo ***** Building qt-help files...
 copy /Y %SOURCE_DIR%\rezonator.qhcp %TARGET_DIR%
@@ -43,11 +46,13 @@ copy /Y %SOURCE_DIR%\rezonator.qhcp %TARGET_DIR%
 if %ERRORLEVEL% neq 0 goto :eof
 
 
+
 echo.
 echo ***** Move built help files to bin dir...
 move %TARGET_DIR%\rezonator.qch %BIN_DIR%
 move %TARGET_DIR%\rezonator.qhc %BIN_DIR%
 if %ERRORLEVEL% neq 0 goto :eof
+
 
 
 echo.
@@ -60,19 +65,29 @@ for %%G in ("%path:;=" "%") do (
 )
 echo ERROR: unable to locate %HELP_TOOL% and get Assistant path
 goto :eof
+
 :qt_dir_found
 set ASSISTANT_SOURCE=%HELP_TOOL_DIR%\assistant.exe
-echo Assistant path is %ASSISTANT_SOURCE%
+echo Source Assistant path is %ASSISTANT_SOURCE%
 
 set ASSISTANT_TARGET=%BIN_DIR%\assistant.exe
+echo Target Assistant path is %ASSISTANT_TARGET%
 if not exist "%ASSISTANT_TARGET%" (
     echo Copy Assistant app to bin dir...
     copy %ASSISTANT_SOURCE% %BIN_DIR%
+) else (
+    echo Already there
 )
+
 
 
 echo.
 echo ***** Running Assistant...
 assistant -collectionFile %BIN_DIR%\rezonator.qhc -style fusion
+
+
+echo.
+echo ***** Done
+echo.
 
 :eof
