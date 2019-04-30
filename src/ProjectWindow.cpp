@@ -24,7 +24,6 @@
 #include "widgets/OriMruMenu.h"
 #include "widgets/OriMdiToolBar.h"
 #include "widgets/OriStatusBar.h"
-#include "widgets/OriStylesMenu.h"
 
 #include <QAction>
 #include <QApplication>
@@ -193,7 +192,6 @@ void ProjectWindow::createMenuBar()
     menuEdit = Ori::Gui::menu(tr("&Edit"), this,
         { actnEditCut, actnEditCopy, actnEditPaste, nullptr, actnEditSelectAll });
 
-    _stylesMenu = new Ori::Widgets::StylesMenu(CommonData::instance()->styler(), this);
     _langsMenu = new Ori::Widgets::LanguagesMenu(CommonData::instance()->translator(), ":/toolbar16/langs", this);
     menuView = new QMenu(tr("&View"), this);
 
@@ -290,7 +288,6 @@ void ProjectWindow::updateMenuBar()
             menuView->addSeparator();
         }
     }
-    menuView->addMenu(_stylesMenu);
     menuView->addMenu(_langsMenu);
 
     // Update menu bar

@@ -14,17 +14,21 @@ int main(int argc, char* argv[])
 {
     qsrand(static_cast<uint>(std::time(nullptr)));
 
-    //Ori::Debug::installMessageHandler();
-
     QApplication app(argc, argv);
     app.setApplicationName("reZonator");
     app.setOrganizationName("orion-project.org");
+    app.setStyle("fusion");
 
     // Run test session if requested
     if (Ori::Testing::isTesting())
         return Ori::Testing::run(app, { ADD_SUITE(Z::Tests) });
 
     QStringList args = QApplication::arguments();
+
+    if (args.contains("console"))
+        Ori::Debug::installMessageHandler();
+
+    qDebug() << "test";
 
     Settings::instance().load();
     Settings::instance().isDevMode = args.contains("dev_mode");

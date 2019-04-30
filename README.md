@@ -4,7 +4,7 @@
 
 This is the official port of reZonator to [Qt](qt.io) framework. The goal is to make it open-source and cross-platform.
 
-Currently, version 2 is in alpha state, but it implements most important functions of version 1:
+Currently, version 2 is in alpha state, but it implements the most important functions of version 1:
 
 * Reading of project files (schemas) from version 1.
 * Stability calculation for resonators (standing-wave and ring).
@@ -38,7 +38,7 @@ Windows does not provide default command line tools like `wget`, `tar` or `make`
 
 
 ## Build
-Where it is possible commands are the same for different OS, with some exception e.g. Windows doesn't have `sudo` command and you have to rum `cmd` as Administrator instead. 
+Where it is possible, commands are the same for different OS, with some exceptions. E.g. Windows doesn't have `sudo` command, and you have to rum `cmd` as Administrator instead. 
 
 ### Application
 

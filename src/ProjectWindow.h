@@ -19,7 +19,6 @@ class SchemaMdiArea;
 class SchemaViewWindow;
 
 namespace Ori {
-    class Styler;
     class Translator;
     class MruFileList;
 
@@ -57,7 +56,7 @@ protected:
 private:
     QMenu *menuFile, *menuEdit, *menuHelp, *menuWindow, *menuTools,
           *menuElement, *menuFunctions, *menuView,
-          *menuLangs, *menuStyles;
+          *menuLangs;
 
     QAction *actnFileNew, *actnFileOpen, *actnFileExit, *actnFileSave, *actnFileSaveCopy,
             *actnFileSaveAs, *actnFileTripType, *actnFilePump, *actnFileLambda, *actnFileSummary,
@@ -85,7 +84,6 @@ private:
 
     Ori::Widgets::MruMenu* _mruMenu;
     Ori::Widgets::MdiToolBar* _mdiToolbar;
-    Ori::Widgets::StylesMenu* _stylesMenu;
     Ori::Widgets::LanguagesMenu* _langsMenu;
     SchemaViewWindow* _schemaWindow;
     bool _forceClosing = false;
