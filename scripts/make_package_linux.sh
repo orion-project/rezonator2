@@ -83,6 +83,7 @@ rename_to_version() {
     echo
     echo -e "${COLOR_WARNING}Warning: Unknown release version.${COLOR_RESET}"
     echo "Run 'release/make_version.py' script to generate version number."
+    exit 1
   fi
 }
 

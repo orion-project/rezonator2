@@ -11,11 +11,19 @@ cd out
 
 
 print_header "Building..."
+
+START_TIME=`date +%s`
+
 if [ -d BuildDir ]; then rm -rdf BuildDir; fi
 mkdir BuildDir
 cd BuildDir
 qmake -config release ../../rezonator.pro
 make
+
+END_TIME=`date +%s`
+echo
+echo "Finished in `expr $END_TIME - $START_TIME` seconds"
+
 exit_if_fail
 
 print_done
