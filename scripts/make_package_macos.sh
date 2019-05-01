@@ -50,11 +50,9 @@ populate_rezonator() {
   echo "Add Assistant and related libs..."
   cp ${ASSISTANT_DIR}/MacOS/Assistant ${REZONATOR_DIR}/MacOS/assistant
   cp -R ${ASSISTANT_DIR}/Frameworks/QtHelp.framework ${REZONATOR_DIR}/Frameworks
-  cp -R ${ASSISTANT_DIR}/Frameworks/QtNetwork.framework ${REZONATOR_DIR}/Frameworks
   cp -R ${ASSISTANT_DIR}/Frameworks/QtSql.framework ${REZONATOR_DIR}/Frameworks
   mkdir ${REZONATOR_DIR}/PlugIns/sqldrivers
   cp ${ASSISTANT_DIR}/PlugIns/sqldrivers/libqsqlite.dylib ${REZONATOR_DIR}/PlugIns/sqldrivers
-  cp -r ${ASSISTANT_DIR}/PlugIns/bearer ${REZONATOR_DIR}/PlugIns
   exit_if_fail
 }
 
