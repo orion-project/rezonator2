@@ -18,7 +18,7 @@ Windows:
 ```bash
 python -m pip install sphinx
 ```
-Python for Windows doesn't provide alias `python3` so be sure Python 3 is in PATH
+Python for Windows doesn't provide alias `python3` so be sure Python 3 is in `PATH`
 
 ## Build
 

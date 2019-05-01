@@ -10,14 +10,14 @@ Commands for running scripts suppose that current dir is the project root - a di
 MAJOR . MINOR . PATCH [-CODENAME]
 ```
 
-See: [Semantic Versioning](https://semver.org)
+See [Semantic Versioning](https://semver.org)
 
 
 **Prepare new release**
 
-* Decide version numbers for new release
+* Decide a version numbers for the new release
 
-Increase at least one of `MAJOR`, `MINOR` or `MICRO` numbers when create a new release.
+Increase at least one of `MAJOR`, `MINOR` or `MICRO` numbers when creating a new release.
 
 * Update version info that will be built into the application
 
@@ -32,7 +32,7 @@ Increase at least one of `MAJOR`, `MINOR` or `MICRO` numbers when create a new r
  git push
 ```
 
-* Make new release tag
+* Make a new release tag
 
 ```bash
 git tag -a v2.0.2-alpha2 -m 'Short version description'
@@ -76,4 +76,5 @@ scripts\make_package_win.bat
 Target package is `out\redist` directory.
 
 **TODO:** Pack this dir into zip archive (using python? there is no `zip` on Windows by default).
-**TODO:** Make InnoSetup installable package.
+
+**TODO:** Make [InnoSetup](http://www.jrsoftware.org) installable package.

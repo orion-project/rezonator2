@@ -38,7 +38,7 @@ Windows does not provide default command line tools like `wget`, `tar` or `make`
 
 
 ## Build
-Where it is possible, commands are the same for different OS, with some exceptions. E.g. Windows doesn't have `sudo` command, and you have to rum `cmd` as Administrator instead. 
+Where it is possible, commands are the same for different OS, with some exceptions. E.g. Windows doesn't have `sudo` command, and you have to run `cmd` as Administrator instead. 
 
 ### Application
 
