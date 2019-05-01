@@ -22,12 +22,16 @@ inline QString lambda() { return QStringLiteral("λ"); }
 inline QString alpha() { return QStringLiteral("α"); }
 
 inline QString homepage() { return "http://rezonator.orion-project.org"; }
+inline QString versionFileUrl() { return "http://rezonator.orion-project.org/files/version.xml"; }
+inline QString downloadPage() { return "http://rezonator.orion-project.org/index.php?page=dload"; }
 inline QString sourcepage() { return "https://github.com/orion-project/rezonator2"; }
 inline QString newIssueUrl() { return "https://github.com/orion-project/rezonator2/issues/new"; }
 inline QString email() { return "rezonator@orion-project.org"; }
 
 inline QChar multDot() { return QChar(0x00B7); }
 inline QChar multX() { return QChar(0x00D7); }
+
+inline QString appName() { return "<span style='color:navy'>re<span style='color:red'>Z</span>onator</span>"; }
 
 inline QString appVersion()
 {

@@ -496,6 +496,7 @@ ToolsStartPanel::ToolsStartPanel() : StartPanel("panel_tools")
         layout->addWidget(makeButton(":/toolbar/protocol", tr("Edit Stylesheet"), SLOT(editStyleSheet())));
     layout->addWidget(makeButton(":/toolbar/settings", tr("Edit Settings"), SLOT(editAppSettings())));
     layout->addWidget(makeButton(":/toolbar/help", tr("Show Manual"), SLOT(showUserManual())));
+    layout->addWidget(makeButton(":/toolbar/update", tr("Check Updates"), SLOT(checkUpdates())));
     layout->addStretch();
 }
 
@@ -517,6 +518,11 @@ void ToolsStartPanel::editAppSettings()
 void ToolsStartPanel::showUserManual()
 {
     Z::HelpSystem::instance()->showContents();
+}
+
+void ToolsStartPanel::checkUpdates()
+{
+    Z::HelpSystem::instance()->checkUpdates();
 }
 
 //------------------------------------------------------------------------------

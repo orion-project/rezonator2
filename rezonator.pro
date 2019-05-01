@@ -1,4 +1,4 @@
-QT += core gui widgets printsupport
+QT += core gui widgets printsupport network
 
 #------------------------------------------------------------
 # Definition of output

@@ -4,21 +4,25 @@
 #include "core/Protocol.h"
 
 #include "helpers/OriDialogs.h"
+#include "core/OriVersion.h"
 
 #include <QApplication>
 #include <QDebug>
 #include <QDesktopServices>
 #include <QFile>
 #include <QMessageBox>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 #include <QProcess>
 #include <QPushButton>
+#include <QStyle>
 #include <QUrl>
 
 namespace {
 
 Z::HelpSystem* __instance = nullptr;
 
-}
+} // namespace
 
 namespace Z {
 
@@ -85,23 +89,27 @@ bool HelpSystem::startAssistant()
     if (!QFile::exists(assistantFile))
     {
         Z_ERROR("Help viewer not found");
-        QMessageBox::critical(_parent, qApp->applicationName(), "Help viewer not found");
+        Ori::Dlg::error("Help viewer not found");
         return false;
     }
 
     if (!QFile::exists(helpFile))
     {
         Z_ERROR("Help file not found");
-        QMessageBox::critical(_parent, qApp->applicationName(), "Help file not found");
+        Ori::Dlg::error("Help file not found");
         return false;
     }
 
     QProcess *process = new QProcess(this);
-    process->start(assistantFile, {"-collectionFile", helpFile, "-enableRemoteControl", "-style", "fusion"});
+    process->start(assistantFile, {
+                       "-collectionFile", helpFile,
+                       "-style", qApp->style()->objectName(),
+                       "-enableRemoteControl"
+                   });
     if (!process->waitForStarted(5000))
     {
         Z_ERROR("Failed to start help viewer" << process->errorString());
-        QMessageBox::critical(_parent, qApp->applicationName(), "Failed to start help viewer");
+        Ori::Dlg::error("Failed to start help viewer");
         delete process;
         return false;
     }
@@ -129,7 +137,7 @@ void HelpSystem::assistantFinished(int exitCode)
     Z_INFO("Help viewer finished, exit code" << exitCode);
     if (_assistant)
     {
-        delete _assistant;
+        _assistant->deleteLater();
         _assistant = nullptr;
     }
 }
@@ -153,7 +161,48 @@ void HelpSystem::visitHomePage()
 
 void HelpSystem::checkUpdates()
 {
-    // TODO:NEXT-VER
+    if (_updateChecker)
+    {
+        qDebug() << "Check is already in progress";
+        return;
+    }
+    _updateChecker = new QNetworkAccessManager(this);
+    _updateReply = _updateChecker->get(QNetworkRequest(QUrl(Z::Strs::versionFileUrl())));
+    connect(_updateReply, &QNetworkReply::finished, [this](){
+        if (!_updateReply) return;
+        auto versionData = _updateReply->readAll();
+        _updateReply->deleteLater();
+        _updateReply = nullptr;
+        _updateChecker->deleteLater();
+        _updateChecker = nullptr;
+        versionReceived(versionData);
+    });
+    connect(_updateReply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), [this](QNetworkReply::NetworkError){
+        auto errorMsg =_updateReply->errorString();
+        qCritical() << "Network error" << errorMsg;
+        _updateReply->deleteLater();
+        _updateReply = nullptr;
+        _updateChecker->deleteLater();
+        _updateChecker = nullptr;
+        Ori::Dlg::error(tr("Failed to get version information"));
+    });
+}
+
+void HelpSystem::versionReceived(QByteArray versionData) const
+{
+    auto versionStr = QString::fromLatin1(versionData);
+    Ori::Version serverVersion(versionStr);
+    Ori::Version currentVersion(APP_VER_MAJOR, APP_VER_MINOR, APP_VER_PATCH);
+    if (currentVersion >= serverVersion)
+        Ori::Dlg::info(tr("<p>You are using version %1"
+                          "<p>Version on the server is %2"
+                          "<p>You are using the most recent version of %3")
+                       .arg(Z::Strs::appVersion(), versionStr, Z::Strs::appName()));
+    else Ori::Dlg::info(tr("<p>You are using version %1"
+                           "<p>Version on the server is <b>%2</b>"
+                           "<p>There is a newer version of %3"
+                           "<p><a href='%4'>Open download page</a>")
+                        .arg(Z::Strs::appVersion(), versionStr, Z::Strs::appName(), Z::Strs::downloadPage()));
 }
 
 void HelpSystem::sendBugReport()
@@ -179,7 +228,7 @@ void HelpSystem::showAbout()
                 "<p>The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING "
                 "THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE."
                 )
-            .replace("{app}", qApp->applicationName())
+            .replace("{app}", Z::Strs::appName())
             .replace("{app_ver}", Z::Strs::appVersion())
             .replace("{app_year}", Z::Strs::appVersionYear())
             .replace("{build_date}", Z::Strs::appVersionDate())

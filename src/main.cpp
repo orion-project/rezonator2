@@ -25,10 +25,10 @@ int main(int argc, char* argv[])
 
     QStringList args = QApplication::arguments();
 
+    // It's only useful on Windows where there is no
+    // direct way to use the console for GUI applications.
     if (args.contains("console"))
         Ori::Debug::installMessageHandler();
-
-    qDebug() << "test";
 
     Settings::instance().load();
     Settings::instance().isDevMode = args.contains("dev_mode");

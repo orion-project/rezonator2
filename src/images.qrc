@@ -37,6 +37,7 @@
         <file alias="gauss_pos_z">../img/toolbar/gauss_pos_z.svg</file>
         <file alias="gauss">../img/toolbar/gauss.svg</file>
         <file alias="help">../img/toolbar/help.svg</file>
+        <file alias="home">../img/toolbar/home.svg</file>
         <file alias="info">../img/toolbar/info.svg</file>
         <file alias="limits_auto_x">../img/toolbar/limits_auto_x.svg</file>
         <file alias="limits_auto_y">../img/toolbar/limits_auto_y.svg</file>

@@ -4,6 +4,8 @@
 #include <QObject>
 
 QT_BEGIN_NAMESPACE
+class QNetworkAccessManager;
+class QNetworkReply;
 class QProcess;
 QT_END_NAMESPACE
 
@@ -38,9 +40,12 @@ private:
 
     QWidget* _parent = nullptr;
     QProcess* _assistant = nullptr;
+    QNetworkAccessManager* _updateChecker = nullptr;
+    QNetworkReply* _updateReply = nullptr;
 
     bool startAssistant();
     void closeAssistant();
+    void versionReceived(QByteArray versionData) const;
 };
 
 } // namespace Z

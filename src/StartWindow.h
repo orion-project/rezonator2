@@ -135,6 +135,7 @@ private slots:
     void editStyleSheet();
     void editAppSettings();
     void showUserManual();
+    void checkUpdates();
 };
 
 //------------------------------------------------------------------------------
