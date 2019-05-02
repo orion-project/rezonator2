@@ -7,7 +7,7 @@
     <stop offset="0" stop-color="#86c57f"/>
     <stop offset="1" stop-color="#b2dd7d"/>
   </linearGradient>
-  <linearGradient id="c" gradientUnits="userSpaceOnUse" x1="21.05571423836" x2="231.333025862" y1="-216.7266809728" y2="-4.26391299172">
+  <linearGradient id="c" gradientUnits="userSpaceOnUse" x1="21.055714" x2="231.333026" y1="-216.726681" y2="-4.263913">
     <stop offset="0" stop-color="#a4c8f0"/>
     <stop offset="1" stop-color="#737ba6"/>
   </linearGradient>

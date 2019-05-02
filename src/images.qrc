@@ -14,6 +14,7 @@
         <file alias="elem_move_down">../img/toolbar/elem_move_down.svg</file>
         <file alias="elem_matr">../img/toolbar/elem_matr.svg</file>
         <file alias="elem_prop">../img/toolbar/elem_prop.svg</file>
+        <file alias="equals">../img/toolbar/equals.svg</file>
         <file alias="error">../img/toolbar/error.svg</file>
         <file alias="formula_stab_normal">../img/misc/formula_stab_normal.svg</file>
         <file alias="formula_stab_squared">../img/misc/formula_stab_squared.svg</file>
@@ -35,7 +36,6 @@
         <file alias="gauss_near_zone">../img/toolbar/gauss_near_zone.svg</file>
         <file alias="gauss_pos_w">../img/toolbar/gauss_pos_w.svg</file>
         <file alias="gauss_pos_z">../img/toolbar/gauss_pos_z.svg</file>
-        <file alias="gauss">../img/toolbar/gauss.svg</file>
         <file alias="help">../img/toolbar/help.svg</file>
         <file alias="home">../img/toolbar/home.svg</file>
         <file alias="info">../img/toolbar/info.svg</file>
@@ -150,15 +150,16 @@
         <file alias="view">../img/misc/opts_window.svg</file>
     </qresource>
     <qresource prefix="/window_icons">
-        <file alias="main">../img/icon/main_2.svg</file>
-        <file alias="schema">../img/icon/schema.svg</file>
+        <file alias="calculator">../img/icon/calculator.svg</file>
         <file alias="catalog">../img/icon/elements.svg</file>
-        <file alias="gauss_calc">../img/icon/gauss.svg</file>
-        <file alias="options">../img/icon/settings.svg</file>
-        <file alias="wavelength">../img/icon/wavelength.svg</file>
         <file alias="element">../img/icon/element.svg</file>
+        <file alias="gauss_calc">../img/icon/gauss.svg</file>
+        <file alias="main">../img/icon/main_2.svg</file>
+        <file alias="options">../img/icon/settings.svg</file>
         <file alias="parameter">../img/icon/parameter.svg</file>
         <file alias="pump">../img/icon/pump.svg</file>
+        <file alias="schema">../img/icon/schema.svg</file>
+        <file alias="wavelength">../img/icon/wavelength.svg</file>
     </qresource>
     <qresource prefix="/icons">
         <file alias="pump_on">../img/misc/lamp_green.svg</file>

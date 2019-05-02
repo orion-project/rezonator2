@@ -132,6 +132,7 @@ signals:
 
 private slots:
     void showGaussCalculator();
+    void showCalculator();
     void editStyleSheet();
     void editAppSettings();
     void showUserManual();

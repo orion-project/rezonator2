@@ -1,6 +1,7 @@
 #include "ProjectWindow.h"
 
 #include "CalcManager.h"
+#include "CalculatorWindow.h"
 #include "CommonData.h"
 #include "ElementsCatalogDialog.h"
 #include "GaussCalculatorWindow.h"
@@ -147,6 +148,7 @@ void ProjectWindow::createActions()
 
     actnToolsCatalog = A_(tr("&Elements Catalog"), this, SLOT(showElementsCatalog()), ":/toolbar/catalog");
     actnToolsGaussCalc = A_(tr("&Gauss Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
+    actnToolsCalc = A_(tr("Formula &Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
     actnToolsPrefs = A_(tr("Pre&ferences..."), this, SLOT(showPreferences()), ":/toolbar/settings");
     actnToolFlipSchema = A_(tr("&Flip Schema"), this, SLOT(flipSchema()));
 
@@ -202,7 +204,7 @@ void ProjectWindow::createMenuBar()
 
     menuTools = Ori::Gui::menu(tr("&Tools", "Menu title"), this,
         { actnToolFlipSchema, nullptr,
-          actnToolsGaussCalc, actnToolsCatalog, nullptr, actnToolsPrefs });
+          actnToolsGaussCalc, actnToolsCalc, actnToolsCatalog, nullptr, actnToolsPrefs });
 
     menuWindow = Ori::Gui::menu(tr("&Window"), this,
         { actnWndSchema, actnWndParams, actnWndPumps, actnWndProtocol, nullptr,
@@ -224,7 +226,7 @@ void ProjectWindow::createToolBars()
         actnFuncRoundTrip, nullptr, actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamVariation, nullptr,
         actnFuncCaustic, actnFuncMultiCaustic, nullptr, actnFuncRepRate, nullptr,
         actnWndParams, actnWndPumps, nullptr,
-        actnToolsGaussCalc
+        actnToolsGaussCalc, actnToolsCalc
     }, true));
 
     _mdiToolbar = new Ori::Widgets::MdiToolBar(tr("Windows"), _mdiArea);
@@ -451,6 +453,11 @@ void ProjectWindow::showPreferences()
 void ProjectWindow::showGaussCalculator()
 {
     GaussCalculatorWindow::showCalcWindow();
+}
+
+void ProjectWindow::showCalculator()
+{
+    CalculatorWindow::showCalcWindow();
 }
 
 void ProjectWindow::flipSchema()

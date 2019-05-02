@@ -2,6 +2,7 @@
 
 #include "AppSettings.h"
 #include "AppSettingsDialog.h"
+#include "CalculatorWindow.h"
 #include "CommonData.h"
 #include "GaussCalculatorWindow.h"
 #include "HelpSystem.h"
@@ -492,6 +493,7 @@ ToolsStartPanel::ToolsStartPanel() : StartPanel("panel_tools")
     layout->setSpacing(10);
     layout->addWidget(makeHeader(tr("Tools")));
     layout->addWidget(makeButton(":/toolbar/gauss_calculator", tr("Gauss Calculator"), SLOT(showGaussCalculator())));
+    layout->addWidget(makeButton(":/window_icons/calculator", tr("Formula Calculator"), SLOT(showCalculator())));
     if (Settings::instance().isDevMode)
         layout->addWidget(makeButton(":/toolbar/protocol", tr("Edit Stylesheet"), SLOT(editStyleSheet())));
     layout->addWidget(makeButton(":/toolbar/settings", tr("Edit Settings"), SLOT(editAppSettings())));
@@ -503,6 +505,11 @@ ToolsStartPanel::ToolsStartPanel() : StartPanel("panel_tools")
 void ToolsStartPanel::showGaussCalculator()
 {
     GaussCalculatorWindow::showCalcWindow();
+}
+
+void ToolsStartPanel::showCalculator()
+{
+    CalculatorWindow::showCalcWindow();
 }
 
 void ToolsStartPanel::editStyleSheet()

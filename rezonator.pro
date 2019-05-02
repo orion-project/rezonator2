@@ -54,6 +54,7 @@ HEADERS += \
     libs/qcustomplot/qcustomplot.h \
     src/AppSettings.h \
     src/CalcManager.h \
+    src/CalculatorWindow.h \
     src/CustomPrefs.h \
     src/ElementPropsDialog.h \
     src/ElementsCatalogDialog.h \
@@ -75,6 +76,7 @@ HEADERS += \
     src/core/ElementsCatalog.h \
     src/core/Format.h \
     src/core/Formula.h \
+    src/core/LuaHelper.h \
     src/core/Math.h \
     src/core/Parameters.h \
     src/core/Protocol.h \
@@ -154,6 +156,7 @@ SOURCES += \
     libs/qcustomplot/qcustomplot.cpp \
     src/AppSettings.cpp \
     src/CalcManager.cpp \
+    src/CalculatorWindow.cpp \
     src/CustomPrefs.cpp \
     src/ElementPropsDialog.cpp \
     src/ElementsCatalogDialog.cpp \
@@ -174,6 +177,7 @@ SOURCES += \
     src/core/Elements.cpp \
     src/core/ElementsCatalog.cpp \
     src/core/Formula.cpp \
+    src/core/LuaHelper.cpp \
     src/core/Math.cpp \
     src/core/Parameters.cpp \
     src/core/Protocol.cpp \
