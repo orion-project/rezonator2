@@ -115,7 +115,7 @@ void ProjectOperations::openSchemaFile(const QString& fileName, const OpenFileOp
         QStringList args;
         args << qApp->applicationFilePath();
         if (opts.isExample)
-            args << "example";
+            args << "--example";
         args << " \"" + fileName + "\"";
         QProcess::startDetached(args.join(' '));
         return;
