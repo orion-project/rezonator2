@@ -1,26 +1,36 @@
 #include "CalculatorWindow.h"
 
 #include "AppSettings.h"
+#include "CustomPrefs.h"
 #include "core/LuaHelper.h"
 #include "widgets/Appearance.h"
 
+#include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 #include "helpers/OriWindows.h"
-#include "tools/OriSettings.h"
 #include "widgets/OriFlatToolBar.h"
 
 #include <QDebug>
 #include <QIcon>
-#include <QJsonDocument>
+#include <QJsonArray>
 #include <QJsonObject>
 #include <QLabel>
 #include <QPlainTextEdit>
 #include <QSplitter>
+#include <QToolButton>
 
-void CalculatorWindow::showCalcWindow()
+namespace  {
+
+CalculatorWindow* __instance = nullptr;
+
+} //  namespace
+
+void CalculatorWindow::showWindow()
 {
-    (new CalculatorWindow)->show();
+    if (!__instance)
+        __instance = new CalculatorWindow;
+    __instance->show();
 }
 
 CalculatorWindow::CalculatorWindow(QWidget *parent) : QWidget(parent)
@@ -29,6 +39,7 @@ CalculatorWindow::CalculatorWindow(QWidget *parent) : QWidget(parent)
     setWindowTitle(tr("Formula Calculator"));
     setWindowIcon(QIcon(":/window_icons/calculator"));
 
+    // TODO: make custom items widget using _log as a model
     _logView = new QPlainTextEdit;
     _logView->setReadOnly(true);
     Z::Gui::setCodeEditorFont(_logView);
@@ -42,35 +53,29 @@ CalculatorWindow::CalculatorWindow(QWidget *parent) : QWidget(parent)
 
     _errorView = new QLabel;
     _errorView->setVisible(false);
+    _errorView->setWordWrap(true);
     _errorView->setStyleSheet("QLabel{background:red;color:white;font-weight:bold;padding:3px}");
     Z::Gui::setCodeEditorFont(_errorView);
 
-    auto splitter = new QSplitter;
-    splitter->setOrientation(Qt::Vertical);
-    splitter->addWidget(_logView);
-    splitter->addWidget(Ori::Layouts::LayoutV({
-        _editor,
-        _errorView
-    }).setMargin(0).setSpacing(0).makeWidget());
+    auto editor = Ori::Layouts::LayoutV({
+        _editor, _errorView}).setMargin(0).setSpacing(0).makeWidget();
+    _splitter = Ori::Gui::splitterV(_logView, editor);
 
-    Ori::Layouts::LayoutV({
-            makeToolbar(),
-            splitter,
-        })
-        .setMargin(3)
-        .setSpacing(0)
-        .useFor(this);
+    Ori::Layouts::LayoutV({makeToolbar(), _splitter,}).setMargin(3).setSpacing(0).useFor(this);
 
     _lua = new Z::Lua;
 
     restoreState();
     Ori::Wnd::moveToScreenCenter(this);
+
+    _editor->setFocus();
 }
 
 CalculatorWindow::~CalculatorWindow()
 {
     storeState();
     delete _lua;
+    __instance = nullptr;
 }
 
 QWidget* CalculatorWindow::makeToolbar()
@@ -78,6 +83,7 @@ QWidget* CalculatorWindow::makeToolbar()
 #define A_ Ori::Gui::action
 
     auto actnCalc = A_(tr("Calculate"), this, SLOT(calculate()), ":/toolbar/equals", Qt::CTRL | Qt::Key_Return);
+    auto actnClear = A_(tr("Clear Log"), this, SLOT(clearLog()), ":/toolbar/delete_items");
 
     auto actionHelp = new QAction(QIcon(":/toolbar/help"), tr("Help"), this);
     actionHelp->setEnabled(false); // TODO:NEXT-VER
@@ -85,10 +91,9 @@ QWidget* CalculatorWindow::makeToolbar()
     auto toolbar = new Ori::Widgets::FlatToolBar;
     toolbar->setIconSize(Settings::instance().toolbarIconSize());
     Ori::Gui::populate(toolbar, {
-        actnCalc, nullptr, actionHelp
+        Ori::Gui::textToolButton(actnCalc), actnClear, nullptr, actionHelp
     });
     return toolbar;
-
 #undef A_
 }
 
@@ -98,15 +103,24 @@ void CalculatorWindow::showError(const QString& error)
     _errorView->setVisible(true);
 }
 
-void CalculatorWindow::showResult(const QString &code, double value)
+void CalculatorWindow::showResult(const QString &code, double result)
 {
-    _logView->appendPlainText(code); // TODO set code style
-    _logView->appendPlainText(QString::number(value)); // TODO set result style
+    LogItem item;
+    item.code = code;
+    item.result = result;
+    _log.append(item);
+
+    _logView->appendHtml(QStringLiteral(
+        "<p style='color:#444'>%1"
+        "<p style='font-weight:bold'>&nbsp;&nbsp;&nbsp;%2"
+        "<p>&nbsp;"
+    ).arg(code).arg(result));
 }
 
 void CalculatorWindow::calculate()
 {
     auto code = _editor->toPlainText();
+    if (code.isEmpty()) return;
 
     auto res = _lua->calculate(code);
     if (res.ok())
@@ -115,48 +129,53 @@ void CalculatorWindow::calculate()
         showError(res.error());
 }
 
-QString CalculatorWindow::stateFileName()
-{
-    Ori::Settings s;
-    return s.settings()->fileName().section('.', 0, -2) + ".calc.json";
-}
-
 void CalculatorWindow::restoreState()
 {
-    QJsonObject root;
+    QJsonObject root = CustomDataHelpers::loadCustomData("calc");
 
-    auto fileName = stateFileName();
-    QFile file(fileName);
-    if (file.exists())
-    {
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-            qWarning() << "CalculatorWindow: failed to load state" << fileName << file.errorString();
-        else
-            root = QJsonDocument::fromJson(file.readAll()).object();
-    }
+    CustomDataHelpers::restoreWindowSize(root, this, 600, 400);
 
-    int w = root["window_width"].toInt();
-    int h = root["window_height"].toInt();
-    if (w == 0 || h == 0)
+    int logH = root["log_height"].toInt();
+    int editorH = root["editor_height"].toInt();
+    if (logH > 0 && editorH > 0)
+        _splitter->setSizes({logH, editorH});
+
+    auto log = root["log"].toArray();
+    for (auto it = log.begin(); it != log.end(); it++)
     {
-        w = 600;
-        h = 400;
+        auto item = (*it).toObject();
+        auto code = item["code"].toString();
+        auto result = item["result"].toDouble();
+        if (!code.isEmpty())
+            showResult(code, result);
     }
-    resize(w, h);
 }
 
 void CalculatorWindow::storeState()
 {
     QJsonObject root;
-    root["window_width"] = width();
-    root["window_height"] = height();
 
-    auto fileName = stateFileName();
-    QFile file(fileName);
-    if (!file.open(QFile::WriteOnly | QFile::Text))
-    {
-        qWarning() << "CalculatorWindow: failed to save state" << fileName << file.errorString();
-        return;
-    }
-    QTextStream(&file) << QJsonDocument(root).toJson();
+    CustomDataHelpers::storeWindowSize(root, this);
+
+    auto sizes = _splitter->sizes();
+    root["log_height"] = sizes.at(0);
+    root["editor_height"] = sizes.at(1);
+
+    QJsonArray log;
+    for (auto item : _log)
+        log.append(QJsonObject({
+            {"code", item.code},
+            {"result", item.result}
+        }));
+    root["log"] = log;
+
+    CustomDataHelpers::saveCustomData(root, "calc");
+}
+
+void CalculatorWindow::clearLog()
+{
+    if (!Ori::Dlg::yes(tr("Do you confirm the deletion of all log items?"))) return;
+
+    _log.clear();
+    _logView->clear();
 }

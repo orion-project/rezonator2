@@ -504,12 +504,12 @@ ToolsStartPanel::ToolsStartPanel() : StartPanel("panel_tools")
 
 void ToolsStartPanel::showGaussCalculator()
 {
-    GaussCalculatorWindow::showCalcWindow();
+    GaussCalculatorWindow::showWindow();
 }
 
 void ToolsStartPanel::showCalculator()
 {
-    CalculatorWindow::showCalcWindow();
+    CalculatorWindow::showWindow();
 }
 
 void ToolsStartPanel::editStyleSheet()

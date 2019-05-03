@@ -1,16 +1,83 @@
 #include "CustomPrefs.h"
 
+#include "tools/OriSettings.h"
+
 #include <QDebug>
 #include <QDir>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QFile>
+#include <QWidget>
+
+//--------------------------------------------------------------------------------
+//                               CustomDataHelpers
+//--------------------------------------------------------------------------------
+
+namespace CustomDataHelpers {
+
+QString dataFileName(const QString& spec)
+{
+    Ori::Settings s;
+    return s.settings()->fileName().section('.', 0, -2) % '.' % spec % QStringLiteral(".json");
+}
+
+QJsonObject loadCustomData(const QString& spec)
+{
+    QJsonObject root;
+    auto fileName = dataFileName(spec);
+    QFile file(fileName);
+    if (file.exists())
+    {
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+            qWarning() << spec << "failed to load state" << fileName << file.errorString();
+        else
+            root = QJsonDocument::fromJson(file.readAll()).object();
+    }
+    return root;
+}
+
+void saveCustomData(const QJsonObject& root, const QString& spec)
+{
+    auto fileName = dataFileName(spec);
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly | QFile::Text))
+    {
+        qWarning() << spec << "failed to save state" << fileName << file.errorString();
+        return;
+    }
+    QTextStream(&file) << QJsonDocument(root).toJson();
+}
+
+void storeWindowSize(QJsonObject& root, QWidget* wnd)
+{
+    root["window_width"] = wnd->width();
+    root["window_height"] = wnd->height();
+}
+
+void restoreWindowSize(const QJsonObject& root, QWidget* wnd, int defaultW, int defaultH)
+{
+    int w = root["window_width"].toInt();
+    int h = root["window_height"].toInt();
+    if (w == 0 || h == 0)
+    {
+        w = defaultW;
+        h = defaultH;
+    }
+    wnd->resize(w, h);
+}
+
+} // namespace CustomDataHelpers
+
+//--------------------------------------------------------------------------------
+//                                   CustomData
+//--------------------------------------------------------------------------------
 
 namespace CustomData {
 
 static QJsonObject __customData;
 static QString __storagePath;
+
 
 void load(const QString& storagePath)
 {

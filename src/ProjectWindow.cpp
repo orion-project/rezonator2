@@ -452,12 +452,12 @@ void ProjectWindow::showPreferences()
 
 void ProjectWindow::showGaussCalculator()
 {
-    GaussCalculatorWindow::showCalcWindow();
+    GaussCalculatorWindow::showWindow();
 }
 
 void ProjectWindow::showCalculator()
 {
-    CalculatorWindow::showCalcWindow();
+    CalculatorWindow::showWindow();
 }
 
 void ProjectWindow::flipSchema()

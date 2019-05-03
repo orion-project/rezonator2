@@ -6,6 +6,7 @@
 QT_BEGIN_NAMESPACE
 class QLabel;
 class QPlainTextEdit;
+class QSplitter;
 QT_END_NAMESPACE
 
 namespace Z {
@@ -20,22 +21,29 @@ public:
     explicit CalculatorWindow(QWidget *parent = nullptr);
     ~CalculatorWindow();
 
-    static void showCalcWindow();
+    static void showWindow();
 
 private slots:
     void calculate();
+    void clearLog();
 
 private:
     Z::Lua* _lua;
     QPlainTextEdit* _logView;
     QPlainTextEdit* _editor;
     QLabel* _errorView;
+    QSplitter* _splitter;
+
+    struct LogItem {
+        QString code;
+        double result;
+    };
+    QList<LogItem> _log;
 
     QWidget* makeToolbar();
     void showError(const QString& error);
-    void showResult(const QString& code, double value);
+    void showResult(const QString& code, double result);
 
-    static QString stateFileName();
     void restoreState();
     void storeState();
 };

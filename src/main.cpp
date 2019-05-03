@@ -77,12 +77,12 @@ int main(int argc, char* argv[])
         auto toolName = parser.value(optionTool);
         if (toolName == "gauss")
         {
-            GaussCalculatorWindow::showCalcWindow();
+            GaussCalculatorWindow::showWindow();
             return app.exec();
         }
         else if (toolName == "calc")
         {
-            CalculatorWindow::showCalcWindow();
+            CalculatorWindow::showWindow();
             return app.exec();
         }
         else
