@@ -8,7 +8,10 @@
           "text": "2D Stability Map function."
         },
         {
-          "text": "Intergation with Qt Assistant and initial help pages."
+          "text": "Integration with Qt Assistant and initial help pages."
+        },
+        {
+          "text": "Formula Calculator tool."
         }
       ]
     },
