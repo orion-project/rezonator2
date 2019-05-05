@@ -4,7 +4,7 @@
 #include "RezonatorDialog.h"
 
 QT_BEGIN_NAMESPACE
-class QCheckBox;
+class QGroupBox;
 class QLabel;
 class QPlainTextEdit;
 class QSplitter;
@@ -26,11 +26,10 @@ protected slots:
     void collect() override;
 
 private:
-    QCheckBox* _overrideFontFlag;
+    QGroupBox* _groupFont;
     QPushButton* _chooseFontButton;
     QLabel* _fontSampleLabel;
-    void overrideFontClicked(int);
-    void chooseFontClicked();
+    void chooseFontCliked();
 };
 
 

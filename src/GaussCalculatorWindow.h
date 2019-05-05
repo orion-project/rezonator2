@@ -104,6 +104,7 @@ private slots:
     void updatePlot();
     void zoneSelected(int zone);
     void lockSelected(int lock);
+    void showCalculator();
 };
 
 #endif // GAUSS_CALCULATOR_WINDOW_H

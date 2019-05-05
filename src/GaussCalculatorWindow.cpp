@@ -1,6 +1,7 @@
 #include "GaussCalculatorWindow.h"
 
 #include "AppSettings.h"
+#include "CalculatorWindow.h"
 #include "CustomPrefs.h"
 #include "funcs/GaussCalculator.h"
 #include "widgets/Plot.h"
@@ -465,6 +466,7 @@ void GaussCalculatorWindow::showWindow()
     if (!__instance)
         __instance = new GaussCalculatorWindow;
     __instance->show();
+    __instance->activateWindow();
 }
 
 GaussCalculatorWindow::GaussCalculatorWindow(QWidget *parent) : QWidget(parent)
@@ -622,6 +624,8 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     _plotV = Ori::Gui::toggledAction(tr("Plot Beam Angle"), this, SLOT(updatePlot()), ":/toolbar/plot_v");
     _plotZ0 = Ori::Gui::toggledAction(tr("Plot Rayleigh Distance"), this, SLOT(updatePlot()), ":/toolbar/plot_z0");
 
+    auto actionCalc = Ori::Gui::action(tr("Formula Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
+
     auto actionHelp = new QAction(QIcon(":/toolbar/help"), tr("Help"), this);
     actionHelp->setEnabled(false); // TODO:NEXT-VER
 
@@ -629,7 +633,7 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     toolbar->setIconSize(Settings::instance().toolbarIconSize());
     Ori::Gui::populate(toolbar, {
         _calcModeLock, nullptr, _calcModeZone, nullptr, _plotPlusMinusZ, _plotPlusMinusW, nullptr,
-        _plotWR, _plotV, _plotZ0, nullptr, actionHelp
+        _plotWR, _plotV, _plotZ0, nullptr, actionCalc, nullptr, actionHelp
     });
     return toolbar;
 }
@@ -707,4 +711,9 @@ void GaussCalculatorWindow::updatePlot()
     _plot->setLimitsX(minZ, maxZ, false);
     _plot->setLimitsY(minY, maxY, false);
     _plot->replot();
+}
+
+void GaussCalculatorWindow::showCalculator()
+{
+    CalculatorWindow::showWindow();
 }

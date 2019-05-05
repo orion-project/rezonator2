@@ -13,6 +13,7 @@
 
 #include <QCheckBox>
 #include <QDebug>
+#include <QGroupBox>
 #include <QFontDialog>
 #include <QGroupBox>
 #include <QIcon>
@@ -23,6 +24,8 @@
 #include <QPushButton>
 #include <QSplitter>
 #include <QToolButton>
+
+using namespace Ori::Layouts;
 
 namespace  {
 
@@ -39,54 +42,50 @@ CalculatorSettingsDlg::CalculatorSettingsDlg() : RezonatorDialog(RezonatorDialog
     setTitleAndIcon(tr("Formula Calculator Settings"), ":/window_icons/calculator");
     setObjectName("ElementPropsDialog");
 
-    bool overrideFont = __instance->_overrideFont;
-
-    _overrideFontFlag = new QCheckBox(tr("Override default font"));
-    _overrideFontFlag->setChecked(overrideFont);
-    connect(_overrideFontFlag, &QCheckBox::stateChanged, this, &CalculatorSettingsDlg::overrideFontClicked);
-
-    _chooseFontButton = new QPushButton(tr("Choose font..."));
-    _chooseFontButton->setEnabled(overrideFont);
-    connect(_chooseFontButton, &QPushButton::clicked, this, &CalculatorSettingsDlg::chooseFontClicked);
-
     _fontSampleLabel = new QLabel("L / math.sqrt(n^2 - math.sin(a)^2)");
     _fontSampleLabel->setStyleSheet("background-color:white;padding:6px");
     _fontSampleLabel->setFrameShape(QFrame::StyledPanel);
-    _fontSampleLabel->setEnabled(overrideFont);
     auto f = _fontSampleLabel->font();
     Z::Gui::adjustCodeEditorFont(f);
-    f.setFamily(__instance->_overrideFontName);
-    f.setPointSize(__instance->_overrideFontSize);
+    if (!__instance->_overrideFontName.isEmpty() and __instance->_overrideFontSize > 0)
+    {
+        f.setFamily(__instance->_overrideFontName);
+        f.setPointSize(__instance->_overrideFontSize);
+    }
     _fontSampleLabel->setFont(f);
 
-    auto layout = Ori::Layouts::LayoutV({
-        _overrideFontFlag, _chooseFontButton, _fontSampleLabel
-    }).setMargin(0).boxLayout();
+    _chooseFontButton = new QPushButton(tr("Choose font..."));
+    connect(_chooseFontButton, &QPushButton::clicked, this, &CalculatorSettingsDlg::chooseFontCliked);
 
-    mainLayout()->addLayout(layout);
+    _groupFont = new QGroupBox(tr("Override default font"));
+    _groupFont->setCheckable(true);
+    _groupFont->setChecked(__instance->_overrideFont);
+    LayoutV({_chooseFontButton, _fontSampleLabel}).useFor(_groupFont);
+
+    mainLayout()->addWidget(_groupFont);
     mainLayout()->addSpacing(6);
 }
 
 void CalculatorSettingsDlg::collect()
 {
-    __instance->_overrideFont = _overrideFontFlag->isChecked();
+    __instance->_overrideFont = _groupFont->isChecked();
     __instance->_overrideFontName = _fontSampleLabel->font().family();
     __instance->_overrideFontSize = _fontSampleLabel->font().pointSize();
     accept();
     close();
 }
 
-void CalculatorSettingsDlg::overrideFontClicked(int)
-{
-    _chooseFontButton->setEnabled(_overrideFontFlag->isChecked());
-    _fontSampleLabel->setEnabled(_overrideFontFlag->isChecked());
-}
-
-void CalculatorSettingsDlg::chooseFontClicked()
+void CalculatorSettingsDlg::chooseFontCliked()
 {
     bool ok = false;
-    auto f = QFontDialog::getFont(&ok, _fontSampleLabel->font(), this, tr("Choose Font"), QFontDialog::DontUseNativeDialog);
-    if (ok) _fontSampleLabel->setFont(f);
+    auto f0 = _fontSampleLabel->font();
+    auto f1 = QFontDialog::getFont(&ok, f0, this, tr("Choose Font"));
+    if (ok)
+    {
+        f0.setFamily(f1.family());
+        f0.setPointSize(f1.pointSize());
+        _fontSampleLabel->setFont(f0);
+    }
 }
 
 //--------------------------------------------------------------------------------
@@ -124,11 +123,10 @@ CalculatorWindow::CalculatorWindow(QWidget *parent) : QWidget(parent)
     _errorView->setWordWrap(true);
     _errorView->setStyleSheet("QLabel{background:red;color:white;font-weight:bold;padding:3px}");
 
-    auto editor = Ori::Layouts::LayoutV({
-        _editor, _errorView}).setMargin(0).setSpacing(0).makeWidget();
+    auto editor = LayoutV({_editor, _errorView}).setMargin(0).setSpacing(0).makeWidget();
     _splitter = Ori::Gui::splitterV(_logView, editor);
 
-    Ori::Layouts::LayoutV({makeToolbar(), _splitter,}).setMargin(3).setSpacing(0).useFor(this);
+    LayoutV({makeToolbar(), _splitter,}).setMargin(3).setSpacing(0).useFor(this);
 
     _lua = new Z::Lua;
 
