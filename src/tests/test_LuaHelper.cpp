@@ -44,7 +44,7 @@ TEST_METHOD(global_funcs)
     ASSERT_LUA(0.33, "csc(%1)", "1 / sin(%1)");
     ASSERT_LUA(0.33, "csch(%1)", "2 / (math.exp(%1) - math.exp(-%1))");
 
-    ASSERT_LUA(0.33, "abs(%1)", "math.abs(%1)");
+    ASSERT_LUA(0.33, "abs(-%1)", "math.abs(-%1)");
     ASSERT_LUA(0.33, "floor(%1)", "math.floor(%1)");
     ASSERT_LUA(0.33, "ceil(%1)", "math.ceil(%1)");
 

@@ -11,6 +11,7 @@ reZonator2 Documentation
 
    elements
    functions
+   calculators
    handbook
 
 
