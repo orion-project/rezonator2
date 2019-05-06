@@ -110,13 +110,12 @@ CalculatorWindow::CalculatorWindow(QWidget *parent) : QWidget(parent)
     _logView = new QPlainTextEdit;
     _logView->setReadOnly(true);
     _logView->setPlaceholderText(tr("Calculation results are displayed here"));
+    _logView->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
 
     _editor = new QPlainTextEdit;
     _editor->setWordWrapMode(QTextOption::WordWrap);
-    _editor->setPlaceholderText(tr("Enter your formula here and\nhit Ctrl+Enter to calculate"));
-    connect(_editor, &QPlainTextEdit::textChanged, [this](){
-       _errorView->setVisible(false);
-    });
+    _editor->setPlaceholderText(tr("Enter your formula here and hit Ctrl+Enter to calculate"));
+    connect(_editor, &QPlainTextEdit::textChanged, [this](){ _errorView->setVisible(false); });
 
     _errorView = new QLabel;
     _errorView->setVisible(false);
@@ -150,6 +149,9 @@ QWidget* CalculatorWindow::makeToolbar()
     auto actnCalc = A_(tr("Calculate"), this, SLOT(calculate()), ":/toolbar/equals", Qt::CTRL | Qt::Key_Return);
     auto actnClear = A_(tr("Clear Log"), this, SLOT(clearLog()), ":/toolbar/delete_items");
 
+    auto actnReuse = A_(tr("Reuse Selected<br>(<b>Ctrl + D</b>)"), this,
+        SLOT(reuseItem()), ":/toolbar/duplicate_page", Qt::CTRL + Qt::Key_D);
+
     auto actnSettings = A_(tr("Settings"), this, SLOT(showSettings()), ":/toolbar/settings");
     auto actionHelp = new QAction(QIcon(":/toolbar/help"), tr("Help"), this);
     actionHelp->setEnabled(false); // TODO:NEXT-VER
@@ -160,8 +162,7 @@ QWidget* CalculatorWindow::makeToolbar()
     auto toolbar = new Ori::Widgets::FlatToolBar;
     toolbar->setIconSize(Settings::instance().toolbarIconSize());
     Ori::Gui::populate(toolbar, {
-        buttonCalc, actnClear, nullptr,
-        actnSettings, actionHelp
+        buttonCalc, actnClear, nullptr, actnReuse, nullptr, actnSettings, actionHelp
     });
     return toolbar;
 #undef A_
@@ -194,10 +195,14 @@ void CalculatorWindow::showResult(const QString &code, double result)
     _log.append(item);
 
     _logView->appendHtml(QStringLiteral(
-        "<p style='color:#444'>%1"
+        "<p style='color:#669'>%1"
         "<p style='font-weight:bold'>&nbsp;&nbsp;&nbsp;%2"
         "<p style='font-size:6px'>&nbsp;"
     ).arg(code).arg(result));
+
+    auto c = _logView->textCursor();
+    c.movePosition(QTextCursor::End);
+    _logView->setTextCursor(c);
 }
 
 void CalculatorWindow::calculate()
@@ -276,4 +281,17 @@ void CalculatorWindow::showSettings()
 {
     CalculatorSettingsDlg dlg;
     if (dlg.run()) adjustFont();
+}
+
+void CalculatorWindow::reuseItem()
+{
+    auto text = _logView->textCursor().selectedText().trimmed();
+    if (text.isEmpty()) return;
+
+    _editor->setPlainText(text);
+    _editor->setFocus();
+
+    auto c = _editor->textCursor();
+    c.setPosition(text.length());
+    _editor->setTextCursor(c);
 }

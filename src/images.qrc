@@ -9,6 +9,7 @@
         <file alias="cut">../img/toolbar/cut.svg</file>
         <file alias="delete">../img/toolbar/delete.svg</file>
         <file alias="delete_items">../img/toolbar/delete_items.svg</file>
+        <file alias="duplicate_page">../img/toolbar/duplicate_page.svg</file>
         <file alias="elem_add">../img/toolbar/elem_add.svg</file>
         <file alias="elem_delete">../img/toolbar/elem_delete.svg</file>
         <file alias="elem_move_up">../img/toolbar/elem_move_up.svg</file>

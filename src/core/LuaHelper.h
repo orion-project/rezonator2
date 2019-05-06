@@ -16,6 +16,8 @@ public:
 
 private:
     lua_State* _lua = nullptr;
+
+    void registerGlobalFuncs();
 };
 
 } // namespace Lua

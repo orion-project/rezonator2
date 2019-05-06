@@ -47,6 +47,7 @@ private slots:
     void calculate();
     void clearLog();
     void showSettings();
+    void reuseItem();
 
 private:
     Z::Lua* _lua;
