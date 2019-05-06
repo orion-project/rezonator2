@@ -42,7 +42,7 @@ CalculatorSettingsDlg::CalculatorSettingsDlg() : RezonatorDialog(RezonatorDialog
     setTitleAndIcon(tr("Formula Calculator Settings"), ":/window_icons/calculator");
     setObjectName("ElementPropsDialog");
 
-    _fontSampleLabel = new QLabel("L / math.sqrt(n^2 - math.sin(a)^2)");
+    _fontSampleLabel = new QLabel("2.5 / sqrt(1.33^2 - sin(deg2rad(30))^2)");
     _fontSampleLabel->setStyleSheet("background-color:white;padding:6px");
     _fontSampleLabel->setFrameShape(QFrame::StyledPanel);
     auto f = _fontSampleLabel->font();

@@ -213,6 +213,7 @@ SOURCES += \
     src/tests/test_Elements.cpp \
     src/tests/test_ElementsImages.cpp \
     src/tests/test_InfoFunctions.cpp \
+    src/tests/test_LuaHelper.cpp \
     src/tests/test_Math.cpp \
     src/tests/test_Parameters.cpp \
     src/tests/test_Report.cpp \
