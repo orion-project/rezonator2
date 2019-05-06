@@ -20,6 +20,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QLabel>
+#include <QListWidget>
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QSplitter>
@@ -42,7 +43,7 @@ CalculatorSettingsDlg::CalculatorSettingsDlg() : RezonatorDialog(RezonatorDialog
     setTitleAndIcon(tr("Formula Calculator Settings"), ":/window_icons/calculator");
     setObjectName("ElementPropsDialog");
 
-    _fontSampleLabel = new QLabel("2.5 / sqrt(1.33^2 - sin(deg2rad(30))^2)");
+    _fontSampleLabel = new QLabel("L / sqrt(n^2 - sin(deg2rad(a))^2)");
     _fontSampleLabel->setStyleSheet("background-color:white;padding:6px");
     _fontSampleLabel->setFrameShape(QFrame::StyledPanel);
     auto f = _fontSampleLabel->font();
@@ -112,6 +113,12 @@ CalculatorWindow::CalculatorWindow(QWidget *parent) : QWidget(parent)
     _logView->setPlaceholderText(tr("Calculation results are displayed here"));
     _logView->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
 
+    _varsView = new QListWidget;
+
+    _sessionSplitter = Ori::Gui::splitterH(_logView, _varsView);
+    _sessionSplitter->setStretchFactor(0, 3);
+    _sessionSplitter->setStretchFactor(1, 1);
+
     _editor = new QPlainTextEdit;
     _editor->setWordWrapMode(QTextOption::WordWrap);
     _editor->setPlaceholderText(tr("Enter your formula here and hit Ctrl+Enter to calculate"));
@@ -123,11 +130,15 @@ CalculatorWindow::CalculatorWindow(QWidget *parent) : QWidget(parent)
     _errorView->setStyleSheet("QLabel{background:red;color:white;font-weight:bold;padding:3px}");
 
     auto editor = LayoutV({_editor, _errorView}).setMargin(0).setSpacing(0).makeWidget();
-    _splitter = Ori::Gui::splitterV(_logView, editor);
+    _mainSplitter = Ori::Gui::splitterV(_sessionSplitter, editor);
+    _mainSplitter->setStretchFactor(0, 3);
+    _mainSplitter->setStretchFactor(1, 1);
 
-    LayoutV({makeToolbar(), _splitter,}).setMargin(3).setSpacing(0).useFor(this);
+    LayoutV({makeToolbar(), _mainSplitter,}).setMargin(3).setSpacing(0).useFor(this);
 
     _lua = new Z::Lua;
+    if (!_lua->open()) // should be opened to load global vars from prev session
+        showError(tr("Not enough memory to initialize formula parser"));
 
     restoreState();
     Ori::Wnd::moveToScreenCenter(this);
@@ -147,7 +158,7 @@ QWidget* CalculatorWindow::makeToolbar()
 #define A_ Ori::Gui::action
 
     auto actnCalc = A_(tr("Calculate"), this, SLOT(calculate()), ":/toolbar/equals", Qt::CTRL | Qt::Key_Return);
-    auto actnClear = A_(tr("Clear Log"), this, SLOT(clearLog()), ":/toolbar/delete_items");
+    auto actnClear = A_(tr("Clear Session"), this, SLOT(clearLog()), ":/toolbar/delete_items");
 
     auto actnReuse = A_(tr("Reuse Selected<br>(<b>Ctrl + D</b>)"), this,
         SLOT(reuseItem()), ":/toolbar/duplicate_page", Qt::CTRL + Qt::Key_D);
@@ -179,6 +190,7 @@ void CalculatorWindow::adjustFont()
     }
     _editor->setFont(f);
     _logView->setFont(f);
+    _varsView->setFont(f);
 }
 
 void CalculatorWindow::showError(const QString& error)
@@ -194,11 +206,14 @@ void CalculatorWindow::showResult(const QString &code, double result)
     item.result = result;
     _log.append(item);
 
+    auto codeHtml = QString(code);
+    codeHtml.replace('\n', QStringLiteral("<br>"));
+
     _logView->appendHtml(QStringLiteral(
         "<p style='color:#669'>%1"
         "<p style='font-weight:bold'>&nbsp;&nbsp;&nbsp;%2"
         "<p style='font-size:6px'>&nbsp;"
-    ).arg(code).arg(result));
+    ).arg(codeHtml).arg(result));
 
     auto c = _logView->textCursor();
     c.movePosition(QTextCursor::End);
@@ -212,7 +227,10 @@ void CalculatorWindow::calculate()
 
     auto res = _lua->calculate(code);
     if (res.ok())
+    {
         showResult(code, res.value());
+        populateVars();
+    }
     else
         showError(res.error());
 }
@@ -223,16 +241,24 @@ void CalculatorWindow::restoreState()
 
     CustomDataHelpers::restoreWindowSize(root, this, 600, 400);
 
+    // Restore font
     _overrideFont = root["override_font"].toBool();
     _overrideFontName = root["override_font_name"].toString();
     _overrideFontSize = root["override_font_size"].toInt();
     adjustFont();
 
+    // Restore splitters
     int logH = root["log_height"].toInt();
     int editorH = root["editor_height"].toInt();
-    if (logH > 0 && editorH > 0)
-        _splitter->setSizes({logH, editorH});
+    if (logH > 0 and editorH > 0)
+        _mainSplitter->setSizes({logH, editorH});
 
+    int logW = root["log_width"].toInt();
+    int varsW = root["vars_width"].toInt();
+    if (logW > 0 and varsW > 0)
+        _sessionSplitter->setSizes({logW, varsW});
+
+    // Restore calculation history
     auto log = root["log"].toArray();
     for (auto it = log.begin(); it != log.end(); it++)
     {
@@ -242,6 +268,12 @@ void CalculatorWindow::restoreState()
         if (!code.isEmpty())
             showResult(code, result);
     }
+
+    // Restore session vars
+    QJsonObject varsJson = root["vars"].toObject();
+    for (auto key : varsJson.keys())
+        _lua->setGlobalVar(key, varsJson[key].toDouble());
+    populateVars();
 }
 
 void CalculatorWindow::storeState()
@@ -250,14 +282,21 @@ void CalculatorWindow::storeState()
 
     CustomDataHelpers::storeWindowSize(root, this);
 
+    // Store font
     root["override_font"] = _overrideFont;
     root["override_font_name"] = _overrideFontName;
     root["override_font_size"] = _overrideFontSize;
 
-    auto sizes = _splitter->sizes();
+    // Store splitters
+    auto sizes = _mainSplitter->sizes();
     root["log_height"] = sizes.at(0);
     root["editor_height"] = sizes.at(1);
 
+    sizes = _sessionSplitter->sizes();
+    root["log_width"] = sizes.at(0);
+    root["vars_width"] = sizes.at(1);
+
+    // Store calculation history
     QJsonArray log;
     for (auto item : _log)
         log.append(QJsonObject({
@@ -266,15 +305,29 @@ void CalculatorWindow::storeState()
         }));
     root["log"] = log;
 
+    // Store session vars
+    QJsonObject varsJson;
+    QMap<QString, double> vars = _lua->getGlobalVars();
+    QMapIterator<QString, double> it(vars);
+    while (it.hasNext())
+    {
+        it.next();
+        varsJson[it.key()] = it.value();
+    }
+    root["vars"] = varsJson;
+
     CustomDataHelpers::saveCustomData(root, "calc");
 }
 
 void CalculatorWindow::clearLog()
 {
-    if (!Ori::Dlg::yes(tr("Do you confirm the deletion of all log items?"))) return;
+    if (!Ori::Dlg::yes(tr("This will erase all log items and variables. Confirm?"))) return;
 
     _log.clear();
     _logView->clear();
+    _varsView->clear();
+
+    _lua->open();
 }
 
 void CalculatorWindow::showSettings()
@@ -294,4 +347,19 @@ void CalculatorWindow::reuseItem()
     auto c = _editor->textCursor();
     c.setPosition(text.length());
     _editor->setTextCursor(c);
+}
+
+void CalculatorWindow::populateVars()
+{
+    _varsView->clear();
+
+    QMap<QString, double> vars = _lua->getGlobalVars();
+    QMapIterator<QString, double> it(vars);
+    while (it.hasNext())
+    {
+        it.next();
+
+        auto item = new QListWidgetItem(_varsView);
+        item->setText(QString("%1 = %2").arg(it.key()).arg(it.value()));
+    }
 }

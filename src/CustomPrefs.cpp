@@ -32,7 +32,12 @@ QJsonObject loadCustomData(const QString& spec)
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
             qWarning() << spec << "failed to load state" << fileName << file.errorString();
         else
-            root = QJsonDocument::fromJson(file.readAll()).object();
+        {
+            QJsonParseError error;
+            root = QJsonDocument::fromJson(file.readAll(), &error).object();
+            if (error.error != QJsonParseError::NoError)
+                qWarning() << spec << "failed to load state" << error.errorString();
+        }
     }
     return root;
 }
@@ -91,7 +96,10 @@ void load(const QString& storagePath)
             qWarning() << "Unable to load custom prefs" << __storagePath << file.errorString();
             return;
         }
-        __customData = QJsonDocument::fromJson(file.readAll()).object();
+        QJsonParseError error;
+        __customData = QJsonDocument::fromJson(file.readAll(), &error).object();
+        if (error.error != QJsonParseError::NoError)
+            qWarning() << "Unable to load custom prefs" << error.errorString();
     }
 }
 

@@ -1,6 +1,7 @@
 #include "LuaHelper.h"
 
 #include <QApplication>
+#include <QDebug>
 #include <QtMath>
 
 #include <cmath>
@@ -115,20 +116,26 @@ void Lua::registerGlobalFuncs()
     LUA_REGISTER_GLOBAL_FUN(_lua, rad2deg);
 }
 
+bool Lua::open()
+{
+    if (_lua) lua_close(_lua);
+
+    _lua = luaL_newstate();
+    if (!_lua) return false;
+
+    luaL_openlibs(_lua);
+    registerGlobalFuncs();
+    return true;
+}
+
 Z::Result<double> Lua::calculate(const QString& formula)
 {
-    if (!_lua)
-    {
-        _lua = luaL_newstate();
-        if (!_lua)
-            return Z::Result<double>::fail(qApp->translate("Formula", "Not enough memory to create formula parser"));
-        luaL_openlibs(_lua);
-        registerGlobalFuncs();
-    }
+    if (!_lua and !open())
+        return Z::Result<double>::fail(qApp->translate("Formula", "Not enough memory to initialize formula parser"));
 
     auto L = _lua;
 
-    #define RESULT_VAR "result"
+    #define RESULT_VAR "ans"
     #define FORMULA_ID "formula"
 
     static QRegExp resultVar(RESULT_VAR "\\s*=");
@@ -178,6 +185,51 @@ Z::Result<double> Lua::calculate(const QString& formula)
     #undef RESULT_VAR
     #undef FORMULA_ID
 }
+
+QMap<QString, double> Lua::getGlobalVars()
+{
+    QMap<QString, double> vars;
+    if (!_lua) return vars;
+
+    lua_pushglobaltable(_lua); // get global table (index: -2)
+    lua_pushnil(_lua); // put a nil key on the stack (index: -1)
+    while (lua_next(_lua, -2)) // get a key and put next key-value pair,
+    {                          // -2 is index of table
+        auto keyType = lua_type(_lua, -2);
+        auto valueType = lua_type(_lua, -1);
+        if (keyType == LUA_TSTRING and valueType == LUA_TNUMBER)
+        {
+            auto namePtr = lua_tostring(_lua, -2);
+            if (namePtr)
+            {
+                auto varName = QString::fromLatin1(namePtr);
+                vars[varName] = lua_tonumber(_lua, -1);
+            }
+        }
+        lua_pop(_lua, 1); // remove value, keep key for next iteration
+    }
+    lua_pop(_lua, 1); // remove global table
+    return vars;
+}
+
+void Lua::setGlobalVar(const QString& name, double value)
+{
+    if (!_lua) return;
+
+    lua_pushnumber(_lua, value);
+    lua_setglobal(_lua, name.toLatin1().data());
+}
+
+void Lua::setGlobalVars(const QMap<QString, double>& vars)
+{
+    QMapIterator<QString, double> it(vars);
+    while (it.hasNext())
+    {
+        it.next();
+        setGlobalVar(it.key(), it.value());
+    }
+}
+
 
 } // namespace Z
 

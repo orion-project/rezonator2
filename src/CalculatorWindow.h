@@ -6,6 +6,7 @@
 QT_BEGIN_NAMESPACE
 class QGroupBox;
 class QLabel;
+class QListWidget;
 class QPlainTextEdit;
 class QSplitter;
 QT_END_NAMESPACE
@@ -53,8 +54,10 @@ private:
     Z::Lua* _lua;
     QPlainTextEdit* _logView;
     QPlainTextEdit* _editor;
+    QListWidget* _varsView;
     QLabel* _errorView;
-    QSplitter* _splitter;
+    QSplitter* _mainSplitter;
+    QSplitter* _sessionSplitter;
     bool _overrideFont = false;
     QString _overrideFontName;
     int _overrideFontSize = 0;
@@ -71,6 +74,7 @@ private:
     void restoreState();
     void storeState();
     void adjustFont();
+    void populateVars();
 
     friend class CalculatorSettingsDlg;
 };

@@ -12,7 +12,14 @@ public:
     Lua();
     ~Lua();
 
+
+    bool open();
+
     Z::Result<double> calculate(const QString& code);
+
+    QMap<QString, double> getGlobalVars();
+    void setGlobalVar(const QString& name, double value);
+    void setGlobalVars(const QMap<QString, double>& vars);
 
 private:
     lua_State* _lua = nullptr;
