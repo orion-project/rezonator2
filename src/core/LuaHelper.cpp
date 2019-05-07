@@ -21,6 +21,12 @@ static double impl_sech(double arg) { return 1.0 / cosh(arg); }
 static double impl_csc(double arg) { return 1.0 / qSin(arg); }
 static double impl_csch(double arg) { return 1.0 / sinh(arg); }
 
+static int global_pi(lua_State *L)
+{
+    lua_pushnumber(L, M_PI);
+    return 1;
+}
+
 // func should return a number of results
 #define LUA_DEFINE_GLOBAL_FUNC(name, meat) \
     static int global_##name(lua_State *L) { \
@@ -114,6 +120,8 @@ void Lua::registerGlobalFuncs()
 
     LUA_REGISTER_GLOBAL_FUN(_lua, deg2rad);
     LUA_REGISTER_GLOBAL_FUN(_lua, rad2deg);
+
+    LUA_REGISTER_GLOBAL_FUN(_lua, pi);
 }
 
 bool Lua::open()

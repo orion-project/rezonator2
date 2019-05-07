@@ -29,3 +29,22 @@ span.app-name-z {
     color: red;
 }
 
+div.highlight {
+    margin-left: 40px;
+}
+
+pre {
+    font-family: Courier New, Monaco, monospace;
+    color: #116;
+}
+
+span.pre {
+    font-family: Courier New, Monaco, monospace;
+    color: #116;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+code {
+    background-color: #f5f5f9;
+}

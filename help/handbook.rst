@@ -11,3 +11,4 @@ Handbook
    matrix_optics
    round_trip_matrix
    hyper_gauss
+   lua_primer
