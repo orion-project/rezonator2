@@ -41,10 +41,15 @@
                 <File name="hyper_gauss.rst" />
                 <File name="matrix_optics.rst" />
                 <File name="round_trip_matrix.rst" />
+                <File name="lua_primer.rst" />
             </Folder>
             <Folder name="funcs">
                 <File name="functions.rst" />
                 <File name="func_reprate.rst" />
+            </Folder>
+            <Folder name="calcs">
+                <File name="calc_formula.rst" />
+                <File name="calculators.rst" />
             </Folder>
         </Folder>
         <Folder name="qch">
