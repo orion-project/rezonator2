@@ -16,11 +16,12 @@
 #include <QGroupBox>
 #include <QFontDialog>
 #include <QGroupBox>
+#include <QHeaderView>
 #include <QIcon>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QLabel>
-#include <QListWidget>
+#include <QTableWidget>
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QSplitter>
@@ -113,7 +114,15 @@ CalculatorWindow::CalculatorWindow(QWidget *parent) : QWidget(parent)
     _logView->setPlaceholderText(tr("Calculation results are displayed here"));
     _logView->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
 
-    _varsView = new QListWidget;
+    _varsView = new QTableWidget;
+    _varsView->setColumnCount(2);
+    _varsView->setShowGrid(false);
+    _varsView->horizontalHeader()->setVisible(false);
+    _varsView->verticalHeader()->setVisible(false);
+    _varsView->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    _varsView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _varsView->setAlternatingRowColors(true);
+    _varsView->setWordWrap(false);
 
     _sessionSplitter = Ori::Gui::splitterH(_logView, _varsView);
     _sessionSplitter->setStretchFactor(0, 3);
@@ -351,15 +360,22 @@ void CalculatorWindow::reuseItem()
 
 void CalculatorWindow::populateVars()
 {
-    _varsView->clear();
+    _varsView->clearContents();
 
     QMap<QString, double> vars = _lua->getGlobalVars();
+    _varsView->setRowCount(vars.size());
     QMapIterator<QString, double> it(vars);
+    int row = 0;
     while (it.hasNext())
     {
         it.next();
 
-        auto item = new QListWidgetItem(_varsView);
-        item->setText(QString("%1 = %2").arg(it.key()).arg(it.value()));
+        _varsView->setItem(row, 0, new QTableWidgetItem(it.key()));
+        _varsView->setItem(row, 1, new QTableWidgetItem(QString::number(it.value())));
+        _varsView->resizeRowToContents(row);
+
+        row++;
     }
+    _varsView->resizeColumnToContents(0);
+    _varsView->setColumnWidth(0, _varsView->columnWidth(0) + 10);
 }

@@ -7,6 +7,7 @@
 #include "core/Format.h"
 #include "tests/TestSuite.h"
 
+#include "helpers/OriTools.h"
 #include "tools/OriDebug.h"
 #include "testing/OriTestManager.h"
 
@@ -28,6 +29,10 @@ int main(int argc, char* argv[])
     app.setOrganizationName("orion-project.org");
     app.setApplicationVersion(Z::Strs::appVersion());
     app.setStyle("fusion");
+
+    auto p = app.palette();
+    p.setColor(QPalette::AlternateBase, Ori::Color::blend(p.color(QPalette::Button), p.color(QPalette::Highlight), 0.02));
+    app.setPalette(p);
 
     QCommandLineParser parser;
     auto optionHelp = parser.addHelpOption();

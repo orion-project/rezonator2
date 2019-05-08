@@ -6,7 +6,7 @@
 QT_BEGIN_NAMESPACE
 class QGroupBox;
 class QLabel;
-class QListWidget;
+class QTableWidget;
 class QPlainTextEdit;
 class QSplitter;
 QT_END_NAMESPACE
@@ -54,7 +54,7 @@ private:
     Z::Lua* _lua;
     QPlainTextEdit* _logView;
     QPlainTextEdit* _editor;
-    QListWidget* _varsView;
+    QTableWidget* _varsView;
     QLabel* _errorView;
     QSplitter* _mainSplitter;
     QSplitter* _sessionSplitter;
