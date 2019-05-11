@@ -2,6 +2,7 @@
 
 #include "AppSettings.h"
 #include "CustomPrefs.h"
+#include "HelpSystem.h"
 #include "core/LuaHelper.h"
 #include "widgets/Appearance.h"
 
@@ -121,6 +122,7 @@ CalculatorWindow::CalculatorWindow(QWidget *parent) : QWidget(parent)
     _varsView->verticalHeader()->setVisible(false);
     _varsView->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
     _varsView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    _varsView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     _varsView->setAlternatingRowColors(true);
     _varsView->setWordWrap(false);
 
@@ -173,8 +175,7 @@ QWidget* CalculatorWindow::makeToolbar()
         SLOT(reuseItem()), ":/toolbar/duplicate_page", Qt::CTRL + Qt::Key_D);
 
     auto actnSettings = A_(tr("Settings"), this, SLOT(showSettings()), ":/toolbar/settings");
-    auto actionHelp = new QAction(QIcon(":/toolbar/help"), tr("Help"), this);
-    actionHelp->setEnabled(false); // TODO:NEXT-VER
+    auto actionHelp = A_(tr("Help"), this, SLOT(showHelp()), ":/toolbar/help", QKeySequence::HelpContents);
 
     auto buttonCalc = Ori::Gui::textToolButton(actnCalc);
     buttonCalc->setToolTip(tr("Calculate<br>(<b>Ctrl + Enter</b>)"));
@@ -185,6 +186,7 @@ QWidget* CalculatorWindow::makeToolbar()
         buttonCalc, actnClear, nullptr, actnReuse, nullptr, actnSettings, actionHelp
     });
     return toolbar;
+
 #undef A_
 }
 
@@ -378,4 +380,9 @@ void CalculatorWindow::populateVars()
     }
     _varsView->resizeColumnToContents(0);
     _varsView->setColumnWidth(0, _varsView->columnWidth(0) + 10);
+}
+
+void CalculatorWindow::showHelp()
+{
+    Z::HelpSystem::instance()->showTopic("calc_formula.html");
 }

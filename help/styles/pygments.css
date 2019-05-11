@@ -1,11 +1,11 @@
 /*
   reZonator styles
-  pigments.css is the default css file for syntax highlightning.
-  We don't use syntax highlightning in this manual
+  pigments.css is the default css file for syntax highlighting.
+  We don't use syntax highlighting in this manual
   so it is easy to use this file for some app specific styles
 */
 
-span.menuselection {
+span.menuselection, span.guilabel, kbd {
     color: maroon;
     font-style: italic;
 }
@@ -47,4 +47,9 @@ span.pre {
 
 code {
     background-color: #f5f5f9;
+}
+
+span.guipart {
+    font-weight: bold;
+    background-color: #e5e5e9;
 }

@@ -48,6 +48,8 @@ rst_prolog = """
 .. |rezonator| replace:: :app_name:`re`\ :app_name_z:`Z`\ :app_name:`onator`
 
 .. default-role:: math_var
+
+.. role:: guipart
 """
 
 
