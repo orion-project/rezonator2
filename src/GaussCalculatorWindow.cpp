@@ -1,6 +1,8 @@
 #include "GaussCalculatorWindow.h"
 
 #include "AppSettings.h"
+#include "CalculatorWindow.h"
+#include "CustomPrefs.h"
 #include "funcs/GaussCalculator.h"
 #include "widgets/Plot.h"
 #include "widgets/ParamEditor.h"
@@ -8,19 +10,21 @@
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWindows.h"
 #include "helpers/OriWidgets.h"
-#include "tools/OriSettings.h"
 #include "widgets/OriActions.h"
 #include "widgets/OriFlatToolBar.h"
 
 #include <QGridLayout>
-#include <QJsonDocument>
 #include <QJsonObject>
 #include <QIcon>
 #include <QTimer>
 
 namespace {
+
 enum PlotMode { PLOT_W, PLOT_R };
-}
+
+GaussCalculatorWindow* __instance = nullptr;
+
+} // namespace
 
 const int points = 50;
 
@@ -457,9 +461,12 @@ private:
 //                              GaussCalculatorWindow
 //--------------------------------------------------------------------------------
 
-void GaussCalculatorWindow::showCalcWindow()
+void GaussCalculatorWindow::showWindow()
 {
-    (new GaussCalculatorWindow)->show();
+    if (!__instance)
+        __instance = new GaussCalculatorWindow;
+    __instance->show();
+    __instance->activateWindow();
 }
 
 GaussCalculatorWindow::GaussCalculatorWindow(QWidget *parent) : QWidget(parent)
@@ -503,36 +510,14 @@ GaussCalculatorWindow::~GaussCalculatorWindow()
 {
     storeState();
     qDeleteAll(_paramEditors);
-}
-
-QString GaussCalculatorWindow::stateFileName()
-{
-    Ori::Settings s;
-    return s.settings()->fileName().section('.', 0, -2) + ".gauss.json";
+    __instance = nullptr;
 }
 
 void GaussCalculatorWindow::restoreState()
 {
-    QJsonObject root;
+    QJsonObject root = CustomDataHelpers::loadCustomData("gauss");
 
-    auto fileName = stateFileName();
-    QFile file(fileName);
-    if (file.exists())
-    {
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-            qWarning() << "GaussCalculatorWindow: failed to load state" << fileName << file.errorString();
-        else
-            root = QJsonDocument::fromJson(file.readAll()).object();
-    }
-
-    int w = root["window_width"].toInt();
-    int h = root["window_height"].toInt();
-    if (w == 0 || h == 0)
-    {
-        w = 750;
-        h = 400;
-    }
-    resize(w, h);
+    CustomDataHelpers::restoreWindowSize(root, this, 750, 400);
 
     _plotPlusMinusZ->setCheckedId(root["plot_minus_z"].toInt());
     _plotPlusMinusW->setCheckedId(root["plot_minus_w"].toInt());
@@ -558,14 +543,7 @@ void GaussCalculatorWindow::storeState()
     root["plot_v"] = _plotV->isChecked();
     root["plot_z0"] = _plotZ0->isChecked();
 
-    auto fileName = stateFileName();
-    QFile file(fileName);
-    if (!file.open(QFile::WriteOnly | QFile::Text))
-    {
-        qWarning() << "GaussCalculatorWindow: failed to save state" << fileName << file.errorString();
-        return;
-    }
-    QTextStream(&file) << QJsonDocument(root).toJson();
+    CustomDataHelpers::saveCustomData(root, "gauss");
 }
 
 void GaussCalculatorWindow::makeParams(QGridLayout *paramsLayout)
@@ -646,6 +624,8 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     _plotV = Ori::Gui::toggledAction(tr("Plot Beam Angle"), this, SLOT(updatePlot()), ":/toolbar/plot_v");
     _plotZ0 = Ori::Gui::toggledAction(tr("Plot Rayleigh Distance"), this, SLOT(updatePlot()), ":/toolbar/plot_z0");
 
+    auto actionCalc = Ori::Gui::action(tr("Formula Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
+
     auto actionHelp = new QAction(QIcon(":/toolbar/help"), tr("Help"), this);
     actionHelp->setEnabled(false); // TODO:NEXT-VER
 
@@ -653,7 +633,7 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     toolbar->setIconSize(Settings::instance().toolbarIconSize());
     Ori::Gui::populate(toolbar, {
         _calcModeLock, nullptr, _calcModeZone, nullptr, _plotPlusMinusZ, _plotPlusMinusW, nullptr,
-        _plotWR, _plotV, _plotZ0, nullptr, actionHelp
+        _plotWR, _plotV, _plotZ0, nullptr, actionCalc, nullptr, actionHelp
     });
     return toolbar;
 }
@@ -731,4 +711,9 @@ void GaussCalculatorWindow::updatePlot()
     _plot->setLimitsX(minZ, maxZ, false);
     _plot->setLimitsY(minY, maxY, false);
     _plot->replot();
+}
+
+void GaussCalculatorWindow::showCalculator()
+{
+    CalculatorWindow::showWindow();
 }

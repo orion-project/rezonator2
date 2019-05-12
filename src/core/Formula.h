@@ -11,7 +11,7 @@ class Formula : public ParameterListener
 {
 public:
     Formula(Parameter* target);
-    virtual ~Formula();
+    ~Formula() override;
 
     bool prepare(Parameters &availableDeps);
     void calculate();

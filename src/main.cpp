@@ -1,14 +1,24 @@
 #include "CommonData.h"
+#include "CalculatorWindow.h"
 #include "GaussCalculatorWindow.h"
 #include "ProjectOperations.h"
 #include "ProjectWindow.h"
 #include "StartWindow.h"
+#include "core/Format.h"
 #include "tests/TestSuite.h"
+
+#include "helpers/OriTools.h"
 #include "tools/OriDebug.h"
 #include "testing/OriTestManager.h"
 
 #include <QApplication>
 #include <QFileInfo>
+#include <QCommandLineParser>
+#include <QMessageBox>
+
+#ifndef Q_OS_WIN
+#include <iostream>
+#endif
 
 int main(int argc, char* argv[])
 {
@@ -17,61 +27,95 @@ int main(int argc, char* argv[])
     QApplication app(argc, argv);
     app.setApplicationName("reZonator");
     app.setOrganizationName("orion-project.org");
+    app.setApplicationVersion(Z::Strs::appVersion());
     app.setStyle("fusion");
 
-    // Run test session if requested
-    if (Ori::Testing::isTesting())
-        return Ori::Testing::run(app, { ADD_SUITE(Z::Tests) });
+    auto p = app.palette();
+    p.setColor(QPalette::AlternateBase, Ori::Color::blend(p.color(QPalette::Button), p.color(QPalette::Highlight), 0.02));
+    app.setPalette(p);
 
-    QStringList args = QApplication::arguments();
+    QCommandLineParser parser;
+    auto optionHelp = parser.addHelpOption();
+    auto optionVersion = parser.addVersionOption();
+    QCommandLineOption optionTest("test", "Run unit-test session.");
+    QCommandLineOption optionTool("tool", "Run a tool: gauss, calc", "name");
+    QCommandLineOption optionDevMode("dev"); optionDevMode.setHidden(true);
+    QCommandLineOption optionConsole("console"); optionConsole.setHidden(true);
+    QCommandLineOption optionExample("example"); optionExample.setHidden(true);
+    parser.addOptions({optionTest, optionTool, optionDevMode, optionConsole, optionExample});
+
+    if (!parser.parse(QApplication::arguments()))
+    {
+#ifdef Q_OS_WIN
+        QMessageBox::critical(nullptr, app.applicationName(), parser.errorText());
+#else
+        std::cerr << qPrintable(parser.errorText()) << std::endl;
+#endif
+        return 1;
+    }
+
+    // These will quite the app
+    if (parser.isSet(optionHelp))
+        parser.showHelp();
+    if (parser.isSet(optionVersion))
+        parser.showVersion();
 
     // It's only useful on Windows where there is no
     // direct way to use the console for GUI applications.
-    if (args.contains("console"))
+    if (parser.isSet(optionConsole))
         Ori::Debug::installMessageHandler();
 
+    // Run test session if requested
+    if (parser.isSet(optionTest))
+        return Ori::Testing::run(app, { ADD_SUITE(Z::Tests) });
+
+    // Load application settings before any command start
     Settings::instance().load();
-    Settings::instance().isDevMode = args.contains("dev_mode");
+    Settings::instance().isDevMode = parser.isSet(optionDevMode);
 
     // CommonData will be used via its instance pointer
     CommonData commonData;
 
-    // Run gauss calculator tool if requested
-    if (args.contains("gauss"))
+    // Run a tool if requested
+    if (parser.isSet(optionTool))
     {
-        GaussCalculatorWindow::showCalcWindow();
-        return app.exec();
-    }
-
-    // Treat given file as example
-    bool isExample = false;
-    for (int i = 0; i < args.count(); i++)
-    {
-        if (args.at(i) == "example")
+        auto toolName = parser.value(optionTool);
+        if (toolName == "gauss")
         {
-            isExample = true;
-            args.removeAt(i);
-            break;
+            GaussCalculatorWindow::showWindow();
+            return app.exec();
+        }
+        else if (toolName == "calc")
+        {
+            CalculatorWindow::showWindow();
+            return app.exec();
+        }
+        else
+        {
+        #ifdef Q_OS_WIN
+            QMessageBox::critical(nullptr, app.applicationName(), "Unknown tool name: " + toolName);
+        #else
+            std::cerr << "Unknown tool name: " << qPrintable(toolName) << std::endl;
+        #endif
+            return 1;
         }
     }
 
     // Open a file if given
-    QString fileName;
-    for (int i = 1; i < args.count(); i++)
-        if (QFileInfo(args.at(i)).exists())
-        {
-            fileName = args.at(i);
-            break;
-        }
-    if (!fileName.isEmpty())
+    auto args = parser.positionalArguments();
+    if (!args.isEmpty())
     {
-        auto projectWindow = new ProjectWindow(nullptr);
-        projectWindow->show();
-        if (isExample)
-            projectWindow->operations()->openExampleFile(fileName);
-        else
-            projectWindow->operations()->openSchemaFile(fileName);
-        return app.exec();
+        auto fileName = args.first();
+        if (QFileInfo(fileName).exists())
+        {
+            auto projectWindow = new ProjectWindow(nullptr);
+            projectWindow->show();
+            if (parser.isSet(optionExample))
+                projectWindow->operations()->openExampleFile(fileName);
+            else
+                projectWindow->operations()->openSchemaFile(fileName);
+            return app.exec();
+        }
     }
 
     // Open empty project window in start window is disabled

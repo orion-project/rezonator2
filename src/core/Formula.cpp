@@ -115,6 +115,7 @@ void Formula::calculate()
     lua_close(L);
 
     #undef RESULT_VAR
+    #undef FORMULA_ID
 }
 
 void Formula::addDep(Parameter* param)

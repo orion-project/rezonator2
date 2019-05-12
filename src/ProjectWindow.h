@@ -70,7 +70,7 @@ private:
             *actnFuncCaustic, *actnFuncMultiCaustic, *actnFuncBeamVariation;
 
     QAction  *actnToolsGaussCalc, *actnToolsCatalog, *actnToolsPrefs,
-             *actnToolFlipSchema;
+             *actnToolFlipSchema, *actnToolsCalc;
 
     QAction *actnWndClose, *actnWndCloseAll, *actnWndTile, *actnWndCascade,
             *actnWndSchema, *actnWndParams, *actnWndProtocol, *actnWndPumps;
@@ -107,6 +107,7 @@ private slots:
     void showProtocolWindow();
     void showSchemaWindow();
     void showGaussCalculator();
+    void showCalculator();
     void showParamsWindow();
     void showPumpsWindow();
 

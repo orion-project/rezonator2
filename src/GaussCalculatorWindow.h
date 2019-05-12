@@ -74,7 +74,7 @@ public:
     explicit GaussCalculatorWindow(QWidget *parent = nullptr);
     ~GaussCalculatorWindow();
 
-    static void showCalcWindow();
+    static void showWindow();
 
 private:
     Plot* _plot;
@@ -97,7 +97,6 @@ private:
 
     void recalc();
 
-    static QString stateFileName();
     void restoreState();
     void storeState();
 
@@ -105,6 +104,7 @@ private slots:
     void updatePlot();
     void zoneSelected(int zone);
     void lockSelected(int lock);
+    void showCalculator();
 };
 
 #endif // GAUSS_CALCULATOR_WINDOW_H

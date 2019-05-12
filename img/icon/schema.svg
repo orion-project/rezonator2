@@ -1,17 +1,19 @@
 <svg height="256" width="256" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <linearGradient id="a" gradientUnits="userSpaceOnUse" x1="21.05572423836" x2="231.333035862" y1="23.2733290272" y2="235.73609700828">
+  <linearGradient id="a" gradientUnits="userSpaceOnUse" x1="21.055724" x2="231.333036" y1="23.273329" y2="235.736097">
     <stop offset="0" stop-color="#fdffff"/>
     <stop offset="1" stop-color="#cfcfff"/>
   </linearGradient>
-  <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="21.05572423836" x2="231.333035862" y1="23.2733290272" y2="235.73609700828">
+  <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="21.055724" x2="231.333036" y1="23.273329" y2="235.736097">
     <stop offset="0" stop-color="#a4c8f0"/>
     <stop offset="1" stop-color="#737ba6"/>
   </linearGradient>
   <rect fill="url(#a)" height="250.99998" ry="26.829721" stroke="url(#b)" stroke-width="5" width="250.99998" x="2.5" y="2.500016"/>
   <g stroke-width="10">
-    <path d="m40.607487 34v50" fill="none" stroke="#000"/>
-    <path d="m214.60749 172v50" fill="none" stroke="#000"/>
-    <path d="m40.718355 59h180.531915l-186.500537 138h177.746867" fill="none" stroke="#000" stroke-linejoin="round" stroke-opacity=".691542"/>
+    <g fill="none" stroke="#000">
+      <path d="m40.607487 34v50"/>
+      <path d="m214.60749 172v50"/>
+      <path d="m40.718355 59h180.531915l-186.500537 138h177.746867" stroke-linejoin="round" stroke-opacity=".691542"/>
+    </g>
     <path d="m67.440636 91h51.805704l72.52799 74h-51.80571z" fill="#49b7ff" fill-opacity=".65" fill-rule="evenodd" stroke="#49b7ff" stroke-linecap="square"/>
   </g>
 </svg>

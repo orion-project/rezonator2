@@ -1,5 +1,5 @@
 <svg height="256" width="256" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <linearGradient id="a" gradientUnits="userSpaceOnUse" x1="21.05571423836" x2="231.333025862" y1="23.2733190272" y2="235.73608700828">
+  <linearGradient id="a" gradientUnits="userSpaceOnUse" x1="21.055714" x2="231.333026" y1="23.273319" y2="235.736087">
     <stop offset="0" stop-color="#a4c8f0"/>
     <stop offset="1" stop-color="#737ba6"/>
   </linearGradient>
@@ -7,20 +7,20 @@
     <stop offset="0" stop-color="#fdffff"/>
     <stop offset="1" stop-color="#cfcfff"/>
   </linearGradient>
-  <linearGradient id="c" gradientUnits="userSpaceOnUse" x1="25.9125088" x2="25.9125088" xlink:href="#d" y1="44.4487782" y2="114.1570542"/>
+  <linearGradient id="c" gradientUnits="userSpaceOnUse" x1="25.912509" x2="25.912509" xlink:href="#d" y1="44.448778" y2="114.157054"/>
   <linearGradient id="d">
     <stop offset="0" stop-color="#418af9"/>
     <stop offset=".2" stop-color="#fdfdfd"/>
     <stop offset=".40000001" stop-color="#418af9"/>
     <stop offset="1" stop-color="#aecbf8"/>
   </linearGradient>
-  <linearGradient id="e" gradientUnits="userSpaceOnUse" x1="32.8833364" x2="32.8833364" xlink:href="#f" y1="44.4487782" y2="114.1570542"/>
+  <linearGradient id="e" gradientUnits="userSpaceOnUse" x1="32.883336" x2="32.883336" xlink:href="#f" y1="44.448778" y2="114.157054"/>
   <linearGradient id="f">
     <stop offset="0" stop-color="#2d77e6"/>
     <stop offset="1" stop-color="#71a3ee"/>
   </linearGradient>
-  <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="25.9125088" x2="25.9125088" xlink:href="#d" y1="150.4487832" y2="220.1570592"/>
-  <linearGradient id="h" gradientUnits="userSpaceOnUse" x1="32.8833364" x2="32.8833364" xlink:href="#f" y1="150.4487832" y2="220.1570592"/>
+  <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="25.912509" x2="25.912509" xlink:href="#d" y1="150.448783" y2="220.157059"/>
+  <linearGradient id="h" gradientUnits="userSpaceOnUse" x1="32.883336" x2="32.883336" xlink:href="#f" y1="150.448783" y2="220.157059"/>
   <rect fill="url(#b)" height="250.99998" ry="26.829721" stroke="url(#a)" stroke-width="5" width="250.99998" x="2.5" y="2.500015"/>
   <g fill-rule="evenodd">
     <path d="m77.855103 66.058346h80.500887v-27.883313l51.87798 42.047682-51.87798 41.602255v-27.883316h-80.500887z" fill="#ff6f6f"/>
