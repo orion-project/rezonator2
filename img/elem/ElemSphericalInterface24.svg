@@ -1,21 +1,21 @@
 <svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <linearGradient id="a" gradientTransform="scale(.49999998 .99999996)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="12" x2="12" y1="0" y2="24">
-    <stop offset="0" stop-color="#e4ffdb"/>
-    <stop offset="1" stop-color="#99fdc8"/>
-  </linearGradient>
-  <linearGradient id="b" gradientTransform="matrix(.49999998 0 0 .99999996 12 -24)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="12" x2="12" y1="0" y2="24">
-    <stop offset="0" stop-color="#dbf6ff"/>
-    <stop offset="1" stop-color="#7ddcfd"/>
-  </linearGradient>
-  <path d="m12-24h12v24h-12c-3.7246392-8.1201497-4.6601012-16.150326 0-24z" fill="url(#b)" transform="scale(1 -1)"/>
-  <path d="m0 0h12c-3.6851494 8.0658062-3.9067384 16.069763 0 24h-12z" fill="url(#a)"/>
-  <g fill="none" stroke-linecap="round">
-    <path d="m22.875 6.1875-5-5m3 6-5-5" stroke="#00b4ff"/>
-    <path d="m1.25 7.5 5-5m-3 6 5-5" stroke="#00c8aa"/>
-    <path d="m1.8771186 20.980932 4.1355932-4.237288m-2.1355932 5.237288 3.6271186-3.830508" stroke="#00c8aa"/>
-    <path d="m22.5 21.9375-2.711864-2.966102m.711864 3.966102-3.016949-3.169492" stroke="#00b4ff"/>
-    <path d="m17.49032 8.53871 4 3.948789-4.031855 4.012501" stroke="#f00" stroke-linejoin="round" stroke-width="3"/>
-    <path d="m12.5 24c-4.8085515-7.717144-4.4081883-15.7406948 0-24" stroke="#00b4ff"/>
-    <path d="m2.414357 12.495543h19.024757" stroke="#f00" stroke-width="3"/>
-  </g>
+<linearGradient id="a" gradientTransform="scale(.5 1)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="12" x2="12" y1="0" y2="24">
+<stop offset="0" stop-color="#e4ffdb"/>
+<stop offset="1" stop-color="#99fdc8"/>
+</linearGradient>
+<linearGradient id="b" gradientTransform="matrix(.5 0 0 1 12 -24)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="12" x2="12" y1="0" y2="24">
+<stop offset="0" stop-color="#dbf6ff"/>
+<stop offset="1" stop-color="#7ddcfd"/>
+</linearGradient>
+<path d="m12-24h12v24h-12c-3.72-8.12-4.66-16.15 0-24z" fill="url(#b)" transform="scale(1 -1)"/>
+<path d="m0 0h12c-3.69 8.07-3.91 16.07 0 24h-12z" fill="url(#a)"/>
+<g fill="none" stroke-linecap="round">
+<path d="m22.88 6.19-5-5m3 6-5-5" stroke="#00b4ff"/>
+<path d="m1.25 7.5 5-5m-3 6 5-5" stroke="#00c8aa"/>
+<path d="m1.88 20.98 4.14-4.24m-2.14 5.24 3.63-3.83" stroke="#00c8aa"/>
+<path d="m22.5 21.94-2.71-2.97m.71 3.97-3.02-3.17" stroke="#00b4ff"/>
+<path d="m17.49 8.54 4 3.95-4.03 4.01" stroke="#f00" stroke-linejoin="round" stroke-width="3"/>
+<path d="m12.5 24c-4.81-7.72-4.41-15.74 0-24" stroke="#00b4ff"/>
+<path d="m2.41 12.5h19.02" stroke="#f00" stroke-width="3"/>
+</g>
 </svg>

@@ -1,21 +1,23 @@
 <svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <linearGradient id="a" gradientTransform="scale(.49999998 .99999996)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="12" x2="12" y1="0" y2="24">
-    <stop offset="0" stop-color="#e4ffdb"/>
-    <stop offset="1" stop-color="#99fdc8"/>
-  </linearGradient>
-  <linearGradient id="b" gradientTransform="matrix(.49999998 0 0 .99999996 12 -24)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="12" x2="12" y1="0" y2="24">
-    <stop offset="0" stop-color="#dbf6ff"/>
-    <stop offset="1" stop-color="#7ddcfd"/>
-  </linearGradient>
-  <path d="m12-24h12v24h-12z" fill="url(#b)" transform="scale(1 -1)"/>
-  <path d="m0 0h12v24h-12z" fill="url(#a)"/>
-  <g fill="none">
-    <path d="m22.875 6.1875-5-5m3 6-5-5" stroke="#00b4ff" stroke-linecap="round"/>
-    <path d="m1.25 7.5 5-5m-3 6 5-5" stroke="#00c8aa" stroke-linecap="round"/>
-    <path d="m3.25 20.625 5-5m-3 6 5-5" stroke="#00c8aa" stroke-linecap="round"/>
-    <path d="m22.5 21.9375-5-5m3 6-5-5" stroke="#00b4ff" stroke-linecap="round"/>
-    <path d="m17.49032 8.53871 4 3.948789-4.031855 4.012501" stroke="#f00" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
-    <path d="m12.5 24v-24" stroke="#00b4ff"/>
-    <path d="m2.414357 12.495543h19.024757" stroke="#f00" stroke-linecap="round" stroke-width="3"/>
-  </g>
+<linearGradient id="a" gradientTransform="scale(.5 1)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="12" x2="12" y1="0" y2="24">
+<stop offset="0" stop-color="#e4ffdb"/>
+<stop offset="1" stop-color="#99fdc8"/>
+</linearGradient>
+<linearGradient id="b" gradientTransform="matrix(.5 0 0 1 12 -24)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="12" x2="12" y1="0" y2="24">
+<stop offset="0" stop-color="#dbf6ff"/>
+<stop offset="1" stop-color="#7ddcfd"/>
+</linearGradient>
+<path d="m12-24h12v24h-12z" fill="url(#b)" transform="scale(1 -1)"/>
+<path d="m0 0h12v24h-12z" fill="url(#a)"/>
+<g fill="none">
+<g stroke-linecap="round">
+<path d="m22.88 6.19-5-5m3 6-5-5" stroke="#00b4ff"/>
+<path d="m1.25 7.5 5-5m-3 6 5-5" stroke="#00c8aa"/>
+<path d="m3.25 20.63 5-5m-3 6 5-5" stroke="#00c8aa"/>
+<path d="m22.5 21.94-5-5m3 6-5-5" stroke="#00b4ff"/>
+<path d="m17.49 8.54 4 3.95-4.03 4.01" stroke="#f00" stroke-linejoin="round" stroke-width="3"/>
+</g>
+<path d="m12.5 24v-24" stroke="#00b4ff"/>
+<path d="m2.41 12.5h19.02" stroke="#f00" stroke-linecap="round" stroke-width="3"/>
+</g>
 </svg>

@@ -205,4 +205,18 @@ private:
     Z::Parameter *_radius1, *_radius2;
 DECLARE_ELEMENT_END
 
+//------------------------------------------------------------------------------
+
+DECLARE_ELEMENT(ElemGrinLens, ElementRange)
+    ElemGrinLens();
+    TYPE_NAME(qApp->translate("Elements", "GRIN lens"))
+    DEFAULT_LABEL("GL")
+    CALC_MATRIX
+    SUB_RANGE
+    double ior2t() const { return _ior2t->value().value(); }
+    double ior2s() const { return _ior2s->value().value(); }
+private:
+    Z::Parameter *_ior2t, *_ior2s;
+DECLARE_ELEMENT_END
+
 #endif // ELEMENTS_H

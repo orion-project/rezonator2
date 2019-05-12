@@ -313,12 +313,6 @@ TEST_METHOD(Point)
     ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
 
-/* TODO
-TEST_METHOD(grin_lens)
-{
-
-} */
-
 // Calculation: $PROJECT/calc/ElemThickLens.py
 TEST_METHOD(ThickLens)
 {
@@ -343,6 +337,30 @@ TEST_METHOD(ThickLens)
     ASSERT_MATRIX(s1, 0.9925926, 0.0013333, -3.7037037, 0.6666667)
     ASSERT_MATRIX(t2, 1.0000000, 0.0080000, -3.3333333, 1.4733333)
     ASSERT_MATRIX(s2, 1.0000000, 0.0080000, -3.3333333, 1.4733333)
+}
+
+// Calculation: $PROJECT/calc/ElemGrinLens.py
+TEST_METHOD(GrinLens)
+{
+    ELEM(GrinLens, 4)
+    SET_PARAM(L, 10, mm)
+    SET_PARAM(n, 1.5, none)
+    SET_PARAM(n2t, 0.2, none)
+    SET_PARAM(n2s, 0.3, none)
+
+    ASSERT_RAW_PARAM(ior, 1.5)
+    ASSERT_RAW_PARAM(lengthSI, 0.01)
+    ASSERT_RAW_PARAM(ior2t, 0.2)
+    ASSERT_RAW_PARAM(ior2s, 0.3)
+
+    ASSERT_MATRIX(t, 0.9999933, 0.0066667, -0.0020000, 0.9999933)
+    ASSERT_MATRIX(s, 0.9999900, 0.0066666, -0.0030000, 0.9999900)
+
+    elem->setSubRangeSI(0.003);
+    ASSERT_MATRIX(t1, 0.9999994, 0.0020000, -0.0004000, 0.6666663)
+    ASSERT_MATRIX(s1, 0.9999991, 0.0020000, -0.0006000, 0.6666661)
+    ASSERT_MATRIX(t2, 0.9999967, 0.0070000, -0.0014000, 1.4999951)
+    ASSERT_MATRIX(s2, 0.9999951, 0.0070000, -0.0021000, 1.4999927)
 }
 
 // Calculation: $PROJECT/calc/Elements.py
@@ -423,7 +441,7 @@ TEST_GROUP("Elements",
            ADD_TEST(Matrix1),
            ADD_TEST(Matrix2),
            ADD_TEST(Point),
-           // TODO ADD_TEST(grin_lens),
+           ADD_TEST(GrinLens),
            ADD_TEST(ThickLens),
            ADD_TEST(NormalInterface),
            ADD_TEST(BrewsterInterface),

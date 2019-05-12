@@ -1,29 +1,45 @@
 <svg height="272" width="205" xmlns="http://www.w3.org/2000/svg">
-  <path d="m15.407377 167.65864 82.218263 25.29973" fill="none" stroke="#000" stroke-dasharray="6 6"/>
-  <path d="m16.225397 44.59798 85.400243 26.36039" fill="none" stroke="#000" stroke-dasharray="8 8"/>
-  <path d="m12.100505 195h106.685205" fill="none" stroke="#000" stroke-width="7"/>
-  <path d="m12.918525 73h109.867185" fill="none" stroke="#000" stroke-width="7"/>
-  <path d="m66.631959 47.552048c11.762497 15.335914 10.952896 62.157452-.809602 81.066782m-9.910649-81.290121 71.915012-38.0420006h8.93355c11.76249 15.3359146 11.76249 62.6836876 0 81.5930186l-71.393509 38.216823-9.008375-.10038z" fill="#7f7f7f" fill-opacity=".741176" stroke="#000" stroke-width="3.573417"/>
-  <path d="m56.358386 47.403155 11.279692.105283 69.829232-37.6292594" fill="none" stroke="#000" stroke-width="3.573417"/>
-  <path d="m55.993819 169.18984 75.219981-39.79029h17.93356c-12.14385 20.6658-11.70337 63.14176.22024 85.34276l-74.674506 39.97314-18.23207-.10499z" fill="#7f7f7f" fill-opacity=".741176" stroke="#000" stroke-width="3.737639"/>
-  <path d="m56.461024 169.2677h17.933553c-12.14385 20.6658-11.703369 63.14176.220247 85.34276" fill="none" stroke="#000" stroke-width="3.737639"/>
-  <path d="m73.825472 169.73491 75.219988-40.49109" fill="none" stroke="#000" stroke-width="3.737639"/>
-  <path d="m106.35355 69.5c.07576 2.209709.45457 4.158946-.74499 6.911612l75.82894.088388v-7z" fill-rule="evenodd"/>
-  <path d="m101.82322 191.5c-1.07329 2.12132-.95964 4.07056-.21466 6.91161l83.82894.08839v-7z" fill-rule="evenodd"/>
-  <g fill="none">
-    <path d="m106.01398 73.194174s78.61166 23.264196 78.61166 23.264196" stroke="#000" stroke-dasharray="6 6"/>
-    <path d="m102.01398 197.19417 79.11166 24.7642" stroke="#000" stroke-dasharray="8 8"/>
-    <path d="m28.409263 81.204013a66.207108 62.5 0 0 1 1.793724-18.608428" stroke="#000" transform="translate(0 -12.530331)"/>
-    <path d="m25.577165 64.640935 2.828427 4.065864 2.740038-3.889087" stroke="#000"/>
-    <path d="m26.902989 53.415615 3.27037-3.270369 1.502602 4.065864" stroke="#000"/>
-    <path d="m28.409263 81.204013a66.207108 62.5 0 0 1 1.793724-18.608428" stroke="#000" transform="translate(-6 109.375)"/>
-    <path d="m19.577165 186.54627 2.828427 4.06586 2.740038-3.88909" stroke="#000"/>
-    <path d="m20.902989 175.32095 3.27037-3.27037 1.502602 4.06586" stroke="#000"/>
-    <path d="m163 60.25 19.5 13-19.75 11.25" stroke="#000" stroke-linecap="round" stroke-width="7"/>
-    <path d="m167 182.25 19.5 13-19.75 11.25" stroke="#000" stroke-linecap="round" stroke-width="7"/>
-  </g>
-  <text font-family="Times New Roman" font-size="10" font-style="italic" x="139.91113" y="118.79688"><tspan font-size="28" x="139.91113" y="118.79688">F&gt;0</tspan></text>
-  <text font-family="Times New Roman" font-size="10" font-style="italic" x="139.91113" y="250.79688"><tspan font-size="28" x="139.91113" y="250.79688">F&lt;0</tspan></text>
-  <text font-family="Times New Roman" font-size="28" font-style="italic" x="7.076172" y="64.022461"><tspan x="7.076172" y="64.022461">α</tspan></text>
-  <text font-family="Times New Roman" font-size="28" font-style="italic" x="3.076172" y="188.02246"><tspan x="3.076172" y="188.02246">α</tspan></text>
+<g stroke="#000">
+<g fill="none">
+<path d="m15.41 167.66 82.22 25.3" stroke-dasharray="6 6"/>
+<path d="m16.23 44.6 85.4 26.36" stroke-dasharray="8 8"/>
+<g stroke-width="7">
+<path d="m12.1 195h106.69"/>
+<path d="m12.92 73h109.87"/>
+</g>
+</g>
+<path d="m66.63 47.55c11.76 15.34 10.95 62.16-.81 81.07m-9.91-81.29 71.92-38.04h8.93c11.76 15.34 11.76 62.68 0 81.59l-71.39 38.22-9.01-.1z" fill="#7f7f7f" fill-opacity=".74" stroke-width="3.57"/>
+<path d="m56.36 47.4 11.28.11 69.83-37.63" fill="none" stroke-width="3.57"/>
+<g stroke-width="3.74">
+<path d="m55.99 169.19 75.22-39.79h17.93c-12.14 20.67-11.7 63.14.22 85.34l-74.67 39.97-18.23-.1z" fill="#7f7f7f" fill-opacity=".74"/>
+<g fill="none">
+<path d="m56.46 169.27h17.93c-12.14 20.67-11.7 63.14.22 85.34"/>
+<path d="m73.83 169.73 75.22-40.49"/>
+</g>
+</g>
+</g>
+<path d="m106.35 69.5c.08 2.21.45 4.16-.74 6.91l75.83.09v-7z" fill-rule="evenodd"/>
+<path d="m101.82 191.5c-1.07 2.12-.96 4.07-.21 6.91l83.83.09v-7z" fill-rule="evenodd"/>
+<g fill="none" stroke="#000">
+<path d="m106.01 73.19s78.61 23.26 78.61 23.26" stroke-dasharray="6 6"/>
+<path d="m102.01 197.19 79.11 24.76" stroke-dasharray="8 8"/>
+<path d="m28.41 81.2a66.21 62.5 0 0 1 1.79-18.61" transform="translate(0 -12.53)"/>
+<path d="m25.58 64.64 2.83 4.07 2.74-3.89"/>
+<path d="m26.9 53.42 3.27-3.27 1.5 4.07"/>
+<path d="m28.41 81.2a66.21 62.5 0 0 1 1.79-18.61" transform="translate(-6 109.38)"/>
+<path d="m19.58 186.55 2.83 4.07 2.74-3.89"/>
+<path d="m20.9 175.32 3.27-3.27 1.5 4.07"/>
+<g stroke-linecap="round" stroke-width="7">
+<path d="m163 60.25 19.5 13-19.75 11.25"/>
+<path d="m167 182.25 19.5 13-19.75 11.25"/>
+</g>
+</g>
+<g font-family="Times New Roman" font-style="italic">
+<text font-size="10" x="139.91" y="118.8"><tspan font-size="28" x="139.91" y="118.8">F&gt;0</tspan></text>
+<text font-size="10" x="139.91" y="250.8"><tspan font-size="28" x="139.91" y="250.8">F&lt;0</tspan></text>
+<g font-size="28">
+<text x="7.08" y="64.02"><tspan x="7.08" y="64.02">α</tspan></text>
+<text x="3.08" y="188.02"><tspan x="3.08" y="188.02">α</tspan></text>
+</g>
+</g>
 </svg>

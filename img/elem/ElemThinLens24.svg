@@ -1,14 +1,14 @@
 <svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <linearGradient id="a" gradientUnits="userSpaceOnUse" x1="10.088602" x2="9.93851" y1="1.047912" y2="23">
-    <stop offset="0" stop-color="#dbf6ff"/>
-    <stop offset="1" stop-color="#7ddcfd"/>
-  </linearGradient>
-  <path d="m8.5444104.77394888h2.6821936s3.066105 5.42324192 3.09516 11.18100212c.029056 5.757761-3.09516 11.304767-3.09516 11.304767h-2.2542233s-2.2142173-5.617886-2.2142173-11.242886c0-5.6250003 1.786247-11.24288312 1.786247-11.24288312z" fill="#a1daff" fill-rule="evenodd"/>
-  <path d="m1.5170154 22.53744 20.9765496-20.9314995" fill="none" stroke="#f00" stroke-linecap="round" stroke-width="3"/>
-  <path d="m8.9723807.77394888h2.2542233s3.066105 5.42324192 3.09516 11.18100212c.029056 5.757761-3.09516 11.304767-3.09516 11.304767h-2.2542233s-2.2142173-5.617886-2.2142173-11.242886c0-5.6250003 2.2142173-11.24288312 2.2142173-11.24288312z" fill="url(#a)" fill-rule="evenodd" stroke="#00b4ff" stroke-width="1.5"/>
-  <g fill="none">
-    <path d="m17.523018 1.5225247h4.976982v5.0127018" stroke="#f00" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
-    <path d="m.00217785 12.5h23.03999715" stroke="#000" stroke-dasharray="2 1"/>
-    <path d="m5.3967093 18.647167 11.1005487-11.1005491" stroke="#f00" stroke-opacity=".316667" stroke-width="3"/>
-  </g>
+<linearGradient id="a" gradientUnits="userSpaceOnUse" x1="10.09" x2="9.94" y1="1.05" y2="23">
+<stop offset="0" stop-color="#dbf6ff"/>
+<stop offset="1" stop-color="#7ddcfd"/>
+</linearGradient>
+<path d="m8.54.77h2.68s3.07 5.42 3.1 11.18-3.1 11.3-3.1 11.3h-2.25s-2.21-5.62-2.21-11.24c0-5.63 1.79-11.24 1.79-11.24z" fill="#a1daff" fill-rule="evenodd"/>
+<path d="m1.52 22.54 20.98-20.93" fill="none" stroke="#f00" stroke-linecap="round" stroke-width="3"/>
+<path d="m8.97.77h2.25s3.07 5.42 3.1 11.18-3.1 11.3-3.1 11.3h-2.25s-2.21-5.62-2.21-11.24c0-5.63 2.21-11.24 2.21-11.24z" fill="url(#a)" fill-rule="evenodd" stroke="#00b4ff" stroke-width="1.5"/>
+<g fill="none">
+<path d="m17.52 1.52h4.98v5.01" stroke="#f00" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+<path d="m0 12.5h23.04" stroke="#000" stroke-dasharray="2 1"/>
+<path d="m5.4 18.65 11.1-11.1" stroke="#f00" stroke-opacity=".32" stroke-width="3"/>
+</g>
 </svg>

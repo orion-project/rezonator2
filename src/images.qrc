@@ -123,6 +123,7 @@
         <file alias="ElemTiltedInterface">../img/elem/ElemTiltedInterface.svg</file>
         <file alias="ElemSphericalInterface">../img/elem/ElemSphericalInterface.svg</file>
         <file alias="ElemThickLens">../img/elem/ElemThickLens.svg</file>
+        <file alias="ElemGrinLens">../img/elem/ElemGrinLens.svg</file>
     </qresource>
     <qresource prefix="/elem_icon">
         <file alias="ElemEmptyRange">../img/elem/ElemEmptyRange24.svg</file>
@@ -144,6 +145,7 @@
         <file alias="ElemTiltedInterface">../img/elem/ElemTiltedInterface24.svg</file>
         <file alias="ElemSphericalInterface">../img/elem/ElemSphericalInterface24.svg</file>
         <file alias="ElemThickLens">../img/elem/ElemThickLens24.svg</file>
+        <file alias="ElemGrinLens">../img/elem/ElemGrinLens24.svg</file>
     </qresource>
     <qresource prefix="/config_pages">
         <file alias="general">../img/misc/opts_gear.svg</file>

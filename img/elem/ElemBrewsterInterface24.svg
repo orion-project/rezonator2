@@ -1,23 +1,23 @@
 <svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <linearGradient id="a">
-    <stop offset="0" stop-color="#dbf6ff"/>
-    <stop offset="1" stop-color="#7ddcfd"/>
-  </linearGradient>
-  <linearGradient id="b" gradientTransform="matrix(1 0 0 1.0222222 3.977439 -.266667)" gradientUnits="userSpaceOnUse" x1="15.913273" x2="4.892136" xlink:href="#a" y1="1.041945" y2="23"/>
-  <linearGradient id="c" gradientTransform="scale(.49999998 .99999996)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="12" x2="12" y1="0" y2="24">
-    <stop offset="0" stop-color="#e4ffdb"/>
-    <stop offset="1" stop-color="#99fdc8"/>
-  </linearGradient>
-  <linearGradient id="d" gradientTransform="matrix(.49999998 0 0 .99999996 11.999999 -24.000001)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="12" x2="12" xlink:href="#a" y1="0" y2="24"/>
-  <path d="m5.0786375-24h18.9213625v24h-8z" fill="url(#d)" transform="scale(1 -1)"/>
-  <path d="m23.060942 6.0349586-5-5m3 6-3.830508-3.779661" fill="none" stroke="#00b4ff" stroke-linecap="round"/>
-  <path d="m15.159715 21.979624-4.084746-4.033898m2.084746 5.033898-3.9830511-3.881356" fill="none" stroke="#00b4ff" stroke-linecap="round"/>
-  <path d="m0 0h16l-11.114592 24h-4.885408z" fill="url(#c)"/>
-  <path d="m1.5231207 16.968473 3.118644-2.915254m-2.0338983 4.983051 4.1864404-3.881356" fill="none" stroke="#00c8aa" stroke-linecap="round"/>
-  <path d="m20.772793 11.186372 1.602496 5.387482-5.466296 1.573424" fill="none" stroke="#f00" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
-  <path d="m2.8494335 3.2470336h3.6680805v.8832488h-3.6680805zm1.8392358-2.47309671q-1.1430279 0-1.8132579.85207531-.6754255.8520754-.6754255 2.3224249 0 1.4651539.67023 2.3172293.6754255.8520753 1.8184534.8520753 1.1430279 0 1.8132579-.8520753.6650344-.8520754.6650344-2.3172293 0-1.4703495-.6650344-2.3224249-.67023-.85207531-1.8132579-.85207531zm0-.85207535q1.6314126 0 2.6081819 1.09626766.9767693 1.0910721.9767693 2.9303079 0 1.8340402-.9767693 2.9251123-.9767693 1.0962677-2.6081819 1.0962677-1.6366081 0-2.6133774-1.0910721-.9819649-1.0910721-.9819649-2.9303079 0-1.8392358.9819649-2.9355035.9767693-1.09107206 2.6133774-1.09107206z" transform="scale(.9907912 1.0092943)"/>
-  <g stroke-linecap="round">
-    <path d="m5.2229836 23.500001 10.9007574-23.0000005" fill="url(#b)" fill-rule="evenodd" stroke="#00b4ff"/>
-    <path d="m-.06370962 10.501252h11.15297062l10.536294 5.519715" fill="none" stroke="#f00" stroke-width="3"/>
-  </g>
+<linearGradient id="a">
+<stop offset="0" stop-color="#dbf6ff"/>
+<stop offset="1" stop-color="#7ddcfd"/>
+</linearGradient>
+<linearGradient id="b" gradientTransform="matrix(1 0 0 1.02 3.98 -.27)" gradientUnits="userSpaceOnUse" x1="15.91" x2="4.89" xlink:href="#a" y1="1.04" y2="23"/>
+<linearGradient id="c" gradientTransform="scale(.5 1)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="12" x2="12" y1="0" y2="24">
+<stop offset="0" stop-color="#e4ffdb"/>
+<stop offset="1" stop-color="#99fdc8"/>
+</linearGradient>
+<linearGradient id="d" gradientTransform="matrix(.5 0 0 1 12 -24)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="12" x2="12" xlink:href="#a" y1="0" y2="24"/>
+<path d="m5.08-24h18.92v24h-8z" fill="url(#d)" transform="scale(1 -1)"/>
+<path d="m23.06 6.03-5-5m3 6-3.83-3.78" fill="none" stroke="#00b4ff" stroke-linecap="round"/>
+<path d="m15.16 21.98-4.08-4.03m2.08 5.03-3.98-3.88" fill="none" stroke="#00b4ff" stroke-linecap="round"/>
+<path d="m0 0h16l-11.11 24h-4.89z" fill="url(#c)"/>
+<path d="m1.52 16.97 3.12-2.92m-2.03 4.98 4.19-3.88" fill="none" stroke="#00c8aa" stroke-linecap="round"/>
+<path d="m20.77 11.19 1.6 5.39-5.47 1.57" fill="none" stroke="#f00" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+<path d="m2.85 3.25h3.67v.88h-3.67zm1.84-2.47q-1.14 0-1.81.85-.68.85-.68 2.32 0 1.47.67 2.32.68.85 1.82.85 1.14 0 1.81-.85.67-.85.67-2.32 0-1.47-.67-2.32-.67-.85-1.81-.85zm0-.85q1.63 0 2.61 1.1.98 1.09.98 2.93 0 1.83-.98 2.93-.98 1.1-2.61 1.1-1.64 0-2.61-1.09-.98-1.09-.98-2.93 0-1.84.98-2.94.98-1.09 2.61-1.09z" transform="scale(.99 1.01)"/>
+<g stroke-linecap="round">
+<path d="m5.22 23.5 10.9-23" fill="url(#b)" fill-rule="evenodd" stroke="#00b4ff"/>
+<path d="m-.06 10.5h11.15l10.54 5.52" fill="none" stroke="#f00" stroke-width="3"/>
+</g>
 </svg>

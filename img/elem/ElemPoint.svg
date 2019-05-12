@@ -1,11 +1,13 @@
 <svg height="128" width="200" xmlns="http://www.w3.org/2000/svg">
-  <g fill="none" stroke="#000">
-    <path d="m104.75 65.000008h52.42273" stroke-width="7"/>
-    <path d="m97.961365 73.75v50.28703" stroke-dasharray="4 4"/>
-    <path d="m141.06818 48.454553 18.18182 16.727273-17.81818 16.363636" stroke-linecap="round" stroke-width="7"/>
-  </g>
-  <text font-family="Times New Roman" font-size="14.516184" font-style="italic" transform="scale(1.179256 .84799229)" x="44.816986" y="58.762127"><tspan font-size="52.258263" x="44.816986" y="58.762127">1</tspan></text>
-  <path d="m75.75 63.125a11.375 11.375 0 1 1 -22.75 0 11.375 11.375 0 1 1 22.75 0z" fill="none" stroke="#000" stroke-width="4.074627" transform="matrix(.73626374 0 0 .73626374 50.564387 18.52336)"/>
-  <path d="m40.75 65.000008h48.42273" fill="none" stroke="#000" stroke-width="7"/>
-  <path d="m97.961365 3.75v50.28703" fill="none" stroke="#000" stroke-dasharray="4 4"/>
+<g fill="none" stroke="#000">
+<path d="m104.75 65h52.42" stroke-width="7"/>
+<path d="m97.96 73.75v50.29" stroke-dasharray="4 4"/>
+<path d="m141.07 48.45 18.18 16.73-17.82 16.36" stroke-linecap="round" stroke-width="7"/>
+</g>
+<text font-family="Times New Roman" font-size="14.52" font-style="italic" transform="scale(1.18 .85)" x="44.82" y="58.76"><tspan font-size="52.26" x="44.82" y="58.76">1</tspan></text>
+<g fill="none" stroke="#000">
+<path d="m75.75 63.13a11.38 11.38 0 1 1 -22.75 0 11.38 11.38 0 1 1 22.75 0z" stroke-width="4.07" transform="matrix(.74 0 0 .74 50.56 18.52)"/>
+<path d="m40.75 65h48.42" stroke-width="7"/>
+<path d="m97.96 3.75v50.29" stroke-dasharray="4 4"/>
+</g>
 </svg>

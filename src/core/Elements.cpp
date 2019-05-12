@@ -539,3 +539,65 @@ void ElemThickLens::setSubRangeSI(double value)
     _mt2.assign(1, L2, (1-n)/R2, L2*(1-n)/R2 + n);
     _ms2 = _mt2;
 }
+
+//------------------------------------------------------------------------------
+//                             ElemGrinLens
+
+ElemGrinLens::ElemGrinLens() : ElementRange()
+{
+    _ior->setVisible(true);
+
+    _ior2t = new Z::Parameter(Z::Dims::none(),
+        QStringLiteral("n2t"), QStringLiteral("n2t"),
+        qApp->translate("Param", "IOR gradient (T)"),
+        qApp->translate("Param", "Radial gradient of index of refraction in tangential plane"));
+    _ior2s = new Z::Parameter(Z::Dims::none(),
+        QStringLiteral("n2s"), QStringLiteral("n2s"),
+        qApp->translate("Param", "IOR gradient (S)"),
+        qApp->translate("Param", "Radial gradient of index of refraction in sagittal plane"));
+
+    addParam(_ior2t, 0.01, Z::Units::none());
+    addParam(_ior2s, 0.01, Z::Units::none());
+}
+
+void ElemGrinLens::calcMatrixInternal()
+{
+    const double L = lengthSI();
+    const double n0 = ior();
+    const double n2t = ior2t();
+    const double n2s = ior2s();
+
+    const double n2_div_n0_t = sqrt(qAbs(n2t / n0)) * L;
+    const double n2_div_n0_s = sqrt(qAbs(n2s / n0)) * L;
+    const double n2_mul_n0_t = sqrt(qAbs(n2t * n0));
+    const double n2_mul_n0_s = sqrt(qAbs(n2s * n0));
+
+    _mt.assign(cos(n2_div_n0_t), 1.0 / n2_mul_n0_t * sin(n2_div_n0_t),
+               -n2_mul_n0_t * sin(n2_div_n0_t), cos(n2_div_n0_t));
+    _ms.assign(cos(n2_div_n0_s), 1.0 / n2_mul_n0_s * sin(n2_div_n0_s),
+               -n2_mul_n0_s * sin(n2_div_n0_s), cos(n2_div_n0_s));
+}
+
+void ElemGrinLens::setSubRangeSI(double value)
+{
+    const double L1 = value;
+    const double L2 = lengthSI() - L1;
+    const double n0 = ior();
+    const double n2t = ior2t();
+    const double n2s = ior2s();
+
+    const double n2_div_n0_t = sqrt(qAbs(n2t / n0));
+    const double n2_div_n0_s = sqrt(qAbs(n2s / n0));
+    const double n2_mul_n0_t = sqrt(qAbs(n2t * n0));
+    const double n2_mul_n0_s = sqrt(qAbs(n2s * n0));
+
+    _mt1.assign(cos(n2_div_n0_t * L1), 1.0 / n2_mul_n0_t * sin(n2_div_n0_t * L1),
+               -n2_div_n0_t * sin(n2_div_n0_t * L1), 1.0 / n0 * cos(n2_div_n0_t * L1));
+    _ms1.assign(cos(n2_div_n0_s * L1), 1.0 / n2_mul_n0_s * sin(n2_div_n0_s * L1),
+               -n2_div_n0_s * sin(n2_div_n0_s * L1), 1.0 / n0 * cos(n2_div_n0_s * L1));
+
+    _mt2.assign(cos(n2_div_n0_t * L2), sqrt(qAbs(n0 / n2t)) * sin(n2_div_n0_t * L2),
+               -n2_mul_n0_t * sin(n2_div_n0_t * L2), n0 * cos(n2_div_n0_t * L2));
+    _ms2.assign(cos(n2_div_n0_s * L2), sqrt(qAbs(n0 / n2s)) * sin(n2_div_n0_s * L2),
+               -n2_mul_n0_s * sin(n2_div_n0_s * L2), n0 * cos(n2_div_n0_s * L2));
+}

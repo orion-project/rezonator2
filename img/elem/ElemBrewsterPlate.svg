@@ -1,36 +1,44 @@
 <svg height="128" width="200" xmlns="http://www.w3.org/2000/svg">
-  <g transform="translate(5.344357)">
-    <g fill="none" stroke="#000">
-      <path d="m65.937455 51-42.90909-25.545455" stroke-dasharray="12 6" stroke-width="1.5"/>
-      <path d="m157.93745 79-42.90909-25.545455" stroke-dasharray="12 6" stroke-width="1.5"/>
-      <path d="m175.27578 12.372315-57.00087 40.59047h-51.902756l-52.409798 33.322718" stroke-linecap="round" stroke-width="7"/>
-      <path d="m161.78711 10.254167 18.37734-2.4739482-6.18576 18.4027392" stroke-linecap="round" stroke-width="7"/>
-      <path d="m147.14093 38.697306c1.40768 9.853824.67526 19.895267-2.14737 29.440552"/>
-      <path d="m148.71559 63.897385-3.80746 4.613479-.9511-6.02093"/>
-      <path d="m144.57967 44.220598 2.2765-5.565401 4.13755 4.572975"/>
-      <path d="m35.493898 66.186662c-1.998941-9.751081-1.872973-19.818427.369331-29.516438"/>
-      <path d="m32.403462 41.127282 3.522538-4.834556 1.312212 5.952674"/>
-      <path d="m37.717652 60.519054-1.936985 5.692485-4.405602-4.315316"/>
-      <path d="m124.51527 98.593924-28.545457-22.909091" stroke-width="1.5"/>
-      <path d="m97.424358 81.684833-1.818181-6.36364 7.454543 1.27273"/>
-    </g>
-    <text font-family="Times New Roman" font-size="10" font-style="italic" x="126.5129" y="107.21783"><tspan font-size="36" x="126.5129" y="107.21783">n</tspan></text>
-    <path d="m86.0235 28.71195 12.7246-12.89862m-13.59092 9.59091 6.5909-6.63636m1.4091 6.63636 6.5909-6.63636" fill="none" stroke="#000"/>
-    <path d="m104.0235 44.71195 12.7246-12.89862m-13.59092 9.59091 6.5909-6.63636m1.4091 6.63636 6.5909-6.63636" fill="none" stroke="#000"/>
-    <path d="m80.0235 46.71195 12.7246-12.89862m-13.59092 9.59091 6.5909-6.63636m1.4091 6.63636 6.5909-6.63636" fill="none" stroke="#000"/>
-    <path d="m90.0235 72.71195 12.7246-12.89862m-13.59092 9.59091 6.5909-6.63636m1.4091 6.63636 6.5909-6.63636" fill="none" stroke="#000"/>
-    <path d="m66.0235 72.71195 12.7246-12.89862m-13.59092 9.59091 6.5909-6.63636m1.4091 6.63636 6.5909-6.63636" fill="none" stroke="#000"/>
-    <path d="m66.0235 88.71195 12.7246-12.89862m-13.59092 9.59091 6.5909-6.63636m1.4091 6.63636 6.5909-6.63636" fill="none" stroke="#000"/>
-    <text font-family="Times New Roman" font-size="10" font-style="italic" x="51.449429" y="125.77584"><tspan font-size="36" x="51.449429" y="125.77584">L</tspan></text>
-    <path d="m77.748957 124.01936 6.376118-1.57657-2.651827-5.50366m-37.683518-10.93434-2.3979-5.9864 6.12219-1.09384" fill="none" stroke="#000"/>
-    <path d="m56.060139 107.67466-14.414495-7.58221" fill="none" stroke="#000"/>
-    <path d="m83.794326 122.22907-14.414494-7.58219" fill="none" stroke="#000"/>
-    <text font-family="Times New Roman" font-size="8.135203" font-style="italic" transform="scale(.9624467 1.0390186)" x="155.7762" y="59.674786"><tspan font-size="29.286732" x="155.7762" y="59.674786">Θ</tspan></text>
-    <text font-family="Times New Roman" font-size="5.282076" font-style="italic" transform="scale(.9466757 1.056328)" x="177.05728" y="64.805244"><tspan font-size="19.015472" x="177.05728" y="64.805244">b</tspan></text>
-    <text font-family="Times New Roman" font-size="8.135203" font-style="italic" transform="scale(.9624467 1.0390186)" x="4.079647" y="53.900108"><tspan font-size="29.286732" x="4.079647" y="53.900108">Θ</tspan></text>
-    <text font-family="Times New Roman" font-size="5.282076" font-style="italic" transform="scale(.9466757 1.056328)" x="22.833443" y="59.125198"><tspan font-size="19.015472" x="22.833443" y="59.125198">b</tspan></text>
-    <path d="m82.371887-36.31982h48.194695v89.91497h-48.194695z" fill="none" stroke="#000" stroke-dashoffset="21.443998" stroke-linecap="round" stroke-width="3" transform="matrix(.8917891 .4524513 -.4524513 .8917891 0 0)"/>
-    <path d="m95.004237 103.56373-11.190599 22.05686m-45.229507-21.80575 11.441681-22.551747" fill="none" stroke="#000" stroke-dashoffset="21.443998" stroke-linecap="round"/>
-    <path d="m82.0235 96.71195 12.7246-12.89862m-13.59092 9.59091 6.5909-6.63636m1.4091 6.63636 6.5909-6.63636" fill="none" stroke="#000"/>
-  </g>
+<g transform="translate(5.34)">
+<g fill="none" stroke="#000">
+<path d="m65.94 51-42.91-25.55" stroke-dasharray="12 6" stroke-width="1.5"/>
+<path d="m157.94 79-42.91-25.55" stroke-dasharray="12 6" stroke-width="1.5"/>
+<path d="m175.28 12.37-57 40.59h-51.9l-52.41 33.32" stroke-linecap="round" stroke-width="7"/>
+<path d="m161.79 10.25 18.38-2.47-6.19 18.4" stroke-linecap="round" stroke-width="7"/>
+<path d="m147.14 38.7c1.41 9.85.68 19.9-2.15 29.44"/>
+<path d="m148.72 63.9-3.81 4.61-.95-6.02"/>
+<path d="m144.58 44.22 2.28-5.57 4.14 4.57"/>
+<path d="m35.49 66.19c-2-9.75-1.87-19.82.37-29.52"/>
+<path d="m32.4 41.13 3.52-4.83 1.31 5.95"/>
+<path d="m37.72 60.52-1.94 5.69-4.41-4.32"/>
+<path d="m124.52 98.59-28.55-22.91" stroke-width="1.5"/>
+<path d="m97.42 81.68-1.82-6.36 7.45 1.27"/>
+</g>
+<text font-family="Times New Roman" font-size="10" font-style="italic" x="126.51" y="107.22"><tspan font-size="36" x="126.51" y="107.22">n</tspan></text>
+<g fill="none" stroke="#000">
+<path d="m86.02 28.71 12.72-12.9m-13.59 9.59 6.59-6.64m1.41 6.64 6.59-6.64"/>
+<path d="m104.02 44.71 12.72-12.9m-13.59 9.59 6.59-6.64m1.41 6.64 6.59-6.64"/>
+<path d="m80.02 46.71 12.72-12.9m-13.59 9.59 6.59-6.64m1.41 6.64 6.59-6.64"/>
+<path d="m90.02 72.71 12.72-12.9m-13.59 9.59 6.59-6.64m1.41 6.64 6.59-6.64"/>
+<path d="m66.02 72.71 12.72-12.9m-13.59 9.59 6.59-6.64m1.41 6.64 6.59-6.64"/>
+<path d="m66.02 88.71 12.72-12.9m-13.59 9.59 6.59-6.64m1.41 6.64 6.59-6.64"/>
+</g>
+<text font-family="Times New Roman" font-size="10" font-style="italic" x="51.45" y="125.78"><tspan font-size="36" x="51.45" y="125.78">L</tspan></text>
+<g fill="none" stroke="#000">
+<path d="m77.75 124.02 6.38-1.58-2.65-5.5m-37.68-10.93-2.4-5.99 6.12-1.09"/>
+<path d="m56.06 107.67-14.41-7.58"/>
+<path d="m83.79 122.23-14.41-7.58"/>
+</g>
+<g font-family="Times New Roman" font-style="italic">
+<text font-size="8.14" transform="scale(.96 1.04)" x="155.78" y="59.67"><tspan font-size="29.29" x="155.78" y="59.67">Θ</tspan></text>
+<text font-size="5.28" transform="scale(.95 1.06)" x="177.06" y="64.81"><tspan font-size="19.02" x="177.06" y="64.81">b</tspan></text>
+<text font-size="8.14" transform="scale(.96 1.04)" x="4.08" y="53.9"><tspan font-size="29.29" x="4.08" y="53.9">Θ</tspan></text>
+<text font-size="5.28" transform="scale(.95 1.06)" x="22.83" y="59.13"><tspan font-size="19.02" x="22.83" y="59.13">b</tspan></text>
+</g>
+<g fill="none" stroke="#000">
+<path d="m82.37-36.32h48.19v89.91h-48.19z" stroke-dashoffset="21.44" stroke-linecap="round" stroke-width="3" transform="matrix(.89 .45 -.45 .89 0 0)"/>
+<path d="m95 103.56-11.19 22.06m-45.23-21.81 11.44-22.55" stroke-dashoffset="21.44" stroke-linecap="round"/>
+<path d="m82.02 96.71 12.72-12.9m-13.59 9.59 6.59-6.64m1.41 6.64 6.59-6.64"/>
+</g>
+</g>
 </svg>

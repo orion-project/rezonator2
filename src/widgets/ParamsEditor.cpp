@@ -33,6 +33,12 @@ ParamsEditor::ParamsEditor(Options opts, QWidget *parent) : QWidget(parent), _pa
     }
 
     _infoPanel = new Ori::Widgets::InfoPanel;
+    auto layout = qobject_cast<QBoxLayout*>(_infoPanel->layout());
+    if (layout)
+    {
+        layout->setMargin(6);
+        layout->setSpacing(12);
+    }
 
     Ori::Layouts::LayoutV({
                               layoutParams,
@@ -75,7 +81,7 @@ void ParamsEditor::paramFocused()
         if (editor == sender())
         {
             auto p = editor->parameter();
-            _infoPanel->setInfo("<b>" % p->name() % "</b><br>" % p->description());
+            _infoPanel->setInfo(p->name(), p->description());
             return;
         }
 }

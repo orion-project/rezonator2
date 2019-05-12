@@ -1,26 +1,26 @@
 <svg height="128" width="200" xmlns="http://www.w3.org/2000/svg">
-  <g fill="none" stroke="#000" transform="translate(28 -2)">
-    <path d="m24.5 8v115" stroke-width="3"/>
-    <path d="m120 8-90 60 90 55" stroke-width="7"/>
-    <path d="m25 67.5h95" stroke-dasharray="8 2 1 2"/>
-    <path d="m25 18-10-10"/>
-    <path d="m25 24-10-10"/>
-    <path d="m25 30-10-10"/>
-    <path d="m25 36-10-10"/>
-    <path d="m25 42-10-10"/>
-    <path d="m25 48-10-10"/>
-    <path d="m25 54-10-10"/>
-    <path d="m25 60-10-10"/>
-    <path d="m25 66-10-10"/>
-    <path d="m25 72-10-10"/>
-    <path d="m25 78-10-10"/>
-    <path d="m25 84-10-10"/>
-    <path d="m25 90-10-10"/>
-    <path d="m25 96-10-10"/>
-    <path d="m25 102-10-10"/>
-    <path d="m25 108-10-10"/>
-    <path d="m25 114-10-10"/>
-    <path d="m25 120-10-10"/>
-    <path d="m100 123h20l-10-20" stroke-linecap="round" stroke-width="7"/>
-  </g>
+<g fill="none" stroke="#000" transform="translate(28 -2)">
+<path d="m24.5 8v115" stroke-width="3"/>
+<path d="m120 8-90 60 90 55" stroke-width="7"/>
+<path d="m25 67.5h95" stroke-dasharray="8 2 1 2"/>
+<path d="m25 18-10-10"/>
+<path d="m25 24-10-10"/>
+<path d="m25 30-10-10"/>
+<path d="m25 36-10-10"/>
+<path d="m25 42-10-10"/>
+<path d="m25 48-10-10"/>
+<path d="m25 54-10-10"/>
+<path d="m25 60-10-10"/>
+<path d="m25 66-10-10"/>
+<path d="m25 72-10-10"/>
+<path d="m25 78-10-10"/>
+<path d="m25 84-10-10"/>
+<path d="m25 90-10-10"/>
+<path d="m25 96-10-10"/>
+<path d="m25 102-10-10"/>
+<path d="m25 108-10-10"/>
+<path d="m25 114-10-10"/>
+<path d="m25 120-10-10"/>
+<path d="m100 123h20l-10-20" stroke-linecap="round" stroke-width="7"/>
+</g>
 </svg>

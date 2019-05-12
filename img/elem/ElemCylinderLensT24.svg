@@ -1,13 +1,11 @@
 <svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <linearGradient id="a" gradientUnits="userSpaceOnUse" x1="8.875766" x2="8.725674" y1="1.038194" y2="22.990282">
-    <stop offset="0" stop-color="#dbf6ff"/>
-    <stop offset="1" stop-color="#7ddcfd"/>
-  </linearGradient>
-  <g>
-    <path d="m1.560891 22.471039 20.932674-20.8876232" fill="none" stroke="#f00" stroke-linecap="round" stroke-width="3"/>
-    <path d="m17.500493 1.5225248h4.976982v5.012702" fill="none" stroke="#f00" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
-    <path d="m7.759544.7642311h2.254224s3.066106 5.4232419 3.095161 11.1810019c.029056 5.757761-3.095161 11.304767-3.095161 11.304767h-2.254224c-.076347-7.530013-.096438-14.8106261 0-22.4857689z" fill="url(#a)" fill-rule="evenodd" stroke="#00b4ff" stroke-width="1.5"/>
-    <path d="m5.017501 19.060038 11.100549-11.1005489" fill="none" stroke="#f00" stroke-opacity=".316667" stroke-width="3"/>
-    <path d="m18.66805 20.475179v-7.299817q-1.288203.04156-1.897676.581769-.595621.526362-.775692 1.759159h-.401698l.04156-2.784181h8.310987l.0277 2.784181h-.401698q-.180071-1.232797-.789544-1.759159-.59562-.540214-1.869972-.581769v7.299817q0 .789544.221626.997318.235478.207775 1.135835.277033v.346291h-4.945037v-.346291q.886505-.06926 1.108132-.277033.235478-.221626.235478-.997318z" transform="scale(.97110104 1.029759)"/>
-  </g>
+<linearGradient id="a" gradientUnits="userSpaceOnUse" x1="8.88" x2="8.73" y1="1.04" y2="22.99">
+<stop offset="0" stop-color="#dbf6ff"/>
+<stop offset="1" stop-color="#7ddcfd"/>
+</linearGradient>
+<path d="m1.56 22.47 20.93-20.89" fill="none" stroke="#f00" stroke-linecap="round" stroke-width="3"/>
+<path d="m17.5 1.52h4.98v5.01" fill="none" stroke="#f00" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+<path d="m7.76.76h2.25s3.07 5.42 3.1 11.18-3.1 11.3-3.1 11.3h-2.25c-.08-7.53-.1-14.81 0-22.49z" fill="url(#a)" fill-rule="evenodd" stroke="#00b4ff" stroke-width="1.5"/>
+<path d="m5.02 19.06 11.1-11.1" fill="none" stroke="#f00" stroke-opacity=".32" stroke-width="3"/>
+<path d="m18.67 20.48v-7.3q-1.29.04-1.9.58-.6.53-.78 1.76h-.4l.04-2.78h8.31l.03 2.78h-.4q-.18-1.23-.79-1.76-.6-.54-1.87-.58v7.3q0 .79.22 1 .24.21 1.14.28v.35h-4.95v-.35q.89-.07 1.11-.28.24-.22.24-1z" transform="scale(.97 1.03)"/>
 </svg>

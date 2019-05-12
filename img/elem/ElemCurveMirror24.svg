@@ -1,17 +1,21 @@
 <svg height="24" width="24" xmlns="http://www.w3.org/2000/svg">
-  <g fill="none">
-    <path d="m7 12 15 10" stroke="#f00" stroke-linejoin="bevel" stroke-width="3"/>
-    <path d="m7 12 15-10" stroke="#f00" stroke-linecap="round" stroke-width="3"/>
-    <g stroke="#000">
-      <path d="m10.5 25c-6-7-6-19 0-26" stroke-width="2"/>
-      <path d="m6 8-4-4" stroke-linecap="square"/>
-      <path d="m5 11-4-4" stroke-linecap="square"/>
-      <path d="m8 22-7-7" stroke-linecap="square"/>
-    </g>
-    <path d="m15 22.5h7l-2-7.5" stroke="#f00" stroke-linecap="round" stroke-width="3"/>
-    <path d="m10 28-8-8" stroke="#000" stroke-linecap="square"/>
-    <path d="m7 5-4-4" stroke="#000" stroke-linecap="square"/>
-    <path d="m7 11.5h17" stroke="#000" stroke-dasharray="4 2"/>
-    <path d="m6.1168831 16.116883-5.1168831-5.116883" stroke="#000" stroke-linecap="square"/>
-  </g>
+<g fill="none">
+<path d="m7 12 15 10" stroke="#f00" stroke-linejoin="bevel" stroke-width="3"/>
+<path d="m7 12 15-10" stroke="#f00" stroke-linecap="round" stroke-width="3"/>
+<g stroke="#000">
+<path d="m10.5 25c-6-7-6-19 0-26" stroke-width="2"/>
+<g stroke-linecap="square">
+<path d="m6 8-4-4"/>
+<path d="m5 11-4-4"/>
+<path d="m8 22-7-7"/>
+</g>
+</g>
+<path d="m15 22.5h7l-2-7.5" stroke="#f00" stroke-linecap="round" stroke-width="3"/>
+<g stroke="#000">
+<path d="m10 28-8-8" stroke-linecap="square"/>
+<path d="m7 5-4-4" stroke-linecap="square"/>
+<path d="m7 11.5h17" stroke-dasharray="4 2"/>
+<path d="m6.12 16.12-5.12-5.12" stroke-linecap="square"/>
+</g>
+</g>
 </svg>

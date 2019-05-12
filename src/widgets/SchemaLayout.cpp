@@ -42,6 +42,21 @@ QPen getPlanePen()
     return p;
 }
 
+QBrush getGrinBrush(double sizeF)
+{
+    int size = int(sizeF);
+    static QMap<int, QBrush> brushes;
+    if (!brushes.contains(size))
+    {
+        QLinearGradient g(0, -size, 0, size);
+        g.setColorAt(0, Qt::white);
+        g.setColorAt(0.5, Qt::gray);
+        g.setColorAt(1, Qt::white);
+        brushes[size] = QBrush(g);
+    }
+    return brushes[size];
+}
+
 const QFont& getMarkTSFont()
 {
     static QFont f = QFont("Arial", 8, QFont::Bold);
@@ -957,6 +972,24 @@ namespace ElemThickLensLayout {
 }
 
 //------------------------------------------------------------------------------
+namespace ElemGrinLensLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+    DECLARE_ELEMENT_LAYOUT_END
+
+    ELEMENT_LAYOUT_INIT {
+        HW = 25; HH = 40;
+    }
+
+    ELEMENT_LAYOUT_PAINT {
+        QPainterPath path;
+        path.addRect(boundingRect());
+        painter->setBrush(getGrinBrush(HH));
+        painter->setPen(getGlassPen());
+        painter->drawPath(path);
+    }
+}
+
+//------------------------------------------------------------------------------
 //                               SchemaLayout
 //------------------------------------------------------------------------------
 
@@ -1132,6 +1165,7 @@ ElementLayout* make(Element *elem) {
         registerLayout<ElemTiltedInterface, ElemTiltedInterfaceLayout::Layout>();
         registerLayout<ElemSphericalInterface, ElemSphericalInterfaceLayout::Layout>();
         registerLayout<ElemThickLens, ElemThickLensLayout::Layout>();
+        registerLayout<ElemGrinLens, ElemGrinLensLayout::Layout>();
     }
     if (!__factoryMethods.contains(elem->type()))
         return nullptr;

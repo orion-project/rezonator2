@@ -1,0 +1,63 @@
+<svg height="260" width="260" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<linearGradient id="a" gradientTransform="matrix(.83 0 0 1 53.33 2)" gradientUnits="userSpaceOnUse" x1="75.63" x2="75.63" y1="31.47" y2="227.71">
+<stop offset="0" stop-color="#6a6a6a" stop-opacity="0"/>
+<stop offset=".5" stop-color="#6a6a6a"/>
+<stop offset="1" stop-color="#6a6a6a" stop-opacity="0"/>
+</linearGradient>
+<g stroke="#000">
+<path d="m69.5 51.5h97v157h-97z" fill="url(#a)" stroke-width="3"/>
+<g fill="none">
+<path d="m3.5 130h250.42" stroke-width="4"/>
+<path d="m167.5 28.82v34.47"/>
+<path d="m70.41 32.5h95.47" stroke-width="1.02"/>
+<path d="m161.64 28.18 4.91 4.36-4.91 3.64m-87-8-4.91 4.18 4.91 3.82"/>
+</g>
+</g>
+<text fill="#3c53c8" font-family="Times New Roman" font-size="7.02" font-style="italic" transform="scale(.99 1.01)" x="15.41" y="26.64"><tspan fill="#3c53c8" font-size="25.28" x="15.41" y="26.64">r</tspan></text>
+<text font-family="Times New Roman" font-size="10" font-style="italic" x="109.25" y="29.99"><tspan font-size="36" x="109.25" y="29.99">L</tspan></text>
+<g fill="none">
+<g stroke="#000">
+<path d="m3.5 69.06h66.8c80.53 0 134.88 42.59 181.63 79.99" stroke-width="4"/>
+<path d="m68.5 28.82v34.47"/>
+<g stroke-linecap="round" stroke-width="3">
+<path d="m248 136 7-6-7-6"/>
+<path d="m252.5 118.22.71-9.19-9.19.71"/>
+<path d="m252.5 141.8.71 9.19-9.19-.71"/>
+</g>
+</g>
+<g stroke="#3c53c8">
+<path d="m47.5 128c0-30.03-17.71-60.92-31-77"/>
+<path d="m47.5 131c0 30.03-17.71 60.92-31 77"/>
+<path d="m8.46 231.72v-217.28" stroke-width="1.02"/>
+<path d="m4.14 18.68 4.36-4.91 3.64 4.91"/>
+<path d="m51.69 225.51h-49.28" stroke-width="1.02"/>
+<path d="m47.64 229.83 4.91-4.18-4.91-3.82"/>
+</g>
+</g>
+<text fill="#3c53c8" font-family="Times New Roman" font-size="7.36" font-style="italic" transform="scale(.99 1.01)" x="40.16" y="244.17"><tspan fill="#3c53c8" font-size="26.51" x="40.16" y="244.17">n</tspan></text>
+<g font-family="Times New Roman" font-style="italic" transform="translate(39.6 .71)">
+<text font-size="10" x="64" y="115.02"><tspan font-size="36" x="64" y="115.02">n</tspan></text>
+<text font-size="7.02" transform="scale(.99 1.01)" x="80.3" y="122.41"><tspan font-size="25.28" x="80.3" y="122.41">0</tspan></text>
+</g>
+<path d="m3.5 191h66.8c80.53 0 134.88-42.59 181.63-79.99" fill="none" stroke="#000" stroke-width="4"/>
+<path d="m205.5 235.5h45.5" fill="none" stroke="#3c53c8"/>
+<text fill="#3c53c8" font-family="Times New Roman" font-size="7.36" font-style="italic" transform="scale(.99 1.01)" x="220.05" y="254.66"><tspan fill="#3c53c8" font-size="26.51" x="220.05" y="254.66">2</tspan></text>
+<g fill="none" stroke="#3c53c8" transform="translate(0 -60)">
+<path d="m189.5 295.5h9.5"/>
+<path d="m149.5 297.5h9.5"/>
+<path d="m149.5 293.5h9.5"/>
+</g>
+<g fill="#3c53c8" font-family="Times New Roman" font-style="italic" transform="scale(.99 1.01)">
+<g font-size="4.55">
+<text x="175.47" y="246.96"><tspan dx="0" dy="0" fill="#3c53c8" font-size="16.36" x="175.47" y="246.96">0</tspan></text>
+<text x="221.15" y="230.11"><tspan fill="#3c53c8" font-size="16.36" x="221.15" y="230.11">2</tspan></text>
+<text x="246.4" y="218.09"><tspan fill="#3c53c8" font-size="16.36" x="246.4" y="218.09">2</tspan></text>
+</g>
+<g font-size="7.36">
+<text x="133.67" y="240.87"><tspan fill="#3c53c8" font-size="26.51" x="133.67" y="240.87">n</tspan></text>
+<text x="163.83" y="240.87"><tspan fill="#3c53c8" font-size="26.51" x="163.83" y="240.87">n</tspan></text>
+<text x="209.08" y="224.41"><tspan fill="#3c53c8" font-size="26.51" x="209.08" y="224.41">n</tspan></text>
+<text x="235.22" y="224.41"><tspan fill="#3c53c8" font-size="26.51" x="235.22" y="224.41">r</tspan></text>
+</g>
+</g>
+</svg>
