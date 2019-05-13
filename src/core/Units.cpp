@@ -96,7 +96,8 @@ DEFINE_UNIT(mrad, QT_TRANSLATE_NOOP_UTF8("Units", "mrad"), v * 0.001, v * 1000, 
 DEFINE_UNIT(amin, QT_TRANSLATE_NOOP_UTF8("Units", "′"), v / 60.0 * M_PI / 180.0, v * 180 / M_PI * 60, rad)
 DEFINE_UNIT(deg, QT_TRANSLATE_NOOP_UTF8("Units", "°"), v * M_PI / 180.0, v * 180.0 / M_PI, rad)
 
-DEFINE_UNIT(Hz, QT_TRANSLATE_NOOP_UTF8("Units", "Hz"), v, v, Hz) // SI-unit must be first
+DEFINE_UNIT(Hz, QT_TRANSLATE_NOOP_UTF8("Units", "Hz"), v, v, Hz)
+DEFINE_UNIT(inv_m2, QT_TRANSLATE_NOOP_UTF8("Units", "1/m²"), v, v, inv_m2)
 
 } // namespace Units
 
@@ -124,9 +125,14 @@ DEFINE_DIM(angular, QT_TRANSLATE_NOOP("Units", "Angular"), UNIT(rad),
     UNIT(deg),
 )
 
+DEFINE_DIM(fixed, QT_TRANSLATE_NOOP("Units", "Misc"), UNIT(none),
+    UNIT(Hz),
+    UNIT(inv_m2),
+)
+
 DimList dims()
 {
-    static QList<Dim> dims({none(), linear(), angular()});
+    static QList<Dim> dims({none(), linear(), angular(), fixed()});
     return dims;
 }
 

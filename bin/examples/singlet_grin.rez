@@ -1,0 +1,249 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 980
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "d1",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "GL1",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2s": {
+                    "unit": "inv_m2",
+                    "value": 0.3
+                },
+                "n2t": {
+                    "unit": "inv_m2",
+                    "value": 0.2
+                }
+            },
+            "title": "",
+            "type": "ElemGrinLens"
+        },
+        {
+            "is_disabled": false,
+            "label": "d2",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        }
+    ],
+    "formulas": [
+    ],
+    "notes": "",
+    "param_links": [
+    ],
+    "pumps": [
+        {
+            "is_active": true,
+            "label": "",
+            "mode": "Waist",
+            "params": {
+                "MI": {
+                    "unit": "none",
+                    "value_s": 1,
+                    "value_t": 1
+                },
+                "w_0": {
+                    "unit": "mkm",
+                    "value_s": 1000,
+                    "value_t": 1000
+                },
+                "z_w": {
+                    "unit": "mm",
+                    "value_s": 0,
+                    "value_t": 0
+                }
+            },
+            "title": ""
+        }
+    ],
+    "schema_version": "2.0",
+    "title": "",
+    "trip_type": "SP",
+    "windows": [
+        {
+            "function": {
+                "args": [
+                    {
+                        "element_index": 0,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 100
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 1,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 100
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 2,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 100
+                            },
+                            "use_step": false
+                        }
+                    }
+                ]
+            },
+            "type": "Multicaustic",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "elem_bound_markers": true,
+                "stored_views": [
+                    {
+                        "mode": 0,
+                        "x_max": 303.00000000000006,
+                        "x_min": -3.0000000000000004,
+                        "x_unit": "none",
+                        "y_max": 1.0014455882329503,
+                        "y_min": 0.9997969982064485,
+                        "y_unit": "mm"
+                    },
+                    {
+                        "mode": 1,
+                        "x_max": 302.9898989898991,
+                        "x_min": -1.9797979797979808,
+                        "x_unit": "none",
+                        "y_max": 183220.13878102283,
+                        "y_min": -25820.553094631316,
+                        "y_unit": "none"
+                    }
+                ],
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 303.00000000000006,
+                "x_min": -3.0000000000000004,
+                "x_unit": "none",
+                "y_max": 1.0014455882329503,
+                "y_min": 0.9997969982064485,
+                "y_unit": "mm"
+            }
+        },
+        {
+            "function": {
+                "arg": {
+                    "element_index": 1,
+                    "param": "n2s",
+                    "range": {
+                        "points": 100,
+                        "start": {
+                            "unit": "inv_m2",
+                            "value": 0
+                        },
+                        "step": {
+                            "unit": "inv_m2",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "inv_m2",
+                            "value": 1
+                        },
+                        "use_step": false
+                    }
+                },
+                "pos": {
+                    "element_index": 2,
+                    "offset": {
+                        "unit": "mm",
+                        "value": 100
+                    }
+                }
+            },
+            "type": "BeamVariation",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "stored_views": [
+                ],
+                "ts_flipped": false,
+                "ts_mode": "S",
+                "x_max": 1.01,
+                "x_min": -0.01,
+                "x_unit": "none",
+                "y_max": 1.0112429071804052,
+                "y_min": 0.9883522197300472,
+                "y_unit": "mm"
+            }
+        }
+    ]
+}

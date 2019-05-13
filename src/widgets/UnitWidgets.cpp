@@ -31,7 +31,7 @@ void UnitComboBox::populate(Z::Dim dim)
     clear();
     for (auto unit: dim->units())
         addItem(unit->name(), qVariantFromValue(unit));
-    _isEmptyOrSingleItem = count() < 2;
+    _isEmptyOrSingleItem = count() < 2 || dim == Z::Dims::fixed();
     _enableChangeEvent = true;
     setEnabled(true);
 }
@@ -131,14 +131,24 @@ UnitsMenu::~UnitsMenu()
 void UnitsMenu::setUnit(Z::Unit unit)
 {
     if (_unit == unit) return;
+
     _unit = unit;
     if (unit == Z::Units::none())
     {
+        _menu->clear();
         _menu->setEnabled(false);
         return;
     }
-    _menu->setEnabled(true);
+
     auto dim = Z::Units::guessDim(unit);
+    if (dim == Z::Dims::fixed())
+    {
+        _menu->clear();
+        _menu->setEnabled(false);
+        return;
+    }
+
+    _menu->setEnabled(true);
     if (dim != _dim || _menu->isEmpty())
     {
         _dim = dim;

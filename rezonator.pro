@@ -220,6 +220,7 @@ SOURCES += \
     src/tests/test_RoundTripCalculator.cpp \
     src/tests/test_Schema.cpp \
     src/tests/test_SchemaReaderIni.cpp \
+    src/tests/test_UnitWidgets.cpp \
     src/tests/test_Units.cpp \
     src/tests/test_Values.cpp \
     src/widgets/Appearance.cpp \

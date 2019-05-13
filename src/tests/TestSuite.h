@@ -6,6 +6,7 @@ namespace Tests {
 
 USE_GROUP(ReportTests)                             // test_Report.cpp
 USE_GROUP(UnitsTests)                              // test_Units.cpp
+USE_GROUP(UnitWidgetsTests)                        // test_UnitWidgets.cpp
 USE_GROUP(MathTests)                               // test_Math.cpp
 USE_GROUP(ValuesTests)                             // test_Values.cpp
 USE_GROUP(ParametersTests)                         // test_Parameters.cpp
@@ -28,6 +29,7 @@ TEST_SUITE(
     ADD_GROUP(Ori::Tests::All),
     ADD_GROUP(ReportTests),
     ADD_GROUP(UnitsTests),
+    ADD_GROUP(UnitWidgetsTests),
     ADD_GROUP(MathTests),
     ADD_GROUP(ValuesTests),
     ADD_GROUP(ParametersTests),

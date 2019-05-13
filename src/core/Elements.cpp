@@ -547,17 +547,17 @@ ElemGrinLens::ElemGrinLens() : ElementRange()
 {
     _ior->setVisible(true);
 
-    _ior2t = new Z::Parameter(Z::Dims::none(),
+    _ior2t = new Z::Parameter(Z::Dims::fixed(),
         QStringLiteral("n2t"), QStringLiteral("n2t"),
         qApp->translate("Param", "IOR gradient (T)"),
         qApp->translate("Param", "Radial gradient of index of refraction in tangential plane"));
-    _ior2s = new Z::Parameter(Z::Dims::none(),
+    _ior2s = new Z::Parameter(Z::Dims::fixed(),
         QStringLiteral("n2s"), QStringLiteral("n2s"),
         qApp->translate("Param", "IOR gradient (S)"),
         qApp->translate("Param", "Radial gradient of index of refraction in sagittal plane"));
 
-    addParam(_ior2t, 0.01, Z::Units::none());
-    addParam(_ior2s, 0.01, Z::Units::none());
+    addParam(_ior2t, 0.01, Z::Units::inv_m2());
+    addParam(_ior2s, 0.01, Z::Units::inv_m2());
 }
 
 void ElemGrinLens::calcMatrixInternal()

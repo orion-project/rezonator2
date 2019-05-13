@@ -22,6 +22,16 @@ namespace UnitsTests {
     ASSERT_EQ_DBL(left, right)                          \
 }
 
+TEST_METHOD(none_toSi)
+{
+    SAME_VALUE(Z::Units::none()->toSi(3.14), 3.14)
+}
+
+TEST_METHOD(none_fromSi)
+{
+    SAME_VALUE(Z::Units::none()->fromSi(3.14), 3.14)
+}
+
 TEST_METHOD(linear_toSi)
 {
     SAME_VALUE(Z::Units::Ao()->toSi(3.14), 3.14e-10)
@@ -58,6 +68,18 @@ TEST_METHOD(algular_fromSi)
     SAME_VALUE(Z::Units::deg()->fromSi(3.14), RAD_TO_DEG(3.14))
 }
 
+TEST_METHOD(fixed_fromSi)
+{
+    SAME_VALUE(Z::Units::Hz()->fromSi(3.14), 3.14)
+    SAME_VALUE(Z::Units::inv_m2()->fromSi(3.14), 3.14)
+}
+
+TEST_METHOD(fixed_toSi)
+{
+    SAME_VALUE(Z::Units::Hz()->toSi(3.14), 3.14)
+    SAME_VALUE(Z::Units::inv_m2()->toSi(3.14), 3.14)
+}
+
 //------------------------------------------------------------------------------
 
 TEST_METHOD(linear_unitByAlias)
@@ -66,6 +88,7 @@ TEST_METHOD(linear_unitByAlias)
     for (Z::Unit u : Z::Dims::linear()->units())  ASSERT_EQ_PTR(dim->unitByAlias(u->alias()), u);
     for (Z::Unit u : Z::Dims::angular()->units()) ASSERT_IS_NULL(dim->unitByAlias(u->alias()));
     for (Z::Unit u : Z::Dims::none()->units())    ASSERT_IS_NULL(dim->unitByAlias(u->alias()));
+    for (Z::Unit u : Z::Dims::fixed()->units())   ASSERT_IS_NULL(dim->unitByAlias(u->alias()));
 }
 
 TEST_METHOD(angular_unitByAlias)
@@ -74,6 +97,7 @@ TEST_METHOD(angular_unitByAlias)
     for (Z::Unit u : Z::Dims::linear()->units())  ASSERT_IS_NULL(dim->unitByAlias(u->alias()));
     for (Z::Unit u : Z::Dims::angular()->units()) ASSERT_EQ_PTR(dim->unitByAlias(u->alias()), u);
     for (Z::Unit u : Z::Dims::none()->units())    ASSERT_IS_NULL(dim->unitByAlias(u->alias()));
+    for (Z::Unit u : Z::Dims::fixed()->units())   ASSERT_IS_NULL(dim->unitByAlias(u->alias()));
 }
 
 TEST_METHOD(none_unitByAlias)
@@ -82,6 +106,16 @@ TEST_METHOD(none_unitByAlias)
     for (Z::Unit u : Z::Dims::linear()->units())  ASSERT_IS_NULL(dim->unitByAlias(u->alias()));
     for (Z::Unit u : Z::Dims::angular()->units()) ASSERT_IS_NULL(dim->unitByAlias(u->alias()));
     for (Z::Unit u : Z::Dims::none()->units())    ASSERT_EQ_PTR(dim->unitByAlias(u->alias()), u);
+    for (Z::Unit u : Z::Dims::fixed()->units())   ASSERT_IS_NULL(dim->unitByAlias(u->alias()));
+}
+
+TEST_METHOD(fixed_unitByAlias)
+{
+    auto dim = Z::Dims::fixed();
+    for (Z::Unit u : Z::Dims::linear()->units())  ASSERT_IS_NULL(dim->unitByAlias(u->alias()));
+    for (Z::Unit u : Z::Dims::angular()->units()) ASSERT_IS_NULL(dim->unitByAlias(u->alias()));
+    for (Z::Unit u : Z::Dims::none()->units())    ASSERT_IS_NULL(dim->unitByAlias(u->alias()));
+    for (Z::Unit u : Z::Dims::fixed()->units())   ASSERT_EQ_PTR(dim->unitByAlias(u->alias()), u);
 }
 
 //------------------------------------------------------------------------------
@@ -148,6 +182,8 @@ TEST_METHOD(guessDim)
         ASSERT_EQ_PTR(Z::Units::guessDim(u), Z::Dims::angular());
     for (Z::Unit u : Z::Dims::none()->units())
         ASSERT_EQ_PTR(Z::Units::guessDim(u), Z::Dims::none());
+    for (Z::Unit u : Z::Dims::fixed()->units())
+        ASSERT_EQ_PTR(Z::Units::guessDim(u), Z::Dims::fixed());
 }
 
 TEST_METHOD(findByAlias)
@@ -164,13 +200,18 @@ TEST_METHOD(findByAlias)
 //------------------------------------------------------------------------------
 
 TEST_GROUP("Units",
+    ADD_TEST(none_toSi),
+    ADD_TEST(none_fromSi),
     ADD_TEST(linear_toSi),
     ADD_TEST(linear_fromSi),
     ADD_TEST(algular_toSi),
     ADD_TEST(algular_fromSi),
+    ADD_TEST(fixed_toSi),
+    ADD_TEST(fixed_fromSi),
     ADD_TEST(linear_unitByAlias),
     ADD_TEST(angular_unitByAlias),
     ADD_TEST(none_unitByAlias),
+    ADD_TEST(fixed_unitByAlias),
     ADD_TEST(simplify),
     ADD_TEST(prefix_name_tr),
     ADD_TEST(guessDim),

@@ -66,6 +66,8 @@ DECLARE_UNIT(deg)
 
 DECLARE_UNIT(Hz)
 
+DECLARE_UNIT(inv_m2)
+
 } // namespace Units
 
 namespace Dims {
@@ -73,6 +75,7 @@ namespace Dims {
 DECLARE_DIM(none)
 DECLARE_DIM(linear)
 DECLARE_DIM(angular)
+DECLARE_DIM(fixed)
 
 DimList dims();
 
