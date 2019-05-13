@@ -34,15 +34,15 @@
                 },
                 "n": {
                     "unit": "none",
-                    "value": 1
+                    "value": 1.5
                 },
                 "n2s": {
                     "unit": "inv_m2",
-                    "value": 0.3
+                    "value": 0.25
                 },
                 "n2t": {
                     "unit": "inv_m2",
-                    "value": 0.2
+                    "value": 0.15
                 }
             },
             "title": "",

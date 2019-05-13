@@ -14,6 +14,7 @@ SchemaParamsTable::SchemaParamsTable(Schema *schema, QWidget *parent) : QTableWi
 #endif
     // TODO check windows
 
+    setWordWrap(false);
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setItemDelegateForColumn(COL_ALIAS, new RichTextItemDelegate(aliasOffsetY, this));

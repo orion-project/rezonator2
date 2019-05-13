@@ -563,41 +563,70 @@ ElemGrinLens::ElemGrinLens() : ElementRange()
 void ElemGrinLens::calcMatrixInternal()
 {
     const double L = lengthSI();
-    const double n0 = ior();
+    const double n0 = qAbs(ior());
     const double n2t = ior2t();
     const double n2s = ior2s();
 
-    const double n2_div_n0_t = sqrt(qAbs(n2t / n0)) * L;
-    const double n2_div_n0_s = sqrt(qAbs(n2s / n0)) * L;
-    const double n2_mul_n0_t = sqrt(qAbs(n2t * n0));
-    const double n2_mul_n0_s = sqrt(qAbs(n2s * n0));
+    // When n2 = 0 then A = 1, C = 0, D = 1, B = 0/0 -> L/n0
 
-    _mt.assign(cos(n2_div_n0_t), 1.0 / n2_mul_n0_t * sin(n2_div_n0_t),
-               -n2_mul_n0_t * sin(n2_div_n0_t), cos(n2_div_n0_t));
-    _ms.assign(cos(n2_div_n0_s), 1.0 / n2_mul_n0_s * sin(n2_div_n0_s),
-               -n2_mul_n0_s * sin(n2_div_n0_s), cos(n2_div_n0_s));
+    if (n2t > 0)
+    {
+        const double n2_div_n0 = sqrt(n2t / n0) * L;
+        const double n2_mul_n0 = sqrt(n2t * n0);
+
+        _mt.assign(cos(n2_div_n0), 1.0 / n2_mul_n0 * sin(n2_div_n0),
+                   -n2_mul_n0 * sin(n2_div_n0), cos(n2_div_n0));
+    }
+    else _mt.assign(1, L / n0, 0, 1);
+
+    if (n2s > 0)
+    {
+        const double n2_div_n0 = sqrt(n2s / n0) * L;
+        const double n2_mul_n0 = sqrt(n2s * n0);
+
+        _ms.assign(cos(n2_div_n0), 1.0 / n2_mul_n0 * sin(n2_div_n0),
+                   -n2_mul_n0 * sin(n2_div_n0), cos(n2_div_n0));
+    }
+    else _ms.assign(1, L / n0, 0, 1);
 }
 
 void ElemGrinLens::setSubRangeSI(double value)
 {
     const double L1 = value;
     const double L2 = lengthSI() - L1;
-    const double n0 = ior();
+    const double n0 = qAbs(ior());
     const double n2t = ior2t();
     const double n2s = ior2s();
 
-    const double n2_div_n0_t = sqrt(qAbs(n2t / n0));
-    const double n2_div_n0_s = sqrt(qAbs(n2s / n0));
-    const double n2_mul_n0_t = sqrt(qAbs(n2t * n0));
-    const double n2_mul_n0_s = sqrt(qAbs(n2s * n0));
+    if (n2t > 0)
+    {
+        const double n2_div_n0 = sqrt(n2t / n0);
+        const double n2_mul_n0 = sqrt(n2t * n0);
 
-    _mt1.assign(cos(n2_div_n0_t * L1), 1.0 / n2_mul_n0_t * sin(n2_div_n0_t * L1),
-               -n2_div_n0_t * sin(n2_div_n0_t * L1), 1.0 / n0 * cos(n2_div_n0_t * L1));
-    _ms1.assign(cos(n2_div_n0_s * L1), 1.0 / n2_mul_n0_s * sin(n2_div_n0_s * L1),
-               -n2_div_n0_s * sin(n2_div_n0_s * L1), 1.0 / n0 * cos(n2_div_n0_s * L1));
+        _mt1.assign(cos(n2_div_n0 * L1), 1.0 / n2_mul_n0 * sin(n2_div_n0 * L1),
+                   -n2_div_n0 * sin(n2_div_n0 * L1), 1.0 / n0 * cos(n2_div_n0 * L1));
+        _mt2.assign(cos(n2_div_n0 * L2), sqrt(qAbs(n0 / n2t)) * sin(n2_div_n0 * L2),
+                   -n2_mul_n0 * sin(n2_div_n0 * L2), n0 * cos(n2_div_n0 * L2));
+    }
+    else
+    {
+        _mt1.assign(1, L1 / n0, 0, 1 / n0);
+        _mt2.assign(1, L2, 0, n0);
+    }
 
-    _mt2.assign(cos(n2_div_n0_t * L2), sqrt(qAbs(n0 / n2t)) * sin(n2_div_n0_t * L2),
-               -n2_mul_n0_t * sin(n2_div_n0_t * L2), n0 * cos(n2_div_n0_t * L2));
-    _ms2.assign(cos(n2_div_n0_s * L2), sqrt(qAbs(n0 / n2s)) * sin(n2_div_n0_s * L2),
-               -n2_mul_n0_s * sin(n2_div_n0_s * L2), n0 * cos(n2_div_n0_s * L2));
+    if (n2s > 0)
+    {
+        const double n2_div_n0 = sqrt(n2s / n0);
+        const double n2_mul_n0 = sqrt(n2s * n0);
+
+        _ms1.assign(cos(n2_div_n0 * L1), 1.0 / n2_mul_n0 * sin(n2_div_n0 * L1),
+                   -n2_div_n0 * sin(n2_div_n0 * L1), 1.0 / n0 * cos(n2_div_n0 * L1));
+        _ms2.assign(cos(n2_div_n0 * L2), sqrt(qAbs(n0 / n2s)) * sin(n2_div_n0 * L2),
+                   -n2_mul_n0 * sin(n2_div_n0 * L2), n0 * cos(n2_div_n0 * L2));
+    }
+    else
+    {
+        _ms1.assign(1, L1 / n0, 0, 1 / n0);
+        _ms2.assign(1, L2, 0, n0);
+    }
 }

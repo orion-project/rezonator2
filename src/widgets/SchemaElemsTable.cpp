@@ -25,6 +25,7 @@ SchemaElemsTable::SchemaElemsTable(Schema *schema, QWidget *parent) : QTableWidg
     paramsOffsetY = 2;
 #endif
 
+    setWordWrap(false);
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setItemDelegateForColumn(COL_PARAMS, new RichTextItemDelegate(paramsOffsetY, this));
