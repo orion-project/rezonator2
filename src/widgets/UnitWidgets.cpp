@@ -28,10 +28,14 @@ UnitComboBox::UnitComboBox(Z::Dim dim, QWidget* parent) : UnitComboBox(parent)
 void UnitComboBox::populate(Z::Dim dim)
 {
     _enableChangeEvent = false;
+
     clear();
     for (auto unit: dim->units())
         addItem(unit->name(), qVariantFromValue(unit));
-    _isEmptyOrSingleItem = count() < 2 || dim == Z::Dims::fixed();
+
+    _isEmptyOrSingleItem = count() < 2 or
+        (dim == Z::Dims::fixed() and !canSelectFixedUnit);
+
     _enableChangeEvent = true;
     setEnabled(true);
 }
@@ -83,13 +87,19 @@ DimComboBox::DimComboBox(QWidget* parent) : QComboBox(parent)
 {
     populate();
     Z::Gui::setValueFont(this);
+
+    connect(this, QOverload<int>::of(&QComboBox::currentIndexChanged), [&](int index){
+        if(index >= 0 && _enableChangeEvent) emit dimChanged(dimAt(index));
+    });
 }
 
 void DimComboBox::populate()
 {
+    _enableChangeEvent = false;
     clear();
     for (auto dim: Z::Dims::dims())
         addItem(dim->name(), qVariantFromValue(dim));
+    _enableChangeEvent = true;
 }
 
 Z::Dim DimComboBox::selectedDim() const
@@ -99,12 +109,14 @@ Z::Dim DimComboBox::selectedDim() const
 
 void DimComboBox::setSelectedDim(Z::Dim dim)
 {
+    _enableChangeEvent = false;
     for (int i = 0; i < count(); i++)
         if (dimAt(i) == dim)
         {
             setCurrentIndex(i);
-            return;
+            break;
         }
+    _enableChangeEvent = true;
 }
 
 Z::Dim DimComboBox::dimAt(int index) const

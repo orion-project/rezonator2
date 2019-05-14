@@ -29,7 +29,7 @@ ParamEditorEx::ParamEditorEx(Z::Parameter *param, Z::Formulas *formulas, Z::Para
 
     auto optionsButton = new QPushButton;
     optionsButton->setFlat(true);
-    optionsButton->setIcon(QIcon(":/toolbar/options"));
+    optionsButton->setIcon(QIcon(":/toolbar/settings"));
     optionsButton->setFixedWidth(24);
     connect(optionsButton, &QPushButton::clicked, [menu, optionsButton](){
         // button->setMenu() crashes the app on MacOS when button is clicked, so show manually

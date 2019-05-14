@@ -21,17 +21,23 @@ public:
     UnitComboBox(QWidget* parent = nullptr);
     UnitComboBox(Z::Dim dim, QWidget* parent = nullptr);
 
-    void populate(Z::Dim dim);
-
     Z::Unit selectedUnit() const;
     void setSelectedUnit(Z::Unit unit);
 
     void setEnabled(bool on);
 
+    /// If the user can select a unit from Z::Dims::fixed() dimension.
+    /// It is used for 'design parameter' mode, @see SchemaParamsWindow.
+    /// Call it as a part of control initialization before `populate()`.
+    bool canSelectFixedUnit = false;
+
+public slots:
+    void populate(Z::Dim dim);
+
 signals:
     void focused(bool focus);
 
-    /// Signal raises when user changes selection.
+    /// Signal raises when the user changes selection.
     /// It doesn't raise when selection is changed programmatically via @a setSelectedUnit().
     void unitChanged(Z::Unit unit);
 
@@ -59,10 +65,17 @@ public:
     Z::Dim selectedDim() const;
     void setSelectedDim(Z::Dim dim);
 
+signals:
+    /// Signal raises when the user changes selection.
+    /// It doesn't raise when selection is changed programmatically via @a setSelectedDim().
+    void dimChanged(Z::Dim dim);
+
 private:
     void populate();
 
     Z::Dim dimAt(int index) const;
+
+    bool _enableChangeEvent = true;
 };
 
 

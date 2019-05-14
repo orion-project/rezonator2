@@ -48,18 +48,26 @@ TEST_METHOD(must_disable_unit_none)
 TEST_METHOD(must_disable_unit_fixed)
 {
     UnitComboBox combo(Z::Dims::fixed());
-    for (auto unit : Z::Dims::fixed()->units())
-    {
-        combo.setSelectedUnit(unit);
-        ASSERT_IS_TRUE(combo.selectedUnit() == unit)
-        ASSERT_IS_FALSE(combo.isEnabled())
-    }
+    ASSERT_IS_FALSE(combo.isEnabled())
+    combo.setEnabled(true);
+    ASSERT_IS_FALSE(combo.isEnabled())
+}
+
+TEST_METHOD(must_enable_unit_fixed_when_required)
+{
+    UnitComboBox combo;
+    combo.canSelectFixedUnit = true;
+    combo.populate(Z::Dims::fixed());
+    ASSERT_IS_TRUE(combo.isEnabled())
+    combo.setEnabled(false);
+    ASSERT_IS_FALSE(combo.isEnabled())
 }
 
 TEST_GROUP("UnitComboBox",
     ADD_TEST(must_contain_all_units),
     ADD_TEST(must_disable_unit_none),
     ADD_TEST(must_disable_unit_fixed),
+    ADD_TEST(must_enable_unit_fixed_when_required),
 )
 
 } // namespace UnitComboBoxTests

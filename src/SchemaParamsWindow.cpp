@@ -89,17 +89,37 @@ void SchemaParamsWindow::createToolBar()
 
 void SchemaParamsWindow::createParameter()
 {
+    auto recentDim = CustomPrefs::recentDim("global_param_dim");
+    auto recentUnit = CustomPrefs::recentUnit("global_param_unit", recentDim);
+
     auto aliasEditor = new QLineEdit;
     Z::Gui::setValueFont(aliasEditor);
 
+    auto unitEditor = new UnitComboBox;
+    unitEditor->canSelectFixedUnit = true;
+    unitEditor->setFixedWidth(QWIDGETSIZE_MAX);
+    unitEditor->populate(recentDim);
+    unitEditor->setSelectedUnit(recentUnit);
+
+    QMap<Z::Dim, Z::Unit> recentUnits;
+
     auto dimEditor = new DimComboBox;
-    dimEditor->setSelectedDim(CustomPrefs::recentDim("global_param_dim"));
+    dimEditor->setSelectedDim(recentDim);
+    connect(dimEditor, &DimComboBox::dimChanged, [&](Z::Dim dim){
+        recentUnits[recentDim] = unitEditor->selectedUnit();
+        if (!recentUnits.contains(dim))
+            recentUnits[dim] = CustomPrefs::recentUnit("global_param_unit", dim);
+        unitEditor->populate(dim);
+        unitEditor->setSelectedUnit(recentUnits[dim]);
+        recentDim = dim;
+    });
 
     QWidget editor;
     auto layout = new QFormLayout(&editor);
     layout->setMargin(0);
     layout->addRow(new QLabel(tr("Name")), aliasEditor);
     layout->addRow(new QLabel(tr("Dim")), dimEditor);
+    layout->addRow(new QLabel(tr("Unit")), unitEditor);
 
     auto verifyFunc = [&](){
         auto alias = aliasEditor->text().trimmed();
@@ -124,11 +144,12 @@ void SchemaParamsWindow::createParameter()
         auto label = alias;
         auto name = alias;
         auto param = new Z::Parameter(dim, alias, label, name);
-        auto unit = CustomPrefs::recentUnit("global_param_unit", dim);
+        auto unit = unitEditor->selectedUnit();
         param->setValue(Z::Value(0, unit));
         schema()->customParams()->append(param);
 
         CustomPrefs::setRecentDim("global_param_dim", dim);
+        CustomPrefs::setRecentUnit("global_param_unit", unit);
 
         schema()->events().raise(SchemaEvents::CustomParamCreated, param);
 
@@ -165,7 +186,7 @@ void SchemaParamsWindow::deleteParameter()
                     dependentParams << tr("Element <b>%1</b>, parameter <b>%2</b>").arg(elem->label(), param->label());
         if (!dependentParams.isEmpty())
             return Ori::Dlg::info(
-                tr("Can't delete paremeter '%1' because there are element parameters depending on it:<br><br>%2")
+                tr("Can't delete global parameter <b>%1</b><br>because some elements' parameters depend on it:<br><br>%2")
                     .arg(deletingParam->alias(), dependentParams.join("<br>")));
     }
 

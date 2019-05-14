@@ -264,9 +264,18 @@ void ParamEditor::linkToGlobalParameter()
     Z::Parameters availableParams;
     for (auto param : *_globalParams)
         if (param->dim() == _param->dim())
+        {
+            // Parameters of fixed dim can only be linked unit-to-unit
+            if (param->dim() == Z::Dims::fixed() and
+                param->value().unit() != _param->value().unit())
+                continue;
+
             availableParams.append(param);
+        }
+
     if (availableParams.isEmpty())
-        return Ori::Dlg::info(tr("There are no parameters to link to"));
+        return Ori::Dlg::info(tr("There are no suitable parameters to link to"));
+
     availableParams.insert(0, ParamsListWidget::noneParam());
 
     auto selected = _linkSource ? _linkSource : ParamsListWidget::noneParam();
