@@ -15,7 +15,7 @@ print_res('Subrange', L1)
 
 print('----------------------------------')
 print('Precalculated full matrix')
-# ../img/matrices/ElemPlate.png
+# ../help/matrix/ElemPlate.png
 M_full = make_abcd(1, L / n, 0, 1)
 print_abcd("M_full", M_full)
 
@@ -40,12 +40,12 @@ print('----------------------------------')
 print('Product of 2 matrices')
 
 # input into medium and left half-pass
-# ../img/matrices/ElemPlate_left.png
+# ../help/matrix/ElemPlate_left.png
 M_lf = make_abcd(1, L1/n, 0, 1/n)
 print_abcd("M_lf", M_lf) 
 
 # right half-pass and output into air
-# ../img/matrices/ElemPlate_right.png
+# ../help/matrix/ElemPlate_right.png
 M_rt = make_abcd(1, L2, 0, n)
 print_abcd("M_rt", M_rt) 
 

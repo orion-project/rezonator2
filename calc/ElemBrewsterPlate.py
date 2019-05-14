@@ -17,7 +17,7 @@ print_res('Subrange', L1)
 
 print('----------------------------------')
 print('Precalculated full matrix')
-# ../img/matrices/ElemBrewsterPlate.png
+# ../help/matrix/ElemBrewsterPlate.png
 M_t_full = make_abcd(1, L * sqrt(n*n + 1) / pow(n, 4), 0, 1)
 M_s_full = make_abcd(1, L * sqrt(n*n + 1) / pow(n, 2), 0, 1)
 print_abcd("M_t(pre)", M_t_full)
@@ -49,14 +49,14 @@ print('----------------------------------')
 print('Product of 2 matrices')
 
 # input into medium and left half-pass
-# ../img/matrices/ElemBrewsterPlate_left.png
+# ../help/matrix/ElemBrewsterPlate_left.png
 M_lf_t = make_abcd(n, L1/sqr(n), 0, 1/sqr(n))
 M_lf_s = make_abcd(1, L1/n, 0, 1/n)
 print_abcd("M_lf_t", M_lf_t) 
 print_abcd("M_lf_s", M_lf_s)
 
 # right half-pass and output into air
-# ../img/matrices/ElemBrewsterPlate_right.png
+# ../help/matrix/ElemBrewsterPlate_right.png
 M_rt_t = make_abcd(1/n, L2/n, 0, sqr(n))
 M_rt_s = make_abcd(1, L2, 0, n)
 print_abcd("M_rt_t", M_rt_t) 

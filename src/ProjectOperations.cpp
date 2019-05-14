@@ -272,6 +272,15 @@ bool createFirstPump(Schema* schema, bool raiseParamsChanged)
     auto pump = PumpParamsDialog::makeNewPump();
     if (!pump) return false;
 
+    if (Settings::instance().pumpAutoLabel)
+        Z::Utils::generateLabel(schema, pump);
+
+    if (!PumpParamsDialog::editPump(pump))
+    {
+        delete pump;
+        return false;
+    }
+
     schema->pumps()->append(pump);
     schema->events().raise(SchemaEvents::PumpCreated, pump);
 

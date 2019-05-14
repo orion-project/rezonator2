@@ -20,7 +20,7 @@ print_res('Subrange', L1)
 
 print('----------------------------------')
 print('Precalculated full matrix')
-# ../img/matrices/ElemTiltedPlate.png
+# ../help/matrix/ElemTiltedPlate.png
 s = sqr(n) - sqr(sin(a))
 M_t_full = make_abcd(1, L * sqr(n) * (1 - sqr(sin(a))) / sqrt(pow(s, 3)), 0, 1)
 M_s_full = make_abcd(1, L / sqrt(s), 0, 1)
@@ -53,14 +53,14 @@ print('----------------------------------')
 print('Product of 2 matrices')
 
 # input into medium and left half-pass
-# ../img/matrices/ElemTiltedPlate_left.png
+# ../help/matrix/ElemTiltedPlate_left.png
 M_lf_t = make_abcd(cos(b)/cos(a), L1/n * cos(a)/cos(b), 0, 1/n * cos(a)/cos(b))
 M_lf_s = make_abcd(1, L1/n, 0, 1/n)
 print_abcd("M_lf_t", M_lf_t) 
 print_abcd("M_lf_s", M_lf_s)
 
 # right half-pass and output into air
-# ../img/matrices/ElemTiltedPlate_right.png
+# ../help/matrix/ElemTiltedPlate_right.png
 M_rt_t = make_abcd(cos(a)/cos(b), L2 * cos(a)/cos(b), 0, n * cos(b)/cos(a))
 M_rt_s = make_abcd(1, L2, 0, n)
 print_abcd("M_rt_t", M_rt_t) 

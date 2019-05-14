@@ -6,7 +6,7 @@ from rezonator import *
 
 print('\n----------------------------------')
 print('CurveMirror\n')
-# ../img/matrices/ElemCurveMirror.png
+# ../help/matrix/ElemCurveMirror.png
 R = 0.1         # ROC
 a = radians(15) # incident angle
 Mt = make_abcd(1, 0, -2 / (R * cos(a)), 1)
@@ -17,7 +17,7 @@ print_abcd('S', Ms)
 
 print('\n----------------------------------')
 print('ThinLens\n')
-# ../img/matrices/ElemThinLens.png
+# ../help/matrix/ElemThinLens.png
 F = 0.1         # focal range
 a = radians(15) # incident angle
 Mt = make_abcd(1, 0, -1 / (F * cos(a)), 1)
@@ -28,7 +28,7 @@ print_abcd('S', Ms)
 
 print('\n----------------------------------')
 print('EmptyRange\n')
-# ../img/matrices/ElemEmptyRange.png
+# ../help/matrix/ElemEmptyRange.png
 L = 0.088
 L1 = L * 0.2
 L2 = L - L1
@@ -45,7 +45,7 @@ compare_abcd("M_full == M_2", M_full, M_2)
 
 print('\n----------------------------------')
 print('MediumRange\n')
-# ../img/matrices/ElemMediaRange.png
+# ../help/matrix/ElemMediaRange.png
 L = 0.088
 n = 1.2
 L1 = L * 0.2
@@ -64,7 +64,7 @@ compare_abcd("M_full == M_2", M_full, M_2)
 
 print('\n----------------------------------')
 print('NormalInterface\n')
-# ../img/matrices/ElemNormalInterface.png
+# ../help/matrix/ElemNormalInterface.png
 n1 = 1.6
 n2 = 3.7
 M = make_abcd(1, 0, 0, n1/n2)
@@ -74,7 +74,7 @@ print_abcd('M_inv', M_inv)
 
 print('\n----------------------------------')
 print('BrewsterInterface\n')
-# ../img/matrices/ElemBrewsterInterface.png
+# ../help/matrix/ElemBrewsterInterface.png
 n1 = 1.6
 n2 = 3.7
 M_t = make_abcd(n2/n1, 0, 0, pow(n1/n2, 2))
@@ -88,7 +88,7 @@ print_abcd('M_inv_s', M_inv_s)
 
 print('\n----------------------------------')
 print('TiltedInterface\n')
-# ../img/matrices/ElemTiltedInterface.png
+# ../help/matrix/ElemTiltedInterface.png
 n1 = 1.6
 n2 = 3.7
 a = radians(15)          # angle in n1
@@ -115,7 +115,7 @@ print_abcd('M_inv_s', M_s_inv)
 
 print('\n----------------------------------')
 print('SphericalInterface\n')
-# ../img/matrices/ElemSphericalInterface.png
+# ../help/matrix/ElemSphericalInterface.png
 n1 = 1.7
 n2 = 3.8
 R = 0.9

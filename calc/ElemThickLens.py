@@ -17,7 +17,7 @@ print_res('Subrange', L1)
 
 print('----------------------------------')
 print('Precalculated full matrix')
-# ../img/matrix/ElemThickLens.png
+# ../help/matrix/ElemThickLens.png
 A = 1 + L/R1*(n-1)/n
 B = L/n
 C = (n-1)*(1/R1 - 1/R2) - L/R1/R2*(n-1)*(n-1)/n
@@ -55,12 +55,12 @@ print('----------------------------------')
 print('Product of 2 matrices')
 
 # input into medium and left half-pass
-# ../img/matrix/ElemThickLens_left.png
+# ../help/matrix/ElemThickLens_left.png
 M_lf = make_abcd(1 + L1*(n-1)/R1/n, L1/n, (n-1)/R1/n, 1/n)
 print_abcd("M_lf", M_lf) 
 
 # right half-pass and output into air
-# ../img/matrix/ElemThickLens_right.png
+# ../help/matrix/ElemThickLens_right.png
 M_rt = make_abcd(1, L2, (1-n)/R2, L2*(1-n)/R2 + n)
 print_abcd("M_rt", M_rt) 
 
