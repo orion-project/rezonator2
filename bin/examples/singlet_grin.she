@@ -2,7 +2,7 @@
 Version=1.2
 HasTitle=0
 Notes=
-Units\Linear=m
+Units\Linear=mm
 Units\Beamsize=mkm
 Units\Lambda=nm
 Units\Angle=deg
@@ -35,7 +35,7 @@ Misalign\AxisT=0
 Misalign\AxisS=0
 Misalign\AngleT=0
 Misalign\AngleS=0
-Param_L=0.1
+Param_L=100
 
 [Element1]
 Type=TElemGrinLens
@@ -46,10 +46,10 @@ Misalign\AxisT=0
 Misalign\AxisS=0
 Misalign\AngleT=0
 Misalign\AngleS=0
-Param_L=0.1
+Param_L=100
 Param_n0=1.5
-Param_n2t=0.15
-Param_n2s=0.25
+Param_n2t=1.5E-7
+Param_n2s=2.5E-7
 Param_D=10
 
 [Element2]
@@ -61,7 +61,7 @@ Misalign\AxisT=0
 Misalign\AxisS=0
 Misalign\AngleT=0
 Misalign\AngleS=0
-Param_L=0.1
+Param_L=100
 
 [WINDOWS]
 Window1=TwndGraphMultiCaustic
@@ -71,31 +71,31 @@ VarCount=3
 Var1.Element=0
 Var1.Param=-1
 Var1.Start=0
-Var1.Stop=0.1
+Var1.Stop=100
 Var1.Step=0
 Var1.Points=100
 Var2.Element=1
 Var2.Param=-1
 Var2.Start=0
-Var2.Stop=0.1
+Var2.Stop=100
 Var2.Step=0
 Var2.Points=100
 Var3.Element=2
 Var3.Param=-1
 Var3.Start=0
-Var3.Stop=0.1
+Var3.Stop=100
 Var3.Step=0
 Var3.Points=100
 Var.Element=2
 Var.Param=-1
 Var.Start=0
-Var.Stop=0.1
+Var.Stop=100
 Var.Step=0
 Var.Points=100
 PlanesFlipped=0
 AuxParams\M2t=1
 AuxParams\M2s=1
-Plot=eNrtVdFu2jAUfY+Uf0Blj6hKKFtBUR6AJh1SIBXJuknVNLnkDqwlduU4benX79oJJAjoVK0PW9VESPbxufG95x7jm2tvHk3C2XfTuAaRU85c+9Q2DdO48efDqYe4L0gGru1Yju18sKrHsTQn8Pz4x/DbJELe8JHm1zSntymyTSOmMoUYHqU7ApK1BElokXdaRVYtRfQJXKuaDNkSowabqc+ZdGOaQd6awUNrzjPCHLu5fdfqYUL6NY1oQVII+JIIKlcZXajPNqYjkmNGG96E3YOQkGgSuYW0mXQJzHnBEp+KXNbYtEglTSmDOi5kquSaMkwlCEakpoRyBSKiSYO/qbhi65LrRbgjgkjdAGuLHhSif0wH3QGSFoBxIiPSbXfabeu03W6bxqWgCTaxWzaxr18Vo/CYLn7ldYcPLAbAlnLl9hrQhDEQzwZpRhVZ4VPKuHh2u5pRRXYbuC7C2nfiDkEFj7GDUqVbdggjursRCr/iOVWCX4FYANIr2GPJZqVshQIjSYTcwqX5R2Ech9M/2j+wOy0ff0G303rG/O/ef/f+/+P9wLv0Zhfq1qgNNOYpFy5u5evHNJp2mzA0yD1J1fhlnQ1gCUyVfqYYY/06212cD7ZfjT5WAfXRw7EgLEd3VTXW08V6k0kEgkJeJq8OyorcQSTXG4OuuT4JeDvKKRFLqhX4zAV9qqcxv0N99DnDodtTxwJ+SrffOzeNOeRo/vEKRdQqFbnkWVPOaJ3d8rQhZAnsU77SRJliOx9j9pQVvMh1Lcfuaawo4Q+4craLX9B7PKPikKmww/EkDrzdBmtNTxrX+QkaJKVLlil5u2Xx9qeq+LPzwaFqmx2x9zuyK/+epS7VxrqZzo4JVOJH7HD4D7VbRu/b7cUyolbRl9ExuQ4oZFUCWf+uPIPXVMcPw/jNKGNbm/qQWUpj/5Vx3pQ6g9cUZzKLvflsGKA6V8DiZnS/YiEeIW7XX8WNdfRvUbm4Ig==
+Plot=eNrtVdFu2jAUfY+Uf0Blj6hKKFtBUR6AJh1SIBXJuknVNLnkDqwlduU4benX79oJJAjoVK0PW9VESPbxufG95x7jm2tvHk3C2XfTuAaRU85c+9Q2DdO48efDqYe4L0gGru1Yju18sKrHsTQn8Pz4x/DbJELe8JHm1zSntymyTSOmMoUYHqU7ApK1BElokXdaRVYtRfQJXKuaDNkSowabqc+ZdGOaQd6awUNrzjPCHLu5fdfqYUL6NY1oQVII+JIIKlcZXajPNqYjkmNGG96E3YOQkGgSuYW0mXQJzHnBEp+KXNbYtEglTSmDOi5kquSaMkwlCEakpoRyBSKiSYO/qbhi65LrRbgjgkjdAGuLHhSif0wH3QGSFoBxIiPSbXfabeu03W6bxqWgCTaxWzaxr18Vo/CYLn7ldYcPLAbAlnLl9hrQhDEQzwZpRhVZ4VPKuHh2u5pRRXYbuC7C2nfiDkEFj7GDUqVbdggjursRCr/iOVWCX4FYANIr2GPJZqVshQIjSYTcwqX5R2Ech9M/2j+wOy0ff0G308qecf+7+d/N//+YP/AuvdmFujZqA415yoWLW/n6MY2m3SYMDXJPUjV+WWcDWAJTpZ8pxli/znYX54PtV6OPVUB99nAsCMvRXVWN9XSx3mQSgaCQl8mrg7IidxDJ9caga65PAl6PckrEkmoFPnNBn+ppzO9QH33OcOj21LGAn9Lt985NYw45mn+8QhG1SkUuedaUM1pntzxtCFkC+5SvNFGm2M7HmD1lBS9yXcuxixorSvgDrpzt4hf0Hs+oOGQq7HA8iQNvt8Fa05PGfX6CBknpkmVK3m5ZvP2pKv7sfHCo2mZH7P2O7Mq/Z6lLtbFuprNjApX4ETsc/kPtltH7dnuxjKhV9GV0TK4DClmVQNa/K8/gNdXxwzB+M8rY1qY+ZJbS2H9lnDelzuA1xZnMYm8+GwaozhWwuBndr1iIR4jb9VdxYx39G1ymuI8=
 TrueAxisTitleX="{elem_alias}, |{unit_linear}"
 TrueAxisTitleY={default_title}
 TrueChartTitle={default_title}

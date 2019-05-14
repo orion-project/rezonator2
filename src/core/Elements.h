@@ -215,6 +215,8 @@ DECLARE_ELEMENT(ElemGrinLens, ElementRange)
     SUB_RANGE
     double ior2t() const { return _ior2t->value().value(); }
     double ior2s() const { return _ior2s->value().value(); }
+    Z::Parameter* paramIor2t() const { return _ior2t; }
+    Z::Parameter* paramIor2s() const { return _ior2s; }
 private:
     Z::Parameter *_ior2t, *_ior2s;
 DECLARE_ELEMENT_END

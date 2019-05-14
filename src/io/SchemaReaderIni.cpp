@@ -412,6 +412,11 @@ void SchemaReaderIni::readElement(const QString &section)
             unit = _angularUnit;
             tmp = unit->fromSi(tmp);
         }
+
+        // Gradiens are stored in linear units in old schemas, but they are in 1/m2 in new ones
+        if (grinLens and (param == grinLens->paramIor2t() or param == grinLens->paramIor2s()))
+             tmp /= _linearUnit->toSi(1) * _linearUnit->toSi(1);
+
         Z::Value value(tmp, unit);
 
         auto res = param->verify(value);
@@ -436,6 +441,9 @@ Z::Unit SchemaReaderIni::paramUnit(Z::Parameter* param) const
     // Angles are always stored in rads in old schemas
     if (param->dim() == Z::Dims::angular())
         return Z::Units::rad();
+
+    if (param->dim() == Z::Dims::fixed())
+        return param->value().unit();
 
     return Z::Units::none();
 }
