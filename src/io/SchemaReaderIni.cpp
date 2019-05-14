@@ -63,8 +63,8 @@ QString parseElemType(const QString& oldType, const Ori::Version& version)
           {"TElemThinCylinderLensS", ElemCylinderLensS::_type_() },
           {"TElemMatrix",            ElemMatrix::_type_() },
           {"TElemPoint",             ElemPoint::_type_() },
+          {"TElemGrinLens",          ElemGrinLens::_type_()}
       });
-    // TODO:NEXT-VER load grin-lens
 
     auto type = oldType;
     if (version.match(1, 0))
@@ -381,10 +381,17 @@ void SchemaReaderIni::readElement(const QString &section)
     elem->setTitle(ini.getString("Title"));
     elem->setDisabled(ini.getBool("Disabled"));
 
+    auto grinLens = dynamic_cast<ElemGrinLens*>(elem);
+
     for (Z::Parameter* param : elem->params())
     {
+        auto paramAlias = param->alias();
+
+        if (grinLens and param == grinLens->paramIor())
+            paramAlias = "n0";
+
         bool ok;
-        double tmp = ini.getValue("Param_" + param->alias(), 0, &ok);
+        double tmp = ini.getValue("Param_" + paramAlias, 0, &ok);
         if (!ok)
         {
             // IOR is not stored in old schemas for empty ranges so there is no issue if that

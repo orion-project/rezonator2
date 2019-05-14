@@ -110,6 +110,8 @@ QString PlotFuncWindowStorable::writeWindowGeneral(QJsonObject& root) const
     root["cursor_mode"] = Z::IO::Utils::enumToStr(_cursorPanel->mode());
 
     // Store plot limits
+    // Saved unit `none` means it's default unit of the function
+    // and it was not overridden by axis units menu
     auto limitsX = _plot->limitsX();
     auto limitsY = _plot->limitsY();
     root["x_min"] = limitsX.min;

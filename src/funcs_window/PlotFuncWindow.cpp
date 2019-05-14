@@ -428,6 +428,9 @@ void PlotFuncWindow::updateGraphs()
 void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
 {
     QVector<QCPGraph*>& graphs = plane == Z::Plane_T? _graphsT: _graphsS;
+    bool isVisible = actnShowTS->isChecked()
+        or (plane == Z::Plane_T and actnShowT->isChecked())
+        or (plane == Z::Plane_S and actnShowS->isChecked());
     int resultCount = _function->resultCount(plane);
     for (int i = 0; i < resultCount; i++)
     {
@@ -436,6 +439,7 @@ void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
         {
             g = _plot->addGraph();
             g->setPen(getLineSettings(plane));
+            g->setVisible(isVisible);
             graphs.append(g);
         }
         else g = graphs[i];

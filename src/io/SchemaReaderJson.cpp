@@ -361,7 +361,10 @@ void SchemaReaderJson::readWindow(const QJsonObject& root)
 
     QString res = storable->storableRead(root);
     if (res.isEmpty())
+    {
         WindowsManager::instance().show(window);
+        // Window will be recalculated on RecalRequred after loading is completed
+    }
     else
     {
         _report.warning(QString("Unable to load window of type '%1': %2").arg(type, res));
