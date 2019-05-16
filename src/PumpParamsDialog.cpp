@@ -1,9 +1,12 @@
 #include "PumpParamsDialog.h"
 
 #include "core/Pump.h"
+#include "core/Utils.h"
 #include "widgets/Appearance.h"
 #include "widgets/ParamsEditor.h"
 #include "helpers/OriDialogs.h"
+#include "helpers/OriLayouts.h"
+#include "widgets/OriSelectableTile.h"
 
 #include <QHBoxLayout>
 #include <QFormLayout>
@@ -11,31 +14,75 @@
 #include <QLineEdit>
 #include <QListWidget>
 
+//------------------------------------------------------------------------------
+//                             PumpModeDrawing
+//------------------------------------------------------------------------------
+namespace {
+
+class PumpModeDrawing : public QLabel
+{
+public:
+    PumpModeDrawing()
+    {
+        setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        setContentsMargins(6, 6, 6, 6);
+    }
+
+    void setPumpMode(Z::PumpMode* pumpMode)
+    {
+        if (pumpMode)
+            setPixmap(QPixmap(pumpMode->drawingPath()));
+        else
+            clear();
+    }
+};
+
+} // namespace
+
+//------------------------------------------------------------------------------
+//                            PumpParamsDialog
+//------------------------------------------------------------------------------
+
 Z::PumpParams* PumpParamsDialog::makeNewPump()
 {
-    QListWidget list;
-#ifdef Q_OS_WIN
-    // Default icon size looks OK on Ubuntu and MacOS but it is too small on Windows
-    list.setIconSize(QSize(24, 24));
-#endif
+    auto drawing = new PumpModeDrawing;
+
+    Ori::Widgets::SelectableTileRadioGroup modesGroup;
+    modesGroup.selectionFollowsArrows = true;
+    connect(&modesGroup, &Ori::Widgets::SelectableTileRadioGroup::dataSelected, [&](const QVariant& data){
+        drawing->setPumpMode(var2ptr<Z::PumpMode*>(data));
+    });
+
+    auto modesWidget = new QFrame;
+    modesWidget->setFrameShape(QFrame::StyledPanel);
+    auto modesLayout = new QHBoxLayout(modesWidget);
+    modesLayout->setMargin(0);
+    modesLayout->setSpacing(0);
     for (Z::PumpMode *mode : Z::Pump::allModes())
     {
-        auto it = new QListWidgetItem(QIcon(mode->iconPath()), mode->displayName());
-        it->setData(Qt::UserRole, mode->modeName());
-        list.addItem(it);
+        auto modeItem = new Ori::Widgets::SelectableTile;
+        modeItem->selectionFollowsFocus = true;
+        modeItem->setFrameShape(QFrame::NoFrame);
+        modeItem->setPixmap(QIcon(mode->iconPath()).pixmap(32, 32));
+        modeItem->setTitle(mode->displayName());
+        modeItem->setData(ptr2var(mode));
+
+        modesGroup.addTile(modeItem);
+        modesLayout->addWidget(modeItem);
     }
-    list.setCurrentRow(0);
-    if (Ori::Dlg::Dialog(&list)
+
+    QWidget content;
+    Ori::Layouts::LayoutV({modesWidget, drawing})
+            .setMargin(0).setSpacing(12).useFor(&content);
+
+    if (Ori::Dlg::Dialog(&content)
             .withIconPath(":/window_icons/pump")
             .withTitle(tr("Select Pump Mode"))
-            .withOkSignal(SIGNAL(itemDoubleClicked(QListWidgetItem*)))
+            .withOkSignal(&modesGroup, SIGNAL(doubleClicked(QVariant)))
+            .withContentToButtonsSpacingFactor(2)
             .exec())
     {
-        auto selectedItem = list.currentItem();
-        if (!selectedItem) return nullptr;
-
-        auto modeName = selectedItem->data(Qt::UserRole).toString();
-        auto mode = Z::Pump::findByModeName(modeName);
+        auto mode = var2ptr<Z::PumpMode*>(modesGroup.selectedData());
         return mode ? mode->makePump() : nullptr;
     }
     return nullptr;
@@ -77,13 +124,11 @@ PumpParamsDialog::PumpParamsDialog(Z::PumpParams *params, QWidget *parent)
 
     _paramsEditor = new ParamsEditorTS(params->params());
 
-    auto drawing = new QLabel;
-    drawing->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    drawing->setContentsMargins(6, 6, 6, 6);
+    auto drawing = new PumpModeDrawing;
 
     if (pumpMode)
     {
-        drawing->setPixmap(QPixmap(pumpMode->drawingPath()));
+        drawing->setPumpMode(pumpMode);
         iconLabel->setPixmap(QIcon(pumpMode->iconPath()).pixmap(48, 48));
         iconLabel->setToolTip(pumpMode->displayName());
     }
