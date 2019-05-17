@@ -51,6 +51,44 @@ void LinkButton::focusOutEvent(QFocusEvent *e)
 }
 
 //------------------------------------------------------------------------------
+
+namespace {
+int countSuitableGlobalParams(Z::Parameters* globalParams, Z::Parameter* param)
+{
+    auto dim = param->dim();
+    int count = 0;
+    for (auto p : *globalParams)
+        if (p->dim() == dim)
+        {
+            // Parameters of fixed dim can only be linked unit-to-unit
+            if (dim == Z::Dims::fixed() and
+                p->value().unit() != param->value().unit())
+                continue;
+
+            count++;
+        }
+    return count;
+}
+
+Z::Parameters getSuitableGlobalParams(Z::Parameters* globalParams, Z::Parameter* param)
+{
+    auto dim = param->dim();
+    Z::Parameters params;
+    for (auto p : *globalParams)
+        if (p->dim() == dim)
+        {
+            // Parameters of fixed dim can only be linked unit-to-unit
+            if (dim == Z::Dims::fixed() and
+                p->value().unit() != param->value().unit())
+                continue;
+
+            params.append(p);
+        }
+    return params;
+}
+}
+
+//------------------------------------------------------------------------------
 //                              ParamEditor
 //------------------------------------------------------------------------------
 
@@ -85,7 +123,7 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
     _labelLabel = Z::Gui::symbolLabel(paramLabel % " = ");
     layout->addWidget(_labelLabel);
 
-    if (opts.allowLinking)
+    if (opts.allowLinking and countSuitableGlobalParams(_globalParams, _param))
     {
         _labelLabel->setText(paramLabel);
         _linkButton = new LinkButton;
@@ -251,18 +289,7 @@ QWidget* ParamEditor::unitsSelector() const { return _unitsSelector; }
 
 void ParamEditor::linkToGlobalParameter()
 {
-    Z::Parameters availableParams;
-    for (auto param : *_globalParams)
-        if (param->dim() == _param->dim())
-        {
-            // Parameters of fixed dim can only be linked unit-to-unit
-            if (param->dim() == Z::Dims::fixed() and
-                param->value().unit() != _param->value().unit())
-                continue;
-
-            availableParams.append(param);
-        }
-
+    Z::Parameters availableParams = getSuitableGlobalParams(_globalParams, _param);
     if (availableParams.isEmpty())
         return Ori::Dlg::info(tr("There are no suitable parameters to link to"));
 
