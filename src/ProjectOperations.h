@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#include "core/CommonTypes.h"
+
 class Schema;
 class CalcManager;
 
@@ -31,6 +33,9 @@ public:
     /// running the application from AppImage (Linux) or application bundle (MacOS)
     /// user has no access to examples directory via regular open file dialog.
     static QString selectSchemaExample();
+
+    static Schema* createDefaultSchema(TripType tripType);
+    static void createDefaultPump(Schema* schema);
 
 public slots:
     void newSchemaFile();

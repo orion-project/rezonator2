@@ -271,28 +271,27 @@ bool ProjectOperations::canClose()
     return true;
 }
 
-bool createFirstPump(Schema* schema, bool raiseParamsChanged)
+Schema* ProjectOperations::createDefaultSchema(TripType tripType)
 {
-    auto pump = PumpParamsDialog::makeNewPump();
-    if (!pump) return false;
+    auto schema = new Schema();
+    schema->events().disable();
+    schema->setTripType(tripType);
+    if (tripType == TripType::SP)
+        createDefaultPump(schema);
+    schema->events().enable();
+    return schema;
+}
+
+void ProjectOperations::createDefaultPump(Schema *schema)
+{
+    auto pump = Z::PumpMode_Waist::instance()->makePump();
+    pump->activate(true);
 
     if (Settings::instance().pumpAutoLabel)
         Z::Utils::generateLabel(schema, pump);
 
-    if (!PumpParamsDialog::editPump(pump))
-    {
-        delete pump;
-        return false;
-    }
-
     schema->pumps()->append(pump);
     schema->events().raise(SchemaEvents::PumpCreated, pump);
-
-    pump->activate(true);
-    if (raiseParamsChanged)
-        schema->events().raise(SchemaEvents::ParamsChanged);
-
-    return true;
 }
 
 void ProjectOperations::setupPump()
@@ -300,18 +299,13 @@ void ProjectOperations::setupPump()
     if (!schema()->isSP()) return;
 
     if (schema()->pumps()->isEmpty())
+        createDefaultPump(schema());
+
+    auto pump = schema()->activePump();
+    if (PumpParamsDialog::editPump(pump))
     {
-        const bool raiseParamsChanged = true;
-        createFirstPump(schema(), raiseParamsChanged);
-    }
-    else
-    {
-        auto pump = schema()->activePump();
-        if (PumpParamsDialog::editPump(pump))
-        {
-            schema()->events().raise(SchemaEvents::PumpChanged, pump);
-            schema()->events().raise(SchemaEvents::RecalRequred);
-        }
+        schema()->events().raise(SchemaEvents::PumpChanged, pump);
+        schema()->events().raise(SchemaEvents::RecalRequred);
     }
 }
 
@@ -381,12 +375,7 @@ void ProjectOperations::setupTripType()
     {
         auto tripType = static_cast<TripType>(tripTypeGroup.selectedData().toInt());
         if (tripType == TripType::SP && schema()->pumps()->isEmpty())
-        {
-            const bool raiseParamsChanged = false;
-            // ParamsChanged will be raised from setTripType()
-            if (!createFirstPump(schema(), raiseParamsChanged))
-                return;
-        }
+            createDefaultPump(schema());
         schema()->setTripType(tripType);
     }
 }

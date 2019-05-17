@@ -163,26 +163,20 @@ PumpParams_InvComplex::PumpParams_InvComplex() : PumpParams_Complex()
 //                                      Pump
 //--------------------------------------------------------------------------------
 
-const QVector<PumpMode*>& Pump::allModes()
+const QVector<const PumpMode*>& Pump::allModes()
 {
-    static PumpMode_Waist waist;
-    static PumpMode_Front front;
-    static PumpMode_RayVector ray_vector;
-    static PumpMode_TwoSections sections;
-    static PumpMode_Complex complex;
-    static PumpMode_InvComplex inv_complex;
-    static QVector<PumpMode*> producers({
-        &waist,
-        &front,
-        &ray_vector,
-        &sections,
-        &complex,
-        &inv_complex,
+    static QVector<const PumpMode*> producers({
+        PumpMode_Waist::instance(),
+        PumpMode_Front::instance(),
+        PumpMode_RayVector::instance(),
+        PumpMode_TwoSections::instance(),
+        PumpMode_Complex::instance(),
+        PumpMode_InvComplex::instance(),
     });
     return producers;
 }
 
-PumpMode* Pump::findByModeName(const QString& name)
+const PumpMode* Pump::findByModeName(const QString& name)
 {
     for (auto producer : allModes())
         if (producer->modeName() == name)

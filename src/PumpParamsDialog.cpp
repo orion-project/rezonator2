@@ -28,7 +28,7 @@ public:
         setContentsMargins(6, 6, 6, 6);
     }
 
-    void setPumpMode(Z::PumpMode* pumpMode)
+    void setPumpMode(const Z::PumpMode* pumpMode)
     {
         if (pumpMode)
             setPixmap(QPixmap(pumpMode->drawingPath()));
@@ -58,7 +58,7 @@ Z::PumpParams* PumpParamsDialog::makeNewPump()
     auto modesLayout = new QHBoxLayout(modesWidget);
     modesLayout->setMargin(0);
     modesLayout->setSpacing(0);
-    for (Z::PumpMode *mode : Z::Pump::allModes())
+    for (auto mode : Z::Pump::allModes())
     {
         auto modeItem = new Ori::Widgets::SelectableTile;
         modeItem->selectionFollowsFocus = true;

@@ -29,21 +29,13 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QStyleOption>
+#include <QTimer>
 #include <QToolButton>
 #include <QMovie>
 
 using namespace Ori::Layouts;
 
 namespace {
-    void makeSchema(TripType tripType)
-    {
-        auto s = new Schema();
-        s->events().disable();
-        s->setTripType(tripType);
-        s->events().enable();
-        (new ProjectWindow(s))->show();
-    }
-
     void adjustTipImagePosition(QLabel* tipImage)
     {
         if (!tipImage->isVisible()) return;
@@ -218,7 +210,7 @@ void MruStartPanel::makeEmpty()
 void MruStartPanel::openFile(const QString& filePath)
 {
     emit onClose();
-    auto projectWindow = new ProjectWindow(nullptr);
+    auto projectWindow = new ProjectWindow(new Schema());
     projectWindow->show();
     projectWindow->operations()->openSchemaFile(filePath);
     CommonData::instance()->mruList()->append(filePath);
@@ -449,7 +441,7 @@ void ActionsStartPanel::openSchemaFile()
     auto fileName = ProjectOperations::getOpenFileName(this);
     if (fileName.isEmpty()) return;
     emit onClose();
-    auto projectWindow = new ProjectWindow;
+    auto projectWindow = new ProjectWindow(new Schema());
     projectWindow->show();
     projectWindow->operations()->openSchemaFile(fileName);
 }
@@ -459,27 +451,34 @@ void ActionsStartPanel::openSchemaExample()
     auto fileName = ProjectOperations::selectSchemaExample();
     if (fileName.isEmpty()) return;
     emit onClose();
-    auto projectWindow = new ProjectWindow;
+    auto projectWindow = new ProjectWindow(new Schema());
     projectWindow->show();
     projectWindow->operations()->openExampleFile(fileName);
 }
 
+namespace {
+void makeNewSchema(TripType tripType)
+{
+    (new ProjectWindow(ProjectOperations::createDefaultSchema(tripType)))->show();
+}
+}
+
 void ActionsStartPanel::makeSchemaSW()
 {
+    makeNewSchema(TripType::SW);
     emit onClose();
-    makeSchema(TripType::SW);
 }
 
 void ActionsStartPanel::makeSchemaRR()
 {
+    makeNewSchema(TripType::RR);
     emit onClose();
-    makeSchema(TripType::RR);
 }
 
 void ActionsStartPanel::makeSchemaSP()
 {
+    makeNewSchema(TripType::SP);
     emit onClose();
-    makeSchema(TripType::SP);
 }
 
 //------------------------------------------------------------------------------

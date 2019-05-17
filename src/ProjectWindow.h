@@ -35,7 +35,7 @@ class ProjectWindow : public QMainWindow, public SchemaToolWindow
     Q_OBJECT
 
 public:
-    ProjectWindow(Schema* readySchema = nullptr);
+    ProjectWindow(Schema* aSchema);
     ~ProjectWindow() override;
 
     // inherits from SchemaListener

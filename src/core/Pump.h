@@ -24,7 +24,11 @@ public: \
     QString modeName() const override { return QStringLiteral(# mode_class); } \
     QString displayName() const override { return mode_name; } \
     QString description() const override { return mode_descr; } \
-};
+    static const PumpMode_##mode_class* instance() {\
+        static PumpMode_##mode_class mode;\
+        return &mode;\
+    }\
+};\
 
 
 #define PUMP_PARAM(name) \
@@ -75,8 +79,8 @@ public:
 
 class Pump {
 public:
-    static const QVector<PumpMode*> &allModes();
-    static PumpMode* findByModeName(const QString& name);
+    static const QVector<const PumpMode *> &allModes();
+    static const PumpMode *findByModeName(const QString& name);
     static QString labelPrefix();
 };
 

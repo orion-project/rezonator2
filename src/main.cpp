@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
         auto fileName = args.first();
         if (QFileInfo(fileName).exists())
         {
-            auto projectWindow = new ProjectWindow(nullptr);
+            auto projectWindow = new ProjectWindow(new Schema());
             projectWindow->show();
             if (parser.isSet(optionExample))
                 projectWindow->operations()->openExampleFile(fileName);
@@ -118,10 +118,13 @@ int main(int argc, char* argv[])
         }
     }
 
-    // Open empty project window in start window is disabled
+    // Open empty project window if start window is disabled
     if (!Settings::instance().showStartWindow)
     {
-        (new ProjectWindow)->show();
+        auto tripType = TripTypes::find(Settings::instance().defaultTripType);
+        auto schema = ProjectOperations::createDefaultSchema(tripType);
+        auto window = new ProjectWindow(schema);
+        window->show();
         return app.exec();
     }
 

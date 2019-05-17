@@ -13,9 +13,9 @@ QString generateLabel(const QString& prefix, const QStringList& existedLabels);
 } // namespace Z
 
 
-inline QVariant ptr2var(void* p)
+inline QVariant ptr2var(const void* p)
 {
-    return qVariantFromValue(p);
+    return qVariantFromValue(const_cast<void*>(p));
 }
 
 template <typename T>
