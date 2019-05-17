@@ -76,6 +76,8 @@ SchemaToolWindow::SchemaToolWindow(Schema *owner) : SchemaWindow(owner)
 QToolBar* SchemaToolWindow::makeToolBar(const QString& title, bool flat)
 {
     QToolBar* toolbar = flat? new Ori::Widgets::FlatToolBar(title): new QToolBar(title);
+    toolbar->setMovable(false);
+    toolbar->setFloatable(false);
     toolbar->setIconSize(Z::WindowUtils::toolbarIconSize());
     toolbar->setObjectName("toolBar_" % title);
     _toolbars << toolbar;

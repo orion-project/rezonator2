@@ -363,10 +363,10 @@ void ProjectOperations::setupTripType()
     }
 
     QWidget content;
-    LayoutV({new QLabel("Round-trip type:"), tripTypeLabel, Space(12), tripTypeLayout})
-            .setMargin(0).setSpacing(3).useFor(&content);
+    LayoutV({tripTypeLabel, tripTypeLayout}).setMargin(0).setSpacing(12).useFor(&content);
 
     auto dlg = Ori::Dlg::Dialog(&content)
+            .withTitle(tr("Round-trip type"))
             .withHelpTopic("") // TODO help topic
             .withContentToButtonsSpacingFactor(3)
             .withActiveWidget(activeTile)

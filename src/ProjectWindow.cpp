@@ -222,6 +222,8 @@ void ProjectWindow::createToolBars()
     }, true));
 
     _mdiToolbar = new Ori::Widgets::MdiToolBar(tr("Windows"), _mdiArea);
+    _mdiToolbar->setMovable(false);
+    _mdiToolbar->setFloatable(false);
     Z::WindowUtils::adjustIconSize(_mdiToolbar);
     addToolBar(Qt::BottomToolBarArea, _mdiToolbar);
 }
