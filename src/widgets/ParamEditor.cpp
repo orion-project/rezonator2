@@ -6,31 +6,17 @@
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
-#include "helpers/OriTools.h"
 #include "widgets/OriValueEdit.h"
 
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QToolButton>
 
 using Ori::Widgets::ValueEdit;
 
 //------------------------------------------------------------------------------
 //                              LinkButton
 //------------------------------------------------------------------------------
-
-// QPushButton looks ugly on "macintosh" style, it looses its standard view
-// and can't calcutale its size propely (even fixed size).
-// QToolButton can't be focused by tab but looks the same on all styles so use it.
-// TODO: add Ctrl+= shortcut to invoke the button, it will be even more usable than tabbing it.
-class LinkButton : public QToolButton
-{
-public:
-    LinkButton();
-    QSize sizeHint() const override;
-    void showLinkSource(Z::Parameter *param);
-};
 
 LinkButton::LinkButton() : QToolButton()
 {
@@ -50,6 +36,18 @@ void LinkButton::showLinkSource(Z::Parameter *param)
     int w = fontMetrics().width(text);
     setFixedWidth(w + 2 * Ori::Gui::layoutSpacing());
     setText(text);
+}
+
+void LinkButton::focusInEvent(QFocusEvent *e)
+{
+    QToolButton::focusInEvent(e);
+    emit focused(true);
+}
+
+void LinkButton::focusOutEvent(QFocusEvent *e)
+{
+    QToolButton::focusOutEvent(e);
+    emit focused(false);
 }
 
 //------------------------------------------------------------------------------
@@ -89,7 +87,7 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
 
     if (opts.allowLinking)
     {
-        _labelLabel->setText(paramLabel); // remove '='
+        _labelLabel->setText(paramLabel);
         _linkButton = new LinkButton;
         _linkButton->setToolTip(tr("Link to global parameter"));
         _linkButton->showLinkSource(_linkSource);
@@ -119,8 +117,10 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
     connect(_valueEditor, &ValueEdit::focused, this, &ParamEditor::editorFocused);
     connect(_valueEditor, &ValueEdit::keyPressed, this, &ParamEditor::editorKeyPressed);
     connect(_valueEditor, &ValueEdit::valueEdited, this, &ParamEditor::valueEdited);
-    connect(_unitsSelector, &UnitComboBox::focused, this,  &ParamEditor::editorFocused);
+    connect(_unitsSelector, &UnitComboBox::focused, this, &ParamEditor::editorFocused);
     connect(_unitsSelector, &UnitComboBox::unitChanged, this, &ParamEditor::unitChanged);
+    if (_linkButton)
+        connect(_linkButton, &LinkButton::focused, this, &ParamEditor::editorFocused);
 
     _valueEditor->selectAll();
 }
@@ -224,18 +224,8 @@ void ParamEditor::focus()
 
 void ParamEditor::editorFocused(bool focus)
 {
-    QPalette p;
-
-    if (focus)
-    {
-        p.setColor(QPalette::Background, Ori::Color::blend(p.color(QPalette::Button), p.color(QPalette::Highlight), 0.2));
-        setAutoFillBackground(true);
-        emit focused();
-    }
-    else
-        setAutoFillBackground(false);
-
-    setPalette(p);
+    Z::Gui::setFocusedBackground(this, focus);
+    if (focus) emit focused();
 }
 
 void ParamEditor::editorKeyPressed(int key)

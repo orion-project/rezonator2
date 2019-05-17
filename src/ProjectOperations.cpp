@@ -14,18 +14,20 @@
 #include "io/CommonUtils.h"
 
 #include "helpers/OriDialogs.h"
+#include "helpers/OriLayouts.h"
 #include "tools/OriWaitCursor.h"
 #include "widgets/ParamEditor.h"
 #include "widgets/OriSelectableTile.h"
 
 #include <QApplication>
 #include <QFileDialog>
-#include <QHBoxLayout>
 #include <QLabel>
 #include <QMessageBox>
 #include <QProcess>
 #include <QTextStream>
 #include <QListWidget>
+
+using namespace Ori::Layouts;
 
 QFileDialog::Options fileDialogOptions()
 {
@@ -340,41 +342,40 @@ void ProjectOperations::setupTripType()
         tripTypeLabel->setText(info.fullHeader());
     });
 
+    Ori::Widgets::SelectableTile *activeTile = nullptr;
+
     auto tripTypeLayout = new QHBoxLayout();
     tripTypeLayout->setMargin(0);
     tripTypeLayout->setSpacing(12);
     for (auto tripType : TripTypes::all())
     {
         auto info = TripTypes::info(tripType);
-        auto item = new Ori::Widgets::SelectableTile;
-        item->setPixmap(QIcon(info.iconPath()).pixmap(32, 32));
-        item->setTitle(info.alias());
-        item->setToolTip(info.toolTip());
-        item->setData(static_cast<int>(tripType));
-        item->setTitleStyleSheet("font-weight:bold;font-size:15px;margin:10px 15px 0 15px;");
+        auto tile = new Ori::Widgets::SelectableTile;
+        tile->setPixmap(QIcon(info.iconPath()).pixmap(32, 32));
+        tile->setTitle(info.alias());
+        tile->setToolTip(info.toolTip());
+        tile->setData(static_cast<int>(tripType));
+        tile->setTitleStyleSheet("font-weight:bold;font-size:15px;margin:10px 15px 0 15px;");
 
         if (tripType == schema()->tripType())
         {
-            item->setSelected(true);
+            activeTile = tile;
+            tile->setSelected(true);
             tripTypeLabel->setText(info.fullHeader());
         }
 
-        tripTypeLayout->addWidget(item);
-        tripTypeGroup.addTile(item);
+        tripTypeLayout->addWidget(tile);
+        tripTypeGroup.addTile(tile);
     }
 
     QWidget content;
-    auto contentLayout = new QVBoxLayout(&content);
-    contentLayout->setMargin(0);
-    contentLayout->setSpacing(3);
-    contentLayout->addWidget(new QLabel("Round-trip type:"));
-    contentLayout->addWidget(tripTypeLabel);
-    contentLayout->addSpacing(12);
-    contentLayout->addLayout(tripTypeLayout);
+    LayoutV({new QLabel("Round-trip type:"), tripTypeLabel, Space(12), tripTypeLayout})
+            .setMargin(0).setSpacing(3).useFor(&content);
 
     auto dlg = Ori::Dlg::Dialog(&content)
             .withHelpTopic("") // TODO help topic
             .withContentToButtonsSpacingFactor(3)
+            .withActiveWidget(activeTile)
             .withOkSignal(&tripTypeGroup, SIGNAL(doubleClicked(QVariant)));
     if (dlg.exec())
     {

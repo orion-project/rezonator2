@@ -1,7 +1,7 @@
 #ifndef PARAM_EDITOR_H
 #define PARAM_EDITOR_H
 
-#include <QWidget>
+#include <QToolButton>
 
 #include "../core/Parameters.h"
 
@@ -13,9 +13,30 @@ namespace Ori {
 namespace Widgets {
     class ValueEdit;
 }}
-
-class LinkButton;
 class UnitComboBox;
+
+
+// QPushButton looks ugly on "macintosh" style, it looses its standard view
+// and can't calcutale its size propely (even fixed size).
+// QToolButton can't be focused by tab but looks the same on all styles so use it.
+// TODO: add Ctrl+= shortcut to invoke the button, it will be even more usable than tabbing it.
+class LinkButton : public QToolButton
+{
+    Q_OBJECT
+
+public:
+    LinkButton();
+    QSize sizeHint() const override;
+    void showLinkSource(Z::Parameter *param);
+
+signals:
+    void focused(bool focus);
+
+protected:
+    void focusInEvent(QFocusEvent *e) override;
+    void focusOutEvent(QFocusEvent *e) override;
+};
+
 
 class ParamEditor : public QWidget, public Z::ParameterListener
 {

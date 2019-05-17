@@ -67,6 +67,8 @@ inline int unitsSelectorWidth() { return 60; }
 inline QString globalParamColorHtml() { return QStringLiteral("#000080"); }
 inline QColor globalParamColor() { return QColor(globalParamColorHtml()); }
 
+void setFocusedBackground(QWidget *w, bool focused);
+
 } // namespace Gui
 } // namespace Z
 

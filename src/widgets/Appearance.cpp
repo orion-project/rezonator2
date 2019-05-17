@@ -1,5 +1,7 @@
 #include "Appearance.h"
 
+#include "helpers/OriTools.h"
+
 #include <QApplication>
 #include <QLabel>
 #include <QStyle>
@@ -81,6 +83,21 @@ QLabel* symbolLabel(const QString& text)
     auto label = new QLabel(text);
     setSymbolFont(label);
     return label;
+}
+
+void setFocusedBackground(QWidget *w, bool focused)
+{
+    QPalette p;
+
+    if (focused)
+    {
+        p.setColor(QPalette::Background, Ori::Color::blend(p.color(QPalette::Button), p.color(QPalette::Highlight), 0.2));
+        w->setAutoFillBackground(true);
+    }
+    else
+        w->setAutoFillBackground(false);
+
+    w->setPalette(p);
 }
 
 } // namespace Gui

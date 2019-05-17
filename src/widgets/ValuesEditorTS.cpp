@@ -3,12 +3,15 @@
 #include "Appearance.h"
 #include "UnitWidgets.h"
 #include "widgets/OriValueEdit.h"
+#include "helpers/OriLayouts.h"
 
 #include <QApplication>
 #include <QDebug>
 #include <QLabel>
 #include <QStyle>
 #include <QToolButton>
+
+using namespace Ori::Layouts;
 
 namespace {
 QToolButton* makeButton(const QString& tooltip, const QString& icon, QObject* reciever, const char* slot)
@@ -52,26 +55,24 @@ ValueEditorTS::ValueEditorTS(const QString& label, const QString& symbol, const 
     connect(_editorS, SIGNAL(keyPressed(int)), this, SLOT(editorKeyPressed(int)));
     connect(_unitsSelector, SIGNAL(focused(bool)), this, SLOT(editorFocused(bool)));
 
-    auto layout = new QHBoxLayout(this);
-    layout->setMargin(0);
-    layout->setSpacing(0);
-    layout->addWidget(_label);
-    layout->addStretch();
-    layout->addSpacing(6);
-    layout->addWidget(_symbol);
-    layout->addSpacing(6);
-    layout->addWidget(_editorT);
-    layout->addWidget(makeButton(tr("Assign T value to S"), ":/toolbar10/ts_t2s", this, SLOT(assignTtoS())));
-    layout->addWidget(makeButton(tr("Swap values"), ":/toolbar10/ts_swap", this, SLOT(swapValues())));
-    layout->addWidget(makeButton(tr("Assign S value to T"), ":/toolbar10/ts_s2t", this, SLOT(assignStoT())));
-    layout->addWidget(_editorS);
-    layout->addSpacing(2);
-    layout->addWidget(_unitsSelector);
+    LayoutH({
+        _label,
+        Stretch(),
+        Space(6),
+        _symbol,
+        Space(6),
+        _editorT,
+        makeButton(tr("Assign T value to S"), ":/toolbar10/ts_t2s", this, SLOT(assignTtoS())),
+        makeButton(tr("Swap values"), ":/toolbar10/ts_swap", this, SLOT(swapValues())),
+        makeButton(tr("Assign S value to T"), ":/toolbar10/ts_s2t", this, SLOT(assignStoT())),
+        _editorS,
+        Space(2),
+        _unitsSelector,
+    }).setMargin(0).setSpacing(0).useFor(this);
 
     int s = style()->pixelMetric(QStyle::PM_LayoutVerticalSpacing);
     int hs = s / 2 + 1;
     setContentsMargins(s, hs, hs, hs);
-    setAutoFillBackground(true);
 
     setValue(value);
 }
@@ -108,7 +109,7 @@ void ValueEditorTS::assignStoT()
 
 void ValueEditorTS::editorFocused(bool focus)
 {
-    setBackgroundRole(focus? QPalette::Light: QPalette::Window);
+    Z::Gui::setFocusedBackground(this, focus);
 }
 
 void ValueEditorTS::editorKeyPressed(int key)
