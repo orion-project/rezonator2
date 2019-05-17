@@ -52,6 +52,7 @@ RESOURCES += \
 HEADERS += \
     libs/qcustomplot/qcpcursor.h \
     libs/qcustomplot/qcustomplot.h \
+    src/AdjustmentWindow.h \
     src/AppSettings.h \
     src/CalcManager.h \
     src/CalculatorWindow.h \
@@ -154,6 +155,7 @@ HEADERS += \
 SOURCES += \
     libs/qcustomplot/qcpcursor.cpp \
     libs/qcustomplot/qcustomplot.cpp \
+    src/AdjustmentWindow.cpp \
     src/AppSettings.cpp \
     src/CalcManager.cpp \
     src/CalculatorWindow.cpp \

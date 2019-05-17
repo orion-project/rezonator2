@@ -1,5 +1,6 @@
 #include "ProjectWindow.h"
 
+#include "AdjustmentWindow.h"
 #include "CalcManager.h"
 #include "CalculatorWindow.h"
 #include "CommonData.h"
@@ -141,8 +142,9 @@ void ProjectWindow::createActions()
     actnToolsCatalog = A_(tr("&Elements Catalog"), this, SLOT(showElementsCatalog()), ":/toolbar/catalog");
     actnToolsGaussCalc = A_(tr("&Gauss Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
     actnToolsCalc = A_(tr("Formula &Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
-    actnToolsPrefs = A_(tr("Pre&ferences..."), this, SLOT(showPreferences()), ":/toolbar/settings");
     actnToolFlipSchema = A_(tr("&Flip Schema"), this, SLOT(flipSchema()));
+    actnToolSettings = A_(tr("&Settings..."), this, SLOT(showSettings()), ":/toolbar/settings");
+    actnToolAdjust = A_(tr("&Adjustment"), this, SLOT(showAdjustment()), ":/toolbar/adjust");
 
     // These common window actions must not have data (action->data()), as data presense indicates that
     // this action is for activation of specific subwindow and _mdiArea is responsible for it.
@@ -195,8 +197,8 @@ void ProjectWindow::createMenuBar()
           actnFuncBeamVariation, nullptr, actnFuncRepRate });
 
     menuTools = Ori::Gui::menu(tr("&Tools", "Menu title"), this,
-        { actnToolFlipSchema, nullptr,
-          actnToolsGaussCalc, actnToolsCalc, actnToolsCatalog, nullptr, actnToolsPrefs });
+        { actnToolFlipSchema, nullptr, actnToolAdjust, nullptr,
+          actnToolsGaussCalc, actnToolsCalc, actnToolsCatalog, nullptr, actnToolSettings });
 
     menuWindow = Ori::Gui::menu(tr("&Window"), this,
         { actnWndSchema, actnWndParams, actnWndPumps, actnWndProtocol, nullptr,
@@ -217,7 +219,7 @@ void ProjectWindow::createToolBars()
         actnEditCut, actnEditCopy, actnEditPaste, nullptr,
         actnFuncRoundTrip, nullptr, actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamVariation, nullptr,
         actnFuncCaustic, actnFuncMultiCaustic, nullptr, actnFuncRepRate, nullptr,
-        actnWndParams, actnWndPumps, nullptr,
+        actnWndParams, actnWndPumps, nullptr, actnToolAdjust, nullptr,
         actnToolsGaussCalc, actnToolsCalc
     }, true));
 
@@ -439,7 +441,7 @@ void ProjectWindow::showElementsCatalog()
     Z::Dlgs::showElementsCatalog();
 }
 
-void ProjectWindow::showPreferences()
+void ProjectWindow::showSettings()
 {
     Settings::instance().edit(this);
 }
@@ -458,6 +460,11 @@ void ProjectWindow::flipSchema()
 {
     if (Ori::Dlg::yes(tr("Do you want to rearrange elements in the opposite order?")))
         schema()->flip();
+}
+
+void ProjectWindow::showAdjustment()
+{
+    AdjustmentWindow::open(schema(), this);
 }
 
 //------------------------------------------------------------------------------

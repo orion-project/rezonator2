@@ -69,8 +69,8 @@ private:
             *actnFuncRepRate, *actnFuncMultFwd, *actnFuncMultBkwd,
             *actnFuncCaustic, *actnFuncMultiCaustic, *actnFuncBeamVariation;
 
-    QAction  *actnToolsGaussCalc, *actnToolsCatalog, *actnToolsPrefs,
-             *actnToolFlipSchema, *actnToolsCalc;
+    QAction  *actnToolsGaussCalc, *actnToolsCatalog, *actnToolSettings,
+             *actnToolFlipSchema, *actnToolsCalc, *actnToolAdjust;
 
     QAction *actnWndClose, *actnWndCloseAll, *actnWndTile, *actnWndCascade,
             *actnWndSchema, *actnWndParams, *actnWndProtocol, *actnWndPumps;
@@ -103,13 +103,14 @@ private:
 
 private slots:
     void showElementsCatalog();
-    void showPreferences();
+    void showSettings();
     void showProtocolWindow();
     void showSchemaWindow();
     void showGaussCalculator();
     void showCalculator();
     void showParamsWindow();
     void showPumpsWindow();
+    void showAdjustment();
 
     void openSchemaExample();
 

@@ -29,7 +29,7 @@ AppSettingsDialog::AppSettingsDialog(QWidget* parent) : Ori::Dlg::BasicConfigDia
     pageListIconSize = QSize(48, 48);
 
     setObjectName("AppSettingsDialog");
-    setTitleAndIcon(tr("Preferences"), ":/window_icons/options");
+    setTitleAndIcon(tr("Application Settings"), ":/window_icons/options");
 
     createPages({
                     createGeneralPage(),

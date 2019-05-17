@@ -20,7 +20,6 @@ class InfoFuncWindow : public QWidget, public SchemaToolWindow
     Q_OBJECT
 
 public:
-    explicit InfoFuncWindow(InfoFunction *func, QWidget *parent = nullptr);
     ~InfoFuncWindow() override;
 
     static void open(InfoFunction *func, QWidget* parent = nullptr);
@@ -45,6 +44,8 @@ private:
     QString _result;
     bool _needRecalc = false;
     bool _frozen = false;
+
+    explicit InfoFuncWindow(InfoFunction *func, QWidget *parent = nullptr);
 
     void createToolbar();
     void updateFrozenInfo();
