@@ -69,8 +69,12 @@ SchemaWindow::~SchemaWindow()
 //                               SchemaToolWindow
 //------------------------------------------------------------------------------
 
-SchemaToolWindow::SchemaToolWindow(Schema *owner) : SchemaWindow(owner)
+SchemaToolWindow::SchemaToolWindow(Schema *owner, InitOptions options) : SchemaWindow(owner)
 {
+    if (options.testFlag(InitOption_DefaultLayout))
+    {
+        // TODO
+    }
 }
 
 QToolBar* SchemaToolWindow::makeToolBar(const QString& title, bool flat)

@@ -464,7 +464,7 @@ void ProjectWindow::flipSchema()
 
 void ProjectWindow::showAdjustment()
 {
-    AdjustmentWindow::open(schema(), this);
+    AdjustmentWindow::adjust(schema(), nullptr);
 }
 
 //------------------------------------------------------------------------------

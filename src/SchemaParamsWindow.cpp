@@ -1,5 +1,6 @@
 #include "SchemaParamsWindow.h"
 
+#include "AdjustmentWindow.h"
 #include "CustomPrefs.h"
 #include "WindowsManager.h"
 #include "widgets/Appearance.h"
@@ -68,6 +69,7 @@ void SchemaParamsWindow::createActions()
     _actnParamDelete = A_(tr("&Delete"), this, SLOT(deleteParameter()), ":/toolbar/param_delete", Qt::CTRL | Qt::Key_Delete);
     _actnParamSet = A_(tr("&Set..."), this, SLOT(setParameterValue()), ":/toolbar/param_set", Qt::Key_Return);
     _actnParamDescr = A_(tr("&Annotate..."), this, SLOT(annotateParameter()), ":/toolbar/param_annotate", Qt::CTRL | Qt::Key_Return);
+    _actnParamAdjust = A_(tr("Ad&just"), this, SLOT(adjustParameter()), ":/toolbar/adjust");
 
     #undef A_
 }
@@ -75,10 +77,10 @@ void SchemaParamsWindow::createActions()
 void SchemaParamsWindow::createMenuBar()
 {
     _windowMenu = Ori::Gui::menu(tr("&Parameter"), this,
-        { _actnParamAdd, nullptr, _actnParamSet, _actnParamDescr, nullptr, _actnParamDelete });
+        { _actnParamAdd, nullptr, _actnParamSet, _actnParamDescr, nullptr, _actnParamAdjust, nullptr, _actnParamDelete });
 
     _contextMenu = Ori::Gui::menu(this,
-        { _actnParamSet, _actnParamDescr, nullptr, _actnParamDelete });
+        { _actnParamSet, _actnParamDescr, nullptr, _actnParamAdjust, nullptr, _actnParamDelete });
 }
 
 void SchemaParamsWindow::createToolBar()
@@ -237,4 +239,12 @@ void SchemaParamsWindow::annotateParameter()
         param->setDescription(descr);
         schema()->events().raise(SchemaEvents::CustomParamEdited, param);
     }
+}
+
+void SchemaParamsWindow::adjustParameter()
+{
+    auto param = _table->selected();
+    if (!param) return;
+
+    AdjustmentWindow::adjust(schema(), param);
 }

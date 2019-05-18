@@ -1,0 +1,183 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 980
+        }
+    },
+    "custom_params": {
+        "F0": {
+            "descr": "Focal range for both lenses",
+            "dim": "linear",
+            "unit": "cm",
+            "value": 10
+        },
+        "L0": {
+            "descr": "Distance from the first lens to the light source and from the last lens to an image",
+            "dim": "linear",
+            "unit": "cm",
+            "value": 10
+        },
+        "dL": {
+            "descr": "Distance between lenses",
+            "dim": "linear",
+            "unit": "cm",
+            "value": 5
+        }
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "d1",
+            "params": {
+                "L": {
+                    "unit": "cm",
+                    "value": 10
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "F1",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 0
+                },
+                "F": {
+                    "unit": "cm",
+                    "value": 10
+                }
+            },
+            "title": "",
+            "type": "ElemThinLens"
+        },
+        {
+            "is_disabled": false,
+            "label": "d2",
+            "params": {
+                "L": {
+                    "unit": "cm",
+                    "value": 5
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "F2",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 0
+                },
+                "F": {
+                    "unit": "cm",
+                    "value": 10
+                }
+            },
+            "title": "",
+            "type": "ElemThinLens"
+        },
+        {
+            "is_disabled": false,
+            "label": "d3",
+            "params": {
+                "L": {
+                    "unit": "cm",
+                    "value": 10
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        }
+    ],
+    "formulas": [
+        {
+            "code": "F0 / 2",
+            "param_deps": [
+                "F0"
+            ],
+            "target_param": "dL"
+        }
+    ],
+    "notes": "",
+    "param_links": [
+        {
+            "source_param": "L0",
+            "target_elem": 0,
+            "target_param": "L"
+        },
+        {
+            "source_param": "L0",
+            "target_elem": 4,
+            "target_param": "L"
+        },
+        {
+            "source_param": "F0",
+            "target_elem": 1,
+            "target_param": "F"
+        },
+        {
+            "source_param": "F0",
+            "target_elem": 3,
+            "target_param": "F"
+        },
+        {
+            "source_param": "dL",
+            "target_elem": 2,
+            "target_param": "L"
+        }
+    ],
+    "pumps": [
+        {
+            "is_active": true,
+            "label": "P1",
+            "mode": "RayVector",
+            "params": {
+                "V": {
+                    "unit": "deg",
+                    "value_s": 6,
+                    "value_t": 5
+                },
+                "y": {
+                    "unit": "mm",
+                    "value_s": 1,
+                    "value_t": 1
+                },
+                "z_y": {
+                    "unit": "mm",
+                    "value_s": 0,
+                    "value_t": 0
+                }
+            },
+            "title": ""
+        }
+    ],
+    "schema_version": "2.0",
+    "title": "",
+    "trip_type": "SP",
+    "windows": [
+        {
+            "type": "PumpsWindow"
+        },
+        {
+            "type": "SchemaParams"
+        }
+    ]
+}

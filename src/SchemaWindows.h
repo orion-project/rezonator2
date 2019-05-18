@@ -88,7 +88,12 @@ private:
 class SchemaToolWindow : public SchemaWindow, public SettingsListener
 {
 public:
-    SchemaToolWindow(Schema *owner);
+    enum InitOption {
+        InitOption_DefaultLayout = 0x01,
+    };
+    Q_DECLARE_FLAGS(InitOptions, InitOption)
+
+    SchemaToolWindow(Schema *owner, InitOptions options = InitOptions());
 
     /// Inherited from @ref SettingsListener.
     /// Function is called when application settings are changed.
@@ -102,8 +107,11 @@ public:
     QToolBar* toolbar() const { return _toolbars.isEmpty()? nullptr: _toolbars.first(); }
     const QList<QToolBar*>& toolbars() const { return _toolbars; }
 
+    void setContent(QWidget *content, int row = -1);
+
 private:
     QList<QToolBar*> _toolbars;
+    QVBoxLayout* _mainLayout = nullptr;
 };
 
 //------------------------------------------------------------------------------
@@ -133,7 +141,7 @@ public:
         /// initNoDefaultWidget option is not set.
         initNoToolBar = 0x02,
     };
-    typedef QFlags<InitOption> InitOptions;
+    Q_DECLARE_FLAGS(InitOptions, InitOption)
 
 public:
     BasicMdiChild(InitOptions options = InitOptions());
