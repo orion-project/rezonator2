@@ -96,6 +96,7 @@ protected:
     explicit PumpWindow(Schema*owner);
 
     virtual Z::PumpParams* makeNewPumpDlg();
+    virtual Z::PumpParams* selectedPump() const;
 
 private:
     static PumpWindow* _instance;

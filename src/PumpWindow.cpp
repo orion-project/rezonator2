@@ -231,6 +231,8 @@ PumpWindow::PumpWindow(Schema *owner) : SchemaMdiChild(owner)
 
 PumpWindow::~PumpWindow()
 {
+    qDebug() << "PumpWindow::~PumpWindow()";
+
     _instance = nullptr;
 
     schema()->unregisterListener(_table);
@@ -291,6 +293,11 @@ Z::PumpParams* PumpWindow::makeNewPumpDlg()
     return pump;
 }
 
+Z::PumpParams* PumpWindow::selectedPump() const
+{
+    return _table->selected();
+}
+
 void PumpWindow::addNewPump(Z::PumpParams* pump)
 {
     schema()->pumps()->append(pump);
@@ -312,7 +319,7 @@ void PumpWindow::createPump()
 
 void PumpWindow::editPump()
 {
-    auto pump = _table->selected();
+    auto pump = selectedPump();
     if (!pump) return;
     if (!PumpParamsDialog::editPump(pump)) return;
     schema()->events().raise(SchemaEvents::PumpChanged, pump);
@@ -326,7 +333,7 @@ void PumpWindow::deletePump()
     if (schema()->isSP() && schema()->pumps()->size() == 1)
         return Ori::Dlg::info(tr("Unable to delete the last pump in SP schema."));
 
-    auto pump = _table->selected();
+    auto pump = selectedPump();
     if (!pump) return;
 
     auto pumpId = pump->label().isEmpty()
@@ -347,7 +354,7 @@ void PumpWindow::deletePump()
 
 void PumpWindow::activatePump()
 {
-    auto pump = _table->selected();
+    auto pump = selectedPump();
     if (!pump) return;
 
     if (pump->isActive()) return;
@@ -368,7 +375,7 @@ void PumpWindow::activatePump()
 
 void PumpWindow::clonePump()
 {
-    auto pump = _table->selected();
+    auto pump = selectedPump();
     if (!pump) return;
 
     auto pumpMode = Z::Pump::findByModeName(pump->modeName());
