@@ -4,6 +4,7 @@
 #include <memory>
 
 #pragma GCC diagnostic ignored "-Wpadded"
+#pragma GCC diagnostic ignored "-Wunused-member-function"
 
 namespace Z {
 namespace Tests {
@@ -26,16 +27,18 @@ namespace SchemaTests {
 
 //------------------------------------------------------------------------------
 
+namespace {
 DECLARE_ELEMENT(TestElement, Element)
     Ori::Testing::TestBase *test = nullptr;
     ~TestElement() override
     {
         if (!test) return;
         TEST_LOG("~TestElement() " + label())
-        test->data().insert(label(), true);
+        SET_TEST_DATA(label(), true);
     }
     DEFAULT_LABEL("hhh")
 DECLARE_ELEMENT_END
+}
 
 #define PREPARE_SCHEMA_ELEMS(elem_count)\
     SCHEMA_AND_LISTENER \
@@ -51,7 +54,7 @@ TEST_METHOD(constructor)
     ASSERT_IS_FALSE(schema.modified())
 }
 
-TEST_METHOD(destructor_must_delete_elements)
+TEST_METHOD(destructor__must_delete_elements)
 {
     auto schema = new Schema;
     for (int i = 0; i < 10; i++)
@@ -66,7 +69,67 @@ TEST_METHOD(destructor_must_delete_elements)
         ASSERT_IS_TRUE(test->data()[QString::number(i)].toBool()) // element was deleted
 }
 
-TEST_METHOD(destructor_must_raise_event)
+TEST_METHOD(destructor__must_delete_custom_params)
+{
+    class TestParam : public Z::Parameter
+    {
+    public:
+        ~TestParam() { SET_TEST_DATA("custom param was deleted", true); }
+        Ori::Testing::TestBase* test = nullptr;
+    };
+
+    auto param = new TestParam;
+    param->test = test;
+
+    auto schema = new Schema;
+    schema->customParams()->append(param);
+    delete schema;
+
+    ASSERT_EQ_DATA("custom param was deleted", true)
+}
+
+TEST_METHOD(destructor__must_delete_pumps)
+{
+    class TestPumpParams : public Z::PumpParams
+    {
+    public:
+        ~TestPumpParams() { SET_TEST_DATA("pump was deleted", true); }
+        Ori::Testing::TestBase* test = nullptr;
+    };
+
+    auto pump = new TestPumpParams;
+    pump->test = test;
+
+    auto schema = new Schema;
+    schema->pumps()->append(pump);
+    delete schema;
+
+    ASSERT_EQ_DATA("pump was deleted", true)
+}
+
+TEST_METHOD(destructor__must_delete_formulas)
+{
+    Z::Parameter param;
+
+    class TestFormula : public Z::Formula
+    {
+    public:
+        TestFormula(Z::Parameter* p) : Z::Formula(p) {}
+        ~TestFormula() { SET_TEST_DATA("formula was deleted", true); }
+        Ori::Testing::TestBase* test = nullptr;
+    };
+
+    auto formula = new TestFormula(&param);
+    formula->test = test;
+
+    auto schema = new Schema;
+    schema->formulas()->put(formula);
+    delete schema;
+
+    ASSERT_EQ_DATA("formula was deleted", true)
+}
+
+TEST_METHOD(destructor__must_raise_event)
 {
     TestSchemaListener listener;
     auto schema = new Schema;
@@ -76,7 +139,7 @@ TEST_METHOD(destructor_must_raise_event)
     ASSERT_IS_TRUE(listener.checkEvents({EVENT(Deleted)}))
 }
 
-TEST_METHOD(destructor_with_no_events)
+TEST_METHOD(destructor__can_do_without_events)
 {
     TestSchemaListener listener;
     auto schema = new Schema;
@@ -89,10 +152,12 @@ TEST_METHOD(destructor_with_no_events)
 
 //------------------------------------------------------------------------------
 
+namespace {
 DECLARE_ELEMENT(LabeledElement1, Element) DEFAULT_LABEL("hhh") DECLARE_ELEMENT_END
 DECLARE_ELEMENT(LabeledElement2, Element) DEFAULT_LABEL("ggg") DECLARE_ELEMENT_END
+}
 
-TEST_METHOD(generateLabel_first_elem)
+TEST_METHOD(generateLabel__first_elem)
 {
     Schema s;
     auto e1 = new LabeledElement1;
@@ -106,7 +171,7 @@ TEST_METHOD(generateLabel_first_elem)
     ASSERT_EQ_STR(e2->label(), "ggg1");
 }
 
-TEST_METHOD(generateLabel_next_elem)
+TEST_METHOD(generateLabel__next_elem)
 {
     Schema s;
     s.insertElement(new LabeledElement1);
@@ -190,12 +255,12 @@ TEST_METHOD(raise_all_events)
 
 //------------------------------------------------------------------------------
 
-TEST_METHOD(set_wavelength_must_raise_event)
+TEST_METHOD(set_wavelength__must_raise_event)
 {
     SCHEMA_AND_LISTENER
     schema.wavelength().setValue(Z::Value(10, Z::Units::m()));
     ASSERT_SCHEMA_STATE(STATE(Modified))
-    ASSERT_LISTENER(nullptr, EVENT(LambdaChanged), EVENT(Changed))
+    ASSERT_LISTENER(nullptr, EVENT(LambdaChanged), EVENT(Changed), EVENT(RecalRequred))
 }
 
 TEST_METHOD(enabledCount)
@@ -216,7 +281,7 @@ TEST_METHOD(elementById)
 
 //------------------------------------------------------------------------------
 
-TEST_METHOD(insertElement_must_increase_count)
+TEST_METHOD(insertElement__must_increase_count)
 {
     Schema schema;
     ASSERT_ELEM_COUNT(0)
@@ -224,7 +289,7 @@ TEST_METHOD(insertElement_must_increase_count)
     ASSERT_ELEM_COUNT(1)
 }
 
-TEST_METHOD(insertElement_must_assign_element_owner)
+TEST_METHOD(insertElement__must_assign_element_owner)
 {
     Schema schema;
     auto el = new TestElement;
@@ -232,18 +297,18 @@ TEST_METHOD(insertElement_must_assign_element_owner)
     ASSERT_EQ_PTR(el->owner(), &schema);
 }
 
-TEST_METHOD(insertElement_must_raise_events_and_change_state)
+TEST_METHOD(insertElement__must_raise_events_and_change_state)
 {
     SCHEMA_AND_LISTENER
     auto el1 = new TestElement;
     schema.insertElement(el1);
     ASSERT_SCHEMA_STATE(STATE(Modified))
-    ASSERT_LISTENER(el1, EVENT(ElemCreated), EVENT(Changed))
+    ASSERT_LISTENER(el1, EVENT(ElemCreated), EVENT(Changed), EVENT(RecalRequred))
 }
 
 //------------------------------------------------------------------------------
 
-TEST_METHOD(deleteElement_must_not_fail_when_invalid_elem)
+TEST_METHOD(deleteElement__must_not_fail_when_invalid_elem)
 {
     PREPARE_SCHEMA_ELEMS(1)
 
@@ -261,7 +326,7 @@ TEST_METHOD(deleteElement_must_not_fail_when_invalid_elem)
     ASSERT_ELEM_COUNT(1)
 }
 
-TEST_METHOD(deleteElement_must_decrease_count)
+TEST_METHOD(deleteElement__must_decrease_count)
 {
     PREPARE_SCHEMA_ELEMS(2)
     ASSERT_EQ_INT(schema.count(), 2)
@@ -279,7 +344,7 @@ TEST_METHOD(deleteElement_must_decrease_count)
     ASSERT_EQ_INT(schema.indexOf(el2), -1)
 }
 
-TEST_METHOD(deleteElement_must_reset_element_owner)
+TEST_METHOD(deleteElement__must_reset_element_owner)
 {
     PREPARE_SCHEMA_ELEMS(2)
     for (auto el: schema.elements())
@@ -296,7 +361,7 @@ TEST_METHOD(deleteElement_must_reset_element_owner)
     ASSERT_IS_NULL(el2->owner())
 }
 
-TEST_METHOD(deleteElement_with_lockEvents)
+TEST_METHOD(deleteElement__with_lockEvents)
 {
     PREPARE_SCHEMA_ELEMS(2)
     schema.events().disable();
@@ -314,7 +379,7 @@ TEST_METHOD(deleteElement_with_lockEvents)
     ASSERT_SCHEMA_STATE(STATE(New))
 }
 
-TEST_METHOD(deleteElement_with_events_false)
+TEST_METHOD(deleteElement__with_events_false)
 {
     PREPARE_SCHEMA_ELEMS(2)
     schema.events().enable();
@@ -332,33 +397,35 @@ TEST_METHOD(deleteElement_with_events_false)
     ASSERT_SCHEMA_STATE(STATE(New))
 }
 
-TEST_METHOD(deleteElement_by_index_with_events)
+TEST_METHOD(deleteElement__by_index_with_events)
 {
     PREPARE_SCHEMA_ELEMS(1)
     TAKE_ELEM_PTR(el, 0)
     schema.deleteElement(0, true, false);
     ASSERT_SCHEMA_STATE(STATE(Modified))
-    ASSERT_LISTENER(el, EVENT(ElemDeleting), EVENT(ElemDeleted), EVENT(Changed))
+    ASSERT_LISTENER(el, EVENT(ElemDeleting), EVENT(ElemDeleted), EVENT(Changed), EVENT(RecalRequred))
 }
 
-TEST_METHOD(deleteElement_by_pointer_with_events)
+TEST_METHOD(deleteElement__by_pointer_with_events)
 {
     PREPARE_SCHEMA_ELEMS(1)
     TAKE_ELEM_PTR(el, 0)
     schema.deleteElement(el, true, false);
     ASSERT_SCHEMA_STATE(STATE(Modified))
-    ASSERT_LISTENER(el, EVENT(ElemDeleting), EVENT(ElemDeleted), EVENT(Changed))
+    ASSERT_LISTENER(el, EVENT(ElemDeleting), EVENT(ElemDeleted), EVENT(Changed), EVENT(RecalRequred))
 }
 
 //------------------------------------------------------------------------------
 
+namespace {
 DECLARE_ELEMENT(TestRange, ElementRange)
 DECLARE_ELEMENT_END
 
 DECLARE_ELEMENT(TestInterface, ElementInterface)
 DECLARE_ELEMENT_END
+}
 
-TEST_METHOD(ElementInterface_must_be_linked_to_neighbours)
+TEST_METHOD(ElementInterface__must_be_linked_to_neighbours)
 {
     Schema s;
 
@@ -419,7 +486,7 @@ TEST_METHOD(ElementInterface_must_be_linked_to_neighbours)
     ASSERT_EQ_DBL(intf1->ior2(), 1)
 }
 
-TEST_METHOD(ElementInterface_must_be_unlinked_after_deletion_of_itself)
+TEST_METHOD(ElementInterface__must_be_unlinked_after_deletion_of_itself)
 {
     Schema s;
 
@@ -434,7 +501,7 @@ TEST_METHOD(ElementInterface_must_be_unlinked_after_deletion_of_itself)
     ASSERT_EQ_INT(s.paramLinks()->size(), 0);
 }
 
-TEST_METHOD(ElementInterface_must_be_unlinked_after_deletion_of_neighbour)
+TEST_METHOD(ElementInterface__must_be_unlinked_after_deletion_of_neighbour)
 {
     Schema s;
 
@@ -451,30 +518,51 @@ TEST_METHOD(ElementInterface_must_be_unlinked_after_deletion_of_neighbour)
 
 //------------------------------------------------------------------------------
 
+TEST_METHOD(activePump)
+{
+    auto p1 = Z::PumpMode_Waist::instance()->makePump();
+    auto p2 = Z::PumpMode_Waist::instance()->makePump();
+
+    Schema s;
+    s.pumps()->append(p1);
+    s.pumps()->append(p2);
+
+    ASSERT_IS_NULL(s.activePump());
+
+    p2->activate(true);
+    ASSERT_EQ_PTR(s.activePump(), p2);
+}
+
+//------------------------------------------------------------------------------
+
 TEST_GROUP("Schema",
     ADD_TEST(constructor),
-    ADD_TEST(destructor_must_raise_event),
-    ADD_TEST(destructor_with_no_events),
-    ADD_TEST(destructor_must_delete_elements),
-    ADD_TEST(generateLabel_first_elem),
-    ADD_TEST(generateLabel_next_elem),
+    ADD_TEST(destructor__must_delete_elements),
+    ADD_TEST(destructor__must_delete_custom_params),
+    ADD_TEST(destructor__must_delete_pumps),
+    ADD_TEST(destructor__must_delete_formulas),
+    ADD_TEST(destructor__must_raise_event),
+    ADD_TEST(destructor__can_do_without_events),
+    ADD_TEST(generateLabel__first_elem),
+    ADD_TEST(generateLabel__next_elem),
     ADD_TEST(raise_all_events),
-    ADD_TEST(set_wavelength_must_raise_event),
+    ADD_TEST(set_wavelength__must_raise_event),
     ADD_TEST(enabledCount),
     ADD_TEST(elementById),
-    ADD_TEST(insertElement_must_increase_count),
-    ADD_TEST(insertElement_must_assign_element_owner),
-    ADD_TEST(insertElement_must_raise_events_and_change_state),
-    ADD_TEST(deleteElement_must_decrease_count),
-    ADD_TEST(deleteElement_must_not_fail_when_invalid_elem),
-    ADD_TEST(deleteElement_must_reset_element_owner),
-    ADD_TEST(deleteElement_with_lockEvents),
-    ADD_TEST(deleteElement_with_events_false),
-    ADD_TEST(deleteElement_by_index_with_events),
-    ADD_TEST(deleteElement_by_pointer_with_events),
-    ADD_TEST(ElementInterface_must_be_linked_to_neighbours),
-    ADD_TEST(ElementInterface_must_be_unlinked_after_deletion_of_itself),
-    ADD_TEST(ElementInterface_must_be_unlinked_after_deletion_of_neighbour),
+    ADD_TEST(insertElement__must_increase_count),
+    ADD_TEST(insertElement__must_assign_element_owner),
+    ADD_TEST(insertElement__must_raise_events_and_change_state),
+    ADD_TEST(deleteElement__must_decrease_count),
+    ADD_TEST(deleteElement__must_not_fail_when_invalid_elem),
+    ADD_TEST(deleteElement__must_reset_element_owner),
+    ADD_TEST(deleteElement__with_lockEvents),
+    ADD_TEST(deleteElement__with_events_false),
+    ADD_TEST(deleteElement__by_index_with_events),
+    ADD_TEST(deleteElement__by_pointer_with_events),
+    ADD_TEST(ElementInterface__must_be_linked_to_neighbours),
+    ADD_TEST(ElementInterface__must_be_unlinked_after_deletion_of_itself),
+    ADD_TEST(ElementInterface__must_be_unlinked_after_deletion_of_neighbour),
+    ADD_TEST(activePump),
 )
 
 } // namespace SchemaTests

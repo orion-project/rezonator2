@@ -57,7 +57,7 @@ TEST_METHOD(global_funcs)
     ASSERT_LUA(0.33, "deg2rad(%1)", "math.rad(%1)");
     ASSERT_LUA(0.33, "rad2deg(%1)", "math.deg(%1)");
 
-    ASSERT_LUA(0, "pi()", "math.pi");
+    ASSERT_LUA(0, "pi() --%1", "math.pi --%1");
 }
 
 //------------------------------------------------------------------------------

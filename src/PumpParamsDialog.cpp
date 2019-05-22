@@ -99,7 +99,7 @@ PumpParamsDialog::PumpParamsDialog(Z::PumpParams *params, QWidget *parent)
 {
     auto pumpMode = Z::Pump::findByModeName(params->modeName());
     if (!pumpMode)
-        qCritical() << "Unable to find mode for pump parameters";
+        qCritical() << "PumpParamsDialog::PumpParamsDialog(): Unable to find mode for pump parameters";
 
     auto pumpModeStr = pumpMode ? pumpMode->displayName() : QString();
     setTitleAndIcon(tr("Input Beam Parameters (%1)").arg(pumpModeStr), ":/toolbar/pump_edit");

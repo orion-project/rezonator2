@@ -89,7 +89,7 @@ void SchemaWriterJson::writePump(QJsonObject &root, Z::PumpParams *pump)
     auto mode = Z::Pump::findByModeName(pump->modeName());
     if (!mode)
     {
-        qCritical() << "Unable to find mode for pump parameters";
+        qCritical() << "SchemaWriterJson::writePump(): Unable to find mode for pump parameters";
         return;
     }
     root["mode"] = mode->modeName();

@@ -153,7 +153,7 @@ void PumpsTable::populateRow(Z::PumpParams *pump, int row)
         it->setToolTip(pumpMode->displayName());
     }
     else
-        qCritical() << "Unable to find mode for pump parameters";
+        qCritical() << "PumpsTable::populateRow(): Unable to find mode for pump parameters";
 
     auto iconPath = pump->isActive() ? ":/icons/pump_on" : ":/icons/pump_off";
     item(row, COL_ACTIVE)->setData(Qt::DecorationRole, QIcon(iconPath).pixmap(_iconSize, _iconSize));
@@ -231,8 +231,6 @@ PumpWindow::PumpWindow(Schema *owner) : SchemaMdiChild(owner)
 
 PumpWindow::~PumpWindow()
 {
-    qDebug() << "PumpWindow::~PumpWindow()";
-
     _instance = nullptr;
 
     schema()->unregisterListener(_table);
@@ -293,6 +291,11 @@ Z::PumpParams* PumpWindow::makeNewPumpDlg()
     return pump;
 }
 
+bool PumpWindow::editPumpDlg(Z::PumpParams* pump)
+{
+    return PumpParamsDialog::editPump(pump);
+}
+
 Z::PumpParams* PumpWindow::selectedPump() const
 {
     return _table->selected();
@@ -321,9 +324,9 @@ void PumpWindow::editPump()
 {
     auto pump = selectedPump();
     if (!pump) return;
-    if (!PumpParamsDialog::editPump(pump)) return;
+    if (!editPumpDlg(pump)) return;
     schema()->events().raise(SchemaEvents::PumpChanged, pump);
-    if (pump->isActive())
+    if (pump->isActive() and schema()->tripType() == TripType::SP)
         schema()->events().raise(SchemaEvents::RecalRequred);
     showStatusInfo();
 }
@@ -346,7 +349,15 @@ void PumpWindow::deletePump()
         schema()->pumps()->removeOne(pump);
         schema()->events().raise(SchemaEvents::PumpDeleted, pump);
         if (pump->isActive())
+        {
+            if (schema()->pumps()->size() > 0)
+            {
+                auto pump = schema()->pumps()->first();
+                pump->activate(true);
+                schema()->events().raise(SchemaEvents::PumpChanged, pump);
+            }
             schema()->events().raise(SchemaEvents::RecalRequred);
+        }
         delete pump;
     }
     showStatusInfo();
@@ -364,11 +375,15 @@ void PumpWindow::activatePump()
     {
         oldPump->activate(false);
         _table->pumpChanged(schema(), oldPump);
+        schema()->events().raise(SchemaEvents::PumpChanged, oldPump);
     }
+
     pump->activate(true);
     _table->pumpChanged(schema(), pump);
-    schema()->events().raise(SchemaEvents::Changed);
-    schema()->events().raise(SchemaEvents::RecalRequred);
+    schema()->events().raise(SchemaEvents::PumpChanged, pump);
+
+    if (schema()->tripType() == TripType::SP)
+        schema()->events().raise(SchemaEvents::RecalRequred);
 
     showStatusInfo();
 }

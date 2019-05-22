@@ -84,7 +84,7 @@ const SchemaEvents::EventProps& SchemaEvents::propsOf(Event event)
         INIT_EVENT(PumpCreated,        true,         SchemaState::Modified ),
         INIT_EVENT(PumpChanged,        true,         SchemaState::Modified ),
         INIT_EVENT(PumpDeleted,        true,         SchemaState::Modified ),
-        INIT_EVENT(PumpDeleting,       true,         SchemaState::Current  ),
+        INIT_EVENT(PumpDeleting,       false,        SchemaState::Current  ),
         INIT_EVENT(RecalRequred,       false,        SchemaState::Current  ),
     });
     return _props[event];
@@ -148,6 +148,8 @@ Schema::~Schema()
 
     qDeleteAll(_items);
     qDeleteAll(_customParams);
+    qDeleteAll(_pumps);
+
     _formulas.clear();
 }
 
