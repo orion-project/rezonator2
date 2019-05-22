@@ -88,7 +88,7 @@ private:
 
 #define ASSERT_LISTENER_EVENTS(...)\
     TEST_LOG(listener.eventsStr())\
-    ASSERT_IS_TRUE(listener.checkEvents(__VA_ARGS__))
+    ASSERT_IS_TRUE(listener.checkEvents({__VA_ARGS__}))
 
 #define ASSERT_LISTENER_NO_EVENTS \
     TEST_LOG(listener.eventsStr())\
@@ -96,5 +96,8 @@ private:
 
 #define ASSERT_SCHEMA_STATE(expected_state)\
     ASSERT_EQ_INT(int(schema.state().current()), int(expected_state))
+
+#define ASSERT_SCHEMA_PTR_STATE(expected_state)\
+    ASSERT_EQ_INT(int(schema->state().current()), int(expected_state))
 
 #endif // TEST_SCHEMA_LISTENER_H

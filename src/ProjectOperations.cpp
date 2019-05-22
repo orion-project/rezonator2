@@ -294,6 +294,11 @@ void ProjectOperations::createDefaultPump(Schema *schema)
     schema->events().raise(SchemaEvents::PumpCreated, pump);
 }
 
+bool ProjectOperations::editPumpDlg(Z::PumpParams* pump)
+{
+    return PumpParamsDialog::editPump(pump);
+}
+
 void ProjectOperations::setupPump()
 {
     if (!schema()->isSP()) return;
@@ -302,7 +307,9 @@ void ProjectOperations::setupPump()
         createDefaultPump(schema());
 
     auto pump = schema()->activePump();
-    if (PumpParamsDialog::editPump(pump))
+    if (!pump) return;
+
+    if (editPumpDlg(pump))
     {
         schema()->events().raise(SchemaEvents::PumpChanged, pump);
         schema()->events().raise(SchemaEvents::RecalRequred);
@@ -321,7 +328,7 @@ void ProjectOperations::setupWavelength()
             .exec();
 }
 
-void ProjectOperations::setupTripType()
+bool ProjectOperations::selectTripTypeDlg(TripType* tripType)
 {
     auto tripTypeLabel = new QLabel;
     auto font = tripTypeLabel->font();
@@ -373,7 +380,17 @@ void ProjectOperations::setupTripType()
             .withOkSignal(&tripTypeGroup, SIGNAL(doubleClicked(QVariant)));
     if (dlg.exec())
     {
-        auto tripType = static_cast<TripType>(tripTypeGroup.selectedData().toInt());
+        *tripType = static_cast<TripType>(tripTypeGroup.selectedData().toInt());
+        return true;
+    }
+    return false;
+}
+
+void ProjectOperations::setupTripType()
+{
+    TripType tripType;
+    if (selectTripTypeDlg(&tripType))
+    {
         if (tripType == TripType::SP && schema()->pumps()->isEmpty())
             createDefaultPump(schema());
         schema()->setTripType(tripType);

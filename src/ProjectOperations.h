@@ -10,6 +10,7 @@ class CalcManager;
 
 namespace Z {
     class Report;
+    class PumpParams;
 }
 
 struct OpenFileOptions {
@@ -53,6 +54,10 @@ public slots:
 
 signals:
     void protocolRequired();
+
+protected:
+    virtual bool editPumpDlg(Z::PumpParams* pump);
+    virtual bool selectTripTypeDlg(TripType* tripType);
 
 private:
     QWidget* _parent;

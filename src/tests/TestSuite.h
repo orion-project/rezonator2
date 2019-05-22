@@ -24,6 +24,7 @@ USE_GROUP(InfoFunctionsTests)                      // test_InfoFunctions.cpp
 USE_GROUP(ElementSelectorWidgetTests)              // test_ElemSelectorWidget.cpp
 USE_GROUP(PumpWindowTests)                         // test_PumpWindow.cpp
 USE_GROUP(LuaHelperTests)                          // test_LuaHelper.cpp
+USE_GROUP(ProjectOperationsTests)                  // test_ProjectOperations.cpp
 
 TEST_SUITE(
     ADD_GROUP(Ori::Tests::All),
@@ -47,6 +48,7 @@ TEST_SUITE(
     ADD_GROUP(ElementSelectorWidgetTests),
     ADD_GROUP(PumpWindowTests),
     ADD_GROUP(LuaHelperTests),
+    ADD_GROUP(ProjectOperationsTests),
 )
 
 } // namespace Tests
