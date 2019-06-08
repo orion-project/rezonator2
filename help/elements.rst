@@ -13,7 +13,7 @@ The element can describe a general optical component such as a :doc:`mirror <mat
 
 The application utilizes conventional ABCD-matrix approach (by Kogelnik and Li) to compute the propagation of paraxial Gaussian beams through an element.  In calculations, each element represented by its :doc:`ray matrix <elem_matrs>`.
 
-You don't have to assign matrices for elements manually. Instead, you can provide values for some typical element parameters - a focal length of a lens, thickness and refractive index for a crystal, and so on. The software will automatically compute element matrices based on these parameter values.
+You don't have to assign matrices for elements manually. Instead, you can provide values for some typical element parameters - a focal length of a lens, thickness and refractive index for a crystal, and others. The software automatically computes element matrices based on these parameter values.
 
 .. toctree::
    :maxdepth: 1

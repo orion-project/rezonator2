@@ -3,7 +3,7 @@
 Point Element
 =============
 
-It is a helper element having a unity matrix. It does not affect propagating beam anyhow. The element differs from :doc:`ElemFlatMirror` only in visual representation but exactly the same in calculations.
+The point element is a helper element having a unity matrix. It does not affect propagating beam anyhow. The element differs from :doc:`ElemFlatMirror` only in visual representation but the same in calculations.
 
     .. image:: ../../img/elem/ElemPoint.svg
 

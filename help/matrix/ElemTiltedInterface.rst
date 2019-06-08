@@ -10,7 +10,7 @@ The element represents the flat boundary between two media having indexes of ref
 
     .. image:: ElemTiltedInterface_1.png
 
-It is sometimes convenient to set the angle inside the |n2| media as if one would want to set `β` angle instead of `α`. But there is no additional `β` parameter in the element, as it leads to ambiguity what angle should be considered. Instead, one can just give the negative sign to the angle, and it forces |rezonator| to treat this angle as being inside of the |n2| media and calculate the first angle accordingly.
+It is sometimes convenient to set the angle inside the |n2| media as if one would want to set `β` angle instead of `α`. However, there is no additional `β` parameter in the element, as it leads to ambiguity what angle should be considered. Instead, one can give the negative sign to the angle, and it forces |rezonator| to treat this angle as being inside of the |n2| media and calculate the first angle accordingly.
 
     .. image:: ElemTiltedInterface_2.png
 

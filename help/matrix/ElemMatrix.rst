@@ -1,7 +1,7 @@
 Custom Element-Matrix
 =====================
 
-An element whose matrices are set by the user directly. See more about :doc:`using of custom elements <custom_elems>`.
+The matrix element is an element whose matrices are set by the user directly. See more about :doc:`using custom elements <custom_elems>`.
 
     .. image:: ../../img/elem/ElemMatrix.svg
 

@@ -3,9 +3,9 @@
 Brewster Plane-parallel Plate
 =============================
 
-Brewster plate is characterized by its thickness `L` and index of refraction `n`. A beam falls at the face of plate at Brewster's angle. 
+Brewster plate is characterized by its thickness `L` and index of refraction `n`. A beam falls at the face of the plate at Brewster's angle. 
 
-Like :doc:`ElemBrewsterCrystal`, it is also a widely used form of laser gain medium. But when the laser rod becomes too short, it is convenient to consider it as a plane-parallel plate which is tilted at Brewster's angle toward the beam propagation. In this case the geometric path of the beam `L`\ :sub:`eff` is slightly bigger than the thickness of the element.
+Like :doc:`ElemBrewsterCrystal`, it is also a widely used form of laser gain medium. However, when the laser rod becomes too short, it is convenient to consider it as a plane-parallel plate which is tilted at Brewster's angle toward the beam propagation. In this case, the geometric path of the beam `L`\ :sub:`eff` is slightly bigger than the thickness of the element.
 
 Full element
 

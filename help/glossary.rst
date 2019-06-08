@@ -7,11 +7,11 @@ Glossary
 Propagation Direction
 ---------------------
 
-|rezonator| supposes a beam propagating from left to right in the schema. For :ref:`single-pass <schema_kind_sp>` schema, it is as if a light source would be located just before the leftmost element of the schema and is directed to the right side.
+|rezonator| supposes a beam is propagating from left to right in the schema. For :ref:`single-pass <schema_kind_sp>` schema, it is as if a light source would be located just before the leftmost element of the schema and is directed to the right side.
 
     .. image:: img/propagation_sp.png
 
-For :ref:`resonators <schema_kind_rr>`, it is just the chosen primary direction. In :ref:`standing-wave resonator <schema_kind_sw>`, the beam reflects from the rightmost element and does round-trip returning back to the leftmost one. 
+For :ref:`resonators <schema_kind_rr>`, it is just the chosen primary direction. In :ref:`standing-wave resonator <schema_kind_sw>`, the beam reflects from the rightmost element and does round-trip returning to the leftmost one. 
 
     .. image:: img/propagation_res.png
 
@@ -30,10 +30,10 @@ Working Planes
 
 **Tangential Plane, T-plane**
 
-Tangential plane is the plane containing all the resonator's elements (the plane of an optical stand). Beams are refracted or reflected in this plane.
+The tangential plane is the plane containing all the resonator's elements (the plane of an optical stand). Beams are refracted or reflected in this plane.
 
 **Sagittal Plane, S-plane**
 
-Sagittal plane is the plane containing element's optical axis and perpendicular to the tangential plane. 
+The sagittal plane is the plane containing the element's optical axis and perpendicular to the tangential plane. 
 
     .. image:: img/planes_ts.png

@@ -74,7 +74,7 @@ A comment starts with a double hyphen (``--``) and runs until the end of the lin
 Mathematical Functions
 ----------------------
 
-Lua provides a set of `mathematical functions <https://www.lua.org/manual/5.3/manual.html#6.7>`_ in the ``math`` library. One has to call them using the library name, e.g. ``math.sin(math.pi / 4)``. For convenience, |rezonator| supports its own set of common mathematical functions that can be used without any additional prefix, e.g. ``sin(pi()/4)``. 
+Lua provides a set of `mathematical functions <https://www.lua.org/manual/5.3/manual.html#6.7>`_ in the ``math`` library. One has to call them using the library name, e.g., ``math.sin(math.pi / 4)``. For convenience, |rezonator| supports its own set of standard mathematical functions that can be used without any additional prefix, e.g., ``sin(pi()/4)``. 
 
 ``sin`` --- returns the sine of the angle in radians.
 
