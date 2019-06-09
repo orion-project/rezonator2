@@ -1,10 +1,35 @@
 #ifndef ADJUSTMENT_WINDOW_H
 #define ADJUSTMENT_WINDOW_H
 
-#include <QWidget>
-#include <QLabel>
+#include <QToolButton>
 
 #include "SchemaWindows.h"
+
+QT_BEGIN_NAMESPACE
+class QLabel;
+QT_END_NAMESPACE
+
+namespace Ori {
+namespace Widgets {
+    class ValueEdit;
+}}
+
+
+class AdjusterButton : public QToolButton
+{
+    Q_OBJECT
+
+public:
+    AdjusterButton(const char* iconPath);
+
+signals:
+    void focused(bool focus);
+
+protected:
+    void focusInEvent(QFocusEvent *e) override;
+    void focusOutEvent(QFocusEvent *e) override;
+};
+
 
 class AdjusterWidget : public QWidget, public Z::ParameterListener
 {
@@ -16,9 +41,31 @@ public:
 
     void parameterChanged(Z::ParameterBase*) override;
 
+public slots:
+    void focus();
+
+signals:
+    void focused();
+    void goingFocusNext();
+    void goingFocusPrev();
+    void valueEdited(double value);
+
+protected:
+    void mousePressEvent(QMouseEvent*) override;
+
 private:
+    Ori::Widgets::ValueEdit* _valueEditor;
     Z::Parameter* _param;
-    QLabel* _testLabel;
+    QLabel *_labelLabel, *_labelUnit;
+    AdjusterButton *_buttonPlus, *_buttonMinus, *_buttonMult, *_buttonDivide;
+
+    void editorFocused(bool focus);
+    void editorKeyPressed(int key);
+    void populate();
+    void adjustPlus();
+    void adjustMinus();
+    void adjustMult();
+    void adjustDivide();
 };
 
 
@@ -30,6 +77,13 @@ public:
     explicit AdjusterListWidget(QWidget *parent = nullptr);
 
     void add(AdjusterWidget* w);
+    void remove(AdjusterWidget* w);
+
+private:
+    QList<AdjusterWidget*> _items;
+
+    void focusNextParam();
+    void focusPrevParam();
 };
 
 

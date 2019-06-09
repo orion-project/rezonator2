@@ -289,6 +289,8 @@ QWidget* ParamEditor::unitsSelector() const { return _unitsSelector; }
 
 void ParamEditor::linkToGlobalParameter()
 {
+    focus();
+
     Z::Parameters availableParams = getSuitableGlobalParams(_globalParams, _param);
     if (availableParams.isEmpty())
         return Ori::Dlg::info(tr("There are no suitable parameters to link to"));

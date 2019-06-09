@@ -103,6 +103,10 @@
         <file alias="ts_t2s">../img/toolbar10/ts_T2S.png</file>
         <file alias="ts_s2t">../img/toolbar10/ts_S2T.png</file>
         <file alias="ts_swap">../img/toolbar10/ts_swap.png</file>
+        <file alias="plus">../img/toolbar10/plus.png</file>
+        <file alias="minus">../img/toolbar10/minus.png</file>
+        <file alias="multiply">../img/toolbar10/multiply.png</file>
+        <file alias="divide">../img/toolbar10/divide.png</file>
     </qresource>
     <qresource prefix="/elem_drawing">
         <file alias="ElemEmptyRange">../img/elem/ElemEmptyRange.svg</file>

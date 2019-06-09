@@ -23,6 +23,12 @@
             "dim": "linear",
             "unit": "cm",
             "value": 5
+        },
+        "h": {
+            "descr": "",
+            "dim": "linear",
+            "unit": "cm",
+            "value": 1
         }
     },
     "elements": [

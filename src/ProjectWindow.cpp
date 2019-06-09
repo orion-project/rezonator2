@@ -43,12 +43,12 @@ enum ProjectWindowStatusPanels
     STATUS_MODIF,
     STATUS_LAMBDA,
     STATUS_TRIPTYPE,
-    STATUS_PUMP,
     STATUS_STABIL,
     STATUS_FILE,
 
     STATUS_PANELS_COUNT,
 };
+static const ProjectWindowStatusPanels STATUS_PUMP = STATUS_STABIL;
 
 ProjectWindow::ProjectWindow(Schema* aSchema) : QMainWindow(), SchemaToolWindow(aSchema)
 {
@@ -232,16 +232,17 @@ void ProjectWindow::createToolBars()
 
 void ProjectWindow::createStatusBar()
 {
-    auto status = new Ori::Widgets::StatusBar(STATUS_PANELS_COUNT);
-    status->connect(STATUS_LAMBDA, SIGNAL(doubleClicked()), _operations, SLOT(setupWavelength()));
-    status->connect(STATUS_TRIPTYPE, SIGNAL(doubleClicked()), _operations, SLOT(setupTripType()));
-    status->connect(STATUS_PUMP, SIGNAL(doubleClicked()), _operations, SLOT(setupPump()));
+    _statusBar = new Ori::Widgets::StatusBar(STATUS_PANELS_COUNT);
+    _statusBar->connect(STATUS_LAMBDA, SIGNAL(doubleClicked()), _operations, SLOT(setupWavelength()));
+    _statusBar->connect(STATUS_TRIPTYPE, SIGNAL(doubleClicked()), _operations, SLOT(setupTripType()));
+    _statusBar->connect(STATUS_PUMP, SIGNAL(doubleClicked()), _operations, SLOT(setupPump()));
 
-    auto versionLabel = new QLabel(" " % Z::Strs::appVersion() % " ");
+    auto versionLabel = new QLabel(Z::Strs::appVersion());
+    versionLabel->setContentsMargins(3, 0, 3, 0);
     versionLabel->setForegroundRole(QPalette::Mid);
-    status->addPermanentWidget(versionLabel);
+    _statusBar->addPermanentWidget(versionLabel);
 
-    setStatusBar(status);
+    setStatusBar(_statusBar);
 }
 
 void ProjectWindow::updateTitle()
@@ -318,27 +319,25 @@ void ProjectWindow::updateActions()
 
 void ProjectWindow::updateStatusInfo()
 {
-    auto status = dynamic_cast<Ori::Widgets::StatusBar*>(statusBar());
-
     int totalCount = schema()->count();
     int enabledCount = schema()->enabledCount();
     if (totalCount != enabledCount)
-        status->setText(STATUS_ELEMS, tr("Elements: %1 (%2)",
+        _statusBar->setText(STATUS_ELEMS, tr("Elements: %1 (%2)",
                                          "Status text").arg(enabledCount).arg(totalCount));
-    else status->setText(STATUS_ELEMS, tr("Elements: %1", "Status text").arg(totalCount));
+    else _statusBar->setText(STATUS_ELEMS, tr("Elements: %1", "Status text").arg(totalCount));
 
-    if (!schema()->modified()) status->clear(STATUS_MODIF);
-    else status->setText(STATUS_MODIF, tr("Modified", "Status text"));
+    if (!schema()->modified()) _statusBar->clear(STATUS_MODIF);
+    else _statusBar->setText(STATUS_MODIF, tr("Modified", "Status text"));
 
-    status->setText(STATUS_LAMBDA, schema()->wavelength().displayStr());
+    _statusBar->setText(STATUS_LAMBDA, schema()->wavelength().displayStr());
 
     auto tripTypeInfo = TripTypes::info(schema()->tripType());
-    status->setIcon(STATUS_TRIPTYPE, tripTypeInfo.iconPath());
-    status->setToolTip(STATUS_TRIPTYPE, tripTypeInfo.toolTip());
+    _statusBar->setIcon(STATUS_TRIPTYPE, tripTypeInfo.iconPath());
+    _statusBar->setToolTip(STATUS_TRIPTYPE, tripTypeInfo.toolTip());
 
-    QString pumpHint, pumpIcon;
     if (schema()->isSP())
     {
+        QString pumpHint, pumpIcon;
         auto pump = schema()->activePump();
         if (pump)
         {
@@ -347,48 +346,41 @@ void ProjectWindow::updateStatusInfo()
             if (pumpMode)
                 pumpIcon = pumpMode->iconPath();
         }
+        _statusBar->setIcon(STATUS_PUMP, pumpIcon);
+        _statusBar->setToolTip(STATUS_PUMP, pumpHint);
     }
-    status->setIcon(STATUS_PUMP, pumpIcon);
-    status->setToolTip(STATUS_PUMP, pumpHint);
 
-    if (schema()->fileName().isEmpty()) status->clear(STATUS_FILE);
-    else status->setText(STATUS_FILE, schema()->fileName());
+    if (schema()->fileName().isEmpty()) _statusBar->clear(STATUS_FILE);
+    else _statusBar->setText(STATUS_FILE, schema()->fileName());
 }
 
 void ProjectWindow::updateStability()
 {
-    auto status = qobject_cast<Ori::Widgets::StatusBar*>(statusBar());
+    if (!schema()->isResonator()) return;
+    auto stable = Calc::isStable(schema());
     QString icon, hint;
-    if (schema()->isResonator())
+    if (!stable.T && !stable.S)
     {
-        auto stable = Calc::isStable(schema());
-        if (!stable.T && !stable.S)
-        {
-            icon = QStringLiteral(":/icons/stability_err");
-            hint = tr("System is unstable");
-        }
-        else if (!stable.T)
-        {
-            icon = QStringLiteral(":/icons/stability_err");
-            hint = tr("System is unstable in T-plane");
-        }
-        else if (!stable.S)
-        {
-            icon = QStringLiteral(":/icons/stability_err");
-            hint = tr("System is unstable in S-plane");
-        }
-        else
-        {
-            icon = QStringLiteral(":/icons/stability_ok");
-            hint = tr("System is stable");
-        }
+        icon = QStringLiteral(":/icons/stability_err");
+        hint = tr("System is unstable", "Status text");
+    }
+    else if (!stable.T)
+    {
+        icon = QStringLiteral(":/icons/stability_err");
+        hint = tr("System is unstable in T-plane", "Status text");
+    }
+    else if (!stable.S)
+    {
+        icon = QStringLiteral(":/icons/stability_err");
+        hint = tr("System is unstable in S-plane", "Status text");
     }
     else
     {
-        // TODO:NEXT-VER show pump params in tooltip
+        icon = QStringLiteral(":/icons/stability_ok");
+        hint = tr("System is stable", "Status text");
     }
-    status->setIcon(STATUS_STABIL, icon);
-    status->setToolTip(STATUS_STABIL, hint);
+    _statusBar->setIcon(STATUS_STABIL, icon);
+    _statusBar->setToolTip(STATUS_STABIL, hint);
 }
 
 void ProjectWindow::closeEvent(QCloseEvent* ce)

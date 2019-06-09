@@ -196,7 +196,7 @@ bool ProjectOperations::saveSchemaFile()
     if (fileName.isEmpty())
         return saveSchemaFileAs();
     if (Z::IO::Utils::isOldSchema(fileName))
-        return Ori::Dlg::yes(tr("The schema is of old format and can not be saved, "
+        return Ori::Dlg::yes(tr("The schema is in the old format and can not be saved, "
                                 "would you like to save it as a file in the new format?"))
             && saveSchemaFileAs();
     return saveSchemaFile(fileName);
@@ -404,7 +404,7 @@ QString ProjectOperations::selectSchemaExample()
 #ifdef Q_OS_MAC
     if (exampleFiles.isEmpty())
     {
-        // Lock near the application bundle, it is for development mode
+        // Look near the application bundle, it is for development mode
         examplesDir = qApp->applicationDirPath() % "/../../../examples";
         examplesDir = QDir(examplesDir).absolutePath();
         exampleFiles = QDir(examplesDir).entryList(QDir::Files, QDir::Name);
