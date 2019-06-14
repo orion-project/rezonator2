@@ -1,5 +1,6 @@
 #include "AdjustmentWindow.h"
 
+#include "HelpSystem.h"
 #include "widgets/Appearance.h"
 
 #include "helpers/OriLayouts.h"
@@ -9,6 +10,8 @@
 #include <QApplication>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QMenu>
+#include <QPushButton>
 #include <QTimer>
 
 using namespace Ori::Layouts;
@@ -73,6 +76,23 @@ AdjusterWidget::AdjusterWidget(Z::Parameter *param, QWidget *parent) : QWidget(p
     connect(_buttonMult, &AdjusterButton::focused, this, &AdjusterWidget::editorFocused);
     connect(_buttonDivide, &AdjusterButton::focused, this, &AdjusterWidget::editorFocused);
 
+    auto menu = new QMenu(this);
+    menu->addAction(QIcon(":/toolbar/settings"), tr("Settings..."), this, &AdjusterWidget::setupAdjuster);
+    menu->addAction(QIcon(":/toolbar/delete"), tr("Delete"), this, &AdjusterWidget::deleteRequsted);
+    menu->addSeparator();
+    menu->addAction(QIcon(":/toolbar/help"), tr("Help"), this, &AdjusterWidget::help);
+    connect(menu, &QMenu::aboutToHide, this, &AdjusterWidget::focus);
+
+    auto optionsButton = new QPushButton;
+    optionsButton->setFlat(true);
+    optionsButton->setIcon(QIcon(":/toolbar16/menu"));
+    optionsButton->setFixedWidth(24);
+    connect(optionsButton, &QPushButton::clicked, [this, menu, optionsButton](){
+        this->editorFocused(true);
+        // button->setMenu() crashes the app on MacOS when button is clicked, so show manually
+        menu->popup(optionsButton->mapToGlobal(optionsButton->rect().bottomLeft()));
+    });
+
     LayoutH({
         _labelLabel,
         Space(3),
@@ -82,7 +102,9 @@ AdjusterWidget::AdjusterWidget(Z::Parameter *param, QWidget *parent) : QWidget(p
         _buttonMinus,
         _valueEditor,
         _buttonPlus,
-        _buttonMult
+        _buttonMult,
+        Space(6),
+        optionsButton,
     }).setMargin(6).setSpacing(1).useFor(this);
 
     populate();
@@ -160,6 +182,17 @@ void AdjusterWidget::adjustDivide()
 {
     focus();
     qDebug() << "divide";
+}
+
+void AdjusterWidget::setupAdjuster()
+{
+    qDebug() << "setup";
+}
+
+void AdjusterWidget::help()
+{
+    focus();
+    Z::HelpSystem::instance()->showTopic("adjustment.html");
 }
 
 //------------------------------------------------------------------------------
@@ -281,20 +314,21 @@ void AdjustmentWindow::addAdjuster(Z::Parameter* param)
     for (auto adj : _adjusters)
         if (adj.param == param)
         {
-            adj.widget->setFocus();
+            adj.widget->focus();
             return;
         }
     AdjusterItem adjuster;
     adjuster.param = param;
     adjuster.widget = new AdjusterWidget(param);
+    connect(adjuster.widget, &AdjusterWidget::deleteRequsted, this, &AdjustmentWindow::deleteCurrentAdjuster);
     _adjustersWidget->add(adjuster.widget);
     _adjusters.append(adjuster);
-    adjuster.widget->setFocus();
 }
 
 void AdjustmentWindow::deleteAdjuster(Z::Parameter* param)
 {
     AdjusterWidget *deletingWidget = nullptr;
+
     for (int i = 0; i < _adjusters.size(); i++)
         if (_adjusters.at(i).param == param)
         {
@@ -302,6 +336,7 @@ void AdjustmentWindow::deleteAdjuster(Z::Parameter* param)
             _adjusters.removeAt(i);
             break;
         }
+
     if (deletingWidget)
     {
         if (_adjusters.isEmpty())
@@ -311,3 +346,20 @@ void AdjustmentWindow::deleteAdjuster(Z::Parameter* param)
     }
 }
 
+void AdjustmentWindow::deleteCurrentAdjuster()
+{
+    auto deletingWidget = qobject_cast<AdjusterWidget*>(sender());
+    if (!deletingWidget) return;
+
+    for (int i = 0; i < _adjusters.size(); i++)
+        if (_adjusters.at(i).widget == deletingWidget)
+        {
+            _adjusters.removeAt(i);
+            break;
+        }
+
+    if (_adjusters.isEmpty())
+        close();
+    else
+        deletingWidget->deleteLater();
+}

@@ -93,6 +93,7 @@
         <file alias="check_invert">../img/toolbar16/check_invert.png</file>
         <file alias="check_none">../img/toolbar16/check_none.png</file>
         <file alias="langs">../img/toolbar16/flags.png</file>
+        <file alias="menu">../img/toolbar16/menu.png</file>
         <file alias="points">../img/toolbar16/graph_point.png</file>
         <file alias="table">../img/toolbar16/table.png</file>
         <file alias="params">../img/toolbar16/params.png</file>

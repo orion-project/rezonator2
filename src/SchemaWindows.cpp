@@ -71,10 +71,7 @@ SchemaWindow::~SchemaWindow()
 
 SchemaToolWindow::SchemaToolWindow(Schema *owner, InitOptions options) : SchemaWindow(owner)
 {
-    if (options.testFlag(InitOption_DefaultLayout))
-    {
-        // TODO
-    }
+    Q_UNUSED(options)
 }
 
 QToolBar* SchemaToolWindow::makeToolBar(const QString& title, bool flat)

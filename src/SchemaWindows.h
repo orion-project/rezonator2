@@ -89,7 +89,7 @@ class SchemaToolWindow : public SchemaWindow, public SettingsListener
 {
 public:
     enum InitOption {
-        InitOption_DefaultLayout = 0x01,
+        NoOption = 0x00,
     };
     Q_DECLARE_FLAGS(InitOptions, InitOption)
 
@@ -99,19 +99,16 @@ public:
     /// Function is called when application settings are changed.
     void settingsChanged() override;
 
+protected:
     QToolBar* makeToolBar(bool flat = false);
     QToolBar* makeToolBar(const std::initializer_list<QObject *>& items, bool flat = false);
     QToolBar* makeToolBar(const QString& title, bool flat = false);
     QToolBar* makeToolBar(const QString& title, const std::initializer_list<QObject*>& items, bool flat = false);
 
-    QToolBar* toolbar() const { return _toolbars.isEmpty()? nullptr: _toolbars.first(); }
-    const QList<QToolBar*>& toolbars() const { return _toolbars; }
-
-    void setContent(QWidget *content, int row = -1);
+    QToolBar* toolbar() const { return _toolbars.isEmpty() ? nullptr : _toolbars.first(); }
 
 private:
     QList<QToolBar*> _toolbars;
-    QVBoxLayout* _mainLayout = nullptr;
 };
 
 //------------------------------------------------------------------------------

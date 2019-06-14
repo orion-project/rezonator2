@@ -49,6 +49,7 @@ signals:
     void goingFocusNext();
     void goingFocusPrev();
     void valueEdited(double value);
+    void deleteRequsted();
 
 protected:
     void mousePressEvent(QMouseEvent*) override;
@@ -66,6 +67,8 @@ private:
     void adjustMinus();
     void adjustMult();
     void adjustDivide();
+    void setupAdjuster();
+    void help();
 };
 
 
@@ -113,6 +116,7 @@ private:
 
     void addAdjuster(Z::Parameter* param);
     void deleteAdjuster(Z::Parameter* param);
+    void deleteCurrentAdjuster();
 };
 
 #endif // ADJUSTMENT_WINDOW_H
