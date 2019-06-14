@@ -141,6 +141,12 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
     layout->addSpacing(3);
     layout->addWidget(_unitsSelector);
 
+    if (opts.auxControl)
+    {
+        layout->addSpacing(6);
+        layout->addWidget(opts.auxControl);
+    }
+
     Z::Gui::setValueFont(_valueEditor);
 
     // make some room around widgets to make highlighting visible

@@ -61,6 +61,9 @@ public:
         /// Enable linking target param to global params.
         bool allowLinking = false;
 
+        /// Auxilary control to be put after unit selector.
+        QWidget* auxControl = nullptr;
+
         Options(Z::Parameter* p) : param(p) {}
     };
 
@@ -82,6 +85,8 @@ public:
 
     // Implements Z::ParameterListener
     void parameterChanged(Z::ParameterBase*) override;
+
+    void editorFocused(bool focus);
 
 signals:
     void focused();
@@ -115,7 +120,6 @@ private:
     void linkToGlobalParameter();
     void showValue(Z::Parameter *param);
     void setIsLinked(bool on);
-    void editorFocused(bool focus);
     void editorKeyPressed(int key);
 };
 

@@ -11,6 +11,8 @@
 #include <QMenu>
 #include <QPushButton>
 
+using namespace Ori::Layouts;
+
 ParamEditorEx::ParamEditorEx(Z::Parameter *param, Z::Formulas *formulas, Z::Parameters *globalParams, QWidget *parent)
     : QWidget(parent), _param(param), _formulas(formulas), _globalParams(globalParams)
 {
@@ -21,31 +23,28 @@ ParamEditorEx::ParamEditorEx(Z::Parameter *param, Z::Formulas *formulas, Z::Para
     _hasFormula = _formula;
 
     auto menu = new QMenu(this);
-    _actnAddFormula = menu->addAction(tr("Add formula"), this, &ParamEditorEx::addFormula);
-    _actnRemoveFormula = menu->addAction(tr("Remove formula"), this, &ParamEditorEx::removeFormula);
+    _actnAddFormula = menu->addAction(QIcon(":/toolbar/param_formula"), tr("Add formula"), this, &ParamEditorEx::addFormula);
+    _actnRemoveFormula = menu->addAction(QIcon(":/toolbar/param_delete"), tr("Remove formula"), this, &ParamEditorEx::removeFormula);
     _actnRemoveFormula->setVisible(false);
 
-    _paramEditor = new ParamEditor(_tmpParam);
-
-    auto optionsButton = new QPushButton;
-    optionsButton->setFlat(true);
-    optionsButton->setIcon(QIcon(":/toolbar/settings"));
-    optionsButton->setFixedWidth(24);
-    connect(optionsButton, &QPushButton::clicked, [menu, optionsButton](){
+    auto menuButton = new QPushButton;
+    menuButton->setFlat(true);
+    menuButton->setIcon(QIcon(":/toolbar16/menu"));
+    menuButton->setFixedWidth(24);
+    connect(menuButton, &QPushButton::clicked, [this, menu, menuButton](){
+        this->_paramEditor->editorFocused(true);
         // button->setMenu() crashes the app on MacOS when button is clicked, so show manually
-        menu->popup(optionsButton->mapToGlobal(optionsButton->rect().bottomLeft()));
+        menu->popup(menuButton->mapToGlobal(menuButton->rect().bottomLeft()));
     });
 
-    Ori::Layouts::LayoutV({
-        Ori::Layouts::LayoutH({
-            _paramEditor,
-            optionsButton
-        })
-        .setMargin(0)
-        .setSpacing(0)
-    })
-    .setMargin(0)
-    .useFor(this);
+    ParamEditor::Options opts(_tmpParam);
+    opts.auxControl = menuButton;
+
+    _paramEditor = new ParamEditor(opts);
+
+    connect(menu, &QMenu::aboutToHide, _paramEditor, &ParamEditor::focus);
+
+    LayoutV({_paramEditor, Space(6)}).setMargin(0).setSpacing(0).useFor(this);
 
     toggleFormulaView();
 }
@@ -76,7 +75,7 @@ void ParamEditorEx::removeFormula()
 
 void ParamEditorEx::createFormulaEditor()
 {
-    enum { ROW_VALUE, ROW_CODE };
+    enum { ROW_VALUE, ROW_SPACER, ROW_CODE };
 
     _tmpFormula = new Z::Formula(_tmpParam);
     if (_formula)
