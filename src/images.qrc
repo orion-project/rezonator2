@@ -76,6 +76,7 @@
         <file alias="pump_edit">../img/toolbar/pump_props.svg</file>
         <file alias="pump_on">../img/toolbar/pump_on.svg</file>
         <file alias="pumps">../img/toolbar/pumps.svg</file>
+        <file alias="restore">../img/toolbar/restore.svg</file>
         <file alias="schema_new">../img/toolbar/schema_new.svg</file>
         <file alias="schema_open">../img/toolbar/schema_open.svg</file>
         <file alias="schema_prop">../img/toolbar/schema_prop.svg</file>

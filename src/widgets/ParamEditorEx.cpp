@@ -44,7 +44,12 @@ ParamEditorEx::ParamEditorEx(Z::Parameter *param, Z::Formulas *formulas, Z::Para
 
     connect(menu, &QMenu::aboutToHide, _paramEditor, &ParamEditor::focus);
 
-    LayoutV({_paramEditor, Space(6)}).setMargin(0).setSpacing(0).useFor(this);
+    // Main layout
+    LayoutV({
+        // when append items here, add respective members to the enum in `createFormulaEditor()`
+        _paramEditor,
+        Space(6)
+    }).setMargin(0).setSpacing(0).useFor(this);
 
     toggleFormulaView();
 }
@@ -75,6 +80,7 @@ void ParamEditorEx::removeFormula()
 
 void ParamEditorEx::createFormulaEditor()
 {
+    // This enum should match content of the main layout
     enum { ROW_VALUE, ROW_SPACER, ROW_CODE };
 
     _tmpFormula = new Z::Formula(_tmpParam);

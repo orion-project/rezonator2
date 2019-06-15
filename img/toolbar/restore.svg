@@ -1,0 +1,16 @@
+<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<linearGradient id="a" gradientTransform="matrix(-.76 .75 .76 .75 15.36 -7.19)" gradientUnits="userSpaceOnUse" x1="20.54" x2="2.96" y1="11.82" y2="14.07">
+<stop offset="0" stop-color="#a1de92"/>
+<stop offset="1" stop-color="#5f9652"/>
+</linearGradient>
+<linearGradient id="b" gradientTransform="matrix(-.76 .75 .76 .75 15.36 -7.19)" gradientUnits="userSpaceOnUse" x1="15.96" x2="15.96" y1="4.2" y2="15.13">
+<stop offset="0" stop-color="#50b938"/>
+<stop offset="1" stop-color="#2f4b29"/>
+</linearGradient>
+<rect fill="#6565d0" height="17" ry="1.21" stroke="#3f4397" width="17" x=".5" y="6.5"/>
+<path d="m3 7h11.5v9h-11.5z" fill="#fafafa" stroke-width=".04"/>
+<path d="m5.5 18h8v5.5h-8z" fill="#e5e5f1" stroke="#a7aada"/>
+<path d="m6.5 19.5h2v2.5h-2z" fill="#1b1d42" stroke-width=".04"/>
+<path d="m14 9h3v4.5" fill="none" stroke="#f9f9f9" stroke-linecap="square" stroke-width="2.5"/>
+<path d="m17.5 12.98 6-6.2-6-6.28v4.33c-10.42-.56-13.84 5.7-12.57 9.67.71-5.53 6.63-6.4 12.57-5.88z" fill="url(#a)" fill-rule="evenodd" stroke="url(#b)" stroke-linejoin="round"/>
+</svg>

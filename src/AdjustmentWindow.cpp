@@ -8,6 +8,7 @@
 #include "widgets/OriValueEdit.h"
 
 #include <QApplication>
+#include <QDateTime>
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QMenu>
@@ -18,6 +19,7 @@ using namespace Ori::Layouts;
 
 namespace {
 AdjustmentWindow* __instance = nullptr;
+const int __changeValueIntervalMs = 250;
 }
 
 //------------------------------------------------------------------------------
@@ -48,6 +50,7 @@ void AdjusterButton::focusOutEvent(QFocusEvent *e)
 AdjusterWidget::AdjusterWidget(Z::Parameter *param, QWidget *parent) : QWidget(parent), _param(param)
 {
     _param->addListener(this);
+    _sourceValue = _param->value();
 
     _valueEditor = new Ori::Widgets::ValueEdit;
     Z::Gui::setValueFont(_valueEditor);
@@ -76,7 +79,9 @@ AdjusterWidget::AdjusterWidget(Z::Parameter *param, QWidget *parent) : QWidget(p
     connect(_buttonMult, &AdjusterButton::focused, this, &AdjusterWidget::editorFocused);
     connect(_buttonDivide, &AdjusterButton::focused, this, &AdjusterWidget::editorFocused);
 
+    // TODO: move menu to parent and add shortcuts
     auto menu = new QMenu(this);
+    menu->addAction(QIcon(":/toolbar/restore"), tr("Restore Value..."), this, &AdjusterWidget::restoreValue);
     menu->addAction(QIcon(":/toolbar/settings"), tr("Settings..."), this, &AdjusterWidget::setupAdjuster);
     menu->addAction(QIcon(":/toolbar/delete"), tr("Delete"), this, &AdjusterWidget::deleteRequsted);
     menu->addSeparator();
@@ -117,6 +122,9 @@ AdjusterWidget::~AdjusterWidget()
 
 void AdjusterWidget::parameterChanged(Z::ParameterBase*)
 {
+    if (not _isValueChanging)
+        _sourceValue = _param->value();
+
     populate();
 }
 
@@ -128,6 +136,7 @@ void AdjusterWidget::focus()
 
 void AdjusterWidget::editorFocused(bool focus)
 {
+    _isFocused = focus;
     Z::Gui::setFocusedBackground(this, focus);
     if (focus) emit focused();
 }
@@ -160,28 +169,46 @@ void AdjusterWidget::populate()
     else _labelUnit->clear();
 }
 
+double AdjusterWidget::currentValue() const
+{
+    return (_changeValueTimer and _changeValueTimer->isActive() ? _currentValue : _param->value()).value();
+}
+
+void AdjusterWidget::setCurrentValue(double value)
+{
+    _valueEditor->setValue(value);
+    if (!_changeValueTimer)
+    {
+        _changeValueTimer = new QTimer(this);
+        _changeValueTimer->setInterval(__changeValueIntervalMs);
+        connect(_changeValueTimer, &QTimer::timeout, this, &AdjusterWidget::changeValue);
+    }
+    _currentValue = Z::Value(value, _param->value().unit());
+    _changeValueTimer->start();
+}
+
 void AdjusterWidget::adjustPlus()
 {
-    focus();
-    qDebug() << "plus";
+    if (not _isFocused) focus();
+    setCurrentValue(currentValue() + _increment);
 }
 
 void AdjusterWidget::adjustMinus()
 {
-    focus();
-    qDebug() << "minus";
+    if (not _isFocused) focus();
+    setCurrentValue(currentValue() - _increment);
 }
 
 void AdjusterWidget::adjustMult()
 {
-    focus();
-    qDebug() << "multiply";
+    if (not _isFocused) focus();
+    setCurrentValue(currentValue() * _multiplier);
 }
 
 void AdjusterWidget::adjustDivide()
 {
-    focus();
-    qDebug() << "divide";
+    if (not _isFocused) focus();
+    setCurrentValue(currentValue() / _multiplier);
 }
 
 void AdjusterWidget::setupAdjuster()
@@ -189,10 +216,38 @@ void AdjusterWidget::setupAdjuster()
     qDebug() << "setup";
 }
 
+void AdjusterWidget::restoreValue()
+{
+    _currentValue = _sourceValue;
+    changeValue();
+}
+
 void AdjusterWidget::help()
 {
-    focus();
     Z::HelpSystem::instance()->showTopic("adjustment.html");
+}
+
+void AdjusterWidget::changeValue()
+{
+    _changeValueTimer->stop();
+    auto res = _param->verify(_currentValue);
+    if (res.isEmpty())
+    {
+        _isValueChanging = true;
+        _param->setValue(_currentValue);
+        _isValueChanging = false;
+
+        // TODO: raise events
+        //schema()->events().raise(SchemaEvents::ElemChanged, elem);
+        // or
+        //schema()->events().raise(SchemaEvents::CustomParamChanged, _param);
+        // and
+        //schema()->events().raise(SchemaEvents::RecalRequred);
+    }
+    else
+    {
+        // TODO: show error
+    }
 }
 
 //------------------------------------------------------------------------------

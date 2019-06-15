@@ -7,6 +7,7 @@
 
 QT_BEGIN_NAMESPACE
 class QLabel;
+class QTimer;
 QT_END_NAMESPACE
 
 namespace Ori {
@@ -57,8 +58,15 @@ protected:
 private:
     Ori::Widgets::ValueEdit* _valueEditor;
     Z::Parameter* _param;
+    Z::Value _sourceValue;
+    Z::Value _currentValue;
+    double _increment = 1;
+    double _multiplier = 1.1;
+    bool _isValueChanging = false;
     QLabel *_labelLabel, *_labelUnit;
     AdjusterButton *_buttonPlus, *_buttonMinus, *_buttonMult, *_buttonDivide;
+    bool _isFocused = false;
+    QTimer* _changeValueTimer = nullptr;
 
     void editorFocused(bool focus);
     void editorKeyPressed(int key);
@@ -68,7 +76,12 @@ private:
     void adjustMult();
     void adjustDivide();
     void setupAdjuster();
+    void restoreValue();
     void help();
+    void changeValue();
+
+    void setCurrentValue(double value);
+    double currentValue() const;
 };
 
 
