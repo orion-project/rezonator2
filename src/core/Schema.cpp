@@ -422,5 +422,14 @@ void generateLabel(Schema* schema, PumpParams* pump)
     pump->setLabel(generateLabel(Pump::labelPrefix(), labels));
 }
 
+Element* findElemByParam(Schema* schema, Parameter* param)
+{
+    for (auto e : schema->elements())
+        for (auto p : e->params())
+            if (p == param)
+                return e;
+    return nullptr;
+}
+
 } // namespace Utils
 } // namespace Z

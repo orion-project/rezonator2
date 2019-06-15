@@ -37,7 +37,7 @@ class AdjusterWidget : public QWidget, public Z::ParameterListener
     Q_OBJECT
 
 public:
-    explicit AdjusterWidget(Z::Parameter* param, QWidget *parent = nullptr);
+    explicit AdjusterWidget(Schema* schema, Z::Parameter* param, QWidget *parent = nullptr);
     ~AdjusterWidget() override;
 
     void parameterChanged(Z::ParameterBase*) override;
@@ -56,7 +56,8 @@ protected:
     void mousePressEvent(QMouseEvent*) override;
 
 private:
-    Ori::Widgets::ValueEdit* _valueEditor;
+    Schema* _schema;
+    Element* _elem = nullptr;
     Z::Parameter* _param;
     Z::Value _sourceValue;
     Z::Value _currentValue;
@@ -64,6 +65,7 @@ private:
     double _multiplier = 1.1;
     bool _isValueChanging = false;
     QLabel *_labelLabel, *_labelUnit;
+    Ori::Widgets::ValueEdit* _valueEditor;
     AdjusterButton *_buttonPlus, *_buttonMinus, *_buttonMult, *_buttonDivide;
     bool _isFocused = false;
     QTimer* _changeValueTimer = nullptr;
@@ -124,6 +126,7 @@ private:
         AdjusterWidget* widget;
     };
 
+    Schema* _schema;
     QList<AdjusterItem> _adjusters;
     AdjusterListWidget* _adjustersWidget;
 

@@ -297,6 +297,9 @@ void generateLabel(Schema* schema, Element* elem);
 /// Makes an automatic label for the given pump: `P1`, `P2`, etc.
 void generateLabel(Schema* schema, PumpParams* pump);
 
+/// Returns an element owning the given parameter or null.
+Element* findElemByParam(Schema* schema, Parameter* param);
+
 } // namespace Utils
 } // namespace Z
 

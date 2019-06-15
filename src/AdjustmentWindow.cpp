@@ -47,10 +47,13 @@ void AdjusterButton::focusOutEvent(QFocusEvent *e)
 //                             AdjusterWidget
 //------------------------------------------------------------------------------
 
-AdjusterWidget::AdjusterWidget(Z::Parameter *param, QWidget *parent) : QWidget(parent), _param(param)
+AdjusterWidget::AdjusterWidget(Schema* schema, Z::Parameter *param, QWidget *parent) : QWidget(parent)
 {
+    _schema = schema;
+    _param = param;
     _param->addListener(this);
     _sourceValue = _param->value();
+    _elem = Z::Utils::findElemByParam(_schema, _param);
 
     _valueEditor = new Ori::Widgets::ValueEdit;
     Z::Gui::setValueFont(_valueEditor);
@@ -237,12 +240,11 @@ void AdjusterWidget::changeValue()
         _param->setValue(_currentValue);
         _isValueChanging = false;
 
-        // TODO: raise events
-        //schema()->events().raise(SchemaEvents::ElemChanged, elem);
-        // or
-        //schema()->events().raise(SchemaEvents::CustomParamChanged, _param);
-        // and
-        //schema()->events().raise(SchemaEvents::RecalRequred);
+        if (_elem)
+            _schema->events().raise(SchemaEvents::ElemChanged, _elem);
+        else
+            _schema->events().raise(SchemaEvents::CustomParamChanged, _param);
+        _schema->events().raise(SchemaEvents::RecalRequred);
     }
     else
     {
@@ -327,7 +329,7 @@ void AdjustmentWindow::adjust(Schema* schema, Z::Parameter* param)
 }
 
 AdjustmentWindow::AdjustmentWindow(Schema *schema, QWidget *parent)
-    : QWidget(parent, Qt::Tool), SchemaToolWindow(schema)
+    : QWidget(parent, Qt::Tool), SchemaToolWindow(schema), _schema(schema)
 {
     __instance = this;
 
@@ -374,7 +376,7 @@ void AdjustmentWindow::addAdjuster(Z::Parameter* param)
         }
     AdjusterItem adjuster;
     adjuster.param = param;
-    adjuster.widget = new AdjusterWidget(param);
+    adjuster.widget = new AdjusterWidget(_schema, param);
     connect(adjuster.widget, &AdjusterWidget::deleteRequsted, this, &AdjustmentWindow::deleteCurrentAdjuster);
     _adjustersWidget->add(adjuster.widget);
     _adjusters.append(adjuster);
