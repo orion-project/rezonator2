@@ -72,6 +72,8 @@ void InfoFuncWindow::createToolbar()
     toolbar->addWidget(Ori::Gui::textToolButton(actnCopyAll));
     toolbar->addSeparator();
     if (!_function->helpTopic().isEmpty())
+        // using QKeySequence::HelpContents here gives "Ambiguous shortcut overload: F1"
+        // ProjectWindow's help action should analyze active top-level and show correct topic.
         toolbar->addAction(Ori::Gui::action(tr("Help"), this, SLOT(help()), ":/toolbar/help"));
 }
 

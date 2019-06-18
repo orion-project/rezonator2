@@ -144,13 +144,46 @@ void AdjusterWidget::editorFocused(bool focus)
     if (focus) emit focused();
 }
 
+void processAdjustmentKeys(AdjusterWidget* adjuster, int key)
+{
+    switch (key)
+    {
+    case Qt::Key_Equal:
+        if (qApp->keyboardModifiers().testFlag(Qt::ControlModifier))
+            adjuster->adjustMult();
+        else
+            adjuster->adjustPlus();
+        break;
+
+    case Qt::Key_Minus:
+        if (qApp->keyboardModifiers().testFlag(Qt::ControlModifier))
+            adjuster->adjustDivide();
+        else
+            adjuster->adjustMinus();
+        break;
+
+    case Qt::Key_Plus:
+        adjuster->adjustPlus();
+        break;
+
+    case Qt::Key_Slash:
+        adjuster->adjustDivide();
+        break;
+
+    case Qt::Key_Asterisk:
+    case Qt::Key_8:
+        adjuster->adjustMult();
+        break;
+    }
+}
+
 void AdjusterWidget::editorKeyPressed(int key)
 {
     switch (key)
     {
     case Qt::Key_Up: emit goingFocusPrev(); break;
     case Qt::Key_Down: emit goingFocusNext(); break;
-    default:;
+    default: processAdjustmentKeys(this, key);
     }
 }
 
@@ -419,4 +452,26 @@ void AdjustmentWindow::deleteCurrentAdjuster()
         close();
     else
         deletingWidget->deleteLater();
+}
+
+AdjusterWidget* AdjustmentWindow::focusedAdjuster()
+{
+    for (auto adjuster : _adjusters)
+        if (adjuster.widget->isFocused())
+            return adjuster.widget;
+    return nullptr;
+}
+
+void AdjustmentWindow::keyPressEvent(QKeyEvent *e)
+{
+    //qDebug() << "key press" << e->key() << (e->type() == QEvent::ShortcutOverride ? "true": "false");
+
+    auto adjuster = focusedAdjuster();
+    if (adjuster) return;
+
+    switch (e->key())
+    {
+    default:
+        processAdjustmentKeys(adjuster, e->key());
+    }
 }

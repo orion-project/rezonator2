@@ -42,6 +42,13 @@ public:
 
     void parameterChanged(Z::ParameterBase*) override;
 
+    bool isFocused() const { return _isFocused; }
+
+    void adjustPlus();
+    void adjustMinus();
+    void adjustMult();
+    void adjustDivide();
+
 public slots:
     void focus();
 
@@ -73,10 +80,6 @@ private:
     void editorFocused(bool focus);
     void editorKeyPressed(int key);
     void populate();
-    void adjustPlus();
-    void adjustMinus();
-    void adjustMult();
-    void adjustDivide();
     void setupAdjuster();
     void restoreValue();
     void help();
@@ -117,6 +120,9 @@ public:
     void elementDeleting(Schema*, Element*) override;
     void customParamDeleting(Schema*, Z::Parameter*) override;
 
+protected:
+    void keyPressEvent(QKeyEvent *e) override;
+
 private:
     explicit AdjustmentWindow(Schema* schema, QWidget *parent = nullptr);
 
@@ -133,6 +139,7 @@ private:
     void addAdjuster(Z::Parameter* param);
     void deleteAdjuster(Z::Parameter* param);
     void deleteCurrentAdjuster();
+    AdjusterWidget* focusedAdjuster();
 };
 
 #endif // ADJUSTMENT_WINDOW_H
