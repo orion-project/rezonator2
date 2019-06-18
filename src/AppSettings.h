@@ -38,7 +38,9 @@ public:
     int plotNumberPrecision;  ///< Number of decimal digits used to format axes labels.
     QString defaultTripType;  ///< New schemas should be created having this trip-type.
     bool showStartWindow;     ///< Show StartWindow after app started instead of opening ProjectWindow.
-    int mruSchemaCount;
+    int mruSchemaCount;          ///< Max items count in recently opened schemas list.
+    double adjusterIncrement;    ///< Increment value used for new adjusters.
+    double adjusterMultiplier;   ///< Multiplier value used for new adjusters.
 
     bool layoutExportTransparent; ///< Use transparent background in exported images of layout.
 

@@ -1,15 +1,19 @@
 #include "AdjustmentWindow.h"
 
+#include "AppSettings.h"
 #include "HelpSystem.h"
 #include "widgets/Appearance.h"
 
+#include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 #include "widgets/OriValueEdit.h"
 
 #include <QApplication>
+#include <QCheckBox>
 #include <QDateTime>
 #include <QVBoxLayout>
+#include <QFormLayout>
 #include <QLabel>
 #include <QMenu>
 #include <QPushButton>
@@ -54,6 +58,9 @@ AdjusterWidget::AdjusterWidget(Schema* schema, Z::Parameter *param, QWidget *par
     _param->addListener(this);
     _sourceValue = _param->value();
     _elem = Z::Utils::findElemByParam(_schema, _param);
+
+    _increment = Settings::instance().adjusterIncrement;
+    _multiplier = Settings::instance().adjusterMultiplier;
 
     _valueEditor = new Ori::Widgets::ValueEdit;
     Z::Gui::setValueFont(_valueEditor);
@@ -249,7 +256,40 @@ void AdjusterWidget::adjustDivide()
 
 void AdjusterWidget::setupAdjuster()
 {
-    qDebug() << "setup";
+    auto increment = new Ori::Widgets::ValueEdit;
+    auto multiplier = new Ori::Widgets::ValueEdit;
+    Z::Gui::setValueFont(increment);
+    Z::Gui::setValueFont(multiplier);
+    increment->setValue(_increment);
+    multiplier->setValue(_multiplier);
+
+    auto flagSetDefault = new QCheckBox(tr("Set as default values"));
+    auto flagUseForAll = new QCheckBox(tr("Apply for all adjusters"));
+
+    QWidget w;
+    auto layout = new QFormLayout(&w);
+    layout->setMargin(0);
+    layout->addRow(tr("Increment"), increment);
+    layout->addRow(tr("Multiplier"), multiplier);
+    layout->addRow(flagSetDefault);
+    layout->addRow(flagUseForAll);
+
+    if (Ori::Dlg::Dialog(&w)
+            .withTitle(tr("Adjuster Settings"))
+            .withContentToButtonsSpacingFactor(2)
+            .exec())
+    {
+        if (increment->ok()) _increment = increment->value();
+        if (multiplier->ok()) _multiplier = multiplier->value();
+        if (flagSetDefault->isChecked())
+        {
+            Settings::instance().adjusterIncrement = _increment;
+            Settings::instance().adjusterMultiplier = _multiplier;
+            Settings::instance().save();
+        }
+        if (flagUseForAll)
+            emit spreadSettings();
+    }
 }
 
 void AdjusterWidget::restoreValue()
@@ -284,6 +324,13 @@ void AdjusterWidget::changeValue()
         // TODO: show error
     }
 }
+
+void AdjusterWidget::copySettingsFrom(AdjusterWidget* other)
+{
+    _increment = other->_increment;
+    _multiplier = other->_multiplier;
+}
+
 
 //------------------------------------------------------------------------------
 //                            AdjusterListWidget
@@ -411,6 +458,7 @@ void AdjustmentWindow::addAdjuster(Z::Parameter* param)
     adjuster.param = param;
     adjuster.widget = new AdjusterWidget(_schema, param);
     connect(adjuster.widget, &AdjusterWidget::deleteRequsted, this, &AdjustmentWindow::deleteCurrentAdjuster);
+    connect(adjuster.widget, &AdjusterWidget::spreadSettings, this, &AdjustmentWindow::spreadAdjusterSettings);
     _adjustersWidget->add(adjuster.widget);
     _adjusters.append(adjuster);
 }
@@ -474,4 +522,14 @@ void AdjustmentWindow::keyPressEvent(QKeyEvent *e)
     default:
         processAdjustmentKeys(adjuster, e->key());
     }
+}
+
+void AdjustmentWindow::spreadAdjusterSettings()
+{
+    auto source = qobject_cast<AdjusterWidget*>(sender());
+    if (!source) return;
+
+    for (auto adjuster : _adjusters)
+        if (adjuster.widget != source)
+            adjuster.widget->copySettingsFrom(source);
 }

@@ -49,6 +49,8 @@ public:
     void adjustMult();
     void adjustDivide();
 
+    void copySettingsFrom(AdjusterWidget* other);
+
 public slots:
     void focus();
 
@@ -58,6 +60,7 @@ signals:
     void goingFocusPrev();
     void valueEdited(double value);
     void deleteRequsted();
+    void spreadSettings();
 
 protected:
     void mousePressEvent(QMouseEvent*) override;
@@ -140,6 +143,7 @@ private:
     void deleteAdjuster(Z::Parameter* param);
     void deleteCurrentAdjuster();
     AdjusterWidget* focusedAdjuster();
+    void spreadAdjusterSettings();
 };
 
 #endif // ADJUSTMENT_WINDOW_H
