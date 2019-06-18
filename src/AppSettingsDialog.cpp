@@ -122,8 +122,8 @@ bool AppSettingsDialog::collect()
     settings.useSystemDialogs = groupView->option(3);
 
     // layout
-    settings.save();
     settings.layoutExportTransparent = groupView->option(1);
 
+    settings.save();
     return true;
 }

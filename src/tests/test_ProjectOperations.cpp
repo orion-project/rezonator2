@@ -34,7 +34,7 @@ protected:
     TestSchemaListener listener;\
     QSharedPointer<Schema> schema(ProjectOperations::createDefaultSchema(tripType));\
     schema->registerListener(&listener);\
-    TestProjectOperations op(schema.get());
+    TestProjectOperations op(schema.data());
 
 //------------------------------------------------------------------------------
 

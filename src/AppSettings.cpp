@@ -58,6 +58,8 @@ void Settings::load()
     LOAD(defaultTripType, String);
     LOAD_DEF(showStartWindow, Bool, true);
     LOAD_DEF(mruSchemaCount, Int, 16);
+    LOAD_DEF(adjusterIncrement, Double, 1.0);
+    LOAD_DEF(adjusterMultiplier, Double, 1.1);
 
     s.beginGroup("Debug");
     LOAD_DEF(showProtocolAtStart, Bool, false);
@@ -91,6 +93,8 @@ void Settings::save()
     SAVE(defaultTripType);
     SAVE(showStartWindow);
     SAVE(mruSchemaCount);
+    SAVE(adjusterIncrement);
+    SAVE(adjusterMultiplier);
 
     s.beginGroup("Debug");
     SAVE(showProtocolAtStart);
