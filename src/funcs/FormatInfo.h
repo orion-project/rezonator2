@@ -1,7 +1,7 @@
 #ifndef FORMAT_INFO_H
 #define FORMAT_INFO_H
 
-#include <QString>
+#include "../core/Parameters.h"
 
 class Schema;
 class Element;
@@ -36,6 +36,9 @@ QString paramHtml(TParam *param)
         "<nobr><span style='%1'>%2</span><span style='%3'> = %4</span></nobr>")
         .arg(nameStyle(), param->displayLabel(), valueStyle(), param->value().displayStr());
 }
+
+QString paramLabelHtml(Z::Parameter *param);
+QString customParamLabelWithFormulaHtml(Z::Parameter *param, Schema* schema);
 
 } // namespace Format
 } // namespace Z

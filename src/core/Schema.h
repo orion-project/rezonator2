@@ -235,7 +235,7 @@ public:
     /// Adiitional params that can be added by user and used in formulas.
     Z::Parameters* customParams() { return &_customParams; }
 
-    /// Linst of all links which bind elements' parameter to schema parameters.
+    /// Linst of all links which bind elements' parameter to custom parameters.
     Z::ParamLinks* paramLinks() { return &_paramLinks; }
 
     /// List of all formulas operated on schema parameters.

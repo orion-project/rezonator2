@@ -3,6 +3,7 @@
 #include "AppSettings.h"
 #include "HelpSystem.h"
 #include "widgets/Appearance.h"
+#include "funcs/FormatInfo.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
@@ -69,11 +70,8 @@ AdjusterWidget::AdjusterWidget(Schema* schema, Z::Parameter *param, QWidget *par
     connect(_valueEditor, &Ori::Widgets::ValueEdit::keyPressed, this, &AdjusterWidget::editorKeyPressed);
     connect(_valueEditor, &Ori::Widgets::ValueEdit::valueEdited, this, &AdjusterWidget::valueEdited);
 
-    auto paramLabel = _param->label();
-    if (paramLabel.isEmpty())
-        paramLabel = _param->alias();
-    _labelLabel = Z::Gui::symbolLabel(paramLabel);
-
+    _labelLabel = Z::Gui::symbolLabel("");
+    Z::Gui::setFontStyle(_labelLabel, false);
     _labelUnit = new QLabel;
 
     _buttonPlus = new AdjusterButton(":/toolbar10/plus");
@@ -91,20 +89,18 @@ AdjusterWidget::AdjusterWidget(Schema* schema, Z::Parameter *param, QWidget *par
 
     // TODO: move menu to parent and add shortcuts
     auto menu = new QMenu(this);
-    menu->addAction(QIcon(":/toolbar/restore"), tr("Restore Value..."), this, &AdjusterWidget::restoreValue);
+    _actionRestore = menu->addAction(QIcon(":/toolbar/restore"), tr("Restore Value..."), this, &AdjusterWidget::restoreValue);
     menu->addAction(QIcon(":/toolbar/settings"), tr("Settings..."), this, &AdjusterWidget::setupAdjuster);
     menu->addAction(QIcon(":/toolbar/delete"), tr("Delete"), this, &AdjusterWidget::deleteRequsted);
     menu->addSeparator();
     menu->addAction(QIcon(":/toolbar/help"), tr("Help"), this, &AdjusterWidget::help);
     connect(menu, &QMenu::aboutToHide, this, &AdjusterWidget::focus);
 
-    auto optionsButton = new QPushButton;
-    optionsButton->setFlat(true);
+    auto optionsButton = new QToolButton;
     optionsButton->setIcon(QIcon(":/toolbar16/menu"));
-    optionsButton->setFixedWidth(24);
+    optionsButton->setStyleSheet(QStringLiteral("border: none; background-color: transparent"));
     connect(optionsButton, &QPushButton::clicked, [this, menu, optionsButton](){
         this->editorFocused(true);
-        // button->setMenu() crashes the app on MacOS when button is clicked, so show manually
         menu->popup(optionsButton->mapToGlobal(optionsButton->rect().bottomLeft()));
     });
 
@@ -190,7 +186,10 @@ void AdjusterWidget::editorKeyPressed(int key)
     {
     case Qt::Key_Up: emit goingFocusPrev(); break;
     case Qt::Key_Down: emit goingFocusNext(); break;
-    default: processAdjustmentKeys(this, key);
+    // TODO: process action hotkeys
+    default:
+        if (not _isReadOnly)
+            processAdjustmentKeys(this, key);
     }
 }
 
@@ -199,6 +198,14 @@ void AdjusterWidget::mousePressEvent(QMouseEvent *e)
     QWidget::mousePressEvent(e);
     focus();
 }
+
+namespace {
+void setButtonEnabled(QToolButton* button, bool on)
+{
+    button->setEnabled(on);
+    // TODO: add more stying, default disabled state is not too notable
+}
+} // namespace
 
 void AdjusterWidget::populate()
 {
@@ -210,6 +217,22 @@ void AdjusterWidget::populate()
     if (unit != Z::Units::none())
         _labelUnit->setText(QString("(%1)").arg(unit->name()));
     else _labelUnit->clear();
+
+    bool isCustomDrivenByFormula = _schema->formulas()->items().contains(_param);
+
+    if (isCustomDrivenByFormula)
+        _labelLabel->setText(Z::Format::customParamLabelWithFormulaHtml(_param, _schema));
+    else
+        _labelLabel->setText(Z::Format::paramLabelHtml(_param));
+
+    _isReadOnly = isCustomDrivenByFormula;
+    _actionRestore->setEnabled(!_isReadOnly);
+    setButtonEnabled(_buttonMult, not _isReadOnly);
+    setButtonEnabled(_buttonPlus, not _isReadOnly);
+    setButtonEnabled(_buttonMinus, not _isReadOnly);
+    setButtonEnabled(_buttonDivide, not _isReadOnly);
+    _valueEditor->setReadOnly(_isReadOnly);
+    Z::Gui::setFontStyle(_valueEditor, false, _isReadOnly);
 }
 
 double AdjusterWidget::currentValue() const
@@ -508,20 +531,6 @@ AdjusterWidget* AdjustmentWindow::focusedAdjuster()
         if (adjuster.widget->isFocused())
             return adjuster.widget;
     return nullptr;
-}
-
-void AdjustmentWindow::keyPressEvent(QKeyEvent *e)
-{
-    //qDebug() << "key press" << e->key() << (e->type() == QEvent::ShortcutOverride ? "true": "false");
-
-    auto adjuster = focusedAdjuster();
-    if (adjuster) return;
-
-    switch (e->key())
-    {
-    default:
-        processAdjustmentKeys(adjuster, e->key());
-    }
 }
 
 void AdjustmentWindow::spreadAdjusterSettings()

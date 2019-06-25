@@ -6,6 +6,7 @@
 #include "SchemaWindows.h"
 
 QT_BEGIN_NAMESPACE
+class QAction;
 class QLabel;
 class QTimer;
 QT_END_NAMESPACE
@@ -78,7 +79,9 @@ private:
     Ori::Widgets::ValueEdit* _valueEditor;
     AdjusterButton *_buttonPlus, *_buttonMinus, *_buttonMult, *_buttonDivide;
     bool _isFocused = false;
+    bool _isReadOnly = false;
     QTimer* _changeValueTimer = nullptr;
+    QAction *_actionRestore;
 
     void editorFocused(bool focus);
     void editorKeyPressed(int key);
@@ -122,9 +125,6 @@ public:
     // Implementation of SchemaListener
     void elementDeleting(Schema*, Element*) override;
     void customParamDeleting(Schema*, Z::Parameter*) override;
-
-protected:
-    void keyPressEvent(QKeyEvent *e) override;
 
 private:
     explicit AdjustmentWindow(Schema* schema, QWidget *parent = nullptr);

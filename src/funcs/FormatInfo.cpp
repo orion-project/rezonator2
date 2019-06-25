@@ -149,6 +149,29 @@ QString pumpParamsHtml(Z::PumpParams *pump)
     return paramsInfo.join(", ");
 }
 
+QString paramLabelHtml(Z::Parameter *param)
+{
+    auto paramLabel = param->label();
+    if (paramLabel.isEmpty())
+        paramLabel = param->alias();
+    return QStringLiteral("<b>%2</b>").arg(paramLabel);
+}
+
+QString customParamLabelWithFormulaHtml(Z::Parameter *param, Schema* schema)
+{
+    QString formulaDescr;
+    auto formula = schema->formulas()->get(param);
+    if (formula && !formula->deps().isEmpty())
+    {
+        QStringList params;
+        for (auto dep : formula->deps())
+            params << dep->label();
+        formulaDescr = QString(" <i>= f(%1)</i>").arg(params.join(", "));
+    }
+    return QStringLiteral("<b><span style='color:%1'>%2</span></b>%3")
+        .arg(Z::Gui::globalParamColorHtml(), param->label(), formulaDescr);
+}
+
 } // namespace Format
 } // namespace Z
 

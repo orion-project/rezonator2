@@ -2,6 +2,7 @@
 
 #include "Appearance.h"
 #include "RichTextItemDelegate.h"
+#include "../funcs/FormatInfo.h"
 
 #include <QHeaderView>
 #include <QMenu>
@@ -110,17 +111,7 @@ void SchemaParamsTable::createRow(int row)
 void SchemaParamsTable::populateRow(Z::Parameter *param, int row)
 {
     // Parameter alias and formula
-    QString formulaDescr;
-    auto formula = schema()->formulas()->get(param);
-    if (formula && !formula->deps().isEmpty())
-    {
-        QStringList params;
-        for (auto dep : formula->deps())
-            params << dep->alias();
-        formulaDescr = QString(" <i>= f(%1)</i>").arg(params.join(", "));
-    }
-    item(row, COL_ALIAS)->setText(QStringLiteral("<b><span style='color:%1'>%2</span></b>%3")
-                                  .arg(Z::Gui::globalParamColorHtml(), param->alias(), formulaDescr));
+    item(row, COL_ALIAS)->setText(Z::Format::customParamLabelWithFormulaHtml(param, schema()));
 
     // Parameter icon
     auto it = item(row, COL_IMAGE);
