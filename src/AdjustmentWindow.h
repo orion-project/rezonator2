@@ -32,6 +32,11 @@ protected:
     void focusOutEvent(QFocusEvent *e) override;
 };
 
+struct AdjusterSettings
+{
+    double increment = 1;
+    double multiplier = 1.1;
+};
 
 class AdjusterWidget : public QWidget, public Z::ParameterListener
 {
@@ -44,13 +49,17 @@ public:
     void parameterChanged(Z::ParameterBase*) override;
 
     bool isFocused() const { return _isFocused; }
+    bool isReadOnly() const { return _isReadOnly; }
 
     void adjustPlus();
     void adjustMinus();
     void adjustMult();
     void adjustDivide();
 
-    void copySettingsFrom(AdjusterWidget* other);
+    AdjusterSettings settings() const { return _settings; }
+    void setSettings(const AdjusterSettings& s) { _settings = s; }
+
+    void restoreValue();
 
 public slots:
     void focus();
@@ -60,8 +69,6 @@ signals:
     void goingFocusNext();
     void goingFocusPrev();
     void valueEdited(double value);
-    void deleteRequsted();
-    void spreadSettings();
 
 protected:
     void mousePressEvent(QMouseEvent*) override;
@@ -72,8 +79,7 @@ private:
     Z::Parameter* _param;
     Z::Value _sourceValue;
     Z::Value _currentValue;
-    double _increment = 1;
-    double _multiplier = 1.1;
+    AdjusterSettings _settings;
     bool _isValueChanging = false;
     QLabel *_labelLabel, *_labelUnit;
     Ori::Widgets::ValueEdit* _valueEditor;
@@ -81,14 +87,10 @@ private:
     bool _isFocused = false;
     bool _isReadOnly = false;
     QTimer* _changeValueTimer = nullptr;
-    QAction *_actionRestore;
 
     void editorFocused(bool focus);
     void editorKeyPressed(int key);
     void populate();
-    void setupAdjuster();
-    void restoreValue();
-    void help();
     void changeValue();
 
     void setCurrentValue(double value);
@@ -126,6 +128,13 @@ public:
     void elementDeleting(Schema*, Element*) override;
     void customParamDeleting(Schema*, Z::Parameter*) override;
 
+private slots:
+    void addAdjuster();
+    void restoreValue();
+    void setupAdjuster();
+    void deleteAdjuster();
+    void help();
+
 private:
     explicit AdjustmentWindow(Schema* schema, QWidget *parent = nullptr);
 
@@ -138,12 +147,12 @@ private:
     Schema* _schema;
     QList<AdjusterItem> _adjusters;
     AdjusterListWidget* _adjustersWidget;
+    QAction *_actnRestore, *_actnSettings, *_actnDelete;
 
     void addAdjuster(Z::Parameter* param);
     void deleteAdjuster(Z::Parameter* param);
-    void deleteCurrentAdjuster();
     AdjusterWidget* focusedAdjuster();
-    void spreadAdjusterSettings();
+    void updateActions();
 };
 
 #endif // ADJUSTMENT_WINDOW_H

@@ -9,6 +9,7 @@
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 #include "widgets/OriValueEdit.h"
+#include "widgets/OriFlatToolBar.h"
 
 #include <QApplication>
 #include <QCheckBox>
@@ -60,8 +61,8 @@ AdjusterWidget::AdjusterWidget(Schema* schema, Z::Parameter *param, QWidget *par
     _sourceValue = _param->value();
     _elem = Z::Utils::findElemByParam(_schema, _param);
 
-    _increment = Settings::instance().adjusterIncrement;
-    _multiplier = Settings::instance().adjusterMultiplier;
+    _settings.increment = Settings::instance().adjusterIncrement;
+    _settings.multiplier = Settings::instance().adjusterMultiplier;
 
     _valueEditor = new Ori::Widgets::ValueEdit;
     Z::Gui::setValueFont(_valueEditor);
@@ -87,23 +88,6 @@ AdjusterWidget::AdjusterWidget(Schema* schema, Z::Parameter *param, QWidget *par
     connect(_buttonMult, &AdjusterButton::focused, this, &AdjusterWidget::editorFocused);
     connect(_buttonDivide, &AdjusterButton::focused, this, &AdjusterWidget::editorFocused);
 
-    // TODO: move menu to parent and add shortcuts
-    auto menu = new QMenu(this);
-    _actionRestore = menu->addAction(QIcon(":/toolbar/restore"), tr("Restore Value..."), this, &AdjusterWidget::restoreValue);
-    menu->addAction(QIcon(":/toolbar/settings"), tr("Settings..."), this, &AdjusterWidget::setupAdjuster);
-    menu->addAction(QIcon(":/toolbar/delete"), tr("Delete"), this, &AdjusterWidget::deleteRequsted);
-    menu->addSeparator();
-    menu->addAction(QIcon(":/toolbar/help"), tr("Help"), this, &AdjusterWidget::help);
-    connect(menu, &QMenu::aboutToHide, this, &AdjusterWidget::focus);
-
-    auto optionsButton = new QToolButton;
-    optionsButton->setIcon(QIcon(":/toolbar16/menu"));
-    optionsButton->setStyleSheet(QStringLiteral("border: none; background-color: transparent"));
-    connect(optionsButton, &QPushButton::clicked, [this, menu, optionsButton](){
-        this->editorFocused(true);
-        menu->popup(optionsButton->mapToGlobal(optionsButton->rect().bottomLeft()));
-    });
-
     LayoutH({
         _labelLabel,
         Space(3),
@@ -114,8 +98,6 @@ AdjusterWidget::AdjusterWidget(Schema* schema, Z::Parameter *param, QWidget *par
         _valueEditor,
         _buttonPlus,
         _buttonMult,
-        Space(6),
-        optionsButton,
     }).setMargin(6).setSpacing(1).useFor(this);
 
     populate();
@@ -147,49 +129,37 @@ void AdjusterWidget::editorFocused(bool focus)
     if (focus) emit focused();
 }
 
-void processAdjustmentKeys(AdjusterWidget* adjuster, int key)
-{
-    switch (key)
-    {
-    case Qt::Key_Equal:
-        if (qApp->keyboardModifiers().testFlag(Qt::ControlModifier))
-            adjuster->adjustMult();
-        else
-            adjuster->adjustPlus();
-        break;
-
-    case Qt::Key_Minus:
-        if (qApp->keyboardModifiers().testFlag(Qt::ControlModifier))
-            adjuster->adjustDivide();
-        else
-            adjuster->adjustMinus();
-        break;
-
-    case Qt::Key_Plus:
-        adjuster->adjustPlus();
-        break;
-
-    case Qt::Key_Slash:
-        adjuster->adjustDivide();
-        break;
-
-    case Qt::Key_Asterisk:
-    case Qt::Key_8:
-        adjuster->adjustMult();
-        break;
-    }
-}
-
 void AdjusterWidget::editorKeyPressed(int key)
 {
     switch (key)
     {
     case Qt::Key_Up: emit goingFocusPrev(); break;
     case Qt::Key_Down: emit goingFocusNext(); break;
+
+    case Qt::Key_Equal:
+        if (qApp->keyboardModifiers().testFlag(Qt::ControlModifier))
+            adjustMult();
+        else
+            adjustPlus();
+        break;
+    case Qt::Key_Minus:
+        if (qApp->keyboardModifiers().testFlag(Qt::ControlModifier))
+            adjustDivide();
+        else
+            adjustMinus();
+        break;
+    case Qt::Key_Plus:
+        adjustPlus();
+        break;
+    case Qt::Key_Slash:
+        adjustDivide();
+        break;
+    case Qt::Key_Asterisk:
+    case Qt::Key_8:
+        adjustMult();
+        break;
+
     // TODO: process action hotkeys
-    default:
-        if (not _isReadOnly)
-            processAdjustmentKeys(this, key);
     }
 }
 
@@ -226,7 +196,6 @@ void AdjusterWidget::populate()
         _labelLabel->setText(Z::Format::paramLabelHtml(_param));
 
     _isReadOnly = isCustomDrivenByFormula;
-    _actionRestore->setEnabled(!_isReadOnly);
     setButtonEnabled(_buttonMult, not _isReadOnly);
     setButtonEnabled(_buttonPlus, not _isReadOnly);
     setButtonEnabled(_buttonMinus, not _isReadOnly);
@@ -242,6 +211,7 @@ double AdjusterWidget::currentValue() const
 
 void AdjusterWidget::setCurrentValue(double value)
 {
+    if (_isReadOnly) return;
     _valueEditor->setValue(value);
     if (!_changeValueTimer)
     {
@@ -256,74 +226,32 @@ void AdjusterWidget::setCurrentValue(double value)
 void AdjusterWidget::adjustPlus()
 {
     if (not _isFocused) focus();
-    setCurrentValue(currentValue() + _increment);
+    setCurrentValue(currentValue() + _settings.increment);
 }
 
 void AdjusterWidget::adjustMinus()
 {
     if (not _isFocused) focus();
-    setCurrentValue(currentValue() - _increment);
+    setCurrentValue(currentValue() - _settings.increment);
 }
 
 void AdjusterWidget::adjustMult()
 {
     if (not _isFocused) focus();
-    setCurrentValue(currentValue() * _multiplier);
+    setCurrentValue(currentValue() * _settings.multiplier);
 }
 
 void AdjusterWidget::adjustDivide()
 {
     if (not _isFocused) focus();
-    setCurrentValue(currentValue() / _multiplier);
-}
-
-void AdjusterWidget::setupAdjuster()
-{
-    auto increment = new Ori::Widgets::ValueEdit;
-    auto multiplier = new Ori::Widgets::ValueEdit;
-    Z::Gui::setValueFont(increment);
-    Z::Gui::setValueFont(multiplier);
-    increment->setValue(_increment);
-    multiplier->setValue(_multiplier);
-
-    auto flagSetDefault = new QCheckBox(tr("Set as default values"));
-    auto flagUseForAll = new QCheckBox(tr("Apply for all adjusters"));
-
-    QWidget w;
-    auto layout = new QFormLayout(&w);
-    layout->setMargin(0);
-    layout->addRow(tr("Increment"), increment);
-    layout->addRow(tr("Multiplier"), multiplier);
-    layout->addRow(flagSetDefault);
-    layout->addRow(flagUseForAll);
-
-    if (Ori::Dlg::Dialog(&w)
-            .withTitle(tr("Adjuster Settings"))
-            .withContentToButtonsSpacingFactor(2)
-            .exec())
-    {
-        if (increment->ok()) _increment = increment->value();
-        if (multiplier->ok()) _multiplier = multiplier->value();
-        if (flagSetDefault->isChecked())
-        {
-            Settings::instance().adjusterIncrement = _increment;
-            Settings::instance().adjusterMultiplier = _multiplier;
-            Settings::instance().save();
-        }
-        if (flagUseForAll)
-            emit spreadSettings();
-    }
+    setCurrentValue(currentValue() / _settings.multiplier);
 }
 
 void AdjusterWidget::restoreValue()
 {
+    if (_isReadOnly) return;
     _currentValue = _sourceValue;
     changeValue();
-}
-
-void AdjusterWidget::help()
-{
-    Z::HelpSystem::instance()->showTopic("adjustment.html");
 }
 
 void AdjusterWidget::changeValue()
@@ -347,13 +275,6 @@ void AdjusterWidget::changeValue()
         // TODO: show error
     }
 }
-
-void AdjusterWidget::copySettingsFrom(AdjusterWidget* other)
-{
-    _increment = other->_increment;
-    _multiplier = other->_multiplier;
-}
-
 
 //------------------------------------------------------------------------------
 //                            AdjusterListWidget
@@ -428,7 +349,8 @@ void AdjustmentWindow::adjust(Schema* schema, Z::Parameter* param)
     }
     __instance->show();
     __instance->activateWindow();
-    __instance->addAdjuster(param);
+    if (param)
+        __instance->addAdjuster(param);
 }
 
 AdjustmentWindow::AdjustmentWindow(Schema *schema, QWidget *parent)
@@ -441,15 +363,37 @@ AdjustmentWindow::AdjustmentWindow(Schema *schema, QWidget *parent)
 
     _adjustersWidget = new AdjusterListWidget;
 
+    auto actnAdd = Ori::Gui::action(tr("Add Adjuster"), this, SLOT(addAdjuster()), ":/toolbar/plus");
+    _actnRestore = Ori::Gui::action(tr("Restore Value"), this, SLOT(restoreValue()), ":/toolbar/restore");
+    _actnSettings = Ori::Gui::action(tr("Settings..."), this, SLOT(setupAdjuster()), ":/toolbar/settings");
+    _actnDelete = Ori::Gui::action(tr("Delete"), this, SLOT(deleteAdjuster()), ":/toolbar/delete");
+    auto actnHelp = Ori::Gui::action(tr("Help"), this, SLOT(help()), ":/toolbar/help");
+
+    auto toolbar = Ori::Gui::toolbar({
+        Ori::Gui::textToolButton(actnAdd), nullptr, _actnRestore, _actnSettings, _actnDelete, nullptr, actnHelp
+    });
+    toolbar->setStyleSheet("border-bottom: 1px solid silver");
+    toolbar->setIconSize(QSize(16, 16));
+
     LayoutV({
-        LayoutV({_adjustersWidget, Stretch()}).setMargin(0).setSpacing(0)
+        LayoutV({toolbar, _adjustersWidget, Stretch()}).setMargin(0).setSpacing(0)
     }).setMargin(0).setSpacing(0).useFor(this);
+
+    updateActions();
 }
 
 AdjustmentWindow::~AdjustmentWindow()
 {
     __instance = nullptr;
     // TODO: store adjusters
+}
+
+AdjusterWidget* AdjustmentWindow::focusedAdjuster()
+{
+    for (auto adjuster : _adjusters)
+        if (adjuster.widget->isFocused())
+            return adjuster.widget;
+    return nullptr;
 }
 
 void AdjustmentWindow::elementDeleting(Schema*, Element* elem)
@@ -465,12 +409,6 @@ void AdjustmentWindow::customParamDeleting(Schema*, Z::Parameter* param)
 
 void AdjustmentWindow::addAdjuster(Z::Parameter* param)
 {
-    if (!param)
-    {
-        // TODO: check if empty and show stub
-        return;
-    }
-
     for (auto adj : _adjusters)
         if (adj.param == param)
         {
@@ -480,10 +418,14 @@ void AdjustmentWindow::addAdjuster(Z::Parameter* param)
     AdjusterItem adjuster;
     adjuster.param = param;
     adjuster.widget = new AdjusterWidget(_schema, param);
-    connect(adjuster.widget, &AdjusterWidget::deleteRequsted, this, &AdjustmentWindow::deleteCurrentAdjuster);
-    connect(adjuster.widget, &AdjusterWidget::spreadSettings, this, &AdjustmentWindow::spreadAdjusterSettings);
+    connect(adjuster.widget, &AdjusterWidget::focused, this, &AdjustmentWindow::updateActions);
     _adjustersWidget->add(adjuster.widget);
     _adjusters.append(adjuster);
+}
+
+void AdjustmentWindow::addAdjuster()
+{
+    // TODO
 }
 
 void AdjustmentWindow::deleteAdjuster(Z::Parameter* param)
@@ -503,13 +445,16 @@ void AdjustmentWindow::deleteAdjuster(Z::Parameter* param)
         if (_adjusters.isEmpty())
             close();
         else
+        {
             deletingWidget->deleteLater();
+            _adjusters.first().widget->focus();
+        }
     }
 }
 
-void AdjustmentWindow::deleteCurrentAdjuster()
+void AdjustmentWindow::deleteAdjuster()
 {
-    auto deletingWidget = qobject_cast<AdjusterWidget*>(sender());
+    auto deletingWidget = focusedAdjuster();
     if (!deletingWidget) return;
 
     for (int i = 0; i < _adjusters.size(); i++)
@@ -522,23 +467,80 @@ void AdjustmentWindow::deleteCurrentAdjuster()
     if (_adjusters.isEmpty())
         close();
     else
+    {
         deletingWidget->deleteLater();
+        _adjusters.first().widget->focus();
+    }
 }
 
-AdjusterWidget* AdjustmentWindow::focusedAdjuster()
+void AdjustmentWindow::setupAdjuster()
 {
-    for (auto adjuster : _adjusters)
-        if (adjuster.widget->isFocused())
-            return adjuster.widget;
-    return nullptr;
+    auto adjuster = focusedAdjuster();
+    if (!adjuster) return;
+
+    auto settings = adjuster->settings();
+
+    auto increment = new Ori::Widgets::ValueEdit;
+    auto multiplier = new Ori::Widgets::ValueEdit;
+    Z::Gui::setValueFont(increment);
+    Z::Gui::setValueFont(multiplier);
+    increment->setValue(settings.increment);
+    multiplier->setValue(settings.multiplier);
+
+    auto flagSetDefault = new QCheckBox(tr("Set as default values"));
+    auto flagUseForAll = new QCheckBox(tr("Apply for all adjusters"));
+
+    QWidget w;
+    auto layout = new QFormLayout(&w);
+    layout->setMargin(0);
+    layout->addRow(tr("Increment"), increment);
+    layout->addRow(tr("Multiplier"), multiplier);
+    layout->addRow(flagSetDefault);
+    layout->addRow(flagUseForAll);
+
+    if (Ori::Dlg::Dialog(&w)
+            .withTitle(tr("Adjuster Settings"))
+            .withContentToButtonsSpacingFactor(2)
+            .exec())
+    {
+        if (increment->ok()) settings.increment = increment->value();
+        if (multiplier->ok()) settings.multiplier = multiplier->value();
+
+        adjuster->setSettings(settings);
+
+        if (flagSetDefault->isChecked())
+        {
+            Settings::instance().adjusterIncrement = settings.increment;
+            Settings::instance().adjusterMultiplier = settings.multiplier;
+            Settings::instance().save();
+        }
+        if (flagUseForAll)
+        {
+            for (auto adj : _adjusters)
+                if (adj.widget != adjuster)
+                    adj.widget->setSettings(settings);
+        }
+    }
 }
 
-void AdjustmentWindow::spreadAdjusterSettings()
+void AdjustmentWindow::restoreValue()
 {
-    auto source = qobject_cast<AdjusterWidget*>(sender());
-    if (!source) return;
+    auto adjuster = focusedAdjuster();
+    if (!adjuster) return;
 
-    for (auto adjuster : _adjusters)
-        if (adjuster.widget != source)
-            adjuster.widget->copySettingsFrom(source);
+    adjuster->restoreValue();
+}
+
+void AdjustmentWindow::updateActions()
+{
+    _actnSettings->setEnabled(_adjusters.count() > 0);
+    _actnDelete->setEnabled(_adjusters.count() > 0);
+
+    auto adjuster = focusedAdjuster();
+    _actnRestore->setEnabled(adjuster and not adjuster->isReadOnly());
+}
+
+void AdjustmentWindow::help()
+{
+    Z::HelpSystem::instance()->showTopic("adjustment.html");
 }
