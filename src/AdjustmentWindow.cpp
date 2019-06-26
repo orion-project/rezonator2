@@ -50,6 +50,43 @@ void AdjusterButton::focusOutEvent(QFocusEvent *e)
 }
 
 //------------------------------------------------------------------------------
+//                          AdjusterSettingsWidget
+//------------------------------------------------------------------------------
+
+AdjusterSettingsWidget::AdjusterSettingsWidget(const AdjusterSettings &settings, QWidget *parent) : QWidget(parent)
+{
+    _settings = settings;
+
+    _increment = new Ori::Widgets::ValueEdit;
+    _multiplier = new Ori::Widgets::ValueEdit;
+    Z::Gui::setValueFont(_increment);
+    Z::Gui::setValueFont(_multiplier);
+    _increment->setValue(_settings.increment);
+    _multiplier->setValue(_settings.multiplier);
+
+    _flagSetDefault = new QCheckBox(tr("Set as default values"));
+    _flagUseForAll = new QCheckBox(tr("Apply for all adjusters"));
+
+    auto layout = new QFormLayout(this);
+    layout->setMargin(0);
+    layout->addRow(tr("Increment"), _increment);
+    layout->addRow(tr("Multiplier"), _multiplier);
+    layout->addRow(_flagSetDefault);
+    layout->addRow(_flagUseForAll);
+}
+
+AdjusterSettings AdjusterSettingsWidget::settings() const
+{
+    auto settings = _settings;
+    if (_increment->ok()) settings.increment = _increment->value();
+    if (_multiplier->ok()) settings.multiplier = _multiplier->value();
+    return settings;
+}
+
+bool AdjusterSettingsWidget::shouldSetDefault() const { return _flagSetDefault->isChecked(); }
+bool AdjusterSettingsWidget::shouldUseForAll() const { return _flagUseForAll->isChecked(); }
+
+//------------------------------------------------------------------------------
 //                             AdjusterWidget
 //------------------------------------------------------------------------------
 
@@ -59,17 +96,18 @@ AdjusterWidget::AdjusterWidget(Schema* schema, Z::Parameter *param, QWidget *par
     _param = param;
     _param->addListener(this);
     _sourceValue = _param->value();
+    _currentValue = _param->value();
     _elem = Z::Utils::findElemByParam(_schema, _param);
 
     _settings.increment = Settings::instance().adjusterIncrement;
     _settings.multiplier = Settings::instance().adjusterMultiplier;
 
     _valueEditor = new Ori::Widgets::ValueEdit;
-    Z::Gui::setValueFont(_valueEditor);
     _valueEditor->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
     connect(_valueEditor, &Ori::Widgets::ValueEdit::focused, this, &AdjusterWidget::editorFocused);
     connect(_valueEditor, &Ori::Widgets::ValueEdit::keyPressed, this, &AdjusterWidget::editorKeyPressed);
     connect(_valueEditor, &Ori::Widgets::ValueEdit::valueEdited, this, &AdjusterWidget::valueEdited);
+    Z::Gui::setValueFont(_valueEditor);
 
     _labelLabel = Z::Gui::symbolLabel("");
     Z::Gui::setFontStyle(_labelLabel, false);
@@ -169,14 +207,6 @@ void AdjusterWidget::mousePressEvent(QMouseEvent *e)
     focus();
 }
 
-namespace {
-void setButtonEnabled(QToolButton* button, bool on)
-{
-    button->setEnabled(on);
-    // TODO: add more stying, default disabled state is not too notable
-}
-} // namespace
-
 void AdjusterWidget::populate()
 {
     auto value = _param->value();
@@ -196,10 +226,10 @@ void AdjusterWidget::populate()
         _labelLabel->setText(Z::Format::paramLabelHtml(_param));
 
     _isReadOnly = isCustomDrivenByFormula;
-    setButtonEnabled(_buttonMult, not _isReadOnly);
-    setButtonEnabled(_buttonPlus, not _isReadOnly);
-    setButtonEnabled(_buttonMinus, not _isReadOnly);
-    setButtonEnabled(_buttonDivide, not _isReadOnly);
+    _buttonMult->setEnabled(not _isReadOnly);
+    _buttonPlus->setEnabled(not _isReadOnly);
+    _buttonMinus->setEnabled(not _isReadOnly);
+    _buttonDivide->setEnabled(not _isReadOnly);
     _valueEditor->setReadOnly(_isReadOnly);
     Z::Gui::setFontStyle(_valueEditor, false, _isReadOnly);
 }
@@ -250,13 +280,16 @@ void AdjusterWidget::adjustDivide()
 void AdjusterWidget::restoreValue()
 {
     if (_isReadOnly) return;
+    if (_currentValue == _sourceValue) return;
     _currentValue = _sourceValue;
     changeValue();
 }
 
 void AdjusterWidget::changeValue()
 {
-    _changeValueTimer->stop();
+    if (_changeValueTimer)
+        _changeValueTimer->stop();
+
     auto res = _param->verify(_currentValue);
     if (res.isEmpty())
     {
@@ -478,43 +511,23 @@ void AdjustmentWindow::setupAdjuster()
     auto adjuster = focusedAdjuster();
     if (!adjuster) return;
 
-    auto settings = adjuster->settings();
-
-    auto increment = new Ori::Widgets::ValueEdit;
-    auto multiplier = new Ori::Widgets::ValueEdit;
-    Z::Gui::setValueFont(increment);
-    Z::Gui::setValueFont(multiplier);
-    increment->setValue(settings.increment);
-    multiplier->setValue(settings.multiplier);
-
-    auto flagSetDefault = new QCheckBox(tr("Set as default values"));
-    auto flagUseForAll = new QCheckBox(tr("Apply for all adjusters"));
-
-    QWidget w;
-    auto layout = new QFormLayout(&w);
-    layout->setMargin(0);
-    layout->addRow(tr("Increment"), increment);
-    layout->addRow(tr("Multiplier"), multiplier);
-    layout->addRow(flagSetDefault);
-    layout->addRow(flagUseForAll);
+    AdjusterSettingsWidget w(adjuster->settings());
 
     if (Ori::Dlg::Dialog(&w)
             .withTitle(tr("Adjuster Settings"))
             .withContentToButtonsSpacingFactor(2)
             .exec())
     {
-        if (increment->ok()) settings.increment = increment->value();
-        if (multiplier->ok()) settings.multiplier = multiplier->value();
-
+        auto settings = w.settings();
         adjuster->setSettings(settings);
 
-        if (flagSetDefault->isChecked())
+        if (w.shouldSetDefault())
         {
             Settings::instance().adjusterIncrement = settings.increment;
             Settings::instance().adjusterMultiplier = settings.multiplier;
             Settings::instance().save();
         }
-        if (flagUseForAll)
+        if (w.shouldUseForAll())
         {
             for (auto adj : _adjusters)
                 if (adj.widget != adjuster)

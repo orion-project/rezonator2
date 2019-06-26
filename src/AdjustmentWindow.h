@@ -7,6 +7,7 @@
 
 QT_BEGIN_NAMESPACE
 class QAction;
+class QCheckBox;
 class QLabel;
 class QTimer;
 QT_END_NAMESPACE
@@ -32,11 +33,32 @@ protected:
     void focusOutEvent(QFocusEvent *e) override;
 };
 
+
 struct AdjusterSettings
 {
     double increment = 1;
     double multiplier = 1.1;
 };
+
+
+class AdjusterSettingsWidget : public QWidget
+{
+    Q_OBJECT
+
+public:
+    AdjusterSettingsWidget(const AdjusterSettings& settings, QWidget *parent = nullptr);
+
+    AdjusterSettings settings() const;
+
+    bool shouldSetDefault() const;
+    bool shouldUseForAll() const;
+
+private:
+    AdjusterSettings _settings;
+    Ori::Widgets::ValueEdit *_increment, *_multiplier;
+    QCheckBox *_flagSetDefault, *_flagUseForAll;
+};
+
 
 class AdjusterWidget : public QWidget, public Z::ParameterListener
 {
