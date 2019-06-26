@@ -3,6 +3,7 @@
 #include "AppSettings.h"
 #include "HelpSystem.h"
 #include "widgets/Appearance.h"
+#include "widgets/ParamsTreeWidget.h"
 #include "funcs/FormatInfo.h"
 
 #include "helpers/OriDialogs.h"
@@ -458,7 +459,12 @@ void AdjustmentWindow::addAdjuster(Z::Parameter* param)
 
 void AdjustmentWindow::addAdjuster()
 {
-    // TODO
+    auto param = ParamsTreeWidget::selectParamDlg(_schema, tr("Parameter Selector"), tr("Select a parameter to adjust"));
+    if (param)
+    {
+        qDebug() << param->displayStr();
+        addAdjuster(param);
+    }
 }
 
 void AdjustmentWindow::deleteAdjuster(Z::Parameter* param)

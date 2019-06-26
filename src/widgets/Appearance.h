@@ -60,6 +60,7 @@ template <class T> void setFontStyle(T* target,
 }
 
 QLabel* symbolLabel(const QString& text);
+QLabel* headerlabel(const QString& text);
 
 /// Preferred fixed width of unit selector combo boxes
 inline int unitsSelectorWidth() { return 60; }

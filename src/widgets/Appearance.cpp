@@ -85,6 +85,16 @@ QLabel* symbolLabel(const QString& text)
     return label;
 }
 
+QLabel* headerlabel(const QString& text)
+{
+    auto label = new QLabel(text);
+    auto f = label->font();
+    f.setPointSize(f.pointSize() + 2);
+    f.setBold(true);
+    label->setFont(f);
+    return label;
+}
+
 void setFocusedBackground(QWidget *w, bool focused)
 {
     QPalette p;

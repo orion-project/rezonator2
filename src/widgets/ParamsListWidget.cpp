@@ -2,6 +2,7 @@
 
 #include "Appearance.h"
 #include "../CustomPrefs.h"
+
 #include "helpers/OriDialogs.h"
 
 Z::Parameter *ParamsListWidget::noneParam()

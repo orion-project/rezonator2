@@ -151,10 +151,7 @@ QString pumpParamsHtml(Z::PumpParams *pump)
 
 QString paramLabelHtml(Z::Parameter *param)
 {
-    auto paramLabel = param->label();
-    if (paramLabel.isEmpty())
-        paramLabel = param->alias();
-    return QStringLiteral("<b>%2</b>").arg(paramLabel);
+    return QStringLiteral("<b>%2</b>").arg(param->displayLabel());
 }
 
 QString customParamLabelWithFormulaHtml(Z::Parameter *param, Schema* schema)
