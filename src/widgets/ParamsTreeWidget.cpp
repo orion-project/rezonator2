@@ -2,10 +2,12 @@
 
 #include "Appearance.h"
 #include "ElementImagesProvider.h"
+#include "RichTextItemDelegate.h"
 #include "../CustomPrefs.h"
 #include "../core/Schema.h"
 #include "../core/ElementFilter.h"
 #include "../core/Utils.h"
+#include "../funcs/FormatInfo.h"
 
 #include "helpers/OriDialogs.h"
 
@@ -17,8 +19,8 @@
 namespace  {
 enum {
     COL_TITLE,
-    COL_VALUE,
-    COL_DRIVER,
+//    COL_VALUE,
+//    COL_DRIVER,
     COL_DESCR,
 
     COL_COUNT
@@ -82,6 +84,7 @@ ParamsTreeWidget::ParamsTreeWidget(Options opts, QWidget *parent) : QWidget(pare
     _tree->setColumnCount(COL_COUNT);
     _tree->setHeaderHidden(true);
     _tree->setUniformRowHeights(true);
+    _tree->setItemDelegate(new RichTextItemDelegate());
     connect(_tree, &QTreeWidget::itemDoubleClicked, this, &ParamsTreeWidget::itemDoubleClicked);
     connect(_tree, &QTreeWidget::currentItemChanged, this, &ParamsTreeWidget::currentItemChanged);
 
@@ -92,8 +95,8 @@ ParamsTreeWidget::ParamsTreeWidget(Options opts, QWidget *parent) : QWidget(pare
     populate();
     _tree->expandAll();
     _tree->resizeColumnToContents(COL_TITLE);
-    _tree->resizeColumnToContents(COL_VALUE);
-    _tree->resizeColumnToContents(COL_DRIVER);
+//    _tree->resizeColumnToContents(COL_VALUE);
+//    _tree->resizeColumnToContents(COL_DRIVER);
 }
 
 void ParamsTreeWidget::populate()
@@ -131,37 +134,43 @@ void ParamsTreeWidget::addRootItem(const QString& title, const QString &iconPath
     _tree->addTopLevelItem(root);
 }
 
+struct ParamInfo
+{
+    Schema* schema;
+    Z::Parameter* param;
+    bool isElement;
+};
+
 QTreeWidgetItem* ParamsTreeWidget::addParamItem(Z::Parameter* param, bool isElement)
 {
-    QString driver = makeDriverStr(_opts.schema, param, isElement);
+    QString labelStr;
+    QString tooltipStr;
+    bool isReadOnly = false;
 
-    auto boldFont = _tree->font();
-    boldFont.setBold(true);
+    if (isElement)
+    {
+        isReadOnly = _opts.schema->paramLinks()->byTarget(param);
+        labelStr = Z::Format::elemParamLabel(param, _opts.schema);
+        if (isReadOnly)
+            tooltipStr = tr("Parameter is linked to custom parameter");
+    }
+    else
+    {
+        isReadOnly = _opts.schema->formulas()->items().contains(param);
+        labelStr = Z::Format::customParamLabel(param, _opts.schema);
+        if (isReadOnly)
+            tooltipStr = tr("Parameter is driven by formula");
+    }
+
+    auto valueStr = param->value().displayStr();
+    auto valueStr1 = isReadOnly
+        ? QStringLiteral("<span style='font-weight:normal; font-style:italic'> = %1</span>").arg(valueStr)
+        : QStringLiteral("<span style='font-weight:normal'> = %1</span>").arg(valueStr);
 
     auto item = new QTreeWidgetItem;
-    item->setText(COL_TITLE, param->displayLabel());
-    item->setFont(COL_TITLE, boldFont);
-    item->setData(COL_TITLE, Qt::UserRole, ptr2var(param));
-    item->setText(COL_VALUE, param->value().displayStr());
-    item->setText(COL_DRIVER, driver);
-    if (not driver.isEmpty())
-    {
-        auto italicFont = _tree->font();
-        italicFont.setItalic(true);
-        item->setFont(COL_VALUE, italicFont);
-
-        if (isElement)
-        {
-            item->setToolTip(COL_DRIVER, tr("Parameter is linked to custom parameter"));
-            item->setForeground(COL_DRIVER, Z::Gui::globalParamColor());
-            item->setFont(COL_DRIVER, boldFont);
-        }
-        else
-        {
-            item->setToolTip(COL_DRIVER, tr("Parameter is driven by formula"));
-            item->setFont(COL_DRIVER, italicFont);
-        }
-    }
+    //item->setFont(COL_TITLE, Z::Gui::getSymbolFontSm());
+    item->setText(COL_TITLE, labelStr + valueStr1);
+    item->setToolTip(COL_TITLE, tooltipStr);
     auto descr = isElement ? param->name() : param->description();
     item->setText(COL_DESCR, descr);
     item->setToolTip(COL_DESCR, descr);

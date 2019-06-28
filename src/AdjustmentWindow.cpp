@@ -223,7 +223,7 @@ void AdjusterWidget::populate()
         _isReadOnly = _schema->paramLinks()->byTarget(_param);
         _labelLabel->setText(_elem->displayLabel() +
                              QStringLiteral("<span style='font-weight:normal'>, </span>") +
-                             Z::Format::elemParamLabel(_schema, _param));
+                             Z::Format::elemParamLabel(_param, _schema));
     }
     else
     {

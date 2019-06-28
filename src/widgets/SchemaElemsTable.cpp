@@ -150,7 +150,7 @@ void SchemaElemsTable::createRow(Element *elem, int row)
 void SchemaElemsTable::populateRow(Element *elem, int row)
 {
     item(row, COL_LABEL)->setText(" " % elem->label() % " ");
-    item(row, COL_PARAMS)->setText(Z::Format::elemParamsWithValues(schema(), elem));
+    item(row, COL_PARAMS)->setText(Z::Format::elemParamsWithValues(elem, schema()));
     item(row, COL_TITLE)->setText("  " % elem->title());
     const QBrush& color = elem->disabled()? palette().shadow() : palette().text();
     item(row, COL_LABEL)->setForeground(color);

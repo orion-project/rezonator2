@@ -28,12 +28,12 @@ QString roundTrip(const QList<Element *> &elems, bool hyperlinks = false);
 
 QString linkViewMatrix(Element *elem);
 
-QString elemParamLabel(Schema *schema, Z::Parameter* param, bool showLinksToGlobals = true);
-QString elemParamLabelAndValue(Schema *schema, Z::Parameter* param, bool showLinksToGlobals = true);
-QString elemParamsWithValues(Schema *schema, Element *elem, bool showLinksToGlobals = true);
+QString elemParamLabel(Z::Parameter* param, Schema *schema, bool showLinksToGlobals = true);
+QString elemParamLabelAndValue(Z::Parameter* param, Schema *schema, bool showLinksToGlobals = true);
+QString elemParamsWithValues(Element *elem, Schema *schema, bool showLinksToGlobals = true);
 QString pumpParamsWithValues(Z::PumpParams *pump);
 
-QString nameStyle();
+QString nameStyle(bool isSmall = false);
 QString valueStyle();
 
 template <class TParam>

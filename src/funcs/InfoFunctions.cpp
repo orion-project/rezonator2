@@ -187,7 +187,7 @@ QString InfoFuncSummary::calculate()
             if (elem->hasParams())
             {
                 elemStrs << ":";
-                elemStrs << Z::Format::elemParamsWithValues(schema(), elem, false);
+                elemStrs << Z::Format::elemParamsWithValues(elem, schema(), false);
             }
             if (!elem->title().isEmpty())
                 elemStrs << QStringLiteral("<i>(%1)</i>").arg(elem->title());

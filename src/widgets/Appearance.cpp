@@ -9,6 +9,13 @@
 namespace Z {
 namespace Gui {
 
+QFont getSymbolFont()
+{
+    QFont f = QApplication::font();
+    adjustSymbolFont(f);
+    return f;
+}
+
 QFont getSymbolFontSm()
 {
     QFont f = QApplication::font();

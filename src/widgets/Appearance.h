@@ -12,6 +12,7 @@ QT_END_NAMESPACE
 namespace Z {
 namespace Gui {
 
+QFont getSymbolFont();
 QFont getSymbolFontSm();
 QFont getValueFont();
 
