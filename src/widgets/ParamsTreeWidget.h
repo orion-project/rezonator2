@@ -37,6 +37,7 @@ public:
 
 signals:
     void paramDoubleClicked(Z::Parameter* param);
+    void paramSelected(Z::Parameter* param);
 
 private:
     Options _opts;
@@ -46,6 +47,7 @@ private:
     void addRootItem(const QString& title, const QString& iconPath, const Z::Parameters& params, bool isElement);
     QTreeWidgetItem *addParamItem(Z::Parameter* param, bool isElement);
     void itemDoubleClicked(QTreeWidgetItem *item, int column);
+    void currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 };
 
 #endif // PARAMS_TREE_WIDGET_H

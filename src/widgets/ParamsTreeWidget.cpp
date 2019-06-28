@@ -9,6 +9,7 @@
 
 #include "helpers/OriDialogs.h"
 
+#include <QAbstractButton>
 #include <QTreeWidget>
 #include <QVBoxLayout>
 #include <QLabel>
@@ -59,7 +60,13 @@ Z::Parameter* ParamsTreeWidget::selectParamDlg(Options opts)
     dlg.withTitle(opts.dialogTitle)
        .withStretchedContent()
        .withInitialSize(CustomPrefs::recentSize("select_param_tree_dlg_size"))
-       .withOkSignal(SIGNAL(paramDoubleClicked(Z::Parameter*)));
+       .withOkSignal(SIGNAL(paramDoubleClicked(Z::Parameter*)))
+       .withOnDlgReady([&](){
+            if (!dlg.okButton()) return;
+            connect(&paramsTree, &ParamsTreeWidget::paramSelected, [&](Z::Parameter* param){
+                dlg.okButton()->setEnabled(param);
+            });
+        });
     if (dlg.exec())
     {
         CustomPrefs::setRecentSize("select_param_tree_dlg_size", dlg.size());
@@ -76,6 +83,7 @@ ParamsTreeWidget::ParamsTreeWidget(Options opts, QWidget *parent) : QWidget(pare
     _tree->setHeaderHidden(true);
     _tree->setUniformRowHeights(true);
     connect(_tree, &QTreeWidget::itemDoubleClicked, this, &ParamsTreeWidget::itemDoubleClicked);
+    connect(_tree, &QTreeWidget::currentItemChanged, this, &ParamsTreeWidget::currentItemChanged);
 
     auto layout = new QVBoxLayout(this);
     layout->setMargin(0);
@@ -171,3 +179,10 @@ void ParamsTreeWidget::itemDoubleClicked(QTreeWidgetItem *item, int column)
     auto param = paramOfItem(item);
     if (param) emit paramDoubleClicked(param);
 }
+
+void ParamsTreeWidget::currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+{
+    Q_UNUSED(previous);
+    emit paramSelected(paramOfItem(current));
+}
+
