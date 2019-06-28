@@ -106,6 +106,13 @@ QString nameStyle(bool isSmall)
     return isSmall ? styleSm : style;
 }
 
+QString formulaStyle(bool isSmall)
+{
+    static QString style(fontToHtmlStyles(Z::Gui::getFormulaFont()));
+    static QString styleSm(fontToHtmlStyles(Z::Gui::getFormulaFontSm()));
+    return isSmall ? styleSm : style;
+}
+
 QString valueStyle()
 {
     static QString style(fontToHtmlStyles(Z::Gui::getValueFont()));
@@ -185,11 +192,91 @@ QString customParamLabel(Z::Parameter *param, Schema* schema, bool showFormula)
         if (formula and not formula->deps().isEmpty())
             formulaDescr = QStringLiteral(" <span style='font-weight:normal; font-style:italic'>= %1</span>").arg(formula->displayStr());
     }
-    return QStringLiteral("<span style='color:%1'>%2</span>%3")
+    return QStringLiteral("<span style='color:%1'><b>%2</b></span>%3")
         .arg(Z::Gui::globalParamColorHtml(),
              param->label(),
              formulaDescr);
 }
+
+QString FormatParam::format(Z::Parameter* param)
+{
+    QStringList parts;
+
+    // Base font is value font
+    parts << QStringLiteral("<span style='");
+    parts << valueStyle();
+    parts << QStringLiteral("'>");
+
+    parts << QStringLiteral("<span style='");
+    parts << nameStyle(smallName);
+
+    if (!isElement)
+    {
+        parts << "; color:";
+        parts << Z::Gui::globalParamColorHtml();
+    }
+
+    parts << QStringLiteral("'>");
+    parts << param->displayLabel();
+    parts << QStringLiteral("</span>");
+
+    isReadOnly = false;
+
+    if (includeDriver)
+    {
+        QString driverStr;
+
+        if (isElement)
+        {
+            auto link = schema->paramLinks()->byTarget(param);
+            isReadOnly = link;
+            if (link)
+                driverStr = link->source()->displayLabel();
+        }
+        else
+        {
+            auto formula = schema->formulas()->get(param);
+            isReadOnly = formula;
+            if (formula and not formula->deps().isEmpty())
+                driverStr = formula->displayStr();
+        }
+
+        if (!driverStr.isEmpty())
+        {
+            parts << QStringLiteral(" = <span style='");
+            if (isElement)
+            {
+                parts << nameStyle(smallName);
+                parts << "; color:";
+                parts << Z::Gui::globalParamColorHtml();
+            }
+            else
+            {
+                parts << formulaStyle(smallName);
+            }
+            parts << QStringLiteral("'>");
+            parts << driverStr;
+            parts << QStringLiteral("</span>");
+        }
+    }
+
+    if (includeValue)
+    {
+        parts << QStringLiteral(" = ");
+
+        if (isReadOnly)
+            parts << QStringLiteral("<i>");
+
+        parts << param->value().displayStr();
+
+        if (isReadOnly)
+            parts << QStringLiteral("</i>");
+    }
+
+    parts << QStringLiteral("</span>");
+    return parts.join('\n');
+}
+
 
 } // namespace Format
 } // namespace Z

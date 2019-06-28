@@ -19,8 +19,6 @@
 namespace  {
 enum {
     COL_TITLE,
-//    COL_VALUE,
-//    COL_DRIVER,
     COL_DESCR,
 
     COL_COUNT
@@ -29,20 +27,6 @@ enum {
 Z::Parameter* paramOfItem(QTreeWidgetItem *item)
 {
     return item ? var2ptr<Z::Parameter*>(item->data(COL_TITLE, Qt::UserRole)) : nullptr;
-}
-
-QString makeDriverStr(Schema* schema, Z::Parameter* param, bool isElement)
-{
-    if (isElement)
-    {
-        auto link = schema->paramLinks()->byTarget(param);
-        if (link) return link->source()->displayLabel();
-    }
-
-    auto formula = schema->formulas()->get(param);
-    if (formula) return formula->displayStr();
-
-    return QString();
 }
 
 }
@@ -95,8 +79,6 @@ ParamsTreeWidget::ParamsTreeWidget(Options opts, QWidget *parent) : QWidget(pare
     populate();
     _tree->expandAll();
     _tree->resizeColumnToContents(COL_TITLE);
-//    _tree->resizeColumnToContents(COL_VALUE);
-//    _tree->resizeColumnToContents(COL_DRIVER);
 }
 
 void ParamsTreeWidget::populate()
@@ -143,37 +125,18 @@ struct ParamInfo
 
 QTreeWidgetItem* ParamsTreeWidget::addParamItem(Z::Parameter* param, bool isElement)
 {
-    QString labelStr;
-    QString tooltipStr;
-    bool isReadOnly = false;
-
-    if (isElement)
-    {
-        isReadOnly = _opts.schema->paramLinks()->byTarget(param);
-        labelStr = Z::Format::elemParamLabel(param, _opts.schema);
-        if (isReadOnly)
-            tooltipStr = tr("Parameter is linked to custom parameter");
-    }
-    else
-    {
-        isReadOnly = _opts.schema->formulas()->items().contains(param);
-        labelStr = Z::Format::customParamLabel(param, _opts.schema);
-        if (isReadOnly)
-            tooltipStr = tr("Parameter is driven by formula");
-    }
-
-    auto valueStr = param->value().displayStr();
-    auto valueStr1 = isReadOnly
-        ? QStringLiteral("<span style='font-weight:normal; font-style:italic'> = %1</span>").arg(valueStr)
-        : QStringLiteral("<span style='font-weight:normal'> = %1</span>").arg(valueStr);
+    Z::Format::FormatParam f;
+    f.includeValue = true;
+    f.smallName = true;
+    f.isElement = isElement;
+    f.schema = _opts.schema;
 
     auto item = new QTreeWidgetItem;
-    //item->setFont(COL_TITLE, Z::Gui::getSymbolFontSm());
-    item->setText(COL_TITLE, labelStr + valueStr1);
-    item->setToolTip(COL_TITLE, tooltipStr);
+    item->setText(COL_TITLE, f.format(param));
     auto descr = isElement ? param->name() : param->description();
     item->setText(COL_DESCR, descr);
     item->setToolTip(COL_DESCR, descr);
+    item->setData(COL_TITLE, Qt::UserRole, ptr2var(param));
     return item;
 }
 

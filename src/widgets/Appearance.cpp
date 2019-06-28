@@ -23,6 +23,24 @@ QFont getSymbolFontSm()
     return f;
 }
 
+QFont getFormulaFont()
+{
+    QFont f = QApplication::font();
+    adjustSymbolFont(f);
+    f.setBold(false);
+    f.setItalic(true);
+    return f;
+}
+
+QFont getFormulaFontSm()
+{
+    QFont f = QApplication::font();
+    adjustSymbolFontSm(f);
+    f.setBold(false);
+    f.setItalic(true);
+    return f;
+}
+
 QFont getValueFont()
 {
     QFont f = QApplication::font();

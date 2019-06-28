@@ -14,6 +14,8 @@ namespace Gui {
 
 QFont getSymbolFont();
 QFont getSymbolFontSm();
+QFont getFormulaFont();
+QFont getFormulaFontSm();
 QFont getValueFont();
 
 void adjustSymbolFont(QFont& f);

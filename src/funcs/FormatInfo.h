@@ -34,6 +34,7 @@ QString elemParamsWithValues(Element *elem, Schema *schema, bool showLinksToGlob
 QString pumpParamsWithValues(Z::PumpParams *pump);
 
 QString nameStyle(bool isSmall = false);
+QString formulaStyle(bool isSmall = false);
 QString valueStyle();
 
 template <class TParam>
@@ -46,6 +47,18 @@ QString paramLabelAndValue(TParam *param)
 
 QString paramLabel(Z::Parameter *param);
 QString customParamLabel(Z::Parameter *param, Schema* schema, bool showFormula = true);
+
+struct FormatParam
+{
+    Schema* schema;
+    bool includeValue = false;
+    bool includeDriver = true;
+    bool smallName = false;
+    bool isElement = true;
+    bool isReadOnly = false;
+
+    QString format(Z::Parameter* param);
+};
 
 } // namespace Format
 } // namespace Z

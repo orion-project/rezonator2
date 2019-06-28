@@ -218,18 +218,17 @@ void AdjusterWidget::populate()
         _labelUnit->setText(QString("(%1)").arg(unit->name()));
     else _labelUnit->clear();
 
+    Z::Format::FormatParam f;
+    f.schema = _schema;
+    f.isElement = _elem;
+    f.smallName = _elem;
+
+    auto labelStr = f.format(_param);
     if (_elem)
-    {
-        _isReadOnly = _schema->paramLinks()->byTarget(_param);
-        _labelLabel->setText(_elem->displayLabel() +
-                             QStringLiteral("<span style='font-weight:normal'>, </span>") +
-                             Z::Format::elemParamLabel(_param, _schema));
-    }
-    else
-    {
-        _isReadOnly = _schema->formulas()->items().contains(_param);
-        _labelLabel->setText(Z::Format::customParamLabel(_param, _schema));
-    }
+        labelStr = QStringLiteral("%1<span style='font-weight:normal'>, </span>%2").arg(_elem->displayLabel(), labelStr);
+
+    _labelLabel->setText(labelStr);
+    _isReadOnly = f.isReadOnly;
 
     _buttonMult->setEnabled(not _isReadOnly);
     _buttonPlus->setEnabled(not _isReadOnly);
