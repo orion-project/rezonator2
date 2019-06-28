@@ -111,61 +111,80 @@ QString valueStyle()
     return style;
 }
 
-QString elemParamsHtml(Schema *schema, Element *elem, bool showLinksToGlobals)
+QString elemParamLabel(Schema *schema, Z::Parameter* param, bool showLinksToGlobals)
+{
+    auto labelStr = QStringLiteral("<span style='%1'>%2</span>")
+                    .arg(nameStyle(), param->displayLabel());
+    if (!showLinksToGlobals)
+        return labelStr;
+
+    auto link = schema->paramLinks()->byTarget(param);
+    if (!link)
+        return labelStr;
+
+    return QStringLiteral("%1 = <span style='%2; color:%3'>%4</span>")
+                .arg(labelStr,
+                     nameStyle(),
+                     Z::Gui::globalParamColorHtml(),
+                     link->source()->displayLabel());
+}
+
+QString elemParamLabelAndValue(Schema *schema, Z::Parameter* param, bool showLinksToGlobals)
+{
+    if (not showLinksToGlobals)
+        return paramLabelAndValue(param);
+
+    QString valueStr;
+    auto link = schema->paramLinks()->byTarget(param);
+    if (link)
+        valueStr = QStringLiteral("<span style='%1; color:%2'>%3</span> = <span style='%4'><i>%5</i></span>")
+                    .arg(nameStyle(),
+                         Z::Gui::globalParamColorHtml(),
+                         link->source()->displayLabel(),
+                         valueStyle(),
+                         param->value().displayStr());
+    else
+        valueStr = QStringLiteral("<span style='%1'>%2</span>")
+                    .arg(valueStyle(), param->value().displayStr());
+    return QStringLiteral("<span style='%1'>%2</span> = %3")
+                    .arg(nameStyle(), param->displayLabel(), valueStr);
+}
+
+QString elemParamsWithValues(Schema *schema, Element *elem, bool showLinksToGlobals)
 {
     QStringList paramsInfo;
     for (Z::Parameter *param : elem->params())
     {
         if (!Z::Utils::defaultParamFilter()->check(param)) continue;
 
-        if (showLinksToGlobals)
-        {
-            QString valueStr;
-            auto link = schema->paramLinks()->byTarget(param);
-            if (link)
-                valueStr = QStringLiteral("<span style='%1; color:%2'>%3</span> = <span style='%4'><i>%5</i></span>")
-                            .arg(nameStyle(),
-                                 Z::Gui::globalParamColorHtml(),
-                                 link->source()->displayLabel(),
-                                 valueStyle(),
-                                 param->value().displayStr());
-            else
-                valueStr = QStringLiteral("<span style='%1'>%2</span>")
-                            .arg(valueStyle(), param->value().displayStr());
-            paramsInfo << QStringLiteral("<span style='%1'>%2</span> = %3")
-                            .arg(nameStyle(), param->displayLabel(), valueStr);
-        }
-        else
-            paramsInfo << paramHtml(param);
+        paramsInfo << elemParamLabelAndValue(schema, param, showLinksToGlobals);
     }
     return paramsInfo.join(", ");
 }
 
-QString pumpParamsHtml(Z::PumpParams *pump)
+QString pumpParamsWithValues(Z::PumpParams *pump)
 {
     QStringList paramsInfo;
     for (Z::ParameterTS *param : *pump->params())
-        paramsInfo << paramHtml(param);
+        paramsInfo << paramLabelAndValue(param);
     return paramsInfo.join(", ");
 }
 
-QString paramLabelHtml(Z::Parameter *param)
+QString paramLabel(Z::Parameter *param)
 {
     return QStringLiteral("<b>%2</b>").arg(param->displayLabel());
 }
 
-QString customParamLabelWithFormulaHtml(Z::Parameter *param, Schema* schema)
+QString customParamLabel(Z::Parameter *param, Schema* schema, bool showFormula)
 {
     QString formulaDescr;
-    auto formula = schema->formulas()->get(param);
-    if (formula && !formula->deps().isEmpty())
+    if (showFormula)
     {
-        QStringList params;
-        for (auto dep : formula->deps())
-            params << dep->label();
-        formulaDescr = QString(" <i>= f(%1)</i>").arg(params.join(", "));
+        auto formula = schema->formulas()->get(param);
+        if (formula and not formula->deps().isEmpty())
+            formulaDescr = QStringLiteral(" <span style='font-weight:normal; font-style:italic'>= %1</span>").arg(formula->displayStr());
     }
-    return QStringLiteral("<b><span style='color:%1'>%2</span></b>%3")
+    return QStringLiteral("<span style='color:%1; font-weight:bold'>%2</span>%3")
         .arg(Z::Gui::globalParamColorHtml(), param->label(), formulaDescr);
 }
 

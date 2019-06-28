@@ -138,6 +138,14 @@ void Formula::assignDeps(const Formula *formula)
         addDep(dep);
 }
 
+QString Formula::displayStr() const
+{
+    QStringList params;
+    for (auto dep : _deps)
+        params << dep->displayLabel();
+    return QStringLiteral("f(%1)").arg(params.join(QStringLiteral(", ")));
+}
+
 //------------------------------------------------------------------------------
 
 void Formulas::put(Formula* f)

@@ -187,7 +187,7 @@ QString InfoFuncSummary::calculate()
             if (elem->hasParams())
             {
                 elemStrs << ":";
-                elemStrs << Z::Format::elemParamsHtml(schema(), elem, false);
+                elemStrs << Z::Format::elemParamsWithValues(schema(), elem, false);
             }
             if (!elem->title().isEmpty())
                 elemStrs << QStringLiteral("<i>(%1)</i>").arg(elem->title());
@@ -196,7 +196,7 @@ QString InfoFuncSummary::calculate()
 
     if (!strs.isEmpty())
         strs << "";
-    strs << Z::Format::paramHtml(&schema()->wavelength());
+    strs << Z::Format::paramLabelAndValue(&schema()->wavelength());
 
     if (schema()->isSP())
     {
@@ -207,7 +207,7 @@ QString InfoFuncSummary::calculate()
             strs << qApp->translate("Func", "<b>Input beam:</b>");
             auto pumpMode = Z::Pump::findByModeName(pump->modeName());
             if (pumpMode) strs << pumpMode->description();
-            strs << Z::Format::pumpParamsHtml(pump);
+            strs << Z::Format::pumpParamsWithValues(pump);
         }
     }
 

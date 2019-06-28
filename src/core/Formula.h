@@ -31,6 +31,8 @@ public:
 
     void parameterChanged(ParameterBase*) override { calculate(); }
 
+    QString displayStr() const;
+
 private:
     Parameter* _target;
     Parameters _deps;

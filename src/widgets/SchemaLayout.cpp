@@ -98,7 +98,7 @@ void ElementLayout::makeElemToolTip()
                .arg(schema->indexOf(_element)+1)
                .arg(_element->label())
                .arg(_element->typeName())
-               .arg(Z::Format::elemParamsHtml(schema, _element))
+               .arg(Z::Format::elemParamsWithValues(schema, _element))
                );
 }
 

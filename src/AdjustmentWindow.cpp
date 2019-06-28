@@ -111,7 +111,6 @@ AdjusterWidget::AdjusterWidget(Schema* schema, Z::Parameter *param, QWidget *par
     Z::Gui::setValueFont(_valueEditor);
 
     _labelLabel = Z::Gui::symbolLabel("");
-    Z::Gui::setFontStyle(_labelLabel, false);
     _labelUnit = new QLabel;
 
     _buttonPlus = new AdjusterButton(":/toolbar10/plus");
@@ -219,14 +218,19 @@ void AdjusterWidget::populate()
         _labelUnit->setText(QString("(%1)").arg(unit->name()));
     else _labelUnit->clear();
 
-    bool isCustomDrivenByFormula = _schema->formulas()->items().contains(_param);
-
-    if (isCustomDrivenByFormula)
-        _labelLabel->setText(Z::Format::customParamLabelWithFormulaHtml(_param, _schema));
+    if (_elem)
+    {
+        _isReadOnly = _schema->paramLinks()->byTarget(_param);
+        _labelLabel->setText(_elem->displayLabel() +
+                             QStringLiteral("<span style='font-weight:normal'>, </span>") +
+                             Z::Format::elemParamLabel(_schema, _param));
+    }
     else
-        _labelLabel->setText(Z::Format::paramLabelHtml(_param));
+    {
+        _isReadOnly = _schema->formulas()->items().contains(_param);
+        _labelLabel->setText(Z::Format::customParamLabel(_param, _schema));
+    }
 
-    _isReadOnly = isCustomDrivenByFormula;
     _buttonMult->setEnabled(not _isReadOnly);
     _buttonPlus->setEnabled(not _isReadOnly);
     _buttonMinus->setEnabled(not _isReadOnly);
@@ -459,12 +463,18 @@ void AdjustmentWindow::addAdjuster(Z::Parameter* param)
 
 void AdjustmentWindow::addAdjuster()
 {
-    auto param = ParamsTreeWidget::selectParamDlg(_schema, tr("Parameter Selector"), tr("Select a parameter to adjust"));
+    Z::Parameters existedParams;
+    for (auto adj : _adjusters)
+        existedParams << adj.param;
+
+    ParamsTreeWidget::Options opts;
+    opts.schema = _schema;
+    opts.dialogTitle = tr("Parameter Selector");
+    opts.dialogPrompt = tr("Select a parameter to adjust");
+    opts.ignoreList = existedParams;
+    auto param = ParamsTreeWidget::selectParamDlg(opts);
     if (param)
-    {
-        qDebug() << param->displayStr();
         addAdjuster(param);
-    }
 }
 
 void AdjustmentWindow::deleteAdjuster(Z::Parameter* param)

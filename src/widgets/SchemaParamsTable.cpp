@@ -111,7 +111,7 @@ void SchemaParamsTable::createRow(int row)
 void SchemaParamsTable::populateRow(Z::Parameter *param, int row)
 {
     // Parameter alias and formula
-    item(row, COL_ALIAS)->setText(Z::Format::customParamLabelWithFormulaHtml(param, schema()));
+    item(row, COL_ALIAS)->setText(Z::Format::customParamLabel(param, schema()));
 
     // Parameter icon
     auto it = item(row, COL_IMAGE);

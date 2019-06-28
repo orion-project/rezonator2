@@ -24,11 +24,14 @@ public:
         ElementFilter *elemFilter = nullptr;
         Z::ParameterFilter* paramFilter = nullptr;
         bool showGlobalParams = true;
+        QString dialogTitle;
+        QString dialogPrompt;
+        Z::Parameters ignoreList;
     };
 
     explicit ParamsTreeWidget(Options opts, QWidget *parent = nullptr);
 
-    static Z::Parameter* selectParamDlg(Schema* schema, const QString& title, const QString& prompt = QString());
+    static Z::Parameter* selectParamDlg(Options opts);
 
     Z::Parameter* selectedParam() const;
 
@@ -40,10 +43,9 @@ private:
     QTreeWidget* _tree;
 
     void populate();
-    void addRootItem(const QString& title, const QString& iconPath, const Z::Parameters& params);
-    void addParamItem(QTreeWidgetItem* root, Z::Parameter* param);
+    void addRootItem(const QString& title, const QString& iconPath, const Z::Parameters& params, bool isElement);
+    QTreeWidgetItem *addParamItem(Z::Parameter* param, bool isElement);
     void itemDoubleClicked(QTreeWidgetItem *item, int column);
-
 };
 
 #endif // PARAMS_TREE_WIDGET_H
