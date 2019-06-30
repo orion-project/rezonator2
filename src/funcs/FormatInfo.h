@@ -33,7 +33,7 @@ QString elemParamLabelAndValue(Z::Parameter* param, Schema *schema, bool showLin
 QString elemParamsWithValues(Element *elem, Schema *schema, bool showLinksToGlobals = true);
 QString pumpParamsWithValues(Z::PumpParams *pump);
 
-QString nameStyle(bool isSmall = false);
+QString paramLabelStyle(bool isSmall = false);
 QString formulaStyle(bool isSmall = false);
 QString valueStyle();
 
@@ -42,7 +42,7 @@ QString paramLabelAndValue(TParam *param)
 {
     return QStringLiteral(
         "<nobr><span style='%1'>%2</span><span style='%3'> = %4</span></nobr>")
-        .arg(nameStyle(), param->displayLabel(), valueStyle(), param->value().displayStr());
+        .arg(paramLabelStyle(), param->displayLabel(), valueStyle(), param->value().displayStr());
 }
 
 QString paramLabel(Z::Parameter *param);

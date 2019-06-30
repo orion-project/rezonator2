@@ -99,17 +99,17 @@ QString fontToHtmlStyles(const QFont& font)
     return QStringLiteral("font:") + styles.join(' ');
 }
 
-QString nameStyle(bool isSmall)
+QString paramLabelStyle(bool isSmall)
 {
-    static QString style(fontToHtmlStyles(Z::Gui::getSymbolFont()));
-    static QString styleSm(fontToHtmlStyles(Z::Gui::getSymbolFontSm()));
+    static QString style(fontToHtmlStyles(Z::Gui::getParamLabelFont(Z::Gui::FontSize_Normal)));
+    static QString styleSm(fontToHtmlStyles(Z::Gui::getParamLabelFont(Z::Gui::FontSize_Small)));
     return isSmall ? styleSm : style;
 }
 
 QString formulaStyle(bool isSmall)
 {
-    static QString style(fontToHtmlStyles(Z::Gui::getFormulaFont()));
-    static QString styleSm(fontToHtmlStyles(Z::Gui::getFormulaFontSm()));
+    static QString style(fontToHtmlStyles(Z::Gui::getFormulaFont(Z::Gui::FontSize_Normal)));
+    static QString styleSm(fontToHtmlStyles(Z::Gui::getFormulaFont(Z::Gui::FontSize_Small)));
     return isSmall ? styleSm : style;
 }
 
@@ -122,7 +122,7 @@ QString valueStyle()
 QString elemParamLabel(Z::Parameter* param, Schema *schema, bool showLinksToGlobals)
 {
     auto labelStr = QStringLiteral("<span style='%1'>%2</span>")
-                    .arg(nameStyle(), param->displayLabel());
+                    .arg(paramLabelStyle(), param->displayLabel());
     if (!showLinksToGlobals)
         return labelStr;
 
@@ -132,7 +132,7 @@ QString elemParamLabel(Z::Parameter* param, Schema *schema, bool showLinksToGlob
 
     return QStringLiteral("%1 = <span style='%2; color:%3'>%4</span>")
                 .arg(labelStr,
-                     nameStyle(),
+                     paramLabelStyle(),
                      Z::Gui::globalParamColorHtml(),
                      link->source()->displayLabel());
 }
@@ -146,7 +146,7 @@ QString elemParamLabelAndValue(Z::Parameter* param, Schema *schema, bool showLin
     auto link = schema->paramLinks()->byTarget(param);
     if (link)
         valueStr = QStringLiteral("<span style='%1; color:%2'>%3</span> = <span style='%4'><i>%5</i></span>")
-                    .arg(nameStyle(),
+                    .arg(paramLabelStyle(),
                          Z::Gui::globalParamColorHtml(),
                          link->source()->displayLabel(),
                          valueStyle(),
@@ -155,7 +155,7 @@ QString elemParamLabelAndValue(Z::Parameter* param, Schema *schema, bool showLin
         valueStr = QStringLiteral("<span style='%1'>%2</span>")
                     .arg(valueStyle(), param->value().displayStr());
     return QStringLiteral("<span style='%1'>%2</span> = %3")
-                    .arg(nameStyle(), param->displayLabel(), valueStr);
+                    .arg(paramLabelStyle(), param->displayLabel(), valueStr);
 }
 
 QString elemParamsWithValues(Element *elem, Schema *schema, bool showLinksToGlobals)
@@ -208,7 +208,7 @@ QString FormatParam::format(Z::Parameter* param)
     parts << QStringLiteral("'>");
 
     parts << QStringLiteral("<span style='");
-    parts << nameStyle(smallName);
+    parts << paramLabelStyle(smallName);
 
     if (!isElement)
     {
@@ -246,7 +246,7 @@ QString FormatParam::format(Z::Parameter* param)
             parts << QStringLiteral(" = <span style='");
             if (isElement)
             {
-                parts << nameStyle(smallName);
+                parts << paramLabelStyle(smallName);
                 parts << "; color:";
                 parts << Z::Gui::globalParamColorHtml();
             }

@@ -12,28 +12,21 @@ QT_END_NAMESPACE
 namespace Z {
 namespace Gui {
 
-QFont getSymbolFont();
-QFont getSymbolFontSm();
-QFont getFormulaFont();
-QFont getFormulaFontSm();
-QFont getValueFont();
+enum FontSize { FontSize_Normal, FontSize_Small };
 
-void adjustSymbolFont(QFont& f);
-void adjustSymbolFontSm(QFont& f);
+void adjustSymbolFont(QFont& f, FontSize size = FontSize_Normal);
 void adjustValueFont(QFont& f);
 void adjustCodeEditorFont(QFont& f);
 
-template <class T> void setSymbolFont(T* target)
-{
-    QFont f = target->font();
-    adjustSymbolFont(f);
-    target->setFont(f);
-}
+QFont getElemLabelFont(FontSize size = FontSize_Normal);
+QFont getParamLabelFont(FontSize size = FontSize_Normal);
+QFont getFormulaFont(FontSize size = FontSize_Normal);
+QFont getValueFont();
 
-template <class T> void setSymbolFontSm(T* target)
+template <class T> void setSymbolFont(T* target, FontSize size = FontSize_Normal)
 {
     QFont f = target->font();
-    adjustSymbolFontSm(f);
+    adjustSymbolFont(f, size);
     target->setFont(f);
 }
 
@@ -62,7 +55,6 @@ template <class T> void setFontStyle(T* target,
     target->setFont(f);
 }
 
-QLabel* symbolLabel(const QString& text);
 QLabel* headerlabel(const QString& text);
 
 /// Preferred fixed width of unit selector combo boxes

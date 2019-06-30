@@ -22,6 +22,8 @@ public:
     {
         return new ElementFilter({ new TCondition... });
     }
+
+    static ElementFilter* elemsWithVisibleParams();
 };
 
 #define DECLARE_ELEM_FILTER(class_name)\

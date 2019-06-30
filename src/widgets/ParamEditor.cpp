@@ -120,7 +120,8 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
         layout->addSpacing(def_spacing * 2);
     }
 
-    _labelLabel = Z::Gui::symbolLabel(paramLabel % " = ");
+    _labelLabel = new QLabel(paramLabel % " = ");
+    _labelLabel->setFont(Z::Gui::getParamLabelFont());
     layout->addWidget(_labelLabel);
 
     if (opts.allowLinking and countSuitableGlobalParams(_globalParams, _param))

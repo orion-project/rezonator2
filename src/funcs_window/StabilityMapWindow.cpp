@@ -26,10 +26,7 @@ StabilityParamsDlg::StabilityParamsDlg(Schema *schema, Z::Variable *var)
     if (!var->element && !_recentKey.isEmpty())
         Z::IO::Json::readVariablePref(CustomPrefs::recentObj(_recentKey), var, schema);
 
-    std::shared_ptr<ElementFilter> elemFilter(
-        ElementFilter::make<ElementFilterHasVisibleParams, ElementFilterEnabled>());
-
-    _elemSelector = new ElemAndParamSelector(schema, elemFilter.get(), Z::Utils::defaultParamFilter());
+    _elemSelector = new ElemAndParamSelector(schema, ElementFilter::elemsWithVisibleParams(), Z::Utils::defaultParamFilter());
     connect(_elemSelector, SIGNAL(selectionChanged()), this, SLOT(guessRange()));
 
     _rangeEditor = new GeneralRangeEditor;

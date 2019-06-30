@@ -85,43 +85,40 @@ void ParamsTreeWidget::populate()
 {
     for (auto elem : _opts.schema->elements())
         if (!_opts.elemFilter || _opts.elemFilter->check(elem))
-        {
-            auto iconPath = ElementImagesProvider::instance().iconPath(elem->type());
-            addRootItem(elem->displayLabelTitle(), iconPath, elem->params(), true);
-        }
+            addRootItem(elem);
     if (_opts.showGlobalParams)
-        addRootItem(tr("Globals"), ":/toolbar/parameter", _opts.schema->globalParams(), false);
+        addRootItem(nullptr);
 }
 
-void ParamsTreeWidget::addRootItem(const QString& title, const QString &iconPath, const Z::Parameters &params, bool isElement)
+void ParamsTreeWidget::addRootItem(Element* elem)
 {
     QVector<QTreeWidgetItem*> items;
+    auto params = elem ? elem->params() : _opts.schema->globalParams();
     for (auto param : params)
         if (!_opts.ignoreList.contains(param))
             if (!_opts.paramFilter || _opts.paramFilter->check(param))
-                items << addParamItem(param, isElement);
+                items << addParamItem(param, elem);
 
     if (items.isEmpty()) return;
 
-    auto f = _tree->font();
-    f.setBold(true);
-
     auto root = new QTreeWidgetItem;
-    root->setFont(COL_TITLE, f);
-    root->setText(COL_TITLE, title);
-    root->setIcon(COL_TITLE, QIcon(iconPath));
-    root->setFirstColumnSpanned(true);
+    if (elem)
+    {
+        root->setText(COL_TITLE, elem->displayLabel());
+        root->setFont(COL_TITLE, Z::Gui::getElemLabelFont(Z::Gui::FontSize_Small));
+        root->setIcon(COL_TITLE, QIcon(ElementImagesProvider::instance().iconPath(elem->type())));
+        root->setText(COL_DESCR, elem->title());
+    }
+    else
+    {
+        root->setText(COL_TITLE, tr("Globals"));
+        root->setFont(COL_TITLE, Z::Gui::getValueFont());
+        root->setIcon(COL_TITLE, QIcon(":/toolbar/parameter"));
+    }
     for (auto item : items)
         root->addChild(item);
     _tree->addTopLevelItem(root);
 }
-
-struct ParamInfo
-{
-    Schema* schema;
-    Z::Parameter* param;
-    bool isElement;
-};
 
 QTreeWidgetItem* ParamsTreeWidget::addParamItem(Z::Parameter* param, bool isElement)
 {

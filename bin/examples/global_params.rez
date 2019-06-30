@@ -45,7 +45,7 @@
                     "value": 1
                 }
             },
-            "title": "",
+            "title": "Distance from litght source",
             "type": "ElemEmptyRange"
         },
         {
@@ -61,7 +61,7 @@
                     "value": 10
                 }
             },
-            "title": "",
+            "title": "Objective lens",
             "type": "ElemThinLens"
         },
         {
@@ -77,7 +77,7 @@
                     "value": 1
                 }
             },
-            "title": "",
+            "title": "Distance between lenses",
             "type": "ElemEmptyRange"
         },
         {
@@ -93,7 +93,7 @@
                     "value": 10
                 }
             },
-            "title": "",
+            "title": "Eye lens",
             "type": "ElemThinLens"
         },
         {
@@ -109,7 +109,7 @@
                     "value": 1
                 }
             },
-            "title": "",
+            "title": "Distance to image",
             "type": "ElemEmptyRange"
         }
     ],

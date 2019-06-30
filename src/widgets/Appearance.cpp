@@ -9,45 +9,6 @@
 namespace Z {
 namespace Gui {
 
-QFont getSymbolFont()
-{
-    QFont f = QApplication::font();
-    adjustSymbolFont(f);
-    return f;
-}
-
-QFont getSymbolFontSm()
-{
-    QFont f = QApplication::font();
-    adjustSymbolFontSm(f);
-    return f;
-}
-
-QFont getFormulaFont()
-{
-    QFont f = QApplication::font();
-    adjustSymbolFont(f);
-    f.setBold(false);
-    f.setItalic(true);
-    return f;
-}
-
-QFont getFormulaFontSm()
-{
-    QFont f = QApplication::font();
-    adjustSymbolFontSm(f);
-    f.setBold(false);
-    f.setItalic(true);
-    return f;
-}
-
-QFont getValueFont()
-{
-    QFont f = QApplication::font();
-    adjustValueFont(f);
-    return f;
-}
-
 void adjustValueFont(QFont& f)
 {
 #if defined(Q_OS_MAC)
@@ -58,34 +19,25 @@ void adjustValueFont(QFont& f)
 #endif
 }
 
-void adjustSymbolFont(QFont& f)
+void adjustSymbolFont(QFont& f, FontSize size)
 {
     f.setBold(true);
 #if defined(Q_OS_WIN)
-    f.setPointSize(13);
     f.setFamily(QStringLiteral("Times New Roman"));
 #elif defined(Q_OS_MAC)
-    f.setPointSize(20);
     f.setFamily(QStringLiteral("Times New Roman"));
 #else
-    f.setPointSize(13);
     f.setFamily(QStringLiteral("serif"));
 #endif
-}
-
-void adjustSymbolFontSm(QFont& f)
-{
-    f.setBold(true);
+    int sizePt =
 #if defined(Q_OS_WIN)
-    f.setPointSize(11);
-    f.setFamily(QStringLiteral("Times New Roman"));
+        size == FontSize_Small ? 11 : 13;
 #elif defined(Q_OS_MAC)
-    f.setPointSize(16);
-    f.setFamily(QStringLiteral("Times New Roman"));
+        size == FontSize_Small ? 16 : 20;
 #else
-    f.setPointSize(10);
-    f.setFamily(QStringLiteral("serif"));
+        size == FontSize_Small ? 10 : 13;
 #endif
+    f.setPointSize(sizePt);
 }
 
 void adjustCodeEditorFont(QFont &f)
@@ -102,12 +54,33 @@ void adjustCodeEditorFont(QFont &f)
 #endif
 }
 
-
-QLabel* symbolLabel(const QString& text)
+QFont getElemLabelFont(FontSize size)
 {
-    auto label = new QLabel(text);
-    setSymbolFont(label);
-    return label;
+    QFont f = QApplication::font();
+    adjustSymbolFont(f, size);
+    return f;
+}
+
+QFont getParamLabelFont(FontSize size)
+{
+    QFont f = QApplication::font();
+    adjustSymbolFont(f, size);
+    return f;
+}
+
+QFont getValueFont()
+{
+    QFont f = QApplication::font();
+    adjustValueFont(f);
+    return f;
+}
+
+QFont getFormulaFont(FontSize size)
+{
+    auto f = getParamLabelFont(size);
+    f.setBold(false);
+    f.setItalic(true);
+    return f;
 }
 
 QLabel* headerlabel(const QString& text)

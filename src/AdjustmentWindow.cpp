@@ -2,6 +2,7 @@
 
 #include "AppSettings.h"
 #include "HelpSystem.h"
+#include "core/ElementFilter.h"
 #include "widgets/Appearance.h"
 #include "widgets/ParamsTreeWidget.h"
 #include "funcs/FormatInfo.h"
@@ -110,7 +111,8 @@ AdjusterWidget::AdjusterWidget(Schema* schema, Z::Parameter *param, QWidget *par
     connect(_valueEditor, &Ori::Widgets::ValueEdit::valueEdited, this, &AdjusterWidget::valueEdited);
     Z::Gui::setValueFont(_valueEditor);
 
-    _labelLabel = Z::Gui::symbolLabel("");
+    _labelLabel = new QLabel;
+    _labelLabel->setFont(Z::Gui::getElemLabelFont());
     _labelUnit = new QLabel;
 
     _buttonPlus = new AdjusterButton(":/toolbar10/plus");
@@ -471,6 +473,8 @@ void AdjustmentWindow::addAdjuster()
     opts.dialogTitle = tr("Parameter Selector");
     opts.dialogPrompt = tr("Select a parameter to adjust");
     opts.ignoreList = existedParams;
+    opts.elemFilter = ElementFilter::elemsWithVisibleParams();
+    opts.paramFilter = Z::Utils::defaultParamFilter();
     auto param = ParamsTreeWidget::selectParamDlg(opts);
     if (param)
         addAdjuster(param);

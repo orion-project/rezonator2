@@ -10,6 +10,12 @@ ElementFilter::ElementFilter(std::initializer_list<ElementFilterCondition*> cond
 {
 }
 
+ElementFilter* ElementFilter::elemsWithVisibleParams()
+{
+    static ElementFilter* filter = ElementFilter::make<ElementFilterHasVisibleParams, ElementFilterEnabled>();
+    return filter;
+}
+
 
 bool ElementFilterEnabled::check(Element *elem)
 {

@@ -11,6 +11,7 @@ class QTreeWidgetItem;
 QT_END_NAMESPACE
 
 class Schema;
+class Element;
 class ElementFilter;
 
 class ParamsTreeWidget : public QWidget
@@ -44,7 +45,7 @@ private:
     QTreeWidget* _tree;
 
     void populate();
-    void addRootItem(const QString& title, const QString& iconPath, const Z::Parameters& params, bool isElement);
+    void addRootItem(Element* elem);
     QTreeWidgetItem *addParamItem(Z::Parameter* param, bool isElement);
     void itemDoubleClicked(QTreeWidgetItem *item, int column);
     void currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
