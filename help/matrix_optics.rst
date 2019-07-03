@@ -1,57 +1,62 @@
 .. index:: single: matrix optics
 
-Formulas of Matrix Optics
-=========================
+Calculation of Beam Parameters in Resonators
+============================================
 
-.. index:: single: complex radius of curvature
+The description is given according to the book "Lasers" by A.E. Siegman, see chapter 21 "Generalized paraxial resonator theory". 
 
-Complex Radius of Curvature
----------------------------
+For the analysis, we need to select a reference plane to calculate :doc:`the round trip matrix<round_trip_matrix>` against. In general, an element chosen as a parameter of a particular function is the reference plane.
 
-    .. image:: img/gauss_q.png
-
-|para|
-
-    .. image:: img/gauss_q_r_w.png
-    
-
-Matrix Transformation
----------------------
-
-Transformation of the complex radius of curvature by the ray matrix of an optical system:
+Having the round-trip matrix we can write an expression for transformation of :ref:`complex parameter<gauss_complex_param>`:
 
     .. image:: img/gauss_q_abcd.png
+
+Because we consider a stable resonator, the output parameter is the same as the input one, so the beam is self-consistent, and it reproduces itself after full round-trip through the resonator:
+
+    .. image:: img/abcd_q_in_out.png
     
+|para|
 
-.. index:: single: eigenvalues of round-trip matrix
+    .. image:: img/abcd_q.png
 
-Eigenvalues of Round-trip Matrix
---------------------------------
+Then we can find out the complex parameter as a solution to the quadratic equation:
 
-Eigenvalues of resonator's round-trip matrix:
-
-    .. image:: img/eigenvalue.png
-    
-A negative value means a nonreal situation when the beam's energy increases with radial distance.
+    .. image:: img/abcd_q_quadratic.png
 
 
-Principal eigenvalue of resonator's round-trip matrix:
+But for convenience, it is better to rewrite this equation meaning the inverted complex parameter:
 
-    .. image:: img/abcd_eigenvalue.png
-    
+    .. image:: img/abcd_q_quadratic_1.png
+
+
+using the relationship
+
+    .. image:: img/abcd_ad_bc.png
 
 Self-conformed Complex Radius of Curvature
 ------------------------------------------
 
-The self-conformed beam is a beam which is transformed into itself after several passes through the resonator.
+The solution to this equation gives values of the complex parameter of self-consistent Hermite-gaussian mode in the resonator:
 
-    .. image:: img/gauss_self_q.png
-    
+    .. image:: img/abcd_solution.png
+
+or
+
+    .. image:: img/abcd_solution_1.png
+
+
+One of the solutions gives unreal situation when the beam's energy increases with radial distance.
+
+Knowing the expression of the complex parameter through beam characteristics
+
+    .. image:: img/gauss_q.png
+
+we can express the properties of the self-consistent beam in terms of round-trip matrix elements.
 
 Radius of Wavefront Curvature
 -----------------------------
 
-Calculation of the radius of wavefront curvature of the self-conformed beam from components of round-trip matrix:
+Calculation of the radius of wavefront curvature of the self-consistent beam from components of round-trip matrix:
 
     .. image:: img/abcd_curvature.png
    
@@ -59,43 +64,18 @@ Calculation of the radius of wavefront curvature of the self-conformed beam from
 Beam Radius
 -----------
 
-Calculation of the self-conformed beam radius from components of round-trip matrix:
+Calculation of the self-consistent beam radius from components of round-trip matrix:
 
-    .. image:: img/abcd_radius.png
+    .. image:: img/abcd_radius_1.png
+
+|para|
+
+    .. image:: img/abcd_radius_2.png
     
+|para|
+
+    .. image:: img/abcd_radius_3.png
     
-Waist Location
---------------
-
-Calculation of position of the waist of the self-conformed beam from components of round-trip matrix:
-
-    .. image:: img/abcd_waist_pos.png
-
-  
-Waist Size
-----------
-
-Calculation of beam radius at the waist of the self-conformed beam from components of round-trip matrix:
-
-    .. image:: img/abcd_waist_size.png
-    
- 
-Rayleigh Distance
------------------
-
-Calculation of the :ref:`Rayleigh distance <gauss_confocal>` of the self-conformed beam from round-trip matrix components:
-
-    .. image:: img/abcd_z0.png
-    
-    
-Spread Angle
-------------
-
-Calculation of half of the spread angle of the self-conformed beam from components of round-trip matrix:
-
-    .. image:: img/abcd_vs.png
-    
- 
 .. seealso::
 
     :doc:`gauss`

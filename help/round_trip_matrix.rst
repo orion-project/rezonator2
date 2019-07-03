@@ -2,8 +2,8 @@
 .. index:: single: matrix of round-trip
 .. index:: single: round-trip
 
-Round-trip Matrix Calculation
-=============================
+Calculation of Round-trip Matrix 
+================================
 
 The :doc:`ray-matrix <elem_matrs>` formalism supposes the elements' matrices are multiplied one-by-one in the direction opposite to the beam :ref:`propagation direction <propagation_dir>`.
 
