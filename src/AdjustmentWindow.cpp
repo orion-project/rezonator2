@@ -407,6 +407,7 @@ AdjustmentWindow::AdjustmentWindow(Schema *schema, QWidget *parent)
     _actnSettings = Ori::Gui::action(tr("Settings..."), this, SLOT(setupAdjuster()), ":/toolbar/settings");
     _actnDelete = Ori::Gui::action(tr("Delete"), this, SLOT(deleteAdjuster()), ":/toolbar/delete");
     auto actnHelp = Ori::Gui::action(tr("Help"), this, SLOT(help()), ":/toolbar/help");
+    actnHelp->setEnabled(false); // TODO: help page
 
     auto toolbar = Ori::Gui::toolbar({
         Ori::Gui::textToolButton(actnAdd), nullptr, _actnRestore, _actnSettings, _actnDelete, nullptr, actnHelp
@@ -494,13 +495,9 @@ void AdjustmentWindow::deleteAdjuster(Z::Parameter* param)
 
     if (deletingWidget)
     {
-        if (_adjusters.isEmpty())
-            close();
-        else
-        {
-            deletingWidget->deleteLater();
+        deletingWidget->deleteLater();
+        if (not _adjusters.isEmpty())
             _adjusters.first().widget->focus();
-        }
     }
 }
 
@@ -516,13 +513,9 @@ void AdjustmentWindow::deleteAdjuster()
             break;
         }
 
-    if (_adjusters.isEmpty())
-        close();
-    else
-    {
-        deletingWidget->deleteLater();
+    deletingWidget->deleteLater();
+    if (not _adjusters.isEmpty())
         _adjusters.first().widget->focus();
-    }
 }
 
 void AdjustmentWindow::setupAdjuster()
