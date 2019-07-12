@@ -28,7 +28,6 @@ QString roundTrip(const QList<Element *> &elems, bool hyperlinks = false);
 
 QString linkViewMatrix(Element *elem);
 
-QString elemParamLabel(Z::Parameter* param, Schema *schema, bool showLinksToGlobals = true);
 QString elemParamLabelAndValue(Z::Parameter* param, Schema *schema, bool showLinksToGlobals = true);
 QString elemParamsWithValues(Element *elem, Schema *schema, bool showLinksToGlobals = true);
 QString pumpParamsWithValues(Z::PumpParams *pump);
@@ -42,10 +41,9 @@ QString paramLabelAndValue(TParam *param)
 {
     return QStringLiteral(
         "<nobr><span style='%1'>%2</span><span style='%3'> = %4</span></nobr>")
-        .arg(paramLabelStyle(), param->displayLabel(), valueStyle(), param->value().displayStr());
+        .arg(paramLabelStyle(true), param->displayLabel(), valueStyle(), param->value().displayStr());
 }
 
-QString paramLabel(Z::Parameter *param);
 QString customParamLabel(Z::Parameter *param, Schema* schema, bool showFormula = true);
 
 struct FormatParam

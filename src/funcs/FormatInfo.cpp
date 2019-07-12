@@ -119,24 +119,6 @@ QString valueStyle()
     return style;
 }
 
-QString elemParamLabel(Z::Parameter* param, Schema *schema, bool showLinksToGlobals)
-{
-    auto labelStr = QStringLiteral("<span style='%1'>%2</span>")
-                    .arg(paramLabelStyle(), param->displayLabel());
-    if (!showLinksToGlobals)
-        return labelStr;
-
-    auto link = schema->paramLinks()->byTarget(param);
-    if (!link)
-        return labelStr;
-
-    return QStringLiteral("%1 = <span style='%2; color:%3'>%4</span>")
-                .arg(labelStr,
-                     paramLabelStyle(),
-                     Z::Gui::globalParamColorHtml(),
-                     link->source()->displayLabel());
-}
-
 QString elemParamLabelAndValue(Z::Parameter* param, Schema *schema, bool showLinksToGlobals)
 {
     if (not showLinksToGlobals)
@@ -146,7 +128,7 @@ QString elemParamLabelAndValue(Z::Parameter* param, Schema *schema, bool showLin
     auto link = schema->paramLinks()->byTarget(param);
     if (link)
         valueStr = QStringLiteral("<span style='%1; color:%2'>%3</span> = <span style='%4'><i>%5</i></span>")
-                    .arg(paramLabelStyle(),
+                    .arg(paramLabelStyle(true),
                          Z::Gui::globalParamColorHtml(),
                          link->source()->displayLabel(),
                          valueStyle(),
@@ -155,7 +137,7 @@ QString elemParamLabelAndValue(Z::Parameter* param, Schema *schema, bool showLin
         valueStr = QStringLiteral("<span style='%1'>%2</span>")
                     .arg(valueStyle(), param->value().displayStr());
     return QStringLiteral("<span style='%1'>%2</span> = %3")
-                    .arg(paramLabelStyle(), param->displayLabel(), valueStr);
+                    .arg(paramLabelStyle(true), param->displayLabel(), valueStr);
 }
 
 QString elemParamsWithValues(Element *elem, Schema *schema, bool showLinksToGlobals)
@@ -176,11 +158,6 @@ QString pumpParamsWithValues(Z::PumpParams *pump)
     for (Z::ParameterTS *param : *pump->params())
         paramsInfo << paramLabelAndValue(param);
     return paramsInfo.join(", ");
-}
-
-QString paramLabel(Z::Parameter *param)
-{
-    return QStringLiteral("<b>%2</b>").arg(param->displayLabel());
 }
 
 QString customParamLabel(Z::Parameter *param, Schema* schema, bool showFormula)
