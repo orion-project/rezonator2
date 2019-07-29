@@ -16,7 +16,8 @@ enum FontSize { FontSize_Normal, FontSize_Small };
 
 void adjustSymbolFont(QFont& f, FontSize size = FontSize_Normal);
 void adjustValueFont(QFont& f);
-void adjustCodeEditorFont(QFont& f);
+
+QFont codeEditorFont();
 
 QFont getElemLabelFont(FontSize size = FontSize_Normal);
 QFont getParamLabelFont(FontSize size = FontSize_Normal);
@@ -34,13 +35,6 @@ template <class T> void setValueFont(T* target)
 {
     QFont f = target->font();
     adjustValueFont(f);
-    target->setFont(f);
-}
-
-template <class T> void setCodeEditorFont(T* target)
-{
-    QFont f = target->font();
-    adjustCodeEditorFont(f);
     target->setFont(f);
 }
 

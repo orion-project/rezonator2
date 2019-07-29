@@ -35,7 +35,7 @@ QWidget* FormulaEditor::makeEditorTab()
     _codeEditor = new QTextEdit;
     _codeEditor->setAcceptRichText(false);
     _codeEditor->setPlainText(_formula->code());
-    Z::Gui::setCodeEditorFont(_codeEditor);
+    _codeEditor->setFont(Z::Gui::codeEditorFont());
     connect(_codeEditor, &QTextEdit::textChanged, _recalcTimer, QOverload<>::of(&QTimer::start));
 
     _statusLabel = new QLabel;

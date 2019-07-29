@@ -601,9 +601,7 @@ StartWindow::~StartWindow()
 void StartWindow::editStyleSheet()
 {
     auto editor = new QPlainTextEdit;
-    auto font = editor->font();
-    Z::Gui::adjustCodeEditorFont(font);
-    editor->setFont(font);
+    editor->setFont(Z::Gui::codeEditorFont());
     editor->setPlainText(this->styleSheet());
 
     auto applyButton = new QPushButton("Apply");

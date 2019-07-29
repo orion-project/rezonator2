@@ -40,8 +40,9 @@ void adjustSymbolFont(QFont& f, FontSize size)
     f.setPointSize(sizePt);
 }
 
-void adjustCodeEditorFont(QFont &f)
+QFont codeEditorFont()
 {
+    QFont f = QApplication::font();
 #if defined(Q_OS_WIN)
     f.setFamily("Courier New");
     f.setPointSize(10);
@@ -52,6 +53,7 @@ void adjustCodeEditorFont(QFont &f)
     f.setFamily("monospace");
     f.setPointSize(11);
 #endif
+    return f;
 }
 
 QFont getElemLabelFont(FontSize size)

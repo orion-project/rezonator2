@@ -48,8 +48,7 @@ CalculatorSettingsDlg::CalculatorSettingsDlg() : RezonatorDialog(RezonatorDialog
     _fontSampleLabel = new QLabel("L / sqrt(n^2 - sin(deg2rad(a))^2)");
     _fontSampleLabel->setStyleSheet("background-color:white;padding:6px");
     _fontSampleLabel->setFrameShape(QFrame::StyledPanel);
-    auto f = _fontSampleLabel->font();
-    Z::Gui::adjustCodeEditorFont(f);
+    auto f = Z::Gui::codeEditorFont();
     if (!__instance->_overrideFontName.isEmpty() and __instance->_overrideFontSize > 0)
     {
         f.setFamily(__instance->_overrideFontName);
@@ -192,8 +191,7 @@ QWidget* CalculatorWindow::makeToolbar()
 
 void CalculatorWindow::adjustFont()
 {
-    auto f = font();
-    Z::Gui::adjustCodeEditorFont(f);
+    auto f = Z::Gui::codeEditorFont();
     if (_overrideFont && !_overrideFontName.isEmpty() && _overrideFontSize > 0)
     {
         f.setFamily(_overrideFontName);
