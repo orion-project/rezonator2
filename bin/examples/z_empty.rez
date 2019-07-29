@@ -155,11 +155,13 @@
     ],
     "formulas": [
     ],
+    "notes": "",
     "param_links": [
     ],
     "pumps": [
     ],
     "schema_version": "2.0",
+    "title": "",
     "trip_type": "SW",
     "windows": [
         {
@@ -184,18 +186,32 @@
                         "use_step": false
                     }
                 },
-                "stab_calc_mode": "Normal"
+                "stab_calc_mode": "Squared"
             },
             "type": "StabMap",
             "window": {
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
-                "ts_flipped": false,
+                "stab_bound_markers": true,
+                "stored_views": [
+                    {
+                        "mode": 0,
+                        "x_max": 113.10495926662054,
+                        "x_min": 95.69456819315307,
+                        "x_unit": "none",
+                        "y_max": 0.789908256880734,
+                        "y_min": -0.9950917431192661,
+                        "y_unit": "none"
+                    }
+                ],
+                "ts_flipped": true,
                 "ts_mode": "T+S",
-                "x_max": 113.10495926662054,
-                "x_min": 95.69456819315307,
-                "y_max": 0.789908256880734,
-                "y_min": -0.9950917431192661
+                "x_max": 107.32915000135482,
+                "x_min": 99.63529988260478,
+                "x_unit": "none",
+                "y_max": 3.778210245522021,
+                "y_min": -2.817259470125764,
+                "y_unit": "none"
             }
         },
         {
@@ -327,12 +343,17 @@
             "window": {
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
+                "elem_bound_markers": true,
+                "stored_views": [
+                ],
                 "ts_flipped": false,
                 "ts_mode": "T+S",
                 "x_max": 1529.14,
                 "x_min": -15.14,
+                "x_unit": "none",
                 "y_max": 802.4353374204328,
-                "y_min": -15.230361413492814
+                "y_min": -15.230361413492814,
+                "y_unit": "none"
             }
         }
     ]

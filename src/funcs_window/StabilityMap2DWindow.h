@@ -34,7 +34,6 @@ protected:
     QString getDefaultTitleY() const override;
     void storeViewSpecific(int key) override;
     void restoreViewSpecific(int key) override;
-    void updateVisibiityTSSpecific() override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;
@@ -60,7 +59,6 @@ private:
 
     void createControl();
     void autolimitsStability(bool replot);
-    void fillGraph();
 };
 
 

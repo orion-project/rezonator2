@@ -224,7 +224,8 @@ void StabilityMapWindow::updateStabBoundMarkers()
     _stabBoundMarkerTop->point2->setCoords(1, 1);
     _stabBoundMarkerTop->setVisible(_actnStabBoundMarkers->isChecked());
 
-    double low = function()->stabilityCalcMode() == Z::Enums::StabilityCalcMode::Normal ? -1 : 0;
+    double low = function()->stabilityCalcMode() ==
+        (Z::Enums::StabilityCalcMode::Normal or actnShowTS->isChecked()) ? -1 : 0;
     _stabBoundMarkerLow->point1->setCoords(0, low);
     _stabBoundMarkerLow->point2->setCoords(1, low);
     _stabBoundMarkerLow->setVisible(_actnStabBoundMarkers->isChecked());

@@ -130,7 +130,6 @@ protected:
     virtual QString formatTitleSpecial(const QString& title) const { return title; }
     virtual void storeViewSpecific(int key) { Q_UNUSED(key) }
     virtual void restoreViewSpecific(int key) { Q_UNUSED(key) }
-    virtual void updateVisibiityTSSpecific() {}
     virtual QWidget* makeOptionsPanel() { return nullptr; }
     virtual void fillGraphWithFunctionResults(Z::WorkPlane plane, QCPGraph *graph, int resultIndex);
 
@@ -142,7 +141,6 @@ protected:
     void createStatusBar();
     void createContent();
 
-    void updateVisibilityTS();
     void updateTSModeActions();
     void updateTitles();
     void updateTitle();
