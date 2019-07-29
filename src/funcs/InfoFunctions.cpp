@@ -178,19 +178,22 @@ QString InfoFuncRepetitionRate::calculate()
 
 QString InfoFuncSummary::calculate()
 {
+    Z::Format::FormatParams f;
+    f.schema = schema();
+    f.includeValue = true;
+    f.smallName = true;
+
     QStringList strs;
     for (Element* elem : schema()->elements())
         if (!elem->disabled() && elem->hasParams())
         {
             QStringList elemStrs;
+            // TODO: this is not standard look for elements' labels
             elemStrs << QStringLiteral("<font color=maroon>%1</font>").arg(elem->displayLabel());
             if (elem->hasParams())
-            {
-                elemStrs << ":";
-                elemStrs << Z::Format::elemParamsWithValues(elem, schema(), false);
-            }
+                elemStrs << QStringLiteral(":") << f.format(elem);
             if (!elem->title().isEmpty())
-                elemStrs << QStringLiteral("<i>(%1)</i>").arg(elem->title());
+                elemStrs << QStringLiteral("(%1)").arg(elem->title());
             strs << elemStrs.join(' ');
         }
 

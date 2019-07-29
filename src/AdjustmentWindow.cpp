@@ -106,14 +106,12 @@ AdjusterWidget::AdjusterWidget(Schema* schema, Z::Parameter *param, QWidget *par
     _settings.multiplier = Settings::instance().adjusterMultiplier;
 
     _valueEditor = new Ori::Widgets::ValueEdit;
-    _valueEditor->setFont(Z::Gui::ValueFont().get());
     _valueEditor->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
     connect(_valueEditor, &Ori::Widgets::ValueEdit::focused, this, &AdjusterWidget::editorFocused);
     connect(_valueEditor, &Ori::Widgets::ValueEdit::keyPressed, this, &AdjusterWidget::editorKeyPressed);
     connect(_valueEditor, &Ori::Widgets::ValueEdit::valueEdited, this, &AdjusterWidget::valueEdited);
 
-    _labelLabel = new QLabel;
-    _labelLabel->setFont(Z::Gui::getElemLabelFont());
+    _labelName = new QLabel;
     _labelUnit = new QLabel;
 
     _buttonPlus = new AdjusterButton(":/toolbar10/plus");
@@ -130,7 +128,7 @@ AdjusterWidget::AdjusterWidget(Schema* schema, Z::Parameter *param, QWidget *par
     connect(_buttonDivide, &AdjusterButton::focused, this, &AdjusterWidget::editorFocused);
 
     LayoutH({
-        _labelLabel,
+        _labelName,
         Space(3),
         _labelUnit,
         Space(12),
@@ -228,17 +226,18 @@ void AdjusterWidget::populate()
 
     auto labelStr = f.format(_param);
     if (_elem)
-        labelStr = QStringLiteral("%1<span style='font-weight:normal'>, </span>%2").arg(_elem->displayLabel(), labelStr);
+        labelStr = QStringLiteral("<span style='%1'>%2, </span>%3")
+            .arg(Z::Gui::ElemLabelFont().html(), _elem->displayLabel(), labelStr);
 
-    _labelLabel->setText(labelStr);
-    _isReadOnly = f.isReadOnly;
+    _labelName->setText(labelStr);
+    _isReadOnly = f.isReadOnly();
 
     _buttonMult->setEnabled(not _isReadOnly);
     _buttonPlus->setEnabled(not _isReadOnly);
     _buttonMinus->setEnabled(not _isReadOnly);
     _buttonDivide->setEnabled(not _isReadOnly);
     _valueEditor->setReadOnly(_isReadOnly);
-    Z::Gui::setFontStyle(_valueEditor, false, _isReadOnly);
+    _valueEditor->setFont(Z::Gui::ValueFont().readOnly(_isReadOnly).get());
 }
 
 double AdjusterWidget::currentValue() const

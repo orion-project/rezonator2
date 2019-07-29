@@ -133,7 +133,7 @@ void SchemaElemsTable::createRow(Element *elem, int row)
     setItem(row, COL_IMAGE, it);
 
     it = new QTableWidgetItem();
-    Z::Gui::setSymbolFont(it);
+    it->setFont(Z::Gui::ElemLabelFont().get());
     it->setTextAlignment(Qt::AlignHCenter | Qt::AlignCenter);
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_LABEL, it);
@@ -150,7 +150,13 @@ void SchemaElemsTable::createRow(Element *elem, int row)
 void SchemaElemsTable::populateRow(Element *elem, int row)
 {
     item(row, COL_LABEL)->setText(" " % elem->label() % " ");
-    item(row, COL_PARAMS)->setText(Z::Format::elemParamsWithValues(elem, schema()));
+
+    Z::Format::FormatParams f;
+    f.schema = schema();
+    f.includeValue = true;
+    f.smallName = true;
+    item(row, COL_PARAMS)->setText(f.format(elem));
+
     item(row, COL_TITLE)->setText("  " % elem->title());
     const QBrush& color = elem->disabled()? palette().shadow() : palette().text();
     item(row, COL_LABEL)->setForeground(color);

@@ -28,8 +28,6 @@ QString roundTrip(const QList<Element *> &elems, bool hyperlinks = false);
 
 QString linkViewMatrix(Element *elem);
 
-QString elemParamLabelAndValue(Z::Parameter* param, Schema *schema, bool showLinksToGlobals = true);
-QString elemParamsWithValues(Element *elem, Schema *schema, bool showLinksToGlobals = true);
 QString pumpParamsWithValues(Z::PumpParams *pump);
 
 QString paramLabelStyle(bool isSmall = false);
@@ -44,8 +42,6 @@ QString paramLabelAndValue(TParam *param)
         .arg(paramLabelStyle(true), param->displayLabel(), valueStyle(), param->value().displayStr());
 }
 
-QString customParamLabel(Z::Parameter *param, Schema* schema, bool showFormula = true);
-
 struct FormatParam
 {
     Schema* schema;
@@ -53,9 +49,20 @@ struct FormatParam
     bool includeDriver = true;
     bool smallName = false;
     bool isElement = true;
-    bool isReadOnly = false;
+
+    // Parameter is read-only when it has a driver providing its value.
+    // So this property is only assigned when `includeDriver` requested.
+    bool isReadOnly() const { return _isReadOnly; }
 
     QString format(Z::Parameter* param);
+
+private:
+    bool _isReadOnly = false;
+};
+
+struct FormatParams : public FormatParam
+{
+    QString format(Element *elem);
 };
 
 } // namespace Format

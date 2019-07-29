@@ -9,6 +9,21 @@
 namespace Z {
 namespace Gui {
 
+// TODO: merge with the same function from Z::Format
+QString fontToHtmlStyles(const QFont& font)
+{
+    QStringList styles;
+    if (font.bold())
+        styles << QStringLiteral("bold");
+    else if (font.italic())
+        styles << QStringLiteral("italic");
+    else
+        styles << QStringLiteral("normal");
+    styles << QString::number(font.pointSize()) % QStringLiteral("pt");
+    styles << font.family();
+    return QStringLiteral("font:") + styles.join(' ');
+}
+
 void adjustSymbolFont(QFont& f, FontSize size)
 {
     f.setBold(true);
@@ -35,6 +50,8 @@ QFont ValueFont::get() const
     QFont f = QApplication::font();
     if (_bold)
         f.setBold(true);
+    if (_readOnly)
+        f.setItalic(true);
 #if defined(Q_OS_MAC)
     f.setPointSize(14);
 #else
@@ -60,17 +77,58 @@ QFont CodeEditorFont::get() const
     return f;
 }
 
-QFont getElemLabelFont(FontSize size)
+QFont ElemLabelFont::get() const
 {
     QFont f = QApplication::font();
-    adjustSymbolFont(f, size);
+    f.setBold(true);
+#if defined(Q_OS_WIN)
+    f.setFamily(QStringLiteral("Times New Roman"));
+#elif defined(Q_OS_MAC)
+    f.setFamily(QStringLiteral("Times New Roman"));
+#else
+    f.setFamily(QStringLiteral("serif"));
+#endif
+    int sizePt =
+#if defined(Q_OS_WIN)
+        _small ? 11 : 13;
+#elif defined(Q_OS_MAC)
+        _small ? 16 : 20;
+#else
+        _small ? 10 : 13;
+#endif
+    f.setPointSize(sizePt);
     return f;
 }
 
-QFont getParamLabelFont(FontSize size)
+QString ElemLabelFont::html() const
+{
+    int key = _small ? 1 : 0;
+    static QMap<int, QString> htmls;
+    if (!htmls.contains(key))
+        htmls.insert(key, fontToHtmlStyles(get()));
+    return htmls[key];
+}
+
+QFont ParamLabelFont::get() const
 {
     QFont f = QApplication::font();
-    adjustSymbolFont(f, size);
+    f.setBold(true);
+#if defined(Q_OS_WIN)
+    f.setFamily(QStringLiteral("Times New Roman"));
+#elif defined(Q_OS_MAC)
+    f.setFamily(QStringLiteral("Times New Roman"));
+#else
+    f.setFamily(QStringLiteral("serif"));
+#endif
+    int sizePt =
+#if defined(Q_OS_WIN)
+        _small ? 11 : 13;
+#elif defined(Q_OS_MAC)
+        _small ? 16 : 20;
+#else
+        _small ? 10 : 13;
+#endif
+    f.setPointSize(sizePt);
     return f;
 }
 

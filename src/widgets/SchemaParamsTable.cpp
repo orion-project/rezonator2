@@ -91,14 +91,11 @@ void SchemaParamsTable::createRow(int row)
     setItem(row, COL_IMAGE, it);
 
     it = new QTableWidgetItem();
-    Z::Gui::setSymbolFont(it);
-    Z::Gui::setFontStyle(it, false); // make it bold in html content
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     it->setTextAlignment(Qt::AlignHCenter | Qt::AlignCenter);
     setItem(row, COL_ALIAS, it);
 
     it = new QTableWidgetItem();
-    it->setFont(Z::Gui::ValueFont().get());
     it->setTextAlignment(Qt::AlignHCenter | Qt::AlignCenter);
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_VALUE, it);
@@ -111,7 +108,10 @@ void SchemaParamsTable::createRow(int row)
 void SchemaParamsTable::populateRow(Z::Parameter *param, int row)
 {
     // Parameter alias and formula
-    item(row, COL_ALIAS)->setText(Z::Format::customParamLabel(param, schema()));
+    Z::Format::FormatParam f;
+    f.schema = schema();
+    f.isElement = false;
+    item(row, COL_ALIAS)->setText(f.format(param));
 
     // Parameter icon
     auto it = item(row, COL_IMAGE);
@@ -131,9 +131,7 @@ void SchemaParamsTable::populateRow(Z::Parameter *param, int row)
 
     // Parameter value
     it = item(row, COL_VALUE);
-    auto f = it->font();
-    f.setItalic(param->valueDriver() == Z::ParamValueDriver::Formula);
-    it->setFont(f);
+    it->setFont(Z::Gui::ValueFont().readOnly(param->valueDriver() == Z::ParamValueDriver::Formula).get());
     it->setText(" " % param->value().displayStr() % " ");
 
     // Parameter annotation

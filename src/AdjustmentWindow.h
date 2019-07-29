@@ -103,7 +103,7 @@ private:
     Z::Value _currentValue;
     AdjusterSettings _settings;
     bool _isValueChanging = false;
-    QLabel *_labelLabel, *_labelUnit;
+    QLabel *_labelName, *_labelUnit;
     Ori::Widgets::ValueEdit* _valueEditor;
     AdjusterButton *_buttonPlus, *_buttonMinus, *_buttonMult, *_buttonDivide;
     bool _isFocused = false;

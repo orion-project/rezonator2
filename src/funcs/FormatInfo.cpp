@@ -101,8 +101,8 @@ QString fontToHtmlStyles(const QFont& font)
 
 QString paramLabelStyle(bool isSmall)
 {
-    static QString style(fontToHtmlStyles(Z::Gui::getParamLabelFont(Z::Gui::FontSize_Normal)));
-    static QString styleSm(fontToHtmlStyles(Z::Gui::getParamLabelFont(Z::Gui::FontSize_Small)));
+    static QString style(fontToHtmlStyles(Z::Gui::ParamLabelFont().get()));
+    static QString styleSm(fontToHtmlStyles(Z::Gui::ParamLabelFont().small().get()));
     return isSmall ? styleSm : style;
 }
 
@@ -119,39 +119,6 @@ QString valueStyle()
     return style;
 }
 
-QString elemParamLabelAndValue(Z::Parameter* param, Schema *schema, bool showLinksToGlobals)
-{
-    if (not showLinksToGlobals)
-        return paramLabelAndValue(param);
-
-    QString valueStr;
-    auto link = schema->paramLinks()->byTarget(param);
-    if (link)
-        valueStr = QStringLiteral("<span style='%1; color:%2'>%3</span> = <span style='%4'><i>%5</i></span>")
-                    .arg(paramLabelStyle(true),
-                         Z::Gui::globalParamColorHtml(),
-                         link->source()->displayLabel(),
-                         valueStyle(),
-                         param->value().displayStr());
-    else
-        valueStr = QStringLiteral("<span style='%1'>%2</span>")
-                    .arg(valueStyle(), param->value().displayStr());
-    return QStringLiteral("<span style='%1'>%2</span> = %3")
-                    .arg(paramLabelStyle(true), param->displayLabel(), valueStr);
-}
-
-QString elemParamsWithValues(Element *elem, Schema *schema, bool showLinksToGlobals)
-{
-    QStringList paramsInfo;
-    for (Z::Parameter *param : elem->params())
-    {
-        if (!Z::Utils::defaultParamFilter()->check(param)) continue;
-
-        paramsInfo << elemParamLabelAndValue(param, schema, showLinksToGlobals);
-    }
-    return paramsInfo.join(", ");
-}
-
 QString pumpParamsWithValues(Z::PumpParams *pump)
 {
     QStringList paramsInfo;
@@ -160,20 +127,9 @@ QString pumpParamsWithValues(Z::PumpParams *pump)
     return paramsInfo.join(", ");
 }
 
-QString customParamLabel(Z::Parameter *param, Schema* schema, bool showFormula)
-{
-    QString formulaDescr;
-    if (showFormula)
-    {
-        auto formula = schema->formulas()->get(param);
-        if (formula and not formula->deps().isEmpty())
-            formulaDescr = QStringLiteral(" <span style='font-weight:normal; font-style:italic'>= %1</span>").arg(formula->displayStr());
-    }
-    return QStringLiteral("<span style='color:%1'><b>%2</b></span>%3")
-        .arg(Z::Gui::globalParamColorHtml(),
-             param->label(),
-             formulaDescr);
-}
+//------------------------------------------------------------------------------
+//                                  FormatParam
+//------------------------------------------------------------------------------
 
 QString FormatParam::format(Z::Parameter* param)
 {
@@ -197,7 +153,7 @@ QString FormatParam::format(Z::Parameter* param)
     parts << param->displayLabel();
     parts << QStringLiteral("</span>");
 
-    isReadOnly = false;
+    _isReadOnly = false;
 
     if (includeDriver)
     {
@@ -206,14 +162,14 @@ QString FormatParam::format(Z::Parameter* param)
         if (isElement)
         {
             auto link = schema->paramLinks()->byTarget(param);
-            isReadOnly = link;
+            _isReadOnly = link;
             if (link)
                 driverStr = link->source()->displayLabel();
         }
         else
         {
             auto formula = schema->formulas()->get(param);
-            isReadOnly = formula;
+            _isReadOnly = formula;
             if (formula and not formula->deps().isEmpty())
                 driverStr = formula->displayStr();
         }
@@ -241,12 +197,12 @@ QString FormatParam::format(Z::Parameter* param)
     {
         parts << QStringLiteral(" = ");
 
-        if (isReadOnly)
+        if (_isReadOnly)
             parts << QStringLiteral("<i>");
 
         parts << param->value().displayStr();
 
-        if (isReadOnly)
+        if (_isReadOnly)
             parts << QStringLiteral("</i>");
     }
 
@@ -254,6 +210,21 @@ QString FormatParam::format(Z::Parameter* param)
     return parts.join('\n');
 }
 
+//------------------------------------------------------------------------------
+//                                FormatParams
+//------------------------------------------------------------------------------
+
+QString FormatParams::format(Element *elem)
+{
+    QStringList parts;
+    for (Z::Parameter *param : elem->params())
+    {
+        if (!Z::Utils::defaultParamFilter()->check(param)) continue;
+
+        parts << FormatParam::format(param);
+    }
+    return parts.join(QStringLiteral(", "));
+}
 
 } // namespace Format
 } // namespace Z

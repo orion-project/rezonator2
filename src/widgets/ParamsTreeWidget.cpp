@@ -105,7 +105,7 @@ void ParamsTreeWidget::addRootItem(Element* elem)
     if (elem)
     {
         root->setText(COL_TITLE, elem->displayLabel());
-        root->setFont(COL_TITLE, Z::Gui::getElemLabelFont(Z::Gui::FontSize_Small));
+        root->setFont(COL_TITLE, Z::Gui::ElemLabelFont().small().get());
         root->setIcon(COL_TITLE, QIcon(ElementImagesProvider::instance().iconPath(elem->type())));
         root->setText(COL_DESCR, elem->title());
     }

@@ -19,14 +19,33 @@ void adjustSymbolFont(QFont& f, FontSize size = FontSize_Normal);
 struct ValueFont
 {
     ValueFont& bold() { _bold = true; return *this; }
+    ValueFont& readOnly(bool on = true) { _readOnly = on; return *this; }
     QFont get() const;
 private:
     bool _bold = false;
+    bool _readOnly = false;
 };
 
 struct CodeEditorFont
 {
     QFont get() const;
+};
+
+struct ElemLabelFont
+{
+    ElemLabelFont& small() { _small = true; return *this; }
+    QFont get() const;
+    QString html() const;
+private:
+    bool _small = false;
+};
+
+struct ParamLabelFont
+{
+    ParamLabelFont& small() { _small = true; return *this; }
+    QFont get() const;
+private:
+    bool _small = false;
 };
 
 struct FormulaFont
@@ -36,9 +55,6 @@ struct FormulaFont
 private:
     bool _small = false;
 };
-
-QFont getElemLabelFont(FontSize size = FontSize_Normal);
-QFont getParamLabelFont(FontSize size = FontSize_Normal);
 
 template <class T> void setSymbolFont(T* target, FontSize size = FontSize_Normal)
 {

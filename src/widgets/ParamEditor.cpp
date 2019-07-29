@@ -121,7 +121,7 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
     }
 
     _labelLabel = new QLabel(paramLabel % " = ");
-    _labelLabel->setFont(Z::Gui::getParamLabelFont());
+    _labelLabel->setFont(Z::Gui::ParamLabelFont().get());
     layout->addWidget(_labelLabel);
 
     if (opts.allowLinking and countSuitableGlobalParams(_globalParams, _param))
