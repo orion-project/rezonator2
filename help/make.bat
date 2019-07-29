@@ -4,17 +4,23 @@ setlocal
 echo Build application manual.
 
 
-set HELP_TOOL=qhelpgenerator.exe
+set HELP_TOOL=qcollectiongenerator.exe
 
 echo.
 echo ***** Check if Qt is in PATH
 where /Q %HELP_TOOL%
 if %ERRORLEVEL% neq 0 (
-	echo.
-	echo ERROR: %HELP_TOOL% is not found in PATH
-	echo Find Qt installation and update your PATH like:
-    echo set PATH=c:\Qt\5.12.0\mingw73_64\bin;%%PATH%%
-	goto :eof
+    :: Qt 5.12 and above dont't use qcollectiongenerator
+    set HELP_TOOL=qhelpgenerator.exe
+
+    where /Q %HELP_TOOL%
+    if %ERRORLEVEL% neq 0 (
+        echo.
+        echo ERROR: %HELP_TOOL% is not found in PATH
+        echo Find Qt installation and update your PATH like:
+        echo set PATH=c:\Qt\5.12.0\mingw73_64\bin;%%PATH%%
+        goto :eof
+    )
 )
 %HELP_TOOL% -v
 
