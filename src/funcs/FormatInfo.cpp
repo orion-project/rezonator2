@@ -108,8 +108,8 @@ QString paramLabelStyle(bool isSmall)
 
 QString formulaStyle(bool isSmall)
 {
-    static QString style(fontToHtmlStyles(Z::Gui::getFormulaFont(Z::Gui::FontSize_Normal)));
-    static QString styleSm(fontToHtmlStyles(Z::Gui::getFormulaFont(Z::Gui::FontSize_Small)));
+    static QString style(fontToHtmlStyles(Z::Gui::formulaFont(Z::Gui::FontSize_Normal)));
+    static QString styleSm(fontToHtmlStyles(Z::Gui::formulaFont(Z::Gui::FontSize_Small)));
     return isSmall ? styleSm : style;
 }
 

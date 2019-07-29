@@ -77,11 +77,26 @@ QFont getValueFont()
     return f;
 }
 
-QFont getFormulaFont(FontSize size)
+QFont formulaFont(FontSize size)
 {
     auto f = getParamLabelFont(size);
-    f.setBold(false);
     f.setItalic(true);
+#if defined(Q_OS_WIN)
+    f.setFamily(QStringLiteral("Times New Roman"));
+#elif defined(Q_OS_MAC)
+    f.setFamily(QStringLiteral("Times New Roman"));
+#else
+    f.setFamily(QStringLiteral("serif"));
+#endif
+    int sizePt =
+#if defined(Q_OS_WIN)
+        size == FontSize_Small ? 11 : 13;
+#elif defined(Q_OS_MAC)
+        size == FontSize_Small ? 16 : 20;
+#else
+        size == FontSize_Small ? 10 : 13;
+#endif
+    f.setPointSize(sizePt);
     return f;
 }
 

@@ -18,10 +18,10 @@ void adjustSymbolFont(QFont& f, FontSize size = FontSize_Normal);
 void adjustValueFont(QFont& f);
 
 QFont codeEditorFont();
+QFont formulaFont(FontSize size = FontSize_Normal);
 
 QFont getElemLabelFont(FontSize size = FontSize_Normal);
 QFont getParamLabelFont(FontSize size = FontSize_Normal);
-QFont getFormulaFont(FontSize size = FontSize_Normal);
 QFont getValueFont();
 
 template <class T> void setSymbolFont(T* target, FontSize size = FontSize_Normal)
