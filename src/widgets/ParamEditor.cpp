@@ -137,6 +137,8 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
     }
 
     _valueEditor = new ValueEdit;
+    _valueEditor->setFont(Z::Gui::valueFont());
+
     _unitsSelector = new UnitComboBox(_param->dim());
     layout->addWidget(_valueEditor);
     layout->addSpacing(3);
@@ -147,8 +149,6 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
         layout->addSpacing(6);
         layout->addWidget(opts.auxControl);
     }
-
-    Z::Gui::setValueFont(_valueEditor);
 
     // make some room around widgets to make highlighting visible
     int hs = def_spacing / 2 + 1;

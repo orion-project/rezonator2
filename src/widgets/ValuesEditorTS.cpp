@@ -44,8 +44,8 @@ ValueEditorTS::ValueEditorTS(const QString& label, const QString& symbol, const 
 
     _editorT = new Ori::Widgets::ValueEdit;
     _editorS = new Ori::Widgets::ValueEdit;
-    Z::Gui::setValueFont(_editorT);
-    Z::Gui::setValueFont(_editorS);
+    _editorT->setFont(Z::Gui::valueFont());
+    _editorS->setFont(Z::Gui::valueFont());
 
     _unitsSelector = new UnitComboBox;
 

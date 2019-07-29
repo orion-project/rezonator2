@@ -95,7 +95,7 @@ void SchemaParamsWindow::createParameter()
     auto recentUnit = CustomPrefs::recentUnit("global_param_unit", recentDim);
 
     auto aliasEditor = new QLineEdit;
-    Z::Gui::setValueFont(aliasEditor);
+    aliasEditor->setFont(Z::Gui::valueFont());
 
     auto unitEditor = new UnitComboBox;
     unitEditor->canSelectFixedUnit = true;

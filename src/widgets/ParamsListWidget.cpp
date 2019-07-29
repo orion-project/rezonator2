@@ -36,7 +36,7 @@ Z::Parameter* ParamsListWidget::selectParamDlg(const Z::Parameters *params, cons
 
 ParamsListWidget::ParamsListWidget(const Z::Parameters *params, QWidget *parent) : QListWidget(parent), _params(params)
 {
-    Z::Gui::setValueFont(this);
+    setFont(Z::Gui::valueFont());
 
 #ifdef Q_OS_WIN
     // Default icon size looks OK on Ubuntu and MacOS but it is too small on Windows

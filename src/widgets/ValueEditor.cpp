@@ -12,7 +12,7 @@ ValueEditor::ValueEditor(QWidget *parent) : QWidget(parent)
         _unitsSelector = new UnitComboBox
     }).setMargin(0).setSpacing(2).useFor(this);
 
-    Z::Gui::setValueFont(_valueEditor);
+    _valueEditor->setFont(Z::Gui::valueFont());
     _valueEditor->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
 
     connect(_valueEditor, &QLineEdit::textEdited, [this]{emit this->valueChanged();});

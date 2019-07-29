@@ -34,7 +34,7 @@ InfoFuncWindow::InfoFuncWindow(InfoFunction *func, QWidget *parent) :
     _editor = new QTextBrowser;
     _editor->setReadOnly(true);
     _editor->setOpenLinks(false);
-    Z::Gui::setValueFont(_editor);
+    _editor->setFont(Z::Gui::valueFont());
     connect(_editor, SIGNAL(anchorClicked(QUrl)), this, SLOT(linkClicked(QUrl)));
 
     createToolbar();

@@ -40,6 +40,18 @@ void adjustSymbolFont(QFont& f, FontSize size)
     f.setPointSize(sizePt);
 }
 
+QFont valueFont()
+{
+    QFont f = QApplication::font();
+#if defined(Q_OS_MAC)
+    f.setPointSize(14);
+#else
+    if (f.pointSize() < 10)
+        f.setPointSize(10);
+#endif
+    return f;
+}
+
 QFont codeEditorFont()
 {
     QFont f = QApplication::font();
@@ -67,13 +79,6 @@ QFont getParamLabelFont(FontSize size)
 {
     QFont f = QApplication::font();
     adjustSymbolFont(f, size);
-    return f;
-}
-
-QFont getValueFont()
-{
-    QFont f = QApplication::font();
-    adjustValueFont(f);
     return f;
 }
 

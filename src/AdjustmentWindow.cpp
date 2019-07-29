@@ -60,10 +60,11 @@ AdjusterSettingsWidget::AdjusterSettingsWidget(const AdjusterSettings &settings,
     _settings = settings;
 
     _increment = new Ori::Widgets::ValueEdit;
-    _multiplier = new Ori::Widgets::ValueEdit;
-    Z::Gui::setValueFont(_increment);
-    Z::Gui::setValueFont(_multiplier);
+    _increment->setFont(Z::Gui::valueFont());
     _increment->setValue(_settings.increment);
+
+    _multiplier = new Ori::Widgets::ValueEdit;
+    _multiplier->setFont(Z::Gui::valueFont());
     _multiplier->setValue(_settings.multiplier);
 
     _flagSetDefault = new QCheckBox(tr("Set as default values"));
@@ -105,11 +106,11 @@ AdjusterWidget::AdjusterWidget(Schema* schema, Z::Parameter *param, QWidget *par
     _settings.multiplier = Settings::instance().adjusterMultiplier;
 
     _valueEditor = new Ori::Widgets::ValueEdit;
+    _valueEditor->setFont(Z::Gui::valueFont());
     _valueEditor->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
     connect(_valueEditor, &Ori::Widgets::ValueEdit::focused, this, &AdjusterWidget::editorFocused);
     connect(_valueEditor, &Ori::Widgets::ValueEdit::keyPressed, this, &AdjusterWidget::editorKeyPressed);
     connect(_valueEditor, &Ori::Widgets::ValueEdit::valueEdited, this, &AdjusterWidget::valueEdited);
-    Z::Gui::setValueFont(_valueEditor);
 
     _labelLabel = new QLabel;
     _labelLabel->setFont(Z::Gui::getElemLabelFont());

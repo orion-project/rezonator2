@@ -304,8 +304,8 @@ bool Plot::setLimitsDlg(QCPRange& range, const QString& title)
 {
     auto editorMin = new Ori::Widgets::ValueEdit;
     auto editorMax = new Ori::Widgets::ValueEdit;
-    Z::Gui::setValueFont(editorMin);
-    Z::Gui::setValueFont(editorMax);
+    editorMin->setFont(Z::Gui::valueFont());
+    editorMax->setFont(Z::Gui::valueFont());
     editorMin->setNumberPrecision(_numberPrecision);
     editorMax->setNumberPrecision(_numberPrecision);
     editorMin->setValue(range.lower);

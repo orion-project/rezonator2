@@ -17,24 +17,17 @@ enum FontSize { FontSize_Normal, FontSize_Small };
 void adjustSymbolFont(QFont& f, FontSize size = FontSize_Normal);
 void adjustValueFont(QFont& f);
 
+QFont valueFont();
 QFont codeEditorFont();
 QFont formulaFont(FontSize size = FontSize_Normal);
 
 QFont getElemLabelFont(FontSize size = FontSize_Normal);
 QFont getParamLabelFont(FontSize size = FontSize_Normal);
-QFont getValueFont();
 
 template <class T> void setSymbolFont(T* target, FontSize size = FontSize_Normal)
 {
     QFont f = target->font();
     adjustSymbolFont(f, size);
-    target->setFont(f);
-}
-
-template <class T> void setValueFont(T* target)
-{
-    QFont f = target->font();
-    adjustValueFont(f);
     target->setFont(f);
 }
 

@@ -41,7 +41,7 @@ QWidget* SchemaPropsDialog::createGeneralPage()
     auto page = new Ori::Dlg::BasicConfigPage(tr("General"), ":/toolbar/options");
 
     _titleEditor = new QLineEdit;
-    Z::Gui::setValueFont(_titleEditor);
+    _titleEditor->setFont(Z::Gui::valueFont());
 
     page->add({
                   new QLabel(tr("Title")),
@@ -56,7 +56,7 @@ QWidget* SchemaPropsDialog::createNotesPage()
     auto page = new Ori::Dlg::BasicConfigPage(tr("Notes"), ":/config_pages/note");
 
     _notesEditor = new QPlainTextEdit;
-    Z::Gui::setValueFont(_notesEditor);
+    _notesEditor->setFont(Z::Gui::valueFont());
 
     page->add({_notesEditor});
     return page;

@@ -112,7 +112,7 @@ void ParamsTreeWidget::addRootItem(Element* elem)
     else
     {
         root->setText(COL_TITLE, tr("Globals"));
-        root->setFont(COL_TITLE, Z::Gui::getValueFont());
+        root->setFont(COL_TITLE, Z::Gui::valueFont());
         root->setIcon(COL_TITLE, QIcon(":/toolbar/parameter"));
     }
     for (auto item : items)

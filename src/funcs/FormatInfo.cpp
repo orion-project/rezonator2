@@ -115,7 +115,7 @@ QString formulaStyle(bool isSmall)
 
 QString valueStyle()
 {
-    static QString style(fontToHtmlStyles(Z::Gui::getValueFont()));
+    static QString style(fontToHtmlStyles(Z::Gui::valueFont()));
     return style;
 }
 

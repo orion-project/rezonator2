@@ -33,7 +33,7 @@ struct PointsEditor
         editor = new QSpinBox;
         editor->setAlignment(Qt::AlignRight);
         editor->setRange(MIN_POINTS_COUNT, MAX_POINTS_COUNT);
-        Z::Gui::setValueFont(editor);
+        editor->setFont(Z::Gui::valueFont());
 
         layout = new QHBoxLayout;
         layout->setMargin(0);
@@ -154,7 +154,7 @@ PointsRangeEditor::PointsRangeEditor() : QGridLayout()
     Z::Gui::setFontStyle(stopValueLabel, false, true);
 
     _stopValueLabel = new QLabel;
-    Z::Gui::setValueFont(_stopValueLabel);
+    _stopValueLabel->setFont(Z::Gui::valueFont());
     Z::Gui::setFontStyle(_stopValueLabel, false, true);
 
     addWidget(stopValueLabel, row0, col0);
