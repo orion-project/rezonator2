@@ -15,11 +15,27 @@ namespace Gui {
 enum FontSize { FontSize_Normal, FontSize_Small };
 
 void adjustSymbolFont(QFont& f, FontSize size = FontSize_Normal);
-void adjustValueFont(QFont& f);
 
-QFont valueFont();
-QFont codeEditorFont();
-QFont formulaFont(FontSize size = FontSize_Normal);
+struct ValueFont
+{
+    ValueFont& bold() { _bold = true; return *this; }
+    QFont get() const;
+private:
+    bool _bold = false;
+};
+
+struct CodeEditorFont
+{
+    QFont get() const;
+};
+
+struct FormulaFont
+{
+    FormulaFont& small() { _small = true; return *this; }
+    QFont get() const;
+private:
+    bool _small = false;
+};
 
 QFont getElemLabelFont(FontSize size = FontSize_Normal);
 QFont getParamLabelFont(FontSize size = FontSize_Normal);

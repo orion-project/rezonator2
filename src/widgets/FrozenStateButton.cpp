@@ -64,7 +64,7 @@ FrozenStatePopup::FrozenStatePopup(FrozenStateButton *owner) : QFrame(owner, Qt:
     setFrameShape(QFrame::Box);
 
     textInfo = new QLabel;
-    textInfo->setFont(Z::Gui::valueFont());
+    textInfo->setFont(Z::Gui::ValueFont().get());
 
     QToolButton *buttonCopy = new QToolButton;
     buttonCopy->setIcon(QPixmap(":/toolbar/copy"));

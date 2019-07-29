@@ -44,8 +44,8 @@ ValueEditorTS::ValueEditorTS(const QString& label, const QString& symbol, const 
 
     _editorT = new Ori::Widgets::ValueEdit;
     _editorS = new Ori::Widgets::ValueEdit;
-    _editorT->setFont(Z::Gui::valueFont());
-    _editorS->setFont(Z::Gui::valueFont());
+    _editorT->setFont(Z::Gui::ValueFont().get());
+    _editorS->setFont(Z::Gui::ValueFont().get());
 
     _unitsSelector = new UnitComboBox;
 
@@ -145,8 +145,8 @@ ValuesEditorTS::ValuesEditorTS(const QVector<ValueEditorTS*>& editors) : QVBoxLa
     _unitSpacer = new QLabel;
     _headerT = new QLabel("T");
     _headerS = new QLabel("S");
-    Z::Gui::setSymbolFont(_headerT);
-    Z::Gui::setSymbolFont(_headerS);
+    _headerT->setFont(Z::Gui::ValueFont().bold().get());
+    _headerS->setFont(Z::Gui::ValueFont().bold().get());
     _headerT->setAlignment(Qt::AlignHCenter);
     _headerS->setAlignment(Qt::AlignHCenter);
 

@@ -137,7 +137,7 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
     }
 
     _valueEditor = new ValueEdit;
-    _valueEditor->setFont(Z::Gui::valueFont());
+    _valueEditor->setFont(Z::Gui::ValueFont().get());
 
     _unitsSelector = new UnitComboBox(_param->dim());
     layout->addWidget(_valueEditor);

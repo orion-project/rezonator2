@@ -108,8 +108,8 @@ PumpParamsDialog::PumpParamsDialog(Z::PumpParams *params, QWidget *parent)
     QLabel* iconLabel = new QLabel;
     _editorLabel = new QLineEdit;
     _editorTitle = new QLineEdit;
-    _editorLabel->setFont(Z::Gui::valueFont());
-    _editorTitle->setFont(Z::Gui::valueFont());
+    _editorLabel->setFont(Z::Gui::ValueFont().get());
+    _editorTitle->setFont(Z::Gui::ValueFont().get());
 
     auto layoutLabelTitle = new QFormLayout;
     layoutLabelTitle->addRow(tr("Label:"), _editorLabel);

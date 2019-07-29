@@ -134,7 +134,7 @@ void PumpsTable::createRow(int row)
     setItem(row, COL_LABEL, it);
 
     it = new QTableWidgetItem();
-    it->setFont(Z::Gui::valueFont());
+    it->setFont(Z::Gui::ValueFont().get());
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_PARAMS, it);
 

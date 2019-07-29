@@ -9,16 +9,6 @@
 namespace Z {
 namespace Gui {
 
-void adjustValueFont(QFont& f)
-{
-#if defined(Q_OS_MAC)
-    f.setPointSize(14);
-#else
-    if (f.pointSize() < 10)
-        f.setPointSize(10);
-#endif
-}
-
 void adjustSymbolFont(QFont& f, FontSize size)
 {
     f.setBold(true);
@@ -40,9 +30,11 @@ void adjustSymbolFont(QFont& f, FontSize size)
     f.setPointSize(sizePt);
 }
 
-QFont valueFont()
+QFont ValueFont::get() const
 {
     QFont f = QApplication::font();
+    if (_bold)
+        f.setBold(true);
 #if defined(Q_OS_MAC)
     f.setPointSize(14);
 #else
@@ -52,7 +44,7 @@ QFont valueFont()
     return f;
 }
 
-QFont codeEditorFont()
+QFont CodeEditorFont::get() const
 {
     QFont f = QApplication::font();
 #if defined(Q_OS_WIN)
@@ -82,9 +74,9 @@ QFont getParamLabelFont(FontSize size)
     return f;
 }
 
-QFont formulaFont(FontSize size)
+QFont FormulaFont::get() const
 {
-    auto f = getParamLabelFont(size);
+    auto f = QApplication::font();
     f.setItalic(true);
 #if defined(Q_OS_WIN)
     f.setFamily(QStringLiteral("Times New Roman"));
@@ -95,11 +87,11 @@ QFont formulaFont(FontSize size)
 #endif
     int sizePt =
 #if defined(Q_OS_WIN)
-        size == FontSize_Small ? 11 : 13;
+        _small ? 11 : 13;
 #elif defined(Q_OS_MAC)
-        size == FontSize_Small ? 16 : 20;
+        _small ? 16 : 20;
 #else
-        size == FontSize_Small ? 10 : 13;
+        _small ? 10 : 13;
 #endif
     f.setPointSize(sizePt);
     return f;

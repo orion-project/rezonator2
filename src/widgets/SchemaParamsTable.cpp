@@ -98,7 +98,7 @@ void SchemaParamsTable::createRow(int row)
     setItem(row, COL_ALIAS, it);
 
     it = new QTableWidgetItem();
-    it->setFont(Z::Gui::valueFont());
+    it->setFont(Z::Gui::ValueFont().get());
     it->setTextAlignment(Qt::AlignHCenter | Qt::AlignCenter);
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_VALUE, it);

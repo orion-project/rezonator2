@@ -16,7 +16,7 @@
 
 ElemSelectorWidget::ElemSelectorWidget(Schema* schema, ElementFilter *filter) : QComboBox(), _filter(filter)
 {
-    setFont(Z::Gui::valueFont());
+    setFont(Z::Gui::ValueFont().get());
 
     for (auto elem : schema->elements())
         if (!filter || filter->check(elem))
@@ -49,7 +49,7 @@ WidgetResult ElemSelectorWidget::verify()
 
 ParamSelectorWidget::ParamSelectorWidget(Z::ParameterFilter* filter) : QComboBox(), _filter(filter)
 {
-    setFont(Z::Gui::valueFont());
+    setFont(Z::Gui::ValueFont().get());
 }
 
 void ParamSelectorWidget::populate(Element *elem)
@@ -248,7 +248,7 @@ ElemOffsetSelectorWidget::ElemOffsetSelectorWidget(Schema* schema, ElementFilter
     Z::Gui::setFontStyle(_lengthTitle, false, true);
 
     _lengthLabel = new QLabel;
-    _lengthLabel->setFont(Z::Gui::valueFont());
+    _lengthLabel->setFont(Z::Gui::ValueFont().get());
     Z::Gui::setFontStyle(_lengthLabel, false, true);
 
     _offsetTitle = new QLabel(tr("Offset"));

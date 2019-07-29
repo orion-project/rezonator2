@@ -13,7 +13,7 @@ UnitComboBox::UnitComboBox(QWidget* parent) : QComboBox(parent)
 {
     setEnabled(false);
     setFixedWidth(Z::Gui::unitsSelectorWidth());
-    setFont(Z::Gui::valueFont());
+    setFont(Z::Gui::ValueFont().get());
 
     connect(this, QOverload<int>::of(&QComboBox::currentIndexChanged), [&](int index){
         if (index >= 0 && _enableChangeEvent) emit unitChanged(unitAt(index));
@@ -86,7 +86,7 @@ void UnitComboBox::setEnabled(bool on)
 DimComboBox::DimComboBox(QWidget* parent) : QComboBox(parent)
 {
     populate();
-    setFont(Z::Gui::valueFont());
+    setFont(Z::Gui::ValueFont().get());
 
     connect(this, QOverload<int>::of(&QComboBox::currentIndexChanged), [&](int index){
         if(index >= 0 && _enableChangeEvent) emit dimChanged(dimAt(index));

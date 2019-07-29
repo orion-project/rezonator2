@@ -56,9 +56,9 @@ ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : Rezonat
 
     // common props
     _editorLabel = new QLineEdit;
-    _editorLabel->setFont(Z::Gui::valueFont());
+    _editorLabel->setFont(Z::Gui::ValueFont().get());
     _editorTitle = new QLineEdit;
-    _editorTitle->setFont(Z::Gui::valueFont());
+    _editorTitle->setFont(Z::Gui::ValueFont().get());
 
     auto layoutCommon = new QFormLayout;
     layoutCommon->addRow(tr("Label:"), _editorLabel);
