@@ -1,5 +1,5 @@
 @echo off
-setlocal
+setlocal EnableDelayedExpansion
 
 echo Build application manual.
 
@@ -10,13 +10,14 @@ echo.
 echo ***** Check if Qt is in PATH
 where /Q %HELP_TOOL%
 if %ERRORLEVEL% neq 0 (
-    :: Qt 5.12 and above dont't use qcollectiongenerator
+    :: Qt 5.12 and above doesnt't use qcollectiongenerator
     set HELP_TOOL=qhelpgenerator.exe
+    echo %HELP_TOOL% not found, try !HELP_TOOL!...
 
-    where /Q %HELP_TOOL%
-    if %ERRORLEVEL% neq 0 (
+    where /Q !HELP_TOOL!
+    if !ERRORLEVEL! neq 0 (
         echo.
-        echo ERROR: %HELP_TOOL% is not found in PATH
+        echo ERROR: %HELP_TOOL% or !HELP_TOOL! not found in PATH
         echo Find Qt installation and update your PATH like:
         echo set PATH=c:\Qt\5.12.0\mingw73_64\bin;%%PATH%%
         goto :eof
