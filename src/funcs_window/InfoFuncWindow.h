@@ -1,8 +1,6 @@
 #ifndef INFO_FUNC_WINDOW_H
 #define INFO_FUNC_WINDOW_H
 
-#include <QWidget>
-
 #include "../SchemaWindows.h"
 
 QT_BEGIN_NAMESPACE
@@ -15,7 +13,7 @@ class Schema;
 class InfoFunction;
 class FrozenStateButton;
 
-class InfoFuncWindow : public QWidget, public SchemaToolWindow
+class InfoFuncWindow : public SchemaPopupWindow, public SchemaToolWindow
 {
     Q_OBJECT
 
@@ -39,7 +37,6 @@ private:
     QTextBrowser *_editor;
     QAction *actnUpdate, *actnFreeze, *actnFrozenInfo;
     FrozenStateButton *buttonFrozenInfo;
-
     InfoFunction *_function;
     QString _result;
     bool _needRecalc = false;

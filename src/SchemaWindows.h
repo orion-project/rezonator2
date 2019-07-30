@@ -238,4 +238,33 @@ private:
     void updateBackground();
 };
 
+//------------------------------------------------------------------------------
+
+/**
+    This class should be used as a base for popup windows wanting to process action shortcuts.
+    ProjectWindow is the parent for all the schema popup windows and in this case Qt prints
+    "Ambiguous shortcut overload" when ProjectWindow has the same shortcut as a popup window has.
+    It is not the case for the calculator windows which have no parent and shortcuts work well there.
+    There is a similar question (https://forum.qt.io/topic/99653/ambiguous-shortcut-overload) but no answer.
+    Currently, it works only with shortcuts set as `QKeySequence::StandardKey`, and it should be extended
+    to process arbitrary shortcuts. However, it'd be better to find a more robust and straightforward solution.
+*/
+class SchemaPopupWindow : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit SchemaPopupWindow(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+
+protected:
+    bool event(QEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+
+    void registerShortcut(QKeySequence::StandardKey stdKey, QAction* action);
+
+private:
+    QVector<QKeySequence::StandardKey> _actionShortcuts;
+    QMap<QKeySequence::StandardKey, QAction*> _actionWithShortcuts;
+};
+
 #endif // SCHEMA_WINDOWS_H
