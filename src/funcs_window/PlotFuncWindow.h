@@ -58,6 +58,7 @@ public:
 
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return QList<QMenu*>() << menuPlot << menuLimits /* TODO:NEXT-VER << menuFormat*/; }
+    virtual QList<ViewMenuItem> viewMenuItems() override;
 
     // Implementation of SchemaListener
     void recalcRequired(Schema*) override;
@@ -88,6 +89,7 @@ protected:
     PlotParamsPanel* _leftPanel;
     QCPCursor* _cursor;
     CursorPanel* _cursorPanel;
+    QMenu* _cursorMenu; // Used for View menu of ProjectWindow
     QSplitter* _splitter;
     Ori::Widgets::StatusBar* _statusBar;
     FrozenStateButton* _buttonFrozenInfo;
@@ -130,9 +132,10 @@ protected:
     virtual QString formatTitleSpecial(const QString& title) const { return title; }
     virtual void storeViewSpecific(int key) { Q_UNUSED(key) }
     virtual void restoreViewSpecific(int key) { Q_UNUSED(key) }
-    virtual void updateVisibiityTSSpecific() {}
     virtual QWidget* makeOptionsPanel() { return nullptr; }
     virtual void fillGraphWithFunctionResults(Z::WorkPlane plane, QCPGraph *graph, int resultIndex);
+
+    virtual void fillViewMenuActions(QList<QAction*>& actions) const { Q_UNUSED(actions); }
 
     QCPGraph* selectedGraph() const;
 
@@ -142,7 +145,6 @@ protected:
     void createStatusBar();
     void createContent();
 
-    void updateVisibilityTS();
     void updateTSModeActions();
     void updateTitles();
     void updateTitle();

@@ -44,6 +44,12 @@ void PlotParamsPanel::placeIn(QToolBar* toolbar)
         toolbar->addAction(panel.action);
 }
 
+void PlotParamsPanel::fillActions(QList<QAction*>& actions)
+{
+    for (const PanelInfo& panel: _panels)
+        actions << panel.action;
+}
+
 void PlotParamsPanel::showPanel()
 {
     saveActiveSize();

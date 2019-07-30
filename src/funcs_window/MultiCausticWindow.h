@@ -27,9 +27,6 @@ public:
     void elementChanged(Schema*, Element*) override;
     void elementDeleting(Schema*, Element*) override;
 
-    // Implementation of BasicMdiChild
-    QList<QAction*> viewActions() override;
-
 protected:
     // Implementation of PlotFuncWindow
     QWidget* makeOptionsPanel() override;
@@ -41,6 +38,7 @@ protected:
     QString getDefaultTitle() const override;
     QString getDefaultTitleX() const override;
     QString getDefaultTitleY() const override;
+    void fillViewMenuActions(QList<QAction*>& actions) const override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;

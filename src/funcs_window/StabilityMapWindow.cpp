@@ -145,7 +145,7 @@ void StabilityMapWindow::createControl()
     _actnStabilityAutolimits->setIcon(QIcon(":/toolbar/limits_stab"));
     connect(_actnStabilityAutolimits, &QAction::triggered, this, &StabilityMapWindow::autolimitsStability);
 
-    _actnStabBoundMarkers = new QAction(tr("Stability bound markers"), this);
+    _actnStabBoundMarkers = new QAction(tr("Stability boundary markers"), this);
     _actnStabBoundMarkers->setCheckable(true);
     _actnStabBoundMarkers->setChecked(true);
     connect(_actnStabBoundMarkers, &QAction::toggled, this, &StabilityMapWindow::toggleStabBoundMarkers);
@@ -224,7 +224,8 @@ void StabilityMapWindow::updateStabBoundMarkers()
     _stabBoundMarkerTop->point2->setCoords(1, 1);
     _stabBoundMarkerTop->setVisible(_actnStabBoundMarkers->isChecked());
 
-    double low = function()->stabilityCalcMode() == Z::Enums::StabilityCalcMode::Normal ? -1 : 0;
+    double low = function()->stabilityCalcMode() ==
+        (Z::Enums::StabilityCalcMode::Normal or actnShowTS->isChecked()) ? -1 : 0;
     _stabBoundMarkerLow->point1->setCoords(0, low);
     _stabBoundMarkerLow->point2->setCoords(1, low);
     _stabBoundMarkerLow->setVisible(_actnStabBoundMarkers->isChecked());
@@ -238,9 +239,9 @@ QCPItemStraightLine* StabilityMapWindow::makeStabBoundMarker() const
     return line;
 }
 
-QList<QAction*> StabilityMapWindow::viewActions()
+void StabilityMapWindow::fillViewMenuActions(QList<QAction*>& actions) const
 {
-    return {_actnStabBoundMarkers};
+    actions << _actnStabBoundMarkers;
 }
 
 void StabilityMapWindow::toggleStabBoundMarkers(bool on)

@@ -99,6 +99,17 @@ void CursorPanel::placeIn(class QToolBar* toolbar)
     toolbar->addAction(actnCursorFollow);
 }
 
+void CursorPanel::fillMenu(QMenu* menu)
+{
+    menu->addAction(actnShowCursor);
+    menu->addSeparator();
+    menu->addAction(actnCursorVert);
+    menu->addAction(actnCursorHorz);
+    menu->addAction(actnCursorBoth);
+    menu->addSeparator();
+    menu->addAction(actnCursorFollow);
+}
+
 QSize CursorPanel::sizeHint() const
 {
     return QSize(9999, TEXT_SIZE + TEXT_MARGIN_TOP + TEXT_MARGIN_BOTTOM);
