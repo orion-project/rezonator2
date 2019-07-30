@@ -34,14 +34,6 @@ QString paramLabelStyle(bool isSmall = false);
 QString formulaStyle(bool isSmall = false);
 QString valueStyle();
 
-template <class TParam>
-QString paramLabelAndValue(TParam *param)
-{
-    return QStringLiteral(
-        "<nobr><span style='%1'>%2</span><span style='%3'> = %4</span></nobr>")
-        .arg(paramLabelStyle(true), param->displayLabel(), valueStyle(), param->value().displayStr());
-}
-
 struct FormatParam
 {
     Schema* schema;
@@ -50,8 +42,8 @@ struct FormatParam
     bool smallName = false;
     bool isElement = true;
 
-    // Parameter is read-only when it has a driver providing its value.
-    // So this property is only assigned when `includeDriver` requested.
+    /// Parameter is read-only when it has a driver providing its value.
+    /// So this property is only assigned when `includeDriver` requested.
     bool isReadOnly() const { return _isReadOnly; }
 
     QString format(Z::Parameter* param);
@@ -60,9 +52,16 @@ private:
     bool _isReadOnly = false;
 };
 
-struct FormatParams : public FormatParam
+struct FormatElemParams
 {
+    Schema* schema;
+
     QString format(Element *elem);
+};
+
+struct FormatPumpParams
+{
+    QString format(Z::PumpParams *pump);
 };
 
 } // namespace Format

@@ -151,10 +151,8 @@ void SchemaElemsTable::populateRow(Element *elem, int row)
 {
     item(row, COL_LABEL)->setText(elem->label());
 
-    Z::Format::FormatParams f;
+    Z::Format::FormatElemParams f;
     f.schema = schema();
-    f.includeValue = true;
-    f.smallName = true;
     item(row, COL_PARAMS)->setText(f.format(elem));
 
     item(row, COL_TITLE)->setText(elem->title());

@@ -89,10 +89,8 @@ void ElementLayout::makeElemToolTip()
     auto schema = dynamic_cast<Schema*>(_element->owner());
     if (!schema) return;
 
-    Z::Format::FormatParams f;
+    Z::Format::FormatElemParams f;
     f.schema = schema;
-    f.includeValue = true;
-    f.smallName = true;
 
     setToolTip(QStringLiteral("#%1 <b>%2</b> <i>(%3)</i><br>%4")
                .arg(schema->indexOf(_element)+1)

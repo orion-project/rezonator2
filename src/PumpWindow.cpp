@@ -158,8 +158,8 @@ void PumpsTable::populateRow(Z::PumpParams *pump, int row)
     auto iconPath = pump->isActive() ? ":/icons/pump_on" : ":/icons/pump_off";
     item(row, COL_ACTIVE)->setData(Qt::DecorationRole, QIcon(iconPath).pixmap(_iconSize, _iconSize));
     item(row, COL_LABEL)->setText(pump->label());
-    item(row, COL_PARAMS)->setText(Z::Format::pumpParamsWithValues(pump));
-    item(row, COL_TITLE)->setText("  " % pump->title());
+    item(row, COL_PARAMS)->setText(Z::Format::FormatPumpParams().format(pump));
+    item(row, COL_TITLE)->setText(pump->title());
 }
 
 void PumpsTable::schemaLoaded(Schema*)

@@ -119,14 +119,6 @@ QString valueStyle()
     return style;
 }
 
-QString pumpParamsWithValues(Z::PumpParams *pump)
-{
-    QStringList paramsInfo;
-    for (Z::ParameterTS *param : *pump->params())
-        paramsInfo << paramLabelAndValue(param);
-    return paramsInfo.join(", ");
-}
-
 //------------------------------------------------------------------------------
 //                                  FormatParam
 //------------------------------------------------------------------------------
@@ -211,19 +203,39 @@ QString FormatParam::format(Z::Parameter* param)
 }
 
 //------------------------------------------------------------------------------
-//                                FormatParams
+//                              FormatElemParams
 //------------------------------------------------------------------------------
 
-QString FormatParams::format(Element *elem)
+QString FormatElemParams::format(Element *elem)
 {
+    FormatParam f;
+    f.schema = schema;
+    f.smallName = true;
+    f.includeValue = true;
+
     QStringList parts;
     for (Z::Parameter *param : elem->params())
     {
         if (!Z::Utils::defaultParamFilter()->check(param)) continue;
 
-        parts << FormatParam::format(param);
+        parts << f.format(param);
     }
     return parts.join(QStringLiteral(", "));
+}
+
+//------------------------------------------------------------------------------
+//                              FormatPumpParams
+//------------------------------------------------------------------------------
+
+QString FormatPumpParams::format(Z::PumpParams *pump)
+{
+    QStringList paramsInfo;
+    for (Z::ParameterTS *param : *pump->params())
+        paramsInfo << QStringLiteral(
+            "<nobr><span style='%1'>%2</span><span style='%3'> = %4</span></nobr>")
+            .arg(paramLabelStyle(true), param->displayLabel(),
+                 valueStyle(), param->value().displayStr());
+    return paramsInfo.join(", ");
 }
 
 } // namespace Format

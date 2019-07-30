@@ -178,10 +178,8 @@ QString InfoFuncRepetitionRate::calculate()
 
 QString InfoFuncSummary::calculate()
 {
-    Z::Format::FormatParams f;
+    Z::Format::FormatElemParams f;
     f.schema = schema();
-    f.includeValue = true;
-    f.smallName = true;
 
     QStringList strs;
     for (Element* elem : schema()->elements())
@@ -199,7 +197,12 @@ QString InfoFuncSummary::calculate()
 
     if (!strs.isEmpty())
         strs << "";
-    strs << Z::Format::paramLabelAndValue(&schema()->wavelength());
+
+    Z::Format::FormatParam f1;
+    f1.includeDriver = false;
+    f1.includeValue = true;
+    f1.smallName = true;
+    strs << f1.format(&schema()->wavelength());
 
     if (schema()->isSP())
     {
@@ -210,7 +213,7 @@ QString InfoFuncSummary::calculate()
             strs << qApp->translate("Func", "<b>Input beam:</b>");
             auto pumpMode = Z::Pump::findByModeName(pump->modeName());
             if (pumpMode) strs << pumpMode->description();
-            strs << Z::Format::pumpParamsWithValues(pump);
+            strs << Z::Format::FormatPumpParams().format(pump);
         }
     }
 

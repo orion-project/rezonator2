@@ -49,7 +49,7 @@ private:
     bool _small = false;
 };
 
-template <class T> QString html(const T& font)
+template <class FontStruct> QString html(const FontStruct& font)
 {
     int key = font.key();
     static QMap<int, QString> htmls;
