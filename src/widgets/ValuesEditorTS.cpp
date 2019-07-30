@@ -36,8 +36,8 @@ QToolButton* makeButton(const QString& tooltip, const QString& icon, QObject* re
 ValueEditorTS::ValueEditorTS(const QString& label, const QString& symbol, const Z::ValueTS& value) : QWidget()
 {
     _symbol = new QLabel(symbol);
-    Z::Gui::setSymbolFont(_symbol);
     _symbol->setAlignment(Qt::AlignVCenter);
+    _symbol->setFont(Z::Gui::ParamLabelFont().get());
 
     _label = new QLabel(label);
     _label->setAlignment(Qt::AlignVCenter);

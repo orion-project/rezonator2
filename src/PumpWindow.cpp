@@ -128,7 +128,7 @@ void PumpsTable::createRow(int row)
     setItem(row, COL_ACTIVE, it);
 
     it = new QTableWidgetItem();
-    Z::Gui::setSymbolFont(it);
+    it->setFont(Z::Gui::PumpLabelFont().get());
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     it->setTextAlignment(Qt::AlignHCenter | Qt::AlignCenter);
     setItem(row, COL_LABEL, it);

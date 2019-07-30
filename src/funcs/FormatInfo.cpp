@@ -145,7 +145,7 @@ QString FormatParam::format(Z::Parameter* param)
 
     if (!isElement)
     {
-        parts << "; color:";
+        parts << QStringLiteral("; color:");
         parts << Z::Gui::globalParamColorHtml();
     }
 
@@ -180,7 +180,7 @@ QString FormatParam::format(Z::Parameter* param)
             if (isElement)
             {
                 parts << paramLabelStyle(smallName);
-                parts << "; color:";
+                parts << QStringLiteral("; color:");
                 parts << Z::Gui::globalParamColorHtml();
             }
             else

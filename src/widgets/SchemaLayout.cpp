@@ -65,13 +65,7 @@ const QFont& getMarkTSFont()
 
 const QFont& getLabelFont()
 {
-    static QFont f;
-    static bool fontInited = false;
-    if (!fontInited)
-    {
-        Z::Gui::adjustSymbolFont(f);
-        fontInited = true;
-    }
+    static QFont f = Z::Gui::ElemLabelFont().get();
     return f;
 }
 

@@ -21,7 +21,7 @@ using Ori::Widgets::ValueEdit;
 LinkButton::LinkButton() : QToolButton()
 {
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    Z::Gui::setSymbolFont(this);
+    setFont(Z::Gui::ParamLabelFont().get());
     showLinkSource(nullptr);
 }
 

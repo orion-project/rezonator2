@@ -24,27 +24,6 @@ QString fontToHtmlStyles(const QFont& font)
     return QStringLiteral("font:") + styles.join(' ');
 }
 
-void adjustSymbolFont(QFont& f, FontSize size)
-{
-    f.setBold(true);
-#if defined(Q_OS_WIN)
-    f.setFamily(QStringLiteral("Times New Roman"));
-#elif defined(Q_OS_MAC)
-    f.setFamily(QStringLiteral("Times New Roman"));
-#else
-    f.setFamily(QStringLiteral("serif"));
-#endif
-    int sizePt =
-#if defined(Q_OS_WIN)
-        size == FontSize_Small ? 11 : 13;
-#elif defined(Q_OS_MAC)
-        size == FontSize_Small ? 16 : 20;
-#else
-        size == FontSize_Small ? 10 : 13;
-#endif
-    f.setPointSize(sizePt);
-}
-
 QFont ValueFont::get() const
 {
     QFont f = QApplication::font();
@@ -78,38 +57,6 @@ QFont CodeEditorFont::get() const
 }
 
 QFont ElemLabelFont::get() const
-{
-    QFont f = QApplication::font();
-    f.setBold(true);
-#if defined(Q_OS_WIN)
-    f.setFamily(QStringLiteral("Times New Roman"));
-#elif defined(Q_OS_MAC)
-    f.setFamily(QStringLiteral("Times New Roman"));
-#else
-    f.setFamily(QStringLiteral("serif"));
-#endif
-    int sizePt =
-#if defined(Q_OS_WIN)
-        _small ? 11 : 13;
-#elif defined(Q_OS_MAC)
-        _small ? 16 : 20;
-#else
-        _small ? 10 : 13;
-#endif
-    f.setPointSize(sizePt);
-    return f;
-}
-
-QString ElemLabelFont::html() const
-{
-    int key = _small ? 1 : 0;
-    static QMap<int, QString> htmls;
-    if (!htmls.contains(key))
-        htmls.insert(key, fontToHtmlStyles(get()));
-    return htmls[key];
-}
-
-QFont ParamLabelFont::get() const
 {
     QFont f = QApplication::font();
     f.setBold(true);
@@ -168,15 +115,9 @@ QLabel* headerlabel(const QString& text)
 void setFocusedBackground(QWidget *w, bool focused)
 {
     QPalette p;
-
     if (focused)
-    {
         p.setColor(QPalette::Background, Ori::Color::blend(p.color(QPalette::Button), p.color(QPalette::Highlight), 0.2));
-        w->setAutoFillBackground(true);
-    }
-    else
-        w->setAutoFillBackground(false);
-
+    w->setAutoFillBackground(focused);
     w->setPalette(p);
 }
 

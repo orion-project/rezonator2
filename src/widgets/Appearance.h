@@ -3,6 +3,7 @@
 
 #include <QFont>
 #include <QColor>
+#include <QMap>
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -12,9 +13,7 @@ QT_END_NAMESPACE
 namespace Z {
 namespace Gui {
 
-enum FontSize { FontSize_Normal, FontSize_Small };
-
-void adjustSymbolFont(QFont& f, FontSize size = FontSize_Normal);
+QString fontToHtmlStyles(const QFont& font);
 
 struct ValueFont
 {
@@ -34,19 +33,14 @@ struct CodeEditorFont
 struct ElemLabelFont
 {
     ElemLabelFont& small() { _small = true; return *this; }
+    int key() const { return _small; }
     QFont get() const;
-    QString html() const;
 private:
     bool _small = false;
 };
 
-struct ParamLabelFont
-{
-    ParamLabelFont& small() { _small = true; return *this; }
-    QFont get() const;
-private:
-    bool _small = false;
-};
+using ParamLabelFont = ElemLabelFont;
+using PumpLabelFont = ElemLabelFont;
 
 struct FormulaFont
 {
@@ -56,11 +50,13 @@ private:
     bool _small = false;
 };
 
-template <class T> void setSymbolFont(T* target, FontSize size = FontSize_Normal)
+template <class T> QString html(const T& font)
 {
-    QFont f = target->font();
-    adjustSymbolFont(f, size);
-    target->setFont(f);
+    int key = font.key();
+    static QMap<int, QString> htmls;
+    if (!htmls.contains(key))
+        htmls.insert(key, fontToHtmlStyles(font.get()));
+    return htmls[key];
 }
 
 template <class T> void setFontStyle(T* target,
@@ -80,7 +76,6 @@ QLabel* headerlabel(const QString& text);
 inline int unitsSelectorWidth() { return 60; }
 
 inline QString globalParamColorHtml() { return QStringLiteral("#000080"); }
-inline QColor globalParamColor() { return QColor(globalParamColorHtml()); }
 
 void setFocusedBackground(QWidget *w, bool focused);
 
