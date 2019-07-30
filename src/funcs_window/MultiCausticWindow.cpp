@@ -156,6 +156,7 @@ QWidget* MultiCausticWindow::makeOptionsPanel()
 
 void MultiCausticWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, QCPGraph *graph, int resultIndex)
 {
+    bool flipped = plane == Z::WorkPlane::Plane_S and actnShowTS->isChecked();
     auto unitX = getUnitX();
     auto unitY = getUnitY();
     int resultIndex1 = 0;
@@ -176,7 +177,7 @@ void MultiCausticWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, QCPGra
                 // TODO: possible optimization: extract unit's SI factor before loop
                 // and replace the call of virtual method with simple multiplication
                 double x = unitX->fromSi(xs.at(i) + offset);
-                double y = unitY->fromSi(ys.at(i));
+                double y = unitY->fromSi(ys.at(i)) * (flipped ? -1 : 1);
                 data->add(QCPGraphData(x, y));
             }
             graph->setData(data);
@@ -301,6 +302,8 @@ QString MultiCausticWindow::readFunction(const QJsonObject& root)
         args.append(arg);
     }
     function()->setArgs(args);
+    function()->setMode(Z::IO::Utils::enumFromStr(
+        root["mode"].toString(), CausticFunction::BeamRadius));
     return QString();
 }
 
@@ -310,6 +313,7 @@ QString MultiCausticWindow::writeFunction(QJsonObject& root)
     for (const Z::Variable& arg : function()->args())
         argsJson.append(Z::IO::Json::writeVariable(&arg, schema()));
     root["args"] = argsJson;
+    root["mode"] = Z::IO::Utils::enumToStr(function()->mode());
     return QString();
 }
 

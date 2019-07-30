@@ -93,7 +93,7 @@ void PlotFuncWindow::createMenuBar()
     connect(_unitsMenuY, &UnitsMenu::unitChanged, this, &PlotFuncWindow::setUnitY);
 
     menuPlot = menu(tr("&Plot", "Menu title"), this, {
-        actnUpdate, actnUpdateParams, actnFreeze, nullptr, actnShowT, actnShowS, actnShowTS, nullptr,
+        actnUpdate, actnUpdateParams, actnFreeze, nullptr, actnShowTS, actnShowT, actnShowS, nullptr,
         _unitsMenuX->menu(), _unitsMenuY->menu(), nullptr, actnShowRoundTrip
     });
     connect(menuPlot, &QMenu::aboutToShow, [this](){
@@ -160,9 +160,9 @@ void PlotFuncWindow::createToolBar()
     t->addAction(actnFreeze);
     actnFrozenInfo = t->addWidget(_buttonFrozenInfo);
     t->addSeparator();
+    t->addAction(actnShowTS);
     t->addAction(actnShowT);
     t->addAction(actnShowS);
-    t->addAction(actnShowTS);
     t->addSeparator();
     t->addAction(actnAutolimits);
     t->addAction(actnZoomIn);

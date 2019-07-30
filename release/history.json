@@ -1,6 +1,18 @@
 {
   "history": [
     {
+      "version": "2.0.5-alpha5",
+      "date": "",
+      "changes": [
+        {
+          "text": "TS-flipped mode added for plot functions."
+        },
+        {
+          "text": "Fixed: Multicaustic doesn't save the mode (beam radius/front radius)."
+        }
+      ]
+    },
+    {
       "version": "2.0.4-alpha4",
       "date": "2019-07-03",
       "changes": [

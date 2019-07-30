@@ -196,11 +196,20 @@
                 "stored_views": [
                     {
                         "mode": 0,
-                        "x_max": 113.10495926662054,
-                        "x_min": 95.69456819315307,
+                        "x_max": 110.2,
+                        "x_min": 89.8,
                         "x_unit": "none",
-                        "y_max": 0.789908256880734,
-                        "y_min": -0.9950917431192661,
+                        "y_max": 24.742734021277208,
+                        "y_min": -30.57448436488165,
+                        "y_unit": "none"
+                    },
+                    {
+                        "mode": 1,
+                        "x_max": 107.32915000135482,
+                        "x_min": 99.63529988260478,
+                        "x_unit": "none",
+                        "y_max": 3.778210245522021,
+                        "y_min": -2.817259470125764,
                         "y_unit": "none"
                     }
                 ],
@@ -337,7 +346,8 @@
                             "use_step": false
                         }
                     }
-                ]
+                ],
+                "mode": "FontRadius"
             },
             "type": "Multicaustic",
             "window": {
@@ -345,14 +355,90 @@
                 "cursor_mode": "Both",
                 "elem_bound_markers": true,
                 "stored_views": [
+                    {
+                        "mode": 0,
+                        "x_max": 1539.179393939394,
+                        "x_min": -9.118787878787879,
+                        "x_unit": "none",
+                        "y_max": 834.3661282192639,
+                        "y_min": -862.8741344372106,
+                        "y_unit": "none"
+                    },
+                    {
+                        "mode": 1,
+                        "x_max": 1539.179393939394,
+                        "x_min": -9.118787878787879,
+                        "x_unit": "none",
+                        "y_max": 100,
+                        "y_min": -100,
+                        "y_unit": "none"
+                    }
                 ],
-                "ts_flipped": false,
-                "ts_mode": "T+S",
-                "x_max": 1529.14,
-                "x_min": -15.14,
+                "ts_flipped": true,
+                "ts_mode": "T",
+                "x_max": 1539.179393939394,
+                "x_min": -9.118787878787879,
                 "x_unit": "none",
-                "y_max": 802.4353374204328,
-                "y_min": -15.230361413492814,
+                "y_max": 100,
+                "y_min": -100,
+                "y_unit": "none"
+            }
+        },
+        {
+            "function": {
+                "arg": {
+                    "element_index": 1,
+                    "param": "L",
+                    "range": {
+                        "points": 100,
+                        "start": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 6
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 600
+                        },
+                        "use_step": false
+                    }
+                },
+                "mode": "BeamRadius"
+            },
+            "type": "Caustic",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "stored_views": [
+                    {
+                        "mode": 0,
+                        "x_max": 606,
+                        "x_min": -6,
+                        "x_unit": "none",
+                        "y_max": 832.8217260089272,
+                        "y_min": -830.4416880225073,
+                        "y_unit": "none"
+                    },
+                    {
+                        "mode": 1,
+                        "x_max": 605.939393939394,
+                        "x_min": 0.12121212121212022,
+                        "x_unit": "none",
+                        "y_max": 30.508885126860562,
+                        "y_min": -469.7141962527844,
+                        "y_unit": "none"
+                    }
+                ],
+                "ts_flipped": true,
+                "ts_mode": "T+S",
+                "x_max": 606,
+                "x_min": -6,
+                "x_unit": "none",
+                "y_max": 832.8217260089272,
+                "y_min": -830.4416880225073,
                 "y_unit": "none"
             }
         }
