@@ -279,11 +279,18 @@ void ProjectWindow::updateMenuBar()
     menuView->clear();
     if (child)
     {
-        auto viewActions = child->viewActions();
-        if (!viewActions.empty())
+        auto items = child->viewMenuItems();
+        if (!items.empty())
         {
-            for (auto action : viewActions)
-                menuView->addAction(action);
+            for (auto item : items)
+            {
+                if (item.action)
+                    menuView->addAction(item.action);
+                else if (item.menu)
+                    menuView->addMenu(item.menu);
+                else
+                    menuView->addSeparator();
+            }
             menuView->addSeparator();
         }
     }

@@ -342,9 +342,9 @@ ElemDeletionReaction MultiCausticWindow::reactElemDeletion(const Elements& elems
     return ElemDeletionReaction::None;
 }
 
-QList<QAction*> MultiCausticWindow::viewActions()
+void MultiCausticWindow::fillViewMenuActions(QList<QAction*>& actions) const
 {
-    return {_actnElemBoundMarkers};
+    actions << _actnElemBoundMarkers;
 }
 
 void MultiCausticWindow::toggleElementBoundMarkers(bool on)

@@ -20,6 +20,7 @@ public:
     void update();
     void update(const QString& info);
     void placeIn(class QToolBar* toolbar);
+    void fillMenu(QMenu *menu);
 
     bool autoUpdateInfo() const { return _autoUpdateInfo; }
     void setAutoUpdateInfo(bool v) { _autoUpdateInfo = v; }

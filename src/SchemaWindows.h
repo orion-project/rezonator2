@@ -140,6 +140,15 @@ public:
     };
     Q_DECLARE_FLAGS(InitOptions, InitOption)
 
+    struct ViewMenuItem
+    {
+        QAction* action = nullptr;
+        QMenu* menu = nullptr;
+        ViewMenuItem() {}
+        ViewMenuItem(QAction* a): action(a) {}
+        ViewMenuItem(QMenu* m): menu(m) {}
+    };
+
 public:
     BasicMdiChild(InitOptions options = InitOptions());
 
@@ -151,7 +160,7 @@ public:
 
     /// Returns additional actions for View menu.
     /// These actions are inserted into View menu when MDI-child window is activated.
-    virtual QList<QAction*> viewActions() { return QList<QAction*>(); }
+    virtual QList<ViewMenuItem> viewMenuItems() { return QList<ViewMenuItem>(); }
 
     /// Returns default toolbar of MDI-child window
     /// or nullptr if one was not created (see @ref InitOption::initNoToolBar).

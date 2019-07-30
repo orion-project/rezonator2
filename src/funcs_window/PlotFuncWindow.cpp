@@ -208,9 +208,11 @@ void PlotFuncWindow::createContent()
     auto axesLayer = _plot->layer(QStringLiteral("axes"));
     if (axesLayer) _cursor->setLayer(axesLayer);
 
+    _cursorMenu = new QMenu(tr("Cursor"), this);
     _cursorPanel = new CursorPanel(_function, _cursor);
     _cursorPanel->setAutoUpdateInfo(false);
     _cursorPanel->placeIn(toolbar);
+    _cursorPanel->fillMenu(_cursorMenu);
 
     _splitter->addWidget(_leftPanel);
     _splitter->addWidget(_plot);
@@ -652,9 +654,33 @@ void PlotFuncWindow::setUnitY(Z::Unit unit)
         updateGraphs();
         _plot->setLimitsY(limits, false);
         updateTitleY();
-        updateStatusUnits();
+        updateStatusUnits();;
         afterSetUnitsY(oldUnit, unit);
         schema()->markModified();
         _plot->replot();
     }
+}
+
+QList<BasicMdiChild::ViewMenuItem> PlotFuncWindow::viewMenuItems()
+{
+    QList<BasicMdiChild::ViewMenuItem> menuItems;
+
+    QList<QAction*> actions;
+    _leftPanel->fillActions(actions);
+    if (actions.size() > 0)
+    {
+        for (auto a : actions)
+            menuItems << BasicMdiChild::ViewMenuItem(a);
+        menuItems << BasicMdiChild::ViewMenuItem();
+    }
+
+    menuItems << BasicMdiChild::ViewMenuItem(_cursorMenu);
+    menuItems << BasicMdiChild::ViewMenuItem();
+
+    actions.clear();
+    fillViewMenuActions(actions);
+    for (auto a : actions)
+        menuItems << BasicMdiChild::ViewMenuItem(a);
+
+    return menuItems;
 }
