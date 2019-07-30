@@ -26,7 +26,7 @@ void InfoFuncWindow::open(InfoFunction *func, QWidget* parent)
 }
 
 InfoFuncWindow::InfoFuncWindow(InfoFunction *func, QWidget *parent) :
-    QWidget(parent, Qt::Tool), SchemaToolWindow(func->schema()), _function(func)
+    SchemaPopupWindow(parent, Qt::Tool), SchemaToolWindow(func->schema()), _function(func)
 {
     setWindowTitle(_function->name());
     setAttribute(Qt::WA_DeleteOnClose);
@@ -62,19 +62,30 @@ InfoFuncWindow::~InfoFuncWindow()
 
 void InfoFuncWindow::createToolbar()
 {
-    auto toolbar = makeToolBar(true);
-    toolbar->addAction(actnUpdate = Ori::Gui::action(tr("Update"), this, SLOT(processCalc()), ":/toolbar/update", Qt::Key_F5));
-    toolbar->addAction(actnFreeze = Ori::Gui::toggledAction(tr("Freeze"), this, SLOT(freeze(bool)), ":/toolbar/freeze", Qt::CTRL | Qt::Key_F));
-    actnFrozenInfo = toolbar->addWidget(buttonFrozenInfo = new FrozenStateButton(tr("Frozen info"), "frozen_info"));
-    toolbar->addSeparator();
-    toolbar->addAction(Ori::Gui::action(tr("Copy"), _editor, SLOT(copy()), ":/toolbar/copy", QKeySequence::Copy));
+    actnUpdate = Ori::Gui::action(tr("Update"), this, SLOT(processCalc()), ":/toolbar/update", QKeySequence::Refresh);
+    actnFreeze = Ori::Gui::toggledAction(tr("Freeze"), this, SLOT(freeze(bool)), ":/toolbar/freeze", QKeySequence::Find);
+    auto actnCopy = Ori::Gui::action(tr("Copy"), _editor, SLOT(copy()), ":/toolbar/copy", QKeySequence::Copy);
     auto actnCopyAll = Ori::Gui::action(tr("Copy All"), this, SLOT(copyAll()), ":/toolbar/copy_all");
+    buttonFrozenInfo = new FrozenStateButton(tr("Frozen info"), "frozen_info");
+
+    registerShortcut(QKeySequence::Refresh, actnUpdate);
+    registerShortcut(QKeySequence::Find, actnFreeze);
+    registerShortcut(QKeySequence::Copy, actnCopy);
+
+    auto toolbar = makeToolBar(true);
+    toolbar->addAction(actnUpdate);
+    toolbar->addAction(actnFreeze);
+    actnFrozenInfo = toolbar->addWidget(buttonFrozenInfo);
+    toolbar->addSeparator();
+    toolbar->addAction(actnCopy);
     toolbar->addWidget(Ori::Gui::textToolButton(actnCopyAll));
     toolbar->addSeparator();
     if (!_function->helpTopic().isEmpty())
-        // using QKeySequence::HelpContents here gives "Ambiguous shortcut overload: F1"
-        // ProjectWindow's help action should analyze active top-level and show correct topic.
-        toolbar->addAction(Ori::Gui::action(tr("Help"), this, SLOT(help()), ":/toolbar/help"));
+    {
+        auto actnHelp = Ori::Gui::action(tr("Help"), this, SLOT(help()), ":/toolbar/help", QKeySequence::HelpContents);
+        registerShortcut(QKeySequence::HelpContents, actnHelp);
+        toolbar->addAction(actnHelp);
+    }
 }
 
 void InfoFuncWindow::updateFrozenInfo()

@@ -64,8 +64,6 @@ void PlotFuncWindow::createActions()
     actnShowT->setChecked(true);
     actnShowS->setChecked(true);
 
-    actnShowTS->setVisible(false); //< TODO:NEXT_VER
-
     actnShowRoundTrip = action(tr("Show Round-trip"), this, SLOT(showRoundTrip()));
     actnShowRoundTrip->setVisible(false);
 
@@ -95,7 +93,7 @@ void PlotFuncWindow::createMenuBar()
     connect(_unitsMenuY, &UnitsMenu::unitChanged, this, &PlotFuncWindow::setUnitY);
 
     menuPlot = menu(tr("&Plot", "Menu title"), this, {
-        actnUpdate, actnUpdateParams, actnFreeze, nullptr, actnShowT, actnShowS, actnShowTS, nullptr,
+        actnUpdate, actnUpdateParams, actnFreeze, nullptr, actnShowTS, actnShowT, actnShowS, nullptr,
         _unitsMenuX->menu(), _unitsMenuY->menu(), nullptr, actnShowRoundTrip
     });
     connect(menuPlot, &QMenu::aboutToShow, [this](){
@@ -160,9 +158,9 @@ void PlotFuncWindow::createToolBar()
     t->addAction(actnFreeze);
     actnFrozenInfo = t->addWidget(_buttonFrozenInfo);
     t->addSeparator();
+    t->addAction(actnShowTS);
     t->addAction(actnShowT);
     t->addAction(actnShowS);
-    t->addAction(actnShowTS);
     t->addSeparator();
     t->addAction(actnAutolimits);
     t->addAction(actnZoomIn);
@@ -208,9 +206,11 @@ void PlotFuncWindow::createContent()
     auto axesLayer = _plot->layer(QStringLiteral("axes"));
     if (axesLayer) _cursor->setLayer(axesLayer);
 
+    _cursorMenu = new QMenu(tr("Cursor"), this);
     _cursorPanel = new CursorPanel(_function, _cursor);
     _cursorPanel->setAutoUpdateInfo(false);
     _cursorPanel->placeIn(toolbar);
+    _cursorPanel->fillMenu(_cursorMenu);
 
     _splitter->addWidget(_leftPanel);
     _splitter->addWidget(_plot);
@@ -248,7 +248,10 @@ void PlotFuncWindow::showT()
         actnShowS->setChecked(!actnShowT->isChecked());
     else if (!actnShowT->isChecked() && !actnShowS->isChecked())
         actnShowS->setChecked(true);
-    updateVisibilityTS();
+    updateGraphs();
+    afterUpdate();
+    _plot->replot();
+    schema()->markModified();
 }
 
 void PlotFuncWindow::showS()
@@ -259,7 +262,10 @@ void PlotFuncWindow::showS()
         actnShowT->setChecked(!actnShowS->isChecked());
     else if (!actnShowS->isChecked() && !actnShowT->isChecked())
         actnShowT->setChecked(true);
-    updateVisibilityTS();
+    updateGraphs();
+    afterUpdate();
+    _plot->replot();
+    schema()->markModified();
 }
 
 void PlotFuncWindow::showTS()
@@ -267,24 +273,19 @@ void PlotFuncWindow::showTS()
     Z_NOTE("showTS" << actnShowTS->isChecked());
 
     updateTSModeActions();
-    updateVisibilityTS();
-    // TODO:NEXT-VER Schema.ModifiedForms := True;
-}
-
-void PlotFuncWindow::updateVisibilityTS()
-{
-    bool t = actnShowT->isChecked() || actnShowTS->isChecked();
-    bool s = actnShowS->isChecked() || actnShowTS->isChecked();
-    for (auto g : _graphsT) g->setVisible(t);
-    for (auto g : _graphsS) g->setVisible(s);
-    updateVisibiityTSSpecific();
+    updateGraphs();
+    afterUpdate();
     _plot->replot();
+    schema()->markModified();
 }
 
 void PlotFuncWindow::updateTSModeActions()
 {
-    actnShowT->setEnabled(!actnShowTS->isChecked());
-    actnShowS->setEnabled(!actnShowTS->isChecked());
+    bool ts = !actnShowTS->isChecked();
+    actnShowT->setEnabled(ts);
+    actnShowT->setVisible(ts);
+    actnShowS->setEnabled(ts);
+    actnShowS->setVisible(ts);
 }
 
 void PlotFuncWindow::updateNotables()
@@ -437,11 +438,12 @@ void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
         {
             g = _plot->addGraph();
             g->setPen(getLineSettings(plane));
-            g->setVisible(isVisible);
             graphs.append(g);
         }
         else g = graphs[i];
-        fillGraphWithFunctionResults(plane, g, i);
+        g->setVisible(isVisible);
+        if (isVisible)
+            fillGraphWithFunctionResults(plane, g, i);
     }
     while (graphs.size() > resultCount)
     {
@@ -452,6 +454,7 @@ void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
 
 void PlotFuncWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, QCPGraph *graph, int resultIndex)
 {
+    bool flipped = plane == Z::WorkPlane::Plane_S and actnShowTS->isChecked();
     auto result = _function->result(plane, resultIndex);
     int count = result.pointsCount();
     auto xs = result.x();
@@ -464,7 +467,7 @@ void PlotFuncWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, QCPGraph *
         // TODO: possible optimization: extract unit's SI factor before loop
         // and replace the call of virtual method with simple multiplication
         double x = unitX->fromSi(xs.at(i));
-        double y = unitY->fromSi(ys.at(i));
+        double y = unitY->fromSi(ys.at(i)) * (flipped ? -1 : 1);
         data->add(QCPGraphData(x, y));
     }
     graph->setData(data);
@@ -649,9 +652,33 @@ void PlotFuncWindow::setUnitY(Z::Unit unit)
         updateGraphs();
         _plot->setLimitsY(limits, false);
         updateTitleY();
-        updateStatusUnits();
+        updateStatusUnits();;
         afterSetUnitsY(oldUnit, unit);
         schema()->markModified();
         _plot->replot();
     }
+}
+
+QList<BasicMdiChild::ViewMenuItem> PlotFuncWindow::viewMenuItems()
+{
+    QList<BasicMdiChild::ViewMenuItem> menuItems;
+
+    QList<QAction*> actions;
+    _leftPanel->fillActions(actions);
+    if (actions.size() > 0)
+    {
+        for (auto a : actions)
+            menuItems << BasicMdiChild::ViewMenuItem(a);
+        menuItems << BasicMdiChild::ViewMenuItem();
+    }
+
+    menuItems << BasicMdiChild::ViewMenuItem(_cursorMenu);
+    menuItems << BasicMdiChild::ViewMenuItem();
+
+    actions.clear();
+    fillViewMenuActions(actions);
+    for (auto a : actions)
+        menuItems << BasicMdiChild::ViewMenuItem(a);
+
+    return menuItems;
 }

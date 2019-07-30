@@ -53,7 +53,6 @@ QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root)
     actnShowS->setChecked(modeS);
     actnShowTS->setChecked(root["ts_flipped"].toBool());
     updateTSModeActions();
-    updateVisibilityTS();
 
     // Restore cursor state
     _cursorPanel->setEnabled(root["cursor_enabled"].toBool(true));

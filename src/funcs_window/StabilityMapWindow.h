@@ -18,9 +18,6 @@ public:
 
     StabilityMapFunction* function() const { return dynamic_cast<StabilityMapFunction*>(_function); }
 
-    // Implementation of BasicMdiChild
-    QList<QAction*> viewActions() override;
-
 protected:
     // Implementation of PlotFuncWindow
     QWidget* makeOptionsPanel() override;
@@ -29,6 +26,7 @@ protected:
     QString getDefaultTitle() const override;
     QString getDefaultTitleX() const override;
     QString getDefaultTitleY() const override;
+    void fillViewMenuActions(QList<QAction*>& actions) const override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;

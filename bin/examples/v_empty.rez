@@ -190,6 +190,116 @@
                 "y_min": -1.272574780006655,
                 "y_unit": "cm"
             }
+        },
+        {
+            "function": {
+                "arg_x": {
+                    "element_index": 1,
+                    "param": "L",
+                    "range": {
+                        "points": 100,
+                        "start": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 100
+                        },
+                        "use_step": false
+                    }
+                },
+                "arg_y": {
+                    "element_index": 3,
+                    "param": "L",
+                    "range": {
+                        "points": 100,
+                        "start": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 500
+                        },
+                        "use_step": false
+                    }
+                },
+                "stab_calc_mode": "Normal"
+            },
+            "type": "StabMap2D",
+            "window": {
+                "aux_stored_views": [
+                ],
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "stored_views": [
+                ],
+                "ts_flipped": false,
+                "ts_mode": "S",
+                "x_max": 100,
+                "x_min": 0,
+                "x_unit": "none",
+                "y_max": 500,
+                "y_min": 0,
+                "y_unit": "none",
+                "z_max": 3,
+                "z_min": -3
+            }
+        },
+        {
+            "function": {
+                "arg": {
+                    "element_index": 1,
+                    "param": "L",
+                    "range": {
+                        "points": 100,
+                        "start": {
+                            "unit": "mm",
+                            "value": 25
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 27
+                        },
+                        "use_step": false
+                    }
+                },
+                "pos": {
+                    "element_index": 4,
+                    "offset": {
+                        "unit": "none",
+                        "value": 0
+                    }
+                }
+            },
+            "type": "BeamVariation",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "stored_views": [
+                ],
+                "ts_flipped": true,
+                "ts_mode": "T+S",
+                "x_max": 26.693535353535424,
+                "x_min": 24.983232323232322,
+                "x_unit": "none",
+                "y_max": 822.3978508251379,
+                "y_min": -1589.4308010187528,
+                "y_unit": "none"
+            }
         }
     ]
 }

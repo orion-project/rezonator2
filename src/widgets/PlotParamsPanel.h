@@ -31,6 +31,7 @@ public:
     explicit PlotParamsPanel(PlotParamsPanelCtorOptions options, QWidget *parent = nullptr);
 
     void placeIn(QToolBar* toolbar);
+    void fillActions(QList<QAction *> &actions);
 
     QTextBrowser* infoPanel() const;
     GraphDataGrid* dataGrid() const;

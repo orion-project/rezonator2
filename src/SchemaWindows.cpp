@@ -328,3 +328,44 @@ void SchemaMdiArea::updateBackground()
         setBackground(QBrush(palette().color(QPalette::Background)));
 }
 
+//------------------------------------------------------------------------------
+//                               RezonatorPopupWindow
+//------------------------------------------------------------------------------
+
+SchemaPopupWindow::SchemaPopupWindow(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f)
+{
+}
+
+void SchemaPopupWindow::registerShortcut(QKeySequence::StandardKey stdKey, QAction*action)
+{
+    _actionShortcuts.append(stdKey);
+    _actionWithShortcuts.insert(stdKey, action);
+}
+
+bool SchemaPopupWindow::event(QEvent *event)
+{
+    if (event->type() == QEvent::ShortcutOverride)
+    {
+        auto keyEvent = dynamic_cast<QKeyEvent*>(event);
+        if (keyEvent)
+            for (auto shortcut : _actionShortcuts)
+                if (keyEvent->matches(shortcut))
+                {
+                    keyEvent->accept();
+                    return true;
+                }
+    }
+    return QWidget::event(event);
+}
+
+void SchemaPopupWindow::keyPressEvent(QKeyEvent *event)
+{
+    for (auto shortcut : _actionShortcuts)
+        if (event->matches(shortcut))
+        {
+            _actionWithShortcuts[shortcut]->trigger();
+            event->accept();
+            return;
+        }
+    QWidget::keyPressEvent(event);
+}
