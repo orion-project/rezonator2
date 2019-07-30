@@ -137,7 +137,6 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
     }
 
     _valueEditor = new ValueEdit;
-    _valueEditor->setFont(Z::Gui::ValueFont().get());
 
     _unitsSelector = new UnitComboBox(_param->dim());
     layout->addWidget(_valueEditor);
@@ -194,8 +193,8 @@ void ParamEditor::showValue(Z::Parameter *param)
 void ParamEditor::setIsLinked(bool on)
 {
     _valueEditor->setReadOnly(on);
+    _valueEditor->setFont(Z::Gui::ValueFont().readOnly(on).get());
     _unitsSelector->setEnabled(!on);
-    Z::Gui::setFontStyle(_valueEditor, false, on);
 }
 
 Z::Value ParamEditor::getValue() const

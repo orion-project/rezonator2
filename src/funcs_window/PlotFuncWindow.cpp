@@ -117,9 +117,8 @@ void PlotFuncWindow::createMenuBar()
 
     auto menuX = new QMenu;
     auto titleX = new QWidgetAction(this);
-    auto labelX = new QLabel(tr("Axis X"));
+    auto labelX = new QLabel(tr("<b>Axis X</b>"));
     labelX->setMargin(6);
-    Z::Gui::setFontStyle(labelX, true);
     titleX->setDefaultWidget(labelX);
     menuX->addAction(titleX);
     menuX->addMenu(_unitsMenuX->menu());
@@ -133,9 +132,8 @@ void PlotFuncWindow::createMenuBar()
 
     auto menuY = new QMenu;
     auto titleY = new QWidgetAction(this);
-    auto labelY = new QLabel(tr("Axis Y"));
+    auto labelY = new QLabel(tr("<b>Axis Y</b>"));
     labelY->setMargin(6);
-    Z::Gui::setFontStyle(labelY, true);
     titleY->setDefaultWidget(labelY);
     menuY->addAction(titleY);
     menuY->addMenu(_unitsMenuY->menu());

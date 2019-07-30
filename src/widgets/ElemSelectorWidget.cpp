@@ -245,11 +245,9 @@ ElemOffsetSelectorWidget::ElemOffsetSelectorWidget(Schema* schema, ElementFilter
     connect(_elemSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(currentElemChanged(int)));
 
     _lengthTitle = new QLabel(tr("Length"));
-    Z::Gui::setFontStyle(_lengthTitle, false, true);
 
     _lengthLabel = new QLabel;
     _lengthLabel->setFont(Z::Gui::ValueFont().get());
-    Z::Gui::setFontStyle(_lengthLabel, false, true);
 
     _offsetTitle = new QLabel(tr("Offset"));
     _offsetEditor = new ValueEditor;

@@ -149,7 +149,7 @@ void SchemaElemsTable::createRow(Element *elem, int row)
 
 void SchemaElemsTable::populateRow(Element *elem, int row)
 {
-    item(row, COL_LABEL)->setText(" " % elem->label() % " ");
+    item(row, COL_LABEL)->setText(elem->label());
 
     Z::Format::FormatParams f;
     f.schema = schema();
@@ -157,7 +157,7 @@ void SchemaElemsTable::populateRow(Element *elem, int row)
     f.smallName = true;
     item(row, COL_PARAMS)->setText(f.format(elem));
 
-    item(row, COL_TITLE)->setText("  " % elem->title());
+    item(row, COL_TITLE)->setText(elem->title());
     const QBrush& color = elem->disabled()? palette().shadow() : palette().text();
     item(row, COL_LABEL)->setForeground(color);
     item(row, COL_PARAMS)->setForeground(color);
@@ -169,7 +169,7 @@ void SchemaElemsTable::fillPlaceholderRow()
     int row = rowCount() - 1;
 
     QTableWidgetItem *it = new QTableWidgetItem();
-    //it->setData(Qt::DecorationRole, QPixmap(":/toolbar/elem_add"));
+    it->setData(Qt::DecorationRole, QPixmap(":/toolbar/elem_add"));
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_IMAGE, it);
 
@@ -182,9 +182,8 @@ void SchemaElemsTable::fillPlaceholderRow()
     setItem(row, COL_PARAMS, it);
 
     it = new QTableWidgetItem();
-    Z::Gui::setFontStyle(it, false, true);
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    it->setForeground(QColor(0, 0, 0, 30));
+    it->setForeground(QColor(0, 0, 0, 40));
     it->setText(tr("Double click here to append new element"));
     setItem(row, COL_TITLE, it);
 }

@@ -151,11 +151,9 @@ PointsRangeEditor::PointsRangeEditor() : QGridLayout()
     const int col1 = 1;
 
     auto stopValueLabel = new QLabel(tr("Plottable length:"));
-    Z::Gui::setFontStyle(stopValueLabel, false, true);
 
     _stopValueLabel = new QLabel;
     _stopValueLabel->setFont(Z::Gui::ValueFont().get());
-    Z::Gui::setFontStyle(_stopValueLabel, false, true);
 
     addWidget(stopValueLabel, row0, col0);
     addWidget(_stopValueLabel, row0, col1);

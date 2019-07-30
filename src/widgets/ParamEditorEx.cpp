@@ -111,7 +111,7 @@ void ParamEditorEx::toggleFormulaView()
     _actnRemoveFormula->setVisible(_hasFormula);
 
     auto valueEditor = qobject_cast<QLineEdit*>(_paramEditor->valueEditor());
-    Z::Gui::setFontStyle(valueEditor, false, _hasFormula);
+    valueEditor->setFont(Z::Gui::ValueFont().readOnly(_hasFormula).get());
     valueEditor->setReadOnly(_hasFormula);
 
     if (_formulaEditor)

@@ -2,7 +2,6 @@
 #define APPEARANCE_H
 
 #include <QFont>
-#include <QColor>
 #include <QMap>
 
 QT_BEGIN_NAMESPACE
@@ -57,17 +56,6 @@ template <class T> QString html(const T& font)
     if (!htmls.contains(key))
         htmls.insert(key, fontToHtmlStyles(font.get()));
     return htmls[key];
-}
-
-template <class T> void setFontStyle(T* target,
-    bool bold, bool italic = false, bool underline = false, bool strikeout = false)
-{
-    QFont f = target->font();
-    f.setBold(bold);
-    f.setItalic(italic);
-    f.setUnderline(underline);
-    f.setStrikeOut(strikeout);
-    target->setFont(f);
 }
 
 QLabel* headerlabel(const QString& text);
