@@ -13,10 +13,7 @@ class PumpParams;
 
 namespace Format {
 
-// TODO: Format functions should be unified.
-// Now, part of them supposes target control already have the proper font set up (face and size),
-// while another part includes font specification into result HTML (`nameStyle()` and `valueStyle()`).
-
+QString fontToHtmlStyles(const QFont& font);
 
 QString elementTitle(Element *elem);
 QString elementTitleAndMatrices(Element *elem);
@@ -28,11 +25,14 @@ QString roundTrip(const QList<Element *> &elems, bool hyperlinks = false);
 
 QString linkViewMatrix(Element *elem);
 
-QString pumpParamsWithValues(Z::PumpParams *pump);
-
-QString paramLabelStyle(bool isSmall = false);
-QString formulaStyle(bool isSmall = false);
-QString valueStyle();
+template <class FontStruct> QString html(const FontStruct& font)
+{
+    int key = font.key();
+    static QMap<int, QString> htmls;
+    if (!htmls.contains(key))
+        htmls.insert(key, fontToHtmlStyles(font.get()));
+    return htmls[key];
+}
 
 struct FormatParam
 {

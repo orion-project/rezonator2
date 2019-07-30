@@ -8,6 +8,8 @@
 #include <QApplication>
 #include <QFont>
 
+using namespace Z::Gui;
+
 namespace Z {
 namespace Format {
 
@@ -99,26 +101,6 @@ QString fontToHtmlStyles(const QFont& font)
     return QStringLiteral("font:") + styles.join(' ');
 }
 
-QString paramLabelStyle(bool isSmall)
-{
-    static QString style(fontToHtmlStyles(Z::Gui::ParamLabelFont().get()));
-    static QString styleSm(fontToHtmlStyles(Z::Gui::ParamLabelFont().small().get()));
-    return isSmall ? styleSm : style;
-}
-
-QString formulaStyle(bool isSmall)
-{
-    static QString style(fontToHtmlStyles(Z::Gui::FormulaFont().get()));
-    static QString styleSm(fontToHtmlStyles(Z::Gui::FormulaFont().small().get()));
-    return isSmall ? styleSm : style;
-}
-
-QString valueStyle()
-{
-    static QString style(fontToHtmlStyles(Z::Gui::ValueFont().get()));
-    return style;
-}
-
 //------------------------------------------------------------------------------
 //                                  FormatParam
 //------------------------------------------------------------------------------
@@ -128,22 +110,17 @@ QString FormatParam::format(Z::Parameter* param)
     QStringList parts;
 
     // Base font is value font
-    parts << QStringLiteral("<span style='");
-    parts << valueStyle();
-    parts << QStringLiteral("'>");
+    parts << QStringLiteral("<span style='") << html(ValueFont()) << QStringLiteral("'>");
 
-    parts << QStringLiteral("<span style='");
-    parts << paramLabelStyle(smallName);
-
+    // Parameter label style
+    parts << QStringLiteral("<span style='") << html(ParamLabelFont().small(smallName));
     if (!isElement)
-    {
-        parts << QStringLiteral("; color:");
-        parts << Z::Gui::globalParamColorHtml();
-    }
-
+        parts << QStringLiteral("; color:") << globalParamColorHtml();
     parts << QStringLiteral("'>");
-    parts << param->displayLabel();
-    parts << QStringLiteral("</span>");
+
+    // Parameter label text
+    parts << param->displayLabel()
+          << QStringLiteral("</span>");
 
     _isReadOnly = false;
 
@@ -168,20 +145,24 @@ QString FormatParam::format(Z::Parameter* param)
 
         if (!driverStr.isEmpty())
         {
+            // Driver style
             parts << QStringLiteral(" = <span style='");
             if (isElement)
             {
-                parts << paramLabelStyle(smallName);
-                parts << QStringLiteral("; color:");
-                parts << Z::Gui::globalParamColorHtml();
+                // Element's param is driven by global param
+                parts << html(ParamLabelFont().small(smallName))
+                      << QStringLiteral("; color:") << globalParamColorHtml();
             }
             else
             {
-                parts << formulaStyle(smallName);
+                // Global param is driven by formula
+                parts << html(FormulaFont().small(smallName));
             }
             parts << QStringLiteral("'>");
-            parts << driverStr;
-            parts << QStringLiteral("</span>");
+
+            // Driver text
+            parts << driverStr
+                  << QStringLiteral("</span>");
         }
     }
 
@@ -233,8 +214,8 @@ QString FormatPumpParams::format(Z::PumpParams *pump)
     for (Z::ParameterTS *param : *pump->params())
         paramsInfo << QStringLiteral(
             "<nobr><span style='%1'>%2</span><span style='%3'> = %4</span></nobr>")
-            .arg(paramLabelStyle(true), param->displayLabel(),
-                 valueStyle(), param->value().displayStr());
+            .arg(html(ParamLabelFont().small()), param->displayLabel(),
+                 html(ValueFont()), param->value().displayStr());
     return paramsInfo.join(", ");
 }
 

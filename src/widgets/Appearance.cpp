@@ -9,21 +9,6 @@
 namespace Z {
 namespace Gui {
 
-// TODO: merge with the same function from Z::Format
-QString fontToHtmlStyles(const QFont& font)
-{
-    QStringList styles;
-    if (font.bold())
-        styles << QStringLiteral("bold");
-    else if (font.italic())
-        styles << QStringLiteral("italic");
-    else
-        styles << QStringLiteral("normal");
-    styles << QString::number(font.pointSize()) % QStringLiteral("pt");
-    styles << font.family();
-    return QStringLiteral("font:") + styles.join(' ');
-}
-
 QFont ValueFont::get() const
 {
     QFont f = QApplication::font();

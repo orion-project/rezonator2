@@ -12,12 +12,16 @@ QT_END_NAMESPACE
 namespace Z {
 namespace Gui {
 
-QString fontToHtmlStyles(const QFont& font);
+inline int boolKey(bool on, int offset = 0)
+{
+    return (on ? 1 : 0) << offset;
+}
 
 struct ValueFont
 {
-    ValueFont& bold() { _bold = true; return *this; }
+    ValueFont& bold(bool on = true) { _bold = on; return *this; }
     ValueFont& readOnly(bool on = true) { _readOnly = on; return *this; }
+    int key() const { return boolKey(_bold) | boolKey(_readOnly, 1); }
     QFont get() const;
 private:
     bool _bold = false;
@@ -31,7 +35,7 @@ struct CodeEditorFont
 
 struct ElemLabelFont
 {
-    ElemLabelFont& small() { _small = true; return *this; }
+    ElemLabelFont& small(bool on = true) { _small = on; return *this; }
     int key() const { return _small; }
     QFont get() const;
 private:
@@ -43,20 +47,12 @@ using PumpLabelFont = ElemLabelFont;
 
 struct FormulaFont
 {
-    FormulaFont& small() { _small = true; return *this; }
+    FormulaFont& small(bool on = true) { _small = on; return *this; }
+    int key() const { return _small; }
     QFont get() const;
 private:
     bool _small = false;
 };
-
-template <class FontStruct> QString html(const FontStruct& font)
-{
-    int key = font.key();
-    static QMap<int, QString> htmls;
-    if (!htmls.contains(key))
-        htmls.insert(key, fontToHtmlStyles(font.get()));
-    return htmls[key];
-}
 
 QLabel* headerlabel(const QString& text);
 
