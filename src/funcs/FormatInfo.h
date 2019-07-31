@@ -15,7 +15,6 @@ namespace Format {
 
 QString fontToHtmlStyles(const QFont& font);
 
-QString elementTitle(Element *elem);
 QString elementTitleAndMatrices(Element *elem);
 
 QString matrix(const Z::Matrix& m);

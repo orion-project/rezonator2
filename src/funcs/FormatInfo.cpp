@@ -15,40 +15,45 @@ namespace Format {
 
 QString matrix(const Z::Matrix& m)
 {
-    const char *matrixFmtString =
-        "<table border=1 cellpadding=5 cellspacing=0>"
-            "<tr><td align=right>%1</td><td align=right>%2</td></tr>"
-            "<tr><td align=right>%3</td><td align=right>%4</td></tr>"
-        "</table>";
-    return QString::fromLatin1(matrixFmtString).arg(
-        Z::format(m.A), Z::format(m.B), Z::format(m.C), Z::format(m.D));
+    return QStringLiteral(
+        "<table border=1 cellpadding=5 cellspacing=-1 style='border-color:gray;border-style:solid'>"
+            "<tr>"
+                "<td align=right><pre class=value>%1</pre></td>"
+                "<td align=right><pre class=value>%2</pre></td>"
+            "</tr>"
+            "<tr>"
+                "<td align=right><pre class=value>%3</pre></td>"
+                "<td align=right><pre class=value>%4</pre></td>"
+            "</tr>"
+        "</table>"
+    ).arg(
+        Z::format(m.A), Z::format(m.B), Z::format(m.C), Z::format(m.D)
+    );
 }
 
 QString matrices(const Z::Matrix& mt, const Z::Matrix& ms)
 {
-    static const char *matricesFmtString =
-        "<table cellpadding=6 valign=middle>"
+    return QStringLiteral(
+        "<table cellpadding=3 valign=middle style='margin-top:5px'>"
             "<tr>"
-                "<td><b>M<sub>T</sub>&nbsp;&nbsp;=</b></td>"
+                "<td><pre class=param_sm>M<sub>T</sub>&nbsp;=</pre></td>"
                 "<td>%1</td>"
-                "<td><b>M<sub>S</sub>&nbsp;&nbsp;=</b></td>"
+                "<td style='padding-left:10px'><pre class=param_sm>M<sub>S</sub>&nbsp;=</pre></td>"
                 "<td>%2</td>"
-                "<td>"
-                    "<p>&Delta;<sub>T</sub> = %3"
-                    "<p>&Delta;<sub>S</sub> = %4"
+                "<td style='padding-left:10px'>"
+                    "<pre><span class=param_sm>&Delta;<sub>T</sub></span><span class=value> = %3</span></pre>"
+                    "<pre><span class=param_sm>&Delta;<sub>S</sub></span><span class=value> = %4</span></pre>"
                 "</td>"
             "</tr>"
-        "</table>";
-    return QString::fromLatin1(matricesFmtString)
-            .arg(matrix(mt))
-            .arg(matrix(ms))
-            .arg(mt.det())
-            .arg(ms.det());
+        "</table>"
+    ).arg(
+        matrix(mt), matrix(ms), Z::format(mt.det()), Z::format(ms.det())
+    );
 }
 
 QString linkViewMatrix(Element *elem)
 {
-    return QStringLiteral("<a href='func://viewmatrix?elem=%1'>%2</a>")
+    return QStringLiteral("<a href='func://viewmatrix?elem=%1' class=elem_link>%2</a>")
             .arg(elem->id()).arg(elem->displayLabel());
 }
 
@@ -65,40 +70,43 @@ QString roundTrip(const QList<Element*>& elems, bool hyperlinks)
     return result;
 }
 
-QString elementTitle(Element *elem)
-{
-    QString disabled;
-    if (elem->disabled()) disabled = qApp->translate("Z::Format", "(disabled)");
-    return QStringLiteral("<span style='color: %1'>%2%3</span>").arg(
-        elem->disabled()? "gray": "navy", elem->displayLabelTitle(), disabled);
-}
-
 QString elementTitleAndMatrices(Element *elem)
 {
-    QString result;
-    if (elem->disabled())
-        result += QStringLiteral("<div style='color: gray'>");
-    result += elementTitle(elem) + matrices(elem->Mt(), elem->Ms());
+    QStringList report;
+
+    report << QStringLiteral("<span class=elem_label>")
+           << elem->displayLabel()
+           << QStringLiteral("</span>");
+
+    if (!elem->title().isEmpty())
+        report << QStringLiteral(" <span class=elem_title>(")
+               << elem->title()
+               << QStringLiteral(")</span>");
+
+    report << matrices(elem->Mt(), elem->Ms());
+
     if (elem->hasOption(Element_Asymmetrical))
-        result += QStringLiteral("<p>") + qApp->translate("Z::Format", "Back-propagation matrices:") +
-                matrices(elem->Mt_inv(), elem->Ms_inv());
-    if (elem->disabled())
-        result += QStringLiteral("</div>");
-    return result;
+        report << qApp->translate("Z::Format", "Back-propagation matrices:")
+               << matrices(elem->Mt_inv(), elem->Ms_inv());
+
+    return report.join(QString());
 }
 
 QString fontToHtmlStyles(const QFont& font)
 {
     QStringList styles;
+    styles << QStringLiteral("font:");
     if (font.bold())
         styles << QStringLiteral("bold");
     else if (font.italic())
         styles << QStringLiteral("italic");
     else
         styles << QStringLiteral("normal");
+    styles << QChar(' ');
     styles << QString::number(font.pointSize()) % QStringLiteral("pt");
-    styles << font.family();
-    return QStringLiteral("font:") + styles.join(' ');
+    styles << QChar(' ');
+    styles << QChar('"') << font.family() << QChar('"');
+    return styles.join(QString());
 }
 
 //------------------------------------------------------------------------------
@@ -180,7 +188,7 @@ QString FormatParam::format(Z::Parameter* param)
     }
 
     parts << QStringLiteral("</span>");
-    return parts.join('\n');
+    return parts.join(QString());
 }
 
 //------------------------------------------------------------------------------

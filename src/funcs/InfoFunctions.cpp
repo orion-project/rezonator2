@@ -3,8 +3,25 @@
 #include "FormatInfo.h"
 #include "../core/Format.h"
 #include "../core/Schema.h"
+#include "../widgets/Appearance.h"
 
 #include <QApplication>
+
+QString matrixFuncsStyleSheet()
+{
+    return QStringLiteral(
+        ".value {%1} "
+        ".param {%2}"
+        ".param_sm {%3}"
+        ".elem_link {text-decoration:none}"
+        ".elem_label {%4}"
+    ).arg(
+        Z::Format::html(Z::Gui::ValueFont()),
+        Z::Format::html(Z::Gui::ParamLabelFont()),
+        Z::Format::html(Z::Gui::ParamLabelFont().small()),
+        Z::Format::html(Z::Gui::ElemLabelFont())
+    );
+}
 
 //------------------------------------------------------------------------------
 //                              InfoFuncMatrix
@@ -100,23 +117,27 @@ QString InfoFuncMatrixRT::calculate()
     c.calcRoundTrip();
     c.multMatrix();
 
-    QString result = QStringLiteral("%1:<p>%2<hr><b>Ref.: </b>%3").arg(
-                Z::Format::roundTrip(c.roundTrip(), true),
-                Z::Format::matrices(c.Mt(), c.Ms()),
-                Z::Format::linkViewMatrix(c.reference()));
+    QStringList report;
+    report << Z::Format::roundTrip(c.roundTrip(), true) << QChar(':')
+           << Z::Format::matrices(c.Mt(), c.Ms())
+           << QStringLiteral("<hr><span class=param_sm>Ref:&nbsp;</span>")
+           << Z::Format::linkViewMatrix(c.reference());
 
     if (schema()->isResonator())
     {
         auto stab = c.stability();
-        result += formatStability('T', stab.T) % formatStability('S', stab.S);
+        report << formatStability('T', stab.T)
+               << formatStability('S', stab.S);
     }
 
-    return result;
+    return report.join(QString());
 }
 
 QString InfoFuncMatrixRT::formatStability(char plane, double value)
 {
-    return QStringLiteral("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<nobr><b>P<sub>%1</sub></b> = %2</nobr>")
+    return QStringLiteral("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                          "<span class=param_sm>P<sub>%1</sub></span>"
+                          "<span class=value> = %2</span>")
             .arg(plane).arg(Z::format(value));
 }
 

@@ -2,6 +2,7 @@
 
 #include "../core/Schema.h"
 #include "../HelpSystem.h"
+#include "../funcs/FormatInfo.h"
 #include "../funcs/InfoFunctions.h"
 #include "../widgets/Appearance.h"
 #include "../widgets/FrozenStateButton.h"
@@ -35,6 +36,7 @@ InfoFuncWindow::InfoFuncWindow(InfoFunction *func, QWidget *parent) :
     _editor->setReadOnly(true);
     _editor->setOpenLinks(false);
     _editor->setFont(Z::Gui::ValueFont().get());
+    _editor->document()->setDefaultStyleSheet(func->styleSheet());
     connect(_editor, SIGNAL(anchorClicked(QUrl)), this, SLOT(linkClicked(QUrl)));
 
     createToolbar();

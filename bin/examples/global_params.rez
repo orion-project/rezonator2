@@ -45,7 +45,7 @@
                     "value": 1
                 }
             },
-            "title": "Distance from litght source",
+            "title": "Distance from light source",
             "type": "ElemEmptyRange"
         },
         {

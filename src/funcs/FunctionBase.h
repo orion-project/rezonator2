@@ -55,7 +55,8 @@ class InfoFunction : public FunctionBase
 public:
     InfoFunction(Schema *schema) : FunctionBase(schema) {}
     virtual FunctionState elementDeleting(Element*);
-    virtual QString calculate() { return ""; }
+    virtual QString calculate() { return QString(); }
+    virtual QString styleSheet() const { return QString(); }
 };
 
 #endif // FUNCTION_BASE_H
