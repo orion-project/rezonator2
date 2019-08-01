@@ -419,6 +419,9 @@ AdjustmentWindow::AdjustmentWindow(Schema *schema, QWidget *parent)
     }).setMargin(0).setSpacing(0).useFor(this);
 
     updateActions();
+
+    if (parent)
+        move(parent->pos() + parent->rect().center() - rect().center());
 }
 
 AdjustmentWindow::~AdjustmentWindow()

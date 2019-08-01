@@ -22,6 +22,7 @@ LinkButton::LinkButton() : QToolButton()
 {
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     setFont(Z::Gui::ParamLabelFont().get());
+    setStyleSheet("color:" + Z::Gui::globalParamColorHtml());
     showLinkSource(nullptr);
 }
 

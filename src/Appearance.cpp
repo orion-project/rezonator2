@@ -14,9 +14,8 @@ QString reportStyleSheet()
     static auto styleSheet = QString::fromLatin1(
         ".value {%1} "
         ".param {%2}"
-        ".elem_link {text-decoration:none}"
         ".elem_label {%3}"
-        ".elem_title {color:#555}"
+        ".elem_link {text-decoration:none}"
     ).arg(
         html(ValueFont()),
         html(ParamLabelFont()),

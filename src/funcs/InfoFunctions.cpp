@@ -192,29 +192,34 @@ QString InfoFuncSummary::calculate()
     for (Element* elem : schema()->elements())
         if (!elem->disabled() && elem->hasParams())
         {
-            report << QStringLiteral("<tr><td><span class=elem_label>")
+            report << QStringLiteral("<tr><td><span style='")
+                   << Z::Gui::html(Z::Gui::ElemLabelFont())
+                   << QStringLiteral("'>")
                    << elem->displayLabel()
-                   << QStringLiteral("</span></td><td>")
+
+                   // weird, but the space after span is important!
+                   // without it vertical alignment calculated improperly sometimes
+                   << QStringLiteral("</span> </td><td>")
+
                    << formatParams.format(elem)
-                   << QStringLiteral("</td><td><span class=elem_title>")
+                   << QStringLiteral("</td><td>")
                    << elem->title()
-                   << QStringLiteral("</span></td></tr>");
+                   << QStringLiteral("</td></tr>");
         }
     report << QStringLiteral("</table>");
 
     Z::Format::FormatParam formatWavelength;
     formatWavelength.includeDriver = false;
     formatWavelength.includeValue = true;
-    report << QStringLiteral("<br>")
-           << formatWavelength.format(&schema()->wavelength())
-           << QStringLiteral("<br>");
+    report << QStringLiteral("<p>")
+           << formatWavelength.format(&schema()->wavelength());
 
     if (schema()->isSP())
     {
         auto pump = schema()->activePump();
         if (pump)
         {
-            report << QStringLiteral("<br>")
+            report << QStringLiteral("<p>")
                    << qApp->translate("InfoFuncSummary", "<b>Input beam:</b>")
                    << QStringLiteral("<br>");
 

@@ -1,6 +1,5 @@
 #include "ParamsTreeWidget.h"
 
-#include "ElementImagesProvider.h"
 #include "RichTextItemDelegate.h"
 #include "../Appearance.h"
 #include "../CustomPrefs.h"
@@ -53,12 +52,9 @@ Z::Parameter* ParamsTreeWidget::selectParamDlg(Options opts)
                 dlg.okButton()->setEnabled(param);
             });
         });
-    if (dlg.exec())
-    {
-        CustomPrefs::setRecentSize("select_param_tree_dlg_size", dlg.size());
-        return paramsTree.selectedParam();
-    }
-    return nullptr;
+    bool ok = dlg.exec();
+    CustomPrefs::setRecentSize("select_param_tree_dlg_size", dlg.size());
+    return ok ? paramsTree.selectedParam() : nullptr;
 }
 
 
@@ -102,18 +98,18 @@ void ParamsTreeWidget::addRootItem(Element* elem)
     if (items.isEmpty()) return;
 
     auto root = new QTreeWidgetItem;
+    root->setBackgroundColor(COL_TITLE, QColor("#eee"));
+    root->setBackgroundColor(COL_DESCR, QColor("#eee"));
     if (elem)
     {
         root->setText(COL_TITLE, elem->displayLabel());
         root->setFont(COL_TITLE, Z::Gui::ElemLabelFont().get());
-        root->setIcon(COL_TITLE, QIcon(ElementImagesProvider::instance().iconPath(elem->type())));
         root->setText(COL_DESCR, elem->title());
     }
     else
     {
         root->setText(COL_TITLE, tr("Globals"));
         root->setFont(COL_TITLE, Z::Gui::ValueFont().get());
-        root->setIcon(COL_TITLE, QIcon(":/toolbar/parameter"));
     }
     for (auto item : items)
         root->addChild(item);
@@ -130,7 +126,7 @@ QTreeWidgetItem* ParamsTreeWidget::addParamItem(Z::Parameter* param, bool isElem
     auto item = new QTreeWidgetItem;
     item->setText(COL_TITLE, f.format(param));
     auto descr = isElement ? param->name() : param->description();
-    item->setText(COL_DESCR, descr);
+    item->setText(COL_DESCR, "<span style='color:#888888'>" + descr + "</span>");
     item->setToolTip(COL_DESCR, descr);
     item->setData(COL_TITLE, Qt::UserRole, ptr2var(param));
     return item;
