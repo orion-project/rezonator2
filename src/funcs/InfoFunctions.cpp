@@ -1,27 +1,12 @@
 #include "InfoFunctions.h"
-#include "RoundTripCalculator.h"
+
 #include "FormatInfo.h"
+#include "RoundTripCalculator.h"
+#include "../Appearance.h"
 #include "../core/Format.h"
 #include "../core/Schema.h"
-#include "../widgets/Appearance.h"
 
 #include <QApplication>
-
-QString matrixFuncsStyleSheet()
-{
-    return QStringLiteral(
-        ".value {%1} "
-        ".param {%2}"
-        ".param_sm {%3}"
-        ".elem_link {text-decoration:none}"
-        ".elem_label {%4}"
-    ).arg(
-        Z::Format::html(Z::Gui::ValueFont()),
-        Z::Format::html(Z::Gui::ParamLabelFont()),
-        Z::Format::html(Z::Gui::ParamLabelFont().small()),
-        Z::Format::html(Z::Gui::ElemLabelFont())
-    );
-}
 
 //------------------------------------------------------------------------------
 //                              InfoFuncMatrix
@@ -120,7 +105,7 @@ QString InfoFuncMatrixRT::calculate()
     QStringList report;
     report << Z::Format::roundTrip(c.roundTrip(), true) << QChar(':')
            << Z::Format::matrices(c.Mt(), c.Ms())
-           << QStringLiteral("<hr><span class=param_sm>Ref:&nbsp;</span>")
+           << QStringLiteral("<hr><span class=param>Ref:&nbsp;</span>")
            << Z::Format::linkViewMatrix(c.reference());
 
     if (schema()->isResonator())
@@ -136,7 +121,7 @@ QString InfoFuncMatrixRT::calculate()
 QString InfoFuncMatrixRT::formatStability(char plane, double value)
 {
     return QStringLiteral("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-                          "<span class=param_sm>P<sub>%1</sub></span>"
+                          "<span class=param>P<sub>%1</sub></span>"
                           "<span class=value> = %2</span>")
             .arg(plane).arg(Z::format(value));
 }
@@ -199,45 +184,48 @@ QString InfoFuncRepetitionRate::calculate()
 
 QString InfoFuncSummary::calculate()
 {
-    Z::Format::FormatElemParams f;
-    f.schema = schema();
+    Z::Format::FormatElemParams formatParams;
+    formatParams.schema = schema();
 
-    QStringList strs;
+    QStringList report;
+    report << QStringLiteral("<table border=1 cellpadding=5 cellspacing=-1 style='border-color:gray;border-style:solid'>");
     for (Element* elem : schema()->elements())
         if (!elem->disabled() && elem->hasParams())
         {
-            QStringList elemStrs;
-            // TODO: this is not standard look for elements' labels
-            elemStrs << QStringLiteral("<font color=maroon>%1</font>").arg(elem->displayLabel());
-            if (elem->hasParams())
-                elemStrs << QStringLiteral(":") << f.format(elem);
-            if (!elem->title().isEmpty())
-                elemStrs << QStringLiteral("(%1)").arg(elem->title());
-            strs << elemStrs.join(' ');
+            report << QStringLiteral("<tr><td><span class=elem_label>")
+                   << elem->displayLabel()
+                   << QStringLiteral("</span></td><td>")
+                   << formatParams.format(elem)
+                   << QStringLiteral("</td><td><span class=elem_title>")
+                   << elem->title()
+                   << QStringLiteral("</span></td></tr>");
         }
+    report << QStringLiteral("</table>");
 
-    if (!strs.isEmpty())
-        strs << "";
-
-    Z::Format::FormatParam f1;
-    f1.includeDriver = false;
-    f1.includeValue = true;
-    f1.smallName = true;
-    strs << f1.format(&schema()->wavelength());
+    Z::Format::FormatParam formatWavelength;
+    formatWavelength.includeDriver = false;
+    formatWavelength.includeValue = true;
+    report << QStringLiteral("<br>")
+           << formatWavelength.format(&schema()->wavelength())
+           << QStringLiteral("<br>");
 
     if (schema()->isSP())
     {
         auto pump = schema()->activePump();
         if (pump)
         {
-            strs << "";
-            strs << qApp->translate("Func", "<b>Input beam:</b>");
+            report << QStringLiteral("<br>")
+                   << qApp->translate("InfoFuncSummary", "<b>Input beam:</b>")
+                   << QStringLiteral("<br>");
+
             auto pumpMode = Z::Pump::findByModeName(pump->modeName());
-            if (pumpMode) strs << pumpMode->description();
-            strs << Z::Format::FormatPumpParams().format(pump);
+            if (pumpMode)
+                report << pumpMode->description()
+                       << QStringLiteral("<br>");
+
+            report << Z::Format::FormatPumpParams().format(pump);
         }
     }
 
-    return strs.join("<br>");
+    return report.join(QString());
 }
-

@@ -1,7 +1,8 @@
 #include "Plot.h"
 
-#include "Appearance.h"
+#include "../Appearance.h"
 #include "../AppSettings.h"
+
 #include "helpers/OriDialogs.h"
 #include "widgets/OriValueEdit.h"
 

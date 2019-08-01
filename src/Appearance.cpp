@@ -9,6 +9,39 @@
 namespace Z {
 namespace Gui {
 
+QString reportStyleSheet()
+{
+    static auto styleSheet = QString::fromLatin1(
+        ".value {%1} "
+        ".param {%2}"
+        ".elem_link {text-decoration:none}"
+        ".elem_label {%3}"
+        ".elem_title {color:#555}"
+    ).arg(
+        html(ValueFont()),
+        html(ParamLabelFont()),
+        html(ElemLabelFont())
+    );
+    return styleSheet;
+}
+
+QString fontToHtmlStyles(const QFont& font)
+{
+    QStringList styles;
+    styles << QStringLiteral("font:");
+    if (font.bold())
+        styles << QStringLiteral("bold");
+    else if (font.italic())
+        styles << QStringLiteral("italic");
+    else
+        styles << QStringLiteral("normal");
+    styles << QChar(' ');
+    styles << QString::number(font.pointSize()) % QStringLiteral("pt");
+    styles << QChar(' ');
+    styles << QChar('"') << font.family() << QChar('"');
+    return styles.join(QString());
+}
+
 QFont ValueFont::get() const
 {
     QFont f = QApplication::font();
@@ -54,12 +87,13 @@ QFont ElemLabelFont::get() const
 #endif
     int sizePt =
 #if defined(Q_OS_WIN)
-        _small ? 11 : 13;
+        11
 #elif defined(Q_OS_MAC)
-        _small ? 16 : 20;
+        16
 #else
-        _small ? 10 : 13;
+        10
 #endif
+    ;
     f.setPointSize(sizePt);
     return f;
 }
@@ -77,12 +111,13 @@ QFont FormulaFont::get() const
 #endif
     int sizePt =
 #if defined(Q_OS_WIN)
-        _small ? 11 : 13;
+        11
 #elif defined(Q_OS_MAC)
-        _small ? 16 : 20;
+        16
 #else
-        _small ? 10 : 13;
+        10
 #endif
+    ;
     f.setPointSize(sizePt);
     return f;
 }

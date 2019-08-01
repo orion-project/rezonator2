@@ -1,8 +1,9 @@
 #include "ParamEditorEx.h"
 
-#include "Appearance.h"
 #include "FormulaEditor.h"
 #include "ParamEditor.h"
+#include "../Appearance.h"
+
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 

@@ -1,15 +1,16 @@
 #include "PlotFuncWindow.h"
 
+#include "../Appearance.h"
 #include "../AppSettings.h"
 #include "../core/Protocol.h"
 #include "../funcs/InfoFunctions.h"
-#include "../widgets/Appearance.h"
 #include "../widgets/Plot.h"
 #include "../widgets/FrozenStateButton.h"
 #include "../widgets/GraphDataGrid.h"
 #include "../widgets/CursorPanel.h"
 #include "../widgets/PlotParamsPanel.h"
 #include "../widgets/UnitWidgets.h"
+
 #include "helpers/OriWidgets.h"
 #include "widgets/OriFlatToolBar.h"
 #include "widgets/OriLabels.h"

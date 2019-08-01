@@ -1,9 +1,9 @@
 #include "FormatInfo.h"
 
+#include "../Appearance.h"
 #include "../core/Element.h"
 #include "../core/Format.h"
 #include "../core/Schema.h"
-#include "../widgets/Appearance.h"
 
 #include <QApplication>
 #include <QFont>
@@ -36,13 +36,13 @@ QString matrices(const Z::Matrix& mt, const Z::Matrix& ms)
     return QStringLiteral(
         "<table cellpadding=3 valign=middle style='margin-top:5px'>"
             "<tr>"
-                "<td><pre class=param_sm>M<sub>T</sub>&nbsp;=</pre></td>"
+                "<td><pre class=param>M<sub>T</sub>&nbsp;=</pre></td>"
                 "<td>%1</td>"
-                "<td style='padding-left:10px'><pre class=param_sm>M<sub>S</sub>&nbsp;=</pre></td>"
+                "<td style='padding-left:10px'><pre class=param>M<sub>S</sub>&nbsp;=</pre></td>"
                 "<td>%2</td>"
                 "<td style='padding-left:10px'>"
-                    "<pre><span class=param_sm>&Delta;<sub>T</sub></span><span class=value> = %3</span></pre>"
-                    "<pre><span class=param_sm>&Delta;<sub>S</sub></span><span class=value> = %4</span></pre>"
+                    "<pre><span class=param>&Delta;<sub>T</sub></span><span class=value> = %3</span></pre>"
+                    "<pre><span class=param>&Delta;<sub>S</sub></span><span class=value> = %4</span></pre>"
                 "</td>"
             "</tr>"
         "</table>"
@@ -92,23 +92,6 @@ QString elementTitleAndMatrices(Element *elem)
     return report.join(QString());
 }
 
-QString fontToHtmlStyles(const QFont& font)
-{
-    QStringList styles;
-    styles << QStringLiteral("font:");
-    if (font.bold())
-        styles << QStringLiteral("bold");
-    else if (font.italic())
-        styles << QStringLiteral("italic");
-    else
-        styles << QStringLiteral("normal");
-    styles << QChar(' ');
-    styles << QString::number(font.pointSize()) % QStringLiteral("pt");
-    styles << QChar(' ');
-    styles << QChar('"') << font.family() << QChar('"');
-    return styles.join(QString());
-}
-
 //------------------------------------------------------------------------------
 //                                  FormatParam
 //------------------------------------------------------------------------------
@@ -121,7 +104,7 @@ QString FormatParam::format(Z::Parameter* param)
     parts << QStringLiteral("<span style='") << html(ValueFont()) << QStringLiteral("'>");
 
     // Parameter label style
-    parts << QStringLiteral("<span style='") << html(ParamLabelFont().small(smallName));
+    parts << QStringLiteral("<span style='") << html(ParamLabelFont());
     if (!isElement)
         parts << QStringLiteral("; color:") << globalParamColorHtml();
     parts << QStringLiteral("'>");
@@ -158,13 +141,13 @@ QString FormatParam::format(Z::Parameter* param)
             if (isElement)
             {
                 // Element's param is driven by global param
-                parts << html(ParamLabelFont().small(smallName))
+                parts << html(ParamLabelFont())
                       << QStringLiteral("; color:") << globalParamColorHtml();
             }
             else
             {
                 // Global param is driven by formula
-                parts << html(FormulaFont().small(smallName));
+                parts << html(FormulaFont());
             }
             parts << QStringLiteral("'>");
 
@@ -199,7 +182,6 @@ QString FormatElemParams::format(Element *elem)
 {
     FormatParam f;
     f.schema = schema;
-    f.smallName = true;
     f.includeValue = true;
 
     QStringList parts;
@@ -222,7 +204,7 @@ QString FormatPumpParams::format(Z::PumpParams *pump)
     for (Z::ParameterTS *param : *pump->params())
         paramsInfo << QStringLiteral(
             "<nobr><span style='%1'>%2</span><span style='%3'> = %4</span></nobr>")
-            .arg(html(ParamLabelFont().small()), param->displayLabel(),
+            .arg(html(ParamLabelFont()), param->displayLabel(),
                  html(ValueFont()), param->value().displayStr());
     return paramsInfo.join(", ");
 }

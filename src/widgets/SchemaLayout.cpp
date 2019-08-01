@@ -1,6 +1,6 @@
 #include "SchemaLayout.h"
 
-#include "Appearance.h"
+#include "../Appearance.h"
 #include "../AppSettings.h"
 #include "../funcs/FormatInfo.h"
 

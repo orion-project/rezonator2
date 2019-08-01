@@ -1,7 +1,7 @@
 #include "ValuesEditorTS.h"
 
-#include "Appearance.h"
 #include "UnitWidgets.h"
+#include "../Appearance.h"
 #include "widgets/OriValueEdit.h"
 #include "helpers/OriLayouts.h"
 

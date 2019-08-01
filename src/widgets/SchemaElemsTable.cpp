@@ -1,8 +1,8 @@
 #include "SchemaElemsTable.h"
 
-#include "Appearance.h"
 #include "ElementImagesProvider.h"
 #include "RichTextItemDelegate.h"
+#include "../Appearance.h"
 #include "../funcs/FormatInfo.h"
 
 #include <QDebug>

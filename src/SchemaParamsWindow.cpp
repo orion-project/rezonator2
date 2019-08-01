@@ -1,12 +1,13 @@
 #include "SchemaParamsWindow.h"
 
 #include "AdjustmentWindow.h"
+#include "Appearance.h"
 #include "CustomPrefs.h"
 #include "WindowsManager.h"
-#include "widgets/Appearance.h"
 #include "widgets/SchemaParamsTable.h"
 #include "widgets/ParamEditorEx.h"
 #include "widgets/UnitWidgets.h"
+
 #include "helpers/OriWidgets.h"
 #include "helpers/OriDialogs.h"
 

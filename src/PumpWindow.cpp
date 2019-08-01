@@ -1,10 +1,11 @@
 #include "PumpWindow.h"
 
+#include "Appearance.h"
 #include "PumpParamsDialog.h"
 #include "funcs/FormatInfo.h"
-#include "widgets/Appearance.h"
 #include "widgets/RichTextItemDelegate.h"
 #include "widgets/ValuesEditorTS.h"
+
 #include "widgets/OriOptionsGroup.h"
 #include "widgets/OriStatusBar.h"
 #include "helpers/OriDialogs.h"

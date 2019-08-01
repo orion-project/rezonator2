@@ -1,5 +1,6 @@
-#include "Appearance.h"
 #include "UnitWidgets.h"
+
+#include "../Appearance.h"
 
 #include <QActionGroup>
 #include <QDebug>

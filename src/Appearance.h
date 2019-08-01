@@ -12,6 +12,9 @@ QT_END_NAMESPACE
 namespace Z {
 namespace Gui {
 
+QString reportStyleSheet();
+QString fontToHtmlStyles(const QFont& font);
+
 inline int boolKey(bool on, int offset = 0)
 {
     return (on ? 1 : 0) << offset;
@@ -35,11 +38,8 @@ struct CodeEditorFont
 
 struct ElemLabelFont
 {
-    ElemLabelFont& small(bool on = true) { _small = on; return *this; }
-    int key() const { return _small; }
+    int key() const { return 0; }
     QFont get() const;
-private:
-    bool _small = false;
 };
 
 using ParamLabelFont = ElemLabelFont;
@@ -47,12 +47,18 @@ using PumpLabelFont = ElemLabelFont;
 
 struct FormulaFont
 {
-    FormulaFont& small(bool on = true) { _small = on; return *this; }
-    int key() const { return _small; }
+    int key() const { return 0; }
     QFont get() const;
-private:
-    bool _small = false;
 };
+
+template <class FontStruct> QString html(const FontStruct& font)
+{
+    int key = font.key();
+    static QMap<int, QString> htmls;
+    if (!htmls.contains(key))
+        htmls.insert(key, fontToHtmlStyles(font.get()));
+    return htmls[key];
+}
 
 QLabel* headerlabel(const QString& text);
 

@@ -1,5 +1,6 @@
 #include "StartWindow.h"
 
+#include "Appearance.h"
 #include "AppSettings.h"
 #include "AppSettingsDialog.h"
 #include "CalculatorWindow.h"
@@ -9,7 +10,6 @@
 #include "ProjectOperations.h"
 #include "ProjectWindow.h"
 #include "core/CommonTypes.h"
-#include "widgets/Appearance.h"
 
 #include "helpers/OriWindows.h"
 #include "helpers/OriLayouts.h"

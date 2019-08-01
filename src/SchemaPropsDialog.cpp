@@ -1,6 +1,6 @@
 #include "SchemaPropsDialog.h"
 
-#include "widgets/Appearance.h"
+#include "Appearance.h"
 #include "core/Schema.h"
 
 #include <QLabel>

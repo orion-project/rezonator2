@@ -8,8 +8,6 @@
 
 class Schema;
 
-QString matrixFuncsStyleSheet();
-
 //------------------------------------------------------------------------------
 
 class InfoFuncMatrix : public InfoFunction
@@ -17,7 +15,6 @@ class InfoFuncMatrix : public InfoFunction
 public:
     InfoFuncMatrix(Schema*, Element*);
     QString calculate() override;
-    QString styleSheet() const override { return matrixFuncsStyleSheet(); }
     FunctionState elementDeleting(Element *elem) override;
     FUNC_NAME(qApp->translate("Func", "Element's Matrices"))
 private:
@@ -31,7 +28,6 @@ class InfoFuncMatrices : public InfoFunction
 public:
     InfoFuncMatrices(Schema*, const Elements&);
     QString calculate() override;
-    QString styleSheet() const override { return matrixFuncsStyleSheet(); }
     FunctionState elementDeleting(Element*) override;
     FUNC_NAME(qApp->translate("Func", "Elements' Matrices"))
 protected:
@@ -45,7 +41,6 @@ class InfoFuncMatrixMultFwd : public InfoFuncMatrices
 public:
     InfoFuncMatrixMultFwd(Schema*, const Elements&);
     QString calculate() override;
-    QString styleSheet() const override { return matrixFuncsStyleSheet(); }
     FUNC_NAME(qApp->translate("Func", "Matrix Product"))
 };
 
@@ -62,7 +57,6 @@ class InfoFuncMatrixRT : public InfoFunction
 public:
     InfoFuncMatrixRT(Schema*, Element*);
     QString calculate() override;
-    QString styleSheet() const override { return matrixFuncsStyleSheet(); }
     FunctionState elementDeleting(Element*) override;
     FUNC_NAME(qApp->translate("Func", "Round-trip Matrix"))
 private:

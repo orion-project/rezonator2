@@ -1,9 +1,10 @@
 #include "PumpParamsDialog.h"
 
+#include "Appearance.h"
 #include "core/Pump.h"
 #include "core/Utils.h"
-#include "widgets/Appearance.h"
 #include "widgets/ParamsEditor.h"
+
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
 #include "widgets/OriSelectableTile.h"

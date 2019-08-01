@@ -1,9 +1,9 @@
 #include "AdjustmentWindow.h"
 
+#include "Appearance.h"
 #include "AppSettings.h"
 #include "HelpSystem.h"
 #include "core/ElementFilter.h"
-#include "widgets/Appearance.h"
 #include "widgets/ParamsTreeWidget.h"
 #include "funcs/FormatInfo.h"
 
@@ -222,12 +222,11 @@ void AdjusterWidget::populate()
     Z::Format::FormatParam f;
     f.schema = _schema;
     f.isElement = _elem;
-    f.smallName = _elem;
 
     auto labelStr = f.format(_param);
     if (_elem)
         labelStr = QStringLiteral("<span style='%1'>%2, </span>%3")
-            .arg(Z::Format::html(Z::Gui::ElemLabelFont()), _elem->displayLabel(), labelStr);
+            .arg(Z::Gui::html(Z::Gui::ElemLabelFont()), _elem->displayLabel(), labelStr);
 
     _labelName->setText(labelStr);
     _isReadOnly = f.isReadOnly();

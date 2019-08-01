@@ -13,8 +13,6 @@ class PumpParams;
 
 namespace Format {
 
-QString fontToHtmlStyles(const QFont& font);
-
 QString elementTitleAndMatrices(Element *elem);
 
 QString matrix(const Z::Matrix& m);
@@ -24,21 +22,11 @@ QString roundTrip(const QList<Element *> &elems, bool hyperlinks = false);
 
 QString linkViewMatrix(Element *elem);
 
-template <class FontStruct> QString html(const FontStruct& font)
-{
-    int key = font.key();
-    static QMap<int, QString> htmls;
-    if (!htmls.contains(key))
-        htmls.insert(key, fontToHtmlStyles(font.get()));
-    return htmls[key];
-}
-
 struct FormatParam
 {
     Schema* schema;
     bool includeValue = false;
     bool includeDriver = true;
-    bool smallName = false;
     bool isElement = true;
 
     /// Parameter is read-only when it has a driver providing its value.

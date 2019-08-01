@@ -1,9 +1,11 @@
 #include "ElementPropsDialog.h"
+
+#include "Appearance.h"
 #include "core/Element.h"
 #include "core/Schema.h"
-#include "widgets/Appearance.h"
 #include "widgets/ElementImagesProvider.h"
 #include "widgets/ParamsEditor.h"
+
 #include "widgets/OriSvgView.h"
 #include "helpers/OriLayouts.h"
 

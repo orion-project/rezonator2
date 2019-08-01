@@ -1,10 +1,10 @@
 #include "CalculatorWindow.h"
 
+#include "Appearance.h"
 #include "AppSettings.h"
 #include "CustomPrefs.h"
 #include "HelpSystem.h"
 #include "core/LuaHelper.h"
-#include "widgets/Appearance.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"

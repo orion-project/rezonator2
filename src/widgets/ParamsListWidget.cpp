@@ -1,6 +1,6 @@
 #include "ParamsListWidget.h"
 
-#include "Appearance.h"
+#include "../Appearance.h"
 #include "../CustomPrefs.h"
 
 #include "helpers/OriDialogs.h"

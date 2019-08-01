@@ -110,7 +110,7 @@ HEADERS += \
     src/io/SchemaWriterJson.h \
     src/tests/TestSuite.h \
     src/tests/TestUtils.h \
-    src/widgets/Appearance.h \
+    src/Appearance.h \
     src/widgets/CursorPanel.h \
     src/widgets/ElemSelectorWidget.h \
     src/widgets/ElementImagesProvider.h \
@@ -227,7 +227,7 @@ SOURCES += \
     src/tests/test_UnitWidgets.cpp \
     src/tests/test_Units.cpp \
     src/tests/test_Values.cpp \
-    src/widgets/Appearance.cpp \
+    src/Appearance.cpp \
     src/widgets/CursorPanel.cpp \
     src/widgets/ElemSelectorWidget.cpp \
     src/widgets/ElementTypesListView.cpp \

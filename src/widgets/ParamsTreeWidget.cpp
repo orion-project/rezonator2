@@ -1,8 +1,8 @@
 #include "ParamsTreeWidget.h"
 
-#include "Appearance.h"
 #include "ElementImagesProvider.h"
 #include "RichTextItemDelegate.h"
+#include "../Appearance.h"
 #include "../CustomPrefs.h"
 #include "../core/Schema.h"
 #include "../core/ElementFilter.h"
@@ -105,7 +105,7 @@ void ParamsTreeWidget::addRootItem(Element* elem)
     if (elem)
     {
         root->setText(COL_TITLE, elem->displayLabel());
-        root->setFont(COL_TITLE, Z::Gui::ElemLabelFont().small().get());
+        root->setFont(COL_TITLE, Z::Gui::ElemLabelFont().get());
         root->setIcon(COL_TITLE, QIcon(ElementImagesProvider::instance().iconPath(elem->type())));
         root->setText(COL_DESCR, elem->title());
     }
@@ -124,7 +124,6 @@ QTreeWidgetItem* ParamsTreeWidget::addParamItem(Z::Parameter* param, bool isElem
 {
     Z::Format::FormatParam f;
     f.includeValue = true;
-    f.smallName = true;
     f.isElement = isElement;
     f.schema = _opts.schema;
 

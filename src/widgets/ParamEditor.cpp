@@ -1,8 +1,8 @@
 #include "ParamEditor.h"
 
-#include "Appearance.h"
 #include "ParamsListWidget.h"
 #include "UnitWidgets.h"
+#include "../Appearance.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"

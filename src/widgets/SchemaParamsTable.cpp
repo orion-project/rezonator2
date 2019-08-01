@@ -1,7 +1,7 @@
 #include "SchemaParamsTable.h"
 
-#include "Appearance.h"
 #include "RichTextItemDelegate.h"
+#include "../Appearance.h"
 #include "../funcs/FormatInfo.h"
 
 #include <QHeaderView>

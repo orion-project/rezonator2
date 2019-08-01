@@ -1,10 +1,10 @@
 #include "VariableRangeEditor.h"
 
-#include "Appearance.h"
 #include "ValueEditor.h"
+#include "../Appearance.h"
 #include "../core/Element.h"
 #include "../core/Variable.h"
-//#include "widgets/OriValueEdit.h"
+
 #include "helpers/OriWidgets.h"
 
 #include <QApplication>
