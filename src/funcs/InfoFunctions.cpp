@@ -188,38 +188,39 @@ QString InfoFuncSummary::calculate()
     formatParams.schema = schema();
 
     QStringList report;
-    report << QStringLiteral("<table border=1 cellpadding=5 cellspacing=-1 style='border-color:gray;border-style:solid'>");
+    report << QStringLiteral("<table border=1 cellspacing=-1 style='border-color:#aaa;border-style:solid'>");
     for (Element* elem : schema()->elements())
         if (!elem->disabled() && elem->hasParams())
         {
-            report << QStringLiteral("<tr><td><span style='")
+            report << QStringLiteral("<tr><td style='padding:2 4'><span style='")
                    << Z::Gui::html(Z::Gui::ElemLabelFont())
                    << QStringLiteral("'>")
                    << elem->displayLabel()
 
                    // weird, but the space after span is important!
                    // without it vertical alignment calculated improperly sometimes
-                   << QStringLiteral("</span> </td><td>")
+                   << QStringLiteral("</span> </td><td style='padding:2 4'>")
 
                    << formatParams.format(elem)
-                   << QStringLiteral("</td><td>")
+                   << QStringLiteral("</td><td style='padding:2 4'>")
                    << elem->title()
                    << QStringLiteral("</td></tr>");
         }
-    report << QStringLiteral("</table>");
+    report << QStringLiteral("</table><br>");
 
     Z::Format::FormatParam formatWavelength;
     formatWavelength.includeDriver = false;
     formatWavelength.includeValue = true;
-    report << QStringLiteral("<p>")
-           << formatWavelength.format(&schema()->wavelength());
+    report << QStringLiteral("<br>")
+           << formatWavelength.format(&schema()->wavelength())
+           << QStringLiteral("<br>");
 
     if (schema()->isSP())
     {
         auto pump = schema()->activePump();
         if (pump)
         {
-            report << QStringLiteral("<p>")
+            report << QStringLiteral("<br>")
                    << qApp->translate("InfoFuncSummary", "<b>Input beam:</b>")
                    << QStringLiteral("<br>");
 
