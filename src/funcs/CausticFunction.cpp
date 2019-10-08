@@ -28,15 +28,18 @@ void CausticFunction::calculate()
     if (!prepareResults(range)) return;
     if (!prepareCalculator(elem, true)) return;
 
-    auto tripType = _schema->tripType();
-    bool prepared = tripType == TripType::SP
-            ? prepareSinglePass()
-            : prepareResonator();
-    if (!prepared) return;
+    bool isResonator = _schema->isResonator();
+    bool isPrepared = isResonator
+            ? prepareResonator()
+            : prepareSinglePass();
+    if (!isPrepared) return;
 
     BackupAndLock locker(elem, elem->paramLength());
 
-    bool stabilityChecked = !_schema->isResonator();
+    bool needCheckStability = isResonator;
+    auto calcBeamParams = isResonator
+            ? &CausticFunction::calculateResonator
+            : &CausticFunction::calculateSinglePass;
     Z::PointTS prevRes(Double::nan(), Double::nan());
     for (auto x : range.values())
     {
@@ -45,9 +48,9 @@ void CausticFunction::calculate()
 
         // After the first round-trip was calculated,
         // we should check if system is unstable
-        if (!stabilityChecked)
+        if (needCheckStability)
         {
-            stabilityChecked = true;
+            needCheckStability = false;
             auto stab = _calc->isStable();
             if (!stab.T && !stab.S)
             {
@@ -56,13 +59,7 @@ void CausticFunction::calculate()
             }
         }
 
-        Z::PointTS res;
-        switch (tripType)
-        {
-        case TripType::SW:
-        case TripType::RR: res = calculateResonator(); break;
-        case TripType::SP: res = calculateSinglePass(); break;
-        }
+        Z::PointTS res = (this->*calcBeamParams)();
 
         if (_mode == FontRadius)
         {
@@ -92,8 +89,10 @@ bool CausticFunction::prepareSinglePass()
     }
     if (!_pumpCalc.T) _pumpCalc.T = PumpCalculator::T();
     if (!_pumpCalc.S) _pumpCalc.S = PumpCalculator::S();
-    // Cached _wavelenSI can be reduced in order to account medium IOR,
-    // but pump is supposed to be in air, so get wavelength from schema.
+
+    // NOTE: We have _wavelenSI member here in the function, but it can be lower
+    // than schema's wavelength in order to account IOR of the reference element.
+    // But pump is supposed to be in air, so get wavelength from schema.
     const double lambda = schema()->wavelength().value().toSi();
     if (!_pumpCalc.T->init(pump, lambda) ||
         !_pumpCalc.S->init(pump, lambda))
