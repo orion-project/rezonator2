@@ -70,6 +70,7 @@ HEADERS += \
     src/SchemaViewWindow.h \
     src/SchemaWindows.h \
     src/WindowsManager.h \
+    src/core/Beam.h \
     src/core/CommonTypes.h \
     src/core/Element.h \
     src/core/ElementFilter.h \
@@ -174,6 +175,7 @@ SOURCES += \
     src/SchemaViewWindow.cpp \
     src/SchemaWindows.cpp \
     src/WindowsManager.cpp \
+    src/core/Beam.cpp \
     src/core/CommonTypes.cpp \
     src/core/Element.cpp \
     src/core/ElementFilter.cpp \

@@ -39,6 +39,7 @@
     double axisLengthSI() const override;
 
 class Element;
+struct BeamProps;
 
 //------------------------------------------------------------------------------
 /**
@@ -231,6 +232,26 @@ protected:
     ElementInterface();
 
     Z::Parameter *_ior1, *_ior2;
+};
+
+//------------------------------------------------------------------------------
+/**
+    The base class for elements whose matrix depends on beam parameters.
+*/
+class ElementDynamic : public Element
+{
+public:
+    virtual void calcDynamicMatrix(const BeamProps& beamT, const BeamProps& beamS) { Q_UNUSED(beamT) Q_UNUSED(beamS) }
+
+    const Z::Matrix& Mt_dyn() const { return _mt_dyn; }
+    const Z::Matrix& Ms_dyn() const { return _ms_dyn; }
+    const Z::Matrix* pMt_dyn() const { return &_mt_dyn; }
+    const Z::Matrix* pMs_dyn() const { return &_ms_dyn; }
+
+protected:
+    Z::Matrix _mt_dyn, _ms_dyn;
+
+    void calcMatrixInternal() override;
 };
 
 //------------------------------------------------------------------------------

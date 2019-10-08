@@ -120,8 +120,17 @@ void RoundTripCalculator::collectMatrices()
         }
         else
         {
-            _matrsT.push_back(item.element->pMt());
-            _matrsS.push_back(item.element->pMs());
+            auto dynamicElem = dynamic_cast<ElementDynamic*>(item.element);
+            if (dynamicElem)
+            {
+                _matrsT.push_back(dynamicElem->pMt_dyn());
+                _matrsS.push_back(dynamicElem->pMs_dyn());
+            }
+            else
+            {
+                _matrsT.push_back(item.element->pMt());
+                _matrsS.push_back(item.element->pMs());
+            }
         }
         i++;
     }
