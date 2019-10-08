@@ -10,6 +10,7 @@ Currently, version 2 is in alpha state, but it implements the most important fun
 * Stability calculation for resonators (standing-wave and ring).
 * Caustic calculation for resonators and single-pass systems.
 
+If you need some particular feature from version 1 that it no ported yet, fill free to open an [issue](https://github.com/orion-project/rezonator2/issues) with a feature request.
 
 See [Home page](http://rezonator.orion-project.org/index.php?page=ver2) or [Releases](https://github.com/orion-project/rezonator2/releases) for binary packages for Windows, Linux and macOS. See [build instructions](./docs/build.md) for building from source code.
 
