@@ -24,7 +24,7 @@ class StatusBar;
 
 class CursorPanel;
 class FrozenStateButton;
-class FunctionGraph;
+class FunctionGraphSet;
 class Plot;
 class PlotFunction;
 class PlotFuncWindow;
@@ -86,7 +86,7 @@ protected:
     QString _title = TitlePlaceholder::defaultTitle();
     QString _titleX = TitlePlaceholder::defaultTitle();
     QString _titleY = TitlePlaceholder::defaultTitle();
-    FunctionGraph *_graphsT, *_graphsS;
+    FunctionGraphSet *_graphs;
     PlotParamsPanel* _leftPanel;
     QCPCursor* _cursor;
     CursorPanel* _cursorPanel;

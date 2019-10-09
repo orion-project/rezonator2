@@ -49,8 +49,7 @@ PlotFuncWindow::PlotFuncWindow(PlotFunction *func) : SchemaMdiChild(func->schema
 PlotFuncWindow::~PlotFuncWindow()
 {
     delete _function;
-    delete _graphsT;
-    delete _graphsS;
+    delete _graphs;
 }
 
 void PlotFuncWindow::createActions()
@@ -222,14 +221,7 @@ void PlotFuncWindow::createContent()
     setContent(toolbar);
     setContent(_splitter);
 
-    _graphsT = new FunctionGraph(_plot, Z::Plane_T);
-    _graphsS = new FunctionGraph(_plot, Z::Plane_S);
-    _graphsT->getUnitX = [this]{ return getUnitX(); };
-    _graphsT->getUnitY = [this]{ return getUnitY(); };
-    _graphsS->getUnitX = [this]{ return getUnitX(); };
-    _graphsS->getUnitY = [this]{ return getUnitY(); };
-    _graphsT->setPen(QPen(Qt::darkGreen));
-    _graphsS->setPen(QPen(Qt::red));
+    _graphs = new FunctionGraphSet(_plot, [this]{ return GraphUnits {getUnitX(), getUnitY()}; });
 }
 
 void PlotFuncWindow::createStatusBar()
@@ -293,9 +285,9 @@ void PlotFuncWindow::showModeTS()
     bool t = actnShowT->isChecked();
     bool s = actnShowS->isChecked();
 
-    _graphsT->setVisible(flipped || t);
-    _graphsS->setVisible(flipped || s);
-    _graphsS->setFlipped(flipped);
+    _graphs->T()->setVisible(flipped || t);
+    _graphs->S()->setVisible(flipped || s);
+    _graphs->S()->setFlipped(flipped);
 
     actnShowT->setEnabled(!flipped);
     actnShowT->setVisible(!flipped);
@@ -420,8 +412,7 @@ void PlotFuncWindow::calculate()
     {
         _statusBar->setText(STATUS_INFO, _function->errorText());
         _statusBar->highlightError(STATUS_INFO);
-        _graphsT->clear();
-        _graphsS->clear();
+        _graphs->clear();
     }
     else
     {
@@ -432,8 +423,7 @@ void PlotFuncWindow::calculate()
 
 void PlotFuncWindow::updateGraphs()
 {
-    _graphsT->update(_function);
-    _graphsS->update(_function);
+    _graphs->update(_function);
 }
 
 void PlotFuncWindow::graphSelected(QCPGraph *graph)

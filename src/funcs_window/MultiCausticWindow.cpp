@@ -160,8 +160,7 @@ void MultiCausticWindow::updateGraphs()
     QList<PlotFunction*> funcs;
     for (auto func : function()->funcs())
         funcs << func;
-    _graphsT->update(funcs);
-    _graphsS->update(funcs);
+    _graphs->update(funcs);
 }
 
 void MultiCausticWindow::afterUpdate()

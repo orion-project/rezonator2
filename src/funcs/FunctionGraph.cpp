@@ -3,9 +3,13 @@
 #include "PlotFunction.h"
 #include "../widgets/Plot.h"
 
-FunctionGraph::FunctionGraph(Plot* plot, Z::WorkPlane workPlane): _plot(plot), _workPlane(workPlane)
-{
+//------------------------------------------------------------------------------
+//                                 FunctionGraph
+//------------------------------------------------------------------------------
 
+FunctionGraph::FunctionGraph(Plot* plot, Z::WorkPlane workPlane, std::function<GraphUnits()> getUnits)
+    : _plot(plot), _workPlane(workPlane), _getUnits(getUnits)
+{
 }
 
 void FunctionGraph::clear()
@@ -67,21 +71,21 @@ QCPGraph* FunctionGraph::getOrMakeSegment(int index)
     return segment;
 }
 
-void FunctionGraph::fillSegment(QCPGraph* segment, PlotFunction* function, int resultIndex, double offset)
+void FunctionGraph::fillSegment(QCPGraph* segment, PlotFunction* function, int resultIndex, double offsetX)
 {
     auto result = function->result(_workPlane, resultIndex);
     int count = result.pointsCount();
     auto xs = result.x();
     auto ys = result.y();
-    auto unitX = getUnitX();
-    auto unitY = getUnitY();
+    auto units = _getUnits();
+    auto factorY = _isFlipped ? -1 : 1;
     QSharedPointer<QCPGraphDataContainer> data(new QCPGraphDataContainer);
     for (int i = 0; i < count; i++)
     {
         // TODO: possible optimization: extract unit's SI factor before loop
         // and replace the call of virtual method with simple multiplication
-        double x = unitX->fromSi(xs.at(i) + offset);
-        double y = unitY->fromSi(ys.at(i)) * (_isFlipped ? -1 : 1);
+        double x = units.X->fromSi(xs.at(i) + offsetX);
+        double y = units.Y->fromSi(ys.at(i) * factorY);
         data->add(QCPGraphData(x, y));
     }
     segment->setData(data);
@@ -94,4 +98,40 @@ void FunctionGraph::trimToCount(int count)
         _plot->removePlottable(_segments.last());
         _segments.removeLast();
     }
+}
+
+//------------------------------------------------------------------------------
+//                               FunctionGraphSet
+//------------------------------------------------------------------------------
+
+FunctionGraphSet::FunctionGraphSet(Plot* plot, std::function<GraphUnits()> getUnits)
+{
+    _graphT = new FunctionGraph(plot, Z::Plane_T, getUnits);
+    _graphS = new FunctionGraph(plot, Z::Plane_S, getUnits);
+    _graphT->setPen(QPen(Qt::darkGreen));
+    _graphS->setPen(QPen(Qt::red));
+}
+
+FunctionGraphSet::~FunctionGraphSet()
+{
+    delete _graphT;
+    delete _graphS;
+}
+
+void FunctionGraphSet::clear()
+{
+    _graphT->clear();
+    _graphS->clear();
+}
+
+void FunctionGraphSet::update(PlotFunction* function)
+{
+    _graphT->update(function);
+    _graphS->update(function);
+}
+
+void FunctionGraphSet::update(const QList<PlotFunction*>& functions)
+{
+    _graphT->update(functions);
+    _graphS->update(functions);
 }
