@@ -24,6 +24,7 @@ class StatusBar;
 
 class CursorPanel;
 class FrozenStateButton;
+class FunctionGraph;
 class Plot;
 class PlotFunction;
 class PlotFuncWindow;
@@ -85,7 +86,7 @@ protected:
     QString _title = TitlePlaceholder::defaultTitle();
     QString _titleX = TitlePlaceholder::defaultTitle();
     QString _titleY = TitlePlaceholder::defaultTitle();
-    QVector<QCPGraph*> _graphsT, _graphsS;
+    FunctionGraph *_graphsT, *_graphsS;
     PlotParamsPanel* _leftPanel;
     QCPCursor* _cursor;
     CursorPanel* _cursorPanel;
@@ -100,7 +101,7 @@ protected:
     bool _exclusiveModeTS = false;
     UnitsMenu *_unitsMenuX, *_unitsMenuY;
     QMenu *menuPlot, *menuLimits, *menuFormat, *menuAxisX, *menuAxisY;
-    QAction *actnShowT, *actnShowS, *actnShowTS,
+    QAction *actnShowT, *actnShowS, *actnShowFlippedTS,
         *actnAutolimits, *actnAutolimitsX, *actnAutolimitsY,
         *actnSetLimits, *actnSetLimitsX, *actnSetLimitsY,
         *actnZoomIn, *actnZoomOut, *actnZoomInX, *actnZoomOutX, *actnZoomInY, *actnZoomOutY,
@@ -133,7 +134,6 @@ protected:
     virtual void storeViewSpecific(int key) { Q_UNUSED(key) }
     virtual void restoreViewSpecific(int key) { Q_UNUSED(key) }
     virtual QWidget* makeOptionsPanel() { return nullptr; }
-    virtual void fillGraphWithFunctionResults(Z::WorkPlane plane, QCPGraph *graph, int resultIndex);
 
     virtual void fillViewMenuActions(QList<QAction*>& actions) const { Q_UNUSED(actions); }
 
@@ -145,7 +145,7 @@ protected:
     void createStatusBar();
     void createContent();
 
-    void updateTSModeActions();
+    void showModeTS();
     void updateTitles();
     void updateTitle();
     void updateTitleX();
@@ -157,19 +157,15 @@ protected:
 
     QString displayWindowTitle() const;
 
-    QPen getLineSettings(Z::WorkPlane);
-
-    void debug_LogGraphsCount();
-
     void disableAndClose();
 
     Z::Unit getUnitX() const;
     Z::Unit getUnitY() const;
 
 private slots:
-    void showT();
-    void showS();
-    void showTS();
+    void activateModeT();
+    void activateModeS();
+    void activateModeFlippedTS();
     void updateWithParams();
     void showRoundTrip();
     void freeze(bool);

@@ -4,6 +4,7 @@
 #include "../AppSettings.h"
 #include "../core/Protocol.h"
 #include "../funcs/InfoFunctions.h"
+#include "../funcs/FunctionGraph.h"
 #include "../widgets/Plot.h"
 #include "../widgets/FrozenStateButton.h"
 #include "../widgets/GraphDataGrid.h"
@@ -48,6 +49,8 @@ PlotFuncWindow::PlotFuncWindow(PlotFunction *func) : SchemaMdiChild(func->schema
 PlotFuncWindow::~PlotFuncWindow()
 {
     delete _function;
+    delete _graphsT;
+    delete _graphsS;
 }
 
 void PlotFuncWindow::createActions()
@@ -56,12 +59,12 @@ void PlotFuncWindow::createActions()
     actnUpdateParams = action(tr("Update With Params..."), this,
         SLOT(updateWithParams()), ":/toolbar/update_params", Qt::CTRL | Qt::Key_F5);
 
-    actnShowT = action(tr("Show &T-plane"), this, SLOT(showT()), ":/toolbar/plot_t");
-    actnShowS = action(tr("Show &S-plane"), this, SLOT(showS()), ":/toolbar/plot_s");
-    actnShowTS = action(tr("TS-flipped Mode"), this, SLOT(showTS()), ":/toolbar/plot_ts");
+    actnShowT = action(tr("Show &T-plane"), this, SLOT(activateModeT()), ":/toolbar/plot_t");
+    actnShowS = action(tr("Show &S-plane"), this, SLOT(activateModeS()), ":/toolbar/plot_s");
+    actnShowFlippedTS = action(tr("TS-flipped Mode"), this, SLOT(activateModeFlippedTS()), ":/toolbar/plot_ts");
     actnShowT->setCheckable(true);
     actnShowS->setCheckable(true);
-    actnShowTS->setCheckable(true);
+    actnShowFlippedTS->setCheckable(true);
     actnShowT->setChecked(true);
     actnShowS->setChecked(true);
 
@@ -94,7 +97,7 @@ void PlotFuncWindow::createMenuBar()
     connect(_unitsMenuY, &UnitsMenu::unitChanged, this, &PlotFuncWindow::setUnitY);
 
     menuPlot = menu(tr("&Plot", "Menu title"), this, {
-        actnUpdate, actnUpdateParams, actnFreeze, nullptr, actnShowTS, actnShowT, actnShowS, nullptr,
+        actnUpdate, actnUpdateParams, actnFreeze, nullptr, actnShowFlippedTS, actnShowT, actnShowS, nullptr,
         _unitsMenuX->menu(), _unitsMenuY->menu(), nullptr, actnShowRoundTrip
     });
     connect(menuPlot, &QMenu::aboutToShow, [this](){
@@ -159,7 +162,7 @@ void PlotFuncWindow::createToolBar()
     t->addAction(actnFreeze);
     actnFrozenInfo = t->addWidget(_buttonFrozenInfo);
     t->addSeparator();
-    t->addAction(actnShowTS);
+    t->addAction(actnShowFlippedTS);
     t->addAction(actnShowT);
     t->addAction(actnShowS);
     t->addSeparator();
@@ -200,7 +203,6 @@ void PlotFuncWindow::createContent()
     _plot->setAutoAddPlottableToLegend(false);
     connect(_plot, &Plot::graphSelected, this, &PlotFuncWindow::graphSelected);
 
-
     _cursor = new QCPCursor(_plot);
     connect(_cursor, &QCPCursor::positionChanged, this, &PlotFuncWindow::updateCursorInfo);
     _plot->serviceGraphs().append(_cursor);
@@ -219,6 +221,15 @@ void PlotFuncWindow::createContent()
 
     setContent(toolbar);
     setContent(_splitter);
+
+    _graphsT = new FunctionGraph(_plot, Z::Plane_T);
+    _graphsS = new FunctionGraph(_plot, Z::Plane_S);
+    _graphsT->getUnitX = [this]{ return getUnitX(); };
+    _graphsT->getUnitY = [this]{ return getUnitY(); };
+    _graphsS->getUnitX = [this]{ return getUnitX(); };
+    _graphsS->getUnitY = [this]{ return getUnitY(); };
+    _graphsT->setPen(QPen(Qt::darkGreen));
+    _graphsS->setPen(QPen(Qt::red));
 }
 
 void PlotFuncWindow::createStatusBar()
@@ -241,52 +252,55 @@ QCPGraph *PlotFuncWindow::selectedGraph() const
     return graphs.isEmpty()? nullptr: graphs.first();
 }
 
-void PlotFuncWindow::showT()
+void PlotFuncWindow::activateModeT()
 {
-    Z_NOTE("showT" << actnShowT->isChecked());
-
     if (_exclusiveModeTS)
         actnShowS->setChecked(!actnShowT->isChecked());
     else if (!actnShowT->isChecked() && !actnShowS->isChecked())
         actnShowS->setChecked(true);
+    showModeTS();
     updateGraphs();
     afterUpdate();
     _plot->replot();
     schema()->markModified();
 }
 
-void PlotFuncWindow::showS()
+void PlotFuncWindow::activateModeS()
 {
-    Z_NOTE("showS" << actnShowS->isChecked());
-
     if (_exclusiveModeTS)
         actnShowT->setChecked(!actnShowS->isChecked());
     else if (!actnShowS->isChecked() && !actnShowT->isChecked())
         actnShowT->setChecked(true);
+    showModeTS();
     updateGraphs();
     afterUpdate();
     _plot->replot();
     schema()->markModified();
 }
 
-void PlotFuncWindow::showTS()
+void PlotFuncWindow::activateModeFlippedTS()
 {
-    Z_NOTE("showTS" << actnShowTS->isChecked());
-
-    updateTSModeActions();
+    showModeTS();
     updateGraphs();
     afterUpdate();
     _plot->replot();
     schema()->markModified();
 }
 
-void PlotFuncWindow::updateTSModeActions()
+void PlotFuncWindow::showModeTS()
 {
-    bool ts = !actnShowTS->isChecked();
-    actnShowT->setEnabled(ts);
-    actnShowT->setVisible(ts);
-    actnShowS->setEnabled(ts);
-    actnShowS->setVisible(ts);
+    bool flipped = actnShowFlippedTS->isChecked();
+    bool t = actnShowT->isChecked();
+    bool s = actnShowS->isChecked();
+
+    _graphsT->setVisible(flipped || t);
+    _graphsS->setVisible(flipped || s);
+    _graphsS->setFlipped(flipped);
+
+    actnShowT->setEnabled(!flipped);
+    actnShowT->setVisible(!flipped);
+    actnShowS->setEnabled(!flipped);
+    actnShowS->setVisible(!flipped);
 }
 
 void PlotFuncWindow::updateNotables()
@@ -404,13 +418,10 @@ void PlotFuncWindow::calculate()
     _function->calculate();
     if (!_function->ok())
     {
-        //debug_LogGraphsCount();
         _statusBar->setText(STATUS_INFO, _function->errorText());
         _statusBar->highlightError(STATUS_INFO);
-        for (auto g : _graphsT) _plot->removePlottable(g);
-        for (auto g : _graphsS) _plot->removePlottable(g);
-        _graphsT.clear();
-        _graphsS.clear();
+        _graphsT->clear();
+        _graphsS->clear();
     }
     else
     {
@@ -421,62 +432,8 @@ void PlotFuncWindow::calculate()
 
 void PlotFuncWindow::updateGraphs()
 {
-    updateGraphs(Z::Plane_T);
-    updateGraphs(Z::Plane_S);
-}
-
-void PlotFuncWindow::updateGraphs(Z::WorkPlane plane)
-{
-    QVector<QCPGraph*>& graphs = plane == Z::Plane_T? _graphsT: _graphsS;
-    bool isVisible = actnShowTS->isChecked()
-        or (plane == Z::Plane_T and actnShowT->isChecked())
-        or (plane == Z::Plane_S and actnShowS->isChecked());
-    int resultCount = _function->resultCount(plane);
-    for (int i = 0; i < resultCount; i++)
-    {
-        QCPGraph *g;
-        if (i >= graphs.size())
-        {
-            g = _plot->addGraph();
-            g->setPen(getLineSettings(plane));
-            graphs.append(g);
-        }
-        else g = graphs[i];
-        g->setVisible(isVisible);
-        if (isVisible)
-            fillGraphWithFunctionResults(plane, g, i);
-    }
-    while (graphs.size() > resultCount)
-    {
-        _plot->removePlottable(graphs.last());
-        graphs.removeLast();
-    }
-}
-
-void PlotFuncWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, QCPGraph *graph, int resultIndex)
-{
-    bool flipped = plane == Z::WorkPlane::Plane_S and actnShowTS->isChecked();
-    auto result = _function->result(plane, resultIndex);
-    int count = result.pointsCount();
-    auto xs = result.x();
-    auto ys = result.y();
-    auto unitX = getUnitX();
-    auto unitY = getUnitY();
-    QSharedPointer<QCPGraphDataContainer> data(new QCPGraphDataContainer);
-    for (int i = 0; i < count; i++)
-    {
-        // TODO: possible optimization: extract unit's SI factor before loop
-        // and replace the call of virtual method with simple multiplication
-        double x = unitX->fromSi(xs.at(i));
-        double y = unitY->fromSi(ys.at(i)) * (flipped ? -1 : 1);
-        data->add(QCPGraphData(x, y));
-    }
-    graph->setData(data);
-}
-
-QPen PlotFuncWindow::getLineSettings(Z::WorkPlane plane)
-{
-    return plane == Z::Plane_T? QPen(Qt::darkGreen): QPen(Qt::red);
+    _graphsT->update(_function);
+    _graphsS->update(_function);
 }
 
 void PlotFuncWindow::graphSelected(QCPGraph *graph)
@@ -497,19 +454,6 @@ void PlotFuncWindow::showRoundTrip()
 void PlotFuncWindow::recalcRequired(Schema*)
 {
     update();
-}
-
-void PlotFuncWindow::debug_LogGraphsCount()
-{
-    Z_INFO("Graphs on plot:" << _plot->graphCount());
-    for (int i = 0; i < _plot->graphCount(); i++)
-        Z_INFO("  graph:" << qintptr(_plot->graph(i)));
-    Z_INFO("Graphs in T array:" << _graphsT.size());
-    for (int i = 0; i < _graphsT.size(); i++)
-        Z_INFO("  graph:" << qintptr(_graphsT.at(i)));
-    Z_INFO("Graphs in S array:" << _graphsS.size());
-    for (int i = 0; i < _graphsS.size(); i++)
-        Z_INFO("  graph:" << qintptr(_graphsS.at(i)));
 }
 
 void PlotFuncWindow::freeze(bool frozen)

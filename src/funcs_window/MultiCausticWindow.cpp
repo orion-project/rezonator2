@@ -2,6 +2,7 @@
 
 #include "CausticOptionsPanel.h"
 #include "../funcs/CausticFunction.h"
+#include "../funcs/FunctionGraph.h"
 #include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
 #include "../widgets/Plot.h"
@@ -154,38 +155,13 @@ QWidget* MultiCausticWindow::makeOptionsPanel()
     return new CausticOptionsPanel<MultiCausticWindow>(this);
 }
 
-void MultiCausticWindow::fillGraphWithFunctionResults(Z::WorkPlane plane, QCPGraph *graph, int resultIndex)
+void MultiCausticWindow::updateGraphs()
 {
-    bool flipped = plane == Z::WorkPlane::Plane_S and actnShowTS->isChecked();
-    auto unitX = getUnitX();
-    auto unitY = getUnitY();
-    int resultIndex1 = 0;
-    double offset = 0;
-    for (CausticFunction* func : function()->funcs())
-    {
-        // Offset result for current element to place it after all previous elements
-        int resultIndex2 = resultIndex1 + func->resultCount(plane);
-        if (resultIndex >= resultIndex1 && resultIndex < resultIndex2)
-        {
-            auto result = func->result(plane, resultIndex - resultIndex1);
-            int count = result.pointsCount();
-            auto xs = result.x();
-            auto ys = result.y();
-            QSharedPointer<QCPGraphDataContainer> data(new QCPGraphDataContainer);
-            for (int i = 0; i < count; i++)
-            {
-                // TODO: possible optimization: extract unit's SI factor before loop
-                // and replace the call of virtual method with simple multiplication
-                double x = unitX->fromSi(xs.at(i) + offset);
-                double y = unitY->fromSi(ys.at(i)) * (flipped ? -1 : 1);
-                data->add(QCPGraphData(x, y));
-            }
-            graph->setData(data);
-            return;
-        }
-        resultIndex1 = resultIndex2;
-        offset += func->arg()->range.stop.toSi();
-    }
+    QList<PlotFunction*> funcs;
+    for (auto func : function()->funcs())
+        funcs << func;
+    _graphsT->update(funcs);
+    _graphsS->update(funcs);
 }
 
 void MultiCausticWindow::afterUpdate()

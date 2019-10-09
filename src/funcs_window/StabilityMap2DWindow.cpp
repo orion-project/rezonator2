@@ -177,7 +177,7 @@ StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
     PlotFuncWindowStorable(new StabilityMap2DFunction(schema))
 {
     _exclusiveModeTS = true;
-    actnShowTS->setVisible(false);
+    actnShowFlippedTS->setVisible(false);
     actnShowT->setChecked(true);
     actnShowS->setChecked(false);
 

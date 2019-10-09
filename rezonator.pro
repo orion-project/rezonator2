@@ -92,6 +92,7 @@ HEADERS += \
     src/funcs/CausticFunction.h \
     src/funcs/FormatInfo.h \
     src/funcs/FunctionBase.h \
+    src/funcs/FunctionGraph.h \
     src/funcs/GaussCalculator.h \
     src/funcs/InfoFunctions.h \
     src/funcs/PlotFunction.h \
@@ -195,6 +196,7 @@ SOURCES += \
     src/funcs/CausticFunction.cpp \
     src/funcs/FormatInfo.cpp \
     src/funcs/FunctionBase.cpp \
+    src/funcs/FunctionGraph.cpp \
     src/funcs/GaussCalculator.cpp \
     src/funcs/InfoFunctions.cpp \
     src/funcs/PlotFunction.cpp \

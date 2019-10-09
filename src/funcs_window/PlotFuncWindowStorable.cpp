@@ -51,8 +51,8 @@ QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root)
     else if (mode == "S") modeT = false;
     actnShowT->setChecked(modeT);
     actnShowS->setChecked(modeS);
-    actnShowTS->setChecked(root["ts_flipped"].toBool());
-    updateTSModeActions();
+    actnShowFlippedTS->setChecked(root["ts_flipped"].toBool());
+    showModeTS();
 
     // Restore cursor state
     _cursorPanel->setEnabled(root["cursor_enabled"].toBool(true));
@@ -102,7 +102,7 @@ QString PlotFuncWindowStorable::writeWindowGeneral(QJsonObject& root) const
     bool modeT = actnShowT->isChecked();
     bool modeS = actnShowS->isChecked();
     root["ts_mode"] = (modeT && modeS)? "T+S": (modeT ? "T" : "S");
-    root["ts_flipped"] = actnShowTS->isChecked();
+    root["ts_flipped"] = actnShowFlippedTS->isChecked();
 
     // Store cursor state
     root["cursor_enabled"] = _cursorPanel->enabled();
