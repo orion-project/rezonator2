@@ -23,6 +23,7 @@ public:
 protected:
     // Implementation of PlotFuncWindow
     bool configureInternal() override;
+    void calculate() override;
     void updateGraphs() override;
     void afterUpdate() override;
     ElemDeletionReaction reactElemDeletion(const Elements&) override;

@@ -11,6 +11,13 @@
 MultibeamCausticWindow::MultibeamCausticWindow(Schema *schema) : PlotFuncWindowStorable(new MultibeamCausticFunction(schema))
 {
     createActions();
+
+    _exclusiveModeTS = true;
+    _recalcWhenChangeModeTS = true;
+    actnShowFlippedTS->setVisible(false);
+    actnShowFlippedTS->setEnabled(false);
+    actnShowT->setChecked(true);
+    actnShowS->setChecked(false);
 }
 
 void MultibeamCausticWindow::createActions()
@@ -19,6 +26,32 @@ void MultibeamCausticWindow::createActions()
     _actnElemBoundMarkers->setCheckable(true);
     _actnElemBoundMarkers->setChecked(true);
     connect(_actnElemBoundMarkers, &QAction::toggled, this, &MultibeamCausticWindow::toggleElementBoundMarkers);
+}
+
+void MultibeamCausticWindow::calculate()
+{
+    _graphs->clear();
+
+    // for this functions T and S modes are exclusive
+    auto workPlane = actnShowT->isChecked() ? Z::Plane_T : Z::Plane_S;
+
+    QList<PlotFunction*> funcs;
+    for (auto func : function()->funcs())
+        funcs << func;
+
+    clearStatusInfo();
+    for (auto pump : *schema()->pumps())
+    {
+        function()->setPump(pump);
+        function()->calculate();
+        if (!function()->ok())
+        {
+            showFunctionError();
+            _graphs->clear();
+            return;
+        }
+        _graphs->update(pump->label(), workPlane, funcs);
+    }
 }
 
 bool MultibeamCausticWindow::configureInternal()

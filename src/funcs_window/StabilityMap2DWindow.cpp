@@ -178,6 +178,7 @@ StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
 {
     _exclusiveModeTS = true;
     actnShowFlippedTS->setVisible(false);
+    actnShowFlippedTS->setEnabled(false);
     actnShowT->setChecked(true);
     actnShowS->setChecked(false);
 

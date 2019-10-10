@@ -59,7 +59,7 @@
     ],
     "formulas": [
     ],
-    "notes": "Example schema containing single focusing lens and two variants of input beam - gaussian and ray vector - having similar parameter but different 'nature'.",
+    "notes": "Example schema containing single focusing lens and several input beams.",
     "param_links": [
     ],
     "pumps": [
@@ -337,13 +337,13 @@
                 "stored_views": [
                 ],
                 "ts_flipped": false,
-                "ts_mode": "T+S",
-                "x_max": 12.120000000000001,
-                "x_min": -0.12000000000000002,
-                "x_unit": "none",
-                "y_max": 18115.088809744364,
-                "y_min": -1225.1343730059334,
-                "y_unit": "none"
+                "ts_mode": "S",
+                "x_max": 121.20000000000002,
+                "x_min": -1.2000000000000002,
+                "x_unit": "mm",
+                "y_max": 18.959586531581287,
+                "y_min": -18.959586531581287,
+                "y_unit": "mm"
             }
         }
     ]

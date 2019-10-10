@@ -99,6 +99,7 @@ protected:
     bool _needRecalc = false;
     bool _frozen = false;
     bool _exclusiveModeTS = false;
+    bool _recalcWhenChangeModeTS = false;
     UnitsMenu *_unitsMenuX, *_unitsMenuY;
     QMenu *menuPlot, *menuLimits, *menuFormat, *menuAxisX, *menuAxisY;
     QAction *actnShowT, *actnShowS, *actnShowFlippedTS,
@@ -142,6 +143,7 @@ protected:
     void createContent();
 
     void showModeTS();
+    void updateModeTS();
     void updateTitles();
     void updateTitle();
     void updateTitleX();

@@ -54,8 +54,7 @@ public:
     void clear();
     void update(PlotFunction* function);
     void update(const QList<PlotFunction*>& functions);
-    void update(const QString& id, PlotFunction* function);
-    void update(const QString& id, const QList<PlotFunction*>& functions);
+    void update(const QString& id, Z::WorkPlane workPlane, const QList<PlotFunction*>& functions);
 
     FunctionGraph* T() { return _graphT; }
     FunctionGraph* S() { return _graphS; }

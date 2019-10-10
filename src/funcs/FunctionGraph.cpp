@@ -116,12 +116,15 @@ FunctionGraphSet::~FunctionGraphSet()
 {
     delete _graphT;
     delete _graphS;
+    qDeleteAll(_graphs.values());
 }
 
 void FunctionGraphSet::clear()
 {
     _graphT->clear();
     _graphS->clear();
+    for (auto g : _graphs.values())
+        g->clear();
 }
 
 void FunctionGraphSet::update(PlotFunction* function)
@@ -136,24 +139,14 @@ void FunctionGraphSet::update(const QList<PlotFunction*>& functions)
     _graphS->update(functions);
 }
 
-void FunctionGraphSet::update(const QString& id, PlotFunction* function)
+void FunctionGraphSet::update(const QString& id, Z::WorkPlane workPlane, const QList<PlotFunction*>& functions)
 {
-    if (!_graphs.contains(id))
+    QString key = id + (workPlane == Z::Plane_T ? "_t" : "_s");
+    if (!_graphs.contains(key))
     {
-        auto graph = new FunctionGraph(_plot, Z::Plane_T, _getUnits);
-        graph->setPen(QPen(Qt::darkBlue));
-        _graphs.insert(id, graph);
+        auto graph = new FunctionGraph(_plot, workPlane, _getUnits);
+        graph->setPen(QPen(workPlane == Z::Plane_T ? Qt::darkGreen : Qt::red));
+        _graphs.insert(key, graph);
     }
-    _graphs[id]->update(function);
-}
-
-void FunctionGraphSet::update(const QString& id, const QList<PlotFunction*>& functions)
-{
-    if (!_graphs.contains(id))
-    {
-        auto graph = new FunctionGraph(_plot, Z::Plane_T, _getUnits);
-        graph->setPen(QPen(Qt::darkBlue));
-        _graphs.insert(id, graph);
-    }
-    _graphs[id]->update(functions);
+    _graphs[key]->update(functions);
 }
