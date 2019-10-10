@@ -410,15 +410,25 @@ void PlotFuncWindow::calculate()
     _function->calculate();
     if (!_function->ok())
     {
-        _statusBar->setText(STATUS_INFO, _function->errorText());
-        _statusBar->highlightError(STATUS_INFO);
+        showFunctionError();
         _graphs->clear();
     }
     else
     {
-        _statusBar->clear(STATUS_INFO);
+        clearStatusInfo();
         updateGraphs();
     }
+}
+
+void PlotFuncWindow::showFunctionError()
+{
+    _statusBar->setText(STATUS_INFO, _function->errorText());
+    _statusBar->highlightError(STATUS_INFO);
+}
+
+void PlotFuncWindow::clearStatusInfo()
+{
+    _statusBar->clear(STATUS_INFO);
 }
 
 void PlotFuncWindow::updateGraphs()

@@ -101,3 +101,9 @@ Z::Unit MultiCausticFunction::defaultUnitY() const
 {
     return CausticFunction::defaultUnitsForMode(mode());
 }
+
+void MultiCausticFunction::setPump(Z::PumpParams* pump)
+{
+    for (CausticFunction *func : _funcs)
+        func->setPump(pump);
+}

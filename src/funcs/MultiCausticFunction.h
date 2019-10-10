@@ -20,6 +20,9 @@ public:
     int resultCount(Z::WorkPlane plane) const override;
     const PlotFuncResult& result(Z::WorkPlane plane, int index) const override;
 
+    // Only needs for SP schemas
+    void setPump(Z::PumpParams* pump);
+
     QVector<Z::Variable> args() const;
     void setArgs(const QVector<Z::Variable>& args);
 

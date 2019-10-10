@@ -139,6 +139,11 @@ void MultiCausticWindow::createActions()
     connect(_actnElemBoundMarkers, &QAction::toggled, this, &MultiCausticWindow::toggleElementBoundMarkers);
 }
 
+QWidget* MultiCausticWindow::makeOptionsPanel()
+{
+    return new CausticOptionsPanel<MultiCausticWindow>(this);
+}
+
 bool MultiCausticWindow::configureInternal()
 {
     MultiCausticParamsDlg dlg(schema(), function()->args());
@@ -150,9 +155,12 @@ bool MultiCausticWindow::configureInternal()
     return false;
 }
 
-QWidget* MultiCausticWindow::makeOptionsPanel()
+void MultiCausticWindow::calculate()
 {
-    return new CausticOptionsPanel<MultiCausticWindow>(this);
+    if (schema()->isSP())
+        function()->setPump(schema()->activePump());
+
+    PlotFuncWindow::calculate();
 }
 
 void MultiCausticWindow::updateGraphs()

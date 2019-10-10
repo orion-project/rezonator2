@@ -120,7 +120,6 @@ protected:
     };
     QMap<int, ViewState> _storedView;
 
-    /// Calculates function and plots its results.
     virtual void calculate();
     virtual bool configureInternal() { return true; }
     virtual void updateGraphs();
@@ -134,8 +133,7 @@ protected:
     virtual void storeViewSpecific(int key) { Q_UNUSED(key) }
     virtual void restoreViewSpecific(int key) { Q_UNUSED(key) }
     virtual QWidget* makeOptionsPanel() { return nullptr; }
-
-    virtual void fillViewMenuActions(QList<QAction*>& actions) const { Q_UNUSED(actions); }
+    virtual void fillViewMenuActions(QList<QAction*>& actions) const { Q_UNUSED(actions) }
 
     QCPGraph* selectedGraph() const;
 
@@ -154,6 +152,8 @@ protected:
     void updateStatusUnits();
 
     void showInfo(const QString& text, const QString& icon = QString());
+    void showFunctionError();
+    void clearStatusInfo();
 
     QString displayWindowTitle() const;
 

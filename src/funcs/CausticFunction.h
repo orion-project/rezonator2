@@ -7,6 +7,9 @@
 
 class PumpCalculator;
 class AbcdBeamCalculator;
+namespace Z {
+class PumpParams;
+}
 
 class CausticFunction : public PlotFunction
 {
@@ -20,6 +23,9 @@ public:
     FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Caustic"))
 
     CausticFunction(Schema *schema) : PlotFunction(schema) {}
+
+    // Only needs for SP schemas
+    void setPump(Z::PumpParams* pump) { _pump = pump; }
 
     void calculate() override;
     bool hasOptions() const override { return true; }
@@ -40,6 +46,7 @@ private:
     /// Schema wavelength in SI units.
     double _wavelenSI = 0;
 
+    Z::PumpParams* _pump = nullptr;
     Z::PairTS<std::shared_ptr<PumpCalculator>> _pumpCalc;
     std::shared_ptr<AbcdBeamCalculator> _beamCalc;
 

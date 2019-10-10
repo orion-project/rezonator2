@@ -79,8 +79,7 @@ void CausticFunction::calculate()
 
 bool CausticFunction::prepareSinglePass()
 {    
-    Z::PumpParams *pump = _schema->activePump();
-    if (!pump)
+    if (!_pump)
     {
         setError(qApp->translate("Calc error",
             "There is no active pump in the schema. "
@@ -94,8 +93,8 @@ bool CausticFunction::prepareSinglePass()
     // than schema's wavelength in order to account IOR of the reference element.
     // But pump is supposed to be in air, so get wavelength from schema.
     const double lambda = schema()->wavelength().value().toSi();
-    if (!_pumpCalc.T->init(pump, lambda) ||
-        !_pumpCalc.S->init(pump, lambda))
+    if (!_pumpCalc.T->init(_pump, lambda) ||
+        !_pumpCalc.S->init(_pump, lambda))
     {
         setError("Unsupported pump mode");
         return false;

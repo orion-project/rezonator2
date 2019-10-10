@@ -108,6 +108,14 @@ bool CausticWindow::configureInternal()
     return CausticParamsDlg(schema(), function()->arg()).run();
 }
 
+void CausticWindow::calculate()
+{
+    if (schema()->isSP())
+        function()->setPump(schema()->activePump());
+
+    PlotFuncWindow::calculate();
+}
+
 QWidget* CausticWindow::makeOptionsPanel()
 {
     return new CausticOptionsPanel<CausticWindow>(this);
