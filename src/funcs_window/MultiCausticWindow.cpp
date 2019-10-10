@@ -155,14 +155,6 @@ bool MultiCausticWindow::configureInternal()
     return false;
 }
 
-void MultiCausticWindow::calculate()
-{
-    if (schema()->isSP())
-        function()->setPump(schema()->activePump());
-
-    PlotFuncWindow::calculate();
-}
-
 void MultiCausticWindow::updateGraphs()
 {
     QList<PlotFunction*> funcs;

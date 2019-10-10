@@ -146,3 +146,14 @@ void FunctionGraphSet::update(const QString& id, PlotFunction* function)
     }
     _graphs[id]->update(function);
 }
+
+void FunctionGraphSet::update(const QString& id, const QList<PlotFunction*>& functions)
+{
+    if (!_graphs.contains(id))
+    {
+        auto graph = new FunctionGraph(_plot, Z::Plane_T, _getUnits);
+        graph->setPen(QPen(Qt::darkBlue));
+        _graphs.insert(id, graph);
+    }
+    _graphs[id]->update(functions);
+}

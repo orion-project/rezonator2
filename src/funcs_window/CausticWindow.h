@@ -21,7 +21,6 @@ protected:
     // Implementation of PlotFuncWindow
     QWidget* makeOptionsPanel() override;
     bool configureInternal() override;
-    void calculate() override;
     QString getDefaultTitle() const override;
     QString getDefaultTitleX() const override;
     QString getDefaultTitleY() const override;
