@@ -1,0 +1,161 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "mkm",
+            "value": 0.64
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "L1",
+            "params": {
+                "L": {
+                    "unit": "cm",
+                    "value": 5
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "Distance from light source to lens",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "F1",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 14.999999999999977
+                },
+                "F": {
+                    "unit": "cm",
+                    "value": 5
+                }
+            },
+            "title": "",
+            "type": "ElemThinLens"
+        },
+        {
+            "is_disabled": false,
+            "label": "L2",
+            "params": {
+                "L": {
+                    "unit": "cm",
+                    "value": 7
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        }
+    ],
+    "formulas": [
+    ],
+    "notes": "Example schema containing single focusing lens and two variants of input beam - gaussian and ray vector - having similar parameter but different 'nature'.",
+    "param_links": [
+    ],
+    "pumps": [
+        {
+            "is_active": true,
+            "label": "P1",
+            "mode": "RayVector",
+            "params": {
+                "V": {
+                    "unit": "deg",
+                    "value_s": 2.5,
+                    "value_t": 2
+                },
+                "y": {
+                    "unit": "mm",
+                    "value_s": 12,
+                    "value_t": 10
+                },
+                "z_y": {
+                    "unit": "cm",
+                    "value_s": 0,
+                    "value_t": 0
+                }
+            },
+            "title": "Geometric pump"
+        },
+        {
+            "is_active": false,
+            "label": "P3",
+            "mode": "RayVector",
+            "params": {
+                "V": {
+                    "unit": "deg",
+                    "value_s": 1.5,
+                    "value_t": 1
+                },
+                "y": {
+                    "unit": "mm",
+                    "value_s": 12,
+                    "value_t": 10
+                },
+                "z_y": {
+                    "unit": "cm",
+                    "value_s": 0,
+                    "value_t": 0
+                }
+            },
+            "title": "Geometric pump"
+        }
+    ],
+    "schema_version": "2.0",
+    "title": "Single Lens",
+    "trip_type": "SP",
+    "windows": [
+        {
+            "type": "PumpsWindow"
+        },
+        {
+            "function": {
+                "arg": {
+                    "element_index": 0,
+                    "param": "L",
+                    "range": {
+                        "points": 10,
+                        "start": {
+                            "unit": "cm",
+                            "value": 0
+                        },
+                        "step": {
+                            "unit": "cm",
+                            "value": 0.05
+                        },
+                        "stop": {
+                            "unit": "cm",
+                            "value": 5
+                        },
+                        "use_step": false
+                    }
+                },
+                "mode": "BeamRadius"
+            },
+            "type": "Caustic",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "stored_views": [
+                ],
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 5.05,
+                "x_min": -0.05,
+                "x_unit": "none",
+                "y_max": 11832.595714594047,
+                "y_min": 9912.733537400283,
+                "y_unit": "mm"
+            }
+        }
+    ]
+}

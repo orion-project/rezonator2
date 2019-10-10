@@ -6,6 +6,7 @@
 
 #include <QVector>
 #include <QPen>
+#include <QMap>
 
 class QCPGraph;
 class Plot;
@@ -53,12 +54,16 @@ public:
     void clear();
     void update(PlotFunction* function);
     void update(const QList<PlotFunction*>& functions);
+    void update(const QString& id, PlotFunction* function);
 
     FunctionGraph* T() { return _graphT; }
     FunctionGraph* S() { return _graphS; }
 
 private:
+    Plot* _plot;
+    std::function<GraphUnits()> _getUnits;
     FunctionGraph *_graphT, *_graphS;
+    QMap<QString, FunctionGraph*> _graphs;
 };
 
 #endif // FUNCTION_GRAPH_H

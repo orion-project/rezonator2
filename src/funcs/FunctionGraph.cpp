@@ -104,7 +104,7 @@ void FunctionGraph::trimToCount(int count)
 //                               FunctionGraphSet
 //------------------------------------------------------------------------------
 
-FunctionGraphSet::FunctionGraphSet(Plot* plot, std::function<GraphUnits()> getUnits)
+FunctionGraphSet::FunctionGraphSet(Plot* plot, std::function<GraphUnits()> getUnits): _plot(plot), _getUnits(getUnits)
 {
     _graphT = new FunctionGraph(plot, Z::Plane_T, getUnits);
     _graphS = new FunctionGraph(plot, Z::Plane_S, getUnits);
@@ -134,4 +134,15 @@ void FunctionGraphSet::update(const QList<PlotFunction*>& functions)
 {
     _graphT->update(functions);
     _graphS->update(functions);
+}
+
+void FunctionGraphSet::update(const QString& id, PlotFunction* function)
+{
+    if (!_graphs.contains(id))
+    {
+        auto graph = new FunctionGraph(_plot, Z::Plane_T, _getUnits);
+        graph->setPen(QPen(Qt::darkBlue));
+        _graphs.insert(id, graph);
+    }
+    _graphs[id]->update(function);
 }

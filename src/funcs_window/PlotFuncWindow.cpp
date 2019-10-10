@@ -250,7 +250,6 @@ void PlotFuncWindow::activateModeT()
         actnShowS->setChecked(!actnShowT->isChecked());
     else if (!actnShowT->isChecked() && !actnShowS->isChecked())
         actnShowS->setChecked(true);
-    showModeTS();
     updateGraphs();
     afterUpdate();
     _plot->replot();
@@ -263,7 +262,6 @@ void PlotFuncWindow::activateModeS()
         actnShowT->setChecked(!actnShowS->isChecked());
     else if (!actnShowS->isChecked() && !actnShowT->isChecked())
         actnShowT->setChecked(true);
-    showModeTS();
     updateGraphs();
     afterUpdate();
     _plot->replot();
@@ -272,22 +270,16 @@ void PlotFuncWindow::activateModeS()
 
 void PlotFuncWindow::activateModeFlippedTS()
 {
-    showModeTS();
+    updateActionsTS();
     updateGraphs();
     afterUpdate();
     _plot->replot();
     schema()->markModified();
 }
 
-void PlotFuncWindow::showModeTS()
+void PlotFuncWindow::updateActionsTS()
 {
     bool flipped = actnShowFlippedTS->isChecked();
-    bool t = actnShowT->isChecked();
-    bool s = actnShowS->isChecked();
-
-    _graphs->T()->setVisible(flipped || t);
-    _graphs->S()->setVisible(flipped || s);
-    _graphs->S()->setFlipped(flipped);
 
     actnShowT->setEnabled(!flipped);
     actnShowT->setVisible(!flipped);
@@ -380,6 +372,11 @@ void PlotFuncWindow::update()
         _needRecalc = true;
         return;
     }
+
+    bool flipped = actnShowFlippedTS->isChecked();
+    _graphs->T()->setVisible(flipped || actnShowT->isChecked());
+    _graphs->S()->setVisible(flipped || actnShowS->isChecked());
+    _graphs->S()->setFlipped(flipped);
 
     calculate();
 

@@ -2,6 +2,7 @@
 
 #include "CausticOptionsPanel.h"
 #include "../CustomPrefs.h"
+#include "../funcs/FunctionGraph.h"
 #include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
 #include "../widgets/ElemSelectorWidget.h"
@@ -110,10 +111,41 @@ bool CausticWindow::configureInternal()
 
 void CausticWindow::calculate()
 {
-    if (schema()->isSP())
-        function()->setPump(schema()->activePump());
-
+    function()->setPump(schema()->activePump());
     PlotFuncWindow::calculate();
+    return;
+
+    if (schema()->isResonator())
+    {
+        PlotFuncWindow::calculate();
+        return;
+    }
+
+    bool isMultiBeamMode = true; // TODO
+
+    if (!isMultiBeamMode)
+    {
+        PlotFuncWindow::calculate();
+        return;
+    }
+
+    clearStatusInfo();
+    _graphs->T()->setVisible(false);
+    _graphs->S()->setVisible(false);
+    _graphs->update(function()); // apply visibility
+
+    for (auto pump : *schema()->pumps())
+    {
+        function()->setPump(pump);
+        function()->calculate();
+        if (!function()->ok())
+        {
+            showFunctionError();
+            _graphs->clear();
+            return;
+        }
+        _graphs->update(pump->label(), function());
+    }
 }
 
 QWidget* CausticWindow::makeOptionsPanel()
