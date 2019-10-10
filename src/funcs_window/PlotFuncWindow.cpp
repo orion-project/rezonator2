@@ -416,7 +416,7 @@ void PlotFuncWindow::calculate()
     _function->calculate();
     if (!_function->ok())
     {
-        showFunctionError();
+        showStatusError(_function->errorText());
         _graphs->clear();
     }
     else
@@ -426,9 +426,9 @@ void PlotFuncWindow::calculate()
     }
 }
 
-void PlotFuncWindow::showFunctionError()
+void PlotFuncWindow::showStatusError(const QString& message)
 {
-    _statusBar->setText(STATUS_INFO, _function->errorText());
+    _statusBar->setText(STATUS_INFO, message);
     _statusBar->highlightError(STATUS_INFO);
 }
 

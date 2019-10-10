@@ -151,8 +151,7 @@ protected:
     void updateGraphs(Z::WorkPlane);
     void updateStatusUnits();
 
-    void showInfo(const QString& text, const QString& icon = QString());
-    void showFunctionError();
+    void showStatusError(const QString &message);
     void clearStatusInfo();
 
     QString displayWindowTitle() const;

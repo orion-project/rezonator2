@@ -11,7 +11,6 @@ public:
 
     MultibeamCausticFunction(Schema *schema) : MultirangeCausticFunction(schema) {}
 
-    void calculate() override;
     bool hasOptions() const override { return false; }
     const char* iconPath() const override { return ":/toolbar/func_multi_beam_caustic"; }
 

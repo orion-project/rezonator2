@@ -32,6 +32,12 @@ void MultibeamCausticWindow::calculate()
 {
     _graphs->clear();
 
+    if (!schema()->isSP())
+    {
+        showStatusError(tr("This function can only operate on SP schema"));
+        return;
+    }
+
     // for this functions T and S modes are exclusive
     auto workPlane = actnShowT->isChecked() ? Z::Plane_T : Z::Plane_S;
 
@@ -46,7 +52,7 @@ void MultibeamCausticWindow::calculate()
         function()->calculate();
         if (!function()->ok())
         {
-            showFunctionError();
+            showStatusError(function()->errorText());
             _graphs->clear();
             return;
         }
