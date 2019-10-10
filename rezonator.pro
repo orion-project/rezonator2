@@ -96,6 +96,7 @@ HEADERS += \
     src/funcs/GaussCalculator.h \
     src/funcs/InfoFunctions.h \
     src/funcs/MultibeamCausticFunction.h \
+    src/funcs/MultirangeCausticFunction.h \
     src/funcs/PlotFunction.h \
     src/funcs/PumpCalculator.h \
     src/funcs/RoundTripCalculator.h \
@@ -105,6 +106,7 @@ HEADERS += \
     src/funcs_window/InfoFuncWindow.h \
     src/funcs_window/MultiCausticParamsDlg.h \
     src/funcs_window/MultibeamCausticWindow.h \
+    src/funcs_window/MultirangeCausticWindow.h \
     src/funcs_window/PlotFuncWindow.h \
     src/funcs_window/PlotFuncWindowStorable.h \
     src/funcs_window/StabilityMap2DWindow.h \
@@ -140,8 +142,6 @@ HEADERS += \
     src/widgets/WidgetResult.h \
     src/tests/TestSchemaListener.h \
     src/GaussCalculatorWindow.h \
-    src/funcs_window/MultiCausticWindow.h \
-    src/funcs/MultiCausticFunction.h \
     src/widgets/VariableRangeEditor.h \
     src/funcs_window/CausticOptionsPanel.h \
     src/funcs_window/FuncOptionsPanel.h \
@@ -204,6 +204,7 @@ SOURCES += \
     src/funcs/GaussCalculator.cpp \
     src/funcs/InfoFunctions.cpp \
     src/funcs/MultibeamCausticFunction.cpp \
+    src/funcs/MultirangeCausticFunction.cpp \
     src/funcs/PlotFunction.cpp \
     src/funcs/PumpCalculator.cpp \
     src/funcs/RoundTripCalculator.cpp \
@@ -213,6 +214,7 @@ SOURCES += \
     src/funcs_window/InfoFuncWindow.cpp \
     src/funcs_window/MultiCausticParamsDlg.cpp \
     src/funcs_window/MultibeamCausticWindow.cpp \
+    src/funcs_window/MultirangeCausticWindow.cpp \
     src/funcs_window/PlotFuncWindow.cpp \
     src/funcs_window/PlotFuncWindowStorable.cpp \
     src/funcs_window/StabilityMap2DWindow.cpp \
@@ -265,8 +267,6 @@ SOURCES += \
     src/tests/test_SchemaReaderJson.cpp \
     src/tests/test_PumpWindow.cpp \
     src/GaussCalculatorWindow.cpp \
-    src/funcs_window/MultiCausticWindow.cpp \
-    src/funcs/MultiCausticFunction.cpp \
     src/widgets/VariableRangeEditor.cpp \
     src/funcs_window/FuncOptionsPanel.cpp \
     src/io/ISchemaWindowStorable.cpp \

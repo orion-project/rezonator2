@@ -3,7 +3,7 @@
 #include "core/Protocol.h"
 #include "funcs/InfoFunctions.h"
 #include "funcs/CausticFunction.h"
-#include "funcs/MultiCausticFunction.h"
+#include "funcs/MultirangeCausticFunction.h"
 #include "funcs/MultibeamCausticFunction.h"
 #include "funcs/StabilityMapFunction.h"
 #include "funcs/StabilityMap2DFunction.h"
@@ -11,7 +11,7 @@
 #include "funcs_window/PlotFuncWindow.h"
 #include "funcs_window/InfoFuncWindow.h"
 #include "funcs_window/CausticWindow.h"
-#include "funcs_window/MultiCausticWindow.h"
+#include "funcs_window/MultirangeCausticWindow.h"
 #include "funcs_window/MultibeamCausticWindow.h"
 #include "funcs_window/StabilityMapWindow.h"
 #include "funcs_window/StabilityMap2DWindow.h"
@@ -40,7 +40,7 @@ CalcManager::CalcManager(Schema *schema, QWidget *parent) :
     registerWindowConstructor<StabilityMapWindow, StabilityMapFunction>();
     registerWindowConstructor<StabilityMap2DWindow, StabilityMap2DFunction>();
     registerWindowConstructor<CausticWindow, CausticFunction>();
-    registerWindowConstructor<MultiCausticWindow, MultiCausticFunction>();
+    registerWindowConstructor<MultirangeCausticWindow, MultirangeCausticFunction>();
     registerWindowConstructor<MultibeamCausticWindow, MultibeamCausticFunction>();
     registerWindowConstructor<BeamVariationWindow, BeamVariationFunction>();
 }
@@ -89,9 +89,9 @@ void CalcManager::funcCaustic()
     showPlotFunc<CausticFunction>();
 }
 
-void CalcManager::funcMultiCaustic()
+void CalcManager::funcMultirangeCaustic()
 {
-    showPlotFunc<MultiCausticFunction>();
+    showPlotFunc<MultirangeCausticFunction>();
 }
 
 void CalcManager::funcMultibeamCaustic()

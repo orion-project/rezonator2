@@ -111,61 +111,61 @@ void ProjectWindow::createActions()
 {
     #define A_ Ori::Gui::action
 
-    actnFileNew = A_(tr("&New"), _operations, SLOT(newSchemaFile()), ":/toolbar/schema_new", QKeySequence::New);
-    actnFileOpen = A_(tr("&Open..."), _operations, SLOT(openSchemaFile()), ":/toolbar/schema_open", QKeySequence::Open);
-    actnFileOpenExample = A_(tr("Open &Example..."), this, SLOT(openSchemaExample()), ":/toolbar/schema_sample");
-    actnFileSave = A_(tr("&Save"), _operations, SLOT(saveSchemaFile()), ":/toolbar/schema_save", QKeySequence::Save);
-    actnFileSaveAs = A_(tr("Save &As..."), _operations, SLOT(saveSchemaFileAs()), nullptr, QKeySequence::SaveAs);
-    actnFileSaveCopy = A_(tr("Save &Copy..."), _operations, SLOT(saveSchemaFileCopy()));
-    actnFileLambda = A_(tr("Change &Wavelength..."), _operations, SLOT(setupWavelength()), ":/toolbar/wavelength", Qt::Key_F10);
-    actnFileTripType = A_(tr("Change &Trip Type..."), _operations, SLOT(setupTripType()));
-    actnFilePump = A_(tr("Setup &Input Beam..."), _operations, SLOT(setupPump()), ":/toolbar/pump_edit", Qt::Key_F9);
-    actnFileSummary = A_(tr("Summar&y..."), _calculations, SLOT(funcSummary()), ":/toolbar/schema_summary", Qt::CTRL | Qt::Key_I);
-    actnFileProps = A_(tr("Prop&erties..."), _operations, SLOT(editSchemaProps()), ":/toolbar/schema_prop");
-    actnFileExit = A_(tr("E&xit"), qApp, SLOT(closeAllWindows()), nullptr, Qt::CTRL | Qt::Key_Q);
+    actnFileNew = A_(tr("New"), _operations, SLOT(newSchemaFile()), ":/toolbar/schema_new", QKeySequence::New);
+    actnFileOpen = A_(tr("Open..."), _operations, SLOT(openSchemaFile()), ":/toolbar/schema_open", QKeySequence::Open);
+    actnFileOpenExample = A_(tr("Open Example..."), this, SLOT(openSchemaExample()), ":/toolbar/schema_sample");
+    actnFileSave = A_(tr("Save"), _operations, SLOT(saveSchemaFile()), ":/toolbar/schema_save", QKeySequence::Save);
+    actnFileSaveAs = A_(tr("Save As..."), _operations, SLOT(saveSchemaFileAs()), nullptr, QKeySequence::SaveAs);
+    actnFileSaveCopy = A_(tr("Save Copy..."), _operations, SLOT(saveSchemaFileCopy()));
+    actnFileLambda = A_(tr("Change Wavelength..."), _operations, SLOT(setupWavelength()), ":/toolbar/wavelength", Qt::Key_F10);
+    actnFileTripType = A_(tr("Change Trip Type..."), _operations, SLOT(setupTripType()));
+    actnFilePump = A_(tr("Setup Input Beam..."), _operations, SLOT(setupPump()), ":/toolbar/pump_edit", Qt::Key_F9);
+    actnFileSummary = A_(tr("Summary..."), _calculations, SLOT(funcSummary()), ":/toolbar/schema_summary", Qt::CTRL | Qt::Key_I);
+    actnFileProps = A_(tr("Properties..."), _operations, SLOT(editSchemaProps()), ":/toolbar/schema_prop");
+    actnFileExit = A_(tr("Exit"), qApp, SLOT(closeAllWindows()), nullptr, Qt::CTRL | Qt::Key_Q);
 
-    actnEditCut = A_(tr("Cu&t"), _mdiArea, SLOT(editableChild_Cut()), ":/toolbar/cut", QKeySequence::Cut);
-    actnEditCopy = A_(tr("&Copy"), _mdiArea, SLOT(editableChild_Copy()), ":/toolbar/copy", QKeySequence::Copy);
-    actnEditPaste = A_(tr("&Paste"), _mdiArea, SLOT(editableChild_Paste()), ":/toolbar/paste", QKeySequence::Paste);
-    actnEditSelectAll = A_(tr("Select &All"), _mdiArea, SLOT(editableChild_SelectAll()), nullptr, QKeySequence::SelectAll);
+    actnEditCut = A_(tr("Cut"), _mdiArea, SLOT(editableChild_Cut()), ":/toolbar/cut", QKeySequence::Cut);
+    actnEditCopy = A_(tr("Copy"), _mdiArea, SLOT(editableChild_Copy()), ":/toolbar/copy", QKeySequence::Copy);
+    actnEditPaste = A_(tr("Paste"), _mdiArea, SLOT(editableChild_Paste()), ":/toolbar/paste", QKeySequence::Paste);
+    actnEditSelectAll = A_(tr("Select All"), _mdiArea, SLOT(editableChild_SelectAll()), nullptr, QKeySequence::SelectAll);
 
-    actnFuncRoundTrip = A_(tr("&Round-trip Matrix"), _calculations, SLOT(funcRoundTrip()), ":/toolbar/func_round_trip");
-    actnFuncMultFwd = A_(tr("Multiply Selected &Forward"), _calculations, SLOT(funcMultFwd()));
-    actnFuncMultBkwd = A_(tr("Multiply Selected &Backward"), _calculations, SLOT(funcMultBkwd()));
-    actnFuncStabMap = A_(tr("&Stability Map..."), _calculations, SLOT(funcStabMap()), ":/toolbar/func_stab_map");
-    actnFuncStabMap2d = A_(tr("&2D Stability Map..."), _calculations, SLOT(funcStabMap2d()), ":/toolbar/func_stab_map_2d");
-    actnFuncRepRate = A_(tr("&Intermode Beats Frequency"), _calculations, SLOT(funcRepRate()), ":/toolbar/func_reprate");
-    actnFuncCaustic = A_(tr("&Caustic..."), _calculations, SLOT(funcCaustic()), ":/toolbar/func_caustic");
-    actnFuncMultiCaustic = A_(tr("&Multicaustic..."), _calculations, SLOT(funcMultiCaustic()), ":/toolbar/func_multi_caustic");
-    actnFuncMultibeamCaustic = A_(tr("&Multibeam Caustic..."), _calculations, SLOT(funcMultibeamCaustic()), ":/toolbar/func_multi_caustic");
-    actnFuncBeamVariation = A_(tr("&Beamsize Variation..."), _calculations, SLOT(funcBeamVariation()), ":/toolbar/func_beam_variation");
+    actnFuncRoundTrip = A_(tr("Round-trip Matrix"), _calculations, SLOT(funcRoundTrip()), ":/toolbar/func_round_trip");
+    actnFuncMultFwd = A_(tr("Multiply Selected Forward"), _calculations, SLOT(funcMultFwd()));
+    actnFuncMultBkwd = A_(tr("Multiply Selected Backward"), _calculations, SLOT(funcMultBkwd()));
+    actnFuncStabMap = A_(tr("Stability Map..."), _calculations, SLOT(funcStabMap()), ":/toolbar/func_stab_map");
+    actnFuncStabMap2d = A_(tr("2D Stability Map..."), _calculations, SLOT(funcStabMap2d()), ":/toolbar/func_stab_map_2d");
+    actnFuncRepRate = A_(tr("Intermode Beats Frequency"), _calculations, SLOT(funcRepRate()), ":/toolbar/func_reprate");
+    actnFuncCaustic = A_(tr("Caustic..."), _calculations, SLOT(funcCaustic()), ":/toolbar/func_caustic");
+    actnFuncMultirangeCaustic = A_(tr("Multirange Caustic..."), _calculations, SLOT(funcMultirangeCaustic()), ":/toolbar/func_multi_caustic");
+    actnFuncMultibeamCaustic = A_(tr("Multibeam Caustic..."), _calculations, SLOT(funcMultibeamCaustic()), ":/toolbar/func_multi_caustic");
+    actnFuncBeamVariation = A_(tr("Beamsize Variation..."), _calculations, SLOT(funcBeamVariation()), ":/toolbar/func_beam_variation");
 
-    actnToolsCatalog = A_(tr("&Elements Catalog"), this, SLOT(showElementsCatalog()), ":/toolbar/catalog");
-    actnToolsGaussCalc = A_(tr("&Gauss Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
-    actnToolsCalc = A_(tr("Formula &Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
-    actnToolFlipSchema = A_(tr("&Flip Schema"), this, SLOT(flipSchema()));
-    actnToolSettings = A_(tr("&Settings..."), this, SLOT(showSettings()), ":/toolbar/settings");
-    actnToolAdjust = A_(tr("&Adjustment"), this, SLOT(showAdjustment()), ":/toolbar/adjust");
+    actnToolsCatalog = A_(tr("Elements Catalog"), this, SLOT(showElementsCatalog()), ":/toolbar/catalog");
+    actnToolsGaussCalc = A_(tr("Gauss Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
+    actnToolsCalc = A_(tr("Formula Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
+    actnToolFlipSchema = A_(tr("Flip Schema"), this, SLOT(flipSchema()));
+    actnToolSettings = A_(tr("Settings..."), this, SLOT(showSettings()), ":/toolbar/settings");
+    actnToolAdjust = A_(tr("Adjustment"), this, SLOT(showAdjustment()), ":/toolbar/adjust");
 
     // These common window actions must not have data (action->data()), as data presense indicates that
     // this action is for activation of specific subwindow and _mdiArea is responsible for it.
-    actnWndSchema = A_(tr("&Schema"), this, SLOT(showSchemaWindow()), ":/toolbar/schema", Qt::Key_F12);
-    actnWndParams = A_(tr("&Parameters"), this, SLOT(showParamsWindow()), ":/toolbar/parameter", Qt::Key_F11);
-    actnWndPumps = A_(tr("P&umps"), this, SLOT(showPumpsWindow()), ":/toolbar/pumps");
-    actnWndProtocol = A_(tr("P&rotocol"), this, SLOT(showProtocolWindow()), ":/toolbar/protocol");
-    actnWndClose = A_(tr("Cl&ose"), _mdiArea, SLOT(closeActiveSubWindow()));
-    actnWndCloseAll = A_(tr("Close &All"), _mdiArea, SLOT(closeAllSubWindows()), ":/toolbar/windows_close");
-    actnWndTile = A_(tr("&Tile"), _mdiArea, SLOT(tileSubWindows()));
-    actnWndCascade = A_(tr("&Cascade"), _mdiArea, SLOT(cascadeSubWindows()));
+    actnWndSchema = A_(tr("Schema"), this, SLOT(showSchemaWindow()), ":/toolbar/schema", Qt::Key_F12);
+    actnWndParams = A_(tr("Parameters"), this, SLOT(showParamsWindow()), ":/toolbar/parameter", Qt::Key_F11);
+    actnWndPumps = A_(tr("Pumps"), this, SLOT(showPumpsWindow()), ":/toolbar/pumps");
+    actnWndProtocol = A_(tr("Protocol"), this, SLOT(showProtocolWindow()), ":/toolbar/protocol");
+    actnWndClose = A_(tr("Close"), _mdiArea, SLOT(closeActiveSubWindow()));
+    actnWndCloseAll = A_(tr("Close All"), _mdiArea, SLOT(closeAllSubWindows()), ":/toolbar/windows_close");
+    actnWndTile = A_(tr("Tile"), _mdiArea, SLOT(tileSubWindows()));
+    actnWndCascade = A_(tr("Cascade"), _mdiArea, SLOT(cascadeSubWindows()));
 
     auto help = Z::HelpSystem::instance();
     // TODO: analyze top-level window and show context help if available
-    actnHelpContent = A_(tr("&Contents"), help, SLOT(showContents()), ":/toolbar/help", QKeySequence::HelpContents);
-    actnHelpIndex = A_(tr("&Index"), help, SLOT(showIndex()));
-    actnHelpBugReport = A_(tr("&Send Bug Report"), help, SLOT(sendBugReport()), ":/toolbar/bug");
-    actnHelpUpdates = A_(tr("Check for &Updates"), help, SLOT(checkUpdates()), ":/toolbar/update");
-    actnHelpHomepage = A_(tr("&Visit Homepage"), help, SLOT(visitHomePage()), ":/toolbar/home");
-    actnHelpAbout = A_(tr("&About..."), help, SLOT(showAbout()));
+    actnHelpContent = A_(tr("Contents"), help, SLOT(showContents()), ":/toolbar/help", QKeySequence::HelpContents);
+    actnHelpIndex = A_(tr("Index"), help, SLOT(showIndex()));
+    actnHelpBugReport = A_(tr("Send Bug Report"), help, SLOT(sendBugReport()), ":/toolbar/bug");
+    actnHelpUpdates = A_(tr("Check for Updates"), help, SLOT(checkUpdates()), ":/toolbar/update");
+    actnHelpHomepage = A_(tr("Visit Homepage"), help, SLOT(visitHomePage()), ":/toolbar/home");
+    actnHelpAbout = A_(tr("About..."), help, SLOT(showAbout()));
 
     /* TODO:NEXT-VER
     actnFileSave->setEnabled(false);
@@ -179,34 +179,34 @@ void ProjectWindow::createMenuBar()
 {
     menuBar()->setNativeMenuBar(Settings::instance().useNativeMenuBar);
 
-    _mruMenu = new Ori::Widgets::MruMenu(tr("Recent &Files"), CommonData::instance()->mruList(), this);
+    _mruMenu = new Ori::Widgets::MruMenu(tr("Recent Files"), CommonData::instance()->mruList(), this);
 
-    menuFile = Ori::Gui::menu(tr("&File"), this,
+    menuFile = Ori::Gui::menu(tr("File"), this,
         { actnFileNew, actnFileOpen, actnFileOpenExample, _mruMenu, nullptr, actnFileSave,
           actnFileSaveAs, actnFileSaveCopy, nullptr,
           actnFileProps, actnFileTripType, actnFileLambda, actnFilePump, actnFileSummary, nullptr, actnFileExit });
 
-    menuEdit = Ori::Gui::menu(tr("&Edit"), this,
+    menuEdit = Ori::Gui::menu(tr("Edit"), this,
         { actnEditCut, actnEditCopy, actnEditPaste, nullptr, actnEditSelectAll });
 
     _langsMenu = new Ori::Widgets::LanguagesMenu(CommonData::instance()->translator(), ":/toolbar16/langs", this);
-    menuView = new QMenu(tr("&View"), this);
+    menuView = new QMenu(tr("View"), this);
 
-    menuFunctions = Ori::Gui::menu(tr("F&unctions"), this,
+    menuFunctions = Ori::Gui::menu(tr("Functions"), this,
         { actnFuncRoundTrip, actnFuncMultFwd, actnFuncMultBkwd, nullptr, actnFuncStabMap,
-          actnFuncStabMap2d, nullptr, actnFuncCaustic, actnFuncMultiCaustic, actnFuncMultibeamCaustic,
+          actnFuncStabMap2d, nullptr, actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic,
           actnFuncBeamVariation, nullptr, actnFuncRepRate });
 
-    menuTools = Ori::Gui::menu(tr("&Tools", "Menu title"), this,
+    menuTools = Ori::Gui::menu(tr("Tools", "Menu title"), this,
         { actnToolFlipSchema, nullptr, actnToolAdjust, nullptr,
           actnToolsGaussCalc, actnToolsCalc, actnToolsCatalog, nullptr, actnToolSettings });
 
-    menuWindow = Ori::Gui::menu(tr("&Window"), this,
+    menuWindow = Ori::Gui::menu(tr("Window"), this,
         { actnWndSchema, actnWndParams, actnWndPumps, actnWndProtocol, nullptr,
           actnWndClose, actnWndCloseAll, nullptr, actnWndTile, actnWndCascade, nullptr });
     connect(menuWindow, SIGNAL(aboutToShow()), _mdiArea, SLOT(populateWindowMenu()));
 
-    menuHelp = Ori::Gui::menu(tr("&Help"), this,
+    menuHelp = Ori::Gui::menu(tr("Help"), this,
         { actnHelpContent, actnHelpIndex, nullptr,
           actnHelpBugReport, actnHelpUpdates, actnHelpHomepage, nullptr,
           actnHelpAbout });
@@ -219,7 +219,7 @@ void ProjectWindow::createToolBars()
         actnFileSave, nullptr, actnFileProps, actnFilePump, actnFileSummary , nullptr,
         actnEditCut, actnEditCopy, actnEditPaste, nullptr,
         actnFuncRoundTrip, nullptr, actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamVariation, nullptr,
-        actnFuncCaustic, actnFuncMultiCaustic, actnFuncMultibeamCaustic, nullptr, actnFuncRepRate, nullptr,
+        actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic, nullptr, actnFuncRepRate, nullptr,
         actnWndParams, actnWndPumps, nullptr, actnToolAdjust, nullptr,
         actnToolsGaussCalc, actnToolsCalc
     }, true));

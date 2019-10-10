@@ -349,7 +349,7 @@
                 ],
                 "mode": "FontRadius"
             },
-            "type": "Multicaustic",
+            "type": "MultirangeCaustic",
             "window": {
                 "cursor_enabled": true,
                 "cursor_mode": "Both",

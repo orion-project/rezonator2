@@ -1,15 +1,15 @@
 #ifndef MULTI_BEAM_CAUSTIC_FUNCTION_H
 #define MULTI_BEAM_CAUSTIC_FUNCTION_H
 
-#include "MultiCausticFunction.h"
+#include "MultirangeCausticFunction.h"
 
-class MultibeamCausticFunction : public MultiCausticFunction
+class MultibeamCausticFunction : public MultirangeCausticFunction
 {
 public:
     FUNC_ALIAS("MultibeamCaustic")
     FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Multibeam Caustic"))
 
-    MultibeamCausticFunction(Schema *schema) : MultiCausticFunction(schema) {}
+    MultibeamCausticFunction(Schema *schema) : MultirangeCausticFunction(schema) {}
 
     bool hasOptions() const override { return false; }
 

@@ -2,18 +2,18 @@
 #define MULTI_CAUSTIC_WINDOW_H
 
 #include "PlotFuncWindowStorable.h"
-#include "../funcs/MultiCausticFunction.h"
+#include "../funcs/MultirangeCausticFunction.h"
 
 class QCPItemStraightLine;
 
-class MultiCausticWindow final : public PlotFuncWindowStorable
+class MultirangeCausticWindow final : public PlotFuncWindowStorable
 {
     Q_OBJECT
 
 public:
-    explicit MultiCausticWindow(Schema*);
+    explicit MultirangeCausticWindow(Schema*);
 
-    MultiCausticFunction* function() const { return dynamic_cast<MultiCausticFunction*>(_function); }
+    MultirangeCausticFunction* function() const { return dynamic_cast<MultirangeCausticFunction*>(_function); }
 
     // Implementation of SchemaListener
     void schemaRebuilt(Schema*) override;

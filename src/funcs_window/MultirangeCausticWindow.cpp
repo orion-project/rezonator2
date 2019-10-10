@@ -1,4 +1,4 @@
-#include "MultiCausticWindow.h"
+#include "MultirangeCausticWindow.h"
 
 #include "CausticOptionsPanel.h"
 #include "MultiCausticParamsDlg.h"
@@ -11,25 +11,25 @@
 #include <QAction>
 #include <QDebug>
 
-MultiCausticWindow::MultiCausticWindow(Schema *schema): PlotFuncWindowStorable(new MultiCausticFunction(schema))
+MultirangeCausticWindow::MultirangeCausticWindow(Schema *schema): PlotFuncWindowStorable(new MultirangeCausticFunction(schema))
 {
     createActions();
 }
 
-void MultiCausticWindow::createActions()
+void MultirangeCausticWindow::createActions()
 {
     _actnElemBoundMarkers = new QAction(tr("Element bound markers"), this);
     _actnElemBoundMarkers->setCheckable(true);
     _actnElemBoundMarkers->setChecked(true);
-    connect(_actnElemBoundMarkers, &QAction::toggled, this, &MultiCausticWindow::toggleElementBoundMarkers);
+    connect(_actnElemBoundMarkers, &QAction::toggled, this, &MultirangeCausticWindow::toggleElementBoundMarkers);
 }
 
-QWidget* MultiCausticWindow::makeOptionsPanel()
+QWidget* MultirangeCausticWindow::makeOptionsPanel()
 {
-    return new CausticOptionsPanel<MultiCausticWindow>(this);
+    return new CausticOptionsPanel<MultirangeCausticWindow>(this);
 }
 
-bool MultiCausticWindow::configureInternal()
+bool MultirangeCausticWindow::configureInternal()
 {
     MultiCausticParamsDlg dlg(schema(), function()->args());
     if (dlg.run())
@@ -40,7 +40,7 @@ bool MultiCausticWindow::configureInternal()
     return false;
 }
 
-void MultiCausticWindow::updateGraphs()
+void MultirangeCausticWindow::updateGraphs()
 {
     QList<PlotFunction*> funcs;
     for (auto func : function()->funcs())
@@ -48,12 +48,12 @@ void MultiCausticWindow::updateGraphs()
     _graphs->update(funcs);
 }
 
-void MultiCausticWindow::afterUpdate()
+void MultirangeCausticWindow::afterUpdate()
 {
     updateElementBoundMarkers();
 }
 
-void MultiCausticWindow::updateElementBoundMarkers()
+void MultirangeCausticWindow::updateElementBoundMarkers()
 {
     auto unitX = getUnitX();
     double offset = 0;
@@ -80,7 +80,7 @@ void MultiCausticWindow::updateElementBoundMarkers()
     _elemBoundMarkers = markers;
 }
 
-QCPItemStraightLine* MultiCausticWindow::makeElemBoundMarker() const
+QCPItemStraightLine* MultirangeCausticWindow::makeElemBoundMarker() const
 {
     QCPItemStraightLine *line = new QCPItemStraightLine(plot());
     line->setPen(QPen(Qt::magenta, 1, Qt::DashLine)); // TODO make configurable
@@ -88,7 +88,7 @@ QCPItemStraightLine* MultiCausticWindow::makeElemBoundMarker() const
     return line;
 }
 
-void MultiCausticWindow::schemaRebuilt(Schema* schema)
+void MultirangeCausticWindow::schemaRebuilt(Schema* schema)
 {
     // We only have to ensure all arguments are in the same order as schema elements.
     // Don't recalculate here, recalculation will be done later on the intended event.
@@ -102,7 +102,7 @@ void MultiCausticWindow::schemaRebuilt(Schema* schema)
     function()->setArgs(newArgs);
 }
 
-void MultiCausticWindow::elementChanged(Schema*, Element* elem)
+void MultirangeCausticWindow::elementChanged(Schema*, Element* elem)
 {
     // Only modify the set of arguments, don't recalculate here,
     // recalculation will be done later on the intended event.
@@ -120,7 +120,7 @@ void MultiCausticWindow::elementChanged(Schema*, Element* elem)
         }
 }
 
-void MultiCausticWindow::elementDeleting(Schema*, Element* elem)
+void MultirangeCausticWindow::elementDeleting(Schema*, Element* elem)
 {
     bool needUpdate = false;
     auto args = function()->args();
@@ -142,7 +142,7 @@ void MultiCausticWindow::elementDeleting(Schema*, Element* elem)
     }
 }
 
-QString MultiCausticWindow::readFunction(const QJsonObject& root)
+QString MultirangeCausticWindow::readFunction(const QJsonObject& root)
 {
     QVector<Z::Variable> args;
     QJsonArray argsJson = root["args"].toArray();
@@ -160,7 +160,7 @@ QString MultiCausticWindow::readFunction(const QJsonObject& root)
     return QString();
 }
 
-QString MultiCausticWindow::writeFunction(QJsonObject& root)
+QString MultirangeCausticWindow::writeFunction(QJsonObject& root)
 {
     QJsonArray argsJson;
     for (const Z::Variable& arg : function()->args())
@@ -170,19 +170,19 @@ QString MultiCausticWindow::writeFunction(QJsonObject& root)
     return QString();
 }
 
-QString MultiCausticWindow::readWindowSpecific(const QJsonObject& root)
+QString MultirangeCausticWindow::readWindowSpecific(const QJsonObject& root)
 {
     _actnElemBoundMarkers->setChecked(root["elem_bound_markers"].toBool(true));
     return QString();
 }
 
-QString MultiCausticWindow::writeWindowSpecific(QJsonObject& root)
+QString MultirangeCausticWindow::writeWindowSpecific(QJsonObject& root)
 {
     root["elem_bound_markers"] = _actnElemBoundMarkers->isChecked();
     return QString();
 }
 
-ElemDeletionReaction MultiCausticWindow::reactElemDeletion(const Elements& elems)
+ElemDeletionReaction MultirangeCausticWindow::reactElemDeletion(const Elements& elems)
 {
     int deletingArgsCount = 0;
     for (const Z::Variable& arg : function()->args())
@@ -195,12 +195,12 @@ ElemDeletionReaction MultiCausticWindow::reactElemDeletion(const Elements& elems
     return ElemDeletionReaction::None;
 }
 
-void MultiCausticWindow::fillViewMenuActions(QList<QAction*>& actions) const
+void MultirangeCausticWindow::fillViewMenuActions(QList<QAction*>& actions) const
 {
     actions << _actnElemBoundMarkers;
 }
 
-void MultiCausticWindow::toggleElementBoundMarkers(bool on)
+void MultirangeCausticWindow::toggleElementBoundMarkers(bool on)
 {
     for (auto marker : _elemBoundMarkers)
         marker->setVisible(on);
@@ -208,7 +208,7 @@ void MultiCausticWindow::toggleElementBoundMarkers(bool on)
     schema()->events().raise(SchemaEvents::Changed);
 }
 
-QString MultiCausticWindow::getDefaultTitle() const
+QString MultirangeCausticWindow::getDefaultTitle() const
 {
     switch (function()->mode())
     {
@@ -222,7 +222,7 @@ QString MultiCausticWindow::getDefaultTitle() const
     return QString();
 }
 
-QString MultiCausticWindow::getDefaultTitleX() const
+QString MultirangeCausticWindow::getDefaultTitleX() const
 {
     QStringList strs;
     for (auto arg : function()->args())
@@ -230,7 +230,7 @@ QString MultiCausticWindow::getDefaultTitleX() const
     return QStringLiteral("%1 (%2)").arg(strs.join(QStringLiteral(", ")), getUnitX()->name());
 }
 
-QString MultiCausticWindow::getDefaultTitleY() const
+QString MultirangeCausticWindow::getDefaultTitleY() const
 {
     QString title;
     switch (function()->mode())

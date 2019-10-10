@@ -54,16 +54,16 @@ void SchemaViewWindow::createActions()
 {
     #define A_ Ori::Gui::action
 
-    actnElemAdd = A_(tr("A&ppend..."), this, SLOT(actionElemAdd()), ":/toolbar/elem_add", Qt::CTRL | Qt::Key_Insert);
-    actnElemMoveUp = A_(tr("Move Selected &Up"), this, SLOT(actionElemMoveUp()), ":/toolbar/elem_move_up");
-    actnElemMoveDown = A_(tr("Move Selected &Down"), this, SLOT(actionElemMoveDown()), ":/toolbar/elem_move_down");
-    actnElemProp = A_(tr("&Properties..."), this, SLOT(actionElemProp()), ":/toolbar/elem_prop", Qt::Key_Return);
-    actnElemMatr = A_(tr("&Matrix"), _calculations, SLOT(funcShowMatrices()), ":/toolbar/elem_matr", Qt::SHIFT | Qt::Key_Return);
-    actnElemMatrAll = A_(tr("&Show All Matrices"), _calculations, SLOT(funcShowAllMatrices()));
-    actnElemDelete = A_(tr("&Delete"), this, SLOT(actionElemDelete()), ":/toolbar/elem_delete", Qt::CTRL | Qt::Key_Delete);
+    actnElemAdd = A_(tr("Append..."), this, SLOT(actionElemAdd()), ":/toolbar/elem_add", Qt::CTRL | Qt::Key_Insert);
+    actnElemMoveUp = A_(tr("Move Selected Up"), this, SLOT(actionElemMoveUp()), ":/toolbar/elem_move_up");
+    actnElemMoveDown = A_(tr("Move Selected Down"), this, SLOT(actionElemMoveDown()), ":/toolbar/elem_move_down");
+    actnElemProp = A_(tr("Properties..."), this, SLOT(actionElemProp()), ":/toolbar/elem_prop", Qt::Key_Return);
+    actnElemMatr = A_(tr("Matrix"), _calculations, SLOT(funcShowMatrices()), ":/toolbar/elem_matr", Qt::SHIFT | Qt::Key_Return);
+    actnElemMatrAll = A_(tr("Show All Matrices"), _calculations, SLOT(funcShowAllMatrices()));
+    actnElemDelete = A_(tr("Delete"), this, SLOT(actionElemDelete()), ":/toolbar/elem_delete", Qt::CTRL | Qt::Key_Delete);
 
-    actnEditCopy = A_(tr("&Copy", "Edit action"), this, SLOT(copy()), ":/toolbar/copy");
-    actnEditPaste = A_(tr("&Paste", "Edit action"), this, SLOT(paste()), ":/toolbar/paste");
+    actnEditCopy = A_(tr("Copy", "Edit action"), this, SLOT(copy()), ":/toolbar/copy");
+    actnEditPaste = A_(tr("Paste", "Edit action"), this, SLOT(paste()), ":/toolbar/paste");
 
     shortcutAddFromLastRow = new QShortcut(Qt::Key_Return, this);
     connect(shortcutAddFromLastRow, SIGNAL(activated()), this, SLOT(actionElemAdd()));
@@ -73,7 +73,7 @@ void SchemaViewWindow::createActions()
 
 void SchemaViewWindow::createMenuBar()
 {
-    menuElement = Ori::Gui::menu(tr("E&lement"), this,
+    menuElement = Ori::Gui::menu(tr("Element"), this,
         { actnElemAdd, nullptr, actnElemMoveUp, actnElemMoveDown, nullptr, actnElemProp,
           actnElemMatr, actnElemMatrAll, nullptr, actnElemDelete });
 

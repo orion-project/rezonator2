@@ -28,7 +28,7 @@ public slots:
     void funcStabMap2d();
     void funcRepRate();
     void funcCaustic();
-    void funcMultiCaustic();
+    void funcMultirangeCaustic();
     void funcMultibeamCaustic();
     void funcShowMatrices();
     void funcShowAllMatrices();

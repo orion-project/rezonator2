@@ -66,18 +66,18 @@ void SchemaParamsWindow::createActions()
 {
     #define A_ Ori::Gui::action
 
-    _actnParamAdd = A_(tr("&Create..."), this, SLOT(createParameter()), ":/toolbar/param_add", Qt::CTRL | Qt::Key_Insert);
-    _actnParamDelete = A_(tr("&Delete"), this, SLOT(deleteParameter()), ":/toolbar/param_delete", Qt::CTRL | Qt::Key_Delete);
-    _actnParamSet = A_(tr("&Set..."), this, SLOT(setParameterValue()), ":/toolbar/param_set", Qt::Key_Return);
-    _actnParamDescr = A_(tr("&Annotate..."), this, SLOT(annotateParameter()), ":/toolbar/param_annotate", Qt::CTRL | Qt::Key_Return);
-    _actnParamAdjust = A_(tr("Ad&just"), this, SLOT(adjustParameter()), ":/toolbar/adjust");
+    _actnParamAdd = A_(tr("Create..."), this, SLOT(createParameter()), ":/toolbar/param_add", Qt::CTRL | Qt::Key_Insert);
+    _actnParamDelete = A_(tr("Delete"), this, SLOT(deleteParameter()), ":/toolbar/param_delete", Qt::CTRL | Qt::Key_Delete);
+    _actnParamSet = A_(tr("Set..."), this, SLOT(setParameterValue()), ":/toolbar/param_set", Qt::Key_Return);
+    _actnParamDescr = A_(tr("Annotate..."), this, SLOT(annotateParameter()), ":/toolbar/param_annotate", Qt::CTRL | Qt::Key_Return);
+    _actnParamAdjust = A_(tr("Adjust"), this, SLOT(adjustParameter()), ":/toolbar/adjust");
 
     #undef A_
 }
 
 void SchemaParamsWindow::createMenuBar()
 {
-    _windowMenu = Ori::Gui::menu(tr("&Parameter"), this,
+    _windowMenu = Ori::Gui::menu(tr("Parameter"), this,
         { _actnParamAdd, nullptr, _actnParamSet, _actnParamDescr, nullptr, _actnParamAdjust, nullptr, _actnParamDelete });
 
     _contextMenu = Ori::Gui::menu(this,

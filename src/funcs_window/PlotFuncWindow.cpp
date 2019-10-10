@@ -59,8 +59,8 @@ void PlotFuncWindow::createActions()
     actnUpdateParams = action(tr("Update With Params..."), this,
         SLOT(updateWithParams()), ":/toolbar/update_params", Qt::CTRL | Qt::Key_F5);
 
-    actnShowT = action(tr("Show &T-plane"), this, SLOT(activateModeT()), ":/toolbar/plot_t");
-    actnShowS = action(tr("Show &S-plane"), this, SLOT(activateModeS()), ":/toolbar/plot_s");
+    actnShowT = action(tr("Show T-plane"), this, SLOT(activateModeT()), ":/toolbar/plot_t");
+    actnShowS = action(tr("Show S-plane"), this, SLOT(activateModeS()), ":/toolbar/plot_s");
     actnShowFlippedTS = action(tr("TS-flipped Mode"), this, SLOT(activateModeFlippedTS()), ":/toolbar/plot_ts");
     actnShowT->setCheckable(true);
     actnShowS->setCheckable(true);
@@ -96,7 +96,7 @@ void PlotFuncWindow::createMenuBar()
     connect(_unitsMenuX, &UnitsMenu::unitChanged, this, &PlotFuncWindow::setUnitX);
     connect(_unitsMenuY, &UnitsMenu::unitChanged, this, &PlotFuncWindow::setUnitY);
 
-    menuPlot = menu(tr("&Plot", "Menu title"), this, {
+    menuPlot = menu(tr("Plot", "Menu title"), this, {
         actnUpdate, actnUpdateParams, actnFreeze, nullptr, actnShowFlippedTS, actnShowT, actnShowS, nullptr,
         _unitsMenuX->menu(), _unitsMenuY->menu(), nullptr, actnShowRoundTrip
     });
@@ -107,13 +107,13 @@ void PlotFuncWindow::createMenuBar()
         _unitsMenuY->setUnit(getUnitY());
     });
 
-    menuLimits = menu(tr("&Limits", "Menu title"), this, {
+    menuLimits = menu(tr("Limits", "Menu title"), this, {
         actnSetLimits, actnAutolimits, actnZoomIn, actnZoomOut, nullptr,
         actnSetLimitsX, actnAutolimitsX, actnZoomInX, actnZoomOutX, nullptr,
         actnSetLimitsY, actnAutolimitsY, actnZoomInY, actnZoomOutY
     });
 
-    menuFormat = menu(tr("Fo&rmat", "Menu title"), this, {
+    menuFormat = menu(tr("Format", "Menu title"), this, {
         // TODO
     });
 

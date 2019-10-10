@@ -1,11 +1,11 @@
-#include "MultiCausticFunction.h"
+#include "MultirangeCausticFunction.h"
 
-MultiCausticFunction::~MultiCausticFunction()
+MultirangeCausticFunction::~MultirangeCausticFunction()
 {
     qDeleteAll(_funcs);
 }
 
-QVector<Z::Variable> MultiCausticFunction::args() const
+QVector<Z::Variable> MultirangeCausticFunction::args() const
 {
     QVector<Z::Variable> args;
     for (auto func : _funcs)
@@ -13,19 +13,19 @@ QVector<Z::Variable> MultiCausticFunction::args() const
     return args;
 }
 
-CausticFunction::Mode MultiCausticFunction::mode() const
+CausticFunction::Mode MultirangeCausticFunction::mode() const
 {
     return _funcs.first()->mode();
 }
 
-void MultiCausticFunction::setMode(CausticFunction::Mode mode)
+void MultirangeCausticFunction::setMode(CausticFunction::Mode mode)
 {
     for (CausticFunction *func : _funcs)
         func->setMode(mode);
 }
 
 // TODO ensure if all subfunctions have the same _argumentUnit
-void MultiCausticFunction::setArgs(const QVector<Z::Variable>& args)
+void MultirangeCausticFunction::setArgs(const QVector<Z::Variable>& args)
 {
     QList<CausticFunction*> funcs;
     for (const Z::Variable& arg : args)
@@ -51,7 +51,7 @@ void MultiCausticFunction::setArgs(const QVector<Z::Variable>& args)
     _funcs = funcs;
 }
 
-void MultiCausticFunction::calculate()
+void MultirangeCausticFunction::calculate()
 {
     setError(QString());
     for (CausticFunction *func : _funcs)
@@ -67,7 +67,7 @@ void MultiCausticFunction::calculate()
     }
 }
 
-int MultiCausticFunction::resultCount(Z::WorkPlane plane) const
+int MultirangeCausticFunction::resultCount(Z::WorkPlane plane) const
 {
     int count = 0;
     for (CausticFunction *func : _funcs)
@@ -75,7 +75,7 @@ int MultiCausticFunction::resultCount(Z::WorkPlane plane) const
     return count;
 }
 
-const PlotFuncResult& MultiCausticFunction::result(Z::WorkPlane plane, int index) const
+const PlotFuncResult& MultirangeCausticFunction::result(Z::WorkPlane plane, int index) const
 {
     int index1 = 0;
     for (CausticFunction *func : _funcs)
@@ -92,17 +92,17 @@ const PlotFuncResult& MultiCausticFunction::result(Z::WorkPlane plane, int index
     throw std::runtime_error(errorMsg.toStdString()); // let it crash
 }
 
-Z::Unit MultiCausticFunction::defaultUnitX() const
+Z::Unit MultirangeCausticFunction::defaultUnitX() const
 {
     return _funcs.first()->arg()->parameter->value().unit();
 }
 
-Z::Unit MultiCausticFunction::defaultUnitY() const
+Z::Unit MultirangeCausticFunction::defaultUnitY() const
 {
     return CausticFunction::defaultUnitsForMode(mode());
 }
 
-void MultiCausticFunction::setPump(Z::PumpParams* pump)
+void MultirangeCausticFunction::setPump(Z::PumpParams* pump)
 {
     for (CausticFunction *func : _funcs)
         func->setPump(pump);

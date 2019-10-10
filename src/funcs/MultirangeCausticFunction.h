@@ -5,14 +5,14 @@
 
 class CausticFunction;
 
-class MultiCausticFunction : public PlotFunction
+class MultirangeCausticFunction : public PlotFunction
 {
 public:
-    FUNC_ALIAS("Multicaustic")
-    FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Multicaustic"))
+    FUNC_ALIAS("MultirangeCaustic")
+    FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Multirange Caustic"))
 
-    MultiCausticFunction(Schema *schema) : PlotFunction(schema) {}
-    ~MultiCausticFunction() override;
+    MultirangeCausticFunction(Schema *schema) : PlotFunction(schema) {}
+    ~MultirangeCausticFunction() override;
 
     void calculate() override;
     bool hasOptions() const override { return true; }
