@@ -9,7 +9,7 @@ class ElemAndParamSelector;
 class QCPItemStraightLine;
 class GeneralRangeEditor;
 
-class StabilityMapWindow : public PlotFuncWindowStorable
+class StabilityMapWindow final : public PlotFuncWindowStorable
 {
     Q_OBJECT
 

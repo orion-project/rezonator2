@@ -9,7 +9,7 @@ class ElemAndParamSelector;
 class ElemOffsetSelectorWidget;
 class GeneralRangeEditor;
 
-class BeamVariationWindow : public PlotFuncWindowStorable
+class BeamVariationWindow final : public PlotFuncWindowStorable
 {
     Q_OBJECT
 

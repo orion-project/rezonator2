@@ -14,7 +14,7 @@ QT_BEGIN_NAMESPACE
 class QGroupBox;
 QT_END_NAMESPACE
 
-class StabilityMap2DWindow : public PlotFuncWindowStorable
+class StabilityMap2DWindow final : public PlotFuncWindowStorable
 {
     Q_OBJECT
 

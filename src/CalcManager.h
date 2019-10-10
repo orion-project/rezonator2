@@ -29,6 +29,7 @@ public slots:
     void funcRepRate();
     void funcCaustic();
     void funcMultiCaustic();
+    void funcMultibeamCaustic();
     void funcShowMatrices();
     void funcShowAllMatrices();
     void funcBeamVariation();

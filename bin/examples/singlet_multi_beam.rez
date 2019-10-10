@@ -283,6 +283,68 @@
                 "y_min": -15799.655442984407,
                 "y_unit": "none"
             }
+        },
+        {
+            "function": {
+                "args": [
+                    {
+                        "element_index": 0,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "cm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "cm",
+                                "value": 0.05
+                            },
+                            "stop": {
+                                "unit": "cm",
+                                "value": 5
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 2,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "cm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "cm",
+                                "value": 0.07
+                            },
+                            "stop": {
+                                "unit": "cm",
+                                "value": 7.000000000000001
+                            },
+                            "use_step": false
+                        }
+                    }
+                ]
+            },
+            "type": "MultibeamCaustic",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "elem_bound_markers": true,
+                "stored_views": [
+                ],
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 12.120000000000001,
+                "x_min": -0.12000000000000002,
+                "x_unit": "none",
+                "y_max": 18115.088809744364,
+                "y_min": -1225.1343730059334,
+                "y_unit": "none"
+            }
         }
     ]
 }

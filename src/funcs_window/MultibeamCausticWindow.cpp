@@ -1,35 +1,27 @@
-#include "MultiCausticWindow.h"
+#include "MultibeamCausticWindow.h"
 
-#include "CausticOptionsPanel.h"
 #include "MultiCausticParamsDlg.h"
-#include "../funcs/CausticFunction.h"
 #include "../funcs/FunctionGraph.h"
-#include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
 #include "../widgets/Plot.h"
 
 #include <QAction>
 #include <QDebug>
 
-MultiCausticWindow::MultiCausticWindow(Schema *schema): PlotFuncWindowStorable(new MultiCausticFunction(schema))
+MultibeamCausticWindow::MultibeamCausticWindow(Schema *schema) : PlotFuncWindowStorable(new MultibeamCausticFunction(schema))
 {
     createActions();
 }
 
-void MultiCausticWindow::createActions()
+void MultibeamCausticWindow::createActions()
 {
     _actnElemBoundMarkers = new QAction(tr("Element bound markers"), this);
     _actnElemBoundMarkers->setCheckable(true);
     _actnElemBoundMarkers->setChecked(true);
-    connect(_actnElemBoundMarkers, &QAction::toggled, this, &MultiCausticWindow::toggleElementBoundMarkers);
+    connect(_actnElemBoundMarkers, &QAction::toggled, this, &MultibeamCausticWindow::toggleElementBoundMarkers);
 }
 
-QWidget* MultiCausticWindow::makeOptionsPanel()
-{
-    return new CausticOptionsPanel<MultiCausticWindow>(this);
-}
-
-bool MultiCausticWindow::configureInternal()
+bool MultibeamCausticWindow::configureInternal()
 {
     MultiCausticParamsDlg dlg(schema(), function()->args());
     if (dlg.run())
@@ -40,7 +32,7 @@ bool MultiCausticWindow::configureInternal()
     return false;
 }
 
-void MultiCausticWindow::updateGraphs()
+void MultibeamCausticWindow::updateGraphs()
 {
     QList<PlotFunction*> funcs;
     for (auto func : function()->funcs())
@@ -48,12 +40,12 @@ void MultiCausticWindow::updateGraphs()
     _graphs->update(funcs);
 }
 
-void MultiCausticWindow::afterUpdate()
+void MultibeamCausticWindow::afterUpdate()
 {
     updateElementBoundMarkers();
 }
 
-void MultiCausticWindow::updateElementBoundMarkers()
+void MultibeamCausticWindow::updateElementBoundMarkers()
 {
     auto unitX = getUnitX();
     double offset = 0;
@@ -80,7 +72,7 @@ void MultiCausticWindow::updateElementBoundMarkers()
     _elemBoundMarkers = markers;
 }
 
-QCPItemStraightLine* MultiCausticWindow::makeElemBoundMarker() const
+QCPItemStraightLine* MultibeamCausticWindow::makeElemBoundMarker() const
 {
     QCPItemStraightLine *line = new QCPItemStraightLine(plot());
     line->setPen(QPen(Qt::magenta, 1, Qt::DashLine)); // TODO make configurable
@@ -88,7 +80,7 @@ QCPItemStraightLine* MultiCausticWindow::makeElemBoundMarker() const
     return line;
 }
 
-void MultiCausticWindow::schemaRebuilt(Schema* schema)
+void MultibeamCausticWindow::schemaRebuilt(Schema* schema)
 {
     // We only have to ensure all arguments are in the same order as schema elements.
     // Don't recalculate here, recalculation will be done later on the intended event.
@@ -102,7 +94,7 @@ void MultiCausticWindow::schemaRebuilt(Schema* schema)
     function()->setArgs(newArgs);
 }
 
-void MultiCausticWindow::elementChanged(Schema*, Element* elem)
+void MultibeamCausticWindow::elementChanged(Schema*, Element* elem)
 {
     // Only modify the set of arguments, don't recalculate here,
     // recalculation will be done later on the intended event.
@@ -120,7 +112,7 @@ void MultiCausticWindow::elementChanged(Schema*, Element* elem)
         }
 }
 
-void MultiCausticWindow::elementDeleting(Schema*, Element* elem)
+void MultibeamCausticWindow::elementDeleting(Schema*, Element* elem)
 {
     bool needUpdate = false;
     auto args = function()->args();
@@ -142,7 +134,7 @@ void MultiCausticWindow::elementDeleting(Schema*, Element* elem)
     }
 }
 
-QString MultiCausticWindow::readFunction(const QJsonObject& root)
+QString MultibeamCausticWindow::readFunction(const QJsonObject& root)
 {
     QVector<Z::Variable> args;
     QJsonArray argsJson = root["args"].toArray();
@@ -155,34 +147,31 @@ QString MultiCausticWindow::readFunction(const QJsonObject& root)
         args.append(arg);
     }
     function()->setArgs(args);
-    function()->setMode(Z::IO::Utils::enumFromStr(
-        root["mode"].toString(), CausticFunction::BeamRadius));
     return QString();
 }
 
-QString MultiCausticWindow::writeFunction(QJsonObject& root)
+QString MultibeamCausticWindow::writeFunction(QJsonObject& root)
 {
     QJsonArray argsJson;
     for (const Z::Variable& arg : function()->args())
         argsJson.append(Z::IO::Json::writeVariable(&arg, schema()));
     root["args"] = argsJson;
-    root["mode"] = Z::IO::Utils::enumToStr(function()->mode());
     return QString();
 }
 
-QString MultiCausticWindow::readWindowSpecific(const QJsonObject& root)
+QString MultibeamCausticWindow::readWindowSpecific(const QJsonObject& root)
 {
     _actnElemBoundMarkers->setChecked(root["elem_bound_markers"].toBool(true));
     return QString();
 }
 
-QString MultiCausticWindow::writeWindowSpecific(QJsonObject& root)
+QString MultibeamCausticWindow::writeWindowSpecific(QJsonObject& root)
 {
     root["elem_bound_markers"] = _actnElemBoundMarkers->isChecked();
     return QString();
 }
 
-ElemDeletionReaction MultiCausticWindow::reactElemDeletion(const Elements& elems)
+ElemDeletionReaction MultibeamCausticWindow::reactElemDeletion(const Elements& elems)
 {
     int deletingArgsCount = 0;
     for (const Z::Variable& arg : function()->args())
@@ -195,12 +184,12 @@ ElemDeletionReaction MultiCausticWindow::reactElemDeletion(const Elements& elems
     return ElemDeletionReaction::None;
 }
 
-void MultiCausticWindow::fillViewMenuActions(QList<QAction*>& actions) const
+void MultibeamCausticWindow::fillViewMenuActions(QList<QAction*>& actions) const
 {
     actions << _actnElemBoundMarkers;
 }
 
-void MultiCausticWindow::toggleElementBoundMarkers(bool on)
+void MultibeamCausticWindow::toggleElementBoundMarkers(bool on)
 {
     for (auto marker : _elemBoundMarkers)
         marker->setVisible(on);
@@ -208,21 +197,12 @@ void MultiCausticWindow::toggleElementBoundMarkers(bool on)
     schema()->events().raise(SchemaEvents::Changed);
 }
 
-QString MultiCausticWindow::getDefaultTitle() const
+QString MultibeamCausticWindow::getDefaultTitle() const
 {
-    switch (function()->mode())
-    {
-    case CausticFunction::Mode::BeamRadius:
-        return tr("Beam Radius");
-    case CausticFunction::Mode::FontRadius:
-        return tr("Wavefront Curvature Radius");
-    case CausticFunction::Mode::HalfAngle:
-        return tr("Half of Divergence Angle");
-    }
-    return QString();
+    return tr("Beam Radius");
 }
 
-QString MultiCausticWindow::getDefaultTitleX() const
+QString MultibeamCausticWindow::getDefaultTitleX() const
 {
     QStringList strs;
     for (auto arg : function()->args())
@@ -230,20 +210,8 @@ QString MultiCausticWindow::getDefaultTitleX() const
     return QStringLiteral("%1 (%2)").arg(strs.join(QStringLiteral(", ")), getUnitX()->name());
 }
 
-QString MultiCausticWindow::getDefaultTitleY() const
+QString MultibeamCausticWindow::getDefaultTitleY() const
 {
-    QString title;
-    switch (function()->mode())
-    {
-    case CausticFunction::Mode::BeamRadius:
-        title = tr("Beam radius");
-        break;
-    case CausticFunction::Mode::FontRadius:
-        title = tr("Wavefront curvature radius");
-        break;
-    case CausticFunction::Mode::HalfAngle:
-        title = tr("Half of divergence angle");
-        break;
-    }
+    QString title = tr("Beam radius");
     return QStringLiteral("%1 (%2)").arg(title, getUnitY()->name());
 }

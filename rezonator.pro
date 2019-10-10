@@ -95,6 +95,7 @@ HEADERS += \
     src/funcs/FunctionGraph.h \
     src/funcs/GaussCalculator.h \
     src/funcs/InfoFunctions.h \
+    src/funcs/MultibeamCausticFunction.h \
     src/funcs/PlotFunction.h \
     src/funcs/PumpCalculator.h \
     src/funcs/RoundTripCalculator.h \
@@ -102,6 +103,8 @@ HEADERS += \
     src/funcs/StabilityMapFunction.h \
     src/funcs_window/CausticWindow.h \
     src/funcs_window/InfoFuncWindow.h \
+    src/funcs_window/MultiCausticParamsDlg.h \
+    src/funcs_window/MultibeamCausticWindow.h \
     src/funcs_window/PlotFuncWindow.h \
     src/funcs_window/PlotFuncWindowStorable.h \
     src/funcs_window/StabilityMap2DWindow.h \
@@ -200,6 +203,7 @@ SOURCES += \
     src/funcs/FunctionGraph.cpp \
     src/funcs/GaussCalculator.cpp \
     src/funcs/InfoFunctions.cpp \
+    src/funcs/MultibeamCausticFunction.cpp \
     src/funcs/PlotFunction.cpp \
     src/funcs/PumpCalculator.cpp \
     src/funcs/RoundTripCalculator.cpp \
@@ -207,6 +211,8 @@ SOURCES += \
     src/funcs/StabilityMapFunction.cpp \
     src/funcs_window/CausticWindow.cpp \
     src/funcs_window/InfoFuncWindow.cpp \
+    src/funcs_window/MultiCausticParamsDlg.cpp \
+    src/funcs_window/MultibeamCausticWindow.cpp \
     src/funcs_window/PlotFuncWindow.cpp \
     src/funcs_window/PlotFuncWindowStorable.cpp \
     src/funcs_window/StabilityMap2DWindow.cpp \

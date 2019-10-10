@@ -8,7 +8,7 @@
 class ElemSelectorWidget;
 class PointsRangeEditor;
 
-class CausticWindow : public PlotFuncWindowStorable
+class CausticWindow final : public PlotFuncWindowStorable
 {
     Q_OBJECT
 

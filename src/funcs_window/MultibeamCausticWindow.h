@@ -1,19 +1,19 @@
-#ifndef MULTI_CAUSTIC_WINDOW_H
-#define MULTI_CAUSTIC_WINDOW_H
+#ifndef MULTI_BEAM_CAUSTIC_WINDOW_H
+#define MULTI_BEAM_CAUSTIC_WINDOW_H
 
 #include "PlotFuncWindowStorable.h"
-#include "../funcs/MultiCausticFunction.h"
+#include "../funcs/MultibeamCausticFunction.h"
 
 class QCPItemStraightLine;
 
-class MultiCausticWindow final : public PlotFuncWindowStorable
+class MultibeamCausticWindow final : public PlotFuncWindowStorable
 {
     Q_OBJECT
 
 public:
-    explicit MultiCausticWindow(Schema*);
+    explicit MultibeamCausticWindow(Schema*);
 
-    MultiCausticFunction* function() const { return dynamic_cast<MultiCausticFunction*>(_function); }
+    MultibeamCausticFunction* function() const { return dynamic_cast<MultibeamCausticFunction*>(_function); }
 
     // Implementation of SchemaListener
     void schemaRebuilt(Schema*) override;
@@ -22,7 +22,6 @@ public:
 
 protected:
     // Implementation of PlotFuncWindow
-    QWidget* makeOptionsPanel() override;
     bool configureInternal() override;
     void updateGraphs() override;
     void afterUpdate() override;
@@ -50,4 +49,4 @@ private:
     QCPItemStraightLine* makeElemBoundMarker() const;
 };
 
-#endif // MULTI_CAUSTIC_WINDOW_H
+#endif // MULTI_BEAM_CAUSTIC_WINDOW_H

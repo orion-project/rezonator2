@@ -4,6 +4,7 @@
 #include "funcs/InfoFunctions.h"
 #include "funcs/CausticFunction.h"
 #include "funcs/MultiCausticFunction.h"
+#include "funcs/MultibeamCausticFunction.h"
 #include "funcs/StabilityMapFunction.h"
 #include "funcs/StabilityMap2DFunction.h"
 #include "funcs/BeamVariationFunction.h"
@@ -11,6 +12,7 @@
 #include "funcs_window/InfoFuncWindow.h"
 #include "funcs_window/CausticWindow.h"
 #include "funcs_window/MultiCausticWindow.h"
+#include "funcs_window/MultibeamCausticWindow.h"
 #include "funcs_window/StabilityMapWindow.h"
 #include "funcs_window/StabilityMap2DWindow.h"
 #include "funcs_window/BeamVariationWindow.h"
@@ -39,6 +41,7 @@ CalcManager::CalcManager(Schema *schema, QWidget *parent) :
     registerWindowConstructor<StabilityMap2DWindow, StabilityMap2DFunction>();
     registerWindowConstructor<CausticWindow, CausticFunction>();
     registerWindowConstructor<MultiCausticWindow, MultiCausticFunction>();
+    registerWindowConstructor<MultibeamCausticWindow, MultibeamCausticFunction>();
     registerWindowConstructor<BeamVariationWindow, BeamVariationFunction>();
 }
 
@@ -91,6 +94,11 @@ void CalcManager::funcMultiCaustic()
     showPlotFunc<MultiCausticFunction>();
 }
 
+void CalcManager::funcMultibeamCaustic()
+{
+    showPlotFunc<MultibeamCausticFunction>();
+}
+
 void CalcManager::funcBeamVariation()
 {
     showPlotFunc<BeamVariationFunction>();
@@ -102,7 +110,7 @@ void CalcManager::funcShowMatrices()
     auto elems = schema()->selectedElements();
     if (elems.isEmpty())
     {
-        Z_INFO("No elements selected");
+        Z_INFO("No elements selected")
         return;
     }
     if (elems.size() == 1)

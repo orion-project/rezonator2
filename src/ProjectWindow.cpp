@@ -137,6 +137,7 @@ void ProjectWindow::createActions()
     actnFuncRepRate = A_(tr("&Intermode Beats Frequency"), _calculations, SLOT(funcRepRate()), ":/toolbar/func_reprate");
     actnFuncCaustic = A_(tr("&Caustic..."), _calculations, SLOT(funcCaustic()), ":/toolbar/func_caustic");
     actnFuncMultiCaustic = A_(tr("&Multicaustic..."), _calculations, SLOT(funcMultiCaustic()), ":/toolbar/func_multi_caustic");
+    actnFuncMultibeamCaustic = A_(tr("&Multibeam Caustic..."), _calculations, SLOT(funcMultibeamCaustic()), ":/toolbar/func_multi_caustic");
     actnFuncBeamVariation = A_(tr("&Beamsize Variation..."), _calculations, SLOT(funcBeamVariation()), ":/toolbar/func_beam_variation");
 
     actnToolsCatalog = A_(tr("&Elements Catalog"), this, SLOT(showElementsCatalog()), ":/toolbar/catalog");
@@ -193,7 +194,7 @@ void ProjectWindow::createMenuBar()
 
     menuFunctions = Ori::Gui::menu(tr("F&unctions"), this,
         { actnFuncRoundTrip, actnFuncMultFwd, actnFuncMultBkwd, nullptr, actnFuncStabMap,
-          actnFuncStabMap2d, nullptr, actnFuncCaustic, actnFuncMultiCaustic,
+          actnFuncStabMap2d, nullptr, actnFuncCaustic, actnFuncMultiCaustic, actnFuncMultibeamCaustic,
           actnFuncBeamVariation, nullptr, actnFuncRepRate });
 
     menuTools = Ori::Gui::menu(tr("&Tools", "Menu title"), this,
@@ -218,7 +219,7 @@ void ProjectWindow::createToolBars()
         actnFileSave, nullptr, actnFileProps, actnFilePump, actnFileSummary , nullptr,
         actnEditCut, actnEditCopy, actnEditPaste, nullptr,
         actnFuncRoundTrip, nullptr, actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamVariation, nullptr,
-        actnFuncCaustic, actnFuncMultiCaustic, nullptr, actnFuncRepRate, nullptr,
+        actnFuncCaustic, actnFuncMultiCaustic, actnFuncMultibeamCaustic, nullptr, actnFuncRepRate, nullptr,
         actnWndParams, actnWndPumps, nullptr, actnToolAdjust, nullptr,
         actnToolsGaussCalc, actnToolsCalc
     }, true));
