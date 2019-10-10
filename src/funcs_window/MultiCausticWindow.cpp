@@ -176,13 +176,6 @@ void MultiCausticWindow::afterUpdate()
     updateElementBoundMarkers();
 }
 
-void MultiCausticWindow::afterSetUnitsX(Z::Unit old, Z::Unit cur)
-{
-    Q_UNUSED(old)
-    Q_UNUSED(cur)
-    updateElementBoundMarkers();
-}
-
 void MultiCausticWindow::updateElementBoundMarkers()
 {
     auto unitX = getUnitX();

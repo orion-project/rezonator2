@@ -125,6 +125,7 @@ HEADERS += \
     src/widgets/ParamsEditor.h \
     src/widgets/ParamsListWidget.h \
     src/widgets/Plot.h \
+    src/widgets/PlotHelpers.h \
     src/widgets/PlotParamsPanel.h \
     src/widgets/RichTextItemDelegate.h \
     src/widgets/SchemaElemsTable.h \
@@ -243,6 +244,7 @@ SOURCES += \
     src/widgets/ParamsEditor.cpp \
     src/widgets/ParamsListWidget.cpp \
     src/widgets/Plot.cpp \
+    src/widgets/PlotHelpers.cpp \
     src/widgets/PlotParamsPanel.cpp \
     src/widgets/RichTextItemDelegate.cpp \
     src/widgets/SchemaElemsTable.cpp \

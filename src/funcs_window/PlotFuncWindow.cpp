@@ -6,6 +6,7 @@
 #include "../funcs/InfoFunctions.h"
 #include "../funcs/FunctionGraph.h"
 #include "../widgets/Plot.h"
+#include "../widgets/PlotHelpers.h"
 #include "../widgets/FrozenStateButton.h"
 #include "../widgets/GraphDataGrid.h"
 #include "../widgets/CursorPanel.h"
@@ -566,19 +567,11 @@ void PlotFuncWindow::setUnitX(Z::Unit unit)
     auto oldUnit = getUnitX();
     if (oldUnit == unit) return;
     _unitX = unit;
-    if (function()->ok())
-    {
-        auto limits = _plot->limitsX();
-        limits.min = unit->fromSi(oldUnit->toSi(limits.min));
-        limits.max = unit->fromSi(oldUnit->toSi(limits.max));
-        updateGraphs();
-        _plot->setLimitsX(limits, false);
-        updateTitleX();
-        updateStatusUnits();
-        afterSetUnitsX(oldUnit, unit);
-        schema()->markModified();
-        _plot->replot();
-    }
+    updateTitleX();
+    updateStatusUnits();
+    schema()->markModified();
+    PlotHelpers::rescaleLimits(_plot, PlotAxis::X, oldUnit, unit);
+    update();
 }
 
 void PlotFuncWindow::setUnitY(Z::Unit unit)
@@ -586,19 +579,11 @@ void PlotFuncWindow::setUnitY(Z::Unit unit)
     auto oldUnit = getUnitY();
     if (oldUnit == unit) return;
     _unitY = unit;
-    if (function()->ok())
-    {
-        auto limits = _plot->limitsY();
-        limits.min = unit->fromSi(oldUnit->toSi(limits.min));
-        limits.max = unit->fromSi(oldUnit->toSi(limits.max));
-        updateGraphs();
-        _plot->setLimitsY(limits, false);
-        updateTitleY();
-        updateStatusUnits();;
-        afterSetUnitsY(oldUnit, unit);
-        schema()->markModified();
-        _plot->replot();
-    }
+    updateTitleY();
+    updateStatusUnits();
+    schema()->markModified();
+    PlotHelpers::rescaleLimits(_plot, PlotAxis::Y, oldUnit, unit);
+    update();
 }
 
 QList<BasicMdiChild::ViewMenuItem> PlotFuncWindow::viewMenuItems()
