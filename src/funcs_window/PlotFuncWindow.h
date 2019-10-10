@@ -141,7 +141,7 @@ protected:
     void createStatusBar();
     void createContent();
 
-    void updateActionsTS();
+    void showModeTS();
     void updateTitles();
     void updateTitle();
     void updateTitleX();
