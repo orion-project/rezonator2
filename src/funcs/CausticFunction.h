@@ -50,8 +50,9 @@ private:
     Z::PairTS<std::shared_ptr<PumpCalculator>> _pumpCalc;
     std::shared_ptr<AbcdBeamCalculator> _beamCalc;
 
-    bool prepareSinglePass();
+    bool prepareSinglePass(Element *ref);
     bool prepareResonator();
+    void prepareDynamicElements(Element* ref);
     inline Z::PointTS calculateSinglePass() const;
     inline Z::PointTS calculateResonator() const;
 };

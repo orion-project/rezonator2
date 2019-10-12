@@ -9,6 +9,15 @@
         },
         {
           "text": "Fixed: Multicaustic doesn't save the mode (beam radius/front radius)."
+        },
+        {
+          "text": "Multicaustic function renamed to Multirange Caustic."
+        },
+        {
+          "text": "New function: Multibeam Caustic."
+        },
+        {
+          "text": "New elements: Axicon Mirror, Axicon Lens."
         }
       ]
     },

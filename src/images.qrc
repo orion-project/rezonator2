@@ -134,6 +134,7 @@
         <file alias="ElemGrinLens">../img/elem/ElemGrinLens.svg</file>
     </qresource>
     <qresource prefix="/elem_icon">
+        <file alias="ElemAxiconMirror">../img/elem/ElemAxiconMirror24.svg</file>
         <file alias="ElemEmptyRange">../img/elem/ElemEmptyRange24.svg</file>
         <file alias="ElemMediumRange">../img/elem/ElemMediumRange24.svg</file>
         <file alias="ElemPlate">../img/elem/ElemPlate24.svg</file>

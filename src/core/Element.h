@@ -39,7 +39,7 @@
     double axisLengthSI() const override;
 
 class Element;
-struct BeamProps;
+class PumpCalculator;
 
 //------------------------------------------------------------------------------
 /**
@@ -179,10 +179,20 @@ protected:
 typedef QList<Element*> Elements;
 
 //------------------------------------------------------------------------------
+
+class IRefractiveElement
+{
+public:
+    virtual double ior() const = 0;
+protected:
+    ~IRefractiveElement();
+};
+
+//------------------------------------------------------------------------------
 /**
     The base class for elements having length and optional IOR.
 */
-class ElementRange : public Element
+class ElementRange : public Element, public IRefractiveElement
 {
 public:
     virtual void setSubRangeSI(double value) { Q_UNUSED(value) }
@@ -241,7 +251,27 @@ protected:
 class ElementDynamic : public Element
 {
 public:
-    virtual void calcDynamicMatrix(const BeamProps& beamT, const BeamProps& beamS) { Q_UNUSED(beamT) Q_UNUSED(beamS) }
+    struct CalcParams
+    {
+        /// Matrices of part of the schema
+        /// from the first element up to this element (not including).
+        const Z::Matrix *Mt, *Ms;
+
+        /// Propagating beam calculators incapsulate input beam parameters
+        /// and can compute output beam parameters from ray matrix.
+        PumpCalculator *pumpCalcT, *pumpCalcS;
+
+        /// Schema wevelength in meters.
+        double schemaWavelenSI;
+
+        /// This wavelength is used to calculate beam parameters at the left side of this element.
+        /// It can differ from schema's wavelength if left-hand element has IOR.
+        /// We don't care if this IOR differs from IOR of the current element (in the case it's refractive).
+        /// In this case the beam transition between elements is invalid, but it is up to user.
+        double prevElemWavelenSI;
+    };
+
+    virtual void calcDynamicMatrix(const CalcParams& p) { Q_UNUSED(p) }
 
     const Z::Matrix& Mt_dyn() const { return _mt_dyn; }
     const Z::Matrix& Ms_dyn() const { return _ms_dyn; }

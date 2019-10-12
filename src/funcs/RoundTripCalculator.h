@@ -29,6 +29,8 @@ public:
     inline Schema* owner() const { return _schema; }
     inline const Z::Matrix& Mt() const { return _mt; }
     inline const Z::Matrix& Ms() const { return _ms; }
+    inline const Z::Matrix* pMt() const { return &_mt; }
+    inline const Z::Matrix* pMs() const { return &_ms; }
     inline const Z::MatrixArray& matrsT() const { return _matrsT; }
     inline const Z::MatrixArray& matrsS() const { return _matrsS; }
     QList<Element*> roundTrip() const;

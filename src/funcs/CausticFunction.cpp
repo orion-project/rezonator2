@@ -31,7 +31,7 @@ void CausticFunction::calculate()
     bool isResonator = _schema->isResonator();
     bool isPrepared = isResonator
             ? prepareResonator()
-            : prepareSinglePass();
+            : prepareSinglePass(elem);
     if (!isPrepared) return;
 
     BackupAndLock locker(elem, elem->paramLength());
@@ -77,7 +77,7 @@ void CausticFunction::calculate()
     finishResults();
 }
 
-bool CausticFunction::prepareSinglePass()
+bool CausticFunction::prepareSinglePass(Element* ref)
 {
     auto pump = _pump ? _pump : schema()->activePump();
     if (!pump)
@@ -100,6 +100,9 @@ bool CausticFunction::prepareSinglePass()
         setError("Unsupported pump mode");
         return false;
     }
+
+    prepareDynamicElements(ref);
+
     return true;
 }
 
@@ -108,6 +111,48 @@ bool CausticFunction::prepareResonator()
     if (!_beamCalc) _beamCalc.reset(new AbcdBeamCalculator);
     _beamCalc->setWavelenSI(_wavelenSI);
     return true;
+}
+
+void CausticFunction::prepareDynamicElements(Element* ref)
+{
+    const double lambda = schema()->wavelength().value().toSi();
+
+    for (int i = 0; i < schema()->count(); i++)
+    {
+        auto elem = schema()->element(i);
+        if (elem == ref) break;
+        auto dynamic = dynamic_cast<ElementDynamic*>(elem);
+        if (!dynamic) continue;
+
+        if (i == 0)
+        {
+            Z::Matrix unity;
+            ElementDynamic::CalcParams p;
+            p.Mt = &unity;
+            p.Ms = &unity;
+            p.pumpCalcT = _pumpCalc.T.get();
+            p.pumpCalcS = _pumpCalc.S.get();
+            p.schemaWavelenSI = lambda;
+            p.prevElemWavelenSI = lambda;
+            dynamic->calcDynamicMatrix(p);
+        }
+        else
+        {
+            auto prevElem = schema()->element(i - i);
+            RoundTripCalculator calc(schema(), prevElem);
+            calc.calcRoundTrip();
+            calc.multMatrix();
+            ElementDynamic::CalcParams p;
+            p.Mt = calc.pMt();
+            p.Ms = calc.pMs();
+            p.pumpCalcT = _pumpCalc.T.get();
+            p.pumpCalcS = _pumpCalc.S.get();
+            auto refractive = dynamic_cast<IRefractiveElement*>(prevElem);
+            p.prevElemWavelenSI = refractive ? lambda / refractive->ior() : lambda;
+            p.schemaWavelenSI = lambda;
+            dynamic->calcDynamicMatrix(p);
+        }
+    }
 }
 
 Z::PointTS CausticFunction::calculateSinglePass() const

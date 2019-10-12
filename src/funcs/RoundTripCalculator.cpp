@@ -121,7 +121,7 @@ void RoundTripCalculator::collectMatrices()
         else
         {
             auto dynamicElem = dynamic_cast<ElementDynamic*>(item.element);
-            if (dynamicElem)
+            if (dynamicElem && _schema->isSP())
             {
                 _matrsT.push_back(dynamicElem->pMt_dyn());
                 _matrsS.push_back(dynamicElem->pMs_dyn());
