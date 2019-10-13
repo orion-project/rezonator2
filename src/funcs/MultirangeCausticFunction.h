@@ -21,7 +21,7 @@ public:
     const PlotFuncResult& result(Z::WorkPlane plane, int index) const override;
 
     // Only needs for SP schemas
-    void setPump(Z::PumpParams* pump);
+    void setPump(PumpParams* pump);
 
     QVector<Z::Variable> args() const;
     void setArgs(const QVector<Z::Variable>& args);

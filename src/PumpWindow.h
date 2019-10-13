@@ -34,17 +34,17 @@ public:
 
     Schema* schema() const { return _schema; }
 
-    Z::PumpParams* selected() const;
-    void setSelected(Z::PumpParams*);
+    PumpParams* selected() const;
+    void setSelected(PumpParams*);
 
     // inherits from SchemaListener
     void schemaLoaded(Schema*) override;
-    void pumpCreated(Schema*, Z::PumpParams*) override;
-    void pumpChanged(Schema*, Z::PumpParams*) override;
-    void pumpDeleting(Schema*, Z::PumpParams*) override;
+    void pumpCreated(Schema*, PumpParams*) override;
+    void pumpChanged(Schema*, PumpParams*) override;
+    void pumpDeleting(Schema*, PumpParams*) override;
 
 signals:
-    void doubleClicked(Z::PumpParams*);
+    void doubleClicked(PumpParams*);
 
 private slots:
     void doubleClicked(class QTableWidgetItem*);
@@ -59,8 +59,8 @@ private:
     void adjustColumns();
     void populate();
     void createRow(int row);
-    void populateRow(Z::PumpParams *pump, int row);
-    int findRow(Z::PumpParams *pump);
+    void populateRow(PumpParams *pump, int row);
+    int findRow(PumpParams *pump);
 
     const int _iconSize = 24;
 };
@@ -95,9 +95,9 @@ public slots:
 protected:
     explicit PumpWindow(Schema*owner);
 
-    virtual Z::PumpParams* makeNewPumpDlg();
-    virtual bool editPumpDlg(Z::PumpParams*);
-    virtual Z::PumpParams* selectedPump() const;
+    virtual PumpParams* makeNewPumpDlg();
+    virtual bool editPumpDlg(PumpParams*);
+    virtual PumpParams* selectedPump() const;
 
 private:
     static PumpWindow* _instance;
@@ -113,7 +113,7 @@ private:
     void createToolBar();
     void createStatusBar();
     void showStatusInfo();
-    void addNewPump(Z::PumpParams* pump);
+    void addNewPump(PumpParams* pump);
 };
 
 #endif // PUMP_WINDOW_H

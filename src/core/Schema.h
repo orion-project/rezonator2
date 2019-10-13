@@ -43,10 +43,10 @@ public:
     virtual void customParamChanged(Schema*, Z::Parameter*) {}
     virtual void customParamDeleting(Schema*, Z::Parameter*) {}
     virtual void customParamDeleted(Schema*, Z::Parameter*) {}
-    virtual void pumpCreated(Schema*, Z::PumpParams*) {}
-    virtual void pumpChanged(Schema*, Z::PumpParams*) {}
-    virtual void pumpDeleting(Schema*, Z::PumpParams*) {}
-    virtual void pumpDeleted(Schema*, Z::PumpParams*) {}
+    virtual void pumpCreated(Schema*, PumpParams*) {}
+    virtual void pumpChanged(Schema*, PumpParams*) {}
+    virtual void pumpDeleting(Schema*, PumpParams*) {}
+    virtual void pumpDeleted(Schema*, PumpParams*) {}
     virtual void recalcRequired(Schema*) {}
 };
 
@@ -246,8 +246,8 @@ public:
     /// This list is not stored in a schema and collect parameters at each call.
     Z::Parameters globalParams() const;
 
-    Z::PumpsList* pumps() { return &_pumps; }
-    Z::PumpParams* activePump();
+    PumpsList* pumps() { return &_pumps; }
+    PumpParams* activePump();
 
     void moveElementUp(Element* elem);
     void moveElementDown(Element* elem);
@@ -268,7 +268,7 @@ private:
     Z::Parameters _customParams;
     Z::ParamLinks _paramLinks;
     Z::Formulas _formulas;
-    Z::PumpsList _pumps;
+    PumpsList _pumps;
 
     // inherits from ElementOwner
     void elementChanged(Element *elem) override { _events.raise(SchemaEvents::ElemChanged, elem); }

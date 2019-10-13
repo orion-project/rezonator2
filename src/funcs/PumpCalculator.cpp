@@ -35,7 +35,7 @@ class PumpCalculatorImpl final
     }
 
     template <class TPumpParams, typename ...Lambda>
-    bool initInput(Z::PumpParams* pump, Lambda ...lambda)
+    bool initInput(PumpParams* pump, Lambda ...lambda)
     {
         auto p = dynamic_cast<TPumpParams*>(pump);
         if (!p) return false;
@@ -169,7 +169,7 @@ PumpCalculator::~PumpCalculator()
     if (_impl) delete _impl;
 }
 
-bool PumpCalculator::init(Z::PumpParams* pump, double lambdaSI)
+bool PumpCalculator::init(PumpParams* pump, double lambdaSI)
 {
     // InvComplex should be tested before Complex, because Complex is more generic
     return _impl->initInput<PumpParams_Waist>(pump, lambdaSI) ||

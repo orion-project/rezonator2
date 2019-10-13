@@ -23,9 +23,9 @@ public:
     void schemaParamsChanged(Schema*s) { store(SchemaEvents::ParamsChanged, s); }
     void schemaLambdaChanged(Schema*s) { store(SchemaEvents::LambdaChanged, s); }
     void pumpCreated(Schema*s, PumpParams*p) { store(SchemaEvents::PumpCreated, s, p); }
-    void pumpChanged(Schema*s, Z::PumpParams*p) { store(SchemaEvents::PumpChanged, s, p); }
-    void pumpDeleting(Schema*s, Z::PumpParams*p) { store(SchemaEvents::PumpDeleting, s, p); }
-    void pumpDeleted(Schema*s, Z::PumpParams*p) { store(SchemaEvents::PumpDeleted, s, p); }
+    void pumpChanged(Schema*s, PumpParams*p) { store(SchemaEvents::PumpChanged, s, p); }
+    void pumpDeleting(Schema*s, PumpParams*p) { store(SchemaEvents::PumpDeleting, s, p); }
+    void pumpDeleted(Schema*s, PumpParams*p) { store(SchemaEvents::PumpDeleted, s, p); }
     void recalcRequired(Schema*s) { store(SchemaEvents::RecalRequred, s); }
 
 public:

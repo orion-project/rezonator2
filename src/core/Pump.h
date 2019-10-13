@@ -18,6 +18,7 @@ public: \
 class PumpMode_##mode_class : public PumpMode \
 { \
 public: \
+    ~PumpMode_##mode_class() override; \
     PumpParams* makePump() const override { return new PumpParams_##mode_class(); } \
     QString drawingPath() const override { return QStringLiteral(drawing_path); } \
     QString iconPath() const override { return QStringLiteral(icon_path); } \
@@ -33,12 +34,9 @@ public: \
 
 #define PUMP_PARAM(name) \
 public: \
-    ParameterTS* name() const { return _##name; } \
+    Z::ParameterTS* name() const { return _##name; } \
 private: \
-    ParameterTS *_##name;
-
-
-namespace Z {
+    Z::ParameterTS *_##name;
 
 
 class PumpParams
@@ -48,7 +46,7 @@ public:
     virtual QString modeName() const { return QString(); }
     QString label() const { return _label; }
     QString title() const { return _title; }
-    ParametersTS* params() { return &_params; }
+    Z::ParametersTS* params() { return &_params; }
     void setLabel(const QString& label) { _label = label; }
     void setTitle(const QString& title) { _title = title; }
     QString str() const { return _params.str(); }
@@ -56,9 +54,9 @@ public:
     bool isActive() const { return _isActive; }
     void activate(bool on) { _isActive = on; }
 protected:
-    void addParam(ParameterTS *param, double value, Unit unit = Units::none());
+    void addParam(Z::ParameterTS *param, double value, Z::Unit unit = Z::Units::none());
 private:
-    ParametersTS _params;
+    Z::ParametersTS _params;
     QString _label, _title;
     bool _isActive = false;
 };
@@ -144,7 +142,5 @@ DECLARE_PUMP_PARAMS_END(InvComplex,
                         qApp->translate("Pump mode", "Gaussian beam defined by inverted complex parameter"),
                         ":/drawing/pump_complex",
                         ":/icons/pump_inv_complex")
-
-} // namespace Z
 
 #endif // PUMP_PARAMS_H

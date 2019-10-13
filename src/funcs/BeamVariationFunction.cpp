@@ -65,7 +65,7 @@ Z::Unit BeamVariationFunction::defaultUnitX() const
 
 bool BeamVariationFunction::prepareSinglePass()
 {
-    Z::PumpParams *pump = _schema->activePump();
+    auto pump = _schema->activePump();
     if (!pump)
     {
         setError(qApp->translate("Calc error",

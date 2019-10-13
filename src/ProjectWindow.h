@@ -44,7 +44,7 @@ public:
     void schemaLoaded(Schema*) override;
     void schemaSaved(Schema*) override;
     void schemaParamsChanged(Schema*) override;
-    void pumpChanged(Schema*, Z::PumpParams*) override;
+    void pumpChanged(Schema*, PumpParams*) override;
 
     // inherited from SettingsListener.
     void settingsChanged() override;

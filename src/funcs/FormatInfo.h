@@ -5,11 +5,11 @@
 
 class Schema;
 class Element;
+class PumpParams;
 
 namespace Z {
 
 class Matrix;
-class PumpParams;
 
 namespace Format {
 
@@ -48,7 +48,7 @@ struct FormatElemParams
 
 struct FormatPumpParams
 {
-    QString format(Z::PumpParams *pump);
+    QString format(PumpParams *pump);
 };
 
 } // namespace Format

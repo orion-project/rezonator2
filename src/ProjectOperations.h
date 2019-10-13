@@ -5,12 +5,12 @@
 
 #include "core/CommonTypes.h"
 
-class Schema;
 class CalcManager;
+class Schema;
+class PumpParams;
 
 namespace Z {
     class Report;
-    class PumpParams;
 }
 
 struct OpenFileOptions {
@@ -56,7 +56,7 @@ signals:
     void protocolRequired();
 
 protected:
-    virtual bool editPumpDlg(Z::PumpParams* pump);
+    virtual bool editPumpDlg(PumpParams* pump);
     virtual bool selectTripTypeDlg(TripType* tripType);
 
 private:

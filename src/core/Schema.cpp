@@ -112,10 +112,10 @@ void SchemaEvents::notify(SchemaListener* listener, SchemaEvents::Event event, v
     case CustomParamChanged: listener->customParamChanged(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
     case CustomParamDeleting: listener->customParamDeleting(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
     case CustomParamDeleted: listener->customParamDeleted(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
-    case PumpCreated: listener->pumpCreated(_schema, reinterpret_cast<Z::PumpParams*>(param)); break;
-    case PumpChanged: listener->pumpChanged(_schema, reinterpret_cast<Z::PumpParams*>(param)); break;
-    case PumpDeleting: listener->pumpDeleting(_schema, reinterpret_cast<Z::PumpParams*>(param)); break;
-    case PumpDeleted: listener->pumpDeleted(_schema, reinterpret_cast<Z::PumpParams*>(param)); break;
+    case PumpCreated: listener->pumpCreated(_schema, reinterpret_cast<PumpParams*>(param)); break;
+    case PumpChanged: listener->pumpChanged(_schema, reinterpret_cast<PumpParams*>(param)); break;
+    case PumpDeleting: listener->pumpDeleting(_schema, reinterpret_cast<PumpParams*>(param)); break;
+    case PumpDeleted: listener->pumpDeleted(_schema, reinterpret_cast<PumpParams*>(param)); break;
     case RecalRequred: listener->recalcRequired(_schema); break;
     };
 }
@@ -285,9 +285,9 @@ Z::Parameters Schema::globalParams() const
     return list;
 }
 
-Z::PumpParams* Schema::activePump()
+PumpParams* Schema::activePump()
 {
-    for (Z::PumpParams *pump : _pumps)
+    for (PumpParams *pump : _pumps)
         if (pump->isActive())
             return pump;
     return nullptr;

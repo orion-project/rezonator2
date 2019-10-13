@@ -224,7 +224,7 @@ QString InfoFuncSummary::calculate()
                    << qApp->translate("InfoFuncSummary", "<b>Input beam:</b>")
                    << QStringLiteral("<br>");
 
-            auto pumpMode = Z::Pump::findByModeName(pump->modeName());
+            auto pumpMode = Pump::findByModeName(pump->modeName());
             if (pumpMode)
                 report << pumpMode->description()
                        << QStringLiteral("<br>");

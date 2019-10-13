@@ -75,7 +75,7 @@ void SchemaWriterJson::writeCustomParams(QJsonObject& root)
 void SchemaWriterJson::writePumps(QJsonObject &root)
 {
     QJsonArray pumpsJson;
-    for (Z::PumpParams* pump: *_schema->pumps())
+    for (PumpParams* pump: *_schema->pumps())
     {
         QJsonObject pumpJson;
         writePump(pumpJson, pump);
@@ -84,9 +84,9 @@ void SchemaWriterJson::writePumps(QJsonObject &root)
     root["pumps"] = pumpsJson;
 }
 
-void SchemaWriterJson::writePump(QJsonObject &root, Z::PumpParams *pump)
+void SchemaWriterJson::writePump(QJsonObject &root, PumpParams *pump)
 {
-    auto mode = Z::Pump::findByModeName(pump->modeName());
+    auto mode = Pump::findByModeName(pump->modeName());
     if (!mode)
     {
         qCritical() << "SchemaWriterJson::writePump(): Unable to find mode for pump parameters";

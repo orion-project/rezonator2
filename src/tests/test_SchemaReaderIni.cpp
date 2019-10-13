@@ -225,7 +225,7 @@ TEST_CASE(read_schema_1_2, read_schema, "all_elems_ver-1-2.she", Z::Units::mkm()
     Schema schema;\
     READ_AND_ASSERT(file_name)\
     ASSERT_IS_NOT_NULL(schema.activePump())\
-    auto pump = dynamic_cast<Z::PumpParams_##mode*>(schema.activePump());\
+    auto pump = dynamic_cast<PumpParams_##mode*>(schema.activePump());\
     ASSERT_IS_NOT_NULL(pump)\
     ASSERT_PUMP_PARAM(param1, value1T, value1S, unit1)\
     ASSERT_PUMP_PARAM(param2, value2T, value2S, unit2)\

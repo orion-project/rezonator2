@@ -3,9 +3,10 @@
 
 #include <memory>
 
+class PumpParams;
+
 namespace Z {
 class Matrix;
-class PumpParams;
 }
 
 struct BeamResult
@@ -23,7 +24,7 @@ public:
 
     ~PumpCalculator();
 
-    bool init(Z::PumpParams* pump, double lambdaSI);
+    bool init(PumpParams* pump, double lambdaSI);
     BeamResult calc(const Z::Matrix& matrix, double lambdaSI);
 
 private:

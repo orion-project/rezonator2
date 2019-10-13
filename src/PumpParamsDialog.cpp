@@ -29,7 +29,7 @@ public:
         setContentsMargins(6, 6, 6, 6);
     }
 
-    void setPumpMode(const Z::PumpMode* pumpMode)
+    void setPumpMode(const PumpMode* pumpMode)
     {
         if (pumpMode)
             setPixmap(QPixmap(pumpMode->drawingPath()));
@@ -44,14 +44,14 @@ public:
 //                            PumpParamsDialog
 //------------------------------------------------------------------------------
 
-Z::PumpParams* PumpParamsDialog::makeNewPump()
+PumpParams* PumpParamsDialog::makeNewPump()
 {
     auto drawing = new PumpModeDrawing;
 
     Ori::Widgets::SelectableTileRadioGroup modesGroup;
     modesGroup.selectionFollowsArrows = true;
     connect(&modesGroup, &Ori::Widgets::SelectableTileRadioGroup::dataSelected, [&](const QVariant& data){
-        drawing->setPumpMode(var2ptr<Z::PumpMode*>(data));
+        drawing->setPumpMode(var2ptr<PumpMode*>(data));
     });
 
     auto modesWidget = new QFrame;
@@ -59,7 +59,7 @@ Z::PumpParams* PumpParamsDialog::makeNewPump()
     auto modesLayout = new QHBoxLayout(modesWidget);
     modesLayout->setMargin(0);
     modesLayout->setSpacing(0);
-    for (auto mode : Z::Pump::allModes())
+    for (auto mode : Pump::allModes())
     {
         auto modeItem = new Ori::Widgets::SelectableTile;
         modeItem->selectionFollowsFocus = true;
@@ -83,22 +83,22 @@ Z::PumpParams* PumpParamsDialog::makeNewPump()
             .withContentToButtonsSpacingFactor(2)
             .exec())
     {
-        auto mode = var2ptr<Z::PumpMode*>(modesGroup.selectedData());
+        auto mode = var2ptr<PumpMode*>(modesGroup.selectedData());
         return mode ? mode->makePump() : nullptr;
     }
     return nullptr;
 }
 
-bool PumpParamsDialog::editPump(Z::PumpParams *params)
+bool PumpParamsDialog::editPump(PumpParams *params)
 {
     auto dlg = new PumpParamsDialog(params);
     return dlg->exec() == QDialog::Accepted;
 }
 
-PumpParamsDialog::PumpParamsDialog(Z::PumpParams *params, QWidget *parent)
+PumpParamsDialog::PumpParamsDialog(PumpParams *params, QWidget *parent)
     : RezonatorDialog(Options(NoOptions), parent), _params(params)
 {
-    auto pumpMode = Z::Pump::findByModeName(params->modeName());
+    auto pumpMode = Pump::findByModeName(params->modeName());
     if (!pumpMode)
         qCritical() << "PumpParamsDialog::PumpParamsDialog(): Unable to find mode for pump parameters";
 

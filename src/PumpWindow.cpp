@@ -84,7 +84,7 @@ void PumpsTable::adjustColumns()
 
 void PumpsTable::doubleClicked(QTableWidgetItem*)
 {
-    Z::PumpParams* pump = selected();
+    PumpParams* pump = selected();
     if (pump) emit doubleClicked(pump);
 }
 
@@ -94,12 +94,12 @@ void PumpsTable::showContextMenu(const QPoint& pos)
         _contextMenu->popup(mapToGlobal(pos));
 }
 
-Z::PumpParams* PumpsTable::selected() const
+PumpParams* PumpsTable::selected() const
 {
     return schema()->pumps()->at(currentRow());
 }
 
-void PumpsTable::setSelected(Z::PumpParams *param)
+void PumpsTable::setSelected(PumpParams *param)
 {
     setCurrentCell(findRow(param), 0);
 }
@@ -144,9 +144,9 @@ void PumpsTable::createRow(int row)
     setItem(row, COL_TITLE, it);
 }
 
-void PumpsTable::populateRow(Z::PumpParams *pump, int row)
+void PumpsTable::populateRow(PumpParams *pump, int row)
 {
-    auto pumpMode = Z::Pump::findByModeName(pump->modeName());
+    auto pumpMode = Pump::findByModeName(pump->modeName());
     if (pumpMode)
     {
         auto it = item(row, COL_IMAGE);
@@ -168,7 +168,7 @@ void PumpsTable::schemaLoaded(Schema*)
     populate();
 }
 
-void PumpsTable::pumpCreated(Schema*, Z::PumpParams *pump)
+void PumpsTable::pumpCreated(Schema*, PumpParams *pump)
 {
     int row = rowCount();
     setRowCount(row+1);
@@ -177,15 +177,15 @@ void PumpsTable::pumpCreated(Schema*, Z::PumpParams *pump)
     setSelected(pump);
 }
 
-void PumpsTable::pumpChanged(Schema*, Z::PumpParams *pump)
+void PumpsTable::pumpChanged(Schema*, PumpParams *pump)
 {
     auto row = findRow(pump);
     if (row < 0) return;
-    populateRow(reinterpret_cast<Z::PumpParams*>(pump), row);
+    populateRow(reinterpret_cast<PumpParams*>(pump), row);
     adjustColumns();
 }
 
-void PumpsTable::pumpDeleting(Schema*, Z::PumpParams *pump)
+void PumpsTable::pumpDeleting(Schema*, PumpParams *pump)
 {
     auto row = findRow(pump);
     if (row < 0) return;
@@ -193,7 +193,7 @@ void PumpsTable::pumpDeleting(Schema*, Z::PumpParams *pump)
     adjustColumns();
 }
 
-int PumpsTable::findRow(Z::PumpParams *pump)
+int PumpsTable::findRow(PumpParams *pump)
 {
     return schema()->pumps()->indexOf(pump);
 }
@@ -278,7 +278,7 @@ void PumpWindow::createStatusBar()
     setContent(_statusBar);
 }
 
-Z::PumpParams* PumpWindow::makeNewPumpDlg()
+PumpParams* PumpWindow::makeNewPumpDlg()
 {
     auto pump = PumpParamsDialog::makeNewPump();
     if (!pump) return nullptr;
@@ -292,17 +292,17 @@ Z::PumpParams* PumpWindow::makeNewPumpDlg()
     return pump;
 }
 
-bool PumpWindow::editPumpDlg(Z::PumpParams* pump)
+bool PumpWindow::editPumpDlg(PumpParams* pump)
 {
     return PumpParamsDialog::editPump(pump);
 }
 
-Z::PumpParams* PumpWindow::selectedPump() const
+PumpParams* PumpWindow::selectedPump() const
 {
     return _table->selected();
 }
 
-void PumpWindow::addNewPump(Z::PumpParams* pump)
+void PumpWindow::addNewPump(PumpParams* pump)
 {
     schema()->pumps()->append(pump);
     bool isFirstPump = schema()->pumps()->size() == 1;
@@ -394,7 +394,7 @@ void PumpWindow::clonePump()
     auto pump = selectedPump();
     if (!pump) return;
 
-    auto pumpMode = Z::Pump::findByModeName(pump->modeName());
+    auto pumpMode = Pump::findByModeName(pump->modeName());
     if (!pumpMode) return;
 
     auto newPump = pumpMode->makePump();

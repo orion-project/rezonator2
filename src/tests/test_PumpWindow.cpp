@@ -35,8 +35,8 @@ public:
 
 protected:
     PumpParams* makeNewPumpDlg() override { return pump; }
-    bool editPumpDlg(Z::PumpParams*) override { return dlgResult; }
-    Z::PumpParams* selectedPump() const override { return pump; }
+    bool editPumpDlg(PumpParams*) override { return dlgResult; }
+    PumpParams* selectedPump() const override { return pump; }
 };
 }
 
@@ -46,7 +46,7 @@ TEST_METHOD(createPump__first_pump_must_be_active)
 {
     Schema schema;
     TestPumpWindow window(&schema);
-    window.pump = Z::PumpMode_Waist::instance()->makePump();
+    window.pump = PumpMode_Waist::instance()->makePump();
 
     ASSERT_IS_NULL(schema.activePump())
     window.createPump();
@@ -57,7 +57,7 @@ TEST_METHOD(createPump__must_raise_event)
 {
     SCHEMA_AND_LISTENER
     TestPumpWindow window(&schema);
-    window.pump = Z::PumpMode_Waist::instance()->makePump();
+    window.pump = PumpMode_Waist::instance()->makePump();
 
     window.createPump();
 
@@ -72,7 +72,7 @@ TEST_METHOD(editPump__must_do_nothing_when_dialog_canceled)
     SCHEMA_AND_LISTENER;
 
     TestPumpWindow window(&schema);
-    window.pump = Z::PumpMode_Waist::instance()->makePump();
+    window.pump = PumpMode_Waist::instance()->makePump();
     window.dlgResult = false;
     window.editPump();
 
@@ -85,7 +85,7 @@ TEST_METHOD(editPump__must_raise_events)
     SCHEMA_AND_LISTENER;
 
     TestPumpWindow window(&schema);
-    window.pump = Z::PumpMode_Waist::instance()->makePump();
+    window.pump = PumpMode_Waist::instance()->makePump();
     window.editPump();
 
     ASSERT_SCHEMA_STATE(STATE(Modified));
@@ -101,7 +101,7 @@ TEST_METHOD(editPump__must_recalc_SP_schema_when_pump_is_active)
     schema.events().enable();
 
     TestPumpWindow window(&schema);
-    window.pump = Z::PumpMode_Waist::instance()->makePump();
+    window.pump = PumpMode_Waist::instance()->makePump();
     window.pump->activate(true);
     window.editPump();
 
@@ -114,7 +114,7 @@ TEST_METHOD(editPump__must_not_recalc_non_SP_schema)
     SCHEMA_AND_LISTENER;
 
     TestPumpWindow window(&schema);
-    window.pump = Z::PumpMode_Waist::instance()->makePump();
+    window.pump = PumpMode_Waist::instance()->makePump();
     window.pump->activate(true);
     window.editPump();
 
@@ -125,7 +125,7 @@ TEST_METHOD(editPump__must_not_recalc_non_SP_schema)
 
 TEST_METHOD(deletePump__must_not_delete_the_only_pump_from_SP_schema)
 {
-    auto pump = Z::PumpMode_Waist::instance()->makePump();
+    auto pump = PumpMode_Waist::instance()->makePump();
 
     SCHEMA_AND_LISTENER;
     schema.events().disable();
@@ -147,7 +147,7 @@ TEST_METHOD(deletePump__can_delete_the_only_pump_from_non_SP_schema)
 {
     Ori::Dlg::Mock::setNextResult(QMessageBox::Ok);
 
-    class TestPumpParams : public Z::PumpParams
+    class TestPumpParams : public PumpParams
     {
     public:
         ~TestPumpParams() { SET_TEST_DATA("pump was deleted", true); }
@@ -179,7 +179,7 @@ TEST_METHOD(deletePump__must_do_nothing_when_not_confirmed)
 {
     Ori::Dlg::Mock::setNextResult(QMessageBox::Cancel);
 
-    auto pump = Z::PumpMode_Waist::instance()->makePump();
+    auto pump = PumpMode_Waist::instance()->makePump();
 
     SCHEMA_AND_LISTENER;
     schema.events().disable();
@@ -201,9 +201,9 @@ TEST_METHOD(deletePump__must_activate_the_first_pump_when_active_pump_was_delete
 {
     Ori::Dlg::Mock::setNextResult(QMessageBox::Ok);
 
-    auto pump1 = Z::PumpMode_Waist::instance()->makePump(); TEST_LOG_PTR(pump1);
-    auto pump2 = Z::PumpMode_Waist::instance()->makePump(); TEST_LOG_PTR(pump2);
-    auto pump3 = Z::PumpMode_Waist::instance()->makePump(); TEST_LOG_PTR(pump3);
+    auto pump1 = PumpMode_Waist::instance()->makePump(); TEST_LOG_PTR(pump1);
+    auto pump2 = PumpMode_Waist::instance()->makePump(); TEST_LOG_PTR(pump2);
+    auto pump3 = PumpMode_Waist::instance()->makePump(); TEST_LOG_PTR(pump3);
     pump3->activate(true);
 
     SCHEMA_AND_LISTENER;
@@ -234,8 +234,8 @@ TEST_METHOD(deletePump__must_activate_the_first_pump_when_active_pump_was_delete
 
 TEST_METHOD(activatePump__must_do_nothing_when_pump_is_already_active)
 {
-    auto pump1 = Z::PumpMode_Waist::instance()->makePump(); TEST_LOG_PTR(pump1);
-    auto pump2 = Z::PumpMode_Waist::instance()->makePump(); TEST_LOG_PTR(pump2);
+    auto pump1 = PumpMode_Waist::instance()->makePump(); TEST_LOG_PTR(pump1);
+    auto pump2 = PumpMode_Waist::instance()->makePump(); TEST_LOG_PTR(pump2);
     pump2->activate(true);
 
     SCHEMA_AND_LISTENER;
@@ -256,8 +256,8 @@ TEST_METHOD(activatePump__must_do_nothing_when_pump_is_already_active)
 
 TEST_METHOD(activatePump__must_deactivate_previous_active_pump)
 {
-    auto pump1 = Z::PumpMode_Waist::instance()->makePump(); TEST_LOG_PTR(pump1);
-    auto pump2 = Z::PumpMode_Waist::instance()->makePump(); TEST_LOG_PTR(pump2);
+    auto pump1 = PumpMode_Waist::instance()->makePump(); TEST_LOG_PTR(pump1);
+    auto pump2 = PumpMode_Waist::instance()->makePump(); TEST_LOG_PTR(pump2);
     pump2->activate(true);
 
     SCHEMA_AND_LISTENER;
@@ -282,8 +282,8 @@ TEST_METHOD(activatePump__must_deactivate_previous_active_pump)
 
 TEST_METHOD(activatePump__must_not_recalc_non_SP_schema)
 {
-    auto pump1 = Z::PumpMode_Waist::instance()->makePump(); TEST_LOG_PTR(pump1);
-    auto pump2 = Z::PumpMode_Waist::instance()->makePump(); TEST_LOG_PTR(pump2);
+    auto pump1 = PumpMode_Waist::instance()->makePump(); TEST_LOG_PTR(pump1);
+    auto pump2 = PumpMode_Waist::instance()->makePump(); TEST_LOG_PTR(pump2);
     pump2->activate(true);
 
     SCHEMA_AND_LISTENER;

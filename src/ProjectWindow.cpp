@@ -350,7 +350,7 @@ void ProjectWindow::updateStatusInfo()
         if (pump)
         {
             pumpHint = pump->displayStr();
-            auto pumpMode = Z::Pump::findByModeName(pump->modeName());
+            auto pumpMode = Pump::findByModeName(pump->modeName());
             if (pumpMode)
                 pumpIcon = pumpMode->iconPath();
         }
@@ -493,7 +493,7 @@ void ProjectWindow::showPumpsWindow()
 //------------------------------------------------------------------------------
 //                               Schema events
 
-void ProjectWindow::pumpChanged(Schema *s, Z::PumpParams *pump)
+void ProjectWindow::pumpChanged(Schema *s, PumpParams *pump)
 {
     if (pump->isActive() && s->isSP())
         updateStatusInfo();

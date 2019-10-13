@@ -8,19 +8,17 @@ class QLineEdit;
 QT_END_NAMESPACE
 
 class ParamsEditorTS;
-namespace Z {
 class PumpParams;
-}
 
 class PumpParamsDialog : public RezonatorDialog
 {
     Q_OBJECT
 
 public:
-    explicit PumpParamsDialog(Z::PumpParams *params, QWidget *parent = nullptr);
+    explicit PumpParamsDialog(PumpParams *params, QWidget *parent = nullptr);
 
-    static Z::PumpParams *makeNewPump();
-    static bool editPump(Z::PumpParams *params);
+    static PumpParams *makeNewPump();
+    static bool editPump(PumpParams *params);
 
 public slots:
     void collect() override;
@@ -29,7 +27,7 @@ protected:
     void showEvent(QShowEvent*) override;
 
 private:
-    Z::PumpParams *_params;
+    PumpParams *_params;
     ParamsEditorTS *_paramsEditor;
     QLineEdit *_editorLabel;
     QLineEdit *_editorTitle;

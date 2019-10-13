@@ -284,7 +284,7 @@ Schema* ProjectOperations::createDefaultSchema(TripType tripType)
 
 void ProjectOperations::createDefaultPump(Schema *schema)
 {
-    auto pump = Z::PumpMode_Waist::instance()->makePump();
+    auto pump = PumpMode_Waist::instance()->makePump();
     pump->activate(true);
 
     if (Settings::instance().pumpAutoLabel)
@@ -294,7 +294,7 @@ void ProjectOperations::createDefaultPump(Schema *schema)
     schema->events().raise(SchemaEvents::PumpCreated, pump);
 }
 
-bool ProjectOperations::editPumpDlg(Z::PumpParams* pump)
+bool ProjectOperations::editPumpDlg(PumpParams* pump)
 {
     return PumpParamsDialog::editPump(pump);
 }

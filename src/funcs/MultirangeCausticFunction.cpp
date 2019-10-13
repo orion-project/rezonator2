@@ -102,7 +102,7 @@ Z::Unit MultirangeCausticFunction::defaultUnitY() const
     return CausticFunction::defaultUnitsForMode(mode());
 }
 
-void MultirangeCausticFunction::setPump(Z::PumpParams* pump)
+void MultirangeCausticFunction::setPump(PumpParams* pump)
 {
     for (CausticFunction *func : _funcs)
         func->setPump(pump);

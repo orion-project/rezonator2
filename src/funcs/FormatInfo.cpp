@@ -201,7 +201,7 @@ QString FormatElemParams::format(Element *elem)
 //                              FormatPumpParams
 //------------------------------------------------------------------------------
 
-QString FormatPumpParams::format(Z::PumpParams *pump)
+QString FormatPumpParams::format(PumpParams *pump)
 {
     QStringList paramsInfo;
     for (Z::ParameterTS *param : *pump->params())

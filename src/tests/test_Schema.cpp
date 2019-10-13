@@ -90,7 +90,7 @@ TEST_METHOD(destructor__must_delete_custom_params)
 
 TEST_METHOD(destructor__must_delete_pumps)
 {
-    class TestPumpParams : public Z::PumpParams
+    class TestPumpParams : public PumpParams
     {
     public:
         ~TestPumpParams() { SET_TEST_DATA("pump was deleted", true); }
@@ -520,8 +520,8 @@ TEST_METHOD(ElementInterface__must_be_unlinked_after_deletion_of_neighbour)
 
 TEST_METHOD(activePump)
 {
-    auto p1 = Z::PumpMode_Waist::instance()->makePump();
-    auto p2 = Z::PumpMode_Waist::instance()->makePump();
+    auto p1 = PumpMode_Waist::instance()->makePump();
+    auto p2 = PumpMode_Waist::instance()->makePump();
 
     Schema s;
     s.pumps()->append(p1);

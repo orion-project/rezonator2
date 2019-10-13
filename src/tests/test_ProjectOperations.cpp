@@ -3,8 +3,6 @@
 #include "../AppSettings.h"
 #include "../ProjectOperations.h"
 
-#pragma GCC diagnostic ignored "-Wpadded"
-
 namespace Z {
 namespace Tests {
 namespace ProjectOperationsTests {
@@ -14,12 +12,12 @@ class TestProjectOperations : public ProjectOperations
 {
 public:
     TestProjectOperations(Schema* s) : ProjectOperations(s, nullptr, nullptr) {}
-    Z::PumpParams* editedPump = nullptr;
+    PumpParams* editedPump = nullptr;
     bool setupPumpDlgResult = true;
     bool selectTripTypeDlgResult = true;
     TripType selectedTripType = TripType::SW;
 protected:
-    bool editPumpDlg(Z::PumpParams* pump) override {
+    bool editPumpDlg(PumpParams* pump) override {
         editedPump = pump;
         return setupPumpDlgResult;
     }
@@ -106,7 +104,7 @@ TEST_CASE_METHOD(setupPump__must_do_nothing_for_non_SP_schema, TripType tripType
 {
     SCHEMA_PTR_AND_LISTENER(tripType);
 
-    auto pump = Z::PumpMode_Waist::instance()->makePump();
+    auto pump = PumpMode_Waist::instance()->makePump();
     pump->activate(true);
     schema->pumps()->append(pump);
 

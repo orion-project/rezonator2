@@ -2,17 +2,22 @@
 
 #include <QDebug>
 
-namespace Z {
-
+using namespace Z;
 using namespace Units;
 
 //--------------------------------------------------------------------------------
 //                                     PumpMode
 //--------------------------------------------------------------------------------
 
-PumpMode::~PumpMode()
-{
-}
+PumpMode::~PumpMode() {}
+
+// To skip static analyzer warnings "class has no out-of-line definitions"
+PumpMode_Waist::~PumpMode_Waist() {}
+PumpMode_Front::~PumpMode_Front() {}
+PumpMode_RayVector::~PumpMode_RayVector() {}
+PumpMode_TwoSections::~PumpMode_TwoSections() {}
+PumpMode_Complex::~PumpMode_Complex() {}
+PumpMode_InvComplex::~PumpMode_InvComplex() {}
 
 //--------------------------------------------------------------------------------
 //                                   PumpParams
@@ -188,5 +193,3 @@ QString Pump::labelPrefix()
 {
     return QStringLiteral("P");
 }
-
-} // namespace Z
