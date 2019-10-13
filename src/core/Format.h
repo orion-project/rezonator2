@@ -20,6 +20,7 @@ namespace Strs {
 
 inline QString lambda() { return QStringLiteral("λ"); }
 inline QString alpha() { return QStringLiteral("α"); }
+inline QString theta() { return QStringLiteral("θ"); }
 
 inline QString homepage() { return "http://rezonator.orion-project.org"; }
 inline QString versionFileUrl() { return "http://rezonator.orion-project.org/files/version.xml"; }

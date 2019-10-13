@@ -1,8 +1,10 @@
 #include "Elements.h"
+
 #include "Format.h"
+#include "../funcs/PumpCalculator.h"
+#include "core/OriFloatingPoint.h"
 
 #include <math.h>
-#include "core/OriFloatingPoint.h"
 
 // TODO:NEXT-VER in general case all parameters units should be verified too.
 // But currenly we have verification only in that places which always use correct uints (e.g. Element props dialog).
@@ -110,6 +112,13 @@ void ElemPlate::setSubRangeSI(double value)
     _ms1 = _mt1;
     _mt2.assign(1, lengthSI() - value, 0, ior());
     _ms2 = _mt2;
+}
+
+//------------------------------------------------------------------------------
+//                              ElemFlatMirror
+
+ElemFlatMirror::ElemFlatMirror() : Element()
+{
 }
 
 //------------------------------------------------------------------------------
@@ -384,6 +393,13 @@ void ElemMatrix::calcMatrixInternal()
 }
 
 //------------------------------------------------------------------------------
+//                                ElemPoint
+
+ElemPoint::ElemPoint() : Element()
+{
+}
+
+//------------------------------------------------------------------------------
 //                             ElemNormalInterface
 
 void ElemNormalInterface::calcMatrixInternal()
@@ -629,4 +645,31 @@ void ElemGrinLens::setSubRangeSI(double value)
         _ms1.assign(1, L1 / n0, 0, 1 / n0);
         _ms2.assign(1, L2, 0, n0);
     }
+}
+
+//------------------------------------------------------------------------------
+//                             ElemAxiconMirror
+
+ElemAxiconMirror::ElemAxiconMirror() : ElementDynamic()
+{
+    _theta = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Theta"), Z::Strs::theta(),
+                              qApp->translate("Param", "Axicon angle"),
+                              qApp->translate("Param", ""));
+    _alpha = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Alpha"), Z::Strs::alpha(),
+                              qApp->translate("Param", "Angle of incidence "),
+                              qApp->translate("Param", "Zero angle is normal incidence."));
+    addParam(_theta, 0.1, Z::Units::deg());
+    addParam(_alpha, 0, Z::Units::deg());
+}
+
+void ElemAxiconMirror::calcDynamicMatrix(const CalcParams& p)
+{
+    auto beamT = p.pumpCalcT->calc(*p.Mt, p.prevElemWavelenSI);
+    auto beamS = p.pumpCalcS->calc(*p.Ms, p.prevElemWavelenSI);
+
+    auto cosA = cos(alpha());
+    auto tmp = -2 * theta();
+
+    _mt_dyn.assign(1, 0, tmp / beamT.beamRadius / cosA, 1);
+    _ms_dyn.assign(1, 0, tmp / beamS.beamRadius * cosA, 1);
 }

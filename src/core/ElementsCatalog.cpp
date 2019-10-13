@@ -23,6 +23,7 @@ ElementsCatalog::ElementsCatalog()
     registerElement(categoryAux, new ElemCylinderLensT);
     registerElement(categoryAux, new ElemCylinderLensS);
     registerElement(categoryAux, new ElemGrinLens);
+    registerElement(categoryAux, new ElemAxiconMirror);
 
     auto categoryIntf = qApp->translate("Elements", "Media and interfaces");
     registerElement(categoryIntf, new ElemMediumRange);

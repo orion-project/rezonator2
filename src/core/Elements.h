@@ -35,6 +35,7 @@ DECLARE_ELEMENT_END
 //------------------------------------------------------------------------------
 
 DECLARE_ELEMENT(ElemFlatMirror, Element)
+    ElemFlatMirror();
     TYPE_NAME(qApp->translate("Elements", "Flat mirror"))
     DEFAULT_LABEL("M")
     PARAMS_EDITOR(None)
@@ -146,6 +147,7 @@ DECLARE_ELEMENT_END
 //------------------------------------------------------------------------------
 
 DECLARE_ELEMENT(ElemPoint, Element)
+    ElemPoint();
     TYPE_NAME(qApp->translate("Elements", "Point"))
     DEFAULT_LABEL("P")
     PARAMS_EDITOR(None)
@@ -219,6 +221,19 @@ DECLARE_ELEMENT(ElemGrinLens, ElementRange)
     Z::Parameter* paramIor2s() const { return _ior2s; }
 private:
     Z::Parameter *_ior2t, *_ior2s;
+DECLARE_ELEMENT_END
+
+//------------------------------------------------------------------------------
+
+DECLARE_ELEMENT(ElemAxiconMirror, ElementDynamic)
+    ElemAxiconMirror();
+    TYPE_NAME(qApp->translate("Elements", "Axicon (mirror)"))
+    DEFAULT_LABEL("XM")
+    void calcDynamicMatrix(const CalcParams& p) override;
+    double theta() const { return _theta->value().toSi(); }
+    double alpha() const { return _alpha->value().toSi(); }
+private:
+    Z::Parameter *_theta, *_alpha;
 DECLARE_ELEMENT_END
 
 #endif // ELEMENTS_H
