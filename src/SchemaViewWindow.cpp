@@ -207,12 +207,14 @@ void SchemaViewWindow::elementCreated(Schema*, Element *elem)
 
 bool SchemaViewWindow::canCopy()
 {
-    return _table->hasSelection();
+    return _table->selectionModel()->hasSelection();
 }
 
 void SchemaViewWindow::copy()
 {
-    Z::IO::Clipboard::setElements(_table->selection());
+    auto elems = _table->selection();
+    if (!elems.isEmpty())
+        Z::IO::Clipboard::setElements(elems);
 }
 
 void SchemaViewWindow::paste()

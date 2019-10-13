@@ -38,7 +38,7 @@ QString SchemaWriterJson::writeToString()
 
     writeGeneral(root);
     writeCustomParams(root);
-    writePumps(root);
+    writePumps(root, *_schema->pumps());
     writeElements(root, _schema->elements());
     writeParamLinks(root);
     writeFormulas(root);
@@ -70,36 +70,6 @@ void SchemaWriterJson::writeCustomParams(QJsonObject& root)
             { "unit", p->value().unit()->alias() },
         });
     root["custom_params"] = customParams;
-}
-
-void SchemaWriterJson::writePumps(QJsonObject &root)
-{
-    QJsonArray pumpsJson;
-    for (PumpParams* pump: *_schema->pumps())
-    {
-        QJsonObject pumpJson;
-        writePump(pumpJson, pump);
-        pumpsJson.append(pumpJson);
-    }
-    root["pumps"] = pumpsJson;
-}
-
-void SchemaWriterJson::writePump(QJsonObject &root, PumpParams *pump)
-{
-    auto mode = Pump::findByModeName(pump->modeName());
-    if (!mode)
-    {
-        qCritical() << "SchemaWriterJson::writePump(): Unable to find mode for pump parameters";
-        return;
-    }
-    root["mode"] = mode->modeName();
-    root["label"] = pump->label();
-    root["title"] = pump->title();
-    root["is_active"] = pump->isActive();
-    QJsonObject paramsJson;
-    for (Z::ParameterTS* p : *pump->params())
-        paramsJson[p->alias()] = writeValueTS(p->value());
-    root["params"] = paramsJson;
 }
 
 void SchemaWriterJson::writeParamLinks(QJsonObject& root)
@@ -193,6 +163,36 @@ void writeElement(QJsonObject& root, Element *elem)
     QJsonObject paramsJson;
     for (Z::Parameter* p : elem->params())
         paramsJson[p->alias()] = writeValue(p->value());
+    root["params"] = paramsJson;
+}
+
+void writePumps(QJsonObject& root, const QList<PumpParams*>& pumps)
+{
+    QJsonArray pumpsJson;
+    for (auto pump: pumps)
+    {
+        QJsonObject pumpJson;
+        writePump(pumpJson, pump);
+        pumpsJson.append(pumpJson);
+    }
+    root["pumps"] = pumpsJson;
+}
+
+void writePump(QJsonObject &root, PumpParams *pump)
+{
+    auto mode = Pump::findByModeName(pump->modeName());
+    if (!mode)
+    {
+        qCritical() << "SchemaWriterJson::writePump(): Unable to find mode for pump parameters";
+        return;
+    }
+    root["mode"] = mode->modeName();
+    root["label"] = pump->label();
+    root["title"] = pump->title();
+    root["is_active"] = pump->isActive();
+    QJsonObject paramsJson;
+    for (Z::ParameterTS* p : *pump->params())
+        paramsJson[p->alias()] = writeValueTS(p->value());
     root["params"] = paramsJson;
 }
 

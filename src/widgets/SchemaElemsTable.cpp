@@ -77,32 +77,22 @@ void SchemaElemsTable::setSelected(Element *elem)
 Elements SchemaElemsTable::selection() const
 {
     Elements elements;
-    QList<int> rows = selectedRows();
-    for (int i = 0; i < rows.count(); i++)
-        elements.append(schema()->element(rows[i]));
-    if (elements.empty())
-    {
-        auto elem = selected();
-        if (elem) elements << elem;
-    }
+    for (int row : selectedRows())
+        elements << schema()->element(row);
     return elements;
 }
 
 QList<int> SchemaElemsTable::selectedRows() const
 {
-    QList<int> result;
-    QList<QTableWidgetSelectionRange> selection = selectedRanges();
-    for (int i = 0; i < selection.count(); i++)
-        for (int j = selection.at(i).topRow(); j <= selection.at(i).bottomRow(); j++)
-            if (j < rowCount()-1)
-                result.append(j);
-    return result;
-}
-
-bool SchemaElemsTable::hasSelection() const
-{
-    int row = currentRow();
-    return row > -1 && row < rowCount()-1;
+    QList<int> rows;
+    for (auto index : selectionModel()->selectedIndexes())
+    {
+        // Don't include the last row because it's the "Create element" placeholder
+        if (index.row() == rowCount() - 1) continue;
+        if (!rows.contains(index.row())) rows << index.row();
+    }
+    std::sort(rows.begin(), rows.end());
+    return rows;
 }
 
 // TODO: This method should be optimized, it takes 0.1 - 0.2s for schema of 7 elements.

@@ -17,7 +17,7 @@ class CalcManager;
     Basic window containing visual representation of schema (element list, layout)
     and holding actions controlling the schema (append, remove elements, etc.).
 */
-class SchemaViewWindow: public SchemaMdiChild, public EditableWindow
+class SchemaViewWindow: public SchemaMdiChild, public IEditableWindow
 {
     Q_OBJECT
 

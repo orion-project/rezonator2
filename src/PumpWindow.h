@@ -35,6 +35,8 @@ public:
     Schema* schema() const { return _schema; }
 
     PumpParams* selected() const;
+    QList<PumpParams*> selection() const;
+    QList<int> selectedRows() const;
     void setSelected(PumpParams*);
 
     // inherits from SchemaListener
@@ -67,7 +69,7 @@ private:
 
 //------------------------------------------------------------------------------
 
-class PumpWindow : public SchemaMdiChild, public ISchemaWindowStorable
+class PumpWindow : public SchemaMdiChild, public ISchemaWindowStorable, public IEditableWindow
 {
     Q_OBJECT
 
@@ -85,12 +87,21 @@ public:
     // inherits from ISchemaWindowStorable
     QString storableType() const override { return PumpWindowStorable::windowType; }
 
+    // inherits from EditableWindow
+    SupportedCommands supportedCommands() override {
+        return EditCmd_Copy | EditCmd_Paste | EditCmd_SelectAll; }
+    bool canCopy() override;
+    bool canPaste() override { return true; }
+    void selectAll() override;
+
 public slots:
     void createPump();
     void deletePump();
     void editPump();
     void activatePump();
     void clonePump();
+    void copy() override;
+    void paste() override;
 
 protected:
     explicit PumpWindow(Schema*owner);

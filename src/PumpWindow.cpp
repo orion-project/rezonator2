@@ -3,6 +3,7 @@
 #include "Appearance.h"
 #include "PumpParamsDialog.h"
 #include "funcs/FormatInfo.h"
+#include "io/Clipboard.h"
 #include "widgets/RichTextItemDelegate.h"
 #include "widgets/ValuesEditorTS.h"
 
@@ -97,6 +98,24 @@ void PumpsTable::showContextMenu(const QPoint& pos)
 PumpParams* PumpsTable::selected() const
 {
     return schema()->pumps()->at(currentRow());
+}
+
+QList<PumpParams*> PumpsTable::selection() const
+{
+    QList<PumpParams*> pumps;
+    for (auto row : selectedRows())
+        pumps << schema()->pumps()->at(row);
+    return pumps;
+}
+
+QList<int> PumpsTable::selectedRows() const
+{
+    QList<int> rows;
+    for (auto index : selectionModel()->selectedIndexes())
+        if (!rows.contains(index.row()))
+            rows << index.row();
+    std::sort(rows.begin(), rows.end());
+    return rows;
 }
 
 void PumpsTable::setSelected(PumpParams *param)
@@ -224,7 +243,7 @@ PumpWindow::PumpWindow(Schema *owner) : SchemaMdiChild(owner)
     createStatusBar();
 
     _table->setContextMenu(_contextMenu);
-    connect(_table, SIGNAL(doubleClicked(Z::PumpParams*)), this, SLOT(editPump()));
+    connect(_table, SIGNAL(doubleClicked(PumpParams*)), this, SLOT(editPump()));
     schema()->registerListener(_table);
 
     showStatusInfo();
@@ -421,4 +440,31 @@ void PumpWindow::showStatusInfo()
         _statusBar->setText(STATUS_ACTIVE_PUMP, tr("Active pump: %1").arg(activePumpStr));
     }
     else _statusBar->clear(STATUS_ACTIVE_PUMP);
+}
+
+bool PumpWindow::canCopy()
+{
+    return _table->selectionModel()->hasSelection();
+}
+
+void PumpWindow::selectAll()
+{
+    _table->selectAll();
+}
+
+void PumpWindow::copy()
+{
+    auto pumps = _table->selection();
+    if (!pumps.isEmpty())
+        Z::IO::Clipboard::setPumps(pumps);
+}
+
+void PumpWindow::paste()
+{
+    auto pumps = Z::IO::Clipboard::getPumps();
+    for (auto pump : pumps)
+    {
+        // TODO: correct pump label
+        addNewPump(pump);
+    }
 }

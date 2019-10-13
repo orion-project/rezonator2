@@ -135,10 +135,7 @@ void SchemaReaderJson::readFromUtf8(const QByteArray& data)
     readGeneral(root);
     readCustomParams(root);
     readPumps(root);
-
-    auto elems = readElements(root, &_report);
-    _schema->insertElements(elems, -1, false, false);
-
+    readElements(root);
     readParamLinks(root);
     readFormulas(root);
     readWindows(root);
@@ -217,49 +214,26 @@ void SchemaReaderJson::readCustomParam(const QJsonObject& root, const QString &a
 
 void SchemaReaderJson::readPumps(const QJsonObject& root)
 {
-    if (!root.contains("pumps"))
+    auto pumps = Z::IO::Json::readPumps(root, &_report);
+
+    if (pumps.isEmpty())
     {
         if (_schema->isSP())
         {
-            _report.warning("No pumps are stored in file, default pump will be created.");
+            _report.warning("There are no pumps in the file, default pump created.");
             _schema->pumps()->append(Pump::allModes().first()->makePump());
         }
         else return;
     }
-    JsonValue pumpsJson(root, "pumps", &_report);
-    if (pumpsJson)
-        for (auto it = pumpsJson.array().begin(); it != pumpsJson.array().end(); it++)
-            readPump((*it).toObject());
+
+    for (auto pump : pumps)
+        _schema->pumps()->append(pump);
 }
 
-void SchemaReaderJson::readPump(const QJsonObject& root)
+void SchemaReaderJson::readElements(const QJsonObject& root)
 {
-    auto pumpModeName = root["mode"].toString();
-    auto pumpMode = Pump::findByModeName(pumpModeName);
-    if (!pumpMode)
-        return _report.warning(QString("Unknown pump mode '%1', pump skipped").arg(pumpModeName));
-
-    auto pump = pumpMode->makePump();
-    pump->setLabel(root["label"].toString());
-    pump->setTitle(root["title"].toString());
-    pump->activate(root["is_active"].toBool());
-
-    JsonValue paramsJson(root, "params", &_report);
-    if (paramsJson)
-    {
-        for (Z::ParameterTS *param : *pump->params())
-        {
-            JsonValue paramJson(paramsJson, param->alias(), &_report);
-            if (paramJson)
-            {
-                auto res = readParamValueTS(paramJson.obj(), param);
-                if (!res.isEmpty())
-                    _report.warning(QString("Reading pump #%1: %2").arg(_schema->pumps()->size()).arg(res));
-            }
-        }
-    }
-
-    _schema->pumps()->append(pump);
+    auto elems = Z::IO::Json::readElements(root, &_report);
+    _schema->insertElements(elems, -1, false, false);
 }
 
 void SchemaReaderJson::readParamLinks(const QJsonObject& root)
@@ -423,6 +397,57 @@ Element* readElement(const QJsonObject& root, Z::Report* report)
     // TODO: read misalignments
 
     return elem;
+}
+
+QList<PumpParams*> readPumps(const QJsonObject& root, Z::Report* report)
+{
+    if (!root.contains("pumps")) return {};
+
+    JsonValue pumpsJson(root, "pumps", report);
+    if (!pumpsJson) return {};
+
+    QList<PumpParams*> pumps;
+    for (auto it = pumpsJson.array().begin(); it != pumpsJson.array().end(); it++)
+    {
+        auto pump = readPump((*it).toObject(), report);
+        if (pump) pumps << pump;
+    }
+    return pumps;
+}
+
+PumpParams* readPump(const QJsonObject& root, Z::Report* report)
+{
+    auto pumpModeName = root["mode"].toString();
+    auto pumpMode = Pump::findByModeName(pumpModeName);
+    if (!pumpMode)
+    {
+        report->warning(QString("Unknown pump mode '%1', pump skipped").arg(pumpModeName));
+        return nullptr;
+    }
+
+    auto pump = pumpMode->makePump();
+    pump->setLabel(root["label"].toString());
+    pump->setTitle(root["title"].toString());
+    pump->activate(root["is_active"].toBool());
+
+    JsonValue paramsJson(root, "params", report);
+    if (!paramsJson)
+    {
+        delete pump;
+        return nullptr;
+    }
+
+    for (Z::ParameterTS *param : *pump->params())
+    {
+        JsonValue paramJson(paramsJson, param->alias(), report);
+        if (!paramJson) continue;
+
+        auto res = readParamValueTS(paramJson.obj(), param);
+        if (!res.isEmpty())
+            report->warning(QString("Reading pump %1: %2").arg(pump->label()).arg(res));
+    }
+
+    return pump;
 }
 
 } // namespace Json

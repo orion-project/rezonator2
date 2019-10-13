@@ -27,8 +27,6 @@ private:
 
     void writeGeneral(QJsonObject& root);
     void writeCustomParams(QJsonObject& root);
-    void writePumps(QJsonObject &root);
-    void writePump(QJsonObject &root, PumpParams *pump);
     void writeParamLinks(QJsonObject& root);
     void writeFormulas(QJsonObject& root);
     void writeWindows(QJsonObject& root);
@@ -40,6 +38,9 @@ namespace Json {
 
 void writeElements(QJsonObject& root, const QList<Element*>& elements);
 void writeElement(QJsonObject& root, Element *elem);
+
+void writePumps(QJsonObject& root, const QList<PumpParams*>& pumps);
+void writePump(QJsonObject &root, PumpParams *pump);
 
 } // namespace Json
 } // namespace IO

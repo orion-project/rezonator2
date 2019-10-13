@@ -17,6 +17,7 @@ namespace Clipboard {
 
 const QString Z_CLIPBOARD_MIME_TYPE = "application/x-rezonator2-mime";
 const QString Z_CLIPBOARD_DATA_ELEMENTS = Z_CLIPBOARD_MIME_TYPE + ";value=elements";
+const QString Z_CLIPBOARD_DATA_PUMPS = Z_CLIPBOARD_MIME_TYPE + ";value=pumps";
 
 void setClipboardData(QJsonObject& root, const QString& dataType)
 {
@@ -84,6 +85,26 @@ QList<Element*> getElements()
         qDebug() << report.str();
 
     return elems;
+}
+
+void setPumps(const QList<PumpParams*>& pumps)
+{
+    QJsonObject root;
+    Z::IO::Json::writePumps(root, pumps);
+    setClipboardData(root, Z_CLIPBOARD_DATA_PUMPS);
+}
+
+QList<PumpParams*> getPumps()
+{
+    QJsonObject root = getClipboradData(Z_CLIPBOARD_DATA_PUMPS);
+    if (root.isEmpty()) return {};
+
+    Z::Report report;
+    auto pumps = Z::IO::Json::readPumps(root, &report);
+    if (!report.isEmpty())
+        qDebug() << report.str();
+
+    return pumps;
 }
 
 } // namespace Clipboard

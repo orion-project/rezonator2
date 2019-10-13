@@ -256,7 +256,7 @@ void ProjectWindow::updateTitle()
 
 namespace  {
 
-void activateEditAction(QAction* action, EditableWindow* wnd, EditableWindow::SupportedCommand cmd)
+void activateEditAction(QAction* action, IEditableWindow* wnd, IEditableWindow::SupportedCommand cmd)
 {
     bool on = wnd && wnd->supportedCommands().testFlag(cmd);
     action->setEnabled(on);
@@ -270,11 +270,11 @@ void ProjectWindow::updateMenuBar()
     BasicMdiChild* child = _mdiArea->activeChild();
 
     // Update Edit menu
-    EditableWindow* editable = _mdiArea->activeEditableChild();
-    activateEditAction(actnEditCut, editable, EditableWindow::EditCmd_Cut);
-    activateEditAction(actnEditCopy, editable, EditableWindow::EditCmd_Copy);
-    activateEditAction(actnEditPaste, editable, EditableWindow::EditCmd_Paste);
-    activateEditAction(actnEditSelectAll, editable, EditableWindow::EditCmd_SelectAll);
+    IEditableWindow* editable = _mdiArea->activeEditableChild();
+    activateEditAction(actnEditCut, editable, IEditableWindow::EditCmd_Cut);
+    activateEditAction(actnEditCopy, editable, IEditableWindow::EditCmd_Copy);
+    activateEditAction(actnEditPaste, editable, IEditableWindow::EditCmd_Paste);
+    activateEditAction(actnEditSelectAll, editable, IEditableWindow::EditCmd_SelectAll);
 
     // Update View menu
     menuView->clear();

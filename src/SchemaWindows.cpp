@@ -45,7 +45,7 @@ void adjustIconSize(QToolBar* toolbar, const QSize& iconSize)
 //                               EditableWindow
 //------------------------------------------------------------------------------
 
-EditableWindow::~EditableWindow()
+IEditableWindow::~IEditableWindow()
 {
 }
 
@@ -189,9 +189,9 @@ BasicMdiChild* SchemaMdiArea::activeChild() const
     return dynamic_cast<BasicMdiChild*>(activeSubWindow());
 }
 
-EditableWindow* SchemaMdiArea::activeEditableChild() const
+IEditableWindow* SchemaMdiArea::activeEditableChild() const
 {
-    return dynamic_cast<EditableWindow*>(activeSubWindow());
+    return dynamic_cast<IEditableWindow*>(activeSubWindow());
 }
 
 
@@ -250,25 +250,25 @@ void SchemaMdiArea::activateChild(BasicMdiChild* window)
 
 void SchemaMdiArea::editableChild_Cut()
 {
-    EditableWindow *w = dynamic_cast<EditableWindow*>(activeSubWindow());
+    IEditableWindow *w = dynamic_cast<IEditableWindow*>(activeSubWindow());
     if (w && w->canCut()) w->cut();
 }
 
 void SchemaMdiArea::editableChild_Copy()
 {
-    EditableWindow *w = dynamic_cast<EditableWindow*>(activeSubWindow());
+    IEditableWindow *w = dynamic_cast<IEditableWindow*>(activeSubWindow());
     if (w && w->canCopy()) w->copy();
 }
 
 void SchemaMdiArea::editableChild_Paste()
 {
-    EditableWindow *w = dynamic_cast<EditableWindow*>(activeSubWindow());
+    IEditableWindow *w = dynamic_cast<IEditableWindow*>(activeSubWindow());
     if (w && w->canPaste()) w->paste();
 }
 
 void SchemaMdiArea::editableChild_SelectAll()
 {
-    EditableWindow *w = dynamic_cast<EditableWindow*>(activeSubWindow());
+    IEditableWindow *w = dynamic_cast<IEditableWindow*>(activeSubWindow());
     if (w) w->selectAll();
 }
 

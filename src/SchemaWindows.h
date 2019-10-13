@@ -33,7 +33,7 @@ void adjustIconSize(QToolBar* toolbar, const QSize& iconSize);
     If it is, project window calls corresponding method of that child
     to process the command.
 */
-class EditableWindow
+class IEditableWindow
 {
 public:
     enum SupportedCommand {
@@ -45,7 +45,7 @@ public:
     };
     Q_DECLARE_FLAGS(SupportedCommands, SupportedCommand)
 
-    virtual ~EditableWindow();
+    virtual ~IEditableWindow();
 
     virtual SupportedCommands supportedCommands() { return EditCmd_None; }
     virtual bool canCut() { return false; }
@@ -57,7 +57,7 @@ public:
     virtual void selectAll() {}
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(EditableWindow::SupportedCommands)
+Q_DECLARE_OPERATORS_FOR_FLAGS(IEditableWindow::SupportedCommands)
 
 //------------------------------------------------------------------------------
 /**
@@ -215,7 +215,7 @@ public:
     explicit SchemaMdiArea(QWidget *parent = nullptr);
 
     BasicMdiChild* activeChild() const;
-    EditableWindow* activeEditableChild() const;
+    IEditableWindow* activeEditableChild() const;
 
     void settingsChanged() override;
 

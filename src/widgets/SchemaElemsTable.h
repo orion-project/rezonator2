@@ -22,11 +22,8 @@ public:
 
     Element* selected() const override;
     void setSelected(Element*);
-
     Elements selection() const override;
     QList<int> selectedRows() const;
-
-    bool hasSelection() const;
 
     // inherits from SchemaListener
     void schemaLoaded(Schema*) override;

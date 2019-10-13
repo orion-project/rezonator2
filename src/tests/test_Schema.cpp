@@ -3,9 +3,6 @@
 
 #include <memory>
 
-#pragma GCC diagnostic ignored "-Wpadded"
-#pragma GCC diagnostic ignored "-Wunused-member-function"
-
 namespace Z {
 namespace Tests {
 namespace SchemaTests {

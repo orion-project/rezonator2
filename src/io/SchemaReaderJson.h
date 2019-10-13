@@ -9,6 +9,7 @@ QT_END_NAMESPACE
 
 class Element;
 class Schema;
+class PumpParams;
 
 class SchemaReaderJson
 {
@@ -29,7 +30,7 @@ private:
     void readCustomParams(const QJsonObject& root);
     void readCustomParam(const QJsonObject& root, const QString& alias);
     void readPumps(const QJsonObject& root);
-    void readPump(const QJsonObject& root);
+    void readElements(const QJsonObject& root);
     void readParamLinks(const QJsonObject& root);
     void readParamLink(const QJsonObject& root);
     void readFormulas(const QJsonObject& root);
@@ -44,6 +45,9 @@ namespace Json {
 
 QList<Element*> readElements(const QJsonObject& root, Z::Report* report);
 Element* readElement(const QJsonObject& root, Z::Report* report);
+
+QList<PumpParams*> readPumps(const QJsonObject& root, Z::Report* report);
+PumpParams* readPump(const QJsonObject& root, Z::Report* report);
 
 } // namespace Json
 } // namespace IO
