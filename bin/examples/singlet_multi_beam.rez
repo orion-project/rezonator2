@@ -84,11 +84,11 @@
                     "value_t": 0
                 }
             },
-            "title": "Geometric pump"
+            "title": ""
         },
         {
             "is_active": false,
-            "label": "P3",
+            "label": "P2",
             "mode": "RayVector",
             "params": {
                 "V": {
@@ -107,11 +107,11 @@
                     "value_t": 0
                 }
             },
-            "title": "Geometric pump"
+            "title": ""
         },
         {
             "is_active": false,
-            "label": "P4",
+            "label": "P3",
             "mode": "RayVector",
             "params": {
                 "V": {
@@ -130,11 +130,11 @@
                     "value_t": 0
                 }
             },
-            "title": "Geometric pump"
+            "title": ""
         },
         {
             "is_active": false,
-            "label": "P5",
+            "label": "P4",
             "mode": "RayVector",
             "params": {
                 "V": {
@@ -153,7 +153,7 @@
                     "value_t": 0
                 }
             },
-            "title": "Geometric pump"
+            "title": ""
         }
     ],
     "schema_version": "2.0",
@@ -162,46 +162,6 @@
     "windows": [
         {
             "type": "PumpsWindow"
-        },
-        {
-            "function": {
-                "arg": {
-                    "element_index": 0,
-                    "param": "L",
-                    "range": {
-                        "points": 10,
-                        "start": {
-                            "unit": "cm",
-                            "value": 0
-                        },
-                        "step": {
-                            "unit": "cm",
-                            "value": 0.05
-                        },
-                        "stop": {
-                            "unit": "cm",
-                            "value": 5
-                        },
-                        "use_step": false
-                    }
-                },
-                "mode": "BeamRadius"
-            },
-            "type": "Caustic",
-            "window": {
-                "cursor_enabled": true,
-                "cursor_mode": "Both",
-                "stored_views": [
-                ],
-                "ts_flipped": false,
-                "ts_mode": "T+S",
-                "x_max": 5.05,
-                "x_min": -0.05,
-                "x_unit": "cm",
-                "y_max": 17.59778714378214,
-                "y_min": 9.638200612200851,
-                "y_unit": "mm"
-            }
         },
         {
             "function": {

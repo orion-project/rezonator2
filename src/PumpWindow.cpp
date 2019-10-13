@@ -459,12 +459,36 @@ void PumpWindow::copy()
         Z::IO::Clipboard::setPumps(pumps);
 }
 
+static QString makeUniquePumpLabel(PumpParams* pump, const QList<PumpParams*>& allPumps)
+{
+    for (int index = 1; index < 1000; index++)
+    {
+        bool isUnique = true;
+        auto label = QString("%1 (%2)").arg(pump->label()).arg(index);
+        for (auto p : allPumps)
+            if (p->label() == label)
+            {
+                isUnique = false;
+                break;
+            }
+        if (isUnique)
+            return label;
+    }
+    return pump->label();
+}
+
 void PumpWindow::paste()
 {
-    auto pumps = Z::IO::Clipboard::getPumps();
-    for (auto pump : pumps)
+    const auto pastedPumps = Z::IO::Clipboard::getPumps();
+    const auto& existedPumps = *schema()->pumps();
+    for (auto pastedPump : pastedPumps)
     {
-        // TODO: correct pump label
-        addNewPump(pump);
+        pastedPump->activate(false);
+
+        for (auto existedPump : existedPumps)
+            if (pastedPump->label() == existedPump->label())
+                pastedPump->setLabel(makeUniquePumpLabel(pastedPump, existedPumps));
+
+        addNewPump(pastedPump);
     }
 }
