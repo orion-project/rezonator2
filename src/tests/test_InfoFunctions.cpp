@@ -25,7 +25,7 @@ TEST_METHOD(InfoFuncRepetitionRate_RR_must_be_twice_of_SW)
     InfoFuncRepetitionRate rate_sw(&sw);
     rate_sw.calculate();
 
-    ASSERT_EQ_DBL(rate_rr.result(), rate_sw.result()*2)
+    ASSERT_EQ_DBL(rate_rr.repetitonRate(), rate_sw.repetitonRate()*2)
 }
 
 TEST_METHOD(InfoFuncRepetitionRate_must_account_optical_path)
@@ -50,7 +50,7 @@ TEST_METHOD(InfoFuncRepetitionRate_must_account_optical_path)
     InfoFuncRepetitionRate rate2(&s2);
     rate2.calculate();
 
-    ASSERT_EQ_DBL(rate1.result(), rate2.result()*2)
+    ASSERT_EQ_DBL(rate1.repetitonRate(), rate2.repetitonRate()*2)
 }
 
 //------------------------------------------------------------------------------

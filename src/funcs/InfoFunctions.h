@@ -14,7 +14,7 @@ class InfoFuncMatrix : public InfoFunction
 {
 public:
     InfoFuncMatrix(Schema*, Element*);
-    QString calculate() override;
+    QString calculateInternal() override;
     FunctionState elementDeleting(Element *elem) override;
     FUNC_NAME(qApp->translate("Func", "Element's Matrices"))
 private:
@@ -27,7 +27,7 @@ class InfoFuncMatrices : public InfoFunction
 {
 public:
     InfoFuncMatrices(Schema*, const Elements&);
-    QString calculate() override;
+    QString calculateInternal() override;
     FunctionState elementDeleting(Element*) override;
     FUNC_NAME(qApp->translate("Func", "Elements' Matrices"))
 protected:
@@ -40,7 +40,7 @@ class InfoFuncMatrixMultFwd : public InfoFuncMatrices
 {
 public:
     InfoFuncMatrixMultFwd(Schema*, const Elements&);
-    QString calculate() override;
+    QString calculateInternal() override;
     FUNC_NAME(qApp->translate("Func", "Matrix Product"))
 };
 
@@ -56,7 +56,7 @@ class InfoFuncMatrixRT : public InfoFunction
 {
 public:
     InfoFuncMatrixRT(Schema*, Element*);
-    QString calculate() override;
+    QString calculateInternal() override;
     FunctionState elementDeleting(Element*) override;
     FUNC_NAME(qApp->translate("Func", "Round-trip Matrix"))
 private:
@@ -70,12 +70,12 @@ class InfoFuncRepetitionRate : public InfoFunction
 {
 public:
     InfoFuncRepetitionRate(Schema *schema) : InfoFunction(schema) {}
-    QString calculate() override;
+    QString calculateInternal() override;
     QString helpTopic() const override { return QStringLiteral("func_reprate.html"); }
     FUNC_NAME(qApp->translate("Func", "Intermode Beats Frequency"))
-    double result() const { return _result; }
+    double repetitonRate() const { return _repetitonRate; }
 private:
-    double _result;
+    double _repetitonRate;
 };
 
 //------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ class InfoFuncSummary : public InfoFunction
 {
 public:
     InfoFuncSummary(Schema *schema) : InfoFunction(schema) {}
-    QString calculate() override;
+    QString calculateInternal() override;
     FUNC_NAME(qApp->translate("Func", "Schema Summary"))
 };
 

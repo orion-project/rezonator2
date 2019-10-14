@@ -4,6 +4,8 @@
 #include "../core/Element.h"
 #include "../core/Variable.h"
 
+#include "core/OriTemplates.h"
+
 #define FUNC_NAME(s)\
     QString name() const override { return s; }
 
@@ -11,13 +13,22 @@
     static QString _alias_() { return s; }\
     QString alias() const override { return s; }
 
-class Schema;
+class FunctionBase;
 class RoundTripCalculator;
+class Schema;
+
+class FunctionListener
+{
+public:
+    virtual ~FunctionListener();
+    virtual void functionCalculated(FunctionBase*) {}
+    virtual void functionDeleted(FunctionBase*) {}
+};
 
 /**
     Base class for all functions.
 */
-class FunctionBase
+class FunctionBase : public Notifier<FunctionListener>
 {
 public:
     enum FunctionState
@@ -27,7 +38,6 @@ public:
         Dead, ///< Function result has no meaning anymore. Function window should be closed.
     };
 public:
-    FunctionBase(Schema *schema) : _schema(schema) {}
     virtual ~FunctionBase();
 
     Schema* schema() const { return _schema; }
@@ -42,6 +52,8 @@ public:
 
 protected:
     Schema *_schema;
+
+    FunctionBase(Schema *schema) : _schema(schema) {}
 };
 
 /**
@@ -53,9 +65,18 @@ protected:
 class InfoFunction : public FunctionBase
 {
 public:
-    InfoFunction(Schema *schema) : FunctionBase(schema) {}
     virtual FunctionState elementDeleting(Element*);
-    virtual QString calculate() { return QString(); }
+    const QString& result() const { return _result; }
+    void calculate();
+    void freeze(bool on);
+    bool frozen() const { return _frozen; }
+protected:
+    InfoFunction(Schema *schema) : FunctionBase(schema) {}
+    virtual QString calculateInternal() { return QString(); }
+private:
+    QString _result;
+    bool _frozen = false;
+    bool _needRecalc = false;
 };
 
 #endif // FUNCTION_BASE_H

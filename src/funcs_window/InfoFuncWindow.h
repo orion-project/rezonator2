@@ -2,6 +2,7 @@
 #define INFO_FUNC_WINDOW_H
 
 #include "../SchemaWindows.h"
+#include "../funcs/InfoFunctions.h"
 
 QT_BEGIN_NAMESPACE
 class QTextBrowser;
@@ -10,10 +11,9 @@ class QAction;
 QT_END_NAMESPACE
 
 class Schema;
-class InfoFunction;
 class FrozenStateButton;
 
-class InfoFuncWindow : public SchemaPopupWindow, public SchemaToolWindow
+class InfoFuncWindow : public SchemaPopupWindow, public SchemaToolWindow, public FunctionListener
 {
     Q_OBJECT
 
@@ -25,6 +25,7 @@ public:
 protected:
     void recalcRequired(Schema*) override { processCalc(); }
     void elementDeleting(Schema*, Element*) override;
+    void functionCalculated(FunctionBase*) override;
 
 private slots:
     void freeze(bool);
@@ -38,17 +39,11 @@ private:
     QAction *actnUpdate, *actnFreeze, *actnFrozenInfo;
     FrozenStateButton *buttonFrozenInfo;
     InfoFunction *_function;
-    QString _result;
-    bool _needRecalc = false;
-    bool _frozen = false;
 
     explicit InfoFuncWindow(InfoFunction *func, QWidget *parent = nullptr);
 
     void createToolbar();
     void updateFrozenInfo();
-    void updateResultText();
-
-    QString paperColor();
 };
 
 #endif // INFO_FUNC_WINDOW_H

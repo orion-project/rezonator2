@@ -468,7 +468,12 @@ void PlotFuncWindow::freeze(bool frozen)
     actnUpdate->setEnabled(!_frozen);
     actnUpdateParams->setEnabled(!_frozen);
     actnFrozenInfo->setVisible(_frozen);
-    _buttonFrozenInfo->setInfo(InfoFuncSummary(schema()).calculate());
+    if (_frozen)
+    {
+        InfoFuncSummary summary(schema());
+        summary.calculate();
+        _buttonFrozenInfo->setInfo(summary.result());
+    }
     _leftPanel->setOptionsPanelEnabled(!_frozen);
     if (!_frozen and _needRecalc)
         update();

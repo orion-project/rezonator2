@@ -10,6 +10,7 @@
 
 //------------------------------------------------------------------------------
 //                              InfoFuncMatrix
+//------------------------------------------------------------------------------
 
 InfoFuncMatrix::InfoFuncMatrix(Schema *schema, Element *elem)
     : InfoFunction(schema), _element(elem) {}
@@ -20,13 +21,14 @@ FunctionBase::FunctionState InfoFuncMatrix::elementDeleting(Element *elem)
     return _element == elem? Frozen: Ok;
 }
 
-QString InfoFuncMatrix::calculate()
+QString InfoFuncMatrix::calculateInternal()
 {
     return Z::Format::elementTitleAndMatrices(_element);
 }
 
 //------------------------------------------------------------------------------
 //                             InfoFuncMatrices
+//------------------------------------------------------------------------------
 
 InfoFuncMatrices::InfoFuncMatrices(Schema *schema, const Elements& elems)
     : InfoFunction(schema), _elements(elems) {}
@@ -37,7 +39,7 @@ FunctionBase::FunctionState InfoFuncMatrices::elementDeleting(Element *elem)
     return _elements.isEmpty()? Dead: Ok;
 }
 
-QString InfoFuncMatrices::calculate()
+QString InfoFuncMatrices::calculateInternal()
 {
     QString result;
     for (int i = 0; i < _elements.size(); i++)
@@ -51,11 +53,12 @@ QString InfoFuncMatrices::calculate()
 
 //------------------------------------------------------------------------------
 //                             InfoFuncMatrixMultFwd
+//------------------------------------------------------------------------------
 
 InfoFuncMatrixMultFwd::InfoFuncMatrixMultFwd(Schema *schema, const Elements& elems)
     : InfoFuncMatrices(schema, elems) {}
 
-QString InfoFuncMatrixMultFwd::calculate()
+QString InfoFuncMatrixMultFwd::calculateInternal()
 {
     Z::Matrix mt, ms;
 
@@ -72,6 +75,7 @@ QString InfoFuncMatrixMultFwd::calculate()
 
 //------------------------------------------------------------------------------
 //                             InfoFuncMatrixMultBkwd
+//------------------------------------------------------------------------------
 
 InfoFuncMatrixMultBkwd::InfoFuncMatrixMultBkwd(Schema *schema, const Elements& elems)
     : InfoFuncMatrixMultFwd(schema, elems)
@@ -84,6 +88,7 @@ InfoFuncMatrixMultBkwd::InfoFuncMatrixMultBkwd(Schema *schema, const Elements& e
 
 //------------------------------------------------------------------------------
 //                            InfoFuncMatrixRT
+//------------------------------------------------------------------------------
 
 InfoFuncMatrixRT::InfoFuncMatrixRT(Schema *schema, Element *elem)
     : InfoFunction(schema), _element(elem)
@@ -96,7 +101,7 @@ FunctionBase::FunctionState InfoFuncMatrixRT::elementDeleting(Element *elem)
     return _element == elem? Frozen: Ok;
 }
 
-QString InfoFuncMatrixRT::calculate()
+QString InfoFuncMatrixRT::calculateInternal()
 {
     RoundTripCalculator c(_schema, _element);
     c.calcRoundTrip();
@@ -128,10 +133,11 @@ QString InfoFuncMatrixRT::formatStability(char plane, double value)
 
 //------------------------------------------------------------------------------
 //                            InfoFuncRepetitionRate
+//------------------------------------------------------------------------------
 
-QString InfoFuncRepetitionRate::calculate()
+QString InfoFuncRepetitionRate::calculateInternal()
 {
-    _result = 0;
+    _repetitonRate = 0;
     double L = 0;
     int count = 0;
     QStringList parts;
@@ -158,10 +164,10 @@ QString InfoFuncRepetitionRate::calculate()
         return qApp->translate("Func", "The schema does not contain elements having "
                 "length (ranges, crystals, etc.), or their total length is zero.");
 
-    _result = Z::Const::LightSpeed / L;
-    if (schema()->isSW()) _result /= 2.0;
+    _repetitonRate = Z::Const::LightSpeed / L;
+    if (schema()->isSW()) _repetitonRate /= 2.0;
 
-    Z::PrefixedValue freq(_result, Z::Units::Hz()); // convert to suitable kHz, MHz, etc.
+    Z::PrefixedValue freq(_repetitonRate, Z::Units::Hz()); // convert to suitable kHz, MHz, etc.
 
     QString sum = "<b>" % Z::format(L) % Z::Units::m()->name() % "</b>";
     if (count > 1) sum = parts.join(" + ") % " = " % sum;
@@ -181,8 +187,9 @@ QString InfoFuncRepetitionRate::calculate()
 
 //------------------------------------------------------------------------------
 //                             InfoFuncSummary
+//------------------------------------------------------------------------------
 
-QString InfoFuncSummary::calculate()
+QString InfoFuncSummary::calculateInternal()
 {
     Z::Format::FormatElemParams formatParams;
     formatParams.schema = schema();

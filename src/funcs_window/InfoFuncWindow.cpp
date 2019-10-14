@@ -4,7 +4,6 @@
 #include "../HelpSystem.h"
 #include "../core/Schema.h"
 #include "../funcs/FormatInfo.h"
-#include "../funcs/InfoFunctions.h"
 #include "../widgets/FrozenStateButton.h"
 
 #include "widgets/OriFlatToolBar.h"
@@ -52,7 +51,7 @@ InfoFuncWindow::InfoFuncWindow(InfoFunction *func, QWidget *parent) :
         move(parent->pos() + parent->rect().center() - rect().center());
     // TODO: iterate through all the information windows and move this if it overlaps some of existed
 
-    updateResultText();
+    _function->registerListener(this);
 
     if (!schema()->state().isLoading())
         processCalc(); // else recalc on schemaLoaded
@@ -60,6 +59,7 @@ InfoFuncWindow::InfoFuncWindow(InfoFunction *func, QWidget *parent) :
 
 InfoFuncWindow::~InfoFuncWindow()
 {
+    _function->unregisterListener(this);
     delete _function;
 }
 
@@ -93,21 +93,19 @@ void InfoFuncWindow::createToolbar()
 
 void InfoFuncWindow::updateFrozenInfo()
 {
-    if (_frozen)
-        buttonFrozenInfo->setInfo(InfoFuncSummary(schema()).calculate());
+    InfoFuncSummary summary(schema());
+    summary.calculate();
+    buttonFrozenInfo->setInfo(summary.result());
 }
 
-void InfoFuncWindow::updateResultText()
-{
-    _editor->setHtml(QStringLiteral("<body bgcolor=\"%1\">%2</body>").arg(paperColor(), _result));
-}
-
-QString InfoFuncWindow::paperColor()
+void InfoFuncWindow::functionCalculated(FunctionBase*)
 {
     QPalette p;
-    QColor color = p.color(QPalette::ToolTipBase);
-    if (_frozen) color = Ori::Color::blend(color, p.color(QPalette::Window), 0.5);
-    return color.name();
+    QColor pageColor = p.color(QPalette::ToolTipBase);
+    if (_function->frozen())
+        pageColor = Ori::Color::blend(pageColor, p.color(QPalette::Window), 0.5);
+
+    _editor->setHtml(QStringLiteral("<body bgcolor=%1>%2</body>").arg(pageColor.name(), _function->result()));
 }
 
 void InfoFuncWindow::elementDeleting(Schema*, Element *elem)
@@ -132,24 +130,16 @@ void InfoFuncWindow::elementDeleting(Schema*, Element *elem)
 
 void InfoFuncWindow::processCalc()
 {
-    if (!_frozen)
-    {
-        _result = _function->calculate();
-        updateResultText();
-    }
-    else
-        _needRecalc = true;
+    _function->calculate();
 }
 
 void InfoFuncWindow::freeze(bool frozen)
 {
-    _frozen = frozen;
-    actnUpdate->setEnabled(!_frozen);
-    actnFrozenInfo->setVisible(_frozen);
-    updateFrozenInfo();
-    if (!_frozen and _needRecalc)
-        processCalc();
-    else updateResultText();
+    actnUpdate->setEnabled(!frozen);
+    actnFrozenInfo->setVisible(frozen);
+    if (frozen) updateFrozenInfo();
+    _function->freeze(frozen);
+    functionCalculated(_function); // update back color
 }
 
 void InfoFuncWindow::help()
