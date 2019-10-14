@@ -1,16 +1,17 @@
 #ifndef SCHEMA_H
 #define SCHEMA_H
 
-#include <QApplication>
-#include <QDebug>
-#include <QMap>
-
 #include "CommonTypes.h"
 #include "Element.h"
 #include "Formula.h"
 #include "Parameters.h"
 #include "Pump.h"
-#include "SchemaClient.h"
+
+#include "core/OriTemplates.h"
+
+#include <QApplication>
+#include <QDebug>
+#include <QMap>
 
 class Schema;
 
@@ -22,9 +23,10 @@ class Schema;
     through the method @a Schema::registerListener(). The schema will call
     appropriate method of the interface when something occurs.
 */
-class SchemaListener : public SchemaClient
+class SchemaListener
 {
 public:
+    virtual ~SchemaListener();
     virtual void schemaCreated(Schema*) {}
     virtual void schemaDeleted(Schema*) {}
     virtual void schemaChanged(Schema*) {}
@@ -182,7 +184,7 @@ private:
 
 //------------------------------------------------------------------------------
 
-class Schema : public ElementOwner, public Z::ParameterListener
+class Schema : public ElementOwner, public Z::ParameterListener, public Notifier<SchemaListener>
 {
 public:
     Schema();
@@ -218,10 +220,6 @@ public:
     SchemaEvents& events() { return _events; }
     SchemaState& state() { return _state; }
     bool modified() const { return _state.current() == SchemaState::Modified; }
-
-    SchemaClients& clients() { return _clients; }
-    void registerListener(SchemaListener* listener) { _clients.append(listener); }
-    void unregisterListener(SchemaListener* listener) { _clients.remove(listener); }
 
     void insertElement(Element* elem, int index = -1, bool event = true);
     void insertElements(const Elements& elems, int index, bool event, bool generateLabels);
@@ -259,7 +257,6 @@ private:
     Elements _items;
     SchemaEvents _events;
     SchemaState _state;
-    SchemaClients _clients;
     SchemaSelection _selection;
     QString _fileName;
     QString _title, _notes;

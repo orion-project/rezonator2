@@ -4,6 +4,14 @@
 #include "Utils.h"
 
 //------------------------------------------------------------------------------
+//                               SchemaListener
+//------------------------------------------------------------------------------
+
+SchemaListener::~SchemaListener()
+{
+}
+
+//------------------------------------------------------------------------------
 //                                SchemaState
 //------------------------------------------------------------------------------
 
@@ -43,7 +51,7 @@ void SchemaEvents::raise(Event event, void *param) const
     if (int(eventProps.nextState) != SchemaState::Current)
         _schema->state().set(eventProps.nextState);
 
-    auto listeners = _schema->clients().get<SchemaListener>();
+    auto listeners = _schema->listeners();
 
     for (SchemaListener* listener : listeners)
         notify(listener, event, param);

@@ -85,7 +85,6 @@ HEADERS += \
     src/core/Pump.h \
     src/core/Report.h \
     src/core/Schema.h \
-    src/core/SchemaClient.h \
     src/core/Units.h \
     src/core/Values.h \
     src/core/Variable.h \
