@@ -96,6 +96,7 @@ HEADERS += \
     src/funcs/InfoFunctions.h \
     src/funcs/MultibeamCausticFunction.h \
     src/funcs/MultirangeCausticFunction.h \
+    src/funcs/PlotFuncRoundTripFunction.h \
     src/funcs/PlotFunction.h \
     src/funcs/PumpCalculator.h \
     src/funcs/RoundTripCalculator.h \
@@ -105,6 +106,7 @@ HEADERS += \
     src/funcs_window/InfoFuncWindow.h \
     src/funcs_window/MultiCausticParamsDlg.h \
     src/funcs_window/MultibeamCausticWindow.h \
+    src/funcs_window/MulticausticWindowHelpers.h \
     src/funcs_window/MultirangeCausticWindow.h \
     src/funcs_window/PlotFuncWindow.h \
     src/funcs_window/PlotFuncWindowStorable.h \
@@ -204,6 +206,7 @@ SOURCES += \
     src/funcs/InfoFunctions.cpp \
     src/funcs/MultibeamCausticFunction.cpp \
     src/funcs/MultirangeCausticFunction.cpp \
+    src/funcs/PlotFuncRoundTripFunction.cpp \
     src/funcs/PlotFunction.cpp \
     src/funcs/PumpCalculator.cpp \
     src/funcs/RoundTripCalculator.cpp \
@@ -213,6 +216,7 @@ SOURCES += \
     src/funcs_window/InfoFuncWindow.cpp \
     src/funcs_window/MultiCausticParamsDlg.cpp \
     src/funcs_window/MultibeamCausticWindow.cpp \
+    src/funcs_window/MulticausticWindowHelpers.cpp \
     src/funcs_window/MultirangeCausticWindow.cpp \
     src/funcs_window/PlotFuncWindow.cpp \
     src/funcs_window/PlotFuncWindowStorable.cpp \

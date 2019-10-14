@@ -33,8 +33,15 @@ public:
     inline const Z::Matrix* pMs() const { return &_ms; }
     inline const Z::MatrixArray& matrsT() const { return _matrsT; }
     inline const Z::MatrixArray& matrsS() const { return _matrsS; }
+
     QList<Element*> roundTrip() const;
     QString roundTripStr() const;
+
+    /// It mostly the same as `roundTrip()` but can be a bit different when `splitRange` is used,
+    /// then it contains the same element twice - the ref element at the beginning and at the end.
+    /// The idea is it must always have the same items number as `_matrsT` and `_matrsS`,
+    /// while `roundTrip()` is not oblidged to.
+    QList<Element*> matrixOwners() const { return _matrixOwners; }
 
 protected:
     /// Array of T-matrices for production (round-trip).
@@ -52,6 +59,8 @@ protected:
 
      /// Reference element for round-trip calculation.
     Element* _reference;
+
+    QList<Element*> _matrixOwners;
 
     Z::Enums::StabilityCalcMode _stabilityCalcMode = Z::Enums::StabilityCalcMode::Normal;
 

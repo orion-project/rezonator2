@@ -26,6 +26,7 @@ protected:
     void recalcRequired(Schema*) override { processCalc(); }
     void elementDeleting(Schema*, Element*) override;
     void functionCalculated(FunctionBase*) override;
+    void functionDeleted(FunctionBase*) override;
 
 private slots:
     void freeze(bool);

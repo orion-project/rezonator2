@@ -29,6 +29,7 @@ void RoundTripCalculator::calcRoundTrip(bool splitRange)
 
 void RoundTripCalculator::reset()
 {
+    _matrixOwners.clear();
     _roundTrip.clear();
     _matrsT.clear();
     _matrsS.clear();
@@ -105,31 +106,33 @@ void RoundTripCalculator::collectMatrices()
     // part of the range from current point to the next element
     if (range)
     {
-        _matrsT.push_back(range->pMt1());
-        _matrsS.push_back(range->pMs1());
+        _matrixOwners << range;
+        _matrsT << range->pMt1();
+        _matrsS << range->pMs1();
         i++;
     }
     // all other elements as a whole
     while (i < c)
     {
         const auto& item = _roundTrip.at(i);
+        _matrixOwners << item.element;
         if (item.secondPass)
         {
-            _matrsT.push_back(item.element->pMt_inv());
-            _matrsS.push_back(item.element->pMs_inv());
+            _matrsT << item.element->pMt_inv();
+            _matrsS << item.element->pMs_inv();
         }
         else
         {
             auto dynamicElem = dynamic_cast<ElementDynamic*>(item.element);
             if (dynamicElem && _schema->isSP())
             {
-                _matrsT.push_back(dynamicElem->pMt_dyn());
-                _matrsS.push_back(dynamicElem->pMs_dyn());
+                _matrsT << dynamicElem->pMt_dyn();
+                _matrsS << dynamicElem->pMs_dyn();
             }
             else
             {
-                _matrsT.push_back(item.element->pMt());
-                _matrsS.push_back(item.element->pMs());
+                _matrsT << item.element->pMt();
+                _matrsS << item.element->pMs();
             }
         }
         i++;
@@ -137,8 +140,9 @@ void RoundTripCalculator::collectMatrices()
     // remaining part of the range under investigation
     if (range)
     {
-        _matrsT.push_back(range->pMt2());
-        _matrsS.push_back(range->pMs2());
+        _matrixOwners << range;
+        _matrsT << range->pMt2();
+        _matrsS << range->pMs2();
     }
 }
 
@@ -152,8 +156,9 @@ void RoundTripCalculator::collectMatricesSP()
         auto range = Z::Utils::asRange(_roundTrip.at(i).element);
         if (range)
         {
-            _matrsT.push_back(range->pMt1());
-            _matrsS.push_back(range->pMs1());
+            _matrixOwners << range;
+            _matrsT << range->pMt1();
+            _matrsS << range->pMs1();
             i++;
         }
     }
@@ -161,8 +166,9 @@ void RoundTripCalculator::collectMatricesSP()
     while (i < c)
     {
         const auto& item = _roundTrip.at(i);
-        _matrsT.push_back(item.element->pMt());
-        _matrsS.push_back(item.element->pMs());
+        _matrixOwners << item.element;
+        _matrsT << item.element->pMt();
+        _matrsS << item.element->pMs();
         i++;
     }
 }

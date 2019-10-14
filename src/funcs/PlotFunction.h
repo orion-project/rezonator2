@@ -121,6 +121,8 @@ public:
     virtual Z::Unit defaultUnitX() const { return Z::Units::none(); }
     virtual Z::Unit defaultUnitY() const { return Z::Units::none(); }
 
+    RoundTripCalculator* roundTripCalculator() const { return _calc; }
+
 protected:
     Z::Variable _arg;
     RoundTripCalculator* _calc = nullptr;

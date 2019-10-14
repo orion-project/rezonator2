@@ -1,9 +1,11 @@
 #include "PlotFuncWindow.h"
 
+#include "InfoFuncWindow.h"
 #include "../Appearance.h"
 #include "../AppSettings.h"
 #include "../core/Protocol.h"
 #include "../funcs/InfoFunctions.h"
+#include "../funcs/PlotFuncRoundTripFunction.h"
 #include "../funcs/FunctionGraph.h"
 #include "../widgets/Plot.h"
 #include "../widgets/PlotHelpers.h"
@@ -68,8 +70,7 @@ void PlotFuncWindow::createActions()
     actnShowT->setChecked(true);
     actnShowS->setChecked(true);
 
-    actnShowRoundTrip = action(tr("Show Round-trip"), this, SLOT(showRoundTrip()));
-    actnShowRoundTrip->setVisible(false);
+    actnShowRoundTrip = action(tr("Show Round-trip"), this, SLOT(showRoundTrip()), ":/toolbar/func_round_trip");
 
     actnFreeze = toggledAction(tr("Freeze"), this, SLOT(freeze(bool)), ":/toolbar/freeze", Qt::CTRL | Qt::Key_F);
 
@@ -454,7 +455,7 @@ void PlotFuncWindow::graphSelected(QCPGraph *graph)
 
 void PlotFuncWindow::showRoundTrip()
 {
-    // TODO:NEXT-VER
+    InfoFuncWindow::open(new PlotFuncRoundTripFunction(windowTitle(), _function));
 }
 
 void PlotFuncWindow::recalcRequired(Schema*)

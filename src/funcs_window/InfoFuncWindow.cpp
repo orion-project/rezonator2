@@ -59,8 +59,11 @@ InfoFuncWindow::InfoFuncWindow(InfoFunction *func, QWidget *parent) :
 
 InfoFuncWindow::~InfoFuncWindow()
 {
-    _function->unregisterListener(this);
-    delete _function;
+    if (_function)
+    {
+        _function->unregisterListener(this);
+        delete _function;
+    }
 }
 
 void InfoFuncWindow::createToolbar()
@@ -106,6 +109,12 @@ void InfoFuncWindow::functionCalculated(FunctionBase*)
         pageColor = Ori::Color::blend(pageColor, p.color(QPalette::Window), 0.5);
 
     _editor->setHtml(QStringLiteral("<body bgcolor=%1>%2</body>").arg(pageColor.name(), _function->result()));
+}
+
+void InfoFuncWindow::functionDeleted(FunctionBase*)
+{
+    _function = nullptr;
+    close();
 }
 
 void InfoFuncWindow::elementDeleting(Schema*, Element *elem)

@@ -1,6 +1,7 @@
 #include "MultibeamCausticWindow.h"
 
 #include "MultiCausticParamsDlg.h"
+#include "MulticausticWindowHelpers.h"
 #include "../funcs/FunctionGraph.h"
 #include "../io/JsonUtils.h"
 #include "../widgets/Plot.h"
@@ -253,4 +254,9 @@ QString MultibeamCausticWindow::getDefaultTitleY() const
 {
     QString title = tr("Beam radius");
     return QStringLiteral("%1 (%2)").arg(title, getUnitY()->name());
+}
+
+void MultibeamCausticWindow::showRoundTrip()
+{
+    MulticausticWindowHelpers::showRoundTrip(getUnitX(), _cursor, function()->funcs(), windowTitle());
 }

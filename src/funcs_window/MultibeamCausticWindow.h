@@ -31,6 +31,7 @@ protected:
     QString getDefaultTitleX() const override;
     QString getDefaultTitleY() const override;
     void fillViewMenuActions(QList<QAction*>& actions) const override;
+    void showRoundTrip() override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;

@@ -77,6 +77,7 @@ public slots:
 protected slots:
     virtual void updateNotables();
     virtual void updateDataGrid();
+    virtual void showRoundTrip();
 
 protected:
     Plot* _plot;
@@ -166,7 +167,6 @@ private slots:
     void activateModeS();
     void activateModeFlippedTS();
     void updateWithParams();
-    void showRoundTrip();
     void freeze(bool);
 
     QWidget* optionsPanelRequired();

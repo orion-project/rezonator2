@@ -2,6 +2,7 @@
 
 #include "CausticOptionsPanel.h"
 #include "MultiCausticParamsDlg.h"
+#include "MulticausticWindowHelpers.h"
 #include "../funcs/CausticFunction.h"
 #include "../funcs/FunctionGraph.h"
 #include "../io/CommonUtils.h"
@@ -247,3 +248,10 @@ QString MultirangeCausticWindow::getDefaultTitleY() const
     }
     return QStringLiteral("%1 (%2)").arg(title, getUnitY()->name());
 }
+
+void MultirangeCausticWindow::showRoundTrip()
+{
+    MulticausticWindowHelpers::showRoundTrip(getUnitX(), _cursor, function()->funcs(), windowTitle());
+}
+
+
