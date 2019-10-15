@@ -145,89 +145,49 @@ void Plot::graphClicked(QCPAbstractPlottable *plottable)
     emit graphSelected(g);
 }
 
-void Plot::autolimits(bool replot)
+void Plot::autolimits(QCPAxis* axis, bool replot)
 {
-    if (graphCount() == 0) return;
-
-    if (excludeServiceGraphsFromAutolimiting)
+    QCPRange totalRange;
+    bool isTotalValid = false;
+    for (int i = 0; i < graphCount(); i++)
     {
-        bool onlyEnlarge = false;
-        for (int i = 0; i < graphCount(); i++)
+        auto g = graph(i);
+
+        if (!g->visible()) continue;
+
+        if (excludeServiceGraphsFromAutolimiting)
+            if (_serviceGraphs.contains(g))
+                continue;
+
+        bool hasRange = false;
+        auto range = axis == xAxis
+                ? g->getKeyRange(hasRange, QCP::sdBoth)
+                : g->getValueRange(hasRange, QCP::sdBoth, QCPRange());
+        if (!hasRange) continue;
+
+        if (!isTotalValid)
         {
-            auto g = graph(i);
-            if (g && !_serviceGraphs.contains(g))
-            {
-                g->rescaleAxes(onlyEnlarge);
-                onlyEnlarge = true;
-            }
+            totalRange = range;
+            isTotalValid = true;
         }
-    }
-    else rescaleAxes(true);
-
-    if (useSafeMargins)
-    {
-        if (!sanitizeAxisRange(xAxis))
-            extendLimits(xAxis, _safeMarginsX, false);
-        if (!sanitizeAxisRange(yAxis))
-            extendLimits(yAxis, _safeMarginsY, false);
+        else totalRange.expand(range);
     }
 
-    if (replot) this->replot();
-}
+    if (!isTotalValid) return;
 
-bool Plot::sanitizeAxisRange(QCPAxis* axis)
-{
-    auto range = axis->range();
-    if (sanitizeRange(range, safeMargins(axis)))
-    {
-        axis->setRange(range);
-        return true;
-    }
-    return false;
-}
+    bool corrected = PlotUtils::correctZeroRange(totalRange, safeMargins(axis));
+    axis->setRange(totalRange);
 
-bool Plot::sanitizeRange(QCPRange& range, double safeMargin)
-{
-    auto epsilon = std::numeric_limits<double>::epsilon();
-    if (range.size() <= epsilon)
-    {
-        if (qAbs(range.lower) <= epsilon)
-        {
-            range.lower = -1;
-            range.upper = 1;
-        }
-        else
-        {
-            double delta = range.lower * safeMargin;
-            range.lower -= delta;
-            range.upper += delta;
-        }
-        return true;
-    }
-    return false;
-}
+    if (!corrected && useSafeMargins)
+        extendLimits(axis, safeMargins(axis), false);
 
-void Plot::autolimitsX(bool replot)
-{
-    auto range = yAxis->range();
-    autolimits(false);
-    yAxis->setRange(range);
-    if (replot) this->replot();
-}
-
-void Plot::autolimitsY(bool replot)
-{
-    auto range = xAxis->range();
-    autolimits(false);
-    xAxis->setRange(range);
     if (replot) this->replot();
 }
 
 void Plot::extendLimits(double factor, bool replot)
 {
-    extendLimitsX(factor, false);
-    extendLimitsY(factor, false);
-    if (replot) this->replot();
+    extendLimits(xAxis, factor, false);
+    extendLimits(yAxis, factor, replot);
 }
 
 void Plot::extendLimits(QCPAxis* axis, double factor, bool replot)
@@ -261,8 +221,8 @@ double Plot::safeMargins(QCPAxis* axis)
 
 void Plot::setAxisRange(QCPAxis* axis, const QCPRange& range)
 {
-    auto r = range;
-    sanitizeRange(r, safeMargins(axis));
+    QCPRange r = range;
+    PlotUtils::correctZeroRange(r, safeMargins(axis));
     axis->setRange(r);
 }
 
@@ -277,16 +237,6 @@ bool Plot::setLimitsDlg()
         return true;
     }
     return false;
-}
-
-QString Plot::getAxisTitle(QCPAxis* axis) const
-{
-   if (axis == xAxis)
-       return tr("X-axis");
-   if (axis == yAxis)
-       return tr("Y-axis");
-   auto label = axis->label();
-   return label.isEmpty() ? tr("Axis") : label;
 }
 
 bool Plot::setLimitsDlg(QCPAxis* axis)
@@ -327,6 +277,16 @@ bool Plot::setLimitsDlg(QCPRange& range, const QString& title)
         return true;
     }
     return false;
+}
+
+QString Plot::getAxisTitle(QCPAxis* axis) const
+{
+   if (axis == xAxis)
+       return tr("X-axis");
+   if (axis == yAxis)
+       return tr("Y-axis");
+   auto label = axis->label();
+   return label.isEmpty() ? tr("Axis") : label;
 }
 
 // TODO invisible title takes a room anyway and one can see empty space above the graph

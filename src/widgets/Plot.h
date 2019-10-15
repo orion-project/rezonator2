@@ -44,9 +44,9 @@ public:
     int axisRectCol() const { return 0; }
 
 public slots:
-    void autolimits(bool replot = true);
-    void autolimitsX(bool replot = true);
-    void autolimitsY(bool replot = true);
+    void autolimits(bool replot = true) { autolimits(xAxis, false); autolimits(yAxis, replot); }
+    void autolimitsX(bool replot = true) { autolimits(xAxis, replot); }
+    void autolimitsY(bool replot = true) { autolimits(yAxis, replot); }
     bool setLimitsDlg();
     bool setLimitsDlgX() { return setLimitsDlg(xAxis); }
     bool setLimitsDlgY() { return setLimitsDlg(yAxis); }
@@ -73,12 +73,7 @@ private slots:
     bool setLimitsDlg(QCPAxis* axis);
 
 private:
-    enum class PlotPart
-    {
-        None,
-        AxisX,
-        AxisY
-    };
+    enum class PlotPart { None, AxisX, AxisY };
 
     QCPTextElement* _title;
     QString _titleText;
@@ -89,10 +84,9 @@ private:
     const double _zoomStepY;
     const int _numberPrecision;
 
+    void autolimits(QCPAxis* axis, bool replot);
     void extendLimits(QCPAxis* axis, double factor, bool replot);
     bool setLimitsDlg(QCPRange& range, const QString &title);
-    bool sanitizeAxisRange(QCPAxis* axis);
-    bool sanitizeRange(QCPRange& range, double safeMargin);
     void setAxisRange(QCPAxis* axis, const QCPRange &range);
     double safeMargins(QCPAxis* axis);
     PlotPart selectedPart() const;

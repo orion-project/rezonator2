@@ -9,6 +9,9 @@
 
 #include <QString>
 
+class QCPRange;
+class QCPAbstractPlottable;
+
 struct AxisLimits
 {
     double min;
@@ -22,9 +25,14 @@ struct AxisLimits
     QString str() const;
 };
 
-namespace TitlePlaceholder
-{
-    QString defaultTitle();
+namespace TitlePlaceholder {
+QString defaultTitle();
+}
+
+namespace PlotUtils {
+
+/// Returns true when range is corrected, false when it's unchanged.
+bool correctZeroRange(QCPRange& range, double safeMargin);
 }
 
 #endif // PLOT_UTILS_H
