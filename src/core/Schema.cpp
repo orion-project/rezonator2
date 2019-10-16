@@ -46,7 +46,7 @@ void SchemaEvents::raise(Event event, void *param, const char* reason) const
     if (!_enabled) return;
 
     const EventProps& eventProps = propsOf(event);
-    Z_REPORT("SchemaEvent:" << eventProps.name << "-" << reason)
+    Z_REPORT(QString("SchemaEvent: %1, reason=[%2]").arg(eventProps.name).arg(reason))
 
     if (int(eventProps.nextState) != SchemaState::Current)
         _schema->state().set(eventProps.nextState);
@@ -58,7 +58,8 @@ void SchemaEvents::raise(Event event, void *param, const char* reason) const
 
     if (eventProps.shouldRaiseChanged)
     {
-        Z_REPORT("SchemaEvent:" << propsOf(Changed).name << "-" << reason)
+        Z_REPORT(QString("SchemaEvent: %1, modified=%2, reason=[%3]")
+            .arg(propsOf(Changed).name).arg(Z::str(_schema->modified())).arg(reason))
         for (SchemaListener* listener : listeners)
             notify(listener, Changed, nullptr);
     }

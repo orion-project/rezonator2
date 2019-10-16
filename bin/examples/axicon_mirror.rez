@@ -190,7 +190,7 @@
                         "element_index": 2,
                         "param": "L",
                         "range": {
-                            "points": 100,
+                            "points": 10,
                             "start": {
                                 "unit": "mm",
                                 "value": 0

@@ -190,7 +190,7 @@
                         "element_index": 2,
                         "param": "L",
                         "range": {
-                            "points": 100,
+                            "points": 10,
                             "start": {
                                 "unit": "cm",
                                 "value": 0
@@ -251,7 +251,7 @@
                         "element_index": 0,
                         "param": "L",
                         "range": {
-                            "points": 100,
+                            "points": 10,
                             "start": {
                                 "unit": "cm",
                                 "value": 0
@@ -271,7 +271,7 @@
                         "element_index": 2,
                         "param": "L",
                         "range": {
-                            "points": 100,
+                            "points": 10,
                             "start": {
                                 "unit": "cm",
                                 "value": 0

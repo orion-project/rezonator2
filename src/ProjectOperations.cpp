@@ -128,7 +128,7 @@ void ProjectOperations::openSchemaFile(const QString& fileName, const OpenFileOp
     Z_REPORT("Loading" << fileName)
     Z::Report report;
 
-    schema()->events().raise(SchemaEvents::Loading, "Schema file opened");
+    schema()->events().raise(SchemaEvents::Loading, "ProjectOperations: schema file opened");
     schema()->events().disable();
 
     if (Z::IO::Utils::isOldSchema(fileName))
