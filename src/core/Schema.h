@@ -124,7 +124,8 @@ public:
         RecalRequred,  ///< Something is done that requires recalculation of all functions
     };
 
-    void raise(Event event, void* param = nullptr) const;
+    void raise(Event event, const char* reason) const { raise(event, nullptr, reason); }
+    void raise(Event event, void* param, const char* reason) const;
 
     void enable() { _enabled = true; }
     void disable() { _enabled = false; }
@@ -251,7 +252,7 @@ public:
     void moveElementDown(Element* elem);
     void flip();
 
-    void markModified();
+    void markModified(const char* reason);
 
 private:
     Elements _items;
@@ -268,7 +269,7 @@ private:
     PumpsList _pumps;
 
     // inherits from ElementOwner
-    void elementChanged(Element *elem) override { _events.raise(SchemaEvents::ElemChanged, elem); }
+    void elementChanged(Element *elem) override;
 
     // inherits from ParameterListener
     void parameterChanged(Z::ParameterBase *param) override;

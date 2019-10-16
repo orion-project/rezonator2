@@ -31,7 +31,7 @@ void SchemaState::set(State state)
 {
     _current = state;
 
-    Z_REPORT(str());
+    Z_REPORT(str())
 }
 
 //------------------------------------------------------------------------------
@@ -41,12 +41,12 @@ void SchemaState::set(State state)
 #define INIT_EVENT(event, raise_changed, next_state)\
     {event, EventProps{QString(# event), raise_changed, static_cast<SchemaState::State>(next_state)}}
 
-void SchemaEvents::raise(Event event, void *param) const
+void SchemaEvents::raise(Event event, void *param, const char* reason) const
 {
     if (!_enabled) return;
 
     const EventProps& eventProps = propsOf(event);
-    Z_REPORT("SchemaEvent:" << eventProps.name)
+    Z_REPORT("SchemaEvent:" << eventProps.name << "-" << reason)
 
     if (int(eventProps.nextState) != SchemaState::Current)
         _schema->state().set(eventProps.nextState);
@@ -58,7 +58,7 @@ void SchemaEvents::raise(Event event, void *param) const
 
     if (eventProps.shouldRaiseChanged)
     {
-        Z_REPORT("SchemaEvent:" << propsOf(Changed).name)
+        Z_REPORT("SchemaEvent:" << propsOf(Changed).name << "-" << reason)
         for (SchemaListener* listener : listeners)
             notify(listener, Changed, nullptr);
     }
@@ -125,7 +125,7 @@ void SchemaEvents::notify(SchemaListener* listener, SchemaEvents::Event event, v
     case PumpDeleting: listener->pumpDeleting(_schema, reinterpret_cast<PumpParams*>(param)); break;
     case PumpDeleted: listener->pumpDeleted(_schema, reinterpret_cast<PumpParams*>(param)); break;
     case RecalRequred: listener->recalcRequired(_schema); break;
-    };
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -147,12 +147,12 @@ Schema::Schema()
     _wavelength.addListener(this);
 
     _events._schema = this;
-    _events.raise(SchemaEvents::Created);
+    _events.raise(SchemaEvents::Created, "Schema: schema constructor");
 }
 
 Schema::~Schema()
 {
-    _events.raise(SchemaEvents::Deleted);
+    _events.raise(SchemaEvents::Deleted, "schema: schema destructor");
 
     qDeleteAll(_items);
     qDeleteAll(_customParams);
@@ -206,8 +206,8 @@ void Schema::insertElement(Element* elem, int index, bool event)
 
     if (event)
     {
-        _events.raise(SchemaEvents::ElemCreated, elem);
-        _events.raise(SchemaEvents::RecalRequred);
+        _events.raise(SchemaEvents::ElemCreated, elem, "Schema: insertElement");
+        _events.raise(SchemaEvents::RecalRequred, "Schema: insertElement");
     }
 }
 
@@ -234,8 +234,8 @@ void Schema::insertElements(const Elements& elems, int index, bool event, bool g
     if (event)
     {
         for (auto elem : elems)
-            _events.raise(SchemaEvents::ElemCreated, elem);
-        _events.raise(SchemaEvents::RecalRequred);
+            _events.raise(SchemaEvents::ElemCreated, elem, "Schema: insertElements");
+        _events.raise(SchemaEvents::RecalRequred, "Schema: insertElements");
     }
 }
 
@@ -251,7 +251,7 @@ void Schema::deleteElement(int index, bool event, bool free)
     Element *elem = _items.at(index);
 
     if (event)
-        _events.raise(SchemaEvents::ElemDeleting, elem);
+        _events.raise(SchemaEvents::ElemDeleting, elem, "Schema: deleteElement");
 
     _items.removeAt(index);
     elem->setOwner(nullptr);
@@ -261,20 +261,25 @@ void Schema::deleteElement(int index, bool event, bool free)
 
     if (event)
     {
-        _events.raise(SchemaEvents::ElemDeleted, elem);
-        _events.raise(SchemaEvents::RecalRequred);
+        _events.raise(SchemaEvents::ElemDeleted, elem, "Schema: deleteElement");
+        _events.raise(SchemaEvents::RecalRequred, "Schema: deleteElement");
     }
 
     if (free)
         delete elem;
 }
 
+void Schema::elementChanged(Element *elem)
+{
+    _events.raise(SchemaEvents::ElemChanged, elem, "Schema: elementChanged");
+}
+
 void Schema::parameterChanged(Z::ParameterBase *param)
 {
     if (param == &_wavelength)
     {
-        _events.raise(SchemaEvents::LambdaChanged);
-        _events.raise(SchemaEvents::RecalRequred);
+        _events.raise(SchemaEvents::LambdaChanged, "Schema: parameterChanged: lambda");
+        _events.raise(SchemaEvents::RecalRequred, "Schema: parameterChanged: lambda");
     }
 }
 
@@ -282,8 +287,8 @@ void Schema::setTripType(TripType value)
 {
     if (_tripType == value) return;
     _tripType = value;
-    _events.raise(SchemaEvents::ParamsChanged);
-    _events.raise(SchemaEvents::RecalRequred);
+    _events.raise(SchemaEvents::ParamsChanged, "Schema: setTripType");
+    _events.raise(SchemaEvents::RecalRequred, "Schema: setTripType");
 }
 
 Z::Parameters Schema::globalParams() const
@@ -371,8 +376,8 @@ void Schema::shiftElement(int index, const std::function<int(int)>& getTargetInd
     if (_items.size() == 1) return;
     _items.swap(index, getTargetIndex(index));
     relinkInterfaces();
-    _events.raise(SchemaEvents::Rebuilt);
-    _events.raise(SchemaEvents::RecalRequred);
+    _events.raise(SchemaEvents::Rebuilt, "Schema: shiftElement");
+    _events.raise(SchemaEvents::RecalRequred, "Schema: shiftElement");
 }
 
 void Schema::moveElementUp(Element *elem)
@@ -396,13 +401,13 @@ void Schema::flip()
     for (int i = 0; i < size / 2; i++)
         _items.swap(i, size - 1 - i);
     relinkInterfaces();
-    _events.raise(SchemaEvents::Rebuilt);
-    _events.raise(SchemaEvents::RecalRequred);
+    _events.raise(SchemaEvents::Rebuilt, "Schema: flip");
+    _events.raise(SchemaEvents::RecalRequred, "Schema: flip");
 }
 
-void Schema::markModified()
+void Schema::markModified(const char *reason)
 {
-    _events.raise(SchemaEvents::Changed);
+    _events.raise(SchemaEvents::Changed, reason);
 }
 
 //------------------------------------------------------------------------------

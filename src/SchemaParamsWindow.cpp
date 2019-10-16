@@ -154,7 +154,7 @@ void SchemaParamsWindow::createParameter()
         CustomPrefs::setRecentDim("global_param_dim", dim);
         CustomPrefs::setRecentUnit("global_param_unit", unit);
 
-        schema()->events().raise(SchemaEvents::CustomParamCreated, param);
+        schema()->events().raise(SchemaEvents::CustomParamCreated, param, "Params window: param created");
 
         _isSettingValueForNewParam = true;
         QTimer::singleShot(100, [&](){ setParameterValue(); });
@@ -195,10 +195,10 @@ void SchemaParamsWindow::deleteParameter()
 
     if (Ori::Dlg::ok(tr("Confirm deletion of parameter '%1'").arg(deletingParam->alias())))
     {
-        schema()->events().raise(SchemaEvents::CustomParamDeleting, deletingParam);
+        schema()->events().raise(SchemaEvents::CustomParamDeleting, deletingParam, "Params window: param deleting");
         schema()->formulas()->free(deletingParam);
         schema()->customParams()->removeOne(deletingParam);
-        schema()->events().raise(SchemaEvents::CustomParamDeleted, deletingParam);
+        schema()->events().raise(SchemaEvents::CustomParamDeleted, deletingParam, "Params window: param deleted");
     }
 }
 
@@ -217,8 +217,8 @@ void SchemaParamsWindow::setParameterValue()
                 .exec();
     if (ok)
     {
-        schema()->events().raise(SchemaEvents::CustomParamChanged, param);
-        schema()->events().raise(SchemaEvents::RecalRequred);
+        schema()->events().raise(SchemaEvents::CustomParamChanged, param, "Params window: param value set");
+        schema()->events().raise(SchemaEvents::RecalRequred, "Params window: param value set");
     }
 
     if (_isSettingValueForNewParam)
@@ -238,7 +238,7 @@ void SchemaParamsWindow::annotateParameter()
     if (ok)
     {
         param->setDescription(descr);
-        schema()->events().raise(SchemaEvents::CustomParamEdited, param);
+        schema()->events().raise(SchemaEvents::CustomParamEdited, param, "Params window: param annotated");
     }
 }
 

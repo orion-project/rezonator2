@@ -206,7 +206,7 @@ void MultirangeCausticWindow::toggleElementBoundMarkers(bool on)
     for (auto marker : _elemBoundMarkers)
         marker->setVisible(on);
     plot()->replot();
-    schema()->events().raise(SchemaEvents::Changed);
+    schema()->events().raise(SchemaEvents::Changed, "MultirangeCausticWindow: toggleElementBoundMarkers");
 }
 
 QString MultirangeCausticWindow::getDefaultTitle() const

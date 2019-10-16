@@ -286,7 +286,7 @@ void PlotFuncWindow::updateModeTS()
         _plot->replot();
     }
 
-    schema()->markModified();
+    schema()->markModified("PlotFuncWindow::updateModeTS");
 }
 
 void PlotFuncWindow::showModeTS()
@@ -493,7 +493,7 @@ bool PlotFuncWindow::configure()
 {
     bool ok = configureInternal();
     if (ok)
-        schema()->events().raise(SchemaEvents::Changed);
+        schema()->events().raise(SchemaEvents::Changed, "PlotFuncWindow: configure");
     return ok;
 }
 
@@ -583,7 +583,7 @@ void PlotFuncWindow::setUnitX(Z::Unit unit)
     _unitX = unit;
     updateTitleX();
     updateStatusUnits();
-    schema()->markModified();
+    schema()->markModified("PlotFuncWindow::setUnitX");
     PlotHelpers::rescaleLimits(_plot, PlotAxis::X, oldUnit, unit);
     update();
 }
@@ -595,7 +595,7 @@ void PlotFuncWindow::setUnitY(Z::Unit unit)
     _unitY = unit;
     updateTitleY();
     updateStatusUnits();
-    schema()->markModified();
+    schema()->markModified("PlotFuncWindow::setUnitY");
     PlotHelpers::rescaleLimits(_plot, PlotAxis::Y, oldUnit, unit);
     update();
 }

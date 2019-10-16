@@ -15,7 +15,7 @@ bool editSchemaProps(QWidget* parent, Schema* schema)
     SchemaPropsDialog dialog(parent, schema);
     bool ok = dialog.exec() == QDialog::Accepted;
     if (ok and dialog.isModified())
-        schema->events().raise(SchemaEvents::Changed);
+        schema->events().raise(SchemaEvents::Changed, "Schema changed via props dialog");
     return ok;
 }
 

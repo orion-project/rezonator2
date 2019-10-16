@@ -327,9 +327,9 @@ void PumpWindow::addNewPump(PumpParams* pump)
     bool isFirstPump = schema()->pumps()->size() == 1;
     if (isFirstPump)
         pump->activate(true);
-    schema()->events().raise(SchemaEvents::PumpCreated, pump);
+    schema()->events().raise(SchemaEvents::PumpCreated, pump, "PumpWindow: new pump created");
     if (isFirstPump)
-        schema()->events().raise(SchemaEvents::RecalRequred);
+        schema()->events().raise(SchemaEvents::RecalRequred, "PumpWindow: new pump created");
     showStatusInfo();
 }
 
@@ -345,9 +345,9 @@ void PumpWindow::editPump()
     auto pump = selectedPump();
     if (!pump) return;
     if (!editPumpDlg(pump)) return;
-    schema()->events().raise(SchemaEvents::PumpChanged, pump);
+    schema()->events().raise(SchemaEvents::PumpChanged, pump, "PumpWindow: pump params changed");
     if (pump->isActive() and schema()->tripType() == TripType::SP)
-        schema()->events().raise(SchemaEvents::RecalRequred);
+        schema()->events().raise(SchemaEvents::RecalRequred, "PumpWindow: pump params changed");
     showStatusInfo();
 }
 
@@ -365,18 +365,18 @@ void PumpWindow::deletePump()
 
     if (Ori::Dlg::ok(tr("Confirm deletion of pump %1").arg(pumpId)))
     {
-        schema()->events().raise(SchemaEvents::PumpDeleting, pump);
+        schema()->events().raise(SchemaEvents::PumpDeleting, pump, "PumpWindow: pump deleting");
         schema()->pumps()->removeOne(pump);
-        schema()->events().raise(SchemaEvents::PumpDeleted, pump);
+        schema()->events().raise(SchemaEvents::PumpDeleted, pump, "PumpWindow: pump deleted");
         if (pump->isActive())
         {
             if (schema()->pumps()->size() > 0)
             {
                 auto pump = schema()->pumps()->first();
                 pump->activate(true);
-                schema()->events().raise(SchemaEvents::PumpChanged, pump);
+                schema()->events().raise(SchemaEvents::PumpChanged, pump, "PumpWindow: pump activated after active pump deleted");
             }
-            schema()->events().raise(SchemaEvents::RecalRequred);
+            schema()->events().raise(SchemaEvents::RecalRequred, "PumpWindow: pump activated after active pump deleted");
         }
         delete pump;
     }
@@ -395,15 +395,15 @@ void PumpWindow::activatePump()
     {
         oldPump->activate(false);
         _table->pumpChanged(schema(), oldPump);
-        schema()->events().raise(SchemaEvents::PumpChanged, oldPump);
+        schema()->events().raise(SchemaEvents::PumpChanged, oldPump, "PumpWindow: prev active pump deactivated");
     }
 
     pump->activate(true);
     _table->pumpChanged(schema(), pump);
-    schema()->events().raise(SchemaEvents::PumpChanged, pump);
+    schema()->events().raise(SchemaEvents::PumpChanged, pump, "PumpWindow: another pump activated");
 
     if (schema()->tripType() == TripType::SP)
-        schema()->events().raise(SchemaEvents::RecalRequred);
+        schema()->events().raise(SchemaEvents::RecalRequred, "PumpWindow: another pump activated");
 
     showStatusInfo();
 }

@@ -96,8 +96,8 @@ void SchemaViewWindow::editElement(Element* elem)
 {
     if (ElementPropsDialog::editElement(elem))
     {
-        schema()->events().raise(SchemaEvents::ElemChanged, elem);
-        schema()->events().raise(SchemaEvents::RecalRequred);
+        schema()->events().raise(SchemaEvents::ElemChanged, elem, "SchemaViewWindow: element edited");
+        schema()->events().raise(SchemaEvents::RecalRequred, "SchemaViewWindow: element edited");
     }
 }
 

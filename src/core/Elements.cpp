@@ -670,6 +670,6 @@ void ElemAxiconMirror::calcDynamicMatrix(const CalcParams& p)
     auto cosA = cos(alpha());
     auto tmp = -2 * theta();
 
-    _mt_dyn.assign(1, 0, tmp / beamT.beamRadius / cosA, 1);
-    _ms_dyn.assign(1, 0, tmp / beamS.beamRadius * cosA, 1);
+    _mt_dyn.assign(1, 0, tmp / qAbs(beamT.beamRadius) / cosA, 1);
+    _ms_dyn.assign(1, 0, tmp / qAbs(beamS.beamRadius) * cosA, 1);
 }

@@ -128,7 +128,7 @@ void ProjectOperations::openSchemaFile(const QString& fileName, const OpenFileOp
     Z_REPORT("Loading" << fileName)
     Z::Report report;
 
-    schema()->events().raise(SchemaEvents::Loading);
+    schema()->events().raise(SchemaEvents::Loading, "Schema file opened");
     schema()->events().disable();
 
     if (Z::IO::Utils::isOldSchema(fileName))
@@ -161,8 +161,8 @@ void ProjectOperations::openSchemaFile(const QString& fileName, const OpenFileOp
     else
         schema()->setFileName(fileName);
     schema()->events().enable();
-    schema()->events().raise(SchemaEvents::Loaded);
-    schema()->events().raise(SchemaEvents::RecalRequred);
+    schema()->events().raise(SchemaEvents::Loaded, "ProjectOperations: schema file loaded");
+    schema()->events().raise(SchemaEvents::RecalRequred, "ProjectOperations: schema file loaded");
 }
 
 void ProjectOperations::writeProtocol(const Z::Report& report, const QString& message)
@@ -217,7 +217,7 @@ bool ProjectOperations::saveSchemaFile(const QString& fileName)
     if (!writer.report().hasErrors())
     {
         schema()->setFileName(fileName);
-        schema()->events().raise(SchemaEvents::Saved);
+        schema()->events().raise(SchemaEvents::Saved, "ProjectOperations: schema file saved");
     }
 
     return !writer.report().hasErrors();
@@ -291,7 +291,7 @@ void ProjectOperations::createDefaultPump(Schema *schema)
         Z::Utils::generateLabel(schema, pump);
 
     schema->pumps()->append(pump);
-    schema->events().raise(SchemaEvents::PumpCreated, pump);
+    schema->events().raise(SchemaEvents::PumpCreated, pump, "ProjectOperations: default pump created");
 }
 
 bool ProjectOperations::editPumpDlg(PumpParams* pump)
@@ -311,8 +311,8 @@ void ProjectOperations::setupPump()
 
     if (editPumpDlg(pump))
     {
-        schema()->events().raise(SchemaEvents::PumpChanged, pump);
-        schema()->events().raise(SchemaEvents::RecalRequred);
+        schema()->events().raise(SchemaEvents::PumpChanged, pump, "ProjectOperations: pump params changed via dialog");
+        schema()->events().raise(SchemaEvents::RecalRequred, "ProjectOperations: pump params changed via dialog");
     }
 }
 

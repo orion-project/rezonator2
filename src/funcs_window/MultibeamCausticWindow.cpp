@@ -234,7 +234,7 @@ void MultibeamCausticWindow::toggleElementBoundMarkers(bool on)
     for (auto marker : _elemBoundMarkers)
         marker->setVisible(on);
     plot()->replot();
-    schema()->events().raise(SchemaEvents::Changed);
+    schema()->events().raise(SchemaEvents::Changed, "MultibeamCausticWindow: toggleElementBoundMarkers");
 }
 
 QString MultibeamCausticWindow::getDefaultTitle() const

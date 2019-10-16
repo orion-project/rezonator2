@@ -123,17 +123,8 @@ void RoundTripCalculator::collectMatrices()
         }
         else
         {
-            auto dynamicElem = dynamic_cast<ElementDynamic*>(item.element);
-            if (dynamicElem && _schema->isSP())
-            {
-                _matrsT << dynamicElem->pMt_dyn();
-                _matrsS << dynamicElem->pMs_dyn();
-            }
-            else
-            {
-                _matrsT << item.element->pMt();
-                _matrsS << item.element->pMs();
-            }
+            _matrsT << item.element->pMt();
+            _matrsS << item.element->pMs();
         }
         i++;
     }
@@ -167,8 +158,17 @@ void RoundTripCalculator::collectMatricesSP()
     {
         const auto& item = _roundTrip.at(i);
         _matrixOwners << item.element;
-        _matrsT << item.element->pMt();
-        _matrsS << item.element->pMs();
+        auto dynamicElem = dynamic_cast<ElementDynamic*>(item.element);
+        if (dynamicElem)
+        {
+            _matrsT << dynamicElem->pMt_dyn();
+            _matrsS << dynamicElem->pMs_dyn();
+        }
+        else
+        {
+            _matrsT << item.element->pMt();
+            _matrsS << item.element->pMs();
+        }
         i++;
     }
 }

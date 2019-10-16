@@ -160,12 +160,12 @@ TEST_METHOD(generateLabel__first_elem)
     auto e1 = new LabeledElement1;
     s.insertElement(e1);
     Z::Utils::generateLabel(&s, e1);
-    ASSERT_EQ_STR(e1->label(), "hhh1");
+    ASSERT_EQ_STR(e1->label(), "hhh1")
 
     auto e2 = new LabeledElement2;
     s.insertElement(e2);
     Z::Utils::generateLabel(&s, e2);
-    ASSERT_EQ_STR(e2->label(), "ggg1");
+    ASSERT_EQ_STR(e2->label(), "ggg1")
 }
 
 TEST_METHOD(generateLabel__next_elem)
@@ -178,11 +178,11 @@ TEST_METHOD(generateLabel__next_elem)
 
     LabeledElement1 e1;
     Z::Utils::generateLabel(&s, &e1);
-    ASSERT_EQ_STR(e1.label(), "hhh2");
+    ASSERT_EQ_STR(e1.label(), "hhh2")
 
     LabeledElement2 e2;
     Z::Utils::generateLabel(&s, &e2);
-    ASSERT_EQ_STR(e2.label(), "ggg2");
+    ASSERT_EQ_STR(e2.label(), "ggg2")
 }
 
 //------------------------------------------------------------------------------
@@ -191,10 +191,10 @@ TEST_METHOD(generateLabel__next_elem)
     TEST_LOG(#event)                                                         \
     listener.reset();                                                        \
     schema.events().disable();                                               \
-    schema.events().raise(SchemaEvents::event, elem);                        \
+    schema.events().raise(SchemaEvents::event, elem, "");                    \
     ASSERT_IS_TRUE(listener.events.isEmpty())                                \
     schema.events().enable();                                                \
-    schema.events().raise(SchemaEvents::event, elem);
+    schema.events().raise(SchemaEvents::event, elem, "");
 
 TEST_METHOD(raise_all_events)
 {

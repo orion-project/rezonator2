@@ -249,7 +249,7 @@ void StabilityMapWindow::toggleStabBoundMarkers(bool on)
     _stabBoundMarkerLow->setVisible(on);
     _stabBoundMarkerTop->setVisible(on);
     plot()->replot();
-    schema()->events().raise(SchemaEvents::Changed);
+    schema()->events().raise(SchemaEvents::Changed, "StabilityMapWindow: toggleStabBoundMarkers");
 }
 
 QString StabilityMapWindow::getDefaultTitle() const

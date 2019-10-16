@@ -84,7 +84,7 @@ private:
 #define STATE(state) SchemaState::state
 
 #define SCHEMA_RESET_STATE\
-    schema.events().raise(SchemaEvents::Saved);
+    schema.events().raise(SchemaEvents::Saved, "");
 
 #define ASSERT_LISTENER_EVENTS(...)\
     TEST_LOG(listener.eventsStr())\

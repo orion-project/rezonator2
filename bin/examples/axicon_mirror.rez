@@ -34,7 +34,7 @@
                 },
                 "Theta": {
                     "unit": "deg",
-                    "value": 10
+                    "value": 5
                 }
             },
             "title": "",
