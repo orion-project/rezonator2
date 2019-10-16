@@ -69,7 +69,10 @@ private:
 
 //------------------------------------------------------------------------------
 
-class PumpWindow : public SchemaMdiChild, public ISchemaWindowStorable, public IEditableWindow
+class PumpWindow : public SchemaMdiChild,
+                   public ISchemaWindowStorable,
+                   public IEditableWindow,
+                   public IShortcutListener
 {
     Q_OBJECT
 
@@ -93,6 +96,9 @@ public:
     bool canCopy() override;
     bool canPaste() override { return true; }
     void selectAll() override;
+
+    // inherits from IShortcutListener
+    void shortcutEnterPressed() override;
 
 public slots:
     void createPump();

@@ -60,7 +60,9 @@ void SchemaElemsTable::doubleClicked(QTableWidgetItem*)
 void SchemaElemsTable::showContextMenu(const QPoint& pos)
 {
     auto menu = (currentRow() < rowCount() - 1) ? elementContextMenu : lastRowContextMenu;
-    if (menu) menu->popup(mapToGlobal(pos));
+    if (!menu) return;
+    emit beforeContextMenuShown(menu);
+    menu->popup(mapToGlobal(pos));
 }
 
 Element* SchemaElemsTable::selected() const

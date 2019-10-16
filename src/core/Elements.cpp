@@ -49,6 +49,7 @@ FocalLengthVerifier* globalFocalLengthVerifier()
 
 //------------------------------------------------------------------------------
 //                             ElemEmptyRange
+//------------------------------------------------------------------------------
 
 void ElemEmptyRange::calcMatrixInternal()
 {
@@ -68,6 +69,7 @@ void ElemEmptyRange::setSubRangeSI(double value)
 
 //------------------------------------------------------------------------------
 //                             ElemMediaRange
+//------------------------------------------------------------------------------
 
 ElemMediumRange::ElemMediumRange() : ElementRange()
 {
@@ -92,6 +94,7 @@ void ElemMediumRange::setSubRangeSI(double value)
 
 //------------------------------------------------------------------------------
 //                                ElemPlate
+//------------------------------------------------------------------------------
 
 ElemPlate::ElemPlate() : ElementRange()
 {
@@ -116,6 +119,7 @@ void ElemPlate::setSubRangeSI(double value)
 
 //------------------------------------------------------------------------------
 //                              ElemFlatMirror
+//------------------------------------------------------------------------------
 
 ElemFlatMirror::ElemFlatMirror() : Element()
 {
@@ -123,6 +127,7 @@ ElemFlatMirror::ElemFlatMirror() : Element()
 
 //------------------------------------------------------------------------------
 //                              ElemCurveMirror
+//------------------------------------------------------------------------------
 
 ElemCurveMirror::ElemCurveMirror()
 {
@@ -148,6 +153,7 @@ void ElemCurveMirror::calcMatrixInternal()
 
 //------------------------------------------------------------------------------
 //                                ElemThinLens
+//------------------------------------------------------------------------------
 
 ElemThinLens::ElemThinLens()
 {
@@ -173,6 +179,7 @@ void ElemThinLens::calcMatrixInternal()
 
 //------------------------------------------------------------------------------
 //                              ElemCylinderLensT
+//------------------------------------------------------------------------------
 
 void ElemCylinderLensT::calcMatrixInternal()
 {
@@ -184,6 +191,7 @@ void ElemCylinderLensT::calcMatrixInternal()
 
 //------------------------------------------------------------------------------
 //                              ElemCylinderLensS
+//------------------------------------------------------------------------------
 
 void ElemCylinderLensS::calcMatrixInternal()
 {
@@ -195,6 +203,7 @@ void ElemCylinderLensS::calcMatrixInternal()
 
 //------------------------------------------------------------------------------
 //                             ElemTiltedCrystal
+//------------------------------------------------------------------------------
 
 ElemTiltedCrystal::ElemTiltedCrystal() : ElementRange()
 {
@@ -239,6 +248,7 @@ void ElemTiltedCrystal::setSubRangeSI(double value)
 
 //------------------------------------------------------------------------------
 //                              ElemTiltedPlate
+//------------------------------------------------------------------------------
 
 void ElemTiltedPlate::calcMatrixInternal()
 {
@@ -279,6 +289,7 @@ double ElemTiltedPlate::axisLengthSI() const
 
 //------------------------------------------------------------------------------
 //                            ElemBrewsterCrystal
+//------------------------------------------------------------------------------
 
 ElemBrewsterCrystal::ElemBrewsterCrystal() : ElementRange()
 {
@@ -313,6 +324,7 @@ void ElemBrewsterCrystal::setSubRangeSI(double value)
 
 //------------------------------------------------------------------------------
 //                             ElemBrewsterPlate
+//------------------------------------------------------------------------------
 
 ElemBrewsterPlate::ElemBrewsterPlate() : ElementRange()
 {
@@ -353,6 +365,7 @@ double ElemBrewsterPlate::axisLengthSI() const
 
 //------------------------------------------------------------------------------
 //                                ElemMatrix
+//------------------------------------------------------------------------------
 
 void ElemMatrix::makeParam(const QString& name, const double& value)
 {
@@ -394,6 +407,7 @@ void ElemMatrix::calcMatrixInternal()
 
 //------------------------------------------------------------------------------
 //                                ElemPoint
+//------------------------------------------------------------------------------
 
 ElemPoint::ElemPoint() : Element()
 {
@@ -401,6 +415,7 @@ ElemPoint::ElemPoint() : Element()
 
 //------------------------------------------------------------------------------
 //                             ElemNormalInterface
+//------------------------------------------------------------------------------
 
 void ElemNormalInterface::calcMatrixInternal()
 {
@@ -416,6 +431,7 @@ void ElemNormalInterface::calcMatrixInternal()
 
 //------------------------------------------------------------------------------
 //                             ElemBrewsterInterface
+//------------------------------------------------------------------------------
 
 void ElemBrewsterInterface::calcMatrixInternal()
 {
@@ -431,6 +447,7 @@ void ElemBrewsterInterface::calcMatrixInternal()
 
 //------------------------------------------------------------------------------
 //                             ElemTiltedInterface
+//------------------------------------------------------------------------------
 
 ElemTiltedInterface::ElemTiltedInterface() : ElementInterface()
 {
@@ -463,6 +480,7 @@ void ElemTiltedInterface::calcMatrixInternal()
 
 //------------------------------------------------------------------------------
 //                             ElemSphericalInterface
+//------------------------------------------------------------------------------
 
 ElemSphericalInterface::ElemSphericalInterface() : ElementInterface()
 {
@@ -490,6 +508,7 @@ void ElemSphericalInterface::calcMatrixInternal()
 
 //------------------------------------------------------------------------------
 //                             ElemThickLens
+//------------------------------------------------------------------------------
 
 ElemThickLens::ElemThickLens() : ElementRange()
 {
@@ -558,6 +577,7 @@ void ElemThickLens::setSubRangeSI(double value)
 
 //------------------------------------------------------------------------------
 //                             ElemGrinLens
+//------------------------------------------------------------------------------
 
 ElemGrinLens::ElemGrinLens() : ElementRange()
 {
@@ -649,6 +669,7 @@ void ElemGrinLens::setSubRangeSI(double value)
 
 //------------------------------------------------------------------------------
 //                             ElemAxiconMirror
+//------------------------------------------------------------------------------
 
 ElemAxiconMirror::ElemAxiconMirror() : ElementDynamic()
 {

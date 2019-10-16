@@ -1,19 +1,23 @@
+#include "SchemaViewWindow.h"
+
+#include "AdjustmentWindow.h"
 #include "ElementsCatalogDialog.h"
 #include "ElementPropsDialog.h"
-#include "SchemaViewWindow.h"
 #include "CalcManager.h"
 #include "WindowsManager.h"
-#include "io/Clipboard.h"
 #include "core/ElementsCatalog.h"
+#include "core/Utils.h"
 #include "funcs_window/PlotFuncWindow.h"
+#include "io/Clipboard.h"
 #include "widgets/SchemaLayout.h"
 #include "widgets/SchemaElemsTable.h"
+
 #include "helpers/OriWidgets.h"
 #include "helpers/OriDialogs.h"
 
 #include <QAction>
+#include <QMenu>
 #include <QSplitter>
-#include <QShortcut>
 #include <QTimer>
 #include <QToolButton>
 
@@ -37,6 +41,7 @@ SchemaViewWindow::SchemaViewWindow(Schema *owner, CalcManager *calcs) : SchemaMd
 
     connect(_table, SIGNAL(doubleClicked(Element*)), this, SLOT(rowDoubleClicked(Element*)));
     connect(_table, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(currentCellChanged(int, int, int, int)));
+    connect(_table, SIGNAL(beforeContextMenuShown(QMenu*)), this, SLOT(contextMenuAboutToShow(QMenu*)));
     _table->elementContextMenu = menuContextElement;
     _table->lastRowContextMenu = menuContextLastRow;
 }
@@ -57,16 +62,15 @@ void SchemaViewWindow::createActions()
     actnElemAdd = A_(tr("Append..."), this, SLOT(actionElemAdd()), ":/toolbar/elem_add", Qt::CTRL | Qt::Key_Insert);
     actnElemMoveUp = A_(tr("Move Selected Up"), this, SLOT(actionElemMoveUp()), ":/toolbar/elem_move_up");
     actnElemMoveDown = A_(tr("Move Selected Down"), this, SLOT(actionElemMoveDown()), ":/toolbar/elem_move_down");
-    actnElemProp = A_(tr("Properties..."), this, SLOT(actionElemProp()), ":/toolbar/elem_prop", Qt::Key_Return);
+    actnElemProp = A_(tr("Properties..."), this, SLOT(actionElemProp()), ":/toolbar/elem_prop");
     actnElemMatr = A_(tr("Matrix"), _calculations, SLOT(funcShowMatrices()), ":/toolbar/elem_matr", Qt::SHIFT | Qt::Key_Return);
     actnElemMatrAll = A_(tr("Show All Matrices"), _calculations, SLOT(funcShowAllMatrices()));
-    actnElemDelete = A_(tr("Delete"), this, SLOT(actionElemDelete()), ":/toolbar/elem_delete", Qt::CTRL | Qt::Key_Delete);
+    actnElemDelete = A_(tr("Delete..."), this, SLOT(actionElemDelete()), ":/toolbar/elem_delete", Qt::CTRL | Qt::Key_Delete);
 
     actnEditCopy = A_(tr("Copy", "Edit action"), this, SLOT(copy()), ":/toolbar/copy");
     actnEditPaste = A_(tr("Paste", "Edit action"), this, SLOT(paste()), ":/toolbar/paste");
 
-    shortcutAddFromLastRow = new QShortcut(Qt::Key_Return, this);
-    connect(shortcutAddFromLastRow, SIGNAL(activated()), this, SLOT(actionElemAdd()));
+    actnAdjuster = A_(tr("Add Adjuster"), this, SLOT(adjustParam()), ":/toolbar/adjust");
 
     #undef A_
 }
@@ -78,7 +82,7 @@ void SchemaViewWindow::createMenuBar()
           actnElemMatr, actnElemMatrAll, nullptr, actnElemDelete });
 
     menuContextElement = Ori::Gui::menu(this,
-        { actnElemProp, actnElemMatr, nullptr,
+        { actnElemProp, actnElemMatr, nullptr, actnAdjuster, nullptr,
           actnEditCopy, actnEditPaste, nullptr, actnElemDelete });
 
     menuContextLastRow = Ori::Gui::menu(this,
@@ -248,5 +252,53 @@ void SchemaViewWindow::currentCellChanged(int curRow, int, int prevRow, int)
     actnEditCopy->setEnabled(hasElem);
     actnElemMoveUp->setEnabled(hasElem);
     actnElemMoveDown->setEnabled(hasElem);
-    shortcutAddFromLastRow->setEnabled(!hasElem);
+}
+
+void SchemaViewWindow::contextMenuAboutToShow(QMenu* menu)
+{
+    if (menu != menuContextElement) return;
+
+    if (menuAdjuster)
+    {
+        delete menuAdjuster;
+        menuAdjuster = nullptr;
+    }
+    actnAdjuster->setVisible(false);
+
+    auto elem = _table->selected();
+    if (!elem) return;
+
+    auto params = Z::Utils::defaultParamFilter()->filter(elem->params());
+    if (params.isEmpty()) return;
+
+    if (params.size() == 1)
+    {
+        actnAdjuster->setVisible(true);
+        actnAdjuster->setData(ptr2var(params.first()));
+    }
+    else
+    {
+        menuAdjuster = new QMenu(tr("Add Adjuster"));
+        menuAdjuster->setIcon(QIcon(":/toolbar/adjust"));
+        for (auto param : params)
+        {
+            auto action = menuAdjuster->addAction(param->label(), this, &SchemaViewWindow::adjustParam);
+            action->setData(ptr2var(param));
+        }
+        menuContextElement->insertMenu(actnAdjuster, menuAdjuster);
+    }
+}
+
+void SchemaViewWindow::adjustParam()
+{
+    auto param = var2ptr<Z::Parameter*>(qobject_cast<QAction*>(sender())->data());
+    if (param) AdjustmentWindow::adjust(schema(), param);
+}
+
+void SchemaViewWindow::shortcutEnterPressed()
+{
+    if (_table->currentRow() == _table->rowCount() - 1)
+        actionElemAdd();
+    else
+        actionElemProp();
 }

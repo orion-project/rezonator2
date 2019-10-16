@@ -82,6 +82,7 @@ public:
     void setSettings(const AdjusterSettings& s) { _settings = s; }
 
     void restoreValue();
+    void applyEditing();
 
 public slots:
     void focus();
@@ -90,7 +91,6 @@ signals:
     void focused();
     void goingFocusNext();
     void goingFocusPrev();
-    void valueEdited(double value);
 
 protected:
     void mousePressEvent(QMouseEvent*) override;
@@ -138,7 +138,7 @@ private:
 };
 
 
-class AdjustmentWindow : public QWidget, public SchemaToolWindow
+class AdjustmentWindow : public QWidget, public SchemaToolWindow, public IShortcutListener
 {
     Q_OBJECT
 
@@ -149,6 +149,9 @@ public:
     // Implementation of SchemaListener
     void elementDeleting(Schema*, Element*) override;
     void customParamDeleting(Schema*, Z::Parameter*) override;
+
+    // Implementation of IShortcutListener
+    void shortcutEnterPressed() override;
 
 private slots:
     void addAdjuster();

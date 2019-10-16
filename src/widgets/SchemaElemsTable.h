@@ -37,6 +37,7 @@ public:
 
 signals:
     void doubleClicked(Element*);
+    void beforeContextMenuShown(QMenu* menu);
 
 private slots:
     void doubleClicked(class QTableWidgetItem*);

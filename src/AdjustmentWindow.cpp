@@ -109,7 +109,6 @@ AdjusterWidget::AdjusterWidget(Schema* schema, Z::Parameter *param, QWidget *par
     _valueEditor->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
     connect(_valueEditor, &Ori::Widgets::ValueEdit::focused, this, &AdjusterWidget::editorFocused);
     connect(_valueEditor, &Ori::Widgets::ValueEdit::keyPressed, this, &AdjusterWidget::editorKeyPressed);
-    connect(_valueEditor, &Ori::Widgets::ValueEdit::valueEdited, this, &AdjusterWidget::valueEdited);
 
     _labelName = new QLabel;
     _labelUnit = new QLabel;
@@ -290,10 +289,19 @@ void AdjusterWidget::restoreValue()
     changeValue();
 }
 
+void AdjusterWidget::applyEditing()
+{
+    _currentValue = _valueEditor->value();
+    changeValue();
+}
+
 void AdjusterWidget::changeValue()
 {
     if (_changeValueTimer)
         _changeValueTimer->stop();
+
+    if (_currentValue == _param->value())
+        return;
 
     auto res = _param->verify(_currentValue);
     if (res.isEmpty())
@@ -575,4 +583,10 @@ void AdjustmentWindow::updateActions()
 void AdjustmentWindow::help()
 {
     Z::HelpSystem::instance()->showTopic("adjustment.html");
+}
+
+void AdjustmentWindow::shortcutEnterPressed()
+{
+    auto adjuster = focusedAdjuster();
+    if (adjuster) adjuster->applyEditing();
 }

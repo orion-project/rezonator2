@@ -8,7 +8,6 @@
 QT_BEGIN_NAMESPACE
 class QMenu;
 class QAction;
-class QShortcut;
 QT_END_NAMESPACE
 
 class CalcManager;
@@ -17,7 +16,7 @@ class CalcManager;
     Basic window containing visual representation of schema (element list, layout)
     and holding actions controlling the schema (append, remove elements, etc.).
 */
-class SchemaViewWindow: public SchemaMdiChild, public IEditableWindow
+class SchemaViewWindow: public SchemaMdiChild, public IEditableWindow, public IShortcutListener
 {
     Q_OBJECT
 
@@ -31,12 +30,15 @@ public:
     // inherits from SchemaListener
     void elementCreated(Schema*, Element*) override;
 
-    // inherits from EditableWindow
+    // inherits from IEditableWindow
     SupportedCommands supportedCommands() override {
         return EditCmd_Copy | EditCmd_Paste | EditCmd_SelectAll; }
     bool canCopy() override;
     bool canPaste() override { return true; }
     void selectAll() override;
+
+    // inherits from IShortcutListener
+    void shortcutEnterPressed() override;
 
 public slots:
     void copy() override;
@@ -48,11 +50,11 @@ protected:
 
 private:
     QAction *actnElemAdd, *actnElemMoveUp, *actnElemMoveDown, *actnElemProp,
-        *actnElemMatr, *actnElemMatrAll, *actnElemDelete, *actnEditCopy, *actnEditPaste;
+            *actnElemMatr, *actnElemMatrAll, *actnElemDelete, *actnEditCopy, *actnEditPaste,
+            *actnAdjuster;
 
     QMenu *menuElement, *menuContextElement, *menuContextLastRow;
-
-    QShortcut* shortcutAddFromLastRow;
+    QMenu *menuAdjuster = nullptr;
 
     class SchemaLayout *_layout;
     class SchemaElemsTable *_table;
@@ -74,6 +76,8 @@ private slots:
     void actionElemDelete();
     void rowDoubleClicked(Element*);
     void currentCellChanged(int curRow, int, int prevRow, int);
+    void contextMenuAboutToShow(QMenu* menu);
+    void adjustParam();
 };
 
 #endif // SCHEMA_WINDOW_H

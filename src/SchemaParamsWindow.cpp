@@ -67,8 +67,8 @@ void SchemaParamsWindow::createActions()
     #define A_ Ori::Gui::action
 
     _actnParamAdd = A_(tr("Create..."), this, SLOT(createParameter()), ":/toolbar/param_add", Qt::CTRL | Qt::Key_Insert);
-    _actnParamDelete = A_(tr("Delete"), this, SLOT(deleteParameter()), ":/toolbar/param_delete", Qt::CTRL | Qt::Key_Delete);
-    _actnParamSet = A_(tr("Set..."), this, SLOT(setParameterValue()), ":/toolbar/param_set", Qt::Key_Return);
+    _actnParamDelete = A_(tr("Delete..."), this, SLOT(deleteParameter()), ":/toolbar/param_delete", Qt::CTRL | Qt::Key_Delete);
+    _actnParamSet = A_(tr("Set..."), this, SLOT(setParameterValue()), ":/toolbar/param_set");
     _actnParamDescr = A_(tr("Annotate..."), this, SLOT(annotateParameter()), ":/toolbar/param_annotate", Qt::CTRL | Qt::Key_Return);
     _actnParamAdjust = A_(tr("Adjust"), this, SLOT(adjustParameter()), ":/toolbar/adjust");
 
@@ -248,4 +248,9 @@ void SchemaParamsWindow::adjustParameter()
     if (!param) return;
 
     AdjustmentWindow::adjust(schema(), param);
+}
+
+void SchemaParamsWindow::shortcutEnterPressed()
+{
+    setParameterValue();
 }

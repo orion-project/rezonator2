@@ -261,8 +261,8 @@ void PumpWindow::createActions()
     #define A_ Ori::Gui::action
 
     _actnPumpAdd = A_(tr("Create..."), this, SLOT(createPump()), ":/toolbar/pump_add", Qt::CTRL | Qt::Key_Insert);
-    _actnPumpDelete = A_(tr("Delete"), this, SLOT(deletePump()), ":/toolbar/pump_delete", Qt::CTRL | Qt::Key_Delete);
-    _actnPumpEdit = A_(tr("Edit..."), this, SLOT(editPump()), ":/toolbar/pump_edit", Qt::Key_Return);
+    _actnPumpDelete = A_(tr("Delete..."), this, SLOT(deletePump()), ":/toolbar/pump_delete", Qt::CTRL | Qt::Key_Delete);
+    _actnPumpEdit = A_(tr("Edit..."), this, SLOT(editPump()), ":/toolbar/pump_edit");
     _actnPumpActivate = A_(tr("Activate..."), this, SLOT(activatePump()), ":/toolbar/pump_on", Qt::CTRL | Qt::Key_Return);
     _actnPumpClone = A_(tr("Clone"), this, SLOT(clonePump()), ":/toolbar/clone");
 
@@ -491,4 +491,9 @@ void PumpWindow::paste()
 
         addNewPump(pastedPump);
     }
+}
+
+void PumpWindow::shortcutEnterPressed()
+{
+   editPump();
 }

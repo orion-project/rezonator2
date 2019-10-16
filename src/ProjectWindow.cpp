@@ -36,6 +36,7 @@
 #include <QMenuBar>
 #include <QTimer>
 #include <QToolButton>
+#include <QShortcut>
 
 enum ProjectWindowStatusPanels
 {
@@ -92,6 +93,10 @@ ProjectWindow::ProjectWindow(Schema* aSchema) : QMainWindow(), SchemaToolWindow(
 
     if (Settings::instance().showProtocolAtStart)
         showProtocolWindow();
+
+    // This allows Enter shortcut for tool windows (see IShortcutListener).
+    auto shortcutApply = new QShortcut(Qt::Key_Return, this);
+    connect(shortcutApply, &QShortcut::activated, this, &ProjectWindow::shortcutEnterActivated);
 }
 
 ProjectWindow::~ProjectWindow()
@@ -143,7 +148,7 @@ void ProjectWindow::createActions()
     actnToolsCatalog = A_(tr("Elements Catalog"), this, SLOT(showElementsCatalog()), ":/toolbar/catalog");
     actnToolsGaussCalc = A_(tr("Gauss Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
     actnToolsCalc = A_(tr("Formula Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
-    actnToolFlipSchema = A_(tr("Flip Schema"), this, SLOT(flipSchema()));
+    actnToolFlipSchema = A_(tr("Flip Schema..."), this, SLOT(flipSchema()));
     actnToolSettings = A_(tr("Settings..."), this, SLOT(showSettings()), ":/toolbar/settings");
     actnToolAdjust = A_(tr("Adjustment"), this, SLOT(showAdjustment()), ":/toolbar/adjust");
 
@@ -532,3 +537,11 @@ void ProjectWindow::schemaSaved(Schema*)
     updateTitle();
 }
 
+void ProjectWindow::shortcutEnterActivated()
+{
+    auto shortcutListener = dynamic_cast<IShortcutListener*>(qApp->activeWindow());
+    if (!shortcutListener)
+        shortcutListener = dynamic_cast<IShortcutListener*>(_mdiArea->activeChild());
+    if (shortcutListener)
+        shortcutListener->shortcutEnterPressed();
+}

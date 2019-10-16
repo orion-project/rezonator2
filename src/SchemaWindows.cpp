@@ -329,7 +329,7 @@ void SchemaMdiArea::updateBackground()
 }
 
 //------------------------------------------------------------------------------
-//                               RezonatorPopupWindow
+//                               SchemaPopupWindow
 //------------------------------------------------------------------------------
 
 SchemaPopupWindow::SchemaPopupWindow(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f)
@@ -368,4 +368,12 @@ void SchemaPopupWindow::keyPressEvent(QKeyEvent *event)
             return;
         }
     QWidget::keyPressEvent(event);
+}
+
+//------------------------------------------------------------------------------
+//                               IShortcutListener
+//------------------------------------------------------------------------------
+
+IShortcutListener::~IShortcutListener()
+{
 }

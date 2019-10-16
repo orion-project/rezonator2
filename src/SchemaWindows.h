@@ -246,7 +246,7 @@ private:
     "Ambiguous shortcut overload" when ProjectWindow has the same shortcut as a popup window has.
     It is not the case for the calculator windows which have no parent and shortcuts work well there.
     There is a similar question (https://forum.qt.io/topic/99653/ambiguous-shortcut-overload) but no answer.
-    Currently, it works only with shortcuts set as `QKeySequence::StandardKey`, and it should be extended
+    TODO: Currently, it works only with shortcuts set as `QKeySequence::StandardKey`, and it should be extended
     to process arbitrary shortcuts. However, it'd be better to find a more robust and straightforward solution.
 */
 class SchemaPopupWindow : public QWidget
@@ -265,6 +265,22 @@ protected:
 private:
     QVector<QKeySequence::StandardKey> _actionShortcuts;
     QMap<QKeySequence::StandardKey, QAction*> _actionWithShortcuts;
+};
+
+//------------------------------------------------------------------------------
+
+/**
+    Qt can't process shortcuts on a popup window if there is the same shortcut on the main window.
+    It works when the popup window has no parent so it's another main window in the app.
+    But it fails for tool windows which have the project window as their parent.
+    TODO: SchemaPopupWindow gives the similar functionality but for standard key sequences.
+    I'd be better to merge both classes and provide single and complete solution for any shortcuts.
+*/
+class IShortcutListener
+{
+public:
+    virtual ~IShortcutListener();
+    virtual void shortcutEnterPressed() {}
 };
 
 #endif // SCHEMA_WINDOWS_H

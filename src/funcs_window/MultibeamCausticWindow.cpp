@@ -1,5 +1,6 @@
 #include "MultibeamCausticWindow.h"
 
+#include "../core/Protocol.h"
 #include "../funcs/FunctionGraph.h"
 
 #include <QAction>
@@ -33,17 +34,23 @@ void MultibeamCausticWindow::calculate()
         funcs << func;
 
     clearStatusInfo();
+    int errorCount = 0;
     for (auto pump : *schema()->pumps())
     {
         function()->setPump(pump);
         function()->calculate();
         if (!function()->ok())
         {
-            showStatusError(function()->errorText());
-            _graphs->clear();
-            return;
+            errorCount++;
+            Z_ERROR(QString("%1: Pump %2: %3").arg(windowTitle()).arg(pump->label()).arg(function()->errorText()));
+            continue;
         }
         _graphs->update(pump->label(), workPlane, funcs);
+    }
+    if (errorCount == schema()->pumps()->size())
+    {
+        showStatusError(tr("No points were calculated, see Protocol window for details"));
+        _graphs->clear();
     }
 }
 

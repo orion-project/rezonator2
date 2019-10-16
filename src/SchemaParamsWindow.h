@@ -14,7 +14,7 @@ const QString windowType("SchemaParams");
 SchemaWindow* createWindow(Schema* schema);
 }
 
-class SchemaParamsWindow : public SchemaMdiChild, public ISchemaWindowStorable
+class SchemaParamsWindow : public SchemaMdiChild, public ISchemaWindowStorable, public IShortcutListener
 {
     Q_OBJECT
 
@@ -28,6 +28,9 @@ public:
 
     // inherits from ISchemaWindowStorable
     QString storableType() const override { return SchemaParamsWindowStorable::windowType; }
+
+    // inherits from IShortcutListener
+    void shortcutEnterPressed() override;
 
 private slots:
     void createParameter();

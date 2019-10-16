@@ -104,6 +104,8 @@ private:
     void updateStability();
     void updateActions();
 
+    void shortcutEnterActivated();
+
 private slots:
     void showElementsCatalog();
     void showSettings();

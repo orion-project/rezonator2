@@ -1,14 +1,11 @@
 {
   "history": [
     {
-      "version": "2.0.5-alpha5",
+      "version": "2.0.5-beta1",
       "date": "",
       "changes": [
         {
           "text": "TS-flipped mode added for plot functions."
-        },
-        {
-          "text": "Fixed: Multicaustic doesn't save the mode (beam radius/front radius)."
         },
         {
           "text": "Multicaustic function renamed to Multirange Caustic."
@@ -24,6 +21,18 @@
         },
         {
           "text": "Function 'Show Round-trip' can be called from plot window."
+        },
+        {
+          "text": "Parameter adjuster can be created via element's context menu."
+        },
+        {
+          "text": "Fixed: Multicaustic doesn't save the mode (beam radius/front radius)."
+        },
+        {
+          "text": "Fixed: Invalid autolimits when graph is constant line."
+        },
+        {
+          "text": "Fixed: Unable to set adjusting parameter via typing in adjuster input box."
         }
       ]
     },
