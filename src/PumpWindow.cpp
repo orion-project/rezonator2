@@ -301,7 +301,7 @@ PumpParams* PumpWindow::makeNewPumpDlg()
 {
     auto pump = PumpParamsDialog::makeNewPump();
     if (!pump) return nullptr;
-    if (Settings::instance().pumpAutoLabel)
+    if (AppSettings::instance().pumpAutoLabel)
         Z::Utils::generateLabel(schema(), pump);
     if (!PumpParamsDialog::editPump(pump))
     {
@@ -417,7 +417,7 @@ void PumpWindow::clonePump()
     if (!pumpMode) return;
 
     auto newPump = pumpMode->makePump();
-    if (Settings::instance().pumpAutoLabel)
+    if (AppSettings::instance().pumpAutoLabel)
         Z::Utils::generateLabel(schema(), newPump);
     else newPump->setLabel(pump->label());
     newPump->setTitle(pump->title());

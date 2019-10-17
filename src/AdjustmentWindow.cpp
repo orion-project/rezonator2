@@ -102,8 +102,8 @@ AdjusterWidget::AdjusterWidget(Schema* schema, Z::Parameter *param, QWidget *par
     _currentValue = _param->value();
     _elem = Z::Utils::findElemByParam(_schema, _param);
 
-    _settings.increment = Settings::instance().adjusterIncrement;
-    _settings.multiplier = Settings::instance().adjusterMultiplier;
+    _settings.increment = AppSettings::instance().adjusterIncrement;
+    _settings.multiplier = AppSettings::instance().adjusterMultiplier;
 
     _valueEditor = new Ori::Widgets::ValueEdit;
     _valueEditor->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
@@ -550,9 +550,9 @@ void AdjustmentWindow::setupAdjuster()
 
         if (w.shouldSetDefault())
         {
-            Settings::instance().adjusterIncrement = settings.increment;
-            Settings::instance().adjusterMultiplier = settings.multiplier;
-            Settings::instance().save();
+            AppSettings::instance().adjusterIncrement = settings.increment;
+            AppSettings::instance().adjusterMultiplier = settings.multiplier;
+            AppSettings::instance().save();
         }
         if (w.shouldUseForAll())
         {

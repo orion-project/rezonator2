@@ -180,7 +180,7 @@ QWidget* CalculatorWindow::makeToolbar()
     buttonCalc->setToolTip(tr("Calculate<br>(<b>Ctrl + Enter</b>)"));
 
     auto toolbar = new Ori::Widgets::FlatToolBar;
-    toolbar->setIconSize(Settings::instance().toolbarIconSize());
+    toolbar->setIconSize(AppSettings::instance().toolbarIconSize());
     Ori::Gui::populate(toolbar, {
         buttonCalc, actnClear, nullptr, actnReuse, nullptr, actnSettings, actionHelp
     });

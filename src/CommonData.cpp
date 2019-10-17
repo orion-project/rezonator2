@@ -18,7 +18,7 @@ CommonData::CommonData(QObject *parent) : QObject(parent)
     }
 
     _instance = this;
-    Settings::instance().registerListener(this);
+    AppSettings::instance().registerListener(this);
 
     Ori::Settings s;
     s.beginGroup("View");
@@ -27,7 +27,7 @@ CommonData::CommonData(QObject *parent) : QObject(parent)
 
     s.beginGroup("States");
     _mruList = new Ori::MruFileList(this);
-    _mruList->setMaxCount(Settings::instance().mruSchemaCount);
+    _mruList->setMaxCount(AppSettings::instance().mruSchemaCount);
     _mruList->load(s.settings());
 
     CustomPrefs::load(s.settings()->fileName());
@@ -41,12 +41,12 @@ CommonData::~CommonData()
     s.setValue("language", _translator->currentLanguage());
 
     _instance = nullptr;
-    Settings::instance().unregisterListener(this);
+    AppSettings::instance().unregisterListener(this);
 }
 
 void CommonData::settingsChanged()
 {
-    _mruList->setMaxCount(Settings::instance().mruSchemaCount);
+    _mruList->setMaxCount(AppSettings::instance().mruSchemaCount);
 }
 
 void CommonData::addFileToMruList(const QString& fileName)

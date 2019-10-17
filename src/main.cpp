@@ -70,8 +70,8 @@ int main(int argc, char* argv[])
         return Ori::Testing::run(app, { ADD_SUITE(Z::Tests) });
 
     // Load application settings before any command start
-    Settings::instance().load();
-    Settings::instance().isDevMode = parser.isSet(optionDevMode);
+    AppSettings::instance().load();
+    AppSettings::instance().isDevMode = parser.isSet(optionDevMode);
 
     // CommonData will be used via its instance pointer
     CommonData commonData;
@@ -119,9 +119,9 @@ int main(int argc, char* argv[])
     }
 
     // Open empty project window if start window is disabled
-    if (!Settings::instance().showStartWindow)
+    if (!AppSettings::instance().showStartWindow)
     {
-        auto tripType = TripTypes::find(Settings::instance().defaultTripType);
+        auto tripType = TripTypes::find(AppSettings::instance().defaultTripType);
         auto schema = ProjectOperations::createDefaultSchema(tripType);
         auto window = new ProjectWindow(schema);
         window->show();

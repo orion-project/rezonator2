@@ -1120,7 +1120,7 @@ QMenu* SchemaLayout::createContextMenu()
 void SchemaLayout::copyImage()
 {
     QImage image(_scene.sceneRect().size().toSize(), QImage::Format_ARGB32);
-    image.fill(Settings::instance().layoutExportTransparent ? Qt::transparent : Qt::white);
+    image.fill(AppSettings::instance().layoutExportTransparent ? Qt::transparent : Qt::white);
 
     QPainter painter(&image);
     painter.setRenderHint(QPainter::Antialiasing, true);

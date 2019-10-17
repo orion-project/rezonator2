@@ -91,7 +91,7 @@ ProjectWindow::ProjectWindow(Schema* aSchema) : QMainWindow(), SchemaToolWindow(
 
     registerStorableWindows();
 
-    if (Settings::instance().showProtocolAtStart)
+    if (AppSettings::instance().showProtocolAtStart)
         showProtocolWindow();
 
     // This allows Enter shortcut for tool windows (see IShortcutListener).
@@ -182,7 +182,7 @@ void ProjectWindow::createActions()
 
 void ProjectWindow::createMenuBar()
 {
-    menuBar()->setNativeMenuBar(Settings::instance().useNativeMenuBar);
+    menuBar()->setNativeMenuBar(AppSettings::instance().useNativeMenuBar);
 
     _mruMenu = new Ori::Widgets::MruMenu(tr("Recent Files"), CommonData::instance()->mruList(), this);
 
@@ -448,7 +448,7 @@ void ProjectWindow::showElementsCatalog()
 
 void ProjectWindow::showSettings()
 {
-    Settings::instance().edit(this);
+    AppSettings::instance().edit(this);
 }
 
 void ProjectWindow::showGaussCalculator()

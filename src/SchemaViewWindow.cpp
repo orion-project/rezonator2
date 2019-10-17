@@ -195,13 +195,13 @@ void SchemaViewWindow::actionElemDelete()
 
 void SchemaViewWindow::elementCreated(Schema*, Element *elem)
 {
-    if (!_pasteMode && Settings::instance().elemAutoLabel)
+    if (!_pasteMode && AppSettings::instance().elemAutoLabel)
     {
         // Disable elemChanged event from inside of elemCreated
         ElementLocker locker(elem, false);
         Z::Utils::generateLabel(schema(), elem);
     }
-    if (!_pasteMode && Settings::instance().editNewElem)
+    if (!_pasteMode && AppSettings::instance().editNewElem)
         // All clients should process elementCreated event before elem will be changed,
         // so run deffered to avoid raise elementChanged from inside of elementCreated.
         QTimer::singleShot(0, [this, elem](){ this->editElement(elem); });
@@ -228,7 +228,7 @@ void SchemaViewWindow::paste()
 
     _pasteMode = true;
     bool doEvents = true;
-    bool doLabels = Settings::instance().elemAutoLabelPasted;
+    bool doLabels = AppSettings::instance().elemAutoLabelPasted;
     schema()->insertElements(elems, _table->currentRow(), doEvents, doLabels);
     _pasteMode = false;
 }

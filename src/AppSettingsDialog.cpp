@@ -85,7 +85,7 @@ QWidget* AppSettingsDialog::createLayoutPage()
 
 void AppSettingsDialog::populate()
 {
-    Settings &settings = Settings::instance();
+    AppSettings &settings = AppSettings::instance();
 
     // options
     groupOptions->setOption(0, settings.editNewElem);
@@ -106,7 +106,7 @@ void AppSettingsDialog::populate()
 
 bool AppSettingsDialog::collect()
 {
-    Settings &settings = Settings::instance();
+    AppSettings &settings = AppSettings::instance();
 
     // options
     settings.editNewElem = groupOptions->option(0);

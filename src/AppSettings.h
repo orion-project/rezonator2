@@ -7,18 +7,18 @@
 
 #include <QSize>
 
-class SettingsListener
+class IAppSettingsListener
 {
 public:
-    SettingsListener();
-    virtual ~SettingsListener();
+    IAppSettingsListener();
+    virtual ~IAppSettingsListener();
 
     virtual void settingsChanged() {}
 };
 
-class Settings :
-        public Singleton<Settings>,
-        public Notifier<SettingsListener>
+class AppSettings :
+        public Singleton<AppSettings>,
+        public Notifier<IAppSettingsListener>
 {
 public:
     bool editNewElem;         ///< Open element properties dialog after element has been created.
@@ -60,9 +60,9 @@ public:
     QSize toolbarIconSize() const;
 
 private:
-    Settings() {}
+    AppSettings() {}
 
-    friend class Singleton<Settings>;
+    friend class Singleton<AppSettings>;
 
     int toolbarIconSizeSmall;
     int toolbarIconSizeBig;

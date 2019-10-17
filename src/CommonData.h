@@ -11,7 +11,7 @@ namespace Ori {
     class MruFileList;
 }
 
-class CommonData : public QObject, public SettingsListener
+class CommonData : public QObject, public IAppSettingsListener
 {
     Q_OBJECT
 

@@ -255,7 +255,7 @@ TipsStartPanel::TipsStartPanel(QLabel *tipImage) : StartPanel("panel_tips")
     connect(nextButton, &QToolButton::clicked, this, &TipsStartPanel::showNextTip);
     buttonsLayout->addWidget(nextButton);
 
-    if (Settings::instance().isDevMode)
+    if (AppSettings::instance().isDevMode)
     {
         auto chooseTipButton = new QToolButton;
         chooseTipButton->setProperty("role", "tip_button");
@@ -493,7 +493,7 @@ ToolsStartPanel::ToolsStartPanel() : StartPanel("panel_tools")
     layout->addWidget(makeHeader(tr("Tools")));
     layout->addWidget(makeButton(":/toolbar/gauss_calculator", tr("Gauss Calculator"), SLOT(showGaussCalculator())));
     layout->addWidget(makeButton(":/window_icons/calculator", tr("Formula Calculator"), SLOT(showCalculator())));
-    if (Settings::instance().isDevMode)
+    if (AppSettings::instance().isDevMode)
         layout->addWidget(makeButton(":/toolbar/protocol", tr("Edit Stylesheet"), SLOT(editStyleSheet())));
     layout->addWidget(makeButton(":/toolbar/settings", tr("Edit Settings"), SLOT(editAppSettings())));
     layout->addWidget(makeButton(":/toolbar/help", tr("Show Manual"), SLOT(showUserManual())));

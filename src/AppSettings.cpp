@@ -14,14 +14,14 @@ namespace Dlg {
 //                              SettingsListener
 //------------------------------------------------------------------------------
 
-SettingsListener::SettingsListener()
+IAppSettingsListener::IAppSettingsListener()
 {
-    Settings::instance().registerListener(this);
+    AppSettings::instance().registerListener(this);
 }
 
-SettingsListener::~SettingsListener()
+IAppSettingsListener::~IAppSettingsListener()
 {
-    Settings::instance().unregisterListener(this);
+    AppSettings::instance().unregisterListener(this);
 }
 
 
@@ -38,7 +38,7 @@ SettingsListener::~SettingsListener()
 #define SAVE(option)\
     s.settings()->setValue(QStringLiteral(#option), option)
 
-void Settings::load()
+void AppSettings::load()
 {
     Ori::Settings s;
 
@@ -80,7 +80,7 @@ void Settings::load()
     defaultUnitAngle = Z::Units::findByAlias(s.settings()->value("defaultUnitAngle").toString(), Z::Units::deg());
 }
 
-void Settings::save()
+void AppSettings::save()
 {
     Ori::Settings s;
 
@@ -120,15 +120,15 @@ void Settings::save()
     s.settings()->setValue("defaultUnitAngle", defaultUnitAngle->alias());
 }
 
-bool Settings::edit(class QWidget *parent)
+bool AppSettings::edit(class QWidget *parent)
 {
     bool result = Z::Dlg::editAppSettings(parent);
     if (result)
-        notify(&SettingsListener::settingsChanged);
+        notify(&IAppSettingsListener::settingsChanged);
     return result;
 }
 
-QSize Settings::toolbarIconSize() const
+QSize AppSettings::toolbarIconSize() const
 {
     return smallToolbarImages ?
         QSize(toolbarIconSizeSmall, toolbarIconSizeSmall) :

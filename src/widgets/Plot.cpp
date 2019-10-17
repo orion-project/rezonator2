@@ -10,11 +10,11 @@
 #include <QLabel>
 
 Plot::Plot() :
-        _safeMarginsX(Settings::instance().plotSafeMarginsPercentX/100.0),
-        _safeMarginsY(Settings::instance().plotSafeMarginsPercentY/100.0),
-        _zoomStepX(Settings::instance().plotZoomStepPercentX/100.0),
-        _zoomStepY(Settings::instance().plotZoomStepPercentY/100.0),
-        _numberPrecision(Settings::instance().plotNumberPrecision)
+        _safeMarginsX(AppSettings::instance().plotSafeMarginsPercentX/100.0),
+        _safeMarginsY(AppSettings::instance().plotSafeMarginsPercentY/100.0),
+        _zoomStepX(AppSettings::instance().plotZoomStepPercentX/100.0),
+        _zoomStepY(AppSettings::instance().plotZoomStepPercentY/100.0),
+        _numberPrecision(AppSettings::instance().plotNumberPrecision)
 {
     yAxis->setNumberPrecision(_numberPrecision);
     xAxis->setNumberPrecision(_numberPrecision);

@@ -179,9 +179,9 @@ Z::Unit CausticWindow::getDefaultUnitY() const
 {
     switch (function()->mode())
     {
-    case CausticFunction::BeamRadius: return Settings::instance().defaultUnitBeamRadius;
-    case CausticFunction::FontRadius: return Settings::instance().defaultUnitFrontRadius;
-    case CausticFunction::HalfAngle: return Settings::instance().defaultUnitAngle;
+    case CausticFunction::BeamRadius: return AppSettings::instance().defaultUnitBeamRadius;
+    case CausticFunction::FontRadius: return AppSettings::instance().defaultUnitFrontRadius;
+    case CausticFunction::HalfAngle: return AppSettings::instance().defaultUnitAngle;
     }
     return Z::Units::none();
 }

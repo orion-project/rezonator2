@@ -32,7 +32,7 @@ using namespace Ori::Layouts;
 QFileDialog::Options fileDialogOptions()
 {
     QFileDialog::Options options = nullptr;
-    if (!Settings::instance().useSystemDialogs)
+    if (!AppSettings::instance().useSystemDialogs)
         options |= QFileDialog::DontUseNativeDialog;
     return options;
 }
@@ -287,7 +287,7 @@ void ProjectOperations::createDefaultPump(Schema *schema)
     auto pump = PumpMode_Waist::instance()->makePump();
     pump->activate(true);
 
-    if (Settings::instance().pumpAutoLabel)
+    if (AppSettings::instance().pumpAutoLabel)
         Z::Utils::generateLabel(schema, pump);
 
     schema->pumps()->append(pump);

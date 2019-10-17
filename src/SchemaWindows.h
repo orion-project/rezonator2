@@ -85,7 +85,7 @@ private:
     so derived should also be inherited from some QWidget class,
     see @ref SchemaMdiChild or @ref InfoFuncWindow for example.
 */
-class SchemaToolWindow : public SchemaWindow, public SettingsListener
+class SchemaToolWindow : public SchemaWindow, public IAppSettingsListener
 {
 public:
     enum InitOption {
@@ -120,7 +120,7 @@ private:
     inserted into QMdiArea then default QMdiSubWindow is created and it uses default
     application icon.
 */
-class BasicMdiChild : public QMdiSubWindow, public SettingsListener
+class BasicMdiChild : public QMdiSubWindow, public IAppSettingsListener
 {
     Q_OBJECT
 
@@ -207,7 +207,7 @@ public:
 
 //------------------------------------------------------------------------------
 
-class SchemaMdiArea : public QMdiArea, public SettingsListener
+class SchemaMdiArea : public QMdiArea, public IAppSettingsListener
 {
     Q_OBJECT
 

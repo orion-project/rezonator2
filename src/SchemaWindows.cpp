@@ -16,7 +16,7 @@ namespace WindowUtils {
 
 QSize toolbarIconSize()
 {
-    return Settings::instance().smallToolbarImages? QSize(16,16): QSize(24,24);
+    return AppSettings::instance().smallToolbarImages? QSize(16,16): QSize(24,24);
 }
 
 void adjustIconSize(QToolBar* toolbar)
@@ -322,7 +322,7 @@ void SchemaMdiArea::settingsChanged()
 
 void SchemaMdiArea::updateBackground()
 {
-    if (Settings::instance().showBackground)
+    if (AppSettings::instance().showBackground)
         setBackground(QBrush(QPixmap(":/misc/mdi_background")));
     else
         setBackground(QBrush(palette().color(QPalette::Background)));

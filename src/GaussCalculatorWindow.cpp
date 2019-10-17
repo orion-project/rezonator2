@@ -630,7 +630,7 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     actionHelp->setEnabled(false); // TODO:NEXT-VER
 
     auto toolbar = new Ori::Widgets::FlatToolBar;
-    toolbar->setIconSize(Settings::instance().toolbarIconSize());
+    toolbar->setIconSize(AppSettings::instance().toolbarIconSize());
     Ori::Gui::populate(toolbar, {
         _calcModeLock, nullptr, _calcModeZone, nullptr, _plotPlusMinusZ, _plotPlusMinusW, nullptr,
         _plotWR, _plotV, _plotZ0, nullptr, actionCalc, nullptr, actionHelp
