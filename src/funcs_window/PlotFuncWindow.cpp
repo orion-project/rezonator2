@@ -1,6 +1,7 @@
 #include "PlotFuncWindow.h"
 
 #include "InfoFuncWindow.h"
+#include "FuncWindowHelpers.h"
 #include "../Appearance.h"
 #include "../AppSettings.h"
 #include "../core/Protocol.h"
@@ -33,14 +34,9 @@ enum PlotWindowStatusPanels
     STATUS_PANELS_COUNT,
 };
 
-static QMap<QString, int> __windowIndeces;
-
 PlotFuncWindow::PlotFuncWindow(PlotFunction *func) : SchemaMdiChild(func->schema()), _function(func)
 {
-    _windowIndex = __windowIndeces[function()->name()];
-    __windowIndeces[function()->name()] = _windowIndex+1;
-
-    setTitleAndIcon(displayWindowTitle(), function()->iconPath());
+    setTitleAndIcon(FuncWindowHelpers::makeWindowTitle(func), function()->iconPath());
 
     createContent();
     createActions();
@@ -528,13 +524,6 @@ void PlotFuncWindow::restoreView(int key)
         _centerCursorRequested = true;
     }
     restoreViewSpecific(key);
-}
-
-QString PlotFuncWindow::displayWindowTitle() const
-{
-    if (_windowIndex > 0)
-        return QString("%1 (%2)").arg(function()->name()).arg(_windowIndex);
-    return function()->name();
 }
 
 ElemDeletionReaction PlotFuncWindow::reactElemDeletion(const Elements& elems)

@@ -10,7 +10,6 @@
 QT_BEGIN_NAMESPACE
 class QAction;
 class QLabel;
-class QMenu;
 class QSplitter;
 QT_END_NAMESPACE
 
@@ -109,8 +108,6 @@ protected:
         *actnZoomIn, *actnZoomOut, *actnZoomInX, *actnZoomOutX, *actnZoomInY, *actnZoomOutY,
         *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo;
 
-    int _windowIndex = 0;
-
     struct ViewState
     {
         AxisLimits limitsX;
@@ -153,8 +150,6 @@ protected:
 
     void showStatusError(const QString &message);
     void clearStatusInfo();
-
-    QString displayWindowTitle() const;
 
     void disableAndClose();
 

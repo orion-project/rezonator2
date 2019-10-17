@@ -110,6 +110,7 @@ QWidget* AppSettingsDialog::createUnitsPage()
     infoLabel->setWordWrap(true);
     auto infoIcon = new QLabel;
     infoIcon->setPixmap(QIcon(":/toolbar/info").pixmap(24, 24));
+    infoIcon->setFixedWidth(24);
 
     auto defUnitsGroup = new QGroupBox(tr("Default units"));
     LayoutV({

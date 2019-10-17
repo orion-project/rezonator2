@@ -7,12 +7,12 @@ class MultibeamCausticFunction : public MultirangeCausticFunction
 {
 public:
     FUNC_ALIAS("MultibeamCaustic")
-    FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Multibeam Caustic"))
+    FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "MB-Caustic"))
+    FUNC_ICON(":/toolbar/func_multi_beam_caustic")
 
     MultibeamCausticFunction(Schema *schema);
 
     bool hasOptions() const override { return false; }
-    const char* iconPath() const override { return ":/toolbar/func_multi_beam_caustic"; }
 
     CausticFunction::Mode mode() const = delete;
     void setMode(CausticFunction::Mode mode) = delete;

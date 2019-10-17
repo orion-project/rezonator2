@@ -13,6 +13,9 @@
     static QString _alias_() { return s; }\
     QString alias() const override { return s; }
 
+#define FUNC_ICON(s)\
+    const char* iconPath() const override { return s; }
+
 class FunctionBase;
 class RoundTripCalculator;
 class Schema;

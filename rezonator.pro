@@ -105,6 +105,7 @@ HEADERS += \
     src/funcs/StabilityMapFunction.h \
     src/funcs/TableFunction.h \
     src/funcs_window/CausticWindow.h \
+    src/funcs_window/FuncWindowHelpers.h \
     src/funcs_window/InfoFuncWindow.h \
     src/funcs_window/MultiCausticParamsDlg.h \
     src/funcs_window/MultibeamCausticWindow.h \
@@ -218,6 +219,7 @@ SOURCES += \
     src/funcs/StabilityMapFunction.cpp \
     src/funcs/TableFunction.cpp \
     src/funcs_window/CausticWindow.cpp \
+    src/funcs_window/FuncWindowHelpers.cpp \
     src/funcs_window/InfoFuncWindow.cpp \
     src/funcs_window/MultiCausticParamsDlg.cpp \
     src/funcs_window/MultibeamCausticWindow.cpp \

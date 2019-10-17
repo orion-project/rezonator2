@@ -7,7 +7,8 @@ class StabilityMap2DFunction : public PlotFunction
 {
 public:
     FUNC_ALIAS("StabMap2D")
-    FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "2D Stability Map"))
+    FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "2D-Stability"))
+    FUNC_ICON(":/toolbar/func_stab_map_2d")
 
     StabilityMap2DFunction(Schema *schema) : PlotFunction(schema) {}
 
@@ -23,7 +24,6 @@ public:
     bool hasOptions() const override { return true; }
     bool hasDataTable() const override { return false; }
     void loadPrefs() override;
-    const char* iconPath() const override { return ":/toolbar/func_stab_map_2d"; }
 
     Z::Enums::StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }
     void setStabilityCalcMode(Z::Enums::StabilityCalcMode mode) { _stabilityCalcMode = mode; }

@@ -9,14 +9,14 @@ class MultirangeCausticFunction : public PlotFunction
 {
 public:
     FUNC_ALIAS("MultirangeCaustic")
-    FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Multirange Caustic"))
+    FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "MR-Caustic"))
+    FUNC_ICON(":/toolbar/func_multi_caustic")
 
     MultirangeCausticFunction(Schema *schema) : PlotFunction(schema) {}
     ~MultirangeCausticFunction() override;
 
     void calculate() override;
     bool hasOptions() const override { return true; }
-    const char* iconPath() const override { return ":/toolbar/func_multi_caustic"; }
     int resultCount(Z::WorkPlane plane) const override;
     const PlotFuncResult& result(Z::WorkPlane plane, int index) const override;
 

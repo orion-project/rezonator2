@@ -144,7 +144,7 @@ void ProjectWindow::createActions()
     actnFuncMultirangeCaustic = A_(tr("Multirange Caustic..."), _calculations, SLOT(funcMultirangeCaustic()), ":/toolbar/func_multi_caustic");
     actnFuncMultibeamCaustic = A_(tr("Multibeam Caustic..."), _calculations, SLOT(funcMultibeamCaustic()), ":/toolbar/func_multi_beam_caustic");
     actnFuncBeamVariation = A_(tr("Beamsize Variation..."), _calculations, SLOT(funcBeamVariation()), ":/toolbar/func_beam_variation");
-    actnFuncBeamParamsAtElems = A_(tr("Beam Parameters at Elemens"), _calculations, SLOT(funcBeamParamsAtElems()));
+    actnFuncBeamParamsAtElems = A_(tr("Beam Parameters at Elemens"), _calculations, SLOT(funcBeamParamsAtElems()), ":/toolbar/func_beamdata");
 
     actnToolsCatalog = A_(tr("Elements Catalog"), this, SLOT(showElementsCatalog()), ":/toolbar/catalog");
     actnToolsGaussCalc = A_(tr("Gauss Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
@@ -199,9 +199,10 @@ void ProjectWindow::createMenuBar()
     menuView = new QMenu(tr("View"), this);
 
     menuFunctions = Ori::Gui::menu(tr("Functions"), this,
-        { actnFuncRoundTrip, actnFuncMultFwd, actnFuncMultBkwd, nullptr, actnFuncStabMap,
-          actnFuncStabMap2d, nullptr, actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic,
-          actnFuncBeamVariation, nullptr, actnFuncBeamParamsAtElems, nullptr, actnFuncRepRate });
+        { actnFuncRoundTrip, actnFuncMultFwd, actnFuncMultBkwd, nullptr,
+          actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamVariation, nullptr,
+          actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic,
+          actnFuncBeamParamsAtElems, nullptr, actnFuncRepRate });
 
     menuTools = Ori::Gui::menu(tr("Tools", "Menu title"), this,
         { actnToolFlipSchema, nullptr, actnToolAdjust, nullptr,
@@ -223,10 +224,10 @@ void ProjectWindow::createToolBars()
     addToolBar(makeToolBar({
         actnFileNew, Ori::Gui::menuToolButton(_mruMenu, actnFileOpen),
         actnFileSave, nullptr, actnFileProps, actnFilePump, actnFileSummary , nullptr,
-        actnEditCut, actnEditCopy, actnEditPaste, nullptr,
-        actnFuncRoundTrip, nullptr, actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamVariation, nullptr,
-        actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic, nullptr, actnFuncRepRate, nullptr,
-        actnWndParams, actnWndPumps, nullptr, actnToolAdjust, nullptr,
+        actnEditCut, actnEditCopy, actnEditPaste, nullptr, actnFuncRoundTrip, nullptr,
+        actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamVariation, nullptr,
+        actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic, actnFuncBeamParamsAtElems, nullptr,
+        actnFuncRepRate, nullptr, actnWndParams, actnWndPumps, nullptr, actnToolAdjust, nullptr,
         actnToolsGaussCalc, actnToolsCalc
     }, true));
 

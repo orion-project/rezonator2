@@ -1,5 +1,5 @@
-#ifndef BEAMPARAMS_AT_ELEMS_FUNCTION_H
-#define BEAMPARAMS_AT_ELEMS_FUNCTION_H
+#ifndef BEAM_PARAMS_AT_ELEMS_FUNCTION_H
+#define BEAM_PARAMS_AT_ELEMS_FUNCTION_H
 
 #include "TableFunction.h"
 
@@ -7,9 +7,12 @@ class BeamParamsAtElemsFunction : public TableFunction
 {
 public:
     FUNC_ALIAS("BeamParamsAtElems")
-    FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Beam Parameters at Elements"))
+    FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Beam Data"))
+    FUNC_ICON(":/toolbar/func_beamdata")
 
     BeamParamsAtElemsFunction(Schema *schema);
+
+    QVector<ColumnDef> columns() const override;
 };
 
-#endif // BEAMPARAMS_AT_ELEMS_FUNCTION_H
+#endif // BEAM_PARAMS_AT_ELEMS_FUNCTION_H
