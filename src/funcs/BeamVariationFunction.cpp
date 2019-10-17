@@ -58,11 +58,6 @@ void BeamVariationFunction::calculate()
     finishResults();
 }
 
-Z::Unit BeamVariationFunction::defaultUnitX() const
-{
-    return _arg.range.start.unit();
-}
-
 bool BeamVariationFunction::prepareSinglePass()
 {
     auto pump = _schema->activePump();

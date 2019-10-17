@@ -161,6 +161,8 @@ protected:
 
     Z::Unit getUnitX() const;
     Z::Unit getUnitY() const;
+    virtual Z::Unit getDefaultUnitX() const { return Z::Units::none(); }
+    virtual Z::Unit getDefaultUnitY() const { return Z::Units::none(); }
 
 private slots:
     void activateModeT();

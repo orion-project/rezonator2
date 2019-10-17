@@ -18,9 +18,6 @@ public:
 
     void calculate() override;
     const char* iconPath() const override { return ":/toolbar/func_beam_variation"; }
-    Z::Unit defaultUnitX() const override;
-    // TODO: Preferable units can be stored and restored from CustomPrefs
-    Z::Unit defaultUnitY() const override { return Z::Units::mkm(); }
 
     Z::PlotPosition* pos() { return &_pos; }
 

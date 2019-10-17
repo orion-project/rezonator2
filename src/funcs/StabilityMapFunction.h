@@ -16,7 +16,6 @@ public:
     bool hasOptions() const override { return true; }
     void loadPrefs() override;
     const char* iconPath() const override { return ":/toolbar/func_stab_map"; }
-    Z::Unit defaultUnitX() const override;
 
     Z::Enums::StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }
     void setStabilityCalcMode(Z::Enums::StabilityCalcMode mode) { _stabilityCalcMode = mode; }

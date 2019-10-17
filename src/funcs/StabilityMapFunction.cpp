@@ -36,9 +36,3 @@ void StabilityMapFunction::loadPrefs()
                 CustomPrefs::recentStr(QStringLiteral("func_stab_map_mode")),
                 Z::Enums::StabilityCalcMode::Normal);
 }
-
-Z::Unit StabilityMapFunction::defaultUnitX() const
-{
-    return _arg.range.start.unit();
-}
-

@@ -32,6 +32,8 @@ protected:
     QString getDefaultTitle() const override;
     QString getDefaultTitleX() const override;
     QString getDefaultTitleY() const override;
+    Z::Unit getDefaultUnitX() const override;
+    Z::Unit getDefaultUnitY() const override;
     void storeViewSpecific(int key) override;
     void restoreViewSpecific(int key) override;
 

@@ -29,13 +29,9 @@ public:
     bool hasOptions() const override { return true; }
     QString calculatePoint(const double& arg) override;
     const char* iconPath() const override { return ":/toolbar/func_caustic"; }
-    Z::Unit defaultUnitX() const override;
-    Z::Unit defaultUnitY() const override { return defaultUnitsForMode(_mode); }
 
     Mode mode() const { return _mode; }
     void setMode(Mode mode) { _mode = mode; }
-
-    static Z::Unit defaultUnitsForMode(CausticFunction::Mode);
 
 private:
     /// Wich type of result the function should compute.

@@ -219,3 +219,21 @@ QString MulticausticWindow::getDefaultTitleX() const
         strs << arg.element->displayLabel();
     return QStringLiteral("%1 (%2)").arg(strs.join(QStringLiteral(", ")), getUnitX()->name());
 }
+
+Z::Unit MulticausticWindow::getDefaultUnitX() const
+{
+    const auto& funcs = function()->funcs();
+    return funcs.isEmpty() ? Z::Units::none() : funcs.first()->arg()->parameter->value().unit();
+}
+
+Z::Unit MulticausticWindow::getDefaultUnitY() const
+{
+    // TODO: Get from AppSettings
+    switch (function()->mode())
+    {
+    case CausticFunction::BeamRadius: return Z::Units::mkm();
+    case CausticFunction::FontRadius: return Z::Units::m();
+    case CausticFunction::HalfAngle: return Z::Units::deg();
+    }
+    return Z::Units::none();
+}

@@ -562,7 +562,7 @@ void PlotFuncWindow::disableAndClose()
 
 Z::Unit PlotFuncWindow::getUnitX() const
 {
-    auto defUnit = function()->defaultUnitX();
+    auto defUnit = getDefaultUnitX();
     auto thisDim = Z::Units::guessDim(_unitX);
     auto funcDim = Z::Units::guessDim(defUnit);
     return thisDim == funcDim ? _unitX : defUnit;
@@ -570,7 +570,7 @@ Z::Unit PlotFuncWindow::getUnitX() const
 
 Z::Unit PlotFuncWindow::getUnitY() const
 {
-    auto defUnit = function()->defaultUnitY();
+    auto defUnit = getDefaultUnitY();
     auto thisDim = Z::Units::guessDim(_unitY);
     auto funcDim = Z::Units::guessDim(defUnit);
     return thisDim == funcDim ? _unitY : defUnit;

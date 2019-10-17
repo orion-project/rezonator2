@@ -118,9 +118,6 @@ public:
     /// Load custom preferences - recently used modes etc.
     virtual void loadPrefs() {}
 
-    virtual Z::Unit defaultUnitX() const { return Z::Units::none(); }
-    virtual Z::Unit defaultUnitY() const { return Z::Units::none(); }
-
     RoundTripCalculator* roundTripCalculator() const { return _calc; }
 
 protected:

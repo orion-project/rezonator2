@@ -146,6 +146,17 @@ QString BeamVariationWindow::getDefaultTitleY() const
         .arg(getUnitY()->name());
 }
 
+Z::Unit BeamVariationWindow::getDefaultUnitX() const
+{
+    return function()->arg()->range.start.unit();
+}
+
+Z::Unit BeamVariationWindow::getDefaultUnitY() const
+{
+    // TODO: get from AppSettings
+    return Z::Units::mkm();
+}
+
 QString BeamVariationWindow::readFunction(const QJsonObject& root)
 {
     auto res = Z::IO::Json::readVariable(root["arg"].toObject(), function()->arg(), schema());

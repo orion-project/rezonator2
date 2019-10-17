@@ -304,6 +304,16 @@ QString StabilityMap2DWindow::getDefaultTitleY() const
     return getDefaultAxisTitle(function()->paramY(), getUnitY());
 }
 
+Z::Unit StabilityMap2DWindow::getDefaultUnitX() const
+{
+    return function()->paramX()->range.start.unit();
+}
+
+Z::Unit StabilityMap2DWindow::getDefaultUnitY() const
+{
+    return function()->paramY()->range.start.unit();
+}
+
 void StabilityMap2DWindow::autolimitsStability(bool replot)
 {
     switch (function()->stabilityCalcMode())

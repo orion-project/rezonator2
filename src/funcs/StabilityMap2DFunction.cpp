@@ -76,13 +76,3 @@ bool StabilityMap2DFunction::checkArg(Z::Variable* arg)
     }
     return true;
 }
-
-Z::Unit StabilityMap2DFunction::defaultUnitX() const
-{
-    return _paramX.range.start.unit();
-}
-
-Z::Unit StabilityMap2DFunction::defaultUnitY() const
-{
-    return _paramY.range.start.unit();
-}

@@ -168,3 +168,20 @@ QString CausticWindow::getDefaultTitleY() const
     }
     return QStringLiteral("%1 (%2)").arg(title, getUnitY()->name());
 }
+
+Z::Unit CausticWindow::getDefaultUnitX() const
+{
+    return function()->arg()->parameter->value().unit();
+}
+
+Z::Unit CausticWindow::getDefaultUnitY() const
+{
+    // TODO: Get from AppSettings
+    switch (function()->mode())
+    {
+    case CausticFunction::BeamRadius: return Z::Units::mkm();
+    case CausticFunction::FontRadius: return Z::Units::m();
+    case CausticFunction::HalfAngle: return Z::Units::deg();
+    }
+    return Z::Units::none();
+}

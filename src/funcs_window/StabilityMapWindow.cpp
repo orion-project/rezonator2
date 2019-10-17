@@ -285,3 +285,8 @@ QString StabilityMapWindow::getDefaultTitleY() const
     }
     return tr("Stability parameter: %1").arg(stabCalcMode);
 }
+
+Z::Unit StabilityMapWindow::getDefaultUnitX() const
+{
+    return function()->arg()->range.start.unit();
+}

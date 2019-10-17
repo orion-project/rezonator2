@@ -203,20 +203,3 @@ QString CausticFunction::calculatePoint(const double& arg)
     return QString::fromUtf8("ω<sub>T</sub>: %1; ω<sub>S</sub>: %2")
             .arg(Z::format(value.T), Z::format(value.S)); */
 }
-
-Z::Unit CausticFunction::defaultUnitX() const
-{
-    return _arg.parameter->value().unit();
-}
-
-Z::Unit CausticFunction::defaultUnitsForMode(CausticFunction::Mode mode)
-{
-    // TODO: Preferable units for each mode can be stored and restored from CustomPrefs
-    switch (mode)
-    {
-    case CausticFunction::BeamRadius: return Z::Units::mkm();
-    case CausticFunction::FontRadius: return Z::Units::m();
-    case CausticFunction::HalfAngle: return Z::Units::deg();
-    }
-    return Z::Units::none();
-}

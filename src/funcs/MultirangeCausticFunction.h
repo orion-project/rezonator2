@@ -26,13 +26,10 @@ public:
     QVector<Z::Variable> args() const;
     void setArgs(const QVector<Z::Variable>& args);
 
-    QList<CausticFunction*> funcs() { return _funcs; }
+    const QList<CausticFunction*>& funcs() { return _funcs; }
 
     CausticFunction::Mode mode() const;
     void setMode(CausticFunction::Mode mode);
-
-    Z::Unit defaultUnitX() const override;
-    Z::Unit defaultUnitY() const override;
 
 private:
     QList<CausticFunction*> _funcs;

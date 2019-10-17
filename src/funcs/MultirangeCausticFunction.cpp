@@ -92,16 +92,6 @@ const PlotFuncResult& MultirangeCausticFunction::result(Z::WorkPlane plane, int 
     throw std::runtime_error(errorMsg.toStdString()); // let it crash
 }
 
-Z::Unit MultirangeCausticFunction::defaultUnitX() const
-{
-    return _funcs.first()->arg()->parameter->value().unit();
-}
-
-Z::Unit MultirangeCausticFunction::defaultUnitY() const
-{
-    return CausticFunction::defaultUnitsForMode(mode());
-}
-
 void MultirangeCausticFunction::setPump(PumpParams* pump)
 {
     for (CausticFunction *func : _funcs)
