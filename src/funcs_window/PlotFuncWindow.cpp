@@ -503,8 +503,8 @@ void PlotFuncWindow::storeView(int key)
     view.limitsX = _plot->limitsX();
     view.limitsY = _plot->limitsY();
     view.cursorPos = _cursor->position();
-    view.unitX = _unitX;
-    view.unitY = _unitY;
+    view.unitX = getUnitX();
+    view.unitY = getUnitY();
     _storedView[key] = view;
     storeViewSpecific(key);
 }
@@ -522,9 +522,8 @@ void PlotFuncWindow::restoreView(int key)
     }
     else
     {
-        // Units for the view will be guessed from dim on first request
-        _unitX = Z::Units::none();
-        _unitY = Z::Units::none();
+        _unitX = getDefaultUnitX();
+        _unitY = getDefaultUnitY();
         _autolimitsRequest = true;
         _centerCursorRequested = true;
     }

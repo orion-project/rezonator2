@@ -26,6 +26,9 @@
           "text": "Parameter adjuster can be created via element's context menu."
         },
         {
+          "text": "Default units for function results can be chosen via app settings dialog."
+        },
+        {
           "text": "Fixed: Multicaustic doesn't save the mode (beam radius/front radius)."
         },
         {

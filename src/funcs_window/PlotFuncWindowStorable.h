@@ -15,10 +15,10 @@ public:
     QString storableWrite(QJsonObject& root) override;
 
 protected:
-    virtual QString readFunction(const QJsonObject& root) { Q_UNUSED(root);  return QString(); }
-    virtual QString writeFunction(QJsonObject& root) { Q_UNUSED(root);  return QString(); }
-    virtual QString readWindowSpecific(const QJsonObject& root) { Q_UNUSED(root);  return QString(); }
-    virtual QString writeWindowSpecific(QJsonObject& root) { Q_UNUSED(root);  return QString(); }
+    virtual QString readFunction(const QJsonObject& root) { Q_UNUSED(root)  return QString(); }
+    virtual QString writeFunction(QJsonObject& root) { Q_UNUSED(root)  return QString(); }
+    virtual QString readWindowSpecific(const QJsonObject& root) { Q_UNUSED(root)  return QString(); }
+    virtual QString writeWindowSpecific(QJsonObject& root) { Q_UNUSED(root)  return QString(); }
 
 private:
     QString readWindowGeneral(const QJsonObject& root);
