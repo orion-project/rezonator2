@@ -10,11 +10,27 @@ class TableFunction : public FunctionBase
 public:
     struct ColumnDef
     {
-        enum { WIDTH_STRETCH = -1, WIDTH_AUTO = 0 };
-        QString title, titleT, titleS;
+        QString titleT, titleS;
         Z::Unit unit = Z::Units::none();
-        bool isHtml = false;
-        int width = WIDTH_AUTO;
+    };
+
+    enum class ResultPosition
+    {
+        ELEMENT,       //   ()
+        LEFT,          // ->()
+        RIGHT,         //   ()->
+        LEFT_OUTSIDE,  // ->[   ]
+        LEFT_INSIDE,   //   [-> ]
+        MIDDLE,        //   [ + ]
+        RIGHT_INSIDE,  //   [ ->]
+        RIGHT_OUTSIDE, //   [   ]->
+    };
+
+    struct Result
+    {
+        Element* element;
+        ResultPosition position = ResultPosition::ELEMENT;
+        QVector<Z::PointTS> values;
     };
 
 public:
@@ -31,8 +47,11 @@ public:
 
     virtual QVector<ColumnDef> columns() const { return QVector<ColumnDef>(); }
 
-private:
+    const QVector<Result>& results() const { return _results; }
+
+protected:
     QString _errorText;
+    QVector<Result> _results;
 };
 
 #endif // TABLEFUNCTION_H

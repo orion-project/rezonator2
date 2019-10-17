@@ -1,6 +1,7 @@
 #include "BeamParamsAtElemsFunction.h"
 
 #include "../AppSettings.h"
+#include "../core/Schema.h"
 
 BeamParamsAtElemsFunction::BeamParamsAtElemsFunction(Schema *schema) : TableFunction(schema)
 {
@@ -9,11 +10,6 @@ BeamParamsAtElemsFunction::BeamParamsAtElemsFunction(Schema *schema) : TableFunc
 
 QVector<TableFunction::ColumnDef> BeamParamsAtElemsFunction::columns() const
 {
-    ColumnDef position;
-    position.width = ColumnDef::WIDTH_STRETCH;
-    position.isHtml = true;
-    position.title = "Position";
-
     ColumnDef beamRadius;
     beamRadius.titleT = "Wt";
     beamRadius.titleS = "Ws";
@@ -29,5 +25,20 @@ QVector<TableFunction::ColumnDef> BeamParamsAtElemsFunction::columns() const
     halfAngle.titleS = "Vs";
     halfAngle.unit = AppSettings::instance().defaultUnitAngle;
 
-    return {position, beamRadius, frontRadius, halfAngle};
+    return {beamRadius, frontRadius, halfAngle};
+}
+
+void BeamParamsAtElemsFunction::calculate()
+{
+    _results.clear();
+
+    for (auto elem : schema()->elements())
+    {
+        Result res;
+        res.element = elem;
+        res.values = {
+            {1, 2}, {3, 4}, {5, 6}
+        };
+        _results << res;
+    }
 }

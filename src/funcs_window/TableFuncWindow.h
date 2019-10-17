@@ -26,8 +26,11 @@ class TableFuncResultTable: public QTableWidget
 public:
     TableFuncResultTable(const QVector<TableFunction::ColumnDef>& columns);
 
-    void adjustColumns();
-    void updateColumnTitles(bool t, bool s);
+    bool showT = true;
+    bool showS = true;
+
+    void updateColumnTitles();
+    void update(const QVector<TableFunction::Result>& results);
 
 private:
     QVector<TableFunction::ColumnDef> _columns;

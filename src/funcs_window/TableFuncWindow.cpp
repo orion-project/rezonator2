@@ -1,6 +1,7 @@
 #include "TableFuncWindow.h"
 
 #include "FuncWindowHelpers.h"
+#include "../Appearance.h"
 #include "../core/Format.h"
 #include "../funcs/InfoFunctions.h"
 #include "../widgets/FrozenStateButton.h"
@@ -26,49 +27,31 @@ enum PlotWindowStatusPanels
 //                             TableFuncResultTable
 //------------------------------------------------------------------------------
 
+enum FixedCols {
+    COL_POSITION,
+
+    FIXED_COLS_COUNT
+};
+
 TableFuncResultTable::TableFuncResultTable(const QVector<TableFunction::ColumnDef> &columns) : QTableWidget(), _columns(columns)
 {
     setWordWrap(false);
-    setColumnCount(_columns.size());
+    setColumnCount(FIXED_COLS_COUNT + _columns.size());
     setContextMenuPolicy(Qt::CustomContextMenu);
-    horizontalHeader()->setHighlightSections(false);
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-
-    for (int col = 0; col < columns.size(); col++)
-    {
-        const auto& column = columns.at(col);
-        if (column.isHtml)
-            setItemDelegateForColumn(col, new RichTextItemDelegate(0, this));
-        if (column.width == TableFunction::ColumnDef::WIDTH_STRETCH)
-            horizontalHeader()->setSectionResizeMode(col, QHeaderView::Stretch);
-        else if (column.width == TableFunction::ColumnDef::WIDTH_AUTO)
-            horizontalHeader()->setSectionResizeMode(col, QHeaderView::ResizeToContents);
-        else
-        {
-            horizontalHeader()->setSectionResizeMode(col, QHeaderView::Fixed);
-            horizontalHeader()->resizeSection(col, column.width);
-        }
-    }
+    setItemDelegateForColumn(COL_POSITION, new RichTextItemDelegate(2, this));
 }
 
-void TableFuncResultTable::adjustColumns()
-{
-    for (int col = 0; col < columnCount(); col++)
-        if (horizontalHeader()->sectionResizeMode(col) == QHeaderView::ResizeToContents)
-            resizeColumnToContents(col);
-}
-
-void TableFuncResultTable::updateColumnTitles(bool t, bool s)
+void TableFuncResultTable::updateColumnTitles()
 {
     QStringList titles;
+    titles << tr("Position");
     for (const auto& col : _columns)
     {
         QString title;
-        if (!col.title.isEmpty())
-            title = col.title;
-        else if (t and s)
-            title = QString("%1 %2 %3 ").arg(col.titleT).arg(Z::Strs::multX()).arg(col.titleS);
-        else if (t)
+        if (showT and showS)
+            title = QStringLiteral("%1 %2 %3 ").arg(col.titleT).arg(Z::Strs::multX()).arg(col.titleS);
+        else if (showT)
             title = col.titleT;
         else
             title = col.titleS;
@@ -81,6 +64,60 @@ void TableFuncResultTable::updateColumnTitles(bool t, bool s)
         titles << title;
     }
     setHorizontalHeaderLabels(titles);
+}
+
+void TableFuncResultTable::update(const QVector<TableFunction::Result>& results)
+{
+    if (results.isEmpty())
+    {
+        clearContents();
+        return;
+    }
+
+    setRowCount(results.size());
+
+    for (int row = 0; row < results.size(); row++)
+    {
+        const auto& res = results.at(row);
+
+        QTableWidgetItem *it = item(row, COL_POSITION);
+        if (!it)
+        {
+            it = new QTableWidgetItem();
+            it->setFont(Z::Gui::ElemLabelFont().get());
+            it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+            setItem(row, COL_POSITION, it);
+        }
+        it->setText(res.element->displayLabel());
+
+        for (int index = 0; index < res.values.size(); index++)
+        {
+            const auto& value = res.values.at(index);
+            // TODO: rescale value to target unit
+
+            QString valueStr;
+            if (showT and showS)
+                valueStr = QStringLiteral("%1 %2 %3 ")
+                        .arg(Z::format(value.T))
+                        .arg(Z::Strs::multX())
+                        .arg(Z::format(value.S));
+            else if (showT)
+                valueStr = Z::format(value.T);
+            else
+                valueStr = Z::format(value.S);
+
+            it = item(row, FIXED_COLS_COUNT + index);
+            if (!it)
+            {
+                it = new QTableWidgetItem();
+                it->setFont(Z::Gui::ValueFont().get());
+                it->setTextAlignment(Qt::AlignHCenter | Qt::AlignCenter);
+                it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+                setItem(row, FIXED_COLS_COUNT + index, it);
+            }
+            it->setText(valueStr);
+        }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -147,7 +184,7 @@ void TableFuncWindow::createStatusBar()
 void TableFuncWindow::createContent()
 {
     _table = new TableFuncResultTable(_function->columns());
-    _table->updateColumnTitles(true, true);
+    _table->updateColumnTitles();
 
     setContent(_table);
 }
@@ -164,7 +201,7 @@ void TableFuncWindow::update()
     if (!_function->ok())
     {
         showStatusError(_function->errorText());
-        _table->clear();
+        _table->clearContents();
     }
     else
     {
@@ -199,7 +236,9 @@ void TableFuncWindow::updateModeTS()
 
 void TableFuncWindow::showModeTS()
 {
-    _table->updateColumnTitles(_actnShowT->isChecked(), _actnShowS->isChecked());
+    _table->showT = _actnShowT->isChecked();
+    _table->showS = _actnShowS->isChecked();
+    _table->updateColumnTitles();
 }
 
 void TableFuncWindow::freeze(bool frozen)
@@ -219,8 +258,7 @@ void TableFuncWindow::freeze(bool frozen)
 
 void TableFuncWindow::updateTable()
 {
-    // TODO
-    _table->adjustColumns();
+    _table->update(_function->results());
 }
 
 void TableFuncWindow::showStatusError(const QString& message)

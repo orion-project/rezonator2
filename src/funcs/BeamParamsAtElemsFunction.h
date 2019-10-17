@@ -12,6 +12,8 @@ public:
 
     BeamParamsAtElemsFunction(Schema *schema);
 
+    void calculate() override;
+
     QVector<ColumnDef> columns() const override;
 };
 
