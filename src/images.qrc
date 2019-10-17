@@ -161,6 +161,7 @@
         <file alias="layout">../img/misc/opts_layout.svg</file>
         <file alias="note">../img/misc/opts_notepad.svg</file>
         <file alias="view">../img/misc/opts_window.svg</file>
+        <file alias="units">../img/misc/opts_units.svg</file>
     </qresource>
     <qresource prefix="/window_icons">
         <file alias="calculator">../img/icon/calculator.svg</file>

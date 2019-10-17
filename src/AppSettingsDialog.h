@@ -7,6 +7,8 @@ QT_BEGIN_NAMESPACE
 class QComboBox;
 QT_END_NAMESPACE
 
+class UnitComboBox;
+
 namespace Ori {
 namespace Widgets {
     class OptionsGroup;
@@ -24,13 +26,17 @@ public:
     virtual bool collect() override;
 
 private:
-    Ori::Widgets::OptionsGroup *groupOptions;
-    Ori::Widgets::OptionsGroup *groupView;
-    Ori::Widgets::OptionsGroup *groupLayoutExport;
+    Ori::Widgets::OptionsGroup *_groupOptions;
+    Ori::Widgets::OptionsGroup *_groupView;
+    Ori::Widgets::OptionsGroup *_groupLayoutExport;
+    UnitComboBox *_defaultUnitBeamRadius;
+    UnitComboBox *_defaultUnitFrontRadius;
+    UnitComboBox *_defaultUnitAngle;
 
     QWidget* createGeneralPage();
     QWidget* createViewPage();
     QWidget* createLayoutPage();
+    QWidget* createUnitsPage();
     void fillLangsCombo();
     void fillStylesCombo();
 };

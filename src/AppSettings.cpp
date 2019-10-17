@@ -74,9 +74,9 @@ void AppSettings::load()
     s.beginGroup("Layout");
     LOAD_DEF(layoutExportTransparent, Bool, false);
 
-    s.beginGroup("Units\\Default");
-    defaultUnitFrontRadius = Z::Units::findByAlias(s.settings()->value("defaultUnitFrontRadius").toString(), Z::Units::m());
+    s.beginGroup("Units");
     defaultUnitBeamRadius = Z::Units::findByAlias(s.settings()->value("defaultUnitBeamRadius").toString(), Z::Units::mkm());
+    defaultUnitFrontRadius = Z::Units::findByAlias(s.settings()->value("defaultUnitFrontRadius").toString(), Z::Units::m());
     defaultUnitAngle = Z::Units::findByAlias(s.settings()->value("defaultUnitAngle").toString(), Z::Units::deg());
 }
 
@@ -115,8 +115,8 @@ void AppSettings::save()
     SAVE(layoutExportTransparent);
 
     s.beginGroup("Units");
-    s.settings()->setValue("defaultUnitFrontRadius", defaultUnitFrontRadius->alias());
     s.settings()->setValue("defaultUnitBeamRadius", defaultUnitBeamRadius->alias());
+    s.settings()->setValue("defaultUnitFrontRadius", defaultUnitFrontRadius->alias());
     s.settings()->setValue("defaultUnitAngle", defaultUnitAngle->alias());
 }
 
