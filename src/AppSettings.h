@@ -1,7 +1,10 @@
 #ifndef APP_SETTINGS_H
 #define APP_SETTINGS_H
 
+#include "core/Units.h"
+
 #include "core/OriTemplates.h"
+
 #include <QSize>
 
 class SettingsListener
@@ -43,6 +46,10 @@ public:
     double adjusterMultiplier;   ///< Multiplier value used for new adjusters.
 
     bool layoutExportTransparent; ///< Use transparent background in exported images of layout.
+
+    Z::Unit defaultUnitFrontRadius = Z::Units::none();
+    Z::Unit defaultUnitBeamRadius = Z::Units::none();
+    Z::Unit defaultUnitAngle = Z::Units::none();
 
     bool isDevMode = false;
 

@@ -46,11 +46,11 @@ void PlotFuncResultSet::addPoint(double x, double y)
         int segmentLen = results.at(resultIndex).pointsCount();
         if (!isSegmentEnded && segmentLen > 0)
         {
-            Z_INFO(id << "line segment ended at" << x << "points count:" << segmentLen);
+            Z_INFO(id << "line segment ended at" << x << "points count:" << segmentLen)
             isSegmentEnded = true;
             if (segmentLen < 2)
             {
-                Z_INFO(id << "segment is too short, skipped");
+                Z_INFO(id << "segment is too short, skipped")
                 results[resultIndex].clear();
                 makeNewSegment = false;
             }
@@ -69,7 +69,7 @@ void PlotFuncResultSet::addPoint(double x, double y)
             }
             Z_INFO(id << "line continued with new segment at" << x)
         }
-        //Z_INFO(id << "point" << x << y);
+        //Z_INFO(id << "point" << x << y)
         results[resultIndex].append(x, y);
     }
 }
@@ -136,9 +136,9 @@ void PlotFunction::clearResults()
 
 bool PlotFunction::prepareResults(Z::PlottingRange range)
 {
-    Z_REPORT("Calc:" << name());
-    Z_INFO(arg()->str());
-    Z_INFO(range.str());
+    Z_REPORT("Calc:" << name())
+    Z_INFO(arg()->str())
+    Z_INFO(range.str())
     _errorText.clear();
     if (range.points() < 2)
     {
@@ -155,7 +155,7 @@ void PlotFunction::finishResults()
 {
     int totalCountT = _results.T.allPointsCount();
     int totalCountS = _results.S.allPointsCount();
-    Z_INFO("Total points count: T =" << totalCountT << "S =" << totalCountS);
+    Z_INFO("Total points count: T =" << totalCountT << "S =" << totalCountS)
     if (totalCountT == 0 && totalCountS == 0)
         setError(qApp->translate("Calc error", "No one valid point was calculated"));
 }

@@ -1,6 +1,7 @@
 #include "CausticWindow.h"
 
 #include "CausticOptionsPanel.h"
+#include "../AppSettings.h"
 #include "../CustomPrefs.h"
 #include "../funcs/FunctionGraph.h"
 #include "../io/CommonUtils.h"
@@ -176,12 +177,11 @@ Z::Unit CausticWindow::getDefaultUnitX() const
 
 Z::Unit CausticWindow::getDefaultUnitY() const
 {
-    // TODO: Get from AppSettings
     switch (function()->mode())
     {
-    case CausticFunction::BeamRadius: return Z::Units::mkm();
-    case CausticFunction::FontRadius: return Z::Units::m();
-    case CausticFunction::HalfAngle: return Z::Units::deg();
+    case CausticFunction::BeamRadius: return Settings::instance().defaultUnitBeamRadius;
+    case CausticFunction::FontRadius: return Settings::instance().defaultUnitFrontRadius;
+    case CausticFunction::HalfAngle: return Settings::instance().defaultUnitAngle;
     }
     return Z::Units::none();
 }

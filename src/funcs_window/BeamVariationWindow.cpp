@@ -153,8 +153,7 @@ Z::Unit BeamVariationWindow::getDefaultUnitX() const
 
 Z::Unit BeamVariationWindow::getDefaultUnitY() const
 {
-    // TODO: get from AppSettings
-    return Z::Units::mkm();
+    return Settings::instance().defaultUnitBeamRadius;
 }
 
 QString BeamVariationWindow::readFunction(const QJsonObject& root)
