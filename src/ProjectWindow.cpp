@@ -144,6 +144,7 @@ void ProjectWindow::createActions()
     actnFuncMultirangeCaustic = A_(tr("Multirange Caustic..."), _calculations, SLOT(funcMultirangeCaustic()), ":/toolbar/func_multi_caustic");
     actnFuncMultibeamCaustic = A_(tr("Multibeam Caustic..."), _calculations, SLOT(funcMultibeamCaustic()), ":/toolbar/func_multi_beam_caustic");
     actnFuncBeamVariation = A_(tr("Beamsize Variation..."), _calculations, SLOT(funcBeamVariation()), ":/toolbar/func_beam_variation");
+    actnFuncBeamParamsAtElems = A_(tr("Beam Parameters at Elemens"), _calculations, SLOT(funcBeamParamsAtElems()));
 
     actnToolsCatalog = A_(tr("Elements Catalog"), this, SLOT(showElementsCatalog()), ":/toolbar/catalog");
     actnToolsGaussCalc = A_(tr("Gauss Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
@@ -200,7 +201,7 @@ void ProjectWindow::createMenuBar()
     menuFunctions = Ori::Gui::menu(tr("Functions"), this,
         { actnFuncRoundTrip, actnFuncMultFwd, actnFuncMultBkwd, nullptr, actnFuncStabMap,
           actnFuncStabMap2d, nullptr, actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic,
-          actnFuncBeamVariation, nullptr, actnFuncRepRate });
+          actnFuncBeamVariation, nullptr, actnFuncBeamParamsAtElems, nullptr, actnFuncRepRate });
 
     menuTools = Ori::Gui::menu(tr("Tools", "Menu title"), this,
         { actnToolFlipSchema, nullptr, actnToolAdjust, nullptr,

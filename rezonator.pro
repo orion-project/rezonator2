@@ -88,6 +88,7 @@ HEADERS += \
     src/core/Units.h \
     src/core/Values.h \
     src/core/Variable.h \
+    src/funcs/BeamParamsAtElemsFunction.h \
     src/funcs/CausticFunction.h \
     src/funcs/FormatInfo.h \
     src/funcs/FunctionBase.h \
@@ -102,6 +103,7 @@ HEADERS += \
     src/funcs/RoundTripCalculator.h \
     src/funcs/StabilityMap2DFunction.h \
     src/funcs/StabilityMapFunction.h \
+    src/funcs/TableFunction.h \
     src/funcs_window/CausticWindow.h \
     src/funcs_window/InfoFuncWindow.h \
     src/funcs_window/MultiCausticParamsDlg.h \
@@ -112,6 +114,7 @@ HEADERS += \
     src/funcs_window/PlotFuncWindowStorable.h \
     src/funcs_window/StabilityMap2DWindow.h \
     src/funcs_window/StabilityMapWindow.h \
+    src/funcs_window/TableFuncWindow.h \
     src/io/ISchemaWindowStorable.h \
     src/io/SchemaReaderIni.h \
     src/io/SchemaReaderJson.h \
@@ -198,6 +201,7 @@ SOURCES += \
     src/core/Units.cpp \
     src/core/Values.cpp \
     src/core/Variable.cpp \
+    src/funcs/BeamParamsAtElemsFunction.cpp \
     src/funcs/CausticFunction.cpp \
     src/funcs/FormatInfo.cpp \
     src/funcs/FunctionBase.cpp \
@@ -212,6 +216,7 @@ SOURCES += \
     src/funcs/RoundTripCalculator.cpp \
     src/funcs/StabilityMap2DFunction.cpp \
     src/funcs/StabilityMapFunction.cpp \
+    src/funcs/TableFunction.cpp \
     src/funcs_window/CausticWindow.cpp \
     src/funcs_window/InfoFuncWindow.cpp \
     src/funcs_window/MultiCausticParamsDlg.cpp \
@@ -222,6 +227,7 @@ SOURCES += \
     src/funcs_window/PlotFuncWindowStorable.cpp \
     src/funcs_window/StabilityMap2DWindow.cpp \
     src/funcs_window/StabilityMapWindow.cpp \
+    src/funcs_window/TableFuncWindow.cpp \
     src/io/SchemaReaderIni.cpp \
     src/io/SchemaReaderJson.cpp \
     src/io/SchemaWriterJson.cpp \

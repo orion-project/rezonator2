@@ -33,12 +33,12 @@ enum PlotWindowStatusPanels
     STATUS_PANELS_COUNT,
 };
 
-QMap<QString, int> PlotFuncWindow::_windowIndeces;
+static QMap<QString, int> __windowIndeces;
 
 PlotFuncWindow::PlotFuncWindow(PlotFunction *func) : SchemaMdiChild(func->schema()), _function(func)
 {
-    _windowIndex = _windowIndeces[function()->name()];
-    _windowIndeces[function()->name()] = _windowIndex+1;
+    _windowIndex = __windowIndeces[function()->name()];
+    __windowIndeces[function()->name()] = _windowIndex+1;
 
     setTitleAndIcon(displayWindowTitle(), function()->iconPath());
 

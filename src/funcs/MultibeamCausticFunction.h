@@ -9,7 +9,7 @@ public:
     FUNC_ALIAS("MultibeamCaustic")
     FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Multibeam Caustic"))
 
-    MultibeamCausticFunction(Schema *schema) : MultirangeCausticFunction(schema) {}
+    MultibeamCausticFunction(Schema *schema);
 
     bool hasOptions() const override { return false; }
     const char* iconPath() const override { return ":/toolbar/func_multi_beam_caustic"; }

@@ -69,7 +69,7 @@ private:
     QAction *actnFuncRoundTrip, *actnFuncStabMap, *actnFuncStabMap2d,
             *actnFuncRepRate, *actnFuncMultFwd, *actnFuncMultBkwd,
             *actnFuncCaustic, *actnFuncMultirangeCaustic, *actnFuncBeamVariation,
-            *actnFuncMultibeamCaustic;
+            *actnFuncMultibeamCaustic, *actnFuncBeamParamsAtElems;
 
     QAction  *actnToolsGaussCalc, *actnToolsCatalog, *actnToolSettings,
              *actnToolFlipSchema, *actnToolsCalc, *actnToolAdjust;

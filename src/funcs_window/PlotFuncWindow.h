@@ -110,7 +110,6 @@ protected:
         *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo;
 
     int _windowIndex = 0;
-    static QMap<QString, int> _windowIndeces;
 
     struct ViewState
     {

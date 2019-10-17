@@ -33,6 +33,7 @@ public slots:
     void funcShowMatrices();
     void funcShowAllMatrices();
     void funcBeamVariation();
+    void funcBeamParamsAtElems();
 
 private:
     QWidget* _parent;
@@ -40,6 +41,7 @@ private:
 
     void showInfoFunc(InfoFunction* func);
     template <class TWindow> void showPlotFunc();
+    template <class TFunction> void showTableFunc();
 };
 
 #endif // CALC_MANAGER_H

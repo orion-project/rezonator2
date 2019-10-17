@@ -1,21 +1,23 @@
 #include "CalcManager.h"
 #include "WindowsManager.h"
 #include "core/Protocol.h"
-#include "funcs/InfoFunctions.h"
+#include "funcs/BeamVariationFunction.h"
 #include "funcs/CausticFunction.h"
-#include "funcs/MultirangeCausticFunction.h"
+#include "funcs/InfoFunctions.h"
+#include "funcs/BeamParamsAtElemsFunction.h"
 #include "funcs/MultibeamCausticFunction.h"
+#include "funcs/MultirangeCausticFunction.h"
 #include "funcs/StabilityMapFunction.h"
 #include "funcs/StabilityMap2DFunction.h"
-#include "funcs/BeamVariationFunction.h"
-#include "funcs_window/PlotFuncWindow.h"
-#include "funcs_window/InfoFuncWindow.h"
+#include "funcs_window/BeamVariationWindow.h"
 #include "funcs_window/CausticWindow.h"
-#include "funcs_window/MultirangeCausticWindow.h"
+#include "funcs_window/InfoFuncWindow.h"
+#include "funcs_window/PlotFuncWindow.h"
 #include "funcs_window/MultibeamCausticWindow.h"
+#include "funcs_window/MultirangeCausticWindow.h"
 #include "funcs_window/StabilityMapWindow.h"
 #include "funcs_window/StabilityMap2DWindow.h"
-#include "funcs_window/BeamVariationWindow.h"
+#include "funcs_window/TableFuncWindow.h"
 
 template <class TWindow> SchemaWindow* windowConstructor(Schema* schema)
 {
@@ -104,6 +106,11 @@ void CalcManager::funcBeamVariation()
     showPlotFunc<BeamVariationFunction>();
 }
 
+void CalcManager::funcBeamParamsAtElems()
+{
+    showTableFunc<BeamParamsAtElemsFunction>();
+}
+
 void CalcManager::funcShowMatrices()
 {
     RETURN_IF_SCHEMA_EMPTY
@@ -152,4 +159,14 @@ template <class TFunction> void CalcManager::showPlotFunc()
     plotWnd->requestAutolimits();
     plotWnd->requestCenterCursor();
     plotWnd->update();
+}
+
+template <class TFunction> void CalcManager::showTableFunc()
+{
+    RETURN_IF_SCHEMA_EMPTY
+
+    auto wnd = new TableFuncWindow(new TFunction(schema()));
+
+    WindowsManager::instance().show(wnd);
+    wnd->update();
 }
