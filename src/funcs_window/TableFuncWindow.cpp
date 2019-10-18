@@ -12,16 +12,38 @@
 
 #include <QAction>
 #include <QHeaderView>
+#include <QPainter>
 #include <QToolBar>
 
 using namespace Ori::Gui;
 
-enum PlotWindowStatusPanels
-{
-    STATUS_INFO,
+//------------------------------------------------------------------------------
+//                        TableFuncPositionColumnItemDelegate
+//------------------------------------------------------------------------------
 
-    STATUS_PANELS_COUNT,
-};
+TableFuncPositionColumnItemDelegate::TableFuncPositionColumnItemDelegate(QObject *parent) : QItemDelegate(parent)
+{
+}
+
+void TableFuncPositionColumnItemDelegate::paint(
+        QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    _paintingIndex = index;
+    QItemDelegate::paint(painter, option, index);
+}
+
+void TableFuncPositionColumnItemDelegate::drawDisplay(
+        QPainter *painter, const QStyleOptionViewItem &option, const QRect &rect, const QString &text) const
+{
+    Q_ASSERT(_paintingIndex.isValid());
+
+    QRect r = rect;
+    r.setLeft(rect.left() + 3);
+
+    QItemDelegate::drawDisplay(painter, option, r, text);
+
+    painter->drawPixmap(r.right() - 26, r.top() + 2, qvariant_cast<QPixmap>(_paintingIndex.data(Qt::UserRole)));
+}
 
 //------------------------------------------------------------------------------
 //                             TableFuncResultTable
@@ -39,7 +61,7 @@ TableFuncResultTable::TableFuncResultTable(const QVector<TableFunction::ColumnDe
     setColumnCount(FIXED_COLS_COUNT + _columns.size());
     setContextMenuPolicy(Qt::CustomContextMenu);
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    setItemDelegateForColumn(COL_POSITION, new RichTextItemDelegate(2, this));
+    setItemDelegateForColumn(COL_POSITION, new TableFuncPositionColumnItemDelegate(this));
 }
 
 void TableFuncResultTable::updateColumnTitles()
@@ -74,6 +96,17 @@ void TableFuncResultTable::update(const QVector<TableFunction::Result>& results)
         return;
     }
 
+    static QMap<TableFunction::ResultPosition, QPixmap> pixmaps {
+        {TableFunction::ResultPosition::ELEMENT, QPixmap()},
+        {TableFunction::ResultPosition::LEFT, QPixmap(":/misc/beampos_left")},
+        {TableFunction::ResultPosition::RIGHT, QPixmap(":/misc/beampos_right")},
+        {TableFunction::ResultPosition::LEFT_INSIDE, QPixmap(":/misc/beampos_left_in")},
+        {TableFunction::ResultPosition::LEFT_OUTSIDE, QPixmap(":/misc/beampos_left_out")},
+        {TableFunction::ResultPosition::MIDDLE, QPixmap(":/misc/beampos_middle")},
+        {TableFunction::ResultPosition::RIGHT_INSIDE, QPixmap(":/misc/beampos_right_in")},
+        {TableFunction::ResultPosition::RIGHT_OUTSIDE, QPixmap(":/misc/beampos_right_out")},
+    };
+
     setRowCount(results.size());
 
     for (int row = 0; row < results.size(); row++)
@@ -86,6 +119,7 @@ void TableFuncResultTable::update(const QVector<TableFunction::Result>& results)
             it = new QTableWidgetItem();
             it->setFont(Z::Gui::ElemLabelFont().get());
             it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+            it->setData(Qt::UserRole, pixmaps[res.position]);
             setItem(row, COL_POSITION, it);
         }
         it->setText(res.element->displayLabel());
@@ -123,6 +157,13 @@ void TableFuncResultTable::update(const QVector<TableFunction::Result>& results)
 //------------------------------------------------------------------------------
 //                                TableFuncWindow
 //------------------------------------------------------------------------------
+
+enum PlotWindowStatusPanels
+{
+    STATUS_INFO,
+
+    STATUS_PANELS_COUNT,
+};
 
 TableFuncWindow::TableFuncWindow(TableFunction* func) : SchemaMdiChild(func->schema()), _function(func)
 {

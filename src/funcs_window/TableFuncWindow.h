@@ -5,6 +5,7 @@
 #include "../funcs/TableFunction.h"
 
 #include <QTableWidget>
+#include <QItemDelegate>
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -17,6 +18,20 @@ class StatusBar;
 
 class FrozenStateButton;
 class TableFunction;
+
+class TableFuncPositionColumnItemDelegate : public QItemDelegate
+{
+public:
+    TableFuncPositionColumnItemDelegate(QObject *parent = nullptr);
+
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+
+protected:
+    void drawDisplay(QPainter *painter, const QStyleOptionViewItem &option, const QRect &rect, const QString &text) const override;
+
+private:
+    mutable QModelIndex _paintingIndex;
+};
 
 
 class TableFuncResultTable: public QTableWidget

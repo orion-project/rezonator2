@@ -194,6 +194,13 @@
     <qresource prefix="/misc">
         <file alias="glass_pattern">../img/misc/glass_pattern.png</file>
         <file alias="mdi_background">../img/misc/background.bmp</file>
+        <file alias="beampos_left">../img/misc/beampos_left.svg</file>
+        <file alias="beampos_left_in">../img/misc/beampos_left_in.svg</file>
+        <file alias="beampos_left_out">../img/misc/beampos_left_out.svg</file>
+        <file alias="beampos_middle">../img/misc/beampos_middle.svg</file>
+        <file alias="beampos_right">../img/misc/beampos_right.svg</file>
+        <file alias="beampos_right_in">../img/misc/beampos_right_in.svg</file>
+        <file alias="beampos_right_out">../img/misc/beampos_right_out.svg</file>
     </qresource>
     <qresource prefix="/drawing">
         <file alias="pump_waist">../img/drawing/pump_waist.png</file>
