@@ -732,6 +732,8 @@ ElementNeighbour getNeighbour(Schema* schema, int index) {
         if (dynamic_cast<ElemEmptyRange*>(elem))
             return ElementNeighbour::Air;
     }
+    else if (schema->isSP())
+        return ElementNeighbour::Air;
     return ElementNeighbour::Unknown;
 }
 

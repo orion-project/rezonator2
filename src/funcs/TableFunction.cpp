@@ -37,6 +37,7 @@ bool TableFunction::prepareResonator()
 void TableFunction::calculate()
 {
    _results.clear();
+   _errorText.clear();
 
    bool isResonator = _schema->isResonator();
    bool isPrepared = isResonator
@@ -92,12 +93,37 @@ void TableFunction::calculate()
 
 Element* TableFunction::prevElement(int index)
 {
-    return nullptr; // TODO
+    if (index > 0)
+        return schema()->element(index - 1);
+    switch (schema()->tripType())
+    {
+    case TripType::SP:
+    case TripType::SW:
+        return nullptr;
+
+    case TripType::RR:
+        int prevIndex = schema()->count() - 1;
+        if (prevIndex == index) return nullptr;
+        return schema()->element(prevIndex);
+    }
+    return nullptr;
 }
 
 Element* TableFunction::nextElement(int index)
 {
-    return nullptr; // TODO
+    if (index < schema()->count() - 1)
+        return schema()->element(index + 1);
+    switch (schema()->tripType())
+    {
+    case TripType::SP:
+    case TripType::SW:
+        return nullptr;
+
+    case TripType::RR:
+        if (index == 0) return nullptr;
+        return schema()->element(0);
+    }
+    return nullptr;
 }
 
 bool TableFunction::calculateAtMirrorOrLens(Element *elem, int index)
@@ -167,7 +193,7 @@ bool TableFunction::calculateAtInterface(ElementInterface* iface, int index)
             break; // Don't return!
 
         case TripType::SW:
-            Z_ERROR(QString("%1: Invalid SW schema: interface element %2 is at the left end of schema. "
+            Z_ERROR(QString("%1: Invalid SW schema: the interface element %2 is at the left end of schema. "
                             "The end element must be a mirror.").arg(name(), iface->displayLabel()))
             _errorText = "Invalid SW schema, see Protocol for details";
             return false;
@@ -183,9 +209,10 @@ bool TableFunction::calculateAtInterface(ElementInterface* iface, int index)
         if (!prevRange) prevRange = dynamic_cast<ElemMediumRange*>(prevElem);
         if (!prevRange)
         {
-            Z_ERROR(QString("%1: Invalid schema: there is '%2' at the left of interface %3, "
-                            "it must be an empty range or a medium range instead."
-                            ).arg(name(), prevElem->typeName(), iface->displayLabel()))
+            Z_ERROR(QString("%1: Invalid schema: there is a '%2' element at the left of the interface %3. "
+                            "Only valid elements at both sides of an interface are '%4' or '%5'."
+                            ).arg(name(), prevElem->typeName(), iface->displayLabel(),
+                            ElemEmptyRange::_typeName_(), ElemMediumRange::_typeName_()))
             _errorText = "Invalid schema, see Protocol for details";
             return false;
         }
@@ -193,7 +220,40 @@ bool TableFunction::calculateAtInterface(ElementInterface* iface, int index)
         calculateAt(prevRange, true, iface, ResultPosition::IFACE_LEFT);
     }
 
-    calculateAt(iface, false, iface, ResultPosition::IFACE_RIGHT);
+    auto nextElem = nextElement(index);
+    if (!nextElem)
+    {
+        switch (schema()->tripType())
+        {
+        case TripType::SP:
+            calculateAt(iface, false, iface, ResultPosition::IFACE_RIGHT);
+            return true;
+
+        case TripType::SW:
+            Z_ERROR(QString("%1: Invalid SW schema: the interface element %2 is at the right end of schema. "
+                            "The end element must be a mirror.").arg(name(), iface->displayLabel()))
+            _errorText = "Invalid SW schema, see Protocol for details";
+            return false;
+
+        case TripType::RR:
+            _errorText = "Too few elements in RR schema";
+            return false;
+        }
+    }
+
+    ElementRange *nextRange = dynamic_cast<ElemEmptyRange*>(nextElem);
+    if (!nextRange) nextRange = dynamic_cast<ElemMediumRange*>(nextElem);
+    if (!nextRange)
+    {
+        Z_ERROR(QString("%1: Invalid schema: there is a '%2' at the right of the interface %3. "
+                        "Only valid elements at both sides of an interface are '%4' or '%5'."
+                        ).arg(name(), nextElem->typeName(), iface->displayLabel(),
+                        ElemEmptyRange::_typeName_(), ElemMediumRange::_typeName_()))
+        _errorText = "Invalid schema, see Protocol for details";
+        return false;
+    }
+    nextRange->setSubRangeSI(0);
+    calculateAt(nextRange, true, iface, ResultPosition::IFACE_RIGHT);
     return true;
 }
 
@@ -253,6 +313,7 @@ void TableFunction::calculateAt(Element* calcElem, bool calcSubrange, Element *r
     res.values = schema()->isResonator()
             ? calculateResonator(&calc, wavelenSI)
             : calculateSinglePass(&calc, wavelenSI);
+    _results << res;
 }
 
 void TableFunction::calculatePumpBeforeSchema(Element* elem, ResultPosition resultPos)
@@ -270,6 +331,7 @@ void TableFunction::calculatePumpBeforeSchema(Element* elem, ResultPosition resu
         { beamT.frontRadius, beamS.frontRadius },
         { beamT.halfAngle, beamS.halfAngle },
     };
+    _results << res;
 }
 
 QVector<Z::PointTS> TableFunction::calculateSinglePass(RoundTripCalculator* calc, double wavelenSI) const

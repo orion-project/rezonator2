@@ -54,7 +54,8 @@ QWidget* AppSettingsDialog::createGeneralPage()
         tr("Generate labels for created elements"),
         tr("Generate labels for pasted elements"),
         tr("Generate labels for new pumps"),
-        tr("Show start window after application run")
+        tr("Show start window when application runs"),
+        tr("Show protocol window after application started"),
     });
 
     page->add({_groupOptions, page->stretch()});
@@ -136,6 +137,7 @@ void AppSettingsDialog::populate()
     _groupOptions->setOption(2, settings.elemAutoLabelPasted);
     _groupOptions->setOption(3, settings.pumpAutoLabel);
     _groupOptions->setOption(4, settings.showStartWindow);
+    _groupOptions->setOption(5, settings.showProtocolAtStart);
 
     // view
     _groupView->setOption(0, settings.smallToolbarImages);
@@ -162,6 +164,7 @@ bool AppSettingsDialog::collect()
     settings.elemAutoLabelPasted = _groupOptions->option(2);
     settings.pumpAutoLabel = _groupOptions->option(3);
     settings.showStartWindow = _groupOptions->option(4);
+    settings.showProtocolAtStart = _groupOptions->option(5);
 
     // view
     settings.smallToolbarImages = _groupView->option(0);

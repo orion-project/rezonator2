@@ -21,7 +21,8 @@
     const QString labelPrefix() const override { return QStringLiteral(label); }
 
 #define TYPE_NAME(name)\
-    const QString typeName() const override { static QString _name_ = name; return _name_; }
+    const QString typeName() const override { static QString _name_ = name; return _name_; }\
+    static const QString _typeName_() { static QString _name_ = name; return _name_; }
 
 #define PARAMS_EDITOR(editor)\
     Z::ParamsEditor paramsEditorKind() const override { return Z::ParamsEditor::editor; }

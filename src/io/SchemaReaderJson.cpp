@@ -318,6 +318,8 @@ void SchemaReaderJson::readWindows(const QJsonObject& root)
 void SchemaReaderJson::readWindow(const QJsonObject& root)
 {
     auto type = root["type"].toString();
+    if (type == "Multicaustic") type = "MultirangeCaustic";
+
     auto ctor = WindowsManager::getConstructor(type);
     if (!ctor)
         return _report.warning(QString(
