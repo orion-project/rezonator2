@@ -213,6 +213,7 @@
     </qresource>
     <qresource prefix="/style">
         <file alias="StartWindow">StartWindow.qss</file>
+        <file alias="about">../img/about/about_1.png</file>
     </qresource>
     <qresource prefix="/tips">
         <file alias="list">tips.json</file>

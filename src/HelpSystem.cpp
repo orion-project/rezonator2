@@ -3,13 +3,16 @@
 #include "core/Format.h"
 #include "core/Protocol.h"
 
-#include "helpers/OriDialogs.h"
 #include "core/OriVersion.h"
+#include "helpers/OriLayouts.h"
+#include "helpers/OriDialogs.h"
+#include "widgets/OriLabels.h"
 
 #include <QApplication>
 #include <QDebug>
 #include <QDesktopServices>
 #include <QFile>
+#include <QLabel>
 #include <QMessageBox>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -17,6 +20,8 @@
 #include <QPushButton>
 #include <QStyle>
 #include <QUrl>
+
+using namespace Ori::Layouts;
 
 namespace {
 
@@ -211,6 +216,95 @@ void HelpSystem::sendBugReport()
 }
 
 void HelpSystem::showAbout()
+{
+    auto w = new QDialog;
+    w->setAttribute(Qt::WA_DeleteOnClose);
+    w->setWindowTitle(tr("About %1").arg(qApp->applicationName()));
+
+    QPixmap bckgnd(":/style/about");
+    w->setMaximumSize(bckgnd.size());
+    w->setMinimumSize(bckgnd.size());
+    w->resize(bckgnd.size());
+
+    auto p = w->palette();
+    p.setBrush(QPalette::Background, QBrush(bckgnd));
+    w->setPalette(p);
+
+    auto f = w->font();
+    f.setFamily("monospace"); // Menlo,Monaco,Consolas,'Courier New',monospace
+
+    auto labelVersion = new QLabel(QString("%1.%2.%3").arg(APP_VER_MAJOR).arg(APP_VER_MINOR).arg(APP_VER_PATCH));
+    f.setPixelSize(50);
+    f.setBold(true);
+    labelVersion->setFont(f);
+    labelVersion->setStyleSheet("color:white");
+
+    f.setPixelSize(34);
+    auto labelCodename = new QLabel(APP_VER_CODENAME);
+    labelCodename->setFont(f);
+    labelCodename->setStyleSheet("color:white");
+
+    f.setBold(false);
+    f.setPixelSize(20);
+    auto labelDate = new QLabel(BUILDDATE);
+    labelDate->setFont(f);
+    labelDate->setStyleSheet("color:white");
+
+    auto labelQt = new Ori::Widgets::Label(QString("Powered by Qt %1").arg(QT_VERSION_STR));
+    connect(labelQt, &Ori::Widgets::Label::clicked, []{ qApp->aboutQt(); });
+    labelQt->setCursor(Qt::PointingHandCursor);
+    labelQt->setStyleSheet("color:white");
+    labelQt->setFont(f);
+
+    auto makeInfo = [f](const QString& text){
+        auto label = new QLabel(text);
+        label->setStyleSheet("color:white");
+        label->setFont(f);
+        return label;
+    };
+
+    auto makeLink = [f](const QString& address, const QString& href = QString()) {
+        auto label = new Ori::Widgets::Label(address);
+        connect(label, &Ori::Widgets::Label::clicked, [address, href]{
+            QDesktopServices::openUrl(QUrl(href.isEmpty() ? address : href));
+        });
+        label->setCursor(Qt::PointingHandCursor);
+        label->setStyleSheet("color:white");
+        label->setFont(f);
+        return label;
+    };
+
+    f.setPixelSize(9);
+    auto labelDescr = new QLabel(
+        "reZonator is open-source laser resonator calculation tool. "
+        "The program is provided as is with no warranty of any kind, "
+        "including the warranty of design, merchantability and fitness for a particular purpose.");
+    labelDescr->setWordWrap(true);
+    labelDescr->setStyleSheet("color:#88FFFFFF");
+    labelDescr->setFont(f);
+
+    LayoutV({
+        LayoutH({Stretch(), labelVersion, Space(4)}),
+        LayoutH({Stretch(), labelCodename, Space(4)}),
+        Space(4),
+        LayoutH({Stretch(), labelDate, Space(4)}),
+        Stretch(),
+        LayoutH({Space(4), labelQt, Stretch()}),
+        Space(4),
+        LayoutH({Space(4), makeInfo(QString("Chunosov N.I. © 2006-%1").arg(APP_VER_YEAR)), Stretch()}),
+        Space(4),
+        LayoutH({Space(4), makeLink(Z::Strs::email(), QString("mailto:%1").arg(Z::Strs::email())), Stretch()}),
+        Space(4),
+        LayoutH({Space(4), makeLink(Z::Strs::homepage()), Stretch()}),
+        Space(4),
+        LayoutH({Space(4), makeLink(Z::Strs::sourcepage()), Stretch()}),
+        Space(4),
+    }).setMargin(12).setSpacing(0).useFor(w);
+
+    w->exec();
+}
+
+void HelpSystem::showAbout1()
 {
     auto title = tr("About %1").arg(qApp->applicationName());
     auto text = tr(
