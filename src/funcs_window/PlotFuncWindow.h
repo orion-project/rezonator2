@@ -58,10 +58,10 @@ public:
 
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return QList<QMenu*>() << menuPlot << menuLimits /* TODO:NEXT-VER << menuFormat*/; }
-    virtual QList<ViewMenuItem> viewMenuItems() override;
+    virtual QList<ViewMenuItem> menuItems_View() override;
 
     // Implementation of SchemaListener
-    void recalcRequired(Schema*) override;
+    void recalcRequired(Schema*) override { update(); }
     void elementDeleting(Schema*, Element*) override;
 
     void storeView(int key);

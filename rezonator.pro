@@ -93,6 +93,7 @@ HEADERS += \
     src/funcs/FormatInfo.h \
     src/funcs/FunctionBase.h \
     src/funcs/FunctionGraph.h \
+    src/funcs/FunctionUtils.h \
     src/funcs/GaussCalculator.h \
     src/funcs/InfoFunctions.h \
     src/funcs/MultibeamCausticFunction.h \
@@ -207,6 +208,7 @@ SOURCES += \
     src/funcs/FormatInfo.cpp \
     src/funcs/FunctionBase.cpp \
     src/funcs/FunctionGraph.cpp \
+    src/funcs/FunctionUtils.cpp \
     src/funcs/GaussCalculator.cpp \
     src/funcs/InfoFunctions.cpp \
     src/funcs/MultibeamCausticFunction.cpp \

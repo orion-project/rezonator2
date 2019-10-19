@@ -46,7 +46,6 @@ private:
 
     bool prepareSinglePass(Element *ref);
     bool prepareResonator();
-    void prepareDynamicElements(Element* ref);
     inline Z::PointTS calculateSinglePass() const;
     inline Z::PointTS calculateResonator() const;
 };

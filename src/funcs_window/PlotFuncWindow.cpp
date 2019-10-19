@@ -454,11 +454,6 @@ void PlotFuncWindow::showRoundTrip()
     InfoFuncWindow::open(new PlotFuncRoundTripFunction(windowTitle(), _function));
 }
 
-void PlotFuncWindow::recalcRequired(Schema*)
-{
-    update();
-}
-
 void PlotFuncWindow::freeze(bool frozen)
 {
     _frozen = frozen;
@@ -588,7 +583,7 @@ void PlotFuncWindow::setUnitY(Z::Unit unit)
     update();
 }
 
-QList<BasicMdiChild::ViewMenuItem> PlotFuncWindow::viewMenuItems()
+QList<BasicMdiChild::ViewMenuItem> PlotFuncWindow::menuItems_View()
 {
     QList<BasicMdiChild::ViewMenuItem> menuItems;
 

@@ -201,6 +201,8 @@
         <file alias="beampos_right">../img/misc/beampos_right.svg</file>
         <file alias="beampos_right_in">../img/misc/beampos_right_in.svg</file>
         <file alias="beampos_right_out">../img/misc/beampos_right_out.svg</file>
+        <file alias="beampos_iface_left">../img/misc/beampos_iface_left.svg</file>
+        <file alias="beampos_iface_right">../img/misc/beampos_iface_right.svg</file>
     </qresource>
     <qresource prefix="/drawing">
         <file alias="pump_waist">../img/drawing/pump_waist.png</file>

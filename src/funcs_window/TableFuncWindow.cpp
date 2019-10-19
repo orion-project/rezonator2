@@ -105,6 +105,8 @@ void TableFuncResultTable::update(const QVector<TableFunction::Result>& results)
         {TableFunction::ResultPosition::MIDDLE, QPixmap(":/misc/beampos_middle")},
         {TableFunction::ResultPosition::RIGHT_INSIDE, QPixmap(":/misc/beampos_right_in")},
         {TableFunction::ResultPosition::RIGHT_OUTSIDE, QPixmap(":/misc/beampos_right_out")},
+        {TableFunction::ResultPosition::IFACE_LEFT, QPixmap(":/misc/beampos_iface_left")},
+        {TableFunction::ResultPosition::IFACE_RIGHT, QPixmap(":/misc/beampos_iface_right")},
     };
 
     setRowCount(results.size());
@@ -126,19 +128,21 @@ void TableFuncResultTable::update(const QVector<TableFunction::Result>& results)
 
         for (int index = 0; index < res.values.size(); index++)
         {
+            const auto& column = _columns.at(index);
             const auto& value = res.values.at(index);
-            // TODO: rescale value to target unit
+            double valueT = column.unit->fromSi(value.T);
+            double valueS = column.unit->fromSi(value.S);
 
             QString valueStr;
             if (showT and showS)
                 valueStr = QStringLiteral("%1 %2 %3 ")
-                        .arg(Z::format(value.T))
+                        .arg(Z::format(valueT))
                         .arg(Z::Strs::multX())
-                        .arg(Z::format(value.S));
+                        .arg(Z::format(valueS));
             else if (showT)
-                valueStr = Z::format(value.T);
+                valueStr = Z::format(valueT);
             else
-                valueStr = Z::format(value.S);
+                valueStr = Z::format(valueS);
 
             it = item(row, FIXED_COLS_COUNT + index);
             if (!it)

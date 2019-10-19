@@ -11,10 +11,6 @@ public:
     FUNC_ICON(":/toolbar/func_beamdata")
 
     BeamParamsAtElemsFunction(Schema *schema);
-
-    void calculate() override;
-
-    QVector<ColumnDef> columns() const override;
 };
 
 #endif // BEAM_PARAMS_AT_ELEMS_FUNCTION_H

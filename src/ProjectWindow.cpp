@@ -287,7 +287,7 @@ void ProjectWindow::updateMenuBar()
     menuView->clear();
     if (child)
     {
-        auto items = child->viewMenuItems();
+        auto items = child->menuItems_View();
         if (!items.empty())
         {
             for (auto item : items)

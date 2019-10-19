@@ -65,6 +65,9 @@ public:
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return QList<QMenu*>() << _menuTable; }
 
+    // Implementation of SchemaListener
+    void recalcRequired(Schema*) override { update(); }
+
 public slots:
     void update();
 

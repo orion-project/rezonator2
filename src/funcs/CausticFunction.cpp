@@ -1,10 +1,11 @@
 #include "CausticFunction.h"
 
-#include "../core/Protocol.h"
-#include "../core/Schema.h"
+#include "AbcdBeamCalculator.h"
+#include "FunctionUtils.h"
 #include "PumpCalculator.h"
 #include "RoundTripCalculator.h"
-#include "AbcdBeamCalculator.h"
+#include "../core/Protocol.h"
+#include "../core/Schema.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -79,30 +80,14 @@ void CausticFunction::calculate()
 
 bool CausticFunction::prepareSinglePass(Element* ref)
 {
-    auto pump = _pump ? _pump : schema()->activePump();
-    if (!pump)
+    QString res = FunctionUtils::preparePumpCalculator(schema(), _pump, _pumpCalc);
+    if (!res.isEmpty())
     {
-        setError(qApp->translate("Calc error",
-            "There is no active pump in the schema. "
-            "Use 'Pumps' window to create a new pump or activate one of the existing ones."));
-        return false;
-    }
-    if (!_pumpCalc.T) _pumpCalc.T = PumpCalculator::T();
-    if (!_pumpCalc.S) _pumpCalc.S = PumpCalculator::S();
-
-    // NOTE: We have _wavelenSI member here in the function, but it can be lower
-    // than schema's wavelength in order to account IOR of the reference element.
-    // But pump is supposed to be in air, so get wavelength from schema.
-    const double lambda = schema()->wavelength().value().toSi();
-    if (!_pumpCalc.T->init(pump, lambda) ||
-        !_pumpCalc.S->init(pump, lambda))
-    {
-        setError("Unsupported pump mode");
+        setError(res);
         return false;
     }
 
-    prepareDynamicElements(ref);
-
+    FunctionUtils::prepareDynamicElements(schema(), ref, _pumpCalc);
     return true;
 }
 
@@ -111,48 +96,6 @@ bool CausticFunction::prepareResonator()
     if (!_beamCalc) _beamCalc.reset(new AbcdBeamCalculator);
     _beamCalc->setWavelenSI(_wavelenSI);
     return true;
-}
-
-void CausticFunction::prepareDynamicElements(Element* ref)
-{
-    const double lambda = schema()->wavelength().value().toSi();
-
-    for (int i = 0; i < schema()->count(); i++)
-    {
-        auto elem = schema()->element(i);
-        if (elem == ref) break;
-        auto dynamic = dynamic_cast<ElementDynamic*>(elem);
-        if (!dynamic) continue;
-
-        if (i == 0)
-        {
-            Z::Matrix unity;
-            ElementDynamic::CalcParams p;
-            p.Mt = &unity;
-            p.Ms = &unity;
-            p.pumpCalcT = _pumpCalc.T.get();
-            p.pumpCalcS = _pumpCalc.S.get();
-            p.schemaWavelenSI = lambda;
-            p.prevElemWavelenSI = lambda;
-            dynamic->calcDynamicMatrix(p);
-        }
-        else
-        {
-            auto prevElem = schema()->element(i - i);
-            RoundTripCalculator calc(schema(), prevElem);
-            calc.calcRoundTrip();
-            calc.multMatrix();
-            ElementDynamic::CalcParams p;
-            p.Mt = calc.pMt();
-            p.Ms = calc.pMs();
-            p.pumpCalcT = _pumpCalc.T.get();
-            p.pumpCalcS = _pumpCalc.S.get();
-            auto refractive = dynamic_cast<IRefractiveElement*>(prevElem);
-            p.prevElemWavelenSI = refractive ? lambda / refractive->ior() : lambda;
-            p.schemaWavelenSI = lambda;
-            dynamic->calcDynamicMatrix(p);
-        }
-    }
 }
 
 Z::PointTS CausticFunction::calculateSinglePass() const

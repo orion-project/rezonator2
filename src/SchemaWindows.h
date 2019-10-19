@@ -160,7 +160,7 @@ public:
 
     /// Returns additional actions for View menu.
     /// These actions are inserted into View menu when MDI-child window is activated.
-    virtual QList<ViewMenuItem> viewMenuItems() { return QList<ViewMenuItem>(); }
+    virtual QList<ViewMenuItem> menuItems_View() { return QList<ViewMenuItem>(); }
 
     /// Returns default toolbar of MDI-child window
     /// or nullptr if one was not created (see @ref InitOption::initNoToolBar).
