@@ -231,7 +231,15 @@ void HelpSystem::showAbout()
     w->setPalette(p);
 
     auto f = w->font();
-    f.setFamily("monospace"); // Menlo,Monaco,Consolas,'Courier New',monospace
+#ifdef Q_OS_WIN
+    f.setFamily("Consolas");
+#endif
+#ifdef Q_OS_MAC
+    f.setFamily("Monaco"); // Menlo?
+#endif
+#ifdef Q_OS_LINUX
+    f.setFamily("monospace");
+#endif
 
     auto labelVersion = new QLabel(QString("%1.%2.%3").arg(APP_VER_MAJOR).arg(APP_VER_MINOR).arg(APP_VER_PATCH));
     f.setPixelSize(50);

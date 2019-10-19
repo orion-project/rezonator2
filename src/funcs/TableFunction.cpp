@@ -51,7 +51,7 @@ void TableFunction::calculate()
         auto elem = elems.at(i);
         if (elem->disabled()) continue;
 
-        if (dynamic_cast<ElemCurveMirror*>(elem) || dynamic_cast<ElemThinLens*>(elem))
+        if (elem->hasOption(Element_ChangesWavefront))
         {
             if (calculateAtMirrorOrLens(elem, i))
                 continue;

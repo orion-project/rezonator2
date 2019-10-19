@@ -140,6 +140,8 @@ ElemCurveMirror::ElemCurveMirror()
     addParam(_radius, 100, Z::Units::mm());
     addParam(_alpha, 0, Z::Units::deg());
 
+    setOption(Element_ChangesWavefront);
+
     _radius->setVerifier(globalCurvatureRadiusVerifier());
 }
 
@@ -165,6 +167,8 @@ ElemThinLens::ElemThinLens()
                               qApp->translate("Param", "Zero angle is normal incidence."));
     addParam(_focus, 100, Z::Units::mm());
     addParam(_alpha, 0, Z::Units::deg());
+
+    setOption(Element_ChangesWavefront);
 
     _focus->setVerifier(globalFocalLengthVerifier());
 }
@@ -681,6 +685,8 @@ ElemAxiconMirror::ElemAxiconMirror() : ElementDynamic()
                               qApp->translate("Param", "Zero angle is normal incidence."));
     addParam(_theta, 0.1, Z::Units::deg());
     addParam(_alpha, 0, Z::Units::deg());
+
+    setOption(Element_ChangesWavefront);
 }
 
 void ElemAxiconMirror::calcDynamicMatrix(const CalcParams& p)

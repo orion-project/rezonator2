@@ -59,9 +59,16 @@ public:
 //------------------------------------------------------------------------------
 
 enum ElementOption {
-    /// Element can calculate two set of matrices
-    /// one for forward propagation and other for back propagtion.
+    /// The element can calculate two sets of matrices -
+    /// one for the forward propagation and another for the back propagation.
     Element_Asymmetrical = 0x01,
+
+    /// The element can change wavefront, so functions calculating something
+    /// at elements (e.g., Beam Parameters at Element) should calculate
+    /// before and after such an element to provide full information.
+    /// There is no reason to set this option for range-like elements
+    /// or interface elements because they treated separately.
+    Element_ChangesWavefront = 0x01,
 };
 
 /**
@@ -79,7 +86,7 @@ enum ElementOption {
            \\|         back propagation              |//
     ```
 
-    Most of the lements are symmetrical and inverted set of matrices are the same as the forward set.
+    Most of the elements are symmetrical and inverted set of matrices are the same as the forward set.
     But there are several elements having these sets different (@see ThickLens, interface elements).
     They have option @a Element_Asymmetrical.
 */
