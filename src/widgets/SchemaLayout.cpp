@@ -990,6 +990,180 @@ namespace ElemGrinLensLayout {
 }
 
 //------------------------------------------------------------------------------
+namespace AxiconElementLayout {
+    enum AxiconForm {
+        FormUnknown,
+        ConvexLens,         //      <>
+        ConcaveLens,        //      ><
+        PlaneConvexMirror,  //      |>
+        PlaneConvexLens,    //      |>
+        PlaneConcaveMirror, //      |<
+        PlaneConcaveLens,   //      |<
+        ConvexPlaneMirror,  //      <|
+        ConcavePlaneMirror, //      >|
+    };
+
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+        AxiconForm paintMode = FormUnknown;
+    DECLARE_ELEMENT_LAYOUT_END
+
+    ELEMENT_LAYOUT_INIT {
+    }
+
+    ELEMENT_LAYOUT_PAINT {
+        const qreal sagitta = HW * 0.85;
+
+        painter->setPen(getGlassPen());
+
+        switch (paintMode) {
+        case FormUnknown:
+            break;
+        case ConvexLens: // <>
+        case ConcaveLens: // )(
+        case PlaneConvexLens: // |>
+        case PlaneConcaveLens: // |<
+            painter->setBrush(getGlassBrush());
+            break;
+        case PlaneConvexMirror: // |>
+        case PlaneConcaveMirror: // |<
+        case ConvexPlaneMirror:  // <|
+        case ConcavePlaneMirror: // >|
+            painter->setBrush(getMirrorBrush());
+            break;
+        }
+
+        QPainterPath path;
+
+        switch (paintMode) {
+        case FormUnknown:
+            break;
+
+        case ConvexLens: // <>
+            path.moveTo(HW, 0);
+            path.lineTo(HW - sagitta, HH);
+            path.lineTo(-HW + sagitta, HH);
+            path.lineTo(-HW, 0);
+            path.lineTo(-HW + sagitta, -HH);
+            path.lineTo(HW - sagitta, -HH);
+            break;
+
+        case ConcaveLens: // )(
+            path.moveTo(HW - sagitta, 0);
+            path.lineTo(HW, HH);
+            path.lineTo(-HW, HH);
+            path.lineTo(-HW + sagitta, 0);
+            path.lineTo(-HW, -HH);
+            path.lineTo(HW, -HH);
+            break;
+
+        case PlaneConvexMirror: // |>
+        case PlaneConvexLens: // |>
+            path.moveTo(-HW * 0.5, HH);
+            path.lineTo(HW - sagitta, HH);
+            path.lineTo(HW, 0);
+            path.lineTo(HW - sagitta, -HH);
+            path.lineTo(-HW * 0.5, -HH);
+            break;
+
+        case PlaneConcaveMirror: // |<
+        case PlaneConcaveLens: // |<
+            path.moveTo(0, 0);
+            path.lineTo(HW, HH);
+            path.lineTo(-HW * 0.5, HH);
+            path.lineTo(-HW * 0.5, -HH);
+            path.lineTo(HW, -HH);
+            break;
+
+        case ConvexPlaneMirror:  // <|
+            path.moveTo(HW * 0.5, HH);
+            path.lineTo(-HW + sagitta, HH);
+            path.lineTo(-HW, 0);
+            path.lineTo(-HW + sagitta, -HH);
+            path.lineTo(HW * 0.5, -HH);
+            break;
+
+        case ConcavePlaneMirror: // >|
+            path.moveTo(HW * 0.5, HH);
+            path.lineTo(-HW, HH);
+            path.lineTo(0, 0);
+            path.lineTo(-HW, -HH);
+            path.lineTo(HW * 0.5, -HH);
+            break;
+        }
+        path.closeSubpath();
+
+        slopePainter(painter);
+        painter->drawPath(path);
+
+        painter->setPen(getMirrorPen());
+        painter->setBrush(Qt::NoBrush);
+        QPainterPath path1;
+        switch (paintMode) {
+        case PlaneConvexMirror: // |>
+            path1.moveTo(HW - sagitta, HH);
+            path1.lineTo(HW, 0);
+            path1.lineTo(HW - sagitta, -HH);
+            break;
+
+        case PlaneConcaveMirror: // |<
+            path1.moveTo(HW, HH);
+            path1.lineTo(HW - sagitta, 0);
+            path1.lineTo(HW, -HH);
+            break;
+
+        case ConvexPlaneMirror:  // <|
+            path1.moveTo(-HW + sagitta, HH);
+            path1.lineTo(-HW, 0);
+            path1.lineTo(-HW + sagitta, -HH);
+            break;
+
+        case ConcavePlaneMirror: // >|
+            path1.moveTo(-HW, HH);
+            path1.lineTo(-HW + sagitta, 0);
+            path1.lineTo(-HW, -HH);
+            break;
+
+        default: break;
+        }
+        painter->drawPath(path1);
+    }
+}
+
+//------------------------------------------------------------------------------
+namespace ElemAxiconMirrorLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+        QSharedPointer<AxiconElementLayout::Layout> layout;
+    DECLARE_ELEMENT_LAYOUT_END
+
+    ELEMENT_LAYOUT_INIT {
+        HW = 12; HH = 40;
+        auto mirror = dynamic_cast<ElemAxiconMirror*>(_element);
+        if (!mirror || !_element->owner()) return;
+        layout.reset(new AxiconElementLayout::Layout(nullptr));
+        layout->setHalfSize(HW, HH);
+        layout->setSlope(mirror->alpha());
+        int index = _element->owner()->indexOf(_element);
+        if (index <= 0)
+            layout->paintMode = mirror->theta() > 0
+                ? AxiconElementLayout::PlaneConcaveMirror
+                : AxiconElementLayout::PlaneConvexMirror;
+        else if (index >= _element->owner()->count()-1)
+            layout->paintMode = mirror->theta() > 0
+                ? AxiconElementLayout::ConcavePlaneMirror
+                : AxiconElementLayout::ConvexPlaneMirror;
+        else
+            layout->paintMode = mirror->theta() > 0
+                ? AxiconElementLayout::ConvexLens
+                : AxiconElementLayout::ConcaveLens;
+        layout->init();
+    }
+
+    ELEMENT_LAYOUT_PAINT {
+        if (layout) layout->paint(painter, nullptr, nullptr);
+    }
+}
+
+//------------------------------------------------------------------------------
 //                               SchemaLayout
 //------------------------------------------------------------------------------
 
@@ -1166,6 +1340,7 @@ ElementLayout* make(Element *elem) {
         registerLayout<ElemSphericalInterface, ElemSphericalInterfaceLayout::Layout>();
         registerLayout<ElemThickLens, ElemThickLensLayout::Layout>();
         registerLayout<ElemGrinLens, ElemGrinLensLayout::Layout>();
+        registerLayout<ElemAxiconMirror, ElemAxiconMirrorLayout::Layout>();
     }
     if (!__factoryMethods.contains(elem->type()))
         return nullptr;

@@ -113,6 +113,7 @@
         <file alias="divide">../img/toolbar10/divide.png</file>
     </qresource>
     <qresource prefix="/elem_drawing">
+        <file alias="ElemAxiconMirror">../img/elem/ElemAxiconMirror.svg</file>
         <file alias="ElemEmptyRange">../img/elem/ElemEmptyRange.svg</file>
         <file alias="ElemMediumRange">../img/elem/ElemMediumRange.svg</file>
         <file alias="ElemPlate">../img/elem/ElemPlate.svg</file>

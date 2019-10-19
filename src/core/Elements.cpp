@@ -683,7 +683,7 @@ ElemAxiconMirror::ElemAxiconMirror() : ElementDynamic()
     _alpha = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Alpha"), Z::Strs::alpha(),
                               qApp->translate("Param", "Angle of incidence "),
                               qApp->translate("Param", "Zero angle is normal incidence."));
-    addParam(_theta, 0.1, Z::Units::deg());
+    addParam(_theta, 1, Z::Units::deg());
     addParam(_alpha, 0, Z::Units::deg());
 
     setOption(Element_ChangesWavefront);
