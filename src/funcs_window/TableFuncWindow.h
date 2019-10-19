@@ -47,12 +47,17 @@ public:
     void updateColumnTitles();
     void update(const QVector<TableFunction::Result>& results);
 
+    void copy();
+
 private:
     QVector<TableFunction::ColumnDef> _columns;
+    QMenu *_contextMenu = nullptr;
+
+    void showContextMenu(const QPoint& pos);
 };
 
 
-class TableFuncWindow : public SchemaMdiChild
+class TableFuncWindow : public SchemaMdiChild, public IEditableWindow
 {
     Q_OBJECT
 
@@ -67,6 +72,12 @@ public:
 
     // Implementation of SchemaListener
     void recalcRequired(Schema*) override { update(); }
+
+    // Implementation of IEditableWindow
+    SupportedCommands supportedCommands() override { return EditCmd_Copy | EditCmd_SelectAll; }
+    bool canCopy() override { return true; }
+    void copy() override { _table->copy(); }
+    void selectAll() override { _table->selectAll(); }
 
 public slots:
     void update();

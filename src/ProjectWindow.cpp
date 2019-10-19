@@ -329,6 +329,7 @@ void ProjectWindow::updateActions()
     actnFilePump->setVisible(isSchemaSP);
     actnFuncStabMap->setVisible(!isSchemaSP);
     actnFuncStabMap2d->setVisible(!isSchemaSP);
+    actnFuncMultibeamCaustic->setVisible(isSchemaSP);
     actnFileSave->setEnabled(schema()->modified());
 }
 

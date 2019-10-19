@@ -11,11 +11,41 @@
 #include "widgets/OriStatusBar.h"
 
 #include <QAction>
+#include <QClipboard>
 #include <QHeaderView>
+#include <QMenu>
 #include <QPainter>
 #include <QToolBar>
 
 using namespace Ori::Gui;
+
+struct TableFuncResultPositionInfo
+{
+    QString ascii;
+    QString tooltip;
+    QPixmap pixmap;
+};
+
+static const TableFuncResultPositionInfo& tableResultPositionInfo(TableFunction::ResultPosition pos)
+{
+#define I_(pos, ascii, tooltip, pixmap)\
+    {TableFunction::ResultPosition::pos, {QString(ascii), QString(tooltip), QPixmap(pixmap)}}
+
+    static QMap<TableFunction::ResultPosition, TableFuncResultPositionInfo> info = {
+        I_(ELEMENT,       "",          "",                          ""),
+        I_(LEFT,          "->()",      "At the left of element",    ":/misc/beampos_left"),
+        I_(RIGHT,         "  ()->",    "At the right of element",   ":/misc/beampos_right"),
+        I_(LEFT_OUTSIDE,  "->[   ]",   "At the left edge outside",  ":/misc/beampos_left_out"),
+        I_(LEFT_INSIDE,   "  [-> ]",   "At the left edge inside",   ":/misc/beampos_left_in"),
+        I_(MIDDLE,        "  [ + ]",   "In the middle of element",  ":/misc/beampos_middle"),
+        I_(RIGHT_INSIDE,  "  [ ->]",   "At the right edge inside",  ":/misc/beampos_right_in"),
+        I_(RIGHT_OUTSIDE, "  [   ]->", "At the right edge outside", ":/misc/beampos_right_out"),
+        I_(IFACE_LEFT,    "->|",       "At the left of interface",  ":/misc/beampos_iface_left"),
+        I_(IFACE_RIGHT,   "  |->",     "At the right of interface", ":/misc/beampos_iface_right"),
+    };
+    return info[pos];
+#undef I_
+}
 
 //------------------------------------------------------------------------------
 //                        TableFuncPositionColumnItemDelegate
@@ -42,7 +72,8 @@ void TableFuncPositionColumnItemDelegate::drawDisplay(
 
     QItemDelegate::drawDisplay(painter, option, r, text);
 
-    painter->drawPixmap(r.right() - 26, r.top() + 2, qvariant_cast<QPixmap>(_paintingIndex.data(Qt::UserRole)));
+    auto resultPosition = TableFunction::ResultPosition(_paintingIndex.data(Qt::UserRole).toInt());
+    painter->drawPixmap(r.right() - 26, r.top() + 2, tableResultPositionInfo(resultPosition).pixmap);
 }
 
 //------------------------------------------------------------------------------
@@ -60,8 +91,11 @@ TableFuncResultTable::TableFuncResultTable(const QVector<TableFunction::ColumnDe
     setWordWrap(false);
     setColumnCount(FIXED_COLS_COUNT + _columns.size());
     setContextMenuPolicy(Qt::CustomContextMenu);
+    setSelectionMode(QAbstractItemView::ContiguousSelection);
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     setItemDelegateForColumn(COL_POSITION, new TableFuncPositionColumnItemDelegate(this));
+
+    connect(this, &QTableWidget::customContextMenuRequested, this, &TableFuncResultTable::showContextMenu);
 }
 
 void TableFuncResultTable::updateColumnTitles()
@@ -96,19 +130,6 @@ void TableFuncResultTable::update(const QVector<TableFunction::Result>& results)
         return;
     }
 
-    static QMap<TableFunction::ResultPosition, QPixmap> pixmaps {
-        {TableFunction::ResultPosition::ELEMENT, QPixmap()},
-        {TableFunction::ResultPosition::LEFT, QPixmap(":/misc/beampos_left")},
-        {TableFunction::ResultPosition::RIGHT, QPixmap(":/misc/beampos_right")},
-        {TableFunction::ResultPosition::LEFT_INSIDE, QPixmap(":/misc/beampos_left_in")},
-        {TableFunction::ResultPosition::LEFT_OUTSIDE, QPixmap(":/misc/beampos_left_out")},
-        {TableFunction::ResultPosition::MIDDLE, QPixmap(":/misc/beampos_middle")},
-        {TableFunction::ResultPosition::RIGHT_INSIDE, QPixmap(":/misc/beampos_right_in")},
-        {TableFunction::ResultPosition::RIGHT_OUTSIDE, QPixmap(":/misc/beampos_right_out")},
-        {TableFunction::ResultPosition::IFACE_LEFT, QPixmap(":/misc/beampos_iface_left")},
-        {TableFunction::ResultPosition::IFACE_RIGHT, QPixmap(":/misc/beampos_iface_right")},
-    };
-
     setRowCount(results.size());
 
     for (int row = 0; row < results.size(); row++)
@@ -121,7 +142,8 @@ void TableFuncResultTable::update(const QVector<TableFunction::Result>& results)
             it = new QTableWidgetItem();
             it->setFont(Z::Gui::ElemLabelFont().get());
             it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-            it->setData(Qt::UserRole, pixmaps[res.position]);
+            it->setData(Qt::UserRole, int(res.position));
+            it->setToolTip(tableResultPositionInfo(res.position).tooltip);
             setItem(row, COL_POSITION, it);
         }
         it->setText(res.element->displayLabel());
@@ -156,6 +178,44 @@ void TableFuncResultTable::update(const QVector<TableFunction::Result>& results)
             it->setText(valueStr);
         }
     }
+}
+
+void TableFuncResultTable::showContextMenu(const QPoint& pos)
+{
+    if (!_contextMenu)
+    {
+        _contextMenu = new QMenu;
+        _contextMenu->addAction(QIcon(":/toolbar/copy"), tr("Copy"), this, &TableFuncResultTable::copy);
+        _contextMenu->addSeparator();
+        _contextMenu->addAction(tr("Select All"), this, &QTableWidget::selectAll);
+    }
+    _contextMenu->popup(mapToGlobal(pos));
+}
+
+void TableFuncResultTable::copy()
+{
+    auto ranges = selectedRanges();
+    if (ranges.isEmpty()) return;
+    QString report;
+    QTextStream stream(&report);
+    auto range = ranges.first();
+    for (int row = range.topRow(); row <= range.bottomRow(); row++)
+    {
+        for (int col = range.leftColumn(); col <= range.rightColumn(); col++)
+        {
+            auto item = this->item(row, col);
+            stream << item->text();
+            if (col == 0)
+            {
+                auto resultPosition = TableFunction::ResultPosition(item->data(Qt::UserRole).toInt());
+                stream << '\t' << tableResultPositionInfo(resultPosition).ascii;
+            }
+            if (col < range.rightColumn())
+                stream << '\t';
+        }
+        stream << '\n';
+    }
+    qApp->clipboard()->setText(report);
 }
 
 //------------------------------------------------------------------------------
