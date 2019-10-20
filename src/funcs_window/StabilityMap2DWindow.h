@@ -48,6 +48,7 @@ protected:
 
 private:
     QCPColorMap *_graph;
+    QCPGraph *_autolimiter;
     QAction* _actnStabilityAutolimits;
     QCPColorScale *_colorScale;
     bool _zAutolimitsRequest = true;

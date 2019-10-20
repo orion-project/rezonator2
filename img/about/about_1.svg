@@ -15,7 +15,7 @@
    viewBox="0 0 158.75 113.24167"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
    sodipodi:docname="about_1.svg"
    inkscape:export-filename="/home/kolyan/Projects/rezonator2/img/about/about_1.png"
    inkscape:export-xdpi="96"
@@ -96,16 +96,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="306.02138"
-     inkscape:cy="74.604432"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="282.34158"
+     inkscape:cy="209.03635"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer4"
+     inkscape:current-layer="layer2"
      showgrid="false"
      inkscape:window-width="1920"
-     inkscape:window-height="1130"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1"
      units="px" />
   <metadata
@@ -116,7 +116,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -128,14 +128,14 @@
      style="display:inline"
      sodipodi:insensitive="true">
     <image
-       sodipodi:absref="/home/kolyan/Projects/rezonator2/img/about/about_1_back.png"
+       sodipodi:absref="C:\Projects\rezonator2\img\about\about_1_back.png"
        xlink:href="about_1_back.png"
-       width="158.75"
-       height="113.24167"
-       preserveAspectRatio="none"
-       id="image5639"
+       y="183.75832"
        x="0"
-       y="183.75832" />
+       id="image5639"
+       preserveAspectRatio="none"
+       height="113.24167"
+       width="158.75" />
   </g>
   <g
      inkscape:groupmode="layer"
@@ -229,16 +229,16 @@
          dx="0 0 0 0 -4.7965965">re  onator</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.32992887px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#ffffff;fill-opacity:0.85276034;stroke:none;stroke-width:0.24984041px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="4.5902781"
-       y="30.901423"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29444647px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#ffffff;fill-opacity:0.85276034;stroke:none;stroke-width:0.24984042px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="4.5781755"
+       y="30.696638"
        id="text5521"
-       transform="scale(1.0389197,0.96253829)"><tspan
+       transform="scale(1.0320348,0.96895959)"><tspan
          sodipodi:role="line"
          id="tspan5519"
-         x="4.5902781"
-         y="30.901423"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.32992887px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:0.85276034;stroke-width:0.24984041px">designed for resonator design</tspan></text>
+         x="4.5781755"
+         y="30.696638"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29444647px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:0.85276034;stroke-width:0.24984042px">designed for resonators design</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"

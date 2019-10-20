@@ -40,7 +40,7 @@ public:
     bool excludeServiceGraphsFromAutolimiting = true;
 
     // TODO: should be a row below the title, it can be 0 or 1, depending on if title is visible
-    int axisRectRow() const { return 1; }
+    int axisRectRow() const { return 0; }
     int axisRectCol() const { return 0; }
 
 public slots:

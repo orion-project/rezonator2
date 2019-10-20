@@ -186,6 +186,9 @@ StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
     // We have to do this way because QCPColorMap::rescaleAxes() seems not working as expected
     _plot->excludeServiceGraphsFromAutolimiting = false;
 
+    _autolimiter = _plot->addGraph();
+    _autolimiter->setPen(QPen(Qt::transparent));
+
     _graph = new QCPColorMap(_plot->xAxis, _plot->yAxis);
 
     _colorScale = new QCPColorScale(_plot);
@@ -261,8 +264,13 @@ void StabilityMap2DWindow::updateGraphs()
 
     auto unitX = getUnitX();
     auto unitY = getUnitY();
-    data->setRange({ unitX->fromSi(rangeX.start()), unitX->fromSi(rangeX.stop()) },
-                   { unitY->fromSi(rangeY.start()), unitY->fromSi(rangeY.stop()) });
+    auto minX = unitX->fromSi(rangeX.start());
+    auto maxX = unitX->fromSi(rangeX.stop());
+    auto minY = unitY->fromSi(rangeY.start());
+    auto maxY = unitY->fromSi(rangeY.stop());
+    data->setRange({ minX, maxX }, { minY, maxY });
+
+    _autolimiter->setData({minX, maxX}, {minY, maxY});
 
     for (int ix = 0; ix < nx; ix++)
         for (int iy = 0; iy < ny; iy++)
