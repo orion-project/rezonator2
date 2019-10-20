@@ -123,3 +123,29 @@ M = make_abcd(1, 0, (n2-n1)/R/n2, n1/n2)
 M_inv = make_abcd(1, 0, (n1-n2)/-R/n1, n2/n1)
 print_abcd('M', M)
 print_abcd('M_inv', M_inv)
+
+print('\n----------------------------------')
+print('AxiconMirror\n')
+# ../help/matrix/ElemAxiconMirror.png
+theta = radians(5.5)
+alpha = radians(11)
+r_t = 0.011
+r_s = 0.012
+M_t = make_abcd(1, 0, -2*theta/r_t/cos(alpha), 1)
+M_s = make_abcd(1, 0, -2*theta/r_s*cos(alpha), 1)
+print_abcd('M_t', M_t)
+print_abcd('M_s', M_s)
+
+print('\n----------------------------------')
+print('AxiconLens\n')
+# ../help/matrix/ElemAxiconLens.png
+theta = radians(5.5)
+alpha = radians(11)
+n = 1.33
+r_t = 0.013
+r_s = 0.014
+theta_eff = asin(sin(theta)*n) - theta
+M_t = make_abcd(1, 0, -theta_eff/r_t/cos(alpha), 1)
+M_s = make_abcd(1, 0, -theta_eff/r_s*cos(alpha), 1)
+print_abcd('M_t', M_t)
+print_abcd('M_s', M_s)

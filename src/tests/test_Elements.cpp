@@ -1,6 +1,8 @@
 #include "testing/OriTestBase.h"
 #include "../core/Elements.h"
 #include "../core/ElementsCatalog.h"
+#include "../core/Pump.h"
+#include "../funcs/PumpCalculator.h"
 #include "TestUtils.h"
 
 #include <QSharedPointer>
@@ -423,6 +425,63 @@ TEST_METHOD(SphericalInterface)
     ASSERT_MATRIX(s_inv, 1.0000000, 0.0000000, 1.3725490, 2.2352941)
 }
 
+// Calculation: $PROJECT/calc/Elements.py
+TEST_METHOD(AxiconMirror)
+{
+    ELEM(AxiconMirror, 2)
+    SET_PARAM(Theta, 5.5, deg)
+    SET_PARAM(Alpha, 11, deg)
+
+    PumpParams_RayVector pump;
+    pump.radius()->setValue({11, 12, Z::Units::mm()});
+    pump.angle()->setValue(0);
+    pump.distance()->setValue(0);
+
+    auto pumpCalcT = PumpCalculator::T();
+    auto pumpCalcS = PumpCalculator::S();
+    pumpCalcT->init(&pump, 0);
+    pumpCalcS->init(&pump, 0);
+    ElementDynamic::CalcParams p;
+    Z::Matrix unity;
+    p.pumpCalcT = pumpCalcT.get();
+    p.pumpCalcS = pumpCalcS.get();
+    p.Mt = &unity;
+    p.Ms = &unity;
+    elem->calcDynamicMatrix(p);
+
+    ASSERT_MATRIX(t_dyn, 1.0000000, 0.0000000, -17.7799605, 1.0000000)
+    ASSERT_MATRIX(s_dyn, 1.0000000, 0.0000000, -15.7049075, 1.0000000)
+}
+
+// Calculation: $PROJECT/calc/Elements.py
+TEST_METHOD(AxiconLens)
+{
+    ELEM(AxiconLens, 3)
+    SET_PARAM(Theta, 5.5, deg)
+    SET_PARAM(Alpha, 11, deg)
+    SET_PARAM(n, 1.33, none)
+
+    PumpParams_RayVector pump;
+    pump.radius()->setValue({13, 14, Z::Units::mm()});
+    pump.angle()->setValue(0);
+    pump.distance()->setValue(0);
+
+    auto pumpCalcT = PumpCalculator::T();
+    auto pumpCalcS = PumpCalculator::S();
+    pumpCalcT->init(&pump, 0);
+    pumpCalcS->init(&pump, 0);
+    ElementDynamic::CalcParams p;
+    Z::Matrix unity;
+    p.pumpCalcT = pumpCalcT.get();
+    p.pumpCalcS = pumpCalcS.get();
+    p.Mt = &unity;
+    p.Ms = &unity;
+    elem->calcDynamicMatrix(p);
+
+    ASSERT_MATRIX(t_dyn, 1.0000000, 0.0000000, -2.4942520, 1.0000000)
+    ASSERT_MATRIX(s_dyn, 1.0000000, 0.0000000, -2.2317667, 1.0000000)
+}
+
 //------------------------------------------------------------------------------
 
 TEST_GROUP("Elements",
@@ -447,6 +506,8 @@ TEST_GROUP("Elements",
            ADD_TEST(BrewsterInterface),
            ADD_TEST(TiltedInterface),
            ADD_TEST(SphericalInterface),
+           ADD_TEST(AxiconMirror),
+           ADD_TEST(AxiconLens),
            )
 
 } // namespace ElementsTests
