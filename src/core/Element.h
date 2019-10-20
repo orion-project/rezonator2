@@ -187,20 +187,10 @@ protected:
 typedef QList<Element*> Elements;
 
 //------------------------------------------------------------------------------
-
-class IRefractiveElement
-{
-public:
-    virtual double ior() const = 0;
-protected:
-    ~IRefractiveElement();
-};
-
-//------------------------------------------------------------------------------
 /**
     The base class for elements having length and optional IOR.
 */
-class ElementRange : public Element, public IRefractiveElement
+class ElementRange : public Element
 {
 public:
     virtual void setSubRangeSI(double value) { Q_UNUSED(value) }
@@ -273,8 +263,8 @@ public:
         double schemaWavelenSI;
 
         /// This wavelength is used to calculate beam parameters at the left side of this element.
-        /// It can differ from schema's wavelength if left-hand element has IOR.
-        /// We don't care if this IOR differs from IOR of the current element (in the case it's refractive).
+        /// It can differ from schema's wavelength if the left-hand element is medium-range.
+        /// We don't care if this IOR differs from IOR of the current element (in the case it has IOR).
         /// In this case the beam transition between elements is invalid, but it is up to user.
         double prevElemWavelenSI;
     };

@@ -3,6 +3,7 @@
 #include "PumpCalculator.h"
 #include "RoundTripCalculator.h"
 #include "../core/Schema.h"
+#include "../core/Elements.h"
 
 namespace FunctionUtils {
 
@@ -62,8 +63,8 @@ void prepareDynamicElements(Schema* schema, Element* stopElem, const Z::PairTS<s
             p.Ms = calc.pMs();
             p.pumpCalcT = pumpCalc.T.get();
             p.pumpCalcS = pumpCalc.S.get();
-            auto refractive = dynamic_cast<IRefractiveElement*>(prevElem);
-            p.prevElemWavelenSI = refractive ? lambda / refractive->ior() : lambda;
+            auto medium = dynamic_cast<ElemMediumRange*>(prevElem);
+            p.prevElemWavelenSI = medium ? lambda / medium->ior() : lambda;
             p.schemaWavelenSI = lambda;
             dynamic->calcDynamicMatrix(p);
         }
