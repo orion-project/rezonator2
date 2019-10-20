@@ -227,13 +227,27 @@ DECLARE_ELEMENT_END
 
 DECLARE_ELEMENT(ElemAxiconMirror, ElementDynamic)
     ElemAxiconMirror();
-    TYPE_NAME(qApp->translate("Elements", "Axicon (mirror)"))
+    TYPE_NAME(qApp->translate("Elements", "Axicon mirror"))
     DEFAULT_LABEL("XM")
     void calcDynamicMatrix(const CalcParams& p) override;
     double theta() const { return _theta->value().toSi(); }
     double alpha() const { return _alpha->value().toSi(); }
 private:
     Z::Parameter *_theta, *_alpha;
+DECLARE_ELEMENT_END
+
+//------------------------------------------------------------------------------
+
+DECLARE_ELEMENT(ElemAxiconLens, ElementDynamic)
+    ElemAxiconLens();
+    TYPE_NAME(qApp->translate("Elements", "Axicon lens"))
+    DEFAULT_LABEL("XL")
+    void calcDynamicMatrix(const CalcParams& p) override;
+    double theta() const { return _theta->value().toSi(); }
+    double alpha() const { return _alpha->value().toSi(); }
+    double ior() const { return _ior->value().value(); }
+private:
+    Z::Parameter *_theta, *_alpha, *_ior;
 DECLARE_ELEMENT_END
 
 #endif // ELEMENTS_H

@@ -678,8 +678,7 @@ void ElemGrinLens::setSubRangeSI(double value)
 ElemAxiconMirror::ElemAxiconMirror() : ElementDynamic()
 {
     _theta = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Theta"), Z::Strs::theta(),
-                              qApp->translate("Param", "Axicon angle"),
-                              qApp->translate("Param", ""));
+                              qApp->translate("Param", "Axicon angle"));
     _alpha = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Alpha"), Z::Strs::alpha(),
                               qApp->translate("Param", "Angle of incidence "),
                               qApp->translate("Param", "Zero angle is normal incidence."));
@@ -695,8 +694,41 @@ void ElemAxiconMirror::calcDynamicMatrix(const CalcParams& p)
     auto beamS = p.pumpCalcS->calc(*p.Ms, p.prevElemWavelenSI);
 
     auto cosA = cos(alpha());
-    auto tmp = -2 * theta();
+    auto tmp = 2 * theta();
 
-    _mt_dyn.assign(1, 0, tmp / qAbs(beamT.beamRadius) / cosA, 1);
-    _ms_dyn.assign(1, 0, tmp / qAbs(beamS.beamRadius) * cosA, 1);
+    _mt_dyn.assign(1, 0, -tmp / qAbs(beamT.beamRadius) / cosA, 1);
+    _ms_dyn.assign(1, 0, -tmp / qAbs(beamS.beamRadius) * cosA, 1);
+}
+
+//------------------------------------------------------------------------------
+//                             ElemAxiconLens
+//------------------------------------------------------------------------------
+
+ElemAxiconLens::ElemAxiconLens() : ElementDynamic()
+{
+    _theta = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Theta"), Z::Strs::theta(),
+                              qApp->translate("Param", "Axicon angle"));
+    _alpha = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Alpha"), Z::Strs::alpha(),
+                              qApp->translate("Param", "Angle of incidence "),
+                              qApp->translate("Param", "Zero angle is normal incidence."));
+    _ior = new Z::Parameter(Z::Dims::none(),
+                            QStringLiteral("n"), QStringLiteral("n"),
+                            qApp->translate("Param", "Index of refraction"));
+    addParam(_theta, 1, Z::Units::deg());
+    addParam(_alpha, 0, Z::Units::deg());
+    addParam(_ior, 1.5, Z::Units::none());
+
+    setOption(Element_ChangesWavefront);
+}
+
+void ElemAxiconLens::calcDynamicMatrix(const CalcParams& p)
+{
+    auto beamT = p.pumpCalcT->calc(*p.Mt, p.prevElemWavelenSI);
+    auto beamS = p.pumpCalcS->calc(*p.Ms, p.prevElemWavelenSI);
+
+    auto cosA = cos(alpha());
+    auto tmp = asin(sin(theta()) * ior()) - theta();
+
+    _mt_dyn.assign(1, 0, -tmp / qAbs(beamT.beamRadius) / cosA, 1);
+    _ms_dyn.assign(1, 0, -tmp / qAbs(beamS.beamRadius) * cosA, 1);
 }

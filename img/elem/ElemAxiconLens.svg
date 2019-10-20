@@ -1,0 +1,58 @@
+<svg height="235" width="128" xmlns="http://www.w3.org/2000/svg">
+<g fill="none" stroke="#000">
+<path d="m1 175.5h123" stroke-dasharray="8 2 1 2"/>
+<path d="m48.5 120.47v109.03h28.59l2.72-3.94-22.91-50.06 23.47-49.97-3.09-5.06z" stroke-width="3"/>
+<path d="m48.5 4.47v109.03h12.6l25.9-54.16-25.9-54.87z" stroke-width="3"/>
+<path d="m1 59.5h123" stroke-dasharray="8 2 1 2"/>
+<path d="m55.16 138.97 12.72-12.9m-13.59 9.59 6.59-6.64m1.41 6.64 6.59-6.64"/>
+<path d="m57.38 226.47 12.72-12.9m-13.59 9.59 6.59-6.64m1.41 6.64 6.59-6.64"/>
+<path d="m55.64 53.23 12.72-12.9m-13.59 9.59 6.59-6.64m1.41 6.64 6.59-6.64"/>
+<path d="m60.38 82.51 12.72-12.9m-13.59 9.59 6.59-6.64m1.41 6.64 6.59-6.64"/>
+<path d="m51.99 34.47 12.72-12.9m-13.59 9.59 6.59-6.64m1.41 6.64 6.59-6.64"/>
+</g>
+<g font-family="Times New Roman" font-style="italic">
+<text font-size="28" x="11.4" y="51.87"><tspan x="11.4" y="51.87">α</tspan></text>
+<text font-size="28" x="12.16" y="166.76"><tspan x="12.16" y="166.76">α</tspan></text>
+<text font-size="10" x="79.44" y="93.16"><tspan font-size="28" x="79.44" y="93.16">θ&gt;0</tspan></text>
+<text font-size="10" x="77.22" y="198"><tspan font-size="28" x="77.22" y="198">θ&lt;0</tspan></text>
+</g>
+<g fill="none" stroke="#000">
+<g stroke-linecap="round" stroke-width="7" transform="matrix(.98 .17 -.17 .98 25.28 -9.76)">
+<path d="m117.36 131-99.13 81.12"/>
+<path d="m94.4 132.47 25.46-3.89-7.07 24.75"/>
+</g>
+<path d="m53.4 161.75 9.72-9.9m-10.59 6.59 6.59-6.64"/>
+<path d="m51.7 204.12 9.42-9.56m-10.29 6.25 6.59-6.64"/>
+<g stroke-linecap="round" stroke-width="7" transform="matrix(.98 .17 -.17 .98 25.28 -119.76)">
+<path d="m117.36 131-97.65 79.91"/>
+<path d="m94.4 132.47 25.46-3.89-7.07 24.75"/>
+</g>
+<path d="m30.73 93.51c6.21-1.23 12.64-1.87 19.21-1.87 14.64 0 28.53 3.19 41.03 8.92" stroke-linejoin="round"/>
+<path d="m77.09 98.51-4.9-4.32 6.58-1.59"/>
+<path d="m41.13 95 5.69-3.34-5.82-2.78"/>
+<path d="m52.9 108.25 9.72-9.9m-10.59 6.59 6.59-6.64"/>
+<g transform="matrix(1 0 0 -1 0 299.38)">
+<path d="m30.73 93.51c6.21-1.23 12.64-1.87 19.21-1.87 14.64 0 28.53 3.19 41.03 8.92" stroke-linejoin="round"/>
+<path d="m77.09 98.51-4.9-4.32 6.58-1.59"/>
+<path d="m41.13 95 5.69-3.34-5.82-2.78"/>
+</g>
+<g transform="matrix(-.41 -.91 .91 -.41 -47.26 170.96)">
+<path d="m30.73 93.51c6.21-1.23 12.64-1.87 19.21-1.87 10.82 0 21.24 1.74 30.98 4.97 3.44 1.14 11.91 4.66 15.86 6.75" stroke-linejoin="round"/>
+<path d="m84.18 101.07-4.42-4.8 6.71-.89"/>
+<path d="m41.13 95 5.69-3.34-5.82-2.78"/>
+</g>
+<g transform="matrix(-.37 -.93 .93 -.37 -51.52 278.12)">
+<path d="m30.73 93.51c6.21-1.23 12.64-1.87 19.21-1.87 14.64 0 28.53 3.19 41.03 8.92" stroke-linejoin="round"/>
+<path d="m78.52 98.96-4.76-4.46 6.62-1.39"/>
+<path d="m41.13 95 5.69-3.34-5.82-2.78"/>
+</g>
+</g>
+<text font-family="Times New Roman" font-size="28" font-style="italic" x="12.25" y="135.16"><tspan x="12.25" y="135.16">n</tspan></text>
+<path d="m26.96 132.91 30.49 12.9" fill="none" stroke="#000"/>
+<path d="m54.14 140.6 3.45 5.3-6.28.75" fill="none" stroke="#000"/>
+<text font-family="Times New Roman" font-size="28" font-style="italic" x="9.26" y="24.36"><tspan x="9.26" y="24.36">n</tspan></text>
+<g fill="none" stroke="#000" transform="matrix(.87 -.5 .5 .87 -64.2 -83.98)">
+<path d="m26.96 132.91 30.49 12.9"/>
+<path d="m54.14 140.6 3.45 5.3-6.28.75"/>
+</g>
+</svg>

@@ -113,6 +113,7 @@
         <file alias="divide">../img/toolbar10/divide.png</file>
     </qresource>
     <qresource prefix="/elem_drawing">
+        <file alias="ElemAxiconLens">../img/elem/ElemAxiconLens.svg</file>
         <file alias="ElemAxiconMirror">../img/elem/ElemAxiconMirror.svg</file>
         <file alias="ElemEmptyRange">../img/elem/ElemEmptyRange.svg</file>
         <file alias="ElemMediumRange">../img/elem/ElemMediumRange.svg</file>
@@ -136,6 +137,7 @@
         <file alias="ElemGrinLens">../img/elem/ElemGrinLens.svg</file>
     </qresource>
     <qresource prefix="/elem_icon">
+        <file alias="ElemAxiconLens">../img/elem/ElemAxiconLens24.svg</file>
         <file alias="ElemAxiconMirror">../img/elem/ElemAxiconMirror24.svg</file>
         <file alias="ElemEmptyRange">../img/elem/ElemEmptyRange24.svg</file>
         <file alias="ElemMediumRange">../img/elem/ElemMediumRange24.svg</file>

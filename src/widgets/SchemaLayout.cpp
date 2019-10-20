@@ -251,14 +251,14 @@ namespace CurvedElementLayout {
         ConcaveLens,        //      )(
         ConvexConcaveLens,  //      ((
         ConcaveConvexLens,  //      ))
-        PlaneConvexMirror,  //      |)
-        PlaneConvexLens,    //      |)
-        PlaneConcaveMirror, //      |(
-        PlaneConcaveLens,   //      |(
-        ConvexPlaneMirror,  //      (|
-        ConvexPlaneLens,    //      (|
-        ConcavePlaneMirror, //      )|
-        ConcavePlaneLens    //      )|
+        PlanoConvexMirror,  //      |)
+        PlanoConvexLens,    //      |)
+        PlanoConcaveMirror, //      |(
+        PlanoConcaveLens,   //      |(
+        ConvexPlanoMirror,  //      (|
+        ConvexPlanoLens,    //      (|
+        ConcavePlanoMirror, //      )|
+        ConcavePlanoLens    //      )|
     };
 
     DECLARE_ELEMENT_LAYOUT_BEGIN
@@ -322,7 +322,7 @@ namespace CurvedElementLayout {
             path.arcTo(rightSurface, -startAngle, sweepAngle);
             break;
 
-        case PlaneConvexMirror:
+        case PlanoConvexMirror:
             painter->setBrush(getMirrorBrush());
             rightSurface = QRectF(HW - 2*ROC, -ROC, 2*ROC, 2*ROC);
             path.moveTo(HW - sagitta, HH);
@@ -331,7 +331,7 @@ namespace CurvedElementLayout {
             path.lineTo(-HW, HH);
             break;
 
-        case PlaneConvexLens:
+        case PlanoConvexLens:
             rightSurface = QRectF(HW - 2*ROC, -ROC, 2*ROC, 2*ROC);
             path.moveTo(HW - sagitta, HH);
             path.arcTo(rightSurface, 360-startAngle, sweepAngle);
@@ -339,7 +339,7 @@ namespace CurvedElementLayout {
             path.lineTo(-HW, HH);
             break;
 
-        case PlaneConcaveMirror:
+        case PlanoConcaveMirror:
             painter->setBrush(getMirrorBrush());
             rightSurface = QRectF(HW - sagitta, -ROC, 2*ROC, 2*ROC);
             path.moveTo(HW, -HH);
@@ -348,7 +348,7 @@ namespace CurvedElementLayout {
             path.lineTo(-HW, -HH);
             break;
 
-        case PlaneConcaveLens:
+        case PlanoConcaveLens:
             rightSurface = QRectF(HW - sagitta, -ROC, 2*ROC, 2*ROC);
             path.moveTo(HW, -HH);
             path.arcTo(rightSurface, 180-startAngle, sweepAngle);
@@ -356,7 +356,7 @@ namespace CurvedElementLayout {
             path.lineTo(-HW, -HH);
             break;
 
-        case ConcavePlaneMirror:
+        case ConcavePlanoMirror:
             painter->setBrush(getMirrorBrush());
             leftSurface = QRectF(-HW + sagitta - 2*ROC, -ROC, 2*ROC, 2*ROC);
             path.moveTo(-HW, HH);
@@ -365,7 +365,7 @@ namespace CurvedElementLayout {
             path.lineTo(HW, HH);
             break;
 
-        case ConcavePlaneLens:
+        case ConcavePlanoLens:
             leftSurface = QRectF(-HW + sagitta - 2*ROC, -ROC, 2*ROC, 2*ROC);
             path.moveTo(-HW, HH);
             path.arcTo(leftSurface, 360-startAngle, sweepAngle);
@@ -373,7 +373,7 @@ namespace CurvedElementLayout {
             path.lineTo(HW, HH);
             break;
 
-        case ConvexPlaneMirror:
+        case ConvexPlanoMirror:
             painter->setBrush(getMirrorBrush());
             leftSurface = QRectF(-HW, -ROC, 2*ROC, 2*ROC);
             path.moveTo(-HW + sagitta, -HH);
@@ -382,7 +382,7 @@ namespace CurvedElementLayout {
             path.lineTo(HW, -HH);
             break;
 
-        case ConvexPlaneLens:
+        case ConvexPlanoLens:
             leftSurface = QRectF(-HW, -ROC, 2*ROC, 2*ROC);
             path.moveTo(-HW + sagitta, -HH);
             path.arcTo(leftSurface, 180-startAngle, sweepAngle);
@@ -396,22 +396,22 @@ namespace CurvedElementLayout {
         painter->drawPath(path);
 
         switch (paintMode) {
-        case PlaneConvexMirror:
+        case PlanoConvexMirror:
             painter->setPen(getMirrorPen());
             painter->drawArc(rightSurface, int(16*(360-startAngle)), int(16*sweepAngle));
             break;
 
-        case PlaneConcaveMirror:
+        case PlanoConcaveMirror:
             painter->setPen(getMirrorPen());
             painter->drawArc(rightSurface, int(16*(180-startAngle)), int(16*sweepAngle));
             break;
 
-        case ConcavePlaneMirror:
+        case ConcavePlanoMirror:
             painter->setPen(getMirrorPen());
             painter->drawArc(leftSurface, int(16*(360-startAngle)), int(16*sweepAngle));
             break;
 
-        case ConvexPlaneMirror:
+        case ConvexPlanoMirror:
             painter->setPen(getMirrorPen());
             painter->drawArc(leftSurface, int(16*(180-startAngle)), int(16*sweepAngle));
             break;
@@ -444,12 +444,12 @@ namespace ElemCurveMirrorLayout {
         int index = _element->owner()->indexOf(_element);
         if (index <= 0)
             layout->paintMode = mirror->radius() > 0
-                ? CurvedElementLayout::PlaneConcaveMirror
-                : CurvedElementLayout::PlaneConvexMirror;
+                ? CurvedElementLayout::PlanoConcaveMirror
+                : CurvedElementLayout::PlanoConvexMirror;
         else if (index >= _element->owner()->count()-1)
             layout->paintMode = mirror->radius() > 0
-                ? CurvedElementLayout::ConcavePlaneMirror
-                : CurvedElementLayout::ConvexPlaneMirror;
+                ? CurvedElementLayout::ConcavePlanoMirror
+                : CurvedElementLayout::ConvexPlanoMirror;
         else
             layout->paintMode = mirror->radius() > 0
                 ? CurvedElementLayout::ConvexLens
@@ -995,12 +995,12 @@ namespace AxiconElementLayout {
         FormUnknown,
         ConvexLens,         //      <>
         ConcaveLens,        //      ><
-        PlaneConvexMirror,  //      |>
-        PlaneConvexLens,    //      |>
-        PlaneConcaveMirror, //      |<
-        PlaneConcaveLens,   //      |<
-        ConvexPlaneMirror,  //      <|
-        ConcavePlaneMirror, //      >|
+        PlanoConvexMirror,  //      |>
+        PlanoConvexLens,    //      |>
+        PlanoConcaveMirror, //      |<
+        PlanoConcaveLens,   //      |<
+        ConvexPlanoMirror,  //      <|
+        ConcavePlanoMirror, //      >|
     };
 
     DECLARE_ELEMENT_LAYOUT_BEGIN
@@ -1020,14 +1020,14 @@ namespace AxiconElementLayout {
             break;
         case ConvexLens: // <>
         case ConcaveLens: // )(
-        case PlaneConvexLens: // |>
-        case PlaneConcaveLens: // |<
+        case PlanoConvexLens: // |>
+        case PlanoConcaveLens: // |<
             painter->setBrush(getGlassBrush());
             break;
-        case PlaneConvexMirror: // |>
-        case PlaneConcaveMirror: // |<
-        case ConvexPlaneMirror:  // <|
-        case ConcavePlaneMirror: // >|
+        case PlanoConvexMirror: // |>
+        case PlanoConcaveMirror: // |<
+        case ConvexPlanoMirror:  // <|
+        case ConcavePlanoMirror: // >|
             painter->setBrush(getMirrorBrush());
             break;
         }
@@ -1056,8 +1056,8 @@ namespace AxiconElementLayout {
             path.lineTo(HW, -HH);
             break;
 
-        case PlaneConvexMirror: // |>
-        case PlaneConvexLens: // |>
+        case PlanoConvexMirror: // |>
+        case PlanoConvexLens: // |>
             path.moveTo(-HW * 0.5, HH);
             path.lineTo(HW - sagitta, HH);
             path.lineTo(HW, 0);
@@ -1065,8 +1065,8 @@ namespace AxiconElementLayout {
             path.lineTo(-HW * 0.5, -HH);
             break;
 
-        case PlaneConcaveMirror: // |<
-        case PlaneConcaveLens: // |<
+        case PlanoConcaveMirror: // |<
+        case PlanoConcaveLens: // |<
             path.moveTo(0, 0);
             path.lineTo(HW, HH);
             path.lineTo(-HW * 0.5, HH);
@@ -1074,7 +1074,7 @@ namespace AxiconElementLayout {
             path.lineTo(HW, -HH);
             break;
 
-        case ConvexPlaneMirror:  // <|
+        case ConvexPlanoMirror:  // <|
             path.moveTo(HW * 0.5, HH);
             path.lineTo(-HW + sagitta, HH);
             path.lineTo(-HW, 0);
@@ -1082,7 +1082,7 @@ namespace AxiconElementLayout {
             path.lineTo(HW * 0.5, -HH);
             break;
 
-        case ConcavePlaneMirror: // >|
+        case ConcavePlanoMirror: // >|
             path.moveTo(HW * 0.5, HH);
             path.lineTo(-HW, HH);
             path.lineTo(0, 0);
@@ -1099,25 +1099,25 @@ namespace AxiconElementLayout {
         painter->setBrush(Qt::NoBrush);
         QPainterPath path1;
         switch (paintMode) {
-        case PlaneConvexMirror: // |>
+        case PlanoConvexMirror: // |>
             path1.moveTo(HW - sagitta, HH);
             path1.lineTo(HW, 0);
             path1.lineTo(HW - sagitta, -HH);
             break;
 
-        case PlaneConcaveMirror: // |<
+        case PlanoConcaveMirror: // |<
             path1.moveTo(HW, HH);
             path1.lineTo(HW - sagitta, 0);
             path1.lineTo(HW, -HH);
             break;
 
-        case ConvexPlaneMirror:  // <|
+        case ConvexPlanoMirror:  // <|
             path1.moveTo(-HW + sagitta, HH);
             path1.lineTo(-HW, 0);
             path1.lineTo(-HW + sagitta, -HH);
             break;
 
-        case ConcavePlaneMirror: // >|
+        case ConcavePlanoMirror: // >|
             path1.moveTo(-HW, HH);
             path1.lineTo(-HW + sagitta, 0);
             path1.lineTo(-HW, -HH);
@@ -1145,16 +1145,50 @@ namespace ElemAxiconMirrorLayout {
         int index = _element->owner()->indexOf(_element);
         if (index <= 0)
             layout->paintMode = mirror->theta() > 0
-                ? AxiconElementLayout::PlaneConcaveMirror
-                : AxiconElementLayout::PlaneConvexMirror;
+                ? AxiconElementLayout::PlanoConcaveMirror
+                : AxiconElementLayout::PlanoConvexMirror;
         else if (index >= _element->owner()->count()-1)
             layout->paintMode = mirror->theta() > 0
-                ? AxiconElementLayout::ConcavePlaneMirror
-                : AxiconElementLayout::ConvexPlaneMirror;
+                ? AxiconElementLayout::ConcavePlanoMirror
+                : AxiconElementLayout::ConvexPlanoMirror;
         else
             layout->paintMode = mirror->theta() > 0
-                ? AxiconElementLayout::ConvexLens
-                : AxiconElementLayout::ConcaveLens;
+                ? AxiconElementLayout::PlanoConvexLens
+                : AxiconElementLayout::PlanoConcaveLens;
+        layout->init();
+    }
+
+    ELEMENT_LAYOUT_PAINT {
+        if (layout) layout->paint(painter, nullptr, nullptr);
+    }
+}
+
+//------------------------------------------------------------------------------
+namespace ElemAxiconLensLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+        QSharedPointer<AxiconElementLayout::Layout> layout;
+    DECLARE_ELEMENT_LAYOUT_END
+
+    ELEMENT_LAYOUT_INIT {
+        HW = 12; HH = 40;
+        auto mirror = dynamic_cast<ElemAxiconLens*>(_element);
+        if (!mirror || !_element->owner()) return;
+        layout.reset(new AxiconElementLayout::Layout(nullptr));
+        layout->setHalfSize(HW, HH);
+        layout->setSlope(mirror->alpha());
+        int index = _element->owner()->indexOf(_element);
+        if (index <= 0)
+            layout->paintMode = mirror->theta() > 0
+                ? AxiconElementLayout::PlanoConcaveMirror
+                : AxiconElementLayout::PlanoConvexMirror;
+        else if (index >= _element->owner()->count()-1)
+            layout->paintMode = mirror->theta() > 0
+                ? AxiconElementLayout::ConcavePlanoMirror
+                : AxiconElementLayout::ConvexPlanoMirror;
+        else
+            layout->paintMode = mirror->theta() > 0
+                ? AxiconElementLayout::PlanoConvexLens
+                : AxiconElementLayout::PlanoConcaveLens;
         layout->init();
     }
 
@@ -1341,6 +1375,7 @@ ElementLayout* make(Element *elem) {
         registerLayout<ElemThickLens, ElemThickLensLayout::Layout>();
         registerLayout<ElemGrinLens, ElemGrinLensLayout::Layout>();
         registerLayout<ElemAxiconMirror, ElemAxiconMirrorLayout::Layout>();
+        registerLayout<ElemAxiconLens, ElemAxiconLensLayout::Layout>();
     }
     if (!__factoryMethods.contains(elem->type()))
         return nullptr;

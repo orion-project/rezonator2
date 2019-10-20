@@ -44,6 +44,7 @@ Interface elements have no index of refraction. Instead, they take indexes of ad
    matrix/ElemThinCylinderLensT
    matrix/ElemThinCylinderLensS
    matrix/ElemAxiconMirror
+   matrix/ElemAxiconLens
    
 **Media and Interfaces**
 
