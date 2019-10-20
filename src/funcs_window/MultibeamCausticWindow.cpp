@@ -16,6 +16,12 @@ MultibeamCausticWindow::MultibeamCausticWindow(Schema *schema) : MulticausticWin
     actnShowS->setChecked(false);
 }
 
+void MultibeamCausticWindow::pumpChanged(Schema*, PumpParams* p)
+{
+    // If pump is active, there will be recalcRequired, so skip double calculation.
+    if (!p->isActive()) update();
+}
+
 void MultibeamCausticWindow::calculate()
 {
     _graphs->clear();

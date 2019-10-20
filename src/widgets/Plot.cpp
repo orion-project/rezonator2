@@ -48,8 +48,10 @@ Plot::Plot() :
     _title->setSelectedFont(f);
     _title->setSelectable(true);
     _title->setMargins({10, 10, 10, 0});
-    plotLayout()->insertRow(0);
-    plotLayout()->addElement(0, 0, _title);
+    _title->setVisible(false);
+    //TODO:
+    //plotLayout()->insertRow(0);
+    //plotLayout()->addElement(0, 0, _title);
 
 #ifdef Q_OS_MAC
     f.setPointSize(14);

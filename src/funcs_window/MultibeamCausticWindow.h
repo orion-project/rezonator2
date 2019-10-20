@@ -13,6 +13,11 @@ public:
 
     MultibeamCausticFunction* function() const { return dynamic_cast<MultibeamCausticFunction*>(_function); }
 
+    void pumpCreated(Schema*, PumpParams*) override { update(); }
+    void pumpChanged(Schema*, PumpParams* p) override;
+    void pumpDeleting(Schema*, PumpParams*) override { update(); }
+    void pumpDeleted(Schema*, PumpParams*) override { update(); }
+
 protected:
     // Implementation of PlotFuncWindow
     void calculate() override;
