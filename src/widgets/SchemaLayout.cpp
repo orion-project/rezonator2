@@ -1153,8 +1153,8 @@ namespace ElemAxiconMirrorLayout {
                 : AxiconElementLayout::ConvexPlanoMirror;
         else
             layout->paintMode = mirror->theta() > 0
-                ? AxiconElementLayout::PlanoConvexLens
-                : AxiconElementLayout::PlanoConcaveLens;
+                ? AxiconElementLayout::ConvexLens
+                : AxiconElementLayout::ConcaveLens;
         layout->init();
     }
 
