@@ -2,7 +2,7 @@
   "history": [
     {
       "version": "2.0.5-beta1",
-      "date": "",
+      "date": "2019-10-21",
       "changes": [
         {
           "text": "TS-flipped mode added for plot functions."
@@ -17,13 +17,13 @@
           "text": "New function: Beam Parameters at Elements."
         },
         {
+          "text": "New function: Show Round-trip (can be called from plot window)."
+        },
+        {
           "text": "New elements: Axicon Mirror, Axicon Lens."
         },
         {
           "text": "Copy/Paste actions for pumps."
-        },
-        {
-          "text": "Function 'Show Round-trip' can be called from plot window."
         },
         {
           "text": "Parameter adjuster can be created via element's context menu."
@@ -39,6 +39,9 @@
         },
         {
           "text": "Fixed: Unable to set adjusting parameter via typing in adjuster input box."
+        },
+        {
+          "text": "Fixed: Wrong autolimits on 2D Stability Map plots."
         }
       ]
     },
