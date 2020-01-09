@@ -128,84 +128,84 @@ TEST_CASE_METHOD(read_schema, const QString& fileName,
 
     Element *elem;
     ASSERT_ELEMENT(0, EmptyRange, "L_1", "Empty range", false)
-    ASSERT_PARAM("L", 55, lin);
+    ASSERT_PARAM("L", 55, lin)
 
     ASSERT_ELEMENT(1, Plate, "Cr_1", "Plate of matter", true)
-    ASSERT_PARAM("L", 100, lin);
-    ASSERT_PARAM("n", 1.2, none);
-    //TODO: ASSERT_PARAM("D", 9);
+    ASSERT_PARAM("L", 100, lin)
+    ASSERT_PARAM("n", 1.2, none)
+    //TODO: ASSERT_PARAM("D", 9)
     //TODO: check misalignments
 
     ASSERT_ELEMENT(2, FlatMirror, "M_1", "Flat mirror", true)
-    //TODO: ASSERT_PARAM("D", 11);
+    //TODO: ASSERT_PARAM("D", 11)
     //TODO: check misalignments
 
     ASSERT_ELEMENT(3, CurveMirror, "M_2", "Spherical mirror", false)
-    ASSERT_PARAM("R", 125, lin);
-    ASSERT_PARAM("Alpha", 0.130899693899575, ang);
-    //TODO: ASSERT_PARAM("D", 12.1);
+    ASSERT_PARAM("R", 125, lin)
+    ASSERT_PARAM("Alpha", 0.130899693899575, ang)
+    //TODO: ASSERT_PARAM("D", 12.1)
     //TODO: check misalignments
 
     ASSERT_ELEMENT(4, ThinLens, "F_1", "Spherical lens", true)
-    ASSERT_PARAM("F", 135.6, lin);
-    ASSERT_PARAM("Alpha", 0.0959931088596881, ang);
-    //TODO: ASSERT_PARAM("D", 18.1);
+    ASSERT_PARAM("F", 135.6, lin)
+    ASSERT_PARAM("Alpha", 0.0959931088596881, ang)
+    //TODO: ASSERT_PARAM("D", 18.1)
     //TODO: check misalignments
 
     ASSERT_ELEMENT(5, CylinderLensT, "F_c_t", "Cylindrical tangential lens", false)
-    ASSERT_PARAM("F", 18, lin);
-    ASSERT_PARAM("Alpha", 0.436332312998582, ang);
-    //TODO: ASSERT_PARAM("D", 13);
+    ASSERT_PARAM("F", 18, lin)
+    ASSERT_PARAM("Alpha", 0.436332312998582, ang)
+    //TODO: ASSERT_PARAM("D", 13)
     //TODO: check misalignments
 
     ASSERT_ELEMENT(6, CylinderLensS, "F_c_s", "Cylindrical sagittal lens", false)
-    ASSERT_PARAM("F", 19, lin);
-    ASSERT_PARAM("Alpha", -0.418879020478639, ang);
-    //TODO: ASSERT_PARAM("D", 14);
+    ASSERT_PARAM("F", 19, lin)
+    ASSERT_PARAM("Alpha", -0.418879020478639, ang)
+    //TODO: ASSERT_PARAM("D", 14)
     //TODO: check misalignments
 
     ASSERT_ELEMENT(7, TiltedCrystal, "Cr_2", "Tiltel crystal", true)
-    ASSERT_PARAM("L", 13, lin);
-    ASSERT_PARAM("n", 2.3, none);
-    ASSERT_PARAM("Alpha", 0.314159265358979, ang);
+    ASSERT_PARAM("L", 13, lin)
+    ASSERT_PARAM("n", 2.3, none)
+    ASSERT_PARAM("Alpha", 0.314159265358979, ang)
     //TODO: ASSERT_PARAM("D", 11);
     //TODO: check misalignments
 
     ASSERT_ELEMENT(8, TiltedPlate, "Cr_3", "Tiltel plate", true)
-    ASSERT_PARAM("L", 14, lin);
-    ASSERT_PARAM("n", 2.2, none);
-    ASSERT_PARAM("Alpha", 0.296705972839036, ang);
-    //TODO: ASSERT_PARAM("D", 12);
+    ASSERT_PARAM("L", 14, lin)
+    ASSERT_PARAM("n", 2.2, none)
+    ASSERT_PARAM("Alpha", 0.296705972839036, ang)
+    //TODO: ASSERT_PARAM("D", 12)
     //TODO: check misalignments
 
     ASSERT_ELEMENT(9, BrewsterCrystal, "Cr_4", "Brewster crystal", false)
-    ASSERT_PARAM("L", 15, lin);
-    ASSERT_PARAM("n", 2.1, none);
-    //TODO: ASSERT_PARAM("D", 13);
+    ASSERT_PARAM("L", 15, lin)
+    ASSERT_PARAM("n", 2.1, none)
+    //TODO: ASSERT_PARAM("D", 13)
     //TODO: check misalignments
 
     ASSERT_ELEMENT(10, BrewsterPlate, "Cr_5", "Brewster plate", false)
-    ASSERT_PARAM("L", 16, lin);
-    ASSERT_PARAM("n", 2, none);
-    //TODO: ASSERT_PARAM("D", 14);
+    ASSERT_PARAM("L", 16, lin)
+    ASSERT_PARAM("n", 2, none)
+    //TODO: ASSERT_PARAM("D", 14)
     //TODO: check misalignments
 
     ASSERT_ELEMENT(11, MediumRange, "L_2", "Range in medium", true)
-    ASSERT_PARAM("L", 56, lin);
-    ASSERT_PARAM("n", 1.4, none);
+    ASSERT_PARAM("L", 56, lin)
+    ASSERT_PARAM("n", 1.4, none)
 
     ASSERT_ELEMENT(12, Point, "Pt", "Point or plane", true)
     //TODO: check misalignments
 
     ASSERT_ELEMENT(13, Matrix, "Mat_1", "Matrix element", true)
-    ASSERT_PARAM("At", 1.237, none);
-    ASSERT_PARAM("Bt", 2.155, none);
-    ASSERT_PARAM("Ct", 3.245, none);
-    ASSERT_PARAM("Dt", 4.155, none);
-    ASSERT_PARAM("As", 5.155, none);
-    ASSERT_PARAM("Bs", 6.152, none);
-    ASSERT_PARAM("Cs", 7.415, none);
-    ASSERT_PARAM("Ds", 8.155, none);
+    ASSERT_PARAM("At", 1.237, none)
+    ASSERT_PARAM("Bt", 2.155, lin)
+    ASSERT_PARAM("Ct", 3.245 * lin->fromSi(1), Z::Units::inv_m())
+    ASSERT_PARAM("Dt", 4.155, none)
+    ASSERT_PARAM("As", 5.155, none)
+    ASSERT_PARAM("Bs", 6.152, lin)
+    ASSERT_PARAM("Cs", 7.415 * lin->fromSi(1), Z::Units::inv_m())
+    ASSERT_PARAM("Ds", 8.155, none)
     //TODO: check misalignments
 
     // TODO: check grin lens

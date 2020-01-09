@@ -373,15 +373,24 @@ double ElemBrewsterPlate::axisLengthSI() const
 
 ElemMatrix::ElemMatrix()
 {
-    addParam(new Z::Parameter(Z::Dims::none(), "At", "At", "At"), 1, Z::Units::none());
-    addParam(new Z::Parameter(Z::Dims::linear(), "Bt", "Bt", "Bt"), 0, Z::Units::m());
-    addParam(new Z::Parameter(Z::Dims::fixed(), "Ct", "Ct", "Ct"), 0, Z::Units::inv_m());
-    addParam(new Z::Parameter(Z::Dims::none(), "Dt", "Dt", "Dt"), 1, Z::Units::none());
+    _At = new Z::Parameter(Z::Dims::none(), "At", "At", "At");
+    _Bt = new Z::Parameter(Z::Dims::linear(), "Bt", "Bt", "Bt");
+    _Ct = new Z::Parameter(Z::Dims::fixed(), "Ct", "Ct", "Ct");
+    _Dt = new Z::Parameter(Z::Dims::none(), "Dt", "Dt", "Dt");
+    _As = new Z::Parameter(Z::Dims::none(), "As", "As", "As");
+    _Bs = new Z::Parameter(Z::Dims::linear(), "Bs", "Bs", "Bs");
+    _Cs = new Z::Parameter(Z::Dims::fixed(), "Cs", "Cs", "Cs");
+    _Ds = new Z::Parameter(Z::Dims::none(), "Ds", "Ds", "Ds");
 
-    addParam(new Z::Parameter(Z::Dims::none(), "As", "As", "As"), 1, Z::Units::none());
-    addParam(new Z::Parameter(Z::Dims::linear(), "Bs", "Bs", "Bs"), 0, Z::Units::m());
-    addParam(new Z::Parameter(Z::Dims::fixed(), "Cs", "Cs", "Cs"), 0, Z::Units::inv_m());
-    addParam(new Z::Parameter(Z::Dims::none(), "Ds", "Ds", "Ds"), 1, Z::Units::none());
+    addParam(_At, 1, Z::Units::none());
+    addParam(_Bt, 0, Z::Units::m());
+    addParam(_Ct, 0, Z::Units::inv_m());
+    addParam(_Dt, 1, Z::Units::none());
+
+    addParam(_As, 1, Z::Units::none());
+    addParam(_Bs, 0, Z::Units::m());
+    addParam(_Cs, 0, Z::Units::inv_m());
+    addParam(_Ds, 1, Z::Units::none());
 }
 
 void ElemMatrix::setMatrix(int offset, const double& a, const double& b, const double& c, const double& d)
