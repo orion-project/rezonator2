@@ -164,7 +164,15 @@ QString FormatParam::format(Z::Parameter* param)
         if (_isReadOnly)
             parts << QStringLiteral("<i>");
 
-        parts << param->value().displayStr();
+        // When HTML is available, it's better to format inverted units as negative degrees,
+        // because digits in strings like "1/m" could be easily confused with the value itself, e.g. "1 1/m".
+        auto unit = param->value().unit();
+        if (unit == Z::Units::inv_m())
+            parts << Z::format(param->value().value()) << QStringLiteral(" m<sup>&ndash;1</sup>");
+        else if (unit == Z::Units::inv_m2())
+            parts << Z::format(param->value().value()) << QStringLiteral(" m<sup>&ndash;2</sup>");
+        else
+            parts << param->value().displayStr();
 
         if (_isReadOnly)
             parts << QStringLiteral("</i>");
@@ -192,7 +200,7 @@ QString FormatElemParams::format(Element *elem)
     {
         if (!Z::Utils::defaultParamFilter()->check(param)) continue;
 
-        parts << f.format(param);
+        parts << f.format(param).trimmed();
     }
     return parts.join(QStringLiteral(", "));
 }
