@@ -405,6 +405,35 @@ void ElemMatrix::calcMatrixInternal()
 }
 
 //------------------------------------------------------------------------------
+//                                ElemMatrix
+//------------------------------------------------------------------------------
+
+ElemMatrix1::ElemMatrix1()
+{
+    addParam(new Z::Parameter(Z::Dims::none(), "A", "A", "A"), 1, Z::Units::none());
+    addParam(new Z::Parameter(Z::Dims::linear(), "B", "B", "B"), 0, Z::Units::m());
+    addParam(new Z::Parameter(Z::Dims::fixed(), "C", "C", "C"), 0, Z::Units::inv_m());
+    addParam(new Z::Parameter(Z::Dims::none(), "D", "D", "D"), 1, Z::Units::none());
+}
+
+void ElemMatrix1::setMatrix(const double& a, const double& b, const double& c, const double& d)
+{
+    params().at(0)->setValue(Z::Value(a, Z::Units::none()));
+    params().at(1)->setValue(Z::Value(b, Z::Units::m()));
+    params().at(2)->setValue(Z::Value(c, Z::Units::inv_m()));
+    params().at(3)->setValue(Z::Value(d, Z::Units::none()));
+}
+
+void ElemMatrix1::calcMatrixInternal()
+{
+    _mt.assign(_params.at(0)->value().toSi(), _params.at(1)->value().toSi(),
+               _params.at(2)->value().toSi(), _params.at(3)->value().toSi());
+    _ms = _mt;
+    _mt_inv = _mt;
+    _ms_inv = _ms;
+}
+
+//------------------------------------------------------------------------------
 //                                ElemPoint
 //------------------------------------------------------------------------------
 

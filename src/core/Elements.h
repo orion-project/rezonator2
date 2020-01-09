@@ -133,14 +133,23 @@ DECLARE_ELEMENT_END
 
 DECLARE_ELEMENT(ElemMatrix, Element)
     ElemMatrix();
-    TYPE_NAME(qApp->translate("Elements", "Custom element-matrix"))
+    TYPE_NAME(qApp->translate("Elements", "Custom element-matrix (T&S)"))
     DEFAULT_LABEL("C")
-    //PARAMS_EDITOR(ABCD)
     CALC_MATRIX
     void setMatrixT(const double& a, const double& b, const double& c, const double& d) { setMatrix(0, a, b, c, d); }
     void setMatrixS(const double& a, const double& b, const double& c, const double& d) { setMatrix(4, a, b, c, d); }
 private:
     void setMatrix(int offset, const double& a, const double& b, const double& c, const double& d);
+DECLARE_ELEMENT_END
+
+//------------------------------------------------------------------------------
+
+DECLARE_ELEMENT(ElemMatrix1, Element)
+    ElemMatrix1();
+    TYPE_NAME(qApp->translate("Elements", "Custom element-matrix (T=S)"))
+    DEFAULT_LABEL("C")
+    CALC_MATRIX
+    void setMatrix(const double& a, const double& b, const double& c, const double& d);
 DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------

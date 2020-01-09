@@ -1,0 +1,14 @@
+<svg height="128" width="200" xmlns="http://www.w3.org/2000/svg">
+<g fill="none" stroke="#000">
+<path d="m39.75 63.61h118.42" stroke-width="7"/>
+<path d="m89.75 28.36v74.29" stroke-dasharray="3 3"/>
+<path d="m51.95 26.36h75.61v74.5h-75.61z" stroke-width="3"/>
+<path d="m142.07 47.06 18.18 16.73-17.82 16.36" stroke-linecap="round" stroke-width="7"/>
+</g>
+<g font-family="Times New Roman" font-size="7.38" font-style="italic">
+<text x="63.49" y="50.44"><tspan font-size="26.56" x="63.49" y="50.44">A</tspan></text>
+<text x="101.49" y="50.24"><tspan font-size="26.56" x="101.49" y="50.24">B</tspan></text>
+<text x="59.87" y="92.44"><tspan font-size="26.56" x="59.87" y="92.44">C</tspan></text>
+<text x="100.06" y="92.44"><tspan font-size="26.56" x="100.06" y="92.44">D</tspan></text>
+</g>
+</svg>

@@ -1367,6 +1367,7 @@ ElementLayout* make(Element *elem) {
         registerLayout<ElemBrewsterCrystal, ElemBrewsterCrystalLayout::Layout>();
         registerLayout<ElemBrewsterPlate, ElemBrewsterPlateLayout::Layout>();
         registerLayout<ElemMatrix, ElemMatrixLayout::Layout>();
+        registerLayout<ElemMatrix1, ElemMatrixLayout::Layout>();
         registerLayout<ElemPoint, ElemPointLayout::Layout>();
         registerLayout<ElemNormalInterface, ElemNormalInterfaceLayout::Layout>();
         registerLayout<ElemBrewsterInterface, ElemBrewsterInterfaceLayout::Layout>();

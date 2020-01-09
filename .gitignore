@@ -14,3 +14,4 @@ bin/assistant*
 tmp
 out
 __pycache__
+img/svgcleaner

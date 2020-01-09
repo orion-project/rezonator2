@@ -128,6 +128,7 @@
         <file alias="ElemTiltedCrystal">../img/elem/ElemTiltedCrystal.svg</file>
         <file alias="ElemTiltedPlate">../img/elem/ElemTiltedPlate.svg</file>
         <file alias="ElemMatrix">../img/elem/ElemMatrix.svg</file>
+        <file alias="ElemMatrix1">../img/elem/ElemMatrix1.svg</file>
         <file alias="ElemPoint">../img/elem/ElemPoint.svg</file>
         <file alias="ElemNormalInterface">../img/elem/ElemNormalInterface.svg</file>
         <file alias="ElemBrewsterInterface">../img/elem/ElemBrewsterInterface.svg</file>
@@ -148,6 +149,7 @@
         <file alias="ElemCylinderLensT">../img/elem/ElemCylinderLensT24.svg</file>
         <file alias="ElemCylinderLensS">../img/elem/ElemCylinderLensS24.svg</file>
         <file alias="ElemMatrix">../img/elem/ElemMatrix24.svg</file>
+        <file alias="ElemMatrix1">../img/elem/ElemMatrix124.svg</file>
         <file alias="ElemBrewsterCrystal">../img/elem/ElemBrewsterCrystal24.svg</file>
         <file alias="ElemBrewsterPlate">../img/elem/ElemBrewsterPlate24.svg</file>
         <file alias="ElemTiltedCrystal">../img/elem/ElemTiltedCrystal24.svg</file>
