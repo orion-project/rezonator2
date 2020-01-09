@@ -265,6 +265,8 @@ void PumpWindow::createActions()
     _actnPumpEdit = A_(tr("Edit..."), this, SLOT(editPump()), ":/toolbar/pump_edit");
     _actnPumpActivate = A_(tr("Activate..."), this, SLOT(activatePump()), ":/toolbar/pump_on", Qt::CTRL | Qt::Key_Return);
     _actnPumpClone = A_(tr("Clone"), this, SLOT(clonePump()), ":/toolbar/clone");
+    _actnPumpCopy = A_(tr("Copy"), this, SLOT(copy()), ":/toolbar/copy");
+    _actnPumpPaste = A_(tr("Paste"), this, SLOT(paste()), ":/toolbar/paste");
 
     #undef A_
 }
@@ -275,7 +277,7 @@ void PumpWindow::createMenuBar()
         { _actnPumpAdd, _actnPumpClone, nullptr, _actnPumpEdit, _actnPumpActivate, nullptr, _actnPumpDelete });
 
     _contextMenu = Ori::Gui::menu(this,
-        { _actnPumpEdit, _actnPumpActivate, nullptr, _actnPumpDelete });
+        { _actnPumpEdit, _actnPumpActivate, nullptr, _actnPumpClone, _actnPumpCopy, _actnPumpPaste, nullptr, _actnPumpDelete });
 }
 
 void PumpWindow::createToolBar()

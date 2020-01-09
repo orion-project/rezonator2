@@ -120,7 +120,8 @@ private:
     static PumpWindow* _instance;
 
     PumpsTable* _table;
-    QAction *_actnPumpAdd, *_actnPumpDelete, *_actnPumpEdit, *_actnPumpActivate, *_actnPumpClone;
+    QAction *_actnPumpAdd, *_actnPumpDelete, *_actnPumpEdit, *_actnPumpActivate, *_actnPumpClone,
+        *_actnPumpCopy, *_actnPumpPaste;
     QMenu *_windowMenu, *_contextMenu;
     Ori::Widgets::StatusBar* _statusBar;
     bool _isEditingNewPump = false;

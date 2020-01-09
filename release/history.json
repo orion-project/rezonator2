@@ -6,6 +6,12 @@
       "changes": [
         {
           "text": "Can link parameters of Matrix element to global parameters."
+        },
+        {
+          "text": "New element: Matrix element with single matrix (T=S)."
+        },
+        {
+          "text": "Copy/Paste commands in pumps window."
         }
       ]
     },
