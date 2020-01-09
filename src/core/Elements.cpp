@@ -371,29 +371,24 @@ double ElemBrewsterPlate::axisLengthSI() const
 //                                ElemMatrix
 //------------------------------------------------------------------------------
 
-void ElemMatrix::makeParam(const QString& name, const double& value)
-{
-    addParam(new Z::Parameter(Z::Dims::none(), name, name, name), value, Z::Units::none());
-}
-
 ElemMatrix::ElemMatrix()
 {
-    makeParam("At", 1);
-    makeParam("Bt", 0);
-    makeParam("Ct", 0);
-    makeParam("Dt", 1);
+    addParam(new Z::Parameter(Z::Dims::none(), "At", "At", "At"), 1, Z::Units::none());
+    addParam(new Z::Parameter(Z::Dims::linear(), "Bt", "Bt", "Bt"), 0, Z::Units::m());
+    addParam(new Z::Parameter(Z::Dims::fixed(), "Ct", "Ct", "Ct"), 0, Z::Units::inv_m());
+    addParam(new Z::Parameter(Z::Dims::none(), "Dt", "Dt", "Dt"), 1, Z::Units::none());
 
-    makeParam("As", 1);
-    makeParam("Bs", 0);
-    makeParam("Cs", 0);
-    makeParam("Ds", 1);
+    addParam(new Z::Parameter(Z::Dims::none(), "As", "As", "As"), 1, Z::Units::none());
+    addParam(new Z::Parameter(Z::Dims::linear(), "Bs", "Bs", "Bs"), 0, Z::Units::m());
+    addParam(new Z::Parameter(Z::Dims::fixed(), "Cs", "Cs", "Cs"), 0, Z::Units::inv_m());
+    addParam(new Z::Parameter(Z::Dims::none(), "Ds", "Ds", "Ds"), 1, Z::Units::none());
 }
 
 void ElemMatrix::setMatrix(int offset, const double& a, const double& b, const double& c, const double& d)
 {
     params().at(offset+0)->setValue(Z::Value(a, Z::Units::none()));
-    params().at(offset+1)->setValue(Z::Value(b, Z::Units::none()));
-    params().at(offset+2)->setValue(Z::Value(c, Z::Units::none()));
+    params().at(offset+1)->setValue(Z::Value(b, Z::Units::m()));
+    params().at(offset+2)->setValue(Z::Value(c, Z::Units::inv_m()));
     params().at(offset+3)->setValue(Z::Value(d, Z::Units::none()));
 }
 
@@ -401,10 +396,10 @@ void ElemMatrix::setMatrix(int offset, const double& a, const double& b, const d
 
 void ElemMatrix::calcMatrixInternal()
 {
-    _mt.assign(_params.at(0)->value().value(), _params.at(1)->value().value(),
-               _params.at(2)->value().value(), _params.at(3)->value().value());
-    _ms.assign(_params.at(4)->value().value(), _params.at(5)->value().value(),
-               _params.at(6)->value().value(), _params.at(7)->value().value());
+    _mt.assign(_params.at(0)->value().toSi(), _params.at(1)->value().toSi(),
+               _params.at(2)->value().toSi(), _params.at(3)->value().toSi());
+    _ms.assign(_params.at(4)->value().toSi(), _params.at(5)->value().toSi(),
+               _params.at(6)->value().toSi(), _params.at(7)->value().toSi());
     _mt_inv = _mt;
     _ms_inv = _ms;
 }

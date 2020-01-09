@@ -98,6 +98,7 @@ DEFINE_UNIT(deg, QT_TRANSLATE_NOOP_UTF8("Units", "°"), v * M_PI / 180.0, v * 18
 
 DEFINE_UNIT(Hz, QT_TRANSLATE_NOOP_UTF8("Units", "Hz"), v, v, Hz)
 DEFINE_UNIT(inv_m2, QT_TRANSLATE_NOOP_UTF8("Units", "1/m²"), v, v, inv_m2)
+DEFINE_UNIT(inv_m, QT_TRANSLATE_NOOP_UTF8("Units", "1/m"), v, v, inv_m)
 
 } // namespace Units
 
@@ -128,6 +129,7 @@ DEFINE_DIM(angular, QT_TRANSLATE_NOOP("Units", "Angular"), UNIT(rad),
 DEFINE_DIM(fixed, QT_TRANSLATE_NOOP("Units", "Misc"), UNIT(none),
     UNIT(Hz),
     UNIT(inv_m2),
+    UNIT(inv_m),
 )
 
 DimList dims()

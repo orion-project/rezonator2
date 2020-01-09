@@ -135,9 +135,8 @@ DECLARE_ELEMENT(ElemMatrix, Element)
     ElemMatrix();
     TYPE_NAME(qApp->translate("Elements", "Custom element-matrix"))
     DEFAULT_LABEL("C")
-    PARAMS_EDITOR(ABCD)
+    //PARAMS_EDITOR(ABCD)
     CALC_MATRIX
-    void makeParam(const QString& name, const double& value);
     void setMatrixT(const double& a, const double& b, const double& c, const double& d) { setMatrix(0, a, b, c, d); }
     void setMatrixS(const double& a, const double& b, const double& c, const double& d) { setMatrix(4, a, b, c, d); }
 private:
