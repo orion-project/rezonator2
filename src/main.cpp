@@ -113,7 +113,10 @@ int main(int argc, char* argv[])
             if (parser.isSet(optionExample))
                 projectWindow->operations()->openExampleFile(fileName);
             else
+            {
                 projectWindow->operations()->openSchemaFile(fileName);
+                CommonData::instance()->addFileToMruList(fileName);
+            }
             return app.exec();
         }
     }

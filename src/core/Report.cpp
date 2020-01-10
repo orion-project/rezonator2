@@ -1,5 +1,6 @@
 #include "Report.h"
 
+#include <QDebug>
 #include <QStringList>
 
 namespace Z {
@@ -49,6 +50,20 @@ QString Report::str() const
     for (const Event& event : _events)
         s << event.str();
     return s.join("\n");
+}
+
+void Report::writeToStdout() const
+{
+    for (const Z::Report::Event& event: events())
+    {
+        QString m = event.message();
+        switch (event.type())
+        {
+        case Z::Report::Event::Info: qInfo() << m; break;
+        case Z::Report::Event::Warning: qWarning() << m; break;
+        case Z::Report::Event::Error: qCritical() << m; break;
+        }
+    }
 }
 
 } // namespace Z

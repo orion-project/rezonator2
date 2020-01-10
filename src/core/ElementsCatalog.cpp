@@ -5,7 +5,7 @@
 
 ElementsCatalog::ElementsCatalog()
 {
-    auto categoryCommon = qApp->translate("Elements", "Common elements");
+    auto categoryCommon = qApp->translate("Elements", "Common");
     registerElement(categoryCommon, new ElemEmptyRange);
     registerElement(categoryCommon, new ElemPlate);
     registerElement(categoryCommon, new ElemFlatMirror);
@@ -16,7 +16,7 @@ ElementsCatalog::ElementsCatalog()
     registerElement(categoryCommon, new ElemBrewsterCrystal);
     registerElement(categoryCommon, new ElemBrewsterPlate);
 
-    auto categoryAux = qApp->translate("Elements", "Additional elements");
+    auto categoryAux = qApp->translate("Elements", "Additional");
     registerElement(categoryAux, new ElemMatrix);
     registerElement(categoryAux, new ElemMatrix1);
     registerElement(categoryAux, new ElemPoint);

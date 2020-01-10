@@ -26,9 +26,7 @@ QString matrix(const Z::Matrix& m)
                 "<td align=right><pre class=value>%4</pre></td>"
             "</tr>"
         "</table>"
-    ).arg(
-        Z::format(m.A), Z::format(m.B), Z::format(m.C), Z::format(m.D)
-    );
+    ).arg(Z::format(m.A), Z::format(m.B), Z::format(m.C), Z::format(m.D));
 }
 
 QString matrices(const Z::Matrix& mt, const Z::Matrix& ms)
@@ -46,9 +44,19 @@ QString matrices(const Z::Matrix& mt, const Z::Matrix& ms)
                 "</td>"
             "</tr>"
         "</table>"
-    ).arg(
-        matrix(mt), matrix(ms), Z::format(mt.det()), Z::format(ms.det())
-    );
+    ).arg(matrix(mt), matrix(ms), Z::format(mt.det()), Z::format(ms.det()));
+}
+
+QString matrix(const QString& label, const Z::Matrix& m)
+{
+    return QStringLiteral(
+        "<table cellpadding=3 valign=middle style='margin-top:5px'>"
+            "<tr>"
+                "<td><pre class=param>%1&nbsp;=</pre></td>"
+                "<td>%2</td>"
+            "</tr>"
+        "</table>"
+    ).arg(label, matrix(m));
 }
 
 QString linkViewMatrix(Element *elem)
