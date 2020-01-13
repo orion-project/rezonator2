@@ -1,5 +1,6 @@
 #include "CommonData.h"
 #include "CalculatorWindow.h"
+#include "CustomElemsWindow.h"
 #include "GaussCalculatorWindow.h"
 #include "ProjectOperations.h"
 #include "ProjectWindow.h"
@@ -88,6 +89,11 @@ int main(int argc, char* argv[])
         else if (toolName == "calc")
         {
             CalculatorWindow::showWindow();
+            return app.exec();
+        }
+        else if (toolName == "elems")
+        {
+            CustomElemsWindow::showWindow();
             return app.exec();
         }
         else

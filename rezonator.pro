@@ -57,6 +57,7 @@ HEADERS += \
     src/CalcManager.h \
     src/CalculatorWindow.h \
     src/CustomElemsManager.h \
+    src/CustomElemsWindow.h \
     src/CustomPrefs.h \
     src/ElementPropsDialog.h \
     src/ElementsCatalogDialog.h \
@@ -174,6 +175,7 @@ SOURCES += \
     src/CalcManager.cpp \
     src/CalculatorWindow.cpp \
     src/CustomElemsManager.cpp \
+    src/CustomElemsWindow.cpp \
     src/CustomPrefs.cpp \
     src/ElementPropsDialog.cpp \
     src/ElementsCatalogDialog.cpp \

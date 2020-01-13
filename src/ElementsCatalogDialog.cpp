@@ -20,17 +20,11 @@
 #include <QTabWidget>
 #include <QTextBrowser>
 
-namespace Z {
-namespace Dlgs {
+static int __savedTabIndex = 0;
 
-// TODO: ElementsCatalog should be QWidget, not QDialog.
-// In CatalogMode_View mode it should be displayed as tool window (Qt::Tool),
-// as this type of window is not overlapped by main window on MacOS.
-// In CatalogMode_Selector it should be displayed via Ori::Dialog or like that.
-
-Element* createElement()
+Element* ElementsCatalogDialog::createElement()
 {
-    ElementsCatalogDialog catalog(ElementsCatalogDialog::CatalogMode_Selector);
+    ElementsCatalogDialog catalog;
     if (catalog.exec() != QDialog::Accepted)
         return nullptr;
 
@@ -47,28 +41,7 @@ Element* createElement()
     return newElem;
 }
 
-void showElementsCatalog()
-{
-    auto catalog = new ElementsCatalogDialog(ElementsCatalogDialog::CatalogMode_View);
-    // NOTE: on MacOS popup window can by overlapped by main window
-    // It seems be normal for MacOS, e.g. file info window is opened by Finder
-    // and can be overlapped by Finder main window so we can't activate it again.
-    catalog->show();
-}
-
-} // namespace Dlgs
-} // namespace Z
-
-//-----------------------------------------------------------------------------
-//                            ElementsCatalogDialog
-//-----------------------------------------------------------------------------
-
-namespace {
-int __savedTabIndex = 0;
-}
-
-ElementsCatalogDialog::ElementsCatalogDialog(CatalogMode mode, QWidget *parent)
-    : RezonatorDialog(mode == CatalogMode_View ? OmitButtonsPanel : DontDeleteOnClose, parent)
+ElementsCatalogDialog::ElementsCatalogDialog(QWidget *parent): RezonatorDialog(DontDeleteOnClose, parent)
 {
     setTitleAndIcon(tr("Elements Catalog"), ":/window_icons/catalog");
     setObjectName("ElementsCatalogDialog");
@@ -88,7 +61,7 @@ ElementsCatalogDialog::ElementsCatalogDialog(CatalogMode mode, QWidget *parent)
         _previewHtml->document()->setDefaultStyleSheet(Z::Gui::reportStyleSheet());
     }
 
-    connect(_categoryTabs, SIGNAL(currentChanged(int)), this, SLOT(categorySelected(int)));
+    connect(_categoryTabs, &QTabWidget::currentChanged, this, &ElementsCatalogDialog::categorySelected);
     mainLayout()->addWidget(_categoryTabs);
 
     // preview
@@ -96,12 +69,9 @@ ElementsCatalogDialog::ElementsCatalogDialog(CatalogMode mode, QWidget *parent)
 
     // element list
     _elementsList = new ElementTypesListView;
-    connect(_elementsList, &ElementTypesListView::elementSelected, this, &ElementsCatalogDialog::loadDrawing);
-    if (mode == CatalogMode_Selector)
-    {
-        connect(_elementsList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(accept()));
-        connect(_elementsList, SIGNAL(enterPressed()), this, SLOT(accept()));
-    }
+    connect(_elementsList, &ElementTypesListView::elementSelected, this, &ElementsCatalogDialog::updatePreview);
+    connect(_elementsList, &ElementTypesListView::itemDoubleClicked, this, &ElementsCatalogDialog::accept);
+    connect(_elementsList, &ElementTypesListView::enterPressed, this, &ElementsCatalogDialog::accept);
 
     _preview = new QStackedWidget;
     _preview->addWidget(_previewSvg);
@@ -176,7 +146,7 @@ static QString makeCustomElemPreview(Element* elem)
     return QString();
 }
 
-void ElementsCatalogDialog::loadDrawing(Element* elem)
+void ElementsCatalogDialog::updatePreview(Element* elem)
 {
     if (_categoryTabs->currentIndex() == _customElemsTab)
         _previewHtml->setHtml(makeCustomElemPreview(elem));

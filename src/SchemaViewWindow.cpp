@@ -118,7 +118,7 @@ void SchemaViewWindow::rowDoubleClicked(Element *elem)
 
 void SchemaViewWindow::actionElemAdd()
 {
-    Element *elem = Z::Dlgs::createElement();
+    Element *elem = ElementsCatalogDialog::createElement();
     if (elem)
         schema()->insertElement(elem, _table->currentRow(), true);
 }

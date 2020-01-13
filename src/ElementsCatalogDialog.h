@@ -24,22 +24,18 @@ class ElementsCatalogDialog : public RezonatorDialog
     Q_OBJECT
 
 public:
-    enum CatalogMode
-    {
-        CatalogMode_Selector,
-        CatalogMode_View
-    };
-
     struct Selection
     {
         Element* elem;
         bool isCustom;
     };
 
-    ElementsCatalogDialog(CatalogMode mode, QWidget* parent = nullptr);
+    ElementsCatalogDialog(QWidget* parent = nullptr);
     ~ElementsCatalogDialog() override;
 
     Selection selection() const;
+
+    static Element* createElement();
 
 protected:
     QSize prefferedSize() const override { return QSize(600, 400); }
@@ -54,18 +50,8 @@ private:
     int _customElemsTab = -1;
     Schema *_customElems = nullptr;
 
-private slots:
     void categorySelected(int index);
-    void loadDrawing(Element *elem);
+    void updatePreview(Element *elem);
 };
-
-
-namespace Z {
-namespace Dlgs {
-
-Element* createElement();
-void showElementsCatalog();
-
-}}
 
 #endif // ELEMENT_SELECTOR_H

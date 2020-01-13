@@ -4,6 +4,7 @@
 #include "CalcManager.h"
 #include "CalculatorWindow.h"
 #include "CommonData.h"
+#include "CustomElemsWindow.h"
 #include "ElementsCatalogDialog.h"
 #include "GaussCalculatorWindow.h"
 #include "HelpSystem.h"
@@ -146,7 +147,7 @@ void ProjectWindow::createActions()
     actnFuncBeamVariation = A_(tr("Beamsize Variation..."), _calculations, SLOT(funcBeamVariation()), ":/toolbar/func_beam_variation");
     actnFuncBeamParamsAtElems = A_(tr("Beam Parameters at Elemens"), _calculations, SLOT(funcBeamParamsAtElems()), ":/toolbar/func_beamdata");
 
-    actnToolsCatalog = A_(tr("Elements Catalog"), this, SLOT(showElementsCatalog()), ":/toolbar/catalog");
+    actnToolsCustomElems = A_(tr("Custom Elements"), this, SLOT(showCustomElems()), ":/toolbar/catalog");
     actnToolsGaussCalc = A_(tr("Gauss Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
     actnToolsCalc = A_(tr("Formula Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
     actnToolFlipSchema = A_(tr("Flip Schema..."), this, SLOT(flipSchema()));
@@ -206,7 +207,7 @@ void ProjectWindow::createMenuBar()
 
     menuTools = Ori::Gui::menu(tr("Tools", "Menu title"), this,
         { actnToolFlipSchema, nullptr, actnToolAdjust, nullptr,
-          actnToolsGaussCalc, actnToolsCalc, actnToolsCatalog, nullptr, actnToolSettings });
+          actnToolsGaussCalc, actnToolsCalc, actnToolsCustomElems, nullptr, actnToolSettings });
 
     menuWindow = Ori::Gui::menu(tr("Window"), this,
         { actnWndSchema, actnWndParams, actnWndPumps, actnWndProtocol, nullptr,
@@ -444,9 +445,9 @@ void ProjectWindow::openSchemaExample()
 //------------------------------------------------------------------------------
 //                             Tools actions
 
-void ProjectWindow::showElementsCatalog()
+void ProjectWindow::showCustomElems()
 {
-    Z::Dlgs::showElementsCatalog();
+    CustomElemsWindow::showWindow();
 }
 
 void ProjectWindow::showSettings()
