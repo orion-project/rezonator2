@@ -19,10 +19,10 @@ QString SchemaState::str() const
 {
     switch (_current)
     {
-    case None: return "SchemaState: None";
-    case New: return "SchemaState: New";
-    case Loading: return "SchemaState: Loading";
-    case Modified: return "SchemaState: Modified";
+    case None: return QStringLiteral("SchemaState: None");
+    case New: return QStringLiteral("SchemaState: New");
+    case Loading: return QStringLiteral("SchemaState: Loading");
+    case Modified: return QStringLiteral("SchemaState: Modified");
     }
     return QString();
 }
@@ -30,8 +30,6 @@ QString SchemaState::str() const
 void SchemaState::set(State state)
 {
     _current = state;
-
-    Z_REPORT(str())
 }
 
 //------------------------------------------------------------------------------
@@ -45,11 +43,18 @@ void SchemaEvents::raise(Event event, void *param, const char* reason) const
 {
     if (!_enabled) return;
 
+    QString alias = _schema->alias();
+    if (!alias.isEmpty())
+        alias = QStringLiteral("[%1]: ").arg(alias);
+
     const EventProps& eventProps = propsOf(event);
-    Z_REPORT(QString("SchemaEvent: %1, reason=[%2]").arg(eventProps.name).arg(reason))
+    Z_REPORT(QStringLiteral("%1SchemaEvent: %2, reason=[%3]").arg(alias).arg(eventProps.name).arg(reason))
 
     if (int(eventProps.nextState) != SchemaState::Current)
+    {
         _schema->state().set(eventProps.nextState);
+        Z_REPORT(QStringLiteral("%1%2").arg(alias).arg(_schema->state().str()))
+    }
 
     auto listeners = _schema->listeners();
 
@@ -58,8 +63,8 @@ void SchemaEvents::raise(Event event, void *param, const char* reason) const
 
     if (eventProps.shouldRaiseChanged)
     {
-        Z_REPORT(QString("SchemaEvent: %1, modified=%2, reason=[%3]")
-            .arg(propsOf(Changed).name).arg(Z::str(_schema->modified())).arg(reason))
+        Z_REPORT(QStringLiteral("%1SchemaEvent: %2, modified=%3, reason=[%4]")
+            .arg(alias).arg(propsOf(Changed).name).arg(Z::str(_schema->modified())).arg(reason))
         for (SchemaListener* listener : listeners)
             notify(listener, Changed, nullptr);
     }
@@ -72,7 +77,7 @@ const SchemaEvents::EventProps& SchemaEvents::propsOf(Event event)
         //                           | Should also | New state which
         //                           | raise event | schema obtains
         //                           | 'Changed'   | with this event
-        INIT_EVENT(Created,            true,         SchemaState::New      ),
+        INIT_EVENT(Created,            false,        SchemaState::New      ),
         INIT_EVENT(Deleted,            false,        SchemaState::Current  ),
         INIT_EVENT(Changed,            false,        SchemaState::Modified ),
         INIT_EVENT(Saved,              true,         SchemaState::None     ),
@@ -141,7 +146,7 @@ ElementSelector::~ElementSelector()
 //                                 Schema
 //------------------------------------------------------------------------------
 
-Schema::Schema()
+Schema::Schema(const QString &alias) : _alias(alias)
 {
     _wavelength = Z::Parameter(Z::Dims::linear(), "lambda", Z::Strs::lambda(), /*qApp->translate("Param", "Wavelength")*/QString());
     _wavelength.setValue(Z::Value(980, Z::Units::nm()));

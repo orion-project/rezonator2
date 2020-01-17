@@ -111,6 +111,7 @@ public:
     virtual const QString labelPrefix() const { return QString(); }
 
     Z::Parameters& params() { return _params; }
+    const Z::Parameters& params() const { return _params; }
     bool hasParams() const { return !_params.isEmpty(); }
 
     /// Label of element. Label is short indentificator

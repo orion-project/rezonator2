@@ -188,7 +188,7 @@ private:
 class Schema : public ElementOwner, public Z::ParameterListener, public Notifier<SchemaListener>
 {
 public:
-    Schema();
+    Schema(const QString& alias = QString());
     ~Schema() override;
 
     const QString& fileName() const { return _fileName; }
@@ -199,6 +199,8 @@ public:
 
     const QString& notes() const { return _notes; }
     void setNotes(const QString& notes) { _notes = notes; }
+
+    const QString& alias() const { return _alias; }
 
     Z::Parameter& wavelength() { return _wavelength; }
 
@@ -260,7 +262,7 @@ private:
     SchemaState _state;
     SchemaSelection _selection;
     QString _fileName;
-    QString _title, _notes;
+    QString _title, _notes, _alias;
     TripType _tripType = TripType::SW;
     Z::Parameter _wavelength;
     Z::Parameters _customParams;

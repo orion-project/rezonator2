@@ -51,7 +51,7 @@ protected:
 private:
     QAction *actnElemAdd, *actnElemMoveUp, *actnElemMoveDown, *actnElemProp,
             *actnElemMatr, *actnElemMatrAll, *actnElemDelete, *actnEditCopy, *actnEditPaste,
-            *actnAdjuster;
+            *actnAdjuster, *actnSaveCustom;
 
     QMenu *menuElement, *menuContextElement, *menuContextLastRow;
     QMenu *menuAdjuster = nullptr;
@@ -74,6 +74,7 @@ private slots:
     void actionElemMoveDown();
     void actionElemProp();
     void actionElemDelete();
+    void actionSaveCustom();
     void rowDoubleClicked(Element*);
     void currentCellChanged(int curRow, int, int prevRow, int);
     void contextMenuAboutToShow(QMenu* menu);

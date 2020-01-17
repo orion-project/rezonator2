@@ -4,6 +4,7 @@
 #include "ElementsCatalogDialog.h"
 #include "ElementPropsDialog.h"
 #include "CalcManager.h"
+#include "CustomElemsManager.h"
 #include "WindowsManager.h"
 #include "core/ElementsCatalog.h"
 #include "core/Utils.h"
@@ -72,6 +73,8 @@ void SchemaViewWindow::createActions()
 
     actnAdjuster = A_(tr("Add Adjuster"), this, SLOT(adjustParam()), ":/toolbar/adjust");
 
+    actnSaveCustom = A_(tr("Save as Custom Element..."), this, SLOT(actionSaveCustom()), ":/toolbar/star");
+
     #undef A_
 }
 
@@ -79,11 +82,11 @@ void SchemaViewWindow::createMenuBar()
 {
     menuElement = Ori::Gui::menu(tr("Element"), this,
         { actnElemAdd, nullptr, actnElemMoveUp, actnElemMoveDown, nullptr, actnElemProp,
-          actnElemMatr, actnElemMatrAll, nullptr, actnElemDelete });
+          actnElemMatr, actnElemMatrAll, nullptr, actnElemDelete, nullptr, actnSaveCustom });
 
     menuContextElement = Ori::Gui::menu(this,
         { actnElemProp, actnElemMatr, nullptr, actnAdjuster, nullptr,
-          actnEditCopy, actnEditPaste, nullptr, actnElemDelete });
+          actnEditCopy, actnEditPaste, nullptr, actnElemDelete});
 
     menuContextLastRow = Ori::Gui::menu(this,
         { actnElemAdd, actnEditPaste });
@@ -190,6 +193,13 @@ void SchemaViewWindow::actionElemDelete()
         schema()->deleteElement(elements[i], true);
 }
 
+void SchemaViewWindow::actionSaveCustom()
+{
+    Element* elem = _table->selected();
+    if (elem)
+        CustomElemsManager::saveAsCustom(schema(), elem);
+}
+
 //------------------------------------------------------------------------------
 //                               Schema events
 
@@ -252,6 +262,7 @@ void SchemaViewWindow::currentCellChanged(int curRow, int, int prevRow, int)
     actnEditCopy->setEnabled(hasElem);
     actnElemMoveUp->setEnabled(hasElem);
     actnElemMoveDown->setEnabled(hasElem);
+    actnSaveCustom->setEnabled(hasElem);
 }
 
 void SchemaViewWindow::contextMenuAboutToShow(QMenu* menu)

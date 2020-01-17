@@ -21,7 +21,7 @@ Z::Parameter* ParamsListWidget::selectParamDlg(const Z::Parameters *params, cons
     ParamsListWidget paramsList(params);
     if (selected)
         paramsList.setSelectedParam(selected);
-    Ori::Dlg::Dialog dlg(&paramsList);
+    Ori::Dlg::Dialog dlg(&paramsList, false);
     dlg.withTitle(title)
        .withStretchedContent()
        .withInitialSize(CustomPrefs::recentSize("select_param_dlg_size"))

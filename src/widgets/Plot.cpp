@@ -271,7 +271,7 @@ bool Plot::setLimitsDlg(QCPRange& range, const QString& title)
     layout->addRow(new QLabel("Min"), editorMin);
     layout->addRow(new QLabel("Max"), editorMax);
 
-    if (Ori::Dlg::Dialog(&w).withTitle(title).exec())
+    if (Ori::Dlg::Dialog(&w, false).withTitle(title).exec())
     {
         range.lower = editorMin->value();
         range.upper = editorMax->value();

@@ -68,6 +68,20 @@ Element* ElementsCatalog::create(const QString& type) const
     return nullptr;
 }
 
+Element* ElementsCatalog::create(const Element* sample, bool copyParams) const
+{
+    auto newElem = create(sample->type());
+
+    if (copyParams)
+    {
+        auto params = sample->params();
+        for (int i = 0; i < params.count(); i++)
+            newElem->params().at(i)->setValue(params.at(i)->value());
+    }
+
+    return newElem;
+}
+
 Elements ElementsCatalog::elements(const QString& category) const
 {
     return _elemsCategorized.contains(category)? _elemsCategorized[category]: Elements();

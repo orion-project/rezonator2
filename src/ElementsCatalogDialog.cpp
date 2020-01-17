@@ -29,16 +29,7 @@ Element* ElementsCatalogDialog::createElement()
         return nullptr;
 
     auto selection = catalog.selection();
-    auto newElem = ElementsCatalog::instance().create(selection.elem->type());
-
-    if (selection.isCustom)
-    {
-        auto params = selection.elem->params();
-        for (int i = 0; i < params.count(); i++)
-            newElem->params().at(i)->setValue(params.at(i)->value());
-    }
-
-    return newElem;
+    return ElementsCatalog::instance().create(selection.elem, selection.isCustom);
 }
 
 ElementsCatalogDialog::ElementsCatalogDialog(QWidget *parent): RezonatorDialog(DontDeleteOnClose, parent)

@@ -540,7 +540,7 @@ void AdjustmentWindow::setupAdjuster()
 
     AdjusterSettingsWidget w(adjuster->settings());
 
-    if (Ori::Dlg::Dialog(&w)
+    if (Ori::Dlg::Dialog(&w, false)
             .withTitle(tr("Adjuster Settings"))
             .withContentToButtonsSpacingFactor(2)
             .exec())
