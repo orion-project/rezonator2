@@ -185,7 +185,7 @@ private:
 
 //------------------------------------------------------------------------------
 
-class Schema : public ElementOwner, public Z::ParameterListener, public Notifier<SchemaListener>
+class Schema : public ElementOwner, public Z::ParameterListener, public Ori::Notifier<SchemaListener>
 {
 public:
     Schema(const QString& alias = QString());

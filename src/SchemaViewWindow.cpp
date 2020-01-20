@@ -73,7 +73,7 @@ void SchemaViewWindow::createActions()
 
     actnAdjuster = A_(tr("Add Adjuster"), this, SLOT(adjustParam()), ":/toolbar/adjust");
 
-    actnSaveCustom = A_(tr("Save as Custom Element..."), this, SLOT(actionSaveCustom()), ":/toolbar/star");
+    actnSaveCustom = A_(tr("Save to Custom Library..."), this, SLOT(actionSaveCustom()), ":/toolbar/star");
 
     #undef A_
 }

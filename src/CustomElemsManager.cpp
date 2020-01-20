@@ -70,36 +70,29 @@ void saveAsCustom(Schema* schema, Element* elem)
 
     auto labelEditor = new QLineEdit;
     labelEditor->setText(elem->labelPrefix());
-
     auto titleEditor = new Ori::Dlg::InputTextEditor;
     titleEditor->setText(elem->title());
 
-    auto infoPanel = new Ori::Widgets::InfoPanel;
+    QBoxLayout *infoLayout = nullptr;
     if (hasLinksForElement(schema, elem))
+    {
+        auto infoPanel = new Ori::Widgets::InfoPanel;
         infoPanel->setInfo(qApp->tr("Some of the source element parameters are linked to the global parameters. "
             "These links will not be preserved in custom element, because they relate to the current schema, "
             "while the custom element is schema independent.", "Save custom element"));
-    else infoPanel->setVisible(false);
+        infoLayout = Ori::Layouts::LayoutV({Ori::Layouts::Space(12), infoPanel}).setMargin(0).boxLayout();
+    }
 
     auto layoutCommon = new QFormLayout;
     layoutCommon->setMargin(0);
     layoutCommon->addRow(qApp->tr("Label:", "Save custom element"), labelEditor);
     layoutCommon->addRow(qApp->tr("Title:", "Save custom element"), titleEditor);
 
-    auto content = Ori::Layouts::LayoutV({layoutCommon, Ori::Layouts::Space(12), infoPanel}).setMargin(0).makeWidget();
+    auto content = Ori::Layouts::LayoutV({layoutCommon, infoLayout}).setMargin(0).makeWidget();
 
     bool ok = Ori::Dlg::Dialog(content, true)
-        .withTitle(qApp->tr("Save Custom Element", "Save custom element"))
+        .withTitle(qApp->tr("Save to Custom Library", "Save custom element"))
         .withContentToButtonsSpacingFactor(2)
-        .withVerification([titleEditor, customElems](){
-            QString newTitle = titleEditor->text().trimmed();
-            if (newTitle.isEmpty())
-                return qApp->tr("Element title should not be empty", "Save custom element");
-            for (auto elem : customElems->elements())
-                if (elem->title() == newTitle)
-                    return qApp->tr("Another custom element with such title already exists", "Save custom element");
-            return QString();
-        })
         .exec();
 
     if (!ok) return;

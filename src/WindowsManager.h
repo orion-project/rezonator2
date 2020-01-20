@@ -11,7 +11,7 @@
 class Schema;
 class SchemaWindow;
 
-class WindowsManager : public QObject, public Singleton<WindowsManager>
+class WindowsManager : public QObject, public Ori::Singleton<WindowsManager>
 {
     Q_OBJECT
 

@@ -4,7 +4,7 @@
 #include "Element.h"
 #include "core/OriTemplates.h"
 
-class ElementsCatalog : public Singleton<ElementsCatalog>
+class ElementsCatalog : public Ori::Singleton<ElementsCatalog>
 {
 public:
     const QStringList& categories() const { return _categories; }

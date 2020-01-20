@@ -45,7 +45,7 @@ void CustomElemsWindow::showWindow()
 CustomElemsWindow::CustomElemsWindow(Schema *library) : QWidget(), _library(library)
 {
     setAttribute(Qt::WA_DeleteOnClose);
-    setWindowTitle(tr("Custom Elements"));
+    setWindowTitle(tr("Custom Elements Library"));
     setWindowIcon(QIcon(":/window_icons/catalog"));
 
     createActions();

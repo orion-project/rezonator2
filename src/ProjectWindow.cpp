@@ -147,7 +147,7 @@ void ProjectWindow::createActions()
     actnFuncBeamVariation = A_(tr("Beamsize Variation..."), _calculations, SLOT(funcBeamVariation()), ":/toolbar/func_beam_variation");
     actnFuncBeamParamsAtElems = A_(tr("Beam Parameters at Elemens"), _calculations, SLOT(funcBeamParamsAtElems()), ":/toolbar/func_beamdata");
 
-    actnToolsCustomElems = A_(tr("Custom Elements"), this, SLOT(showCustomElems()), ":/toolbar/catalog");
+    actnToolsCustomElems = A_(tr("Custom Elements Library"), this, SLOT(showCustomElems()), ":/toolbar/catalog");
     actnToolsGaussCalc = A_(tr("Gauss Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
     actnToolsCalc = A_(tr("Formula Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
     actnToolFlipSchema = A_(tr("Flip Schema..."), this, SLOT(flipSchema()));

@@ -118,23 +118,22 @@ ElementsCatalogDialog::Selection ElementsCatalogDialog::selection() const
 
 static QString makeCustomElemPreview(Element* elem)
 {
-    auto elemMatrix1 = dynamic_cast<ElemMatrix1*>(elem);
-    if (elemMatrix1)
-    {
-        elemMatrix1->calcMatrix();
-        return Z::Format::matrix(QStringLiteral("M"), elemMatrix1->Mt());
-    }
+    QString report;
+    QTextStream stream(&report);
+    stream << QStringLiteral("<p><b><span class=elem_title>")
+           << elem->typeName()
+           << QStringLiteral("</span></b><p>");
 
-    auto elemMatrix = dynamic_cast<ElemMatrix*>(elem);
-    if (elemMatrix)
-    {
-        elemMatrix->calcMatrix();
-        return Z::Format::matrix(QStringLiteral("M<sub>T</sub>"), elemMatrix->Mt()) +
-               QStringLiteral("<br>") +
-               Z::Format::matrix(QStringLiteral("M<sub>S</sub>"), elemMatrix->Ms());
-    }
+    Z::Format::FormatParam f;
+    f.includeDriver = false;
+    f.includeValue = true;
 
-    return QString();
+    for (const auto param : elem->params())
+        stream << f.format(param) << QStringLiteral("<br/>");
+
+    stream << "<center><img src='" << ElementImagesProvider::instance().drawingPath(elem->type()) << "'/></center>";
+
+    return report;
 }
 
 void ElementsCatalogDialog::updatePreview(Element* elem)
