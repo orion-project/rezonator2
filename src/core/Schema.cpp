@@ -275,6 +275,30 @@ void Schema::deleteElement(int index, bool event, bool free)
         delete elem;
 }
 
+void Schema::clearElements(bool events)
+{
+    while (_items.size() > 0)
+    {
+        Element *elem = _items.at(0);
+
+        if (events)
+            _events.raise(SchemaEvents::ElemDeleting, elem, "Schema: clearElements");
+
+        _items.removeAt(0);
+        elem->setOwner(nullptr);
+
+        if (events)
+            _events.raise(SchemaEvents::ElemDeleted, elem, "Schema: clearElements");
+
+        delete elem;
+    }
+
+    qDeleteAll(_paramLinks);
+
+    if (events)
+        _events.raise(SchemaEvents::RecalRequred, "Schema: clearElements");
+}
+
 void Schema::elementChanged(Element *elem)
 {
     _events.raise(SchemaEvents::ElemChanged, elem, "Schema: elementChanged");

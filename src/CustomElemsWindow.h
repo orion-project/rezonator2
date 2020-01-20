@@ -4,6 +4,7 @@
 #include <QWidget>
 
 QT_BEGIN_NAMESPACE
+class QFileSystemWatcher;
 class QMenu;
 class QTabWidget;
 QT_END_NAMESPACE
@@ -42,6 +43,8 @@ private:
     QAction *_actnElemAdd, *_actnElemMoveUp, *_actnElemMoveDown, *_actnElemProp,
             *_actnElemDelete, *_actnEditCopy, *_actnEditPaste;
     QMenu *_menuContextElement, *_menuContextLastRow;
+    QFileSystemWatcher *_watcher;
+    bool _isLibrarySaving = false;
 
     explicit CustomElemsWindow(Schema* library);
 
@@ -54,6 +57,8 @@ private:
     void rowDoubleClicked(Element*);
     void currentCellChanged(int curRow, int, int prevRow, int);
     void contextMenuAboutToShow(QMenu* menu);
+    bool saveLibrary();
+    void libraryFileChanged(const QString&);
 };
 
 #endif // CUSTOM_ELEMS_WINDOW_H

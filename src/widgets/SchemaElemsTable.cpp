@@ -174,7 +174,7 @@ void SchemaElemsTable::fillPlaceholderRow()
     it = new QTableWidgetItem();
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     it->setForeground(QColor(0, 0, 0, 40));
-    it->setText(tr("Double click here to append new element"));
+    it->setText(tr("Double click here to append a new element"));
     setItem(row, COL_TITLE, it);
 }
 

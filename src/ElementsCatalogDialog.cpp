@@ -8,6 +8,8 @@
 #include "funcs/FormatInfo.h"
 #include "widgets/ElementImagesProvider.h"
 #include "widgets/ElementTypesListView.h"
+
+#include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
 #include "widgets/OriSvgView.h"
 
@@ -42,15 +44,18 @@ ElementsCatalogDialog::ElementsCatalogDialog(QWidget *parent): RezonatorDialog(D
     for (auto category : ElementsCatalog::instance().categories())
         _categoryTabs->addTab(new QWidget, category);
 
-    _customElems = CustomElemsManager::load();
-    if (_customElems)
+    auto res = CustomElemsManager::loadLibrary();
+    if (res.ok())
     {
+        _customElems = res.result();
         _categoryTabs->addTab(new QWidget, tr("Custom"));
         _customElemsTab = _categoryTabs->count()-1;
         _previewHtml = new QTextBrowser;
         _previewHtml->setFont(Z::Gui::ValueFont().get());
         _previewHtml->document()->setDefaultStyleSheet(Z::Gui::reportStyleSheet());
     }
+    else
+        Ori::Dlg::error(tr("There are messages while loading Custom Elements Library:\n\n%1").arg(res.error()));
 
     connect(_categoryTabs, &QTabWidget::currentChanged, this, &ElementsCatalogDialog::categorySelected);
     mainLayout()->addWidget(_categoryTabs);

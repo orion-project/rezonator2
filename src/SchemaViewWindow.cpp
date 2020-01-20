@@ -196,8 +196,11 @@ void SchemaViewWindow::actionElemDelete()
 void SchemaViewWindow::actionSaveCustom()
 {
     Element* elem = _table->selected();
-    if (elem)
-        CustomElemsManager::saveAsCustom(schema(), elem);
+    if (!elem) return;
+
+    QString res = CustomElemsManager::saveToLibrary(elem);
+    if (!res.isEmpty())
+        Ori::Dlg::error(res);
 }
 
 //------------------------------------------------------------------------------

@@ -14,6 +14,7 @@
 #include "helpers/OriWindows.h"
 #include "widgets/OriFlatToolBar.h"
 
+#include <QFileSystemWatcher>
 #include <QIcon>
 #include <QMenu>
 #include <QTabWidget>
@@ -30,13 +31,13 @@ void CustomElemsWindow::showWindow()
 {
     if (!__instance)
     {
-        auto elemsLib = CustomElemsManager::load();
-        if (!elemsLib)
+        auto res = CustomElemsManager::loadLibrary();
+        if (!res.ok())
         {
-            // TODO: show error to the user
+            Ori::Dlg::error(tr("There are messages while loading Custom Elements Library:\n\n%1").arg(res.error()));
             return;
         }
-        __instance = new CustomElemsWindow(elemsLib);
+        __instance = new CustomElemsWindow(res.result());
     }
     __instance->show();
     __instance->activateWindow();
@@ -69,6 +70,12 @@ CustomElemsWindow::CustomElemsWindow(Schema *library) : QWidget(), _library(libr
 
     Ori::Layouts::LayoutV({_tabs}).setMargin(3).useFor(this);
 
+    _watcher = new QFileSystemWatcher(this);
+    connect(_watcher, &QFileSystemWatcher::fileChanged, this, &CustomElemsWindow::libraryFileChanged);
+    QString fileName = CustomElemsManager::libraryFile();
+    if (QFile::exists(fileName))
+        _watcher->addPath(fileName);
+
     restoreState();
     Ori::Wnd::moveToScreenCenter(this);
 }
@@ -87,10 +94,11 @@ void CustomElemsWindow::createActions()
     _actnElemAdd = A_(tr("Append..."), this, SLOT(actionElemAdd()), ":/toolbar/elem_add", Qt::CTRL | Qt::Key_Insert);
     _actnElemMoveUp = A_(tr("Move Selected Up"), this, SLOT(actionElemMoveUp()), ":/toolbar/elem_move_up");
     _actnElemMoveDown = A_(tr("Move Selected Down"), this, SLOT(actionElemMoveDown()), ":/toolbar/elem_move_down");
+    // TODO: share Enter shortcut between actions on different tabs (when those will be)
     _actnElemProp = A_(tr("Properties..."), this, SLOT(actionElemProp()), ":/toolbar/elem_prop", Qt::Key_Return);
     _actnElemDelete = A_(tr("Delete..."), this, SLOT(actionElemDelete()), ":/toolbar/elem_delete", Qt::CTRL | Qt::Key_Delete);
 
-    // TODO: share edit shortcuts with different tabs
+    // TODO: share edit shortcuts between actions on different tabs (when those will be)
     _actnEditCopy = A_(tr("Copy", "Edit action"), this, SLOT(copy()), ":/toolbar/copy", QKeySequence::Copy);
     _actnEditPaste = A_(tr("Paste", "Edit action"), this, SLOT(paste()), ":/toolbar/paste", QKeySequence::Paste);
 
@@ -141,7 +149,7 @@ void CustomElemsWindow::actionElemAdd()
     if (elem)
     {
         _library->insertElement(elem, _table->currentRow(), true);
-        // TODO: save library
+        saveLibrary();
         // All clients should process elementCreated event before elem will be changed,
         // so run deffered to avoid raise elementChanged from inside of elementCreated.
         QTimer::singleShot(0, [this, elem](){ this->editElement(elem); });
@@ -155,7 +163,7 @@ void CustomElemsWindow::actionElemMoveUp()
     {
         _library->moveElementUp(elem);
         _table->setSelected(elem);
-        // TODO: save library
+        saveLibrary();
     }
 }
 
@@ -166,7 +174,7 @@ void CustomElemsWindow::actionElemMoveDown()
     {
         _library->moveElementDown(elem);
         _table->setSelected(elem);
-        // TODO: save library
+        saveLibrary();
     }
 }
 
@@ -197,7 +205,7 @@ void CustomElemsWindow::actionElemDelete()
 
     for (int i = 0; i < elements.size(); i++)
         _library->deleteElement(elements[i], true);
-    // TODO: save library
+    saveLibrary();
 }
 
 void CustomElemsWindow::editElement(Element* elem)
@@ -205,7 +213,7 @@ void CustomElemsWindow::editElement(Element* elem)
     if (ElementPropsDialog::editElement(elem))
     {
         _library->events().raise(SchemaEvents::ElemChanged, elem, "CustomElemsWindow: element edited");
-        // TODO: save elems library
+        saveLibrary();
     }
 }
 
@@ -253,4 +261,70 @@ void CustomElemsWindow::paste()
     bool doEvents = true;
     bool doLabels = false;
     _library->insertElements(elems, _table->currentRow(), doEvents, doLabels);
+    saveLibrary();
+}
+
+bool CustomElemsWindow::saveLibrary()
+{
+    _isLibrarySaving = true;
+    QString res = CustomElemsManager::saveLibrary(_library);
+    if (!res.isEmpty())
+    {
+        Ori::Dlg::error(tr("There are messages while saving Custom Elements Library:\n\n%1").arg(res));
+        return false;
+    }
+    QString fileName = CustomElemsManager::libraryFile();
+    if (!_watcher->files().contains(fileName))
+        _watcher->addPath(fileName);
+    return true;
+}
+
+void CustomElemsWindow::libraryFileChanged(const QString&)
+{
+    if (_isLibrarySaving)
+    {
+        _isLibrarySaving = false;
+        return;
+    }
+
+    auto res = CustomElemsManager::loadLibrary();
+    if (!res.ok())
+    {
+        Ori::Dlg::error(tr("There are messages while reloading Custom Elements Library:\n\n%1").arg(res.error()));
+        return;
+    }
+
+    QSharedPointer<Schema> reloadedLibrary(res.result());
+
+    QString fileName = CustomElemsManager::libraryFile();
+    if (!QFile::exists(fileName))
+    {
+        _watcher->removePath(fileName);
+        if (_library->count() > 0)
+        {
+            if (Ori::Dlg::yes(tr(
+                 "It's detected that the Custom Elements Library "
+                 "has been removed from the file system by some other process. "
+                 "Do you want to save the current set of elements as a new library?")))
+            {
+                saveLibrary();
+            }
+            else
+            {
+                _library->clearElements();
+                _table->populate();
+            }
+        }
+        return;
+    }
+
+    // Move elements from reloaded library to the current library instance
+    _library->clearElements();
+    while (reloadedLibrary->count() > 0)
+    {
+        auto elem = reloadedLibrary->element(0);
+        reloadedLibrary->deleteElement(0, false, false);
+        _library->insertElement(elem, -1, false);
+    }
+    _table->populate();
 }

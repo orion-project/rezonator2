@@ -17,38 +17,47 @@
 
 namespace CustomElemsManager {
 
-QString customElemsFileName()
+QString libraryFile()
 {
     Ori::Settings s;
     return s.settings()->fileName().section('.', 0, -2) % '.' % QStringLiteral("elems.rez");
 }
 
-Schema* load()
+Ori::Result<Schema*> loadLibrary()
 {
-    Schema *schema = new Schema(QStringLiteral("custom_elems"));
-    schema->events().disable();
-    SchemaReaderJson reader(schema);
-    reader.readFromFile(customElemsFileName());
+    Schema *library = new Schema(QStringLiteral("custom_elems"));
+
+    QString fileName = libraryFile();
+    if (!QFile::exists(fileName))
+        return Ori::Result<Schema*>::ok(library);
+
+    library->events().disable();
+    SchemaReaderJson reader(library);
+    reader.readFromFile(libraryFile());
     auto report = reader.report();
     if (!report.isEmpty())
     {
-        // TODO: report error to the user explicitly
+        qDebug() << "There are messages while loading Custom Element Library";
         report.writeToStdout();
-        delete schema;
-        return nullptr;
+        delete library;
+        return Ori::Result<Schema*>::fail(report.str());
     }
-    schema->events().enable();
-    return schema;
+    library->events().enable();
+    return Ori::Result<Schema*>::ok(library);
 }
 
-void save(Schema* schema)
+QString saveLibrary(Schema* library)
 {
-    SchemaWriterJson writer(schema);
-    writer.writeToFile(customElemsFileName());
-    if (!writer.report().isEmpty())
+    SchemaWriterJson writer(library);
+    writer.writeToFile(libraryFile());
+    auto report = writer.report();
+    if (!report.isEmpty())
     {
-        // TODO: report error to the user explicitly
+        qDebug() << "There are messages while saving Custom Element Library";
+        report.writeToStdout();
+        return report.str();
     }
+    return QString();
 }
 
 static bool hasLinksForElement(Schema* schema, Element* elem)
@@ -59,14 +68,13 @@ static bool hasLinksForElement(Schema* schema, Element* elem)
     return false;
 }
 
-void saveAsCustom(Schema* schema, Element* elem)
+QString saveToLibrary(Element* elem)
 {
-    QSharedPointer<Schema> customElems(load());
-    if (!customElems)
-    {
-        // TODO: report error to the user
-        return;
-    }
+    auto res = loadLibrary();
+    if (!res.ok())
+        return res.error();
+
+    QSharedPointer<Schema> library(res.result());
 
     auto labelEditor = new QLineEdit;
     labelEditor->setText(elem->labelPrefix());
@@ -74,7 +82,8 @@ void saveAsCustom(Schema* schema, Element* elem)
     titleEditor->setText(elem->title());
 
     QBoxLayout *infoLayout = nullptr;
-    if (hasLinksForElement(schema, elem))
+    auto schema = dynamic_cast<Schema*>(elem->owner());
+    if (schema and hasLinksForElement(schema, elem))
     {
         auto infoPanel = new Ori::Widgets::InfoPanel;
         infoPanel->setInfo(qApp->tr("Some of the source element parameters are linked to the global parameters. "
@@ -88,20 +97,20 @@ void saveAsCustom(Schema* schema, Element* elem)
     layoutCommon->addRow(qApp->tr("Label:", "Save custom element"), labelEditor);
     layoutCommon->addRow(qApp->tr("Title:", "Save custom element"), titleEditor);
 
-    auto content = Ori::Layouts::LayoutV({layoutCommon, infoLayout}).setMargin(0).makeWidget();
+    QSharedPointer<QWidget> content(Ori::Layouts::LayoutV({layoutCommon, infoLayout}).setMargin(0).makeWidget());
 
-    bool ok = Ori::Dlg::Dialog(content, true)
+    bool ok = Ori::Dlg::Dialog(content.data(), false)
         .withTitle(qApp->tr("Save to Custom Library", "Save custom element"))
         .withContentToButtonsSpacingFactor(2)
         .exec();
 
-    if (!ok) return;
+    if (!ok) return QString();
 
     auto newElem = ElementsCatalog::instance().create(elem, true);
     newElem->setLabel(labelEditor->text().trimmed());
     newElem->setTitle(titleEditor->text().trimmed());
-    customElems->insertElement(newElem);
-    save(customElems.data());
+    library->insertElement(newElem);
+    return saveLibrary(library.data());
 }
 
 } // namespace CustomElemsManager

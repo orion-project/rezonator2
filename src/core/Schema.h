@@ -228,6 +228,7 @@ public:
     void insertElements(const Elements& elems, int index, bool event, bool generateLabels);
     void deleteElement(Element* elem, bool event = true, bool free = true);
     void deleteElement(int index, bool event = true, bool free = true);
+    void clearElements(bool events = false);
 
     SchemaSelection& selection() { return _selection; }
     Element* selectedElement() const { return _selection.element(); }
