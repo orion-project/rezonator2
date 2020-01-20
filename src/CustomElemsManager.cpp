@@ -11,6 +11,7 @@
 #include "widgets/OriInfoPanel.h"
 
 #include <QApplication>
+#include <QFormLayout>
 #include <QLabel>
 #include <QLineEdit>
 
@@ -67,6 +68,9 @@ void saveAsCustom(Schema* schema, Element* elem)
         return;
     }
 
+    auto labelEditor = new QLineEdit;
+    labelEditor->setText(elem->labelPrefix());
+
     auto titleEditor = new Ori::Dlg::InputTextEditor;
     titleEditor->setText(elem->title());
 
@@ -77,14 +81,15 @@ void saveAsCustom(Schema* schema, Element* elem)
             "while the custom element is schema independent.", "Save custom element"));
     else infoPanel->setVisible(false);
 
-    auto content = Ori::Layouts::LayoutV({
-        titleEditor,
-        infoPanel
-    }).setMargin(0).makeWidget();
+    auto layoutCommon = new QFormLayout;
+    layoutCommon->setMargin(0);
+    layoutCommon->addRow(qApp->tr("Label:", "Save custom element"), labelEditor);
+    layoutCommon->addRow(qApp->tr("Title:", "Save custom element"), titleEditor);
+
+    auto content = Ori::Layouts::LayoutV({layoutCommon, Ori::Layouts::Space(12), infoPanel}).setMargin(0).makeWidget();
 
     bool ok = Ori::Dlg::Dialog(content, true)
-        .withTitle(qApp->tr("Save custom element", "Save custom element"))
-        .withVerticalPrompt(qApp->tr("Element title", "Save custom element"))
+        .withTitle(qApp->tr("Save Custom Element", "Save custom element"))
         .withContentToButtonsSpacingFactor(2)
         .withVerification([titleEditor, customElems](){
             QString newTitle = titleEditor->text().trimmed();
@@ -100,6 +105,7 @@ void saveAsCustom(Schema* schema, Element* elem)
     if (!ok) return;
 
     auto newElem = ElementsCatalog::instance().create(elem, true);
+    newElem->setLabel(labelEditor->text().trimmed());
     newElem->setTitle(titleEditor->text().trimmed());
     customElems->insertElement(newElem);
     save(customElems.data());

@@ -16,6 +16,7 @@ class SchemaElemsTable: public QTableWidget, public SchemaListener, public Eleme
 public:
     explicit SchemaElemsTable(Schema *schema, QWidget *parent = nullptr);
 
+    void populate();
     void populateParams();
 
     Schema* schema() const { return _schema; }
@@ -49,7 +50,6 @@ private:
     Schema *_schema;
 
     void adjustColumns();
-    void populate();
     void createRow(Element *elem, int row);
     void populateRow(Element *elem, int row);
     void fillPlaceholderRow();

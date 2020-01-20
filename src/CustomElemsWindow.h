@@ -3,19 +3,57 @@
 
 #include <QWidget>
 
+QT_BEGIN_NAMESPACE
+class QMenu;
+class QTabWidget;
+QT_END_NAMESPACE
+
+class Element;
+class Schema;
+class SchemaElemsTable;
+namespace Ori {
+namespace Widgets {
+class FlatToolBar;
+}}
+
 class CustomElemsWindow : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit CustomElemsWindow(QWidget *parent = nullptr);
     ~CustomElemsWindow() override;
 
     static void showWindow();
 
+private slots:
+    void actionElemAdd();
+    void actionElemMoveUp();
+    void actionElemMoveDown();
+    void actionElemProp();
+    void actionElemDelete();
+    void copy();
+    void paste();
+
 private:
+    Schema *_library;
+    QTabWidget *_tabs;
+    SchemaElemsTable *_table;
+    Ori::Widgets::FlatToolBar *_toolbar;
+    QAction *_actnElemAdd, *_actnElemMoveUp, *_actnElemMoveDown, *_actnElemProp,
+            *_actnElemDelete, *_actnEditCopy, *_actnEditPaste;
+    QMenu *_menuContextElement, *_menuContextLastRow;
+
+    explicit CustomElemsWindow(Schema* library);
+
+    void createActions();
+    void createToolbar();
+    void createMenu();
     void restoreState();
     void storeState();
+    void editElement(Element* elem);
+    void rowDoubleClicked(Element*);
+    void currentCellChanged(int curRow, int, int prevRow, int);
+    void contextMenuAboutToShow(QMenu* menu);
 };
 
 #endif // CUSTOM_ELEMS_WINDOW_H

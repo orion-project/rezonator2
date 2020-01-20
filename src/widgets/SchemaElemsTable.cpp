@@ -213,4 +213,3 @@ void SchemaElemsTable::elementDeleting(Schema *schema, Element *elem)
         adjustColumns();
     }
 }
-
