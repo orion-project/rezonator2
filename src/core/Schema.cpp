@@ -217,7 +217,7 @@ void Schema::insertElement(Element* elem, int index, bool event)
     }
 }
 
-void Schema::insertElements(const Elements& elems, int index, bool event, bool generateLabels)
+void Schema::insertElements(const Elements& elems, int index, bool event)
 {
     int insert = isValid(index);
     for (int i = 0; i < elems.size(); i++)
@@ -230,9 +230,6 @@ void Schema::insertElements(const Elements& elems, int index, bool event, bool g
             _items.append(elem);
 
         elem->setOwner(this);
-
-        if (generateLabels)
-            Z::Utils::generateLabel(this, elem);
     }
 
     relinkInterfaces();
@@ -447,10 +444,10 @@ void Schema::markModified(const char *reason)
 namespace Z {
 namespace Utils {
 
-void generateLabel(Schema* schema, Element* elem)
+void generateLabel(const Elements& elements, Element* elem)
 {
     QStringList labels;
-    for (const auto e : schema->elements())
+    for (const auto e : elements)
         if (e != elem)
             labels << e->label();
     elem->setLabel(generateLabel(elem->labelPrefix(), labels));

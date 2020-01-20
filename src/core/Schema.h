@@ -225,7 +225,7 @@ public:
     bool modified() const { return _state.current() == SchemaState::Modified; }
 
     void insertElement(Element* elem, int index = -1, bool event = true);
-    void insertElements(const Elements& elems, int index, bool event, bool generateLabels);
+    void insertElements(const Elements& elems, int index, bool event);
     void deleteElement(Element* elem, bool event = true, bool free = true);
     void deleteElement(int index, bool event = true, bool free = true);
     void clearElements(bool events = false);
@@ -293,7 +293,7 @@ namespace Utils {
 
 /// Makes an automatic label for the given element.
 /// Automatical label consist of a prefix like `M`, `L`, etc. and index.
-void generateLabel(Schema* schema, Element* elem);
+void generateLabel(const Elements& elements, Element* elem);
 
 /// Makes an automatic label for the given pump: `P1`, `P2`, etc.
 void generateLabel(Schema* schema, PumpParams* pump);

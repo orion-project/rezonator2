@@ -30,6 +30,8 @@
                     <File name="matrix\ElemBrewsterInterface.rst" />
                     <File name="matrix\ElemTiltedInterface.rst" />
                     <File name="matrix\ElemThickLens.rst" />
+                    <File name="matrix\ElemAxiconMirror.rst" />
+                    <File name="matrix\ElemAxiconLens.rst" />
                 </Folder>
                 <File name="elements.rst" />
                 <File name="elem_matrs.rst" />

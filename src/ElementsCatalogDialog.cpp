@@ -47,12 +47,15 @@ ElementsCatalogDialog::ElementsCatalogDialog(QWidget *parent): RezonatorDialog(D
     auto res = CustomElemsManager::loadLibrary();
     if (res.ok())
     {
-        _customElems = res.result();
-        _categoryTabs->addTab(new QWidget, tr("Custom"));
-        _customElemsTab = _categoryTabs->count()-1;
-        _previewHtml = new QTextBrowser;
-        _previewHtml->setFont(Z::Gui::ValueFont().get());
-        _previewHtml->document()->setDefaultStyleSheet(Z::Gui::reportStyleSheet());
+        if (not res.result()->isEmpty())
+        {
+            _customElems = res.result();
+            _categoryTabs->addTab(new QWidget, tr("Custom"));
+            _customElemsTab = _categoryTabs->count()-1;
+            _previewHtml = new QTextBrowser;
+            _previewHtml->setFont(Z::Gui::ValueFont().get());
+            _previewHtml->document()->setDefaultStyleSheet(Z::Gui::reportStyleSheet());
+        }
     }
     else
         Ori::Dlg::error(tr("There are messages while loading Custom Elements Library:\n\n%1").arg(res.error()));

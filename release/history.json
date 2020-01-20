@@ -11,7 +11,10 @@
           "text": "New element: Matrix element with single matrix (T=S)."
         },
         {
-          "text": "Copy/Paste commands in pumps window."
+          "text": "Copy/Paste commands in the Pumps window."
+        },
+        {
+          "text": "Added Custom Elements Library. Copy of any element can be saved to the library."
         }
       ]
     },

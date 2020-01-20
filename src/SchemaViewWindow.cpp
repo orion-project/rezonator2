@@ -19,7 +19,6 @@
 #include <QAction>
 #include <QMenu>
 #include <QSplitter>
-#include <QTimer>
 #include <QToolButton>
 
 SchemaViewWindow::SchemaViewWindow(Schema *owner, CalcManager *calcs) : SchemaMdiChild(owner), _calculations(calcs)
@@ -122,8 +121,15 @@ void SchemaViewWindow::rowDoubleClicked(Element *elem)
 void SchemaViewWindow::actionElemAdd()
 {
     Element *elem = ElementsCatalogDialog::createElement();
-    if (elem)
-        schema()->insertElement(elem, _table->currentRow(), true);
+    if (!elem) return;
+
+    if (AppSettings::instance().elemAutoLabel)
+        Z::Utils::generateLabel(schema()->elements(), elem);
+
+    schema()->insertElement(elem, _table->currentRow(), true);
+
+    if (AppSettings::instance().editNewElem)
+        editElement(elem);
 }
 
 void SchemaViewWindow::actionElemMoveUp()
@@ -204,23 +210,6 @@ void SchemaViewWindow::actionSaveCustom()
 }
 
 //------------------------------------------------------------------------------
-//                               Schema events
-
-void SchemaViewWindow::elementCreated(Schema*, Element *elem)
-{
-    if (!_pasteMode && AppSettings::instance().elemAutoLabel)
-    {
-        // Disable elemChanged event from inside of elemCreated
-        ElementLocker locker(elem, false);
-        Z::Utils::generateLabel(schema(), elem);
-    }
-    if (!_pasteMode && AppSettings::instance().editNewElem)
-        // All clients should process elementCreated event before elem will be changed,
-        // so run deffered to avoid raise elementChanged from inside of elementCreated.
-        QTimer::singleShot(0, [this, elem](){ this->editElement(elem); });
-}
-
-//------------------------------------------------------------------------------
 
 bool SchemaViewWindow::canCopy()
 {
@@ -236,14 +225,20 @@ void SchemaViewWindow::copy()
 
 void SchemaViewWindow::paste()
 {
-    auto elems = Z::IO::Clipboard::getElements();
-    if (elems.isEmpty()) return;
+    auto pastedElems = Z::IO::Clipboard::getElements();
+    if (pastedElems.isEmpty()) return;
 
-    _pasteMode = true;
-    bool doEvents = true;
-    bool doLabels = AppSettings::instance().elemAutoLabelPasted;
-    schema()->insertElements(elems, _table->currentRow(), doEvents, doLabels);
-    _pasteMode = false;
+    if (AppSettings::instance().elemAutoLabelPasted)
+    {
+        Elements allElems(schema()->elements());
+        for (auto elem : pastedElems)
+        {
+            Z::Utils::generateLabel(allElems, elem);
+            allElems << elem;
+        }
+    }
+
+    schema()->insertElements(pastedElems, _table->currentRow(), true);
 }
 
 void SchemaViewWindow::selectAll()

@@ -18,7 +18,6 @@
 #include <QIcon>
 #include <QMenu>
 #include <QTabWidget>
-#include <QTimer>
 #include <QToolButton>
 
 namespace {
@@ -150,9 +149,7 @@ void CustomElemsWindow::actionElemAdd()
     {
         _library->insertElement(elem, _table->currentRow(), true);
         saveLibrary();
-        // All clients should process elementCreated event before elem will be changed,
-        // so run deffered to avoid raise elementChanged from inside of elementCreated.
-        QTimer::singleShot(0, [this, elem](){ this->editElement(elem); });
+        editElement(elem);
     }
 }
 
@@ -258,9 +255,7 @@ void CustomElemsWindow::paste()
     auto elems = Z::IO::Clipboard::getElements();
     if (elems.isEmpty()) return;
 
-    bool doEvents = true;
-    bool doLabels = false;
-    _library->insertElements(elems, _table->currentRow(), doEvents, doLabels);
+    _library->insertElements(elems, _table->currentRow(), true);
     saveLibrary();
 }
 
@@ -300,7 +295,7 @@ void CustomElemsWindow::libraryFileChanged(const QString&)
     if (!QFile::exists(fileName))
     {
         _watcher->removePath(fileName);
-        if (_library->count() > 0)
+        if (not _library->isEmpty())
         {
             if (Ori::Dlg::yes(tr(
                  "It's detected that the Custom Elements Library "
