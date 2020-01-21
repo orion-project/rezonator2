@@ -444,13 +444,14 @@ void Schema::markModified(const char *reason)
 namespace Z {
 namespace Utils {
 
-void generateLabel(const Elements& elements, Element* elem)
+void generateLabel(const Elements& elements, Element* elem, const QString &labelPrefix)
 {
     QStringList labels;
     for (const auto e : elements)
         if (e != elem)
             labels << e->label();
-    elem->setLabel(generateLabel(elem->labelPrefix(), labels));
+    QString prefix = labelPrefix.isEmpty() ? elem->labelPrefix() : labelPrefix;
+    elem->setLabel(generateLabel(prefix, labels));
 }
 
 void generateLabel(Schema* schema, PumpParams* pump)

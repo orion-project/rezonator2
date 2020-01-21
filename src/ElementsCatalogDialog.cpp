@@ -34,7 +34,7 @@ Element* ElementsCatalogDialog::chooseElementSample()
 
     if (sample->hasOption(Element_CustomSample))
     {
-        // Extract the element from the library instance
+        // Extract the sample from the library instance
         // to prevent its deletion together with the lib
         catalog._library->deleteElement(sample, false, false);
     }

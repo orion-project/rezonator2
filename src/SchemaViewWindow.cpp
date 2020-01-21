@@ -131,7 +131,7 @@ void SchemaViewWindow::actionElemAdd()
     if (!elem) return;
 
     if (AppSettings::instance().elemAutoLabel)
-        Z::Utils::generateLabel(schema()->elements(), elem);
+        Z::Utils::generateLabel(schema()->elements(), elem, isCustom ? sample->label() : QString());
 
     schema()->insertElement(elem, _table->currentRow(), true);
 
