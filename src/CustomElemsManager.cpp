@@ -43,6 +43,10 @@ Ori::Result<Schema*> loadLibrary()
         return Ori::Result<Schema*>::fail(report.str());
     }
     library->events().enable();
+
+    for (Element* elem : library->elements())
+        elem->setOption(Element_CustomSample);
+
     return Ori::Result<Schema*>::ok(library);
 }
 

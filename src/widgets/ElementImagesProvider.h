@@ -20,7 +20,7 @@ protected:
     ElementImagesProvider() {}
 
 private:
-    friend class Singleton<ElementImagesProvider>;
+    friend class Ori::Singleton<ElementImagesProvider>;
 };
 
 #endif // ELEMENT_IMAGES_PROVIDER_H

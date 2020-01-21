@@ -34,7 +34,7 @@ private:
     QStringList _categories;
     QMap<QString, Elements> _elemsCategorized;
 
-    friend class Singleton<ElementsCatalog>;
+    friend class Ori::Singleton<ElementsCatalog>;
 };
 
 #endif // ELEMENTS_CATALOG_H

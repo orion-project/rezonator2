@@ -62,7 +62,7 @@ public:
 private:
     AppSettings() {}
 
-    friend class Singleton<AppSettings>;
+    friend class Ori::Singleton<AppSettings>;
 
     int toolbarIconSizeSmall;
     int toolbarIconSizeBig;

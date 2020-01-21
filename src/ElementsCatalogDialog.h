@@ -24,18 +24,17 @@ class ElementsCatalogDialog : public RezonatorDialog
     Q_OBJECT
 
 public:
-    struct Selection
-    {
-        Element* elem;
-        bool isCustom;
-    };
-
     ElementsCatalogDialog(QWidget* parent = nullptr);
     ~ElementsCatalogDialog() override;
 
-    Selection selection() const;
+    Element* selection() const;
 
-    static Element* createElement();
+    /// Opens a dialog to select a sample for element creation.
+    /// The sample can be one of the predefined elements stored in the Elements Catalog,
+    /// and in this case the result pointer is persistent and not need to be freed.
+    /// The sample can be one of the elements stored in the Custom Elements Library,
+    /// then the result pointer should be freed manually after usage to prevent memory leaks.
+    static Element* chooseElementSample();
 
 protected:
     QSize prefferedSize() const override { return QSize(600, 400); }
@@ -48,7 +47,7 @@ private:
     QTabWidget *_categoryTabs;
     QTextBrowser *_previewHtml = nullptr;
     int _customElemsTab = -1;
-    Schema *_customElems = nullptr;
+    Schema *_library = nullptr;
 
     void categorySelected(int index);
     void updatePreview(Element *elem);

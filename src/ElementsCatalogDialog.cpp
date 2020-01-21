@@ -24,14 +24,22 @@
 
 static int __savedTabIndex = 0;
 
-Element* ElementsCatalogDialog::createElement()
+Element* ElementsCatalogDialog::chooseElementSample()
 {
     ElementsCatalogDialog catalog;
     if (catalog.exec() != QDialog::Accepted)
         return nullptr;
 
-    auto selection = catalog.selection();
-    return ElementsCatalog::instance().create(selection.elem, selection.isCustom);
+    auto sample = catalog.selection();
+
+    if (sample->hasOption(Element_CustomSample))
+    {
+        // Extract the element from the library instance
+        // to prevent its deletion together with the lib
+        catalog._library->deleteElement(sample, false, false);
+    }
+
+    return sample;
 }
 
 ElementsCatalogDialog::ElementsCatalogDialog(QWidget *parent): RezonatorDialog(DontDeleteOnClose, parent)
@@ -49,7 +57,7 @@ ElementsCatalogDialog::ElementsCatalogDialog(QWidget *parent): RezonatorDialog(D
     {
         if (not res.result()->isEmpty())
         {
-            _customElems = res.result();
+            _library = res.result();
             _categoryTabs->addTab(new QWidget, tr("Custom"));
             _customElemsTab = _categoryTabs->count()-1;
             _previewHtml = new QTextBrowser;
@@ -93,8 +101,8 @@ ElementsCatalogDialog::~ElementsCatalogDialog()
 {
     __savedTabIndex = _categoryTabs->currentIndex();
 
-    if (_customElems)
-        delete _customElems;
+    if (_library)
+        delete _library;
 }
 
 void ElementsCatalogDialog::categorySelected(int index)
@@ -103,7 +111,7 @@ void ElementsCatalogDialog::categorySelected(int index)
     _categoryTabs->widget(index)->setLayout(_pageLayout);
     if (index == _customElemsTab)
     {
-        _elementsList->populate(_customElems->elements(), ElementTypesListView::DisplayNameKind::Title);
+        _elementsList->populate(_library->elements(), ElementTypesListView::DisplayNameKind::Title);
         _preview->setCurrentWidget(_previewHtml);
     }
     else
@@ -115,13 +123,9 @@ void ElementsCatalogDialog::categorySelected(int index)
     _elementsList->setFocus();
 }
 
-ElementsCatalogDialog::Selection ElementsCatalogDialog::selection() const
+Element *ElementsCatalogDialog::selection() const
 {
-    return
-    {
-        _elementsList->selected(),
-        _categoryTabs->currentIndex() == _customElemsTab
-    };
+    return _elementsList->selected();
 }
 
 static QString makeCustomElemPreview(Element* elem)

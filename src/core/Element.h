@@ -68,7 +68,12 @@ enum ElementOption {
     /// before and after such an element to provide full information.
     /// There is no reason to set this option for range-like elements
     /// or interface elements because they treated separately.
-    Element_ChangesWavefront = 0x01,
+    Element_ChangesWavefront = 0x02,
+
+    /// The element is a sample for creation of other elements.
+    /// Such samples are stored in the Custom Elements Library and shown
+    /// in the Elements Catalog on a separate page.
+    Element_CustomSample = 0x04,
 };
 
 /**

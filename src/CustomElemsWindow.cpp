@@ -5,6 +5,7 @@
 #include "ElementsCatalogDialog.h"
 #include "ElementPropsDialog.h"
 #include "WindowsManager.h"
+#include "core/ElementsCatalog.h"
 #include "io/Clipboard.h"
 #include "widgets/SchemaElemsTable.h"
 
@@ -144,13 +145,19 @@ void CustomElemsWindow::storeState()
 
 void CustomElemsWindow::actionElemAdd()
 {
-    Element *elem = ElementsCatalogDialog::createElement();
-    if (elem)
-    {
-        _library->insertElement(elem, _table->currentRow(), true);
-        saveLibrary();
-        editElement(elem);
-    }
+    Element *sample = ElementsCatalogDialog::chooseElementSample();
+    if (!sample) return;
+
+    QSharedPointer<Element> sampleDeleter;
+    bool isCustom = sample->hasOption(Element_CustomSample);
+    if (isCustom) sampleDeleter.reset(sample);
+
+    Element *elem = ElementsCatalog::instance().create(sample, isCustom);
+    if (!elem) return;
+
+    _library->insertElement(elem, _table->currentRow(), true);
+    saveLibrary();
+    editElement(elem);
 }
 
 void CustomElemsWindow::actionElemMoveUp()
@@ -299,7 +306,7 @@ void CustomElemsWindow::libraryFileChanged(const QString&)
         {
             if (Ori::Dlg::yes(tr(
                  "It's detected that the Custom Elements Library "
-                 "has been removed from the file system by some other process. "
+                 "has been removed from the filesystem by some other process. "
                  "Do you want to save the current set of elements as a new library?")))
             {
                 saveLibrary();

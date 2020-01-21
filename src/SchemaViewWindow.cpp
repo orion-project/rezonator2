@@ -120,7 +120,14 @@ void SchemaViewWindow::rowDoubleClicked(Element *elem)
 
 void SchemaViewWindow::actionElemAdd()
 {
-    Element *elem = ElementsCatalogDialog::createElement();
+    Element *sample = ElementsCatalogDialog::chooseElementSample();
+    if (!sample) return;
+
+    QSharedPointer<Element> sampleDeleter;
+    bool isCustom = sample->hasOption(Element_CustomSample);
+    if (isCustom) sampleDeleter.reset(sample);
+
+    Element* elem = ElementsCatalog::instance().create(sample, isCustom);
     if (!elem) return;
 
     if (AppSettings::instance().elemAutoLabel)
