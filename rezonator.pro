@@ -76,6 +76,7 @@ HEADERS += \
     src/core/CommonTypes.h \
     src/core/Element.h \
     src/core/ElementFilter.h \
+    src/core/ElementFormula.h \
     src/core/Elements.h \
     src/core/ElementsCatalog.h \
     src/core/Format.h \
@@ -127,6 +128,7 @@ HEADERS += \
     src/tests/TestUtils.h \
     src/Appearance.h \
     src/widgets/CursorPanel.h \
+    src/widgets/ElemFormulaEditor.h \
     src/widgets/ElemSelectorWidget.h \
     src/widgets/ElementImagesProvider.h \
     src/widgets/ElementTypesListView.h \
@@ -194,6 +196,7 @@ SOURCES += \
     src/core/CommonTypes.cpp \
     src/core/Element.cpp \
     src/core/ElementFilter.cpp \
+    src/core/ElementFormula.cpp \
     src/core/Elements.cpp \
     src/core/ElementsCatalog.cpp \
     src/core/Formula.cpp \
@@ -259,6 +262,7 @@ SOURCES += \
     src/tests/test_Values.cpp \
     src/Appearance.cpp \
     src/widgets/CursorPanel.cpp \
+    src/widgets/ElemFormulaEditor.cpp \
     src/widgets/ElemSelectorWidget.cpp \
     src/widgets/ElementTypesListView.cpp \
     src/widgets/FormulaEditor.cpp \

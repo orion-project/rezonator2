@@ -26,7 +26,7 @@ ProtocolWindow::ProtocolWindow() : BasicMdiChild(InitOptions(initNoDefaultWidget
     setContent(_log);
 
     _windowMenu = new QMenu(tr("Protocol"), this);
-    _windowMenu->addAction(tr("Clear"), [&](){ _log->clear(); });
+    _windowMenu->addAction(QIcon(":/toolbar/clear_log"), tr("Clear"), [&](){ _log->clear(); });
 
     Z::Protocol::setView(_log);
 }

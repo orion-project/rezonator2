@@ -2,6 +2,7 @@
 
 #include "../Appearance.h"
 #include "../AppSettings.h"
+#include "../core/ElementFormula.h"
 #include "../funcs/FormatInfo.h"
 
 #include <QClipboard>
@@ -1368,6 +1369,7 @@ ElementLayout* make(Element *elem) {
         registerLayout<ElemBrewsterPlate, ElemBrewsterPlateLayout::Layout>();
         registerLayout<ElemMatrix, ElemMatrixLayout::Layout>();
         registerLayout<ElemMatrix1, ElemMatrixLayout::Layout>();
+        registerLayout<ElemFormula, ElemMatrixLayout::Layout>();
         registerLayout<ElemPoint, ElemPointLayout::Layout>();
         registerLayout<ElemNormalInterface, ElemNormalInterfaceLayout::Layout>();
         registerLayout<ElemBrewsterInterface, ElemBrewsterInterfaceLayout::Layout>();

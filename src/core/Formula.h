@@ -7,6 +7,10 @@
 
 namespace Z {
 
+/**
+    Formula can calculate an expression given as a string and assign the result to the target parameter.
+    It can have other parameters as dependencies and use their names in the expression.
+*/
 class Formula : public ParameterListener
 {
 public:
@@ -42,6 +46,9 @@ private:
 
 //------------------------------------------------------------------------------
 
+/**
+    Contains a set of @a Z::Formula instances and their mappings to target parameters.
+*/
 class Formulas
 {
 public:

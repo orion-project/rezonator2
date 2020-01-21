@@ -37,7 +37,7 @@ void Formula::calculate()
     if (_code.isEmpty())
     {
         _status = qApp->translate("Formula", "Formula is empty");
-        Z_ERROR(QString("Empty formula for param '%1'").arg(_target->alias()));
+        Z_ERROR(QString("Empty formula for param '%1'").arg(_target->alias()))
         return;
     }
 
@@ -45,7 +45,7 @@ void Formula::calculate()
     if (!L)
     {
         _status = qApp->translate("Formula", "Not enough memory to create formula parser");
-        Z_ERROR(QString("Bad formula for param '%1'").arg(_target->alias(), _status));
+        Z_ERROR(QString("Bad formula for param '%1'").arg(_target->alias(), _status))
         return;
     }
 
@@ -110,7 +110,7 @@ void Formula::calculate()
     }
 
     if (!_status.isEmpty())
-        Z_ERROR(QString("Bad formula for param '%1': %2").arg(_target->alias(), _status));
+        Z_ERROR(QString("Bad formula for param '%1': %2").arg(_target->alias(), _status))
 
     lua_close(L);
 

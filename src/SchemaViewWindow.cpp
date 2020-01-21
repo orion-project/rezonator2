@@ -7,9 +7,11 @@
 #include "CustomElemsManager.h"
 #include "WindowsManager.h"
 #include "core/ElementsCatalog.h"
+#include "core/ElementFormula.h"
 #include "core/Utils.h"
 #include "funcs_window/PlotFuncWindow.h"
 #include "io/Clipboard.h"
+#include "widgets/ElemFormulaEditor.h"
 #include "widgets/SchemaLayout.h"
 #include "widgets/SchemaElemsTable.h"
 
@@ -66,13 +68,11 @@ void SchemaViewWindow::createActions()
     actnElemMatr = A_(tr("Matrix"), _calculations, SLOT(funcShowMatrices()), ":/toolbar/elem_matr", Qt::SHIFT | Qt::Key_Return);
     actnElemMatrAll = A_(tr("Show All Matrices"), _calculations, SLOT(funcShowAllMatrices()));
     actnElemDelete = A_(tr("Delete..."), this, SLOT(actionElemDelete()), ":/toolbar/elem_delete", Qt::CTRL | Qt::Key_Delete);
-
     actnEditCopy = A_(tr("Copy", "Edit action"), this, SLOT(copy()), ":/toolbar/copy");
     actnEditPaste = A_(tr("Paste", "Edit action"), this, SLOT(paste()), ":/toolbar/paste");
-
     actnAdjuster = A_(tr("Add Adjuster"), this, SLOT(adjustParam()), ":/toolbar/adjust");
-
     actnSaveCustom = A_(tr("Save to Custom Library..."), this, SLOT(actionSaveCustom()), ":/toolbar/star");
+    actnEditFormula = A_(tr("Edit formula"), this, SLOT(actionEditFormula()), ":/toolbar/edit_formula");
 
     #undef A_
 }
@@ -80,11 +80,11 @@ void SchemaViewWindow::createActions()
 void SchemaViewWindow::createMenuBar()
 {
     menuElement = Ori::Gui::menu(tr("Element"), this,
-        { actnElemAdd, nullptr, actnElemMoveUp, actnElemMoveDown, nullptr, actnElemProp,
+        { actnElemAdd, nullptr, actnElemMoveUp, actnElemMoveDown, nullptr, actnElemProp, actnEditFormula,
           actnElemMatr, actnElemMatrAll, nullptr, actnElemDelete, nullptr, actnSaveCustom });
 
     menuContextElement = Ori::Gui::menu(this,
-        { actnElemProp, actnElemMatr, nullptr, actnAdjuster, nullptr,
+        { actnElemProp, actnEditFormula, actnElemMatr, nullptr, actnAdjuster, nullptr,
           actnEditCopy, actnEditPaste, nullptr, actnElemDelete});
 
     menuContextLastRow = Ori::Gui::menu(this,
@@ -216,6 +216,14 @@ void SchemaViewWindow::actionSaveCustom()
         Ori::Dlg::error(res);
 }
 
+void SchemaViewWindow::actionEditFormula()
+{
+    auto elem = dynamic_cast<ElemFormula*>(_table->selected());
+    if (!elem) return;
+
+    ElemFormulaEditor::editFormula(elem);
+}
+
 //------------------------------------------------------------------------------
 
 bool SchemaViewWindow::canCopy()
@@ -255,11 +263,11 @@ void SchemaViewWindow::selectAll()
 
 //------------------------------------------------------------------------------
 
-void SchemaViewWindow::currentCellChanged(int curRow, int, int prevRow, int)
+void SchemaViewWindow::currentCellChanged(int curRow, int, int, int)
 {
     int lastRow = _table->rowCount() - 1;
-    if (curRow < lastRow && prevRow < lastRow) return;
     bool hasElem = curRow < lastRow;
+    Element* curElem = hasElem ? schema()->element(curRow) : nullptr;
     actnElemProp->setEnabled(hasElem);
     actnElemMatr->setEnabled(hasElem);
     actnElemMatrAll->setEnabled(hasElem);
@@ -268,6 +276,10 @@ void SchemaViewWindow::currentCellChanged(int curRow, int, int prevRow, int)
     actnElemMoveUp->setEnabled(hasElem);
     actnElemMoveDown->setEnabled(hasElem);
     actnSaveCustom->setEnabled(hasElem);
+
+    bool isFormula = dynamic_cast<ElemFormula*>(curElem);
+    actnEditFormula->setEnabled(isFormula);
+    actnEditFormula->setVisible(isFormula);
 }
 
 void SchemaViewWindow::contextMenuAboutToShow(QMenu* menu)

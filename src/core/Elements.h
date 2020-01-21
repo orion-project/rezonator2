@@ -133,7 +133,7 @@ DECLARE_ELEMENT_END
 
 DECLARE_ELEMENT(ElemMatrix, Element)
     ElemMatrix();
-    TYPE_NAME(qApp->translate("Elements", "Custom element-matrix (T&S)"))
+    TYPE_NAME(qApp->translate("Elements", "Matrix element (T&S)"))
     DEFAULT_LABEL("C")
     CALC_MATRIX
     void setMatrixT(const double& a, const double& b, const double& c, const double& d) { setMatrix(0, a, b, c, d); }
@@ -155,7 +155,7 @@ DECLARE_ELEMENT_END
 
 DECLARE_ELEMENT(ElemMatrix1, Element)
     ElemMatrix1();
-    TYPE_NAME(qApp->translate("Elements", "Custom element-matrix (T=S)"))
+    TYPE_NAME(qApp->translate("Elements", "Matrix element (T=S)"))
     DEFAULT_LABEL("C")
     CALC_MATRIX
     void setMatrix(const double& a, const double& b, const double& c, const double& d);

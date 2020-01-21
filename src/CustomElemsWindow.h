@@ -7,15 +7,12 @@ QT_BEGIN_NAMESPACE
 class QFileSystemWatcher;
 class QMenu;
 class QTabWidget;
+class QToolBar;
 QT_END_NAMESPACE
 
 class Element;
 class Schema;
 class SchemaElemsTable;
-namespace Ori {
-namespace Widgets {
-class FlatToolBar;
-}}
 
 class CustomElemsWindow : public QWidget
 {
@@ -39,7 +36,7 @@ private:
     Schema *_library;
     QTabWidget *_tabs;
     SchemaElemsTable *_table;
-    Ori::Widgets::FlatToolBar *_toolbar;
+    QToolBar *_toolbar;
     QAction *_actnElemAdd, *_actnElemMoveUp, *_actnElemMoveDown, *_actnElemProp,
             *_actnElemDelete, *_actnEditCopy, *_actnEditPaste;
     QMenu *_menuContextElement, *_menuContextLastRow;

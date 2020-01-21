@@ -3,6 +3,8 @@
         <file alias="adjust">../img/toolbar/adjust.svg</file>
         <file alias="bug">../img/toolbar/bug.svg</file>
         <file alias="catalog">../img/toolbar/elements.svg</file>
+        <file alias="check">../img/toolbar/check.svg</file>
+        <file alias="clear_log">../img/toolbar/clear_log.svg</file>
         <file alias="clone">../img/toolbar/clone.svg</file>
         <file alias="copy">../img/toolbar/copy.svg</file>
         <file alias="copy_all">../img/toolbar/copy_all.svg</file>
@@ -11,6 +13,7 @@
         <file alias="delete">../img/toolbar/delete.svg</file>
         <file alias="delete_items">../img/toolbar/delete_items.svg</file>
         <file alias="duplicate_page">../img/toolbar/duplicate_page.svg</file>
+        <file alias="edit_formula">../img/toolbar/edit_formula.svg</file>
         <file alias="elem_add">../img/toolbar/elem_add.svg</file>
         <file alias="elem_delete">../img/toolbar/elem_delete.svg</file>
         <file alias="elem_move_up">../img/toolbar/elem_move_up.svg</file>
@@ -130,6 +133,7 @@
         <file alias="ElemTiltedPlate">../img/elem/ElemTiltedPlate.svg</file>
         <file alias="ElemMatrix">../img/elem/ElemMatrix.svg</file>
         <file alias="ElemMatrix1">../img/elem/ElemMatrix1.svg</file>
+        <file alias="ElemFormula">../img/elem/ElemFormula.svg</file>
         <file alias="ElemPoint">../img/elem/ElemPoint.svg</file>
         <file alias="ElemNormalInterface">../img/elem/ElemNormalInterface.svg</file>
         <file alias="ElemBrewsterInterface">../img/elem/ElemBrewsterInterface.svg</file>
@@ -151,6 +155,7 @@
         <file alias="ElemCylinderLensS">../img/elem/ElemCylinderLensS24.svg</file>
         <file alias="ElemMatrix">../img/elem/ElemMatrix24.svg</file>
         <file alias="ElemMatrix1">../img/elem/ElemMatrix124.svg</file>
+        <file alias="ElemFormula">../img/elem/ElemFormula24.svg</file>
         <file alias="ElemBrewsterCrystal">../img/elem/ElemBrewsterCrystal24.svg</file>
         <file alias="ElemBrewsterPlate">../img/elem/ElemBrewsterPlate24.svg</file>
         <file alias="ElemTiltedCrystal">../img/elem/ElemTiltedCrystal24.svg</file>
