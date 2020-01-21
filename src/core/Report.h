@@ -38,6 +38,7 @@ public:
     void error(const QString& message);
 
     QString str() const;
+    void writeToStdout() const;
 
     const QList<Event>& events() const { return _events; }
 

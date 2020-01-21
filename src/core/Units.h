@@ -65,8 +65,8 @@ DECLARE_UNIT(amin)
 DECLARE_UNIT(deg)
 
 DECLARE_UNIT(Hz)
-
 DECLARE_UNIT(inv_m2)
+DECLARE_UNIT(inv_m)
 
 } // namespace Units
 

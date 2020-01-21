@@ -1,7 +1,15 @@
 #include "ElementsCatalogDialog.h"
+
+#include "Appearance.h"
+#include "CustomElemsManager.h"
+#include "core/Schema.h"
+#include "core/Elements.h"
 #include "core/ElementsCatalog.h"
+#include "funcs/FormatInfo.h"
 #include "widgets/ElementImagesProvider.h"
 #include "widgets/ElementTypesListView.h"
+
+#include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
 #include "widgets/OriSvgView.h"
 
@@ -10,111 +18,140 @@
 #include <QDialogButtonBox>
 #include <QIcon>
 #include <QSplitter>
+#include <QStackedWidget>
 #include <QTabWidget>
+#include <QTextBrowser>
 
-namespace Z {
-namespace Dlgs {
+static int __savedTabIndex = 0;
 
-// TODO: ElementsCatalog should be QWidget, not QDialog.
-// In CatalogMode_View mode it should be displayed as tool window (Qt::Tool),
-// as this type of window is not overlapped by main window on MacOS.
-// In CatalogMode_Selector it should be displayed via Ori::Dialog or like that.
-
-bool selectElementType(QString& type)
+Element* ElementsCatalogDialog::chooseElementSample()
 {
-    ElementsCatalogDialog catalog(ElementsCatalogDialog::CatalogMode_Selector);
-    if (catalog.exec() == QDialog::Accepted)
+    ElementsCatalogDialog catalog;
+    if (catalog.exec() != QDialog::Accepted)
+        return nullptr;
+
+    auto sample = catalog.selection();
+
+    if (sample->hasOption(Element_CustomSample))
     {
-        type = catalog.selected();
-        return true;
+        // Extract the sample from the library instance
+        // to prevent its deletion together with the lib
+        catalog._library->deleteElement(sample, false, false);
     }
-    return false;
+
+    return sample;
 }
 
-Element* createElement()
-{
-    QString type;
-    if (selectElementType(type))
-        return ElementsCatalog::instance().create(type);
-    return nullptr;
-}
-
-void showElementsCatalog()
-{
-    auto catalog = new ElementsCatalogDialog(ElementsCatalogDialog::CatalogMode_View);
-    // NOTE: on MacOS popup window can by overlapped by main window
-    // It seems be normal for MacOS, e.g. file info window is opened by Finder
-    // and can be overlapped by Finder main window so we can't activate it again.
-    catalog->show();
-}
-
-} // namespace Dlgs
-} // namespace Z
-
-//-----------------------------------------------------------------------------
-//                            ElementsCatalogDialog
-//-----------------------------------------------------------------------------
-
-namespace {
-int __savedTabIndex = 0;
-}
-
-ElementsCatalogDialog::ElementsCatalogDialog(CatalogMode mode, QWidget *parent)
-    : RezonatorDialog(mode == CatalogMode_View ? OmitButtonsPanel : DontDeleteOnClose, parent)
+ElementsCatalogDialog::ElementsCatalogDialog(QWidget *parent): RezonatorDialog(DontDeleteOnClose, parent)
 {
     setTitleAndIcon(tr("Elements Catalog"), ":/window_icons/catalog");
     setObjectName("ElementsCatalogDialog");
 
     // category tabs
-    tabs = new QTabWidget;
+    _categoryTabs = new QTabWidget;
     for (auto category : ElementsCatalog::instance().categories())
-        tabs->addTab(new QWidget, category);
-    connect(tabs, SIGNAL(currentChanged(int)), this, SLOT(categorySelected(int)));
-    mainLayout()->addWidget(tabs);
+        _categoryTabs->addTab(new QWidget, category);
+
+    auto res = CustomElemsManager::loadLibrary();
+    if (res.ok())
+    {
+        if (not res.result()->isEmpty())
+        {
+            _library = res.result();
+            _categoryTabs->addTab(new QWidget, tr("Custom"));
+            _customElemsTab = _categoryTabs->count()-1;
+            _previewHtml = new QTextBrowser;
+            _previewHtml->setFont(Z::Gui::ValueFont().get());
+            _previewHtml->document()->setDefaultStyleSheet(Z::Gui::reportStyleSheet());
+        }
+    }
+    else
+        Ori::Dlg::error(tr("There are messages while loading Custom Elements Library:\n\n%1").arg(res.error()));
+
+    connect(_categoryTabs, &QTabWidget::currentChanged, this, &ElementsCatalogDialog::categorySelected);
+    mainLayout()->addWidget(_categoryTabs);
 
     // preview
-    drawing = new Ori::Widgets::SvgView(QString());
+    _previewSvg = new Ori::Widgets::SvgView(QString());
 
     // element list
-    elements = new ElementTypesListView;
-    connect(elements, SIGNAL(elementSelected(QString)), this, SLOT(loadDrawing(QString)));
-    if (mode == CatalogMode_Selector)
-    {
-        connect(elements, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(accept()));
-        connect(elements, SIGNAL(enterPressed()), this, SLOT(accept()));
-    }
+    _elementsList = new ElementTypesListView;
+    connect(_elementsList, &ElementTypesListView::elementSelected, this, &ElementsCatalogDialog::updatePreview);
+    connect(_elementsList, &ElementTypesListView::itemDoubleClicked, this, &ElementsCatalogDialog::accept);
+    connect(_elementsList, &ElementTypesListView::enterPressed, this, &ElementsCatalogDialog::accept);
+
+    _preview = new QStackedWidget;
+    _preview->addWidget(_previewSvg);
+    if (_previewHtml)
+        _preview->addWidget(_previewHtml);
 
     // page
-    layoutPage = new QVBoxLayout;
-    layoutPage->addWidget(Ori::Gui::splitterH(elements, drawing));
-    layoutPage->setMargin(mainLayout()->spacing()/2+1);
+    _pageLayout = new QVBoxLayout;
+    _pageLayout->addWidget(Ori::Gui::splitterH(_elementsList, _preview));
+    _pageLayout->setMargin(mainLayout()->spacing()/2+1);
 
     // initial view
-    tabs->setCurrentIndex(__savedTabIndex);
-    categorySelected(__savedTabIndex);
-    elements->setFocus();
+    int tabIndex = qMin(qMax(0, __savedTabIndex), _categoryTabs->count()-1);
+    _categoryTabs->setCurrentIndex(tabIndex);
+    categorySelected(tabIndex);
+    _elementsList->setFocus();
 }
 
 ElementsCatalogDialog::~ElementsCatalogDialog()
 {
-    __savedTabIndex = tabs->currentIndex();
+    __savedTabIndex = _categoryTabs->currentIndex();
+
+    if (_library)
+        delete _library;
 }
 
 void ElementsCatalogDialog::categorySelected(int index)
 {
     if (index < 0) return;
-    tabs->widget(index)->setLayout(layoutPage);
-    auto category = ElementsCatalog::instance().categories().at(index);
-    elements->populate(ElementsCatalog::instance().elements(category));
-    elements->setFocus();
+    _categoryTabs->widget(index)->setLayout(_pageLayout);
+    if (index == _customElemsTab)
+    {
+        _elementsList->populate(_library->elements(), ElementTypesListView::DisplayNameKind::Title);
+        _preview->setCurrentWidget(_previewHtml);
+    }
+    else
+    {
+        auto category = ElementsCatalog::instance().categories().at(index);
+        _elementsList->populate(ElementsCatalog::instance().elements(category));
+        _preview->setCurrentWidget(_previewSvg);
+    }
+    _elementsList->setFocus();
 }
 
-QString ElementsCatalogDialog::selected() const
+Element *ElementsCatalogDialog::selection() const
 {
-    return elements->selected();
+    return _elementsList->selected();
 }
 
-void ElementsCatalogDialog::loadDrawing(const QString& elemType)
+static QString makeCustomElemPreview(Element* elem)
 {
-    drawing->load(ElementImagesProvider::instance().drawingPath(elemType));
+    QString report;
+    QTextStream stream(&report);
+    stream << QStringLiteral("<p><b><span class=elem_title>")
+           << elem->typeName()
+           << QStringLiteral("</span></b><p>");
+
+    Z::Format::FormatParam f;
+    f.includeDriver = false;
+    f.includeValue = true;
+
+    for (const auto param : elem->params())
+        stream << f.format(param) << QStringLiteral("<br/>");
+
+    stream << "<center><img src='" << ElementImagesProvider::instance().drawingPath(elem->type()) << "'/></center>";
+
+    return report;
+}
+
+void ElementsCatalogDialog::updatePreview(Element* elem)
+{
+    if (_categoryTabs->currentIndex() == _customElemsTab)
+        _previewHtml->setHtml(makeCustomElemPreview(elem));
+    else
+        _previewSvg->load(ElementImagesProvider::instance().drawingPath(elem->type()));
 }

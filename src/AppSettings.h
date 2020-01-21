@@ -17,8 +17,8 @@ public:
 };
 
 class AppSettings :
-        public Singleton<AppSettings>,
-        public Notifier<IAppSettingsListener>
+        public Ori::Singleton<AppSettings>,
+        public Ori::Notifier<IAppSettingsListener>
 {
 public:
     bool editNewElem;         ///< Open element properties dialog after element has been created.
@@ -62,7 +62,7 @@ public:
 private:
     AppSettings() {}
 
-    friend class Singleton<AppSettings>;
+    friend class Ori::Singleton<AppSettings>;
 
     int toolbarIconSizeSmall;
     int toolbarIconSizeBig;

@@ -76,7 +76,7 @@ PumpParams* PumpParamsDialog::makeNewPump()
     Ori::Layouts::LayoutV({modesWidget, drawing})
             .setMargin(0).setSpacing(12).useFor(&content);
 
-    if (Ori::Dlg::Dialog(&content)
+    if (Ori::Dlg::Dialog(&content, false)
             .withIconPath(":/window_icons/pump")
             .withTitle(tr("Select Pump Mode"))
             .withOkSignal(&modesGroup, SIGNAL(doubleClicked(QVariant)))

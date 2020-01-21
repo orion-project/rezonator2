@@ -314,7 +314,7 @@ class ParameterLinksList : public QList<TLink*>
 public:
     ParameterLinksList(): QList<TLink*>() {}
 
-    TLink* bySource(void *source) const
+    TLink* bySource(const void *source) const
     {
         for (TLink *link : *this)
             if (link->source() == source)
@@ -322,7 +322,7 @@ public:
         return nullptr;
     }
 
-    TLink* byTarget(void *target) const
+    TLink* byTarget(const void *target) const
     {
         for (TLink *link : *this)
             if (link->target() == target)

@@ -185,10 +185,10 @@ private:
 
 //------------------------------------------------------------------------------
 
-class Schema : public ElementOwner, public Z::ParameterListener, public Notifier<SchemaListener>
+class Schema : public ElementOwner, public Z::ParameterListener, public Ori::Notifier<SchemaListener>
 {
 public:
-    Schema();
+    Schema(const QString& alias = QString());
     ~Schema() override;
 
     const QString& fileName() const { return _fileName; }
@@ -199,6 +199,8 @@ public:
 
     const QString& notes() const { return _notes; }
     void setNotes(const QString& notes) { _notes = notes; }
+
+    const QString& alias() const { return _alias; }
 
     Z::Parameter& wavelength() { return _wavelength; }
 
@@ -223,9 +225,10 @@ public:
     bool modified() const { return _state.current() == SchemaState::Modified; }
 
     void insertElement(Element* elem, int index = -1, bool event = true);
-    void insertElements(const Elements& elems, int index, bool event, bool generateLabels);
+    void insertElements(const Elements& elems, int index, bool event);
     void deleteElement(Element* elem, bool event = true, bool free = true);
     void deleteElement(int index, bool event = true, bool free = true);
+    void clearElements(bool events = false);
 
     SchemaSelection& selection() { return _selection; }
     Element* selectedElement() const { return _selection.element(); }
@@ -260,7 +263,7 @@ private:
     SchemaState _state;
     SchemaSelection _selection;
     QString _fileName;
-    QString _title, _notes;
+    QString _title, _notes, _alias;
     TripType _tripType = TripType::SW;
     Z::Parameter _wavelength;
     Z::Parameters _customParams;
@@ -290,7 +293,7 @@ namespace Utils {
 
 /// Makes an automatic label for the given element.
 /// Automatical label consist of a prefix like `M`, `L`, etc. and index.
-void generateLabel(Schema* schema, Element* elem);
+void generateLabel(const Elements& elements, Element* elem, const QString& labelPrefix = QString());
 
 /// Makes an automatic label for the given pump: `P1`, `P2`, etc.
 void generateLabel(Schema* schema, PumpParams* pump);

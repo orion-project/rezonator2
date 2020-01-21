@@ -133,15 +133,32 @@ DECLARE_ELEMENT_END
 
 DECLARE_ELEMENT(ElemMatrix, Element)
     ElemMatrix();
-    TYPE_NAME(qApp->translate("Elements", "Custom element-matrix"))
+    TYPE_NAME(qApp->translate("Elements", "Custom element-matrix (T&S)"))
     DEFAULT_LABEL("C")
-    PARAMS_EDITOR(ABCD)
     CALC_MATRIX
-    void makeParam(const QString& name, const double& value);
     void setMatrixT(const double& a, const double& b, const double& c, const double& d) { setMatrix(0, a, b, c, d); }
     void setMatrixS(const double& a, const double& b, const double& c, const double& d) { setMatrix(4, a, b, c, d); }
+    Z::Parameter* paramAt() const { return _At; }
+    Z::Parameter* paramAs() const { return _As; }
+    Z::Parameter* paramBt() const { return _Bt; }
+    Z::Parameter* paramBs() const { return _Bs; }
+    Z::Parameter* paramCt() const { return _Ct; }
+    Z::Parameter* paramCs() const { return _Cs; }
+    Z::Parameter* paramDt() const { return _Dt; }
+    Z::Parameter* paramDs() const { return _Ds; }
 private:
     void setMatrix(int offset, const double& a, const double& b, const double& c, const double& d);
+    Z::Parameter *_At, *_As, *_Bt, *_Bs, *_Ct, *_Cs, *_Dt, *_Ds;
+DECLARE_ELEMENT_END
+
+//------------------------------------------------------------------------------
+
+DECLARE_ELEMENT(ElemMatrix1, Element)
+    ElemMatrix1();
+    TYPE_NAME(qApp->translate("Elements", "Custom element-matrix (T=S)"))
+    DEFAULT_LABEL("C")
+    CALC_MATRIX
+    void setMatrix(const double& a, const double& b, const double& c, const double& d);
 DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------

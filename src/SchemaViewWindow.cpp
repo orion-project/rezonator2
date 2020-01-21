@@ -4,6 +4,7 @@
 #include "ElementsCatalogDialog.h"
 #include "ElementPropsDialog.h"
 #include "CalcManager.h"
+#include "CustomElemsManager.h"
 #include "WindowsManager.h"
 #include "core/ElementsCatalog.h"
 #include "core/Utils.h"
@@ -18,7 +19,6 @@
 #include <QAction>
 #include <QMenu>
 #include <QSplitter>
-#include <QTimer>
 #include <QToolButton>
 
 SchemaViewWindow::SchemaViewWindow(Schema *owner, CalcManager *calcs) : SchemaMdiChild(owner), _calculations(calcs)
@@ -72,6 +72,8 @@ void SchemaViewWindow::createActions()
 
     actnAdjuster = A_(tr("Add Adjuster"), this, SLOT(adjustParam()), ":/toolbar/adjust");
 
+    actnSaveCustom = A_(tr("Save to Custom Library..."), this, SLOT(actionSaveCustom()), ":/toolbar/star");
+
     #undef A_
 }
 
@@ -79,11 +81,11 @@ void SchemaViewWindow::createMenuBar()
 {
     menuElement = Ori::Gui::menu(tr("Element"), this,
         { actnElemAdd, nullptr, actnElemMoveUp, actnElemMoveDown, nullptr, actnElemProp,
-          actnElemMatr, actnElemMatrAll, nullptr, actnElemDelete });
+          actnElemMatr, actnElemMatrAll, nullptr, actnElemDelete, nullptr, actnSaveCustom });
 
     menuContextElement = Ori::Gui::menu(this,
         { actnElemProp, actnElemMatr, nullptr, actnAdjuster, nullptr,
-          actnEditCopy, actnEditPaste, nullptr, actnElemDelete });
+          actnEditCopy, actnEditPaste, nullptr, actnElemDelete});
 
     menuContextLastRow = Ori::Gui::menu(this,
         { actnElemAdd, actnEditPaste });
@@ -118,9 +120,23 @@ void SchemaViewWindow::rowDoubleClicked(Element *elem)
 
 void SchemaViewWindow::actionElemAdd()
 {
-    Element *elem = Z::Dlgs::createElement();
-    if (elem)
-        schema()->insertElement(elem, _table->currentRow(), true);
+    Element *sample = ElementsCatalogDialog::chooseElementSample();
+    if (!sample) return;
+
+    QSharedPointer<Element> sampleDeleter;
+    bool isCustom = sample->hasOption(Element_CustomSample);
+    if (isCustom) sampleDeleter.reset(sample);
+
+    Element* elem = ElementsCatalog::instance().create(sample, isCustom);
+    if (!elem) return;
+
+    if (AppSettings::instance().elemAutoLabel)
+        Z::Utils::generateLabel(schema()->elements(), elem, isCustom ? sample->label() : QString());
+
+    schema()->insertElement(elem, _table->currentRow(), true);
+
+    if (AppSettings::instance().editNewElem)
+        editElement(elem);
 }
 
 void SchemaViewWindow::actionElemMoveUp()
@@ -190,21 +206,14 @@ void SchemaViewWindow::actionElemDelete()
         schema()->deleteElement(elements[i], true);
 }
 
-//------------------------------------------------------------------------------
-//                               Schema events
-
-void SchemaViewWindow::elementCreated(Schema*, Element *elem)
+void SchemaViewWindow::actionSaveCustom()
 {
-    if (!_pasteMode && AppSettings::instance().elemAutoLabel)
-    {
-        // Disable elemChanged event from inside of elemCreated
-        ElementLocker locker(elem, false);
-        Z::Utils::generateLabel(schema(), elem);
-    }
-    if (!_pasteMode && AppSettings::instance().editNewElem)
-        // All clients should process elementCreated event before elem will be changed,
-        // so run deffered to avoid raise elementChanged from inside of elementCreated.
-        QTimer::singleShot(0, [this, elem](){ this->editElement(elem); });
+    Element* elem = _table->selected();
+    if (!elem) return;
+
+    QString res = CustomElemsManager::saveToLibrary(elem);
+    if (!res.isEmpty())
+        Ori::Dlg::error(res);
 }
 
 //------------------------------------------------------------------------------
@@ -223,14 +232,20 @@ void SchemaViewWindow::copy()
 
 void SchemaViewWindow::paste()
 {
-    auto elems = Z::IO::Clipboard::getElements();
-    if (elems.isEmpty()) return;
+    auto pastedElems = Z::IO::Clipboard::getElements();
+    if (pastedElems.isEmpty()) return;
 
-    _pasteMode = true;
-    bool doEvents = true;
-    bool doLabels = AppSettings::instance().elemAutoLabelPasted;
-    schema()->insertElements(elems, _table->currentRow(), doEvents, doLabels);
-    _pasteMode = false;
+    if (AppSettings::instance().elemAutoLabelPasted)
+    {
+        Elements allElems(schema()->elements());
+        for (auto elem : pastedElems)
+        {
+            Z::Utils::generateLabel(allElems, elem);
+            allElems << elem;
+        }
+    }
+
+    schema()->insertElements(pastedElems, _table->currentRow(), true);
 }
 
 void SchemaViewWindow::selectAll()
@@ -252,6 +267,7 @@ void SchemaViewWindow::currentCellChanged(int curRow, int, int prevRow, int)
     actnEditCopy->setEnabled(hasElem);
     actnElemMoveUp->setEnabled(hasElem);
     actnElemMoveDown->setEnabled(hasElem);
+    actnSaveCustom->setEnabled(hasElem);
 }
 
 void SchemaViewWindow::contextMenuAboutToShow(QMenu* menu)

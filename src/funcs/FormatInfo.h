@@ -17,6 +17,7 @@ QString elementTitleAndMatrices(Element *elem);
 
 QString matrix(const Z::Matrix& m);
 QString matrices(const Z::Matrix& mt, const Z::Matrix& ms);
+QString matrix(const QString& label, const Z::Matrix& m);
 
 QString roundTrip(const QList<Element *> &elems, bool hyperlinks = false);
 

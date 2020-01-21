@@ -1,6 +1,24 @@
 {
   "history": [
     {
+      "version": "2.0.6-beta2",
+      "date": "2020-??-??",
+      "changes": [
+        {
+          "text": "Can link parameters of Matrix element to global parameters."
+        },
+        {
+          "text": "New element: Matrix element with single matrix (T=S)."
+        },
+        {
+          "text": "Copy/Paste commands in the Pumps window."
+        },
+        {
+          "text": "Added Custom Elements Library. Copy of any element can be saved to the library."
+        }
+      ]
+    },
+    {
       "version": "2.0.5-beta1",
       "date": "2019-10-21",
       "changes": [

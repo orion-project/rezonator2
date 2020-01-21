@@ -5,7 +5,7 @@
 
 ElementsCatalog::ElementsCatalog()
 {
-    auto categoryCommon = qApp->translate("Elements", "Common elements");
+    auto categoryCommon = qApp->translate("Elements", "Common");
     registerElement(categoryCommon, new ElemEmptyRange);
     registerElement(categoryCommon, new ElemPlate);
     registerElement(categoryCommon, new ElemFlatMirror);
@@ -16,8 +16,9 @@ ElementsCatalog::ElementsCatalog()
     registerElement(categoryCommon, new ElemBrewsterCrystal);
     registerElement(categoryCommon, new ElemBrewsterPlate);
 
-    auto categoryAux = qApp->translate("Elements", "Additional elements");
+    auto categoryAux = qApp->translate("Elements", "Additional");
     registerElement(categoryAux, new ElemMatrix);
+    registerElement(categoryAux, new ElemMatrix1);
     registerElement(categoryAux, new ElemPoint);
     registerElement(categoryAux, new ElemThickLens);
     registerElement(categoryAux, new ElemCylinderLensT);
@@ -65,6 +66,20 @@ Element* ElementsCatalog::create(const QString& type) const
             return elem;
         }
     return nullptr;
+}
+
+Element* ElementsCatalog::create(const Element* sample, bool copyParams) const
+{
+    auto newElem = create(sample->type());
+
+    if (copyParams)
+    {
+        auto params = sample->params();
+        for (int i = 0; i < params.count(); i++)
+            newElem->params().at(i)->setValue(params.at(i)->value());
+    }
+
+    return newElem;
 }
 
 Elements ElementsCatalog::elements(const QString& category) const

@@ -319,7 +319,7 @@ void ProjectOperations::setupPump()
 void ProjectOperations::setupWavelength()
 {
     ParamEditor editor(&schema()->wavelength());
-    Ori::Dlg::Dialog(&editor)
+    Ori::Dlg::Dialog(&editor, false)
             .withTitle(schema()->wavelength().name())
             .withHelpTopic("") // TODO help topic
             .withIconPath(":/window_icons/wavelength")
@@ -372,7 +372,7 @@ bool ProjectOperations::selectTripTypeDlg(TripType* tripType)
     QWidget content;
     LayoutV({tripTypeLabel, tripTypeLayout}).setMargin(0).setSpacing(12).useFor(&content);
 
-    auto dlg = Ori::Dlg::Dialog(&content)
+    auto dlg = Ori::Dlg::Dialog(&content, false)
             .withTitle(tr("Round-trip type"))
             .withHelpTopic("") // TODO help topic
             .withContentToButtonsSpacingFactor(3)
@@ -420,7 +420,7 @@ QString ProjectOperations::selectSchemaExample()
 
     QString fileName;
 
-    Ori::Dlg::Dialog dlg(&fileList);
+    Ori::Dlg::Dialog dlg(&fileList, false);
     dlg.withTitle(tr("Open Example Schema"))
        .withStretchedContent()
        .withInitialSize(CustomPrefs::recentSize("open_example_dlg_size"))

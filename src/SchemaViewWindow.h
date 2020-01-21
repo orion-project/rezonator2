@@ -27,9 +27,6 @@ public:
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return { menuElement }; }
 
-    // inherits from SchemaListener
-    void elementCreated(Schema*, Element*) override;
-
     // inherits from IEditableWindow
     SupportedCommands supportedCommands() override {
         return EditCmd_Copy | EditCmd_Paste | EditCmd_SelectAll; }
@@ -51,7 +48,7 @@ protected:
 private:
     QAction *actnElemAdd, *actnElemMoveUp, *actnElemMoveDown, *actnElemProp,
             *actnElemMatr, *actnElemMatrAll, *actnElemDelete, *actnEditCopy, *actnEditPaste,
-            *actnAdjuster;
+            *actnAdjuster, *actnSaveCustom;
 
     QMenu *menuElement, *menuContextElement, *menuContextLastRow;
     QMenu *menuAdjuster = nullptr;
@@ -59,8 +56,6 @@ private:
     class SchemaLayout *_layout;
     class SchemaElemsTable *_table;
     CalcManager* _calculations;
-
-    bool _pasteMode = false;
 
     void createActions();
     void createMenuBar();
@@ -74,6 +69,7 @@ private slots:
     void actionElemMoveDown();
     void actionElemProp();
     void actionElemDelete();
+    void actionSaveCustom();
     void rowDoubleClicked(Element*);
     void currentCellChanged(int curRow, int, int prevRow, int);
     void contextMenuAboutToShow(QMenu* menu);

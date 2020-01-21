@@ -6,6 +6,8 @@
 QT_BEGIN_NAMESPACE
 class QVBoxLayout;
 class QTabWidget;
+class QStackedWidget;
+class QTextBrowser;
 QT_END_NAMESPACE
 
 namespace Ori {
@@ -13,46 +15,42 @@ namespace Widgets {
     class SvgView;
 }}
 
+class Schema;
 class Element;
+class ElementTypesListView;
 
 class ElementsCatalogDialog : public RezonatorDialog
 {
     Q_OBJECT
 
 public:
-    enum CatalogMode
-    {
-        CatalogMode_Selector,
-        CatalogMode_View
-    };
-
-    ElementsCatalogDialog(CatalogMode mode, QWidget* parent = nullptr);
+    ElementsCatalogDialog(QWidget* parent = nullptr);
     ~ElementsCatalogDialog() override;
 
-    QString selected() const;
+    Element* selection() const;
+
+    /// Opens a dialog to select a sample for element creation.
+    /// The sample can be one of the predefined elements stored in the Elements Catalog,
+    /// and in this case the result pointer is persistent and not need to be freed.
+    /// The sample can be one of the elements stored in the Custom Elements Library,
+    /// then the result pointer should be freed manually after usage to prevent memory leaks.
+    static Element* chooseElementSample();
 
 protected:
     QSize prefferedSize() const override { return QSize(600, 400); }
 
 private:
-    class ElementTypesListView *elements;
-    Ori::Widgets::SvgView *drawing;
-    QVBoxLayout *layoutPage;
-    QTabWidget *tabs;
+    ElementTypesListView *_elementsList;
+    Ori::Widgets::SvgView *_previewSvg;
+    QVBoxLayout *_pageLayout;
+    QStackedWidget *_preview;
+    QTabWidget *_categoryTabs;
+    QTextBrowser *_previewHtml = nullptr;
+    int _customElemsTab = -1;
+    Schema *_library = nullptr;
 
-private slots:
     void categorySelected(int index);
-    void loadDrawing(const QString& elemType);
+    void updatePreview(Element *elem);
 };
-
-
-namespace Z {
-namespace Dlgs {
-
-bool selectElementDialog(QString &type);
-Element* createElement();
-void showElementsCatalog();
-
-}}
 
 #endif // ELEMENT_SELECTOR_H

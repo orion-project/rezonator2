@@ -31,7 +31,7 @@ public:
 /**
     Base class for all functions.
 */
-class FunctionBase : public Notifier<FunctionListener>
+class FunctionBase : public Ori::Notifier<FunctionListener>
 {
 public:
     enum FunctionState

@@ -1,6 +1,8 @@
 #include "ElementTypesListView.h"
 #include "ElementImagesProvider.h"
 
+#include "../core/Utils.h"
+
 #include <QKeyEvent>
 #include <QPainter>
 
@@ -26,13 +28,13 @@ void ElementTypesListView::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void ElementTypesListView::populate(Elements elems)
+void ElementTypesListView::populate(Elements elems, DisplayNameKind displayNameKind)
 {
     static QMap<QString, QIcon> elemIcons;
 
     blockSignals(true);
     clear();
-    foreach (Element *elem, elems)
+    for (Element *elem : elems)
     {
         if (!elemIcons.contains(elem->type()))
         {
@@ -48,8 +50,16 @@ void ElementTypesListView::populate(Elements elems)
             painter.drawPixmap(marginX, marginY, defaultSize.width(), defaultSize.height(), defaultIcon.pixmap(defaultSize));
             elemIcons.insert(elem->type(), QIcon(thisPixmap));
         }
-        auto it = new QListWidgetItem(elemIcons[elem->type()], elem->typeName());
-        it->setData(Qt::UserRole, elem->type());
+        QString displayName;
+        switch (displayNameKind)
+        {
+        case DisplayNameKind::Type: displayName = elem->typeName(); break;
+        case DisplayNameKind::Title: displayName = elem->title(); break;
+        }
+        if (displayName.isEmpty())
+            displayName = elem->typeName();
+        auto it = new QListWidgetItem(elemIcons[elem->type()], displayName);
+        it->setData(Qt::UserRole, ptr2var(elem));
         addItem(it);
     }
     adjust();
@@ -80,21 +90,21 @@ void ElementTypesListView::adjust()
 void ElementTypesListView::rowSelected(int index)
 {
     if (index < 0)
-        emit elementSelected(QString());
+        emit elementSelected(nullptr);
     else
-        emit elementSelected(elemType(item(index)));
+        emit elementSelected(elem(item(index)));
 }
 
-const QString ElementTypesListView::selected() const
+Element* ElementTypesListView::selected() const
 {
     if (currentRow() > -1)
-        return elemType(item(currentRow()));
-    return QString();
+        return elem(item(currentRow()));
+    return nullptr;
 }
 
-QString ElementTypesListView::elemType(QListWidgetItem *item) const
+Element *ElementTypesListView::elem(QListWidgetItem *item) const
 {
-    return item->data(Qt::UserRole).toString();
+    return var2ptr<Element*>(item->data(Qt::UserRole));
 }
 
 QSize ElementTypesListView::iconSize() const

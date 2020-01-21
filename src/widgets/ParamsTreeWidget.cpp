@@ -41,7 +41,7 @@ Z::Parameter* ParamsTreeWidget::selectParamDlg(Options opts)
             layout->insertWidget(0, Z::Gui::headerlabel(opts.dialogPrompt));
     }
 
-    Ori::Dlg::Dialog dlg(&paramsTree);
+    Ori::Dlg::Dialog dlg(&paramsTree, false);
     dlg.withTitle(opts.dialogTitle)
        .withStretchedContent()
        .withInitialSize(CustomPrefs::recentSize("select_param_tree_dlg_size"))
@@ -139,14 +139,14 @@ Z::Parameter* ParamsTreeWidget::selectedParam() const
 
 void ParamsTreeWidget::itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
-    Q_UNUSED(column);
+    Q_UNUSED(column)
     auto param = paramOfItem(item);
     if (param) emit paramDoubleClicked(param);
 }
 
 void ParamsTreeWidget::currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
-    Q_UNUSED(previous);
+    Q_UNUSED(previous)
     emit paramSelected(paramOfItem(current));
 }
 

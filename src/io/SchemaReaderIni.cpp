@@ -382,6 +382,7 @@ void SchemaReaderIni::readElement(const QString &section)
     elem->setDisabled(ini.getBool("Disabled"));
 
     auto grinLens = dynamic_cast<ElemGrinLens*>(elem);
+    auto matrixElem = dynamic_cast<ElemMatrix*>(elem);
 
     for (Z::Parameter* param : elem->params())
     {
@@ -415,7 +416,11 @@ void SchemaReaderIni::readElement(const QString &section)
 
         // Gradiens are stored in linear units in old schemas, but they are in 1/m2 in new ones
         if (grinLens and (param == grinLens->paramIor2t() or param == grinLens->paramIor2s()))
-             tmp /= _linearUnit->toSi(1) * _linearUnit->toSi(1);
+            tmp /= _linearUnit->toSi(1) * _linearUnit->toSi(1);
+
+        // C factors are stored in linear units in old schemas, but they are in 1/m in new ones
+        if (matrixElem and (param == matrixElem->paramCt() or param == matrixElem->paramCs()))
+            tmp /= _linearUnit->toSi(1);
 
         Z::Value value(tmp, unit);
 

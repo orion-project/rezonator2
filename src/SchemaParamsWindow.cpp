@@ -135,7 +135,7 @@ void SchemaParamsWindow::createParameter()
         return QString();
     };
 
-    if (Ori::Dlg::Dialog(&editor)
+    if (Ori::Dlg::Dialog(&editor, false)
                 .withTitle(tr("Create Parameter"))
                 .withIconPath(":/window_icons/parameter")
                 .withContentToButtonsSpacingFactor(3)
@@ -209,7 +209,7 @@ void SchemaParamsWindow::setParameterValue()
 
     auto globalParams = schema()->globalParams();
     ParamEditorEx editor(param, schema()->formulas(), &globalParams);
-    bool ok = Ori::Dlg::Dialog(&editor)
+    bool ok = Ori::Dlg::Dialog(&editor, false)
                 .withTitle(tr("Set value"))
                 .withIconPath(":/window_icons/parameter")
                 .withContentToButtonsSpacingFactor(2)

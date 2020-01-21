@@ -26,9 +26,7 @@ QString matrix(const Z::Matrix& m)
                 "<td align=right><pre class=value>%4</pre></td>"
             "</tr>"
         "</table>"
-    ).arg(
-        Z::format(m.A), Z::format(m.B), Z::format(m.C), Z::format(m.D)
-    );
+    ).arg(Z::format(m.A), Z::format(m.B), Z::format(m.C), Z::format(m.D));
 }
 
 QString matrices(const Z::Matrix& mt, const Z::Matrix& ms)
@@ -46,9 +44,19 @@ QString matrices(const Z::Matrix& mt, const Z::Matrix& ms)
                 "</td>"
             "</tr>"
         "</table>"
-    ).arg(
-        matrix(mt), matrix(ms), Z::format(mt.det()), Z::format(ms.det())
-    );
+    ).arg(matrix(mt), matrix(ms), Z::format(mt.det()), Z::format(ms.det()));
+}
+
+QString matrix(const QString& label, const Z::Matrix& m)
+{
+    return QStringLiteral(
+        "<table cellpadding=3 valign=middle style='margin-top:5px'>"
+            "<tr>"
+                "<td><pre class=param>%1&nbsp;=</pre></td>"
+                "<td>%2</td>"
+            "</tr>"
+        "</table>"
+    ).arg(label, matrix(m));
 }
 
 QString linkViewMatrix(Element *elem)
@@ -164,7 +172,15 @@ QString FormatParam::format(Z::Parameter* param)
         if (_isReadOnly)
             parts << QStringLiteral("<i>");
 
-        parts << param->value().displayStr();
+        // When HTML is available, it's better to format inverted units as negative degrees,
+        // because digits in strings like "1/m" could be easily confused with the value itself, e.g. "1 1/m".
+        auto unit = param->value().unit();
+        if (unit == Z::Units::inv_m())
+            parts << Z::format(param->value().value()) << QStringLiteral(" m<sup>&ndash;1</sup>");
+        else if (unit == Z::Units::inv_m2())
+            parts << Z::format(param->value().value()) << QStringLiteral(" m<sup>&ndash;2</sup>");
+        else
+            parts << param->value().displayStr();
 
         if (_isReadOnly)
             parts << QStringLiteral("</i>");
@@ -192,7 +208,7 @@ QString FormatElemParams::format(Element *elem)
     {
         if (!Z::Utils::defaultParamFilter()->check(param)) continue;
 
-        parts << f.format(param);
+        parts << f.format(param).trimmed();
     }
     return parts.join(QStringLiteral(", "));
 }

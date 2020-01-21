@@ -1,14 +1,36 @@
 <svg height="128" width="200" xmlns="http://www.w3.org/2000/svg">
-<g fill="none" stroke="#000">
-<path d="m39.75 63.61h118.42" stroke-width="7"/>
-<path d="m89.75 28.36v74.29" stroke-dasharray="3 3"/>
-<path d="m51.95 26.36h75.61v74.5h-75.61z" stroke-width="3"/>
-<path d="m142.07 47.06 18.18 16.73-17.82 16.36" stroke-linecap="round" stroke-width="7"/>
+<g transform="translate(6)">
+<path d="m126.95 64v36.86h-75v-36.86z" style="fill:#fff;fill-opacity:.8;stroke:#4d4d4d;stroke-width:3;stroke-linecap:round;stroke-linejoin:round"/>
+<g fill="#4d4d4d" font-family="Times New Roman" font-size="7.38" font-style="italic">
+<text x="59.87" y="92.44"><tspan fill="#4d4d4d" font-size="26.56" x="59.87" y="92.44">C</tspan></text>
+<text x="100.06" y="92.44"><tspan fill="#4d4d4d" font-size="26.56" x="100.06" y="92.44">D</tspan></text>
 </g>
+<path d="m89.75 64.36v36.29" fill="none" stroke="#4d4d4d" stroke-dasharray="3 3"/>
+</g>
+<path d="m93.24 44.48h75.61l-39.61 19.53-74.51-.54z" fill="#fff" fill-opacity=".8" stroke="#6f6f6f" stroke-linejoin="round" stroke-width="3"/>
+<path d="m128.84 45.56-36.01 17.76" fill="none" stroke="#4d4d4d" stroke-dasharray="3 3"/>
+<g fill="#6f6f6f" font-family="Times New Roman" font-size="7.38" font-style="italic" transform="matrix(1 0 -1.1 .54 70.36 30.15)">
+<text x="63.49" y="50.44"><tspan fill="#6f6f6f" font-size="26.56" x="63.49" y="50.44">A</tspan></text>
+<text x="101.49" y="50.24"><tspan fill="#6f6f6f" font-size="26.56" x="101.49" y="50.24">B</tspan></text>
+</g>
+<g transform="translate(4)">
+<path d="m130.38 63.44-43.68 21.54h-75.61l43.99-21.69z" fill="#fff" fill-opacity=".91" stroke="#000" stroke-linejoin="round" stroke-width="3"/>
+<path d="m92.41 63.52-45.49 22.43" fill="none" stroke="#000" stroke-dasharray="3 3"/>
+<g font-family="Times New Roman" font-size="7.38" font-style="italic" transform="matrix(1 0 -1.1 .54 70.36 30.15)">
+<text x="59.87" y="92.44"><tspan font-size="26.56" x="59.87" y="92.44">C</tspan></text>
+<text x="100.06" y="92.44"><tspan font-size="26.56" x="100.06" y="92.44">D</tspan></text>
+</g>
+</g>
+<g transform="translate(6)">
+<path d="m51.95 26.36h75v36.64h-75z" style="fill:#fff;fill-opacity:.8;stroke:#000;stroke-width:3;stroke-linecap:round;stroke-linejoin:round"/>
 <g font-family="Times New Roman" font-size="7.38" font-style="italic">
 <text x="63.49" y="50.44"><tspan font-size="26.56" x="63.49" y="50.44">A</tspan></text>
 <text x="101.49" y="50.24"><tspan font-size="26.56" x="101.49" y="50.24">B</tspan></text>
-<text x="59.87" y="92.44"><tspan font-size="26.56" x="59.87" y="92.44">C</tspan></text>
-<text x="100.06" y="92.44"><tspan font-size="26.56" x="100.06" y="92.44">D</tspan></text>
+</g>
+<path d="m89.75 26.36v36.29" fill="none" stroke="#000" stroke-dasharray="3 3"/>
+</g>
+<g fill="none" stroke="#000" stroke-width="7">
+<path d="m156.07 47.06 18.18 16.73-17.82 16.36" stroke-linecap="round"/>
+<path d="m23.75 63.61h146.42"/>
 </g>
 </svg>

@@ -1,5 +1,6 @@
 #include "CommonData.h"
 #include "CalculatorWindow.h"
+#include "CustomElemsWindow.h"
 #include "GaussCalculatorWindow.h"
 #include "ProjectOperations.h"
 #include "ProjectWindow.h"
@@ -90,6 +91,11 @@ int main(int argc, char* argv[])
             CalculatorWindow::showWindow();
             return app.exec();
         }
+        else if (toolName == "elems")
+        {
+            CustomElemsWindow::showWindow();
+            return app.exec();
+        }
         else
         {
         #ifdef Q_OS_WIN
@@ -113,7 +119,10 @@ int main(int argc, char* argv[])
             if (parser.isSet(optionExample))
                 projectWindow->operations()->openExampleFile(fileName);
             else
+            {
                 projectWindow->operations()->openSchemaFile(fileName);
+                CommonData::instance()->addFileToMruList(fileName);
+            }
             return app.exec();
         }
     }

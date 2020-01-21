@@ -275,7 +275,7 @@ TEST_METHOD(BrewsterPlate)
     ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
 
-TEST_METHOD(Matrix1)
+TEST_METHOD(Matrix_1)
 {
     ELEM(Matrix, 8)
     elem->setMatrixT(1.1, 2.2, 3.3, 4.4);
@@ -287,20 +287,45 @@ TEST_METHOD(Matrix1)
     ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
 
-TEST_METHOD(Matrix2)
+TEST_METHOD(Matrix_2)
 {
     ELEM(Matrix, 8)
     SET_PARAM(At, 1.1, none)
-    SET_PARAM(Bt, 2.2, none)
-    SET_PARAM(Ct, 3.3, none)
+    SET_PARAM(Bt, 220, cm)
+    SET_PARAM(Ct, 3.3, inv_m)
     SET_PARAM(Dt, 4.4, none)
     SET_PARAM(As, 5.5, none)
-    SET_PARAM(Bs, 6.6, none)
-    SET_PARAM(Cs, 7.7, none)
+    SET_PARAM(Bs, 6600, mm)
+    SET_PARAM(Cs, 7.7, inv_m)
     SET_PARAM(Ds, 8.8, none)
 
     ASSERT_MATRIX(t, 1.1, 2.2, 3.3, 4.4)
     ASSERT_MATRIX(s, 5.5, 6.6, 7.7, 8.8)
+    ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
+    ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
+}
+
+TEST_METHOD(Matrix1_1)
+{
+    ELEM(Matrix1, 4)
+    elem->setMatrix(1.1, 2.2, 3.3, 4.4);
+
+    ASSERT_MATRIX(t, 1.1, 2.2, 3.3, 4.4)
+    ASSERT_EQ_MATRIX(elem->Mt(), elem->Ms())
+    ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
+    ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
+}
+
+TEST_METHOD(Matrix1_2)
+{
+    ELEM(Matrix1, 4)
+    SET_PARAM(A, 1.1, none)
+    SET_PARAM(B, 220, cm)
+    SET_PARAM(C, 3.3, inv_m)
+    SET_PARAM(D, 4.4, none)
+
+    ASSERT_MATRIX(t, 1.1, 2.2, 3.3, 4.4)
+    ASSERT_EQ_MATRIX(elem->Mt(), elem->Ms())
     ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
     ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
@@ -497,8 +522,10 @@ TEST_GROUP("Elements",
            ADD_TEST(TiltedPlate),
            ADD_TEST(BrewsterCrystal),
            ADD_TEST(BrewsterPlate),
-           ADD_TEST(Matrix1),
-           ADD_TEST(Matrix2),
+           ADD_TEST(Matrix_1),
+           ADD_TEST(Matrix_2),
+           ADD_TEST(Matrix1_1),
+           ADD_TEST(Matrix1_2),
            ADD_TEST(Point),
            ADD_TEST(GrinLens),
            ADD_TEST(ThickLens),

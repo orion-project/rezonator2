@@ -10,14 +10,16 @@ class ElementTypesListView : public QListWidget
     Q_OBJECT
 
 public:
+    enum class DisplayNameKind { Type, Title };
+
     explicit ElementTypesListView(QWidget *parent = nullptr);
     
-    void populate(Elements elems);
-    const QString selected() const;
+    void populate(Elements elems, DisplayNameKind displayNameKind = DisplayNameKind::Type);
+    Element* selected() const;
 
 signals:
     void enterPressed();
-    void elementSelected(const QString& type);
+    void elementSelected(Element*);
 
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
@@ -25,7 +27,7 @@ protected:
 private:
     void adjust();
 
-    QString elemType(QListWidgetItem*) const;
+    Element* elem(QListWidgetItem*) const;
     QString iconPath(Element*) const;
     QSize iconSize() const;
 
