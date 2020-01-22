@@ -104,7 +104,7 @@ protected:
     QMenu *menuPlot, *menuLimits, *menuFormat, *menuAxisX, *menuAxisY;
     QAction *actnShowT, *actnShowS, *actnShowFlippedTS,
         *actnAutolimits, *actnAutolimitsX, *actnAutolimitsY,
-        *actnSetLimits, *actnSetLimitsX, *actnSetLimitsY,
+        *actnSetLimitsX, *actnSetLimitsY,
         *actnZoomIn, *actnZoomOut, *actnZoomInX, *actnZoomOutX, *actnZoomInY, *actnZoomOutY,
         *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo;
 

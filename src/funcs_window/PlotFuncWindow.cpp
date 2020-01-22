@@ -81,7 +81,6 @@ void PlotFuncWindow::createActions()
     actnZoomInY = action(tr("Zoom-in Over Y"), _plot, SLOT(zoomInY()), ":/toolbar/limits_zoom_in_y");
     actnZoomOutY = action(tr("Zoom-out Over Y"), _plot, SLOT(zoomOutY()), ":/toolbar/limits_zoom_out_y");
 
-    actnSetLimits = action(tr("Set Limits..."), _plot, SLOT(setLimitsDlg()));
     actnSetLimitsX = action(tr("Set X-axis Limits..."), _plot, SLOT(setLimitsDlgX()));
     actnSetLimitsY = action(tr("Set Y-axis Limits..."), _plot, SLOT(setLimitsDlgY()));
 }
@@ -105,7 +104,7 @@ void PlotFuncWindow::createMenuBar()
     });
 
     menuLimits = menu(tr("Limits", "Menu title"), this, {
-        actnSetLimits, actnAutolimits, actnZoomIn, actnZoomOut, nullptr,
+        actnAutolimits, actnZoomIn, actnZoomOut, nullptr,
         actnSetLimitsX, actnAutolimitsX, actnZoomInX, actnZoomOutX, nullptr,
         actnSetLimitsY, actnAutolimitsY, actnZoomInY, actnZoomOutY
     });
@@ -199,6 +198,12 @@ void PlotFuncWindow::createContent()
     _plot->legend->setVisible(false);
     _plot->setAutoAddPlottableToLegend(false);
     connect(_plot, &Plot::graphSelected, this, &PlotFuncWindow::graphSelected);
+
+    _plot->getAxisUnitString = [this](QCPAxis* axis) {
+        if (axis == _plot->xAxis) return getUnitX()->name();
+        if (axis == _plot->yAxis) return getUnitY()->name();
+        return QString();
+    };
 
     _cursor = new QCPCursor(_plot);
     connect(_cursor, &QCPCursor::positionChanged, this, &PlotFuncWindow::updateCursorInfo);

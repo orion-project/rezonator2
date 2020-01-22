@@ -36,6 +36,9 @@ public:
     QMenu *menuAxisX = nullptr;
     QMenu *menuAxisY = nullptr;
 
+    /// The callback used to get axis units for showing in the axis limits dialog.
+    std::function<QString(QCPAxis*)> getAxisUnitString;
+
     bool useSafeMargins = true;
     bool excludeServiceGraphsFromAutolimiting = true;
 
@@ -47,7 +50,6 @@ public slots:
     void autolimits(bool replot = true) { autolimits(xAxis, false); autolimits(yAxis, replot); }
     void autolimitsX(bool replot = true) { autolimits(xAxis, replot); }
     void autolimitsY(bool replot = true) { autolimits(yAxis, replot); }
-    bool setLimitsDlg();
     bool setLimitsDlgX() { return setLimitsDlg(xAxis); }
     bool setLimitsDlgY() { return setLimitsDlg(yAxis); }
     void zoomIn() { extendLimits(-(_zoomStepX+_zoomStepY)/2.0); }
@@ -86,7 +88,7 @@ private:
 
     void autolimits(QCPAxis* axis, bool replot);
     void extendLimits(QCPAxis* axis, double factor, bool replot);
-    bool setLimitsDlg(QCPRange& range, const QString &title);
+    bool setLimitsDlg(QCPRange& range, const QString &title, const QString& unit);
     void setAxisRange(QCPAxis* axis, const QCPRange &range);
     double safeMargins(QCPAxis* axis);
     PlotPart selectedPart() const;

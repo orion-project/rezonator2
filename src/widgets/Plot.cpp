@@ -228,23 +228,13 @@ void Plot::setAxisRange(QCPAxis* axis, const QCPRange& range)
     axis->setRange(r);
 }
 
-bool Plot::setLimitsDlg()
-{
-    auto range = xAxis->range();
-    if (setLimitsDlg(range, tr("Limits for X and Y")))
-    {
-        setAxisRange(xAxis, range);
-        setAxisRange(yAxis, range);
-        replot();
-        return true;
-    }
-    return false;
-}
-
 bool Plot::setLimitsDlg(QCPAxis* axis)
 {
+    QString unitStr;
+    if (getAxisUnitString)
+        unitStr = getAxisUnitString(axis);
     auto range = axis->range();
-    if (setLimitsDlg(range, tr("%1 Limits").arg(getAxisTitle(axis))))
+    if (setLimitsDlg(range, tr("%1 Limits").arg(getAxisTitle(axis)), unitStr))
     {
         setAxisRange(axis, range);
         replot();
@@ -253,7 +243,7 @@ bool Plot::setLimitsDlg(QCPAxis* axis)
     return false;
 }
 
-bool Plot::setLimitsDlg(QCPRange& range, const QString& title)
+bool Plot::setLimitsDlg(QCPRange& range, const QString& title, const QString &unit)
 {
     auto editorMin = new Ori::Widgets::ValueEdit;
     auto editorMax = new Ori::Widgets::ValueEdit;
@@ -268,8 +258,8 @@ bool Plot::setLimitsDlg(QCPRange& range, const QString& title)
     QWidget w;
 
     auto layout = new QFormLayout(&w);
-    layout->addRow(new QLabel("Min"), editorMin);
-    layout->addRow(new QLabel("Max"), editorMax);
+    layout->addRow(new QLabel(unit.isEmpty() ? QString("Min") : QString("Min (%1)").arg(unit)), editorMin);
+    layout->addRow(new QLabel(unit.isEmpty() ? QString("Max") : QString("Max (%1)").arg(unit)), editorMax);
 
     if (Ori::Dlg::Dialog(&w, false).withTitle(title).exec())
     {
