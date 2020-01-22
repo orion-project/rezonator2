@@ -1,23 +1,22 @@
-<svg height="256" width="256" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <linearGradient id="a">
-    <stop offset="0" stop-color="#725236"/>
-    <stop offset="1" stop-color="#826044"/>
-  </linearGradient>
-  <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="142.720447" x2="23.271071" xlink:href="#a" y1="146.551308" y2="80.335722"/>
-  <linearGradient id="c" gradientUnits="userSpaceOnUse" x1="71.717034" x2="19.215376" xlink:href="#a" y1="34.639885" y2="18.65681"/>
-  <linearGradient id="d" gradientUnits="userSpaceOnUse" x1="37.240556" x2="70.857534" y1="113.058919" y2="113.616049">
-    <stop offset="0" stop-color="#fff"/>
-    <stop offset="1" stop-color="#fff" stop-opacity="0"/>
-  </linearGradient>
-  <linearGradient id="e" gradientUnits="userSpaceOnUse" x1="109.260921" x2="219.292109" y1="209.662336" y2="108.800414">
-    <stop offset="0" stop-color="#cd3232"/>
-    <stop offset="1" stop-color="#e08e8e"/>
-  </linearGradient>
-  <path d="m21.613671 83.062519-2.739954-73.5221052 62.105637 34.7060762z" fill="#b29175" fill-rule="evenodd" stroke="url(#c)" stroke-width="3"/>
-  <circle cx="82.767433" cy="112.30188" fill="#b08e71" r="68.333122" stroke="url(#b)" stroke-width="4"/>
-  <path d="m74.951944 162.36683c-60.40008-10.46038-55.54385-85.555591-9.58574-98.604941" fill="none" stroke="url(#d)" stroke-linecap="round" stroke-opacity=".278481" stroke-width="15"/>
-  <g stroke-linejoin="round">
-    <path d="m191.78432 163.81605 55.0156-55.01559-27.5078-27.507792-55.01559 55.015582-55.01559-55.015582-27.507805 27.507792 55.015595 55.01559-55.015595 55.01559 27.507805 27.5078 55.01559-55.0156 55.01559 55.0156 27.5078-27.5078z" fill="url(#e)" fill-rule="evenodd" stroke="#661b1b" stroke-width="9.169266"/>
-    <path d="m100.09167 218.83164 45.84633-45.84633c9.16926-9.16926 0-18.33853 0-18.33853l-45.84633-45.84632" fill="none" stroke="#edbaba" stroke-linecap="round" stroke-width="13.753899"/>
-  </g>
+<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<linearGradient id="a" gradientUnits="userSpaceOnUse" x1="2.744" x2="11.244" y1="10.936" y2="11.548">
+<stop offset="0" stop-color="#fff"/>
+<stop offset="1" stop-color="#fff" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="b" gradientUnits="userSpaceOnUse" x1="109.26" x2="219.29" y1="209.66" y2="108.8">
+<stop offset="0" stop-color="#cd3232"/>
+<stop offset="1" stop-color="#e08e8e"/>
+</linearGradient>
+<g>
+<path d="m1.25 7.77v-6.96l5.96 3.16z" fill="#b29175" fill-rule="evenodd" stroke="#725236" stroke-width=".5"/>
+<circle cx="7.13" cy="10.63" fill="#b08e71" r="6.7" stroke="#725236" stroke-width=".5"/>
+<g fill="none" stroke="url(#a)" stroke-linecap="round" stroke-opacity=".28" stroke-width="1.47">
+<path d="m6.37 15.54c-5.92-1.03-5.45-8.39-.94-9.67"/>
+<path d="m6.37 15.54c-5.92-1.03-5.45-8.39-.94-9.67"/>
+</g>
+</g>
+<g stroke-linejoin="round" transform="matrix(.1 0 0 .1 -2.47 -2.43)">
+<path d="m191.78 163.82 55.02-55.02-27.51-27.51-55.02 55.02-55.02-55.02-27.51 27.51 55.02 55.02-55.02 55.02 27.51 27.51 55.02-55.02 55.02 55.02 27.51-27.51z" fill="url(#b)" fill-rule="evenodd" stroke="#661b1b" stroke-width="9.17"/>
+<path d="m100.09 218.83 45.85-45.84c9.17-9.17 0-18.34 0-18.34l-45.85-45.85" fill="none" stroke="#edbaba" stroke-linecap="round" stroke-width="13.75"/>
+</g>
 </svg>

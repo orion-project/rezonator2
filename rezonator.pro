@@ -59,6 +59,7 @@ HEADERS += \
     src/CustomElemsManager.h \
     src/CustomElemsWindow.h \
     src/CustomPrefs.h \
+    src/ElemFormulaWindow.h \
     src/ElementPropsDialog.h \
     src/ElementsCatalogDialog.h \
     src/HelpSystem.h \
@@ -179,6 +180,7 @@ SOURCES += \
     src/CustomElemsManager.cpp \
     src/CustomElemsWindow.cpp \
     src/CustomPrefs.cpp \
+    src/ElemFormulaWindow.cpp \
     src/ElementPropsDialog.cpp \
     src/ElementsCatalogDialog.cpp \
     src/HelpSystem.cpp \

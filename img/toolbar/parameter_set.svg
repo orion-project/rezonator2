@@ -1,22 +1,22 @@
-<svg height="256" width="256" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <linearGradient id="a">
-    <stop offset="0" stop-color="#725236"/>
-    <stop offset="1" stop-color="#826044"/>
-  </linearGradient>
-  <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="142.720447" x2="23.271071" xlink:href="#a" y1="146.551308" y2="80.335722"/>
-  <linearGradient id="c" gradientUnits="userSpaceOnUse" x1="71.717034" x2="19.215376" xlink:href="#a" y1="34.639885" y2="18.65681"/>
-  <linearGradient id="d" gradientUnits="userSpaceOnUse" x1="37.240556" x2="70.857534" y1="113.058919" y2="113.616049">
-    <stop offset="0" stop-color="#fff"/>
-    <stop offset="1" stop-color="#fff" stop-opacity="0"/>
-  </linearGradient>
-  <path d="m21.613671 83.062519-2.739954-73.5221052 62.105637 34.7060762z" fill="#c0a68f" fill-rule="evenodd" stroke="url(#c)" stroke-width="3"/>
-  <circle cx="82.767433" cy="112.30188" fill="#c0a68f" r="68.333122" stroke="url(#b)" stroke-width="4"/>
-  <path d="m74.951944 162.36683c-60.40008-10.46038-55.54385-85.555591-9.58574-98.604941" fill="none" stroke="url(#d)" stroke-linecap="round" stroke-opacity=".278481" stroke-width="15"/>
-  <g id="e" transform="matrix(1.1037224 0 0 1.1037224 -26.09737 -40.78583)">
-    <path d="m248.10788 177.61644v-46.22744h-123.56128l-.20618 46.22735z" fill="#2e95b7" fill-rule="evenodd" stroke="#2c5461" stroke-linejoin="round" stroke-width="7"/>
-    <path d="m135.42608 142.14326h101.47294" style="fill:none;stroke:#fff;stroke-width:11.095;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:.473684"/>
-    <circle cx="79.169418" cy="154.3156" fill="#2e95b7" r="21.562986" stroke="#2c5461" stroke-linejoin="round" stroke-width="7"/>
-    <circle cx="72.349464" cy="146.43663" fill="#fff" fill-opacity=".47451" r="8.469893"/>
-  </g>
-  <use height="100%" transform="translate(0 83.575792)" width="100%" xlink:href="#e"/>
+<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<linearGradient id="a" gradientUnits="userSpaceOnUse" x1="2.744" x2="11.244" y1="10.936" y2="11.548">
+<stop offset="0" stop-color="#fff"/>
+<stop offset="1" stop-color="#fff" stop-opacity="0"/>
+</linearGradient>
+<g>
+<path d="m1.25 7.77v-6.96l5.96 3.16z" fill="#b29175" fill-rule="evenodd" stroke="#725236" stroke-width=".5"/>
+<circle cx="7.13" cy="10.63" fill="#b08e71" r="6.7" stroke="#725236" stroke-width=".5"/>
+<g fill="none" stroke="url(#a)" stroke-linecap="round" stroke-opacity=".28" stroke-width="1.47">
+<path d="m6.37 15.54c-5.92-1.03-5.45-8.39-.94-9.67"/>
+<path d="m6.37 15.54c-5.92-1.03-5.45-8.39-.94-9.67"/>
+</g>
+</g>
+<g id="b" transform="matrix(.1 0 0 .1 -1.54 -3.33)">
+<path d="m250.71 178.48v-49.85h-119.77l-.2 49.85z" fill="#2e95b7" fill-rule="evenodd" stroke="#366878" stroke-linejoin="round" stroke-width="10.24"/>
+<path d="m147.79 143.21h87.08" style="fill:none;stroke:#fff;stroke-width:13.92;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:.47"/>
+<circle cx="82.65" cy="153.55" fill="none" r="24.38" stroke="#bad6e0" stroke-linejoin="round" stroke-width="20.03"/>
+<circle cx="82.65" cy="153.55" fill="#2e95b7" r="24.38" stroke="#2c5562" stroke-linejoin="round" stroke-width="11.33"/>
+<circle cx="77.15" cy="146.92" fill="#fff" fill-opacity=".54" r="8.47"/>
+</g>
+<use height="100%" transform="translate(0 9)" width="100%" xlink:href="#b"/>
 </svg>

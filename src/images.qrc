@@ -15,6 +15,8 @@
         <file alias="duplicate_page">../img/toolbar/duplicate_page.svg</file>
         <file alias="edit_formula">../img/toolbar/edit_formula.svg</file>
         <file alias="elem_add">../img/toolbar/elem_add.svg</file>
+        <file alias="elem_arrow_from">../img/toolbar/elem_arrow_from.svg</file>
+        <file alias="elem_arrow_to">../img/toolbar/elem_arrow_to.svg</file>
         <file alias="elem_delete">../img/toolbar/elem_delete.svg</file>
         <file alias="elem_move_up">../img/toolbar/elem_move_up.svg</file>
         <file alias="elem_move_down">../img/toolbar/elem_move_down.svg</file>
@@ -47,6 +49,7 @@
         <file alias="help">../img/toolbar/help.svg</file>
         <file alias="home">../img/toolbar/home.svg</file>
         <file alias="info">../img/toolbar/info.svg</file>
+        <file alias="label">../img/toolbar/label.svg</file>
         <file alias="limits_auto_x">../img/toolbar/limits_auto_x.svg</file>
         <file alias="limits_auto_y">../img/toolbar/limits_auto_y.svg</file>
         <file alias="limits_auto">../img/toolbar/limits_auto.svg</file>
@@ -82,10 +85,10 @@
         <file alias="pump_on">../img/toolbar/pump_on.svg</file>
         <file alias="pumps">../img/toolbar/pumps.svg</file>
         <file alias="restore">../img/toolbar/restore.svg</file>
+        <file alias="save">../img/toolbar/save.svg</file>
         <file alias="schema_new">../img/toolbar/schema_new.svg</file>
         <file alias="schema_open">../img/toolbar/schema_open.svg</file>
         <file alias="schema_prop">../img/toolbar/schema_prop.svg</file>
-        <file alias="schema_save">../img/toolbar/save.svg</file>
         <file alias="schema_sample">../img/toolbar/schema_sample.svg</file>
         <file alias="schema_summary">../img/toolbar/schema_summary.svg</file>
         <file alias="schema">../img/toolbar/go_to_schema.svg</file>
@@ -101,10 +104,10 @@
         <file alias="check_none">../img/toolbar16/check_none.png</file>
         <file alias="langs">../img/toolbar16/flags.png</file>
         <file alias="menu">../img/toolbar16/menu.png</file>
-        <file alias="points">../img/toolbar16/graph_point.png</file>
-        <file alias="table">../img/toolbar16/table.png</file>
         <file alias="params">../img/toolbar16/params.png</file>
         <file alias="plot_tracing">../img/toolbar16/plot_tracing.png</file>
+        <file alias="points">../img/toolbar16/graph_point.png</file>
+        <file alias="table">../img/toolbar16/table.png</file>
     </qresource>
     <qresource prefix="/toolbar10">
         <file alias="ts_link">../img/toolbar10/ts_equals.png</file>

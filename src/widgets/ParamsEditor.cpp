@@ -9,28 +9,11 @@
 //                                ParamsEditor
 //------------------------------------------------------------------------------
 
-ParamsEditor::ParamsEditor(Options opts, QWidget *parent) : QWidget(parent), _params(opts.params)
+ParamsEditor::ParamsEditor(Options opts, QWidget *parent) : QWidget(parent), _options(opts), _params(opts.params)
 {
-    auto layoutParams = Ori::Layouts::LayoutV({}).setMargin(0).setSpacing(0);
-    for (auto param : *_params)
-    {
-        // TODO use parameters filter
-        if (!param->visible()) continue;
-
-        ParamEditor::Options o(param);
-        // NOTE: Currently ParamsEditor is only used in element properties dialog
-        // so we can set suitable options here. But in general options should be passed from client.
-        o.allowLinking = true;
-        o.globalParams = opts.globalParams;
-        o.paramLinks = opts.paramLinks;
-        auto editor = new ParamEditor(o);
-        connect(editor, &ParamEditor::focused, this, &ParamsEditor::paramFocused);
-        connect(editor, &ParamEditor::goingFocusNext, this, &ParamsEditor::focusNextParam);
-        connect(editor, &ParamEditor::goingFocusPrev, this, &ParamsEditor::focusPrevParam);
-
-        _editors.append(editor);
-        layoutParams.boxLayout()->addWidget(editor);
-    }
+    _paramsLayout = Ori::Layouts::LayoutV({}).setMargin(0).setSpacing(0).boxLayout();
+    for (Z::Parameter* param : *_params)
+        addEditor(param);
 
     _infoPanel = new Ori::Widgets::InfoPanel;
     auto layout = qobject_cast<QBoxLayout*>(_infoPanel->layout());
@@ -41,7 +24,7 @@ ParamsEditor::ParamsEditor(Options opts, QWidget *parent) : QWidget(parent), _pa
     }
 
     Ori::Layouts::LayoutV({
-                              layoutParams,
+                              _paramsLayout,
                               Ori::Layouts::Stretch(),
                               Ori::Layouts::LayoutH({_infoPanel}).setMargin(3)
                           })
@@ -49,12 +32,33 @@ ParamsEditor::ParamsEditor(Options opts, QWidget *parent) : QWidget(parent), _pa
             .useFor(this);
 }
 
-void ParamsEditor::populate()
+void ParamsEditor::addEditor(Z::Parameter* param)
+{
+    if (_options.filter && !_options.filter->check(param))
+        return;
+
+    ParamEditor::Options o(param);
+    o.allowLinking = _options.globalParams;
+    o.globalParams = _options.globalParams;
+    o.paramLinks = _options.paramLinks;
+    o.menuButtonActions = _options.menuButtonActions;
+    if (_options.makeAuxControl)
+        o.auxControl = _options.makeAuxControl(param);
+    auto editor = new ParamEditor(o);
+    connect(editor, &ParamEditor::focused, this, &ParamsEditor::paramFocused);
+    connect(editor, &ParamEditor::goingFocusNext, this, &ParamsEditor::focusNextParam);
+    connect(editor, &ParamEditor::goingFocusPrev, this, &ParamsEditor::focusPrevParam);
+
+    _editors.append(editor);
+    _paramsLayout->addWidget(editor);
+}
+
+void ParamsEditor::populateValues()
 {
     for (auto editor : _editors) editor->populate();
 }
 
-void ParamsEditor::apply()
+void ParamsEditor::applyValues()
 {
     for (auto editor : _editors) editor->apply();
 }

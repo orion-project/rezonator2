@@ -120,7 +120,7 @@ void ProjectWindow::createActions()
     actnFileNew = A_(tr("New"), _operations, SLOT(newSchemaFile()), ":/toolbar/schema_new", QKeySequence::New);
     actnFileOpen = A_(tr("Open..."), _operations, SLOT(openSchemaFile()), ":/toolbar/schema_open", QKeySequence::Open);
     actnFileOpenExample = A_(tr("Open Example..."), this, SLOT(openSchemaExample()), ":/toolbar/schema_sample");
-    actnFileSave = A_(tr("Save"), _operations, SLOT(saveSchemaFile()), ":/toolbar/schema_save", QKeySequence::Save);
+    actnFileSave = A_(tr("Save"), _operations, SLOT(saveSchemaFile()), ":/toolbar/save", QKeySequence::Save);
     actnFileSaveAs = A_(tr("Save As..."), _operations, SLOT(saveSchemaFileAs()), nullptr, QKeySequence::SaveAs);
     actnFileSaveCopy = A_(tr("Save Copy..."), _operations, SLOT(saveSchemaFileCopy()));
     actnFileLambda = A_(tr("Change Wavelength..."), _operations, SLOT(setupWavelength()), ":/toolbar/wavelength", Qt::Key_F10);

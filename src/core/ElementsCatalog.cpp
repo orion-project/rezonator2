@@ -6,7 +6,7 @@
 
 ElementsCatalog::ElementsCatalog()
 {
-    auto categoryCommon = qApp->translate("Elements", "Common");
+    auto categoryCommon = qApp->translate("Elements", "Common elements");
     registerElement(categoryCommon, new ElemEmptyRange);
     registerElement(categoryCommon, new ElemPlate);
     registerElement(categoryCommon, new ElemFlatMirror);
@@ -17,7 +17,7 @@ ElementsCatalog::ElementsCatalog()
     registerElement(categoryCommon, new ElemBrewsterCrystal);
     registerElement(categoryCommon, new ElemBrewsterPlate);
 
-    auto categoryAux = qApp->translate("Elements", "Additional");
+    auto categoryAux = qApp->translate("Elements", "Additional elements");
     registerElement(categoryAux, new ElemMatrix);
     registerElement(categoryAux, new ElemMatrix1);
     registerElement(categoryAux, new ElemFormula);
@@ -29,7 +29,7 @@ ElementsCatalog::ElementsCatalog()
     registerElement(categoryAux, new ElemAxiconMirror);
     registerElement(categoryAux, new ElemAxiconLens);
 
-    auto categoryIntf = qApp->translate("Elements", "Media and interfaces");
+    auto categoryIntf = qApp->translate("Elements", "Media, interfaces");
     registerElement(categoryIntf, new ElemMediumRange);
     registerElement(categoryIntf, new ElemNormalInterface);
     registerElement(categoryIntf, new ElemBrewsterInterface);

@@ -58,7 +58,7 @@ ElementsCatalogDialog::ElementsCatalogDialog(QWidget *parent): RezonatorDialog(D
         if (not res.result()->isEmpty())
         {
             _library = res.result();
-            _categoryTabs->addTab(new QWidget, tr("Custom"));
+            _categoryTabs->addTab(new QWidget, tr("Custom library"));
             _customElemsTab = _categoryTabs->count()-1;
             _previewHtml = new QTextBrowser;
             _previewHtml->setFont(Z::Gui::ValueFont().get());

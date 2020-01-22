@@ -37,7 +37,7 @@ public:
     static Element* chooseElementSample();
 
 protected:
-    QSize prefferedSize() const override { return QSize(600, 400); }
+    QSize prefferedSize() const override { return QSize(620, 400); }
 
 private:
     ElementTypesListView *_elementsList;

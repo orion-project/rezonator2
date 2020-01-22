@@ -11,6 +11,8 @@
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMenu>
+#include <QPushButton>
 
 using Ori::Widgets::ValueEdit;
 
@@ -143,6 +145,32 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
     layout->addWidget(_valueEditor);
     layout->addSpacing(3);
     layout->addWidget(_unitsSelector);
+
+    if (!opts.menuButtonActions.isEmpty())
+    {
+        auto menuButton = new QPushButton;
+        menuButton->setFlat(true);
+        menuButton->setIcon(QIcon(":/toolbar16/menu"));
+        menuButton->setFixedWidth(24);
+
+        auto actionsMenu = new QMenu(this);
+        for (auto action : opts.menuButtonActions)
+            if (action)
+                actionsMenu->addAction(action);
+            else actionsMenu->addSeparator();
+
+        connect(menuButton, &QPushButton::clicked, [this, menuButton, actionsMenu](){
+            editorFocused(true);
+
+            // When menu is opened, each action has a pointer to the current param editor
+            for (auto action : actionsMenu->actions())
+                action->setData(QVariant::fromValue(this));
+
+            // button->setMenu() crashes the app on MacOS when button is clicked, so show manually
+            actionsMenu->popup(menuButton->mapToGlobal(menuButton->rect().bottomLeft()));
+        });
+        layout->addWidget(menuButton);
+    }
 
     if (opts.auxControl)
     {

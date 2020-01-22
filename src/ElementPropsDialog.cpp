@@ -165,6 +165,7 @@ ElementPropsDialog_List::ElementPropsDialog_List(Element *elem, QWidget *parent)
     auto schema = dynamic_cast<Schema*>(elem->owner());
 
     ParamsEditor::Options opts(&elem->params());
+    opts.filter.reset(new Z::ParameterFilter({new Z::ParameterFilterVisible()}));
     opts.globalParams = schema ? schema->customParams() : nullptr;
     opts.paramLinks = schema ? schema->paramLinks() : nullptr;
 
@@ -177,12 +178,12 @@ ElementPropsDialog_List::ElementPropsDialog_List(Element *elem, QWidget *parent)
 
 void ElementPropsDialog_List::populateParams()
 {
-    _editors->populate();
+    _editors->populateValues();
 }
 
 void ElementPropsDialog_List::collectParams()
 {
-    _editors->apply();
+    _editors->applyValues();
 }
 
 QString ElementPropsDialog_List::verifyParams() const

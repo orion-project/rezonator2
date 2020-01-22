@@ -5,6 +5,10 @@
 
 #include "../core/Parameters.h"
 
+QT_BEGIN_NAMESPACE
+class QBoxLayout;
+QT_END_NAMESPACE
+
 namespace Ori {
 namespace Widgets {
     class InfoPanel;
@@ -31,13 +35,25 @@ public:
         /// Container for links to global parameters.
         Z::ParamLinks *paramLinks = nullptr;
 
+        /// Show only parameters passing this filter.
+        QSharedPointer<Z::ParameterFilter> filter;
+
+        /// If this list is not empty, the "Menu" button is added to each editor.
+        QList<QAction*> menuButtonActions;
+
+        /// If the function is provided, it is called when each parameter editor is created.
+        /// It should return an addtional control to be inserted into each parmeter editor.
+        std::function<QWidget*(Z::Parameter*)> makeAuxControl;
+
         Options(Z::Parameters *p) : params(p) {}
     };
 
 public:
     explicit ParamsEditor(Options opts, QWidget *parent = nullptr);
 
-    void populate();
+    void populateValues();
+
+    void addEditor(Z::Parameter* param);
 
     void focus();
     void focus(Z::Parameter *param);
@@ -45,12 +61,14 @@ public:
     QString verify() const;
 
 public slots:
-    void apply();
+    void applyValues();
 
 private:
+    Options _options;
     Z::Parameters* _params;
     QList<ParamEditor*> _editors;
     Ori::Widgets::InfoPanel* _infoPanel;
+    QBoxLayout* _paramsLayout;
 
     void adjustEditors();
 

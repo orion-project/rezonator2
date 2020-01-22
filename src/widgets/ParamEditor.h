@@ -61,6 +61,9 @@ public:
         /// Enable linking target param to global params.
         bool allowLinking = false;
 
+        /// If this list is not empty, the "Menu" button is added after the editor
+        QList<QAction*> menuButtonActions;
+
         /// Auxilary control to be put after unit selector.
         QWidget* auxControl = nullptr;
 

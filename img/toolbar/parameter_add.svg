@@ -1,23 +1,17 @@
-<svg height="256" width="256" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <linearGradient id="a">
-    <stop offset="0" stop-color="#725236"/>
-    <stop offset="1" stop-color="#826044"/>
-  </linearGradient>
-  <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="142.720447" x2="23.271071" xlink:href="#a" y1="146.551308" y2="80.335722"/>
-  <linearGradient id="c" gradientUnits="userSpaceOnUse" x1="71.717034" x2="19.215376" xlink:href="#a" y1="34.639885" y2="18.65681"/>
-  <linearGradient id="d" gradientUnits="userSpaceOnUse" x1="37.240556" x2="70.857534" y1="113.058919" y2="113.616049">
-    <stop offset="0" stop-color="#fff"/>
-    <stop offset="1" stop-color="#fff" stop-opacity="0"/>
-  </linearGradient>
-  <linearGradient id="e" gradientTransform="matrix(6.2851287 6.2851287 -6.3537759 6.3537759 165.57891 -20.00192)" gradientUnits="userSpaceOnUse" x1="22.384937" x2="7.652146" y1="12.892776" y2="14.944254">
-    <stop offset="0" stop-color="#3f9725"/>
-    <stop offset="1" stop-color="#8dda76"/>
-  </linearGradient>
-  <path d="m21.613671 83.062519-2.739954-73.5221052 62.105637 34.7060762z" fill="#b29175" fill-rule="evenodd" stroke="url(#c)" stroke-width="3"/>
-  <circle cx="82.767433" cy="112.30188" fill="#b08e71" r="68.333122" stroke="url(#b)" stroke-width="4"/>
-  <path d="m74.951944 162.36683c-60.40008-10.46038-55.54385-85.555591-9.58574-98.604941" fill="none" stroke="url(#d)" stroke-linecap="round" stroke-opacity=".278481" stroke-width="15"/>
-  <g stroke-linejoin="round">
-    <path d="m183.38946 183.51382 64.71842.10262v-46.22744h-64.71842v-64.71841h-46.22744v64.71841h-64.615423l-.20618 46.22735h64.821413v64.71842h46.22744z" fill="url(#e)" fill-rule="evenodd" stroke="#2d4e24" stroke-width="7"/>
-    <path d="m85.426081 150.14326h55.472939c9.24549 0 9.24549-9.24549 9.24549-9.24549v-55.472925" fill="none" stroke="#fff" stroke-linecap="round" stroke-opacity=".802632" stroke-width="11.094586"/>
-  </g>
+<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<linearGradient id="a" gradientUnits="userSpaceOnUse" x1="2.744" x2="11.244" y1="10.936" y2="11.548">
+<stop offset="0" stop-color="#fff"/>
+<stop offset="1" stop-color="#fff" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="b" gradientTransform="matrix(.62 .62 -.62 .62 15.58 -2.8)" gradientUnits="userSpaceOnUse" x1="22.38" x2="7.65" y1="12.89" y2="14.94">
+<stop offset="0" stop-color="#3f9725"/>
+<stop offset="1" stop-color="#8dda76"/>
+</linearGradient>
+<path d="m1.25 7.77v-6.96l5.96 3.16z" fill="#b29175" fill-rule="evenodd" stroke="#725236" stroke-width=".5"/>
+<circle cx="7.13" cy="10.63" fill="#b08e71" r="6.7" stroke="#725236" stroke-width=".5"/>
+<path d="m6.37 15.54c-5.92-1.03-5.45-8.39-.94-9.67" fill="none" stroke="url(#a)" stroke-linecap="round" stroke-opacity=".28" stroke-width="1.47"/>
+<g stroke-linejoin="round">
+<path d="m17.5 17.49 6.17.01v-5.01h-6.17v-6h-5v6h-6.03l-.02 5.01h6.05v5.99h5z" fill="url(#b)" fill-rule="evenodd" stroke="#3c6830"/>
+<path d="m8 14h5.16c.91 0 .84-1.3.84-1.3v-4.7" fill="none" stroke="#fff" stroke-linecap="round" stroke-opacity=".8" stroke-width="1.09"/>
+</g>
 </svg>

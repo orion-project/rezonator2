@@ -63,7 +63,7 @@ template <class FontStruct> QString html(const FontStruct& font)
 QLabel* headerlabel(const QString& text);
 
 /// Preferred fixed width of unit selector combo boxes
-inline int unitsSelectorWidth() { return 60; }
+inline int unitsSelectorWidth() { return 63; }
 
 inline QString globalParamColorHtml() { return QStringLiteral("#000080"); }
 

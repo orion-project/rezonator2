@@ -1,6 +1,7 @@
 #include "SchemaViewWindow.h"
 
 #include "AdjustmentWindow.h"
+#include "ElemFormulaWindow.h"
 #include "ElementsCatalogDialog.h"
 #include "ElementPropsDialog.h"
 #include "CalcManager.h"
@@ -11,7 +12,6 @@
 #include "core/Utils.h"
 #include "funcs_window/PlotFuncWindow.h"
 #include "io/Clipboard.h"
-#include "widgets/ElemFormulaEditor.h"
 #include "widgets/SchemaLayout.h"
 #include "widgets/SchemaElemsTable.h"
 
@@ -65,7 +65,7 @@ void SchemaViewWindow::createActions()
     actnElemMoveUp = A_(tr("Move Selected Up"), this, SLOT(actionElemMoveUp()), ":/toolbar/elem_move_up");
     actnElemMoveDown = A_(tr("Move Selected Down"), this, SLOT(actionElemMoveDown()), ":/toolbar/elem_move_down");
     actnElemProp = A_(tr("Properties..."), this, SLOT(actionElemProp()), ":/toolbar/elem_prop");
-    actnElemMatr = A_(tr("Matrix"), _calculations, SLOT(funcShowMatrices()), ":/toolbar/elem_matr", Qt::SHIFT | Qt::Key_Return);
+    actnElemMatr = A_(tr("Show Matrix"), _calculations, SLOT(funcShowMatrices()), ":/toolbar/elem_matr", Qt::SHIFT | Qt::Key_Return);
     actnElemMatrAll = A_(tr("Show All Matrices"), _calculations, SLOT(funcShowAllMatrices()));
     actnElemDelete = A_(tr("Delete..."), this, SLOT(actionElemDelete()), ":/toolbar/elem_delete", Qt::CTRL | Qt::Key_Delete);
     actnEditCopy = A_(tr("Copy", "Edit action"), this, SLOT(copy()), ":/toolbar/copy");
@@ -221,7 +221,7 @@ void SchemaViewWindow::actionEditFormula()
     auto elem = dynamic_cast<ElemFormula*>(_table->selected());
     if (!elem) return;
 
-    ElemFormulaEditor::editFormula(elem);
+    WindowsManager::instance().show(new ElemFormulaWindow(schema(), elem));
 }
 
 //------------------------------------------------------------------------------
