@@ -38,9 +38,6 @@ set BIN_DIR=.\bin
 
 echo.
 echo ***** Building html files...
-::python -m sphinx -b html %SOURCE_DIR% %TARGET_DIR%
-::goto :eof
-
 python -m sphinx -b qthelp %SOURCE_DIR% %TARGET_DIR%
 if %ERRORLEVEL% neq 0 goto :eof
 

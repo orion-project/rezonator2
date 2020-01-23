@@ -99,13 +99,13 @@ Angular spread of the Gaussian beam is given by the asymptotic angle of divergen
 
     .. image:: img/gauss_caustics.png
     
+
     
+.. _gauss_complex_param:
 .. index:: single: complex radius of curvature
     
 Complex Radius of Curvature
 ---------------------------
-.. _gauss_complex_param:
-.. index:: single: complex radius of curvature
 
 The complex radius of curvature `q(z)` is related to the beam radius `w(z)` and the radius of curvature `R(z)` by the definition:
 
