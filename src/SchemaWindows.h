@@ -179,6 +179,8 @@ public:
     /// Function is called when application settings are changed.
     void settingsChanged() override;
 
+    virtual QString helpTopic() const { return QString(); }
+
 protected:
     void closeEvent(class QCloseEvent*) override { emit closing(); }
 

@@ -166,8 +166,7 @@ void ProjectWindow::createActions()
     actnWndCascade = A_(tr("Cascade"), _mdiArea, SLOT(cascadeSubWindows()));
 
     auto help = Z::HelpSystem::instance();
-    // TODO: analyze top-level window and show context help if available
-    actnHelpContent = A_(tr("Contents"), help, SLOT(showContents()), ":/toolbar/help", QKeySequence::HelpContents);
+    actnHelpContent = A_(tr("Contents"), this, SLOT(showHelp()), ":/toolbar/help", QKeySequence::HelpContents);
     actnHelpIndex = A_(tr("Index"), help, SLOT(showIndex()));
     actnHelpBugReport = A_(tr("Send Bug Report"), help, SLOT(sendBugReport()), ":/toolbar/bug");
     actnHelpUpdates = A_(tr("Check for Updates"), help, SLOT(checkUpdates()), ":/toolbar/update");
@@ -477,7 +476,7 @@ void ProjectWindow::showAdjustment()
 }
 
 //------------------------------------------------------------------------------
-//                               Window action
+//                               Window actions
 
 void ProjectWindow::showProtocolWindow()
 {
@@ -497,6 +496,24 @@ void ProjectWindow::showParamsWindow()
 void ProjectWindow::showPumpsWindow()
 {
     _mdiArea->appendChild(PumpWindow::create(schema()));
+}
+
+//------------------------------------------------------------------------------
+//                               Help actions
+
+void ProjectWindow::showHelp()
+{
+    auto activeChild = _mdiArea->activeChild();
+    if (activeChild)
+    {
+        QString helpTopic = activeChild->helpTopic();
+        if (!helpTopic.isEmpty())
+        {
+            Z::HelpSystem::instance()->showTopic(helpTopic);
+            return;
+        }
+    }
+    Z::HelpSystem::instance()->showContents();
 }
 
 //------------------------------------------------------------------------------
