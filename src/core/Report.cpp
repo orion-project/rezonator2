@@ -44,6 +44,12 @@ void Report::error(const QString& message)
     _events.append(Event(Event::Error, message));
 }
 
+void Report::report(const Report& other)
+{
+    for (const Event& event : other._events)
+        _events.append(event);
+}
+
 QString Report::str() const
 {
     QStringList s;

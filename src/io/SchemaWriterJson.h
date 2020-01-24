@@ -8,6 +8,7 @@ class QJsonObject;
 QT_END_NAMESPACE
 
 class Element;
+class ElemFormula;
 class Schema;
 class PumpParams;
 

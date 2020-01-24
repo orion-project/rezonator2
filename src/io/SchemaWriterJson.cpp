@@ -4,13 +4,12 @@
 #include "JsonUtils.h"
 #include "ISchemaWindowStorable.h"
 #include "../core/Schema.h"
+#include "../core/ElementFormula.h"
 #include "../WindowsManager.h"
 
 #include <QApplication>
 #include <QDebug>
 #include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
 #include <QFile>
 
 using namespace Z::IO::Json;
@@ -125,14 +124,24 @@ void SchemaWriterJson::writeWindows(QJsonObject& root)
         auto storable = dynamic_cast<ISchemaWindowStorable*>(window);
         if (!storable) continue;
 
+        QString windowType = storable->storableType();
+        Z::Report windowReport;
         QJsonObject windowJson;
-        windowJson["type"] = storable->storableType();
-        QString res = storable->storableWrite(windowJson);
-        if (res.isEmpty())
+        windowJson["type"] = windowType;
+        if (storable->storableWrite(windowJson, &windowReport))
+        {
             windowsJson.append(windowJson);
+            if (!windowReport.isEmpty())
+            {
+                _report.info(QString("There are messages while saving window of type '%1'").arg(windowType));
+                _report.report(windowReport);
+            }
+        }
         else
-            _report.warning(qApp->translate("IO",
-                "Unable to save window of type '%1': %2").arg(storable->storableType(), res));
+        {
+            _report.warning(QString("Unable to save window of type '%1'").arg(windowType));
+            _report.report(windowReport);
+        }
     }
     root["windows"] = windowsJson;
 }
@@ -155,14 +164,29 @@ void writeElements(QJsonObject& root, const QList<Element*>& elements)
 
 void writeElement(QJsonObject& root, Element *elem)
 {
+    auto formulaElem = dynamic_cast<ElemFormula*>(elem);
+
     root["type"] = elem->type();
     root["label"] = elem->label();
     root["title"] = elem->title();
     root["is_disabled"] = elem->disabled();
+    if (formulaElem)
+    {
+        root["has_matrices_ts"] = formulaElem->hasMatricesTS();
+        root["formula"] = formulaElem->formula();
+    }
 
     QJsonObject paramsJson;
     for (Z::Parameter* p : elem->params())
-        paramsJson[p->alias()] = writeValue(p->value());
+    {
+        auto paramJson = writeValue(p->value());
+        if (formulaElem)
+        {
+            paramJson["dim"] = p->dim()->alias();
+            paramJson["descr"] = p->description();
+        }
+        paramsJson[p->alias()] = paramJson;
+    }
     root["params"] = paramsJson;
 }
 

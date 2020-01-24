@@ -36,6 +36,7 @@ public:
     void info(const QString& message);
     void warning(const QString& message);
     void error(const QString& message);
+    void report(const Report& other);
 
     QString str() const;
     void writeToStdout() const;

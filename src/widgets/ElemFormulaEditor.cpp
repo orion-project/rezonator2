@@ -21,23 +21,56 @@
 #include <QToolButton>
 #include <QPlainTextEdit>
 
-ElemFormulaEditor::ElemFormulaEditor(ElemFormula* elem, bool fullToolbar) : QWidget(), _element(elem)
+using namespace Ori::Layouts;
+
+ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, bool fullToolbar)
+    : ElemFormulaEditor(sourceElem, nullptr, fullToolbar)
 {
+}
+
+ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *workingCopy, bool fullToolbar)
+    : QWidget(), _sourceElem(sourceElem), _workingCopy(workingCopy)
+{
+    if (!_workingCopy)
+    {
+        _workingCopy = new ElemFormula;
+        for (const auto p : _sourceElem->params())
+        {
+            auto paramCopy = new Z::Parameter(p->dim(),
+                                              p->alias(),
+                                              p->label(),
+                                              p->name(),
+                                              p->description(),
+                                              p->category(),
+                                              p->visible());
+            paramCopy->setValue(p->value());
+            _workingCopy->params().append(paramCopy);
+        }
+    }
+
     createActions();
     createToolbar(fullToolbar);
 
-    ParamsEditor::Options opts(&_parameters);
+    ParamsEditor::Options opts(&_workingCopy->params());
     opts.menuButtonActions = {_actnParamDescr, nullptr, _actnParamDelete};
     _paramsEditor = new ParamsEditor(opts);
+    _paramsEditor->setVisible(!_workingCopy->params().isEmpty());
+
+    _stubNoParams = LayoutV({
+        LayoutH({ Stretch(), new QLabel(tr("Element nas no parameters")), Stretch() }),
+        Stretch(),
+    }).makeWidget();
+    _stubNoParams->setVisible(_workingCopy->params().isEmpty());
 
     _flagHasTandSMatrices = new QCheckBox(tr("Different matrices for T and S"));
 
-    auto paramsPanel = Ori::Layouts::LayoutV({
+    auto paramsPanel = LayoutV({
         Z::Gui::headerlabel(tr(" Options")),
-        Ori::Layouts::LayoutV({_flagHasTandSMatrices}).setMargin(6),
-        Ori::Layouts::Space(6),
+        LayoutV({ _flagHasTandSMatrices }).setMargin(6),
+        Space(6),
         Z::Gui::headerlabel(tr(" Parameters")),
         _paramsEditor,
+        _stubNoParams,
     }).setMargin(0).makeWidget();
 
     _codeEditor = new QTextEdit;
@@ -58,6 +91,11 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* elem, bool fullToolbar) : QWid
     mainSplitter->setStretchFactor(1, 90);
 
     Ori::Layouts::LayoutV({_toolbar, mainSplitter}).setMargin(0).useFor(this);
+}
+
+ElemFormulaEditor::~ElemFormulaEditor()
+{
+    delete _workingCopy;
 }
 
 void ElemFormulaEditor::createActions()
@@ -111,12 +149,14 @@ void ElemFormulaEditor::saveChanges()
 {
     // TODO
     _logView->append("Save changes");
+    emit modified(false);
 }
 
 void ElemFormulaEditor::resetChanges()
 {
     // TODO
     _logView->append("Reset changes");
+    emit modified(false);
 }
 
 void ElemFormulaEditor::checkFormula()
@@ -192,10 +232,10 @@ void ElemFormulaEditor::createParameter()
         auto alias = aliasEditor->text().trimmed();
         if (alias.isEmpty())
             return tr("Parameter name can't be empty");
-        if (_parameters.byAlias(alias))
-            return tr("Parameter '%1' already exists").arg(alias);
+        if (_workingCopy->params().byAlias(alias))
+            return tr("Parameter <b>%1</b> already exists").arg(alias);
         if (!Z::FormulaUtils::isValidVariableName(alias))
-            return tr("Parameter name '%1' is invalid").arg(alias);
+            return tr("Parameter name <b>%1</b> is invalid").arg(alias);
         return QString();
     };
 
@@ -213,16 +253,37 @@ void ElemFormulaEditor::createParameter()
         auto name = alias;
         auto param = new Z::Parameter(dim, alias, label, name);
         param->setValue(Z::Value(0, unit));
-        _parameters.append(param);
+        _workingCopy->params().append(param);
         _paramsEditor->addEditor(param);
         _paramsEditor->populateValues();
         _paramsEditor->focus(param);
+        if (_stubNoParams->isVisible())
+        {
+            _stubNoParams->setVisible(false);
+            _paramsEditor->setVisible(true);
+        }
+        emit modified(true);
     }
 }
 
 void ElemFormulaEditor::deleteParameter()
 {
-    qDebug() << "Annontate" << _actnParamDelete->data().value<ParamEditor*>()->parameter()->displayStr();
+    auto param = _actnParamDelete->data().value<ParamEditor*>()->parameter();
+    if (Ori::Dlg::yes(tr("Delete parameter <b>%1</b>?").arg(param->alias())))
+    {
+        _paramsEditor->removeEditor(param);
+        /*_parameters.removeOne(param);
+        delete param;
+
+        if (_parameters.isEmpty())
+        {
+            _stubNoParams->setVisible(true);
+            _paramsEditor->setVisible(false);
+        }
+        else
+            _paramsEditor->focus(_parameters.first());*/
+        emit modified(true);
+    }
 }
 
 void ElemFormulaEditor::annotateParameter()

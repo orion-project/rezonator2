@@ -180,7 +180,7 @@ void ProjectOperations::writeProtocol(const Z::Report& report, const QString& me
     }
     if (!message.isEmpty())
     {
-        QString msg = message % "\n\n" % tr("See protocol window for details.");
+        QString msg = message % "\n\n" % tr("See the Protocol window for details.");
         if (report.hasErrors())
             Ori::Dlg::error(msg);
         else if (report.hasWarnings())

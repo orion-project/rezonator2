@@ -5,12 +5,11 @@
 #include "ISchemaWindowStorable.h"
 #include "../core/Schema.h"
 #include "../core/ElementsCatalog.h"
+#include "../core/ElementFormula.h"
 #include "../WindowsManager.h"
 
 #include <QDebug>
 #include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
 #include <QFile>
 
 namespace Z {
@@ -34,64 +33,6 @@ QString readParamValueTS(const QJsonObject& json, ParameterTS* param)
     param->setValue(res.value());
     return QString();
 }
-
-/// Json value wrapper allowing to track value path inside file.
-/// Path can be useful for logging when reading of some value fails.
-class JsonValue
-{
-public:
-    JsonValue(const QJsonObject& root, const QString& key, Z::Report* report)
-    {
-        _path = "/" + key;
-        initObj(root, key);
-
-        if (!_msg.isEmpty() and report)
-            report->warning(_msg);
-    }
-
-    JsonValue(const JsonValue& root, const QString& key, Z::Report* report)
-    {
-        _path = root._path % '/' % key;
-        initObj(root.obj(), key);
-
-        if (!_msg.isEmpty() and report)
-            report->warning(_msg);
-    }
-
-    QString msg() const { return _msg; }
-
-    const QJsonObject& obj() const { return _obj; }
-    const QJsonArray& array() const { return _array; }
-
-    operator bool() const { return _msg.isEmpty(); }
-
-private:
-    QString _path;
-    QString _msg;
-    QJsonObject _obj;
-    QJsonArray _array;
-
-    void initObj(const QJsonObject& root, const QString& key)
-    {
-        if (!root.contains(key))
-        {
-            _msg = QString("Key not found: '%1'").arg(_path);
-            return;
-        }
-        QJsonValue value = root[key];
-        if (value.isNull() || value.isUndefined())
-        {
-            _msg = QString("Value is not set at '%1'").arg(_path);
-            return;
-        }
-        if (value.isArray())
-            _array = value.toArray();
-        else if (value.isObject())
-            _obj = value.toObject();
-        else
-            _msg = QString("Unsupported value type at '%1'").arg(_path);
-    }
-};
 
 } // namespace Json
 } // namespace IO
@@ -335,15 +276,21 @@ void SchemaReaderJson::readWindow(const QJsonObject& root)
         return;
     }
 
-    QString res = storable->storableRead(root);
-    if (res.isEmpty())
+    Z::Report windowReport;
+    if (storable->storableRead(root, &windowReport))
     {
         WindowsManager::instance().show(window);
         // Window will be recalculated on RecalRequred after loading is completed
+        if (!windowReport.isEmpty())
+        {
+            _report.info(QString("There are messages while loading window of type '%1'").arg(type));
+            _report.report(windowReport);
+        }
     }
     else
     {
-        _report.warning(QString("Unable to load window of type '%1': %2").arg(type, res));
+        _report.warning(QString("Unable to load window of type '%1'").arg(type));
+        _report.report(windowReport);
         delete window;
     }
 }
@@ -377,13 +324,36 @@ Element* readElement(const QJsonObject& root, Z::Report* report)
 
     ElementLocker lock(elem);
 
+    auto formulaElem = dynamic_cast<ElemFormula*>(elem);
+
     elem->setLabel(root["label"].toString());
     elem->setTitle(root["title"].toString());
     elem->setDisabled(root["is_disabled"].toBool());
+    if (formulaElem)
+    {
+        formulaElem->setHasMatricesTS(root["has_matrices_ts"].toBool());
+        formulaElem->setFormula(root["formula"].toString());
+    }
 
     JsonValue paramsJson(root, "params", report);
     if (paramsJson)
     {
+        if (formulaElem)
+            for (auto alias : paramsJson.obj().keys())
+            {
+                auto paramJson = paramsJson.obj()[alias].toObject();
+                auto descr = paramJson["descr"].toString();
+                auto dimStr = paramJson["dim"].toString();
+                auto dim = Z::Dims::findByAlias(dimStr);
+                if (!dim)
+                {
+                    dim = Z::Dims::none();
+                    report->warning(QString("Reading element '%1': unknown dimension of parameter %2: %3")
+                                    .arg(elem->displayLabel()).arg(alias).arg(dimStr));
+                }
+                elem->params().append(new Z::Parameter(dim, alias, alias, alias, descr));
+            }
+
         for (Z::Parameter *param : elem->params())
         {
             JsonValue paramJson(paramsJson, param->alias(), report);

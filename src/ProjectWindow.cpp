@@ -5,6 +5,7 @@
 #include "CalculatorWindow.h"
 #include "CommonData.h"
 #include "CustomElemsWindow.h"
+#include "ElemFormulaWindow.h"
 #include "ElementsCatalogDialog.h"
 #include "GaussCalculatorWindow.h"
 #include "HelpSystem.h"
@@ -111,6 +112,7 @@ void ProjectWindow::registerStorableWindows()
 {
     WindowsManager::registerConstructor(SchemaParamsWindowStorable::windowType, SchemaParamsWindowStorable::createWindow);
     WindowsManager::registerConstructor(PumpWindowStorable::windowType, PumpWindowStorable::createWindow);
+    WindowsManager::registerConstructor(ElemFormulaWindowStorable::windowType, ElemFormulaWindowStorable::createWindow);
 }
 
 void ProjectWindow::createActions()

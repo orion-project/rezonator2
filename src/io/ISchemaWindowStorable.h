@@ -7,6 +7,10 @@ QT_BEGIN_NAMESPACE
 class QJsonObject;
 QT_END_NAMESPACE
 
+namespace Z {
+class Report;
+}
+
 /**
     Interface for a window which wants to be saved into schema file.
 
@@ -42,15 +46,20 @@ public:
 
     /// Derived function should implement all storage logic.
     /// By default, only fact of window existence will be saved.
-    /// Function should return error text if window can't be stored, or empty string when all is OK.
+    /// Function should return `false` if window can't be stored.
+    /// Error text should be put into the `report` as `warning`.
+    /// Note that putting `error` into the report will fail entire schema saving.
     ///
-    virtual QString storableWrite(QJsonObject& root);
+    virtual bool storableWrite(QJsonObject& root, Z::Report* report);
 
     /// Derived function should implement all restoring logic.
     /// By default, default constructed window will be restored.
-    /// Function should return error text if window can't be restored, or empty string when all is OK.
+    /// Function should return `false` if window can't be restored.
+    /// Error text should be put into the `report` as `warning`.
+    /// Note that putting `error` into the report will fail entire schema loading,
+    /// but in general we only want to skip the loading of particular window.
     ///
-    virtual QString storableRead(const QJsonObject& root);
+    virtual bool storableRead(const QJsonObject& root, Z::Report* report);
 };
 
 #endif // Z_SCHEMA_STORABLE_H

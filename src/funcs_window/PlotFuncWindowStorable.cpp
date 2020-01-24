@@ -3,43 +3,68 @@
 #include "../widgets/CursorPanel.h"
 #include "../widgets/Plot.h"
 #include "../io/CommonUtils.h"
+#include "../core/Report.h"
 
 #include <QAction>
 #include <QJsonObject>
 
-QString PlotFuncWindowStorable::storableRead(const QJsonObject &root)
+bool PlotFuncWindowStorable::storableRead(const QJsonObject &root, Z::Report *report)
 {
     auto funcJson = root["function"].toObject();
     QString res = readFunction(funcJson);
-    if (!res.isEmpty()) return res;
+    if (!res.isEmpty())
+    {
+        report->warning(res);
+        return false;
+    }
 
     auto wndJson = root["window"].toObject();
     res = readWindowGeneral(wndJson);
-    if (!res.isEmpty()) return res;
+    if (!res.isEmpty())
+    {
+        report->warning(res);
+        return false;
+    }
 
     res = readWindowSpecific(wndJson);
-    if (!res.isEmpty()) return res;
+    if (!res.isEmpty())
+    {
+        report->warning(res);
+        return false;
+    }
 
-   return QString();
+   return true;
 }
 
-QString PlotFuncWindowStorable::storableWrite(QJsonObject &root)
+bool PlotFuncWindowStorable::storableWrite(QJsonObject &root, Z::Report *report)
 {
     QJsonObject funcJson;
     QString res = writeFunction(funcJson);
-    if (!res.isEmpty()) return res;
+    if (!res.isEmpty())
+    {
+        report->warning(res);
+        return false;
+    }
 
     QJsonObject wndJson;
     res = writeWindowGeneral(wndJson);
-    if (!res.isEmpty()) return res;
+    if (!res.isEmpty())
+    {
+        report->warning(res);
+        return false;
+    }
 
     res = writeWindowSpecific(wndJson);
-    if (!res.isEmpty()) return res;
+    if (!res.isEmpty())
+    {
+        report->warning(res);
+        return false;
+    }
 
     root["function"] = funcJson;
     root["window"] = wndJson;
 
-    return QString();
+    return true;
 }
 
 QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root)

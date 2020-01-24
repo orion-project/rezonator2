@@ -129,9 +129,9 @@ void SchemaParamsWindow::createParameter()
         if (alias.isEmpty())
             return tr("Parameter name can't be empty");
         if (schema()->customParams()->byAlias(alias))
-            return tr("Parameter '%1' already exists").arg(alias);
+            return tr("Parameter <b>%1</b> already exists").arg(alias);
         if (!Z::FormulaUtils::isValidVariableName(alias))
-            return tr("Parameter name '%1' is invalid").arg(alias);
+            return tr("Parameter name <b>%1</b> is invalid").arg(alias);
         return QString();
     };
 
@@ -174,7 +174,7 @@ void SchemaParamsWindow::deleteParameter()
         for (Z::Parameter *param : dependentParams)
             dependentAliases << "<b>" % param->alias() % "</b>";
         return Ori::Dlg::info(
-            tr("Can't delete paremeter '%1' because there are global parameters depending on it:<br><br>%2")
+            tr("Can't delete paremeter <b>%1<b> because there are global parameters depending on it:<br><br>%2")
                 .arg(deletingParam->alias(), dependentAliases.join(", ")));
     }
 
@@ -193,7 +193,7 @@ void SchemaParamsWindow::deleteParameter()
                     .arg(deletingParam->alias(), dependentParams.join("<br>")));
     }
 
-    if (Ori::Dlg::ok(tr("Confirm deletion of parameter '%1'").arg(deletingParam->alias())))
+    if (Ori::Dlg::yes(tr("Delete parameter<b>%1<b>?").arg(deletingParam->alias())))
     {
         schema()->events().raise(SchemaEvents::CustomParamDeleting, deletingParam, "Params window: param deleting");
         schema()->formulas()->free(deletingParam);

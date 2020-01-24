@@ -5,6 +5,7 @@
 #include "../core/Values.h"
 
 #include <QJsonObject>
+#include <QJsonArray>
 
 class Schema;
 class Element;
@@ -13,6 +14,7 @@ namespace Z {
 
 struct VariableRange;
 struct Variable;
+class Report;
 
 namespace IO {
 namespace Json {
@@ -30,6 +32,32 @@ QJsonObject writeVariablePref(Variable *var);
 void readVariablePref(const QJsonObject& json, Variable *var, Schema *schema);
 
 Result<Element*> readElemByIndex(const QJsonObject& json, const QString& key, Schema *schema);
+
+/**
+    Json value wrapper allowing to track value path inside file.
+    Path can be useful for logging when reading of some value fails.
+*/
+class JsonValue
+{
+public:
+    JsonValue(const QJsonObject& root, const QString& key, Z::Report* report);
+    JsonValue(const JsonValue& root, const QString& key, Z::Report* report);
+
+    QString msg() const { return _msg; }
+
+    const QJsonObject& obj() const { return _obj; }
+    const QJsonArray& array() const { return _array; }
+
+    operator bool() const { return _msg.isEmpty(); }
+
+private:
+    QString _path;
+    QString _msg;
+    QJsonObject _obj;
+    QJsonArray _array;
+
+    void initObj(const QJsonObject& root, const QString& key);
+};
 
 } // namespace Json
 } // namespace IO

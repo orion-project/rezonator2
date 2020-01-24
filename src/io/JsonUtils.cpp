@@ -2,6 +2,7 @@
 
 #include "../core/Schema.h"
 #include "../core/Variable.h"
+#include "../core/Report.h"
 
 namespace Z {
 namespace IO {
@@ -147,6 +148,49 @@ Result<Element*> readElemByIndex(const QJsonObject& json, const QString& key, Sc
     if (!elem)
         return Result<Element*>::fail(QString("There is no element with index %1").arg(elemIndex));
     return Result<Element*>::success(elem);
+}
+
+//------------------------------------------------------------------------------
+//                                 JsonValue
+//------------------------------------------------------------------------------
+
+JsonValue::JsonValue(const QJsonObject& root, const QString& key, Z::Report* report)
+{
+    _path = "/" + key;
+    initObj(root, key);
+
+    if (!_msg.isEmpty() and report)
+        report->warning(_msg);
+}
+
+JsonValue::JsonValue(const JsonValue& root, const QString& key, Z::Report* report)
+{
+    _path = root._path % '/' % key;
+    initObj(root.obj(), key);
+
+    if (!_msg.isEmpty() and report)
+        report->warning(_msg);
+}
+
+void JsonValue::initObj(const QJsonObject& root, const QString& key)
+{
+    if (!root.contains(key))
+    {
+        _msg = QString("Key not found: '%1'").arg(_path);
+        return;
+    }
+    QJsonValue value = root[key];
+    if (value.isNull() || value.isUndefined())
+    {
+        _msg = QString("Value is not set at '%1'").arg(_path);
+        return;
+    }
+    if (value.isArray())
+        _array = value.toArray();
+    else if (value.isObject())
+        _obj = value.toObject();
+    else
+        _msg = QString("Unsupported value type at '%1'").arg(_path);
 }
 
 } // namespace Json

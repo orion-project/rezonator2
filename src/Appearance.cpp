@@ -128,6 +128,7 @@ QLabel* headerlabel(const QString& text)
     f.setPointSize(f.pointSize() + 2);
     f.setBold(true);
     label->setFont(f);
+    label->setStyleSheet("color:SteelBlue");
     return label;
 }
 

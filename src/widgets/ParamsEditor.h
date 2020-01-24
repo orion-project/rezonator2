@@ -54,6 +54,7 @@ public:
     void populateValues();
 
     void addEditor(Z::Parameter* param);
+    void removeEditor(Z::Parameter* param);
 
     void focus();
     void focus(Z::Parameter *param);

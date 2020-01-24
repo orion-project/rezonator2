@@ -4,14 +4,16 @@ ISchemaWindowStorable::~ISchemaWindowStorable()
 {
 }
 
-QString ISchemaWindowStorable::storableWrite(QJsonObject& root)
+bool ISchemaWindowStorable::storableWrite(QJsonObject& root, Z::Report *report)
 {
-    Q_UNUSED(root);
-    return QString();
+    Q_UNUSED(root)
+    Q_UNUSED(report)
+    return true;
 }
 
-QString ISchemaWindowStorable::storableRead(const QJsonObject& root)
+bool ISchemaWindowStorable::storableRead(const QJsonObject& root, Z::Report *report)
 {
-    Q_UNUSED(root);
-    return QString();
+    Q_UNUSED(root)
+    Q_UNUSED(report)
+    return true;
 }

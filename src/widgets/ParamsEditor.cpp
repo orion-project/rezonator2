@@ -34,6 +34,11 @@ ParamsEditor::ParamsEditor(Options opts, QWidget *parent) : QWidget(parent), _op
 
 void ParamsEditor::addEditor(Z::Parameter* param)
 {
+    // We don't add the parameter to the `_params` list here
+    // because it's supposed to be done by the widget's owner
+    // (which is also probably the owner of the parameters list itself)
+    // and that owner only kicks the widget to update the presentation.
+
     if (_options.filter && !_options.filter->check(param))
         return;
 
@@ -51,6 +56,25 @@ void ParamsEditor::addEditor(Z::Parameter* param)
 
     _editors.append(editor);
     _paramsLayout->addWidget(editor);
+}
+
+void ParamsEditor::removeEditor(Z::Parameter* param)
+{
+    // We don't remove the parameter from the `_params` list here
+    // because it's supposed to be done by the widget's owner
+    // (which is also probably the owner of the parameters list itself)
+    // and that owner only kicks the widget to update the presentation.
+
+    for (int i = 0; i < _editors.size(); i++)
+    {
+        auto editor = _editors.at(i);
+        if (editor->parameter() == param)
+        {
+            _editors.removeAt(i);
+            delete editor;
+            break;
+        }
+    }
 }
 
 void ParamsEditor::populateValues()

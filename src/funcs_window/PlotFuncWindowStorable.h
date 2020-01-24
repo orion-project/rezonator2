@@ -11,8 +11,8 @@ public:
 
     // implementation of ISchemaWindowStorable
     QString storableType() const override { return _function->alias(); }
-    QString storableRead(const QJsonObject& root) override;
-    QString storableWrite(QJsonObject& root) override;
+    bool storableRead(const QJsonObject& root, Z::Report* report) override;
+    bool storableWrite(QJsonObject& root, Z::Report* report) override;
 
 protected:
     virtual QString readFunction(const QJsonObject& root) { Q_UNUSED(root)  return QString(); }

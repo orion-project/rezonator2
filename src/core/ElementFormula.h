@@ -10,8 +10,13 @@ DECLARE_ELEMENT(ElemFormula, Element)
     TYPE_NAME(qApp->translate("Elements", "Formula element"))
     DEFAULT_LABEL("C")
     CALC_MATRIX
+    bool hasMatricesTS() const { return _hasMatricesTS; }
+    void setHasMatricesTS(bool on) { _hasMatricesTS = on; }
+    QString formula() const { return _formula; }
+    void setFormula(const QString& formula) { _formula = formula; }
 private:
-    QString _code;
+    bool _hasMatricesTS = true;
+    QString _formula;
 DECLARE_ELEMENT_END
 
 #endif // ELEMENT_FORMULA_H
