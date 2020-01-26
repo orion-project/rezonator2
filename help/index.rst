@@ -12,7 +12,7 @@ reZonator2 Documentation
    schema
    elements
    functions
-   calculators
+   tools
    handbook
 
 

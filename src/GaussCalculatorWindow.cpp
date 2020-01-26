@@ -3,6 +3,7 @@
 #include "AppSettings.h"
 #include "CalculatorWindow.h"
 #include "CustomPrefs.h"
+#include "HelpSystem.h"
 #include "funcs/GaussCalculator.h"
 #include "widgets/Plot.h"
 #include "widgets/ParamEditor.h"
@@ -565,11 +566,11 @@ void GaussCalculatorWindow::makeParams(QGridLayout *paramsLayout)
     using namespace Z::Dims;
     _lambda = addParam(linear(), QStringLiteral("lambda"), QStringLiteral("λ"), 980_nm);
     _MI = addParam(none(), QStringLiteral("MI"), QStringLiteral("M²"), 1);
-    _w0 = addParam(linear(), QStringLiteral("w0"), QStringLiteral("ω<sub>0</sub>"), 100_mkm);
+    _w0 = addParam(linear(), QStringLiteral("w0"), QStringLiteral("w<sub>0</sub>"), 100_mkm);
     _z = addParam(linear(), QStringLiteral("z"), QStringLiteral("z"), 100_mm);
     _z0 = addParam(linear(), QStringLiteral("z0"), QStringLiteral("z<sub>0</sub>"), 0_mm);
     _Vs = addParam(angular(), QStringLiteral("Vs"), QStringLiteral("V<sub>s</sub>"), 0_deg);
-    _w = addParam(linear(), QStringLiteral("w"), QStringLiteral("ω"), 0_mkm);
+    _w = addParam(linear(), QStringLiteral("w"), QStringLiteral("w"), 0_mkm);
     _R = addParam(linear(), QStringLiteral("R"), QStringLiteral("R"), 0_mm);
     _reQ = addParam(linear(), QStringLiteral("q_re"), QStringLiteral("re(q)"), 0_mm);
     _imQ = addParam(linear(), QStringLiteral("q_im"), QStringLiteral("im(q)"), 0_mm);
@@ -626,8 +627,7 @@ QWidget* GaussCalculatorWindow::makeToolbar()
 
     auto actionCalc = Ori::Gui::action(tr("Formula Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
 
-    auto actionHelp = new QAction(QIcon(":/toolbar/help"), tr("Help"), this);
-    actionHelp->setEnabled(false); // TODO:NEXT-VER
+    auto actionHelp = Ori::Gui::action(tr("Help"), this, SLOT(showHelp()), ":/toolbar/help");
 
     auto toolbar = new Ori::Widgets::FlatToolBar;
     toolbar->setIconSize(AppSettings::instance().toolbarIconSize());
@@ -716,4 +716,9 @@ void GaussCalculatorWindow::updatePlot()
 void GaussCalculatorWindow::showCalculator()
 {
     CalculatorWindow::showWindow();
+}
+
+void GaussCalculatorWindow::showHelp()
+{
+    Z::HelpSystem::instance()->showTopic("calc_gauss.html");
 }
