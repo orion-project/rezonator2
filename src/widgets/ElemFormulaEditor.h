@@ -32,8 +32,13 @@ public:
     ElemFormula* sourceElem() { return _sourceElem; }
     ElemFormula* workingCopy() { return _workingCopy; }
 
+    bool isChanged() const { return _isChanged; }
+    void setIsChanged(bool on) { _isChanged = on; }
+    void populateValues();
+    void applyValues();
+
 signals:
-    void modified(bool isModified);
+    void onChanged();
 
 private slots:
     void saveChanges();
@@ -61,9 +66,13 @@ private:
     QMenu *_menuParam;
     QCheckBox *_flagHasTandSMatrices;
     QWidget *_stubNoParams;
+    bool _isChanged = false;
+    bool _lockEvents = false;
+    bool _firstChange = true;
 
     void createActions();
     void createToolbar(bool full);
+    void somethingChanged();
 
     friend class ElemFormulaWindow;
 };

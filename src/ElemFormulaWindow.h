@@ -48,6 +48,9 @@ public:
     void copy() override;
     void paste() override;
 
+    // inherits from SchemaListener
+    void elementChanged(Schema*, Element*) override;
+
     // inherits from ISchemaWindowStorable
     QString storableType() const override { return ElemFormulaWindowStorable::windowType; }
     bool storableRead(const QJsonObject& root, Z::Report* report) override;
@@ -61,6 +64,7 @@ private:
     QMenu *_menuFormula;
 
     void createContent(ElemFormula* sourceElem, ElemFormula *workingCopy);
+    void updateWindowTitle();
 
     friend class ElemFormulaWindowLoader;
 };

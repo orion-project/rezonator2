@@ -48,22 +48,42 @@ ElemFormulaWindow::ElemFormulaWindow(Schema *owner, ElemFormula *elem)
     : SchemaMdiChild(owner, InitOptions(initNoDefaultWidget | initNoToolBar))
 {
     createContent(elem, nullptr);
+    updateWindowTitle();
 }
 
 void ElemFormulaWindow::createContent(ElemFormula *sourceElem, ElemFormula *workingCopy)
 {
-    setTitleAndIcon(sourceElem->displayLabel(), ":/elem_icon/ElemFormula");
+    setWindowIcon(QIcon(":/elem_icon/ElemFormula"));
 
     _editor = new ElemFormulaEditor(sourceElem, workingCopy, false);
-    connect(_editor, &ElemFormulaEditor::modified, [this](bool modified){
-        if (modified)
-            schema()->markModified("ElemFormula edited");
+    connect(_editor, &ElemFormulaEditor::onChanged, [this](){
+        updateWindowTitle();
+        // Mark schema as modified even if `_editor->isChanged` gets `false`.
+        // It means the _editor was loaded having the state `changed = true`,
+        // now it's been reset, and the schema becomes different
+        // from the state in what it was loaded.
+        schema()->markModified("ElemFormula edited");
     });
 
     _menuFormula = new QMenu(tr("Formula"));
     _editor->populateWindowMenu(_menuFormula);
 
     setContent(_editor);
+    _editor->populateValues();
+}
+
+void ElemFormulaWindow::updateWindowTitle()
+{
+    if (_editor->isChanged())
+        setWindowTitle(tr("%1 (changed)").arg(_editor->sourceElem()->displayLabel()));
+    else
+        setWindowTitle(_editor->sourceElem()->displayLabel());
+}
+
+void ElemFormulaWindow::elementChanged(Schema*, Element* elem)
+{
+    if (elem == _editor->sourceElem())
+        updateWindowTitle();
 }
 
 bool ElemFormulaWindow::canCopy()
@@ -121,6 +141,8 @@ bool ElemFormulaWindow::storableRead(const QJsonObject& root, Z::Report *report)
     }
 
     createContent(sourceElem, workingCopy);
+    _editor->setIsChanged(root["is_changed"].toBool());
+    updateWindowTitle();
     return true;
 }
 
@@ -130,9 +152,12 @@ bool ElemFormulaWindow::storableWrite(QJsonObject& root, Z::Report *report)
 
     root["elem_index"] = schema()->indexOf(_editor->sourceElem());
 
+    _editor->applyValues();
+
     QJsonObject elemJson;
     Z::IO::Json::writeElement(elemJson, _editor->workingCopy());
     root["working_copy"] = elemJson;
+    root["is_changed"] = _editor->isChanged();
 
     return true;
 }

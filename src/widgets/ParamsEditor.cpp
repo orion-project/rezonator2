@@ -53,6 +53,8 @@ void ParamsEditor::addEditor(Z::Parameter* param)
     connect(editor, &ParamEditor::focused, this, &ParamsEditor::paramFocused);
     connect(editor, &ParamEditor::goingFocusNext, this, &ParamsEditor::focusNextParam);
     connect(editor, &ParamEditor::goingFocusPrev, this, &ParamsEditor::focusPrevParam);
+    connect(editor, &ParamEditor::valueEdited, this, &ParamsEditor::paramValueEdited);
+    connect(editor, &ParamEditor::unitChanged, this, &ParamsEditor::paramUnitChanged);
 
     _editors.append(editor);
     _paramsLayout->addWidget(editor);
@@ -157,6 +159,22 @@ QString ParamsEditor::verify() const
         if (!res.isEmpty()) errs << res;
     }
     return errs.isEmpty()? QString(): errs.join('\n');
+}
+
+void ParamsEditor::paramValueEdited(double value)
+{
+    auto editor = qobject_cast<ParamEditor*>(sender());
+    if (!editor) return;
+
+    emit paramChanged(editor->parameter(), Z::Value(value, editor->getValue().unit()));
+}
+
+void ParamsEditor::paramUnitChanged(Z::Unit unit)
+{
+    auto editor = qobject_cast<ParamEditor*>(sender());
+    if (!editor) return;
+
+    emit paramChanged(editor->parameter(), Z::Value(editor->getValue().value(), unit));
 }
 
 //------------------------------------------------------------------------------

@@ -12,7 +12,6 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMenu>
-#include <QPushButton>
 
 using Ori::Widgets::ValueEdit;
 
@@ -51,6 +50,41 @@ void LinkButton::focusOutEvent(QFocusEvent *e)
 {
     QToolButton::focusOutEvent(e);
     emit focused(false);
+}
+
+//------------------------------------------------------------------------------
+//                              LinkButton
+//------------------------------------------------------------------------------
+
+MenuButton::MenuButton(QList<QAction *> actions) : QPushButton()
+{
+    setFlat(true);
+    setIcon(QIcon(":/toolbar16/menu"));
+    setFixedWidth(24);
+
+    _menu = new QMenu(this);
+    for (auto action : actions)
+        if (action)
+            _menu->addAction(action);
+        else _menu->addSeparator();
+
+    connect(_menu, &QMenu::aboutToShow, [this](){ _isMenuOpened = true; });
+    connect(_menu, &QMenu::aboutToHide, [this](){ _isMenuOpened = false; });
+}
+
+void MenuButton::focusInEvent(QFocusEvent *e)
+{
+    QPushButton::focusInEvent(e);
+    emit focused(true);
+}
+
+void MenuButton::focusOutEvent(QFocusEvent *e)
+{
+    QPushButton::focusOutEvent(e);
+
+    // Don't raise focus-lost event because after menu has closed focus returns to the button
+    if (!_isMenuOpened)
+        emit focused(false);
 }
 
 //------------------------------------------------------------------------------
@@ -148,26 +182,15 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
 
     if (!opts.menuButtonActions.isEmpty())
     {
-        auto menuButton = new QPushButton;
-        menuButton->setFlat(true);
-        menuButton->setIcon(QIcon(":/toolbar16/menu"));
-        menuButton->setFixedWidth(24);
-
-        auto actionsMenu = new QMenu(this);
-        for (auto action : opts.menuButtonActions)
-            if (action)
-                actionsMenu->addAction(action);
-            else actionsMenu->addSeparator();
-
-        connect(menuButton, &QPushButton::clicked, [this, menuButton, actionsMenu](){
-            editorFocused(true);
-
+        auto menuButton = new MenuButton(opts.menuButtonActions);
+        connect(menuButton, &MenuButton::focused, this, &ParamEditor::editorFocused);
+        connect(menuButton, &QPushButton::clicked, [this, menuButton](){
             // When menu is opened, each action has a pointer to the current param editor
-            for (auto action : actionsMenu->actions())
+            for (auto action : menuButton->menu()->actions())
                 action->setData(QVariant::fromValue(this));
 
             // button->setMenu() crashes the app on MacOS when button is clicked, so show manually
-            actionsMenu->popup(menuButton->mapToGlobal(menuButton->rect().bottomLeft()));
+            menuButton->menu()->popup(menuButton->mapToGlobal(menuButton->rect().bottomLeft()));
         });
         layout->addWidget(menuButton);
     }

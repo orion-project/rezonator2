@@ -61,6 +61,9 @@ public:
 
     QString verify() const;
 
+signals:
+    void paramChanged(Z::Parameter* param, Z::Value value);
+
 public slots:
     void applyValues();
 
@@ -72,6 +75,8 @@ private:
     QBoxLayout* _paramsLayout;
 
     void adjustEditors();
+    void paramValueEdited(double value);
+    void paramUnitChanged(Z::Unit unit);
 
 private slots:
     void paramFocused();

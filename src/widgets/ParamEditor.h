@@ -2,6 +2,7 @@
 #define PARAM_EDITOR_H
 
 #include <QToolButton>
+#include <QPushButton>
 
 #include "../core/Parameters.h"
 
@@ -35,6 +36,28 @@ signals:
 protected:
     void focusInEvent(QFocusEvent *e) override;
     void focusOutEvent(QFocusEvent *e) override;
+};
+
+
+class MenuButton : public QPushButton
+{
+    Q_OBJECT
+
+public:
+    MenuButton(QList<QAction*> actions);
+
+    QMenu* menu() { return _menu; }
+
+signals:
+    void focused(bool focus);
+
+protected:
+    void focusInEvent(QFocusEvent *e) override;
+    void focusOutEvent(QFocusEvent *e) override;
+
+private:
+    QMenu* _menu;
+    bool _isMenuOpened = false;
 };
 
 
