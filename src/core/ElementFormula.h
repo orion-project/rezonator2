@@ -14,6 +14,9 @@ DECLARE_ELEMENT(ElemFormula, Element)
     void setHasMatricesTS(bool on) { _hasMatricesTS = on; }
     QString formula() const { return _formula; }
     void setFormula(const QString& formula) { _formula = formula; }
+    void removeParams();
+    void addParam(Z::Parameter* param);
+    void removeParam(Z::Parameter* param);
 private:
     bool _hasMatricesTS = true;
     QString _formula;

@@ -115,7 +115,6 @@ public:
     /// Default prefix for generating of automatical labels for elements of this type.
     virtual const QString labelPrefix() const { return QString(); }
 
-    Z::Parameters& params() { return _params; }
     const Z::Parameters& params() const { return _params; }
     bool hasParams() const { return !_params.isEmpty(); }
 
@@ -181,7 +180,7 @@ protected:
 
     virtual void calcMatrixInternal();
 
-    int addParam(Z::Parameter* param, const double& value, Z::Unit unit);
+    void addParam(Z::Parameter* param);
 
     void parameterChanged(Z::ParameterBase*) override;
 

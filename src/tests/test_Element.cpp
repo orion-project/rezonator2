@@ -8,10 +8,13 @@ namespace Z {
 namespace Tests {
 namespace ElementTests {
 
+namespace {
 DECLARE_ELEMENT(TestElement, Element)
     TestElement()
     {
-        addParam(new Z::Parameter(Z::Dims::linear(), "", "",  ""), 3.14, Z::Units::mkm());
+        auto p = new Z::Parameter(Z::Dims::linear(), "", "",  "");
+        p->setValue(3.14_mkm);
+        addParam(p);
     }
 
     bool matrixCalculated = false;
@@ -27,6 +30,7 @@ DECLARE_ELEMENT(TestElement, Element)
         changedParam = p;
     }
 DECLARE_ELEMENT_END
+}
 
 #define RESET_MATRIX(e) e.matrixCalculated = false;
 #define ASSERT_MATRIX_CALCULATED(e) ASSERT_IS_TRUE(e.matrixCalculated)
@@ -34,6 +38,7 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
+namespace {
 class TestElemOwner : public ElementOwner
 {
 public:
@@ -41,6 +46,7 @@ public:
     Element *element = nullptr;
     void elementChanged(Element *e) override { element = e; changed = true; }
 };
+}
 
 #define ELEMENT_AND_OWNER\
     TestElemOwner owner;\
@@ -82,10 +88,10 @@ TEST_METHOD(Element_must_add_param_in_ctor)
 TEST_METHOD(Element_must_listen_its_params)
 {
     TestElement el;
-    ASSERT_IS_NULL(el.changedParam);
+    ASSERT_IS_NULL(el.changedParam)
 
     el.params().at(0)->setValue(1_mm);
-    ASSERT_EQ_PTR(el.changedParam, el.params().at(0));
+    ASSERT_EQ_PTR(el.changedParam, el.params().at(0))
 }
 
 TEST_METHOD(Element_hasParams)
@@ -128,13 +134,13 @@ TEST_METHOD(Element_unlock_does_not_raise_events)
 TEST_METHOD(Element_setDisabled_must_set_flag)
 {
     TestElement e;
-    ASSERT_IS_FALSE(e.disabled());
+    ASSERT_IS_FALSE(e.disabled())
 
     e.setDisabled(true);
-    ASSERT_IS_TRUE(e.disabled());
+    ASSERT_IS_TRUE(e.disabled())
 
     e.setDisabled(false);
-    ASSERT_IS_FALSE(e.disabled());
+    ASSERT_IS_FALSE(e.disabled())
 }
 
 TEST_METHOD(Element_setDisabled_must_be_unity_matrix)

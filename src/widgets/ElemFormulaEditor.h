@@ -64,7 +64,7 @@ private:
     QTextEdit *_codeEditor, *_logView;
     QToolBar *_toolbar;
     QMenu *_menuParam;
-    QCheckBox *_flagHasTandSMatrices;
+    QCheckBox *_flagHasMatricesTS;
     QWidget *_stubNoParams;
     bool _isChanged = false;
     bool _lockEvents = false;
@@ -73,6 +73,8 @@ private:
     void createActions();
     void createToolbar(bool full);
     void somethingChanged();
+    void initWorkingCopy();
+    void updateParamsEditorVisibility();
 
     friend class ElemFormulaWindow;
 };

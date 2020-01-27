@@ -63,12 +63,10 @@ QString Element::displayLabelTitle()
     return typeName();
 }
 
-int Element::addParam(Z::Parameter *param, const double& value, Z::Unit unit)
+void Element::addParam(Z::Parameter *param)
 {
-    param->setValue(Z::Value(value, unit));
-    param->addListener(this); // do it after setValue() to suppress parameterChanged()
+    param->addListener(this);
     _params.append(param);
-    return _params.size()-1;
 }
 
 void Element::parameterChanged(Z::ParameterBase*)
@@ -149,8 +147,11 @@ ElementRange::ElementRange()
     // and should be explicitly revealed by derived elements
     _ior->setVisible(false);
 
-    addParam(_length, 100, Z::Units::mm());
-    addParam(_ior, 1, Z::Units::none());
+    _length->setValue(100_mm);
+    _ior->setValue(1);
+
+    addParam(_length);
+    addParam(_ior);
 }
 
 //------------------------------------------------------------------------------
@@ -171,8 +172,11 @@ ElementInterface::ElementInterface()
     _ior1->setVisible(false);
     _ior2->setVisible(false);
 
-    addParam(_ior1, 1, Z::Units::none());
-    addParam(_ior2, 1, Z::Units::none());
+    _ior1->setValue(1);
+    _ior2->setValue(2);
+
+    addParam(_ior1);
+    addParam(_ior2);
 
     setOption(Element_Asymmetrical);
 }

@@ -24,6 +24,17 @@
 
 using namespace Ori::Layouts;
 
+template <class TPayload>
+class ObjectDeleter : public QObject
+{
+public:
+    ObjectDeleter(TPayload* payload, QObject* parent) : QObject(parent), _payload(payload) {}
+    ~ObjectDeleter() override { delete _payload; }
+private:
+    TPayload* _payload;
+};
+
+
 ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, bool fullToolbar)
     : ElemFormulaEditor(sourceElem, nullptr, fullToolbar)
 {
@@ -35,18 +46,7 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
     if (!_workingCopy)
     {
         _workingCopy = new ElemFormula;
-        for (const auto p : _sourceElem->params())
-        {
-            auto paramCopy = new Z::Parameter(p->dim(),
-                                              p->alias(),
-                                              p->label(),
-                                              p->name(),
-                                              p->description(),
-                                              p->category(),
-                                              p->visible());
-            paramCopy->setValue(p->value());
-            _workingCopy->params().append(paramCopy);
-        }
+        initWorkingCopy();
     }
 
     createActions();
@@ -64,12 +64,12 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
     }).makeWidget();
     _stubNoParams->setVisible(_workingCopy->params().isEmpty());
 
-    _flagHasTandSMatrices = new QCheckBox(tr("Different matrices for T and S"));
-    connect(_flagHasTandSMatrices, &QCheckBox::stateChanged, this, &ElemFormulaEditor::somethingChanged);
+    _flagHasMatricesTS = new QCheckBox(tr("Different matrices for T and S"));
+    connect(_flagHasMatricesTS, &QCheckBox::stateChanged, this, &ElemFormulaEditor::somethingChanged);
 
     auto paramsPanel = LayoutV({
         Z::Gui::headerlabel(tr(" Options")),
-        LayoutV({ _flagHasTandSMatrices }).setMargin(6),
+        LayoutV({ _flagHasMatricesTS }).setMargin(6),
         Space(6),
         Z::Gui::headerlabel(tr(" Parameters")),
         _paramsEditor,
@@ -95,12 +95,13 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
     mainSplitter->setStretchFactor(1, 90);
 
     Ori::Layouts::LayoutV({_toolbar, mainSplitter}).setMargin(0).useFor(this);
+
+    // Element should be deleted only after all children, so put at the end
+    new ObjectDeleter<Element>(_workingCopy, this);
 }
 
 ElemFormulaEditor::~ElemFormulaEditor()
 {
-    // Free element only after all base destructors finished
-    QTimer::singleShot(0, [this](){ delete _workingCopy; });
 }
 
 void ElemFormulaEditor::createActions()
@@ -150,21 +151,39 @@ void ElemFormulaEditor::populateWindowMenu(QMenu* menu)
     menu->addAction(_actnParamAdd);
 }
 
+void ElemFormulaEditor::initWorkingCopy()
+{
+    _workingCopy->removeParams();
+    for (const auto p : _sourceElem->params())
+    {
+        auto paramCopy = new Z::Parameter(p->dim(),
+                                          p->alias(),
+                                          p->label(),
+                                          p->name(),
+                                          p->description(),
+                                          p->category(),
+                                          p->visible());
+        paramCopy->setValue(p->value());
+        _workingCopy->addParam(paramCopy);
+    }
+    _workingCopy->setFormula(_sourceElem->formula());
+    _workingCopy->setHasMatricesTS(_sourceElem->hasMatricesTS());
+}
+
 void ElemFormulaEditor::populateValues()
 {
     _lockEvents = true;
     _paramsEditor->populateValues();
     _codeEditor->setPlainText(_workingCopy->formula());
-    _flagHasTandSMatrices->setChecked(_workingCopy->hasMatricesTS());
+    _flagHasMatricesTS->setChecked(_workingCopy->hasMatricesTS());
     _lockEvents = false;
-    _isChanged = false;
 }
 
 void ElemFormulaEditor::applyValues()
 {
     _paramsEditor->applyValues();
     _workingCopy->setFormula(_codeEditor->toPlainText());
-    _workingCopy->setHasMatricesTS(_flagHasTandSMatrices->isChecked());
+    _workingCopy->setHasMatricesTS(_flagHasMatricesTS->isChecked());
 }
 
 void ElemFormulaEditor::somethingChanged()
@@ -179,7 +198,7 @@ void ElemFormulaEditor::somethingChanged()
 void ElemFormulaEditor::saveChanges()
 {
     // TODO
-    if (!_isChanged) return;
+    if (not _isChanged) return;
     _logView->append("Save changes");
     _isChanged = false;
     emit onChanged();
@@ -187,9 +206,15 @@ void ElemFormulaEditor::saveChanges()
 
 void ElemFormulaEditor::resetChanges()
 {
-    // TODO
-    if (!_isChanged) return;
-    _logView->append("Reset changes");
+    if (not _isChanged) return;
+    if (not Ori::Dlg::yes(tr("Element <b>%1</b>: all changed "
+        "made in this editor window will be lost. Continue?")
+        .arg(_sourceElem->displayLabel()))) return;
+    _paramsEditor->removeEditors();
+    initWorkingCopy();
+    _paramsEditor->populateEditors();
+    populateValues();
+    updateParamsEditorVisibility();
     _isChanged = false;
     emit onChanged();
 }
@@ -288,9 +313,9 @@ void ElemFormulaEditor::createParameter()
         auto name = alias;
         auto param = new Z::Parameter(dim, alias, label, name);
         param->setValue(Z::Value(0, unit));
-        _workingCopy->params().append(param);
+        _workingCopy->addParam(param);
         _paramsEditor->addEditor(param);
-        _paramsEditor->populateValues();
+        _paramsEditor->populateEditor(param);
         _paramsEditor->focus(param);
         if (_stubNoParams->isVisible())
         {
@@ -307,18 +332,21 @@ void ElemFormulaEditor::deleteParameter()
     if (Ori::Dlg::yes(tr("Delete parameter <b>%1</b>?").arg(param->alias())))
     {
         _paramsEditor->removeEditor(param);
-        /*_parameters.removeOne(param);
-        delete param;
-
-        if (_parameters.isEmpty())
-        {
-            _stubNoParams->setVisible(true);
-            _paramsEditor->setVisible(false);
-        }
-        else
-            _paramsEditor->focus(_parameters.first());*/
+        _workingCopy->removeParam(param);
+        updateParamsEditorVisibility();
         somethingChanged();
     }
+}
+
+void ElemFormulaEditor::updateParamsEditorVisibility()
+{
+    if (not _workingCopy->hasParams())
+    {
+        _stubNoParams->setVisible(true);
+        _paramsEditor->setVisible(false);
+    }
+    else
+        _paramsEditor->focus(_workingCopy->params().first());
 }
 
 void ElemFormulaEditor::annotateParameter()
@@ -328,6 +356,7 @@ void ElemFormulaEditor::annotateParameter()
     if (newDescr != param->description())
     {
         param->setDescription(newDescr);
+        _paramsEditor->focus(param);
         somethingChanged();
     }
 }

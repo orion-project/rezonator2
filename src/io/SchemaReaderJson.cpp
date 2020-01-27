@@ -351,7 +351,7 @@ Element* readElement(const QJsonObject& root, Z::Report* report)
                     report->warning(QString("Reading element '%1': unknown dimension of parameter %2: %3")
                                     .arg(elem->displayLabel()).arg(alias).arg(dimStr));
                 }
-                elem->params().append(new Z::Parameter(dim, alias, alias, alias, descr));
+                formulaElem->addParam(new Z::Parameter(dim, alias, alias, alias, descr));
             }
 
         for (Z::Parameter *param : elem->params())

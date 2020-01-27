@@ -27,7 +27,7 @@ public:
     struct Options
     {
         /// Target editing parameters.
-        Z::Parameters *params;
+        const Z::Parameters *params;
 
         /// Global parameters to which tagets can be linked.
         Z::Parameters *globalParams = nullptr;
@@ -45,16 +45,19 @@ public:
         /// It should return an addtional control to be inserted into each parmeter editor.
         std::function<QWidget*(Z::Parameter*)> makeAuxControl;
 
-        Options(Z::Parameters *p) : params(p) {}
+        Options(const Z::Parameters *p) : params(p) {}
     };
 
 public:
-    explicit ParamsEditor(Options opts, QWidget *parent = nullptr);
+    explicit ParamsEditor(const Options opts, QWidget *parent = nullptr);
 
+    void removeEditors();
+    void populateEditors();
     void populateValues();
 
     void addEditor(Z::Parameter* param);
     void removeEditor(Z::Parameter* param);
+    void populateEditor(Z::Parameter* param);
 
     void focus();
     void focus(Z::Parameter *param);
@@ -68,8 +71,8 @@ public slots:
     void applyValues();
 
 private:
-    Options _options;
-    Z::Parameters* _params;
+    const Options _options;
+    const Z::Parameters* _params;
     QList<ParamEditor*> _editors;
     Ori::Widgets::InfoPanel* _infoPanel;
     QBoxLayout* _paramsLayout;

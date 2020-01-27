@@ -137,8 +137,12 @@ ElemCurveMirror::ElemCurveMirror()
     _alpha = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Alpha"), Z::Strs::alpha(),
                               qApp->translate("Param", "Angle of incidence "),
                               qApp->translate("Param", "Zero angle is normal incidence."));
-    addParam(_radius, 100, Z::Units::mm());
-    addParam(_alpha, 0, Z::Units::deg());
+
+    _radius->setValue(100_mm);
+    _alpha->setValue(0_deg);
+
+    addParam(_radius);
+    addParam(_alpha);
 
     setOption(Element_ChangesWavefront);
 
@@ -165,8 +169,12 @@ ElemThinLens::ElemThinLens()
     _alpha = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Alpha"), Z::Strs::alpha(),
                               qApp->translate("Param", "Angle of incidence "),
                               qApp->translate("Param", "Zero angle is normal incidence."));
-    addParam(_focus, 100, Z::Units::mm());
-    addParam(_alpha, 0, Z::Units::deg());
+
+    _focus->setValue(100_mm);
+    _alpha->setValue(0_deg);
+
+    addParam(_focus);
+    addParam(_alpha);
 
     setOption(Element_ChangesWavefront);
 
@@ -216,7 +224,10 @@ ElemTiltedCrystal::ElemTiltedCrystal() : ElementRange()
     _alpha = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Alpha"), Z::Strs::alpha(),
                               qApp->translate("Param", "Angle of incidence "),
                               qApp->translate("Param", "Zero angle is normal incidence."));
-    addParam(_alpha, 0, Z::Units::deg());
+
+    _alpha->setValue(0_deg);
+
+    addParam(_alpha);
 }
 
 void ElemTiltedCrystal::calcMatrixInternal()
@@ -382,15 +393,23 @@ ElemMatrix::ElemMatrix()
     _Cs = new Z::Parameter(Z::Dims::fixed(), "Cs", "Cs", "Cs");
     _Ds = new Z::Parameter(Z::Dims::none(), "Ds", "Ds", "Ds");
 
-    addParam(_At, 1, Z::Units::none());
-    addParam(_Bt, 0, Z::Units::m());
-    addParam(_Ct, 0, Z::Units::inv_m());
-    addParam(_Dt, 1, Z::Units::none());
+    _At->setValue(1);
+    _Bt->setValue(0_m);
+    _Ct->setValue(Z::Value(0, Z::Units::inv_m()));
+    _Dt->setValue(1);
+    _As->setValue(1);
+    _Bs->setValue(0_m);
+    _Cs->setValue(Z::Value(0, Z::Units::inv_m()));
+    _Ds->setValue(1);
 
-    addParam(_As, 1, Z::Units::none());
-    addParam(_Bs, 0, Z::Units::m());
-    addParam(_Cs, 0, Z::Units::inv_m());
-    addParam(_Ds, 1, Z::Units::none());
+    addParam(_At);
+    addParam(_Bt);
+    addParam(_Ct);
+    addParam(_Dt);
+    addParam(_As);
+    addParam(_Bs);
+    addParam(_Cs);
+    addParam(_Ds);
 }
 
 void ElemMatrix::setMatrix(int offset, const double& a, const double& b, const double& c, const double& d)
@@ -419,10 +438,20 @@ void ElemMatrix::calcMatrixInternal()
 
 ElemMatrix1::ElemMatrix1()
 {
-    addParam(new Z::Parameter(Z::Dims::none(), "A", "A", "A"), 1, Z::Units::none());
-    addParam(new Z::Parameter(Z::Dims::linear(), "B", "B", "B"), 0, Z::Units::m());
-    addParam(new Z::Parameter(Z::Dims::fixed(), "C", "C", "C"), 0, Z::Units::inv_m());
-    addParam(new Z::Parameter(Z::Dims::none(), "D", "D", "D"), 1, Z::Units::none());
+    auto A = new Z::Parameter(Z::Dims::none(), "A", "A", "A");
+    auto B = new Z::Parameter(Z::Dims::linear(), "B", "B", "B");
+    auto C = new Z::Parameter(Z::Dims::fixed(), "C", "C", "C");
+    auto D = new Z::Parameter(Z::Dims::none(), "D", "D", "D");
+
+    A->setValue(1);
+    B->setValue(0_m);
+    C->setValue(Z::Value(0, Z::Units::inv_m()));
+    D->setValue(1);
+
+    addParam(A);
+    addParam(B);
+    addParam(C);
+    addParam(D);
 }
 
 void ElemMatrix1::setMatrix(const double& a, const double& b, const double& c, const double& d)
@@ -492,7 +521,9 @@ ElemTiltedInterface::ElemTiltedInterface() : ElementInterface()
                               qApp->translate("Param", "Angle of incidence "),
                               qApp->translate("Param", "Zero angle is normal incidence. "
                               "Negative value sets angle from the side of medium <i>n<sub>2</sub></i>."));
-    addParam(_alpha, 0, Z::Units::deg());
+    _alpha->setValue(0_deg);
+
+    addParam(_alpha);
 }
 
 void ElemTiltedInterface::calcMatrixInternal()
@@ -525,7 +556,9 @@ ElemSphericalInterface::ElemSphericalInterface() : ElementInterface()
                                qApp->translate("Param", "Radius of curvature"),
                                qApp->translate("Param", "Negative value means left-bulged surface, "
                                                         "positive value means right-bulged surface."));
-    addParam(_radius, 100, Z::Units::mm());
+    _radius->setValue(100_mm);
+
+    addParam(_radius);
 
     _radius->setVerifier(globalCurvatureRadiusVerifier());
 }
@@ -559,8 +592,12 @@ ElemThickLens::ElemThickLens() : ElementRange()
                                 qApp->translate("Param", "Right radius of curvature"),
                                 qApp->translate("Param", "Negative value means left-bulged surface, "
                                                          "positive value means right-bulged surface."));
-    addParam(_radius1, -100, Z::Units::mm());
-    addParam(_radius2, 100, Z::Units::mm());
+
+    _radius1->setValue(-100_mm);
+    _radius2->setValue(100_mm);
+
+    addParam(_radius1);
+    addParam(_radius2);
 
     _radius1->setVerifier(globalCurvatureRadiusVerifier());
     _radius2->setVerifier(globalCurvatureRadiusVerifier());
@@ -629,8 +666,11 @@ ElemGrinLens::ElemGrinLens() : ElementRange()
         qApp->translate("Param", "IOR gradient (S)"),
         qApp->translate("Param", "Radial gradient of index of refraction in sagittal plane"));
 
-    addParam(_ior2t, 0.01, Z::Units::inv_m2());
-    addParam(_ior2s, 0.01, Z::Units::inv_m2());
+    _ior2t->setValue(Z::Value(0.01, Z::Units::inv_m2()));
+    _ior2s->setValue(Z::Value(0.01, Z::Units::inv_m2()));
+
+    addParam(_ior2t);
+    addParam(_ior2s);
 }
 
 void ElemGrinLens::calcMatrixInternal()
@@ -715,8 +755,12 @@ ElemAxiconMirror::ElemAxiconMirror() : ElementDynamic()
     _alpha = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Alpha"), Z::Strs::alpha(),
                               qApp->translate("Param", "Angle of incidence "),
                               qApp->translate("Param", "Zero angle is normal incidence."));
-    addParam(_theta, 1, Z::Units::deg());
-    addParam(_alpha, 0, Z::Units::deg());
+
+    _theta->setValue(1_deg);
+    _alpha->setValue(0_deg);
+
+    addParam(_theta);
+    addParam(_alpha);
 
     setOption(Element_ChangesWavefront);
 }
@@ -747,9 +791,14 @@ ElemAxiconLens::ElemAxiconLens() : ElementDynamic()
     _ior = new Z::Parameter(Z::Dims::none(),
                             QStringLiteral("n"), QStringLiteral("n"),
                             qApp->translate("Param", "Index of refraction"));
-    addParam(_theta, 1, Z::Units::deg());
-    addParam(_alpha, 0, Z::Units::deg());
-    addParam(_ior, 1.5, Z::Units::none());
+
+    _theta->setValue(1_deg);
+    _alpha->setValue(0_deg);
+    _ior->setValue(1.5);
+
+    addParam(_theta);
+    addParam(_alpha);
+    addParam(_ior);
 
     setOption(Element_ChangesWavefront);
 }

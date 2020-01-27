@@ -9,11 +9,10 @@
 //                                ParamsEditor
 //------------------------------------------------------------------------------
 
-ParamsEditor::ParamsEditor(Options opts, QWidget *parent) : QWidget(parent), _options(opts), _params(opts.params)
+ParamsEditor::ParamsEditor(const Options opts, QWidget *parent) : QWidget(parent), _options(opts), _params(opts.params)
 {
     _paramsLayout = Ori::Layouts::LayoutV({}).setMargin(0).setSpacing(0).boxLayout();
-    for (Z::Parameter* param : *_params)
-        addEditor(param);
+    populateEditors();
 
     _infoPanel = new Ori::Widgets::InfoPanel;
     auto layout = qobject_cast<QBoxLayout*>(_infoPanel->layout());
@@ -32,8 +31,31 @@ ParamsEditor::ParamsEditor(Options opts, QWidget *parent) : QWidget(parent), _op
             .useFor(this);
 }
 
+void ParamsEditor::populateEditors()
+{
+    if (not _editors.isEmpty())
+    {
+        qWarning() << "ParamsEditor::populateEditors: already populated, use removeEditors first";
+        return;
+    }
+    for (Z::Parameter* param : *_params)
+        addEditor(param);
+}
+
+void ParamsEditor::removeEditors()
+{
+    qDeleteAll(_editors);
+    _editors.clear();
+}
+
 void ParamsEditor::addEditor(Z::Parameter* param)
 {
+    if (not _params->contains(param))
+    {
+        qWarning() << "ParamsEditor::addEditor: invalid param, it is not in the parameters list";
+        return;
+    }
+
     // We don't add the parameter to the `_params` list here
     // because it's supposed to be done by the widget's owner
     // (which is also probably the owner of the parameters list itself)
@@ -74,6 +96,19 @@ void ParamsEditor::removeEditor(Z::Parameter* param)
         {
             _editors.removeAt(i);
             delete editor;
+            break;
+        }
+    }
+}
+
+void ParamsEditor::populateEditor(Z::Parameter* param)
+{
+    for (int i = 0; i < _editors.size(); i++)
+    {
+        auto editor = _editors.at(i);
+        if (editor->parameter() == param)
+        {
+            editor->populate();
             break;
         }
     }
