@@ -9,9 +9,10 @@ reZonator2 Documentation
    :maxdepth: 1
    :caption: Table of Contents:
 
+   schema
    elements
    functions
-   calculators
+   tools
    handbook
 
 

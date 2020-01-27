@@ -4,6 +4,7 @@
 #include "CalcManager.h"
 #include "CommonData.h"
 #include "CustomPrefs.h"
+#include "HelpSystem.h"
 #include "PumpParamsDialog.h"
 #include "SchemaPropsDialog.h"
 #include "core/Schema.h"
@@ -321,7 +322,6 @@ void ProjectOperations::setupWavelength()
     ParamEditor editor(&schema()->wavelength());
     Ori::Dlg::Dialog(&editor, false)
             .withTitle(schema()->wavelength().name())
-            .withHelpTopic("") // TODO help topic
             .withIconPath(":/window_icons/wavelength")
             .withHorizontalPrompt(tr("Enter new wavelength:"))
             .connectOkToContentApply()
@@ -374,7 +374,7 @@ bool ProjectOperations::selectTripTypeDlg(TripType* tripType)
 
     auto dlg = Ori::Dlg::Dialog(&content, false)
             .withTitle(tr("Round-trip type"))
-            .withHelpTopic("") // TODO help topic
+            .withOnHelp([](){ Z::HelpSystem::instance()->showTopic("trip_type.html"); })
             .withContentToButtonsSpacingFactor(3)
             .withActiveWidget(activeTile)
             .withOkSignal(&tripTypeGroup, SIGNAL(doubleClicked(QVariant)));

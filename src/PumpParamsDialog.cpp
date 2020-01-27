@@ -1,6 +1,7 @@
 #include "PumpParamsDialog.h"
 
 #include "Appearance.h"
+#include "HelpSystem.h"
 #include "core/Pump.h"
 #include "core/Utils.h"
 #include "widgets/ParamsEditor.h"
@@ -79,6 +80,7 @@ PumpParams* PumpParamsDialog::makeNewPump()
     if (Ori::Dlg::Dialog(&content, false)
             .withIconPath(":/window_icons/pump")
             .withTitle(tr("Select Pump Mode"))
+            .withOnHelp([](){ Z::HelpSystem::instance()->showTopic("pump_mode.html"); })
             .withOkSignal(&modesGroup, SIGNAL(doubleClicked(QVariant)))
             .withContentToButtonsSpacingFactor(2)
             .exec())
@@ -96,7 +98,7 @@ bool PumpParamsDialog::editPump(PumpParams *params)
 }
 
 PumpParamsDialog::PumpParamsDialog(PumpParams *params, QWidget *parent)
-    : RezonatorDialog(Options(NoOptions), parent), _params(params)
+    : RezonatorDialog(Options(UseHelpButton), parent), _params(params)
 {
     auto pumpMode = Pump::findByModeName(params->modeName());
     if (!pumpMode)

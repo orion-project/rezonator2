@@ -75,7 +75,6 @@ html_theme_options = {
 
 html_title = 'reZonator2 Manual'
 
-# TODO: make header on transparent background
 html_logo = '../img/rezonator_header.png'
 
 html_favicon = '../img/icon/main_2.ico'

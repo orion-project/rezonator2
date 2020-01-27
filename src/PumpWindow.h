@@ -83,6 +83,7 @@ public:
 
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return { _windowMenu }; }
+    QString helpTopic() const override { return "pumps_window.html"; }
 
     // inherits from SchemaListener
     void schemaLoaded(Schema*) override { showStatusInfo(); }

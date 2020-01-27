@@ -116,6 +116,7 @@ private slots:
     void showParamsWindow();
     void showPumpsWindow();
     void showAdjustment();
+    void showHelp();
 
     void openSchemaExample();
 

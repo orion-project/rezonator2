@@ -7,7 +7,7 @@
 
 span.menuselection, span.guilabel, kbd {
     color: maroon;
-    font-style: italic;
+    font-family: Courier New, Monaco, monospace;
 }
 
 span.elem-param {

@@ -43,7 +43,7 @@ const TripTypeInfo& TripTypes::SP() {
     static TripTypeInfoPrivate p {
         "SP",
         "Single pass system (SP)",
-        "SP - Single pass system",
+        "SP - Single-pass system",
         ":/icons/trip_type_sp"
     };
     static TripTypeInfo t(&p);

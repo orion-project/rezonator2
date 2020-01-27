@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<!--
+Original file is one of the official demos from MaxJax
+https://mathjax.github.io/MathJax-demos-web/input-tex2svg.html
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>TeX to SVG</title>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <script>
+    window.onload = () => {
+      var input = document.getElementById('input');
+      input.value = localStorage.getItem('tex_to_svg_input') || 'x = {-b \pm \sqrt{b^2-4ac} \over 2a}';
+    }
+    
+    function convert() {
+      // Get the TeX input
+      var input = document.getElementById("input").value.trim();
+ 
+      // Disable the render button until MathJax is done
+      var button = document.getElementById("render");
+      button.disabled = true;
+
+      // Clear the old output
+      output = document.getElementById('output');
+      output.innerHTML = '';
+
+      // Reset the tex labels (and automatic equation numbers, though there aren't any here).
+      MathJax.texReset();
+      
+      // Get the conversion options (metrics and display settings)
+      var options = MathJax.getMetricsFor(output);
+      options.display = true;
+
+      // Convert the input to SVG output and use a promise to wait for it to be ready
+      // (in case an extension needs to be loaded dynamically).
+      MathJax.tex2chtmlPromise(input, options).then(node => {
+
+        // The promise returns the typeset node, which we add to the output
+        // Then update the document to include the adjusted CSS for the content of the new equation.
+        output.appendChild(node);
+        MathJax.startup.document.clear();
+        MathJax.startup.document.updateDocument();
+        
+        localStorage.setItem('tex_to_svg_input', input);
+      }).catch(err => {
+        //  If there was an error, put the message into the output instead
+        output.appendChild(document.createElement('pre')).appendChild(document.createTextNode(err.message));
+      }).then(() => {
+        //  Error or not, re-enable the render buttons
+        button.disabled = false;
+      });
+    }
+  </script>
+  <style>
+  #frame {
+    max-width: 40em;
+    margin: auto;
+  }
+  #input {
+    border: 1px solid grey;
+    margin: 0 0 .25em;
+    width: 100%;
+    font-size: 120%;
+    box-sizing: border-box;
+  }
+  #output {
+    font-size: 125%;
+    margin-top: .25em;
+    border: 1px solid grey;
+    padding: .25em;
+    min-height: 2em;
+    color: #222;
+  }
+  #output > pre {
+    margin-left: 5px;
+  }
+  </style>
+</head>
+<body>
+  <div id="frame">
+    <h1>TeX to SVG</h1>
+    <textarea id="input" rows="15" cols="10">
+    </textarea>
+    <button id="render" onclick="convert()">Render</button>
+    <div id="output"></div>
+  </div>
+</body>
+</html>
