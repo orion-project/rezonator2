@@ -64,6 +64,11 @@ void ElemFormulaWindow::createContent(ElemFormula *sourceElem, ElemFormula *work
         // from the state in what it was loaded.
         schema()->markModified("ElemFormula edited");
     });
+    connect(_editor, &ElemFormulaEditor::onSaved, [this](){
+        updateWindowTitle();
+        schema()->events().raise(SchemaEvents::ElemChanged, _editor->sourceElem(), "ElemFormula saved");
+        schema()->events().raise(SchemaEvents::RecalRequred, "ElemFormula saved");
+    });
 
     _menuFormula = new QMenu(tr("Formula"));
     _editor->populateWindowMenu(_menuFormula);

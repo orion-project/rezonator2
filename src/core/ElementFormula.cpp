@@ -10,12 +10,6 @@ void ElemFormula::calcMatrixInternal()
 
 }
 
-void ElemFormula::removeParams()
-{
-    qDeleteAll(_params);
-    _params.clear();
-}
-
 void ElemFormula::addParam(Z::Parameter* param, int index)
 {
     if (_params.indexOf(param) >= 0)
@@ -63,4 +57,25 @@ void ElemFormula::moveParamDown(Z::Parameter* param)
     }
     int index1 = (index == _params.size()-1) ? 0 : index+1;
     _params.swap(index, index1);
+}
+
+void ElemFormula::assign(const ElemFormula* other)
+{
+    qDeleteAll(_params);
+    _params.clear();
+
+    for (const auto p : other->params())
+    {
+        auto paramCopy = new Z::Parameter(p->dim(),
+                                          p->alias(),
+                                          p->label(),
+                                          p->name(),
+                                          p->description(),
+                                          p->category(),
+                                          p->visible());
+        paramCopy->setValue(p->value());
+        addParam(paramCopy);
+    }
+    _formula = other->formula();
+    _hasMatricesTS = other->hasMatricesTS();
 }

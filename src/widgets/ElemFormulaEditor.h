@@ -39,6 +39,7 @@ public:
 
 signals:
     void onChanged();
+    void onSaved();
 
 private slots:
     void saveChanges();
@@ -75,7 +76,6 @@ private:
     void createActions();
     void createToolbar(bool full);
     void editorChanged();
-    void initWorkingCopy();
     void updateParamsEditorVisibility();
 
     friend class ElemFormulaWindow;

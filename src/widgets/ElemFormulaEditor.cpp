@@ -46,7 +46,7 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
     if (!_workingCopy)
     {
         _workingCopy = new ElemFormula;
-        initWorkingCopy();
+        _workingCopy->assign(_sourceElem);
     }
 
     createActions();
@@ -55,14 +55,12 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
     ParamsEditor::Options opts(&_workingCopy->params());
     opts.menuButtonActions = {_actnParamDescr, nullptr, _actnParamMoveUp, _actnParamMoveDown, nullptr, _actnParamDelete};
     _paramsEditor = new ParamsEditor(opts);
-    _paramsEditor->setVisible(!_workingCopy->params().isEmpty());
     connect(_paramsEditor, &ParamsEditor::paramChanged, this, &ElemFormulaEditor::editorChanged);
 
     _stubNoParams = LayoutV({
         LayoutH({ Stretch(), new QLabel(tr("Element nas no parameters")), Stretch() }),
         Stretch(),
     }).makeWidget();
-    _stubNoParams->setVisible(_workingCopy->params().isEmpty());
 
     _flagHasMatricesTS = new QCheckBox(tr("Different matrices for T and S"));
     connect(_flagHasMatricesTS, &QCheckBox::stateChanged, this, &ElemFormulaEditor::editorChanged);
@@ -98,6 +96,8 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
 
     // Element should be deleted only after all children, so put at the end
     new ObjectDeleter<Element>(_workingCopy, this);
+
+    updateParamsEditorVisibility();
 }
 
 ElemFormulaEditor::~ElemFormulaEditor()
@@ -153,25 +153,6 @@ void ElemFormulaEditor::populateWindowMenu(QMenu* menu)
     menu->addAction(_actnParamAdd);
 }
 
-void ElemFormulaEditor::initWorkingCopy()
-{
-    _workingCopy->removeParams();
-    for (const auto p : _sourceElem->params())
-    {
-        auto paramCopy = new Z::Parameter(p->dim(),
-                                          p->alias(),
-                                          p->label(),
-                                          p->name(),
-                                          p->description(),
-                                          p->category(),
-                                          p->visible());
-        paramCopy->setValue(p->value());
-        _workingCopy->addParam(paramCopy);
-    }
-    _workingCopy->setFormula(_sourceElem->formula());
-    _workingCopy->setHasMatricesTS(_sourceElem->hasMatricesTS());
-}
-
 void ElemFormulaEditor::populateValues()
 {
     _lockEvents = true;
@@ -199,11 +180,11 @@ void ElemFormulaEditor::editorChanged()
 
 void ElemFormulaEditor::saveChanges()
 {
-    // TODO
     if (not _isChanged) return;
-    _logView->append("Save changes");
+    applyValues();
+    _sourceElem->assign(_workingCopy);
     _isChanged = false;
-    emit onChanged();
+    emit onSaved();
 }
 
 void ElemFormulaEditor::resetChanges()
@@ -213,7 +194,7 @@ void ElemFormulaEditor::resetChanges()
         "made in this editor window will be lost. Continue?")
         .arg(_sourceElem->displayLabel()))) return;
     _paramsEditor->removeEditors();
-    initWorkingCopy();
+    _workingCopy->assign(_sourceElem);
     _paramsEditor->populateEditors();
     populateValues();
     updateParamsEditorVisibility();
@@ -352,7 +333,11 @@ void ElemFormulaEditor::updateParamsEditorVisibility()
         _paramsEditor->setVisible(false);
     }
     else
+    {
+        _stubNoParams->setVisible(false);
+        _paramsEditor->setVisible(true);
         _paramsEditor->focus(_workingCopy->params().first());
+    }
 }
 
 void ElemFormulaEditor::annotateParameter()
