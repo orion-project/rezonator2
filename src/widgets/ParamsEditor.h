@@ -58,6 +58,8 @@ public:
     void addEditor(Z::Parameter* param);
     void removeEditor(Z::Parameter* param);
     void populateEditor(Z::Parameter* param);
+    void moveEditorUp(Z::Parameter* param);
+    void moveEditorDown(Z::Parameter* param);
 
     void focus();
     void focus(Z::Parameter *param);

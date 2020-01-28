@@ -180,7 +180,7 @@ protected:
 
     virtual void calcMatrixInternal();
 
-    void addParam(Z::Parameter* param);
+    void addParam(Z::Parameter* param, int index = -1);
 
     void parameterChanged(Z::ParameterBase*) override;
 

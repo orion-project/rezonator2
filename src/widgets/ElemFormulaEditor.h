@@ -49,6 +49,8 @@ private slots:
     void createParameter();
     void deleteParameter();
     void annotateParameter();
+    void moveParameterUp();
+    void moveParameterDown();
 
 private:
     /// This construct should be called only during schema loading
@@ -60,7 +62,7 @@ private:
     ElemFormula* _workingCopy;
     ParamsEditor* _paramsEditor;
     QAction *_actnSaveChanges, *_actnResetChanges, *_actnCheckCode, *_actnClearLog, *_actnShowHelp,
-        *_actnParamAdd, *_actnParamDelete, *_actnParamDescr;
+        *_actnParamAdd, *_actnParamDelete, *_actnParamDescr, *_actnParamMoveUp, *_actnParamMoveDown;
     QTextEdit *_codeEditor, *_logView;
     QToolBar *_toolbar;
     QMenu *_menuParam;
@@ -72,7 +74,7 @@ private:
 
     void createActions();
     void createToolbar(bool full);
-    void somethingChanged();
+    void editorChanged();
     void initWorkingCopy();
     void updateParamsEditorVisibility();
 

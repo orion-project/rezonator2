@@ -344,6 +344,7 @@ Element* readElement(const QJsonObject& root, Z::Report* report)
                 auto paramJson = paramsJson.obj()[alias].toObject();
                 auto descr = paramJson["descr"].toString();
                 auto dimStr = paramJson["dim"].toString();
+                auto order = paramJson["order"].toInt(-1);
                 auto dim = Z::Dims::findByAlias(dimStr);
                 if (!dim)
                 {
@@ -351,7 +352,7 @@ Element* readElement(const QJsonObject& root, Z::Report* report)
                     report->warning(QString("Reading element '%1': unknown dimension of parameter %2: %3")
                                     .arg(elem->displayLabel()).arg(alias).arg(dimStr));
                 }
-                formulaElem->addParam(new Z::Parameter(dim, alias, alias, alias, descr));
+                formulaElem->addParam(new Z::Parameter(dim, alias, alias, alias, descr), order);
             }
 
         for (Z::Parameter *param : elem->params())

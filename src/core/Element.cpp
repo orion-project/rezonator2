@@ -63,10 +63,12 @@ QString Element::displayLabelTitle()
     return typeName();
 }
 
-void Element::addParam(Z::Parameter *param)
+void Element::addParam(Z::Parameter *param, int index)
 {
     param->addListener(this);
-    _params.append(param);
+    if (index < 0 || index >= _params.size())
+        _params.append(param);
+    else _params.insert(index, param);
 }
 
 void Element::parameterChanged(Z::ParameterBase*)

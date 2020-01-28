@@ -53,10 +53,10 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
     createToolbar(fullToolbar);
 
     ParamsEditor::Options opts(&_workingCopy->params());
-    opts.menuButtonActions = {_actnParamDescr, nullptr, _actnParamDelete};
+    opts.menuButtonActions = {_actnParamDescr, nullptr, _actnParamMoveUp, _actnParamMoveDown, nullptr, _actnParamDelete};
     _paramsEditor = new ParamsEditor(opts);
     _paramsEditor->setVisible(!_workingCopy->params().isEmpty());
-    connect(_paramsEditor, &ParamsEditor::paramChanged, this, &ElemFormulaEditor::somethingChanged);
+    connect(_paramsEditor, &ParamsEditor::paramChanged, this, &ElemFormulaEditor::editorChanged);
 
     _stubNoParams = LayoutV({
         LayoutH({ Stretch(), new QLabel(tr("Element nas no parameters")), Stretch() }),
@@ -65,7 +65,7 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
     _stubNoParams->setVisible(_workingCopy->params().isEmpty());
 
     _flagHasMatricesTS = new QCheckBox(tr("Different matrices for T and S"));
-    connect(_flagHasMatricesTS, &QCheckBox::stateChanged, this, &ElemFormulaEditor::somethingChanged);
+    connect(_flagHasMatricesTS, &QCheckBox::stateChanged, this, &ElemFormulaEditor::editorChanged);
 
     auto paramsPanel = LayoutV({
         Z::Gui::headerlabel(tr(" Options")),
@@ -79,7 +79,7 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
     _codeEditor = new QTextEdit;
     _codeEditor->setAcceptRichText(false);
     _codeEditor->setFont(Z::Gui::CodeEditorFont().get());
-    connect(_codeEditor, &QTextEdit::textChanged, this, &ElemFormulaEditor::somethingChanged);
+    connect(_codeEditor, &QTextEdit::textChanged, this, &ElemFormulaEditor::editorChanged);
 
     _logView = new QTextEdit;
     _logView->setReadOnly(true);
@@ -116,6 +116,8 @@ void ElemFormulaEditor::createActions()
     _actnParamAdd = A_(tr("Add Parameter..."), this, SLOT(createParameter()), ":/toolbar/param_add");
     _actnParamDelete = A_(tr("Delete..."), this, SLOT(deleteParameter()), ":/toolbar/param_delete");
     _actnParamDescr = A_(tr("Annotate..."), this, SLOT(annotateParameter()), ":/toolbar/param_annotate");
+    _actnParamMoveUp = A_(tr("Move Up"), this, SLOT(moveParameterUp()), ":/toolbar/move_up");
+    _actnParamMoveDown = A_(tr("Move Down"), this, SLOT(moveParameterDown()), ":/toolbar/move_down");
 
     #undef A_
 }
@@ -186,7 +188,7 @@ void ElemFormulaEditor::applyValues()
     _workingCopy->setHasMatricesTS(_flagHasMatricesTS->isChecked());
 }
 
-void ElemFormulaEditor::somethingChanged()
+void ElemFormulaEditor::editorChanged()
 {
     if (_lockEvents) return;
     if (_isChanged && !_firstChange) return;
@@ -207,7 +209,7 @@ void ElemFormulaEditor::saveChanges()
 void ElemFormulaEditor::resetChanges()
 {
     if (not _isChanged) return;
-    if (not Ori::Dlg::yes(tr("Element <b>%1</b>: all changed "
+    if (not Ori::Dlg::yes(tr("Element <b>%1</b>: all changes "
         "made in this editor window will be lost. Continue?")
         .arg(_sourceElem->displayLabel()))) return;
     _paramsEditor->removeEditors();
@@ -322,7 +324,7 @@ void ElemFormulaEditor::createParameter()
             _stubNoParams->setVisible(false);
             _paramsEditor->setVisible(true);
         }
-        somethingChanged();
+        editorChanged();
     }
 }
 
@@ -331,10 +333,14 @@ void ElemFormulaEditor::deleteParameter()
     auto param = _actnParamDelete->data().value<ParamEditor*>()->parameter();
     if (Ori::Dlg::yes(tr("Delete parameter <b>%1</b>?").arg(param->alias())))
     {
-        _paramsEditor->removeEditor(param);
-        _workingCopy->removeParam(param);
-        updateParamsEditorVisibility();
-        somethingChanged();
+        // It's an action handler called from the menu owned by the editor we're trying to remove,
+        // so it needes to be finished for action handler workflow before the editor can be freed.
+        QTimer::singleShot(0, [this, param](){
+            _paramsEditor->removeEditor(param);
+            _workingCopy->removeParam(param);
+            updateParamsEditorVisibility();
+            editorChanged();
+        });
     }
 }
 
@@ -357,6 +363,28 @@ void ElemFormulaEditor::annotateParameter()
     {
         param->setDescription(newDescr);
         _paramsEditor->focus(param);
-        somethingChanged();
+        editorChanged();
     }
+}
+
+void ElemFormulaEditor::moveParameterUp()
+{
+    if (_workingCopy->params().count() < 2) return;
+    auto param = _actnParamMoveUp->data().value<ParamEditor*>()->parameter();
+    _paramsEditor->moveEditorUp(param);
+    _workingCopy->moveParamUp(param);
+    editorChanged();
+}
+
+void ElemFormulaEditor::moveParameterDown()
+{
+    if (_workingCopy->params().count() < 2) return;
+    auto param = _actnParamMoveDown->data().value<ParamEditor*>()->parameter();
+    _paramsEditor->moveEditorDown(param);
+    for (auto p : _workingCopy->params())
+        qDebug() << "before" << p->alias();
+    _workingCopy->moveParamDown(param);
+    for (auto p : _workingCopy->params())
+        qDebug() << "after" << p->alias();
+    editorChanged();
 }

@@ -212,6 +212,54 @@ void ParamsEditor::paramUnitChanged(Z::Unit unit)
     emit paramChanged(editor->parameter(), Z::Value(editor->getValue().value(), unit));
 }
 
+void ParamsEditor::moveEditorUp(Z::Parameter* param)
+{
+    if (_editors.size() < 2) return;
+    for (int i = 0; i < _editors.size(); i++)
+    {
+        ParamEditor *editor = _editors.at(i);
+        if (editor->parameter() == param)
+        {
+            _paramsLayout->removeWidget(editor);
+            if (i == 0)
+            {
+                _paramsLayout->addWidget(editor);
+                _editors.swap(i, _editors.size()-1);
+            }
+            else
+            {
+                _paramsLayout->insertWidget(i-1, editor);
+                _editors.swap(i, i-1);
+            }
+            break;
+        }
+    }
+}
+
+void ParamsEditor::moveEditorDown(Z::Parameter* param)
+{
+    if (_editors.size() < 2) return;
+    for (int i = 0; i < _editors.size(); i++)
+    {
+        ParamEditor *editor = _editors.at(i);
+        if (editor->parameter() == param)
+        {
+            _paramsLayout->removeWidget(editor);
+            if (i == _editors.size()-1)
+            {
+                _paramsLayout->insertWidget(0, editor);
+                _editors.swap(i, 0);
+            }
+            else
+            {
+                _paramsLayout->insertWidget(i+1, editor);
+                _editors.swap(i, i+1);
+            }
+            break;
+        }
+    }
+}
+
 //------------------------------------------------------------------------------
 //                               ParamsEditorTS
 //------------------------------------------------------------------------------

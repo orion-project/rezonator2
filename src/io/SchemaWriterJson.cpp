@@ -177,13 +177,15 @@ void writeElement(QJsonObject& root, Element *elem)
     }
 
     QJsonObject paramsJson;
-    for (Z::Parameter* p : elem->params())
+    for (int i = 0; i < elem->params().size(); i++)
     {
+        Z::Parameter* p = elem->params().at(i);
         auto paramJson = writeValue(p->value());
         if (formulaElem)
         {
             paramJson["dim"] = p->dim()->alias();
             paramJson["descr"] = p->description();
+            paramJson["order"] = i;
         }
         paramsJson[p->alias()] = paramJson;
     }
