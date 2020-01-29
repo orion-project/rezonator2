@@ -62,11 +62,7 @@ Element* ElementsCatalog::create(const QString& type) const
 {
     for (Element* maker : _elements)
         if (maker->type() == type)
-        {
-            auto elem = maker->create();
-            elem->calcMatrix();
-            return elem;
-        }
+            return maker->create();
     return nullptr;
 }
 

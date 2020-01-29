@@ -44,6 +44,7 @@ public:
     int mruSchemaCount;          ///< Max items count in recently opened schemas list.
     double adjusterIncrement;    ///< Increment value used for new adjusters.
     double adjusterMultiplier;   ///< Multiplier value used for new adjusters.
+    bool showCustomElemLibrary;  ///< Load Custom Element Library into Elements Catalog
 
     bool layoutExportTransparent; ///< Use transparent background in exported images of layout.
 

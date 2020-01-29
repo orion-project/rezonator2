@@ -7,7 +7,6 @@ ElemFormula::ElemFormula()
 
 void ElemFormula::calcMatrixInternal()
 {
-
 }
 
 void ElemFormula::addParam(Z::Parameter* param, int index)

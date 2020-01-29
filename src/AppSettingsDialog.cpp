@@ -56,6 +56,7 @@ QWidget* AppSettingsDialog::createGeneralPage()
         tr("Generate labels for new pumps"),
         tr("Show start window when application runs"),
         tr("Show protocol window after application started"),
+        tr("Show custom elements in Elements Catalog"),
     });
 
     page->add({_groupOptions, page->stretch()});
@@ -138,6 +139,7 @@ void AppSettingsDialog::populate()
     _groupOptions->setOption(3, settings.pumpAutoLabel);
     _groupOptions->setOption(4, settings.showStartWindow);
     _groupOptions->setOption(5, settings.showProtocolAtStart);
+    _groupOptions->setOption(6, settings.showCustomElemLibrary);
 
     // view
     _groupView->setOption(0, settings.smallToolbarImages);
@@ -165,6 +167,7 @@ bool AppSettingsDialog::collect()
     settings.pumpAutoLabel = _groupOptions->option(3);
     settings.showStartWindow = _groupOptions->option(4);
     settings.showProtocolAtStart = _groupOptions->option(5);
+    settings.showCustomElemLibrary = _groupOptions->option(6);
 
     // view
     settings.smallToolbarImages = _groupView->option(0);

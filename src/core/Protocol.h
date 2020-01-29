@@ -30,7 +30,7 @@ public:
     inline Protocol& operator << (bool v) { write(v? QStringLiteral("true"): QStringLiteral("false")); return *this; }
     inline Protocol& operator << (const std::string& v) { write(QString::fromStdString(v)); return *this; }
 
-    inline void write(const QString& str) { _record.append(str).append(' '); }
+    void write(const QString& str);
 
 private:
     QString _record;

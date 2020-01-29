@@ -435,6 +435,7 @@ void SchemaReaderIni::readElement(const QString &section)
 
         param->setValue(value);
     }
+
     // TODO:NEXT-VER load misalignments
 }
 

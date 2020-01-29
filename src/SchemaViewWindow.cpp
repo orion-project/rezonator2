@@ -130,6 +130,8 @@ void SchemaViewWindow::actionElemAdd()
     Element* elem = ElementsCatalog::instance().create(sample, isCustom);
     if (!elem) return;
 
+    elem->calcMatrix("SchemaViewWindow: element added");
+
     if (AppSettings::instance().elemAutoLabel)
         Z::Utils::generateLabel(schema()->elements(), elem, isCustom ? sample->label() : QString());
 

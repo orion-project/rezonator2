@@ -107,7 +107,7 @@ TEST_METHOD(Plate)
 TEST_METHOD(FlatMirror)
 {
     ELEM(FlatMirror, 0)
-    elem->calcMatrix();
+    elem->calcMatrix("");
     ASSERT_MATRIX_IS_UNITY(elem->Mt())
     ASSERT_MATRIX_IS_UNITY(elem->Ms())
     ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
@@ -333,7 +333,7 @@ TEST_METHOD(Matrix1_2)
 TEST_METHOD(Point)
 {
     ELEM(Point, 0)
-    elem->calcMatrix();
+    elem->calcMatrix("");
     ASSERT_MATRIX_IS_UNITY(elem->Mt())
     ASSERT_MATRIX_IS_UNITY(elem->Ms())
     ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())

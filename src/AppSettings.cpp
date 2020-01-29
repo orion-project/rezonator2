@@ -60,6 +60,7 @@ void AppSettings::load()
     LOAD_DEF(mruSchemaCount, Int, 16);
     LOAD_DEF(adjusterIncrement, Double, 1.0);
     LOAD_DEF(adjusterMultiplier, Double, 1.1);
+    LOAD_DEF(showCustomElemLibrary, Bool, true);
 
     s.beginGroup("Debug");
     LOAD_DEF(showProtocolAtStart, Bool, false);
@@ -100,6 +101,7 @@ void AppSettings::save()
     SAVE(mruSchemaCount);
     SAVE(adjusterIncrement);
     SAVE(adjusterMultiplier);
+    SAVE(showCustomElemLibrary);
 
     s.beginGroup("Debug");
     SAVE(showProtocolAtStart);

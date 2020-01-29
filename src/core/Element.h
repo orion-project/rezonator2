@@ -139,7 +139,7 @@ public:
     /// of element if both label and title are empty.
     QString displayLabelTitle();
 
-    void calcMatrix();
+    void calcMatrix(const char* reason);
     const Z::Matrix& Mt() const { return _mt; }
     const Z::Matrix& Ms() const { return _ms; }
     const Z::Matrix* pMt() const { return &_mt; }
@@ -154,13 +154,6 @@ public:
 
     bool disabled() const { return _disabled; }
     void setDisabled(bool value);
-
-    /// Locks element. Locking pervents element from generating 'modified' event
-    /// and matrix recalculation every time when parameter value has been changed.
-    void lock();
-
-    /// Unlocks element. Calculates new matrix. No events generated here.
-    void unlock(bool recalc = true);
 
     void setOption(ElementOption option) { _options |= option; }
     bool hasOption(ElementOption option) const { return _options & option; }
@@ -183,6 +176,18 @@ protected:
     void addParam(Z::Parameter* param, int index = -1);
 
     void parameterChanged(Z::ParameterBase*) override;
+
+
+    /// Locks element. Locking pervents element from generating 'modified' event
+    /// and matrix recalculation every time when parameter value has been changed.
+    void lock();
+
+    /// Unlocks element. Calculates new matrix. No events generated here.
+    void unlock(bool recalc = true);
+
+    friend class ElementLocker;
+    friend class BackupAndLock;
+
 
     /// Support for ElementsCatalog's functionality
     friend class ElementsCatalog;

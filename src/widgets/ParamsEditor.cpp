@@ -121,7 +121,8 @@ void ParamsEditor::populateValues()
 
 void ParamsEditor::applyValues()
 {
-    for (auto editor : _editors) editor->apply();
+    for (auto editor : _editors)
+        editor->apply();
 }
 
 void ParamsEditor::focus()

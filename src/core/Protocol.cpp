@@ -1,5 +1,6 @@
 #include "Protocol.h"
 
+#include <QDebug>
 #include <QPlainTextEdit>
 
 namespace Z {
@@ -39,6 +40,12 @@ QString Protocol::messageFormat() const
     case Warning: return QStringLiteral("<p><font color=magenta>W: %1</font></p>");
     }
     return QString();
+}
+
+void Protocol::write(const QString& str)
+{
+    qDebug() << str;
+    _record.append(str).append(' ');
 }
 
 } // namespace Z

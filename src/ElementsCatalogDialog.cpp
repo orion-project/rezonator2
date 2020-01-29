@@ -1,6 +1,7 @@
 #include "ElementsCatalogDialog.h"
 
 #include "Appearance.h"
+#include "AppSettings.h"
 #include "CustomElemsManager.h"
 #include "core/Schema.h"
 #include "core/Elements.h"
@@ -52,21 +53,24 @@ ElementsCatalogDialog::ElementsCatalogDialog(QWidget *parent): RezonatorDialog(D
     for (auto category : ElementsCatalog::instance().categories())
         _categoryTabs->addTab(new QWidget, category);
 
-    auto res = CustomElemsManager::loadLibrary();
-    if (res.ok())
+    if (AppSettings::instance().showCustomElemLibrary)
     {
-        if (not res.result()->isEmpty())
+        auto res = CustomElemsManager::loadLibrary();
+        if (res.ok())
         {
-            _library = res.result();
-            _categoryTabs->addTab(new QWidget, tr("Custom library"));
-            _customElemsTab = _categoryTabs->count()-1;
-            _previewHtml = new QTextBrowser;
-            _previewHtml->setFont(Z::Gui::ValueFont().get());
-            _previewHtml->document()->setDefaultStyleSheet(Z::Gui::reportStyleSheet());
+            if (not res.result()->isEmpty())
+            {
+                _library = res.result();
+                _categoryTabs->addTab(new QWidget, tr("Custom library"));
+                _customElemsTab = _categoryTabs->count()-1;
+                _previewHtml = new QTextBrowser;
+                _previewHtml->setFont(Z::Gui::ValueFont().get());
+                _previewHtml->document()->setDefaultStyleSheet(Z::Gui::reportStyleSheet());
+            }
         }
+        else
+            Ori::Dlg::error(tr("There are messages while loading Custom Elements Library:\n\n%1").arg(res.error()));
     }
-    else
-        Ori::Dlg::error(tr("There are messages while loading Custom Elements Library:\n\n%1").arg(res.error()));
 
     connect(_categoryTabs, &QTabWidget::currentChanged, this, &ElementsCatalogDialog::categorySelected);
     mainLayout()->addWidget(_categoryTabs);

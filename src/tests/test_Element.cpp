@@ -111,10 +111,11 @@ TEST_METHOD(Element_unlock_calculates_matrix)
 {
     TestElement elem;
 
-    elem.lock();
-    ASSERT_MATRIX_NOT_CALCULATED(elem)
+    {
+        ElementLocker locker(&elem);
+        ASSERT_MATRIX_NOT_CALCULATED(elem)
+    }
 
-    elem.unlock();
     ASSERT_MATRIX_CALCULATED(elem)
 }
 
@@ -122,10 +123,11 @@ TEST_METHOD(Element_unlock_does_not_raise_events)
 {
     ELEMENT_AND_OWNER
 
-    elem.lock();
-    ASSERT_OWNER_NOT_NOTIFYED
+    {
+        ElementLocker locker(&elem);
+        ASSERT_OWNER_NOT_NOTIFYED
+    }
 
-    elem.unlock();
     ASSERT_OWNER_NOT_NOTIFYED
 }
 
@@ -146,18 +148,18 @@ TEST_METHOD(Element_setDisabled_must_set_flag)
 TEST_METHOD(Element_setDisabled_must_be_unity_matrix)
 {
     TestElement e;
-    e.calcMatrix();
+    e.calcMatrix("");
     ASSERT_MATRIX_CALCULATED(e)
 
     RESET_MATRIX(e)
     e.setDisabled(true);
-    e.calcMatrix();
+    e.calcMatrix("");
     ASSERT_MATRIX_NOT_CALCULATED(e)
     ASSERT_MATRIX_IS_UNITY(e.Mt())
     ASSERT_MATRIX_IS_UNITY(e.Ms())
 
     e.setDisabled(false);
-    e.calcMatrix();
+    e.calcMatrix("");
     ASSERT_MATRIX_CALCULATED(e)
 }
 
@@ -165,11 +167,12 @@ TEST_METHOD(Element_setDisabled_must_raise_event)
 {
     ELEMENT_AND_OWNER
 
-    elem.lock();
-    elem.setDisabled(true);
-    ASSERT_OWNER_NOT_NOTIFYED
+    {
+        ElementLocker locker(&elem);
+        elem.setDisabled(true);
+        ASSERT_OWNER_NOT_NOTIFYED
+    }
 
-    elem.unlock();
     elem.setDisabled(true);
     ASSERT_OWNER_NOTIFYED
 }
@@ -189,11 +192,12 @@ TEST_METHOD(Element_setTitle_must_raise_event)
 {
     ELEMENT_AND_OWNER
 
-    elem.lock();
-    elem.setTitle("test");
-    ASSERT_OWNER_NOT_NOTIFYED
+    {
+        ElementLocker locker(&elem);
+        elem.setTitle("test");
+        ASSERT_OWNER_NOT_NOTIFYED
+    }
 
-    elem.unlock();
     elem.setTitle("test");
     ASSERT_OWNER_NOTIFYED
 }
@@ -213,11 +217,12 @@ TEST_METHOD(Element_setLabel_must_raise_event)
 {
     ELEMENT_AND_OWNER
 
-    elem.lock();
-    elem.setLabel("test");
-    ASSERT_OWNER_NOT_NOTIFYED
+    {
+        ElementLocker locker(&elem);
+        elem.setLabel("test");
+        ASSERT_OWNER_NOT_NOTIFYED
+    }
 
-    elem.unlock();
     elem.setLabel("test");
     ASSERT_OWNER_NOTIFYED
 }
@@ -234,7 +239,7 @@ TEST_METHOD(ElementOwner_setParam_must_recalculate_matrix)
 TEST_METHOD(ElementOwner_setParam_must_recalculate_matrix_when_locked)
 {
     TestElement elem;
-    elem.lock();
+    ElementLocker locker(&elem);
     elem.params()[0]->setValue(100_mkm);
     ASSERT_MATRIX_CALCULATED(elem)
 }
@@ -243,11 +248,12 @@ TEST_METHOD(ElementOwner_setParam_must_raise_event)
 {
     ELEMENT_AND_OWNER
 
-    elem.lock();
-    elem.params()[0]->setValue(100_mkm);
-    ASSERT_OWNER_NOT_NOTIFYED
+    {
+        ElementLocker locker(&elem);
+        elem.params()[0]->setValue(100_mkm);
+        ASSERT_OWNER_NOT_NOTIFYED
+    }
 
-    elem.unlock();
     elem.params()[0]->setValue(150_mm);
     ASSERT_OWNER_NOTIFYED
 }

@@ -204,7 +204,7 @@ void ElemFormulaEditor::resetChanges()
 
 void ElemFormulaEditor::checkFormula()
 {
-    // TODO
+    _paramsEditor->applyValues();
     _logView->append("Check formula");
 }
 
@@ -366,10 +366,6 @@ void ElemFormulaEditor::moveParameterDown()
     if (_workingCopy->params().count() < 2) return;
     auto param = _actnParamMoveDown->data().value<ParamEditor*>()->parameter();
     _paramsEditor->moveEditorDown(param);
-    for (auto p : _workingCopy->params())
-        qDebug() << "before" << p->alias();
     _workingCopy->moveParamDown(param);
-    for (auto p : _workingCopy->params())
-        qDebug() << "after" << p->alias();
     editorChanged();
 }
