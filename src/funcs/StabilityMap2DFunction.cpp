@@ -38,10 +38,12 @@ void StabilityMap2DFunction::calculate()
     for (int ix = 0; ix < nx; ix++)
     {
         _paramX.parameter->setValue({valuesX.at(ix), unitX});
+        _paramX.element->calcMatrix("StabilityMap2DFunction::calculate");
 
         for (int iy = 0; iy < ny; iy++)
         {
             _paramY.parameter->setValue({valuesY.at(iy), unitY});
+            _paramY.element->calcMatrix("StabilityMap2DFunction::calculate");
 
             _calc->multMatrix();
 

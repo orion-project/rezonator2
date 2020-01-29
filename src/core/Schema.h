@@ -257,6 +257,8 @@ public:
 
     void markModified(const char* reason);
 
+    void calcMatrices(const char *reason);
+
 private:
     Elements _items;
     SchemaEvents _events;

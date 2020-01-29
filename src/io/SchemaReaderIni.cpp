@@ -375,7 +375,7 @@ void SchemaReaderIni::readElement(const QString &section)
 
     _schema->insertElement(elem, -1, false);
 
-    ElementLocker lock(elem);
+    ElementLocker lock(elem, false);
 
     elem->setLabel(ini.getString("Alias"));
     elem->setTitle(ini.getString("Title"));

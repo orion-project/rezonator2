@@ -236,12 +236,12 @@ TEST_METHOD(ElementOwner_setParam_must_recalculate_matrix)
     ASSERT_MATRIX_CALCULATED(elem)
 }
 
-TEST_METHOD(ElementOwner_setParam_must_recalculate_matrix_when_locked)
+TEST_METHOD(ElementOwner_setParam_must_not_recalculate_matrix_when_locked)
 {
     TestElement elem;
     ElementLocker locker(&elem);
     elem.params()[0]->setValue(100_mkm);
-    ASSERT_MATRIX_CALCULATED(elem)
+    ASSERT_MATRIX_NOT_CALCULATED(elem)
 }
 
 TEST_METHOD(ElementOwner_setParam_must_raise_event)
@@ -281,7 +281,7 @@ TEST_GROUP("Element",
     ADD_TEST(Element_setLabel_must_raise_event),
 
     ADD_TEST(ElementOwner_setParam_must_recalculate_matrix),
-    ADD_TEST(ElementOwner_setParam_must_recalculate_matrix_when_locked),
+    ADD_TEST(ElementOwner_setParam_must_not_recalculate_matrix_when_locked),
     ADD_TEST(ElementOwner_setParam_must_raise_event),
 )
 

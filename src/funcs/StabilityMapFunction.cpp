@@ -22,6 +22,7 @@ void StabilityMapFunction::calculate()
         auto value = Z::Value(x, range.unit());
 
         param->setValue(value);
+        elem->calcMatrix("StabilityMapFunction::calculate");
         _calc->multMatrix();
 
         addResultPoint(x, _calc->stability());

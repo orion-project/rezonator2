@@ -35,8 +35,6 @@ void CausticFunction::calculate()
             : prepareSinglePass(elem);
     if (!isPrepared) return;
 
-    BackupAndLock locker(elem, elem->paramLength());
-
     bool needCheckStability = isResonator;
     auto calcBeamParams = isResonator
             ? &CausticFunction::calculateResonator

@@ -161,6 +161,7 @@ void ProjectOperations::openSchemaFile(const QString& fileName, const OpenFileOp
     }
     else
         schema()->setFileName(fileName);
+    schema()->calcMatrices("ProjectOperations: schema file loaded");
     schema()->events().enable();
     schema()->events().raise(SchemaEvents::Loaded, "ProjectOperations: schema file loaded");
     schema()->events().raise(SchemaEvents::RecalRequred, "ProjectOperations: schema file loaded");

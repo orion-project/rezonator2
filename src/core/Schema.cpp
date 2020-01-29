@@ -437,6 +437,13 @@ void Schema::markModified(const char *reason)
     _events.raise(SchemaEvents::Changed, reason);
 }
 
+void Schema::calcMatrices(const char* reason)
+{
+    qDebug() << "Schema::calcMatrices" << alias() << reason;
+    for (auto elem : _items)
+        elem->calcMatrix("Schema::calcMatrices");
+}
+
 //------------------------------------------------------------------------------
 //                                Z::Utils
 //------------------------------------------------------------------------------
