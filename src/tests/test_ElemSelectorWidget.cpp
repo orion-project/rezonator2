@@ -19,11 +19,11 @@ namespace ElementSelectorWidgetTests {
 
 #define TEST_SCHEMA(var)\
     Schema var;\
-    schema.insertElement(new ElemMatrix);\
-    schema.insertElement(new ElemEmptyRange);\
-    schema.insertElement(new ElemThinLens);\
-    schema.insertElement(new ElemEmptyRange);\
-    schema.insertElement(new ElemFlatMirror);
+    schema.insertElement(new ElemMatrix, -1, Arg::RaiseEvents(true));\
+    schema.insertElement(new ElemEmptyRange, -1, Arg::RaiseEvents(true));\
+    schema.insertElement(new ElemThinLens, -1, Arg::RaiseEvents(true));\
+    schema.insertElement(new ElemEmptyRange, -1, Arg::RaiseEvents(true));\
+    schema.insertElement(new ElemFlatMirror, -1, Arg::RaiseEvents(true));
 
 //------------------------------------------------------------------------------
 
@@ -158,8 +158,8 @@ TEST_METHOD(must_select_the_first_when_populated)
     ElemMatrix elem;
     ParamSelectorWidget target;
     target.populate(&elem);
-    ASSERT_EQ_INT(target.currentIndex(), 0);
-    ASSERT_EQ_PTR(target.selectedParameter(), elem.params().first());
+    ASSERT_EQ_INT(target.currentIndex(), 0)
+    ASSERT_EQ_PTR(target.selectedParameter(), elem.params().first())
 }
 
 TEST_METHOD(can_set_selected_param_and_current_index)
@@ -169,12 +169,12 @@ TEST_METHOD(can_set_selected_param_and_current_index)
     target.populate(&elem);
 
     target.setSelectedParameter(elem.params().at(2));
-    ASSERT_EQ_INT(target.currentIndex(), 2);
-    ASSERT_EQ_PTR(target.selectedParameter(), elem.params().at(2));
+    ASSERT_EQ_INT(target.currentIndex(), 2)
+    ASSERT_EQ_PTR(target.selectedParameter(), elem.params().at(2))
 
     target.setCurrentIndex(3);
-    ASSERT_EQ_INT(target.currentIndex(), 3);
-    ASSERT_EQ_PTR(target.selectedParameter(), elem.params().at(3));
+    ASSERT_EQ_INT(target.currentIndex(), 3)
+    ASSERT_EQ_PTR(target.selectedParameter(), elem.params().at(3))
 }
 
 namespace repopulate {

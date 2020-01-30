@@ -40,7 +40,7 @@ DECLARE_ELEMENT_END
 #define PREPARE_SCHEMA_ELEMS(elem_count)\
     SCHEMA_AND_LISTENER \
     for (int i = 0; i < elem_count; i++ )\
-        schema.insertElement(new TestElement, -1, false);
+        schema.insertElement(new TestElement, -1, Arg::RaiseEvents(false));
 
 //------------------------------------------------------------------------------
 
@@ -59,7 +59,7 @@ TEST_METHOD(destructor__must_delete_elements)
         auto elem = new TestElement;
         elem->setLabel(QString::number(i));
         elem->test = test;
-        schema->insertElement(elem);
+        schema->insertElement(elem, -1, Arg::RaiseEvents(true));
     }
     delete schema;
     for (int i = 0; i < 10; i++)
@@ -158,12 +158,12 @@ TEST_METHOD(generateLabel__first_elem)
 {
     Schema s;
     auto e1 = new LabeledElement1;
-    s.insertElement(e1);
+    s.insertElement(e1, -1, Arg::RaiseEvents(true));
     Z::Utils::generateLabel(s.elements(), e1);
     ASSERT_EQ_STR(e1->label(), "hhh1")
 
     auto e2 = new LabeledElement2;
-    s.insertElement(e2);
+    s.insertElement(e2, -1, Arg::RaiseEvents(true));
     Z::Utils::generateLabel(s.elements(), e2);
     ASSERT_EQ_STR(e2->label(), "ggg1")
 }
@@ -171,8 +171,8 @@ TEST_METHOD(generateLabel__first_elem)
 TEST_METHOD(generateLabel__next_elem)
 {
     Schema s;
-    s.insertElement(new LabeledElement1);
-    s.insertElement(new LabeledElement2);
+    s.insertElement(new LabeledElement1, -1, Arg::RaiseEvents(true));
+    s.insertElement(new LabeledElement2, -1, Arg::RaiseEvents(true));
     Z::Utils::generateLabel(s.elements(), s.element(0));
     Z::Utils::generateLabel(s.elements(), s.element(1));
 
@@ -282,7 +282,7 @@ TEST_METHOD(insertElement__must_increase_count)
 {
     Schema schema;
     ASSERT_ELEM_COUNT(0)
-    schema.insertElement(new TestElement);
+    schema.insertElement(new TestElement, -1, Arg::RaiseEvents(true));
     ASSERT_ELEM_COUNT(1)
 }
 
@@ -290,7 +290,7 @@ TEST_METHOD(insertElement__must_assign_element_owner)
 {
     Schema schema;
     auto el = new TestElement;
-    schema.insertElement(el);
+    schema.insertElement(el, -1, Arg::RaiseEvents(true));
     ASSERT_EQ_PTR(el->owner(), &schema)
 }
 
@@ -298,7 +298,7 @@ TEST_METHOD(insertElement__must_raise_events_and_change_state)
 {
     SCHEMA_AND_LISTENER
     auto el1 = new TestElement;
-    schema.insertElement(el1);
+    schema.insertElement(el1, -1, Arg::RaiseEvents(true));
     ASSERT_SCHEMA_STATE(STATE(Modified))
     ASSERT_LISTENER(el1, EVENT(ElemCreated), EVENT(Changed), EVENT(RecalRequred))
 }
@@ -310,16 +310,16 @@ TEST_METHOD(deleteElement__must_not_fail_when_invalid_elem)
     PREPARE_SCHEMA_ELEMS(1)
 
     // invalid index
-    schema.deleteElement(-1);
+    schema.deleteElement(-1, Arg::RaiseEvents(true), Arg::FreeElem(true));
     ASSERT_ELEM_COUNT(1)
 
     // invalid index
-    schema.deleteElement(1);
+    schema.deleteElement(1, Arg::RaiseEvents(true), Arg::FreeElem(true));
     ASSERT_ELEM_COUNT(1)
 
     // invalid pointer
     TestElement nonSchemaElem;
-    schema.deleteElement(&nonSchemaElem);
+    schema.deleteElement(&nonSchemaElem, Arg::RaiseEvents(true), Arg::FreeElem(true));
     ASSERT_ELEM_COUNT(1)
 }
 
@@ -330,13 +330,13 @@ TEST_METHOD(deleteElement__must_decrease_count)
 
     // by index
     TAKE_ELEM_PTR(el1, 0)
-    schema.deleteElement(0, false, false);
+    schema.deleteElement(0, Arg::RaiseEvents(false), Arg::FreeElem(false));
     ASSERT_ELEM_COUNT(1)
     ASSERT_EQ_INT(schema.indexOf(el1), -1)
 
     // by pointer
     TAKE_ELEM_PTR(el2, 0)
-    schema.deleteElement(el2, false, false);
+    schema.deleteElement(el2, Arg::RaiseEvents(false), Arg::FreeElem(false));
     ASSERT_ELEM_COUNT(0)
     ASSERT_EQ_INT(schema.indexOf(el2), -1)
 }
@@ -349,12 +349,12 @@ TEST_METHOD(deleteElement__must_reset_element_owner)
 
     // by index
     TAKE_ELEM_PTR(el1, 0)
-    schema.deleteElement(0, false, false);
+    schema.deleteElement(0, Arg::RaiseEvents(false), Arg::FreeElem(false));
     ASSERT_IS_NULL(el1->owner())
 
     // by pointer
     TAKE_ELEM_PTR(el2, 0)
-    schema.deleteElement(el2, false, false);
+    schema.deleteElement(el2, Arg::RaiseEvents(false), Arg::FreeElem(false));
     ASSERT_IS_NULL(el2->owner())
 }
 
@@ -365,13 +365,13 @@ TEST_METHOD(deleteElement__with_lockEvents)
 
     // by index
     TAKE_ELEM_PTR(el1, 0)
-    schema.deleteElement(0, true, false);
+    schema.deleteElement(0, Arg::RaiseEvents(true), Arg::FreeElem(false));
     ASSERT_LISTENER_NO_EVENTS
     ASSERT_SCHEMA_STATE(STATE(New))
 
     // by pointer
     TAKE_ELEM_PTR(el2, 0)
-    schema.deleteElement(el2, true, false);
+    schema.deleteElement(el2, Arg::RaiseEvents(true), Arg::FreeElem(false));
     ASSERT_LISTENER_NO_EVENTS
     ASSERT_SCHEMA_STATE(STATE(New))
 }
@@ -383,13 +383,13 @@ TEST_METHOD(deleteElement__with_events_false)
 
     // by index
     TAKE_ELEM_PTR(el1, 0)
-    schema.deleteElement(0, false, false);
+    schema.deleteElement(0, Arg::RaiseEvents(false), Arg::FreeElem(false));
     ASSERT_LISTENER_NO_EVENTS
     ASSERT_SCHEMA_STATE(STATE(New))
 
     // by pointer
     TAKE_ELEM_PTR(el2, 0)
-    schema.deleteElement(el2, false, false);
+    schema.deleteElement(el2, Arg::RaiseEvents(false), Arg::FreeElem(false));
     ASSERT_LISTENER_NO_EVENTS
     ASSERT_SCHEMA_STATE(STATE(New))
 }
@@ -398,7 +398,7 @@ TEST_METHOD(deleteElement__by_index_with_events)
 {
     PREPARE_SCHEMA_ELEMS(1)
     TAKE_ELEM_PTR(el, 0)
-    schema.deleteElement(0, true, false);
+    schema.deleteElement(0, Arg::RaiseEvents(true), Arg::FreeElem(false));
     ASSERT_SCHEMA_STATE(STATE(Modified))
     ASSERT_LISTENER(el, EVENT(ElemDeleting), EVENT(ElemDeleted), EVENT(Changed), EVENT(RecalRequred))
 }
@@ -407,7 +407,7 @@ TEST_METHOD(deleteElement__by_pointer_with_events)
 {
     PREPARE_SCHEMA_ELEMS(1)
     TAKE_ELEM_PTR(el, 0)
-    schema.deleteElement(el, true, false);
+    schema.deleteElement(el, Arg::RaiseEvents(true), Arg::FreeElem(false));
     ASSERT_SCHEMA_STATE(STATE(Modified))
     ASSERT_LISTENER(el, EVENT(ElemDeleting), EVENT(ElemDeleted), EVENT(Changed), EVENT(RecalRequred))
 }
@@ -428,7 +428,7 @@ TEST_METHOD(ElementInterface__must_be_linked_to_neighbours)
 
     // [0:intf1]
     auto intf1 = new TestInterface;
-    s.insertElement(intf1);
+    s.insertElement(intf1, -1, Arg::RaiseEvents(true));
     ASSERT_EQ_DBL(intf1->ior1(), 1)
     ASSERT_EQ_DBL(intf1->ior2(), 1)
 
@@ -436,7 +436,7 @@ TEST_METHOD(ElementInterface__must_be_linked_to_neighbours)
     // [0:medium1][1:intf1]
     auto medium1 = new TestRange;
     medium1->paramIor()->setValue(2);
-    s.insertElement(medium1, 0);
+    s.insertElement(medium1, 0, Arg::RaiseEvents(true));
     ASSERT_EQ_INT(s.paramLinks()->size(), 1)
     ASSERT_EQ_DBL(intf1->ior1(), 2)
     ASSERT_EQ_DBL(intf1->ior2(), 1)
@@ -445,7 +445,7 @@ TEST_METHOD(ElementInterface__must_be_linked_to_neighbours)
     // [0:medium1][1:intf1][2:medium2]
     auto medium2 = new TestRange;
     medium2->paramIor()->setValue(3);
-    s.insertElement(medium2);
+    s.insertElement(medium2, -1, Arg::RaiseEvents(true));
     ASSERT_EQ_INT(s.paramLinks()->size(), 2)
     ASSERT_EQ_DBL(intf1->ior1(), 2)
     ASSERT_EQ_DBL(intf1->ior2(), 3)
@@ -464,7 +464,7 @@ TEST_METHOD(ElementInterface__must_be_linked_to_neighbours)
     // reset `n1`, and change of left range must not change `n1` anymore
     // [0:medium1][1:elem1][2:intf1][3:medium2]
     auto elem1 = new TestElement;
-    s.insertElement(elem1, 1);
+    s.insertElement(elem1, 1, Arg::RaiseEvents(true));
     ASSERT_EQ_INT(s.paramLinks()->size(), 1)
     ASSERT_EQ_DBL(intf1->ior1(), 1)
     medium1->paramIor()->setValue(2);
@@ -475,7 +475,7 @@ TEST_METHOD(ElementInterface__must_be_linked_to_neighbours)
     // reset `n2`, and change of right range must not change `n2` anymore
     // [0:medium1][1:elem1][2:intf1][3:elem2][4:medium2]
     auto elem2 = new TestElement;
-    s.insertElement(elem2, 3);
+    s.insertElement(elem2, 3, Arg::RaiseEvents(true));
     ASSERT_EQ_INT(s.paramLinks()->size(), 0)
     ASSERT_EQ_DBL(intf1->ior2(), 1)
     medium2->paramIor()->setValue(3);
@@ -488,13 +488,13 @@ TEST_METHOD(ElementInterface__must_be_unlinked_after_deletion_of_itself)
     Schema s;
 
     auto intf1 = new TestInterface;
-    s.insertElement(intf1);
+    s.insertElement(intf1, -1, Arg::RaiseEvents(true));
 
     auto medium1 = new TestRange;
-    s.insertElement(medium1, 0);
+    s.insertElement(medium1, 0, Arg::RaiseEvents(true));
     ASSERT_EQ_INT(s.paramLinks()->size(), 1)
 
-    s.deleteElement(intf1);
+    s.deleteElement(intf1, Arg::RaiseEvents(true), Arg::FreeElem(true));
     ASSERT_EQ_INT(s.paramLinks()->size(), 0)
 }
 
@@ -503,13 +503,13 @@ TEST_METHOD(ElementInterface__must_be_unlinked_after_deletion_of_neighbour)
     Schema s;
 
     auto intf1 = new TestInterface;
-    s.insertElement(intf1);
+    s.insertElement(intf1, -1, Arg::RaiseEvents(true));
 
     auto medium1 = new TestRange;
-    s.insertElement(medium1, 0);
+    s.insertElement(medium1, 0, Arg::RaiseEvents(true));
     ASSERT_EQ_INT(s.paramLinks()->size(), 1)
 
-    s.deleteElement(medium1);
+    s.deleteElement(medium1, Arg::RaiseEvents(true), Arg::FreeElem(true));
     ASSERT_EQ_INT(s.paramLinks()->size(), 0)
 }
 

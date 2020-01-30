@@ -8,12 +8,22 @@
 #include "Pump.h"
 
 #include "core/OriTemplates.h"
+#include "core/OriArg.h"
 
 #include <QApplication>
 #include <QDebug>
 #include <QMap>
 
 class Schema;
+
+//------------------------------------------------------------------------------
+
+namespace Arg {
+
+using RaiseEvents = Ori::Argument<bool, struct RaiseEventsTag>;
+using FreeElem = Ori::Argument<bool, struct FreeElemTag>;
+
+} // namespace Arg
 
 //------------------------------------------------------------------------------
 /**
@@ -224,11 +234,11 @@ public:
     SchemaState& state() { return _state; }
     bool modified() const { return _state.current() == SchemaState::Modified; }
 
-    void insertElement(Element* elem, int index = -1, bool event = true);
-    void insertElements(const Elements& elems, int index, bool event);
-    void deleteElement(Element* elem, bool event = true, bool free = true);
-    void deleteElement(int index, bool event = true, bool free = true);
-    void clearElements(bool events = false);
+    void insertElement(Element* elem, int index, Arg::RaiseEvents events);
+    void insertElements(const Elements& elems, int index, Arg::RaiseEvents events);
+    void deleteElement(Element* elem, Arg::RaiseEvents events, Arg::FreeElem free);
+    void deleteElement(int index, Arg::RaiseEvents events, Arg::FreeElem free);
+    void clearElements(Arg::RaiseEvents events);
 
     SchemaSelection& selection() { return _selection; }
     Element* selectedElement() const { return _selection.element(); }

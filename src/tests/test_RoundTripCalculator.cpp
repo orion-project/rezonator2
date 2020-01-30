@@ -7,8 +7,10 @@ namespace Z {
 namespace Tests {
 namespace RoundTripCalculatorTests {
 
+namespace  {
 DECLARE_ELEMENT(TestElem, Element) DECLARE_ELEMENT_END
 DECLARE_ELEMENT(TestElemRange, ElementRange) DECLARE_ELEMENT_END
+}
 
 static const int EL_COUNT = 4;
 static const int EL_BEG = 0;
@@ -54,7 +56,7 @@ struct TestData
         {
             Element* el = (i == refIndex)? refElem: new TestElem;
             el->setLabel(QString::number(i));
-            schema->insertElement(el);
+            schema->insertElement(el, -1, Arg::RaiseEvents(true));
         }
 
         calc.reset(new RoundTripCalculator(schema.data(), refElem));
@@ -67,7 +69,7 @@ struct TestData
         schema->setTripType(tripType);
 
         for (auto elem : elems)
-            schema->insertElement(elem);
+            schema->insertElement(elem, -1, Arg::RaiseEvents(true));
 
         calc.reset(new RoundTripCalculator(schema.data(), schema->element(refIndex)));
     }
@@ -417,8 +419,8 @@ TEST_CASE_METHOD(rt_ifaces_normal, TripType tripType, const RefIndex& refIndex1,
                 });
     RUN_TEST_DATA(d1)
     RUN_TEST_DATA(d2)
-    ASSERT_EQ_MATRIX(d1.calc->Mt(), d2.calc->Mt());
-    ASSERT_EQ_MATRIX(d1.calc->Ms(), d2.calc->Ms());
+    ASSERT_EQ_MATRIX(d1.calc->Mt(), d2.calc->Mt())
+    ASSERT_EQ_MATRIX(d1.calc->Ms(), d2.calc->Ms())
 }
 
 TEST_CASE(rt_ifaces_normal_sw_0, rt_ifaces_normal, SW, RefIndex(0), RefIndex(0))
@@ -462,8 +464,8 @@ TEST_CASE_METHOD(rt_ifaces_brewster, TripType tripType, const RefIndex& refIndex
                 });
     RUN_TEST_DATA(d1)
     RUN_TEST_DATA(d2)
-    ASSERT_EQ_MATRIX(d1.calc->Mt(), d2.calc->Mt());
-    ASSERT_EQ_MATRIX(d1.calc->Ms(), d2.calc->Ms());
+    ASSERT_EQ_MATRIX(d1.calc->Mt(), d2.calc->Mt())
+    ASSERT_EQ_MATRIX(d1.calc->Ms(), d2.calc->Ms())
 }
 
 TEST_CASE(rt_ifaces_brewster_sw_0, rt_ifaces_brewster, SW, RefIndex(0), RefIndex(0))
@@ -514,10 +516,10 @@ TEST_CASE_METHOD(rt_ifaces_tilted, TripType tripType, const RefIndex& refIndex1,
     RUN_TEST_DATA(d1)
     RUN_TEST_DATA(d2)
     RUN_TEST_DATA(d3)
-    ASSERT_NEAR_MATRIX(d1.calc->Mt(), d2.calc->Mt(), 1e-6);
-    ASSERT_NEAR_MATRIX(d1.calc->Ms(), d2.calc->Ms(), 1e-6);
-    ASSERT_NEAR_MATRIX(d1.calc->Mt(), d3.calc->Mt(), 1e-6);
-    ASSERT_NEAR_MATRIX(d1.calc->Ms(), d3.calc->Ms(), 1e-6);
+    ASSERT_NEAR_MATRIX(d1.calc->Mt(), d2.calc->Mt(), 1e-6)
+    ASSERT_NEAR_MATRIX(d1.calc->Ms(), d2.calc->Ms(), 1e-6)
+    ASSERT_NEAR_MATRIX(d1.calc->Mt(), d3.calc->Mt(), 1e-6)
+    ASSERT_NEAR_MATRIX(d1.calc->Ms(), d3.calc->Ms(), 1e-6)
 }
 
 TEST_CASE(rt_ifaces_tilted_sw_0, rt_ifaces_tilted, SW, RefIndex(0), RefIndex(0))
@@ -560,8 +562,8 @@ TEST_CASE_METHOD(rt_ifaces_spherical, TripType tripType, const RefIndex& refInde
                 });
     RUN_TEST_DATA(d1)
     RUN_TEST_DATA(d2)
-    ASSERT_EQ_MATRIX(d1.calc->Mt(), d2.calc->Mt());
-    ASSERT_EQ_MATRIX(d1.calc->Ms(), d2.calc->Ms());
+    ASSERT_EQ_MATRIX(d1.calc->Mt(), d2.calc->Mt())
+    ASSERT_EQ_MATRIX(d1.calc->Ms(), d2.calc->Ms())
 }
 
 TEST_CASE(rt_ifaces_spherical_sw_0, rt_ifaces_spherical, SW, RefIndex(0), RefIndex(0))

@@ -135,7 +135,7 @@ void SchemaViewWindow::actionElemAdd()
     if (AppSettings::instance().elemAutoLabel)
         Z::Utils::generateLabel(schema()->elements(), elem, isCustom ? sample->label() : QString());
 
-    schema()->insertElement(elem, _table->currentRow(), true);
+    schema()->insertElement(elem, _table->currentRow(), Arg::RaiseEvents(true));
 
     if (AppSettings::instance().editNewElem)
         editElement(elem);
@@ -205,7 +205,7 @@ void SchemaViewWindow::actionElemDelete()
     if (!Ori::Dlg::ok(confirmation.join("<br>"))) return;
 
     for (int i = 0; i < elements.size(); i++)
-        schema()->deleteElement(elements[i], true);
+        schema()->deleteElement(elements[i], Arg::RaiseEvents(true), Arg::FreeElem(true));
 }
 
 void SchemaViewWindow::actionSaveCustom()
@@ -255,7 +255,7 @@ void SchemaViewWindow::paste()
         }
     }
 
-    schema()->insertElements(pastedElems, _table->currentRow(), true);
+    schema()->insertElements(pastedElems, _table->currentRow(), Arg::RaiseEvents(true));
 }
 
 void SchemaViewWindow::selectAll()

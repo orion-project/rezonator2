@@ -373,7 +373,7 @@ void SchemaReaderIni::readElement(const QString &section)
         return _report.warning(qApp->translate("IO",
             "Unknown element type '%1', element skipped").arg(oldType));
 
-    _schema->insertElement(elem, -1, false);
+    _schema->insertElement(elem, -1, Arg::RaiseEvents(false));
 
     ElementLocker lock(elem, false);
 

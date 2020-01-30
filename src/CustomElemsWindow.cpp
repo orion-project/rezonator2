@@ -155,7 +155,7 @@ void CustomElemsWindow::actionElemAdd()
     Element *elem = ElementsCatalog::instance().create(sample, isCustom);
     if (!elem) return;
 
-    _library->insertElement(elem, _table->currentRow(), true);
+    _library->insertElement(elem, _table->currentRow(), Arg::RaiseEvents(true));
     saveLibrary();
     editElement(elem);
 }
@@ -208,7 +208,7 @@ void CustomElemsWindow::actionElemDelete()
     if (!Ori::Dlg::ok(confirmation.join("<br>"))) return;
 
     for (int i = 0; i < elements.size(); i++)
-        _library->deleteElement(elements[i], true);
+        _library->deleteElement(elements[i], Arg::RaiseEvents(true), Arg::FreeElem(true));
     saveLibrary();
 }
 
@@ -262,7 +262,7 @@ void CustomElemsWindow::paste()
     auto elems = Z::IO::Clipboard::getElements();
     if (elems.isEmpty()) return;
 
-    _library->insertElements(elems, _table->currentRow(), true);
+    _library->insertElements(elems, _table->currentRow(), Arg::RaiseEvents(true));
     saveLibrary();
 }
 
@@ -313,7 +313,7 @@ void CustomElemsWindow::libraryFileChanged(const QString&)
             }
             else
             {
-                _library->clearElements();
+                _library->clearElements(Arg::RaiseEvents(false));
                 _table->populate();
             }
         }
@@ -321,12 +321,12 @@ void CustomElemsWindow::libraryFileChanged(const QString&)
     }
 
     // Move elements from reloaded library to the current library instance
-    _library->clearElements();
+    _library->clearElements(Arg::RaiseEvents(false));
     while (reloadedLibrary->count() > 0)
     {
         auto elem = reloadedLibrary->element(0);
-        reloadedLibrary->deleteElement(0, false, false);
-        _library->insertElement(elem, -1, false);
+        reloadedLibrary->deleteElement(0, Arg::RaiseEvents(false), Arg::FreeElem(false));
+        _library->insertElement(elem, -1, Arg::RaiseEvents(false));
     }
     _table->populate();
 }

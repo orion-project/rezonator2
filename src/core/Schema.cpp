@@ -197,7 +197,7 @@ Element* Schema::elementByLabel(const QString& label) const
     return nullptr;
 }
 
-void Schema::insertElement(Element* elem, int index, bool event)
+void Schema::insertElement(Element* elem, int index, Arg::RaiseEvents events)
 {
     if (!elem) return;
 
@@ -210,14 +210,14 @@ void Schema::insertElement(Element* elem, int index, bool event)
 
     relinkInterfaces();
 
-    if (event)
+    if (events.value)
     {
         _events.raise(SchemaEvents::ElemCreated, elem, "Schema: insertElement");
         _events.raise(SchemaEvents::RecalRequred, "Schema: insertElement");
     }
 }
 
-void Schema::insertElements(const Elements& elems, int index, bool event)
+void Schema::insertElements(const Elements& elems, int index, Arg::RaiseEvents events)
 {
     int insert = isValid(index);
     for (int i = 0; i < elems.size(); i++)
@@ -234,7 +234,7 @@ void Schema::insertElements(const Elements& elems, int index, bool event)
 
     relinkInterfaces();
 
-    if (event)
+    if (events.value)
     {
         for (auto elem : elems)
             _events.raise(SchemaEvents::ElemCreated, elem, "Schema: insertElements");
@@ -242,18 +242,18 @@ void Schema::insertElements(const Elements& elems, int index, bool event)
     }
 }
 
-void Schema::deleteElement(Element* elem, bool event, bool free)
+void Schema::deleteElement(Element* elem, Arg::RaiseEvents events, Arg::FreeElem free)
 {
-    deleteElement(_items.indexOf(elem), event, free);
+    deleteElement(_items.indexOf(elem), events, free);
 }
 
-void Schema::deleteElement(int index, bool event, bool free)
+void Schema::deleteElement(int index, Arg::RaiseEvents events, Arg::FreeElem free)
 {
     if (!isValid(index)) return;
 
     Element *elem = _items.at(index);
 
-    if (event)
+    if (events.value)
         _events.raise(SchemaEvents::ElemDeleting, elem, "Schema: deleteElement");
 
     _items.removeAt(index);
@@ -262,29 +262,29 @@ void Schema::deleteElement(int index, bool event, bool free)
     relinkInterfaces();
     removeParamLinks(elem);
 
-    if (event)
+    if (events.value)
     {
         _events.raise(SchemaEvents::ElemDeleted, elem, "Schema: deleteElement");
         _events.raise(SchemaEvents::RecalRequred, "Schema: deleteElement");
     }
 
-    if (free)
+    if (free.value)
         delete elem;
 }
 
-void Schema::clearElements(bool events)
+void Schema::clearElements(Arg::RaiseEvents events)
 {
     while (_items.size() > 0)
     {
         Element *elem = _items.at(0);
 
-        if (events)
+        if (events.value)
             _events.raise(SchemaEvents::ElemDeleting, elem, "Schema: clearElements");
 
         _items.removeAt(0);
         elem->setOwner(nullptr);
 
-        if (events)
+        if (events.value)
             _events.raise(SchemaEvents::ElemDeleted, elem, "Schema: clearElements");
 
         delete elem;
@@ -292,7 +292,7 @@ void Schema::clearElements(bool events)
 
     qDeleteAll(_paramLinks);
 
-    if (events)
+    if (events.value)
         _events.raise(SchemaEvents::RecalRequred, "Schema: clearElements");
 }
 

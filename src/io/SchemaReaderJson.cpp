@@ -174,7 +174,7 @@ void SchemaReaderJson::readPumps(const QJsonObject& root)
 void SchemaReaderJson::readElements(const QJsonObject& root)
 {
     auto elems = Z::IO::Json::readElements(root, &_report);
-    _schema->insertElements(elems, -1, false);
+    _schema->insertElements(elems, -1, Arg::RaiseEvents(false));
 }
 
 void SchemaReaderJson::readParamLinks(const QJsonObject& root)
