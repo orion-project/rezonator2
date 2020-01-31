@@ -137,8 +137,13 @@ static QString makeCustomElemPreview(Element* elem)
     QString report;
     QTextStream stream(&report);
     stream << QStringLiteral("<p><b><span class=elem_title>")
-           << elem->typeName()
-           << QStringLiteral("</span></b><p>");
+           << elem->typeName();
+
+    QString customLabel = elem->label();
+    if (not customLabel.isEmpty())
+        stream << QStringLiteral(" (") << customLabel << ')';
+
+    stream << QStringLiteral("</span></b><p>");
 
     Z::Format::FormatParam f;
     f.includeDriver = false;

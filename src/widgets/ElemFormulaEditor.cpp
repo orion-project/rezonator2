@@ -164,9 +164,10 @@ void ElemFormulaEditor::populateValues()
 
 void ElemFormulaEditor::applyValues()
 {
-    _paramsEditor->applyValues();
     _workingCopy->setFormula(_codeEditor->toPlainText());
     _workingCopy->setHasMatricesTS(_flagHasMatricesTS->isChecked());
+    ElementMatrixLocker matrixLocker(_workingCopy, "ElemFormulaEditor::applyValues");
+    _paramsEditor->applyValues();
 }
 
 void ElemFormulaEditor::editorChanged()
@@ -204,8 +205,7 @@ void ElemFormulaEditor::resetChanges()
 
 void ElemFormulaEditor::checkFormula()
 {
-    _paramsEditor->applyValues();
-    _logView->append("Check formula");
+    applyValues();
 }
 
 void ElemFormulaEditor::clearLog()

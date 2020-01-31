@@ -72,6 +72,7 @@ Element* ElementsCatalog::create(const Element* sample, bool copyParams) const
 
     if (copyParams)
     {
+        ElementMatrixLocker matrixLocker(newElem, "ElementsCatalog: create elem from sample");
         auto params = sample->params();
         for (int i = 0; i < params.count(); i++)
             newElem->params().at(i)->setValue(params.at(i)->value());
