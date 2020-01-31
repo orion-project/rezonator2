@@ -85,43 +85,43 @@ Lua::~Lua()
         lua_close(_lua);
 }
 
-void Lua::registerGlobalFuncs()
+void Lua::registerGlobalFuncs(lua_State* lua)
 {
-    LUA_REGISTER_GLOBAL_FUN(_lua, sin);
-    LUA_REGISTER_GLOBAL_FUN(_lua, sinh);
-    LUA_REGISTER_GLOBAL_FUN(_lua, asin);
+    LUA_REGISTER_GLOBAL_FUN(lua, sin)
+    LUA_REGISTER_GLOBAL_FUN(lua, sinh)
+    LUA_REGISTER_GLOBAL_FUN(lua, asin)
 
-    LUA_REGISTER_GLOBAL_FUN(_lua, cos);
-    LUA_REGISTER_GLOBAL_FUN(_lua, cosh);
-    LUA_REGISTER_GLOBAL_FUN(_lua, acos);
+    LUA_REGISTER_GLOBAL_FUN(lua, cos)
+    LUA_REGISTER_GLOBAL_FUN(lua, cosh)
+    LUA_REGISTER_GLOBAL_FUN(lua, acos)
 
-    LUA_REGISTER_GLOBAL_FUN(_lua, tan);
-    LUA_REGISTER_GLOBAL_FUN(_lua, tanh);
-    LUA_REGISTER_GLOBAL_FUN(_lua, atan);
+    LUA_REGISTER_GLOBAL_FUN(lua, tan)
+    LUA_REGISTER_GLOBAL_FUN(lua, tanh)
+    LUA_REGISTER_GLOBAL_FUN(lua, atan)
 
-    LUA_REGISTER_GLOBAL_FUN(_lua, cot);
-    LUA_REGISTER_GLOBAL_FUN(_lua, coth);
-    LUA_REGISTER_GLOBAL_FUN(_lua, acot);
+    LUA_REGISTER_GLOBAL_FUN(lua, cot)
+    LUA_REGISTER_GLOBAL_FUN(lua, coth)
+    LUA_REGISTER_GLOBAL_FUN(lua, acot)
 
-    LUA_REGISTER_GLOBAL_FUN(_lua, sec);
-    LUA_REGISTER_GLOBAL_FUN(_lua, sech);
-    LUA_REGISTER_GLOBAL_FUN(_lua, csc);
-    LUA_REGISTER_GLOBAL_FUN(_lua, csch);
+    LUA_REGISTER_GLOBAL_FUN(lua, sec)
+    LUA_REGISTER_GLOBAL_FUN(lua, sech)
+    LUA_REGISTER_GLOBAL_FUN(lua, csc)
+    LUA_REGISTER_GLOBAL_FUN(lua, csch)
 
-    LUA_REGISTER_GLOBAL_FUN(_lua, abs);
-    LUA_REGISTER_GLOBAL_FUN(_lua, floor);
-    LUA_REGISTER_GLOBAL_FUN(_lua, ceil);
+    LUA_REGISTER_GLOBAL_FUN(lua, abs)
+    LUA_REGISTER_GLOBAL_FUN(lua, floor)
+    LUA_REGISTER_GLOBAL_FUN(lua, ceil)
 
-    LUA_REGISTER_GLOBAL_FUN(_lua, exp);
-    LUA_REGISTER_GLOBAL_FUN(_lua, ln);
-    LUA_REGISTER_GLOBAL_FUN(_lua, lg);
+    LUA_REGISTER_GLOBAL_FUN(lua, exp)
+    LUA_REGISTER_GLOBAL_FUN(lua, ln)
+    LUA_REGISTER_GLOBAL_FUN(lua, lg)
 
-    LUA_REGISTER_GLOBAL_FUN(_lua, sqrt);
+    LUA_REGISTER_GLOBAL_FUN(lua, sqrt)
 
-    LUA_REGISTER_GLOBAL_FUN(_lua, deg2rad);
-    LUA_REGISTER_GLOBAL_FUN(_lua, rad2deg);
+    LUA_REGISTER_GLOBAL_FUN(lua, deg2rad)
+    LUA_REGISTER_GLOBAL_FUN(lua, rad2deg)
 
-    LUA_REGISTER_GLOBAL_FUN(_lua, pi);
+    LUA_REGISTER_GLOBAL_FUN(lua, pi)
 }
 
 bool Lua::open()
@@ -132,7 +132,7 @@ bool Lua::open()
     if (!_lua) return false;
 
     luaL_openlibs(_lua);
-    registerGlobalFuncs();
+    registerGlobalFuncs(_lua);
     return true;
 }
 
@@ -140,8 +140,6 @@ Z::Result<double> Lua::calculate(const QString& formula)
 {
     if (!_lua and !open())
         return Z::Result<double>::fail(qApp->translate("Formula", "Not enough memory to initialize formula parser"));
-
-    auto L = _lua;
 
     #define RESULT_VAR "ans"
     #define FORMULA_ID "formula"
@@ -154,16 +152,16 @@ Z::Result<double> Lua::calculate(const QString& formula)
     QString error;
 
     auto codeBytes = code.toLatin1();
-    int res = luaL_loadbufferx(L, codeBytes.data(), static_cast<size_t>(codeBytes.size()), FORMULA_ID, "t");
+    int res = luaL_loadbufferx(_lua, codeBytes.data(), static_cast<size_t>(codeBytes.size()), FORMULA_ID, "t");
     if (res == LUA_OK)
     {
-        res = lua_pcall(L, 0, 0, 0);
+        res = lua_pcall(_lua, 0, 0, 0);
         if (res == LUA_OK)
         {
-            int valueType = lua_getglobal(L, RESULT_VAR);
+            int valueType = lua_getglobal(_lua, RESULT_VAR);
             if (valueType == LUA_TNUMBER)
             {
-                auto value = lua_tonumber(L, -1);
+                auto value = lua_tonumber(_lua, -1);
                 return Z::Result<double>::success(value);
             }
             else
@@ -172,7 +170,7 @@ Z::Result<double> Lua::calculate(const QString& formula)
     }
     if (res != LUA_OK)
     {
-        error = QString(lua_tostring(L, -1));
+        error = QString(lua_tostring(_lua, -1));
         if (!error.isEmpty())
         {
             // Clean up error message which looks like

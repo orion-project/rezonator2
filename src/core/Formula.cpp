@@ -1,16 +1,8 @@
 #include "Formula.h"
 #include "Protocol.h"
-
-extern "C" {
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
-}
-
-#include <cassert>
+#include "LuaHelper.h"
 
 #include <QApplication>
-#include <QRegExp>
 
 namespace Z {
 
@@ -37,85 +29,35 @@ void Formula::calculate()
     if (_code.isEmpty())
     {
         _status = qApp->translate("Formula", "Formula is empty");
-        Z_ERROR(QString("Empty formula for param '%1'").arg(_target->alias()))
-        return;
-    }
-
-    lua_State *L = luaL_newstate();
-    if (!L)
-    {
-        _status = qApp->translate("Formula", "Not enough memory to create formula parser");
-        Z_ERROR(QString("Bad formula for param '%1'").arg(_target->alias(), _status))
-        return;
-    }
-
-    luaL_openlibs(L);
-
-    #define RESULT_VAR "result"
-    #define FORMULA_ID "formula"
-
-    // TODO: add math functions to global namespace
-
-    for (Z::Parameter* dep : _deps)
-    {
-        lua_pushnumber(L, dep->value().toSi());
-        lua_setglobal(L, dep->alias().toLatin1().data());
-    }
-
-    static QRegExp resultVar(RESULT_VAR "\\s*=");
-    QString code = _code;
-    int pos = code.indexOf(resultVar);
-    if (pos < 0) code = (RESULT_VAR "=") + code;
-
-    auto codeBytes = code.toLatin1();
-    int res = luaL_loadbufferx(L, codeBytes.data(), static_cast<size_t>(codeBytes.size()), FORMULA_ID, "t");
-    if (res == LUA_OK)
-    {
-        res = lua_pcall(L, 0, 0, 0);
-        if (res == LUA_OK)
-        {
-            int valueType = lua_getglobal(L, RESULT_VAR);
-            if (valueType == LUA_TNUMBER)
-            {
-                auto valueSi = lua_tonumber(L, -1);
-                auto unit = _target->value().unit();
-                auto value = unit->fromSi(valueSi);
-                _target->setValue(Value(value, unit));
-                _status.clear();
-            }
-            else
-                _status = qApp->translate("Formula", "Result value is not a number");
-        }
-    }
-    if (res != LUA_OK)
-    {
-        _status = QString(lua_tostring(L, -1));
-
-        if (!_status.isEmpty())
-        {
-            // Clean up error message which looks like
-            // [string "formula"]:1: <useful message>
-            static QString prefix("[string \"" FORMULA_ID "\"]:");
-            if (_status.startsWith(prefix))
-                _status.remove(0, prefix.length());
-            int pos = _status.indexOf(':');
-            if (pos >= 0)
-                _status.remove(0, pos+2);
-        }
-
-        if (_status.isEmpty())
-            _status = qApp->tr("Formula", "Unknown error, code=%1").arg(res);
-        else
-            _status = qApp->tr("Error: %1").arg(_status);
-    }
-
-    if (!_status.isEmpty())
         Z_ERROR(QString("Bad formula for param '%1': %2").arg(_target->alias(), _status))
+        return;
+    }
 
-    lua_close(L);
+    Z::Lua lua;
+    if (!lua.open())
+    {
+        _status = qApp->translate("Formula", "Not enough memory to initialize formula parser");
+        Z_ERROR(QString("Bad formula for param '%1': %2").arg(_target->alias(), _status))
+        return;
+    }
 
-    #undef RESULT_VAR
-    #undef FORMULA_ID
+    for (auto dep : _deps)
+        lua.setGlobalVar(dep->alias(), dep->value().toSi());
+
+    auto res = lua.calculate(_code);
+    if (res.ok())
+    {
+        auto valueSi = res.value();
+        auto unit = _target->value().unit();
+        auto value = unit->fromSi(valueSi);
+        _target->setValue(Value(value, unit));
+        _status.clear();
+    }
+    else
+    {
+        _status = res.error();
+        Z_ERROR(QString("Bad formula for param '%1': %2").arg(_target->alias(), _status))
+    }
 }
 
 void Formula::addDep(Parameter* param)

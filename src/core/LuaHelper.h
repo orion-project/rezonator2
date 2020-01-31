@@ -12,7 +12,6 @@ public:
     Lua();
     ~Lua();
 
-
     bool open();
 
     Z::Result<double> calculate(const QString& code);
@@ -21,12 +20,12 @@ public:
     void setGlobalVar(const QString& name, double value);
     void setGlobalVars(const QMap<QString, double>& vars);
 
+    static void registerGlobalFuncs(lua_State* lua);
+
 private:
     lua_State* _lua = nullptr;
-
-    void registerGlobalFuncs();
 };
 
-} // namespace Lua
+} // namespace Z
 
 #endif // Z_LUA_HELPER_H
