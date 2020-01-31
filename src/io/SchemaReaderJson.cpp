@@ -322,7 +322,8 @@ Element* readElement(const QJsonObject& root, Z::Report* report)
         return nullptr;
     }
 
-    ElementEventsLocker lock(elem);
+    // No need in locking element events here as all the schema events are locked during loading
+    ElementMatrixLocker matrixLocker(elem, "Z::IO::Json::readElement");
 
     auto formulaElem = dynamic_cast<ElemFormula*>(elem);
 

@@ -73,7 +73,10 @@ void Element::addParam(Z::Parameter *param, int index)
 
 void Element::parameterChanged(Z::ParameterBase*)
 {
-    calcMatrix("Element::parameterChanged");
+    if (_calcMatrixLocked)
+        _calcMatrixNeeded = true;
+    else
+        calcMatrix("Element::parameterChanged");
 
     if (!_eventsLocked && _owner)
         _owner->elementChanged(this);

@@ -318,7 +318,8 @@ void Schema::relinkInterfaces()
         ElementInterface *iface = dynamic_cast<ElementInterface*>(_items.at(i));
         if (!iface) continue;
 
-        ElementEventsLocker locker(iface);
+        ElementEventsLocker eventLocker(iface);
+        ElementMatrixLocker matrixLocker(iface, "Schema::relinkInterfaces");
 
         removeParamLinks(iface);
 

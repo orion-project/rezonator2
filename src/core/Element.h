@@ -177,7 +177,11 @@ protected:
 
     void parameterChanged(Z::ParameterBase*) override;
 
-    bool _eventsLocked = false;
+    bool _calcMatrixLocked = false;
+    bool _calcMatrixNeeded = false;
+    friend class ElementMatrixLocker;
+
+    int _eventsLocked = false;
     friend class ElementEventsLocker;
 
     /// Support for ElementsCatalog's functionality
@@ -303,6 +307,32 @@ public:
 
 private:
     Element *_elem;
+};
+
+//------------------------------------------------------------------------------
+
+class ElementMatrixLocker
+{
+public:
+    ElementMatrixLocker(Element* elem, const char* reason): _elem(elem), _reason(reason)
+    {
+        _elem->_calcMatrixLocked = true;
+    }
+
+    ~ElementMatrixLocker()
+    {
+        _elem->_calcMatrixLocked = false;
+
+        if (_elem->_calcMatrixNeeded)
+        {
+            _elem->_calcMatrixNeeded = false;
+            _elem->calcMatrix(_reason);
+        }
+    }
+
+private:
+    Element *_elem;
+    const char *_reason;
 };
 
 //------------------------------------------------------------------------------

@@ -373,9 +373,10 @@ void SchemaReaderIni::readElement(const QString &section)
         return _report.warning(qApp->translate("IO",
             "Unknown element type '%1', element skipped").arg(oldType));
 
-    _schema->insertElements({elem}, -1, Arg::RaiseEvents(false));
+    // No need in locking element events here as all the schema events are locked during loading
+    ElementMatrixLocker matrixLocker(elem, "SchemaReaderIni::readElement");
 
-    ElementEventsLocker lock(elem);
+    _schema->insertElements({elem}, -1, Arg::RaiseEvents(false));
 
     elem->setLabel(ini.getString("Alias"));
     elem->setTitle(ini.getString("Title"));
