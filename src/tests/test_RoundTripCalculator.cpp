@@ -52,12 +52,14 @@ struct TestData
         schema.reset(new Schema);
         schema->setTripType(tripType);
 
+        Elements elems;
         for (int i = 0; i < EL_COUNT; i++)
         {
             Element* el = (i == refIndex)? refElem: new TestElem;
             el->setLabel(QString::number(i));
-            schema->insertElement(el, -1, Arg::RaiseEvents(true));
+            elems << el;
         }
+        schema->insertElements(elems, -1, Arg::RaiseEvents(false));
 
         calc.reset(new RoundTripCalculator(schema.data(), refElem));
     }
@@ -67,10 +69,7 @@ struct TestData
     {
         schema.reset(new Schema);
         schema->setTripType(tripType);
-
-        for (auto elem : elems)
-            schema->insertElement(elem, -1, Arg::RaiseEvents(true));
-
+        schema->insertElements(elems, -1, Arg::RaiseEvents(false));
         calc.reset(new RoundTripCalculator(schema.data(), schema->element(refIndex)));
     }
 };

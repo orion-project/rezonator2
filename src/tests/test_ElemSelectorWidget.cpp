@@ -19,11 +19,13 @@ namespace ElementSelectorWidgetTests {
 
 #define TEST_SCHEMA(var)\
     Schema var;\
-    schema.insertElement(new ElemMatrix, -1, Arg::RaiseEvents(true));\
-    schema.insertElement(new ElemEmptyRange, -1, Arg::RaiseEvents(true));\
-    schema.insertElement(new ElemThinLens, -1, Arg::RaiseEvents(true));\
-    schema.insertElement(new ElemEmptyRange, -1, Arg::RaiseEvents(true));\
-    schema.insertElement(new ElemFlatMirror, -1, Arg::RaiseEvents(true));
+    schema.insertElements({\
+        new ElemMatrix,\
+        new ElemEmptyRange,\
+        new ElemThinLens,\
+        new ElemEmptyRange,\
+        new ElemFlatMirror,\
+    }, -1, Arg::RaiseEvents(false));\
 
 //------------------------------------------------------------------------------
 

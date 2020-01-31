@@ -421,6 +421,28 @@ public:
 
 typedef Ori::Filter<Parameter*, ParameterFilterCondition> ParameterFilter;
 
+//------------------------------------------------------------------------------
+
+/**
+    Backups and restores parameter value.
+*/
+class ParamValueBackup
+{
+public:
+    ParamValueBackup(Parameter* param): _param(param), _backup(param->value())
+    {
+    }
+
+    ~ParamValueBackup()
+    {
+        _param->setValue(_backup);
+    }
+
+private:
+    Parameter* _param;
+    Value _backup;
+};
+
 } // namespace Z
 
 #endif // Z_PARAMETERS_H

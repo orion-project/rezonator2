@@ -131,7 +131,7 @@ void ElementPropsDialog::collect()
         return;
     }
 
-    ElementLocker locker(_element);
+    ElementEventsLocker locker(_element);
 
     _element->setLabel(_editorLabel->text());
     _element->setTitle(_editorTitle->text());

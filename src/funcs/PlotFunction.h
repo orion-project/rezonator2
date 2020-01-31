@@ -10,20 +10,6 @@
 class RoundTripCalculator;
 class Schema;
 
-/**
-    Backups and restores parameter value, and prevents multiple elementChanged events.
-*/
-class BackupAndLock
-{
-public:
-    BackupAndLock(Element* elem, Z::Parameter* param): _elem(elem), _param(param), _backup(param->value()) { _elem->lock();}
-    ~BackupAndLock() { _param->setValue(_backup); _elem->unlock(); }
-private:
-    Element* _elem;
-    Z::Parameter* _param;
-    Z::Value _backup;
-};
-
 class FunctionRange
 {
 public:

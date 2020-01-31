@@ -13,11 +13,11 @@ TEST_METHOD(InfoFuncRepetitionRate_RR_must_be_twice_of_SW)
 {
     Schema rr;
     rr.setTripType(TripType::RR);
-    rr.insertElement(new ElemEmptyRange, -1, Arg::RaiseEvents(true));
+    rr.insertElements({new ElemEmptyRange}, -1, Arg::RaiseEvents(true));
 
     Schema sw;
     sw.setTripType(TripType::SW);
-    sw.insertElement(new ElemEmptyRange, -1, Arg::RaiseEvents(true));
+    sw.insertElements({new ElemEmptyRange}, -1, Arg::RaiseEvents(true));
 
     InfoFuncRepetitionRate rate_rr(&rr);
     rate_rr.calculate();
@@ -33,13 +33,13 @@ TEST_METHOD(InfoFuncRepetitionRate_must_account_optical_path)
     Schema s1;
     auto e1 = new ElemEmptyRange;
     e1->paramLength()->setValue(Z::Value(100, Z::Units::mm()));
-    s1.insertElement(e1, -1, Arg::RaiseEvents(true));
+    s1.insertElements({e1}, -1, Arg::RaiseEvents(true));
 
     Schema s2;
     auto e2 = new ElemMediumRange;
     e2->paramLength()->setValue(Z::Value(100, Z::Units::mm()));
     e2->paramIor()->setValue(Z::Value(2, Z::Units::none()));
-    s2.insertElement(e2, -1, Arg::RaiseEvents(true));
+    s2.insertElements({e2}, -1, Arg::RaiseEvents(true));
 
     for (auto p : e1->params()) TEST_LOG(p->str())
     for (auto p : e2->params()) TEST_LOG(p->str())

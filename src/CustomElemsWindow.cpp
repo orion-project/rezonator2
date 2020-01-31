@@ -155,7 +155,7 @@ void CustomElemsWindow::actionElemAdd()
     Element *elem = ElementsCatalog::instance().create(sample, isCustom);
     if (!elem) return;
 
-    _library->insertElement(elem, _table->currentRow(), Arg::RaiseEvents(true));
+    _library->insertElements({elem}, _table->currentRow(), Arg::RaiseEvents(true));
     saveLibrary();
     editElement(elem);
 }
@@ -205,10 +205,10 @@ void CustomElemsWindow::actionElemDelete()
     for (int i = 0; i < elements.size(); i++)
         confirmation << QString("<b>%1</b>").arg(elements[i]->displayLabelTitle());
 
-    if (!Ori::Dlg::ok(confirmation.join("<br>"))) return;
+    if (not Ori::Dlg::ok(confirmation.join("<br>"))) return;
 
-    for (int i = 0; i < elements.size(); i++)
-        _library->deleteElement(elements[i], Arg::RaiseEvents(true), Arg::FreeElem(true));
+    _library->deleteElements(elements, Arg::RaiseEvents(true), Arg::FreeElem(true));
+
     saveLibrary();
 }
 
@@ -313,7 +313,7 @@ void CustomElemsWindow::libraryFileChanged(const QString&)
             }
             else
             {
-                _library->clearElements(Arg::RaiseEvents(false));
+                _library->deleteElements(_library->elements(), Arg::RaiseEvents(false), Arg::FreeElem(true));
                 _table->populate();
             }
         }
@@ -321,12 +321,9 @@ void CustomElemsWindow::libraryFileChanged(const QString&)
     }
 
     // Move elements from reloaded library to the current library instance
-    _library->clearElements(Arg::RaiseEvents(false));
-    while (reloadedLibrary->count() > 0)
-    {
-        auto elem = reloadedLibrary->element(0);
-        reloadedLibrary->deleteElement(0, Arg::RaiseEvents(false), Arg::FreeElem(false));
-        _library->insertElement(elem, -1, Arg::RaiseEvents(false));
-    }
+    Elements reloadedElems(reloadedLibrary->elements());
+    reloadedLibrary->deleteElements({reloadedElems}, Arg::RaiseEvents(false), Arg::FreeElem(false));
+    _library->deleteElements(_library->elements(), Arg::RaiseEvents(false), Arg::FreeElem(true));
+    _library->insertElements({reloadedElems}, -1, Arg::RaiseEvents(false));
     _table->populate();
 }

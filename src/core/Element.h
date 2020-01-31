@@ -140,6 +140,7 @@ public:
     QString displayLabelTitle();
 
     void calcMatrix(const char* reason);
+
     const Z::Matrix& Mt() const { return _mt; }
     const Z::Matrix& Ms() const { return _ms; }
     const Z::Matrix* pMt() const { return &_mt; }
@@ -167,7 +168,6 @@ protected:
     Z::Matrix _mt_inv, _ms_inv;
     int _id;
     bool _disabled = false;
-    bool _locked = false;
     Z::Parameters _params;
     int _options = 0;
 
@@ -177,17 +177,8 @@ protected:
 
     void parameterChanged(Z::ParameterBase*) override;
 
-
-    /// Locks element. Locking pervents element from generating 'modified' event
-    /// and matrix recalculation every time when parameter value has been changed.
-    void lock();
-
-    /// Unlocks element. Calculates new matrix. No events generated here.
-    void unlock(bool recalc = true);
-
-    friend class ElementLocker;
-    friend class BackupAndLock;
-
+    bool _eventsLocked = false;
+    friend class ElementEventsLocker;
 
     /// Support for ElementsCatalog's functionality
     friend class ElementsCatalog;
@@ -293,20 +284,25 @@ protected:
 };
 
 //------------------------------------------------------------------------------
-class ElementLocker
+/**
+    The class prevents element from generating the 'modified' event
+    every time when a parameter value changes.
+*/
+class ElementEventsLocker
 {
 public:
-    ElementLocker(Element* elem, bool recalc = true): _elem(elem), _recalc(recalc)
+    ElementEventsLocker(Element* elem): _elem(elem)
     {
-        _elem->lock();
+        _elem->_eventsLocked = true;
     }
-    ~ElementLocker()
+
+    ~ElementEventsLocker()
     {
-        _elem->unlock(_recalc);
+        _elem->_eventsLocked = false;
     }
+
 private:
     Element *_elem;
-    bool _recalc;
 };
 
 //------------------------------------------------------------------------------
@@ -329,7 +325,6 @@ inline QSize elemIconSize() { return QSize(24, 24); }
 inline QString elemIconPath(const QString& elemType) { return ":/elem_icon/" % elemType; }
 inline QString elemIconPath(Element* elem) { return elemIconPath(elem->type()); }
 inline QString elemDrawingPath(const QString& elemType) { return ":/elem_drawing/" % elemType; }
-
 
 } // namespace Utils
 } // namespace Z

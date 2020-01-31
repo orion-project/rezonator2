@@ -73,13 +73,10 @@ void Element::addParam(Z::Parameter *param, int index)
 
 void Element::parameterChanged(Z::ParameterBase*)
 {
-    if (!_locked)
-    {
-        calcMatrix("Element::parameterChanged");
+    calcMatrix("Element::parameterChanged");
 
-        if (_owner)
-            _owner->elementChanged(this);
-    }
+    if (!_eventsLocked && _owner)
+        _owner->elementChanged(this);
 }
 
 void Element::calcMatrix(const char *reason)
@@ -95,7 +92,7 @@ void Element::calcMatrix(const char *reason)
     }
     else
     {
-        //qDebug() << "Calc matrix" << type() << displayLabel() << reason;
+        qDebug() << "Calc matrix" << type() << displayLabel() << reason;
         calcMatrixInternal();
     }
 }
@@ -108,36 +105,24 @@ void Element::calcMatrixInternal()
     _ms_inv.unity();
 }
 
-void Element::lock()
-{
-    _locked = true;
-}
-
-void Element::unlock(bool recalc)
-{
-    _locked = false;
-    if (recalc)
-        calcMatrix("Element::unlock");
-}
-
 void Element::setLabel(const QString& value)
 {
     _label = value;
-    if (!_locked && _owner)
+    if (!_eventsLocked && _owner)
         _owner->elementChanged(this);
 }
 
 void Element::setTitle(const QString& value)
 {
     _title = value;
-    if (!_locked && _owner)
+    if (!_eventsLocked && _owner)
         _owner->elementChanged(this);
 }
 
 void Element::setDisabled(bool value)
 {
     _disabled = value;
-    if (!_locked && _owner)
+    if (!_eventsLocked && _owner)
         _owner->elementChanged(this);
 }
 

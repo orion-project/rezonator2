@@ -197,29 +197,11 @@ Element* Schema::elementByLabel(const QString& label) const
     return nullptr;
 }
 
-void Schema::insertElement(Element* elem, int index, Arg::RaiseEvents events)
-{
-    if (!elem) return;
-
-    if (isValid(index))
-        _items.insert(index, elem);
-    else
-        _items.append(elem);
-
-    elem->setOwner(this);
-
-    relinkInterfaces();
-
-    if (events.value)
-    {
-        _events.raise(SchemaEvents::ElemCreated, elem, "Schema: insertElement");
-        _events.raise(SchemaEvents::RecalRequred, "Schema: insertElement");
-    }
-}
-
 void Schema::insertElements(const Elements& elems, int index, Arg::RaiseEvents events)
 {
-    int insert = isValid(index);
+    if (elems.isEmpty()) return;
+
+    bool insert = isValid(index);
     for (int i = 0; i < elems.size(); i++)
     {
         auto elem = elems.at(i);
@@ -242,58 +224,36 @@ void Schema::insertElements(const Elements& elems, int index, Arg::RaiseEvents e
     }
 }
 
-void Schema::deleteElement(Element* elem, Arg::RaiseEvents events, Arg::FreeElem free)
+void Schema::deleteElements(const Elements& elems, Arg::RaiseEvents events, Arg::FreeElem free)
 {
-    deleteElement(_items.indexOf(elem), events, free);
-}
-
-void Schema::deleteElement(int index, Arg::RaiseEvents events, Arg::FreeElem free)
-{
-    if (!isValid(index)) return;
-
-    Element *elem = _items.at(index);
+    Elements ownedElems;
+    for (auto elem : elems)
+        if (_items.contains(elem) and not ownedElems.contains(elem))
+            ownedElems << elem;
+    if (ownedElems.isEmpty()) return;
 
     if (events.value)
-        _events.raise(SchemaEvents::ElemDeleting, elem, "Schema: deleteElement");
+        for (auto elem : ownedElems)
+            _events.raise(SchemaEvents::ElemDeleting, elem, "Schema: deleteElement");
 
-    _items.removeAt(index);
-    elem->setOwner(nullptr);
+    for (auto elem : ownedElems)
+    {
+        _items.removeOne(elem);
+        elem->setOwner(nullptr);
+        removeParamLinks(elem);
+    }
 
     relinkInterfaces();
-    removeParamLinks(elem);
 
     if (events.value)
-    {
-        _events.raise(SchemaEvents::ElemDeleted, elem, "Schema: deleteElement");
-        _events.raise(SchemaEvents::RecalRequred, "Schema: deleteElement");
-    }
+        for (auto elem : ownedElems)
+            _events.raise(SchemaEvents::ElemDeleted, elem, "Schema: deleteElement");
 
     if (free.value)
-        delete elem;
-}
-
-void Schema::clearElements(Arg::RaiseEvents events)
-{
-    while (_items.size() > 0)
-    {
-        Element *elem = _items.at(0);
-
-        if (events.value)
-            _events.raise(SchemaEvents::ElemDeleting, elem, "Schema: clearElements");
-
-        _items.removeAt(0);
-        elem->setOwner(nullptr);
-
-        if (events.value)
-            _events.raise(SchemaEvents::ElemDeleted, elem, "Schema: clearElements");
-
-        delete elem;
-    }
-
-    qDeleteAll(_paramLinks);
+        qDeleteAll(ownedElems);
 
     if (events.value)
-        _events.raise(SchemaEvents::RecalRequred, "Schema: clearElements");
+        _events.raise(SchemaEvents::RecalRequred, "Schema: deleteElement");
 }
 
 void Schema::elementChanged(Element *elem)
@@ -358,7 +318,7 @@ void Schema::relinkInterfaces()
         ElementInterface *iface = dynamic_cast<ElementInterface*>(_items.at(i));
         if (!iface) continue;
 
-        ElementLocker locker(iface);
+        ElementEventsLocker locker(iface);
 
         removeParamLinks(iface);
 
@@ -435,13 +395,6 @@ void Schema::flip()
 void Schema::markModified(const char *reason)
 {
     _events.raise(SchemaEvents::Changed, reason);
-}
-
-void Schema::calcMatrices(const char* reason)
-{
-    qDebug() << "Schema::calcMatrices" << alias() << reason;
-    for (auto elem : _items)
-        elem->calcMatrix("Schema::calcMatrices");
 }
 
 //------------------------------------------------------------------------------

@@ -107,16 +107,16 @@ TEST_METHOD(Element_hasParams)
 
 //------------------------------------------------------------------------------
 
-TEST_METHOD(Element_unlock_calculates_matrix)
+TEST_METHOD(Element_unlock_does_not_calculates_matrix)
 {
     TestElement elem;
 
     {
-        ElementLocker locker(&elem);
+        ElementEventsLocker locker(&elem);
         ASSERT_MATRIX_NOT_CALCULATED(elem)
     }
 
-    ASSERT_MATRIX_CALCULATED(elem)
+    ASSERT_MATRIX_NOT_CALCULATED(elem)
 }
 
 TEST_METHOD(Element_unlock_does_not_raise_events)
@@ -124,7 +124,7 @@ TEST_METHOD(Element_unlock_does_not_raise_events)
     ELEMENT_AND_OWNER
 
     {
-        ElementLocker locker(&elem);
+        ElementEventsLocker locker(&elem);
         ASSERT_OWNER_NOT_NOTIFYED
     }
 
@@ -168,7 +168,7 @@ TEST_METHOD(Element_setDisabled_must_raise_event)
     ELEMENT_AND_OWNER
 
     {
-        ElementLocker locker(&elem);
+        ElementEventsLocker locker(&elem);
         elem.setDisabled(true);
         ASSERT_OWNER_NOT_NOTIFYED
     }
@@ -193,7 +193,7 @@ TEST_METHOD(Element_setTitle_must_raise_event)
     ELEMENT_AND_OWNER
 
     {
-        ElementLocker locker(&elem);
+        ElementEventsLocker locker(&elem);
         elem.setTitle("test");
         ASSERT_OWNER_NOT_NOTIFYED
     }
@@ -218,7 +218,7 @@ TEST_METHOD(Element_setLabel_must_raise_event)
     ELEMENT_AND_OWNER
 
     {
-        ElementLocker locker(&elem);
+        ElementEventsLocker locker(&elem);
         elem.setLabel("test");
         ASSERT_OWNER_NOT_NOTIFYED
     }
@@ -236,12 +236,12 @@ TEST_METHOD(ElementOwner_setParam_must_recalculate_matrix)
     ASSERT_MATRIX_CALCULATED(elem)
 }
 
-TEST_METHOD(ElementOwner_setParam_must_not_recalculate_matrix_when_locked)
+TEST_METHOD(ElementOwner_setParam_must_recalculate_matrix_when_locked)
 {
     TestElement elem;
-    ElementLocker locker(&elem);
+    ElementEventsLocker locker(&elem);
     elem.params()[0]->setValue(100_mkm);
-    ASSERT_MATRIX_NOT_CALCULATED(elem)
+    ASSERT_MATRIX_CALCULATED(elem)
 }
 
 TEST_METHOD(ElementOwner_setParam_must_raise_event)
@@ -249,7 +249,7 @@ TEST_METHOD(ElementOwner_setParam_must_raise_event)
     ELEMENT_AND_OWNER
 
     {
-        ElementLocker locker(&elem);
+        ElementEventsLocker locker(&elem);
         elem.params()[0]->setValue(100_mkm);
         ASSERT_OWNER_NOT_NOTIFYED
     }
@@ -267,7 +267,7 @@ TEST_GROUP("Element",
     ADD_TEST(Element_must_listen_its_params),
     ADD_TEST(Element_hasParams),
 
-    ADD_TEST(Element_unlock_calculates_matrix),
+    ADD_TEST(Element_unlock_does_not_calculates_matrix),
     ADD_TEST(Element_unlock_does_not_raise_events),
 
     ADD_TEST(Element_setDisabled_must_set_flag),
@@ -281,7 +281,7 @@ TEST_GROUP("Element",
     ADD_TEST(Element_setLabel_must_raise_event),
 
     ADD_TEST(ElementOwner_setParam_must_recalculate_matrix),
-    ADD_TEST(ElementOwner_setParam_must_not_recalculate_matrix_when_locked),
+    ADD_TEST(ElementOwner_setParam_must_recalculate_matrix_when_locked),
     ADD_TEST(ElementOwner_setParam_must_raise_event),
 )
 

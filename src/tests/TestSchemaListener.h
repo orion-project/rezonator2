@@ -36,6 +36,7 @@ public:
         PumpParams *pump;
     };
     QVector<SchemaEvents::Event> events;
+    QVector<void*> eventParams;
 
     void reset()
     {
@@ -48,6 +49,14 @@ public:
         if (events.size() != expected.size()) return false;
         for (int i = 0; i < events.size(); i++)
             if (events.at(i) != expected.at(i)) return false;
+        return true;
+    }
+
+    bool checkEventParams(QVector<void*> expected)
+    {
+        if (eventParams.size() != expected.size()) return false;
+        for (int i = 0; i < eventParams.size(); i++)
+            if (eventParams.at(i) != expected.at(i)) return false;
         return true;
     }
 
@@ -66,6 +75,7 @@ private:
         if (p)
             rawEventParam = p;
         events << event;
+        eventParams << p;
     }
 };
 
@@ -89,6 +99,9 @@ private:
 #define ASSERT_LISTENER_EVENTS(...)\
     TEST_LOG(listener.eventsStr())\
     ASSERT_IS_TRUE(listener.checkEvents({__VA_ARGS__}))
+
+#define ASSERT_LISTENER_EVENT_PARAMS(...)\
+    ASSERT_IS_TRUE(listener.checkEventParams({__VA_ARGS__}))
 
 #define ASSERT_LISTENER_NO_EVENTS \
     TEST_LOG(listener.eventsStr())\

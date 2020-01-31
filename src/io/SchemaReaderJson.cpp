@@ -322,7 +322,7 @@ Element* readElement(const QJsonObject& root, Z::Report* report)
         return nullptr;
     }
 
-    ElementLocker lock(elem, false);
+    ElementEventsLocker lock(elem);
 
     auto formulaElem = dynamic_cast<ElemFormula*>(elem);
 

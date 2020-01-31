@@ -36,14 +36,15 @@ void BeamVariationFunction::calculate()
 
     auto param = arg()->parameter;
     auto elem = arg()->element;
-    BackupAndLock locker(elem, param);
+
+    ElementEventsLocker elemLock(elem);
+    Z::ParamValueBackup paramLock(param);
 
     for (auto x : range.values())
     {
         auto value = Z::Value(x, range.unit());
 
         param->setValue(value);
-        elem->calcMatrix("BeamVariationFunction::calculate");
         _calc->multMatrix();
 
         Z::PointTS res;

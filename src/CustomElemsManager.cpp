@@ -113,7 +113,7 @@ QString saveToLibrary(Element* elem)
     auto newElem = ElementsCatalog::instance().create(elem, true);
     newElem->setLabel(labelEditor->text().trimmed());
     newElem->setTitle(titleEditor->text().trimmed());
-    library->insertElement(newElem, -1, Arg::RaiseEvents(true));
+    library->insertElements({newElem}, -1, Arg::RaiseEvents(false));
     return saveLibrary(library.data());
 }
 

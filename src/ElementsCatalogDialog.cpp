@@ -37,7 +37,7 @@ Element* ElementsCatalogDialog::chooseElementSample()
     {
         // Extract the sample from the library instance
         // to prevent its deletion together with the lib
-        catalog._library->deleteElement(sample, Arg::RaiseEvents(false), Arg::FreeElem(false));
+        catalog._library->deleteElements({sample}, Arg::RaiseEvents(false), Arg::FreeElem(false));
     }
 
     return sample;
