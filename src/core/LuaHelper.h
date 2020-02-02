@@ -12,18 +12,24 @@ public:
     Lua();
     ~Lua();
 
-    bool open();
 
+    QString open();
     Z::Result<double> calculate(const QString& code);
-
+    QString setCode(const QString& code);
+    QString execute();
+    Z::Result<double> getGlobalVar(const char* name);
     QMap<QString, double> getGlobalVars();
     void setGlobalVar(const QString& name, double value);
     void setGlobalVars(const QMap<QString, double>& vars);
+    void removeGlobalVar(const QString& name);
 
     static void registerGlobalFuncs(lua_State* lua);
 
 private:
     lua_State* _lua = nullptr;
+
+    QString getLuaError(int errCode) const;
+    QString refineLuaError(const QString& err) const;
 };
 
 } // namespace Z

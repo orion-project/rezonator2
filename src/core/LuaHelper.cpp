@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QtMath>
+#include <QRegularExpression>
 
 #include <cmath>
 
@@ -11,6 +12,9 @@ extern "C" {
 #include <lualib.h>
 #include <lauxlib.h>
 }
+
+#define RESULT_VAR "ans"
+#define FORMULA_ID "formula"
 
 static double impl_cot(double arg) { return 1.0 / qTan(arg); }
 static double impl_acot(double arg) { return qAtan(1.0 / arg); }
@@ -124,79 +128,113 @@ void Lua::registerGlobalFuncs(lua_State* lua)
     LUA_REGISTER_GLOBAL_FUN(lua, pi)
 }
 
-bool Lua::open()
+QString Lua::open()
 {
     if (_lua) lua_close(_lua);
 
     _lua = luaL_newstate();
-    if (!_lua) return false;
+    if (!_lua)
+        return qApp->translate("Formula", "Not enough memory to initialize formula parser");
 
     luaL_openlibs(_lua);
     registerGlobalFuncs(_lua);
-    return true;
+    return QString();
 }
 
 Z::Result<double> Lua::calculate(const QString& formula)
 {
-    if (!_lua and !open())
-        return Z::Result<double>::fail(qApp->translate("Formula", "Not enough memory to initialize formula parser"));
-
-    #define RESULT_VAR "ans"
-    #define FORMULA_ID "formula"
+    assert(_lua);
 
     static QRegExp resultVar(RESULT_VAR "\\s*=");
     QString code = formula;
     int pos = code.indexOf(resultVar);
     if (pos < 0) code = (RESULT_VAR "=") + code;
 
-    QString error;
+    QString error = setCode(code);
+    if (!error.isEmpty())
+        return Z::Result<double>::fail(error);
+
+    error = execute();
+    if (!error.isEmpty())
+        return Z::Result<double>::fail(error);
+
+    return getGlobalVar(RESULT_VAR);
+}
+
+QString Lua::setCode(const QString& code)
+{
+    assert(_lua);
 
     auto codeBytes = code.toLatin1();
     int res = luaL_loadbufferx(_lua, codeBytes.data(), static_cast<size_t>(codeBytes.size()), FORMULA_ID, "t");
-    if (res == LUA_OK)
-    {
-        res = lua_pcall(_lua, 0, 0, 0);
-        if (res == LUA_OK)
-        {
-            int valueType = lua_getglobal(_lua, RESULT_VAR);
-            if (valueType == LUA_TNUMBER)
-            {
-                auto value = lua_tonumber(_lua, -1);
-                return Z::Result<double>::success(value);
-            }
-            else
-                error = qApp->translate("Formula", "Result value is not a number");
-        }
-    }
     if (res != LUA_OK)
-    {
-        error = QString(lua_tostring(_lua, -1));
-        if (!error.isEmpty())
-        {
-            // Clean up error message which looks like
-            // [string "formula"]:1: <useful message>
-            static QString prefix("[string \"" FORMULA_ID "\"]:");
-            if (error.startsWith(prefix))
-                error.remove(0, prefix.length());
-            int pos = error.indexOf(':');
-            if (pos >= 0)
-                error.remove(0, pos+2);
-        }
-    }
+        return getLuaError(res);
+    return QString();
+}
 
+QString Lua::execute()
+{
+    assert(_lua);
+
+    int res = lua_pcall(_lua, 0, 0, 0);
+    if (res != LUA_OK)
+        return getLuaError(res);
+    return QString();
+}
+
+QString Lua::getLuaError(int errCode) const
+{
+    assert(_lua);
+
+    QString error(lua_tostring(_lua, -1));
     if (error.isEmpty())
-        error = qApp->tr("Formula", "Unknown error, code=%1").arg(res);
-    return Z::Result<double>::fail(error);
+        return qApp->translate("Formula", "Unknown error, code=%1").arg(errCode);
 
-    #undef RESULT_VAR
-    #undef FORMULA_ID
+    // Clean up error message which looks like
+    // [string "formula"]:1: <useful message>
+    static QString prefix("[string \"" FORMULA_ID "\"]:");
+    if (error.startsWith(prefix))
+        error.remove(0, prefix.length());
+    int pos = error.indexOf(':');
+    if (pos >= 0)
+        error.remove(0, pos+2);
+    return refineLuaError(error);
+}
+
+QString Lua::refineLuaError(const QString& err) const
+{
+    auto match = QRegularExpression("attempt to perform arithmetic on a nil value \\(global '(.+)'\\)").match(err);
+    if (match.hasMatch())
+        return qApp->translate("Formula", "Unknown variable '%1'").arg(match.captured(1));
+
+    match = QRegularExpression("attempt to call a nil value \\(global '(.+)'\\)").match(err);
+    if (match.hasMatch())
+        return qApp->translate("Formula", "Unknown function '%1'").arg(match.captured(1));
+
+    match = QRegularExpression("bad argument #(\\d+) to '(.+)' \\(number expected, got nil\\)").match(err);
+    if (match.hasMatch())
+        return qApp->translate("Formula", "Invalid argument for '%1': unknown variable").arg(match.captured(2));
+
+    return err;
+}
+
+Z::Result<double> Lua::getGlobalVar(const char* name)
+{
+    assert(_lua);
+
+    int valueType = lua_getglobal(_lua, name);
+    if (valueType != LUA_TNUMBER)
+        return Z::Result<double>::fail(qApp->translate("Formula", "Variable '%1' is not a number").arg(name));
+
+    auto value = lua_tonumber(_lua, -1);
+    return Z::Result<double>::success(value);
 }
 
 QMap<QString, double> Lua::getGlobalVars()
 {
-    QMap<QString, double> vars;
-    if (!_lua) return vars;
+    assert(_lua);
 
+    QMap<QString, double> vars;
     lua_pushglobaltable(_lua); // get global table (index: -2)
     lua_pushnil(_lua); // put a nil key on the stack (index: -1)
     while (lua_next(_lua, -2)) // get a key and put next key-value pair,
@@ -228,6 +266,8 @@ void Lua::setGlobalVar(const QString& name, double value)
 
 void Lua::setGlobalVars(const QMap<QString, double>& vars)
 {
+    assert(_lua);
+
     QMapIterator<QString, double> it(vars);
     while (it.hasNext())
     {
@@ -236,6 +276,12 @@ void Lua::setGlobalVars(const QMap<QString, double>& vars)
     }
 }
 
+void Lua::removeGlobalVar(const QString& name)
+{
+    assert(_lua);
+
+    lua_pushnil(_lua);
+    lua_setglobal(_lua, name.toLatin1().data());
+}
 
 } // namespace Z
-

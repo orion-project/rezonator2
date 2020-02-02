@@ -34,9 +34,9 @@ void Formula::calculate()
     }
 
     Z::Lua lua;
-    if (!lua.open())
+    _status = lua.open();
+    if (!_status.isEmpty())
     {
-        _status = qApp->translate("Formula", "Not enough memory to initialize formula parser");
         Z_ERROR(QString("Bad formula for param '%1': %2").arg(_target->alias(), _status))
         return;
     }
@@ -45,19 +45,17 @@ void Formula::calculate()
         lua.setGlobalVar(dep->alias(), dep->value().toSi());
 
     auto res = lua.calculate(_code);
-    if (res.ok())
-    {
-        auto valueSi = res.value();
-        auto unit = _target->value().unit();
-        auto value = unit->fromSi(valueSi);
-        _target->setValue(Value(value, unit));
-        _status.clear();
-    }
-    else
+    if (!res.ok())
     {
         _status = res.error();
         Z_ERROR(QString("Bad formula for param '%1': %2").arg(_target->alias(), _status))
+        return;
     }
+
+    auto unit = _target->value().unit();
+    auto value = unit->fromSi(res.value());
+    _target->setValue(Value(value, unit));
+    _status.clear();
 }
 
 void Formula::addDep(Parameter* param)

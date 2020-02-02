@@ -248,6 +248,7 @@ SOURCES += \
     src/tests/test_ElemSelectorWidget.cpp \
     src/tests/test_Element.cpp \
     src/tests/test_ElementFilter.cpp \
+    src/tests/test_ElementFormula.cpp \
     src/tests/test_Elements.cpp \
     src/tests/test_ElementsImages.cpp \
     src/tests/test_InfoFunctions.cpp \

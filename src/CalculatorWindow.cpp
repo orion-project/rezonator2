@@ -147,10 +147,9 @@ CalculatorWindow::CalculatorWindow(QWidget *parent) : QWidget(parent)
     LayoutV({makeToolbar(), _mainSplitter,}).setMargin(3).setSpacing(0).useFor(this);
 
     _lua = new Z::Lua;
-    if (!_lua->open()) // should be opened to load global vars from prev session
-        showError(tr("Not enough memory to initialize formula parser"));
+    if (reopenLua()) // should be opened to load global vars from prev session
+        restoreState();
 
-    restoreState();
     Ori::Wnd::moveToScreenCenter(this);
 
     _editor->setFocus();
@@ -158,17 +157,36 @@ CalculatorWindow::CalculatorWindow(QWidget *parent) : QWidget(parent)
 
 CalculatorWindow::~CalculatorWindow()
 {
-    storeState();
-    delete _lua;
+    if (_lua)
+    {
+        storeState();
+        delete _lua;
+    }
     __instance = nullptr;
+}
+
+bool CalculatorWindow::reopenLua()
+{
+    QString res = _lua->open();
+    if (res.isEmpty())
+        return true;
+
+    // Disable action those can refer to _lua
+    _actnCalc->setEnabled(false);
+    _actnClear->setEnabled(false);
+
+    showError(res);
+    delete _lua;
+    _lua = nullptr;
+    return false;
 }
 
 QWidget* CalculatorWindow::makeToolbar()
 {
 #define A_ Ori::Gui::action
 
-    auto actnCalc = A_(tr("Calculate"), this, SLOT(calculate()), ":/toolbar/equals", Qt::CTRL | Qt::Key_Return);
-    auto actnClear = A_(tr("Clear Session"), this, SLOT(clearLog()), ":/toolbar/delete_items");
+    _actnCalc = A_(tr("Calculate"), this, SLOT(calculate()), ":/toolbar/equals", Qt::CTRL | Qt::Key_Return);
+    _actnClear = A_(tr("Clear Session"), this, SLOT(clearLog()), ":/toolbar/delete_items");
 
     auto actnReuse = A_(tr("Reuse Selected<br>(<b>Ctrl + D</b>)"), this,
         SLOT(reuseItem()), ":/toolbar/duplicate_page", Qt::CTRL + Qt::Key_D);
@@ -176,13 +194,13 @@ QWidget* CalculatorWindow::makeToolbar()
     auto actnSettings = A_(tr("Settings"), this, SLOT(showSettings()), ":/toolbar/settings");
     auto actionHelp = A_(tr("Help"), this, SLOT(showHelp()), ":/toolbar/help", QKeySequence::HelpContents);
 
-    auto buttonCalc = Ori::Gui::textToolButton(actnCalc);
+    auto buttonCalc = Ori::Gui::textToolButton(_actnCalc);
     buttonCalc->setToolTip(tr("Calculate<br>(<b>Ctrl + Enter</b>)"));
 
     auto toolbar = new Ori::Widgets::FlatToolBar;
     toolbar->setIconSize(AppSettings::instance().toolbarIconSize());
     Ori::Gui::populate(toolbar, {
-        buttonCalc, actnClear, nullptr, actnReuse, nullptr, actnSettings, actionHelp
+        buttonCalc, _actnClear, nullptr, actnReuse, nullptr, actnSettings, actionHelp
     });
     return toolbar;
 
@@ -336,7 +354,7 @@ void CalculatorWindow::clearLog()
     _logView->clear();
     _varsView->clear();
 
-    _lua->open();
+    reopenLua();
 }
 
 void CalculatorWindow::showSettings()

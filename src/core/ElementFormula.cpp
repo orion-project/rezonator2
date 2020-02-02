@@ -1,12 +1,116 @@
 #include "ElementFormula.h"
 
+#include "LuaHelper.h"
+
+#include <QApplication>
+
 ElemFormula::ElemFormula()
 {
+}
 
+ElemFormula::~ElemFormula()
+{
+    if (_lua) delete _lua;
+}
+
+bool ElemFormula::reopenLua()
+{
+    if (_lua) delete _lua;
+
+    _lua = new Z::Lua;
+    _error = _lua->open();
+    if (!_error.isEmpty())
+    {
+        delete _lua;
+        _lua = nullptr;
+        return false;
+    }
+    return true;
+}
+
+void ElemFormula::reset()
+{
+    if (!_lua) return;
+
+    for (auto var : _lua->getGlobalVars().keys())
+        _lua->removeGlobalVar(var);
 }
 
 void ElemFormula::calcMatrixInternal()
 {
+    if (_formula.isEmpty())
+    {
+        _error = qApp->translate("ElemFormula", "Formula is empty");
+        setUnity();
+        return;
+    }
+
+    if (!_lua && !reopenLua())
+    {
+        setUnity();
+        return;
+    }
+
+    for (auto param : _params)
+        _lua->setGlobalVar(param->alias(), param->value().toSi());
+
+    _error = _lua->setCode(_formula);
+    if (!_error.isEmpty())
+    {
+        setUnity();
+        return;
+    }
+
+    _error = _lua->execute();
+    if (!_error.isEmpty())
+    {
+        setUnity();
+        return;
+    }
+
+    double A, B, C, D;
+
+    auto results = _lua->getGlobalVars();
+    if (_hasMatricesTS)
+    {
+        if (!getResult(results, QStringLiteral("At"), A)) return;
+        if (!getResult(results, QStringLiteral("Bt"), B)) return;
+        if (!getResult(results, QStringLiteral("Ct"), C)) return;
+        if (!getResult(results, QStringLiteral("Dt"), D)) return;
+        _mt.assign(A, B, C, D);
+        if (!getResult(results, QStringLiteral("As"), A)) return;
+        if (!getResult(results, QStringLiteral("Bs"), B)) return;
+        if (!getResult(results, QStringLiteral("Cs"), C)) return;
+        if (!getResult(results, QStringLiteral("Ds"), D)) return;
+        _ms.assign(A, B, C, D);
+    }
+    else
+    {
+        if (!getResult(results, QStringLiteral("A"), A)) return;
+        if (!getResult(results, QStringLiteral("B"), B)) return;
+        if (!getResult(results, QStringLiteral("C"), C)) return;
+        if (!getResult(results, QStringLiteral("D"), D)) return;
+        _mt.assign(A, B, C, D);
+        _ms.assign(A, B, C, D);
+    }
+}
+
+bool ElemFormula::getResult(const QMap<QString, double>& results, const QString& name, double& result)
+{
+    if (!results.contains(name))
+    {
+        _error = qApp->translate("ElemFormula", "Formula doesn't contain an expression for '%1' or it is not a number").arg(name);
+        setUnity();
+        return false;
+    }
+    result = results[name];
+    return true;
+}
+
+void ElemFormula::setUnity()
+{
+    _mt.unity();
+    _ms.unity();
 }
 
 void ElemFormula::addParam(Z::Parameter* param, int index)
@@ -42,8 +146,13 @@ void ElemFormula::moveParamUp(Z::Parameter* param)
         qWarning() << "ElemFormula::moveParamUp: invalid parameter, it's not in the parameters list";
         return;
     }
-    int index1 = (index == 0) ? _params.size()-1 : index-1;
-    _params.swap(index, index1);
+    if (index == 0)
+    {
+        _params.removeAt(0);
+        _params.append(param);
+    }
+    else
+        _params.swap(index, index-1);
 }
 
 void ElemFormula::moveParamDown(Z::Parameter* param)
@@ -54,8 +163,13 @@ void ElemFormula::moveParamDown(Z::Parameter* param)
         qWarning() << "ElemFormula::moveParamDown: invalid parameter, it's not in the parameters list";
         return;
     }
-    int index1 = (index == _params.size()-1) ? 0 : index+1;
-    _params.swap(index, index1);
+    if (index == _params.size()-1)
+    {
+        _params.removeAt(index);
+        _params.insert(0, param);
+    }
+    else
+        _params.swap(index, index+1);
 }
 
 void ElemFormula::assign(const ElemFormula* other)

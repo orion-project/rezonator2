@@ -62,6 +62,7 @@ private:
     bool _overrideFont = false;
     QString _overrideFontName;
     int _overrideFontSize = 0;
+    QAction *_actnCalc, *_actnClear;
 
     struct LogItem {
         QString code;
@@ -70,6 +71,7 @@ private:
     QList<LogItem> _log;
 
     QWidget* makeToolbar();
+    bool reopenLua();
     void showError(const QString& error);
     void showResult(const QString& code, double result);
     void restoreState();

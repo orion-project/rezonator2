@@ -225,7 +225,8 @@ void ParamsEditor::moveEditorUp(Z::Parameter* param)
             if (i == 0)
             {
                 _paramsLayout->addWidget(editor);
-                _editors.swap(i, _editors.size()-1);
+                _editors.removeAt(0);
+                _editors.append(editor);
             }
             else
             {
@@ -249,7 +250,8 @@ void ParamsEditor::moveEditorDown(Z::Parameter* param)
             if (i == _editors.size()-1)
             {
                 _paramsLayout->insertWidget(0, editor);
-                _editors.swap(i, 0);
+                _editors.removeAt(i);
+                _editors.insert(0, editor);
             }
             else
             {

@@ -6,6 +6,7 @@
 #include "../Appearance.h"
 #include "../WindowsManager.h"
 #include "../core/ElementFormula.h"
+#include "../funcs/FormatInfo.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
@@ -83,6 +84,7 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
     _logView->setReadOnly(true);
     _logView->setAcceptRichText(false);
     _logView->setFont(Z::Gui::CodeEditorFont().get());
+    _logView->document()->setDefaultStyleSheet(Z::Gui::reportStyleSheet());
 
     auto codeSplitter = Ori::Gui::splitterV(_codeEditor, _logView);
     codeSplitter->setStretchFactor(0, 80);
@@ -205,7 +207,13 @@ void ElemFormulaEditor::resetChanges()
 
 void ElemFormulaEditor::checkFormula()
 {
+    _workingCopy->reset();
     applyValues();
+
+    if (_workingCopy->ok())
+        _logView->setHtml(Z::Format::matrices(_workingCopy->Mt(), _workingCopy->Ms()));
+    else
+        _logView->setHtml(QString("<p style='color:red'>%1").arg(_workingCopy->error()));
 }
 
 void ElemFormulaEditor::clearLog()

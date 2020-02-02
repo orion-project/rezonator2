@@ -12,6 +12,7 @@ USE_GROUP(ValuesTests)                             // test_Values.cpp
 USE_GROUP(ParametersTests)                         // test_Parameters.cpp
 USE_GROUP(ElementTests)                            // test_Element.cpp
 USE_GROUP(ElementsTests)                           // test_Elements.cpp
+USE_GROUP(ElementFormulaTests)                     // test_ElementFormula.cpp
 USE_GROUP(ElementFilterTests)                      // test_ElementFilter.cpp
 USE_GROUP(ElementsImagesTests)                     // test_ElementsImages.cpp
 USE_GROUP(SchemaTests)                             // test_Schema.cpp
@@ -36,6 +37,7 @@ TEST_SUITE(
     ADD_GROUP(ParametersTests),
     ADD_GROUP(ElementTests),
     ADD_GROUP(ElementsTests),
+    ADD_GROUP(ElementFormulaTests),
     ADD_GROUP(ElementFilterTests),
     ADD_GROUP(ElementsImagesTests),
     ADD_GROUP(SchemaTests),
