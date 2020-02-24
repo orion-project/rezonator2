@@ -49,9 +49,17 @@
                 <File name="functions.rst" />
                 <File name="func_reprate.rst" />
             </Folder>
-            <Folder name="calcs">
+            <Folder name="tools">
                 <File name="calc_formula.rst" />
-                <File name="calculators.rst" />
+                <File name="calc_gauss.rst" />
+                <File name="tools.rst" />
+            </Folder>
+            <Folder name="shema">
+                <File name="schema.rst" />
+                <File name="trip_type.rst" />
+                <File name="input_beam.rst" />
+                <File name="pump_mode.rst" />
+                <File name="pumps_window.rst" />
             </Folder>
         </Folder>
         <Folder name="qch">
@@ -60,6 +68,10 @@
         </Folder>
         <Folder name="styles">
             <File name="styles\pygments.css" />
+        </Folder>
+        <Folder name="formulas">
+            <File name="render_formula.html" />
+            <File name="calc_gauss.html" />
         </Folder>
     </Project>
 </NotepadPlus>
