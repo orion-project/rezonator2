@@ -15,3 +15,4 @@ tmp
 out
 __pycache__
 img/svgcleaner
+.venv

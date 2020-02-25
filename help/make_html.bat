@@ -3,10 +3,8 @@
 echo Build application manual (HTML version).
 
 set SCRIPT_DIR=%~dp0
-cd %SCRIPT_DIR%\..
-
-set SOURCE_DIR=.\help
-set TARGET_DIR=.\out\help_html
+set SOURCE_DIR=%SCRIPT_DIR%
+set TARGET_DIR=%SCRIPT_DIR%\..\out\help_html
 
 echo.
 echo ***** Building html files...

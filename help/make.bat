@@ -27,12 +27,9 @@ if %ERRORLEVEL% neq 0 (
 
 
 set SCRIPT_DIR=%~dp0
-cd %SCRIPT_DIR%\..
-
-
-set SOURCE_DIR=.\help
-set TARGET_DIR=.\out\help
-set BIN_DIR=.\bin
+set SOURCE_DIR=%SCRIPT_DIR%
+set TARGET_DIR=%SCRIPT_DIR%\..\out\help
+set BIN_DIR=%SCRIPT_DIR%\..\bin
 
 
 
