@@ -103,7 +103,7 @@ Formula* Formulas::get(Parameter* p)
 {
     if (_items.contains(p))
     {
-        assert(_items[p]->target() == p);
+        Q_ASSERT(_items[p]->target() == p);
         return _items[p];
     }
     return nullptr;

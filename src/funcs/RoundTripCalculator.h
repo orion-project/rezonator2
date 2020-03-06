@@ -43,6 +43,23 @@ public:
     /// while `roundTrip()` is not oblidged to.
     QList<Element*> matrixOwners() const { return _matrixOwners; }
 
+    struct RoundTripElemInfo
+    {
+        Element* element;
+
+        /// In SW schemas beam passes each element twice
+        /// and the second time passes it in opposite direction than the first time.
+        /// It is importand to know which pass it is,
+        /// in order to choose a proper matrix of interface element.
+        bool secondPass = false;
+
+        RoundTripElemInfo() = default;
+        RoundTripElemInfo(Element* e): element(e) {}
+        RoundTripElemInfo(Element* e, bool second): element(e), secondPass(second) {}
+    };
+
+    const QVector<RoundTripElemInfo>& rawRoundTrip() const { return _roundTrip; }
+
 protected:
     /// Array of T-matrices for production (round-trip).
     /// Valid only after calcRoundTrip() call.
@@ -65,21 +82,6 @@ protected:
     Z::Enums::StabilityCalcMode _stabilityCalcMode = Z::Enums::StabilityCalcMode::Normal;
 
 private:
-    struct RoundTripElemInfo
-    {
-        Element* element;
-
-        /// In SW schemas beam passes each element twice
-        /// and the second time passes it in opposite direction than the first time.
-        /// It is importand to know which pass it is,
-        /// in order to choose a proper matrix of interface element.
-        bool secondPass = false;
-
-        RoundTripElemInfo() = default;
-        RoundTripElemInfo(Element* e): element(e) {}
-        RoundTripElemInfo(Element* e, bool second): element(e), secondPass(second) {}
-    };
-
     /// Array of elements in order of round-trip.
     /// Valid only after calcRoundTrip() call.
     QVector<RoundTripElemInfo> _roundTrip;

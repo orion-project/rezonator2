@@ -143,7 +143,7 @@ QString Lua::open()
 
 Z::Result<double> Lua::calculate(const QString& formula)
 {
-    assert(_lua);
+    Q_ASSERT(_lua);
 
     static QRegExp resultVar(RESULT_VAR "\\s*=");
     QString code = formula;
@@ -163,7 +163,7 @@ Z::Result<double> Lua::calculate(const QString& formula)
 
 QString Lua::setCode(const QString& code)
 {
-    assert(_lua);
+    Q_ASSERT(_lua);
 
     auto codeBytes = code.toLatin1();
     int res = luaL_loadbufferx(_lua, codeBytes.data(), static_cast<size_t>(codeBytes.size()), FORMULA_ID, "t");
@@ -174,7 +174,7 @@ QString Lua::setCode(const QString& code)
 
 QString Lua::execute()
 {
-    assert(_lua);
+    Q_ASSERT(_lua);
 
     int res = lua_pcall(_lua, 0, 0, 0);
     if (res != LUA_OK)
@@ -184,7 +184,7 @@ QString Lua::execute()
 
 QString Lua::getLuaError(int errCode) const
 {
-    assert(_lua);
+    Q_ASSERT(_lua);
 
     QString error(lua_tostring(_lua, -1));
     if (error.isEmpty())
@@ -220,7 +220,7 @@ QString Lua::refineLuaError(const QString& err) const
 
 Z::Result<double> Lua::getGlobalVar(const char* name)
 {
-    assert(_lua);
+    Q_ASSERT(_lua);
 
     int valueType = lua_getglobal(_lua, name);
     if (valueType != LUA_TNUMBER)
@@ -232,7 +232,7 @@ Z::Result<double> Lua::getGlobalVar(const char* name)
 
 QMap<QString, double> Lua::getGlobalVars()
 {
-    assert(_lua);
+    Q_ASSERT(_lua);
 
     QMap<QString, double> vars;
     lua_pushglobaltable(_lua); // get global table (index: -2)
@@ -266,7 +266,7 @@ void Lua::setGlobalVar(const QString& name, double value)
 
 void Lua::setGlobalVars(const QMap<QString, double>& vars)
 {
-    assert(_lua);
+    Q_ASSERT(_lua);
 
     QMapIterator<QString, double> it(vars);
     while (it.hasNext())
@@ -278,7 +278,7 @@ void Lua::setGlobalVars(const QMap<QString, double>& vars)
 
 void Lua::removeGlobalVar(const QString& name)
 {
-    assert(_lua);
+    Q_ASSERT(_lua);
 
     lua_pushnil(_lua);
     lua_setglobal(_lua, name.toLatin1().data());

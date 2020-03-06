@@ -59,6 +59,48 @@ QString matrix(const QString& label, const Z::Matrix& m)
     ).arg(label, matrix(m));
 }
 
+namespace Py {
+QString matrixAsNumpy(const QString& label, const Z::Matrix& m)
+{
+    return QStringLiteral("%1 = np.matrix([[%2, %3], [%4, %5]])")
+        .arg(label).arg(m.A).arg(m.B).arg(m.C).arg(m.D);
+}
+
+QString matrixVarName(Element *elem, const QString& suffix)
+{
+    return QStringLiteral("M_%1%2").arg(elem->displayLabel()).arg(suffix);
+}
+
+QString elementMatrices(Element *elem)
+{
+    if (elem->hasOption(Element_Asymmetrical))
+        return QStringLiteral("<p><code>%1</code><br><code>%2</code><br><code>%3</code><br><code>%4</code></p>")
+            .arg(matrixAsNumpy(matrixVarName(elem, "_f_t"), elem->Mt()))
+            .arg(matrixAsNumpy(matrixVarName(elem, "_f_s"), elem->Ms()))
+            .arg(matrixAsNumpy(matrixVarName(elem, "_b_t"), elem->Mt_inv()))
+            .arg(matrixAsNumpy(matrixVarName(elem, "_b_s"), elem->Ms_inv()));
+    return QStringLiteral("<p><code>%1</code><br><code>%2</code></p>")
+        .arg(matrixAsNumpy(matrixVarName(elem, "_t"), elem->Mt()))
+        .arg(matrixAsNumpy(matrixVarName(elem, "_s"), elem->Ms()));
+}
+
+QString roundTrip(const QList<Element*>& elems)
+{
+    QString resultT;
+    QString resultS;
+    for (int i = 0; i < elems.size(); i++)
+    {
+        Element *elem = elems[i];
+        resultT += matrixVarName(elem, "_t") % " * ";
+        resultS += matrixVarName(elem, "_s") % " * ";
+    }
+    resultT.truncate(resultT.length()-2); // remove last "* "
+    resultS.truncate(resultS.length()-2); // remove last "* "
+    return QStringLiteral("<p><code>M0_t = %1</code><br><code>M0_s = %2</code></p>").arg(resultT, resultS);
+}
+
+} // namespace Py
+
 QString linkViewMatrix(Element *elem)
 {
     return QStringLiteral("<a href='func://viewmatrix?elem=%1' class=elem_link>%2</a>")
@@ -80,7 +122,8 @@ QString roundTrip(const QList<Element*>& elems, bool hyperlinks)
 
 QString elementTitleAndMatrices(Element *elem)
 {
-    QStringList report;
+    QString result;
+    QTextStream report(&result);
 
     report << QStringLiteral("<span class=elem_label>")
            << elem->displayLabel()
@@ -91,13 +134,16 @@ QString elementTitleAndMatrices(Element *elem)
                << elem->title()
                << QStringLiteral(")</span>");
 
+    if (elem->hasOption(Element_Asymmetrical))
+        report << qApp->translate("Z::Format", "<p>Forward-propagation matrices:");
+
     report << matrices(elem->Mt(), elem->Ms());
 
     if (elem->hasOption(Element_Asymmetrical))
-        report << qApp->translate("Z::Format", "Back-propagation matrices:")
+        report << qApp->translate("Z::Format", "<p>Back-propagation matrices:")
                << matrices(elem->Mt_inv(), elem->Ms_inv());
 
-    return report.join(QString());
+    return result;
 }
 
 //------------------------------------------------------------------------------

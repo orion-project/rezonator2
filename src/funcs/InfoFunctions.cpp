@@ -2,6 +2,7 @@
 
 #include "FormatInfo.h"
 #include "RoundTripCalculator.h"
+#include "../AppSettings.h"
 #include "../Appearance.h"
 #include "../core/Format.h"
 #include "../core/Schema.h"
@@ -23,7 +24,10 @@ FunctionBase::FunctionState InfoFuncMatrix::elementDeleting(Element *elem)
 
 QString InfoFuncMatrix::calculateInternal()
 {
-    return Z::Format::elementTitleAndMatrices(_element);
+    QString report = Z::Format::elementTitleAndMatrices(_element);
+    if (AppSettings::instance().showPythonMatrices)
+        report += Z::Format::Py::elementMatrices(_element);
+    return report;
 }
 
 //------------------------------------------------------------------------------
@@ -42,11 +46,14 @@ FunctionBase::FunctionState InfoFuncMatrices::elementDeleting(Element *elem)
 QString InfoFuncMatrices::calculateInternal()
 {
     QString result;
+    QTextStream stream(&result);
     for (int i = 0; i < _elements.size(); i++)
     {
-        result += Z::Format::elementTitleAndMatrices(_elements.at(i));
+        stream << Z::Format::elementTitleAndMatrices(_elements.at(i));
+        if (AppSettings::instance().showPythonMatrices)
+            stream << Z::Format::Py::elementMatrices(_elements.at(i));
         if (i < _elements.size() - 1)
-            result += "<hr>";
+            stream << "<hr>";
     }
     return result;
 }
@@ -68,9 +75,14 @@ QString InfoFuncMatrixMultFwd::calculateInternal()
         ms *= elem->Ms();
     }
 
-    return QStringLiteral("%1:<p>%2").arg(
-                Z::Format::roundTrip(_elements, true),
-                Z::Format::matrices(mt, ms));
+    QString report = QStringLiteral("%1:<p>%2")
+            .arg(Z::Format::roundTrip(_elements, true))
+            .arg(Z::Format::matrices(mt, ms));
+
+    if (AppSettings::instance().showPythonMatrices)
+        report += Z::Format::Py::roundTrip(_elements);
+
+    return report;
 }
 
 //------------------------------------------------------------------------------
@@ -82,6 +94,7 @@ InfoFuncMatrixMultBkwd::InfoFuncMatrixMultBkwd(Schema *schema, const Elements& e
 {
     Elements reversed;
     reversed.reserve(_elements.size());
+    // TODO: for asymmetrical elements we should take inverted matrix
     std::reverse_copy(_elements.begin(), _elements.end(), std::back_inserter(reversed));
     _elements = reversed;
 }
@@ -107,7 +120,8 @@ QString InfoFuncMatrixRT::calculateInternal()
     c.calcRoundTrip();
     c.multMatrix();
 
-    QStringList report;
+    QString result;
+    QTextStream report(&result);
     report << Z::Format::roundTrip(c.roundTrip(), true) << QChar(':')
            << Z::Format::matrices(c.Mt(), c.Ms())
            << QStringLiteral("<hr><span class=param>Ref:&nbsp;</span>")
@@ -120,7 +134,40 @@ QString InfoFuncMatrixRT::calculateInternal()
                << formatStability('S', stab.S);
     }
 
-    return report.join(QString());
+    if (AppSettings::instance().showPythonMatrices)
+    {
+        QString resultT;
+        QString resultS;
+        auto rt = c.rawRoundTrip();
+        bool isSW = _schema->isSW();
+        for (int i = 0; i < rt.size(); i++)
+        {
+            Element *elem = rt.at(i).element;
+            if (isSW and elem->hasOption(Element_Asymmetrical))
+            {
+                if (rt.at(i).secondPass)
+                {
+                    resultT += Z::Format::Py::matrixVarName(elem, "_b_t") % " * ";
+                    resultS += Z::Format::Py::matrixVarName(elem, "_b_s") % " * ";
+                }
+                else
+                {
+                    resultT += Z::Format::Py::matrixVarName(elem, "_f_t") % " * ";
+                    resultS += Z::Format::Py::matrixVarName(elem, "_f_s") % " * ";
+                }
+            }
+            else
+            {
+                resultT += Z::Format::Py::matrixVarName(elem, "_t") % " * ";
+                resultS += Z::Format::Py::matrixVarName(elem, "_s") % " * ";
+            }
+        }
+        resultT.truncate(resultT.length()-2); // remove last "* "
+        resultS.truncate(resultS.length()-2); // remove last "* "
+        report << QStringLiteral("<p><code>M0_t = %1</code><br><code>M0_s = %2</code></p>").arg(resultT, resultS);
+    }
+
+    return result;
 }
 
 QString InfoFuncMatrixRT::formatStability(char plane, double value)

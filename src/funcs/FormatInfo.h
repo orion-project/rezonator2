@@ -19,6 +19,13 @@ QString matrix(const Z::Matrix& m);
 QString matrices(const Z::Matrix& mt, const Z::Matrix& ms);
 QString matrix(const QString& label, const Z::Matrix& m);
 
+namespace Py {
+QString matrixAsNumpy(const QString& label, const Z::Matrix& m);
+QString matrixVarName(Element *elem, const QString& suffix);
+QString elementMatrices(Element *elem);
+QString roundTrip(const QList<Element*>& elems);
+} //namespace Py
+
 QString roundTrip(const QList<Element *> &elems, bool hyperlinks = false);
 
 QString linkViewMatrix(Element *elem);

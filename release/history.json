@@ -15,6 +15,9 @@
         },
         {
           "text": "Added Custom Elements Library. Copy of any element can be saved to the library."
+        },
+        {
+          "text": "Added an option allowing for output the Python code for matrices in info function windows."
         }
       ]
     },
