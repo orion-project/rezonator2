@@ -2,11 +2,12 @@
 
 #include "../CustomPrefs.h"
 #include "../io/JsonUtils.h"
-#include "../widgets/Plot.h"
 #include "../widgets/ElemSelectorWidget.h"
 #include "../widgets/VariableRangeEditor.h"
 
 #include "helpers/OriWidgets.h"
+
+#include "qcpl_plot.h"
 
 //------------------------------------------------------------------------------
 //                             BeamVariationParamsDlg

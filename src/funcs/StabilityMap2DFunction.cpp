@@ -4,8 +4,6 @@
 
 #include "../CustomPrefs.h"
 
-#include "libs/qcustomplot/qcustomplot.h"
-
 void StabilityMap2DFunction::calculate()
 {
     if (!checkArg(&_paramX)) return;

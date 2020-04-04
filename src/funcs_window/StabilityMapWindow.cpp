@@ -4,12 +4,13 @@
 #include "../CustomPrefs.h"
 #include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
-#include "../widgets/Plot.h"
 #include "../widgets/ElemSelectorWidget.h"
 #include "../widgets/VariableRangeEditor.h"
 
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
+
+#include "qcpl_plot.h"
 
 #include <QAction>
 

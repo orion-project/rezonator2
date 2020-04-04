@@ -55,7 +55,7 @@ private:
 
     struct ViewState
     {
-        AxisLimits limitsZ;
+        QCPL::AxisLimits limitsZ;
         QString titleZ;
     };
     QMap<int, ViewState> _auxStoredView;

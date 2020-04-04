@@ -1,13 +1,14 @@
 #include "FunctionGraph.h"
 
 #include "PlotFunction.h"
-#include "../widgets/Plot.h"
+
+#include "qcpl_plot.h"
 
 //------------------------------------------------------------------------------
 //                                 FunctionGraph
 //------------------------------------------------------------------------------
 
-FunctionGraph::FunctionGraph(Plot* plot, Z::WorkPlane workPlane, std::function<GraphUnits()> getUnits)
+FunctionGraph::FunctionGraph(QCPL::Plot* plot, Z::WorkPlane workPlane, std::function<GraphUnits()> getUnits)
     : _plot(plot), _workPlane(workPlane), _getUnits(getUnits)
 {
 }
@@ -58,7 +59,7 @@ void FunctionGraph::update(const QList<PlotFunction *> &functions)
     trimToCount(totalSegmentCount);
 }
 
-QCPGraph* FunctionGraph::getOrMakeSegment(int index)
+QCPL::Graph* FunctionGraph::getOrMakeSegment(int index)
 {
     QCPGraph *segment;
     if (index >= _segments.size())
@@ -104,7 +105,7 @@ void FunctionGraph::trimToCount(int count)
 //                               FunctionGraphSet
 //------------------------------------------------------------------------------
 
-FunctionGraphSet::FunctionGraphSet(Plot* plot, std::function<GraphUnits()> getUnits): _plot(plot), _getUnits(getUnits)
+FunctionGraphSet::FunctionGraphSet(QCPL::Plot* plot, std::function<GraphUnits()> getUnits): _plot(plot), _getUnits(getUnits)
 {
     _graphT = new FunctionGraph(plot, Z::Plane_T, getUnits);
     _graphS = new FunctionGraph(plot, Z::Plane_S, getUnits);

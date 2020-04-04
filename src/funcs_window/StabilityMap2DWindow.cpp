@@ -5,13 +5,14 @@
 #include "../CustomPrefs.h"
 #include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
-#include "../widgets/Plot.h"
 #include "../widgets/ElemSelectorWidget.h"
 #include "../widgets/VariableRangeEditor.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
+
+#include <qcpl_plot.h>
 
 //------------------------------------------------------------------------------
 //                            StabilityMap2DParamsDlg
@@ -38,7 +39,7 @@ StabilityMap2DParamsDlg::StabilityMap2DParamsDlg(Schema *schema, Z::Variable *va
 
 void StabilityMap2DParamsDlg::makeControls(const QString &title, Schema* schema, VarEditor* editor)
 {
-    std::shared_ptr<ElementFilter> elemFilter(
+    QSharedPointer<ElementFilter> elemFilter(
         ElementFilter::make<ElementFilterHasVisibleParams, ElementFilterEnabled>());
 
     editor->elemSelector = new ElemAndParamSelector(schema, elemFilter.get(), Z::Utils::defaultParamFilter());
@@ -377,8 +378,8 @@ QString StabilityMap2DWindow::writeFunction(QJsonObject& root)
 QString StabilityMap2DWindow::readWindowSpecific(const QJsonObject& root)
 {
     // Restore plot limits
-    AxisLimits limitsZ { root["z_min"].toDouble(Double::nan()),
-                         root["z_max"].toDouble(Double::nan()) };
+    QCPL::AxisLimits limitsZ { root["z_min"].toDouble(Double::nan()),
+                               root["z_max"].toDouble(Double::nan()) };
     _zAutolimitsRequest = limitsZ.isInvalid();
     if (!_zAutolimitsRequest)
         _plot->setLimits(_colorScale->axis(), limitsZ, false);
@@ -423,4 +424,3 @@ QString StabilityMap2DWindow::writeWindowSpecific(QJsonObject& root)
 
     return QString();
 }
-

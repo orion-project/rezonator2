@@ -1,9 +1,10 @@
 #include "PlotFuncWindowStorable.h"
 
-#include "../widgets/CursorPanel.h"
-#include "../widgets/Plot.h"
 #include "../io/CommonUtils.h"
 #include "../core/Report.h"
+
+#include "qcpl_cursor_panel.h"
+#include "qcpl_plot.h"
 
 #include <QAction>
 #include <QJsonObject>
@@ -81,14 +82,14 @@ QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root)
 
     // Restore cursor state
     _cursorPanel->setEnabled(root["cursor_enabled"].toBool(true));
-    _cursorPanel->setMode(Z::IO::Utils::enumFromStr(root["cursor_mode"].toString(), CursorPanel::Both));
+    _cursorPanel->setMode(Z::IO::Utils::enumFromStr(root["cursor_mode"].toString(), QCPL::CursorPanel::Both));
     requestCenterCursor();
 
     // Restore plot limits
-    AxisLimits limitsX { root["x_min"].toDouble(Double::nan()),
-                         root["x_max"].toDouble(Double::nan()) };
-    AxisLimits limitsY { root["y_min"].toDouble(Double::nan()),
-                         root["y_max"].toDouble(Double::nan()) };
+    QCPL::AxisLimits limitsX { root["x_min"].toDouble(Double::nan()),
+                               root["x_max"].toDouble(Double::nan()) };
+    QCPL::AxisLimits limitsY { root["y_min"].toDouble(Double::nan()),
+                               root["y_max"].toDouble(Double::nan()) };
     if (limitsX.isInvalid() || limitsY.isInvalid())
         requestAutolimits();
     else

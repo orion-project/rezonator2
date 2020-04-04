@@ -13,8 +13,12 @@ class QGridLayout;
 QT_END_NAMESPACE
 
 class QCPGraph;
-class Plot;
+
 class ParamEditor;
+
+namespace QCPL {
+class Plot;
+}
 
 namespace Ori {
 namespace Widgets {
@@ -77,7 +81,7 @@ public:
     static void showWindow();
 
 private:
-    Plot* _plot;
+    QCPL::Plot* _plot;
     std::shared_ptr<GaussCalculator> _calc;
     std::shared_ptr<GaussPlotter> _plotter;
     std::shared_ptr<GaussGraphZ0> _graphZ0;

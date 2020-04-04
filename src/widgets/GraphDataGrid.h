@@ -2,7 +2,7 @@
 #define GRAPH_DATA_GRID_H
 
 #include <QTableWidget>
-#include "../../libs/qcustomplot/qcustomplot.h"
+#include "../../libs/custom-plot-lab/qcustomplot/qcustomplot.h"
 
 class GraphDataGrid : public QTableWidget
 {

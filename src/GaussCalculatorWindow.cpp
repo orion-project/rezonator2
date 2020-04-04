@@ -5,7 +5,6 @@
 #include "CustomPrefs.h"
 #include "HelpSystem.h"
 #include "funcs/GaussCalculator.h"
-#include "widgets/Plot.h"
 #include "widgets/ParamEditor.h"
 
 #include "helpers/OriLayouts.h"
@@ -13,6 +12,8 @@
 #include "helpers/OriWidgets.h"
 #include "widgets/OriActions.h"
 #include "widgets/OriFlatToolBar.h"
+
+#include "qcpl_plot.h"
 
 #include <QGridLayout>
 #include <QJsonObject>
@@ -203,7 +204,7 @@ double GaussCalcParamEditor::paramValueSI() const
 class GaussGraphsContainer
 {
 public:
-    void addItems(Plot* plot, int count, const QPen& pen, const QBrush& brush)
+    void addItems(QCPL::Plot* plot, int count, const QPen& pen, const QBrush& brush)
     {
         for (int i = 0; i < count; i++)
         {
@@ -254,7 +255,7 @@ struct GaussPlotOptions
 class GaussGraphZ0
 {
 public:
-    GaussGraphZ0(Plot* plot, GaussPlotter *plotter, GaussCalculator *calc) : _plotter(plotter), _calc(calc)
+    GaussGraphZ0(QCPL::Plot* plot, GaussPlotter *plotter, GaussCalculator *calc) : _plotter(plotter), _calc(calc)
     {
         QPen penMain(Qt::gray, 2, Qt::DashLine);
         QPen penGauss(Qt::gray, 1, Qt::DashLine);
@@ -294,7 +295,7 @@ private:
     struct LineSet { QCPItemStraightLine *pos, *neg; };
     LineSet _main, _gauss;
 
-    static QCPItemStraightLine* makeLine(Plot* plot, const QPen& pen)
+    static QCPItemStraightLine* makeLine(QCPL::Plot* plot, const QPen& pen)
     {
         QCPItemStraightLine *line = new QCPItemStraightLine(plot);
         line->setPen(pen);
@@ -312,7 +313,7 @@ private:
 class GaussGraphV
 {
 public:
-    GaussGraphV(Plot* plot, GaussPlotter *plotter, GaussCalculator *calc) : _plotter(plotter), _calc(calc)
+    GaussGraphV(QCPL::Plot* plot, GaussPlotter *plotter, GaussCalculator *calc) : _plotter(plotter), _calc(calc)
     {
         _graphs.addItems(plot, 4, QPen(Qt::gray, 1, Qt::DashLine), Qt::NoBrush);
     }
@@ -353,7 +354,7 @@ private:
 class GaussGraphW
 {
 public:
-    GaussGraphW(Plot* plot, GaussPlotter *plotter) : _plotter(plotter)
+    GaussGraphW(QCPL::Plot* plot, GaussPlotter *plotter) : _plotter(plotter)
     {
         QColor fillColor(255, 0, 0, 30);
         _graphs.addItems(plot, 2, QPen(Qt::red), fillColor);
@@ -414,7 +415,7 @@ private:
 class GaussGraphR
 {
 public:
-    GaussGraphR(Plot* plot, GaussPlotter *plotter) : _plotter(plotter)
+    GaussGraphR(QCPL::Plot* plot, GaussPlotter *plotter) : _plotter(plotter)
     {
         QColor fillColor(0, 0, 255, 30);
         _graphs.addItems(plot, 2, QPen(Qt::blue), fillColor);
@@ -640,7 +641,7 @@ QWidget* GaussCalculatorWindow::makeToolbar()
 
 QWidget* GaussCalculatorWindow::makePlot()
 {
-    _plot = new Plot;
+    _plot = new QCPL::Plot;
     _plot->legend->setVisible(false);
     _plot->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     return _plot;

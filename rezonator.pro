@@ -10,12 +10,15 @@ DESTDIR = $$_PRO_FILE_PWD_/bin
 #------------------------------------------------------------
 # Submodules
 
-# orion
+# orion (https://github.com/orion-project/orion-qt)
 ORION = $$_PRO_FILE_PWD_/orion
 include($$ORION/orion.pri)
 include($$ORION/orion_testing.pri)
 include($$ORION/orion_tests.pri)
 include($$ORION/orion_svg.pri)
+
+# custom-plot-lab (https://github.com/orion-project/custom-plot-lab)
+include(libs/custom-plot-lab/custom-plot-lab.pri)
 
 # lua
 LUA = $$_PRO_FILE_PWD_/libs/lua-5.3.4
@@ -50,8 +53,6 @@ RESOURCES += \
     src/images.qrc
 
 HEADERS += \
-    libs/qcustomplot/qcpcursor.h \
-    libs/qcustomplot/qcustomplot.h \
     src/AdjustmentWindow.h \
     src/AppSettings.h \
     src/CalcManager.h \
@@ -128,7 +129,6 @@ HEADERS += \
     src/tests/TestSuite.h \
     src/tests/TestUtils.h \
     src/Appearance.h \
-    src/widgets/CursorPanel.h \
     src/widgets/ElemFormulaEditor.h \
     src/widgets/ElemSelectorWidget.h \
     src/widgets/ElementImagesProvider.h \
@@ -140,7 +140,6 @@ HEADERS += \
     src/widgets/ParamEditorEx.h \
     src/widgets/ParamsEditor.h \
     src/widgets/ParamsListWidget.h \
-    src/widgets/Plot.h \
     src/widgets/PlotHelpers.h \
     src/widgets/PlotParamsPanel.h \
     src/widgets/RichTextItemDelegate.h \
@@ -171,8 +170,6 @@ HEADERS += \
     src/widgets/ParamsTreeWidget.h
 	
 SOURCES += \
-    libs/qcustomplot/qcpcursor.cpp \
-    libs/qcustomplot/qcustomplot.cpp \
     src/AdjustmentWindow.cpp \
     src/AppSettings.cpp \
     src/CalcManager.cpp \
@@ -264,7 +261,6 @@ SOURCES += \
     src/tests/test_Units.cpp \
     src/tests/test_Values.cpp \
     src/Appearance.cpp \
-    src/widgets/CursorPanel.cpp \
     src/widgets/ElemFormulaEditor.cpp \
     src/widgets/ElemSelectorWidget.cpp \
     src/widgets/ElementTypesListView.cpp \
@@ -275,7 +271,6 @@ SOURCES += \
     src/widgets/ParamEditorEx.cpp \
     src/widgets/ParamsEditor.cpp \
     src/widgets/ParamsListWidget.cpp \
-    src/widgets/Plot.cpp \
     src/widgets/PlotHelpers.cpp \
     src/widgets/PlotParamsPanel.cpp \
     src/widgets/RichTextItemDelegate.cpp \

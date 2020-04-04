@@ -95,7 +95,7 @@ void Element::calcMatrix(const char *reason)
     }
     else
     {
-        qDebug() << "Calc matrix" << type() << displayLabel() << reason;
+        //qDebug() << "Calc matrix" << type() << displayLabel() << reason;
         calcMatrixInternal();
     }
 }

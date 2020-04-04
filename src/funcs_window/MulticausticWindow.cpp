@@ -5,8 +5,9 @@
 #include "../funcs/FunctionGraph.h"
 #include "../funcs/PlotFuncRoundTripFunction.h"
 #include "../io/JsonUtils.h"
-#include "../widgets/Plot.h"
-#include "../../libs/qcustomplot/qcpcursor.h"
+
+#include "qcpl_cursor.h"
+#include "qcpl_plot.h"
 
 #include <QAction>
 

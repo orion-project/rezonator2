@@ -8,9 +8,13 @@
 #include <QPen>
 #include <QMap>
 
-class QCPGraph;
-class Plot;
 class PlotFunction;
+
+class QCPGraph;
+
+namespace QCPL {
+class Plot;
+}
 
 struct GraphUnits
 {
@@ -21,7 +25,7 @@ struct GraphUnits
 class FunctionGraph
 {
 public:
-    FunctionGraph(Plot* plot, Z::WorkPlane workPlane, std::function<GraphUnits()> getUnits);
+    FunctionGraph(QCPL::Plot* plot, Z::WorkPlane workPlane, std::function<GraphUnits()> getUnits);
 
     void clear();
     void update(PlotFunction* function);
@@ -32,7 +36,7 @@ public:
     void setPen(const QPen& pen) { _linePen = pen; }
 
 private:
-    Plot* _plot;
+    QCPL::Plot* _plot;
     Z::WorkPlane _workPlane;
     std::function<GraphUnits()> _getUnits;
     bool _isFlipped = false;
@@ -48,7 +52,7 @@ private:
 class FunctionGraphSet
 {
 public:
-    FunctionGraphSet(Plot* plot, std::function<GraphUnits()> getUnits);
+    FunctionGraphSet(QCPL::Plot* plot, std::function<GraphUnits()> getUnits);
     ~FunctionGraphSet();
 
     void clear();
@@ -60,7 +64,7 @@ public:
     FunctionGraph* S() { return _graphS; }
 
 private:
-    Plot* _plot;
+    QCPL::Plot* _plot;
     std::function<GraphUnits()> _getUnits;
     FunctionGraph *_graphT, *_graphS;
     QMap<QString, FunctionGraph*> _graphs;

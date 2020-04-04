@@ -7,24 +7,29 @@
 #include "../funcs/PlotFunction.h"
 #include "../widgets/PlotUtils.h"
 
+#include "qcpl_types.h"
+
 QT_BEGIN_NAMESPACE
 class QAction;
 class QLabel;
 class QSplitter;
 QT_END_NAMESPACE
 
-class QCPCursor;
 class QCPGraph;
+
+namespace QCPL {
+class Cursor;
+class CursorPanel;
+class Plot;
+}
 
 namespace Ori {
 namespace Widgets {
 class StatusBar;
 }}
 
-class CursorPanel;
 class FrozenStateButton;
 class FunctionGraphSet;
-class Plot;
 class PlotFunction;
 class PlotFuncWindow;
 class PlotParamsPanel;
@@ -45,7 +50,7 @@ public:
     ~PlotFuncWindow() override;
 
     PlotFunction* function() const { return _function; }
-    Plot* plot() const { return _plot; }
+    QCPL::Plot* plot() const { return _plot; }
 
     /// Do autolimits after next update.
     void requestAutolimits() { _autolimitsRequest = true; }
@@ -79,7 +84,9 @@ protected slots:
     virtual void showRoundTrip();
 
 protected:
-    Plot* _plot;
+    QCPL::Plot* _plot;
+    QCPL::Cursor* _cursor;
+    QCPL::CursorPanel* _cursorPanel;
     PlotFunction* _function;
     Z::Unit _unitX = Z::Units::none();
     Z::Unit _unitY = Z::Units::none();
@@ -88,8 +95,6 @@ protected:
     QString _titleY = TitlePlaceholder::defaultTitle();
     FunctionGraphSet *_graphs;
     PlotParamsPanel* _leftPanel;
-    QCPCursor* _cursor;
-    CursorPanel* _cursorPanel;
     QMenu* _cursorMenu; // Used for View menu of ProjectWindow
     QSplitter* _splitter;
     Ori::Widgets::StatusBar* _statusBar;
@@ -110,8 +115,8 @@ protected:
 
     struct ViewState
     {
-        AxisLimits limitsX;
-        AxisLimits limitsY;
+        QCPL::AxisLimits limitsX;
+        QCPL::AxisLimits limitsY;
         Z::Unit unitX, unitY;
         QPointF cursorPos;
         QString title, titleX, titleY;

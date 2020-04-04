@@ -8,11 +8,9 @@
 #include "../funcs/InfoFunctions.h"
 #include "../funcs/PlotFuncRoundTripFunction.h"
 #include "../funcs/FunctionGraph.h"
-#include "../widgets/Plot.h"
+#include "../widgets/GraphDataGrid.h"
 #include "../widgets/PlotHelpers.h"
 #include "../widgets/FrozenStateButton.h"
-#include "../widgets/GraphDataGrid.h"
-#include "../widgets/CursorPanel.h"
 #include "../widgets/PlotParamsPanel.h"
 #include "../widgets/UnitWidgets.h"
 
@@ -20,7 +18,10 @@
 #include "widgets/OriFlatToolBar.h"
 #include "widgets/OriLabels.h"
 #include "widgets/OriStatusBar.h"
-#include "../../libs/qcustomplot/qcpcursor.h"
+
+#include "qcpl_cursor.h"
+#include "qcpl_cursor_panel.h"
+#include "qcpl_plot.h"
 
 using namespace Ori::Gui;
 
@@ -194,10 +195,10 @@ void PlotFuncWindow::createContent()
     _leftPanel->placeIn(toolbar);
     toolbar->addSeparator();
 
-    _plot = new Plot;
+    _plot = new QCPL::Plot;
     _plot->legend->setVisible(false);
     _plot->setAutoAddPlottableToLegend(false);
-    connect(_plot, &Plot::graphSelected, this, &PlotFuncWindow::graphSelected);
+    connect(_plot, &QCPL::Plot::graphClicked, this, &PlotFuncWindow::graphSelected);
 
     _plot->getAxisUnitString = [this](QCPAxis* axis) {
         if (axis == _plot->xAxis) return getUnitX()->name();
@@ -205,14 +206,14 @@ void PlotFuncWindow::createContent()
         return QString();
     };
 
-    _cursor = new QCPCursor(_plot);
-    connect(_cursor, &QCPCursor::positionChanged, this, &PlotFuncWindow::updateCursorInfo);
+    _cursor = new QCPL::Cursor(_plot);
+    connect(_cursor, &QCPL::Cursor::positionChanged, this, &PlotFuncWindow::updateCursorInfo);
     _plot->serviceGraphs().append(_cursor);
     auto axesLayer = _plot->layer(QStringLiteral("axes"));
     if (axesLayer) _cursor->setLayer(axesLayer);
 
     _cursorMenu = new QMenu(tr("Cursor"), this);
-    _cursorPanel = new CursorPanel(_function, _cursor);
+    _cursorPanel = new QCPL::CursorPanel(_cursor);
     _cursorPanel->setAutoUpdateInfo(false);
     _cursorPanel->placeIn(toolbar);
     _cursorPanel->fillMenu(_cursorMenu);
@@ -241,7 +242,7 @@ void PlotFuncWindow::createStatusBar()
     setContent(_statusBar);
 }
 
-QCPGraph *PlotFuncWindow::selectedGraph() const
+QCPL::Graph *PlotFuncWindow::selectedGraph() const
 {
     auto graphs = _plot->selectedGraphs();
     return graphs.isEmpty()? nullptr: graphs.first();

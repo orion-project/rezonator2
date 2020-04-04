@@ -1,10 +1,10 @@
 #include "PlotHelpers.h"
 
-#include "Plot.h"
+#include "qcpl_plot.h"
 
 namespace PlotHelpers {
 
-void rescaleLimits(Plot* plot, PlotAxis axis, Z::Unit unitFrom, Z::Unit unitTo)
+void rescaleLimits(QCPL::Plot* plot, PlotAxis axis, Z::Unit unitFrom, Z::Unit unitTo)
 {
     auto limits = axis == PlotAxis::X
             ? plot->limitsX()

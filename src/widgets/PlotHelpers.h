@@ -9,13 +9,15 @@
 
 #include "../core/Units.h"
 
+namespace QCPL {
 class Plot;
+}
 
 enum class PlotAxis { X, Y };
 
 namespace PlotHelpers {
 
-void rescaleLimits(Plot* plot, PlotAxis axis, Z::Unit unitFrom, Z::Unit unitTo);
+void rescaleLimits(QCPL::Plot* plot, PlotAxis axis, Z::Unit unitFrom, Z::Unit unitTo);
 
 } // namespace PlotHelpers
 
