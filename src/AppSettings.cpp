@@ -62,6 +62,7 @@ void AppSettings::load()
     LOAD_DEF(adjusterMultiplier, Double, 1.1);
     LOAD_DEF(showCustomElemLibrary, Bool, true);
     LOAD_DEF(showPythonMatrices, Bool, false);
+    LOAD_DEF(skipFuncWindowsLoading, Bool, false);
 
     s.beginGroup("Debug");
     LOAD_DEF(showProtocolAtStart, Bool, false);
@@ -104,6 +105,7 @@ void AppSettings::save()
     SAVE(adjusterMultiplier);
     SAVE(showCustomElemLibrary);
     SAVE(showPythonMatrices);
+    SAVE(skipFuncWindowsLoading);
 
     s.beginGroup("Debug");
     SAVE(showProtocolAtStart);

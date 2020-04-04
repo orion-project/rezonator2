@@ -58,6 +58,7 @@ QWidget* AppSettingsDialog::createGeneralPage()
         tr("Show protocol window after application started"),
         tr("Show custom elements in Elements Catalog"),
         tr("Show Python code for matrices in info windows"),
+        tr("Don't load function windows when opening schema"),
     });
 
     page->add({_groupOptions, page->stretch()});
@@ -142,6 +143,7 @@ void AppSettingsDialog::populate()
     _groupOptions->setOption(5, settings.showProtocolAtStart);
     _groupOptions->setOption(6, settings.showCustomElemLibrary);
     _groupOptions->setOption(7, settings.showPythonMatrices);
+    _groupOptions->setOption(8, settings.skipFuncWindowsLoading);
 
     // view
     _groupView->setOption(0, settings.smallToolbarImages);
@@ -171,6 +173,7 @@ bool AppSettingsDialog::collect()
     settings.showProtocolAtStart = _groupOptions->option(5);
     settings.showCustomElemLibrary = _groupOptions->option(6);
     settings.showPythonMatrices = _groupOptions->option(7);
+    settings.skipFuncWindowsLoading = _groupOptions->option(8);
 
     // view
     settings.smallToolbarImages = _groupView->option(0);

@@ -3,6 +3,7 @@
 #include "../core/Schema.h"
 #include "../core/Elements.h"
 #include "../core/ElementsCatalog.h"
+#include "../AppSettings.h"
 
 #include <QFile>
 #include <QPointer>
@@ -182,7 +183,9 @@ void SchemaReaderIni::readFromFile(const QString &fileName)
     readLambda(ini);
     readPump(ini);
     readElements();
-    readWindows();
+
+    if (!AppSettings::instance().skipFuncWindowsLoading)
+        readWindows();
 
     delete _file;
 }

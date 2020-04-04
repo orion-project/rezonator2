@@ -6,6 +6,7 @@
 #include "../core/Schema.h"
 #include "../core/ElementsCatalog.h"
 #include "../core/ElementFormula.h"
+#include "../AppSettings.h"
 #include "../WindowsManager.h"
 
 #include <QDebug>
@@ -79,7 +80,9 @@ void SchemaReaderJson::readFromUtf8(const QByteArray& data)
     readElements(root);
     readParamLinks(root);
     readFormulas(root);
-    readWindows(root);
+
+    if (!AppSettings::instance().skipFuncWindowsLoading)
+        readWindows(root);
 }
 
 void SchemaReaderJson::readGeneral(const QJsonObject& root)
