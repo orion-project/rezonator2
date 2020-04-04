@@ -8,7 +8,6 @@
 #include "../funcs/InfoFunctions.h"
 #include "../funcs/PlotFuncRoundTripFunction.h"
 #include "../funcs/FunctionGraph.h"
-#include "../widgets/GraphDataGrid.h"
 #include "../widgets/PlotHelpers.h"
 #include "../widgets/FrozenStateButton.h"
 #include "../widgets/PlotParamsPanel.h"
@@ -21,6 +20,7 @@
 
 #include "qcpl_cursor.h"
 #include "qcpl_cursor_panel.h"
+#include "qcpl_graph_grid.h"
 #include "qcpl_plot.h"
 
 using namespace Ori::Gui;
@@ -362,7 +362,7 @@ void PlotFuncWindow::updateDataGrid()
     {
         auto graph = selectedGraph();
         if (graph)
-            _leftPanel->dataGrid()->setData(graph->data());
+            _leftPanel->dataGrid()->setData(graph);
     }
 }
 

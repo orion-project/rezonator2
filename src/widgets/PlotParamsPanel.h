@@ -1,5 +1,5 @@
-#ifndef PLOTPARAMSPANEL_H
-#define PLOTPARAMSPANEL_H
+#ifndef PLOT_PARAMS_PANEL_H
+#define PLOT_PARAMS_PANEL_H
 
 #include <QStackedWidget>
 
@@ -10,7 +10,9 @@ class QTextBrowser;
 class QToolBar;
 QT_END_NAMESPACE
 
+namespace QCPL {
 class GraphDataGrid;
+}
 
 typedef QWidget* (*MakePanelFunc)(class PlotParamsPanel*);
 typedef void (*ActivatePanelFunc)(class PlotParamsPanel*);
@@ -34,7 +36,7 @@ public:
     void fillActions(QList<QAction *> &actions);
 
     QTextBrowser* infoPanel() const;
-    GraphDataGrid* dataGrid() const;
+    QCPL::GraphDataGrid* dataGrid() const;
     QWidget* optionsPanel() const;
 
     void setOptionsPanelEnabled(bool on);
@@ -67,4 +69,4 @@ private:
     void saveActiveSize();
 };
 
-#endif // PLOTPARAMSPANEL_H
+#endif // PLOT_PARAMS_PANEL_H

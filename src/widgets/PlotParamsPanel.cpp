@@ -4,7 +4,8 @@
 #include <QToolBar>
 
 #include "PlotParamsPanel.h"
-#include "GraphDataGrid.h"
+
+#include "qcpl_graph_grid.h"
 
 #define DEFAULT_PANEL_W 150
 
@@ -18,7 +19,7 @@ PlotParamsPanel::PlotParamsPanel(PlotParamsPanelCtorOptions options, QWidget *pa
 
     if (options.hasDataGrid)
         _dataGridIndex = initPanel(tr("Show Data Table"), ":/toolbar16/table",
-            /* makeWidget: */ [](PlotParamsPanel*)->QWidget*{ return new GraphDataGrid; },
+            /* makeWidget: */ [](PlotParamsPanel*)->QWidget*{ return new QCPL::GraphDataGrid; },
             /* onActivate: */ [](PlotParamsPanel* self){ emit self->updateDataGrid(); });
 
     if (options.hasOptionsPanel)
@@ -107,9 +108,9 @@ QTextBrowser* PlotParamsPanel::infoPanel() const
     return _infoPanelIndex < 0? nullptr: qobject_cast<QTextBrowser*>(_panels.at(_infoPanelIndex).widget);
 }
 
-GraphDataGrid* PlotParamsPanel::dataGrid() const
+QCPL::GraphDataGrid* PlotParamsPanel::dataGrid() const
 {
-    return _dataGridIndex < 0? nullptr: qobject_cast<GraphDataGrid*>(_panels.at(_dataGridIndex).widget);
+    return _dataGridIndex < 0? nullptr: qobject_cast<QCPL::GraphDataGrid*>(_panels.at(_dataGridIndex).widget);
 }
 
 QWidget* PlotParamsPanel::optionsPanel() const
