@@ -11,14 +11,14 @@ DESTDIR = $$_PRO_FILE_PWD_/bin
 # Submodules
 
 # orion (https://github.com/orion-project/orion-qt)
-ORION = $$_PRO_FILE_PWD_/orion
+ORION = $$_PRO_FILE_PWD_/libs/orion
 include($$ORION/orion.pri)
 include($$ORION/orion_testing.pri)
 include($$ORION/orion_tests.pri)
 include($$ORION/orion_svg.pri)
 
 # custom-plot-lab (https://github.com/orion-project/custom-plot-lab)
-include(libs/custom-plot-lab/custom-plot-lab.pri)
+include($$_PRO_FILE_PWD_/libs/custom-plot-lab/custom-plot-lab.pri)
 
 # lua
 LUA = $$_PRO_FILE_PWD_/libs/lua-5.3.4

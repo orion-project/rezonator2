@@ -1,3 +1,6 @@
 [submodule "libs/custom-plot-lab"]
 	path = libs/custom-plot-lab
 	url = https://github.com/orion-project/custom-plot-lab
+[submodule "libs/orion"]
+	path = libs/orion
+	url = https://github.com/orion-project/orion-qt
