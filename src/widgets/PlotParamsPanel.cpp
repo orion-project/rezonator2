@@ -4,10 +4,22 @@
 #include <QToolBar>
 
 #include "PlotParamsPanel.h"
+#include "../AppSettings.h"
 
 #include "qcpl_graph_grid.h"
 
 #define DEFAULT_PANEL_W 150
+
+static QWidget* makeGraphDataGrid(PlotParamsPanel*)
+{
+    auto panel = new QCPL::GraphDataGrid;
+    panel->getExportSettings = [](){
+        QCPL::GraphDataExportSettings s;
+        s.csv = AppSettings::instance().exportGraphDataAsCsv;
+        return s;
+    };
+    return panel;
+}
 
 PlotParamsPanel::PlotParamsPanel(PlotParamsPanelCtorOptions options, QWidget *parent) :
     QStackedWidget(parent), _splitter(options.splitter)
@@ -19,7 +31,7 @@ PlotParamsPanel::PlotParamsPanel(PlotParamsPanelCtorOptions options, QWidget *pa
 
     if (options.hasDataGrid)
         _dataGridIndex = initPanel(tr("Show Data Table"), ":/toolbar16/table",
-            /* makeWidget: */ [](PlotParamsPanel*)->QWidget*{ return new QCPL::GraphDataGrid; },
+            /* makeWidget: */ makeGraphDataGrid,
             /* onActivate: */ [](PlotParamsPanel* self){ emit self->updateDataGrid(); });
 
     if (options.hasOptionsPanel)

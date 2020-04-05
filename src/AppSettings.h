@@ -50,6 +50,10 @@ public:
 
     bool layoutExportTransparent; ///< Use transparent background in exported images of layout.
 
+    bool exportGraphDataAsCsv; ///< Write data in CSV format (otherwise, tab-separated text).
+    bool exportColumnHeaders; ///< Write column headers in the first line.
+    bool useSystemDecimalSeparator; ///< Use system decimal separator (otherwise, use point).
+
     Z::Unit defaultUnitFrontRadius = Z::Units::none();
     Z::Unit defaultUnitBeamRadius = Z::Units::none();
     Z::Unit defaultUnitAngle = Z::Units::none();

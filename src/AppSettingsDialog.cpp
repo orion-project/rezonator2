@@ -42,6 +42,7 @@ AppSettingsDialog::AppSettingsDialog(QWidget* parent) : Ori::Dlg::BasicConfigDia
                     createViewPage(),
                     createLayoutPage(),
                     createUnitsPage(),
+                    createExportPage(),
                 });
 }
 
@@ -130,6 +131,20 @@ QWidget* AppSettingsDialog::createUnitsPage()
     return page;
 }
 
+QWidget* AppSettingsDialog::createExportPage()
+{
+    auto page = new Ori::Dlg::BasicConfigPage(tr("Export"), ":/toolbar/save");
+
+    _groupExportData = new Ori::Widgets::OptionsGroup(tr("Graph data export options"), {
+        tr("Use CSV format (otherwise, tab-separated text)"),
+        tr("Write column headers in the first line"),
+        tr("Use system decimal separator (otherwise, use point)"),
+    });
+
+    page->add({_groupExportData, page->stretch()});
+    return page;
+}
+
 void AppSettingsDialog::populate()
 {
     AppSettings &settings = AppSettings::instance();
@@ -158,6 +173,11 @@ void AppSettingsDialog::populate()
     _defaultUnitBeamRadius->setSelectedUnit(settings.defaultUnitBeamRadius);
     _defaultUnitFrontRadius->setSelectedUnit(settings.defaultUnitFrontRadius);
     _defaultUnitAngle->setSelectedUnit(settings.defaultUnitAngle);
+
+    // export
+    _groupExportData->setOption(0, settings.exportGraphDataAsCsv);
+    _groupExportData->setOption(1, settings.exportColumnHeaders);
+    _groupExportData->setOption(2, settings.useSystemDecimalSeparator);
 }
 
 bool AppSettingsDialog::collect()
@@ -188,6 +208,11 @@ bool AppSettingsDialog::collect()
     settings.defaultUnitBeamRadius = _defaultUnitBeamRadius->selectedUnit();
     settings.defaultUnitFrontRadius = _defaultUnitFrontRadius->selectedUnit();
     settings.defaultUnitAngle = _defaultUnitAngle->selectedUnit();
+
+    // export
+    settings.exportGraphDataAsCsv = _groupExportData->option(0);
+    settings.exportColumnHeaders = _groupExportData->option(1);
+    settings.useSystemDecimalSeparator = _groupExportData->option(2);
 
     settings.save();
     return true;

@@ -77,6 +77,11 @@ void AppSettings::load()
     s.beginGroup("Layout");
     LOAD_DEF(layoutExportTransparent, Bool, false);
 
+    s.beginGroup("Export");
+    LOAD_DEF(exportGraphDataAsCsv, Bool, false);
+    LOAD_DEF(exportColumnHeaders, Bool, false);
+    LOAD_DEF(useSystemDecimalSeparator, Bool, false);
+
     s.beginGroup("Units");
     defaultUnitBeamRadius = Z::Units::findByAlias(s.settings()->value("defaultUnitBeamRadius").toString(), Z::Units::mkm());
     defaultUnitFrontRadius = Z::Units::findByAlias(s.settings()->value("defaultUnitFrontRadius").toString(), Z::Units::m());
@@ -119,6 +124,11 @@ void AppSettings::save()
 
     s.beginGroup("Layout");
     SAVE(layoutExportTransparent);
+
+    s.beginGroup("Export");
+    SAVE(exportGraphDataAsCsv);
+    SAVE(exportColumnHeaders);
+    SAVE(useSystemDecimalSeparator);
 
     s.beginGroup("Units");
     s.settings()->setValue("defaultUnitBeamRadius", defaultUnitBeamRadius->alias());
