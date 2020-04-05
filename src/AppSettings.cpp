@@ -78,9 +78,13 @@ void AppSettings::load()
     LOAD_DEF(layoutExportTransparent, Bool, false);
 
     s.beginGroup("Export");
-    LOAD_DEF(exportGraphDataAsCsv, Bool, false);
+    LOAD_DEF(exportAsCsv, Bool, false);
     LOAD_DEF(exportColumnHeaders, Bool, false);
-    LOAD_DEF(useSystemDecimalSeparator, Bool, false);
+    LOAD_DEF(exportSystemLocale, Bool, false);
+    LOAD_DEF(exportNumberPrecision, Int, 6);
+
+    s.beginGroup("Format");
+    LOAD_DEF(numberPrecisionData, Int, 6);
 
     s.beginGroup("Units");
     defaultUnitBeamRadius = Z::Units::findByAlias(s.settings()->value("defaultUnitBeamRadius").toString(), Z::Units::mkm());
@@ -126,9 +130,13 @@ void AppSettings::save()
     SAVE(layoutExportTransparent);
 
     s.beginGroup("Export");
-    SAVE(exportGraphDataAsCsv);
+    SAVE(exportAsCsv);
     SAVE(exportColumnHeaders);
-    SAVE(useSystemDecimalSeparator);
+    SAVE(exportSystemLocale);
+    SAVE(exportNumberPrecision);
+
+    s.beginGroup("Format");
+    SAVE(numberPrecisionData);
 
     s.beginGroup("Units");
     s.settings()->setValue("defaultUnitBeamRadius", defaultUnitBeamRadius->alias());
@@ -138,9 +146,16 @@ void AppSettings::save()
 
 bool AppSettings::edit(class QWidget *parent)
 {
+    int old_numberPrecisionData = numberPrecisionData;
+
     bool result = Z::Dlg::editAppSettings(parent);
     if (result)
+    {
         notify(&IAppSettingsListener::settingsChanged);
+
+        if (old_numberPrecisionData != numberPrecisionData)
+            notify(&IAppSettingsListener::optionChanged, AppSettingsOptions::numberPrecisionData);
+    }
     return result;
 }
 

@@ -7,6 +7,10 @@
 
 #include <QSize>
 
+enum class AppSettingsOptions {
+    numberPrecisionData
+};
+
 class IAppSettingsListener
 {
 public:
@@ -14,6 +18,7 @@ public:
     virtual ~IAppSettingsListener();
 
     virtual void settingsChanged() {}
+    virtual void optionChanged(AppSettingsOptions option) { Q_UNUSED(option) }
 };
 
 class AppSettings :
@@ -50,9 +55,12 @@ public:
 
     bool layoutExportTransparent; ///< Use transparent background in exported images of layout.
 
-    bool exportGraphDataAsCsv; ///< Write data in CSV format (otherwise, tab-separated text).
+    bool exportAsCsv; ///< Write data in CSV format (otherwise, tab-separated text).
     bool exportColumnHeaders; ///< Write column headers in the first line.
-    bool useSystemDecimalSeparator; ///< Use system decimal separator (otherwise, use point).
+    bool exportSystemLocale; ///< Use system locale (otherwise, use C-locale).
+    int exportNumberPrecision; ///< Number precision for export.
+
+    int numberPrecisionData; ///< Number precision for value formatting (graph data, etc).
 
     Z::Unit defaultUnitFrontRadius = Z::Units::none();
     Z::Unit defaultUnitBeamRadius = Z::Units::none();

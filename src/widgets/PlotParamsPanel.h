@@ -3,6 +3,8 @@
 
 #include <QStackedWidget>
 
+#include "../AppSettings.h"
+
 QT_BEGIN_NAMESPACE
 class QAction;
 class QSplitter;
@@ -25,12 +27,13 @@ struct PlotParamsPanelCtorOptions
     bool hasOptionsPanel;
 };
 
-class PlotParamsPanel : public QStackedWidget
+class PlotParamsPanel : public QStackedWidget, public IAppSettingsListener
 {
     Q_OBJECT
 
 public:
     explicit PlotParamsPanel(PlotParamsPanelCtorOptions options, QWidget *parent = nullptr);
+    ~PlotParamsPanel() override;
 
     void placeIn(QToolBar* toolbar);
     void fillActions(QList<QAction *> &actions);
@@ -40,6 +43,8 @@ public:
     QWidget* optionsPanel() const;
 
     void setOptionsPanelEnabled(bool on);
+
+    void optionChanged(AppSettingsOptions option) override;
 
 signals:
     void updateDataGrid();

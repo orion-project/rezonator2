@@ -1,4 +1,5 @@
 #include <QAction>
+#include <QDebug>
 #include <QSplitter>
 #include <QTextBrowser>
 #include <QToolBar>
@@ -12,13 +13,17 @@
 
 static QWidget* makeGraphDataGrid(PlotParamsPanel*)
 {
-    auto panel = new QCPL::GraphDataGrid;
-    panel->getExportSettings = [](){
-        QCPL::GraphDataExportSettings s;
-        s.csv = AppSettings::instance().exportGraphDataAsCsv;
-        return s;
+    auto grid = new QCPL::GraphDataGrid;
+    grid->setNumberPrecision(AppSettings::instance().numberPrecisionData);
+    grid->getExportSettings = [](){
+        QCPL::GraphDataExportSettings es;
+        auto as = AppSettings::instance();
+        es.csv = as.exportAsCsv;
+        es.systemLocale = as.exportSystemLocale;
+        es.numberPrecision = as.exportNumberPrecision;
+        return es;
     };
-    return panel;
+    return grid;
 }
 
 PlotParamsPanel::PlotParamsPanel(PlotParamsPanelCtorOptions options, QWidget *parent) :
@@ -40,6 +45,13 @@ PlotParamsPanel::PlotParamsPanel(PlotParamsPanelCtorOptions options, QWidget *pa
             /* onActivate: */ nullptr);
 
     setVisible(false); // all actions unchecked
+
+    AppSettings::instance().registerListener(this);
+}
+
+PlotParamsPanel::~PlotParamsPanel()
+{
+    AppSettings::instance().unregisterListener(this);
 }
 
 int PlotParamsPanel::initPanel(const QString& title, const char* icon, MakePanelFunc makeWidget, ActivatePanelFunc onActivate)
@@ -136,4 +148,15 @@ void PlotParamsPanel::setOptionsPanelEnabled(bool on)
     auto panel = optionsPanel();
     if (panel)
         panel->setEnabled(on);
+}
+
+void PlotParamsPanel::optionChanged(AppSettingsOptions option)
+{
+    qDebug() << "option changed";
+    if (option == AppSettingsOptions::numberPrecisionData)
+    {
+        auto grid = dataGrid();
+        if (grid)
+            grid->setNumberPrecision(AppSettings::instance().numberPrecisionData);
+    }
 }

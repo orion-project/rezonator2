@@ -7,6 +7,7 @@
 #include "widgets/OriOptionsGroup.h"
 
 #include <QBoxLayout>
+#include <QDebug>
 #include <QFormLayout>
 #include <QLabel>
 #include <QIcon>
@@ -25,6 +26,18 @@ bool editAppSettings(QWidget *parent)
 
 } // namespace Dlgs
 } // namespace Z
+
+namespace  {
+class NumberPrecisionSpinBox : public QSpinBox
+{
+public:
+    NumberPrecisionSpinBox() : QSpinBox()
+    {
+        setRange(1, 16);
+        setFixedWidth(QFontMetrics(font()).boundingRect("00").width() * 4);
+    }
+};
+}
 
 //------------------------------------------------------------------------------
 //                              ConfigDialog
@@ -78,7 +91,13 @@ QWidget* AppSettingsDialog::createViewPage()
         tr("Use system open/save file dialogs")
     });
 
-    page->add({_groupView, page->stretch()});
+    _numberPrecisionData = new NumberPrecisionSpinBox;
+    auto groupFormat = new QGroupBox(tr("Number format"));
+    LayoutH({
+        new QLabel(tr("Number precision for result formatting")), _numberPrecisionData
+    }).useFor(groupFormat);
+
+    page->add({_groupView, groupFormat, page->stretch()});
     return page;
 }
 
@@ -136,9 +155,14 @@ QWidget* AppSettingsDialog::createExportPage()
     auto page = new Ori::Dlg::BasicConfigPage(tr("Export"), ":/toolbar/save");
 
     _groupExportData = new Ori::Widgets::OptionsGroup(tr("Graph data export options"), {
-        tr("Use CSV format (otherwise, tab-separated text)"),
-        tr("Write column headers in the first line"),
-        tr("Use system decimal separator (otherwise, use point)"),
+        tr("Use CSV format"),
+        tr("Use system locale "),
+        //tr("Write column headers"),
+    });
+
+    _exportNumberPrecision = new NumberPrecisionSpinBox;
+    _groupExportData->addControls({
+        LayoutH({new QLabel(tr("Number precision")), _exportNumberPrecision, Stretch()}).boxLayout(),
     });
 
     page->add({_groupExportData, page->stretch()});
@@ -165,6 +189,7 @@ void AppSettingsDialog::populate()
     _groupView->setOption(1, settings.showBackground);
     _groupView->setOption(2, settings.useNativeMenuBar);
     _groupView->setOption(3, settings.useSystemDialogs);
+    _numberPrecisionData->setValue(settings.numberPrecisionData);
 
     // layout
     _groupLayoutExport->setOption(0, settings.layoutExportTransparent);
@@ -175,9 +200,10 @@ void AppSettingsDialog::populate()
     _defaultUnitAngle->setSelectedUnit(settings.defaultUnitAngle);
 
     // export
-    _groupExportData->setOption(0, settings.exportGraphDataAsCsv);
-    _groupExportData->setOption(1, settings.exportColumnHeaders);
-    _groupExportData->setOption(2, settings.useSystemDecimalSeparator);
+    _groupExportData->setOption(0, settings.exportAsCsv);
+    _groupExportData->setOption(1, settings.exportSystemLocale);
+    //_groupExportData->setOption(2, settings.exportColumnHeaders);
+    _exportNumberPrecision->setValue(settings.exportNumberPrecision);
 }
 
 bool AppSettingsDialog::collect()
@@ -200,6 +226,7 @@ bool AppSettingsDialog::collect()
     settings.showBackground = _groupView->option(1);
     settings.useNativeMenuBar = _groupView->option(2);
     settings.useSystemDialogs = _groupView->option(3);
+    settings.numberPrecisionData = _numberPrecisionData->value();
 
     // layout
     settings.layoutExportTransparent = _groupView->option(1);
@@ -210,9 +237,10 @@ bool AppSettingsDialog::collect()
     settings.defaultUnitAngle = _defaultUnitAngle->selectedUnit();
 
     // export
-    settings.exportGraphDataAsCsv = _groupExportData->option(0);
-    settings.exportColumnHeaders = _groupExportData->option(1);
-    settings.useSystemDecimalSeparator = _groupExportData->option(2);
+    settings.exportAsCsv = _groupExportData->option(0);
+    settings.exportSystemLocale = _groupExportData->option(1);
+    //settings.exportColumnHeaders = _groupExportData->option(2);
+    settings.exportNumberPrecision = _exportNumberPrecision->value();
 
     settings.save();
     return true;

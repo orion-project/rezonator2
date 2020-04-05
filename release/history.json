@@ -18,6 +18,9 @@
         },
         {
           "text": "Added an option allowing for output the Python code for matrices in info function windows."
+        },
+        {
+          "text": "Added settings for number formatting and data exporting."
         }
       ]
     },

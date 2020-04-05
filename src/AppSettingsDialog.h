@@ -5,6 +5,7 @@
 
 QT_BEGIN_NAMESPACE
 class QComboBox;
+class QSpinBox;
 QT_END_NAMESPACE
 
 class UnitComboBox;
@@ -33,6 +34,8 @@ private:
     UnitComboBox *_defaultUnitBeamRadius;
     UnitComboBox *_defaultUnitFrontRadius;
     UnitComboBox *_defaultUnitAngle;
+    QSpinBox *_exportNumberPrecision;
+    QSpinBox *_numberPrecisionData;
 
     QWidget* createGeneralPage();
     QWidget* createViewPage();
