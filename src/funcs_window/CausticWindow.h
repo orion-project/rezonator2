@@ -5,6 +5,7 @@
 #include "../RezonatorDialog.h"
 #include "../funcs/CausticFunction.h"
 
+class BeamShapeWidget;
 class ElemSelectorWidget;
 class PointsRangeEditor;
 
@@ -30,6 +31,13 @@ protected:
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;
     QString writeFunction(QJsonObject& root) override;
+
+private:
+    QAction *_actnShowBeamShape;
+    BeamShapeWidget *_beamShape = nullptr;
+    QRect _beamShapeGeom;
+
+    void showBeamShape();
 };
 
 

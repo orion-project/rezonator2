@@ -5,11 +5,10 @@
 #include "../funcs/FunctionGraph.h"
 #include "../funcs/PlotFuncRoundTripFunction.h"
 #include "../io/JsonUtils.h"
+#include "../widgets/BeamShapeWidget.h"
 
 #include "qcpl_cursor.h"
 #include "qcpl_plot.h"
-
-#include <QAction>
 
 MulticausticWindow::MulticausticWindow(MultirangeCausticFunction* function) : PlotFuncWindowStorable(function)
 {
@@ -17,6 +16,21 @@ MulticausticWindow::MulticausticWindow(MultirangeCausticFunction* function) : Pl
     _actnElemBoundMarkers->setCheckable(true);
     _actnElemBoundMarkers->setChecked(true);
     connect(_actnElemBoundMarkers, &QAction::toggled, this, &MulticausticWindow::toggleElementBoundMarkers);
+
+    _actnShowBeamShape = new QAction(tr("Show Beam Shape", "Plot action"), this);
+    _actnShowBeamShape->setIcon(QIcon(":/toolbar/profile"));
+    _actnShowBeamShape->setCheckable(true);
+    connect(_actnShowBeamShape, &QAction::triggered, this, &MulticausticWindow::showBeamShape);
+
+    menuPlot->addSeparator();
+    menuPlot->addAction(_actnShowBeamShape);
+
+    toolbar()->addSeparator();
+    toolbar()->addAction(_actnShowBeamShape);
+
+    connect(_plot, &QCPL::Plot::resized, [this](const QSize&, const QSize&){
+        if (_beamShape) _beamShape->parentSizeChanged();
+    });
 }
 
 bool MulticausticWindow::configureInternal()
@@ -236,4 +250,19 @@ Z::Unit MulticausticWindow::getDefaultUnitY() const
     case CausticFunction::HalfAngle: return AppSettings::instance().defaultUnitAngle;
     }
     return Z::Units::none();
+}
+
+void MulticausticWindow::showBeamShape()
+{
+    if (_beamShape)
+    {
+        _beamShapeGeom = _beamShape->geometry();
+        _beamShape->deleteLater();
+        _beamShape = nullptr;
+    }
+    else
+    {
+        _beamShape = new BeamShapeWidget(_plot);
+        _beamShape->setInitialGeometry(_beamShapeGeom);
+    }
 }

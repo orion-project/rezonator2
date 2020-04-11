@@ -39,8 +39,6 @@ private:
     QAction *_actnStabilityAutolimits, *_actnStabBoundMarkers;
     QCPItemStraightLine *_stabBoundMarkerLow, *_stabBoundMarkerTop;
 
-    void createControl();
-
     void updateStabBoundMarkers();
     void toggleStabBoundMarkers(bool on);
 

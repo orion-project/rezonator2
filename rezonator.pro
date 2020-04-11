@@ -129,6 +129,7 @@ HEADERS += \
     src/tests/TestSuite.h \
     src/tests/TestUtils.h \
     src/Appearance.h \
+    src/widgets/BeamShapeWidget.h \
     src/widgets/ElemFormulaEditor.h \
     src/widgets/ElemSelectorWidget.h \
     src/widgets/ElementImagesProvider.h \
@@ -260,6 +261,7 @@ SOURCES += \
     src/tests/test_Units.cpp \
     src/tests/test_Values.cpp \
     src/Appearance.cpp \
+    src/widgets/BeamShapeWidget.cpp \
     src/widgets/ElemFormulaEditor.cpp \
     src/widgets/ElemSelectorWidget.cpp \
     src/widgets/ElementTypesListView.cpp \

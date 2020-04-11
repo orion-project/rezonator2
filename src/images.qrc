@@ -80,6 +80,7 @@
         <file alias="plot_w">../img/toolbar/plot_w.svg</file>
         <file alias="plot_z0">../img/toolbar/plot_z0.svg</file>
         <file alias="plus">../img/toolbar/plus.svg</file>
+        <file alias="profile">../img/toolbar/profile.svg</file>
         <file alias="protocol">../img/toolbar/protocol.svg</file>
         <file alias="pump_add">../img/toolbar/pump_add.svg</file>
         <file alias="pump_delete">../img/toolbar/pump_delete.svg</file>

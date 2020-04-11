@@ -6,13 +6,13 @@
 #include "../funcs/FunctionGraph.h"
 #include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
+#include "../widgets/BeamShapeWidget.h"
 #include "../widgets/ElemSelectorWidget.h"
 #include "../widgets/VariableRangeEditor.h"
 #include "helpers/OriWidgets.h"
 #include "helpers/OriLayouts.h"
 
-#include <QGroupBox>
-#include <QLabel>
+#include "qcpl_plot.h"
 
 //------------------------------------------------------------------------------
 //                           CausticParamsDlg
@@ -103,6 +103,20 @@ void CausticParamsDlg::guessRange()
 
 CausticWindow::CausticWindow(Schema *schema) : PlotFuncWindowStorable(new CausticFunction(schema))
 {
+    _actnShowBeamShape = new QAction(tr("Show Beam Shape", "Plot action"), this);
+    _actnShowBeamShape->setIcon(QIcon(":/toolbar/profile"));
+    _actnShowBeamShape->setCheckable(true);
+    connect(_actnShowBeamShape, &QAction::triggered, this, &CausticWindow::showBeamShape);
+
+    menuPlot->addSeparator();
+    menuPlot->addAction(_actnShowBeamShape);
+
+    toolbar()->addSeparator();
+    toolbar()->addAction(_actnShowBeamShape);
+
+    connect(_plot, &QCPL::Plot::resized, [this](const QSize&, const QSize&){
+        if (_beamShape) _beamShape->parentSizeChanged();
+    });
 }
 
 bool CausticWindow::configureInternal()
@@ -184,4 +198,19 @@ Z::Unit CausticWindow::getDefaultUnitY() const
     case CausticFunction::HalfAngle: return AppSettings::instance().defaultUnitAngle;
     }
     return Z::Units::none();
+}
+
+void CausticWindow::showBeamShape()
+{
+    if (_beamShape)
+    {
+        _beamShapeGeom = _beamShape->geometry();
+        _beamShape->deleteLater();
+        _beamShape = nullptr;
+    }
+    else
+    {
+        _beamShape = new BeamShapeWidget(_plot);
+        _beamShape->setInitialGeometry(_beamShapeGeom);
+    }
 }

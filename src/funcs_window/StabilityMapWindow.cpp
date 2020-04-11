@@ -137,11 +137,6 @@ void StabilityMapOptionsPanel::functionModeChanged(int mode)
 StabilityMapWindow::StabilityMapWindow(Schema *schema) :
     PlotFuncWindowStorable(new StabilityMapFunction(schema))
 {
-    createControl();
-}
-
-void StabilityMapWindow::createControl()
-{
     _actnStabilityAutolimits = new QAction(tr("Y-axis -> Stability Range", "Plot action"), this);
     _actnStabilityAutolimits->setIcon(QIcon(":/toolbar/limits_stab"));
     connect(_actnStabilityAutolimits, &QAction::triggered, this, &StabilityMapWindow::autolimitsStability);
