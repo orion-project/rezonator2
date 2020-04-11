@@ -75,6 +75,9 @@ public:
     /// Returns what will happen if one or all the elements are deleted.
     virtual ElemDeletionReaction reactElemDeletion(const Elements&);
 
+    // inherited from IAppSettingsListener
+    void optionChanged(AppSettingsOptions option) override;
+
 public slots:
     void update();
 
@@ -135,6 +138,7 @@ protected:
     virtual void restoreViewSpecific(int key) { Q_UNUSED(key) }
     virtual QWidget* makeOptionsPanel() { return nullptr; }
     virtual void fillViewMenuActions(QList<QAction*>& actions) const { Q_UNUSED(actions) }
+    virtual QString getCursorInfo(const QPointF& pos) const { Q_UNUSED(pos) return QString(); }
 
     QCPGraph* selectedGraph() const;
 

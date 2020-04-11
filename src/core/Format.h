@@ -14,7 +14,7 @@ inline QString storedStr(const double& v) { return QString::number(v, 'g', 16); 
 inline QString str(bool v) { return v? "true": "false"; }
 
 /// Format a value to be displayed to user
-inline QString format(const double& v) { return QString::number(v); }
+QString format(const double& v);
 
 namespace Strs {
 

@@ -11,6 +11,7 @@
 
 namespace QCPL {
 class Plot;
+class Cursor;
 }
 
 enum class PlotAxis { X, Y };
@@ -18,6 +19,7 @@ enum class PlotAxis { X, Y };
 namespace PlotHelpers {
 
 void rescaleLimits(QCPL::Plot* plot, PlotAxis axis, Z::Unit unitFrom, Z::Unit unitTo);
+void rescaleCursor(QCPL::Cursor* cursor, PlotAxis axis, Z::Unit unitFrom, Z::Unit unitTo);
 
 } // namespace PlotHelpers
 

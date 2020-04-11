@@ -198,6 +198,7 @@ SOURCES += \
     src/core/ElementFormula.cpp \
     src/core/Elements.cpp \
     src/core/ElementsCatalog.cpp \
+    src/core/Format.cpp \
     src/core/Formula.cpp \
     src/core/LuaHelper.cpp \
     src/core/Math.cpp \

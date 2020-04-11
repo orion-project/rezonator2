@@ -215,6 +215,7 @@ void PlotFuncWindow::createContent()
     _cursorMenu = new QMenu(tr("Cursor"), this);
     _cursorPanel = new QCPL::CursorPanel(_cursor);
     _cursorPanel->setAutoUpdateInfo(false);
+    _cursorPanel->setNumberPrecision(AppSettings::instance().numberPrecisionData, false);
     _cursorPanel->placeIn(toolbar);
     _cursorPanel->fillMenu(_cursorMenu);
 
@@ -374,7 +375,7 @@ void PlotFuncWindow::updateCursorInfo()
         // TODO:NEXT-VER calculate by interpolating between existing graph points
         return;
     }
-    _cursorPanel->update(_function->calculatePoint(_cursor->position().x()));
+    _cursorPanel->update(getCursorInfo(_cursor->position()));
 }
 
 void PlotFuncWindow::updateWithParams()
@@ -574,6 +575,7 @@ void PlotFuncWindow::setUnitX(Z::Unit unit)
     updateStatusUnits();
     schema()->markModified("PlotFuncWindow::setUnitX");
     PlotHelpers::rescaleLimits(_plot, PlotAxis::X, oldUnit, unit);
+    PlotHelpers::rescaleCursor(_cursor, PlotAxis::X, oldUnit, unit);
     update();
 }
 
@@ -586,6 +588,7 @@ void PlotFuncWindow::setUnitY(Z::Unit unit)
     updateStatusUnits();
     schema()->markModified("PlotFuncWindow::setUnitY");
     PlotHelpers::rescaleLimits(_plot, PlotAxis::Y, oldUnit, unit);
+    PlotHelpers::rescaleCursor(_cursor, PlotAxis::Y, oldUnit, unit);
     update();
 }
 
@@ -611,4 +614,13 @@ QList<BasicMdiChild::ViewMenuItem> PlotFuncWindow::menuItems_View()
         menuItems << BasicMdiChild::ViewMenuItem(a);
 
     return menuItems;
+}
+
+void PlotFuncWindow::optionChanged(AppSettingsOptions option)
+{
+    if (option == AppSettingsOptions::numberPrecisionData)
+    {
+        _cursorPanel->setNumberPrecision(AppSettings::instance().numberPrecisionData, false);
+        updateCursorInfo();
+    }
 }

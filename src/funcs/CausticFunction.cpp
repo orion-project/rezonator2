@@ -122,25 +122,15 @@ Z::PointTS CausticFunction::calculateResonator() const
     return Z::PointTS();
 }
 
-QString CausticFunction::calculatePoint(const double& arg)
+Z::PointTS CausticFunction::calculateAt(double argSI)
 {
-    Q_UNUSED(arg)
-    return QString();
-
-/* TODO:NEXT-VER
-    if (!_elem || !_calc || !_range.has(arg)) return QString();
-
-    _elem->setSubRange(arg);
+    if (!ok()) return { Double::nan(), Double::nan() };
+    auto elem = Z::Utils::asRange(arg()->element);
+    double x = qMin(qMax(argSI, 0.0), elem->axisLengthSI());
+    auto calcBeamParams = _schema->isResonator()
+            ? &CausticFunction::calculateResonator
+            : &CausticFunction::calculateSinglePass;
+    elem->setSubRangeSI(x);
     _calc->multMatrix();
-
-    Z::PointTS value;
-    switch (_schema->tripType())
-    {
-    case TripType::SW: break; // TODO
-    case TripType::RR: break; // TODO
-    case TripType::SP: value = calculateSinglePass(); break;
-    }
-
-    return QString::fromUtf8("ω<sub>T</sub>: %1; ω<sub>S</sub>: %2")
-            .arg(Z::format(value.T), Z::format(value.S)); */
+    return (this->*calcBeamParams)();
 }

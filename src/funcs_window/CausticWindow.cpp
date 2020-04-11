@@ -3,6 +3,7 @@
 #include "CausticOptionsPanel.h"
 #include "../AppSettings.h"
 #include "../CustomPrefs.h"
+#include "../core/Format.h"
 #include "../funcs/FunctionGraph.h"
 #include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
@@ -198,6 +199,30 @@ Z::Unit CausticWindow::getDefaultUnitY() const
     case CausticFunction::HalfAngle: return AppSettings::instance().defaultUnitAngle;
     }
     return Z::Units::none();
+}
+
+QString CausticWindow::getCursorInfo(const QPointF& pos) const
+{
+    double x = getUnitX()->toSi(pos.x());
+    auto res = function()->calculateAt(x);
+    auto unitY = getUnitY();
+    QString title;
+    switch (function()->mode())
+    {
+    case CausticFunction::Mode::BeamRadius:
+        title = QStringLiteral("W");
+        break;
+    case CausticFunction::Mode::FontRadius:
+        title = QStringLiteral("R");
+        break;
+    case CausticFunction::Mode::HalfAngle:
+        title = QStringLiteral("V");
+        break;
+    }
+    return QString("%1t = %2; %1s = %3")
+            .arg(title)
+            .arg(Z::format(unitY->fromSi(res.T)))
+            .arg(Z::format(unitY->fromSi(res.S)));
 }
 
 void CausticWindow::showBeamShape()
