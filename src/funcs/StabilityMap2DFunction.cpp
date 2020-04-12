@@ -76,3 +76,15 @@ bool StabilityMap2DFunction::checkArg(Z::Variable* arg)
     }
     return true;
 }
+
+Z::PointTS StabilityMap2DFunction::calculateAt(const Z::Value& x, const Z::Value& y)
+{
+    ElementEventsLocker elemLockX(_paramX.element);
+    ElementEventsLocker elemLockY(_paramY.element);
+    Z::ParamValueBackup paramLockX(_paramX.parameter);
+    Z::ParamValueBackup paramLockY(_paramY.parameter);
+    _paramX.parameter->setValue(x);
+    _paramY.parameter->setValue(y);
+    _calc->multMatrix();
+    return _calc->stability();
+}

@@ -2,6 +2,7 @@
 
 #include "FuncOptionsPanel.h"
 #include "../CustomPrefs.h"
+#include "../core/Format.h"
 #include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
 #include "../widgets/ElemSelectorWidget.h"
@@ -285,4 +286,11 @@ QString StabilityMapWindow::getDefaultTitleY() const
 Z::Unit StabilityMapWindow::getDefaultUnitX() const
 {
     return function()->arg()->range.start.unit();
+}
+
+QString StabilityMapWindow::getCursorInfo(const QPointF& pos) const
+{
+    if (!function()->ok()) return QString();
+    auto res = function()->calculateAt(Z::Value(pos.x(), getUnitX()));
+    return QStringLiteral("Pt = %1; Ps = %2").arg(Z::format(res.T)).arg(Z::format(res.S));
 }

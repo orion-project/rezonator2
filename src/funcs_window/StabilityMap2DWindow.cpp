@@ -1,8 +1,8 @@
 #include "StabilityMap2DWindow.h"
 
 #include "FuncOptionsPanel.h"
-
 #include "../CustomPrefs.h"
+#include "../core/Format.h"
 #include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
 #include "../widgets/ElemSelectorWidget.h"
@@ -423,4 +423,11 @@ QString StabilityMap2DWindow::writeWindowSpecific(QJsonObject& root)
     root["aux_stored_views"] = viewsJson;
 
     return QString();
+}
+
+QString StabilityMap2DWindow::getCursorInfo(const QPointF& pos) const
+{
+    if (!function()->ok()) return QString();
+    auto res = function()->calculateAt(Z::Value(pos.x(), getUnitX()), Z::Value(pos.y(), getUnitY()));
+    return QStringLiteral("Pt = %1; Ps = %2").arg(Z::format(res.T)).arg(Z::format(res.S));
 }

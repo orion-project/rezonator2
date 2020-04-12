@@ -124,7 +124,6 @@ Z::PointTS CausticFunction::calculateResonator() const
 
 Z::PointTS CausticFunction::calculateAt(double argSI)
 {
-    if (!ok()) return { Double::nan(), Double::nan() };
     auto elem = Z::Utils::asRange(arg()->element);
     double x = qMin(qMax(argSI, 0.0), elem->axisLengthSI());
     auto calcBeamParams = _schema->isResonator()

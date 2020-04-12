@@ -203,6 +203,7 @@ Z::Unit CausticWindow::getDefaultUnitY() const
 
 QString CausticWindow::getCursorInfo(const QPointF& pos) const
 {
+    if (!function()->ok()) return QString();
     double x = getUnitX()->toSi(pos.x());
     auto res = function()->calculateAt(x);
     auto unitY = getUnitY();

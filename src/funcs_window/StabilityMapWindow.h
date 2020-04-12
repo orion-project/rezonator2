@@ -28,6 +28,7 @@ protected:
     QString getDefaultTitleY() const override;
     void fillViewMenuActions(QList<QAction*>& actions) const override;
     Z::Unit getDefaultUnitX() const override;
+    QString getCursorInfo(const QPointF& pos) const override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;

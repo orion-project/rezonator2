@@ -36,6 +36,7 @@ protected:
     Z::Unit getDefaultUnitY() const override;
     void storeViewSpecific(int key) override;
     void restoreViewSpecific(int key) override;
+    QString getCursorInfo(const QPointF& pos) const override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;
