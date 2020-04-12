@@ -133,3 +133,17 @@ Z::PointTS CausticFunction::calculateAt(double argSI)
     _calc->multMatrix();
     return (this->*calcBeamParams)();
 }
+
+QString CausticFunction::modeAlias(Mode mode)
+{
+    switch (mode)
+    {
+    case CausticFunction::Mode::BeamRadius:
+        return QStringLiteral("W");
+    case CausticFunction::Mode::FontRadius:
+        return QStringLiteral("R");
+    case CausticFunction::Mode::HalfAngle:
+        return QStringLiteral("V");
+    }
+    return QString();
+}

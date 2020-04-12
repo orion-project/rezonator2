@@ -1,6 +1,7 @@
 #include "MultirangeCausticWindow.h"
 
 #include "CausticOptionsPanel.h"
+#include "../core/Format.h"
 #include "../funcs/CausticFunction.h"
 #include "../io/CommonUtils.h"
 
@@ -63,4 +64,16 @@ QString MultirangeCausticWindow::getDefaultTitleY() const
         break;
     }
     return QStringLiteral("%1 (%2)").arg(title, getUnitY()->name());
+}
+
+QString MultirangeCausticWindow::getCursorInfo(const QPointF& pos) const
+{
+    if (!function()->ok()) return QString();
+    double x = getUnitX()->toSi(pos.x());
+    auto res = function()->calculateAt(x);
+    auto unitY = getUnitY();
+    return QString("%1t = %2; %1s = %3")
+            .arg(CausticFunction::modeAlias(function()->mode()))
+            .arg(Z::format(unitY->fromSi(res.T)))
+            .arg(Z::format(unitY->fromSi(res.S)));
 }

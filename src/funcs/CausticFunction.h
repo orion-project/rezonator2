@@ -34,6 +34,8 @@ public:
     Mode mode() const { return _mode; }
     void setMode(Mode mode) { _mode = mode; }
 
+    static QString modeAlias(Mode mode);
+
 private:
     /// Wich type of result the function should compute.
     Mode _mode = Mode::BeamRadius;

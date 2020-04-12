@@ -19,6 +19,8 @@ public:
 
     void calculate() override;
 
+    Z::PointTS calculateAt(const Z::Value& v);
+
     Z::PlotPosition* pos() { return &_pos; }
 
 protected:

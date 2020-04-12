@@ -207,21 +207,8 @@ QString CausticWindow::getCursorInfo(const QPointF& pos) const
     double x = getUnitX()->toSi(pos.x());
     auto res = function()->calculateAt(x);
     auto unitY = getUnitY();
-    QString title;
-    switch (function()->mode())
-    {
-    case CausticFunction::Mode::BeamRadius:
-        title = QStringLiteral("W");
-        break;
-    case CausticFunction::Mode::FontRadius:
-        title = QStringLiteral("R");
-        break;
-    case CausticFunction::Mode::HalfAngle:
-        title = QStringLiteral("V");
-        break;
-    }
     return QString("%1t = %2; %1s = %3")
-            .arg(title)
+            .arg(CausticFunction::modeAlias(function()->mode()))
             .arg(Z::format(unitY->fromSi(res.T)))
             .arg(Z::format(unitY->fromSi(res.S)));
 }

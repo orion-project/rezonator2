@@ -16,6 +16,7 @@ protected:
     QWidget* makeOptionsPanel() override;
     QString getDefaultTitle() const override;
     QString getDefaultTitleY() const override;
+    QString getCursorInfo(const QPointF& pos) const override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;

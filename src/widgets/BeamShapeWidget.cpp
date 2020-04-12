@@ -232,7 +232,7 @@ void BeamShapeWidget::paint(QPaintDevice *target, bool showBackground) const
 
     if (showBackground)
     {
-        p.fillRect(0, 0, W, H, Qt::white);
+        p.fillRect(0, 0, W+1, H+1, Qt::white);
     }
     else if (_drawResizeBorder)
     {

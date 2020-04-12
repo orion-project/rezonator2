@@ -61,6 +61,26 @@ void BeamVariationFunction::calculate()
     finishResults();
 }
 
+Z::PointTS BeamVariationFunction::calculateAt(const Z::Value& v)
+{
+    auto elem = arg()->element;
+    auto param = arg()->parameter;
+    ElementEventsLocker elemLock(elem);
+    Z::ParamValueBackup paramLock(param);
+    auto rangeElem = Z::Utils::asRange(_pos.element);
+    if (rangeElem)
+        rangeElem->setSubRangeSI(_pos.offset.toSi());
+    param->setValue(v);
+    _calc->multMatrix();
+    switch (_schema->tripType())
+    {
+    case TripType::SW:
+    case TripType::RR: return calculateResonator();
+    case TripType::SP: return calculateSinglePass();
+    }
+    return { Double::nan(), Double::nan() };
+}
+
 bool BeamVariationFunction::prepareSinglePass()
 {
     auto pump = _schema->activePump();
