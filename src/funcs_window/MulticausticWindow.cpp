@@ -12,6 +12,8 @@
 
 MulticausticWindow::MulticausticWindow(MultirangeCausticFunction* function) : PlotFuncWindowStorable(function)
 {
+    _plot->addLayer("elem_bounds", _plot->layer("graphs"), QCustomPlot::limBelow);
+
     _actnElemBoundMarkers = new QAction(tr("Element bound markers"), this);
     _actnElemBoundMarkers->setCheckable(true);
     _actnElemBoundMarkers->setChecked(true);
@@ -57,6 +59,7 @@ QCPItemStraightLine* MulticausticWindow::makeElemBoundMarker() const
     QCPItemStraightLine *line = new QCPItemStraightLine(plot());
     line->setPen(QPen(Qt::magenta, 1, Qt::DashLine)); // TODO make configurable
     line->setSelectable(false);
+    line->setLayer("elem_bounds");
     return line;
 }
 

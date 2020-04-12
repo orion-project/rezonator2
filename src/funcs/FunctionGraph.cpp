@@ -66,6 +66,7 @@ QCPL::Graph* FunctionGraph::getOrMakeSegment(int index)
     {
         segment = _plot->addGraph();
         segment->setPen(_linePen);
+        segment->setLayer("graphs");
         _segments.append(segment);
     }
     else segment = _segments[index];

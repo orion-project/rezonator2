@@ -198,6 +198,7 @@ void PlotFuncWindow::createContent()
     _plot = new QCPL::Plot;
     _plot->legend->setVisible(false);
     _plot->setAutoAddPlottableToLegend(false);
+    _plot->addLayer("graphs");
     connect(_plot, &QCPL::Plot::graphClicked, this, &PlotFuncWindow::graphSelected);
 
     _plot->getAxisUnitString = [this](QCPAxis* axis) {
