@@ -24,10 +24,14 @@ namespace ElementsTests {
     ASSERT_NEAR_DBL(elem->param(), value, 1e-7)
 
 #define ASSERT_MATRIX(ts, a, b, c, d)\
-    ASSERT_NEAR_DBL(elem->M##ts().A, a, 1e-7)\
-    ASSERT_NEAR_DBL(elem->M##ts().B, b, 1e-7)\
-    ASSERT_NEAR_DBL(elem->M##ts().C, c, 1e-7)\
-    ASSERT_NEAR_DBL(elem->M##ts().D, d, 1e-7)
+    ASSERT_NEAR_DBL(elem->M##ts().A.real(), a, 1e-7)\
+    ASSERT_NEAR_DBL(elem->M##ts().B.real(), b, 1e-7)\
+    ASSERT_NEAR_DBL(elem->M##ts().C.real(), c, 1e-7)\
+    ASSERT_NEAR_DBL(elem->M##ts().D.real(), d, 1e-7)\
+    ASSERT_EQ_DBL(elem->M##ts().A.imag(), 0)\
+    ASSERT_EQ_DBL(elem->M##ts().B.imag(), 0)\
+    ASSERT_EQ_DBL(elem->M##ts().C.imag(), 0)\
+    ASSERT_EQ_DBL(elem->M##ts().D.imag(), 0)
 
 //------------------------------------------------------------------------------
 

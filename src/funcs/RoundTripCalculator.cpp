@@ -186,34 +186,32 @@ void RoundTripCalculator::multMatrix()
 
 Z::PointTS RoundTripCalculator::stability() const
 {
-    return {
-        calcStability((_mt.A + _mt.D) * 0.5),
-        calcStability((_ms.A + _ms.D) * 0.5)
-    };
+    return { calcStability(_mt), calcStability(_ms) };
 }
 
 Z::PairTS<bool> RoundTripCalculator::isStable() const
 {
-    return {
-        isStable((_mt.A + _mt.D) * 0.5),
-        isStable((_ms.A + _ms.D) * 0.5)
-    };
+    return { isStable(_mt), isStable(_ms) };
 }
 
-bool RoundTripCalculator::isStable(double half_of_A_plus_D) const
+bool RoundTripCalculator::isStable(const Z::Matrix& m) const
 {
+    // TODO:COMPLEX: what about imaginary part?
+    auto half_of_A_plus_D = ((m.A + m.D) * 0.5).real();
     return (half_of_A_plus_D > -1) && (half_of_A_plus_D < 1);
 }
 
-double RoundTripCalculator::calcStability(double half_of_A_plus_D) const
+double RoundTripCalculator::calcStability(const Z::Matrix& m) const
 {
+    // TODO:COMPLEX: what about imaginary part?
+    auto half_of_A_plus_D = (m.A + m.D) * 0.5;
     switch (_stabilityCalcMode)
     {
     case Z::Enums::StabilityCalcMode::Normal:
-        return half_of_A_plus_D;
+        return half_of_A_plus_D.real();
 
     case Z::Enums::StabilityCalcMode::Squared:
-        return 1 - half_of_A_plus_D * half_of_A_plus_D;
+        return (Z::Complex(1, 0) - half_of_A_plus_D * half_of_A_plus_D).real();
     }
     return 0;
 }
