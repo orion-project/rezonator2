@@ -242,6 +242,22 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
+DECLARE_ELEMENT(ElemGrinMedium, ElementRange)
+    ElemGrinMedium();
+    TYPE_NAME(qApp->translate("Elements", "GRIN medium"))
+    DEFAULT_LABEL("GM")
+    CALC_MATRIX
+    SUB_RANGE
+    double ior2t() const { return _ior2t->value().value(); }
+    double ior2s() const { return _ior2s->value().value(); }
+    Z::Parameter* paramIor2t() const { return _ior2t; }
+    Z::Parameter* paramIor2s() const { return _ior2s; }
+private:
+    Z::Parameter *_ior2t, *_ior2s;
+DECLARE_ELEMENT_END
+
+//------------------------------------------------------------------------------
+
 DECLARE_ELEMENT(ElemAxiconMirror, ElementDynamic)
     ElemAxiconMirror();
     TYPE_NAME(qApp->translate("Elements", "Axicon mirror"))

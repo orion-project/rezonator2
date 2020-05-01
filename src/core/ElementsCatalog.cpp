@@ -31,6 +31,7 @@ ElementsCatalog::ElementsCatalog()
 
     auto categoryIntf = qApp->translate("Elements", "Media, interfaces");
     registerElement(categoryIntf, new ElemMediumRange);
+    registerElement(categoryIntf, new ElemGrinMedium);
     registerElement(categoryIntf, new ElemNormalInterface);
     registerElement(categoryIntf, new ElemBrewsterInterface);
     registerElement(categoryIntf, new ElemTiltedInterface);

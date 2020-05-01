@@ -390,6 +390,30 @@ TEST_METHOD(GrinLens)
     ASSERT_MATRIX(s2, 0.9999951, 0.0070000, -0.0021000, 1.4999927)
 }
 
+// Calculation: $PROJECT/calc/ElemGrinLens.py
+TEST_METHOD(GrinMedium)
+{
+    ELEM(GrinMedium, 4)
+    SET_PARAM(L, 10, mm)
+    SET_PARAM(n, 1.5, none)
+    SET_PARAM(n2t, 0.2, none)
+    SET_PARAM(n2s, 0.3, none)
+
+    ASSERT_RAW_PARAM(ior, 1.5)
+    ASSERT_RAW_PARAM(lengthSI, 0.01)
+    ASSERT_RAW_PARAM(ior2t, 0.2)
+    ASSERT_RAW_PARAM(ior2s, 0.3)
+
+    ASSERT_MATRIX(t, 0.9999933, 0.0100000, -0.0013333, 0.9999933)
+    ASSERT_MATRIX(s, 0.9999900, 0.0100000, -0.0020000, 0.9999900)
+
+    elem->setSubRangeSI(0.003);
+    ASSERT_MATRIX(t1, 0.9999994, 0.0030000, -0.0004000, 0.9999994)
+    ASSERT_MATRIX(s1, 0.9999991, 0.0030000, -0.0006000, 0.9999991)
+    ASSERT_MATRIX(t2, 0.9999967, 0.0070000, -0.0009333, 0.9999967)
+    ASSERT_MATRIX(s2, 0.9999951, 0.0070000, -0.0014000, 0.9999951)
+}
+
 // Calculation: $PROJECT/calc/Elements.py
 TEST_METHOD(NormalInterface)
 {
@@ -528,6 +552,7 @@ TEST_GROUP("Elements",
            ADD_TEST(Matrix1_2),
            ADD_TEST(Point),
            ADD_TEST(GrinLens),
+           ADD_TEST(GrinMedium),
            ADD_TEST(ThickLens),
            ADD_TEST(NormalInterface),
            ADD_TEST(BrewsterInterface),

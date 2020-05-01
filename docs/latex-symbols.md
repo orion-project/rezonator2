@@ -85,3 +85,136 @@ https://oeis.org/wiki/List_of_LaTeX_mathematical_symbols
 `\rightleftharpoons` $$ \rightleftharpoons $$
 
 `\leadsto` $$ \leadsto $$
+
+## Spaces
+
+No space: $$ a b $$
+
+`\;` - a thick space: $$ a \; b $$
+
+`\:` - a medium space: $$ a \: b $$
+
+`\,` - a thin space: $$ a \, b $$
+
+`\!` - a negative thin space:  $$ a \! b $$
+
+## Greek alphabet
+
+```latex
+\alpha A        \beta B       \gamma \Gamma        \delta \Delta
+\epsilon E      \zeta Z       \eta E               \theta \Theta
+\iota I         \kappa K      \lambda \Lambda      \mu M
+\nu N           \omicron O    \pi \Pi              \rho R
+\sigma \Sigma   \tau T        \upsilon \Upsilon    \phi \Phi
+\chi X          \psi \Psi     \omega \Omega
+```
+
+$$ \alpha A \;\;\;\; \beta B \;\;\;\; \gamma \Gamma \;\;\;\; \delta \Delta $$
+
+$$ \epsilon E \;\;\;\; \zeta Z \;\;\;\; \eta E \;\;\;\; \theta \Theta $$
+
+$$ \iota I \;\;\;\; \kappa K \;\;\;\; \lambda \Lambda \;\;\;\; \mu M $$
+
+$$ \nu N \;\;\;\; \omicron O \;\;\;\; \pi \Pi \;\;\;\; \rho R $$
+
+$$ \sigma \Sigma \;\;\;\; \tau T \;\;\;\; \upsilon \Upsilon \;\;\;\; \phi \Phi $$
+
+$$ \chi X \;\;\;\; \psi \Psi \;\;\;\; \omega \Omega $$
+
+## Matrices
+
+Plain:
+
+```latex
+\begin{matrix}
+1 & 2 & 3\\
+a & b & c
+\end{matrix}
+```
+
+$$
+\begin{matrix}
+1 & 2 & 3\\
+a & b & c
+\end{matrix}
+$$
+
+Parentheses, round brackets:
+
+```latex
+\begin{pmatrix}
+1 & 2 & 3\\
+a & b & c
+\end{pmatrix}
+```
+
+$$
+\begin{pmatrix}
+1 & 2 & 3\\
+a & b & c
+\end{pmatrix}
+$$
+
+Brackets, square brackets:
+
+```latex
+\begin{bmatrix}
+1 & 2 & 3\\
+a & b & c
+\end{bmatrix}
+```
+
+$$
+\begin{bmatrix}
+1 & 2 & 3\\
+a & b & c
+\end{bmatrix}
+$$
+
+Braces, curly brackets:
+
+```latex
+\begin{Bmatrix}
+1 & 2 & 3\\
+a & b & c
+\end{Bmatrix}
+```
+
+$$
+\begin{Bmatrix}
+1 & 2 & 3\\
+a & b & c
+\end{Bmatrix}
+$$
+
+Pipes:
+
+```latex
+\begin{vmatrix}
+1 & 2 & 3\\
+a & b & c
+\end{vmatrix}
+```
+
+$$
+\begin{vmatrix}
+1 & 2 & 3\\
+a & b & c
+\end{vmatrix}
+$$
+
+Double pipes
+
+```latex
+\begin{Vmatrix}
+1 & 2 & 3\\
+a & b & c
+\end{Vmatrix}
+```
+
+$$
+\begin{Vmatrix}
+1 & 2 & 3\\
+a & b & c
+\end{Vmatrix}
+$$

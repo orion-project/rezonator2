@@ -991,6 +991,23 @@ namespace ElemGrinLensLayout {
 }
 
 //------------------------------------------------------------------------------
+namespace ElemGrinMediumLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+    DECLARE_ELEMENT_LAYOUT_END
+
+    ELEMENT_LAYOUT_INIT {
+        HW = 30; HH = 40;
+    }
+
+    ELEMENT_LAYOUT_PAINT {
+        painter->fillRect(boundingRect(), getGrinBrush(HH));
+        painter->setPen(getGlassPen());
+        painter->drawLine(QLineF(-HW, -HH, HW, -HH));
+        painter->drawLine(QLineF(-HW, HH, HW, HH));
+    }
+}
+
+//------------------------------------------------------------------------------
 namespace AxiconElementLayout {
     enum AxiconForm {
         FormUnknown,
@@ -1377,6 +1394,7 @@ ElementLayout* make(Element *elem) {
         registerLayout<ElemSphericalInterface, ElemSphericalInterfaceLayout::Layout>();
         registerLayout<ElemThickLens, ElemThickLensLayout::Layout>();
         registerLayout<ElemGrinLens, ElemGrinLensLayout::Layout>();
+        registerLayout<ElemGrinMedium, ElemGrinMediumLayout::Layout>();
         registerLayout<ElemAxiconMirror, ElemAxiconMirrorLayout::Layout>();
         registerLayout<ElemAxiconLens, ElemAxiconLensLayout::Layout>();
     }
