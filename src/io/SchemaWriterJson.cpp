@@ -170,6 +170,8 @@ void writeElement(QJsonObject& root, Element *elem)
     root["label"] = elem->label();
     root["title"] = elem->title();
     root["is_disabled"] = elem->disabled();
+    root["layout_show_label"] = elem->layoutOptions.showLabel;
+    root["layout_draw_narrow"] = elem->layoutOptions.drawNarrow;
     if (formulaElem)
     {
         root["has_matrices_ts"] = formulaElem->hasMatricesTS();

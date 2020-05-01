@@ -332,6 +332,8 @@ Element* readElement(const QJsonObject& root, Z::Report* report)
 
     elem->setLabel(root["label"].toString());
     elem->setTitle(root["title"].toString());
+    elem->layoutOptions.showLabel = root["layout_show_label"].toBool(elem->layoutOptions.showLabel);
+    elem->layoutOptions.drawNarrow = root["layout_draw_narrow"].toBool(elem->layoutOptions.drawNarrow);
     elem->setDisabled(root["is_disabled"].toBool());
     if (formulaElem)
     {

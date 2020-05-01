@@ -1,0 +1,941 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 980
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "d1",
+            "layout_draw_narrow": true,
+            "layout_show_label": false,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "s3",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
+            "params": {
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1.5
+                }
+            },
+            "title": "",
+            "type": "ElemBrewsterInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "GM1",
+            "layout_draw_narrow": true,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1.5
+                },
+                "n2s": {
+                    "unit": "inv_m2",
+                    "value": 0.25
+                },
+                "n2t": {
+                    "unit": "inv_m2",
+                    "value": 0.15
+                }
+            },
+            "title": "",
+            "type": "ElemGrinMedium"
+        },
+        {
+            "is_disabled": false,
+            "label": "s4",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
+            "params": {
+                "n1": {
+                    "unit": "none",
+                    "value": 1.5
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemBrewsterInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "d2",
+            "layout_draw_narrow": true,
+            "layout_show_label": false,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "s5",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 0
+                },
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemTiltedInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "GM2",
+            "layout_draw_narrow": true,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2s": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                },
+                "n2t": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                }
+            },
+            "title": "",
+            "type": "ElemGrinMedium"
+        },
+        {
+            "is_disabled": false,
+            "label": "s6",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 0
+                },
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemTiltedInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "d3",
+            "layout_draw_narrow": true,
+            "layout_show_label": false,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "s7",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
+            "params": {
+                "R": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemSphericalInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "GM3",
+            "layout_draw_narrow": true,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2s": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                },
+                "n2t": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                }
+            },
+            "title": "",
+            "type": "ElemGrinMedium"
+        },
+        {
+            "is_disabled": false,
+            "label": "s8",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
+            "params": {
+                "R": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemSphericalInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "d5",
+            "layout_draw_narrow": true,
+            "layout_show_label": false,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "s9",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
+            "params": {
+                "R": {
+                    "unit": "mm",
+                    "value": -100
+                },
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemSphericalInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "GM4",
+            "layout_draw_narrow": true,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2s": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                },
+                "n2t": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                }
+            },
+            "title": "",
+            "type": "ElemGrinMedium"
+        },
+        {
+            "is_disabled": false,
+            "label": "s10",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
+            "params": {
+                "R": {
+                    "unit": "mm",
+                    "value": -100
+                },
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemSphericalInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "d6",
+            "layout_draw_narrow": true,
+            "layout_show_label": false,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "s11",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
+            "params": {
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemNormalInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "GM5",
+            "layout_draw_narrow": true,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2s": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                },
+                "n2t": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                }
+            },
+            "title": "",
+            "type": "ElemGrinMedium"
+        },
+        {
+            "is_disabled": false,
+            "label": "s12",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
+            "params": {
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemNormalInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "d7",
+            "layout_draw_narrow": true,
+            "layout_show_label": false,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "GM6",
+            "layout_draw_narrow": true,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2s": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                },
+                "n2t": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                }
+            },
+            "title": "",
+            "type": "ElemGrinMedium"
+        },
+        {
+            "is_disabled": false,
+            "label": "s13",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
+            "params": {
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemNormalInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "GM7",
+            "layout_draw_narrow": true,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2s": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                },
+                "n2t": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                }
+            },
+            "title": "",
+            "type": "ElemGrinMedium"
+        },
+        {
+            "is_disabled": false,
+            "label": "d8",
+            "layout_draw_narrow": true,
+            "layout_show_label": false,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "GM8",
+            "layout_draw_narrow": true,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2s": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                },
+                "n2t": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                }
+            },
+            "title": "",
+            "type": "ElemGrinMedium"
+        },
+        {
+            "is_disabled": false,
+            "label": "s14",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
+            "params": {
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemBrewsterInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "GM9",
+            "layout_draw_narrow": true,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2s": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                },
+                "n2t": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                }
+            },
+            "title": "",
+            "type": "ElemGrinMedium"
+        },
+        {
+            "is_disabled": false,
+            "label": "d9",
+            "layout_draw_narrow": true,
+            "layout_show_label": false,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "GM10",
+            "layout_draw_narrow": true,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2s": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                },
+                "n2t": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                }
+            },
+            "title": "",
+            "type": "ElemGrinMedium"
+        },
+        {
+            "is_disabled": false,
+            "label": "s15",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 0
+                },
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemTiltedInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "GM11",
+            "layout_draw_narrow": true,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2s": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                },
+                "n2t": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                }
+            },
+            "title": "",
+            "type": "ElemGrinMedium"
+        },
+        {
+            "is_disabled": false,
+            "label": "d10",
+            "layout_draw_narrow": true,
+            "layout_show_label": false,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "GM12",
+            "layout_draw_narrow": true,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2s": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                },
+                "n2t": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                }
+            },
+            "title": "",
+            "type": "ElemGrinMedium"
+        },
+        {
+            "is_disabled": false,
+            "label": "s16",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
+            "params": {
+                "R": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemSphericalInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "GM13",
+            "layout_draw_narrow": true,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2s": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                },
+                "n2t": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                }
+            },
+            "title": "",
+            "type": "ElemGrinMedium"
+        },
+        {
+            "is_disabled": false,
+            "label": "d11",
+            "layout_draw_narrow": true,
+            "layout_show_label": false,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "GM14",
+            "layout_draw_narrow": true,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2s": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                },
+                "n2t": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                }
+            },
+            "title": "",
+            "type": "ElemGrinMedium"
+        },
+        {
+            "is_disabled": false,
+            "label": "s17",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
+            "params": {
+                "R": {
+                    "unit": "mm",
+                    "value": -100
+                },
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemSphericalInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "GM15",
+            "layout_draw_narrow": true,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2s": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                },
+                "n2t": {
+                    "unit": "inv_m2",
+                    "value": 0.01
+                }
+            },
+            "title": "",
+            "type": "ElemGrinMedium"
+        },
+        {
+            "is_disabled": false,
+            "label": "d12",
+            "layout_draw_narrow": true,
+            "layout_show_label": false,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        }
+    ],
+    "formulas": [
+    ],
+    "notes": "",
+    "param_links": [
+    ],
+    "pumps": [
+        {
+            "is_active": true,
+            "label": "P2",
+            "mode": "Waist",
+            "params": {
+                "MI": {
+                    "unit": "none",
+                    "value_s": 1,
+                    "value_t": 1
+                },
+                "w_0": {
+                    "unit": "mkm",
+                    "value_s": 1000,
+                    "value_t": 1000
+                },
+                "z_w": {
+                    "unit": "mm",
+                    "value_s": 0,
+                    "value_t": 0
+                }
+            },
+            "title": ""
+        }
+    ],
+    "schema_version": "2.0",
+    "title": "",
+    "trip_type": "SP",
+    "windows": [
+    ]
+}

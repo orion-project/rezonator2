@@ -104,29 +104,6 @@
     ],
     "pumps": [
         {
-            "is_active": false,
-            "label": "P1",
-            "mode": "Waist",
-            "params": {
-                "MI": {
-                    "unit": "none",
-                    "value_s": 1,
-                    "value_t": 1
-                },
-                "w_0": {
-                    "unit": "mkm",
-                    "value_s": 100,
-                    "value_t": 100
-                },
-                "z_w": {
-                    "unit": "mm",
-                    "value_s": 100,
-                    "value_t": 100
-                }
-            },
-            "title": ""
-        },
-        {
             "is_active": true,
             "label": "P2",
             "mode": "Waist",

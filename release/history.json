@@ -24,6 +24,9 @@
         },
         {
           "text": "Added settings for number formatting and data exporting."
+        },
+        {
+          "text": "Added options for controlling how element is displayed on the layout - show label, draw narrow."
         }
       ]
     },
