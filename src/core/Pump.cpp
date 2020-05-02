@@ -168,7 +168,7 @@ PumpParams_InvComplex::PumpParams_InvComplex() : PumpParams_Complex()
 //                                      Pump
 //--------------------------------------------------------------------------------
 
-const QVector<const PumpMode*>& Pump::allModes()
+const QVector<const PumpMode*>& Pumps::allModes()
 {
     static QVector<const PumpMode*> producers({
         PumpMode_Waist::instance(),
@@ -181,7 +181,7 @@ const QVector<const PumpMode*>& Pump::allModes()
     return producers;
 }
 
-const PumpMode* Pump::findByModeName(const QString& name)
+const PumpMode* Pumps::findByModeName(const QString& name)
 {
     for (auto producer : allModes())
         if (producer->modeName() == name)
@@ -189,7 +189,7 @@ const PumpMode* Pump::findByModeName(const QString& name)
     return nullptr;
 }
 
-QString Pump::labelPrefix()
+QString Pumps::labelPrefix()
 {
     return QStringLiteral("P");
 }

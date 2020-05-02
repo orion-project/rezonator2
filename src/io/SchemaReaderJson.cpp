@@ -169,7 +169,7 @@ void SchemaReaderJson::readPumps(const QJsonObject& root)
         if (_schema->isSP())
         {
             _report.warning("There are no pumps in the file, default pump created.");
-            _schema->pumps()->append(Pump::allModes().first()->makePump());
+            _schema->pumps()->append(Pumps::allModes().first()->makePump());
         }
         else return;
     }
@@ -401,7 +401,7 @@ QList<PumpParams*> readPumps(const QJsonObject& root, Z::Report* report)
 PumpParams* readPump(const QJsonObject& root, Z::Report* report)
 {
     auto pumpModeName = root["mode"].toString();
-    auto pumpMode = Pump::findByModeName(pumpModeName);
+    auto pumpMode = Pumps::findByModeName(pumpModeName);
     if (!pumpMode)
     {
         report->warning(QString("Unknown pump mode '%1', pump skipped").arg(pumpModeName));
