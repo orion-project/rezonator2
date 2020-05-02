@@ -240,6 +240,10 @@ void SchemaReaderIni::readUnits(IniSection& ini)
 
 void SchemaReaderIni::readPump(IniSection& ini)
 {
+    // Remove default pump
+    qDeleteAll(*_schema->pumps());
+    _schema->pumps()->clear();
+
     if (!_schema->isSP()) return;
 
     PumpParams *pump = nullptr;

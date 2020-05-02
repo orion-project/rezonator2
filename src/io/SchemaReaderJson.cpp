@@ -158,6 +158,10 @@ void SchemaReaderJson::readCustomParam(const QJsonObject& root, const QString &a
 
 void SchemaReaderJson::readPumps(const QJsonObject& root)
 {
+    // Remove default pump
+    qDeleteAll(*_schema->pumps());
+    _schema->pumps()->clear();
+
     auto pumps = Z::IO::Json::readPumps(root, &_report);
 
     if (pumps.isEmpty())
