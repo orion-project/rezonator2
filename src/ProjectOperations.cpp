@@ -126,13 +126,6 @@ void ProjectOperations::openSchemaFile(const QString& fileName, const OpenFileOp
         return;
     }
 
-    // Delete default pump
-    if (schema()->isSP())
-    {
-        qDeleteAll(*schema()->pumps());
-        schema()->pumps()->clear();
-    }
-
     Z_REPORT("Loading" << fileName)
     Z::Report report;
 
