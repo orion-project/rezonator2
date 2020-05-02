@@ -40,32 +40,33 @@
   </style>
   <body>
     <div class="paper">
-      <div class="frame" style="top: 0; height: 370px"></div>
+      <div class="frame" style="top: 0; height: 565px"></div>
       <div>
         \[ n(r) = n_0 - \frac { n_0 \; r^2 } 2
           \;\;\;\;\;\;\;\;\;\;\;\;
           r^2 = x^2 + y^2
-          \;\;\;\;\;\;\;\;\;\;\;\;
-          \gamma^2 \equiv \frac {n_2} {n_0} \]
+        \]
       </div>
       <div class="drawing-and-formula">
         <div>
           <img class="drawing" src="ElemGrinMedium.svg"/>
         </div>
         <div class="formulas-column">
-          <div style="margin-top:40px">
+          <div style="margin-top:30px">
+            \[ n_2 > 0  \;\;\;\;\;\;\;\; \gamma = \sqrt \frac {n_2} {n_0} \]
             \[
-            M\bigg\rvert_{n_2 > 0} = \begin{bmatrix}
+            M = \begin{bmatrix}
                 \cos(\gamma L) & \cfrac {\sin(\gamma L)} {\gamma} \\
                 -\gamma \: \sin(\gamma L) & \cos(\gamma L) 
                 \end{bmatrix}
             \]
           </div>
-          <div style="margin-top:40px">
+          <div style="margin-top:90px">
+            \[ n_2 < 0 \;\;\;\;\;\;\;\; \gamma = \sqrt \frac {|n_2|} {n_0} \]
             \[
-            M\bigg\rvert_{n_2 < 0} = \begin{bmatrix}
+            M = \begin{bmatrix}
                 \cosh(\gamma L) & \cfrac {\sinh(\gamma L)} {\gamma} \\
-                -\gamma \: \sinh(\gamma L) & \cosh(\gamma L) 
+                \gamma \: \sinh(\gamma L) & \cosh(\gamma L) 
                 \end{bmatrix}
             \]
           </div>

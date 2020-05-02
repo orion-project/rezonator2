@@ -12,7 +12,10 @@
         },
         {
           "text": "New element: GRIN medium."
-        }
+        },
+        {
+          "text": "Element GRIN lens can accept negative gradient constants n2."
+        },
         {
           "text": "Copy/Paste commands in the Pumps window."
         },
