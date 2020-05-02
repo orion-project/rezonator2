@@ -1,0 +1,66 @@
+<svg height="270" width="260" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<linearGradient id="a" gradientTransform="matrix(1.11 0 0 1 31.1 10)" gradientUnits="userSpaceOnUse" x1="75.63" x2="75.63" y1="31.47" y2="227.71">
+<stop offset="0" stop-color="#6a6a6a" stop-opacity="0"/>
+<stop offset=".5" stop-color="#6a6a6a"/>
+<stop offset="1" stop-color="#6a6a6a" stop-opacity="0"/>
+</linearGradient>
+<path d="m52.83 59.5h130.34c5.31 4.09 12.72 16.41 3.93 31.25-13.21 22.29-2.5 25.88 2.71 41.28 6.39 18.92-17.85 32.36-3.31 55.15 12.1 18.96-6.53 26.36-3.33 29.32h-130.34c4.35-10.63 8.33-23.41.75-36.17-9.95-16.75 9.78-34.82 3.75-46.66-10.47-20.56-7.37-35.69-2.75-43.56 4.64-7.91 6.32-19.19-1.75-30.61z" fill="url(#a)"/>
+<g fill="none" stroke="#000">
+<path d="m3.5 138h250.42" stroke-width="4"/>
+<path d="m70.41 40.5h95.47" stroke-width="1.02"/>
+<path d="m161.64 36.18 4.91 4.36-4.91 3.64m-87-8-4.91 4.18 4.91 3.82"/>
+</g>
+<text fill="#3c53c8" font-family="Times New Roman" font-size="7.02" font-style="italic" transform="scale(.99 1.01)" x="15.41" y="34.54"><tspan fill="#3c53c8" font-size="25.28" x="15.41" y="34.54">r</tspan></text>
+<text font-family="Times New Roman" font-size="10" font-style="italic" x="109.25" y="37.99"><tspan font-size="36" x="109.25" y="37.99">L</tspan></text>
+<g fill="none">
+<g stroke="#000">
+<path d="m3.5 77.06h66.8c80.53 0 134.88 42.59 181.63 79.99" stroke-width="4"/>
+<path d="m68.5 36.82v22.47m99-22.47v22.47"/>
+<g stroke-linecap="round" stroke-width="3">
+<path d="m248 144 7-6-7-6"/>
+<path d="m252.5 126.22.71-9.19-9.19.71"/>
+<path d="m252.5 149.8.71 9.19-9.19-.71"/>
+</g>
+</g>
+<g stroke="#3c53c8">
+<path d="m47.5 136c0-30.03-17.71-60.92-31-77"/>
+<path d="m47.5 139c0 30.03-17.71 60.92-31 77"/>
+<path d="m8.46 239.72v-217.28" stroke-width="1.02"/>
+<path d="m4.14 26.68 4.36-4.91 3.64 4.91"/>
+<path d="m51.69 233.51h-49.28" stroke-width="1.02"/>
+<path d="m47.64 237.83 4.91-4.18-4.91-3.82"/>
+</g>
+</g>
+<text fill="#3c53c8" font-family="Times New Roman" font-size="7.36" font-style="italic" transform="scale(.99 1.01)" x="40.16" y="252.13"><tspan fill="#3c53c8" font-size="26.51" x="40.16" y="252.13">n</tspan></text>
+<g font-family="Times New Roman" font-style="italic" transform="translate(39.6 8.71)">
+<text font-size="10" x="64" y="115.02"><tspan font-size="36" x="64" y="115.02">n</tspan></text>
+<text font-size="7.02" transform="scale(.99 1.01)" x="80.3" y="122.41"><tspan font-size="25.28" x="80.3" y="122.41">0</tspan></text>
+</g>
+<g fill="none">
+<path d="m3.5 199h66.8c80.53 0 134.87-42.59 181.62-79.99" stroke="#000" stroke-width="4"/>
+<g stroke="#000">
+<path d="m53.5 59.5h129m0 157h-129" stroke-width="3"/>
+<path d="m68.5 60.82v154.47m99-154.47v154.47" stroke-dasharray="3 3"/>
+</g>
+<path d="m205.52 244.84h45.5" stroke="#3c53c8"/>
+</g>
+<text fill="#3c53c8" font-family="Times New Roman" font-size="7.36" font-style="italic" transform="scale(.99 1.01)" x="220.06" y="263.89"><tspan fill="#3c53c8" font-size="26.51" x="220.06" y="263.89">2</tspan></text>
+<g fill="none" stroke="#3c53c8" transform="translate(.02 -50.66)">
+<path d="m189.5 295.5h9.5"/>
+<path d="m149.5 297.5h9.5"/>
+<path d="m149.5 293.5h9.5"/>
+</g>
+<g fill="#3c53c8" font-family="Times New Roman" font-style="italic" transform="matrix(.99 0 0 1.01 .02 9.34)">
+<g font-size="4.55">
+<text x="175.47" y="246.96"><tspan dx="0" dy="0" fill="#3c53c8" font-size="16.36" x="175.47" y="246.96">0</tspan></text>
+<text x="221.15" y="230.11"><tspan fill="#3c53c8" font-size="16.36" x="221.15" y="230.11">2</tspan></text>
+<text x="246.4" y="218.09"><tspan fill="#3c53c8" font-size="16.36" x="246.4" y="218.09">2</tspan></text>
+</g>
+<g font-size="7.36">
+<text x="133.67" y="240.87"><tspan fill="#3c53c8" font-size="26.51" x="133.67" y="240.87">n</tspan></text>
+<text x="163.83" y="240.87"><tspan fill="#3c53c8" font-size="26.51" x="163.83" y="240.87">n</tspan></text>
+<text x="209.08" y="224.41"><tspan fill="#3c53c8" font-size="26.51" x="209.08" y="224.41">n</tspan></text>
+<text x="235.22" y="224.41"><tspan fill="#3c53c8" font-size="26.51" x="235.22" y="224.41">r</tspan></text>
+</g>
+</g>
+</svg>

@@ -76,6 +76,14 @@ enum ElementOption {
     Element_CustomSample = 0x04,
 };
 
+struct ElementLayoutOptions {
+    bool showLabel = true;
+
+    /// Draw a narrow version of the element. It can be useful when schema contains many elements.
+    /// How the option is processed depends on the particular element type.
+    bool drawNarrow = false;
+};
+
 /**
     Base class for all optical elements.
 
@@ -158,6 +166,8 @@ public:
 
     void setOption(ElementOption option) { _options |= option; }
     bool hasOption(ElementOption option) const { return _options & option; }
+
+    ElementLayoutOptions layoutOptions;
 
 protected:
     Element();

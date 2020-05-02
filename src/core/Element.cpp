@@ -178,6 +178,8 @@ ElementInterface::ElementInterface()
     addParam(_ior2);
 
     setOption(Element_Asymmetrical);
+
+    layoutOptions.showLabel = false;
 }
 
 //------------------------------------------------------------------------------

@@ -163,7 +163,8 @@ namespace ElemEmptyRangeLayout {
     DECLARE_ELEMENT_LAYOUT_END
 
     ELEMENT_LAYOUT_INIT {
-        HW = 50; HH = 5;
+        HW = _element->layoutOptions.drawNarrow ? 15 : 50;
+        HH = 5;
     }
 
     ELEMENT_LAYOUT_PAINT {
@@ -177,7 +178,8 @@ namespace ElemMediumRangeLayout {
     DECLARE_ELEMENT_LAYOUT_END
 
     ELEMENT_LAYOUT_INIT {
-        HW = 30; HH = 40;
+        HW = _element->layoutOptions.drawNarrow ? 15 : 30;
+        HH = 40;
     }
 
     ELEMENT_LAYOUT_PAINT {
@@ -194,7 +196,8 @@ namespace ElemPlateLayout {
     DECLARE_ELEMENT_LAYOUT_END
 
     ELEMENT_LAYOUT_INIT {
-        HW = 25; HH = 40;
+        HW = _element->layoutOptions.drawNarrow ? 15 : 25;
+        HH = 40;
     }
 
     ELEMENT_LAYOUT_PAINT {
@@ -608,7 +611,8 @@ namespace ElemTiltedPlateLayout {
     DECLARE_ELEMENT_LAYOUT_END
 
     ELEMENT_LAYOUT_INIT {
-        HW = 15; HH = 40;
+        HW = _element->layoutOptions.drawNarrow ? 7 : 15;
+        HH = 40;
         auto plate = dynamic_cast<ElemTiltedPlate*>(_element);
         if (!plate) return;
         setSlope(plate->alpha());
@@ -629,7 +633,8 @@ namespace ElemBrewsterCrystalLayout {
     DECLARE_ELEMENT_LAYOUT_END
 
     ELEMENT_LAYOUT_INIT {
-        HW = 30; HH = 30;
+        HW = _element->layoutOptions.drawNarrow ? 20 : 30;
+        HH = 30;
         layout.reset(new CrystalElementLayout::Layout(nullptr));
         layout->setHalfSize(HW, HH);
         layout->setSlopeAngle(40);
@@ -648,7 +653,9 @@ namespace ElemBrewsterPlateLayout {
     DECLARE_ELEMENT_LAYOUT_END
 
     ELEMENT_LAYOUT_INIT {
-        HW = 15; HH = 40; _slopeAngle = 40; _slope = SlopePlus;
+        HW = _element->layoutOptions.drawNarrow ? 7 : 15;
+        HH = 40;
+        _slopeAngle = 40; _slope = SlopePlus;
     }
 
     ELEMENT_LAYOUT_PAINT {
@@ -711,17 +718,24 @@ namespace ElemNormalInterfaceLayout {
 //------------------------------------------------------------------------------
 namespace InterfaceElementHeper {
 
-enum class ElementPlacement {
-    BetweenRanges,
-    BetweenMedia,
-    BeforeMedium,
-    AfterMedium,
+struct ElementPlacement {
+    enum {
+        BetweenRanges,
+        BetweenMedia,
+        BeforeMedium,
+        AfterMedium,
+    } placement;
+    enum {
+        OptionNone = 0x00,
+        OptionGrin = 0x01,
+    } options;
 };
 
 enum class ElementNeighbour {
     Unknown,
     Air,
     Medium,
+    Grin,
 };
 
 ElementNeighbour getNeighbour(Schema* schema, int index) {
@@ -729,6 +743,9 @@ ElementNeighbour getNeighbour(Schema* schema, int index) {
     if (elem) {
         if (dynamic_cast<ElemMediumRange*>(elem))
             return ElementNeighbour::Medium;
+
+        if (dynamic_cast<ElemGrinMedium*>(elem))
+            return ElementNeighbour::Grin;
 
         if (dynamic_cast<ElemEmptyRange*>(elem))
             return ElementNeighbour::Air;
@@ -738,27 +755,40 @@ ElementNeighbour getNeighbour(Schema* schema, int index) {
     return ElementNeighbour::Unknown;
 }
 
+// Check on these files how interfaces are drawn with combination with different media:
+// $$_PRO_FILE_PWD_/bin/test_files/draw_interfaces_grin.rez
+// $$_PRO_FILE_PWD_/bin/test_files/draw_interfaces_media.rez
+// $$_PRO_FILE_PWD_/bin/test_files/draw_interfaces_grin_media.rez
 ElementPlacement getPlacement(Element* elem) {
     auto schema = dynamic_cast<Schema*>(elem->owner());
-    if (!schema) return ElementPlacement::BetweenMedia;
+    if (!schema) return {ElementPlacement::BetweenMedia, ElementPlacement::OptionNone};
 
     auto index = schema->indexOf(elem);
     auto left = getNeighbour(schema, index-1);
     auto right = getNeighbour(schema, index+1);
 
     if (left == ElementNeighbour::Air && right == ElementNeighbour::Air)
-        return ElementPlacement::BetweenRanges;
+        return {ElementPlacement::BetweenRanges, ElementPlacement::OptionNone};
 
     if (left == ElementNeighbour::Medium && right == ElementNeighbour::Medium)
-        return ElementPlacement::BetweenMedia;
+        return {ElementPlacement::BetweenMedia, ElementPlacement::OptionNone};
+
+    if (left == ElementNeighbour::Grin && right == ElementNeighbour::Grin)
+        return {ElementPlacement::BetweenMedia, ElementPlacement::OptionGrin};
 
     if (left == ElementNeighbour::Air && right == ElementNeighbour::Medium)
-        return ElementPlacement::BeforeMedium;
+        return {ElementPlacement::BeforeMedium, ElementPlacement::OptionNone};
+
+    if (left == ElementNeighbour::Air && right == ElementNeighbour::Grin)
+        return {ElementPlacement::BeforeMedium, ElementPlacement::OptionGrin};
 
     if (left == ElementNeighbour::Medium && right == ElementNeighbour::Air)
-        return ElementPlacement::AfterMedium;
+        return {ElementPlacement::AfterMedium, ElementPlacement::OptionNone};
 
-    return ElementPlacement::BetweenMedia;
+    if (left == ElementNeighbour::Grin && right == ElementNeighbour::Air)
+        return {ElementPlacement::AfterMedium, ElementPlacement::OptionGrin};
+
+    return {ElementPlacement::BetweenMedia, ElementPlacement::OptionNone};
 }
 
 }
@@ -766,24 +796,33 @@ ElementPlacement getPlacement(Element* elem) {
 using namespace InterfaceElementHeper;
 
 //------------------------------------------------------------------------------
+// Base layout for ElemBrewsterInterfaceLayout and ElemTiltedInterfaceLayout interface.
+// Normal interface is painted by separate and simpler ElemNormalInterfaceLayout.
 namespace PlaneInterfaceElementLayout {
     DECLARE_ELEMENT_LAYOUT_BEGIN
         ElementPlacement placement;
+        QBrush getBrush() const;
     DECLARE_ELEMENT_LAYOUT_END
 
     ELEMENT_LAYOUT_INIT {
         placement = getPlacement(_element);
     }
 
+    QBrush Layout::getBrush() const {
+        if (placement.options & ElementPlacement::OptionGrin)
+            return getGrinBrush(HH);
+        return getGlassBrush();
+    }
+
     ELEMENT_LAYOUT_PAINT {
-        switch (placement) {
+        switch (placement.placement) {
         case ElementPlacement::BetweenRanges:
             painter->setPen(getPlanePen());
             painter->drawLine(QLineF(HW, -HH, -HW, HH));
             break;
 
         case ElementPlacement::BetweenMedia:
-            painter->fillRect(boundingRect(), getGlassBrush());
+            painter->fillRect(boundingRect(), getBrush());
             painter->setPen(getGlassPen());
             painter->drawLine(QLineF(-HW, -HH, HW, -HH));
             painter->drawLine(QLineF(HW, -HH, -HW, HH));
@@ -796,7 +835,7 @@ namespace PlaneInterfaceElementLayout {
                 path.lineTo(HW, -HH);
                 path.lineTo(-HW, HH);
                 path.closeSubpath();
-                painter->fillPath(path, getGlassBrush());
+                painter->fillPath(path, getBrush());
 
                 painter->setPen(getGlassPen());
                 painter->drawLine(QLineF(-HW, -HH, HW, -HH));
@@ -810,7 +849,7 @@ namespace PlaneInterfaceElementLayout {
                 path.lineTo(-HW, HH);
                 path.lineTo(HW, HH);
                 path.closeSubpath();
-                painter->fillPath(path, getGlassBrush());
+                painter->fillPath(path, getBrush());
 
                 painter->setPen(getGlassPen());
                 painter->drawLine(QLineF(HW, -HH, -HW, HH));
@@ -865,7 +904,14 @@ namespace ElemSphericalInterfaceLayout {
         QRectF _surface;
         qreal _startAngle;
         qreal _sweepAngle;
+        QBrush getBrush() const;
     DECLARE_ELEMENT_LAYOUT_END
+
+    QBrush Layout::getBrush() const {
+        if (_placement.options & ElementPlacement::OptionGrin)
+            return getGrinBrush(HH);
+        return getGlassBrush();
+    }
 
     ELEMENT_LAYOUT_INIT {
         HW = 15; HH = 40;
@@ -887,14 +933,14 @@ namespace ElemSphericalInterfaceLayout {
     }
 
     ELEMENT_LAYOUT_PAINT {
-        switch (_placement) {
+        switch (_placement.placement) {
         case ElementPlacement::BetweenRanges:
             painter->setPen(getPlanePen());
             painter->drawArc(_surface, int(_startAngle)*16, int(_sweepAngle)*16);
             break;
 
         case ElementPlacement::BetweenMedia:
-            painter->fillRect(boundingRect(), getGlassBrush());
+            painter->fillRect(boundingRect(), getBrush());
             painter->setPen(getGlassPen());
             painter->drawLine(QLineF(-HW, -HH, HW, -HH));
             painter->drawLine(QLineF(-HW, HH, HW, HH));
@@ -908,7 +954,7 @@ namespace ElemSphericalInterfaceLayout {
                 path.arcTo(_surface, _startAngle, _sweepAngle);
                 path.lineTo(-HW, HH);
                 path.closeSubpath();
-                painter->fillPath(path, getGlassBrush());
+                painter->fillPath(path, getBrush());
 
                 painter->setPen(getGlassPen());
                 QPainterPath path1;
@@ -927,7 +973,7 @@ namespace ElemSphericalInterfaceLayout {
                 path.arcTo(_surface, _startAngle, _sweepAngle);
                 path.lineTo(HW, HH);
                 path.closeSubpath();
-                painter->fillPath(path, getGlassBrush());
+                painter->fillPath(path, getBrush());
 
                 painter->setPen(getGlassPen());
                 QPainterPath path1;
@@ -949,7 +995,8 @@ namespace ElemThickLensLayout {
     DECLARE_ELEMENT_LAYOUT_END
 
     ELEMENT_LAYOUT_INIT {
-        HW = 25; HH=40;
+        HW = _element->layoutOptions.drawNarrow ? 10 : 25;
+        HH = 40;
         auto lens = dynamic_cast<ElemThickLens*>(_element);
         if (!lens) return;
         layout.reset(new CurvedElementLayout::Layout(nullptr));
@@ -978,7 +1025,8 @@ namespace ElemGrinLensLayout {
     DECLARE_ELEMENT_LAYOUT_END
 
     ELEMENT_LAYOUT_INIT {
-        HW = 25; HH = 40;
+        HW = _element->layoutOptions.drawNarrow ? 15 : 25;
+        HH = 40;
     }
 
     ELEMENT_LAYOUT_PAINT {
@@ -987,6 +1035,24 @@ namespace ElemGrinLensLayout {
         painter->setBrush(getGrinBrush(HH));
         painter->setPen(getGlassPen());
         painter->drawPath(path);
+    }
+}
+
+//------------------------------------------------------------------------------
+namespace ElemGrinMediumLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+    DECLARE_ELEMENT_LAYOUT_END
+
+    ELEMENT_LAYOUT_INIT {
+        HW = _element->layoutOptions.drawNarrow ? 15 : 30;
+        HH = 40;
+    }
+
+    ELEMENT_LAYOUT_PAINT {
+        painter->fillRect(boundingRect(), getGrinBrush(HH));
+        painter->setPen(getGlassPen());
+        painter->drawLine(QLineF(-HW, -HH, HW, -HH));
+        painter->drawLine(QLineF(-HW, HH, HW, HH));
     }
 }
 
@@ -1260,38 +1326,40 @@ void SchemaLayout::populate()
 
 void SchemaLayout::addElement(ElementLayout *elem)
 {
-    if (!_elements.isEmpty())
-    {
+    if (!_elements.isEmpty()) {
         ElementLayout *last = _elements.last();
         elem->setPos(last->x() + last->halfW() + elem->halfW(), 0);
     }
-    else
-        elem->setPos(0, 0);
+    else elem->setPos(0, 0);
 
     _elements.append(elem);
     _scene.addItem(elem);
 
     // Add element label
-    QGraphicsTextItem *label = _scene.addText(elem->element()->label());
-    label->setZValue(1000 + _elements.count());
-    label->setFont(getLabelFont());
-    label->setToolTip(elem->toolTip());
-    // Try to position new label avoiding overlapping with previous labels
-    QRectF r = label->boundingRect();
-    qreal labelX = elem->x() - r.width() / 2.0;
-    qreal labelY = elem->y() - elem->halfH() - r.height();
-    qreal minY = labelY;
-    for (int prevIndex = _elements.size()-2; prevIndex >= 0; prevIndex--) {
-        auto prevLabel = _elemLabels[_elements.at(prevIndex)];
-        auto prevRect = prevLabel->boundingRect();
-        if (labelX <= prevLabel->x() + prevRect.width() &&
-            labelY <= prevLabel->y() && labelY > prevLabel->y() - prevRect.height())
-            labelY = minY - prevRect.height()*0.75;
-        else minY = qMin(minY, prevLabel->y());
+    if (elem->element()->layoutOptions.showLabel) {
+        QGraphicsTextItem *label = _scene.addText(elem->element()->label());
+        label->setZValue(1000 + _elements.count());
+        label->setFont(getLabelFont());
+        label->setToolTip(elem->toolTip());
+        // Try to position new label avoiding overlapping with previous labels
+        QRectF r = label->boundingRect();
+        qreal labelX = elem->x() - r.width() / 2.0;
+        qreal labelY = elem->y() - elem->halfH() - r.height();
+        qreal minY = labelY;
+        for (int prevIndex = _elements.size()-2; prevIndex >= 0; prevIndex--) {
+            auto elemLayout = _elements.at(prevIndex);
+            if (not elemLayout->element()->layoutOptions.showLabel) continue;
+            auto prevLabel = _elemLabels[elemLayout];
+            auto prevRect = prevLabel->boundingRect();
+            if (labelX <= prevLabel->x() + prevRect.width() &&
+                labelY <= prevLabel->y() && labelY > prevLabel->y() - prevRect.height())
+                labelY = minY - prevRect.height()*0.75;
+            else minY = qMin(minY, prevLabel->y());
+        }
+        label->setX(labelX);
+        label->setY(labelY);
+        _elemLabels.insert(elem, label);
     }
-    label->setX(labelX);
-    label->setY(labelY);
-    _elemLabels.insert(elem, label);
 }
 
 void SchemaLayout::clear()
@@ -1377,6 +1445,7 @@ ElementLayout* make(Element *elem) {
         registerLayout<ElemSphericalInterface, ElemSphericalInterfaceLayout::Layout>();
         registerLayout<ElemThickLens, ElemThickLensLayout::Layout>();
         registerLayout<ElemGrinLens, ElemGrinLensLayout::Layout>();
+        registerLayout<ElemGrinMedium, ElemGrinMediumLayout::Layout>();
         registerLayout<ElemAxiconMirror, ElemAxiconMirrorLayout::Layout>();
         registerLayout<ElemAxiconLens, ElemAxiconLensLayout::Layout>();
     }

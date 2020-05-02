@@ -68,7 +68,7 @@ ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : Rezonat
 
     // parameters tab-set
     _tabs = new QTabWidget;
-    // TODO:NEXT-VER _tabs->addTab(initPageOther(), tr("Other"));
+    _tabs->addTab(initPageOptions(), tr("Options"));
     _tabs->addTab(initPageOutline(), tr("Outline"));
 
     mainLayout()->addLayout(layoutCommon);
@@ -97,12 +97,20 @@ void ElementPropsDialog::setPageParams(QWidget* pageParams)
     _tabs->insertTab(0, pageParams, tr("Parameters"));
 }
 
-/* TODO:NEXT-VER
-QWidget* ElementPropsDialog::initPageOther()
+QWidget* ElementPropsDialog::initPageOptions()
 {
-    return Ori::Gui::widgetV({
-        _disabled = new QCheckBox(tr("Ignore this element in calculations")), 0 });
-} */
+    _layoutShowLabel = new QCheckBox(tr("Show element label on layout"));
+    _layoutDrawNarrow = new QCheckBox(tr("Draw narrow version of element"));
+    _layoutDrawNarrow->setToolTip(tr(
+        "Draw a narrow version of the element. It can be useful when schema contains many elements."
+        "How the option is processed depends on the particular element type."));
+
+    return Ori::Layouts::LayoutV({
+        _layoutShowLabel,
+        _layoutDrawNarrow,
+        Ori::Layouts::Stretch()
+    }).makeWidget();
+}
 
 QWidget* ElementPropsDialog::initPageOutline()
 {
@@ -115,7 +123,8 @@ void ElementPropsDialog::populate()
 {
     _editorLabel->setText(_element->label());
     _editorTitle->setText(_element->title());
-    // TODO:NEXT-VER _disabled->setChecked(_element->disabled());
+    _layoutShowLabel->setChecked(_element->layoutOptions.showLabel);
+    _layoutDrawNarrow->setChecked(_element->layoutOptions.drawNarrow);
 
     populateParams();
 }
@@ -136,7 +145,8 @@ void ElementPropsDialog::collect()
 
     _element->setLabel(_editorLabel->text());
     _element->setTitle(_editorTitle->text());
-    // TODO:NEXT-VER _element->setDisabled(_disabled->isChecked());
+    _element->layoutOptions.showLabel = _layoutShowLabel->isChecked();
+    _element->layoutOptions.drawNarrow = _layoutDrawNarrow->isChecked();
 
     collectParams();
     accept();

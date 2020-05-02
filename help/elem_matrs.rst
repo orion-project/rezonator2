@@ -51,6 +51,7 @@ Interface elements have no index of refraction. Instead, they take indexes of ad
 .. toctree::
 
    matrix/ElemMediaRange
+   matrix/ElemGrinMedium
    matrix/ElemNormalInterface
    matrix/ElemBrewsterInterface
    matrix/ElemTiltedInterface

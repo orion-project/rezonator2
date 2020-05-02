@@ -684,23 +684,17 @@ void ElemGrinLens::calcMatrixInternal()
 
     if (n2t > 0)
     {
-        const double n2_div_n0 = sqrt(n2t / n0) * L;
-        const double n2_mul_n0 = sqrt(n2t * n0);
-
-        _mt.assign(cos(n2_div_n0), 1.0 / n2_mul_n0 * sin(n2_div_n0),
-                   -n2_mul_n0 * sin(n2_div_n0), cos(n2_div_n0));
+        const double g = sqrt(n2t / n0);
+        _mt.assign(cos(g*L), sin(g*L)/n0/g, -n0*g*sin(g*L), cos(g*L));
     }
-    else _mt.assign(1, L / n0, 0, 1);
+    else _mt.assign(1, L/n0, 0, 1);
 
     if (n2s > 0)
     {
-        const double n2_div_n0 = sqrt(n2s / n0) * L;
-        const double n2_mul_n0 = sqrt(n2s * n0);
-
-        _ms.assign(cos(n2_div_n0), 1.0 / n2_mul_n0 * sin(n2_div_n0),
-                   -n2_mul_n0 * sin(n2_div_n0), cos(n2_div_n0));
+        const double g = sqrt(n2s / n0);
+        _ms.assign(cos(g*L), sin(g*L)/n0/g, -n0*g*sin(g*L), cos(g*L));
     }
-    else _ms.assign(1, L / n0, 0, 1);
+    else _ms.assign(1, L/n0, 0, 1);
 }
 
 void ElemGrinLens::setSubRangeSI(double value)
@@ -713,34 +707,107 @@ void ElemGrinLens::setSubRangeSI(double value)
 
     if (n2t > 0)
     {
-        const double n2_div_n0 = sqrt(n2t / n0);
-        const double n2_mul_n0 = sqrt(n2t * n0);
-
-        _mt1.assign(cos(n2_div_n0 * L1), 1.0 / n2_mul_n0 * sin(n2_div_n0 * L1),
-                   -n2_div_n0 * sin(n2_div_n0 * L1), 1.0 / n0 * cos(n2_div_n0 * L1));
-        _mt2.assign(cos(n2_div_n0 * L2), sqrt(qAbs(n0 / n2t)) * sin(n2_div_n0 * L2),
-                   -n2_mul_n0 * sin(n2_div_n0 * L2), n0 * cos(n2_div_n0 * L2));
+        const double g = sqrt(n2t / n0);
+        _mt1.assign(cos(g*L1), sin(g*L1)/n0/g, -g*sin(g*L1), cos(g*L1)/n0);
+        _mt2.assign(cos(g*L2), sin(g*L2)/g, -n0*g*sin(g*L2), n0*cos(g*L2));
     }
     else
     {
-        _mt1.assign(1, L1 / n0, 0, 1 / n0);
+        _mt1.assign(1, L1/n0, 0, 1/n0);
         _mt2.assign(1, L2, 0, n0);
     }
 
     if (n2s > 0)
     {
-        const double n2_div_n0 = sqrt(n2s / n0);
-        const double n2_mul_n0 = sqrt(n2s * n0);
-
-        _ms1.assign(cos(n2_div_n0 * L1), 1.0 / n2_mul_n0 * sin(n2_div_n0 * L1),
-                   -n2_div_n0 * sin(n2_div_n0 * L1), 1.0 / n0 * cos(n2_div_n0 * L1));
-        _ms2.assign(cos(n2_div_n0 * L2), sqrt(qAbs(n0 / n2s)) * sin(n2_div_n0 * L2),
-                   -n2_mul_n0 * sin(n2_div_n0 * L2), n0 * cos(n2_div_n0 * L2));
+        const double g = sqrt(n2s / n0);
+        _ms1.assign(cos(g*L1), sin(g*L1)/n0/g, -g*sin(g*L1), cos(g*L1)/n0);
+        _ms2.assign(cos(g*L2), sin(g*L2)/g, -n0*g*sin(g*L2), n0*cos(g*L2));
     }
     else
     {
-        _ms1.assign(1, L1 / n0, 0, 1 / n0);
+        _ms1.assign(1, L1/n0, 0, 1/n0);
         _ms2.assign(1, L2, 0, n0);
+    }
+}
+
+//------------------------------------------------------------------------------
+//                             ElemGrinMedium
+//------------------------------------------------------------------------------
+
+ElemGrinMedium::ElemGrinMedium() : ElementRange()
+{
+    _ior->setVisible(true);
+
+    _ior2t = new Z::Parameter(Z::Dims::fixed(),
+        QStringLiteral("n2t"), QStringLiteral("n2t"),
+        qApp->translate("Param", "IOR gradient (T)"),
+        qApp->translate("Param", "Radial gradient of index of refraction in tangential plane"));
+    _ior2s = new Z::Parameter(Z::Dims::fixed(),
+        QStringLiteral("n2s"), QStringLiteral("n2s"),
+        qApp->translate("Param", "IOR gradient (S)"),
+        qApp->translate("Param", "Radial gradient of index of refraction in sagittal plane"));
+
+    _ior2t->setValue(Z::Value(0.01, Z::Units::inv_m2()));
+    _ior2s->setValue(Z::Value(0.01, Z::Units::inv_m2()));
+
+    addParam(_ior2t);
+    addParam(_ior2s);
+}
+
+void ElemGrinMedium::calcMatrixInternal()
+{
+    const double L = lengthSI();
+    const double n0 = qAbs(ior());
+    const double n2t = ior2t();
+    const double n2s = ior2s();
+
+    // When n2 = 0 then A = 1, C = 0, D = 1, B = 0/0 -> L
+
+    if (n2t > 0)
+    {
+        const double g = sqrt(n2t / n0);
+        _mt.assign(cos(g*L), sin(g*L)/g, -g*sin(g*L), cos(g*L));
+    }
+    else _mt.assign(1, L, 0, 1);
+
+    if (n2s > 0)
+    {
+        const double g = sqrt(n2s / n0);
+        _ms.assign(cos(g*L), sin(g*L)/g, -g*sin(g*L), cos(g*L));
+    }
+    else _ms.assign(1, L, 0, 1);
+}
+
+void ElemGrinMedium::setSubRangeSI(double value)
+{
+    const double L1 = value;
+    const double L2 = lengthSI() - L1;
+    const double n0 = qAbs(ior());
+    const double n2t = ior2t();
+    const double n2s = ior2s();
+
+    if (n2t > 0)
+    {
+        const double g = sqrt(n2t / n0);
+        _mt1.assign(cos(g*L1), sin(g*L1)/g, -g*sin(g*L1), cos(g*L1));
+        _mt2.assign(cos(g*L2), sin(g*L2)/g, -g*sin(g*L2), cos(g*L2));
+    }
+    else
+    {
+        _mt1.assign(1, L1, 0, 1);
+        _mt2.assign(1, L2, 0, 1);
+    }
+
+    if (n2s > 0)
+    {
+        const double g = sqrt(n2s / n0);
+        _ms1.assign(cos(g*L1), sin(g*L1)/g, -g*sin(g*L1), cos(g*L1));
+        _ms2.assign(cos(g*L2), sin(g*L2)/g, -g*sin(g*L2), cos(g*L2));
+    }
+    else
+    {
+        _ms1.assign(1, L1, 0, 1);
+        _ms2.assign(1, L2, 0, 1);
     }
 }
 

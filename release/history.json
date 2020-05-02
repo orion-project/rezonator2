@@ -11,6 +11,9 @@
           "text": "New element: Matrix element with single matrix (T=S)."
         },
         {
+          "text": "New element: GRIN medium."
+        }
+        {
           "text": "Copy/Paste commands in the Pumps window."
         },
         {
@@ -21,6 +24,9 @@
         },
         {
           "text": "Added settings for number formatting and data exporting."
+        },
+        {
+          "text": "Added options for controlling how element is displayed on the layout - show label, draw narrow."
         }
       ]
     },
