@@ -165,7 +165,7 @@ void PumpsTable::createRow(int row)
 
 void PumpsTable::populateRow(PumpParams *pump, int row)
 {
-    auto pumpMode = Pump::findByModeName(pump->modeName());
+    auto pumpMode = Pumps::findByModeName(pump->modeName());
     if (pumpMode)
     {
         auto it = item(row, COL_IMAGE);
@@ -415,7 +415,7 @@ void PumpWindow::clonePump()
     auto pump = selectedPump();
     if (!pump) return;
 
-    auto pumpMode = Pump::findByModeName(pump->modeName());
+    auto pumpMode = Pumps::findByModeName(pump->modeName());
     if (!pumpMode) return;
 
     auto newPump = pumpMode->makePump();

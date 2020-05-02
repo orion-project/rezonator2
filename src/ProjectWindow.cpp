@@ -360,7 +360,7 @@ void ProjectWindow::updateStatusInfo()
         if (pump)
         {
             pumpHint = pump->displayStr();
-            auto pumpMode = Pump::findByModeName(pump->modeName());
+            auto pumpMode = Pumps::findByModeName(pump->modeName());
             if (pumpMode)
                 pumpIcon = pumpMode->iconPath();
         }

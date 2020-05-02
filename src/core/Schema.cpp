@@ -421,7 +421,7 @@ void generateLabel(Schema* schema, PumpParams* pump)
     for (const auto p : *schema->pumps())
         if (p != pump)
             labels << p->label();
-    pump->setLabel(generateLabel(Pump::labelPrefix(), labels));
+    pump->setLabel(generateLabel(Pumps::labelPrefix(), labels));
 }
 
 Element* findElemByParam(Schema* schema, Parameter* param)

@@ -60,7 +60,7 @@ PumpParams* PumpParamsDialog::makeNewPump()
     auto modesLayout = new QHBoxLayout(modesWidget);
     modesLayout->setMargin(0);
     modesLayout->setSpacing(0);
-    for (auto mode : Pump::allModes())
+    for (auto mode : Pumps::allModes())
     {
         auto modeItem = new Ori::Widgets::SelectableTile;
         modeItem->selectionFollowsFocus = true;
@@ -100,7 +100,7 @@ bool PumpParamsDialog::editPump(PumpParams *params)
 PumpParamsDialog::PumpParamsDialog(PumpParams *params, QWidget *parent)
     : RezonatorDialog(Options(UseHelpButton), parent), _params(params)
 {
-    auto pumpMode = Pump::findByModeName(params->modeName());
+    auto pumpMode = Pumps::findByModeName(params->modeName());
     if (!pumpMode)
         qCritical() << "PumpParamsDialog::PumpParamsDialog(): Unable to find mode for pump parameters";
 
