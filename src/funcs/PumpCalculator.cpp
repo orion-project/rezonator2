@@ -113,11 +113,21 @@ class PumpCalculatorImpl final
 
     BeamResult calcVector(const Matrix& matrix)
     {
-        RayVector output(inputRay, matrix);
         BeamResult beam;
-        beam.beamRadius = output.Y;
-        beam.halfAngle = output.V;
-        beam.frontRadius = output.Y / sin(output.V);
+        if (matrix.isReal())
+        {
+            RayVector output(inputRay, matrix);
+            beam.beamRadius = output.Y;
+            beam.halfAngle = output.V;
+            beam.frontRadius = output.Y / sin(output.V);
+        }
+        else
+        {
+            // Geometric pump can't be used with complex matrices
+            beam.beamRadius = Double::nan();
+            beam.halfAngle = Double::nan();
+            beam.frontRadius = Double::nan();
+        }
         return beam;
     }
 

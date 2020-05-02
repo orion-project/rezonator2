@@ -193,3 +193,9 @@ QString Pumps::labelPrefix()
 {
     return QStringLiteral("P");
 }
+
+bool Pumps::isGeometric(const PumpParams* p)
+{
+    return dynamic_cast<const PumpParams_RayVector*>(p) or
+           dynamic_cast<const PumpParams_TwoSections*>(p);
+}
