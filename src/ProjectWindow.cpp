@@ -8,6 +8,7 @@
 #include "ElemFormulaWindow.h"
 #include "ElementsCatalogDialog.h"
 #include "GaussCalculatorWindow.h"
+#include "GrinLensWindow.h"
 #include "HelpSystem.h"
 #include "ProjectOperations.h"
 #include "ProtocolWindow.h"
@@ -155,6 +156,7 @@ void ProjectWindow::createActions()
     actnToolFlipSchema = A_(tr("Flip Schema..."), this, SLOT(flipSchema()));
     actnToolSettings = A_(tr("Settings..."), this, SLOT(showSettings()), ":/toolbar/settings");
     actnToolAdjust = A_(tr("Adjustment"), this, SLOT(showAdjustment()), ":/toolbar/adjust");
+    actnToolGrinLens = A_(tr("GRIN Lens Assessment"), this, SLOT(showGrinLens()), ":/toolbar/grin");
 
     // These common window actions must not have data (action->data()), as data presense indicates that
     // this action is for activation of specific subwindow and _mdiArea is responsible for it.
@@ -208,7 +210,7 @@ void ProjectWindow::createMenuBar()
 
     menuTools = Ori::Gui::menu(tr("Tools", "Menu title"), this,
         { actnToolFlipSchema, nullptr, actnToolAdjust, nullptr,
-          actnToolsGaussCalc, actnToolsCalc, actnToolsCustomElems, nullptr, actnToolSettings });
+          actnToolsGaussCalc, actnToolsCalc, actnToolsCustomElems, actnToolGrinLens, nullptr, actnToolSettings });
 
     menuWindow = Ori::Gui::menu(tr("Window"), this,
         { actnWndSchema, actnWndParams, actnWndPumps, actnWndProtocol, nullptr,
@@ -230,7 +232,7 @@ void ProjectWindow::createToolBars()
         actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamVariation, nullptr,
         actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic, actnFuncBeamParamsAtElems, nullptr,
         actnFuncRepRate, nullptr, actnWndParams, actnWndPumps, nullptr, actnToolAdjust, nullptr,
-        actnToolsGaussCalc, actnToolsCalc
+        actnToolsGaussCalc, actnToolsCalc, actnToolGrinLens
     }, true));
 
     _mdiToolbar = new Ori::Widgets::MdiToolBar(tr("Windows"), _mdiArea);
@@ -464,6 +466,11 @@ void ProjectWindow::showGaussCalculator()
 void ProjectWindow::showCalculator()
 {
     CalculatorWindow::showWindow();
+}
+
+void ProjectWindow::showGrinLens()
+{
+    GrinLensWindow::showWindow();
 }
 
 void ProjectWindow::flipSchema()

@@ -11,24 +11,26 @@
 
 ParamsEditor::ParamsEditor(const Options opts, QWidget *parent) : QWidget(parent), _options(opts), _params(opts.params)
 {
+    // Parameters layout should not be used as the widget's main layout
+    // because parameters can be added in runtime and it should be easy to call addWidget
+    // and not be bothered that someting other might be at the bottom (e.g. into panel).
     _paramsLayout = Ori::Layouts::LayoutV({}).setMargin(0).setSpacing(0).boxLayout();
     populateEditors();
 
-    _infoPanel = new Ori::Widgets::InfoPanel;
-    auto layout = qobject_cast<QBoxLayout*>(_infoPanel->layout());
-    if (layout)
+    auto mainLayout = Ori::Layouts::LayoutV({ _paramsLayout, Ori::Layouts::Stretch() }).setSpacing(0).setMargin(0).boxLayout();
+
+    if (opts.auxControl)
+        mainLayout->addWidget(opts.auxControl);
+
+    if (opts.showInfoPanel)
     {
-        layout->setMargin(6);
-        layout->setSpacing(12);
+        _infoPanel = new Ori::Widgets::InfoPanel;
+        _infoPanel->setMargin(6); // this margin is inside of the frame (it's padding)
+        _infoPanel->setSpacing(12);
+        mainLayout->addLayout(Ori::Layouts::LayoutV({_infoPanel}).setMargin(3).boxLayout());
     }
 
-    Ori::Layouts::LayoutV({
-                              _paramsLayout,
-                              Ori::Layouts::Stretch(),
-                              Ori::Layouts::LayoutH({_infoPanel}).setMargin(3)
-                          })
-            .setMargin(0)
-            .useFor(this);
+    setLayout(mainLayout);
 }
 
 void ParamsEditor::populateEditors()
@@ -143,6 +145,8 @@ void ParamsEditor::focus(Z::Parameter *param)
 
 void ParamsEditor::paramFocused()
 {
+    if (!_infoPanel) return;
+
     for (auto editor : _editors)
         if (editor == sender())
         {
@@ -202,6 +206,9 @@ void ParamsEditor::paramValueEdited(double value)
     auto editor = qobject_cast<ParamEditor*>(sender());
     if (!editor) return;
 
+    if (_options.autoApply)
+        editor->apply();
+
     emit paramChanged(editor->parameter(), Z::Value(value, editor->getValue().unit()));
 }
 
@@ -209,6 +216,9 @@ void ParamsEditor::paramUnitChanged(Z::Unit unit)
 {
     auto editor = qobject_cast<ParamEditor*>(sender());
     if (!editor) return;
+
+    if (_options.autoApply)
+        editor->apply();
 
     emit paramChanged(editor->parameter(), Z::Value(editor->getValue().value(), unit));
 }

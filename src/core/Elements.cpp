@@ -665,8 +665,9 @@ ElemGrinLens::ElemGrinLens() : ElementRange() {
         qApp->translate("Param", "IOR gradient (S)"),
         qApp->translate("Param", "Radial gradient of index of refraction in sagittal plane"));
 
-    _ior2t->setValue(Z::Value(0.01, Z::Units::inv_m2()));
-    _ior2s->setValue(Z::Value(0.01, Z::Units::inv_m2()));
+    _ior->setValue(2);
+    _ior2t->setValue(Z::Value(1, Z::Units::inv_m2()));
+    _ior2s->setValue(Z::Value(1, Z::Units::inv_m2()));
 
     addParam(_ior2t);
     addParam(_ior2s);
@@ -747,8 +748,9 @@ ElemGrinMedium::ElemGrinMedium() : ElementRange() {
         qApp->translate("Param", "IOR gradient (S)"),
         qApp->translate("Param", "Radial gradient of index of refraction in sagittal plane"));
 
-    _ior2t->setValue(Z::Value(0.01, Z::Units::inv_m2()));
-    _ior2s->setValue(Z::Value(0.01, Z::Units::inv_m2()));
+    _ior->setValue(2);
+    _ior2t->setValue(Z::Value(1, Z::Units::inv_m2()));
+    _ior2s->setValue(Z::Value(1, Z::Units::inv_m2()));
 
     addParam(_ior2t);
     addParam(_ior2s);

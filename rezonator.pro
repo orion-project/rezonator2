@@ -63,6 +63,7 @@ HEADERS += \
     src/ElemFormulaWindow.h \
     src/ElementPropsDialog.h \
     src/ElementsCatalogDialog.h \
+    src/GrinLensWindow.h \
     src/HelpSystem.h \
     src/ProjectOperations.h \
     src/ProjectWindow.h \
@@ -181,6 +182,7 @@ SOURCES += \
     src/ElemFormulaWindow.cpp \
     src/ElementPropsDialog.cpp \
     src/ElementsCatalogDialog.cpp \
+    src/GrinLensWindow.cpp \
     src/HelpSystem.cpp \
     src/ProjectOperations.cpp \
     src/ProjectWindow.cpp \
