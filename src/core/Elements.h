@@ -272,6 +272,20 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
+DECLARE_ELEMENT(ElemThermoMedium, ElementRange)
+    ElemThermoMedium();
+    TYPE_NAME(qApp->translate("Elements", "Thermo medium"))
+    DEFAULT_LABEL("TM")
+    CALC_MATRIX
+    SUB_RANGE
+    double focus() const { return _focus->value().toSi(); }
+protected:
+    Z::Parameter *_focus;
+    double _n2;
+DECLARE_ELEMENT_END
+
+//------------------------------------------------------------------------------
+
 DECLARE_ELEMENT(ElemAxiconMirror, ElementDynamic)
     ElemAxiconMirror();
     TYPE_NAME(qApp->translate("Elements", "Axicon mirror"))

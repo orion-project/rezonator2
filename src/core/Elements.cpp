@@ -833,7 +833,7 @@ void ElemGrinMedium::setSubRangeSI(double value) {
 }
 
 //------------------------------------------------------------------------------
-//                             ElemThermalLens
+//                             ElemThermoLens
 //------------------------------------------------------------------------------
 
 ElemThermoLens::ElemThermoLens() : ElementRange() {
@@ -873,6 +873,51 @@ void ElemThermoLens::setSubRangeSI(double value) {
     const double g = sqrt(_n2 / n0);
     _mt1.assign(cos(g*L1), sin(g*L1)/n0/g, -g*sin(g*L1), cos(g*L1)/n0);
     _mt2.assign(cos(g*L2), sin(g*L2)/g, -n0*g*sin(g*L2), n0*cos(g*L2));
+    _ms1 = _mt1;
+    _ms2 = _mt2;
+}
+
+//------------------------------------------------------------------------------
+//                             ElemThermoMedium
+//------------------------------------------------------------------------------
+
+ElemThermoMedium::ElemThermoMedium() : ElementRange() {
+    _length->setDescription(qApp->translate("Param", "Thickness of material. "
+                                                     "Must be a positive value."));
+    _ior->setRawValue(2);
+    _ior->setVisible(true);
+    _ior->setLabel(QStringLiteral("n0"));
+    _ior->setDescription(qApp->translate("Param", "Index of refraction at the optical axis. "
+                                                  "Must be a positive value."));
+
+    _focus = new Z::Parameter(Z::Dims::linear(),
+        QStringLiteral("F"), QStringLiteral("F"),
+        qApp->translate("Param", "Focal length"),
+        qApp->translate("Param", "Distance at wich parallel input rays get converged. "
+                                "Distance is measured from the exit face of the lens. "
+                                "Must be a positive value."));
+    _focus->setValue(1_m);
+
+    addParam(_focus);
+}
+
+void ElemThermoMedium::calcMatrixInternal() {
+    const double L = lengthSI();
+    const double n0 = qAbs(ior());
+    const double F = focus();
+    _n2 = GrinCalculator::solve_n2(L, F, n0);
+    const double g = sqrt(_n2 / n0);
+    _mt.assign(cos(g*L), sin(g*L)/g, -g*sin(g*L), cos(g*L));
+    _ms = _mt;
+}
+
+void ElemThermoMedium::setSubRangeSI(double value) {
+    const double L1 = value;
+    const double L2 = lengthSI() - L1;
+    const double n0 = ior();
+    const double g = sqrt(_n2 / n0);
+    _mt1.assign(cos(g*L1), sin(g*L1)/g, -g*sin(g*L1), cos(g*L1));
+    _mt2.assign(cos(g*L2), sin(g*L2)/g, -g*sin(g*L2), cos(g*L2));
     _ms1 = _mt1;
     _ms2 = _mt2;
 }

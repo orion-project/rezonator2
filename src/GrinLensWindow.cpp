@@ -151,6 +151,7 @@ void GrinLensWindow::calculateN2()
     if (F <= 0)
         return showError(tr("F must be a positive value"));
     double n2 = GrinCalculator::solve_n2(L, F, n0);
+    qDebug() << "Calculated n2" << QString::number(n2, 'g', 16);
     auto unit = _ior2->value().unit();
     _ior2->setValue(Z::Value(unit->fromSi(n2), unit));
     showError(QString());
@@ -168,6 +169,7 @@ void GrinLensWindow::calculateF()
     if (n2 < 0)
         return showError(tr("n2 must be a positive value"));
     double F = GrinCalculator::calc_focus(L, n0, n2);
+    qDebug() << "Calculated F" << QString::number(F, 'g', 16);
     auto unit = _focus->value().unit();
     _focus->setValue(Z::Value(unit->fromSi(F), unit));
     showError(QString());

@@ -157,6 +157,7 @@
         <file alias="ElemTiltedInterface">../img/elem/ElemTiltedInterface.svg</file>
         <file alias="ElemTiltedPlate">../img/elem/ElemTiltedPlate.svg</file>
         <file alias="ElemThermoLens">../img/elem/ElemThermoLens.svg</file>
+        <file alias="ElemThermoMedium">../img/elem/ElemThermoMedium.svg</file>
     </qresource>
     <qresource prefix="/elem_icon">
         <file alias="ElemAxiconLens">../img/elem/ElemAxiconLens24.svg</file>
@@ -185,6 +186,7 @@
         <file alias="ElemTiltedInterface">../img/elem/ElemTiltedInterface24.svg</file>
         <file alias="ElemTiltedPlate">../img/elem/ElemTiltedPlate24.svg</file>
         <file alias="ElemThermoLens">../img/elem/ElemThermoLens24.svg</file>
+        <file alias="ElemThermoMedium">../img/elem/ElemThermoMedium24.svg</file>
     </qresource>
     <qresource prefix="/config_pages">
         <file alias="general">../img/misc/opts_gear.svg</file>

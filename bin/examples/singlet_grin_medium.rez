@@ -11,6 +11,8 @@
         {
             "is_disabled": false,
             "label": "d1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "mm",
@@ -27,6 +29,8 @@
         {
             "is_disabled": false,
             "label": "s1",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
             "params": {
                 "n1": {
                     "unit": "none",
@@ -34,7 +38,7 @@
                 },
                 "n2": {
                     "unit": "none",
-                    "value": 1.5
+                    "value": 1.73
                 }
             },
             "title": "",
@@ -43,6 +47,8 @@
         {
             "is_disabled": false,
             "label": "GM1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "mm",
@@ -50,15 +56,15 @@
                 },
                 "n": {
                     "unit": "none",
-                    "value": 1.5
+                    "value": 1.73
                 },
                 "n2s": {
                     "unit": "inv_m2",
-                    "value": 0.25
+                    "value": 6.8
                 },
                 "n2t": {
                     "unit": "inv_m2",
-                    "value": 0.15
+                    "value": 6.8
                 }
             },
             "title": "",
@@ -67,10 +73,12 @@
         {
             "is_disabled": false,
             "label": "s2",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
             "params": {
                 "n1": {
                     "unit": "none",
-                    "value": 1.5
+                    "value": 1.73
                 },
                 "n2": {
                     "unit": "none",
@@ -83,10 +91,12 @@
         {
             "is_disabled": false,
             "label": "d2",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
-                    "unit": "mm",
-                    "value": 100
+                    "unit": "m",
+                    "value": 1.5
                 },
                 "n": {
                     "unit": "none",
@@ -104,8 +114,8 @@
     ],
     "pumps": [
         {
-            "is_active": true,
-            "label": "P2",
+            "is_active": false,
+            "label": "P0",
             "mode": "Waist",
             "params": {
                 "MI": {
@@ -114,11 +124,34 @@
                     "value_t": 1
                 },
                 "w_0": {
-                    "unit": "mkm",
-                    "value_s": 1000,
-                    "value_t": 1000
+                    "unit": "mm",
+                    "value_s": 10,
+                    "value_t": 10
                 },
                 "z_w": {
+                    "unit": "mm",
+                    "value_s": 0,
+                    "value_t": 0
+                }
+            },
+            "title": ""
+        },
+        {
+            "is_active": true,
+            "label": "P1",
+            "mode": "RayVector",
+            "params": {
+                "V": {
+                    "unit": "deg",
+                    "value_s": 0,
+                    "value_t": 0
+                },
+                "y": {
+                    "unit": "mm",
+                    "value_s": 10,
+                    "value_t": 10
+                },
+                "z_y": {
                     "unit": "mm",
                     "value_s": 0,
                     "value_t": 0
@@ -191,8 +224,8 @@
                                 "value": 1
                             },
                             "stop": {
-                                "unit": "mm",
-                                "value": 100
+                                "unit": "m",
+                                "value": 1.5
                             },
                             "use_step": false
                         }
@@ -207,13 +240,13 @@
                 "elem_bound_markers": true,
                 "stored_views": [
                 ],
-                "ts_flipped": false,
+                "ts_flipped": true,
                 "ts_mode": "T+S",
-                "x_max": 303.00000000000006,
-                "x_min": -3.0000000000000004,
+                "x_max": 1717,
+                "x_min": -17,
                 "x_unit": "mm",
-                "y_max": 1.0015270495348136,
-                "y_min": 0.9999272833554851,
+                "y_max": 11,
+                "y_min": -11,
                 "y_unit": "mm"
             }
         }

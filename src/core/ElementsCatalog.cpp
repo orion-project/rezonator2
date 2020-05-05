@@ -20,7 +20,7 @@ ElementsCatalog::ElementsCatalog()
     auto categoryAux = qApp->translate("Elements", "Additional elements");
     registerElement(categoryAux, new ElemMatrix);
     registerElement(categoryAux, new ElemMatrix1);
-    registerElement(categoryAux, new ElemFormula);
+    //registerElement(categoryAux, new ElemFormula);
     registerElement(categoryAux, new ElemPoint);
     registerElement(categoryAux, new ElemThickLens);
     registerElement(categoryAux, new ElemCylinderLensT);
@@ -33,6 +33,7 @@ ElementsCatalog::ElementsCatalog()
     auto categoryIntf = qApp->translate("Elements", "Media, interfaces");
     registerElement(categoryIntf, new ElemMediumRange);
     registerElement(categoryIntf, new ElemGrinMedium);
+    registerElement(categoryIntf, new ElemThermoMedium);
     registerElement(categoryIntf, new ElemNormalInterface);
     registerElement(categoryIntf, new ElemBrewsterInterface);
     registerElement(categoryIntf, new ElemTiltedInterface);
