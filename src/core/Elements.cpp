@@ -1,6 +1,7 @@
 #include "Elements.h"
 
 #include "Format.h"
+#include "../funcs/GrinCalculator.h"
 #include "../funcs/PumpCalculator.h"
 #include "core/OriFloatingPoint.h"
 
@@ -654,18 +655,26 @@ void ElemThickLens::setSubRangeSI(double value)
 //------------------------------------------------------------------------------
 
 ElemGrinLens::ElemGrinLens() : ElementRange() {
+    _length->setDescription(qApp->translate("Param", "Thickness of the lens. "
+                                                     "Must be a positive value."));
+
+    _ior->setRawValue(2);
     _ior->setVisible(true);
+    _ior->setLabel(QStringLiteral("n0"));
+    _ior->setDescription(qApp->translate("Param", "Index of refraction at the optical axis. "
+                                                  "Must be a positive value."));
 
     _ior2t = new Z::Parameter(Z::Dims::fixed(),
         QStringLiteral("n2t"), QStringLiteral("n2t"),
         qApp->translate("Param", "IOR gradient (T)"),
-        qApp->translate("Param", "Radial gradient of index of refraction in tangential plane"));
+        qApp->translate("Param", "Radial gradient of index of refraction in tangential plane. "
+                                 "Positive for collecting lens, negative for diverging lens."));
     _ior2s = new Z::Parameter(Z::Dims::fixed(),
         QStringLiteral("n2s"), QStringLiteral("n2s"),
         qApp->translate("Param", "IOR gradient (S)"),
-        qApp->translate("Param", "Radial gradient of index of refraction in sagittal plane"));
+        qApp->translate("Param", "Radial gradient of index of refraction in sagittal plane. "
+                                 "Positive for collecting lens, negative for diverging lens."));
 
-    _ior->setValue(2);
     _ior2t->setValue(Z::Value(1, Z::Units::inv_m2()));
     _ior2s->setValue(Z::Value(1, Z::Units::inv_m2()));
 
@@ -737,18 +746,26 @@ void ElemGrinLens::setSubRangeSI(double value) {
 //------------------------------------------------------------------------------
 
 ElemGrinMedium::ElemGrinMedium() : ElementRange() {
+    _length->setDescription(qApp->translate("Param", "Thickness of material. "
+                                                     "Must be a positive value."));
+
+    _ior->setRawValue(2);
     _ior->setVisible(true);
+    _ior->setLabel(QStringLiteral("n0"));
+    _ior->setDescription(qApp->translate("Param", "Index of refraction at the optical axis. "
+                                                  "Must be a positive value."));
 
     _ior2t = new Z::Parameter(Z::Dims::fixed(),
         QStringLiteral("n2t"), QStringLiteral("n2t"),
         qApp->translate("Param", "IOR gradient (T)"),
-        qApp->translate("Param", "Radial gradient of index of refraction in tangential plane"));
+        qApp->translate("Param", "Radial gradient of index of refraction in tangential plane. "
+                                 "Positive for collecting medium, negative for diverging medium."));
     _ior2s = new Z::Parameter(Z::Dims::fixed(),
         QStringLiteral("n2s"), QStringLiteral("n2s"),
         qApp->translate("Param", "IOR gradient (S)"),
-        qApp->translate("Param", "Radial gradient of index of refraction in sagittal plane"));
+        qApp->translate("Param", "Radial gradient of index of refraction in sagittal plane. "
+                                 "Positive for collecting medium, negative for diverging medium."));
 
-    _ior->setValue(2);
     _ior2t->setValue(Z::Value(1, Z::Units::inv_m2()));
     _ior2s->setValue(Z::Value(1, Z::Units::inv_m2()));
 
@@ -813,6 +830,51 @@ void ElemGrinMedium::setSubRangeSI(double value) {
         _ms1.assign(1, L1, 0, 1);
         _ms2.assign(1, L2, 0, 1);
     }
+}
+
+//------------------------------------------------------------------------------
+//                             ElemThermalLens
+//------------------------------------------------------------------------------
+
+ElemThermoLens::ElemThermoLens() : ElementRange() {
+    _length->setDescription(qApp->translate("Param", "Thickness of material. "
+                                                     "Must be a positive value."));
+    _ior->setRawValue(2);
+    _ior->setVisible(true);
+    _ior->setLabel(QStringLiteral("n0"));
+    _ior->setDescription(qApp->translate("Param", "Index of refraction at the optical axis. "
+                                                  "Must be a positive value."));
+
+    _focus = new Z::Parameter(Z::Dims::linear(),
+        QStringLiteral("F"), QStringLiteral("F"),
+        qApp->translate("Param", "Focal length"),
+        qApp->translate("Param", "Distance at wich parallel input rays get converged. "
+                                "Distance is measured from the exit face of the lens. "
+                                "Must be a positive value."));
+    _focus->setValue(1_m);
+
+    addParam(_focus);
+}
+
+void ElemThermoLens::calcMatrixInternal() {
+    const double L = lengthSI();
+    const double F = focus();
+    const double n0 = ior();
+    _n2 = GrinCalculator::solve_n2(L, F, n0);
+    const double g = sqrt(_n2 / n0);
+    _mt.assign(cos(g*L), sin(g*L)/n0/g, -n0*g*sin(g*L), cos(g*L));
+    _ms = _mt;
+}
+
+void ElemThermoLens::setSubRangeSI(double value) {
+    const double L1 = value;
+    const double L2 = lengthSI() - L1;
+    const double n0 = ior();
+    const double g = sqrt(_n2 / n0);
+    _mt1.assign(cos(g*L1), sin(g*L1)/n0/g, -g*sin(g*L1), cos(g*L1)/n0);
+    _mt2.assign(cos(g*L2), sin(g*L2)/g, -n0*g*sin(g*L2), n0*cos(g*L2));
+    _ms1 = _mt1;
+    _ms2 = _mt2;
 }
 
 //------------------------------------------------------------------------------

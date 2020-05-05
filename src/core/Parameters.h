@@ -43,6 +43,7 @@ public:
     /// Label of parameter. E.g.: `L`, `alpha`, `n<sub>0</sub>`.
     /// Can contains some html tags (subscript or superscript).
     const QString& label() const { return _label; }
+    void setLabel(const QString& value) { _label = value; }
 
     /// Name of parameter. E.g.: Length, Inclination angle, etc.
     const QString& name() const { return _name; }
@@ -143,14 +144,20 @@ template <typename TValue>
 class ValuedParameter : public ParameterBase
 {
 public:
-    /// Get parameter value
+    /// Get parameter value.
     const TValue& value() const { return _value; }
 
-    /// Set parameter value
+    /// Set parameter value and notify all clients.
     void setValue(const TValue& value)
     {
         _value = value;
         notifyListeners();
+    }
+
+    /// Set parameter value without notification.
+    void setRawValue(const TValue& value)
+    {
+        _value = value;
     }
 
     /// Verify parameter value.

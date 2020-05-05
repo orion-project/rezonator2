@@ -14,7 +14,10 @@
           "text": "New element: GRIN medium."
         },
         {
-          "text": "Element GRIN lens can accept negative gradient constants n2."
+          "text": "New elements: Thermal lens, Thermal medium."
+        },
+        {
+          "text": "GRIN lens can accept negative gradient constants n2."
         },
         {
           "text": "Copy/Paste commands in the Pumps window."
@@ -30,6 +33,9 @@
         },
         {
           "text": "Added options for controlling how element is displayed on the layout - show label, draw narrow."
+        },
+        {
+          "text": "New tool: GRIN lens assessment."
         }
       ]
     },

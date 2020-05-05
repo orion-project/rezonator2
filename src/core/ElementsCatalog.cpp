@@ -26,6 +26,7 @@ ElementsCatalog::ElementsCatalog()
     registerElement(categoryAux, new ElemCylinderLensT);
     registerElement(categoryAux, new ElemCylinderLensS);
     registerElement(categoryAux, new ElemGrinLens);
+    registerElement(categoryAux, new ElemThermoLens);
     registerElement(categoryAux, new ElemAxiconMirror);
     registerElement(categoryAux, new ElemAxiconLens);
 

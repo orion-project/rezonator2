@@ -1445,6 +1445,7 @@ ElementLayout* make(Element *elem) {
         registerLayout<ElemSphericalInterface, ElemSphericalInterfaceLayout::Layout>();
         registerLayout<ElemThickLens, ElemThickLensLayout::Layout>();
         registerLayout<ElemGrinLens, ElemGrinLensLayout::Layout>();
+        registerLayout<ElemThermoLens, ElemGrinLensLayout::Layout>();
         registerLayout<ElemGrinMedium, ElemGrinMediumLayout::Layout>();
         registerLayout<ElemAxiconMirror, ElemAxiconMirrorLayout::Layout>();
         registerLayout<ElemAxiconLens, ElemAxiconLensLayout::Layout>();

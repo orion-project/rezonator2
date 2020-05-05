@@ -39,10 +39,11 @@ GrinLensWindow::GrinLensWindow(QWidget *parent) : QWidget(parent)
 
     _length =  new Z::Parameter(Z::Dims::linear(), QStringLiteral("L"), QStringLiteral("L"),
                                 tr("Length"),
-                                tr("Thickness of material."));
+                                tr("Thickness of material. Must be a positive value."));
     _ior = new Z::Parameter(Z::Dims::none(), QStringLiteral("n0"), QStringLiteral("n0"),
                             tr("IOR"),
-                            tr("Index of refraction at the optical axis."));
+                            tr("Index of refraction at the optical axis. "
+                               "Must be a positive value."));
     _ior2 = new Z::Parameter(Z::Dims::fixed(), QStringLiteral("n2"), QStringLiteral("n2"),
                              tr("IOR gradient"),
                              tr("Radial gradient of index of refraction. "
@@ -50,7 +51,8 @@ GrinLensWindow::GrinLensWindow(QWidget *parent) : QWidget(parent)
     _focus = new Z::Parameter(Z::Dims::linear(), QStringLiteral("F"), QStringLiteral("F"),
                               tr("Focal length"),
                               tr("Distance at wich parallel input rays get converged. "
-                                 "Distance is measured from the exit face of the lens."));
+                                 "Distance is measured from the exit face of the lens. "
+                                 "Must be a positive value."));
     _length->setValue(100_mm);
     _ior->setValue(1.73);
     _ior2->setValue(Z::Value(6.80588, Z::Units::inv_m2()));
@@ -80,7 +82,9 @@ GrinLensWindow::GrinLensWindow(QWidget *parent) : QWidget(parent)
 
     auto tabs = new QTabWidget;
     tabs->addTab(editors, tr("Calc"));
-    tabs->addTab(LayoutV({Ori::Widgets::SvgView::makeStatic(":/drawing/grin_lens")}).setMargin(3).makeWidget(), tr("Outline"));
+    tabs->addTab(LayoutV({
+        Ori::Widgets::SvgView::makeStatic(":/drawing/grin_lens")
+    }).setMargin(3).makeWidget(), tr("Outline"));
 
     LayoutV({toolbar, LayoutV({tabs}).setMargin(6)}).setSpacing(0).setMargin(0).useFor(this);
 
@@ -141,8 +145,8 @@ void GrinLensWindow::calculateN2()
     if (L <= 0)
         return showError(tr("L must be a positive value"));
     double n0 = _ior->value().toSi();
-    if (n0 < 1)
-        return showError(tr("n0 must be greater than 1"));
+    if (n0 < 0)
+        return showError(tr("n0 must be a positive value"));
     double F = _focus->value().toSi();
     if (F <= 0)
         return showError(tr("F must be a positive value"));
@@ -158,8 +162,8 @@ void GrinLensWindow::calculateF()
     if (L <= 0)
         return showError(tr("L must be a positive value"));
     double n0 = _ior->value().toSi();
-    if (n0 < 1)
-        return showError(tr("n0 must be greater than 1"));
+    if (n0 < 0)
+        return showError(tr("n0 must be a positive value"));
     double n2 = _ior2->value().toSi();
     if (n2 < 0)
         return showError(tr("n2 must be a positive value"));

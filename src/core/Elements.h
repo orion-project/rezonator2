@@ -236,7 +236,7 @@ DECLARE_ELEMENT(ElemGrinLens, ElementRange)
     double ior2s() const { return _ior2s->value().value(); }
     Z::Parameter* paramIor2t() const { return _ior2t; }
     Z::Parameter* paramIor2s() const { return _ior2s; }
-private:
+protected:
     Z::Parameter *_ior2t, *_ior2s;
 DECLARE_ELEMENT_END
 
@@ -252,8 +252,22 @@ DECLARE_ELEMENT(ElemGrinMedium, ElementRange)
     double ior2s() const { return _ior2s->value().value(); }
     Z::Parameter* paramIor2t() const { return _ior2t; }
     Z::Parameter* paramIor2s() const { return _ior2s; }
-private:
+protected:
     Z::Parameter *_ior2t, *_ior2s;
+DECLARE_ELEMENT_END
+
+//------------------------------------------------------------------------------
+
+DECLARE_ELEMENT(ElemThermoLens, ElementRange)
+    ElemThermoLens();
+    TYPE_NAME(qApp->translate("Elements", "Thermal lens"))
+    DEFAULT_LABEL("TL")
+    CALC_MATRIX
+    SUB_RANGE
+    double focus() const { return _focus->value().toSi(); }
+protected:
+    Z::Parameter *_focus;
+    double _n2;
 DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
