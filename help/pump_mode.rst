@@ -41,7 +41,7 @@ Ray Vector
 
 In this mode, you can specify a radius and half of the spread angle of the input beam at the first element of the schema. 
 
-No complex radius of curvature is calculated in this case and the M² parameter is not taken into account. The beam is considered in a geometrical approach, but not as gaussian. 
+No complex radius of curvature is calculated in this case and the M² parameter is not taken into account. The beam is considered in a geometrical approach, but not as gaussian beam. 
 
   .. image:: img/pump_ray.png
 

@@ -32,6 +32,9 @@
                     <File name="matrix\ElemThickLens.rst" />
                     <File name="matrix\ElemAxiconMirror.rst" />
                     <File name="matrix\ElemAxiconLens.rst" />
+                    <File name="matrix\ElemGrinMedium.rst" />
+                    <File name="matrix\ElemThermoMedium.rst" />
+                    <File name="matrix\ElemThermoLens.rst" />
                 </Folder>
                 <File name="elements.rst" />
                 <File name="elem_matrs.rst" />
@@ -53,6 +56,7 @@
                 <File name="calc_formula.rst" />
                 <File name="calc_gauss.rst" />
                 <File name="tools.rst" />
+                <File name="calc_grin.rst" />
             </Folder>
             <Folder name="shema">
                 <File name="schema.rst" />
@@ -72,6 +76,9 @@
         <Folder name="formulas">
             <File name="render_formula.html" />
             <File name="calc_gauss.html" />
+            <File name="matrix\ElemGrinMedium.html" />
+            <File name="matrix\ElemGrinLens.html" />
+            <File name="calc_grin.html" />
         </Folder>
     </Project>
 </NotepadPlus>

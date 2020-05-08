@@ -3,14 +3,16 @@
 GRIN Medium
 ===========
 
-GRIN medium has a gradual variation of refractive index that produces lensing effect. The element has similar matrices for both work planes, but gradient constants can be set independently for tangential and sagittal planes.
+.. |n2| replace:: `n`\ :sub:`2`
+
+The GRIN medium has a quadratic transverse variation of refractive index, with either a maximum or minimum on the axis that produces a lensing effect. The element has similar matrices for both work planes, but gradient constants |n2| can be set independently for tangential and sagittal planes.
 
 Unlike :doc:`ElemGrinLens`, this element doesn't imply any interfaces. To get proper results, you should put appropriate interface elements at both sides of the medium.
 
-
     .. image:: ElemGrinMedium.png
     
-   
+When the gradient constant |n2| is set to zero, the element becomes simple :doc:`ElemMediaRange`.
+
 .. seealso::
 
     :doc:`./ElemGrinLens`,

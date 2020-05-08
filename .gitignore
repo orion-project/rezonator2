@@ -16,3 +16,4 @@ out
 __pycache__
 img/svgcleaner
 .venv
+.ipynb_checkpoints

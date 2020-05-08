@@ -46,6 +46,9 @@
         <file alias="gauss_near_zone">../img/toolbar/gauss_near_zone.svg</file>
         <file alias="gauss_pos_w">../img/toolbar/gauss_pos_w.svg</file>
         <file alias="gauss_pos_z">../img/toolbar/gauss_pos_z.svg</file>
+        <file alias="grin_calc_n2">../img/toolbar/grin_calc_n2.svg</file>
+        <file alias="grin_calc_f">../img/toolbar/grin_calc_f.svg</file>
+        <file alias="grin">../img/toolbar/grin.svg</file>
         <file alias="help">../img/toolbar/help.svg</file>
         <file alias="home">../img/toolbar/home.svg</file>
         <file alias="info">../img/toolbar/info.svg</file>
@@ -102,10 +105,15 @@
         <file alias="windows_close">../img/toolbar/windows_close.svg</file>
     </qresource>
     <qresource prefix="/toolbar16">
+        <file alias="calculator">../img/toolbar16/calculator.png</file>
         <file alias="check_all">../img/toolbar16/check_all.png</file>
         <file alias="check_invert">../img/toolbar16/check_invert.png</file>
         <file alias="check_none">../img/toolbar16/check_none.png</file>
+        <file alias="check_on">../img/toolbar16/check_on.png</file>
+        <file alias="check_off">../img/toolbar16/check_off.png</file>
         <file alias="langs">../img/toolbar16/flags.png</file>
+        <file alias="lock_on">../img/toolbar16/lock_on.png</file>
+        <file alias="lock_off">../img/toolbar16/lock_off.png</file>
         <file alias="menu">../img/toolbar16/menu.png</file>
         <file alias="params">../img/toolbar16/params.png</file>
         <file alias="plot_tracing">../img/toolbar16/plot_tracing.png</file>
@@ -148,6 +156,8 @@
         <file alias="ElemTiltedCrystal">../img/elem/ElemTiltedCrystal.svg</file>
         <file alias="ElemTiltedInterface">../img/elem/ElemTiltedInterface.svg</file>
         <file alias="ElemTiltedPlate">../img/elem/ElemTiltedPlate.svg</file>
+        <file alias="ElemThermoLens">../img/elem/ElemThermoLens.svg</file>
+        <file alias="ElemThermoMedium">../img/elem/ElemThermoMedium.svg</file>
     </qresource>
     <qresource prefix="/elem_icon">
         <file alias="ElemAxiconLens">../img/elem/ElemAxiconLens24.svg</file>
@@ -175,6 +185,8 @@
         <file alias="ElemTiltedCrystal">../img/elem/ElemTiltedCrystal24.svg</file>
         <file alias="ElemTiltedInterface">../img/elem/ElemTiltedInterface24.svg</file>
         <file alias="ElemTiltedPlate">../img/elem/ElemTiltedPlate24.svg</file>
+        <file alias="ElemThermoLens">../img/elem/ElemThermoLens24.svg</file>
+        <file alias="ElemThermoMedium">../img/elem/ElemThermoMedium24.svg</file>
     </qresource>
     <qresource prefix="/config_pages">
         <file alias="general">../img/misc/opts_gear.svg</file>
@@ -224,6 +236,7 @@
         <file alias="beampos_iface_right">../img/misc/beampos_iface_right.svg</file>
     </qresource>
     <qresource prefix="/drawing">
+        <file alias="grin_lens">../img/drawing/grin_lens.svg</file>
         <file alias="pump_waist">../img/drawing/pump_waist.png</file>
         <file alias="pump_front">../img/drawing/pump_front.png</file>
         <file alias="pump_ray_vector">../img/drawing/pump_ray_vector.png</file>

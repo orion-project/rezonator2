@@ -1,6 +1,7 @@
 #include "Elements.h"
 
 #include "Format.h"
+#include "../funcs/GrinCalculator.h"
 #include "../funcs/PumpCalculator.h"
 #include "core/OriFloatingPoint.h"
 
@@ -653,28 +654,35 @@ void ElemThickLens::setSubRangeSI(double value)
 //                             ElemGrinLens
 //------------------------------------------------------------------------------
 
-ElemGrinLens::ElemGrinLens() : ElementRange()
-{
+ElemGrinLens::ElemGrinLens() : ElementRange() {
+    _length->setDescription(qApp->translate("Param", "Thickness of the lens. "
+                                                     "Must be a positive value."));
+
+    _ior->setRawValue(2);
     _ior->setVisible(true);
+    _ior->setLabel(QStringLiteral("n0"));
+    _ior->setDescription(qApp->translate("Param", "Index of refraction at the optical axis. "
+                                                  "Must be a positive value."));
 
     _ior2t = new Z::Parameter(Z::Dims::fixed(),
         QStringLiteral("n2t"), QStringLiteral("n2t"),
         qApp->translate("Param", "IOR gradient (T)"),
-        qApp->translate("Param", "Radial gradient of index of refraction in tangential plane"));
+        qApp->translate("Param", "Radial gradient of index of refraction in tangential plane. "
+                                 "Positive for collecting lens, negative for diverging lens."));
     _ior2s = new Z::Parameter(Z::Dims::fixed(),
         QStringLiteral("n2s"), QStringLiteral("n2s"),
         qApp->translate("Param", "IOR gradient (S)"),
-        qApp->translate("Param", "Radial gradient of index of refraction in sagittal plane"));
+        qApp->translate("Param", "Radial gradient of index of refraction in sagittal plane. "
+                                 "Positive for collecting lens, negative for diverging lens."));
 
-    _ior2t->setValue(Z::Value(0.01, Z::Units::inv_m2()));
-    _ior2s->setValue(Z::Value(0.01, Z::Units::inv_m2()));
+    _ior2t->setValue(Z::Value(1, Z::Units::inv_m2()));
+    _ior2s->setValue(Z::Value(1, Z::Units::inv_m2()));
 
     addParam(_ior2t);
     addParam(_ior2s);
 }
 
-void ElemGrinLens::calcMatrixInternal()
-{
+void ElemGrinLens::calcMatrixInternal() {
     const double L = lengthSI();
     const double n0 = qAbs(ior());
     const double n2t = ior2t();
@@ -682,49 +690,52 @@ void ElemGrinLens::calcMatrixInternal()
 
     // When n2 = 0 then A = 1, C = 0, D = 1, B = 0/0 -> L/n0
 
-    if (n2t > 0)
-    {
+    if (n2t > 0) {
         const double g = sqrt(n2t / n0);
         _mt.assign(cos(g*L), sin(g*L)/n0/g, -n0*g*sin(g*L), cos(g*L));
-    }
-    else _mt.assign(1, L/n0, 0, 1);
+    } else if (n2t < 0) {
+        const double g = sqrt(-n2t / n0);
+        _mt.assign(cosh(g*L), sinh(g*L)/n0/g, n0*g*sinh(g*L), cosh(g*L));
+    } else _mt.assign(1, L/n0, 0, 1);
 
-    if (n2s > 0)
-    {
+    if (n2s > 0) {
         const double g = sqrt(n2s / n0);
         _ms.assign(cos(g*L), sin(g*L)/n0/g, -n0*g*sin(g*L), cos(g*L));
-    }
-    else _ms.assign(1, L/n0, 0, 1);
+    } else if (n2s < 0) {
+        const double g = sqrt(-n2s / n0);
+        _ms.assign(cosh(g*L), sinh(g*L)/n0/g, n0*g*sinh(g*L), cosh(g*L));
+    } else _ms.assign(1, L/n0, 0, 1);
 }
 
-void ElemGrinLens::setSubRangeSI(double value)
-{
+void ElemGrinLens::setSubRangeSI(double value) {
     const double L1 = value;
     const double L2 = lengthSI() - L1;
     const double n0 = qAbs(ior());
     const double n2t = ior2t();
     const double n2s = ior2s();
 
-    if (n2t > 0)
-    {
+    if (n2t > 0) {
         const double g = sqrt(n2t / n0);
         _mt1.assign(cos(g*L1), sin(g*L1)/n0/g, -g*sin(g*L1), cos(g*L1)/n0);
         _mt2.assign(cos(g*L2), sin(g*L2)/g, -n0*g*sin(g*L2), n0*cos(g*L2));
-    }
-    else
-    {
+    } else if (n2t < 0) {
+        const double g = sqrt(-n2t / n0);
+        _mt1.assign(cosh(g*L1), sinh(g*L1)/n0/g, g*sinh(g*L1), cosh(g*L1)/n0);
+        _mt2.assign(cosh(g*L2), sinh(g*L2)/g, n0*g*sinh(g*L2), n0*cosh(g*L2));
+    } else {
         _mt1.assign(1, L1/n0, 0, 1/n0);
         _mt2.assign(1, L2, 0, n0);
     }
 
-    if (n2s > 0)
-    {
+    if (n2s > 0) {
         const double g = sqrt(n2s / n0);
         _ms1.assign(cos(g*L1), sin(g*L1)/n0/g, -g*sin(g*L1), cos(g*L1)/n0);
         _ms2.assign(cos(g*L2), sin(g*L2)/g, -n0*g*sin(g*L2), n0*cos(g*L2));
-    }
-    else
-    {
+    } else if (n2s < 0) {
+        const double g = sqrt(-n2s / n0);
+        _ms1.assign(cosh(g*L1), sinh(g*L1)/n0/g, g*sinh(g*L1), cosh(g*L1)/n0);
+        _ms2.assign(cosh(g*L2), sinh(g*L2)/g, n0*g*sinh(g*L2), n0*cosh(g*L2));
+    } else {
         _ms1.assign(1, L1/n0, 0, 1/n0);
         _ms2.assign(1, L2, 0, n0);
     }
@@ -734,28 +745,35 @@ void ElemGrinLens::setSubRangeSI(double value)
 //                             ElemGrinMedium
 //------------------------------------------------------------------------------
 
-ElemGrinMedium::ElemGrinMedium() : ElementRange()
-{
+ElemGrinMedium::ElemGrinMedium() : ElementRange() {
+    _length->setDescription(qApp->translate("Param", "Thickness of material. "
+                                                     "Must be a positive value."));
+
+    _ior->setRawValue(2);
     _ior->setVisible(true);
+    _ior->setLabel(QStringLiteral("n0"));
+    _ior->setDescription(qApp->translate("Param", "Index of refraction at the optical axis. "
+                                                  "Must be a positive value."));
 
     _ior2t = new Z::Parameter(Z::Dims::fixed(),
         QStringLiteral("n2t"), QStringLiteral("n2t"),
         qApp->translate("Param", "IOR gradient (T)"),
-        qApp->translate("Param", "Radial gradient of index of refraction in tangential plane"));
+        qApp->translate("Param", "Radial gradient of index of refraction in tangential plane. "
+                                 "Positive for collecting medium, negative for diverging medium."));
     _ior2s = new Z::Parameter(Z::Dims::fixed(),
         QStringLiteral("n2s"), QStringLiteral("n2s"),
         qApp->translate("Param", "IOR gradient (S)"),
-        qApp->translate("Param", "Radial gradient of index of refraction in sagittal plane"));
+        qApp->translate("Param", "Radial gradient of index of refraction in sagittal plane. "
+                                 "Positive for collecting medium, negative for diverging medium."));
 
-    _ior2t->setValue(Z::Value(0.01, Z::Units::inv_m2()));
-    _ior2s->setValue(Z::Value(0.01, Z::Units::inv_m2()));
+    _ior2t->setValue(Z::Value(1, Z::Units::inv_m2()));
+    _ior2s->setValue(Z::Value(1, Z::Units::inv_m2()));
 
     addParam(_ior2t);
     addParam(_ior2s);
 }
 
-void ElemGrinMedium::calcMatrixInternal()
-{
+void ElemGrinMedium::calcMatrixInternal() {
     const double L = lengthSI();
     const double n0 = qAbs(ior());
     const double n2t = ior2t();
@@ -763,52 +781,145 @@ void ElemGrinMedium::calcMatrixInternal()
 
     // When n2 = 0 then A = 1, C = 0, D = 1, B = 0/0 -> L
 
-    if (n2t > 0)
-    {
+    if (n2t > 0) {
         const double g = sqrt(n2t / n0);
         _mt.assign(cos(g*L), sin(g*L)/g, -g*sin(g*L), cos(g*L));
-    }
-    else _mt.assign(1, L, 0, 1);
+    } else if (n2t < 0) {
+        const double g = sqrt(-n2t / n0);
+        _mt.assign(cosh(g*L), sinh(g*L)/g, g*sinh(g*L), cosh(g*L));
+    } else _mt.assign(1, L, 0, 1);
 
-    if (n2s > 0)
-    {
+    if (n2s > 0) {
         const double g = sqrt(n2s / n0);
         _ms.assign(cos(g*L), sin(g*L)/g, -g*sin(g*L), cos(g*L));
-    }
-    else _ms.assign(1, L, 0, 1);
+    } else if (n2s < 0) {
+        const double g = sqrt(-n2s / n0);
+        _ms.assign(cosh(g*L), sinh(g*L)/g, g*sinh(g*L), cosh(g*L));
+    } else _ms.assign(1, L, 0, 1);
 }
 
-void ElemGrinMedium::setSubRangeSI(double value)
-{
+void ElemGrinMedium::setSubRangeSI(double value) {
     const double L1 = value;
     const double L2 = lengthSI() - L1;
     const double n0 = qAbs(ior());
     const double n2t = ior2t();
     const double n2s = ior2s();
 
-    if (n2t > 0)
-    {
+    if (n2t > 0) {
         const double g = sqrt(n2t / n0);
         _mt1.assign(cos(g*L1), sin(g*L1)/g, -g*sin(g*L1), cos(g*L1));
         _mt2.assign(cos(g*L2), sin(g*L2)/g, -g*sin(g*L2), cos(g*L2));
-    }
-    else
-    {
+    } else if (n2t < 0) {
+        const double g = sqrt(-n2t / n0);
+        _mt1.assign(cosh(g*L1), sinh(g*L1)/g, g*sinh(g*L1), cosh(g*L1));
+        _mt2.assign(cosh(g*L2), sinh(g*L2)/g, g*sinh(g*L2), cosh(g*L2));
+    } else {
         _mt1.assign(1, L1, 0, 1);
         _mt2.assign(1, L2, 0, 1);
     }
 
-    if (n2s > 0)
-    {
+    if (n2s > 0) {
         const double g = sqrt(n2s / n0);
         _ms1.assign(cos(g*L1), sin(g*L1)/g, -g*sin(g*L1), cos(g*L1));
         _ms2.assign(cos(g*L2), sin(g*L2)/g, -g*sin(g*L2), cos(g*L2));
-    }
-    else
-    {
+    } else if (n2s < 0) {
+        const double g = sqrt(-n2s / n0);
+        _ms1.assign(cosh(g*L1), sinh(g*L1)/g, g*sinh(g*L1), cosh(g*L1));
+        _ms2.assign(cosh(g*L2), sinh(g*L2)/g, g*sinh(g*L2), cosh(g*L2));
+    } else {
         _ms1.assign(1, L1, 0, 1);
         _ms2.assign(1, L2, 0, 1);
     }
+}
+
+//------------------------------------------------------------------------------
+//                             ElemThermoLens
+//------------------------------------------------------------------------------
+
+ElemThermoLens::ElemThermoLens() : ElementRange() {
+    _length->setDescription(qApp->translate("Param", "Thickness of material. "
+                                                     "Must be a positive value."));
+    _ior->setRawValue(2);
+    _ior->setVisible(true);
+    _ior->setLabel(QStringLiteral("n0"));
+    _ior->setDescription(qApp->translate("Param", "Index of refraction at the optical axis. "
+                                                  "Must be a positive value."));
+
+    _focus = new Z::Parameter(Z::Dims::linear(),
+        QStringLiteral("F"), QStringLiteral("F"),
+        qApp->translate("Param", "Focal length"),
+        qApp->translate("Param", "Distance at wich parallel input rays get converged. "
+                                "Distance is measured from the exit face of the lens. "
+                                "Must be a positive value."));
+    _focus->setValue(1_m);
+
+    addParam(_focus);
+}
+
+void ElemThermoLens::calcMatrixInternal() {
+    const double L = lengthSI();
+    const double F = focus();
+    const double n0 = ior();
+    _n2 = GrinCalculator::solve_n2(L, F, n0);
+    const double g = sqrt(_n2 / n0);
+    _mt.assign(cos(g*L), sin(g*L)/n0/g, -n0*g*sin(g*L), cos(g*L));
+    _ms = _mt;
+}
+
+void ElemThermoLens::setSubRangeSI(double value) {
+    const double L1 = value;
+    const double L2 = lengthSI() - L1;
+    const double n0 = ior();
+    const double g = sqrt(_n2 / n0);
+    _mt1.assign(cos(g*L1), sin(g*L1)/n0/g, -g*sin(g*L1), cos(g*L1)/n0);
+    _mt2.assign(cos(g*L2), sin(g*L2)/g, -n0*g*sin(g*L2), n0*cos(g*L2));
+    _ms1 = _mt1;
+    _ms2 = _mt2;
+}
+
+//------------------------------------------------------------------------------
+//                             ElemThermoMedium
+//------------------------------------------------------------------------------
+
+ElemThermoMedium::ElemThermoMedium() : ElementRange() {
+    _length->setDescription(qApp->translate("Param", "Thickness of material. "
+                                                     "Must be a positive value."));
+    _ior->setRawValue(2);
+    _ior->setVisible(true);
+    _ior->setLabel(QStringLiteral("n0"));
+    _ior->setDescription(qApp->translate("Param", "Index of refraction at the optical axis. "
+                                                  "Must be a positive value."));
+
+    _focus = new Z::Parameter(Z::Dims::linear(),
+        QStringLiteral("F"), QStringLiteral("F"),
+        qApp->translate("Param", "Focal length"),
+        qApp->translate("Param", "Distance at wich parallel input rays get converged. "
+                                "Distance is measured from the exit face of the lens. "
+                                "Must be a positive value."));
+    _focus->setValue(1_m);
+
+    addParam(_focus);
+}
+
+void ElemThermoMedium::calcMatrixInternal() {
+    const double L = lengthSI();
+    const double n0 = qAbs(ior());
+    const double F = focus();
+    _n2 = GrinCalculator::solve_n2(L, F, n0);
+    const double g = sqrt(_n2 / n0);
+    _mt.assign(cos(g*L), sin(g*L)/g, -g*sin(g*L), cos(g*L));
+    _ms = _mt;
+}
+
+void ElemThermoMedium::setSubRangeSI(double value) {
+    const double L1 = value;
+    const double L2 = lengthSI() - L1;
+    const double n0 = ior();
+    const double g = sqrt(_n2 / n0);
+    _mt1.assign(cos(g*L1), sin(g*L1)/g, -g*sin(g*L1), cos(g*L1));
+    _mt2.assign(cos(g*L2), sin(g*L2)/g, -g*sin(g*L2), cos(g*L2));
+    _ms1 = _mt1;
+    _ms2 = _mt2;
 }
 
 //------------------------------------------------------------------------------

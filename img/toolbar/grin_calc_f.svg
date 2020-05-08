@@ -1,0 +1,8 @@
+<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m24 11.01-12.99-3.09-11.01-5.91v20.5l11.72-5.68 12.28-2.32z" fill="#ff4300" fill-opacity=".36"/>
+<g fill="none">
+<path d="m24 11.01c-5.45-.16-17.21-3.22-24-9" stroke="#ff4300" stroke-linecap="round" stroke-width="1.5"/>
+<path d="m0 12.51h24" stroke="#182e6d"/>
+<path d="m24 14c-5.45.16-17.2 3.22-24 9" stroke="#ff4300" stroke-linecap="round" stroke-width="1.5"/>
+</g>
+</svg>

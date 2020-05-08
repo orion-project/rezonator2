@@ -26,11 +26,15 @@
     margin-left: 40px;
     margin-right: 20px;
   }
-  .frame {
+  .frames {
+    display: flex;
+    flex-direction: column;
     position: absolute;
-    border: 1px dashed red;
     left: 0;
     right: 0;
+  }
+  .frame {
+    border: 1px dashed red;
   }
   .drawing {
     margin-left: 20px;
@@ -40,15 +44,17 @@
   </style>
   <body>
     <div class="paper">
-      <div class="frame" style="top: 0; height: 370px"></div>
-      <div class="frame" style="top: 385px; height: 260px"></div>
-      <div class="frame" style="top: 660px; height: 260px"></div>
+      <div class="frames">
+        <div class="frame" style="height: 570px"></div>
+        <div class="frame" style="height: 270px; margin-top: 20px;"></div>
+        <div class="frame" style="height: 260px; margin-top: 10px;"></div>
+      </div>
       <div>
         \[ n(r) = n_0 - \frac { n_0 \; r^2 } 2
           \;\;\;\;\;\;\;\;\;\;\;\;
           r^2 = x^2 + y^2
           \;\;\;\;\;\;\;\;\;\;\;\;
-          \gamma^2 \equiv \frac {n_2} {n_0} \]
+        \]
       </div>
       <div class="drawing-and-formula">
         <div>
@@ -56,6 +62,7 @@
         </div>
         <div class="formulas-column">
           <div style="margin-top:40px">
+            \[ n_2 > 0  \;\;\;\;\;\;\;\; \gamma = \sqrt \frac {n_2} {n_0} \]
             \[
             M\bigg\rvert_{n_2 > 0} = \begin{bmatrix}
                 \cos(\gamma L) & \cfrac {\sin(\gamma L)} {n_0 \gamma} \\
@@ -63,16 +70,17 @@
                 \end{bmatrix}
             \]
           </div>
-          <div style="margin-top:40px">
+          <div style="margin-top:60px">
+            \[ n_2 < 0 \;\;\;\;\;\;\;\; \gamma = \sqrt \frac {|n_2|} {n_0} \]
             \[
             M\bigg\rvert_{n_2 < 0} = \begin{bmatrix}
                 \cosh(\gamma L) & \cfrac {\sinh(\gamma L)} {n_0 \gamma} \\
-                -n_0 \gamma \: \sinh(\gamma L) & \cosh(\gamma L) 
+                n_0 \gamma \: \sinh(\gamma L) & \cosh(\gamma L) 
                 \end{bmatrix}
             \]
           </div>
           
-          <div style="margin-top:100px">
+          <div style="margin-top:135px">
             \[
             M_{LF}\bigg\rvert_{n_2 > 0} = \begin{bmatrix}
                 \cos(\gamma L) & \cfrac {\sin(\gamma L)} {n_0 \gamma} \\
@@ -84,16 +92,16 @@
             \[
             M_{LF}\bigg\rvert_{n_2 < 0} = \begin{bmatrix}
                 \cosh(\gamma L) & \cfrac { \sinh(\gamma L) } {n_0 \gamma} \\
-                -\gamma \: \sinh(\gamma L) & \cfrac {\cosh(\gamma L)} {n_0}
+                \gamma \: \sinh(\gamma L) & \cfrac {\cosh(\gamma L)} {n_0}
                 \end{bmatrix}
             \]
           </div>
 
-          <div style="margin-top:75px">
+          <div style="margin-top:85px">
             \[
             M_{RT}\bigg\rvert_{n_2 > 0} = \begin{bmatrix}
                 \cos(\gamma L) & \cfrac {\sin(\gamma L)} {\gamma} \\
-              -n_0 \gamma \: \sin(\gamma L) & n_0 \cos(\gamma L) 
+                -n_0 \gamma \: \sin(\gamma L) & n_0 \cos(\gamma L) 
                 \end{bmatrix}
             \]
           </div>
@@ -101,7 +109,7 @@
             \[
             M_{RT}\bigg\rvert_{n_2 < 0} = \begin{bmatrix}
                 \cosh(\gamma L) & \cfrac {\sinh(\gamma L)} {\gamma} \\
-                -n_0 \gamma \: \sinh(\gamma L) & n_0 \cosh(\gamma L) 
+                n_0 \gamma \: \sinh(\gamma L) & n_0 \cosh(\gamma L) 
                 \end{bmatrix}
             \]
           </div>

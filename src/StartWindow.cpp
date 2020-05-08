@@ -6,6 +6,7 @@
 #include "CalculatorWindow.h"
 #include "CommonData.h"
 #include "GaussCalculatorWindow.h"
+#include "GrinLensWindow.h"
 #include "HelpSystem.h"
 #include "ProjectOperations.h"
 #include "ProjectWindow.h"
@@ -493,6 +494,7 @@ ToolsStartPanel::ToolsStartPanel() : StartPanel("panel_tools")
     layout->addWidget(makeHeader(tr("Tools")));
     layout->addWidget(makeButton(":/toolbar/gauss_calculator", tr("Gauss Calculator"), SLOT(showGaussCalculator())));
     layout->addWidget(makeButton(":/window_icons/calculator", tr("Formula Calculator"), SLOT(showCalculator())));
+    //layout->addWidget(makeButton(":/toolbar/grin", tr("GRIN Lens Assessment"), SLOT(showGrinLens())));
     if (AppSettings::instance().isDevMode)
         layout->addWidget(makeButton(":/toolbar/protocol", tr("Edit Stylesheet"), SLOT(editStyleSheet())));
     layout->addWidget(makeButton(":/toolbar/settings", tr("Edit Settings"), SLOT(editAppSettings())));
@@ -509,6 +511,11 @@ void ToolsStartPanel::showGaussCalculator()
 void ToolsStartPanel::showCalculator()
 {
     CalculatorWindow::showWindow();
+}
+
+void ToolsStartPanel::showGrinLens()
+{
+    GrinLensWindow::showWindow();
 }
 
 void ToolsStartPanel::editStyleSheet()

@@ -747,6 +747,9 @@ ElementNeighbour getNeighbour(Schema* schema, int index) {
         if (dynamic_cast<ElemGrinMedium*>(elem))
             return ElementNeighbour::Grin;
 
+        if (dynamic_cast<ElemThermoMedium*>(elem))
+            return ElementNeighbour::Grin;
+
         if (dynamic_cast<ElemEmptyRange*>(elem))
             return ElementNeighbour::Air;
     }
@@ -1445,7 +1448,9 @@ ElementLayout* make(Element *elem) {
         registerLayout<ElemSphericalInterface, ElemSphericalInterfaceLayout::Layout>();
         registerLayout<ElemThickLens, ElemThickLensLayout::Layout>();
         registerLayout<ElemGrinLens, ElemGrinLensLayout::Layout>();
+        registerLayout<ElemThermoLens, ElemGrinLensLayout::Layout>();
         registerLayout<ElemGrinMedium, ElemGrinMediumLayout::Layout>();
+        registerLayout<ElemThermoMedium, ElemGrinMediumLayout::Layout>();
         registerLayout<ElemAxiconMirror, ElemAxiconMirrorLayout::Layout>();
         registerLayout<ElemAxiconLens, ElemAxiconLensLayout::Layout>();
     }

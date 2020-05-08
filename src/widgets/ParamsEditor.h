@@ -45,6 +45,16 @@ public:
         /// It should return an addtional control to be inserted into each parmeter editor.
         std::function<QWidget*(Z::Parameter*)> makeAuxControl;
 
+        /// Wether to show a panel displaying the parameter info.
+        bool showInfoPanel = true;
+
+        /// When true, the parameter change is applied immediately after the parameters was edited.
+        /// When false, the client has to call ParamsEditor::applyValues() when needed.
+        bool autoApply = false;
+
+        /// An additional control displaying at the bottom of all editors just above the info panel.
+        QWidget* auxControl = nullptr;
+
         Options(const Z::Parameters *p) : params(p) {}
     };
 
@@ -76,7 +86,7 @@ private:
     const Options _options;
     const Z::Parameters* _params;
     QList<ParamEditor*> _editors;
-    Ori::Widgets::InfoPanel* _infoPanel;
+    Ori::Widgets::InfoPanel* _infoPanel = nullptr;
     QBoxLayout* _paramsLayout;
 
     void adjustEditors();

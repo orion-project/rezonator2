@@ -628,7 +628,7 @@ QWidget* GaussCalculatorWindow::makeToolbar()
 
     auto actionCalc = Ori::Gui::action(tr("Formula Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
 
-    auto actionHelp = Ori::Gui::action(tr("Help"), this, SLOT(showHelp()), ":/toolbar/help");
+    auto actionHelp = Ori::Gui::action(tr("Help"), this, SLOT(showHelp()), ":/toolbar/help", QKeySequence::HelpContents);
 
     auto toolbar = new Ori::Widgets::FlatToolBar;
     toolbar->setIconSize(AppSettings::instance().toolbarIconSize());

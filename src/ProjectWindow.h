@@ -72,7 +72,8 @@ private:
             *actnFuncMultibeamCaustic, *actnFuncBeamParamsAtElems;
 
     QAction  *actnToolsGaussCalc, *actnToolsCustomElems, *actnToolSettings,
-             *actnToolFlipSchema, *actnToolsCalc, *actnToolAdjust;
+             *actnToolFlipSchema, *actnToolsCalc, *actnToolAdjust,
+             *actnToolGrinLens;
 
     QAction *actnWndClose, *actnWndCloseAll, *actnWndTile, *actnWndCascade,
             *actnWndSchema, *actnWndParams, *actnWndProtocol, *actnWndPumps;
@@ -107,6 +108,7 @@ private:
     void shortcutEnterActivated();
 
 private slots:
+    void showGrinLens();
     void showCustomElems();
     void showSettings();
     void showProtocolWindow();

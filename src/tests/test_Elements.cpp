@@ -376,11 +376,13 @@ TEST_METHOD(GrinLens)
     ELEM(GrinLens, 4)
     SET_PARAM(L, 10, mm)
     SET_PARAM(n, 1.5, none)
-    SET_PARAM(n2t, 0.2, none)
-    SET_PARAM(n2s, 0.3, none)
 
     ASSERT_RAW_PARAM(ior, 1.5)
     ASSERT_RAW_PARAM(lengthSI, 0.01)
+
+    // positive
+    SET_PARAM(n2t, 0.2, none)
+    SET_PARAM(n2s, 0.3, none)
     ASSERT_RAW_PARAM(ior2t, 0.2)
     ASSERT_RAW_PARAM(ior2s, 0.3)
 
@@ -392,6 +394,36 @@ TEST_METHOD(GrinLens)
     ASSERT_MATRIX(s1, 0.9999991, 0.0020000, -0.0006000, 0.6666661)
     ASSERT_MATRIX(t2, 0.9999967, 0.0070000, -0.0014000, 1.4999951)
     ASSERT_MATRIX(s2, 0.9999951, 0.0070000, -0.0021000, 1.4999927)
+
+    // negative
+    SET_PARAM(n2t, -0.2, none)
+    SET_PARAM(n2s, -0.3, none)
+    ASSERT_RAW_PARAM(ior2t, -0.2)
+    ASSERT_RAW_PARAM(ior2s, -0.3)
+
+    ASSERT_MATRIX(t, 1.0000067, 0.0066667, 0.0020000, 1.0000067)
+    ASSERT_MATRIX(s, 1.0000100, 0.0066667, 0.0030000, 1.0000100)
+
+    elem->setSubRangeSI(0.003);
+    ASSERT_MATRIX(t1, 1.0000006, 0.0020000, 0.0004000, 0.6666671)
+    ASSERT_MATRIX(s1, 1.0000009, 0.0020000, 0.0006000, 0.6666673)
+    ASSERT_MATRIX(t2, 1.0000033, 0.0070000, 0.0014000, 1.5000049)
+    ASSERT_MATRIX(s2, 1.0000049, 0.0070000, 0.0021000, 1.5000074)
+
+    // zero
+    SET_PARAM(n2t, 0, none)
+    SET_PARAM(n2s, 0, none)
+    ASSERT_RAW_PARAM(ior2t, 0)
+    ASSERT_RAW_PARAM(ior2s, 0)
+
+    ASSERT_MATRIX(t, 1, 0.01/1.5, 0, 1)
+    ASSERT_MATRIX(s, 1, 0.01/1.5, 0, 1)
+
+    elem->setSubRangeSI(0.003);
+    ASSERT_MATRIX(t1, 1, 0.003/1.5, 0, 1.0/1.5)
+    ASSERT_MATRIX(s1, 1, 0.003/1.5, 0, 1.0/1.5)
+    ASSERT_MATRIX(t2, 1, 0.01-0.003, 0, 1.5)
+    ASSERT_MATRIX(s2, 1, 0.01-0.003, 0, 1.5)
 }
 
 // Calculation: $PROJECT/calc/ElemGrinLens.py
@@ -400,11 +432,13 @@ TEST_METHOD(GrinMedium)
     ELEM(GrinMedium, 4)
     SET_PARAM(L, 10, mm)
     SET_PARAM(n, 1.5, none)
-    SET_PARAM(n2t, 0.2, none)
-    SET_PARAM(n2s, 0.3, none)
 
     ASSERT_RAW_PARAM(ior, 1.5)
     ASSERT_RAW_PARAM(lengthSI, 0.01)
+
+    // positive
+    SET_PARAM(n2t, 0.2, none)
+    SET_PARAM(n2s, 0.3, none)
     ASSERT_RAW_PARAM(ior2t, 0.2)
     ASSERT_RAW_PARAM(ior2s, 0.3)
 
@@ -416,6 +450,80 @@ TEST_METHOD(GrinMedium)
     ASSERT_MATRIX(s1, 0.9999991, 0.0030000, -0.0006000, 0.9999991)
     ASSERT_MATRIX(t2, 0.9999967, 0.0070000, -0.0009333, 0.9999967)
     ASSERT_MATRIX(s2, 0.9999951, 0.0070000, -0.0014000, 0.9999951)
+
+    // negative
+    SET_PARAM(n2t, -0.2, none)
+    SET_PARAM(n2s, -0.3, none)
+    ASSERT_RAW_PARAM(ior2t, -0.2)
+    ASSERT_RAW_PARAM(ior2s, -0.3)
+
+    ASSERT_MATRIX(t, 1.0000067, 0.0100000, 0.0013333, 1.0000067)
+    ASSERT_MATRIX(s, 1.0000100, 0.0100000, 0.0020000, 1.0000100)
+
+    elem->setSubRangeSI(0.003);
+    ASSERT_MATRIX(t1, 1.0000006, 0.0030000, 0.0004000, 1.0000006)
+    ASSERT_MATRIX(s1, 1.0000009, 0.0030000, 0.0006000, 1.0000009)
+    ASSERT_MATRIX(t2, 1.0000033, 0.0070000, 0.0009333, 1.0000033)
+    ASSERT_MATRIX(s2, 1.0000049, 0.0070000, 0.0014000, 1.0000049)
+
+    // zero
+    SET_PARAM(n2t, 0, none)
+    SET_PARAM(n2s, 0, none)
+    ASSERT_RAW_PARAM(ior2t, 0)
+    ASSERT_RAW_PARAM(ior2s, 0)
+
+    ASSERT_MATRIX(t, 1, 0.01, 0, 1)
+    ASSERT_MATRIX(s, 1, 0.01, 0, 1)
+
+    elem->setSubRangeSI(0.003);
+    ASSERT_MATRIX(t1, 1, 0.003, 0, 1)
+    ASSERT_MATRIX(s1, 1, 0.003, 0, 1)
+    ASSERT_MATRIX(t2, 1, 0.01-0.003, 0, 1)
+    ASSERT_MATRIX(s2, 1, 0.01-0.003, 0, 1)
+}
+
+// Calculation: $PROJECT/calc/ElemGrinLens.py
+TEST_METHOD(ThermoLens)
+{
+    ELEM(ThermoLens, 3)
+    SET_PARAM(L, 100, mm)
+    SET_PARAM(n, 1.7, none)
+    SET_PARAM(F, 1.5, m) // n2=6.580425421766774
+
+    ASSERT_RAW_PARAM(ior, 1.7)
+    ASSERT_RAW_PARAM(lengthSI, 0.1)
+    ASSERT_RAW_PARAM(focus, 1.5)
+
+    ASSERT_MATRIX(t, 0.9807082, 0.0584448, -0.6538055, 0.9807082)
+    ASSERT_MATRIX(s, 0.9807082, 0.0584448, -0.6538055, 0.9807082)
+
+    elem->setSubRangeSI(0.03);
+    ASSERT_MATRIX(t1, 0.9982586, 0.0176368, -0.1160577, 0.5872110)
+    ASSERT_MATRIX(s1, 0.9982586, 0.0176368, -0.1160577, 0.5872110)
+    ASSERT_MATRIX(t2, 0.9905314, 0.0697789, -0.4591750, 1.6839034)
+    ASSERT_MATRIX(s2, 0.9905314, 0.0697789, -0.4591750, 1.6839034)
+}
+
+// Calculation: $PROJECT/calc/ElemGrinLens.py
+TEST_METHOD(ThermoMedium)
+{
+    ELEM(ThermoMedium, 3)
+    SET_PARAM(L, 100, mm)
+    SET_PARAM(n, 1.7, none)
+    SET_PARAM(F, 1.5, m) // n2=6.580425421766774
+
+    ASSERT_RAW_PARAM(ior, 1.7)
+    ASSERT_RAW_PARAM(lengthSI, 0.1)
+    ASSERT_RAW_PARAM(focus, 1.5)
+
+    ASSERT_MATRIX(t, 0.9807082, 0.0993561, -0.3845914, 0.9807082)
+    ASSERT_MATRIX(s, 0.9807082, 0.0993561, -0.3845914, 0.9807082)
+
+    elem->setSubRangeSI(0.03);
+    ASSERT_MATRIX(t1, 0.9982586, 0.0299826, -0.1160577, 0.9982586)
+    ASSERT_MATRIX(s1, 0.9982586, 0.0299826, -0.1160577, 0.9982586)
+    ASSERT_MATRIX(t2, 0.9905314, 0.0697789, -0.2701030, 0.9905314)
+    ASSERT_MATRIX(s2, 0.9905314, 0.0697789, -0.2701030, 0.9905314)
 }
 
 // Calculation: $PROJECT/calc/Elements.py
@@ -557,6 +665,8 @@ TEST_GROUP("Elements",
            ADD_TEST(Point),
            ADD_TEST(GrinLens),
            ADD_TEST(GrinMedium),
+           ADD_TEST(ThermoLens),
+           ADD_TEST(ThermoMedium),
            ADD_TEST(ThickLens),
            ADD_TEST(NormalInterface),
            ADD_TEST(BrewsterInterface),

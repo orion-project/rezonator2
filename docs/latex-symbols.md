@@ -218,3 +218,18 @@ $$
 a & b & c
 \end{Vmatrix}
 $$
+
+## Brackets
+
+Vertical line
+
+```latex
+\bigg\rvert
+```
+
+$$
+M\bigg\rvert_{n_2 < 0} = \begin{bmatrix}
+                \cosh(\gamma L) & \cfrac {\sinh(\gamma L)} {\gamma} \\
+                \gamma \: \sinh(\gamma L) & \cosh(\gamma L)
+                \end{bmatrix}
+$$

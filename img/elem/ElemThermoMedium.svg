@@ -1,0 +1,32 @@
+<svg height="220" width="260" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<linearGradient id="a" gradientTransform="matrix(1.11 0 0 1 -5.27 7.63)" gradientUnits="userSpaceOnUse" x1="75.63" x2="75.63" y1="48.89" y2="206.81">
+<stop offset="0" stop-color="#f0f0f0"/>
+<stop offset=".5" stop-color="#6a6a6a"/>
+<stop offset="1" stop-color="#f0f0f0"/>
+</linearGradient>
+<path d="m16.46 57.13h130.34c5.31 4.09 12.72 16.41 3.93 31.25-13.21 22.29-2.5 25.88 2.71 41.28 6.39 18.92-17.85 32.36-3.31 55.15 12.1 18.96-6.53 26.36-3.33 29.32h-130.34c4.35-10.63 8.33-23.41.75-36.17-9.95-16.75 9.78-34.82 3.75-46.66-10.47-20.56-7.37-35.69-2.75-43.56 4.64-7.91 6.32-19.19-1.75-30.61z" fill="url(#a)"/>
+<path d="m3.5 134h250.42" fill="none" stroke="#000" stroke-width="4"/>
+<path d="m123.64 32.18 4.91 4.36-4.91 3.64m-87-8-4.91 4.18 4.91 3.82m-4.23-3.68h95.47" fill="none" stroke="#000"/>
+<text font-family="Times New Roman" font-size="10" font-style="italic" x="71.25" y="31.99"><tspan font-size="36" x="71.25" y="31.99">L</tspan></text>
+<g fill="none" stroke="#000">
+<path d="m3.5 73.06h66.8c80.53 0 134.88 42.59 181.63 79.99" stroke-width="4"/>
+<path d="m30.5 32.82v22.47m99-22.47v22.47"/>
+<g stroke-linecap="round" stroke-width="3" transform="translate(0 5)">
+<path d="m248 135 7-6-7-6"/>
+<path d="m252.5 117.22.71-9.19-9.19.71"/>
+<path d="m252.5 140.8.71 9.19-9.19-.71"/>
+</g>
+</g>
+<g font-family="Times New Roman" font-style="italic" transform="translate(1.6 4.71)">
+<text font-size="10" x="64" y="115.02"><tspan font-size="36" x="64" y="115.02">n</tspan></text>
+<text font-size="7.02" transform="scale(.99 1.01)" x="80.3" y="122.41"><tspan font-size="25.28" x="80.3" y="122.41">0</tspan></text>
+</g>
+<g fill="none" stroke="#000">
+<path d="m3.5 195h66.8c80.53 0 134.87-42.59 181.62-79.99" stroke-width="4"/>
+<path d="m15.5 55.5h129m0 157h-129" stroke-width="3"/>
+<path d="m30.5 56.82v154.47m99-154.47v154.47" stroke-dasharray="3 3"/>
+<path d="m222.58 32.18 4.91 4.36-4.91 3.64m-87-8-4.91 4.18 4.91 3.82m-4.23-3.68h95.47"/>
+</g>
+<text font-family="Times New Roman" font-size="10" font-style="italic" x="170.19" y="31.99"><tspan font-size="36" x="170.19" y="31.99">F</tspan></text>
+<path d="m228.44 32.82v100.47" fill="none" stroke="#000"/>
+</svg>

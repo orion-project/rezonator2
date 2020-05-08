@@ -2,34 +2,43 @@
 
 reZonator user manual is built using [Sphinx Documentation Builder](http://www.sphinx-doc.org).
 
-## Install
+## Prepare environment
+
+The virtual environment shared between different project parts, e.g., `calc` and `help`, so it's better to make it on the project top level.
 
 Linux, macOS:
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-python3 -m pip install sphinx
 ```
 
-Windows:
+Windows (there is no `python3` command on Windows so be sure Python 3 is in the PATH):
+
 ```bash
 python -m venv .venv
-.venv\Scripts\activate.bat
+.venv\Scripts\activate
+```
+
+## Install requirements
+
+For building help we only need
+
+```bash
 python -m pip install sphinx
 ```
-Python for Windows doesn't provide the alias `python3`, so be sure Python 3 is in the `PATH`
 
 ## Build
 
 Linux, macOS:
+
 ```bash
-source .venv/bin/activate
 ./make.sh
 ```
 
 Windows:
+
 ```bash
-.venv\Scripts\activate.bat
 make.bat
 ```
 

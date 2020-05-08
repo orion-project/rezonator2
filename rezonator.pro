@@ -63,6 +63,7 @@ HEADERS += \
     src/ElemFormulaWindow.h \
     src/ElementPropsDialog.h \
     src/ElementsCatalogDialog.h \
+    src/GrinLensWindow.h \
     src/HelpSystem.h \
     src/ProjectOperations.h \
     src/ProjectWindow.h \
@@ -100,6 +101,7 @@ HEADERS += \
     src/funcs/FunctionGraph.h \
     src/funcs/FunctionUtils.h \
     src/funcs/GaussCalculator.h \
+    src/funcs/GrinCalculator.h \
     src/funcs/InfoFunctions.h \
     src/funcs/MultibeamCausticFunction.h \
     src/funcs/MultirangeCausticFunction.h \
@@ -180,6 +182,7 @@ SOURCES += \
     src/ElemFormulaWindow.cpp \
     src/ElementPropsDialog.cpp \
     src/ElementsCatalogDialog.cpp \
+    src/GrinLensWindow.cpp \
     src/HelpSystem.cpp \
     src/ProjectOperations.cpp \
     src/ProjectWindow.cpp \
@@ -217,6 +220,7 @@ SOURCES += \
     src/funcs/FunctionGraph.cpp \
     src/funcs/FunctionUtils.cpp \
     src/funcs/GaussCalculator.cpp \
+    src/funcs/GrinCalculator.cpp \
     src/funcs/InfoFunctions.cpp \
     src/funcs/MultibeamCausticFunction.cpp \
     src/funcs/MultirangeCausticFunction.cpp \
@@ -249,6 +253,7 @@ SOURCES += \
     src/tests/test_ElementFormula.cpp \
     src/tests/test_Elements.cpp \
     src/tests/test_ElementsImages.cpp \
+    src/tests/test_GrinCalculator.cpp \
     src/tests/test_InfoFunctions.cpp \
     src/tests/test_LuaHelper.cpp \
     src/tests/test_Math.cpp \

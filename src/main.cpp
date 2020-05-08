@@ -2,6 +2,7 @@
 #include "CalculatorWindow.h"
 #include "CustomElemsWindow.h"
 #include "GaussCalculatorWindow.h"
+#include "GrinLensWindow.h"
 #include "ProjectOperations.h"
 #include "ProjectWindow.h"
 #include "StartWindow.h"
@@ -94,6 +95,11 @@ int main(int argc, char* argv[])
         else if (toolName == "elems")
         {
             CustomElemsWindow::showWindow();
+            return app.exec();
+        }
+        else if (toolName == "grin")
+        {
+            GrinLensWindow::showWindow();
             return app.exec();
         }
         else
