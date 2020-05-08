@@ -19,43 +19,33 @@ Several elements have more matrices using in some specific calculations. For exa
 Interface elements have no index of refraction. Instead, they take indexes of adjacent elements to calculate their matrices. So there is some obvious suggestion about the placement of an interface element in the schema - the left and the right adjacent elements of the interface should be either :doc:`matrix/ElemEmptyRange` or :doc:`matrix/ElemMediaRange`. |rezonator| doesn't complain if it is not, but then one can't count on correct results.
 
 
-**Common Elements**
-
 .. toctree::
    
-   matrix/ElemEmptyRange
-   matrix/ElemPlate
-   matrix/ElemFlatMirror
-   matrix/ElemCurveMirror
-   matrix/ElemThinLens
-   matrix/ElemTiltedCrystal
-   matrix/ElemTiltedPlate
-   matrix/ElemBrewsterCrystal
-   matrix/ElemBrewsterPlate
-   
-**Additional Elements**
-
-.. toctree::
-
-   matrix/ElemMatrix
-   matrix/ElemPoint
-   matrix/ElemThickLens
-   matrix/ElemGrinLens
-   matrix/ElemThinCylinderLensT
-   matrix/ElemThinCylinderLensS
-   matrix/ElemAxiconMirror
    matrix/ElemAxiconLens
-   
-**Media and Interfaces**
-
-.. toctree::
-
-   matrix/ElemMediaRange
+   matrix/ElemAxiconMirror
+   matrix/ElemBrewsterCrystal
+   matrix/ElemBrewsterInterface
+   matrix/ElemBrewsterPlate
+   matrix/ElemMatrix
+   matrix/ElemEmptyRange
+   matrix/ElemFlatMirror
+   matrix/ElemGrinLens
    matrix/ElemGrinMedium
    matrix/ElemNormalInterface
-   matrix/ElemBrewsterInterface
-   matrix/ElemTiltedInterface
+   matrix/ElemPlate
+   matrix/ElemPoint
+   matrix/ElemThinCylinderLensS
+   matrix/ElemMediaRange
    matrix/ElemSphericalInterface
+   matrix/ElemCurveMirror
+   matrix/ElemThinCylinderLensT
+   matrix/ElemThermoLens
+   matrix/ElemThermoMedium
+   matrix/ElemThickLens
+   matrix/ElemThinLens
+   matrix/ElemTiltedCrystal
+   matrix/ElemTiltedInterface
+   matrix/ElemTiltedPlate
 
    
 .. seealso::

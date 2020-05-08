@@ -274,7 +274,7 @@ DECLARE_ELEMENT_END
 
 DECLARE_ELEMENT(ElemThermoMedium, ElementRange)
     ElemThermoMedium();
-    TYPE_NAME(qApp->translate("Elements", "Thermo medium"))
+    TYPE_NAME(qApp->translate("Elements", "Thermal medium"))
     DEFAULT_LABEL("TM")
     CALC_MATRIX
     SUB_RANGE

@@ -11,10 +11,7 @@
           "text": "New element: Matrix element with single matrix (T=S)."
         },
         {
-          "text": "New element: GRIN medium."
-        },
-        {
-          "text": "New elements: Thermal lens, Thermal medium."
+          "text": "New elements: GRIN medium, Thermal lens, Thermal medium."
         },
         {
           "text": "GRIN lens can accept negative gradient constants n2."

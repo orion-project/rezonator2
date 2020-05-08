@@ -8,7 +8,7 @@ Gaussian Beam Calculator
 
 :menuselection:`Tools --> Gaussian Beam Calculator`
 
-.. Text and formulas are in the algorithm description `../calc/GaussCalculator.md`, keep these docs in sync
+.. Text and formulas are in the algorithm description `./calc_gauss.html`, keep these docs in sync
 
 The tool *Gauss Beam Calculator* computes some free parameters of the Gaussian beam when changing one of its parameters and fixing some others. As it is not possible to make all the parameters to be free, we introduce two fixing modes called *Lock waist* and *Lock front*.
 

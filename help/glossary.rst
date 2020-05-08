@@ -19,6 +19,22 @@ When the :doc:`round-trip matrix <round_trip_matrix>` is calculated, elements' m
 
 
 
+.. _ray_vector:
+.. index:: single: ray vector
+
+Ray Vector
+----------
+
+Ray vector represents a geometric beam approximation when a beam described by two parameters - a distance from the optical axis `r` and an angle between the beam and the optical axis `V`.
+
+    .. image:: img/ray_vector.png
+
+When a beam traverses an optical system, parameters of the output beam can be expresses from parameters of the input beam and system's ray matrix `M = [A, B; C, D]`.
+
+    .. image:: img/ray_vector_1.png
+
+|rezonator| can compute ray vector propagation in :ref:`single-pass <schema_kind_sp>` schemas, see :ref:`Pump mode: Ray vector <pump_mode_vector>`.
+
 .. _working_planes:
 .. index:: single: tangential plane
 .. index:: single: sagittal plane

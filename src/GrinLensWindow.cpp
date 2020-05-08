@@ -1,6 +1,7 @@
 #include "GrinLensWindow.h"
 
 #include "CustomPrefs.h"
+#include "HelpSystem.h"
 #include "funcs/GrinCalculator.h"
 #include "io/JsonUtils.h"
 #include "widgets/ParamsEditor.h"
@@ -76,7 +77,7 @@ GrinLensWindow::GrinLensWindow(QWidget *parent) : QWidget(parent)
     _actionCalcN2 = Ori::Gui::toggledAction(tr("Calc n2 from F"), group, nullptr, ":/toolbar/grin_calc_n2");
 
     auto toolbar = new Ori::Widgets::FlatToolBar;
-    auto actionHelp = Ori::Gui::action(tr("Help"), this, SLOT(showHelp()), ":/toolbar/help", Qt::Key_F1);
+    auto actionHelp = Ori::Gui::action(tr("Help"), this, SLOT(showHelp()), ":/toolbar/help", QKeySequence::HelpContents);
     Ori::Gui::populate(toolbar, {
         Ori::Gui::textToolButton(_actionCalcF), Ori::Gui::textToolButton(_actionCalcN2), nullptr, actionHelp});
 
@@ -177,8 +178,7 @@ void GrinLensWindow::calculateF()
 
 void GrinLensWindow::showHelp()
 {
-    qDebug() << "Help";
-    // TODO
+    Z::HelpSystem::instance()->showTopic("calc_grin.html");
 }
 
 void GrinLensWindow::showError(const QString& err)

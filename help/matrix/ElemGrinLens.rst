@@ -6,7 +6,7 @@ GRIN Lens
 
 .. |n2| replace:: `n`\ :sub:`2`
 
-GRIN lens is a plane-parallel slab of material with a quadratic transverse variation of refractive index, with either a maxium or minimum on axis, that produces lensing effect. The element has similar matrices for both work planes, but gradient constants |n2| can be set independently for tangential and sagittal planes.
+The GRIN lens is a plane-parallel slab of material with a quadratic transverse variation of refractive index, with either a maximum or minimum on the axis that produces a lensing effect. The element has similar matrices for both work planes, but gradient constants |n2| can be set independently for tangential and sagittal planes.
 
 Note that this element represents a piece of GRIN-medium in free space. It has planar input and output interfaces. If you want to build a more complex GRIN-rod, e.g., having one or both curved interfaces, you should use the :doc:`ElemGrinMedium` element and surround it with appropriate interface elements.
 
