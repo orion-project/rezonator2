@@ -21,6 +21,7 @@ static QWidget* makeGraphDataGrid(PlotParamsPanel*)
         es.csv = as.exportAsCsv;
         es.systemLocale = as.exportSystemLocale;
         es.numberPrecision = as.exportNumberPrecision;
+        es.transposed = as.exportTransposed;
         return es;
     };
     return grid;

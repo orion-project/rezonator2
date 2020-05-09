@@ -81,6 +81,7 @@ void AppSettings::load()
     LOAD_DEF(exportAsCsv, Bool, false);
     LOAD_DEF(exportColumnHeaders, Bool, false);
     LOAD_DEF(exportSystemLocale, Bool, false);
+    LOAD_DEF(exportTransposed, Bool, false);
     LOAD_DEF(exportNumberPrecision, Int, 6);
 
     s.beginGroup("Format");
@@ -133,6 +134,7 @@ void AppSettings::save()
     SAVE(exportAsCsv);
     SAVE(exportColumnHeaders);
     SAVE(exportSystemLocale);
+    SAVE(exportTransposed);
     SAVE(exportNumberPrecision);
 
     s.beginGroup("Format");

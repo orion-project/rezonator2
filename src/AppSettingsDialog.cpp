@@ -156,7 +156,8 @@ QWidget* AppSettingsDialog::createExportPage()
 
     _groupExportData = new Ori::Widgets::OptionsGroup(tr("Graph data export options"), {
         tr("Use CSV format"),
-        tr("Use system locale "),
+        tr("Use system locale"),
+        tr("Write values in row"),
         //tr("Write column headers"),
     });
 
@@ -202,7 +203,7 @@ void AppSettingsDialog::populate()
     // export
     _groupExportData->setOption(0, settings.exportAsCsv);
     _groupExportData->setOption(1, settings.exportSystemLocale);
-    //_groupExportData->setOption(2, settings.exportColumnHeaders);
+    _groupExportData->setOption(2, settings.exportTransposed);
     _exportNumberPrecision->setValue(settings.exportNumberPrecision);
 }
 
@@ -239,7 +240,7 @@ bool AppSettingsDialog::collect()
     // export
     settings.exportAsCsv = _groupExportData->option(0);
     settings.exportSystemLocale = _groupExportData->option(1);
-    //settings.exportColumnHeaders = _groupExportData->option(2);
+    settings.exportTransposed = _groupExportData->option(2);
     settings.exportNumberPrecision = _exportNumberPrecision->value();
 
     settings.save();
