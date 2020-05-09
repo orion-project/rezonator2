@@ -84,6 +84,9 @@ void PlotFuncWindow::createActions()
 
     actnSetLimitsX = action(tr("Set X-axis Limits..."), _plot, SLOT(setLimitsDlgX()));
     actnSetLimitsY = action(tr("Set Y-axis Limits..."), _plot, SLOT(setLimitsDlgY()));
+
+    actnCopyGraphData = action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy");
+    actnCopyPlotImage = action(tr("Copy Plot Image"), this, SLOT(copyPlotImage()), ":/toolbar/copy_img");
 }
 
 void PlotFuncWindow::createMenuBar()
@@ -114,7 +117,7 @@ void PlotFuncWindow::createMenuBar()
         // TODO
     });
 
-    auto menuX = new QMenu;
+    auto menuX = new QMenu(this);
     auto titleX = new QWidgetAction(this);
     auto labelX = new QLabel(tr("<b>Axis X</b>"));
     labelX->setMargin(6);
@@ -124,12 +127,14 @@ void PlotFuncWindow::createMenuBar()
     menuX->addSeparator();
     menuX->addAction(tr("Limits..."), _plot, SLOT(setLimitsDlgX()));
     menuX->addAction(QIcon(":/toolbar/limits_auto_x"), tr("Fit to Graphs"), _plot, SLOT(autolimitsX()));
+    menuX->addSeparator();
+    menuX->addAction(actnCopyPlotImage);
     connect(menuX, &QMenu::aboutToShow, [this](){
         _unitsMenuX->menu()->setTitle(tr("Unit"));
         _unitsMenuX->setUnit(getUnitX());
     });
 
-    auto menuY = new QMenu;
+    auto menuY = new QMenu(this);
     auto titleY = new QWidgetAction(this);
     auto labelY = new QLabel(tr("<b>Axis Y</b>"));
     labelY->setMargin(6);
@@ -139,13 +144,24 @@ void PlotFuncWindow::createMenuBar()
     menuY->addSeparator();
     menuY->addAction(tr("Limits..."), _plot, SLOT(setLimitsDlgY()));
     menuY->addAction(QIcon(":/toolbar/limits_auto_y"), tr("Fit to Graphs"), _plot, SLOT(autolimitsY()));
+    menuY->addSeparator();
+    menuY->addAction(actnCopyPlotImage);
     connect(menuY, &QMenu::aboutToShow, [this](){
         _unitsMenuY->menu()->setTitle(tr("Unit"));
         _unitsMenuY->setUnit(getUnitY());
     });
 
+    auto menuGraph = new QMenu(this);
+    menuGraph->addAction(actnCopyGraphData);
+    menuGraph->addAction(actnCopyPlotImage);
+
+    auto menuPlot = new QMenu(this);
+    menuPlot->addAction(actnCopyPlotImage);
+
     _plot->menuAxisX = menuX;
     _plot->menuAxisY = menuY;
+    _plot->menuGraph = menuGraph;
+    _plot->menuPlot = menuPlot;
 }
 
 void PlotFuncWindow::createToolBar()
@@ -624,4 +640,26 @@ void PlotFuncWindow::optionChanged(AppSettingsOptions option)
         _cursorPanel->setNumberPrecision(AppSettings::instance().numberPrecisionData, false);
         updateCursorInfo();
     }
+}
+
+void PlotFuncWindow::copyGraphData()
+{
+    auto graph = _plot->selectedGraph();
+    if (!graph) return;
+    auto exporter = QCPL::GraphDataExporter(PlotHelpers::makeExportSettings());
+    for (auto d : *graph->data().data())
+        exporter.add(d.key, d.value);
+    exporter.toClipboard();
+}
+
+void PlotFuncWindow::copyPlotImage()
+{
+    bool oldVisible = _cursor->visible();
+    if (AppSettings::instance().exportHideCursor)
+        _cursor->setVisible(false);
+
+    _plot->copyPlotImage();
+
+    if (oldVisible != _cursor->visible())
+        _cursor->setVisible(oldVisible);
 }

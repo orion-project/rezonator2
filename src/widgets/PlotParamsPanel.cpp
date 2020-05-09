@@ -1,13 +1,14 @@
+#include "PlotParamsPanel.h"
+
+#include "PlotHelpers.h"
+
+#include "qcpl_graph_grid.h"
+
 #include <QAction>
 #include <QDebug>
 #include <QSplitter>
 #include <QTextBrowser>
 #include <QToolBar>
-
-#include "PlotParamsPanel.h"
-#include "../AppSettings.h"
-
-#include "qcpl_graph_grid.h"
 
 #define DEFAULT_PANEL_W 150
 
@@ -15,15 +16,7 @@ static QWidget* makeGraphDataGrid(PlotParamsPanel*)
 {
     auto grid = new QCPL::GraphDataGrid;
     grid->setNumberPrecision(AppSettings::instance().numberPrecisionData);
-    grid->getExportSettings = [](){
-        QCPL::GraphDataExportSettings es;
-        auto as = AppSettings::instance();
-        es.csv = as.exportAsCsv;
-        es.systemLocale = as.exportSystemLocale;
-        es.numberPrecision = as.exportNumberPrecision;
-        es.transposed = as.exportTransposed;
-        return es;
-    };
+    grid->getExportSettings = PlotHelpers::makeExportSettings;
     return grid;
 }
 
@@ -153,7 +146,6 @@ void PlotParamsPanel::setOptionsPanelEnabled(bool on)
 
 void PlotParamsPanel::optionChanged(AppSettingsOptions option)
 {
-    qDebug() << "option changed";
     if (option == AppSettingsOptions::numberPrecisionData)
     {
         auto grid = dataGrid();

@@ -147,7 +147,7 @@ TEST_METHOD(deletePump__can_delete_the_only_pump_from_non_SP_schema)
 {
     Ori::Dlg::Mock::setNextResult(QMessageBox::Ok);
 
-    class TestPumpParams : public PumpParams
+    class TestPumpParams : public PumpParams_Waist
     {
     public:
         ~TestPumpParams() { SET_TEST_DATA("pump was deleted", true); }

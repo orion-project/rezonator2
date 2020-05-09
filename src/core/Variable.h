@@ -41,9 +41,9 @@ public:
 */
 struct VariableRange
 {
-    Z::Value start;         ///< Initial parameter value.
-    Z::Value stop;          ///< Final parameter value.
-    Z::Value step;          ///< Parameter variation step.
+    Value start;            ///< Initial parameter value.
+    Value stop;             ///< Final parameter value.
+    Value step;             ///< Parameter variation step.
     int points = 100;       ///< Amount of points.
     bool useStep = false;   ///< Use step value instead of points number.
 
@@ -52,6 +52,9 @@ struct VariableRange
 
     PlottingRange plottingRange() const;
     QString str() const;
+
+    static VariableRange withPoints(const Value& start, const Value& stop, int points);
+    static VariableRange withStep(const Value& start, const Value& stop, const Value& step);
 };
 
 /**
@@ -60,7 +63,7 @@ struct VariableRange
 struct Variable
 {
     Element* element = nullptr;        ///< An element whose parameter value is varied.
-    Z::Parameter* parameter = nullptr; ///< Element's parameter which value is varied.
+    Parameter* parameter = nullptr;    ///< Element's parameter which value is varied.
     VariableRange range;               ///< Variation settings.
 
     QString str() const;
@@ -70,13 +73,13 @@ struct Variable
 struct PlotPosition
 {
     Element* element = nullptr;
-    Z::Value offset = 0;
+    Value offset = 0;
 };
 
 namespace Utils {
 
 /// The function returns the stop value of the range according to axis length of a range element.
-Z::Value getRangeStop(ElementRange *element);
+Value getRangeStop(ElementRange *element);
 
 } // namespace Utils
 

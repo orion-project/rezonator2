@@ -7,6 +7,7 @@
 #include "../io/JsonUtils.h"
 #include "../widgets/ElemSelectorWidget.h"
 #include "../widgets/VariableRangeEditor.h"
+#include "../widgets/PlotHelpers.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
@@ -216,6 +217,11 @@ void StabilityMap2DWindow::createControl()
     _actnStabilityAutolimits = new QAction(tr("Z-axis -> Stability Range", "Plot action"), this);
     _actnStabilityAutolimits->setIcon(QIcon(":/toolbar/limits_stab"));
     connect(_actnStabilityAutolimits, &QAction::triggered, [this](){autolimitsStability(true);});
+
+    _actnCopyGraphData = Ori::Gui::action(tr("Copy Graph Data"), this, SLOT(copyGraphData2D()), ":/toolbar/copy");
+    _plot->menuPlot->insertAction(actnCopyPlotImage, _actnCopyGraphData);
+    _plot->menuAxisX->insertAction(actnCopyPlotImage, _actnCopyGraphData);
+    _plot->menuAxisY->insertAction(actnCopyPlotImage, _actnCopyGraphData);
 
     menuLimits->addSeparator();
     menuLimits->addAction(_actnStabilityAutolimits);
@@ -430,4 +436,21 @@ QString StabilityMap2DWindow::getCursorInfo(const QPointF& pos) const
     if (!function()->ok()) return QString();
     auto res = function()->calculateAt(Z::Value(pos.x(), getUnitX()), Z::Value(pos.y(), getUnitY()));
     return QStringLiteral("Pt = %1; Ps = %2").arg(Z::format(res.T)).arg(Z::format(res.S));
+}
+
+void StabilityMap2DWindow::copyGraphData2D()
+{
+    auto settings = PlotHelpers::makeExportSettings();
+    settings.transposed = false;
+    auto exporter = QCPL::GraphDataExporter(settings);
+    auto data =_graph->data();
+    auto ny = data->valueSize();
+    auto nx = data->keySize();
+    QVector<double> v(nx);
+    for (int iy = 0; iy < ny; iy++) {
+        for (int ix = 0; ix < nx; ix++)
+            v[ix] = data->cell(ix, iy);
+        exporter.add(v);
+    }
+    exporter.toClipboard();
 }

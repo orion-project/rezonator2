@@ -95,8 +95,8 @@ GrinLensWindow::GrinLensWindow(QWidget *parent) : QWidget(parent)
 
 GrinLensWindow::~GrinLensWindow()
 {
-    qDeleteAll(_params);
     storeState();
+    qDeleteAll(_params);
     __instance = nullptr;
 }
 

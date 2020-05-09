@@ -83,6 +83,7 @@ void AppSettings::load()
     LOAD_DEF(exportSystemLocale, Bool, false);
     LOAD_DEF(exportTransposed, Bool, false);
     LOAD_DEF(exportNumberPrecision, Int, 6);
+    LOAD_DEF(exportHideCursor, Bool, false);
 
     s.beginGroup("Format");
     LOAD_DEF(numberPrecisionData, Int, 6);
@@ -136,6 +137,7 @@ void AppSettings::save()
     SAVE(exportSystemLocale);
     SAVE(exportTransposed);
     SAVE(exportNumberPrecision);
+    SAVE(exportHideCursor);
 
     s.beginGroup("Format");
     SAVE(numberPrecisionData);

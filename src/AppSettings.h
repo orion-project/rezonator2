@@ -60,6 +60,7 @@ public:
     bool exportSystemLocale; ///< Use system locale (otherwise, use C-locale).
     bool exportTransposed; ///< Write columns as rows.
     int exportNumberPrecision; ///< Number precision for export.
+    bool exportHideCursor; ///< Hide cursor lines when exporting plot image.
 
     int numberPrecisionData; ///< Number precision for value formatting (graph data, etc).
 

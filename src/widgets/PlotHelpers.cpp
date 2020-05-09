@@ -1,5 +1,7 @@
 #include "PlotHelpers.h"
 
+#include "../AppSettings.h"
+
 #include "qcpl_plot.h"
 #include "qcpl_cursor.h"
 
@@ -28,6 +30,17 @@ void rescaleCursor(QCPL::Cursor* cursor, PlotAxis axis, Z::Unit unitFrom, Z::Uni
         cursor->setPositionX(pos, false);
     else
         cursor->setPositionY(pos, false);
+}
+
+QCPL::GraphDataExportSettings makeExportSettings()
+{
+    QCPL::GraphDataExportSettings es;
+    auto as = AppSettings::instance();
+    es.csv = as.exportAsCsv;
+    es.systemLocale = as.exportSystemLocale;
+    es.numberPrecision = as.exportNumberPrecision;
+    es.transposed = as.exportTransposed;
+    return es;
 }
 
 } // namespace PlotHelpers

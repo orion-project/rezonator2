@@ -258,6 +258,7 @@ SOURCES += \
     src/tests/test_LuaHelper.cpp \
     src/tests/test_Math.cpp \
     src/tests/test_Parameters.cpp \
+    src/tests/test_PlotFunctions.cpp \
     src/tests/test_ProjectOperations.cpp \
     src/tests/test_Report.cpp \
     src/tests/test_RoundTripCalculator.cpp \

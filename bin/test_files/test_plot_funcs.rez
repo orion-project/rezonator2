@@ -1,0 +1,333 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 1000
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "M_back",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 5.000000000000002
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 30
+                }
+            },
+            "title": "Back mirror",
+            "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L_foc",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 56
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "Focusing range",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M_foc",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 5.000000000000002
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 50
+                }
+            },
+            "title": "Focusing mirror",
+            "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 420
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "Folding range",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M_out",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+            },
+            "title": "Output mirror",
+            "type": "ElemFlatMirror"
+        }
+    ],
+    "formulas": [
+    ],
+    "notes": "This file is used to calculate expected data for test in test_PlotFunctions.cpp",
+    "param_links": [
+    ],
+    "pumps": [
+    ],
+    "schema_version": "2.0",
+    "title": "",
+    "trip_type": "SW",
+    "windows": [
+        {
+            "function": {
+                "arg": {
+                    "element_index": 1,
+                    "param": "L",
+                    "range": {
+                        "points": 10,
+                        "start": {
+                            "unit": "mm",
+                            "value": 24
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 60
+                        },
+                        "use_step": false
+                    }
+                },
+                "stab_calc_mode": "Squared"
+            },
+            "type": "StabMap",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "stab_bound_markers": true,
+                "stored_views": [
+                    {
+                        "mode": 0,
+                        "x_max": 60.36,
+                        "x_min": 23.64,
+                        "x_unit": "mm",
+                        "y_max": 10.326323748488317,
+                        "y_min": -7.243342352408971,
+                        "y_unit": "none"
+                    },
+                    {
+                        "mode": 1,
+                        "x_max": 0.05622085838827574,
+                        "x_min": 0.025008858388275743,
+                        "x_unit": "m",
+                        "y_max": -7.818959989845234,
+                        "y_min": -92.99969874002575,
+                        "y_unit": "none"
+                    }
+                ],
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 6.036,
+                "x_min": 2.3640000000000003,
+                "x_unit": "cm",
+                "y_max": 5.537505939216064,
+                "y_min": -94.3159076377665,
+                "y_unit": "none"
+            }
+        },
+        {
+            "function": {
+                "arg": {
+                    "element_index": 1,
+                    "param": "L",
+                    "range": {
+                        "points": 1000,
+                        "start": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0.56
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 56
+                        },
+                        "use_step": false
+                    }
+                },
+                "mode": "FontRadius"
+            },
+            "type": "Caustic",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "stored_views": [
+                    {
+                        "mode": 0,
+                        "x_max": 3.6263313984335968,
+                        "x_min": 2.3730993123906847,
+                        "x_unit": "cm",
+                        "y_max": 0.17916508944714626,
+                        "y_min": -0.07619764377621936,
+                        "y_unit": "mm"
+                    },
+                    {
+                        "mode": 1,
+                        "x_max": 40.98306635004107,
+                        "x_min": 19.087314599874663,
+                        "x_unit": "none",
+                        "y_max": 1.0996596796582745,
+                        "y_min": -1.272574780006655,
+                        "y_unit": "cm"
+                    }
+                ],
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 40.98306635004107,
+                "x_min": 19.087314599874663,
+                "x_unit": "mm",
+                "y_max": 1.0996596796582745,
+                "y_min": -1.272574780006655,
+                "y_unit": "cm"
+            }
+        },
+        {
+            "function": {
+                "arg_x": {
+                    "element_index": 1,
+                    "param": "L",
+                    "range": {
+                        "points": 10,
+                        "start": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 100
+                        },
+                        "use_step": false
+                    }
+                },
+                "arg_y": {
+                    "element_index": 3,
+                    "param": "L",
+                    "range": {
+                        "points": 10,
+                        "start": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 500
+                        },
+                        "use_step": false
+                    }
+                },
+                "stab_calc_mode": "Normal"
+            },
+            "type": "StabMap2D",
+            "window": {
+                "aux_stored_views": [
+                ],
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "stored_views": [
+                ],
+                "ts_flipped": false,
+                "ts_mode": "S",
+                "x_max": 100,
+                "x_min": 0,
+                "x_unit": "mm",
+                "y_max": 500,
+                "y_min": 0,
+                "y_unit": "mm",
+                "z_max": 3,
+                "z_min": -3
+            }
+        },
+        {
+            "function": {
+                "arg": {
+                    "element_index": 1,
+                    "param": "L",
+                    "range": {
+                        "points": 100,
+                        "start": {
+                            "unit": "mm",
+                            "value": 25
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 27
+                        },
+                        "use_step": false
+                    }
+                },
+                "pos": {
+                    "element_index": 4,
+                    "offset": {
+                        "unit": "none",
+                        "value": 0
+                    }
+                }
+            },
+            "type": "BeamVariation",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "stored_views": [
+                ],
+                "ts_flipped": true,
+                "ts_mode": "T+S",
+                "x_max": 26.693535353535424,
+                "x_min": 24.983232323232322,
+                "x_unit": "mm",
+                "y_max": 0.8223978508251378,
+                "y_min": -1.5894308010187528,
+                "y_unit": "mm"
+            }
+        }
+    ]
+}

@@ -23,6 +23,7 @@ USE_GROUP(GaussCalculatorTests)                    // test_GaussCalculator.cpp
 USE_GROUP(GrinCalculatorTests)                     // test_GrinCalculator.cpp
 USE_GROUP(PumpCalculatorTests)                     // test_PumpCalculator.cpp
 USE_GROUP(InfoFunctionsTests)                      // test_InfoFunctions.cpp
+USE_GROUP(PlotFunctionsTests)                      // test_PlotFunctions.cpp
 USE_GROUP(ElementSelectorWidgetTests)              // test_ElemSelectorWidget.cpp
 USE_GROUP(PumpWindowTests)                         // test_PumpWindow.cpp
 USE_GROUP(LuaHelperTests)                          // test_LuaHelper.cpp
@@ -49,6 +50,7 @@ TEST_SUITE(
     ADD_GROUP(GrinCalculatorTests),
     ADD_GROUP(PumpCalculatorTests),
     ADD_GROUP(InfoFunctionsTests),
+    ADD_GROUP(PlotFunctionsTests),
     ADD_GROUP(ElementSelectorWidgetTests),
     ADD_GROUP(PumpWindowTests),
     ADD_GROUP(LuaHelperTests),

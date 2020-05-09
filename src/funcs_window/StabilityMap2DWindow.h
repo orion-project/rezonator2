@@ -47,10 +47,13 @@ protected:
     // Implementation of SchemaListener
     void elementDeleting(Schema*, Element*) override;
 
+private slots:
+    void copyGraphData2D();
+
 private:
     QCPColorMap *_graph;
     QCPGraph *_autolimiter;
-    QAction* _actnStabilityAutolimits;
+    QAction *_actnStabilityAutolimits, *_actnCopyGraphData;
     QCPColorScale *_colorScale;
     bool _zAutolimitsRequest = true;
 
