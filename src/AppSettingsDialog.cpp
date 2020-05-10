@@ -155,9 +155,9 @@ QWidget* AppSettingsDialog::createExportPage()
     auto page = new Ori::Dlg::BasicConfigPage(tr("Export"), ":/toolbar/save");
 
     _groupExportData = new Ori::Widgets::OptionsGroup(tr("Graph data export options"), {
-        tr("Use CSV format"),
-        tr("Use system locale"),
-        tr("Write values in row"),
+        tr("Use CSV format (otherwise, use plain text format)"),
+        tr("Use system locale (otherwise, use C locale)"),
+        tr("Transposed mode (write values in row instead of column)"),
         //tr("Write column headers"),
     });
 
@@ -167,7 +167,7 @@ QWidget* AppSettingsDialog::createExportPage()
     });
 
     _groupExportPlot = new Ori::Widgets::OptionsGroup(tr("Plot image export options"), {
-        tr("Hide cursor lines")
+        tr("Hide cursor lines when save, copy, or print image")
     });
 
     page->add({_groupExportData, _groupExportPlot, page->stretch()});

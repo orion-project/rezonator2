@@ -441,16 +441,32 @@ QString StabilityMap2DWindow::getCursorInfo(const QPointF& pos) const
 void StabilityMap2DWindow::copyGraphData2D()
 {
     auto settings = PlotHelpers::makeExportSettings();
+    bool transposed = settings.transposed;
     settings.transposed = false;
     auto exporter = QCPL::GraphDataExporter(settings);
     auto data =_graph->data();
     auto ny = data->valueSize();
     auto nx = data->keySize();
-    QVector<double> v(nx);
-    for (int iy = 0; iy < ny; iy++) {
+    qDebug() << "copy2d" << ny << nx;
+    if (transposed)
+    {
+        QVector<double> v(ny);
         for (int ix = 0; ix < nx; ix++)
-            v[ix] = data->cell(ix, iy);
-        exporter.add(v);
+        {
+            for (int iy = 0; iy < ny; iy++)
+                v[iy] = data->cell(ix, iy);
+            exporter.add(v);
+        }
+    }
+    else
+    {
+        QVector<double> v(nx);
+        for (int iy = 0; iy < ny; iy++)
+        {
+            for (int ix = 0; ix < nx; ix++)
+                v[ix] = data->cell(ix, iy);
+            exporter.add(v);
+        }
     }
     exporter.toClipboard();
 }
