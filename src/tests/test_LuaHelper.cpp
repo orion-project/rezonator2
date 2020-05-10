@@ -211,7 +211,7 @@ TEST_METHOD(can_show_refined_error_messages)
 
 //------------------------------------------------------------------------------
 
-TEST_GROUP("Lua Helper",
+TEST_GROUP("LuaHelper",
     ADD_TEST(global_funcs),
     ADD_TEST(can_be_several_parser_instances),
     ADD_TEST(different_instances_use_differenet_globals),

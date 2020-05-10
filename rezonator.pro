@@ -247,6 +247,7 @@ SOURCES += \
     src/io/SchemaReaderJson.cpp \
     src/io/SchemaWriterJson.cpp \
     src/main.cpp \
+    src/tests/test_AbcdBeamCalculator.cpp \
     src/tests/test_ElemSelectorWidget.cpp \
     src/tests/test_Element.cpp \
     src/tests/test_ElementFilter.cpp \

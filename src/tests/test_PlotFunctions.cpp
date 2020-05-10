@@ -1,4 +1,5 @@
 #include "testing/OriTestBase.h"
+#include "TestUtils.h"
 #include "../core/Schema.h"
 #include "../core/Elements.h"
 #include "../funcs/StabilityMapFunction.h"
@@ -52,19 +53,6 @@ static QString arrToStr(const QVector<double> arr)
     }\
 }
 
-#define ASSERT_NEAR_TS(expr, expected_t, expected_s, epsilon) \
-{\
-    auto res = expr; \
-    if (std::isnan(expected_t)) \
-        ASSERT_IS_TRUE(std::isnan(res.T))\
-    else \
-        ASSERT_NEAR_DBL(res.T, expected_t, epsilon)\
-    if (std::isnan(expected_s)) \
-        ASSERT_IS_TRUE(std::isnan(res.S)) \
-    else \
-        ASSERT_NEAR_DBL(res.S, expected_s, epsilon)\
-}
-
 #define ASSERT_FUNC_OK \
     if (!func.ok()) \
         TEST_LOG(func.errorText()) \
@@ -96,6 +84,8 @@ static QString arrToStr(const QVector<double> arr)
     QVector<double> var_name = {__VA_ARGS__}; \
     for (int i = 0; i < var_name.size(); i++) \
         var_name[i] = var_name.at(i) - arr_offset.last();
+
+//------------------------------------------------------------------------------
 
 namespace Z {
 namespace Tests {
@@ -208,7 +198,7 @@ TEST_METHOD(calculateAt)
     ASSERT_NEAR_TS(func.calculateAt(7_cm), -820.10025, -591.667213, 1e-6)
 }
 
-TEST_GROUP("Stability Map",
+TEST_GROUP("StabilityMapFunction",
            ADD_TEST(calculate_normal),
            ADD_TEST(calculate_squared),
            ADD_TEST(calculateAt),
@@ -303,7 +293,7 @@ TEST_METHOD(calculateAt)
     ASSERT_NEAR_TS(func.calculateAt(12_cm, 30_cm), -184.537358, -167.424983, 1e-6)
 }
 
-TEST_GROUP("2D Stability Map",
+TEST_GROUP("StabilityMap2DFunction",
            ADD_TEST(calculate_normal),
            ADD_TEST(calculate_squared),
            ADD_TEST(calculateAt),
@@ -411,7 +401,7 @@ TEST_METHOD(calculateAt_SP_R)
     ASSERT_NEAR_TS(func.calculateAt(0.057), 0.0388935389, 0.0385073863, 1e-10)
 }
 
-TEST_GROUP("Caustic",
+TEST_GROUP("CausticFunction",
            ADD_TEST(calculate_resonator_W),
            ADD_TEST(calculate_resonator_R),
            ADD_TEST(calculateAt_resonator_W),
@@ -459,7 +449,7 @@ TEST_METHOD(calculateAt)
     ASSERT_NEAR_TS(func.calculateAt(0.0271_m), Double::nan(), Double::nan(), 1e-11)
 }
 
-TEST_GROUP("Beam Variation",
+TEST_GROUP("BeamVariationFunction",
            ADD_TEST(calculate),
            ADD_TEST(calculateAt),
            )
@@ -561,7 +551,7 @@ TEST_METHOD(calculateAt_SP_R)
     ASSERT_NEAR_TS(func.calculateAt(0.2), 0.0771479866, 0.0697118023, 1e-10)
 }
 
-TEST_GROUP("Multirange Caustic",
+TEST_GROUP("MultirangeCausticFunction",
            ADD_TEST(calculate_resonator_W),
            ADD_TEST(calculateAt_resonator_W),
            ADD_TEST(calculateAt_resonator_R),

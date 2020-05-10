@@ -251,7 +251,7 @@ TEST_METHOD(InvComplex_hyper)
 
 //------------------------------------------------------------------------------
 
-TEST_GROUP("Pump Calculator",
+TEST_GROUP("PumpCalculator",
            ADD_TEST(Waist_gauss),
            ADD_TEST(Waist_hyper),
            ADD_TEST(Front_gauss),
