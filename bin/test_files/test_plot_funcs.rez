@@ -119,11 +119,34 @@
                 }
             },
             "title": ""
+        },
+        {
+            "is_active": false,
+            "label": "P2",
+            "mode": "Waist",
+            "params": {
+                "MI": {
+                    "unit": "none",
+                    "value_s": 1,
+                    "value_t": 1
+                },
+                "w_0": {
+                    "unit": "mkm",
+                    "value_s": 180,
+                    "value_t": 220
+                },
+                "z_w": {
+                    "unit": "mm",
+                    "value_s": 100,
+                    "value_t": 100
+                }
+            },
+            "title": ""
         }
     ],
     "schema_version": "2.0",
     "title": "",
-    "trip_type": "SW",
+    "trip_type": "SP",
     "windows": [
         {
             "function": {
@@ -206,7 +229,7 @@
                         "use_step": false
                     }
                 },
-                "mode": "BeamRadius"
+                "mode": "FontRadius"
             },
             "type": "Caustic",
             "window": {
@@ -224,9 +247,9 @@
                     },
                     {
                         "mode": 1,
-                        "x_max": 0.02445904726766788,
-                        "x_min": 0.013213581291725805,
-                        "x_unit": "m",
+                        "x_max": 2.4459047267667877,
+                        "x_min": 1.3213581291725804,
+                        "x_unit": "cm",
                         "y_max": 0.005645196831234958,
                         "y_min": -0.006575581531898563,
                         "y_unit": "m"
@@ -234,11 +257,11 @@
                 ],
                 "ts_flipped": false,
                 "ts_mode": "T+S",
-                "x_max": 0.056560000000000006,
+                "x_max": 0.05656,
                 "x_min": -0.0005600000000000001,
                 "x_unit": "m",
-                "y_max": 0.0006693020331658745,
-                "y_min": -2.9035441766273765e-05,
+                "y_max": 0.04171508357794264,
+                "y_min": -0.020358899091655745,
                 "y_unit": "m"
             }
         },
@@ -340,7 +363,7 @@
                     "element_index": 1,
                     "param": "L",
                     "range": {
-                        "points": 100,
+                        "points": 20,
                         "start": {
                             "unit": "mm",
                             "value": 25
@@ -370,14 +393,14 @@
                 "cursor_mode": "Both",
                 "stored_views": [
                 ],
-                "ts_flipped": true,
+                "ts_flipped": false,
                 "ts_mode": "T+S",
-                "x_max": 26.693535353535424,
-                "x_min": 24.983232323232322,
-                "x_unit": "mm",
-                "y_max": 0.8223978508251378,
-                "y_min": -1.5894308010187528,
-                "y_unit": "mm"
+                "x_max": 0.02699235124444231,
+                "x_min": 0.024980230032321013,
+                "x_unit": "m",
+                "y_max": 0.0018870318205422665,
+                "y_min": -0.0009504136522152521,
+                "y_unit": "m"
             }
         },
         {
@@ -427,7 +450,7 @@
                         }
                     }
                 ],
-                "mode": "BeamRadius"
+                "mode": "FontRadius"
             },
             "type": "MultirangeCaustic",
             "window": {
@@ -437,31 +460,31 @@
                 "stored_views": [
                     {
                         "mode": 0,
-                        "x_max": 480.76,
-                        "x_min": -4.76,
-                        "x_unit": "mm",
-                        "y_max": 1150.9020446884733,
-                        "y_min": -27.6085405479759,
-                        "y_unit": "mkm"
+                        "x_max": 0.48075999999999997,
+                        "x_min": -0.0047599999999999995,
+                        "x_unit": "m",
+                        "y_max": 0.003907422211104115,
+                        "y_min": -0.00015611677498430834,
+                        "y_unit": "m"
                     },
                     {
                         "mode": 1,
-                        "x_max": 480.76,
-                        "x_min": -4.76,
-                        "x_unit": "mm",
-                        "y_max": 20642230518457.49,
-                        "y_min": -433486840887606.6,
+                        "x_max": 0.19013187373371385,
+                        "x_min": 0.07767721397429309,
+                        "x_unit": "m",
+                        "y_max": 0.04597861611623123,
+                        "y_min": -0.06295449040784154,
                         "y_unit": "m"
                     }
                 ],
                 "ts_flipped": false,
                 "ts_mode": "T+S",
-                "x_max": 480.76,
-                "x_min": -4.76,
-                "x_unit": "mm",
-                "y_max": 1150.9020446884733,
-                "y_min": -27.6085405479759,
-                "y_unit": "mkm"
+                "x_max": 0.19013187373371385,
+                "x_min": 0.07767721397429309,
+                "x_unit": "m",
+                "y_max": 0.04597861611623123,
+                "y_min": -0.06295449040784154,
+                "y_unit": "m"
             }
         }
     ]

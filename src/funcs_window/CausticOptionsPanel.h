@@ -15,7 +15,7 @@ public:
         Ori::Layouts::LayoutV({
             makeSectionHeader(tr("Function mode")),
             makeModeButton(":/toolbar/plot_w", tr("Beam radius"), int(CausticFunction::Mode::BeamRadius)),
-            makeModeButton(":/toolbar/plot_r", tr("Wavefront ROC"), int(CausticFunction::Mode::FontRadius)),
+            makeModeButton(":/toolbar/plot_r", tr("Wavefront ROC"), int(CausticFunction::Mode::FrontRadius)),
             //TODO:NEXT-VER makeModeButton(":/toolbar/plot_v", tr("Beam divergence angle"), int(CausticFunction::Mode::HalfAngle)),
             Ori::Layouts::Stretch()
         }).setSpacing(0).setMargin(0).useFor(this);

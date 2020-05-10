@@ -40,7 +40,7 @@ QString MultirangeCausticWindow::getDefaultTitle() const
     {
     case CausticFunction::Mode::BeamRadius:
         return tr("Beam Radius");
-    case CausticFunction::Mode::FontRadius:
+    case CausticFunction::Mode::FrontRadius:
         return tr("Wavefront Curvature Radius");
     case CausticFunction::Mode::HalfAngle:
         return tr("Half of Divergence Angle");
@@ -56,7 +56,7 @@ QString MultirangeCausticWindow::getDefaultTitleY() const
     case CausticFunction::Mode::BeamRadius:
         title = tr("Beam radius");
         break;
-    case CausticFunction::Mode::FontRadius:
+    case CausticFunction::Mode::FrontRadius:
         title = tr("Wavefront curvature radius");
         break;
     case CausticFunction::Mode::HalfAngle:

@@ -192,7 +192,7 @@ QString BeamVariationWindow::getCursorInfo(const QPointF& pos) const
     if (!function()->ok()) return QString();
     auto res = function()->calculateAt(Z::Value(pos.x(), getUnitX()));
     auto unitY = getUnitY();
-    return QStringLiteral("Pt = %1; Ps = %2")
+    return QStringLiteral("Wt = %1; Ws = %2")
             .arg(Double(res.T).isNan() ? QStringLiteral("NaN") : Z::format(unitY->fromSi(res.T)))
             .arg(Double(res.S).isNan() ? QStringLiteral("NaN") : Z::format(unitY->fromSi(res.S)));
 }

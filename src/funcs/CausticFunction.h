@@ -14,7 +14,7 @@ class CausticFunction : public PlotFunction
     Q_GADGET
 
 public:
-    enum Mode { BeamRadius, FontRadius, HalfAngle, };
+    enum Mode { BeamRadius, FrontRadius, HalfAngle, };
     Q_ENUM(Mode)
 
     FUNC_ALIAS("Caustic")
