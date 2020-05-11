@@ -67,6 +67,7 @@ GrinLensWindow::GrinLensWindow(QWidget *parent) : QWidget(parent)
 
     ParamsEditor::Options opts(&_params);
     opts.autoApply = true;
+    opts.ownParams = true;
     opts.auxControl = LayoutV({_statusLabel}).setMargin(3).makeWidget();
     auto editors = new ParamsEditor(opts);
     connect(editors, SIGNAL(paramChanged(Z::Parameter*, Z::Value)), this, SLOT(calculate(Z::Parameter*)));
@@ -96,7 +97,6 @@ GrinLensWindow::GrinLensWindow(QWidget *parent) : QWidget(parent)
 GrinLensWindow::~GrinLensWindow()
 {
     storeState();
-    qDeleteAll(_params);
     __instance = nullptr;
 }
 

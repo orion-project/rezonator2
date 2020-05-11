@@ -31,18 +31,18 @@ bool ElementPropsDialog::editElement(Element *elem, QWidget *parent)
     ElementPropsDialog *dlg = nullptr;
     switch (elem->paramsEditorKind())
     {
-    case Z::ParamsEditor::None:
+    case Z::ParamsEditorKind::None:
         dlg = new ElementPropsDialog_None(elem, parent);
         break;
 
-    case Z::ParamsEditor::List:
+    case Z::ParamsEditorKind::List:
         if (Z::Utils::defaultParamFilter()->count(elem->params()) == 0)
             dlg = new ElementPropsDialog_None(elem, parent);
         else
             dlg = new ElementPropsDialog_List(elem, parent);
         break;
 
-    case Z::ParamsEditor::ABCD:
+    case Z::ParamsEditorKind::ABCD:
         dlg = new ElementPropsDialog_Abcd(elem, parent);
         break;
     }

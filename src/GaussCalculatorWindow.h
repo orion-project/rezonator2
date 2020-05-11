@@ -45,7 +45,7 @@ public:
                          GaussCalcGetValueFunc getValue,
                          GaussCalcSetValueFunc setValue,
                          bool invertedUnit = false);
-    ~GaussCalcParamEditor();
+    ~GaussCalcParamEditor() override;
 
     ParamEditor* editor() const { return _editor; }
 
@@ -76,7 +76,7 @@ class GaussCalculatorWindow : public QWidget, public Z::ParameterListener
 
 public:
     explicit GaussCalculatorWindow(QWidget *parent = nullptr);
-    ~GaussCalculatorWindow();
+    ~GaussCalculatorWindow() override;
 
     static void showWindow();
 

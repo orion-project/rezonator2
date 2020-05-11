@@ -40,6 +40,7 @@ TEST_METHOD(Parameter_setValue_getValue)
 
 //------------------------------------------------------------------------------
 
+namespace {
 class TestParamListener : public Z::ParameterListener
 {
 public:
@@ -50,6 +51,7 @@ public:
         changedParam = p->name();
     }
 };
+}
 
 TEST_METHOD(ParameterListener_parameterChanged)
 {
@@ -59,7 +61,7 @@ TEST_METHOD(ParameterListener_parameterChanged)
 
     listener.changedParam.clear();
     p.setValue(100_mm);
-    ASSERT_EQ_STR(listener.changedParam, p.name());
+    ASSERT_EQ_STR(listener.changedParam, p.name())
 }
 
 //------------------------------------------------------------------------------
@@ -69,9 +71,9 @@ TEST_METHOD(Parameters_byAlias)
     Z::Parameter p1(Z::Dims::none(), "p1", "", "");
     Z::Parameter p2(Z::Dims::none(), "p2", "", "");
     Z::Parameters params { &p1, &p2 };
-    ASSERT_EQ_PTR(params.byAlias("p1"), &p1);
-    ASSERT_EQ_PTR(params.byAlias("p2"), &p2);
-    ASSERT_IS_NULL(params.byAlias("p3"));
+    ASSERT_EQ_PTR(params.byAlias("p1"), &p1)
+    ASSERT_EQ_PTR(params.byAlias("p2"), &p2)
+    ASSERT_IS_NULL(params.byAlias("p3"))
 }
 
 TEST_METHOD(Parameters_byIndex)
@@ -79,9 +81,9 @@ TEST_METHOD(Parameters_byIndex)
     Z::Parameter p1(Z::Dims::none(), "p1", "", "");
     Z::Parameter p2(Z::Dims::none(), "p2", "", "");
     Z::Parameters params { &p1, &p2 };
-    ASSERT_EQ_PTR(params.byIndex(0), &p1);
-    ASSERT_EQ_PTR(params.byIndex(1), &p2);
-    ASSERT_IS_NULL(params.byIndex(2));
+    ASSERT_EQ_PTR(params.byIndex(0), &p1)
+    ASSERT_EQ_PTR(params.byIndex(1), &p2)
+    ASSERT_IS_NULL(params.byIndex(2))
 }
 
 TEST_METHOD(Parameters_byPointer)
@@ -90,9 +92,9 @@ TEST_METHOD(Parameters_byPointer)
     Z::Parameter p2(Z::Dims::none(), "p2", "", "");
     Z::Parameter p3(Z::Dims::none(), "p3", "", "");
     Z::Parameters params { &p1, &p2 };
-    ASSERT_EQ_PTR(params.byPointer(&p1), &p1);
-    ASSERT_EQ_PTR(params.byPointer(&p2), &p2);
-    ASSERT_IS_NULL(params.byPointer(&p3));
+    ASSERT_EQ_PTR(params.byPointer(&p1), &p1)
+    ASSERT_EQ_PTR(params.byPointer(&p2), &p2)
+    ASSERT_IS_NULL(params.byPointer(&p3))
 }
 
 //------------------------------------------------------------------------------
@@ -104,10 +106,10 @@ TEST_METHOD(ParameterFilterVisible_check)
     Z::ParameterFilterVisible filter;
 
     Z::Parameter p;
-    ASSERT_IS_TRUE(filter.check(&p));
+    ASSERT_IS_TRUE(filter.check(&p))
 
     p.setVisible(false);
-    ASSERT_IS_FALSE(filter.check(&p));
+    ASSERT_IS_FALSE(filter.check(&p))
 }
 
 TEST_GROUP("ParameterFilter",

@@ -10,6 +10,8 @@ USE_GROUP(UnitWidgetsTests)                        // test_UnitWidgets.cpp
 USE_GROUP(MathTests)                               // test_Math.cpp
 USE_GROUP(ValuesTests)                             // test_Values.cpp
 USE_GROUP(ParametersTests)                         // test_Parameters.cpp
+USE_GROUP(ParamEditorTests)                        // test_ParamEditor.cpp
+USE_GROUP(ParamsEditorTests)                       // test_ParamsEditor.cpp
 USE_GROUP(ElementTests)                            // test_Element.cpp
 USE_GROUP(ElementsTests)                           // test_Elements.cpp
 USE_GROUP(ElementFormulaTests)                     // test_ElementFormula.cpp
@@ -38,6 +40,8 @@ TEST_SUITE(
     ADD_GROUP(MathTests),
     ADD_GROUP(ValuesTests),
     ADD_GROUP(ParametersTests),
+    ADD_GROUP(ParamEditorTests),
+    ADD_GROUP(ParamsEditorTests),
     ADD_GROUP(ElementTests),
     ADD_GROUP(ElementsTests),
     ADD_GROUP(ElementFormulaTests),

@@ -25,7 +25,7 @@
     static const QString _typeName_() { static QString _name_ = name; return _name_; }
 
 #define PARAMS_EDITOR(editor)\
-    Z::ParamsEditor paramsEditorKind() const override { return Z::ParamsEditor::editor; }
+    Z::ParamsEditorKind paramsEditorKind() const override { return Z::ParamsEditorKind::editor; }
 
 #define CALC_MATRIX\
     void calcMatrixInternal() override;
@@ -159,7 +159,7 @@ public:
     const Z::Matrix* pMs_inv() const { return &_ms_inv; }
 
     /// Preferable parameter editor kind for this element.
-    virtual Z::ParamsEditor paramsEditorKind() const { return Z::ParamsEditor::List; }
+    virtual Z::ParamsEditorKind paramsEditorKind() const { return Z::ParamsEditorKind::List; }
 
     bool disabled() const { return _disabled; }
     void setDisabled(bool value);

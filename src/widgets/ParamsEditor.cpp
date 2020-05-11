@@ -71,6 +71,7 @@ void ParamsEditor::addEditor(Z::Parameter* param)
     o.globalParams = _options.globalParams;
     o.paramLinks = _options.paramLinks;
     o.menuButtonActions = _options.menuButtonActions;
+    o.ownParam = _options.ownParams;
     if (_options.makeAuxControl)
         o.auxControl = _options.makeAuxControl(param);
     auto editor = new ParamEditor(o);
