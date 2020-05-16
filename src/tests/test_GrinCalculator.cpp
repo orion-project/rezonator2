@@ -47,7 +47,7 @@ TEST_METHOD(solve_n2)
 
 //------------------------------------------------------------------------------
 
-TEST_GROUP("GRIN Calculator",
+TEST_GROUP("GrinCalculator",
            ADD_TEST(calc_focus),
            ADD_TEST(solve_n2),
            )

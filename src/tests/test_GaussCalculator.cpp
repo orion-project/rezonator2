@@ -531,7 +531,7 @@ TEST_METHOD(change_Lambda)
 
 //------------------------------------------------------------------------------
 
-TEST_GROUP("Gauss Calculator",
+TEST_GROUP("GaussCalculator",
            ADD_TEST(change_W0),
            ADD_TEST(change_Z0_far),
            ADD_TEST(change_Z0_near),

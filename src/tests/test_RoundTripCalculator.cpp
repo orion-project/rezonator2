@@ -600,7 +600,7 @@ TEST_GROUP("Composite interfaced elements",
 
 //------------------------------------------------------------------------------
 
-TEST_GROUP("Round-trip Calculator",
+TEST_GROUP("RoundTripCalculator",
            ADD_GROUP(RoundTripElements),
            ADD_GROUP(RoundTripEndMatrices_NoRange_NoSplit),
            ADD_GROUP(RoundTripEndMatrices_RangeSplit),

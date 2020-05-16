@@ -66,7 +66,7 @@ void CausticFunction::calculate()
 
         Z::PointTS res = (this->*calcBeamParams)();
 
-        if (_mode == FontRadius)
+        if (_mode == FrontRadius)
         {
             // If wavefront radius changes its sign, then we have a pole at waist
             if (!std::isnan(prevRes.T) && (prevRes.T * res.T) < 0)
@@ -109,7 +109,7 @@ Z::PointTS CausticFunction::calculateSinglePass() const
     switch (_mode)
     {
     case BeamRadius: return { beamT.beamRadius, beamS.beamRadius };
-    case FontRadius: return { beamT.frontRadius, beamS.frontRadius };
+    case FrontRadius: return { beamT.frontRadius, beamS.frontRadius };
     case HalfAngle: return { beamT.halfAngle, beamS.halfAngle };
     }
     qCritical() << "Unsupported caustic result mode";
@@ -121,7 +121,7 @@ Z::PointTS CausticFunction::calculateResonator() const
     switch (_mode)
     {
     case BeamRadius: return _beamCalc->beamRadius(_calc->Mt(), _calc->Ms());
-    case FontRadius: return _beamCalc->frontRadius(_calc->Mt(), _calc->Ms());
+    case FrontRadius: return _beamCalc->frontRadius(_calc->Mt(), _calc->Ms());
     case HalfAngle: return _beamCalc->halfAngle(_calc->Mt(), _calc->Ms());
     }
     qCritical() << "Unsupported caustic result mode";
@@ -146,7 +146,7 @@ QString CausticFunction::modeAlias(Mode mode)
     {
     case CausticFunction::Mode::BeamRadius:
         return QStringLiteral("W");
-    case CausticFunction::Mode::FontRadius:
+    case CausticFunction::Mode::FrontRadius:
         return QStringLiteral("R");
     case CausticFunction::Mode::HalfAngle:
         return QStringLiteral("V");

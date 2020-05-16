@@ -58,7 +58,9 @@ public:
     bool exportAsCsv; ///< Write data in CSV format (otherwise, tab-separated text).
     bool exportColumnHeaders; ///< Write column headers in the first line.
     bool exportSystemLocale; ///< Use system locale (otherwise, use C-locale).
+    bool exportTransposed; ///< Write columns as rows.
     int exportNumberPrecision; ///< Number precision for export.
+    bool exportHideCursor; ///< Hide cursor lines when exporting plot image.
 
     int numberPrecisionData; ///< Number precision for value formatting (graph data, etc).
 

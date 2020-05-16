@@ -39,13 +39,13 @@ void StabilityMapFunction::loadPrefs()
                 Z::Enums::StabilityCalcMode::Normal);
 }
 
- Z::PointTS StabilityMapFunction::calculateAt(const Z::Value& v)
- {
-     auto elem = arg()->element;
-     auto param = arg()->parameter;
-     ElementEventsLocker elemLock(elem);
-     Z::ParamValueBackup paramLock(param);
-     param->setValue(v);
-     _calc->multMatrix();
-     return _calc->stability();
- }
+Z::PointTS StabilityMapFunction::calculateAt(const Z::Value& v)
+{
+    auto elem = arg()->element;
+    auto param = arg()->parameter;
+    ElementEventsLocker elemLock(elem);
+    Z::ParamValueBackup paramLock(param);
+    param->setValue(v);
+    _calc->multMatrix();
+    return _calc->stability();
+}

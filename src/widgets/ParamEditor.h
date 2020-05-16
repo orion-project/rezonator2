@@ -90,6 +90,10 @@ public:
         /// Auxilary control to be put after unit selector.
         QWidget* auxControl = nullptr;
 
+        /// Should editor take ownership on the parameter.
+        /// If yes, the parameter is deleted when the editor gets deleted.
+        bool ownParam = false;
+
         Options(Z::Parameter* p) : param(p) {}
     };
 
@@ -142,6 +146,7 @@ private:
     LinkButton* _linkButton = nullptr;
     QString _editorInfo;
     bool _paramChangedHandlerEnabled = true;
+    bool _ownParam;
 
     void linkToGlobalParameter();
     void showValue(Z::Parameter *param);

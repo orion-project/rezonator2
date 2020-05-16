@@ -67,6 +67,19 @@
 
 #define ASSERT_MATRIX_IS_UNITY(m) ASSERT_MATRIX_IS(m, 1.0, 0.0, 0.0, 1.0)
 
+#define ASSERT_NEAR_TS(expr, expected_t, expected_s, epsilon) \
+{\
+    auto res = expr; \
+    if (std::isnan(expected_t)) \
+        ASSERT_IS_TRUE(std::isnan(res.T))\
+    else \
+        ASSERT_NEAR_DBL(res.T, expected_t, epsilon)\
+    if (std::isnan(expected_s)) \
+        ASSERT_IS_TRUE(std::isnan(res.S)) \
+    else \
+        ASSERT_NEAR_DBL(res.S, expected_s, epsilon)\
+}
+
 //------------------------------------------------------------------------------
 //                       Definitions for schema readers
 //------------------------------------------------------------------------------

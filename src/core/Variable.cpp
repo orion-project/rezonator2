@@ -68,6 +68,28 @@ QString VariableRange::str() const
         .arg(start.str()).arg(stop.str()).arg(step.str()).arg(points).arg(Z::str(useStep));
 }
 
+VariableRange VariableRange::withPoints(const Value& start, const Value& stop, int points)
+{
+    VariableRange range;
+    range.start = start;
+    range.stop = stop;
+    range.step = 0;
+    range.points = points;
+    range.useStep = false;
+    return range;
+}
+
+VariableRange VariableRange::withStep(const Value &start, const Value &stop, const Value &step)
+{
+    VariableRange range;
+    range.start = start;
+    range.stop = stop;
+    range.step = step;
+    range.points = 0;
+    range.useStep = true;
+    return range;
+}
+
 //------------------------------------------------------------------------------
 
 QString Variable::str() const
@@ -82,10 +104,10 @@ QString Variable::str() const
 
 namespace Utils {
 
-Z::Value getRangeStop(ElementRange *element)
+Value getRangeStop(ElementRange *element)
 {
     auto unit = element->paramLength()->value().unit();
-    return Z::Value(unit->fromSi(element->axisLengthSI()), unit);
+    return Value(unit->fromSi(element->axisLengthSI()), unit);
 }
 
 } // namespace Utils

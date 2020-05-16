@@ -130,7 +130,7 @@ Z::Parameters getSuitableGlobalParams(Z::Parameters* globalParams, Z::Parameter*
 //------------------------------------------------------------------------------
 
 ParamEditor::ParamEditor(Options opts) : QWidget(),
-    _param(opts.param), _globalParams(opts.globalParams), _paramLinks(opts.paramLinks)
+    _param(opts.param), _globalParams(opts.globalParams), _paramLinks(opts.paramLinks), _ownParam(opts.ownParam)
 {
     _param->addListener(this);
 
@@ -223,7 +223,10 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
 
 ParamEditor::~ParamEditor()
 {
-    _param->removeListener(this);
+    if (_ownParam)
+        delete _param;
+    else
+        _param->removeListener(this);
 }
 
 void ParamEditor::parameterChanged(Z::ParameterBase*)

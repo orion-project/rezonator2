@@ -55,6 +55,10 @@ public:
         /// An additional control displaying at the bottom of all editors just above the info panel.
         QWidget* auxControl = nullptr;
 
+        /// Should editor take ownership on the parameters.
+        /// If yes, the parameters are deleted when the editor gets deleted.
+        bool ownParams = false;
+
         Options(const Z::Parameters *p) : params(p) {}
     };
 

@@ -155,8 +155,9 @@ QWidget* AppSettingsDialog::createExportPage()
     auto page = new Ori::Dlg::BasicConfigPage(tr("Export"), ":/toolbar/save");
 
     _groupExportData = new Ori::Widgets::OptionsGroup(tr("Graph data export options"), {
-        tr("Use CSV format"),
-        tr("Use system locale "),
+        tr("Use CSV format (otherwise, use plain text format)"),
+        tr("Use system locale (otherwise, use C locale)"),
+        tr("Transposed mode (write values in row instead of column)"),
         //tr("Write column headers"),
     });
 
@@ -165,7 +166,11 @@ QWidget* AppSettingsDialog::createExportPage()
         LayoutH({new QLabel(tr("Number precision")), _exportNumberPrecision, Stretch()}).boxLayout(),
     });
 
-    page->add({_groupExportData, page->stretch()});
+    _groupExportPlot = new Ori::Widgets::OptionsGroup(tr("Plot image export options"), {
+        tr("Hide cursor lines when save, copy, or print image")
+    });
+
+    page->add({_groupExportData, _groupExportPlot, page->stretch()});
     return page;
 }
 
@@ -202,8 +207,9 @@ void AppSettingsDialog::populate()
     // export
     _groupExportData->setOption(0, settings.exportAsCsv);
     _groupExportData->setOption(1, settings.exportSystemLocale);
-    //_groupExportData->setOption(2, settings.exportColumnHeaders);
+    _groupExportData->setOption(2, settings.exportTransposed);
     _exportNumberPrecision->setValue(settings.exportNumberPrecision);
+    _groupExportPlot->setOption(0, settings.exportHideCursor);
 }
 
 bool AppSettingsDialog::collect()
@@ -239,8 +245,9 @@ bool AppSettingsDialog::collect()
     // export
     settings.exportAsCsv = _groupExportData->option(0);
     settings.exportSystemLocale = _groupExportData->option(1);
-    //settings.exportColumnHeaders = _groupExportData->option(2);
+    settings.exportTransposed = _groupExportData->option(2);
     settings.exportNumberPrecision = _exportNumberPrecision->value();
+    settings.exportHideCursor = _groupExportPlot->option(0);
 
     settings.save();
     return true;

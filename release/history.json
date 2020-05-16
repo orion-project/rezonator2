@@ -29,6 +29,9 @@
           "text": "Added settings for number formatting and data exporting."
         },
         {
+          "text": "Added menu commands for exporting graph data and plot image (copy to Clipboard)."
+        },
+        {
           "text": "Added options for controlling how element is displayed on the layout - show label, draw narrow."
         },
         {

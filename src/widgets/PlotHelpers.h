@@ -9,6 +9,8 @@
 
 #include "../core/Units.h"
 
+#include "qcpl_export.h"
+
 namespace QCPL {
 class Plot;
 class Cursor;
@@ -20,6 +22,8 @@ namespace PlotHelpers {
 
 void rescaleLimits(QCPL::Plot* plot, PlotAxis axis, Z::Unit unitFrom, Z::Unit unitTo);
 void rescaleCursor(QCPL::Cursor* cursor, PlotAxis axis, Z::Unit unitFrom, Z::Unit unitTo);
+
+QCPL::GraphDataExportSettings makeExportSettings();
 
 } // namespace PlotHelpers
 

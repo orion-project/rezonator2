@@ -230,7 +230,7 @@ TEST_METHOD(setupTripType__must_create_active_pump_for_SP_schema)
 
 //------------------------------------------------------------------------------
 
-TEST_GROUP("Project Operations",
+TEST_GROUP("ProjectOperations",
     ADD_TEST(createDefaultPump__must_add_active_pump),
     ADD_TEST(createDefaultPump__must_raise_events),
     ADD_TEST(createDefaultPump__must_generate_label_when_required),

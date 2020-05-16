@@ -247,6 +247,7 @@ SOURCES += \
     src/io/SchemaReaderJson.cpp \
     src/io/SchemaWriterJson.cpp \
     src/main.cpp \
+    src/tests/test_AbcdBeamCalculator.cpp \
     src/tests/test_ElemSelectorWidget.cpp \
     src/tests/test_Element.cpp \
     src/tests/test_ElementFilter.cpp \
@@ -257,7 +258,10 @@ SOURCES += \
     src/tests/test_InfoFunctions.cpp \
     src/tests/test_LuaHelper.cpp \
     src/tests/test_Math.cpp \
+    src/tests/test_ParamEditor.cpp \
     src/tests/test_Parameters.cpp \
+    src/tests/test_ParamsEditor.cpp \
+    src/tests/test_PlotFunctions.cpp \
     src/tests/test_ProjectOperations.cpp \
     src/tests/test_Report.cpp \
     src/tests/test_RoundTripCalculator.cpp \

@@ -109,12 +109,13 @@ protected:
     bool _exclusiveModeTS = false;
     bool _recalcWhenChangeModeTS = false;
     UnitsMenu *_unitsMenuX, *_unitsMenuY;
-    QMenu *menuPlot, *menuLimits, *menuFormat, *menuAxisX, *menuAxisY;
+    QMenu *menuPlot, *menuLimits, *menuFormat;
     QAction *actnShowT, *actnShowS, *actnShowFlippedTS,
         *actnAutolimits, *actnAutolimitsX, *actnAutolimitsY,
         *actnSetLimitsX, *actnSetLimitsY,
         *actnZoomIn, *actnZoomOut, *actnZoomInX, *actnZoomOutX, *actnZoomInY, *actnZoomOutY,
-        *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo;
+        *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo,
+        *actnCopyGraphData, *actnCopyPlotImage;
 
     struct ViewState
     {
@@ -173,6 +174,8 @@ private slots:
     void activateModeFlippedTS();
     void updateWithParams();
     void freeze(bool);
+    void copyPlotImage();
+    void copyGraphData();
 
     QWidget* optionsPanelRequired();
 

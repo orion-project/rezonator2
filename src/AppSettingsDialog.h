@@ -31,6 +31,7 @@ private:
     Ori::Widgets::OptionsGroup *_groupView;
     Ori::Widgets::OptionsGroup *_groupLayoutExport;
     Ori::Widgets::OptionsGroup *_groupExportData;
+    Ori::Widgets::OptionsGroup *_groupExportPlot;
     UnitComboBox *_defaultUnitBeamRadius;
     UnitComboBox *_defaultUnitFrontRadius;
     UnitComboBox *_defaultUnitAngle;

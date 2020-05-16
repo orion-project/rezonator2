@@ -9,7 +9,7 @@
 
 namespace Z {
 
-enum class ParamsEditor { None, List, ABCD };
+enum class ParamsEditorKind { None, List, ABCD };
 
 class ParameterBase;
 
@@ -120,7 +120,7 @@ public:
     /// Verify parameter value.
     /// Inherited classes should implement actual verification logic.
     /// Should return empty string if value is valid, or reason why one is invalid.
-    virtual QString verify(const TValue& value) const { Q_UNUSED(value); return QString(); }
+    virtual QString verify(const TValue& value) const { Q_UNUSED(value) return QString(); }
 };
 
 //------------------------------------------------------------------------------

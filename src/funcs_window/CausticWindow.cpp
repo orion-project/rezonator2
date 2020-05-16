@@ -107,6 +107,7 @@ CausticWindow::CausticWindow(Schema *schema) : PlotFuncWindowStorable(new Causti
     _actnShowBeamShape = new QAction(tr("Show Beam Shape", "Plot action"), this);
     _actnShowBeamShape->setIcon(QIcon(":/toolbar/profile"));
     _actnShowBeamShape->setCheckable(true);
+    _actnShowBeamShape->setVisible(false);
     connect(_actnShowBeamShape, &QAction::triggered, this, &CausticWindow::showBeamShape);
 
     menuPlot->addSeparator();
@@ -153,7 +154,7 @@ QString CausticWindow::getDefaultTitle() const
     {
     case CausticFunction::Mode::BeamRadius:
         return tr("Beam Radius");
-    case CausticFunction::Mode::FontRadius:
+    case CausticFunction::Mode::FrontRadius:
         return tr("Wavefront Curvature Radius");
     case CausticFunction::Mode::HalfAngle:
         return tr("Half of Divergence Angle");
@@ -175,7 +176,7 @@ QString CausticWindow::getDefaultTitleY() const
     case CausticFunction::Mode::BeamRadius:
         title = tr("Beam radius");
         break;
-    case CausticFunction::Mode::FontRadius:
+    case CausticFunction::Mode::FrontRadius:
         title = tr("Wavefront curvature radius");
         break;
     case CausticFunction::Mode::HalfAngle:
@@ -195,7 +196,7 @@ Z::Unit CausticWindow::getDefaultUnitY() const
     switch (function()->mode())
     {
     case CausticFunction::BeamRadius: return AppSettings::instance().defaultUnitBeamRadius;
-    case CausticFunction::FontRadius: return AppSettings::instance().defaultUnitFrontRadius;
+    case CausticFunction::FrontRadius: return AppSettings::instance().defaultUnitFrontRadius;
     case CausticFunction::HalfAngle: return AppSettings::instance().defaultUnitAngle;
     }
     return Z::Units::none();
