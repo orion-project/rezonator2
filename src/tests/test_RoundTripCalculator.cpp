@@ -313,8 +313,24 @@ TEST_GROUP("Round-trip end matrices (range split)",
 
 namespace GeneralFuncs {
 
+/// RT-Calculator allowing for setting matrices directly
+class TestRoundTripCalculator : public RoundTripCalculator {
+public:
+    TestRoundTripCalculator(Schema *s) : RoundTripCalculator(s) {}
+    TestRoundTripCalculator(Schema *s, const Matrix &mt, const Matrix &ms) : RoundTripCalculator(s) {
+        _mt = mt;
+        _ms = ms;
+    }
+    void addT(std::initializer_list<const Matrix*> matrs) {
+        for (auto &m : matrs) _matrsT.append(m);
+    }
+    void addS(std::initializer_list<const Matrix*> matrs) {
+        for (auto &m : matrs) _matrsS.append(m);
+    }
+};
+
 // Calculation: $PROJECT/calc/RoundTripCalculator.py
-TEST_METHOD(mult_matrices)
+TEST_METHOD(multMatrix)
 {
     Matrix L1_t(1, 0.05, 0, 1);
     Matrix L1_s = L1_t;
@@ -332,17 +348,6 @@ TEST_METHOD(mult_matrices)
     Matrix L3_s = L3_t;
 
     Schema schema;
-    class TestRoundTripCalculator : public RoundTripCalculator {
-    public:
-        TestRoundTripCalculator(Schema*s) : RoundTripCalculator(s) {}
-        void addT(std::initializer_list<Matrix*> matrs) {
-            for (auto &m : matrs) _matrsT.append(m);
-        }
-        void addS(std::initializer_list<Matrix*> matrs) {
-            for (auto &m : matrs) _matrsS.append(m);
-        }
-    };
-
     TestRoundTripCalculator c(&schema);
     c.addT({&L3_t, &Cr1_t, &L2_t, &F1_t, &L1_t});
     c.addS({&L3_s, &Cr1_s, &L2_s, &F1_s, &L1_s});
@@ -351,41 +356,90 @@ TEST_METHOD(mult_matrices)
     ASSERT_MATRIX_NEAR(c.Ms(), -1.3899498, 0.1731843, -9.8480800, 0.5075960, 1e-7)
 }
 
+#define ASSERT_STABILITY(c, expected_t, expected_s) \
+{\
+    auto s = c.isStable();\
+    ASSERT_IS_TRUE(s.T == expected_t)\
+    ASSERT_IS_TRUE(s.S == expected_s)\
+}
+
+// Calculation: $PROJECT/bin/test_files/test_stability.rez (Ref:M_out)
+TEST_METHOD(stability_stable)
+{
+    // L_foc = 56mm
+    Matrix mt(-0.946404361, 0.0201553431, -5.17573851, -0.946404361);
+    Matrix ms(0.411007405, 0.527102031, -1.57668319, 0.411007405);
+
+    Schema schema;
+    TestRoundTripCalculator c(&schema, mt, ms);
+    c.setStabilityCalcMode(Z::Enums::StabilityCalcMode::Normal);
+    ASSERT_NEAR_TS(c.stability(), -0.946404361, 0.411007405, 1e-9);
+    ASSERT_STABILITY(c, true, true)
+
+    c.setStabilityCalcMode(Z::Enums::StabilityCalcMode::Squared);
+    ASSERT_NEAR_TS(c.stability(), 0.104318786, 0.831072913, 1e-9);
+    ASSERT_STABILITY(c, true, true)
+}
+
+TEST_METHOD(stability_unstable_S)
+{
+    // L_foc = 55mm
+    Matrix mt(0.378002292, 0.517339649, -1.65677282, 0.378002292);
+    Matrix ms(1.56926206, 0.957958409, 1.52677132, 1.56926206);
+
+    Schema schema;
+    TestRoundTripCalculator c(&schema, mt, ms);
+    c.setStabilityCalcMode(Z::Enums::StabilityCalcMode::Normal);
+    ASSERT_NEAR_TS(c.stability(), 0.378002292, 1.56926206, 1e-8);
+    ASSERT_STABILITY(c, true, false)
+
+    c.setStabilityCalcMode(Z::Enums::StabilityCalcMode::Squared);
+    ASSERT_NEAR_TS(c.stability(), 0.857114268, -1.46258343, 1e-7);
+    ASSERT_STABILITY(c, true, false)
+}
+
+TEST_METHOD(stability_unstable_T)
+{
+    // L_foc = 57mm
+    Matrix mt(-2.35811339, -0.511546559, -8.91551057, -2.35811339);
+    Matrix ms(-0.828582488, 0.0641496036, -4.88625094, -0.828582488);
+
+    Schema schema;
+    TestRoundTripCalculator c(&schema, mt, ms);
+    c.setStabilityCalcMode(Z::Enums::StabilityCalcMode::Normal);
+    ASSERT_NEAR_TS(c.stability(), -2.35811339, -0.828582488, 1e-8);
+    ASSERT_STABILITY(c, false, true)
+
+    c.setStabilityCalcMode(Z::Enums::StabilityCalcMode::Squared);
+    ASSERT_NEAR_TS(c.stability(), -4.56069875, 0.313451061, 1e-7);
+    ASSERT_STABILITY(c, false, true)
+}
+
+TEST_METHOD(stability_unstable)
+{
+    // L_foc = 54mm
+    Matrix mt(1.61510657, 0.980006359, 1.64138652, 1.61510657);
+    Matrix ms(2.64618149, 1.35671874, 4.42411261, 2.64618149);
+
+    Schema schema;
+    TestRoundTripCalculator c(&schema, mt, ms);
+    c.setStabilityCalcMode(Z::Enums::StabilityCalcMode::Normal);
+    ASSERT_NEAR_TS(c.stability(), 1.61510657, 2.64618149, 1e-8);
+    ASSERT_STABILITY(c, false, false)
+
+    c.setStabilityCalcMode(Z::Enums::StabilityCalcMode::Squared);
+    ASSERT_NEAR_TS(c.stability(), -1.60856923, -6.00227648, 1e-8);
+    ASSERT_STABILITY(c, false, false)
+}
+
 TEST_GROUP("General functionality",
-           ADD_TEST(mult_matrices),
+           ADD_TEST(multMatrix),
+           ADD_TEST(stability_stable),
+           ADD_TEST(stability_unstable_S),
+           ADD_TEST(stability_unstable_T),
+           ADD_TEST(stability_unstable),
            )
 }
-
-//------------------------------------------------------------------------------
-
-template <typename TElement>
-Element* makeElem(const QString& label, const QString& paramStr) {
-    TElement *elem = new TElement;
-    elem->setLabel(label);
-    for (auto part : paramStr.split(';')) {
-        auto keyValue = part.split('=');
-        if (keyValue.size() != 2) continue;
-        auto key = keyValue.at(0).trimmed();
-        auto value = keyValue.at(1).trimmed();
-        auto param = elem->params().byAlias(key);
-        if (!param) {
-            qWarning() << "makeElem(): Unknown param alias:" << key;
-            continue;
-        }
-        param->setValue(Z::Value::parse(value));
-    }
-    return elem;
-}
-
-TEST_METHOD(Helper_makeElem)
-{
-    Element* elem = makeElem<ElemEmptyRange>("Label_1", "L = 56.7cm");
-    ASSERT_IS_NOT_NULL(elem)
-    ASSERT_EQ_STR(elem->type(), "ElemEmptyRange")
-    ASSERT_EQ_STR(elem->label(), "Label_1")
-    ASSERT_EQ_ZVALUE(elem->params().byAlias("L")->value(), 56.7_cm)
-}
-
 
 //------------------------------------------------------------------------------
 /**
@@ -606,7 +660,6 @@ TEST_GROUP("RoundTripCalculator",
            ADD_GROUP(RoundTripEndMatrices_RangeSplit),
            ADD_GROUP(GeneralFuncs),
            ADD_GROUP(InterfacedElements),
-           ADD_TEST(Helper_makeElem),
            )
 } // namespace RoundTripCalculatorTests
 } // namespace Tests

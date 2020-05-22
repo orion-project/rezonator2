@@ -4,6 +4,7 @@
 namespace Z {
 namespace Tests {
 
+USE_GROUP(TestUtilsTests)                          // test_TestUtilsTests.cpp
 USE_GROUP(ReportTests)                             // test_Report.cpp
 USE_GROUP(UnitsTests)                              // test_Units.cpp
 USE_GROUP(UnitWidgetsTests)                        // test_UnitWidgets.cpp
@@ -34,6 +35,7 @@ USE_GROUP(ProjectOperationsTests)                  // test_ProjectOperations.cpp
 
 TEST_SUITE(
     ADD_GROUP(Ori::Tests::All),
+    ADD_GROUP(TestUtilsTests),
     ADD_GROUP(ReportTests),
     ADD_GROUP(UnitsTests),
     ADD_GROUP(UnitWidgetsTests),
