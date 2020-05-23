@@ -4,6 +4,8 @@
 #include "../core/Values.h"
 #include "testing/OriTestBase.h"
 
+#include <QDebug>
+
 //------------------------------------------------------------------------------
 //                       Application specific asserts
 //------------------------------------------------------------------------------
@@ -103,5 +105,28 @@
     auto message = report.isEmpty()? "    (empty)": report;\
     test->logMessage("Loading report:\n" % message % "\n");\
 }
+
+//------------------------------------------------------------------------------
+
+template <typename TElement>
+TElement* makeElem(const QString& label, const QString& paramStr) {
+    TElement *elem = new TElement;
+    elem->setLabel(label);
+    for (auto part : paramStr.split(';')) {
+        auto keyValue = part.split('=');
+        if (keyValue.size() != 2) continue;
+        auto key = keyValue.at(0).trimmed();
+        auto value = keyValue.at(1).trimmed();
+        auto param = elem->params().byAlias(key);
+        if (!param) {
+            qWarning() << "makeElem(): Unknown param alias:" << key;
+            continue;
+        }
+        param->setValue(Z::Value::parse(value));
+    }
+    return elem;
+}
+
+//------------------------------------------------------------------------------
 
 #endif // Z_TEST_UTILS_H

@@ -1,0 +1,155 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 1000
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "M_back",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 5
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 30
+                }
+            },
+            "title": "Back mirror",
+            "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L_foc",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 56
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "Focusing range",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M_foc",
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 10
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 50
+                }
+            },
+            "title": "Focusing mirror",
+            "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L",
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 420
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "Folding range",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M_out",
+            "params": {
+            },
+            "title": "Output mirror",
+            "type": "ElemFlatMirror"
+        }
+    ],
+    "formulas": [
+    ],
+    "notes": "This file is used to calculate RT-matrixes for stability tests in test_RoundTripCalculator.cpp",
+    "param_links": [
+    ],
+    "pumps": [
+    ],
+    "schema_version": "2.0",
+    "title": "",
+    "trip_type": "SW",
+    "windows": [
+        {
+            "function": {
+                "arg": {
+                    "element_index": 1,
+                    "param": "L",
+                    "range": {
+                        "points": 100,
+                        "start": {
+                            "unit": "cm",
+                            "value": 5
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "cm",
+                            "value": 6
+                        },
+                        "use_step": false
+                    }
+                },
+                "stab_calc_mode": "Squared"
+            },
+            "type": "StabMap",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "stab_bound_markers": true,
+                "stored_views": [
+                    {
+                        "mode": 0,
+                        "x_max": 60.36,
+                        "x_min": 23.64,
+                        "x_unit": "mm",
+                        "y_max": 1.05,
+                        "y_min": -1.05,
+                        "y_unit": "none"
+                    },
+                    {
+                        "mode": 1,
+                        "x_max": 6.036,
+                        "x_min": 2.364,
+                        "x_unit": "cm",
+                        "y_max": 1.0466511783333254,
+                        "y_min": -0.06590861448225471,
+                        "y_unit": "none"
+                    }
+                ],
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 6.01,
+                "x_min": 4.99,
+                "x_unit": "cm",
+                "y_max": 1.05,
+                "y_min": -0.05,
+                "y_unit": "none"
+            }
+        }
+    ]
+}
