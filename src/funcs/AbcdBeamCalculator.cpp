@@ -20,8 +20,11 @@ static bool isImag(const Z::Complex& v)
 double AbcdBeamCalculator::beamRadius(const Z::Matrix& m) const
 {
     auto w = sqrt(_wavelenSI * M_1_PI * 2.0 * m.B / sqrt(4.0 - SQR(m.A + m.D)));
-    //qDebug() << "w =" << Z::str(w);
-    return isReal(w) ? w.real() : Double::nan();
+    //qDebug() << "B =" << Z::str(m.B) << "W =" << Z::str(w);
+    // B can be negative in a system with pure real matrices
+    // and this gives a pure imaginary W while the system is stable.
+    // TODO:COMPLEX: check what happens in a system with complex round-trip matrix.
+    return isReal(w) ? w.real() : (isImag(w) ? w.imag() : Double::nan());
 }
 
 double AbcdBeamCalculator::frontRadius(const Z::Matrix& m) const
@@ -34,8 +37,7 @@ double AbcdBeamCalculator::frontRadius(const Z::Matrix& m) const
 double AbcdBeamCalculator::halfAngle(const Z::Matrix& m) const
 {
     auto v = sqrt(_wavelenSI * M_1_PI * 2.0 * m.C / sqrt(4.0 - SQR(m.A + m.D)));
-    //qDebug() << "C =" << Z::str(m.C);
-    //qDebug() << "V =" << Z::str(v);
+    //qDebug() << "C =" << Z::str(m.C) << "V =" << Z::str(v);
     // C can be negative in a system with pure real matrices
     // and this gives a pure imaginary V while the system is stable.
     // TODO:COMPLEX: check what happens in a system with complex round-trip matrix.
