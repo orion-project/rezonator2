@@ -411,6 +411,7 @@ PumpParams* readPump(const QJsonObject& root, Z::Report* report)
     auto pump = pumpMode->makePump();
     pump->setLabel(root["label"].toString());
     pump->setTitle(root["title"].toString());
+    pump->setColor(root["color"].isString() ? root["color"].toString() : pump->color());
     pump->activate(root["is_active"].toBool());
 
     JsonValue paramsJson(root, "params", report);

@@ -1,0 +1,278 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 980
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "d1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 120
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "TL1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+                "F": {
+                    "unit": "m",
+                    "value": 0.1
+                },
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 2
+                }
+            },
+            "title": "",
+            "type": "ElemThermoLens"
+        },
+        {
+            "is_disabled": false,
+            "label": "d2",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 120
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        }
+    ],
+    "formulas": [
+    ],
+    "notes": "",
+    "param_links": [
+    ],
+    "pumps": [
+        {
+            "color": "#ffaa00",
+            "is_active": true,
+            "label": "P1",
+            "mode": "InvComplex",
+            "params": {
+                "Im": {
+                    "unit": "mm",
+                    "value_s": 0.00290697,
+                    "value_t": 0.00290697
+                },
+                "MI": {
+                    "unit": "none",
+                    "value_s": 1,
+                    "value_t": 1
+                },
+                "Re": {
+                    "unit": "mm",
+                    "value_s": 0.00906811,
+                    "value_t": 0.00906811
+                }
+            },
+            "title": "Inv complex positive"
+        },
+        {
+            "color": "#aa55ff",
+            "is_active": false,
+            "label": "P2",
+            "mode": "InvComplex",
+            "params": {
+                "Im": {
+                    "unit": "mm",
+                    "value_s": -0.00243261,
+                    "value_t": -0.00243261
+                },
+                "MI": {
+                    "unit": "none",
+                    "value_s": 1,
+                    "value_t": 1
+                },
+                "Re": {
+                    "unit": "mm",
+                    "value_s": 0.00936834,
+                    "value_t": 0.00936834
+                }
+            },
+            "title": "Inv complex negative"
+        }
+    ],
+    "schema_version": "2.0",
+    "title": "",
+    "trip_type": "SP",
+    "windows": [
+        {
+            "type": "PumpsWindow"
+        },
+        {
+            "function": {
+                "args": [
+                    {
+                        "element_index": 0,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 120
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 1,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 100
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 2,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 120
+                            },
+                            "use_step": false
+                        }
+                    }
+                ]
+            },
+            "type": "MultibeamCaustic",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "elem_bound_markers": true,
+                "stored_views": [
+                ],
+                "ts_flipped": false,
+                "ts_mode": "T",
+                "x_max": 343.3999999999999,
+                "x_min": -3.3999999999999995,
+                "x_unit": "mm",
+                "y_max": 836.0364535085232,
+                "y_min": 303.36814193175024,
+                "y_unit": "mkm"
+            }
+        },
+        {
+            "function": {
+                "args": [
+                    {
+                        "element_index": 0,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 120
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 2,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 120
+                            },
+                            "use_step": false
+                        }
+                    }
+                ],
+                "mode": "BeamRadius"
+            },
+            "type": "MultirangeCaustic",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "elem_bound_markers": true,
+                "stored_views": [
+                ],
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 323.2,
+                "x_min": -3.2,
+                "x_unit": "mm",
+                "y_max": 1200.0623640297215,
+                "y_min": 286.03357476407416,
+                "y_unit": "mkm"
+            }
+        }
+    ]
+}

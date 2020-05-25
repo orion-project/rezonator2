@@ -51,7 +51,10 @@ void MultibeamCausticWindow::calculate()
             Z_ERROR(QString("%1: Pump %2: %3").arg(windowTitle()).arg(pump->label()).arg(function()->errorText()));
             continue;
         }
-        _graphs->update(pump->label(), workPlane, funcs);
+        // TODO: show different pump lines in legend
+        // It'll require additional work as a caustic line consist of several ranges
+        // which of them is a separate QCP-graph
+        _graphs->update(pump->label(), workPlane, funcs, pump->color());
     }
     if (errorCount == schema()->pumps()->size())
     {

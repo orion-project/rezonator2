@@ -34,6 +34,7 @@ public:
     void setFlipped(bool on) { _isFlipped = on; }
     void setVisible(bool on) { _isVisible = on; }
     void setPen(const QPen& pen) { _linePen = pen; }
+    void setColor(Z::WorkPlane workPlane, const QString& color);
 
 private:
     QCPL::Plot* _plot;
@@ -58,7 +59,7 @@ public:
     void clear();
     void update(PlotFunction* function);
     void update(const QList<PlotFunction*>& functions);
-    void update(const QString& id, Z::WorkPlane workPlane, const QList<PlotFunction*>& functions);
+    void update(const QString& id, Z::WorkPlane workPlane, const QList<PlotFunction*>& functions, const QString& color);
 
     FunctionGraph* T() { return _graphT; }
     FunctionGraph* S() { return _graphS; }

@@ -36,6 +36,9 @@
         },
         {
           "text": "New tool: GRIN lens assessment."
+        },
+        {
+          "test": "Can set different colors for pumps for using in MB-Caustic plot."
         }
       ]
     },

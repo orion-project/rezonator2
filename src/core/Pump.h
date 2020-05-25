@@ -46,9 +46,11 @@ public:
     virtual QString modeName() const { return QString(); }
     QString label() const { return _label; }
     QString title() const { return _title; }
+    QString color() const { return _color; }
     Z::ParametersTS* params() { return &_params; }
     void setLabel(const QString& label) { _label = label; }
     void setTitle(const QString& title) { _title = title; }
+    void setColor(const QString& color) { _color = color; }
     QString str() const { return _params.str(); }
     QString displayStr() const { return _params.displayStr(); }
     bool isActive() const { return _isActive; }
@@ -58,6 +60,7 @@ protected:
 private:
     Z::ParametersTS _params;
     QString _label, _title;
+    QString _color = "#555555";
     bool _isActive = false;
 };
 
