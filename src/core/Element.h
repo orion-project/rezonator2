@@ -275,7 +275,7 @@ public:
         PumpCalculator *pumpCalcT, *pumpCalcS;
 
         /// Schema wevelength in meters.
-        double schemaWavelenSI;
+        double schemaWavelenSi;
 
         /// We don't care if this IOR differs from IOR of the current element (in the case it has IOR).
         /// In this case the beam transition between elements is invalid, but it is up to user.

@@ -91,8 +91,7 @@ bool CausticFunction::prepareSinglePass(Element* ref)
 
 bool CausticFunction::prepareResonator()
 {
-    if (!_beamCalc) _beamCalc.reset(new AbcdBeamCalculator);
-    _beamCalc->setWavelenSI(schema()->wavelength().value().toSi() / _ior);
+    if (!_beamCalc) _beamCalc.reset(new AbcdBeamCalculator(schema()->wavelenSi()));
     return true;
 }
 
@@ -114,9 +113,9 @@ Z::PointTS CausticFunction::calculateResonator() const
 {
     switch (_mode)
     {
-    case BeamRadius: return _beamCalc->beamRadius(_calc->Mt(), _calc->Ms());
-    case FrontRadius: return _beamCalc->frontRadius(_calc->Mt(), _calc->Ms());
-    case HalfAngle: return _beamCalc->halfAngle(_calc->Mt(), _calc->Ms());
+    case BeamRadius: return _beamCalc->beamRadius(_calc->Mt(), _calc->Ms(), _ior);
+    case FrontRadius: return _beamCalc->frontRadius(_calc->Mt(), _calc->Ms(), _ior);
+    case HalfAngle: return _beamCalc->halfAngle(_calc->Mt(), _calc->Ms(), _ior);
     }
     qCritical() << "Unsupported caustic result mode";
     return Z::PointTS();

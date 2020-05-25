@@ -72,7 +72,7 @@ protected:
     void calculateAt(Element* calcElem, bool calcSubrange, Element* resultElem, ResultPosition resultPos);
     void calculatePumpBeforeSchema(Element* elem, ResultPosition resultPos);
     QVector<Z::PointTS> calculateSinglePass(RoundTripCalculator* calc, double ior) const;
-    QVector<Z::PointTS> calculateResonator(RoundTripCalculator* calc, double wavelenSI, double ior) const;
+    QVector<Z::PointTS> calculateResonator(RoundTripCalculator* calc, double ior) const;
 };
 
 #endif // TABLEFUNCTION_H

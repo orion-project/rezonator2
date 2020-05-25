@@ -93,10 +93,8 @@ bool BeamVariationFunction::prepareSinglePass()
     }
     if (!_pumpCalc.T) _pumpCalc.T = PumpCalculator::T();
     if (!_pumpCalc.S) _pumpCalc.S = PumpCalculator::S();
-    // A pump is always supposed to be in free space
-    const double lambda = schema()->wavelength().value().toSi();
-    if (!_pumpCalc.T->init(pump, lambda) ||
-        !_pumpCalc.S->init(pump, lambda))
+    if (!_pumpCalc.T->init(pump, schema()->wavelenSi()) ||
+        !_pumpCalc.S->init(pump, schema()->wavelenSi()))
     {
         setError("Unsupported pump mode");
         return false;
@@ -106,8 +104,7 @@ bool BeamVariationFunction::prepareSinglePass()
 
 bool BeamVariationFunction::prepareResonator()
 {
-    if (!_beamCalc) _beamCalc.reset(new AbcdBeamCalculator);
-    _beamCalc->setWavelenSI(schema()->wavelength().value().toSi() / _ior);
+    if (!_beamCalc) _beamCalc.reset(new AbcdBeamCalculator(schema()->wavelength().value().toSi()));
     return true;
 }
 
@@ -120,5 +117,5 @@ Z::PointTS BeamVariationFunction::calculateSinglePass() const
 
 Z::PointTS BeamVariationFunction::calculateResonator() const
 {
-    return _beamCalc->beamRadius(_calc->Mt(), _calc->Ms());
+    return _beamCalc->beamRadius(_calc->Mt(), _calc->Ms(), _ior);
 }

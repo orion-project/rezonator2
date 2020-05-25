@@ -30,7 +30,7 @@ bool TableFunction::prepareSinglePass()
 
 bool TableFunction::prepareResonator()
 {
-    if (!_beamCalc) _beamCalc.reset(new AbcdBeamCalculator);
+    if (!_beamCalc) _beamCalc.reset(new AbcdBeamCalculator(schema()->wavelenSi()));
     return true;
 }
 
@@ -303,14 +303,13 @@ void TableFunction::calculateAt(Element* calcElem, bool calcSubrange, Element *r
     calc.calcRoundTrip(calcSubrange);
     calc.multMatrix();
 
-    double ior = calcSubrange ? Z::Utils::asRange(calcElem)->ior() : 1;
-    double wavelenSI = schema()->wavelength().value().toSi();
+    const double ior = calcSubrange ? Z::Utils::asRange(calcElem)->ior() : 1;
 
     Result res;
     res.element = resultElem;
     res.position = resultPos;
     res.values = schema()->isResonator()
-            ? calculateResonator(&calc, wavelenSI, ior)
+            ? calculateResonator(&calc, ior)
             : calculateSinglePass(&calc, ior);
     _results << res;
 }
@@ -343,13 +342,12 @@ QVector<Z::PointTS> TableFunction::calculateSinglePass(RoundTripCalculator* calc
     };
 }
 
-QVector<Z::PointTS> TableFunction::calculateResonator(RoundTripCalculator *calc, double wavelenSI, double ior) const
+QVector<Z::PointTS> TableFunction::calculateResonator(RoundTripCalculator *calc, double ior) const
 {
-    _beamCalc->setWavelenSI(wavelenSI / ior);
     return {
-        _beamCalc->beamRadius(calc->Mt(), calc->Ms()),
-        _beamCalc->frontRadius(calc->Mt(), calc->Ms()),
-        _beamCalc->halfAngle(calc->Mt(), calc->Ms()) ,
+        _beamCalc->beamRadius(calc->Mt(), calc->Ms(), ior),
+        _beamCalc->frontRadius(calc->Mt(), calc->Ms(), ior),
+        _beamCalc->halfAngle(calc->Mt(), calc->Ms(), ior),
     };
 }
 
