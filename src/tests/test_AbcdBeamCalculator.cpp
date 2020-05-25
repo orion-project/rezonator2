@@ -2,7 +2,6 @@
 #include "TestUtils.h"
 #include "../funcs/AbcdBeamCalculator.h"
 #include "../core/Math.h"
-#include <QThread>
 
 // Expected values for these tests calculated by `test_files/test_plot_funcs.rez`
 // with help of func 'Round-trip Matrix' and 'Beam Parameters at Element'.
@@ -32,7 +31,6 @@ TEST_METHOD(beamRadius__must_return_nan_when_unstable)
     Z::Matrix m(-0.577181785, -0.511906815, 24.6309496, 20.1128159);
     ASSERT_IS_UNSTABLE(m)
     ASSERT_IS_TRUE(std::isnan(calc.beamRadius(m, 1)))
-            QThread::sleep(60);
 }
 
 TEST_METHOD(beamRadius)
@@ -100,6 +98,7 @@ TEST_GROUP("AbcdBeamCalculator",
            ADD_TEST(halfAngle__must_return_nan_when_unstable),
            ADD_TEST(halfAngle),
            ADD_TEST(calc_ts),
+           // TODO: add tests for calculation inside a medium
            )
 
 } // namespace AbcdBeamCalculatorTests

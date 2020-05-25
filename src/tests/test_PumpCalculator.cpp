@@ -262,6 +262,7 @@ TEST_GROUP("PumpCalculator",
            ADD_TEST(Complex_hyper),
            ADD_TEST(InvComplex_gauss),
            ADD_TEST(InvComplex_hyper),
+           // TODO: add tests for calculation inside a medium
            )
 
 } // namespace PumpCalculatorTests
