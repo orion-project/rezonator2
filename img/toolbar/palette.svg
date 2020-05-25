@@ -1,0 +1,17 @@
+<svg height="128mm" viewBox="0 0 128 128" width="128mm" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<linearGradient id="a" gradientUnits="userSpaceOnUse" x1="97.8796" x2="23.3584" y1="278.8878" y2="189.8534">
+<stop offset="0" stop-color="#f3c668"/>
+<stop offset="1" stop-color="#f9f398"/>
+</linearGradient>
+<linearGradient id="b" gradientUnits="userSpaceOnUse" x1="105.2324" x2="29.926" y1="268.1186" y2="185.124">
+<stop offset="0" stop-color="#c69c59"/>
+<stop offset="1" stop-color="#7d6642"/>
+</linearGradient>
+<g transform="translate(0 -169)">
+<path d="m65.73 172.24c-32.41.01-71.09 29.27-61.51 60.47 2.08 6.77 9.18 6.94 16.04 7.24 39 1.71-8.58 38.73 25.52 50.58 51.74 17.98 79.54-24.31 79.94-55.09.44-33.27-26.71-63.2-59.99-63.19zm16.13 98.74c.5 9.2-5.77 16.79-17.56 17.26-11.79.48-20.63-5.23-21.01-14.43-.37-9.21 6.87-16.7 18.66-17.24 9.89-.46 19.43 5.74 19.9 14.42z" style="fill:none;stroke:#000;stroke-width:3.17;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:.55"/>
+<path d="m64.93 170.64c-32.41.01-71.09 29.27-61.51 60.47 2.08 6.77 9.18 6.94 16.04 7.24 39 1.71-8.58 38.73 25.52 50.58 51.74 17.98 79.54-24.31 79.94-55.09.44-33.27-26.71-63.2-59.99-63.19zm16.13 98.74c.5 9.2-5.77 16.79-17.56 17.26-11.79.48-20.63-5.23-21.01-14.43-.37-9.21 6.87-16.7 18.66-17.24 9.89-.46 19.43 5.74 19.9 14.42z" fill="url(#a)" stroke="url(#b)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.12"/>
+<ellipse cx="98.63" cy="239.04" fill="#f60006" rx="15.77" ry="17.91"/>
+<ellipse cx="126.45" cy="169.36" fill="#00943f" rx="18.17" ry="15.37" transform="matrix(.96 .27 -.27 .96 0 0)"/>
+<ellipse cx="32.08" cy="212.05" fill="#0066e4" rx="15.77" ry="17.37"/>
+</g>
+</svg>

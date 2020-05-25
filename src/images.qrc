@@ -68,6 +68,7 @@
         <file alias="ok">../img/toolbar/ok.svg</file>
         <file alias="options">../img/toolbar/options.svg</file>
         <file alias="settings">../img/toolbar/settings.svg</file>
+        <file alias="palette">../img/toolbar/palette.svg</file>
         <file alias="param_add">../img/toolbar/parameter_add.svg</file>
         <file alias="param_annotate">../img/toolbar/parameter_label.svg</file>
         <file alias="param_delete">../img/toolbar/parameter_delete.svg</file>

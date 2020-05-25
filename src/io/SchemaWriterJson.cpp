@@ -217,6 +217,7 @@ void writePump(QJsonObject &root, PumpParams *pump)
     root["mode"] = mode->modeName();
     root["label"] = pump->label();
     root["title"] = pump->title();
+    root["color"] = pump->color();
     root["is_active"] = pump->isActive();
     QJsonObject paramsJson;
     for (Z::ParameterTS* p : *pump->params())

@@ -22,6 +22,7 @@ MulticausticWindow::MulticausticWindow(MultirangeCausticFunction* function) : Pl
     _actnShowBeamShape = new QAction(tr("Show Beam Shape", "Plot action"), this);
     _actnShowBeamShape->setIcon(QIcon(":/toolbar/profile"));
     _actnShowBeamShape->setCheckable(true);
+    _actnShowBeamShape->setVisible(false); // TODO
     connect(_actnShowBeamShape, &QAction::triggered, this, &MulticausticWindow::showBeamShape);
 
     menuPlot->addSeparator();

@@ -53,7 +53,7 @@ private slots:
     void showContextMenu(const QPoint&);
 
 private:
-    enum { COL_IMAGE, COL_ACTIVE, COL_LABEL, COL_PARAMS, COL_TITLE, COL_COUNT };
+    enum { COL_COLOR, COL_IMAGE, COL_ACTIVE, COL_LABEL, COL_PARAMS, COL_TITLE, COL_COUNT };
 
     Schema *_schema;
     QMenu *_contextMenu = nullptr;
@@ -109,6 +109,7 @@ public slots:
     void clonePump();
     void copy() override;
     void paste() override;
+    void setPumpColor();
 
 protected:
     explicit PumpWindow(Schema*owner);
@@ -122,7 +123,7 @@ private:
 
     PumpsTable* _table;
     QAction *_actnPumpAdd, *_actnPumpDelete, *_actnPumpEdit, *_actnPumpActivate, *_actnPumpClone,
-        *_actnPumpCopy, *_actnPumpPaste;
+        *_actnPumpCopy, *_actnPumpPaste, *_actnPumpColor;
     QMenu *_windowMenu, *_contextMenu;
     Ori::Widgets::StatusBar* _statusBar;
     bool _isEditingNewPump = false;

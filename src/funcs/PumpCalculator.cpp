@@ -133,9 +133,17 @@ class PumpCalculatorImpl final
 
     BeamResult calcGauss(const Matrix& matrix, double lambda)
     {
+        // In Gerrard and Burch's "Introduction to matric methods in optics"
+        // q is defined as 1/q = 1/R + i*lambda/pi/w^2
+        // while in Seigman's "Lasers" and in Yariv's "Quantum electronics"
+        // it is defined as 1/q = 1/R - i*lambda/pi/w^2 (negative imaginary part)
+        // Both definitions are transformed by matrices in the same way
+        // and give positive or negative imaginary part respectively.
+        // See bin/test_files/complex_pump.rez
+        // That's way we use qAbs(q_inv.imag() in calculations below.
         Complex q_inv = 1.0 / matrix.multComplexBeam(inputQ);
         const double R = 1.0 / q_inv.real();
-        const double w_equiv_2 = lambda / M_PI / q_inv.imag();
+        const double w_equiv_2 = lambda / M_PI / qAbs(q_inv.imag());
         const double w_hyper = sqrt(w_equiv_2 * MI);
 
         // see GaussCalculator for next formulas

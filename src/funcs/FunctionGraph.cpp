@@ -102,6 +102,14 @@ void FunctionGraph::trimToCount(int count)
     }
 }
 
+void FunctionGraph::setColor(Z::WorkPlane workPlane, const QString& color)
+{
+    QColor clr(color);
+    if (!clr.isValid())
+        clr = workPlane == Z::Plane_T ? Qt::darkGreen : Qt::red;
+    setPen(QPen(clr));
+}
+
 //------------------------------------------------------------------------------
 //                               FunctionGraphSet
 //------------------------------------------------------------------------------
@@ -141,14 +149,16 @@ void FunctionGraphSet::update(const QList<PlotFunction*>& functions)
     _graphS->update(functions);
 }
 
-void FunctionGraphSet::update(const QString& id, Z::WorkPlane workPlane, const QList<PlotFunction*>& functions)
+void FunctionGraphSet::update(const QString& id, Z::WorkPlane workPlane, const QList<PlotFunction*>& functions, const QString &color)
 {
     QString key = id + (workPlane == Z::Plane_T ? "_t" : "_s");
     if (!_graphs.contains(key))
     {
         auto graph = new FunctionGraph(_plot, workPlane, _getUnits);
-        graph->setPen(QPen(workPlane == Z::Plane_T ? Qt::darkGreen : Qt::red));
+        graph->setColor(workPlane, color);
         _graphs.insert(key, graph);
     }
+    else
+        _graphs[key]->setColor(workPlane, color);
     _graphs[key]->update(functions);
 }

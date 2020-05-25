@@ -13,6 +13,7 @@
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 
+#include <QColorDialog>
 #include <QHeaderView>
 #include <QLabel>
 #include <QListWidget>
@@ -56,11 +57,14 @@ PumpsTable::PumpsTable(Schema* schema, QWidget *parent) : QTableWidget(0, COL_CO
     paramsOffsetY = 2;
 #endif
 
+    setWordWrap(false);
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setItemDelegateForColumn(COL_PARAMS, new RichTextItemDelegate(paramsOffsetY, this));
-    horizontalHeader()->setMinimumSectionSize(_iconSize+6);
+    horizontalHeader()->setMinimumSectionSize(16);
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    horizontalHeader()->setSectionResizeMode(COL_COLOR, QHeaderView::Fixed);
+    horizontalHeader()->resizeSection(COL_COLOR, 16);
     horizontalHeader()->setSectionResizeMode(COL_IMAGE, QHeaderView::Fixed);
     horizontalHeader()->resizeSection(COL_IMAGE, _iconSize+6);
     horizontalHeader()->setSectionResizeMode(COL_ACTIVE, QHeaderView::Fixed);
@@ -69,7 +73,7 @@ PumpsTable::PumpsTable(Schema* schema, QWidget *parent) : QTableWidget(0, COL_CO
     horizontalHeader()->setSectionResizeMode(COL_PARAMS, QHeaderView::ResizeToContents);
     horizontalHeader()->setSectionResizeMode(COL_TITLE, QHeaderView::Stretch);
     horizontalHeader()->setHighlightSections(false);
-    setHorizontalHeaderLabels({ tr("Typ"), tr("On"), tr("Label"), tr("Params"), tr("Title") });
+    setHorizontalHeaderLabels({ QString(), tr("Typ"), tr("On"), tr("Label"), tr("Params"), tr("Title") });
 
     connect(this, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(doubleClicked(QTableWidgetItem*)));
     connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
@@ -139,12 +143,15 @@ void PumpsTable::populate()
 void PumpsTable::createRow(int row)
 {
     QTableWidgetItem *it = new QTableWidgetItem();
+    it->setFlags(Qt::ItemIsEnabled);
+    setItem(row, COL_COLOR, it);
+
+    it = new QTableWidgetItem();
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_IMAGE, it);
 
     it = new QTableWidgetItem();
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    it->setTextAlignment(Qt::AlignHCenter | Qt::AlignCenter);
     setItem(row, COL_ACTIVE, it);
 
     it = new QTableWidgetItem();
@@ -175,8 +182,11 @@ void PumpsTable::populateRow(PumpParams *pump, int row)
     else
         qCritical() << "PumpsTable::populateRow(): Unable to find mode for pump parameters";
 
+    item(row, COL_COLOR)->setBackgroundColor(QColor(pump->color()));
+
     auto iconPath = pump->isActive() ? ":/icons/pump_on" : ":/icons/pump_off";
     item(row, COL_ACTIVE)->setData(Qt::DecorationRole, QIcon(iconPath).pixmap(_iconSize, _iconSize));
+
     item(row, COL_LABEL)->setText(pump->label());
     item(row, COL_PARAMS)->setText(Z::Format::FormatPumpParams().format(pump));
     item(row, COL_TITLE)->setText(pump->title());
@@ -267,6 +277,7 @@ void PumpWindow::createActions()
     _actnPumpClone = A_(tr("Clone"), this, SLOT(clonePump()), ":/toolbar/clone");
     _actnPumpCopy = A_(tr("Copy"), this, SLOT(copy()), ":/toolbar/copy");
     _actnPumpPaste = A_(tr("Paste"), this, SLOT(paste()), ":/toolbar/paste");
+    _actnPumpColor = A_(tr("Set color..."), this, SLOT(setPumpColor()), ":/toolbar/palette");
 
     #undef A_
 }
@@ -274,10 +285,12 @@ void PumpWindow::createActions()
 void PumpWindow::createMenuBar()
 {
     _windowMenu = Ori::Gui::menu(tr("Pump"), this,
-        { _actnPumpAdd, _actnPumpClone, nullptr, _actnPumpEdit, _actnPumpActivate, nullptr, _actnPumpDelete });
+        { _actnPumpAdd, _actnPumpClone, nullptr,
+          _actnPumpEdit, _actnPumpActivate, _actnPumpColor, nullptr, _actnPumpDelete });
 
     _contextMenu = Ori::Gui::menu(this,
-        { _actnPumpEdit, _actnPumpActivate, nullptr, _actnPumpClone, _actnPumpCopy, _actnPumpPaste, nullptr, _actnPumpDelete });
+        { _actnPumpEdit, _actnPumpActivate, _actnPumpColor, nullptr,
+          _actnPumpClone, _actnPumpCopy, _actnPumpPaste, nullptr, _actnPumpDelete });
 }
 
 void PumpWindow::createToolBar()
@@ -288,6 +301,7 @@ void PumpWindow::createToolBar()
         nullptr,
         Ori::Gui::textToolButton(_actnPumpEdit),
         Ori::Gui::textToolButton(_actnPumpActivate),
+        _actnPumpColor,
         nullptr,
         _actnPumpDelete
     });
@@ -498,4 +512,18 @@ void PumpWindow::paste()
 void PumpWindow::shortcutEnterPressed()
 {
    editPump();
+}
+
+void PumpWindow::setPumpColor()
+{
+    auto pump = selectedPump();
+    if (!pump) return;
+    QColor newColor = QColorDialog::getColor(QColor(pump->color()), this, tr("Select pump line color"));
+    if (!newColor.isValid()) return;
+    pump->setColor(newColor.name());
+    // TODO: maybe it worth to introduce an additional event just for replotting without recalculation
+    schema()->events().raise(SchemaEvents::PumpChanged, pump, "PumpWindow: pump color changed");
+    if (pump->isActive() and schema()->tripType() == TripType::SP)
+        schema()->events().raise(SchemaEvents::RecalRequred, "PumpWindow: pump color changed");
+    showStatusInfo();
 }
