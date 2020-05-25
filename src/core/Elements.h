@@ -311,4 +311,15 @@ private:
     Z::Parameter *_theta, *_alpha, *_ior;
 DECLARE_ELEMENT_END
 
+//------------------------------------------------------------------------------
+
+DECLARE_ELEMENT(ElemGaussAperture, Element)
+    ElemGaussAperture();
+    TYPE_NAME(qApp->translate("Elements", "Gaussian aperture"))
+    DEFAULT_LABEL("GA")
+    CALC_MATRIX
+protected:
+    Z::Parameter *_lambda, *_alpha2t, *_alpha2s;
+DECLARE_ELEMENT_END
+
 #endif // ELEMENTS_H

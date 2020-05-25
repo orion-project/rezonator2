@@ -992,3 +992,40 @@ void ElemAxiconLens::calcDynamicMatrix(const CalcParams& p)
     _mt_dyn.assign(1, 0, -tmp / qAbs(beamT.beamRadius) / cosA, 1);
     _ms_dyn.assign(1, 0, -tmp / qAbs(beamS.beamRadius) * cosA, 1);
 }
+
+//------------------------------------------------------------------------------
+//                             ElemGaussAperture
+//------------------------------------------------------------------------------
+
+ElemGaussAperture::ElemGaussAperture() : Element()
+{
+    _lambda = new Z::Parameter(Z::Dims::linear(), QStringLiteral("Lambda"), Z::Strs::lambda(),
+                              qApp->translate("Param", "Free space wavelength"));
+    _alpha2t = new Z::Parameter(Z::Dims::fixed(),
+        QStringLiteral("alpha2t"), QStringLiteral("α2t"),
+        qApp->translate("Param", "Radial transmission factor (T)"));
+    _alpha2s = new Z::Parameter(Z::Dims::fixed(),
+        QStringLiteral("alpha2s"), QStringLiteral("α2s"),
+        qApp->translate("Param", "Radial transmission factor (S)"));
+
+    _lambda->setValue(980_nm);
+    _alpha2t->setValue(Z::Value(1, Z::Units::inv_m2()));
+    _alpha2s->setValue(Z::Value(1, Z::Units::inv_m2()));
+
+    addParam(_lambda);
+    addParam(_alpha2t);
+    addParam(_alpha2s);
+}
+
+void ElemGaussAperture::calcMatrixInternal()
+{
+    double lambda = _lambda->value().toSi();
+    double alpha2t = _alpha2t->value().toSi();
+    double alpha2s = _alpha2s->value().toSi();
+
+    double Ct = -lambda * alpha2t / 2.0 / M_PI;
+    double Cs = -lambda * alpha2s / 2.0 / M_PI;
+
+    _mt.assign(Z::Complex(1, 0), Z::Complex(0, 0), Z::Complex(0, Ct), Z::Complex(1, 0));
+    _ms.assign(Z::Complex(1, 0), Z::Complex(0, 0), Z::Complex(0, Cs), Z::Complex(1, 0));
+}

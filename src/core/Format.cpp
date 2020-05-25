@@ -9,7 +9,7 @@ QString str(const Complex& v)
     return QString("%1 %2 i%3")
             .arg(v.real(), 0, 'g', 16)
             .arg(v.imag() < 0 ? '-' : '+')
-            .arg(v.imag(), 0, 'g', 16);
+            .arg(qAbs(v.imag()), 0, 'g', 16);
 }
 
 QString format(const double& v)
@@ -23,7 +23,7 @@ QString format(const Complex& v)
     return QString("%1 %2 i%3")
             .arg(v.real(), 0, 'g', precision)
             .arg(v.imag() < 0 ? '-' : '+')
-            .arg(v.imag(), 0, 'g', precision);
+            .arg(qAbs(v.imag()), 0, 'g', precision);
 }
 
 } // namespace Z
