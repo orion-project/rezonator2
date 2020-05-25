@@ -303,25 +303,23 @@ void TableFunction::calculateAt(Element* calcElem, bool calcSubrange, Element *r
     calc.calcRoundTrip(calcSubrange);
     calc.multMatrix();
 
+    double ior = calcSubrange ? Z::Utils::asRange(calcElem)->ior() : 1;
     double wavelenSI = schema()->wavelength().value().toSi();
-    if (calcSubrange)
-        wavelenSI /= Z::Utils::asRange(calcElem)->ior();
 
     Result res;
     res.element = resultElem;
     res.position = resultPos;
     res.values = schema()->isResonator()
-            ? calculateResonator(&calc, wavelenSI)
-            : calculateSinglePass(&calc, wavelenSI);
+            ? calculateResonator(&calc, wavelenSI, ior)
+            : calculateSinglePass(&calc, ior);
     _results << res;
 }
 
 void TableFunction::calculatePumpBeforeSchema(Element* elem, ResultPosition resultPos)
 {
     Z::Matrix unity;
-    double wavelenSI = schema()->wavelength().value().toSi();
-    BeamResult beamT = _pumpCalc.T->calc(unity, wavelenSI);
-    BeamResult beamS = _pumpCalc.S->calc(unity, wavelenSI);
+    BeamResult beamT = _pumpCalc.T->calc(unity, 1);
+    BeamResult beamS = _pumpCalc.S->calc(unity, 1);
 
     Result res;
     res.element = elem;
@@ -334,10 +332,10 @@ void TableFunction::calculatePumpBeforeSchema(Element* elem, ResultPosition resu
     _results << res;
 }
 
-QVector<Z::PointTS> TableFunction::calculateSinglePass(RoundTripCalculator* calc, double wavelenSI) const
+QVector<Z::PointTS> TableFunction::calculateSinglePass(RoundTripCalculator* calc, double ior) const
 {
-    BeamResult beamT = _pumpCalc.T->calc(calc->Mt(), wavelenSI);
-    BeamResult beamS = _pumpCalc.S->calc(calc->Ms(), wavelenSI);
+    BeamResult beamT = _pumpCalc.T->calc(calc->Mt(), ior);
+    BeamResult beamS = _pumpCalc.S->calc(calc->Ms(), ior);
     return {
         { beamT.beamRadius, beamS.beamRadius },
         { beamT.frontRadius, beamS.frontRadius },
@@ -345,9 +343,9 @@ QVector<Z::PointTS> TableFunction::calculateSinglePass(RoundTripCalculator* calc
     };
 }
 
-QVector<Z::PointTS> TableFunction::calculateResonator(RoundTripCalculator *calc, double wavelenSI) const
+QVector<Z::PointTS> TableFunction::calculateResonator(RoundTripCalculator *calc, double wavelenSI, double ior) const
 {
-    _beamCalc->setWavelenSI(wavelenSI);
+    _beamCalc->setWavelenSI(wavelenSI / ior);
     return {
         _beamCalc->beamRadius(calc->Mt(), calc->Ms()),
         _beamCalc->frontRadius(calc->Mt(), calc->Ms()),

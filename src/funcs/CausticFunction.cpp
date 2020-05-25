@@ -21,7 +21,7 @@ void CausticFunction::calculate()
         return;
     }
 
-    _wavelenSI = schema()->wavelength().value().toSi() / elem->ior();
+    _ior = elem->ior();
 
     auto tmpRange = arg()->range;
     tmpRange.stop = Z::Value(elem->axisLengthSI(), Z::Units::m());
@@ -92,14 +92,14 @@ bool CausticFunction::prepareSinglePass(Element* ref)
 bool CausticFunction::prepareResonator()
 {
     if (!_beamCalc) _beamCalc.reset(new AbcdBeamCalculator);
-    _beamCalc->setWavelenSI(_wavelenSI);
+    _beamCalc->setWavelenSI(schema()->wavelength().value().toSi() / _ior);
     return true;
 }
 
 Z::PointTS CausticFunction::calculateSinglePass() const
 {
-    BeamResult beamT = _pumpCalc.T->calc(_calc->Mt(), _wavelenSI);
-    BeamResult beamS = _pumpCalc.S->calc(_calc->Ms(), _wavelenSI);
+    BeamResult beamT = _pumpCalc.T->calc(_calc->Mt(), _ior);
+    BeamResult beamS = _pumpCalc.S->calc(_calc->Ms(), _ior);
     switch (_mode)
     {
     case BeamRadius: return { beamT.beamRadius, beamS.beamRadius };

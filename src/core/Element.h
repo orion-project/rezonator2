@@ -277,11 +277,9 @@ public:
         /// Schema wevelength in meters.
         double schemaWavelenSI;
 
-        /// This wavelength is used to calculate beam parameters at the left side of this element.
-        /// It can differ from schema's wavelength if the left-hand element is medium-range.
         /// We don't care if this IOR differs from IOR of the current element (in the case it has IOR).
         /// In this case the beam transition between elements is invalid, but it is up to user.
-        double prevElemWavelenSI;
+        double prevElemIor;
     };
 
     virtual void calcDynamicMatrix(const CalcParams& p) { Q_UNUSED(p) }

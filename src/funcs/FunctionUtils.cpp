@@ -49,7 +49,7 @@ void prepareDynamicElements(Schema* schema, Element* stopElem, const Z::PairTS<s
             p.pumpCalcT = pumpCalc.T.get();
             p.pumpCalcS = pumpCalc.S.get();
             p.schemaWavelenSI = lambda;
-            p.prevElemWavelenSI = lambda;
+            p.prevElemIor = 1;
             dynamic->calcDynamicMatrix(p);
         }
         else
@@ -64,7 +64,7 @@ void prepareDynamicElements(Schema* schema, Element* stopElem, const Z::PairTS<s
             p.pumpCalcT = pumpCalc.T.get();
             p.pumpCalcS = pumpCalc.S.get();
             auto medium = dynamic_cast<ElemMediumRange*>(prevElem);
-            p.prevElemWavelenSI = medium ? lambda / medium->ior() : lambda;
+            p.prevElemIor = medium ? medium->ior() : 1;
             p.schemaWavelenSI = lambda;
             dynamic->calcDynamicMatrix(p);
         }

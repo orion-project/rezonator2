@@ -71,8 +71,8 @@ protected:
     bool calculateAtCrystal(ElementRange* range, int index);
     void calculateAt(Element* calcElem, bool calcSubrange, Element* resultElem, ResultPosition resultPos);
     void calculatePumpBeforeSchema(Element* elem, ResultPosition resultPos);
-    QVector<Z::PointTS> calculateSinglePass(RoundTripCalculator* calc, double wavelenSI) const;
-    QVector<Z::PointTS> calculateResonator(RoundTripCalculator* calc, double wavelenSI) const;
+    QVector<Z::PointTS> calculateSinglePass(RoundTripCalculator* calc, double ior) const;
+    QVector<Z::PointTS> calculateResonator(RoundTripCalculator* calc, double wavelenSI, double ior) const;
 };
 
 #endif // TABLEFUNCTION_H
