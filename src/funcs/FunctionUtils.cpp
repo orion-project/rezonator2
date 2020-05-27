@@ -7,7 +7,10 @@
 
 namespace FunctionUtils {
 
-QString preparePumpCalculator(Schema* schema, PumpParams* useThisPump, Z::PairTS<std::shared_ptr<PumpCalculator>>& pumpCalc)
+QString preparePumpCalculator(Schema* schema,
+                              PumpParams* useThisPump,
+                              Z::PairTS<std::shared_ptr<PumpCalculator>>& pumpCalc,
+                              bool writeProtocol)
 {
     auto pump = useThisPump ? useThisPump : schema->activePump();
     if (!pump)
@@ -18,8 +21,8 @@ QString preparePumpCalculator(Schema* schema, PumpParams* useThisPump, Z::PairTS
 
     if (!pumpCalc.T) pumpCalc.T = PumpCalculator::T();
     if (!pumpCalc.S) pumpCalc.S = PumpCalculator::S();
-    if (!pumpCalc.T->init(pump, schema->wavelenSi()) ||
-        !pumpCalc.S->init(pump, schema->wavelenSi()))
+    if (!pumpCalc.T->init(pump, schema->wavelenSi(), "T", writeProtocol) ||
+        !pumpCalc.S->init(pump, schema->wavelenSi(), "S", writeProtocol))
     {
         return "Unsupported pump mode";
     }

@@ -6,7 +6,7 @@ namespace Z {
 
 QString str(const Complex& v)
 {
-    return QString("%1 %2 i%3")
+    return QString("%1%2i%3")
             .arg(v.real(), 0, 'g', 16)
             .arg(v.imag() < 0 ? '-' : '+')
             .arg(qAbs(v.imag()), 0, 'g', 16);

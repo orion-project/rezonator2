@@ -64,6 +64,12 @@ void CausticFunction::calculate()
         elem->setSubRangeSI(x);
         _calc->multMatrix();
 
+        if (_writeProtocol)
+        {
+            Z_INFO("Offset" << x)
+            Z_INFO("Mt =" << _calc->Mt().str() << "| Ms =" << _calc->Ms().str())
+        }
+
         Z::PointTS res = (this->*calcBeamParams)();
 
         if (_mode == FrontRadius)
@@ -84,7 +90,7 @@ void CausticFunction::calculate()
 
 bool CausticFunction::prepareSinglePass(Element* ref)
 {
-    QString res = FunctionUtils::preparePumpCalculator(schema(), _pump, _pumpCalc);
+    QString res = FunctionUtils::preparePumpCalculator(schema(), _pump, _pumpCalc, _writeProtocol);
     if (!res.isEmpty())
     {
         setError(res);
