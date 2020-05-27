@@ -245,6 +245,8 @@ QString FormatParam::format(Z::Parameter* param)
             parts << Z::format(param->value().value()) << QStringLiteral(" m<sup>&ndash;1</sup>");
         else if (unit == Z::Units::inv_m2())
             parts << Z::format(param->value().value()) << QStringLiteral(" m<sup>&ndash;2</sup>");
+        else if (unit == Z::Units::inv_m3())
+            parts << Z::format(param->value().value()) << QStringLiteral(" m<sup>&ndash;3</sup>");
         else
             parts << param->value().displayStr();
 

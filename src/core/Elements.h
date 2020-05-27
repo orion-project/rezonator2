@@ -322,4 +322,45 @@ protected:
     Z::Parameter *_lambda, *_alpha2t, *_alpha2s;
 DECLARE_ELEMENT_END
 
+//------------------------------------------------------------------------------
+
+DECLARE_ELEMENT(ElemGaussApertureLens, Element)
+    ElemGaussApertureLens();
+    TYPE_NAME(qApp->translate("Elements", "Gaussian aperture with thin lens"))
+    DEFAULT_LABEL("GA")
+    CALC_MATRIX
+protected:
+    Z::Parameter *_lambda, *_focusT, *_focusS, *_alpha2t, *_alpha2s;
+DECLARE_ELEMENT_END
+
+//------------------------------------------------------------------------------
+
+DECLARE_ELEMENT(ElemGaussDuctMedium, ElementRange)
+    ElemGaussDuctMedium();
+    TYPE_NAME(qApp->translate("Elements", "Gaussian duct (medium)"))
+    DEFAULT_LABEL("GD")
+    CALC_MATRIX
+    SUB_RANGE
+protected:
+    Z::Parameter *_lambda;
+    Z::Parameter *_ior2t, *_ior2s;
+    Z::Parameter *_alpha2t, *_alpha2s;
+DECLARE_ELEMENT_END
+
+//------------------------------------------------------------------------------
+
+DECLARE_ELEMENT(ElemGaussDuctSlab, ElementRange)
+    ElemGaussDuctSlab();
+    TYPE_NAME(qApp->translate("Elements", "Gaussian duct (slab)"))
+    DEFAULT_LABEL("GD")
+    CALC_MATRIX
+    SUB_RANGE
+protected:
+    Z::Parameter *_lambda;
+    Z::Parameter *_ior2t, *_ior2s;
+    Z::Parameter *_alpha2t, *_alpha2s;
+DECLARE_ELEMENT_END
+
+//------------------------------------------------------------------------------
+
 #endif // ELEMENTS_H
