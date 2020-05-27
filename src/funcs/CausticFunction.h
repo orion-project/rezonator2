@@ -40,8 +40,8 @@ private:
     /// Wich type of result the function should compute.
     Mode _mode = Mode::BeamRadius;
 
-    /// Schema wavelength in SI units.
-    double _wavelenSI = 0;
+    /// Index of refraction of an element in which the function is calculated
+    double _ior = 0;
 
     PumpParams* _pump = nullptr;
     Z::PairTS<std::shared_ptr<PumpCalculator>> _pumpCalc;

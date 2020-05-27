@@ -18,10 +18,8 @@ QString preparePumpCalculator(Schema* schema, PumpParams* useThisPump, Z::PairTS
 
     if (!pumpCalc.T) pumpCalc.T = PumpCalculator::T();
     if (!pumpCalc.S) pumpCalc.S = PumpCalculator::S();
-
-    const double lambda = schema->wavelength().value().toSi();
-    if (!pumpCalc.T->init(pump, lambda) ||
-        !pumpCalc.S->init(pump, lambda))
+    if (!pumpCalc.T->init(pump, schema->wavelenSi()) ||
+        !pumpCalc.S->init(pump, schema->wavelenSi()))
     {
         return "Unsupported pump mode";
     }
@@ -31,8 +29,6 @@ QString preparePumpCalculator(Schema* schema, PumpParams* useThisPump, Z::PairTS
 
 void prepareDynamicElements(Schema* schema, Element* stopElem, const Z::PairTS<std::shared_ptr<PumpCalculator>>& pumpCalc)
 {
-    const double lambda = schema->wavelength().value().toSi();
-
     for (int i = 0; i < schema->count(); i++)
     {
         auto elem = schema->element(i);
@@ -48,8 +44,8 @@ void prepareDynamicElements(Schema* schema, Element* stopElem, const Z::PairTS<s
             p.Ms = &unity;
             p.pumpCalcT = pumpCalc.T.get();
             p.pumpCalcS = pumpCalc.S.get();
-            p.schemaWavelenSI = lambda;
-            p.prevElemWavelenSI = lambda;
+            p.schemaWavelenSi = schema->wavelenSi();
+            p.prevElemIor = 1;
             dynamic->calcDynamicMatrix(p);
         }
         else
@@ -64,8 +60,8 @@ void prepareDynamicElements(Schema* schema, Element* stopElem, const Z::PairTS<s
             p.pumpCalcT = pumpCalc.T.get();
             p.pumpCalcS = pumpCalc.S.get();
             auto medium = dynamic_cast<ElemMediumRange*>(prevElem);
-            p.prevElemWavelenSI = medium ? lambda / medium->ior() : lambda;
-            p.schemaWavelenSI = lambda;
+            p.prevElemIor = medium ? medium->ior() : 1;
+            p.schemaWavelenSi = schema->wavelenSi();
             dynamic->calcDynamicMatrix(p);
         }
     }

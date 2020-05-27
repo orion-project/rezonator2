@@ -10,15 +10,15 @@ class Matrix;
 class AbcdBeamCalculator
 {
 public:
-    void setWavelenSI(double wavelen) { _wavelenSI = wavelen; }
+    AbcdBeamCalculator(double lambdaSI) { _wavelenSI = lambdaSI; }
 
-    double beamRadius(const Z::Matrix& m) const;
-    double frontRadius(const Z::Matrix &m) const;
-    double halfAngle(const Z::Matrix &m) const;
+    double beamRadius(const Z::Matrix& m, double ior) const;
+    double frontRadius(const Z::Matrix &m, double ior) const;
+    double halfAngle(const Z::Matrix &m, double ior) const;
 
-    Z::PointTS beamRadius(const Z::Matrix& mt, const Z::Matrix& ms) const;
-    Z::PointTS frontRadius(const Z::Matrix &mt, const Z::Matrix& ms) const;
-    Z::PointTS halfAngle(const Z::Matrix &mt, const Z::Matrix& ms) const;
+    Z::PointTS beamRadius(const Z::Matrix& mt, const Z::Matrix& ms, double ior) const;
+    Z::PointTS frontRadius(const Z::Matrix &mt, const Z::Matrix& ms, double ior) const;
+    Z::PointTS halfAngle(const Z::Matrix &mt, const Z::Matrix& ms, double ior) const;
 
 private:
     double _wavelenSI;

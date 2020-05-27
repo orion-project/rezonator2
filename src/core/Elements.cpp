@@ -945,8 +945,8 @@ ElemAxiconMirror::ElemAxiconMirror() : ElementDynamic()
 
 void ElemAxiconMirror::calcDynamicMatrix(const CalcParams& p)
 {
-    auto beamT = p.pumpCalcT->calc(*p.Mt, p.prevElemWavelenSI);
-    auto beamS = p.pumpCalcS->calc(*p.Ms, p.prevElemWavelenSI);
+    auto beamT = p.pumpCalcT->calc(*p.Mt, p.prevElemIor);
+    auto beamS = p.pumpCalcS->calc(*p.Ms, p.prevElemIor);
 
     auto cosA = cos(alpha());
     auto tmp = 2 * theta();
@@ -983,8 +983,8 @@ ElemAxiconLens::ElemAxiconLens() : ElementDynamic()
 
 void ElemAxiconLens::calcDynamicMatrix(const CalcParams& p)
 {
-    auto beamT = p.pumpCalcT->calc(*p.Mt, p.prevElemWavelenSI);
-    auto beamS = p.pumpCalcS->calc(*p.Ms, p.prevElemWavelenSI);
+    auto beamT = p.pumpCalcT->calc(*p.Mt, p.prevElemIor);
+    auto beamS = p.pumpCalcS->calc(*p.Ms, p.prevElemIor);
 
     auto cosA = cos(alpha());
     auto tmp = asin(sin(theta()) * ior()) - theta();

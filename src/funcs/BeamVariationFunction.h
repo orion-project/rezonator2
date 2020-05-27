@@ -26,8 +26,8 @@ public:
 protected:
     Z::PlotPosition _pos;
 
-    /// Schema wavelength in SI units.
-    double _wavelenSI = 0;
+    /// Index of refraction of an element in which the function is calculated
+    double _ior = 0;
 
     Z::PairTS<std::shared_ptr<PumpCalculator>> _pumpCalc;
     std::shared_ptr<AbcdBeamCalculator> _beamCalc;

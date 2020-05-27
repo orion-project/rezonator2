@@ -19,6 +19,7 @@ class PumpCalculatorImpl final
     GetPumpParam getPumpParam;
     enum { GAUSS, RAY_VECTOR } mode;
     double MI;
+    double wavelen; // Schema wavelength, we always treat pumps as located in vacuum
     Complex inputQ {0, 0};
     RayVector inputRay {0, 0};
 
@@ -46,6 +47,7 @@ class PumpCalculatorImpl final
     void initInput(PumpParams_Waist *pump, double lambda)
     {
         mode = GAUSS;
+        wavelen = lambda;
         MI = qAbs(getPumpParam(&pump->MI()->value()));
         const double z = paramValueSI(pump->distance());
         const double w0_hyper = paramValueSI(pump->waist());
@@ -66,6 +68,7 @@ class PumpCalculatorImpl final
     void initInput(PumpParams_Front *pump, double lambda)
     {
         mode = GAUSS;
+        wavelen = lambda;
         MI = qAbs(getPumpParam(&pump->MI()->value()));
         const double w_hyper = paramValueSI(pump->beamRadius());
         const double w_equiv_2 = SQR(w_hyper) / MI;
@@ -91,9 +94,10 @@ class PumpCalculatorImpl final
         inputRay.set(y2, atan((y2 - y1) / z));
     }
 
-    void initInput(PumpParams_Complex *pump)
+    void initInput(PumpParams_Complex *pump, double lambda)
     {
         mode = GAUSS;
+        wavelen = lambda;
         MI = qAbs(getPumpParam(&pump->MI()->value()));
         Complex q_inv_hyper = 1.0 / Complex(paramValueSI(pump->real()),
                                             paramValueSI(pump->imag()));
@@ -101,9 +105,10 @@ class PumpCalculatorImpl final
                                q_inv_hyper.imag() * MI);
     }
 
-    void initInput(PumpParams_InvComplex *pump)
+    void initInput(PumpParams_InvComplex *pump, double lambda)
     {
         mode = GAUSS;
+        wavelen = lambda;
         MI = qAbs(getPumpParam(&pump->MI()->value()));
         // Inverted complex beam parameter is measured in inverted units (1/m, 1/mm)
         // and value's unit actually means 1/unit for this case (e.g. mm means 1/mm).
@@ -131,8 +136,10 @@ class PumpCalculatorImpl final
         return beam;
     }
 
-    BeamResult calcGauss(const Matrix& matrix, double lambda)
+    BeamResult calcGauss(const Matrix& matrix, double ior)
     {
+        const double lambda = wavelen / ior;
+
         // In Gerrard and Burch's "Introduction to matric methods in optics"
         // q is defined as 1/q = 1/R + i*lambda/pi/w^2
         // while in Seigman's "Lasers" and in Yariv's "Quantum electronics"
@@ -192,18 +199,18 @@ bool PumpCalculator::init(PumpParams* pump, double lambdaSI)
     // InvComplex should be tested before Complex, because Complex is more generic
     return _impl->initInput<PumpParams_Waist>(pump, lambdaSI) ||
            _impl->initInput<PumpParams_Front>(pump, lambdaSI) ||
-           _impl->initInput<PumpParams_InvComplex>(pump) ||
-           _impl->initInput<PumpParams_Complex>(pump) ||
+           _impl->initInput<PumpParams_InvComplex>(pump, lambdaSI) ||
+           _impl->initInput<PumpParams_Complex>(pump, lambdaSI) ||
            _impl->initInput<PumpParams_RayVector>(pump) ||
            _impl->initInput<PumpParams_TwoSections>(pump);
 }
 
-BeamResult PumpCalculator::calc(const Z::Matrix& matrix, double lambdaSI)
+BeamResult PumpCalculator::calc(const Z::Matrix& matrix, double ior)
 {
     switch (_impl->mode)
     {
     case PumpCalculatorImpl::GAUSS:
-        return _impl->calcGauss(matrix, lambdaSI);
+        return _impl->calcGauss(matrix, ior);
 
     case PumpCalculatorImpl::RAY_VECTOR:
         return _impl->calcVector(matrix);

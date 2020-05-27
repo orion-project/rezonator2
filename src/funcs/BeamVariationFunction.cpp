@@ -15,7 +15,7 @@ void BeamVariationFunction::calculate()
         return;
     }
 
-    _wavelenSI = schema()->wavelength().value().toSi();
+    _ior = 1;
 
     auto range = arg()->range.plottingRange();
     if (!prepareResults(range)) return;
@@ -25,7 +25,7 @@ void BeamVariationFunction::calculate()
     if (rangeElem)
     {
         rangeElem->setSubRangeSI(_pos.offset.toSi());
-        _wavelenSI /= rangeElem->ior();
+        _ior = rangeElem->ior();
     }
 
     auto tripType = _schema->tripType();
@@ -93,11 +93,8 @@ bool BeamVariationFunction::prepareSinglePass()
     }
     if (!_pumpCalc.T) _pumpCalc.T = PumpCalculator::T();
     if (!_pumpCalc.S) _pumpCalc.S = PumpCalculator::S();
-    // Cached _wavelenSI can be reduced in order to account medium IOR,
-    // but pump is supposed to be in air, so get wavelength from schema.
-    const double lambda = schema()->wavelength().value().toSi();
-    if (!_pumpCalc.T->init(pump, lambda) ||
-        !_pumpCalc.S->init(pump, lambda))
+    if (!_pumpCalc.T->init(pump, schema()->wavelenSi()) ||
+        !_pumpCalc.S->init(pump, schema()->wavelenSi()))
     {
         setError("Unsupported pump mode");
         return false;
@@ -107,19 +104,18 @@ bool BeamVariationFunction::prepareSinglePass()
 
 bool BeamVariationFunction::prepareResonator()
 {
-    if (!_beamCalc) _beamCalc.reset(new AbcdBeamCalculator);
-    _beamCalc->setWavelenSI(_wavelenSI);
+    if (!_beamCalc) _beamCalc.reset(new AbcdBeamCalculator(schema()->wavelength().value().toSi()));
     return true;
 }
 
 Z::PointTS BeamVariationFunction::calculateSinglePass() const
 {
-    BeamResult beamT = _pumpCalc.T->calc(_calc->Mt(), _wavelenSI);
-    BeamResult beamS = _pumpCalc.S->calc(_calc->Ms(), _wavelenSI);
+    BeamResult beamT = _pumpCalc.T->calc(_calc->Mt(), _ior);
+    BeamResult beamS = _pumpCalc.S->calc(_calc->Ms(), _ior);
     return { beamT.beamRadius, beamS.beamRadius };
 }
 
 Z::PointTS BeamVariationFunction::calculateResonator() const
 {
-    return _beamCalc->beamRadius(_calc->Mt(), _calc->Ms());
+    return _beamCalc->beamRadius(_calc->Mt(), _calc->Ms(), _ior);
 }

@@ -213,6 +213,7 @@ public:
     const QString& alias() const { return _alias; }
 
     Z::Parameter& wavelength() { return _wavelength; }
+    double wavelenSi() const { return _wavelength.value().toSi(); }
 
     TripType tripType() const { return _tripType; }
     void setTripType(TripType value);
