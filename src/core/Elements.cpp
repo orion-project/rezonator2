@@ -1008,14 +1008,12 @@ ElemGaussAperture::ElemGaussAperture() : Element()
         QStringLiteral("alpha2t"), QStringLiteral("α2t"),
         qApp->translate("Param", "Loss factor (T)"),
         qApp->translate("Param", "Total loss factor in tangential plane. "
-                                 "Positive value describes radially increasing loss. "
-                                 "Negative value describes radially decreasing gain."));
+                                 "Positive value describes radially increasing loss."));
     _alpha2s = new Z::Parameter(Z::Dims::fixed(),
         QStringLiteral("alpha2s"), QStringLiteral("α2s"),
         qApp->translate("Param", "Loss factor (S)"),
         qApp->translate("Param", "Total loss factor in sagittal plane. "
-                                 "Positive value describes radially increasing loss. "
-                                 "Negative value describes radially decreasing gain."));
+                                 "Positive value describes radially increasing loss."));
 
     _lambda->setValue(980_nm);
     _alpha2t->setValue(Z::Value(1, Z::Units::inv_m2()));
@@ -1059,14 +1057,12 @@ ElemGaussApertureLens::ElemGaussApertureLens() : Element()
         QStringLiteral("alpha2t"), QStringLiteral("α2t"),
         qApp->translate("Param", "Loss factor (T)"),
         qApp->translate("Param", "Total loss factor in tangential plane. "
-                                 "Positive value describes radially increasing loss. "
-                                 "Negative value describes radially decreasing gain."));
+                                 "Positive value describes radially increasing loss."));
     _alpha2s = new Z::Parameter(Z::Dims::fixed(),
         QStringLiteral("alpha2s"), QStringLiteral("α2s"),
         qApp->translate("Param", "Loss factor (S)"),
         qApp->translate("Param", "Total loss factor in sagittal plane. "
-                                 "Positive value describes radially increasing loss. "
-                                 "Negative value describes radially decreasing gain."));
+                                 "Positive value describes radially increasing loss."));
 
     _lambda->setValue(980_nm);
     _focusT->setValue(100_mm);
@@ -1124,14 +1120,12 @@ ElemGaussDuctMedium::ElemGaussDuctMedium() : ElementRange() {
         QStringLiteral("alpha2t"), QStringLiteral("α2t"),
         qApp->translate("Param", "Loss factor (T)"),
         qApp->translate("Param", "Loss factor per unit length in tangential plane. "
-                                 "Positive value describes radially increasing loss. "
-                                 "Negative value describes radially decreasing gain."));
+                                 "Positive value describes radially increasing loss."));
     _alpha2s = new Z::Parameter(Z::Dims::fixed(),
         QStringLiteral("alpha2s"), QStringLiteral("α2s"),
         qApp->translate("Param", "Loss factor (S)"),
         qApp->translate("Param", "Loss factor per unit length in sagittal plane. "
-                                 "Positive value describes radially increasing loss. "
-                                 "Negative value describes radially decreasing gain."));
+                                 "Positive value describes radially increasing loss."));
 
     _lambda->setValue(980_nm);
     _ior2t->setValue(Z::Value(1, Z::Units::inv_m2()));
@@ -1212,14 +1206,12 @@ ElemGaussDuctSlab::ElemGaussDuctSlab() : ElementRange() {
         QStringLiteral("alpha2t"), QStringLiteral("α2t"),
         qApp->translate("Param", "Loss factor (T)"),
         qApp->translate("Param", "Loss factor per unit length in tangential plane. "
-                                 "Positive value describes radially increasing loss. "
-                                 "Negative value describes radially decreasing gain."));
+                                 "Positive value describes radially increasing loss."));
     _alpha2s = new Z::Parameter(Z::Dims::fixed(),
         QStringLiteral("alpha2s"), QStringLiteral("α2s"),
         qApp->translate("Param", "Loss factor (S)"),
         qApp->translate("Param", "Loss factor per unit length in sagittal plane. "
-                                 "Positive value describes radially increasing loss. "
-                                 "Negative value describes radially decreasing gain."));
+                                 "Positive value describes radially increasing loss."));
 
     _lambda->setValue(980_nm);
     _ior2t->setValue(Z::Value(1, Z::Units::inv_m2()));

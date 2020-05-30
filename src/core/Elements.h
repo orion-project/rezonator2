@@ -329,6 +329,7 @@ DECLARE_ELEMENT(ElemGaussApertureLens, Element)
     TYPE_NAME(qApp->translate("Elements", "Gaussian aperture with thin lens"))
     DEFAULT_LABEL("GA")
     CALC_MATRIX
+    double focusT() const { return _focusT->value().toSi(); }
 protected:
     Z::Parameter *_lambda, *_focusT, *_focusS, *_alpha2t, *_alpha2s;
 DECLARE_ELEMENT_END
