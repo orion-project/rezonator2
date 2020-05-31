@@ -33,6 +33,20 @@ namespace ElementsTests {
     ASSERT_EQ_DBL(elem->M##ts().C.imag(), 0)\
     ASSERT_EQ_DBL(elem->M##ts().D.imag(), 0)
 
+#define ASSERT_MATRIX_C(ts, a, b, c, d) { \
+    const double eps = 1e-7;\
+    ASSERT_NEAR_DBL(elem->M##ts().A.real(), a.real(), eps)\
+    ASSERT_NEAR_DBL(elem->M##ts().B.real(), b.real(), eps)\
+    ASSERT_NEAR_DBL(elem->M##ts().C.real(), c.real(), eps)\
+    ASSERT_NEAR_DBL(elem->M##ts().D.real(), d.real(), eps)\
+    ASSERT_NEAR_DBL(elem->M##ts().A.imag(), a.imag(), eps)\
+    ASSERT_NEAR_DBL(elem->M##ts().B.imag(), b.imag(), eps)\
+    ASSERT_NEAR_DBL(elem->M##ts().C.imag(), c.imag(), eps)\
+    ASSERT_NEAR_DBL(elem->M##ts().D.imag(), d.imag(), eps)\
+}
+
+#define _C Z::Complex
+
 //------------------------------------------------------------------------------
 
 // Calculation: $PROJECT/calc/Elements.py
@@ -526,6 +540,76 @@ TEST_METHOD(ThermoMedium)
     ASSERT_MATRIX(s2, 0.9905314, 0.0697789, -0.2701030, 0.9905314)
 }
 
+// Calculation: $PROJECT/calc/ElemGauss.py
+TEST_METHOD(GaussAperture)
+{
+    ELEM(GaussAperture, 3)
+    SET_PARAM(Lambda, 980, nm)
+    SET_PARAM(alpha2t, 1e6, inv_m2)
+    SET_PARAM(alpha2s, 2e6, inv_m2)
+
+    ASSERT_MATRIX_C(t, _C(1,0), _C(0,0), _C(0,-0.1559718), _C(1,0))
+    ASSERT_MATRIX_C(s, _C(1,0), _C(0,0), _C(0,-0.3119437), _C(1,0))
+}
+
+// Calculation: $PROJECT/calc/ElemGauss.py
+TEST_METHOD(GaussApertureLens)
+{
+    ELEM(GaussApertureLens, 5)
+    SET_PARAM(Lambda, 980, nm)
+    SET_PARAM(Ft, 50, cm)
+    SET_PARAM(Fs, 60, cm)
+    SET_PARAM(alpha2t, 1e6, inv_m2)
+    SET_PARAM(alpha2s, 2e6, inv_m2)
+
+    ASSERT_MATRIX_C(t, _C(1,0), _C(0,0), _C(-2,-0.1559718), _C(1,0))
+    ASSERT_MATRIX_C(s, _C(1,0), _C(0,0), _C(-1.6666667,-0.3119437), _C(1,0))
+}
+
+// Calculation: $PROJECT/calc/ElemGauss.py
+TEST_METHOD(GaussDuctMedium)
+{
+    ELEM(GaussDuctMedium, 7)
+    SET_PARAM(L, 10, mm)
+    SET_PARAM(n, 1.5, none)
+    SET_PARAM(Lambda, 980, nm)
+    SET_PARAM(n2t, 0.2, inv_m2)
+    SET_PARAM(n2s, 0.3, inv_m2)
+    SET_PARAM(alpha2t, 1e8, inv_m3)
+    SET_PARAM(alpha2s, 2e8, inv_m3)
+
+    ASSERT_MATRIX_C(t, _C(0.9999933,-0.0005199), _C(0.0100000,-0.0000017), _C(-0.0013514,-0.1039808), _C(0.9999933,-0.0005199))
+    ASSERT_MATRIX_C(s, _C(0.9999898,-0.0010398), _C(0.0100000,-0.0000035), _C(-0.0020721,-0.2079611), _C(0.9999898,-0.0010398))
+
+    elem->setSubRangeSI(0.003);
+    ASSERT_MATRIX_C(t1, _C(0.9999994,-0.0000468), _C(0.0030000,-0.0000000), _C(-0.0004005,-0.0311944), _C(0.9999994,-0.0000468))
+    ASSERT_MATRIX_C(s1, _C(0.9999991,-0.0000936), _C(0.0030000,-0.0000001), _C(-0.0006019,-0.0623887), _C(0.9999991,-0.0000936))
+    ASSERT_MATRIX_C(t2, _C(0.9999967,-0.0002548), _C(0.0070000,-0.0000006), _C(-0.0009395,-0.0727867), _C(0.9999967,-0.0002548))
+    ASSERT_MATRIX_C(s2, _C(0.9999951,-0.0005095), _C(0.0070000,-0.0000012), _C(-0.0014247,-0.1455732), _C(0.9999951,-0.0005095))
+}
+
+// Calculation: $PROJECT/calc/ElemGauss.py
+TEST_METHOD(GaussDuctSlab)
+{
+    ELEM(GaussDuctSlab, 7)
+    SET_PARAM(L, 10, mm)
+    SET_PARAM(n, 1.5, none)
+    SET_PARAM(Lambda, 980, nm)
+    SET_PARAM(n2t, 0.2, inv_m2)
+    SET_PARAM(n2s, 0.3, inv_m2)
+    SET_PARAM(alpha2t, 1e8, inv_m3)
+    SET_PARAM(alpha2s, 2e8, inv_m3)
+
+    ASSERT_MATRIX_C(t, _C(0.9999933,-0.0005199), _C(0.0066667,-0.0000012), _C(-0.0020270,-0.1559711), _C(0.9999933,-0.0005199))
+    ASSERT_MATRIX_C(s, _C(0.9999898,-0.0010398), _C(0.0066666,-0.0000023), _C(-0.0031081,-0.3119416), _C(0.9999898,-0.0010398))
+
+    elem->setSubRangeSI(0.003);
+    ASSERT_MATRIX_C(t1, _C(0.9999994,-0.0000468), _C(0.0020000,-0.0000000), _C(-0.0004005,-0.0311944), _C(0.6666663,-0.0000312))
+    ASSERT_MATRIX_C(s1, _C(0.9999991,-0.0000936), _C(0.0020000,-0.0000001), _C(-0.0006019,-0.0623887), _C(0.6666661,-0.0000624))
+    ASSERT_MATRIX_C(t2, _C(0.9999967,-0.0002548), _C(0.0070000,-0.0000006), _C(-0.0014093,-0.1091801), _C(1.4999951,-0.0003821))
+    ASSERT_MATRIX_C(s2, _C(0.9999951,-0.0005095), _C(0.0070000,-0.0000012), _C(-0.0021371,-0.2183599), _C(1.4999926,-0.0007643))
+}
+
 // Calculation: $PROJECT/calc/Elements.py
 TEST_METHOD(NormalInterface)
 {
@@ -667,6 +751,10 @@ TEST_GROUP("Elements",
            ADD_TEST(GrinMedium),
            ADD_TEST(ThermoLens),
            ADD_TEST(ThermoMedium),
+           ADD_TEST(GaussAperture),
+           ADD_TEST(GaussApertureLens),
+           ADD_TEST(GaussDuctMedium),
+           ADD_TEST(GaussDuctSlab),
            ADD_TEST(ThickLens),
            ADD_TEST(NormalInterface),
            ADD_TEST(BrewsterInterface),

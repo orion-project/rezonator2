@@ -1254,9 +1254,9 @@ void ElemGaussDuctSlab::setSubRangeSI(double value) {
 
     const Z::Complex gt = sqrt(Z::Complex(n2t/n0, lambda*a2t/n0/_2PI));
     _mt1.assign(cos(gt*L1), sin(gt*L1)/gt/n0, -gt*sin(gt*L1), cos(gt*L1)/n0);
-    _mt2.assign(cos(gt*L2), sin(gt*L2)/gt/n0, -gt*sin(gt*L2), cos(gt*L2)/n0);
+    _mt2.assign(cos(gt*L2), sin(gt*L2)/gt, -gt*n0*sin(gt*L2), cos(gt*L2)*n0);
 
     const Z::Complex gs = sqrt(Z::Complex(n2s/n0, lambda*a2s/n0/_2PI));
-    _ms1.assign(cos(gs*L1), sin(gs*L1)/gs, -gs*n0*sin(gs*L1), cos(gs*L1)*n0);
+    _ms1.assign(cos(gs*L1), sin(gs*L1)/gs/n0, -gs*sin(gs*L1), cos(gs*L1)/n0);
     _ms2.assign(cos(gs*L2), sin(gs*L2)/gs, -gs*n0*sin(gs*L2), cos(gs*L2)*n0);
 }
