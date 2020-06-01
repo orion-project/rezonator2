@@ -5,6 +5,12 @@
       "date": "2020-??-??",
       "changes": [
         {
+          "text": "Can calculate complex matrices and beam parameters from them (not supported yet for stability calculation)."
+        },
+        {
+          "text": "Can calculate function values under cursor."
+        }
+        {
           "text": "Can link parameters of Matrix element to global parameters."
         },
         {
@@ -12,6 +18,9 @@
         },
         {
           "text": "New elements: GRIN medium, Thermal lens, Thermal medium."
+        },
+        {
+          "text": "New elements: Gaussian aperture, Gaussian aperture with thin lens, Gaussian duct (medium), Gaussian duct (slab)."
         },
         {
           "text": "GRIN lens can accept negative gradient constants n2."
