@@ -309,6 +309,9 @@ namespace Caustic {
     CausticFunction func(s.schema); \
     func.setMode(mode); \
     func.arg()->element = s.elem_L_foc; \
+    func.arg()->range.start = 0_m; \
+    func.arg()->range.stop = 0_m; \
+    func.arg()->range.step = 0_m; \
     func.arg()->range.points = 10; \
     func.calculate(); \
     ASSERT_FUNC_OK
@@ -481,9 +484,15 @@ namespace MultirangeCaustic {
     MultirangeCausticFunction func(s.schema); \
     Z::Variable v1; \
     v1.element = s.elem_L_foc; \
+    v1.range.start = 0_m; \
+    v1.range.stop = 0_m; \
+    v1.range.step = 0_m; \
     v1.range.points = 10; \
     Z::Variable v2; \
     v2.element = s.elem_L; \
+    v2.range.start = 0_m; \
+    v2.range.stop = 0_m; \
+    v2.range.step = 0_m; \
     v2.range.points = 10; \
     func.setArgs({v1, v2}); \
     func.setMode(mode); \

@@ -73,7 +73,7 @@ VariableRange VariableRange::withPoints(const Value& start, const Value& stop, i
     VariableRange range;
     range.start = start;
     range.stop = stop;
-    range.step = 0;
+    range.step = Value(0, start.unit());
     range.points = points;
     range.useStep = false;
     return range;
