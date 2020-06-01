@@ -47,6 +47,11 @@ namespace ElementsTests {
 
 #define _C Z::Complex
 
+#define ASSERT_PARAM_VISIBLE(name, expected_visible) { \
+    auto param_##name = elem->params().byAlias(#name);\
+    ASSERT_IS_NOT_NULL(param_##name)\
+    ASSERT_IS_TRUE(param_##name->visible() == expected_visible) }
+
 //------------------------------------------------------------------------------
 
 // Calculation: $PROJECT/calc/Elements.py
@@ -548,6 +553,8 @@ TEST_METHOD(GaussAperture)
     SET_PARAM(alpha2t, 1e6, inv_m2)
     SET_PARAM(alpha2s, 2e6, inv_m2)
 
+    ASSERT_PARAM_VISIBLE(Lambda, false)
+
     ASSERT_MATRIX_C(t, _C(1,0), _C(0,0), _C(0,-0.1559718), _C(1,0))
     ASSERT_MATRIX_C(s, _C(1,0), _C(0,0), _C(0,-0.3119437), _C(1,0))
 }
@@ -561,6 +568,8 @@ TEST_METHOD(GaussApertureLens)
     SET_PARAM(Fs, 60, cm)
     SET_PARAM(alpha2t, 1e6, inv_m2)
     SET_PARAM(alpha2s, 2e6, inv_m2)
+
+    ASSERT_PARAM_VISIBLE(Lambda, false)
 
     ASSERT_MATRIX_C(t, _C(1,0), _C(0,0), _C(-2,-0.1559718), _C(1,0))
     ASSERT_MATRIX_C(s, _C(1,0), _C(0,0), _C(-1.6666667,-0.3119437), _C(1,0))
@@ -577,6 +586,8 @@ TEST_METHOD(GaussDuctMedium)
     SET_PARAM(n2s, 0.3, inv_m2)
     SET_PARAM(alpha2t, 1e8, inv_m3)
     SET_PARAM(alpha2s, 2e8, inv_m3)
+
+    ASSERT_PARAM_VISIBLE(Lambda, false)
 
     ASSERT_MATRIX_C(t, _C(0.9999933,-0.0005199), _C(0.0100000,-0.0000017), _C(-0.0013514,-0.1039808), _C(0.9999933,-0.0005199))
     ASSERT_MATRIX_C(s, _C(0.9999898,-0.0010398), _C(0.0100000,-0.0000035), _C(-0.0020721,-0.2079611), _C(0.9999898,-0.0010398))
@@ -599,6 +610,8 @@ TEST_METHOD(GaussDuctSlab)
     SET_PARAM(n2s, 0.3, inv_m2)
     SET_PARAM(alpha2t, 1e8, inv_m3)
     SET_PARAM(alpha2s, 2e8, inv_m3)
+
+    ASSERT_PARAM_VISIBLE(Lambda, false)
 
     ASSERT_MATRIX_C(t, _C(0.9999933,-0.0005199), _C(0.0066667,-0.0000012), _C(-0.0020270,-0.1559711), _C(0.9999933,-0.0005199))
     ASSERT_MATRIX_C(s, _C(0.9999898,-0.0010398), _C(0.0066666,-0.0000023), _C(-0.0031081,-0.3119416), _C(0.9999898,-0.0010398))

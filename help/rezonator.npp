@@ -35,6 +35,10 @@
                     <File name="matrix\ElemGrinMedium.rst" />
                     <File name="matrix\ElemThermoMedium.rst" />
                     <File name="matrix\ElemThermoLens.rst" />
+                    <File name="matrix\ElemGaussAperture.rst" />
+                    <File name="matrix\ElemGaussApertureLens.rst" />
+                    <File name="matrix\ElemGaussDuctMedium.rst" />
+                    <File name="matrix\ElemGaussDuctSlab.rst" />
                 </Folder>
                 <File name="elements.rst" />
                 <File name="elem_matrs.rst" />
@@ -72,6 +76,7 @@
         </Folder>
         <Folder name="styles">
             <File name="styles\pygments.css" />
+            <File name="matrix\matrix_formula.css" />
         </Folder>
         <Folder name="formulas">
             <File name="render_formula.html" />
@@ -79,6 +84,8 @@
             <File name="matrix\ElemGrinMedium.html" />
             <File name="matrix\ElemGrinLens.html" />
             <File name="calc_grin.html" />
+            <File name="matrix\ElemGaussDuct.html" />
+            <File name="matrix\ElemGaussAperture.html" />
         </Folder>
     </Project>
 </NotepadPlus>

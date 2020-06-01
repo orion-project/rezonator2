@@ -1002,8 +1002,9 @@ void ElemAxiconLens::calcDynamicMatrix(const CalcParams& p)
 
 ElemGaussAperture::ElemGaussAperture() : Element()
 {
-    _lambda = new Z::Parameter(Z::Dims::linear(), QStringLiteral("Lambda"), Z::Strs::lambda(),
-                              qApp->translate("Param", "Free space wavelength"));
+    _lambda = new Z::Parameter(Z::Dims::linear(), QStringLiteral("Lambda"));
+    _lambda->setVisible(false);
+
     _alpha2t = new Z::Parameter(Z::Dims::fixed(),
         QStringLiteral("alpha2t"), QStringLiteral("α2t"),
         qApp->translate("Param", "Loss factor (T)"),
@@ -1022,6 +1023,9 @@ ElemGaussAperture::ElemGaussAperture() : Element()
     addParam(_lambda);
     addParam(_alpha2t);
     addParam(_alpha2s);
+
+    setOption(Element_ChangesWavefront);
+    setOption(Element_RequiresWavelength);
 }
 
 void ElemGaussAperture::calcMatrixInternal()
@@ -1040,9 +1044,9 @@ void ElemGaussAperture::calcMatrixInternal()
 
 ElemGaussApertureLens::ElemGaussApertureLens() : Element()
 {
-    _lambda = new Z::Parameter(Z::Dims::linear(),
-        QStringLiteral("Lambda"), Z::Strs::lambda(),
-        qApp->translate("Param", "Free space wavelength"));
+    _lambda = new Z::Parameter(Z::Dims::linear(), QStringLiteral("Lambda"));
+    _lambda->setVisible(false);
+
     _focusT = new Z::Parameter(Z::Dims::linear(),
         QStringLiteral("Ft"), QStringLiteral("Ft"),
         qApp->translate("Param", "Focal length (T)"),
@@ -1075,6 +1079,12 @@ ElemGaussApertureLens::ElemGaussApertureLens() : Element()
     addParam(_focusS);
     addParam(_alpha2t);
     addParam(_alpha2s);
+
+    setOption(Element_ChangesWavefront);
+    setOption(Element_RequiresWavelength);
+
+    _focusT->setVerifier(globalFocalLengthVerifier());
+    _focusS->setVerifier(globalFocalLengthVerifier());
 }
 
 void ElemGaussApertureLens::calcMatrixInternal()
@@ -1097,8 +1107,8 @@ ElemGaussDuctMedium::ElemGaussDuctMedium() : ElementRange() {
     _length->setDescription(qApp->translate("Param", "Thickness of material. "
                                                      "Must be a positive value."));
 
-    _lambda = new Z::Parameter(Z::Dims::linear(), QStringLiteral("Lambda"), Z::Strs::lambda(),
-                              qApp->translate("Param", "Free space wavelength"));
+    _lambda = new Z::Parameter(Z::Dims::linear(), QStringLiteral("Lambda"));
+    _lambda->setVisible(false);
 
     _ior->setRawValue(2);
     _ior->setVisible(true);
@@ -1138,6 +1148,8 @@ ElemGaussDuctMedium::ElemGaussDuctMedium() : ElementRange() {
     addParam(_ior2s);
     addParam(_alpha2t);
     addParam(_alpha2s);
+
+    setOption(Element_RequiresWavelength);
 }
 
 void ElemGaussDuctMedium::calcMatrixInternal() {
@@ -1183,8 +1195,8 @@ ElemGaussDuctSlab::ElemGaussDuctSlab() : ElementRange() {
     _length->setDescription(qApp->translate("Param", "Thickness of material. "
                                                      "Must be a positive value."));
 
-    _lambda = new Z::Parameter(Z::Dims::linear(), QStringLiteral("Lambda"), Z::Strs::lambda(),
-                              qApp->translate("Param", "Free space wavelength"));
+    _lambda = new Z::Parameter(Z::Dims::linear(), QStringLiteral("Lambda"));
+    _lambda->setVisible(false);
 
     _ior->setRawValue(2);
     _ior->setVisible(true);
@@ -1224,6 +1236,8 @@ ElemGaussDuctSlab::ElemGaussDuctSlab() : ElementRange() {
     addParam(_ior2s);
     addParam(_alpha2t);
     addParam(_alpha2s);
+
+    setOption(Element_RequiresWavelength);
 }
 
 void ElemGaussDuctSlab::calcMatrixInternal() {

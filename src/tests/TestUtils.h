@@ -129,4 +129,17 @@ TElement* makeElem(const QString& label, const QString& paramStr) {
 
 //------------------------------------------------------------------------------
 
+#define SET_PARAM_VALUE(elem, name, value) { \
+    auto param_##name = elem->params().byAlias(#name);\
+    ASSERT_IS_NOT_NULL(param_##name)\
+    param_##name->setValue(value); }
+
+#define ASSERT_PARAM_VALUE(elem, name, expected_value) { \
+    auto param_##name = elem->params().byAlias(#name);\
+    ASSERT_IS_NOT_NULL(param_##name)\
+    ASSERT_NEAR_DBL(param_##name->value().value(), expected_value.value(), 1e-7) \
+    ASSERT_EQ_UNIT(param_##name->value().unit(), expected_value.unit()) }
+
+//------------------------------------------------------------------------------
+
 #endif // Z_TEST_UTILS_H
