@@ -2,7 +2,7 @@
   "history": [
     {
       "version": "2.0.6-beta2",
-      "date": "2020-??-??",
+      "date": "2020-06-02",
       "changes": [
         {
           "text": "Can calculate complex matrices and beam parameters from them (not supported yet for stability calculation)."
