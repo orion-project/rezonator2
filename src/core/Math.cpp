@@ -14,29 +14,29 @@ extern const double LightSpeed = 299792458.0; // m/sec, light speed in vacuum
 
 Matrix operator *(const Matrix &m1, const Matrix &m2)
 {
-    double a = m1.A * m2.A + m1.B * m2.C;
-    double b = m1.A * m2.B + m1.B * m2.D;
-    double c = m1.C * m2.A + m1.D * m2.C;
-    double d = m1.C * m2.B + m1.D * m2.D;
+    Complex a = m1.A * m2.A + m1.B * m2.C;
+    Complex b = m1.A * m2.B + m1.B * m2.D;
+    Complex c = m1.C * m2.A + m1.D * m2.C;
+    Complex d = m1.C * m2.B + m1.D * m2.D;
     return Matrix(a, b, c, d);
 }
 
 void Matrix::operator *= (const Matrix &m)
 {
 
-    double a = A * m.A + B * m.C;
-    double b = A * m.B + B * m.D;
-    double c = C * m.A + D * m.C;
-    double d = C * m.B + D * m.D;
+    Complex a = A * m.A + B * m.C;
+    Complex b = A * m.B + B * m.D;
+    Complex c = C * m.A + D * m.C;
+    Complex d = C * m.B + D * m.D;
     assign(a, b, c, d);
 }
 
 void Matrix::operator *= (const Matrix *m)
 {
-    double a = A * m->A + B * m->C;
-    double b = A * m->B + B * m->D;
-    double c = C * m->A + D * m->C;
-    double d = C * m->B + D * m->D;
+    Complex a = A * m->A + B * m->C;
+    Complex b = A * m->B + B * m->D;
+    Complex c = C * m->A + D * m->C;
+    Complex d = C * m->B + D * m->D;
     assign(a, b, c, d);
 }
 
@@ -50,9 +50,14 @@ Complex Matrix::multComplexBeam(const Complex& c) const
     return (c * A + B) / (c * C + D);
 }
 
-double Matrix::det() const
+Complex Matrix::det() const
 {
     return A * D - B * C;
+}
+
+bool Matrix::isReal() const
+{
+    return A.imag() == 0 && B.imag() == 0 && C.imag() == 0 && D.imag() == 0;
 }
 
 //------------------------------------------------------------------------------
@@ -61,8 +66,9 @@ double Matrix::det() const
 
 RayVector::RayVector(const RayVector& in, const Matrix& m)
 {
-    Y = in.Y * m.A + in.V * m.B;
-    V = in.Y * m.C + in.V * m.D;
+    // TODO: COMPLEX: what about imaginary part?
+    Y = in.Y * m.A.real() + in.V * m.B.real();
+    V = in.Y * m.C.real() + in.V * m.D.real();
 }
 
 QString RayVector::str() const

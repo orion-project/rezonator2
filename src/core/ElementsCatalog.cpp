@@ -38,6 +38,12 @@ ElementsCatalog::ElementsCatalog()
     registerElement(categoryIntf, new ElemBrewsterInterface);
     registerElement(categoryIntf, new ElemTiltedInterface);
     registerElement(categoryIntf, new ElemSphericalInterface);
+
+    auto categoryCplx = qApp->translate("Elements", "Complex elements");
+    registerElement(categoryCplx, new ElemGaussAperture);
+    registerElement(categoryCplx, new ElemGaussApertureLens);
+    registerElement(categoryCplx, new ElemGaussDuctMedium);
+    registerElement(categoryCplx, new ElemGaussDuctSlab);
 }
 
 ElementsCatalog::~ElementsCatalog()

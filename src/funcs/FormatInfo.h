@@ -1,6 +1,7 @@
 #ifndef FORMAT_INFO_H
 #define FORMAT_INFO_H
 
+#include "../core/CommonTypes.h"
 #include "../core/Parameters.h"
 
 class Schema;
@@ -20,6 +21,7 @@ QString matrices(const Z::Matrix& mt, const Z::Matrix& ms);
 QString matrix(const QString& label, const Z::Matrix& m);
 
 namespace Py {
+QString formatPy(const Z::Complex& v);
 QString matrixAsNumpy(const QString& label, const Z::Matrix& m);
 QString matrixVarName(Element *elem, const QString& suffix);
 QString elementMatrices(Element *elem);

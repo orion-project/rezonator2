@@ -80,9 +80,10 @@ public:
 
 class Pumps {
 public:
-    static const QVector<const PumpMode *> &allModes();
+    static const QVector<const PumpMode*> &allModes();
     static const PumpMode *findByModeName(const QString& name);
     static QString labelPrefix();
+    static bool isGeometric(const PumpParams*);
 };
 
 

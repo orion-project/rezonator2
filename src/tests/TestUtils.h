@@ -28,28 +28,44 @@
     ASSERT_EQ_UNIT(v.unit(), expected_value.unit())
 
 #define ASSERT_EQ_MATRIX(m, expected_m)\
-    ASSERT_EQ_DBL((m).A, (expected_m).A); \
-    ASSERT_EQ_DBL((m).B, (expected_m).B); \
-    ASSERT_EQ_DBL((m).C, (expected_m).C); \
-    ASSERT_EQ_DBL((m).D, (expected_m).D);
+    ASSERT_EQ_DBL((m).A.real(), (expected_m).A.real()); \
+    ASSERT_EQ_DBL((m).B.real(), (expected_m).B.real()); \
+    ASSERT_EQ_DBL((m).C.real(), (expected_m).C.real()); \
+    ASSERT_EQ_DBL((m).D.real(), (expected_m).D.real()); \
+    ASSERT_EQ_DBL((m).A.imag(), (expected_m).A.imag()); \
+    ASSERT_EQ_DBL((m).B.imag(), (expected_m).B.imag()); \
+    ASSERT_EQ_DBL((m).C.imag(), (expected_m).C.imag()); \
+    ASSERT_EQ_DBL((m).D.imag(), (expected_m).D.imag());
 
 #define ASSERT_NEAR_MATRIX(m, expected_m, eps)\
-    ASSERT_NEAR_DBL((m).A, (expected_m).A, eps); \
-    ASSERT_NEAR_DBL((m).B, (expected_m).B, eps); \
-    ASSERT_NEAR_DBL((m).C, (expected_m).C, eps); \
-    ASSERT_NEAR_DBL((m).D, (expected_m).D, eps);
+    ASSERT_NEAR_DBL((m).A.real(), (expected_m).A.real(), eps); \
+    ASSERT_NEAR_DBL((m).B.real(), (expected_m).B.real(), eps); \
+    ASSERT_NEAR_DBL((m).C.real(), (expected_m).C.real(), eps); \
+    ASSERT_NEAR_DBL((m).D.real(), (expected_m).D.real(), eps); \
+    ASSERT_NEAR_DBL((m).A.imag(), (expected_m).A.imag(), eps); \
+    ASSERT_NEAR_DBL((m).B.imag(), (expected_m).B.imag(), eps); \
+    ASSERT_NEAR_DBL((m).C.imag(), (expected_m).C.imag(), eps); \
+    ASSERT_NEAR_DBL((m).D.imag(), (expected_m).D.imag(), eps);
 
 #define ASSERT_MATRIX_IS(m, a, b, c, d) \
-    ASSERT_EQ_DBL((m).A, a); \
-    ASSERT_EQ_DBL((m).B, b); \
-    ASSERT_EQ_DBL((m).C, c); \
-    ASSERT_EQ_DBL((m).D, d);
+    ASSERT_EQ_DBL((m).A.real(), a); \
+    ASSERT_EQ_DBL((m).B.real(), b); \
+    ASSERT_EQ_DBL((m).C.real(), c); \
+    ASSERT_EQ_DBL((m).D.real(), d); \
+    ASSERT_EQ_DBL((m).A.imag(), 0); \
+    ASSERT_EQ_DBL((m).B.imag(), 0); \
+    ASSERT_EQ_DBL((m).C.imag(), 0); \
+    ASSERT_EQ_DBL((m).D.imag(), 0);
 
 #define ASSERT_MATRIX_NEAR(m, a, b, c, d, eps) \
-    ASSERT_NEAR_DBL((m).A, a, eps); \
-    ASSERT_NEAR_DBL((m).B, b, eps); \
-    ASSERT_NEAR_DBL((m).C, c, eps); \
-    ASSERT_NEAR_DBL((m).D, d, eps);
+    ASSERT_NEAR_DBL((m).A.real(), a, eps); \
+    ASSERT_NEAR_DBL((m).B.real(), b, eps); \
+    ASSERT_NEAR_DBL((m).C.real(), c, eps); \
+    ASSERT_NEAR_DBL((m).D.real(), d, eps); \
+    ASSERT_EQ_DBL((m).A.imag(), 0); \
+    ASSERT_EQ_DBL((m).B.imag(), 0); \
+    ASSERT_EQ_DBL((m).C.imag(), 0); \
+    ASSERT_EQ_DBL((m).D.imag(), 0);
 
 #define ASSERT_MATRIX_IS_UNITY(m) ASSERT_MATRIX_IS(m, 1.0, 0.0, 0.0, 1.0)
 
@@ -110,6 +126,19 @@ TElement* makeElem(const QString& label, const QString& paramStr) {
     }
     return elem;
 }
+
+//------------------------------------------------------------------------------
+
+#define SET_PARAM_VALUE(elem, name, value) { \
+    auto param_##name = elem->params().byAlias(#name);\
+    ASSERT_IS_NOT_NULL(param_##name)\
+    param_##name->setValue(value); }
+
+#define ASSERT_PARAM_VALUE(elem, name, expected_value) { \
+    auto param_##name = elem->params().byAlias(#name);\
+    ASSERT_IS_NOT_NULL(param_##name)\
+    ASSERT_NEAR_DBL(param_##name->value().value(), expected_value.value(), 1e-7) \
+    ASSERT_EQ_UNIT(param_##name->value().unit(), expected_value.unit()) }
 
 //------------------------------------------------------------------------------
 

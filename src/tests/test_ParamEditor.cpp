@@ -26,7 +26,7 @@ TEST_METHOD(ctor__must_register_listener)
 {
     TestParam param(test);
     QSharedPointer<ParamEditor> editor(new ParamEditor(ParamEditor::Options(&param)));
-    ASSERT_IS_TRUE(param.listeners().contains(editor.get()))
+    ASSERT_IS_TRUE(param.listeners().contains(editor.data()))
 }
 
 TEST_METHOD(destructor__must_unregister_listener_when_no_own)

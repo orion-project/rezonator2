@@ -143,6 +143,10 @@
         <file alias="ElemEmptyRange">../img/elem/ElemEmptyRange.svg</file>
         <file alias="ElemFlatMirror">../img/elem/ElemFlatMirror.svg</file>
         <file alias="ElemFormula">../img/elem/ElemFormula.svg</file>
+        <file alias="ElemGaussAperture">../img/elem/ElemGaussAperture.svg</file>
+        <file alias="ElemGaussApertureLens">../img/elem/ElemGaussApertureLens.svg</file>
+        <file alias="ElemGaussDuctMedium">../img/elem/ElemGaussDuctMedium.svg</file>
+        <file alias="ElemGaussDuctSlab">../img/elem/ElemGaussDuctSlab.svg</file>
         <file alias="ElemGrinLens">../img/elem/ElemGrinLens.svg</file>
         <file alias="ElemGrinMedium">../img/elem/ElemGrinMedium.svg</file>
         <file alias="ElemMatrix">../img/elem/ElemMatrix.svg</file>
@@ -169,6 +173,10 @@
         <file alias="ElemCurveMirror">../img/elem/ElemCurveMirror24.svg</file>
         <file alias="ElemCylinderLensS">../img/elem/ElemCylinderLensS24.svg</file>
         <file alias="ElemCylinderLensT">../img/elem/ElemCylinderLensT24.svg</file>
+        <file alias="ElemGaussAperture">../img/elem/ElemGaussAperture24.svg</file>
+        <file alias="ElemGaussApertureLens">../img/elem/ElemGaussApertureLens24.svg</file>
+        <file alias="ElemGaussDuctMedium">../img/elem/ElemGaussDuctMedium24.svg</file>
+        <file alias="ElemGaussDuctSlab">../img/elem/ElemGaussDuctSlab24.svg</file>
         <file alias="ElemEmptyRange">../img/elem/ElemEmptyRange24.svg</file>
         <file alias="ElemFlatMirror">../img/elem/ElemFlatMirror24.svg</file>
         <file alias="ElemFormula">../img/elem/ElemFormula24.svg</file>

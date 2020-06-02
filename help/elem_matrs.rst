@@ -29,6 +29,10 @@ Interface elements have no index of refraction. Instead, they take indexes of ad
    matrix/ElemMatrix
    matrix/ElemEmptyRange
    matrix/ElemFlatMirror
+   matrix/ElemGaussAperture
+   matrix/ElemGaussApertureLens
+   matrix/ElemGaussDuctMedium
+   matrix/ElemGaussDuctSlab
    matrix/ElemGrinLens
    matrix/ElemGrinMedium
    matrix/ElemNormalInterface

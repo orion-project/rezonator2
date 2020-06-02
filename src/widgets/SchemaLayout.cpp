@@ -266,6 +266,7 @@ namespace CurvedElementLayout {
     };
 
     DECLARE_ELEMENT_LAYOUT_BEGIN
+        QBrush brush;
         CurvedForm paintMode = FormUnknown;
         void paintCornerMark(QPainter *painter, const QString& mark) const;
     DECLARE_ELEMENT_LAYOUT_END
@@ -274,7 +275,7 @@ namespace CurvedElementLayout {
     }
 
     ELEMENT_LAYOUT_PAINT {
-        painter->setBrush(getGlassBrush());
+        painter->setBrush(brush.style() == Qt::NoBrush ? getGlassBrush() : brush);
         painter->setPen(getGlassPen());
 
         const qreal ROC = 100;
@@ -1060,6 +1061,49 @@ namespace ElemGrinMediumLayout {
 }
 
 //------------------------------------------------------------------------------
+namespace ElemGaussApertureLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+    DECLARE_ELEMENT_LAYOUT_END
+
+    ELEMENT_LAYOUT_INIT {
+        HW = 5;
+        HH = 40;
+    }
+
+    ELEMENT_LAYOUT_PAINT {
+        QPainterPath path;
+        path.addRect(boundingRect());
+        painter->setBrush(getGrinBrush(HH));
+        painter->setPen(getGlassPen());
+        painter->drawPath(path);
+    }
+}
+
+//------------------------------------------------------------------------------
+namespace ElemGaussApertureLensLayout {
+    DECLARE_ELEMENT_LAYOUT_BEGIN
+        QSharedPointer<CurvedElementLayout::Layout> layout;
+    DECLARE_ELEMENT_LAYOUT_END
+
+    ELEMENT_LAYOUT_INIT {
+        HW = 10; HH = 40;
+        auto lens = dynamic_cast<ElemGaussApertureLens*>(_element);
+        if (!lens) return;
+        layout.reset(new CurvedElementLayout::Layout(nullptr));
+        layout->setHalfSize(HW, HH);
+        layout->brush = getGrinBrush(HH);
+        layout->paintMode = lens->focusT() > 0
+                       ? CurvedElementLayout::PlanoConvexLens // |)
+                       : CurvedElementLayout::PlanoConcaveLens; // |(
+        layout->init();
+    }
+
+    ELEMENT_LAYOUT_PAINT {
+        if (layout) layout->paint(painter, nullptr, nullptr);
+    }
+}
+
+//------------------------------------------------------------------------------
 namespace AxiconElementLayout {
     enum AxiconForm {
         FormUnknown,
@@ -1426,33 +1470,37 @@ template <class TElement, class TLayout> void registerLayout() {
 
 ElementLayout* make(Element *elem) {
     if (__factoryMethods.empty()) {
-        registerLayout<ElemEmptyRange, ElemEmptyRangeLayout::Layout>();
-        registerLayout<ElemMediumRange, ElemMediumRangeLayout::Layout>();
-        registerLayout<ElemPlate, ElemPlateLayout::Layout>();
-        registerLayout<ElemFlatMirror, ElemFlatMirrorLayout::Layout>();
-        registerLayout<ElemCurveMirror, ElemCurveMirrorLayout::Layout>();
-        registerLayout<ElemThinLens, ElemThinLensLayout::Layout>();
-        registerLayout<ElemCylinderLensT, ElemCylinderLensTLayout::Layout>();
-        registerLayout<ElemCylinderLensS, ElemCylinderLensSLayout::Layout>();
-        registerLayout<ElemTiltedCrystal, ElemTiltedCrystalLayout::Layout>();
-        registerLayout<ElemTiltedPlate, ElemTiltedPlateLayout::Layout>();
+        registerLayout<ElemAxiconLens, ElemAxiconLensLayout::Layout>();
+        registerLayout<ElemAxiconMirror, ElemAxiconMirrorLayout::Layout>();
         registerLayout<ElemBrewsterCrystal, ElemBrewsterCrystalLayout::Layout>();
+        registerLayout<ElemBrewsterInterface, ElemBrewsterInterfaceLayout::Layout>();
         registerLayout<ElemBrewsterPlate, ElemBrewsterPlateLayout::Layout>();
+        registerLayout<ElemCurveMirror, ElemCurveMirrorLayout::Layout>();
+        registerLayout<ElemCylinderLensS, ElemCylinderLensSLayout::Layout>();
+        registerLayout<ElemCylinderLensT, ElemCylinderLensTLayout::Layout>();
+        registerLayout<ElemEmptyRange, ElemEmptyRangeLayout::Layout>();
+        registerLayout<ElemFlatMirror, ElemFlatMirrorLayout::Layout>();
+        registerLayout<ElemFormula, ElemMatrixLayout::Layout>();
+        registerLayout<ElemGaussAperture, ElemGaussApertureLayout::Layout>();
+        registerLayout<ElemGaussApertureLens, ElemGaussApertureLensLayout::Layout>();
+        registerLayout<ElemGaussDuctSlab, ElemGrinLensLayout::Layout>();
+        registerLayout<ElemGaussDuctMedium, ElemGrinMediumLayout::Layout>();
+        registerLayout<ElemGrinLens, ElemGrinLensLayout::Layout>();
+        registerLayout<ElemGrinMedium, ElemGrinMediumLayout::Layout>();
         registerLayout<ElemMatrix, ElemMatrixLayout::Layout>();
         registerLayout<ElemMatrix1, ElemMatrixLayout::Layout>();
-        registerLayout<ElemFormula, ElemMatrixLayout::Layout>();
-        registerLayout<ElemPoint, ElemPointLayout::Layout>();
+        registerLayout<ElemMediumRange, ElemMediumRangeLayout::Layout>();
         registerLayout<ElemNormalInterface, ElemNormalInterfaceLayout::Layout>();
-        registerLayout<ElemBrewsterInterface, ElemBrewsterInterfaceLayout::Layout>();
-        registerLayout<ElemTiltedInterface, ElemTiltedInterfaceLayout::Layout>();
+        registerLayout<ElemPlate, ElemPlateLayout::Layout>();
+        registerLayout<ElemPoint, ElemPointLayout::Layout>();
         registerLayout<ElemSphericalInterface, ElemSphericalInterfaceLayout::Layout>();
-        registerLayout<ElemThickLens, ElemThickLensLayout::Layout>();
-        registerLayout<ElemGrinLens, ElemGrinLensLayout::Layout>();
         registerLayout<ElemThermoLens, ElemGrinLensLayout::Layout>();
-        registerLayout<ElemGrinMedium, ElemGrinMediumLayout::Layout>();
         registerLayout<ElemThermoMedium, ElemGrinMediumLayout::Layout>();
-        registerLayout<ElemAxiconMirror, ElemAxiconMirrorLayout::Layout>();
-        registerLayout<ElemAxiconLens, ElemAxiconLensLayout::Layout>();
+        registerLayout<ElemThickLens, ElemThickLensLayout::Layout>();
+        registerLayout<ElemThinLens, ElemThinLensLayout::Layout>();
+        registerLayout<ElemTiltedCrystal, ElemTiltedCrystalLayout::Layout>();
+        registerLayout<ElemTiltedInterface, ElemTiltedInterfaceLayout::Layout>();
+        registerLayout<ElemTiltedPlate, ElemTiltedPlateLayout::Layout>();
     }
     if (!__factoryMethods.contains(elem->type()))
         return nullptr;

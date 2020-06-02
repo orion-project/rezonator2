@@ -1,10 +1,7 @@
 #ifndef MATH_H
 #define MATH_H
 
-#include <QString>
-#include <QVector>
-
-#include <complex>
+#include "CommonTypes.h"
 
 #define SQR(a) ((a)*(a))
 
@@ -17,32 +14,36 @@ extern const double LightSpeed;
 
 //------------------------------------------------------------------------------
 
-typedef std::complex<double> Complex;
-
-//------------------------------------------------------------------------------
-
 /**
     The ABCD ray matrix.
 */
 class Matrix
 {
 public:
-    double A, B, C, D;
+    Complex A, B, C, D;
 
-    Matrix() : A(1.0), B(0.0), C(0.0), D(1.0) {}
+    Matrix() : A(1), B(0), C(0), D(1) {}
     Matrix(const Matrix& m) : A(m.A), B(m.B), C(m.C), D(m.D) {}
     Matrix(const Matrix* m) : A(m->A), B(m->B), C(m->C), D(m->D) {}
     Matrix(double a, double b, double c, double d) : A(a), B(b), C(c), D(d) {}
+    Matrix(const Complex& a, const Complex& b, const Complex& c, const Complex& d) : A(a), B(b), C(c), D(d) {}
 
     void unity()
     {
-        A = 1.0; B = 0.0; C = 0.0; D = 1.0;
+        A = {1, 0}; B = {0, 0}; C = {0, 0}; D = {1, 0};
     }
 
     void assign(double a, double b, double c, double d)
     {
         A = a; B = b; C = c; D = d;
     }
+
+    void assign(const Complex& a, const Complex& b, const Complex& c, const Complex& d)
+    {
+        A = a; B = b; C = c; D = d;
+    }
+
+    bool isReal() const;
 
     void operator *= (const Matrix &m);
     void operator *= (const Matrix *m);
@@ -52,7 +53,7 @@ public:
 
     QString str() const;
 
-    double det() const;
+    Complex det() const;
 };
 
 Matrix operator *(const Matrix &m1, const Matrix &m2);

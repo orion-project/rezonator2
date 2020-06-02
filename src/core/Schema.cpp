@@ -205,6 +205,8 @@ void Schema::insertElements(const Elements& elems, int index, Arg::RaiseEvents e
     for (int i = 0; i < elems.size(); i++)
     {
         auto elem = elems.at(i);
+        if (elem->hasOption(Element_RequiresWavelength))
+            Z::Utils::setElemWavelen(elem, _wavelength.value());
 
         if (insert)
             _items.insert(index + i, elem);
@@ -266,6 +268,11 @@ void Schema::parameterChanged(Z::ParameterBase *param)
     if (param == &_wavelength)
     {
         _events.raise(SchemaEvents::LambdaChanged, "Schema: parameterChanged: lambda");
+
+        for (auto elem : _items)
+            if (elem->hasOption(Element_RequiresWavelength))
+                Z::Utils::setElemWavelen(elem, _wavelength.value());
+
         _events.raise(SchemaEvents::RecalRequred, "Schema: parameterChanged: lambda");
     }
 }

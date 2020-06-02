@@ -30,10 +30,14 @@ public:
 #define ASSERT_MATRIX(ts, a, b, c, d)\
     TEST_LOG(elem.error())\
     ASSERT_EQ_STR(elem.error(), "")\
-    ASSERT_EQ_DBL(elem.M##ts().A, a)\
-    ASSERT_EQ_DBL(elem.M##ts().B, b)\
-    ASSERT_EQ_DBL(elem.M##ts().C, c)\
-    ASSERT_EQ_DBL(elem.M##ts().D, d)
+    ASSERT_EQ_DBL(elem.M##ts().A.real(), a)\
+    ASSERT_EQ_DBL(elem.M##ts().B.real(), b)\
+    ASSERT_EQ_DBL(elem.M##ts().C.real(), c)\
+    ASSERT_EQ_DBL(elem.M##ts().D.real(), d)\
+    ASSERT_EQ_DBL(elem.M##ts().A.imag(), 0)\
+    ASSERT_EQ_DBL(elem.M##ts().B.imag(), 0)\
+    ASSERT_EQ_DBL(elem.M##ts().C.imag(), 0)\
+    ASSERT_EQ_DBL(elem.M##ts().D.imag(), 0)
 
 #define CALC_TEST_MATRIX(code)\
     elem.setFormula(code);\

@@ -5,44 +5,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <link rel="stylesheet" href="matrix_formula.css" type="text/css"></link> 
   </head>
-  <style>
-  body {
-    display: flex;
-    flex-direction: row;
-  }
-  .paper {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    font-size: 125%;
-    color: #222;
-  }
-  .drawing-and-formula {
-    display: flex;
-    flex-direction: row;
-  }
-  .formulas-column {
-    margin-left: 40px;
-    margin-right: 20px;
-  }
-  .frame {
-    position: absolute;
-    border: 1px dashed red;
-    left: 0;
-    right: 0;
-  }
-  .drawing {
-    margin-left: 20px;
-  }
-  .stretch {
-  }
-  </style>
   <body>
     <div class="paper">
-      <div class="frame" style="top: 0; height: 565px"></div>
+      <div class="frames">
+        <div class="frame" style="top: 0; height: 565px"></div>
+      </div>
       <div>
-        \[ n(r) = n_0 - \frac { n_0 \; r^2 } 2
+        \[ n(r) = n_0 - \frac { n_2 \; r^2 } 2
           \;\;\;\;\;\;\;\;\;\;\;\;
           r^2 = x^2 + y^2
         \]

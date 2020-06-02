@@ -7,6 +7,9 @@
 
 #include <math.h>
 
+#define _PI Z::Const::Pi
+#define _2PI (2.0*Z::Const::Pi)
+
 // TODO:NEXT-VER in general case all parameters units should be verified too.
 // But currenly we have verification only in that places which always use correct uints (e.g. Element props dialog).
 
@@ -991,4 +994,283 @@ void ElemAxiconLens::calcDynamicMatrix(const CalcParams& p)
 
     _mt_dyn.assign(1, 0, -tmp / qAbs(beamT.beamRadius) / cosA, 1);
     _ms_dyn.assign(1, 0, -tmp / qAbs(beamS.beamRadius) * cosA, 1);
+}
+
+//------------------------------------------------------------------------------
+//                             ElemGaussAperture
+//------------------------------------------------------------------------------
+
+ElemGaussAperture::ElemGaussAperture() : Element()
+{
+    _lambda = new Z::Parameter(Z::Dims::linear(), QStringLiteral("Lambda"));
+    _lambda->setVisible(false);
+
+    _alpha2t = new Z::Parameter(Z::Dims::fixed(),
+        QStringLiteral("alpha2t"), QStringLiteral("α2t"),
+        qApp->translate("Param", "Loss factor (T)"),
+        qApp->translate("Param", "Total loss factor in tangential plane. "
+                                 "Positive value describes radially increasing loss."));
+    _alpha2s = new Z::Parameter(Z::Dims::fixed(),
+        QStringLiteral("alpha2s"), QStringLiteral("α2s"),
+        qApp->translate("Param", "Loss factor (S)"),
+        qApp->translate("Param", "Total loss factor in sagittal plane. "
+                                 "Positive value describes radially increasing loss."));
+
+    _lambda->setValue(980_nm);
+    _alpha2t->setValue(Z::Value(1, Z::Units::inv_m2()));
+    _alpha2s->setValue(Z::Value(1, Z::Units::inv_m2()));
+
+    addParam(_lambda);
+    addParam(_alpha2t);
+    addParam(_alpha2s);
+
+    setOption(Element_ChangesWavefront);
+    setOption(Element_RequiresWavelength);
+}
+
+void ElemGaussAperture::calcMatrixInternal()
+{
+    const double wl = _lambda->value().toSi();
+    const double a2t = _alpha2t->value().toSi();
+    const double a2s = _alpha2s->value().toSi();
+
+    _mt.assign(Z::Complex(1, 0), Z::Complex(0, 0), Z::Complex(0, -wl*a2t/_2PI), Z::Complex(1, 0));
+    _ms.assign(Z::Complex(1, 0), Z::Complex(0, 0), Z::Complex(0, -wl*a2s/_2PI), Z::Complex(1, 0));
+}
+
+//------------------------------------------------------------------------------
+//                             ElemGaussApertureLens
+//------------------------------------------------------------------------------
+
+ElemGaussApertureLens::ElemGaussApertureLens() : Element()
+{
+    _lambda = new Z::Parameter(Z::Dims::linear(), QStringLiteral("Lambda"));
+    _lambda->setVisible(false);
+
+    _focusT = new Z::Parameter(Z::Dims::linear(),
+        QStringLiteral("Ft"), QStringLiteral("Ft"),
+        qApp->translate("Param", "Focal length (T)"),
+        qApp->translate("Param", "Focal length in tangential plane."
+                                 "Positive for collecting lens, negative for diverging lens."));
+    _focusS = new Z::Parameter(Z::Dims::linear(),
+        QStringLiteral("Fs"), QStringLiteral("Fs"),
+        qApp->translate("Param", "Focal length (S)"),
+        qApp->translate("Param", "Focal length in sagittal plane."
+                                 "Positive for collecting lens, negative for diverging lens."));
+    _alpha2t = new Z::Parameter(Z::Dims::fixed(),
+        QStringLiteral("alpha2t"), QStringLiteral("α2t"),
+        qApp->translate("Param", "Loss factor (T)"),
+        qApp->translate("Param", "Total loss factor in tangential plane. "
+                                 "Positive value describes radially increasing loss."));
+    _alpha2s = new Z::Parameter(Z::Dims::fixed(),
+        QStringLiteral("alpha2s"), QStringLiteral("α2s"),
+        qApp->translate("Param", "Loss factor (S)"),
+        qApp->translate("Param", "Total loss factor in sagittal plane. "
+                                 "Positive value describes radially increasing loss."));
+
+    _lambda->setValue(980_nm);
+    _focusT->setValue(100_mm);
+    _focusS->setValue(100_mm);
+    _alpha2t->setValue(Z::Value(1, Z::Units::inv_m2()));
+    _alpha2s->setValue(Z::Value(1, Z::Units::inv_m2()));
+
+    addParam(_lambda);
+    addParam(_focusT);
+    addParam(_focusS);
+    addParam(_alpha2t);
+    addParam(_alpha2s);
+
+    setOption(Element_ChangesWavefront);
+    setOption(Element_RequiresWavelength);
+
+    _focusT->setVerifier(globalFocalLengthVerifier());
+    _focusS->setVerifier(globalFocalLengthVerifier());
+}
+
+void ElemGaussApertureLens::calcMatrixInternal()
+{
+    const double wl = _lambda->value().toSi();
+    const double ft = _focusT->value().toSi();
+    const double fs = _focusS->value().toSi();
+    const double a2t = _alpha2t->value().toSi();
+    const double a2s = _alpha2s->value().toSi();
+
+    _mt.assign(Z::Complex(1, 0), Z::Complex(0, 0), Z::Complex(-1.0/ft, -wl*a2t/_2PI), Z::Complex(1, 0));
+    _ms.assign(Z::Complex(1, 0), Z::Complex(0, 0), Z::Complex(-1.0/fs, -wl*a2s/_2PI), Z::Complex(1, 0));
+}
+
+//------------------------------------------------------------------------------
+//                             ElemGaussDuctMedium
+//------------------------------------------------------------------------------
+
+ElemGaussDuctMedium::ElemGaussDuctMedium() : ElementRange() {
+    _length->setDescription(qApp->translate("Param", "Thickness of material. "
+                                                     "Must be a positive value."));
+
+    _lambda = new Z::Parameter(Z::Dims::linear(), QStringLiteral("Lambda"));
+    _lambda->setVisible(false);
+
+    _ior->setRawValue(2);
+    _ior->setVisible(true);
+    _ior->setLabel(QStringLiteral("n0"));
+    _ior->setDescription(qApp->translate("Param", "Index of refraction at the optical axis. "
+                                                  "Must be a positive value."));
+
+    _ior2t = new Z::Parameter(Z::Dims::fixed(),
+        QStringLiteral("n2t"), QStringLiteral("n2t"),
+        qApp->translate("Param", "IOR gradient (T)"),
+        qApp->translate("Param", "Radial gradient of index of refraction in tangential plane. "
+                                 "Positive for collecting medium, negative for diverging medium."));
+    _ior2s = new Z::Parameter(Z::Dims::fixed(),
+        QStringLiteral("n2s"), QStringLiteral("n2s"),
+        qApp->translate("Param", "IOR gradient (S)"),
+        qApp->translate("Param", "Radial gradient of index of refraction in sagittal plane. "
+                                 "Positive for collecting medium, negative for diverging medium."));
+    _alpha2t = new Z::Parameter(Z::Dims::fixed(),
+        QStringLiteral("alpha2t"), QStringLiteral("α2t"),
+        qApp->translate("Param", "Loss factor (T)"),
+        qApp->translate("Param", "Loss factor per unit length in tangential plane. "
+                                 "Positive value describes radially increasing loss."));
+    _alpha2s = new Z::Parameter(Z::Dims::fixed(),
+        QStringLiteral("alpha2s"), QStringLiteral("α2s"),
+        qApp->translate("Param", "Loss factor (S)"),
+        qApp->translate("Param", "Loss factor per unit length in sagittal plane. "
+                                 "Positive value describes radially increasing loss."));
+
+    _lambda->setValue(980_nm);
+    _ior2t->setValue(Z::Value(1, Z::Units::inv_m2()));
+    _ior2s->setValue(Z::Value(1, Z::Units::inv_m2()));
+    _alpha2t->setValue(Z::Value(1, Z::Units::inv_m3()));
+    _alpha2s->setValue(Z::Value(1, Z::Units::inv_m3()));
+
+    addParam(_lambda);
+    addParam(_ior2t);
+    addParam(_ior2s);
+    addParam(_alpha2t);
+    addParam(_alpha2s);
+
+    setOption(Element_RequiresWavelength);
+}
+
+void ElemGaussDuctMedium::calcMatrixInternal() {
+    const double L = lengthSI();
+    const double n0 = ior();
+    const double wl = _lambda->value().toSi();
+    const double n2t = _ior2t->value().toSi();
+    const double n2s = _ior2s->value().toSi();
+    const double a2t = _alpha2t->value().toSi();
+    const double a2s = _alpha2s->value().toSi();
+
+    const Z::Complex gt = sqrt(Z::Complex(n2t/n0, wl*a2t/n0/_2PI));
+    _mt.assign(cos(gt*L), sin(gt*L)/gt, -gt*sin(gt*L), cos(gt*L));
+
+    const Z::Complex gs = sqrt(Z::Complex(n2s/n0, wl*a2s/n0/_2PI));
+    _ms.assign(cos(gs*L), sin(gs*L)/gs, -gs*sin(gs*L), cos(gs*L));
+}
+
+void ElemGaussDuctMedium::setSubRangeSI(double value) {
+    const double L1 = value;
+    const double L2 = lengthSI() - L1;
+    const double n0 = ior();
+    const double lambda = _lambda->value().toSi();
+    const double n2t = _ior2t->value().toSi();
+    const double n2s = _ior2s->value().toSi();
+    const double a2t = _alpha2t->value().toSi();
+    const double a2s = _alpha2s->value().toSi();
+
+    const Z::Complex gt = sqrt(Z::Complex(n2t/n0, lambda*a2t/n0/_2PI));
+    _mt1.assign(cos(gt*L1), sin(gt*L1)/gt, -gt*sin(gt*L1), cos(gt*L1));
+    _mt2.assign(cos(gt*L2), sin(gt*L2)/gt, -gt*sin(gt*L2), cos(gt*L2));
+
+    const Z::Complex gs = sqrt(Z::Complex(n2s/n0, lambda*a2s/n0/_2PI));
+    _ms1.assign(cos(gs*L1), sin(gs*L1)/gs, -gs*sin(gs*L1), cos(gs*L1));
+    _ms2.assign(cos(gs*L2), sin(gs*L2)/gs, -gs*sin(gs*L2), cos(gs*L2));
+}
+
+//------------------------------------------------------------------------------
+//                             ElemGaussDuctSlab
+//------------------------------------------------------------------------------
+
+ElemGaussDuctSlab::ElemGaussDuctSlab() : ElementRange() {
+    _length->setDescription(qApp->translate("Param", "Thickness of material. "
+                                                     "Must be a positive value."));
+
+    _lambda = new Z::Parameter(Z::Dims::linear(), QStringLiteral("Lambda"));
+    _lambda->setVisible(false);
+
+    _ior->setRawValue(2);
+    _ior->setVisible(true);
+    _ior->setLabel(QStringLiteral("n0"));
+    _ior->setDescription(qApp->translate("Param", "Index of refraction at the optical axis. "
+                                                  "Must be a positive value."));
+
+    _ior2t = new Z::Parameter(Z::Dims::fixed(),
+        QStringLiteral("n2t"), QStringLiteral("n2t"),
+        qApp->translate("Param", "IOR gradient (T)"),
+        qApp->translate("Param", "Radial gradient of index of refraction in tangential plane. "
+                                 "Positive for collecting medium, negative for diverging medium."));
+    _ior2s = new Z::Parameter(Z::Dims::fixed(),
+        QStringLiteral("n2s"), QStringLiteral("n2s"),
+        qApp->translate("Param", "IOR gradient (S)"),
+        qApp->translate("Param", "Radial gradient of index of refraction in sagittal plane. "
+                                 "Positive for collecting medium, negative for diverging medium."));
+    _alpha2t = new Z::Parameter(Z::Dims::fixed(),
+        QStringLiteral("alpha2t"), QStringLiteral("α2t"),
+        qApp->translate("Param", "Loss factor (T)"),
+        qApp->translate("Param", "Loss factor per unit length in tangential plane. "
+                                 "Positive value describes radially increasing loss."));
+    _alpha2s = new Z::Parameter(Z::Dims::fixed(),
+        QStringLiteral("alpha2s"), QStringLiteral("α2s"),
+        qApp->translate("Param", "Loss factor (S)"),
+        qApp->translate("Param", "Loss factor per unit length in sagittal plane. "
+                                 "Positive value describes radially increasing loss."));
+
+    _lambda->setValue(980_nm);
+    _ior2t->setValue(Z::Value(1, Z::Units::inv_m2()));
+    _ior2s->setValue(Z::Value(1, Z::Units::inv_m2()));
+    _alpha2t->setValue(Z::Value(1, Z::Units::inv_m3()));
+    _alpha2s->setValue(Z::Value(1, Z::Units::inv_m3()));
+
+    addParam(_lambda);
+    addParam(_ior2t);
+    addParam(_ior2s);
+    addParam(_alpha2t);
+    addParam(_alpha2s);
+
+    setOption(Element_RequiresWavelength);
+}
+
+void ElemGaussDuctSlab::calcMatrixInternal() {
+    const double L = lengthSI();
+    const double n0 = ior();
+    const double wl = _lambda->value().toSi();
+    const double n2t = _ior2t->value().toSi();
+    const double n2s = _ior2s->value().toSi();
+    const double a2t = _alpha2t->value().toSi();
+    const double a2s = _alpha2s->value().toSi();
+
+    const Z::Complex gt = sqrt(Z::Complex(n2t/n0, wl*a2t/n0/_2PI));
+    _mt.assign(cos(gt*L), sin(gt*L)/gt/n0, -gt*n0*sin(gt*L), cos(gt*L));
+
+    const Z::Complex gs = sqrt(Z::Complex(n2s/n0, wl*a2s/n0/_2PI));
+    _ms.assign(cos(gs*L), sin(gs*L)/gs/n0, -gs*n0*sin(gs*L), cos(gs*L));
+}
+
+void ElemGaussDuctSlab::setSubRangeSI(double value) {
+    const double L1 = value;
+    const double L2 = lengthSI() - L1;
+    const double n0 = ior();
+    const double lambda = _lambda->value().toSi();
+    const double n2t = _ior2t->value().toSi();
+    const double n2s = _ior2s->value().toSi();
+    const double a2t = _alpha2t->value().toSi();
+    const double a2s = _alpha2s->value().toSi();
+
+    const Z::Complex gt = sqrt(Z::Complex(n2t/n0, lambda*a2t/n0/_2PI));
+    _mt1.assign(cos(gt*L1), sin(gt*L1)/gt/n0, -gt*sin(gt*L1), cos(gt*L1)/n0);
+    _mt2.assign(cos(gt*L2), sin(gt*L2)/gt, -gt*n0*sin(gt*L2), cos(gt*L2)*n0);
+
+    const Z::Complex gs = sqrt(Z::Complex(n2s/n0, lambda*a2s/n0/_2PI));
+    _ms1.assign(cos(gs*L1), sin(gs*L1)/gs/n0, -gs*sin(gs*L1), cos(gs*L1)/n0);
+    _ms2.assign(cos(gs*L2), sin(gs*L2)/gs, -gs*n0*sin(gs*L2), cos(gs*L2)*n0);
 }

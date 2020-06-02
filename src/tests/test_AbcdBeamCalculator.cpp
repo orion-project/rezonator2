@@ -14,18 +14,18 @@ namespace AbcdBeamCalculatorTests {
     AbcdBeamCalculator calc(1e-6);
 
 #define ASSERT_IS_STABLE(m) {\
-    double p = (m.A + m.D) / 2; \
+    double p = (m.A.real() + m.D.real()) / 2; \
     ASSERT_IS_TRUE(p >= -1 and p <= 1) \
 }
 
 #define ASSERT_IS_UNSTABLE(m) {\
-    double p = (m.A + m.D) / 2; \
+    double p = (m.A.real() + m.D.real()) / 2; \
     ASSERT_IS_TRUE(p < -1 or p > 1) \
 }
 
 //------------------------------------------------------------------------------
 
-TEST_METHOD(beamRadius__must_return_nan_when_unstable)
+TEST_METHOD(real_beamRadius__must_return_nan_when_unstable)
 {
     CALCULATOR
     Z::Matrix m(-0.577181785, -0.511906815, 24.6309496, 20.1128159);
@@ -33,7 +33,7 @@ TEST_METHOD(beamRadius__must_return_nan_when_unstable)
     ASSERT_IS_TRUE(std::isnan(calc.beamRadius(m, 1)))
 }
 
-TEST_METHOD(beamRadius)
+TEST_METHOD(real_beamRadius)
 {
     CALCULATOR
     Z::Matrix m(1.22740581, 0.933155617, -5.17573851, -3.12021454);
@@ -41,7 +41,7 @@ TEST_METHOD(beamRadius)
     ASSERT_NEAR_DBL(calc.beamRadius(m, 1), 958.984241e-6, 1e-10)
 }
 
-TEST_METHOD(frontRadius__can_return_inf)
+TEST_METHOD(real_frontRadius__can_return_inf)
 {
     CALCULATOR
     double r1 = calc.frontRadius({1, 1, 0, 1}, 1);
@@ -52,7 +52,7 @@ TEST_METHOD(frontRadius__can_return_inf)
     ASSERT_IS_TRUE(r2 < 0)
 }
 
-TEST_METHOD(frontRadius)
+TEST_METHOD(real_frontRadius)
 {
     CALCULATOR
     Z::Matrix m(1.22740581, 0.933155617, -5.17573851, -3.12021454);
@@ -60,7 +60,7 @@ TEST_METHOD(frontRadius)
     ASSERT_NEAR_DBL(calc.frontRadius(m, 1), -0.429271897, 1e-9)
 }
 
-TEST_METHOD(halfAngle__must_return_nan_when_unstable)
+TEST_METHOD(real_halfAngle__must_return_nan_when_unstable)
 {
     CALCULATOR
     Z::Matrix m(-0.577181785, -0.511906815, 24.6309496, 20.1128159);
@@ -68,7 +68,7 @@ TEST_METHOD(halfAngle__must_return_nan_when_unstable)
     ASSERT_IS_TRUE(std::isnan(calc.halfAngle(m, 1)))
 }
 
-TEST_METHOD(halfAngle)
+TEST_METHOD(real_halfAngle)
 {
     CALCULATOR
     Z::Matrix m(1.22740581, 0.933155617, -5.17573851, -3.12021454);
@@ -76,7 +76,7 @@ TEST_METHOD(halfAngle)
     ASSERT_NEAR_DBL(calc.halfAngle(m, 1), (0.129402667_deg).toSi(), 1e-10)
 }
 
-TEST_METHOD(calc_ts)
+TEST_METHOD(real_calc_ts)
 {
     CALCULATOR
     Z::Matrix mt(1.22740581, 0.933155617, -5.17573851, -3.12021454);
@@ -91,13 +91,13 @@ TEST_METHOD(calc_ts)
 //------------------------------------------------------------------------------
 
 TEST_GROUP("AbcdBeamCalculator",
-           ADD_TEST(beamRadius__must_return_nan_when_unstable),
-           ADD_TEST(beamRadius),
-           ADD_TEST(frontRadius__can_return_inf),
-           ADD_TEST(frontRadius),
-           ADD_TEST(halfAngle__must_return_nan_when_unstable),
-           ADD_TEST(halfAngle),
-           ADD_TEST(calc_ts),
+           ADD_TEST(real_beamRadius__must_return_nan_when_unstable),
+           ADD_TEST(real_beamRadius),
+           ADD_TEST(real_frontRadius__can_return_inf),
+           ADD_TEST(real_frontRadius),
+           ADD_TEST(real_halfAngle__must_return_nan_when_unstable),
+           ADD_TEST(real_halfAngle),
+           ADD_TEST(real_calc_ts),
            // TODO: add tests for calculation inside a medium
            )
 

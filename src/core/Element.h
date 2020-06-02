@@ -74,6 +74,12 @@ enum ElementOption {
     /// Such samples are stored in the Custom Elements Library and shown
     /// in the Elements Catalog on a separate page.
     Element_CustomSample = 0x04,
+
+    /// Wavelength must be passed to the element to calculate matrices.
+    /// Schema takes care of that, it listens for wavelength changes
+    /// and passes new lambda value to all elements having this option set.
+    /// The element must provide parameter "Lambda" for accepting wavelength.
+    Element_RequiresWavelength = 0x08,
 };
 
 struct ElementLayoutOptions {
@@ -353,6 +359,8 @@ inline bool isRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
 inline ElementRange* asRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
 inline bool isInterface(Element *elem) { return dynamic_cast<ElementInterface*>(elem); }
 inline ElementInterface* asInterface(Element *elem) { return dynamic_cast<ElementInterface*>(elem); }
+
+void setElemWavelen(Element* elem, const Z::Value& lambda);
 
 /// Gives a filter of parameters for regular users' usage.
 /// These are parameters that can be edited in Element properties dialog,

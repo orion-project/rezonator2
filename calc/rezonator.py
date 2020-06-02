@@ -29,6 +29,10 @@ def print_abcd(name, M):
   A, B, C, D = get_abcd(M)
   print("{}: {:.7f}, {:.7f}, {:.7f}, {:.7f}".format(name, A, B, C, D))
 
+def print_abcd_c(name, M):
+  A, B, C, D = get_abcd(M)
+  print("{}: _C({:.7f},{:.7f}), _C({:.7f},{:.7f}), _C({:.7f},{:.7f}), _C({:.7f},{:.7f})" \
+    .format(name, A.real, A.imag, B.real, B.imag, C.real, C.imag, D.real, D.imag))
 
 # Compare two ABCD-matrices
 def compare_abcd(id, M1, M2, epsilon = 1e-7):

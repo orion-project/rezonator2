@@ -15,6 +15,7 @@ namespace Format {
 
 QString matrix(const Z::Matrix& m)
 {
+    bool real = m.isReal();
     return QStringLiteral(
         "<table border=1 cellpadding=5 cellspacing=-1 style='border-color:gray;border-style:solid'>"
             "<tr>"
@@ -26,7 +27,10 @@ QString matrix(const Z::Matrix& m)
                 "<td align=right><pre class=value>%4</pre></td>"
             "</tr>"
         "</table>"
-    ).arg(Z::format(m.A), Z::format(m.B), Z::format(m.C), Z::format(m.D));
+    ).arg(real ? Z::format(m.A.real()) : Z::format(m.A),
+          real ? Z::format(m.B.real()) : Z::format(m.B),
+          real ? Z::format(m.C.real()) : Z::format(m.C),
+          real ? Z::format(m.D.real()) : Z::format(m.D));
 }
 
 QString matrices(const Z::Matrix& mt, const Z::Matrix& ms)
@@ -44,7 +48,10 @@ QString matrices(const Z::Matrix& mt, const Z::Matrix& ms)
                 "</td>"
             "</tr>"
         "</table>"
-    ).arg(matrix(mt), matrix(ms), Z::format(mt.det()), Z::format(ms.det()));
+    ).arg(matrix(mt),
+          matrix(ms),
+          mt.isReal() ? Z::format(mt.det().real()) : Z::format(mt.det()),
+          ms.isReal() ? Z::format(ms.det().real()) : Z::format(ms.det()));
 }
 
 QString matrix(const QString& label, const Z::Matrix& m)
@@ -60,10 +67,23 @@ QString matrix(const QString& label, const Z::Matrix& m)
 }
 
 namespace Py {
+QString formatPy(const Z::Complex& v)
+{
+    return QString("%1%2%3j")
+            .arg(v.real(), 0, 'g', 16)
+            .arg(v.imag() < 0 ? '-' : '+')
+            .arg(v.imag(), 0, 'g', 16);
+}
+
 QString matrixAsNumpy(const QString& label, const Z::Matrix& m)
 {
+    bool real = m.isReal();
     return QStringLiteral("%1 = np.matrix([[%2, %3], [%4, %5]])")
-        .arg(label).arg(m.A).arg(m.B).arg(m.C).arg(m.D);
+        .arg(label)
+        .arg(real ? Z::str(m.A.real()) : formatPy(m.A))
+        .arg(real ? Z::str(m.B.real()) : formatPy(m.B))
+        .arg(real ? Z::str(m.C.real()) : formatPy(m.C))
+        .arg(real ? Z::str(m.D.real()) : formatPy(m.D));
 }
 
 QString matrixVarName(Element *elem, const QString& suffix)
@@ -225,6 +245,8 @@ QString FormatParam::format(Z::Parameter* param)
             parts << Z::format(param->value().value()) << QStringLiteral(" m<sup>&ndash;1</sup>");
         else if (unit == Z::Units::inv_m2())
             parts << Z::format(param->value().value()) << QStringLiteral(" m<sup>&ndash;2</sup>");
+        else if (unit == Z::Units::inv_m3())
+            parts << Z::format(param->value().value()) << QStringLiteral(" m<sup>&ndash;3</sup>");
         else
             parts << param->value().displayStr();
 

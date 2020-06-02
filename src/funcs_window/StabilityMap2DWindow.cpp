@@ -43,7 +43,7 @@ void StabilityMap2DParamsDlg::makeControls(const QString &title, Schema* schema,
     QSharedPointer<ElementFilter> elemFilter(
         ElementFilter::make<ElementFilterHasVisibleParams, ElementFilterEnabled>());
 
-    editor->elemSelector = new ElemAndParamSelector(schema, elemFilter.get(), Z::Utils::defaultParamFilter());
+    editor->elemSelector = new ElemAndParamSelector(schema, elemFilter.data(), Z::Utils::defaultParamFilter());
     connect(editor->elemSelector, &ElemAndParamSelector::selectionChanged, [this, editor]{ this->guessRange(editor); });
 
     editor->rangeEditor = new GeneralRangeEditor;

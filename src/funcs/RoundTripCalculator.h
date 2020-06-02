@@ -93,8 +93,8 @@ private:
     void collectMatrices();
     void collectMatricesSP();
 
-    double calcStability(double half_of_A_plus_D) const;
-    bool isStable(double half_of_A_plus_D) const;
+    double calcStability(const Z::Matrix &m) const;
+    bool isStable(const Z::Matrix &m) const;
 };
 
 //------------------------------------------------------------------------------

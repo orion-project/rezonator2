@@ -1,5 +1,7 @@
 #include "Element.h"
 
+#include "Protocol.h"
+
 #include <QApplication>
 
 //------------------------------------------------------------------------------
@@ -204,6 +206,29 @@ void ElementDynamic::calcMatrixInternal()
 
 namespace Z {
 namespace Utils {
+
+void setElemWavelen(Element* elem, const Z::Value& lambda)
+{
+    QString paramName = QStringLiteral("Lambda");
+    auto param = elem->params().byAlias(paramName);
+    if (!param)
+    {
+        Z_WARNING("Element" << elem->displayLabel() << "is marked as wavelength requiring but doesn't provide parameter" << paramName)
+        qWarning() << "Element" << elem->displayLabel() << "is marked as wavelength requiring but doesn't provide parameter" << paramName;
+        return;
+    }
+    if (param->dim() != Z::Dims::linear())
+    {
+        Z_WARNING("Element" << elem->displayLabel() << "is marked as wavelength requiring "
+            "but its parameter" << paramName << "has invalid dimension" << param->dim()->name() <<
+            "while it should be" << Z::Dims::linear()->name())
+        qWarning() << "Element" << elem->displayLabel() << "is marked as wavelength requiring "
+            "but its parameter" << paramName << "has invalid dimension" << param->dim()->name() <<
+            "while it should be" << Z::Dims::linear()->name();
+        return;
+    }
+    param->setValue(lambda);
+}
 
 ParameterFilter* defaultParamFilter()
 {

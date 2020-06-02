@@ -1,0 +1,264 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 980
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "d1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 50
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "GA1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+                "Lambda": {
+                    "unit": "nm",
+                    "value": 980
+                },
+                "alpha2s": {
+                    "unit": "inv_m2",
+                    "value": 0
+                },
+                "alpha2t": {
+                    "unit": "inv_m2",
+                    "value": 2001590000
+                }
+            },
+            "title": "",
+            "type": "ElemGaussAperture"
+        },
+        {
+            "is_disabled": false,
+            "label": "d2",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 25
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        }
+    ],
+    "formulas": [
+    ],
+    "notes": "",
+    "param_links": [
+    ],
+    "pumps": [
+        {
+            "color": "#555555",
+            "is_active": true,
+            "label": "P1",
+            "mode": "Waist",
+            "params": {
+                "MI": {
+                    "unit": "none",
+                    "value_s": 1,
+                    "value_t": 1
+                },
+                "w_0": {
+                    "unit": "mkm",
+                    "value_s": 100,
+                    "value_t": 100
+                },
+                "z_w": {
+                    "unit": "mm",
+                    "value_s": 0,
+                    "value_t": 0
+                }
+            },
+            "title": ""
+        }
+    ],
+    "schema_version": "2.0",
+    "title": "",
+    "trip_type": "SP",
+    "windows": [
+        {
+            "type": "PumpsWindow"
+        },
+        {
+            "function": {
+                "args": [
+                    {
+                        "element_index": 0,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 50
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 2,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 25
+                            },
+                            "use_step": false
+                        }
+                    }
+                ],
+                "mode": "BeamRadius"
+            },
+            "type": "MultirangeCaustic",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "elem_bound_markers": true,
+                "stored_views": [
+                ],
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 75.75000000000001,
+                "x_min": -0.7500000000000001,
+                "x_unit": "mm",
+                "y_max": 265.5507969302421,
+                "y_min": 20.962936888285242,
+                "y_unit": "mkm"
+            }
+        },
+        {
+            "function": {
+                "arg": {
+                    "element_index": 1,
+                    "param": "alpha2t",
+                    "range": {
+                        "points": 1000,
+                        "start": {
+                            "unit": "inv_m2",
+                            "value": 58262750
+                        },
+                        "step": {
+                            "unit": "inv_m2",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "inv_m2",
+                            "value": 58262850
+                        },
+                        "use_step": false
+                    }
+                },
+                "pos": {
+                    "element_index": 2,
+                    "offset": {
+                        "unit": "mm",
+                        "value": 25
+                    }
+                }
+            },
+            "type": "BeamVariation",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "stored_views": [
+                ],
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 58262851,
+                "x_min": 58262749,
+                "x_unit": "inv_m2",
+                "y_max": 10254.722097588017,
+                "y_min": -488.05355085312345,
+                "y_unit": "mm"
+            }
+        },
+        {
+            "function": {
+                "arg": {
+                    "element_index": 1,
+                    "param": "alpha2t",
+                    "range": {
+                        "points": 1000,
+                        "start": {
+                            "unit": "inv_m2",
+                            "value": 1000000
+                        },
+                        "step": {
+                            "unit": "inv_m2",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "inv_m2",
+                            "value": 5000000000
+                        },
+                        "use_step": false
+                    }
+                },
+                "pos": {
+                    "element_index": 2,
+                    "offset": {
+                        "unit": "mm",
+                        "value": 25
+                    }
+                }
+            },
+            "type": "BeamVariation",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "stored_views": [
+                ],
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 5049990000,
+                "x_min": -48990000,
+                "x_unit": "inv_m2",
+                "y_max": 1342.89621279373,
+                "y_min": 88.31448090208788,
+                "y_unit": "mkm"
+            }
+        }
+    ]
+}

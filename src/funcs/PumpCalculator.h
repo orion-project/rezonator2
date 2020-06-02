@@ -24,7 +24,7 @@ public:
 
     ~PumpCalculator();
 
-    bool init(PumpParams* pump, double lambdaSI);
+    bool init(PumpParams* pump, double lambdaSI, const char* ident = nullptr, bool writeProtocol = false);
     BeamResult calc(const Z::Matrix& matrix, double ior);
 
 private:

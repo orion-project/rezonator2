@@ -46,6 +46,7 @@ private:
     PumpParams* _pump = nullptr;
     Z::PairTS<std::shared_ptr<PumpCalculator>> _pumpCalc;
     std::shared_ptr<AbcdBeamCalculator> _beamCalc;
+    bool _writeProtocol = false;
 
     bool prepareSinglePass(Element *ref);
     bool prepareResonator();

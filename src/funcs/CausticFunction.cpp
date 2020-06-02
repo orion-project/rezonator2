@@ -35,27 +35,39 @@ void CausticFunction::calculate()
             : prepareSinglePass(elem);
     if (!isPrepared) return;
 
-    bool needCheckStability = isResonator;
     auto calcBeamParams = isResonator
             ? &CausticFunction::calculateResonator
             : &CausticFunction::calculateSinglePass;
+
+    // Calculate round-trip matrix and check if the caustic can be calculated
+    elem->setSubRangeSI(range.values().first());
+    _calc->multMatrix();
+    if (isResonator) // Can't be calculated for unstable resonator
+    {
+        auto stab = _calc->isStable();
+        if (not stab.T and not stab.S)
+        {
+            setError(qApp->translate("Calc error", "System is unstable, can't calculate caustic"));
+            return;
+        }
+    }
+    // Caustic can't be calculated for SP-system with geometric pump and complex matrices
+    else if (Pumps::isGeometric(_pump) and (not _calc->Mt().isReal() or not _calc->Ms().isReal()))
+    {
+        setError(qApp->translate("Calc error", "Geometric pump can't be used with complex matrices"));
+        return;
+    }
+
     Z::PointTS prevRes(Double::nan(), Double::nan());
     for (auto x : range.values())
     {
         elem->setSubRangeSI(x);
         _calc->multMatrix();
 
-        // After the first round-trip was calculated,
-        // we should check if system is unstable
-        if (needCheckStability)
+        if (_writeProtocol)
         {
-            needCheckStability = false;
-            auto stab = _calc->isStable();
-            if (!stab.T && !stab.S)
-            {
-                setError(qApp->translate("Calc error", "System is unstable, can't calculate caustic"));
-                return;
-            }
+            Z_INFO("Offset" << x)
+            Z_INFO("Mt =" << _calc->Mt().str() << "| Ms =" << _calc->Ms().str())
         }
 
         Z::PointTS res = (this->*calcBeamParams)();
@@ -78,7 +90,7 @@ void CausticFunction::calculate()
 
 bool CausticFunction::prepareSinglePass(Element* ref)
 {
-    QString res = FunctionUtils::preparePumpCalculator(schema(), _pump, _pumpCalc);
+    QString res = FunctionUtils::preparePumpCalculator(schema(), _pump, _pumpCalc, _writeProtocol);
     if (!res.isEmpty())
     {
         setError(res);

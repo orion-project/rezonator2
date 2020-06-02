@@ -2,6 +2,7 @@
 
 #include "../core/Math.h"
 #include "../core/Pump.h"
+#include "../core/Protocol.h"
 
 using namespace Z;
 
@@ -18,8 +19,10 @@ class PumpCalculatorImpl final
 
     GetPumpParam getPumpParam;
     enum { GAUSS, RAY_VECTOR } mode;
+    const char* id;
     double MI;
     double wavelen; // Schema wavelength, we always treat pumps as located in vacuum
+    bool protocol;
     Complex inputQ {0, 0};
     RayVector inputRay {0, 0};
 
@@ -36,18 +39,20 @@ class PumpCalculatorImpl final
     }
 
     template <class TPumpParams, typename ...Lambda>
-    bool initInput(PumpParams* pump, Lambda ...lambda)
+    bool initInput(PumpParams* pump, const char* ident, bool writeProtocol, Lambda ...lambda)
     {
         auto p = dynamic_cast<TPumpParams*>(pump);
         if (!p) return false;
-        initInput(p, lambda...);
+        initInput(p, ident, writeProtocol, lambda...);
         return true;
     }
 
-    void initInput(PumpParams_Waist *pump, double lambda)
+    void initInput(PumpParams_Waist *pump, const char* ident, bool writeProtocol, double lambda)
     {
         mode = GAUSS;
+        id = ident;
         wavelen = lambda;
+        protocol = writeProtocol;
         MI = qAbs(getPumpParam(&pump->MI()->value()));
         const double z = paramValueSI(pump->distance());
         const double w0_hyper = paramValueSI(pump->waist());
@@ -63,66 +68,94 @@ class PumpCalculatorImpl final
             const double R_equiv = z * (1 + SQR(z0_equiv / z));
             inputQ = 1.0 / Complex(1.0 / R_equiv, lambda / M_PI / w_equiv_2);
         }
+        if (protocol)
+            Z_INFO(id << "Q_in =" << Z::str(inputQ))
     }
 
-    void initInput(PumpParams_Front *pump, double lambda)
+    void initInput(PumpParams_Front *pump, const char* ident, bool writeProtocol, double lambda)
     {
         mode = GAUSS;
+        id = ident;
         wavelen = lambda;
+        protocol = writeProtocol;
         MI = qAbs(getPumpParam(&pump->MI()->value()));
         const double w_hyper = paramValueSI(pump->beamRadius());
         const double w_equiv_2 = SQR(w_hyper) / MI;
         const double R_equiv = paramValueSI(pump->frontRadius());
         inputQ = 1.0 / Complex(1.0 / R_equiv, lambda / M_PI / w_equiv_2);
+        if (protocol)
+            Z_INFO(id << "Q_in =" << Z::str(inputQ))
     }
 
-    void initInput(PumpParams_RayVector *pump)
+    void initInput(PumpParams_RayVector *pump, const char* ident, bool writeProtocol)
     {
         mode = RAY_VECTOR;
+        id = ident;
+        protocol = writeProtocol;
         const double y = paramValueSI(pump->radius());
         const double v = paramValueSI(pump->angle());
         const double z = paramValueSI(pump->distance());
         inputRay.set(y + z * tan(v), v);
     }
 
-    void initInput(PumpParams_TwoSections *pump)
+    void initInput(PumpParams_TwoSections *pump, const char* ident, bool writeProtocol)
     {
         mode = RAY_VECTOR;
+        id = ident;
+        protocol = writeProtocol;
         const double y1 = paramValueSI(pump->radius1());
         const double y2 = paramValueSI(pump->radius2());
         const double z = paramValueSI(pump->distance());
         inputRay.set(y2, atan((y2 - y1) / z));
     }
 
-    void initInput(PumpParams_Complex *pump, double lambda)
+    void initInput(PumpParams_Complex *pump, const char* ident, bool writeProtocol, double lambda)
     {
         mode = GAUSS;
+        id = ident;
         wavelen = lambda;
+        protocol = writeProtocol;
         MI = qAbs(getPumpParam(&pump->MI()->value()));
         Complex q_inv_hyper = 1.0 / Complex(paramValueSI(pump->real()),
                                             paramValueSI(pump->imag()));
         inputQ = 1.0 / Complex(q_inv_hyper.real(),
                                q_inv_hyper.imag() * MI);
+        if (protocol)
+            Z_INFO(id << "Q_in =" << Z::str(inputQ))
     }
 
-    void initInput(PumpParams_InvComplex *pump, double lambda)
+    void initInput(PumpParams_InvComplex *pump, const char* ident, bool writeProtocol, double lambda)
     {
         mode = GAUSS;
+        id = ident;
         wavelen = lambda;
+        protocol = writeProtocol;
         MI = qAbs(getPumpParam(&pump->MI()->value()));
         // Inverted complex beam parameter is measured in inverted units (1/m, 1/mm)
         // and value's unit actually means 1/unit for this case (e.g. mm means 1/mm).
         inputQ = 1.0 / Complex(paramValueInvSI(pump->real()),
                                paramValueInvSI(pump->imag()) * MI);
+        if (protocol)
+            Z_INFO(id << "Q_in =" << Z::str(inputQ))
     }
 
     BeamResult calcVector(const Matrix& matrix)
     {
-        RayVector output(inputRay, matrix);
         BeamResult beam;
-        beam.beamRadius = output.Y;
-        beam.halfAngle = output.V;
-        beam.frontRadius = output.Y / sin(output.V);
+        if (matrix.isReal())
+        {
+            RayVector output(inputRay, matrix);
+            beam.beamRadius = output.Y;
+            beam.halfAngle = output.V;
+            beam.frontRadius = output.Y / sin(output.V);
+        }
+        else
+        {
+            // Geometric pump can't be used with complex matrices
+            beam.beamRadius = Double::nan();
+            beam.halfAngle = Double::nan();
+            beam.frontRadius = Double::nan();
+        }
         return beam;
     }
 
@@ -138,7 +171,10 @@ class PumpCalculatorImpl final
         // and give positive or negative imaginary part respectively.
         // See bin/test_files/complex_pump.rez
         // That's way we use qAbs(q_inv.imag() in calculations below.
-        Complex q_inv = 1.0 / matrix.multComplexBeam(inputQ);
+        Complex q_cur = matrix.multComplexBeam(inputQ);
+        Complex q_inv = 1.0 / q_cur;
+        if (protocol)
+            Z_INFO(id << "Q =" << Z::str(q_cur) << "| 1/Q =" << Z::str(q_inv))
         const double R = 1.0 / q_inv.real();
         const double w_equiv_2 = lambda / M_PI / qAbs(q_inv.imag());
         const double w_hyper = sqrt(w_equiv_2 * MI);
@@ -184,15 +220,15 @@ PumpCalculator::~PumpCalculator()
     if (_impl) delete _impl;
 }
 
-bool PumpCalculator::init(PumpParams* pump, double lambdaSI)
+bool PumpCalculator::init(PumpParams* pump, double lambdaSI, const char *ident, bool writeProtocol)
 {
     // InvComplex should be tested before Complex, because Complex is more generic
-    return _impl->initInput<PumpParams_Waist>(pump, lambdaSI) ||
-           _impl->initInput<PumpParams_Front>(pump, lambdaSI) ||
-           _impl->initInput<PumpParams_InvComplex>(pump, lambdaSI) ||
-           _impl->initInput<PumpParams_Complex>(pump, lambdaSI) ||
-           _impl->initInput<PumpParams_RayVector>(pump) ||
-           _impl->initInput<PumpParams_TwoSections>(pump);
+    return _impl->initInput<PumpParams_Waist>(pump, ident, writeProtocol, lambdaSI) ||
+           _impl->initInput<PumpParams_Front>(pump, ident, writeProtocol, lambdaSI) ||
+           _impl->initInput<PumpParams_InvComplex>(pump, ident, writeProtocol, lambdaSI) ||
+           _impl->initInput<PumpParams_Complex>(pump, ident, writeProtocol, lambdaSI) ||
+           _impl->initInput<PumpParams_RayVector>(pump, ident, writeProtocol) ||
+           _impl->initInput<PumpParams_TwoSections>(pump, ident, writeProtocol);
 }
 
 BeamResult PumpCalculator::calc(const Z::Matrix& matrix, double ior)

@@ -5,43 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <link rel="stylesheet" href="matrix_formula.css" type="text/css"></link> 
   </head>
-  <style>
-  body {
-    display: flex;
-    flex-direction: row;
-  }
-  .paper {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    font-size: 125%;
-    color: #222;
-  }
-  .drawing-and-formula {
-    display: flex;
-    flex-direction: row;
-  }
-  .formulas-column {
-    margin-left: 40px;
-    margin-right: 20px;
-  }
-  .frames {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    left: 0;
-    right: 0;
-  }
-  .frame {
-    border: 1px dashed red;
-  }
-  .drawing {
-    margin-left: 20px;
-  }
-  .stretch {
-  }
-  </style>
   <body>
     <div class="paper">
       <div class="frames">
@@ -50,7 +15,7 @@
         <div class="frame" style="height: 260px; margin-top: 10px;"></div>
       </div>
       <div>
-        \[ n(r) = n_0 - \frac { n_0 \; r^2 } 2
+        \[ n(r) = n_0 - \frac { n_2 \; r^2 } 2
           \;\;\;\;\;\;\;\;\;\;\;\;
           r^2 = x^2 + y^2
           \;\;\;\;\;\;\;\;\;\;\;\;
@@ -83,16 +48,16 @@
           <div style="margin-top:135px">
             \[
             M_{LF}\bigg\rvert_{n_2 > 0} = \begin{bmatrix}
-                \cos(\gamma L) & \cfrac {\sin(\gamma L)} {n_0 \gamma} \\
-                -\gamma \: \sin(\gamma L) & \cfrac {\cos(\gamma L)} {n_0} 
+                \cos(\gamma h) & \cfrac {\sin(\gamma h)} {n_0 \gamma} \\
+                -\gamma \: \sin(\gamma h) & \cfrac {\cos(\gamma h)} {n_0} 
                 \end{bmatrix}
             \]
           </div>
           <div style="margin-top:40px">
             \[
             M_{LF}\bigg\rvert_{n_2 < 0} = \begin{bmatrix}
-                \cosh(\gamma L) & \cfrac { \sinh(\gamma L) } {n_0 \gamma} \\
-                \gamma \: \sinh(\gamma L) & \cfrac {\cosh(\gamma L)} {n_0}
+                \cosh(\gamma h) & \cfrac { \sinh(\gamma h) } {n_0 \gamma} \\
+                \gamma \: \sinh(\gamma h) & \cfrac {\cosh(\gamma h)} {n_0}
                 \end{bmatrix}
             \]
           </div>
@@ -100,16 +65,16 @@
           <div style="margin-top:85px">
             \[
             M_{RT}\bigg\rvert_{n_2 > 0} = \begin{bmatrix}
-                \cos(\gamma L) & \cfrac {\sin(\gamma L)} {\gamma} \\
-                -n_0 \gamma \: \sin(\gamma L) & n_0 \cos(\gamma L) 
+                \cos(\gamma h) & \cfrac {\sin(\gamma h)} {\gamma} \\
+                -n_0 \gamma \: \sin(\gamma h) & n_0 \cos(\gamma h) 
                 \end{bmatrix}
             \]
           </div>
           <div style="margin-top:40px">
             \[
             M_{RT}\bigg\rvert_{n_2 < 0} = \begin{bmatrix}
-                \cosh(\gamma L) & \cfrac {\sinh(\gamma L)} {\gamma} \\
-                n_0 \gamma \: \sinh(\gamma L) & n_0 \cosh(\gamma L) 
+                \cosh(\gamma h) & \cfrac {\sinh(\gamma h)} {\gamma} \\
+                n_0 \gamma \: \sinh(\gamma h) & n_0 \cosh(\gamma h) 
                 \end{bmatrix}
             \]
           </div>

@@ -34,6 +34,7 @@ DECLARE_ELEMENT(TestElement, Element)
         SET_TEST_DATA(QString("elem destructor %1").arg(label()), true);
     }
     DEFAULT_LABEL("hhh")
+    void addParamPublic(Z::Parameter* p) { addParam(p); }
 DECLARE_ELEMENT_END
 }
 
@@ -264,6 +265,67 @@ TEST_METHOD(set_wavelength__must_raise_event)
     ASSERT_SCHEMA_STATE(STATE(Modified))
     ASSERT_LISTENER(nullptr, EVENT(LambdaChanged), EVENT(Changed), EVENT(RecalRequred))
 }
+
+//------------------------------------------------------------------------------
+
+TEST_METHOD(Element_RequiresWavelength__must_be_respected)
+{
+    Schema schema;
+    auto oldLambda = 5_m;
+    schema.wavelength().setValue(oldLambda);
+
+    // Good element, it requires wavelength and provides Lambda
+    auto e1 = new TestElement;
+    e1->setOption(Element_RequiresWavelength);
+    e1->addParamPublic(new Z::Parameter(Z::Dims::linear(), "Lambda"));
+    SET_PARAM_VALUE(e1, Lambda, 1_mm)
+
+    // Good element, it requires wavelength and provides Lambda
+    auto e2 = new TestElement;
+    e2->setOption(Element_RequiresWavelength);
+    e2->addParamPublic(new Z::Parameter(Z::Dims::linear(), "Lambda"));
+    SET_PARAM_VALUE(e2, Lambda, 2_mm)
+
+    // Provides Lambda but doesn't require wavelength
+    auto e3 = new TestElement;
+    e3->addParamPublic(new Z::Parameter(Z::Dims::linear(), "Lambda"));
+    SET_PARAM_VALUE(e3, Lambda, 3_mm)
+
+    // Requires wavelength but doesn't provide Lambda
+    auto e4 = new TestElement;
+    e4->setOption(Element_RequiresWavelength);
+    e4->addParamPublic(new Z::Parameter(Z::Dims::linear(), "Lambda1"));
+    SET_PARAM_VALUE(e4, Lambda1, 4_mm)
+
+    // Requires wavelengh but Lambda is of invalid dim
+    auto e5 = new TestElement;
+    e5->setOption(Element_RequiresWavelength);
+    e5->addParamPublic(new Z::Parameter(Z::Dims::angular(), "Lambda"));
+    SET_PARAM_VALUE(e5, Lambda, 5_deg)
+
+    ASSERT_PARAM_VALUE(e1, Lambda, 1_mm)
+    ASSERT_PARAM_VALUE(e2, Lambda, 2_mm)
+    ASSERT_PARAM_VALUE(e3, Lambda, 3_mm)
+    ASSERT_PARAM_VALUE(e4, Lambda1, 4_mm)
+    ASSERT_PARAM_VALUE(e5, Lambda, 5_deg)
+
+    schema.insertElements({e1, e2, e3, e4, e5}, -1, Arg::RaiseEvents(false));
+    ASSERT_PARAM_VALUE(e1, Lambda, oldLambda)
+    ASSERT_PARAM_VALUE(e2, Lambda, oldLambda)
+    ASSERT_PARAM_VALUE(e3, Lambda, 3_mm)
+    ASSERT_PARAM_VALUE(e4, Lambda1, 4_mm)
+    ASSERT_PARAM_VALUE(e5, Lambda, 5_deg)
+
+    auto newLambda = 10_m;
+    schema.wavelength().setValue(newLambda);
+    ASSERT_PARAM_VALUE(e1, Lambda, newLambda)
+    ASSERT_PARAM_VALUE(e2, Lambda, newLambda)
+    ASSERT_PARAM_VALUE(e3, Lambda, 3_mm)
+    ASSERT_PARAM_VALUE(e4, Lambda1, 4_mm)
+    ASSERT_PARAM_VALUE(e5, Lambda, 5_deg)
+}
+
+//------------------------------------------------------------------------------
 
 TEST_METHOD(enabledCount)
 {
@@ -552,6 +614,7 @@ TEST_GROUP("Schema",
     ADD_TEST(generateLabel__next_elem),
     ADD_TEST(raise_all_events),
     ADD_TEST(set_wavelength__must_raise_event),
+    ADD_TEST(Element_RequiresWavelength__must_be_respected),
     ADD_TEST(enabledCount),
     ADD_TEST(elementById),
     ADD_TEST(insertElements__must_increase_count),
