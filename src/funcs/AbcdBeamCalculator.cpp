@@ -7,14 +7,28 @@
 
 static bool isReal(const Z::Complex& v)
 {
+#ifdef Q_OS_MAC
+    // While Windows and Linux versions give exact zero here,
+    // macOS version gives some small value (not digged why).
+    // Probably this epsilon has to be adjusted, it's given from tests.
+    return std::isnan(v.imag()) or qAbs(v.imag()) <= 1e-18;
+#else
     static Double zero(0);
     return std::isnan(v.imag()) or Double(v.imag()).almostEqual(zero);
+#endif
 }
 
 static bool isImag(const Z::Complex& v)
 {
+#ifdef Q_OS_MAC
+    // While Windows and Linux versions give exact zero here,
+    // macOS version gives some small value (not digged why)
+    // Probably this epsilon has to be adjusted, it's given from tests.
+    return std::isnan(v.real()) or qAbs(v.real()) <= 1e-18;
+#else
     static Double zero(0);
     return std::isnan(v.real()) or Double(v.real()).almostEqual(zero);
+#endif
 }
 
 double AbcdBeamCalculator::beamRadius(const Z::Matrix& m, double ior) const
@@ -38,7 +52,7 @@ double AbcdBeamCalculator::frontRadius(const Z::Matrix& m, double ior) const
 double AbcdBeamCalculator::halfAngle(const Z::Matrix& m, double ior) const
 {
     auto v = sqrt(_wavelenSI/ior * M_1_PI * 2.0 * m.C / sqrt(4.0 - SQR(m.A + m.D)));
-    //qDebug() << "C =" << Z::str(m.C) << "V =" << Z::str(v);
+    qDebug() << "C =" << Z::str(m.C) << "V =" << Z::str(v);
     // C can be negative in a system with pure real matrices
     // and this gives a pure imaginary V while the system is stable.
     // TODO:COMPLEX: check what happens in a system with complex round-trip matrix.
