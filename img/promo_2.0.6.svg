@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="410"
+   height="410"
+   viewBox="0 0 108.47917 108.47917"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   sodipodi:docname="promo_2.0.6.svg"
+   inkscape:export-filename="C:\Projects\rezonator2\img\promo_2.0.6.png"
+   inkscape:export-xdpi="280.97562"
+   inkscape:export-ydpi="280.97562">
+  <defs
+     id="defs2">
+    <linearGradient
+       id="b"
+       gradientTransform="matrix(0.1487735,0,0,0.13528754,-26.58662,13.562677)"
+       gradientUnits="userSpaceOnUse"
+       x1="326.68332"
+       x2="721.24884"
+       y1="-5.2486219"
+       y2="429.62204">
+      <stop
+         offset="0"
+         stop-color="#fdffff"
+         id="stop1055" />
+      <stop
+         offset="1"
+         stop-color="#cfcfff"
+         id="stop1057" />
+    </linearGradient>
+    <linearGradient
+       id="c"
+       gradientTransform="matrix(0.1487735,0,0,0.13528754,-26.58662,13.562677)"
+       gradientUnits="userSpaceOnUse"
+       x1="376.13055"
+       x2="644.93158"
+       xlink:href="#a"
+       y1="-15.148117"
+       y2="440.22864" />
+    <linearGradient
+       id="a">
+      <stop
+         offset="0"
+         stop-color="#a4c8f0"
+         id="stop1050" />
+      <stop
+         offset="1"
+         stop-color="#737ba6"
+         id="stop1052" />
+    </linearGradient>
+    <linearGradient
+       id="d"
+       gradientTransform="matrix(5.1313425,0,0,5.1318636,14.634185,-10.046704)"
+       gradientUnits="userSpaceOnUse"
+       x1="40.649776"
+       x2="37.074421"
+       xlink:href="#a"
+       y1="-1.236028"
+       y2="22.319952" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#b"
+       id="linearGradient1774"
+       x1="48.948833"
+       y1="17.922674"
+       x2="102.50601"
+       y2="63.002686"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.0628932,0,0,1.2717236,-29.794437,-11.36448)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#a"
+       id="linearGradient1782"
+       x1="67.077675"
+       y1="23.113417"
+       x2="124.00323"
+       y2="80.442734"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-44.844732,-11.68521)" />
+    <filter
+       height="1.014123"
+       y="-0.0070614953"
+       width="1.0100744"
+       x="-0.0050372"
+       id="filter883"
+       style="color-interpolation-filters:sRGB"
+       inkscape:collect="always">
+      <feGaussianBlur
+         id="feGaussianBlur885"
+         stdDeviation="0.33318979"
+         inkscape:collect="always" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="321.93956"
+     inkscape:cy="264.89778"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     units="px"
+     inkscape:document-rotation="0" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="back"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-183.75832)"
+     style="display:inline;filter:url(#filter883)">
+    <image
+       sodipodi:absref="C:\Projects\rezonator2\img\about\about_1_back.png"
+       xlink:href="about/about_1_back.png"
+       y="180.58328"
+       x="-22.225"
+       id="image5639"
+       preserveAspectRatio="none"
+       height="113.24167"
+       width="158.75" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="frame">
+    <rect
+       style="fill:none;stroke:#ff0000;stroke-width:0.345931;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect869"
+       width="109.19157"
+       height="109.19157"
+       x="-0.35620081"
+       y="-0.35620081" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="title shadow"
+     style="display:inline">
+    <text
+       id="text5509"
+       y="22.403332"
+       x="3.0413084"
+       style="font-style:normal;font-weight:normal;font-size:17.4949px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#fff2f2;fill-opacity:0.742331;stroke:none;stroke-width:0.529167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.214724"
+       xml:space="preserve"><tspan
+         dx="0 0 0 0 -4.7965965"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:17.4949px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#fff2f2;fill-opacity:0.742331;stroke:none;stroke-width:0.529167;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.214724"
+         y="22.403332"
+         x="3.0413084"
+         id="tspan5507"
+         sodipodi:role="line">re  onator</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="title"
+     style="display:inline">
+    <g
+       id="g5495"
+       transform="matrix(0.30050188,0,0,0.30050188,16.711514,2.1231522)">
+      <rect
+         ry="9.2207985"
+         y="7.2271171"
+         x="16.226357"
+         height="67.46875"
+         width="67.46875"
+         id="rect1766"
+         style="opacity:1;fill:url(#linearGradient1774);fill-opacity:1;fill-rule:nonzero;stroke:url(#linearGradient1782);stroke-width:1.76094;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <g
+         style="fill-rule:evenodd"
+         transform="matrix(0.26458333,0,0,0.26458333,17.899892,9.7616682)"
+         id="g1076">
+        <path
+           d="M 127.34865,129.63088 174.33766,66.252152 H 40.008343 v -24 H 219.48224 V 70.866687 L 134.02373,136.30663 85.629425,194.25216 H 212.83955 l -0.35132,24 H 34.66388 V 188.9221 Z"
+           id="path5505"
+           inkscape:connector-curvature="0"
+           style="fill:#000000;fill-opacity:0.822222"
+           sodipodi:nodetypes="ccccccccccccc" />
+        <path
+           style="fill:#ff0000;fill-opacity:0.98773"
+           inkscape:connector-curvature="0"
+           id="path1064"
+           d="M 125.68476,127.37872 172.67377,64 H 45 V 40 H 217.81835 V 68.614535 L 132.35984,134.05447 83.965543,192 H 211.17566 l -0.35132,24 H 33 v -29.33006 z" />
+        <path
+           style="fill-opacity:0.327778"
+           inkscape:connector-curvature="0"
+           id="path1066"
+           d="M 33,24 H 57 V 80 H 33 Z" />
+        <path
+           style="fill-opacity:0.716667"
+           inkscape:connector-curvature="0"
+           id="path1068"
+           d="M 33,24 H 45 V 80 H 33 Z" />
+        <path
+           style="fill-opacity:0.327778"
+           inkscape:connector-curvature="0"
+           id="path1070"
+           transform="scale(-1,1)"
+           d="m -223,176 h 24 v 56 h -24 z" />
+        <path
+           style="fill-opacity:0.716667"
+           inkscape:connector-curvature="0"
+           id="path1072"
+           transform="scale(-1,1)"
+           d="m -223,176 h 12 v 56 h -12 z" />
+        <path
+           style="fill:#49b7ff;fill-opacity:0.65;stroke:#49b7ff;stroke-width:6;stroke-linecap:square"
+           inkscape:connector-curvature="0"
+           id="path1074"
+           d="m 68.897674,83 h 42.388716 l 78.03599,90 h -42.38871 z" />
+      </g>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:17.4949px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#ff0000;fill-opacity:0.993865;stroke:#fdfdfe;stroke-width:0.529167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.214724"
+       x="2.831522"
+       y="22.287088"
+       id="text1680"><tspan
+         sodipodi:role="line"
+         id="tspan1678"
+         x="2.831522"
+         y="22.287088"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:17.4949px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:0.993865;stroke:#fdfdfe;stroke-width:0.529167;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.214724"
+         dx="0 0 0 0 -4.7965965">re  onator</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29445px;line-height:125%;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#ffffff;fill-opacity:0.85276;stroke:none;stroke-width:0.24984px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="4.5781755"
+       y="30.696638"
+       id="text5521"
+       transform="scale(1.0320348,0.96895959)"><tspan
+         sodipodi:role="line"
+         id="tspan5519"
+         x="4.5781755"
+         y="30.696638"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29445px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:0.85276;stroke-width:0.24984px">designed for resonators design</tspan></text>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="version"
+     style="display:inline">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:16.442px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.411051px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="4.4521623"
+       y="87.457512"
+       id="text5517"><tspan
+         sodipodi:role="line"
+         id="tspan5515"
+         x="4.4521623"
+         y="87.457512"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16.442px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke-width:0.411051px"
+         rotate="0 0 0 0 0 0 0 0 0 0 0 0">2.0.6<tspan
+   style="font-size:8.69928px;stroke-width:0.411051px"
+   id="tspan866">-beta2</tspan></tspan></text>
+    <text
+       id="text5545"
+       y="62.838699"
+       x="62.295372"
+       style="font-style:normal;font-weight:normal;font-size:16.2798px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.406995px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.61343px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke-width:0.406995px"
+         y="62.838699"
+         x="62.295372"
+         id="tspan5543"
+         sodipodi:role="line">released</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:4.23333px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.406995px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="4.5812693"
+       y="97.059387"
+       id="text873"><tspan
+         sodipodi:role="line"
+         id="tspan871"
+         x="4.5812693"
+         y="97.059387"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.23333px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke-width:0.406995px">rezonator.orion-project.org</tspan></text>
+    <text
+       id="text877"
+       y="103.93855"
+       x="4.5812693"
+       style="font-style:normal;font-weight:normal;font-size:4.23333px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.406995px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.23333px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke-width:0.406995px"
+         y="103.93855"
+         x="4.5812693"
+         id="tspan875"
+         sodipodi:role="line">github.com/orion-project/rezonator2</tspan></text>
+  </g>
+</svg>
