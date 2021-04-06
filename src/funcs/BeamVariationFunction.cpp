@@ -104,7 +104,7 @@ bool BeamVariationFunction::prepareSinglePass()
 
 bool BeamVariationFunction::prepareResonator()
 {
-    if (!_beamCalc) _beamCalc.reset(new AbcdBeamCalculator(schema()->wavelength().value().toSi()));
+    _beamCalc.reset(new AbcdBeamCalculator(schema()->wavelength().value().toSi()));
     return true;
 }
 
