@@ -242,7 +242,7 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemGrinMedium, ElementRange)
+DECLARE_ELEMENT(ElemGrinMedium, ElemMediumRange)
     ElemGrinMedium();
     TYPE_NAME(qApp->translate("Elements", "GRIN medium"))
     DEFAULT_LABEL("GM")
@@ -272,7 +272,7 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemThermoMedium, ElementRange)
+DECLARE_ELEMENT(ElemThermoMedium, ElemMediumRange)
     ElemThermoMedium();
     TYPE_NAME(qApp->translate("Elements", "Thermal medium"))
     DEFAULT_LABEL("TM")

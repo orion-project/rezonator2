@@ -8,6 +8,7 @@
 #include "../core/Schema.h"
 #include "../core/Elements.h"
 #include "../core/Protocol.h"
+#include "../core/ElementsCatalog.h"
 
 #include <QDebug>
 
@@ -79,6 +80,9 @@ void TableFunction::calculate()
         auto rangeN = dynamic_cast<ElemMediumRange*>(elem);
         if (rangeN)
         {
+            // Don't need to calculate LEFT_INSIDE and RIGHT_INSIDE points,
+            // because they will be calculated when processing left and right
+            // neighbor elements (they always must be in a properly defined schema).
             rangeN->setSubRangeSI(rangeN->axisLengthSI() / 2.0);
             calculateAt(rangeN, true, rangeN, ResultPosition::MIDDLE);
             continue;
@@ -209,10 +213,11 @@ bool TableFunction::calculateAtInterface(ElementInterface* iface, int index)
         if (!prevRange) prevRange = dynamic_cast<ElemMediumRange*>(prevElem);
         if (!prevRange)
         {
-            Z_ERROR(QString("%1: Invalid schema: There is a '%2' element at the left of the interface %3. "
-                            "Only valid elements at both sides of an interface are '%4' or '%5'."
+            Z_ERROR(QString("%1: Invalid schema: There is a %2 element at the left of the interface %3. "
+                            "The only valid elements at both sides of an interface are %4, %5."
                             ).arg(name(), prevElem->typeName(), iface->displayLabel(),
-                            ElemEmptyRange::_typeName_(), ElemMediumRange::_typeName_()))
+                                  ElemEmptyRange::_typeName_(),
+                                  ElementsCatalog::instance().getMediumTypeNames().join(", ")))
             _errorText = "Invalid schema, see Protocol for details";
             return false;
         }
@@ -245,10 +250,11 @@ bool TableFunction::calculateAtInterface(ElementInterface* iface, int index)
     if (!nextRange) nextRange = dynamic_cast<ElemMediumRange*>(nextElem);
     if (!nextRange)
     {
-        Z_ERROR(QString("%1: Invalid schema: There is a '%2' at the right of the interface %3. "
-                        "Only valid elements at both sides of an interface are '%4' or '%5'."
+        Z_ERROR(QString("%1: Invalid schema: There is a %2 at the right of the interface %3. "
+                        "The only valid elements at both sides of an interface are %4, %5."
                         ).arg(name(), nextElem->typeName(), iface->displayLabel(),
-                        ElemEmptyRange::_typeName_(), ElemMediumRange::_typeName_()))
+                              ElemEmptyRange::_typeName_(),
+                              ElementsCatalog::instance().getMediumTypeNames().join(", ")))
         _errorText = "Invalid schema, see Protocol for details";
         return false;
     }

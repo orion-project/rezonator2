@@ -748,7 +748,7 @@ void ElemGrinLens::setSubRangeSI(double value) {
 //                             ElemGrinMedium
 //------------------------------------------------------------------------------
 
-ElemGrinMedium::ElemGrinMedium() : ElementRange() {
+ElemGrinMedium::ElemGrinMedium() : ElemMediumRange() {
     _length->setDescription(qApp->translate("Param", "Thickness of material. "
                                                      "Must be a positive value."));
 
@@ -884,7 +884,7 @@ void ElemThermoLens::setSubRangeSI(double value) {
 //                             ElemThermoMedium
 //------------------------------------------------------------------------------
 
-ElemThermoMedium::ElemThermoMedium() : ElementRange() {
+ElemThermoMedium::ElemThermoMedium() : ElemMediumRange() {
     _length->setDescription(qApp->translate("Param", "Thickness of material. "
                                                      "Must be a positive value."));
     _ior->setRawValue(2);

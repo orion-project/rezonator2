@@ -94,3 +94,15 @@ Elements ElementsCatalog::elements(const QString& category) const
 {
     return _elemsCategorized.contains(category)? _elemsCategorized[category]: Elements();
 }
+
+QStringList ElementsCatalog::getMediumTypeNames() const
+{
+    QStringList res;
+    for (auto elem : _elements) {
+        auto rangeN = dynamic_cast<ElemMediumRange*>(elem);
+        if (rangeN) {
+            res << rangeN->typeName();
+        }
+    }
+    return res;
+}
