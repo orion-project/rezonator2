@@ -1,5 +1,7 @@
 QT += core gui widgets printsupport network
 
+CONFIG += c++17
+
 #------------------------------------------------------------
 # Definition of output
 

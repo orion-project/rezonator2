@@ -39,4 +39,16 @@ inline T var2ptr(const QVariant& v)
         int value; \
     };
 
+namespace Z {
+
+template <typename T> struct Optional {
+    bool set;
+    T value;
+    Optional(): set(false) {}
+    explicit Optional(const T& value): set(true), value(value) {}
+    static Optional null() { return Optional(); }
+};
+
+} // namespace Z
+
 #endif // Z_UTILS_H

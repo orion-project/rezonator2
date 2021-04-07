@@ -60,7 +60,7 @@ namespace TableFunctionTests {
 
 namespace BeamParamsAtElems {
 
-TEST_CASE_METHOD(must_take_medium_ior__mirrors_at_ends, QString fileName)
+TEST_CASE_METHOD(must_respect_medium_ior__mirrors_at_ends, QString fileName)
 {
     READ_TEST_FILE(BeamParamsAtElemsFunction, fileName, ResultsCount(5))
 
@@ -72,14 +72,18 @@ TEST_CASE_METHOD(must_take_medium_ior__mirrors_at_ends, QString fileName)
     ASSERT_TABLE_RES(3, 4, IgnoreSign(true))
 }
 
-TEST_CASE(must_take_medium_ior__mirrors_at_ends__simple, must_take_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media_1.rez")
-TEST_CASE(must_take_medium_ior__mirrors_at_ends__grin, must_take_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media_2.rez")
-TEST_CASE(must_take_medium_ior__mirrors_at_ends__thermo, must_take_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media_3.rez")
+TEST_CASE(must_respect_medium_ior__curved_mirrors_at_ends__simple, must_respect_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media__1_1.rez")
+TEST_CASE(must_respect_medium_ior__curved_mirrors_at_ends__grin, must_respect_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media__1_2.rez")
+TEST_CASE(must_respect_medium_ior__curved_mirrors_at_ends__thermo, must_respect_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media__1_3.rez")
+TEST_CASE(must_respect_medium_ior__curved_and_flat_mirror_at_end__right, must_respect_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media__2_1.rez")
+TEST_CASE(must_respect_medium_ior__curved_and_flat_mirror_at_end__left, must_respect_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media__2_2.rez")
 
 TEST_GROUP("BeamParamsAtElemsFunction",
-           ADD_TEST(must_take_medium_ior__mirrors_at_ends__simple),
-           ADD_TEST(must_take_medium_ior__mirrors_at_ends__grin),
-           ADD_TEST(must_take_medium_ior__mirrors_at_ends__thermo),
+           ADD_TEST(must_respect_medium_ior__curved_mirrors_at_ends__simple),
+           ADD_TEST(must_respect_medium_ior__curved_mirrors_at_ends__grin),
+           ADD_TEST(must_respect_medium_ior__curved_mirrors_at_ends__thermo),
+           ADD_TEST(must_respect_medium_ior__curved_and_flat_mirror_at_end__right),
+           ADD_TEST(must_respect_medium_ior__curved_and_flat_mirror_at_end__left),
            )
 }
 

@@ -364,4 +364,15 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
+namespace Z {
+namespace Utils {
+
+inline bool isMedium(Element *elem) { return dynamic_cast<ElemMediumRange*>(elem); }
+inline ElemMediumRange* asMedium(Element *elem) { return dynamic_cast<ElemMediumRange*>(elem); }
+
+} // namespace Utils
+} // namespace Z
+
+//------------------------------------------------------------------------------
+
 #endif // ELEMENTS_H

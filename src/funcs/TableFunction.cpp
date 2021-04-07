@@ -101,33 +101,26 @@ void TableFunction::calculate()
         auto range = Z::Utils::asRange(elem);
         if (!range)
         {
-            calculateAt(elem, false, elem, ResultPosition::ELEMENT);
+            calculateAtPlane(elem, i);
             continue;
         }
 
         if (dynamic_cast<ElemEmptyRange*>(elem))
             continue;
 
-        auto rangeN = dynamic_cast<ElemMediumRange*>(elem);
+        auto rangeN = Z::Utils::asMedium(elem);
         if (rangeN)
         {
             // By default, don't need to calculate LEFT_INSIDE and RIGHT_INSIDE points,
             // because they will be calculated when processing the left and right
             // neighbor elements (they always must be in a properly defined schema).
             if (calcDebugResults)
-            {
-                rangeN->setSubRangeSI(0);
-                calculateAt(rangeN, true, rangeN, ResultPosition::LEFT_INSIDE);
-            }
+                calculateAt(rangeN, UseSubrange(0), rangeN, ResultPosition::LEFT_INSIDE);
 
-            rangeN->setSubRangeSI(rangeN->axisLengthSI() / 2.0);
-            calculateAt(rangeN, true, rangeN, ResultPosition::MIDDLE);
+            calculateAt(rangeN, UseSubrange(rangeN->axisLengthSI() / 2.0), rangeN, ResultPosition::MIDDLE);
 
             if (calcDebugResults)
-            {
-                rangeN->setSubRangeSI(rangeN->axisLengthSI());
-                calculateAt(rangeN, true, rangeN, ResultPosition::RIGHT_INSIDE);
-            }
+                calculateAt(rangeN, UseSubrange(rangeN->axisLengthSI()), rangeN, ResultPosition::RIGHT_INSIDE);
             continue;
         }
 
@@ -182,21 +175,15 @@ bool TableFunction::calculateAtMirrorOrLens(Element *elem, int index)
         {
         case TripType::SP:
             calculatePumpBeforeSchema(elem, ResultPosition::LEFT);
-            calculateAt(elem, false, elem, ResultPosition::RIGHT);
+            calculateAt(elem, UseSubrange::null(), elem, ResultPosition::RIGHT);
             return true;
 
         case TripType::SW:
         {
             // It's the left end mirror and beam params before and after are the same
-            auto nextElem = nextElement(index);
-            if (!nextElem)
-            {
-                _errorText = "Too few elements in SP schema";
-                return false;
-            }
-            auto nextMedium = dynamic_cast<ElemMediumRange*>(nextElem);
+            auto nextMedium = Z::Utils::asMedium(nextElement(index));
             auto overrideIor = nextMedium ? OptionalIor(nextMedium->ior()) : OptionalIor();
-            calculateAt(elem, false, elem, ResultPosition::ELEMENT, overrideIor);
+            calculateAt(elem, UseSubrange::null(), elem, ResultPosition::ELEMENT, overrideIor);
             return true;
         }
 
@@ -212,22 +199,16 @@ bool TableFunction::calculateAtMirrorOrLens(Element *elem, int index)
         {
         case TripType::SP:
             // Calculate pump params after the last element
-            calculateAt(prevElem, false, elem, ResultPosition::LEFT);
-            calculateAt(elem, false, elem, ResultPosition::RIGHT);
+            calculateAt(prevElem, UseSubrange::null(), elem, ResultPosition::LEFT);
+            calculateAt(elem, UseSubrange::null(), elem, ResultPosition::RIGHT);
             return true;
 
         case TripType::SW:
         {
             // It's the right end mirror and beam params before and after are the same
-            auto prevElem = prevElement(index);
-            if (!prevElem)
-            {
-                _errorText = "Too few elements in SP schema";
-                return false;
-            }
-            auto prevMedium = dynamic_cast<ElemMediumRange*>(prevElem);
+            auto prevMedium = Z::Utils::asMedium(prevElement(index));
             auto overrideIor = prevMedium ? OptionalIor(prevMedium->ior()) : OptionalIor();
-            calculateAt(elem, false, elem, ResultPosition::ELEMENT, overrideIor);
+            calculateAt(elem, UseSubrange::null(), elem, ResultPosition::ELEMENT, overrideIor);
             return true;
         }
 
@@ -243,8 +224,8 @@ bool TableFunction::calculateAtMirrorOrLens(Element *elem, int index)
         _errorText = "Invalid SW schema, see Protocol for details";
         return false;
     }
-    calculateAt(prevElem, false, elem, ResultPosition::LEFT);
-    calculateAt(elem, false, elem, ResultPosition::RIGHT);
+    calculateAt(prevElem, UseSubrange::null(), elem, ResultPosition::LEFT);
+    calculateAt(elem, UseSubrange::null(), elem, ResultPosition::RIGHT);
     return true;
 }
 
@@ -284,8 +265,7 @@ bool TableFunction::calculateAtInterface(ElementInterface* iface, int index)
             _errorText = "Invalid schema, see Protocol for details";
             return false;
         }
-        prevRange->setSubRangeSI(prevRange->axisLengthSI());
-        calculateAt(prevRange, true, iface, ResultPosition::IFACE_LEFT);
+        calculateAt(prevRange, UseSubrange(prevRange->axisLengthSI()), iface, ResultPosition::IFACE_LEFT);
     }
 
     auto nextElem = nextElement(index);
@@ -294,7 +274,7 @@ bool TableFunction::calculateAtInterface(ElementInterface* iface, int index)
         switch (schema()->tripType())
         {
         case TripType::SP:
-            calculateAt(iface, false, iface, ResultPosition::IFACE_RIGHT);
+            calculateAt(iface, UseSubrange::null(), iface, ResultPosition::IFACE_RIGHT);
             return true;
 
         case TripType::SW:
@@ -321,8 +301,7 @@ bool TableFunction::calculateAtInterface(ElementInterface* iface, int index)
         _errorText = "Invalid schema, see Protocol for details";
         return false;
     }
-    nextRange->setSubRangeSI(0);
-    calculateAt(nextRange, true, iface, ResultPosition::IFACE_RIGHT);
+    calculateAt(nextRange, UseSubrange(0.0), iface, ResultPosition::IFACE_RIGHT);
     return true;
 }
 
@@ -350,31 +329,54 @@ bool TableFunction::calculateAtCrystal(ElementRange* range, int index)
         }
     }
     else
-        calculateAt(prevElem, false, range, ResultPosition::LEFT_OUTSIDE);
+        calculateAt(prevElem, UseSubrange::null(), range, ResultPosition::LEFT_OUTSIDE);
 
-    range->setSubRangeSI(0);
-    calculateAt(range, true, range, ResultPosition::LEFT_INSIDE);
+    calculateAt(range, UseSubrange(0.0), range, ResultPosition::LEFT_INSIDE);
 
     auto len = range->axisLengthSI();
-    range->setSubRangeSI(len / 2.0);
-    calculateAt(range, true, range, ResultPosition::MIDDLE);
+    calculateAt(range, UseSubrange(len / 2.0), range, ResultPosition::MIDDLE);
 
-    range->setSubRangeSI(len);
-    calculateAt(range, true, range, ResultPosition::RIGHT_INSIDE);
+    calculateAt(range, UseSubrange(len), range, ResultPosition::RIGHT_INSIDE);
 
-    calculateAt(range, false, range, ResultPosition::RIGHT_OUTSIDE);
+    calculateAt(range, UseSubrange::null(), range, ResultPosition::RIGHT_OUTSIDE);
     return true;
 }
 
-void TableFunction::calculateAt(Element* calcElem, bool calcSubrange, Element *resultElem,
+void TableFunction::calculateAtPlane(Element* elem, int index)
+{
+    OptionalIor overrideIor;
+    if (schema()->tripType() == TripType::SW)
+    {
+        // It's the left end mirror attached to a medium
+        if (!prevElement(index))
+        {
+            auto nextMedium = Z::Utils::asMedium(nextElement(index));
+            if (nextMedium)
+                overrideIor = OptionalIor(nextMedium->ior());
+        }
+        // It's the right end mirror attached to a medium
+        else if (!nextElement(index))
+        {
+            auto prevMedium = Z::Utils::asMedium(prevElement(index));
+            if (prevMedium)
+                overrideIor = OptionalIor(prevMedium->ior());
+        }
+    }
+    calculateAt(elem, UseSubrange::null(), elem, ResultPosition::ELEMENT, overrideIor);
+}
+
+void TableFunction::calculateAt(Element* calcElem, UseSubrange subrange, Element *resultElem,
                                 ResultPosition resultPos, OptionalIor overrideIor)
 {
+    if (subrange.set)
+        Z::Utils::asRange(calcElem)->setSubRangeSI(subrange.value);
+
     RoundTripCalculator calc(schema(), calcElem);
-    calc.calcRoundTrip(calcSubrange);
+    calc.calcRoundTrip(subrange.set);
     calc.multMatrix();
 
-    const double ior = overrideIor.set ? overrideIor.ior :
-        (calcSubrange ? Z::Utils::asRange(calcElem)->ior() : 1);
+    const double ior = overrideIor.set ? overrideIor.value :
+        (subrange.set ? Z::Utils::asRange(calcElem)->ior() : 1);
 
     Result res;
     res.element = resultElem;

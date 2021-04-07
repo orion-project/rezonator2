@@ -4,16 +4,13 @@
 #include <memory>
 
 #include "FunctionBase.h"
+#include "../core/Utils.h"
 
 class AbcdBeamCalculator;
 class Schema;
 
-struct OptionalIor {
-    bool set;
-    double ior;
-    OptionalIor(): set(false){}
-    OptionalIor(double ior): set(true), ior(ior) {}
-};
+typedef Z::Optional<double> OptionalIor;
+typedef Z::Optional<double> UseSubrange;
 
 // TODO: currently, this is BeamParamsAtElemsFunction function, not a general solution
 
@@ -92,7 +89,8 @@ protected:
     bool calculateAtMirrorOrLens(Element* elem, int index);
     bool calculateAtInterface(ElementInterface* iface, int index);
     bool calculateAtCrystal(ElementRange* range, int index);
-    void calculateAt(Element* calcElem, bool calcSubrange, Element* resultElem,
+    void calculateAtPlane(Element* elem, int index);
+    void calculateAt(Element* calcElem, UseSubrange subrange, Element* resultElem,
                      ResultPosition resultPos, OptionalIor overrideIor = OptionalIor());
     void calculatePumpBeforeSchema(Element* elem, ResultPosition resultPos);
     QVector<Z::PointTS> calculateSinglePass(RoundTripCalculator* calc, double ior) const;
