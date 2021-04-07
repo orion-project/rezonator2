@@ -28,10 +28,14 @@
         },
         {
             "is_disabled": false,
-            "label": "GM1",
+            "label": "TM1",
             "layout_draw_narrow": false,
             "layout_show_label": true,
             "params": {
+                "F": {
+                    "unit": "m",
+                    "value": 1
+                },
                 "L": {
                     "unit": "mm",
                     "value": 55
@@ -39,18 +43,10 @@
                 "n": {
                     "unit": "none",
                     "value": 1.78
-                },
-                "n2s": {
-                    "unit": "inv_m2",
-                    "value": 20
-                },
-                "n2t": {
-                    "unit": "inv_m2",
-                    "value": 10
                 }
             },
             "title": "",
-            "type": "ElemGrinMedium"
+            "type": "ElemThermoMedium"
         },
         {
             "is_disabled": false,
@@ -82,45 +78,5 @@
     "title": "",
     "trip_type": "SW",
     "windows": [
-        {
-            "function": {
-                "arg": {
-                    "element_index": 1,
-                    "param": "L",
-                    "range": {
-                        "points": 100,
-                        "start": {
-                            "unit": "mm",
-                            "value": 0
-                        },
-                        "step": {
-                            "unit": "mm",
-                            "value": 0.55
-                        },
-                        "stop": {
-                            "unit": "mm",
-                            "value": 55
-                        },
-                        "use_step": false
-                    }
-                },
-                "mode": "BeamRadius"
-            },
-            "type": "Caustic",
-            "window": {
-                "cursor_enabled": true,
-                "cursor_mode": "Both",
-                "stored_views": [
-                ],
-                "ts_flipped": false,
-                "ts_mode": "T+S",
-                "x_max": 55.55,
-                "x_min": -0.55,
-                "x_unit": "mm",
-                "y_max": 178.8759541747726,
-                "y_min": 146.71106801000494,
-                "y_unit": "mkm"
-            }
-        }
     ]
 }

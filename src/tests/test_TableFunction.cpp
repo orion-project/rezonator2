@@ -60,9 +60,9 @@ namespace TableFunctionTests {
 
 namespace BeamParamsAtElems {
 
-TEST_METHOD(must_take_medium_ior__mirrors_at_ends)
+TEST_CASE_METHOD(must_take_medium_ior__mirrors_at_ends, QString fileName)
 {
-    READ_TEST_FILE(BeamParamsAtElemsFunction, "calc_beamdata_elems_and_media_1.rez", ResultsCount(5))
+    READ_TEST_FILE(BeamParamsAtElemsFunction, fileName, ResultsCount(5))
 
     // First two results must be the same - left end mirror and origin of medium
     ASSERT_TABLE_RES(0, 1, IgnoreSign(false))
@@ -72,8 +72,14 @@ TEST_METHOD(must_take_medium_ior__mirrors_at_ends)
     ASSERT_TABLE_RES(3, 4, IgnoreSign(true))
 }
 
+TEST_CASE(must_take_medium_ior__mirrors_at_ends__simple, must_take_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media_1.rez")
+TEST_CASE(must_take_medium_ior__mirrors_at_ends__grin, must_take_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media_2.rez")
+TEST_CASE(must_take_medium_ior__mirrors_at_ends__thermo, must_take_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media_3.rez")
+
 TEST_GROUP("BeamParamsAtElemsFunction",
-           ADD_TEST(must_take_medium_ior__mirrors_at_ends),
+           ADD_TEST(must_take_medium_ior__mirrors_at_ends__simple),
+           ADD_TEST(must_take_medium_ior__mirrors_at_ends__grin),
+           ADD_TEST(must_take_medium_ior__mirrors_at_ends__thermo),
            )
 }
 
