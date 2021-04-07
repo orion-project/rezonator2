@@ -1,6 +1,7 @@
 #include "TestUtils.h"
 #include "../core/Schema.h"
 #include "../core/Elements.h"
+#include "../core/Utils.h"
 #include "../funcs/RoundTripCalculator.h"
 
 namespace Z {
@@ -20,20 +21,6 @@ static const int EL_END = 3;
 static const TripType SW = TripType::SW;
 static const TripType SP = TripType::SP;
 static const TripType RR = TripType::RR;
-
-#define BOOL_PARAM(param_name) \
-    struct param_name { \
-        explicit param_name(bool v) : value(v) {} \
-        operator bool() const { return value; } \
-        bool value; \
-    };
-
-#define INT_PARAM(param_name) \
-    struct param_name { \
-        explicit param_name(int v) : value(v) {} \
-        operator int() const { return value; } \
-        int value; \
-    };
 
 BOOL_PARAM(UseRange)
 BOOL_PARAM(DoSplit)

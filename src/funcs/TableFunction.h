@@ -8,6 +8,13 @@
 class AbcdBeamCalculator;
 class Schema;
 
+struct OptionalIor {
+    bool set;
+    double ior;
+    OptionalIor(): set(false){}
+    OptionalIor(double ior): set(true), ior(ior) {}
+};
+
 // TODO: currently, this is BeamParamsAtElemsFunction function, not a general solution
 
 class TableFunction : public FunctionBase
@@ -33,11 +40,22 @@ public:
         IFACE_RIGHT,   //   |->
     };
 
+    struct ResultPositionInfo
+    {
+        QString ascii;
+        QString tooltip;
+        QString pixmap;
+    };
+
+    static const ResultPositionInfo& resultPositionInfo(ResultPosition pos);
+
     struct Result
     {
         Element* element;
         ResultPosition position = ResultPosition::ELEMENT;
         QVector<Z::PointTS> values;
+
+        QString str() const;
     };
 
 public:
@@ -56,6 +74,11 @@ public:
 
     const QVector<Result>& results() const { return _results; }
 
+    /// Calculate additional points which are excessive for user
+    /// because they are duplicated (already calculated via neigbor elements)
+    /// but can be useful for testing
+    bool calcDebugResults = false;
+
 protected:
     QString _errorText;
     QVector<Result> _results;
@@ -69,7 +92,8 @@ protected:
     bool calculateAtMirrorOrLens(Element* elem, int index);
     bool calculateAtInterface(ElementInterface* iface, int index);
     bool calculateAtCrystal(ElementRange* range, int index);
-    void calculateAt(Element* calcElem, bool calcSubrange, Element* resultElem, ResultPosition resultPos);
+    void calculateAt(Element* calcElem, bool calcSubrange, Element* resultElem,
+                     ResultPosition resultPos, OptionalIor overrideIor = OptionalIor());
     void calculatePumpBeforeSchema(Element* elem, ResultPosition resultPos);
     QVector<Z::PointTS> calculateSinglePass(RoundTripCalculator* calc, double ior) const;
     QVector<Z::PointTS> calculateResonator(RoundTripCalculator* calc, double ior) const;

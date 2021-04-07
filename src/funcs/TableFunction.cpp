@@ -12,6 +12,37 @@
 
 #include <QDebug>
 
+const TableFunction::ResultPositionInfo& TableFunction::resultPositionInfo(TableFunction::ResultPosition pos)
+{
+#define I_(pos, ascii, tooltip, pixmap)\
+    {TableFunction::ResultPosition::pos, {QString(ascii), QString(tooltip), QString(pixmap)}}
+
+    static QMap<TableFunction::ResultPosition, TableFunction::ResultPositionInfo> info = {
+        I_(ELEMENT,       "",          "",                          ""),
+        I_(LEFT,          "->()",      "At the left of element",    ":/misc/beampos_left"),
+        I_(RIGHT,         "  ()->",    "At the right of element",   ":/misc/beampos_right"),
+        I_(LEFT_OUTSIDE,  "->[   ]",   "At the left edge outside",  ":/misc/beampos_left_out"),
+        I_(LEFT_INSIDE,   "  [-> ]",   "At the left edge inside",   ":/misc/beampos_left_in"),
+        I_(MIDDLE,        "  [ + ]",   "In the middle of element",  ":/misc/beampos_middle"),
+        I_(RIGHT_INSIDE,  "  [ ->]",   "At the right edge inside",  ":/misc/beampos_right_in"),
+        I_(RIGHT_OUTSIDE, "  [   ]->", "At the right edge outside", ":/misc/beampos_right_out"),
+        I_(IFACE_LEFT,    "->|",       "At the left of interface",  ":/misc/beampos_iface_left"),
+        I_(IFACE_RIGHT,   "  |->",     "At the right of interface", ":/misc/beampos_iface_right"),
+    };
+    return info[pos];
+#undef I_
+}
+
+QString TableFunction::Result::str() const
+{
+    QString res;
+    QTextStream stream(&res);
+    stream << element->displayLabel() << "\t" << resultPositionInfo(position).ascii << "\t";
+    for (const auto& value : values)
+        stream << value.T << " x " << value.S << "\t";
+    return res;
+}
+
 TableFunction::TableFunction(Schema *schema) : FunctionBase(schema)
 {
 }
@@ -80,11 +111,23 @@ void TableFunction::calculate()
         auto rangeN = dynamic_cast<ElemMediumRange*>(elem);
         if (rangeN)
         {
-            // Don't need to calculate LEFT_INSIDE and RIGHT_INSIDE points,
-            // because they will be calculated when processing left and right
+            // By default, don't need to calculate LEFT_INSIDE and RIGHT_INSIDE points,
+            // because they will be calculated when processing the left and right
             // neighbor elements (they always must be in a properly defined schema).
+            if (calcDebugResults)
+            {
+                rangeN->setSubRangeSI(0);
+                calculateAt(rangeN, true, rangeN, ResultPosition::LEFT_INSIDE);
+            }
+
             rangeN->setSubRangeSI(rangeN->axisLengthSI() / 2.0);
             calculateAt(rangeN, true, rangeN, ResultPosition::MIDDLE);
+
+            if (calcDebugResults)
+            {
+                rangeN->setSubRangeSI(rangeN->axisLengthSI());
+                calculateAt(rangeN, true, rangeN, ResultPosition::RIGHT_INSIDE);
+            }
             continue;
         }
 
@@ -143,9 +186,19 @@ bool TableFunction::calculateAtMirrorOrLens(Element *elem, int index)
             return true;
 
         case TripType::SW:
-            // It's the end mirror and beam params before and after are the same
-            calculateAt(elem, false, elem, ResultPosition::ELEMENT);
+        {
+            // It's the left end mirror and beam params before and after are the same
+            auto nextElem = nextElement(index);
+            if (!nextElem)
+            {
+                _errorText = "Too few elements in SP schema";
+                return false;
+            }
+            auto nextMedium = dynamic_cast<ElemMediumRange*>(nextElem);
+            auto overrideIor = nextMedium ? OptionalIor(nextMedium->ior()) : OptionalIor();
+            calculateAt(elem, false, elem, ResultPosition::ELEMENT, overrideIor);
             return true;
+        }
 
         case TripType::RR:
             _errorText = "Too few elements in RR schema";
@@ -164,9 +217,19 @@ bool TableFunction::calculateAtMirrorOrLens(Element *elem, int index)
             return true;
 
         case TripType::SW:
-            // It's the end mirror and beam params before and after are the same
-            calculateAt(elem, false, elem, ResultPosition::ELEMENT);
+        {
+            // It's the right end mirror and beam params before and after are the same
+            auto prevElem = prevElement(index);
+            if (!prevElem)
+            {
+                _errorText = "Too few elements in SP schema";
+                return false;
+            }
+            auto prevMedium = dynamic_cast<ElemMediumRange*>(prevElem);
+            auto overrideIor = prevMedium ? OptionalIor(prevMedium->ior()) : OptionalIor();
+            calculateAt(elem, false, elem, ResultPosition::ELEMENT, overrideIor);
             return true;
+        }
 
         case TripType::RR:
             _errorText = "Too few elements in RR schema";
@@ -303,13 +366,15 @@ bool TableFunction::calculateAtCrystal(ElementRange* range, int index)
     return true;
 }
 
-void TableFunction::calculateAt(Element* calcElem, bool calcSubrange, Element *resultElem, ResultPosition resultPos)
+void TableFunction::calculateAt(Element* calcElem, bool calcSubrange, Element *resultElem,
+                                ResultPosition resultPos, OptionalIor overrideIor)
 {
     RoundTripCalculator calc(schema(), calcElem);
     calc.calcRoundTrip(calcSubrange);
     calc.multMatrix();
 
-    const double ior = calcSubrange ? Z::Utils::asRange(calcElem)->ior() : 1;
+    const double ior = overrideIor.set ? overrideIor.ior :
+        (calcSubrange ? Z::Utils::asRange(calcElem)->ior() : 1);
 
     Result res;
     res.element = resultElem;

@@ -28,6 +28,7 @@ USE_GROUP(PumpCalculatorTests)                     // test_PumpCalculator.cpp
 USE_GROUP(AbcdBeamCalculatorTests)                 // test_AbcdBeamCalculator.cpp
 USE_GROUP(InfoFunctionsTests)                      // test_InfoFunctions.cpp
 USE_GROUP(PlotFunctionsTests)                      // test_PlotFunctions.cpp
+USE_GROUP(TableFunctionTests)                      // test_TableFunction.cpp
 USE_GROUP(ElementSelectorWidgetTests)              // test_ElemSelectorWidget.cpp
 USE_GROUP(PumpWindowTests)                         // test_PumpWindow.cpp
 USE_GROUP(LuaHelperTests)                          // test_LuaHelper.cpp
@@ -59,6 +60,7 @@ TEST_SUITE(
     ADD_GROUP(AbcdBeamCalculatorTests),
     ADD_GROUP(InfoFunctionsTests),
     ADD_GROUP(PlotFunctionsTests),
+    ADD_GROUP(TableFunctionTests),
     ADD_GROUP(ElementSelectorWidgetTests),
     ADD_GROUP(PumpWindowTests),
     ADD_GROUP(LuaHelperTests),

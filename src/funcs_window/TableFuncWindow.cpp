@@ -19,32 +19,12 @@
 
 using namespace Ori::Gui;
 
-struct TableFuncResultPositionInfo
+static const QPixmap& resultPosPixmap(TableFunction::ResultPosition pos)
 {
-    QString ascii;
-    QString tooltip;
-    QPixmap pixmap;
-};
-
-static const TableFuncResultPositionInfo& tableResultPositionInfo(TableFunction::ResultPosition pos)
-{
-#define I_(pos, ascii, tooltip, pixmap)\
-    {TableFunction::ResultPosition::pos, {QString(ascii), QString(tooltip), QPixmap(pixmap)}}
-
-    static QMap<TableFunction::ResultPosition, TableFuncResultPositionInfo> info = {
-        I_(ELEMENT,       "",          "",                          ""),
-        I_(LEFT,          "->()",      "At the left of element",    ":/misc/beampos_left"),
-        I_(RIGHT,         "  ()->",    "At the right of element",   ":/misc/beampos_right"),
-        I_(LEFT_OUTSIDE,  "->[   ]",   "At the left edge outside",  ":/misc/beampos_left_out"),
-        I_(LEFT_INSIDE,   "  [-> ]",   "At the left edge inside",   ":/misc/beampos_left_in"),
-        I_(MIDDLE,        "  [ + ]",   "In the middle of element",  ":/misc/beampos_middle"),
-        I_(RIGHT_INSIDE,  "  [ ->]",   "At the right edge inside",  ":/misc/beampos_right_in"),
-        I_(RIGHT_OUTSIDE, "  [   ]->", "At the right edge outside", ":/misc/beampos_right_out"),
-        I_(IFACE_LEFT,    "->|",       "At the left of interface",  ":/misc/beampos_iface_left"),
-        I_(IFACE_RIGHT,   "  |->",     "At the right of interface", ":/misc/beampos_iface_right"),
-    };
-    return info[pos];
-#undef I_
+    static QMap<TableFunction::ResultPosition, QPixmap> pixmaps;
+    if (!pixmaps.contains(pos))
+        pixmaps[pos] = QPixmap(TableFunction::resultPositionInfo(pos).pixmap);
+    return pixmaps[pos];
 }
 
 //------------------------------------------------------------------------------
@@ -73,7 +53,7 @@ void TableFuncPositionColumnItemDelegate::drawDisplay(
     QItemDelegate::drawDisplay(painter, option, r, text);
 
     auto resultPosition = TableFunction::ResultPosition(_paintingIndex.data(Qt::UserRole).toInt());
-    painter->drawPixmap(r.right() - 26, r.top() + 2, tableResultPositionInfo(resultPosition).pixmap);
+    painter->drawPixmap(r.right() - 26, r.top() + 2, resultPosPixmap(resultPosition));
 }
 
 //------------------------------------------------------------------------------
@@ -143,7 +123,7 @@ void TableFuncResultTable::update(const QVector<TableFunction::Result>& results)
             it->setFont(Z::Gui::ElemLabelFont().get());
             it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
             it->setData(Qt::UserRole, int(res.position));
-            it->setToolTip(tableResultPositionInfo(res.position).tooltip);
+            it->setToolTip(TableFunction::resultPositionInfo(res.position).tooltip);
             setItem(row, COL_POSITION, it);
         }
         it->setText(res.element->displayLabel());
@@ -208,7 +188,7 @@ void TableFuncResultTable::copy()
             if (col == 0)
             {
                 auto resultPosition = TableFunction::ResultPosition(item->data(Qt::UserRole).toInt());
-                stream << '\t' << tableResultPositionInfo(resultPosition).ascii;
+                stream << '\t' << TableFunction::resultPositionInfo(resultPosition).ascii;
             }
             if (col < range.rightColumn())
                 stream << '\t';

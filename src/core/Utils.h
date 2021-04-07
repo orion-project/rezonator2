@@ -25,4 +25,18 @@ inline T var2ptr(const QVariant& v)
     return reinterpret_cast<T>(v.value<void*>());
 }
 
+#define BOOL_PARAM(param_name) \
+    struct param_name { \
+        explicit param_name(bool v) : value(v) {} \
+        operator bool() const { return value; } \
+        bool value; \
+    };
+
+#define INT_PARAM(param_name) \
+    struct param_name { \
+        explicit param_name(int v) : value(v) {} \
+        operator int() const { return value; } \
+        int value; \
+    };
+
 #endif // Z_UTILS_H
