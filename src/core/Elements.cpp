@@ -708,6 +708,9 @@ void ElemGrinLens::calcMatrixInternal() {
         const double g = sqrt(-n2s / n0);
         _ms.assign(cosh(g*L), sinh(g*L)/n0/g, n0*g*sinh(g*L), cosh(g*L));
     } else _ms.assign(1, L/n0, 0, 1);
+
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 void ElemGrinLens::setSubRangeSI(double value) {
@@ -799,6 +802,9 @@ void ElemGrinMedium::calcMatrixInternal() {
         const double g = sqrt(-n2s / n0);
         _ms.assign(cosh(g*L), sinh(g*L)/g, g*sinh(g*L), cosh(g*L));
     } else _ms.assign(1, L, 0, 1);
+
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 void ElemGrinMedium::setSubRangeSI(double value) {
@@ -867,6 +873,9 @@ void ElemThermoLens::calcMatrixInternal() {
     const double g = sqrt(_n2 / n0);
     _mt.assign(cos(g*L), sin(g*L)/n0/g, -n0*g*sin(g*L), cos(g*L));
     _ms = _mt;
+
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 void ElemThermoLens::setSubRangeSI(double value) {
@@ -912,6 +921,9 @@ void ElemThermoMedium::calcMatrixInternal() {
     const double g = sqrt(_n2 / n0);
     _mt.assign(cos(g*L), sin(g*L)/g, -g*sin(g*L), cos(g*L));
     _ms = _mt;
+
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 void ElemThermoMedium::setSubRangeSI(double value) {
@@ -1036,6 +1048,9 @@ void ElemGaussAperture::calcMatrixInternal()
 
     _mt.assign(Z::Complex(1, 0), Z::Complex(0, 0), Z::Complex(0, -wl*a2t/_2PI), Z::Complex(1, 0));
     _ms.assign(Z::Complex(1, 0), Z::Complex(0, 0), Z::Complex(0, -wl*a2s/_2PI), Z::Complex(1, 0));
+
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -1097,6 +1112,9 @@ void ElemGaussApertureLens::calcMatrixInternal()
 
     _mt.assign(Z::Complex(1, 0), Z::Complex(0, 0), Z::Complex(-1.0/ft, -wl*a2t/_2PI), Z::Complex(1, 0));
     _ms.assign(Z::Complex(1, 0), Z::Complex(0, 0), Z::Complex(-1.0/fs, -wl*a2s/_2PI), Z::Complex(1, 0));
+
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -1166,6 +1184,9 @@ void ElemGaussDuctMedium::calcMatrixInternal() {
 
     const Z::Complex gs = sqrt(Z::Complex(n2s/n0, wl*a2s/n0/_2PI));
     _ms.assign(cos(gs*L), sin(gs*L)/gs, -gs*sin(gs*L), cos(gs*L));
+
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 void ElemGaussDuctMedium::setSubRangeSI(double value) {
@@ -1254,6 +1275,9 @@ void ElemGaussDuctSlab::calcMatrixInternal() {
 
     const Z::Complex gs = sqrt(Z::Complex(n2s/n0, wl*a2s/n0/_2PI));
     _ms.assign(cos(gs*L), sin(gs*L)/gs/n0, -gs*n0*sin(gs*L), cos(gs*L));
+
+    _mt_inv = _mt;
+    _ms_inv = _ms;
 }
 
 void ElemGaussDuctSlab::setSubRangeSI(double value) {
