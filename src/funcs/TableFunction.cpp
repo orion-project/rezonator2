@@ -101,11 +101,12 @@ void TableFunction::calculate()
         auto range = Z::Utils::asRange(elem);
         if (!range)
         {
-            calculateAtPlane(elem, i);
-            continue;
+            if (calculateAtPlane(elem, i))
+                continue;
+            else break;
         }
 
-        if (dynamic_cast<ElemEmptyRange*>(elem))
+        if (Z::Utils::isSpace(elem))
             continue;
 
         auto rangeN = Z::Utils::asMedium(elem);
@@ -342,28 +343,77 @@ bool TableFunction::calculateAtCrystal(ElementRange* range, int index)
     return true;
 }
 
-void TableFunction::calculateAtPlane(Element* elem, int index)
+bool TableFunction::calculateAtPlane(Element* elem, int index)
 {
-    OptionalIor overrideIor;
-    if (schema()->tripType() == TripType::SW)
+    switch (schema()->tripType())
     {
+    case TripType::SW:
         // It's the left end mirror attached to a medium
+        // If it's not a mirror then the system is invalid, but we don't check here
         if (!prevElement(index))
         {
             auto nextMedium = Z::Utils::asMedium(nextElement(index));
-            if (nextMedium)
-                overrideIor = OptionalIor(nextMedium->ior());
+            auto overrideIor = nextMedium ? OptionalIor(nextMedium->ior()) : OptionalIor();
+            calculateAt(elem, UseSubrange::null(), elem, ResultPosition::ELEMENT, overrideIor);
+            return true;
         }
+
         // It's the right end mirror attached to a medium
-        else if (!nextElement(index))
+        // If it's not a mirror then the system is invalid, but we don't check here
+        if (!nextElement(index))
         {
             auto prevMedium = Z::Utils::asMedium(prevElement(index));
-            if (prevMedium)
-                overrideIor = OptionalIor(prevMedium->ior());
+            auto overrideIor = prevMedium ? OptionalIor(prevMedium->ior()) : OptionalIor();
+            calculateAt(elem, UseSubrange::null(), elem, ResultPosition::ELEMENT, overrideIor);
+            return true;
         }
+
+        return calculateAtPlaneInMiddleOfSystem(elem, index);
+
+    case TripType::RR:
+        return calculateAtPlaneInMiddleOfSystem(elem, index);
+
+    case TripType::SP:
+        return calculateAtPlaneInMiddleOfSystem(elem, index);
     }
-    calculateAt(elem, UseSubrange::null(), elem, ResultPosition::ELEMENT, overrideIor);
+
+    Z_ERROR(QString("%1: Invalid schema: Unknown trip-type %2.").arg(name()).arg(int(schema()->tripType())))
+    _errorText = "Invalid schema, see Protocol for details";
+    return false;
 }
+
+bool TableFunction::calculateAtPlaneInMiddleOfSystem(Element* elem, int index)
+{
+    // In this method the elem is guaranteed to be not at the ends of a schema
+    // for SW and SP systems, for RR any element is always in a 'middle'
+
+    auto prevMedium = Z::Utils::asMedium(prevElement(index));
+    auto nextMedium = Z::Utils::asMedium(nextElement(index));
+
+    if ((prevMedium && !nextMedium) || (!prevMedium && nextMedium))
+    {
+        Z_ERROR(QString(
+            "%1: Invalid schema: Position of element %2 is incorrect, "
+            "only interface element types can be placed at the edge of medium: %3")
+                .arg(name(), elem->displayLabel(), ElementsCatalog::instance().getInterfaceTypeNames().join(", ")))
+        _errorText = "Invalid schema, see Protocol for details";
+        return false;
+    }
+
+    // Position between two media doesn't guarantee that schema is valid
+    // but at least it CAN BE valid (especially if both media have the same IOR)
+    // if element's matrix doesn't imply air around the element.
+    if (prevMedium && nextMedium)
+    {
+        calculateAt(prevMedium, UseSubrange(prevMedium->lengthSI()), elem, ResultPosition::LEFT);
+        calculateAt(elem, UseSubrange::null(), elem, ResultPosition::RIGHT, OptionalIor(nextMedium->ior()));
+        return true;
+    }
+
+    calculateAt(elem, UseSubrange::null(), elem, ResultPosition::ELEMENT);
+    return true;
+}
+
 
 void TableFunction::calculateAt(Element* calcElem, UseSubrange subrange, Element *resultElem,
                                 ResultPosition resultPos, OptionalIor overrideIor)

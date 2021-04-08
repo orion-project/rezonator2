@@ -367,6 +367,8 @@ DECLARE_ELEMENT_END
 namespace Z {
 namespace Utils {
 
+inline bool isSpace(Element *elem) { return dynamic_cast<ElemEmptyRange*>(elem); }
+inline ElemEmptyRange* asSpace(Element *elem) { return dynamic_cast<ElemEmptyRange*>(elem); }
 inline bool isMedium(Element *elem) { return dynamic_cast<ElemMediumRange*>(elem); }
 inline ElemMediumRange* asMedium(Element *elem) { return dynamic_cast<ElemMediumRange*>(elem); }
 

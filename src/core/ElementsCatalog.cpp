@@ -98,11 +98,17 @@ Elements ElementsCatalog::elements(const QString& category) const
 QStringList ElementsCatalog::getMediumTypeNames() const
 {
     QStringList res;
-    for (auto elem : _elements) {
-        auto rangeN = dynamic_cast<ElemMediumRange*>(elem);
-        if (rangeN) {
-            res << rangeN->typeName();
-        }
-    }
+    for (auto elem : _elements)
+        if (Z::Utils::isMedium(elem))
+            res << elem->typeName();
+    return res;
+}
+
+QStringList ElementsCatalog::getInterfaceTypeNames() const
+{
+    QStringList res;
+    for (auto elem : _elements)
+        if (Z::Utils::isInterface(elem))
+            res << elem->typeName();
     return res;
 }

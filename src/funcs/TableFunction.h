@@ -74,7 +74,7 @@ public:
     /// Calculate additional points which are excessive for user
     /// because they are duplicated (already calculated via neigbor elements)
     /// but can be useful for testing
-    bool calcDebugResults = false;
+    bool calcDebugResults = true;
 
 protected:
     QString _errorText;
@@ -89,7 +89,8 @@ protected:
     bool calculateAtMirrorOrLens(Element* elem, int index);
     bool calculateAtInterface(ElementInterface* iface, int index);
     bool calculateAtCrystal(ElementRange* range, int index);
-    void calculateAtPlane(Element* elem, int index);
+    bool calculateAtPlane(Element* elem, int index);
+    bool calculateAtPlaneInMiddleOfSystem(Element* elem, int index);
     void calculateAt(Element* calcElem, UseSubrange subrange, Element* resultElem,
                      ResultPosition resultPos, OptionalIor overrideIor = OptionalIor());
     void calculatePumpBeforeSchema(Element* elem, ResultPosition resultPos);

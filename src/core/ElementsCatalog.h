@@ -26,6 +26,7 @@ public:
     void registerElement(const QString& category, Element *elem);
 
     QStringList getMediumTypeNames() const;
+    QStringList getInterfaceTypeNames() const;
 
 protected:
     ElementsCatalog();
