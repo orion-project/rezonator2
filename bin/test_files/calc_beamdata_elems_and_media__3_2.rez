@@ -56,7 +56,7 @@
                 },
                 "n2": {
                     "unit": "none",
-                    "value": 1
+                    "value": 1.5
                 }
             },
             "title": "",
@@ -74,7 +74,7 @@
                 },
                 "n": {
                     "unit": "none",
-                    "value": 1
+                    "value": 1.5
                 }
             },
             "title": "",
@@ -110,7 +110,7 @@
                 },
                 "n": {
                     "unit": "none",
-                    "value": 1
+                    "value": 1.5
                 }
             },
             "title": "",
@@ -124,7 +124,7 @@
             "params": {
                 "n1": {
                     "unit": "none",
-                    "value": 1
+                    "value": 1.5
                 },
                 "n2": {
                     "unit": "none",
@@ -142,7 +142,7 @@
             "params": {
                 "L": {
                     "unit": "mm",
-                    "value": 100
+                    "value": 50
                 },
                 "n": {
                     "unit": "none",

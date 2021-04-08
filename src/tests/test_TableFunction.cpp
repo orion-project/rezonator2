@@ -20,8 +20,8 @@
     func_type func(&schema);\
     func.calcDebugResults = true;\
     func.calculate();\
-    ASSERT_IS_TRUE(func.ok())\
     ASSERT_EQ_STR(func.errorText(), "")\
+    ASSERT_IS_TRUE(func.ok())\
     for (const auto& r : func.results()) {TEST_LOG(r.str())}\
     ASSERT_EQ_INT(func.results().size(), expected_result_count)
 
@@ -72,18 +72,34 @@ TEST_CASE_METHOD(must_respect_medium_ior__mirrors_at_ends, QString fileName)
     ASSERT_TABLE_RES(3, 4, IgnoreSign(true))
 }
 
-TEST_CASE(must_respect_medium_ior__curved_mirrors_at_ends__simple, must_respect_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media__1_1.rez")
-TEST_CASE(must_respect_medium_ior__curved_mirrors_at_ends__grin, must_respect_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media__1_2.rez")
-TEST_CASE(must_respect_medium_ior__curved_mirrors_at_ends__thermo, must_respect_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media__1_3.rez")
-TEST_CASE(must_respect_medium_ior__curved_and_flat_mirror_at_end__right, must_respect_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media__2_1.rez")
-TEST_CASE(must_respect_medium_ior__curved_and_flat_mirror_at_end__left, must_respect_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media__2_2.rez")
+TEST_CASE(must_respect_medium_ior__sw__curved_ends__simple, must_respect_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media__1_1.rez")
+TEST_CASE(must_respect_medium_ior__sw__curved_ends__grin, must_respect_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media__1_2.rez")
+TEST_CASE(must_respect_medium_ior__sw__curved_ends__thermo, must_respect_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media__1_3.rez")
+TEST_CASE(must_respect_medium_ior__sw__curved_left_flat_right, must_respect_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media__2_1.rez")
+TEST_CASE(must_respect_medium_ior__sw__curved_right_flat_left, must_respect_medium_ior__mirrors_at_ends, "calc_beamdata_elems_and_media__2_2.rez")
+
+TEST_CASE_METHOD(must_respect_medium_ior__elem_in_middle, QString fileName)
+{
+    READ_TEST_FILE(BeamParamsAtElemsFunction, fileName, ResultsCount(14))
+
+    // The end of left-half medium must match left side of element
+    ASSERT_TABLE_RES(5, 6, IgnoreSign(false))
+
+    // Right side of element must match the start of right-half medium
+    ASSERT_TABLE_RES(7, 8, IgnoreSign(false))
+}
+
+TEST_CASE(must_respect_medium_ior__sw__flat_in_middle, must_respect_medium_ior__elem_in_middle, "calc_beamdata_elems_and_media__3_1.rez")
+TEST_CASE(must_respect_medium_ior__sw__lens_in_middle, must_respect_medium_ior__elem_in_middle, "calc_beamdata_elems_and_media__3_2.rez")
 
 TEST_GROUP("BeamParamsAtElemsFunction",
-           ADD_TEST(must_respect_medium_ior__curved_mirrors_at_ends__simple),
-           ADD_TEST(must_respect_medium_ior__curved_mirrors_at_ends__grin),
-           ADD_TEST(must_respect_medium_ior__curved_mirrors_at_ends__thermo),
-           ADD_TEST(must_respect_medium_ior__curved_and_flat_mirror_at_end__right),
-           ADD_TEST(must_respect_medium_ior__curved_and_flat_mirror_at_end__left),
+           ADD_TEST(must_respect_medium_ior__sw__curved_ends__simple),
+           ADD_TEST(must_respect_medium_ior__sw__curved_ends__grin),
+           ADD_TEST(must_respect_medium_ior__sw__curved_ends__thermo),
+           ADD_TEST(must_respect_medium_ior__sw__curved_left_flat_right),
+           ADD_TEST(must_respect_medium_ior__sw__curved_right_flat_left),
+           ADD_TEST(must_respect_medium_ior__sw__flat_in_middle),
+           ADD_TEST(must_respect_medium_ior__sw__lens_in_middle),
            )
 }
 

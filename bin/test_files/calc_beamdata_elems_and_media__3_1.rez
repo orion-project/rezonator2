@@ -56,7 +56,7 @@
                 },
                 "n2": {
                     "unit": "none",
-                    "value": 1
+                    "value": 1.5
                 }
             },
             "title": "",
@@ -74,7 +74,7 @@
                 },
                 "n": {
                     "unit": "none",
-                    "value": 1
+                    "value": 1.5
                 }
             },
             "title": "",
@@ -102,7 +102,7 @@
                 },
                 "n": {
                     "unit": "none",
-                    "value": 1
+                    "value": 1.5
                 }
             },
             "title": "",
@@ -116,7 +116,7 @@
             "params": {
                 "n1": {
                     "unit": "none",
-                    "value": 1
+                    "value": 1.5
                 },
                 "n2": {
                     "unit": "none",
@@ -134,7 +134,7 @@
             "params": {
                 "L": {
                     "unit": "mm",
-                    "value": 100
+                    "value": 50
                 },
                 "n": {
                     "unit": "none",
@@ -174,5 +174,108 @@
     "title": "",
     "trip_type": "SW",
     "windows": [
+        {
+            "function": {
+                "args": [
+                    {
+                        "element_index": 1,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 100
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 3,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 100
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 5,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 100
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 7,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 0.5
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 50
+                            },
+                            "use_step": false
+                        }
+                    }
+                ],
+                "mode": "BeamRadius"
+            },
+            "type": "MultirangeCaustic",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "elem_bound_markers": true,
+                "stored_views": [
+                ],
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 353.5,
+                "x_min": -3.5,
+                "x_unit": "mm",
+                "y_max": 357.30157980231,
+                "y_min": 328.5050206446669,
+                "y_unit": "mkm"
+            }
+        }
     ]
 }
