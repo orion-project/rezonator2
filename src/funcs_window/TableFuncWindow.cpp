@@ -8,11 +8,13 @@
 #include "../widgets/RichTextItemDelegate.h"
 
 #include "helpers/OriWidgets.h"
+#include "helpers/OriLayouts.h"
 #include "widgets/OriStatusBar.h"
 
 #include <QAction>
 #include <QClipboard>
 #include <QHeaderView>
+#include <QTextBrowser>
 #include <QMenu>
 #include <QPainter>
 #include <QToolBar>
@@ -82,7 +84,7 @@ void TableFuncResultTable::updateColumnTitles()
 {
     QStringList titles;
     titles << tr("Position");
-    for (const auto& col : _columns)
+    for (auto& col : _columns)
     {
         QString title;
         if (showT and showS)
@@ -271,7 +273,10 @@ void TableFuncWindow::createContent()
     _table = new TableFuncResultTable(_function->columns());
     _table->updateColumnTitles();
 
-    setContent(_table);
+    _errorView = new QTextBrowser();
+    _errorView->setVisible(false);
+
+    setContent(Ori::Layouts::LayoutV({_table, _errorView}).setMargin(0).setSpacing(0).makeWidget());
 }
 
 void TableFuncWindow::update()
@@ -285,12 +290,16 @@ void TableFuncWindow::update()
     _function->calculate();
     if (!_function->ok())
     {
-        showStatusError(_function->errorText());
+        _errorView->setHtml(QString("<p style='color:red;font-size:13pt;margin:1em;'><br>%1</p>").arg(_function->errorText()));
+        _errorView->setVisible(true);
+        _table->setVisible(false);
         _table->clearContents();
     }
     else
     {
-        clearStatusInfo();
+        _errorView->setVisible(false);
+        _errorView->clear();
+        _table->setVisible(true);
         updateTable();
     }
 }
@@ -345,17 +354,3 @@ void TableFuncWindow::updateTable()
 {
     _table->update(_function->results());
 }
-
-void TableFuncWindow::showStatusError(const QString& message)
-{
-    _statusBar->setText(STATUS_INFO, message);
-    _statusBar->highlightError(STATUS_INFO);
-    _statusBar->setVisible(true);
-}
-
-void TableFuncWindow::clearStatusInfo()
-{
-    _statusBar->clear(STATUS_INFO);
-    _statusBar->setVisible(false);
-}
-

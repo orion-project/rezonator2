@@ -9,6 +9,7 @@
 
 QT_BEGIN_NAMESPACE
 class QAction;
+class QTextBrowser;
 QT_END_NAMESPACE
 
 namespace Ori {
@@ -94,6 +95,7 @@ private:
     FrozenStateButton* _buttonFrozenInfo;
     Ori::Widgets::StatusBar *_statusBar;
     TableFuncResultTable *_table;
+    QTextBrowser* _errorView;
     bool _frozen = false;
     bool _needRecalc = false;
 
@@ -102,9 +104,6 @@ private:
     void createToolBar();
     void createStatusBar();
     void createContent();
-
-    void showStatusError(const QString &message);
-    void clearStatusInfo();
 
     void showModeTS();
     void updateModeTS();

@@ -129,7 +129,10 @@ void TableFunction::calculate()
     }
 
     if (!_errorText.isEmpty())
+    {
+        Z_ERROR(name() + ": " + _errorText)
         _results.clear();
+    }
 }
 
 Element* TableFunction::prevElement(int index)
@@ -220,9 +223,9 @@ bool TableFunction::calculateAtMirrorOrLens(Element *elem, int index)
     }
     if (dynamic_cast<ElemMediumRange*>(prevElem) || Z::Utils::asInterface(prevElem))
     {
-        Z_ERROR(QString("%1: Invalid schema: there is '%2' element at the left of %3.")
-                        .arg(name(), prevElem->typeName(), elem->displayLabel()))
-        _errorText = "Invalid SW schema, see Protocol for details";
+        _errorText = QString(
+            "Invalid schema: there is %1 element at the left of %2.")
+            .arg(prevElem->typeName(), elem->displayLabel());
         return false;
     }
     calculateAt(prevElem, UseSubrange::null(), elem, ResultPosition::LEFT);
@@ -242,9 +245,9 @@ bool TableFunction::calculateAtInterface(ElementInterface* iface, int index)
             break; // Don't return!
 
         case TripType::SW:
-            Z_ERROR(QString("%1: Invalid SW schema: The interface element %2 is at the left end of the schema. "
-                            "The end element must be a mirror.").arg(name(), iface->displayLabel()))
-            _errorText = "Invalid SW schema, see Protocol for details";
+            _errorText = QString(
+                "Invalid SW schema: Interface element %1 is at the left end of the schema. "
+                "The end element must be a mirror.").arg(iface->displayLabel());
             return false;
 
         case TripType::RR:
@@ -258,11 +261,11 @@ bool TableFunction::calculateAtInterface(ElementInterface* iface, int index)
         if (!prevRange) prevRange = dynamic_cast<ElemMediumRange*>(prevElem);
         if (!prevRange)
         {
-            Z_ERROR(QString("%1: Invalid schema: There is a %2 element at the left of the interface %3. "
-                            "The only valid elements at both sides of an interface are %4, %5."
-                            ).arg(name(), prevElem->typeName(), iface->displayLabel(),
-                                  ElemEmptyRange::_typeName_(),
-                                  ElementsCatalog::instance().getMediumTypeNames().join(", ")))
+            _errorText = QString(
+                "Invalid schema: There is a %1 element at the left of the interface %2. "
+                "The only valid elements at both sides of an interface are %3, %4.").arg(
+                prevElem->typeName(), iface->displayLabel(), ElemEmptyRange::_typeName_(),
+                ElementsCatalog::instance().getMediumTypeNames().join(", "));
             _errorText = "Invalid schema, see Protocol for details";
             return false;
         }
@@ -279,9 +282,9 @@ bool TableFunction::calculateAtInterface(ElementInterface* iface, int index)
             return true;
 
         case TripType::SW:
-            Z_ERROR(QString("%1: Invalid SW schema: The interface element %2 is at the right end of the schema. "
-                            "The end element must be a mirror.").arg(name(), iface->displayLabel()))
-            _errorText = "Invalid SW schema, see Protocol for details";
+            _errorText = QString(
+                "Invalid SW schema: Interface element %1 is at the right end of the schema. "
+                "The end element must be a mirror.").arg(iface->displayLabel());
             return false;
 
         case TripType::RR:
@@ -294,12 +297,11 @@ bool TableFunction::calculateAtInterface(ElementInterface* iface, int index)
     if (!nextRange) nextRange = dynamic_cast<ElemMediumRange*>(nextElem);
     if (!nextRange)
     {
-        Z_ERROR(QString("%1: Invalid schema: There is a %2 at the right of the interface %3. "
-                        "The only valid elements at both sides of an interface are %4, %5."
-                        ).arg(name(), nextElem->typeName(), iface->displayLabel(),
-                              ElemEmptyRange::_typeName_(),
-                              ElementsCatalog::instance().getMediumTypeNames().join(", ")))
-        _errorText = "Invalid schema, see Protocol for details";
+        _errorText = QString(
+            "Invalid schema: There is a %1 at the right of the interface %2. "
+            "The only valid elements at both sides of an interface are %3, %4.").arg(
+            nextElem->typeName(), iface->displayLabel(), ElemEmptyRange::_typeName_(),
+            ElementsCatalog::instance().getMediumTypeNames().join(", "));
         return false;
     }
     calculateAt(nextRange, UseSubrange(0.0), iface, ResultPosition::IFACE_RIGHT);
@@ -318,10 +320,9 @@ bool TableFunction::calculateAtCrystal(ElementRange* range, int index)
             break; // Don't return!
 
         case TripType::SW:
-            Z_ERROR(QString(
-                "%1: Invalid SW schema: Crystal-like element %2 is at the left end of schema, "
-                "but the end element must be a mirror.").arg(name(), range->displayLabel()))
-            _errorText = "Invalid SW schema, see Protocol for details";
+            _errorText = QString(
+                "Invalid SW schema: Crystal-like element %1 is at the left end of schema, "
+                "but the end element must be a mirror.").arg(range->displayLabel());
             return false;
 
         case TripType::RR:
@@ -377,8 +378,7 @@ bool TableFunction::calculateAtPlane(Element* elem, int index)
         return calculateAtPlaneInMiddleOfSystem(elem, index);
     }
 
-    Z_ERROR(QString("%1: Invalid schema: Unknown trip-type %2.").arg(name()).arg(int(schema()->tripType())))
-    _errorText = "Invalid schema, see Protocol for details";
+    _errorText = QString("%1: Invalid schema: Unknown trip-type %2.").arg(name()).arg(int(schema()->tripType()));
     return false;
 }
 
@@ -392,11 +392,10 @@ bool TableFunction::calculateAtPlaneInMiddleOfSystem(Element* elem, int index)
 
     if ((prevMedium && !nextMedium) || (!prevMedium && nextMedium))
     {
-        Z_ERROR(QString(
-            "%1: Invalid schema: Position of element %2 is incorrect, "
-            "only interface element types can be placed at the edge of medium: %3")
-                .arg(name(), elem->displayLabel(), ElementsCatalog::instance().getInterfaceTypeNames().join(", ")))
-        _errorText = "Invalid schema, see Protocol for details";
+        _errorText = QString(
+            "Invalid schema: Position of element %1 is incorrect, "
+            "only interface element types can be placed at the edge of medium: %2").arg(
+            elem->displayLabel(), ElementsCatalog::instance().getInterfaceTypeNames().join(", "));
         return false;
     }
 
