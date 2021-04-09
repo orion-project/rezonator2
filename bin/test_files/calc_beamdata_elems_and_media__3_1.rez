@@ -169,10 +169,34 @@
     "param_links": [
     ],
     "pumps": [
+        {
+            "color": "#555555",
+            "is_active": true,
+            "label": "P1",
+            "mode": "Waist",
+            "params": {
+                "MI": {
+                    "unit": "none",
+                    "value_s": 1,
+                    "value_t": 1
+                },
+                "w_0": {
+                    "unit": "mkm",
+                    "value_s": 90,
+                    "value_t": 100
+                },
+                "z_w": {
+                    "unit": "mm",
+                    "value_s": 2,
+                    "value_t": 2
+                }
+            },
+            "title": ""
+        }
     ],
     "schema_version": "2.0",
     "title": "",
-    "trip_type": "SW",
+    "trip_type": "SP",
     "windows": [
         {
             "function": {
@@ -272,10 +296,13 @@
                 "x_max": 353.5,
                 "x_min": -3.5,
                 "x_unit": "mm",
-                "y_max": 357.30157980231,
-                "y_min": 328.5050206446669,
+                "y_max": 1030.5982888273684,
+                "y_min": 45.48886968848215,
                 "y_unit": "mkm"
             }
+        },
+        {
+            "type": "PumpsWindow"
         }
     ]
 }

@@ -99,7 +99,8 @@ public:
     /// Calculate additional points which are excessive for user
     /// because they are duplicated (already calculated via neigbor elements)
     /// but can be useful for testing
-    bool calcDebugResults = true;
+    bool calcMediumEnds = false;
+    bool calcEmptySpaces = false;
 
 protected:
     QString _errorText;

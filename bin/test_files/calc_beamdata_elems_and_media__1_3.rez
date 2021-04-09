@@ -73,10 +73,37 @@
     "param_links": [
     ],
     "pumps": [
+        {
+            "color": "#555555",
+            "is_active": true,
+            "label": "P1",
+            "mode": "Waist",
+            "params": {
+                "MI": {
+                    "unit": "none",
+                    "value_s": 1,
+                    "value_t": 1
+                },
+                "w_0": {
+                    "unit": "mkm",
+                    "value_s": 90,
+                    "value_t": 100
+                },
+                "z_w": {
+                    "unit": "mm",
+                    "value_s": 1,
+                    "value_t": 1
+                }
+            },
+            "title": ""
+        }
     ],
     "schema_version": "2.0",
     "title": "",
-    "trip_type": "SW",
+    "trip_type": "SP",
     "windows": [
+        {
+            "type": "PumpsWindow"
+        }
     ]
 }

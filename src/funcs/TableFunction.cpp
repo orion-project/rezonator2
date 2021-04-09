@@ -111,8 +111,17 @@ void TableFunction::calculate()
             continue;
         }
 
-        if (Z::Utils::isSpace(elem))
+        auto space = Z::Utils::asSpace(elem);
+        if (space)
+        {
+            if (calcEmptySpaces)
+            {
+                calculateAt(CalcElem::RangeBeg(space), ResultElem(space, ResultPosition::LEFT_INSIDE));
+                calculateAt(CalcElem::RangeMid(space), ResultElem(space, ResultPosition::MIDDLE));
+                calculateAt(CalcElem::RangeEnd(space), ResultElem(space, ResultPosition::RIGHT_INSIDE));
+            }
             continue;
+        }
 
         auto rangeN = Z::Utils::asMedium(elem);
         if (rangeN)
@@ -120,12 +129,12 @@ void TableFunction::calculate()
             // By default, don't need to calculate LEFT_INSIDE and RIGHT_INSIDE points,
             // because they will be calculated when processing the left and right
             // neighbor elements (they always must be in a properly defined schema).
-            if (calcDebugResults)
+            if (calcMediumEnds)
                 calculateAt(CalcElem::RangeBeg(rangeN), ResultElem(rangeN, ResultPosition::LEFT_INSIDE));
 
             calculateAt(CalcElem::RangeMid(rangeN), ResultElem(rangeN, ResultPosition::MIDDLE));
 
-            if (calcDebugResults)
+            if (calcMediumEnds)
                 calculateAt(CalcElem::RangeEnd(rangeN), ResultElem(rangeN, ResultPosition::RIGHT_INSIDE));
             continue;
         }
@@ -190,7 +199,7 @@ QString TableFunction::calculateAtElem(Element *elem, int index, AlwaysTwoSides 
         {
             // It's the left end mirror (probably attached to a medium)
             // If it's not a mirror then the system is invalid, but we don't check here
-            if (nextElem)
+            if (!prevElem)
             {
                 auto nextMedium = Z::Utils::asMedium(nextElem);
                 auto overrideIor = nextMedium ? OptionalIor(nextMedium->ior()) : OptionalIor();
@@ -200,7 +209,7 @@ QString TableFunction::calculateAtElem(Element *elem, int index, AlwaysTwoSides 
 
             // It's the right end mirror (probably attached to a medium)
             // If it's not a mirror then the system is invalid, but we don't check here
-            if (prevElem)
+            if (!nextElem)
             {
                 auto prevMedium = Z::Utils::asMedium(prevElem);
                 auto overrideIor = prevMedium ? OptionalIor(prevMedium->ior()) : OptionalIor();
@@ -223,13 +232,25 @@ QString TableFunction::calculateAtElem(Element *elem, int index, AlwaysTwoSides 
         if (!prevElem)
         {
             calculatePumpBeforeSchema(elem, ResultPosition::LEFT);
-            calculateAt(CalcElem(elem), ResultElem(elem, ResultPosition::RIGHT));
+            // We can calculate beam after the first elem like if beam was in a medium
+            // but the schema is invalid anyway - beamsize will show step-change
+            // at the first elem when the second is medium, which is not physically correct.
+            // But at least this calculation is consistent with those for SW schema.
+            auto nextMedium = Z::Utils::asMedium(nextElem);
+            auto overrideIor = nextMedium ? OptionalIor(nextMedium->ior()) : OptionalIor();
+            calculateAt(CalcElem(elem), ResultElem(elem, ResultPosition::RIGHT), overrideIor);
             return "";
         }
         if (!nextElem)
         {
+            // We can calculate beam before the last elem like if beam was in a medium
+            // but the schema is invalid anyway - beamsize will show step-change
+            // at the last elem if pre-last is medium, which is not physically correct.
+            // But at least this calculation is consistent with those for SW schema.
+            auto prevMedium = Z::Utils::asMedium(prevElem);
+            auto overrideIor = prevMedium ? OptionalIor(prevMedium->ior()) : OptionalIor();
+            calculateAt(CalcElem(prevElem), ResultElem(elem, ResultPosition::LEFT), overrideIor);
             // Calculate pump params after the last element
-            calculateAt(CalcElem(prevElem), ResultElem(elem, ResultPosition::LEFT));
             calculateAt(CalcElem(elem), ResultElem(elem, ResultPosition::RIGHT));
             return "";
         }
