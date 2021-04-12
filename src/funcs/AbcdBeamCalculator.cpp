@@ -31,6 +31,11 @@ static bool isImag(const Z::Complex& v)
 #endif
 }
 
+AbcdBeamCalculator::AbcdBeamCalculator(double lambdaSI)
+{
+    _wavelenSI = lambdaSI;
+}
+
 double AbcdBeamCalculator::beamRadius(const Z::Matrix& m, double ior) const
 {
     auto w = sqrt(_wavelenSI/ior * M_1_PI * 2.0 * m.B / sqrt(4.0 - SQR(m.A + m.D)));

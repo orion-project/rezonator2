@@ -61,6 +61,10 @@ public:
 enum ElementOption {
     /// The element can calculate two sets of matrices -
     /// one for the forward propagation and another for the back propagation.
+    /// This options is used only for output and formatting
+    /// in order not to show equal matrices twice.
+    /// Each element must initialize back propagation matrices explicitly
+    /// event when they are the same as forward propagation ones.
     Element_Asymmetrical = 0x01,
 
     /// The element can change wavefront, so functions calculating something

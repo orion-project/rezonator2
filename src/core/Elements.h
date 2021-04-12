@@ -242,7 +242,7 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemGrinMedium, ElementRange)
+DECLARE_ELEMENT(ElemGrinMedium, ElemMediumRange)
     ElemGrinMedium();
     TYPE_NAME(qApp->translate("Elements", "GRIN medium"))
     DEFAULT_LABEL("GM")
@@ -272,7 +272,7 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemThermoMedium, ElementRange)
+DECLARE_ELEMENT(ElemThermoMedium, ElemMediumRange)
     ElemThermoMedium();
     TYPE_NAME(qApp->translate("Elements", "Thermal medium"))
     DEFAULT_LABEL("TM")
@@ -361,6 +361,19 @@ protected:
     Z::Parameter *_ior2t, *_ior2s;
     Z::Parameter *_alpha2t, *_alpha2s;
 DECLARE_ELEMENT_END
+
+//------------------------------------------------------------------------------
+
+namespace Z {
+namespace Utils {
+
+inline bool isSpace(Element *elem) { return dynamic_cast<ElemEmptyRange*>(elem); }
+inline ElemEmptyRange* asSpace(Element *elem) { return dynamic_cast<ElemEmptyRange*>(elem); }
+inline bool isMedium(Element *elem) { return dynamic_cast<ElemMediumRange*>(elem); }
+inline ElemMediumRange* asMedium(Element *elem) { return dynamic_cast<ElemMediumRange*>(elem); }
+
+} // namespace Utils
+} // namespace Z
 
 //------------------------------------------------------------------------------
 

@@ -94,3 +94,21 @@ Elements ElementsCatalog::elements(const QString& category) const
 {
     return _elemsCategorized.contains(category)? _elemsCategorized[category]: Elements();
 }
+
+QStringList ElementsCatalog::getMediumTypeNames() const
+{
+    QStringList res;
+    for (auto elem : _elements)
+        if (Z::Utils::isMedium(elem))
+            res << elem->typeName();
+    return res;
+}
+
+QStringList ElementsCatalog::getInterfaceTypeNames() const
+{
+    QStringList res;
+    for (auto elem : _elements)
+        if (Z::Utils::isInterface(elem))
+            res << elem->typeName();
+    return res;
+}

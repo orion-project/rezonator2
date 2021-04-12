@@ -742,14 +742,14 @@ enum class ElementNeighbour {
 ElementNeighbour getNeighbour(Schema* schema, int index) {
     auto elem = schema->element(index);
     if (elem) {
-        if (dynamic_cast<ElemMediumRange*>(elem))
-            return ElementNeighbour::Medium;
-
         if (dynamic_cast<ElemGrinMedium*>(elem))
             return ElementNeighbour::Grin;
 
         if (dynamic_cast<ElemThermoMedium*>(elem))
             return ElementNeighbour::Grin;
+
+        if (dynamic_cast<ElemMediumRange*>(elem))
+            return ElementNeighbour::Medium;
 
         if (dynamic_cast<ElemEmptyRange*>(elem))
             return ElementNeighbour::Air;

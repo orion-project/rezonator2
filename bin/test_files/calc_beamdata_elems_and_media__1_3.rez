@@ -1,0 +1,109 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 2940
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "M1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 0
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 1000
+                }
+            },
+            "title": "",
+            "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "TM1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+                "F": {
+                    "unit": "m",
+                    "value": 1
+                },
+                "L": {
+                    "unit": "mm",
+                    "value": 55
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1.78
+                }
+            },
+            "title": "",
+            "type": "ElemThermoMedium"
+        },
+        {
+            "is_disabled": false,
+            "label": "M2",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 0
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 100
+                }
+            },
+            "title": "",
+            "type": "ElemCurveMirror"
+        }
+    ],
+    "formulas": [
+    ],
+    "notes": "",
+    "param_links": [
+    ],
+    "pumps": [
+        {
+            "color": "#555555",
+            "is_active": true,
+            "label": "P1",
+            "mode": "Waist",
+            "params": {
+                "MI": {
+                    "unit": "none",
+                    "value_s": 1,
+                    "value_t": 1
+                },
+                "w_0": {
+                    "unit": "mkm",
+                    "value_s": 90,
+                    "value_t": 100
+                },
+                "z_w": {
+                    "unit": "mm",
+                    "value_s": 1,
+                    "value_t": 1
+                }
+            },
+            "title": ""
+        }
+    ],
+    "schema_version": "2.0",
+    "title": "",
+    "trip_type": "SP",
+    "windows": [
+        {
+            "type": "PumpsWindow"
+        }
+    ]
+}

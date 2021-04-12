@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "FunctionBase.h"
+#include "../core/Utils.h"
 
 class AbcdBeamCalculator;
 class Schema;
@@ -13,6 +14,9 @@ class Schema;
 class TableFunction : public FunctionBase
 {
 public:
+    typedef Z::Optional<double> OptionalIor;
+    BOOL_PARAM(AlwaysTwoSides)
+
     struct ColumnDef
     {
         QString titleT, titleS;
@@ -33,11 +37,47 @@ public:
         IFACE_RIGHT,   //   |->
     };
 
+    struct ResultPositionInfo
+    {
+        QString ascii;
+        QString tooltip;
+        QString pixmap;
+    };
+
+    static const ResultPositionInfo& resultPositionInfo(ResultPosition pos);
+
     struct Result
     {
         Element* element;
         ResultPosition position = ResultPosition::ELEMENT;
         QVector<Z::PointTS> values;
+
+        QString str() const;
+    };
+
+    struct CalcElem
+    {
+        Element* elem = nullptr;
+        ElementRange *range = nullptr;
+        double subrange = 0;
+        enum class SubrangeOpt {NONE, MID, END};
+        SubrangeOpt subrangeOpt = SubrangeOpt::NONE;
+        Element* ref() const { return range ? range : elem; }
+        CalcElem(Element *elem): elem(elem) {}
+        static CalcElem Range(ElementRange *range, double subrange) { return CalcElem(range, subrange); }
+        static CalcElem RangeBeg(ElementRange *range) { return CalcElem(range, 0.0); }
+        static CalcElem RangeMid(ElementRange *range) { return CalcElem(range, SubrangeOpt::MID); }
+        static CalcElem RangeEnd(ElementRange *range) { return CalcElem(range, SubrangeOpt::END); }
+     private:
+        CalcElem(ElementRange *range, double subrange): range(range), subrange(subrange) {}
+        CalcElem(ElementRange *range, SubrangeOpt opt): range(range), subrangeOpt(opt) {}
+    };
+
+    struct ResultElem
+    {
+        Element* elem;
+        ResultPosition pos;
+        ResultElem(Element* elem, ResultPosition pos): elem(elem), pos(pos) {}
     };
 
 public:
@@ -56,6 +96,12 @@ public:
 
     const QVector<Result>& results() const { return _results; }
 
+    /// Calculate additional points which are excessive for user
+    /// because they are duplicated (already calculated via neigbor elements)
+    /// but can be useful for testing
+    bool calcMediumEnds = false;
+    bool calcEmptySpaces = false;
+
 protected:
     QString _errorText;
     QVector<Result> _results;
@@ -66,10 +112,12 @@ protected:
     bool prepareResonator();
     Element* prevElement(int index);
     Element* nextElement(int index);
-    bool calculateAtMirrorOrLens(Element* elem, int index);
-    bool calculateAtInterface(ElementInterface* iface, int index);
-    bool calculateAtCrystal(ElementRange* range, int index);
-    void calculateAt(Element* calcElem, bool calcSubrange, Element* resultElem, ResultPosition resultPos);
+    QString calculateAtElem(Element* elem, int index, AlwaysTwoSides alwaysTwoSides);
+    QString calculateAtInterface(ElementInterface* iface, int index);
+    QString calculateAtCrystal(ElementRange* range, int index);
+    QString calculateAtPlane(Element* elem, int index);
+    QString calculateInMiddle(Element* elem, Element *prevElem, Element *nextElem, AlwaysTwoSides alwaysTwoSides);
+    void calculateAt(CalcElem calcElem, ResultElem resultElem, OptionalIor overrideIor = OptionalIor());
     void calculatePumpBeforeSchema(Element* elem, ResultPosition resultPos);
     QVector<Z::PointTS> calculateSinglePass(RoundTripCalculator* calc, double ior) const;
     QVector<Z::PointTS> calculateResonator(RoundTripCalculator* calc, double ior) const;

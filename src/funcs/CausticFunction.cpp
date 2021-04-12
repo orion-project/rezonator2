@@ -103,7 +103,7 @@ bool CausticFunction::prepareSinglePass(Element* ref)
 
 bool CausticFunction::prepareResonator()
 {
-    if (!_beamCalc) _beamCalc.reset(new AbcdBeamCalculator(schema()->wavelenSi()));
+    _beamCalc.reset(new AbcdBeamCalculator(schema()->wavelenSi()));
     return true;
 }
 

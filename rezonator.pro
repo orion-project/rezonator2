@@ -1,5 +1,7 @@
 QT += core gui widgets printsupport network
 
+CONFIG += c++17
+
 #------------------------------------------------------------
 # Definition of output
 
@@ -267,6 +269,7 @@ SOURCES += \
     src/tests/test_RoundTripCalculator.cpp \
     src/tests/test_Schema.cpp \
     src/tests/test_SchemaReaderIni.cpp \
+    src/tests/test_TableFunction.cpp \
     src/tests/test_TestUtils.cpp \
     src/tests/test_UnitWidgets.cpp \
     src/tests/test_Units.cpp \

@@ -10,7 +10,7 @@ class Matrix;
 class AbcdBeamCalculator
 {
 public:
-    AbcdBeamCalculator(double lambdaSI) { _wavelenSI = lambdaSI; }
+    AbcdBeamCalculator(double lambdaSI);
 
     double beamRadius(const Z::Matrix& m, double ior) const;
     double frontRadius(const Z::Matrix &m, double ior) const;

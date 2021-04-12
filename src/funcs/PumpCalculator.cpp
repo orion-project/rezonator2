@@ -13,7 +13,7 @@ using namespace Z;
 class PumpCalculatorImpl final
 {
     friend class PumpCalculator;
-    using GetPumpParam = std::const_mem_fun_t<double, Z::ValueTS>;
+    using GetPumpParam = double (Z::ValueTS::*)() const;
 
     PumpCalculatorImpl(GetPumpParam f) : getPumpParam(f) {}
 
@@ -28,14 +28,16 @@ class PumpCalculatorImpl final
 
     inline double paramValueSI(ParameterTS* param)
     {
-        return param->value().unit()->toSi(getPumpParam(&param->value()));
+        auto v = (param->value().*getPumpParam)();
+        return param->value().unit()->toSi(v);
     }
 
     inline double paramValueInvSI(ParameterTS* param)
     {
         // When one wants to convert inverted non-SI to inverted SI units,
         // one can use fromSi() function as it have inverted action of toSi().
-        return param->value().unit()->fromSi(getPumpParam(&param->value()));
+        auto v = (param->value().*getPumpParam)();
+        return param->value().unit()->fromSi(v);
     }
 
     template <class TPumpParams, typename ...Lambda>
@@ -53,7 +55,7 @@ class PumpCalculatorImpl final
         id = ident;
         wavelen = lambda;
         protocol = writeProtocol;
-        MI = qAbs(getPumpParam(&pump->MI()->value()));
+        MI = qAbs((pump->MI()->value().*getPumpParam)());
         const double z = paramValueSI(pump->distance());
         const double w0_hyper = paramValueSI(pump->waist());
         const double w0_equiv_2 = SQR(w0_hyper) / MI;
@@ -78,7 +80,7 @@ class PumpCalculatorImpl final
         id = ident;
         wavelen = lambda;
         protocol = writeProtocol;
-        MI = qAbs(getPumpParam(&pump->MI()->value()));
+        MI = qAbs((pump->MI()->value().*getPumpParam)());
         const double w_hyper = paramValueSI(pump->beamRadius());
         const double w_equiv_2 = SQR(w_hyper) / MI;
         const double R_equiv = paramValueSI(pump->frontRadius());
@@ -115,7 +117,7 @@ class PumpCalculatorImpl final
         id = ident;
         wavelen = lambda;
         protocol = writeProtocol;
-        MI = qAbs(getPumpParam(&pump->MI()->value()));
+        MI = qAbs((pump->MI()->value().*getPumpParam)());
         Complex q_inv_hyper = 1.0 / Complex(paramValueSI(pump->real()),
                                             paramValueSI(pump->imag()));
         inputQ = 1.0 / Complex(q_inv_hyper.real(),
@@ -130,7 +132,7 @@ class PumpCalculatorImpl final
         id = ident;
         wavelen = lambda;
         protocol = writeProtocol;
-        MI = qAbs(getPumpParam(&pump->MI()->value()));
+        MI = qAbs((pump->MI()->value().*getPumpParam)());
         // Inverted complex beam parameter is measured in inverted units (1/m, 1/mm)
         // and value's unit actually means 1/unit for this case (e.g. mm means 1/mm).
         inputQ = 1.0 / Complex(paramValueInvSI(pump->real()),
@@ -204,14 +206,14 @@ class PumpCalculatorImpl final
 std::shared_ptr<PumpCalculator> PumpCalculator::T()
 {
     PumpCalculator *c = new PumpCalculator();
-    c->_impl = new PumpCalculatorImpl(std::mem_fun(&ValueTS::rawValueT));
+    c->_impl = new PumpCalculatorImpl(&ValueTS::rawValueT);
     return std::shared_ptr<PumpCalculator>(c);
 }
 
 std::shared_ptr<PumpCalculator> PumpCalculator::S()
 {
     PumpCalculator *c = new PumpCalculator();
-    c->_impl = new PumpCalculatorImpl(std::mem_fun(&ValueTS::rawValueS));
+    c->_impl = new PumpCalculatorImpl(&ValueTS::rawValueS);
     return std::shared_ptr<PumpCalculator>(c);
 }
 

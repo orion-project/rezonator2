@@ -8,8 +8,40 @@
 #include "../core/Schema.h"
 #include "../core/Elements.h"
 #include "../core/Protocol.h"
+#include "../core/ElementsCatalog.h"
 
 #include <QDebug>
+
+const TableFunction::ResultPositionInfo& TableFunction::resultPositionInfo(TableFunction::ResultPosition pos)
+{
+#define I_(pos, ascii, tooltip, pixmap)\
+    {TableFunction::ResultPosition::pos, {QString(ascii), QString(tooltip), QString(pixmap)}}
+
+    static QMap<TableFunction::ResultPosition, TableFunction::ResultPositionInfo> info = {
+        I_(ELEMENT,       "",          "",                          ""),
+        I_(LEFT,          "->()",      "At the left of element",    ":/misc/beampos_left"),
+        I_(RIGHT,         "  ()->",    "At the right of element",   ":/misc/beampos_right"),
+        I_(LEFT_OUTSIDE,  "->[   ]",   "At the left edge outside",  ":/misc/beampos_left_out"),
+        I_(LEFT_INSIDE,   "  [-> ]",   "At the left edge inside",   ":/misc/beampos_left_in"),
+        I_(MIDDLE,        "  [ + ]",   "In the middle of element",  ":/misc/beampos_middle"),
+        I_(RIGHT_INSIDE,  "  [ ->]",   "At the right edge inside",  ":/misc/beampos_right_in"),
+        I_(RIGHT_OUTSIDE, "  [   ]->", "At the right edge outside", ":/misc/beampos_right_out"),
+        I_(IFACE_LEFT,    "->|",       "At the left of interface",  ":/misc/beampos_iface_left"),
+        I_(IFACE_RIGHT,   "  |->",     "At the right of interface", ":/misc/beampos_iface_right"),
+    };
+    return info[pos];
+#undef I_
+}
+
+QString TableFunction::Result::str() const
+{
+    QString res;
+    QTextStream stream(&res);
+    stream << element->displayLabel() << "\t" << resultPositionInfo(position).ascii << "\t";
+    for (const auto& value : values)
+        stream << value.T << " x " << value.S << "\t";
+    return res;
+}
 
 TableFunction::TableFunction(Schema *schema) : FunctionBase(schema)
 {
@@ -30,20 +62,28 @@ bool TableFunction::prepareSinglePass()
 
 bool TableFunction::prepareResonator()
 {
-    if (!_beamCalc) _beamCalc.reset(new AbcdBeamCalculator(schema()->wavelenSi()));
+    _beamCalc.reset(new AbcdBeamCalculator(schema()->wavelenSi()));
     return true;
 }
 
 void TableFunction::calculate()
 {
-   _results.clear();
-   _errorText.clear();
+    _results.clear();
+    _errorText.clear();
 
-   bool isResonator = _schema->isResonator();
-   bool isPrepared = isResonator
+    bool isResonator = _schema->isResonator();
+    bool isPrepared = isResonator
            ? prepareResonator()
            : prepareSinglePass();
-   if (!isPrepared) return;
+    if (!isPrepared) return;
+
+    #define CHECK_ERR(f) {\
+        QString res = f;\
+        if (!res.isEmpty()) {\
+            _errorText = res;\
+            break;\
+        }\
+    }
 
     auto elems = schema()->elements();
     for (int i = 0; i < elems.size(); i++)
@@ -53,42 +93,62 @@ void TableFunction::calculate()
 
         if (elem->hasOption(Element_ChangesWavefront))
         {
-            if (calculateAtMirrorOrLens(elem, i))
-                continue;
-            else break;
+            CHECK_ERR(calculateAtElem(elem, i, AlwaysTwoSides(true)));
+            continue;
         }
 
         auto iface = Z::Utils::asInterface(elem);
         if (iface)
         {
-            if (calculateAtInterface(iface, i))
-                continue;
-            else break;
+            CHECK_ERR(calculateAtInterface(iface, i))
+            continue;
         }
 
         auto range = Z::Utils::asRange(elem);
         if (!range)
         {
-            calculateAt(elem, false, elem, ResultPosition::ELEMENT);
+            CHECK_ERR(calculateAtElem(elem, i, AlwaysTwoSides(false)))
             continue;
         }
 
-        if (dynamic_cast<ElemEmptyRange*>(elem))
+        auto space = Z::Utils::asSpace(elem);
+        if (space)
+        {
+            if (calcEmptySpaces)
+            {
+                calculateAt(CalcElem::RangeBeg(space), ResultElem(space, ResultPosition::LEFT_INSIDE));
+                calculateAt(CalcElem::RangeMid(space), ResultElem(space, ResultPosition::MIDDLE));
+                calculateAt(CalcElem::RangeEnd(space), ResultElem(space, ResultPosition::RIGHT_INSIDE));
+            }
             continue;
+        }
 
-        auto rangeN = dynamic_cast<ElemMediumRange*>(elem);
+        auto rangeN = Z::Utils::asMedium(elem);
         if (rangeN)
         {
-            rangeN->setSubRangeSI(rangeN->axisLengthSI() / 2.0);
-            calculateAt(rangeN, true, rangeN, ResultPosition::MIDDLE);
+            // By default, don't need to calculate LEFT_INSIDE and RIGHT_INSIDE points,
+            // because they will be calculated when processing the left and right
+            // neighbor elements (they always must be in a properly defined schema).
+            if (calcMediumEnds)
+                calculateAt(CalcElem::RangeBeg(rangeN), ResultElem(rangeN, ResultPosition::LEFT_INSIDE));
+
+            calculateAt(CalcElem::RangeMid(rangeN), ResultElem(rangeN, ResultPosition::MIDDLE));
+
+            if (calcMediumEnds)
+                calculateAt(CalcElem::RangeEnd(rangeN), ResultElem(rangeN, ResultPosition::RIGHT_INSIDE));
             continue;
         }
 
-        if (!calculateAtCrystal(range, i)) break;
+        CHECK_ERR(calculateAtCrystal(range, i))
     }
 
+    #undef CHECK_ERR
+
     if (!_errorText.isEmpty())
+    {
+        Z_ERROR(name() + ": " + _errorText)
         _results.clear();
+    }
 }
 
 Element* TableFunction::prevElement(int index)
@@ -126,62 +186,79 @@ Element* TableFunction::nextElement(int index)
     return nullptr;
 }
 
-bool TableFunction::calculateAtMirrorOrLens(Element *elem, int index)
+QString TableFunction::calculateAtElem(Element *elem, int index, AlwaysTwoSides alwaysTwoSides)
 {
     auto prevElem = prevElement(index);
-    if (!prevElem)
-    {
-        switch (schema()->tripType())
-        {
-        case TripType::SP:
-            calculatePumpBeforeSchema(elem, ResultPosition::LEFT);
-            calculateAt(elem, false, elem, ResultPosition::RIGHT);
-            return true;
-
-        case TripType::SW:
-            // It's the end mirror and beam params before and after are the same
-            calculateAt(elem, false, elem, ResultPosition::ELEMENT);
-            return true;
-
-        case TripType::RR:
-            _errorText = "Too few elements in RR schema";
-            return false;
-        }
-    }
     auto nextElem = nextElement(index);
-    if (!nextElem)
-    {
-        switch (schema()->tripType())
+
+    switch (schema()->tripType()) {
+    case TripType::SW:
+        if (prevElem && nextElem)
+            return calculateInMiddle(elem, prevElem, nextElem, alwaysTwoSides);
+        else if (prevElem || nextElem)
         {
-        case TripType::SP:
+            // It's the left end mirror (probably attached to a medium)
+            // If it's not a mirror then the system is invalid, but we don't check here
+            if (!prevElem)
+            {
+                auto nextMedium = Z::Utils::asMedium(nextElem);
+                auto overrideIor = nextMedium ? OptionalIor(nextMedium->ior()) : OptionalIor();
+                calculateAt(CalcElem(elem), ResultElem(elem, ResultPosition::ELEMENT), overrideIor);
+                return "";
+            }
+
+            // It's the right end mirror (probably attached to a medium)
+            // If it's not a mirror then the system is invalid, but we don't check here
+            if (!nextElem)
+            {
+                auto prevMedium = Z::Utils::asMedium(prevElem);
+                auto overrideIor = prevMedium ? OptionalIor(prevMedium->ior()) : OptionalIor();
+                calculateAt(CalcElem(elem), ResultElem(elem, ResultPosition::ELEMENT), overrideIor);
+                return "";
+            }
+        }
+        return "Too few elements";
+
+    case TripType::RR:
+        // In ring systems we always are somewhere in a middle
+        if (prevElem && nextElem)
+            return calculateInMiddle(elem, prevElem, nextElem, alwaysTwoSides);
+        return "Too few elements";
+
+    case TripType::SP:
+        // In middle of schema
+        if (prevElem && nextElem)
+            return calculateInMiddle(elem, prevElem, nextElem, alwaysTwoSides);
+        if (!prevElem)
+        {
+            calculatePumpBeforeSchema(elem, ResultPosition::LEFT);
+            // We can calculate beam after the first elem like if beam was in a medium
+            // but the schema is invalid anyway - beamsize will show step-change
+            // at the first elem when the second is medium, which is not physically correct.
+            // But at least this calculation is consistent with those for SW schema.
+            auto nextMedium = Z::Utils::asMedium(nextElem);
+            auto overrideIor = nextMedium ? OptionalIor(nextMedium->ior()) : OptionalIor();
+            calculateAt(CalcElem(elem), ResultElem(elem, ResultPosition::RIGHT), overrideIor);
+            return "";
+        }
+        if (!nextElem)
+        {
+            // We can calculate beam before the last elem like if beam was in a medium
+            // but the schema is invalid anyway - beamsize will show step-change
+            // at the last elem if pre-last is medium, which is not physically correct.
+            // But at least this calculation is consistent with those for SW schema.
+            auto prevMedium = Z::Utils::asMedium(prevElem);
+            auto overrideIor = prevMedium ? OptionalIor(prevMedium->ior()) : OptionalIor();
+            calculateAt(CalcElem(prevElem), ResultElem(elem, ResultPosition::LEFT), overrideIor);
             // Calculate pump params after the last element
-            calculateAt(prevElem, false, elem, ResultPosition::LEFT);
-            calculateAt(elem, false, elem, ResultPosition::RIGHT);
-            return true;
-
-        case TripType::SW:
-            // It's the end mirror and beam params before and after are the same
-            calculateAt(elem, false, elem, ResultPosition::ELEMENT);
-            return true;
-
-        case TripType::RR:
-            _errorText = "Too few elements in RR schema";
-            return false;
+            calculateAt(CalcElem(elem), ResultElem(elem, ResultPosition::RIGHT));
+            return "";
         }
     }
-    if (dynamic_cast<ElemMediumRange*>(prevElem) || Z::Utils::asInterface(prevElem))
-    {
-        Z_ERROR(QString("%1: Invalid schema: there is '%2' element at the left of %3.")
-                        .arg(name(), prevElem->typeName(), elem->displayLabel()))
-        _errorText = "Invalid SW schema, see Protocol for details";
-        return false;
-    }
-    calculateAt(prevElem, false, elem, ResultPosition::LEFT);
-    calculateAt(elem, false, elem, ResultPosition::RIGHT);
-    return true;
+    return QString("Invalid schema: Unknown trip-type %1.").arg(int(schema()->tripType()));
 }
 
-bool TableFunction::calculateAtInterface(ElementInterface* iface, int index)
+QString TableFunction::calculateAtInterface(ElementInterface* iface, int index)
 {
     auto prevElem = prevElement(index);
     if (!prevElem)
@@ -193,31 +270,25 @@ bool TableFunction::calculateAtInterface(ElementInterface* iface, int index)
             break; // Don't return!
 
         case TripType::SW:
-            Z_ERROR(QString("%1: Invalid SW schema: The interface element %2 is at the left end of the schema. "
-                            "The end element must be a mirror.").arg(name(), iface->displayLabel()))
-            _errorText = "Invalid SW schema, see Protocol for details";
-            return false;
+            return QString(
+                "Invalid SW schema: Interface element %1 is at the left end of the schema. "
+                "The end element must be a mirror.").arg(iface->displayLabel());
 
         case TripType::RR:
-            _errorText = "Too few elements in RR schema";
-            return false;
+            return "Too few elements in RR schema";
         }
     }
     else
     {
-        ElementRange *prevRange = dynamic_cast<ElemEmptyRange*>(prevElem);
-        if (!prevRange) prevRange = dynamic_cast<ElemMediumRange*>(prevElem);
+        ElementRange* prevRange = Z::Utils::asSpace(prevElem);
+        if (!prevRange) prevRange = Z::Utils::asMedium(prevElem);
         if (!prevRange)
-        {
-            Z_ERROR(QString("%1: Invalid schema: There is a '%2' element at the left of the interface %3. "
-                            "Only valid elements at both sides of an interface are '%4' or '%5'."
-                            ).arg(name(), prevElem->typeName(), iface->displayLabel(),
-                            ElemEmptyRange::_typeName_(), ElemMediumRange::_typeName_()))
-            _errorText = "Invalid schema, see Protocol for details";
-            return false;
-        }
-        prevRange->setSubRangeSI(prevRange->axisLengthSI());
-        calculateAt(prevRange, true, iface, ResultPosition::IFACE_LEFT);
+            return QString(
+                "Invalid schema: There is a %1 element at the left of the interface %2. "
+                "The only valid elements at both sides of an interface are %3, %4.").arg(
+                prevElem->typeName(), iface->displayLabel(), ElemEmptyRange::_typeName_(),
+                ElementsCatalog::instance().getMediumTypeNames().join(", "));
+        calculateAt(CalcElem::RangeEnd(prevRange), ResultElem(iface, ResultPosition::IFACE_LEFT));
     }
 
     auto nextElem = nextElement(index);
@@ -226,38 +297,32 @@ bool TableFunction::calculateAtInterface(ElementInterface* iface, int index)
         switch (schema()->tripType())
         {
         case TripType::SP:
-            calculateAt(iface, false, iface, ResultPosition::IFACE_RIGHT);
-            return true;
+            calculateAt(CalcElem(iface), ResultElem(iface, ResultPosition::IFACE_RIGHT));
+            return "";
 
         case TripType::SW:
-            Z_ERROR(QString("%1: Invalid SW schema: The interface element %2 is at the right end of the schema. "
-                            "The end element must be a mirror.").arg(name(), iface->displayLabel()))
-            _errorText = "Invalid SW schema, see Protocol for details";
-            return false;
+            return QString(
+                "Invalid SW schema: Interface element %1 is at the right end of the schema. "
+                "The end element must be a mirror.").arg(iface->displayLabel());
 
         case TripType::RR:
-            _errorText = "Too few elements in RR schema";
-            return false;
+            return "Too few elements in RR schema";
         }
     }
 
-    ElementRange *nextRange = dynamic_cast<ElemEmptyRange*>(nextElem);
-    if (!nextRange) nextRange = dynamic_cast<ElemMediumRange*>(nextElem);
+    ElementRange* nextRange = Z::Utils::asSpace(nextElem);
+    if (!nextRange) nextRange = Z::Utils::asMedium(nextElem);
     if (!nextRange)
-    {
-        Z_ERROR(QString("%1: Invalid schema: There is a '%2' at the right of the interface %3. "
-                        "Only valid elements at both sides of an interface are '%4' or '%5'."
-                        ).arg(name(), nextElem->typeName(), iface->displayLabel(),
-                        ElemEmptyRange::_typeName_(), ElemMediumRange::_typeName_()))
-        _errorText = "Invalid schema, see Protocol for details";
-        return false;
-    }
-    nextRange->setSubRangeSI(0);
-    calculateAt(nextRange, true, iface, ResultPosition::IFACE_RIGHT);
-    return true;
+        return QString(
+            "Invalid schema: There is a %1 at the right of the interface %2. "
+            "The only valid elements at both sides of an interface are %3, %4.").arg(
+            nextElem->typeName(), iface->displayLabel(), ElemEmptyRange::_typeName_(),
+            ElementsCatalog::instance().getMediumTypeNames().join(", "));
+    calculateAt(CalcElem::RangeBeg(nextRange), ResultElem(iface, ResultPosition::IFACE_RIGHT));
+    return "";
 }
 
-bool TableFunction::calculateAtCrystal(ElementRange* range, int index)
+QString TableFunction::calculateAtCrystal(ElementRange* range, int index)
 {
     auto prevElem = prevElement(index);
     if (!prevElem)
@@ -269,45 +334,80 @@ bool TableFunction::calculateAtCrystal(ElementRange* range, int index)
             break; // Don't return!
 
         case TripType::SW:
-            Z_ERROR(QString(
-                "%1: Invalid SW schema: Crystal-like element %2 is at the left end of schema, "
-                "but the end element must be a mirror.").arg(name(), range->displayLabel()))
-            _errorText = "Invalid SW schema, see Protocol for details";
-            return false;
+            return QString(
+                "Invalid SW schema: Crystal-like element %1 is at the left end of schema, "
+                "but the end element must be a mirror.").arg(range->displayLabel());
 
         case TripType::RR:
-            _errorText = "Too few elements in RR schema";
-            return false;
+            return "Too few elements in RR schema";
         }
     }
     else
-        calculateAt(prevElem, false, range, ResultPosition::LEFT_OUTSIDE);
-
-    range->setSubRangeSI(0);
-    calculateAt(range, true, range, ResultPosition::LEFT_INSIDE);
-
-    auto len = range->axisLengthSI();
-    range->setSubRangeSI(len / 2.0);
-    calculateAt(range, true, range, ResultPosition::MIDDLE);
-
-    range->setSubRangeSI(len);
-    calculateAt(range, true, range, ResultPosition::RIGHT_INSIDE);
-
-    calculateAt(range, false, range, ResultPosition::RIGHT_OUTSIDE);
-    return true;
+        calculateAt(CalcElem(prevElem), ResultElem(range, ResultPosition::LEFT_OUTSIDE));
+    calculateAt(CalcElem::RangeBeg(range), ResultElem(range, ResultPosition::LEFT_INSIDE));
+    calculateAt(CalcElem::RangeMid(range), ResultElem(range, ResultPosition::MIDDLE));
+    calculateAt(CalcElem::RangeEnd(range), ResultElem(range, ResultPosition::RIGHT_INSIDE));
+    calculateAt(CalcElem(range), ResultElem(range, ResultPosition::RIGHT_OUTSIDE));
+    return "";
 }
 
-void TableFunction::calculateAt(Element* calcElem, bool calcSubrange, Element *resultElem, ResultPosition resultPos)
+QString TableFunction::calculateInMiddle(Element* elem, Element* prevElem, Element* nextElem, AlwaysTwoSides alwaysTwoSides)
 {
-    RoundTripCalculator calc(schema(), calcElem);
-    calc.calcRoundTrip(calcSubrange);
+    // In this method the elem is guaranteed to be not at the ends of a schema
+    // for SW and SP systems, for RR any element is always in a 'middle'
+
+    auto prevMedium = Z::Utils::asMedium(prevElem);
+    auto nextMedium = Z::Utils::asMedium(nextElem);
+
+    if ((prevMedium && !nextMedium) || (!prevMedium && nextMedium))
+        return QString(
+            "Invalid schema: Position of element %1 is incorrect, "
+            "only interface element types can be placed at the edge of medium: %2").arg(
+            elem->displayLabel(), ElementsCatalog::instance().getInterfaceTypeNames().join(", "));
+
+    // Position between two media doesn't guarantee that schema is valid
+    // but at least it CAN BE valid (especially if both media have the same IOR)
+    // if element's matrix doesn't imply air around the element.
+    if (prevMedium && nextMedium)
+    {
+        calculateAt(CalcElem::RangeEnd(prevMedium), ResultElem(elem, ResultPosition::LEFT));
+        calculateAt(CalcElem(elem), ResultElem(elem, ResultPosition::RIGHT), OptionalIor(nextMedium->ior()));
+        return "";
+    }
+
+    if (alwaysTwoSides)
+    {
+        auto prevRange = Z::Utils::asRange(prevElem);
+        auto calcElem = prevRange ? CalcElem::RangeEnd(prevRange) : CalcElem(prevElem);
+        calculateAt(calcElem, ResultElem(elem, ResultPosition::LEFT));
+        calculateAt(CalcElem(elem), ResultElem(elem, ResultPosition::RIGHT));
+    }
+    else
+        calculateAt(CalcElem(elem), ResultElem(elem, ResultPosition::ELEMENT));
+    return "";
+}
+
+void TableFunction::calculateAt(CalcElem calcElem, ResultElem resultElem, OptionalIor overrideIor)
+{
+    if (calcElem.range)
+    {
+        if (calcElem.subrangeOpt == CalcElem::SubrangeOpt::END)
+            calcElem.range->setSubRangeSI(calcElem.range->axisLengthSI());
+        else if (calcElem.subrangeOpt == CalcElem::SubrangeOpt::MID)
+            calcElem.range->setSubRangeSI(calcElem.range->axisLengthSI()/2.0);
+        else
+            calcElem.range->setSubRangeSI(calcElem.subrange);
+    }
+
+    RoundTripCalculator calc(schema(), calcElem.ref());
+    calc.calcRoundTrip(calcElem.range);
     calc.multMatrix();
 
-    const double ior = calcSubrange ? Z::Utils::asRange(calcElem)->ior() : 1;
+    const double ior = overrideIor.set ? overrideIor.value : (calcElem.range ? calcElem.range->ior() : 1);
 
     Result res;
-    res.element = resultElem;
-    res.position = resultPos;
+    res.element = resultElem.elem;
+    res.position = resultElem.pos;
     res.values = schema()->isResonator()
             ? calculateResonator(&calc, ior)
             : calculateSinglePass(&calc, ior);
