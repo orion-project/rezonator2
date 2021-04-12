@@ -1,6 +1,18 @@
 {
   "history": [
     {
+      "version": "2.0.7-beta3",
+      "date": "2021-04-??",
+      "changes": [
+        {
+          "text": "Fix: mirrors at ends of resonator respect IOR of attached media (https://github.com/orion-project/rezonator2/issues/4)"
+        },
+        {
+          "text": "Fix: back-propagation matrices for GRIN elements were not calculated (https://github.com/orion-project/rezonator2/issues/5)"
+        }
+      ]
+    },
+    {
       "version": "2.0.6-beta2",
       "date": "2020-06-02",
       "changes": [
@@ -47,7 +59,7 @@
           "text": "New tool: GRIN lens assessment."
         },
         {
-          "test": "Can set different colors for pumps for using in MB-Caustic plot."
+          "text": "Can set different colors for pumps for using in MB-Caustic plot."
         }
       ]
     },

@@ -161,7 +161,7 @@ GaussCalcParamEditor::GaussCalcParamEditor(Z::Parameter *param,
       _invertedUnit(invertedUnit)
 {
     _editor = new ParamEditor(ParamEditor::Options(_param));
-    _setValueToCalculator(_calc, paramValueSI());
+    (_calc->*_setValueToCalculator)(paramValueSI());
     connect(_editor, SIGNAL(valueEdited(double)), this, SLOT(paramEdited()));
     connect(_editor, SIGNAL(unitChanged(Z::Unit)), this, SLOT(paramEdited()));
 }
@@ -174,7 +174,7 @@ GaussCalcParamEditor::~GaussCalcParamEditor()
 
 void GaussCalcParamEditor::getValueFromCalculator()
 {
-    double valueSi = _getValueFromCalculator(_calc);
+    double valueSi = (_calc->*_getValueFromCalculator)();
     Z::Unit unit = _param->value().unit();
     double value = _invertedUnit
             ? unit->toSi(valueSi)
@@ -185,7 +185,7 @@ void GaussCalcParamEditor::getValueFromCalculator()
 void GaussCalcParamEditor::paramEdited()
 {
     _editor->apply();
-    _setValueToCalculator(_calc, paramValueSI());
+    (_calc->*_setValueToCalculator)(paramValueSI());
     emit calcNeeded();
 }
 
@@ -550,7 +550,7 @@ void GaussCalculatorWindow::storeState()
 
 void GaussCalculatorWindow::makeParams(QGridLayout *paramsLayout)
 {
-    #define FUNC(func_name) std::mem_fun(&GaussCalculator::func_name)
+    #define FUNC(func_name) &GaussCalculator::func_name
 
     auto addParam = [](Z::Dim dim, const QString& alias, const QString& name, const Z::Value& initialValue) {
         auto param = new Z::Parameter(dim, alias, name);

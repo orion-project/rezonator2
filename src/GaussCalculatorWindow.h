@@ -3,7 +3,6 @@
 
 #include <QWidget>
 
-#include <functional>
 #include <memory>
 
 #include "core/Parameters.h"
@@ -37,8 +36,8 @@ class GaussCalcParamEditor : public QObject
     Q_OBJECT
 
 public:
-    using GaussCalcGetValueFunc = std::const_mem_fun_t<double, GaussCalculator>;
-    using GaussCalcSetValueFunc = std::mem_fun1_t<void, GaussCalculator, const double&>;
+    using GaussCalcGetValueFunc = double (GaussCalculator::*)() const;
+    using GaussCalcSetValueFunc = void (GaussCalculator::*)(const double&);
 
     GaussCalcParamEditor(Z::Parameter *param,
                          GaussCalculator *calc,
