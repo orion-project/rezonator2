@@ -33,7 +33,7 @@ if [[ -z ${QMAKE_VER} ]]; then
   echo -e "${COLOR_FAIL}ERROR: Qt is not found in PATH.${COLOR_RESET}"
   echo "Find Qt installation and update your PATH like:"
   if [ ${IS_LINUX} ]; then
-    echo -e "${COLOR_BOLD}export PATH=/home/user/Qt/5.10.0/gcc_64/bin:\$PATH${COLOR_RESET}"
+    echo -e "${COLOR_BOLD}export PATH=/home/user/Qt/5.15.2/gcc_64/bin:\$PATH${COLOR_RESET}"
   else
     echo -e "${COLOR_BOLD}export PATH=/Users/user/Qt/5.10.0/clang_64/bin:\$PATH${COLOR_RESET}"
   fi

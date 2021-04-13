@@ -6,6 +6,12 @@ reZonator user manual is built using [Sphinx Documentation Builder](http://www.s
 
 The virtual environment shared between different project parts, e.g., `calc` and `help`, so it's better to make it on the project top level.
 
+On Ubuntu `patchelf` package is required:
+
+```bash
+sudo apt-get install patchelf
+```
+
 Linux, macOS:
 
 ```bash

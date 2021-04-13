@@ -61,7 +61,7 @@ run_linuxdeplyqt() {
   ./${LINUXDEPLOYQT} AppDir/usr/bin/assistant \
     -no-translations \
     -no-copy-copyright-files \
-    -exclude-libs=libqsqlmysql
+    -exclude-libs=libqsqlmysql,libqsqlodbc,libqsqlpsql
 
   echo
   echo "Bundle rezonator..."
@@ -69,7 +69,7 @@ run_linuxdeplyqt() {
     -appimage \
     -no-translations \
     -no-copy-copyright-files \
-    -exclude-libs=libqsqlmysql
+    -exclude-libs=libqsqlmysql,libqsqlodbc,libqsqlpsql
   exit_if_fail
 }
 
