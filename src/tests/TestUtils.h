@@ -5,6 +5,7 @@
 #include "testing/OriTestBase.h"
 
 #include <QDebug>
+#include <QFile>
 
 //------------------------------------------------------------------------------
 //                       Application specific asserts

@@ -15,6 +15,7 @@
 #include "helpers/OriWindows.h"
 #include "widgets/OriFlatToolBar.h"
 
+#include <QFile>
 #include <QFileSystemWatcher>
 #include <QIcon>
 #include <QMenu>

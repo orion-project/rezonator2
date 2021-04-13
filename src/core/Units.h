@@ -5,6 +5,7 @@
 
 #include <QString>
 #include <QList>
+#include <QMetaType>
 
 #define DECLARE_UNIT(unit_name) Unit unit_name();
 #define DECLARE_DIM(dim_name) Dim dim_name();

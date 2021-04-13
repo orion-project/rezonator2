@@ -1,8 +1,17 @@
 {
   "history": [
     {
+      "version": "2.0.8-beta4",
+      "date": "2021-04-13",
+      "changes": [
+        {
+          "text": "Adjust and build with Qt 5.15.2 which is the latest LTS in 5.* series",
+        },
+      ]
+    },
+    {
       "version": "2.0.7-beta3",
-      "date": "2021-04-??",
+      "date": "2021-04-13",
       "changes": [
         {
           "text": "Fix: mirrors at ends of resonator respect IOR of attached media (https://github.com/orion-project/rezonator2/issues/4)"

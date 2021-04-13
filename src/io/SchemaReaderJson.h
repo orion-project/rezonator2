@@ -3,6 +3,10 @@
 
 #include "../core/Report.h"
 
+QT_BEGIN_NAMESPACE
+class QJsonObject;
+QT_END_NAMESPACE
+
 class Element;
 class Schema;
 class PumpParams;

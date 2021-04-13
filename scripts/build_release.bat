@@ -11,7 +11,7 @@ if %ERRORLEVEL% neq 0 (
 	echo.
 	echo ERROR: mingw32-make is not found in PATH
 	echo Ensure you have MinGW installed and update PATH, e.g.:
-    echo set PATH=c:\Qt\Tools\mingw730_64\bin;%%PATH%%
+    echo set PATH=c:\Qt\Tools\mingw810_64\bin;%%PATH%%
 	goto :eof
 )
 where /Q qmake
@@ -19,7 +19,7 @@ if %ERRORLEVEL% neq 0 (
 	echo.
 	echo ERROR: qmake is not found in PATH
 	echo Find Qt installation and update your PATH like:
-    echo set PATH=c:\Qt\5.12.0\mingw73_64\bin;%%PATH%%
+    echo set PATH=c:\Qt\5.15.2\mingw81_64\bin;%%PATH%%
 	goto :eof
 )
 mingw32-make --version

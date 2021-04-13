@@ -7,6 +7,7 @@
 #include <QBoxLayout>
 #include <QDebug>
 #include <QEvent>
+#include <QKeyEvent>
 #include <QMenu>
 #include <QTimer>
 #include <QToolButton>

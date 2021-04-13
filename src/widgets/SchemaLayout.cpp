@@ -6,6 +6,7 @@
 #include "../funcs/FormatInfo.h"
 
 #include <QClipboard>
+#include <QContextMenuEvent>
 #include <QtMath>
 #include <QMenu>
 

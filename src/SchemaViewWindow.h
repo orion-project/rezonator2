@@ -5,6 +5,8 @@
 #include "core/Schema.h"
 #include "core/Element.h"
 
+#include <QCloseEvent>
+
 QT_BEGIN_NAMESPACE
 class QMenu;
 class QAction;

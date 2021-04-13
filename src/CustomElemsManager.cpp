@@ -11,6 +11,7 @@
 #include "widgets/OriInfoPanel.h"
 
 #include <QApplication>
+#include <QFile>
 #include <QFormLayout>
 #include <QLabel>
 #include <QLineEdit>
