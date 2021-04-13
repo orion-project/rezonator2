@@ -41,6 +41,12 @@ additional dev libs must be installed:
 sudo apt-get install build-essential libgl1-mesa-dev
 ```
 
+#### [macOS] Latest Qt for Sierra
+
+Version Qt 5.12.10 is the latest of 5.* LTSs availablbe for Sierra (10.12).
+QtCreator 4.10.2 is the latest as well and must be downloaded and installed manually.
+Also 5.12.10 kit must be registered manually in that "obsolete" QtCreator.
+
 ## Build steps
 
 ### Clone git repository
