@@ -107,7 +107,7 @@ PumpParams* PumpsTable::selected() const
 QList<PumpParams*> PumpsTable::selection() const
 {
     QList<PumpParams*> pumps;
-    for (auto row : selectedRows())
+    Q_FOREACH (auto row, selectedRows())
         pumps << schema()->pumps()->at(row);
     return pumps;
 }
@@ -115,7 +115,7 @@ QList<PumpParams*> PumpsTable::selection() const
 QList<int> PumpsTable::selectedRows() const
 {
     QList<int> rows;
-    for (auto index : selectionModel()->selectedIndexes())
+    Q_FOREACH (auto index, selectionModel()->selectedIndexes())
         if (!rows.contains(index.row()))
             rows << index.row();
     std::sort(rows.begin(), rows.end());

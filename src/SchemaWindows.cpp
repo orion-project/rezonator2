@@ -281,7 +281,7 @@ void SchemaMdiArea::populateWindowMenu()
     auto subWindows = subWindowList();
 
     // Remove action of windows that are no more exist
-    for (auto action : menu->actions())
+    Q_FOREACH (auto action, menu->actions())
     {
         if (action->data().isNull()) continue;
         // If we interpret variant data as QMdiSubWindow*, Qt seems to call for some of their
@@ -349,25 +349,31 @@ bool SchemaPopupWindow::event(QEvent *event)
     {
         auto keyEvent = dynamic_cast<QKeyEvent*>(event);
         if (keyEvent)
-            for (auto shortcut : _actionShortcuts)
+        {
+            Q_FOREACH(auto shortcut, _actionShortcuts)
+            {
                 if (keyEvent->matches(shortcut))
                 {
                     keyEvent->accept();
                     return true;
                 }
+            }
+        }
     }
     return QWidget::event(event);
 }
 
 void SchemaPopupWindow::keyPressEvent(QKeyEvent *event)
 {
-    for (auto shortcut : _actionShortcuts)
+    Q_FOREACH (auto shortcut, _actionShortcuts)
+    {
         if (event->matches(shortcut))
         {
             _actionWithShortcuts[shortcut]->trigger();
             event->accept();
             return;
         }
+    }
     QWidget::keyPressEvent(event);
 }
 

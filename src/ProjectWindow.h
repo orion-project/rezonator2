@@ -76,7 +76,8 @@ private:
              *actnToolGrinLens;
 
     QAction *actnWndClose, *actnWndCloseAll, *actnWndTile, *actnWndCascade,
-            *actnWndSchema, *actnWndParams, *actnWndProtocol, *actnWndPumps;
+            *actnWndSchema, *actnWndParams, *actnWndProtocol, *actnWndPumps,
+            *actnWndNotes;
 
     QAction *actnHelpBugReport, *actnHelpUpdates, *actnHelpHomepage, *actnHelpAbout,
             *actnHelpContent, *actnHelpIndex;
@@ -117,6 +118,7 @@ private slots:
     void showCalculator();
     void showParamsWindow();
     void showPumpsWindow();
+    void showNotesWindow();
     void showAdjustment();
     void showHelp();
 
