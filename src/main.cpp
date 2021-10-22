@@ -41,9 +41,9 @@ int main(int argc, char* argv[])
     auto optionVersion = parser.addVersionOption();
     QCommandLineOption optionTest("test", "Run unit-test session.");
     QCommandLineOption optionTool("tool", "Run a tool: gauss, calc", "name");
-    QCommandLineOption optionDevMode("dev"); optionDevMode.setHidden(true);
-    QCommandLineOption optionConsole("console"); optionConsole.setHidden(true);
-    QCommandLineOption optionExample("example"); optionExample.setHidden(true);
+    QCommandLineOption optionDevMode("dev"); optionDevMode.setFlags(QCommandLineOption::HiddenFromHelp);
+    QCommandLineOption optionConsole("console"); optionConsole.setFlags(QCommandLineOption::HiddenFromHelp);
+    QCommandLineOption optionExample("example"); optionExample.setFlags(QCommandLineOption::HiddenFromHelp);
     parser.addOptions({optionTest, optionTool, optionDevMode, optionConsole, optionExample});
 
     if (!parser.parse(QApplication::arguments()))
@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
     if (!args.isEmpty())
     {
         auto fileName = args.first();
-        if (QFileInfo(fileName).exists())
+        if (QFileInfo::exists(fileName))
         {
             auto projectWindow = new ProjectWindow(new Schema());
             projectWindow->show();

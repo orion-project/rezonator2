@@ -152,7 +152,7 @@ void ElemFormula::moveParamUp(Z::Parameter* param)
         _params.append(param);
     }
     else
-        _params.swap(index, index-1);
+        _params.swapItemsAt(index, index-1);
 }
 
 void ElemFormula::moveParamDown(Z::Parameter* param)
@@ -169,7 +169,7 @@ void ElemFormula::moveParamDown(Z::Parameter* param)
         _params.insert(0, param);
     }
     else
-        _params.swap(index, index+1);
+        _params.swapItemsAt(index, index+1);
 }
 
 void ElemFormula::assign(const ElemFormula* other)

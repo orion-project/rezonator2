@@ -9,6 +9,7 @@ class QLabel;
 class QBoxLayout;
 class QFileInfo;
 class QMovie;
+class QToolButton;
 QT_END_NAMESPACE
 
 class CustomCssWidget : public QWidget
@@ -155,6 +156,7 @@ protected:
 
 private:
     QLabel *_tipImage;
+    QToolButton *_aboutButton;
 
     void editStyleSheet();
     void loadStyleSheet();

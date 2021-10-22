@@ -26,6 +26,7 @@
 #include <QPainter>
 #include <QPlainTextEdit>
 #include <QPushButton>
+#include <QRandomGenerator>
 #include <QResource>
 #include <QScrollArea>
 #include <QScrollBar>
@@ -91,7 +92,7 @@ void MruStartItem::resizeEvent(QResizeEvent *event)
 
     QFontMetrics metrix(_filePathLabel->font());
     int width = _filePathLabel->width();
-    if (metrix.width(_filePath) > width)
+    if (metrix.horizontalAdvance(_filePath) > width)
     {
         _filePathLabel->setText(metrix.elidedText(_filePath, Qt::ElideLeft, width));
         setToolTip(_filePath);
@@ -306,7 +307,7 @@ void TipsStartPanel::loadTips()
     auto keys = _tips.keys();
     while (!keys.isEmpty())
     {
-        int index = qrand() % keys.size();
+        int index = QRandomGenerator::system()->generate() % keys.size();
         auto key = keys.at(index);
         keys.removeAt(index);
         auto tip = _tips[key].toObject();
@@ -588,6 +589,15 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
         Stretch(),
     }).setMargin(20).useFor(this);
 
+    _aboutButton = new QToolButton(this);
+    _aboutButton->setIcon(QIcon(":/toolbar/help"));
+    _aboutButton->setToolTip(tr("About"));
+    connect(_aboutButton, &QToolButton::clicked, this, []{
+        Z::HelpSystem::instance()->showAbout();
+    });
+    auto h = _aboutButton->size().height();
+    _aboutButton->resize(h, h);
+
     // Should be after all widgets to overlay them
     tipImage->setParent(this);
 
@@ -634,6 +644,8 @@ void StartWindow::resizeEvent(QResizeEvent* event)
 {
     QWidget::resizeEvent(event);
     adjustTipImagePosition(_tipImage);
+
+    _aboutButton->move(event->size().width() - _aboutButton->width() - 10, 10);
 }
 
 void StartWindow::loadStyleSheet()

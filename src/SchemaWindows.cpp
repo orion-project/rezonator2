@@ -326,7 +326,7 @@ void SchemaMdiArea::updateBackground()
     if (AppSettings::instance().showBackground)
         setBackground(QBrush(QPixmap(":/misc/mdi_background")));
     else
-        setBackground(QBrush(palette().color(QPalette::Background)));
+        setBackground(QBrush(palette().color(QPalette::Window)));
 }
 
 //------------------------------------------------------------------------------
