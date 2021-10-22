@@ -133,7 +133,11 @@ void ProjectWindow::createActions()
     actnFileSummary = A_(tr("Summary..."), _calculations, SLOT(funcSummary()), ":/toolbar/schema_summary");
     actnFileProps = A_(tr("Properties..."), _operations, SLOT(editSchemaProps()), ":/toolbar/schema_prop");
     actnFileExit = A_(tr("Exit"), qApp, SLOT(closeAllWindows()), nullptr, Qt::CTRL | Qt::Key_Q);
+    actnFilePrint = A_(tr("Print..."), _mdiArea, SLOT(printableChild_SendToPrinter()), ":/toolbar/print");
+    actnFilePrintPreview = A_(tr("Print Preview..."), _mdiArea, SLOT(printableChild_PrintPreview()), nullptr);
 
+    actnEditUndo = A_(tr("Undo"), _mdiArea, SLOT(editableChild_Undo()), ":/toolbar/undo", QKeySequence::Undo);
+    actnEditRedo = A_(tr("Redo"), _mdiArea, SLOT(editableChild_Redo()), ":/toolbar/redo", QKeySequence::Redo);
     actnEditCut = A_(tr("Cut"), _mdiArea, SLOT(editableChild_Cut()), ":/toolbar/cut", QKeySequence::Cut);
     actnEditCopy = A_(tr("Copy"), _mdiArea, SLOT(editableChild_Copy()), ":/toolbar/copy", QKeySequence::Copy);
     actnEditPaste = A_(tr("Paste"), _mdiArea, SLOT(editableChild_Paste()), ":/toolbar/paste", QKeySequence::Paste);
@@ -195,11 +199,11 @@ void ProjectWindow::createMenuBar()
 
     menuFile = Ori::Gui::menu(tr("File"), this,
         { actnFileNew, actnFileOpen, actnFileOpenExample, _mruMenu, nullptr, actnFileSave,
-          actnFileSaveAs, actnFileSaveCopy, nullptr,
+          actnFileSaveAs, actnFileSaveCopy, nullptr, actnFilePrint, actnFilePrintPreview, nullptr,
           actnFileProps, actnFileTripType, actnFileLambda, actnFilePump, actnFileSummary, nullptr, actnFileExit });
 
     menuEdit = Ori::Gui::menu(tr("Edit"), this,
-        { actnEditCut, actnEditCopy, actnEditPaste, nullptr, actnEditSelectAll });
+        { actnEditUndo, actnEditRedo, nullptr, actnEditCut, actnEditCopy, actnEditPaste, nullptr, actnEditSelectAll });
 
     _langsMenu = new Ori::Widgets::LanguagesMenu(CommonData::instance()->translator(), ":/toolbar16/langs", this);
     menuView = new QMenu(tr("View"), this);
@@ -284,10 +288,16 @@ void ProjectWindow::updateMenuBar()
 
     // Update Edit menu
     IEditableWindow* editable = _mdiArea->activeEditableChild();
+    activateEditAction(actnEditUndo, editable, IEditableWindow::EditCmd_Undo);
+    activateEditAction(actnEditRedo, editable, IEditableWindow::EditCmd_Redo);
     activateEditAction(actnEditCut, editable, IEditableWindow::EditCmd_Cut);
     activateEditAction(actnEditCopy, editable, IEditableWindow::EditCmd_Copy);
     activateEditAction(actnEditPaste, editable, IEditableWindow::EditCmd_Paste);
     activateEditAction(actnEditSelectAll, editable, IEditableWindow::EditCmd_SelectAll);
+
+    IPrintableWindow* printable = dynamic_cast<IPrintableWindow*>(child);
+    actnFilePrint->setEnabled(printable);
+    actnFilePrintPreview->setEnabled(printable);
 
     // Update View menu
     menuView->clear();

@@ -14,7 +14,9 @@ QT_END_NAMESPACE
 
 class Schema;
 
-class NoteWindow : public SchemaMdiChild
+class NoteWindow : public SchemaMdiChild,
+                   public IEditableWindow,
+                   public IPrintableWindow
 {
     Q_OBJECT
 
@@ -25,6 +27,25 @@ public:
 
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return { _windowMenu }; }
+
+    // inherits from IEditableWindow
+    SupportedCommands supportedCommands() override {
+        return EditCmd_Undo | EditCmd_Redo | EditCmd_Cut | EditCmd_Copy | EditCmd_Paste | EditCmd_SelectAll; }
+    bool canUndo() override;
+    bool canRedo() override;
+    bool canCut() override;
+    bool canCopy() override;
+    bool canPaste() override;
+    void undo() override;
+    void redo() override;
+    void cut() override;
+    void copy() override;
+    void paste() override;
+    void selectAll() override;
+
+    // inherits from IPrintableWindow
+    void sendToPrinter() override;
+    void printPreview() override;
 
 protected:
     explicit NoteWindow(Schema *owner);
@@ -43,6 +64,9 @@ private slots:
     void cursorPositionChanged();
     void currentCharFormatChanged(const QTextCharFormat &format);
     void insertTable();
+    void markModified(bool ok);
+    void indent();
+    void unindent();
 
 private:
     static NoteWindow* _instance;
@@ -56,7 +80,8 @@ private:
     QAction *_actionBold, *_actionUnderline, *_actionItalic, *_actionStrikeout,
         *_actionTextColor, *_actionAlignLeft, *_actionAlignCenter, *_actionAlignRight,
         *_actionAlignJustify, *_actionUndo, *_actionRedo, *_actionCut, *_actionCopy, *_actionPaste,
-        *_actionInsertTable;
+        *_actionInsertTable, *_actionIndent, *_actionUnindent;
+    bool _schemaChanged = false;
 
     void createActions();
     void createMenuBar();
@@ -67,6 +92,7 @@ private:
     void fontChanged(const QFont &f);
     void colorChanged(const QColor &c);
     void alignmentChanged(Qt::Alignment a);
+    void modifyIndentation(int amount);
 };
 
 #endif // NOTE_WINDOW_H

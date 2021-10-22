@@ -57,6 +57,8 @@
         <file alias="help">../img/toolbar/help.svg</file>
         <file alias="home">../img/toolbar/home.svg</file>
         <file alias="info">../img/toolbar/info.svg</file>
+        <file alias="indent_dec">../img/toolbar/indent_dec.svg</file>
+        <file alias="indent_inc">../img/toolbar/indent_inc.svg</file>
         <file alias="italic">../img/toolbar/italic.svg</file>
         <file alias="label">../img/toolbar/label.svg</file>
         <file alias="limits_auto_x">../img/toolbar/limits_auto_x.svg</file>
@@ -91,6 +93,7 @@
         <file alias="plot_w">../img/toolbar/plot_w.svg</file>
         <file alias="plot_z0">../img/toolbar/plot_z0.svg</file>
         <file alias="plus">../img/toolbar/plus.svg</file>
+        <file alias="print">../img/toolbar/printer.svg</file>
         <file alias="profile">../img/toolbar/profile.svg</file>
         <file alias="protocol">../img/toolbar/protocol.svg</file>
         <file alias="pump_add">../img/toolbar/pump_add.svg</file>

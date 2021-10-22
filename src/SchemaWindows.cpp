@@ -43,10 +43,18 @@ void adjustIconSize(QToolBar* toolbar, const QSize& iconSize)
 } // namespace Z
 
 //------------------------------------------------------------------------------
-//                               EditableWindow
+//                               IEditableWindow
 //------------------------------------------------------------------------------
 
 IEditableWindow::~IEditableWindow()
+{
+}
+
+//------------------------------------------------------------------------------
+//                               IPrintableWindow
+//------------------------------------------------------------------------------
+
+IPrintableWindow::~IPrintableWindow()
 {
 }
 
@@ -195,6 +203,10 @@ IEditableWindow* SchemaMdiArea::activeEditableChild() const
     return dynamic_cast<IEditableWindow*>(activeSubWindow());
 }
 
+IPrintableWindow* SchemaMdiArea::activePrintableChild() const
+{
+    return dynamic_cast<IPrintableWindow*>(activeSubWindow());
+}
 
 void SchemaMdiArea::appendChild(QWidget* window)
 {
@@ -248,6 +260,17 @@ void SchemaMdiArea::activateChild(BasicMdiChild* window)
     }
 }
 
+void SchemaMdiArea::editableChild_Undo()
+{
+    IEditableWindow *w = dynamic_cast<IEditableWindow*>(activeSubWindow());
+    if (w && w->canUndo()) w->undo();
+}
+
+void SchemaMdiArea::editableChild_Redo()
+{
+    IEditableWindow *w = dynamic_cast<IEditableWindow*>(activeSubWindow());
+    if (w && w->canRedo()) w->redo();
+}
 
 void SchemaMdiArea::editableChild_Cut()
 {
@@ -271,6 +294,18 @@ void SchemaMdiArea::editableChild_SelectAll()
 {
     IEditableWindow *w = dynamic_cast<IEditableWindow*>(activeSubWindow());
     if (w) w->selectAll();
+}
+
+void SchemaMdiArea::printableChild_SendToPrinter()
+{
+    auto w = dynamic_cast<IPrintableWindow*>(activeSubWindow());
+    if (w) w->sendToPrinter();
+}
+
+void SchemaMdiArea::printableChild_PrintPreview()
+{
+    auto w = dynamic_cast<IPrintableWindow*>(activeSubWindow());
+    if (w) w->printPreview();
 }
 
 void SchemaMdiArea::populateWindowMenu()

@@ -41,16 +41,22 @@ public:
         EditCmd_Cut = 0x01,
         EditCmd_Copy = 0x02,
         EditCmd_Paste = 0x04,
-        EditCmd_SelectAll = 0x08
+        EditCmd_SelectAll = 0x08,
+        EditCmd_Undo = 0x10,
+        EditCmd_Redo = 0x20,
     };
     Q_DECLARE_FLAGS(SupportedCommands, SupportedCommand)
 
     virtual ~IEditableWindow();
 
     virtual SupportedCommands supportedCommands() { return EditCmd_None; }
+    virtual bool canUndo() { return false; }
+    virtual bool canRedo() { return false; }
     virtual bool canCut() { return false; }
     virtual bool canCopy() { return false; }
     virtual bool canPaste() { return false; }
+    virtual void undo() {}
+    virtual void redo() {}
     virtual void cut() {}
     virtual void copy() {}
     virtual void paste() {}
@@ -58,6 +64,19 @@ public:
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(IEditableWindow::SupportedCommands)
+
+//------------------------------------------------------------------------------
+/**
+    Interface of a window supporting print operations.
+*/
+class IPrintableWindow
+{
+public:
+    virtual ~IPrintableWindow();
+
+    virtual void sendToPrinter() {}
+    virtual void printPreview() {}
+};
 
 //------------------------------------------------------------------------------
 /**
@@ -218,6 +237,7 @@ public:
 
     BasicMdiChild* activeChild() const;
     IEditableWindow* activeEditableChild() const;
+    IPrintableWindow* activePrintableChild() const;
 
     void settingsChanged() override;
 
@@ -227,10 +247,14 @@ public slots:
     void activateChild();
     void activateChild(QWidget*);
     void activateChild(BasicMdiChild*);
+    void editableChild_Undo();
+    void editableChild_Redo();
     void editableChild_Cut();
     void editableChild_Copy();
     void editableChild_Paste();
     void editableChild_SelectAll();
+    void printableChild_SendToPrinter();
+    void printableChild_PrintPreview();
 
     /// Slot that should be connected to signal aboutToShow() of menu 'Window'
     /// to populate it with actions allowing subwindow activation.
