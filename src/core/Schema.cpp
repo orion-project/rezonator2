@@ -369,7 +369,7 @@ void Schema::shiftElement(int index, const std::function<int(int)>& getTargetInd
 {
     if (!isValid(index)) return;
     if (_items.size() == 1) return;
-    _items.swap(index, getTargetIndex(index));
+    _items.swapItemsAt(index, getTargetIndex(index));
     relinkInterfaces();
     _events.raise(SchemaEvents::Rebuilt, "Schema: shiftElement");
     _events.raise(SchemaEvents::RecalRequred, "Schema: shiftElement");
@@ -394,7 +394,7 @@ void Schema::flip()
     int size = _items.size();
     if (size < 2) return;
     for (int i = 0; i < size / 2; i++)
-        _items.swap(i, size - 1 - i);
+        _items.swapItemsAt(i, size - 1 - i);
     relinkInterfaces();
     _events.raise(SchemaEvents::Rebuilt, "Schema: flip");
     _events.raise(SchemaEvents::RecalRequred, "Schema: flip");

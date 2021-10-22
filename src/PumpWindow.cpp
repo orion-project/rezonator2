@@ -182,7 +182,7 @@ void PumpsTable::populateRow(PumpParams *pump, int row)
     else
         qCritical() << "PumpsTable::populateRow(): Unable to find mode for pump parameters";
 
-    item(row, COL_COLOR)->setBackgroundColor(QColor(pump->color()));
+    item(row, COL_COLOR)->setBackground(QColor(pump->color()));
 
     auto iconPath = pump->isActive() ? ":/icons/pump_on" : ":/icons/pump_off";
     item(row, COL_ACTIVE)->setData(Qt::DecorationRole, QIcon(iconPath).pixmap(_iconSize, _iconSize));

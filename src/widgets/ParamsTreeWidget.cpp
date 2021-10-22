@@ -98,8 +98,8 @@ void ParamsTreeWidget::addRootItem(Element* elem)
     if (items.isEmpty()) return;
 
     auto root = new QTreeWidgetItem;
-    root->setBackgroundColor(COL_TITLE, QColor("#eee"));
-    root->setBackgroundColor(COL_DESCR, QColor("#eee"));
+    root->setBackground(COL_TITLE, QColor(0xE, 0xE, 0xE));
+    root->setBackground(COL_DESCR, QColor(0xE, 0xE, 0xE));
     if (elem)
     {
         root->setText(COL_TITLE, elem->displayLabel());
@@ -111,7 +111,7 @@ void ParamsTreeWidget::addRootItem(Element* elem)
         root->setText(COL_TITLE, tr("Globals"));
         root->setFont(COL_TITLE, Z::Gui::ValueFont().get());
     }
-    for (auto item : items)
+    Q_FOREACH(auto item, items)
         root->addChild(item);
     _tree->addTopLevelItem(root);
 }

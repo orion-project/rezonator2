@@ -1,4 +1,5 @@
 libs/lua-*
+libs/*.tar.gz
 bin/test/_tmp*
 bin/rezonator
 bin/rezonator.app

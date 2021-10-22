@@ -75,7 +75,7 @@ void ElementTypesListView::adjust()
     int width, max_width = 0;
     for (int i = 0; i < count(); i++)
     {
-        width = fm.width(item(i)->text());
+        width = fm.horizontalAdvance(item(i)->text());
         if (width > max_width) max_width = width;
     }
     auto iconSize = ElementImagesProvider::instance().iconSize();

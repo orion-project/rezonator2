@@ -7,8 +7,6 @@ Automatic project configuration is not supported.
 So before running build scripts open the project in QtCreator and configure it for using particular Qt kit.
 The latest 5.* is supported (it is 5.15.2 currently).
 
-Make all preparations described in (prepare_deps.sh)[./prepare_deps.sh].
-
 ### Qt quirks
 
 #### [Ubuntu] Platform plugin

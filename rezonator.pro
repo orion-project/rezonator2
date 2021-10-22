@@ -23,15 +23,7 @@ include($$ORION/orion_svg.pri)
 include($$_PRO_FILE_PWD_/libs/custom-plot-lab/custom-plot-lab.pri)
 
 # lua
-LUA = $$_PRO_FILE_PWD_/libs/lua-5.3.4
-INCLUDEPATH += $$LUA/src
-LIBS += -L$$LUA/src -llua
-win32 {
-}
-else {
-# `dl` is required for Lua
-LIBS += -ldl
-}
+include($$_PRO_FILE_PWD_/libs/lua.pri)
 
 #------------------------------------------------------------
 # Version information

@@ -67,7 +67,9 @@ void HelpSystem::showTopic(const QString& topic)
     if (!startAssistant()) return;
 
     QByteArray commands;
-    commands.append("setSource qthelp://org.orion-project.rezonator/doc/" % topic % '\n');
+    commands.append("setSource qthelp://org.orion-project.rezonator/doc/");
+    commands.append(topic.toLocal8Bit());
+    commands.append('\n');
     _assistant->write(commands);
 }
 
@@ -182,7 +184,7 @@ void HelpSystem::checkUpdates()
         _updateChecker = nullptr;
         versionReceived(versionData);
     });
-    connect(_updateReply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error), [this](QNetworkReply::NetworkError){
+    connect(_updateReply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::errorOccurred), [this](QNetworkReply::NetworkError){
         auto errorMsg =_updateReply->errorString();
         qCritical() << "Network error" << errorMsg;
         _updateReply->deleteLater();
@@ -227,7 +229,7 @@ void HelpSystem::showAbout()
     w->resize(bckgnd.size());
 
     auto p = w->palette();
-    p.setBrush(QPalette::Background, QBrush(bckgnd));
+    p.setBrush(QPalette::Window, QBrush(bckgnd));
     w->setPalette(p);
 
     auto f = w->font();

@@ -32,7 +32,7 @@ using namespace Ori::Layouts;
 
 QFileDialog::Options fileDialogOptions()
 {
-    QFileDialog::Options options = nullptr;
+    QFileDialog::Options options;
     if (!AppSettings::instance().useSystemDialogs)
         options |= QFileDialog::DontUseNativeDialog;
     return options;
@@ -47,7 +47,7 @@ ProjectOperations::ProjectOperations(Schema *schema, QWidget *parent, CalcManage
 
 void ProjectOperations::newSchemaFile()
 {
-    QProcess::startDetached(qApp->applicationFilePath());
+    QProcess::startDetached(qApp->applicationFilePath(), {});
 }
 
 QString ProjectOperations::getOpenFileName(QWidget* parent)
@@ -122,7 +122,7 @@ void ProjectOperations::openSchemaFile(const QString& fileName, const OpenFileOp
         if (opts.isExample)
             args << "--example";
         args << " \"" + fileName + "\"";
-        QProcess::startDetached(args.join(' '));
+        QProcess::startDetached(args.join(' '), {});
         return;
     }
 

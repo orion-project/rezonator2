@@ -15,7 +15,7 @@ QString generateLabel(const QString& prefix, const QStringList& existedLabels);
 
 inline QVariant ptr2var(const void* p)
 {
-    return qVariantFromValue(const_cast<void*>(p));
+    return QVariant::fromValue(const_cast<void*>(p));
 }
 
 template <typename T>
