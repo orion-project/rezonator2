@@ -252,6 +252,12 @@ void ProjectOperations::saveSchemaFileCopy()
 
 bool ProjectOperations::canClose()
 {
+    if (schema()->memo && schema()->memo->editor)
+    {
+        auto editor = dynamic_cast<ISchemaMemoEditor*>(schema()->memo->editor.data());
+        if (editor) editor->saveMemo();
+    }
+
     if (schema()->modified())
     {
         if (schema()->fileName().isEmpty())

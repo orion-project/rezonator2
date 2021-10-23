@@ -434,7 +434,7 @@ void ProjectWindow::closeEvent(QCloseEvent* ce)
     if (_closingInProgress) return;
 
     _closingInProgress = true;
-    QTimer::singleShot(0, [&](){
+    QTimer::singleShot(0, this, [&](){
         if (_operations->canClose()) {
             _forceClosing = true;
             close();

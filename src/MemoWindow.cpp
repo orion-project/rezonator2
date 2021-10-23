@@ -39,6 +39,11 @@ MemoWindow::MemoWindow(Schema* owner) : SchemaMdiChild(owner)
     _schemaChanged = schema()->modified();
 
     _editor = new QTextEdit;
+    if (schema()->memo)
+    {
+        _editor->setHtml(schema()->memo->text);
+        schema()->memo->editor = this;
+    }
     setContent(_editor);
 
     _comboFont = new QFontComboBox;
@@ -156,7 +161,6 @@ void MemoWindow::createToolBar()
     _alignButton->setPopupMode(QToolButton::InstantPopup);
     _alignButton->setMenu(_alignMenu);
 
-
     populateToolbar({
         _actionUndo, _actionRedo,
         makeEmptySeparator(),
@@ -168,9 +172,22 @@ void MemoWindow::createToolBar()
     });
 }
 
-void MemoWindow::closeEvent(QCloseEvent *e)
+void MemoWindow::closeEvent(class QCloseEvent* e)
 {
-    // TODO:
+    if (_editor->document()->isModified())
+        saveMemo();
+
+    SchemaMdiChild::closeEvent(e);
+}
+
+void MemoWindow::saveMemo()
+{
+    if (!schema()->memo)
+    {
+        schema()->memo = new SchemaMemo;
+        schema()->memo->editor = this;
+    }
+    schema()->memo->text = _editor->toHtml();
 }
 
 void MemoWindow::textBold()
@@ -371,9 +388,13 @@ void MemoWindow::copy() { _editor->copy(); }
 void MemoWindow::paste() { _editor->paste(); }
 void MemoWindow::selectAll() { _editor->selectAll(); }
 
-void MemoWindow::markModified(bool ok)
+void MemoWindow::markModified(bool m)
 {
-    qDebug() << "document modified" << ok;
+    if (m)
+    {
+        saveMemo();
+        schema()->events().raise(SchemaEvents::Changed, "memo modified");
+    }
 }
 
 void MemoWindow::sendToPrinter()

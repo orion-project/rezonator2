@@ -16,7 +16,8 @@ class Schema;
 
 class MemoWindow : public SchemaMdiChild,
                    public IEditableWindow,
-                   public IPrintableWindow
+                   public IPrintableWindow,
+                   public ISchemaMemoEditor
 {
     Q_OBJECT
 
@@ -47,10 +48,13 @@ public:
     void sendToPrinter() override;
     void printPreview() override;
 
+    // inherits from ISchemaMemoEditor
+    void saveMemo() override;
+
 protected:
     explicit MemoWindow(Schema *owner);
 
-    void closeEvent(QCloseEvent *e) override;
+    void closeEvent(class QCloseEvent*) override;
 
 private slots:
     void textBold();
@@ -64,7 +68,7 @@ private slots:
     void cursorPositionChanged();
     void currentCharFormatChanged(const QTextCharFormat &format);
     void insertTable();
-    void markModified(bool ok);
+    void markModified(bool m);
     void indent();
     void unindent();
 

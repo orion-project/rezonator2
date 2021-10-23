@@ -80,6 +80,7 @@ void SchemaReaderJson::readFromUtf8(const QByteArray& data)
     readElements(root);
     readParamLinks(root);
     readFormulas(root);
+    readMemos(root);
 
     if (!AppSettings::instance().skipFuncWindowsLoading)
         readWindows(root);
@@ -300,6 +301,27 @@ void SchemaReaderJson::readWindow(const QJsonObject& root)
         _report.report(windowReport);
         delete window;
     }
+}
+
+void SchemaReaderJson::readMemos(const QJsonObject& root)
+{
+    if (!root.contains(QStringLiteral("memos")))
+        return;
+    JsonValue memosJson(root, QStringLiteral("memos"), &_report);
+    if (memosJson)
+        for (auto it = memosJson.array().begin(); it != memosJson.array().end(); it++)
+        {
+            readMemo((*it).toObject());
+            break; // only one memo at this time
+        }
+}
+
+void SchemaReaderJson::readMemo(const QJsonObject& root)
+{
+    auto text = root["text"].toString();
+    if (text.isEmpty()) return;
+    _schema->memo = new SchemaMemo;
+    _schema->memo->text = text;
 }
 
 namespace Z {

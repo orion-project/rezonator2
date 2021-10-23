@@ -24,8 +24,6 @@
 
 int main(int argc, char* argv[])
 {
-    qsrand(static_cast<uint>(std::time(nullptr)));
-
     QApplication app(argc, argv);
     app.setApplicationName("reZonator");
     app.setOrganizationName("orion-project.org");

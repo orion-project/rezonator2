@@ -37,6 +37,8 @@ private:
     void readFormula(const QJsonObject& root);
     void readWindows(const QJsonObject& root);
     void readWindow(const QJsonObject& root);
+    void readMemos(const QJsonObject& root);
+    void readMemo(const QJsonObject& root);
 };
 
 namespace Z {
