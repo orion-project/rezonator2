@@ -59,7 +59,7 @@ HEADERS += \
     src/ElementsCatalogDialog.h \
     src/GrinLensWindow.h \
     src/HelpSystem.h \
-    src/NoteWindow.h \
+    src/MemoWindow.h \
     src/ProjectOperations.h \
     src/ProjectWindow.h \
     src/ProtocolWindow.h \
@@ -179,7 +179,7 @@ SOURCES += \
     src/ElementsCatalogDialog.cpp \
     src/GrinLensWindow.cpp \
     src/HelpSystem.cpp \
-    src/NoteWindow.cpp \
+    src/MemoWindow.cpp \
     src/ProjectOperations.cpp \
     src/ProjectWindow.cpp \
     src/ProtocolWindow.cpp \

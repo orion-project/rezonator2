@@ -15,7 +15,7 @@
 #include "PumpWindow.h"
 #include "SchemaViewWindow.h"
 #include "SchemaParamsWindow.h"
-#include "NoteWindow.h"
+#include "MemoWindow.h"
 #include "WindowsManager.h"
 #include "core/Format.h"
 #include "funcs/RoundTripCalculator.h"
@@ -168,7 +168,7 @@ void ProjectWindow::createActions()
     actnWndSchema = A_(tr("Schema"), this, SLOT(showSchemaWindow()), ":/toolbar/schema", Qt::Key_F12);
     actnWndParams = A_(tr("Parameters"), this, SLOT(showParamsWindow()), ":/toolbar/parameter", Qt::Key_F11);
     actnWndPumps = A_(tr("Pumps"), this, SLOT(showPumpsWindow()), ":/toolbar/pumps");
-    actnWndNotes = A_(tr("Notes"), this, SLOT(showNotesWindow()), ":/toolbar/notepad");
+    actnWndMemos = A_(tr("Memos"), this, SLOT(showMemosWindow()), ":/toolbar/notepad");
     actnWndProtocol = A_(tr("Protocol"), this, SLOT(showProtocolWindow()), ":/toolbar/protocol");
     actnWndClose = A_(tr("Close"), _mdiArea, SLOT(closeActiveSubWindow()));
     actnWndCloseAll = A_(tr("Close All"), _mdiArea, SLOT(closeAllSubWindows()), ":/toolbar/windows_close");
@@ -219,7 +219,7 @@ void ProjectWindow::createMenuBar()
           actnToolsGaussCalc, actnToolsCalc, actnToolsCustomElems, actnToolGrinLens, nullptr, actnToolSettings });
 
     menuWindow = Ori::Gui::menu(tr("Window"), this,
-        { actnWndSchema, actnWndParams, actnWndPumps, actnWndProtocol, actnWndNotes, nullptr,
+        { actnWndSchema, actnWndParams, actnWndPumps, actnWndProtocol, actnWndMemos, nullptr,
           actnWndClose, actnWndCloseAll, nullptr, actnWndTile, actnWndCascade, nullptr });
     connect(menuWindow, SIGNAL(aboutToShow()), _mdiArea, SLOT(populateWindowMenu()));
 
@@ -237,7 +237,7 @@ void ProjectWindow::createToolBars()
         actnEditCut, actnEditCopy, actnEditPaste, nullptr, actnFuncRoundTrip, nullptr,
         actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamVariation, nullptr,
         actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic, actnFuncBeamParamsAtElems, nullptr,
-        actnFuncRepRate, nullptr, actnWndParams, actnWndPumps, actnWndNotes, nullptr, actnToolAdjust, nullptr,
+        actnFuncRepRate, nullptr, actnWndParams, actnWndPumps, actnWndMemos, nullptr, actnToolAdjust, nullptr,
         actnToolsGaussCalc, actnToolsCalc, actnToolGrinLens
     }, true));
 
@@ -521,9 +521,9 @@ void ProjectWindow::showPumpsWindow()
     _mdiArea->appendChild(PumpWindow::create(schema()));
 }
 
-void ProjectWindow::showNotesWindow()
+void ProjectWindow::showMemosWindow()
 {
-    _mdiArea->appendChild(NoteWindow::create(schema()));
+    _mdiArea->appendChild(MemoWindow::create(schema()));
 }
 
 //------------------------------------------------------------------------------

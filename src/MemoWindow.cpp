@@ -1,4 +1,4 @@
-#include "NoteWindow.h"
+#include "MemoWindow.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
@@ -23,18 +23,18 @@
 //                                NoteWindow
 //------------------------------------------------------------------------------
 
-NoteWindow* NoteWindow::_instance = nullptr;
+MemoWindow* MemoWindow::_instance = nullptr;
 
-NoteWindow* NoteWindow::create(Schema* owner)
+MemoWindow* MemoWindow::create(Schema* owner)
 {
     if (!_instance)
-        _instance = new NoteWindow(owner);
+        _instance = new MemoWindow(owner);
     return _instance;
 }
 
-NoteWindow::NoteWindow(Schema* owner) : SchemaMdiChild(owner)
+MemoWindow::MemoWindow(Schema* owner) : SchemaMdiChild(owner)
 {
-    setTitleAndIcon(tr("Notes"), ":/toolbar/notepad");
+    setTitleAndIcon(tr("Memo"), ":/toolbar/notepad");
 
     _schemaChanged = schema()->modified();
 
@@ -80,12 +80,12 @@ NoteWindow::NoteWindow(Schema* owner) : SchemaMdiChild(owner)
     _editor->setFocus();
 }
 
-NoteWindow::~NoteWindow()
+MemoWindow::~MemoWindow()
 {
     _instance = nullptr;
 }
 
-void NoteWindow::createActions()
+void MemoWindow::createActions()
 {
     #define A_ Ori::Gui::action
 
@@ -107,7 +107,7 @@ void NoteWindow::createActions()
     QPixmap pix(16, 16);
     pix.fill(Qt::black);
     _actionTextColor = new QAction(pix, tr("Color..."), this);
-    connect(_actionTextColor, &QAction::triggered, this, &NoteWindow::textColor);
+    connect(_actionTextColor, &QAction::triggered, this, &MemoWindow::textColor);
 
     _actionsAlignment = new QActionGroup(this);
     connect(_actionsAlignment, SIGNAL(triggered(QAction*)), this, SLOT(textAlign(QAction*)));
@@ -128,13 +128,13 @@ void NoteWindow::createActions()
     #undef A_
 }
 
-void NoteWindow::createMenuBar()
+void MemoWindow::createMenuBar()
 {
     _alignMenu = Ori::Gui::menu(tr("Alignment"), this, {
         _actionAlignLeft, _actionAlignCenter, _actionAlignRight, _actionAlignJustify
     });
 
-    _windowMenu = Ori::Gui::menu(tr("Notes"), this, {
+    _windowMenu = Ori::Gui::menu(tr("Memo"), this, {
         _actionBold, _actionItalic, _actionUnderline, _actionStrikeout, nullptr,
         _actionIndent, _actionUnindent, nullptr,
         _actionTextColor,
@@ -150,7 +150,7 @@ static QWidget* makeEmptySeparator(int width = 6)
     return w;
 }
 
-void NoteWindow::createToolBar()
+void MemoWindow::createToolBar()
 {
     _alignButton = new QToolButton;
     _alignButton->setPopupMode(QToolButton::InstantPopup);
@@ -168,47 +168,47 @@ void NoteWindow::createToolBar()
     });
 }
 
-void NoteWindow::closeEvent(QCloseEvent *e)
+void MemoWindow::closeEvent(QCloseEvent *e)
 {
     // TODO:
 }
 
-void NoteWindow::textBold()
+void MemoWindow::textBold()
 {
     QTextCharFormat fmt;
     fmt.setFontWeight(_actionBold->isChecked() ? QFont::Bold : QFont::Normal);
     mergeFormat(fmt);
 }
 
-void NoteWindow::textUnderline()
+void MemoWindow::textUnderline()
 {
     QTextCharFormat fmt;
     fmt.setFontUnderline(_actionUnderline->isChecked());
     mergeFormat(fmt);
 }
 
-void NoteWindow::textItalic()
+void MemoWindow::textItalic()
 {
     QTextCharFormat fmt;
     fmt.setFontItalic(_actionItalic->isChecked());
     mergeFormat(fmt);
 }
 
-void NoteWindow::textStrikeout()
+void MemoWindow::textStrikeout()
 {
     QTextCharFormat fmt;
     fmt.setFontStrikeOut(_actionStrikeout->isChecked());
     mergeFormat(fmt);
 }
 
-void NoteWindow::textFamily(const QString &f)
+void MemoWindow::textFamily(const QString &f)
 {
     QTextCharFormat fmt;
     fmt.setFontFamily(f);
     mergeFormat(fmt);
 }
 
-void NoteWindow::textSize(const QString &p)
+void MemoWindow::textSize(const QString &p)
 {
     qreal pointSize = p.toFloat();
     if (p.toFloat() > 0)
@@ -219,7 +219,7 @@ void NoteWindow::textSize(const QString &p)
     }
 }
 
-void NoteWindow::textColor()
+void MemoWindow::textColor()
 {
     QColor color = QColorDialog::getColor(_editor->textColor(), this);
     if (!color.isValid())
@@ -230,7 +230,7 @@ void NoteWindow::textColor()
     colorChanged(color);
 }
 
-void NoteWindow::mergeFormat(const QTextCharFormat &format)
+void MemoWindow::mergeFormat(const QTextCharFormat &format)
 {
     QTextCursor cursor = _editor->textCursor();
     if (!cursor.hasSelection())
@@ -239,7 +239,7 @@ void NoteWindow::mergeFormat(const QTextCharFormat &format)
     _editor->mergeCurrentCharFormat(format);
 }
 
-void NoteWindow::textAlign(QAction *a)
+void MemoWindow::textAlign(QAction *a)
 {
     if (a == _actionAlignLeft) {
         _editor->setAlignment(Qt::AlignLeft | Qt::AlignAbsolute);
@@ -256,17 +256,17 @@ void NoteWindow::textAlign(QAction *a)
     }
 }
 
-void NoteWindow::indent()
+void MemoWindow::indent()
 {
     modifyIndentation(1);
 }
 
-void NoteWindow::unindent()
+void MemoWindow::unindent()
 {
     modifyIndentation(-1);
 }
 
-void NoteWindow::modifyIndentation(int amount)
+void MemoWindow::modifyIndentation(int amount)
 {
     QTextCursor cursor = _editor->textCursor();
     cursor.beginEditBlock();
@@ -291,18 +291,18 @@ void NoteWindow::modifyIndentation(int amount)
 }
 
 
-void NoteWindow::cursorPositionChanged()
+void MemoWindow::cursorPositionChanged()
 {
     alignmentChanged(_editor->alignment());
 }
 
-void NoteWindow::currentCharFormatChanged(const QTextCharFormat &format)
+void MemoWindow::currentCharFormatChanged(const QTextCharFormat &format)
 {
     fontChanged(format.font());
     colorChanged(format.foreground().color());
 }
 
-void NoteWindow::fontChanged(const QFont &f)
+void MemoWindow::fontChanged(const QFont &f)
 {
     _comboFont->setCurrentIndex(_comboFont->findText(QFontInfo(f).family()));
     _comboSize->setCurrentIndex(_comboSize->findText(QString::number(f.pointSize())));
@@ -312,14 +312,14 @@ void NoteWindow::fontChanged(const QFont &f)
     _actionStrikeout->setChecked(f.strikeOut());
 }
 
-void NoteWindow::colorChanged(const QColor &c)
+void MemoWindow::colorChanged(const QColor &c)
 {
     QPixmap pix(16, 16);
     pix.fill(c);
     _actionTextColor->setIcon(pix);
 }
 
-void NoteWindow::alignmentChanged(Qt::Alignment a)
+void MemoWindow::alignmentChanged(Qt::Alignment a)
 {
     if (a & Qt::AlignLeft) {
         _actionAlignLeft->setChecked(true);
@@ -336,7 +336,7 @@ void NoteWindow::alignmentChanged(Qt::Alignment a)
     }
 }
 
-void NoteWindow::insertTable()
+void MemoWindow::insertTable()
 {
     auto rows = Ori::Gui::spinBox(1, 1000, 4);
     auto cols = Ori::Gui::spinBox(1, 100, 4);
@@ -359,24 +359,24 @@ void NoteWindow::insertTable()
     }
 }
 
-bool NoteWindow::canUndo() { return _actionUndo->isEnabled(); }
-bool NoteWindow::canRedo() { return _actionRedo->isEnabled(); }
-bool NoteWindow::canCut() { return _actionCut->isEnabled(); }
-bool NoteWindow::canCopy() { return _actionCopy->isEnabled(); }
-bool NoteWindow::canPaste() { return _editor->canPaste(); }
-void NoteWindow::undo() { _editor->undo(); }
-void NoteWindow::redo() { _editor->redo(); }
-void NoteWindow::cut() { _editor->cut(); }
-void NoteWindow::copy() { _editor->copy(); }
-void NoteWindow::paste() { _editor->paste(); }
-void NoteWindow::selectAll() { _editor->selectAll(); }
+bool MemoWindow::canUndo() { return _actionUndo->isEnabled(); }
+bool MemoWindow::canRedo() { return _actionRedo->isEnabled(); }
+bool MemoWindow::canCut() { return _actionCut->isEnabled(); }
+bool MemoWindow::canCopy() { return _actionCopy->isEnabled(); }
+bool MemoWindow::canPaste() { return _editor->canPaste(); }
+void MemoWindow::undo() { _editor->undo(); }
+void MemoWindow::redo() { _editor->redo(); }
+void MemoWindow::cut() { _editor->cut(); }
+void MemoWindow::copy() { _editor->copy(); }
+void MemoWindow::paste() { _editor->paste(); }
+void MemoWindow::selectAll() { _editor->selectAll(); }
 
-void NoteWindow::markModified(bool ok)
+void MemoWindow::markModified(bool ok)
 {
     qDebug() << "document modified" << ok;
 }
 
-void NoteWindow::sendToPrinter()
+void MemoWindow::sendToPrinter()
 {
     QPrinter printer(QPrinter::HighResolution);
     QPrintDialog *dlg = new QPrintDialog(&printer, this);
@@ -388,7 +388,7 @@ void NoteWindow::sendToPrinter()
     delete dlg;
 }
 
-void NoteWindow::printPreview()
+void MemoWindow::printPreview()
 {
     QPrinter printer(QPrinter::HighResolution);
     QPrintPreviewDialog preview(&printer, this);

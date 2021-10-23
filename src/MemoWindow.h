@@ -1,5 +1,5 @@
-#ifndef NOTE_WINDOW_H
-#define NOTE_WINDOW_H
+#ifndef MEMO_WINDOW_H
+#define MEMO_WINDOW_H
 
 #include "SchemaWindows.h"
 
@@ -14,16 +14,16 @@ QT_END_NAMESPACE
 
 class Schema;
 
-class NoteWindow : public SchemaMdiChild,
+class MemoWindow : public SchemaMdiChild,
                    public IEditableWindow,
                    public IPrintableWindow
 {
     Q_OBJECT
 
 public:
-    static NoteWindow* create(Schema*);
+    static MemoWindow* create(Schema*);
 
-    ~NoteWindow() override;
+    ~MemoWindow() override;
 
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return { _windowMenu }; }
@@ -48,7 +48,7 @@ public:
     void printPreview() override;
 
 protected:
-    explicit NoteWindow(Schema *owner);
+    explicit MemoWindow(Schema *owner);
 
     void closeEvent(QCloseEvent *e) override;
 
@@ -69,7 +69,7 @@ private slots:
     void unindent();
 
 private:
-    static NoteWindow* _instance;
+    static MemoWindow* _instance;
 
     QTextEdit *_editor;
     QMenu *_windowMenu, *_alignMenu;
@@ -95,5 +95,5 @@ private:
     void modifyIndentation(int amount);
 };
 
-#endif // NOTE_WINDOW_H
+#endif // MEMO_WINDOW_H
 

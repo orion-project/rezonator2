@@ -77,7 +77,7 @@ private:
 
     QAction *actnWndClose, *actnWndCloseAll, *actnWndTile, *actnWndCascade,
             *actnWndSchema, *actnWndParams, *actnWndProtocol, *actnWndPumps,
-            *actnWndNotes;
+            *actnWndMemos;
 
     QAction *actnHelpBugReport, *actnHelpUpdates, *actnHelpHomepage, *actnHelpAbout,
             *actnHelpContent, *actnHelpIndex;
@@ -118,7 +118,7 @@ private slots:
     void showCalculator();
     void showParamsWindow();
     void showPumpsWindow();
-    void showNotesWindow();
+    void showMemosWindow();
     void showAdjustment();
     void showHelp();
 
