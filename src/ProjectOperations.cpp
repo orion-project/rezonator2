@@ -203,9 +203,20 @@ bool ProjectOperations::saveSchemaFile()
     return saveSchemaFile(fileName);
 }
 
+void ProjectOperations::applyMemoEditors()
+{
+    if (schema()->memo && schema()->memo->editor)
+    {
+        auto editor = dynamic_cast<ISchemaMemoEditor*>(schema()->memo->editor.data());
+        if (editor) editor->saveMemo();
+    }
+}
+
 bool ProjectOperations::saveSchemaFile(const QString& fileName)
 {
     Z_REPORT("Saving" << fileName)
+
+    applyMemoEditors();
 
     SchemaWriterJson writer(schema());
     {
@@ -243,6 +254,8 @@ void ProjectOperations::saveSchemaFileCopy()
 
     Ori::WaitCursor wc;
 
+    applyMemoEditors();
+
     SchemaWriterJson writer(schema());
     writer.writeToFile(fileName);
 
@@ -252,12 +265,6 @@ void ProjectOperations::saveSchemaFileCopy()
 
 bool ProjectOperations::canClose()
 {
-    if (schema()->memo && schema()->memo->editor)
-    {
-        auto editor = dynamic_cast<ISchemaMemoEditor*>(schema()->memo->editor.data());
-        if (editor) editor->saveMemo();
-    }
-
     if (schema()->modified())
     {
         if (schema()->fileName().isEmpty())

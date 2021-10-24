@@ -5,23 +5,72 @@
 #include "helpers/OriWidgets.h"
 
 #include <QAction>
+#include <QClipboard>
 #include <QColorDialog>
 #include <QComboBox>
 #include <QFontComboBox>
 #include <QFormLayout>
 #include <QMenu>
+#include <QMimeData>
 #include <QPainter>
 #include <QPrinter>
 #include <QPrintDialog>
 #include <QPrintPreviewDialog>
+#include <QRegularExpression>
+#include <QSpinBox>
 #include <QTextEdit>
 #include <QTextList>
 #include <QTextTable>
 #include <QToolButton>
-#include <QSpinBox>
+#include <QUuid>
 
 //------------------------------------------------------------------------------
-//                                NoteWindow
+//                                MemoTextEdit
+//------------------------------------------------------------------------------
+
+class MemoTextEdit : public QTextEdit
+{
+public:
+    MemoTextEdit(SchemaMemo* memo) : QTextEdit(), _memo(memo)
+    {
+        if (!memo->images.isEmpty())
+        {
+            auto it = memo->images.constBegin();
+            while (it != memo->images.constEnd())
+            {
+                document()->addResource(QTextDocument::ImageResource, it.key(), it.value());
+                it++;
+            }
+        }
+        if (!memo->text.isEmpty())
+            setHtml(memo->text);
+    }
+
+    bool canInsertFromMimeData(const QMimeData* source) const override
+    {
+        return source->hasImage() || source->hasUrls() || QTextEdit::canInsertFromMimeData(source);
+    }
+
+    void insertFromMimeData(const QMimeData* source) override
+    {
+        if (source->hasImage())
+        {
+            auto id = QUuid::createUuid().toString(QUuid::Id128);
+            auto img = qvariant_cast<QImage>(source->imageData());
+            document()->addResource(QTextDocument::ImageResource, id, img);
+            textCursor().insertImage(id);
+            _memo->images[id] = img;
+            return;
+        }
+        QTextEdit::insertFromMimeData(source);
+    }
+
+private:
+    SchemaMemo *_memo;
+};
+
+//------------------------------------------------------------------------------
+//                                MemoWindow
 //------------------------------------------------------------------------------
 
 static QWidget* makeEmptySeparator(int width = 6)
@@ -70,14 +119,11 @@ MemoWindow::MemoWindow(Schema* owner) : SchemaMdiChild(owner)
 {
     setTitleAndIcon(tr("Memo"), ":/toolbar/notepad");
 
-    _schemaChanged = schema()->modified();
+    if (!schema()->memo)
+        schema()->memo = new SchemaMemo;
+    schema()->memo->editor = this;
 
-    _editor = new QTextEdit;
-    if (schema()->memo)
-    {
-        _editor->setHtml(schema()->memo->text);
-        schema()->memo->editor = this;
-    }
+    _editor = new MemoTextEdit(schema()->memo);
     setContent(_editor);
 
     _comboFont = new QFontComboBox;
@@ -208,7 +254,12 @@ void MemoWindow::createToolBar()
 
 void MemoWindow::closeEvent(class QCloseEvent* e)
 {
-    if (_editor->document()->isModified())
+    if (_editor->document()->isEmpty())
+    {
+        delete schema()->memo;
+        schema()->memo = nullptr;
+    }
+    else
         saveMemo();
 
     SchemaMdiChild::closeEvent(e);
@@ -216,12 +267,22 @@ void MemoWindow::closeEvent(class QCloseEvent* e)
 
 void MemoWindow::saveMemo()
 {
-    if (!schema()->memo)
+    auto memo = schema()->memo;
+    memo->text = _editor->toHtml();
+
+    QStringList unusedImages;
+    auto it = memo->images.constBegin();
+    while (it != memo->images.constEnd())
     {
-        schema()->memo = new SchemaMemo;
-        schema()->memo->editor = this;
+        QRegularExpression expr(QString("<img.*src\\s*=\\s*\"%1\".*\\/>").arg(it.key()));
+        if (!expr.match(memo->text).hasMatch())
+            unusedImages << it.key();
+        it++;
     }
-    schema()->memo->text = _editor->toHtml();
+    foreach (const auto& id, unusedImages)
+        memo->images.remove(id);
+
+    _editor->document()->setModified(false);
 }
 
 void MemoWindow::textBold()
@@ -430,20 +491,17 @@ bool MemoWindow::canRedo() { return _actionRedo->isEnabled(); }
 bool MemoWindow::canCut() { return _actionCut->isEnabled(); }
 bool MemoWindow::canCopy() { return _actionCopy->isEnabled(); }
 bool MemoWindow::canPaste() { return _editor->canPaste(); }
-void MemoWindow::undo() { _editor->undo(); }
-void MemoWindow::redo() { _editor->redo(); }
-void MemoWindow::cut() { _editor->cut(); }
-void MemoWindow::copy() { _editor->copy(); }
-void MemoWindow::paste() { _editor->paste(); }
+void MemoWindow::undo() { _actionUndo->trigger(); }
+void MemoWindow::redo() { _actionRedo->trigger(); }
+void MemoWindow::cut() { _actionCut->trigger(); }
+void MemoWindow::copy() { _actionCopy->trigger(); }
+void MemoWindow::paste() { _actionPaste->trigger(); }
 void MemoWindow::selectAll() { _editor->selectAll(); }
 
 void MemoWindow::markModified(bool m)
 {
     if (m)
-    {
-        saveMemo();
         schema()->events().raise(SchemaEvents::Changed, "memo modified");
-    }
 }
 
 void MemoWindow::sendToPrinter()

@@ -9,9 +9,10 @@
 #include "../AppSettings.h"
 #include "../WindowsManager.h"
 
+#include <QBuffer>
 #include <QDebug>
-#include <QJsonDocument>
 #include <QFile>
+#include <QJsonDocument>
 
 namespace Z {
 namespace IO {
@@ -305,23 +306,35 @@ void SchemaReaderJson::readWindow(const QJsonObject& root)
 
 void SchemaReaderJson::readMemos(const QJsonObject& root)
 {
-    if (!root.contains(QStringLiteral("memos")))
-        return;
-    JsonValue memosJson(root, QStringLiteral("memos"), &_report);
-    if (memosJson)
-        for (auto it = memosJson.array().begin(); it != memosJson.array().end(); it++)
-        {
-            readMemo((*it).toObject());
-            break; // only one memo at this time
-        }
+    auto memosJson = root["memos"].toArray();
+    for (auto it = memosJson.begin(); it != memosJson.end(); it++)
+    {
+        readMemo((*it).toObject());
+        break; // only one memo at this time
+    }
 }
 
 void SchemaReaderJson::readMemo(const QJsonObject& root)
 {
     auto text = root["text"].toString();
     if (text.isEmpty()) return;
+
     _schema->memo = new SchemaMemo;
     _schema->memo->text = text;
+
+    auto imagesIson = root["images"].toObject();
+    auto it = imagesIson.constBegin();
+    while (it != imagesIson.constEnd())
+    {
+        auto bytes = QByteArray::fromBase64(it.value().toString().toLatin1());
+        QBuffer buf(&bytes);
+        QImage img;
+        if (!img.load(&buf, "png"))
+            _report.warning(QString("Unable to load image %1 for memo").arg(it.key()));
+        else
+            _schema->memo->images[it.key()] = img;
+        it++;
+    }
 }
 
 namespace Z {

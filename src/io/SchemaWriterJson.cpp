@@ -8,6 +8,7 @@
 #include "../WindowsManager.h"
 
 #include <QApplication>
+#include <QBuffer>
 #include <QDebug>
 #include <QJsonDocument>
 #include <QFile>
@@ -156,10 +157,20 @@ void SchemaWriterJson::writeMemos(QJsonObject& root)
     if (!_schema->memo || _schema->memo->text.isEmpty())
         return;
 
-    QJsonArray memosJson;
+    QJsonObject imagesIson;
+    auto it = _schema->memo->images.constBegin();
+    while (it != _schema->memo->images.constEnd())
+    {
+        QBuffer b;
+        it.value().save(&b, "png");
+        imagesIson[it.key()] = QString::fromLatin1(b.buffer().toBase64());
+        it++;
+    }
 
+    QJsonArray memosJson;
     QJsonObject memoJson;
     memoJson["text"] = _schema->memo->text;
+    memoJson["images"] = imagesIson;
     memosJson.append(memoJson);
 
     root["memos"] = memosJson;

@@ -12,6 +12,7 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QImage>
 #include <QMap>
 #include <QPointer>
 
@@ -205,6 +206,7 @@ public:
 struct SchemaMemo
 {
     QString text;
+    QMap<QString, QImage> images;
     QPointer<QWidget> editor;
 };
 

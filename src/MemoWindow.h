@@ -8,11 +8,11 @@ class QActionGroup;
 class QComboBox;
 class QFontComboBox;
 class QTextCharFormat;
-class QTextEdit;
 class QToolButton;
 QT_END_NAMESPACE
 
 class Schema;
+class MemoTextEdit;
 
 class MemoWindow : public SchemaMdiChild,
                    public IEditableWindow,
@@ -77,7 +77,7 @@ private slots:
 private:
     static MemoWindow* _instance;
 
-    QTextEdit *_editor;
+    MemoTextEdit *_editor;
     QMenu *_windowMenu, *_alignMenu;
     QFontComboBox *_comboFont;
     QComboBox *_comboSize;
@@ -87,7 +87,6 @@ private:
         *_actionTextColor, *_actionBackColor, *_actionAlignLeft, *_actionAlignCenter, *_actionAlignRight,
         *_actionAlignJustify, *_actionUndo, *_actionRedo, *_actionCut, *_actionCopy, *_actionPaste,
         *_actionInsertTable, *_actionIndent, *_actionUnindent;
-    bool _schemaChanged = false;
 
     void createActions();
     void createMenuBar();
