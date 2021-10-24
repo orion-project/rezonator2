@@ -55,6 +55,7 @@ protected:
     explicit MemoWindow(Schema *owner);
 
     void closeEvent(class QCloseEvent*) override;
+    QSize sizeHint() const override;
 
 private slots:
     void textBold();
@@ -64,6 +65,7 @@ private slots:
     void textFamily(const QString &f);
     void textSize(const QString &p);
     void textColor();
+    void backColor();
     void textAlign(QAction *a);
     void cursorPositionChanged();
     void currentCharFormatChanged(const QTextCharFormat &format);
@@ -82,7 +84,7 @@ private:
     QActionGroup *_actionsAlignment;
     QToolButton *_alignButton;
     QAction *_actionBold, *_actionUnderline, *_actionItalic, *_actionStrikeout,
-        *_actionTextColor, *_actionAlignLeft, *_actionAlignCenter, *_actionAlignRight,
+        *_actionTextColor, *_actionBackColor, *_actionAlignLeft, *_actionAlignCenter, *_actionAlignRight,
         *_actionAlignJustify, *_actionUndo, *_actionRedo, *_actionCut, *_actionCopy, *_actionPaste,
         *_actionInsertTable, *_actionIndent, *_actionUnindent;
     bool _schemaChanged = false;
@@ -94,7 +96,8 @@ private:
 
     void mergeFormat(const QTextCharFormat &format);
     void fontChanged(const QFont &f);
-    void colorChanged(const QColor &c);
+    void textColorChanged(const QBrush &b);
+    void backColorChanged(const QBrush &b);
     void alignmentChanged(Qt::Alignment a);
     void modifyIndentation(int amount);
 };

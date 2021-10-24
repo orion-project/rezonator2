@@ -5,6 +5,7 @@
         <file alias="align_right">../img/toolbar/align_right.svg</file>
         <file alias="align_center">../img/toolbar/align_center.svg</file>
         <file alias="align_just">../img/toolbar/align_just.svg</file>
+        <file alias="back_color">../img/toolbar/back_color.svg</file>
         <file alias="bold">../img/toolbar/bold.svg</file>
         <file alias="bug">../img/toolbar/bug.svg</file>
         <file alias="catalog">../img/toolbar/elements.svg</file>
@@ -112,6 +113,7 @@
         <file alias="schema">../img/toolbar/go_to_schema.svg</file>
         <file alias="star">../img/toolbar/star.svg</file>
         <file alias="strikeout">../img/toolbar/strikeout.svg</file>
+        <file alias="text_color">../img/toolbar/text_color.svg</file>
         <file alias="underline">../img/toolbar/underline.svg</file>
         <file alias="undo">../img/toolbar/undo.svg</file>
         <file alias="update_params">../img/toolbar/update_params.svg</file>

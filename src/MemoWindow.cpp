@@ -10,6 +10,7 @@
 #include <QFontComboBox>
 #include <QFormLayout>
 #include <QMenu>
+#include <QPainter>
 #include <QPrinter>
 #include <QPrintDialog>
 #include <QPrintPreviewDialog>
@@ -22,6 +23,39 @@
 //------------------------------------------------------------------------------
 //                                NoteWindow
 //------------------------------------------------------------------------------
+
+static QWidget* makeEmptySeparator(int width = 6)
+{
+    auto w = new QWidget;
+    w->setFixedWidth(width);
+    return w;
+}
+
+static QPixmap makeColorIcon(QMap<QString, QPixmap>& icons, const QString& baseIcon, const QBrush &b)
+{
+    auto n = b.style() == Qt::NoBrush ? QStringLiteral("empty") : b.color().name();
+    if (icons.contains(n))
+        return icons[n];
+    auto pixmap = QIcon(baseIcon).pixmap(24, 24);
+    QPainter p(&pixmap);
+    p.setPen(b.color());
+    p.setBrush(b);
+    p.drawRect(0, 18, 23, 5);
+    icons[n] = pixmap;
+    return pixmap;
+}
+
+static QPixmap makeTextColorIcon(const QBrush &b)
+{
+    static QMap<QString, QPixmap> icons;
+    return makeColorIcon(icons, QStringLiteral(":/toolbar/text_color"), b);
+}
+
+static QPixmap makeBackColorIcon(const QBrush &b)
+{
+    static QMap<QString, QPixmap> icons;
+    return makeColorIcon(icons, QStringLiteral(":/toolbar/back_color"), b);
+}
 
 MemoWindow* MemoWindow::_instance = nullptr;
 
@@ -79,10 +113,17 @@ MemoWindow::MemoWindow(Schema* owner) : SchemaMdiChild(owner)
     _actionCopy->setEnabled(false);
     _actionUndo->setEnabled(false);
     _actionRedo->setEnabled(false);
-    fontChanged(_editor->font());
-    colorChanged(_editor->textColor());
-    alignmentChanged(_editor->alignment());
     _editor->setFocus();
+
+    fontChanged(_editor->font());
+    alignmentChanged(_editor->alignment());
+
+    QTextCursor cursor = _editor->textCursor();
+    if (!cursor.hasSelection())
+        cursor.select(QTextCursor::WordUnderCursor);
+    auto fmt = cursor.charFormat();
+    textColorChanged(fmt.foreground());
+    backColorChanged(fmt.background());
 }
 
 MemoWindow::~MemoWindow()
@@ -109,10 +150,10 @@ void MemoWindow::createActions()
     _actionUnderline->setCheckable(true);
     _actionStrikeout->setCheckable(true);
 
-    QPixmap pix(16, 16);
-    pix.fill(Qt::black);
-    _actionTextColor = new QAction(pix, tr("Color..."), this);
+    _actionTextColor = new QAction(makeTextColorIcon(Qt::black), tr("Text Color..."), this);
     connect(_actionTextColor, &QAction::triggered, this, &MemoWindow::textColor);
+    _actionBackColor = new QAction(makeBackColorIcon(Qt::white), tr("Back Color..."), this);
+    connect(_actionBackColor, &QAction::triggered, this, &MemoWindow::backColor);
 
     _actionsAlignment = new QActionGroup(this);
     connect(_actionsAlignment, SIGNAL(triggered(QAction*)), this, SLOT(textAlign(QAction*)));
@@ -142,17 +183,10 @@ void MemoWindow::createMenuBar()
     _windowMenu = Ori::Gui::menu(tr("Memo"), this, {
         _actionBold, _actionItalic, _actionUnderline, _actionStrikeout, nullptr,
         _actionIndent, _actionUnindent, nullptr,
-        _actionTextColor,
+        _actionTextColor, _actionBackColor,
         _alignMenu, nullptr,
         _actionInsertTable,
     });
-}
-
-static QWidget* makeEmptySeparator(int width = 6)
-{
-    auto w = new QWidget;
-    w->setFixedWidth(width);
-    return w;
 }
 
 void MemoWindow::createToolBar()
@@ -168,7 +202,7 @@ void MemoWindow::createToolBar()
         makeEmptySeparator(),
         _actionCut, _actionCopy, _actionPaste, nullptr,
         _actionBold, _actionItalic, _actionUnderline, _actionStrikeout, nullptr,
-        _actionIndent, _actionUnindent, nullptr, _actionTextColor, _alignButton,
+        _actionIndent, _actionUnindent, nullptr, _actionTextColor, _actionBackColor, _alignButton,
     });
 }
 
@@ -244,7 +278,18 @@ void MemoWindow::textColor()
     QTextCharFormat fmt;
     fmt.setForeground(color);
     mergeFormat(fmt);
-    colorChanged(color);
+    textColorChanged(color);
+}
+
+void MemoWindow::backColor()
+{
+    QColor color = QColorDialog::getColor(_editor->textBackgroundColor(), this);
+    if (!color.isValid())
+        return;
+    QTextCharFormat fmt;
+    fmt.setBackground(color);
+    mergeFormat(fmt);
+    backColorChanged(color);
 }
 
 void MemoWindow::mergeFormat(const QTextCharFormat &format)
@@ -316,7 +361,8 @@ void MemoWindow::cursorPositionChanged()
 void MemoWindow::currentCharFormatChanged(const QTextCharFormat &format)
 {
     fontChanged(format.font());
-    colorChanged(format.foreground().color());
+    textColorChanged(format.foreground());
+    backColorChanged(format.background());
 }
 
 void MemoWindow::fontChanged(const QFont &f)
@@ -329,11 +375,14 @@ void MemoWindow::fontChanged(const QFont &f)
     _actionStrikeout->setChecked(f.strikeOut());
 }
 
-void MemoWindow::colorChanged(const QColor &c)
+void MemoWindow::textColorChanged(const QBrush &b)
 {
-    QPixmap pix(16, 16);
-    pix.fill(c);
-    _actionTextColor->setIcon(pix);
+    _actionTextColor->setIcon(makeTextColorIcon(b));
+}
+
+void MemoWindow::backColorChanged(const QBrush &b)
+{
+    _actionBackColor->setIcon(makeBackColorIcon(b));
 }
 
 void MemoWindow::alignmentChanged(Qt::Alignment a)
@@ -415,4 +464,12 @@ void MemoWindow::printPreview()
     QPrintPreviewDialog preview(&printer, this);
     connect(&preview, &QPrintPreviewDialog::paintRequested, _editor, &QTextEdit::print);
     preview.exec();
+}
+
+QSize MemoWindow::sizeHint() const
+{
+    auto sz = SchemaMdiChild::sizeHint();
+    // make a bit wider to be sure that all toolbuttons are visible
+    sz.setWidth(1.1 * sz.width());
+    return sz;
 }
