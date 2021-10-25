@@ -1,0 +1,35 @@
+<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <linearGradient id="a">
+    <stop offset="0" stop-color="#92b1de"/>
+    <stop offset="1" stop-color="#525f96"/>
+  </linearGradient>
+  <linearGradient id="b">
+    <stop offset="0" stop-color="#fdffff"/>
+    <stop offset="1" stop-color="#b2d3fa"/>
+  </linearGradient>
+  <linearGradient id="c" gradientTransform="matrix(.8 0 0 .77 -20.8 11.87)" gradientUnits="userSpaceOnUse" x1="40.04" x2="40.07" xlink:href="#b" y1="21.04" y2="45.06"/>
+  <linearGradient id="d" gradientTransform="matrix(.8 0 0 .77 -20.8 11.87)" gradientUnits="userSpaceOnUse" x1="30.73" x2="48.91" xlink:href="#a" y1="19.35" y2="46.49"/>
+  <linearGradient id="e" gradientTransform="matrix(.8 0 0 .77 -18.8 13.87)" gradientUnits="userSpaceOnUse" x1="40.04" x2="40.07" xlink:href="#b" y1="21.04" y2="45.06"/>
+  <linearGradient id="f" gradientTransform="matrix(.8 0 0 .77 -18.8 13.87)" gradientUnits="userSpaceOnUse" x1="30.73" x2="48.91" xlink:href="#a" y1="19.35" y2="46.49"/>
+  <g stroke-linecap="round" transform="translate(0 -24)">
+    <path d="m3.5 28.5h19v19h-19z" fill="url(#e)" stroke="url(#f)" stroke-opacity=".69"/>
+    <path d="m1.5 26.5h19v19h-19z" fill="url(#c)" stroke="url(#d)" stroke-opacity=".69"/>
+    <g fill="none">
+      <g stroke="#000" stroke-opacity=".69">
+        <path d="m5.01 28.5c-1.1 0-2-.9-2-2s.9-2 2-2 1.9.79 2 1.51"/>
+        <path d="m11.01 28.5c-1.1 0-2-.9-2-2s.9-2 2-2 1.9.79 2 1.51"/>
+        <path d="m17.01 28.5c-1.1 0-2-.9-2-2s.9-2 2-2 1.9.79 2 1.51"/>
+      </g>
+      <g stroke-width=".31">
+        <path d="m7.16 44v-14" stroke="#f00" stroke-opacity=".47"/>
+        <g stroke="#000">
+          <path d="m4 32.85h14" opacity=".52"/>
+          <path d="m4 36.86h14" opacity=".52"/>
+          <path d="m4 40.86h14" opacity=".52"/>
+        </g>
+      </g>
+    </g>
+  </g>
+  <circle cx="17.5" cy="17.5" fill="#d22" r="5.83" stroke="#fff" stroke-width="1.34"/>
+  <path d="m16 20h1v-5.03l-1.72.72v-.9l1.74-1.08h.98v6.29h1v1h-3z" fill="#fff"/>
+</svg>

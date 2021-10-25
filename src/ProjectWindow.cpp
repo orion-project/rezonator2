@@ -349,6 +349,8 @@ void ProjectWindow::updateActions()
     actnFuncStabMap2d->setVisible(!isSchemaSP);
     actnFuncMultibeamCaustic->setVisible(isSchemaSP);
     actnFileSave->setEnabled(schema()->modified());
+    if (schema()->memo)
+        actnWndMemos->setIcon(QIcon(":/toolbar/notepad_1"));
 }
 
 void ProjectWindow::updateStatusInfo()

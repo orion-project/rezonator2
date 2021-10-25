@@ -217,6 +217,8 @@ void MemoWindow::createActions()
 
     _actionInsertTable = A_(tr("Insert Table..."), this, SLOT(insertTable()));
 
+    _actionExportPdf = A_(tr("Export as PDF..."), this, SLOT(exportPdf()));
+
     #undef A_
 }
 
@@ -231,7 +233,8 @@ void MemoWindow::createMenuBar()
         _actionIndent, _actionUnindent, nullptr,
         _actionTextColor, _actionBackColor,
         _alignMenu, nullptr,
-        _actionInsertTable,
+        _actionInsertTable, nullptr,
+        _actionExportPdf,
     });
 }
 
@@ -530,4 +533,23 @@ QSize MemoWindow::sizeHint() const
     // make a bit wider to be sure that all toolbuttons are visible
     sz.setWidth(1.1 * sz.width());
     return sz;
+}
+
+void MemoWindow::exportPdf()
+{
+    QString fileName = Ori::Dlg::getSaveFileName(
+        tr("Export memo as PDF"), tr("PDF documents (*.pdf);;All files (*.*)"), "pdf");
+    if (fileName.isEmpty()) return;
+
+    QPrinter printer(QPrinter::PrinterResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+    printer.setPageSize(QPageSize(QPageSize::A4));
+#else
+    printer.setPaperSize(QPrinter::A4);
+#endif
+    printer.setOutputFileName(fileName);
+
+    _editor->document()->print(&printer);
 }

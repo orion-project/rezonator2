@@ -75,6 +75,7 @@
         <file alias="move_up">../img/toolbar/move_up.svg</file>
         <file alias="move_down">../img/toolbar/move_down.svg</file>
         <file alias="notepad">../img/toolbar/notepad.svg</file>
+        <file alias="notepad_1">../img/toolbar/notepad_1.svg</file>
         <file alias="ok">../img/toolbar/ok.svg</file>
         <file alias="options">../img/toolbar/options.svg</file>
         <file alias="settings">../img/toolbar/settings.svg</file>

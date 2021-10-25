@@ -73,6 +73,7 @@ private slots:
     void markModified(bool m);
     void indent();
     void unindent();
+    void exportPdf();
 
 private:
     static MemoWindow* _instance;
@@ -86,7 +87,7 @@ private:
     QAction *_actionBold, *_actionUnderline, *_actionItalic, *_actionStrikeout,
         *_actionTextColor, *_actionBackColor, *_actionAlignLeft, *_actionAlignCenter, *_actionAlignRight,
         *_actionAlignJustify, *_actionUndo, *_actionRedo, *_actionCut, *_actionCopy, *_actionPaste,
-        *_actionInsertTable, *_actionIndent, *_actionUnindent;
+        *_actionInsertTable, *_actionIndent, *_actionUnindent, *_actionExportPdf;
 
     void createActions();
     void createMenuBar();
