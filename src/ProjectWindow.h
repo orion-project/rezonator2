@@ -3,9 +3,10 @@
 
 #include <QMainWindow>
 
-#include "core/Schema.h"
 #include "AppSettings.h"
+#include "MessageBus.h"
 #include "SchemaWindows.h"
+#include "core/Schema.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -31,7 +32,9 @@ namespace Ori {
     }
 }
 
-class ProjectWindow : public QMainWindow, public SchemaToolWindow
+class ProjectWindow : public QMainWindow,
+                      public SchemaToolWindow,
+                      public IMessageBusListener
 {
     Q_OBJECT
 
@@ -48,6 +51,9 @@ public:
 
     // inherited from SettingsListener.
     void settingsChanged() override;
+
+    // inherited from IMessageBusListener
+    void messageBusEvent(MessageBusEvent event, const QMap<QString, QVariant>& params) override;
 
     ProjectOperations* operations() { return _operations; }
 

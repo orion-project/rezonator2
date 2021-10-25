@@ -60,6 +60,7 @@ HEADERS += \
     src/GrinLensWindow.h \
     src/HelpSystem.h \
     src/MemoWindow.h \
+    src/MessageBus.h \
     src/ProjectOperations.h \
     src/ProjectWindow.h \
     src/ProtocolWindow.h \
@@ -180,6 +181,7 @@ SOURCES += \
     src/GrinLensWindow.cpp \
     src/HelpSystem.cpp \
     src/MemoWindow.cpp \
+    src/MessageBus.cpp \
     src/ProjectOperations.cpp \
     src/ProjectWindow.cpp \
     src/ProtocolWindow.cpp \

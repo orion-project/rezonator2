@@ -10,12 +10,12 @@
 #include "GaussCalculatorWindow.h"
 #include "GrinLensWindow.h"
 #include "HelpSystem.h"
+#include "MemoWindow.h"
 #include "ProjectOperations.h"
 #include "ProtocolWindow.h"
 #include "PumpWindow.h"
-#include "SchemaViewWindow.h"
 #include "SchemaParamsWindow.h"
-#include "MemoWindow.h"
+#include "SchemaViewWindow.h"
 #include "WindowsManager.h"
 #include "core/Format.h"
 #include "funcs/RoundTripCalculator.h"
@@ -101,6 +101,8 @@ ProjectWindow::ProjectWindow(Schema* aSchema) : QMainWindow(), SchemaToolWindow(
     // This allows Enter shortcut for tool windows (see IShortcutListener).
     auto shortcutApply = new QShortcut(Qt::Key_Return, this);
     connect(shortcutApply, &QShortcut::activated, this, &ProjectWindow::shortcutEnterActivated);
+
+    MessageBus::instance().registerListener(this);
 }
 
 ProjectWindow::~ProjectWindow()
@@ -595,4 +597,17 @@ void ProjectWindow::shortcutEnterActivated()
         shortcutListener = dynamic_cast<IShortcutListener*>(_mdiArea->activeChild());
     if (shortcutListener)
         shortcutListener->shortcutEnterPressed();
+}
+
+void ProjectWindow::messageBusEvent(MessageBusEvent event, const QMap<QString, QVariant> &params)
+{
+    Q_UNUSED(params)
+    switch (event) {
+    case MBE_MEMO_ADDED:
+        actnWndMemos->setIcon(QIcon(":/toolbar/notepad_1"));
+        break;
+    case MBE_MEMO_REMOVED:
+        actnWndMemos->setIcon(QIcon(":/toolbar/notepad"));
+        break;
+    }
 }

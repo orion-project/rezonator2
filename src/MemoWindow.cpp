@@ -1,4 +1,5 @@
 #include "MemoWindow.h"
+#include "MessageBus.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
@@ -261,6 +262,7 @@ void MemoWindow::closeEvent(class QCloseEvent* e)
     {
         delete schema()->memo;
         schema()->memo = nullptr;
+        MessageBus::instance().send(MBE_MEMO_REMOVED, {});
     }
     else
         saveMemo();
@@ -504,7 +506,10 @@ void MemoWindow::selectAll() { _editor->selectAll(); }
 void MemoWindow::markModified(bool m)
 {
     if (m)
+    {
         schema()->events().raise(SchemaEvents::Changed, "memo modified");
+        MessageBus::instance().send(MBE_MEMO_ADDED, {});
+    }
 }
 
 void MemoWindow::sendToPrinter()
