@@ -125,6 +125,8 @@ MemoWindow::MemoWindow(Schema* owner) : SchemaMdiChild(owner)
     schema()->memo->editor = this;
 
     _editor = new MemoTextEdit(schema()->memo);
+    _editor->setAutoFormatting(QTextEdit::AutoAll);
+    _editor->setTextInteractionFlags(_editor->textInteractionFlags() | Qt::LinksAccessibleByMouse);
     setContent(_editor);
 
     _comboFont = new QFontComboBox;

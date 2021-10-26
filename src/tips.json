@@ -1,4 +1,8 @@
 {
+    "memo": {
+        "text": "Memo window is a rich text editor where you can take work notes, keep some pieces of useful information, even paste images into that and all these data will be stored in your schema project file.",
+        "image": "memo.png"
+    },
     "edit_cursor_values": {
         "text": "You can <b>move the cursor</b> by dragging its lines or clicking X or Y value in the cursor panel and typing an <b>exact value</b> to move the cursor to. Double click moves the cursor into the click position.",
         "image": "edit_cursor_values.gif",

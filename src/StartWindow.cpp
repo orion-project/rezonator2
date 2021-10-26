@@ -271,7 +271,7 @@ TipsStartPanel::TipsStartPanel(QLabel *tipImage) : StartPanel("panel_tips")
 
     LayoutH({
         LayoutV({
-            makeHeader(tr("Tips")),
+            makeHeader(tr("You know what?")),
             _tipText,
             Stretch(),
             buttonsLayout,
@@ -349,7 +349,7 @@ void TipsStartPanel::showTip(const QJsonObject &tip)
         auto previewFile = tip["preview"].toString();
         if (previewFile.isEmpty())
             previewFile = imageFile;
-        auto previewPath = tipImagesPath + previewFile;
+        QString previewPath = tipImagesPath + previewFile;
         auto preview = QPixmap(previewPath);
         if (preview.width() != TIP_IMG_PREVIEW_W or
             preview.height() != TIP_IMG_PREVIEW_H)

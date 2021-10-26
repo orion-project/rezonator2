@@ -282,5 +282,6 @@
         <file alias="tool_gauss_calc.gif">../img/tips/tool_gauss_calc.gif</file>
         <file alias="toggle_cursor_lines.gif">../img/tips/toggle_cursor_lines.gif</file>
         <file alias="active_status_bar.gif">../img/tips/active_status_bar.gif</file>
+        <file alias="memo.png">../img/tips/memo.png</file>
     </qresource>
 </RCC>
