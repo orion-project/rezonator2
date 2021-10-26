@@ -59,6 +59,8 @@ HEADERS += \
     src/ElementsCatalogDialog.h \
     src/GrinLensWindow.h \
     src/HelpSystem.h \
+    src/MemoWindow.h \
+    src/MessageBus.h \
     src/ProjectOperations.h \
     src/ProjectWindow.h \
     src/ProtocolWindow.h \
@@ -138,6 +140,7 @@ HEADERS += \
     src/widgets/ParamsListWidget.h \
     src/widgets/PlotHelpers.h \
     src/widgets/PlotParamsPanel.h \
+    src/widgets/PopupMessage.h \
     src/widgets/RichTextItemDelegate.h \
     src/widgets/SchemaElemsTable.h \
     src/widgets/SchemaLayout.h \
@@ -178,6 +181,8 @@ SOURCES += \
     src/ElementsCatalogDialog.cpp \
     src/GrinLensWindow.cpp \
     src/HelpSystem.cpp \
+    src/MemoWindow.cpp \
+    src/MessageBus.cpp \
     src/ProjectOperations.cpp \
     src/ProjectWindow.cpp \
     src/ProtocolWindow.cpp \
@@ -279,6 +284,7 @@ SOURCES += \
     src/widgets/ParamsListWidget.cpp \
     src/widgets/PlotHelpers.cpp \
     src/widgets/PlotParamsPanel.cpp \
+    src/widgets/PopupMessage.cpp \
     src/widgets/RichTextItemDelegate.cpp \
     src/widgets/SchemaElemsTable.cpp \
     src/widgets/SchemaLayout.cpp \

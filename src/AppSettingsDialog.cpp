@@ -235,7 +235,7 @@ bool AppSettingsDialog::collect()
     settings.numberPrecisionData = _numberPrecisionData->value();
 
     // layout
-    settings.layoutExportTransparent = _groupView->option(1);
+    settings.layoutExportTransparent = _groupView->option(0);
 
     // units
     settings.defaultUnitBeamRadius = _defaultUnitBeamRadius->selectedUnit();

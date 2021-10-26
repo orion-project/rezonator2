@@ -8,6 +8,7 @@
 #include "../WindowsManager.h"
 
 #include <QApplication>
+#include <QBuffer>
 #include <QDebug>
 #include <QJsonDocument>
 #include <QFile>
@@ -42,6 +43,7 @@ QString SchemaWriterJson::writeToString()
     writeParamLinks(root);
     writeFormulas(root);
     writeWindows(root);
+    writeMemos(root);
 
     QJsonDocument doc(root);
     return doc.toJson();
@@ -61,7 +63,7 @@ void SchemaWriterJson::writeGeneral(QJsonObject& root)
 void SchemaWriterJson::writeCustomParams(QJsonObject& root)
 {
     QJsonObject customParams;
-    for (Z::Parameter *p : *_schema->customParams())
+    foreach (Z::Parameter *p, *_schema->customParams())
         customParams[p->alias()] = QJsonObject({
             { "descr", p->description() },
             { "dim", p->dim()->alias() },
@@ -74,7 +76,7 @@ void SchemaWriterJson::writeCustomParams(QJsonObject& root)
 void SchemaWriterJson::writeParamLinks(QJsonObject& root)
 {
     QJsonArray linksJson;
-    for (const Z::ParamLink *link : *_schema->paramLinks())
+    foreach (const Z::ParamLink *link, *_schema->paramLinks())
     {
         if (link->hasOption(Z::ParamLink_NonStorable)) continue;
 
@@ -101,8 +103,11 @@ void SchemaWriterJson::writeParamLinks(QJsonObject& root)
 void SchemaWriterJson::writeFormulas(QJsonObject& root)
 {
     QJsonArray formulasJson;
-    for (Z::Formula *formula : _schema->formulas()->items().values())
+    const auto&  formulas = _schema->formulas()->items();
+    auto it = formulas.constBegin();
+    while (it != formulas.constEnd())
     {
+        auto formula = it.value();
         QJsonObject formulaJson;
         formulaJson["target_param"] = formula->target()->alias();
         formulaJson["code"] = formula->code();
@@ -111,6 +116,7 @@ void SchemaWriterJson::writeFormulas(QJsonObject& root)
             depsJson.append(dep->alias());
         formulaJson["param_deps"] = depsJson;
         formulasJson.append(formulaJson);
+        it++;
     }
     root["formulas"] = formulasJson;
 }
@@ -144,6 +150,30 @@ void SchemaWriterJson::writeWindows(QJsonObject& root)
         }
     }
     root["windows"] = windowsJson;
+}
+
+void SchemaWriterJson::writeMemos(QJsonObject& root)
+{
+    if (!_schema->memo || _schema->memo->text.isEmpty())
+        return;
+
+    QJsonObject imagesIson;
+    auto it = _schema->memo->images.constBegin();
+    while (it != _schema->memo->images.constEnd())
+    {
+        QBuffer b;
+        it.value().save(&b, "png");
+        imagesIson[it.key()] = QString::fromLatin1(b.buffer().toBase64());
+        it++;
+    }
+
+    QJsonArray memosJson;
+    QJsonObject memoJson;
+    memoJson["text"] = _schema->memo->text;
+    memoJson["images"] = imagesIson;
+    memosJson.append(memoJson);
+
+    root["memos"] = memosJson;
 }
 
 namespace Z {

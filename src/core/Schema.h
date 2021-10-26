@@ -12,7 +12,9 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QImage>
 #include <QMap>
+#include <QPointer>
 
 class Schema;
 
@@ -195,6 +197,21 @@ private:
 
 //------------------------------------------------------------------------------
 
+class ISchemaMemoEditor
+{
+public:
+    virtual void saveMemo() = 0;
+};
+
+struct SchemaMemo
+{
+    QString text;
+    QMap<QString, QImage> images;
+    QPointer<QWidget> editor;
+};
+
+//------------------------------------------------------------------------------
+
 class Schema : public ElementOwner, public Z::ParameterListener, public Ori::Notifier<SchemaListener>
 {
 public:
@@ -264,6 +281,8 @@ public:
     void flip();
 
     void markModified(const char* reason);
+
+    SchemaMemo* memo;
 
 private:
     Elements _items;

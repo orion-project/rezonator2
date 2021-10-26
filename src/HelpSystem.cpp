@@ -314,37 +314,4 @@ void HelpSystem::showAbout()
     w->exec();
 }
 
-void HelpSystem::showAbout1()
-{
-    auto title = tr("About %1").arg(qApp->applicationName());
-    auto text = tr(
-                "<h2>{app} {app_ver}</h2>"
-                "<p>Built: {build_date}"
-                "<p>Copyright: Chunosov N.&nbsp;I. © 2006-{app_year}"
-                "<p>Web: <a href='{www}'>{www}</a>"
-                "<p>E-mail: <a href='mailto://{email}'>{email}</a>"
-                "<p>Powered by "
-                "<a href='http://qt.io'>Qt</a>, "
-                "<a href='http://www.qcustomplot.com'>QCustomPlot</a>, "
-                "<a href='http://lua.org'>Lua</a>"
-                "<p>{app} is open-source laser resonator calculation tool, its "
-                "source code is at <a href='{www_sources}'>{www_sources}</a>."
-                "<p>The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING "
-                "THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE."
-                )
-            .replace("{app}", Z::Strs::appName())
-            .replace("{app_ver}", Z::Strs::appVersion())
-            .replace("{app_year}", Z::Strs::appVersionYear())
-            .replace("{build_date}", Z::Strs::appVersionDate())
-            .replace("{www}", Z::Strs::homepage())
-            .replace("{email}", Z::Strs::email())
-            .replace("{www_sources}", Z::Strs::sourcepage());
-    QMessageBox about(QMessageBox::NoIcon, title, text, QMessageBox::Ok, _parent);
-    about.setIconPixmap(QPixmap(":/window_icons/main").
-        scaled(64, 64, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    auto button = about.addButton(tr("About Qt"), QMessageBox::ActionRole);
-    connect(button, SIGNAL(clicked()), qApp, SLOT(aboutQt()));
-    about.exec();
-}
-
 } // namespace Z

@@ -1,0 +1,19 @@
+<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <linearGradient id="a" gradientTransform="matrix(.74 0 0 .81 .17 -.45)" gradientUnits="userSpaceOnUse" x1="13.3" x2="21.42" xlink:href="#d" y1="3.74" y2="17.31"/>
+  <linearGradient id="b" gradientTransform="matrix(.97 0 0 1 .68 0)" gradientUnits="userSpaceOnUse" x1=".91" x2="23.08" y1="15.32" y2="15.32">
+    <stop offset="0" stop-color="#d2d2dd"/>
+    <stop offset="1" stop-color="#a3aab7"/>
+  </linearGradient>
+  <linearGradient id="c" gradientTransform="matrix(.74 0 0 .81 .17 8.55)" gradientUnits="userSpaceOnUse" x1="15.23" x2="20.06" xlink:href="#d" y1="11.69" y2="18.59"/>
+  <linearGradient id="d">
+    <stop offset="0" stop-color="#92b1de"/>
+    <stop offset="1" stop-color="#525f96"/>
+  </linearGradient>
+  <path d="m3 9.51c-.79 0-1.43.72-1.43 1.62v8.79c0 .9.64 1.62 1.43 1.62h18.09c.79 0 1.43-.72 1.43-1.62v-8.79c0-.9-.64-1.62-1.43-1.62z" fill="url(#b)" stroke="#808a9b"/>
+  <path d="m18 2v12h-12v-12z" fill="url(#a)"/>
+  <path d="m17 3v10h-10v-10z" fill="#fff" fill-opacity=".79"/>
+  <rect fill="#d80000" height="2" ry=".78" width="2.32" x="18.68" y="15"/>
+  <path d="m18 18v6h-12v-6z" fill="url(#c)"/>
+  <path d="m17 19v4h-10v-4z" fill="#fff" fill-opacity=".79"/>
+  <path d="m2 13.5h20" fill="none" stroke="#808a9b"/>
+</svg>

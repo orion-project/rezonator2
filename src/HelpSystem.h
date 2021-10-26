@@ -29,7 +29,6 @@ public slots:
     void sendBugReport();
     void checkUpdates();
     void showAbout();
-    void showAbout1();
 
 private slots:
     void assistantFinished(int exitCode);

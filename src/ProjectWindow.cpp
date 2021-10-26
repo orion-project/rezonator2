@@ -10,11 +10,12 @@
 #include "GaussCalculatorWindow.h"
 #include "GrinLensWindow.h"
 #include "HelpSystem.h"
+#include "MemoWindow.h"
 #include "ProjectOperations.h"
 #include "ProtocolWindow.h"
 #include "PumpWindow.h"
-#include "SchemaViewWindow.h"
 #include "SchemaParamsWindow.h"
+#include "SchemaViewWindow.h"
 #include "WindowsManager.h"
 #include "core/Format.h"
 #include "funcs/RoundTripCalculator.h"
@@ -100,6 +101,8 @@ ProjectWindow::ProjectWindow(Schema* aSchema) : QMainWindow(), SchemaToolWindow(
     // This allows Enter shortcut for tool windows (see IShortcutListener).
     auto shortcutApply = new QShortcut(Qt::Key_Return, this);
     connect(shortcutApply, &QShortcut::activated, this, &ProjectWindow::shortcutEnterActivated);
+
+    MessageBus::instance().registerListener(this);
 }
 
 ProjectWindow::~ProjectWindow()
@@ -129,10 +132,14 @@ void ProjectWindow::createActions()
     actnFileLambda = A_(tr("Change Wavelength..."), _operations, SLOT(setupWavelength()), ":/toolbar/wavelength", Qt::Key_F10);
     actnFileTripType = A_(tr("Change Trip Type..."), _operations, SLOT(setupTripType()));
     actnFilePump = A_(tr("Setup Input Beam..."), _operations, SLOT(setupPump()), ":/toolbar/pump_edit", Qt::Key_F9);
-    actnFileSummary = A_(tr("Summary..."), _calculations, SLOT(funcSummary()), ":/toolbar/schema_summary", Qt::CTRL | Qt::Key_I);
+    actnFileSummary = A_(tr("Summary..."), _calculations, SLOT(funcSummary()), ":/toolbar/schema_summary");
     actnFileProps = A_(tr("Properties..."), _operations, SLOT(editSchemaProps()), ":/toolbar/schema_prop");
     actnFileExit = A_(tr("Exit"), qApp, SLOT(closeAllWindows()), nullptr, Qt::CTRL | Qt::Key_Q);
+    actnFilePrint = A_(tr("Print..."), _mdiArea, SLOT(printableChild_SendToPrinter()), ":/toolbar/print");
+    actnFilePrintPreview = A_(tr("Print Preview..."), _mdiArea, SLOT(printableChild_PrintPreview()), nullptr);
 
+    actnEditUndo = A_(tr("Undo"), _mdiArea, SLOT(editableChild_Undo()), ":/toolbar/undo", QKeySequence::Undo);
+    actnEditRedo = A_(tr("Redo"), _mdiArea, SLOT(editableChild_Redo()), ":/toolbar/redo", QKeySequence::Redo);
     actnEditCut = A_(tr("Cut"), _mdiArea, SLOT(editableChild_Cut()), ":/toolbar/cut", QKeySequence::Cut);
     actnEditCopy = A_(tr("Copy"), _mdiArea, SLOT(editableChild_Copy()), ":/toolbar/copy", QKeySequence::Copy);
     actnEditPaste = A_(tr("Paste"), _mdiArea, SLOT(editableChild_Paste()), ":/toolbar/paste", QKeySequence::Paste);
@@ -163,6 +170,7 @@ void ProjectWindow::createActions()
     actnWndSchema = A_(tr("Schema"), this, SLOT(showSchemaWindow()), ":/toolbar/schema", Qt::Key_F12);
     actnWndParams = A_(tr("Parameters"), this, SLOT(showParamsWindow()), ":/toolbar/parameter", Qt::Key_F11);
     actnWndPumps = A_(tr("Pumps"), this, SLOT(showPumpsWindow()), ":/toolbar/pumps");
+    actnWndMemos = A_(tr("Memos"), this, SLOT(showMemosWindow()), ":/toolbar/notepad");
     actnWndProtocol = A_(tr("Protocol"), this, SLOT(showProtocolWindow()), ":/toolbar/protocol");
     actnWndClose = A_(tr("Close"), _mdiArea, SLOT(closeActiveSubWindow()));
     actnWndCloseAll = A_(tr("Close All"), _mdiArea, SLOT(closeAllSubWindows()), ":/toolbar/windows_close");
@@ -193,11 +201,11 @@ void ProjectWindow::createMenuBar()
 
     menuFile = Ori::Gui::menu(tr("File"), this,
         { actnFileNew, actnFileOpen, actnFileOpenExample, _mruMenu, nullptr, actnFileSave,
-          actnFileSaveAs, actnFileSaveCopy, nullptr,
+          actnFileSaveAs, actnFileSaveCopy, nullptr, actnFilePrint, actnFilePrintPreview, nullptr,
           actnFileProps, actnFileTripType, actnFileLambda, actnFilePump, actnFileSummary, nullptr, actnFileExit });
 
     menuEdit = Ori::Gui::menu(tr("Edit"), this,
-        { actnEditCut, actnEditCopy, actnEditPaste, nullptr, actnEditSelectAll });
+        { actnEditUndo, actnEditRedo, nullptr, actnEditCut, actnEditCopy, actnEditPaste, nullptr, actnEditSelectAll });
 
     _langsMenu = new Ori::Widgets::LanguagesMenu(CommonData::instance()->translator(), ":/toolbar16/langs", this);
     menuView = new QMenu(tr("View"), this);
@@ -213,7 +221,7 @@ void ProjectWindow::createMenuBar()
           actnToolsGaussCalc, actnToolsCalc, actnToolsCustomElems, actnToolGrinLens, nullptr, actnToolSettings });
 
     menuWindow = Ori::Gui::menu(tr("Window"), this,
-        { actnWndSchema, actnWndParams, actnWndPumps, actnWndProtocol, nullptr,
+        { actnWndSchema, actnWndParams, actnWndPumps, actnWndProtocol, actnWndMemos, nullptr,
           actnWndClose, actnWndCloseAll, nullptr, actnWndTile, actnWndCascade, nullptr });
     connect(menuWindow, SIGNAL(aboutToShow()), _mdiArea, SLOT(populateWindowMenu()));
 
@@ -231,7 +239,7 @@ void ProjectWindow::createToolBars()
         actnEditCut, actnEditCopy, actnEditPaste, nullptr, actnFuncRoundTrip, nullptr,
         actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamVariation, nullptr,
         actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic, actnFuncBeamParamsAtElems, nullptr,
-        actnFuncRepRate, nullptr, actnWndParams, actnWndPumps, nullptr, actnToolAdjust, nullptr,
+        actnFuncRepRate, nullptr, actnWndParams, actnWndPumps, actnWndMemos, nullptr, actnToolAdjust, nullptr,
         actnToolsGaussCalc, actnToolsCalc, actnToolGrinLens
     }, true));
 
@@ -282,10 +290,16 @@ void ProjectWindow::updateMenuBar()
 
     // Update Edit menu
     IEditableWindow* editable = _mdiArea->activeEditableChild();
+    activateEditAction(actnEditUndo, editable, IEditableWindow::EditCmd_Undo);
+    activateEditAction(actnEditRedo, editable, IEditableWindow::EditCmd_Redo);
     activateEditAction(actnEditCut, editable, IEditableWindow::EditCmd_Cut);
     activateEditAction(actnEditCopy, editable, IEditableWindow::EditCmd_Copy);
     activateEditAction(actnEditPaste, editable, IEditableWindow::EditCmd_Paste);
     activateEditAction(actnEditSelectAll, editable, IEditableWindow::EditCmd_SelectAll);
+
+    IPrintableWindow* printable = dynamic_cast<IPrintableWindow*>(child);
+    actnFilePrint->setEnabled(printable);
+    actnFilePrintPreview->setEnabled(printable);
 
     // Update View menu
     menuView->clear();
@@ -317,8 +331,10 @@ void ProjectWindow::updateMenuBar()
     menuBar->addMenu(menuView);
     menuBar->addMenu(menuFunctions);
     if (child)
-        for (QMenu* menu : child->menus())
+    {
+        Q_FOREACH (QMenu* menu, child->menus())
             menuBar->addMenu(menu);
+    }
     menuBar->addMenu(menuTools);
     menuBar->addMenu(menuWindow);
     menuBar->addMenu(menuHelp);
@@ -335,6 +351,8 @@ void ProjectWindow::updateActions()
     actnFuncStabMap2d->setVisible(!isSchemaSP);
     actnFuncMultibeamCaustic->setVisible(isSchemaSP);
     actnFileSave->setEnabled(schema()->modified());
+    if (schema()->memo)
+        actnWndMemos->setIcon(QIcon(":/toolbar/notepad_1"));
 }
 
 void ProjectWindow::updateStatusInfo()
@@ -420,7 +438,7 @@ void ProjectWindow::closeEvent(QCloseEvent* ce)
     if (_closingInProgress) return;
 
     _closingInProgress = true;
-    QTimer::singleShot(0, [&](){
+    QTimer::singleShot(0, this, [&](){
         if (_operations->canClose()) {
             _forceClosing = true;
             close();
@@ -507,6 +525,11 @@ void ProjectWindow::showPumpsWindow()
     _mdiArea->appendChild(PumpWindow::create(schema()));
 }
 
+void ProjectWindow::showMemosWindow()
+{
+    _mdiArea->appendChild(MemoWindow::create(schema()));
+}
+
 //------------------------------------------------------------------------------
 //                               Help actions
 
@@ -574,4 +597,17 @@ void ProjectWindow::shortcutEnterActivated()
         shortcutListener = dynamic_cast<IShortcutListener*>(_mdiArea->activeChild());
     if (shortcutListener)
         shortcutListener->shortcutEnterPressed();
+}
+
+void ProjectWindow::messageBusEvent(MessageBusEvent event, const QMap<QString, QVariant> &params)
+{
+    Q_UNUSED(params)
+    switch (event) {
+    case MBE_MEMO_ADDED:
+        actnWndMemos->setIcon(QIcon(":/toolbar/notepad_1"));
+        break;
+    case MBE_MEMO_REMOVED:
+        actnWndMemos->setIcon(QIcon(":/toolbar/notepad"));
+        break;
+    }
 }

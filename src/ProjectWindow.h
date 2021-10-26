@@ -3,9 +3,10 @@
 
 #include <QMainWindow>
 
-#include "core/Schema.h"
 #include "AppSettings.h"
+#include "MessageBus.h"
 #include "SchemaWindows.h"
+#include "core/Schema.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -31,7 +32,9 @@ namespace Ori {
     }
 }
 
-class ProjectWindow : public QMainWindow, public SchemaToolWindow
+class ProjectWindow : public QMainWindow,
+                      public SchemaToolWindow,
+                      public IMessageBusListener
 {
     Q_OBJECT
 
@@ -49,6 +52,9 @@ public:
     // inherited from SettingsListener.
     void settingsChanged() override;
 
+    // inherited from IMessageBusListener
+    void messageBusEvent(MessageBusEvent event, const QMap<QString, QVariant>& params) override;
+
     ProjectOperations* operations() { return _operations; }
 
 protected:
@@ -61,9 +67,9 @@ private:
 
     QAction *actnFileNew, *actnFileOpen, *actnFileExit, *actnFileSave, *actnFileSaveCopy,
             *actnFileSaveAs, *actnFileTripType, *actnFilePump, *actnFileLambda, *actnFileSummary,
-            *actnFileOpenExample, *actnFileProps;
+            *actnFileOpenExample, *actnFileProps, *actnFilePrint, *actnFilePrintPreview;
 
-    QAction *actnEditCut, *actnEditCopy,
+    QAction *actnEditCut, *actnEditCopy, *actnEditUndo, *actnEditRedo,
             *actnEditPaste, *actnEditSelectAll;
 
     QAction *actnFuncRoundTrip, *actnFuncStabMap, *actnFuncStabMap2d,
@@ -76,7 +82,8 @@ private:
              *actnToolGrinLens;
 
     QAction *actnWndClose, *actnWndCloseAll, *actnWndTile, *actnWndCascade,
-            *actnWndSchema, *actnWndParams, *actnWndProtocol, *actnWndPumps;
+            *actnWndSchema, *actnWndParams, *actnWndProtocol, *actnWndPumps,
+            *actnWndMemos;
 
     QAction *actnHelpBugReport, *actnHelpUpdates, *actnHelpHomepage, *actnHelpAbout,
             *actnHelpContent, *actnHelpIndex;
@@ -117,6 +124,7 @@ private slots:
     void showCalculator();
     void showParamsWindow();
     void showPumpsWindow();
+    void showMemosWindow();
     void showAdjustment();
     void showHelp();
 

@@ -43,10 +43,18 @@ void adjustIconSize(QToolBar* toolbar, const QSize& iconSize)
 } // namespace Z
 
 //------------------------------------------------------------------------------
-//                               EditableWindow
+//                               IEditableWindow
 //------------------------------------------------------------------------------
 
 IEditableWindow::~IEditableWindow()
+{
+}
+
+//------------------------------------------------------------------------------
+//                               IPrintableWindow
+//------------------------------------------------------------------------------
+
+IPrintableWindow::~IPrintableWindow()
 {
 }
 
@@ -195,6 +203,10 @@ IEditableWindow* SchemaMdiArea::activeEditableChild() const
     return dynamic_cast<IEditableWindow*>(activeSubWindow());
 }
 
+IPrintableWindow* SchemaMdiArea::activePrintableChild() const
+{
+    return dynamic_cast<IPrintableWindow*>(activeSubWindow());
+}
 
 void SchemaMdiArea::appendChild(QWidget* window)
 {
@@ -248,6 +260,17 @@ void SchemaMdiArea::activateChild(BasicMdiChild* window)
     }
 }
 
+void SchemaMdiArea::editableChild_Undo()
+{
+    IEditableWindow *w = dynamic_cast<IEditableWindow*>(activeSubWindow());
+    if (w && w->canUndo()) w->undo();
+}
+
+void SchemaMdiArea::editableChild_Redo()
+{
+    IEditableWindow *w = dynamic_cast<IEditableWindow*>(activeSubWindow());
+    if (w && w->canRedo()) w->redo();
+}
 
 void SchemaMdiArea::editableChild_Cut()
 {
@@ -273,6 +296,18 @@ void SchemaMdiArea::editableChild_SelectAll()
     if (w) w->selectAll();
 }
 
+void SchemaMdiArea::printableChild_SendToPrinter()
+{
+    auto w = dynamic_cast<IPrintableWindow*>(activeSubWindow());
+    if (w) w->sendToPrinter();
+}
+
+void SchemaMdiArea::printableChild_PrintPreview()
+{
+    auto w = dynamic_cast<IPrintableWindow*>(activeSubWindow());
+    if (w) w->printPreview();
+}
+
 void SchemaMdiArea::populateWindowMenu()
 {
     QMenu* menu = qobject_cast<QMenu*>(sender());
@@ -281,7 +316,7 @@ void SchemaMdiArea::populateWindowMenu()
     auto subWindows = subWindowList();
 
     // Remove action of windows that are no more exist
-    for (auto action : menu->actions())
+    Q_FOREACH (auto action, menu->actions())
     {
         if (action->data().isNull()) continue;
         // If we interpret variant data as QMdiSubWindow*, Qt seems to call for some of their
@@ -326,7 +361,7 @@ void SchemaMdiArea::updateBackground()
     if (AppSettings::instance().showBackground)
         setBackground(QBrush(QPixmap(":/misc/mdi_background")));
     else
-        setBackground(QBrush(palette().color(QPalette::Background)));
+        setBackground(QBrush(palette().color(QPalette::Window)));
 }
 
 //------------------------------------------------------------------------------
@@ -349,25 +384,31 @@ bool SchemaPopupWindow::event(QEvent *event)
     {
         auto keyEvent = dynamic_cast<QKeyEvent*>(event);
         if (keyEvent)
-            for (auto shortcut : _actionShortcuts)
+        {
+            Q_FOREACH(auto shortcut, _actionShortcuts)
+            {
                 if (keyEvent->matches(shortcut))
                 {
                     keyEvent->accept();
                     return true;
                 }
+            }
+        }
     }
     return QWidget::event(event);
 }
 
 void SchemaPopupWindow::keyPressEvent(QKeyEvent *event)
 {
-    for (auto shortcut : _actionShortcuts)
+    Q_FOREACH (auto shortcut, _actionShortcuts)
+    {
         if (event->matches(shortcut))
         {
             _actionWithShortcuts[shortcut]->trigger();
             event->accept();
             return;
         }
+    }
     QWidget::keyPressEvent(event);
 }
 

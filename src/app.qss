@@ -1,4 +1,7 @@
-QToolButton {
+/************************************
+             StartWindow
+************************************/
+StartWindow QToolButton {
   border: 1px solid white;
   border-radius: 5px;
   padding: 5px;
@@ -6,18 +9,18 @@ QToolButton {
   color: #335;
 }
 
-QToolButton:focus {
+StartWindow QToolButton:focus {
   border-color: #dadbde;
   background-color: #f6f7fa;
 }
 
-QToolButton:hover {
+StartWindow QToolButton:hover {
   border-color: silver;
   background-color: qlineargradient(
     x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #f6f7fa, stop: 1 #dadbde);
 }
 
-QToolButton[role=tip_button] {
+StartWindow QToolButton[role=tip_button] {
   border-color: #dadbde;
   padding: 0px 10px;
   font-size: 10px;
@@ -25,22 +28,22 @@ QToolButton[role=tip_button] {
   max-height: 18px;
 }
 
-QToolButton[role=tip_button]:hover {
+StartWindow QToolButton[role=tip_button]:hover {
   border-color: silver;
 }
 
-QWidget[role=panel] {
+StartWindow QWidget[role=panel] {
   background-color: white;
   border: 1px solid silver;
   border-radius: 5px;
 }
 
-QLabel[role=header] {
+StartWindow QLabel[role=header] {
   font: bold 16px;
   color: #557;
 }
 
-#tip_text {
+StartWindow #tip_text {
   font-family: Arial;
   font-size: 15px;
   padding-left: 6px;
@@ -48,29 +51,29 @@ QLabel[role=header] {
   color: #225
 }
 
-#tip_preview {
+StartWindow #tip_preview {
   margin-right: 5px;
 }
 
-#tip_image {
+StartWindow #tip_image {
   background-color: white;
   border: 1px solid silver;
   border-radius: 6px;
   padding-left: 9px;
 }
 
-#mru_empty_stub {
+StartWindow #mru_empty_stub {
   font-size: 12px;
   padding: 10px;
   color: silver;
 }
 
-QLabel[role=mru_file_name] {
+StartWindow QLabel[role=mru_file_name] {
   font: bold 14px;
   color: #446;
 }
 
-QLabel[role=mru_file_path] {
+StartWindow QLabel[role=mru_file_path] {
   font-size: 11px;
   color: #779;
 }
@@ -87,42 +90,64 @@ MruStartItem:hover {
     x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fefefe, stop: 1 #f6f7f9);
 }
 
-#mru_scroll_area  {
+StartWindow #mru_scroll_area  {
   border-style: none;
   background-color: white;
 }
 
-#mru_widget {
+StartWindow #mru_widget {
   background-color: white;
   margin-right: 20px;
 }
 
-#mru_scroll_area QScrollBar:vertical {
+StartWindow #mru_scroll_area QScrollBar:vertical {
   background-color: white;
   width: 15px;
   margin-left: 6px;
 }
 
-#mru_scroll_area QScrollBar::handle:vertical {
+StartWindow #mru_scroll_area QScrollBar::handle:vertical {
   border: 1px solid #dadbde;
   border-radius: 4px;
   background-color: #f6f7fa;
   min-height: 20px;
 }
 
-#mru_scroll_area QScrollBar::add-line:vertical {
+StartWindow #mru_scroll_area QScrollBar::add-line:vertical {
   height: 0;
 }
 
-#mru_scroll_area QScrollBar::sub-line:vertical {
+StartWindow #mru_scroll_area QScrollBar::sub-line:vertical {
   height: 0;
 }
 
-#panel_tips {
+StartWindow #panel_tips {
   min-height: 130px;
   max-height: 130px;
 }
 
-#panel_mru {
+StartWindow #panel_mru {
   min-width: 350px;
+}
+
+/************************************
+             PopupMessage
+************************************/
+PopupMessage {
+  border-radius: 6px;
+}
+PopupMessage QLabel {
+  margin: 10px;
+}
+PopupMessage[mode=affirm] {
+  border: 1px solid #7ee87e;
+  background: #b5fbb5;
+}
+PopupMessage[mode=error] {
+  border: 1px solid #e87e7e;
+  background: #ffb5b5;
+}
+PopupMessage[mode=info] {
+  border: 1px solid #C0C0C0;
+  background: #DCDCDC;
 }

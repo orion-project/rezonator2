@@ -18,3 +18,5 @@ __pycache__
 img/svgcleaner
 .venv
 .ipynb_checkpoints
+/1.*
+/2.*

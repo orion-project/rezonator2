@@ -1,6 +1,12 @@
 <RCC>
     <qresource prefix="/toolbar">
         <file alias="adjust">../img/toolbar/adjust.svg</file>
+        <file alias="align_left">../img/toolbar/align_left.svg</file>
+        <file alias="align_right">../img/toolbar/align_right.svg</file>
+        <file alias="align_center">../img/toolbar/align_center.svg</file>
+        <file alias="align_just">../img/toolbar/align_just.svg</file>
+        <file alias="back_color">../img/toolbar/back_color.svg</file>
+        <file alias="bold">../img/toolbar/bold.svg</file>
         <file alias="bug">../img/toolbar/bug.svg</file>
         <file alias="catalog">../img/toolbar/elements.svg</file>
         <file alias="check">../img/toolbar/check.svg</file>
@@ -52,6 +58,9 @@
         <file alias="help">../img/toolbar/help.svg</file>
         <file alias="home">../img/toolbar/home.svg</file>
         <file alias="info">../img/toolbar/info.svg</file>
+        <file alias="indent_dec">../img/toolbar/indent_dec.svg</file>
+        <file alias="indent_inc">../img/toolbar/indent_inc.svg</file>
+        <file alias="italic">../img/toolbar/italic.svg</file>
         <file alias="label">../img/toolbar/label.svg</file>
         <file alias="limits_auto_x">../img/toolbar/limits_auto_x.svg</file>
         <file alias="limits_auto_y">../img/toolbar/limits_auto_y.svg</file>
@@ -65,6 +74,8 @@
         <file alias="limits_zoom_out">../img/toolbar/limits_zoom_out.svg</file>
         <file alias="move_up">../img/toolbar/move_up.svg</file>
         <file alias="move_down">../img/toolbar/move_down.svg</file>
+        <file alias="notepad">../img/toolbar/notepad.svg</file>
+        <file alias="notepad_1">../img/toolbar/notepad_1.svg</file>
         <file alias="ok">../img/toolbar/ok.svg</file>
         <file alias="options">../img/toolbar/options.svg</file>
         <file alias="settings">../img/toolbar/settings.svg</file>
@@ -84,6 +95,7 @@
         <file alias="plot_w">../img/toolbar/plot_w.svg</file>
         <file alias="plot_z0">../img/toolbar/plot_z0.svg</file>
         <file alias="plus">../img/toolbar/plus.svg</file>
+        <file alias="print">../img/toolbar/printer.svg</file>
         <file alias="profile">../img/toolbar/profile.svg</file>
         <file alias="protocol">../img/toolbar/protocol.svg</file>
         <file alias="pump_add">../img/toolbar/pump_add.svg</file>
@@ -91,6 +103,7 @@
         <file alias="pump_edit">../img/toolbar/pump_props.svg</file>
         <file alias="pump_on">../img/toolbar/pump_on.svg</file>
         <file alias="pumps">../img/toolbar/pumps.svg</file>
+        <file alias="redo">../img/toolbar/redo.svg</file>
         <file alias="restore">../img/toolbar/restore.svg</file>
         <file alias="save">../img/toolbar/save.svg</file>
         <file alias="schema_new">../img/toolbar/schema_new.svg</file>
@@ -100,6 +113,10 @@
         <file alias="schema_summary">../img/toolbar/schema_summary.svg</file>
         <file alias="schema">../img/toolbar/go_to_schema.svg</file>
         <file alias="star">../img/toolbar/star.svg</file>
+        <file alias="strikeout">../img/toolbar/strikeout.svg</file>
+        <file alias="text_color">../img/toolbar/text_color.svg</file>
+        <file alias="underline">../img/toolbar/underline.svg</file>
+        <file alias="undo">../img/toolbar/undo.svg</file>
         <file alias="update_params">../img/toolbar/update_params.svg</file>
         <file alias="update">../img/toolbar/update.svg</file>
         <file alias="wavelength">../img/toolbar/wavelength.svg</file>
@@ -253,7 +270,7 @@
         <file alias="pump_complex">../img/drawing/pump_complex.png</file>
     </qresource>
     <qresource prefix="/style">
-        <file alias="StartWindow">StartWindow.qss</file>
+        <file alias="app">../src/app.qss</file>
         <file alias="about">../img/about/about_1.png</file>
     </qresource>
     <qresource prefix="/tips">
@@ -265,5 +282,6 @@
         <file alias="tool_gauss_calc.gif">../img/tips/tool_gauss_calc.gif</file>
         <file alias="toggle_cursor_lines.gif">../img/tips/toggle_cursor_lines.gif</file>
         <file alias="active_status_bar.gif">../img/tips/active_status_bar.gif</file>
+        <file alias="memo.png">../img/tips/memo.png</file>
     </qresource>
 </RCC>

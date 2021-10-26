@@ -165,6 +165,8 @@ Schema::~Schema()
     qDeleteAll(_pumps);
 
     _formulas.clear();
+
+    if (memo) delete memo;
 }
 
 int Schema::enabledCount() const

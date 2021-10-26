@@ -31,6 +31,7 @@ private:
     void writeParamLinks(QJsonObject& root);
     void writeFormulas(QJsonObject& root);
     void writeWindows(QJsonObject& root);
+    void writeMemos(QJsonObject& root);
 };
 
 namespace Z {

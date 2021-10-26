@@ -64,6 +64,8 @@ private:
     Schema* _schema;
     CalcManager* _calcManager;
 
+    void applyMemoEditors();
+
     void writeProtocol(const Z::Report& report, const QString &message);
     void openSchemaFile(const QString& fileName, const OpenFileOptions& opts);
 };

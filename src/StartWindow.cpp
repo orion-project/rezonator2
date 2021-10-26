@@ -14,6 +14,8 @@
 
 #include "helpers/OriWindows.h"
 #include "helpers/OriLayouts.h"
+#include "helpers/OriTheme.h"
+#include "helpers/OriDialogs.h"
 #include "tools/OriMruList.h"
 #include "tools/OriSettings.h"
 #include "widgets/OriLabels.h"
@@ -26,6 +28,7 @@
 #include <QPainter>
 #include <QPlainTextEdit>
 #include <QPushButton>
+#include <QRandomGenerator>
 #include <QResource>
 #include <QScrollArea>
 #include <QScrollBar>
@@ -91,7 +94,7 @@ void MruStartItem::resizeEvent(QResizeEvent *event)
 
     QFontMetrics metrix(_filePathLabel->font());
     int width = _filePathLabel->width();
-    if (metrix.width(_filePath) > width)
+    if (metrix.horizontalAdvance(_filePath) > width)
     {
         _filePathLabel->setText(metrix.elidedText(_filePath, Qt::ElideLeft, width));
         setToolTip(_filePath);
@@ -270,7 +273,7 @@ TipsStartPanel::TipsStartPanel(QLabel *tipImage) : StartPanel("panel_tips")
 
     LayoutH({
         LayoutV({
-            makeHeader(tr("Tips")),
+            makeHeader(tr("You know what?")),
             _tipText,
             Stretch(),
             buttonsLayout,
@@ -306,7 +309,7 @@ void TipsStartPanel::loadTips()
     auto keys = _tips.keys();
     while (!keys.isEmpty())
     {
-        int index = qrand() % keys.size();
+        int index = QRandomGenerator::system()->generate() % keys.size();
         auto key = keys.at(index);
         keys.removeAt(index);
         auto tip = _tips[key].toObject();
@@ -348,7 +351,7 @@ void TipsStartPanel::showTip(const QJsonObject &tip)
         auto previewFile = tip["preview"].toString();
         if (previewFile.isEmpty())
             previewFile = imageFile;
-        auto previewPath = tipImagesPath + previewFile;
+        QString previewPath = tipImagesPath + previewFile;
         auto preview = QPixmap(previewPath);
         if (preview.width() != TIP_IMG_PREVIEW_W or
             preview.height() != TIP_IMG_PREVIEW_H)
@@ -588,10 +591,17 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
         Stretch(),
     }).setMargin(20).useFor(this);
 
+    _aboutButton = new QToolButton(this);
+    _aboutButton->setIcon(QIcon(":/toolbar/help"));
+    _aboutButton->setToolTip(tr("About"));
+    connect(_aboutButton, &QToolButton::clicked, this, []{
+        Z::HelpSystem::instance()->showAbout();
+    });
+    auto h = _aboutButton->size().height();
+    _aboutButton->resize(h, h);
+
     // Should be after all widgets to overlay them
     tipImage->setParent(this);
-
-    loadStyleSheet();
 
     Ori::Settings s;
     s.beginGroup("View");
@@ -609,18 +619,25 @@ void StartWindow::editStyleSheet()
 {
     auto editor = new QPlainTextEdit;
     editor->setFont(Z::Gui::CodeEditorFont().get());
-    editor->setPlainText(this->styleSheet());
+    editor->setPlainText(Ori::Theme::loadRawStyleSheet());
 
     auto applyButton = new QPushButton("Apply");
-    connect(applyButton, &QPushButton::clicked, [this, editor]{
-        this->setStyleSheet(editor->toPlainText());
+    connect(applyButton, &QPushButton::clicked, [editor]{
+        qApp->setStyleSheet(Ori::Theme::makeStyleSheet(editor->toPlainText()));
+    });
+
+    auto saveButton = new QPushButton("Save");
+    connect(saveButton, &QPushButton::clicked, [editor]{
+        auto res = Ori::Theme::saveRawStyleSheet(editor->toPlainText());
+        if (!res.isEmpty()) Ori::Dlg::error(res);
     });
 
     auto wnd = LayoutV({
         editor,
         LayoutH({
             Stretch(),
-            applyButton
+            applyButton,
+            saveButton,
         }).setMargin(6)
     }).setMargin(3).setSpacing(0).makeWidget();
     wnd->setAttribute(Qt::WA_DeleteOnClose);
@@ -634,28 +651,6 @@ void StartWindow::resizeEvent(QResizeEvent* event)
 {
     QWidget::resizeEvent(event);
     adjustTipImagePosition(_tipImage);
-}
 
-void StartWindow::loadStyleSheet()
-{
-    QFile file(":/style/StartWindow");
-    bool ok = file.open(QIODevice::ReadOnly);
-    if (!ok)
-    {
-        qWarning() << "Unable to load style from resources" << file.errorString();
-        return;
-    }
-    QByteArray data = file.readAll();
-    if (data.isEmpty())
-    {
-        qWarning() << "Unable to load style from resources: read data is empty";
-        return;
-    }
-    QString styleSheet = data;
-    if (styleSheet.isEmpty())
-    {
-        qWarning() << "Unable to load style from resources: data can't be converter to string";
-        return;
-    }
-    setStyleSheet(styleSheet);
+    _aboutButton->move(event->size().width() - _aboutButton->width() - 10, 10);
 }

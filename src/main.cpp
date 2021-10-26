@@ -9,6 +9,7 @@
 #include "core/Format.h"
 #include "tests/TestSuite.h"
 
+#include "helpers/OriTheme.h"
 #include "helpers/OriTools.h"
 #include "tools/OriDebug.h"
 #include "testing/OriTestManager.h"
@@ -24,8 +25,6 @@
 
 int main(int argc, char* argv[])
 {
-    qsrand(static_cast<uint>(std::time(nullptr)));
-
     QApplication app(argc, argv);
     app.setApplicationName("reZonator");
     app.setOrganizationName("orion-project.org");
@@ -41,9 +40,9 @@ int main(int argc, char* argv[])
     auto optionVersion = parser.addVersionOption();
     QCommandLineOption optionTest("test", "Run unit-test session.");
     QCommandLineOption optionTool("tool", "Run a tool: gauss, calc", "name");
-    QCommandLineOption optionDevMode("dev"); optionDevMode.setHidden(true);
-    QCommandLineOption optionConsole("console"); optionConsole.setHidden(true);
-    QCommandLineOption optionExample("example"); optionExample.setHidden(true);
+    QCommandLineOption optionDevMode("dev"); optionDevMode.setFlags(QCommandLineOption::HiddenFromHelp);
+    QCommandLineOption optionConsole("console"); optionConsole.setFlags(QCommandLineOption::HiddenFromHelp);
+    QCommandLineOption optionExample("example"); optionExample.setFlags(QCommandLineOption::HiddenFromHelp);
     parser.addOptions({optionTest, optionTool, optionDevMode, optionConsole, optionExample});
 
     if (!parser.parse(QApplication::arguments()))
@@ -74,6 +73,10 @@ int main(int argc, char* argv[])
     // Load application settings before any command start
     AppSettings::instance().load();
     AppSettings::instance().isDevMode = parser.isSet(optionDevMode);
+
+    // Call `setStyleSheet` after setting loaded
+    // to be able to apply custom colors (if they are).
+    app.setStyleSheet(Ori::Theme::makeStyleSheet(Ori::Theme::loadRawStyleSheet()));
 
     // CommonData will be used via its instance pointer
     CommonData commonData;
@@ -118,7 +121,7 @@ int main(int argc, char* argv[])
     if (!args.isEmpty())
     {
         auto fileName = args.first();
-        if (QFileInfo(fileName).exists())
+        if (QFileInfo::exists(fileName))
         {
             auto projectWindow = new ProjectWindow(new Schema());
             projectWindow->show();

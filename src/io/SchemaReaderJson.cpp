@@ -9,9 +9,10 @@
 #include "../AppSettings.h"
 #include "../WindowsManager.h"
 
+#include <QBuffer>
 #include <QDebug>
-#include <QJsonDocument>
 #include <QFile>
+#include <QJsonDocument>
 
 namespace Z {
 namespace IO {
@@ -80,6 +81,7 @@ void SchemaReaderJson::readFromUtf8(const QByteArray& data)
     readElements(root);
     readParamLinks(root);
     readFormulas(root);
+    readMemos(root);
 
     if (!AppSettings::instance().skipFuncWindowsLoading)
         readWindows(root);
@@ -299,6 +301,39 @@ void SchemaReaderJson::readWindow(const QJsonObject& root)
         _report.warning(QString("Unable to load window of type '%1'").arg(type));
         _report.report(windowReport);
         delete window;
+    }
+}
+
+void SchemaReaderJson::readMemos(const QJsonObject& root)
+{
+    auto memosJson = root["memos"].toArray();
+    for (auto it = memosJson.begin(); it != memosJson.end(); it++)
+    {
+        readMemo((*it).toObject());
+        break; // only one memo at this time
+    }
+}
+
+void SchemaReaderJson::readMemo(const QJsonObject& root)
+{
+    auto text = root["text"].toString();
+    if (text.isEmpty()) return;
+
+    _schema->memo = new SchemaMemo;
+    _schema->memo->text = text;
+
+    auto imagesIson = root["images"].toObject();
+    auto it = imagesIson.constBegin();
+    while (it != imagesIson.constEnd())
+    {
+        auto bytes = QByteArray::fromBase64(it.value().toString().toLatin1());
+        QBuffer buf(&bytes);
+        QImage img;
+        if (!img.load(&buf, "png"))
+            _report.warning(QString("Unable to load image %1 for memo").arg(it.key()));
+        else
+            _schema->memo->images[it.key()] = img;
+        it++;
     }
 }
 

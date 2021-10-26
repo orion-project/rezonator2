@@ -417,14 +417,16 @@ QString StabilityMap2DWindow::writeWindowSpecific(QJsonObject& root)
 
     // Store view states
     QJsonArray viewsJson;
-    for (int key : _auxStoredView.keys())
+    auto it = _auxStoredView.constBegin();
+    while (it != _auxStoredView.constEnd())
     {
-        auto view = _auxStoredView[key];
+        auto view = it.value();
         viewsJson.append(QJsonObject{
-            { "mode", key },
+            { "mode", it.key() },
             { "z_min", view.limitsZ.min },
             { "z_max", view.limitsZ.max },
         });
+        it++;
     }
     root["aux_stored_views"] = viewsJson;
 
@@ -435,7 +437,7 @@ QString StabilityMap2DWindow::getCursorInfo(const QPointF& pos) const
 {
     if (!function()->ok()) return QString();
     auto res = function()->calculateAt(Z::Value(pos.x(), getUnitX()), Z::Value(pos.y(), getUnitY()));
-    return QStringLiteral("Pt = %1; Ps = %2").arg(Z::format(res.T)).arg(Z::format(res.S));
+    return QStringLiteral("Pt = %1; Ps = %2").arg(Z::format(res.T), Z::format(res.S));
 }
 
 void StabilityMap2DWindow::copyGraphData2D()
