@@ -1,5 +1,6 @@
 #include "MemoWindow.h"
 #include "MessageBus.h"
+#include "widgets/PopupMessage.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
@@ -9,6 +10,7 @@
 #include <QClipboard>
 #include <QColorDialog>
 #include <QComboBox>
+#include <QDesktopServices>
 #include <QFontComboBox>
 #include <QFormLayout>
 #include <QMenu>
@@ -19,10 +21,13 @@
 #include <QPrintPreviewDialog>
 #include <QRegularExpression>
 #include <QSpinBox>
+#include <QSyntaxHighlighter>
 #include <QTextEdit>
 #include <QTextList>
 #include <QTextTable>
 #include <QToolButton>
+#include <QToolTip>
+#include <QVector>
 #include <QUuid>
 
 //------------------------------------------------------------------------------
@@ -66,8 +71,187 @@ public:
         QTextEdit::insertFromMimeData(source);
     }
 
+protected:
+    void mousePressEvent(QMouseEvent *e) override
+    {
+        if (e->button() == Qt::LeftButton && e->modifiers().testFlag(Qt::ControlModifier))
+            _clickedHref = hyperlinkAt(e->pos());
+
+        // There is no selection -> move cursor to the point of click
+        auto cursor = textCursor();
+        if (e->button() == Qt::RightButton && cursor.anchor() == cursor.position())
+            setTextCursor(cursorForPosition(viewport()->mapFromParent(e->pos())));
+
+        QTextEdit::mousePressEvent(e);
+    }
+
+    void mouseReleaseEvent(QMouseEvent *e) override
+    {
+        if (not _clickedHref.isEmpty())
+        {
+            QDesktopServices::openUrl(_clickedHref);
+            PopupMessage::info(tr("Opened in your default browser\n\n%1").arg(_clickedHref));
+            _clickedHref.clear();
+        }
+        QTextEdit::mouseReleaseEvent(e);
+    }
+
+
+    bool event(QEvent *event) override
+    {
+        if (event->type() != QEvent::ToolTip)
+            return QTextEdit::event(event);
+
+        auto helpEvent = dynamic_cast<QHelpEvent*>(event);
+        if (not helpEvent) return false;
+
+        auto href = hyperlinkAt(helpEvent->pos());
+        if (not href.isEmpty())
+        {
+            auto tooltip = QStringLiteral("<p style='white-space:pre'>%1<p>%2")
+                    .arg(href, tr("<b>Ctrl + Click</b> to open"));
+            QToolTip::showText(helpEvent->globalPos(), tooltip);
+        }
+        else QToolTip::hideText();
+
+        event->accept();
+        return true;
+    }
+
+
 private:
     SchemaMemo *_memo;
+    QString _clickedHref;
+
+    // Hyperlink made via syntax highlighter doesn't create some 'top level' anchor,
+    // so `anchorAt` returns nothing, we have to enumerate block styles to find out a href.
+    QString hyperlinkAt(const QPoint& pos) const
+    {
+        auto cursor = cursorForPosition(viewport()->mapFromParent(pos));
+        int cursorPos = cursor.positionInBlock() - (cursor.position() - cursor.anchor());
+        foreach (const auto& format, cursor.block().layout()->formats())
+            if (format.format.isAnchor() &&
+                cursorPos >= format.start &&
+                cursorPos < format.start + format.length)
+            {
+                auto href = format.format.anchorHref();
+                if (not href.isEmpty()) return href;
+            }
+        return QString();
+    }
+};
+
+//------------------------------------------------------------------------------
+//                               MemoTextFormat
+//------------------------------------------------------------------------------
+
+struct MemoTextFormat
+{
+    MemoTextFormat() {}
+    MemoTextFormat(const QString& colorName): _colorName(colorName) {}
+
+    MemoTextFormat& family(const QString& family) { _fontFamily = family; return *this; }
+    MemoTextFormat& bold() { _bold = true; return *this; }
+    MemoTextFormat& italic() { _italic = true; return *this; }
+    MemoTextFormat& underline() { _underline = true; return *this; }
+    MemoTextFormat& strikeOut() { _strikeOut = true; return *this; }
+    MemoTextFormat& anchor() { _anchor = true; return *this; }
+    MemoTextFormat& spellError() { _spellError = true; return *this; }
+    MemoTextFormat& background(const QString& colorName) { _backColorName = colorName; return *this; }
+
+    QTextCharFormat get() const
+    {
+        QTextCharFormat f;
+        if (!_fontFamily.isEmpty())
+            f.setFontFamilies({_fontFamily});
+        if (!_colorName.isEmpty())
+            f.setForeground(QColor(_colorName));
+        if (_bold)
+            f.setFontWeight(QFont::Bold);
+        f.setFontItalic(_italic);
+        f.setFontUnderline(_underline);
+        f.setAnchor(_anchor);
+        f.setFontStrikeOut(_strikeOut);
+        if (_spellError)
+        {
+            f.setUnderlineColor("red");
+            f.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
+        }
+        if (!_backColorName.isEmpty())
+            f.setBackground(QColor(_backColorName));
+        return f;
+    }
+
+private:
+    QString _fontFamily;
+    QString _colorName;
+    QString _backColorName;
+    bool _bold = false;
+    bool _italic = false;
+    bool _underline = false;
+    bool _anchor = false;
+    bool _spellError = false;
+    bool _strikeOut = false;
+};
+
+//------------------------------------------------------------------------------
+//                              MemoHighlighter
+//------------------------------------------------------------------------------
+
+class MemoHighlighter : public QSyntaxHighlighter
+{
+public:
+
+public:
+    struct Rule
+    {
+        QRegularExpression expr;
+        QTextCharFormat format;
+        int group = 0;
+        bool hyperlink = false;
+    };
+
+    explicit MemoHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {}
+
+protected:
+    const QVector<Rule>& rules() const
+    {
+        static QVector<Rule> rules = {
+            {
+                .expr = QRegularExpression("\\bhttp(s?)://[^\\s]+\\b"),
+                .format = MemoTextFormat("blue").underline().get(),
+                .hyperlink = true,
+            }
+        };
+        return rules;
+    }
+
+    void highlightBlock(const QString &text) override
+    {
+        for (const auto& rule : rules())
+        {
+            auto m = rule.expr.match(text);
+            while (m.hasMatch())
+            {
+                int pos = m.capturedStart(rule.group);
+                int length = m.capturedLength(rule.group);
+
+                // Font style is applied correctly but highlighter can't make anchors and apply tooltips.
+                // We do it manually overriding event handlers in MemoTextEdit.
+                // There is the bug but seems nobody cares: https://bugreports.qt.io/browse/QTBUG-21553
+                if (rule.hyperlink)
+                {
+                    QTextCharFormat format(rule.format);
+                    format.setAnchor(true);
+                    format.setAnchorHref(m.captured(rule.group));
+                    setFormat(pos, length, format);
+                }
+                else
+                    setFormat(pos, length, rule.format);
+                m = rule.expr.match(text, pos + length);
+            }
+        }
+    }
 };
 
 //------------------------------------------------------------------------------
@@ -127,6 +311,7 @@ MemoWindow::MemoWindow(Schema* owner) : SchemaMdiChild(owner)
     _editor = new MemoTextEdit(schema()->memo);
     _editor->setAutoFormatting(QTextEdit::AutoAll);
     _editor->setTextInteractionFlags(_editor->textInteractionFlags() | Qt::LinksAccessibleByMouse);
+    new MemoHighlighter(_editor->document());
     setContent(_editor);
 
     _comboFont = new QFontComboBox;

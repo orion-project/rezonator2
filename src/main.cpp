@@ -9,6 +9,7 @@
 #include "core/Format.h"
 #include "tests/TestSuite.h"
 
+#include "helpers/OriTheme.h"
 #include "helpers/OriTools.h"
 #include "tools/OriDebug.h"
 #include "testing/OriTestManager.h"
@@ -72,6 +73,10 @@ int main(int argc, char* argv[])
     // Load application settings before any command start
     AppSettings::instance().load();
     AppSettings::instance().isDevMode = parser.isSet(optionDevMode);
+
+    // Call `setStyleSheet` after setting loaded
+    // to be able to apply custom colors (if they are).
+    app.setStyleSheet(Ori::Theme::makeStyleSheet(Ori::Theme::loadRawStyleSheet()));
 
     // CommonData will be used via its instance pointer
     CommonData commonData;

@@ -14,6 +14,8 @@
 
 #include "helpers/OriWindows.h"
 #include "helpers/OriLayouts.h"
+#include "helpers/OriTheme.h"
+#include "helpers/OriDialogs.h"
 #include "tools/OriMruList.h"
 #include "tools/OriSettings.h"
 #include "widgets/OriLabels.h"
@@ -601,8 +603,6 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
     // Should be after all widgets to overlay them
     tipImage->setParent(this);
 
-    loadStyleSheet();
-
     Ori::Settings s;
     s.beginGroup("View");
     s.restoreWindowGeometry("startWindow", this);
@@ -619,18 +619,25 @@ void StartWindow::editStyleSheet()
 {
     auto editor = new QPlainTextEdit;
     editor->setFont(Z::Gui::CodeEditorFont().get());
-    editor->setPlainText(this->styleSheet());
+    editor->setPlainText(Ori::Theme::loadRawStyleSheet());
 
     auto applyButton = new QPushButton("Apply");
-    connect(applyButton, &QPushButton::clicked, [this, editor]{
-        this->setStyleSheet(editor->toPlainText());
+    connect(applyButton, &QPushButton::clicked, [editor]{
+        qApp->setStyleSheet(Ori::Theme::makeStyleSheet(editor->toPlainText()));
+    });
+
+    auto saveButton = new QPushButton("Save");
+    connect(saveButton, &QPushButton::clicked, [editor]{
+        auto res = Ori::Theme::saveRawStyleSheet(editor->toPlainText());
+        if (!res.isEmpty()) Ori::Dlg::error(res);
     });
 
     auto wnd = LayoutV({
         editor,
         LayoutH({
             Stretch(),
-            applyButton
+            applyButton,
+            saveButton,
         }).setMargin(6)
     }).setMargin(3).setSpacing(0).makeWidget();
     wnd->setAttribute(Qt::WA_DeleteOnClose);
@@ -646,28 +653,4 @@ void StartWindow::resizeEvent(QResizeEvent* event)
     adjustTipImagePosition(_tipImage);
 
     _aboutButton->move(event->size().width() - _aboutButton->width() - 10, 10);
-}
-
-void StartWindow::loadStyleSheet()
-{
-    QFile file(":/style/StartWindow");
-    bool ok = file.open(QIODevice::ReadOnly);
-    if (!ok)
-    {
-        qWarning() << "Unable to load style from resources" << file.errorString();
-        return;
-    }
-    QByteArray data = file.readAll();
-    if (data.isEmpty())
-    {
-        qWarning() << "Unable to load style from resources: read data is empty";
-        return;
-    }
-    QString styleSheet = data;
-    if (styleSheet.isEmpty())
-    {
-        qWarning() << "Unable to load style from resources: data can't be converter to string";
-        return;
-    }
-    setStyleSheet(styleSheet);
 }

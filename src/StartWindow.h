@@ -159,7 +159,6 @@ private:
     QToolButton *_aboutButton;
 
     void editStyleSheet();
-    void loadStyleSheet();
 };
 
 #endif // START_WINDOW_H

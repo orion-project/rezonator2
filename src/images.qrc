@@ -270,7 +270,7 @@
         <file alias="pump_complex">../img/drawing/pump_complex.png</file>
     </qresource>
     <qresource prefix="/style">
-        <file alias="StartWindow">StartWindow.qss</file>
+        <file alias="app">../src/app.qss</file>
         <file alias="about">../img/about/about_1.png</file>
     </qresource>
     <qresource prefix="/tips">
