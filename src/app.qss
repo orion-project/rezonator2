@@ -23,7 +23,6 @@ StartWindow QToolButton:hover {
 StartWindow QToolButton[role=tip_button] {
   border-color: #dadbde;
   padding: 0px 10px;
-  font-size: 10px;
   min-height: 18px;
   max-height: 18px;
 }
@@ -48,6 +47,7 @@ StartWindow #tip_text {
   font-size: 15px;
   padding-left: 6px;
   padding-right: 6px;
+  padding-top: 10px;
   color: #225
 }
 
@@ -122,8 +122,8 @@ StartWindow #mru_scroll_area QScrollBar::sub-line:vertical {
 }
 
 StartWindow #panel_tips {
-  min-height: 130px;
-  max-height: 130px;
+  min-height: 170px;
+  max-height: 170px;
 }
 
 StartWindow #panel_mru {

@@ -41,8 +41,8 @@
      id="namedview1107"
      showgrid="false"
      inkscape:zoom="3.19"
-     inkscape:cx="140.47371"
-     inkscape:cy="407.57174"
+     inkscape:cx="89.533271"
+     inkscape:cy="156.78804"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -229,8 +229,9 @@
   <path
      id="path2615"
      style="fill:none;stroke:#000000"
-     d="m 99.75,401.94 v 50.47 m -36,-50.29 v 34.29"
-     inkscape:connector-curvature="0" />
+     d="m 99.75,401.94 v 50.47 m -36,-50.29 v 50.29"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cccc" />
   <path
      d="m 30.75,422.62 h 68 v 67 h -68 z"
      id="path2617"

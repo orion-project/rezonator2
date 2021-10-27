@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -40,9 +40,9 @@
      inkscape:window-height="1137"
      id="namedview3257"
      showgrid="false"
-     inkscape:zoom="1.3037281"
-     inkscape:cx="66.976216"
-     inkscape:cy="307.40187"
+     inkscape:zoom="3.6874999"
+     inkscape:cx="106.543"
+     inkscape:cy="109.57505"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -447,7 +447,7 @@
      style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      inkscape:connector-curvature="0" />
   <path
-     d="m 76.0235,368.71195 12.7246,-12.89862 m -13.59092,9.59091 6.5909,-6.63636 m 1.4091,6.63636 6.5909,-6.63636"
+     d="m 72.22689,368.16958 12.7246,-12.89862 m -13.59092,9.59091 6.5909,-6.63636 m 1.4091,6.63636 6.5909,-6.63636"
      id="path4195"
      style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      inkscape:connector-curvature="0" />
@@ -520,8 +520,8 @@
      style="fill:#ffffff;fill-opacity:0.90196078;stroke:none"
      id="rect4237"
      transform="rotate(26.901066)"
-     y="193.94029"
-     x="263.75818"
+     y="158.03877"
+     x="243.82326"
      height="151.17577"
      width="72.394676" />
   <path
@@ -579,12 +579,12 @@
      style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      inkscape:connector-curvature="0" />
   <path
-     d="m 76.0235,576.71195 12.7246,-12.89862 m -13.59092,9.59091 6.5909,-6.63636 m 1.4091,6.63636 6.5909,-6.63636"
+     d="m 76.565873,575.89839 12.7246,-12.89862 m -13.59092,9.59091 6.5909,-6.63636 m 1.4091,6.63636 6.5909,-6.63636"
      id="path4849"
      style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      inkscape:connector-curvature="0" />
   <path
-     d="m 76.0235,592.71195 12.7246,-12.89862 m -13.59092,9.59091 6.5909,-6.63636 m 1.4091,6.63636 6.5909,-6.63636"
+     d="m 70.870958,591.62721 12.7246,-12.89862 m -13.59092,9.59091 6.5909,-6.63636 m 1.4091,6.63636 6.5909,-6.63636"
      id="path4851"
      style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
      inkscape:connector-curvature="0" />
@@ -655,7 +655,7 @@
      id="path4895" />
   <path
      style="fill:#ffffff;fill-opacity:0.90196078;stroke:none"
-     d="m 76.417031,424.1559 64.560789,32.75507 -63.653882,125.32539 -32.918924,-4.8022 -41.8113549,1.06407 z"
+     d="m 74.115938,448.7009 64.560792,32.75507 -63.653885,125.32539 -32.918924,-4.8022 -41.811355,1.06407 z"
      id="rect4897"
      inkscape:connector-curvature="0"
      sodipodi:nodetypes="cccccc" />

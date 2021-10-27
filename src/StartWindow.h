@@ -84,13 +84,13 @@ public:
 private:
     QMovie* _movie = nullptr;
     QJsonObject _tips;
-    QLabel *_tipText, *_tipPreview, *_tipImage;
+    QLabel *_tipText, *_tipPreview, *_tipImage, *_enlargeTip;
     QString _imagePath;
     QStringList _ids;
     int _index = -1;
 
-    const int TIP_IMG_PREVIEW_H = 100;
-    const int TIP_IMG_PREVIEW_W = 200;
+    const int TIP_IMG_PREVIEW_H = 150;
+    const int TIP_IMG_PREVIEW_W = 300;
 
     void loadTips();
     void showNextTip();
