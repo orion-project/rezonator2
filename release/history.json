@@ -6,6 +6,9 @@
       "changes": [
         {
           "text": "Added schema memo - rich formatted text document that can be stored with schema."
+        },
+        {
+          "text": "Fixed that incorrect matrices were displayed in the help file for some elements."
         }
       ]
     },

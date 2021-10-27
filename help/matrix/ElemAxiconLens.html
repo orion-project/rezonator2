@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <link rel="stylesheet" href="matrix_formula.css" type="text/css"></link> 
+  </head>
+  <body>
+    <div class="paper">
+      <div class="frames">
+        <div class="frame" style="height: 300px"></div>
+      </div>
+      <div class="drawing-and-formula">
+        <div style="margin-top:30px">
+          <img class="drawing" src="../../img/elem/ElemAxiconLens.svg"/>
+        </div>
+        <div class="formulas-column">
+          <div style="margin-top:25px">
+            \[
+            M_T = \begin{bmatrix}
+                1 & 0 \\
+                - \cfrac { \theta_{e\!f\!f} } { r \cos \alpha} & 1 
+                \end{bmatrix}
+            \]
+          </div>
+          <div style="margin-top:0px">
+            \[
+            M_S = \begin{bmatrix}
+                1 & 0 \\
+                - \cfrac { \theta_{e\!f\!f} \cos \alpha} { r } & 1 
+                \end{bmatrix}
+            \]
+          </div>
+		  <div style="margin-top:0px">
+			\[
+			\theta_{e\!f\!f} = \arcsin ( n \sin \theta  ) - \theta
+			\]
+			\[
+			\theta_{e\!f\!f} \approx \theta ( n - 1)
+			\]
+		  </div>
+        </div>
+      </div>
+    </div> <!-- end paper -->
+    <div class="stretch"></div>
+  </body>
+</html>

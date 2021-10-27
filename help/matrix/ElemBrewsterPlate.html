@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <link rel="stylesheet" href="matrix_formula.css" type="text/css"></link> 
+  </head>
+  <body>
+    <div class="paper">
+	  <!-- absolute positioned frames for copying formulas from -->
+      <div class="frames">
+        <div class="frame" style="height: 235px"></div>
+        <div class="frame" style="height: 180px; margin-top: 25px;"></div>
+        <div class="frame" style="height: 180px; margin-top: 45px;"></div>
+      </div>
+      <div class="drawing-and-formula">
+        <div style="margin-top:10px">
+          <img class="drawing" src="ElemBrewsterPlate.svg"/>
+        </div>
+        <div class="formulas-column">
+          <div style="margin-top:30px">
+            \[
+              L_{e\!f\!f} = \cfrac {L}{ \cos \bigg( { \arcsin \bigg( { \cfrac { \sin \arctan n }{n} } \bigg) } \bigg) } 
+                = \cfrac { L \sqrt { n^2 + 1 } }{n}
+            \]
+          </div>
+          <div>
+            \[
+            M_T = \begin{bmatrix}
+                1 & \cfrac { L_{e\!f\!f} } { n^3 } \\
+                0 & 1 
+                \end{bmatrix}
+            \;\;\;
+            M_S = \begin{bmatrix}
+                1 & \cfrac { L_{e\!f\!f} } { n } \\
+                0 & 1
+                \end{bmatrix}
+            \]
+          </div>
+          <div style="margin-top:95px">
+            \[
+            M_T^{LF} = \begin{bmatrix}
+                n & \cfrac {h}{n^2}  \\
+                1 & \cfrac {1}{n^2}
+            \end{bmatrix}
+            \;\;\;\;\;\;
+            M_S^{LF} = \begin{bmatrix}
+                1 & \cfrac h n \\
+                0 & \cfrac 1 n
+            \end{bmatrix}
+            \]
+          </div>
+          <div style="margin-top:150px">
+            \[
+            M_T^{RT} = \begin{bmatrix}
+                \cfrac {1}{n} & \cfrac {h}{n} \\
+                0 & n^2
+            \end{bmatrix}
+            \;\;\;\;\;\;
+            M_S^{RT} = \begin{bmatrix}
+                1 & h \\
+                0 & n
+            \end{bmatrix}
+            \]
+          </div>
+        </div>
+      </div>
+    </div> <!-- end paper -->
+    <div class="stretch"></div>
+  </body>
+</html>

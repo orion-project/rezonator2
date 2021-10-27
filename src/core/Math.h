@@ -48,6 +48,16 @@ public:
     void operator *= (const Matrix &m);
     void operator *= (const Matrix *m);
 
+    void operator = (const Matrix &m)
+    {
+        A = m.A; B = m.B; C = m.C; D = m.D;
+    }
+
+    void operator = (const Matrix *m)
+    {
+        A = m->A; B = m->B; C = m->C; D = m->D;
+    }
+
     /// Transformation of complex ROC by ray matrix
     Complex multComplexBeam(const Complex& c) const;
 

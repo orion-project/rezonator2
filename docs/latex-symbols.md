@@ -16,6 +16,8 @@ https://oeis.org/wiki/List_of_LaTeX_mathematical_symbols
 
 `\sim` $$ \sim $$
 
+`\nsim` $$ \nsim $$
+
 `\propto` $$ \propto $$
 
 `\neq \ne` $$ \neq \ne $$
@@ -232,4 +234,40 @@ M\bigg\rvert_{n_2 < 0} = \begin{bmatrix}
                 \cosh(\gamma L) & \cfrac {\sinh(\gamma L)} {\gamma} \\
                 \gamma \: \sinh(\gamma L) & \cosh(\gamma L)
                 \end{bmatrix}
+$$
+
+Parentheses
+
+```latex
+(\, ... )\,
+```
+
+$$
+(\, \cfrac {n_1}{n_2} )\,
+\big(\, \cfrac {n_1}{n_2} \big)\,
+\bigg(\, \cfrac {n_1}{n_2} \bigg)\,
+$$
+
+Braces
+
+```latex
+\{ ... \}
+```
+
+$$
+\{ \cfrac {n_1}{n_2} \}
+\big\{ \cfrac {n_1}{n_2} \big\}
+\bigg\{ \cfrac {n_1}{n_2} \bigg\}
+$$
+
+Square bracket
+
+```latex
+[\, ... ]\,
+```
+
+$$
+[\, \cfrac {n_1}{n_2} ]\,
+\big[\, \cfrac {n_1}{n_2} \big]\,
+\bigg[\, \cfrac {n_1}{n_2} \bigg]\,
 $$
