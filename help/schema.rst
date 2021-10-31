@@ -32,4 +32,5 @@ Each time you modify any schema properties or elements' parameters, |rezonator| 
    input_beam
    pumps_window
    pump_mode
- 
+   params_window
+   adjust

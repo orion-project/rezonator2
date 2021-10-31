@@ -13,6 +13,12 @@ If you close the window, the pumps are not lost. If you change schema trip type 
 
 |para|
 
+When the window is closed, the parameters of active pump can be quickly accessed via double-clicking at the Pump icon in the status bar:
+
+  .. image:: img/setup_input_beam.png 
+
+|para|
+
 .. seealso::
 
     :doc:`input_beam`, :doc:`pump_mode`

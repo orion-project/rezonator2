@@ -25,7 +25,7 @@ public slots:
 
 protected:
     void showEvent(QShowEvent*) override;
-    QString helpTopic() const override { return "input_beam.html"; }
+    QString helpTopic() const override;
 
 private:
     PumpParams *_params;

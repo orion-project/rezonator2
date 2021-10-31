@@ -80,7 +80,11 @@ PumpParams* PumpParamsDialog::makeNewPump()
     if (Ori::Dlg::Dialog(&content, false)
             .withIconPath(":/window_icons/pump")
             .withTitle(tr("Select Pump Mode"))
-            .withOnHelp([](){ Z::HelpSystem::instance()->showTopic("pump_mode.html"); })
+            .withOnHelp([&modesGroup](){
+                auto mode = var2ptr<PumpMode*>(modesGroup.selectedData());
+                if (mode) Z::HelpSystem::instance()->showTopic("pump_mode.html#" + mode->helpTopic());
+                else Z::HelpSystem::instance()->showTopic("pump_mode.html");
+            })
             .withOkSignal(&modesGroup, SIGNAL(doubleClicked(QVariant)))
             .withContentToButtonsSpacingFactor(2)
             .exec())
@@ -158,4 +162,12 @@ void PumpParamsDialog::collect()
     _paramsEditor->collect();
     accept();
     close();
+}
+
+QString PumpParamsDialog::helpTopic() const
+{
+    auto pumpMode = Pumps::findByModeName(_params->modeName());
+    if (pumpMode)
+        return "pump_mode.html#" + pumpMode->helpTopic();
+    return "input_beam.html";
 }

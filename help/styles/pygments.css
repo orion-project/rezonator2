@@ -5,12 +5,21 @@
   so it is easy to use this file for some app specific styles
 */
 
+h2 {
+    margin-top: 3em;
+}
+
 span.menuselection, span.guilabel, kbd {
     color: maroon;
-    font-family: Courier New, Monaco, monospace;
+    font-family: Consolas,"Courier New",Monaco,monospace;
 }
 
 span.elem-param {
+    color: #555;
+    font-weight: bold;
+}
+
+span.param {
     color: #555;
     font-weight: bold;
 }
@@ -34,12 +43,12 @@ div.highlight {
 }
 
 pre {
-    font-family: Courier New, Monaco, monospace;
+    font-family: Consolas,"Courier New",Monaco,monospace;
     color: #116;
 }
 
 span.pre {
-    font-family: Courier New, Monaco, monospace;
+    font-family: Consolas,"Courier New",Monaco,monospace;   
     color: #116;
     margin-left: 2px;
     margin-right: 2px;

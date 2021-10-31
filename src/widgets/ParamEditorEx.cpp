@@ -24,8 +24,8 @@ ParamEditorEx::ParamEditorEx(Z::Parameter *param, Z::Formulas *formulas, Z::Para
     _hasFormula = _formula;
 
     auto menu = new QMenu(this);
-    _actnAddFormula = menu->addAction(QIcon(":/toolbar/param_formula"), tr("Add formula"), this, &ParamEditorEx::addFormula);
-    _actnRemoveFormula = menu->addAction(QIcon(":/toolbar/param_delete"), tr("Remove formula"), this, &ParamEditorEx::removeFormula);
+    _actnAddFormula = menu->addAction(QIcon(":/toolbar/param_formula"), tr("Add Formula"), this, &ParamEditorEx::addFormula);
+    _actnRemoveFormula = menu->addAction(QIcon(":/toolbar/param_delete"), tr("Remove Formula"), this, &ParamEditorEx::removeFormula);
     _actnRemoveFormula->setVisible(false);
 
     auto menuButton = new QPushButton;

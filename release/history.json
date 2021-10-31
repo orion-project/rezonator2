@@ -9,7 +9,13 @@
         },
         {
           "text": "Fixed that incorrect matrices were displayed in the help file for some elements."
-        }
+        },
+        {
+          "text": "New help topics in the manual: Global Parameters Window."
+        },
+        {
+          "text": "Several new tips added."
+        },
       ]
     },
     {

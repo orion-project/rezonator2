@@ -39,6 +39,8 @@ rst_prolog = """
 
 .. role:: elem_param
 
+.. role:: param
+
 .. role:: math_var
 
 .. role:: app_name
