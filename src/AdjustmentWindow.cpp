@@ -419,7 +419,6 @@ AdjustmentWindow::AdjustmentWindow(Schema *schema, QWidget *parent)
     _actnSettings = Ori::Gui::action(tr("Settings..."), this, SLOT(setupAdjuster()), ":/toolbar/settings");
     _actnDelete = Ori::Gui::action(tr("Delete"), this, SLOT(deleteAdjuster()), ":/toolbar/delete");
     auto actnHelp = Ori::Gui::action(tr("Help"), this, SLOT(help()), ":/toolbar/help");
-    actnHelp->setEnabled(false); // TODO: help page
 
     auto toolbar = Ori::Gui::toolbar({
         Ori::Gui::textToolButton(actnAdd), nullptr, _actnRestore, _actnSettings, _actnDelete, nullptr, actnHelp
@@ -464,7 +463,7 @@ void AdjustmentWindow::customParamDeleting(Schema*, Z::Parameter* param)
 
 void AdjustmentWindow::addAdjuster(Z::Parameter* param)
 {
-    for (auto adj : _adjusters)
+    foreach (const auto& adj, _adjusters)
         if (adj.param == param)
         {
             adj.widget->focus();
@@ -481,7 +480,7 @@ void AdjustmentWindow::addAdjuster(Z::Parameter* param)
 void AdjustmentWindow::addAdjuster()
 {
     Z::Parameters existedParams;
-    for (auto adj : _adjusters)
+    foreach (const auto& adj, _adjusters)
         existedParams << adj.param;
 
     ParamsTreeWidget::Options opts;
@@ -491,6 +490,7 @@ void AdjustmentWindow::addAdjuster()
     opts.ignoreList = existedParams;
     opts.elemFilter = ElementFilter::elemsWithVisibleParams();
     opts.paramFilter = Z::Utils::defaultParamFilter();
+    opts.helpTopic = QStringLiteral("adjust.html#adjust-add");
     auto param = ParamsTreeWidget::selectParamDlg(opts);
     if (param)
         addAdjuster(param);
@@ -543,6 +543,9 @@ void AdjustmentWindow::setupAdjuster()
     if (Ori::Dlg::Dialog(&w, false)
             .withTitle(tr("Adjuster Settings"))
             .withContentToButtonsSpacingFactor(2)
+            .withOnHelp([]{
+                Z::HelpSystem::instance()->showTopic("adjust.html#adjust-settings");
+            })
             .exec())
     {
         auto settings = w.settings();
@@ -556,7 +559,7 @@ void AdjustmentWindow::setupAdjuster()
         }
         if (w.shouldUseForAll())
         {
-            for (auto adj : _adjusters)
+            foreach (const auto& adj, _adjusters)
                 if (adj.widget != adjuster)
                     adj.widget->setSettings(settings);
         }
@@ -582,7 +585,7 @@ void AdjustmentWindow::updateActions()
 
 void AdjustmentWindow::help()
 {
-    Z::HelpSystem::instance()->showTopic("adjustment.html");
+    Z::HelpSystem::instance()->showTopic("adjust.html");
 }
 
 void AdjustmentWindow::shortcutEnterPressed()
