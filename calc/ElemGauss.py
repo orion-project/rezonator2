@@ -11,7 +11,7 @@ n2 = 0.2        # IOR gradient
 L = 0.01        # Thickness of lens
 h1 = 0.003      # Left half-pass
 h2 = L - h1     # Right half-pass
-a2 = 2e7        # Loss factor
+a2 = 2e6        # Loss factor
 F = 0.6         # Focus range
 g = sqrt((n2/n0 + 1j*wl*a2/n0/2/pi))
 print_res("L", L)
@@ -26,7 +26,13 @@ M_in = make_abcd(1, 0, 0, 1/n0)
 
 print('----------------------------------')
 print('----------------------------------')
-print('         GAUSSIAN APERTURE        ')
+print('        GAUSSIAN APERTURE         ')
+print('----------------------------------')
+print_res("C", -1j*wl*a2/2/pi)
+
+print('----------------------------------')
+print('----------------------------------')
+print('     GAUSSIAN APERTURE LENS       ')
 print('----------------------------------')
 print_res("C", -1/F - 1j*wl*a2/2/pi)
 

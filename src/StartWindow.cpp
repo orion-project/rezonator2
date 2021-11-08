@@ -170,7 +170,7 @@ MruStartPanel::MruStartPanel() : StartPanel("panel_mru")
     auto layout = new QVBoxLayout;
     layout->setMargin(0);
     layout->setSpacing(0);
-    for (const QFileInfo& file : files)
+    foreach (const QFileInfo& file, files)
     {
         auto itemWidget = new MruStartItem(file);
         connect(itemWidget, &MruStartItem::onFileOpen, this, &MruStartPanel::openFile);
@@ -271,6 +271,9 @@ TipsStartPanel::TipsStartPanel(QLabel *tipImage) : StartPanel("panel_tips")
 
     buttonsLayout->addStretch();
 
+    _enlargeTip = new QLabel(tr("Click to enlarge →"));
+    buttonsLayout->addWidget(_enlargeTip);
+
     LayoutH({
         LayoutV({
             makeHeader(tr("You know what?")),
@@ -361,10 +364,12 @@ void TipsStartPanel::showTip(const QJsonObject &tip)
                                      Qt::SmoothTransformation);
         _tipPreview->setPixmap(preview);
         _tipPreview->setVisible(true);
+        _enlargeTip->setVisible(true);
         _imagePath = tipImagesPath + imageFile;
     }
     else
     {
+        _enlargeTip->setVisible(false);
         _tipPreview->setVisible(false);
         _tipPreview->clear();
         _imagePath.clear();

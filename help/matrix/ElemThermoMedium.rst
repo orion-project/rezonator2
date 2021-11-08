@@ -8,7 +8,7 @@ Thermal medium
 
 The thermal medium has a quadratic transverse variation of refractive index, with either a maximum or minimum on the axis that produces a lensing effect.
 
-This element is entirely similar to :doc:`ElemGrinLens`, however instead of setting gradient constant |n2|, you can explicitly assign focal range `F`, and gradient constant is calculated using the :doc:`../calc_grin` tool.
+This element is entirely similar to :doc:`ElemGrinMedium`, however instead of setting gradient constant |n2|, you can explicitly assign focal range `F`, and gradient constant is calculated using the :doc:`../calc_grin` tool.
 
 The element is cylindrically symmetrical and doesn't imply differences between tangential and sagittal planes.
 

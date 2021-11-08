@@ -274,14 +274,17 @@
         <file alias="about">../img/about/about_1.png</file>
     </qresource>
     <qresource prefix="/tips">
-        <file alias="list">tips.json</file>
-        <file alias="edit_cursor_values.gif">../img/tips/edit_cursor_values.gif</file>
-        <file alias="enlarge_tip_preview.png">../img/tips/enlarge_tip_preview.png</file>
-        <file alias="drag_scale_plot.gif">../img/tips/drag_scale_plot.gif</file>
-        <file alias="limit_plot_operations_to_axis.gif">../img/tips/limit_plot_operations_to_axis.gif</file>
-        <file alias="tool_gauss_calc.gif">../img/tips/tool_gauss_calc.gif</file>
-        <file alias="toggle_cursor_lines.gif">../img/tips/toggle_cursor_lines.gif</file>
-        <file alias="active_status_bar.gif">../img/tips/active_status_bar.gif</file>
-        <file alias="memo.png">../img/tips/memo.png</file>
+        <file alias="list">../tips/tips.json</file>
+        <file alias="edit_cursor_values.gif">../tips/edit_cursor_values.gif</file>
+        <file alias="enlarge_tip_preview.png">../tips/enlarge_tip_preview.png</file>
+        <file alias="drag_scale_plot.gif">../tips/drag_scale_plot.gif</file>
+        <file alias="limit_plot_operations_to_axis.gif">../tips/limit_plot_operations_to_axis.gif</file>
+        <file alias="tool_gauss_calc.gif">../tips/tool_gauss_calc.gif</file>
+        <file alias="toggle_cursor_lines.gif">../tips/toggle_cursor_lines.gif</file>
+        <file alias="active_status_bar.gif">../tips/active_status_bar.gif</file>
+        <file alias="memo.png">../tips/memo.png</file>
+        <file alias="several_pumps.gif">../tips/several_pumps.gif</file>
+        <file alias="link_elem_param_to_global.gif">../tips/link_elem_param_to_global.gif</file>
+        <file alias="add_global_param.gif">../tips/add_global_param.gif</file>
     </qresource>
 </RCC>

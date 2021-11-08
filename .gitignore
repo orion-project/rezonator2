@@ -16,7 +16,9 @@ tmp
 out
 __pycache__
 img/svgcleaner
+.vscode
 .venv
 .ipynb_checkpoints
 /1.*
 /2.*
+/help/_build

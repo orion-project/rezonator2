@@ -25,6 +25,7 @@ public:
 
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return { _windowMenu }; }
+    QString helpTopic() const override { return "params_window.html"; }
 
     // inherits from ISchemaWindowStorable
     QString storableType() const override { return SchemaParamsWindowStorable::windowType; }

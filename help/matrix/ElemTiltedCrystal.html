@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <link rel="stylesheet" href="matrix_formula.css" type="text/css"></link> 
+  </head>
+  <body>
+    <div class="paper">
+	  <!-- absolute positioned frames for copying formulas from -->
+      <div class="frames">
+        <div class="frame" style="height: 200px"></div>
+        <div class="frame" style="height: 170px; margin-top: 40px;"></div>
+        <div class="frame" style="height: 170px; margin-top: 60px;"></div>
+      </div>
+      <div class="drawing-and-formula">
+        <div style="margin-top:30px">
+          <img class="drawing" src="ElemTiltedCrystal.svg"/>
+        </div>
+        <div class="formulas-column">
+          <div style="margin-top:25px">
+            \[
+            M_T = \begin{bmatrix}
+                1 & \cfrac { n L \cos^2 \alpha }{ n^2 - \sin^2 \alpha } \\
+                0 & 1 
+                \end{bmatrix}
+            \;\;\;\;\;\;
+            M_S = \begin{bmatrix}
+                1 & \cfrac L n \\
+                0 & 1
+                \end{bmatrix}
+            \]
+          </div>
+          <div>
+            \[
+            \beta = \arcsin \bigg( \cfrac { \sin \alpha }{ n } \bigg)
+            \]
+          </div>
+          <div style="margin-top:100px">
+            \[
+            M_T^{LF} = \begin{bmatrix}
+                \cfrac { \cos \beta }{ \cos \alpha } & \cfrac h n \cfrac { \cos \alpha }{ \cos \beta } \\
+                0 & \cfrac 1 n \cfrac { \cos \alpha }{ \cos \beta }
+                \end{bmatrix}
+            \;\;\;\;\;\;
+            M_S^{LF} = \begin{bmatrix}
+                1 & \cfrac h n \\
+                0 & \cfrac 1 n
+                \end{bmatrix}
+            \]
+          </div>
+          <div style="margin-top:150px">
+            \[
+            M_T^{RT} = \begin{bmatrix}
+                \cfrac { \cos \alpha }{ \cos \beta } & h \cfrac { \cos \alpha }{ \cos \beta } \\
+                0 & n \cfrac { \cos \beta }{ \cos \alpha }
+                \end{bmatrix}
+                \;\;\;\;\;\;
+            M_S^{RT} = \begin{bmatrix}
+                1 & h \\
+                0 & n
+                \end{bmatrix}
+            \]
+          </div>
+        </div>
+      </div>
+    </div> <!-- end paper -->
+    <div class="stretch"></div>
+  </body>
+</html>

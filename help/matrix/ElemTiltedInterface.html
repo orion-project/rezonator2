@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <link rel="stylesheet" href="matrix_formula.css" type="text/css"></link> 
+  </head>
+  <body>
+    <div class="paper">
+	  <!-- absolute positioned frames for copying formulas from -->
+      <div class="frames">
+        <div class="frame" style="height: 210px"></div>
+        <div class="frame" style="height: 215px; margin-top: 10px;"></div>
+      </div>
+      <div class="drawing-and-formula">
+        <div style="margin-top:20px">
+          <img class="drawing" src="ElemTiltedInterface.svg"/>
+        </div>
+        <div class="formulas-column">
+          <div style="margin-top:30px">
+            \[
+            M_T = \begin{bmatrix}
+                \cfrac { \cos \beta } {cos \alpha} & 0 \\
+                0 & { \cfrac {n_1}{n_2} {\cfrac { \cos \alpha }{ \cos \beta }} } 
+                \end{bmatrix}
+            \;\;\;\;
+            M_S = \begin{bmatrix}
+                1 & 0 \\
+                0 & \cfrac {n_1}{n_2}
+                \end{bmatrix}
+            \]
+          </div>
+          <div>
+            \[
+              \beta = \arcsin \bigg(\, \cfrac {n_1}{n_2} \sin \alpha \bigg)\,
+            \]
+          </div>
+          <div style="margin-top:60px">
+            \[
+            M_T = \begin{bmatrix}
+                \cfrac { \cos \lvert \alpha \rvert } {cos \beta} & 0 \\
+                0 & { \cfrac {n_1}{n_2} {\cfrac { \cos \beta }{ \cos \lvert \alpha \rvert }} } 
+                \end{bmatrix}
+            \;\;\;\;
+            M_S = \begin{bmatrix}
+                1 & 0 \\
+                0 & \cfrac {n_1}{n_2}
+                \end{bmatrix}
+            \]
+          </div>
+          <div>
+            \[
+              \beta = \arcsin \bigg(\, \cfrac {n_2}{n_1} \sin \lvert \alpha \rvert \bigg)\,
+            \]
+          </div>
+        </div>
+      </div>
+    </div> <!-- end paper -->
+    <div class="stretch"></div>
+  </body>
+</html>

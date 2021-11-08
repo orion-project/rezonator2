@@ -28,6 +28,7 @@ public:
         QString dialogTitle;
         QString dialogPrompt;
         Z::Parameters ignoreList;
+        QString helpTopic;
     };
 
     explicit ParamsTreeWidget(Options opts, QWidget *parent = nullptr);

@@ -3,6 +3,7 @@
 #include "AdjustmentWindow.h"
 #include "Appearance.h"
 #include "CustomPrefs.h"
+#include "HelpSystem.h"
 #include "WindowsManager.h"
 #include "widgets/SchemaParamsTable.h"
 #include "widgets/ParamEditorEx.h"
@@ -104,7 +105,7 @@ void SchemaParamsWindow::createParameter()
     unitEditor->populate(recentDim);
     unitEditor->setSelectedUnit(recentUnit);
 
-    QMap<Z::Dim, Z::Unit> recentUnits;
+    QHash<Z::Dim, Z::Unit> recentUnits;
 
     auto dimEditor = new DimComboBox;
     dimEditor->setSelectedDim(recentDim);
@@ -157,7 +158,7 @@ void SchemaParamsWindow::createParameter()
         schema()->events().raise(SchemaEvents::CustomParamCreated, param, "Params window: param created");
 
         _isSettingValueForNewParam = true;
-        QTimer::singleShot(100, [&](){ setParameterValue(); });
+        QTimer::singleShot(100, this, [&](){ setParameterValue(); });
     }
 }
 
@@ -174,7 +175,7 @@ void SchemaParamsWindow::deleteParameter()
         for (Z::Parameter *param : dependentParams)
             dependentAliases << "<b>" % param->alias() % "</b>";
         return Ori::Dlg::info(
-            tr("Can't delete paremeter <b>%1<b> because there are global parameters depending on it:<br><br>%2")
+            tr("Can't delete paremeter <b>%1</b> because there are global parameters depending on it:<br><br>%2")
                 .arg(deletingParam->alias(), dependentAliases.join(", ")));
     }
 
@@ -193,7 +194,7 @@ void SchemaParamsWindow::deleteParameter()
                     .arg(deletingParam->alias(), dependentParams.join("<br>")));
     }
 
-    if (Ori::Dlg::yes(tr("Delete parameter<b>%1<b>?").arg(deletingParam->alias())))
+    if (Ori::Dlg::yes(tr("Delete parameter<b>%1</b>?").arg(deletingParam->alias())))
     {
         schema()->events().raise(SchemaEvents::CustomParamDeleting, deletingParam, "Params window: param deleting");
         schema()->formulas()->free(deletingParam);
@@ -210,8 +211,11 @@ void SchemaParamsWindow::setParameterValue()
     auto globalParams = schema()->globalParams();
     ParamEditorEx editor(param, schema()->formulas(), &globalParams);
     bool ok = Ori::Dlg::Dialog(&editor, false)
-                .withTitle(tr("Set value"))
+                .withTitle(tr("Set Value"))
                 .withIconPath(":/window_icons/parameter")
+                .withOnHelp([]{
+                    Z::HelpSystem::instance()->showTopic("params_window.html#params-window-value");
+                })
                 .withContentToButtonsSpacingFactor(2)
                 .connectOkToContentApply()
                 .exec();

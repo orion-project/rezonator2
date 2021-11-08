@@ -3,6 +3,7 @@
 #include "RichTextItemDelegate.h"
 #include "../Appearance.h"
 #include "../CustomPrefs.h"
+#include "../HelpSystem.h"
 #include "../core/Schema.h"
 #include "../core/ElementFilter.h"
 #include "../core/Utils.h"
@@ -52,6 +53,10 @@ Z::Parameter* ParamsTreeWidget::selectParamDlg(Options opts)
                 dlg.okButton()->setEnabled(param);
             });
         });
+    if (!opts.helpTopic.isEmpty())
+        dlg.withOnHelp([&opts]{
+            Z::HelpSystem::instance()->showTopic(opts.helpTopic);
+        });
     bool ok = dlg.exec();
     CustomPrefs::setRecentSize("select_param_tree_dlg_size", dlg.size());
     return ok ? paramsTree.selectedParam() : nullptr;
@@ -98,8 +103,8 @@ void ParamsTreeWidget::addRootItem(Element* elem)
     if (items.isEmpty()) return;
 
     auto root = new QTreeWidgetItem;
-    root->setBackground(COL_TITLE, QColor(0xE, 0xE, 0xE));
-    root->setBackground(COL_DESCR, QColor(0xE, 0xE, 0xE));
+    root->setBackground(COL_TITLE, QColor(0xE0E0E0));
+    root->setBackground(COL_DESCR, QColor(0xE0E0E0));
     if (elem)
     {
         root->setText(COL_TITLE, elem->displayLabel());

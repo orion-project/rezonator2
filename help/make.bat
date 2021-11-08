@@ -4,14 +4,13 @@ setlocal EnableDelayedExpansion
 echo Build application manual.
 
 
-set HELP_TOOL=qcollectiongenerator.exe
+set HELP_TOOL=qhelpgenerator.exe
 
 echo.
 echo ***** Check if Qt is in PATH
 where /Q %HELP_TOOL%
 if %ERRORLEVEL% neq 0 (
-    :: Qt 5.12 and above doesnt't use qcollectiongenerator
-    set HELP_TOOL=qhelpgenerator.exe
+    set HELP_TOOL=qcollectiongenerator.exe
     echo %HELP_TOOL% not found, try !HELP_TOOL!...
 
     where /Q !HELP_TOOL!

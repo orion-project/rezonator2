@@ -1,0 +1,56 @@
+{
+    "memo": {
+        "text": "<b>Memo window</b> is a rich text editor where you can take work notes, keep some pieces of useful information, even paste images into that and all these data will be stored in your schema project file.",
+        "image": "memo.png"
+    },
+    "edit_cursor_values": {
+        "text": "You can <b>move the cursor</b> by dragging its lines or clicking X or Y value in the cursor panel and typing an <b>exact value</b> to move the cursor to. Double click moves the cursor into the click position.",
+        "image": "edit_cursor_values.gif",
+        "see_also": ["toggle_cursor_lines"]
+    },
+    "toggle_cursor_lines": {
+        "text": "It is possible to <b>toggle cursor lines</b> and force the cursor to <b>follow the mouse</b> without holding any button. Double click moves the cursor into the click position.",
+        "image": "toggle_cursor_lines.gif",
+        "see_also": ["edit_cursor_values"]
+    },
+    "disable_start_window": {
+        "text": "You can <b>disable this start window</b> using the respective flag in the application settings dialog. If so, the project window with empty schema will be opened at program start."
+    },
+    "enlarge_tip_preview": {
+        "text": "You can <b>enlarge</b> these small <b>preview images</b> by clicking them.  →<br>Also, some of them are animated!",
+        "preview": "enlarge_tip_preview.png",
+        "image": "limit_plot_operations_to_axis.gif"
+    },
+    "add_global_param": {
+        "text": "You can create a <b>global parameter</b> in the schema and its value can depend on other parameters and even can be set via formula. These global parameters later can be used for providing values for element parameters.",
+        "see_also": ["link_elem_param_to_global", "formulas_in_si"],
+        "image": "add_global_param.gif"
+    },
+    "link_elem_param_to_global": {
+        "text": "You can <b>link an element parameter</b> to a global parameter of the schema, then the element parameter takes a global value. Several elements can be linked to the same global parameter and therefore linked together.",
+        "image": "link_elem_param_to_global.gif",
+        "see_also": ["add_global_param", "formulas_in_si"]
+    },
+    "active_status_bar": {
+        "text": "You can invoke commands by <b>double click</b> on different items of the status bar - edit wavelength, change schema trip type, set up the active pump.",
+        "image": "active_status_bar.gif"
+    },
+    "several_pumps": {
+        "text": "You can define <b>several input beams</b> with different parameters in SP schema and switch between them. All results will be recalculated automatically.",
+        "image": "several_pumps.gif"
+    },
+    "drag_scale_plot": {
+        "text": "You can <b>pan</b> a plot by moving the mouse holding the middle button and <b>scale</b> it with the mouse wheel.",
+        "image": "drag_scale_plot.gif",
+        "see_also": ["limit_plot_operations_to_axis"]
+    },
+    "limit_plot_operations_to_axis": {
+        "text": "Clicking on one of the plot axes you <b>restrict plot scaling and panning</b> only to this axis.",
+        "image": "limit_plot_operations_to_axis.gif",
+        "see_also": ["drag_scale_plot"]
+    },
+    "tool_gauss_calc": {
+        "text": "You can visualize and calculate common parameters of the Gaussian beam using <b>Gauss Calculator</b> tool.",
+        "image": "tool_gauss_calc.gif"
+    }
+}

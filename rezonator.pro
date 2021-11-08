@@ -316,5 +316,6 @@ SOURCES += \
     src/widgets/ParamsTreeWidget.cpp
 
 DISTFILES += \
+    release/history.json \
     src/StartWindow.qss \
-    src/tips.json
+    tips/tips.json

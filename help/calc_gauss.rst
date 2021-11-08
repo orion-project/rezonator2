@@ -34,9 +34,11 @@ These parameters are assigned and computed:
 * `z` - distance from the waist to a point where the wavefront is calculated or assigned
 * `w` - beam radius on distance `z` from the waist
 * `R` - radius of curvature of the wavefront on distance `z` from the waist
-* `re(q)`, `im(q)` - real and imaginary parts of complex beam parameter on distance `z` from the wais
-* `re(1/q)`, `im(1/q)` - real and imaginary parts of inverted complex beam parameter on distance `z` from the wais
-  
+* `re(q)`, `im(q)` - real and imaginary parts of complex beam parameter on distance `z` from the waist
+* `re(1/q)`, `im(1/q)` - real and imaginary parts of inverted complex beam parameter on distance `z` from the waist
+
+\
+
   .. image:: img/wnd_gauss_calc_r.png
 
 

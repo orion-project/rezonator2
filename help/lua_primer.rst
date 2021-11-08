@@ -3,7 +3,7 @@
 Lua Script Primer
 =================
 
-|rezonator| uses `Lua <http://www.lua.org>`_ internally to calculate custom formulas. Here are some citations from the `original documentation <https://www.lua.org/manual/5.3/>`_ to get a brief intro into the language. Provided information should be sufficient to write formulas for :doc:`schema parameters <custom_params>`, :doc:`custom elements <elem_formula>` or to carry out calculations in :doc:`calc_formula`.
+|rezonator| uses `Lua <http://www.lua.org>`_ internally to calculate custom formulas. Here are some citations from the `original documentation <https://www.lua.org/manual/5.3/>`_ to get a brief intro into the language. Provided information should be sufficient to write formulas for :ref:`schema parameters <params_window>`, :doc:`custom elements <elem_formula>` or to carry out calculations in :doc:`calc_formula`.
 
 Lua is a free-form language. It ignores spaces (including newlines) and comments between lexical elements (tokens), except as delimiters between names and keywords. 
 
