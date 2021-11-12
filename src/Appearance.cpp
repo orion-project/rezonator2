@@ -136,7 +136,7 @@ void setFocusedBackground(QWidget *w, bool focused)
 {
     QPalette p;
     if (focused)
-        p.setColor(QPalette::Background, Ori::Color::blend(p.color(QPalette::Button), p.color(QPalette::Highlight), 0.2));
+        p.setColor(QPalette::Window, Ori::Color::blend(p.color(QPalette::Button), p.color(QPalette::Highlight), 0.2));
     w->setAutoFillBackground(focused);
     w->setPalette(p);
 }

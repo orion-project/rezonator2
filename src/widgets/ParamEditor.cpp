@@ -35,7 +35,7 @@ QSize LinkButton::sizeHint() const
 void LinkButton::showLinkSource(Z::Parameter *param)
 {
     QString text = param ? ("= " + param->alias() + " =") : QString("=");
-    int w = fontMetrics().width(text);
+    int w = fontMetrics().horizontalAdvance(text);
     setFixedWidth(w + 2 * Ori::Gui::layoutSpacing());
     setText(text);
 }
