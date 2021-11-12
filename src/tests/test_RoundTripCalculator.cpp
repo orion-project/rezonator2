@@ -105,6 +105,47 @@ TEST_CASE(rt_rr_elems,     rt_elems, RR, EL_MID, "2 1 0 3")
 TEST_CASE(rt_rr_elems_beg, rt_elems, RR, EL_BEG, "0 3 2 1")
 TEST_CASE(rt_rr_elems_end, rt_elems, RR, EL_END, "3 2 1 0")
 
+TEST_METHOD(must_be_empty_when_null_ref)
+{
+    Schema schema;
+    schema.insertElements({new TestElem, new TestElem, new TestElem}, -1, Arg::RaiseEvents(false));
+    RoundTripCalculator calc(&schema, nullptr);
+    calc.calcRoundTrip();
+    ASSERT_IS_TRUE(calc.isEmpty())
+}
+
+TEST_METHOD(must_be_empty_when_invalid_ref)
+{
+    Schema schema;
+    schema.insertElements({new TestElem, new TestElem, new TestElem}, -1, Arg::RaiseEvents(false));
+    TestElem elemNotInSchema;
+    RoundTripCalculator calc(&schema, &elemNotInSchema);
+    calc.calcRoundTrip();
+    ASSERT_IS_TRUE(calc.isEmpty())
+}
+
+TEST_METHOD(must_be_empty_when_disabled_ref)
+{
+    Schema schema;
+    schema.insertElements({new TestElem, new TestElem, new TestElem}, -1, Arg::RaiseEvents(false));
+    schema.element(1)->setDisabled(true);
+    RoundTripCalculator calc(&schema, schema.element(1));
+    calc.calcRoundTrip();
+    ASSERT_IS_TRUE(calc.isEmpty())
+}
+
+TEST_METHOD(disabled_elems_must_be_skipped)
+{
+    Schema schema;
+    schema.insertElements({new TestElem, new TestElem, new TestElem}, -1, Arg::RaiseEvents(false));
+    schema.element(1)->setDisabled(true);
+    RoundTripCalculator calc(&schema, schema.element(2));
+    calc.calcRoundTrip();
+    ASSERT_IS_TRUE(calc.roundTrip().contains(schema.element(0)))
+    ASSERT_IS_FALSE(calc.roundTrip().contains(schema.element(1)))
+    ASSERT_IS_TRUE(calc.roundTrip().contains(schema.element(2)))
+}
+
 TEST_GROUP("Elements in round-trip",
            ADD_TEST(rt_sw_elems),
            ADD_TEST(rt_sw_elems_beg),
@@ -115,6 +156,10 @@ TEST_GROUP("Elements in round-trip",
            ADD_TEST(rt_rr_elems),
            ADD_TEST(rt_rr_elems_beg),
            ADD_TEST(rt_rr_elems_end),
+           ADD_TEST(must_be_empty_when_null_ref),
+           ADD_TEST(must_be_empty_when_invalid_ref),
+           ADD_TEST(must_be_empty_when_disabled_ref),
+           ADD_TEST(disabled_elems_must_be_skipped),
            )
 }
 
@@ -303,8 +348,8 @@ namespace GeneralFuncs {
 /// RT-Calculator allowing for setting matrices directly
 class TestRoundTripCalculator : public RoundTripCalculator {
 public:
-    TestRoundTripCalculator(Schema *s) : RoundTripCalculator(s) {}
-    TestRoundTripCalculator(Schema *s, const Matrix &mt, const Matrix &ms) : RoundTripCalculator(s) {
+    TestRoundTripCalculator(Schema *s) : RoundTripCalculator(s, nullptr) {}
+    TestRoundTripCalculator(Schema *s, const Matrix &mt, const Matrix &ms) : RoundTripCalculator(s, nullptr) {
         _mt = mt;
         _ms = ms;
     }

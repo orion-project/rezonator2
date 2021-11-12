@@ -7,8 +7,8 @@ RoundTripCalculator::RoundTripCalculator(Schema *owner, Element *ref)
 {
     _schema = owner;
     _reference = ref;
-    if (!_reference && _schema->count() > 0)
-        _reference = _schema->elements().first();
+    if (_schema->indexOf(_reference) == -1)
+        _reference = nullptr;
 }
 
 void RoundTripCalculator::calcRoundTrip(bool splitRange)
@@ -17,13 +17,15 @@ void RoundTripCalculator::calcRoundTrip(bool splitRange)
 
     reset();
 
-    if (!_reference) return;
+    if (!_reference || _reference->disabled()) return;
+
+    auto elems = _schema->activeElements();
 
     switch (_schema->tripType())
     {
-    case TripType::SW: calcRoundTripSW(); break;
-    case TripType::RR: calcRoundTripRR(); break;
-    case TripType::SP: calcRoundTripSP(); break;
+    case TripType::SW: calcRoundTripSW(elems); break;
+    case TripType::RR: calcRoundTripRR(elems); break;
+    case TripType::SP: calcRoundTripSP(elems); break;
     }
 }
 
@@ -37,60 +39,60 @@ void RoundTripCalculator::reset()
     _ms.unity();
 }
 
-void RoundTripCalculator::calcRoundTripSW()
+void RoundTripCalculator::calcRoundTripSW(const QList<Element*>& elems)
 {
-    const int ref = _schema->indexOf(_reference);
+    const int ref = elems.indexOf(_reference);
 
     // from the reference element to the first one
     int i = ref;
     while (i > 0)
-        _roundTrip.push_back(_schema->element(i--));
+        _roundTrip.push_back(elems.at(i--));
 
     // from the first element to the last one
-    int c = _schema->count();
+    int c = elems.size();
     // if the last is the reference then skip it because it is already added
     if (ref == c-1) c--;
 
     while (i < c) {
         // end elements of SW-schema should not be treated
         // as "second-passed" because of they are passed ony once
-        bool secondPass = (i != 0) && (i != _schema->count()-1);
+        bool secondPass = (i != 0) && (i != elems.size()-1);
 
-        _roundTrip.push_back({ _schema->element(i++), secondPass });
+        _roundTrip.push_back({ elems.at(i++), secondPass });
     }
 
     // from the last element to the reference one
     i -= 2;
     while (i > ref)
-        _roundTrip.push_back(_schema->element(i--));
+        _roundTrip.push_back(elems.at(i--));
 
     collectMatrices();
 }
 
-void RoundTripCalculator::calcRoundTripRR()
+void RoundTripCalculator::calcRoundTripRR(const QList<Element*>& elems)
 {
-    int ref = _schema->indexOf(_reference);
+    int ref = elems.indexOf(_reference);
 
     // from the reference element to the first one
     int i = ref;
     while (i >= 0)
-        _roundTrip.push_back(_schema->element(i--));
+        _roundTrip.push_back(elems.at(i--));
 
     // from the last element to the reference one
-    i = _schema->count()-1;
+    i = elems.size()-1;
     while (i > ref)
-        _roundTrip.push_back(_schema->element(i--));
+        _roundTrip.push_back(elems.at(i--));
 
     collectMatrices();
 }
 
-void RoundTripCalculator::calcRoundTripSP()
+void RoundTripCalculator::calcRoundTripSP(const QList<Element*>& elems)
 {
-    int i = _schema->indexOf(_reference);
+    int i = elems.indexOf(_reference);
 
     // from the reference element to the first one
     while (i >= 0)
-        _roundTrip.push_back(_schema->element(i--));
+        _roundTrip.push_back(elems.at(i--));
 
     collectMatricesSP();
 }
@@ -219,7 +221,7 @@ double RoundTripCalculator::calcStability(const Z::Matrix& m) const
 QList<Element*> RoundTripCalculator::roundTrip() const
 {
     Elements elements;
-    for (auto& item : _roundTrip)
+    foreach (auto& item, _roundTrip)
         elements.append(item.element);
     return elements;
 }
@@ -227,7 +229,7 @@ QList<Element*> RoundTripCalculator::roundTrip() const
 QString RoundTripCalculator::roundTripStr() const
 {
     QStringList res;
-    for (auto& item : _roundTrip)
+    foreach (auto& item, _roundTrip)
         res << item.element->displayLabel();
     return res.join(' ');
 }
@@ -240,7 +242,8 @@ namespace Calc {
 
 Z::PairTS<bool> isStable(Schema *schema)
 {
-    RoundTripCalculator c(schema);
+    auto elems = schema->activeElements();
+    RoundTripCalculator c(schema, elems.isEmpty() ? nullptr : elems.first());
     c.calcRoundTrip();
     c.multMatrix();
     return c.isStable();

@@ -178,6 +178,15 @@ int Schema::activeCount() const
     return count;
 }
 
+Elements Schema::activeElements() const
+{
+    Elements elems;
+    foreach (auto elem, _items)
+        if (!elem->disabled())
+            elems << elem;
+    return elems;
+}
+
 Element* Schema::element(int index) const
 {
     return isValid(index)? _items.at(index): nullptr;

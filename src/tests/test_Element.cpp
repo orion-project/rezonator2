@@ -145,24 +145,6 @@ TEST_METHOD(Element_setDisabled_must_set_flag)
     ASSERT_IS_FALSE(e.disabled())
 }
 
-TEST_METHOD(Element_setDisabled_must_be_unity_matrix)
-{
-    TestElement e;
-    e.calcMatrix("");
-    ASSERT_MATRIX_CALCULATED(e)
-
-    RESET_MATRIX(e)
-    e.setDisabled(true);
-    e.calcMatrix("");
-    ASSERT_MATRIX_NOT_CALCULATED(e)
-    ASSERT_MATRIX_IS_UNITY(e.Mt())
-    ASSERT_MATRIX_IS_UNITY(e.Ms())
-
-    e.setDisabled(false);
-    e.calcMatrix("");
-    ASSERT_MATRIX_CALCULATED(e)
-}
-
 TEST_METHOD(Element_setDisabled_must_raise_event)
 {
     ELEMENT_AND_OWNER
@@ -271,7 +253,6 @@ TEST_GROUP("Element",
     ADD_TEST(Element_unlock_does_not_raise_events),
 
     ADD_TEST(Element_setDisabled_must_set_flag),
-    ADD_TEST(Element_setDisabled_must_be_unity_matrix),
     ADD_TEST(Element_setDisabled_must_raise_event),
 
     ADD_TEST(Element_setTitle_must_assign_value),

@@ -240,8 +240,9 @@ public:
     inline bool isResonator() const { return _tripType == TripType::SW || _tripType == TripType::RR; }
 
     int count() const override { return _items.size(); }
-    int activeCount() const;
     const Elements& elements() const { return _items; }
+    int activeCount() const;
+    Elements activeElements() const;
     Element* element(int index) const;
     Element* elementById(int id) const;
     Element* elementByLabel(const QString& label) const;
@@ -281,7 +282,7 @@ public:
 
     void markModified(const char* reason);
 
-    SchemaMemo* memo;
+    SchemaMemo* memo = nullptr;
 
 private:
     Elements _items;
