@@ -67,8 +67,7 @@ void SchemaElemsTable::showContextMenu(const QPoint& pos)
 
 Element* SchemaElemsTable::selected() const
 {
-    int index = currentRow();
-    return (index >= 0 and index < schema()->count())? schema()->element(index): nullptr;
+    return schema()->element(currentRow());
 }
 
 void SchemaElemsTable::setSelected(Element *elem)
@@ -79,7 +78,7 @@ void SchemaElemsTable::setSelected(Element *elem)
 Elements SchemaElemsTable::selection() const
 {
     Elements elements;
-    for (int row : selectedRows())
+    foreach (int row, selectedRows())
         elements << schema()->element(row);
     return elements;
 }
@@ -87,7 +86,7 @@ Elements SchemaElemsTable::selection() const
 QList<int> SchemaElemsTable::selectedRows() const
 {
     QList<int> rows;
-    for (auto index : selectionModel()->selectedIndexes())
+    foreach (auto index, selectionModel()->selectedIndexes())
     {
         // Don't include the last row because it's the "Create element" placeholder
         if (index.row() == rowCount() - 1) continue;
@@ -105,10 +104,11 @@ QList<int> SchemaElemsTable::selectedRows() const
 void SchemaElemsTable::populate()
 {
     clearContents();
-    setRowCount(schema()->count() + 1);
-    for (int row = 0; row < schema()->count(); row++)
+    const auto& elems = schema()->elements();
+    setRowCount(elems.size() + 1);
+    for (int row = 0; row < elems.size(); row++)
     {
-        Element *elem = schema()->element(row);
+        Element *elem = elems.at(row);
         createRow(elem, row);
         populateRow(elem, row);
     }
@@ -116,10 +116,23 @@ void SchemaElemsTable::populate()
     adjustColumns();
 }
 
+namespace {
+
+QPixmap elemIcon(const QString& type)
+{
+    static QMap<QString, QPixmap> icons;
+    if (!icons.contains(type))
+        icons[type] = QPixmap(Z::Utils::elemIconPath(type));
+    return icons[type];
+}
+
+} // namespace
+
 void SchemaElemsTable::createRow(Element *elem, int row)
 {
     QTableWidgetItem *it = new QTableWidgetItem();
-    it->setData(Qt::DecorationRole, QPixmap(ElementImagesProvider::instance().iconPath(elem->type())));
+    it->setData(Qt::UserRole, QVariant::fromValue(elem));
+    it->setData(Qt::DecorationRole, elemIcon(elem->type()));
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     it->setToolTip(elem->typeName());
     setItem(row, COL_IMAGE, it);
@@ -206,10 +219,18 @@ void SchemaElemsTable::elementChanged(Schema *schema, Element *elem)
 
 void SchemaElemsTable::elementDeleting(Schema *schema, Element *elem)
 {
-    int index = schema->indexOf(elem);
-    if (index >= 0 && index < rowCount()-1)
+    Q_UNUSED(schema);
+    // Don't use schema.indexOf for getting element raw number,
+    // It gives wrong row numbers when deleting several elements.
+    for (int row = 0; row < rowCount(); row++)
     {
-        removeRow(index);
-        adjustColumns();
+        auto data = item(row, COL_IMAGE)->data(Qt::UserRole);
+        auto rowElem = data.value<Element*>();
+        if (rowElem == elem)
+        {
+            removeRow(row);
+            adjustColumns();
+            return;
+        }
     }
 }

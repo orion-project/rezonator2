@@ -231,16 +231,17 @@ void Schema::insertElements(const Elements& elems, int index, Arg::RaiseEvents e
 void Schema::deleteElements(const Elements& elems, Arg::RaiseEvents events, Arg::FreeElem free)
 {
     Elements ownedElems;
-    for (auto elem : elems)
+    foreach (auto elem, elems)
         if (_items.contains(elem) and not ownedElems.contains(elem))
             ownedElems << elem;
     if (ownedElems.isEmpty()) return;
 
-    if (events.value)
-        for (auto elem : ownedElems)
+    if (events.value) {
+        foreach (auto elem, ownedElems)
             _events.raise(SchemaEvents::ElemDeleting, elem, "Schema: deleteElement");
+    }
 
-    for (auto elem : ownedElems)
+    foreach (auto elem, ownedElems)
     {
         _items.removeOne(elem);
         elem->setOwner(nullptr);
@@ -249,9 +250,10 @@ void Schema::deleteElements(const Elements& elems, Arg::RaiseEvents events, Arg:
 
     relinkInterfaces();
 
-    if (events.value)
-        for (auto elem : ownedElems)
+    if (events.value) {
+        foreach (auto elem, ownedElems)
             _events.raise(SchemaEvents::ElemDeleted, elem, "Schema: deleteElement");
+    }
 
     if (free.value)
         qDeleteAll(ownedElems);
@@ -271,7 +273,7 @@ void Schema::parameterChanged(Z::ParameterBase *param)
     {
         _events.raise(SchemaEvents::LambdaChanged, "Schema: parameterChanged: lambda");
 
-        for (auto elem : _items)
+        foreach (auto elem, _items)
             if (elem->hasOption(Element_RequiresWavelength))
                 Z::Utils::setElemWavelen(elem, _wavelength.value());
 
@@ -296,7 +298,7 @@ Z::Parameters Schema::globalParams() const
 
 PumpParams* Schema::activePump()
 {
-    for (PumpParams *pump : _pumps)
+    foreach (PumpParams *pump, _pumps)
         if (pump->isActive())
             return pump;
     return nullptr;
@@ -417,7 +419,7 @@ namespace Utils {
 void generateLabel(const Elements& elements, Element* elem, const QString &labelPrefix)
 {
     QStringList labels;
-    for (const auto e : elements)
+    foreach (const auto e, elements)
         if (e != elem)
             labels << e->label();
     QString prefix = labelPrefix.isEmpty() ? elem->labelPrefix() : labelPrefix;
@@ -427,7 +429,7 @@ void generateLabel(const Elements& elements, Element* elem, const QString &label
 void generateLabel(Schema* schema, PumpParams* pump)
 {
     QStringList labels;
-    for (const auto p : *schema->pumps())
+    foreach (const auto p, *schema->pumps())
         if (p != pump)
             labels << p->label();
     pump->setLabel(generateLabel(Pumps::labelPrefix(), labels));
@@ -435,8 +437,8 @@ void generateLabel(Schema* schema, PumpParams* pump)
 
 Element* findElemByParam(Schema* schema, Parameter* param)
 {
-    for (auto e : schema->elements())
-        for (auto p : e->params())
+    foreach (auto e, schema->elements())
+        foreach (auto p, e->params())
             if (p == param)
                 return e;
     return nullptr;
