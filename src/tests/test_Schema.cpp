@@ -330,10 +330,10 @@ TEST_METHOD(Element_RequiresWavelength__must_be_respected)
 TEST_METHOD(enabledCount)
 {
     PREPARE_SCHEMA_ELEMS(10)
-    ASSERT_EQ_INT(schema.enabledCount(), 10)
+    ASSERT_EQ_INT(schema.activeCount(), 10)
     schema.element(3)->setDisabled(true);
     schema.element(7)->setDisabled(true);
-    ASSERT_EQ_INT(schema.enabledCount(), 8)
+    ASSERT_EQ_INT(schema.activeCount(), 8)
 }
 
 TEST_METHOD(elementById)

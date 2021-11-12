@@ -303,7 +303,7 @@ void CustomElemsWindow::libraryFileChanged(const QString&)
     if (!QFile::exists(fileName))
     {
         _watcher->removePath(fileName);
-        if (not _library->isEmpty())
+        if (_library->count() > 0)
         {
             if (Ori::Dlg::yes(tr(
                  "It's detected that the Custom Elements Library "

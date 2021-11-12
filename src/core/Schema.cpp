@@ -169,10 +169,10 @@ Schema::~Schema()
     if (memo) delete memo;
 }
 
-int Schema::enabledCount() const
+int Schema::activeCount() const
 {
     int count = 0;
-    for (int i= 0; i < _items.size(); i++)
+    for (int i = 0; i < _items.size(); i++)
         if (!_items.at(i)->disabled())
             count++;
     return count;

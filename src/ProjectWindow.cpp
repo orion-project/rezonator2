@@ -358,7 +358,7 @@ void ProjectWindow::updateActions()
 void ProjectWindow::updateStatusInfo()
 {
     int totalCount = schema()->count();
-    int enabledCount = schema()->enabledCount();
+    int enabledCount = schema()->activeCount();
     if (totalCount != enabledCount)
         _statusBar->setText(STATUS_ELEMS, tr("Elements: %1 (%2)",
                                          "Status text").arg(enabledCount).arg(totalCount));

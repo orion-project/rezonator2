@@ -30,9 +30,9 @@ template <class TWindow, class TFunction> void registerWindowConstructor()
 }
 
 #define RETURN_IF_SCHEMA_EMPTY \
-    if (schema()->isEmpty()) \
+    if (schema()->activeCount() == 0) \
     { \
-        Z_INFO("Schema is empty"); \
+        Z_INFO("There are no active elements in the schema"); \
         return; \
     }
 

@@ -58,7 +58,7 @@ ElementsCatalogDialog::ElementsCatalogDialog(QWidget *parent): RezonatorDialog(D
         auto res = CustomElemsManager::loadLibrary();
         if (res.ok())
         {
-            if (not res.result()->isEmpty())
+            if (res.result()->count() > 0)
             {
                 _library = res.result();
                 _categoryTabs->addTab(new QWidget, tr("Custom library"));
