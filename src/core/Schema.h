@@ -282,7 +282,7 @@ public:
 
     void markModified(const char* reason);
 
-    SchemaMemo* memo;
+    SchemaMemo* memo = nullptr;
 
 private:
     Elements _items;
