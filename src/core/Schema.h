@@ -50,6 +50,8 @@ public:
     virtual void elementChanged(Schema*, Element*) {}
     virtual void elementDeleting(Schema*, Element*) {}
     virtual void elementDeleted(Schema*, Element*) {}
+    virtual void elementsDeleting(Schema*) {}
+    virtual void elementsDeleted(Schema*) {}
     virtual void schemaParamsChanged(Schema*) {}
     virtual void schemaLambdaChanged(Schema*) {}
     virtual void customParamCreated(Schema*, Z::Parameter*) {}
@@ -116,8 +118,10 @@ public:
 
         ElemCreated,   ///< New element was added to schema
         ElemChanged,   ///< Element's params changed
-        ElemDeleting,  ///< Element is being deleted from schema
-        ElemDeleted,   ///< Element was deleted from schema
+        ElemDeleting,  ///< Element is being deleted from schema (per element event)
+        ElemDeleted,   ///< Element was deleted from schema (per element event)
+        ElemsDeleting, ///< Elements will be deleted from schema (group event)
+        ElemsDeleted,  ///< Elements was deleted from schema (group event)
 
         ParamsChanged, ///< Some schema parameter was changed (e.g. TripType)
         LambdaChanged, ///< Schema wavelength was changed

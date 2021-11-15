@@ -56,7 +56,7 @@ private:
     QMenu *menuAdjuster = nullptr;
 
     class SchemaLayout *_layout;
-    class SchemaElemsTable *_table;
+    class ElementsTable* _table;
     CalcManager* _calculations;
 
     void createActions();
@@ -73,8 +73,8 @@ private slots:
     void actionElemDelete();
     void actionSaveCustom();
     void actionEditFormula();
-    void rowDoubleClicked(Element*);
-    void currentCellChanged(int curRow, int, int, int);
+    void elemDoubleClicked(Element*);
+    void currentElemChanged(Element* elem);
     void contextMenuAboutToShow(QMenu* menu);
     void adjustParam();
 };

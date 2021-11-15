@@ -48,12 +48,12 @@ void SchemaEvents::raise(Event event, void *param, const char* reason) const
         alias = QStringLiteral("[%1]: ").arg(alias);
 
     const EventProps& eventProps = propsOf(event);
-    Z_REPORT(QStringLiteral("%1SchemaEvent: %2, reason=[%3]").arg(alias).arg(eventProps.name).arg(reason))
+    Z_REPORT(QStringLiteral("%1SchemaEvent: %2, reason=[%3]").arg(alias, eventProps.name, reason))
 
     if (int(eventProps.nextState) != SchemaState::Current)
     {
         _schema->state().set(eventProps.nextState);
-        Z_REPORT(QStringLiteral("%1%2").arg(alias).arg(_schema->state().str()))
+        Z_REPORT(QStringLiteral("%1%2").arg(alias, _schema->state().str()))
     }
 
     auto listeners = _schema->listeners();
@@ -64,7 +64,7 @@ void SchemaEvents::raise(Event event, void *param, const char* reason) const
     if (eventProps.shouldRaiseChanged)
     {
         Z_REPORT(QStringLiteral("%1SchemaEvent: %2, modified=%3, reason=[%4]")
-            .arg(alias).arg(propsOf(Changed).name).arg(Z::str(_schema->modified())).arg(reason))
+            .arg(alias, propsOf(Changed).name, Z::str(_schema->modified()), reason))
         for (SchemaListener* listener : listeners)
             notify(listener, Changed, nullptr);
     }
@@ -88,6 +88,8 @@ const SchemaEvents::EventProps& SchemaEvents::propsOf(Event event)
         INIT_EVENT(ElemChanged,        true,         SchemaState::Modified ),
         INIT_EVENT(ElemDeleting,       false,        SchemaState::Current  ),
         INIT_EVENT(ElemDeleted,        true,         SchemaState::Modified ),
+        INIT_EVENT(ElemsDeleting,      false,        SchemaState::Current  ),
+        INIT_EVENT(ElemsDeleted,       false,        SchemaState::Current  ),
         INIT_EVENT(ParamsChanged,      true,         SchemaState::Modified ),
         INIT_EVENT(LambdaChanged,      true,         SchemaState::Modified ),
         INIT_EVENT(CustomParamCreated, true,         SchemaState::Modified ),
@@ -119,6 +121,8 @@ void SchemaEvents::notify(SchemaListener* listener, SchemaEvents::Event event, v
     case ElemChanged: listener->elementChanged(_schema, reinterpret_cast<Element*>(param)); break;
     case ElemDeleting: listener->elementDeleting(_schema, reinterpret_cast<Element*>(param)); break;
     case ElemDeleted: listener->elementDeleted(_schema, reinterpret_cast<Element*>(param)); break;
+    case ElemsDeleting: listener->elementsDeleting(_schema); break;
+    case ElemsDeleted: listener->elementsDeleted(_schema); break;
     case ParamsChanged: listener->schemaParamsChanged(_schema); break;
     case LambdaChanged: listener->schemaLambdaChanged(_schema); break;
     case CustomParamCreated: listener->customParamCreated(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
@@ -240,16 +244,18 @@ void Schema::insertElements(const Elements& elems, int index, Arg::RaiseEvents e
 void Schema::deleteElements(const Elements& elems, Arg::RaiseEvents events, Arg::FreeElem free)
 {
     Elements ownedElems;
-    for (auto elem : elems)
+    foreach (auto elem, elems)
         if (_items.contains(elem) and not ownedElems.contains(elem))
             ownedElems << elem;
     if (ownedElems.isEmpty()) return;
 
-    if (events.value)
-        for (auto elem : ownedElems)
+    if (events.value) {
+        _events.raise(SchemaEvents::ElemsDeleting, "Schema: deleteElement");
+        foreach (auto elem, ownedElems)
             _events.raise(SchemaEvents::ElemDeleting, elem, "Schema: deleteElement");
+    }
 
-    for (auto elem : ownedElems)
+    foreach (auto elem, ownedElems)
     {
         _items.removeOne(elem);
         elem->setOwner(nullptr);
@@ -258,15 +264,19 @@ void Schema::deleteElements(const Elements& elems, Arg::RaiseEvents events, Arg:
 
     relinkInterfaces();
 
-    if (events.value)
-        for (auto elem : ownedElems)
+    if (events.value) {
+        foreach (auto elem, ownedElems)
             _events.raise(SchemaEvents::ElemDeleted, elem, "Schema: deleteElement");
+    }
 
     if (free.value)
         qDeleteAll(ownedElems);
 
     if (events.value)
+    {
+        _events.raise(SchemaEvents::ElemsDeleted, "Schema: deleteElement");
         _events.raise(SchemaEvents::RecalRequred, "Schema: deleteElement");
+    }
 }
 
 void Schema::elementChanged(Element *elem)
@@ -280,7 +290,7 @@ void Schema::parameterChanged(Z::ParameterBase *param)
     {
         _events.raise(SchemaEvents::LambdaChanged, "Schema: parameterChanged: lambda");
 
-        for (auto elem : _items)
+        foreach (auto elem, _items)
             if (elem->hasOption(Element_RequiresWavelength))
                 Z::Utils::setElemWavelen(elem, _wavelength.value());
 
@@ -305,7 +315,7 @@ Z::Parameters Schema::globalParams() const
 
 PumpParams* Schema::activePump()
 {
-    for (PumpParams *pump : _pumps)
+    foreach (PumpParams *pump, _pumps)
         if (pump->isActive())
             return pump;
     return nullptr;
@@ -426,7 +436,7 @@ namespace Utils {
 void generateLabel(const Elements& elements, Element* elem, const QString &labelPrefix)
 {
     QStringList labels;
-    for (const auto e : elements)
+    foreach (const auto e, elements)
         if (e != elem)
             labels << e->label();
     QString prefix = labelPrefix.isEmpty() ? elem->labelPrefix() : labelPrefix;
@@ -436,7 +446,7 @@ void generateLabel(const Elements& elements, Element* elem, const QString &label
 void generateLabel(Schema* schema, PumpParams* pump)
 {
     QStringList labels;
-    for (const auto p : *schema->pumps())
+    foreach (const auto p, *schema->pumps())
         if (p != pump)
             labels << p->label();
     pump->setLabel(generateLabel(Pumps::labelPrefix(), labels));
@@ -444,8 +454,8 @@ void generateLabel(Schema* schema, PumpParams* pump)
 
 Element* findElemByParam(Schema* schema, Parameter* param)
 {
-    for (auto e : schema->elements())
-        for (auto p : e->params())
+    foreach (auto e, schema->elements())
+        foreach (auto p, e->params())
             if (p == param)
                 return e;
     return nullptr;

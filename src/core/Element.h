@@ -213,6 +213,9 @@ protected:
 
 typedef QList<Element*> Elements;
 
+// To be able to use in `QVariant::value<Element*>(data)`
+Q_DECLARE_METATYPE(Element*);
+
 //------------------------------------------------------------------------------
 /**
     The base class for elements having length and optional IOR.
