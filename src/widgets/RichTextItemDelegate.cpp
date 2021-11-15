@@ -1,5 +1,7 @@
 #include "RichTextItemDelegate.h"
 
+#include "../Appearance.h"
+
 #include <QDebug>
 #include <QPainter>
 #include <QTextDocument>
@@ -41,6 +43,8 @@ void RichTextItemDelegate::drawDisplay(QPainter *painter, const QStyleOptionView
         textClipRect.setRect(0, 0, rect.width(), rect.height());
     }
     painter->translate(rect.left() + textOffsetX,  rect.top() + _textOffsetY);
+    if (_paintingIndex.data(Z::Gui::DisabledRole).toBool())
+        painter->setOpacity(0.5);
     doc->drawContents(painter, textClipRect);
     painter->restore();
     delete doc;

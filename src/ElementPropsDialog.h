@@ -46,6 +46,7 @@ private:
     QLineEdit *_editorLabel, *_editorTitle;
     QCheckBox *_layoutShowLabel;
     QCheckBox *_layoutDrawNarrow;
+    QCheckBox *_elemDisabled;
 
     QWidget* initPageOptions();
     QWidget* initPageOutline();

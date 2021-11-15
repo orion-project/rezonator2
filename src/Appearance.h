@@ -69,6 +69,8 @@ inline QString globalParamColorHtml() { return QStringLiteral("#000080"); }
 
 void setFocusedBackground(QWidget *w, bool focused);
 
+enum ItemDataRole { DisabledRole = Qt::UserRole+100 };
+
 } // namespace Gui
 } // namespace Z
 

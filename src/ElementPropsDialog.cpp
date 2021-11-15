@@ -99,13 +99,16 @@ void ElementPropsDialog::setPageParams(QWidget* pageParams)
 
 QWidget* ElementPropsDialog::initPageOptions()
 {
+    _elemDisabled = new QCheckBox(tr("Ignore in calculations (disable element)"));
     _layoutShowLabel = new QCheckBox(tr("Show element label on layout"));
     _layoutDrawNarrow = new QCheckBox(tr("Draw narrow version of element"));
     _layoutDrawNarrow->setToolTip(tr(
-        "Draw a narrow version of the element. It can be useful when schema contains many elements."
+        "Draw a narrow version of the element.\n"
+        "It can be useful when schema contains many elements.\n"
         "How the option is processed depends on the particular element type."));
 
     return Ori::Layouts::LayoutV({
+        _elemDisabled,
         _layoutShowLabel,
         _layoutDrawNarrow,
         Ori::Layouts::Stretch()
@@ -123,6 +126,7 @@ void ElementPropsDialog::populate()
 {
     _editorLabel->setText(_element->label());
     _editorTitle->setText(_element->title());
+    _elemDisabled->setChecked(_element->disabled());
     _layoutShowLabel->setChecked(_element->layoutOptions.showLabel);
     _layoutDrawNarrow->setChecked(_element->layoutOptions.drawNarrow);
 
@@ -145,6 +149,7 @@ void ElementPropsDialog::collect()
 
     _element->setLabel(_editorLabel->text());
     _element->setTitle(_editorTitle->text());
+    _element->setDisabled(_elemDisabled->isChecked());
     _element->layoutOptions.showLabel = _layoutShowLabel->isChecked();
     _element->layoutOptions.drawNarrow = _layoutDrawNarrow->isChecked();
 
