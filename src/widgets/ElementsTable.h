@@ -8,7 +8,7 @@
 
 class ElementsTableModel;
 
-class ElementsTable : public QTableView, public SchemaListener, public ElementSelector
+class ElementsTable : public QTableView, public ElementSelector
 {
     Q_OBJECT
 

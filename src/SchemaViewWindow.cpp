@@ -14,7 +14,6 @@
 #include "io/Clipboard.h"
 #include "widgets/ElementsTable.h"
 #include "widgets/SchemaLayout.h"
-#include "widgets/SchemaElemsTable.h"
 
 #include "helpers/OriWidgets.h"
 #include "helpers/OriDialogs.h"
@@ -29,38 +28,28 @@ SchemaViewWindow::SchemaViewWindow(Schema *owner, CalcManager *calcs) : SchemaMd
     setTitleAndIcon(tr("Schema", "Window title"), ":/window_icons/schema");
     setAttribute(Qt::WA_DeleteOnClose, false);
 
-    _table = new SchemaElemsTable(owner);
-    _table1 = new ElementsTable(owner);
+    _table = new ElementsTable(owner);
     _layout = new SchemaLayout(owner);
 
-    setContent(Ori::Gui::splitterV(_table1, _layout, 2, 20));
+    setContent(Ori::Gui::splitterV(_table, _layout, 2, 20));
 
     createActions();
     createMenuBar();
     createToolBar();
 
-    //schema()->registerListener(_table);
-    schema()->registerListener(_table1);
     schema()->registerListener(_layout);
-    schema()->selection().registerSelector(_table1);
+    schema()->selection().registerSelector(_table);
 
-    connect(_table, SIGNAL(doubleClicked(Element*)), this, SLOT(rowDoubleClicked(Element*)));
-    connect(_table, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(currentCellChanged(int, int, int, int)));
-    connect(_table, SIGNAL(beforeContextMenuShown(QMenu*)), this, SLOT(contextMenuAboutToShow(QMenu*)));
+    connect(_table, &ElementsTable::elemDoubleClicked, this, &SchemaViewWindow::elemDoubleClicked);
+    connect(_table, &ElementsTable::currentElemChanged, this, &SchemaViewWindow::currentElemChanged);
+    connect(_table, &ElementsTable::beforeContextMenuShown, this, &SchemaViewWindow::contextMenuAboutToShow);
     _table->elementContextMenu = menuContextElement;
     _table->lastRowContextMenu = menuContextLastRow;
-
-    connect(_table1, &ElementsTable::elemDoubleClicked, this, &SchemaViewWindow::elemDoubleClicked);
-    connect(_table1, &ElementsTable::currentElemChanged, this, &SchemaViewWindow::currentElemChanged);
-    connect(_table1, &ElementsTable::beforeContextMenuShown, this, &SchemaViewWindow::contextMenuAboutToShow);
-    _table1->elementContextMenu = menuContextElement;
-    _table1->lastRowContextMenu = menuContextLastRow;
 }
 
 SchemaViewWindow::~SchemaViewWindow()
 {
     schema()->unregisterListener(_layout);
-    schema()->unregisterListener(_table);
     schema()->selection().unregisterSelector(_table);
     delete _table;
     delete _layout;
@@ -116,14 +105,6 @@ void SchemaViewWindow::editElement(Element* elem)
     }
 }
 
-void SchemaViewWindow::rowDoubleClicked(Element *elem)
-{
-//    if (elem)
-//        editElement(elem);
-//    else
-//        actionElemAdd();
-}
-
 void SchemaViewWindow::elemDoubleClicked(Element *elem)
 {
     if (elem)
@@ -155,8 +136,8 @@ void SchemaViewWindow::actionElemAdd()
     if (AppSettings::instance().elemAutoLabel)
         Z::Utils::generateLabel(schema()->elements(), elem, isCustom ? sample->label() : QString());
 
-    schema()->insertElements({elem}, _table1->currentRow(), Arg::RaiseEvents(true));
-    _table1->setCurrentElem(elem);
+    schema()->insertElements({elem}, _table->currentRow(), Arg::RaiseEvents(true));
+    _table->setCurrentElem(elem);
 
     if (AppSettings::instance().editNewElem)
         editElement(elem);
@@ -164,33 +145,33 @@ void SchemaViewWindow::actionElemAdd()
 
 void SchemaViewWindow::actionElemMoveUp()
 {
-    auto elem = _table1->currentElem();
+    auto elem = _table->currentElem();
     if (elem)
     {
         schema()->moveElementUp(elem);
-        _table1->setCurrentElem(elem);
+        _table->setCurrentElem(elem);
     }
 }
 
 void SchemaViewWindow::actionElemMoveDown()
 {
-    auto elem = _table1->currentElem();
+    auto elem = _table->currentElem();
     if (elem)
     {
         schema()->moveElementDown(elem);
-        _table1->setCurrentElem(elem);
+        _table->setCurrentElem(elem);
     }
 }
 
 void SchemaViewWindow::actionElemProp()
 {
-    auto elem = _table1->selected();
+    auto elem = _table->selected();
     if (elem) editElement(elem);
 }
 
 void SchemaViewWindow::actionElemDelete()
 {
-    Elements elements = _table1->selection();
+    Elements elements = _table->selection();
     if (elements.isEmpty()) return;
 
     QStringList confirmation;
@@ -234,12 +215,12 @@ void SchemaViewWindow::actionElemDelete()
 
     if (!nextElem)
         nextElem = schema()->element(schema()->count()-1);
-    _table1->setCurrentElem(nextElem);
+    _table->setCurrentElem(nextElem);
 }
 
 void SchemaViewWindow::actionSaveCustom()
 {
-    Element* elem = _table1->currentElem();
+    Element* elem = _table->currentElem();
     if (!elem) return;
 
     QString res = CustomElemsManager::saveToLibrary(elem);
@@ -249,7 +230,7 @@ void SchemaViewWindow::actionSaveCustom()
 
 void SchemaViewWindow::actionEditFormula()
 {
-    auto elem = dynamic_cast<ElemFormula*>(_table1->currentElem());
+    auto elem = dynamic_cast<ElemFormula*>(_table->currentElem());
     if (!elem) return;
 
     WindowsManager::instance().show(new ElemFormulaWindow(schema(), elem));
@@ -259,12 +240,12 @@ void SchemaViewWindow::actionEditFormula()
 
 bool SchemaViewWindow::canCopy()
 {
-    return _table1->selectionModel()->hasSelection();
+    return _table->selectionModel()->hasSelection();
 }
 
 void SchemaViewWindow::copy()
 {
-    auto elems = _table1->selection();
+    auto elems = _table->selection();
     if (!elems.isEmpty())
         Z::IO::Clipboard::setElements(elems);
 }
@@ -284,35 +265,16 @@ void SchemaViewWindow::paste()
         }
     }
 
-    schema()->insertElements(pastedElems, _table1->currentRow(), Arg::RaiseEvents(true));
-    _table1->selectElems(pastedElems);
+    schema()->insertElements(pastedElems, _table->currentRow(), Arg::RaiseEvents(true));
+    _table->selectElems(pastedElems);
 }
 
 void SchemaViewWindow::selectAll()
 {
-    _table1->selectAll();
+    _table->selectAll();
 }
 
 //------------------------------------------------------------------------------
-
-void SchemaViewWindow::currentCellChanged(int curRow, int, int, int)
-{
-//    int lastRow = _table1->rowCount() - 1;
-//    bool hasElem = curRow < lastRow;
-//    Element* curElem = hasElem ? schema()->element(curRow) : nullptr;
-//    actnElemProp->setEnabled(hasElem);
-//    actnElemMatr->setEnabled(hasElem);
-//    actnElemMatrAll->setEnabled(hasElem);
-//    actnElemDelete->setEnabled(hasElem);
-//    actnEditCopy->setEnabled(hasElem);
-//    actnElemMoveUp->setEnabled(hasElem);
-//    actnElemMoveDown->setEnabled(hasElem);
-//    actnSaveCustom->setEnabled(hasElem);
-
-//    bool isFormula = dynamic_cast<ElemFormula*>(curElem);
-//    actnEditFormula->setEnabled(isFormula);
-//    actnEditFormula->setVisible(isFormula);
-}
 
 void SchemaViewWindow::currentElemChanged(Element* elem)
 {
@@ -374,7 +336,7 @@ void SchemaViewWindow::adjustParam()
 
 void SchemaViewWindow::shortcutEnterPressed()
 {
-    if (_table->currentRow() == _table->rowCount() - 1)
+    if (_table->currentRow() == schema()->count())
         actionElemAdd();
     else
         actionElemProp();
