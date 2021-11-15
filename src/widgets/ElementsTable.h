@@ -20,6 +20,8 @@ public:
     Element* selected() const override { return currentElem(); }
     Elements selection() const override;
 
+    void selectElems(const Elements& elems);
+
     Element* currentElem() const;
     void setCurrentElem(Element*);
     int currentRow() const;

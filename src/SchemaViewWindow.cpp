@@ -161,12 +161,6 @@ void SchemaViewWindow::actionElemAdd()
 
 void SchemaViewWindow::actionElemMoveUp()
 {
-//    auto elem = _table->selected();
-//    if (elem)
-//    {
-//        schema()->moveElementUp(elem);
-//        _table->setSelected(elem);
-//    }
     auto elem = _table1->currentElem();
     if (elem)
     {
@@ -177,12 +171,6 @@ void SchemaViewWindow::actionElemMoveUp()
 
 void SchemaViewWindow::actionElemMoveDown()
 {
-//    auto elem = _table->selected();
-//    if (elem)
-//    {
-//        schema()->moveElementDown(elem);
-//        _table->setSelected(elem);
-//    }
     auto elem = _table1->currentElem();
     if (elem)
     {
@@ -248,7 +236,7 @@ void SchemaViewWindow::actionElemDelete()
 
 void SchemaViewWindow::actionSaveCustom()
 {
-    Element* elem = _table->selected();
+    Element* elem = _table1->currentElem();
     if (!elem) return;
 
     QString res = CustomElemsManager::saveToLibrary(elem);
@@ -258,7 +246,7 @@ void SchemaViewWindow::actionSaveCustom()
 
 void SchemaViewWindow::actionEditFormula()
 {
-    auto elem = dynamic_cast<ElemFormula*>(_table->selected());
+    auto elem = dynamic_cast<ElemFormula*>(_table1->currentElem());
     if (!elem) return;
 
     WindowsManager::instance().show(new ElemFormulaWindow(schema(), elem));
@@ -268,12 +256,12 @@ void SchemaViewWindow::actionEditFormula()
 
 bool SchemaViewWindow::canCopy()
 {
-    return _table->selectionModel()->hasSelection();
+    return _table1->selectionModel()->hasSelection();
 }
 
 void SchemaViewWindow::copy()
 {
-    auto elems = _table->selection();
+    auto elems = _table1->selection();
     if (!elems.isEmpty())
         Z::IO::Clipboard::setElements(elems);
 }
@@ -293,7 +281,8 @@ void SchemaViewWindow::paste()
         }
     }
 
-    schema()->insertElements(pastedElems, _table->currentRow(), Arg::RaiseEvents(true));
+    schema()->insertElements(pastedElems, _table1->currentRow(), Arg::RaiseEvents(true));
+    _table1->selectElems(pastedElems);
 }
 
 void SchemaViewWindow::selectAll()

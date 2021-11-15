@@ -128,7 +128,7 @@ public:
 
     void elementsDeleted(Schema*) override
     {
-        int minRow = 0, maxRow = 0;
+        int minRow = _schema->count()-1, maxRow = 0;
         foreach (int row, _deleted) {
             if (row < minRow) minRow = row;
             if (row > maxRow) maxRow = row;
@@ -204,6 +204,20 @@ Elements ElementsTable::selection() const
         if (elem) elems << elem;
     }
     return elems;
+}
+
+void ElementsTable::selectElems(const Elements& elems)
+{
+   int minRow = _schema->count()-1, maxRow = 0;
+   foreach (auto elem, elems) {
+       int row = _schema->indexOf(elem);
+       if (row < minRow) minRow = row;
+       if (row > maxRow) maxRow = row;
+   }
+   selectRow(maxRow); // update current index
+   selectionModel()->select(
+        QItemSelection(_model->index(minRow, 0), _model->index(maxRow, COL_COUNT-1)),
+        QItemSelectionModel::SelectionFlags(QItemSelectionModel::Clear | QItemSelectionModel::Select));
 }
 
 int ElementsTable::currentRow() const
