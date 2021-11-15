@@ -26,13 +26,18 @@ public:
     void setCurrentElem(Element*);
     int currentRow() const;
 
+    QMenu *elementContextMenu = nullptr;
+    QMenu *lastRowContextMenu = nullptr;
+
 signals:
     void currentElemChanged(Element*);
     void elemDoubleClicked(Element*);
+    void beforeContextMenuShown(QMenu* menu);
 
 private slots:
      void currentRowChanged(const QModelIndex &current, const QModelIndex &);
      void indexDoubleClicked(const QModelIndex &index);
+     void showContextMenu(const QPoint&);
 
 private:
     Schema* _schema;

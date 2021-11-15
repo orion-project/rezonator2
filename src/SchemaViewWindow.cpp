@@ -52,6 +52,9 @@ SchemaViewWindow::SchemaViewWindow(Schema *owner, CalcManager *calcs) : SchemaMd
 
     connect(_table1, &ElementsTable::elemDoubleClicked, this, &SchemaViewWindow::elemDoubleClicked);
     connect(_table1, &ElementsTable::currentElemChanged, this, &SchemaViewWindow::currentElemChanged);
+    connect(_table1, &ElementsTable::beforeContextMenuShown, this, &SchemaViewWindow::contextMenuAboutToShow);
+    _table1->elementContextMenu = menuContextElement;
+    _table1->lastRowContextMenu = menuContextLastRow;
 }
 
 SchemaViewWindow::~SchemaViewWindow()

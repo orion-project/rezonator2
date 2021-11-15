@@ -1,10 +1,12 @@
 #include "ElementsTable.h"
 
 #include "RichTextItemDelegate.h"
+#include "../Appearance.h"
 #include "../funcs/FormatInfo.h"
 
 #include <QAbstractTableModel>
 #include <QHeaderView>
+#include <QMenu>
 
 namespace {
 
@@ -31,7 +33,7 @@ public:
     {
     }
 
-    int rowCount(const QModelIndex&) const override { return _schema->count(); }
+    int rowCount(const QModelIndex&) const override { return _schema->count()+1; }
     int columnCount(const QModelIndex&) const override { return COL_COUNT; }
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override
@@ -63,7 +65,7 @@ public:
             if (index.column() == COL_IMAGE)
             {
                 auto elem = _schema->element(index.row());
-                return elemIcon(elem->typeName());
+                return elem ? elemIcon(elem->type()) : _addElemIcon;
             }
         }
         else if (role == Qt::ToolTipRole)
@@ -71,22 +73,43 @@ public:
             if (index.column() == COL_IMAGE)
             {
                 auto elem = _schema->element(index.row());
-                return elem->typeName();
+                return elem ? elem->typeName() : QVariant();
             }
+        }
+        else if (role == Qt::FontRole)
+        {
+            if (index.column() == COL_LABEL)
+                return Z::Gui::ElemLabelFont().get();
+        }
+        else if (role == Qt::TextAlignmentRole)
+        {
+            if (index.column() == COL_LABEL)
+                return Qt::AlignCenter;
+        }
+        else if (role == Qt::ForegroundRole)
+        {
+            // it's the "double click to add" row
+            if (index.row() == _schema->count())
+                return QColor(0, 0, 0, 40);
         }
         else if (role == Qt::DisplayRole)
         {
             auto elem = _schema->element(index.row());
-            switch (index.column()) {
-            case COL_LABEL: return elem->label();
-            case COL_TITLE: return elem->title();
-            case COL_PARAMS:
+            if (elem)
             {
-                Z::Format::FormatElemParams f;
-                f.schema = _schema;
-                return f.format(elem);
+                switch (index.column()) {
+                case COL_LABEL: return elem->label();
+                case COL_TITLE: return elem->title();
+                case COL_PARAMS:
+                {
+                    Z::Format::FormatElemParams f;
+                    f.schema = _schema;
+                    return f.format(elem);
+                }
+                }
             }
-            }
+            else if (index.column() == COL_TITLE)
+                return tr("Double click here to append a new element");
         }
         return QVariant();
     }
@@ -149,6 +172,7 @@ private:
     Schema* _schema;
     QTableView* _view;
     QSet<int> _deleted;
+    QPixmap _addElemIcon = QPixmap(":/toolbar/elem_add");
 };
 
 //------------------------------------------------------------------------------
@@ -188,6 +212,7 @@ ElementsTable::ElementsTable(Schema *schema, QWidget *parent) : QTableView(paren
     h->setHighlightSections(false);
 
     connect(this, &ElementsTable::doubleClicked, this, &ElementsTable::indexDoubleClicked);
+    connect(this, &ElementsTable::customContextMenuRequested, this, &ElementsTable::showContextMenu);
 }
 
 ElementsTable::~ElementsTable()
@@ -243,6 +268,13 @@ void ElementsTable::currentRowChanged(const QModelIndex &current, const QModelIn
 
 void ElementsTable::indexDoubleClicked(const QModelIndex &index)
 {
-    auto elem = _schema->element(index.row());
-    if (elem) emit elemDoubleClicked(elem);
+    emit elemDoubleClicked(_schema->element(index.row()));
+}
+
+void ElementsTable::showContextMenu(const QPoint& pos)
+{
+    auto menu = (currentRow() < _schema->count() - 1) ? elementContextMenu : lastRowContextMenu;
+    if (!menu) return;
+    emit beforeContextMenuShown(menu);
+    menu->popup(mapToGlobal(pos));
 }
