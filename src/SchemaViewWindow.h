@@ -57,6 +57,7 @@ private:
 
     class SchemaLayout *_layout;
     class SchemaElemsTable *_table;
+    class ElementsTable* _table1;
     CalcManager* _calculations;
 
     void createActions();
@@ -75,6 +76,8 @@ private slots:
     void actionEditFormula();
     void rowDoubleClicked(Element*);
     void currentCellChanged(int curRow, int, int, int);
+    void elemDoubleClicked(Element*);
+    void currentElemChanged(Element* elem);
     void contextMenuAboutToShow(QMenu* menu);
     void adjustParam();
 };

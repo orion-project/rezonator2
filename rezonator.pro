@@ -132,6 +132,7 @@ HEADERS += \
     src/widgets/ElemSelectorWidget.h \
     src/widgets/ElementImagesProvider.h \
     src/widgets/ElementTypesListView.h \
+    src/widgets/ElementsTable.h \
     src/widgets/FormulaEditor.h \
     src/widgets/FrozenStateButton.h \
     src/widgets/ParamEditor.h \
@@ -276,6 +277,7 @@ SOURCES += \
     src/widgets/ElemFormulaEditor.cpp \
     src/widgets/ElemSelectorWidget.cpp \
     src/widgets/ElementTypesListView.cpp \
+    src/widgets/ElementsTable.cpp \
     src/widgets/FormulaEditor.cpp \
     src/widgets/FrozenStateButton.cpp \
     src/widgets/ParamEditor.cpp \
