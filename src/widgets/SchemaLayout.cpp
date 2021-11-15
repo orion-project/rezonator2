@@ -93,13 +93,11 @@ void ElementLayout::makeElemToolTip()
 
     Z::Format::FormatElemParams f;
     f.schema = schema;
-
-    setToolTip(QStringLiteral("#%1 <b>%2</b> <i>(%3)</i><br>%4")
+    QString paramStr = f.format(_element);
+    paramStr.replace(QStringLiteral(", "), QStringLiteral("<br>"));
+    setToolTip(QStringLiteral("#%1 <b>%2</b><br><i>(%3)</i><br>%4")
                .arg(schema->indexOf(_element)+1)
-               .arg(_element->label())
-               .arg(_element->typeName())
-               .arg(f.format(_element))
-               );
+               .arg(_element->label(), _element->typeName(), paramStr));
 }
 
 QRectF ElementLayout::boundingRect() const
@@ -221,10 +219,10 @@ namespace ElemFlatMirrorLayout {
     ELEMENT_LAYOUT_INIT {
         HW = 7; HH = 40;
         if (!_element->owner()) return;
-        int index = _element->owner()->indexOf(_element);
-        if (index <= 0)
+        auto pos = _element->owner()->position(_element);
+        if (pos == ElementOwner::PositionAtLeft)
             place = PlaceLeft;
-        else if (index >= _element->owner()->count()-1)
+        else if (pos == ElementOwner::PositionAtRight)
             place = PlaceRight;
     }
 
@@ -447,12 +445,12 @@ namespace ElemCurveMirrorLayout {
         layout.reset(new CurvedElementLayout::Layout(nullptr));
         layout->setHalfSize(HW, HH);
         layout->setSlope(mirror->alpha());
-        int index = _element->owner()->indexOf(_element);
-        if (index <= 0)
+        auto pos = _element->owner()->position(_element);
+        if (pos == ElementOwner::PositionAtLeft)
             layout->paintMode = mirror->radius() > 0
                 ? CurvedElementLayout::PlanoConcaveMirror
                 : CurvedElementLayout::PlanoConvexMirror;
-        else if (index >= _element->owner()->count()-1)
+        else if (pos == ElementOwner::PositionAtRight)
             layout->paintMode = mirror->radius() > 0
                 ? CurvedElementLayout::ConcavePlanoMirror
                 : CurvedElementLayout::ConvexPlanoMirror;
@@ -740,8 +738,7 @@ enum class ElementNeighbour {
     Grin,
 };
 
-ElementNeighbour getNeighbour(Schema* schema, int index) {
-    auto elem = schema->element(index);
+ElementNeighbour getNeighbourKind(Schema* schema, Element* elem) {
     if (elem) {
         if (dynamic_cast<ElemGrinMedium*>(elem))
             return ElementNeighbour::Grin;
@@ -768,9 +765,8 @@ ElementPlacement getPlacement(Element* elem) {
     auto schema = dynamic_cast<Schema*>(elem->owner());
     if (!schema) return {ElementPlacement::BetweenMedia, ElementPlacement::OptionNone};
 
-    auto index = schema->indexOf(elem);
-    auto left = getNeighbour(schema, index-1);
-    auto right = getNeighbour(schema, index+1);
+    auto left = getNeighbourKind(schema, schema->leftElement(elem));
+    auto right = getNeighbourKind(schema, schema->rightElement(elem));
 
     if (left == ElementNeighbour::Air && right == ElementNeighbour::Air)
         return {ElementPlacement::BetweenRanges, ElementPlacement::OptionNone};
@@ -1257,12 +1253,12 @@ namespace ElemAxiconMirrorLayout {
         layout.reset(new AxiconElementLayout::Layout(nullptr));
         layout->setHalfSize(HW, HH);
         layout->setSlope(mirror->alpha());
-        int index = _element->owner()->indexOf(_element);
-        if (index <= 0)
+        auto pos = _element->owner()->position(_element);
+        if (pos == ElementOwner::PositionAtLeft)
             layout->paintMode = mirror->theta() > 0
                 ? AxiconElementLayout::PlanoConcaveMirror
                 : AxiconElementLayout::PlanoConvexMirror;
-        else if (index >= _element->owner()->count()-1)
+        else if (pos == ElementOwner::PositionAtRight)
             layout->paintMode = mirror->theta() > 0
                 ? AxiconElementLayout::ConcavePlanoMirror
                 : AxiconElementLayout::ConvexPlanoMirror;
@@ -1291,12 +1287,12 @@ namespace ElemAxiconLensLayout {
         layout.reset(new AxiconElementLayout::Layout(nullptr));
         layout->setHalfSize(HW, HH);
         layout->setSlope(mirror->alpha());
-        int index = _element->owner()->indexOf(_element);
-        if (index <= 0)
+        auto pos = _element->owner()->position(_element);
+        if (pos == ElementOwner::PositionAtLeft)
             layout->paintMode = mirror->theta() > 0
                 ? AxiconElementLayout::PlanoConcaveMirror
                 : AxiconElementLayout::PlanoConvexMirror;
-        else if (index >= _element->owner()->count()-1)
+        else if (pos == ElementOwner::PositionAtRight)
             layout->paintMode = mirror->theta() > 0
                 ? AxiconElementLayout::ConcavePlanoMirror
                 : AxiconElementLayout::ConvexPlanoMirror;
@@ -1339,8 +1335,9 @@ void SchemaLayout::populate()
 
     clear();
 
-    for (int i = 0; i < _schema->count(); i++) {
-        Element *elem = _schema->element(i);
+    auto elems = _schema->elements();
+    for (int i = 0; i < elems.size(); i++) {
+        Element *elem = elems.at(i);
         if (elem->disabled()) continue;
         auto layout = ElementLayoutFactory::make(elem);
         if (layout) {
@@ -1354,7 +1351,7 @@ void SchemaLayout::populate()
     // The first element is at zero position.
     qreal fullW = 0;
     qreal firstHW = -1;
-    for (ElementLayout *elem : _elements) {
+    foreach (ElementLayout *elem, _elements) {
         fullW += 2*elem->halfW();
         if (firstHW < 0)
             firstHW = elem->halfW();

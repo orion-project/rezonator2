@@ -51,10 +51,13 @@ class PumpCalculator;
 class ElementOwner
 {
 public:
+    enum Position {PositionInvalid, PositionAtLeft, PositionInMidle, PositionAtRight};
+public:
     virtual ~ElementOwner();
     virtual void elementChanged(Element*) {}
     virtual int indexOf(Element*) const { return -1; }
     virtual int count() const { return 0; }
+    virtual Position position(Element*) const { return PositionInvalid; }
     friend class Element;
 };
 

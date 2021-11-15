@@ -426,6 +426,33 @@ void Schema::markModified(const char *reason)
     _events.raise(SchemaEvents::Changed, reason);
 }
 
+ElementOwner::Position Schema::position(Element* elem) const
+{
+    auto elems = activeElements();
+    int index = elems.indexOf(elem);
+    if (index < 0) return PositionInvalid;
+    if (index == 0) return PositionAtLeft;
+    if (index == elems.size()-1) return PositionAtRight;
+    return PositionInMidle;
+}
+
+Element* Schema::leftElement(Element *elem) const
+{
+    auto elems = activeElements();
+    int index = elems.indexOf(elem);
+    if (index <= 0) return nullptr;
+    return elems.at(index-1);
+}
+
+Element* Schema::rightElement(Element *elem) const
+{
+    auto elems = activeElements();
+    int index = elems.indexOf(elem);
+    if (index < 0) return nullptr;
+    if (index == elems.size()-1) return nullptr;
+    return elems.at(index+1);
+}
+
 //------------------------------------------------------------------------------
 //                                Z::Utils
 //------------------------------------------------------------------------------
