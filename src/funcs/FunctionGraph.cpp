@@ -15,7 +15,7 @@ FunctionGraph::FunctionGraph(QCPL::Plot* plot, Z::WorkPlane workPlane, std::func
 
 void FunctionGraph::clear()
 {
-    for (auto s : _segments)
+    foreach (auto s, _segments)
         _plot->removePlottable(s);
     _segments.clear();
 }
