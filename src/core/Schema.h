@@ -252,8 +252,6 @@ public:
     Element* elementByLabel(const QString& label) const;
     int indexOf(Element *elem) const override { return _items.indexOf(elem); }
     Position position(Element*) const override;
-    Element* leftElement(Element *elem) const;
-    Element* rightElement(Element *elem) const;
 
     SchemaEvents& events() { return _events; }
     SchemaState& state() { return _state; }

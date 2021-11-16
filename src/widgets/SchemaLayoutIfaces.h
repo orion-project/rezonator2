@@ -50,6 +50,16 @@ IfaceNeighbour getNeighbourKind(Schema* schema, Element* elem) {
     return IfaceNeighbour::Unknown;
 }
 
+QPair<Element*, Element*> getSideElements(Schema* schema, Element *elem)
+{
+    auto elems = schema->activeElements();
+    int index = elems.indexOf(elem);
+    if (index < 0) return {nullptr, nullptr};
+    auto left = (index > 0) ? elems.at(index-1) : nullptr;
+    auto right = (index < elems.size()-1) ? elems.at(index+1) : nullptr;
+    return {left, right};
+}
+
 // Check on these files how interfaces are drawn with combination with different media:
 // $$_PRO_FILE_PWD_/bin/test_files/draw_interfaces_grin.rez
 // $$_PRO_FILE_PWD_/bin/test_files/draw_interfaces_media.rez
@@ -58,8 +68,9 @@ IfacePosition getIfacePosition(Element* elem) {
     auto schema = dynamic_cast<Schema*>(elem->owner());
     if (!schema) return {IfacePosition::BetweenMedia, IfacePosition::OptionNone};
 
-    auto left = getNeighbourKind(schema, schema->leftElement(elem));
-    auto right = getNeighbourKind(schema, schema->rightElement(elem));
+    auto sides = getSideElements(schema, elem);
+    auto left = getNeighbourKind(schema, sides.first);
+    auto right = getNeighbourKind(schema, sides.second);
 
     if (left == IfaceNeighbour::Air && right == IfaceNeighbour::Air)
         return {IfacePosition::BetweenRanges, IfacePosition::OptionNone};
