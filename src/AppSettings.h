@@ -64,6 +64,9 @@ public:
 
     int numberPrecisionData; ///< Number precision for value formatting (graph data, etc).
 
+    bool calcTablesMediumEnds;
+    bool calcTablesEmptySpaces;
+
     Z::Unit defaultUnitFrontRadius = Z::Units::none();
     Z::Unit defaultUnitBeamRadius = Z::Units::none();
     Z::Unit defaultUnitAngle = Z::Units::none();

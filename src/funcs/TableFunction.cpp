@@ -45,6 +45,8 @@ QString TableFunction::Result::str() const
 
 TableFunction::TableFunction(Schema *schema) : FunctionBase(schema)
 {
+    calcMediumEnds = AppSettings::instance().calcTablesMediumEnds;
+    calcEmptySpaces = AppSettings::instance().calcTablesEmptySpaces;
 }
 
 bool TableFunction::prepareSinglePass()
