@@ -328,3 +328,9 @@ void ElementsTable::showContextMenu(const QPoint& pos)
     emit beforeContextMenuShown(menu);
     menu->popup(mapToGlobal(pos));
 }
+
+void ElementsTable::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    QTableView::selectionChanged(selected, deselected);
+    emit selectedElemsChanged(selection());
+}

@@ -29,8 +29,12 @@ public:
     QMenu *elementContextMenu = nullptr;
     QMenu *lastRowContextMenu = nullptr;
 
+protected:
+    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
+
 signals:
     void currentElemChanged(Element*);
+    void selectedElemsChanged(const Elements&);
     void elemDoubleClicked(Element*);
     void beforeContextMenuShown(QMenu* menu);
 

@@ -116,6 +116,7 @@
         <file alias="stop">../img/toolbar/stop.svg</file>
         <file alias="strikeout">../img/toolbar/strikeout.svg</file>
         <file alias="text_color">../img/toolbar/text_color.svg</file>
+        <file alias="switch_disabled">../img/toolbar/switch_disabled.svg</file>
         <file alias="underline">../img/toolbar/underline.svg</file>
         <file alias="undo">../img/toolbar/undo.svg</file>
         <file alias="update_params">../img/toolbar/update_params.svg</file>
