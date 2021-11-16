@@ -7,6 +7,8 @@
 #include <QGraphicsItem>
 #include <QGraphicsView>
 
+#define Sqr(x) ((x)*(x))
+
 /**
     Graphical representation of single element.
 */
@@ -47,6 +49,18 @@ protected:
 
     void slopePainter(QPainter *painter);
 };
+
+
+#define DECLARE_ELEMENT_LAYOUT_BEGIN \
+class Layout : public ElementLayout { \
+public: \
+    Layout(Element *elem) : ElementLayout(elem) {} \
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override; \
+    void init() override;
+#define DECLARE_ELEMENT_LAYOUT_END };
+#define ELEMENT_LAYOUT_INIT void Layout::init()
+#define ELEMENT_LAYOUT_PAINT void Layout::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
+
 
 /**
     Graphical representation of a schema.
@@ -91,5 +105,16 @@ private:
 namespace ElementLayoutFactory {
 ElementLayout* make(Element *elem);
 }
+
+namespace ElementLayoutProps {
+QBrush getGlassBrush();
+QPen getGlassPen();
+QBrush getMirrorBrush();
+QPen getMirrorPen();
+QPen getPlanePen();
+QBrush getGrinBrush(double sizeF);
+const QFont& getMarkTSFont();
+const QFont& getLabelFont();
+} // namespace ElementLayoutProps
 
 #endif // SCHEMA_LAYOUT_H

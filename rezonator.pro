@@ -145,6 +145,11 @@ HEADERS += \
     src/widgets/RichTextItemDelegate.h \
     src/widgets/SchemaElemsTable.h \
     src/widgets/SchemaLayout.h \
+    src/widgets/SchemaLayoutAxicon.h \
+    src/widgets/SchemaLayoutCrystal.h \
+    src/widgets/SchemaLayoutElems.h \
+    src/widgets/SchemaLayoutIfaces.h \
+    src/widgets/SchemaLayoutLens.h \
     src/widgets/SchemaParamsTable.h \
     src/widgets/UnitWidgets.h \
     src/widgets/ValueEditor.h \
