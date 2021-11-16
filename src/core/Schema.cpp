@@ -340,10 +340,11 @@ void Schema::removeParamLinks(Element* elem)
 
 void Schema::relinkInterfaces()
 {
-    int elemCount = _items.size();
+    auto elems = activeElements();
+    int elemCount = elems.size();
     for (int i = 0; i < elemCount; i++)
     {
-        ElementInterface *iface = dynamic_cast<ElementInterface*>(_items.at(i));
+        ElementInterface *iface = dynamic_cast<ElementInterface*>(elems.at(i));
         if (!iface) continue;
 
         ElementEventsLocker eventLocker(iface);
@@ -357,9 +358,9 @@ void Schema::relinkInterfaces()
         if (i == 0)
         {
             if (tripType() == TripType::RR)
-                left = dynamic_cast<ElementRange*>(_items.at(elemCount-1));
+                left = dynamic_cast<ElementRange*>(elems.at(elemCount-1));
         }
-        else left = dynamic_cast<ElementRange*>(_items.at(i-1));
+        else left = dynamic_cast<ElementRange*>(elems.at(i-1));
         if (left)
         {
             auto link = new Z::ParamLink(left->paramIor(), iface->paramIor1());
@@ -372,9 +373,9 @@ void Schema::relinkInterfaces()
         if (i == elemCount - 1)
         {
             if (tripType() == TripType::RR)
-                right = dynamic_cast<ElementRange*>(_items.at(0));
+                right = dynamic_cast<ElementRange*>(elems.at(0));
         }
-        else right = dynamic_cast<ElementRange*>(_items.at(i+1));
+        else right = dynamic_cast<ElementRange*>(elems.at(i+1));
         if (right)
         {
             auto link = new Z::ParamLink(right->paramIor(), iface->paramIor2());

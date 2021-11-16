@@ -98,8 +98,12 @@ void SchemaViewWindow::createToolBar()
 
 void SchemaViewWindow::editElement(Element* elem)
 {
+    bool wasDisabled = elem->disabled();
     if (ElementPropsDialog::editElement(elem))
     {
+        if (wasDisabled != elem->disabled())
+            schema()->relinkInterfaces();
+
         schema()->events().raise(SchemaEvents::ElemChanged, elem, "SchemaViewWindow: element edited");
         schema()->events().raise(SchemaEvents::RecalRequred, "SchemaViewWindow: element edited");
     }

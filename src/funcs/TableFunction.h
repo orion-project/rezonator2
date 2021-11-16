@@ -107,6 +107,7 @@ protected:
     QVector<Result> _results;
     Z::PairTS<std::shared_ptr<PumpCalculator>> _pumpCalc;
     std::shared_ptr<AbcdBeamCalculator> _beamCalc;
+    QList<Element*> _activeElements; // valid only during calculate() call
 
     bool prepareSinglePass();
     bool prepareResonator();

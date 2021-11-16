@@ -287,6 +287,8 @@ public:
 
     void markModified(const char* reason);
 
+    void relinkInterfaces();
+
     SchemaMemo* memo = nullptr;
 
 private:
@@ -313,8 +315,6 @@ private:
 
     /// Remove links driving this elements' params
     void removeParamLinks(Element* elem);
-
-    void relinkInterfaces();
 
     void shiftElement(int index, const std::function<int(int)> &getTargetIndex);
 };

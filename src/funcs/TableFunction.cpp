@@ -87,10 +87,11 @@ void TableFunction::calculate()
         }\
     }
 
-    auto elems = schema()->elements();
-    for (int i = 0; i < elems.size(); i++)
+    _activeElements = schema()->activeElements();
+
+    for (int i = 0; i < _activeElements.size(); i++)
     {
-        auto elem = elems.at(i);
+        auto elem = _activeElements.at(i);
         if (elem->disabled()) continue;
 
         if (elem->hasOption(Element_ChangesWavefront))
@@ -156,7 +157,7 @@ void TableFunction::calculate()
 Element* TableFunction::prevElement(int index)
 {
     if (index > 0)
-        return schema()->element(index - 1);
+        return _activeElements.at(index - 1);
     switch (schema()->tripType())
     {
     case TripType::SP:
@@ -164,17 +165,17 @@ Element* TableFunction::prevElement(int index)
         return nullptr;
 
     case TripType::RR:
-        int prevIndex = schema()->count() - 1;
+        int prevIndex = _activeElements.size() - 1;
         if (prevIndex == index) return nullptr;
-        return schema()->element(prevIndex);
+        return _activeElements.at(prevIndex);
     }
     return nullptr;
 }
 
 Element* TableFunction::nextElement(int index)
 {
-    if (index < schema()->count() - 1)
-        return schema()->element(index + 1);
+    if (index < _activeElements.size() - 1)
+        return _activeElements.at(index + 1);
     switch (schema()->tripType())
     {
     case TripType::SP:
@@ -183,7 +184,7 @@ Element* TableFunction::nextElement(int index)
 
     case TripType::RR:
         if (index == 0) return nullptr;
-        return schema()->element(0);
+        return _activeElements.at(0);
     }
     return nullptr;
 }
