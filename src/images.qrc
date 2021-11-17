@@ -24,6 +24,7 @@
         <file alias="elem_arrow_from">../img/toolbar/elem_arrow_from.svg</file>
         <file alias="elem_arrow_to">../img/toolbar/elem_arrow_to.svg</file>
         <file alias="elem_delete">../img/toolbar/elem_delete.svg</file>
+        <file alias="elem_disable">../img/toolbar/elem_disable.svg</file>
         <file alias="elem_move_up">../img/toolbar/elem_move_up.svg</file>
         <file alias="elem_move_down">../img/toolbar/elem_move_down.svg</file>
         <file alias="elem_matr">../img/toolbar/elem_matr.svg</file>

@@ -50,7 +50,7 @@ protected:
 private:
     QAction *actnElemAdd, *actnElemMoveUp, *actnElemMoveDown, *actnElemProp,
             *actnElemMatr, *actnElemMatrAll, *actnElemDelete, *actnEditCopy, *actnEditPaste,
-            *actnAdjuster, *actnSaveCustom, *actnEditFormula, *actnSwitchDisabled;
+            *actnAdjuster, *actnSaveCustom, *actnEditFormula, *actnElemDisable;
 
     QMenu *menuElement, *menuContextElement, *menuContextLastRow;
     QMenu *menuAdjuster = nullptr;
@@ -73,10 +73,9 @@ private slots:
     void actionElemDelete();
     void actionSaveCustom();
     void actionEditFormula();
-    void actionSwitchDisabled();
+    void actionElemDisable();
     void elemDoubleClicked(Element*);
     void currentElemChanged(Element* elem);
-    void selectedElemsChanged(const Elements& elems);
     void contextMenuAboutToShow(QMenu* menu);
     void adjustParam();
 };
