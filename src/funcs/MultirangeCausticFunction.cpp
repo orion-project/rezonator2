@@ -79,7 +79,8 @@ int MultirangeCausticFunction::resultCount(Z::WorkPlane plane) const
 {
     int count = 0;
     for (CausticFunction *func : _funcs)
-        count += func->resultCount(plane);
+        if (!func->arg()->element->disabled())
+            count += func->resultCount(plane);
     return count;
 }
 
@@ -88,6 +89,8 @@ const PlotFuncResult& MultirangeCausticFunction::result(Z::WorkPlane plane, int 
     int index1 = 0;
     for (CausticFunction *func : _funcs)
     {
+        if (func->arg()->element->disabled())
+            continue;
         int index2 = index1 + func->resultCount(plane);
         if (index >= index1 && index < index2)
             return func->result(plane, index - index1);
@@ -111,6 +114,8 @@ Z::PointTS MultirangeCausticFunction::calculateAt(double argSI)
     double remainingL = argSI;
     foreach (CausticFunction *func, _funcs)
     {
+        if (func->arg()->element->disabled())
+            continue;
         auto elem = Z::Utils::asRange(func->arg()->element);
         double L = elem->axisLengthSI();
         double newRemainingL = remainingL - L;
@@ -120,4 +125,3 @@ Z::PointTS MultirangeCausticFunction::calculateAt(double argSI)
     }
     return { Double::nan(), Double::nan() };
 }
-

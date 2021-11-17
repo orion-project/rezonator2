@@ -17,9 +17,20 @@ void RoundTripCalculator::calcRoundTrip(bool splitRange)
 
     reset();
 
-    if (!_reference || _reference->disabled()) return;
+    if (!_reference) {
+        _error = qApp->translate("Round-trip error", "Reference element is not set");
+        return;
+    }
+    if (_reference->disabled()) {
+        _error = qApp->translate("Round-trip error", "Reference element %1 is disabled").arg(_reference->displayLabel());
+        return;
+    }
 
     auto elems = _schema->activeElements();
+    if (elems.isEmpty()) {
+        _error = qApp->translate("Round-trip error", "There are no active elements in the schema");
+        return;
+    }
 
     switch (_schema->tripType())
     {
@@ -31,6 +42,7 @@ void RoundTripCalculator::calcRoundTrip(bool splitRange)
 
 void RoundTripCalculator::reset()
 {
+    _error.clear();
     _matrixOwners.clear();
     _roundTrip.clear();
     _matrsT.clear();

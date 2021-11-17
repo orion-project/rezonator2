@@ -18,7 +18,8 @@ public:
     void calcRoundTrip(bool splitRange = false);
     void multMatrix();
     void reset();
-    bool isEmpty() { return _roundTrip.isEmpty(); }
+    bool isEmpty() const { return _roundTrip.isEmpty(); }
+    QString error() const { return _error; }
 
     Z::PointTS stability() const;
     Z::PairTS<bool> isStable() const;
@@ -78,6 +79,10 @@ protected:
     Element* _reference;
 
     QList<Element*> _matrixOwners;
+
+    /// A reason why round-trip is empty.
+    /// Valid only after calcRoundTrip() call.
+    QString _error;
 
     Z::Enums::StabilityCalcMode _stabilityCalcMode = Z::Enums::StabilityCalcMode::Normal;
 
