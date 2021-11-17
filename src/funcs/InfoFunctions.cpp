@@ -118,6 +118,13 @@ QString InfoFuncMatrixRT::calculateInternal()
 {
     RoundTripCalculator c(_schema, _element);
     c.calcRoundTrip();
+    if (c.isEmpty())
+    {
+        QString msg = qApp->translate("Calc error", "Round-trip is empty");
+        if (!c.error().isEmpty()) msg += ": " + c.error();
+        return msg;
+    }
+
     c.multMatrix();
 
     QString result;

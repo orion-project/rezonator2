@@ -80,10 +80,11 @@ void SchemaWriterJson::writeParamLinks(QJsonObject& root)
     {
         if (link->hasOption(Z::ParamLink_NonStorable)) continue;
 
-        for (int i = 0; i < _schema->elements().size(); i++)
+        auto elems = _schema->elements();
+        for (int i = 0; i < elems.size(); i++)
         {
             bool saved = false;
-            for (const Z::Parameter *targetParam: _schema->element(i)->params())
+            for (const Z::Parameter *targetParam: elems.at(i)->params())
                 if (targetParam == link->target())
                 {
                     linksJson.append(QJsonObject({

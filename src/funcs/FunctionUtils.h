@@ -16,6 +16,10 @@ QString preparePumpCalculator(Schema* schema,
                               PumpParams* useThisPump,
                               Z::PairTS<std::shared_ptr<PumpCalculator>>& pumpCalc,
                               bool writeProtocol = false);
+
+/// Function is used in SP schemas in Caustic and Beam Params functions
+/// Disabled elements will never be passed as stopElem
+/// because the above functions are not calcxlated for disableds
 void prepareDynamicElements(Schema* schema, Element* stopElem, const Z::PairTS<std::shared_ptr<PumpCalculator> > &pumpCalc);
 
 } // namespace FunctionUtils

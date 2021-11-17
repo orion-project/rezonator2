@@ -32,9 +32,10 @@ QString preparePumpCalculator(Schema* schema,
 
 void prepareDynamicElements(Schema* schema, Element* stopElem, const Z::PairTS<std::shared_ptr<PumpCalculator>>& pumpCalc)
 {
-    for (int i = 0; i < schema->count(); i++)
+    auto elems = schema->activeElements();
+    for (int i = 0; i < elems.size(); i++)
     {
-        auto elem = schema->element(i);
+        auto elem = elems.at(i);
         if (elem == stopElem) break;
         auto dynamic = dynamic_cast<ElementDynamic*>(elem);
         if (!dynamic) continue;
@@ -53,7 +54,7 @@ void prepareDynamicElements(Schema* schema, Element* stopElem, const Z::PairTS<s
         }
         else
         {
-            auto prevElem = schema->element(i - i);
+            auto prevElem = elems.at(i - i);
             RoundTripCalculator calc(schema, prevElem);
             calc.calcRoundTrip();
             calc.multMatrix();
