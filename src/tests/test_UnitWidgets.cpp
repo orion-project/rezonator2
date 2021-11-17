@@ -8,6 +8,11 @@ namespace Z {
 namespace Tests {
 namespace UnitWidgetsTests {
 
+template <typename T> QSet<T> listToSet(const QList<T>& list)
+{
+    return QSet<T>(list.begin(), list.end());
+}
+
 //------------------------------------------------------------------------------
 
 namespace UnitComboBoxTests {
@@ -30,7 +35,7 @@ TEST_METHOD(must_contain_all_units)
             ASSERT_IS_TRUE(combo.selectedUnit() == unit);
         }
 
-        auto units = dim->units().toSet();
+        auto units = listToSet(dim->units());
         for (int i = 0; i < combo.count(); i++)
             units.remove(getUnit(combo, i));
         ASSERT_IS_TRUE(units.isEmpty());
@@ -79,7 +84,7 @@ namespace DimComboBoxTests {
 TEST_METHOD(must_contain_all_dims)
 {
     DimComboBox combo;
-    auto dims = Z::Dims::dims().toSet();
+    auto dims = listToSet(Z::Dims::dims());
     for (int i = 0; i < combo.count(); i++)
         dims.remove(combo.itemData(i).value<Z::Dim>());
     ASSERT_IS_TRUE(dims.isEmpty())
@@ -113,7 +118,7 @@ TEST_CASE_METHOD(must_contain_all_units, Z::Dim dim)
     {
         m.setUnit(selectedUnit);
 
-        auto units = dim->units().toSet();
+        auto units = listToSet(dim->units());
         for (auto action : m.menu()->actions())
         {
             auto unit = action->data().value<Z::Unit>();

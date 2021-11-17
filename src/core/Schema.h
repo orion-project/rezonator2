@@ -244,13 +244,14 @@ public:
     inline bool isResonator() const { return _tripType == TripType::SW || _tripType == TripType::RR; }
 
     int count() const override { return _items.size(); }
-    int enabledCount() const;
     const Elements& elements() const { return _items; }
+    int activeCount() const;
+    Elements activeElements() const;
     Element* element(int index) const;
     Element* elementById(int id) const;
     Element* elementByLabel(const QString& label) const;
     int indexOf(Element *elem) const override { return _items.indexOf(elem); }
-    bool isEmpty() const { return _items.size() == 0; }
+    Position position(Element*) const override;
 
     SchemaEvents& events() { return _events; }
     SchemaState& state() { return _state; }
@@ -286,6 +287,8 @@ public:
 
     void markModified(const char* reason);
 
+    void relinkInterfaces();
+
     SchemaMemo* memo = nullptr;
 
 private:
@@ -312,8 +315,6 @@ private:
 
     /// Remove links driving this elements' params
     void removeParamLinks(Element* elem);
-
-    void relinkInterfaces();
 
     void shiftElement(int index, const std::function<int(int)> &getTargetIndex);
 };

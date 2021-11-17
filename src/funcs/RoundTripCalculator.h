@@ -13,12 +13,13 @@ class Element;
 class RoundTripCalculator
 {
 public:
-    RoundTripCalculator(Schema *owner, Element *ref = nullptr);
+    RoundTripCalculator(Schema *owner, Element *ref);
 
     void calcRoundTrip(bool splitRange = false);
     void multMatrix();
     void reset();
-    bool isEmpty() { return _roundTrip.isEmpty(); }
+    bool isEmpty() const { return _roundTrip.isEmpty(); }
+    QString error() const { return _error; }
 
     Z::PointTS stability() const;
     Z::PairTS<bool> isStable() const;
@@ -74,10 +75,14 @@ protected:
 
     Schema* _schema;
 
-     /// Reference element for round-trip calculation.
+    /// Reference element for round-trip calculation.
     Element* _reference;
 
     QList<Element*> _matrixOwners;
+
+    /// A reason why round-trip is empty.
+    /// Valid only after calcRoundTrip() call.
+    QString _error;
 
     Z::Enums::StabilityCalcMode _stabilityCalcMode = Z::Enums::StabilityCalcMode::Normal;
 
@@ -87,9 +92,9 @@ private:
     QVector<RoundTripElemInfo> _roundTrip;
 
     bool _splitRange = false;
-    void calcRoundTripSW();
-    void calcRoundTripRR();
-    void calcRoundTripSP();
+    void calcRoundTripSW(const QList<Element*>& elems);
+    void calcRoundTripRR(const QList<Element*>& elems);
+    void calcRoundTripSP(const QList<Element*>& elems);
     void collectMatrices();
     void collectMatricesSP();
 

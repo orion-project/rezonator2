@@ -70,7 +70,8 @@ void SchemaViewWindow::createActions()
     actnEditPaste = A_(tr("Paste", "Edit action"), this, SLOT(paste()), ":/toolbar/paste");
     actnAdjuster = A_(tr("Add Adjuster"), this, SLOT(adjustParam()), ":/toolbar/adjust");
     actnSaveCustom = A_(tr("Save to Custom Library..."), this, SLOT(actionSaveCustom()), ":/toolbar/star");
-    actnEditFormula = A_(tr("Edit formula"), this, SLOT(actionEditFormula()), ":/toolbar/edit_formula");
+    actnEditFormula = A_(tr("Edit Formula"), this, SLOT(actionEditFormula()), ":/toolbar/edit_formula");
+    actnElemDisable = A_(tr("Disable/Enable"), this, SLOT(actionElemDisable()), ":/toolbar/switch_disabled");
 
     #undef A_
 }
@@ -79,11 +80,11 @@ void SchemaViewWindow::createMenuBar()
 {
     menuElement = Ori::Gui::menu(tr("Element"), this,
         { actnElemAdd, nullptr, actnElemMoveUp, actnElemMoveDown, nullptr, actnElemProp, actnEditFormula,
-          actnElemMatr, actnElemMatrAll, nullptr, actnElemDelete, nullptr, actnSaveCustom });
+          actnElemMatr, actnElemMatrAll, nullptr, actnElemDisable, nullptr, actnElemDelete, nullptr, actnSaveCustom });
 
     menuContextElement = Ori::Gui::menu(this,
         { actnElemProp, actnEditFormula, actnElemMatr, nullptr, actnAdjuster, nullptr,
-          actnEditCopy, actnEditPaste, nullptr, actnElemDelete});
+          actnEditCopy, actnEditPaste, nullptr, actnElemDisable, nullptr, actnElemDelete});
 
     menuContextLastRow = Ori::Gui::menu(this,
         { actnElemAdd, actnEditPaste });
@@ -93,13 +94,17 @@ void SchemaViewWindow::createToolBar()
 {
     populateToolbar({ Ori::Gui::textToolButton(actnElemAdd), nullptr, actnElemMoveUp,
                       actnElemMoveDown, nullptr, Ori::Gui::textToolButton(actnElemProp),
-                      actnElemMatr, nullptr, actnElemDelete });
+                      actnElemMatr, nullptr, actnElemDisable, nullptr, actnElemDelete });
 }
 
 void SchemaViewWindow::editElement(Element* elem)
 {
+    bool wasDisabled = elem->disabled();
     if (ElementPropsDialog::editElement(elem))
     {
+        if (wasDisabled != elem->disabled())
+            schema()->relinkInterfaces();
+
         schema()->events().raise(SchemaEvents::ElemChanged, elem, "SchemaViewWindow: element edited");
         schema()->events().raise(SchemaEvents::RecalRequred, "SchemaViewWindow: element edited");
     }
@@ -236,6 +241,14 @@ void SchemaViewWindow::actionEditFormula()
     WindowsManager::instance().show(new ElemFormulaWindow(schema(), elem));
 }
 
+void SchemaViewWindow::actionElemDisable()
+{
+    foreach (auto elem, _table->selection())
+        elem->setDisabled(!elem->disabled());
+    schema()->relinkInterfaces();
+    schema()->events().raise(SchemaEvents::RecalRequred, "SchemaViewWindow: toggle disabled");
+}
+
 //------------------------------------------------------------------------------
 
 bool SchemaViewWindow::canCopy()
@@ -287,6 +300,7 @@ void SchemaViewWindow::currentElemChanged(Element* elem)
     actnElemMoveUp->setEnabled(hasElem);
     actnElemMoveDown->setEnabled(hasElem);
     actnSaveCustom->setEnabled(hasElem);
+    actnElemDisable->setEnabled(hasElem);
 
     bool isFormula = dynamic_cast<ElemFormula*>(elem);
     actnEditFormula->setEnabled(isFormula);

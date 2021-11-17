@@ -242,7 +242,7 @@ void ParamsEditor::moveEditorUp(Z::Parameter* param)
             else
             {
                 _paramsLayout->insertWidget(i-1, editor);
-                _editors.swap(i, i-1);
+                _editors.swapItemsAt(i, i-1);
             }
             break;
         }
@@ -267,7 +267,7 @@ void ParamsEditor::moveEditorDown(Z::Parameter* param)
             else
             {
                 _paramsLayout->insertWidget(i+1, editor);
-                _editors.swap(i, i+1);
+                _editors.swapItemsAt(i, i+1);
             }
             break;
         }

@@ -49,7 +49,7 @@ bool MulticausticWindow::configureInternal()
 
 void MulticausticWindow::toggleElementBoundMarkers(bool on)
 {
-    for (auto marker : _elemBoundMarkers)
+    foreach (auto marker, _elemBoundMarkers)
         marker->setVisible(on);
     plot()->replot();
     schema()->events().raise(SchemaEvents::Changed, "MultirangeCausticWindow: toggleElementBoundMarkers");
@@ -72,7 +72,10 @@ void MulticausticWindow::updateElementBoundMarkers()
     auto funcs = function()->funcs();
     for (int i = 0; i < funcs.size()-1; i++)
     {
-        offset += funcs.at(i)->arg()->range.stop.toSi();
+        auto arg = funcs.at(i)->arg();
+        if (arg->element->disabled())
+            continue;
+        offset += arg->range.stop.toSi();
         QCPItemStraightLine* marker;
         if (!_elemBoundMarkers.isEmpty())
         {
@@ -86,7 +89,7 @@ void MulticausticWindow::updateElementBoundMarkers()
         marker->setVisible(_actnElemBoundMarkers->isChecked());
         markers.append(marker);
     }
-    for (auto oldMarker : _elemBoundMarkers)
+    foreach (auto oldMarker, _elemBoundMarkers)
         plot()->removeItem(oldMarker);
     _elemBoundMarkers = markers;
 }
@@ -104,7 +107,7 @@ void MulticausticWindow::fillViewMenuActions(QList<QAction*>& actions) const
 ElemDeletionReaction MulticausticWindow::reactElemDeletion(const Elements& elems)
 {
     int deletingArgsCount = 0;
-    for (const Z::Variable& arg : function()->args())
+    foreach (const Z::Variable& arg, function()->args())
     {
         if (elems.contains(arg.element))
             deletingArgsCount++;
@@ -133,7 +136,7 @@ QString MulticausticWindow::readFunction(const QJsonObject& root)
 QString MulticausticWindow::writeFunction(QJsonObject& root)
 {
     QJsonArray argsJson;
-    for (const Z::Variable& arg : function()->args())
+    foreach (const Z::Variable& arg, function()->args())
         argsJson.append(Z::IO::Json::writeVariable(&arg, schema()));
     root["args"] = argsJson;
     return QString();
@@ -155,7 +158,8 @@ void MulticausticWindow::updateGraphs()
 {
     QList<PlotFunction*> funcs;
     for (auto func : function()->funcs())
-        funcs << func;
+        if (!func->arg()->element->disabled())
+            funcs << func;
     _graphs->update(funcs);
 }
 
@@ -163,8 +167,8 @@ void MulticausticWindow::schemaRebuilt(Schema* schema)
 {
     // We only have to ensure all arguments are in the same order as schema elements.
     // Don't recalculate here, recalculation will be done later on the intended event.
-    QMap<Element*, Z::Variable> oldArgs;
-    for (auto arg : function()->args())
+    QHash<Element*, Z::Variable> oldArgs;
+    foreach (auto& arg, function()->args())
         oldArgs.insert(arg.element, arg);
     QVector<Z::Variable> newArgs;
     for (auto elem : schema->elements())
@@ -178,7 +182,9 @@ void MulticausticWindow::elementChanged(Schema*, Element* elem)
     // Only modify the set of arguments, don't recalculate here,
     // recalculation will be done later on the intended event.
     auto args = function()->args();
-    for (Z::Variable& arg : args)
+    for (int i = 0; i < args.size(); i++)
+    {
+        auto& arg = args[i];
         if (arg.element == elem)
         {
             auto newStop = Z::Utils::getRangeStop(Z::Utils::asRange(elem));
@@ -189,6 +195,7 @@ void MulticausticWindow::elementChanged(Schema*, Element* elem)
                 return;
             }
         }
+    }
 }
 
 void MulticausticWindow::elementDeleting(Schema*, Element* elem)
@@ -218,13 +225,16 @@ void MulticausticWindow::showRoundTrip()
     auto unitX = getUnitX();
     auto currentX = unitX->toSi(_cursor->position().x());
     double prevOffset = 0;
-    for (auto func : function()->funcs())
+    foreach (auto func, function()->funcs())
     {
+        if (func->arg()->element->disabled())
+            continue;
+
         double nextOffset = prevOffset + func->arg()->range.stop.toSi();
         if (currentX >= prevOffset && currentX < nextOffset)
         {
             QString funcTitle = QString("%1 (inside of %2)").arg(windowTitle(), func->arg()->element->displayLabel());
-            InfoFuncWindow::open(new PlotFuncRoundTripFunction(funcTitle, func));
+            InfoFuncWindow::open(new PlotFuncRoundTripFunction(funcTitle, func), this);
             return;
         }
         prevOffset = nextOffset;
@@ -234,8 +244,9 @@ void MulticausticWindow::showRoundTrip()
 QString MulticausticWindow::getDefaultTitleX() const
 {
     QStringList strs;
-    for (auto arg : function()->args())
-        strs << arg.element->displayLabel();
+    foreach (auto& arg, function()->args())
+        if (!arg.element->disabled())
+            strs << arg.element->displayLabel();
     return QStringLiteral("%1 (%2)").arg(strs.join(QStringLiteral(", ")), getUnitX()->name());
 }
 

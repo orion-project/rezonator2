@@ -20,13 +20,10 @@ BeamVariationParamsDlg::BeamVariationParamsDlg(Schema *schema, Z::Variable *var,
     setWindowTitle(tr("Variable"));
     setObjectName("BeamVariationParamsDlg");
 
-    std::shared_ptr<ElementFilter> elemFilter(
-        ElementFilter::make<ElementFilterHasVisibleParams, ElementFilterEnabled>());
-
-    _elemSelector = new ElemAndParamSelector(schema, elemFilter.get(), Z::Utils::defaultParamFilter());
+    _elemSelector = new ElemAndParamSelector(schema, ElementFilter::elemsWithVisibleParams(), Z::Utils::defaultParamFilter());
     connect(_elemSelector, SIGNAL(selectionChanged()), this, SLOT(guessRange()));
 
-    _placeSelector = new ElemOffsetSelectorWidget(schema, nullptr);
+    _placeSelector = new ElemOffsetSelectorWidget(schema, ElementFilter::enabledElements());
 
     _rangeEditor = new GeneralRangeEditor;
 

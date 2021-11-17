@@ -18,7 +18,7 @@ MultiCausticParamsDlg::MultiCausticParamsDlg(Schema *schema, const QVector<Z::Va
     setObjectName("MultiCausticParamsDlg");
 
     std::shared_ptr<ElementFilter> elemFilter(
-        ElementFilter::make<ElementFilterIsRange, ElementFilterEnabled>());
+        ElementFilter::make<ElementFilterIsRange>());
 
     _elemsSelector = new MultiElementSelectorWidget(schema, elemFilter.get());
     connect(_elemsSelector, &MultiElementSelectorWidget::currentElementChanged,

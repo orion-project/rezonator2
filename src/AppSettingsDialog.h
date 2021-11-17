@@ -32,6 +32,7 @@ private:
     Ori::Widgets::OptionsGroup *_groupLayoutExport;
     Ori::Widgets::OptionsGroup *_groupExportData;
     Ori::Widgets::OptionsGroup *_groupExportPlot;
+    Ori::Widgets::OptionsGroup *_groupCalcOpts;
     UnitComboBox *_defaultUnitBeamRadius;
     UnitComboBox *_defaultUnitFrontRadius;
     UnitComboBox *_defaultUnitAngle;
@@ -43,6 +44,7 @@ private:
     QWidget* createLayoutPage();
     QWidget* createUnitsPage();
     QWidget* createExportPage();
+    QWidget* createCalcPage();
     void fillLangsCombo();
     void fillStylesCombo();
 };

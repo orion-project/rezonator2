@@ -168,7 +168,9 @@ bool PlotFunction::prepareCalculator(Element* ref, bool splitRange)
     _calc->calcRoundTrip(splitRange);
     if (_calc->isEmpty())
     {
-        setError(qApp->translate("Calc error", "Round trip is empty"));
+        QString error = qApp->translate("Calc error", "Round trip is empty");
+        if (!_calc->error().isEmpty()) error += (": " + _calc->error());
+        setError(error);
         delete _calc;
         _calc = nullptr;
         return false;

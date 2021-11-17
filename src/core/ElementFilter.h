@@ -23,7 +23,9 @@ public:
         return new ElementFilter({ new TCondition... });
     }
 
-    static ElementFilter* elemsWithVisibleParams();
+    // Filter presets
+    static ElementFilter* elemsWithVisibleParams(); // includes ElementFilterEnabled
+    static ElementFilter* enabledElements();
 };
 
 #define DECLARE_ELEM_FILTER(class_name)\

@@ -16,6 +16,12 @@ ElementFilter* ElementFilter::elemsWithVisibleParams()
     return filter;
 }
 
+ElementFilter* ElementFilter::enabledElements()
+{
+    static ElementFilter* filter = ElementFilter::make<ElementFilterEnabled>();
+    return filter;
+}
+
 
 bool ElementFilterEnabled::check(Element *elem)
 {

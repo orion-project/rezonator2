@@ -24,6 +24,7 @@
         <file alias="elem_arrow_from">../img/toolbar/elem_arrow_from.svg</file>
         <file alias="elem_arrow_to">../img/toolbar/elem_arrow_to.svg</file>
         <file alias="elem_delete">../img/toolbar/elem_delete.svg</file>
+        <file alias="elem_disable">../img/toolbar/elem_disable.svg</file>
         <file alias="elem_move_up">../img/toolbar/elem_move_up.svg</file>
         <file alias="elem_move_down">../img/toolbar/elem_move_down.svg</file>
         <file alias="elem_matr">../img/toolbar/elem_matr.svg</file>
@@ -113,8 +114,10 @@
         <file alias="schema_summary">../img/toolbar/schema_summary.svg</file>
         <file alias="schema">../img/toolbar/go_to_schema.svg</file>
         <file alias="star">../img/toolbar/star.svg</file>
+        <file alias="stop">../img/toolbar/stop.svg</file>
         <file alias="strikeout">../img/toolbar/strikeout.svg</file>
         <file alias="text_color">../img/toolbar/text_color.svg</file>
+        <file alias="switch_disabled">../img/toolbar/switch_disabled.svg</file>
         <file alias="underline">../img/toolbar/underline.svg</file>
         <file alias="undo">../img/toolbar/undo.svg</file>
         <file alias="update_params">../img/toolbar/update_params.svg</file>

@@ -8,7 +8,7 @@ MultirangeCausticFunction::~MultirangeCausticFunction()
 QVector<Z::Variable> MultirangeCausticFunction::args() const
 {
     QVector<Z::Variable> args;
-    for (auto func : _funcs)
+    foreach (auto func, _funcs)
         args.append(*(func->arg()));
     return args;
 }
@@ -20,7 +20,7 @@ CausticFunction::Mode MultirangeCausticFunction::mode() const
 
 void MultirangeCausticFunction::setMode(CausticFunction::Mode mode)
 {
-    for (CausticFunction *func : _funcs)
+    foreach (CausticFunction *func, _funcs)
         func->setMode(mode);
 }
 
@@ -28,10 +28,10 @@ void MultirangeCausticFunction::setMode(CausticFunction::Mode mode)
 void MultirangeCausticFunction::setArgs(const QVector<Z::Variable>& args)
 {
     QList<CausticFunction*> funcs;
-    for (const Z::Variable& arg : args)
+    foreach (const Z::Variable& arg, args)
     {
         bool funcUpdated = false;
-        for (CausticFunction *func : _funcs)
+        foreach (CausticFunction *func, _funcs)
             if (func->arg()->element == arg.element)
             {
                 *(func->arg()) = arg;
@@ -54,24 +54,33 @@ void MultirangeCausticFunction::setArgs(const QVector<Z::Variable>& args)
 void MultirangeCausticFunction::calculate()
 {
     setError(QString());
-    for (CausticFunction *func : _funcs)
+    int disabledCount = 0;
+    foreach (CausticFunction *func, _funcs)
     {
+        if (func->arg()->element->disabled())
+        {
+            disabledCount++;
+            continue;
+        }
         func->calculate();
         if (!func->ok())
         {
             setError(func->errorText());
-            for (auto f : _funcs)
+            foreach (auto f, _funcs)
                 f->clearResults();
             break;
         }
     }
+    if (disabledCount == _funcs.size())
+        setError("All elements are disabled");
 }
 
 int MultirangeCausticFunction::resultCount(Z::WorkPlane plane) const
 {
     int count = 0;
     for (CausticFunction *func : _funcs)
-        count += func->resultCount(plane);
+        if (!func->arg()->element->disabled())
+            count += func->resultCount(plane);
     return count;
 }
 
@@ -80,6 +89,8 @@ const PlotFuncResult& MultirangeCausticFunction::result(Z::WorkPlane plane, int 
     int index1 = 0;
     for (CausticFunction *func : _funcs)
     {
+        if (func->arg()->element->disabled())
+            continue;
         int index2 = index1 + func->resultCount(plane);
         if (index >= index1 && index < index2)
             return func->result(plane, index - index1);
@@ -94,15 +105,17 @@ const PlotFuncResult& MultirangeCausticFunction::result(Z::WorkPlane plane, int 
 
 void MultirangeCausticFunction::setPump(PumpParams* pump)
 {
-    for (CausticFunction *func : _funcs)
+    foreach (CausticFunction *func, _funcs)
         func->setPump(pump);
 }
 
 Z::PointTS MultirangeCausticFunction::calculateAt(double argSI)
 {
     double remainingL = argSI;
-    for (CausticFunction *func : _funcs)
+    foreach (CausticFunction *func, _funcs)
     {
+        if (func->arg()->element->disabled())
+            continue;
         auto elem = Z::Utils::asRange(func->arg()->element);
         double L = elem->axisLengthSI();
         double newRemainingL = remainingL - L;
@@ -112,4 +125,3 @@ Z::PointTS MultirangeCausticFunction::calculateAt(double argSI)
     }
     return { Double::nan(), Double::nan() };
 }
-

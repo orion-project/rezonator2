@@ -5,7 +5,10 @@
       "data": "",
       "changes": [
         {
-          "text": "Added schema memo - rich formatted text document that can be stored with schema."
+          "text": "Can disable some elements (instead of to delete them)."
+        },
+        {
+          "text": "Added schema memo - rich formatted text document that can be stored within project."
         },
         {
           "text": "New help topics in the manual: Parameters Window, Adjuster Tool."
@@ -17,7 +20,7 @@
           "text": "Fixed that incorrect matrices were displayed in the help file for some elements."
         },
         {
-          "text": "Fixed incorrect table repainting after several elements deleted."
+          "text": "Fixed incorrect elements table repainting after several elements deleted."
         }
       ]
     },

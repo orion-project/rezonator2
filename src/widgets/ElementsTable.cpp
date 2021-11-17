@@ -7,6 +7,8 @@
 #include <QAbstractTableModel>
 #include <QHeaderView>
 #include <QMenu>
+#include <QPainter>
+#include <QStyledItemDelegate>
 
 namespace {
 
@@ -18,12 +20,34 @@ QPixmap elemIcon(const QString& type)
     return icons[type];
 }
 
-enum { COL_IMAGE, COL_LABEL, COL_PARAMS, COL_TITLE, COL_COUNT };
+enum { COL_IMAGE, COL_LABEL, COL_PARAMS, COL_TITLE, COL_DISABLED, COL_COUNT };
 
 } // namespace
 
 //------------------------------------------------------------------------------
-//                             ElementsTableModes
+//                            ElementsTableItemDelegate
+//------------------------------------------------------------------------------
+
+class ElementsTableItemDelegate : public QStyledItemDelegate
+{
+public:
+    ElementsTableItemDelegate(QObject *parent = nullptr) : QStyledItemDelegate(parent) {}
+
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override
+    {
+        bool disabled = index.data(Z::Gui::DisabledRole).toBool();
+        if (disabled) {
+            painter->save();
+            painter->setOpacity(0.5);
+        }
+        QStyledItemDelegate::paint(painter, option, index);
+        if (disabled)
+            painter->restore();
+    }
+};
+
+//------------------------------------------------------------------------------
+//                             ElementsTableModel
 //------------------------------------------------------------------------------
 
 class ElementsTableModel : public QAbstractTableModel, public SchemaListener
@@ -60,44 +84,58 @@ public:
     QVariant data(const QModelIndex &index, int role) const override
     {
         if (!index.isValid()) return QVariant();
+        int col = index.column();
+        int row = index.row();
         if (role == Qt::DecorationRole)
         {
-            if (index.column() == COL_IMAGE)
+            if (col == COL_IMAGE)
             {
-                auto elem = _schema->element(index.row());
+                auto elem = _schema->element(row);
                 return elem ? elemIcon(elem->type()) : _addElemIcon;
+            }
+            else if (col == COL_DISABLED)
+            {
+                auto elem = _schema->element(row);
+                if (elem && elem->disabled())
+                    return _disabledIcon;
             }
         }
         else if (role == Qt::ToolTipRole)
         {
-            if (index.column() == COL_IMAGE)
+            if (col == COL_IMAGE)
             {
-                auto elem = _schema->element(index.row());
+                auto elem = _schema->element(row);
                 return elem ? elem->typeName() : QVariant();
+            }
+            else if (col == COL_DISABLED)
+            {
+                auto elem = _schema->element(row);
+                if (elem && elem->disabled())
+                    return tr("Element disabled");
             }
         }
         else if (role == Qt::FontRole)
         {
-            if (index.column() == COL_LABEL)
+            if (col == COL_LABEL)
                 return Z::Gui::ElemLabelFont().get();
         }
         else if (role == Qt::TextAlignmentRole)
         {
-            if (index.column() == COL_LABEL)
+            if (col == COL_LABEL)
                 return Qt::AlignCenter;
         }
         else if (role == Qt::ForegroundRole)
         {
             // it's the "double click to add" row
-            if (index.row() == _schema->count())
+            if (row == _schema->count())
                 return QColor(0, 0, 0, 40);
         }
         else if (role == Qt::DisplayRole)
         {
-            auto elem = _schema->element(index.row());
+            auto elem = _schema->element(row);
             if (elem)
             {
-                switch (index.column()) {
+                switch (col) {
                 case COL_LABEL: return elem->label();
                 case COL_TITLE: return elem->title();
                 case COL_PARAMS:
@@ -108,8 +146,16 @@ public:
                 }
                 }
             }
-            else if (index.column() == COL_TITLE)
+            else if (col == COL_TITLE)
                 return tr("Double click here to append a new element");
+        }
+        else if (role == Z::Gui::DisabledRole)
+        {
+            if (col != COL_DISABLED)
+            {
+                auto elem = _schema->element(row);
+                return elem && elem->disabled();
+            }
         }
         return QVariant();
     }
@@ -173,6 +219,7 @@ private:
     QTableView* _view;
     QSet<int> _deleted;
     QPixmap _addElemIcon = QPixmap(":/toolbar/elem_add");
+    QPixmap _disabledIcon = QPixmap(":/toolbar/stop");
 };
 
 //------------------------------------------------------------------------------
@@ -201,11 +248,14 @@ ElementsTable::ElementsTable(Schema *schema, QWidget *parent) : QTableView(paren
     setWordWrap(false);
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionBehavior(QAbstractItemView::SelectRows);
+    setItemDelegate(new ElementsTableItemDelegate(this));
     setItemDelegateForColumn(COL_PARAMS, new RichTextItemDelegate(paramsOffsetY, this));
     auto h = horizontalHeader();
     h->setMinimumSectionSize(iconSize.width()+6);
     h->setSectionResizeMode(COL_IMAGE, QHeaderView::Fixed);
+    h->setSectionResizeMode(COL_DISABLED, QHeaderView::Fixed);
     h->resizeSection(COL_IMAGE, iconSize.width()+6);
+    h->resizeSection(COL_DISABLED, iconSize.width()+6);
     h->setSectionResizeMode(COL_LABEL, QHeaderView::ResizeToContents);
     h->setSectionResizeMode(COL_PARAMS, QHeaderView::ResizeToContents);
     h->setSectionResizeMode(COL_TITLE, QHeaderView::Stretch);
@@ -277,4 +327,10 @@ void ElementsTable::showContextMenu(const QPoint& pos)
     if (!menu) return;
     emit beforeContextMenuShown(menu);
     menu->popup(mapToGlobal(pos));
+}
+
+void ElementsTable::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    QTableView::selectionChanged(selected, deselected);
+    emit selectedElemsChanged(selection());
 }

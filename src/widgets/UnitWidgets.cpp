@@ -31,8 +31,8 @@ void UnitComboBox::populate(Z::Dim dim)
     _enableChangeEvent = false;
 
     clear();
-    for (auto unit: dim->units())
-        addItem(unit->name(), qVariantFromValue(unit));
+    foreach (auto unit, dim->units())
+        addItem(unit->name(), QVariant::fromValue(unit));
 
     _isEmptyOrSingleItem = count() < 2 or
         (dim == Z::Dims::fixed() and !canSelectFixedUnit);
@@ -98,8 +98,8 @@ void DimComboBox::populate()
 {
     _enableChangeEvent = false;
     clear();
-    for (auto dim: Z::Dims::dims())
-        addItem(dim->name(), qVariantFromValue(dim));
+    foreach (auto dim, Z::Dims::dims())
+        addItem(dim->name(), QVariant::fromValue(dim));
     _enableChangeEvent = true;
 }
 
@@ -167,7 +167,7 @@ void UnitsMenu::setUnit(Z::Unit unit)
         _dim = dim;
         populate();
     }
-    for (auto action : _menu->actions())
+    foreach (auto action, _menu->actions())
         if (action->data().value<Z::Unit>() == unit)
         {
             action->setChecked(true);
@@ -178,10 +178,10 @@ void UnitsMenu::setUnit(Z::Unit unit)
 void UnitsMenu::populate()
 {
     _menu->clear();
-    for (auto unit : _dim->units())
+    foreach (auto unit, _dim->units())
     {
         auto action = _menu->addAction(unit->name());
-        action->setData(qVariantFromValue(unit));
+        action->setData(QVariant::fromValue(unit));
         action->setCheckable(true);
         connect(action, &QAction::triggered, this, &UnitsMenu::actionTriggered);
         _actions->addAction(action);

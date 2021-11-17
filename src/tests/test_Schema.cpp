@@ -327,20 +327,45 @@ TEST_METHOD(Element_RequiresWavelength__must_be_respected)
 
 //------------------------------------------------------------------------------
 
-TEST_METHOD(enabledCount)
+TEST_METHOD(activeCount)
 {
     PREPARE_SCHEMA_ELEMS(10)
-    ASSERT_EQ_INT(schema.enabledCount(), 10)
+    ASSERT_EQ_INT(schema.activeCount(), 10)
     schema.element(3)->setDisabled(true);
     schema.element(7)->setDisabled(true);
-    ASSERT_EQ_INT(schema.enabledCount(), 8)
+    ASSERT_EQ_INT(schema.activeCount(), 8)
 }
+
+TEST_METHOD(activeElements)
+{
+    PREPARE_SCHEMA_ELEMS(3)
+    auto elems1 = schema.activeElements();
+    ASSERT_EQ_INT(elems1.size(), schema.count());
+    ASSERT_EQ_PTR(elems1.at(0), schema.element(0))
+    ASSERT_EQ_PTR(elems1.at(1), schema.element(1))
+    ASSERT_EQ_PTR(elems1.at(2), schema.element(2))
+
+    schema.element(1)->setDisabled(true);
+    auto elems2 = schema.activeElements();
+    ASSERT_EQ_INT(elems2.size(), schema.count()-1);
+    ASSERT_EQ_PTR(elems2.at(0), schema.element(0))
+    ASSERT_EQ_PTR(elems2.at(1), schema.element(2))
+}
+
+//------------------------------------------------------------------------------
 
 TEST_METHOD(elementById)
 {
     PREPARE_SCHEMA_ELEMS(2)
     for (auto e : schema.elements())
         ASSERT_EQ_PTR(schema.elementById(e->id()), e)
+}
+
+TEST_METHOD(elementByLabel)
+{
+    PREPARE_SCHEMA_ELEMS(2)
+    for (auto e : schema.elements())
+        ASSERT_EQ_PTR(schema.elementByLabel(e->label()), e)
 }
 
 //------------------------------------------------------------------------------
@@ -615,8 +640,10 @@ TEST_GROUP("Schema",
     ADD_TEST(raise_all_events),
     ADD_TEST(set_wavelength__must_raise_event),
     ADD_TEST(Element_RequiresWavelength__must_be_respected),
-    ADD_TEST(enabledCount),
+    ADD_TEST(activeCount),
+    ADD_TEST(activeElements),
     ADD_TEST(elementById),
+    ADD_TEST(elementByLabel),
     ADD_TEST(insertElements__must_increase_count),
     ADD_TEST(insertElements__must_assign_element_owner),
     ADD_TEST(insertElements__must_raise_events_and_change_state),

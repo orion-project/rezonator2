@@ -87,19 +87,8 @@ void Element::parameterChanged(Z::ParameterBase*)
 void Element::calcMatrix(const char *reason)
 {
     Q_UNUSED(reason)
-
-    if (_disabled)
-    {
-        _mt.unity();
-        _ms.unity();
-        _mt_inv.unity();
-        _ms_inv.unity();
-    }
-    else
-    {
-        //qDebug() << "Calc matrix" << type() << displayLabel() << reason;
-        calcMatrixInternal();
-    }
+    //qDebug() << "Calc matrix" << type() << displayLabel() << reason;
+    calcMatrixInternal();
 }
 
 void Element::calcMatrixInternal()

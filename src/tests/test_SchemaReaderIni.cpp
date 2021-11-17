@@ -78,7 +78,7 @@ TEST_METHOD(read_invalid_elem_type)
     Schema schema;
     READ_AND_ASSERT("invalid_elem_type.she")
     ASSERT_IS_TRUE(reader.report().hasWarnings())
-    ASSERT_IS_TRUE(schema.isEmpty())
+    ASSERT_IS_TRUE(schema.count() == 0)
 }
 
 TEST_METHOD(read_invalid_elem_section)
@@ -103,7 +103,7 @@ TEST_METHOD(read_general)
 {
     Schema schema;
     READ_AND_ASSERT("no_elems.she")
-    ASSERT_IS_TRUE(schema.isEmpty())
+    ASSERT_IS_TRUE(schema.count() == 0)
 
     //TODO? ASSERT_EQ_STR(schema.title(), "Empty schema")
     //TODO? ASSERT_EQ_STR(schema.comment(), "Multi-line comment is not supported")

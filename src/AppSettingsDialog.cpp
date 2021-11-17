@@ -56,6 +56,7 @@ AppSettingsDialog::AppSettingsDialog(QWidget* parent) : Ori::Dlg::BasicConfigDia
                     createLayoutPage(),
                     createUnitsPage(),
                     createExportPage(),
+                    createCalcPage(),
                 });
 }
 
@@ -174,6 +175,19 @@ QWidget* AppSettingsDialog::createExportPage()
     return page;
 }
 
+QWidget* AppSettingsDialog::createCalcPage()
+{
+    auto page = new Ori::Dlg::BasicConfigPage(tr("Calcs"), ":/toolbar/options");
+
+    _groupCalcOpts = new Ori::Widgets::OptionsGroup(tr("Options"), {
+        tr("Calculate at medium ends in table functions"),
+        tr("Calculate in empty spaces in table functions"),
+    });
+
+    page->add({_groupCalcOpts, page->stretch()});
+    return page;
+}
+
 void AppSettingsDialog::populate()
 {
     AppSettings &settings = AppSettings::instance();
@@ -210,6 +224,10 @@ void AppSettingsDialog::populate()
     _groupExportData->setOption(2, settings.exportTransposed);
     _exportNumberPrecision->setValue(settings.exportNumberPrecision);
     _groupExportPlot->setOption(0, settings.exportHideCursor);
+
+    // calc
+    _groupCalcOpts->setOption(0, settings.calcTablesMediumEnds);
+    _groupCalcOpts->setOption(1, settings.calcTablesEmptySpaces);
 }
 
 bool AppSettingsDialog::collect()
@@ -248,6 +266,10 @@ bool AppSettingsDialog::collect()
     settings.exportTransposed = _groupExportData->option(2);
     settings.exportNumberPrecision = _exportNumberPrecision->value();
     settings.exportHideCursor = _groupExportPlot->option(0);
+
+    // calc
+    settings.calcTablesMediumEnds = _groupCalcOpts->option(0);
+    settings.calcTablesEmptySpaces = _groupCalcOpts->option(1);
 
     settings.save();
     return true;
