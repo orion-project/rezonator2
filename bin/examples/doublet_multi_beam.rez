@@ -70,7 +70,7 @@
             "params": {
                 "Alpha": {
                     "unit": "deg",
-                    "value": 10
+                    "value": -15
                 },
                 "L": {
                     "unit": "cm",
@@ -81,11 +81,11 @@
                     "value": 2
                 }
             },
-            "title": "",
+            "title": "Tilted plate between lenses",
             "type": "ElemTiltedPlate"
         },
         {
-            "is_disabled": false,
+            "is_disabled": true,
             "label": "d2",
             "layout_draw_narrow": false,
             "layout_show_label": true,
@@ -99,7 +99,7 @@
                     "value": 1
                 }
             },
-            "title": "",
+            "title": "Additional distance between lenses",
             "type": "ElemEmptyRange"
         },
         {
@@ -110,7 +110,7 @@
             "params": {
                 "Alpha": {
                     "unit": "deg",
-                    "value": -5
+                    "value": 5
                 },
                 "F": {
                     "unit": "cm",
@@ -403,7 +403,7 @@
                             },
                             "stop": {
                                 "unit": "cm",
-                                "value": 1.0037906563920844
+                                "value": 1.0084800728837513
                             },
                             "use_step": false
                         }
@@ -544,7 +544,7 @@
                             },
                             "stop": {
                                 "unit": "cm",
-                                "value": 1.0037906563920844
+                                "value": 1.0084800728837513
                             },
                             "use_step": false
                         }

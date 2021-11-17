@@ -37,18 +37,19 @@ void MultibeamCausticWindow::calculate()
 
     QList<PlotFunction*> funcs;
     for (auto func : function()->funcs())
-        funcs << func;
+        if (!func->arg()->element->disabled())
+            funcs << func;
 
     clearStatusInfo();
     int errorCount = 0;
-    for (auto pump : *schema()->pumps())
+    foreach (auto pump, *schema()->pumps())
     {
         function()->setPump(pump);
         function()->calculate();
         if (!function()->ok())
         {
             errorCount++;
-            Z_ERROR(QString("%1: Pump %2: %3").arg(windowTitle()).arg(pump->label()).arg(function()->errorText()));
+            Z_ERROR(QString("%1: Pump %2: %3").arg(windowTitle(), pump->label(), function()->errorText()));
             continue;
         }
         // TODO: show different pump lines in legend
