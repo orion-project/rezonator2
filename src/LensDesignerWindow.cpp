@@ -158,25 +158,24 @@ LensDesignerWidget::LensDesignerWidget(QWidget *parent) : QSplitter(parent)
                           tr("Thickness", "Lens designer"),
                           tr("Minimal thickness.", "Lens designer"));
 
-    _D->setValue(40_mm);
+    _D->setValue(40_mm); _D->addListener(this);
     //_R1->setValue(-100_mm);
-    _R1->setValue(0_mm);
-    _R2->setValue(100_mm);
-    _T->setValue(5_mm);
-    _IOR->setValue(1.7);
+    _R1->setValue(0_mm); _R1->addListener(this);
+    _R2->setValue(100_mm); _R2->addListener(this);
+    _T->setValue(5_mm); _T->addListener(this);
+    _IOR->setValue(1.7); _IOR->addListener(this);
 
-    _params.append(_D);
-    _params.append(_R1);
-    _params.append(_R2);
-    _params.append(_IOR);
-    _params.append(_T);
-
-    foreach (auto p, _params)
-        p->addListener(this);
-
-    ParamsEditor::Options opts(&_params);
-    opts.autoApply = true;
+    ParamsEditor::Options opts(nullptr);
+    opts.ownParams = true;
+    opts.checkChanges = true;
+    opts.applyMode = ParamsEditor::Options::ApplyEnter;
     auto paramsEditor = new ParamsEditor(opts);
+    QVector<Z::Unit> reasonableUnits{Z::Units::mm(), Z::Units::cm(), Z::Units::m()};
+    paramsEditor->addEditor(_D, reasonableUnits);
+    paramsEditor->addEditor(_R1, reasonableUnits);
+    paramsEditor->addEditor(_R2, reasonableUnits);
+    paramsEditor->addEditor(_IOR);
+    paramsEditor->addEditor(_T, reasonableUnits);
 
     _axis = new LensDesignerItems::OpticalAxisItem;
     _shape = new LensDesignerItems::LensShapeItem;
@@ -202,7 +201,6 @@ LensDesignerWidget::LensDesignerWidget(QWidget *parent) : QSplitter(parent)
 
 LensDesignerWidget::~LensDesignerWidget()
 {
-    qDeleteAll(_params);
 }
 
 void LensDesignerWidget::parameterChanged(Z::ParameterBase*)

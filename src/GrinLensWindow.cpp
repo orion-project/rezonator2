@@ -66,7 +66,7 @@ GrinLensWindow::GrinLensWindow(QWidget *parent) : QWidget(parent)
     _statusLabel->setStyleSheet("QLabel{background:LightCoral;padding:6px}");
 
     ParamsEditor::Options opts(&_params);
-    opts.autoApply = true;
+    opts.applyMode = ParamsEditor::Options::ApplyInstant;
     opts.ownParams = true;
     opts.auxControl = LayoutV({_statusLabel}).setMargin(3).makeWidget();
     auto editors = new ParamsEditor(opts);

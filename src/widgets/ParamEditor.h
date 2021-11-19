@@ -94,6 +94,14 @@ public:
         /// If yes, the parameter is deleted when the editor gets deleted.
         bool ownParam = false;
 
+        /// When `Apply` is called, check if parameter value is really changed.
+        /// Used to avoid unnecessary `parameterChanged` events.
+        bool checkChanges = false;
+
+        /// Use only these units for unit selector
+        /// instead of all those available for the parameter dimension.
+        QVector<Z::Unit> units = {};
+
         Options(Z::Parameter* p) : param(p) {}
     };
 
@@ -120,11 +128,13 @@ public:
 
 signals:
     void focused();
+    void unfocused();
     void goingFocusNext();
     void goingFocusPrev();
     void editorInfoChanged();
     void valueEdited(double value);
     void unitChanged(Z::Unit unit);
+    void enterPressed();
 
 public slots:
     void populate();
@@ -147,6 +157,7 @@ private:
     QString _editorInfo;
     bool _paramChangedHandlerEnabled = true;
     bool _ownParam;
+    bool _checkChanges;
 
     void linkToGlobalParameter();
     void showValue(Z::Parameter *param);

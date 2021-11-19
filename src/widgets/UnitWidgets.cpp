@@ -23,16 +23,27 @@ UnitComboBox::UnitComboBox(QWidget* parent) : QComboBox(parent)
 
 UnitComboBox::UnitComboBox(Z::Dim dim, QWidget* parent) : UnitComboBox(parent)
 {
-    populate(dim);
+    populateInternal(dim, {});
+}
+
+UnitComboBox::UnitComboBox(Z::Dim dim, const QVector<Z::Unit>& units, QWidget* parent) : UnitComboBox(parent)
+{
+    populateInternal(dim, units);
 }
 
 void UnitComboBox::populate(Z::Dim dim)
+{
+    populateInternal(dim, {});
+}
+
+void UnitComboBox::populateInternal(Z::Dim dim, const QVector<Z::Unit>& units)
 {
     _enableChangeEvent = false;
 
     clear();
     foreach (auto unit, dim->units())
-        addItem(unit->name(), QVariant::fromValue(unit));
+        if (units.isEmpty() || units.contains(unit))
+            addItem(unit->name(), QVariant::fromValue(unit));
 
     _isEmptyOrSingleItem = count() < 2 or
         (dim == Z::Dims::fixed() and !canSelectFixedUnit);

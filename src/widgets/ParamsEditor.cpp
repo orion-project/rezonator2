@@ -9,11 +9,11 @@
 //                                ParamsEditor
 //------------------------------------------------------------------------------
 
-ParamsEditor::ParamsEditor(const Options opts, QWidget *parent) : QWidget(parent), _options(opts), _params(opts.params)
+ParamsEditor::ParamsEditor(const Options opts, QWidget *parent) : QWidget(parent), _options(opts)
 {
     // Parameters layout should not be used as the widget's main layout
-    // because parameters can be added in runtime and it should be easy to call addWidget
-    // and not be bothered that someting other might be at the bottom (e.g. into panel).
+    // because parameters can be added in runtime and it should be easy to call `addWidget()`
+    // and not be bothered that someting other might be at the bottom (e.g. auxControl, _infoPanel).
     _paramsLayout = Ori::Layouts::LayoutV({}).setMargin(0).setSpacing(0).boxLayout();
     populateEditors();
 
@@ -40,8 +40,9 @@ void ParamsEditor::populateEditors()
         qWarning() << "ParamsEditor::populateEditors: already populated, use removeEditors first";
         return;
     }
-    for (Z::Parameter* param : *_params)
-        addEditor(param);
+    if (_options.params)
+        for (Z::Parameter* param : *_options.params)
+            addEditor(param);
 }
 
 void ParamsEditor::removeEditors()
@@ -50,18 +51,16 @@ void ParamsEditor::removeEditors()
     _editors.clear();
 }
 
-void ParamsEditor::addEditor(Z::Parameter* param)
+void ParamsEditor::addEditor(Z::Parameter* param, const QVector<Z::Unit> &units)
 {
-    if (not _params->contains(param))
+    // TODO: explain why this check is needed
+    // TODO: why we pass the whole params list in _options,
+    // TODO: but then we seems adding editors explicitly (one by one?)
+    if (_options.params && !_options.params->contains(param))
     {
         qWarning() << "ParamsEditor::addEditor: invalid param, it is not in the parameters list";
         return;
     }
-
-    // We don't add the parameter to the `_params` list here
-    // because it's supposed to be done by the widget's owner
-    // (which is also probably the owner of the parameters list itself)
-    // and that owner only kicks the widget to update the presentation.
 
     if (_options.filter && !_options.filter->check(param))
         return;
@@ -72,14 +71,18 @@ void ParamsEditor::addEditor(Z::Parameter* param)
     o.paramLinks = _options.paramLinks;
     o.menuButtonActions = _options.menuButtonActions;
     o.ownParam = _options.ownParams;
+    o.checkChanges = _options.checkChanges;
+    o.units = units;
     if (_options.makeAuxControl)
         o.auxControl = _options.makeAuxControl(param);
     auto editor = new ParamEditor(o);
     connect(editor, &ParamEditor::focused, this, &ParamsEditor::paramFocused);
+    connect(editor, &ParamEditor::unfocused, this, &ParamsEditor::paramUnfocused);
     connect(editor, &ParamEditor::goingFocusNext, this, &ParamsEditor::focusNextParam);
     connect(editor, &ParamEditor::goingFocusPrev, this, &ParamsEditor::focusPrevParam);
     connect(editor, &ParamEditor::valueEdited, this, &ParamsEditor::paramValueEdited);
     connect(editor, &ParamEditor::unitChanged, this, &ParamsEditor::paramUnitChanged);
+    connect(editor, &ParamEditor::enterPressed, this, &ParamsEditor::paramEnterPressed);
 
     _editors.append(editor);
     _paramsLayout->addWidget(editor);
@@ -87,11 +90,6 @@ void ParamsEditor::addEditor(Z::Parameter* param)
 
 void ParamsEditor::removeEditor(Z::Parameter* param)
 {
-    // We don't remove the parameter from the `_params` list here
-    // because it's supposed to be done by the widget's owner
-    // (which is also probably the owner of the parameters list itself)
-    // and that owner only kicks the widget to update the presentation.
-
     for (int i = 0; i < _editors.size(); i++)
     {
         auto editor = _editors.at(i);
@@ -119,12 +117,12 @@ void ParamsEditor::populateEditor(Z::Parameter* param)
 
 void ParamsEditor::populateValues()
 {
-    for (auto editor : _editors) editor->populate();
+    foreach (auto editor, _editors) editor->populate();
 }
 
 void ParamsEditor::applyValues()
 {
-    for (auto editor : _editors)
+    foreach (auto editor, _editors)
         editor->apply();
 }
 
@@ -136,7 +134,7 @@ void ParamsEditor::focus()
 
 void ParamsEditor::focus(Z::Parameter *param)
 {
-    for (auto editor : _editors)
+    foreach (auto editor, _editors)
         if (editor->parameter() == param)
         {
             editor->focus();
@@ -148,13 +146,24 @@ void ParamsEditor::paramFocused()
 {
     if (!_infoPanel) return;
 
-    for (auto editor : _editors)
+    foreach (auto editor, _editors)
         if (editor == sender())
         {
             auto p = editor->parameter();
             _infoPanel->setInfo(p->name(), p->description());
             return;
         }
+}
+
+void ParamsEditor::paramUnfocused()
+{
+    if (_options.applyMode == Options::ApplyEnter)
+    {
+        auto editor = qobject_cast<ParamEditor*>(sender());
+        if (!editor) return;
+
+        editor->apply();
+    }
 }
 
 void ParamsEditor::focusNextParam()
@@ -207,7 +216,7 @@ void ParamsEditor::paramValueEdited(double value)
     auto editor = qobject_cast<ParamEditor*>(sender());
     if (!editor) return;
 
-    if (_options.autoApply)
+    if (_options.applyMode == Options::ApplyInstant)
         editor->apply();
 
     emit paramChanged(editor->parameter(), Z::Value(value, editor->getValue().unit()));
@@ -218,10 +227,21 @@ void ParamsEditor::paramUnitChanged(Z::Unit unit)
     auto editor = qobject_cast<ParamEditor*>(sender());
     if (!editor) return;
 
-    if (_options.autoApply)
+    if (_options.applyMode == Options::ApplyInstant || _options.applyMode == Options::ApplyManual)
         editor->apply();
 
     emit paramChanged(editor->parameter(), Z::Value(editor->getValue().value(), unit));
+}
+
+void ParamsEditor::paramEnterPressed()
+{
+    if (_options.applyMode == Options::ApplyEnter)
+    {
+        auto editor = qobject_cast<ParamEditor*>(sender());
+        if (!editor) return;
+
+        editor->apply();
+    }
 }
 
 void ParamsEditor::moveEditorUp(Z::Parameter* param)
@@ -282,7 +302,7 @@ ParamsEditorTS::ParamsEditorTS(Z::ParametersTS *params, QWidget *parent) : QWidg
 {
     _valuesEditor = new ValuesEditorTS();
 
-    for (Z::ParameterTS *param : *params)
+    foreach (Z::ParameterTS *param, *params)
     {
         auto editor = new ValueEditorTS(param->name(), param->label(), param->value());
         _editorsMap.insert(param, editor);

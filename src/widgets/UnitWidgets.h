@@ -20,6 +20,7 @@ class UnitComboBox : public QComboBox
 public:
     UnitComboBox(QWidget* parent = nullptr);
     UnitComboBox(Z::Dim dim, QWidget* parent = nullptr);
+    UnitComboBox(Z::Dim dim, const QVector<Z::Unit>& units, QWidget* parent = nullptr);
 
     Z::Unit selectedUnit() const;
     void setSelectedUnit(Z::Unit unit);
@@ -49,6 +50,7 @@ private:
     bool _enableChangeEvent = true;
     bool _isEmptyOrSingleItem = true;
     Z::Unit unitAt(int index) const;
+    void populateInternal(Z::Dim dim, const QVector<Z::Unit>& units);
 };
 
 

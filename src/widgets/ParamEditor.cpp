@@ -94,7 +94,7 @@ int countSuitableGlobalParams(Z::Parameters* globalParams, Z::Parameter* param)
 {
     auto dim = param->dim();
     int count = 0;
-    for (auto p : *globalParams)
+    foreach (auto p, *globalParams)
         if (p->dim() == dim)
         {
             // Parameters of fixed dim can only be linked unit-to-unit
@@ -111,7 +111,7 @@ Z::Parameters getSuitableGlobalParams(Z::Parameters* globalParams, Z::Parameter*
 {
     auto dim = param->dim();
     Z::Parameters params;
-    for (auto p : *globalParams)
+    foreach (auto p, *globalParams)
         if (p->dim() == dim)
         {
             // Parameters of fixed dim can only be linked unit-to-unit
@@ -130,7 +130,8 @@ Z::Parameters getSuitableGlobalParams(Z::Parameters* globalParams, Z::Parameter*
 //------------------------------------------------------------------------------
 
 ParamEditor::ParamEditor(Options opts) : QWidget(),
-    _param(opts.param), _globalParams(opts.globalParams), _paramLinks(opts.paramLinks), _ownParam(opts.ownParam)
+    _param(opts.param), _globalParams(opts.globalParams), _paramLinks(opts.paramLinks),
+    _ownParam(opts.ownParam), _checkChanges(opts.checkChanges)
 {
     _param->addListener(this);
 
@@ -175,7 +176,7 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
 
     _valueEditor = new ValueEdit;
 
-    _unitsSelector = new UnitComboBox(_param->dim());
+    _unitsSelector = new UnitComboBox(_param->dim(), opts.units);
     layout->addWidget(_valueEditor);
     layout->addSpacing(3);
     layout->addWidget(_unitsSelector);
@@ -186,7 +187,7 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
         connect(menuButton, &MenuButton::focused, this, &ParamEditor::editorFocused);
         connect(menuButton, &QPushButton::clicked, [this, menuButton](){
             // When menu is opened, each action has a pointer to the current param editor
-            for (auto action : menuButton->menu()->actions())
+            foreach (auto action, menuButton->menu()->actions())
                 action->setData(QVariant::fromValue(this));
 
             // button->setMenu() crashes the app on MacOS when button is clicked, so show manually
@@ -273,6 +274,9 @@ void ParamEditor::apply()
 
     Z::Value value = getValue();
 
+    if(_checkChanges && value == _param->value())
+        return;
+
     auto res = _param->verify(value);
     if (!res.isEmpty())
     {
@@ -325,12 +329,15 @@ void ParamEditor::editorFocused(bool focus)
 {
     Z::Gui::setFocusedBackground(this, focus);
     if (focus) emit focused();
+    else emit unfocused();
 }
 
 void ParamEditor::editorKeyPressed(int key)
 {
     switch (key)
     {
+    case Qt::Key_Enter:
+    case Qt::Key_Return: emit enterPressed(); break;
     case Qt::Key_Up: emit goingFocusPrev(); break;
     case Qt::Key_Down: emit goingFocusNext(); break;
     default:;

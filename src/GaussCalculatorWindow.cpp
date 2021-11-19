@@ -224,7 +224,7 @@ public:
 
     void clearData()
     {
-        for (QCPGraph *g : _items)
+        foreach (QCPGraph *g, _items)
             g->data()->clear();
     }
 
@@ -505,7 +505,7 @@ GaussCalculatorWindow::GaussCalculatorWindow(QWidget *parent) : QWidget(parent)
 
     _updatesEnabled = true;
     _calc->setRef(GaussCalculator::Ref::W0);
-    QTimer::singleShot(0, [this]{ this->recalc(); });
+    QTimer::singleShot(0, this, [this]{ this->recalc(); });
 }
 
 GaussCalculatorWindow::~GaussCalculatorWindow()
@@ -665,7 +665,7 @@ void GaussCalculatorWindow::recalc()
     // do not take value of this parameter from calculator
     // as it will interfere user input.
     auto changingEditor = sender();
-    for (GaussCalcParamEditor *editor : _paramEditors)
+    foreach (GaussCalcParamEditor *editor, _paramEditors)
         if (editor != changingEditor)
             editor->getValueFromCalculator();
 
