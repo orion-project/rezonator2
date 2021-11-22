@@ -245,7 +245,7 @@ LensDesignerWindow::LensDesignerWindow(QWidget *parent) : QWidget(parent)
 {
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle(tr("Lens Designer"));
-    setWindowIcon(QIcon(":/window_icons/gauss_calc"));
+    setWindowIcon(QIcon(":/window_icons/lens"));
 
     auto toolbar = new Ori::Widgets::FlatToolBar;
 

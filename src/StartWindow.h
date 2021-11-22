@@ -9,8 +9,10 @@ class QLabel;
 class QBoxLayout;
 class QFileInfo;
 class QMovie;
-class QToolButton;
+class QToolBar;
+
 QT_END_NAMESPACE
+
 
 class CustomCssWidget : public QWidget
 {
@@ -128,17 +130,12 @@ class ToolsStartPanel : public StartPanel
 public:
     explicit ToolsStartPanel();
 
-signals:
-    void onEditStyleSheet();
-
 private slots:
     void showGaussCalculator();
     void showCalculator();
     void showGrinLens();
-    void editStyleSheet();
-    void editAppSettings();
-    void showUserManual();
     void checkUpdates();
+    void showLensDesigner();
 };
 
 //------------------------------------------------------------------------------
@@ -156,7 +153,7 @@ protected:
 
 private:
     QLabel *_tipImage;
-    QToolButton *_aboutButton;
+    QToolBar *_toolbar;
 
     void editStyleSheet();
 };

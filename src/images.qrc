@@ -229,6 +229,7 @@
         <file alias="catalog">../img/icon/elements.svg</file>
         <file alias="element">../img/icon/element.svg</file>
         <file alias="gauss_calc">../img/icon/gauss.svg</file>
+        <file alias="lens">../img/icon/lens.svg</file>
         <file alias="main">../img/icon/main_2.svg</file>
         <file alias="options">../img/icon/settings.svg</file>
         <file alias="parameter">../img/icon/parameter.svg</file>
