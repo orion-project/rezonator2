@@ -11,8 +11,9 @@ class QGraphicsView;
 QT_END_NAMESPACE
 
 namespace LensDesignerItems {
-class OpticalAxisItem;
 class LensShapeItem;
+class OpticalAxisItem;
+class PaperGridItem;
 } // namespace LensDesignerItems
 
 class LensDesignerWidget : public QSplitter, public Z::ParameterListener
@@ -31,6 +32,7 @@ private:
     Z::Parameter *_D, *_R1, *_R2, *_IOR, *_T;
     LensDesignerItems::OpticalAxisItem* _axis;
     LensDesignerItems::LensShapeItem* _shape;
+    LensDesignerItems::PaperGridItem* _grid;
 
     void redraw();
 };
@@ -42,6 +44,7 @@ class LensDesignerWindow : public QWidget
 
 public:
     explicit LensDesignerWindow(QWidget *parent = nullptr);
+    ~LensDesignerWindow();
 
     static void showWindow();
 

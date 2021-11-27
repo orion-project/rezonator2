@@ -32,12 +32,52 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override
     {
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing, false);
+        painter->setPen(pen);
         painter->drawLine(QLineF(-len/2, 0, len/2, 0));
         painter->drawLine(QLineF(0, -high/2, 0, high/2));
+        painter->restore();
     }
 
     double len = 0;
     double high = 0;
+    QPen pen = QPen(Qt::black, 1, Qt::DashDotLine);
+};
+
+class PaperGridItem : public QGraphicsItem
+{
+public:
+    QRectF boundingRect() const override
+    {
+        return QRectF(-len/2, -high/2, len, high);
+    }
+
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override
+    {
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing, false);
+        painter->setPen(pen);
+        double x = step * scale;
+        while (x <= len/2) {
+            painter->drawLine(QLineF(x, -high/2, x, high/2));
+            painter->drawLine(QLineF(-x, -high/2, -x, high/2));
+            x += step * scale;
+        }
+        double y = step * scale;
+        while (y <= high/2) {
+            painter->drawLine(QLineF(-len/2, y, len/2, y));
+            painter->drawLine(QLineF(-len/2, -y, len/2, -y));
+            y += step * scale;
+        }
+        painter->restore();
+    }
+
+    double len = 0;
+    double high = 0;
+    double scale = 1;
+    double step = 10;
+    QPen pen = QPen(Qt::gray, 1, Qt::DotLine);
 };
 
 class LensShapeItem : public QGraphicsItem
@@ -120,6 +160,8 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override
     {
+        painter->setPen(glassPen);
+        painter->setBrush(glassBrush);
         painter->drawPath(_path);
     }
 
@@ -128,6 +170,8 @@ public:
     double R2 = 0;
     double D = 0;
     double T = 0;
+    QPen glassPen = QPen(Qt::black, 1.5);
+    QBrush glassBrush = QBrush(QPixmap(":/misc/glass_pattern_big"));
 };
 
 } // namespace LensDesignerItems
@@ -177,12 +221,14 @@ LensDesignerWidget::LensDesignerWidget(QWidget *parent) : QSplitter(parent)
     paramsEditor->addEditor(_IOR);
     paramsEditor->addEditor(_T, reasonableUnits);
 
+    _grid = new LensDesignerItems::PaperGridItem;
     _axis = new LensDesignerItems::OpticalAxisItem;
     _shape = new LensDesignerItems::LensShapeItem;
 
     _scene = new QGraphicsScene(this);
-    _scene->addItem(_axis);
+    _scene->addItem(_grid);
     _scene->addItem(_shape);
+    _scene->addItem(_axis);
 
     _view = new QGraphicsView;
     _view->setRenderHint(QPainter::Antialiasing, true);
@@ -211,22 +257,32 @@ void LensDesignerWidget::parameterChanged(Z::ParameterBase*)
 
 void LensDesignerWidget::redraw()
 {
-    _shape->T = _T->value().toSi() * 1000;
-    _shape->D = _D->value().toSi() * 1000;
-    _shape->R1 = _R1->value().toSi() * 1000;
-    _shape->R2 = _R2->value().toSi() * 1000;
+    qreal tagretH = 300;
+    qreal D = _D->value().toSi() * 1000;
+    qreal scale = tagretH / D;
+
+    _shape->D = D * scale;
+    _shape->T = _T->value().toSi() * 1000 * scale;
+    _shape->R1 = _R1->value().toSi() * 1000 * scale;
+    _shape->R2 = _R2->value().toSi() * 1000 * scale;
     _shape->calc();
 
     auto r = _shape->boundingRect();
-    _axis->len = r.width() * 2;
-    _axis->high = r.height() * 1.5;
 
-    auto b = _scene->itemsBoundingRect();
-    b.adjust(-10, -10, 10, 10);
-    _scene->setSceneRect(b);
-    _view->scale(5, 5);
-    //_view->fitInView(r, Qt::KeepAspectRatio);
-    //_view->centerOn(r.center());
+    qreal paperW = r.width() * 4;
+    qreal paperH = r.height() * 1.5;
+
+    _grid->scale = scale;
+    _grid->len = paperW;
+    _grid->high = paperH;
+
+    _axis->len = paperW;
+    _axis->high = paperH;
+
+    qreal margin = 10 * scale;
+    r.adjust(-margin, -margin, margin, margin);
+    _scene->setSceneRect(r);
+    _scene->update(r);
 }
 
 //--------------------------------------------------------------------------------
@@ -252,4 +308,9 @@ LensDesignerWindow::LensDesignerWindow(QWidget *parent) : QWidget(parent)
     _designer = new LensDesignerWidget;
 
     Ori::Layouts::LayoutV({toolbar, _designer}).setMargin(3).useFor(this);
+}
+
+LensDesignerWindow::~LensDesignerWindow()
+{
+    __instance = nullptr;
 }
