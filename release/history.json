@@ -2,7 +2,7 @@
   "history": [
     {
       "version": "2.0.9-beta5",
-      "data": "",
+      "data": "2021-11-27",
       "changes": [
         {
           "text": "Can disable some elements (instead of to delete them)."
