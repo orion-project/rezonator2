@@ -17,9 +17,10 @@ public:
     void parentSizeChanged();
     void setInitialGeometry(const QRect& r);
 
+    void setSizes(double t, double s);
+
 protected:
     void mousePressEvent(QMouseEvent*) override;
-    void mouseReleaseEvent(QMouseEvent*) override;
     void mouseMoveEvent(QMouseEvent*) override;
     void enterEvent(QEvent*) override;
     void leaveEvent(QEvent*) override;
@@ -34,6 +35,7 @@ private:
     int x0, y0, X, Y, W, H;
     int _textW, _textH;
     bool _drawResizeBorder = false;
+    double _ratio = -1;
 
     void updateSite(const QPoint &pos);
     void paint(QPaintDevice *target, bool showBackground) const;

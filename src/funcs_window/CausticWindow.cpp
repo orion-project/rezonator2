@@ -107,7 +107,6 @@ CausticWindow::CausticWindow(Schema *schema) : PlotFuncWindowStorable(new Causti
     _actnShowBeamShape = new QAction(tr("Show Beam Shape", "Plot action"), this);
     _actnShowBeamShape->setIcon(QIcon(":/toolbar/profile"));
     _actnShowBeamShape->setCheckable(true);
-    _actnShowBeamShape->setVisible(false);
     connect(_actnShowBeamShape, &QAction::triggered, this, &CausticWindow::showBeamShape);
 
     menuPlot->addSeparator();
@@ -207,11 +206,15 @@ QString CausticWindow::getCursorInfo(const QPointF& pos) const
     if (!function()->ok()) return QString();
     double x = getUnitX()->toSi(pos.x());
     auto res = function()->calculateAt(x);
+
+    if (_beamShape)
+        _beamShape->setSizes(res.T, res.S);
+
     auto unitY = getUnitY();
-    return QString("%1t = %2; %1s = %3")
-            .arg(CausticFunction::modeAlias(function()->mode()))
-            .arg(Z::format(unitY->fromSi(res.T)))
-            .arg(Z::format(unitY->fromSi(res.S)));
+    return QString("%1t = %2; %1s = %3").arg(
+                CausticFunction::modeAlias(function()->mode()),
+                Z::format(unitY->fromSi(res.T)),
+                Z::format(unitY->fromSi(res.S)));
 }
 
 void CausticWindow::showBeamShape()
@@ -226,5 +229,18 @@ void CausticWindow::showBeamShape()
     {
         _beamShape = new BeamShapeWidget(_plot);
         _beamShape->setInitialGeometry(_beamShapeGeom);
+        if (function()->ok())
+        {
+            double x = getUnitX()->toSi(cursorPosition().x());
+            auto res = function()->calculateAt(x);
+            _beamShape->setSizes(res.T, res.S);
+        }
     }
+}
+
+void CausticWindow::finishImageBeforeCopy(QPainter* p) const
+{
+    if (!_beamShape) return;
+
+    _beamShape->render(p, _beamShape->geometry().topLeft(), QRegion(), RenderFlags());
 }

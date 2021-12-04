@@ -28,6 +28,7 @@ protected:
     Z::Unit getDefaultUnitX() const override;
     Z::Unit getDefaultUnitY() const override;
     QString getCursorInfo(const QPointF& pos) const override;
+    void finishImageBeforeCopy(QPainter*) const override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;

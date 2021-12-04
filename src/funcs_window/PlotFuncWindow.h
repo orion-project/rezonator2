@@ -140,6 +140,7 @@ protected:
     virtual QWidget* makeOptionsPanel() { return nullptr; }
     virtual void fillViewMenuActions(QList<QAction*>& actions) const { Q_UNUSED(actions) }
     virtual QString getCursorInfo(const QPointF& pos) const { Q_UNUSED(pos) return QString(); }
+    virtual void finishImageBeforeCopy(QPainter*) const {}
 
     QCPGraph* selectedGraph() const;
 
@@ -167,6 +168,8 @@ protected:
     Z::Unit getUnitY() const;
     virtual Z::Unit getDefaultUnitX() const { return Z::Units::none(); }
     virtual Z::Unit getDefaultUnitY() const { return Z::Units::none(); }
+
+    QPointF cursorPosition() const;
 
 private slots:
     void activateModeT();

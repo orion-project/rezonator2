@@ -1,8 +1,17 @@
 {
   "history": [
     {
+      "version": "2.0.10-beta6",
+      "date": "",
+      "changes": [
+        {
+          "text": "Added beam shape tool for caustic windows."
+        }
+      ]
+    },
+    {
       "version": "2.0.9-beta5",
-      "data": "2021-11-27",
+      "date": "2021-11-27",
       "changes": [
         {
           "text": "Can disable some elements (instead of to delete them)."
@@ -30,13 +39,7 @@
       "changes": [
         {
           "text": "Adjust and build with Qt 5.15.2 which is the latest LTS in 5.* series."
-        }
-      ]
-    },
-    {
-      "version": "2.0.7-beta3",
-      "date": "2021-04-13",
-      "changes": [
+        },
         {
           "text": "Fix: mirrors at ends of resonator respect IOR of attached media (https://github.com/orion-project/rezonator2/issues/4)."
         },
@@ -54,7 +57,7 @@
         },
         {
           "text": "Can calculate function values under cursor."
-        }
+        },
         {
           "text": "Can link parameters of Matrix element to global parameters."
         },

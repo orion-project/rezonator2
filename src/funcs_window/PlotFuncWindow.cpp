@@ -564,7 +564,7 @@ void PlotFuncWindow::elementDeleting(Schema*, Element* elem)
 void PlotFuncWindow::disableAndClose()
 {
     _frozen = true; // disable updates
-    QTimer::singleShot(0, [this]{this->close();});
+    QTimer::singleShot(0, this, [this]{close();});
 }
 
 Z::Unit PlotFuncWindow::getUnitX() const
@@ -617,7 +617,7 @@ QList<BasicMdiChild::ViewMenuItem> PlotFuncWindow::menuItems_View()
     _leftPanel->fillActions(actions);
     if (actions.size() > 0)
     {
-        for (auto a : actions)
+        foreach (auto a, actions)
             menuItems << BasicMdiChild::ViewMenuItem(a);
         menuItems << BasicMdiChild::ViewMenuItem();
     }
@@ -627,7 +627,7 @@ QList<BasicMdiChild::ViewMenuItem> PlotFuncWindow::menuItems_View()
 
     actions.clear();
     fillViewMenuActions(actions);
-    for (auto a : actions)
+    foreach (auto a, actions)
         menuItems << BasicMdiChild::ViewMenuItem(a);
 
     return menuItems;
@@ -658,8 +658,17 @@ void PlotFuncWindow::copyPlotImage()
     if (AppSettings::instance().exportHideCursor)
         _cursor->setVisible(false);
 
-    _plot->copyPlotImage();
+    QImage image(_plot->width(), _plot->height(), QImage::Format_RGB32);
+    QCPPainter painter(&image);
+    _plot->toPainter(&painter);
+    finishImageBeforeCopy(&painter);
+    qApp->clipboard()->setImage(image);
 
     if (oldVisible != _cursor->visible())
         _cursor->setVisible(oldVisible);
+}
+
+QPointF PlotFuncWindow::cursorPosition() const
+{
+    return _cursor->position();
 }
