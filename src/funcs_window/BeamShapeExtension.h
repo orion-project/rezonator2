@@ -1,11 +1,16 @@
-#ifndef BEAM_SHAPE_WIDGET_H
-#define BEAM_SHAPE_WIDGET_H
+#ifndef BEAM_SHAPE_EXTENSION_H
+#define BEAM_SHAPE_EXTENSION_H
 
 #include <QWidget>
 
 QT_BEGIN_NAMESPACE
+class QAction;
 class QMenu;
+class QPainter;
+class QWidget;
 QT_END_NAMESPACE
+
+class PlotFuncWindow;
 
 class BeamShapeWidget : public QWidget
 {
@@ -17,7 +22,7 @@ public:
     void parentSizeChanged();
     void setInitialGeometry(const QRect& r);
 
-    void setSizes(double t, double s);
+    void setShape(double t, double s);
 
 protected:
     void mousePressEvent(QMouseEvent*) override;
@@ -42,4 +47,22 @@ private:
     void copyImage() const;
 };
 
-#endif // BEAM_SHAPE_WIDGET_H
+class BeamShapeExtension : public QObject
+{
+    Q_OBJECT
+
+public:
+    BeamShapeExtension(PlotFuncWindow* parent);
+
+    void setShape(double t, double s);
+
+private:
+    PlotFuncWindow* _parent;
+    QAction* _actnShowBeamShape;
+    BeamShapeWidget *_beamShape = nullptr;
+    QRect _beamShapeGeom;
+
+    void showBeamShape();
+};
+
+#endif // BEAM_SHAPE_EXTENSION_H

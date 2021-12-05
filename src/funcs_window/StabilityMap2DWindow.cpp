@@ -153,7 +153,7 @@ StabilityMap2DOptionsPanel::StabilityMap2DOptionsPanel(StabilityMap2DWindow* win
         Ori::Layouts::Stretch()
     }).setSpacing(0).setMargin(0).useFor(this);
 
-    for (auto button : _modeButtons)
+    foreach (auto button, _modeButtons)
         button->setIconSize(QSize(96, 48));
 
     showCurrentMode();
@@ -299,13 +299,13 @@ namespace  {
 QString getDefaultAxisTitle(const Z::Variable* arg, Z::Unit unit)
 {
     if (unit == Z::Units::none())
-        return QStringLiteral("%1, %2")
-                .arg(arg->element->displayLabelTitle())
-                .arg(arg->parameter->name());
-    return QStringLiteral("%1, %2 (%3)")
-            .arg(arg->element->displayLabelTitle())
-            .arg(arg->parameter->label())
-            .arg(unit->name());
+        return QStringLiteral("%1, %2").arg(
+                    arg->element->displayLabelTitle(),
+                    arg->parameter->name());
+    return QStringLiteral("%1, %2 (%3)").arg(
+                arg->element->displayLabelTitle(),
+                arg->parameter->label(),
+                unit->name());
 }
 } // namespace
 
@@ -436,7 +436,7 @@ QString StabilityMap2DWindow::writeWindowSpecific(QJsonObject& root)
 QString StabilityMap2DWindow::getCursorInfo(const QPointF& pos) const
 {
     if (!function()->ok()) return QString();
-    auto res = function()->calculateAt(Z::Value(pos.x(), getUnitX()), Z::Value(pos.y(), getUnitY()));
+    auto res = function()->calculateAtXY(Z::Value(pos.x(), getUnitX()), Z::Value(pos.y(), getUnitY()));
     return QStringLiteral("Pt = %1; Ps = %2").arg(Z::format(res.T), Z::format(res.S));
 }
 
@@ -449,7 +449,7 @@ void StabilityMap2DWindow::copyGraphData2D()
     auto data =_graph->data();
     auto ny = data->valueSize();
     auto nx = data->keySize();
-    qDebug() << "copy2d" << ny << nx;
+    //qDebug() << "copy2d" << ny << nx;
     if (transposed)
     {
         QVector<double> v(ny);

@@ -78,6 +78,9 @@ public:
     // inherited from IAppSettingsListener
     void optionChanged(AppSettingsOptions option) override;
 
+signals:
+    void finishImageBeforeCopy(QPainter*);
+
 public slots:
     void update();
 
@@ -140,7 +143,6 @@ protected:
     virtual QWidget* makeOptionsPanel() { return nullptr; }
     virtual void fillViewMenuActions(QList<QAction*>& actions) const { Q_UNUSED(actions) }
     virtual QString getCursorInfo(const QPointF& pos) const { Q_UNUSED(pos) return QString(); }
-    virtual void finishImageBeforeCopy(QPainter*) const {}
 
     QCPGraph* selectedGraph() const;
 
@@ -169,8 +171,6 @@ protected:
     virtual Z::Unit getDefaultUnitX() const { return Z::Units::none(); }
     virtual Z::Unit getDefaultUnitY() const { return Z::Units::none(); }
 
-    QPointF cursorPosition() const;
-
 private slots:
     void activateModeT();
     void activateModeS();
@@ -188,6 +188,8 @@ private:
 
     void graphSelected(QCPGraph *);
     void updateCursorInfo();
+
+    friend class BeamShapeExtension;
 };
 
 #endif // PLOT_FUNC_WINDOW_H

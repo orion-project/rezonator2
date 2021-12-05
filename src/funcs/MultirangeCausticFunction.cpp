@@ -109,9 +109,9 @@ void MultirangeCausticFunction::setPump(PumpParams* pump)
         func->setPump(pump);
 }
 
-Z::PointTS MultirangeCausticFunction::calculateAt(double argSI)
+Z::PointTS MultirangeCausticFunction::calculateAt(const Z::Value &arg)
 {
-    double remainingL = argSI;
+    double remainingL = arg.toSi();
     foreach (CausticFunction *func, _funcs)
     {
         if (func->arg()->element->disabled())
@@ -120,7 +120,7 @@ Z::PointTS MultirangeCausticFunction::calculateAt(double argSI)
         double L = elem->axisLengthSI();
         double newRemainingL = remainingL - L;
         if (newRemainingL <= 0)
-            return func->calculateAt(remainingL);
+            return func->calculateAt(Z::Value(remainingL, Z::Units::m()));
         remainingL = newRemainingL;
     }
     return { Double::nan(), Double::nan() };

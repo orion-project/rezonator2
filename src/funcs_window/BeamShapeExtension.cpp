@@ -1,13 +1,66 @@
-#include "BeamShapeWidget.h"
+#include "BeamShapeExtension.h"
 
-#include "core/OriFloatingPoint.h"
+#include "PlotFuncWindow.h"
 
-#include <QApplication>
-#include <QClipboard>
-#include <QDebug>
-#include <QMenu>
-#include <QMouseEvent>
-#include <QPainter>
+#include "qcpl_cursor.h"
+#include "qcpl_plot.h"
+
+//------------------------------------------------------------------------------
+//                              BeamShapeExtension
+//------------------------------------------------------------------------------
+
+BeamShapeExtension::BeamShapeExtension(PlotFuncWindow* parent): QObject(parent), _parent(parent)
+{
+    _actnShowBeamShape = new QAction(tr("Show Beam Shape", "Plot action"), parent);
+    _actnShowBeamShape->setIcon(QIcon(":/toolbar/profile"));
+    _actnShowBeamShape->setCheckable(true);
+    connect(_actnShowBeamShape, &QAction::triggered, this, &BeamShapeExtension::showBeamShape);
+
+    _parent->menuPlot->addSeparator();
+    _parent->menuPlot->addAction(_actnShowBeamShape);
+
+    _parent->toolbar()->addSeparator();
+    _parent->toolbar()->addAction(_actnShowBeamShape);
+
+    connect(_parent->_plot, &QCPL::Plot::resized, [this](const QSize&, const QSize&){
+        if (_beamShape)
+            _beamShape->parentSizeChanged();
+    });
+    connect(_parent, &PlotFuncWindow::finishImageBeforeCopy, [this](QPainter* p){
+        if (_beamShape)
+            _beamShape->render(p, _beamShape->geometry().topLeft(), QRegion(), QWidget::RenderFlags());
+    });
+}
+
+void BeamShapeExtension::showBeamShape()
+{
+    if (_beamShape)
+    {
+        _beamShapeGeom = _beamShape->geometry();
+        _beamShape->deleteLater();
+        _beamShape = nullptr;
+    }
+    else
+    {
+        _beamShape = new BeamShapeWidget(_parent->_plot);
+        _beamShape->setInitialGeometry(_beamShapeGeom);
+        if (_parent->function()->ok())
+        {
+            auto res = _parent->function()->calculateAt(Z::Value(_parent->_cursor->position().x(), _parent->getUnitX()));
+            _beamShape->setShape(res.T, res.S);
+        }
+    }
+}
+
+void BeamShapeExtension::setShape(double t, double s)
+{
+    if (_beamShape)
+        _beamShape->setShape(t, s);
+}
+
+//------------------------------------------------------------------------------
+//                              BeamShapeWidget
+//------------------------------------------------------------------------------
 
 static const int MIN_W = 50;
 static const int MIN_H = 50;
@@ -45,7 +98,7 @@ void BeamShapeWidget::setInitialGeometry(const QRect& r)
         setGeometry(parentWidget()->width() - DEFAULT_W - DEFAULT_M, DEFAULT_M, DEFAULT_W, DEFAULT_H);
 }
 
-void BeamShapeWidget::setSizes(double t, double s)
+void BeamShapeWidget::setShape(double t, double s)
 {
     Double w(t);
     Double h(s);

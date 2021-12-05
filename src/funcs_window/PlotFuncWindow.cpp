@@ -661,14 +661,9 @@ void PlotFuncWindow::copyPlotImage()
     QImage image(_plot->width(), _plot->height(), QImage::Format_RGB32);
     QCPPainter painter(&image);
     _plot->toPainter(&painter);
-    finishImageBeforeCopy(&painter);
+    emit finishImageBeforeCopy(&painter);
     qApp->clipboard()->setImage(image);
 
     if (oldVisible != _cursor->visible())
         _cursor->setVisible(oldVisible);
-}
-
-QPointF PlotFuncWindow::cursorPosition() const
-{
-    return _cursor->position();
 }

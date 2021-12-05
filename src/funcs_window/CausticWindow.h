@@ -5,7 +5,7 @@
 #include "../RezonatorDialog.h"
 #include "../funcs/CausticFunction.h"
 
-class BeamShapeWidget;
+class BeamShapeExtension;
 class ElemSelectorWidget;
 class PointsRangeEditor;
 
@@ -28,18 +28,13 @@ protected:
     Z::Unit getDefaultUnitX() const override;
     Z::Unit getDefaultUnitY() const override;
     QString getCursorInfo(const QPointF& pos) const override;
-    void finishImageBeforeCopy(QPainter*) const override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;
     QString writeFunction(QJsonObject& root) override;
 
 private:
-    QAction *_actnShowBeamShape;
-    BeamShapeWidget *_beamShape = nullptr;
-    QRect _beamShapeGeom;
-
-    void showBeamShape();
+    BeamShapeExtension *_beamShape;
 };
 
 

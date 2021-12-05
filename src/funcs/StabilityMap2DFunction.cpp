@@ -77,7 +77,7 @@ bool StabilityMap2DFunction::checkArg(Z::Variable* arg)
     return true;
 }
 
-Z::PointTS StabilityMap2DFunction::calculateAt(const Z::Value& x, const Z::Value& y)
+Z::PointTS StabilityMap2DFunction::calculateAtXY(const Z::Value& x, const Z::Value& y)
 {
     ElementEventsLocker elemLockX(_paramX.element);
     ElementEventsLocker elemLockY(_paramY.element);
