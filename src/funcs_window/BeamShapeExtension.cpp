@@ -44,18 +44,14 @@ void BeamShapeExtension::showBeamShape()
     {
         _beamShape = new BeamShapeWidget(_parent->_plot);
         _beamShape->setInitialGeometry(_beamShapeGeom);
-        if (_parent->function()->ok())
-        {
-            auto res = _parent->function()->calculateAt(Z::Value(_parent->_cursor->position().x(), _parent->getUnitX()));
-            _beamShape->setShape(res.T, res.S);
-        }
+        _parent->updateCursorInfo();
     }
 }
 
-void BeamShapeExtension::setShape(double t, double s)
+void BeamShapeExtension::setShape(const Z::PointTS &shape)
 {
     if (_beamShape)
-        _beamShape->setShape(t, s);
+        _beamShape->setShape(shape);
 }
 
 //------------------------------------------------------------------------------
@@ -98,14 +94,14 @@ void BeamShapeWidget::setInitialGeometry(const QRect& r)
         setGeometry(parentWidget()->width() - DEFAULT_W - DEFAULT_M, DEFAULT_M, DEFAULT_W, DEFAULT_H);
 }
 
-void BeamShapeWidget::setShape(double t, double s)
+void BeamShapeWidget::setShape(const Z::PointTS &shape)
 {
-    Double w(t);
-    Double h(s);
+    Double w(shape.T);
+    Double h(shape.S);
     if (w.is(0) or w.isNan() or w.isInfinity() or h.is(0) or h.isNan() or h.isInfinity())
         _ratio = -1;
     else
-        _ratio = qAbs(t) / qAbs(s);
+        _ratio = qAbs(shape.T) / qAbs(shape.S);
     update();
 }
 

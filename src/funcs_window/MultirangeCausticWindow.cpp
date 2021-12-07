@@ -73,7 +73,7 @@ QString MultirangeCausticWindow::getCursorInfo(const QPointF& pos) const
     if (!function()->ok()) return QString();
     double x = getUnitX()->toSi(pos.x());
     auto res = function()->calculateAt(x);
-    _beamShape->setShape(res.T, res.S);
+    _beamShape->setShape(res);
     auto unitY = getUnitY();
     return QString("%1t = %2; %1s = %3").arg(
                 CausticFunction::modeAlias(function()->mode()),

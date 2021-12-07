@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include "../core/Values.h"
+
 QT_BEGIN_NAMESPACE
 class QAction;
 class QMenu;
@@ -22,7 +24,7 @@ public:
     void parentSizeChanged();
     void setInitialGeometry(const QRect& r);
 
-    void setShape(double t, double s);
+    void setShape(const Z::PointTS& shape);
 
 protected:
     void mousePressEvent(QMouseEvent*) override;
@@ -54,7 +56,7 @@ class BeamShapeExtension : public QObject
 public:
     BeamShapeExtension(PlotFuncWindow* parent);
 
-    void setShape(double t, double s);
+    void setShape(const Z::PointTS& shape);
 
 private:
     PlotFuncWindow* _parent;
