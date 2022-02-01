@@ -4,7 +4,9 @@
       "version": "2.0.10-beta6",
       "date": "",
       "changes": [
-
+        {
+          "text": "Fixed typos (https://github.com/orion-project/rezonator2/issues/16)"
+        }
       ]
     },
     {

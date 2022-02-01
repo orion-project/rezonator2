@@ -274,7 +274,7 @@ QString StabilityMapWindow::getDefaultTitleY() const
     switch (function()->stabilityCalcMode())
     {
     case Z::Enums::StabilityCalcMode::Normal:
-        stabCalcMode = QStringLiteral("(A + B)/2");
+        stabCalcMode = QStringLiteral("(A + D)/2");
         break;
     case Z::Enums::StabilityCalcMode::Squared:
         stabCalcMode = QStringLiteral("1 - ((A + D)/2)²");
