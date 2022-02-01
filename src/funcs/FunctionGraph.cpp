@@ -110,6 +110,13 @@ void FunctionGraph::setColor(Z::WorkPlane workPlane, const QString& color)
     setPen(QPen(clr));
 }
 
+bool FunctionGraph::contains(QCPGraph* graph) const
+{
+    foreach (auto g, segments())
+        if (graph == g) return true;
+    return false;
+}
+
 //------------------------------------------------------------------------------
 //                               FunctionGraphSet
 //------------------------------------------------------------------------------
@@ -126,15 +133,27 @@ FunctionGraphSet::~FunctionGraphSet()
 {
     delete _graphT;
     delete _graphS;
-    qDeleteAll(_graphs.values());
+
+    auto it = _graphs.constBegin();
+    while (it != _graphs.constEnd())
+    {
+        delete it.value();
+        it++;
+    }
+    _graphs.clear();
 }
 
 void FunctionGraphSet::clear()
 {
     _graphT->clear();
     _graphS->clear();
-    for (auto g : _graphs.values())
-        g->clear();
+
+    auto it = _graphs.constBegin();
+    while (it != _graphs.constEnd())
+    {
+        it.value()->clear();
+        it++;
+    }
 }
 
 void FunctionGraphSet::update(PlotFunction* function)
@@ -161,4 +180,22 @@ void FunctionGraphSet::update(const QString& id, Z::WorkPlane workPlane, const Q
     else
         _graphs[key]->setColor(workPlane, color);
     _graphs[key]->update(functions);
+}
+
+FunctionGraph* FunctionGraphSet::findBy(QCPGraph* graph) const
+{
+    if (_graphT->contains(graph))
+        return _graphT;
+    if (_graphS->contains(graph))
+        return _graphS;
+
+    auto it = _graphs.constBegin();
+    while (it != _graphs.constEnd())
+    {
+        if (it.value()->contains(graph))
+            return it.value();
+        it++;
+    }
+
+    return nullptr;
 }
