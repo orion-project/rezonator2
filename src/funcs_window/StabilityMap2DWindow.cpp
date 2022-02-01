@@ -449,7 +449,7 @@ void StabilityMap2DWindow::copyGraphData2D()
     auto data =_graph->data();
     auto ny = data->valueSize();
     auto nx = data->keySize();
-    qDebug() << "copy2d" << ny << nx;
+    //qDebug() << "copy2d" << ny << nx;
     if (transposed)
     {
         QVector<double> v(ny);
