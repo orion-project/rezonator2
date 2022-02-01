@@ -1,8 +1,15 @@
 {
   "history": [
     {
+      "version": "2.0.10-beta6",
+      "date": "",
+      "changes": [
+
+      ]
+    },
+    {
       "version": "2.0.9-beta5",
-      "data": "2021-11-27",
+      "date": "2021-11-27",
       "changes": [
         {
           "text": "Can disable some elements (instead of to delete them)."
