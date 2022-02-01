@@ -1,9 +1,12 @@
 {
   "history": [
     {
-      "version": "2.0.10-beta6",
+      "version": "2.0.10-dev",
       "date": "",
       "changes": [
+        {
+          "text": "Added a command for exporting all graph segments (https://github.com/orion-project/rezonator2/issues/17)"
+        },
         {
           "text": "Fixed typos (https://github.com/orion-project/rezonator2/issues/16)"
         }
