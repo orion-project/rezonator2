@@ -617,7 +617,7 @@ QList<BasicMdiChild::ViewMenuItem> PlotFuncWindow::menuItems_View()
     _leftPanel->fillActions(actions);
     if (actions.size() > 0)
     {
-        for (auto a : actions)
+        foreach (auto a, actions)
             menuItems << BasicMdiChild::ViewMenuItem(a);
         menuItems << BasicMdiChild::ViewMenuItem();
     }
@@ -627,7 +627,7 @@ QList<BasicMdiChild::ViewMenuItem> PlotFuncWindow::menuItems_View()
 
     actions.clear();
     fillViewMenuActions(actions);
-    for (auto a : actions)
+    foreach (auto a, actions)
         menuItems << BasicMdiChild::ViewMenuItem(a);
 
     return menuItems;
