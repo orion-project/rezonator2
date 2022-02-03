@@ -12,6 +12,12 @@ class QMovie;
 class QToolButton;
 QT_END_NAMESPACE
 
+namespace Ori {
+namespace Widgets {
+class Label;
+} // namespace Widget
+} // namespace Ori
+
 class CustomCssWidget : public QWidget
 {
 protected:
@@ -84,7 +90,8 @@ public:
 private:
     QMovie* _movie = nullptr;
     QJsonObject _tips;
-    QLabel *_tipText, *_tipPreview, *_tipImage, *_enlargeTip;
+    QLabel *_tipText, *_tipPreview, *_tipImage;
+    Ori::Widgets::Label *_enlargeTip;
     QString _imagePath;
     QStringList _ids;
     int _index = -1;

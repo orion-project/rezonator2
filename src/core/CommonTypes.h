@@ -63,7 +63,7 @@ public:
     */
     enum StabilityCalcMode
     {
-        Normal, ///< P = (A + B)/2
+        Normal, ///< P = (A + D)/2
         Squared ///< P = 1 - ((A + D)/2)^2
     };
     Q_ENUM(StabilityCalcMode)

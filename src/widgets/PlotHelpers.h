@@ -16,6 +16,8 @@ class Plot;
 class Cursor;
 }
 
+class QCPGraph;
+
 enum class PlotAxis { X, Y };
 
 namespace PlotHelpers {
@@ -24,6 +26,9 @@ void rescaleLimits(QCPL::Plot* plot, PlotAxis axis, Z::Unit unitFrom, Z::Unit un
 void rescaleCursor(QCPL::Cursor* cursor, PlotAxis axis, Z::Unit unitFrom, Z::Unit unitTo);
 
 QCPL::GraphDataExportSettings makeExportSettings();
+
+void toClipboard(QCPGraph* graph);
+void toClipboard(const QVector<QCPGraph*>& graphs);
 
 } // namespace PlotHelpers
 

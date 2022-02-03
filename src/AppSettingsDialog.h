@@ -12,7 +12,7 @@ class UnitComboBox;
 
 namespace Ori {
 namespace Widgets {
-    class OptionsGroup;
+    class OptionsGroupV2;
 }}
 
 class AppSettingsDialog : public Ori::Dlg::BasicConfigDialog
@@ -27,12 +27,12 @@ public:
     virtual bool collect() override;
 
 private:
-    Ori::Widgets::OptionsGroup *_groupOptions;
-    Ori::Widgets::OptionsGroup *_groupView;
-    Ori::Widgets::OptionsGroup *_groupLayoutExport;
-    Ori::Widgets::OptionsGroup *_groupExportData;
-    Ori::Widgets::OptionsGroup *_groupExportPlot;
-    Ori::Widgets::OptionsGroup *_groupCalcOpts;
+    Ori::Widgets::OptionsGroupV2 *_groupOptions;
+    Ori::Widgets::OptionsGroupV2 *_groupView;
+    Ori::Widgets::OptionsGroupV2 *_groupLayoutExport;
+    Ori::Widgets::OptionsGroupV2 *_groupExportData;
+    Ori::Widgets::OptionsGroupV2 *_groupExportPlot;
+    Ori::Widgets::OptionsGroupV2 *_groupCalcOpts;
     UnitComboBox *_defaultUnitBeamRadius;
     UnitComboBox *_defaultUnitFrontRadius;
     UnitComboBox *_defaultUnitAngle;

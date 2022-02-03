@@ -21,6 +21,7 @@
 #include "widgets/OriLabels.h"
 
 #include <QApplication>
+#include <QDesktopServices>
 #include <QFileInfo>
 #include <QInputDialog>
 #include <QJsonDocument>
@@ -229,6 +230,9 @@ TipsStartPanel::TipsStartPanel(QLabel *tipImage) : StartPanel("panel_tips")
     _tipText = new QLabel;
     _tipText->setObjectName("tip_text");
     _tipText->setWordWrap(true);
+    connect(_tipText, &QLabel::linkActivated, [](const QString& link){
+        QDesktopServices::openUrl(link);
+    });
 
     _tipImage = tipImage;
     _tipImage->setVisible(false);
@@ -271,8 +275,10 @@ TipsStartPanel::TipsStartPanel(QLabel *tipImage) : StartPanel("panel_tips")
 
     buttonsLayout->addStretch();
 
-    _enlargeTip = new QLabel(tr("Click to enlarge →"));
+    _enlargeTip = new Ori::Widgets::Label(tr("Click to enlarge →"));
+    _enlargeTip->setCursor(Qt::PointingHandCursor);
     buttonsLayout->addWidget(_enlargeTip);
+    connect(_enlargeTip, &Ori::Widgets::Label::clicked, this, &TipsStartPanel::enlargePreview);
 
     LayoutH({
         LayoutV({

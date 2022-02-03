@@ -30,11 +30,13 @@ public:
     void clear();
     void update(PlotFunction* function);
     void update(const QList<PlotFunction*>& functions);
+    const QVector<QCPGraph*>& segments() const { return _segments; }
     int segmentsCount() const { return _segments.size(); }
     void setFlipped(bool on) { _isFlipped = on; }
     void setVisible(bool on) { _isVisible = on; }
     void setPen(const QPen& pen) { _linePen = pen; }
     void setColor(Z::WorkPlane workPlane, const QString& color);
+    bool contains(QCPGraph* graph) const;
 
 private:
     QCPL::Plot* _plot;
@@ -63,6 +65,8 @@ public:
 
     FunctionGraph* T() { return _graphT; }
     FunctionGraph* S() { return _graphS; }
+
+    FunctionGraph* findBy(QCPGraph* graph) const;
 
 private:
     QCPL::Plot* _plot;

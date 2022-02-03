@@ -64,16 +64,16 @@ QWidget* AppSettingsDialog::createGeneralPage()
 {
     auto page = new Ori::Dlg::BasicConfigPage(tr("Behavior"), ":/config_pages/general");
 
-    _groupOptions = new Ori::Widgets::OptionsGroup(tr("Options"), {
-        tr("Edit just created element"),
-        tr("Generate labels for created elements"),
-        tr("Generate labels for pasted elements"),
-        tr("Generate labels for new pumps"),
-        tr("Show start window when application runs"),
-        tr("Show protocol window after application started"),
-        tr("Show custom elements in Elements Catalog"),
-        tr("Show Python code for matrices in info windows"),
-        tr("Don't load function windows when opening schema"),
+    _groupOptions = new Ori::Widgets::OptionsGroupV2(tr("Options"), {
+        {"editNewElem", tr("Edit just created element")},
+        {"elemAutoLabel", tr("Generate labels for created elements")},
+        {"elemAutoLabelPasted", tr("Generate labels for pasted elements")},
+        {"pumpAutoLabel", tr("Generate labels for new pumps")},
+        {"showStartWindow", tr("Show start window when application runs")},
+        {"showProtocolAtStart", tr("Show protocol window after application started")},
+        {"showCustomElemLibrary", tr("Show custom elements in Elements Catalog")},
+        {"showPythonMatrices", tr("Show Python code for matrices in info windows")},
+        {"skipFuncWindowsLoading", tr("Don't load function windows when opening schema")},
     });
 
     page->add({_groupOptions, page->stretch()});
@@ -85,11 +85,11 @@ QWidget* AppSettingsDialog::createViewPage()
     auto page = new Ori::Dlg::BasicConfigPage(tr("Interface"), ":/config_pages/view");
 
     // group box "Options"
-    _groupView = new Ori::Widgets::OptionsGroup(tr("Options"), {
-        tr("Use small toolbar images"),
-        tr("Show background image"),
-        tr("Use native menu bar (restart required)"),
-        tr("Use system open/save file dialogs")
+    _groupView = new Ori::Widgets::OptionsGroupV2(tr("Options"), {
+        {"smallToolbarImages", tr("Use small toolbar images")},
+        {"showBackground", tr("Show background image")},
+        {"useNativeMenuBar", tr("Use native menu bar (restart required)")},
+        {"useSystemDialogs", tr("Use system open/save file dialogs")},
     });
 
     _numberPrecisionData = new NumberPrecisionSpinBox;
@@ -107,8 +107,8 @@ QWidget* AppSettingsDialog::createLayoutPage()
     auto page = new Ori::Dlg::BasicConfigPage(tr("Layout"), ":/config_pages/layout");
 
     // group box "Options"
-    _groupLayoutExport = new Ori::Widgets::OptionsGroup(tr("Image export options"), {
-        tr("Use transparent background"),
+    _groupLayoutExport = new Ori::Widgets::OptionsGroupV2(tr("Image export options"), {
+        {"layoutExportTransparent", tr("Use transparent background")},
     });
 
     page->add({_groupLayoutExport, page->stretch()});
@@ -155,11 +155,10 @@ QWidget* AppSettingsDialog::createExportPage()
 {
     auto page = new Ori::Dlg::BasicConfigPage(tr("Export"), ":/toolbar/save");
 
-    _groupExportData = new Ori::Widgets::OptionsGroup(tr("Graph data export options"), {
-        tr("Use CSV format (otherwise, use plain text format)"),
-        tr("Use system locale (otherwise, use C locale)"),
-        tr("Transposed mode (write values in row instead of column)"),
-        //tr("Write column headers"),
+    _groupExportData = new Ori::Widgets::OptionsGroupV2(tr("Graph data export options"), {
+        {"exportAsCsv", tr("Use CSV format (otherwise, use plain text format)")},
+        {"exportSystemLocale", tr("Use system locale (otherwise, use C locale)")},
+        {"exportTransposed", tr("Transposed mode (write values in row instead of column)")},
     });
 
     _exportNumberPrecision = new NumberPrecisionSpinBox;
@@ -167,8 +166,8 @@ QWidget* AppSettingsDialog::createExportPage()
         LayoutH({new QLabel(tr("Number precision")), _exportNumberPrecision, Stretch()}).boxLayout(),
     });
 
-    _groupExportPlot = new Ori::Widgets::OptionsGroup(tr("Plot image export options"), {
-        tr("Hide cursor lines when save, copy, or print image")
+    _groupExportPlot = new Ori::Widgets::OptionsGroupV2(tr("Plot image export options"), {
+        {"exportHideCursor", tr("Hide cursor lines when save, copy, or print image")}
     });
 
     page->add({_groupExportData, _groupExportPlot, page->stretch()});
@@ -179,9 +178,9 @@ QWidget* AppSettingsDialog::createCalcPage()
 {
     auto page = new Ori::Dlg::BasicConfigPage(tr("Calcs"), ":/toolbar/options");
 
-    _groupCalcOpts = new Ori::Widgets::OptionsGroup(tr("Options"), {
-        tr("Calculate at medium ends in table functions"),
-        tr("Calculate in empty spaces in table functions"),
+    _groupCalcOpts = new Ori::Widgets::OptionsGroupV2(tr("Options"), {
+        {"calcTablesMediumEnds", tr("Calculate at medium ends in table functions")},
+        {"calcTablesEmptySpaces", tr("Calculate in empty spaces in table functions")},
     });
 
     page->add({_groupCalcOpts, page->stretch()});
@@ -193,25 +192,25 @@ void AppSettingsDialog::populate()
     AppSettings &settings = AppSettings::instance();
 
     // options
-    _groupOptions->setOption(0, settings.editNewElem);
-    _groupOptions->setOption(1, settings.elemAutoLabel);
-    _groupOptions->setOption(2, settings.elemAutoLabelPasted);
-    _groupOptions->setOption(3, settings.pumpAutoLabel);
-    _groupOptions->setOption(4, settings.showStartWindow);
-    _groupOptions->setOption(5, settings.showProtocolAtStart);
-    _groupOptions->setOption(6, settings.showCustomElemLibrary);
-    _groupOptions->setOption(7, settings.showPythonMatrices);
-    _groupOptions->setOption(8, settings.skipFuncWindowsLoading);
+    _groupOptions->setOption("editNewElem", settings.editNewElem);
+    _groupOptions->setOption("elemAutoLabel", settings.elemAutoLabel);
+    _groupOptions->setOption("elemAutoLabelPasted", settings.elemAutoLabelPasted);
+    _groupOptions->setOption("pumpAutoLabel", settings.pumpAutoLabel);
+    _groupOptions->setOption("showStartWindow", settings.showStartWindow);
+    _groupOptions->setOption("showProtocolAtStart", settings.showProtocolAtStart);
+    _groupOptions->setOption("showCustomElemLibrary", settings.showCustomElemLibrary);
+    _groupOptions->setOption("showPythonMatrices", settings.showPythonMatrices);
+    _groupOptions->setOption("skipFuncWindowsLoading", settings.skipFuncWindowsLoading);
 
     // view
-    _groupView->setOption(0, settings.smallToolbarImages);
-    _groupView->setOption(1, settings.showBackground);
-    _groupView->setOption(2, settings.useNativeMenuBar);
-    _groupView->setOption(3, settings.useSystemDialogs);
+    _groupView->setOption("smallToolbarImages", settings.smallToolbarImages);
+    _groupView->setOption("showBackground", settings.showBackground);
+    _groupView->setOption("useNativeMenuBar", settings.useNativeMenuBar);
+    _groupView->setOption("useSystemDialogs", settings.useSystemDialogs);
     _numberPrecisionData->setValue(settings.numberPrecisionData);
 
     // layout
-    _groupLayoutExport->setOption(0, settings.layoutExportTransparent);
+    _groupLayoutExport->setOption("layoutExportTransparent", settings.layoutExportTransparent);
 
     // units
     _defaultUnitBeamRadius->setSelectedUnit(settings.defaultUnitBeamRadius);
@@ -219,15 +218,15 @@ void AppSettingsDialog::populate()
     _defaultUnitAngle->setSelectedUnit(settings.defaultUnitAngle);
 
     // export
-    _groupExportData->setOption(0, settings.exportAsCsv);
-    _groupExportData->setOption(1, settings.exportSystemLocale);
-    _groupExportData->setOption(2, settings.exportTransposed);
+    _groupExportData->setOption("exportAsCsv", settings.exportAsCsv);
+    _groupExportData->setOption("exportSystemLocale", settings.exportSystemLocale);
+    _groupExportData->setOption("exportTransposed", settings.exportTransposed);
     _exportNumberPrecision->setValue(settings.exportNumberPrecision);
-    _groupExportPlot->setOption(0, settings.exportHideCursor);
+    _groupExportPlot->setOption("exportHideCursor", settings.exportHideCursor);
 
     // calc
-    _groupCalcOpts->setOption(0, settings.calcTablesMediumEnds);
-    _groupCalcOpts->setOption(1, settings.calcTablesEmptySpaces);
+    _groupCalcOpts->setOption("calcTablesMediumEnds", settings.calcTablesMediumEnds);
+    _groupCalcOpts->setOption("calcTablesEmptySpaces", settings.calcTablesEmptySpaces);
 }
 
 bool AppSettingsDialog::collect()
@@ -235,25 +234,25 @@ bool AppSettingsDialog::collect()
     AppSettings &settings = AppSettings::instance();
 
     // options
-    settings.editNewElem = _groupOptions->option(0);
-    settings.elemAutoLabel = _groupOptions->option(1);
-    settings.elemAutoLabelPasted = _groupOptions->option(2);
-    settings.pumpAutoLabel = _groupOptions->option(3);
-    settings.showStartWindow = _groupOptions->option(4);
-    settings.showProtocolAtStart = _groupOptions->option(5);
-    settings.showCustomElemLibrary = _groupOptions->option(6);
-    settings.showPythonMatrices = _groupOptions->option(7);
-    settings.skipFuncWindowsLoading = _groupOptions->option(8);
+    settings.editNewElem = _groupOptions->option("editNewElem");
+    settings.elemAutoLabel = _groupOptions->option("elemAutoLabel");
+    settings.elemAutoLabelPasted = _groupOptions->option("elemAutoLabelPasted");
+    settings.pumpAutoLabel = _groupOptions->option("pumpAutoLabel");
+    settings.showStartWindow = _groupOptions->option("showStartWindow");
+    settings.showProtocolAtStart = _groupOptions->option("showProtocolAtStart");
+    settings.showCustomElemLibrary = _groupOptions->option("showCustomElemLibrary");
+    settings.showPythonMatrices = _groupOptions->option("showPythonMatrices");
+    settings.skipFuncWindowsLoading = _groupOptions->option("skipFuncWindowsLoading");
 
     // view
-    settings.smallToolbarImages = _groupView->option(0);
-    settings.showBackground = _groupView->option(1);
-    settings.useNativeMenuBar = _groupView->option(2);
-    settings.useSystemDialogs = _groupView->option(3);
+    settings.smallToolbarImages = _groupView->option("smallToolbarImages");
+    settings.showBackground = _groupView->option("showBackground");
+    settings.useNativeMenuBar = _groupView->option("useNativeMenuBar");
+    settings.useSystemDialogs = _groupView->option("useSystemDialogs");
     settings.numberPrecisionData = _numberPrecisionData->value();
 
     // layout
-    settings.layoutExportTransparent = _groupView->option(0);
+    settings.layoutExportTransparent = _groupLayoutExport->option("layoutExportTransparent");
 
     // units
     settings.defaultUnitBeamRadius = _defaultUnitBeamRadius->selectedUnit();
@@ -261,15 +260,15 @@ bool AppSettingsDialog::collect()
     settings.defaultUnitAngle = _defaultUnitAngle->selectedUnit();
 
     // export
-    settings.exportAsCsv = _groupExportData->option(0);
-    settings.exportSystemLocale = _groupExportData->option(1);
-    settings.exportTransposed = _groupExportData->option(2);
+    settings.exportAsCsv = _groupExportData->option("exportAsCsv");
+    settings.exportSystemLocale = _groupExportData->option("exportSystemLocale");
+    settings.exportTransposed = _groupExportData->option("exportTransposed");
     settings.exportNumberPrecision = _exportNumberPrecision->value();
-    settings.exportHideCursor = _groupExportPlot->option(0);
+    settings.exportHideCursor = _groupExportPlot->option("exportHideCursor");
 
     // calc
-    settings.calcTablesMediumEnds = _groupCalcOpts->option(0);
-    settings.calcTablesEmptySpaces = _groupCalcOpts->option(1);
+    settings.calcTablesMediumEnds = _groupCalcOpts->option("calcTablesMediumEnds");
+    settings.calcTablesEmptySpaces = _groupCalcOpts->option("calcTablesEmptySpaces");
 
     settings.save();
     return true;

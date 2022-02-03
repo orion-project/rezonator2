@@ -118,7 +118,7 @@ protected:
         *actnSetLimitsX, *actnSetLimitsY,
         *actnZoomIn, *actnZoomOut, *actnZoomInX, *actnZoomOutX, *actnZoomInY, *actnZoomOutY,
         *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo,
-        *actnCopyGraphData, *actnCopyPlotImage;
+        *actnCopyGraphData, *actnCopyGraphDataCur, *actnCopyGraphDataAll, *actnCopyPlotImage;
 
     struct ViewState
     {
@@ -179,6 +179,7 @@ private slots:
     void freeze(bool);
     void copyPlotImage();
     void copyGraphData();
+    void copyGraphDataAll();
 
     QWidget* optionsPanelRequired();
 
@@ -187,6 +188,7 @@ private:
     void setUnitY(Z::Unit unit);
 
     void graphSelected(QCPGraph *);
+    void graphsMenuAboutToShow();
     void updateCursorInfo();
 
     friend class BeamShapeExtension;
