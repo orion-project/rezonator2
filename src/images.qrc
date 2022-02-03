@@ -291,5 +291,7 @@
         <file alias="several_pumps.gif">../tips/several_pumps.gif</file>
         <file alias="link_elem_param_to_global.gif">../tips/link_elem_param_to_global.gif</file>
         <file alias="add_global_param.gif">../tips/add_global_param.gif</file>
+        <file alias="online_help.png">../tips/online_help.png</file>
+        <file alias="disable_elem.png">../tips/disable_elem.png</file>
     </qresource>
 </RCC>

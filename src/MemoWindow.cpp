@@ -216,13 +216,15 @@ public:
 protected:
     const QVector<Rule>& rules() const
     {
-        static QVector<Rule> rules = {
-            {
-                .expr = QRegularExpression("\\bhttp(s?)://[^\\s]+\\b"),
-                .format = MemoTextFormat("blue").underline().get(),
-                .hyperlink = true,
-            }
-        };
+        static QVector<Rule> rules;
+        if (rules.isEmpty())
+        {
+            Rule rule;
+            rule.expr = QRegularExpression("\\bhttp(s?)://[^\\s]+\\b");
+            rule.format = MemoTextFormat("blue").underline().get();
+            rule.hyperlink = true;
+            rules << rule;
+        }
         return rules;
     }
 

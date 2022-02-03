@@ -86,6 +86,8 @@ void PlotFuncWindow::createActions()
     actnSetLimitsY = action(tr("Set Y-axis Limits..."), _plot, SLOT(setLimitsDlgY()));
 
     actnCopyGraphData = action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy");
+    actnCopyGraphDataCur = action(tr("Copy Graph Data (this segment)"), this, SLOT(copyGraphData()), ":/toolbar/copy");
+    actnCopyGraphDataAll = action(tr("Copy Graph Data (all segments)"), this, SLOT(copyGraphDataAll()), ":/toolbar/copy");
     actnCopyPlotImage = action(tr("Copy Plot Image"), this, SLOT(copyPlotImage()), ":/toolbar/copy_img");
 }
 
@@ -153,7 +155,10 @@ void PlotFuncWindow::createMenuBar()
 
     auto menuGraph = new QMenu(this);
     menuGraph->addAction(actnCopyGraphData);
+    menuGraph->addAction(actnCopyGraphDataCur);
+    menuGraph->addAction(actnCopyGraphDataAll);
     menuGraph->addAction(actnCopyPlotImage);
+    connect(menuGraph, &QMenu::aboutToShow, this, &PlotFuncWindow::graphsMenuAboutToShow);
 
     auto menuPlot = new QMenu(this);
     menuPlot->addAction(actnCopyPlotImage);
@@ -564,7 +569,7 @@ void PlotFuncWindow::elementDeleting(Schema*, Element* elem)
 void PlotFuncWindow::disableAndClose()
 {
     _frozen = true; // disable updates
-    QTimer::singleShot(0, [this]{this->close();});
+    QTimer::singleShot(0, this, [this]{close();});
 }
 
 Z::Unit PlotFuncWindow::getUnitX() const
@@ -617,7 +622,7 @@ QList<BasicMdiChild::ViewMenuItem> PlotFuncWindow::menuItems_View()
     _leftPanel->fillActions(actions);
     if (actions.size() > 0)
     {
-        for (auto a : actions)
+        foreach (auto a, actions)
             menuItems << BasicMdiChild::ViewMenuItem(a);
         menuItems << BasicMdiChild::ViewMenuItem();
     }
@@ -627,7 +632,7 @@ QList<BasicMdiChild::ViewMenuItem> PlotFuncWindow::menuItems_View()
 
     actions.clear();
     fillViewMenuActions(actions);
-    for (auto a : actions)
+    foreach (auto a, actions)
         menuItems << BasicMdiChild::ViewMenuItem(a);
 
     return menuItems;
@@ -644,12 +649,13 @@ void PlotFuncWindow::optionChanged(AppSettingsOptions option)
 
 void PlotFuncWindow::copyGraphData()
 {
-    auto graph = _plot->selectedGraph();
-    if (!graph) return;
-    auto exporter = QCPL::GraphDataExporter(PlotHelpers::makeExportSettings());
-    for (auto d : *graph->data().data())
-        exporter.add(d.key, d.value);
-    exporter.toClipboard();
+    PlotHelpers::toClipboard(_plot->selectedGraph());
+}
+
+void PlotFuncWindow::copyGraphDataAll()
+{
+    auto ts = _graphs->findBy(_plot->selectedGraph());
+    if (ts) PlotHelpers::toClipboard(ts->segments());
 }
 
 void PlotFuncWindow::copyPlotImage()
@@ -658,8 +664,21 @@ void PlotFuncWindow::copyPlotImage()
     if (AppSettings::instance().exportHideCursor)
         _cursor->setVisible(false);
 
-    _plot->copyPlotImage();
+    QImage image(_plot->width(), _plot->height(), QImage::Format_RGB32);
+    QCPPainter painter(&image);
+    _plot->toPainter(&painter);
+    emit finishImageBeforeCopy(&painter);
+    qApp->clipboard()->setImage(image);
 
     if (oldVisible != _cursor->visible())
         _cursor->setVisible(oldVisible);
+}
+
+void PlotFuncWindow::graphsMenuAboutToShow()
+{
+    auto ts = _graphs->findBy(_plot->selectedGraph());
+    bool manySegments = ts && ts->segmentsCount() > 1;
+    actnCopyGraphData->setVisible(!manySegments);
+    actnCopyGraphDataCur->setVisible(manySegments);
+    actnCopyGraphDataAll->setVisible(manySegments);
 }

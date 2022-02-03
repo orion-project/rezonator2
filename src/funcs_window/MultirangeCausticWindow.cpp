@@ -1,5 +1,6 @@
 #include "MultirangeCausticWindow.h"
 
+#include "BeamShapeExtension.h"
 #include "CausticOptionsPanel.h"
 #include "../core/Format.h"
 #include "../funcs/CausticFunction.h"
@@ -10,6 +11,7 @@
 
 MultirangeCausticWindow::MultirangeCausticWindow(Schema *schema): MulticausticWindow(new MultirangeCausticFunction(schema))
 {
+    _beamShape = new BeamShapeExtension(this);
 }
 
 QWidget* MultirangeCausticWindow::makeOptionsPanel()
@@ -71,6 +73,7 @@ QString MultirangeCausticWindow::getCursorInfo(const QPointF& pos) const
     if (!function()->ok()) return QString();
     double x = getUnitX()->toSi(pos.x());
     auto res = function()->calculateAt(x);
+    _beamShape->setShape(res);
     auto unitY = getUnitY();
     return QString("%1t = %2; %1s = %3").arg(
                 CausticFunction::modeAlias(function()->mode()),

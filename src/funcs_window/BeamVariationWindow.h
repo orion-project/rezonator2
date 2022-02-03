@@ -5,6 +5,7 @@
 #include "../RezonatorDialog.h"
 #include "../funcs/BeamVariationFunction.h"
 
+class BeamShapeExtension;
 class ElemAndParamSelector;
 class ElemOffsetSelectorWidget;
 class GeneralRangeEditor;
@@ -33,6 +34,9 @@ protected:
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;
     QString writeFunction(QJsonObject& root) override;
+
+private:
+    BeamShapeExtension* _beamShape;
 };
 
 

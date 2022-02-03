@@ -78,6 +78,9 @@ public:
     // inherited from IAppSettingsListener
     void optionChanged(AppSettingsOptions option) override;
 
+signals:
+    void finishImageBeforeCopy(QPainter*);
+
 public slots:
     void update();
 
@@ -115,7 +118,7 @@ protected:
         *actnSetLimitsX, *actnSetLimitsY,
         *actnZoomIn, *actnZoomOut, *actnZoomInX, *actnZoomOutX, *actnZoomInY, *actnZoomOutY,
         *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo,
-        *actnCopyGraphData, *actnCopyPlotImage;
+        *actnCopyGraphData, *actnCopyGraphDataCur, *actnCopyGraphDataAll, *actnCopyPlotImage;
 
     struct ViewState
     {
@@ -176,6 +179,7 @@ private slots:
     void freeze(bool);
     void copyPlotImage();
     void copyGraphData();
+    void copyGraphDataAll();
 
     QWidget* optionsPanelRequired();
 
@@ -184,7 +188,10 @@ private:
     void setUnitY(Z::Unit unit);
 
     void graphSelected(QCPGraph *);
+    void graphsMenuAboutToShow();
     void updateCursorInfo();
+
+    friend class BeamShapeExtension;
 };
 
 #endif // PLOT_FUNC_WINDOW_H

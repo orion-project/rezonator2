@@ -61,6 +61,7 @@ public:
     virtual bool checkArguments();
 
     virtual void calculate() {}
+    virtual Z::PairTS<double> calculateAt(const Z::Value& arg) { Q_UNUSED(arg) return Z::PairTS<double>(); }
 
     /// Defines if function can calculate notable values. See @ref calculateNotables().
     virtual bool hasNotables() const { return false; }

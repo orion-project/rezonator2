@@ -43,4 +43,24 @@ QCPL::GraphDataExportSettings makeExportSettings()
     return es;
 }
 
+void toClipboard(QCPGraph* graph)
+{
+    if (!graph) return;
+    QCPL::GraphDataExporter exporter(makeExportSettings());
+    for (auto d : *(graph->data().data()))
+        exporter.add(d.key, d.value);
+    exporter.toClipboard();
+}
+
+void toClipboard(const QVector<QCPGraph*>& graphs)
+{
+    auto settings = makeExportSettings();
+    settings.mergePoints = true;
+    QCPL::GraphDataExporter exporter(settings);
+    foreach (auto g, graphs)
+        for (auto d : *(g->data().data()))
+            exporter.add(d.key, d.value);
+    exporter.toClipboard();
+}
+
 } // namespace PlotHelpers

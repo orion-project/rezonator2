@@ -1,4 +1,12 @@
 {
+    "online_help": {
+        "text": "If you can not see the offline documentation, you always can read it online: <a href='http://rezonator.orion-project.org/help/'>rezonator.orion-project.org/help</a>",
+        "image": "online_help.png"
+    },
+    "disable_elem": {
+        "text": "You can temporary <b>disable an element</b> instead of to delete it permanently. This way it's possible to quickly replace one element with another and back, all functions and plots will be recalculated automatically.",
+        "image": "disable_elem.png"
+    },
     "memo": {
         "text": "<b>Memo window</b> is a rich text editor where you can take work notes, keep some pieces of useful information, even paste images into that and all these data will be stored in your schema project file.",
         "image": "memo.png"
