@@ -21,6 +21,9 @@ protected:
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;
     QString writeFunction(QJsonObject& root) override;
+
+private:
+    class BeamShapeExtension *_beamShape;
 };
 
 #endif // MULTIRANGE_CAUSTIC_WINDOW_H

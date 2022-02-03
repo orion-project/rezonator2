@@ -569,7 +569,7 @@ void PlotFuncWindow::elementDeleting(Schema*, Element* elem)
 void PlotFuncWindow::disableAndClose()
 {
     _frozen = true; // disable updates
-    QTimer::singleShot(0, this, [this]{this->close();});
+    QTimer::singleShot(0, this, [this]{close();});
 }
 
 Z::Unit PlotFuncWindow::getUnitX() const
@@ -664,7 +664,11 @@ void PlotFuncWindow::copyPlotImage()
     if (AppSettings::instance().exportHideCursor)
         _cursor->setVisible(false);
 
-    _plot->copyPlotImage();
+    QImage image(_plot->width(), _plot->height(), QImage::Format_RGB32);
+    QCPPainter painter(&image);
+    _plot->toPainter(&painter);
+    emit finishImageBeforeCopy(&painter);
+    qApp->clipboard()->setImage(image);
 
     if (oldVisible != _cursor->visible())
         _cursor->setVisible(oldVisible);

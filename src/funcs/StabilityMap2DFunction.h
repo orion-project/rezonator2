@@ -25,7 +25,7 @@ public:
     bool hasDataTable() const override { return false; }
     void loadPrefs() override;
 
-    Z::PointTS calculateAt(const Z::Value& x, const Z::Value& y);
+    Z::PointTS calculateAtXY(const Z::Value& x, const Z::Value& y);
 
     Z::Enums::StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }
     void setStabilityCalcMode(Z::Enums::StabilityCalcMode mode) { _stabilityCalcMode = mode; }

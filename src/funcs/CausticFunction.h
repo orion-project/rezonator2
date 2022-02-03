@@ -25,7 +25,7 @@ public:
     // Only needs for SP schemas
     void setPump(PumpParams* pump) { _pump = pump; }
 
-    Z::PointTS calculateAt(double argSI);
+    Z::PointTS calculateAt(const Z::Value& arg) override;
 
     void calculate() override;
     bool hasOptions() const override { return true; }

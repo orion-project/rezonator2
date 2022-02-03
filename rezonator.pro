@@ -108,6 +108,7 @@ HEADERS += \
     src/funcs/StabilityMap2DFunction.h \
     src/funcs/StabilityMapFunction.h \
     src/funcs/TableFunction.h \
+    src/funcs_window/BeamShapeExtension.h \
     src/funcs_window/CausticWindow.h \
     src/funcs_window/FuncWindowHelpers.h \
     src/funcs_window/InfoFuncWindow.h \
@@ -127,7 +128,6 @@ HEADERS += \
     src/tests/TestSuite.h \
     src/tests/TestUtils.h \
     src/Appearance.h \
-    src/widgets/BeamShapeWidget.h \
     src/widgets/ElemFormulaEditor.h \
     src/widgets/ElemSelectorWidget.h \
     src/widgets/ElementImagesProvider.h \
@@ -236,6 +236,7 @@ SOURCES += \
     src/funcs/StabilityMap2DFunction.cpp \
     src/funcs/StabilityMapFunction.cpp \
     src/funcs/TableFunction.cpp \
+    src/funcs_window/BeamShapeExtension.cpp \
     src/funcs_window/CausticWindow.cpp \
     src/funcs_window/FuncWindowHelpers.cpp \
     src/funcs_window/InfoFuncWindow.cpp \
@@ -278,7 +279,6 @@ SOURCES += \
     src/tests/test_Units.cpp \
     src/tests/test_Values.cpp \
     src/Appearance.cpp \
-    src/widgets/BeamShapeWidget.cpp \
     src/widgets/ElemFormulaEditor.cpp \
     src/widgets/ElemSelectorWidget.cpp \
     src/widgets/ElementTypesListView.cpp \

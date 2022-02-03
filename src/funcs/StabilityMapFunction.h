@@ -17,7 +17,7 @@ public:
     bool hasOptions() const override { return true; }
     void loadPrefs() override;
 
-     Z::PointTS calculateAt(const Z::Value& v);
+    Z::PointTS calculateAt(const Z::Value& v) override;
 
     Z::Enums::StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }
     void setStabilityCalcMode(Z::Enums::StabilityCalcMode mode) { _stabilityCalcMode = mode; }

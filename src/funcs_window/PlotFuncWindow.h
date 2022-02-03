@@ -78,6 +78,9 @@ public:
     // inherited from IAppSettingsListener
     void optionChanged(AppSettingsOptions option) override;
 
+signals:
+    void finishImageBeforeCopy(QPainter*);
+
 public slots:
     void update();
 
@@ -187,6 +190,8 @@ private:
     void graphSelected(QCPGraph *);
     void graphsMenuAboutToShow();
     void updateCursorInfo();
+
+    friend class BeamShapeExtension;
 };
 
 #endif // PLOT_FUNC_WINDOW_H

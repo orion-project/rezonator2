@@ -4,7 +4,6 @@
 #include "PlotFuncWindowStorable.h"
 #include "../funcs/MultirangeCausticFunction.h"
 
-class BeamShapeWidget;
 class QCPItemStraightLine;
 
 class MulticausticWindow : public PlotFuncWindowStorable
@@ -42,11 +41,7 @@ protected:
 private:
     QList<QCPItemStraightLine*> _elemBoundMarkers;
     QAction* _actnElemBoundMarkers;
-    QAction* _actnShowBeamShape;
-    BeamShapeWidget *_beamShape = nullptr;
-    QRect _beamShapeGeom;
 
-    void showBeamShape();
     void toggleElementBoundMarkers(bool on);
     void updateElementBoundMarkers();
     QCPItemStraightLine* makeElemBoundMarker() const;

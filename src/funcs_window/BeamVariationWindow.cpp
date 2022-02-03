@@ -1,5 +1,6 @@
 #include "BeamVariationWindow.h"
 
+#include "BeamShapeExtension.h"
 #include "../CustomPrefs.h"
 #include "../core/Format.h"
 #include "../io/JsonUtils.h"
@@ -104,7 +105,7 @@ void BeamVariationParamsDlg::guessRange()
 BeamVariationWindow::BeamVariationWindow(Schema *schema)
     : PlotFuncWindowStorable(new BeamVariationFunction(schema))
 {
-
+    _beamShape = new BeamShapeExtension(this);
 }
 
 bool BeamVariationWindow::configureInternal()
@@ -122,13 +123,13 @@ QString BeamVariationWindow::getDefaultTitleX() const
     auto arg = function()->arg();
     auto unit = getUnitX();
     if (unit == Z::Units::none())
-        return QStringLiteral("%1, %2")
-                .arg(arg->element->displayLabelTitle())
-                .arg(arg->parameter->name());
-    return QStringLiteral("%1, %2 (%3)")
-            .arg(arg->element->displayLabelTitle())
-            .arg(arg->parameter->label())
-            .arg(unit->name());
+        return QStringLiteral("%1, %2").arg(
+                    arg->element->displayLabelTitle(),
+                    arg->parameter->name());
+    return QStringLiteral("%1, %2 (%3)").arg(
+                arg->element->displayLabelTitle(),
+                arg->parameter->label(),
+                unit->name());
 }
 
 QString BeamVariationWindow::getDefaultTitleY() const
@@ -136,13 +137,13 @@ QString BeamVariationWindow::getDefaultTitleY() const
     auto elem = function()->pos()->element;
     auto range = Z::Utils::asRange(elem);
     if (range)
-        return tr("Beam radius at %1 +%2, (%3)")
-            .arg(elem->label())
-            .arg(function()->pos()->offset.displayStr())
-            .arg(getUnitY()->name());
-    return tr("Beam radius at %1, (%2)")
-        .arg(elem->label())
-        .arg(getUnitY()->name());
+        return tr("Beam radius at %1 +%2, (%3)").arg(
+                    elem->label(),
+                    function()->pos()->offset.displayStr(),
+                    getUnitY()->name());
+    return tr("Beam radius at %1, (%2)").arg(
+                elem->label(),
+                getUnitY()->name());
 }
 
 Z::Unit BeamVariationWindow::getDefaultUnitX() const
@@ -188,8 +189,9 @@ QString BeamVariationWindow::getCursorInfo(const QPointF& pos) const
 {
     if (!function()->ok()) return QString();
     auto res = function()->calculateAt(Z::Value(pos.x(), getUnitX()));
+    _beamShape->setShape(res);
     auto unitY = getUnitY();
-    return QStringLiteral("Wt = %1; Ws = %2")
-            .arg(Double(res.T).isNan() ? QStringLiteral("NaN") : Z::format(unitY->fromSi(res.T)))
-            .arg(Double(res.S).isNan() ? QStringLiteral("NaN") : Z::format(unitY->fromSi(res.S)));
+    QString resT = Double(res.T).isNan() ? QStringLiteral("NaN") : Z::format(unitY->fromSi(res.T));
+    QString resS = Double(res.S).isNan() ? QStringLiteral("NaN") : Z::format(unitY->fromSi(res.S));
+    return QStringLiteral("Wt = %1; Ws = %2").arg(resT, resS);
 }

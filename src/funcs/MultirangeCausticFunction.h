@@ -31,7 +31,7 @@ public:
     CausticFunction::Mode mode() const;
     void setMode(CausticFunction::Mode mode);
 
-     Z::PointTS calculateAt(double argSI);
+    Z::PointTS calculateAt(const Z::Value&arg) override;
 
 private:
     QList<CausticFunction*> _funcs;

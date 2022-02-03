@@ -46,7 +46,7 @@ static QString arrToStr(const QVector<double> arr)
             test->setResult(false); \
             test->setMessage("Array is not equal to expected" ); \
             test->logAssertion("ARE ARRAYS NEAR EQUAL", \
-                               QString("%1 == %2").arg(#expr_arr1).arg(#expr_arr2), \
+                               QString("%1 == %2").arg(#expr_arr1, #expr_arr2), \
                                arrToStr(arr2), arrToStr(arr1), __FILE__, __LINE__); \
             return; \
         }\
@@ -287,10 +287,10 @@ TEST_METHOD(calculate_squared)
 TEST_METHOD(calculateAt)
 {
     TEST_STAB_MAP_2D_FUNC(Z::Enums::StabilityCalcMode::Normal)
-    ASSERT_NEAR_TS(func.calculateAt(30_mm, 50_mm), -0.270565484, -0.395066604, 1e-7)
-    ASSERT_NEAR_TS(func.calculateAt(85_mm, 70_mm), -6.18395212, -5.12656322, 1e-7)
-    ASSERT_NEAR_TS(func.calculateAt(5_cm, 40_cm), 5.43798072, 5.86145994, 1e-7)
-    ASSERT_NEAR_TS(func.calculateAt(12_cm, 30_cm), -184.537358, -167.424983, 1e-6)
+    ASSERT_NEAR_TS(func.calculateAtXY(30_mm, 50_mm), -0.270565484, -0.395066604, 1e-7)
+    ASSERT_NEAR_TS(func.calculateAtXY(85_mm, 70_mm), -6.18395212, -5.12656322, 1e-7)
+    ASSERT_NEAR_TS(func.calculateAtXY(5_cm, 40_cm), 5.43798072, 5.86145994, 1e-7)
+    ASSERT_NEAR_TS(func.calculateAtXY(12_cm, 30_cm), -184.537358, -167.424983, 1e-6)
 }
 
 TEST_GROUP("StabilityMap2DFunction",
@@ -343,21 +343,21 @@ TEST_METHOD(calculate_resonator_R)
 TEST_METHOD(calculateAt_resonator_W)
 {
     TEST_CAUSTIC_FUNC(TripType::SW, CausticFunction::Mode::BeamRadius)
-    ASSERT_NEAR_TS(func.calculateAt(-0.01), 0.00109733338, 0.000615955382, 1e-11)
-    ASSERT_NEAR_TS(func.calculateAt(0), 0.00109733338, 0.000615955382, 1e-11)
-    ASSERT_NEAR_TS(func.calculateAt(0.01), 0.000730164138, 0.000411450674, 1e-11)
-    ASSERT_NEAR_TS(func.calculateAt(0.056), 0.000958984241, 0.000530243033, 1e-11)
-    ASSERT_NEAR_TS(func.calculateAt(0.057), 0.000958984241, 0.000530243033, 1e-11)
+    ASSERT_NEAR_TS(func.calculateAt(-0.01_m), 0.00109733338, 0.000615955382, 1e-11)
+    ASSERT_NEAR_TS(func.calculateAt(0_m), 0.00109733338, 0.000615955382, 1e-11)
+    ASSERT_NEAR_TS(func.calculateAt(0.01_m), 0.000730164138, 0.000411450674, 1e-11)
+    ASSERT_NEAR_TS(func.calculateAt(0.056_m), 0.000958984241, 0.000530243033, 1e-11)
+    ASSERT_NEAR_TS(func.calculateAt(0.057_m), 0.000958984241, 0.000530243033, 1e-11)
 }
 
 TEST_METHOD(calculateAt_resonator_R)
 {
     TEST_CAUSTIC_FUNC(TripType::SW, CausticFunction::Mode::FrontRadius)
-    ASSERT_NEAR_TS(func.calculateAt(-0.01), -0.0298858409, -0.0301145951, 1e-10)
-    ASSERT_NEAR_TS(func.calculateAt(0), -0.0298858409, -0.0301145951, 1e-10)
-    ASSERT_NEAR_TS(func.calculateAt(0.01), -0.019886779, -0.0201241552, 1e-10)
-    ASSERT_NEAR_TS(func.calculateAt(0.056), 0.0261181585, 0.0259269355, 1e-10)
-    ASSERT_NEAR_TS(func.calculateAt(0.057), 0.0261181585, 0.0259269355, 1e-10)
+    ASSERT_NEAR_TS(func.calculateAt(-0.01_m), -0.0298858409, -0.0301145951, 1e-10)
+    ASSERT_NEAR_TS(func.calculateAt(0_m), -0.0298858409, -0.0301145951, 1e-10)
+    ASSERT_NEAR_TS(func.calculateAt(0.01_m), -0.019886779, -0.0201241552, 1e-10)
+    ASSERT_NEAR_TS(func.calculateAt(0.056_m), 0.0261181585, 0.0259269355, 1e-10)
+    ASSERT_NEAR_TS(func.calculateAt(0.057_m), 0.0261181585, 0.0259269355, 1e-10)
 }
 
 TEST_METHOD(calculate_SP_W)
@@ -387,21 +387,21 @@ TEST_METHOD(calculate_SP_R)
 TEST_METHOD(calculateAt_SP_W)
 {
     TEST_CAUSTIC_FUNC(TripType::SP, CausticFunction::Mode::BeamRadius)
-    ASSERT_NEAR_TS(func.calculateAt(-0.01), 0.000309574733, 0.000364949149, 1e-11)
-    ASSERT_NEAR_TS(func.calculateAt(0), 0.000309574733, 0.000364949149, 1e-11)
-    ASSERT_NEAR_TS(func.calculateAt(0.01), 0.000129859819, 0.000157093288, 1e-11)
-    ASSERT_NEAR_TS(func.calculateAt(0.056), 0.000701479133, 0.00080188956, 1e-11)
-    ASSERT_NEAR_TS(func.calculateAt(0.057), 0.000701479133, 0.00080188956, 1e-11)
+    ASSERT_NEAR_TS(func.calculateAt(-0.01_m), 0.000309574733, 0.000364949149, 1e-11)
+    ASSERT_NEAR_TS(func.calculateAt(0_m), 0.000309574733, 0.000364949149, 1e-11)
+    ASSERT_NEAR_TS(func.calculateAt(0.01_m), 0.000129859819, 0.000157093288, 1e-11)
+    ASSERT_NEAR_TS(func.calculateAt(0.056_m), 0.000701479133, 0.00080188956, 1e-11)
+    ASSERT_NEAR_TS(func.calculateAt(0.057_m), 0.000701479133, 0.00080188956, 1e-11)
 }
 
 TEST_METHOD(calculateAt_SP_R)
 {
     TEST_CAUSTIC_FUNC(TripType::SP, CausticFunction::Mode::FrontRadius)
-    ASSERT_NEAR_TS(func.calculateAt(-0.01), -0.0171868882, -0.0175373544, 1e-10)
-    ASSERT_NEAR_TS(func.calculateAt(0), -0.0171868882, -0.0175373544, 1e-10)
-    ASSERT_NEAR_TS(func.calculateAt(0.01), -0.00726517034, -0.00757832363, 1e-10)
-    ASSERT_NEAR_TS(func.calculateAt(0.056), 0.0388935389, 0.0385073863, 1e-10)
-    ASSERT_NEAR_TS(func.calculateAt(0.057), 0.0388935389, 0.0385073863, 1e-10)
+    ASSERT_NEAR_TS(func.calculateAt(-0.01_m), -0.0171868882, -0.0175373544, 1e-10)
+    ASSERT_NEAR_TS(func.calculateAt(0_m), -0.0171868882, -0.0175373544, 1e-10)
+    ASSERT_NEAR_TS(func.calculateAt(0.01_m), -0.00726517034, -0.00757832363, 1e-10)
+    ASSERT_NEAR_TS(func.calculateAt(0.056_m), 0.0388935389, 0.0385073863, 1e-10)
+    ASSERT_NEAR_TS(func.calculateAt(0.057_m), 0.0388935389, 0.0385073863, 1e-10)
 }
 
 TEST_GROUP("CausticFunction",

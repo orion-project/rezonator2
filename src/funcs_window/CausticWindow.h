@@ -5,7 +5,7 @@
 #include "../RezonatorDialog.h"
 #include "../funcs/CausticFunction.h"
 
-class BeamShapeWidget;
+class BeamShapeExtension;
 class ElemSelectorWidget;
 class PointsRangeEditor;
 
@@ -34,11 +34,7 @@ protected:
     QString writeFunction(QJsonObject& root) override;
 
 private:
-    QAction *_actnShowBeamShape;
-    BeamShapeWidget *_beamShape = nullptr;
-    QRect _beamShapeGeom;
-
-    void showBeamShape();
+    BeamShapeExtension *_beamShape;
 };
 
 

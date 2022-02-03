@@ -1,10 +1,62 @@
-#include "BeamShapeWidget.h"
+#include "BeamShapeExtension.h"
 
-#include <QApplication>
-#include <QClipboard>
-#include <QMenu>
-#include <QMouseEvent>
-#include <QPainter>
+#include "PlotFuncWindow.h"
+
+#include "qcpl_cursor.h"
+#include "qcpl_plot.h"
+
+//------------------------------------------------------------------------------
+//                              BeamShapeExtension
+//------------------------------------------------------------------------------
+
+BeamShapeExtension::BeamShapeExtension(PlotFuncWindow* parent): QObject(parent), _parent(parent)
+{
+    _actnShowBeamShape = new QAction(tr("Show Beam Shape", "Plot action"), parent);
+    _actnShowBeamShape->setIcon(QIcon(":/toolbar/profile"));
+    _actnShowBeamShape->setCheckable(true);
+    connect(_actnShowBeamShape, &QAction::triggered, this, &BeamShapeExtension::showBeamShape);
+
+    _parent->menuPlot->addSeparator();
+    _parent->menuPlot->addAction(_actnShowBeamShape);
+
+    _parent->toolbar()->addSeparator();
+    _parent->toolbar()->addAction(_actnShowBeamShape);
+
+    connect(_parent->_plot, &QCPL::Plot::resized, [this](const QSize&, const QSize&){
+        if (_beamShape)
+            _beamShape->parentSizeChanged();
+    });
+    connect(_parent, &PlotFuncWindow::finishImageBeforeCopy, [this](QPainter* p){
+        if (_beamShape)
+            _beamShape->render(p, _beamShape->geometry().topLeft(), QRegion(), QWidget::RenderFlags());
+    });
+}
+
+void BeamShapeExtension::showBeamShape()
+{
+    if (_beamShape)
+    {
+        _beamShapeGeom = _beamShape->geometry();
+        _beamShape->deleteLater();
+        _beamShape = nullptr;
+    }
+    else
+    {
+        _beamShape = new BeamShapeWidget(_parent->_plot);
+        _beamShape->setInitialGeometry(_beamShapeGeom);
+        _parent->updateCursorInfo();
+    }
+}
+
+void BeamShapeExtension::setShape(const Z::PointTS &shape)
+{
+    if (_beamShape)
+        _beamShape->setShape(shape);
+}
+
+//------------------------------------------------------------------------------
+//                              BeamShapeWidget
+//------------------------------------------------------------------------------
 
 static const int MIN_W = 50;
 static const int MIN_H = 50;
@@ -15,12 +67,15 @@ static const int RESIZE_BORDER = 5;
 static const int TEXT_TO_BORDER = 3;
 static const int TEXT_TO_AXIS = 2;
 
-BeamShapeWidget::BeamShapeWidget(QWidget *parent) : QWidget(parent) {
+BeamShapeWidget::BeamShapeWidget(QWidget *parent) : QWidget(parent)
+{
     setVisible(true);
     setMouseTracking(true);
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this, &QWidget::customContextMenuRequested, this, [this](const QPoint&p){ _menu->exec(mapToGlobal(p)); });
 
     _menu = new QMenu(this);
-    _menu->addAction(tr("Copy Image"), this, &BeamShapeWidget::copyImage);
+    _menu->addAction(tr("Copy Beam Shape Image"), this, &BeamShapeWidget::copyImage);
 
     // TODO: set the same font as for axes labels
     const auto tm = QFontMetrics(font()).boundingRect(QStringLiteral("T"));
@@ -37,6 +92,17 @@ void BeamShapeWidget::setInitialGeometry(const QRect& r)
     }
     else
         setGeometry(parentWidget()->width() - DEFAULT_W - DEFAULT_M, DEFAULT_M, DEFAULT_W, DEFAULT_H);
+}
+
+void BeamShapeWidget::setShape(const Z::PointTS &shape)
+{
+    Double w(shape.T);
+    Double h(shape.S);
+    if (w.is(0) or w.isNan() or w.isInfinity() or h.is(0) or h.isNan() or h.isInfinity())
+        _ratio = -1;
+    else
+        _ratio = qAbs(shape.T) / qAbs(shape.S);
+    update();
 }
 
 void BeamShapeWidget::mousePressEvent(QMouseEvent *e)
@@ -58,22 +124,12 @@ void BeamShapeWidget::mousePressEvent(QMouseEvent *e)
     }
 }
 
-void BeamShapeWidget::mouseReleaseEvent(QMouseEvent *e)
-{
-    if (e->button() == Qt::RightButton)
-    {
-        _menu->exec(e->globalPos());
-        e->accept();
-    }
-}
-
 void BeamShapeWidget::enterEvent(QEvent *e)
 {
     e->accept();
     _drawResizeBorder = true;
     update();
 }
-
 
 void BeamShapeWidget::leaveEvent(QEvent *e)
 {
@@ -226,7 +282,6 @@ void BeamShapeWidget::paint(QPaintDevice *target, bool showBackground) const
 {
     const int W = target->width() - 1;
     const int H = target->height() - 1;
-    const int R = qMin(W, H)/2 - _textH - TEXT_TO_BORDER;
 
     QPainter p(target);
 
@@ -241,10 +296,26 @@ void BeamShapeWidget::paint(QPaintDevice *target, bool showBackground) const
         p.drawRect(0, 0, W, H);
     }
 
-    p.setPen(QPen(Qt::red, 2));
-    p.setBrush(QColor(255, 205, 205));
-    p.setRenderHint(QPainter::Antialiasing);
-    p.drawEllipse(W/2 - R, H/2 - R, 2*R, 2*R);
+    if (_ratio > 0)
+    {
+        double DX = 0;
+        double DY = 0;
+        double wndRatio = double(W) / double(H);
+        if (_ratio > wndRatio)
+        {
+            DX = qMax(W - _textH - TEXT_TO_BORDER, 0);
+            DY = DX / _ratio;
+        }
+        else
+        {
+            DY = qMax(H - _textH - TEXT_TO_BORDER, 0);
+            DX = DY * _ratio;
+        }
+        p.setPen(QPen(Qt::red, 2));
+        p.setBrush(QColor(255, 205, 205));
+        p.setRenderHint(QPainter::Antialiasing);
+        p.drawEllipse((W-DX)/2, (H-DY)/2, DX, DY);
+    }
 
     p.setPen(Qt::black);
     p.drawText(W - _textW - TEXT_TO_BORDER, H/2 - TEXT_TO_AXIS, QStringLiteral("T"));
