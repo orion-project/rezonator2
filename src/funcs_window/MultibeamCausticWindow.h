@@ -21,8 +21,6 @@ public:
 protected:
     // Implementation of PlotFuncWindow
     void calculate() override;
-    QString getDefaultTitle() const override;
-    QString getDefaultTitleY() const override;
 };
 
 #endif // MULTI_BEAM_CAUSTIC_WINDOW_H

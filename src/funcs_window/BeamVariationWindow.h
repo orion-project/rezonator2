@@ -24,9 +24,6 @@ public:
 protected:
     // Implementation of PlotFuncWindow
     bool configureInternal() override;
-    QString getDefaultTitle() const override;
-    QString getDefaultTitleX() const override;
-    QString getDefaultTitleY() const override;
     Z::Unit getDefaultUnitX() const override;
     Z::Unit getDefaultUnitY() const override;
     QString getCursorInfo(const QPointF& pos) const override;

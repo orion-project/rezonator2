@@ -106,44 +106,30 @@ BeamVariationWindow::BeamVariationWindow(Schema *schema)
     : PlotFuncWindowStorable(new BeamVariationFunction(schema))
 {
     _beamShape = new BeamShapeExtension(this);
+
+    _plot->addTextVarX(QStringLiteral("{elem}"), tr("Variable element label and title"), [this]{
+        return function()->arg()->element->displayLabelTitle(); });
+    _plot->addTextVarX(QStringLiteral("{elem_label}"), tr("Variable element label"), [this]{
+        return function()->arg()->element->label(); });
+    _plot->addTextVarX(QStringLiteral("{elem_title}"), tr("Variable element title"), [this]{
+        return function()->arg()->element->title(); });
+    _plot->addTextVarX(QStringLiteral("{elem_param}"), tr("Variable element parameter"), [this]{
+        return function()->arg()->parameter->name(); });
+
+    _plot->addTextVarY(QStringLiteral("{place}"), tr("Target element (with offset)"), [this]{
+        auto pos = function()->pos();
+        if (Z::Utils::isRange(pos->element))
+            return QStringLiteral("%1 +%2").arg(pos->element->label(), pos->offset.displayStr());
+        return pos->element->label();
+    });
+
+    _plot->setDefaultTitleX(QStringLiteral("{elem}, {elem_param} {(unit)}"));
+    _plot->setDefaultTitleY(QStringLiteral("Beam radius at {place} {(unit)}"));
 }
 
 bool BeamVariationWindow::configureInternal()
 {
     return BeamVariationParamsDlg(schema(), function()->arg(), function()->pos()).run();
-}
-
-QString BeamVariationWindow::getDefaultTitle() const
-{
-    return tr("Beam Radius Variation");
-}
-
-QString BeamVariationWindow::getDefaultTitleX() const
-{
-    auto arg = function()->arg();
-    auto unit = getUnitX();
-    if (unit == Z::Units::none())
-        return QStringLiteral("%1, %2").arg(
-                    arg->element->displayLabelTitle(),
-                    arg->parameter->name());
-    return QStringLiteral("%1, %2 (%3)").arg(
-                arg->element->displayLabelTitle(),
-                arg->parameter->label(),
-                unit->name());
-}
-
-QString BeamVariationWindow::getDefaultTitleY() const
-{
-    auto elem = function()->pos()->element;
-    auto range = Z::Utils::asRange(elem);
-    if (range)
-        return tr("Beam radius at %1 +%2, (%3)").arg(
-                    elem->label(),
-                    function()->pos()->offset.displayStr(),
-                    getUnitY()->name());
-    return tr("Beam radius at %1, (%2)").arg(
-                elem->label(),
-                getUnitY()->name());
 }
 
 Z::Unit BeamVariationWindow::getDefaultUnitX() const

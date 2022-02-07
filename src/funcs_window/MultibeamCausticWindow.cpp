@@ -3,6 +3,8 @@
 #include "../core/Protocol.h"
 #include "../funcs/FunctionGraph.h"
 
+#include <qcpl_plot.h>
+
 #include <QAction>
 #include <QDebug>
 
@@ -14,6 +16,8 @@ MultibeamCausticWindow::MultibeamCausticWindow(Schema *schema) : MulticausticWin
     actnShowFlippedTS->setEnabled(false);
     actnShowT->setChecked(true);
     actnShowS->setChecked(false);
+
+    _plot->setDefaultTitleY(tr("Beam Radius {(unit)}"));
 }
 
 void MultibeamCausticWindow::pumpChanged(Schema*, PumpParams* p)
@@ -62,15 +66,4 @@ void MultibeamCausticWindow::calculate()
         showStatusError(tr("No points were calculated, see Protocol window for details"));
         _graphs->clear();
     }
-}
-
-QString MultibeamCausticWindow::getDefaultTitle() const
-{
-    return tr("Beam Radius");
-}
-
-QString MultibeamCausticWindow::getDefaultTitleY() const
-{
-    QString title = tr("Beam radius");
-    return QStringLiteral("%1 (%2)").arg(title, getUnitY()->name());
 }

@@ -29,9 +29,6 @@ protected:
     bool configureInternal() override;
     ElemDeletionReaction reactElemDeletion(const Elements&) override;
     void updateGraphs() override;
-    QString getDefaultTitle() const override;
-    QString getDefaultTitleX() const override;
-    QString getDefaultTitleY() const override;
     Z::Unit getDefaultUnitX() const override;
     Z::Unit getDefaultUnitY() const override;
     void storeViewSpecific(int key) override;

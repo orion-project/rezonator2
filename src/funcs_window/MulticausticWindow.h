@@ -28,7 +28,6 @@ protected:
     void updateGraphs() override;
     ElemDeletionReaction reactElemDeletion(const Elements&) override;
     void showRoundTrip() override;
-    QString getDefaultTitleX() const override;
     Z::Unit getDefaultUnitX() const override;
     Z::Unit getDefaultUnitY() const override;
 

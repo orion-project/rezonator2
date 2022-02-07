@@ -4,13 +4,6 @@
 
 #include <cmath>
 
-namespace TitlePlaceholder {
-
-QString defaultTitle() { return QStringLiteral("{default_title}"); }
-
-} // namespace TitlePlaceholder
-
-
 namespace PlotUtils {
 
 bool correctZeroRange(QCPRange& range, double safeMargin)

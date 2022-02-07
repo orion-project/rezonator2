@@ -5,7 +5,6 @@
 
 #include "../SchemaWindows.h"
 #include "../funcs/PlotFunction.h"
-#include "../widgets/PlotUtils.h"
 
 #include "qcpl_types.h"
 
@@ -96,9 +95,6 @@ protected:
     PlotFunction* _function;
     Z::Unit _unitX = Z::Units::none();
     Z::Unit _unitY = Z::Units::none();
-    QString _title = TitlePlaceholder::defaultTitle();
-    QString _titleX = TitlePlaceholder::defaultTitle();
-    QString _titleY = TitlePlaceholder::defaultTitle();
     FunctionGraphSet *_graphs;
     PlotParamsPanel* _leftPanel;
     QMenu* _cursorMenu; // Used for View menu of ProjectWindow
@@ -115,7 +111,7 @@ protected:
     QMenu *menuPlot, *menuLimits, *menuFormat;
     QAction *actnShowT, *actnShowS, *actnShowFlippedTS,
         *actnAutolimits, *actnAutolimitsX, *actnAutolimitsY,
-        *actnSetLimitsX, *actnSetLimitsY,
+        *actnSetLimitsX, *actnSetLimitsY, *actnSetTitleX, *actnSetTitleY,
         *actnZoomIn, *actnZoomOut, *actnZoomInX, *actnZoomOutX, *actnZoomInY, *actnZoomOutY,
         *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo,
         *actnCopyGraphData, *actnCopyGraphDataCur, *actnCopyGraphDataAll, *actnCopyPlotImage;
@@ -134,9 +130,6 @@ protected:
     virtual bool configureInternal() { return true; }
     virtual void updateGraphs();
     virtual void afterUpdate() {}
-    virtual QString getDefaultTitle() const { return QString(); }
-    virtual QString getDefaultTitleX() const { return QString(); }
-    virtual QString getDefaultTitleY() const { return QString(); }
     virtual QString formatTitleSpecial(const QString& title) const { return title; }
     virtual void storeViewSpecific(int key) { Q_UNUSED(key) }
     virtual void restoreViewSpecific(int key) { Q_UNUSED(key) }
@@ -154,10 +147,6 @@ protected:
 
     void showModeTS();
     void updateModeTS();
-    void updateTitles();
-    void updateTitle();
-    void updateTitleX();
-    void updateTitleY();
     void updateGraphs(Z::WorkPlane);
     void updateStatusUnits();
 

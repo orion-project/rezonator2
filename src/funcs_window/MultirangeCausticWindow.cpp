@@ -6,12 +6,19 @@
 #include "../funcs/CausticFunction.h"
 #include "../io/CommonUtils.h"
 
+#include <qcpl_plot.h>
+
 #include <QDebug>
 #include <QJsonObject>
 
 MultirangeCausticWindow::MultirangeCausticWindow(Schema *schema): MulticausticWindow(new MultirangeCausticFunction(schema))
 {
     _beamShape = new BeamShapeExtension(this);
+
+    _plot->addTextVarY(QStringLiteral("{func_mode}"), tr("Function mode"), [this]{
+        return CausticFunction::modeDisplayName(function()->mode()); });
+
+    _plot->setDefaultTitleY(QStringLiteral("{func_mode} {(unit)}"));
 }
 
 QWidget* MultirangeCausticWindow::makeOptionsPanel()
@@ -34,38 +41,6 @@ QString MultirangeCausticWindow::writeFunction(QJsonObject& root)
     MulticausticWindow::writeFunction(root);
     root["mode"] = Z::IO::Utils::enumToStr(function()->mode());
     return QString();
-}
-
-QString MultirangeCausticWindow::getDefaultTitle() const
-{
-    switch (function()->mode())
-    {
-    case CausticFunction::Mode::BeamRadius:
-        return tr("Beam Radius");
-    case CausticFunction::Mode::FrontRadius:
-        return tr("Wavefront Curvature Radius");
-    case CausticFunction::Mode::HalfAngle:
-        return tr("Half of Divergence Angle");
-    }
-    return QString();
-}
-
-QString MultirangeCausticWindow::getDefaultTitleY() const
-{
-    QString title;
-    switch (function()->mode())
-    {
-    case CausticFunction::Mode::BeamRadius:
-        title = tr("Beam radius");
-        break;
-    case CausticFunction::Mode::FrontRadius:
-        title = tr("Wavefront curvature radius");
-        break;
-    case CausticFunction::Mode::HalfAngle:
-        title = tr("Half of divergence angle");
-        break;
-    }
-    return QStringLiteral("%1 (%2)").arg(title, getUnitY()->name());
 }
 
 QString MultirangeCausticWindow::getCursorInfo(const QPointF& pos) const

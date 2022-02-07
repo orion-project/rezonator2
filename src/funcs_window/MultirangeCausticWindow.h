@@ -14,8 +14,6 @@ public:
 protected:
     // Implementation of PlotFuncWindow
     QWidget* makeOptionsPanel() override;
-    QString getDefaultTitle() const override;
-    QString getDefaultTitleY() const override;
     QString getCursorInfo(const QPointF& pos) const override;
 
     // Implementation of PlotFuncWindowStorable

@@ -22,6 +22,7 @@
 #include "qcpl_cursor_panel.h"
 #include "qcpl_graph_grid.h"
 #include "qcpl_plot.h"
+#include "qcpl_format.h"
 
 using namespace Ori::Gui;
 
@@ -82,8 +83,10 @@ void PlotFuncWindow::createActions()
     actnZoomInY = action(tr("Zoom-in Over Y"), _plot, SLOT(zoomInY()), ":/toolbar/limits_zoom_in_y");
     actnZoomOutY = action(tr("Zoom-out Over Y"), _plot, SLOT(zoomOutY()), ":/toolbar/limits_zoom_out_y");
 
-    actnSetLimitsX = action(tr("Set X-axis Limits..."), _plot, SLOT(setLimitsDlgX()));
-    actnSetLimitsY = action(tr("Set Y-axis Limits..."), _plot, SLOT(setLimitsDlgY()));
+    actnSetLimitsX = action(tr("X-axis Limits..."), _plot, SLOT(limitsDlgX()));
+    actnSetLimitsY = action(tr("Y-axis Limits..."), _plot, SLOT(limitsDlgY()));
+    actnSetTitleX = action(tr("X-axis Title..."), _plot, SLOT(titleDlgX()));
+    actnSetTitleY = action(tr("Y-axis Title..."), _plot, SLOT(titleDlgY()));
 
     actnCopyGraphData = action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy");
     actnCopyGraphDataCur = action(tr("Copy Graph Data (this segment)"), this, SLOT(copyGraphData()), ":/toolbar/copy");
@@ -100,7 +103,7 @@ void PlotFuncWindow::createMenuBar()
 
     menuPlot = menu(tr("Plot", "Menu title"), this, {
         actnUpdate, actnUpdateParams, actnFreeze, nullptr, actnShowFlippedTS, actnShowT, actnShowS, nullptr,
-        _unitsMenuX->menu(), _unitsMenuY->menu(), nullptr, actnShowRoundTrip
+        _unitsMenuX->menu(), _unitsMenuY->menu(), actnSetTitleX, actnSetTitleY, nullptr, actnShowRoundTrip
     });
     connect(menuPlot, &QMenu::aboutToShow, [this](){
         _unitsMenuX->menu()->setTitle("X-axis Unit");
@@ -126,8 +129,8 @@ void PlotFuncWindow::createMenuBar()
     titleX->setDefaultWidget(labelX);
     menuX->addAction(titleX);
     menuX->addMenu(_unitsMenuX->menu());
-    menuX->addSeparator();
-    menuX->addAction(tr("Limits..."), _plot, SLOT(setLimitsDlgX()));
+    menuX->addAction(tr("Limits..."), _plot, &QCPL::Plot::limitsDlgX);
+    menuX->addAction(tr("Title..."), _plot, &QCPL::Plot::titleDlgX);
     menuX->addAction(QIcon(":/toolbar/limits_auto_x"), tr("Fit to Graphs"), _plot, SLOT(autolimitsX()));
     menuX->addSeparator();
     menuX->addAction(actnCopyPlotImage);
@@ -143,8 +146,8 @@ void PlotFuncWindow::createMenuBar()
     titleY->setDefaultWidget(labelY);
     menuY->addAction(titleY);
     menuY->addMenu(_unitsMenuY->menu());
-    menuY->addSeparator();
-    menuY->addAction(tr("Limits..."), _plot, SLOT(setLimitsDlgY()));
+    menuY->addAction(tr("Limits..."), _plot, &QCPL::Plot::limitsDlgY);
+    menuY->addAction(tr("Title..."), _plot, &QCPL::Plot::titleDlgY);
     menuY->addAction(QIcon(":/toolbar/limits_auto_y"), tr("Fit to Graphs"), _plot, SLOT(autolimitsY()));
     menuY->addSeparator();
     menuY->addAction(actnCopyPlotImage);
@@ -227,6 +230,21 @@ void PlotFuncWindow::createContent()
         if (axis == _plot->yAxis) return getUnitY()->name();
         return QString();
     };
+
+    auto getFuncName = [this]{ return function()->name(); };
+    _plot->addTextVar(QStringLiteral("{func_name}"), tr("Function name"), getFuncName);
+
+    _plot->addTextVarX(QStringLiteral("{unit}"), tr("Unit of measurement"), [this]{ return getUnitX()->name(); });
+    _plot->addTextVarX(QStringLiteral("{(unit)}"), tr("Unit of measurement (in brackets)"), [this]{
+        auto unit = getUnitX(); return unit == Z::Units::none() ? QString() : QStringLiteral("(%1)").arg(unit->name()); });
+    _plot->addTextVarX(QStringLiteral("{func_name}"), tr("Function name"), getFuncName);
+
+    _plot->addTextVarY(QStringLiteral("{unit}"), tr("Unit of measurement"), [this]{ return getUnitY()->name(); });
+    _plot->addTextVarY(QStringLiteral("{(unit)}"), tr("Unit of measurement (in brackets)"), [this]{
+        auto unit = getUnitY(); return unit == Z::Units::none() ? QString() : QStringLiteral("(%1)").arg(unit->name()); });
+    _plot->addTextVarY(QStringLiteral("{func_name}"), tr("Function name"), getFuncName);
+
+    _plot->setDefaultTitle(QStringLiteral("{func_name}"));
 
     _cursor = new QCPL::Cursor(_plot);
     connect(_cursor, &QCPL::Cursor::positionChanged, this, &PlotFuncWindow::updateCursorInfo);
@@ -338,37 +356,6 @@ void PlotFuncWindow::updateNotables()
         _leftPanel->infoPanel()->setHtml(_function->calculateNotables());
 }
 
-void PlotFuncWindow::updateTitles()
-{
-    updateTitle();
-    updateTitleX();
-    updateTitleY();
-}
-
-void PlotFuncWindow::updateTitle()
-{
-    QString title = _title;
-    title.replace(TitlePlaceholder::defaultTitle(), getDefaultTitle());
-    title = formatTitleSpecial(title);
-    _plot->title()->setText(title);
-}
-
-void PlotFuncWindow::updateTitleX()
-{
-    QString title = _titleX;
-    title.replace(TitlePlaceholder::defaultTitle(), getDefaultTitleX());
-    title = formatTitleSpecial(title);
-    _plot->xAxis->setLabel(title);
-}
-
-void PlotFuncWindow::updateTitleY()
-{
-    QString title = _titleY;
-    title.replace(TitlePlaceholder::defaultTitle(), getDefaultTitleY());
-    title = formatTitleSpecial(title);
-    _plot->yAxis->setLabel(title);
-}
-
 void PlotFuncWindow::updateStatusUnits()
 {
     auto unitX = getUnitX();
@@ -429,7 +416,7 @@ void PlotFuncWindow::update()
     }
     else updateCursorInfo();
 
-    updateTitles();
+    _plot->updateTitles();
     updateStatusUnits();
     updateNotables();
     afterUpdate();
@@ -593,7 +580,7 @@ void PlotFuncWindow::setUnitX(Z::Unit unit)
     auto oldUnit = getUnitX();
     if (oldUnit == unit) return;
     _unitX = unit;
-    updateTitleX();
+    _plot->updateTitleX();
     updateStatusUnits();
     schema()->markModified("PlotFuncWindow::setUnitX");
     PlotHelpers::rescaleLimits(_plot, PlotAxis::X, oldUnit, unit);
@@ -606,7 +593,7 @@ void PlotFuncWindow::setUnitY(Z::Unit unit)
     auto oldUnit = getUnitY();
     if (oldUnit == unit) return;
     _unitY = unit;
-    updateTitleY();
+    _plot->updateTitleY();
     updateStatusUnits();
     schema()->markModified("PlotFuncWindow::setUnitY");
     PlotHelpers::rescaleLimits(_plot, PlotAxis::Y, oldUnit, unit);

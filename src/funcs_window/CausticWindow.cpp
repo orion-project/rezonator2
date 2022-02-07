@@ -19,6 +19,8 @@
 #include <QMenu>
 #include <QToolBar>
 
+#include <qcpl_plot.h>
+
 //------------------------------------------------------------------------------
 //                           CausticParamsDlg
 //------------------------------------------------------------------------------
@@ -109,6 +111,19 @@ void CausticParamsDlg::guessRange()
 CausticWindow::CausticWindow(Schema *schema) : PlotFuncWindowStorable(new CausticFunction(schema))
 {
     _beamShape = new BeamShapeExtension(this);
+
+    _plot->addTextVarY(QStringLiteral("{func_mode}"), tr("Function mode"), [this]{
+        return CausticFunction::modeDisplayName(function()->mode()); });
+
+    _plot->addTextVarX(QStringLiteral("{elem}"), tr("Element label and title"), [this]{
+        return function()->arg()->element->displayLabelTitle(); });
+    _plot->addTextVarX(QStringLiteral("{elem_label}"), tr("Element label"), [this]{
+        return function()->arg()->element->label(); });
+    _plot->addTextVarX(QStringLiteral("{elem_title}"), tr("Element title"), [this]{
+        return function()->arg()->element->title(); });
+
+    _plot->setDefaultTitleX(QStringLiteral("{elem} {(unit)}"));
+    _plot->setDefaultTitleY(QStringLiteral("{func_mode} {(unit)}"));
 }
 
 bool CausticWindow::configureInternal()
@@ -136,44 +151,6 @@ QString CausticWindow::writeFunction(QJsonObject& root)
     root["mode"] = Z::IO::Utils::enumToStr(function()->mode());
     root["arg"] = Z::IO::Json::writeVariable(function()->arg(), schema());
     return QString();
-}
-
-QString CausticWindow::getDefaultTitle() const
-{
-    switch (function()->mode())
-    {
-    case CausticFunction::Mode::BeamRadius:
-        return tr("Beam Radius");
-    case CausticFunction::Mode::FrontRadius:
-        return tr("Wavefront Curvature Radius");
-    case CausticFunction::Mode::HalfAngle:
-        return tr("Half of Divergence Angle");
-    }
-    return QString();
-}
-
-QString CausticWindow::getDefaultTitleX() const
-{
-    auto elem = function()->arg()->element;
-    return QStringLiteral("%1 (%2)").arg(elem->displayLabelTitle(), getUnitX()->name());
-}
-
-QString CausticWindow::getDefaultTitleY() const
-{
-    QString title;
-    switch (function()->mode())
-    {
-    case CausticFunction::Mode::BeamRadius:
-        title = tr("Beam radius");
-        break;
-    case CausticFunction::Mode::FrontRadius:
-        title = tr("Wavefront curvature radius");
-        break;
-    case CausticFunction::Mode::HalfAngle:
-        title = tr("Half of divergence angle");
-        break;
-    }
-    return QStringLiteral("%1 (%2)").arg(title, getUnitY()->name());
 }
 
 Z::Unit CausticWindow::getDefaultUnitX() const
