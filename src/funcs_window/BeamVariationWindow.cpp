@@ -124,7 +124,9 @@ BeamVariationWindow::BeamVariationWindow(Schema *schema)
     });
 
     _plot->setDefaultTitleX(QStringLiteral("{elem}, {elem_param} {(unit)}"));
+    _plot->setFormatterTextX(QStringLiteral("{elem}, {elem_param} {(unit)}"));
     _plot->setDefaultTitleY(QStringLiteral("Beam radius at {place} {(unit)}"));
+    _plot->setFormatterTextY(QStringLiteral("Beam radius at {place} {(unit)}"));
 }
 
 bool BeamVariationWindow::configureInternal()

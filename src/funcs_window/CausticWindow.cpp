@@ -153,6 +153,21 @@ QString CausticWindow::writeFunction(QJsonObject& root)
     return QString();
 }
 
+void CausticWindow::storeView(FuncMode mode)
+{
+    ViewSettings vs;
+    storeViewParts(vs, VP_LIMITS_Y | VP_TITLE_Y | VP_UNIT_Y | VP_CUSRSOR_POS);
+    _storedView[mode] = vs;
+}
+
+void CausticWindow::restoreView(FuncMode mode)
+{
+    ViewSettings vs;
+    if (_storedView.contains(mode))
+        vs = _storedView[mode];
+    restoreViewParts(vs, VP_LIMITS_Y | VP_TITLE_Y | VP_UNIT_Y | VP_CUSRSOR_POS);
+}
+
 Z::Unit CausticWindow::getDefaultUnitX() const
 {
     return function()->arg()->parameter->value().unit();

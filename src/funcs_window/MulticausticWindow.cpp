@@ -35,6 +35,7 @@ MulticausticWindow::MulticausticWindow(MultirangeCausticFunction* function) : Pl
         return strs.join(QStringLiteral(", "));
     });
     _plot->setDefaultTitleX(QStringLiteral("{elem_labels} {(unit)}"));
+    _plot->setFormatterTextX(QStringLiteral("{elem_labels} {(unit)}"));
 
     _actnElemBoundMarkers = new QAction(tr("Element bound markers"), this);
     _actnElemBoundMarkers->setCheckable(true);
@@ -262,4 +263,19 @@ Z::Unit MulticausticWindow::getDefaultUnitY() const
     case CausticFunction::HalfAngle: return AppSettings::instance().defaultUnitAngle;
     }
     return Z::Units::none();
+}
+
+void MulticausticWindow::storeView(FuncMode mode)
+{
+    ViewSettings vs;
+    storeViewParts(vs, VP_LIMITS_Y | VP_TITLE_Y | VP_UNIT_Y | VP_CUSRSOR_POS);
+    _storedView[mode] = vs;
+}
+
+void MulticausticWindow::restoreView(FuncMode mode)
+{
+    ViewSettings vs;
+    if (_storedView.contains(mode))
+        vs = _storedView[mode];
+    restoreViewParts(vs, VP_LIMITS_Y | VP_TITLE_Y | VP_UNIT_Y | VP_CUSRSOR_POS);
 }

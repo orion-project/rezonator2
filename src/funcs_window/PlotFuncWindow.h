@@ -45,6 +45,12 @@ class PlotFuncWindow : public SchemaMdiChild
     Q_OBJECT
 
 public:
+    using FuncMode = int;
+    using ViewSettings = QMap<QString, QVariant>;
+    enum ViewPart { VP_LIMITS_Y = 0x01, VP_TITLE_Y = 0x02, VP_UNIT_Y = 0x04, VP_CUSRSOR_POS = 0x08 };
+    Q_DECLARE_FLAGS(ViewParts, ViewPart)
+
+public:
     explicit PlotFuncWindow(PlotFunction*);
     ~PlotFuncWindow() override;
 
@@ -68,8 +74,10 @@ public:
     void recalcRequired(Schema*) override { update(); }
     void elementDeleting(Schema*, Element*) override;
 
-    void storeView(int key);
-    void restoreView(int key);
+    // Called from FuncOptionsPanel when function mode changed e.g. when the Caustic function switches between W and R.
+    // Responsible window should override these methods and save/restore signifacant view differences in _storedView.
+    virtual void storeView(FuncMode) {}
+    virtual void restoreView(FuncMode) {}
 
     /// Returns what will happen if one or all the elements are deleted.
     virtual ElemDeletionReaction reactElemDeletion(const Elements&);
@@ -116,23 +124,17 @@ protected:
         *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo,
         *actnCopyGraphData, *actnCopyGraphDataCur, *actnCopyGraphDataAll, *actnCopyPlotImage;
 
-    struct ViewState
-    {
-        QCPL::AxisLimits limitsX;
-        QCPL::AxisLimits limitsY;
-        Z::Unit unitX, unitY;
-        QPointF cursorPos;
-        QString title, titleX, titleY;
-    };
-    QMap<int, ViewState> _storedView;
+    // Stores differences of plot view when function is switched betweeen modes
+    // e.g. when the Caustic function switches between W and R.
+    // Should be read/written in methods restoreView/storeView
+    QMap<FuncMode, ViewSettings> _storedView;
+    void storeViewParts(ViewSettings&, ViewParts);
+    void restoreViewParts(const ViewSettings&, ViewParts);
 
     virtual void calculate();
     virtual bool configureInternal() { return true; }
     virtual void updateGraphs();
     virtual void afterUpdate() {}
-    virtual QString formatTitleSpecial(const QString& title) const { return title; }
-    virtual void storeViewSpecific(int key) { Q_UNUSED(key) }
-    virtual void restoreViewSpecific(int key) { Q_UNUSED(key) }
     virtual QWidget* makeOptionsPanel() { return nullptr; }
     virtual void fillViewMenuActions(QList<QAction*>& actions) const { Q_UNUSED(actions) }
     virtual QString getCursorInfo(const QPointF& pos) const { Q_UNUSED(pos) return QString(); }
@@ -182,5 +184,7 @@ private:
 
     friend class BeamShapeExtension;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(PlotFuncWindow::ViewParts)
 
 #endif // PLOT_FUNC_WINDOW_H

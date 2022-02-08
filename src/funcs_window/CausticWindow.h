@@ -18,6 +18,10 @@ public:
 
     CausticFunction* function() const { return dynamic_cast<CausticFunction*>(_function); }
 
+    // Implementation of PlotFuncWindow
+    void storeView(FuncMode) override;
+    void restoreView(FuncMode) override;
+
 protected:
     // Implementation of PlotFuncWindow
     QWidget* makeOptionsPanel() override;

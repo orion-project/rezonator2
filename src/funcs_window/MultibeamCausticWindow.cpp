@@ -18,6 +18,7 @@ MultibeamCausticWindow::MultibeamCausticWindow(Schema *schema) : MulticausticWin
     actnShowS->setChecked(false);
 
     _plot->setDefaultTitleY(tr("Beam Radius {(unit)}"));
+    _plot->setFormatterTextY(tr("Beam Radius {(unit)}"));
 }
 
 void MultibeamCausticWindow::pumpChanged(Schema*, PumpParams* p)

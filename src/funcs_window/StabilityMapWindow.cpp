@@ -153,7 +153,9 @@ StabilityMapWindow::StabilityMapWindow(Schema *schema) :
     _plot->addTextVarY(QStringLiteral("{stab_mode}"), tr("Stability parameter mode"), getStabParam);
 
     _plot->setDefaultTitleX(QStringLiteral("{elem}, {elem_param} {(unit)}"));
+    _plot->setFormatterTextX(QStringLiteral("{elem}, {elem_param} {(unit)}"));
     _plot->setDefaultTitleY(QStringLiteral("Stability parameter {stab_mode}"));
+    _plot->setFormatterTextY(QStringLiteral("Stability parameter {stab_mode}"));
 
     _actnStabilityAutolimits = new QAction(tr("Y-axis -> Stability Range", "Plot action"), this);
     _actnStabilityAutolimits->setIcon(QIcon(":/toolbar/limits_stab"));

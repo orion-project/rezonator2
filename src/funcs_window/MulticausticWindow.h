@@ -20,6 +20,10 @@ public:
     void elementChanged(Schema*, Element*) override;
     void elementDeleting(Schema*, Element*) override;
 
+    // Implementation of PlotFuncWindow
+    void storeView(FuncMode) override;
+    void restoreView(FuncMode) override;
+
 protected:
     // Implementation of PlotFuncWindow
     bool configureInternal() override;

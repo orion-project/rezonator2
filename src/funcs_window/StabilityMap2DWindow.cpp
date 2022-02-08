@@ -216,8 +216,9 @@ StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
         return function()->paramY()->parameter->name(); });
 
     _plot->setDefaultTitleX(QStringLiteral("{elem}, {elem_param} {(unit)}"));
+    _plot->setFormatterTextX(QStringLiteral("{elem}, {elem_param} {(unit)}"));
     _plot->setDefaultTitleY(QStringLiteral("{elem}, {elem_param} {(unit)}"));
-
+    _plot->setFormatterTextY(QStringLiteral("{elem}, {elem_param} {(unit)}"));
 
     _colorScale = new QCPColorScale(_plot);
     auto colorAxis = _colorScale->axis();
@@ -344,24 +345,6 @@ void StabilityMap2DWindow::autolimitsStability(bool replot)
     if (replot) _plot->replot();
 }
 
-void StabilityMap2DWindow::storeViewSpecific(int key)
-{
-    ViewState view;
-    view.limitsZ = _plot->limits(_colorScale->axis());
-    _auxStoredView[key] = view;
-}
-
-void StabilityMap2DWindow::restoreViewSpecific(int key)
-{
-    if (_storedView.contains(key))
-    {
-        const ViewState& view = _auxStoredView[key];
-        _plot->setLimits(_colorScale->axis(), view.limitsZ, false);
-    }
-    else
-        _zAutolimitsRequest = true;
-}
-
 QString StabilityMap2DWindow::readFunction(const QJsonObject& root)
 {
     function()->setStabilityCalcMode(Z::IO::Utils::enumFromStr(
@@ -390,20 +373,7 @@ QString StabilityMap2DWindow::readWindowSpecific(const QJsonObject& root)
     if (!_zAutolimitsRequest)
         _plot->setLimits(_colorScale->axis(), limitsZ, false);
 
-    // Restore view states
-    QJsonArray viewsJson = root["aux_stored_views"].toArray();
-    for (auto it = viewsJson.begin(); it != viewsJson.end(); it++)
-    {
-        QJsonObject viewJson = (*it).toObject();
-        auto mode = viewJson["mode"].toInt(-1);
-        if (mode < 0) continue;
-        ViewState state;
-        state.limitsZ = { viewJson["z_min"].toDouble(Double::nan()),
-                          viewJson["z_max"].toDouble(Double::nan()) };
-        if (state.limitsZ.isInvalid())
-            continue;
-        _auxStoredView.insert(mode, state);
-    }
+    _plot->setFormatterText(_colorScale->axis(), root["z_title"].toString());
 
     return QString();
 }
@@ -414,21 +384,7 @@ QString StabilityMap2DWindow::writeWindowSpecific(QJsonObject& root)
     auto limitsZ = _plot->limits(_colorScale->axis());
     root["z_min"] = limitsZ.min;
     root["z_max"] = limitsZ.max;
-
-    // Store view states
-    QJsonArray viewsJson;
-    auto it = _auxStoredView.constBegin();
-    while (it != _auxStoredView.constEnd())
-    {
-        auto view = it.value();
-        viewsJson.append(QJsonObject{
-            { "mode", it.key() },
-            { "z_min", view.limitsZ.min },
-            { "z_max", view.limitsZ.max },
-        });
-        it++;
-    }
-    root["aux_stored_views"] = viewsJson;
+    root["z_title"] = _plot->formatterText(_colorScale->axis());
 
     return QString();
 }

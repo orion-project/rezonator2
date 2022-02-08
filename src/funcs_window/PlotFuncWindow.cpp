@@ -224,6 +224,7 @@ void PlotFuncWindow::createContent()
     _plot->setAutoAddPlottableToLegend(false);
     _plot->addLayer("graphs");
     connect(_plot, &QCPL::Plot::graphClicked, this, &PlotFuncWindow::graphSelected);
+    connect(_plot, &QCPL::Plot::modified, this, [this](const QString& reason){ schema()->markModified(reason.toLatin1().data()); });
 
     _plot->getAxisUnitString = [this](QCPAxis* axis) {
         if (axis == _plot->xAxis) return getUnitX()->name();
@@ -245,6 +246,7 @@ void PlotFuncWindow::createContent()
     _plot->addTextVarY(QStringLiteral("{func_name}"), tr("Function name"), getFuncName);
 
     _plot->setDefaultTitle(QStringLiteral("{func_name}"));
+    _plot->setFormatterText(QStringLiteral("{func_name}"));
 
     _cursor = new QCPL::Cursor(_plot);
     connect(_cursor, &QCPL::Cursor::positionChanged, this, &PlotFuncWindow::updateCursorInfo);
@@ -504,37 +506,62 @@ bool PlotFuncWindow::configure()
     return ok;
 }
 
-void PlotFuncWindow::storeView(int key)
+void PlotFuncWindow::storeViewParts(ViewSettings& vs, ViewParts parts)
 {
-    ViewState view;
-    view.limitsX = _plot->limitsX();
-    view.limitsY = _plot->limitsY();
-    view.cursorPos = _cursor->position();
-    view.unitX = getUnitX();
-    view.unitY = getUnitY();
-    _storedView[key] = view;
-    storeViewSpecific(key);
+    if (parts.testFlag(VP_LIMITS_Y))
+    {
+        auto limits = _plot->limitsY();
+        vs["y_min"] = limits.min;
+        vs["y_max"] = limits.max;
+    }
+    if (parts.testFlag(VP_TITLE_Y))
+    {
+        vs["y_title"] = _plot->formatterTextY();
+    }
+    if (parts.testFlag(VP_UNIT_Y))
+    {
+        vs["y_unit"] = getUnitY()->alias();
+    }
+    if (parts.testFlag(VP_CUSRSOR_POS))
+    {
+        auto pos = _cursor->position();
+        vs["cursor_x"] = pos.x();
+        vs["cursor_y"] = pos.y();
+    }
 }
 
-void PlotFuncWindow::restoreView(int key)
+void PlotFuncWindow::restoreViewParts(const ViewSettings &vs, ViewParts parts)
 {
-    if (_storedView.contains(key))
+    if (parts.testFlag(VP_LIMITS_Y))
     {
-        const ViewState& view = _storedView[key];
-        _unitX = view.unitX;
-        _unitY = view.unitY;
-        _plot->setLimitsX(view.limitsX, false);
-        _plot->setLimitsY(view.limitsY, false);
-        _cursor->setPosition(view.cursorPos, false);
+        bool minOk, maxOk;
+        double min = vs["y_min"].toDouble(&minOk);
+        double max = vs["y_max"].toDouble(&maxOk);
+        if (minOk && maxOk)
+            _plot->setLimitsY(min, max, false);
+        else _autolimitsRequest = true;
+
     }
-    else
+    if (parts.testFlag(VP_TITLE_Y))
     {
-        _unitX = getDefaultUnitX();
-        _unitY = getDefaultUnitY();
-        _autolimitsRequest = true;
-        _centerCursorRequested = true;
+        if (vs.contains("y_title"))
+            _plot->setFormatterTextY(vs["y_title"].toString());
+        else _plot->setFormatterTextY(_plot->defaultTitleY());
     }
-    restoreViewSpecific(key);
+    if (parts.testFlag(VP_UNIT_Y))
+    {
+        auto unit = Z::Units::findByAlias(vs["y_unit"].toString());
+        _unitY = unit ? unit : getDefaultUnitY();
+    }
+    if (parts.testFlag(VP_CUSRSOR_POS))
+    {
+        bool xOk, yOk;
+        double x = vs["cursor_x"].toDouble(&xOk);
+        double y = vs["cursor_y"].toDouble(&yOk);
+        if (xOk && yOk)
+            _cursor->setPosition(x, y, false);
+        else _centerCursorRequested = true;
+    }
 }
 
 ElemDeletionReaction PlotFuncWindow::reactElemDeletion(const Elements& elems)

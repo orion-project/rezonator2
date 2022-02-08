@@ -19,6 +19,7 @@ MultirangeCausticWindow::MultirangeCausticWindow(Schema *schema): MulticausticWi
         return CausticFunction::modeDisplayName(function()->mode()); });
 
     _plot->setDefaultTitleY(QStringLiteral("{func_mode} {(unit)}"));
+    _plot->setFormatterTextY(QStringLiteral("{func_mode} {(unit)}"));
 }
 
 QWidget* MultirangeCausticWindow::makeOptionsPanel()
