@@ -5,6 +5,9 @@
       "date": "",
       "changes": [
         {
+          "text": "Added commands for changing axes titles."
+        },
+        {
           "text": "Added beam shape tool for caustic windows."
         },
         {

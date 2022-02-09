@@ -10,11 +10,6 @@
 #include <QString>
 
 class QCPRange;
-class QCPAbstractPlottable;
-
-namespace TitlePlaceholder {
-QString defaultTitle();
-}
 
 namespace PlotUtils {
 

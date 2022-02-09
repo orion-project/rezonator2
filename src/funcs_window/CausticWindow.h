@@ -18,13 +18,14 @@ public:
 
     CausticFunction* function() const { return dynamic_cast<CausticFunction*>(_function); }
 
+    // Implementation of PlotFuncWindow
+    void storeView(FuncMode) override;
+    void restoreView(FuncMode) override;
+
 protected:
     // Implementation of PlotFuncWindow
     QWidget* makeOptionsPanel() override;
     bool configureInternal() override;
-    QString getDefaultTitle() const override;
-    QString getDefaultTitleX() const override;
-    QString getDefaultTitleY() const override;
     Z::Unit getDefaultUnitX() const override;
     Z::Unit getDefaultUnitY() const override;
     QString getCursorInfo(const QPointF& pos) const override;

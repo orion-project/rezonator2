@@ -3,6 +3,24 @@
 #include <QApplication>
 #include <QDebug>
 
+namespace Z {
+
+QString Enums::displayStr(StabilityCalcMode mode)
+{
+    switch (mode)
+    {
+    case Normal:
+        return QStringLiteral("(A + D)/2");
+    case Squared:
+        return QStringLiteral("1 - ((A + D)/2)²");
+    }
+    return QString();
+}
+
+} // namespace Z
+
+//------------------------------------------------------------------------------
+
 struct TripTypeInfoPrivate {
     QString alias;
     const char* toolTip;

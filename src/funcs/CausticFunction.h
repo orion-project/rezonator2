@@ -35,6 +35,7 @@ public:
     void setMode(Mode mode) { _mode = mode; }
 
     static QString modeAlias(Mode mode);
+    static QString modeDisplayName(Mode mode);
 
 private:
     /// Wich type of result the function should compute.

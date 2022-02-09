@@ -13,6 +13,30 @@ MulticausticWindow::MulticausticWindow(MultirangeCausticFunction* function) : Pl
 {
     _plot->addLayer("elem_bounds", _plot->layer("graphs"), QCustomPlot::limBelow);
 
+    _plot->addTextVarX(QStringLiteral("{elems}"), tr("Element labels and titles"), [this]{
+        QStringList strs;
+        foreach (const auto& arg, this->function()->args())
+            if (!arg.element->disabled())
+                strs << arg.element->displayLabelTitle();
+        return strs.join(QStringLiteral(", "));
+    });
+    _plot->addTextVarX(QStringLiteral("{elem_labels}"), tr("Element labels"), [this]{
+        QStringList strs;
+        foreach (const auto& arg, this->function()->args())
+            if (!arg.element->disabled())
+                strs << arg.element->displayLabel();
+        return strs.join(QStringLiteral(", "));
+    });
+    _plot->addTextVarX(QStringLiteral("{elem_titles}"), tr("Element titles"), [this]{
+        QStringList strs;
+        foreach (const auto& arg, this->function()->args())
+            if (!arg.element->disabled())
+                strs << arg.element->displayTitle();
+        return strs.join(QStringLiteral(", "));
+    });
+    _plot->setDefaultTitleX(QStringLiteral("{elem_labels} {(unit)}"));
+    _plot->setFormatterTextX(QStringLiteral("{elem_labels} {(unit)}"));
+
     _actnElemBoundMarkers = new QAction(tr("Element bound markers"), this);
     _actnElemBoundMarkers->setCheckable(true);
     _actnElemBoundMarkers->setChecked(true);
@@ -224,15 +248,6 @@ void MulticausticWindow::showRoundTrip()
     }
 }
 
-QString MulticausticWindow::getDefaultTitleX() const
-{
-    QStringList strs;
-    foreach (auto& arg, function()->args())
-        if (!arg.element->disabled())
-            strs << arg.element->displayLabel();
-    return QStringLiteral("%1 (%2)").arg(strs.join(QStringLiteral(", ")), getUnitX()->name());
-}
-
 Z::Unit MulticausticWindow::getDefaultUnitX() const
 {
     const auto& funcs = function()->funcs();
@@ -248,4 +263,19 @@ Z::Unit MulticausticWindow::getDefaultUnitY() const
     case CausticFunction::HalfAngle: return AppSettings::instance().defaultUnitAngle;
     }
     return Z::Units::none();
+}
+
+void MulticausticWindow::storeView(FuncMode mode)
+{
+    ViewSettings vs;
+    storeViewParts(vs, VP_LIMITS_Y | VP_TITLE_Y | VP_UNIT_Y | VP_CUSRSOR_POS);
+    _storedView[mode] = vs;
+}
+
+void MulticausticWindow::restoreView(FuncMode mode)
+{
+    ViewSettings vs;
+    if (_storedView.contains(mode))
+        vs = _storedView[mode];
+    restoreViewParts(vs, VP_LIMITS_Y | VP_TITLE_Y | VP_UNIT_Y | VP_CUSRSOR_POS);
 }

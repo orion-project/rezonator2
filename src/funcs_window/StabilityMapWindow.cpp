@@ -138,6 +138,25 @@ void StabilityMapOptionsPanel::functionModeChanged(int mode)
 StabilityMapWindow::StabilityMapWindow(Schema *schema) :
     PlotFuncWindowStorable(new StabilityMapFunction(schema))
 {
+    auto getStabParam = [this]{ return Z::Enums::displayStr(function()->stabilityCalcMode()); };
+    _plot->addTextVar(QStringLiteral("{stab_mode}"), tr("Stability parameter mode"), getStabParam);
+
+    _plot->addTextVarX(QStringLiteral("{elem}"), tr("Variable element label and title"), [this]{
+        return function()->arg()->element->displayLabelTitle(); });
+    _plot->addTextVarX(QStringLiteral("{elem_label}"), tr("Variable element label"), [this]{
+        return function()->arg()->element->label(); });
+    _plot->addTextVarX(QStringLiteral("{elem_title}"), tr("Variable element title"), [this]{
+        return function()->arg()->element->title(); });
+    _plot->addTextVarX(QStringLiteral("{elem_param}"), tr("Variable element parameter"), [this]{
+        return function()->arg()->parameter->name(); });
+
+    _plot->addTextVarY(QStringLiteral("{stab_mode}"), tr("Stability parameter mode"), getStabParam);
+
+    _plot->setDefaultTitleX(QStringLiteral("{elem}, {elem_param} {(unit)}"));
+    _plot->setFormatterTextX(QStringLiteral("{elem}, {elem_param} {(unit)}"));
+    _plot->setDefaultTitleY(QStringLiteral("Stability parameter {stab_mode}"));
+    _plot->setFormatterTextY(QStringLiteral("Stability parameter {stab_mode}"));
+
     _actnStabilityAutolimits = new QAction(tr("Y-axis -> Stability Range", "Plot action"), this);
     _actnStabilityAutolimits->setIcon(QIcon(":/toolbar/limits_stab"));
     connect(_actnStabilityAutolimits, &QAction::triggered, this, &StabilityMapWindow::autolimitsStability);
@@ -249,40 +268,6 @@ void StabilityMapWindow::toggleStabBoundMarkers(bool on)
     schema()->events().raise(SchemaEvents::Changed, "StabilityMapWindow: toggleStabBoundMarkers");
 }
 
-QString StabilityMapWindow::getDefaultTitle() const
-{
-    return tr("Stability Map");
-}
-
-QString StabilityMapWindow::getDefaultTitleX() const
-{
-    auto arg = function()->arg();
-    auto unit = getUnitX();
-    if (unit == Z::Units::none())
-        return QStringLiteral("%1, %2")
-                .arg(arg->element->displayLabelTitle())
-                .arg(arg->parameter->name());
-    return QStringLiteral("%1, %2 (%3)")
-            .arg(arg->element->displayLabelTitle())
-            .arg(arg->parameter->label())
-            .arg(unit->name());
-}
-
-QString StabilityMapWindow::getDefaultTitleY() const
-{
-    QString stabCalcMode;
-    switch (function()->stabilityCalcMode())
-    {
-    case Z::Enums::StabilityCalcMode::Normal:
-        stabCalcMode = QStringLiteral("(A + D)/2");
-        break;
-    case Z::Enums::StabilityCalcMode::Squared:
-        stabCalcMode = QStringLiteral("1 - ((A + D)/2)²");
-        break;
-    }
-    return tr("Stability parameter: %1").arg(stabCalcMode);
-}
-
 Z::Unit StabilityMapWindow::getDefaultUnitX() const
 {
     return function()->arg()->range.start.unit();
@@ -292,5 +277,5 @@ QString StabilityMapWindow::getCursorInfo(const QPointF& pos) const
 {
     if (!function()->ok()) return QString();
     auto res = function()->calculateAt(Z::Value(pos.x(), getUnitX()));
-    return QStringLiteral("Pt = %1; Ps = %2").arg(Z::format(res.T)).arg(Z::format(res.S));
+    return QStringLiteral("Pt = %1; Ps = %2").arg(Z::format(res.T), Z::format(res.S));
 }

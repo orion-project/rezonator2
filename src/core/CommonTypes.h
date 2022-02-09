@@ -83,6 +83,8 @@ public:
         int res = QMetaEnum::fromType<TEnum>().keyToValue(value.toLatin1().data(), &ok);
         return ok ? TEnum(res) : defaultValue;
     }
+
+    static QString displayStr(StabilityCalcMode mode);
 };
 
 

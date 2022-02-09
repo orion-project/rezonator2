@@ -159,3 +159,17 @@ QString CausticFunction::modeAlias(Mode mode)
     }
     return QString();
 }
+
+QString CausticFunction::modeDisplayName(Mode mode)
+{
+    switch (mode)
+    {
+    case CausticFunction::Mode::BeamRadius:
+        return qApp->tr("Beam radius");
+    case CausticFunction::Mode::FrontRadius:
+        return qApp->tr("Wavefront curvature radius");
+    case CausticFunction::Mode::HalfAngle:
+        return qApp->tr("Half of divergence angle");
+    }
+    return QString();
+}
