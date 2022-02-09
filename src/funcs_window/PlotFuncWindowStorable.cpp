@@ -5,6 +5,7 @@
 
 #include "qcpl_cursor_panel.h"
 #include "qcpl_plot.h"
+#include "qcpl_format.h"
 
 #include <QAction>
 #include <QJsonObject>
@@ -71,10 +72,10 @@ bool PlotFuncWindowStorable::storableWrite(QJsonObject &root, Z::Report *report)
 QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root)
 {
     // Restore graphs visibility
-    auto mode = root["ts_mode"].toString();
+    auto modeTS = root["ts_mode"].toString();
     bool modeT = true, modeS = true;
-    if (mode == "T") modeS = false;
-    else if (mode == "S") modeT = false;
+    if (modeTS == "T") modeS = false;
+    else if (modeTS == "S") modeT = false;
     actnShowT->setChecked(modeT);
     actnShowS->setChecked(modeS);
     actnShowFlippedTS->setChecked(root["ts_flipped"].toBool());
@@ -99,24 +100,24 @@ QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root)
     }
     _unitX = Z::Units::findByAlias(root["x_unit"].toString(), Z::Units::none());
     _unitY = Z::Units::findByAlias(root["y_unit"].toString(), Z::Units::none());
+    _plot->setFormatterTextX(root["x_title"].toString());
+    _plot->setFormatterTextY(root["y_title"].toString());
 
     // Restore view states
-    QJsonArray viewsJson = root["stored_views"].toArray();
-    for (auto it = viewsJson.begin(); it != viewsJson.end(); it++)
+    auto viewsJson = root["stored_views"].toObject();
+    auto mode = viewsJson.constBegin();
+    while (mode != viewsJson.constEnd())
     {
-        QJsonObject viewJson = (*it).toObject();
-        auto mode = viewJson["mode"].toInt(-1);
-        if (mode < 0) continue;
-        ViewState state;
-        state.limitsX = { viewJson["x_min"].toDouble(Double::nan()),
-                          viewJson["x_max"].toDouble(Double::nan()) };
-        state.limitsY = { viewJson["y_min"].toDouble(Double::nan()),
-                          viewJson["y_max"].toDouble(Double::nan()) };
-        if (state.limitsX.isInvalid() or state.limitsY.isInvalid())
-            continue;
-        state.unitX = Z::Units::findByAlias(viewJson["x_unit"].toString(), Z::Units::none());
-        state.unitY = Z::Units::findByAlias(viewJson["y_unit"].toString(), Z::Units::none());
-        _storedView.insert(mode, state);
+        ViewSettings vs;
+        auto viewJson = mode.value().toObject();
+        auto it = viewJson.constBegin();
+        while (it != viewJson.constEnd())
+        {
+            vs[it.key()] = it.value().toVariant();
+            it++;
+        }
+        _storedView[mode.key().toInt()] = vs;
+        mode++;
     }
 
     return QString();
@@ -140,24 +141,27 @@ QString PlotFuncWindowStorable::writeWindowGeneral(QJsonObject& root) const
     root["x_min"] = limitsX.min;
     root["x_max"] = limitsX.max;
     root["x_unit"] = getUnitX()->alias();
+    root["x_title"] = _plot->formatterTextX();
     root["y_min"] = limitsY.min;
     root["y_max"] = limitsY.max;
     root["y_unit"] = getUnitY()->alias();
+    root["y_title"] = _plot->formatterTextY();
 
     // Store view states
-    QJsonArray viewsJson;
-    for (int key : _storedView.keys())
+    QJsonObject viewsJson;
+    auto mode = _storedView.constBegin();
+    while (mode != _storedView.constEnd())
     {
-        auto view = _storedView[key];
-        viewsJson.append(QJsonObject{
-            { "mode", key },
-            { "x_min", view.limitsX.min },
-            { "x_max", view.limitsX.max },
-            { "x_unit", view.unitX->alias() },
-            { "y_min", view.limitsY.min },
-            { "y_max", view.limitsY.max },
-            { "y_unit", view.unitY->alias() },
-        });
+        const auto& view = mode.value();
+        QJsonObject viewJson;
+        auto it = view.constBegin();
+        while (it != view.constEnd())
+        {
+            viewJson[it.key()] = QJsonValue::fromVariant(it.value());
+            it++;
+        }
+        viewsJson[QString::number(mode.key())] = viewJson;
+        mode++;
     }
     root["stored_views"] = viewsJson;
 

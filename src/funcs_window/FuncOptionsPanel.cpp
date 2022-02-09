@@ -64,6 +64,6 @@ void FuncOptionsPanel::modeButtonClicked()
 void FuncOptionsPanel::showCurrentMode()
 {
     auto mode = currentFunctionMode();
-    for (auto button : _modeButtons)
+    foreach (auto button, _modeButtons)
         button->setChecked(button->mode() == mode);
 }

@@ -20,6 +20,10 @@ public:
     void elementChanged(Schema*, Element*) override;
     void elementDeleting(Schema*, Element*) override;
 
+    // Implementation of PlotFuncWindow
+    void storeView(FuncMode) override;
+    void restoreView(FuncMode) override;
+
 protected:
     // Implementation of PlotFuncWindow
     bool configureInternal() override;
@@ -28,7 +32,6 @@ protected:
     void updateGraphs() override;
     ElemDeletionReaction reactElemDeletion(const Elements&) override;
     void showRoundTrip() override;
-    QString getDefaultTitleX() const override;
     Z::Unit getDefaultUnitX() const override;
     Z::Unit getDefaultUnitY() const override;
 

@@ -23,9 +23,6 @@ protected:
     QWidget* makeOptionsPanel() override;
     bool configureInternal() override;
     void afterUpdate() override;
-    QString getDefaultTitle() const override;
-    QString getDefaultTitleX() const override;
-    QString getDefaultTitleY() const override;
     void fillViewMenuActions(QList<QAction*>& actions) const override;
     Z::Unit getDefaultUnitX() const override;
     QString getCursorInfo(const QPointF& pos) const override;
