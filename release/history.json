@@ -18,6 +18,9 @@
         },
         {
           "text": "Fixed typos (https://github.com/orion-project/rezonator2/issues/16)"
+        },
+        {
+          "text": "Fixed file opening on Ubuntu and macOS"
         }
       ]
     },
