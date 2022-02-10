@@ -106,51 +106,109 @@ public:
         return (R2 > 0) ? Convex : ConvexConcave;
     }
 
+    void rightArcTopBottom()
+    {
+
+    }
+
     void calc()
     {
+        const qreal t = qAbs(T); // thickness of lens
+        const qreal tt = t/2.0; // half-thickness of lens
+        const qreal d = qAbs(D); // diameter of lens
+        const qreal h = d/2.0; // half-diameter of lens
+        const qreal r1 = qAbs(R1); // left diameter of curvature
+        const qreal r2 = qAbs(R2); // right diameter of curvature
+        const qreal d1 = r1*2.0; // left diameter of curvature
+        const qreal d2 = r2*2.0; // right diameter of curvature
+        qreal s1 = 0, a1 = 0, s2 = 0, a2 = 0;
+        if (R1 != 0) {
+            s1 = r1 - qSqrt(Sqr(r1) - Sqr(h)); // left arc sagitta
+            a1 = qRadiansToDegrees(qAsin(h/r1)); // left arc half-angle
+        }
+        if (R2 != 0) {
+            s2 = r2 - qSqrt(Sqr(r2) - Sqr(h)); // right arc sagitta
+            a2 = qRadiansToDegrees(qAsin(h/r2)); // right arc half-angle
+        }
+        qreal tl = 0; // full lens half-thickness
+
         _path.clear();
         switch (getForm()) {
         case Plane: //      ||
-            qDebug() << "Plane";
-            _path.addRect(-T/2, -D/2, T, D);
+            _path.moveTo(-tt, -h);
+            _path.lineTo(-tt, h);
+            _path.lineTo(tt, h);
+            _path.lineTo(tt, -h);
             break;
         case PlanoConvex: //      |)
-            qDebug() << "PlanoConvex";
-        {
-            const qreal sagitta = R2 - qSqrt(Sqr(R2) - Sqr(D/2));
-            const qreal startAngle = qRadiansToDegrees(qAsin(D/2 / R2));
-            const qreal sweepAngle = 2*startAngle;
-            QRectF rightSurface = QRectF(T/2 + sagitta - 2*R2, -R2, 2*R2, 2*R2);
-
-            _path.moveTo(-T/2, -D/2);
-            _path.lineTo(-T/2, D/2);
-            _path.lineTo(T/2, D/2);
-            _path.arcTo(rightSurface, 360-startAngle, sweepAngle);
-            _path.closeSubpath();
-        }
+            tl = (t + s2)/2.0;
+            _path.moveTo(-tl, -h);
+            _path.lineTo(-tl, h);
+            _path.lineTo(tl-s2, h);
+            _path.arcTo({tl-d2, -r2, d2, d2}, 360-a2, 2*a2);
             break;
         case PlanoConcave: //      |(
-            qDebug() << "PlanoConcave";
+            _path.moveTo(s2-tt, -h);
+            _path.arcTo({tt, -r2, d2, d2}, 180-a2, 2*a2);
+            _path.lineTo(-tt, h);
+            _path.lineTo(-tt, -h);
             break;
         case ConcavePlano: //      )|
-            qDebug() << "ConcavePlano";
+            _path.moveTo(-s1-tt, h);
+            _path.arcTo({-d1-tt, -r1, d1, d1}, 360-a1, 2*a1);
+            _path.lineTo(tt, -h);
+            _path.lineTo(tt, h);
             break;
         case ConvexPlano: //      (|
-            qDebug() << "ConvexPlano";
+            tl = (t + s1)/2.0;
+            _path.moveTo(-tl+s1, -h);
+            _path.arcTo({-tl, -r1, d1, d1}, 180-a1, 2*a1);
+            _path.lineTo(tl, h);
+            _path.lineTo(tl, -h);
             break;
         case ConcaveConvex: //      ))
-            qDebug() << "ConcaveConvex";
+            if (r1 < r2) {
+                _path.moveTo(-s1-tt, h);
+                _path.arcTo({-d1-tt, -r1, d1, d1}, 360-a1, 2*a1);
+                _path.lineTo(tt-s1, -h);
+                _path.arcTo({tt-d2, -r2, d2, d2}, a2, -2*a2);
+            } else {
+                tl = (t - s1 + s2)/2.0;
+                _path.moveTo(-tl-s1, -h);
+                _path.arcTo({-tl-d1, -r1, d1, d1}, a1, -2*a1);
+                _path.lineTo(tl-s2, h);
+                _path.arcTo({tl-d2, -r2, d2, d2}, 360-a2, 2*a2);
+            }
             break;
         case Concave: //      )(
-            qDebug() << "Concave";
+            _path.moveTo(-tt-s1, h);
+            _path.arcTo({-tt-d1, -r1, d1, d1}, 360-a1, 2*a1);
+            _path.lineTo(tt+s2, -h);
+            _path.arcTo({tt, -r2, d2, d2}, 180-a2, 2*a2);
             break;
         case Convex: //      ()
-            qDebug() << "Convex";
+            tl = (t + s1 + s2)/2.0;
+            _path.moveTo(-tl+s1, -h);
+            _path.arcTo({-tl, -r1, d1, d1}, 180-a1, 2*a1);
+            _path.lineTo(tl-s2, h);
+            _path.arcTo({tl-d2, -r2, d2, d2}, 360-a2, 2*a2);
             break;
         case ConvexConcave: //      ((
-            qDebug() << "ConvexConcave";
+            if (r1 < r2) {
+                tl = (t + s1 - s2)/2.0;
+                _path.moveTo(-tl+s1, -h);
+                _path.arcTo({-tl, -r1, d1, d1}, 180-a1, 2*a1);
+                _path.lineTo(tl+s2, h);
+                _path.arcTo({tl, -r2, d2, d2}, 180+a2, -2*a2);
+            } else {
+                _path.moveTo(-tt+s1, -h);
+                _path.arcTo({-tt, -r1, d1, d1}, 180-a1, 2*a1);
+                _path.lineTo(tt+s2, h);
+                _path.arcTo({tt, -r2, d2, d2}, 180+a2, -2*a2);
+            }
             break;
         }
+        _path.closeSubpath();
     }
 
     QRectF boundingRect() const override
@@ -166,10 +224,10 @@ public:
     }
 
     QPainterPath _path;
-    double R1 = 0;
-    double R2 = 0;
-    double D = 0;
-    double T = 0;
+    qreal R1 = 0;
+    qreal R2 = 0;
+    qreal D = 0;
+    qreal T = 0;
     QPen glassPen = QPen(Qt::black, 1.5);
     QBrush glassBrush = QBrush(QPixmap(":/misc/glass_pattern_big"));
 };
@@ -203,8 +261,7 @@ LensDesignerWidget::LensDesignerWidget(QWidget *parent) : QSplitter(parent)
                           tr("Minimal thickness.", "Lens designer"));
 
     _D->setValue(40_mm); _D->addListener(this);
-    //_R1->setValue(-100_mm);
-    _R1->setValue(0_mm); _R1->addListener(this);
+    _R1->setValue(-100_mm); _R1->addListener(this);
     _R2->setValue(100_mm); _R2->addListener(this);
     _T->setValue(5_mm); _T->addListener(this);
     _IOR->setValue(1.7); _IOR->addListener(this);
