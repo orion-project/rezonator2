@@ -163,7 +163,11 @@ struct MemoTextFormat
     {
         QTextCharFormat f;
         if (!_fontFamily.isEmpty())
+        #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
             f.setFontFamilies({_fontFamily});
+        #else
+            f.setFontFamily(_fontFamily);
+        #endif
         if (!_colorName.isEmpty())
             f.setForeground(QColor(_colorName));
         if (_bold)
@@ -675,7 +679,9 @@ void MemoWindow::insertTable()
         fmt.setCellSpacing(0);
         fmt.setBorderBrush(Qt::black);
         fmt.setBorderStyle(QTextFrameFormat::BorderStyle_Solid);
+      #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
         fmt.setBorderCollapse(true);
+      #endif
         _editor->textCursor().insertTable(rows->value(), cols->value(), fmt);
     }
 }

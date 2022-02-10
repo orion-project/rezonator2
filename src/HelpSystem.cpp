@@ -184,7 +184,12 @@ void HelpSystem::checkUpdates()
         _updateChecker = nullptr;
         versionReceived(versionData);
     });
-    connect(_updateReply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::errorOccurred), [this](QNetworkReply::NetworkError){
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+    connect(_updateReply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::errorOccurred),
+#else
+    connect(_updateReply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::error),
+#endif
+            [this](QNetworkReply::NetworkError){
         auto errorMsg =_updateReply->errorString();
         qCritical() << "Network error" << errorMsg;
         _updateReply->deleteLater();

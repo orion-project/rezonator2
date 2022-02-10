@@ -4,6 +4,7 @@
 #include "helpers/OriLayouts.h"
 #include "widgets/OriInfoPanel.h"
 #include "widgets/OriValueEdit.h"
+#include "../core/Utils.h"
 
 //------------------------------------------------------------------------------
 //                                ParamsEditor
@@ -242,7 +243,7 @@ void ParamsEditor::moveEditorUp(Z::Parameter* param)
             else
             {
                 _paramsLayout->insertWidget(i-1, editor);
-                _editors.swapItemsAt(i, i-1);
+                swapItems(_editors, i, i-1);
             }
             break;
         }
@@ -267,7 +268,7 @@ void ParamsEditor::moveEditorDown(Z::Parameter* param)
             else
             {
                 _paramsLayout->insertWidget(i+1, editor);
-                _editors.swapItemsAt(i, i+1);
+                swapItems(_editors, i, i+1);
             }
             break;
         }
