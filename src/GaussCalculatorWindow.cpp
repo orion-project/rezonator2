@@ -6,7 +6,9 @@
 #include "HelpSystem.h"
 #include "funcs/GaussCalculator.h"
 #include "widgets/ParamEditor.h"
+#include "widgets/PlotHelpers.h"
 
+#include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWindows.h"
 #include "helpers/OriWidgets.h"
@@ -211,20 +213,14 @@ public:
             QCPGraph *g = plot->addGraph();
             g->setPen(pen);
             g->setBrush(brush);
-// TODO restore after upgrade to QCustomPlot 2.0.1
-//            QPen selectedPen(pen);
-//            selectedPen.setColor(Qt::black);
-//            if (selectedPen.style() == Qt::NoPen)
-//                selectedPen.setStyle(Qt::DotLine);
-//            g->setSelectedPen(selectedPen);
-//            g->setSelectedBrush(brush);
+            g->selectionDecorator()->setBrush(brush);
             _items.append(g);
         }
     }
 
     void clearData()
     {
-        for (QCPGraph *g : _items)
+        foreach (QCPGraph *g, _items)
             g->data()->clear();
     }
 
@@ -486,9 +482,31 @@ GaussCalculatorWindow::GaussCalculatorWindow(QWidget *parent) : QWidget(parent)
     paramsLayout->setVerticalSpacing(0);
     makeParams(paramsLayout);
 
+    _plot = new QCPL::Plot;
+    _plot->legend->setVisible(false);
+    _plot->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+
+    _plot->addTextVarX(QStringLiteral("{unit}"), tr("Unit of measurement"), [this]{
+        return _z->value().unit()->name(); });
+    _plot->setDefaultTitleX("Axial distance, {unit}");
+    _plot->setFormatterTextX("Axial distance, {unit}");
+
+    _plot->addTextVarY(QStringLiteral("{unit}"), tr("Unit of measurement"), [this]{
+        return (_plotWR->checkedId() == 0 ? _w : _R )->value().unit()->name(); });
+    _plot->addTextVarY(QStringLiteral("{mode}"), tr(""), [this]{
+        return _plotWR->checkedId() == 0 ? QStringLiteral("Beam radius") : QStringLiteral("Radius of curvatue"); });
+    _plot->setDefaultTitleY("{mode}, {unit}");
+    _plot->setFormatterTextY("{mode}, {unit}");
+
+    _warning = new QLabel;
+    _warning->setVisible(false);
+    _warning->setWordWrap(true);
+    _warning->setStyleSheet("background: Crimson; color: white; padding: 0.5em; font-size: 10pt");
+
     Ori::Layouts::LayoutV({
             makeToolbar(),
-            makePlot(),
+            _plot,
+            _warning,
             paramsLayout,
         })
         .setMargin(0)
@@ -505,7 +523,7 @@ GaussCalculatorWindow::GaussCalculatorWindow(QWidget *parent) : QWidget(parent)
 
     _updatesEnabled = true;
     _calc->setRef(GaussCalculator::Ref::W0);
-    QTimer::singleShot(0, [this]{ this->recalc(); });
+    QTimer::singleShot(0, this, [this]{ this->recalc(); });
 }
 
 GaussCalculatorWindow::~GaussCalculatorWindow()
@@ -530,6 +548,8 @@ void GaussCalculatorWindow::restoreState()
     _plotWR->setCheckedId(root["plot_wr"].toInt());
     _plotV->setChecked(root.contains("plot_v") ? root["plot_v"].toBool() : true);
     _plotZ0->setChecked(root.contains("plot_z0") ? root["plot_z0"].toBool() : true);
+    _plot->setFormatterTextX(root["x_title"].toString());
+    _plot->setFormatterTextY(root["y_title"].toString());
 }
 
 void GaussCalculatorWindow::storeState()
@@ -544,6 +564,8 @@ void GaussCalculatorWindow::storeState()
     root["plot_wr"] = _plotWR->checkedId();
     root["plot_v"] = _plotV->isChecked();
     root["plot_z0"] = _plotZ0->isChecked();
+    root["x_title"] = _plot->formatterTextX();
+    root["y_title"] = _plot->formatterTextY();
 
     CustomDataHelpers::saveCustomData(root, "gauss");
 }
@@ -552,13 +574,14 @@ void GaussCalculatorWindow::makeParams(QGridLayout *paramsLayout)
 {
     #define FUNC(func_name) &GaussCalculator::func_name
 
-    auto addParam = [](Z::Dim dim, const QString& alias, const QString& name, const Z::Value& initialValue) {
+    auto addParam = [this](Z::Dim dim, const QString& alias, const QString& name, const Z::Value& initialValue) {
         auto param = new Z::Parameter(dim, alias, name);
         param->setValue(initialValue);
+        _params.append(param);
         return param;
     };
 
-    auto addEditor = [&](int row, int col, GaussCalcParamEditor *editor) {
+    auto addEditor = [this, paramsLayout](int row, int col, GaussCalcParamEditor *editor) {
         _paramEditors.append(editor);
         paramsLayout->addWidget(editor->editor(), row, col);
         connect(editor, &GaussCalcParamEditor::calcNeeded, this, &GaussCalculatorWindow::recalc);
@@ -626,25 +649,22 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     _plotV = Ori::Gui::toggledAction(tr("Plot Beam Angle"), this, SLOT(updatePlot()), ":/toolbar/plot_v");
     _plotZ0 = Ori::Gui::toggledAction(tr("Plot Rayleigh Distance"), this, SLOT(updatePlot()), ":/toolbar/plot_z0");
 
+    auto actnAutolimits = Ori::Gui::action(tr("Fit to Graphs"), _plot, SLOT(autolimits()), ":/toolbar/limits_auto");
+    auto actnTitleX = Ori::Gui::action(tr("X-axis Title..."), _plot, SLOT(titleDlgX()), ":/toolbar/title_x");
+    auto actnTitleY = Ori::Gui::action(tr("Y-axis Title..."), _plot, SLOT(titleDlgY()), ":/toolbar/title_y");
+    auto actionCopyImg = Ori::Gui::action(tr("Copy Plot Image"), _plot, SLOT(copyPlotImage()), ":/toolbar/copy_img", QKeySequence::Copy);
+    auto actionCopyTbl = Ori::Gui::action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
     auto actionCalc = Ori::Gui::action(tr("Formula Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
-
     auto actionHelp = Ori::Gui::action(tr("Help"), this, SLOT(showHelp()), ":/toolbar/help", QKeySequence::HelpContents);
 
     auto toolbar = new Ori::Widgets::FlatToolBar;
     toolbar->setIconSize(AppSettings::instance().toolbarIconSize());
     Ori::Gui::populate(toolbar, {
         _calcModeLock, nullptr, _calcModeZone, nullptr, _plotPlusMinusZ, _plotPlusMinusW, nullptr,
-        _plotWR, _plotV, _plotZ0, nullptr, actionCalc, nullptr, actionHelp
+        _plotWR, _plotV, _plotZ0, nullptr, actnAutolimits, actnTitleX, actnTitleY, nullptr,
+        actionCopyImg, actionCopyTbl, nullptr, actionCalc, nullptr, actionHelp
     });
     return toolbar;
-}
-
-QWidget* GaussCalculatorWindow::makePlot()
-{
-    _plot = new QCPL::Plot;
-    _plot->legend->setVisible(false);
-    _plot->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    return _plot;
 }
 
 void GaussCalculatorWindow::zoneSelected(int zone)
@@ -665,7 +685,7 @@ void GaussCalculatorWindow::recalc()
     // do not take value of this parameter from calculator
     // as it will interfere user input.
     auto changingEditor = sender();
-    for (GaussCalcParamEditor *editor : _paramEditors)
+    foreach (GaussCalcParamEditor *editor, _paramEditors)
         if (editor != changingEditor)
             editor->getValueFromCalculator();
 
@@ -711,7 +731,22 @@ void GaussCalculatorWindow::updatePlot()
     double minY = o.plotMinusY ? -maxY : 0;
     _plot->setLimitsX(minZ, maxZ, false);
     _plot->setLimitsY(minY, maxY, false);
+    _plot->updateTitles();
     _plot->replot();
+
+
+    QString warning;
+    foreach (auto param, _params)
+    {
+        if (qIsNaN(param->value().value()))
+        {
+            warning = tr("Some values became NaNs. This means there is no solution for the given set of parameters. "
+                "It can be irrecoverable state so it's better to reopen the window to start with default values.");
+            break;
+        }
+    }
+    _warning->setText(warning);
+    _warning->setVisible(!warning.isEmpty());
 }
 
 void GaussCalculatorWindow::showCalculator()
@@ -722,4 +757,15 @@ void GaussCalculatorWindow::showCalculator()
 void GaussCalculatorWindow::showHelp()
 {
     Z::HelpSystem::instance()->showTopic("calc_gauss.html");
+}
+
+void GaussCalculatorWindow::copyGraphData()
+{
+    auto g = _plot->selectedGraph();
+    if (!g)
+    {
+        Ori::Dlg::info(tr("Please select a graph first"));
+        return;
+    }
+    PlotHelpers::toClipboard(g);
 }

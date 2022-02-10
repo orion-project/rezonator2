@@ -5,7 +5,10 @@
       "date": "",
       "changes": [
         {
-          "text": "Added commands for changing axes titles."
+          "text": "New commands for Gassian Beam Calculator window: copy image, copy data, change axis titles."
+        },
+        {
+          "text": "Added commands for changing axes titles for function plots."
         },
         {
           "text": "Added beam shape tool for caustic windows."

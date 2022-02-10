@@ -94,6 +94,8 @@ public:
         /// If yes, the parameter is deleted when the editor gets deleted.
         bool ownParam = false;
 
+        bool rescaleOnUnitChange = false;
+
         Options(Z::Parameter* p) : param(p) {}
     };
 
@@ -147,6 +149,7 @@ private:
     QString _editorInfo;
     bool _paramChangedHandlerEnabled = true;
     bool _ownParam;
+    bool _rescaleOnUnitChange = false;
 
     void linkToGlobalParameter();
     void showValue(Z::Parameter *param);

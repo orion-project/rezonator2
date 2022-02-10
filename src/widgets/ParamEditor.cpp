@@ -186,7 +186,7 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
         connect(menuButton, &MenuButton::focused, this, &ParamEditor::editorFocused);
         connect(menuButton, &QPushButton::clicked, [this, menuButton](){
             // When menu is opened, each action has a pointer to the current param editor
-            for (auto action : menuButton->menu()->actions())
+            foreach (auto action, menuButton->menu()->actions())
                 action->setData(QVariant::fromValue(this));
 
             // button->setMenu() crashes the app on MacOS when button is clicked, so show manually
