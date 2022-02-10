@@ -9,6 +9,7 @@
 
 QT_BEGIN_NAMESPACE
 class QGridLayout;
+class QLabel;
 QT_END_NAMESPACE
 
 class QCPGraph;
@@ -91,12 +92,13 @@ private:
     Ori::Widgets::ExclusiveActionGroup *_calcModeLock, *_calcModeZone,  *_plotPlusMinusZ,
         *_plotPlusMinusW, *_plotWR;
     Z::Parameter *_lambda, *_MI, *_w0, *_z, *_z0, *_Vs, *_w, *_R, *_reQ, *_imQ, *_reQ1, *_imQ1;
+    QVector<Z::Parameter*> _params;
     QAction *_plotV, *_plotZ0;
+    QLabel *_warning;
     bool _updatesEnabled = false;
 
     void makeParams(QGridLayout *paramsLayout);
     QWidget* makeToolbar();
-    QWidget* makePlot();
 
     void recalc();
 
@@ -109,6 +111,7 @@ private slots:
     void lockSelected(int lock);
     void showCalculator();
     void showHelp();
+    void copyGraphData();
 };
 
 #endif // GAUSS_CALCULATOR_WINDOW_H

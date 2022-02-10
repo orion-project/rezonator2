@@ -15,6 +15,7 @@
         <file alias="copy">../img/toolbar/copy.svg</file>
         <file alias="copy_all">../img/toolbar/copy_all.svg</file>
         <file alias="copy_img">../img/toolbar/copy_img.svg</file>
+        <file alias="copy_table">../img/toolbar/copy_table.svg</file>
         <file alias="cut">../img/toolbar/cut.svg</file>
         <file alias="delete">../img/toolbar/delete.svg</file>
         <file alias="delete_items">../img/toolbar/delete_items.svg</file>
@@ -117,6 +118,8 @@
         <file alias="stop">../img/toolbar/stop.svg</file>
         <file alias="strikeout">../img/toolbar/strikeout.svg</file>
         <file alias="text_color">../img/toolbar/text_color.svg</file>
+        <file alias="title_x">../img/toolbar/title_x.svg</file>
+        <file alias="title_y">../img/toolbar/title_y.svg</file>
         <file alias="switch_disabled">../img/toolbar/switch_disabled.svg</file>
         <file alias="underline">../img/toolbar/underline.svg</file>
         <file alias="undo">../img/toolbar/undo.svg</file>

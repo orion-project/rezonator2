@@ -51,4 +51,14 @@ template <typename T> struct Optional {
 
 } // namespace Z
 
+template <typename TList> void swapItems(TList& list, int i, int j)
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+    list.swapItemsAt(i, j);
+#else
+    list.swap(i, j);
+#endif
+}
+
+
 #endif // Z_UTILS_H

@@ -118,11 +118,23 @@ void ProjectOperations::openSchemaFile(const QString& fileName, const OpenFileOp
     if (!schema()->state().isNew())
     {
         QStringList args;
+#ifdef Q_OS_WIN
         args << qApp->applicationFilePath();
         if (opts.isExample)
             args << "--example";
         args << " \"" + fileName + "\"";
-        QProcess::startDetached(args.join(' '), {});
+        bool ok = QProcess::startDetached(args.join(' '), {});
+        if (!ok)
+            qWarning() << "Unable to start another instance" << args.join(' ');
+#else
+        QString exe = qApp->applicationFilePath();
+        if (opts.isExample)
+            args << "--example";
+        args << fileName;
+        bool ok = QProcess::startDetached(exe, args);
+        if (!ok)
+            qWarning() << "Unable to start another instance" << exe << args.join(' ');
+#endif
         return;
     }
 

@@ -1,0 +1,33 @@
+<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<linearGradient id="a" gradientTransform="matrix(1 0 0 .89 6.52 7.73)" gradientUnits="userSpaceOnUse" x1="4.59" x2="16.45" xlink:href="#e" y1="2.66" y2="16.98"/>
+<linearGradient id="b" gradientTransform="matrix(1 0 0 .89 6.52 7.73)" gradientUnits="userSpaceOnUse" x1="16.45" x2="4.59" xlink:href="#d" y1="2.66" y2="16.98"/>
+<linearGradient id="c">
+<stop offset="0" stop-color="#818eaf"/>
+<stop offset="1" stop-color="#818eaf" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="d">
+<stop offset="0" stop-color="#92b1de"/>
+<stop offset="1" stop-color="#525f96"/>
+</linearGradient>
+<linearGradient id="e">
+<stop offset="0" stop-color="#fdffff"/>
+<stop offset="1" stop-color="#b2d3fa"/>
+</linearGradient>
+<linearGradient id="f" gradientUnits="userSpaceOnUse" x1="4.5" x2="9.5" xlink:href="#c" y1="12.5" y2="12.5"/>
+<linearGradient id="g" gradientUnits="userSpaceOnUse" x1="4.5" x2="11.5" xlink:href="#c" y1="10.5" y2="10.5"/>
+<linearGradient id="h" gradientUnits="userSpaceOnUse" x1="4.5" x2="11.5" xlink:href="#c" y1="8.5" y2="8.5"/>
+<linearGradient id="i" gradientUnits="userSpaceOnUse" x1="4.5" x2="9.5" xlink:href="#c" y1="6.5" y2="6.5"/>
+<linearGradient id="j" gradientUnits="userSpaceOnUse" x1="4.5" x2="13.5" xlink:href="#c" y1="4.5" y2="4.5"/>
+<linearGradient id="k" gradientTransform="matrix(1 0 0 .89 -1.48 -.27)" gradientUnits="userSpaceOnUse" x1="4.59" x2="16.45" xlink:href="#e" y1="2.66" y2="16.98"/>
+<linearGradient id="l" gradientTransform="matrix(1 0 0 .89 -1.48 -.27)" gradientUnits="userSpaceOnUse" x1="16.45" x2="4.59" xlink:href="#d" y1="2.66" y2="16.98"/>
+<path d="m14.5 2.5v13h-12v-13z" style="fill-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-dashoffset:21.44;fill:url(#k);stroke:url(#l)"/>
+<g fill="none" stroke-linecap="square">
+<path d="m5 4.5h8" stroke="url(#j)"/>
+<path d="m5 6.5h4" stroke="url(#i)"/>
+<path d="m5 8.5h6" stroke="url(#h)"/>
+<path d="m5 10.5h6" stroke="url(#g)"/>
+<path d="m5 12.5h4" stroke="url(#f)"/>
+</g>
+<path d="m21.5 6.5v15h-15v-15z" style="fill-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-dashoffset:21.44;fill:url(#a);stroke:url(#b)"/>
+<path d="m5 6.47h13m-13-6h13m-2-2v13m-8-13v13m4-13v13" fill="none" stroke="#98a2be" stroke-linecap="square" stroke-opacity=".78" transform="matrix(0 -1 1 0 9.03 25.5)"/>
+</svg>

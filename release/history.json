@@ -1,11 +1,14 @@
 {
   "history": [
     {
-      "version": "2.0.10-dev",
-      "date": "",
+      "version": "2.0.10-beta6",
+      "date": "2022-02-10",
       "changes": [
         {
-          "text": "Added commands for changing axes titles."
+          "text": "New commands for Gassian Beam Calculator window: copy image, copy data, change axis titles."
+        },
+        {
+          "text": "Added commands for changing axes titles for function plots."
         },
         {
           "text": "Added beam shape tool for caustic windows."
@@ -15,6 +18,9 @@
         },
         {
           "text": "Fixed typos (https://github.com/orion-project/rezonator2/issues/16)"
+        },
+        {
+          "text": "Fixed file opening on Ubuntu and macOS"
         }
       ]
     },
@@ -48,7 +54,13 @@
       "changes": [
         {
           "text": "Adjust and build with Qt 5.15.2 which is the latest LTS in 5.* series."
-        },
+        }
+      ]
+    },
+    {
+      "version": "2.0.7-beta3",
+      "date": "2021-04-13",
+      "changes": [
         {
           "text": "Fix: mirrors at ends of resonator respect IOR of attached media (https://github.com/orion-project/rezonator2/issues/4)."
         },
