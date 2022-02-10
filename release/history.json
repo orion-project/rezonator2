@@ -1,8 +1,8 @@
 {
   "history": [
     {
-      "version": "2.0.10-dev",
-      "date": "",
+      "version": "2.0.10-beta6",
+      "date": "2022-02-10",
       "changes": [
         {
           "text": "New commands for Gassian Beam Calculator window: copy image, copy data, change axis titles."
