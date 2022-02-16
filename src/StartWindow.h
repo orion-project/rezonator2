@@ -141,7 +141,7 @@ private slots:
     void showCalculator();
     void showGrinLens();
     void checkUpdates();
-    void showLensDesigner();
+    void showLensmaker();
 };
 
 //------------------------------------------------------------------------------

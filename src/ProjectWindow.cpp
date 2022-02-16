@@ -10,7 +10,7 @@
 #include "GaussCalculatorWindow.h"
 #include "GrinLensWindow.h"
 #include "HelpSystem.h"
-#include "LensDesignerWindow.h"
+#include "LensmakerWindow.h"
 #include "MemoWindow.h"
 #include "ProjectOperations.h"
 #include "ProtocolWindow.h"
@@ -165,7 +165,7 @@ void ProjectWindow::createActions()
     actnToolSettings = A_(tr("Settings..."), this, SLOT(showSettings()), ":/toolbar/settings");
     actnToolAdjust = A_(tr("Adjustment"), this, SLOT(showAdjustment()), ":/toolbar/adjust");
     actnToolGrinLens = A_(tr("GRIN Lens Assessment"), this, SLOT(showGrinLens()), ":/toolbar/grin");
-    actnToolLensDesigner = A_(tr("Lens Designer"), this, SLOT(showLensDesigner()), ":/window_icons/lens");
+    actnToolLensmaker = A_(tr("Lensmaker"), this, SLOT(showLensmaker()), ":/window_icons/lens");
 
     // These common window actions must not have data (action->data()), as data presense indicates that
     // this action is for activation of specific subwindow and _mdiArea is responsible for it.
@@ -220,7 +220,7 @@ void ProjectWindow::createMenuBar()
 
     menuTools = Ori::Gui::menu(tr("Tools", "Menu title"), this,
         { actnToolFlipSchema, nullptr, actnToolAdjust, nullptr,
-          actnToolsGaussCalc, actnToolsCalc, actnToolsCustomElems, actnToolGrinLens, actnToolLensDesigner, nullptr, actnToolSettings });
+          actnToolsGaussCalc, actnToolsCalc, actnToolsCustomElems, actnToolGrinLens, actnToolLensmaker, nullptr, actnToolSettings });
 
     menuWindow = Ori::Gui::menu(tr("Window"), this,
         { actnWndSchema, actnWndParams, actnWndPumps, actnWndProtocol, actnWndMemos, nullptr,
@@ -504,9 +504,9 @@ void ProjectWindow::showAdjustment()
     AdjustmentWindow::adjust(schema(), nullptr);
 }
 
-void ProjectWindow::showLensDesigner()
+void ProjectWindow::showLensmaker()
 {
-    LensDesignerWindow::showWindow();
+    LensmakerWindow::showWindow();
 }
 
 //------------------------------------------------------------------------------

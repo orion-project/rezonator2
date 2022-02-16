@@ -3,7 +3,7 @@
 #include "CustomElemsWindow.h"
 #include "GaussCalculatorWindow.h"
 #include "GrinLensWindow.h"
-#include "LensDesignerWindow.h"
+#include "LensmakerWindow.h"
 #include "ProjectOperations.h"
 #include "ProjectWindow.h"
 #include "StartWindow.h"
@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
         }
         else if (toolName == "lens")
         {
-            LensDesignerWindow::showWindow();
+            LensmakerWindow::showWindow();
             return app.exec();
         }
         else

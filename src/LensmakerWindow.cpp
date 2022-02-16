@@ -1,4 +1,4 @@
-#include "LensDesignerWindow.h"
+#include "LensmakerWindow.h"
 
 #include "widgets/ParamsEditor.h"
 #include "widgets/ParamEditor.h"
@@ -17,11 +17,11 @@
 
 namespace {
 
-LensDesignerWindow* __instance = nullptr;
+LensmakerWindow* __instance = nullptr;
 
 } // namespace
 
-namespace LensDesignerItems {
+namespace LensmakerItems {
 
 class OpticalAxisItem : public QGraphicsItem
 {
@@ -207,13 +207,13 @@ public:
     QBrush glassBrush = QBrush(QPixmap(":/misc/glass_pattern_big"));
 };
 
-} // namespace LensDesignerItems
+} // namespace LensmakerItems
 
 //--------------------------------------------------------------------------------
-//                              LensDesignerWidget
+//                              LensmakerWidget
 //--------------------------------------------------------------------------------
 
-LensDesignerWidget::LensDesignerWidget(QWidget *parent) : QSplitter(parent)
+LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
 {
     _D = new Z::Parameter(Z::Dims::linear(), QStringLiteral("D"), QStringLiteral("D"),
                          tr("Diameter", "Lens designer"),
@@ -270,9 +270,9 @@ LensDesignerWidget::LensDesignerWidget(QWidget *parent) : QSplitter(parent)
     auto editorP = paramsEditor->addEditor(_P);
     editorP->setReadonly(true, true);
 
-    _grid = new LensDesignerItems::PaperGridItem;
-    _axis = new LensDesignerItems::OpticalAxisItem;
-    _shape = new LensDesignerItems::LensShapeItem;
+    _grid = new LensmakerItems::PaperGridItem;
+    _axis = new LensmakerItems::OpticalAxisItem;
+    _shape = new LensmakerItems::LensShapeItem;
 
     _scene = new QGraphicsScene(this);
     _scene->addItem(_grid);
@@ -294,11 +294,11 @@ LensDesignerWidget::LensDesignerWidget(QWidget *parent) : QSplitter(parent)
     refresh();
 }
 
-LensDesignerWidget::~LensDesignerWidget()
+LensmakerWidget::~LensmakerWidget()
 {
 }
 
-void LensDesignerWidget::parameterChanged(Z::ParameterBase*)
+void LensmakerWidget::parameterChanged(Z::ParameterBase*)
 {
     refresh();
 }
@@ -329,12 +329,11 @@ struct LensCalculator
         P = (n - 1)*(1/R1 - 1/R2 + (n-1)*T/n/R1/R2);
         F = 1/P;
     }
-
 };
 
 } // namespace
 
-void LensDesignerWidget::refresh()
+void LensmakerWidget::refresh()
 {
     double tagretH = 300; // TODO: make it scalable to viewport
 
@@ -373,31 +372,31 @@ void LensDesignerWidget::refresh()
 }
 
 //--------------------------------------------------------------------------------
-//                              LensDesignerWindow
+//                              LensmakerWindow
 //--------------------------------------------------------------------------------
 
-void LensDesignerWindow::showWindow()
+void LensmakerWindow::showWindow()
 {
     if (!__instance)
-        __instance = new LensDesignerWindow;
+        __instance = new LensmakerWindow;
     __instance->show();
     __instance->activateWindow();
 }
 
-LensDesignerWindow::LensDesignerWindow(QWidget *parent) : QWidget(parent)
+LensmakerWindow::LensmakerWindow(QWidget *parent) : QWidget(parent)
 {
     setAttribute(Qt::WA_DeleteOnClose);
-    setWindowTitle(tr("Lens Designer"));
+    setWindowTitle(tr("Lensmaker"));
     setWindowIcon(QIcon(":/window_icons/lens"));
 
     auto toolbar = new Ori::Widgets::FlatToolBar;
 
-    _designer = new LensDesignerWidget;
+    _designer = new LensmakerWidget;
 
     Ori::Layouts::LayoutV({toolbar, _designer}).setMargin(3).useFor(this);
 }
 
-LensDesignerWindow::~LensDesignerWindow()
+LensmakerWindow::~LensmakerWindow()
 {
     __instance = nullptr;
 }

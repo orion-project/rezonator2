@@ -8,7 +8,7 @@
 #include "GaussCalculatorWindow.h"
 #include "GrinLensWindow.h"
 #include "HelpSystem.h"
-#include "LensDesignerWindow.h"
+#include "LensmakerWindow.h"
 #include "ProjectOperations.h"
 #include "ProjectWindow.h"
 #include "core/CommonTypes.h"
@@ -510,7 +510,7 @@ ToolsStartPanel::ToolsStartPanel() : StartPanel("panel_tools")
     layout->addWidget(makeHeader(tr("Tools")));
     layout->addWidget(makeButton(":/toolbar/gauss_calculator", tr("Gauss Calculator"), SLOT(showGaussCalculator())));
     layout->addWidget(makeButton(":/window_icons/calculator", tr("Formula Calculator"), SLOT(showCalculator())));
-    layout->addWidget(makeButton(":/window_icons/lens", tr("Lens Designer"), SLOT(showLensDesigner())));
+    layout->addWidget(makeButton(":/window_icons/lens", tr("Lensmaker"), SLOT(showLensmaker())));
     layout->addWidget(makeButton(":/toolbar/update", tr("Check Updates"), SLOT(checkUpdates())));
     layout->addStretch();
 }
@@ -535,9 +535,9 @@ void ToolsStartPanel::checkUpdates()
     Z::HelpSystem::instance()->checkUpdates();
 }
 
-void ToolsStartPanel::showLensDesigner()
+void ToolsStartPanel::showLensmaker()
 {
-    LensDesignerWindow::showWindow();
+    LensmakerWindow::showWindow();
 }
 
 //------------------------------------------------------------------------------
