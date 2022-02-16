@@ -29,7 +29,7 @@ public:
 private:
     QGraphicsScene* _scene;
     QGraphicsView* _view;
-    Z::Parameter *_D, *_R1, *_R2, *_IOR, *_T;
+    Z::Parameter *_D, *_R1, *_R2, *_IOR, *_T, *_gridStep;
     LensDesignerItems::OpticalAxisItem* _axis;
     LensDesignerItems::LensShapeItem* _shape;
     LensDesignerItems::PaperGridItem* _grid;

@@ -58,17 +58,19 @@ public:
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing, false);
         painter->setPen(pen);
-        double x = step * scale;
+        double s = qAbs(step);
+        if (s == 0) s = 1.0;
+        double x = s * scale;
         while (x <= len/2) {
             painter->drawLine(QLineF(x, -high/2, x, high/2));
             painter->drawLine(QLineF(-x, -high/2, -x, high/2));
-            x += step * scale;
+            x += s * scale;
         }
-        double y = step * scale;
+        double y = s * scale;
         while (y <= high/2) {
             painter->drawLine(QLineF(-len/2, y, len/2, y));
             painter->drawLine(QLineF(-len/2, -y, len/2, -y));
-            y += step * scale;
+            y += s * scale;
         }
         painter->restore();
     }
@@ -100,15 +102,10 @@ public:
         bool plane1 = Double(R1).is(0);
         bool plane2 = Double(R2).is(0);
         if (plane1 && plane2) return Plane;
-        if (plane1) return (R2 > 0) ? PlanoConvex : PlanoConcave;
-        if (plane2) return (R1 > 0) ? ConcavePlano : ConvexPlano;
-        if (R1 > 0) return (R2 > 0) ? ConcaveConvex : Concave;
-        return (R2 > 0) ? Convex : ConvexConcave;
-    }
-
-    void rightArcTopBottom()
-    {
-
+        if (plane1) return (R2 < 0) ? PlanoConvex : PlanoConcave;
+        if (plane2) return (R1 < 0) ? ConcavePlano : ConvexPlano;
+        if (R1 < 0) return (R2 < 0) ? ConcaveConvex : Concave;
+        return (R2 < 0) ? Convex : ConvexConcave;
     }
 
     void calc()
@@ -245,13 +242,13 @@ LensDesignerWidget::LensDesignerWidget(QWidget *parent) : QSplitter(parent)
                          tr("Lens diameter.", "Lens designer"));
     _R1 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R1"), QStringLiteral("R1"),
                           tr("Left ROC", "Lens designer"),
-                          tr("Negative value means left-bulged surface, "
-                             "positive value means right-bulged surface. "
+                          tr("Negative value means right-bulged surface, "
+                             "positive value means left-bulged surface. "
                              "Set to zero to get plane face.", "Lens designer"));
     _R2 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R2"), QStringLiteral("R2"),
                           tr("Right ROC", "Lens designer"),
-                          tr("Negative value means left-bulged surface, "
-                             "positive value means right-bulged surface. "
+                          tr("Negative value means right-bulged surface, "
+                             "positive value means left-bulged surface. "
                              "Set to zero to get plane face.", "Lens designer"));
     _IOR = new Z::Parameter(Z::Dims::none(), QStringLiteral("n"), QStringLiteral("n"),
                           tr("Index of refraction", "Lens designer"),
@@ -259,12 +256,16 @@ LensDesignerWidget::LensDesignerWidget(QWidget *parent) : QSplitter(parent)
     _T = new Z::Parameter(Z::Dims::linear(), QStringLiteral("T"), QStringLiteral("T"),
                           tr("Thickness", "Lens designer"),
                           tr("Minimal thickness.", "Lens designer"));
+    _gridStep = new Z::Parameter(Z::Dims::linear(), QStringLiteral("grid_step"), tr("Grid step", "Lens designer"),
+                                 tr("Grid step", "Lens designer"),
+                                 tr("Distance between grid lines", "Lens designer"));
 
     _D->setValue(40_mm); _D->addListener(this);
-    _R1->setValue(-100_mm); _R1->addListener(this);
-    _R2->setValue(100_mm); _R2->addListener(this);
+    _R1->setValue(100_mm); _R1->addListener(this);
+    _R2->setValue(-100_mm); _R2->addListener(this);
     _T->setValue(5_mm); _T->addListener(this);
     _IOR->setValue(1.7); _IOR->addListener(this);
+    _gridStep->setValue(10_mm); _gridStep->addListener(this);
 
     ParamsEditor::Options opts(nullptr);
     opts.ownParams = true;
@@ -277,6 +278,7 @@ LensDesignerWidget::LensDesignerWidget(QWidget *parent) : QSplitter(parent)
     paramsEditor->addEditor(_R2, reasonableUnits);
     paramsEditor->addEditor(_IOR);
     paramsEditor->addEditor(_T, reasonableUnits);
+    paramsEditor->addEditor(_gridStep, reasonableUnits);
 
     _grid = new LensDesignerItems::PaperGridItem;
     _axis = new LensDesignerItems::OpticalAxisItem;
@@ -308,20 +310,25 @@ LensDesignerWidget::~LensDesignerWidget()
 
 void LensDesignerWidget::parameterChanged(Z::ParameterBase*)
 {
-    qDebug() << "param changed";
     redraw();
+}
+
+namespace {
+double getValueForScene(Z::Parameter* param, const double& scale = 1) {
+    return param->value().toSi() * 1000 * scale;
+}
 }
 
 void LensDesignerWidget::redraw()
 {
-    qreal tagretH = 300;
-    qreal D = _D->value().toSi() * 1000;
+    qreal tagretH = 300; // TODO: make it scalable to viewport
+    qreal D = getValueForScene(_D);
     qreal scale = tagretH / D;
 
     _shape->D = D * scale;
-    _shape->T = _T->value().toSi() * 1000 * scale;
-    _shape->R1 = _R1->value().toSi() * 1000 * scale;
-    _shape->R2 = _R2->value().toSi() * 1000 * scale;
+    _shape->T = getValueForScene(_T, scale);
+    _shape->R1 = getValueForScene(_R1, scale);
+    _shape->R2 = getValueForScene(_R2, scale);
     _shape->calc();
 
     auto r = _shape->boundingRect();
@@ -329,7 +336,8 @@ void LensDesignerWidget::redraw()
     qreal paperW = r.width() * 4;
     qreal paperH = r.height() * 1.5;
 
-    _grid->scale = scale;
+    _grid->scale = 1;
+    _grid->step = getValueForScene(_gridStep, scale);
     _grid->len = paperW;
     _grid->high = paperH;
 
