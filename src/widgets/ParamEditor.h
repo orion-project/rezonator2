@@ -126,6 +126,8 @@ public:
 
     void editorFocused(bool focus);
 
+    void setReadonly(bool valueOn, bool unitOn);
+
 signals:
     void focused();
     void unfocused();

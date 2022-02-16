@@ -44,6 +44,11 @@ void UnitComboBox::populateInternal(Z::Dim dim, const QVector<Z::Unit>& units)
     foreach (auto unit, dim->units())
         if (units.isEmpty() || units.contains(unit))
             addItem(unit->name(), QVariant::fromValue(unit));
+    // If all units were filtered out it is wrong, restore default units
+    if (!units.isEmpty() && count() == 0) {
+        foreach (auto unit, dim->units())
+            addItem(unit->name(), QVariant::fromValue(unit));
+    }
 
     _isEmptyOrSingleItem = count() < 2 or
         (dim == Z::Dims::fixed() and !canSelectFixedUnit);

@@ -30,11 +30,12 @@ private:
     QGraphicsScene* _scene;
     QGraphicsView* _view;
     Z::Parameter *_D, *_R1, *_R2, *_IOR, *_T, *_gridStep;
+    Z::Parameter *_F, *_P;
     LensDesignerItems::OpticalAxisItem* _axis;
     LensDesignerItems::LensShapeItem* _shape;
     LensDesignerItems::PaperGridItem* _grid;
 
-    void redraw();
+    void refresh();
 };
 
 

@@ -1,6 +1,7 @@
 #include "LensDesignerWindow.h"
 
 #include "widgets/ParamsEditor.h"
+#include "widgets/ParamEditor.h"
 
 #include "core/OriFloatingPoint.h"
 #include "helpers/OriLayouts.h"
@@ -35,8 +36,8 @@ public:
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing, false);
         painter->setPen(pen);
-        painter->drawLine(QLineF(-len/2, 0, len/2, 0));
-        painter->drawLine(QLineF(0, -high/2, 0, high/2));
+        painter->drawLine(QLineF(-len/2.0, 0, len/2.0, 0));
+        painter->drawLine(QLineF(0, -high/2.0, 0, high/2.0));
         painter->restore();
     }
 
@@ -50,7 +51,7 @@ class PaperGridItem : public QGraphicsItem
 public:
     QRectF boundingRect() const override
     {
-        return QRectF(-len/2, -high/2, len, high);
+        return QRectF(-len/2.0, -high/2.0, len, high);
     }
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override
@@ -60,24 +61,23 @@ public:
         painter->setPen(pen);
         double s = qAbs(step);
         if (s == 0) s = 1.0;
-        double x = s * scale;
-        while (x <= len/2) {
-            painter->drawLine(QLineF(x, -high/2, x, high/2));
-            painter->drawLine(QLineF(-x, -high/2, -x, high/2));
-            x += s * scale;
+        double x = s;
+        while (x <= len/2.0) {
+            painter->drawLine(QLineF(x, -high/2.0, x, high/2.0));
+            painter->drawLine(QLineF(-x, -high/2.0, -x, high/2.0));
+            x += s;
         }
-        double y = s * scale;
-        while (y <= high/2) {
-            painter->drawLine(QLineF(-len/2, y, len/2, y));
-            painter->drawLine(QLineF(-len/2, -y, len/2, -y));
-            y += s * scale;
+        double y = s;
+        while (y <= high/2.0) {
+            painter->drawLine(QLineF(-len/2.0, y, len/2.0, y));
+            painter->drawLine(QLineF(-len/2.0, -y, len/2.0, -y));
+            y += s;
         }
         painter->restore();
     }
 
     double len = 0;
     double high = 0;
-    double scale = 1;
     double step = 10;
     QPen pen = QPen(Qt::gray, 1, Qt::DotLine);
 };
@@ -110,15 +110,14 @@ public:
 
     void calc()
     {
-        const qreal t = qAbs(T); // thickness of lens
-        const qreal tt = t/2.0; // half-thickness of lens
-        const qreal d = qAbs(D); // diameter of lens
-        const qreal h = d/2.0; // half-diameter of lens
-        const qreal r1 = qAbs(R1); // left diameter of curvature
-        const qreal r2 = qAbs(R2); // right diameter of curvature
-        const qreal d1 = r1*2.0; // left diameter of curvature
-        const qreal d2 = r2*2.0; // right diameter of curvature
-        qreal s1 = 0, a1 = 0, s2 = 0, a2 = 0;
+        const double t = qAbs(T)/2.0; // half-thickness of lens
+        const double d = qAbs(D); // diameter of lens
+        const double h = d/2.0; // half-diameter of lens
+        const double r1 = qAbs(R1); // left diameter of curvature
+        const double r2 = qAbs(R2); // right diameter of curvature
+        const double d1 = r1*2.0; // left diameter of curvature
+        const double d2 = r2*2.0; // right diameter of curvature
+        double s1 = 0, a1 = 0, s2 = 0, a2 = 0;
         if (R1 != 0) {
             s1 = r1 - qSqrt(Sqr(r1) - Sqr(h)); // left arc sagitta
             a1 = qRadiansToDegrees(qAsin(h/r1)); // left arc half-angle
@@ -127,82 +126,61 @@ public:
             s2 = r2 - qSqrt(Sqr(r2) - Sqr(h)); // right arc sagitta
             a2 = qRadiansToDegrees(qAsin(h/r2)); // right arc half-angle
         }
-        qreal tl = 0; // full lens half-thickness
-
         _path.clear();
         switch (getForm()) {
         case Plane: //      ||
-            _path.moveTo(-tt, -h);
-            _path.lineTo(-tt, h);
-            _path.lineTo(tt, h);
-            _path.lineTo(tt, -h);
+            _path.moveTo(-t, -h);
+            _path.lineTo(-t, h);
+            _path.lineTo(t, h);
+            _path.lineTo(t, -h);
             break;
         case PlanoConvex: //      |)
-            tl = (t + s2)/2.0;
-            _path.moveTo(-tl, -h);
-            _path.lineTo(-tl, h);
-            _path.lineTo(tl-s2, h);
-            _path.arcTo({tl-d2, -r2, d2, d2}, 360-a2, 2*a2);
+            _path.moveTo(-t, -h);
+            _path.lineTo(-t, h);
+            _path.lineTo(t-s2, h);
+            _path.arcTo({t-d2, -r2, d2, d2}, 360-a2, 2*a2);
             break;
         case PlanoConcave: //      |(
-            _path.moveTo(s2-tt, -h);
-            _path.arcTo({tt, -r2, d2, d2}, 180-a2, 2*a2);
-            _path.lineTo(-tt, h);
-            _path.lineTo(-tt, -h);
+            _path.moveTo(-t, -h);
+            _path.lineTo(-t, h);
+            _path.lineTo(t+s2, h);
+            _path.arcTo({t, -r2, d2, d2}, 180+a2, -2*a2);
             break;
         case ConcavePlano: //      )|
-            _path.moveTo(-s1-tt, h);
-            _path.arcTo({-d1-tt, -r1, d1, d1}, 360-a1, 2*a1);
-            _path.lineTo(tt, -h);
-            _path.lineTo(tt, h);
+            _path.moveTo(t, -h);
+            _path.lineTo(t, h);
+            _path.lineTo(-t-s1, h);
+            _path.arcTo({-t-d1, -r1, d1, d1}, 360-a1, 2*a1);
             break;
         case ConvexPlano: //      (|
-            tl = (t + s1)/2.0;
-            _path.moveTo(-tl+s1, -h);
-            _path.arcTo({-tl, -r1, d1, d1}, 180-a1, 2*a1);
-            _path.lineTo(tl, h);
-            _path.lineTo(tl, -h);
-            break;
-        case ConcaveConvex: //      ))
-            if (r1 < r2) {
-                _path.moveTo(-s1-tt, h);
-                _path.arcTo({-d1-tt, -r1, d1, d1}, 360-a1, 2*a1);
-                _path.lineTo(tt-s1, -h);
-                _path.arcTo({tt-d2, -r2, d2, d2}, a2, -2*a2);
-            } else {
-                tl = (t - s1 + s2)/2.0;
-                _path.moveTo(-tl-s1, -h);
-                _path.arcTo({-tl-d1, -r1, d1, d1}, a1, -2*a1);
-                _path.lineTo(tl-s2, h);
-                _path.arcTo({tl-d2, -r2, d2, d2}, 360-a2, 2*a2);
-            }
-            break;
-        case Concave: //      )(
-            _path.moveTo(-tt-s1, h);
-            _path.arcTo({-tt-d1, -r1, d1, d1}, 360-a1, 2*a1);
-            _path.lineTo(tt+s2, -h);
-            _path.arcTo({tt, -r2, d2, d2}, 180-a2, 2*a2);
+            _path.moveTo(t, -h);
+            _path.lineTo(t, h);
+            _path.lineTo(-t+s1, h);
+            _path.arcTo({-t, -r1, d1, d1}, 180+a1, -2*a1);
             break;
         case Convex: //      ()
-            tl = (t + s1 + s2)/2.0;
-            _path.moveTo(-tl+s1, -h);
-            _path.arcTo({-tl, -r1, d1, d1}, 180-a1, 2*a1);
-            _path.lineTo(tl-s2, h);
-            _path.arcTo({tl-d2, -r2, d2, d2}, 360-a2, 2*a2);
+            _path.moveTo(-t+s1, -h);
+            _path.arcTo({-t, -r1, d1, d1}, 180-a1, 2*a1);
+            _path.lineTo(t-s2, h);
+            _path.arcTo({t-d2, -r2, d2, d2}, 360-a2, 2*a2);
+            break;
+        case Concave: //      )(
+            _path.moveTo(-t-s1, -h);
+            _path.arcTo({-t-d1, -r1, d1, d1}, a1, -2*a1);
+            _path.lineTo(t+s2, h);
+            _path.arcTo({t, -r2, d2, d2}, 180+a2, -2*a2);
+            break;
+        case ConcaveConvex: //      ))
+            _path.moveTo(-t-s1, -h);
+            _path.arcTo({-t-d1, -r1, d1, d1}, a1, -2*a1);
+            _path.lineTo(t-s2, h);
+            _path.arcTo({t-d2, -r2, d2, d2}, 360-a2, 2*a2);
             break;
         case ConvexConcave: //      ((
-            if (r1 < r2) {
-                tl = (t + s1 - s2)/2.0;
-                _path.moveTo(-tl+s1, -h);
-                _path.arcTo({-tl, -r1, d1, d1}, 180-a1, 2*a1);
-                _path.lineTo(tl+s2, h);
-                _path.arcTo({tl, -r2, d2, d2}, 180+a2, -2*a2);
-            } else {
-                _path.moveTo(-tt+s1, -h);
-                _path.arcTo({-tt, -r1, d1, d1}, 180-a1, 2*a1);
-                _path.lineTo(tt+s2, h);
-                _path.arcTo({tt, -r2, d2, d2}, 180+a2, -2*a2);
-            }
+            _path.moveTo(-t+s1, -h);
+            _path.arcTo({-t, -r1, d1, d1}, 180-a1, 2*a1);
+            _path.lineTo(t+s2, h);
+            _path.arcTo({t, -r2, d2, d2}, 180+a2, -2*a2);
             break;
         }
         _path.closeSubpath();
@@ -221,10 +199,10 @@ public:
     }
 
     QPainterPath _path;
-    qreal R1 = 0;
-    qreal R2 = 0;
-    qreal D = 0;
-    qreal T = 0;
+    double R1 = 0;
+    double R2 = 0;
+    double D = 0;
+    double T = 0;
     QPen glassPen = QPen(Qt::black, 1.5);
     QBrush glassBrush = QBrush(QPixmap(":/misc/glass_pattern_big"));
 };
@@ -255,17 +233,23 @@ LensDesignerWidget::LensDesignerWidget(QWidget *parent) : QSplitter(parent)
                           tr("Index of refraction of the lens material.", "Lens designer"));
     _T = new Z::Parameter(Z::Dims::linear(), QStringLiteral("T"), QStringLiteral("T"),
                           tr("Thickness", "Lens designer"),
-                          tr("Minimal thickness.", "Lens designer"));
+                          tr("Distance between surfaces on axis.", "Lens designer"));
     _gridStep = new Z::Parameter(Z::Dims::linear(), QStringLiteral("grid_step"), tr("Grid step", "Lens designer"),
                                  tr("Grid step", "Lens designer"),
                                  tr("Distance between grid lines", "Lens designer"));
+    _F = new Z::Parameter(Z::Dims::linear(), QStringLiteral("F"), QStringLiteral("F"),
+                          tr("Focal length"), tr("Focal length"));
+    _P = new Z::Parameter(Z::Dims::none(), QStringLiteral("P"), QStringLiteral("P"),
+                          tr("Optical power"), tr("Optical power in dioptres"));
 
     _D->setValue(40_mm); _D->addListener(this);
     _R1->setValue(100_mm); _R1->addListener(this);
     _R2->setValue(-100_mm); _R2->addListener(this);
-    _T->setValue(5_mm); _T->addListener(this);
+    _T->setValue(7_mm); _T->addListener(this);
     _IOR->setValue(1.7); _IOR->addListener(this);
-    _gridStep->setValue(10_mm); _gridStep->addListener(this);
+    _gridStep->setValue(3_mm); _gridStep->addListener(this);
+    _F->setValue(0_mm);
+    _P->setValue(0);
 
     ParamsEditor::Options opts(nullptr);
     opts.ownParams = true;
@@ -279,6 +263,12 @@ LensDesignerWidget::LensDesignerWidget(QWidget *parent) : QSplitter(parent)
     paramsEditor->addEditor(_IOR);
     paramsEditor->addEditor(_T, reasonableUnits);
     paramsEditor->addEditor(_gridStep, reasonableUnits);
+
+    auto editorF = paramsEditor->addEditor(_F, reasonableUnits);
+    editorF->setReadonly(true, true);
+
+    auto editorP = paramsEditor->addEditor(_P);
+    editorP->setReadonly(true, true);
 
     _grid = new LensDesignerItems::PaperGridItem;
     _axis = new LensDesignerItems::OpticalAxisItem;
@@ -301,7 +291,7 @@ LensDesignerWidget::LensDesignerWidget(QWidget *parent) : QSplitter(parent)
     setStretchFactor(0, 1);
     setStretchFactor(1, 20);
 
-    redraw();
+    refresh();
 }
 
 LensDesignerWidget::~LensDesignerWidget()
@@ -310,42 +300,74 @@ LensDesignerWidget::~LensDesignerWidget()
 
 void LensDesignerWidget::parameterChanged(Z::ParameterBase*)
 {
-    redraw();
+    refresh();
 }
 
 namespace {
-double getValueForScene(Z::Parameter* param, const double& scale = 1) {
-    return param->value().toSi() * 1000 * scale;
-}
+
+inline double toSi(Z::Parameter* param) {
+    return param->value().toSi();
 }
 
-void LensDesignerWidget::redraw()
+inline void fromSi(Z::Parameter* param, const double& value) {
+    auto unit = param->value().unit();
+    param->setValue({unit->fromSi(value), unit});
+}
+
+struct LensCalculator
 {
-    qreal tagretH = 300; // TODO: make it scalable to viewport
-    qreal D = getValueForScene(_D);
-    qreal scale = tagretH / D;
+    double T;
+    double n;
+    double R1;
+    double R2;
+
+    double F; // Focus range
+    double P; // Optical power
+
+    void calc()
+    {
+        P = (n - 1)*(1/R1 - 1/R2 + (n-1)*T/n/R1/R2);
+        F = 1/P;
+    }
+
+};
+
+} // namespace
+
+void LensDesignerWidget::refresh()
+{
+    double tagretH = 300; // TODO: make it scalable to viewport
+
+    LensCalculator calc;
+    calc.T = toSi(_T);
+    calc.n = toSi(_IOR);
+    calc.R1 = toSi(_R1);
+    calc.R2 = toSi(_R2);
+    calc.calc();
+
+    fromSi(_F, calc.F);
+    fromSi(_P, calc.P);
+
+    double D = _D->value().toSi();
+    double scale = tagretH / D;
 
     _shape->D = D * scale;
-    _shape->T = getValueForScene(_T, scale);
-    _shape->R1 = getValueForScene(_R1, scale);
-    _shape->R2 = getValueForScene(_R2, scale);
+    _shape->T = calc.T * scale;
+    _shape->R1 = calc.R1 * scale;
+    _shape->R2 = calc.R2 * scale;
     _shape->calc();
 
     auto r = _shape->boundingRect();
-
-    qreal paperW = r.width() * 4;
-    qreal paperH = r.height() * 1.5;
-
-    _grid->scale = 1;
-    _grid->step = getValueForScene(_gridStep, scale);
-    _grid->len = paperW;
-    _grid->high = paperH;
-
-    _axis->len = paperW;
-    _axis->high = paperH;
-
-    qreal margin = 10 * scale;
+    double margin = D/4.0 * scale;
     r.adjust(-margin, -margin, margin, margin);
+
+    _grid->step = _gridStep->value().toSi() * scale;
+    _grid->len = r.width();
+    _grid->high = r.height();
+
+    _axis->len = r.width();
+    _axis->high = r.height();
+
     _scene->setSceneRect(r);
     _scene->update(r);
 }

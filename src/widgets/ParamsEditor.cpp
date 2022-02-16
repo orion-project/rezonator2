@@ -52,7 +52,7 @@ void ParamsEditor::removeEditors()
     _editors.clear();
 }
 
-void ParamsEditor::addEditor(Z::Parameter* param, const QVector<Z::Unit> &units)
+ParamEditor *ParamsEditor::addEditor(Z::Parameter* param, const QVector<Z::Unit> &units)
 {
     // TODO: explain why this check is needed
     // TODO: why we pass the whole params list in _options,
@@ -60,11 +60,11 @@ void ParamsEditor::addEditor(Z::Parameter* param, const QVector<Z::Unit> &units)
     if (_options.params && !_options.params->contains(param))
     {
         qWarning() << "ParamsEditor::addEditor: invalid param, it is not in the parameters list";
-        return;
+        return nullptr;
     }
 
     if (_options.filter && !_options.filter->check(param))
-        return;
+        return nullptr;
 
     ParamEditor::Options o(param);
     o.allowLinking = _options.globalParams;
@@ -87,6 +87,8 @@ void ParamsEditor::addEditor(Z::Parameter* param, const QVector<Z::Unit> &units)
 
     _editors.append(editor);
     _paramsLayout->addWidget(editor);
+
+    return editor;
 }
 
 void ParamsEditor::removeEditor(Z::Parameter* param)

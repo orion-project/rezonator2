@@ -73,7 +73,7 @@ public:
     void populateEditors();
     void populateValues();
 
-    void addEditor(Z::Parameter* param, const QVector<Z::Unit>& units = {});
+    ParamEditor* addEditor(Z::Parameter* param, const QVector<Z::Unit>& units = {});
     void removeEditor(Z::Parameter* param);
     void populateEditor(Z::Parameter* param);
     void moveEditorUp(Z::Parameter* param);

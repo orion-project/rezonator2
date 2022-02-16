@@ -248,9 +248,19 @@ void ParamEditor::showValue(Z::Parameter *param)
 
 void ParamEditor::setIsLinked(bool on)
 {
-    _valueEditor->setReadOnly(on);
-    _valueEditor->setFont(Z::Gui::ValueFont().readOnly(on).get());
-    _unitsSelector->setEnabled(!on);
+    setReadonly(on, on);
+}
+
+void ParamEditor::setReadonly(bool valueOn, bool unitOn)
+{
+    if ((!valueOn || !unitOn) && _linkSource)
+    {
+        qWarning() << "Parameter editor" << _param->alias() << "Unable to set readonly=false when link source is set";
+        return;
+    }
+    _valueEditor->setReadOnly(valueOn);
+    _valueEditor->setFont(Z::Gui::ValueFont().readOnly(valueOn).get());
+    _unitsSelector->setEnabled(!unitOn);
 }
 
 Z::Value ParamEditor::getValue() const
