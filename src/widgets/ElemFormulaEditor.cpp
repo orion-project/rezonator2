@@ -67,10 +67,10 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
     connect(_flagHasMatricesTS, &QCheckBox::stateChanged, this, &ElemFormulaEditor::editorChanged);
 
     auto paramsPanel = LayoutV({
-        Z::Gui::headerlabel(tr(" Options")),
+        Z::Gui::makeHeaderLabel(tr(" Options")),
         LayoutV({ _flagHasMatricesTS }).setMargin(6),
         Space(6),
-        Z::Gui::headerlabel(tr(" Parameters")),
+        Z::Gui::makeHeaderLabel(tr(" Parameters")),
         _paramsEditor,
         _stubNoParams,
     }).setMargin(0).makeWidget();

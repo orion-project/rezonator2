@@ -1,10 +1,14 @@
 #include "ParamsEditor.h"
+
 #include "ParamEditor.h"
 #include "ValuesEditorTS.h"
+#include "../Appearance.h"
+#include "../core/Utils.h"
+
+#include "widgets/OriLabels.h"
 #include "helpers/OriLayouts.h"
 #include "widgets/OriInfoPanel.h"
 #include "widgets/OriValueEdit.h"
-#include "../core/Utils.h"
 
 //------------------------------------------------------------------------------
 //                                ParamsEditor
@@ -89,6 +93,18 @@ ParamEditor *ParamsEditor::addEditor(Z::Parameter* param, const QVector<Z::Unit>
     _paramsLayout->addWidget(editor);
 
     return editor;
+}
+
+void ParamsEditor::addSeparator(const QString& title)
+{
+    if (title.isEmpty())
+        _paramsLayout->addWidget(new Ori::Widgets::LabelSeparator);
+    else {
+        auto label = new QLabel(title);
+        auto font = Z::Gui::ParamLabelFont().get();
+        label->setStyleSheet(QString("font-size: %1pt; font-weight: bold; color: SteelBlue; padding: 0.1em").arg(font.pointSize()));
+        _paramsLayout->addWidget(label);
+    }
 }
 
 void ParamsEditor::removeEditor(Z::Parameter* param)

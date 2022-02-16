@@ -56,11 +56,12 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override
     {
+        double s = qAbs(step);
+        if (s == 0) return;
+
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing, false);
         painter->setPen(pen);
-        double s = qAbs(step);
-        if (s == 0) s = 1.0;
         double x = s;
         while (x <= len/2.0) {
             painter->drawLine(QLineF(x, -high/2.0, x, high/2.0));
@@ -236,11 +237,11 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
                           tr("Distance between surfaces on axis.", "Lens designer"));
     _gridStep = new Z::Parameter(Z::Dims::linear(), QStringLiteral("grid_step"), tr("Grid step", "Lens designer"),
                                  tr("Grid step", "Lens designer"),
-                                 tr("Distance between grid lines", "Lens designer"));
+                                 tr("Distance between grid lines. Set to zero to disable grid.", "Lens designer"));
     _F = new Z::Parameter(Z::Dims::linear(), QStringLiteral("F"), QStringLiteral("F"),
-                          tr("Focal length"), tr("Focal length"));
+                          tr("Focal length"), tr("Focal length."));
     _P = new Z::Parameter(Z::Dims::none(), QStringLiteral("P"), QStringLiteral("P"),
-                          tr("Optical power"), tr("Optical power in dioptres"));
+                          tr("Optical power"), tr("Optical power in dioptres."));
 
     _D->setValue(40_mm); _D->addListener(this);
     _R1->setValue(100_mm); _R1->addListener(this);
@@ -262,7 +263,10 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     paramsEditor->addEditor(_R2, reasonableUnits);
     paramsEditor->addEditor(_IOR);
     paramsEditor->addEditor(_T, reasonableUnits);
+    paramsEditor->addSeparator();
     paramsEditor->addEditor(_gridStep, reasonableUnits);
+    paramsEditor->addSeparator();
+    paramsEditor->addSeparator(tr("Results"));
 
     auto editorF = paramsEditor->addEditor(_F, reasonableUnits);
     editorF->setReadonly(true, false);
