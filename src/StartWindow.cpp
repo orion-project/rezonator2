@@ -511,6 +511,8 @@ ToolsStartPanel::ToolsStartPanel() : StartPanel("panel_tools")
     layout->addWidget(makeButton(":/toolbar/gauss_calculator", tr("Gauss Calculator"), SLOT(showGaussCalculator())));
     layout->addWidget(makeButton(":/window_icons/calculator", tr("Formula Calculator"), SLOT(showCalculator())));
     layout->addWidget(makeButton(":/window_icons/lens", tr("Lensmaker"), SLOT(showLensmaker())));
+    layout->addWidget(makeButton(":/toolbar/settings", tr("Settings"), SLOT(editSettings())));
+    layout->addWidget(makeButton(":/toolbar/help", tr("Manual"), SLOT(showManual())));
     layout->addWidget(makeButton(":/toolbar/update", tr("Check Updates"), SLOT(checkUpdates())));
     layout->addStretch();
 }
@@ -538,6 +540,16 @@ void ToolsStartPanel::checkUpdates()
 void ToolsStartPanel::showLensmaker()
 {
     LensmakerWindow::showWindow();
+}
+
+void ToolsStartPanel::showManual()
+{
+    Z::HelpSystem::instance()->showContents();
+}
+
+void ToolsStartPanel::editSettings()
+{
+    Z::Dlg::editAppSettings(this);
 }
 
 //------------------------------------------------------------------------------
@@ -592,8 +604,8 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
     _toolbar->setIconSize({24, 24});
     if (AppSettings::instance().isDevMode)
         _toolbar->addAction(QIcon(":/toolbar/protocol"), tr("Edit Stylesheet"), this, &StartWindow::editStyleSheet);
-    _toolbar->addAction(QIcon(":/toolbar/settings"), tr("Edit Settings"), [this]{ Z::Dlg::editAppSettings(this); });
-    _toolbar->addAction(QIcon(":/toolbar/help"), tr("Show Manual"), []{ Z::HelpSystem::instance()->showContents(); });
+    //_toolbar->addAction(QIcon(":/toolbar/settings"), tr("Edit Settings"), [this]{ Z::Dlg::editAppSettings(this); });
+    //_toolbar->addAction(QIcon(":/toolbar/help"), tr("Show Manual"), []{ Z::HelpSystem::instance()->showContents(); });
     _toolbar->addAction(QIcon(":/toolbar/info"), tr("About"), []{ Z::HelpSystem::instance()->showAbout(); });
     _toolbar->setParent(this);
     _toolbar->adjustSize();
