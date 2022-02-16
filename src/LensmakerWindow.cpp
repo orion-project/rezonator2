@@ -265,7 +265,8 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     paramsEditor->addEditor(_gridStep, reasonableUnits);
 
     auto editorF = paramsEditor->addEditor(_F, reasonableUnits);
-    editorF->setReadonly(true, true);
+    editorF->setReadonly(true, false);
+    editorF->rescaleOnUnitChange = true;
 
     auto editorP = paramsEditor->addEditor(_P);
     editorP->setReadonly(true, true);
@@ -305,10 +306,6 @@ void LensmakerWidget::parameterChanged(Z::ParameterBase*)
 
 namespace {
 
-inline double toSi(Z::Parameter* param) {
-    return param->value().toSi();
-}
-
 inline void fromSi(Z::Parameter* param, const double& value) {
     auto unit = param->value().unit();
     param->setValue({unit->fromSi(value), unit});
@@ -338,10 +335,10 @@ void LensmakerWidget::refresh()
     double tagretH = 300; // TODO: make it scalable to viewport
 
     LensCalculator calc;
-    calc.T = toSi(_T);
-    calc.n = toSi(_IOR);
-    calc.R1 = toSi(_R1);
-    calc.R2 = toSi(_R2);
+    calc.T = _T->value().toSi();
+    calc.n = _IOR->value().toSi();
+    calc.R1 = _R1->value().toSi();
+    calc.R2 = _R2->value().toSi();
     calc.calc();
 
     fromSi(_F, calc.F);

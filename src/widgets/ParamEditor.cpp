@@ -215,7 +215,7 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
     connect(_valueEditor, &ValueEdit::keyPressed, this, &ParamEditor::editorKeyPressed);
     connect(_valueEditor, &ValueEdit::valueEdited, this, &ParamEditor::valueEdited);
     connect(_unitsSelector, &UnitComboBox::focused, this, &ParamEditor::editorFocused);
-    connect(_unitsSelector, &UnitComboBox::unitChanged, this, &ParamEditor::unitChanged);
+    connect(_unitsSelector, &UnitComboBox::unitChanged, this, &ParamEditor::unitChangedRaw);
     if (_linkButton)
         connect(_linkButton, &LinkButton::focused, this, &ParamEditor::editorFocused);
 
@@ -383,4 +383,12 @@ void ParamEditor::linkToGlobalParameter()
     _linkButton->showLinkSource(_linkSource);
     setIsLinked(_linkSource);
     showValue(_linkSource ? _linkSource : _param);
+}
+
+void ParamEditor::unitChangedRaw(Z::Unit unit)
+{
+    if (rescaleOnUnitChange)
+        _param->setValue(_param->value().toUnit(unit));
+
+    emit unitChanged(unit);
 }

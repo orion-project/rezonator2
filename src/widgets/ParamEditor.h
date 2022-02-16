@@ -128,6 +128,10 @@ public:
 
     void setReadonly(bool valueOn, bool unitOn);
 
+    /// Recalculate value to different unit when user changes the unit selector, e.g. 1000mm -> 1m
+    /// Currently it only works with applied parameter value, not with a value in the editor.
+    bool rescaleOnUnitChange = false;
+
 signals:
     void focused();
     void unfocused();
@@ -165,6 +169,7 @@ private:
     void showValue(Z::Parameter *param);
     void setIsLinked(bool on);
     void editorKeyPressed(int key);
+    void unitChangedRaw(Z::Unit unit);
 };
 
 #endif // PARAM_EDITOR_H
