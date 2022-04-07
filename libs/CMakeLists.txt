@@ -1,8 +1,7 @@
-set(LUA ${CMAKE_CURRENT_SOURCE_DIR}/lua-5.3.4)
+set(LUA ${CMAKE_CURRENT_SOURCE_DIR}/lua-5.3.4/src)
 
-include_directories(
-    ${LUA}
-)
+include_directories(${LUA})
+message(STATUS "LUA:  ${LUA}")
 
 set(HEADERS
    ${HEADERS}
@@ -31,7 +30,7 @@ set(HEADERS
     ${LUA}/lundump.h 
     ${LUA}/lvm.h 
     ${LUA}/lzio.h
-    
+    PARENT_SCOPE
 )
 
 set(SOURCE
@@ -69,5 +68,5 @@ set(SOURCE
     ${LUA}/lutf8lib.c 
     ${LUA}/lvm.c 
     ${LUA}/lzio.c
-    
+    PARENT_SCOPE
 )
