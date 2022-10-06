@@ -469,9 +469,7 @@ void GaussCalculatorWindow::showWindow()
 
 GaussCalculatorWindow::GaussCalculatorWindow(QWidget *parent) : QWidget(parent)
 {
-    setAttribute(Qt::WA_DeleteOnClose);
-    setWindowTitle(tr("Gaussian Beam Calculator"));
-    setWindowIcon(QIcon(":/window_icons/gauss_calc"));
+    Ori::Wnd::initWindow(this, tr("Gaussian Beam Calculator"), ":/window_icons/gauss_calc");
 
     _calc.reset(new GaussCalculator);
     _plotter.reset(new GaussPlotter);

@@ -4,6 +4,7 @@
 #include "../AppSettings.h"
 #include "../core/ElementFormula.h"
 #include "../funcs/FormatInfo.h"
+#include "../io/Clipboard.h"
 
 #include <QClipboard>
 #include <QContextMenuEvent>
@@ -254,7 +255,7 @@ void SchemaLayout::clear()
 void SchemaLayout::resizeEvent(QResizeEvent *event)
 {
     QGraphicsView::resizeEvent(event);
-    centerView(QRectF());
+    //centerView(QRectF());
 }
 
 void SchemaLayout::centerView(const QRectF& rect)
@@ -278,14 +279,7 @@ QMenu* SchemaLayout::createContextMenu()
 
 void SchemaLayout::copyImage()
 {
-    QImage image(_scene.sceneRect().size().toSize(), QImage::Format_ARGB32);
-    image.fill(AppSettings::instance().layoutExportTransparent ? Qt::transparent : Qt::white);
-
-    QPainter painter(&image);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    _scene.render(&painter);
-
-    qApp->clipboard()->setImage(image);
+    Z::IO::Clipboard::setImage(this, AppSettings::instance().layoutExportTransparent);
 }
 
 //------------------------------------------------------------------------------

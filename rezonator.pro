@@ -100,6 +100,7 @@ HEADERS += \
     src/funcs/GaussCalculator.h \
     src/funcs/GrinCalculator.h \
     src/funcs/InfoFunctions.h \
+    src/funcs/LensCalculator.h \
     src/funcs/MultibeamCausticFunction.h \
     src/funcs/MultirangeCausticFunction.h \
     src/funcs/PlotFuncRoundTripFunction.h \

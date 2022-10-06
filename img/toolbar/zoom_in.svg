@@ -1,0 +1,25 @@
+<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <linearGradient id="a" gradientUnits="userSpaceOnUse" x1="15.28" x2="7" y1="20.54" y2="8.71">
+    <stop offset="0" stop-color="#595976"/>
+    <stop offset="1" stop-color="#babbdc"/>
+  </linearGradient>
+  <linearGradient id="b" gradientUnits="userSpaceOnUse" x1="28.52" x2="19.56" y1="2.98" y2="-.94">
+    <stop offset="0" stop-color="#705526"/>
+    <stop offset="1" stop-color="#c69c59"/>
+  </linearGradient>
+  <linearGradient id="c" gradientUnits="userSpaceOnUse" x1="28.52" x2="19.56" y1="2.98" y2="-.94">
+    <stop offset="0" stop-color="#f3c668"/>
+    <stop offset="1" stop-color="#f9f398"/>
+  </linearGradient>
+  <rect fill="url(#c)" height="3.77" ry="1.19" stroke="url(#b)" stroke-linejoin="round" transform="matrix(.71 .71 -.71 .71 0 0)" width="11.18" x="18.59" y="-1.36"/>
+  <g transform="translate(.31 -5.35)">
+    <circle cx="9.15" cy="15.41" fill="#b9eeff" r="7.19" stroke="url(#a)" stroke-width="1.7"/>
+    <path d="m5.66 19.75c-4.59-4.41.02-11.72 6.03-9.62-4.68.25-7.53 6.83-6.03 9.62z" fill="#42a5c9"/>
+    <path d="m9.15 10.68v9.46" fill="none" stroke="#0e0f55" stroke-width="2.37"/>
+    <path d="m4.42 15.41h9.46" fill="none" stroke="#0e0f55" stroke-width="2.37"/>
+    <g fill="#fff">
+      <ellipse cx="-4.47" cy="12.09" rx="2.4" ry=".85" transform="matrix(.68 -.73 .7 .71 0 0)"/>
+      <ellipse cx="-5.96" cy="22.68" rx="1.83" ry=".65" transform="matrix(.73 -.69 .75 .66 0 0)"/>
+    </g>
+  </g>
+</svg>

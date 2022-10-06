@@ -127,6 +127,8 @@
         <file alias="update">../img/toolbar/update.svg</file>
         <file alias="wavelength">../img/toolbar/wavelength.svg</file>
         <file alias="windows_close">../img/toolbar/windows_close.svg</file>
+        <file alias="zoom_in">../img/toolbar/zoom_in.svg</file>
+        <file alias="zoom_out">../img/toolbar/zoom_out.svg</file>
     </qresource>
     <qresource prefix="/toolbar16">
         <file alias="calculator">../img/toolbar16/calculator.png</file>

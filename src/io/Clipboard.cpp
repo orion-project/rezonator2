@@ -7,6 +7,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QDebug>
+#include <QGraphicsView>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMimeData>
@@ -105,6 +106,18 @@ QList<PumpParams*> getPumps()
         qDebug() << report.str();
 
     return pumps;
+}
+
+void setImage(QGraphicsView* view, bool transparent)
+{
+    QImage image(view->scene()->sceneRect().size().toSize(), QImage::Format_ARGB32);
+    image.fill(transparent ? Qt::transparent : Qt::white);
+
+    QPainter painter(&image);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    view->scene()->render(&painter);
+
+    qApp->clipboard()->setImage(image);
 }
 
 } // namespace Clipboard

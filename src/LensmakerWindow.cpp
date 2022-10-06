@@ -1,17 +1,23 @@
 #include "LensmakerWindow.h"
 
+#include "CustomPrefs.h"
+#include "funcs/LensCalculator.h"
+#include "io/Clipboard.h"
 #include "widgets/ParamsEditor.h"
 #include "widgets/ParamEditor.h"
 
 #include "core/OriFloatingPoint.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
+#include "helpers/OriWindows.h"
 #include "widgets/OriFlatToolBar.h"
 
+#include <QContextMenuEvent>
 #include <QIcon>
 #include <QGraphicsItem>
 #include <QGraphicsView>
 #include <QtMath>
+#include <QMenu>
 
 #define Sqr(x) ((x)*(x))
 
@@ -303,41 +309,26 @@ LensmakerWidget::~LensmakerWidget()
 {
 }
 
+void LensmakerWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+    if (!_menu) _menu = createContextMenu();
+    _menu->popup(this->mapToGlobal(event->pos()));
+}
+
+QMenu* LensmakerWidget::createContextMenu()
+{
+    auto menu = new QMenu(this);
+    menu->addAction(QIcon(":/toolbar/copy_img"), tr("Copy Image"), this, &LensmakerWidget::copyImage);
+    return menu;
+}
+
 void LensmakerWidget::parameterChanged(Z::ParameterBase*)
 {
     refresh();
 }
 
-namespace {
-
-inline void fromSi(Z::Parameter* param, const double& value) {
-    auto unit = param->value().unit();
-    param->setValue({unit->fromSi(value), unit});
-}
-
-struct LensCalculator
-{
-    double T;
-    double n;
-    double R1;
-    double R2;
-
-    double F; // Focus range
-    double P; // Optical power
-
-    void calc()
-    {
-        P = (n - 1)*(1/R1 - 1/R2 + (n-1)*T/n/R1/R2);
-        F = 1/P;
-    }
-};
-
-} // namespace
-
 void LensmakerWidget::refresh()
 {
-    double tagretH = 300; // TODO: make it scalable to viewport
-
     LensCalculator calc;
     calc.T = _T->value().toSi();
     calc.n = _IOR->value().toSi();
@@ -345,11 +336,11 @@ void LensmakerWidget::refresh()
     calc.R2 = _R2->value().toSi();
     calc.calc();
 
-    fromSi(_F, calc.F);
-    fromSi(_P, calc.P);
+    Z::Param::setSi(_F, calc.F);
+    Z::Param::setSi(_P, calc.P);
 
     double D = _D->value().toSi();
-    double scale = tagretH / D;
+    double scale = _targetH / D;
 
     _shape->D = D * scale;
     _shape->T = calc.T * scale;
@@ -372,6 +363,28 @@ void LensmakerWidget::refresh()
     _scene->update(r);
 }
 
+void LensmakerWidget::setTargetH(const double& v, bool doRefresh)
+{
+    _targetH = round(v);
+    if (_targetH < 100) _targetH = 100;
+    if (doRefresh) refresh();
+}
+
+void LensmakerWidget::copyImage()
+{
+    Z::IO::Clipboard::setImage(_view);
+}
+
+void LensmakerWidget::zoomIn()
+{
+    setTargetH(targetH() * 1.1);
+}
+
+void LensmakerWidget::zoomOut()
+{
+    setTargetH(targetH() * 0.9);
+}
+
 //--------------------------------------------------------------------------------
 //                              LensmakerWindow
 //--------------------------------------------------------------------------------
@@ -386,18 +399,54 @@ void LensmakerWindow::showWindow()
 
 LensmakerWindow::LensmakerWindow(QWidget *parent) : QWidget(parent)
 {
-    setAttribute(Qt::WA_DeleteOnClose);
-    setWindowTitle(tr("Lensmaker"));
-    setWindowIcon(QIcon(":/window_icons/lens"));
-
-    auto toolbar = new Ori::Widgets::FlatToolBar;
+    Ori::Wnd::initWindow(this, tr("Lensmaker"), ":/window_icons/lens");
 
     _designer = new LensmakerWidget;
 
-    Ori::Layouts::LayoutV({toolbar, _designer}).setMargin(3).useFor(this);
+#define A_ Ori::Gui::action
+    auto actnCopyImage = A_(tr("Copy Image"), _designer, SLOT(copyImage()), ":/toolbar/copy_img");
+    auto actnZoomOut = A_(tr("Zoom Out"), _designer, SLOT(zoomOut()), ":/toolbar/zoom_out", QKeySequence::ZoomOut);
+    auto actnZoomIn = A_(tr("Zoom In"), _designer, SLOT(zoomIn()), ":/toolbar/zoom_in", QKeySequence::ZoomIn);
+#undef A_
+
+    auto toolbar = new Ori::Widgets::FlatToolBar;
+    Ori::Gui::populate(toolbar, {actnCopyImage, nullptr, actnZoomOut, actnZoomIn});
+
+    Ori::Layouts::LayoutV({
+                              toolbar,
+                              Ori::Layouts::LayoutH({
+                                  _designer
+                              }).setMargin(3)
+                          })
+            .setSpacing(0)
+            .setMargin(0)
+            .useFor(this);
+
+    restoreState();
+    Ori::Wnd::moveToScreenCenter(this);
 }
 
 LensmakerWindow::~LensmakerWindow()
 {
+    storeState();
     __instance = nullptr;
+}
+
+void LensmakerWindow::restoreState()
+{
+    QJsonObject root = CustomDataHelpers::loadCustomData("lens");
+
+    _designer->setTargetH(root["target_H"].toDouble(250));
+
+    CustomDataHelpers::restoreWindowSize(root, this, 700, 500);
+}
+
+void LensmakerWindow::storeState()
+{
+    QJsonObject root;
+    root["window_width"] = width();
+    root["window_height"] = height();
+    root["target_H"] = _designer->targetH();
+
+    CustomDataHelpers::saveCustomData(root, "lens");
 }
