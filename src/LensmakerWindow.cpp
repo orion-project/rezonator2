@@ -2,7 +2,7 @@
 
 #include "CustomPrefs.h"
 #include "funcs/LensCalculator.h"
-#include "io/Clipboard.h"
+#include "widgets/GraphicsView.h"
 #include "widgets/ParamsEditor.h"
 #include "widgets/ParamEditor.h"
 
@@ -15,7 +15,6 @@
 #include <QContextMenuEvent>
 #include <QIcon>
 #include <QGraphicsItem>
-#include <QGraphicsView>
 #include <QtMath>
 #include <QMenu>
 
@@ -290,11 +289,10 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     _scene->addItem(_shape);
     _scene->addItem(_axis);
 
-    _view = new QGraphicsView;
-    _view->setRenderHint(QPainter::Antialiasing, true);
-    _view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    _view->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    _view = new Z::GraphicsView;
     _view->setScene(_scene);
+    connect(_view, &Z::GraphicsView::zoomIn, this, &LensmakerWidget::zoomIn);
+    connect(_view, &Z::GraphicsView::zoomOut, this, &LensmakerWidget::zoomOut);
 
     addWidget(paramsEditor);
     addWidget(_view);
@@ -307,19 +305,6 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
 
 LensmakerWidget::~LensmakerWidget()
 {
-}
-
-void LensmakerWidget::contextMenuEvent(QContextMenuEvent *event)
-{
-    if (!_menu) _menu = createContextMenu();
-    _menu->popup(this->mapToGlobal(event->pos()));
-}
-
-QMenu* LensmakerWidget::createContextMenu()
-{
-    auto menu = new QMenu(this);
-    menu->addAction(QIcon(":/toolbar/copy_img"), tr("Copy Image"), this, &LensmakerWidget::copyImage);
-    return menu;
 }
 
 void LensmakerWidget::parameterChanged(Z::ParameterBase*)
@@ -370,19 +355,14 @@ void LensmakerWidget::setTargetH(const double& v, bool doRefresh)
     if (doRefresh) refresh();
 }
 
-void LensmakerWidget::copyImage()
-{
-    Z::IO::Clipboard::setImage(_view);
-}
-
 void LensmakerWidget::zoomIn()
 {
-    setTargetH(targetH() * 1.1);
+    setTargetH(_targetH * 1.1);
 }
 
 void LensmakerWidget::zoomOut()
 {
-    setTargetH(targetH() * 0.9);
+    setTargetH(_targetH * 0.9);
 }
 
 //--------------------------------------------------------------------------------
@@ -404,7 +384,7 @@ LensmakerWindow::LensmakerWindow(QWidget *parent) : QWidget(parent)
     _designer = new LensmakerWidget;
 
 #define A_ Ori::Gui::action
-    auto actnCopyImage = A_(tr("Copy Image"), _designer, SLOT(copyImage()), ":/toolbar/copy_img");
+    auto actnCopyImage = A_(tr("Copy Image"), _designer->view(), SLOT(copyImage()), ":/toolbar/copy_img");
     auto actnZoomOut = A_(tr("Zoom Out"), _designer, SLOT(zoomOut()), ":/toolbar/zoom_out", QKeySequence::ZoomOut);
     auto actnZoomIn = A_(tr("Zoom In"), _designer, SLOT(zoomIn()), ":/toolbar/zoom_in", QKeySequence::ZoomIn);
 #undef A_

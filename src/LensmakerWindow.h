@@ -7,8 +7,6 @@
 
 QT_BEGIN_NAMESPACE
 class QGraphicsScene;
-class QGraphicsView;
-class QMenu;
 QT_END_NAMESPACE
 
 namespace LensmakerItems {
@@ -16,6 +14,10 @@ class LensShapeItem;
 class OpticalAxisItem;
 class PaperGridItem;
 } // namespace LensmakerItems
+
+namespace Z {
+class GraphicsView;
+}
 
 class LensmakerWidget : public QSplitter, public Z::ParameterListener
 {
@@ -27,29 +29,24 @@ public:
 
     void parameterChanged(Z::ParameterBase*) override;
 
+    Z::GraphicsView* view() const { return _view; }
+
     double targetH() const { return _targetH; }
     void setTargetH(const double& v, bool doRefresh = true);
 
 public slots:
-    void copyImage();
     void zoomIn();
     void zoomOut();
 
-protected:
-    void contextMenuEvent(QContextMenuEvent *event) override;
-
 private:
-    QMenu* _menu = nullptr;
     QGraphicsScene* _scene;
-    QGraphicsView* _view;
+    Z::GraphicsView* _view;
     Z::Parameter *_D, *_R1, *_R2, *_IOR, *_T, *_gridStep;
     Z::Parameter *_F, *_P;
     LensmakerItems::OpticalAxisItem* _axis;
     LensmakerItems::LensShapeItem* _shape;
     LensmakerItems::PaperGridItem* _grid;
     double _targetH = 250;
-
-    QMenu* createContextMenu();
 
     void refresh();
 };
