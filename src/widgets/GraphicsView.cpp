@@ -37,9 +37,6 @@ void GraphicsView::wheelEvent(QWheelEvent *event)
 
 void GraphicsView::copyImage()
 {
-    //QImage image(scene()->sceneRect().size().toSize(), QImage::Format_ARGB32);
-    //image.fill(transparent ? Qt::transparent : Qt::white);
-
     QImage image(scene()->sceneRect().size().toSize(), QImage::Format_RGB888);
     image.fill(Qt::white);
 
