@@ -2,6 +2,7 @@
 
 #include "CustomPrefs.h"
 #include "funcs/LensCalculator.h"
+#include "io/JsonUtils.h"
 #include "widgets/GraphicsView.h"
 #include "widgets/ParamsEditor.h"
 #include "widgets/ParamEditor.h"
@@ -213,6 +214,28 @@ public:
     QBrush glassBrush = QBrush(QPixmap(":/misc/glass_pattern_big"));
 };
 
+class VirtualPlaneItem : public QGraphicsItem
+{
+public:
+    QRectF boundingRect() const override
+    {
+        return QRectF(pos-1, -high/2.0, pos+1, high);
+    }
+
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override
+    {
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing, false);
+        painter->setPen(pen);
+        painter->drawLine(QLineF(pos, -high/2.0, pos, high/2.0));
+        painter->restore();
+    }
+
+    double pos = 0;
+    double high = 0;
+    QPen pen = QPen(Qt::black, 1, Qt::DashLine);
+};
+
 } // namespace LensmakerItems
 
 //--------------------------------------------------------------------------------
@@ -228,12 +251,12 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
                           tr("Left ROC", "Lens designer"),
                           tr("Negative value means right-bulged surface, "
                              "positive value means left-bulged surface. "
-                             "Set to zero to get plane face.", "Lens designer"));
+                             "Set to zero to get planar face.", "Lens designer"));
     _R2 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R2"), QStringLiteral("R2"),
                           tr("Right ROC", "Lens designer"),
                           tr("Negative value means right-bulged surface, "
                              "positive value means left-bulged surface. "
-                             "Set to zero to get plane face.", "Lens designer"));
+                             "Set to zero to get planar face.", "Lens designer"));
     _IOR = new Z::Parameter(Z::Dims::none(), QStringLiteral("n"), QStringLiteral("n"),
                           tr("Index of refraction", "Lens designer"),
                           tr("Index of refraction of the lens material.", "Lens designer"));
@@ -248,12 +271,12 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     _P = new Z::Parameter(Z::Dims::none(), QStringLiteral("P"), QStringLiteral("P"),
                           tr("Optical power"), tr("Optical power in dioptres."));
 
-    _D->setValue(40_mm); _D->addListener(this);
-    _R1->setValue(100_mm); _R1->addListener(this);
-    _R2->setValue(-100_mm); _R2->addListener(this);
-    _T->setValue(7_mm); _T->addListener(this);
-    _IOR->setValue(1.7); _IOR->addListener(this);
-    _gridStep->setValue(3_mm); _gridStep->addListener(this);
+    _D->setValue(40_mm); _D->addListener(this); _params.append(_D);
+    _R1->setValue(100_mm); _R1->addListener(this); _params.append(_R1);
+    _R2->setValue(-100_mm); _R2->addListener(this); _params.append(_R2);
+    _T->setValue(7_mm); _T->addListener(this); _params.append(_T);
+    _IOR->setValue(1.7); _IOR->addListener(this); _params.append(_IOR);
+    _gridStep->setValue(3_mm); _gridStep->addListener(this); _params.append(_gridStep);
     _F->setValue(0_mm);
     _P->setValue(0);
 
@@ -263,11 +286,11 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     opts.applyMode = ParamsEditor::Options::ApplyEnter;
     auto paramsEditor = new ParamsEditor(opts);
     QVector<Z::Unit> reasonableUnits{Z::Units::mm(), Z::Units::cm(), Z::Units::m()};
-    paramsEditor->addEditor(_D, reasonableUnits);
+    paramsEditor->addEditor(_D, {Z::Units::mm(), Z::Units::cm()});
     paramsEditor->addEditor(_R1, reasonableUnits);
     paramsEditor->addEditor(_R2, reasonableUnits);
     paramsEditor->addEditor(_IOR);
-    paramsEditor->addEditor(_T, reasonableUnits);
+    paramsEditor->addEditor(_T, {Z::Units::mm(), Z::Units::cm()});
     paramsEditor->addSeparator();
     paramsEditor->addEditor(_gridStep, reasonableUnits);
     paramsEditor->addSeparator();
@@ -283,11 +306,15 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     _grid = new LensmakerItems::PaperGridItem;
     _axis = new LensmakerItems::OpticalAxisItem;
     _shape = new LensmakerItems::LensShapeItem;
+    _backFocus = new LensmakerItems::VirtualPlaneItem;
+    _frontFocus = new LensmakerItems::VirtualPlaneItem;
 
     _scene = new QGraphicsScene(this);
     _scene->addItem(_grid);
     _scene->addItem(_shape);
     _scene->addItem(_axis);
+    _scene->addItem(_backFocus);
+    _scene->addItem(_frontFocus);
 
     _view = new Z::GraphicsView;
     _view->setScene(_scene);
@@ -299,8 +326,6 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     setSizes({200, 600});
     setStretchFactor(0, 1);
     setStretchFactor(1, 20);
-
-    refresh();
 }
 
 LensmakerWidget::~LensmakerWidget()
@@ -309,11 +334,17 @@ LensmakerWidget::~LensmakerWidget()
 
 void LensmakerWidget::parameterChanged(Z::ParameterBase*)
 {
-    refresh();
+    if (_restoring)
+        return;
+
+    refresh("param");
 }
 
-void LensmakerWidget::refresh()
+void LensmakerWidget::refresh(const char *reason)
 {
+    Q_UNUSED(reason)
+    //qDebug() << "refresh lens view:" << reason;
+
     LensCalculator calc;
     calc.T = _T->value().toSi();
     calc.n = _IOR->value().toSi();
@@ -335,7 +366,8 @@ void LensmakerWidget::refresh()
 
     auto r = _shape->boundingRect();
     double margin = D/4.0 * scale;
-    r.adjust(-margin, -margin, margin, margin);
+    double focus = calc.F * scale;
+    r.adjust(-margin-qAbs(focus), -margin, margin+qAbs(focus), margin);
 
     _grid->step = _gridStep->value().toSi() * scale;
     _grid->len = r.width();
@@ -343,6 +375,12 @@ void LensmakerWidget::refresh()
 
     _axis->len = r.width();
     _axis->high = r.height();
+
+    _backFocus->high = r.height();
+    _backFocus->pos = focus;
+
+    _frontFocus->high = r.height();
+    _frontFocus->pos = -focus;
 
     _scene->setSceneRect(r);
     _scene->update(r);
@@ -352,7 +390,7 @@ void LensmakerWidget::setTargetH(const double& v, bool doRefresh)
 {
     _targetH = round(v);
     if (_targetH < 100) _targetH = 100;
-    if (doRefresh) refresh();
+    if (doRefresh) refresh("zoom");
 }
 
 void LensmakerWidget::zoomIn()
@@ -363,6 +401,39 @@ void LensmakerWidget::zoomIn()
 void LensmakerWidget::zoomOut()
 {
     setTargetH(_targetH * 0.9);
+}
+
+void LensmakerWidget::storeValues(QJsonObject& root)
+{
+    root["lens_height"] = _targetH;
+
+    auto sz = sizes();
+    root["params_width"] = sz.at(0);
+    root["view_width"] = sz.at(1);
+
+    foreach(Z::Parameter *p, _params) {
+        root["param_"+p->alias()] = Z::IO::Json::writeValue(p->value());
+    }
+}
+
+void LensmakerWidget::restoreValues(QJsonObject& root)
+{
+    _restoring = true;
+
+    setTargetH(root["lens_height"].toDouble(250), false);
+
+    int paramsW = root["params_width"].toInt(0);
+    int viewW = root["view_width"].toInt(0);
+    if (paramsW > 0 && viewW > 0)
+        setSizes({paramsW, viewW});
+
+    foreach(Z::Parameter *p, _params)
+    {
+        auto res = Z::IO::Json::readValue(root["param_"+p->alias()].toObject(), p->dim());
+        if (res.ok()) p->setValue(res.value());
+    }
+
+    _restoring = false;
 }
 
 //--------------------------------------------------------------------------------
@@ -404,6 +475,8 @@ LensmakerWindow::LensmakerWindow(QWidget *parent) : QWidget(parent)
 
     restoreState();
     Ori::Wnd::moveToScreenCenter(this);
+
+    _designer->refresh("init");
 }
 
 LensmakerWindow::~LensmakerWindow()
@@ -415,18 +488,14 @@ LensmakerWindow::~LensmakerWindow()
 void LensmakerWindow::restoreState()
 {
     QJsonObject root = CustomDataHelpers::loadCustomData("lens");
-
-    _designer->setTargetH(root["target_H"].toDouble(250));
-
     CustomDataHelpers::restoreWindowSize(root, this, 700, 500);
+    _designer->restoreValues(root);
 }
 
 void LensmakerWindow::storeState()
 {
     QJsonObject root;
-    root["window_width"] = width();
-    root["window_height"] = height();
-    root["target_H"] = _designer->targetH();
-
+    CustomDataHelpers::storeWindowSize(root, this);
+    _designer->storeValues(root);
     CustomDataHelpers::saveCustomData(root, "lens");
 }

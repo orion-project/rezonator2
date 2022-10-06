@@ -1,6 +1,15 @@
 {
   "history": [
     {
+      "version": "2.0.11-beta7",
+      "date": "",
+      "changes": [
+        {
+          "text": "Added a tool for drawing simple lenses - Lensmaker"
+        }
+      ]
+    },
+    {
       "version": "2.0.10-beta6",
       "date": "2022-02-10",
       "changes": [

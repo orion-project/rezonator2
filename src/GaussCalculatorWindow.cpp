@@ -534,9 +534,7 @@ GaussCalculatorWindow::~GaussCalculatorWindow()
 void GaussCalculatorWindow::restoreState()
 {
     QJsonObject root = CustomDataHelpers::loadCustomData("gauss");
-
     CustomDataHelpers::restoreWindowSize(root, this, 750, 400);
-
     _plotPlusMinusZ->setCheckedId(root["plot_minus_z"].toInt());
     _plotPlusMinusW->setCheckedId(root["plot_minus_w"].toInt());
     _calcModeLock->setCheckedId(root["lock_mode"].toInt());
@@ -553,8 +551,7 @@ void GaussCalculatorWindow::restoreState()
 void GaussCalculatorWindow::storeState()
 {
     QJsonObject root;
-    root["window_width"] = width();
-    root["window_height"] = height();
+    CustomDataHelpers::storeWindowSize(root, this);
     root["plot_minus_z"] = _plotPlusMinusZ->checkedId();
     root["plot_minus_w"] = _plotPlusMinusW->checkedId();
     root["lock_mode"] = int(_calc->lock());
@@ -564,7 +561,6 @@ void GaussCalculatorWindow::storeState()
     root["plot_z0"] = _plotZ0->isChecked();
     root["x_title"] = _plot->formatterTextX();
     root["y_title"] = _plot->formatterTextY();
-
     CustomDataHelpers::saveCustomData(root, "gauss");
 }
 

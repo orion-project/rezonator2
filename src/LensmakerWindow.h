@@ -13,6 +13,7 @@ namespace LensmakerItems {
 class LensShapeItem;
 class OpticalAxisItem;
 class PaperGridItem;
+class VirtualPlaneItem;
 } // namespace LensmakerItems
 
 namespace Z {
@@ -31,8 +32,10 @@ public:
 
     Z::GraphicsView* view() const { return _view; }
 
-    double targetH() const { return _targetH; }
-    void setTargetH(const double& v, bool doRefresh = true);
+    void refresh(const char *reason);
+
+    void storeValues(QJsonObject& root);
+    void restoreValues(QJsonObject& root);
 
 public slots:
     void zoomIn();
@@ -43,12 +46,15 @@ private:
     Z::GraphicsView* _view;
     Z::Parameter *_D, *_R1, *_R2, *_IOR, *_T, *_gridStep;
     Z::Parameter *_F, *_P;
+    Z::Parameters _params;
     LensmakerItems::OpticalAxisItem* _axis;
     LensmakerItems::LensShapeItem* _shape;
     LensmakerItems::PaperGridItem* _grid;
+    LensmakerItems::VirtualPlaneItem *_backFocus, *_frontFocus;
     double _targetH = 250;
+    bool _restoring = false;
 
-    void refresh();
+    void setTargetH(const double& v, bool doRefresh = true);
 };
 
 
