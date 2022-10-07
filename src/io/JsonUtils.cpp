@@ -29,12 +29,18 @@ Result<Unit> readUnit(const QJsonObject& json, Dim dim)
     return Result<Unit>::success(unit);
 }
 
+void writeUnit(QJsonObject& json, Unit unit)
+{
+    json["unit"] = unit->alias();
+}
+
 QJsonObject writeValue(const Value& value)
 {
-    return QJsonObject({
+    QJsonObject json({
         { "value", value.value() },
-        { "unit", value.unit()->alias() }
     });
+    writeUnit(json, value.unit());
+    return json;
 }
 
 Result<Value> readValue(const QJsonObject& json, Dim dim)
@@ -48,11 +54,12 @@ Result<Value> readValue(const QJsonObject& json, Dim dim)
 
 QJsonObject writeValueTS(const ValueTS& value)
 {
-    return QJsonObject({
+    QJsonObject json({
         { "value_t", value.rawValueT() },
         { "value_s", value.rawValueS() },
-        { "unit", value.unit()->alias() }
     });
+    writeUnit(json, value.unit());
+    return json;
 }
 
 Result<ValueTS> readValueTS(const QJsonObject& json, Dim dim)

@@ -10,10 +10,12 @@ class QGraphicsScene;
 QT_END_NAMESPACE
 
 namespace LensmakerItems {
-class LensShapeItem;
-class OpticalAxisItem;
-class PaperGridItem;
-class VirtualPlaneItem;
+class LensItem;
+class AxisItem;
+class GridItem;
+class PlaneItem;
+class BeamItem;
+class PointItem;
 } // namespace LensmakerItems
 
 namespace Z {
@@ -47,10 +49,13 @@ private:
     Z::Parameter *_D, *_R1, *_R2, *_IOR, *_T, *_gridStep;
     Z::Parameter *_F, *_P;
     Z::Parameters _params;
-    LensmakerItems::OpticalAxisItem* _axis;
-    LensmakerItems::LensShapeItem* _shape;
-    LensmakerItems::PaperGridItem* _grid;
-    LensmakerItems::VirtualPlaneItem *_backFocus, *_frontFocus;
+    Z::Parameters _results;
+    LensmakerItems::AxisItem* _axis;
+    LensmakerItems::LensItem* _lens;
+    LensmakerItems::GridItem* _grid;
+    LensmakerItems::BeamItem *_beam, *_beamIm;
+    LensmakerItems::PlaneItem *_rearFocus, *_frontFocus;
+    LensmakerItems::PointItem *_rearFocusPt, *_frontFocusPt;
     double _targetH = 250;
     bool _restoring = false;
 

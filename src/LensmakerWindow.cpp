@@ -29,7 +29,7 @@ LensmakerWindow* __instance = nullptr;
 
 namespace LensmakerItems {
 
-class OpticalAxisItem : public QGraphicsItem
+class AxisItem : public QGraphicsItem
 {
 public:
     QRectF boundingRect() const override
@@ -47,12 +47,12 @@ public:
         painter->restore();
     }
 
-    double len = 0;
-    double high = 0;
+    qreal len = 0;
+    qreal high = 0;
     QPen pen = QPen(Qt::black, 1, Qt::DashDotLine);
 };
 
-class PaperGridItem : public QGraphicsItem
+class GridItem : public QGraphicsItem
 {
 public:
     QRectF boundingRect() const override
@@ -83,13 +83,13 @@ public:
         painter->restore();
     }
 
-    double len = 0;
-    double high = 0;
-    double step = 10;
+    qreal len = 0;
+    qreal high = 0;
+    qreal step = 10;
     QPen pen = QPen(Qt::gray, 1, Qt::DotLine);
 };
 
-class LensShapeItem : public QGraphicsItem
+class LensItem : public QGraphicsItem
 {
     enum CurvedForm {
         Plane,          //      ||
@@ -206,20 +206,20 @@ public:
     }
 
     QPainterPath _path;
-    double R1 = 0;
-    double R2 = 0;
-    double D = 0;
-    double T = 0;
+    qreal R1 = 0;
+    qreal R2 = 0;
+    qreal D = 0;
+    qreal T = 0;
     QPen glassPen = QPen(Qt::black, 1.5);
     QBrush glassBrush = QBrush(QPixmap(":/misc/glass_pattern_big"));
 };
 
-class VirtualPlaneItem : public QGraphicsItem
+class PlaneItem : public QGraphicsItem
 {
 public:
     QRectF boundingRect() const override
     {
-        return QRectF(pos-1, -high/2.0, pos+1, high);
+        return QRectF(pos-1, -high/2.0, 2, high);
     }
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override
@@ -234,6 +234,72 @@ public:
     double pos = 0;
     double high = 0;
     QPen pen = QPen(Qt::black, 1, Qt::DashLine);
+};
+
+class BeamItem : public QGraphicsItem
+{
+public:
+    QRectF boundingRect() const override
+    {
+        if (points.empty())
+            return QRectF();
+
+        qreal minX = 0, maxX = 0, maxY = 0;
+        foreach (const QPointF &p, points) {
+            if (p.x() < minX) minX = p.x();
+            if (p.x() > maxX) maxX = p.x();
+            if (p.y() > maxY) maxY = p.y();
+        }
+        return QRectF(minX, -qAbs(maxY), maxX-minX, qAbs(maxY)*2.0);
+    }
+
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override
+    {
+        if (points.empty())
+            return;
+
+        QPainterPath path, path1;
+        bool first = true;
+        foreach (const QPointF &p, points) {
+            QPoint p1(p.x(), -p.y());
+            if (first) {
+                path.moveTo(p);
+                path1.moveTo(p1);
+                first = false;
+            } else {
+                path.lineTo(p);
+                path1.lineTo(p1);
+            }
+        }
+        painter->setPen(pen);
+        painter->drawPath(path);
+        painter->drawPath(path1);
+    }
+
+    QVector<QPointF> points;
+    QPen pen = QPen(Qt::black, 1);
+};
+
+class PointItem : public QGraphicsItem
+{
+public:
+    QRectF boundingRect() const override
+    {
+        return QRectF(x-r, y-r, 2*r, 2*r);
+    }
+
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override
+    {
+        painter->setPen(pen);
+        painter->setBrush(brush);
+        painter->drawEllipse(x-r, y-r, 2*r, 2*r);
+    }
+
+    qreal x = 0;
+    qreal y = 0;
+    qreal r = 3;
+    QPen pen = QPen(Qt::black, 1);
+    QBrush brush = QBrush(Qt::black);
 };
 
 } // namespace LensmakerItems
@@ -277,8 +343,8 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     _T->setValue(7_mm); _T->addListener(this); _params.append(_T);
     _IOR->setValue(1.7); _IOR->addListener(this); _params.append(_IOR);
     _gridStep->setValue(3_mm); _gridStep->addListener(this); _params.append(_gridStep);
-    _F->setValue(0_mm);
-    _P->setValue(0);
+    _F->setValue(0_mm); _results.append(_F);
+    _P->setValue(0); _results.append(_P);
 
     ParamsEditor::Options opts(nullptr);
     opts.ownParams = true;
@@ -303,18 +369,18 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     auto editorP = paramsEditor->addEditor(_P);
     editorP->setReadonly(true, true);
 
-    _grid = new LensmakerItems::PaperGridItem;
-    _axis = new LensmakerItems::OpticalAxisItem;
-    _shape = new LensmakerItems::LensShapeItem;
-    _backFocus = new LensmakerItems::VirtualPlaneItem;
-    _frontFocus = new LensmakerItems::VirtualPlaneItem;
-
     _scene = new QGraphicsScene(this);
-    _scene->addItem(_grid);
-    _scene->addItem(_shape);
-    _scene->addItem(_axis);
-    _scene->addItem(_backFocus);
-    _scene->addItem(_frontFocus);
+    _scene->addItem(_grid = new LensmakerItems::GridItem);
+    _scene->addItem(_lens = new LensmakerItems::LensItem);
+    _scene->addItem(_axis = new LensmakerItems::AxisItem);
+    _scene->addItem(_beam = new LensmakerItems::BeamItem);
+    _scene->addItem(_beamIm = new LensmakerItems::BeamItem);
+    _scene->addItem(_rearFocus = new LensmakerItems::PlaneItem);
+    _scene->addItem(_frontFocus = new LensmakerItems::PlaneItem);
+    _scene->addItem(_rearFocusPt = new LensmakerItems::PointItem);
+    _scene->addItem(_frontFocusPt = new LensmakerItems::PointItem);
+
+    _beamIm->pen = _rearFocus->pen;
 
     _view = new Z::GraphicsView;
     _view->setScene(_scene);
@@ -355,19 +421,20 @@ void LensmakerWidget::refresh(const char *reason)
     Z::Param::setSi(_F, calc.F);
     Z::Param::setSi(_P, calc.P);
 
-    double D = _D->value().toSi();
-    double scale = _targetH / D;
+    qreal D = _D->value().toSi();
+    qreal scale = _targetH / D;
 
-    _shape->D = D * scale;
-    _shape->T = calc.T * scale;
-    _shape->R1 = calc.R1 * scale;
-    _shape->R2 = calc.R2 * scale;
-    _shape->calc();
+    _lens->D = D * scale;
+    _lens->T = calc.T * scale;
+    _lens->R1 = calc.R1 * scale;
+    _lens->R2 = calc.R2 * scale;
+    _lens->calc();
 
-    auto r = _shape->boundingRect();
-    double margin = D/4.0 * scale;
-    double focus = calc.F * scale;
+    auto r = _lens->boundingRect();
+    qreal margin = D/4.0 * scale;
+    qreal focus = calc.F * scale;
     r.adjust(-margin-qAbs(focus), -margin, margin+qAbs(focus), margin);
+    qreal gridH = r.height()/2.0;
 
     _grid->step = _gridStep->value().toSi() * scale;
     _grid->len = r.width();
@@ -376,11 +443,27 @@ void LensmakerWidget::refresh(const char *reason)
     _axis->len = r.width();
     _axis->high = r.height();
 
-    _backFocus->high = r.height();
-    _backFocus->pos = focus;
+    _rearFocus->high = r.height();
+    _rearFocus->pos = focus;
 
     _frontFocus->high = r.height();
     _frontFocus->pos = -focus;
+
+    qreal beamH = _lens->D * 0.45;
+    _beam->points.clear();
+    _beamIm->points.clear();
+    _beam->points.append({-_axis->len / 2.0, beamH});
+    _beam->points.append({0, beamH});
+    if (focus > 0)
+        _beam->points.append({focus, 0});
+    else {
+        _beam->points.append({-focus * (gridH - beamH) / beamH, gridH});
+        _beamIm->points.append({focus, 0});
+        _beamIm->points.append({0, beamH});
+    }
+
+    _frontFocusPt->x = -focus;
+    _rearFocusPt->x = focus;
 
     _scene->setSceneRect(r);
     _scene->update(r);
@@ -414,6 +497,14 @@ void LensmakerWidget::storeValues(QJsonObject& root)
     foreach(Z::Parameter *p, _params) {
         root["param_"+p->alias()] = Z::IO::Json::writeValue(p->value());
     }
+    foreach(Z::Parameter *p, _results) {
+        if (p->dim() == Z::Dims::none())
+            continue;
+
+        QJsonObject json;
+        Z::IO::Json::writeUnit(json, p->value().unit());
+        root["result_"+p->alias()] = json;
+    }
 }
 
 void LensmakerWidget::restoreValues(QJsonObject& root)
@@ -430,7 +521,16 @@ void LensmakerWidget::restoreValues(QJsonObject& root)
     foreach(Z::Parameter *p, _params)
     {
         auto res = Z::IO::Json::readValue(root["param_"+p->alias()].toObject(), p->dim());
-        if (res.ok()) p->setValue(res.value());
+        if (res.ok())
+            p->setValue(res.value());
+    }
+    foreach(Z::Parameter *p, _results) {
+        if (p->dim() == Z::Dims::none())
+            continue;
+
+        auto res = Z::IO::Json::readUnit(root["result_"+p->alias()].toObject(), p->dim());
+        if (res.ok())
+            p->setValue({0, res.value()}); // only unit matters, a magnituge will be updated
     }
 
     _restoring = false;
