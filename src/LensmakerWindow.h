@@ -47,7 +47,7 @@ private:
     QGraphicsScene* _scene;
     Z::GraphicsView* _view;
     Z::Parameter *_D, *_R1, *_R2, *_IOR, *_T, *_gridStep;
-    Z::Parameter *_F, *_P;
+    Z::Parameter *_F, *_P, *_RF, *_FF;
     Z::Parameters _params;
     Z::Parameters _results;
     LensmakerItems::AxisItem* _axis;
@@ -55,7 +55,7 @@ private:
     LensmakerItems::GridItem* _grid;
     LensmakerItems::BeamItem *_beam, *_beamIm;
     LensmakerItems::PlaneItem *_rearFocus, *_frontFocus;
-    LensmakerItems::PointItem *_rearFocusPt, *_frontFocusPt;
+    LensmakerItems::PlaneItem *_rearPrincip, *_frontPrincip;
     double _targetH = 250;
     bool _restoring = false;
 

@@ -1,5 +1,6 @@
 #include "LensmakerWindow.h"
 
+#include "Appearance.h"
 #include "CustomPrefs.h"
 #include "funcs/LensCalculator.h"
 #include "io/JsonUtils.h"
@@ -43,7 +44,7 @@ public:
         painter->setRenderHint(QPainter::Antialiasing, false);
         painter->setPen(pen);
         painter->drawLine(QLineF(-len/2.0, 0, len/2.0, 0));
-        painter->drawLine(QLineF(0, -high/2.0, 0, high/2.0));
+        //painter->drawLine(QLineF(0, -high/2.0, 0, high/2.0));
         painter->restore();
     }
 
@@ -68,6 +69,7 @@ public:
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing, false);
         painter->setPen(pen);
+        painter->drawLine(QLineF(0, -high/2.0, 0, high/2.0));
         double x = s;
         while (x <= len/2.0) {
             painter->drawLine(QLineF(x, -high/2.0, x, high/2.0));
@@ -219,7 +221,7 @@ class PlaneItem : public QGraphicsItem
 public:
     QRectF boundingRect() const override
     {
-        return QRectF(pos-1, -high/2.0, 2, high);
+        return QRectF(pos-r, -high/2.0, r, high);
     }
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override
@@ -228,12 +230,25 @@ public:
         painter->setRenderHint(QPainter::Antialiasing, false);
         painter->setPen(pen);
         painter->drawLine(QLineF(pos, -high/2.0, pos, high/2.0));
+        if (!title.isEmpty())
+        {
+            auto f = Z::Gui::ElemLabelFont().get();
+            QFontMetrics fm(f);
+            painter->setFont(f);
+            painter->drawText(pos+3, -high/2.0+fm.height()-3, title);
+
+        }
+        painter->setBrush(brush);
+        painter->drawEllipse(pos-r, 0-r, 2*r, 2*r);
         painter->restore();
     }
 
     double pos = 0;
     double high = 0;
+    qreal r = 3;
+    QString title;
     QPen pen = QPen(Qt::black, 1, Qt::DashLine);
+    QBrush brush = QBrush(Qt::black);
 };
 
 class BeamItem : public QGraphicsItem
@@ -277,7 +292,7 @@ public:
     }
 
     QVector<QPointF> points;
-    QPen pen = QPen(Qt::black, 1);
+    QPen pen = QPen(Qt::red, 1.5);
 };
 
 class PointItem : public QGraphicsItem
@@ -333,9 +348,13 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
                                  tr("Grid step", "Lens designer"),
                                  tr("Distance between grid lines. Set to zero to disable grid.", "Lens designer"));
     _F = new Z::Parameter(Z::Dims::linear(), QStringLiteral("F"), QStringLiteral("F"),
-                          tr("Focal length"), tr("Focal length."));
+                          tr("Focal length"), tr("Distance between focal point and respective principal plane. <code>H-F</code> or <code>F'-H'</code>"));
     _P = new Z::Parameter(Z::Dims::none(), QStringLiteral("P"), QStringLiteral("P"),
                           tr("Optical power"), tr("Optical power in dioptres."));
+    _FF = new Z::Parameter(Z::Dims::linear(), QStringLiteral("FF"), QStringLiteral("FF"),
+                          tr("Front focal range"), tr("Distance between the front focal point <code>F</code> and the left surface"));
+    _RF = new Z::Parameter(Z::Dims::linear(), QStringLiteral("RF"), QStringLiteral("RF"),
+                          tr("Rear focal range"), tr("Distance between the right surface and the rear focal point <code>F'</code>"));
 
     _D->setValue(40_mm); _D->addListener(this); _params.append(_D);
     _R1->setValue(100_mm); _R1->addListener(this); _params.append(_R1);
@@ -345,6 +364,8 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     _gridStep->setValue(3_mm); _gridStep->addListener(this); _params.append(_gridStep);
     _F->setValue(0_mm); _results.append(_F);
     _P->setValue(0); _results.append(_P);
+    _FF->setValue(0_mm); _results.append(_FF);
+    _RF->setValue(0_mm); _results.append(_RF);
 
     ParamsEditor::Options opts(nullptr);
     opts.ownParams = true;
@@ -369,6 +390,14 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     auto editorP = paramsEditor->addEditor(_P);
     editorP->setReadonly(true, true);
 
+    auto editorFF = paramsEditor->addEditor(_FF, reasonableUnits);
+    editorFF->setReadonly(true, false);
+    editorFF->rescaleOnUnitChange = true;
+
+    auto editorRF = paramsEditor->addEditor(_RF, reasonableUnits);
+    editorRF->setReadonly(true, false);
+    editorRF->rescaleOnUnitChange = true;
+
     _scene = new QGraphicsScene(this);
     _scene->addItem(_grid = new LensmakerItems::GridItem);
     _scene->addItem(_lens = new LensmakerItems::LensItem);
@@ -377,9 +406,13 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     _scene->addItem(_beamIm = new LensmakerItems::BeamItem);
     _scene->addItem(_rearFocus = new LensmakerItems::PlaneItem);
     _scene->addItem(_frontFocus = new LensmakerItems::PlaneItem);
-    _scene->addItem(_rearFocusPt = new LensmakerItems::PointItem);
-    _scene->addItem(_frontFocusPt = new LensmakerItems::PointItem);
+    _scene->addItem(_rearPrincip = new LensmakerItems::PlaneItem);
+    _scene->addItem(_frontPrincip = new LensmakerItems::PlaneItem);
 
+    _rearFocus->title = QStringLiteral("F'");
+    _frontFocus->title = QStringLiteral("F");
+    _rearPrincip->title = QStringLiteral("H'");
+    _frontPrincip->title = QStringLiteral("H");
     _beamIm->pen = _rearFocus->pen;
 
     _view = new Z::GraphicsView;
@@ -420,6 +453,8 @@ void LensmakerWidget::refresh(const char *reason)
 
     Z::Param::setSi(_F, calc.F);
     Z::Param::setSi(_P, calc.P);
+    Z::Param::setSi(_FF, calc.FF);
+    Z::Param::setSi(_RF, calc.RF);
 
     qreal D = _D->value().toSi();
     qreal scale = _targetH / D;
@@ -444,26 +479,26 @@ void LensmakerWidget::refresh(const char *reason)
     _axis->high = r.height();
 
     _rearFocus->high = r.height();
-    _rearFocus->pos = focus;
-
     _frontFocus->high = r.height();
-    _frontFocus->pos = -focus;
+    _rearPrincip->high = r.height();
+    _frontPrincip->high = r.height();
+    _rearFocus->pos = _lens->T/2.0 + calc.RF*scale;
+    _frontFocus->pos = -_lens->T/2.0 + calc.FF*scale;
+    _rearPrincip->pos = _rearFocus->pos - focus;
+    _frontPrincip->pos = _frontFocus->pos + focus;
 
     qreal beamH = _lens->D * 0.45;
     _beam->points.clear();
     _beamIm->points.clear();
     _beam->points.append({-_axis->len / 2.0, beamH});
-    _beam->points.append({0, beamH});
+    _beam->points.append({_rearPrincip->pos, beamH});
     if (focus > 0)
-        _beam->points.append({focus, 0});
+        _beam->points.append({_rearFocus->pos, 0});
     else {
-        _beam->points.append({-focus * (gridH - beamH) / beamH, gridH});
-        _beamIm->points.append({focus, 0});
-        _beamIm->points.append({0, beamH});
+        _beam->points.append({_rearPrincip->pos - focus * (gridH - beamH) / beamH, gridH});
+        _beamIm->points.append({_rearFocus->pos, 0});
+        _beamIm->points.append({_rearPrincip->pos, beamH});
     }
-
-    _frontFocusPt->x = -focus;
-    _rearFocusPt->x = focus;
 
     _scene->setSceneRect(r);
     _scene->update(r);
