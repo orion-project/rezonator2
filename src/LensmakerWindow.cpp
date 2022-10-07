@@ -35,7 +35,7 @@ class AxisItem : public QGraphicsItem
 public:
     QRectF boundingRect() const override
     {
-        return QRectF(-len/2, -high/2, len, high);
+        return rect;
     }
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override
@@ -43,13 +43,11 @@ public:
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing, false);
         painter->setPen(pen);
-        painter->drawLine(QLineF(-len/2.0, 0, len/2.0, 0));
-        //painter->drawLine(QLineF(0, -high/2.0, 0, high/2.0));
+        painter->drawLine(QLineF(rect.left(), 0, rect.right(), 0));
         painter->restore();
     }
 
-    qreal len = 0;
-    qreal high = 0;
+    QRectF rect;
     QPen pen = QPen(Qt::black, 1, Qt::DashDotLine);
 };
 
@@ -58,35 +56,45 @@ class GridItem : public QGraphicsItem
 public:
     QRectF boundingRect() const override
     {
-        return QRectF(-len/2.0, -high/2.0, len, high);
+        return rect;
     }
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override
     {
-        double s = qAbs(step);
+        qreal s = qAbs(step);
         if (s == 0) return;
+
+        qreal high = rect.height()/2.0;
+        qreal left = rect.left();
+        qreal right = rect.right();
 
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing, false);
         painter->setPen(pen);
-        painter->drawLine(QLineF(0, -high/2.0, 0, high/2.0));
-        double x = s;
-        while (x <= len/2.0) {
-            painter->drawLine(QLineF(x, -high/2.0, x, high/2.0));
-            painter->drawLine(QLineF(-x, -high/2.0, -x, high/2.0));
+
+        // positive verticals
+        double x = 0;
+        while (x <= right) {
+            painter->drawLine(QLineF(x, -high, x, high));
             x += s;
         }
+        // negative verticals
+        x = -s;
+        while (x >= left) {
+            painter->drawLine(QLineF(x, -high, x, high));
+            x -= s;
+        }
+        // horizontals
         double y = s;
-        while (y <= high/2.0) {
-            painter->drawLine(QLineF(-len/2.0, y, len/2.0, y));
-            painter->drawLine(QLineF(-len/2.0, -y, len/2.0, -y));
+        while (y <= high) {
+            painter->drawLine(QLineF(left, y, right, y));
+            painter->drawLine(QLineF(left, -y, right, -y));
             y += s;
         }
         painter->restore();
     }
 
-    qreal len = 0;
-    qreal high = 0;
+    QRectF rect;
     qreal step = 10;
     QPen pen = QPen(Qt::gray, 1, Qt::DotLine);
 };
@@ -221,7 +229,7 @@ class PlaneItem : public QGraphicsItem
 public:
     QRectF boundingRect() const override
     {
-        return QRectF(pos-r, -high/2.0, r, high);
+        return QRectF(pos-r, -high/2.0, 2*r, high);
     }
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override
@@ -239,7 +247,7 @@ public:
 
         }
         painter->setBrush(brush);
-        painter->drawEllipse(pos-r, 0-r, 2*r, 2*r);
+        painter->drawEllipse(pos-r, -r, 2*r, 2*r);
         painter->restore();
     }
 
@@ -351,9 +359,9 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
                           tr("Focal length"), tr("Distance between focal point and respective principal plane. <code>H-F</code> or <code>F'-H'</code>"));
     _P = new Z::Parameter(Z::Dims::none(), QStringLiteral("P"), QStringLiteral("P"),
                           tr("Optical power"), tr("Optical power in dioptres."));
-    _FF = new Z::Parameter(Z::Dims::linear(), QStringLiteral("FF"), QStringLiteral("FF"),
+    _F1 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("F1"), QStringLiteral("FF"),
                           tr("Front focal range"), tr("Distance between the front focal point <code>F</code> and the left surface"));
-    _RF = new Z::Parameter(Z::Dims::linear(), QStringLiteral("RF"), QStringLiteral("RF"),
+    _F2 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("F2"), QStringLiteral("RF"),
                           tr("Rear focal range"), tr("Distance between the right surface and the rear focal point <code>F'</code>"));
 
     _D->setValue(40_mm); _D->addListener(this); _params.append(_D);
@@ -364,8 +372,8 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     _gridStep->setValue(3_mm); _gridStep->addListener(this); _params.append(_gridStep);
     _F->setValue(0_mm); _results.append(_F);
     _P->setValue(0); _results.append(_P);
-    _FF->setValue(0_mm); _results.append(_FF);
-    _RF->setValue(0_mm); _results.append(_RF);
+    _F1->setValue(0_mm); _results.append(_F1);
+    _F2->setValue(0_mm); _results.append(_F2);
 
     ParamsEditor::Options opts(nullptr);
     opts.ownParams = true;
@@ -390,11 +398,11 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     auto editorP = paramsEditor->addEditor(_P);
     editorP->setReadonly(true, true);
 
-    auto editorFF = paramsEditor->addEditor(_FF, reasonableUnits);
+    auto editorFF = paramsEditor->addEditor(_F1, reasonableUnits);
     editorFF->setReadonly(true, false);
     editorFF->rescaleOnUnitChange = true;
 
-    auto editorRF = paramsEditor->addEditor(_RF, reasonableUnits);
+    auto editorRF = paramsEditor->addEditor(_F2, reasonableUnits);
     editorRF->setReadonly(true, false);
     editorRF->rescaleOnUnitChange = true;
 
@@ -404,16 +412,16 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     _scene->addItem(_axis = new LensmakerItems::AxisItem);
     _scene->addItem(_beam = new LensmakerItems::BeamItem);
     _scene->addItem(_beamIm = new LensmakerItems::BeamItem);
-    _scene->addItem(_rearFocus = new LensmakerItems::PlaneItem);
-    _scene->addItem(_frontFocus = new LensmakerItems::PlaneItem);
-    _scene->addItem(_rearPrincip = new LensmakerItems::PlaneItem);
-    _scene->addItem(_frontPrincip = new LensmakerItems::PlaneItem);
+    _scene->addItem(_focus1 = new LensmakerItems::PlaneItem);
+    _scene->addItem(_focus2 = new LensmakerItems::PlaneItem);
+    _scene->addItem(_princip1 = new LensmakerItems::PlaneItem);
+    _scene->addItem(_princip2 = new LensmakerItems::PlaneItem);
 
-    _rearFocus->title = QStringLiteral("F'");
-    _frontFocus->title = QStringLiteral("F");
-    _rearPrincip->title = QStringLiteral("H'");
-    _frontPrincip->title = QStringLiteral("H");
-    _beamIm->pen = _rearFocus->pen;
+    _focus1->title = QStringLiteral("F"); _focus1->setData(0, _focus1->title);
+    _focus2->title = QStringLiteral("F'"); _focus2->setData(0, _focus2->title);
+    _princip1->title = QStringLiteral("H"); _princip1->setData(0, _princip1->title);
+    _princip2->title = QStringLiteral("H'"); _princip2->setData(0, _princip2->title);
+    _beamIm->pen = _focus2->pen;
 
     _view = new Z::GraphicsView;
     _view->setScene(_scene);
@@ -445,60 +453,79 @@ void LensmakerWidget::refresh(const char *reason)
     //qDebug() << "refresh lens view:" << reason;
 
     LensCalculator calc;
-    calc.T = _T->value().toSi();
-    calc.n = _IOR->value().toSi();
+    calc.T = qAbs(_T->value().toSi());
+    calc.n = qAbs(_IOR->value().toSi());
     calc.R1 = _R1->value().toSi();
     calc.R2 = _R2->value().toSi();
     calc.calc();
 
     Z::Param::setSi(_F, calc.F);
     Z::Param::setSi(_P, calc.P);
-    Z::Param::setSi(_FF, calc.FF);
-    Z::Param::setSi(_RF, calc.RF);
+    Z::Param::setSi(_F1, calc.F1);
+    Z::Param::setSi(_F2, calc.F2);
 
-    qreal D = _D->value().toSi();
-    qreal scale = _targetH / D;
+    qreal scale = _targetH / _D->value().toSi();
 
-    _lens->D = D * scale;
+    _lens->D = _targetH;
     _lens->T = calc.T * scale;
     _lens->R1 = calc.R1 * scale;
     _lens->R2 = calc.R2 * scale;
     _lens->calc();
 
-    auto r = _lens->boundingRect();
-    qreal margin = D/4.0 * scale;
+    qreal margin = _lens->D / 4.0;
+    qreal gridH = _lens->D + 2*margin;
     qreal focus = calc.F * scale;
-    r.adjust(-margin-qAbs(focus), -margin, margin+qAbs(focus), margin);
-    qreal gridH = r.height()/2.0;
-
-    _grid->step = _gridStep->value().toSi() * scale;
-    _grid->len = r.width();
-    _grid->high = r.height();
-
-    _axis->len = r.width();
-    _axis->high = r.height();
-
-    _rearFocus->high = r.height();
-    _frontFocus->high = r.height();
-    _rearPrincip->high = r.height();
-    _frontPrincip->high = r.height();
-    _rearFocus->pos = _lens->T/2.0 + calc.RF*scale;
-    _frontFocus->pos = -_lens->T/2.0 + calc.FF*scale;
-    _rearPrincip->pos = _rearFocus->pos - focus;
-    _frontPrincip->pos = _frontFocus->pos + focus;
-
     qreal beamH = _lens->D * 0.45;
+
+    _focus1->setVisible(!calc.planar);
+    _focus2->setVisible(!calc.planar);
+    _princip1->setVisible(!calc.planar);
+    _princip2->setVisible(!calc.planar);
     _beam->points.clear();
     _beamIm->points.clear();
-    _beam->points.append({-_axis->len / 2.0, beamH});
-    _beam->points.append({_rearPrincip->pos, beamH});
-    if (focus > 0)
-        _beam->points.append({_rearFocus->pos, 0});
-    else {
-        _beam->points.append({_rearPrincip->pos - focus * (gridH - beamH) / beamH, gridH});
-        _beamIm->points.append({_rearFocus->pos, 0});
-        _beamIm->points.append({_rearPrincip->pos, beamH});
+
+    if (!calc.planar)
+    {
+        _focus1->high = gridH;
+        _focus2->high = gridH;
+        _princip1->high = gridH;
+        _princip2->high = gridH;
+        _focus1->pos = -_lens->T/2.0 + calc.F1*scale;
+        _focus2->pos = _lens->T/2.0 + calc.F2*scale;
+        _princip1->pos = _focus1->pos + focus;
+        _princip2->pos = _focus2->pos - focus;
+
+        // The first point will be inserted when we know full bounds
+        //_beam->points.append({-_axis->len / 2.0, beamH});
+        _beam->points.append({_princip2->pos, beamH});
+        if (focus > 0)
+        {
+            _beam->points.append({_focus2->pos, 0});
+        }
+        else
+        {
+            _beam->points.append({_princip2->pos - focus * (gridH/2.0 - beamH) / beamH, gridH/2.0});
+            _beamIm->points.append({_focus2->pos, 0});
+            _beamIm->points.append({_princip2->pos, beamH});
+        }
     }
+
+    qreal step = qAbs(_gridStep->value().toSi()) * scale;
+
+    QRectF r = _lens->boundingRect()
+            .united(_focus1->boundingRect())
+            .united(_focus2->boundingRect())
+            .united(_princip1->boundingRect())
+            .united(_princip2->boundingRect())
+            .adjusted(-margin, 0, margin, 0);
+
+    if (!_beam->points.empty())
+        _beam->points.insert(0, {r.left(), beamH});
+
+    _grid->rect = r;
+    _grid->step = step;
+
+    _axis->rect = r;
 
     _scene->setSceneRect(r);
     _scene->update(r);

@@ -78,7 +78,7 @@ public:
     void populateEditor(Z::Parameter* param);
     void moveEditorUp(Z::Parameter* param);
     void moveEditorDown(Z::Parameter* param);
-    void addSeparator(const QString& title = QString());
+    void addSeparator(const QString& title = QString(), bool flat = true);
 
     void focus();
     void focus(Z::Parameter *param);

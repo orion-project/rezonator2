@@ -95,11 +95,16 @@ ParamEditor *ParamsEditor::addEditor(Z::Parameter* param, const QVector<Z::Unit>
     return editor;
 }
 
-void ParamsEditor::addSeparator(const QString& title)
+void ParamsEditor::addSeparator(const QString& title, bool flat)
 {
     if (title.isEmpty())
-        _paramsLayout->addWidget(new Ori::Widgets::LabelSeparator);
-    else {
+    {
+        auto label = new Ori::Widgets::LabelSeparator;
+        label->flat = flat;
+        _paramsLayout->addWidget(label);
+    }
+    else
+    {
         auto label = new QLabel(title);
         auto font = Z::Gui::ParamLabelFont().get();
         label->setStyleSheet(QString("font-size: %1pt; font-weight: bold; color: SteelBlue; padding: 0.1em").arg(font.pointSize()));
