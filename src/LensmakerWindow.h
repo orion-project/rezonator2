@@ -7,6 +7,7 @@
 
 QT_BEGIN_NAMESPACE
 class QGraphicsScene;
+class QTabWidget;
 QT_END_NAMESPACE
 
 namespace LensmakerItems {
@@ -36,12 +37,13 @@ public:
 
     void refresh(const char *reason);
 
+    void zoomIn();
+    void zoomOut();
+
     void storeValues(QJsonObject& root);
     void restoreValues(QJsonObject& root);
 
-public slots:
-    void zoomIn();
-    void zoomOut();
+    int index = 1;
 
 private:
     QGraphicsScene* _scene;
@@ -73,11 +75,20 @@ public:
 
     static void showWindow();
 
+private slots:
+    void addLens();
+    void removeLens();
+    void zoomIn();
+    void zoomOut();
+    void copyImage();
+
 private:
-    LensmakerWidget* _designer;
+    QTabWidget* _tabs;
 
     void restoreState();
     void storeState();
+    void addTab(LensmakerWidget* lens);
+    LensmakerWidget* activeLens();
 };
 
 #endif // LENSMAKER_WINDOW_H

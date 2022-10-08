@@ -9,16 +9,18 @@
 #include "widgets/ParamEditor.h"
 
 #include "core/OriFloatingPoint.h"
+#include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 #include "helpers/OriWindows.h"
 #include "widgets/OriFlatToolBar.h"
 
 #include <QContextMenuEvent>
-#include <QIcon>
 #include <QGraphicsItem>
-#include <QtMath>
+#include <QIcon>
 #include <QMenu>
+#include <QTabWidget>
+#include <QtMath>
 
 #define Sqr(x) ((x)*(x))
 
@@ -461,7 +463,7 @@ void LensmakerWidget::parameterChanged(Z::ParameterBase*)
 void LensmakerWidget::refresh(const char *reason)
 {
     Q_UNUSED(reason)
-    //qDebug() << "refresh lens view:" << reason;
+    //qDebug() << "refresh lens view:" << index << reason;
 
     LensCalculator calc;
     calc.T = qAbs(_T->value().toSi());
@@ -625,31 +627,27 @@ LensmakerWindow::LensmakerWindow(QWidget *parent) : QWidget(parent)
 {
     Ori::Wnd::initWindow(this, tr("Lensmaker"), ":/window_icons/lens");
 
-    _designer = new LensmakerWidget;
-
 #define A_ Ori::Gui::action
-    auto actnCopyImage = A_(tr("Copy Image"), _designer->view(), SLOT(copyImage()), ":/toolbar/copy_img");
-    auto actnZoomOut = A_(tr("Zoom Out"), _designer, SLOT(zoomOut()), ":/toolbar/zoom_out", QKeySequence::ZoomOut);
-    auto actnZoomIn = A_(tr("Zoom In"), _designer, SLOT(zoomIn()), ":/toolbar/zoom_in", QKeySequence::ZoomIn);
+    auto actnAddLens = A_(tr("Add Lens"), this, SLOT(addLens()), ":/toolbar/elem_add", QKeySequence::New);
+    auto actnDelLens = A_(tr("Remove Lens"), this, SLOT(removeLens()), ":/toolbar/elem_delete");
+    auto actnCopyImage = A_(tr("Copy Image"), this, SLOT(copyImage()), ":/toolbar/copy_img");
+    auto actnZoomOut = A_(tr("Zoom Out"), this, SLOT(zoomOut()), ":/toolbar/zoom_out", QKeySequence::ZoomOut);
+    auto actnZoomIn = A_(tr("Zoom In"), this, SLOT(zoomIn()), ":/toolbar/zoom_in", QKeySequence::ZoomIn);
 #undef A_
 
     auto toolbar = new Ori::Widgets::FlatToolBar;
-    Ori::Gui::populate(toolbar, {actnCopyImage, nullptr, actnZoomOut, actnZoomIn});
+    Ori::Gui::populate(toolbar, { actnAddLens, actnDelLens,
+                                  nullptr, actnCopyImage,
+                                  nullptr, actnZoomOut, actnZoomIn,
+                       });
 
-    Ori::Layouts::LayoutV({
-                              toolbar,
-                              Ori::Layouts::LayoutH({
-                                  _designer
-                              }).setMargin(3)
-                          })
-            .setSpacing(0)
-            .setMargin(0)
-            .useFor(this);
+    _tabs = new QTabWidget;
+    _tabs->setStyleSheet(QStringLiteral("::pane { border-top: 1px solid palette(mid); padding: 3px; top: -2px; } ::tab-bar { left: 5px; }"));
+
+    Ori::Layouts::LayoutV({toolbar, _tabs}).setSpacing(0).setMargin(0).useFor(this);
 
     restoreState();
     Ori::Wnd::moveToScreenCenter(this);
-
-    _designer->refresh("init");
 }
 
 LensmakerWindow::~LensmakerWindow()
@@ -661,14 +659,112 @@ LensmakerWindow::~LensmakerWindow()
 void LensmakerWindow::restoreState()
 {
     QJsonObject root = CustomDataHelpers::loadCustomData("lens");
+
     CustomDataHelpers::restoreWindowSize(root, this, 700, 500);
-    _designer->restoreValues(root);
+
+    auto jsonLenses = root["lenses"];
+    if (jsonLenses.isArray())
+    {
+        int index = 1;
+        auto lensArray = jsonLenses.toArray();
+        for (auto it = lensArray.begin(); it != lensArray.end(); it++)
+        {
+            auto lens = new LensmakerWidget;
+            QJsonObject json = it->toObject();
+            lens->restoreValues(json);
+            lens->refresh("restore");
+            lens->index = index;
+            addTab(lens);
+            index++;
+        }
+    }
+
+    if (_tabs->count() > 0)
+        _tabs->setCurrentIndex(root["active_lens"].toInt(0));
+    else
+        addLens();
 }
 
 void LensmakerWindow::storeState()
 {
     QJsonObject root;
+
     CustomDataHelpers::storeWindowSize(root, this);
-    _designer->storeValues(root);
+
+    QJsonArray jsonLenses;
+    for (int i = 0; i < _tabs->count(); i++)
+    {
+        auto lens = qobject_cast<LensmakerWidget*>(_tabs->widget(i));
+        if (!lens)
+            continue;
+        QJsonObject json;
+        lens->storeValues(json);
+        jsonLenses.append(json);
+    }
+    root["lenses"] = jsonLenses;
+    root["active_lens"] = _tabs->currentIndex();
+
     CustomDataHelpers::saveCustomData(root, "lens");
+}
+
+void LensmakerWindow::addLens()
+{
+    int maxIndex = 0;
+    QJsonObject json;
+    for (int i = 0; i < _tabs->count(); i++)
+    {
+        auto lens = qobject_cast<LensmakerWidget*>(_tabs->widget(i));
+        if (!lens)
+            continue;
+        if (lens->index > maxIndex)
+            maxIndex = lens->index;
+        if (i == _tabs->currentIndex())
+            lens->storeValues(json);
+    }
+    auto lens = new LensmakerWidget;
+    lens->index = maxIndex+1;
+    lens->restoreValues(json);
+    lens->refresh("init");
+    addTab(lens);
+    _tabs->setCurrentWidget(lens);
+}
+
+void LensmakerWindow::addTab(LensmakerWidget* lens)
+{
+    _tabs->addTab(lens, QStringLiteral("Lens %1").arg(lens->index));
+}
+
+void LensmakerWindow::removeLens()
+{
+    if (_tabs->count() == 1)
+        return;
+
+    if (!Ori::Dlg::yes(tr("Remove lens?")))
+        return;
+
+    auto lens = activeLens();
+    if (lens) lens->deleteLater();
+}
+
+LensmakerWidget* LensmakerWindow::activeLens()
+{
+    return qobject_cast<LensmakerWidget*>(_tabs->currentWidget());
+}
+
+void LensmakerWindow::zoomIn()
+{
+    auto lens = activeLens();
+    if (lens) lens->zoomIn();
+}
+
+void LensmakerWindow::zoomOut()
+{
+    auto lens = activeLens();
+    if (lens) lens->zoomOut();
+}
+
+void LensmakerWindow::copyImage()
+{
+    auto lens = activeLens();
+    if (lens) lens->view()->copyImage();
 }
