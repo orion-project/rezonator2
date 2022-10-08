@@ -33,6 +33,11 @@ namespace LensmakerItems {
 class AxisItem : public QGraphicsItem
 {
 public:
+    AxisItem(QGraphicsItem *parent = nullptr) : QGraphicsItem(parent)
+    {
+        pen.setDashPattern({20, 5, 2, 5});
+    }
+
     QRectF boundingRect() const override
     {
         return rect;
@@ -48,7 +53,7 @@ public:
     }
 
     QRectF rect;
-    QPen pen = QPen(Qt::black, 1, Qt::DashDotLine);
+    QPen pen = QPen(QColor(50, 50, 50), 1, Qt::DashDotLine);
 };
 
 class GridItem : public QGraphicsItem
@@ -227,6 +232,11 @@ public:
 class PlaneItem : public QGraphicsItem
 {
 public:
+    PlaneItem(QGraphicsItem *parent = nullptr) : QGraphicsItem(parent)
+    {
+        pen.setDashPattern({6, 6});
+    }
+
     QRectF boundingRect() const override
     {
         return QRectF(pos-r, -high/2.0, 2*r, high);
@@ -246,6 +256,7 @@ public:
             painter->drawText(pos+3, -high/2.0+fm.height()-3, title);
 
         }
+        painter->setRenderHint(QPainter::Antialiasing, true);
         painter->setBrush(brush);
         painter->drawEllipse(pos-r, -r, 2*r, 2*r);
         painter->restore();
@@ -255,7 +266,7 @@ public:
     double high = 0;
     qreal r = 3;
     QString title;
-    QPen pen = QPen(Qt::black, 1, Qt::DashLine);
+    QPen pen = QPen(QColor(50, 50, 50), 1, Qt::DashLine);
     QBrush brush = QBrush(Qt::black);
 };
 
