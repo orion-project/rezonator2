@@ -11,6 +11,7 @@ Tools
    calc_formula
    calc_gauss
    calc_grin
+   calc_lens
 
 .. seealso::
 

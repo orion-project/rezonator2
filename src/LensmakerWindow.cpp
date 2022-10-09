@@ -255,7 +255,13 @@ public:
             auto f = Z::Gui::ElemLabelFont().get();
             QFontMetrics fm(f);
             painter->setFont(f);
-            painter->drawText(pos+3, -high/2.0+fm.height()-3, title);
+            if (titleAtLeft)
+            {
+                auto r = fm.boundingRect(title);
+                painter->drawText(pos-r.width()-6, -high/2.0+fm.height()-3, title);
+            }
+            else
+                painter->drawText(pos+3, -high/2.0+fm.height()-3, title);
 
         }
         painter->setRenderHint(QPainter::Antialiasing, true);
@@ -268,6 +274,7 @@ public:
     double high = 0;
     qreal r = 3;
     QString title;
+    bool titleAtLeft = false;
     QPen pen = QPen(QColor(50, 50, 50), 1, Qt::DashLine);
     QBrush brush = QBrush(Qt::black);
 };
@@ -349,12 +356,12 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     _D = new Z::Parameter(Z::Dims::linear(), QStringLiteral("D"), QStringLiteral("D"),
                          tr("Diameter", "Lens designer"),
                          tr("Lens diameter.", "Lens designer"));
-    _R1 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R1"), QStringLiteral("R1"),
+    _R1 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R1"), QStringLiteral("R<sub>1</sub>"),
                           tr("Left ROC", "Lens designer"),
                           tr("Negative value means right-bulged surface, "
                              "positive value means left-bulged surface. "
                              "Set to zero to get planar face.", "Lens designer"));
-    _R2 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R2"), QStringLiteral("R2"),
+    _R2 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R2"), QStringLiteral("R<sub>2</sub>"),
                           tr("Right ROC", "Lens designer"),
                           tr("Negative value means right-bulged surface, "
                              "positive value means left-bulged surface. "
@@ -372,9 +379,9 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
                           tr("Focal length"), tr("Distance between focal point and respective principal plane. <code>H-F</code> or <code>F'-H'</code>"));
     _P = new Z::Parameter(Z::Dims::none(), QStringLiteral("P"), QStringLiteral("P"),
                           tr("Optical power"), tr("Optical power in dioptres."));
-    _F1 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("F1"), QStringLiteral("FF"),
+    _F1 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("F1"), QStringLiteral("F<sub>F</sub>"),
                           tr("Front focal range"), tr("Distance between the front focal point <code>F</code> and the left surface"));
-    _F2 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("F2"), QStringLiteral("RF"),
+    _F2 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("F2"), QStringLiteral("F<sub>R</sub>"),
                           tr("Rear focal range"), tr("Distance between the right surface and the rear focal point <code>F'</code>"));
 
     _D->setValue(40_mm); _D->addListener(this); _params.append(_D);
@@ -432,7 +439,7 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
 
     _focus1->title = QStringLiteral("F"); _focus1->setData(0, _focus1->title);
     _focus2->title = QStringLiteral("F'"); _focus2->setData(0, _focus2->title);
-    _princip1->title = QStringLiteral("H"); _princip1->setData(0, _princip1->title);
+    _princip1->title = QStringLiteral("H"); _princip1->setData(0, _princip1->title); _princip1->titleAtLeft = true;
     _princip2->title = QStringLiteral("H'"); _princip2->setData(0, _princip2->title);
     _beamIm->pen = _focus2->pen;
 
