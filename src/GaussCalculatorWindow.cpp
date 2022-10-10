@@ -649,7 +649,7 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     auto actionCopyImg = Ori::Gui::action(tr("Copy Plot Image"), _plot, SLOT(copyPlotImage()), ":/toolbar/copy_img", QKeySequence::Copy);
     auto actionCopyTbl = Ori::Gui::action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
     auto actionCalc = Ori::Gui::action(tr("Formula Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
-    auto actionHelp = Ori::Gui::action(tr("Help"), this, SLOT(showHelp()), ":/toolbar/help", QKeySequence::HelpContents);
+    auto actionHelp = Z::HelpSystem::makeHelpAction(this, "calc_gauss");
 
     auto toolbar = new Ori::Widgets::FlatToolBar;
     toolbar->setIconSize(AppSettings::instance().toolbarIconSize());
@@ -746,11 +746,6 @@ void GaussCalculatorWindow::updatePlot()
 void GaussCalculatorWindow::showCalculator()
 {
     CalculatorWindow::showWindow();
-}
-
-void GaussCalculatorWindow::showHelp()
-{
-    Z::HelpSystem::instance()->showTopic("calc_gauss.html");
 }
 
 void GaussCalculatorWindow::copyGraphData()

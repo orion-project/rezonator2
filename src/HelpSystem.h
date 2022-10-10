@@ -4,6 +4,7 @@
 #include <QObject>
 
 QT_BEGIN_NAMESPACE
+class QAction;
 class QNetworkAccessManager;
 class QNetworkReply;
 class QProcess;
@@ -17,6 +18,8 @@ class HelpSystem : public QObject
 
 public:
     static HelpSystem* instance();
+
+    static QAction* makeHelpAction(QObject *parent, const QString& topic);
 
     void setParent(QWidget* parent) { _parent = parent; }
 

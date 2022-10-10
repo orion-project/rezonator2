@@ -47,4 +47,4 @@ Then combining these two expressions and solving against `F`, we can get the fin
 Gradient Constant Assessment
 ----------------------------
 
-There is no such simple formula for gradient index |n2|, so it's computed via numerical solution of the above formula agains |n2| having known `F`, `L`, and |n0|.
+There is no such simple formula for gradient index |n2|, so it's computed via numerical solution of the above formula against |n2| having known `F`, `L`, and |n0|.

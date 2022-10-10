@@ -63,19 +63,25 @@ As the documentation contains a notable amount of physical formulas, they should
 Use the [render_formula.html](./render_formula.html) page as a simple formula editor to play with the TeX syntax. [Here](../docs/latex-symbols.md) we have a short handbook on TeX symbols. Once formula is finished in the editor and proved to be a valid TeX, it can be pasted into a RST document after the `tex` tag followed by respective `image` tag, e.g.: 
 
 ```
-.. tex:
+Some text some text some text
+
+  .. tex:
     \cfrac{1}{F} = (n - 1)\bigg[\, 
         \cfrac{1}{R_1} - 
         \cfrac{1}{R_2} + 
         \cfrac{(n -1)T}{n R_1 R_2}
     \bigg]\,
 
-.. image:: img/calc_lens_f.png
+  .. image:: img/calc_lens_f.png
+
+Some text some text some text
 ```
 
-`tex` is not a standard tag so sphinx just treats it as a comment. Then we have a [Node.js](https://nodejs.org) script that reads these tags and uses well known [MathJax](https://github.com/mathjax/MathJax) library for rendering TeX syntax into SVG format. Then the script converts each SVG formula into PNG image and save it into a file specified in the `image` tag.
+`tex` is not a standard tag so sphinx just treats it as a comment. There is a [Node.js](https://nodejs.org) script that reads these tags and uses well known [MathJax](https://github.com/mathjax/MathJax) library for rendering TeX syntax into SVG format. Then the script converts each SVG formula into PNG image and saves it into a file specified in the `image` tag.
 
-Usage:
+Note that the indentation in the above code snippet is important. The `image` tag has to be indented to be a separate paragraph otherwise the image will be inserted inline. Since the `image` is indented, the `tex` should be indented as well otherwise the `image` becomes a part of comment and will be ignored.
+
+Usage examples:
 
 ```bash
 # Download MaxJax and additional libraries
@@ -87,7 +93,7 @@ node render_formulas.js calc_lens.rst
 # Update all formula images in all files
 node render_formulas.js --overwrite *
 
-# Run against several files and see what formulas in them (no files generated)
+# Run against several files and show formulas (no PNG generated)
 node render_formulas.js --dry-run calc_lens.rst calc_grin.rst
 ```
 

@@ -9,6 +9,7 @@ const prefixImg = '.. image::'
 // Since we don't have a 'surrounding font', we have to do some hardcoded scaling.
 const svgScale = 1.5;
 
+// Size of free space around formula
 const pngMargin = 20;
 
 const args = {

@@ -58,6 +58,7 @@ private:
     LensmakerItems::BeamItem *_beam, *_beamIm;
     LensmakerItems::PlaneItem *_focus1, *_focus2;
     LensmakerItems::PlaneItem *_princip1, *_princip2;
+    LensmakerItems::PointItem *_vertex1, *_vertex2;
     double _targetH = 250;
     bool _restoring = false;
 

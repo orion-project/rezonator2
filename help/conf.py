@@ -47,13 +47,14 @@ rst_prolog = """
 
 .. role:: app_name_z
 
-.. |rezonator| replace:: :app_name:`re`\ :app_name_z:`Z`\ :app_name:`onator`
+.. |rezonator| replace:: :app_name:`rezonator`
 
 .. default-role:: math_var
 
 .. role:: guipart
 """
 
+# .. |rezonator| replace:: :app_name:`re`\ :app_name_z:`Z`\ :app_name:`onator`
 
 # -- Options for QtHelp output -----------------------------------------------
 

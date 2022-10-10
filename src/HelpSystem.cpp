@@ -8,6 +8,7 @@
 #include "helpers/OriDialogs.h"
 #include "widgets/OriLabels.h"
 
+#include <QAction>
 #include <QApplication>
 #include <QDebug>
 #include <QDesktopServices>
@@ -30,6 +31,20 @@ Z::HelpSystem* __instance = nullptr;
 } // namespace
 
 namespace Z {
+
+QAction* HelpSystem::makeHelpAction(QObject *parent, const QString& topic)
+{
+    auto a = new QAction(tr("Help"), parent);
+    a->setIcon(QIcon(":/toolbar/help"));
+    a->setShortcut(QKeySequence::HelpContents);
+    a->connect(a, &QAction::triggered, [topic]{
+        QString t(topic);
+        if (!topic.endsWith(QStringLiteral(".html")))
+            t += QStringLiteral(".html");
+        instance()->showTopic(t);
+    });
+    return a;
+}
 
 HelpSystem::HelpSystem() : QObject()
 {

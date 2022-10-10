@@ -2,6 +2,7 @@
 
 #include "Appearance.h"
 #include "CustomPrefs.h"
+#include "HelpSystem.h"
 #include "funcs/LensCalculator.h"
 #include "io/JsonUtils.h"
 #include "widgets/GraphicsView.h"
@@ -255,14 +256,7 @@ public:
             auto f = Z::Gui::ElemLabelFont().get();
             QFontMetrics fm(f);
             painter->setFont(f);
-            if (titleAtLeft)
-            {
-                auto r = fm.boundingRect(title);
-                painter->drawText(pos-r.width()-6, -high/2.0+fm.height()-3, title);
-            }
-            else
-                painter->drawText(pos+3, -high/2.0+fm.height()-3, title);
-
+            painter->drawText(titleAtLeft ? pos-fm.boundingRect(title).width()-6 : pos+3, -high/2.0+fm.height()-3, title);
         }
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->setBrush(brush);
@@ -336,11 +330,20 @@ public:
         painter->setPen(pen);
         painter->setBrush(brush);
         painter->drawEllipse(x-r, y-r, 2*r, 2*r);
+        if (!title.isEmpty())
+        {
+            auto f = Z::Gui::ElemLabelFont().get();
+            QFontMetrics fm(f);
+            painter->setFont(f);
+            painter->drawText(titleAtLeft ? x-fm.boundingRect(title).width()-6 : x+3, y+fm.height()-3, title);
+        }
     }
 
     qreal x = 0;
     qreal y = 0;
     qreal r = 3;
+    QString title;
+    bool titleAtLeft = false;
     QPen pen = QPen(Qt::black, 1);
     QBrush brush = QBrush(Qt::black);
 };
@@ -354,35 +357,32 @@ public:
 LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
 {
     _D = new Z::Parameter(Z::Dims::linear(), QStringLiteral("D"), QStringLiteral("D"),
-                         tr("Diameter", "Lens designer"),
-                         tr("Lens diameter.", "Lens designer"));
+                         tr("Diameter"), tr("Lens diameter."));
     _R1 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R1"), QStringLiteral("R<sub>1</sub>"),
-                          tr("Left ROC", "Lens designer"),
+                          tr("Left ROC"),
                           tr("Negative value means right-bulged surface, "
                              "positive value means left-bulged surface. "
-                             "Set to zero to get planar face.", "Lens designer"));
+                             "Set to zero to get planar face."));
     _R2 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R2"), QStringLiteral("R<sub>2</sub>"),
-                          tr("Right ROC", "Lens designer"),
+                          tr("Right ROC"),
                           tr("Negative value means right-bulged surface, "
                              "positive value means left-bulged surface. "
-                             "Set to zero to get planar face.", "Lens designer"));
+                             "Set to zero to get planar face."));
     _IOR = new Z::Parameter(Z::Dims::none(), QStringLiteral("n"), QStringLiteral("n"),
-                          tr("Index of refraction", "Lens designer"),
-                          tr("Index of refraction of the lens material.", "Lens designer"));
+                          tr("Index of refraction"), tr("Index of refraction of the lens material."));
     _T = new Z::Parameter(Z::Dims::linear(), QStringLiteral("T"), QStringLiteral("T"),
-                          tr("Thickness", "Lens designer"),
-                          tr("Distance between surfaces on axis.", "Lens designer"));
+                          tr("Thickness"), tr("Distance between surfaces on axis."));
     _gridStep = new Z::Parameter(Z::Dims::linear(), QStringLiteral("grid_step"), tr("Grid step", "Lens designer"),
-                                 tr("Grid step", "Lens designer"),
-                                 tr("Distance between grid lines. Set to zero to disable grid.", "Lens designer"));
+                          tr("Grid step"), tr("Distance between grid lines. Set to zero to disable grid."));
     _F = new Z::Parameter(Z::Dims::linear(), QStringLiteral("F"), QStringLiteral("F"),
-                          tr("Focal length"), tr("Distance between focal point and respective principal plane. <code>H-F</code> or <code>F'-H'</code>"));
+                          tr("Effective focal length"),
+                          tr("Distance between focal point and respective principal plane. <code>H-F</code> or <code>F'-H'</code>"));
     _P = new Z::Parameter(Z::Dims::none(), QStringLiteral("P"), QStringLiteral("P"),
                           tr("Optical power"), tr("Optical power in dioptres."));
     _F1 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("F1"), QStringLiteral("F<sub>F</sub>"),
-                          tr("Front focal range"), tr("Distance between the front focal point <code>F</code> and the left surface"));
+                          tr("Front focal length"), tr("Distance between the front focal point <code>F</code> and the left surface"));
     _F2 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("F2"), QStringLiteral("F<sub>R</sub>"),
-                          tr("Rear focal range"), tr("Distance between the right surface and the rear focal point <code>F'</code>"));
+                          tr("Rear focal length"), tr("Distance between the right surface and the rear focal point <code>F'</code>"));
 
     _D->setValue(40_mm); _D->addListener(this); _params.append(_D);
     _R1->setValue(100_mm); _R1->addListener(this); _params.append(_R1);
@@ -436,12 +436,19 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     _scene->addItem(_focus2 = new LensmakerItems::PlaneItem);
     _scene->addItem(_princip1 = new LensmakerItems::PlaneItem);
     _scene->addItem(_princip2 = new LensmakerItems::PlaneItem);
+    _scene->addItem(_vertex1 = new LensmakerItems::PointItem);
+    _scene->addItem(_vertex2 = new LensmakerItems::PointItem);
 
-    _focus1->title = QStringLiteral("F"); _focus1->setData(0, _focus1->title);
-    _focus2->title = QStringLiteral("F'"); _focus2->setData(0, _focus2->title);
-    _princip1->title = QStringLiteral("H"); _princip1->setData(0, _princip1->title); _princip1->titleAtLeft = true;
-    _princip2->title = QStringLiteral("H'"); _princip2->setData(0, _princip2->title);
+    _focus1->title = "F"; _focus1->setData(0, _focus1->title);
+    _focus2->title = "F'"; _focus2->setData(0, _focus2->title);
+    _princip1->title = "H"; _princip1->setData(0, _princip1->title); _princip1->titleAtLeft = true;
+    _princip2->title = "H'"; _princip2->setData(0, _princip2->title);
+    _vertex1->title = "V"; _vertex1->titleAtLeft = true;
+    _vertex2->title = "V'";
     _beamIm->pen = _focus2->pen;
+
+//    _vertex1->setVisible(false); // Not sure if they needed, hide for now
+//    _vertex2->setVisible(false);
 
     _view = new Z::GraphicsView;
     _view->setScene(_scene);
@@ -491,6 +498,9 @@ void LensmakerWidget::refresh(const char *reason)
     _lens->R1 = calc.R1 * scale;
     _lens->R2 = calc.R2 * scale;
     _lens->calc();
+
+    _vertex1->x = -_lens->T / 2.0;
+    _vertex2->x = _lens->T / 2.0;
 
     qreal margin = _lens->D / 4.0;
     qreal gridH = _lens->D + 2*margin;
@@ -640,12 +650,14 @@ LensmakerWindow::LensmakerWindow(QWidget *parent) : QWidget(parent)
     auto actnCopyImage = A_(tr("Copy Image"), this, SLOT(copyImage()), ":/toolbar/copy_img");
     auto actnZoomOut = A_(tr("Zoom Out"), this, SLOT(zoomOut()), ":/toolbar/zoom_out", QKeySequence::ZoomOut);
     auto actnZoomIn = A_(tr("Zoom In"), this, SLOT(zoomIn()), ":/toolbar/zoom_in", QKeySequence::ZoomIn);
+    auto actnHelp = Z::HelpSystem::makeHelpAction(this, "calc_lens");
 #undef A_
 
     auto toolbar = new Ori::Widgets::FlatToolBar;
     Ori::Gui::populate(toolbar, { actnAddLens, actnDelLens,
                                   nullptr, actnCopyImage,
                                   nullptr, actnZoomOut, actnZoomIn,
+                                  nullptr, actnHelp,
                        });
 
     _tabs = new QTabWidget;
