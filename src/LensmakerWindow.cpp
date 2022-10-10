@@ -1,6 +1,7 @@
 #include "LensmakerWindow.h"
 
 #include "Appearance.h"
+#include "AppSettings.h"
 #include "CustomPrefs.h"
 #include "HelpSystem.h"
 #include "funcs/LensCalculator.h"
@@ -15,6 +16,7 @@
 #include "helpers/OriWidgets.h"
 #include "helpers/OriWindows.h"
 #include "widgets/OriFlatToolBar.h"
+#include "widgets/OriMenuToolButton.h"
 
 #include <QContextMenuEvent>
 #include <QGraphicsItem>
@@ -28,6 +30,14 @@
 namespace {
 
 LensmakerWindow* __instance = nullptr;
+
+enum {
+    PART_GRID = 0x01,
+    PART_BEAM = 0x02,
+    PART_FOCUS = 0x04,
+    PART_PRINCIP = 0x08,
+    PART_VERTEX = 0x10,
+};
 
 } // namespace
 
@@ -385,11 +395,11 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
                           tr("Rear focal length"), tr("Distance between the right surface and the rear focal point <code>F'</code>"));
 
     _D->setValue(40_mm); _D->addListener(this); _params.append(_D);
-    _R1->setValue(100_mm); _R1->addListener(this); _params.append(_R1);
-    _R2->setValue(-100_mm); _R2->addListener(this); _params.append(_R2);
-    _T->setValue(7_mm); _T->addListener(this); _params.append(_T);
+    _R1->setValue(40_mm); _R1->addListener(this); _params.append(_R1);
+    _R2->setValue(-75_mm); _R2->addListener(this); _params.append(_R2);
+    _T->setValue(15_mm); _T->addListener(this); _params.append(_T);
     _IOR->setValue(1.7); _IOR->addListener(this); _params.append(_IOR);
-    _gridStep->setValue(3_mm); _gridStep->addListener(this); _params.append(_gridStep);
+    _gridStep->setValue(5_mm); _gridStep->addListener(this); _params.append(_gridStep);
     _F->setValue(0_mm); _results.append(_F);
     _P->setValue(0); _results.append(_P);
     _F1->setValue(0_mm); _results.append(_F1);
@@ -447,8 +457,7 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     _vertex2->title = "V'";
     _beamIm->pen = _focus2->pen;
 
-//    _vertex1->setVisible(false); // Not sure if they needed, hide for now
-//    _vertex2->setVisible(false);
+    setVisibleParts(PART_GRID | PART_FOCUS | PART_PRINCIP, false);
 
     _view = new Z::GraphicsView;
     _view->setScene(_scene);
@@ -457,9 +466,14 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
 
     addWidget(paramsEditor);
     addWidget(_view);
-    setSizes({200, 600});
+    //setSizes({200, 600});
     setStretchFactor(0, 1);
     setStretchFactor(1, 20);
+    connect(this, &QSplitter::splitterMoved, [this]{
+        auto sz = sizes();
+        _paramsW = sz.at(0);
+        _viewW = sz.at(1);
+    });
 }
 
 LensmakerWidget::~LensmakerWidget()
@@ -507,10 +521,10 @@ void LensmakerWidget::refresh(const char *reason)
     qreal focus = calc.F * scale;
     qreal beamH = _lens->D * 0.45;
 
-    _focus1->setVisible(!calc.planar);
-    _focus2->setVisible(!calc.planar);
-    _princip1->setVisible(!calc.planar);
-    _princip2->setVisible(!calc.planar);
+    _focus1->setVisible(!calc.planar && _visibleParts&PART_FOCUS);
+    _focus2->setVisible(!calc.planar && _visibleParts&PART_FOCUS);
+    _princip1->setVisible(!calc.planar && _visibleParts&PART_PRINCIP);
+    _princip2->setVisible(!calc.planar && _visibleParts&PART_PRINCIP);
     _beam->points.clear();
     _beamIm->points.clear();
 
@@ -542,12 +556,24 @@ void LensmakerWidget::refresh(const char *reason)
 
     qreal step = qAbs(_gridStep->value().toSi()) * scale;
 
-    QRectF r = _lens->boundingRect()
-            .united(_focus1->boundingRect())
-            .united(_focus2->boundingRect())
-            .united(_princip1->boundingRect())
-            .united(_princip2->boundingRect())
-            .adjusted(-margin, 0, margin, 0);
+    QRectF r = _lens->boundingRect();
+    int marginV = margin;
+    if (_focus1->isVisible()) {
+        r = r.united(_focus1->boundingRect())
+             .united(_focus2->boundingRect());
+        // planes already take extra vertical space
+        marginV = 0;
+    }
+    if (_princip1->isVisible()) {
+        r = r.united(_princip1->boundingRect())
+             .united(_princip2->boundingRect());
+        // planes already take extra vertical space
+        marginV = 0;
+    }
+    if (_beam->isVisible())
+        r = r.united(_beam->boundingRect())
+             .united(_beamIm->boundingRect());
+    r = r.adjusted(-margin, -marginV, margin, marginV);
 
     if (!_beam->points.empty())
         _beam->points.insert(0, {r.left(), beamH});
@@ -582,9 +608,13 @@ void LensmakerWidget::storeValues(QJsonObject& root)
 {
     root["lens_height"] = _targetH;
 
-    auto sz = sizes();
-    root["params_width"] = sz.at(0);
-    root["view_width"] = sz.at(1);
+    root["width_params"] = _paramsW;
+    root["width_view"] = _viewW;
+    root["show_grid"] = bool(_visibleParts & PART_GRID);
+    root["show_beam"] = bool(_visibleParts & PART_BEAM);
+    root["show_focus"] = bool(_visibleParts & PART_FOCUS);
+    root["show_princip"] = bool(_visibleParts & PART_PRINCIP);
+    root["show_vertex"] = bool(_visibleParts & PART_VERTEX);
 
     foreach(Z::Parameter *p, _params) {
         root["param_"+p->alias()] = Z::IO::Json::writeValue(p->value());
@@ -605,10 +635,16 @@ void LensmakerWidget::restoreValues(QJsonObject& root)
 
     setTargetH(root["lens_height"].toDouble(250), false);
 
-    int paramsW = root["params_width"].toInt(0);
-    int viewW = root["view_width"].toInt(0);
-    if (paramsW > 0 && viewW > 0)
-        setSizes({paramsW, viewW});
+    _paramsW = root["width_params"].toInt(_paramsW);
+    _viewW = root["width_view"].toInt(_paramsW);
+
+    int parts = 0;
+    if (root["show_grid"].toBool(true)) parts |= PART_GRID;
+    if (root["show_beam"].toBool(true)) parts |= PART_BEAM;
+    if (root["show_focus"].toBool(true)) parts |= PART_FOCUS;
+    if (root["show_princip"].toBool(true)) parts |= PART_PRINCIP;
+    if (root["show_vertex"].toBool(false)) parts |= PART_VERTEX;
+    setVisibleParts(parts, false);
 
     foreach(Z::Parameter *p, _params)
     {
@@ -626,6 +662,39 @@ void LensmakerWidget::restoreValues(QJsonObject& root)
     }
 
     _restoring = false;
+}
+
+bool LensmakerWidget::event(QEvent *e)
+{
+    if (dynamic_cast<QShowEvent*>(e))
+    {
+        if (_paramsW > 0 && _viewW > 0 && !_splitted)
+        {
+            setSizes({_paramsW, _viewW});
+            _splitted = true;
+        }
+    }
+    return QSplitter::event(e);
+}
+
+void LensmakerWidget::resizeEvent(QResizeEvent *e)
+{
+    QSplitter::resizeEvent(e);
+    auto sz = sizes();
+    _paramsW = sz.at(0);
+    _viewW = sz.at(1);
+}
+
+void LensmakerWidget::setVisibleParts(int parts, bool doRefresh)
+{
+    _visibleParts = parts;
+    _grid->setVisible(parts & PART_GRID);
+    _beam->setVisible(parts & PART_BEAM);
+    _beamIm->setVisible(parts & PART_BEAM);
+    _vertex1->setVisible(parts & PART_VERTEX);
+    _vertex2->setVisible(parts & PART_VERTEX);
+    if (doRefresh)
+        refresh("visbility");
 }
 
 //--------------------------------------------------------------------------------
@@ -653,10 +722,30 @@ LensmakerWindow::LensmakerWindow(QWidget *parent) : QWidget(parent)
     auto actnHelp = Z::HelpSystem::makeHelpAction(this, "calc_lens");
 #undef A_
 
+    _visibleParts = new Ori::Widgets::MenuToolButton;
+    _visibleParts->multiselect = true;
+    _visibleParts->setIcon(QIcon(":/toolbar/options"));
+    _visibleParts->setToolTip(tr("Visible parts"));
+    _visibleParts->addAction(PART_GRID, tr("Grid"));
+    _visibleParts->addAction(PART_BEAM, tr("Beam"));
+    _visibleParts->addAction(PART_FOCUS, tr("Focal planes"));
+    _visibleParts->addAction(PART_PRINCIP, tr("Principal planes"));
+    _visibleParts->addAction(PART_VERTEX, tr("Surface vertices"));
+    connect(_visibleParts, &QToolButton::triggered, [this]{
+        auto lens = activeLens();
+        if (lens) lens->setVisibleParts(_visibleParts->selectedFlags(0), true);
+    });
+    connect(_visibleParts, &Ori::Widgets::MenuToolButton::aboutToShow, [this]{
+        auto lens = activeLens();
+        if (lens) _visibleParts->setSelectedFlags(lens->visibleParts());
+    });
+
     auto toolbar = new Ori::Widgets::FlatToolBar;
+    toolbar->setIconSize(AppSettings::instance().toolbarIconSize());
     Ori::Gui::populate(toolbar, { actnAddLens, actnDelLens,
                                   nullptr, actnCopyImage,
                                   nullptr, actnZoomOut, actnZoomIn,
+                                  nullptr, _visibleParts,
                                   nullptr, actnHelp,
                        });
 

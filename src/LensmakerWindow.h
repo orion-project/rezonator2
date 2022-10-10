@@ -17,11 +17,16 @@ class GridItem;
 class PlaneItem;
 class BeamItem;
 class PointItem;
-} // namespace LensmakerItems
+}
 
 namespace Z {
 class GraphicsView;
 }
+
+namespace Ori {
+namespace Widgets {
+class MenuToolButton;
+}}
 
 class LensmakerWidget : public QSplitter, public Z::ParameterListener
 {
@@ -43,7 +48,14 @@ public:
     void storeValues(QJsonObject& root);
     void restoreValues(QJsonObject& root);
 
+    int visibleParts() const { return _visibleParts; }
+    void setVisibleParts(int parts, bool doRefresh);
+
     int index = 1;
+
+protected:
+    bool event(QEvent*) override;
+    void resizeEvent(QResizeEvent*) override;
 
 private:
     QGraphicsScene* _scene;
@@ -61,6 +73,9 @@ private:
     LensmakerItems::PointItem *_vertex1, *_vertex2;
     double _targetH = 250;
     bool _restoring = false;
+    int _visibleParts = 0;
+    int _paramsW = 200, _viewW = 600;
+    bool _splitted = false;
 
     void setTargetH(const double& v, bool doRefresh = true);
 };
@@ -85,6 +100,7 @@ private slots:
 
 private:
     QTabWidget* _tabs;
+    Ori::Widgets::MenuToolButton *_visibleParts;
 
     void restoreState();
     void storeState();
