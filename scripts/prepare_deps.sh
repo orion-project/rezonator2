@@ -41,8 +41,9 @@ function prepare_lua() {
     wget $LUA_URL
   else
     echo "Unknown how to download for platform $PLATFORM"
-    exit -1
+    exit 1
   fi
+  if [ $? -ne 0 ]; then exit 1; fi
 
   echo "------------------------"
   echo "Unpack sources"

@@ -153,11 +153,11 @@ public:
         const double d1 = r1*2.0; // left diameter of curvature
         const double d2 = r2*2.0; // right diameter of curvature
         double s1 = 0, a1 = 0, s2 = 0, a2 = 0;
-        if (R1 < 0 || R1 > 0) {
+        if (!Double(R1).is(0)) {
             s1 = r1 - qSqrt(Sqr(r1) - Sqr(h)); // left arc sagitta
             a1 = qRadiansToDegrees(qAsin(h/r1)); // left arc half-angle
         }
-        if (R2 < 0 || R1 > 0) {
+        if (!Double(R2).is(0)) {
             s2 = r2 - qSqrt(Sqr(r2) - Sqr(h)); // right arc sagitta
             a2 = qRadiansToDegrees(qAsin(h/r2)); // right arc half-angle
         }
@@ -505,7 +505,7 @@ void LensmakerWidget::refresh(const char *reason)
     Z::Param::setSi(_F1, calc.F1);
     Z::Param::setSi(_F2, calc.F2);
 
-    qreal scale = _targetH / _D->value().toSi();
+    qreal scale = _targetH / qAbs(_D->value().toSi());
 
     _lens->D = _targetH;
     _lens->T = calc.T * scale;
@@ -847,7 +847,7 @@ void LensmakerWindow::removeLens()
     if (_tabs->count() == 1)
         return;
 
-    if (!Ori::Dlg::yes(tr("Remove lens?")))
+    if (!Ori::Dlg::yes(tr("Remove the lens?")))
         return;
 
     auto lens = activeLens();

@@ -53,7 +53,7 @@ template <typename T> struct Optional {
 
 template <typename TList> void swapItems(TList& list, int i, int j)
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
     list.swapItemsAt(i, j);
 #else
     list.swap(i, j);
