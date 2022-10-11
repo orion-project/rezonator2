@@ -59,6 +59,7 @@ HEADERS += \
     src/ElementsCatalogDialog.h \
     src/GrinLensWindow.h \
     src/HelpSystem.h \
+    src/LensmakerWindow.h \
     src/MemoWindow.h \
     src/MessageBus.h \
     src/ProjectOperations.h \
@@ -99,6 +100,7 @@ HEADERS += \
     src/funcs/GaussCalculator.h \
     src/funcs/GrinCalculator.h \
     src/funcs/InfoFunctions.h \
+    src/funcs/LensCalculator.h \
     src/funcs/MultibeamCausticFunction.h \
     src/funcs/MultirangeCausticFunction.h \
     src/funcs/PlotFuncRoundTripFunction.h \
@@ -135,6 +137,7 @@ HEADERS += \
     src/widgets/ElementsTable.h \
     src/widgets/FormulaEditor.h \
     src/widgets/FrozenStateButton.h \
+    src/widgets/GraphicsView.h \
     src/widgets/ParamEditor.h \
     src/widgets/ParamEditorEx.h \
     src/widgets/ParamsEditor.h \
@@ -187,6 +190,7 @@ SOURCES += \
     src/ElementsCatalogDialog.cpp \
     src/GrinLensWindow.cpp \
     src/HelpSystem.cpp \
+    src/LensmakerWindow.cpp \
     src/MemoWindow.cpp \
     src/MessageBus.cpp \
     src/ProjectOperations.cpp \
@@ -285,6 +289,7 @@ SOURCES += \
     src/widgets/ElementsTable.cpp \
     src/widgets/FormulaEditor.cpp \
     src/widgets/FrozenStateButton.cpp \
+    src/widgets/GraphicsView.cpp \
     src/widgets/ParamEditor.cpp \
     src/widgets/ParamEditorEx.cpp \
     src/widgets/ParamsEditor.cpp \

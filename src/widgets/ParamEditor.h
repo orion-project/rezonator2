@@ -94,7 +94,13 @@ public:
         /// If yes, the parameter is deleted when the editor gets deleted.
         bool ownParam = false;
 
-        bool rescaleOnUnitChange = false;
+        /// When `Apply` is called, check if parameter value is really changed.
+        /// Used to avoid unnecessary `parameterChanged` events.
+        bool checkChanges = false;
+
+        /// Use only these units for unit selector
+        /// instead of all those available for the parameter dimension.
+        QVector<Z::Unit> units = {};
 
         Options(Z::Parameter* p) : param(p) {}
     };
@@ -120,13 +126,21 @@ public:
 
     void editorFocused(bool focus);
 
+    void setReadonly(bool valueOn, bool unitOn);
+
+    /// Recalculate value to different unit when user changes the unit selector, e.g. 1000mm -> 1m
+    /// Currently it only works with applied parameter value, not with a value in the editor.
+    bool rescaleOnUnitChange = false;
+
 signals:
     void focused();
+    void unfocused();
     void goingFocusNext();
     void goingFocusPrev();
     void editorInfoChanged();
     void valueEdited(double value);
     void unitChanged(Z::Unit unit);
+    void enterPressed();
 
 public slots:
     void populate();
@@ -149,12 +163,13 @@ private:
     QString _editorInfo;
     bool _paramChangedHandlerEnabled = true;
     bool _ownParam;
-    bool _rescaleOnUnitChange = false;
+    bool _checkChanges;
 
     void linkToGlobalParameter();
     void showValue(Z::Parameter *param);
     void setIsLinked(bool on);
     void editorKeyPressed(int key);
+    void unitChangedRaw(Z::Unit unit);
 };
 
 #endif // PARAM_EDITOR_H

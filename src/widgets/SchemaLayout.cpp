@@ -5,10 +5,6 @@
 #include "../core/ElementFormula.h"
 #include "../funcs/FormatInfo.h"
 
-#include <QClipboard>
-#include <QContextMenuEvent>
-#include <QMenu>
-
 namespace ElementLayoutProps {
 
 QBrush getGlassBrush()
@@ -147,15 +143,12 @@ namespace OpticalAxisLayout {
 //                               SchemaLayout
 //------------------------------------------------------------------------------
 
-SchemaLayout::SchemaLayout(Schema *schema, QWidget* parent) : QGraphicsView(parent), _schema(schema)
+SchemaLayout::SchemaLayout(Schema *schema, QWidget* parent) : Z::GraphicsView(parent), _schema(schema)
 {
     _axis = new OpticalAxisLayout::Layout(nullptr);
     _axis->setZValue(1000);
     _scene.addItem(_axis);
 
-    setRenderHint(QPainter::Antialiasing, true);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     setScene(&_scene);
 }
 
@@ -251,41 +244,10 @@ void SchemaLayout::clear()
     _elements.clear();
 }
 
-void SchemaLayout::resizeEvent(QResizeEvent *event)
-{
-    QGraphicsView::resizeEvent(event);
-    centerView(QRectF());
-}
-
 void SchemaLayout::centerView(const QRectF& rect)
 {
     QRectF r = rect.isEmpty() ? _scene.itemsBoundingRect(): rect;
     centerOn(r.center());
-}
-
-void SchemaLayout::contextMenuEvent(QContextMenuEvent *event)
-{
-    if (!_menu) _menu = createContextMenu();
-    _menu->popup(this->mapToGlobal(event->pos()));
-}
-
-QMenu* SchemaLayout::createContextMenu()
-{
-    auto menu = new QMenu(this);
-    menu->addAction(QIcon(":/toolbar/copy_img"), tr("Copy Image"), this, &SchemaLayout::copyImage);
-    return menu;
-}
-
-void SchemaLayout::copyImage()
-{
-    QImage image(_scene.sceneRect().size().toSize(), QImage::Format_ARGB32);
-    image.fill(AppSettings::instance().layoutExportTransparent ? Qt::transparent : Qt::white);
-
-    QPainter painter(&image);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    _scene.render(&painter);
-
-    qApp->clipboard()->setImage(image);
 }
 
 //------------------------------------------------------------------------------

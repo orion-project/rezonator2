@@ -79,7 +79,7 @@ private:
 
     QAction  *actnToolsGaussCalc, *actnToolsCustomElems, *actnToolSettings,
              *actnToolFlipSchema, *actnToolsCalc, *actnToolAdjust,
-             *actnToolGrinLens;
+             *actnToolGrinLens, *actnToolLensmaker;
 
     QAction *actnWndClose, *actnWndCloseAll, *actnWndTile, *actnWndCascade,
             *actnWndSchema, *actnWndParams, *actnWndProtocol, *actnWndPumps,
@@ -127,6 +127,7 @@ private slots:
     void showMemosWindow();
     void showAdjustment();
     void showHelp();
+    void showLensmaker();
 
     void openSchemaExample();
 

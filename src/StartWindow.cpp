@@ -8,6 +8,7 @@
 #include "GaussCalculatorWindow.h"
 #include "GrinLensWindow.h"
 #include "HelpSystem.h"
+#include "LensmakerWindow.h"
 #include "ProjectOperations.h"
 #include "ProjectWindow.h"
 #include "core/CommonTypes.h"
@@ -19,6 +20,7 @@
 #include "tools/OriMruList.h"
 #include "tools/OriSettings.h"
 #include "widgets/OriLabels.h"
+#include "widgets/OriFlatToolBar.h"
 
 #include <QApplication>
 #include <QDesktopServices>
@@ -508,11 +510,9 @@ ToolsStartPanel::ToolsStartPanel() : StartPanel("panel_tools")
     layout->addWidget(makeHeader(tr("Tools")));
     layout->addWidget(makeButton(":/toolbar/gauss_calculator", tr("Gauss Calculator"), SLOT(showGaussCalculator())));
     layout->addWidget(makeButton(":/window_icons/calculator", tr("Formula Calculator"), SLOT(showCalculator())));
-    //layout->addWidget(makeButton(":/toolbar/grin", tr("GRIN Lens Assessment"), SLOT(showGrinLens())));
-    if (AppSettings::instance().isDevMode)
-        layout->addWidget(makeButton(":/toolbar/protocol", tr("Edit Stylesheet"), SLOT(editStyleSheet())));
-    layout->addWidget(makeButton(":/toolbar/settings", tr("Edit Settings"), SLOT(editAppSettings())));
-    layout->addWidget(makeButton(":/toolbar/help", tr("Show Manual"), SLOT(showUserManual())));
+    layout->addWidget(makeButton(":/window_icons/lens", tr("Lensmaker"), SLOT(showLensmaker())));
+    layout->addWidget(makeButton(":/toolbar/settings", tr("Settings"), SLOT(editSettings())));
+    layout->addWidget(makeButton(":/toolbar/help", tr("Manual"), SLOT(showManual())));
     layout->addWidget(makeButton(":/toolbar/update", tr("Check Updates"), SLOT(checkUpdates())));
     layout->addStretch();
 }
@@ -532,24 +532,24 @@ void ToolsStartPanel::showGrinLens()
     GrinLensWindow::showWindow();
 }
 
-void ToolsStartPanel::editStyleSheet()
+void ToolsStartPanel::checkUpdates()
 {
-    emit onEditStyleSheet();
+    Z::HelpSystem::instance()->checkUpdates();
 }
 
-void ToolsStartPanel::editAppSettings()
+void ToolsStartPanel::showLensmaker()
 {
-    Z::Dlg::editAppSettings(this);
+    LensmakerWindow::showWindow();
 }
 
-void ToolsStartPanel::showUserManual()
+void ToolsStartPanel::showManual()
 {
     Z::HelpSystem::instance()->showContents();
 }
 
-void ToolsStartPanel::checkUpdates()
+void ToolsStartPanel::editSettings()
 {
-    Z::HelpSystem::instance()->checkUpdates();
+    Z::Dlg::editAppSettings(this);
 }
 
 //------------------------------------------------------------------------------
@@ -575,9 +575,6 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
     connect(mruPanel, &ActionsStartPanel::onClose, this, &StartWindow::close);
 
     auto toolsPanel = new ToolsStartPanel;
-    connect(toolsPanel, &ToolsStartPanel::onEditStyleSheet, [this](){
-        this->editStyleSheet();
-    });
 
     auto tipsPanel = new TipsStartPanel(tipImage);
 
@@ -602,14 +599,16 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
         Stretch(),
     }).setMargin(20).useFor(this);
 
-    _aboutButton = new QToolButton(this);
-    _aboutButton->setIcon(QIcon(":/toolbar/help"));
-    _aboutButton->setToolTip(tr("About"));
-    connect(_aboutButton, &QToolButton::clicked, this, []{
-        Z::HelpSystem::instance()->showAbout();
-    });
-    auto h = _aboutButton->size().height();
-    _aboutButton->resize(h, h);
+
+    _toolbar = new Ori::Widgets::FlatToolBar;
+    _toolbar->setIconSize({24, 24});
+    if (AppSettings::instance().isDevMode)
+        _toolbar->addAction(QIcon(":/toolbar/protocol"), tr("Edit Stylesheet"), this, &StartWindow::editStyleSheet);
+    //_toolbar->addAction(QIcon(":/toolbar/settings"), tr("Edit Settings"), [this]{ Z::Dlg::editAppSettings(this); });
+    //_toolbar->addAction(QIcon(":/toolbar/help"), tr("Show Manual"), []{ Z::HelpSystem::instance()->showContents(); });
+    _toolbar->addAction(QIcon(":/toolbar/info"), tr("About"), []{ Z::HelpSystem::instance()->showAbout(); });
+    _toolbar->setParent(this);
+    _toolbar->adjustSize();
 
     // Should be after all widgets to overlay them
     tipImage->setParent(this);
@@ -663,5 +662,5 @@ void StartWindow::resizeEvent(QResizeEvent* event)
     QWidget::resizeEvent(event);
     adjustTipImagePosition(_tipImage);
 
-    _aboutButton->move(event->size().width() - _aboutButton->width() - 10, 10);
+    _toolbar->move(event->size().width() - _toolbar->width() - 10, 10);
 }

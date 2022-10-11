@@ -39,7 +39,7 @@ Z::Parameter* ParamsTreeWidget::selectParamDlg(Options opts)
     {
         auto layout = qobject_cast<QVBoxLayout*>(paramsTree.layout());
         if (layout)
-            layout->insertWidget(0, Z::Gui::headerlabel(opts.dialogPrompt));
+            layout->insertWidget(0, Z::Gui::makeHeaderLabel(opts.dialogPrompt));
     }
 
     Ori::Dlg::Dialog dlg(&paramsTree, false);

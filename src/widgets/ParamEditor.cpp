@@ -94,7 +94,7 @@ int countSuitableGlobalParams(Z::Parameters* globalParams, Z::Parameter* param)
 {
     auto dim = param->dim();
     int count = 0;
-    for (auto p : *globalParams)
+    foreach (auto p, *globalParams)
         if (p->dim() == dim)
         {
             // Parameters of fixed dim can only be linked unit-to-unit
@@ -111,7 +111,7 @@ Z::Parameters getSuitableGlobalParams(Z::Parameters* globalParams, Z::Parameter*
 {
     auto dim = param->dim();
     Z::Parameters params;
-    for (auto p : *globalParams)
+    foreach (auto p, *globalParams)
         if (p->dim() == dim)
         {
             // Parameters of fixed dim can only be linked unit-to-unit
@@ -130,7 +130,8 @@ Z::Parameters getSuitableGlobalParams(Z::Parameters* globalParams, Z::Parameter*
 //------------------------------------------------------------------------------
 
 ParamEditor::ParamEditor(Options opts) : QWidget(),
-    _param(opts.param), _globalParams(opts.globalParams), _paramLinks(opts.paramLinks), _ownParam(opts.ownParam)
+    _param(opts.param), _globalParams(opts.globalParams), _paramLinks(opts.paramLinks),
+    _ownParam(opts.ownParam), _checkChanges(opts.checkChanges)
 {
     _param->addListener(this);
 
@@ -175,7 +176,7 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
 
     _valueEditor = new ValueEdit;
 
-    _unitsSelector = new UnitComboBox(_param->dim());
+    _unitsSelector = new UnitComboBox(_param->dim(), opts.units);
     layout->addWidget(_valueEditor);
     layout->addSpacing(3);
     layout->addWidget(_unitsSelector);
@@ -214,7 +215,7 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
     connect(_valueEditor, &ValueEdit::keyPressed, this, &ParamEditor::editorKeyPressed);
     connect(_valueEditor, &ValueEdit::valueEdited, this, &ParamEditor::valueEdited);
     connect(_unitsSelector, &UnitComboBox::focused, this, &ParamEditor::editorFocused);
-    connect(_unitsSelector, &UnitComboBox::unitChanged, this, &ParamEditor::unitChanged);
+    connect(_unitsSelector, &UnitComboBox::unitChanged, this, &ParamEditor::unitChangedRaw);
     if (_linkButton)
         connect(_linkButton, &LinkButton::focused, this, &ParamEditor::editorFocused);
 
@@ -247,9 +248,19 @@ void ParamEditor::showValue(Z::Parameter *param)
 
 void ParamEditor::setIsLinked(bool on)
 {
-    _valueEditor->setReadOnly(on);
-    _valueEditor->setFont(Z::Gui::ValueFont().readOnly(on).get());
-    _unitsSelector->setEnabled(!on);
+    setReadonly(on, on);
+}
+
+void ParamEditor::setReadonly(bool valueOn, bool unitOn)
+{
+    if ((!valueOn || !unitOn) && _linkSource)
+    {
+        qWarning() << "Parameter editor" << _param->alias() << "Unable to set readonly=false when link source is set";
+        return;
+    }
+    _valueEditor->setReadOnly(valueOn);
+    _valueEditor->setFont(Z::Gui::ValueFont().readOnly(valueOn).get());
+    _unitsSelector->setEnabled(!unitOn);
 }
 
 Z::Value ParamEditor::getValue() const
@@ -272,6 +283,9 @@ void ParamEditor::apply()
     if (!_valueEditor->ok()) return;
 
     Z::Value value = getValue();
+
+    if(_checkChanges && value == _param->value())
+        return;
 
     auto res = _param->verify(value);
     if (!res.isEmpty())
@@ -325,12 +339,15 @@ void ParamEditor::editorFocused(bool focus)
 {
     Z::Gui::setFocusedBackground(this, focus);
     if (focus) emit focused();
+    else emit unfocused();
 }
 
 void ParamEditor::editorKeyPressed(int key)
 {
     switch (key)
     {
+    case Qt::Key_Enter:
+    case Qt::Key_Return: emit enterPressed(); break;
     case Qt::Key_Up: emit goingFocusPrev(); break;
     case Qt::Key_Down: emit goingFocusNext(); break;
     default:;
@@ -366,4 +383,12 @@ void ParamEditor::linkToGlobalParameter()
     _linkButton->showLinkSource(_linkSource);
     setIsLinked(_linkSource);
     showValue(_linkSource ? _linkSource : _param);
+}
+
+void ParamEditor::unitChangedRaw(Z::Unit unit)
+{
+    if (rescaleOnUnitChange)
+        _param->setValue(_param->value().toUnit(unit));
+
+    emit unitChanged(unit);
 }

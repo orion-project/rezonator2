@@ -54,11 +54,48 @@ Target documentation is in `../out` directory.
 
 ### Fonts
 
-Main font size in the Assistant looks a bit small and ugly by default. It depends on the platform, so it's better to use the Assistant's View menu to adjust font size in runtime rather then settings it bigger in CSS files. Leave the body `font-size` undefined in styles. As for font family, the Assistant seems can't work with arbitrary fonts, its zoom command starts glitching and displayed font size can be even different for different runs. So probbaly it worth to stay the font face by default as well.
+Main font size in the Assistant looks a bit small and ugly by default. It depends on the platform, so it's better to use the Assistant's View menu to adjust font size in runtime rather then settings it bigger in CSS files. Leave the body `font-size` undefined in styles. As for font family, the Assistant seems can't work with arbitrary fonts, its zoom command starts glitching and displayed font size can be even different for different runs. So probably it worth to stay the font face by default as well.
 
 ### Formulas
 
-As the documentation contains a notable amount of physical formulas, they should be inserted as pictures. Qt Assistant uses `QTextDocument` to display help pages, and it has fewer abilities comparing to real browsers. Also, Assistant can't run JavaScript code. So pictures for formulas is the only possibility to display them. The page `render_formula.html` used to render TeX syntax into SVG using well known [MathJax](https://github.com/mathjax/MathJax) library. PNG images then saved using print-screen operation, no automation for this process yet.
+As the documentation contains a notable amount of physical formulas, they should be inserted as pictures. Qt Assistant uses `QTextDocument` to display help pages, and it has fewer abilities comparing to real browsers. Also, Assistant can't run JavaScript code. So pictures for formulas is the only possibility to display them.
+
+Use the [render_formula.html](./render_formula.html) page as a simple formula editor to play with the TeX syntax. [Here](../docs/latex-symbols.md) we have a short handbook on TeX symbols. Once formula is finished in the editor and proved to be a valid TeX, it can be pasted into a RST document after the `tex` tag followed by respective `image` tag, e.g.: 
+
+```
+Some text some text some text
+
+  .. tex:
+    \cfrac{1}{F} = (n - 1)\bigg[\, 
+        \cfrac{1}{R_1} - 
+        \cfrac{1}{R_2} + 
+        \cfrac{(n -1)T}{n R_1 R_2}
+    \bigg]\,
+
+  .. image:: img/calc_lens_f.png
+
+Some text some text some text
+```
+
+`tex` is not a standard tag so sphinx just treats it as a comment. There is a [Node.js](https://nodejs.org) script that reads these tags and uses well known [MathJax](https://github.com/mathjax/MathJax) library for rendering TeX syntax into SVG format. Then the script converts each SVG formula into PNG image and saves it into a file specified in the `image` tag.
+
+Note that the indentation in the above code snippet is important. The `image` tag has to be indented to be a separate paragraph otherwise the image will be inserted inline. Since the `image` is indented, the `tex` should be indented as well otherwise the `image` becomes a part of comment and will be ignored.
+
+Usage examples:
+
+```bash
+# Download MaxJax and additional libraries
+npm install
+
+# Generate PNG images for a single file
+node render_formulas.js calc_lens.rst
+
+# Update all formula images in all files
+node render_formulas.js --overwrite *
+
+# Run against several files and show formulas (no PNG generated)
+node render_formulas.js --dry-run calc_lens.rst calc_grin.rst
+```
 
 There also a number of ODF files that are LibreOffice Math formulas. They should be considered as deprecated and gradually replaced. Reasons are Math uses its own syntax instead of conventional TeX, and its rendered formulas do not have such nice appearance as those rendered by MathJax.
 
@@ -69,6 +106,8 @@ For screenshots: `#FF494F` for buttons and arrows, `#FF7C7F` for window frames, 
 ![params_window](./img/params_window_create.png)
 
 ## RST cheat-sheet and some rules
+
+See the full syntax in the [sphinx docs](https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html).
 
 ### Headers
 

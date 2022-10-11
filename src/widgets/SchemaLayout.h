@@ -1,11 +1,11 @@
 #ifndef SCHEMA_LAYOUT_H
 #define SCHEMA_LAYOUT_H
 
+#include "GraphicsView.h"
 #include "../core/Schema.h"
 #include "../core/Elements.h"
 
 #include <QGraphicsItem>
-#include <QGraphicsView>
 
 #define Sqr(x) ((x)*(x))
 
@@ -65,7 +65,7 @@ public: \
 /**
     Graphical representation of a schema.
 */
-class SchemaLayout : public QGraphicsView, public SchemaListener
+class SchemaLayout : public Z::GraphicsView, public SchemaListener
 {
     Q_OBJECT
 
@@ -80,25 +80,17 @@ public:
     void elementChanged(Schema*, Element*) override { populate(); }
     void elementDeleted(Schema*, Element*) override { populate(); }
 
-protected:
-    QGraphicsScene _scene;
-
-    void resizeEvent(QResizeEvent *event) override;
-    void contextMenuEvent(QContextMenuEvent *event) override;
-
 private:
     Schema *_schema;
+    QGraphicsScene _scene;
     ElementLayout *_axis;
     QVector<ElementLayout*> _elements;
     QMap<ElementLayout*, QGraphicsTextItem*> _elemLabels;
-    QMenu* _menu = nullptr;
 
     void addElement(ElementLayout *elem);
     void populate();
     void clear();
     void centerView(const QRectF&);
-    QMenu* createContextMenu();
-    void copyImage();
 };
 
 

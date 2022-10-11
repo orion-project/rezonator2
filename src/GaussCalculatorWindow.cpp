@@ -469,9 +469,7 @@ void GaussCalculatorWindow::showWindow()
 
 GaussCalculatorWindow::GaussCalculatorWindow(QWidget *parent) : QWidget(parent)
 {
-    setAttribute(Qt::WA_DeleteOnClose);
-    setWindowTitle(tr("Gaussian Beam Calculator"));
-    setWindowIcon(QIcon(":/window_icons/gauss_calc"));
+    Ori::Wnd::initWindow(this, tr("Gaussian Beam Calculator"), ":/window_icons/gauss_calc");
 
     _calc.reset(new GaussCalculator);
     _plotter.reset(new GaussPlotter);
@@ -536,9 +534,7 @@ GaussCalculatorWindow::~GaussCalculatorWindow()
 void GaussCalculatorWindow::restoreState()
 {
     QJsonObject root = CustomDataHelpers::loadCustomData("gauss");
-
     CustomDataHelpers::restoreWindowSize(root, this, 750, 400);
-
     _plotPlusMinusZ->setCheckedId(root["plot_minus_z"].toInt());
     _plotPlusMinusW->setCheckedId(root["plot_minus_w"].toInt());
     _calcModeLock->setCheckedId(root["lock_mode"].toInt());
@@ -555,8 +551,7 @@ void GaussCalculatorWindow::restoreState()
 void GaussCalculatorWindow::storeState()
 {
     QJsonObject root;
-    root["window_width"] = width();
-    root["window_height"] = height();
+    CustomDataHelpers::storeWindowSize(root, this);
     root["plot_minus_z"] = _plotPlusMinusZ->checkedId();
     root["plot_minus_w"] = _plotPlusMinusW->checkedId();
     root["lock_mode"] = int(_calc->lock());
@@ -566,7 +561,6 @@ void GaussCalculatorWindow::storeState()
     root["plot_z0"] = _plotZ0->isChecked();
     root["x_title"] = _plot->formatterTextX();
     root["y_title"] = _plot->formatterTextY();
-
     CustomDataHelpers::saveCustomData(root, "gauss");
 }
 
@@ -655,7 +649,7 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     auto actionCopyImg = Ori::Gui::action(tr("Copy Plot Image"), _plot, SLOT(copyPlotImage()), ":/toolbar/copy_img", QKeySequence::Copy);
     auto actionCopyTbl = Ori::Gui::action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
     auto actionCalc = Ori::Gui::action(tr("Formula Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
-    auto actionHelp = Ori::Gui::action(tr("Help"), this, SLOT(showHelp()), ":/toolbar/help", QKeySequence::HelpContents);
+    auto actionHelp = Z::HelpSystem::makeHelpAction(this, "calc_gauss");
 
     auto toolbar = new Ori::Widgets::FlatToolBar;
     toolbar->setIconSize(AppSettings::instance().toolbarIconSize());
@@ -752,11 +746,6 @@ void GaussCalculatorWindow::updatePlot()
 void GaussCalculatorWindow::showCalculator()
 {
     CalculatorWindow::showWindow();
-}
-
-void GaussCalculatorWindow::showHelp()
-{
-    Z::HelpSystem::instance()->showTopic("calc_gauss.html");
 }
 
 void GaussCalculatorWindow::copyGraphData()

@@ -3,6 +3,7 @@
 #include "CustomElemsWindow.h"
 #include "GaussCalculatorWindow.h"
 #include "GrinLensWindow.h"
+#include "LensmakerWindow.h"
 #include "ProjectOperations.h"
 #include "ProjectWindow.h"
 #include "StartWindow.h"
@@ -39,7 +40,7 @@ int main(int argc, char* argv[])
     auto optionHelp = parser.addHelpOption();
     auto optionVersion = parser.addVersionOption();
     QCommandLineOption optionTest("test", "Run unit-test session.");
-    QCommandLineOption optionTool("tool", "Run a tool: gauss, calc", "name");
+    QCommandLineOption optionTool("tool", "Run a tool: gauss, calc, elems, grin, lens", "name");
     QCommandLineOption optionDevMode("dev"); optionDevMode.setFlags(QCommandLineOption::HiddenFromHelp);
     QCommandLineOption optionConsole("console"); optionConsole.setFlags(QCommandLineOption::HiddenFromHelp);
     QCommandLineOption optionExample("example"); optionExample.setFlags(QCommandLineOption::HiddenFromHelp);
@@ -103,6 +104,11 @@ int main(int argc, char* argv[])
         else if (toolName == "grin")
         {
             GrinLensWindow::showWindow();
+            return app.exec();
+        }
+        else if (toolName == "lens")
+        {
+            LensmakerWindow::showWindow();
             return app.exec();
         }
         else

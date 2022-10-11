@@ -50,7 +50,7 @@ public:
 
         /// When true, the parameter change is applied immediately after the parameters was edited.
         /// When false, the client has to call ParamsEditor::applyValues() when needed.
-        bool autoApply = false;
+        enum {ApplyManual, ApplyInstant, ApplyEnter} applyMode = ApplyManual;
 
         /// An additional control displaying at the bottom of all editors just above the info panel.
         QWidget* auxControl = nullptr;
@@ -59,7 +59,11 @@ public:
         /// If yes, the parameters are deleted when the editor gets deleted.
         bool ownParams = false;
 
-        Options(const Z::Parameters *p) : params(p) {}
+        /// When each editor's `Apply` is called, check if parameter value is really changed.
+        /// Used to avoid unnecessary `parameterChanged` events.
+        bool checkChanges = false;
+
+        Options(const Z::Parameters *p = nullptr) : params(p) {}
     };
 
 public:
@@ -69,16 +73,19 @@ public:
     void populateEditors();
     void populateValues();
 
-    void addEditor(Z::Parameter* param);
+    ParamEditor* addEditor(Z::Parameter* param, const QVector<Z::Unit>& units = {});
     void removeEditor(Z::Parameter* param);
     void populateEditor(Z::Parameter* param);
     void moveEditorUp(Z::Parameter* param);
     void moveEditorDown(Z::Parameter* param);
+    void addSeparator(const QString& title = QString(), bool flat = true);
 
     void focus();
     void focus(Z::Parameter *param);
 
     QString verify() const;
+
+    const QList<ParamEditor*>& editors() const { return _editors; }
 
 signals:
     void paramChanged(Z::Parameter* param, Z::Value value);
@@ -88,17 +95,15 @@ public slots:
 
 private:
     const Options _options;
-    const Z::Parameters* _params;
     QList<ParamEditor*> _editors;
     Ori::Widgets::InfoPanel* _infoPanel = nullptr;
     QBoxLayout* _paramsLayout;
-
     void adjustEditors();
     void paramValueEdited(double value);
     void paramUnitChanged(Z::Unit unit);
-
-private slots:
+    void paramEnterPressed();
     void paramFocused();
+    void paramUnfocused();
     void focusNextParam();
     void focusPrevParam();
 };

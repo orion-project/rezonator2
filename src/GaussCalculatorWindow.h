@@ -110,7 +110,6 @@ private slots:
     void zoneSelected(int zone);
     void lockSelected(int lock);
     void showCalculator();
-    void showHelp();
     void copyGraphData();
 };
 

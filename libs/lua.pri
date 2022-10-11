@@ -1,5 +1,7 @@
 LUA = $$PWD/lua-5.3.4/src
 
+linux: DEFINES += LUA_USE_LINUX
+
 INCLUDEPATH += $$LUA
 
 HEADERS += \

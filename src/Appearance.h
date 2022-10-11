@@ -60,7 +60,7 @@ template <class FontStruct> QString html(const FontStruct& font)
     return htmls[key];
 }
 
-QLabel* headerlabel(const QString& text);
+QLabel* makeHeaderLabel(const QString& text);
 
 /// Preferred fixed width of unit selector combo boxes
 inline int unitsSelectorWidth() { return 63; }

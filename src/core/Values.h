@@ -59,6 +59,7 @@ public:
     QString displayStr() const;
 
     double toSi() const { return _unit->toSi(_value); }
+    Z::Value toUnit(Z::Unit unit) const { return {unit->fromSi(_unit->toSi(_value)), unit}; }
 
     Value& operator = (const Value& v) { _value = v._value; _unit = v._unit; return *this; }
     Value& operator = (const double& v) { _value = v; return *this; }

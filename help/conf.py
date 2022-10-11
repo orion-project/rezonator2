@@ -47,13 +47,14 @@ rst_prolog = """
 
 .. role:: app_name_z
 
-.. |rezonator| replace:: :app_name:`re`\ :app_name_z:`Z`\ :app_name:`onator`
+.. |rezonator| replace:: :app_name:`rezonator`
 
 .. default-role:: math_var
 
 .. role:: guipart
 """
 
+# .. |rezonator| replace:: :app_name:`re`\ :app_name_z:`Z`\ :app_name:`onator`
 
 # -- Options for QtHelp output -----------------------------------------------
 
@@ -93,5 +94,5 @@ about_text = get_file_text('about.html')
 about_text = about_text.replace('VERSION', release)
 about_text = about_text.replace('COPYRIGHT', copyright)
 target_dir = os.path.join('..', 'out', 'help')
-if not os.path.isdir(target_dir): os.mkdir(target_dir)
+if not os.path.isdir(target_dir): os.makedirs(target_dir, exist_ok=True)
 set_file_text(os.path.join(target_dir, 'about.html'), about_text)

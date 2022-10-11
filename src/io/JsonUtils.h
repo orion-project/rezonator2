@@ -19,6 +19,9 @@ class Report;
 namespace IO {
 namespace Json {
 
+void writeUnit(QJsonObject& json, Unit unit);
+Result<Unit> readUnit(const QJsonObject& json, Dim dim);
+
 QJsonObject writeValue(const Value& value);
 Result<Value> readValue(const QJsonObject& json, Dim dim = nullptr);
 QJsonObject writeValueTS(const ValueTS& value);

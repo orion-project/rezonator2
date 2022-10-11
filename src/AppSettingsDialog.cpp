@@ -53,7 +53,7 @@ AppSettingsDialog::AppSettingsDialog(QWidget* parent) : Ori::Dlg::BasicConfigDia
     createPages({
                     createGeneralPage(),
                     createViewPage(),
-                    createLayoutPage(),
+                    //createLayoutPage(), the only settings "transparent background" is not applicable to clipboard export (at least on Windows)
                     createUnitsPage(),
                     createExportPage(),
                     createCalcPage(),

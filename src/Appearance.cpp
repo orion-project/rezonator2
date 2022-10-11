@@ -121,7 +121,7 @@ QFont FormulaFont::get() const
     return f;
 }
 
-QLabel* headerlabel(const QString& text)
+QLabel* makeHeaderLabel(const QString& text)
 {
     auto label = new QLabel(text);
     auto f = label->font();

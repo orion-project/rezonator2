@@ -450,6 +450,17 @@ private:
     Value _backup;
 };
 
+//------------------------------------------------------------------------------
+
+namespace Param {
+
+inline void setSi(Z::Parameter* param, const double& value) {
+    auto unit = param->value().unit();
+    param->setValue({unit->fromSi(value), unit});
+}
+
+} // namespace Param
+
 } // namespace Z
 
 #endif // Z_PARAMETERS_H

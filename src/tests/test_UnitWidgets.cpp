@@ -10,7 +10,7 @@ namespace UnitWidgetsTests {
 
 template <typename T> QSet<T> listToSet(const QList<T>& list)
 {
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
     return QSet<T>(list.begin(), list.end());
 #else
     return list.toSet();
