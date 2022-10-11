@@ -80,7 +80,7 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override
     {
         qreal s = qAbs(step);
-        if (s == 0) return;
+        if (Double(s).is(0)) return;
 
         qreal high = rect.height()/2.0;
         qreal left = rect.left();
@@ -153,15 +153,15 @@ public:
         const double d1 = r1*2.0; // left diameter of curvature
         const double d2 = r2*2.0; // right diameter of curvature
         double s1 = 0, a1 = 0, s2 = 0, a2 = 0;
-        if (R1 != 0) {
+        if (R1 < 0 || R1 > 0) {
             s1 = r1 - qSqrt(Sqr(r1) - Sqr(h)); // left arc sagitta
             a1 = qRadiansToDegrees(qAsin(h/r1)); // left arc half-angle
         }
-        if (R2 != 0) {
+        if (R2 < 0 || R1 > 0) {
             s2 = r2 - qSqrt(Sqr(r2) - Sqr(h)); // right arc sagitta
             a2 = qRadiansToDegrees(qAsin(h/r2)); // right arc half-angle
         }
-        _path.clear();
+        _path = QPainterPath();
         switch (getForm()) {
         case Plane: //      ||
             _path.moveTo(-t, -h);
@@ -264,18 +264,18 @@ public:
         if (!title.isEmpty())
         {
             auto f = Z::Gui::ElemLabelFont().get();
-            QFontMetrics fm(f);
+            QFontMetricsF fm(f);
             painter->setFont(f);
-            painter->drawText(titleAtLeft ? pos-fm.boundingRect(title).width()-6 : pos+3, -high/2.0+fm.height()-3, title);
+            painter->drawText(QPointF(titleAtLeft ? pos-fm.boundingRect(title).width()-6 : pos+3, -high/2.0+fm.height()-3), title);
         }
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->setBrush(brush);
-        painter->drawEllipse(pos-r, -r, 2*r, 2*r);
+        painter->drawEllipse(QRectF(pos-r, -r, 2*r, 2*r));
         painter->restore();
     }
 
-    double pos = 0;
-    double high = 0;
+    qreal pos = 0;
+    qreal high = 0;
     qreal r = 3;
     QString title;
     bool titleAtLeft = false;
@@ -308,7 +308,7 @@ public:
         QPainterPath path, path1;
         bool first = true;
         foreach (const QPointF &p, points) {
-            QPoint p1(p.x(), -p.y());
+            QPointF p1(p.x(), -p.y());
             if (first) {
                 path.moveTo(p);
                 path1.moveTo(p1);
@@ -339,13 +339,13 @@ public:
     {
         painter->setPen(pen);
         painter->setBrush(brush);
-        painter->drawEllipse(x-r, y-r, 2*r, 2*r);
+        painter->drawEllipse(QRectF(x-r, y-r, 2*r, 2*r));
         if (!title.isEmpty())
         {
             auto f = Z::Gui::ElemLabelFont().get();
             QFontMetrics fm(f);
             painter->setFont(f);
-            painter->drawText(titleAtLeft ? x-fm.boundingRect(title).width()-6 : x+3, y+fm.height()-3, title);
+            painter->drawText(QPointF(titleAtLeft ? x-fm.boundingRect(title).width()-6 : x+3, y+fm.height()-3), title);
         }
     }
 
@@ -557,7 +557,7 @@ void LensmakerWidget::refresh(const char *reason)
     qreal step = qAbs(_gridStep->value().toSi()) * scale;
 
     QRectF r = _lens->boundingRect();
-    int marginV = margin;
+    qreal marginV = margin;
     if (_focus1->isVisible()) {
         r = r.united(_focus1->boundingRect())
              .united(_focus2->boundingRect());
