@@ -1,9 +1,7 @@
 #include "LensmakerWindow.h"
 
 #include "Appearance.h"
-#include "AppSettings.h"
 #include "CustomPrefs.h"
-#include "HelpSystem.h"
 #include "funcs/LensCalculator.h"
 #include "io/JsonUtils.h"
 #include "widgets/GraphicsView.h"
@@ -15,7 +13,6 @@
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 #include "helpers/OriWindows.h"
-#include "widgets/OriFlatToolBar.h"
 #include "widgets/OriMenuToolButton.h"
 
 #include <QContextMenuEvent>
@@ -23,6 +20,7 @@
 #include <QIcon>
 #include <QMenu>
 #include <QTabWidget>
+#include <QToolBar>
 #include <QtMath>
 
 #define Sqr(x) ((x)*(x))
@@ -716,14 +714,11 @@ LensmakerWindow::LensmakerWindow(QWidget *parent) : QWidget(parent)
 {
     Ori::Wnd::initWindow(this, tr("Lensmaker"), ":/window_icons/lens");
 
-#define A_ Ori::Gui::action
-    auto actnAddLens = A_(tr("Add Lens"), this, SLOT(addLens()), ":/toolbar/elem_add", QKeySequence::New);
-    auto actnDelLens = A_(tr("Remove Lens"), this, SLOT(removeLens()), ":/toolbar/elem_delete");
-    auto actnCopyImage = A_(tr("Copy Image"), this, SLOT(copyImage()), ":/toolbar/copy_img");
-    auto actnZoomOut = A_(tr("Zoom Out"), this, SLOT(zoomOut()), ":/toolbar/zoom_out", QKeySequence::ZoomOut);
-    auto actnZoomIn = A_(tr("Zoom In"), this, SLOT(zoomIn()), ":/toolbar/zoom_in", QKeySequence::ZoomIn);
-    auto actnHelp = Z::HelpSystem::makeHelpAction(this, "calc_lens");
-#undef A_
+    auto actnAddLens = Ori::Gui::action(tr("Add Lens"), this, SLOT(addLens()), ":/toolbar/elem_add", QKeySequence::New);
+    auto actnDelLens = Ori::Gui::action(tr("Remove Lens"), this, SLOT(removeLens()), ":/toolbar/elem_delete");
+    auto actnCopyImage = Ori::Gui::action(tr("Copy Image"), this, SLOT(copyImage()), ":/toolbar/copy_img");
+    auto actnZoomOut = Ori::Gui::action(tr("Zoom Out"), this, SLOT(zoomOut()), ":/toolbar/zoom_out", QKeySequence::ZoomOut);
+    auto actnZoomIn = Ori::Gui::action(tr("Zoom In"), this, SLOT(zoomIn()), ":/toolbar/zoom_in", QKeySequence::ZoomIn);
 
     _visibleParts = new Ori::Widgets::MenuToolButton;
     _visibleParts->multiselect = true;
@@ -743,17 +738,13 @@ LensmakerWindow::LensmakerWindow(QWidget *parent) : QWidget(parent)
         if (lens) _visibleParts->setSelectedFlags(lens->visibleParts());
     });
 
-    auto toolbar = new Ori::Widgets::FlatToolBar;
-    toolbar->setIconSize(AppSettings::instance().toolbarIconSize());
-    Ori::Gui::populate(toolbar, { actnAddLens, actnDelLens,
-                                  nullptr, actnCopyImage,
-                                  nullptr, actnZoomOut, actnZoomIn,
-                                  nullptr, _visibleParts,
-                                  nullptr, actnHelp,
-                       });
+    auto toolbar = Z::Gui::makeToolbar({ actnAddLens, actnDelLens,
+                                         nullptr, actnCopyImage,
+                                         nullptr, actnZoomOut, actnZoomIn,
+                                         nullptr, _visibleParts,
+                                       }, "calc_lens");
 
-    _tabs = new QTabWidget;
-    _tabs->setStyleSheet(QStringLiteral("::pane { border-top: 1px solid palette(mid); padding: 3px; top: -2px; } ::tab-bar { left: 5px; }"));
+    _tabs = Z::Gui::makeBorderlessTabs();
 
     Ori::Layouts::LayoutV({toolbar, _tabs}).setSpacing(0).setMargin(0).useFor(this);
 

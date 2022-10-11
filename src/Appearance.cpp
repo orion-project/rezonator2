@@ -1,10 +1,16 @@
 #include "Appearance.h"
 
+#include "AppSettings.h"
+#include "HelpSystem.h"
+
 #include "helpers/OriTools.h"
+#include "helpers/OriWidgets.h"
+#include "widgets/OriFlatToolBar.h"
 
 #include <QApplication>
 #include <QLabel>
 #include <QStyle>
+#include <QTabWidget>
 
 namespace Z {
 namespace Gui {
@@ -130,6 +136,26 @@ QLabel* makeHeaderLabel(const QString& text)
     label->setFont(f);
     label->setStyleSheet("color:SteelBlue");
     return label;
+}
+
+QTabWidget* makeBorderlessTabs()
+{
+    auto tabs = new QTabWidget;
+    tabs->setStyleSheet(QStringLiteral("::pane { border-top: 1px solid palette(mid); padding: 3px; top: -2px; } ::tab-bar { left: 5px; }"));
+    return tabs;
+}
+
+QToolBar* makeToolbar(std::initializer_list<QObject *> items, const QString &helpTopic)
+{
+    auto toolbar = new Ori::Widgets::FlatToolBar;
+    toolbar->setIconSize(AppSettings::instance().toolbarIconSize());
+    Ori::Gui::populate(toolbar, items);
+    if (!helpTopic.isEmpty())
+    {
+        toolbar->addSeparator();
+        toolbar->addAction(HelpSystem::makeHelpAction(toolbar, helpTopic));
+    }
+    return toolbar;
 }
 
 void setFocusedBackground(QWidget *w, bool focused)

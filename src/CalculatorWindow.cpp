@@ -1,16 +1,13 @@
 #include "CalculatorWindow.h"
 
 #include "Appearance.h"
-#include "AppSettings.h"
 #include "CustomPrefs.h"
-#include "HelpSystem.h"
 #include "core/LuaHelper.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 #include "helpers/OriWindows.h"
-#include "widgets/OriFlatToolBar.h"
 
 #include <QCheckBox>
 #include <QDebug>
@@ -26,6 +23,7 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QSplitter>
+#include <QToolBar>
 #include <QToolButton>
 
 using namespace Ori::Layouts;
@@ -104,9 +102,7 @@ void CalculatorWindow::showWindow()
 
 CalculatorWindow::CalculatorWindow(QWidget *parent) : QWidget(parent)
 {
-    setAttribute(Qt::WA_DeleteOnClose);
-    setWindowTitle(tr("Formula Calculator"));
-    setWindowIcon(QIcon(":/window_icons/calculator"));
+    Ori::Wnd::initWindow(this, tr("Formula Calculator"), ":/window_icons/calculator");
 
     // TODO: make custom items widget using _log as a model
     _logView = new QPlainTextEdit;
@@ -192,17 +188,13 @@ QWidget* CalculatorWindow::makeToolbar()
         SLOT(reuseItem()), ":/toolbar/duplicate_page", Qt::CTRL + Qt::Key_D);
 
     auto actnSettings = A_(tr("Settings"), this, SLOT(showSettings()), ":/toolbar/settings");
-    auto actionHelp = A_(tr("Help"), this, SLOT(showHelp()), ":/toolbar/help", QKeySequence::HelpContents);
 
     auto buttonCalc = Ori::Gui::textToolButton(_actnCalc);
     buttonCalc->setToolTip(tr("Calculate<br>(<b>Ctrl + Enter</b>)"));
 
-    auto toolbar = new Ori::Widgets::FlatToolBar;
-    toolbar->setIconSize(AppSettings::instance().toolbarIconSize());
-    Ori::Gui::populate(toolbar, {
-        buttonCalc, _actnClear, nullptr, actnReuse, nullptr, actnSettings, actionHelp
-    });
-    return toolbar;
+    return Z::Gui::makeToolbar({
+        buttonCalc, _actnClear, nullptr, actnReuse, nullptr, actnSettings
+    }, "calc_formula");
 
 #undef A_
 }
@@ -396,9 +388,4 @@ void CalculatorWindow::populateVars()
     }
     _varsView->resizeColumnToContents(0);
     _varsView->setColumnWidth(0, _varsView->columnWidth(0) + 10);
-}
-
-void CalculatorWindow::showHelp()
-{
-    Z::HelpSystem::instance()->showTopic("calc_formula.html");
 }

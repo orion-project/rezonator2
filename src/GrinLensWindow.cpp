@@ -1,7 +1,7 @@
 #include "GrinLensWindow.h"
 
+#include "Appearance.h"
 #include "CustomPrefs.h"
-#include "HelpSystem.h"
 #include "funcs/GrinCalculator.h"
 #include "io/JsonUtils.h"
 #include "widgets/ParamsEditor.h"
@@ -9,11 +9,11 @@
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 #include "widgets/OriSvgView.h"
-#include "widgets/OriFlatToolBar.h"
 
 #include <QActionGroup>
 #include <QLabel>
 #include <QTabWidget>
+#include <QToolBar>
 #include <QToolButton>
 
 using namespace Ori::Layouts;
@@ -71,22 +71,20 @@ GrinLensWindow::GrinLensWindow(QWidget *parent) : QWidget(parent)
     connect(editors, SIGNAL(paramChanged(Z::Parameter*, Z::Value)), this, SLOT(calculate(Z::Parameter*)));
 
     auto group = new QActionGroup(this);
-    group->setExclusive(true);
     _actionCalcF = Ori::Gui::toggledAction(tr("Calc F from n2"), group, nullptr, ":/toolbar/grin_calc_f");
     _actionCalcN2 = Ori::Gui::toggledAction(tr("Calc n2 from F"), group, nullptr, ":/toolbar/grin_calc_n2");
 
-    auto toolbar = new Ori::Widgets::FlatToolBar;
-    auto actionHelp = Z::HelpSystem::makeHelpAction(this, "calc_grin");
-    Ori::Gui::populate(toolbar, {
-        Ori::Gui::textToolButton(_actionCalcF), Ori::Gui::textToolButton(_actionCalcN2), nullptr, actionHelp});
+    auto toolbar = Z::Gui::makeToolbar({ Ori::Gui::textToolButton(_actionCalcF),
+                                         Ori::Gui::textToolButton(_actionCalcN2),
+                                       }, "calc_grin");
 
-    auto tabs = new QTabWidget;
+    auto tabs = Z::Gui::makeBorderlessTabs();
     tabs->addTab(editors, tr("Calc"));
     tabs->addTab(LayoutV({
         Ori::Widgets::SvgView::makeStatic(":/drawing/grin_lens")
     }).setMargin(3).makeWidget(), tr("Outline"));
 
-    LayoutV({toolbar, LayoutV({tabs}).setMargin(6)}).setSpacing(0).setMargin(0).useFor(this);
+    LayoutV({toolbar, tabs}).setSpacing(0).setMargin(0).useFor(this);
 
     restoreState();
     calculate(_length);

@@ -210,7 +210,7 @@ void AppSettingsDialog::populate()
     _numberPrecisionData->setValue(settings.numberPrecisionData);
 
     // layout
-    _groupLayoutExport->setOption("layoutExportTransparent", settings.layoutExportTransparent);
+    //_groupLayoutExport->setOption("layoutExportTransparent", settings.layoutExportTransparent);
 
     // units
     _defaultUnitBeamRadius->setSelectedUnit(settings.defaultUnitBeamRadius);
@@ -252,7 +252,7 @@ bool AppSettingsDialog::collect()
     settings.numberPrecisionData = _numberPrecisionData->value();
 
     // layout
-    settings.layoutExportTransparent = _groupLayoutExport->option("layoutExportTransparent");
+    //settings.layoutExportTransparent = _groupLayoutExport->option("layoutExportTransparent");
 
     // units
     settings.defaultUnitBeamRadius = _defaultUnitBeamRadius->selectedUnit();

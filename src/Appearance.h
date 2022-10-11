@@ -7,6 +7,8 @@
 QT_BEGIN_NAMESPACE
 class QLabel;
 class QWidget;
+class QTabWidget;
+class QToolBar;
 QT_END_NAMESPACE
 
 namespace Z {
@@ -61,6 +63,8 @@ template <class FontStruct> QString html(const FontStruct& font)
 }
 
 QLabel* makeHeaderLabel(const QString& text);
+QTabWidget* makeBorderlessTabs();
+QToolBar* makeToolbar(std::initializer_list<QObject*> items, const QString& helpTopic = QString());
 
 /// Preferred fixed width of unit selector combo boxes
 inline int unitsSelectorWidth() { return 63; }
