@@ -466,7 +466,6 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
 
     addWidget(paramsEditor);
     addWidget(_view);
-    //setSizes({200, 600});
     setStretchFactor(0, 1);
     setStretchFactor(1, 20);
     connect(this, &QSplitter::splitterMoved, [this]{
@@ -668,6 +667,7 @@ bool LensmakerWidget::event(QEvent *e)
 {
     if (dynamic_cast<QShowEvent*>(e))
     {
+        // Apply sizes on first show
         if (_paramsW > 0 && _viewW > 0 && !_splitted)
         {
             setSizes({_paramsW, _viewW});
@@ -680,6 +680,9 @@ bool LensmakerWidget::event(QEvent *e)
 void LensmakerWidget::resizeEvent(QResizeEvent *e)
 {
     QSplitter::resizeEvent(e);
+    // First resize happens before show,
+    // splitter doesn't have valid sizes yet
+    if (!isVisible()) return;
     auto sz = sizes();
     _paramsW = sz.at(0);
     _viewW = sz.at(1);
@@ -778,10 +781,10 @@ void LensmakerWindow::restoreState()
         for (auto it = lensArray.begin(); it != lensArray.end(); it++)
         {
             auto lens = new LensmakerWidget;
+            lens->index = index;
             QJsonObject json = it->toObject();
             lens->restoreValues(json);
             lens->refresh("restore");
-            lens->index = index;
             addTab(lens);
             index++;
         }

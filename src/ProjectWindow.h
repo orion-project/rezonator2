@@ -59,6 +59,7 @@ public:
 
 protected:
     void closeEvent(class QCloseEvent*) override;
+    QMenu *createPopupMenu() override { return nullptr; }
 
 private:
     QMenu *menuFile, *menuEdit, *menuHelp, *menuWindow, *menuTools,
