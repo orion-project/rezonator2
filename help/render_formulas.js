@@ -57,7 +57,7 @@ require('mathjax')
         }
     })
     .catch(err => {
-        console.error('Failed to init MathJax:', err.message);
+        console.error(err);
         process.exit(1);
     });
 
@@ -71,13 +71,14 @@ function processFile(fn, mathJax) {
 
     const formulas = parseFile(fn);
 
+    if (formulas.length == 0) {
+        console.log('No formulas');
+        return;
+    }
+
     if (args.dryRun) {
-        if (formulas.length > 0) {
-            console.log('Formulas:', formulas.length);
-            console.log(formulas);
-        } else {
-            console.log('No formula');
-        }
+        console.log('Formulas:', formulas.length);
+        console.log(formulas);
         return;
     }
 
@@ -95,13 +96,13 @@ function parseFile(fn) {
     var formula = [];
     var lineNo = 0;
     var formulaLine = 0;
-    for (const line of fs.readFileSync(fn, 'utf-8').split(/\r?\n/)) {
+    for (const line of fs.readFileSync(fn, 'utf-8').split(/\r?\n/).map(l => l.trim())) {
         lineNo++;
 
         if (line.startsWith(prefixTex)) {
             formula = [line.substring(prefixTex.length).trim()];
             formulaLine = lineNo;
-        } else if (line.trim().startsWith(prefixImg)) {
+        } else if (line.startsWith(prefixImg)) {
             if (formula.length == 0) {
                 continue;
             }
@@ -115,7 +116,7 @@ function parseFile(fn) {
             if (formula.length == 0) {
                 continue;
             }
-            formula.push(line.trim());
+            formula.push(line);
         }
     }
     return formulas;

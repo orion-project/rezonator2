@@ -7,26 +7,26 @@
 
 #define MAX_SOLVE_ITERATIONS 1000
 
-using namespace std;
-
 namespace GrinCalculator {
 
 double calc_focus(double L, double n0, double n2)
 {
     if (L < 0) return std::nan("");
     if (n0 < 0) return std::nan("");
-    if (n2 < 0) return std::nan("");
 
-    const double g = sqrt(n2/n0);
-    return 1 / tan(g*L) / n0 / g;
+    const double g = sqrt(qAbs(n2)/n0);
+    return 1 / ( n2 < 0 ? -tanh(g*L) : tan(g*L)) / n0 / g;
 }
 
 double solve_n2(double L, double F, double n0)
 {
     if (L < 0) return std::nan("");
-    if (F < 0) return std::nan("");
     if (n0 < 0) return std::nan("");
 
+    // F = 1 / (tan(g*L) * n0 * g)
+    // F * tan(g*L) * n0 * g = 1
+    // F * tan(g*L) * n0 * g*L = L
+    // F * tan(x) * n0 * x - L = 0
     auto equation = [&](const double& x) {
         return x * F * n0 * tan(x) - L;
     };

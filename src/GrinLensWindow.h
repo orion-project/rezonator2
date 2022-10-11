@@ -21,7 +21,6 @@ public:
     static void showWindow();
 
 private slots:
-    void showHelp();
     void calculate(Z::Parameter* p);
 
 private:
