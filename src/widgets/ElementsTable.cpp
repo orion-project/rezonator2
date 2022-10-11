@@ -187,25 +187,13 @@ public:
 
     void elementsDeleting(Schema*) override
     {
-        _deleted.clear();
-    }
-
-    void elementDeleting(Schema*, Element* elem) override
-    {
-        _deleted << _schema->indexOf(elem);
+        beginResetModel();
     }
 
     void elementsDeleted(Schema*) override
     {
-        int minRow = _schema->count()-1, maxRow = 0;
-        foreach (int row, _deleted) {
-            if (row < minRow) minRow = row;
-            if (row > maxRow) maxRow = row;
-        }
-        beginRemoveRows(QModelIndex(), minRow, maxRow);
-        endRemoveRows();
+        endResetModel();
         adjustColumns();
-        _deleted.clear();
     }
 
     void adjustColumns()
@@ -217,7 +205,6 @@ public:
 private:
     Schema* _schema;
     QTableView* _view;
-    QSet<int> _deleted;
     QPixmap _addElemIcon = QPixmap(":/toolbar/elem_add");
     QPixmap _disabledIcon = QPixmap(":/toolbar/stop");
 };

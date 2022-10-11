@@ -6,6 +6,9 @@
       "changes": [
         {
           "text": "Added a tool for drawing simple lenses - Lensmaker"
+        },
+        {
+          "text": "Fix: schema table not properly updated after element deletion"
         }
       ]
     },
