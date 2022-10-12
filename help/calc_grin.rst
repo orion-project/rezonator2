@@ -40,6 +40,7 @@ We have a :doc:`matrix/ElemGrinLens` and a parallel input ray (|r1|, |v1|) enter
         -n_0 \gamma \: \sin(\gamma L) & \cos(\gamma L) 
       \end{bmatrix}
       \begin{bmatrix}r_1 \\ V_1 \end{bmatrix} \\ \\
+    & \gamma = \sqrt \frac {n_2} {n_0} \\ \\
     & V_1 = 0 \\ \\
     & r_2 = r_1 \cos(\gamma L) \\ \\
     & V_2 = -r_1 n_0 \gamma \sin(\gamma L)
@@ -81,6 +82,7 @@ In a similar way we can get the focal length of negative thermal lens:
         n_0 \gamma \: \sinh(\gamma L)  &   \cosh(\gamma L) 
       \end{bmatrix}
       \begin{bmatrix}r_1 \\ V_1 \end{bmatrix} \\ \\
+    & \gamma = \sqrt \frac {|n_2|} {n_0} \\ \\
     & V_1 = 0 \\ \\
     & r_2 = r_1 \cosh(\gamma L) \\ \\
     & V_2 = r_1 n_0 \gamma \sinh(\gamma L)

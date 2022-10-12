@@ -18,6 +18,9 @@ double calc_focus(double L, double n0, double n2)
     return 1 / ( n2 < 0 ? -tanh(g*L) : tan(g*L)) / n0 / g;
 }
 
+// The algorithm is driven by the shape of equation
+// see $PROJECT/calc/grin_focus_assessment.png
+// and $PROJECT/calc/grin_focus_assessment.ipynb
 double solve_n2(double L, double F, double n0)
 {
     if (L < 0) return std::nan("");
