@@ -1,0 +1,32 @@
+<svg height="220" width="260" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <linearGradient id="a" gradientUnits="userSpaceOnUse" x1="152" x2="153.5" y1="196" y2="41.5">
+    <stop offset="0" stop-color="#eafaff"/>
+    <stop offset=".5" stop-color="#4bcffc"/>
+    <stop offset="1" stop-color="#eafaff"/>
+  </linearGradient>
+  <path d="m107.5 39.5h97v157h-97z" fill="url(#a)" stroke="#00b4ff" stroke-width="3"/>
+  <g fill="none">
+    <path d="m3.5 118h250.42" stroke="#000" stroke-dasharray="8 4 2 4" stroke-width="2"/>
+    <path d="m205.5 24.82v26.47" stroke="#000"/>
+    <path d="m199.64 24.18 4.91 4.36-4.91 3.64m-87-8-4.91 4.18 4.91 3.82m-4.23-3.68h95.47" stroke="#000"/>
+    <path d="m106.5 24.82v26.47" stroke="#000"/>
+    <path d="m199.26 204.18 4.91 4.36-4.91 3.64m-178.5-8-4.91 4.18 4.91 3.82m-4.23-3.68h186.97" stroke="#000"/>
+  </g>
+  <text font-family="Times New Roman" font-size="8.88" font-style="italic" stroke-width=".89" x="81.09" y="204.73"><tspan font-size="31.98" stroke-width=".89" x="81.09" y="204.73">F</tspan></text>
+  <text font-family="Times New Roman" font-size="8.88" font-style="italic" stroke-width=".89" x="149.15" y="24.59"><tspan font-size="31.98" stroke-width=".89" x="149.15" y="24.59">L</tspan></text>
+  <path d="m238.17 49.42 12.76 2.14-9.39 7.89m-238.04 17.1h103.48c32.49.5 67.64-3.74 97.54-12.83l46.41-12.16" fill="none" stroke="#f00" stroke-width="2"/>
+  <path d="m204.53 63.72-189.7 54" fill="none" stroke="#f00" stroke-dasharray="4 4" stroke-width="2"/>
+  <path d="m205.5 178.82v34.47" fill="none" stroke="#000"/>
+  <path d="m204.53 171.72-189.7-54" fill="none" stroke="#f00" stroke-dasharray="4 4" stroke-width="2"/>
+  <circle cx="14.73" cy="117.61" fill="#001217" r="4.75"/>
+  <path d="m238.17 186.6 12.76-2.14-9.39-7.89m-238.04-17.1h103.48c32.49-.5 67.64 3.74 97.54 12.83l46.41 12.16" fill="none" stroke="#f00" stroke-width="2"/>
+  <path d="m14.5 116.82v96.47" fill="none" stroke="#000"/>
+  <g font-family="Times New Roman" font-style="italic" stroke-width="1.23" transform="matrix(.82 0 0 .82 93.57 10.58)">
+    <text font-size="10" x="64" y="115.02"><tspan font-size="36" stroke-width="1.23" x="64" y="115.02">n</tspan></text>
+    <text font-size="7.02" transform="scale(.99 1.01)" x="80.3" y="122.41"><tspan dy="0" font-size="21.24" stroke-width="1.23" x="80.3" y="122.41">0</tspan></text>
+  </g>
+  <g font-family="Times New Roman" font-style="italic" stroke-width="1.01" transform="matrix(.82 0 0 .82 80.41 50.77)">
+    <text font-size="10" stroke-width="1.01" x="64" y="115.02"><tspan font-size="36" stroke-width="1.01" x="64" y="115.02">n &lt;0</tspan></text>
+    <text font-size="4.75" stroke-width="1.33" transform="scale(.99 1.01)" x="82.28" y="119.64">       <tspan font-size="17.1" stroke-width="1.01" x="82.28" y="119.64">2</tspan>     </text>
+  </g>
+</svg>

@@ -10,6 +10,11 @@ class QAction;
 class QLabel;
 QT_END_NAMESPACE
 
+namespace Ori {
+namespace Widgets {
+class SvgView;
+}}
+
 class GrinLensWindow : public QWidget
 {
     Q_OBJECT
@@ -28,12 +33,16 @@ private:
     Z::Parameter *_length, *_ior, *_ior2, *_focus;
     QAction *_actionCalcN2, *_actionCalcF;
     QLabel *_statusLabel;
+    Ori::Widgets::SvgView *_outline;
+    bool _restoring = false;
+    int _outlineKind = 0;
 
     void restoreState();
     void storeState();
     void showError(const QString& err);
     void calculateN2();
     void calculateF();
+    void updateOutline(bool neg);
 };
 
 #endif // GRIN_LENS_WINDOW_H

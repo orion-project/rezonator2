@@ -78,11 +78,11 @@ GrinLensWindow::GrinLensWindow(QWidget *parent) : QWidget(parent)
                                          Ori::Gui::textToolButton(_actionCalcN2),
                                        }, "calc_grin");
 
+    _outline = new Ori::Widgets::SvgView;
+
     auto tabs = Z::Gui::makeBorderlessTabs();
     tabs->addTab(editors, tr("Calc"));
-    tabs->addTab(LayoutV({
-        Ori::Widgets::SvgView::makeStatic(":/drawing/grin_lens")
-    }).setMargin(3).makeWidget(), tr("Outline"));
+    tabs->addTab(LayoutV({_outline}).setMargin(3).makeWidget(), tr("Outline"));
 
     LayoutV({toolbar, tabs}).setSpacing(0).setMargin(0).useFor(this);
 
@@ -102,11 +102,13 @@ void GrinLensWindow::restoreState()
     if (root["solve_n2"].toBool(true))
         _actionCalcN2->setChecked(true);
     else _actionCalcF->setChecked(true);
+    _restoring = true;
     foreach (auto p, _params)
-        if (root.contains(p->alias())) {
-            auto res = Z::IO::Json::readValue(root[p->alias()].toObject(), p->dim());
-            if (res.ok()) p->setValue(res.value());
-        }
+    {
+        auto res = Z::IO::Json::readValue(root[p->alias()].toObject(), p->dim());
+        if (res.ok()) p->setValue(res.value());
+    }
+    _restoring = false;
     CustomDataHelpers::restoreWindowSize(root, this, 340, 280);
 }
 
@@ -122,6 +124,8 @@ void GrinLensWindow::storeState()
 
 void GrinLensWindow::calculate(Z::Parameter *p)
 {
+    if (_restoring)
+        return;
     if (p == _length or p == _ior) {
         if (_actionCalcF->isChecked()) {
             calculateF();
@@ -149,6 +153,7 @@ void GrinLensWindow::calculateN2()
     auto unit = _ior2->value().unit();
     _ior2->setValue(Z::Value(unit->fromSi(n2), unit));
     showError(QString());
+    updateOutline(F < 0);
 }
 
 void GrinLensWindow::calculateF()
@@ -165,10 +170,26 @@ void GrinLensWindow::calculateF()
     auto unit = _focus->value().unit();
     _focus->setValue(Z::Value(unit->fromSi(F), unit));
     showError(QString());
+    updateOutline(F < 0);
 }
 
 void GrinLensWindow::showError(const QString& err)
 {
     _statusLabel->setText(err);
     _statusLabel->setVisible(!err.isEmpty());
+}
+
+void GrinLensWindow::updateOutline(bool neg)
+{
+    if (neg) {
+        if (_outlineKind >= 0) {
+            _outlineKind = -1;
+            _outline->load(":/drawing/grin_lens_neg");
+        }
+    } else {
+        if (_outlineKind <= 0) {
+            _outlineKind = 1;
+            _outline->load(":/drawing/grin_lens");
+        }
+    }
 }
