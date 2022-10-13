@@ -2,10 +2,11 @@
 #include "TestUtils.h"
 #include "../core/Schema.h"
 #include "../core/Elements.h"
-#include "../core/Utils.h"
 #include "../io/SchemaReaderJson.h"
 #include "../funcs/BeamParamsAtElemsFunction.h"
 #include "../AppSettings.h"
+
+#include "core/OriTemplates.h"
 
 #define READ_TEST_FILE(file_name)\
     Schema schema;\

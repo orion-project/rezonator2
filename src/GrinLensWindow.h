@@ -34,7 +34,6 @@ private:
     QAction *_actionCalcN2, *_actionCalcF;
     QLabel *_statusLabel;
     Ori::Widgets::SvgView *_outline;
-    bool _recalculate = true;
     int _outlineKind = 0;
 
     void restoreState();

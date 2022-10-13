@@ -1,8 +1,9 @@
 #include "TestUtils.h"
 #include "../core/Schema.h"
 #include "../core/Elements.h"
-#include "../core/Utils.h"
 #include "../funcs/RoundTripCalculator.h"
+
+#include "core/OriTemplates.h"
 
 namespace Z {
 namespace Tests {

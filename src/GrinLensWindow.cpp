@@ -101,13 +101,11 @@ void GrinLensWindow::restoreState()
     if (root["solve_n2"].toBool(true))
         _actionCalcN2->setChecked(true);
     else _actionCalcF->setChecked(true);
-    _recalculate = false;
     foreach (auto p, _params)
     {
         auto res = Z::IO::Json::readValue(root[p->alias()].toObject(), p->dim());
         if (res.ok()) p->setValue(res.value());
     }
-    _recalculate = true;
     CustomDataHelpers::restoreWindowSize(root, this, 340, 280);
 }
 
@@ -123,8 +121,6 @@ void GrinLensWindow::storeState()
 
 void GrinLensWindow::calculate(Z::Parameter *p)
 {
-    if (!_recalculate)
-        return;
     if (p == _length or p == _ior) {
         if (_actionCalcF->isChecked()) {
             calculateF();
@@ -151,9 +147,7 @@ void GrinLensWindow::calculateN2()
     //qDebug() << "Calculated n2" << QString::number(n2.result(), 'g', 16);
 
     auto unit = _ior2->value().unit();
-    _recalculate = false;
     _ior2->setValue(Z::Value(unit->fromSi(n2.result()), unit));
-    _recalculate = true;
     showError(QString());
 }
 
@@ -170,9 +164,7 @@ void GrinLensWindow::calculateF()
     //qDebug() << "Calculated F" << QString::number(F.result(), 'g', 16);
 
     auto unit = _focus->value().unit();
-    _recalculate = false;
     _focus->setValue(Z::Value(unit->fromSi(F.result()), unit));
-    _recalculate = true;
     showError(QString());
 }
 
