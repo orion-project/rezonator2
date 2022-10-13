@@ -16,8 +16,6 @@
 #include <QToolBar>
 #include <QToolButton>
 
-using namespace Ori::Layouts;
-
 namespace {
 
 GrinLensWindow* __instance = nullptr;
@@ -41,16 +39,16 @@ GrinLensWindow::GrinLensWindow(QWidget *parent) : QWidget(parent)
     _length =  new Z::Parameter(Z::Dims::linear(), QStringLiteral("L"), QStringLiteral("L"),
                                 tr("Length"),
                                 tr("Thickness of material. Must be a positive value."));
-    _ior = new Z::Parameter(Z::Dims::none(), QStringLiteral("n0"), QStringLiteral("n0"),
+    _ior = new Z::Parameter(Z::Dims::none(), QStringLiteral("n0"), QStringLiteral("n<sub>0</sub>"),
                             tr("IOR"),
                             tr("Index of refraction at the optical axis. "
                                "Must be a positive value."));
-    _ior2 = new Z::Parameter(Z::Dims::fixed(), QStringLiteral("n2"), QStringLiteral("n2"),
+    _ior2 = new Z::Parameter(Z::Dims::fixed(), QStringLiteral("n2"), QStringLiteral("n<sub>2</sub>"),
                              tr("IOR gradient"),
                              tr("Radial gradient of index of refraction."));
     _focus = new Z::Parameter(Z::Dims::linear(), QStringLiteral("F"), QStringLiteral("F"),
                               tr("Focal length"),
-                              tr("Distance at that parallel input rays get converged (for positive lens). "
+                              tr("Distance at wich a lens having positive n<sub>2</sub> converges parallel input rays. "
                                  "Distance is measured from the exit face of the lens."));
     _length->setValue(100_mm);
     _ior->setValue(1.73);
@@ -66,7 +64,7 @@ GrinLensWindow::GrinLensWindow(QWidget *parent) : QWidget(parent)
     ParamsEditor::Options opts(&_params);
     opts.applyMode = ParamsEditor::Options::ApplyInstant;
     opts.ownParams = true;
-    opts.auxControl = LayoutV({_statusLabel}).setMargin(3).makeWidget();
+    opts.auxControl = Ori::Layouts::LayoutV({_statusLabel}).setMargin(3).makeWidget();
     auto editors = new ParamsEditor(opts);
     connect(editors, SIGNAL(paramChanged(Z::Parameter*, Z::Value)), this, SLOT(calculate(Z::Parameter*)));
 
@@ -79,12 +77,13 @@ GrinLensWindow::GrinLensWindow(QWidget *parent) : QWidget(parent)
                                        }, "calc_grin");
 
     _outline = new Ori::Widgets::SvgView;
+    _outline->setContentsMargins(3, 3, 3, 3);
 
     auto tabs = Z::Gui::makeBorderlessTabs();
     tabs->addTab(editors, tr("Calc"));
-    tabs->addTab(LayoutV({_outline}).setMargin(3).makeWidget(), tr("Outline"));
+    tabs->addTab(_outline, tr("Outline"));
 
-    LayoutV({toolbar, tabs}).setSpacing(0).setMargin(0).useFor(this);
+    Ori::Layouts::LayoutV({toolbar, tabs}).setSpacing(0).setMargin(0).useFor(this);
 
     restoreState();
     calculate(_length);
@@ -102,13 +101,13 @@ void GrinLensWindow::restoreState()
     if (root["solve_n2"].toBool(true))
         _actionCalcN2->setChecked(true);
     else _actionCalcF->setChecked(true);
-    _restoring = true;
+    _recalculate = false;
     foreach (auto p, _params)
     {
         auto res = Z::IO::Json::readValue(root[p->alias()].toObject(), p->dim());
         if (res.ok()) p->setValue(res.value());
     }
-    _restoring = false;
+    _recalculate = true;
     CustomDataHelpers::restoreWindowSize(root, this, 340, 280);
 }
 
@@ -124,7 +123,7 @@ void GrinLensWindow::storeState()
 
 void GrinLensWindow::calculate(Z::Parameter *p)
 {
-    if (_restoring)
+    if (!_recalculate)
         return;
     if (p == _length or p == _ior) {
         if (_actionCalcF->isChecked()) {
@@ -142,35 +141,39 @@ void GrinLensWindow::calculate(Z::Parameter *p)
 void GrinLensWindow::calculateN2()
 {
     double L = _length->value().toSi();
-    if (L <= 0)
-        return showError(tr("L must be positive"));
     double n0 = _ior->value().toSi();
-    if (n0 < 0)
-        return showError(tr("n0 must be positive"));
     double F = _focus->value().toSi();
-    double n2 = GrinCalculator::solve_n2(L, F, n0);
-    //qDebug() << "Calculated n2" << QString::number(n2, 'g', 16);
-    auto unit = _ior2->value().unit();
-    _ior2->setValue(Z::Value(unit->fromSi(n2), unit));
-    showError(QString());
     updateOutline(F < 0);
+
+    auto n2 = GrinCalculator::solve_n2(L, F, n0);
+    if (!n2.ok())
+        return showError(n2.error());
+    //qDebug() << "Calculated n2" << QString::number(n2.result(), 'g', 16);
+
+    auto unit = _ior2->value().unit();
+    _recalculate = false;
+    _ior2->setValue(Z::Value(unit->fromSi(n2.result()), unit));
+    _recalculate = true;
+    showError(QString());
 }
 
 void GrinLensWindow::calculateF()
 {
     double L = _length->value().toSi();
-    if (L <= 0)
-        return showError(tr("L must be positive"));
     double n0 = _ior->value().toSi();
-    if (n0 < 0)
-        return showError(tr("n0 must be positive"));
     double n2 = _ior2->value().toSi();
-    double F = GrinCalculator::calc_focus(L, n0, n2);
-    //qDebug() << "Calculated F" << QString::number(F, 'g', 16);
+    updateOutline(n2 < 0);
+
+    auto F = GrinCalculator::calc_focus(L, n0, n2);
+    if (!F.ok())
+        return showError(F.error());
+    //qDebug() << "Calculated F" << QString::number(F.result(), 'g', 16);
+
     auto unit = _focus->value().unit();
-    _focus->setValue(Z::Value(unit->fromSi(F), unit));
+    _recalculate = false;
+    _focus->setValue(Z::Value(unit->fromSi(F.result()), unit));
+    _recalculate = true;
     showError(QString());
-    updateOutline(F < 0);
 }
 
 void GrinLensWindow::showError(const QString& err)

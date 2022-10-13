@@ -1,30 +1,39 @@
 #include "GrinCalculator.h"
 
+#include "../core/Protocol.h"
+
 #include <cmath>
 
-#include <QString>
-#include <QDebug>
+#include <QApplication>
 
 #define MAX_SOLVE_ITERATIONS 1000
 
 namespace GrinCalculator {
 
-double calc_focus(double L, double n0, double n2)
+GrinResult check_params(const double& L, const double& n0)
 {
-    if (L < 0) return std::nan("");
-    if (n0 < 0) return std::nan("");
+    if (L < 0) return GrinResult::fail(qApp->translate("GrinCalculator", "L must be positive"));
+    if (n0 < 0) return GrinResult::fail(qApp->translate("GrinCalculator", "n0 must be positive"));
+    return GrinResult::ok(0);
+}
+
+GrinResult calc_focus(const double& L, const double& n0, const double& n2)
+{
+    auto res = check_params(L, n0);
+    if (!res.ok()) return res;
 
     const double g = sqrt(qAbs(n2)/n0);
-    return 1 / ( n2 < 0 ? -tanh(g*L) : tan(g*L)) / n0 / g;
+    const double tg = n2 < 0 ? -tanh(g*L) : tan(g*L);
+    return GrinResult::ok(1 / tg / n0 / g);
 }
 
 // The algorithm is driven by the shape of equation
 // see $PROJECT/calc/grin_focus_assessment.png
 // and $PROJECT/calc/grin_focus_assessment.ipynb
-double solve_n2(double L, double F, double n0)
+GrinResult solve_n2(const double& L, const double& F, const double& n0)
 {
-    if (L < 0) return std::nan("");
-    if (n0 < 0) return std::nan("");
+    auto res = check_params(L, n0);
+    if (!res.ok()) return res;
 
     // F = 1 / (tan(g*L) * n0 * g)
     // F * tan(g*L) * n0 * g = 1
@@ -55,15 +64,15 @@ double solve_n2(double L, double F, double n0)
             y_next = y_mid;
         }
         if (++safe_count >= MAX_SOLVE_ITERATIONS) {
-            qWarning() << QString("Solving for n2 is not finished after %1 iterations. "
-                                  "Parameters: L=%2, F=%3, n0=%4. Stopped at x_mid=%5 y_mid=%6")
-                          .arg(MAX_SOLVE_ITERATIONS).arg(L, 0, 'g', 16).arg(F, 0, 'g', 16)
-                          .arg(n0, 0, 'g', 16).arg(x_mid, 0, 'g', 16).arg(y_mid, 0, 'g', 16);
-            break;
+            Z_WARNING(QString("Solving for n2 is not finished after %1 iterations. "
+                              "Parameters: L=%2, F=%3, n0=%4. Stopped at x_mid=%5 y_mid=%6")
+                      .arg(MAX_SOLVE_ITERATIONS).arg(L, 0, 'g', 16).arg(F, 0, 'g', 16)
+                      .arg(n0, 0, 'g', 16).arg(x_mid, 0, 'g', 16).arg(y_mid, 0, 'g', 16))
+            return GrinResult::fail("Failed to solve for n2 with given F");
         }
     }
-    double tmp = x_mid / L;
-    return n0 * tmp * tmp;
+    const double tmp = x_mid / L;
+    return GrinResult::ok(n0 * tmp * tmp);
 }
 
 } // namespace GrinCalculator

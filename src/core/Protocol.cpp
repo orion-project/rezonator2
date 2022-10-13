@@ -1,6 +1,5 @@
 #include "Protocol.h"
 
-#include <QDebug>
 #include <QPlainTextEdit>
 
 namespace Z {
@@ -44,7 +43,6 @@ QString Protocol::messageFormat() const
 
 void Protocol::write(const QString& str)
 {
-    qDebug() << str;
     _record.append(str).append(' ');
 }
 

@@ -3,6 +3,8 @@
 
 #include "Format.h"
 
+#include <QDebug>
+
 QT_BEGIN_NAMESPACE
 class QPlainTextEdit;
 QT_END_NAMESPACE
@@ -43,11 +45,24 @@ private:
 
 } // namespace Z
 
-// TODO: not sure what difference between REPORT, INFO and NOTE. Seems to be overkill.
-#define Z_REPORT(p) if (Z::Protocol::isEnabled) { Z::Protocol(Z::Protocol::Report) << p; }
-#define Z_INFO(p) if (Z::Protocol::isEnabled) { Z::Protocol(Z::Protocol::Info) << p; }
-#define Z_NOTE(p) if (Z::Protocol::isEnabled) { Z::Protocol(Z::Protocol::Note) << p; }
-#define Z_ERROR(p) if (Z::Protocol::isEnabled) { Z::Protocol(Z::Protocol::Error) << p; }
-#define Z_WARNING(p) if (Z::Protocol::isEnabled) { Z::Protocol(Z::Protocol::Warning) << p; }
+#define Z_REPORT(p) { \
+    qDebug() << p; \
+    if (Z::Protocol::isEnabled) { Z::Protocol(Z::Protocol::Report) << p; } \
+}
+
+#define Z_INFO(p) {\
+    qInfo() << p; \
+    if (Z::Protocol::isEnabled) { Z::Protocol(Z::Protocol::Info) << p; } \
+}
+
+#define Z_WARNING(p) { \
+    qWarning() << p; \
+    if (Z::Protocol::isEnabled) { Z::Protocol(Z::Protocol::Warning) << p; } \
+}
+
+#define Z_ERROR(p) { \
+    qCritical() << p; \
+    if (Z::Protocol::isEnabled) { Z::Protocol(Z::Protocol::Error) << p; } \
+}
 
 #endif // PROTOCOL_H
