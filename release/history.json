@@ -5,6 +5,9 @@
       "date": "",
       "changes": [
         {
+          "text": "Added support for negative focuses in Thermal lens and Thermal medium elements and in the GRIN Lens Assessment tool"
+        },
+        {
           "text": "Added a tool for drawing simple lenses - Lensmaker"
         },
         {

@@ -9,6 +9,7 @@
 
 #define _PI Z::Const::Pi
 #define _2PI (2.0*Z::Const::Pi)
+#define NaN Double::nan()
 
 // TODO:NEXT-VER in general case all parameters units should be verified too.
 // But currenly we have verification only in that places which always use correct uints (e.g. Element props dialog).
@@ -862,10 +863,21 @@ void ElemThermoLens::calcMatrixInternal() {
     const double L = qAbs(lengthSI());
     const double F = focus();
     const double n0 = qAbs(ior());
-    auto n2 = GrinCalculator::solve_n2(L, n0, F);
-    _n2 = n2.ok() ? n2.result() : 0;
-    const double g = sqrt(_n2 / n0);
-    _mt.assign(cos(g*L), sin(g*L)/n0/g, -n0*g*sin(g*L), cos(g*L));
+
+    if (Double(F).isNot(0)) {
+        auto n2 = GrinCalculator::solve_n2(L, n0, F);
+        if (n2.ok()) {
+            _n2 = n2.result();
+            if (_n2 > 0) {
+                const double g = sqrt(_n2 / n0);
+                _mt.assign(cos(g*L), sin(g*L)/n0/g, -n0*g*sin(g*L), cos(g*L));
+            } else {
+                const double g = sqrt(-_n2 / n0);
+                _mt.assign(cosh(g*L), sinh(g*L)/n0/g, n0*g*sinh(g*L), cosh(g*L));
+            }
+        } else _mt.assign(NaN, NaN, NaN, NaN);
+    } else _mt.assign(NaN, NaN, NaN, NaN);
+
     _ms = _mt;
 
     _mt_inv = _mt;
@@ -874,11 +886,17 @@ void ElemThermoLens::calcMatrixInternal() {
 
 void ElemThermoLens::setSubRangeSI(double value) {
     const double L1 = value;
-    const double L2 = lengthSI() - L1;
-    const double n0 = ior();
-    const double g = sqrt(_n2 / n0);
-    _mt1.assign(cos(g*L1), sin(g*L1)/n0/g, -g*sin(g*L1), cos(g*L1)/n0);
-    _mt2.assign(cos(g*L2), sin(g*L2)/g, -n0*g*sin(g*L2), n0*cos(g*L2));
+    const double L2 = qAbs(lengthSI()) - L1;
+    const double n0 = qAbs(ior());
+    if (_n2 > 0) {
+        const double g = sqrt(_n2 / n0);
+        _mt1.assign(cos(g*L1), sin(g*L1)/n0/g, -g*sin(g*L1), cos(g*L1)/n0);
+        _mt2.assign(cos(g*L2), sin(g*L2)/g, -n0*g*sin(g*L2), n0*cos(g*L2));
+    } else {
+        const double g = sqrt(-_n2 / n0);
+        _mt1.assign(cosh(g*L1), sinh(g*L1)/n0/g, g*sinh(g*L1), cosh(g*L1)/n0);
+        _mt2.assign(cosh(g*L2), sinh(g*L2)/g, n0*g*sinh(g*L2), n0*cosh(g*L2));
+    }
     _ms1 = _mt1;
     _ms2 = _mt2;
 }
@@ -909,10 +927,19 @@ void ElemThermoMedium::calcMatrixInternal() {
     const double L = qAbs(lengthSI());
     const double n0 = qAbs(ior());
     const double F = focus();
-    auto n2 = GrinCalculator::solve_n2(L, n0, F);
-    _n2 = n2.ok() ? n2.result() : 0;
-    const double g = sqrt(_n2 / n0);
-    _mt.assign(cos(g*L), sin(g*L)/g, -g*sin(g*L), cos(g*L));
+    if (Double(F).isNot(0)) {
+        auto n2 = GrinCalculator::solve_n2(L, n0, F);
+        if (n2.ok()) {
+            _n2 = n2.result();
+            if (_n2 > 0) {
+                const double g = sqrt(_n2 / n0);
+                _mt.assign(cos(g*L), sin(g*L)/g, -g*sin(g*L), cos(g*L));
+            } else {
+                const double g = sqrt(-_n2 / n0);
+                _mt.assign(cosh(g*L), sinh(g*L)/g, g*sinh(g*L), cosh(g*L));
+            }
+        } else _mt.assign(NaN, NaN, NaN, NaN);
+    } else _mt.assign(NaN, NaN, NaN, NaN);
     _ms = _mt;
 
     _mt_inv = _mt;
@@ -921,11 +948,17 @@ void ElemThermoMedium::calcMatrixInternal() {
 
 void ElemThermoMedium::setSubRangeSI(double value) {
     const double L1 = value;
-    const double L2 = lengthSI() - L1;
-    const double n0 = ior();
-    const double g = sqrt(_n2 / n0);
-    _mt1.assign(cos(g*L1), sin(g*L1)/g, -g*sin(g*L1), cos(g*L1));
-    _mt2.assign(cos(g*L2), sin(g*L2)/g, -g*sin(g*L2), cos(g*L2));
+    const double L2 = qAbs(lengthSI()) - L1;
+    const double n0 = qAbs(ior());
+    if (_n2 > 0) {
+        const double g = sqrt(_n2 / n0);
+        _mt1.assign(cos(g*L1), sin(g*L1)/g, -g*sin(g*L1), cos(g*L1));
+        _mt2.assign(cos(g*L2), sin(g*L2)/g, -g*sin(g*L2), cos(g*L2));
+    } else {
+        const double g = sqrt(-_n2 / n0);
+        _mt1.assign(cosh(g*L1), sinh(g*L1)/g, g*sinh(g*L1), cosh(g*L1));
+        _mt2.assign(cosh(g*L2), sinh(g*L2)/g, g*sinh(g*L2), cosh(g*L2));
+    }
     _ms1 = _mt1;
     _ms2 = _mt2;
 }
