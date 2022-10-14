@@ -46,12 +46,12 @@ private:
 } // namespace Z
 
 #define Z_REPORT(p) { \
-    qDebug() << p; \
+    /*qDebug() << p;*/ \
     if (Z::Protocol::isEnabled) { Z::Protocol(Z::Protocol::Report) << p; } \
 }
 
 #define Z_INFO(p) {\
-    qInfo() << p; \
+    /*qInfo() << p;*/ \
     if (Z::Protocol::isEnabled) { Z::Protocol(Z::Protocol::Info) << p; } \
 }
 

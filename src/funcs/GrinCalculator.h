@@ -8,7 +8,7 @@ namespace GrinCalculator {
 using GrinResult = Ori::Result<double>;
 
 GrinResult calc_focus(const double& L, const double& n0, const double& n2);
-GrinResult solve_n2(const double& L, const double& F, const double& n0);
+GrinResult solve_n2(const double& L, const double& n0, const double& F);
 
 } // namespace GrinFocusCalculator
 

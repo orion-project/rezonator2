@@ -141,7 +141,7 @@ void GrinLensWindow::calculateN2()
     double F = _focus->value().toSi();
     updateOutline(F < 0);
 
-    auto n2 = GrinCalculator::solve_n2(L, F, n0);
+    auto n2 = GrinCalculator::solve_n2(L, n0, F);
     if (!n2.ok())
         return showError(n2.error());
     //qDebug() << "Calculated n2" << QString::number(n2.result(), 'g', 16);

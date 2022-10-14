@@ -862,7 +862,7 @@ void ElemThermoLens::calcMatrixInternal() {
     const double L = qAbs(lengthSI());
     const double F = focus();
     const double n0 = qAbs(ior());
-    auto n2 = GrinCalculator::solve_n2(L, F, n0);
+    auto n2 = GrinCalculator::solve_n2(L, n0, F);
     _n2 = n2.ok() ? n2.result() : 0;
     const double g = sqrt(_n2 / n0);
     _mt.assign(cos(g*L), sin(g*L)/n0/g, -n0*g*sin(g*L), cos(g*L));
@@ -909,7 +909,7 @@ void ElemThermoMedium::calcMatrixInternal() {
     const double L = qAbs(lengthSI());
     const double n0 = qAbs(ior());
     const double F = focus();
-    auto n2 = GrinCalculator::solve_n2(L, F, n0);
+    auto n2 = GrinCalculator::solve_n2(L, n0, F);
     _n2 = n2.ok() ? n2.result() : 0;
     const double g = sqrt(_n2 / n0);
     _mt.assign(cos(g*L), sin(g*L)/g, -g*sin(g*L), cos(g*L));
