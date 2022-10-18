@@ -273,6 +273,7 @@
     </qresource>
     <qresource prefix="/drawing">
         <file alias="grin_lens">../img/drawing/grin_lens.svg</file>
+        <file alias="grin_lens_neg">../img/drawing/grin_lens_neg.svg</file>
         <file alias="pump_waist">../img/drawing/pump_waist.png</file>
         <file alias="pump_front">../img/drawing/pump_front.png</file>
         <file alias="pump_ray_vector">../img/drawing/pump_ray_vector.png</file>

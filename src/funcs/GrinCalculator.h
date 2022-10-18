@@ -1,11 +1,14 @@
 #ifndef GRIN_CALCULATOR_H
 #define GRIN_CALCULATOR_H
 
+#include "core/OriResult.h"
+
 namespace GrinCalculator {
 
-double calc_focus(double L, double n0, double n2);
+using GrinResult = Ori::Result<double>;
 
-double solve_n2(double L, double F, double n0);
+GrinResult calc_focus(const double& L, const double& n0, const double& n2);
+GrinResult solve_n2(const double& L, const double& n0, const double& F);
 
 } // namespace GrinFocusCalculator
 

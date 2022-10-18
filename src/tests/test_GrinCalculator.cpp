@@ -9,40 +9,54 @@ namespace Z {
 namespace Tests {
 namespace GrinCalculatorTests {
 
+#define ASSERT_GRIN_F(L, n0, n2, F) { \
+    auto res = GrinCalculator::calc_focus(L, n0, n2); \
+    if (!res.ok()) TEST_LOG(res.error()) \
+    ASSERT_IS_TRUE(res.ok()) \
+    ASSERT_NEAR_DBL(res.result(), F, 1e-14) \
+}
+
+#define ASSERT_GRIN_N2(L, n0, F, n2) { \
+    auto res = GrinCalculator::solve_n2(L, n0, F); \
+    if (!res.ok()) TEST_LOG(res.error()) \
+    ASSERT_IS_TRUE(res.ok()) \
+    ASSERT_NEAR_DBL(res.result(), n2, 1e-12) \
+}
+
 TEST_METHOD(calc_focus)
 {
-    ASSERT_NEAR_DBL(GrinCalculator::calc_focus(0.01, 1.73, 680.587611522994), 0.145, 1e-16)
-    ASSERT_NEAR_DBL(GrinCalculator::calc_focus(0.01, 1.73, 68.8739721494325), 1.45, 1e-15)
-    ASSERT_NEAR_DBL(GrinCalculator::calc_focus(0.01, 1.73, 6.89563539716427), 14.5, 1e-14)
-    ASSERT_NEAR_DBL(GrinCalculator::calc_focus(0.01, 1.73, 0.689646008267344), 145.0, 1e-12)
+    ASSERT_GRIN_F(0.01, 1.73, -68, -1.4725145128580228)
+    ASSERT_GRIN_F(0.01, 1.73, -6.8, -14.707809084726811)
+    ASSERT_GRIN_F(0.01, 1.73, 6.8, 14.703955520175825)
+    ASSERT_GRIN_F(0.01, 1.73, 68, 1.468660947932803)
 
-    ASSERT_NEAR_DBL(GrinCalculator::calc_focus(0.1, 1.73, 60.7038644668408), 0.145, 1e-16)
-    ASSERT_NEAR_DBL(GrinCalculator::calc_focus(0.1, 1.73, 6.80587611522994), 1.45, 1e-15)
-    ASSERT_NEAR_DBL(GrinCalculator::calc_focus(0.1, 1.73, 0.688739721494325), 14.5, 1e-14)
-    ASSERT_NEAR_DBL(GrinCalculator::calc_focus(0.1, 1.73, 0.0689563539716427), 145.0, 1e-13)
+    ASSERT_GRIN_F(0.1, 1.73, -68, -0.16583993377698594)
+    ASSERT_GRIN_F(0.1, 1.73, -6.8, -1.4898057564340426)
+    ASSERT_GRIN_F(0.1, 1.73, 6.8, 1.451269732942243)
+    ASSERT_GRIN_F(0.1, 1.73, 68, 0.12726642783477746)
 
-    ASSERT_NEAR_DBL(GrinCalculator::calc_focus(1.0, 1.73, 2.76312188867699), 0.145, 1e-15)
-    ASSERT_NEAR_DBL(GrinCalculator::calc_focus(1.0, 1.73, 0.607038644668408), 1.45, 1e-15)
-    ASSERT_NEAR_DBL(GrinCalculator::calc_focus(1.0, 1.73, 0.0680587611522994), 14.5, 1e-14)
-    ASSERT_NEAR_DBL(GrinCalculator::calc_focus(1.0, 1.73, 0.00688739721494325), 145.0, 1e-15)
+    ASSERT_GRIN_F(1, 1.73, -68, -0.09219887148906701)
+    ASSERT_GRIN_F(1, 1.73, -6.8, -0.30282878628426385)
+    ASSERT_GRIN_F(1, 1.73, 6.8, -0.12733932762878003)
+    ASSERT_GRIN_F(1, 1.73, 68, -6.725943680342854)
 }
 
 TEST_METHOD(solve_n2)
 {
-    ASSERT_NEAR_DBL(GrinCalculator::solve_n2(0.01, 0.145, 1.73), 680.587611522994, 1e-2)
-    ASSERT_NEAR_DBL(GrinCalculator::solve_n2(0.01, 1.45, 1.73), 68.8739721494325, 1e-4)
-    ASSERT_NEAR_DBL(GrinCalculator::solve_n2(0.01, 14.5, 1.73), 6.89563539716427, 1e-5)
-    ASSERT_NEAR_DBL(GrinCalculator::solve_n2(0.01, 145.0, 1.73), 0.689646008267344, 1e-6)
+    ASSERT_GRIN_N2(0.01, 1.73, -1.45, -69.0572881420023)
+    ASSERT_GRIN_N2(0.01, 1.73, -14.5, -6.897468131582403)
+    ASSERT_GRIN_N2(0.01, 1.73, 14.5, 6.895639895856058)
+    ASSERT_GRIN_N2(0.01, 1.73, 1.45, 68.87395033584585)
 
-    ASSERT_NEAR_DBL(GrinCalculator::solve_n2(0.1, 0.145, 1.73), 60.7038644668408, 1e-5)
-    ASSERT_NEAR_DBL(GrinCalculator::solve_n2(0.1, 1.45, 1.73), 6.80587611522994, 1e-6)
-    ASSERT_NEAR_DBL(GrinCalculator::solve_n2(0.1, 14.5, 1.73), 0.688739721494325, 1e-7)
-    ASSERT_NEAR_DBL(GrinCalculator::solve_n2(0.1, 145.0, 1.73), 0.0689563539716427, 1e-8)
+    ASSERT_GRIN_N2(0.1, 1.73, -0.145, -79.17933873121946)
+    ASSERT_GRIN_N2(0.1, 1.73, -1.45, -6.98917562047311)
+    ASSERT_GRIN_N2(0.1, 1.73, 1.45, 6.805876236827568)
+    ASSERT_GRIN_N2(0.1, 1.73, 0.145, 60.70386205962681)
 
-    ASSERT_NEAR_DBL(GrinCalculator::solve_n2(1.0, 0.145, 1.73), 2.76312188867699, 1e-8)
-    ASSERT_NEAR_DBL(GrinCalculator::solve_n2(1.0, 1.45, 1.73), 0.607038644668408, 1e-9)
-    ASSERT_NEAR_DBL(GrinCalculator::solve_n2(1.0, 14.5, 1.73), 0.0680587611522994, 1e-9)
-    ASSERT_NEAR_DBL(GrinCalculator::solve_n2(1.0, 145.0, 1.73), 0.00688739721494325, 1e-9)
+    ASSERT_GRIN_N2(1.0, 1.73, -0.0145, -2749.273150042926)
+    ASSERT_GRIN_N2(1.0, 1.73, -0.145, -27.530455608631513)
+    ASSERT_GRIN_N2(1.0, 1.73, 0.145, 2.7631218863278053)
+    ASSERT_GRIN_N2(1.0, 1.73, 0.0145, 36.56807581929833)
 }
 
 //------------------------------------------------------------------------------

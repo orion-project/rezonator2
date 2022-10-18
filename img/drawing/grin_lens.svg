@@ -1,37 +1,29 @@
 <svg height="220" width="260" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<linearGradient id="a" gradientTransform="matrix(.83 0 0 1 11.33 4)" gradientUnits="userSpaceOnUse" x1="75.63" x2="75.63" y1="48.97" y2="206.71">
-<stop offset="0" stop-color="#f0f0f0"/>
-<stop offset=".5" stop-color="#6a6a6a"/>
-<stop offset="1" stop-color="#f0f0f0"/>
-</linearGradient>
-<g stroke="#000">
-<path d="m27.5 53.5h97v157h-97z" fill="url(#a)" stroke-width="3"/>
-<g fill="none">
-<path d="m3.5 132h250.42" stroke-width="4"/>
-<path d="m125.5 30.82v34.47"/>
-<path d="m119.64 30.18 4.91 4.36-4.91 3.64m-87-8-4.91 4.18 4.91 3.82m-4.23-3.68h95.47"/>
-</g>
-</g>
-<text font-family="Times New Roman" font-size="10" font-style="italic" x="67.25" y="31.99"><tspan font-size="36" x="67.25" y="31.99">L</tspan></text>
-<g fill="none" stroke="#000">
-<path d="m3.5 71.06h66.8c80.53 0 134.88 42.59 181.63 79.99" stroke-width="4"/>
-<path d="m26.5 30.82v34.47"/>
-<g stroke-linecap="round" stroke-width="3">
-<path d="m248 138 7-6-7-6"/>
-<path d="m252.5 120.22.71-9.19-9.19.71"/>
-<path d="m252.5 143.8.71 9.19-9.19-.71"/>
-</g>
-</g>
-<g font-family="Times New Roman" font-style="italic" transform="translate(-2.4 2.71)">
-<text font-size="10" x="64" y="115.02"><tspan font-size="36" x="64" y="115.02">n</tspan></text>
-<text font-size="7.02" transform="scale(.99 1.01)" x="80.3" y="122.41"><tspan font-size="25.28" x="80.3" y="122.41">0</tspan></text>
-</g>
-<path d="m3.5 193h66.8c80.53 0 134.87-42.59 181.62-79.99" fill="none" stroke="#000" stroke-width="4"/>
-<g font-family="Times New Roman" font-style="italic" transform="matrix(.83 0 0 .83 -14.3 82.64)">
-<text font-size="10" x="64" xml:space="preserve" y="115.02"><tspan font-size="36" x="64" y="115.02">n  &gt; 0</tspan></text>
-<text font-size="7.02" transform="scale(.99 1.01)" x="80.3" y="122.41"><tspan font-size="25.28" x="80.3" y="122.41">2</tspan></text>
-</g>
-<path d="m227.5 30.82v100.47" fill="none" stroke="#000"/>
-<path d="m221.14 30.18 4.91 4.36-4.91 3.64m-89.5-8-4.91 4.18 4.91 3.82m-4.23-3.68h97.97" fill="none" stroke="#000"/>
-<text font-family="Times New Roman" font-size="10" font-style="italic" x="167.25" y="31.99"><tspan font-size="36" x="167.25" y="31.99">F</tspan></text>
+  <linearGradient id="a" gradientTransform="matrix(.83 0 0 1 71.33 4)" gradientUnits="userSpaceOnUse" x1="72" x2="73.5" y1="210" y2="55.5">
+    <stop offset="0" stop-color="#eafaff"/>
+    <stop offset=".5" stop-color="#4bcffc"/>
+    <stop offset="1" stop-color="#eafaff"/>
+  </linearGradient>
+  <path d="m27.5 53.5h97v157h-97z" fill="url(#a)" stroke="#00b4ff" stroke-width="3"/>
+  <g fill="none">
+    <path d="m3.5 132h250.42" stroke="#000" stroke-dasharray="8 4 2 4" stroke-width="2"/>
+    <path d="m125.5 30.82v34.47" stroke="#000"/>
+    <path d="m119.64 30.18 4.91 4.36-4.91 3.64m-87-8-4.91 4.18 4.91 3.82m-4.23-3.68h95.47" stroke="#000"/>
+    <path d="m26.5 30.82v34.47" stroke="#000"/>
+  </g>
+  <g font-family="Times New Roman" font-style="italic" stroke-width="1.23" transform="matrix(.82 0 0 .82 13.26 21.49)">
+    <text font-size="10" x="64" y="115.02"><tspan font-size="36" stroke-width="1.23" x="64" y="115.02">n</tspan></text>
+    <text font-size="7.02" transform="scale(.99 1.01)" x="80.3" y="122.41"><tspan dy="0" font-size="21.24" stroke-width="1.23" x="80.3" y="122.41">0</tspan></text>
+  </g>
+  <g font-family="Times New Roman" font-style="italic" stroke-width="1.01" transform="matrix(.82 0 0 .82 -13.24 69.19)">
+    <text font-size="10" stroke-width="1.01" x="64" xml:space="preserve" y="115.02"><tspan font-size="36" stroke-width="1.01" x="64" y="115.02">n  &gt; 0</tspan></text>
+    <text font-size="4.75" stroke-width="1.33" transform="scale(.99 1.01)" x="82.28" y="119.64">       <tspan font-size="17.1" stroke-width="1.01" x="82.28" y="119.64">2</tspan>     </text>
+  </g>
+  <path d="m216.5 30.82v100.47" fill="none" stroke="#000"/>
+  <path d="m210.52 30.18 4.91 4.36-4.91 3.64m-78.88-8-4.91 4.18 4.91 3.82m-4.23-3.68h87.35" fill="none" stroke="#000"/>
+  <path d="m239.18 112.7 12.75-1-6.56 9.48m-241.87 76.51h23.48c32.49.5 67.64-3.74 97.54-12.83l127.41-73.16" fill="none" stroke="#f00" stroke-width="2"/>
+  <path d="m239.18 150.57 12.75 1-6.56-9.48m-241.87-76.51h23.48c32.49-.5 67.64 3.74 97.54 12.83l127.41 73.16" fill="none" stroke="#f00" stroke-width="2"/>
+  <circle cx="216.73" cy="131.61" fill="#001217" r="4.75"/>
+  <text font-family="Times New Roman" font-size="8.88" font-style="italic" stroke-width=".89" x="164.7" y="30.59"><tspan font-size="31.98" stroke-width=".89" x="164.7" y="30.59">F</tspan></text>
+  <text font-family="Times New Roman" font-size="8.88" font-style="italic" stroke-width=".89" x="69.15" y="30.59"><tspan font-size="31.98" stroke-width=".89" x="69.15" y="30.59">L</tspan></text>
 </svg>

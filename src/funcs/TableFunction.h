@@ -4,7 +4,8 @@
 #include <memory>
 
 #include "FunctionBase.h"
-#include "../core/Utils.h"
+
+#include "core/OriTemplates.h"
 
 class AbcdBeamCalculator;
 class Schema;
@@ -14,7 +15,7 @@ class Schema;
 class TableFunction : public FunctionBase
 {
 public:
-    typedef Z::Optional<double> OptionalIor;
+    typedef Ori::Optional<double> OptionalIor;
     BOOL_PARAM(AlwaysTwoSides)
 
     struct ColumnDef

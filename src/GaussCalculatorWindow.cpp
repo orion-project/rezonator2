@@ -1,9 +1,8 @@
 #include "GaussCalculatorWindow.h"
 
-#include "AppSettings.h"
+#include "Appearance.h"
 #include "CalculatorWindow.h"
 #include "CustomPrefs.h"
-#include "HelpSystem.h"
 #include "funcs/GaussCalculator.h"
 #include "widgets/ParamEditor.h"
 #include "widgets/PlotHelpers.h"
@@ -649,16 +648,12 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     auto actionCopyImg = Ori::Gui::action(tr("Copy Plot Image"), _plot, SLOT(copyPlotImage()), ":/toolbar/copy_img", QKeySequence::Copy);
     auto actionCopyTbl = Ori::Gui::action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
     auto actionCalc = Ori::Gui::action(tr("Formula Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
-    auto actionHelp = Z::HelpSystem::makeHelpAction(this, "calc_gauss");
 
-    auto toolbar = new Ori::Widgets::FlatToolBar;
-    toolbar->setIconSize(AppSettings::instance().toolbarIconSize());
-    Ori::Gui::populate(toolbar, {
+    return Z::Gui::makeToolbar({
         _calcModeLock, nullptr, _calcModeZone, nullptr, _plotPlusMinusZ, _plotPlusMinusW, nullptr,
         _plotWR, _plotV, _plotZ0, nullptr, actnAutolimits, actnTitleX, actnTitleY, nullptr,
-        actionCopyImg, actionCopyTbl, nullptr, actionCalc, nullptr, actionHelp
-    });
-    return toolbar;
+        actionCopyImg, actionCopyTbl, nullptr, actionCalc
+    }, "calc_gauss");
 }
 
 void GaussCalculatorWindow::zoneSelected(int zone)
