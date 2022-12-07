@@ -272,7 +272,7 @@ QString FormatElemParams::format(Element *elem)
     f.includeValue = true;
 
     QStringList parts;
-    for (Z::Parameter *param : elem->params())
+    foreach (Z::Parameter *param, elem->params())
     {
         if (!Z::Utils::defaultParamFilter()->check(param)) continue;
 
@@ -288,7 +288,7 @@ QString FormatElemParams::format(Element *elem)
 QString FormatPumpParams::format(PumpParams *pump)
 {
     QStringList paramsInfo;
-    for (Z::ParameterTS *param : *pump->params())
+    foreach (Z::ParameterTS *param, *pump->params())
         paramsInfo << QStringLiteral(
             "<nobr><span style='%1'>%2</span><span style='%3'> = %4</span></nobr>")
             .arg(html(ParamLabelFont()), param->displayLabel(),

@@ -64,11 +64,11 @@ void ElemEmptyRange::calcMatrixInternal()
     _ms_inv = _ms;
 }
 
-void ElemEmptyRange::setSubRangeSI(double value)
+void ElemEmptyRange::calcSubmatrices()
 {
-    _mt1.assign(1, value, 0, 1);
+    _mt1.assign(1, _subRangeSI, 0, 1);
     _ms1 = _mt1;
-    _mt2.assign(1, lengthSI() - value, 0, 1);
+    _mt2.assign(1, lengthSI() - _subRangeSI, 0, 1);
     _ms2 = _mt2;
 }
 
@@ -89,11 +89,11 @@ void ElemMediumRange::calcMatrixInternal()
     _ms_inv = _ms;
 }
 
-void ElemMediumRange::setSubRangeSI(double value)
+void ElemMediumRange::calcSubmatrices()
 {
-    _mt1.assign(1, value, 0, 1);
+    _mt1.assign(1, _subRangeSI, 0, 1);
     _ms1 = _mt1;
-    _mt2.assign(1, lengthSI() - value, 0, 1);
+    _mt2.assign(1, lengthSI() - _subRangeSI, 0, 1);
     _ms2 = _mt2;
 }
 
@@ -114,11 +114,11 @@ void ElemPlate::calcMatrixInternal()
     _ms_inv = _ms;
 }
 
-void ElemPlate::setSubRangeSI(double value)
+void ElemPlate::calcSubmatrices()
 {
-    _mt1.assign(1, value / ior(), 0, 1/ior());
+    _mt1.assign(1, _subRangeSI / ior(), 0, 1/ior());
     _ms1 = _mt1;
-    _mt2.assign(1, lengthSI() - value, 0, ior());
+    _mt2.assign(1, lengthSI() - _subRangeSI, 0, ior());
     _ms2 = _mt2;
 }
 
@@ -247,15 +247,15 @@ void ElemTiltedCrystal::calcMatrixInternal()
     _ms_inv = _ms;
 }
 
-void ElemTiltedCrystal::setSubRangeSI(double value)
+void ElemTiltedCrystal::calcSubmatrices()
 {
     const double n = ior();
     const double cos_a = cos(alpha());
     const double cos_b = cos(asin(sin(alpha()) / n)); // cosine of angle inside medium
     const double cos_ab = cos_a / cos_b;
     const double cos_ba = cos_b / cos_a;
-    const double L1 = value;
-    const double L2 = lengthSI() - value;
+    const double L1 = _subRangeSI;
+    const double L2 = lengthSI() - _subRangeSI;
 
     //  --> /:: -->  half lengh * input to medium
     _mt1.assign(cos_ba, L1/n * cos_ab, 0, 1/n * cos_ab);
@@ -283,15 +283,15 @@ void ElemTiltedPlate::calcMatrixInternal()
     _ms_inv = _ms;
 }
 
-void ElemTiltedPlate::setSubRangeSI(double value)
+void ElemTiltedPlate::calcSubmatrices()
 {
     const double n = ior();
     const double cos_a = cos(alpha());
     const double cos_b = cos(asin( sin(alpha()) / n)); // cosine of angle inside medium
     const double cos_ab = cos_a / cos_b;
     const double cos_ba = cos_b / cos_a;
-    const double L1 = value;
-    const double L2 = axisLengthSI() - L1;
+    const double L1 = _subRangeSI;
+    const double L2 = axisLengthSI() - _subRangeSI;
 
     //  --> /:: -->  half lengh * input to medium
     _mt1.assign(cos_ba, L1/n * cos_ab, 0, 1/n * cos_ab);
@@ -327,10 +327,10 @@ void ElemBrewsterCrystal::calcMatrixInternal()
     _ms_inv = _ms;
 }
 
-void ElemBrewsterCrystal::setSubRangeSI(double value)
+void ElemBrewsterCrystal::calcSubmatrices()
 {
     const double n = ior();
-    const double L1 = value;
+    const double L1 = _subRangeSI;
     const double L2 = lengthSI() - L1;
 
     //  --> /:: -->  half lengh * input to medium
@@ -361,9 +361,9 @@ void ElemBrewsterPlate::calcMatrixInternal()
     _ms_inv = _ms;
 }
 
-void ElemBrewsterPlate::setSubRangeSI(double value)
+void ElemBrewsterPlate::calcSubmatrices()
 {
-    const double L1 = value;
+    const double L1 = _subRangeSI;
     const double L2 = axisLengthSI() - L1;
     const double n = ior();
 
@@ -637,10 +637,10 @@ void ElemThickLens::calcMatrixInternal()
     _ms_inv = _mt_inv;
 }
 
-void ElemThickLens::setSubRangeSI(double value)
+void ElemThickLens::calcSubmatrices()
 {
     const double n = ior();
-    const double L1 = value;
+    const double L1 = _subRangeSI;
     const double L2 = lengthSI() - L1;
     const double R1 = radius1();
     const double R2 = radius2();
@@ -712,8 +712,8 @@ void ElemGrinLens::calcMatrixInternal() {
     _ms_inv = _ms;
 }
 
-void ElemGrinLens::setSubRangeSI(double value) {
-    const double L1 = value;
+void ElemGrinLens::calcSubmatrices() {
+    const double L1 = _subRangeSI;
     const double L2 = qAbs(lengthSI()) - L1;
     const double n0 = qAbs(ior());
     const double n2t = ior2t();
@@ -804,8 +804,8 @@ void ElemGrinMedium::calcMatrixInternal() {
     _ms_inv = _ms;
 }
 
-void ElemGrinMedium::setSubRangeSI(double value) {
-    const double L1 = value;
+void ElemGrinMedium::calcSubmatrices() {
+    const double L1 = _subRangeSI;
     const double L2 = qAbs(lengthSI()) - L1;
     const double n0 = qAbs(ior());
     const double n2t = ior2t();
@@ -884,8 +884,8 @@ void ElemThermoLens::calcMatrixInternal() {
     _ms_inv = _ms;
 }
 
-void ElemThermoLens::setSubRangeSI(double value) {
-    const double L1 = value;
+void ElemThermoLens::calcSubmatrices() {
+    const double L1 = _subRangeSI;
     const double L2 = qAbs(lengthSI()) - L1;
     const double n0 = qAbs(ior());
     if (_n2 > 0) {
@@ -946,8 +946,8 @@ void ElemThermoMedium::calcMatrixInternal() {
     _ms_inv = _ms;
 }
 
-void ElemThermoMedium::setSubRangeSI(double value) {
-    const double L1 = value;
+void ElemThermoMedium::calcSubmatrices() {
+    const double L1 = _subRangeSI;
     const double L2 = qAbs(lengthSI()) - L1;
     const double n0 = qAbs(ior());
     if (_n2 > 0) {
@@ -1215,8 +1215,8 @@ void ElemGaussDuctMedium::calcMatrixInternal() {
     _ms_inv = _ms;
 }
 
-void ElemGaussDuctMedium::setSubRangeSI(double value) {
-    const double L1 = value;
+void ElemGaussDuctMedium::calcSubmatrices() {
+    const double L1 = _subRangeSI;
     const double L2 = lengthSI() - L1;
     const double n0 = ior();
     const double lambda = _lambda->value().toSi();
@@ -1306,8 +1306,8 @@ void ElemGaussDuctSlab::calcMatrixInternal() {
     _ms_inv = _ms;
 }
 
-void ElemGaussDuctSlab::setSubRangeSI(double value) {
-    const double L1 = value;
+void ElemGaussDuctSlab::calcSubmatrices() {
+    const double L1 = _subRangeSI;
     const double L2 = lengthSI() - L1;
     const double n0 = ior();
     const double lambda = _lambda->value().toSi();

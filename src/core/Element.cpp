@@ -196,6 +196,18 @@ void ElementDynamic::calcMatrixInternal()
 namespace Z {
 namespace Utils {
 
+Z::Value getSubRangeLf(ElementRange* elem)
+{
+    auto unit = elem->paramLength()->value().unit();
+    return {unit->fromSi(elem->subRangeSI()), unit};
+}
+
+Z::Value getSubRangeRt(ElementRange* elem)
+{
+    auto unit = elem->paramLength()->value().unit();
+    return {unit->fromSi( elem->lengthSI() - elem->subRangeSI()), unit};
+}
+
 void setElemWavelen(Element* elem, const Z::Value& lambda)
 {
     QString paramName = QStringLiteral("Lambda");

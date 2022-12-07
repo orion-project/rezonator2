@@ -33,7 +33,7 @@
     void calcMatrixInternal() override;
 
 #define SUB_RANGE\
-    void setSubRangeSI(double value) override;
+    void calcSubmatrices() override;
 
 #define CHECK_PARAM\
     const char* checkParameter(Z::Parameter *param, double newValue) const;
@@ -226,7 +226,8 @@ Q_DECLARE_METATYPE(Element*);
 class ElementRange : public Element
 {
 public:
-    virtual void setSubRangeSI(double value) { Q_UNUSED(value) }
+    void setSubRangeSI(double value) { _subRangeSI = value; calcSubmatrices(); }
+    double subRangeSI() const { return _subRangeSI; }
 
     const Z::Matrix& Mt1() const { return _mt1; }
     const Z::Matrix& Ms1() const { return _ms1; }
@@ -252,6 +253,9 @@ protected:
     Z::Matrix _ms1, _ms2;
     Z::Parameter *_length;
     Z::Parameter *_ior;
+    double _subRangeSI;
+
+    virtual void calcSubmatrices() {}
 };
 
 //------------------------------------------------------------------------------
@@ -371,6 +375,8 @@ inline bool isRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
 inline ElementRange* asRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
 inline bool isInterface(Element *elem) { return dynamic_cast<ElementInterface*>(elem); }
 inline ElementInterface* asInterface(Element *elem) { return dynamic_cast<ElementInterface*>(elem); }
+Z::Value getSubRangeLf(ElementRange* elem);
+Z::Value getSubRangeRt(ElementRange* elem);
 
 void setElemWavelen(Element* elem, const Z::Value& lambda);
 
