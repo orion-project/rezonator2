@@ -21,6 +21,7 @@ public:
 private:
     QString _funcTitle;
     PlotFunction* _function;
+    bool _showElems = false;
 };
 
 #endif // PLOT_FUNC_ROUND_TRIP_FUNCTION_H

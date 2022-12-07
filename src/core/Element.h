@@ -227,7 +227,10 @@ class ElementRange : public Element
 {
 public:
     void setSubRangeSI(double value) { _subRangeSI = value; calcSubmatrices(); }
+    void setSubRange(const Z::Value& value);
     double subRangeSI() const { return _subRangeSI; }
+    Z::Value subRangeLf() const;
+    Z::Value subRangeRt() const;
 
     const Z::Matrix& Mt1() const { return _mt1; }
     const Z::Matrix& Ms1() const { return _ms1; }
@@ -245,6 +248,7 @@ public:
 
     virtual double axisLengthSI() const { return lengthSI(); }
     virtual double opticalPathSI() const { return axisLengthSI()* ior(); }
+    Z::Value axisLen() const;
 
 protected:
     ElementRange();
@@ -375,8 +379,6 @@ inline bool isRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
 inline ElementRange* asRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
 inline bool isInterface(Element *elem) { return dynamic_cast<ElementInterface*>(elem); }
 inline ElementInterface* asInterface(Element *elem) { return dynamic_cast<ElementInterface*>(elem); }
-Z::Value getSubRangeLf(ElementRange* elem);
-Z::Value getSubRangeRt(ElementRange* elem);
 
 void setElemWavelen(Element* elem, const Z::Value& lambda);
 

@@ -59,9 +59,15 @@ public:
     QString calculateInternal() override;
     FunctionState elementDeleting(Element*) override;
     FUNC_NAME(qApp->translate("Func", "Round-trip Matrix"))
+
+    static QString format(RoundTripCalculator *c, bool showElems);
+    static QString formatStability(char plane, double value);
 private:
     Element* _element;
-    QString formatStability(char plane, double value);
+    bool _showElems = false;
+    bool _useRefOffset = false;
+    Z::Value _refOffset;
+    void setRefOffset();
 };
 
 //------------------------------------------------------------------------------

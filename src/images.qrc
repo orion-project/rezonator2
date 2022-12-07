@@ -106,6 +106,7 @@
         <file alias="pump_on">../img/toolbar/pump_on.svg</file>
         <file alias="pumps">../img/toolbar/pumps.svg</file>
         <file alias="redo">../img/toolbar/redo.svg</file>
+        <file alias="ref_offset">../img/toolbar/ref_offset.svg</file>
         <file alias="restore">../img/toolbar/restore.svg</file>
         <file alias="save">../img/toolbar/save.svg</file>
         <file alias="schema_new">../img/toolbar/schema_new.svg</file>

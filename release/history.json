@@ -12,6 +12,12 @@
         },
         {
           "text": "Fix: schema table not properly updated after element deletion"
+        },
+        {
+          "text": "Can set custom offset inside range element for Round-trip Matrix function"
+        },
+        {
+          "text": "Round-trip Matrix function can show matrices of all elements (optionally)"
         }
       ]
     },
@@ -20,7 +26,7 @@
       "date": "2022-02-10",
       "changes": [
         {
-          "text": "New commands for Gassian Beam Calculator window: copy image, copy data, change axis titles."
+          "text": "New commands for Gaussian Beam Calculator window: copy image, copy data, change axis titles."
         },
         {
           "text": "Added commands for changing axes titles for function plots."

@@ -144,6 +144,36 @@ ElementRange::ElementRange()
     addParam(_ior);
 }
 
+void ElementRange::setSubRange(const Z::Value& value)
+{
+    double v = value.toSi();
+    if (v < 0) v = 0;
+    else
+    {
+        double len = axisLengthSI();
+        if (v > len) v = len;
+    }
+    setSubRangeSI(v);
+}
+
+Z::Value ElementRange::subRangeLf() const
+{
+    auto unit = paramLength()->value().unit();
+    return {unit->fromSi(subRangeSI()), unit};
+}
+
+Z::Value ElementRange::subRangeRt() const
+{
+    auto unit = paramLength()->value().unit();
+    return {unit->fromSi(axisLengthSI() - subRangeSI()), unit};
+}
+
+Z::Value ElementRange::axisLen() const
+{
+    auto unit = paramLength()->value().unit();
+    return {unit->fromSi(axisLengthSI()), unit};
+}
+
 //------------------------------------------------------------------------------
 //                            ElementInterface
 //------------------------------------------------------------------------------
@@ -187,26 +217,12 @@ void ElementDynamic::calcMatrixInternal()
     _ms_dyn.unity();
 }
 
-
-
 //------------------------------------------------------------------------------
 //                                Z::Utils
 //------------------------------------------------------------------------------
 
 namespace Z {
 namespace Utils {
-
-Z::Value getSubRangeLf(ElementRange* elem)
-{
-    auto unit = elem->paramLength()->value().unit();
-    return {unit->fromSi(elem->subRangeSI()), unit};
-}
-
-Z::Value getSubRangeRt(ElementRange* elem)
-{
-    auto unit = elem->paramLength()->value().unit();
-    return {unit->fromSi( elem->lengthSI() - elem->subRangeSI()), unit};
-}
 
 void setElemWavelen(Element* elem, const Z::Value& lambda)
 {

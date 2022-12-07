@@ -86,6 +86,23 @@ void InfoFuncWindow::createToolbar()
     toolbar->addAction(actnCopy);
     toolbar->addWidget(Ori::Gui::textToolButton(actnCopyAll));
     toolbar->addSeparator();
+
+    if (!_function->actions().empty())
+    {
+        foreach (const InfoFuncAction& a, _function->actions())
+        {
+            auto actn = new QAction(QIcon(a.icon), a.title, this);
+            if (a.isChecked)
+            {
+                actn->setCheckable(true);
+                actn->setChecked(a.isChecked());
+            }
+            connect(actn, &QAction::triggered, a.triggered);
+            toolbar->addAction(actn);
+        }
+        toolbar->addSeparator();
+    }
+
     if (!_function->helpTopic().isEmpty())
     {
         auto actnHelp = Ori::Gui::action(tr("Help"), this, SLOT(help()), ":/toolbar/help", QKeySequence::HelpContents);

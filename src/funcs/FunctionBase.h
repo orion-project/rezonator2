@@ -59,6 +59,14 @@ protected:
     FunctionBase(Schema *schema) : _schema(schema) {}
 };
 
+struct InfoFuncAction
+{
+    QString title;
+    QString icon;
+    std::function<void()> triggered;
+    std::function<bool()> isChecked;
+};
+
 /**
     Base class for all information functions.
     Information function is a function presenting its calculation
@@ -73,9 +81,13 @@ public:
     void calculate();
     void freeze(bool on);
     bool frozen() const { return _frozen; }
+    const QVector<InfoFuncAction>& actions() const { return _actions; }
+
 protected:
     InfoFunction(Schema *schema) : FunctionBase(schema) {}
     virtual QString calculateInternal() { return QString(); }
+
+    QVector<InfoFuncAction> _actions;
 private:
     QString _result;
     bool _frozen = false;
