@@ -11,6 +11,8 @@
         {
             "is_disabled": false,
             "label": "L1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "cm",
@@ -27,6 +29,8 @@
         {
             "is_disabled": false,
             "label": "F1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "Alpha": {
                     "unit": "deg",
@@ -43,6 +47,8 @@
         {
             "is_disabled": false,
             "label": "L2",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "cm",
@@ -64,6 +70,7 @@
     ],
     "pumps": [
         {
+            "color": "#555555",
             "is_active": true,
             "label": "P1",
             "mode": "RayVector",
@@ -87,6 +94,7 @@
             "title": ""
         },
         {
+            "color": "#555555",
             "is_active": false,
             "label": "P2",
             "mode": "RayVector",
@@ -110,6 +118,7 @@
             "title": ""
         },
         {
+            "color": "#555555",
             "is_active": false,
             "label": "P3",
             "mode": "RayVector",
@@ -133,6 +142,7 @@
             "title": ""
         },
         {
+            "color": "#555555",
             "is_active": false,
             "label": "P4",
             "mode": "RayVector",
@@ -214,33 +224,33 @@
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
                 "elem_bound_markers": true,
-                "stored_views": [
-                    {
-                        "mode": 0,
-                        "x_max": 7.070000000000001,
-                        "x_min": -0.07,
-                        "x_unit": "none",
-                        "y_max": 15799.655442984407,
-                        "y_min": -15799.655442984407,
-                        "y_unit": "none"
+                "stored_views": {
+                    "0": {
+                        "cursor_x": 5.9896095076400675,
+                        "cursor_y": -1.491505712958208,
+                        "y_max": 15.943288674284265,
+                        "y_min": -18.81595330028143,
+                        "y_title": "{func_mode} {(unit)}",
+                        "y_unit": "mm"
                     },
-                    {
-                        "mode": 1,
-                        "x_max": 7.070000000000001,
-                        "x_min": -0.07,
-                        "x_unit": "none",
-                        "y_max": 0.17744056619607873,
-                        "y_min": -0.10063757145385259,
-                        "y_unit": "none"
+                    "1": {
+                        "cursor_x": 5.984963144963145,
+                        "cursor_y": -4.605911631322401e-05,
+                        "y_max": 0.18128532184482135,
+                        "y_min": -0.1813774400774478,
+                        "y_title": "{func_mode} {(unit)}",
+                        "y_unit": "m"
                     }
-                ],
+                },
                 "ts_flipped": true,
                 "ts_mode": "T+S",
                 "x_max": 12.120000000000001,
                 "x_min": -0.12000000000000002,
+                "x_title": "{elem_labels} {(unit)}",
                 "x_unit": "cm",
                 "y_max": 15.943288674284265,
                 "y_min": -18.81595330028143,
+                "y_title": "{func_mode} {(unit)}",
                 "y_unit": "mm"
             }
         },
@@ -294,15 +304,17 @@
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
                 "elem_bound_markers": true,
-                "stored_views": [
-                ],
+                "stored_views": {
+                },
                 "ts_flipped": false,
                 "ts_mode": "S",
                 "x_max": 121.20000000000002,
                 "x_min": -1.2000000000000002,
+                "x_title": "{elem_labels} {(unit)}",
                 "x_unit": "mm",
                 "y_max": 18.959586531581287,
                 "y_min": -18.959586531581287,
+                "y_title": "Beam Radius {(unit)}",
                 "y_unit": "mm"
             }
         }

@@ -11,6 +11,8 @@
         {
             "is_disabled": false,
             "label": "L1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "cm",
@@ -27,6 +29,8 @@
         {
             "is_disabled": false,
             "label": "F1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "Alpha": {
                     "unit": "deg",
@@ -43,6 +47,8 @@
         {
             "is_disabled": false,
             "label": "L2",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "cm",
@@ -64,6 +70,7 @@
     ],
     "pumps": [
         {
+            "color": "#555555",
             "is_active": false,
             "label": "P1",
             "mode": "RayVector",
@@ -87,6 +94,7 @@
             "title": "Geometric pump"
         },
         {
+            "color": "#555555",
             "is_active": true,
             "label": "P2",
             "mode": "Waist",
@@ -157,41 +165,42 @@
                             "use_step": false
                         }
                     }
-                ]
+                ],
+                "mode": "FrontRadius"
             },
             "type": "MultirangeCaustic",
             "window": {
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
                 "elem_bound_markers": true,
-                "stored_views": [
-                    {
-                        "mode": 0,
-                        "x_max": 12.120000000000001,
-                        "x_min": -0.12000000000000002,
-                        "x_unit": "none",
+                "stored_views": {
+                    "0": {
+                        "cursor_x": 5.989502572898799,
+                        "cursor_y": 3.725143492210063,
                         "y_max": 12.825485795619688,
                         "y_min": -5.317601708013425,
+                        "y_title": "{func_mode} {(unit)}",
                         "y_unit": "mm"
                     },
-                    {
-                        "mode": 1,
-                        "x_max": 12.119494949494952,
-                        "x_min": -0.06898989898989902,
-                        "x_unit": "none",
+                    "1": {
+                        "cursor_x": 0.389223817118554,
+                        "cursor_y": -52.38095238095239,
                         "y_max": 1038769694.7150226,
                         "y_min": -49465223.612086974,
-                        "y_unit": "none"
+                        "y_title": "{func_mode} {(unit)}",
+                        "y_unit": "m"
                     }
-                ],
+                },
                 "ts_flipped": false,
                 "ts_mode": "T+S",
-                "x_max": 12.120000000000001,
-                "x_min": -0.12000000000000002,
-                "x_unit": "none",
-                "y_max": 12.825485795619688,
-                "y_min": -5.317601708013425,
-                "y_unit": "mm"
+                "x_max": 12.119494949494952,
+                "x_min": -0.06898989898989902,
+                "x_title": "{elem_labels} {(unit)}",
+                "x_unit": "cm",
+                "y_max": 1038769694.7150226,
+                "y_min": -49465223.612086974,
+                "y_title": "{func_mode} {(unit)}",
+                "y_unit": "m"
             }
         },
         {

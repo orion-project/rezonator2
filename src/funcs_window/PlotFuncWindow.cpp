@@ -540,7 +540,6 @@ void PlotFuncWindow::restoreViewParts(const ViewSettings &vs, ViewParts parts)
         if (minOk && maxOk)
             _plot->setLimitsY(min, max, false);
         else _autolimitsRequest = true;
-
     }
     if (parts.testFlag(VP_TITLE_Y))
     {

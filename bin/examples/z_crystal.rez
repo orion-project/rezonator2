@@ -11,6 +11,8 @@
         {
             "is_disabled": false,
             "label": "M4",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
             },
             "title": "SESAM",
@@ -19,6 +21,8 @@
         {
             "is_disabled": false,
             "label": "L3",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "mm",
@@ -35,6 +39,8 @@
         {
             "is_disabled": false,
             "label": "M5",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "Alpha": {
                     "unit": "deg",
@@ -51,6 +57,8 @@
         {
             "is_disabled": false,
             "label": "L2",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "mm",
@@ -67,6 +75,8 @@
         {
             "is_disabled": false,
             "label": "M2",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "Alpha": {
                     "unit": "deg",
@@ -83,6 +93,8 @@
         {
             "is_disabled": false,
             "label": "d2",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "mm",
@@ -99,6 +111,8 @@
         {
             "is_disabled": false,
             "label": "Cr",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "mm",
@@ -115,6 +129,8 @@
         {
             "is_disabled": false,
             "label": "d1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "mm",
@@ -131,6 +147,8 @@
         {
             "is_disabled": false,
             "label": "M1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "Alpha": {
                     "unit": "deg",
@@ -147,6 +165,8 @@
         {
             "is_disabled": false,
             "label": "L1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "mm",
@@ -163,6 +183,8 @@
         {
             "is_disabled": false,
             "label": "M3",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
             },
             "title": "Output mirror",
@@ -303,41 +325,42 @@
                             "use_step": false
                         }
                     }
-                ]
+                ],
+                "mode": "FrontRadius"
             },
             "type": "MultirangeCaustic",
             "window": {
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
                 "elem_bound_markers": true,
-                "stored_views": [
-                    {
-                        "mode": 0,
-                        "x_max": 1.5673254757176251,
-                        "x_min": -0.01551807401700619,
-                        "x_unit": "m",
+                "stored_views": {
+                    "0": {
+                        "cursor_x": 0.7745600306043547,
+                        "cursor_y": 0.43129789222038545,
                         "y_max": 0.8541937267491662,
                         "y_min": 0.01107861360634381,
+                        "y_title": "{func_mode} {(unit)}",
                         "y_unit": "mm"
                     },
-                    {
-                        "mode": 1,
-                        "x_max": 156.1350887762218,
-                        "x_min": -2.1492661972412748,
-                        "x_unit": "cm",
-                        "y_max": 10.00000000000001,
-                        "y_min": -9.999999999999996,
-                        "y_unit": "none"
+                    "1": {
+                        "cursor_x": 0.05192137547043423,
+                        "cursor_y": 32.65306122448979,
+                        "y_max": 100,
+                        "y_min": -100,
+                        "y_title": "{func_mode} {(unit)}",
+                        "y_unit": "m"
                     }
-                ],
+                },
                 "ts_flipped": false,
                 "ts_mode": "T+S",
-                "x_max": 1.5673254757176251,
-                "x_min": -0.01551807401700619,
+                "x_max": 1.567325475717625,
+                "x_min": -0.015518074017006188,
+                "x_title": "{elem_labels} {(unit)}",
                 "x_unit": "m",
-                "y_max": 0.8541937267491662,
-                "y_min": 0.01107861360634381,
-                "y_unit": "mm"
+                "y_max": 100,
+                "y_min": -100,
+                "y_title": "{func_mode} {(unit)}",
+                "y_unit": "m"
             }
         }
     ]

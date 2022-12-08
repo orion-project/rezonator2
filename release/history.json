@@ -11,9 +11,6 @@
           "text": "Added a tool for drawing simple lenses - Lensmaker."
         },
         {
-          "text": "Fix: schema table not properly updated after element deletion."
-        },
-        {
           "text": "Can set custom offset inside range element for Round-trip Matrix function."
         },
         {
@@ -21,6 +18,15 @@
         },
         {
           "text": "New help topics in the manual: Round-trip Matrix function, Function freezing, Caustic function."
+        },
+        {
+          "text": "Fix: schema table not properly updated after element deletion."
+        },
+        {
+          "text": "Fix: there are no axis titles stored in example files."
+        },
+        {
+          "text": "Fix: caustic widow opens without axis titles."
         }
       ]
     },
