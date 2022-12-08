@@ -206,7 +206,7 @@ QString InfoFuncMatrixRT::format(RoundTripCalculator *c, bool showElems)
     QTextStream stream(&result);
     stream << Z::Format::roundTrip(c->roundTrip(), true) << QChar(':')
            << Z::Format::matrices(c->Mt(), c->Ms())
-           << QStringLiteral("<br><span class=param>Ref:&nbsp;</span>")
+           << QStringLiteral("<p><span class=param>Ref:&nbsp;</span>")
            << Z::Format::linkViewMatrix(c->reference());
 
     if (c->splitRange())
