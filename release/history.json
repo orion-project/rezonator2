@@ -20,6 +20,9 @@
           "text": "New help topics in the manual: Round-trip Matrix function, Function freezing, Caustic function."
         },
         {
+          "text": "Enabled HIDPI mode and fixed various related small issues (https://github.com/orion-project/rezonator2/issues/15)"
+        },
+        {
           "text": "Fix: schema table not properly updated after element deletion."
         },
         {
