@@ -11,6 +11,8 @@
         {
             "is_disabled": false,
             "label": "d1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "mm",
@@ -27,6 +29,8 @@
         {
             "is_disabled": false,
             "label": "XM1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "Alpha": {
                     "unit": "deg",
@@ -43,6 +47,8 @@
         {
             "is_disabled": false,
             "label": "d2",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "mm",
@@ -64,6 +70,7 @@
     ],
     "pumps": [
         {
+            "color": "#555555",
             "is_active": true,
             "label": "P1",
             "mode": "RayVector",
@@ -87,6 +94,7 @@
             "title": ""
         },
         {
+            "color": "#555555",
             "is_active": false,
             "label": "P2",
             "mode": "RayVector",
@@ -110,6 +118,7 @@
             "title": ""
         },
         {
+            "color": "#555555",
             "is_active": false,
             "label": "P3",
             "mode": "RayVector",
@@ -133,6 +142,7 @@
             "title": ""
         },
         {
+            "color": "#555555",
             "is_active": false,
             "label": "P4",
             "mode": "RayVector",
@@ -213,15 +223,17 @@
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
                 "elem_bound_markers": true,
-                "stored_views": [
-                ],
+                "stored_views": {
+                },
                 "ts_flipped": false,
                 "ts_mode": "S",
                 "x_max": 20.2,
                 "x_min": -0.2,
+                "x_title": "{elem_labels} {(unit)}",
                 "x_unit": "cm",
                 "y_max": 13.2,
                 "y_min": -13.2,
+                "y_title": "Beam Radius {(unit)}",
                 "y_unit": "mm"
             }
         }

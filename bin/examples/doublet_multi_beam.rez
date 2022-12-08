@@ -456,33 +456,33 @@
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
                 "elem_bound_markers": true,
-                "stored_views": [
-                    {
-                        "mode": 0,
-                        "x_max": 7.070000000000001,
-                        "x_min": -0.07,
-                        "x_unit": "none",
-                        "y_max": 15799.655442984407,
-                        "y_min": -15799.655442984407,
-                        "y_unit": "none"
+                "stored_views": {
+                    "0": {
+                        "cursor_x": 18.9689888201574,
+                        "cursor_y": -5.894874854614756,
+                        "y_max": 21.18023030017877,
+                        "y_min": -32.79861858437794,
+                        "y_title": "{func_mode} {(unit)}",
+                        "y_unit": "mm"
                     },
-                    {
-                        "mode": 1,
-                        "x_max": 7.070000000000001,
-                        "x_min": -0.07,
-                        "x_unit": "none",
-                        "y_max": 0.17744056619607873,
-                        "y_min": -0.10063757145385259,
-                        "y_unit": "none"
+                    "1": {
+                        "cursor_x": 17.954889434889434,
+                        "cursor_y": 0.004645275307197799,
+                        "y_max": 0.18957070014650984,
+                        "y_min": -0.18028014953211424,
+                        "y_title": "{func_mode} {(unit)}",
+                        "y_unit": "m"
                     }
-                ],
+                },
                 "ts_flipped": false,
                 "ts_mode": "T+S",
-                "x_max": 38.383828562956005,
-                "x_min": -0.38003790656392084,
+                "x_max": 36.36,
+                "x_min": -0.36,
+                "x_title": "{elem_labels} {(unit)}",
                 "x_unit": "cm",
                 "y_max": 21.18023030017877,
                 "y_min": -32.79861858437794,
+                "y_title": "{func_mode} {(unit)}",
                 "y_unit": "mm"
             }
         },
@@ -596,15 +596,17 @@
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
                 "elem_bound_markers": true,
-                "stored_views": [
-                ],
+                "stored_views": {
+                },
                 "ts_flipped": false,
                 "ts_mode": "S",
                 "x_max": 383.83828562956006,
                 "x_min": -3.8003790656392087,
+                "x_title": "{elem_labels} {(unit)}",
                 "x_unit": "mm",
                 "y_max": 20.682458780954388,
                 "y_min": -20.682458780954388,
+                "y_title": "Beam Radius {(unit)}",
                 "y_unit": "mm"
             }
         }

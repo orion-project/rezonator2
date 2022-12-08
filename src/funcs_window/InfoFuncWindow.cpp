@@ -86,6 +86,23 @@ void InfoFuncWindow::createToolbar()
     toolbar->addAction(actnCopy);
     toolbar->addWidget(Ori::Gui::textToolButton(actnCopyAll));
     toolbar->addSeparator();
+
+    if (!_function->actions().empty())
+    {
+        foreach (const InfoFuncAction& a, _function->actions())
+        {
+            auto actn = new QAction(QIcon(a.icon), a.title, this);
+            if (a.isChecked)
+            {
+                actn->setCheckable(true);
+                actn->setChecked(a.isChecked());
+            }
+            connect(actn, &QAction::triggered, a.triggered);
+            toolbar->addAction(actn);
+        }
+        toolbar->addSeparator();
+    }
+
     if (!_function->helpTopic().isEmpty())
     {
         auto actnHelp = Ori::Gui::action(tr("Help"), this, SLOT(help()), ":/toolbar/help", QKeySequence::HelpContents);
@@ -104,7 +121,14 @@ void InfoFuncWindow::updateFrozenInfo()
 void InfoFuncWindow::functionCalculated(FunctionBase*)
 {
     QPalette p;
-    QColor pageColor = p.color(QPalette::ToolTipBase);
+    QColor pageColor = p.color(
+        #ifdef Q_OS_MAC
+            // Tooltips are grey on macs and this looks ugly
+            QPalette::Base
+        #else
+            QPalette::ToolTipBase
+        #endif
+    );
     if (_function->frozen())
         pageColor = Ori::Color::blend(pageColor, p.color(QPalette::Window), 0.5);
 

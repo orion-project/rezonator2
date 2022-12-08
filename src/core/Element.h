@@ -33,7 +33,7 @@
     void calcMatrixInternal() override;
 
 #define SUB_RANGE\
-    void setSubRangeSI(double value) override;
+    void calcSubmatrices() override;
 
 #define CHECK_PARAM\
     const char* checkParameter(Z::Parameter *param, double newValue) const;
@@ -226,7 +226,11 @@ Q_DECLARE_METATYPE(Element*);
 class ElementRange : public Element
 {
 public:
-    virtual void setSubRangeSI(double value) { Q_UNUSED(value) }
+    void setSubRangeSI(double value) { _subRangeSI = value; calcSubmatrices(); }
+    void setSubRange(const Z::Value& value);
+    double subRangeSI() const { return _subRangeSI; }
+    Z::Value subRangeLf() const;
+    Z::Value subRangeRt() const;
 
     const Z::Matrix& Mt1() const { return _mt1; }
     const Z::Matrix& Ms1() const { return _ms1; }
@@ -244,6 +248,7 @@ public:
 
     virtual double axisLengthSI() const { return lengthSI(); }
     virtual double opticalPathSI() const { return axisLengthSI()* ior(); }
+    Z::Value axisLen() const;
 
 protected:
     ElementRange();
@@ -252,6 +257,9 @@ protected:
     Z::Matrix _ms1, _ms2;
     Z::Parameter *_length;
     Z::Parameter *_ior;
+    double _subRangeSI;
+
+    virtual void calcSubmatrices() {}
 };
 
 //------------------------------------------------------------------------------

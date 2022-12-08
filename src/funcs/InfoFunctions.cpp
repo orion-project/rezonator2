@@ -6,8 +6,15 @@
 #include "../Appearance.h"
 #include "../core/Format.h"
 #include "../core/Schema.h"
+#include "../widgets/ValueEditor.h"
+
+#include "helpers/OriLayouts.h"
+#include "helpers/OriDialogs.h"
 
 #include <QApplication>
+#include <QGridLayout>
+#include <QLabel>
+#include <QRadioButton>
 
 //------------------------------------------------------------------------------
 //                              InfoFuncMatrix
@@ -106,6 +113,23 @@ InfoFuncMatrixMultBkwd::InfoFuncMatrixMultBkwd(Schema *schema, const Elements& e
 InfoFuncMatrixRT::InfoFuncMatrixRT(Schema *schema, Element *elem)
     : InfoFunction(schema), _element(elem)
 {
+    _actions << InfoFuncAction{
+        .title = qApp->translate("InfoFuncMatrixRT", "Show all element matrices"),
+        .icon = ":/toolbar/elem_matr",
+        .triggered = [this](){ _showElems = !_showElems; calculate(); },
+        .isChecked = [this](){ return _showElems; },
+    };
+
+    auto range = Z::Utils::asRange(elem);
+    if (range)
+    {
+        InfoFuncAction act;
+        act.title = qApp->translate("InfoFuncMatrixRT", "Set reference plane offset inside element");
+        act.icon = ":/toolbar/ref_offset";
+        act.triggered = [this](){ setRefOffset(); };
+        _actions << act;
+        _refOffset = {0, range->paramLength()->value().unit()};
+    }
 }
 
 FunctionBase::FunctionState InfoFuncMatrixRT::elementDeleting(Element *elem)
@@ -116,8 +140,11 @@ FunctionBase::FunctionState InfoFuncMatrixRT::elementDeleting(Element *elem)
 
 QString InfoFuncMatrixRT::calculateInternal()
 {
+    auto range = Z::Utils::asRange(_element);
+    bool useOffset = range && _useRefOffset;
+
     RoundTripCalculator c(_schema, _element);
-    c.calcRoundTrip();
+    c.calcRoundTrip(useOffset);
     if (c.isEmpty())
     {
         QString msg = qApp->translate("Calc error", "Round-trip is empty");
@@ -125,53 +152,164 @@ QString InfoFuncMatrixRT::calculateInternal()
         return msg;
     }
 
+    double backupSubRange;
+    if (useOffset)
+    {
+        backupSubRange = range->subRangeSI();
+        range->setSubRange(_refOffset);
+    }
+
     c.multMatrix();
 
-    QString result;
-    QTextStream report(&result);
-    report << Z::Format::roundTrip(c.roundTrip(), true) << QChar(':')
-           << Z::Format::matrices(c.Mt(), c.Ms())
-           << QStringLiteral("<hr><span class=param>Ref:&nbsp;</span>")
-           << Z::Format::linkViewMatrix(c.reference());
+    QString res = format(&c, _showElems);
 
-    if (schema()->isResonator())
+    if (useOffset)
+        range->setSubRangeSI(backupSubRange);
+
+    return res;
+}
+
+void InfoFuncMatrixRT::setRefOffset()
+{
+    auto range = Z::Utils::asRange(_element);
+
+    auto takeWhole = new QRadioButton(qApp->translate("InfoFuncMatrixRT", "Take whole element"));
+    auto useOffset = new QRadioButton(qApp->translate("InfoFuncMatrixRT", "Use offset inside element"));
+    takeWhole->setChecked(!_useRefOffset);
+    useOffset->setChecked(_useRefOffset);
+
+    auto lengthLabel = new QLabel;
+    lengthLabel->setFont(Z::Gui::ValueFont().get());
+    lengthLabel->setText(range->axisLen().displayStr());
+
+    auto offsetEditor = new ValueEditor;
+    offsetEditor->setValue(_refOffset);
+    qApp->connect(offsetEditor, &ValueEditor::valueChanged, [useOffset](){ useOffset->setChecked(true); });
+
+    auto layout = new QGridLayout;
+    layout->addWidget(new QLabel(qApp->translate("InfoFuncMatrixRT", "Axial length")), 1, 0); layout->addWidget(lengthLabel, 1, 1);
+    layout->addWidget(new QLabel(qApp->translate("InfoFuncMatrixRT", "Ref. plane offset")), 2, 0); layout->addWidget(offsetEditor, 2, 1);
+
+    auto w = Ori::Layouts::LayoutV({takeWhole, useOffset, Ori::Layouts::Space(6), layout, Ori::Layouts::Space(12)}).setMargin(0).makeWidget();
+    if (Ori::Dlg::Dialog(w, false).exec())
     {
-        auto stab = c.stability();
-        report << formatStability('T', stab.T)
+        _useRefOffset = useOffset->isChecked();
+        _refOffset = offsetEditor->value();
+        calculate();
+    }
+    delete w;
+}
+
+QString InfoFuncMatrixRT::format(RoundTripCalculator *c, bool showElems)
+{
+    QString result;
+    QTextStream stream(&result);
+    stream << Z::Format::roundTrip(c->roundTrip(), true) << QChar(':')
+           << Z::Format::matrices(c->Mt(), c->Ms())
+           << QStringLiteral("<p><span class=param>Ref:&nbsp;</span>")
+           << Z::Format::linkViewMatrix(c->reference());
+
+    if (c->splitRange())
+    {
+        auto range = Z::Utils::asRange(c->reference());
+        if (range)
+            stream << " (offset inside: " << range->subRangeLf().displayStr() << ")";
+    }
+
+    if (c->owner()->isResonator())
+    {
+        auto stab = c->stability();
+        stream << formatStability('T', stab.T)
                << formatStability('S', stab.S);
     }
 
-    if (AppSettings::instance().showPythonMatrices)
+    QString resultPy;
+    QTextStream streamPy(&resultPy);
+    QStringList namesPyT, namesPyS;
+
+    auto matrsT = c->matrsT();
+    auto matrsS = c->matrsS();
+    auto info = c->matrixInfo();
+    int count = matrsT.size();
+    for (int i = 0; i < count; i++)
     {
-        QString resultT;
-        QString resultS;
-        auto rt = c.rawRoundTrip();
-        bool isSW = _schema->isSW();
-        for (int i = 0; i < rt.size(); i++)
+        auto mi = info.at(i);
+
+        // Output element matrices
+        if (showElems)
         {
-            Element *elem = rt.at(i).element;
-            if (isSW and elem->hasOption(Element_Asymmetrical))
+            stream << QStringLiteral("<hr>");
+
+            stream << QStringLiteral("<span class=elem_label>")
+                   << mi.owner->displayLabel()
+                   << QStringLiteral("</span>");
+
+            if (!mi.owner->title().isEmpty())
+                stream << QStringLiteral(" <span class=elem_title>(")
+                       << mi.owner->title()
+                       << QStringLiteral(")</span>");
+
+            if (mi.kind == mi.LEFT_HALF)
             {
-                if (rt.at(i).secondPass)
-                {
-                    resultT += Z::Format::Py::matrixVarName(elem, "_b_t") % " * ";
-                    resultS += Z::Format::Py::matrixVarName(elem, "_b_s") % " * ";
-                }
-                else
-                {
-                    resultT += Z::Format::Py::matrixVarName(elem, "_f_t") % " * ";
-                    resultS += Z::Format::Py::matrixVarName(elem, "_f_s") % " * ";
-                }
+                auto range = Z::Utils::asRange(mi.owner);
+                if (range)
+                    stream << " (left part: " << range->subRangeLf().displayStr() << ")";
             }
-            else
+            else if (mi.kind == mi.RIGHT_HALF)
             {
-                resultT += Z::Format::Py::matrixVarName(elem, "_t") % " * ";
-                resultS += Z::Format::Py::matrixVarName(elem, "_s") % " * ";
+                auto range = Z::Utils::asRange(mi.owner);
+                if (range)
+                    stream << " (right part: " << range->subRangeRt().displayStr() << ")";
+            }
+            else if (mi.kind == mi.BACK_PASS)
+                stream << " (back pass)";
+
+            stream << Z::Format::matrices(matrsT.at(i), matrsS.at(i));
+        }
+
+        // Collect variable names for round-trip expression
+        if (AppSettings::instance().showPythonMatrices)
+        {
+            QString nameT = Z::Format::Py::matrixVarName(mi.owner, "_t");
+            QString nameS = Z::Format::Py::matrixVarName(mi.owner, "_s");
+            if (mi.kind == mi.LEFT_HALF)
+            {
+                nameT += "_lf";
+                nameS += "_lf";
+            }
+            else if (mi.kind == mi.RIGHT_HALF)
+            {
+                nameT += "_rt";
+                nameS += "_rt";
+            }
+            else if (mi.kind == mi.BACK_PASS)
+            {
+                nameT += "_inv";
+                nameS += "_inv";
+            }
+            namesPyT << nameT;
+            namesPyS << nameS;
+
+            // Output element matrices as py-code
+            if (showElems)
+            {
+                stream << "<p><code>"
+                       << Z::Format::Py::matrixAsNumpy(nameT, matrsT.at(i)) << "<br>"
+                       << Z::Format::Py::matrixAsNumpy(nameS, matrsS.at(i))
+                       << "</code></p>";
+                streamPy
+                       << Z::Format::Py::matrixAsNumpy(nameT, matrsT.at(i)) << "<br>"
+                       << Z::Format::Py::matrixAsNumpy(nameS, matrsS.at(i)) << "<br><br>";
             }
         }
-        resultT.truncate(resultT.length()-2); // remove last "* "
-        resultS.truncate(resultS.length()-2); // remove last "* "
-        report << QStringLiteral("<p><code>M0_t = %1</code><br><code>M0_s = %2</code></p>").arg(resultT, resultS);
+    }
+    if (AppSettings::instance().showPythonMatrices)
+    {
+        streamPy << "# Round-trip matrices<br>"
+                 << "M0_t = " << namesPyT.join(" * ") << "<br>"
+                 << "M0_s = " << namesPyS.join(" * ") << "<br>";
+
+        stream << "<hr><p><code>" << resultPy << "</code>";
     }
 
     return result;

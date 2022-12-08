@@ -469,7 +469,7 @@ void PlotFuncWindow::graphSelected(QCPGraph *graph)
 
 void PlotFuncWindow::showRoundTrip()
 {
-    InfoFuncWindow::open(new PlotFuncRoundTripFunction(windowTitle(), _function));
+    InfoFuncWindow::open(new PlotFuncRoundTripFunction(windowTitle(), _function), this);
 }
 
 void PlotFuncWindow::freeze(bool frozen)
@@ -540,7 +540,6 @@ void PlotFuncWindow::restoreViewParts(const ViewSettings &vs, ViewParts parts)
         if (minOk && maxOk)
             _plot->setLimitsY(min, max, false);
         else _autolimitsRequest = true;
-
     }
     if (parts.testFlag(VP_TITLE_Y))
     {

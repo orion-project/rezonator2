@@ -17,6 +17,8 @@
         {
             "is_disabled": false,
             "label": "M1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "Alpha": {
                     "unit": "deg",
@@ -33,6 +35,8 @@
         {
             "is_disabled": false,
             "label": "L",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "mm",
@@ -49,6 +53,8 @@
         {
             "is_disabled": false,
             "label": "M2",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "Alpha": {
                     "unit": "deg",
@@ -65,6 +71,7 @@
     ],
     "formulas": [
     ],
+    "notes": "",
     "param_links": [
         {
             "source_param": "R0",
@@ -80,6 +87,7 @@
     "pumps": [
     ],
     "schema_version": "2.0",
+    "title": "",
     "trip_type": "SW",
     "windows": [
         {
@@ -113,12 +121,19 @@
             "window": {
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
+                "stab_bound_markers": true,
+                "stored_views": {
+                },
                 "ts_flipped": false,
                 "ts_mode": "T+S",
                 "x_max": 202,
                 "x_min": -2,
+                "x_title": "{elem}, {elem_param} {(unit)}",
+                "x_unit": "mm",
                 "y_max": 1.05,
-                "y_min": -1.05
+                "y_min": -1.05,
+                "y_title": "Stability parameter {stab_mode}",
+                "y_unit": "none"
             }
         }
     ]

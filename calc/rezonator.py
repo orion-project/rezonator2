@@ -58,3 +58,19 @@ def transform_q(q1, M):
 # Print named result value
 def print_res(name, value):
   print("{}: {:.7g}".format(name, value))
+
+
+# Calculate stability parameter from matrix
+# M should be numpy.ndarray
+def calc_stab(M):
+  A, B, C, D = get_abcd(M)
+  return (A+D)/2.0
+
+
+# Calculate beamsize from matrix and wavelength
+# M should be numpy.ndarray
+def calc_w(M, wl, n):
+  A, B, C, D = get_abcd(M)
+  # B can be negative in a system with pure real matrices
+  # and this gives a pure imaginary W while the system is stable.
+  return sqrt(wl/n/pi * 2*abs(B) / sqrt(4 - sqr(A+D)))

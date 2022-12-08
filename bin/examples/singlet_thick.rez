@@ -11,6 +11,8 @@
         {
             "is_disabled": false,
             "label": "L1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "cm",
@@ -27,6 +29,8 @@
         {
             "is_disabled": false,
             "label": "s1",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
             "params": {
                 "R": {
                     "unit": "mm",
@@ -47,6 +51,8 @@
         {
             "is_disabled": false,
             "label": "d1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "mm",
@@ -63,6 +69,8 @@
         {
             "is_disabled": false,
             "label": "s2",
+            "layout_draw_narrow": false,
+            "layout_show_label": false,
             "params": {
                 "R": {
                     "unit": "mm",
@@ -83,6 +91,8 @@
         {
             "is_disabled": false,
             "label": "L2",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "cm",
@@ -104,6 +114,7 @@
     ],
     "pumps": [
         {
+            "color": "#555555",
             "is_active": false,
             "label": "P1",
             "mode": "RayVector",
@@ -127,6 +138,7 @@
             "title": "Geometric pump"
         },
         {
+            "color": "#555555",
             "is_active": true,
             "label": "P2",
             "mode": "Waist",
@@ -217,40 +229,25 @@
                             "use_step": false
                         }
                     }
-                ]
+                ],
+                "mode": "BeamRadius"
             },
             "type": "MultirangeCaustic",
             "window": {
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
                 "elem_bound_markers": true,
-                "stored_views": [
-                    {
-                        "mode": 0,
-                        "x_max": 12.120000000000001,
-                        "x_min": -0.12000000000000002,
-                        "x_unit": "none",
-                        "y_max": 12.825485795619688,
-                        "y_min": -5.317601708013425,
-                        "y_unit": "mm"
-                    },
-                    {
-                        "mode": 1,
-                        "x_max": 12.119494949494952,
-                        "x_min": -0.06898989898989902,
-                        "x_unit": "none",
-                        "y_max": 1038769694.7150226,
-                        "y_min": -49465223.612086974,
-                        "y_unit": "none"
-                    }
-                ],
+                "stored_views": {
+                },
                 "ts_flipped": false,
                 "ts_mode": "T+S",
                 "x_max": 13.13,
                 "x_min": -0.13,
-                "x_unit": "none",
+                "x_title": "{elem_labels} {(unit)}",
+                "x_unit": "cm",
                 "y_max": 13.818957390655939,
                 "y_min": -0.5901051499496285,
+                "y_title": "{func_mode} {(unit)}",
                 "y_unit": "mm"
             }
         },

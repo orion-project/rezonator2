@@ -144,6 +144,36 @@ ElementRange::ElementRange()
     addParam(_ior);
 }
 
+void ElementRange::setSubRange(const Z::Value& value)
+{
+    double v = value.toSi();
+    if (v < 0) v = 0;
+    else
+    {
+        double len = axisLengthSI();
+        if (v > len) v = len;
+    }
+    setSubRangeSI(v);
+}
+
+Z::Value ElementRange::subRangeLf() const
+{
+    auto unit = paramLength()->value().unit();
+    return {unit->fromSi(subRangeSI()), unit};
+}
+
+Z::Value ElementRange::subRangeRt() const
+{
+    auto unit = paramLength()->value().unit();
+    return {unit->fromSi(axisLengthSI() - subRangeSI()), unit};
+}
+
+Z::Value ElementRange::axisLen() const
+{
+    auto unit = paramLength()->value().unit();
+    return {unit->fromSi(axisLengthSI()), unit};
+}
+
 //------------------------------------------------------------------------------
 //                            ElementInterface
 //------------------------------------------------------------------------------
@@ -186,8 +216,6 @@ void ElementDynamic::calcMatrixInternal()
     _mt_dyn.unity();
     _ms_dyn.unity();
 }
-
-
 
 //------------------------------------------------------------------------------
 //                                Z::Utils

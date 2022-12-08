@@ -11,6 +11,8 @@
         {
             "is_disabled": false,
             "label": "M1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "Alpha": {
                     "unit": "deg",
@@ -27,6 +29,8 @@
         {
             "is_disabled": false,
             "label": "L",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "L": {
                     "unit": "mm",
@@ -43,6 +47,8 @@
         {
             "is_disabled": false,
             "label": "M2",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
             "params": {
                 "Alpha": {
                     "unit": "deg",
@@ -97,15 +103,17 @@
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
                 "stab_bound_markers": false,
-                "stored_views": [
-                ],
+                "stored_views": {
+                },
                 "ts_flipped": false,
                 "ts_mode": "T+S",
                 "x_max": 202,
                 "x_min": -2,
+                "x_title": "{elem}, {elem_param} {(unit)}",
                 "x_unit": "mm",
                 "y_max": 1.05,
                 "y_min": -1.05,
+                "y_title": "Stability parameter {stab_mode}",
                 "y_unit": "none"
             }
         },
@@ -137,15 +145,17 @@
             "window": {
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
-                "stored_views": [
-                ],
+                "stored_views": {
+                },
                 "ts_flipped": false,
                 "ts_mode": "T+S",
                 "x_max": 80.8,
                 "x_min": -0.8,
+                "x_title": "{elem} {(unit)}",
                 "x_unit": "mm",
                 "y_max": 0.24399832273930921,
                 "y_min": 0.08208429485825307,
+                "y_title": "{func_mode} {(unit)}",
                 "y_unit": "mm"
             }
         }

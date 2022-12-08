@@ -123,7 +123,9 @@ CausticWindow::CausticWindow(Schema *schema) : PlotFuncWindowStorable(new Causti
         return function()->arg()->element->title(); });
 
     _plot->setDefaultTitleX(QStringLiteral("{elem} {(unit)}"));
+    _plot->setFormatterTextX(QStringLiteral("{elem} {(unit)}"));
     _plot->setDefaultTitleY(QStringLiteral("{func_mode} {(unit)}"));
+    _plot->setFormatterTextY(QStringLiteral("{func_mode} {(unit)}"));
 }
 
 bool CausticWindow::configureInternal()

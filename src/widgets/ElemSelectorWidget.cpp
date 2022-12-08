@@ -19,11 +19,11 @@ ElemSelectorWidget::ElemSelectorWidget(Schema* schema, ElementFilter *filter) : 
 {
     setFont(Z::Gui::ValueFont().get());
 
-    for (auto elem : schema->elements())
+    foreach (auto elem, schema->elements())
         if (!filter || filter->check(elem))
             _elements.append(elem);
 
-    for (auto elem : _elements)
+    foreach (auto elem, _elements)
         addItem(elem->displayLabelTitle());
 }
 
@@ -64,12 +64,12 @@ void ParamSelectorWidget::populate(Element *elem)
             if (!_filter || _filter->check(param))
                 _parameters.append(param);
 
-    for (auto param : _parameters)
+    foreach (auto param, _parameters)
     {
         auto name = param->name();
         auto display = name.isEmpty()
-            ? QStringLiteral("%1 = %2").arg(param->label()).arg(param->value().displayStr())
-            : QStringLiteral("%1 (%2) = %3").arg(param->label()).arg(name).arg(param->value().displayStr());
+            ? QStringLiteral("%1 = %2").arg(param->label(), param->value().displayStr())
+            : QStringLiteral("%1 (%2) = %3").arg(param->label(), name, param->value().displayStr());
         addItem(display);
     }
 }
@@ -269,10 +269,8 @@ void ElemOffsetSelectorWidget::currentElemChanged(int)
     _offsetEditor->setEnabled(range);
     if (range)
     {
-        auto unit = range->paramLength()->value().unit();
-        auto axisLength = Z::Value(unit->fromSi(range->axisLengthSI()), unit);
-        _lengthLabel->setText(axisLength.displayStr());
-        _offsetEditor->setValue(Z::Value(0, unit));
+        _lengthLabel->setText(range->axisLen().displayStr());
+        _offsetEditor->setValue(Z::Value(0, range->paramLength()->value().unit()));
     }
     else
     {

@@ -19,6 +19,8 @@ public:
 
     FUNC_ALIAS("Caustic")
     FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Caustic"))
+    FUNC_HELP("func_caustic.html")
+    FUNC_ICON(":/toolbar/func_caustic")
 
     CausticFunction(Schema *schema) : PlotFunction(schema) {}
 
@@ -29,7 +31,6 @@ public:
 
     void calculate() override;
     bool hasOptions() const override { return true; }
-    const char* iconPath() const override { return ":/toolbar/func_caustic"; }
 
     Mode mode() const { return _mode; }
     void setMode(Mode mode) { _mode = mode; }

@@ -43,7 +43,7 @@ void RoundTripCalculator::calcRoundTrip(bool splitRange)
 void RoundTripCalculator::reset()
 {
     _error.clear();
-    _matrixOwners.clear();
+    _matrixInfo.clear();
     _roundTrip.clear();
     _matrsT.clear();
     _matrsS.clear();
@@ -120,7 +120,7 @@ void RoundTripCalculator::collectMatrices()
     // part of the range from current point to the next element
     if (range)
     {
-        _matrixOwners << range;
+        _matrixInfo << MatrixInfo{.owner = range, .kind = MatrixInfo::LEFT_HALF};
         _matrsT << range->pMt1();
         _matrsS << range->pMs1();
         i++;
@@ -129,23 +129,27 @@ void RoundTripCalculator::collectMatrices()
     while (i < c)
     {
         const auto& item = _roundTrip.at(i);
-        _matrixOwners << item.element;
         if (item.secondPass)
         {
             _matrsT << item.element->pMt_inv();
             _matrsS << item.element->pMs_inv();
+            _matrixInfo << MatrixInfo{
+                 .owner = item.element,
+                 .kind = item.element->hasOption(Element_Asymmetrical) ? MatrixInfo::BACK_PASS : MatrixInfo::WHOLE
+            };
         }
         else
         {
             _matrsT << item.element->pMt();
             _matrsS << item.element->pMs();
+            _matrixInfo << MatrixInfo{.owner = item.element, .kind = MatrixInfo::WHOLE};
         }
         i++;
     }
     // remaining part of the range under investigation
     if (range)
     {
-        _matrixOwners << range;
+        _matrixInfo << MatrixInfo{.owner = range, .kind = MatrixInfo::RIGHT_HALF};
         _matrsT << range->pMt2();
         _matrsS << range->pMs2();
     }
@@ -161,7 +165,7 @@ void RoundTripCalculator::collectMatricesSP()
         auto range = Z::Utils::asRange(_roundTrip.at(i).element);
         if (range)
         {
-            _matrixOwners << range;
+            _matrixInfo << MatrixInfo{.owner = range, .kind = MatrixInfo::LEFT_HALF};
             _matrsT << range->pMt1();
             _matrsS << range->pMs1();
             i++;
@@ -171,7 +175,7 @@ void RoundTripCalculator::collectMatricesSP()
     while (i < c)
     {
         const auto& item = _roundTrip.at(i);
-        _matrixOwners << item.element;
+        _matrixInfo << MatrixInfo{.owner = item.element, .kind = MatrixInfo::WHOLE};
         auto dynamicElem = dynamic_cast<ElementDynamic*>(item.element);
         if (dynamicElem)
         {

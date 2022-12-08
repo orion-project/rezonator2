@@ -5,22 +5,38 @@
       "date": "",
       "changes": [
         {
-          "text": "Added support for negative focuses in Thermal lens and Thermal medium elements and in the GRIN Lens Assessment tool"
+          "text": "Added support for negative focuses in Thermal lens and Thermal medium elements and in the GRIN Lens Assessment tool (https://github.com/orion-project/rezonator2/issues/23)."
         },
         {
-          "text": "Added a tool for drawing simple lenses - Lensmaker"
+          "text": "Added a tool for drawing simple lenses - Lensmaker."
         },
         {
-          "text": "Fix: schema table not properly updated after element deletion"
+          "text": "Can set custom offset inside range element for Round-trip Matrix function."
+        },
+        {
+          "text": "Round-trip Matrix function can show matrices of all elements (optionally)."
+        },
+        {
+          "text": "New help topics in the manual: Round-trip Matrix function, Function freezing, Caustic function."
+        },
+        {
+          "text": "Fix: schema table not properly updated after element deletion."
+        },
+        {
+          "text": "Fix: there are no axis titles stored in example files."
+        },
+        {
+          "text": "Fix: caustic window opens without axis titles."
         }
       ]
     },
     {
       "version": "2.0.10-beta6",
+      "tag": "2.0.10-beta6",
       "date": "2022-02-10",
       "changes": [
         {
-          "text": "New commands for Gassian Beam Calculator window: copy image, copy data, change axis titles."
+          "text": "New commands for Gaussian Beam Calculator window: copy image, copy data, change axis titles."
         },
         {
           "text": "Added commands for changing axes titles for function plots."
@@ -29,13 +45,13 @@
           "text": "Added beam shape tool for caustic windows."
         },
         {
-          "text": "Added a command for exporting all graph segments (https://github.com/orion-project/rezonator2/issues/17)"
+          "text": "Added a command for exporting all graph segments (https://github.com/orion-project/rezonator2/issues/17)."
         },
         {
-          "text": "Fixed typos (https://github.com/orion-project/rezonator2/issues/16)"
+          "text": "Fixed typos (https://github.com/orion-project/rezonator2/issues/16)."
         },
         {
-          "text": "Fixed file opening on Ubuntu and macOS"
+          "text": "Fixed file opening on Ubuntu and macOS."
         }
       ]
     },

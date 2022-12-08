@@ -13,6 +13,12 @@ class Element;
 class RoundTripCalculator
 {
 public:
+    struct MatrixInfo {
+        Element* owner;
+        enum { WHOLE, BACK_PASS, LEFT_HALF, RIGHT_HALF } kind;
+    };
+
+public:
     RoundTripCalculator(Schema *owner, Element *ref);
 
     void calcRoundTrip(bool splitRange = false);
@@ -38,11 +44,8 @@ public:
     QList<Element*> roundTrip() const;
     QString roundTripStr() const;
 
-    /// It mostly the same as `roundTrip()` but can be a bit different when `splitRange` is used,
-    /// then it contains the same element twice - the ref element at the beginning and at the end.
-    /// The idea is it must always have the same items number as `_matrsT` and `_matrsS`,
-    /// while `roundTrip()` is not oblidged to.
-    QList<Element*> matrixOwners() const { return _matrixOwners; }
+    // Returns info array of the same length as matrsT/matrsS
+    QList<MatrixInfo> matrixInfo() const { return _matrixInfo; }
 
     struct RoundTripElemInfo
     {
@@ -61,6 +64,8 @@ public:
 
     const QVector<RoundTripElemInfo>& rawRoundTrip() const { return _roundTrip; }
 
+    bool splitRange() const { return _splitRange; }
+
 protected:
     /// Array of T-matrices for production (round-trip).
     /// Valid only after calcRoundTrip() call.
@@ -78,7 +83,7 @@ protected:
     /// Reference element for round-trip calculation.
     Element* _reference;
 
-    QList<Element*> _matrixOwners;
+    QList<MatrixInfo> _matrixInfo;
 
     /// A reason why round-trip is empty.
     /// Valid only after calcRoundTrip() call.

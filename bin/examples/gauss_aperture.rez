@@ -156,15 +156,17 @@
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
                 "elem_bound_markers": true,
-                "stored_views": [
-                ],
+                "stored_views": {
+                },
                 "ts_flipped": false,
                 "ts_mode": "T+S",
                 "x_max": 75.75000000000001,
                 "x_min": -0.7500000000000001,
+                "x_title": "{elem_labels} {(unit)}",
                 "x_unit": "mm",
                 "y_max": 265.5507969302421,
                 "y_min": 20.962936888285242,
+                "y_title": "{func_mode} {(unit)}",
                 "y_unit": "mkm"
             }
         },
@@ -202,15 +204,17 @@
             "window": {
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
-                "stored_views": [
-                ],
+                "stored_views": {
+                },
                 "ts_flipped": false,
                 "ts_mode": "T+S",
                 "x_max": 58262851,
                 "x_min": 58262749,
+                "x_title": "{elem}, {elem_param} {(unit)}",
                 "x_unit": "inv_m2",
                 "y_max": 10254.722097588017,
                 "y_min": -488.05355085312345,
+                "y_title": "Beam radius at {place} {(unit)}",
                 "y_unit": "mm"
             }
         },
@@ -248,15 +252,17 @@
             "window": {
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
-                "stored_views": [
-                ],
+                "stored_views": {
+                },
                 "ts_flipped": false,
                 "ts_mode": "T+S",
                 "x_max": 5049990000,
                 "x_min": -48990000,
+                "x_title": "{elem}, {elem_param} {(unit)}",
                 "x_unit": "inv_m2",
                 "y_max": 1342.89621279373,
                 "y_min": 88.31448090208788,
+                "y_title": "Beam radius at {place} {(unit)}",
                 "y_unit": "mkm"
             }
         }

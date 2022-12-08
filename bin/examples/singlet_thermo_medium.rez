@@ -110,6 +110,7 @@
     ],
     "pumps": [
         {
+            "color": "#555555",
             "is_active": false,
             "label": "P0",
             "mode": "Waist",
@@ -133,6 +134,7 @@
             "title": ""
         },
         {
+            "color": "#555555",
             "is_active": true,
             "label": "P1",
             "mode": "RayVector",
@@ -211,33 +213,33 @@
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
                 "elem_bound_markers": true,
-                "stored_views": [
-                    {
-                        "mode": 0,
-                        "x_max": 303.00000000000006,
-                        "x_min": -3.0000000000000004,
-                        "x_unit": "none",
-                        "y_max": 1.0014455882329503,
-                        "y_min": 0.9997969982064485,
+                "stored_views": {
+                    "0": {
+                        "cursor_x": 848.528013582343,
+                        "cursor_y": -0.03492063661967926,
+                        "y_max": 11.000000535198744,
+                        "y_min": -11.000000535198744,
+                        "y_title": "{func_mode} {(unit)}",
                         "y_unit": "mm"
                     },
-                    {
-                        "mode": 1,
-                        "x_max": 302.9898989898991,
-                        "x_min": -1.9797979797979808,
-                        "x_unit": "none",
-                        "y_max": 183220.13878102283,
-                        "y_min": -25820.553094631316,
-                        "y_unit": "none"
+                    "1": {
+                        "cursor_x": 847.8697788697789,
+                        "cursor_y": 0,
+                        "y_max": 11.000000535198744,
+                        "y_min": -11.000000535198744,
+                        "y_title": "{func_mode} {(unit)}",
+                        "y_unit": "m"
                     }
-                ],
+                },
                 "ts_flipped": true,
                 "ts_mode": "T+S",
                 "x_max": 1717,
                 "x_min": -17,
+                "x_title": "{elem_labels} {(unit)}",
                 "x_unit": "mm",
                 "y_max": 11.000000535198744,
                 "y_min": -11.000000535198744,
+                "y_title": "{func_mode} {(unit)}",
                 "y_unit": "mm"
             }
         },
@@ -315,15 +317,17 @@
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
                 "elem_bound_markers": true,
-                "stored_views": [
-                ],
+                "stored_views": {
+                },
                 "ts_flipped": true,
                 "ts_mode": "T+S",
                 "x_max": 1717,
                 "x_min": -17,
+                "x_title": "{elem_labels} {(unit)}",
                 "x_unit": "mm",
                 "y_max": 11,
                 "y_min": -11,
+                "y_title": "{func_mode} {(unit)}",
                 "y_unit": "mm"
             }
         }
