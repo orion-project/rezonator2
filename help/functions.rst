@@ -27,4 +27,4 @@ A function is a procedure or an operations sequence yielding some data related t
 
 .. seealso::
 
-    :doc:`tools`
+   :doc:`tools`

@@ -16,6 +16,9 @@
 #define FUNC_ICON(s)\
     const char* iconPath() const override { return s; }
 
+#define FUNC_HELP(s)\
+    QString helpTopic() const override { return s; }
+
 class FunctionBase;
 class RoundTripCalculator;
 class Schema;

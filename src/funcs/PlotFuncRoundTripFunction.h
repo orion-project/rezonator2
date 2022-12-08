@@ -11,7 +11,7 @@ public:
     explicit PlotFuncRoundTripFunction(const QString& funcTitle, PlotFunction* func);
     ~PlotFuncRoundTripFunction() override;
 
-    QString helpTopic() const override { return QStringLiteral("func_rt_plot.html"); }
+    FUNC_HELP("func_rt_plot.html")
     FUNC_NAME("Round-trip for " + _funcTitle)
 
     QString calculateInternal() override;

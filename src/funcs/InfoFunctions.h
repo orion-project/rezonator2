@@ -58,7 +58,7 @@ public:
     InfoFuncMatrixRT(Schema*, Element*);
     QString calculateInternal() override;
     FunctionState elementDeleting(Element*) override;
-    QString helpTopic() const override { return QStringLiteral("func_rt.html"); }
+    FUNC_HELP("func_rt.html")
     FUNC_NAME(qApp->translate("Func", "Round-trip Matrix"))
 
     static QString format(RoundTripCalculator *c, bool showElems);
@@ -78,7 +78,7 @@ class InfoFuncRepetitionRate : public InfoFunction
 public:
     InfoFuncRepetitionRate(Schema *schema) : InfoFunction(schema) {}
     QString calculateInternal() override;
-    QString helpTopic() const override { return QStringLiteral("func_reprate.html"); }
+    FUNC_HELP("func_reprate.html")
     FUNC_NAME(qApp->translate("Func", "Intermode Beats Frequency"))
     double repetitonRate() const { return _repetitonRate; }
 private:
