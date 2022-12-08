@@ -81,7 +81,7 @@ html_title = 'reZonator2 Manual'
 html_logo = '../img/rezonator_header.png'
 
 html_favicon = '../img/icon/main_2.ico'
-html_add_permalinks = ''
+html_permalinks = False
 html_copy_source = False
 
 html_show_copyright = False

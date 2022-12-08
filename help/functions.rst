@@ -11,6 +11,7 @@ A function is a procedure or an operations sequence yielding some data related t
    :caption: Table of Contents:
 
    func_reprate
+   func_rt
 
 .. seealso::
 
