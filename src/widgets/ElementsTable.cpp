@@ -16,7 +16,7 @@ QPixmap elemIcon(const QString& type)
 {
     static QMap<QString, QPixmap> icons;
     if (!icons.contains(type))
-        icons[type] = QPixmap(Z::Utils::elemIconPath(type));
+        icons[type] = QIcon(Z::Utils::elemIconPath(type)).pixmap(Z::Utils::elemIconSize());
     return icons[type];
 }
 
@@ -205,8 +205,8 @@ public:
 private:
     Schema* _schema;
     QTableView* _view;
-    QPixmap _addElemIcon = QPixmap(":/toolbar/elem_add");
-    QPixmap _disabledIcon = QPixmap(":/toolbar/stop");
+    QPixmap _addElemIcon = QIcon(":/toolbar/elem_add").pixmap(Z::Utils::elemIconSize());
+    QPixmap _disabledIcon = QIcon(":/toolbar/stop").pixmap(Z::Utils::elemIconSize());
 };
 
 //------------------------------------------------------------------------------

@@ -25,11 +25,7 @@ protected:
     virtual void keyPressEvent(QKeyEvent *event);
 
 private:
-    void adjust();
-
     Element* elem(QListWidgetItem*) const;
-    QString iconPath(Element*) const;
-    QSize iconSize() const;
 
 private slots:
     void rowSelected(int index);

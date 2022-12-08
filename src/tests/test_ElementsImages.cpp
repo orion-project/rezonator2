@@ -1,6 +1,5 @@
 #include "testing/OriTestBase.h"
 #include "../core/ElementsCatalog.h"
-#include "../widgets/ElementImagesProvider.h"
 #include "../widgets/SchemaLayout.h"
 
 #include <QPixmap>
@@ -16,7 +15,7 @@ TEST_METHOD(resource_icons)
     for (auto elem : ElementsCatalog::instance().elements())
     {
         TEST_LOG(elem->type())
-        auto path = ElementImagesProvider::instance().iconPath(elem->type());
+        auto path = Z::Utils::elemIconPath(elem->type());
         QPixmap icon(path);
         if (icon.isNull())
         {
@@ -34,7 +33,7 @@ TEST_METHOD(resource_outlines)
     for (auto elem : ElementsCatalog::instance().elements())
     {
         TEST_LOG(elem->type())
-        auto path = ElementImagesProvider::instance().drawingPath(elem->type());
+        auto path = Z::Utils::elemDrawingPath(elem->type());
         if (!outline.load(path))
         {
             TEST_LOG("    no outline: " + path)

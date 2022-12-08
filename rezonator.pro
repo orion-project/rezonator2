@@ -132,7 +132,6 @@ HEADERS += \
     src/Appearance.h \
     src/widgets/ElemFormulaEditor.h \
     src/widgets/ElemSelectorWidget.h \
-    src/widgets/ElementImagesProvider.h \
     src/widgets/ElementTypesListView.h \
     src/widgets/ElementsTable.h \
     src/widgets/FormulaEditor.h \
