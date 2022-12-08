@@ -27,4 +27,4 @@ The "Axial length" value in the dialog shows the maximal possible offset and it 
 
 .. seealso::
 
-    :doc:`round_trip_matrix`, :doc:`func_freeze`
+    :doc:`func_rt_plot`, :doc:`round_trip_matrix`, :doc:`func_freeze`

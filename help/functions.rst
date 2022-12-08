@@ -8,11 +8,23 @@ A function is a procedure or an operations sequence yielding some data related t
 
 .. toctree::
    :maxdepth: 1
-   :caption: Table of Contents:
+   :caption: Function windows:
 
-   func_reprate
+   func_freeze
+
+.. toctree::
+   :maxdepth: 1
+   :caption: List of functions:
+
    func_rt
+   func_rt_plot
+   func_stabmap
+   func_stabmap_2d
+   func_caustic
+   func_caustic_mr
+   func_caustic_mb
+   func_reprate
 
 .. seealso::
 
-    :doc:`tools`, :doc:`calculators`
+    :doc:`tools`

@@ -469,7 +469,7 @@ void PlotFuncWindow::graphSelected(QCPGraph *graph)
 
 void PlotFuncWindow::showRoundTrip()
 {
-    InfoFuncWindow::open(new PlotFuncRoundTripFunction(windowTitle(), _function));
+    InfoFuncWindow::open(new PlotFuncRoundTripFunction(windowTitle(), _function), this);
 }
 
 void PlotFuncWindow::freeze(bool frozen)

@@ -58,6 +58,7 @@ public:
     InfoFuncMatrixRT(Schema*, Element*);
     QString calculateInternal() override;
     FunctionState elementDeleting(Element*) override;
+    QString helpTopic() const override { return QStringLiteral("func_rt.html"); }
     FUNC_NAME(qApp->translate("Func", "Round-trip Matrix"))
 
     static QString format(RoundTripCalculator *c, bool showElems);
