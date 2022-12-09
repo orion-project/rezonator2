@@ -59,7 +59,7 @@
   <use id="k" height="100%" transform="translate(-207.4 92.99)" width="100%" xlink:href="#i"/>
   <use id="l" height="100%" transform="translate(-207.62 91.15)" width="100%" xlink:href="#d"/>
   <g transform="translate(-10 164)">
-    <use height="100%" width="100%" xlink:href="#c"/>
+    <use height="100%" transform="matrix(-1 0 0 1 531.41 0)" width="100%" xlink:href="#c"/>
     <use height="100%" width="100%" xlink:href="#d"/>
     <use height="100%" width="100%" xlink:href="#h"/>
     <use height="100%" width="100%" xlink:href="#i"/>
