@@ -63,6 +63,7 @@ void AppSettings::load()
     LOAD_DEF(showCustomElemLibrary, Bool, true);
     LOAD_DEF(showPythonMatrices, Bool, false);
     LOAD_DEF(skipFuncWindowsLoading, Bool, false);
+    LOAD_DEF(useOnlineHelp, Bool, false);
 
     s.beginGroup("Debug");
     LOAD_DEF(showProtocolAtStart, Bool, false);
@@ -121,6 +122,7 @@ void AppSettings::save()
     SAVE(showCustomElemLibrary);
     SAVE(showPythonMatrices);
     SAVE(skipFuncWindowsLoading);
+    SAVE(useOnlineHelp);
 
     s.beginGroup("Debug");
     SAVE(showProtocolAtStart);

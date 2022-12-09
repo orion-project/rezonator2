@@ -1,5 +1,6 @@
 #include "HelpSystem.h"
 
+#include "AppSettings.h"
 #include "core/Format.h"
 #include "core/Protocol.h"
 
@@ -59,6 +60,12 @@ HelpSystem* HelpSystem::instance()
 
 void HelpSystem::showContents()
 {
+    if (AppSettings::instance().useOnlineHelp)
+    {
+        QDesktopServices::openUrl(QUrl(Z::Strs::homepage() + "/help/index.html"));
+        return;
+    }
+
     if (!startAssistant()) return;
 
     QByteArray commands;
@@ -70,6 +77,12 @@ void HelpSystem::showContents()
 
 void HelpSystem::showIndex()
 {
+    if (AppSettings::instance().useOnlineHelp)
+    {
+        QDesktopServices::openUrl(QUrl(Z::Strs::homepage() + "/help/genindex.html"));
+        return;
+    }
+
     if (!startAssistant()) return;
 
     QByteArray commands;
@@ -79,6 +92,12 @@ void HelpSystem::showIndex()
 
 void HelpSystem::showTopic(const QString& topic)
 {
+    if (AppSettings::instance().useOnlineHelp)
+    {
+        QDesktopServices::openUrl(QUrl(Z::Strs::homepage() + "/help/" + topic));
+        return;
+    }
+
     if (!startAssistant()) return;
 
     QByteArray commands;

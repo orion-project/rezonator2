@@ -74,6 +74,7 @@ QWidget* AppSettingsDialog::createGeneralPage()
         {"showCustomElemLibrary", tr("Show custom elements in Elements Catalog")},
         {"showPythonMatrices", tr("Show Python code for matrices in info windows")},
         {"skipFuncWindowsLoading", tr("Don't load function windows when opening schema")},
+        {"useOnlineHelp", tr("Open documentation online instead of from local file")},
     });
 
     page->add({_groupOptions, page->stretch()});
@@ -201,6 +202,7 @@ void AppSettingsDialog::populate()
     _groupOptions->setOption("showCustomElemLibrary", settings.showCustomElemLibrary);
     _groupOptions->setOption("showPythonMatrices", settings.showPythonMatrices);
     _groupOptions->setOption("skipFuncWindowsLoading", settings.skipFuncWindowsLoading);
+    _groupOptions->setOption("useOnlineHelp", settings.useOnlineHelp);
 
     // view
     _groupView->setOption("smallToolbarImages", settings.smallToolbarImages);
@@ -243,6 +245,7 @@ bool AppSettingsDialog::collect()
     settings.showCustomElemLibrary = _groupOptions->option("showCustomElemLibrary");
     settings.showPythonMatrices = _groupOptions->option("showPythonMatrices");
     settings.skipFuncWindowsLoading = _groupOptions->option("skipFuncWindowsLoading");
+    settings.useOnlineHelp = _groupOptions->option("useOnlineHelp");
 
     // view
     settings.smallToolbarImages = _groupView->option("smallToolbarImages");

@@ -52,6 +52,7 @@ public:
     bool showCustomElemLibrary;  ///< Load Custom Element Library into Elements Catalog.
     bool showPythonMatrices;     ///< Show Python code for matrices in info function windows.
     bool skipFuncWindowsLoading; ///< Don't load function windows when opening schema.
+    bool useOnlineHelp;          ///< Navigate to online help instead of opening Assistant
 
     bool layoutExportTransparent; ///< Use transparent background in exported images of layout.
 
@@ -66,6 +67,7 @@ public:
 
     bool calcTablesMediumEnds;
     bool calcTablesEmptySpaces;
+
 
     Z::Unit defaultUnitFrontRadius = Z::Units::none();
     Z::Unit defaultUnitBeamRadius = Z::Units::none();
