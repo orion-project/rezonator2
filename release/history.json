@@ -2,7 +2,7 @@
   "history": [
     {
       "version": "2.0.11-beta7",
-      "date": "",
+      "date": "2022-12-09",
       "changes": [
         {
           "text": "Added support for negative focuses in Thermal lens and Thermal medium elements and in the GRIN Lens Assessment tool (https://github.com/orion-project/rezonator2/issues/23)."
@@ -21,6 +21,9 @@
         },
         {
           "text": "Enabled HIDPI mode and fixed various related small issues (https://github.com/orion-project/rezonator2/issues/15)"
+        },
+        {
+          "text": "Can use online documentation instead of local one (https://github.com/orion-project/rezonator2/issues/9)."
         },
         {
           "text": "Fix: schema table not properly updated after element deletion."
