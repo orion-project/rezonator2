@@ -7,7 +7,6 @@
 #include "core/Elements.h"
 #include "core/ElementsCatalog.h"
 #include "funcs/FormatInfo.h"
-#include "widgets/ElementImagesProvider.h"
 #include "widgets/ElementTypesListView.h"
 
 #include "helpers/OriDialogs.h"
@@ -152,7 +151,8 @@ static QString makeCustomElemPreview(Element* elem)
     for (const auto param : elem->params())
         stream << f.format(param) << QStringLiteral("<br/>");
 
-    stream << "<center><img src='" << ElementImagesProvider::instance().drawingPath(elem->type()) << "'/></center>";
+    // TODO: drawing is rendered as bitmap in html, doesn't look cool on 4k monitor
+    stream << "<center><img src='" << Z::Utils::elemDrawingPath(elem->type()) << "'/></center>";
 
     return report;
 }
@@ -162,5 +162,5 @@ void ElementsCatalogDialog::updatePreview(Element* elem)
     if (_categoryTabs->currentIndex() == _customElemsTab)
         _previewHtml->setHtml(makeCustomElemPreview(elem));
     else
-        _previewSvg->load(ElementImagesProvider::instance().drawingPath(elem->type()));
+        _previewSvg->load(Z::Utils::elemDrawingPath(elem->type()));
 }

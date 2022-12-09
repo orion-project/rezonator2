@@ -3,7 +3,6 @@
 #include "Appearance.h"
 #include "core/Element.h"
 #include "core/Schema.h"
-#include "widgets/ElementImagesProvider.h"
 #include "widgets/ParamsEditor.h"
 
 #include "widgets/OriSvgView.h"
@@ -118,7 +117,7 @@ QWidget* ElementPropsDialog::initPageOptions()
 QWidget* ElementPropsDialog::initPageOutline()
 {
     auto outline = new Ori::Widgets::SvgView;
-    outline->load(ElementImagesProvider::instance().drawingPath(_element->type()));
+    outline->load(Z::Utils::elemDrawingPath(_element->type()));
     return Ori::Layouts::LayoutV({outline}).setMargin(3).makeWidget();
 }
 

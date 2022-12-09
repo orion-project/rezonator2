@@ -1,6 +1,5 @@
 #include "SchemaElemsTable.h"
 
-#include "ElementImagesProvider.h"
 #include "RichTextItemDelegate.h"
 #include "../Appearance.h"
 #include "../funcs/FormatInfo.h"
@@ -14,7 +13,7 @@ SchemaElemsTable::SchemaElemsTable(Schema *schema, QWidget *parent) : QTableWidg
 {
     _schema = schema;
 
-    auto iconSize = ElementImagesProvider::instance().iconSize();
+    auto iconSize = Z::Utils::elemIconSize();
 
     int paramsOffsetY = 0;
 #if defined(Q_OS_MAC)

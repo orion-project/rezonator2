@@ -1,15 +1,13 @@
 #include "ElementTypesListView.h"
-#include "ElementImagesProvider.h"
 
 #include "../core/Utils.h"
 
 #include <QKeyEvent>
-#include <QPainter>
 
 ElementTypesListView::ElementTypesListView(QWidget *parent) : QListWidget(parent)
 {
     setAlternatingRowColors(true);
-    setIconSize(iconSize());
+    setIconSize(Z::Utils::elemIconSize());
     connect(this, SIGNAL(currentRowChanged(int)), this, SLOT(rowSelected(int)));
 }
 
@@ -30,26 +28,13 @@ void ElementTypesListView::keyPressEvent(QKeyEvent *event)
 
 void ElementTypesListView::populate(Elements elems, DisplayNameKind displayNameKind)
 {
-    static QMap<QString, QIcon> elemIcons;
+    auto sz = iconSize();
+    sz.setHeight(sz.height() + 8);
 
     blockSignals(true);
     clear();
     for (Element *elem : elems)
     {
-        if (!elemIcons.contains(elem->type()))
-        {
-            // Make icons with margins for better look here
-            QIcon defaultIcon(ElementImagesProvider::instance().iconPath(elem->type()));
-            QSize defaultSize = ElementImagesProvider::instance().iconSize();
-            QSize thisSize = iconSize();
-            QPixmap thisPixmap(thisSize);
-            thisPixmap.fill(Qt::transparent);
-            int marginX = (thisSize.width() - defaultSize.width()) / 2;
-            int marginY = (thisSize.height() - defaultSize.height()) / 2;
-            QPainter painter(&thisPixmap);
-            painter.drawPixmap(marginX, marginY, defaultSize.width(), defaultSize.height(), defaultIcon.pixmap(defaultSize));
-            elemIcons.insert(elem->type(), QIcon(thisPixmap));
-        }
         QString displayName;
         switch (displayNameKind)
         {
@@ -58,33 +43,13 @@ void ElementTypesListView::populate(Elements elems, DisplayNameKind displayNameK
         }
         if (displayName.isEmpty())
             displayName = elem->typeName();
-        auto it = new QListWidgetItem(elemIcons[elem->type()], displayName);
+        auto it = new QListWidgetItem(QIcon(Z::Utils::elemIconPath(elem->type())), displayName);
         it->setData(Qt::UserRole, ptr2var(elem));
+        it->setSizeHint(sz);
         addItem(it);
     }
-    adjust();
     blockSignals(false);
     setCurrentRow(0);
-}
-
-void ElementTypesListView::adjust()
-{
-    if (count() == 0) return;
-
-    QFontMetrics fm(font());
-    int width, max_width = 0;
-    for (int i = 0; i < count(); i++)
-    {
-        width = fm.horizontalAdvance(item(i)->text());
-        if (width > max_width) max_width = width;
-    }
-    auto iconSize = ElementImagesProvider::instance().iconSize();
-    max_width += iconSize.width() * 2 +
-                 style()->pixelMetric(QStyle::PM_ScrollBarExtent) +
-                 style()->pixelMetric(QStyle::PM_DefaultFrameWidth) * 2;
-    setMinimumWidth(max_width);
-    setMinimumHeight(iconSize.height() + spacing() * 2 + 4 +
-                     style()->pixelMetric(QStyle::PM_DefaultFrameWidth) * 2);
 }
 
 void ElementTypesListView::rowSelected(int index)
@@ -105,12 +70,4 @@ Element* ElementTypesListView::selected() const
 Element *ElementTypesListView::elem(QListWidgetItem *item) const
 {
     return var2ptr<Element*>(item->data(Qt::UserRole));
-}
-
-QSize ElementTypesListView::iconSize() const
-{
-    QSize size = ElementImagesProvider::instance().iconSize();
-    size.rheight() += 4;
-    size.rwidth() += 4;
-    return size;
 }
