@@ -9,6 +9,8 @@ TARGET = rezonator
 TEMPLATE = app
 DESTDIR = $$_PRO_FILE_PWD_/bin
 
+unix: LIBS += -ldl
+
 #------------------------------------------------------------
 # Submodules
 
