@@ -223,7 +223,7 @@ bool RoundTripCalculator::isStable(const Z::Matrix& m) const
     // See also $PROJECT_ROOT/calc/complex_stability.ipynb
 
     auto half_of_A_plus_D = ((m.A + m.D) * 0.5).real();
-    return (half_of_A_plus_D >= -1) && (half_of_A_plus_D <= 1);
+    return (half_of_A_plus_D > -1) && (half_of_A_plus_D < 1);
 }
 
 double RoundTripCalculator::calcStability(const Z::Matrix& m) const

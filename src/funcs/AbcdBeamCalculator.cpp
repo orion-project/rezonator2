@@ -12,7 +12,7 @@ AbcdBeamCalculator::AbcdBeamCalculator(double lambdaSI)
 
 #define CALC_Q \
     auto g = SQR(m.A + m.D) / 4.0; \
-    if (g.real() > 1.0) return Double::nan(); \
+    if (g.real() >= 1.0) return Double::nan(); \
     auto q = ((m.D - m.A) / 2.0 + Z::Complex(0, 1) * sqrt(1.0 - g)) / m.B
 
 double AbcdBeamCalculator::beamRadius(const Z::Matrix& m, double ior) const

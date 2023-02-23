@@ -1,6 +1,21 @@
 {
   "history": [
     {
+      "version": "2.0.12-beta8",
+      "date": "",
+      "changes": [
+        {
+          "text": "Calculate beam parameters in resonators with complex matrices (https://github.com/orion-project/rezonator2/issues/31)"
+        },
+        {
+          "text": "Added configuration options for displaying of imaginary unit"
+        },
+        {
+          "text": "Show both normal and squared stability parameters in round-trip window as complex numbers"
+        }
+      ]
+    },
+    {
       "version": "2.0.11-beta7",
       "date": "2022-12-09",
       "changes": [
