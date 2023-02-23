@@ -64,10 +64,11 @@ public:
     bool exportHideCursor; ///< Hide cursor lines when exporting plot image.
 
     int numberPrecisionData; ///< Number precision for value formatting (graph data, etc).
+    bool showImagUnitAsJ;
+    bool showImagUnitAtEnd;
 
     bool calcTablesMediumEnds;
     bool calcTablesEmptySpaces;
-
 
     Z::Unit defaultUnitFrontRadius = Z::Units::none();
     Z::Unit defaultUnitBeamRadius = Z::Units::none();

@@ -76,6 +76,7 @@ HEADERS += \
     src/WindowsManager.h \
     src/core/Beam.h \
     src/core/CommonTypes.h \
+    src/core/Complex.h \
     src/core/Element.h \
     src/core/ElementFilter.h \
     src/core/ElementFormula.h \
@@ -206,6 +207,7 @@ SOURCES += \
     src/WindowsManager.cpp \
     src/core/Beam.cpp \
     src/core/CommonTypes.cpp \
+    src/core/Complex.cpp \
     src/core/Element.cpp \
     src/core/ElementFilter.cpp \
     src/core/ElementFormula.cpp \

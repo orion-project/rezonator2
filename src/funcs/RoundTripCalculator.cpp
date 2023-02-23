@@ -202,36 +202,49 @@ void RoundTripCalculator::multMatrix()
     }
 }
 
-Z::PointTS RoundTripCalculator::stability() const
-{
-    return { calcStability(_mt), calcStability(_ms) };
-}
-
-Z::PairTS<bool> RoundTripCalculator::isStable() const
-{
-    return { isStable(_mt), isStable(_ms) };
-}
-
 bool RoundTripCalculator::isStable(const Z::Matrix& m) const
 {
-    // TODO:COMPLEX: what about imaginary part?
+    // The most generic stability condition suitable for all-complex matrices
+    // follows from the equation for self-consisten complex beam parameter:
+    //
+    // 1/q = (D-A)/2B ± i/B*√(1-g²)  where g=(A+D)/2
+    // w² = λ/π/Im(1/q)
+    // Im(1/q) != 0 --> stable
+    //
+    // The sign is not important because we can choose any solution from ±
+    // but zero value gets an infinite beam radius which has no sence.
+    // The problem is that comparison with zero is a very weak condition for float numbers.
+    //
+    // For systems with complex matrices either real of complex part
+    // of stability parameter can be used for stability analysis.
+    // Stability condition applied to the real part is the same as in system with pure real matrices.
+    // There can be defined another condition for imaginary part,
+    // but we use only the real part for consistency with pure real systems.
+    // See also $PROJECT_ROOT/calc/complex_stability.ipynb
+
     auto half_of_A_plus_D = ((m.A + m.D) * 0.5).real();
-    return (half_of_A_plus_D > -1) && (half_of_A_plus_D < 1);
+    return (half_of_A_plus_D >= -1) && (half_of_A_plus_D <= 1);
 }
 
 double RoundTripCalculator::calcStability(const Z::Matrix& m) const
 {
-    // TODO:COMPLEX: what about imaginary part?
+    // See RoundTripCalculator::isStable()
+    return calcStabilityCplx(m).real();
+}
+
+Z::Complex RoundTripCalculator::calcStabilityCplx(const Z::Matrix &m) const
+{
     auto half_of_A_plus_D = (m.A + m.D) * 0.5;
     switch (_stabilityCalcMode)
     {
     case Z::Enums::StabilityCalcMode::Normal:
-        return half_of_A_plus_D.real();
+        return half_of_A_plus_D;
 
     case Z::Enums::StabilityCalcMode::Squared:
-        return (Z::Complex(1, 0) - half_of_A_plus_D * half_of_A_plus_D).real();
+        return Z::Complex(1, 0) - half_of_A_plus_D * half_of_A_plus_D;
     }
-    return 0;
+    qWarning() << "Unsupported stability calculation mode" << _stabilityCalcMode;
+    return Z::Complex(0, 0);
 }
 
 QList<Element*> RoundTripCalculator::roundTrip() const

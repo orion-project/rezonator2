@@ -1,4 +1,5 @@
 #include "AppSettings.h"
+
 #include "tools/OriSettings.h"
 
 #ifndef DLG_APP_CONFIG
@@ -88,6 +89,8 @@ void AppSettings::load()
 
     s.beginGroup("Format");
     LOAD_DEF(numberPrecisionData, Int, 6);
+    LOAD_DEF(showImagUnitAsJ, Bool, false);
+    LOAD_DEF(showImagUnitAtEnd, Bool, true);
 
     s.beginGroup("Units");
     defaultUnitBeamRadius = Z::Units::findByAlias(s.settings()->value("defaultUnitBeamRadius").toString(), Z::Units::mkm());
@@ -147,6 +150,8 @@ void AppSettings::save()
 
     s.beginGroup("Format");
     SAVE(numberPrecisionData);
+    SAVE(showImagUnitAsJ);
+    SAVE(showImagUnitAtEnd);
 
     s.beginGroup("Units");
     s.settings()->setValue("defaultUnitBeamRadius", defaultUnitBeamRadius->alias());

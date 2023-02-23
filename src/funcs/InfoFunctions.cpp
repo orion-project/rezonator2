@@ -218,9 +218,12 @@ QString InfoFuncMatrixRT::format(RoundTripCalculator *c, bool showElems)
 
     if (c->owner()->isResonator())
     {
-        auto stab = c->stability();
-        stream << formatStability('T', stab.T)
-               << formatStability('S', stab.S);
+        c->setStabilityCalcMode(Z::Enums::StabilityCalcMode::Normal);
+        auto stabNormal = c->stabilityCplx();
+        stream << "<p>Stability (normal): " << formatStability('T', stabNormal.T) << formatStability('S', stabNormal.S);
+        c->setStabilityCalcMode(Z::Enums::StabilityCalcMode::Squared);
+        auto stabSquared = c->stabilityCplx();
+        stream << "<br>Stability (squared): " << formatStability('T', stabSquared.T) << formatStability('S', stabSquared.S);
     }
 
     QString resultPy;
@@ -315,12 +318,13 @@ QString InfoFuncMatrixRT::format(RoundTripCalculator *c, bool showElems)
     return result;
 }
 
-QString InfoFuncMatrixRT::formatStability(char plane, double value)
+QString InfoFuncMatrixRT::formatStability(char plane, const Z::Complex& v)
 {
+    QString s = Z::isReal(v) ? Z::format(v.real()) : Z::format(v);
     return QStringLiteral("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
                           "<span class=param>P<sub>%1</sub></span>"
                           "<span class=value> = %2</span>")
-            .arg(plane).arg(Z::format(value));
+            .arg(plane).arg(s);
 }
 
 //------------------------------------------------------------------------------

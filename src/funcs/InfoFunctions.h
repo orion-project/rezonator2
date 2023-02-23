@@ -62,7 +62,7 @@ public:
     FUNC_NAME(qApp->translate("Func", "Round-trip Matrix"))
 
     static QString format(RoundTripCalculator *c, bool showElems);
-    static QString formatStability(char plane, double value);
+    static QString formatStability(char plane, const Z::Complex& v);
 private:
     Element* _element;
     bool _showElems = false;
