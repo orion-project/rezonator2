@@ -19,6 +19,8 @@
         <file alias="cut">../img/toolbar/cut.svg</file>
         <file alias="delete">../img/toolbar/delete.svg</file>
         <file alias="delete_items">../img/toolbar/delete_items.svg</file>
+        <file alias="dir_backward">../img/toolbar/dir_backward.svg</file>
+        <file alias="dir_forward">../img/toolbar/dir_forward.svg</file>
         <file alias="duplicate_page">../img/toolbar/duplicate_page.svg</file>
         <file alias="edit_formula">../img/toolbar/edit_formula.svg</file>
         <file alias="elem_add">../img/toolbar/elem_add.svg</file>

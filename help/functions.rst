@@ -16,6 +16,8 @@ A function is a procedure or an operations sequence yielding some data related t
    :maxdepth: 1
    :caption: List of functions:
 
+   func_mult_fwd
+   func_mult_bkwd
    func_rt
    func_rt_plot
    func_stabmap

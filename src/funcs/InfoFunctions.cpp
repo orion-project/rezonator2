@@ -70,21 +70,37 @@ QString InfoFuncMatrices::calculateInternal()
 //------------------------------------------------------------------------------
 
 InfoFuncMatrixMultFwd::InfoFuncMatrixMultFwd(Schema *schema, const Elements& elems)
-    : InfoFuncMatrices(schema, elems) {}
+    : InfoFuncMatrices(schema, elems)
+{
+    _actions
+            << InfoFuncAction{
+               .title = qApp->translate("InfoFuncMatrixMultFwd", "Use forward proparation matrices"),
+               .icon = ":/toolbar/dir_forward",
+               .checkGroup = 1,
+               .triggered = [this](){ _useInvMatrs = false; calculate(); },
+               .isChecked = [this](){ return !_useInvMatrs; },
+            }
+            << InfoFuncAction{
+               .title = qApp->translate("InfoFuncMatrixMultFwd", "Use back proparation matrices"),
+               .icon = ":/toolbar/dir_backward",
+               .checkGroup = 1,
+               .triggered = [this](){ _useInvMatrs = true; calculate(); },
+               .isChecked = [this](){ return _useInvMatrs; },
+            };
+}
 
 QString InfoFuncMatrixMultFwd::calculateInternal()
 {
     Z::Matrix mt, ms;
 
-    for (auto elem : _elements)
+    foreach (auto elem, _elements)
     {
-        mt *= elem->Mt();
-        ms *= elem->Ms();
+        mt *= _useInvMatrs ? elem->Mt_inv() : elem->Mt() ;
+        ms *= _useInvMatrs ? elem->Ms_inv() : elem->Ms();
     }
 
     QString report = QStringLiteral("%1:<p>%2")
-            .arg(Z::Format::roundTrip(_elements, true))
-            .arg(Z::Format::matrices(mt, ms));
+        .arg(Z::Format::roundTrip(_elements, true), Z::Format::matrices(mt, ms));
 
     if (AppSettings::instance().showPythonMatrices)
         report += Z::Format::Py::roundTrip(_elements);
@@ -101,7 +117,6 @@ InfoFuncMatrixMultBkwd::InfoFuncMatrixMultBkwd(Schema *schema, const Elements& e
 {
     Elements reversed;
     reversed.reserve(_elements.size());
-    // TODO: for asymmetrical elements we should take inverted matrix
     std::reverse_copy(_elements.begin(), _elements.end(), std::back_inserter(reversed));
     _elements = reversed;
 }
