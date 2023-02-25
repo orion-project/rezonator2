@@ -7,6 +7,7 @@
 #include "widgets/OriOptionsGroup.h"
 
 #include <QBoxLayout>
+#include <QCheckBox>
 #include <QDebug>
 #include <QFormLayout>
 #include <QLabel>
@@ -94,9 +95,14 @@ QWidget* AppSettingsDialog::createViewPage()
     });
 
     _numberPrecisionData = new NumberPrecisionSpinBox;
+    _showImagUnitAsJ = new QCheckBox(tr("Display imaginary unit as 'j' instead of 'i'"));
+    _showImagUnitAtEnd = new QCheckBox(tr("Show imaginary unit after imaginary part"));
     auto groupFormat = new QGroupBox(tr("Number format"));
-    LayoutH({
-        new QLabel(tr("Number precision for result formatting")), _numberPrecisionData
+    LayoutV({
+        LayoutH({
+            new QLabel(tr("Number precision for result formatting")), _numberPrecisionData
+        }),
+        _showImagUnitAsJ, _showImagUnitAtEnd,
     }).useFor(groupFormat);
 
     page->add({_groupView, groupFormat, page->stretch()});
@@ -210,6 +216,8 @@ void AppSettingsDialog::populate()
     _groupView->setOption("useNativeMenuBar", settings.useNativeMenuBar);
     _groupView->setOption("useSystemDialogs", settings.useSystemDialogs);
     _numberPrecisionData->setValue(settings.numberPrecisionData);
+    _showImagUnitAsJ->setChecked(settings.showImagUnitAsJ);
+    _showImagUnitAtEnd->setChecked(settings.showImagUnitAtEnd);
 
     // layout
     //_groupLayoutExport->setOption("layoutExportTransparent", settings.layoutExportTransparent);
@@ -253,6 +261,8 @@ bool AppSettingsDialog::collect()
     settings.useNativeMenuBar = _groupView->option("useNativeMenuBar");
     settings.useSystemDialogs = _groupView->option("useSystemDialogs");
     settings.numberPrecisionData = _numberPrecisionData->value();
+    settings.showImagUnitAsJ = _showImagUnitAsJ->isChecked();
+    settings.showImagUnitAtEnd = _showImagUnitAtEnd->isChecked();
 
     // layout
     //settings.layoutExportTransparent = _groupLayoutExport->option("layoutExportTransparent");

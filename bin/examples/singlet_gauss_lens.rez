@@ -1,0 +1,253 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 980
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "d1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "GA1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+                "Fs": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "Ft": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "Lambda": {
+                    "unit": "nm",
+                    "value": 980
+                },
+                "alpha2s": {
+                    "unit": "inv_m2",
+                    "value": 100000
+                },
+                "alpha2t": {
+                    "unit": "inv_m2",
+                    "value": 0
+                }
+            },
+            "title": "",
+            "type": "ElemGaussApertureLens"
+        },
+        {
+            "is_disabled": true,
+            "label": "GA2",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+                "Lambda": {
+                    "unit": "nm",
+                    "value": 980
+                },
+                "alpha2s": {
+                    "unit": "inv_m2",
+                    "value": 100000
+                },
+                "alpha2t": {
+                    "unit": "inv_m2",
+                    "value": 0
+                }
+            },
+            "title": "",
+            "type": "ElemGaussAperture"
+        },
+        {
+            "is_disabled": false,
+            "label": "d2",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "P1",
+            "layout_draw_narrow": false,
+            "layout_show_label": true,
+            "params": {
+            },
+            "title": "",
+            "type": "ElemPoint"
+        }
+    ],
+    "formulas": [
+    ],
+    "notes": "",
+    "param_links": [
+    ],
+    "pumps": [
+        {
+            "color": "#555555",
+            "is_active": true,
+            "label": "P1",
+            "mode": "Waist",
+            "params": {
+                "MI": {
+                    "unit": "none",
+                    "value_s": 1,
+                    "value_t": 1
+                },
+                "w_0": {
+                    "unit": "mkm",
+                    "value_s": 100,
+                    "value_t": 100
+                },
+                "z_w": {
+                    "unit": "mm",
+                    "value_s": 0,
+                    "value_t": 0
+                }
+            },
+            "title": ""
+        }
+    ],
+    "schema_version": "2.0",
+    "title": "singlet_gauss_lens",
+    "trip_type": "SP",
+    "windows": [
+        {
+            "function": {
+                "args": [
+                    {
+                        "element_index": 0,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 100
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 3,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 100
+                            },
+                            "use_step": false
+                        }
+                    }
+                ],
+                "mode": "BeamRadius"
+            },
+            "type": "MultirangeCaustic",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "elem_bound_markers": true,
+                "stored_views": {
+                },
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 104.01377769907718,
+                "x_min": 96.10683335783627,
+                "x_title": "{elem_labels} {(unit)}",
+                "x_unit": "mm",
+                "y_max": 333.12374088781763,
+                "y_min": 310.4480236470273,
+                "y_title": "{func_mode} {(unit)}",
+                "y_unit": "mkm"
+            }
+        },
+        {
+            "function": {
+                "arg": {
+                    "element_index": 3,
+                    "param": "L",
+                    "range": {
+                        "points": 100,
+                        "start": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 1
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 100
+                        },
+                        "use_step": false
+                    }
+                },
+                "mode": "BeamRadius"
+            },
+            "type": "Caustic",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "stored_views": {
+                },
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 101,
+                "x_min": -1,
+                "x_title": "{elem} {(unit)}",
+                "x_unit": "mm",
+                "y_max": 329.2886265563843,
+                "y_min": 311.11773902695927,
+                "y_title": "{func_mode} {(unit)}",
+                "y_unit": "mkm"
+            }
+        }
+    ]
+}

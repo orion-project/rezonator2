@@ -4,6 +4,7 @@
 #include "dialogs/OriBasicConfigDlg.h"
 
 QT_BEGIN_NAMESPACE
+class QCheckBox;
 class QComboBox;
 class QSpinBox;
 QT_END_NAMESPACE
@@ -38,6 +39,7 @@ private:
     UnitComboBox *_defaultUnitAngle;
     QSpinBox *_exportNumberPrecision;
     QSpinBox *_numberPrecisionData;
+    QCheckBox *_showImagUnitAsJ, *_showImagUnitAtEnd;
 
     QWidget* createGeneralPage();
     QWidget* createViewPage();

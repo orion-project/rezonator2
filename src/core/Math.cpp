@@ -66,7 +66,9 @@ bool Matrix::isReal() const
 
 RayVector::RayVector(const RayVector& in, const Matrix& m)
 {
-    // TODO: COMPLEX: what about imaginary part?
+    // We don't use complex matrices with ray-vector pumps
+    // See PumpCalculator.cpp PumpCalculatorImpl::calcVector()
+    // See also CausticFunction::calculate()
     Y = in.Y * m.A.real() + in.V * m.B.real();
     V = in.Y * m.C.real() + in.V * m.D.real();
 }

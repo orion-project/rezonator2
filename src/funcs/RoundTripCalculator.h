@@ -27,8 +27,9 @@ public:
     bool isEmpty() const { return _roundTrip.isEmpty(); }
     QString error() const { return _error; }
 
-    Z::PointTS stability() const;
-    Z::PairTS<bool> isStable() const;
+    Z::PointTS stability() const { return { calcStability(_mt), calcStability(_ms) }; }
+    Z::PointComplexTS stabilityCplx() const { return { calcStabilityCplx(_mt), calcStabilityCplx(_ms) }; }
+    Z::PairTS<bool> isStable() const { return { isStable(_mt), isStable(_ms) }; }
     Z::Enums::StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }
     void setStabilityCalcMode(Z::Enums::StabilityCalcMode mode) { _stabilityCalcMode = mode; }
 
@@ -104,6 +105,7 @@ private:
     void collectMatricesSP();
 
     double calcStability(const Z::Matrix &m) const;
+    Z::Complex calcStabilityCplx(const Z::Matrix &m) const;
     bool isStable(const Z::Matrix &m) const;
 };
 
