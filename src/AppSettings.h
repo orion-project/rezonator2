@@ -78,7 +78,9 @@ public:
 
     void load();
     void save();
-    bool edit(class QWidget *parent);
+
+    enum { PageGeneral, PageView, PageLayout, PageUnits, PageExport, PageCalc };
+    bool edit(Ori::Optional<int> currentPageId = Ori::Optional<int>());
 
     QSize toolbarIconSize() const;
 

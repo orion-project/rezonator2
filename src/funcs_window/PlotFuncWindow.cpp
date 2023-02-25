@@ -92,6 +92,7 @@ void PlotFuncWindow::createActions()
     actnCopyGraphDataCur = action(tr("Copy Graph Data (this segment)"), this, SLOT(copyGraphData()), ":/toolbar/copy");
     actnCopyGraphDataAll = action(tr("Copy Graph Data (all segments)"), this, SLOT(copyGraphDataAll()), ":/toolbar/copy");
     actnCopyPlotImage = action(tr("Copy Plot Image"), this, SLOT(copyPlotImage()), ":/toolbar/copy_img");
+    actnExportGraphs = action(tr("Export Graph Data..."), this, SLOT(exportGraphsData()));
 }
 
 void PlotFuncWindow::createMenuBar()
@@ -103,7 +104,8 @@ void PlotFuncWindow::createMenuBar()
 
     menuPlot = menu(tr("Plot", "Menu title"), this, {
         actnUpdate, actnUpdateParams, actnFreeze, nullptr, actnShowFlippedTS, actnShowT, actnShowS, nullptr,
-        _unitsMenuX->menu(), _unitsMenuY->menu(), actnSetTitleX, actnSetTitleY, nullptr, actnShowRoundTrip
+        actnCopyPlotImage,  actnExportGraphs, nullptr,
+        _unitsMenuX->menu(), _unitsMenuY->menu(), actnSetTitleX, actnSetTitleY, nullptr, actnShowRoundTrip,
     });
     connect(menuPlot, &QMenu::aboutToShow, [this](){
         _unitsMenuX->menu()->setTitle("X-axis Unit");
@@ -685,6 +687,11 @@ void PlotFuncWindow::copyPlotImage()
 
     if (oldVisible != _cursor->visible())
         _cursor->setVisible(oldVisible);
+}
+
+void PlotFuncWindow::exportGraphsData()
+{
+    PlotHelpers::exportGraphsData();
 }
 
 void PlotFuncWindow::graphsMenuAboutToShow()

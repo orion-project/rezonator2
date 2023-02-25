@@ -29,6 +29,7 @@ QCPL::GraphDataExportSettings makeExportSettings();
 
 void toClipboard(QCPGraph* graph);
 void toClipboard(const QVector<QCPGraph*>& graphs);
+void exportGraphsData();
 
 } // namespace PlotHelpers
 

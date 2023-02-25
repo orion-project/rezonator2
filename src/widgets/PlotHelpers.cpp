@@ -2,8 +2,18 @@
 
 #include "../AppSettings.h"
 
+#include "helpers/OriDialogs.h"
+#include "helpers/OriLayouts.h"
+#include "widgets/OriOptionsGroup.h"
+
 #include "qcpl_plot.h"
 #include "qcpl_cursor.h"
+
+#include <QLabel>
+
+using namespace Ori::Dlg;
+using namespace Ori::Layouts;
+using namespace Ori::Widgets;
 
 namespace PlotHelpers {
 
@@ -61,6 +71,35 @@ void toClipboard(const QVector<QCPGraph*>& graphs)
         for (auto d : *(g->data().data()))
             exporter.add(d.key, d.value);
     exporter.toClipboard();
+}
+
+void exportGraphsData()
+{
+    auto optsPlane = new OptionsGroup(qApp->translate("exportGraphsData", "Work Plane"), {
+                                          qApp->translate("exportGraphsData", "Tangential"),
+                                          qApp->translate("exportGraphsData", "Sagittal"),
+                                          qApp->translate("exportGraphsData", "Both")
+                                      }, true);
+    auto optsSegment = new OptionsGroup(qApp->translate("exportGraphsData", "Graph Segment"), {
+                                            qApp->translate("exportGraphsData", "Selected"),
+                                            qApp->translate("exportGraphsData", "All"),
+                                        }, true);
+
+    auto labelSettings = new QLabel(qApp->translate("exportGraphsData", "Check also <a href='s'>Global Export Settings</a>"));
+    labelSettings->connect(labelSettings, &QLabel::linkActivated, []{
+        AppSettings::instance().edit(AppSettings::PageExport);
+    });
+
+    optsPlane->setOption(2);
+    optsSegment->setOption(1);
+
+    auto dlg = Dialog(LayoutV({optsPlane, optsSegment, labelSettings}).setMargin(0).makeWidget(), true)
+            .withTitle(qApp->translate("exportGraphsData", "Export Graphs Data"))
+            .withContentToButtonsSpacingFactor(3);
+    if (dlg.exec())
+    {
+        // TODO
+    }
 }
 
 } // namespace PlotHelpers

@@ -475,7 +475,7 @@ void ProjectWindow::showCustomElems()
 
 void ProjectWindow::showSettings()
 {
-    AppSettings::instance().edit(this);
+    AppSettings::instance().edit();
 }
 
 void ProjectWindow::showGaussCalculator()

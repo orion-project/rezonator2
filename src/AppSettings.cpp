@@ -6,7 +6,7 @@
 #define DLG_APP_CONFIG
 namespace Z {
 namespace Dlg {
-    bool editAppSettings(class QWidget *parent); // ConfigDialog.cpp
+    bool editAppSettings(Ori::Optional<int> currentrPageId); // AppSettingDialog.cpp
 }}
 #endif
 
@@ -163,11 +163,11 @@ void AppSettings::save()
     SAVE(calcTablesEmptySpaces);
 }
 
-bool AppSettings::edit(class QWidget *parent)
+bool AppSettings::edit(Ori::Optional<int> currentPageId)
 {
     int old_numberPrecisionData = numberPrecisionData;
 
-    bool result = Z::Dlg::editAppSettings(parent);
+    bool result = Z::Dlg::editAppSettings(currentPageId);
     if (result)
     {
         notify(&IAppSettingsListener::settingsChanged);
