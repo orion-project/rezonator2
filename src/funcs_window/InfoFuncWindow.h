@@ -8,6 +8,7 @@ QT_BEGIN_NAMESPACE
 class QTextBrowser;
 class QToolBar;
 class QAction;
+class QActionGroup;
 QT_END_NAMESPACE
 
 class Schema;
@@ -40,6 +41,7 @@ private:
     QAction *actnUpdate, *actnFreeze, *actnFrozenInfo;
     FrozenStateButton *buttonFrozenInfo;
     InfoFunction *_function;
+    QMap<int, QActionGroup*> _actionGroups;
 
     explicit InfoFuncWindow(InfoFunction *func, QWidget *parent = nullptr);
 

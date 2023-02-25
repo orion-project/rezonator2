@@ -58,7 +58,7 @@ we can calculate radius and ROC of self-consistent beam in resonator:
 Beam Properties in Terms of Matrix Components
 -------------------------------------------
 
-ROC of the self-consistent beam:
+ROC of self-consistent beam:
 
     .. image:: img/abcd_curvature.png
 

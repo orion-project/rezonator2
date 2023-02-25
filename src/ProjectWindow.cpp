@@ -147,8 +147,8 @@ void ProjectWindow::createActions()
     actnEditSelectAll = A_(tr("Select All"), _mdiArea, SLOT(editableChild_SelectAll()), nullptr, QKeySequence::SelectAll);
 
     actnFuncRoundTrip = A_(tr("Round-trip Matrix"), _calculations, SLOT(funcRoundTrip()), ":/toolbar/func_round_trip");
-    actnFuncMultFwd = A_(tr("Multiply Selected Forward"), _calculations, SLOT(funcMultFwd()));
-    actnFuncMultBkwd = A_(tr("Multiply Selected Backward"), _calculations, SLOT(funcMultBkwd()));
+    actnFuncMultFwd = A_(tr("Multiply Selected From First To Last"), _calculations, SLOT(funcMultFwd()));
+    actnFuncMultBkwd = A_(tr("Multiply Selected From Last To First"), _calculations, SLOT(funcMultBkwd()));
     actnFuncStabMap = A_(tr("Stability Map..."), _calculations, SLOT(funcStabMap()), ":/toolbar/func_stab_map");
     actnFuncStabMap2d = A_(tr("2D Stability Map..."), _calculations, SLOT(funcStabMap2d()), ":/toolbar/func_stab_map_2d");
     actnFuncRepRate = A_(tr("Intermode Beats Frequency"), _calculations, SLOT(funcRepRate()), ":/toolbar/func_reprate");

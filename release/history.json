@@ -12,6 +12,12 @@
         },
         {
           "text": "Show both normal and squared stability parameters in round-trip window as complex numbers"
+        },
+        {
+          "text": "'Multiply selected *' functions renamed and documented (https://github.com/orion-project/rezonator2/issues/30)"
+        },
+        {
+          "text": "Can choose between forward and backward matrices in the 'Multiply selected *' functions"
         }
       ]
     },

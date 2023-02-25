@@ -66,6 +66,7 @@ struct InfoFuncAction
 {
     QString title;
     QString icon;
+    int checkGroup = 0;
     std::function<void()> triggered;
     std::function<bool()> isChecked;
 };
