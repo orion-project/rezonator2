@@ -171,7 +171,7 @@ void ProjectOperations::openSchemaFile(const QString& fileName, const OpenFileOp
     if (opts.isExample)
     {
         QFileInfo fileInfo(fileName);
-        schema()->setTitle(fileInfo.baseName());
+        schema()->setTitle(fileInfo.completeBaseName());
         // Don't set file name as we don't want to overwrite examples,
         // and we don't want to show unexpected paths
         // somewhere in /tmp if the program is launched from AppImage

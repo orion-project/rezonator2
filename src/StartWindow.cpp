@@ -80,7 +80,7 @@ MruStartItem::MruStartItem(const QFileInfo& fileInfo)
     // so we need to add some spaces to accout width of vertical scroll bar.
     _displayFilePath = _filePath + "      ";
 
-    auto labelFileName = new QLabel(fileInfo.baseName());
+    auto labelFileName = new QLabel(fileInfo.completeBaseName());
     labelFileName->setProperty("role", "mru_file_name");
 
     _filePathLabel = new QLabel;
