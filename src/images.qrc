@@ -302,5 +302,6 @@
         <file alias="add_global_param.gif">../tips/add_global_param.gif</file>
         <file alias="online_help.png">../tips/online_help.png</file>
         <file alias="disable_elem.png">../tips/disable_elem.png</file>
+        <file alias="tool_lensmaker.png">../tips/tool_lensmaker.png</file>
     </qresource>
 </RCC>
