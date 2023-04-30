@@ -124,7 +124,7 @@ protected:
         *actnZoomIn, *actnZoomOut, *actnZoomInX, *actnZoomOutX, *actnZoomInY, *actnZoomOutY,
         *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo,
         *actnCopyGraphData, *actnCopyGraphDataCur, *actnCopyGraphDataAll, *actnCopyPlotImage,
-        *actnExportGraphs;
+        *actnCopyGraphDataEx;
 
     // Stores differences of plot view when function is switched betweeen modes
     // e.g. when the Caustic function switches between W and R.
@@ -173,7 +173,7 @@ private slots:
     void copyPlotImage();
     void copyGraphData();
     void copyGraphDataAll();
-    void exportGraphsData();
+    void copyGraphDataEx();
 
     QWidget* optionsPanelRequired();
 

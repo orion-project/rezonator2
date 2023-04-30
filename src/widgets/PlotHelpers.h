@@ -17,6 +17,7 @@ class Cursor;
 }
 
 class QCPGraph;
+class FunctionGraphSet;
 
 enum class PlotAxis { X, Y };
 
@@ -29,7 +30,7 @@ QCPL::GraphDataExportSettings makeExportSettings();
 
 void toClipboard(QCPGraph* graph);
 void toClipboard(const QVector<QCPGraph*>& graphs);
-void exportGraphsData();
+void exportGraphsData(FunctionGraphSet* graphs, QCPGraph* selectedGraph);
 
 } // namespace PlotHelpers
 

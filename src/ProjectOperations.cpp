@@ -30,12 +30,32 @@
 
 using namespace Ori::Layouts;
 
-QFileDialog::Options fileDialogOptions()
+static QFileDialog::Options fileDialogOptions()
 {
     QFileDialog::Options options;
     if (!AppSettings::instance().useSystemDialogs)
         options |= QFileDialog::DontUseNativeDialog;
     return options;
+}
+
+static void startAppInstance(QStringList args, const QString& schemaFile = QString())
+{
+    QString exe = qApp->applicationFilePath();
+    if (AppSettings::instance().isDevMode)
+        args << "--dev";
+#ifdef Q_OS_WIN
+    args.insert(0, exe);
+    if (!schemaFile.isEmpty())
+        args << " \"" + schemaFile + "\"";
+    qDebug() << args.join(' ');
+    if (!QProcess::startDetached(args.join(' '), {}))
+        qWarning() << "Unable to start another instance" << args.join(' ');
+#else
+    if (!schemaFile.isEmpty())
+        args << schemaFile;
+    if (!QProcess::startDetached(exe, args))
+        qWarning() << "Unable to start another instance" << exe << args.join(' ');
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -47,7 +67,7 @@ ProjectOperations::ProjectOperations(Schema *schema, QWidget *parent, CalcManage
 
 void ProjectOperations::newSchemaFile()
 {
-    QProcess::startDetached(qApp->applicationFilePath(), {});
+    startAppInstance({});
 }
 
 QString ProjectOperations::getOpenFileName(QWidget* parent)
@@ -118,23 +138,9 @@ void ProjectOperations::openSchemaFile(const QString& fileName, const OpenFileOp
     if (!schema()->state().isNew())
     {
         QStringList args;
-#ifdef Q_OS_WIN
-        args << qApp->applicationFilePath();
         if (opts.isExample)
             args << "--example";
-        args << " \"" + fileName + "\"";
-        bool ok = QProcess::startDetached(args.join(' '), {});
-        if (!ok)
-            qWarning() << "Unable to start another instance" << args.join(' ');
-#else
-        QString exe = qApp->applicationFilePath();
-        if (opts.isExample)
-            args << "--example";
-        args << fileName;
-        bool ok = QProcess::startDetached(exe, args);
-        if (!ok)
-            qWarning() << "Unable to start another instance" << exe << args.join(' ');
-#endif
+        startAppInstance(args, fileName);
         return;
     }
 
