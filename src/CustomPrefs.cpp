@@ -120,7 +120,7 @@ QString maxCounterKey(const QString& counterObjKey)
     auto counterObj = __customData[counterObjKey].toObject();
     int maxCounter = 0;
     QString maxCounterKey;
-    for (auto counterKey: counterObj.keys())
+    for (auto& counterKey: counterObj.keys())
     {
         int counter = counterObj[counterKey].toInt();
         if (counter > maxCounter)

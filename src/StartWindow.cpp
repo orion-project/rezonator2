@@ -2,7 +2,6 @@
 
 #include "Appearance.h"
 #include "AppSettings.h"
-#include "AppSettingsDialog.h"
 #include "CalculatorWindow.h"
 #include "CommonData.h"
 #include "GaussCalculatorWindow.h"
@@ -549,7 +548,7 @@ void ToolsStartPanel::showManual()
 
 void ToolsStartPanel::editSettings()
 {
-    Z::Dlg::editAppSettings(this);
+    AppSettings::instance().edit();
 }
 
 //------------------------------------------------------------------------------
@@ -604,7 +603,6 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
     _toolbar->setIconSize({24, 24});
     if (AppSettings::instance().isDevMode)
         _toolbar->addAction(QIcon(":/toolbar/protocol"), tr("Edit Stylesheet"), this, &StartWindow::editStyleSheet);
-    //_toolbar->addAction(QIcon(":/toolbar/settings"), tr("Edit Settings"), [this]{ Z::Dlg::editAppSettings(this); });
     //_toolbar->addAction(QIcon(":/toolbar/help"), tr("Show Manual"), []{ Z::HelpSystem::instance()->showContents(); });
     _toolbar->addAction(QIcon(":/toolbar/info"), tr("About"), []{ Z::HelpSystem::instance()->showAbout(); });
     _toolbar->setParent(this);

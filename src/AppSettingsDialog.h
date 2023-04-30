@@ -21,7 +21,7 @@ class AppSettingsDialog : public Ori::Dlg::BasicConfigDialog
     Q_OBJECT
 
 public:
-    AppSettingsDialog(QWidget* parent);
+    AppSettingsDialog(QWidget* parent, Ori::Dlg::PageId currentPageId);
 
     // inherited from BasicConfigDialog
     virtual void populate() override;
@@ -50,16 +50,5 @@ private:
     void fillLangsCombo();
     void fillStylesCombo();
 };
-
-#ifndef DLG_APP_CONFIG
-#define DLG_APP_CONFIG
-namespace Z {
-namespace Dlg {
-
-bool editAppSettings(QWidget* parent);
-
-} // namespace Dlg
-} // namespace Z
-#endif
 
 #endif // CONFIG_DLG

@@ -1,9 +1,22 @@
 #include "PlotHelpers.h"
 
 #include "../AppSettings.h"
+#include "../CustomPrefs.h"
+#include "../funcs/FunctionGraph.h"
+
+#include "helpers/OriDialogs.h"
+#include "helpers/OriLayouts.h"
+#include "widgets/OriOptionsGroup.h"
 
 #include "qcpl_plot.h"
 #include "qcpl_cursor.h"
+
+#include <QLabel>
+#include <QCheckBox>
+
+using namespace Ori::Dlg;
+using namespace Ori::Layouts;
+using namespace Ori::Widgets;
 
 namespace PlotHelpers {
 
@@ -61,6 +74,172 @@ void toClipboard(const QVector<QCPGraph*>& graphs)
         for (auto d : *(g->data().data()))
             exporter.add(d.key, d.value);
     exporter.toClipboard();
+}
+
+struct ExportGraphsParams
+{
+    enum { PLANE_T, PLANE_S, PLANE_BOTH };
+    enum { SEGMENT_SELECTED, SEGMENT_ALL };
+    enum { GRAPH_SELECTED, GRAPH_ALL };
+    enum { FORMAT_CSV, FORMAT_TXT };
+    enum { LOCALE_SYSTEM, LOCALE_C };
+    int plane = PLANE_BOTH;
+    int graph = GRAPH_ALL;
+    int segment = SEGMENT_ALL;
+    int format = FORMAT_CSV;
+    int locale = LOCALE_C;
+    int precision = 6;
+    QString empty;
+
+    ExportGraphsParams()
+    {
+        auto state = CustomPrefs::recentObj("export_graph_params");
+        plane = state["plane"].toInt(PLANE_BOTH);
+        graph = state["graph"].toInt(GRAPH_ALL);
+        segment = state["segment"].toInt(SEGMENT_ALL);
+        format = state["format"].toInt(FORMAT_CSV);
+        locale = state["locale"].toInt(LOCALE_C);
+        precision = state["precision"].toInt(6);
+        empty = state["empty"].toString();
+    }
+
+    ~ExportGraphsParams()
+    {
+        CustomPrefs::setRecentObj("export_graph_params", {
+            {"plane", plane},
+            {"graph", graph},
+            {"segment", segment},
+            {"format", format},
+            {"locale", locale},
+            {"precision", precision},
+            {"empty", empty},
+        });
+    }
+};
+
+void exportGraphsData(FunctionGraphSet* graphs, QCPGraph* selectedGraph, const ExportGraphsParams& params)
+{
+    FunctionGraphSet::ExportParams ep;
+    ep.useT = params.plane == params.PLANE_T || params.plane == params.PLANE_BOTH;
+    ep.useS = params.plane == params.PLANE_S || params.plane == params.PLANE_BOTH;
+    ep.graph = params.graph == params.GRAPH_SELECTED ? selectedGraph : nullptr;
+    ep.segment = params.segment == params.SEGMENT_SELECTED ? selectedGraph : nullptr;
+    auto d = graphs->exportData(ep);
+
+    //qApp->clipboard()->setText(graphs->str());
+    //qApp->clipboard()->setText(d.str());
+    //return;
+
+    QCPL::GraphDataExportSettings es;
+    es.csv = params.format == params.FORMAT_CSV;
+    es.systemLocale = params.locale == params.LOCALE_SYSTEM;
+    es.numberPrecision = params.precision;
+
+    QCPL::BaseGraphDataExporter exporter(es);
+
+    exporter.addValue("x");
+    foreach (const auto& col, d.cols)
+    {
+        exporter.addSeparator();
+        exporter.addValue(col);
+    }
+    exporter.addNewline();
+
+    int colCount = d.cols.size();
+    auto it = d.data.constBegin();
+    while (it != d.data.constEnd())
+    {
+        double x = it.key();
+        const auto& y = d.data[x];
+        exporter.addValue(x);
+        for (int c = 0; c < colCount; c++)
+        {
+            exporter.addSeparator();
+            exporter.addValue(y.contains(c) ? exporter.format(y[c]) : params.empty);
+        }
+        exporter.addNewline();
+        it++;
+    }
+    exporter.toClipboard();
+}
+
+void exportGraphsData(FunctionGraphSet* graphs, QCPGraph* selectedGraph)
+{
+    ExportGraphsParams params;
+
+    auto plane = new OptionsGroup(qApp->translate("exportGraphsData", "Work Plane"), true);
+    plane->addOption(ExportGraphsParams::PLANE_T, qApp->translate("exportGraphsData", "Tangential"));
+    plane->addOption(ExportGraphsParams::PLANE_S, qApp->translate("exportGraphsData", "Sagittal"));
+    plane->addOption(ExportGraphsParams::PLANE_BOTH, qApp->translate("exportGraphsData", "Both"));
+    if (!graphs->multiGraphs().isEmpty())
+    {
+        plane->setVisible(false);
+    }
+    else if (graphs->T()->isEmpty())
+    {
+        params.plane = params.PLANE_S;
+        plane->setEnabled(false);
+    }
+    else if (graphs->S()->isEmpty())
+    {
+        params.plane = params.PLANE_T;
+        plane->setEnabled(false);
+    }
+    plane->setOption(params.plane);
+
+    auto graph = new OptionsGroup(OptionsGroup::Params{.title=qApp->translate("exportGraphsData", "Graph Line"), .horizontal=true});
+    graph->addOption(ExportGraphsParams::SEGMENT_ALL, qApp->translate("exportGraphsData", "All"));
+    graph->addOption(ExportGraphsParams::SEGMENT_SELECTED, qApp->translate("exportGraphsData", "Selected"));
+    graph->setVisible(!graphs->multiGraphs().isEmpty());
+    graph->setDisabled(!selectedGraph);
+    graph->setOption(params.graph);
+
+    auto segment = new OptionsGroup(OptionsGroup::Params{.title=qApp->translate("exportGraphsData", "Line Segment"), .horizontal=true});
+    segment->addOption(ExportGraphsParams::SEGMENT_ALL, qApp->translate("exportGraphsData", "All"));
+    segment->addOption(ExportGraphsParams::SEGMENT_SELECTED, qApp->translate("exportGraphsData", "Selected"));
+    segment->setDisabled(!selectedGraph);
+    segment->setOption(params.segment);
+
+    auto format = new OptionsGroup(OptionsGroup::Params{.title=qApp->translate("exportGraphsData", "Data Format"), .horizontal=true});
+    format->addOption(ExportGraphsParams::FORMAT_CSV, qApp->translate("exportGraphsData", "CSV"));
+    format->addOption(ExportGraphsParams::FORMAT_TXT, qApp->translate("exportGraphsData", "Plain text"));
+    format->setOption(params.format);
+
+    auto locale = new OptionsGroup(OptionsGroup::Params{.title=qApp->translate("exportGraphsData", "Number Format"), .horizontal=true});
+    locale->addOption(ExportGraphsParams::LOCALE_C, qApp->translate("exportGraphsData", "C"));
+    locale->addOption(ExportGraphsParams::LOCALE_SYSTEM, qApp->translate("exportGraphsData", "System"));
+    locale->setOption(params.locale);
+
+    auto precision = new QSpinBox();
+    precision->setRange(1, 16);
+    precision->setFixedWidth(QFontMetrics(precision->font()).boundingRect("00").width() * 4);
+    precision->setValue(params.precision);
+
+    auto empty = new QLineEdit;
+    empty->setFixedWidth(precision->width());
+    empty->setText(params.empty);
+
+    auto options = new QGroupBox(qApp->translate("exportGraphsData", "Options"));
+    options->setLayout(LayoutV({
+        LayoutH({ new QLabel(qApp->translate("exportGraphsData", "Number precision")), precision }),
+        LayoutH({ new QLabel(qApp->translate("exportGraphsData", "Replace NaN with")), empty }),
+    }).boxLayout());
+
+    auto dlg = Dialog(LayoutV({plane, graph, segment, format, locale, options}).setMargin(0).makeWidget(), true)
+            .withTitle(qApp->translate("exportGraphsData", "Graphs Data to Clipboard"))
+            .withContentToButtonsSpacingFactor(2);
+    if (dlg.exec())
+    {
+        params.plane = plane->option();
+        params.graph = graph->option();
+        params.segment = segment->option();
+        params.format = format->option();
+        params.locale = locale->option();
+        params.precision = precision->value();
+        params.empty = empty->text();
+
+        exportGraphsData(graphs, selectedGraph, params);
+    }
 }
 
 } // namespace PlotHelpers

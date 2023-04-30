@@ -11,6 +11,12 @@ namespace Ori {
     class MruFileList;
 }
 
+/**
+    This class is a container for objects shared between different top-level windows,
+    e.g. mruList is used in ProjectWindow and StartWindow.
+    It is created in the main function before any top-level window created
+    and should be used via its instance() method.
+*/
 class CommonData : public QObject, public IAppSettingsListener
 {
     Q_OBJECT
