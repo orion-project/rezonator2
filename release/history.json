@@ -2,7 +2,7 @@
   "history": [
     {
       "version": "2.0.12-beta8",
-      "date": "",
+      "date": "2023-05-03",
       "changes": [
         {
           "text": "Calculate beam parameters in resonators with complex matrices (https://github.com/orion-project/rezonator2/issues/31)"
