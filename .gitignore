@@ -24,3 +24,9 @@ img/svgcleaner
 help/_build
 help/node_modules
 help/package-lock.json
+.qtc_clangd
+*.o
+moc_*
+qrc_*
+Makefile
+.qmake.stash
