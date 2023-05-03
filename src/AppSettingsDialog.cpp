@@ -6,7 +6,9 @@
 #include "helpers/OriLayouts.h"
 #include "widgets/OriOptionsGroup.h"
 
+#include <QApplication>
 #include <QBoxLayout>
+#include <QCheckBox>
 #include <QDebug>
 #include <QFormLayout>
 #include <QLabel>
@@ -18,9 +20,9 @@ using namespace Ori::Layouts;
 namespace Z {
 namespace Dlg {
 
-bool editAppSettings(QWidget *parent)
+bool editAppSettings(Ori::Dlg::PageId currentPageId)
 {
-    AppSettingsDialog dialog(parent);
+    AppSettingsDialog dialog(qApp->activeWindow(), currentPageId);
     return dialog.exec() == QDialog::Accepted;
 }
 
@@ -43,7 +45,7 @@ public:
 //                              ConfigDialog
 //------------------------------------------------------------------------------
 
-AppSettingsDialog::AppSettingsDialog(QWidget* parent) : Ori::Dlg::BasicConfigDialog(parent)
+AppSettingsDialog::AppSettingsDialog(QWidget* parent, Ori::Dlg::PageId currentPageId) : Ori::Dlg::BasicConfigDialog(parent)
 {
     pageListIconSize = QSize(48, 48);
 
@@ -58,11 +60,13 @@ AppSettingsDialog::AppSettingsDialog(QWidget* parent) : Ori::Dlg::BasicConfigDia
                     createExportPage(),
                     createCalcPage(),
                 });
+
+    setCurrentPageId(currentPageId);
 }
 
 QWidget* AppSettingsDialog::createGeneralPage()
 {
-    auto page = new Ori::Dlg::BasicConfigPage(tr("Behavior"), ":/config_pages/general");
+    auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageGeneral, tr("Behavior"), ":/config_pages/general");
 
     _groupOptions = new Ori::Widgets::OptionsGroupV2(tr("Options"), {
         {"editNewElem", tr("Edit just created element")},
@@ -83,7 +87,7 @@ QWidget* AppSettingsDialog::createGeneralPage()
 
 QWidget* AppSettingsDialog::createViewPage()
 {
-    auto page = new Ori::Dlg::BasicConfigPage(tr("Interface"), ":/config_pages/view");
+    auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageView, tr("Interface"), ":/config_pages/view");
 
     // group box "Options"
     _groupView = new Ori::Widgets::OptionsGroupV2(tr("Options"), {
@@ -94,9 +98,14 @@ QWidget* AppSettingsDialog::createViewPage()
     });
 
     _numberPrecisionData = new NumberPrecisionSpinBox;
+    _showImagUnitAsJ = new QCheckBox(tr("Display imaginary unit as 'j' instead of 'i'"));
+    _showImagUnitAtEnd = new QCheckBox(tr("Show imaginary unit after imaginary part"));
     auto groupFormat = new QGroupBox(tr("Number format"));
-    LayoutH({
-        new QLabel(tr("Number precision for result formatting")), _numberPrecisionData
+    LayoutV({
+        LayoutH({
+            new QLabel(tr("Number precision for result formatting")), _numberPrecisionData
+        }),
+        _showImagUnitAsJ, _showImagUnitAtEnd,
     }).useFor(groupFormat);
 
     page->add({_groupView, groupFormat, page->stretch()});
@@ -105,7 +114,7 @@ QWidget* AppSettingsDialog::createViewPage()
 
 QWidget* AppSettingsDialog::createLayoutPage()
 {
-    auto page = new Ori::Dlg::BasicConfigPage(tr("Layout"), ":/config_pages/layout");
+    auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageLayout, tr("Layout"), ":/config_pages/layout");
 
     // group box "Options"
     _groupLayoutExport = new Ori::Widgets::OptionsGroupV2(tr("Image export options"), {
@@ -118,7 +127,7 @@ QWidget* AppSettingsDialog::createLayoutPage()
 
 QWidget* AppSettingsDialog::createUnitsPage()
 {
-    auto page = new Ori::Dlg::BasicConfigPage(tr("Units"), ":/config_pages/units");
+    auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageUnits, tr("Units"), ":/config_pages/units");
 
     _defaultUnitBeamRadius = new UnitComboBox(Z::Dims::linear());
     _defaultUnitFrontRadius = new UnitComboBox(Z::Dims::linear());
@@ -154,7 +163,7 @@ QWidget* AppSettingsDialog::createUnitsPage()
 
 QWidget* AppSettingsDialog::createExportPage()
 {
-    auto page = new Ori::Dlg::BasicConfigPage(tr("Export"), ":/toolbar/save");
+    auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageExport, tr("Export"), ":/toolbar/save");
 
     _groupExportData = new Ori::Widgets::OptionsGroupV2(tr("Graph data export options"), {
         {"exportAsCsv", tr("Use CSV format (otherwise, use plain text format)")},
@@ -177,7 +186,7 @@ QWidget* AppSettingsDialog::createExportPage()
 
 QWidget* AppSettingsDialog::createCalcPage()
 {
-    auto page = new Ori::Dlg::BasicConfigPage(tr("Calcs"), ":/toolbar/options");
+    auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageCalc, tr("Calcs"), ":/toolbar/options");
 
     _groupCalcOpts = new Ori::Widgets::OptionsGroupV2(tr("Options"), {
         {"calcTablesMediumEnds", tr("Calculate at medium ends in table functions")},
@@ -210,6 +219,8 @@ void AppSettingsDialog::populate()
     _groupView->setOption("useNativeMenuBar", settings.useNativeMenuBar);
     _groupView->setOption("useSystemDialogs", settings.useSystemDialogs);
     _numberPrecisionData->setValue(settings.numberPrecisionData);
+    _showImagUnitAsJ->setChecked(settings.showImagUnitAsJ);
+    _showImagUnitAtEnd->setChecked(settings.showImagUnitAtEnd);
 
     // layout
     //_groupLayoutExport->setOption("layoutExportTransparent", settings.layoutExportTransparent);
@@ -253,6 +264,8 @@ bool AppSettingsDialog::collect()
     settings.useNativeMenuBar = _groupView->option("useNativeMenuBar");
     settings.useSystemDialogs = _groupView->option("useSystemDialogs");
     settings.numberPrecisionData = _numberPrecisionData->value();
+    settings.showImagUnitAsJ = _showImagUnitAsJ->isChecked();
+    settings.showImagUnitAtEnd = _showImagUnitAtEnd->isChecked();
 
     // layout
     //settings.layoutExportTransparent = _groupLayoutExport->option("layoutExportTransparent");

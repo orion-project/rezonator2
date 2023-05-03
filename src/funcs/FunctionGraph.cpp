@@ -117,6 +117,47 @@ bool FunctionGraph::contains(QCPGraph* graph) const
     return false;
 }
 
+QString FunctionGraph::str() const
+{
+    QString s;
+    QTextStream res(&s);
+    auto units = _getUnits();
+    for (int i = 0; i < _segments.size(); i++)
+    {
+        auto g = _segments.at(i);
+        if (segments().size() > 1)
+            res << "segment " << i << '\n';
+        res << units.X->alias() << '\t' << units.Y->alias() << '\n';
+        auto data = g->data().data();
+        auto it = data->constBegin();
+        while (it != data->constEnd())
+        {
+            res << it->key << '\t' << it->value << '\n';
+            it++;
+        }
+    }
+    return s;
+}
+
+FunctionGraph::ExportData FunctionGraph::exportData(ExportParams params) const
+{
+    QVector<Z::DoublePoint> d;
+    for (int i = 0; i < _segments.size(); i++)
+    {
+        if (params.segmentIdx >= 0 && params.segmentIdx != i)
+            continue;
+        auto g = _segments.at(i);
+        auto data = g->data().data();
+        auto it = data->constBegin();
+        while (it != data->constEnd())
+        {
+            d << Z::DoublePoint{it->key, it->value};
+            it++;
+        }
+    }
+    return d;
+}
+
 //------------------------------------------------------------------------------
 //                               FunctionGraphSet
 //------------------------------------------------------------------------------
@@ -198,4 +239,118 @@ FunctionGraph* FunctionGraphSet::findBy(QCPGraph* graph) const
     }
 
     return nullptr;
+}
+
+QString FunctionGraphSet::str() const
+{
+    QString report;
+    QTextStream res(&report);
+    {
+        res << "graph_t\n";
+        QString s = _graphT->str();
+        if (s.isEmpty())
+            res << "(none)\n";
+        else res << s;
+    }
+    if (!report.isEmpty())
+        res << '\n';
+    {
+        res << "graph_s\n";
+        QString s = _graphS->str();
+        if (s.isEmpty())
+            res << "(none)\n";
+        else res << s;
+    }
+    auto it = _graphs.constBegin();
+    while (it != _graphs.constEnd())
+    {
+        if (!report.isEmpty())
+            res << '\n';
+        res << it.key() << '\n';
+        QString s = it.value()->str();
+        if(s.isEmpty())
+            res << "(none)\n";
+        else res << s;
+        it++;
+    }
+    return report;
+}
+
+FunctionGraphSet::ExportData FunctionGraphSet::exportData(ExportParams params) const
+{
+    ExportData dd;
+
+    auto addColumn = [&dd](const QString& col, const FunctionGraph::ExportData& d) {
+        int c = dd.cols.size();
+        dd.cols << col;
+        foreach (const auto& p, d)
+        {
+            if (dd.data.contains(p.X))
+                dd.data[p.X][c] = p.Y;
+            else dd.data[p.X] = {{c, p.Y}};
+        }
+    };
+
+    // Currently it either can be TS-graph or multigraph (e.g. MR-caustic), but not both
+    if (_graphT->isEmpty() && _graphS->isEmpty())
+    {
+        int segmentIdx = -1;
+        if (params.segment) {
+            // We don't know on which line the selected segment is,
+            // but we want to export respective segments from all lines
+            auto it = _graphs.constBegin();
+            while (it != _graphs.constEnd()) {
+                int i = it.value()->segments().indexOf(params.segment);
+                if (i > -1) {
+                    segmentIdx = i;
+                    break;
+                }
+                it++;
+            }
+        }
+
+        auto it = _graphs.constBegin();
+        while (it != _graphs.constEnd())
+        {
+            if (!params.graph || it.value()->segments().contains(params.graph))
+                addColumn(it.key(), it.value()->exportData(FunctionGraph::ExportParams{.segmentIdx = segmentIdx}));
+            it++;
+        }
+    }
+    else
+    {
+        // We don't know on which T or S line the selected segment is,
+        // but we want to export respective segments from both lines
+        int segmentIdx = _graphT->segments().indexOf(params.segment);
+        if (segmentIdx == -1)
+            segmentIdx = _graphS->segments().indexOf(params.segment);
+        if (params.useT)
+            addColumn("t", _graphT->exportData(FunctionGraph::ExportParams{.segmentIdx = segmentIdx}));
+        if (params.useS)
+            addColumn("s", _graphS->exportData(FunctionGraph::ExportParams{.segmentIdx = segmentIdx}));
+    }
+    return dd;
+}
+
+QString FunctionGraphSet::ExportData::str() const
+{
+    QString report;
+    QTextStream res(&report);
+    res << "x";
+    foreach (const auto& c, cols)
+        res << '\t' << c;
+    res << '\n';
+    int colCount = cols.size();
+    auto it = data.constBegin();
+    while (it != data.constEnd())
+    {
+        double x = it.key();
+        const auto& y = data[x];
+        res << x;
+        for (int c = 0; c < colCount; c++)
+            res << '\t' << (y.contains(c) ? y[c] : ' ');
+        res << '\n';
+        it++;
+    }
+    return report;
 }

@@ -70,6 +70,8 @@ void PlotFuncWindow::createActions()
 
     actnShowRoundTrip = action(tr("Show Round-trip"), this, SLOT(showRoundTrip()), ":/toolbar/func_round_trip");
 
+    actnCopyGraphDataEx = action(tr("Copy Graph Data..."), this, SLOT(copyGraphDataEx()), ":/toolbar/copy_table");
+
     actnFreeze = toggledAction(tr("Freeze"), this, SLOT(freeze(bool)), ":/toolbar/freeze", Qt::CTRL | Qt::Key_F);
 
     actnAutolimits = action(tr("Fit to Graphs"), _plot, SLOT(autolimits()), ":/toolbar/limits_auto");
@@ -88,9 +90,9 @@ void PlotFuncWindow::createActions()
     actnSetTitleX = action(tr("X-axis Title..."), _plot, SLOT(titleDlgX()));
     actnSetTitleY = action(tr("Y-axis Title..."), _plot, SLOT(titleDlgY()));
 
-    actnCopyGraphData = action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy");
-    actnCopyGraphDataCur = action(tr("Copy Graph Data (this segment)"), this, SLOT(copyGraphData()), ":/toolbar/copy");
-    actnCopyGraphDataAll = action(tr("Copy Graph Data (all segments)"), this, SLOT(copyGraphDataAll()), ":/toolbar/copy");
+    actnCopyGraphData = action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
+    actnCopyGraphDataCur = action(tr("Copy Graph Data (this segment)"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
+    actnCopyGraphDataAll = action(tr("Copy Graph Data (all segments)"), this, SLOT(copyGraphDataAll()), ":/toolbar/copy_table");
     actnCopyPlotImage = action(tr("Copy Plot Image"), this, SLOT(copyPlotImage()), ":/toolbar/copy_img");
 }
 
@@ -103,7 +105,8 @@ void PlotFuncWindow::createMenuBar()
 
     menuPlot = menu(tr("Plot", "Menu title"), this, {
         actnUpdate, actnUpdateParams, actnFreeze, nullptr, actnShowFlippedTS, actnShowT, actnShowS, nullptr,
-        _unitsMenuX->menu(), _unitsMenuY->menu(), actnSetTitleX, actnSetTitleY, nullptr, actnShowRoundTrip
+        actnCopyPlotImage,  actnCopyGraphDataEx, nullptr,
+        _unitsMenuX->menu(), _unitsMenuY->menu(), actnSetTitleX, actnSetTitleY, nullptr, actnShowRoundTrip,
     });
     connect(menuPlot, &QMenu::aboutToShow, [this](){
         _unitsMenuX->menu()->setTitle("X-axis Unit");
@@ -685,6 +688,11 @@ void PlotFuncWindow::copyPlotImage()
 
     if (oldVisible != _cursor->visible())
         _cursor->setVisible(oldVisible);
+}
+
+void PlotFuncWindow::copyGraphDataEx()
+{
+    PlotHelpers::exportGraphsData(_graphs, _plot->selectedGraph());
 }
 
 void PlotFuncWindow::graphsMenuAboutToShow()

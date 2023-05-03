@@ -3,6 +3,7 @@
 
 #include "../core/CommonTypes.h"
 #include "../core/Units.h"
+#include "../core/Values.h"
 
 #include <QVector>
 #include <QPen>
@@ -22,8 +23,17 @@ struct GraphUnits
     Z::Unit Y;
 };
 
+
 class FunctionGraph
 {
+public:
+    struct ExportParams
+    {
+        int segmentIdx = -1;
+    };
+
+    using ExportData = QVector<Z::DoublePoint>;
+
 public:
     FunctionGraph(QCPL::Plot* plot, Z::WorkPlane workPlane, std::function<GraphUnits()> getUnits);
 
@@ -37,6 +47,9 @@ public:
     void setPen(const QPen& pen) { _linePen = pen; }
     void setColor(Z::WorkPlane workPlane, const QString& color);
     bool contains(QCPGraph* graph) const;
+    bool isEmpty() const { return _segments.isEmpty(); }
+    QString str() const;
+    ExportData exportData(ExportParams params) const;
 
 private:
     QCPL::Plot* _plot;
@@ -52,8 +65,26 @@ private:
     void trimToCount(int count);
 };
 
+using MultiGraph = QMap<QString, FunctionGraph*>;
+
 class FunctionGraphSet
 {
+public:
+    struct ExportParams
+    {
+        bool useT = false;
+        bool useS = false;
+        QCPGraph* graph = nullptr;
+        QCPGraph* segment = nullptr;
+    };
+
+    struct ExportData
+    {
+        QStringList cols;
+        QMap<double, QMap<int, double>> data;
+        QString str() const;
+    };
+
 public:
     FunctionGraphSet(QCPL::Plot* plot, std::function<GraphUnits()> getUnits);
     ~FunctionGraphSet();
@@ -65,14 +96,18 @@ public:
 
     FunctionGraph* T() { return _graphT; }
     FunctionGraph* S() { return _graphS; }
+    const MultiGraph& multiGraphs() const { return _graphs; }
 
     FunctionGraph* findBy(QCPGraph* graph) const;
+
+    QString str() const;
+    ExportData exportData(ExportParams params) const;
 
 private:
     QCPL::Plot* _plot;
     std::function<GraphUnits()> _getUnits;
     FunctionGraph *_graphT, *_graphS;
-    QMap<QString, FunctionGraph*> _graphs;
+    MultiGraph _graphs;
 };
 
 #endif // FUNCTION_GRAPH_H

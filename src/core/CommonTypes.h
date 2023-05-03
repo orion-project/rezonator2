@@ -6,12 +6,8 @@
 #include <QVector>
 #include <QObject>
 
-#include <complex>
-
 namespace Z {
 enum WorkPlane { Plane_T, Plane_S };
-
-typedef std::complex<double> Complex;
 }
 
 enum class TripType

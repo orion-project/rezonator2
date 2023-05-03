@@ -2,7 +2,6 @@
 
 #include "Appearance.h"
 #include "AppSettings.h"
-#include "AppSettingsDialog.h"
 #include "CalculatorWindow.h"
 #include "CommonData.h"
 #include "GaussCalculatorWindow.h"
@@ -81,7 +80,7 @@ MruStartItem::MruStartItem(const QFileInfo& fileInfo)
     // so we need to add some spaces to accout width of vertical scroll bar.
     _displayFilePath = _filePath + "      ";
 
-    auto labelFileName = new QLabel(fileInfo.baseName());
+    auto labelFileName = new QLabel(fileInfo.completeBaseName());
     labelFileName->setProperty("role", "mru_file_name");
 
     _filePathLabel = new QLabel;
@@ -549,7 +548,7 @@ void ToolsStartPanel::showManual()
 
 void ToolsStartPanel::editSettings()
 {
-    Z::Dlg::editAppSettings(this);
+    AppSettings::instance().edit();
 }
 
 //------------------------------------------------------------------------------
@@ -604,7 +603,6 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
     _toolbar->setIconSize({24, 24});
     if (AppSettings::instance().isDevMode)
         _toolbar->addAction(QIcon(":/toolbar/protocol"), tr("Edit Stylesheet"), this, &StartWindow::editStyleSheet);
-    //_toolbar->addAction(QIcon(":/toolbar/settings"), tr("Edit Settings"), [this]{ Z::Dlg::editAppSettings(this); });
     //_toolbar->addAction(QIcon(":/toolbar/help"), tr("Show Manual"), []{ Z::HelpSystem::instance()->showContents(); });
     _toolbar->addAction(QIcon(":/toolbar/info"), tr("About"), []{ Z::HelpSystem::instance()->showAbout(); });
     _toolbar->setParent(this);

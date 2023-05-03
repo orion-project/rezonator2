@@ -13,6 +13,7 @@
 #include "helpers/OriDialogs.h"
 
 #include <QAction>
+#include <QActionGroup>
 #include <QApplication>
 #include <QBoxLayout>
 #include <QClipboard>
@@ -96,6 +97,12 @@ void InfoFuncWindow::createToolbar()
             {
                 actn->setCheckable(true);
                 actn->setChecked(a.isChecked());
+                if (a.checkGroup)
+                {
+                    if (!_actionGroups.contains(a.checkGroup))
+                        _actionGroups[a.checkGroup] = new QActionGroup(this);
+                    actn->setActionGroup(_actionGroups[a.checkGroup]);
+                }
             }
             connect(actn, &QAction::triggered, a.triggered);
             toolbar->addAction(actn);

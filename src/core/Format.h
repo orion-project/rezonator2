@@ -1,7 +1,9 @@
 #ifndef Z_FORMAT_H
 #define Z_FORMAT_H
 
-#include "CommonTypes.h"
+#include "Complex.h"
+
+#include <QString>
 
 namespace Z {
 

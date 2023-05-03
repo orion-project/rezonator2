@@ -64,10 +64,11 @@ public:
     bool exportHideCursor; ///< Hide cursor lines when exporting plot image.
 
     int numberPrecisionData; ///< Number precision for value formatting (graph data, etc).
+    bool showImagUnitAsJ;
+    bool showImagUnitAtEnd;
 
     bool calcTablesMediumEnds;
     bool calcTablesEmptySpaces;
-
 
     Z::Unit defaultUnitFrontRadius = Z::Units::none();
     Z::Unit defaultUnitBeamRadius = Z::Units::none();
@@ -77,7 +78,9 @@ public:
 
     void load();
     void save();
-    bool edit(class QWidget *parent);
+
+    enum { PageGeneral, PageView, PageLayout, PageUnits, PageExport, PageCalc };
+    bool edit(Ori::Optional<int> currentPageId = Ori::Optional<int>());
 
     QSize toolbarIconSize() const;
 

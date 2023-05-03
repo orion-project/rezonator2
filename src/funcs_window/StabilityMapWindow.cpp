@@ -113,7 +113,7 @@ StabilityMapOptionsPanel::StabilityMapOptionsPanel(StabilityMapWindow* window) :
         Ori::Layouts::Stretch()
     }).setSpacing(0).setMargin(0).useFor(this);
 
-    for (auto button : _modeButtons)
+    foreach (auto button, _modeButtons)
         button->setIconSize(QSize(96, 48));
 
     showCurrentMode();
@@ -190,7 +190,10 @@ void StabilityMapWindow::autolimitsStability()
         break;
 
     case Z::Enums::StabilityCalcMode::Squared:
-        _plot->setLimitsY(-0.05, 1.05);
+        if (actnShowFlippedTS->isChecked())
+            _plot->setLimitsY(-1.05, 1.05);
+        else
+            _plot->setLimitsY(-0.05, 1.05);
         break;
     }
 }

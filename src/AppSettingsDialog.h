@@ -4,6 +4,7 @@
 #include "dialogs/OriBasicConfigDlg.h"
 
 QT_BEGIN_NAMESPACE
+class QCheckBox;
 class QComboBox;
 class QSpinBox;
 QT_END_NAMESPACE
@@ -20,7 +21,7 @@ class AppSettingsDialog : public Ori::Dlg::BasicConfigDialog
     Q_OBJECT
 
 public:
-    AppSettingsDialog(QWidget* parent);
+    AppSettingsDialog(QWidget* parent, Ori::Dlg::PageId currentPageId);
 
     // inherited from BasicConfigDialog
     virtual void populate() override;
@@ -38,6 +39,7 @@ private:
     UnitComboBox *_defaultUnitAngle;
     QSpinBox *_exportNumberPrecision;
     QSpinBox *_numberPrecisionData;
+    QCheckBox *_showImagUnitAsJ, *_showImagUnitAtEnd;
 
     QWidget* createGeneralPage();
     QWidget* createViewPage();
@@ -48,16 +50,5 @@ private:
     void fillLangsCombo();
     void fillStylesCombo();
 };
-
-#ifndef DLG_APP_CONFIG
-#define DLG_APP_CONFIG
-namespace Z {
-namespace Dlg {
-
-bool editAppSettings(QWidget* parent);
-
-} // namespace Dlg
-} // namespace Z
-#endif
 
 #endif // CONFIG_DLG

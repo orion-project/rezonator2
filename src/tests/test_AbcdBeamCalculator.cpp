@@ -44,10 +44,14 @@ TEST_METHOD(real_beamRadius)
 TEST_METHOD(real_frontRadius__can_return_inf)
 {
     CALCULATOR
+
     double r1 = calc.frontRadius({1, 1, 0, 1}, 1);
+    TEST_LOG_VALUE(r1)
     ASSERT_IS_TRUE(std::isinf(r1))
     ASSERT_IS_TRUE(r1 > 0)
+
     double r2 = calc.frontRadius({1, -1, 0, 1}, 1);
+    TEST_LOG_VALUE(r2)
     ASSERT_IS_TRUE(std::isinf(r2))
     ASSERT_IS_TRUE(r2 < 0)
 }

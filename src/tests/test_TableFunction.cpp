@@ -181,6 +181,7 @@ TEST_CASE_METHOD(must_respect_medium_ior__sp_rr__elem_in_middle, QString fileNam
     schema.setTripType(tripType);
     BeamParamsAtElemsFunction func(&schema);
     func.calcMediumEnds = true;
+    func.calcEmptySpaces = false;
     CALC_FUNC(ResultsCount(16))
 
     // The end of left-half medium must match left side of element

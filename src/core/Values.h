@@ -1,6 +1,7 @@
 #ifndef VALUES_H
 #define VALUES_H
 
+#include "Complex.h"
 #include "Units.h"
 #include "core/OriFloatingPoint.h"
 
@@ -26,6 +27,7 @@ struct PairTS
 };
 
 using PointTS = PairTS<double>;
+using PointComplexTS = PairTS<Complex>;
 
 //------------------------------------------------------------------------------
 

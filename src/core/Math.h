@@ -1,7 +1,9 @@
 #ifndef MATH_H
 #define MATH_H
 
-#include "CommonTypes.h"
+#include "Complex.h"
+
+#include <QString>
 
 #define SQR(a) ((a)*(a))
 

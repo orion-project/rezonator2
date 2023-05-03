@@ -70,21 +70,37 @@ QString InfoFuncMatrices::calculateInternal()
 //------------------------------------------------------------------------------
 
 InfoFuncMatrixMultFwd::InfoFuncMatrixMultFwd(Schema *schema, const Elements& elems)
-    : InfoFuncMatrices(schema, elems) {}
+    : InfoFuncMatrices(schema, elems)
+{
+    InfoFuncAction a1;
+    a1.title = qApp->translate("InfoFuncMatrixMultFwd", "Use forward proparation matrices");
+    a1.icon = ":/toolbar/dir_forward";
+    a1.checkGroup = 1;
+    a1.triggered = [this](){ _useInvMatrs = false; calculate(); };
+    a1.isChecked = [this](){ return !_useInvMatrs; };
+
+    InfoFuncAction a2;
+    a2.title = qApp->translate("InfoFuncMatrixMultFwd", "Use back proparation matrices");
+    a2.icon = ":/toolbar/dir_backward";
+    a2.checkGroup = 1;
+    a2.triggered = [this](){ _useInvMatrs = true; calculate(); };
+    a2.isChecked = [this](){ return _useInvMatrs; };
+
+    _actions << a1 << a2;
+}
 
 QString InfoFuncMatrixMultFwd::calculateInternal()
 {
     Z::Matrix mt, ms;
 
-    for (auto elem : _elements)
+    foreach (auto elem, _elements)
     {
-        mt *= elem->Mt();
-        ms *= elem->Ms();
+        mt *= _useInvMatrs ? elem->Mt_inv() : elem->Mt() ;
+        ms *= _useInvMatrs ? elem->Ms_inv() : elem->Ms();
     }
 
     QString report = QStringLiteral("%1:<p>%2")
-            .arg(Z::Format::roundTrip(_elements, true))
-            .arg(Z::Format::matrices(mt, ms));
+        .arg(Z::Format::roundTrip(_elements, true), Z::Format::matrices(mt, ms));
 
     if (AppSettings::instance().showPythonMatrices)
         report += Z::Format::Py::roundTrip(_elements);
@@ -101,7 +117,6 @@ InfoFuncMatrixMultBkwd::InfoFuncMatrixMultBkwd(Schema *schema, const Elements& e
 {
     Elements reversed;
     reversed.reserve(_elements.size());
-    // TODO: for asymmetrical elements we should take inverted matrix
     std::reverse_copy(_elements.begin(), _elements.end(), std::back_inserter(reversed));
     _elements = reversed;
 }
@@ -113,12 +128,12 @@ InfoFuncMatrixMultBkwd::InfoFuncMatrixMultBkwd(Schema *schema, const Elements& e
 InfoFuncMatrixRT::InfoFuncMatrixRT(Schema *schema, Element *elem)
     : InfoFunction(schema), _element(elem)
 {
-    _actions << InfoFuncAction{
-        .title = qApp->translate("InfoFuncMatrixRT", "Show all element matrices"),
-        .icon = ":/toolbar/elem_matr",
-        .triggered = [this](){ _showElems = !_showElems; calculate(); },
-        .isChecked = [this](){ return _showElems; },
-    };
+    InfoFuncAction a;
+    a.title = qApp->translate("InfoFuncMatrixRT", "Show all element matrices");
+    a.icon = ":/toolbar/elem_matr";
+    a.triggered = [this](){ _showElems = !_showElems; calculate(); };
+    a.isChecked = [this](){ return _showElems; };
+    _actions << a;
 
     auto range = Z::Utils::asRange(elem);
     if (range)
@@ -218,9 +233,12 @@ QString InfoFuncMatrixRT::format(RoundTripCalculator *c, bool showElems)
 
     if (c->owner()->isResonator())
     {
-        auto stab = c->stability();
-        stream << formatStability('T', stab.T)
-               << formatStability('S', stab.S);
+        c->setStabilityCalcMode(Z::Enums::StabilityCalcMode::Normal);
+        auto stabNormal = c->stabilityCplx();
+        stream << "<p>Stability (normal): " << formatStability('T', stabNormal.T) << formatStability('S', stabNormal.S);
+        c->setStabilityCalcMode(Z::Enums::StabilityCalcMode::Squared);
+        auto stabSquared = c->stabilityCplx();
+        stream << "<br>Stability (squared): " << formatStability('T', stabSquared.T) << formatStability('S', stabSquared.S);
     }
 
     QString resultPy;
@@ -315,12 +333,13 @@ QString InfoFuncMatrixRT::format(RoundTripCalculator *c, bool showElems)
     return result;
 }
 
-QString InfoFuncMatrixRT::formatStability(char plane, double value)
+QString InfoFuncMatrixRT::formatStability(char plane, const Z::Complex& v)
 {
+    QString s = Z::isReal(v) ? Z::format(v.real()) : Z::format(v);
     return QStringLiteral("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
                           "<span class=param>P<sub>%1</sub></span>"
                           "<span class=value> = %2</span>")
-            .arg(plane).arg(Z::format(value));
+            .arg(plane).arg(s);
 }
 
 //------------------------------------------------------------------------------

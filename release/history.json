@@ -1,6 +1,36 @@
 {
   "history": [
     {
+      "version": "2.0.12-beta8",
+      "date": "2023-05-03",
+      "changes": [
+        {
+          "text": "Calculate beam parameters in resonators with complex matrices (https://github.com/orion-project/rezonator2/issues/31)"
+        },
+        {
+          "text": "Added configuration options for displaying of imaginary unit"
+        },
+        {
+          "text": "Show both normal and squared stability parameters in round-trip window as complex numbers"
+        },
+        {
+          "text": "'Multiply selected *' functions renamed and documented (https://github.com/orion-project/rezonator2/issues/30)"
+        },
+        {
+          "text": "Can choose between forward and backward matrices in the 'Multiply selected *' functions"
+        },
+        {
+          "text": "Can copy graph data for T and S planes simultaneously via command 'Plot -> Copy Graph Data' (https://github.com/orion-project/rezonator2/issues/29)"
+        },
+        {
+          "text": "Fix: 2D-Stability graph data incorrectly copied as one column."
+        },
+        {
+          "text": "Fix: incorrect filename display in window title (https://github.com/orion-project/rezonator2/issues/34)"
+        }
+      ]
+    },
+    {
       "version": "2.0.11-beta7",
       "date": "2022-12-09",
       "changes": [

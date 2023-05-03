@@ -1,11 +1,12 @@
 #include "AppSettings.h"
+
 #include "tools/OriSettings.h"
 
 #ifndef DLG_APP_CONFIG
 #define DLG_APP_CONFIG
 namespace Z {
 namespace Dlg {
-    bool editAppSettings(class QWidget *parent); // ConfigDialog.cpp
+    bool editAppSettings(Ori::Optional<int> currentrPageId); // AppSettingDialog.cpp
 }}
 #endif
 
@@ -88,6 +89,8 @@ void AppSettings::load()
 
     s.beginGroup("Format");
     LOAD_DEF(numberPrecisionData, Int, 6);
+    LOAD_DEF(showImagUnitAsJ, Bool, false);
+    LOAD_DEF(showImagUnitAtEnd, Bool, true);
 
     s.beginGroup("Units");
     defaultUnitBeamRadius = Z::Units::findByAlias(s.settings()->value("defaultUnitBeamRadius").toString(), Z::Units::mkm());
@@ -147,6 +150,8 @@ void AppSettings::save()
 
     s.beginGroup("Format");
     SAVE(numberPrecisionData);
+    SAVE(showImagUnitAsJ);
+    SAVE(showImagUnitAtEnd);
 
     s.beginGroup("Units");
     s.settings()->setValue("defaultUnitBeamRadius", defaultUnitBeamRadius->alias());
@@ -158,11 +163,11 @@ void AppSettings::save()
     SAVE(calcTablesEmptySpaces);
 }
 
-bool AppSettings::edit(class QWidget *parent)
+bool AppSettings::edit(Ori::Optional<int> currentPageId)
 {
     int old_numberPrecisionData = numberPrecisionData;
 
-    bool result = Z::Dlg::editAppSettings(parent);
+    bool result = Z::Dlg::editAppSettings(currentPageId);
     if (result)
     {
         notify(&IAppSettingsListener::settingsChanged);

@@ -184,6 +184,7 @@ StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
     actnShowFlippedTS->setEnabled(false);
     actnShowT->setChecked(true);
     actnShowS->setChecked(false);
+    actnCopyGraphDataEx->setVisible(false); // these cmds only for lines
 
     _plot->useSafeMargins = false;
     // We have to do this way because QCPColorMap::rescaleAxes() seems not working as expected
@@ -401,29 +402,35 @@ void StabilityMap2DWindow::copyGraphData2D()
     auto settings = PlotHelpers::makeExportSettings();
     bool transposed = settings.transposed;
     settings.transposed = false;
-    auto exporter = QCPL::GraphDataExporter(settings);
+    auto exporter = QCPL::BaseGraphDataExporter(settings);
     auto data =_graph->data();
     auto ny = data->valueSize();
     auto nx = data->keySize();
     //qDebug() << "copy2d" << ny << nx;
     if (transposed)
     {
-        QVector<double> v(ny);
         for (int ix = 0; ix < nx; ix++)
         {
             for (int iy = 0; iy < ny; iy++)
-                v[iy] = data->cell(ix, iy);
-            exporter.add(v);
+            {
+                if (iy > 0)
+                    exporter.addSeparator();
+                exporter.addValue(data->cell(ix, iy));
+            }
+            exporter.addNewline();
         }
     }
     else
     {
-        QVector<double> v(nx);
         for (int iy = 0; iy < ny; iy++)
         {
             for (int ix = 0; ix < nx; ix++)
-                v[ix] = data->cell(ix, iy);
-            exporter.add(v);
+            {
+                if (ix > 0)
+                    exporter.addSeparator();
+                exporter.addValue(data->cell(ix, iy));
+            }
+            exporter.addNewline();
         }
     }
     exporter.toClipboard();

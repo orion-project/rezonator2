@@ -51,31 +51,38 @@ Knowing the expression of the complex parameter through beam characteristics
 
     .. image:: img/gauss_q.png
 
-we can express the properties of the self-consistent beam in terms of round-trip matrix elements.
+we can calculate radius and ROC of self-consistent beam in resonator:
 
-Radius of Wavefront Curvature
------------------------------
+    .. image:: img/gauss_q_r_w.png
 
-Calculation of the radius of wavefront curvature of the self-consistent beam from components of round-trip matrix:
+Beam Properties in Terms of Matrix Components
+-------------------------------------------
+
+ROC of self-consistent beam:
 
     .. image:: img/abcd_curvature.png
-   
-   
-Beam Radius
------------
 
-Calculation of the self-consistent beam radius from components of round-trip matrix:
+Self-consistent beam radius:
 
     .. image:: img/abcd_radius_1.png
 
 |para|
 
     .. image:: img/abcd_radius_2.png
-    
+
 |para|
 
     .. image:: img/abcd_radius_3.png
-    
+
+Half-divergence in far-field zone:
+
+    .. tex:
+        V_S^2 = \cfrac{\lambda}{\pi} \cfrac{2 C}{\sqrt{4 - (A + D)^2}}
+
+    .. image:: img/abcd_angle.png
+
+These formulas are given just for information. They do not suit when matrix components are complex numbers, so the application actually doesn't use them and calculates beam properties from self-consistent `q` parameter directly.
+
 .. seealso::
 
     :doc:`gauss`

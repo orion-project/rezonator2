@@ -58,7 +58,11 @@
         "see_also": ["drag_scale_plot"]
     },
     "tool_gauss_calc": {
-        "text": "You can visualize and calculate common parameters of the Gaussian beam using <b>Gauss Calculator</b> tool.",
+        "text": "You can visualize and calculate common parameters of the Gaussian beam using the <b>Gauss Calculator</b> tool.",
         "image": "tool_gauss_calc.gif"
+    },
+    "lensmaker": {
+        "text": "You can visualize simple lens designs and estimate lens shapes and focus positions using the <b>Lensmaker</b> tool.",
+        "image": "tool_lensmaker.png"
     }
 }

@@ -13,12 +13,13 @@ PlotFuncRoundTripFunction::PlotFuncRoundTripFunction(const QString &funcTitle, P
 {
     _function->registerListener(this);
 
-    _actions << InfoFuncAction{
-        .title = qApp->translate("PlotFuncRoundTripFunction", "Show all element matrices"),
-        .icon = ":/toolbar/elem_matr",
-        .triggered = [this](){ _showElems = !_showElems; calculate(); },
-        .isChecked = [this](){ return _showElems; },
-    };
+    InfoFuncAction a;
+    a.title = qApp->translate("PlotFuncRoundTripFunction", "Show all element matrices");
+    a.icon = ":/toolbar/elem_matr";
+    a.triggered = [this](){ _showElems = !_showElems; calculate(); };
+    a.isChecked = [this](){ return _showElems; };
+
+    _actions << a;
 }
 
 PlotFuncRoundTripFunction::~PlotFuncRoundTripFunction()

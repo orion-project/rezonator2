@@ -72,7 +72,7 @@ QString formatPy(const Z::Complex& v)
     return QString("%1%2%3j")
             .arg(v.real(), 0, 'g', 16)
             .arg(v.imag() < 0 ? '-' : '+')
-            .arg(v.imag(), 0, 'g', 16);
+            .arg(qAbs(v.imag()), 0, 'g', 16);
 }
 
 QString matrixAsNumpy(const QString& label, const Z::Matrix& m)
