@@ -187,25 +187,37 @@ void exportGraphsData(FunctionGraphSet* graphs, QCPGraph* selectedGraph)
     }
     plane->setOption(params.plane);
 
-    auto graph = new OptionsGroup(OptionsGroup::Params{.title=qApp->translate("exportGraphsData", "Graph Line"), .horizontal=true});
+    OptionsGroup::Params p1;
+    p1.title = qApp->translate("exportGraphsData", "Graph Line");
+    p1.horizontal = true;
+    auto graph = new OptionsGroup(p1);
     graph->addOption(ExportGraphsParams::SEGMENT_ALL, qApp->translate("exportGraphsData", "All"));
     graph->addOption(ExportGraphsParams::SEGMENT_SELECTED, qApp->translate("exportGraphsData", "Selected"));
     graph->setVisible(!graphs->multiGraphs().isEmpty());
     graph->setDisabled(!selectedGraph);
     graph->setOption(params.graph);
 
-    auto segment = new OptionsGroup(OptionsGroup::Params{.title=qApp->translate("exportGraphsData", "Line Segment"), .horizontal=true});
+    OptionsGroup::Params p2;
+    p2.title = qApp->translate("exportGraphsData", "Line Segment");
+    p2.horizontal = true;
+    auto segment = new OptionsGroup();
     segment->addOption(ExportGraphsParams::SEGMENT_ALL, qApp->translate("exportGraphsData", "All"));
     segment->addOption(ExportGraphsParams::SEGMENT_SELECTED, qApp->translate("exportGraphsData", "Selected"));
     segment->setDisabled(!selectedGraph);
     segment->setOption(params.segment);
 
-    auto format = new OptionsGroup(OptionsGroup::Params{.title=qApp->translate("exportGraphsData", "Data Format"), .horizontal=true});
+    OptionsGroup::Params p3;
+    p3.title = qApp->translate("exportGraphsData", "Data Format");
+    p3.horizontal = true;
+    auto format = new OptionsGroup(p3);
     format->addOption(ExportGraphsParams::FORMAT_CSV, qApp->translate("exportGraphsData", "CSV"));
     format->addOption(ExportGraphsParams::FORMAT_TXT, qApp->translate("exportGraphsData", "Plain text"));
     format->setOption(params.format);
 
-    auto locale = new OptionsGroup(OptionsGroup::Params{.title=qApp->translate("exportGraphsData", "Number Format"), .horizontal=true});
+    OptionsGroup::Params p4;
+    p4.title = qApp->translate("exportGraphsData", "Number Format");
+    p4.horizontal = true;
+    auto locale = new OptionsGroup(p4);
     locale->addOption(ExportGraphsParams::LOCALE_C, qApp->translate("exportGraphsData", "C"));
     locale->addOption(ExportGraphsParams::LOCALE_SYSTEM, qApp->translate("exportGraphsData", "System"));
     locale->setOption(params.locale);

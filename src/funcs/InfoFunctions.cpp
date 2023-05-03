@@ -72,21 +72,21 @@ QString InfoFuncMatrices::calculateInternal()
 InfoFuncMatrixMultFwd::InfoFuncMatrixMultFwd(Schema *schema, const Elements& elems)
     : InfoFuncMatrices(schema, elems)
 {
-    _actions
-            << InfoFuncAction{
-               .title = qApp->translate("InfoFuncMatrixMultFwd", "Use forward proparation matrices"),
-               .icon = ":/toolbar/dir_forward",
-               .checkGroup = 1,
-               .triggered = [this](){ _useInvMatrs = false; calculate(); },
-               .isChecked = [this](){ return !_useInvMatrs; },
-            }
-            << InfoFuncAction{
-               .title = qApp->translate("InfoFuncMatrixMultFwd", "Use back proparation matrices"),
-               .icon = ":/toolbar/dir_backward",
-               .checkGroup = 1,
-               .triggered = [this](){ _useInvMatrs = true; calculate(); },
-               .isChecked = [this](){ return _useInvMatrs; },
-            };
+    InfoFuncAction a1;
+    a1.title = qApp->translate("InfoFuncMatrixMultFwd", "Use forward proparation matrices");
+    a1.icon = ":/toolbar/dir_forward";
+    a1.checkGroup = 1;
+    a1.triggered = [this](){ _useInvMatrs = false; calculate(); };
+    a1.isChecked = [this](){ return !_useInvMatrs; };
+
+    InfoFuncAction a2;
+    a2.title = qApp->translate("InfoFuncMatrixMultFwd", "Use back proparation matrices");
+    a2.icon = ":/toolbar/dir_backward";
+    a2.checkGroup = 1;
+    a2.triggered = [this](){ _useInvMatrs = true; calculate(); };
+    a2.isChecked = [this](){ return _useInvMatrs; };
+
+    _actions << a1 << a2;
 }
 
 QString InfoFuncMatrixMultFwd::calculateInternal()
@@ -128,12 +128,12 @@ InfoFuncMatrixMultBkwd::InfoFuncMatrixMultBkwd(Schema *schema, const Elements& e
 InfoFuncMatrixRT::InfoFuncMatrixRT(Schema *schema, Element *elem)
     : InfoFunction(schema), _element(elem)
 {
-    _actions << InfoFuncAction{
-        .title = qApp->translate("InfoFuncMatrixRT", "Show all element matrices"),
-        .icon = ":/toolbar/elem_matr",
-        .triggered = [this](){ _showElems = !_showElems; calculate(); },
-        .isChecked = [this](){ return _showElems; },
-    };
+    InfoFuncAction a;
+    a.title = qApp->translate("InfoFuncMatrixRT", "Show all element matrices");
+    a.icon = ":/toolbar/elem_matr";
+    a.triggered = [this](){ _showElems = !_showElems; calculate(); };
+    a.isChecked = [this](){ return _showElems; };
+    _actions << a;
 
     auto range = Z::Utils::asRange(elem);
     if (range)
