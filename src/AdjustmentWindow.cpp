@@ -71,7 +71,7 @@ AdjusterSettingsWidget::AdjusterSettingsWidget(const AdjusterSettings &settings,
     _flagUseForAll = new QCheckBox(tr("Apply for all adjusters"));
 
     auto layout = new QFormLayout(this);
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->addRow(tr("Increment"), _increment);
     layout->addRow(tr("Multiplier"), _multiplier);
     layout->addRow(_flagSetDefault);
@@ -334,7 +334,7 @@ void AdjusterWidget::changeValue()
 AdjusterListWidget::AdjusterListWidget(QWidget *parent) : QWidget(parent)
 {
     auto layout = new QVBoxLayout(this);
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
 }
 

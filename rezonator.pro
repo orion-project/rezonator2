@@ -267,6 +267,7 @@ SOURCES += \
     src/tests/test_ElementFormula.cpp \
     src/tests/test_Elements.cpp \
     src/tests/test_ElementsImages.cpp \
+    src/tests/test_Formula.cpp \
     src/tests/test_GrinCalculator.cpp \
     src/tests/test_InfoFunctions.cpp \
     src/tests/test_LuaHelper.cpp \
@@ -284,6 +285,7 @@ SOURCES += \
     src/tests/test_TestUtils.cpp \
     src/tests/test_UnitWidgets.cpp \
     src/tests/test_Units.cpp \
+    src/tests/test_Utils.cpp \
     src/tests/test_Values.cpp \
     src/Appearance.cpp \
     src/widgets/ElemFormulaEditor.cpp \

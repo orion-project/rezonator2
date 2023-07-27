@@ -22,7 +22,7 @@ RezonatorDialog::RezonatorDialog(Options options, QWidget* parent) : QDialog(par
     auto layout = new QVBoxLayout(this);
 
     _mainLayout = new QVBoxLayout;
-    _mainLayout->setMargin(0);
+    _mainLayout->setContentsMargins(0, 0, 0, 0);
     layout->addLayout(_mainLayout);
 
     if (!(options & OmitButtonsPanel))

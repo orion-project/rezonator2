@@ -120,7 +120,7 @@ void SchemaParamsWindow::createParameter()
 
     QWidget editor;
     auto layout = new QFormLayout(&editor);
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->addRow(new QLabel(tr("Name")), aliasEditor);
     layout->addRow(new QLabel(tr("Dim")), dimEditor);
     layout->addRow(new QLabel(tr("Unit")), unitEditor);

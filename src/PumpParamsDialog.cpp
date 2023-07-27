@@ -58,7 +58,7 @@ PumpParams* PumpParamsDialog::makeNewPump()
     auto modesWidget = new QFrame;
     modesWidget->setFrameShape(QFrame::StyledPanel);
     auto modesLayout = new QHBoxLayout(modesWidget);
-    modesLayout->setMargin(0);
+    modesLayout->setContentsMargins(0, 0, 0, 0);
     modesLayout->setSpacing(0);
     for (auto mode : Pumps::allModes())
     {

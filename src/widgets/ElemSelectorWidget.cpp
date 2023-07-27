@@ -106,7 +106,7 @@ ElemAndParamSelector::ElemAndParamSelector(
     connect(_elemSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(currentElemChanged(int)));
     connect(_paramSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(currentParamChanged(int)));
 
-    setMargin(0);
+    setContentsMargins(0, 0, 0, 0);
     setColumnStretch(1, 1);
     addWidget(new QLabel(tr("Element")), 0, 0);     addWidget(_elemSelector, 0, 1);
     addWidget(new QLabel(tr("Parameter")), 1, 0);   addWidget(_paramSelector, 1, 1);

@@ -275,7 +275,7 @@ void ElemFormulaEditor::createParameter()
 
     QWidget editor;
     auto layout = new QFormLayout(&editor);
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->addRow(new QLabel(tr("Name")), aliasEditor);
     layout->addRow(new QLabel(tr("Dim")), dimEditor);
 

@@ -377,7 +377,7 @@ bool ProjectOperations::selectTripTypeDlg(TripType* tripType)
     Ori::Widgets::SelectableTile *activeTile = nullptr;
 
     auto tripTypeLayout = new QHBoxLayout();
-    tripTypeLayout->setMargin(0);
+    tripTypeLayout->setContentsMargins(0, 0, 0, 0);
     tripTypeLayout->setSpacing(12);
     for (auto tripType : TripTypes::all())
     {

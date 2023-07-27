@@ -139,7 +139,7 @@ ValuesEditorTS::ValuesEditorTS() : ValuesEditorTS(QVector<ValueEditorTS*>())
 
 ValuesEditorTS::ValuesEditorTS(const QVector<ValueEditorTS*>& editors) : QVBoxLayout()
 {
-    setMargin(0);
+    setContentsMargins(0, 0, 0, 0);
     setSpacing(0);
 
     _unitSpacer = new QLabel;
@@ -151,7 +151,7 @@ ValuesEditorTS::ValuesEditorTS(const QVector<ValueEditorTS*>& editors) : QVBoxLa
     _headerS->setAlignment(Qt::AlignHCenter);
 
     auto header = new QHBoxLayout;
-    header->setMargin(0);
+    header->setContentsMargins(0, 0, 0, 0);
     header->setSpacing(0);
     header->addStretch();
     header->addWidget(_headerT);

@@ -7,6 +7,7 @@
 #include "helpers/OriWidgets.h"
 
 #include <QAction>
+#include <QActionGroup>
 #include <QClipboard>
 #include <QColorDialog>
 #include <QComboBox>
@@ -712,7 +713,7 @@ void MemoWindow::sendToPrinter()
     QPrinter printer(QPrinter::HighResolution);
     QPrintDialog *dlg = new QPrintDialog(&printer, this);
     if (_editor->textCursor().hasSelection())
-        dlg->addEnabledOption(QAbstractPrintDialog::PrintSelection);
+        dlg->setOption(QAbstractPrintDialog::PrintSelection, true);
     dlg->setWindowTitle(tr("Print Schema Notes"));
     if (dlg->exec() == QDialog::Accepted)
         _editor->print(&printer);

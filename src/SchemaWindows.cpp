@@ -127,7 +127,7 @@ BasicMdiChild::BasicMdiChild(InitOptions options) : QMdiSubWindow()
     {
         setWidget(new QWidget);
         _layout = new QVBoxLayout(widget());
-        _layout->setMargin(0);
+        _layout->setContentsMargins(0, 0, 0, 0);
         _layout->setSpacing(0);
 
         if (!options.testFlag(initNoToolBar))

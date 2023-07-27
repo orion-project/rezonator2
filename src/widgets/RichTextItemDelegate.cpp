@@ -83,7 +83,7 @@ QTextDocument* RichTextItemDelegate::document(const QStyleOptionViewItem &option
         auto group = QStyle::State_Active & option.state ? QPalette::Active : QPalette::Inactive;
         auto color = option.palette.color(group, QPalette::HighlightedText);
         auto colorStyle = QStringLiteral("color:%1").arg(color.name(QColor::HexRgb));
-        static QRegExp colorEntry("color: *#[a-fA-F\\d]+"); // only #rrggbb color format is replaced
+        static QRegularExpression colorEntry("color: *#[a-fA-F\\d]+"); // only #rrggbb color format is replaced
         text.replace(colorEntry, colorStyle);
         text = QStringLiteral("<span style='%1'>%2</span>").arg(colorStyle, text);
     }

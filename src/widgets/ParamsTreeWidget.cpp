@@ -74,7 +74,7 @@ ParamsTreeWidget::ParamsTreeWidget(Options opts, QWidget *parent) : QWidget(pare
     connect(_tree, &QTreeWidget::currentItemChanged, this, &ParamsTreeWidget::currentItemChanged);
 
     auto layout = new QVBoxLayout(this);
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(_tree);
 
     populate();

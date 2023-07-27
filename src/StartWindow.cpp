@@ -63,7 +63,7 @@ namespace {
 void CustomCssWidget::paintEvent(QPaintEvent*)
 {
     QStyleOption opt;
-    opt.init(this);
+    opt.initFrom(this);
     QPainter p(this);
     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 }
@@ -170,7 +170,7 @@ MruStartPanel::MruStartPanel() : StartPanel("panel_mru")
     }
 
     auto layout = new QVBoxLayout;
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
     foreach (const QFileInfo& file, files)
     {
@@ -247,7 +247,7 @@ TipsStartPanel::TipsStartPanel(QLabel *tipImage) : StartPanel("panel_tips")
     _tipPreview = tipPreview;
 
     auto buttonsLayout = new QHBoxLayout;
-    buttonsLayout->setMargin(0);
+    buttonsLayout->setContentsMargins(0, 0, 0, 0);
     buttonsLayout->setSpacing(5);
 
     auto prevButton = new QToolButton;
@@ -504,7 +504,7 @@ void ActionsStartPanel::makeSchemaSP()
 ToolsStartPanel::ToolsStartPanel() : StartPanel("panel_tools")
 {
     auto layout = new QVBoxLayout(this);
-    layout->setMargin(10);
+    layout->setContentsMargins(10, 10, 10, 10);
     layout->setSpacing(10);
     layout->addWidget(makeHeader(tr("Tools")));
     layout->addWidget(makeButton(":/toolbar/gauss_calculator", tr("Gauss Calculator"), SLOT(showGaussCalculator())));

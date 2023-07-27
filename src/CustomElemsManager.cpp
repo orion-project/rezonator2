@@ -98,7 +98,7 @@ QString saveToLibrary(Element* elem)
     }
 
     auto layoutCommon = new QFormLayout;
-    layoutCommon->setMargin(0);
+    layoutCommon->setContentsMargins(0, 0, 0, 0);
     layoutCommon->addRow(qApp->tr("Label:", "Save custom element"), labelEditor);
     layoutCommon->addRow(qApp->tr("Title:", "Save custom element"), titleEditor);
 

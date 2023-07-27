@@ -474,7 +474,7 @@ GaussCalculatorWindow::GaussCalculatorWindow(QWidget *parent) : QWidget(parent)
     _plotter.reset(new GaussPlotter);
 
     QGridLayout *paramsLayout = new QGridLayout;
-    paramsLayout->setMargin(12);
+    paramsLayout->setContentsMargins(12, 12, 12, 12);
     paramsLayout->setHorizontalSpacing(12);
     paramsLayout->setVerticalSpacing(0);
     makeParams(paramsLayout);

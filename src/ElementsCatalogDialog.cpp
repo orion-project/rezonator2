@@ -91,7 +91,8 @@ ElementsCatalogDialog::ElementsCatalogDialog(QWidget *parent): RezonatorDialog(D
     // page
     _pageLayout = new QVBoxLayout;
     _pageLayout->addWidget(Ori::Gui::splitterH(_elementsList, _preview));
-    _pageLayout->setMargin(mainLayout()->spacing()/2+1);
+    auto m = mainLayout()->spacing()/2+1;
+    _pageLayout->setContentsMargins(m, m, m, m);
 
     // initial view
     int tabIndex = qMin(qMax(0, __savedTabIndex), _categoryTabs->count()-1);

@@ -124,7 +124,11 @@ void BeamShapeWidget::mousePressEvent(QMouseEvent *e)
     }
 }
 
+#if (QT_VERSION > QT_VERSION_CHECK(6, 0, 0))
+void BeamShapeWidget::enterEvent(QEnterEvent *e)
+#else
 void BeamShapeWidget::enterEvent(QEvent *e)
+#endif
 {
     e->accept();
     _drawResizeBorder = true;
@@ -233,7 +237,7 @@ void BeamShapeWidget::updateSite(const QPoint &pos)
 {
     const int x = pos.x();
     const int y = pos.y();
-    auto p = mapToGlobal({0, 0});
+    auto p = mapToGlobal(QPoint(0, 0));
     const int x1 = p.x() + RESIZE_BORDER;
     const int y1 = p.y() + RESIZE_BORDER;
     const int x2 = p.x() + width() - RESIZE_BORDER;

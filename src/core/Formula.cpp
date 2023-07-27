@@ -3,6 +3,7 @@
 #include "LuaHelper.h"
 
 #include <QApplication>
+#include <QRegularExpression.h>
 
 namespace Z {
 
@@ -166,8 +167,8 @@ namespace FormulaUtils {
 
 bool isValidVariableName(const QString& s)
 {
-    static QRegExp r("^[a-zA-Z_][a-zA-Z_0-9]*$");
-    return r.exactMatch(s);
+    static QRegularExpression r("^[a-zA-Z_][a-zA-Z_0-9]*$");
+    return r.match(s).hasMatch();
 }
 
 } // namespace ParameterUtils
