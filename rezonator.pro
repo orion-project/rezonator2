@@ -22,6 +22,7 @@ include($$ORION/orion_tests.pri)
 include($$ORION/orion_svg.pri)
 
 # custom-plot-lab (https://github.com/orion-project/custom-plot-lab)
+win32: CONFIG += qcustomplotlab_shared
 include($$_PRO_FILE_PWD_/libs/custom-plot-lab/custom-plot-lab.pri)
 
 # lua
