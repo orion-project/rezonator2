@@ -2,7 +2,6 @@
 
 #include "PlotFuncWindow.h"
 
-#include "qcpl_cursor.h"
 #include "qcpl_plot.h"
 
 //------------------------------------------------------------------------------
@@ -22,11 +21,11 @@ BeamShapeExtension::BeamShapeExtension(PlotFuncWindow* parent): QObject(parent),
     _parent->toolbar()->addSeparator();
     _parent->toolbar()->addAction(_actnShowBeamShape);
 
-    connect(_parent->_plot, &QCPL::Plot::resized, [this](const QSize&, const QSize&){
+    connect(_parent->_plot, &QCPL::Plot::resized, this, [this](const QSize&, const QSize&){
         if (_beamShape)
             _beamShape->parentSizeChanged();
     });
-    connect(_parent, &PlotFuncWindow::finishImageBeforeCopy, [this](QPainter* p){
+    connect(_parent, &PlotFuncWindow::finishImageBeforeCopy, this, [this](QPainter* p){
         if (_beamShape)
             _beamShape->render(p, _beamShape->geometry().topLeft(), QRegion(), QWidget::RenderFlags());
     });
@@ -66,6 +65,16 @@ static const int DEFAULT_M = 20;
 static const int RESIZE_BORDER = 5;
 static const int TEXT_TO_BORDER = 3;
 static const int TEXT_TO_AXIS = 2;
+
+static QPoint globalPos(QMouseEvent *e)
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    auto const p = e->globalPosition();
+    return QPoint(p.x(), p.y());
+#else
+    return e->globalPos();
+#endif
+}
 
 BeamShapeWidget::BeamShapeWidget(QWidget *parent) : QWidget(parent)
 {
@@ -109,7 +118,7 @@ void BeamShapeWidget::mousePressEvent(QMouseEvent *e)
 {
     e->accept();
 
-    auto const pos = e->globalPos();
+    auto const pos = globalPos(e);
     updateSite(pos);
 
     if (e->buttons().testFlag(Qt::LeftButton))
@@ -145,7 +154,7 @@ void BeamShapeWidget::leaveEvent(QEvent *e)
 void BeamShapeWidget::mouseMoveEvent(QMouseEvent *e) {
     e->accept();
 
-    const auto pos = e->globalPos();
+    const auto pos = globalPos(e);
     if (!e->buttons().testFlag(Qt::LeftButton))
     {
         updateSite(pos);

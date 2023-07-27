@@ -185,7 +185,7 @@ QWidget* CalculatorWindow::makeToolbar()
     _actnClear = A_(tr("Clear Session"), this, SLOT(clearLog()), ":/toolbar/delete_items");
 
     auto actnReuse = A_(tr("Reuse Selected<br>(<b>Ctrl + D</b>)"), this,
-        SLOT(reuseItem()), ":/toolbar/duplicate_page", Qt::CTRL + Qt::Key_D);
+        SLOT(reuseItem()), ":/toolbar/duplicate_page", Qt::CTRL | Qt::Key_D);
 
     auto actnSettings = A_(tr("Settings"), this, SLOT(showSettings()), ":/toolbar/settings");
 

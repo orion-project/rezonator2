@@ -323,14 +323,14 @@ MemoWindow::MemoWindow(Schema* owner) : SchemaMdiChild(owner)
 
     _comboFont = new QFontComboBox;
     _comboFont->setMaxVisibleItems(16);
-    connect(_comboFont, SIGNAL(activated(QString)), this, SLOT(textFamily(QString)));
+    connect(_comboFont, SIGNAL(currentTextChanged(QString)), this, SLOT(textFamily(QString)));
 
     _comboSize = new QComboBox;
     _comboSize->setEditable(true);
     _comboSize->setMaxVisibleItems(24);
     QList<int> fontSizes = QFontDatabase::standardSizes();
     foreach(int size, fontSizes) _comboSize->addItem(QString::number(size));
-    connect(_comboSize, SIGNAL(activated(QString)), this, SLOT(textSize(QString)));
+    connect(_comboSize, SIGNAL(currentTextChanged(QString)), this, SLOT(textSize(QString)));
     _comboSize->setCurrentIndex(_comboSize->findText(QString::number(QApplication::font().pointSize())));
 
     createActions();
@@ -515,7 +515,11 @@ void MemoWindow::textStrikeout()
 void MemoWindow::textFamily(const QString &f)
 {
     QTextCharFormat fmt;
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
+    fmt.setFontFamilies({f});
+#else
     fmt.setFontFamily(f);
+#endif
     mergeFormat(fmt);
 }
 

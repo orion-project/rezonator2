@@ -356,7 +356,7 @@ void SchemaReaderIni::readElements()
         if (section.startsWith("Element"))
         {
             bool ok;
-            int index = section.right(section.count()-7).toInt(&ok);
+            int index = section.right(section.length()-7).toInt(&ok);
             if (ok && index > maxElemIndex) maxElemIndex = index;
         }
     for (int index = 0; index <= maxElemIndex; index++)

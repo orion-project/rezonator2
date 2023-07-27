@@ -135,12 +135,12 @@ WidgetResult ElemAndParamSelector::verify()
 MultiElementSelectorWidget::MultiElementSelectorWidget(Schema* schema, ElementFilter *filter) : QWidget()
 {
     _elemsSelector = new QListWidget;
-    _elemsSelector->addAction(Ori::Gui::action("", this, SLOT(selectAllElements()), "", Qt::CTRL+Qt::Key_A));
-    _elemsSelector->addAction(Ori::Gui::action("", this, SLOT(deselectAllElements()), "", Qt::CTRL+Qt::Key_D));
-    _elemsSelector->addAction(Ori::Gui::action("", this, SLOT(invertElementsSelection()), "", Qt::CTRL+Qt::Key_I));
+    _elemsSelector->addAction(Ori::Gui::action("", this, SLOT(selectAllElements()), "", Qt::CTRL|Qt::Key_A));
+    _elemsSelector->addAction(Ori::Gui::action("", this, SLOT(deselectAllElements()), "", Qt::CTRL|Qt::Key_D));
+    _elemsSelector->addAction(Ori::Gui::action("", this, SLOT(invertElementsSelection()), "", Qt::CTRL|Qt::Key_I));
     connect(_elemsSelector, &QListWidget::currentItemChanged, this, &MultiElementSelectorWidget::currentItemChanged);
     connect(_elemsSelector, &QListWidget::itemDoubleClicked, this, &MultiElementSelectorWidget::invertCheckState);
-    connect(_elemsSelector, &QListWidget::itemClicked, [&](QListWidgetItem *item){
+    connect(_elemsSelector, &QListWidget::itemClicked, this, [&](QListWidgetItem *item){
         if (!item->isSelected()) _elemsSelector->setCurrentItem(item); });
 
     Ori::Layouts::LayoutH({
