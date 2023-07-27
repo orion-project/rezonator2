@@ -215,11 +215,11 @@ void MruStartPanel::makeEmpty()
 
 void MruStartPanel::openFile(const QString& filePath)
 {
-    emit onClose();
     auto projectWindow = new ProjectWindow(new Schema());
     projectWindow->show();
     projectWindow->operations()->openSchemaFile(filePath);
     CommonData::instance()->mruList()->append(filePath);
+    emit onClose();
 }
 
 //------------------------------------------------------------------------------
@@ -577,7 +577,7 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
 
     auto tipsPanel = new TipsStartPanel(tipImage);
 
-    connect(tipImage, &Ori::Widgets::Label::clicked, [tipsPanel]{
+    connect(tipImage, &Ori::Widgets::Label::clicked, this, [tipsPanel]{
         tipsPanel->closeTipImage();
     });
 
