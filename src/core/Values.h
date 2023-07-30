@@ -82,10 +82,17 @@ public:
     bool operator <= (const double& v) const { return toSi() <= v; }
 
     static Value parse(const QString& valueStr);
+    static Value fromSi(const double& valueSi, Unit unit) { return Value(unit->fromSi(valueSi), unit); }
 
 private:
     double _value;
     Unit _unit;
+};
+
+struct ValuePoint
+{
+    Value X;
+    Value Y;
 };
 
 } // namespace Z

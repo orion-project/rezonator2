@@ -2,9 +2,8 @@
 
 #include "InfoFuncWindow.h"
 #include "FuncWindowHelpers.h"
-#include "../Appearance.h"
 #include "../AppSettings.h"
-#include "../core/Protocol.h"
+#include "../core/Format.h"
 #include "../funcs/InfoFunctions.h"
 #include "../funcs/PlotFuncRoundTripFunction.h"
 #include "../funcs/FunctionGraph.h"
@@ -15,14 +14,12 @@
 
 #include "helpers/OriWidgets.h"
 #include "widgets/OriFlatToolBar.h"
-#include "widgets/OriLabels.h"
 #include "widgets/OriStatusBar.h"
 
 #include "qcpl_cursor.h"
 #include "qcpl_cursor_panel.h"
 #include "qcpl_graph_grid.h"
 #include "qcpl_plot.h"
-#include "qcpl_format.h"
 
 using namespace Ori::Gui;
 
@@ -389,7 +386,29 @@ void PlotFuncWindow::updateCursorInfo()
         // TODO:NEXT-VER calculate by interpolating between existing graph points
         return;
     }
-    _cursorPanel->update(getCursorInfo(_cursor->position()));
+
+    auto unitX = getUnitX();
+    auto unitY = getUnitY();
+    CursorInfoValues values;
+    auto p = _cursor->position();
+    values << CursorInfoValue(QStringLiteral("X"), unitX->toSi(p.x()));
+    values << CursorInfoValue(QStringLiteral("Y"), unitY->toSi(p.y()));
+    getCursorInfo({Z::Value(p.x(), unitX), Z::Value(p.y(), unitY)}, values);
+    QStringList info;
+    foreach (const CursorInfoValue& v, values)
+    {
+        QString line;
+        if (v.isX())
+            line = _cursorPanel->formatLinkX(Z::format(p.x()));
+        else if (v.isY())
+            line = _cursorPanel->formatLinkY(Z::format(p.y()));
+        else
+            line = QStringLiteral("%1 = %2").arg(v.name, Z::format(unitY->fromSi(v.value)));
+        if (!v.note.isEmpty())
+            line += ' ' + v.note;
+        info << line;
+    }
+    _cursorPanel->setText(info.join(QStringLiteral("; ")));
 }
 
 void PlotFuncWindow::updateWithParams()

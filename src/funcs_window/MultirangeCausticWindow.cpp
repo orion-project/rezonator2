@@ -44,15 +44,23 @@ QString MultirangeCausticWindow::writeFunction(QJsonObject& root)
     return QString();
 }
 
-QString MultirangeCausticWindow::getCursorInfo(const QPointF& pos) const
+void MultirangeCausticWindow::getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const
 {
-    if (!function()->ok()) return QString();
-    double x = getUnitX()->toSi(pos.x());
-    auto res = function()->calculateAt(x);
+    if (!function()->ok()) return;
+    auto unitX = getUnitX();
+    auto res = function()->calculateAt(pos.X);
     _beamShape->setShape(res);
-    auto unitY = getUnitY();
-    return QString("%1t = %2; %1s = %3").arg(
-                CausticFunction::modeAlias(function()->mode()),
-                Z::format(unitY->fromSi(res.T)),
-                Z::format(unitY->fromSi(res.S)));
+    QString valueName = CausticFunction::modeAlias(function()->mode());
+    values << CursorInfoValue(valueName+'t', res.T);
+    values << CursorInfoValue(valueName+'s', res.S);
+    auto funcAndOffset = findFuncAndOffsetSi(pos.X);
+    if (funcAndOffset.first)
+        for (int i = 0; i < values.size(); i++)
+            if (values.at(i).isX())
+            {
+                values[i].note = QStringLiteral("(%1 @ %2)").arg(
+                    funcAndOffset.first->arg()->element->displayLabel(),
+                    Z::format(unitX->fromSi(funcAndOffset.second)));
+                break;
+            }
 }

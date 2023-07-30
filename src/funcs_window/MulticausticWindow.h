@@ -41,6 +41,7 @@ protected:
     QString readWindowSpecific(const QJsonObject& root) override;
     QString writeWindowSpecific(QJsonObject& root) override;
 
+    QPair<CausticFunction *, double> findFuncAndOffsetSi(const Z::Value& x) const;
 private:
     QList<QCPItemStraightLine*> _elemBoundMarkers;
     QAction* _actnElemBoundMarkers;

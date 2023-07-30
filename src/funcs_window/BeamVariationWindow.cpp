@@ -2,7 +2,6 @@
 
 #include "BeamShapeExtension.h"
 #include "../CustomPrefs.h"
-#include "../core/Format.h"
 #include "../io/JsonUtils.h"
 #include "../widgets/ElemSelectorWidget.h"
 #include "../widgets/VariableRangeEditor.h"
@@ -173,13 +172,11 @@ QString BeamVariationWindow::writeFunction(QJsonObject& root)
     return QString();
 }
 
-QString BeamVariationWindow::getCursorInfo(const QPointF& pos) const
+void BeamVariationWindow::getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const
 {
-    if (!function()->ok()) return QString();
-    auto res = function()->calculateAt(Z::Value(pos.x(), getUnitX()));
+    if (!function()->ok()) return;
+    auto res = function()->calculateAt(pos.X);
     _beamShape->setShape(res);
-    auto unitY = getUnitY();
-    QString resT = Double(res.T).isNan() ? QStringLiteral("NaN") : Z::format(unitY->fromSi(res.T));
-    QString resS = Double(res.S).isNan() ? QStringLiteral("NaN") : Z::format(unitY->fromSi(res.S));
-    return QStringLiteral("Wt = %1; Ws = %2").arg(resT, resS);
+    values << CursorInfoValue(QStringLiteral("Wt"), res.T);
+    values << CursorInfoValue(QStringLiteral("Ws"), res.S);
 }

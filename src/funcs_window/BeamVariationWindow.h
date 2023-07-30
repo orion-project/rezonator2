@@ -26,7 +26,7 @@ protected:
     bool configureInternal() override;
     Z::Unit getDefaultUnitX() const override;
     Z::Unit getDefaultUnitY() const override;
-    QString getCursorInfo(const QPointF& pos) const override;
+    void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;

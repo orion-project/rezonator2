@@ -14,7 +14,7 @@ public:
 protected:
     // Implementation of PlotFuncWindow
     QWidget* makeOptionsPanel() override;
-    QString getCursorInfo(const QPointF& pos) const override;
+    void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;

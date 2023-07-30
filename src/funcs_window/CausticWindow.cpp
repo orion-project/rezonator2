@@ -4,14 +4,11 @@
 #include "CausticOptionsPanel.h"
 #include "../AppSettings.h"
 #include "../CustomPrefs.h"
-#include "../core/Format.h"
-#include "../funcs/FunctionGraph.h"
 #include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
 #include "../widgets/ElemSelectorWidget.h"
 #include "../widgets/VariableRangeEditor.h"
 #include "helpers/OriWidgets.h"
-#include "helpers/OriLayouts.h"
 
 #include <QAction>
 #include <QGroupBox>
@@ -186,15 +183,12 @@ Z::Unit CausticWindow::getDefaultUnitY() const
     return Z::Units::none();
 }
 
-QString CausticWindow::getCursorInfo(const QPointF& pos) const
+void CausticWindow::getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const
 {
-    if (!function()->ok()) return QString();
-    double x = getUnitX()->toSi(pos.x());
-    auto res = function()->calculateAt(x);
+    if (!function()->ok()) return;
+    auto res = function()->calculateAt(pos.X);
     _beamShape->setShape(res);
-    auto unitY = getUnitY();
-    return QString("%1t = %2; %1s = %3").arg(
-                CausticFunction::modeAlias(function()->mode()),
-                Z::format(unitY->fromSi(res.T)),
-                Z::format(unitY->fromSi(res.S)));
+    QString valueName = CausticFunction::modeAlias(function()->mode());
+    values << CursorInfoValue(valueName+'t', res.T);
+    values << CursorInfoValue(valueName+'s', res.S);
 }

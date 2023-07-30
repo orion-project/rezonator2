@@ -2,7 +2,6 @@
 
 #include "FuncOptionsPanel.h"
 #include "../CustomPrefs.h"
-#include "../core/Format.h"
 #include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
 #include "../widgets/ElemSelectorWidget.h"
@@ -390,11 +389,12 @@ QString StabilityMap2DWindow::writeWindowSpecific(QJsonObject& root)
     return QString();
 }
 
-QString StabilityMap2DWindow::getCursorInfo(const QPointF& pos) const
+void StabilityMap2DWindow::getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const
 {
-    if (!function()->ok()) return QString();
-    auto res = function()->calculateAtXY(Z::Value(pos.x(), getUnitX()), Z::Value(pos.y(), getUnitY()));
-    return QStringLiteral("Pt = %1; Ps = %2").arg(Z::format(res.T), Z::format(res.S));
+    if (!function()->ok()) return;
+    auto res = function()->calculateAtXY(pos.X, pos.Y);
+    values << CursorInfoValue(QStringLiteral("Pt"), res.T);
+    values << CursorInfoValue(QStringLiteral("Ps"), res.S);
 }
 
 void StabilityMap2DWindow::copyGraphData2D()

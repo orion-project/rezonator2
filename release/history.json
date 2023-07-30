@@ -5,7 +5,10 @@
       "date": "",
       "changes": [
         {
-          "text": "Switch Windows x64 flavour to Qt 6 for its better HDPI support"
+          "text": "Switch Windows x64 flavour to Qt 6 for its better HiDPI support"
+        },
+        {
+          "text": "Cursor panel shows offset inside element under cursor in Multirange caustic window"
         },
         {
           "text": "Fix: ignore saved window geometry if it is out of screen bounds"

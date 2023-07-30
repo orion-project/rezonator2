@@ -276,9 +276,10 @@ Z::Unit StabilityMapWindow::getDefaultUnitX() const
     return function()->arg()->range.start.unit();
 }
 
-QString StabilityMapWindow::getCursorInfo(const QPointF& pos) const
+void StabilityMapWindow::getCursorInfo(const Z::ValuePoint &pos, CursorInfoValues &values) const
 {
-    if (!function()->ok()) return QString();
-    auto res = function()->calculateAt(Z::Value(pos.x(), getUnitX()));
-    return QStringLiteral("Pt = %1; Ps = %2").arg(Z::format(res.T), Z::format(res.S));
+    if (!function()->ok()) return;
+    auto res = function()->calculateAt(pos.X);
+    values << CursorInfoValue(QStringLiteral("Pt"), res.T);
+    values << CursorInfoValue(QStringLiteral("Ps"), res.S);
 }

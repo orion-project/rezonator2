@@ -227,24 +227,32 @@ void MulticausticWindow::elementDeleting(Schema*, Element* elem)
     }
 }
 
-void MulticausticWindow::showRoundTrip()
+QPair<CausticFunction*, double> MulticausticWindow::findFuncAndOffsetSi(const Z::Value &x) const
 {
-    auto unitX = getUnitX();
-    auto currentX = unitX->toSi(_cursor->position().x());
+    auto currentX = x.toSi();
     double prevOffset = 0;
     foreach (auto func, function()->funcs())
     {
         if (func->arg()->element->disabled())
             continue;
-
         double nextOffset = prevOffset + func->arg()->range.stop.toSi();
         if (currentX >= prevOffset && currentX < nextOffset)
         {
-            QString funcTitle = QString("%1 (inside of %2)").arg(windowTitle(), func->arg()->element->displayLabel());
-            InfoFuncWindow::open(new PlotFuncRoundTripFunction(funcTitle, func), this);
-            return;
+            return { func, currentX-prevOffset };
         }
         prevOffset = nextOffset;
+    }
+    return { nullptr, 0 };
+}
+
+void MulticausticWindow::showRoundTrip()
+{
+    auto funcAndOffset = findFuncAndOffsetSi(Z::Value(_cursor->position().x(), getUnitX()));
+    if (funcAndOffset.first)
+    {
+        auto func = funcAndOffset.first;
+        QString funcTitle = QString("%1 (inside of %2)").arg(windowTitle(), func->arg()->element->displayLabel());
+        InfoFuncWindow::open(new PlotFuncRoundTripFunction(funcTitle, func), this);
     }
 }
 

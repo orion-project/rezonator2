@@ -1,7 +1,6 @@
 #include "StabilityMapFunction.h"
 
 #include "../CustomPrefs.h"
-#include "../core/Protocol.h"
 #include "RoundTripCalculator.h"
 
 void StabilityMapFunction::calculate()

@@ -6,8 +6,6 @@
 #include "../SchemaWindows.h"
 #include "../funcs/PlotFunction.h"
 
-#include "qcpl_types.h"
-
 QT_BEGIN_NAMESPACE
 class QAction;
 class QLabel;
@@ -39,6 +37,20 @@ enum class ElemDeletionReaction {
     None,
     Close
 };
+
+struct CursorInfoValue
+{
+    QString name;
+    double value;
+    QString note;
+
+    CursorInfoValue(const QString& name, const double& value): name(name), value(value) {}
+    CursorInfoValue(const QString& name, const double& value, const QString& note): name(name), value(value), note(note) {}
+    bool isX() const { return name == QStringLiteral("X"); }
+    bool isY() const { return name == QStringLiteral("Y"); }
+};
+
+using CursorInfoValues = QList<CursorInfoValue>;
 
 class PlotFuncWindow : public SchemaMdiChild
 {
@@ -139,7 +151,7 @@ protected:
     virtual void afterUpdate() {}
     virtual QWidget* makeOptionsPanel() { return nullptr; }
     virtual void fillViewMenuActions(QList<QAction*>& actions) const { Q_UNUSED(actions) }
-    virtual QString getCursorInfo(const QPointF& pos) const { Q_UNUSED(pos) return QString(); }
+    virtual void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const { Q_UNUSED(pos) Q_UNUSED(values) }
 
     QCPGraph* selectedGraph() const;
 
