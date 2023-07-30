@@ -12,6 +12,9 @@
         },
         {
           "text": "Fix: ignore saved window geometry if it is out of screen bounds"
+        },
+        {
+          "text": "Fix: wrong context menu on the last element in elements table"
         }
       ]
     },
