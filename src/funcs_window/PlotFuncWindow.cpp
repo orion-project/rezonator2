@@ -18,6 +18,7 @@
 
 #include "qcpl_cursor.h"
 #include "qcpl_cursor_panel.h"
+#include "qcpl_format.h"
 #include "qcpl_graph_grid.h"
 #include "qcpl_plot.h"
 
@@ -87,6 +88,8 @@ void PlotFuncWindow::createActions()
     actnSetTitleX = action(tr("X-axis Title..."), _plot, SLOT(titleDlgX()));
     actnSetTitleY = action(tr("Y-axis Title..."), _plot, SLOT(titleDlgY()));
 
+    actnFormatLegend = action(tr("Legend..."), this, SLOT(formatLegend()));
+
     actnCopyGraphData = action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
     actnCopyGraphDataCur = action(tr("Copy Graph Data (this segment)"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
     actnCopyGraphDataAll = action(tr("Copy Graph Data (all segments)"), this, SLOT(copyGraphDataAll()), ":/toolbar/copy_table");
@@ -105,7 +108,7 @@ void PlotFuncWindow::createMenuBar()
         actnCopyPlotImage,  actnCopyGraphDataEx, nullptr,
         _unitsMenuX->menu(), _unitsMenuY->menu(), actnSetTitleX, actnSetTitleY, nullptr, actnShowRoundTrip,
     });
-    connect(menuPlot, &QMenu::aboutToShow, [this](){
+    connect(menuPlot, &QMenu::aboutToShow, this, [this](){
         _unitsMenuX->menu()->setTitle("X-axis Unit");
         _unitsMenuY->menu()->setTitle("Y-axis Unit");
         _unitsMenuX->setUnit(getUnitX());
@@ -119,7 +122,7 @@ void PlotFuncWindow::createMenuBar()
     });
 
     menuFormat = menu(tr("Format", "Menu title"), this, {
-        // TODO
+        actnFormatLegend
     });
 
     auto menuX = new QMenu(this);
@@ -134,7 +137,7 @@ void PlotFuncWindow::createMenuBar()
     menuX->addAction(QIcon(":/toolbar/limits_auto_x"), tr("Fit to Graphs"), _plot, SLOT(autolimitsX()));
     menuX->addSeparator();
     menuX->addAction(actnCopyPlotImage);
-    connect(menuX, &QMenu::aboutToShow, [this](){
+    connect(menuX, &QMenu::aboutToShow, this, [this](){
         _unitsMenuX->menu()->setTitle(tr("Unit"));
         _unitsMenuX->setUnit(getUnitX());
     });
@@ -151,7 +154,7 @@ void PlotFuncWindow::createMenuBar()
     menuY->addAction(QIcon(":/toolbar/limits_auto_y"), tr("Fit to Graphs"), _plot, SLOT(autolimitsY()));
     menuY->addSeparator();
     menuY->addAction(actnCopyPlotImage);
-    connect(menuY, &QMenu::aboutToShow, [this](){
+    connect(menuY, &QMenu::aboutToShow, this, [this](){
         _unitsMenuY->menu()->setTitle(tr("Unit"));
         _unitsMenuY->setUnit(getUnitY());
     });
@@ -222,7 +225,6 @@ void PlotFuncWindow::createContent()
     _plot = new QCPL::Plot;
     _plot->legend->setVisible(false);
     _plot->setAutoAddPlottableToLegend(false);
-    _plot->addLayer("graphs");
     connect(_plot, &QCPL::Plot::graphClicked, this, &PlotFuncWindow::graphSelected);
     connect(_plot, &QCPL::Plot::modified, this, [this](const QString& reason){ schema()->markModified(reason.toLatin1().data()); });
 
@@ -283,6 +285,30 @@ void PlotFuncWindow::createStatusBar()
         _unitsMenuY->menu()->popup(_statusBar->mapToGlobal(STATUS_UNIT_Y, p));
     });
     setContent(_statusBar);
+}
+
+QList<BasicMdiChild::ViewMenuItem> PlotFuncWindow::menuItems_View()
+{
+    QList<BasicMdiChild::ViewMenuItem> menuItems;
+
+    QList<QAction*> actions;
+    _leftPanel->fillActions(actions);
+    if (actions.size() > 0)
+    {
+        foreach (auto a, actions)
+            menuItems << BasicMdiChild::ViewMenuItem(a);
+        menuItems << BasicMdiChild::ViewMenuItem();
+    }
+
+    menuItems << BasicMdiChild::ViewMenuItem(_cursorMenu);
+    menuItems << BasicMdiChild::ViewMenuItem();
+
+    actions.clear();
+    fillViewMenuActions(actions);
+    foreach (auto a, actions)
+        menuItems << BasicMdiChild::ViewMenuItem(a);
+
+    return menuItems;
 }
 
 QCPL::Graph *PlotFuncWindow::selectedGraph() const
@@ -649,30 +675,6 @@ void PlotFuncWindow::setUnitY(Z::Unit unit)
     update();
 }
 
-QList<BasicMdiChild::ViewMenuItem> PlotFuncWindow::menuItems_View()
-{
-    QList<BasicMdiChild::ViewMenuItem> menuItems;
-
-    QList<QAction*> actions;
-    _leftPanel->fillActions(actions);
-    if (actions.size() > 0)
-    {
-        foreach (auto a, actions)
-            menuItems << BasicMdiChild::ViewMenuItem(a);
-        menuItems << BasicMdiChild::ViewMenuItem();
-    }
-
-    menuItems << BasicMdiChild::ViewMenuItem(_cursorMenu);
-    menuItems << BasicMdiChild::ViewMenuItem();
-
-    actions.clear();
-    fillViewMenuActions(actions);
-    foreach (auto a, actions)
-        menuItems << BasicMdiChild::ViewMenuItem(a);
-
-    return menuItems;
-}
-
 void PlotFuncWindow::optionChanged(AppSettingsOptions option)
 {
     if (option == AppSettingsOptions::numberPrecisionData)
@@ -721,4 +723,19 @@ void PlotFuncWindow::graphsMenuAboutToShow()
     actnCopyGraphData->setVisible(!manySegments);
     actnCopyGraphDataCur->setVisible(manySegments);
     actnCopyGraphDataAll->setVisible(manySegments);
+}
+
+void PlotFuncWindow::formatLegend()
+{
+    QCPL::LegendFormatDlgProps props;
+    props.title = tr("Legend");
+    props.sampleText = "T\nS";
+    props.onApplied = [this](){
+        schema()->markModified("PlotFuncWindow::formatLegend");
+    };
+    if (QCPL::legendFormatDlg(_plot->legend, props))
+    {
+        _plot->replot();
+        schema()->markModified("PlotFuncWindow::formatLegend");
+    }
 }

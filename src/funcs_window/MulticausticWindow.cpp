@@ -11,7 +11,7 @@
 
 MulticausticWindow::MulticausticWindow(MultirangeCausticFunction* function) : PlotFuncWindowStorable(function)
 {
-    _plot->addLayer("elem_bounds", _plot->layer("graphs"), QCustomPlot::limBelow);
+    _plot->addLayer("elem_bounds", _plot->layer("main"), QCustomPlot::limBelow);
 
     _plot->addTextVarX(QStringLiteral("{elems}"), tr("Element labels and titles"), [this]{
         QStringList strs;

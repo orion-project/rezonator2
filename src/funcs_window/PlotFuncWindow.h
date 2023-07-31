@@ -79,7 +79,7 @@ public:
     bool configure();
 
     // inherits from BasicMdiChild
-    QList<QMenu*> menus() override { return QList<QMenu*>() << menuPlot << menuLimits /* TODO:NEXT-VER << menuFormat*/; }
+    QList<QMenu*> menus() override { return QList<QMenu*>() << menuPlot << menuLimits << menuFormat; }
     QList<ViewMenuItem> menuItems_View() override;
     QString helpTopic() const override { return _function->helpTopic(); }
 
@@ -136,7 +136,7 @@ protected:
         *actnZoomIn, *actnZoomOut, *actnZoomInX, *actnZoomOutX, *actnZoomInY, *actnZoomOutY,
         *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo,
         *actnCopyGraphData, *actnCopyGraphDataCur, *actnCopyGraphDataAll, *actnCopyPlotImage,
-        *actnCopyGraphDataEx;
+        *actnCopyGraphDataEx, *actnFormatLegend;
 
     // Stores differences of plot view when function is switched betweeen modes
     // e.g. when the Caustic function switches between W and R.
@@ -186,6 +186,7 @@ private slots:
     void copyGraphData();
     void copyGraphDataAll();
     void copyGraphDataEx();
+    void formatLegend();
 
     QWidget* optionsPanelRequired();
 

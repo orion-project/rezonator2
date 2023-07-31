@@ -37,6 +37,8 @@ public:
 public:
     FunctionGraph(QCPL::Plot* plot, Z::WorkPlane workPlane, std::function<GraphUnits()> getUnits);
 
+    QString legendName;
+
     void clear();
     void update(PlotFunction* function);
     void update(const QList<PlotFunction*>& functions);
@@ -45,7 +47,7 @@ public:
     void setFlipped(bool on) { _isFlipped = on; }
     void setVisible(bool on) { _isVisible = on; }
     void setPen(const QPen& pen) { _linePen = pen; }
-    void setColor(Z::WorkPlane workPlane, const QString& color);
+    void setColor(const QString& color);
     bool contains(QCPGraph* graph) const;
     bool isEmpty() const { return _segments.isEmpty(); }
     QString str() const;

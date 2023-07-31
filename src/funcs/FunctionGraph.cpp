@@ -66,7 +66,13 @@ QCPL::Graph* FunctionGraph::getOrMakeSegment(int index)
     {
         segment = _plot->addGraph();
         segment->setPen(_linePen);
-        segment->setLayer("graphs");
+        if (index == 0)
+        {
+            segment->addToLegend();
+            if (legendName.isEmpty())
+                segment->setName(_workPlane == Z::WorkPlane::Plane_T ? QStringLiteral("T") : QStringLiteral("S"));
+            else segment->setName(legendName);
+        }
         _segments.append(segment);
     }
     else segment = _segments[index];
@@ -102,11 +108,11 @@ void FunctionGraph::trimToCount(int count)
     }
 }
 
-void FunctionGraph::setColor(Z::WorkPlane workPlane, const QString& color)
+void FunctionGraph::setColor(const QString& color)
 {
     QColor clr(color);
     if (!clr.isValid())
-        clr = workPlane == Z::Plane_T ? Qt::darkGreen : Qt::red;
+        clr = _workPlane == Z::Plane_T ? Qt::darkGreen : Qt::red;
     setPen(QPen(clr));
 }
 
@@ -215,11 +221,12 @@ void FunctionGraphSet::update(const QString& id, Z::WorkPlane workPlane, const Q
     if (!_graphs.contains(key))
     {
         auto graph = new FunctionGraph(_plot, workPlane, _getUnits);
-        graph->setColor(workPlane, color);
+        graph->legendName = key;
+        graph->setColor(color);
         _graphs.insert(key, graph);
     }
     else
-        _graphs[key]->setColor(workPlane, color);
+        _graphs[key]->setColor(color);
     _graphs[key]->update(functions);
 }
 
