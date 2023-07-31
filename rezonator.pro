@@ -153,6 +153,7 @@ HEADERS += \
     src/widgets/SchemaLayout.h \
     src/widgets/SchemaLayoutAxicon.h \
     src/widgets/SchemaLayoutCrystal.h \
+    src/widgets/SchemaLayoutDefs.h \
     src/widgets/SchemaLayoutElems.h \
     src/widgets/SchemaLayoutIfaces.h \
     src/widgets/SchemaLayoutLens.h \

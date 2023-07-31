@@ -2,6 +2,8 @@
 #define SCHEMA_LAYOUT_AXICON_H
 
 #include "SchemaLayout.h"
+#include "SchemaLayoutDefs.h"
+#include "../core/Elements.h"
 
 using namespace ElementLayoutProps;
 
@@ -19,14 +21,10 @@ namespace AxiconElementLayout {
         ConcavePlanoMirror, //      >|
     };
 
-    DECLARE_ELEMENT_LAYOUT_BEGIN
+    LAYOUT_BEGIN
         AxiconForm paintMode = FormUnknown;
-    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_LAYOUT_INIT {
-    }
-
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         const qreal sagitta = HW * 0.85;
 
         painter->setPen(getGlassPen());
@@ -143,15 +141,16 @@ namespace AxiconElementLayout {
         }
         painter->drawPath(path1);
     }
+
+    LAYOUT_END
 }
 
 //------------------------------------------------------------------------------
 namespace ElemAxiconMirrorLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
+    LAYOUT_BEGIN
         QSharedPointer<AxiconElementLayout::Layout> layout;
-    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_LAYOUT_INIT {
+    INIT {
         HW = 12; HH = 40;
         auto mirror = dynamic_cast<ElemAxiconMirror*>(_element);
         if (!mirror || !_element->owner()) return;
@@ -174,18 +173,19 @@ namespace ElemAxiconMirrorLayout {
         layout->init();
     }
 
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         if (layout) layout->paint(painter, nullptr, nullptr);
     }
+
+    LAYOUT_END
 }
 
 //------------------------------------------------------------------------------
 namespace ElemAxiconLensLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
+    LAYOUT_BEGIN
         QSharedPointer<AxiconElementLayout::Layout> layout;
-    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_LAYOUT_INIT {
+    INIT {
         HW = 12; HH = 40;
         auto mirror = dynamic_cast<ElemAxiconLens*>(_element);
         if (!mirror || !_element->owner()) return;
@@ -208,9 +208,11 @@ namespace ElemAxiconLensLayout {
         layout->init();
     }
 
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         if (layout) layout->paint(painter, nullptr, nullptr);
     }
+
+    LAYOUT_END
 }
 
 #endif // SCHEMA_LAYOUT_AXICON_H

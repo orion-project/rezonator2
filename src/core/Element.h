@@ -3,7 +3,6 @@
 
 #include "Math.h"
 #include "Parameters.h"
-#include "core/OriTemplates.h"
 
 #include <QSize>
 
@@ -94,9 +93,12 @@ enum ElementOption {
 struct ElementLayoutOptions {
     bool showLabel = true;
 
-    /// Draw a narrow version of the element. It can be useful when schema contains many elements.
-    /// How the option is processed depends on the particular element type.
-    bool drawNarrow = false;
+    /// Draw an alternative version of the element.
+    /// For some elements the alternative version is a narrower one
+    /// which can be useful when schema contains many elements.
+    /// In general, how the option is processed depends on particular element type.
+    /// @sa ElementLayoutOptionsView, @sa ElementLayoutFactory::getOptions()
+    bool drawAlt = false;
 };
 
 /**

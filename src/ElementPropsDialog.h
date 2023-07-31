@@ -45,7 +45,7 @@ private:
     QTabWidget *_tabs;
     QLineEdit *_editorLabel, *_editorTitle;
     QCheckBox *_layoutShowLabel;
-    QCheckBox *_layoutDrawNarrow;
+    QCheckBox *_layoutDrawAlt;
     QCheckBox *_elemDisabled;
 
     QWidget* initPageOptions();

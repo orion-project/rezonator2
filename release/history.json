@@ -11,6 +11,9 @@
           "text": "Cursor panel shows offset inside element under cursor in Multirange caustic window"
         },
         {
+          "text": "An option added to the Point element to draw it as plane"
+        },
+        {
           "text": "Fix: ignore saved window geometry if it is out of screen bounds"
         },
         {

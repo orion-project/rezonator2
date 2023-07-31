@@ -3,7 +3,6 @@
 
 #include "GraphicsView.h"
 #include "../core/Schema.h"
-#include "../core/Elements.h"
 
 #include <QGraphicsItem>
 
@@ -27,7 +26,7 @@ public:
 
     Element* element() const { return _element; }
 
-    virtual void init() = 0;
+    virtual void init() {}
 
     QRectF boundingRect() const override;
 
@@ -50,17 +49,12 @@ protected:
     void slopePainter(QPainter *painter);
 };
 
-
-#define DECLARE_ELEMENT_LAYOUT_BEGIN \
-class Layout : public ElementLayout { \
-public: \
-    Layout(Element *elem) : ElementLayout(elem) {} \
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override; \
-    void init() override;
-#define DECLARE_ELEMENT_LAYOUT_END };
-#define ELEMENT_LAYOUT_INIT void Layout::init()
-#define ELEMENT_LAYOUT_PAINT void Layout::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
-
+class ElementLayoutOptionsView
+{
+public:
+    virtual bool hasAltVersion() const { return false; }
+    virtual const char *altVersionOptionTitle() const;
+};
 
 /**
     Graphical representation of a schema.
@@ -96,6 +90,7 @@ private:
 
 namespace ElementLayoutFactory {
 ElementLayout* make(Element *elem);
+ElementLayoutOptionsView *getOptions(Element *elem);
 }
 
 namespace ElementLayoutProps {

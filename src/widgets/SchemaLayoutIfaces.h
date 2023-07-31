@@ -2,6 +2,8 @@
 #define SCHEMA_LAYOUT_IFACES_H
 
 #include "SchemaLayout.h"
+#include "SchemaLayoutDefs.h"
+#include "../core/Elements.h"
 
 #include <QtMath>
 
@@ -103,22 +105,20 @@ using namespace IfaceLayoutHepers;
 // Base layout for ElemBrewsterInterfaceLayout and ElemTiltedInterfaceLayout interface.
 // Normal interface is painted by separate and simpler ElemNormalInterfaceLayout.
 namespace PlaneInterfaceElementLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
+    LAYOUT_BEGIN
         IfacePosition placement;
-        QBrush getBrush() const;
-    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_LAYOUT_INIT {
+    INIT {
         placement = getIfacePosition(_element);
     }
 
-    QBrush Layout::getBrush() const {
+    QBrush getBrush() const {
         if (placement.options & IfacePosition::OptionGrin)
             return getGrinBrush(HH);
         return getGlassBrush();
     }
 
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         switch (placement.placement) {
         case IfacePosition::BetweenRanges:
             painter->setPen(getPlanePen());
@@ -162,62 +162,63 @@ namespace PlaneInterfaceElementLayout {
             break;
         }
     }
+
+    LAYOUT_END
 }
 
 //------------------------------------------------------------------------------
 namespace ElemBrewsterInterfaceLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
+    LAYOUT_BEGIN
         QSharedPointer<PlaneInterfaceElementLayout::Layout> layout;
-    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_LAYOUT_INIT {
+    INIT {
         HW = 30; HH = 40;
         layout.reset(new PlaneInterfaceElementLayout::Layout(_element));
         layout->setHalfSize(HW, HH);
         layout->init();
     }
 
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         layout->paint(painter, nullptr, nullptr);
     }
+
+    LAYOUT_END
 }
 
 //------------------------------------------------------------------------------
 namespace ElemTiltedInterfaceLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
+    LAYOUT_BEGIN
         QSharedPointer<PlaneInterfaceElementLayout::Layout> layout;
-    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_LAYOUT_INIT {
+    INIT {
         HW = 15; HH = 40;
         layout.reset(new PlaneInterfaceElementLayout::Layout(_element));
         layout->setHalfSize(HW, HH);
         layout->init();
     }
 
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         layout->paint(painter, nullptr, nullptr);
     }
+
+    LAYOUT_END
 }
 
 //------------------------------------------------------------------------------
 namespace ElemSphericalInterfaceLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
-    private:
+    LAYOUT_BEGIN
         IfacePosition _placement;
         QRectF _surface;
         qreal _startAngle;
         qreal _sweepAngle;
-        QBrush getBrush() const;
-    DECLARE_ELEMENT_LAYOUT_END
 
-    QBrush Layout::getBrush() const {
+    QBrush getBrush() const {
         if (_placement.options & IfacePosition::OptionGrin)
-            return getGrinBrush(HH);
+                return getGrinBrush(HH);
         return getGlassBrush();
     }
 
-    ELEMENT_LAYOUT_INIT {
+    INIT {
         HW = 15; HH = 40;
         _placement = getIfacePosition(_element);
         auto intf = dynamic_cast<ElemSphericalInterface*>(_element);
@@ -236,7 +237,7 @@ namespace ElemSphericalInterfaceLayout {
         }
     }
 
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         switch (_placement.placement) {
         case IfacePosition::BetweenRanges:
             painter->setPen(getPlanePen());
@@ -252,59 +253,62 @@ namespace ElemSphericalInterfaceLayout {
             break;
 
         case IfacePosition::AfterMedium: {
-                QPainterPath path;
-                path.moveTo(-HW, -HH);
-                path.lineTo(0, -HH);
-                path.arcTo(_surface, _startAngle, _sweepAngle);
-                path.lineTo(-HW, HH);
-                path.closeSubpath();
-                painter->fillPath(path, getBrush());
+            QPainterPath path;
+            path.moveTo(-HW, -HH);
+            path.lineTo(0, -HH);
+            path.arcTo(_surface, _startAngle, _sweepAngle);
+            path.lineTo(-HW, HH);
+            path.closeSubpath();
+            painter->fillPath(path, getBrush());
 
-                painter->setPen(getGlassPen());
-                QPainterPath path1;
-                path1.moveTo(-HW, -HH);
-                path1.lineTo(0, -HH);
-                path1.arcTo(_surface, _startAngle, _sweepAngle);
-                path1.lineTo(-HW, HH);
-                painter->drawPath(path1);
-            }
-            break;
-
-        case IfacePosition::BeforeMedium: {
-                QPainterPath path;
-                path.moveTo(HW, -HH);
-                path.lineTo(0, -HH);
-                path.arcTo(_surface, _startAngle, _sweepAngle);
-                path.lineTo(HW, HH);
-                path.closeSubpath();
-                painter->fillPath(path, getBrush());
-
-                painter->setPen(getGlassPen());
-                QPainterPath path1;
-                path1.moveTo(HW, -HH);
-                path1.lineTo(0, -HH);
-                path1.arcTo(_surface, _startAngle, _sweepAngle);
-                path1.lineTo(HW, HH);
-                painter->drawPath(path1);
-            }
+            painter->setPen(getGlassPen());
+            QPainterPath path1;
+            path1.moveTo(-HW, -HH);
+            path1.lineTo(0, -HH);
+            path1.arcTo(_surface, _startAngle, _sweepAngle);
+            path1.lineTo(-HW, HH);
+            painter->drawPath(path1);
             break;
         }
+
+        case IfacePosition::BeforeMedium: {
+            QPainterPath path;
+            path.moveTo(HW, -HH);
+            path.lineTo(0, -HH);
+            path.arcTo(_surface, _startAngle, _sweepAngle);
+            path.lineTo(HW, HH);
+            path.closeSubpath();
+            painter->fillPath(path, getBrush());
+
+            painter->setPen(getGlassPen());
+            QPainterPath path1;
+            path1.moveTo(HW, -HH);
+            path1.lineTo(0, -HH);
+            path1.arcTo(_surface, _startAngle, _sweepAngle);
+            path1.lineTo(HW, HH);
+            painter->drawPath(path1);
+            break;
+        }
+        }
     }
+
+    LAYOUT_END
 }
 
 //------------------------------------------------------------------------------
 namespace ElemNormalInterfaceLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
-    DECLARE_ELEMENT_LAYOUT_END
+    LAYOUT_BEGIN
 
-    ELEMENT_LAYOUT_INIT {
+    INIT {
         HW = 1.5; HH = 40;
     }
 
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         painter->setPen(getGlassPen());
         painter->drawLine(QLineF(0, -HH, 0, HH));
     }
+
+    LAYOUT_END
 }
 
 #endif // SCHEMA_LAYOUT_IFACES_H

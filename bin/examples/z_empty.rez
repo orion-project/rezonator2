@@ -11,7 +11,7 @@
         {
             "is_disabled": false,
             "label": "M4",
-            "layout_draw_narrow": false,
+            "layout_draw_alt": false,
             "layout_show_label": true,
             "params": {
             },
@@ -21,7 +21,7 @@
         {
             "is_disabled": false,
             "label": "L2",
-            "layout_draw_narrow": false,
+            "layout_draw_alt": false,
             "layout_show_label": true,
             "params": {
                 "L": {
@@ -39,7 +39,7 @@
         {
             "is_disabled": false,
             "label": "M2",
-            "layout_draw_narrow": false,
+            "layout_draw_alt": false,
             "layout_show_label": true,
             "params": {
                 "Alpha": {
@@ -57,7 +57,7 @@
         {
             "is_disabled": false,
             "label": "d1",
-            "layout_draw_narrow": false,
+            "layout_draw_alt": false,
             "layout_show_label": true,
             "params": {
                 "L": {
@@ -75,7 +75,7 @@
         {
             "is_disabled": false,
             "label": "M1",
-            "layout_draw_narrow": false,
+            "layout_draw_alt": false,
             "layout_show_label": true,
             "params": {
                 "Alpha": {
@@ -93,7 +93,7 @@
         {
             "is_disabled": false,
             "label": "L1-1",
-            "layout_draw_narrow": false,
+            "layout_draw_alt": false,
             "layout_show_label": true,
             "params": {
                 "L": {
@@ -110,8 +110,18 @@
         },
         {
             "is_disabled": false,
+            "label": "P1",
+            "layout_draw_alt": true,
+            "layout_show_label": true,
+            "params": {
+            },
+            "title": "",
+            "type": "ElemPoint"
+        },
+        {
+            "is_disabled": false,
             "label": "L1-2",
-            "layout_draw_narrow": false,
+            "layout_draw_alt": false,
             "layout_show_label": true,
             "params": {
                 "L": {
@@ -125,11 +135,21 @@
             },
             "title": "",
             "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "P2",
+            "layout_draw_alt": true,
+            "layout_show_label": true,
+            "params": {
+            },
+            "title": "",
+            "type": "ElemPoint"
         },
         {
             "is_disabled": false,
             "label": "L1-3",
-            "layout_draw_narrow": false,
+            "layout_draw_alt": false,
             "layout_show_label": true,
             "params": {
                 "L": {
@@ -146,8 +166,18 @@
         },
         {
             "is_disabled": false,
+            "label": "P3",
+            "layout_draw_alt": true,
+            "layout_show_label": true,
+            "params": {
+            },
+            "title": "",
+            "type": "ElemPoint"
+        },
+        {
+            "is_disabled": false,
             "label": "L1-4",
-            "layout_draw_narrow": false,
+            "layout_draw_alt": false,
             "layout_show_label": true,
             "params": {
                 "L": {
@@ -165,7 +195,7 @@
         {
             "is_disabled": false,
             "label": "M3",
-            "layout_draw_narrow": false,
+            "layout_draw_alt": false,
             "layout_show_label": true,
             "params": {
             },
@@ -291,7 +321,7 @@
                         }
                     },
                     {
-                        "element_index": 6,
+                        "element_index": 7,
                         "param": "L",
                         "range": {
                             "points": 100,
@@ -311,7 +341,7 @@
                         }
                     },
                     {
-                        "element_index": 7,
+                        "element_index": 9,
                         "param": "L",
                         "range": {
                             "points": 100,
@@ -331,7 +361,7 @@
                         }
                     },
                     {
-                        "element_index": 8,
+                        "element_index": 11,
                         "param": "L",
                         "range": {
                             "points": 100,

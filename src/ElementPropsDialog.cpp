@@ -4,6 +4,7 @@
 #include "core/Element.h"
 #include "core/Schema.h"
 #include "widgets/ParamsEditor.h"
+#include "widgets/SchemaLayout.h"
 
 #include "widgets/OriSvgView.h"
 #include "helpers/OriLayouts.h"
@@ -100,16 +101,18 @@ QWidget* ElementPropsDialog::initPageOptions()
 {
     _elemDisabled = new QCheckBox(tr("Ignore in calculations (disable element)"));
     _layoutShowLabel = new QCheckBox(tr("Show element label on layout"));
-    _layoutDrawNarrow = new QCheckBox(tr("Draw narrow version of element"));
-    _layoutDrawNarrow->setToolTip(tr(
-        "Draw a narrow version of the element.\n"
-        "It can be useful when schema contains many elements.\n"
-        "How the option is processed depends on the particular element type."));
+
+    _layoutDrawAlt = new QCheckBox();
+    auto opts = ElementLayoutFactory::getOptions(_element);
+    if (opts and opts->hasAltVersion())
+        _layoutDrawAlt->setText(tr(opts->altVersionOptionTitle(), "LayoutOptions"));
+    else
+        _layoutDrawAlt->setVisible(false);
 
     return Ori::Layouts::LayoutV({
         _elemDisabled,
         _layoutShowLabel,
-        _layoutDrawNarrow,
+        _layoutDrawAlt,
         Ori::Layouts::Stretch()
     }).makeWidget();
 }
@@ -127,7 +130,7 @@ void ElementPropsDialog::populate()
     _editorTitle->setText(_element->title());
     _elemDisabled->setChecked(_element->disabled());
     _layoutShowLabel->setChecked(_element->layoutOptions.showLabel);
-    _layoutDrawNarrow->setChecked(_element->layoutOptions.drawNarrow);
+    _layoutDrawAlt->setChecked(_element->layoutOptions.drawAlt);
 
     populateParams();
 }
@@ -150,7 +153,7 @@ void ElementPropsDialog::collect()
     _element->setTitle(_editorTitle->text());
     _element->setDisabled(_elemDisabled->isChecked());
     _element->layoutOptions.showLabel = _layoutShowLabel->isChecked();
-    _element->layoutOptions.drawNarrow = _layoutDrawNarrow->isChecked();
+    _element->layoutOptions.drawAlt = _layoutDrawAlt->isChecked();
 
     collectParams();
     accept();

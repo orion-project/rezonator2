@@ -2,6 +2,8 @@
 #define SCHEMA_LAYOUT_LENS_H
 
 #include "SchemaLayout.h"
+#include "SchemaLayoutDefs.h"
+#include "../core/Elements.h"
 
 #include <QtMath>
 
@@ -25,16 +27,11 @@ namespace CurvedElementLayout {
         ConcavePlanoLens    //      )|
     };
 
-    DECLARE_ELEMENT_LAYOUT_BEGIN
+    LAYOUT_BEGIN
         QBrush brush;
         CurvedForm paintMode = FormUnknown;
-        void paintCornerMark(QPainter *painter, const QString& mark) const;
-    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_LAYOUT_INIT {
-    }
-
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         painter->setBrush(brush.style() == Qt::NoBrush ? getGlassBrush() : brush);
         painter->setPen(getGlassPen());
 
@@ -185,21 +182,22 @@ namespace CurvedElementLayout {
         }
     }
 
-    void Layout::paintCornerMark(QPainter *painter, const QString& mark) const {
+    void paintCornerMark(QPainter *painter, const QString& mark) const {
         auto p = boundingRect().bottomRight();
         p.setX(p.x()-qreal(HW)/2.0);
         painter->setFont(getMarkTSFont());
         painter->drawText(p, mark);
     }
+
+    LAYOUT_END
 }
 
 //------------------------------------------------------------------------------
 namespace ElemCurveMirrorLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
+    LAYOUT_BEGIN
         QSharedPointer<CurvedElementLayout::Layout> layout;
-    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_LAYOUT_INIT {
+    INIT {
         HW = 10; HH = 40;
         ElemCurveMirror *mirror = dynamic_cast<ElemCurveMirror*>(_element);
         if (!mirror || !_element->owner()) return;
@@ -222,18 +220,20 @@ namespace ElemCurveMirrorLayout {
         layout->init();
     }
 
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         if (layout) layout->paint(painter, nullptr, nullptr);
     }
+
+    LAYOUT_END
 }
 
 //------------------------------------------------------------------------------
 namespace ElemThinLensLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
+    LAYOUT_BEGIN
         QSharedPointer<CurvedElementLayout::Layout> layout;
-    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_LAYOUT_INIT {
+
+    INIT {
         HW = 10; HH = 40;
         auto lens = dynamic_cast<ElemThinLens*>(_element);
         if (!lens) return;
@@ -246,18 +246,19 @@ namespace ElemThinLensLayout {
         layout->init();
     }
 
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         if (layout) layout->paint(painter, nullptr, nullptr);
     }
+
+    LAYOUT_END
 }
 
 //------------------------------------------------------------------------------
 namespace ElemCylinderLensTLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
+    LAYOUT_BEGIN
         QSharedPointer<CurvedElementLayout::Layout> layout;
-    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_LAYOUT_INIT {
+    INIT {
         HW = 10; HH = 40;
         auto lens = dynamic_cast<ElemCylinderLensT*>(_element);
         if (!lens) return;
@@ -270,21 +271,22 @@ namespace ElemCylinderLensTLayout {
         layout->init();
     }
 
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         if (layout) {
             layout->paint(painter, nullptr, nullptr);
             layout->paintCornerMark(painter, QStringLiteral("T"));
         }
     }
+
+    LAYOUT_END
 }
 
 //------------------------------------------------------------------------------
 namespace ElemCylinderLensSLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
+    LAYOUT_BEGIN
         QSharedPointer<CurvedElementLayout::Layout> layout;
-    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_LAYOUT_INIT {
+    INIT {
         HW = 10; HH = 40;
         auto lens = dynamic_cast<ElemCylinderLensS*>(_element);
         if (!lens) return;
@@ -297,22 +299,23 @@ namespace ElemCylinderLensSLayout {
         layout->init();
     }
 
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         if (layout) {
             layout->paint(painter, nullptr, nullptr);
             layout->paintCornerMark(painter, QStringLiteral("S"));
         }
     }
+
+    LAYOUT_END
 }
 
 //------------------------------------------------------------------------------
 namespace ElemThickLensLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
+    LAYOUT_BEGIN
         QSharedPointer<CurvedElementLayout::Layout> layout;
-    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_LAYOUT_INIT {
-        HW = _element->layoutOptions.drawNarrow ? 10 : 25;
+    INIT {
+        HW = _element->layoutOptions.drawAlt ? 10 : 25;
         HH = 40;
         auto lens = dynamic_cast<ElemThickLens*>(_element);
         if (!lens) return;
@@ -331,18 +334,23 @@ namespace ElemThickLensLayout {
         layout->init();
     }
 
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         if (layout) layout->paint(painter, nullptr, nullptr);
     }
+
+    LAYOUT_END
+
+    OPTIONS_BEGIN
+        HAS_ALT_VERSION
+    OPTIONS_END
 }
 
 //------------------------------------------------------------------------------
 namespace ElemGaussApertureLensLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
+    LAYOUT_BEGIN
         QSharedPointer<CurvedElementLayout::Layout> layout;
-    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_LAYOUT_INIT {
+    INIT {
         HW = 10; HH = 40;
         auto lens = dynamic_cast<ElemGaussApertureLens*>(_element);
         if (!lens) return;
@@ -355,9 +363,11 @@ namespace ElemGaussApertureLensLayout {
         layout->init();
     }
 
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         if (layout) layout->paint(painter, nullptr, nullptr);
     }
+
+    LAYOUT_END
 }
 
 #endif // SCHEMA_LAYOUT_LENS_H
