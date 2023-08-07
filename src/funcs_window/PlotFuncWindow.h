@@ -176,6 +176,9 @@ protected:
     virtual Z::Unit getDefaultUnitX() const { return Z::Units::none(); }
     virtual Z::Unit getDefaultUnitY() const { return Z::Units::none(); }
 
+    /// Adds common variable to all plot parts - axes and title
+    void addTextVar(const QString& name, const QString& descr, std::function<QString()> getter);
+
 private slots:
     void activateModeT();
     void activateModeS();

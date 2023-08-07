@@ -109,20 +109,19 @@ CausticWindow::CausticWindow(Schema *schema) : PlotFuncWindowStorable(new Causti
 {
     _beamShape = new BeamShapeExtension(this);
 
-    _plot->addTextVarY(QStringLiteral("{func_mode}"), tr("Function mode"), [this]{
-        return CausticFunction::modeDisplayName(function()->mode()); });
+    addTextVar("{func_mode}", tr("Function mode"), [this]{ return CausticFunction::modeDisplayName(function()->mode()); });
 
-    _plot->addTextVarX(QStringLiteral("{elem}"), tr("Element label and title"), [this]{
+    _plot->addTextVarY("{elem}", tr("Element label and title"), [this]{
         return function()->arg()->element->displayLabelTitle(); });
-    _plot->addTextVarX(QStringLiteral("{elem_label}"), tr("Element label"), [this]{
+    _plot->addTextVarY("{elem_label}", tr("Element label"), [this]{
         return function()->arg()->element->label(); });
-    _plot->addTextVarX(QStringLiteral("{elem_title}"), tr("Element title"), [this]{
+    _plot->addTextVarY("{elem_title}", tr("Element title"), [this]{
         return function()->arg()->element->title(); });
 
-    _plot->setDefaultTitleX(QStringLiteral("{elem} {(unit)}"));
-    _plot->setFormatterTextX(QStringLiteral("{elem} {(unit)}"));
-    _plot->setDefaultTitleY(QStringLiteral("{func_mode} {(unit)}"));
-    _plot->setFormatterTextY(QStringLiteral("{func_mode} {(unit)}"));
+    _plot->setDefaultTextX("{elem} {(unit)}");
+    _plot->setFormatterTextX(_plot->defaultTextX());
+    _plot->setDefaultTextY("{func_mode} {(unit)}");
+    _plot->setFormatterTextY(_plot->defaultTextY());
 }
 
 bool CausticWindow::configureInternal()

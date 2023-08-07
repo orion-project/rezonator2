@@ -15,11 +15,11 @@ MultirangeCausticWindow::MultirangeCausticWindow(Schema *schema): MulticausticWi
 {
     _beamShape = new BeamShapeExtension(this);
 
-    _plot->addTextVarY(QStringLiteral("{func_mode}"), tr("Function mode"), [this]{
+    _plot->addTextVarY("{func_mode}", tr("Function mode"), [this]{
         return CausticFunction::modeDisplayName(function()->mode()); });
 
-    _plot->setDefaultTitleY(QStringLiteral("{func_mode} {(unit)}"));
-    _plot->setFormatterTextY(QStringLiteral("{func_mode} {(unit)}"));
+    _plot->setDefaultTextY("{func_mode} {(unit)}");
+    _plot->setFormatterTextY(_plot->defaultTextY());
 }
 
 QWidget* MultirangeCausticWindow::makeOptionsPanel()

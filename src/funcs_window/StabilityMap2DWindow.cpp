@@ -195,40 +195,41 @@ StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
     _graph = new QCPColorMap(_plot->xAxis, _plot->yAxis);
 
     auto getStabParam = [this]{ return Z::Enums::displayStr(function()->stabilityCalcMode()); };
-    _plot->addTextVar(QStringLiteral("{stab_mode}"), tr("Stability parameter mode"), getStabParam);
+    _plot->addTextVarT("{stab_mode}", tr("Stability parameter mode"), getStabParam);
 
-    _plot->addTextVarX(QStringLiteral("{elem}"), tr("Variable element label and title"), [this]{
+    _plot->addTextVarX("{elem}", tr("Variable element label and title"), [this]{
         return function()->paramX()->element->displayLabelTitle(); });
-    _plot->addTextVarX(QStringLiteral("{elem_label}"), tr("Variable element label"), [this]{
+    _plot->addTextVarX("{elem_label}", tr("Variable element label"), [this]{
         return function()->paramX()->element->label(); });
-    _plot->addTextVarX(QStringLiteral("{elem_title}"), tr("Variable element title"), [this]{
+    _plot->addTextVarX("{elem_title}", tr("Variable element title"), [this]{
         return function()->paramX()->element->title(); });
-    _plot->addTextVarX(QStringLiteral("{elem_param}"), tr("Variable element parameter"), [this]{
+    _plot->addTextVarX("{elem_param}", tr("Variable element parameter"), [this]{
         return function()->paramX()->parameter->name(); });
 
-    _plot->addTextVarY(QStringLiteral("{elem}"), tr("Variable element label and title"), [this]{
+    _plot->addTextVarY("{elem}", tr("Variable element label and title"), [this]{
         return function()->paramY()->element->displayLabelTitle(); });
-    _plot->addTextVarY(QStringLiteral("{elem_label}"), tr("Variable element label"), [this]{
+    _plot->addTextVarY("{elem_label}", tr("Variable element label"), [this]{
         return function()->paramY()->element->label(); });
-    _plot->addTextVarY(QStringLiteral("{elem_title}"), tr("Variable element title"), [this]{
+    _plot->addTextVarY("{elem_title}", tr("Variable element title"), [this]{
         return function()->paramY()->element->title(); });
-    _plot->addTextVarY(QStringLiteral("{elem_param}"), tr("Variable element parameter"), [this]{
+    _plot->addTextVarY("{elem_param}", tr("Variable element parameter"), [this]{
         return function()->paramY()->parameter->name(); });
 
-    _plot->setDefaultTitleX(QStringLiteral("{elem}, {elem_param} {(unit)}"));
-    _plot->setFormatterTextX(QStringLiteral("{elem}, {elem_param} {(unit)}"));
-    _plot->setDefaultTitleY(QStringLiteral("{elem}, {elem_param} {(unit)}"));
-    _plot->setFormatterTextY(QStringLiteral("{elem}, {elem_param} {(unit)}"));
+    _plot->setDefaultTextX("{elem}, {elem_param} {(unit)}");
+    _plot->setFormatterTextX(_plot->defaultTextX());
+    _plot->setDefaultTextY("{elem}, {elem_param} {(unit)}");
+    _plot->setFormatterTextY(_plot->defaultTextY());
 
     _colorScale = new QCPColorScale(_plot);
     auto colorAxis = _colorScale->axis();
     colorAxis->setLabelFont(_plot->xAxis->labelFont());
     colorAxis->setSelectedLabelFont(_plot->xAxis->selectedLabelFont());
-    _plot->plotLayout()->addElement(_plot->axisRectRow(), _plot->axisRectCol() + 1, _colorScale);
-    _plot->addFormatter(_colorScale->axis(), new QCPL::AxisTitleFormatter(_colorScale->axis()));
-    _plot->addTextVar(_colorScale->axis(), QStringLiteral("{func_name}"), tr("Function name"), [this]{ return function()->name(); });
-    _plot->addTextVar(_colorScale->axis(), QStringLiteral("{stab_mode}"), tr("Stability parameter mode"), getStabParam);
-    _plot->setDefaultTitle(_colorScale->axis(), QStringLiteral("Stability parameter {stab_mode}"));
+    auto plotArea = _plot->axisRectRC();
+    _plot->plotLayout()->addElement(plotArea.row, plotArea.col + 1, _colorScale);
+    _plot->addFormatter(colorAxis, new QCPL::AxisTextFormatter(_colorScale->axis()));
+    _plot->addTextVar(colorAxis, "{func_name}", tr("Function name"), [this]{ return function()->name(); });
+    _plot->addTextVar(colorAxis, "{stab_mode}", tr("Stability parameter mode"), getStabParam);
+    _plot->setDefaultText(colorAxis, tr("Stability parameter {stab_mode}"));
 
     _graph->setColorScale(_colorScale);
     _graph->setGradient(QCPColorGradient::gpJet);

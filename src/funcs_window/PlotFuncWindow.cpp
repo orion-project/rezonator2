@@ -85,8 +85,8 @@ void PlotFuncWindow::createActions()
 
     actnSetLimitsX = action(tr("X-axis Limits..."), _plot, SLOT(limitsDlgX()));
     actnSetLimitsY = action(tr("Y-axis Limits..."), _plot, SLOT(limitsDlgY()));
-    actnSetTitleX = action(tr("X-axis Title..."), _plot, SLOT(titleDlgX()));
-    actnSetTitleY = action(tr("Y-axis Title..."), _plot, SLOT(titleDlgY()));
+    actnSetTitleX = action(tr("X-axis Title..."), _plot, SLOT(axisTextDlgX()));
+    actnSetTitleY = action(tr("Y-axis Title..."), _plot, SLOT(axisTextDlgY()));
 
     actnFormatLegend = action(tr("Legend..."), this, SLOT(formatLegend()));
 
@@ -133,7 +133,7 @@ void PlotFuncWindow::createMenuBar()
     menuX->addAction(titleX);
     menuX->addMenu(_unitsMenuX->menu());
     menuX->addAction(tr("Limits..."), _plot, &QCPL::Plot::limitsDlgX);
-    menuX->addAction(tr("Title..."), _plot, &QCPL::Plot::titleDlgX);
+    menuX->addAction(tr("Title..."), _plot, &QCPL::Plot::axisTextDlgX);
     menuX->addAction(QIcon(":/toolbar/limits_auto_x"), tr("Fit to Graphs"), _plot, SLOT(autolimitsX()));
     menuX->addSeparator();
     menuX->addAction(actnCopyPlotImage);
@@ -150,7 +150,7 @@ void PlotFuncWindow::createMenuBar()
     menuY->addAction(titleY);
     menuY->addMenu(_unitsMenuY->menu());
     menuY->addAction(tr("Limits..."), _plot, &QCPL::Plot::limitsDlgY);
-    menuY->addAction(tr("Title..."), _plot, &QCPL::Plot::titleDlgY);
+    menuY->addAction(tr("Title..."), _plot, &QCPL::Plot::axisTextDlgY);
     menuY->addAction(QIcon(":/toolbar/limits_auto_y"), tr("Fit to Graphs"), _plot, SLOT(autolimitsY()));
     menuY->addSeparator();
     menuY->addAction(actnCopyPlotImage);
@@ -234,21 +234,18 @@ void PlotFuncWindow::createContent()
         return QString();
     };
 
-    auto getFuncName = [this]{ return function()->name(); };
-    _plot->addTextVar(QStringLiteral("{func_name}"), tr("Function name"), getFuncName);
+    addTextVar("{func_name}", tr("Function name"), [this]{ return function()->name(); });
 
-    _plot->addTextVarX(QStringLiteral("{unit}"), tr("Unit of measurement"), [this]{ return getUnitX()->name(); });
-    _plot->addTextVarX(QStringLiteral("{(unit)}"), tr("Unit of measurement (in brackets)"), [this]{
+    _plot->addTextVarX("{unit}", tr("Unit of measurement"), [this]{ return getUnitX()->name(); });
+    _plot->addTextVarX("{(unit)}", tr("Unit of measurement (in brackets)"), [this]{
         auto unit = getUnitX(); return unit == Z::Units::none() ? QString() : QStringLiteral("(%1)").arg(unit->name()); });
-    _plot->addTextVarX(QStringLiteral("{func_name}"), tr("Function name"), getFuncName);
 
-    _plot->addTextVarY(QStringLiteral("{unit}"), tr("Unit of measurement"), [this]{ return getUnitY()->name(); });
-    _plot->addTextVarY(QStringLiteral("{(unit)}"), tr("Unit of measurement (in brackets)"), [this]{
+    _plot->addTextVarY("{unit}", tr("Unit of measurement"), [this]{ return getUnitY()->name(); });
+    _plot->addTextVarY("{(unit)}", tr("Unit of measurement (in brackets)"), [this]{
         auto unit = getUnitY(); return unit == Z::Units::none() ? QString() : QStringLiteral("(%1)").arg(unit->name()); });
-    _plot->addTextVarY(QStringLiteral("{func_name}"), tr("Function name"), getFuncName);
 
-    _plot->setDefaultTitle(QStringLiteral("{func_name}"));
-    _plot->setFormatterText(QStringLiteral("{func_name}"));
+    _plot->setDefaultTextT(QStringLiteral("{func_name}"));
+    _plot->setFormatterTextT(_plot->defaultTextT());
 
     _cursor = new QCPL::Cursor(_plot);
     connect(_cursor, &QCPL::Cursor::positionChanged, this, &PlotFuncWindow::updateCursorInfo);
@@ -466,7 +463,7 @@ void PlotFuncWindow::update()
     }
     else updateCursorInfo();
 
-    _plot->updateTitles();
+    _plot->updateTexts();
     updateStatusUnits();
     updateNotables();
     afterUpdate();
@@ -593,7 +590,7 @@ void PlotFuncWindow::restoreViewParts(const ViewSettings &vs, ViewParts parts)
     {
         if (vs.contains("y_title"))
             _plot->setFormatterTextY(vs["y_title"].toString());
-        else _plot->setFormatterTextY(_plot->defaultTitleY());
+        else _plot->setFormatterTextY(_plot->defaultTextY());
     }
     if (parts.testFlag(VP_UNIT_Y))
     {
@@ -654,7 +651,7 @@ void PlotFuncWindow::setUnitX(Z::Unit unit)
     auto oldUnit = getUnitX();
     if (oldUnit == unit) return;
     _unitX = unit;
-    _plot->updateTitleX();
+    _plot->updateTextX();
     updateStatusUnits();
     schema()->markModified("PlotFuncWindow::setUnitX");
     PlotHelpers::rescaleLimits(_plot, PlotAxis::X, oldUnit, unit);
@@ -667,7 +664,7 @@ void PlotFuncWindow::setUnitY(Z::Unit unit)
     auto oldUnit = getUnitY();
     if (oldUnit == unit) return;
     _unitY = unit;
-    _plot->updateTitleY();
+    _plot->updateTextY();
     updateStatusUnits();
     schema()->markModified("PlotFuncWindow::setUnitY");
     PlotHelpers::rescaleLimits(_plot, PlotAxis::Y, oldUnit, unit);
@@ -728,14 +725,15 @@ void PlotFuncWindow::graphsMenuAboutToShow()
 void PlotFuncWindow::formatLegend()
 {
     QCPL::LegendFormatDlgProps props;
-    props.title = tr("Legend");
-    props.sampleText = "T\nS";
-    props.onApplied = [this](){
-        schema()->markModified("PlotFuncWindow::formatLegend");
-    };
+    props.title = tr("Legend Format");
+    props.sampleText = tr("Graph T\nGraph S");
     if (QCPL::legendFormatDlg(_plot->legend, props))
-    {
-        _plot->replot();
         schema()->markModified("PlotFuncWindow::formatLegend");
-    }
+}
+
+void PlotFuncWindow::addTextVar(const QString& name, const QString& descr, std::function<QString()> getter)
+{
+    _plot->addTextVarT(name, descr, getter);
+    _plot->addTextVarX(name, descr, getter);
+    _plot->addTextVarY(name, descr, getter);
 }
