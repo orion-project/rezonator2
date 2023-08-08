@@ -12,6 +12,7 @@
 #include "../widgets/PlotParamsPanel.h"
 #include "../widgets/UnitWidgets.h"
 
+#include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
 #include "widgets/OriFlatToolBar.h"
 #include "widgets/OriStatusBar.h"
@@ -20,6 +21,7 @@
 #include "qcpl_cursor_panel.h"
 #include "qcpl_format.h"
 #include "qcpl_graph_grid.h"
+#include "qcpl_io_json.h"
 #include "qcpl_plot.h"
 
 using namespace Ori::Gui;
@@ -88,7 +90,10 @@ void PlotFuncWindow::createActions()
     actnSetTitleX = action(tr("X-axis Title..."), _plot, SLOT(axisTextDlgX()));
     actnSetTitleY = action(tr("Y-axis Title..."), _plot, SLOT(axisTextDlgY()));
 
-    actnFormatLegend = action(tr("Legend..."), this, SLOT(formatLegend()));
+    actnFormatTitle = action(tr("Title Format..."), _plot, SLOT(titleFormatDlg()));
+    actnFormatLegend = action(tr("Legend Format..."), _plot, SLOT(legendFormatDlg()));
+    actnFormatX = action(tr("X-axis Format..."), _plot, SLOT(axisFormatDlgX()));
+    actnFormatY = action(tr("Y-axis Format..."), _plot, SLOT(axisFormatDlgY()));
 
     actnCopyGraphData = action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
     actnCopyGraphDataCur = action(tr("Copy Graph Data (this segment)"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
@@ -122,7 +127,10 @@ void PlotFuncWindow::createMenuBar()
     });
 
     menuFormat = menu(tr("Format", "Menu title"), this, {
-        actnFormatLegend
+        actnFormatTitle,
+        actnFormatLegend,
+        actnFormatX,
+        actnFormatY,
     });
 
     auto menuX = new QMenu(this);
@@ -134,6 +142,9 @@ void PlotFuncWindow::createMenuBar()
     menuX->addMenu(_unitsMenuX->menu());
     menuX->addAction(tr("Limits..."), _plot, &QCPL::Plot::limitsDlgX);
     menuX->addAction(tr("Title..."), _plot, &QCPL::Plot::axisTextDlgX);
+    menuX->addAction(tr("Format..."), _plot, &QCPL::Plot::axisFormatDlgX);
+    menuX->addAction(QIcon(":/toolbar/copy_fmt"), tr("Copy Format"), this, [this](){ QCPL::copyAxisFormat(_plot->xAxis); });
+    menuX->addAction(QIcon(":/toolbar/paste_fmt"), tr("Paste Format"), this, [this](){ pasteAxisFormat(_plot->xAxis); });
     menuX->addAction(QIcon(":/toolbar/limits_auto_x"), tr("Fit to Graphs"), _plot, SLOT(autolimitsX()));
     menuX->addSeparator();
     menuX->addAction(actnCopyPlotImage);
@@ -151,6 +162,9 @@ void PlotFuncWindow::createMenuBar()
     menuY->addMenu(_unitsMenuY->menu());
     menuY->addAction(tr("Limits..."), _plot, &QCPL::Plot::limitsDlgY);
     menuY->addAction(tr("Title..."), _plot, &QCPL::Plot::axisTextDlgY);
+    menuY->addAction(tr("Format..."), _plot, &QCPL::Plot::axisFormatDlgY);
+    menuY->addAction(QIcon(":/toolbar/copy_fmt"), tr("Copy Format"), this, [this](){ QCPL::copyAxisFormat(_plot->yAxis); });
+    menuY->addAction(QIcon(":/toolbar/paste_fmt"), tr("Paste Format"), this, [this](){ pasteAxisFormat(_plot->yAxis); });
     menuY->addAction(QIcon(":/toolbar/limits_auto_y"), tr("Fit to Graphs"), _plot, SLOT(autolimitsY()));
     menuY->addSeparator();
     menuY->addAction(actnCopyPlotImage);
@@ -158,6 +172,17 @@ void PlotFuncWindow::createMenuBar()
         _unitsMenuY->menu()->setTitle(tr("Unit"));
         _unitsMenuY->setUnit(getUnitY());
     });
+
+    auto menuLegend = new QMenu(this);
+    menuLegend->addAction(tr("Format..."), _plot, &QCPL::Plot::legendFormatDlg);
+    menuLegend->addAction(QIcon(":/toolbar/copy_fmt"), tr("Copy Format"), this, [this](){ QCPL::copyLegendFormat(_plot->legend); });
+    menuLegend->addAction(QIcon(":/toolbar/paste_fmt"), tr("Paste Format"), this, [this](){ pasteLegendFormat(); });
+
+    auto menuTitle = new QMenu(this);
+    menuTitle->addAction(tr("Title..."), _plot, &QCPL::Plot::titleTextDlg);
+    menuTitle->addAction(tr("Format..."), _plot, &QCPL::Plot::titleFormatDlg);
+    menuTitle->addAction(QIcon(":/toolbar/copy_fmt"), tr("Copy Format"), this, [this](){ QCPL::copyTitleFormat(_plot->title()); });
+    menuTitle->addAction(QIcon(":/toolbar/paste_fmt"), tr("Paste Format"), this, [this](){ pasteTitleFormat(); });
 
     auto menuGraph = new QMenu(this);
     menuGraph->addAction(actnCopyGraphData);
@@ -168,11 +193,15 @@ void PlotFuncWindow::createMenuBar()
 
     auto menuPlot = new QMenu(this);
     menuPlot->addAction(actnCopyPlotImage);
+    menuPlot->addAction(QIcon(":/toolbar/copy_fmt"), tr("Copy Plot Format"), this, [this](){ QCPL::copyPlotFormat(_plot); });
+    menuPlot->addAction(QIcon(":/toolbar/paste_fmt"), tr("Paste Plot Format"), this, [this](){ pastePlotFormat(); });
 
     _plot->menuAxisX = menuX;
     _plot->menuAxisY = menuY;
     _plot->menuGraph = menuGraph;
     _plot->menuPlot = menuPlot;
+    _plot->menuLegend = menuLegend;
+    _plot->menuTitle = menuTitle;
 }
 
 void PlotFuncWindow::createToolBar()
@@ -722,11 +751,11 @@ void PlotFuncWindow::graphsMenuAboutToShow()
     actnCopyGraphDataAll->setVisible(manySegments);
 }
 
-void PlotFuncWindow::formatLegend()
+void PlotFuncWindow::legendFormatDlg()
 {
     QCPL::LegendFormatDlgProps props;
     props.title = tr("Legend Format");
-    props.sampleText = tr("Graph T\nGraph S");
+    props.sampleText = tr("• Line T\n• Line S");
     if (QCPL::legendFormatDlg(_plot->legend, props))
         schema()->markModified("PlotFuncWindow::formatLegend");
 }
@@ -736,4 +765,49 @@ void PlotFuncWindow::addTextVar(const QString& name, const QString& descr, std::
     _plot->addTextVarT(name, descr, getter);
     _plot->addTextVarX(name, descr, getter);
     _plot->addTextVarY(name, descr, getter);
+}
+
+void PlotFuncWindow::pastePlotFormat()
+{
+    auto err = QCPL::pastePlotFormat(_plot);
+    if (err.isEmpty())
+    {
+        schema()->markModified("PlotFuncWindow::pastePlotFormat");
+        _plot->updateTitleVisibility();
+        _plot->replot();
+    }
+    else Ori::Dlg::info(err);
+}
+
+void PlotFuncWindow::pasteLegendFormat()
+{
+    auto err = QCPL::pasteLegendFormat(_plot->legend);
+    if (err.isEmpty())
+    {
+        schema()->markModified("PlotFuncWindow::pasteLegendFormat");
+        _plot->replot();
+    }
+    else Ori::Dlg::info(err);
+}
+
+void PlotFuncWindow::pasteTitleFormat()
+{
+    auto err = QCPL::pasteTitleFormat(_plot->title());
+    if (err.isEmpty())
+    {
+        schema()->markModified("PlotFuncWindow::pasteTitleFormat");
+        _plot->replot();
+    }
+    else Ori::Dlg::info(err);
+}
+
+void PlotFuncWindow::pasteAxisFormat(QCPAxis *axis)
+{
+    auto err = QCPL::pasteAxisFormat(axis);
+    if (err.isEmpty())
+    {
+        schema()->markModified("PlotFuncWindow::pasteAxisFormat");
+        _plot->replot();
+    }
+    else Ori::Dlg::info(err);
 }

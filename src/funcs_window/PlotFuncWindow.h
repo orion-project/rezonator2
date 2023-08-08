@@ -12,6 +12,7 @@ class QLabel;
 class QSplitter;
 QT_END_NAMESPACE
 
+class QCPAxis;
 class QCPGraph;
 
 namespace QCPL {
@@ -136,7 +137,7 @@ protected:
         *actnZoomIn, *actnZoomOut, *actnZoomInX, *actnZoomOutX, *actnZoomInY, *actnZoomOutY,
         *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo,
         *actnCopyGraphData, *actnCopyGraphDataCur, *actnCopyGraphDataAll, *actnCopyPlotImage,
-        *actnCopyGraphDataEx, *actnFormatLegend;
+        *actnCopyGraphDataEx, *actnFormatX, *actnFormatY, *actnFormatTitle, *actnFormatLegend;
 
     // Stores differences of plot view when function is switched betweeen modes
     // e.g. when the Caustic function switches between W and R.
@@ -189,7 +190,11 @@ private slots:
     void copyGraphData();
     void copyGraphDataAll();
     void copyGraphDataEx();
-    void formatLegend();
+    void pastePlotFormat();
+    void pasteLegendFormat();
+    void pasteTitleFormat();
+    void pasteAxisFormat(QCPAxis *axis);
+    void legendFormatDlg();
 
     QWidget* optionsPanelRequired();
 
