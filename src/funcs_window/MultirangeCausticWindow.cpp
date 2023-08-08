@@ -22,6 +22,11 @@ MultirangeCausticWindow::MultirangeCausticWindow(Schema *schema): MulticausticWi
     _plot->setFormatterTextY(_plot->defaultTextY());
 }
 
+QList<BasicMdiChild::MenuItem> MultirangeCausticWindow::viewMenuItems() const
+{
+    return MulticausticWindow::viewMenuItems() << _beamShape->actionToggle();
+}
+
 QWidget* MultirangeCausticWindow::makeOptionsPanel()
 {
     return new CausticOptionsPanel<MultirangeCausticWindow>(this);

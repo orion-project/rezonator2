@@ -2,7 +2,6 @@
 
 #include "FuncOptionsPanel.h"
 #include "../CustomPrefs.h"
-#include "../core/Format.h"
 #include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
 #include "../widgets/ElemSelectorWidget.h"
@@ -258,9 +257,9 @@ QCPItemStraightLine* StabilityMapWindow::makeStabBoundMarker() const
     return line;
 }
 
-void StabilityMapWindow::fillViewMenuActions(QList<QAction*>& actions) const
+QList<BasicMdiChild::MenuItem> StabilityMapWindow::viewMenuItems() const
 {
-    actions << _actnStabBoundMarkers;
+    return { _actnStabBoundMarkers };
 }
 
 void StabilityMapWindow::toggleStabBoundMarkers(bool on)

@@ -200,7 +200,7 @@ void exportGraphsData(FunctionGraphSet* graphs, QCPGraph* selectedGraph)
     OptionsGroup::Params p2;
     p2.title = qApp->translate("exportGraphsData", "Line Segment");
     p2.horizontal = true;
-    auto segment = new OptionsGroup();
+    auto segment = new OptionsGroup(p2);
     segment->addOption(ExportGraphsParams::SEGMENT_ALL, qApp->translate("exportGraphsData", "All"));
     segment->addOption(ExportGraphsParams::SEGMENT_SELECTED, qApp->translate("exportGraphsData", "Selected"));
     segment->setDisabled(!selectedGraph);

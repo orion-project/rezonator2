@@ -61,6 +61,7 @@ public:
     BeamShapeExtension(PlotFuncWindow* parent);
 
     void setShape(const Z::PointTS& shape);
+    QAction* actionToggle() const { return _actnShowBeamShape; }
 
 private:
     PlotFuncWindow* _parent;

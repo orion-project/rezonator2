@@ -36,7 +36,7 @@ public:
     ~PlotParamsPanel() override;
 
     void placeIn(QToolBar* toolbar);
-    void fillActions(QList<QAction *> &actions);
+    QList<QAction*> panelToogleActions() const;
 
     QTextBrowser* infoPanel() const;
     QCPL::GraphDataGrid* dataGrid() const;

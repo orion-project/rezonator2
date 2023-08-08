@@ -106,9 +106,9 @@ void MulticausticWindow::afterUpdate()
     updateElementBoundMarkers();
 }
 
-void MulticausticWindow::fillViewMenuActions(QList<QAction*>& actions) const
+QList<BasicMdiChild::MenuItem> MulticausticWindow::viewMenuItems() const
 {
-    actions << _actnElemBoundMarkers;
+    return { _actnElemBoundMarkers };
 }
 
 ElemDeletionReaction MulticausticWindow::reactElemDeletion(const Elements& elems)

@@ -80,8 +80,9 @@ public:
     bool configure();
 
     // inherits from BasicMdiChild
-    QList<QMenu*> menus() override { return QList<QMenu*>() << menuPlot << menuLimits << menuFormat; }
-    QList<ViewMenuItem> menuItems_View() override;
+    QList<QMenu*> menus() override { return {menuPlot, menuLimits, menuFormat}; }
+    QList<BasicMdiChild::MenuItem> menuItems_View() override;
+    QList<BasicMdiChild::MenuItem> menuItems_Edit() override;
     QString helpTopic() const override { return _function->helpTopic(); }
 
     // Implementation of SchemaListener
@@ -133,11 +134,12 @@ protected:
     QMenu *menuPlot, *menuLimits, *menuFormat;
     QAction *actnShowT, *actnShowS, *actnShowFlippedTS,
         *actnAutolimits, *actnAutolimitsX, *actnAutolimitsY,
-        *actnSetLimitsX, *actnSetLimitsY, *actnSetTitleX, *actnSetTitleY,
+        *actnSetLimitsX, *actnSetLimitsY, *actnSetTextX, *actnSetTextY, *actnSetTextT,
         *actnZoomIn, *actnZoomOut, *actnZoomInX, *actnZoomOutX, *actnZoomInY, *actnZoomOutY,
         *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo,
-        *actnCopyGraphData, *actnCopyGraphDataCur, *actnCopyGraphDataAll, *actnCopyPlotImage,
-        *actnCopyGraphDataEx, *actnFormatX, *actnFormatY, *actnFormatTitle, *actnFormatLegend;
+        *actnCopyGraphData, *actnCopyGraphDataCurSegment, *actnCopyGraphDataAllSegments, *actnCopyPlotImage,
+        *actnCopyGraphDataWithParams, *actnFormatX, *actnFormatY, *actnFormatTitle, *actnFormatLegend,
+        *actnToggleTitle, *actnToggleLegend, *actnCopyFormatFromSelection, *actnPasteFormatToSelection;
 
     // Stores differences of plot view when function is switched betweeen modes
     // e.g. when the Caustic function switches between W and R.
@@ -151,7 +153,8 @@ protected:
     virtual void updateGraphs();
     virtual void afterUpdate() {}
     virtual QWidget* makeOptionsPanel() { return nullptr; }
-    virtual void fillViewMenuActions(QList<QAction*>& actions) const { Q_UNUSED(actions) }
+    virtual QList<BasicMdiChild::MenuItem> viewMenuItems() const { return {}; }
+    virtual QList<BasicMdiChild::MenuItem> editMenuItems() const { return {}; }
     virtual void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const { Q_UNUSED(pos) Q_UNUSED(values) }
 
     QCPGraph* selectedGraph() const;
@@ -159,6 +162,7 @@ protected:
     void createActions();
     void createMenuBar();
     void createToolBar();
+    void createContextMenus();
     void createStatusBar();
     void createContent();
 
@@ -188,13 +192,17 @@ private slots:
     void freeze(bool);
     void copyPlotImage();
     void copyGraphData();
-    void copyGraphDataAll();
-    void copyGraphDataEx();
+    void copyGraphDataAllSegments();
+    void copyGraphDataWithParams();
+    void copyFormatFromSelection();
+    void pasteFormatToSelection();
     void pastePlotFormat();
     void pasteLegendFormat();
     void pasteTitleFormat();
     void pasteAxisFormat(QCPAxis *axis);
     void legendFormatDlg();
+    void toggleTitle();
+    void toggleLegend();
 
     QWidget* optionsPanelRequired();
 
@@ -205,6 +213,7 @@ private:
     void graphSelected(QCPGraph *);
     void graphsMenuAboutToShow();
     void updateCursorInfo();
+    void updatePlotItemToggleActions();
 
     friend class BeamShapeExtension;
 };

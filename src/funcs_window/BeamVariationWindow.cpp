@@ -128,6 +128,11 @@ BeamVariationWindow::BeamVariationWindow(Schema *schema)
     _plot->setFormatterTextY(_plot->defaultTextY());
 }
 
+QList<BasicMdiChild::MenuItem> BeamVariationWindow::viewMenuItems() const
+{
+    return { _beamShape->actionToggle() };
+}
+
 bool BeamVariationWindow::configureInternal()
 {
     return BeamVariationParamsDlg(schema(), function()->arg(), function()->pos()).run();

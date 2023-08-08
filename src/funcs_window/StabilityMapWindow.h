@@ -23,7 +23,7 @@ protected:
     QWidget* makeOptionsPanel() override;
     bool configureInternal() override;
     void afterUpdate() override;
-    void fillViewMenuActions(QList<QAction*>& actions) const override;
+    QList<BasicMdiChild::MenuItem> viewMenuItems() const override;
     Z::Unit getDefaultUnitX() const override;
     void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const override;
 

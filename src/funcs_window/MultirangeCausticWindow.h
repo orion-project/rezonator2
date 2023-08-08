@@ -2,7 +2,6 @@
 #define MULTIRANGE_CAUSTIC_WINDOW_H
 
 #include "MulticausticWindow.h"
-#include "../funcs/MultirangeCausticFunction.h"
 
 class MultirangeCausticWindow final : public MulticausticWindow
 {
@@ -15,6 +14,7 @@ protected:
     // Implementation of PlotFuncWindow
     QWidget* makeOptionsPanel() override;
     void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const override;
+    QList<BasicMdiChild::MenuItem> viewMenuItems() const override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;

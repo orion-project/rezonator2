@@ -183,7 +183,8 @@ StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
     actnShowFlippedTS->setEnabled(false);
     actnShowT->setChecked(true);
     actnShowS->setChecked(false);
-    actnCopyGraphDataEx->setVisible(false); // these cmds only for lines
+    actnCopyGraphDataWithParams->setVisible(false); // this is only for line graphs
+    _actnCopyGraphData2D = Ori::Gui::action(tr("Copy Graph Data"), this, SLOT(copyGraphData2D()), ":/toolbar/copy_table");
 
     _plot->useSafeMargins = false;
     // We have to do this way because QCPColorMap::rescaleAxes() seems not working as expected
@@ -240,19 +241,11 @@ StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
     _plot->axisRect()->setMarginGroup(QCP::msBottom|QCP::msTop, marginGroup);
     _colorScale->setMarginGroup(QCP::msBottom|QCP::msTop, marginGroup);
 
-    createControl();
-}
-
-void StabilityMap2DWindow::createControl()
-{
     _actnStabilityAutolimits = new QAction(tr("Z-axis -> Stability Range", "Plot action"), this);
     _actnStabilityAutolimits->setIcon(QIcon(":/toolbar/limits_stab"));
     connect(_actnStabilityAutolimits, &QAction::triggered, [this](){autolimitsStability(true);});
 
-    _actnCopyGraphData = Ori::Gui::action(tr("Copy Graph Data"), this, SLOT(copyGraphData2D()), ":/toolbar/copy");
-    _plot->menuPlot->insertAction(actnCopyPlotImage, _actnCopyGraphData);
-    _plot->menuAxisX->insertAction(actnCopyPlotImage, _actnCopyGraphData);
-    _plot->menuAxisY->insertAction(actnCopyPlotImage, _actnCopyGraphData);
+    _plot->menuPlot->insertAction(actnCopyPlotImage, _actnCopyGraphData2D);
 
     menuLimits->addSeparator();
     menuLimits->addAction(_actnStabilityAutolimits);

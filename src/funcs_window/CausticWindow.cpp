@@ -124,6 +124,11 @@ CausticWindow::CausticWindow(Schema *schema) : PlotFuncWindowStorable(new Causti
     _plot->setFormatterTextY(_plot->defaultTextY());
 }
 
+QList<BasicMdiChild::MenuItem> CausticWindow::viewMenuItems() const
+{
+    return { _beamShape->actionToggle() };
+}
+
 bool CausticWindow::configureInternal()
 {
     return CausticParamsDlg(schema(), function()->arg()).run();

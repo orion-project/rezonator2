@@ -28,7 +28,7 @@ protected:
     // Implementation of PlotFuncWindow
     bool configureInternal() override;
     void afterUpdate() override;
-    void fillViewMenuActions(QList<QAction*>& actions) const override;
+    QList<BasicMdiChild::MenuItem> viewMenuItems() const override;
     void updateGraphs() override;
     ElemDeletionReaction reactElemDeletion(const Elements&) override;
     void showRoundTrip() override;
