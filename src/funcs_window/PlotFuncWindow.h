@@ -80,7 +80,8 @@ public:
     bool configure();
 
     // inherits from BasicMdiChild
-    QList<QMenu*> menus() override { return {menuPlot, menuLimits, menuFormat}; }
+    //QList<QMenu*> menus() override { return {menuPlot, menuLimits, menuFormat}; }
+    QList<QMenu*> menus() override;
     QList<BasicMdiChild::MenuItem> menuItems_View() override;
     QList<BasicMdiChild::MenuItem> menuItems_Edit() override;
     QString helpTopic() const override { return _function->helpTopic(); }
@@ -155,6 +156,7 @@ protected:
     virtual QWidget* makeOptionsPanel() { return nullptr; }
     virtual QList<BasicMdiChild::MenuItem> viewMenuItems() const { return {}; }
     virtual QList<BasicMdiChild::MenuItem> editMenuItems() const { return {}; }
+    virtual QList<BasicMdiChild::MenuItem> formatMenuItems() const { return {}; }
     virtual void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const { Q_UNUSED(pos) Q_UNUSED(values) }
 
     QCPGraph* selectedGraph() const;

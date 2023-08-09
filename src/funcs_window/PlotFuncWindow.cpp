@@ -135,12 +135,19 @@ void PlotFuncWindow::createMenuBar()
         actnSetLimitsY, actnAutolimitsY, actnZoomInY, actnZoomOutY
     });
 
-    menuFormat = menu(tr("Format", "Menu title"), this, {
-        actnFormatTitle,
-        actnFormatLegend,
-        actnFormatX,
-        actnFormatY,
-    });
+    menuFormat = new QMenu(tr("Format", "Menu title"), this);
+}
+
+QList<QMenu*> PlotFuncWindow::menus()
+{
+    menuFormat->clear();
+    menuFormat->addAction(actnFormatTitle);
+    menuFormat->addAction(actnFormatLegend);
+    menuFormat->addAction(actnFormatX);
+    menuFormat->addAction(actnFormatY);
+    for (auto& item : formatMenuItems())
+        item.addTo(menuFormat);
+    return {menuPlot, menuLimits, menuFormat};
 }
 
 void PlotFuncWindow::createContextMenus()
@@ -296,7 +303,7 @@ void PlotFuncWindow::createContent()
     _cursor = new QCPL::Cursor(_plot);
     connect(_cursor, &QCPL::Cursor::positionChanged, this, &PlotFuncWindow::updateCursorInfo);
     _plot->serviceGraphs().append(_cursor);
-    auto axesLayer = _plot->layer(QStringLiteral("axes"));
+    auto axesLayer = _plot->layer("axes");
     if (axesLayer) _cursor->setLayer(axesLayer);
 
     _cursorMenu = new QMenu(tr("Cursor"), this);

@@ -14,6 +14,7 @@
 
 #include <qcpl_plot.h>
 #include <qcpl_format.h>
+#include <qcpl_io_json.h>
 
 //------------------------------------------------------------------------------
 //                            StabilityMap2DParamsDlg
@@ -179,21 +180,15 @@ StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
     PlotFuncWindowStorable(new StabilityMap2DFunction(schema))
 {
     _exclusiveModeTS = true;
-    actnShowFlippedTS->setVisible(false);
-    actnShowFlippedTS->setEnabled(false);
-    actnShowT->setChecked(true);
-    actnShowS->setChecked(false);
-    actnCopyGraphDataWithParams->setVisible(false); // this is only for line graphs
-    _actnCopyGraphData2D = Ori::Gui::action(tr("Copy Graph Data"), this, SLOT(copyGraphData2D()), ":/toolbar/copy_table");
 
+    createContent();
+    createActions();
+    createContextMenus();
+}
+
+void StabilityMap2DWindow::createContent()
+{
     _plot->useSafeMargins = false;
-    // We have to do this way because QCPColorMap::rescaleAxes() seems not working as expected
-    _plot->excludeServiceGraphsFromAutolimiting = false;
-
-    _autolimiter = _plot->addGraph();
-    _autolimiter->setPen(QPen(Qt::transparent));
-
-    _graph = new QCPColorMap(_plot->xAxis, _plot->yAxis);
 
     auto getStabParam = [this]{ return Z::Enums::displayStr(function()->stabilityCalcMode()); };
     _plot->addTextVarT("{stab_mode}", tr("Stability parameter mode"), getStabParam);
@@ -223,8 +218,7 @@ StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
 
     _colorScale = new QCPColorScale(_plot);
     auto colorAxis = _colorScale->axis();
-    colorAxis->setLabelFont(_plot->xAxis->labelFont());
-    colorAxis->setSelectedLabelFont(_plot->xAxis->selectedLabelFont());
+    _plot->axisIdents[colorAxis] = tr("Color Scale");
     auto plotArea = _plot->axisRectRC();
     _plot->plotLayout()->addElement(plotArea.row, plotArea.col + 1, _colorScale);
     _plot->addFormatter(colorAxis, new QCPL::AxisTextFormatter(_colorScale->axis()));
@@ -232,18 +226,41 @@ StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
     _plot->addTextVar(colorAxis, "{stab_mode}", tr("Stability parameter mode"), getStabParam);
     _plot->setDefaultText(colorAxis, tr("Stability parameter {stab_mode}"));
 
+    _graph = new QCPColorMap(_plot->xAxis, _plot->yAxis);
     _graph->setColorScale(_colorScale);
     _graph->setGradient(QCPColorGradient::gpJet);
     _graph->setSelectable(QCP::stNone);
+
+    // Need to use a separate graph for autolimiting
+    // because QCPColorPlot can't rescale axes to color-map boundaries
+    _autolimiter = _plot->addGraph();
+    _autolimiter->setPen(QPen(Qt::transparent));
+    _autolimiter->setSelectable(QCP::stNone);
+    _plot->serviceGraphs().append(_autolimiter);
+    _plot->excludeServiceGraphsFromAutolimiting = false;
 
     // Make sure the axis rect and color scale synchronize their bottom and top margins:
     QCPMarginGroup *marginGroup = new QCPMarginGroup(_plot);
     _plot->axisRect()->setMarginGroup(QCP::msBottom|QCP::msTop, marginGroup);
     _colorScale->setMarginGroup(QCP::msBottom|QCP::msTop, marginGroup);
+}
+
+void StabilityMap2DWindow::createActions()
+{
+    actnShowFlippedTS->setVisible(false);
+    actnShowFlippedTS->setEnabled(false);
+    actnShowT->setChecked(true);
+    actnShowS->setChecked(false);
+    actnCopyGraphDataWithParams->setVisible(false); // this is only for line graphs
+
+    _actnCopyGraphData2D = Ori::Gui::action(tr("Copy Graph Data"), this, SLOT(copyGraphData2D()), ":/toolbar/copy_table");
 
     _actnStabilityAutolimits = new QAction(tr("Z-axis -> Stability Range", "Plot action"), this);
     _actnStabilityAutolimits->setIcon(QIcon(":/toolbar/limits_stab"));
-    connect(_actnStabilityAutolimits, &QAction::triggered, [this](){autolimitsStability(true);});
+    connect(_actnStabilityAutolimits, &QAction::triggered, this, [this](){autolimitsStability(true);});
+
+    _actnFormatColorScale = new QAction(tr("Format Color Scale..."), this);
+    connect(_actnFormatColorScale, &QAction::triggered, this, [this]{ _plot->colorScaleFormatDlg(_colorScale); });
 
     _plot->menuPlot->insertAction(actnCopyPlotImage, _actnCopyGraphData2D);
 
@@ -252,6 +269,19 @@ StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
 
     toolbar()->addSeparator();
     toolbar()->addAction(_actnStabilityAutolimits);
+}
+
+void StabilityMap2DWindow::createContextMenus()
+{
+    auto scaleMenu = new QMenu(this);
+    scaleMenu->addAction(tr("Limits..."), this, [this]{ _plot->limitsDlg(_colorScale->axis()); });
+    scaleMenu->addAction(tr("Text..."), this, [this]{ _plot->axisTextDlg(_colorScale->axis()); });
+    scaleMenu->addAction(tr("Format..."), this, [this]{ _plot->colorScaleFormatDlg(_colorScale); });
+    scaleMenu->addAction(_actnStabilityAutolimits);
+    scaleMenu->addSeparator();
+    scaleMenu->addAction(QIcon(":/toolbar/copy_fmt"), tr("Copy Format"), this, [this](){ QCPL::copyColorScaleFormat(_colorScale); });
+    scaleMenu->addAction(QIcon(":/toolbar/paste_fmt"), tr("Paste Format"), this, &StabilityMap2DWindow::pasteColorScaleFormat);
+    _plot->menus[_colorScale] = scaleMenu;
 }
 
 QWidget* StabilityMap2DWindow::makeOptionsPanel()
@@ -289,6 +319,7 @@ void StabilityMap2DWindow::updateGraphs()
     auto resultsT = f->resultsT();
     auto resultsS = f->resultsS();
     auto results = actnShowS->isChecked() ? resultsS : resultsT;
+    _graph->setName(actnShowS->isChecked() ? "S" : "T");
 
     auto data = _graph->data();
     data->setSize(nx, ny);
@@ -428,4 +459,15 @@ void StabilityMap2DWindow::copyGraphData2D()
         }
     }
     exporter.toClipboard();
+}
+
+void StabilityMap2DWindow::pasteColorScaleFormat()
+{
+    auto err = QCPL::pasteColorScaleFormat(_colorScale);
+    if (err.isEmpty())
+    {
+        schema()->markModified("StabilityMap2DWindow::pasteColorScaleFormat");
+        _plot->replot();
+    }
+    else Ori::Dlg::info(err);
 }

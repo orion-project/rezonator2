@@ -35,6 +35,7 @@ protected:
     Z::Unit getDefaultUnitY() const override;
     void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const override;
     QList<BasicMdiChild::MenuItem> editMenuItems() const override { return { _actnCopyGraphData2D }; }
+    QList<BasicMdiChild::MenuItem> formatMenuItems() const override { return { _actnFormatColorScale }; }
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;
@@ -51,7 +52,7 @@ private slots:
 private:
     QCPColorMap *_graph;
     QCPGraph *_autolimiter;
-    QAction *_actnStabilityAutolimits, *_actnCopyGraphData2D;
+    QAction *_actnStabilityAutolimits, *_actnCopyGraphData2D, *_actnFormatColorScale;
     QCPColorScale *_colorScale;
     bool _zAutolimitsRequest = true;
 
@@ -62,8 +63,11 @@ private:
     };
     QMap<int, ViewState> _auxStoredView;
 
-    void createControl();
+    void createContent();
+    void createActions();
+    void createContextMenus();
     void autolimitsStability(bool replot);
+    void pasteColorScaleFormat();
 };
 
 
