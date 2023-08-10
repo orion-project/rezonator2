@@ -15,13 +15,13 @@ public:
     bool storableWrite(QJsonObject& root, Z::Report* report) override;
 
 protected:
-    virtual QString readFunction(const QJsonObject& root) { Q_UNUSED(root)  return QString(); }
-    virtual QString writeFunction(QJsonObject& root) { Q_UNUSED(root)  return QString(); }
-    virtual QString readWindowSpecific(const QJsonObject& root) { Q_UNUSED(root)  return QString(); }
-    virtual QString writeWindowSpecific(QJsonObject& root) { Q_UNUSED(root)  return QString(); }
+    virtual QString readFunction(const QJsonObject&) { return QString(); }
+    virtual QString writeFunction(QJsonObject&) { return QString(); }
+    virtual QString readWindowSpecific(const QJsonObject&) { return QString(); }
+    virtual QString writeWindowSpecific(QJsonObject&) { return QString(); }
 
 private:
-    QString readWindowGeneral(const QJsonObject& root);
+    QString readWindowGeneral(const QJsonObject& root, Z::Report *report);
     QString writeWindowGeneral(QJsonObject& root) const;
 };
 

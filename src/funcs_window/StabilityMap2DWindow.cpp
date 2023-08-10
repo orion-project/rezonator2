@@ -2,6 +2,7 @@
 
 #include "FuncOptionsPanel.h"
 #include "../CustomPrefs.h"
+#include "../core/Report.h"
 #include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
 #include "../widgets/ElemSelectorWidget.h"
@@ -45,7 +46,7 @@ void StabilityMap2DParamsDlg::makeControls(const QString &title, Schema* schema,
         ElementFilter::make<ElementFilterHasVisibleParams, ElementFilterEnabled>());
 
     editor->elemSelector = new ElemAndParamSelector(schema, elemFilter.data(), Z::Utils::defaultParamFilter());
-    connect(editor->elemSelector, &ElemAndParamSelector::selectionChanged, [this, editor]{ this->guessRange(editor); });
+    connect(editor->elemSelector, &ElemAndParamSelector::selectionChanged, this, [this, editor]{ this->guessRange(editor); });
 
     editor->rangeEditor = new GeneralRangeEditor;
 
@@ -219,6 +220,7 @@ void StabilityMap2DWindow::createContent()
     _colorScale = new QCPColorScale(_plot);
     auto colorAxis = _colorScale->axis();
     _plot->axisIdents[colorAxis] = tr("Color Scale");
+    _plot->additionalParts[_colorScale] = "color_scale";
     auto plotArea = _plot->axisRectRC();
     _plot->plotLayout()->addElement(plotArea.row, plotArea.col + 1, _colorScale);
     _plot->addFormatter(colorAxis, new QCPL::AxisTextFormatter(_colorScale->axis()));

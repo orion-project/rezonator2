@@ -140,7 +140,8 @@ protected:
         *actnUpdate, *actnUpdateParams, *actnShowRoundTrip, *actnFreeze, *actnFrozenInfo,
         *actnCopyGraphData, *actnCopyGraphDataCurSegment, *actnCopyGraphDataAllSegments, *actnCopyPlotImage,
         *actnCopyGraphDataWithParams, *actnFormatX, *actnFormatY, *actnFormatTitle, *actnFormatLegend,
-        *actnToggleTitle, *actnToggleLegend, *actnCopyFormatFromSelection, *actnPasteFormatToSelection;
+        *actnToggleTitle, *actnToggleLegend, *actnCopyFormatFromSelection, *actnPasteFormatToSelection,
+        *actnCopyPlotFormat, *actnPastePlotFormat;
 
     // Stores differences of plot view when function is switched betweeen modes
     // e.g. when the Caustic function switches between W and R.
@@ -186,6 +187,7 @@ protected:
     /// Adds common variable to all plot parts - axes and title
     void addTextVar(const QString& name, const QString& descr, std::function<QString()> getter);
 
+    void updatePlotItemToggleActions();
 private slots:
     void activateModeT();
     void activateModeS();
@@ -198,6 +200,7 @@ private slots:
     void copyGraphDataWithParams();
     void copyFormatFromSelection();
     void pasteFormatToSelection();
+    void copyPlotFormat();
     void pastePlotFormat();
     void pasteLegendFormat();
     void pasteTitleFormat();
@@ -215,7 +218,6 @@ private:
     void graphSelected(QCPGraph *);
     void graphsMenuAboutToShow();
     void updateCursorInfo();
-    void updatePlotItemToggleActions();
 
     friend class BeamShapeExtension;
 };

@@ -4,8 +4,8 @@
 #include "../core/Report.h"
 
 #include "qcpl_cursor_panel.h"
+#include "qcpl_io_json.h"
 #include "qcpl_plot.h"
-#include "qcpl_format.h"
 
 #include <QAction>
 #include <QJsonObject>
@@ -21,7 +21,7 @@ bool PlotFuncWindowStorable::storableRead(const QJsonObject &root, Z::Report *re
     }
 
     auto wndJson = root["window"].toObject();
-    res = readWindowGeneral(wndJson);
+    res = readWindowGeneral(wndJson, report);
     if (!res.isEmpty())
     {
         report->warning(res);
@@ -35,7 +35,8 @@ bool PlotFuncWindowStorable::storableRead(const QJsonObject &root, Z::Report *re
         return false;
     }
 
-   return true;
+    updatePlotItemToggleActions();
+    return true;
 }
 
 bool PlotFuncWindowStorable::storableWrite(QJsonObject &root, Z::Report *report)
@@ -69,7 +70,7 @@ bool PlotFuncWindowStorable::storableWrite(QJsonObject &root, Z::Report *report)
     return true;
 }
 
-QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root)
+QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root, Z::Report *report)
 {
     // Restore graphs visibility
     auto modeTS = root["ts_mode"].toString();
@@ -102,6 +103,14 @@ QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root)
     _unitY = Z::Units::findByAlias(root["y_unit"].toString(), Z::Units::none());
     _plot->setFormatterTextX(root["x_title"].toString());
     _plot->setFormatterTextY(root["y_title"].toString());
+    _plot->setFormatterTextT(root["t_title"].toString());
+
+    // Restore plot format
+    QCPL::JsonReport qcpl_report;
+    QCPL::readPlot(root["format"].toObject(), _plot, &qcpl_report);
+    for (auto& msg : qcpl_report)
+        if (!msg.ok() && msg.code != QCPL::JsonError::NoData)
+            report->warning(msg.message);
 
     // Restore view states
     auto viewsJson = root["stored_views"].toObject();
@@ -146,6 +155,9 @@ QString PlotFuncWindowStorable::writeWindowGeneral(QJsonObject& root) const
     root["y_max"] = limitsY.max;
     root["y_unit"] = getUnitY()->alias();
     root["y_title"] = _plot->formatterTextY();
+    root["t_title"] = _plot->formatterTextT();
+
+    root["format"] = QCPL::writePlot(_plot);
 
     // Store view states
     QJsonObject viewsJson;

@@ -104,6 +104,8 @@ void PlotFuncWindow::createActions()
     actnCopyPlotImage = action(tr("Copy Plot Image"), this, SLOT(copyPlotImage()), ":/toolbar/copy_img");
     actnCopyFormatFromSelection = action(tr("Copy Format"), this, SLOT(copyFormatFromSelection()), ":/toolbar/copy_fmt");
     actnPasteFormatToSelection = action(tr("Paste Format"), this, SLOT(pasteFormatToSelection()), ":/toolbar/paste_fmt");
+    actnCopyPlotFormat = action(tr("Copy Plot Format"), this, SLOT(copyPlotFormat()), ":/toolbar/copy_fmt");
+    actnPastePlotFormat = action(tr("Paste Plot Format"), this, SLOT(pastePlotFormat()), ":/toolbar/paste_fmt");
 
     actnToggleTitle = action(tr("Plot Title"), this, SLOT(toggleTitle()));
     actnToggleLegend = action(tr("Plot Legend"), this, SLOT(toggleLegend()));
@@ -213,8 +215,8 @@ void PlotFuncWindow::createContextMenus()
     auto menuPlot = new QMenu(this);
     menuPlot->addAction(actnCopyPlotImage);
     menuPlot->addSeparator();
-    menuPlot->addAction(QIcon(":/toolbar/copy_fmt"), tr("Copy Plot Format"), this, [this](){ QCPL::copyPlotFormat(_plot); });
-    menuPlot->addAction(QIcon(":/toolbar/paste_fmt"), tr("Paste Plot Format"), this, [this](){ pastePlotFormat(); });
+    menuPlot->addAction(actnCopyPlotFormat);
+    menuPlot->addAction(actnPastePlotFormat);
 
     _plot->menuAxisX = menuX;
     _plot->menuAxisY = menuY;
@@ -359,8 +361,12 @@ QList<BasicMdiChild::MenuItem> PlotFuncWindow::menuItems_Edit()
             << actnCopyGraphDataWithParams
             << actnCopyPlotImage
             << BasicMdiChild::MenuItem()
-            << actnCopyFormatFromSelection
-            << actnPasteFormatToSelection;
+            // << actnCopyFormatFromSelection
+            // << actnPasteFormatToSelection
+            // TODO: "Copy/Paste plot format" should be just modes of
+            // "Copy/Paste selected format" when nothing is selected
+            << actnCopyPlotFormat
+            << actnPastePlotFormat;
 }
 
 QCPL::Graph* PlotFuncWindow::selectedGraph() const
@@ -794,6 +800,11 @@ void PlotFuncWindow::addTextVar(const QString& name, const QString& descr, std::
     _plot->addTextVarT(name, descr, getter);
     _plot->addTextVarX(name, descr, getter);
     _plot->addTextVarY(name, descr, getter);
+}
+
+void PlotFuncWindow::copyPlotFormat()
+{
+    QCPL::copyPlotFormat(_plot);
 }
 
 void PlotFuncWindow::pastePlotFormat()
