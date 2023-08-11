@@ -113,10 +113,10 @@ AdjusterWidget::AdjusterWidget(Schema* schema, Z::Parameter *param, QWidget *par
     _labelName = new QLabel;
     _labelUnit = new QLabel;
 
-    _buttonPlus = new AdjusterButton(":/toolbar10/plus");
-    _buttonMinus = new AdjusterButton(":/toolbar10/minus");
-    _buttonMult = new AdjusterButton(":/toolbar10/multiply");
-    _buttonDivide = new AdjusterButton(":/toolbar10/divide");
+    _buttonPlus = new AdjusterButton(":/toolbar/math_plus");
+    _buttonMinus = new AdjusterButton(":/toolbar/math_minus");
+    _buttonMult = new AdjusterButton(":/toolbar/math_mult");
+    _buttonDivide = new AdjusterButton(":/toolbar/math_div");
     connect(_buttonPlus, &QToolButton::clicked, this, &AdjusterWidget::adjustPlus);
     connect(_buttonMinus, &QToolButton::clicked, this, &AdjusterWidget::adjustMinus);
     connect(_buttonMult, &QToolButton::clicked, this, &AdjusterWidget::adjustMult);

@@ -10,6 +10,11 @@
         <file alias="bug">../img/toolbar/bug.svg</file>
         <file alias="catalog">../img/toolbar/elements.svg</file>
         <file alias="check">../img/toolbar/check.svg</file>
+        <file alias="check_all">../img/toolbar/check_all.svg</file>
+        <file alias="check_invert">../img/toolbar/check_invert.svg</file>
+        <file alias="check_none">../img/toolbar/check_none.svg</file>
+        <file alias="check_on">../img/toolbar/check_on.svg</file>
+        <file alias="check_off">../img/toolbar/check_off.svg</file>
         <file alias="clear_log">../img/toolbar/clear_log.svg</file>
         <file alias="clone">../img/toolbar/clone.svg</file>
         <file alias="copy">../img/toolbar/copy.svg</file>
@@ -34,6 +39,9 @@
         <file alias="elem_matr">../img/toolbar/elem_matr.svg</file>
         <file alias="elem_prop">../img/toolbar/elem_prop.svg</file>
         <file alias="equals">../img/toolbar/equals.svg</file>
+        <file alias="equ_left">../img/toolbar/equ_left.svg</file>
+        <file alias="equ_right">../img/toolbar/equ_right.svg</file>
+        <file alias="equ_swap">../img/toolbar/equ_swap.svg</file>
         <file alias="error">../img/toolbar/error.svg</file>
         <file alias="formula_stab_normal">../img/misc/formula_stab_normal.svg</file>
         <file alias="formula_stab_squared">../img/misc/formula_stab_squared.svg</file>
@@ -77,6 +85,11 @@
         <file alias="limits_zoom_out_x">../img/toolbar/limits_zoom_out_x.svg</file>
         <file alias="limits_zoom_out_y">../img/toolbar/limits_zoom_out_y.svg</file>
         <file alias="limits_zoom_out">../img/toolbar/limits_zoom_out.svg</file>
+        <file alias="math_div">../img/toolbar/math_div.svg</file>
+        <file alias="math_minus">../img/toolbar/math_minus.svg</file>
+        <file alias="math_mult">../img/toolbar/math_mult.svg</file>
+        <file alias="math_plus">../img/toolbar/math_plus.svg</file>
+        <file alias="menu">../img/toolbar/menu.svg</file>
         <file alias="move_up">../img/toolbar/move_up.svg</file>
         <file alias="move_down">../img/toolbar/move_down.svg</file>
         <file alias="notepad">../img/toolbar/notepad.svg</file>
@@ -85,6 +98,7 @@
         <file alias="options">../img/toolbar/options.svg</file>
         <file alias="settings">../img/toolbar/settings.svg</file>
         <file alias="palette">../img/toolbar/palette.svg</file>
+        <file alias="params">../img/toolbar/params.svg</file>
         <file alias="param_add">../img/toolbar/parameter_add.svg</file>
         <file alias="param_annotate">../img/toolbar/parameter_label.svg</file>
         <file alias="param_delete">../img/toolbar/parameter_delete.svg</file>
@@ -101,6 +115,7 @@
         <file alias="plot_w">../img/toolbar/plot_w.svg</file>
         <file alias="plot_z0">../img/toolbar/plot_z0.svg</file>
         <file alias="plus">../img/toolbar/plus.svg</file>
+        <file alias="points">../img/toolbar/graph_point.svg</file>
         <file alias="print">../img/toolbar/printer.svg</file>
         <file alias="profile">../img/toolbar/profile.svg</file>
         <file alias="protocol">../img/toolbar/protocol.svg</file>
@@ -122,6 +137,7 @@
         <file alias="star">../img/toolbar/star.svg</file>
         <file alias="stop">../img/toolbar/stop.svg</file>
         <file alias="strikeout">../img/toolbar/strikeout.svg</file>
+        <file alias="table">../img/toolbar/table.svg</file>
         <file alias="text_color">../img/toolbar/text_color.svg</file>
         <file alias="title_x">../img/toolbar/title_x.svg</file>
         <file alias="title_y">../img/toolbar/title_y.svg</file>
@@ -134,32 +150,6 @@
         <file alias="windows_close">../img/toolbar/windows_close.svg</file>
         <file alias="zoom_in">../img/toolbar/zoom_in.svg</file>
         <file alias="zoom_out">../img/toolbar/zoom_out.svg</file>
-    </qresource>
-    <qresource prefix="/toolbar16">
-        <file alias="calculator">../img/toolbar16/calculator.png</file>
-        <file alias="check_all">../img/toolbar16/check_all.png</file>
-        <file alias="check_invert">../img/toolbar16/check_invert.png</file>
-        <file alias="check_none">../img/toolbar16/check_none.png</file>
-        <file alias="check_on">../img/toolbar16/check_on.png</file>
-        <file alias="check_off">../img/toolbar16/check_off.png</file>
-        <file alias="langs">../img/toolbar16/flags.png</file>
-        <file alias="lock_on">../img/toolbar16/lock_on.png</file>
-        <file alias="lock_off">../img/toolbar16/lock_off.png</file>
-        <file alias="menu">../img/toolbar16/menu.png</file>
-        <file alias="params">../img/toolbar16/params.png</file>
-        <file alias="plot_tracing">../img/toolbar16/plot_tracing.png</file>
-        <file alias="points">../img/toolbar16/graph_point.png</file>
-        <file alias="table">../img/toolbar16/table.png</file>
-    </qresource>
-    <qresource prefix="/toolbar10">
-        <file alias="ts_link">../img/toolbar10/ts_equals.png</file>
-        <file alias="ts_t2s">../img/toolbar10/ts_T2S.png</file>
-        <file alias="ts_s2t">../img/toolbar10/ts_S2T.png</file>
-        <file alias="ts_swap">../img/toolbar10/ts_swap.png</file>
-        <file alias="plus">../img/toolbar10/plus.png</file>
-        <file alias="minus">../img/toolbar10/minus.png</file>
-        <file alias="multiply">../img/toolbar10/multiply.png</file>
-        <file alias="divide">../img/toolbar10/divide.png</file>
     </qresource>
     <qresource prefix="/elem_drawing">
         <file alias="ElemAxiconLens">../img/elem/ElemAxiconLens.svg</file>

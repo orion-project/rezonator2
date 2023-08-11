@@ -146,9 +146,9 @@ MultiElementSelectorWidget::MultiElementSelectorWidget(Schema* schema, ElementFi
     Ori::Layouts::LayoutH({
         _elemsSelector,
         Ori::Layouts::LayoutV({
-            Ori::Gui::iconToolButton(tr("Select All"), ":/toolbar16/check_all", this, SLOT(selectAllElements())),
-            Ori::Gui::iconToolButton(tr("Select None"), ":/toolbar16/check_none", this, SLOT(deselectAllElements())),
-            Ori::Gui::iconToolButton(tr("Invert Selection"), ":/toolbar16/check_invert", this, SLOT(invertElementsSelection())),
+            Ori::Gui::iconToolButton(tr("Select All"), ":/toolbar/check_all", this, SLOT(selectAllElements())),
+            Ori::Gui::iconToolButton(tr("Select None"), ":/toolbar/check_none", this, SLOT(deselectAllElements())),
+            Ori::Gui::iconToolButton(tr("Invert Selection"), ":/toolbar/check_invert", this, SLOT(invertElementsSelection())),
             Ori::Layouts::Stretch()
         })
     })

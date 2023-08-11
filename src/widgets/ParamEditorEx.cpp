@@ -30,7 +30,7 @@ ParamEditorEx::ParamEditorEx(Z::Parameter *param, Z::Formulas *formulas, Z::Para
 
     auto menuButton = new QPushButton;
     menuButton->setFlat(true);
-    menuButton->setIcon(QIcon(":/toolbar16/menu"));
+    menuButton->setIcon(QIcon(":/toolbar/menu"));
     menuButton->setFixedWidth(24);
     connect(menuButton, &QPushButton::clicked, [this, menu, menuButton](){
         this->_paramEditor->editorFocused(true);

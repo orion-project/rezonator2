@@ -59,7 +59,7 @@ void LinkButton::focusOutEvent(QFocusEvent *e)
 MenuButton::MenuButton(QList<QAction *> actions) : QPushButton()
 {
     setFlat(true);
-    setIcon(QIcon(":/toolbar16/menu"));
+    setIcon(QIcon(":/toolbar/menu"));
     setFixedWidth(24);
 
     _menu = new QMenu(this);

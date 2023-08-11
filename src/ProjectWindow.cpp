@@ -213,7 +213,7 @@ void ProjectWindow::createMenuBar()
     for (auto action : menuEdit->actions())
         action->setData(STANDARD_ACTION_FLAG);
 
-    _langsMenu = new Ori::Widgets::LanguagesMenu(CommonData::instance()->translator(), ":/toolbar16/langs", this);
+    _langsMenu = new Ori::Widgets::LanguagesMenu(CommonData::instance()->translator(), this);
     menuView = new QMenu(tr("View"), this);
 
     menuFunctions = Ori::Gui::menu(tr("Functions"), this,
