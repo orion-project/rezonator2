@@ -11,31 +11,31 @@
 
 MulticausticWindow::MulticausticWindow(MultirangeCausticFunction* function) : PlotFuncWindowStorable(function)
 {
-    _plot->addLayer("elem_bounds", _plot->layer("graphs"), QCustomPlot::limBelow);
+    _plot->addLayer("elem_bounds", _plot->layer("main"), QCustomPlot::limBelow);
 
-    _plot->addTextVarX(QStringLiteral("{elems}"), tr("Element labels and titles"), [this]{
+    _plot->addTextVarX("{elems}", tr("Element labels and titles"), [this]{
         QStringList strs;
         foreach (const auto& arg, this->function()->args())
             if (!arg.element->disabled())
                 strs << arg.element->displayLabelTitle();
         return strs.join(QStringLiteral(", "));
     });
-    _plot->addTextVarX(QStringLiteral("{elem_labels}"), tr("Element labels"), [this]{
+    _plot->addTextVarX("{elem_labels}", tr("Element labels"), [this]{
         QStringList strs;
         foreach (const auto& arg, this->function()->args())
             if (!arg.element->disabled())
                 strs << arg.element->displayLabel();
         return strs.join(QStringLiteral(", "));
     });
-    _plot->addTextVarX(QStringLiteral("{elem_titles}"), tr("Element titles"), [this]{
+    _plot->addTextVarX("{elem_titles}", tr("Element titles"), [this]{
         QStringList strs;
         foreach (const auto& arg, this->function()->args())
             if (!arg.element->disabled())
                 strs << arg.element->displayTitle();
         return strs.join(QStringLiteral(", "));
     });
-    _plot->setDefaultTitleX(QStringLiteral("{elem_labels} {(unit)}"));
-    _plot->setFormatterTextX(QStringLiteral("{elem_labels} {(unit)}"));
+    _plot->setDefaultTextX("{elem_labels} {(unit)}");
+    _plot->setFormatterTextX(_plot->defaultTextX());
 
     _actnElemBoundMarkers = new QAction(tr("Element bound markers"), this);
     _actnElemBoundMarkers->setCheckable(true);
@@ -106,9 +106,9 @@ void MulticausticWindow::afterUpdate()
     updateElementBoundMarkers();
 }
 
-void MulticausticWindow::fillViewMenuActions(QList<QAction*>& actions) const
+QList<BasicMdiChild::MenuItem> MulticausticWindow::viewMenuItems() const
 {
-    actions << _actnElemBoundMarkers;
+    return { _actnElemBoundMarkers };
 }
 
 ElemDeletionReaction MulticausticWindow::reactElemDeletion(const Elements& elems)

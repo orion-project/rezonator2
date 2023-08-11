@@ -119,6 +119,16 @@ void SchemaToolWindow::settingsChanged()
 //                               BasicMdiChild
 //------------------------------------------------------------------------------
 
+void BasicMdiChild::MenuItem::addTo(QMenu* targetMenu)
+{
+    if (action)
+        targetMenu->addAction(action);
+    else if (menu)
+        targetMenu->addMenu(menu);
+    else
+        targetMenu->addSeparator();
+}
+
 BasicMdiChild::BasicMdiChild(InitOptions options) : QMdiSubWindow()
 {
     setAttribute(Qt::WA_DeleteOnClose);
@@ -137,8 +147,6 @@ BasicMdiChild::BasicMdiChild(InitOptions options) : QMdiSubWindow()
             _layout->addWidget(_toolbar);
         }
     }
-
-
 }
 
 void BasicMdiChild::populateToolbar(std::initializer_list<QObject*> items)

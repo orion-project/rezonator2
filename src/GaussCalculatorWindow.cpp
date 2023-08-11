@@ -483,17 +483,16 @@ GaussCalculatorWindow::GaussCalculatorWindow(QWidget *parent) : QWidget(parent)
     _plot->legend->setVisible(false);
     _plot->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    _plot->addTextVarX(QStringLiteral("{unit}"), tr("Unit of measurement"), [this]{
-        return _z->value().unit()->name(); });
-    _plot->setDefaultTitleX("Axial distance, {unit}");
-    _plot->setFormatterTextX("Axial distance, {unit}");
+    _plot->addTextVarX("{unit}", tr("Unit of measurement"), [this]{ return _z->value().unit()->name(); });
+    _plot->setDefaultTextX(tr("Axial distance, {unit}"));
+    _plot->setFormatterTextX(_plot->defaultTextX());
 
-    _plot->addTextVarY(QStringLiteral("{unit}"), tr("Unit of measurement"), [this]{
+    _plot->addTextVarY("{unit}", tr("Unit of measurement"), [this]{
         return (_plotWR->checkedId() == 0 ? _w : _R )->value().unit()->name(); });
-    _plot->addTextVarY(QStringLiteral("{mode}"), tr(""), [this]{
-        return _plotWR->checkedId() == 0 ? QStringLiteral("Beam radius") : QStringLiteral("Radius of curvatue"); });
-    _plot->setDefaultTitleY("{mode}, {unit}");
-    _plot->setFormatterTextY("{mode}, {unit}");
+    _plot->addTextVarY("{mode}", tr("Function mode"), [this]{
+        return _plotWR->checkedId() == 0 ? tr("Beam radius") : tr("Radius of curvatue"); });
+    _plot->setDefaultTextY("{mode}, {unit}");
+    _plot->setFormatterTextY(_plot->defaultTextY());
 
     _warning = new QLabel;
     _warning->setVisible(false);
@@ -643,8 +642,8 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     _plotZ0 = Ori::Gui::toggledAction(tr("Plot Rayleigh Distance"), this, SLOT(updatePlot()), ":/toolbar/plot_z0");
 
     auto actnAutolimits = Ori::Gui::action(tr("Fit to Graphs"), _plot, SLOT(autolimits()), ":/toolbar/limits_auto");
-    auto actnTitleX = Ori::Gui::action(tr("X-axis Title..."), _plot, SLOT(titleDlgX()), ":/toolbar/title_x");
-    auto actnTitleY = Ori::Gui::action(tr("Y-axis Title..."), _plot, SLOT(titleDlgY()), ":/toolbar/title_y");
+    auto actnTitleX = Ori::Gui::action(tr("X-axis Title..."), _plot, SLOT(axisTextDlgX()), ":/toolbar/title_x");
+    auto actnTitleY = Ori::Gui::action(tr("Y-axis Title..."), _plot, SLOT(axisTextDlgY()), ":/toolbar/title_y");
     auto actionCopyImg = Ori::Gui::action(tr("Copy Plot Image"), _plot, SLOT(copyPlotImage()), ":/toolbar/copy_img", QKeySequence::Copy);
     auto actionCopyTbl = Ori::Gui::action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
     auto actionCalc = Ori::Gui::action(tr("Formula Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
@@ -720,7 +719,7 @@ void GaussCalculatorWindow::updatePlot()
     double minY = o.plotMinusY ? -maxY : 0;
     _plot->setLimitsX(minZ, maxZ, false);
     _plot->setLimitsY(minY, maxY, false);
-    _plot->updateTitles();
+    _plot->updateTexts();
     _plot->replot();
 
 

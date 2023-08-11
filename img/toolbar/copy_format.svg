@@ -1,0 +1,55 @@
+<svg height="24" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<linearGradient id="a" gradientUnits="userSpaceOnUse" x1="14.44" x2="18.78" xlink:href="#d" y1="13.1" y2="14.78"/>
+<linearGradient id="b" gradientUnits="userSpaceOnUse" x1="16.84" x2="19.92" xlink:href="#d" y1="8.99" y2="9.71"/>
+<linearGradient id="c" gradientUnits="userSpaceOnUse" x1="8.89" x2="17.73" y1="15.64" y2="18.79">
+<stop offset="0" stop-color="#efff7c"/>
+<stop offset="1" stop-color="#f7d709"/>
+</linearGradient>
+<linearGradient id="d">
+<stop offset="0" stop-color="#d2d2dd"/>
+<stop offset="1" stop-color="#a3aab7"/>
+</linearGradient>
+<linearGradient id="e" gradientTransform="matrix(.99 0 0 .96 -21.01 -40)" gradientUnits="userSpaceOnUse" x1="0" x2="48" y1="24.5" y2="24.5">
+<stop offset="0" stop-color="#ffbd00"/>
+<stop offset="1" stop-color="#ffc598"/>
+</linearGradient>
+<linearGradient id="f" gradientTransform="matrix(2.53 2.53 -2.53 2.53 155.71 -2147.64)" gradientUnits="userSpaceOnUse" x1="331.72" x2="365.75" y1="437.79" y2="437.79">
+<stop offset="0" stop-color="#fff"/>
+<stop offset="1" stop-color="#ffdd7c"/>
+</linearGradient>
+<linearGradient id="g">
+<stop offset="0" stop-color="#818eaf"/>
+<stop offset="1" stop-color="#818eaf" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="h" gradientUnits="userSpaceOnUse" x1="4.5" x2="9.5" xlink:href="#g" y1="12.5" y2="12.5"/>
+<linearGradient id="i" gradientUnits="userSpaceOnUse" x1="4.5" x2="11.5" xlink:href="#g" y1="10.5" y2="10.5"/>
+<linearGradient id="j" gradientUnits="userSpaceOnUse" x1="4.5" x2="11.5" xlink:href="#g" y1="8.5" y2="8.5"/>
+<linearGradient id="k" gradientUnits="userSpaceOnUse" x1="4.5" x2="9.5" xlink:href="#g" y1="6.5" y2="6.5"/>
+<linearGradient id="l" gradientUnits="userSpaceOnUse" x1="4.5" x2="13.5" xlink:href="#g" y1="4.5" y2="4.5"/>
+<linearGradient id="m" gradientTransform="matrix(1 0 0 .89 -1.48 -.27)" gradientUnits="userSpaceOnUse" x1="4.59" x2="16.45" y1="2.66" y2="16.98">
+<stop offset="0" stop-color="#fdffff"/>
+<stop offset="1" stop-color="#b2d3fa"/>
+</linearGradient>
+<linearGradient id="n" gradientTransform="matrix(1 0 0 .89 -1.48 -.27)" gradientUnits="userSpaceOnUse" x1="16.45" x2="4.59" y1="2.66" y2="16.98">
+<stop offset="0" stop-color="#92b1de"/>
+<stop offset="1" stop-color="#525f96"/>
+</linearGradient>
+<path d="m14.5 2.5v13h-12v-13z" style="fill-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-dashoffset:21.44;fill:url(#m);stroke:url(#n)"/>
+<path d="m2.99 19.3c-1.46.28-2.29 1.68.21 2.53 2.11.72 8.15 1.66 14.73 1.04 1.47-2.25 2.62-6.16 2.43-9.18.65-1.61 1.09-5.3.95-6.64l-4.71.08c-2.28 5.17-6.2 6.28-10.27 6.53-.73.04-.95.86-.84 1.18.47 1.37 1.32 2.22 2.15 3.25-1.35.51-3.36.97-4.65 1.21z" fill="#4a5e65" fill-opacity=".35"/>
+<g fill="none" stroke-linecap="square">
+<path d="m5 4.5h8" stroke="url(#l)"/>
+<path d="m5 6.5h4" stroke="url(#k)"/>
+<path d="m5 8.5h6" stroke="url(#j)"/>
+<path d="m5 10.5h6" stroke="url(#i)"/>
+<path d="m5 12.5h4" stroke="url(#h)"/>
+</g>
+<path d="m12.53 13.68c-2.09 1.7-4.04 1.9-6.09 2.15 1.6 3.12 5.67 5.56 10.03 6.09 1.25-1.79 1.93-3.33 2.69-5.81" fill="url(#c)" fill-rule="evenodd" stroke="#ebcd08" stroke-linejoin="round" stroke-width=".75"/>
+<path d="m15.13 11.79c1.11-2.25 1.38-3.6 1.99-5.18.45-1.18 4-.51 3.92.6-.11 1.32-1.03 4.33-1.89 5.92" fill="url(#b)" fill-rule="evenodd" stroke="#545f88" stroke-width=".6"/>
+<path d="m16.44 11.27c.53-1.09 1.15-2.94 1.53-4.09" fill="none" stroke="#fff" stroke-linecap="round" stroke-opacity=".52"/>
+<path d="m13.76 14.73c-.61.67-2.34 1.82-4.04 2.25m5.46-1.55c-.78 1.15-2.19 2.33-3.57 3.02m5.39-2.45c-.54 1.02-1.17 2.18-2.94 3.52" fill="none" stroke="#cbb107" stroke-linecap="round" stroke-width=".4"/>
+<path d="m11.96 13.61c1.68 1.31 4.65 2.27 7.28 2.74.36-1.26.39-2.05-.07-3.26l-4.14-1.27c-1.29.29-1.73.86-3.07 1.8z" fill="url(#a)" fill-rule="evenodd" stroke="#545f88" stroke-linejoin="round" stroke-width=".6"/>
+<g stroke-linecap="round">
+<path d="m-20.52-23.12h46.5v13.5h-46.5z" fill="url(#e)" fill-rule="evenodd" stroke="#7c370b" stroke-dashoffset="21.44" stroke-width="1.5"/>
+<path d="m19-335.47-184.9 184.74-34.97 120.89 10.97-3.17 110.03-31.77 184.9-184.74-16.69-16.68-5.85-5.84-15.6-15.58-1.95-1.95-5.85-5.84-1.95-1.95-15.6-15.58-5.85-5.84-8.89-8.89z" fill="url(#f)" stroke="#000" stroke-linejoin="round" stroke-width="2"/>
+</g>
+</svg>

@@ -14,6 +14,7 @@
         <file alias="clone">../img/toolbar/clone.svg</file>
         <file alias="copy">../img/toolbar/copy.svg</file>
         <file alias="copy_all">../img/toolbar/copy_all.svg</file>
+        <file alias="copy_fmt">../img/toolbar/copy_format.svg</file>
         <file alias="copy_img">../img/toolbar/copy_img.svg</file>
         <file alias="copy_table">../img/toolbar/copy_table.svg</file>
         <file alias="cut">../img/toolbar/cut.svg</file>
@@ -91,6 +92,7 @@
         <file alias="param_set">../img/toolbar/parameter_set.svg</file>
         <file alias="parameter">../img/toolbar/parameter.svg</file>
         <file alias="paste">../img/toolbar/paste.svg</file>
+        <file alias="paste_fmt">../img/toolbar/paste_format.svg</file>
         <file alias="plot_r">../img/toolbar/plot_r.svg</file>
         <file alias="plot_s">../img/toolbar/plot_s.svg</file>
         <file alias="plot_t">../img/toolbar/plot_t.svg</file>

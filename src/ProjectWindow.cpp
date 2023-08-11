@@ -43,6 +43,8 @@
 #include <QToolButton>
 #include <QShortcut>
 
+#define STANDARD_ACTION_FLAG 0x01
+
 enum ProjectWindowStatusPanels
 {
     STATUS_ELEMS,
@@ -208,6 +210,8 @@ void ProjectWindow::createMenuBar()
 
     menuEdit = Ori::Gui::menu(tr("Edit"), this,
         { actnEditUndo, actnEditRedo, nullptr, actnEditCut, actnEditCopy, actnEditPaste, nullptr, actnEditSelectAll });
+    for (auto action : menuEdit->actions())
+        action->setData(STANDARD_ACTION_FLAG);
 
     _langsMenu = new Ori::Widgets::LanguagesMenu(CommonData::instance()->translator(), ":/toolbar16/langs", this);
     menuView = new QMenu(tr("View"), this);
@@ -277,11 +281,12 @@ void ProjectWindow::updateTitle()
 
 namespace  {
 
-void activateEditAction(QAction* action, IEditableWindow* wnd, IEditableWindow::SupportedCommand cmd)
+int activateEditAction(QAction* action, IEditableWindow* wnd, IEditableWindow::SupportedCommand cmd)
 {
     bool on = wnd && wnd->supportedCommands().testFlag(cmd);
     action->setEnabled(on);
     action->setVisible(on);
+    return on ? 1 : 0;
 }
 
 } // namespace
@@ -292,12 +297,22 @@ void ProjectWindow::updateMenuBar()
 
     // Update Edit menu
     IEditableWindow* editable = _mdiArea->activeEditableChild();
-    activateEditAction(actnEditUndo, editable, IEditableWindow::EditCmd_Undo);
-    activateEditAction(actnEditRedo, editable, IEditableWindow::EditCmd_Redo);
-    activateEditAction(actnEditCut, editable, IEditableWindow::EditCmd_Cut);
-    activateEditAction(actnEditCopy, editable, IEditableWindow::EditCmd_Copy);
-    activateEditAction(actnEditPaste, editable, IEditableWindow::EditCmd_Paste);
-    activateEditAction(actnEditSelectAll, editable, IEditableWindow::EditCmd_SelectAll);
+    int editActionCount =
+        activateEditAction(actnEditUndo, editable, IEditableWindow::EditCmd_Undo) +
+        activateEditAction(actnEditRedo, editable, IEditableWindow::EditCmd_Redo) +
+        activateEditAction(actnEditCut, editable, IEditableWindow::EditCmd_Cut) +
+        activateEditAction(actnEditCopy, editable, IEditableWindow::EditCmd_Copy) +
+        activateEditAction(actnEditPaste, editable, IEditableWindow::EditCmd_Paste) +
+        activateEditAction(actnEditSelectAll, editable, IEditableWindow::EditCmd_SelectAll);
+    for (auto action : menuEdit->actions())
+        if (!(action->data().toInt() & STANDARD_ACTION_FLAG))
+            menuEdit->removeAction(action);
+    if (child)
+        for (auto& item : child->menuItems_Edit())
+        {
+            item.addTo(menuEdit);
+            editActionCount++;
+        }
 
     IPrintableWindow* printable = dynamic_cast<IPrintableWindow*>(child);
     actnFilePrint->setEnabled(printable);
@@ -310,25 +325,18 @@ void ProjectWindow::updateMenuBar()
         auto items = child->menuItems_View();
         if (!items.empty())
         {
-            for (auto item : items)
-            {
-                if (item.action)
-                    menuView->addAction(item.action);
-                else if (item.menu)
-                    menuView->addMenu(item.menu);
-                else
-                    menuView->addSeparator();
-            }
+            for (auto& item : items)
+                item.addTo(menuView);
             menuView->addSeparator();
         }
     }
-    menuView->addMenu(_langsMenu);
+    //menuView->addMenu(_langsMenu); TODO: move to settings
 
     // Update menu bar
     QMenuBar* menuBar = this->menuBar();
     menuBar->clear();
     menuBar->addMenu(menuFile);
-    if (editable)
+    if (editActionCount > 0)
         menuBar->addMenu(menuEdit);
     menuBar->addMenu(menuView);
     menuBar->addMenu(menuFunctions);

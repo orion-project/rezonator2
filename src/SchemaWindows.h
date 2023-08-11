@@ -159,13 +159,14 @@ public:
     };
     Q_DECLARE_FLAGS(InitOptions, InitOption)
 
-    struct ViewMenuItem
+    struct MenuItem
     {
         QAction* action = nullptr;
         QMenu* menu = nullptr;
-        ViewMenuItem() {}
-        ViewMenuItem(QAction* a): action(a) {}
-        ViewMenuItem(QMenu* m): menu(m) {}
+        MenuItem() {}
+        MenuItem(QAction* a): action(a) {}
+        MenuItem(QMenu* m): menu(m) {}
+        void addTo(QMenu* targetMenu);
     };
 
 public:
@@ -179,7 +180,13 @@ public:
 
     /// Returns additional actions for View menu.
     /// These actions are inserted into View menu when MDI-child window is activated.
-    virtual QList<ViewMenuItem> menuItems_View() { return QList<ViewMenuItem>(); }
+    virtual QList<MenuItem> menuItems_View() { return QList<MenuItem>(); }
+
+    /// Returns additional actions for Edit menu.
+    /// These actions are inserted into Edit menu when MDI-child window is activated.
+    /// These actions are added in addition to standard Cut/Copy/Paste actions
+    /// available for IEditableWindow-derived windows, so check their names to avoid clashes.
+    virtual QList<MenuItem> menuItems_Edit() { return QList<MenuItem>(); }
 
     /// Returns default toolbar of MDI-child window
     /// or nullptr if one was not created (see @ref InitOption::initNoToolBar).

@@ -10,13 +10,10 @@
 
 BeamShapeExtension::BeamShapeExtension(PlotFuncWindow* parent): QObject(parent), _parent(parent)
 {
-    _actnShowBeamShape = new QAction(tr("Show Beam Shape", "Plot action"), parent);
+    _actnShowBeamShape = new QAction(tr("Beam Shape", "Plot action"), parent);
     _actnShowBeamShape->setIcon(QIcon(":/toolbar/profile"));
     _actnShowBeamShape->setCheckable(true);
     connect(_actnShowBeamShape, &QAction::triggered, this, &BeamShapeExtension::showBeamShape);
-
-    _parent->menuPlot->addSeparator();
-    _parent->menuPlot->addAction(_actnShowBeamShape);
 
     _parent->toolbar()->addSeparator();
     _parent->toolbar()->addAction(_actnShowBeamShape);

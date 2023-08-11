@@ -2,7 +2,6 @@
 
 #include "FuncOptionsPanel.h"
 #include "../CustomPrefs.h"
-#include "../core/Format.h"
 #include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
 #include "../widgets/ElemSelectorWidget.h"
@@ -139,23 +138,23 @@ StabilityMapWindow::StabilityMapWindow(Schema *schema) :
     PlotFuncWindowStorable(new StabilityMapFunction(schema))
 {
     auto getStabParam = [this]{ return Z::Enums::displayStr(function()->stabilityCalcMode()); };
-    _plot->addTextVar(QStringLiteral("{stab_mode}"), tr("Stability parameter mode"), getStabParam);
+    _plot->addTextVarT("{stab_mode}", tr("Stability parameter mode"), getStabParam);
 
-    _plot->addTextVarX(QStringLiteral("{elem}"), tr("Variable element label and title"), [this]{
+    _plot->addTextVarX("{elem}", tr("Variable element label and title"), [this]{
         return function()->arg()->element->displayLabelTitle(); });
-    _plot->addTextVarX(QStringLiteral("{elem_label}"), tr("Variable element label"), [this]{
+    _plot->addTextVarX("{elem_label}", tr("Variable element label"), [this]{
         return function()->arg()->element->label(); });
-    _plot->addTextVarX(QStringLiteral("{elem_title}"), tr("Variable element title"), [this]{
+    _plot->addTextVarX("{elem_title}", tr("Variable element title"), [this]{
         return function()->arg()->element->title(); });
-    _plot->addTextVarX(QStringLiteral("{elem_param}"), tr("Variable element parameter"), [this]{
+    _plot->addTextVarX("{elem_param}", tr("Variable element parameter"), [this]{
         return function()->arg()->parameter->name(); });
 
-    _plot->addTextVarY(QStringLiteral("{stab_mode}"), tr("Stability parameter mode"), getStabParam);
+    _plot->addTextVarY("{stab_mode}", tr("Stability parameter mode"), getStabParam);
 
-    _plot->setDefaultTitleX(QStringLiteral("{elem}, {elem_param} {(unit)}"));
-    _plot->setFormatterTextX(QStringLiteral("{elem}, {elem_param} {(unit)}"));
-    _plot->setDefaultTitleY(QStringLiteral("Stability parameter {stab_mode}"));
-    _plot->setFormatterTextY(QStringLiteral("Stability parameter {stab_mode}"));
+    _plot->setDefaultTextX("{elem}, {elem_param} {(unit)}");
+    _plot->setFormatterTextX(_plot->defaultTextX());
+    _plot->setDefaultTextY("Stability parameter {stab_mode}");
+    _plot->setFormatterTextY(_plot->defaultTextY());
 
     _actnStabilityAutolimits = new QAction(tr("Y-axis -> Stability Range", "Plot action"), this);
     _actnStabilityAutolimits->setIcon(QIcon(":/toolbar/limits_stab"));
@@ -258,9 +257,9 @@ QCPItemStraightLine* StabilityMapWindow::makeStabBoundMarker() const
     return line;
 }
 
-void StabilityMapWindow::fillViewMenuActions(QList<QAction*>& actions) const
+QList<BasicMdiChild::MenuItem> StabilityMapWindow::viewMenuItems() const
 {
-    actions << _actnStabBoundMarkers;
+    return { _actnStabBoundMarkers };
 }
 
 void StabilityMapWindow::toggleStabBoundMarkers(bool on)

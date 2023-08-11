@@ -12,13 +12,16 @@
 #include "../widgets/PlotParamsPanel.h"
 #include "../widgets/UnitWidgets.h"
 
+#include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
 #include "widgets/OriFlatToolBar.h"
 #include "widgets/OriStatusBar.h"
 
 #include "qcpl_cursor.h"
 #include "qcpl_cursor_panel.h"
+#include "qcpl_format.h"
 #include "qcpl_graph_grid.h"
+#include "qcpl_io_json.h"
 #include "qcpl_plot.h"
 
 using namespace Ori::Gui;
@@ -41,7 +44,10 @@ PlotFuncWindow::PlotFuncWindow(PlotFunction *func) : SchemaMdiChild(func->schema
     createActions();
     createMenuBar();
     createToolBar();
+    createContextMenus();
     createStatusBar();
+
+    updatePlotItemToggleActions();
 }
 
 PlotFuncWindow::~PlotFuncWindow()
@@ -67,8 +73,6 @@ void PlotFuncWindow::createActions()
 
     actnShowRoundTrip = action(tr("Show Round-trip"), this, SLOT(showRoundTrip()), ":/toolbar/func_round_trip");
 
-    actnCopyGraphDataEx = action(tr("Copy Graph Data..."), this, SLOT(copyGraphDataEx()), ":/toolbar/copy_table");
-
     actnFreeze = toggledAction(tr("Freeze"), this, SLOT(freeze(bool)), ":/toolbar/freeze", Qt::CTRL | Qt::Key_F);
 
     actnAutolimits = action(tr("Fit to Graphs"), _plot, SLOT(autolimits()), ":/toolbar/limits_auto");
@@ -84,13 +88,29 @@ void PlotFuncWindow::createActions()
 
     actnSetLimitsX = action(tr("X-axis Limits..."), _plot, SLOT(limitsDlgX()));
     actnSetLimitsY = action(tr("Y-axis Limits..."), _plot, SLOT(limitsDlgY()));
-    actnSetTitleX = action(tr("X-axis Title..."), _plot, SLOT(titleDlgX()));
-    actnSetTitleY = action(tr("Y-axis Title..."), _plot, SLOT(titleDlgY()));
+    actnSetTextX = action(tr("X-axis Text..."), _plot, SLOT(axisTextDlgX()));
+    actnSetTextY = action(tr("Y-axis Text..."), _plot, SLOT(axisTextDlgY()));
+    actnSetTextT = action(tr("Title Text..."), _plot, SLOT(titleTextDlg()));
+
+    actnFormatTitle = action(tr("Title Format..."), _plot, SLOT(titleFormatDlg()));
+    actnFormatLegend = action(tr("Legend Format..."), _plot, SLOT(legendFormatDlg()));
+    actnFormatX = action(tr("X-axis Format..."), _plot, SLOT(axisFormatDlgX()));
+    actnFormatY = action(tr("Y-axis Format..."), _plot, SLOT(axisFormatDlgY()));
 
     actnCopyGraphData = action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
-    actnCopyGraphDataCur = action(tr("Copy Graph Data (this segment)"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
-    actnCopyGraphDataAll = action(tr("Copy Graph Data (all segments)"), this, SLOT(copyGraphDataAll()), ":/toolbar/copy_table");
+    actnCopyGraphDataCurSegment = action(tr("Copy Graph Data (this segment)"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
+    actnCopyGraphDataAllSegments = action(tr("Copy Graph Data (all segments)"), this, SLOT(copyGraphDataAllSegments()), ":/toolbar/copy_table");
+    actnCopyGraphDataWithParams = action(tr("Copy Graph Data..."), this, SLOT(copyGraphDataWithParams()), ":/toolbar/copy_table");
     actnCopyPlotImage = action(tr("Copy Plot Image"), this, SLOT(copyPlotImage()), ":/toolbar/copy_img");
+    actnCopyFormatFromSelection = action(tr("Copy Format"), this, SLOT(copyFormatFromSelection()), ":/toolbar/copy_fmt");
+    actnPasteFormatToSelection = action(tr("Paste Format"), this, SLOT(pasteFormatToSelection()), ":/toolbar/paste_fmt");
+    actnCopyPlotFormat = action(tr("Copy Plot Format"), this, SLOT(copyPlotFormat()), ":/toolbar/copy_fmt");
+    actnPastePlotFormat = action(tr("Paste Plot Format"), this, SLOT(pastePlotFormat()), ":/toolbar/paste_fmt");
+
+    actnToggleTitle = action(tr("Plot Title"), this, SLOT(toggleTitle()));
+    actnToggleLegend = action(tr("Plot Legend"), this, SLOT(toggleLegend()));
+    actnToggleTitle->setCheckable(true);
+    actnToggleLegend->setCheckable(true);
 }
 
 void PlotFuncWindow::createMenuBar()
@@ -102,10 +122,9 @@ void PlotFuncWindow::createMenuBar()
 
     menuPlot = menu(tr("Plot", "Menu title"), this, {
         actnUpdate, actnUpdateParams, actnFreeze, nullptr, actnShowFlippedTS, actnShowT, actnShowS, nullptr,
-        actnCopyPlotImage,  actnCopyGraphDataEx, nullptr,
-        _unitsMenuX->menu(), _unitsMenuY->menu(), actnSetTitleX, actnSetTitleY, nullptr, actnShowRoundTrip,
+        actnSetTextT, actnSetTextX, actnSetTextY, _unitsMenuX->menu(), _unitsMenuY->menu(), nullptr, actnShowRoundTrip,
     });
-    connect(menuPlot, &QMenu::aboutToShow, [this](){
+    connect(menuPlot, &QMenu::aboutToShow, this, [this](){
         _unitsMenuX->menu()->setTitle("X-axis Unit");
         _unitsMenuY->menu()->setTitle("Y-axis Unit");
         _unitsMenuX->setUnit(getUnitX());
@@ -118,10 +137,23 @@ void PlotFuncWindow::createMenuBar()
         actnSetLimitsY, actnAutolimitsY, actnZoomInY, actnZoomOutY
     });
 
-    menuFormat = menu(tr("Format", "Menu title"), this, {
-        // TODO
-    });
+    menuFormat = new QMenu(tr("Format", "Menu title"), this);
+}
 
+QList<QMenu*> PlotFuncWindow::menus()
+{
+    menuFormat->clear();
+    menuFormat->addAction(actnFormatTitle);
+    menuFormat->addAction(actnFormatLegend);
+    menuFormat->addAction(actnFormatX);
+    menuFormat->addAction(actnFormatY);
+    for (auto& item : formatMenuItems())
+        item.addTo(menuFormat);
+    return {menuPlot, menuLimits, menuFormat};
+}
+
+void PlotFuncWindow::createContextMenus()
+{
     auto menuX = new QMenu(this);
     auto titleX = new QWidgetAction(this);
     auto labelX = new QLabel(tr("<b>Axis X</b>"));
@@ -130,11 +162,13 @@ void PlotFuncWindow::createMenuBar()
     menuX->addAction(titleX);
     menuX->addMenu(_unitsMenuX->menu());
     menuX->addAction(tr("Limits..."), _plot, &QCPL::Plot::limitsDlgX);
-    menuX->addAction(tr("Title..."), _plot, &QCPL::Plot::titleDlgX);
+    menuX->addAction(tr("Text..."), _plot, &QCPL::Plot::axisTextDlgX);
+    menuX->addAction(tr("Format..."), _plot, &QCPL::Plot::axisFormatDlgX);
     menuX->addAction(QIcon(":/toolbar/limits_auto_x"), tr("Fit to Graphs"), _plot, SLOT(autolimitsX()));
     menuX->addSeparator();
-    menuX->addAction(actnCopyPlotImage);
-    connect(menuX, &QMenu::aboutToShow, [this](){
+    menuX->addAction(QIcon(":/toolbar/copy_fmt"), tr("Copy Format"), this, [this](){ QCPL::copyAxisFormat(_plot->xAxis); });
+    menuX->addAction(QIcon(":/toolbar/paste_fmt"), tr("Paste Format"), this, [this](){ pasteAxisFormat(_plot->xAxis); });
+    connect(menuX, &QMenu::aboutToShow, this, [this](){
         _unitsMenuX->menu()->setTitle(tr("Unit"));
         _unitsMenuX->setUnit(getUnitX());
     });
@@ -147,29 +181,49 @@ void PlotFuncWindow::createMenuBar()
     menuY->addAction(titleY);
     menuY->addMenu(_unitsMenuY->menu());
     menuY->addAction(tr("Limits..."), _plot, &QCPL::Plot::limitsDlgY);
-    menuY->addAction(tr("Title..."), _plot, &QCPL::Plot::titleDlgY);
+    menuY->addAction(tr("Text..."), _plot, &QCPL::Plot::axisTextDlgY);
+    menuY->addAction(tr("Format..."), _plot, &QCPL::Plot::axisFormatDlgY);
     menuY->addAction(QIcon(":/toolbar/limits_auto_y"), tr("Fit to Graphs"), _plot, SLOT(autolimitsY()));
     menuY->addSeparator();
-    menuY->addAction(actnCopyPlotImage);
-    connect(menuY, &QMenu::aboutToShow, [this](){
+    menuY->addAction(QIcon(":/toolbar/copy_fmt"), tr("Copy Format"), this, [this](){ QCPL::copyAxisFormat(_plot->yAxis); });
+    menuY->addAction(QIcon(":/toolbar/paste_fmt"), tr("Paste Format"), this, [this](){ pasteAxisFormat(_plot->yAxis); });
+    connect(menuY, &QMenu::aboutToShow, this, [this](){
         _unitsMenuY->menu()->setTitle(tr("Unit"));
         _unitsMenuY->setUnit(getUnitY());
     });
 
+    auto menuLegend = new QMenu(this);
+    menuLegend->addAction(actnFormatLegend);
+    menuLegend->addSeparator();
+    menuLegend->addAction(QIcon(":/toolbar/copy_fmt"), tr("Copy Format"), this, [this](){ QCPL::copyLegendFormat(_plot->legend); });
+    menuLegend->addAction(QIcon(":/toolbar/paste_fmt"), tr("Paste Format"), this, [this](){ pasteLegendFormat(); });
+
+    auto menuTitle = new QMenu(this);
+    menuTitle->addAction(tr("Title Text..."), _plot, &QCPL::Plot::titleTextDlg);
+    menuTitle->addAction(actnFormatTitle);
+    menuTitle->addSeparator();
+    menuTitle->addAction(QIcon(":/toolbar/copy_fmt"), tr("Copy Title Format"), this, [this](){ QCPL::copyTitleFormat(_plot->title()); });
+    menuTitle->addAction(QIcon(":/toolbar/paste_fmt"), tr("Paste Title Format"), this, [this](){ pasteTitleFormat(); });
+
     auto menuGraph = new QMenu(this);
     menuGraph->addAction(actnCopyGraphData);
-    menuGraph->addAction(actnCopyGraphDataCur);
-    menuGraph->addAction(actnCopyGraphDataAll);
+    menuGraph->addAction(actnCopyGraphDataCurSegment);
+    menuGraph->addAction(actnCopyGraphDataAllSegments);
     menuGraph->addAction(actnCopyPlotImage);
     connect(menuGraph, &QMenu::aboutToShow, this, &PlotFuncWindow::graphsMenuAboutToShow);
 
     auto menuPlot = new QMenu(this);
     menuPlot->addAction(actnCopyPlotImage);
+    menuPlot->addSeparator();
+    menuPlot->addAction(actnCopyPlotFormat);
+    menuPlot->addAction(actnPastePlotFormat);
 
     _plot->menuAxisX = menuX;
     _plot->menuAxisY = menuY;
     _plot->menuGraph = menuGraph;
     _plot->menuPlot = menuPlot;
+    _plot->menuLegend = menuLegend;
+    _plot->menuTitle = menuTitle;
 }
 
 void PlotFuncWindow::createToolBar()
@@ -221,10 +275,13 @@ void PlotFuncWindow::createContent()
 
     _plot = new QCPL::Plot;
     _plot->legend->setVisible(false);
+    _plot->legend->setSelectableParts(QCPLegend::spLegendBox);
     _plot->setAutoAddPlottableToLegend(false);
-    _plot->addLayer("graphs");
     connect(_plot, &QCPL::Plot::graphClicked, this, &PlotFuncWindow::graphSelected);
-    connect(_plot, &QCPL::Plot::modified, this, [this](const QString& reason){ schema()->markModified(reason.toLatin1().data()); });
+    connect(_plot, &QCPL::Plot::modified, this, [this](auto reason){
+        schema()->markModified(reason.toLatin1().data());
+        updatePlotItemToggleActions();
+    });
 
     _plot->getAxisUnitString = [this](QCPAxis* axis) {
         if (axis == _plot->xAxis) return getUnitX()->name();
@@ -232,26 +289,23 @@ void PlotFuncWindow::createContent()
         return QString();
     };
 
-    auto getFuncName = [this]{ return function()->name(); };
-    _plot->addTextVar(QStringLiteral("{func_name}"), tr("Function name"), getFuncName);
+    addTextVar("{func_name}", tr("Function name"), [this]{ return function()->name(); });
 
-    _plot->addTextVarX(QStringLiteral("{unit}"), tr("Unit of measurement"), [this]{ return getUnitX()->name(); });
-    _plot->addTextVarX(QStringLiteral("{(unit)}"), tr("Unit of measurement (in brackets)"), [this]{
+    _plot->addTextVarX("{unit}", tr("Unit of measurement"), [this]{ return getUnitX()->name(); });
+    _plot->addTextVarX("{(unit)}", tr("Unit of measurement (in brackets)"), [this]{
         auto unit = getUnitX(); return unit == Z::Units::none() ? QString() : QStringLiteral("(%1)").arg(unit->name()); });
-    _plot->addTextVarX(QStringLiteral("{func_name}"), tr("Function name"), getFuncName);
 
-    _plot->addTextVarY(QStringLiteral("{unit}"), tr("Unit of measurement"), [this]{ return getUnitY()->name(); });
-    _plot->addTextVarY(QStringLiteral("{(unit)}"), tr("Unit of measurement (in brackets)"), [this]{
+    _plot->addTextVarY("{unit}", tr("Unit of measurement"), [this]{ return getUnitY()->name(); });
+    _plot->addTextVarY("{(unit)}", tr("Unit of measurement (in brackets)"), [this]{
         auto unit = getUnitY(); return unit == Z::Units::none() ? QString() : QStringLiteral("(%1)").arg(unit->name()); });
-    _plot->addTextVarY(QStringLiteral("{func_name}"), tr("Function name"), getFuncName);
 
-    _plot->setDefaultTitle(QStringLiteral("{func_name}"));
-    _plot->setFormatterText(QStringLiteral("{func_name}"));
+    _plot->setDefaultTextT(QStringLiteral("{func_name}"));
+    _plot->setFormatterTextT(_plot->defaultTextT());
 
     _cursor = new QCPL::Cursor(_plot);
     connect(_cursor, &QCPL::Cursor::positionChanged, this, &PlotFuncWindow::updateCursorInfo);
     _plot->serviceGraphs().append(_cursor);
-    auto axesLayer = _plot->layer(QStringLiteral("axes"));
+    auto axesLayer = _plot->layer("axes");
     if (axesLayer) _cursor->setLayer(axesLayer);
 
     _cursorMenu = new QMenu(tr("Cursor"), this);
@@ -285,7 +339,37 @@ void PlotFuncWindow::createStatusBar()
     setContent(_statusBar);
 }
 
-QCPL::Graph *PlotFuncWindow::selectedGraph() const
+QList<BasicMdiChild::MenuItem> PlotFuncWindow::menuItems_View()
+{
+    QList<BasicMdiChild::MenuItem> menuItems;
+    if (auto actions = _leftPanel->panelToogleActions(); !actions.isEmpty())
+    {
+        foreach (auto a, actions)
+            menuItems << a;
+        menuItems << BasicMdiChild::MenuItem();
+    }
+    return menuItems
+            << _cursorMenu
+            << actnToggleTitle
+            << actnToggleLegend
+            << viewMenuItems();
+}
+
+QList<BasicMdiChild::MenuItem> PlotFuncWindow::menuItems_Edit()
+{
+    return editMenuItems()
+            << actnCopyGraphDataWithParams
+            << actnCopyPlotImage
+            << BasicMdiChild::MenuItem()
+            // << actnCopyFormatFromSelection
+            // << actnPasteFormatToSelection
+            // TODO: "Copy/Paste plot format" should be just modes of
+            // "Copy/Paste selected format" when nothing is selected
+            << actnCopyPlotFormat
+            << actnPastePlotFormat;
+}
+
+QCPL::Graph* PlotFuncWindow::selectedGraph() const
 {
     auto graphs = _plot->selectedGraphs();
     return graphs.isEmpty()? nullptr: graphs.first();
@@ -440,7 +524,7 @@ void PlotFuncWindow::update()
     }
     else updateCursorInfo();
 
-    _plot->updateTitles();
+    _plot->updateTexts();
     updateStatusUnits();
     updateNotables();
     afterUpdate();
@@ -567,7 +651,7 @@ void PlotFuncWindow::restoreViewParts(const ViewSettings &vs, ViewParts parts)
     {
         if (vs.contains("y_title"))
             _plot->setFormatterTextY(vs["y_title"].toString());
-        else _plot->setFormatterTextY(_plot->defaultTitleY());
+        else _plot->setFormatterTextY(_plot->defaultTextY());
     }
     if (parts.testFlag(VP_UNIT_Y))
     {
@@ -628,7 +712,7 @@ void PlotFuncWindow::setUnitX(Z::Unit unit)
     auto oldUnit = getUnitX();
     if (oldUnit == unit) return;
     _unitX = unit;
-    _plot->updateTitleX();
+    _plot->updateTextX();
     updateStatusUnits();
     schema()->markModified("PlotFuncWindow::setUnitX");
     PlotHelpers::rescaleLimits(_plot, PlotAxis::X, oldUnit, unit);
@@ -641,36 +725,12 @@ void PlotFuncWindow::setUnitY(Z::Unit unit)
     auto oldUnit = getUnitY();
     if (oldUnit == unit) return;
     _unitY = unit;
-    _plot->updateTitleY();
+    _plot->updateTextY();
     updateStatusUnits();
     schema()->markModified("PlotFuncWindow::setUnitY");
     PlotHelpers::rescaleLimits(_plot, PlotAxis::Y, oldUnit, unit);
     PlotHelpers::rescaleCursor(_cursor, PlotAxis::Y, oldUnit, unit);
     update();
-}
-
-QList<BasicMdiChild::ViewMenuItem> PlotFuncWindow::menuItems_View()
-{
-    QList<BasicMdiChild::ViewMenuItem> menuItems;
-
-    QList<QAction*> actions;
-    _leftPanel->fillActions(actions);
-    if (actions.size() > 0)
-    {
-        foreach (auto a, actions)
-            menuItems << BasicMdiChild::ViewMenuItem(a);
-        menuItems << BasicMdiChild::ViewMenuItem();
-    }
-
-    menuItems << BasicMdiChild::ViewMenuItem(_cursorMenu);
-    menuItems << BasicMdiChild::ViewMenuItem();
-
-    actions.clear();
-    fillViewMenuActions(actions);
-    foreach (auto a, actions)
-        menuItems << BasicMdiChild::ViewMenuItem(a);
-
-    return menuItems;
 }
 
 void PlotFuncWindow::optionChanged(AppSettingsOptions option)
@@ -687,7 +747,7 @@ void PlotFuncWindow::copyGraphData()
     PlotHelpers::toClipboard(_plot->selectedGraph());
 }
 
-void PlotFuncWindow::copyGraphDataAll()
+void PlotFuncWindow::copyGraphDataAllSegments()
 {
     auto ts = _graphs->findBy(_plot->selectedGraph());
     if (ts) PlotHelpers::toClipboard(ts->segments());
@@ -709,7 +769,7 @@ void PlotFuncWindow::copyPlotImage()
         _cursor->setVisible(oldVisible);
 }
 
-void PlotFuncWindow::copyGraphDataEx()
+void PlotFuncWindow::copyGraphDataWithParams()
 {
     PlotHelpers::exportGraphsData(_graphs, _plot->selectedGraph());
 }
@@ -719,6 +779,109 @@ void PlotFuncWindow::graphsMenuAboutToShow()
     auto ts = _graphs->findBy(_plot->selectedGraph());
     bool manySegments = ts && ts->segmentsCount() > 1;
     actnCopyGraphData->setVisible(!manySegments);
-    actnCopyGraphDataCur->setVisible(manySegments);
-    actnCopyGraphDataAll->setVisible(manySegments);
+    actnCopyGraphDataCurSegment->setVisible(manySegments);
+    actnCopyGraphDataAllSegments->setVisible(manySegments);
+}
+
+void PlotFuncWindow::legendFormatDlg()
+{
+    QCPL::LegendFormatDlgProps props;
+    props.title = tr("Legend Format");
+    props.sampleText = tr("• Line T\n• Line S");
+    if (QCPL::legendFormatDlg(_plot->legend, props))
+    {
+        schema()->markModified("PlotFuncWindow::formatLegend");
+        updatePlotItemToggleActions();
+    }
+}
+
+void PlotFuncWindow::addTextVar(const QString& name, const QString& descr, std::function<QString()> getter)
+{
+    _plot->addTextVarT(name, descr, getter);
+    _plot->addTextVarX(name, descr, getter);
+    _plot->addTextVarY(name, descr, getter);
+}
+
+void PlotFuncWindow::copyPlotFormat()
+{
+    QCPL::copyPlotFormat(_plot);
+}
+
+void PlotFuncWindow::pastePlotFormat()
+{
+    auto err = QCPL::pastePlotFormat(_plot);
+    if (err.isEmpty())
+    {
+        _plot->updateTitleVisibility();
+        _plot->replot();
+        schema()->markModified("PlotFuncWindow::pastePlotFormat");
+        updatePlotItemToggleActions();
+    }
+    else Ori::Dlg::info(err);
+}
+
+void PlotFuncWindow::pasteLegendFormat()
+{
+    auto err = QCPL::pasteLegendFormat(_plot->legend);
+    if (err.isEmpty())
+    {
+        _plot->replot();
+        schema()->markModified("PlotFuncWindow::pasteLegendFormat");
+    }
+    else Ori::Dlg::info(err);
+}
+
+void PlotFuncWindow::pasteTitleFormat()
+{
+    auto err = QCPL::pasteTitleFormat(_plot->title());
+    if (err.isEmpty())
+    {
+        _plot->replot();
+        schema()->markModified("PlotFuncWindow::pasteTitleFormat");
+    }
+    else Ori::Dlg::info(err);
+}
+
+void PlotFuncWindow::pasteAxisFormat(QCPAxis *axis)
+{
+    auto err = QCPL::pasteAxisFormat(axis);
+    if (err.isEmpty())
+    {
+        _plot->replot();
+        schema()->markModified("PlotFuncWindow::pasteAxisFormat");
+    }
+    else Ori::Dlg::info(err);
+}
+
+void PlotFuncWindow::toggleTitle()
+{
+    _plot->title()->setVisible(!_plot->title()->visible());
+    _plot->updateTitleVisibility();
+    _plot->replot();
+    schema()->markModified("PlotFuncWindow::toggleTitle");
+    updatePlotItemToggleActions();
+}
+
+void PlotFuncWindow::toggleLegend()
+{
+    _plot->legend->setVisible(!_plot->legend->visible());
+    _plot->replot();
+    schema()->markModified("PlotFuncWindow::toggleLegend");
+    updatePlotItemToggleActions();
+}
+
+void PlotFuncWindow::updatePlotItemToggleActions()
+{
+    actnToggleTitle->setChecked(_plot->title()->visible());
+    actnToggleLegend->setChecked(_plot->legend->visible());
+}
+
+void PlotFuncWindow::copyFormatFromSelection()
+{
+    qDebug() << "TODO: PlotFuncWindow::copyFormatFromSelection()";
+}
+
+void PlotFuncWindow::pasteFormatToSelection()
+{
+    qDebug() << "TODO: PlotFuncWindow::pasteFormatToSelection()";
 }

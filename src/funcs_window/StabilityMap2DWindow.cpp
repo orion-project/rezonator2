@@ -2,6 +2,7 @@
 
 #include "FuncOptionsPanel.h"
 #include "../CustomPrefs.h"
+#include "../core/Report.h"
 #include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
 #include "../widgets/ElemSelectorWidget.h"
@@ -14,6 +15,7 @@
 
 #include <qcpl_plot.h>
 #include <qcpl_format.h>
+#include <qcpl_io_json.h>
 
 //------------------------------------------------------------------------------
 //                            StabilityMap2DParamsDlg
@@ -44,7 +46,7 @@ void StabilityMap2DParamsDlg::makeControls(const QString &title, Schema* schema,
         ElementFilter::make<ElementFilterHasVisibleParams, ElementFilterEnabled>());
 
     editor->elemSelector = new ElemAndParamSelector(schema, elemFilter.data(), Z::Utils::defaultParamFilter());
-    connect(editor->elemSelector, &ElemAndParamSelector::selectionChanged, [this, editor]{ this->guessRange(editor); });
+    connect(editor->elemSelector, &ElemAndParamSelector::selectionChanged, this, [this, editor]{ this->guessRange(editor); });
 
     editor->rangeEditor = new GeneralRangeEditor;
 
@@ -179,85 +181,109 @@ StabilityMap2DWindow::StabilityMap2DWindow(Schema *schema) :
     PlotFuncWindowStorable(new StabilityMap2DFunction(schema))
 {
     _exclusiveModeTS = true;
-    actnShowFlippedTS->setVisible(false);
-    actnShowFlippedTS->setEnabled(false);
-    actnShowT->setChecked(true);
-    actnShowS->setChecked(false);
-    actnCopyGraphDataEx->setVisible(false); // these cmds only for lines
 
+    createContent();
+    createActions();
+    createContextMenus();
+}
+
+void StabilityMap2DWindow::createContent()
+{
     _plot->useSafeMargins = false;
-    // We have to do this way because QCPColorMap::rescaleAxes() seems not working as expected
-    _plot->excludeServiceGraphsFromAutolimiting = false;
-
-    _autolimiter = _plot->addGraph();
-    _autolimiter->setPen(QPen(Qt::transparent));
-
-    _graph = new QCPColorMap(_plot->xAxis, _plot->yAxis);
 
     auto getStabParam = [this]{ return Z::Enums::displayStr(function()->stabilityCalcMode()); };
-    _plot->addTextVar(QStringLiteral("{stab_mode}"), tr("Stability parameter mode"), getStabParam);
+    _plot->addTextVarT("{stab_mode}", tr("Stability parameter mode"), getStabParam);
 
-    _plot->addTextVarX(QStringLiteral("{elem}"), tr("Variable element label and title"), [this]{
+    _plot->addTextVarX("{elem}", tr("Variable element label and title"), [this]{
         return function()->paramX()->element->displayLabelTitle(); });
-    _plot->addTextVarX(QStringLiteral("{elem_label}"), tr("Variable element label"), [this]{
+    _plot->addTextVarX("{elem_label}", tr("Variable element label"), [this]{
         return function()->paramX()->element->label(); });
-    _plot->addTextVarX(QStringLiteral("{elem_title}"), tr("Variable element title"), [this]{
+    _plot->addTextVarX("{elem_title}", tr("Variable element title"), [this]{
         return function()->paramX()->element->title(); });
-    _plot->addTextVarX(QStringLiteral("{elem_param}"), tr("Variable element parameter"), [this]{
+    _plot->addTextVarX("{elem_param}", tr("Variable element parameter"), [this]{
         return function()->paramX()->parameter->name(); });
 
-    _plot->addTextVarY(QStringLiteral("{elem}"), tr("Variable element label and title"), [this]{
+    _plot->addTextVarY("{elem}", tr("Variable element label and title"), [this]{
         return function()->paramY()->element->displayLabelTitle(); });
-    _plot->addTextVarY(QStringLiteral("{elem_label}"), tr("Variable element label"), [this]{
+    _plot->addTextVarY("{elem_label}", tr("Variable element label"), [this]{
         return function()->paramY()->element->label(); });
-    _plot->addTextVarY(QStringLiteral("{elem_title}"), tr("Variable element title"), [this]{
+    _plot->addTextVarY("{elem_title}", tr("Variable element title"), [this]{
         return function()->paramY()->element->title(); });
-    _plot->addTextVarY(QStringLiteral("{elem_param}"), tr("Variable element parameter"), [this]{
+    _plot->addTextVarY("{elem_param}", tr("Variable element parameter"), [this]{
         return function()->paramY()->parameter->name(); });
 
-    _plot->setDefaultTitleX(QStringLiteral("{elem}, {elem_param} {(unit)}"));
-    _plot->setFormatterTextX(QStringLiteral("{elem}, {elem_param} {(unit)}"));
-    _plot->setDefaultTitleY(QStringLiteral("{elem}, {elem_param} {(unit)}"));
-    _plot->setFormatterTextY(QStringLiteral("{elem}, {elem_param} {(unit)}"));
+    _plot->setDefaultTextX("{elem}, {elem_param} {(unit)}");
+    _plot->setFormatterTextX(_plot->defaultTextX());
+    _plot->setDefaultTextY("{elem}, {elem_param} {(unit)}");
+    _plot->setFormatterTextY(_plot->defaultTextY());
 
     _colorScale = new QCPColorScale(_plot);
     auto colorAxis = _colorScale->axis();
-    colorAxis->setLabelFont(_plot->xAxis->labelFont());
-    colorAxis->setSelectedLabelFont(_plot->xAxis->selectedLabelFont());
-    _plot->plotLayout()->addElement(_plot->axisRectRow(), _plot->axisRectCol() + 1, _colorScale);
-    _plot->addFormatter(_colorScale->axis(), new QCPL::AxisTitleFormatter(_colorScale->axis()));
-    _plot->addTextVar(_colorScale->axis(), QStringLiteral("{func_name}"), tr("Function name"), [this]{ return function()->name(); });
-    _plot->addTextVar(_colorScale->axis(), QStringLiteral("{stab_mode}"), tr("Stability parameter mode"), getStabParam);
-    _plot->setDefaultTitle(_colorScale->axis(), QStringLiteral("Stability parameter {stab_mode}"));
+    _plot->axisIdents[colorAxis] = tr("Color Scale");
+    _plot->additionalParts[_colorScale] = "color_scale";
+    auto plotArea = _plot->axisRectRC();
+    _plot->plotLayout()->addElement(plotArea.row, plotArea.col + 1, _colorScale);
+    _plot->addFormatter(colorAxis, new QCPL::AxisTextFormatter(_colorScale->axis()));
+    _plot->addTextVar(colorAxis, "{func_name}", tr("Function name"), [this]{ return function()->name(); });
+    _plot->addTextVar(colorAxis, "{stab_mode}", tr("Stability parameter mode"), getStabParam);
+    _plot->setDefaultText(colorAxis, tr("Stability parameter {stab_mode}"));
 
+    _graph = new QCPColorMap(_plot->xAxis, _plot->yAxis);
     _graph->setColorScale(_colorScale);
     _graph->setGradient(QCPColorGradient::gpJet);
     _graph->setSelectable(QCP::stNone);
+
+    // Need to use a separate graph for autolimiting
+    // because QCPColorPlot can't rescale axes to color-map boundaries
+    _autolimiter = _plot->addGraph();
+    _autolimiter->setPen(QPen(Qt::transparent));
+    _autolimiter->setSelectable(QCP::stNone);
+    _plot->serviceGraphs().append(_autolimiter);
+    _plot->excludeServiceGraphsFromAutolimiting = false;
 
     // Make sure the axis rect and color scale synchronize their bottom and top margins:
     QCPMarginGroup *marginGroup = new QCPMarginGroup(_plot);
     _plot->axisRect()->setMarginGroup(QCP::msBottom|QCP::msTop, marginGroup);
     _colorScale->setMarginGroup(QCP::msBottom|QCP::msTop, marginGroup);
-
-    createControl();
 }
 
-void StabilityMap2DWindow::createControl()
+void StabilityMap2DWindow::createActions()
 {
+    actnShowFlippedTS->setVisible(false);
+    actnShowFlippedTS->setEnabled(false);
+    actnShowT->setChecked(true);
+    actnShowS->setChecked(false);
+    actnCopyGraphDataWithParams->setVisible(false); // this is only for line graphs
+
+    _actnCopyGraphData2D = Ori::Gui::action(tr("Copy Graph Data"), this, SLOT(copyGraphData2D()), ":/toolbar/copy_table");
+
     _actnStabilityAutolimits = new QAction(tr("Z-axis -> Stability Range", "Plot action"), this);
     _actnStabilityAutolimits->setIcon(QIcon(":/toolbar/limits_stab"));
-    connect(_actnStabilityAutolimits, &QAction::triggered, [this](){autolimitsStability(true);});
+    connect(_actnStabilityAutolimits, &QAction::triggered, this, [this](){autolimitsStability(true);});
 
-    _actnCopyGraphData = Ori::Gui::action(tr("Copy Graph Data"), this, SLOT(copyGraphData2D()), ":/toolbar/copy");
-    _plot->menuPlot->insertAction(actnCopyPlotImage, _actnCopyGraphData);
-    _plot->menuAxisX->insertAction(actnCopyPlotImage, _actnCopyGraphData);
-    _plot->menuAxisY->insertAction(actnCopyPlotImage, _actnCopyGraphData);
+    _actnFormatColorScale = new QAction(tr("Format Color Scale..."), this);
+    connect(_actnFormatColorScale, &QAction::triggered, this, [this]{ _plot->colorScaleFormatDlg(_colorScale); });
+
+    _plot->menuPlot->insertAction(actnCopyPlotImage, _actnCopyGraphData2D);
 
     menuLimits->addSeparator();
     menuLimits->addAction(_actnStabilityAutolimits);
 
     toolbar()->addSeparator();
     toolbar()->addAction(_actnStabilityAutolimits);
+}
+
+void StabilityMap2DWindow::createContextMenus()
+{
+    auto scaleMenu = new QMenu(this);
+    scaleMenu->addAction(tr("Limits..."), this, [this]{ _plot->limitsDlg(_colorScale->axis()); });
+    scaleMenu->addAction(tr("Text..."), this, [this]{ _plot->axisTextDlg(_colorScale->axis()); });
+    scaleMenu->addAction(tr("Format..."), this, [this]{ _plot->colorScaleFormatDlg(_colorScale); });
+    scaleMenu->addAction(_actnStabilityAutolimits);
+    scaleMenu->addSeparator();
+    scaleMenu->addAction(QIcon(":/toolbar/copy_fmt"), tr("Copy Format"), this, [this](){ QCPL::copyColorScaleFormat(_colorScale); });
+    scaleMenu->addAction(QIcon(":/toolbar/paste_fmt"), tr("Paste Format"), this, &StabilityMap2DWindow::pasteColorScaleFormat);
+    _plot->menus[_colorScale] = scaleMenu;
 }
 
 QWidget* StabilityMap2DWindow::makeOptionsPanel()
@@ -295,6 +321,7 @@ void StabilityMap2DWindow::updateGraphs()
     auto resultsT = f->resultsT();
     auto resultsS = f->resultsS();
     auto results = actnShowS->isChecked() ? resultsS : resultsT;
+    _graph->setName(actnShowS->isChecked() ? "S" : "T");
 
     auto data = _graph->data();
     data->setSize(nx, ny);
@@ -434,4 +461,15 @@ void StabilityMap2DWindow::copyGraphData2D()
         }
     }
     exporter.toClipboard();
+}
+
+void StabilityMap2DWindow::pasteColorScaleFormat()
+{
+    auto err = QCPL::pasteColorScaleFormat(_colorScale);
+    if (err.isEmpty())
+    {
+        schema()->markModified("StabilityMap2DWindow::pasteColorScaleFormat");
+        _plot->replot();
+    }
+    else Ori::Dlg::info(err);
 }

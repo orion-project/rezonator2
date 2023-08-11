@@ -11,7 +11,7 @@
         {
             "is_disabled": false,
             "label": "L1",
-            "layout_draw_narrow": false,
+            "layout_draw_alt": false,
             "layout_show_label": true,
             "params": {
                 "L": {
@@ -29,7 +29,7 @@
         {
             "is_disabled": false,
             "label": "F1",
-            "layout_draw_narrow": false,
+            "layout_draw_alt": false,
             "layout_show_label": true,
             "params": {
                 "Alpha": {
@@ -47,7 +47,7 @@
         {
             "is_disabled": false,
             "label": "L2",
-            "layout_draw_narrow": false,
+            "layout_draw_alt": false,
             "layout_show_label": true,
             "params": {
                 "L": {
@@ -70,7 +70,7 @@
     ],
     "pumps": [
         {
-            "color": "#555555",
+            "color": "#ffaa00",
             "is_active": true,
             "label": "P1",
             "mode": "RayVector",
@@ -94,7 +94,7 @@
             "title": ""
         },
         {
-            "color": "#555555",
+            "color": "#ff0000",
             "is_active": false,
             "label": "P2",
             "mode": "RayVector",
@@ -118,7 +118,7 @@
             "title": ""
         },
         {
-            "color": "#555555",
+            "color": "#ff00ff",
             "is_active": false,
             "label": "P3",
             "mode": "RayVector",
@@ -142,7 +142,7 @@
             "title": ""
         },
         {
-            "color": "#555555",
+            "color": "#aa00ff",
             "is_active": false,
             "label": "P4",
             "mode": "RayVector",

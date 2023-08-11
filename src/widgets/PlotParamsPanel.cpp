@@ -24,17 +24,17 @@ PlotParamsPanel::PlotParamsPanel(PlotParamsPanelCtorOptions options, QWidget *pa
     QStackedWidget(parent), _splitter(options.splitter)
 {
     if (options.hasInfoPanel)
-        _infoPanelIndex = initPanel(tr("Show Special Points"), ":/toolbar16/points",
+        _infoPanelIndex = initPanel(tr("Special Points"), ":/toolbar16/points",
             /* makeWidget: */ [](PlotParamsPanel*)->QWidget*{ return new QTextBrowser; },
             /* onActivate: */ [](PlotParamsPanel* self){ emit self->updateNotables(); });
 
     if (options.hasDataGrid)
-        _dataGridIndex = initPanel(tr("Show Data Table"), ":/toolbar16/table",
+        _dataGridIndex = initPanel(tr("Data Table"), ":/toolbar16/table",
             /* makeWidget: */ makeGraphDataGrid,
             /* onActivate: */ [](PlotParamsPanel* self){ emit self->updateDataGrid(); });
 
     if (options.hasOptionsPanel)
-        _optionsPanelIndex = initPanel(tr("Show Options"), ":/toolbar16/params",
+        _optionsPanelIndex = initPanel(tr("Function Params"), ":/toolbar16/params",
             /* makeWidget: */ [](PlotParamsPanel* self)->QWidget*{ return emit self->optionsPanelRequired(); },
             /* onActivate: */ nullptr);
 
@@ -63,10 +63,12 @@ void PlotParamsPanel::placeIn(QToolBar* toolbar)
         toolbar->addAction(panel.action);
 }
 
-void PlotParamsPanel::fillActions(QList<QAction*>& actions)
+QList<QAction*> PlotParamsPanel::panelToogleActions() const
 {
+    QList<QAction*> actions;
     for (const PanelInfo& panel: _panels)
         actions << panel.action;
+    return actions;
 }
 
 void PlotParamsPanel::showPanel()
