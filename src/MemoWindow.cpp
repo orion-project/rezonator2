@@ -382,10 +382,10 @@ void MemoWindow::createActions()
     _actionCopy = A_(tr("Copy"), _editor, SLOT(copy()), ":/toolbar/copy");
     _actionPaste = A_(tr("Paste"), _editor, SLOT(paste()), ":/toolbar/paste");
 
-    _actionBold = A_(tr("Bold"), this, SLOT(textBold()), ":/toolbar/bold", QKeySequence::Bold);
-    _actionItalic = A_(tr("Italic"), this, SLOT(textItalic()), ":/toolbar/italic", QKeySequence::Italic);
-    _actionUnderline = A_(tr("Underline"), this, SLOT(textUnderline()), ":/toolbar/underline", QKeySequence::Underline);
-    _actionStrikeout = A_(tr("Strikeout"), this, SLOT(textStrikeout()), ":/toolbar/strikeout");
+    _actionBold = A_(tr("Bold"), this, SLOT(textBold()), ":/toolbar/font_bold", QKeySequence::Bold);
+    _actionItalic = A_(tr("Italic"), this, SLOT(textItalic()), ":/toolbar/font_italic", QKeySequence::Italic);
+    _actionUnderline = A_(tr("Underline"), this, SLOT(textUnderline()), ":/toolbar/font_underline", QKeySequence::Underline);
+    _actionStrikeout = A_(tr("Strikeout"), this, SLOT(textStrikeout()), ":/toolbar/font_strikeout");
     _actionBold->setCheckable(true);
     _actionItalic->setCheckable(true);
     _actionUnderline->setCheckable(true);
