@@ -3,7 +3,9 @@
 #include "InfoFuncWindow.h"
 #include "FuncWindowHelpers.h"
 #include "../AppSettings.h"
+#include "../CustomPrefs.h"
 #include "../core/Format.h"
+#include "../core/Protocol.h"
 #include "../funcs/InfoFunctions.h"
 #include "../funcs/PlotFuncRoundTripFunction.h"
 #include "../funcs/FunctionGraph.h"
@@ -96,6 +98,8 @@ void PlotFuncWindow::createActions()
     actnFormatLegend = action(tr("Legend Format..."), _plot, SLOT(legendFormatDlg()));
     actnFormatX = action(tr("X-axis Format..."), _plot, SLOT(axisFormatDlgX()));
     actnFormatY = action(tr("Y-axis Format..."), _plot, SLOT(axisFormatDlgY()));
+    actnSavePlotFormat = action(tr("Save Plot Format..."), this, SLOT(savePlotFormat()));
+    actnLoadPlotFormat = action(tr("Load Plot Format..."), this, SLOT(loadPlotFormat()));
 
     actnCopyGraphData = action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
     actnCopyGraphDataCurSegment = action(tr("Copy Graph Data (this segment)"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
@@ -149,6 +153,9 @@ QList<QMenu*> PlotFuncWindow::menus()
     menuFormat->addAction(actnFormatY);
     for (auto& item : formatMenuItems())
         item.addTo(menuFormat);
+    menuFormat->addSeparator();
+    menuFormat->addAction(actnSavePlotFormat);
+    menuFormat->addAction(actnLoadPlotFormat);
     return {menuPlot, menuLimits, menuFormat};
 }
 
@@ -884,4 +891,40 @@ void PlotFuncWindow::copyFormatFromSelection()
 void PlotFuncWindow::pasteFormatToSelection()
 {
     qDebug() << "TODO: PlotFuncWindow::pasteFormatToSelection()";
+}
+
+void PlotFuncWindow::savePlotFormat()
+{
+    QString recentPath = CustomPrefs::recentDir("plot_format_path");
+    auto fileName = QFileDialog::getSaveFileName(
+        this, tr("Save Plot Format"), recentPath, tr("JSON files (*.json)\nAll files (*.*)"));
+    if (fileName.isEmpty())
+        return;
+    CustomPrefs::setRecentDir("plot_format_path", fileName);
+    QString err = QCPL::saveFormatToFile(fileName, _plot);
+    if (!err.isEmpty())
+        Ori::Dlg::error(err);
+}
+
+void PlotFuncWindow::loadPlotFormat()
+{
+    QString recentPath = CustomPrefs::recentDir("plot_format_path");
+    auto fileName = QFileDialog::getOpenFileName(
+        this, tr("Load Plot Format"), recentPath, tr("JSON files (*.json)\nAll files (*.*)"));
+    if (fileName.isEmpty())
+        return;
+    CustomPrefs::setRecentDir("plot_format_path", fileName);
+    QCPL::JsonReport report;
+    auto err = QCPL::loadFormatFromFile(fileName, _plot, &report);
+    if (!err.isEmpty())
+    {
+        Ori::Dlg::error(err);
+        return;
+    }
+    _plot->replot();
+    if (!report.isEmpty() && Z::Protocol::isEnabled)
+    {
+        foreach (auto err, report)
+            Z::Protocol(Z::Protocol::Warning) << err.message;
+    }
 }

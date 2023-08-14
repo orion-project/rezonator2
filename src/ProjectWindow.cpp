@@ -189,11 +189,6 @@ void ProjectWindow::createActions()
     actnHelpHomepage = A_(tr("Visit Homepage"), help, SLOT(visitHomePage()), ":/toolbar/home");
     actnHelpAbout = A_(tr("About..."), help, SLOT(showAbout()));
 
-    /* TODO:NEXT-VER
-    actnFileSave->setEnabled(false);
-    actnEditCut->setVisible(false);
-    actnEditCut->setEnabled(false); */
-
     #undef A_
 }
 

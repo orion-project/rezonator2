@@ -141,7 +141,7 @@ protected:
         *actnCopyGraphData, *actnCopyGraphDataCurSegment, *actnCopyGraphDataAllSegments, *actnCopyPlotImage,
         *actnCopyGraphDataWithParams, *actnFormatX, *actnFormatY, *actnFormatTitle, *actnFormatLegend,
         *actnToggleTitle, *actnToggleLegend, *actnCopyFormatFromSelection, *actnPasteFormatToSelection,
-        *actnCopyPlotFormat, *actnPastePlotFormat;
+        *actnCopyPlotFormat, *actnPastePlotFormat, *actnSavePlotFormat, *actnLoadPlotFormat;
 
     // Stores differences of plot view when function is switched betweeen modes
     // e.g. when the Caustic function switches between W and R.
@@ -208,6 +208,8 @@ private slots:
     void legendFormatDlg();
     void toggleTitle();
     void toggleLegend();
+    void savePlotFormat();
+    void loadPlotFormat();
 
     QWidget* optionsPanelRequired();
 

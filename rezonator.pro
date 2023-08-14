@@ -14,6 +14,7 @@ unix: LIBS += -ldl
 #------------------------------------------------------------
 # Submodules
 
+#--------
 # orion (https://github.com/orion-project/orion-qt)
 ORION = $$_PRO_FILE_PWD_/libs/orion
 include($$ORION/orion.pri)
@@ -21,10 +22,18 @@ include($$ORION/orion_testing.pri)
 include($$ORION/orion_tests.pri)
 include($$ORION/orion_svg.pri)
 
+#--------
 # custom-plot-lab (https://github.com/orion-project/custom-plot-lab)
-win32: CONFIG += qcustomplotlab_shared
+
+# qcustomplot.cpp is so large that it even fails to build in debug mode
+# If debug mode is required, you have to use QCustomPlot as shared library:
+# cd libs\custom-plot-lab\qcustomplot; qmake; mingw32-make release
+# Then enable "qcustomplotlab_shared" options and rebuild rezonator
+#win32: CONFIG += qcustomplotlab_shared
+
 include($$_PRO_FILE_PWD_/libs/custom-plot-lab/custom-plot-lab.pri)
 
+#--------
 # lua
 include($$_PRO_FILE_PWD_/libs/lua.pri)
 

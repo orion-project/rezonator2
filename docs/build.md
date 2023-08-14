@@ -74,13 +74,15 @@ Note that submodules are in 'detached head' state by default.
 
 Windows does not provide default command line tools like `wget`, `tar` or `make`, so you have to prepare dependencies using tools you have installed following [these instructions](prepare-deps-win.md).
 
-[QCustomPLot](https://www.qcustomplot.com) is used via wrapper [repository](https://github.com/orion-project/custom-plot-lab) (in submodule) as shared library on Windows. It's because the library source file `qcustomplot.cpp` is so large that it even fails to build in debug mode (`x86_64-w64-mingw32/bin/as.exe: debug\qcustomplot.o: too many sections (33061) Fatal error: debug\qcustomplot.o: file too big`). So you have to build the shared library first:
+[QCustomPlot](https://www.qcustomplot.com) is used via wrapper [repository](https://github.com/orion-project/custom-plot-lab) (in submodule). The library source file `qcustomplot.cpp` is so large that it even fails to build in debug mode (`x86_64-w64-mingw32/bin/as.exe: debug\qcustomplot.o: too many sections (33061) Fatal error: debug\qcustomplot.o: file too big`). So if the debug mode is needed, you have to use QCustomPlot as shared library. Build the library:
 
 ```bash
 cd libs\custom-plot-lab\qcustomplot
 qmake
 mingw32-make release
 ```
+
+Then enable option `qcustomplotlab_shared` in `rezonator.pro` and rebuild the app in debug mode.
 
 ## Dev build
 
