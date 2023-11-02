@@ -712,7 +712,7 @@ void LensmakerWindow::showWindow()
 
 LensmakerWindow::LensmakerWindow(QWidget *parent) : QWidget(parent)
 {
-    Ori::Wnd::initWindow(this, tr("Lensmaker"), ":/window_icons/lens");
+    Ori::Wnd::initWindow(this, "Lensmaker", ":/window_icons/lens");
 
     auto actnAddLens = Ori::Gui::action(tr("Add Lens"), this, SLOT(addLens()), ":/toolbar/elem_add", QKeySequence::New);
     auto actnDelLens = Ori::Gui::action(tr("Remove Lens"), this, SLOT(removeLens()), ":/toolbar/elem_delete");
@@ -729,11 +729,11 @@ LensmakerWindow::LensmakerWindow(QWidget *parent) : QWidget(parent)
     _visibleParts->addAction(PART_FOCUS, tr("Focal planes"));
     _visibleParts->addAction(PART_PRINCIP, tr("Principal planes"));
     _visibleParts->addAction(PART_VERTEX, tr("Surface vertices"));
-    connect(_visibleParts, &QToolButton::triggered, [this]{
+    connect(_visibleParts, &QToolButton::triggered, this, [this]{
         auto lens = activeLens();
         if (lens) lens->setVisibleParts(_visibleParts->selectedFlags(0), true);
     });
-    connect(_visibleParts, &Ori::Widgets::MenuToolButton::aboutToShow, [this]{
+    connect(_visibleParts, &Ori::Widgets::MenuToolButton::aboutToShow, this, [this]{
         auto lens = activeLens();
         if (lens) _visibleParts->setSelectedFlags(lens->visibleParts());
     });

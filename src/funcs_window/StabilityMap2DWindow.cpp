@@ -261,7 +261,7 @@ void StabilityMap2DWindow::createActions()
     _actnStabilityAutolimits->setIcon(QIcon(":/toolbar/limits_stab"));
     connect(_actnStabilityAutolimits, &QAction::triggered, this, [this](){autolimitsStability(true);});
 
-    _actnFormatColorScale = new QAction(tr("Format Color Scale..."), this);
+    _actnFormatColorScale = new QAction(tr("Color Scale Format..."), this);
     connect(_actnFormatColorScale, &QAction::triggered, this, [this]{ _plot->colorScaleFormatDlg(_colorScale); });
 
     _plot->menuPlot->insertAction(actnCopyPlotImage, _actnCopyGraphData2D);

@@ -7,6 +7,7 @@
 #include "GaussCalculatorWindow.h"
 #include "GrinLensWindow.h"
 #include "HelpSystem.h"
+#include "IrisWindow.h"
 #include "LensmakerWindow.h"
 #include "ProjectOperations.h"
 #include "ProjectWindow.h"
@@ -510,7 +511,7 @@ ToolsStartPanel::ToolsStartPanel() : StartPanel("panel_tools")
     layout->addWidget(makeButton(":/toolbar/gauss_calculator", tr("Gauss Calculator"), SLOT(showGaussCalculator())));
     layout->addWidget(makeButton(":/window_icons/calculator", tr("Formula Calculator"), SLOT(showCalculator())));
     layout->addWidget(makeButton(":/window_icons/lens", tr("Lensmaker"), SLOT(showLensmaker())));
-    layout->addWidget(makeButton(":/toolbar/settings", tr("Settings"), SLOT(editSettings())));
+    //layout->addWidget(makeButton(":/toolbar/iris", tr("Iris"), SLOT(showIris())));
     layout->addWidget(makeButton(":/toolbar/help", tr("Manual"), SLOT(showManual())));
     layout->addWidget(makeButton(":/toolbar/update", tr("Check Updates"), SLOT(checkUpdates())));
     layout->addStretch();
@@ -541,14 +542,14 @@ void ToolsStartPanel::showLensmaker()
     LensmakerWindow::showWindow();
 }
 
+void ToolsStartPanel::showIris()
+{
+    IrisWindow::showWindow();
+}
+
 void ToolsStartPanel::showManual()
 {
     Z::HelpSystem::instance()->showContents();
-}
-
-void ToolsStartPanel::editSettings()
-{
-    AppSettings::instance().edit();
 }
 
 //------------------------------------------------------------------------------
@@ -596,13 +597,14 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
             Stretch(),
         }).setSpacing(20),
         Stretch(),
-    }).setMargin(20).useFor(this);
+    }).setMargin(60).useFor(this);
 
 
     _toolbar = new Ori::Widgets::FlatToolBar;
     _toolbar->setIconSize({24, 24});
     if (AppSettings::instance().isDevMode)
         _toolbar->addAction(QIcon(":/toolbar/protocol"), tr("Edit Stylesheet"), this, &StartWindow::editStyleSheet);
+    _toolbar->addAction(QIcon(":/toolbar/settings"), tr("Settings"), this, []{ AppSettings::instance().edit(); });
     //_toolbar->addAction(QIcon(":/toolbar/help"), tr("Show Manual"), []{ Z::HelpSystem::instance()->showContents(); });
     _toolbar->addAction(QIcon(":/toolbar/info"), tr("About"), []{ Z::HelpSystem::instance()->showAbout(); });
     _toolbar->setParent(this);
@@ -630,12 +632,12 @@ void StartWindow::editStyleSheet()
     editor->setPlainText(Ori::Theme::loadRawStyleSheet());
 
     auto applyButton = new QPushButton("Apply");
-    connect(applyButton, &QPushButton::clicked, [editor]{
+    connect(applyButton, &QPushButton::clicked, editor, [editor]{
         qApp->setStyleSheet(Ori::Theme::makeStyleSheet(editor->toPlainText()));
     });
 
     auto saveButton = new QPushButton("Save");
-    connect(saveButton, &QPushButton::clicked, [editor]{
+    connect(saveButton, &QPushButton::clicked, editor, [editor]{
         auto res = Ori::Theme::saveRawStyleSheet(editor->toPlainText());
         if (!res.isEmpty()) Ori::Dlg::error(res);
     });

@@ -6,10 +6,10 @@
 #include "CommonData.h"
 #include "CustomElemsWindow.h"
 #include "ElemFormulaWindow.h"
-#include "ElementsCatalogDialog.h"
 #include "GaussCalculatorWindow.h"
 #include "GrinLensWindow.h"
 #include "HelpSystem.h"
+#include "IrisWindow.h"
 #include "LensmakerWindow.h"
 #include "MemoWindow.h"
 #include "ProjectOperations.h"
@@ -26,8 +26,6 @@
 #include "helpers/OriWindows.h"
 #include "tools/OriMruList.h"
 #include "tools/OriSettings.h"
-#include "widgets/OriFlatToolBar.h"
-#include "widgets/OriLangsMenu.h"
 #include "widgets/OriMruMenu.h"
 #include "widgets/OriMdiToolBar.h"
 #include "widgets/OriStatusBar.h"
@@ -42,8 +40,6 @@
 #include <QTimer>
 #include <QToolButton>
 #include <QShortcut>
-
-#define STANDARD_ACTION_FLAG 0x01
 
 enum ProjectWindowStatusPanels
 {
@@ -164,10 +160,11 @@ void ProjectWindow::createActions()
     actnToolsGaussCalc = A_(tr("Gaussian Beam Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
     actnToolsCalc = A_(tr("Formula Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
     actnToolFlipSchema = A_(tr("Flip Schema..."), this, SLOT(flipSchema()));
-    actnToolSettings = A_(tr("Settings..."), this, SLOT(showSettings()), ":/toolbar/settings");
+    actnSettings = A_(tr("Settings..."), this, SLOT(showSettings()), ":/toolbar/settings");
     actnToolAdjust = A_(tr("Adjustment"), this, SLOT(showAdjustment()), ":/toolbar/adjust");
     actnToolGrinLens = A_(tr("GRIN Lens Assessment"), this, SLOT(showGrinLens()), ":/toolbar/grin");
     actnToolLensmaker = A_(tr("Lensmaker"), this, SLOT(showLensmaker()), ":/window_icons/lens");
+    actnToolIris = A_(tr("Iris"), this, SLOT(showIris()), ":/toolbar/iris");
 
     // These common window actions must not have data (action->data()), as data presense indicates that
     // this action is for activation of specific subwindow and _mdiArea is responsible for it.
@@ -203,12 +200,9 @@ void ProjectWindow::createMenuBar()
           actnFileSaveAs, actnFileSaveCopy, nullptr, actnFilePrint, actnFilePrintPreview, nullptr,
           actnFileProps, actnFileTripType, actnFileLambda, actnFilePump, actnFileSummary, nullptr, actnFileExit });
 
-    menuEdit = Ori::Gui::menu(tr("Edit"), this,
-        { actnEditUndo, actnEditRedo, nullptr, actnEditCut, actnEditCopy, actnEditPaste, nullptr, actnEditSelectAll });
-    for (auto action : menuEdit->actions())
-        action->setData(STANDARD_ACTION_FLAG);
+    menuEdit = new QMenu(tr("Edit"), this);
 
-    _langsMenu = new Ori::Widgets::LanguagesMenu(CommonData::instance()->translator(), this);
+    //_langsMenu = new Ori::Widgets::LanguagesMenu(CommonData::instance()->translator(), this);
     menuView = new QMenu(tr("View"), this);
 
     menuFunctions = Ori::Gui::menu(tr("Functions"), this,
@@ -217,9 +211,13 @@ void ProjectWindow::createMenuBar()
           actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic,
           actnFuncBeamParamsAtElems, nullptr, actnFuncRepRate });
 
+    menuUtils = Ori::Gui::menu(tr("Utils", "Menu title"), this,
+        { actnToolFlipSchema, nullptr, actnToolAdjust });
+
     menuTools = Ori::Gui::menu(tr("Tools", "Menu title"), this,
-        { actnToolFlipSchema, nullptr, actnToolAdjust, nullptr,
-          actnToolsGaussCalc, actnToolsCalc, actnToolsCustomElems, actnToolGrinLens, actnToolLensmaker, nullptr, actnToolSettings });
+        { actnToolsGaussCalc, actnToolsCalc, actnToolsCustomElems, actnToolGrinLens, actnToolLensmaker,
+          //actnToolIris
+        });
 
     menuWindow = Ori::Gui::menu(tr("Window"), this,
         { actnWndSchema, actnWndParams, actnWndPumps, actnWndProtocol, actnWndMemos, nullptr,
@@ -241,7 +239,7 @@ void ProjectWindow::createToolBars()
         actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamVariation, nullptr,
         actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic, actnFuncBeamParamsAtElems, nullptr,
         actnFuncRepRate, nullptr, actnWndParams, actnWndPumps, actnWndMemos, nullptr, actnToolAdjust, nullptr,
-        actnToolsGaussCalc, actnToolsCalc, actnToolGrinLens
+        actnToolsGaussCalc, actnToolsCalc, actnToolGrinLens, //actnToolIris
     }, true));
 
     _mdiToolbar = new Ori::Widgets::MdiToolBar(tr("Windows"), _mdiArea);
@@ -274,40 +272,39 @@ void ProjectWindow::updateTitle()
         Ori::Wnd::setWindowFilePath(this, schema()->fileName());
 }
 
-namespace  {
-
-int activateEditAction(QAction* action, IEditableWindow* wnd, IEditableWindow::SupportedCommand cmd)
+void ProjectWindow::addEditAction(QAction* action, IEditableWindow* wnd, IEditableWindow::SupportedCommand cmd)
 {
     bool on = wnd && wnd->supportedCommands().testFlag(cmd);
     action->setEnabled(on);
     action->setVisible(on);
-    return on ? 1 : 0;
+    if (on)
+        menuEdit->addAction(action);
 }
-
-} // namespace
 
 void ProjectWindow::updateMenuBar()
 {
     BasicMdiChild* child = _mdiArea->activeChild();
 
     // Update Edit menu
+    menuEdit->clear();
     IEditableWindow* editable = _mdiArea->activeEditableChild();
-    int editActionCount =
-        activateEditAction(actnEditUndo, editable, IEditableWindow::EditCmd_Undo) +
-        activateEditAction(actnEditRedo, editable, IEditableWindow::EditCmd_Redo) +
-        activateEditAction(actnEditCut, editable, IEditableWindow::EditCmd_Cut) +
-        activateEditAction(actnEditCopy, editable, IEditableWindow::EditCmd_Copy) +
-        activateEditAction(actnEditPaste, editable, IEditableWindow::EditCmd_Paste) +
-        activateEditAction(actnEditSelectAll, editable, IEditableWindow::EditCmd_SelectAll);
-    for (auto action : menuEdit->actions())
-        if (!(action->data().toInt() & STANDARD_ACTION_FLAG))
-            menuEdit->removeAction(action);
+    addEditAction(actnEditUndo, editable, IEditableWindow::EditCmd_Undo);
+    addEditAction(actnEditRedo, editable, IEditableWindow::EditCmd_Redo);
+    if (actnEditUndo->isVisible() || actnEditRedo->isVisible())
+        menuEdit->addSeparator();
+    addEditAction(actnEditCut, editable, IEditableWindow::EditCmd_Cut);
+    addEditAction(actnEditCopy, editable, IEditableWindow::EditCmd_Copy);
+    addEditAction(actnEditPaste, editable, IEditableWindow::EditCmd_Paste);
+    if (actnEditCut->isVisible() || actnEditCopy->isVisible() || actnEditPaste->isVisible())
+        menuEdit->addSeparator();
+    addEditAction(actnEditSelectAll, editable, IEditableWindow::EditCmd_SelectAll);
+    if (actnEditSelectAll->isVisible())
+        menuEdit->addSeparator();
     if (child)
         for (auto& item : child->menuItems_Edit())
-        {
             item.addTo(menuEdit);
-            editActionCount++;
-        }
+    menuEdit->addSeparator();
+    menuEdit->addAction(actnSettings);
 
     IPrintableWindow* printable = dynamic_cast<IPrintableWindow*>(child);
     actnFilePrint->setEnabled(printable);
@@ -315,31 +312,27 @@ void ProjectWindow::updateMenuBar()
 
     // Update View menu
     menuView->clear();
+    int viewActionsCount = 0;
     if (child)
-    {
-        auto items = child->menuItems_View();
-        if (!items.empty())
+        for (auto& item : child->menuItems_View())
         {
-            for (auto& item : items)
-                item.addTo(menuView);
-            menuView->addSeparator();
+            item.addTo(menuView);
+            viewActionsCount++;
         }
-    }
     //menuView->addMenu(_langsMenu); TODO: move to settings
 
     // Update menu bar
     QMenuBar* menuBar = this->menuBar();
     menuBar->clear();
     menuBar->addMenu(menuFile);
-    if (editActionCount > 0)
-        menuBar->addMenu(menuEdit);
-    menuBar->addMenu(menuView);
+    menuBar->addMenu(menuEdit);
+    if (viewActionsCount > 0)
+        menuBar->addMenu(menuView);
     menuBar->addMenu(menuFunctions);
     if (child)
-    {
-        Q_FOREACH (QMenu* menu, child->menus())
+        for (QMenu* menu : child->menus())
             menuBar->addMenu(menu);
-    }
+    menuBar->addMenu(menuUtils);
     menuBar->addMenu(menuTools);
     menuBar->addMenu(menuWindow);
     menuBar->addMenu(menuHelp);
@@ -510,6 +503,11 @@ void ProjectWindow::showAdjustment()
 void ProjectWindow::showLensmaker()
 {
     LensmakerWindow::showWindow();
+}
+
+void ProjectWindow::showIris()
+{
+    IrisWindow::showWindow();
 }
 
 //------------------------------------------------------------------------------

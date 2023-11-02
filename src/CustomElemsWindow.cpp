@@ -46,9 +46,7 @@ void CustomElemsWindow::showWindow()
 
 CustomElemsWindow::CustomElemsWindow(Schema *library) : QWidget(), _library(library)
 {
-    setAttribute(Qt::WA_DeleteOnClose);
-    setWindowTitle(tr("Custom Elements Library"));
-    setWindowIcon(QIcon(":/window_icons/catalog"));
+    Ori::Wnd::initWindow(this, tr("Custom Elements Library"), ":/window_icons/catalog");
 
     createActions();
     createToolbar();

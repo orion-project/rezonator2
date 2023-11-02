@@ -86,7 +86,6 @@ class LensmakerWindow : public QWidget
     Q_OBJECT
 
 public:
-    explicit LensmakerWindow(QWidget *parent = nullptr);
     ~LensmakerWindow();
 
     static void showWindow();
@@ -99,6 +98,8 @@ private slots:
     void copyImage();
 
 private:
+    explicit LensmakerWindow(QWidget *parent = nullptr);
+
     QTabWidget* _tabs;
     Ori::Widgets::MenuToolButton *_visibleParts;
 

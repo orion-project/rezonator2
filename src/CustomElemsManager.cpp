@@ -34,6 +34,13 @@ Ori::Result<Schema*> loadLibrary()
 
     library->events().disable();
     SchemaReaderJson reader(library);
+    // TODO: There should be two files -
+    // The first one with predefined custom elements used as examples
+    // it's stored in the app directory and can be overwritten when a new app version is downloaded
+    // The second one with user elements which should be preserved on app update
+    // it's stored in the app directory ot in the user profile
+    // depending on when local settings are stored
+    // See the same approach in Iris glass library.
     reader.readFromFile(libraryFile());
     auto report = reader.report();
     if (!report.isEmpty())

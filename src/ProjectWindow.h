@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 
-#include "AppSettings.h"
 #include "MessageBus.h"
 #include "SchemaWindows.h"
 #include "core/Schema.h"
@@ -64,7 +63,7 @@ protected:
 private:
     QMenu *menuFile, *menuEdit, *menuHelp, *menuWindow, *menuTools,
           *menuElement, *menuFunctions, *menuView,
-          *menuLangs;
+          *menuLangs, *menuUtils;
 
     QAction *actnFileNew, *actnFileOpen, *actnFileExit, *actnFileSave, *actnFileSaveCopy,
             *actnFileSaveAs, *actnFileTripType, *actnFilePump, *actnFileLambda, *actnFileSummary,
@@ -78,9 +77,9 @@ private:
             *actnFuncCaustic, *actnFuncMultirangeCaustic, *actnFuncBeamVariation,
             *actnFuncMultibeamCaustic, *actnFuncBeamParamsAtElems;
 
-    QAction  *actnToolsGaussCalc, *actnToolsCustomElems, *actnToolSettings,
+    QAction  *actnToolsGaussCalc, *actnToolsCustomElems, *actnSettings,
              *actnToolFlipSchema, *actnToolsCalc, *actnToolAdjust,
-             *actnToolGrinLens, *actnToolLensmaker;
+             *actnToolGrinLens, *actnToolLensmaker, *actnToolIris;
 
     QAction *actnWndClose, *actnWndCloseAll, *actnWndTile, *actnWndCascade,
             *actnWndSchema, *actnWndParams, *actnWndProtocol, *actnWndPumps,
@@ -95,7 +94,7 @@ private:
 
     Ori::Widgets::MruMenu* _mruMenu;
     Ori::Widgets::MdiToolBar* _mdiToolbar;
-    Ori::Widgets::LanguagesMenu* _langsMenu;
+    //Ori::Widgets::LanguagesMenu* _langsMenu;
     Ori::Widgets::StatusBar* _statusBar;
     SchemaViewWindow* _schemaWindow;
     bool _forceClosing = false;
@@ -129,6 +128,7 @@ private slots:
     void showAdjustment();
     void showHelp();
     void showLensmaker();
+    void showIris();
 
     void openSchemaExample();
 
@@ -137,6 +137,8 @@ private slots:
     /// Slot connected to @c mdiArea::subWindowActivated() signal.
     /// This method is automatically called when mdiArea changes active widget.
     void updateMenuBar();
+
+    void addEditAction(QAction* action, IEditableWindow* wnd, IEditableWindow::SupportedCommand cmd);
 };
 
 #endif // PROJECT_WINDOW_H

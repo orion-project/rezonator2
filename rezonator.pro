@@ -71,6 +71,7 @@ HEADERS += \
     src/ElementsCatalogDialog.h \
     src/GrinLensWindow.h \
     src/HelpSystem.h \
+    src/IrisWindow.h \
     src/LensmakerWindow.h \
     src/MemoWindow.h \
     src/MessageBus.h \
@@ -203,6 +204,7 @@ SOURCES += \
     src/ElementsCatalogDialog.cpp \
     src/GrinLensWindow.cpp \
     src/HelpSystem.cpp \
+    src/IrisWindow.cpp \
     src/LensmakerWindow.cpp \
     src/MemoWindow.cpp \
     src/MessageBus.cpp \

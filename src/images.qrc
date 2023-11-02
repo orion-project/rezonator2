@@ -76,6 +76,7 @@
         <file alias="info">../img/toolbar/info.svg</file>
         <file alias="indent_dec">../img/toolbar/indent_dec.svg</file>
         <file alias="indent_inc">../img/toolbar/indent_inc.svg</file>
+        <file alias="iris">../img/toolbar/iris.svg</file>
         <file alias="label">../img/toolbar/label.svg</file>
         <file alias="limits_auto_x">../img/toolbar/limits_auto_x.svg</file>
         <file alias="limits_auto_y">../img/toolbar/limits_auto_y.svg</file>
@@ -229,6 +230,7 @@
         <file alias="catalog">../img/icon/elements.svg</file>
         <file alias="element">../img/icon/element.svg</file>
         <file alias="gauss_calc">../img/icon/gauss.svg</file>
+        <file alias="iris">../img/icon/iris.svg</file>
         <file alias="lens">../img/icon/lens.svg</file>
         <file alias="main">../img/icon/main_2.svg</file>
         <file alias="options">../img/icon/settings.svg</file>

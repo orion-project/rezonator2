@@ -142,8 +142,8 @@ private slots:
     void showGrinLens();
     void checkUpdates();
     void showLensmaker();
+    void showIris();
     void showManual();
-    void editSettings();
 };
 
 //------------------------------------------------------------------------------
