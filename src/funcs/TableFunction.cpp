@@ -14,8 +14,8 @@
 
 const TableFunction::ResultPositionInfo& TableFunction::resultPositionInfo(TableFunction::ResultPosition pos)
 {
-#define I_(pos, ascii, tooltip, pixmap)\
-    {TableFunction::ResultPosition::pos, {QString(ascii), QString(tooltip), QString(pixmap)}}
+#define I_(pos, ascii, tooltip, icon_path)\
+    {TableFunction::ResultPosition::pos, {QString(ascii), QString(tooltip), QString(icon_path)}}
 
     static QMap<TableFunction::ResultPosition, TableFunction::ResultPositionInfo> info = {
         I_(ELEMENT,       "",          "",                          ""),
@@ -45,8 +45,11 @@ QString TableFunction::Result::str() const
 
 TableFunction::TableFunction(Schema *schema) : FunctionBase(schema)
 {
-    calcMediumEnds = AppSettings::instance().calcTablesMediumEnds;
-    calcEmptySpaces = AppSettings::instance().calcTablesEmptySpaces;
+}
+
+void TableFunction::setParams(const Params& params)
+{
+    _params = params;
 }
 
 bool TableFunction::prepareSinglePass()
@@ -117,10 +120,11 @@ void TableFunction::calculate()
         auto space = Z::Utils::asSpace(elem);
         if (space)
         {
-            if (calcEmptySpaces)
+            if (_params.calcEmptySpaces)
             {
                 calculateAt(CalcElem::RangeBeg(space), ResultElem(space, ResultPosition::LEFT_INSIDE));
-                calculateAt(CalcElem::RangeMid(space), ResultElem(space, ResultPosition::MIDDLE));
+                if (_params.calcSpaceMids)
+                    calculateAt(CalcElem::RangeMid(space), ResultElem(space, ResultPosition::MIDDLE));
                 calculateAt(CalcElem::RangeEnd(space), ResultElem(space, ResultPosition::RIGHT_INSIDE));
             }
             continue;
@@ -132,12 +136,13 @@ void TableFunction::calculate()
             // By default, don't need to calculate LEFT_INSIDE and RIGHT_INSIDE points,
             // because they will be calculated when processing the left and right
             // neighbor elements (they always must be in a properly defined schema).
-            if (calcMediumEnds)
+            if (_params.calcMediumEnds)
                 calculateAt(CalcElem::RangeBeg(rangeN), ResultElem(rangeN, ResultPosition::LEFT_INSIDE));
 
-            calculateAt(CalcElem::RangeMid(rangeN), ResultElem(rangeN, ResultPosition::MIDDLE));
+            if (_params.calcSpaceMids)
+                calculateAt(CalcElem::RangeMid(rangeN), ResultElem(rangeN, ResultPosition::MIDDLE));
 
-            if (calcMediumEnds)
+            if (_params.calcMediumEnds)
                 calculateAt(CalcElem::RangeEnd(rangeN), ResultElem(rangeN, ResultPosition::RIGHT_INSIDE));
             continue;
         }

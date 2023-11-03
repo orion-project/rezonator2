@@ -18,6 +18,16 @@ public:
     typedef Ori::Optional<double> OptionalIor;
     BOOL_PARAM(AlwaysTwoSides)
 
+    struct Params
+    {
+        /// Calculate additional points which are excessive for user
+        /// because they are duplicated (already calculated via neigbor elements)
+        /// but can be useful for testing
+        bool calcMediumEnds = false;
+        bool calcEmptySpaces = false;
+        bool calcSpaceMids = false;
+    };
+
     struct ColumnDef
     {
         QString titleT, titleS;
@@ -42,7 +52,7 @@ public:
     {
         QString ascii;
         QString tooltip;
-        QString pixmap;
+        QString icon_path;
     };
 
     static const ResultPositionInfo& resultPositionInfo(ResultPosition pos);
@@ -97,11 +107,8 @@ public:
 
     const QVector<Result>& results() const { return _results; }
 
-    /// Calculate additional points which are excessive for user
-    /// because they are duplicated (already calculated via neigbor elements)
-    /// but can be useful for testing
-    bool calcMediumEnds = false;
-    bool calcEmptySpaces = false;
+    Params params() const { return _params; }
+    void setParams(const Params& params);
 
 protected:
     QString _errorText;
@@ -109,6 +116,7 @@ protected:
     Z::PairTS<std::shared_ptr<PumpCalculator>> _pumpCalc;
     std::shared_ptr<AbcdBeamCalculator> _beamCalc;
     QList<Element*> _activeElements; // valid only during calculate() call
+    Params _params;
 
     bool prepareSinglePass();
     bool prepareResonator();

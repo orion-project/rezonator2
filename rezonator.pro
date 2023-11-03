@@ -124,6 +124,7 @@ HEADERS += \
     src/funcs/StabilityMap2DFunction.h \
     src/funcs/StabilityMapFunction.h \
     src/funcs/TableFunction.h \
+    src/funcs_window/BeamParamsAtElemsWindow.h \
     src/funcs_window/BeamShapeExtension.h \
     src/funcs_window/CausticWindow.h \
     src/funcs_window/FuncWindowHelpers.h \
@@ -256,6 +257,7 @@ SOURCES += \
     src/funcs/StabilityMap2DFunction.cpp \
     src/funcs/StabilityMapFunction.cpp \
     src/funcs/TableFunction.cpp \
+    src/funcs_window/BeamParamsAtElemsWindow.cpp \
     src/funcs_window/BeamShapeExtension.cpp \
     src/funcs_window/CausticWindow.cpp \
     src/funcs_window/FuncWindowHelpers.cpp \

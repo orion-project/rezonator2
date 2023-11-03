@@ -2,10 +2,10 @@
 
 #include "FuncWindowHelpers.h"
 #include "../Appearance.h"
+#include "../CustomPrefs.h"
 #include "../core/Format.h"
 #include "../funcs/InfoFunctions.h"
 #include "../widgets/FrozenStateButton.h"
-#include "../widgets/RichTextItemDelegate.h"
 
 #include "helpers/OriWidgets.h"
 #include "helpers/OriLayouts.h"
@@ -21,12 +21,12 @@
 
 using namespace Ori::Gui;
 
-static const QPixmap& resultPosPixmap(TableFunction::ResultPosition pos)
+static const QIcon& resultPosIcon(TableFunction::ResultPosition pos)
 {
-    static QMap<TableFunction::ResultPosition, QPixmap> pixmaps;
-    if (!pixmaps.contains(pos))
-        pixmaps[pos] = QPixmap(TableFunction::resultPositionInfo(pos).pixmap);
-    return pixmaps[pos];
+    static QMap<TableFunction::ResultPosition, QIcon> icons;
+    if (!icons.contains(pos))
+        icons[pos] = QIcon(TableFunction::resultPositionInfo(pos).icon_path);
+    return icons[pos];
 }
 
 //------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ void TableFuncPositionColumnItemDelegate::drawDisplay(
     QItemDelegate::drawDisplay(painter, option, r, text);
 
     auto resultPosition = TableFunction::ResultPosition(_paintingIndex.data(Qt::UserRole).toInt());
-    painter->drawPixmap(r.right() - 26, r.top() + 2, resultPosPixmap(resultPosition));
+    resultPosIcon(resultPosition).paint(painter, r.right() - 26, r.top() + 2, 24, 24);
 }
 
 //------------------------------------------------------------------------------
@@ -124,11 +124,11 @@ void TableFuncResultTable::update(const QVector<TableFunction::Result>& results)
             it = new QTableWidgetItem();
             it->setFont(Z::Gui::ElemLabelFont().get());
             it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-            it->setData(Qt::UserRole, int(res.position));
-            it->setToolTip(TableFunction::resultPositionInfo(res.position).tooltip);
             setItem(row, COL_POSITION, it);
         }
         it->setText(res.element->displayLabel());
+        it->setData(Qt::UserRole, int(res.position));
+        it->setToolTip(TableFunction::resultPositionInfo(res.position).tooltip);
 
         for (int index = 0; index < res.values.size(); index++)
         {
@@ -239,18 +239,27 @@ void TableFuncWindow::createActions()
     _actnShowS->setChecked(true);
 
     _actnFreeze = toggledAction(tr("Freeze"), this, SLOT(freeze(bool)), ":/toolbar/freeze", Qt::CTRL | Qt::Key_F);
+
+    _actnCalcMediumEnds = toggledAction(tr("Calculate at medium ends"), this, SLOT(toggleCalcMediumEnds(bool)));
+    _actnCalcEmptySpaces = toggledAction(tr("Calculate in empty spaces"), this, SLOT(toggleCalcEmptySpaces(bool)));
+    _actnCalcSpaceMids = toggledAction(tr("Calculate in the middle of ranges"), this, SLOT(toggleCalcSpaceMids(bool)));
 }
 
 void TableFuncWindow::createMenuBar()
 {
     _menuTable = menu(tr("Table", "Menu title"), this, {
-        _actnUpdate, _actnFreeze, nullptr, _actnShowT, _actnShowS
+        _actnUpdate, _actnFreeze, nullptr, _actnShowT, _actnShowS, nullptr,
+            menu(tr("Options"), this, {_actnCalcMediumEnds, _actnCalcEmptySpaces, _actnCalcSpaceMids})
     });
 }
 
 void TableFuncWindow::createToolBar()
 {
     _buttonFrozenInfo = new FrozenStateButton(tr("Frozen info"), "frozen_info");
+    auto buttonParams = new QToolButton;
+    buttonParams->setMenu(menu({_actnCalcMediumEnds, _actnCalcEmptySpaces, _actnCalcSpaceMids}));
+    buttonParams->setPopupMode(QToolButton::InstantPopup);
+    buttonParams->setIcon(QIcon(":/toolbar/options"));
 
     auto t = toolbar();
     t->addAction(_actnUpdate);
@@ -260,6 +269,8 @@ void TableFuncWindow::createToolBar()
     t->addSeparator();
     t->addAction(_actnShowT);
     t->addAction(_actnShowS);
+    t->addSeparator();
+    t->addWidget(buttonParams);
 }
 
 void TableFuncWindow::createStatusBar()
@@ -353,4 +364,95 @@ void TableFuncWindow::freeze(bool frozen)
 void TableFuncWindow::updateTable()
 {
     _table->update(_function->results());
+}
+
+TableFunction::Params TableFuncWindow::readParams(const QJsonObject& obj)
+{
+    TableFunction::Params params;
+    params.calcMediumEnds = obj["calcMediumEnds"].toBool(false);
+    params.calcEmptySpaces = obj["calcEmptySpaces"].toBool(false);
+    params.calcSpaceMids = obj["calcSpaceMids"].toBool(false);
+    return params;
+}
+
+QJsonObject TableFuncWindow::writeParams(const TableFunction::Params& params)
+{
+    return QJsonObject({
+        {"calcMediumEnds", params.calcMediumEnds},
+        {"calcEmptySpaces", params.calcEmptySpaces},
+        {"calcSpaceMids", params.calcSpaceMids},
+    });
+}
+
+bool TableFuncWindow::configure()
+{
+    return configureInternal(readParams(CustomPrefs::recentObj("func_beam_params_at_elems")));
+}
+
+bool TableFuncWindow::configureInternal(const TableFunction::Params& params)
+{
+    CustomPrefs::setRecentObj("func_beam_params_at_elems", writeParams(params));
+    schema()->events().raise(SchemaEvents::Changed, "TableFuncWindow: configure");
+    _function->setParams(params);
+    updateParamsActions();
+    update();
+    return true;
+}
+
+void TableFuncWindow::updateParamsActions()
+{
+    auto params = _function->params();
+    _actnCalcMediumEnds->setChecked(params.calcMediumEnds);
+    _actnCalcEmptySpaces->setChecked(params.calcEmptySpaces);
+    _actnCalcSpaceMids->setChecked(params.calcSpaceMids);
+}
+
+void TableFuncWindow::toggleCalcMediumEnds(bool calc)
+{
+    auto params = _function->params();
+    params.calcMediumEnds = calc;
+    configureInternal(params);
+}
+
+void TableFuncWindow::toggleCalcEmptySpaces(bool calc)
+{
+    auto params = _function->params();
+    params.calcEmptySpaces = calc;
+    configureInternal(params);
+}
+
+void TableFuncWindow::toggleCalcSpaceMids(bool calc)
+{
+    auto params = _function->params();
+    params.calcSpaceMids = calc;
+    configureInternal(params);
+}
+
+bool TableFuncWindow::storableRead(const QJsonObject& root, Z::Report*)
+{
+    _function->setParams(readParams(root["function"].toObject()));
+    updateParamsActions();
+
+    auto modeTS = root["window"].toObject()["ts_mode"].toString();
+    bool modeT = true, modeS = true;
+    if (modeTS == "T") modeS = false;
+    else if (modeTS == "S") modeT = false;
+    _actnShowT->setChecked(modeT);
+    _actnShowS->setChecked(modeS);
+    showModeTS();
+
+    return true;
+}
+
+bool TableFuncWindow::storableWrite(QJsonObject& root, Z::Report*)
+{
+    root["function"] = writeParams(_function->params());
+
+    bool modeT = _actnShowT->isChecked();
+    bool modeS = _actnShowS->isChecked();
+    root["window"] = QJsonObject({
+        { "ts_mode", (modeT && modeS)? "T+S": (modeT ? "T" : "S") }
+    });
+
+    return true;
 }

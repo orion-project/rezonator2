@@ -3,10 +3,9 @@
 #include "../Appearance.h"
 #include "../HelpSystem.h"
 #include "../core/Schema.h"
-#include "../funcs/FormatInfo.h"
+#include "../funcs/InfoFunctions.h"
 #include "../widgets/FrozenStateButton.h"
 
-#include "widgets/OriFlatToolBar.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 #include "helpers/OriTools.h"
@@ -18,6 +17,7 @@
 #include <QBoxLayout>
 #include <QClipboard>
 #include <QTextBrowser>
+#include <QToolBar>
 
 static const int WINDOW_W = 540;
 static const int WINDOW_H = 260;
@@ -28,7 +28,7 @@ void InfoFuncWindow::open(InfoFunction *func, QWidget* parent)
 }
 
 InfoFuncWindow::InfoFuncWindow(InfoFunction *func, QWidget *parent) :
-    SchemaPopupWindow(parent, Qt::Tool), SchemaToolWindow(func->schema()), _function(func)
+    ShortcutHandlerWindow(parent, Qt::Tool), SchemaToolWindow(func->schema()), _function(func)
 {
     setWindowTitle(_function->name());
     setAttribute(Qt::WA_DeleteOnClose);

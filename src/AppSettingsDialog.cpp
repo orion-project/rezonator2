@@ -58,7 +58,7 @@ AppSettingsDialog::AppSettingsDialog(QWidget* parent, Ori::Dlg::PageId currentPa
                     //createLayoutPage(), the only settings "transparent background" is not applicable to clipboard export (at least on Windows)
                     createUnitsPage(),
                     createExportPage(),
-                    createCalcPage(),
+                    //createCalcPage(),
                 });
 
     setCurrentPageId(currentPageId);
@@ -189,8 +189,6 @@ QWidget* AppSettingsDialog::createCalcPage()
     auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageCalc, tr("Calcs"), ":/toolbar/options");
 
     _groupCalcOpts = new Ori::Widgets::OptionsGroupV2(tr("Options"), {
-        {"calcTablesMediumEnds", tr("Calculate at medium ends in table functions")},
-        {"calcTablesEmptySpaces", tr("Calculate in empty spaces in table functions")},
     });
 
     page->add({_groupCalcOpts, page->stretch()});
@@ -236,10 +234,6 @@ void AppSettingsDialog::populate()
     _groupExportData->setOption("exportTransposed", settings.exportTransposed);
     _exportNumberPrecision->setValue(settings.exportNumberPrecision);
     _groupExportPlot->setOption("exportHideCursor", settings.exportHideCursor);
-
-    // calc
-    _groupCalcOpts->setOption("calcTablesMediumEnds", settings.calcTablesMediumEnds);
-    _groupCalcOpts->setOption("calcTablesEmptySpaces", settings.calcTablesEmptySpaces);
 }
 
 bool AppSettingsDialog::collect()
@@ -281,10 +275,6 @@ bool AppSettingsDialog::collect()
     settings.exportTransposed = _groupExportData->option("exportTransposed");
     settings.exportNumberPrecision = _exportNumberPrecision->value();
     settings.exportHideCursor = _groupExportPlot->option("exportHideCursor");
-
-    // calc
-    settings.calcTablesMediumEnds = _groupCalcOpts->option("calcTablesMediumEnds");
-    settings.calcTablesEmptySpaces = _groupCalcOpts->option("calcTablesEmptySpaces");
 
     settings.save();
     return true;

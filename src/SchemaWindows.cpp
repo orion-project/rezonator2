@@ -373,20 +373,20 @@ void SchemaMdiArea::updateBackground()
 }
 
 //------------------------------------------------------------------------------
-//                               SchemaPopupWindow
+//                               ShortcutHandlerWindow
 //------------------------------------------------------------------------------
 
-SchemaPopupWindow::SchemaPopupWindow(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f)
+ShortcutHandlerWindow::ShortcutHandlerWindow(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f)
 {
 }
 
-void SchemaPopupWindow::registerShortcut(QKeySequence::StandardKey stdKey, QAction*action)
+void ShortcutHandlerWindow::registerShortcut(QKeySequence::StandardKey stdKey, QAction*action)
 {
     _actionShortcuts.append(stdKey);
     _actionWithShortcuts.insert(stdKey, action);
 }
 
-bool SchemaPopupWindow::event(QEvent *event)
+bool ShortcutHandlerWindow::event(QEvent *event)
 {
     if (event->type() == QEvent::ShortcutOverride)
     {
@@ -406,7 +406,7 @@ bool SchemaPopupWindow::event(QEvent *event)
     return QWidget::event(event);
 }
 
-void SchemaPopupWindow::keyPressEvent(QKeyEvent *event)
+void ShortcutHandlerWindow::keyPressEvent(QKeyEvent *event)
 {
     Q_FOREACH (auto shortcut, _actionShortcuts)
     {

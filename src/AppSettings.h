@@ -67,9 +67,6 @@ public:
     bool showImagUnitAsJ;
     bool showImagUnitAtEnd;
 
-    bool calcTablesMediumEnds;
-    bool calcTablesEmptySpaces;
-
     Z::Unit defaultUnitFrontRadius = Z::Units::none();
     Z::Unit defaultUnitBeamRadius = Z::Units::none();
     Z::Unit defaultUnitAngle = Z::Units::none();

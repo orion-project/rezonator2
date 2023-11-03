@@ -2,7 +2,7 @@
 #define INFO_FUNC_WINDOW_H
 
 #include "../SchemaWindows.h"
-#include "../funcs/InfoFunctions.h"
+#include "../funcs/FunctionBase.h"
 
 QT_BEGIN_NAMESPACE
 class QTextBrowser;
@@ -13,8 +13,9 @@ QT_END_NAMESPACE
 
 class Schema;
 class FrozenStateButton;
+class FunctionBase;
 
-class InfoFuncWindow : public SchemaPopupWindow, public SchemaToolWindow, public FunctionListener
+class InfoFuncWindow : public ShortcutHandlerWindow, public SchemaToolWindow, public FunctionListener
 {
     Q_OBJECT
 

@@ -3,6 +3,7 @@
 
 #include "../SchemaWindows.h"
 #include "../funcs/TableFunction.h"
+#include "../io/ISchemaWindowStorable.h"
 
 #include <QTableWidget>
 #include <QItemDelegate>
@@ -20,6 +21,8 @@ class StatusBar;
 class FrozenStateButton;
 class TableFunction;
 
+//------------------------------------------------------------------------------
+
 class TableFuncPositionColumnItemDelegate : public QItemDelegate
 {
 public:
@@ -34,6 +37,7 @@ private:
     mutable QModelIndex _paintingIndex;
 };
 
+//------------------------------------------------------------------------------
 
 class TableFuncResultTable: public QTableWidget
 {
@@ -57,8 +61,9 @@ private:
     void showContextMenu(const QPoint& pos);
 };
 
+//------------------------------------------------------------------------------
 
-class TableFuncWindow : public SchemaMdiChild, public IEditableWindow
+class TableFuncWindow : public SchemaMdiChild, public IEditableWindow, public ISchemaWindowStorable
 {
     Q_OBJECT
 
@@ -67,6 +72,8 @@ public:
     ~TableFuncWindow() override;
 
     TableFunction* function() const { return _function; }
+
+    bool configure();
 
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return QList<QMenu*>() << _menuTable; }
@@ -80,6 +87,11 @@ public:
     void copy() override { _table->copy(); }
     void selectAll() override { _table->selectAll(); }
 
+    // implementation of ISchemaWindowStorable
+    QString storableType() const override { return _function->alias(); }
+    bool storableRead(const QJsonObject& root, Z::Report*) override;
+    bool storableWrite(QJsonObject& root, Z::Report*) override;
+
 public slots:
     void update();
 
@@ -87,11 +99,15 @@ private slots:
     void activateModeT();
     void activateModeS();
     void freeze(bool);
+    void toggleCalcMediumEnds(bool);
+    void toggleCalcEmptySpaces(bool);
+    void toggleCalcSpaceMids(bool);
 
-private:
+protected:
     TableFunction *_function;
     QMenu *_menuTable;
-    QAction *_actnUpdate, *_actnShowT, *_actnShowS, *_actnFreeze, *_actnFrozenInfo;
+    QAction *_actnUpdate, *_actnShowT, *_actnShowS, *_actnFreeze, *_actnFrozenInfo,
+        *_actnCalcMediumEnds, *_actnCalcEmptySpaces, *_actnCalcSpaceMids;
     FrozenStateButton* _buttonFrozenInfo;
     Ori::Widgets::StatusBar *_statusBar;
     TableFuncResultTable *_table;
@@ -108,6 +124,12 @@ private:
     void showModeTS();
     void updateModeTS();
     void updateTable();
+    void updateParamsActions();
+
+    virtual bool configureInternal(const TableFunction::Params&);
+
+    static TableFunction::Params readParams(const QJsonObject& obj);
+    static QJsonObject writeParams(const TableFunction::Params& params);
 };
 
 #endif // TABLE_FUNC_WINDOW_H

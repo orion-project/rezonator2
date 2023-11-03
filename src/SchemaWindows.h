@@ -282,12 +282,12 @@ private:
     TODO: Currently, it works only with shortcuts set as `QKeySequence::StandardKey`, and it should be extended
     to process arbitrary shortcuts. However, it'd be better to find a more robust and straightforward solution.
 */
-class SchemaPopupWindow : public QWidget
+class ShortcutHandlerWindow : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit SchemaPopupWindow(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+    explicit ShortcutHandlerWindow(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 
 protected:
     bool event(QEvent *event) override;
@@ -306,7 +306,7 @@ private:
     Qt can't process shortcuts on a popup window if there is the same shortcut on the main window.
     It works when the popup window has no parent so it's another main window in the app.
     But it fails for tool windows which have the project window as their parent.
-    TODO: SchemaPopupWindow gives the similar functionality but for standard key sequences.
+    TODO: ShortcutHandlerWindow gives the similar functionality but for standard key sequences.
     I'd be better to merge both classes and provide single and complete solution for any shortcuts.
 */
 class IShortcutListener

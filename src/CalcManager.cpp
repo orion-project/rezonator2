@@ -9,6 +9,7 @@
 #include "funcs/MultirangeCausticFunction.h"
 #include "funcs/StabilityMapFunction.h"
 #include "funcs/StabilityMap2DFunction.h"
+#include "funcs/BeamParamsAtElemsFunction.h"
 #include "funcs_window/BeamVariationWindow.h"
 #include "funcs_window/CausticWindow.h"
 #include "funcs_window/InfoFuncWindow.h"
@@ -17,7 +18,7 @@
 #include "funcs_window/MultirangeCausticWindow.h"
 #include "funcs_window/StabilityMapWindow.h"
 #include "funcs_window/StabilityMap2DWindow.h"
-#include "funcs_window/TableFuncWindow.h"
+#include "funcs_window/BeamParamsAtElemsWindow.h"
 
 template <class TWindow> SchemaWindow* windowConstructor(Schema* schema)
 {
@@ -45,6 +46,7 @@ CalcManager::CalcManager(Schema *schema, QWidget *parent) :
     registerWindowConstructor<MultirangeCausticWindow, MultirangeCausticFunction>();
     registerWindowConstructor<MultibeamCausticWindow, MultibeamCausticFunction>();
     registerWindowConstructor<BeamVariationWindow, BeamVariationFunction>();
+    registerWindowConstructor<BeamParamsAtElemsWindow, BeamParamsAtElemsFunction>();
 }
 
 void CalcManager::funcSummary()
@@ -165,8 +167,19 @@ template <class TFunction> void CalcManager::showTableFunc()
 {
     RETURN_IF_SCHEMA_EMPTY
 
-    auto wnd = new TableFuncWindow(new TFunction(schema()));
+    auto ctor = WindowsManager::getConstructor(TFunction::_alias_());
+    if (!ctor) return;
+
+    auto wnd = ctor(schema());
+    if (!wnd) return;
+
+    auto tableWnd = dynamic_cast<TableFuncWindow*>(wnd);
+    if (!tableWnd->configure())
+    {
+        delete wnd;
+        return;
+    }
 
     WindowsManager::instance().show(wnd);
-    wnd->update();
+    tableWnd->update();
 }

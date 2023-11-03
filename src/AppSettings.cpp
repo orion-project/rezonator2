@@ -96,10 +96,6 @@ void AppSettings::load()
     defaultUnitBeamRadius = Z::Units::findByAlias(s.settings()->value("defaultUnitBeamRadius").toString(), Z::Units::mkm());
     defaultUnitFrontRadius = Z::Units::findByAlias(s.settings()->value("defaultUnitFrontRadius").toString(), Z::Units::m());
     defaultUnitAngle = Z::Units::findByAlias(s.settings()->value("defaultUnitAngle").toString(), Z::Units::deg());
-
-    s.beginGroup("Calc");
-    LOAD_DEF(calcTablesMediumEnds, Bool, false);
-    LOAD_DEF(calcTablesEmptySpaces, Bool, false);
 }
 
 void AppSettings::save()
@@ -157,10 +153,6 @@ void AppSettings::save()
     s.settings()->setValue("defaultUnitBeamRadius", defaultUnitBeamRadius->alias());
     s.settings()->setValue("defaultUnitFrontRadius", defaultUnitFrontRadius->alias());
     s.settings()->setValue("defaultUnitAngle", defaultUnitAngle->alias());
-
-    s.beginGroup("Calc");
-    SAVE(calcTablesMediumEnds);
-    SAVE(calcTablesEmptySpaces);
 }
 
 bool AppSettings::edit(Ori::Optional<int> currentPageId)
