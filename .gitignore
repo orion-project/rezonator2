@@ -30,3 +30,5 @@ moc_*
 qrc_*
 Makefile
 .qmake.stash
+*.drawio.bkp
+*.drawio.dtmp

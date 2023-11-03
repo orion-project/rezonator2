@@ -122,12 +122,6 @@ bool PlotFunction::checkArgParam()
     return true;
 }
 
-void PlotFunction::setError(const QString& error)
-{
-    if (!error.isEmpty()) Z_ERROR(QString("%1: %2").arg(name(), error))
-    _errorText = error;
-}
-
 void PlotFunction::clearResults()
 {
     _results.T.reset();

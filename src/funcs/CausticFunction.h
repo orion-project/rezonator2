@@ -31,6 +31,8 @@ public:
 
     void calculate() override;
     bool hasOptions() const override { return true; }
+    bool hasNotables() const override { return true; }
+    QString calculateNotables(Z::Unit unitX, Z::Unit unitY) override;
 
     Mode mode() const { return _mode; }
     void setMode(Mode mode) { _mode = mode; }
@@ -46,7 +48,7 @@ private:
     double _ior = 0;
 
     PumpParams* _pump = nullptr;
-    Z::PairTS<std::shared_ptr<PumpCalculator>> _pumpCalc;
+    std::shared_ptr<PumpCalculator> _pumpCalc;
     std::shared_ptr<AbcdBeamCalculator> _beamCalc;
     bool _writeProtocol = false;
 
@@ -54,6 +56,7 @@ private:
     bool prepareResonator();
     inline Z::PointTS calculateSinglePass() const;
     inline Z::PointTS calculateResonator() const;
+    Z::VariableRange givenRange();
 };
 
 #endif // CAUSTIC_FUNCTION_H

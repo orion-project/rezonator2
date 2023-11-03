@@ -56,10 +56,16 @@ public:
 
     virtual QString helpTopic() const { return QString(); }
 
+    bool ok() const { return _errorText.isEmpty(); }
+    const QString& errorText() const { return _errorText; }
+
 protected:
     Schema *_schema;
+    QString _errorText;
 
     FunctionBase(Schema *schema) : _schema(schema) {}
+
+    void setError(const QString& error);
 };
 
 struct InfoFuncAction

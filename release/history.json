@@ -24,6 +24,9 @@
         },
         {
           "text": "Fix: wrong context menu on the last element in elements table"
+        },
+        {
+          "text": "Fix: Beamsize Variation: axicon matrices were not recalculated during variaton"
         }
       ]
     },

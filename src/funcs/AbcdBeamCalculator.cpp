@@ -1,7 +1,6 @@
 #include "AbcdBeamCalculator.h"
 
 #include "../core/Math.h"
-#include "../core/Format.h"
 
 #include <QDebug>
 

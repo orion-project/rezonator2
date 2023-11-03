@@ -1,9 +1,10 @@
 #include "BeamVariationFunction.h"
 
-#include "../core/Schema.h"
+#include "AbcdBeamCalculator.h"
+#include "FunctionUtils.h"
 #include "PumpCalculator.h"
 #include "RoundTripCalculator.h"
-#include "AbcdBeamCalculator.h"
+#include "../core/Schema.h"
 
 void BeamVariationFunction::calculate()
 {
@@ -28,10 +29,10 @@ void BeamVariationFunction::calculate()
         _ior = rangeElem->ior();
     }
 
-    auto tripType = _schema->tripType();
-    bool prepared = tripType == TripType::SP
-            ? prepareSinglePass()
-            : prepareResonator();
+    auto isResonator = _schema->isResonator();
+    bool prepared = isResonator
+            ? prepareResonator()
+            : prepareSinglePass();
     if (!prepared) return;
 
     auto param = arg()->parameter;
@@ -48,13 +49,16 @@ void BeamVariationFunction::calculate()
         _calc->multMatrix();
 
         Z::PointTS res;
-        switch (tripType)
+        if (isResonator)
+            res = calculateResonator();
+        else
         {
-        case TripType::SW:
-        case TripType::RR: res = calculateResonator(); break;
-        case TripType::SP: res = calculateSinglePass(); break;
+            // Is the variating element located further than a dynamic element
+            // it does not affect the dynamic element matrices
+            // But we calculate dynamic matrices anyway, for simplicity
+            FunctionUtils::prepareDynamicElements(_schema, nullptr, _pumpCalc.get());
+            res = calculateSinglePass();
         }
-
         addResultPoint(x, res);
     }
 
@@ -72,13 +76,9 @@ Z::PointTS BeamVariationFunction::calculateAt(const Z::Value& v)
         rangeElem->setSubRangeSI(_pos.offset.toSi());
     param->setValue(v);
     _calc->multMatrix();
-    switch (_schema->tripType())
-    {
-    case TripType::SW:
-    case TripType::RR: return calculateResonator();
-    case TripType::SP: return calculateSinglePass();
-    }
-    return { Double::nan(), Double::nan() };
+    if (_schema->isResonator())
+        return calculateResonator();
+    return calculateSinglePass();
 }
 
 bool BeamVariationFunction::prepareSinglePass()
@@ -91,28 +91,20 @@ bool BeamVariationFunction::prepareSinglePass()
             "Use 'Pumps' window to create a new pump or activate one of the existing ones."));
         return false;
     }
-    if (!_pumpCalc.T) _pumpCalc.T = PumpCalculator::T();
-    if (!_pumpCalc.S) _pumpCalc.S = PumpCalculator::S();
-    if (!_pumpCalc.T->init(pump, schema()->wavelenSi()) ||
-        !_pumpCalc.S->init(pump, schema()->wavelenSi()))
-    {
-        setError("Unsupported pump mode");
-        return false;
-    }
+    // Do not prepare dynamic elements here, the will be prepared at each plot step
+    _pumpCalc.reset(new PumpCalculator(pump, schema()->wavelenSi()));
     return true;
 }
 
 bool BeamVariationFunction::prepareResonator()
 {
-    _beamCalc.reset(new AbcdBeamCalculator(schema()->wavelength().value().toSi()));
+    _beamCalc.reset(new AbcdBeamCalculator(schema()->wavelenSi()));
     return true;
 }
 
 Z::PointTS BeamVariationFunction::calculateSinglePass() const
 {
-    BeamResult beamT = _pumpCalc.T->calc(_calc->Mt(), _ior);
-    BeamResult beamS = _pumpCalc.S->calc(_calc->Ms(), _ior);
-    return { beamT.beamRadius, beamS.beamRadius };
+    return _pumpCalc->beamRadius(_calc->Mt(), _calc->Ms(), _ior);
 }
 
 Z::PointTS BeamVariationFunction::calculateResonator() const

@@ -1,5 +1,6 @@
 #include "FunctionBase.h"
 #include "../core/Schema.h"
+#include "../core/Protocol.h"
 
 //------------------------------------------------------------------------------
 //                               FunctionListener
@@ -16,6 +17,12 @@ FunctionListener::~FunctionListener()
 FunctionBase::~FunctionBase()
 {
     NOTIFY_LISTENERS_1(functionDeleted, this);
+}
+
+void FunctionBase::setError(const QString& error)
+{
+    if (!error.isEmpty()) Z_ERROR(QString("%1: %2").arg(name(), error))
+    _errorText = error;
 }
 
 //------------------------------------------------------------------------------

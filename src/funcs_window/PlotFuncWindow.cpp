@@ -446,7 +446,7 @@ void PlotFuncWindow::updateNotables()
         return;
     }
     if (_leftPanel->infoPanel() && _leftPanel->infoPanel()->isVisible())
-        _leftPanel->infoPanel()->setHtml(_function->calculateNotables());
+        _leftPanel->infoPanel()->setHtml(_function->calculateNotables(getUnitX(), getUnitY()));
 }
 
 void PlotFuncWindow::updateStatusUnits()

@@ -73,7 +73,7 @@ public:
     /// Calculate some notable values.
     /// E.g. for stability maps these values are stability boundaries,
     /// for caustic these are waist radius and position.
-    virtual QString calculateNotables() { return QString(); }
+    virtual QString calculateNotables(Z::Unit unitX, Z::Unit unitY) { Q_UNUSED(unitX) Q_UNUSED(unitY) return QString(); }
 
     virtual QString calculatePoint(const double&) { return QString(); }
 
@@ -96,9 +96,6 @@ public:
 
     void clearResults();
 
-    bool ok() const { return _errorText.isEmpty(); }
-    const QString& errorText() const { return _errorText; }
-
     Z::Variable* arg() { return &_arg; }
     const FunctionRange& range() const { return _range; }
 
@@ -114,8 +111,6 @@ protected:
     FunctionRange _range;
     Z::Value _backupValue;
 
-    void setError(const QString& error);
-
     bool prepareResults(Z::PlottingRange range);
     void finishResults();
     void addResultPoint(double x, double y_t, double y_s);
@@ -124,9 +119,6 @@ protected:
     const PlotFuncResultSet *results(Z::WorkPlane plane) const;
     bool checkArgElem();
     bool checkArgParam();
-
-private:
-    QString _errorText;
 };
 
 #endif // PLOT_FUNCTION_H

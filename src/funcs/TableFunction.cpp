@@ -7,7 +7,6 @@
 #include "../AppSettings.h"
 #include "../core/Schema.h"
 #include "../core/Elements.h"
-#include "../core/Protocol.h"
 #include "../core/ElementsCatalog.h"
 
 #include <QDebug>
@@ -54,14 +53,17 @@ void TableFunction::setParams(const Params& params)
 
 bool TableFunction::prepareSinglePass()
 {
-    QString res = FunctionUtils::preparePumpCalculator(schema(), nullptr, _pumpCalc);
-    if (!res.isEmpty())
+    auto pump = _schema->activePump();
+    if (!pump)
     {
-        _errorText = res;
+        setError(qApp->translate("Calc error",
+                                 "There is no active pump in the schema. "
+                                 "Use 'Pumps' window to create a new pump or activate one of the existing ones."));
         return false;
     }
 
-    FunctionUtils::prepareDynamicElements(schema(), nullptr, _pumpCalc);
+    _pumpCalc.reset(new PumpCalculator(pump, schema()->wavelenSi()));
+    FunctionUtils::prepareDynamicElements(schema(), nullptr, _pumpCalc.get());
     return true;
 }
 
@@ -85,7 +87,7 @@ void TableFunction::calculate()
     #define CHECK_ERR(f) {\
         QString res = f;\
         if (!res.isEmpty()) {\
-            _errorText = res;\
+            setError(res);\
             break;\
         }\
     }
@@ -152,11 +154,8 @@ void TableFunction::calculate()
 
     #undef CHECK_ERR
 
-    if (!_errorText.isEmpty())
-    {
-        Z_ERROR(name() + ": " + _errorText)
+    if (!ok())
         _results.clear();
-    }
 }
 
 Element* TableFunction::prevElement(int index)
@@ -425,8 +424,8 @@ void TableFunction::calculateAt(CalcElem calcElem, ResultElem resultElem, Option
 void TableFunction::calculatePumpBeforeSchema(Element* elem, ResultPosition resultPos)
 {
     Z::Matrix unity;
-    BeamResult beamT = _pumpCalc.T->calc(unity, 1);
-    BeamResult beamS = _pumpCalc.S->calc(unity, 1);
+    BeamResult beamT = _pumpCalc->calcT(unity, 1);
+    BeamResult beamS = _pumpCalc->calcS(unity, 1);
 
     Result res;
     res.element = elem;
@@ -441,8 +440,8 @@ void TableFunction::calculatePumpBeforeSchema(Element* elem, ResultPosition resu
 
 QVector<Z::PointTS> TableFunction::calculateSinglePass(RoundTripCalculator* calc, double ior) const
 {
-    BeamResult beamT = _pumpCalc.T->calc(calc->Mt(), ior);
-    BeamResult beamS = _pumpCalc.S->calc(calc->Ms(), ior);
+    BeamResult beamT = _pumpCalc->calcT(calc->Mt(), ior);
+    BeamResult beamS = _pumpCalc->calcS(calc->Ms(), ior);
     return {
         { beamT.beamRadius, beamS.beamRadius },
         { beamT.frontRadius, beamS.frontRadius },

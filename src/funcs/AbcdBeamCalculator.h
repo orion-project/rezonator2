@@ -19,7 +19,6 @@ public:
     Z::PointTS beamRadius(const Z::Matrix& mt, const Z::Matrix& ms, double ior) const;
     Z::PointTS frontRadius(const Z::Matrix &mt, const Z::Matrix& ms, double ior) const;
     Z::PointTS halfAngle(const Z::Matrix &mt, const Z::Matrix& ms, double ior) const;
-
 private:
     double _wavelenSI;
 };

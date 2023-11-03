@@ -100,9 +100,6 @@ public:
 
     virtual void calculate();
 
-    bool ok() const { return _errorText.isEmpty(); }
-    const QString& errorText() const { return _errorText; }
-
     virtual QVector<ColumnDef> columns() const;
 
     const QVector<Result>& results() const { return _results; }
@@ -111,9 +108,8 @@ public:
     void setParams(const Params& params);
 
 protected:
-    QString _errorText;
     QVector<Result> _results;
-    Z::PairTS<std::shared_ptr<PumpCalculator>> _pumpCalc;
+    std::shared_ptr<PumpCalculator> _pumpCalc;
     std::shared_ptr<AbcdBeamCalculator> _beamCalc;
     QList<Element*> _activeElements; // valid only during calculate() call
     Params _params;
