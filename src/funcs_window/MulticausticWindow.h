@@ -11,6 +11,14 @@ class MulticausticWindow : public PlotFuncWindowStorable
     Q_OBJECT
 
 public:
+    struct FuncOffset
+    {
+        CausticFunction *func;
+        ValueSi offset;
+        ValueSi position;
+    };
+
+public:
     MulticausticWindow(MultirangeCausticFunction* function);
 
     MultirangeCausticFunction* function() const { return dynamic_cast<MultirangeCausticFunction*>(_function); }
@@ -41,7 +49,7 @@ protected:
     QString readWindowSpecific(const QJsonObject& root) override;
     QString writeWindowSpecific(QJsonObject& root) override;
 
-    QPair<CausticFunction *, double> findFuncAndOffsetSi(const Z::Value& x) const;
+    FuncOffset findFuncOffset(const Z::Value& x) const;
 private:
     QList<QCPItemStraightLine*> _elemBoundMarkers;
     QAction* _actnElemBoundMarkers;

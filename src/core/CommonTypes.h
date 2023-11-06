@@ -10,6 +10,8 @@ namespace Z {
 enum WorkPlane { Plane_T, Plane_S };
 }
 
+using ValueSi = double;
+
 enum class TripType
 {
     SW, ///< Standing wave system

@@ -11,7 +11,7 @@
           "text": "Can change visual settings of plot elements (axes, title, legend) and save them in schema files"
         },
         {
-          "text": "Cursor panel shows offset inside element under cursor in Multirange caustic window"
+          "text": "Cursor panel can show and set offset inside element under cursor in Multirange caustic window"
         },
         {
           "text": "An option added to the Point element to draw it as plane"

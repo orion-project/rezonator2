@@ -22,6 +22,8 @@ protected:
 
 private:
     class BeamShapeExtension *_beamShape;
+
+    void handleCursorPanelCommand(const QString& cmd);
 };
 
 #endif // MULTIRANGE_CAUSTIC_WINDOW_H
