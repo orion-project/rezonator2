@@ -29,7 +29,7 @@ void BeamVariationFunction::calculate()
         _ior = rangeElem->ior();
     }
 
-    auto isResonator = _schema->isResonator();
+    bool isResonator = _schema->isResonator();
     bool prepared = isResonator
             ? prepareResonator()
             : prepareSinglePass();
@@ -37,29 +37,23 @@ void BeamVariationFunction::calculate()
 
     auto param = arg()->parameter;
     auto elem = arg()->element;
+    auto unitX = range.unit();
 
     ElementEventsLocker elemLock(elem);
     Z::ParamValueBackup paramLock(param);
 
     for (auto x : range.values())
     {
-        auto value = Z::Value(x, range.unit());
-
-        param->setValue(value);
-        _calc->multMatrix();
-
-        Z::PointTS res;
-        if (isResonator)
-            res = calculateResonator();
-        else
+        param->setValue({x, unitX});
+        if (!isResonator)
         {
             // Is the variating element located further than a dynamic element
             // it does not affect the dynamic element matrices
             // But we calculate dynamic matrices anyway, for simplicity
             FunctionUtils::prepareDynamicElements(_schema, nullptr, _pumpCalc.get());
-            res = calculateSinglePass();
         }
-        addResultPoint(x, res);
+        _calc->multMatrix();
+        addResultPoint(x, isResonator ? calculateResonator() : calculateSinglePass());
     }
 
     finishResults();
@@ -75,10 +69,16 @@ Z::PointTS BeamVariationFunction::calculateAt(const Z::Value& v)
     if (rangeElem)
         rangeElem->setSubRangeSI(_pos.offset.toSi());
     param->setValue(v);
+    bool isResonator = _schema->isResonator();
+    if (!isResonator)
+    {
+        // Is the variating element located further than a dynamic element
+        // it does not affect the dynamic element matrices
+        // But we calculate dynamic matrices anyway, for simplicity
+        FunctionUtils::prepareDynamicElements(_schema, nullptr, _pumpCalc.get());
+    }
     _calc->multMatrix();
-    if (_schema->isResonator())
-        return calculateResonator();
-    return calculateSinglePass();
+    return isResonator ? calculateResonator() : calculateSinglePass();
 }
 
 bool BeamVariationFunction::prepareSinglePass()
