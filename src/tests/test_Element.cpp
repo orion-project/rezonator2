@@ -1,6 +1,7 @@
-#include "testing/OriTestBase.h"
 #include "../core/Element.h"
-#include "TestUtils.h"
+#include "../tests/TestUtils.h"
+
+#include "testing/OriTestBase.h"
 
 #pragma GCC diagnostic ignored "-Wpadded"
 

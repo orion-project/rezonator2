@@ -1,9 +1,9 @@
 #include "SchemaReaderIni.h"
 
+#include "../app/AppSettings.h"
 #include "../core/Schema.h"
 #include "../core/Elements.h"
 #include "../core/ElementsCatalog.h"
-#include "../AppSettings.h"
 
 #include <QFile>
 #include <QPointer>

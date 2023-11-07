@@ -1,6 +1,7 @@
 #include "../core/Math.h"
 #include "../core/Pump.h"
-#include "../funcs/PumpCalculator.h"
+#include "../math/PumpCalculator.h"
+
 #include "testing/OriTestBase.h"
 
 // Test values are produced by script $PROJECT/calc/PumpCalculator.py

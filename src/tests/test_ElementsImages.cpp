@@ -1,6 +1,7 @@
-#include "testing/OriTestBase.h"
 #include "../core/ElementsCatalog.h"
 #include "../widgets/SchemaLayout.h"
+
+#include "testing/OriTestBase.h"
 
 #include <QPixmap>
 #include <QSvgRenderer>

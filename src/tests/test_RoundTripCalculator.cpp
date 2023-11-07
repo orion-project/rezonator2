@@ -1,7 +1,7 @@
-#include "TestUtils.h"
 #include "../core/Schema.h"
 #include "../core/Elements.h"
-#include "../funcs/RoundTripCalculator.h"
+#include "../math/RoundTripCalculator.h"
+#include "../tests/TestUtils.h"
 
 #include "core/OriTemplates.h"
 

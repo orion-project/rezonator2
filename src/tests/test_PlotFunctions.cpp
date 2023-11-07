@@ -1,13 +1,14 @@
-#include "testing/OriTestBase.h"
-#include "TestUtils.h"
 #include "../core/Schema.h"
 #include "../core/Elements.h"
-#include "../funcs/StabilityMapFunction.h"
-#include "../funcs/StabilityMap2DFunction.h"
-#include "../funcs/CausticFunction.h"
-#include "../funcs/BeamVariationFunction.h"
-#include "../funcs/MultirangeCausticFunction.h"
-#include "../funcs/MultibeamCausticFunction.h"
+#include "../math/StabilityMapFunction.h"
+#include "../math/StabilityMap2DFunction.h"
+#include "../math/CausticFunction.h"
+#include "../math/BeamVariationFunction.h"
+#include "../math/MultirangeCausticFunction.h"
+#include "../math/MultibeamCausticFunction.h"
+#include "../tests/TestUtils.h"
+
+#include "testing/OriTestBase.h"
 
 #include <QTextStream>
 

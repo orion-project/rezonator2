@@ -1,13 +1,13 @@
 #include "ParamsTreeWidget.h"
 
 #include "RichTextItemDelegate.h"
-#include "../Appearance.h"
-#include "../CustomPrefs.h"
-#include "../HelpSystem.h"
+#include "../app/Appearance.h"
+#include "../app/CustomPrefs.h"
+#include "../app/HelpSystem.h"
 #include "../core/Schema.h"
 #include "../core/ElementFilter.h"
 #include "../core/Utils.h"
-#include "../funcs/FormatInfo.h"
+#include "../math/FormatInfo.h"
 
 #include "helpers/OriDialogs.h"
 

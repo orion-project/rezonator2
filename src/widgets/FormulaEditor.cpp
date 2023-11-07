@@ -1,7 +1,7 @@
 #include "FormulaEditor.h"
 
 #include "ParamsListWidget.h"
-#include "../Appearance.h"
+#include "../app/Appearance.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"

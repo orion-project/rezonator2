@@ -1,7 +1,8 @@
-#include "testing/OriTestBase.h"
-#include "../funcs/InfoFunctions.h"
+#include "../math/InfoFunctions.h"
 #include "../core/Schema.h"
 #include "../core/Elements.h"
+
+#include "testing/OriTestBase.h"
 
 namespace Z {
 namespace Tests {

@@ -1,7 +1,6 @@
-#include "TestSchemaListener.h"
-
-#include "../AppSettings.h"
-#include "../ProjectOperations.h"
+#include "../app/AppSettings.h"
+#include "../app/ProjectOperations.h"
+#include "../tests/TestSchemaListener.h"
 
 namespace Z {
 namespace Tests {

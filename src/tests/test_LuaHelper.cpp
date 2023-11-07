@@ -1,5 +1,6 @@
-#include "testing/OriTestBase.h"
 #include "../core/LuaHelper.h"
+
+#include "testing/OriTestBase.h"
 
 namespace Z {
 namespace Tests {

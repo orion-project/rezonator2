@@ -1,7 +1,8 @@
-#include "testing/OriTestBase.h"
-#include "TestUtils.h"
-#include "../funcs/AbcdBeamCalculator.h"
 #include "../core/Math.h"
+#include "../math/AbcdBeamCalculator.h"
+#include "../tests/TestUtils.h"
+
+#include "testing/OriTestBase.h"
 
 // Expected values for these tests calculated by `test_files/test_plot_funcs.rez`
 // with help of func 'Round-trip Matrix' and 'Beam Parameters at Element'.

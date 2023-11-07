@@ -1,8 +1,9 @@
 #ifndef TEST_SCHEMA_LISTENER_H
 #define TEST_SCHEMA_LISTENER_H
 
-#include "testing/OriTestBase.h"
 #include "../core/Schema.h"
+
+#include "testing/OriTestBase.h"
 
 namespace Z {
 namespace Tests {
