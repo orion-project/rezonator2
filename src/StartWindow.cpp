@@ -17,6 +17,7 @@
 #include "helpers/OriLayouts.h"
 #include "helpers/OriTheme.h"
 #include "helpers/OriDialogs.h"
+#include "tools/OriHighlighter.h"
 #include "tools/OriMruList.h"
 #include "tools/OriSettings.h"
 #include "widgets/OriLabels.h"
@@ -630,6 +631,7 @@ void StartWindow::editStyleSheet()
     auto editor = new QPlainTextEdit;
     editor->setFont(Z::Gui::CodeEditorFont().get());
     editor->setPlainText(Ori::Theme::loadRawStyleSheet());
+    Ori::Highlighter::setHighlighter(editor, ":/syntax/qss");
 
     auto applyButton = new QPushButton("Apply");
     connect(applyButton, &QPushButton::clicked, editor, [editor]{
@@ -648,7 +650,7 @@ void StartWindow::editStyleSheet()
             Stretch(),
             applyButton,
             saveButton,
-        }).setMargin(6)
+        }).setMargin(6).setSpacing(6)
     }).setMargin(3).setSpacing(0).makeWidget();
     wnd->setAttribute(Qt::WA_DeleteOnClose);
     wnd->setWindowTitle("Stylesheet Editor");

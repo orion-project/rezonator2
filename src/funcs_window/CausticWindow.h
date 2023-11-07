@@ -28,6 +28,8 @@ protected:
     bool configureInternal() override;
     Z::Unit getDefaultUnitX() const override;
     Z::Unit getDefaultUnitY() const override;
+    Z::Unit getDefaultUnitY(FuncMode mode) const override;
+    SpecPointParams getSpecPointsParams() override;
     void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const override;
     QList<BasicMdiChild::MenuItem> viewMenuItems() const override;
 

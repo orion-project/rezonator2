@@ -178,13 +178,27 @@ Z::Unit CausticWindow::getDefaultUnitX() const
 
 Z::Unit CausticWindow::getDefaultUnitY() const
 {
-    switch (function()->mode())
+    return getDefaultUnitY(function()->mode());
+}
+
+Z::Unit CausticWindow::getDefaultUnitY(FuncMode mode) const
+{
+    switch (mode)
     {
     case CausticFunction::BeamRadius: return AppSettings::instance().defaultUnitBeamRadius;
     case CausticFunction::FrontRadius: return AppSettings::instance().defaultUnitFrontRadius;
     case CausticFunction::HalfAngle: return AppSettings::instance().defaultUnitAngle;
     }
     return Z::Units::none();
+}
+
+SpecPointParams CausticWindow::getSpecPointsParams()
+{
+    return {
+        { CausticFunction::spUnitX, SpecPointParam(getUnitX()) },
+        { CausticFunction::spUnitW, SpecPointParam(function()->mode() == CausticFunction::BeamRadius ? getUnitY() : getUnitY(CausticFunction::BeamRadius)) },
+        { CausticFunction::spUnitR, SpecPointParam(function()->mode() == CausticFunction::FrontRadius ? getUnitY() : getUnitY(CausticFunction::FrontRadius)) },
+    };
 }
 
 void CausticWindow::getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const

@@ -48,6 +48,20 @@ struct PlotFuncResultSet
     int allPointsCount() const;
 };
 
+struct SpecPointParam
+{
+public:
+    SpecPointParam() {}
+    SpecPointParam(Z::Unit unit): _unit(unit) {}
+    SpecPointParam(bool flag): _flag(flag) {}
+    Z::Unit unit() const { return _unit ? _unit : Z::Units::m(); }
+    bool flag() const { return _flag; }
+private:
+    Z::Unit _unit = nullptr;
+    bool _flag = false;
+};
+using SpecPointParams = QMap<int, SpecPointParam>;
+
 /**
     Base class for all plotting functions.
     Plotting function is a function presenting its calculation results in graphical form.
@@ -63,8 +77,8 @@ public:
     virtual void calculate() {}
     virtual Z::PairTS<double> calculateAt(const Z::Value& arg) { Q_UNUSED(arg) return Z::PairTS<double>(); }
 
-    /// Defines if function can calculate notable values. See @ref calculateNotables().
-    virtual bool hasNotables() const { return false; }
+    /// Defines if function can calculate notable values. See @ref calculateSpecPoints().
+    virtual bool hasSpecPoints() const { return false; }
 
     /// Returns a path to function icon.
     /// Icon can be used to display in window title or menus.
@@ -73,7 +87,7 @@ public:
     /// Calculate some notable values.
     /// E.g. for stability maps these values are stability boundaries,
     /// for caustic these are waist radius and position.
-    virtual QString calculateNotables(Z::Unit unitX, Z::Unit unitY) { Q_UNUSED(unitX) Q_UNUSED(unitY) return QString(); }
+    virtual QString calculateSpecPoints(const SpecPointParams& params) { Q_UNUSED(params) return QString(); }
 
     virtual QString calculatePoint(const double&) { return QString(); }
 

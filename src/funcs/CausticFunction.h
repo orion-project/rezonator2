@@ -15,6 +15,7 @@ class CausticFunction : public PlotFunction
 
 public:
     enum Mode { BeamRadius, FrontRadius, HalfAngle, };
+    enum SpecPointParam { spUnitX, spUnitW, spUnitR };
     Q_ENUM(Mode)
 
     FUNC_ALIAS("Caustic")
@@ -31,8 +32,8 @@ public:
 
     void calculate() override;
     bool hasOptions() const override { return true; }
-    bool hasNotables() const override { return true; }
-    QString calculateNotables(Z::Unit unitX, Z::Unit unitY) override;
+    bool hasSpecPoints() const override { return true; }
+    QString calculateSpecPoints(const SpecPointParams& params) override;
 
     Mode mode() const { return _mode; }
     void setMode(Mode mode) { _mode = mode; }

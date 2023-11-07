@@ -1,0 +1,11 @@
+.plane {
+  color: blue;
+  font-size: 12pt;
+  font-weight: bold;
+}
+.param {
+  font-weight: bold;
+}
+.position {
+  color: gray;
+}

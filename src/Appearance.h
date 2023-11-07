@@ -8,6 +8,7 @@ QT_BEGIN_NAMESPACE
 class QLabel;
 class QWidget;
 class QTabWidget;
+class QTextBrowser;
 class QToolBar;
 QT_END_NAMESPACE
 
@@ -74,6 +75,8 @@ inline QString globalParamColorHtml() { return QStringLiteral("#000080"); }
 void setFocusedBackground(QWidget *w, bool focused);
 
 enum ItemDataRole { DisabledRole = Qt::UserRole+100 };
+
+void applyTextBrowserStyleSheet(QTextBrowser* browser, const QString& cssResourcePath);
 
 } // namespace Gui
 } // namespace Z

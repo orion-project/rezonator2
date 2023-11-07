@@ -4,6 +4,7 @@
 #include "FunctionUtils.h"
 #include "PumpCalculator.h"
 #include "RoundTripCalculator.h"
+#include "../AppSettings.h"
 #include "../core/Protocol.h"
 #include "../core/Schema.h"
 
@@ -180,50 +181,75 @@ QString CausticFunction::modeDisplayName(Mode mode)
     return QString();
 }
 
-QString CausticFunction::calculateNotables(Z::Unit unitX, Z::Unit unitY)
+QString CausticFunction::calculateSpecPoints(const SpecPointParams &params)
 {
-//    if (!ok()) return QString();
+    if (!ok()) return QString();
 
-//    auto range = givenRange();
-//    auto elem = Z::Utils::asRange(arg()->element);
+    auto range = givenRange();
+    auto elem = Z::Utils::asRange(arg()->element);
+    QString report;
+    QTextStream stream(&report);
 
-//    elem->setSubRangeSI(range.start.toSi());
-//    _calc->multMatrix();
+    elem->setSubRangeSI(range.start.toSi());
+    _calc->multMatrix();
 
-//    Z::PointTS leftW, rightW, leftR, rightR;
+    Z::PointTS leftW, rightW, leftR, rightR;
 
-//    if (_schema->isResonator())
-//    {
-//        leftW = _beamCalc->beamRadius(_calc->Mt(), _calc->Ms(), _ior);
-//        leftR = _beamCalc->frontRadius(_calc->Mt(), _calc->Ms(), _ior);
-//    }
-//    else
-//    {
-//        BeamResult beamT = _pumpCalc.T->calc(_calc->Mt(), _ior);
-//        BeamResult beamS = _pumpCalc.S->calc(_calc->Ms(), _ior);
-//        leftW = { beamT.beamRadius, beamS.beamRadius };
-//        leftR = { beamT.frontRadius, beamS.frontRadius };
-//    }
+    if (_schema->isResonator())
+    {
+        leftW = _beamCalc->beamRadius(_calc->Mt(), _calc->Ms(), _ior);
+        leftR = _beamCalc->frontRadius(_calc->Mt(), _calc->Ms(), _ior);
+    }
+    else
+    {
+        BeamResult beamT = _pumpCalc->calcT(_calc->Mt(), _ior);
+        BeamResult beamS = _pumpCalc->calcS(_calc->Ms(), _ior);
+        leftW = { beamT.beamRadius, beamS.beamRadius };
+        leftR = { beamT.frontRadius, beamS.frontRadius };
+    }
 
-//    elem->setSubRange(range.stop.toSi());
-//    _calc->multMatrix();
+    elem->setSubRange(range.stop.toSi());
+    _calc->multMatrix();
 
-//    if (_schema->isResonator())
-//    {
-//        rightW = _beamCalc->beamRadius(_calc->Mt(), _calc->Ms(), _ior);
-//        rightR = _beamCalc->frontRadius(_calc->Mt(), _calc->Ms(), _ior);
-//    }
-//    else
-//    {
-//        BeamResult beamT = _pumpCalc.T->calc(_calc->Mt(), _ior);
-//        BeamResult beamS = _pumpCalc.S->calc(_calc->Ms(), _ior);
-//        rightW = { beamT.beamRadius, beamS.beamRadius };
-//        rightR = { beamT.frontRadius, beamS.frontRadius };
-//    }
+    if (_schema->isResonator())
+    {
+        rightW = _beamCalc->beamRadius(_calc->Mt(), _calc->Ms(), _ior);
+        rightR = _beamCalc->frontRadius(_calc->Mt(), _calc->Ms(), _ior);
+    }
+    else
+    {
+        BeamResult beamT = _pumpCalc->calcT(_calc->Mt(), _ior);
+        BeamResult beamS = _pumpCalc->calcS(_calc->Ms(), _ior);
+        rightW = { beamT.beamRadius, beamS.beamRadius };
+        rightR = { beamT.frontRadius, beamS.frontRadius };
+    }
 
-//    if (_schema->isResonator() || _pumpCalc.isGauss())
-//    {
+    if (_schema->isResonator() || _pumpCalc->isGauss())
+    {
+        // TODO: find waist
+    }
 
-//    }
-    return QString();
+    Z::Unit unitX = params.value(spUnitX).unit();
+    Z::Unit unitW = params.value(spUnitW).unit();
+    Z::Unit unitR = params.value(spUnitR).unit();
+    #define FMT_SI(v, u) Z::Value::fromSi(v, u).displayStr()
+    QString rightPos = FMT_SI(range.stop.toSi(), unitX);
+    stream
+        << "<p><span class='plane'>T:</span><br>"
+        << "<span class='param'>w:</span> " << FMT_SI(leftW.T, unitW) << " <span class='position'>@ 0</span><br>"
+        << "<span class='param'>R:</span> " << FMT_SI(leftR.T, unitR) << " <span class='position'>@ 0</span><br>"
+        << "<span class='param'>w:</span> " << FMT_SI(rightW.T, unitW) << " <span class='position'>@ " << rightPos << "</span><br>"
+        << "<span class='param'>R:</span> " << FMT_SI(rightR.T, unitR) << " <span class='position'>@ " << rightPos << "</span><br>"
+        << "<p><span class='plane'>S:</span><br>"
+        << "<span class='param'>w:</span> " << FMT_SI(leftW.S, unitW) << " <span class='position'>@ 0</span><br>"
+        << "<span class='param'>R:</span> " << FMT_SI(leftR.S, unitR) << " <span class='position'>@ 0</span><br>"
+        << "<span class='param'>w:</span> " << FMT_SI(rightW.S, unitW) << " <span class='position'>@ " << rightPos << "</span><br>"
+        << "<span class='param'>R:</span> " << FMT_SI(rightR.S, unitR) << " <span class='position'>@ " << rightPos << "</span><br>"
+    ;
+
+    if (AppSettings::instance().isDevMode)
+        // Ori::Gui::applyTextBrowserStyleSheet should be called on the target browser
+        stream << "<p><a href='do://edit-css'>Edit styles</a>";
+    #undef FMT_SI
+    return report;
 }

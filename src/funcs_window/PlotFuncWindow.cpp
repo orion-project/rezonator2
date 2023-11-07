@@ -267,7 +267,7 @@ void PlotFuncWindow::createContent()
 
     PlotParamsPanelCtorOptions opts;
     opts.splitter = _splitter;
-    opts.hasInfoPanel = function()->hasNotables();
+    opts.hasInfoPanel = function()->hasSpecPoints();
     opts.hasDataGrid = function()->hasDataTable();
     opts.hasOptionsPanel = function()->hasOptions();
     _leftPanel = new PlotParamsPanel(opts);
@@ -446,7 +446,7 @@ void PlotFuncWindow::updateNotables()
         return;
     }
     if (_leftPanel->infoPanel() && _leftPanel->infoPanel()->isVisible())
-        _leftPanel->infoPanel()->setHtml(_function->calculateNotables(getUnitX(), getUnitY()));
+        _leftPanel->infoPanel()->setHtml(_function->calculateSpecPoints(getSpecPointsParams()));
 }
 
 void PlotFuncWindow::updateStatusUnits()
@@ -714,6 +714,17 @@ Z::Unit PlotFuncWindow::getUnitY() const
     return thisDim == funcDim ? _unitY : defUnit;
 }
 
+Z::Unit PlotFuncWindow::getUnitY(FuncMode mode) const
+{
+    if (_storedView.contains(mode))
+    {
+        const ViewSettings& vs = _storedView[mode];
+        auto unit = Z::Units::findByAlias(vs["y_unit"].toString());
+        return unit ? unit : getDefaultUnitY(mode);
+    }
+    return getDefaultUnitY(mode);
+}
+
 void PlotFuncWindow::setUnitX(Z::Unit unit)
 {
     auto oldUnit = getUnitX();
@@ -746,6 +757,7 @@ void PlotFuncWindow::optionChanged(AppSettingsOptions option)
     {
         _cursorPanel->setNumberPrecision(AppSettings::instance().numberPrecisionData, false);
         updateCursorInfo();
+        updateNotables();
     }
 }
 

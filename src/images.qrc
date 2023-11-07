@@ -280,6 +280,7 @@
     <qresource prefix="/style">
         <file alias="app">../src/app.qss</file>
         <file alias="about">../img/about/about_1.png</file>
+        <file alias="spec-points">../src/spec-points.css</file>
     </qresource>
     <qresource prefix="/tips">
         <file alias="list">../tips/tips.json</file>
@@ -297,5 +298,9 @@
         <file alias="online_help.png">../tips/online_help.png</file>
         <file alias="disable_elem.png">../tips/disable_elem.png</file>
         <file alias="tool_lensmaker.png">../tips/tool_lensmaker.png</file>
+    </qresource>
+    <qresource prefix="/syntax">
+        <file alias="css">../libs/orion/syntax/css.ohl</file>
+        <file alias="qss">../libs/orion/syntax/qss.ohl</file>
     </qresource>
 </RCC>

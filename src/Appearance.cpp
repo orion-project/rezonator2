@@ -3,14 +3,22 @@
 #include "AppSettings.h"
 #include "HelpSystem.h"
 
+#include "helpers/OriLayouts.h"
 #include "helpers/OriTools.h"
 #include "helpers/OriWidgets.h"
+#include "tools/OriHighlighter.h"
 #include "widgets/OriFlatToolBar.h"
 
 #include <QApplication>
+#include <QFile>
 #include <QLabel>
 #include <QStyle>
+#include <QPlainTextEdit>
+#include <QPushButton>
 #include <QTabWidget>
+#include <QTextBrowser>
+#include <QToolButton>
+#include <QUrl>
 
 namespace Z {
 namespace Gui {
@@ -67,7 +75,7 @@ QFont CodeEditorFont::get() const
 {
     QFont f = QApplication::font();
 #if defined(Q_OS_WIN)
-    f.setFamily("Courier New");
+    f.setFamilies({"Cascadia Code", "Source Code Pro", "Consolas", "Lucida Console", "Courier New"});
     f.setPointSize(10);
 #elif defined(Q_OS_MAC)
     f.setFamily("Monaco");
@@ -165,6 +173,50 @@ void setFocusedBackground(QWidget *w, bool focused)
         p.setColor(QPalette::Window, Ori::Color::blend(p.color(QPalette::Button), p.color(QPalette::Highlight), 0.2));
     w->setAutoFillBackground(focused);
     w->setPalette(p);
+}
+
+void applyTextBrowserStyleSheet(QTextBrowser* browser, const QString& cssResourcePath)
+{
+    QFile f(cssResourcePath);
+    if (!f.open(QIODevice::ReadOnly))
+    {
+        qWarning() << "Unable to open resource file" << f.fileName() << f.errorString();
+        return;
+    }
+    browser->document()->setDefaultStyleSheet(QString::fromUtf8(f.readAll()));
+    if (!AppSettings::instance().isDevMode) return;
+
+    browser->connect(browser, &QTextBrowser::anchorClicked, browser, [browser](const QUrl& url){
+        if (url.scheme() != "do" or url.host() != "edit-css") return;
+
+        auto editor = new QPlainTextEdit;
+        editor->setFont(CodeEditorFont().get());
+        editor->setPlainText(browser->document()->defaultStyleSheet());
+        Ori::Highlighter::setHighlighter(editor, ":/syntax/css");
+
+        auto applyButton = new QPushButton("Apply");
+        applyButton->connect(applyButton, &QPushButton::clicked, editor, [browser, editor]{
+            browser->document()->setDefaultStyleSheet(editor->toPlainText());
+        });
+
+//        auto saveButton = new QPushButton("Save");
+//        saveButton->connect(saveButton, &QPushButton::clicked, editor, [editor]{
+//        });
+
+        auto wnd = Ori::Layouts::LayoutV({
+            editor,
+            Ori::Layouts::LayoutH({
+                Ori::Layouts::Stretch(),
+                applyButton,
+//                saveButton,
+            }).setMargin(6).setSpacing(6)
+        }).setMargin(3).setSpacing(0).makeWidget();
+        wnd->setAttribute(Qt::WA_DeleteOnClose);
+        wnd->setWindowTitle("Stylesheet Editor");
+        wnd->setWindowIcon(QIcon(":/toolbar/protocol"));
+        wnd->resize(300, 600);
+        wnd->show();
+    });
 }
 
 } // namespace Gui
