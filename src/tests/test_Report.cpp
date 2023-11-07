@@ -1,5 +1,6 @@
-#include "testing/OriTestBase.h"
 #include "../core/Report.h"
+
+#include "testing/OriTestBase.h"
 
 namespace Z {
 namespace Tests {

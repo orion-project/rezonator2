@@ -1,5 +1,6 @@
+#include "../math/GaussCalculator.h"
+
 #include "testing/OriTestBase.h"
-#include "../funcs/GaussCalculator.h"
 
 #include <cmath>
 

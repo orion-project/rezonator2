@@ -1,7 +1,7 @@
 #include "PlotParamsPanel.h"
 
 #include "PlotHelpers.h"
-#include "../Appearance.h"
+#include "../app/Appearance.h"
 
 #include "qcpl_graph_grid.h"
 

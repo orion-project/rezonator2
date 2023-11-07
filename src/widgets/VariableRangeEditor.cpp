@@ -1,7 +1,7 @@
 #include "VariableRangeEditor.h"
 
 #include "ValueEditor.h"
-#include "../Appearance.h"
+#include "../app/Appearance.h"
 #include "../core/Element.h"
 #include "../core/Variable.h"
 

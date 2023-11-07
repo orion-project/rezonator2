@@ -1,8 +1,9 @@
 #include "Elements.h"
 
-#include "Format.h"
-#include "../funcs/GrinCalculator.h"
-#include "../funcs/PumpCalculator.h"
+#include "../core/Format.h"
+#include "../math/GrinCalculator.h"
+#include "../math/PumpCalculator.h"
+
 #include "core/OriFloatingPoint.h"
 
 #include <math.h>

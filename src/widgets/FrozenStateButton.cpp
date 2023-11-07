@@ -1,6 +1,6 @@
 #include "FrozenStateButton.h"
 
-#include "../Appearance.h"
+#include "../app/Appearance.h"
 
 #include "helpers/OriWidgets.h"
 

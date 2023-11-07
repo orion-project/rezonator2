@@ -3,10 +3,10 @@
 #include "ParamEditor.h"
 #include "ParamsEditor.h"
 #include "UnitWidgets.h"
-#include "../Appearance.h"
-#include "../WindowsManager.h"
+#include "../app/Appearance.h"
 #include "../core/ElementFormula.h"
-#include "../funcs/FormatInfo.h"
+#include "../math/FormatInfo.h"
+#include "../windows/WindowsManager.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"

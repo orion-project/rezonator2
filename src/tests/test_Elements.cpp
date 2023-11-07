@@ -1,9 +1,10 @@
-#include "testing/OriTestBase.h"
 #include "../core/Elements.h"
 #include "../core/ElementsCatalog.h"
 #include "../core/Pump.h"
-#include "../funcs/PumpCalculator.h"
-#include "TestUtils.h"
+#include "../tests/TestUtils.h"
+#include "../math/PumpCalculator.h"
+
+#include "testing/OriTestBase.h"
 
 #include <QSharedPointer>
 

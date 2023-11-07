@@ -1,6 +1,6 @@
 #include "RichTextItemDelegate.h"
 
-#include "../Appearance.h"
+#include "../app/Appearance.h"
 
 #include <QDebug>
 #include <QPainter>

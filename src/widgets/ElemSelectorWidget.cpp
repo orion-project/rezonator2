@@ -1,7 +1,7 @@
 #include "ElemSelectorWidget.h"
 
 #include "ValueEditor.h"
-#include "../Appearance.h"
+#include "../app/Appearance.h"
 
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"

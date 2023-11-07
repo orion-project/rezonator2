@@ -2,7 +2,7 @@
 
 #include "ParamEditor.h"
 #include "ValuesEditorTS.h"
-#include "../Appearance.h"
+#include "../app/Appearance.h"
 #include "../core/Utils.h"
 
 #include "widgets/OriLabels.h"

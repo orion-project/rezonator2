@@ -1,11 +1,11 @@
-#include "testing/OriTestBase.h"
-#include "TestUtils.h"
+#include "../app/AppSettings.h"
 #include "../core/Schema.h"
 #include "../io/SchemaReaderJson.h"
-#include "../funcs/BeamParamsAtElemsFunction.h"
-#include "../AppSettings.h"
+#include "../math/BeamParamsAtElemsFunction.h"
+#include "../tests/TestUtils.h"
 
 #include "core/OriTemplates.h"
+#include "testing/OriTestBase.h"
 
 #define READ_TEST_FILE(file_name)\
     Schema schema;\
