@@ -26,7 +26,7 @@ static QWidget* makeSpecPointsView(PlotParamsPanel*)
     auto browser = new QTextBrowser;
     browser->setOpenLinks(false);
     browser->setOpenExternalLinks(false);
-    browser->setFont(Z::Gui::ValueFont().get());
+    browser->setFont(Z::Gui::CodeEditorFont().get());
     Z::Gui::applyTextBrowserStyleSheet(browser, ":/style/spec-points");
     return browser;
 }

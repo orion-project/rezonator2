@@ -125,3 +125,24 @@ Z::PointTS MultirangeCausticFunction::calculateAt(const Z::Value &arg)
     }
     return { Double::nan(), Double::nan() };
 }
+
+QString MultirangeCausticFunction::calculateSpecPoints(const SpecPointParams& params)
+{
+    QString report;
+    QTextStream stream(&report);
+    double offset = 0;
+    for (int i = 0; i < _funcs.size(); i++)
+    {
+        auto func = _funcs.at(i);
+        if (func->arg()->element->disabled())
+            continue;
+        SpecPointParams funcParams = params;
+        funcParams[CausticFunction::spOffset] = SpecPointParam(offset);
+        stream << "<p><span class='elem'>" << func->arg()->element->displayLabelTitle() << "</span>"
+               << func->calculateSpecPoints(funcParams);
+        if (i < _funcs.size()-1)
+            stream << "<hr>";
+        offset += func->arg()->range.stop.toSi();
+    }
+    return report;
+}

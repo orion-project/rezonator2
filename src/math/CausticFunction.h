@@ -1,7 +1,7 @@
 #ifndef CAUSTIC_FUNCTION_H
 #define CAUSTIC_FUNCTION_H
 
-#include "PlotFunction.h"
+#include "../math/PlotFunction.h"
 
 #include <memory>
 
@@ -15,7 +15,7 @@ class CausticFunction : public PlotFunction
 
 public:
     enum Mode { BeamRadius, FrontRadius, HalfAngle, };
-    enum SpecPointParam { spUnitX, spUnitW, spUnitR };
+    enum SpecPointParam { spUnitX, spUnitW, spUnitR, spOffset };
     Q_ENUM(Mode)
 
     FUNC_ALIAS("Caustic")

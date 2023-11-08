@@ -12,6 +12,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QFile>
+#include <QFileInfo>
 #include <QLabel>
 #include <QStyle>
 #include <QPlainTextEdit>
@@ -20,6 +21,7 @@
 #include <QTextBrowser>
 #include <QToolButton>
 #include <QUrl>
+#include <QXmlStreamReader>
 
 namespace Z {
 namespace Gui {
@@ -187,8 +189,50 @@ void applyTextBrowserStyleSheet(QTextBrowser* browser, const QString& cssResourc
     browser->document()->setDefaultStyleSheet(QString::fromUtf8(f.readAll()));
     if (!AppSettings::instance().isDevMode) return;
 
-    browser->connect(browser, &QTextBrowser::anchorClicked, browser, [browser](const QUrl& url){
+    browser->connect(browser, &QTextBrowser::anchorClicked, browser, [cssResourcePath, browser](const QUrl& url){
         if (url.scheme() != "do" or url.host() != "edit-css") return;
+
+        auto parts = cssResourcePath.split('/');
+        if (parts.size() != 3)
+        {
+            qWarning() << "Unsupported resource path format" << cssResourcePath
+                       << "it should be of pattern ':/prefix/alias'";
+            return;
+        }
+        QString prefix = '/' + parts[1];
+        QString alias = parts[2];
+        QString styleFile;
+        // TODO: adjust for macOS
+        QFile f(qApp->applicationDirPath() + "/../src/app.qrc");
+        if (!f.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            qWarning() << "Unable to open resource file" << f.fileName() << f.errorString();
+            return;
+        }
+        bool prefixFound = false;
+        QXmlStreamReader xml(&f);
+        while (!xml.atEnd()) {
+            if (xml.readNext() == QXmlStreamReader::StartElement)
+            {
+                if (prefixFound and xml.name() == QLatin1String("file") and xml.attributes().value("alias") == alias)
+                {
+                    QFileInfo fi(qApp->applicationDirPath() + "/../src/" + xml.readElementText());
+                    styleFile = fi.absoluteFilePath();
+                    break;
+                }
+                else if (xml.name() == QLatin1String("qresource") and xml.attributes().value("prefix") == prefix)
+                    prefixFound = true;
+            }
+            if (xml.hasError()) {
+                qWarning() << "Failed to read resource file" << f.fileName() << xml.errorString();
+                return;
+            }
+        }
+        if (styleFile.isEmpty())
+        {
+            qWarning() << "Source file not found for resource" << cssResourcePath;
+            return;
+        }
 
         auto editor = new QPlainTextEdit;
         editor->setFont(CodeEditorFont().get());
@@ -200,18 +244,27 @@ void applyTextBrowserStyleSheet(QTextBrowser* browser, const QString& cssResourc
             browser->document()->setDefaultStyleSheet(editor->toPlainText());
         });
 
-//        auto saveButton = new QPushButton("Save");
-//        saveButton->connect(saveButton, &QPushButton::clicked, editor, [editor]{
-//        });
+        auto saveButton = new QPushButton("Save");
+        saveButton->connect(saveButton, &QPushButton::clicked, editor, [styleFile, editor]{
+            QFile f(styleFile);
+            if (!f.open(QIODevice::WriteOnly | QIODevice::Text))
+            {
+                qWarning() << "Unable to open file for writing" << styleFile << f.errorString();
+                return;
+            }
+            f.write(editor->toPlainText().toUtf8());
+            qDebug() << "Saved" << styleFile;
+        });
 
         auto wnd = Ori::Layouts::LayoutV({
+            new QLabel(styleFile),
             editor,
             Ori::Layouts::LayoutH({
                 Ori::Layouts::Stretch(),
                 applyButton,
-//                saveButton,
-            }).setMargin(6).setSpacing(6)
-        }).setMargin(3).setSpacing(0).makeWidget();
+                saveButton,
+            }).setMargin(6)
+        }).setMargin(3).setSpacing(6).makeWidget();
         wnd->setAttribute(Qt::WA_DeleteOnClose);
         wnd->setWindowTitle("Stylesheet Editor");
         wnd->setWindowIcon(QIcon(":/toolbar/protocol"));

@@ -54,11 +54,14 @@ public:
     SpecPointParam() {}
     SpecPointParam(Z::Unit unit): _unit(unit) {}
     SpecPointParam(bool flag): _flag(flag) {}
+    SpecPointParam(double value): _value(value) {}
     Z::Unit unit() const { return _unit ? _unit : Z::Units::m(); }
     bool flag() const { return _flag; }
+    double value() const { return _value; }
 private:
     Z::Unit _unit = nullptr;
     bool _flag = false;
+    double _value = 0;
 };
 using SpecPointParams = QMap<int, SpecPointParam>;
 

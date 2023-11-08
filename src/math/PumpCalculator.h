@@ -27,6 +27,7 @@ public:
     BeamResult calcS(const Z::Matrix& m, double ior) const { return calc(_implS, m, ior); }
 
     bool isGauss() const;
+    Z::PointTS MI() const;
 
     Z::PointTS beamRadius(const Z::Matrix& mt, const Z::Matrix& ms, double ior) const;
     Z::PointTS frontRadius(const Z::Matrix &mt, const Z::Matrix& ms, double ior) const;

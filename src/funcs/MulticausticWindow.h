@@ -42,6 +42,8 @@ protected:
     void showRoundTrip() override;
     Z::Unit getDefaultUnitX() const override;
     Z::Unit getDefaultUnitY() const override;
+    Z::Unit getDefaultUnitY(FuncMode mode) const override;
+    SpecPointParams getSpecPointsParams() override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;

@@ -264,13 +264,27 @@ Z::Unit MulticausticWindow::getDefaultUnitX() const
 
 Z::Unit MulticausticWindow::getDefaultUnitY() const
 {
-    switch (function()->mode())
+    return getDefaultUnitY(function()->mode());
+}
+
+Z::Unit MulticausticWindow::getDefaultUnitY(FuncMode mode) const
+{
+    switch (mode)
     {
     case CausticFunction::BeamRadius: return AppSettings::instance().defaultUnitBeamRadius;
     case CausticFunction::FrontRadius: return AppSettings::instance().defaultUnitFrontRadius;
     case CausticFunction::HalfAngle: return AppSettings::instance().defaultUnitAngle;
     }
     return Z::Units::none();
+}
+
+SpecPointParams MulticausticWindow::getSpecPointsParams()
+{
+    return {
+        { CausticFunction::spUnitX, SpecPointParam(getUnitX()) },
+        { CausticFunction::spUnitW, SpecPointParam(function()->mode() == CausticFunction::BeamRadius ? getUnitY() : getUnitY(CausticFunction::BeamRadius)) },
+        { CausticFunction::spUnitR, SpecPointParam(function()->mode() == CausticFunction::FrontRadius ? getUnitY() : getUnitY(CausticFunction::FrontRadius)) },
+    };
 }
 
 void MulticausticWindow::storeView(FuncMode mode)

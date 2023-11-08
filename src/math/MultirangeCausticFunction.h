@@ -17,8 +17,10 @@ public:
 
     void calculate() override;
     bool hasOptions() const override { return true; }
+    bool hasSpecPoints() const override { return true; }
     int resultCount(Z::WorkPlane plane) const override;
     const PlotFuncResult& result(Z::WorkPlane plane, int index) const override;
+    QString calculateSpecPoints(const SpecPointParams& params) override;
 
     // Only needs for SP schemas
     void setPump(PumpParams* pump);

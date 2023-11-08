@@ -13,6 +13,7 @@ public:
     MultibeamCausticFunction(Schema *schema);
 
     bool hasOptions() const override { return false; }
+    bool hasSpecPoints() const override { return false; }
 
     CausticFunction::Mode mode() const = delete;
     void setMode(CausticFunction::Mode mode) = delete;
