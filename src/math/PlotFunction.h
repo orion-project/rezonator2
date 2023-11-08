@@ -114,6 +114,7 @@ public:
     void clearResults();
 
     Z::Variable* arg() { return &_arg; }
+    const Z::Variable* arg() const { return &_arg; }
     const FunctionRange& range() const { return _range; }
 
     /// Load custom preferences - recently used modes etc.

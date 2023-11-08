@@ -20,7 +20,16 @@
           "text": "Table windows can be stored in schema file"
         },
         {
-          "text": "Fix: ignore saved window geometry if it is out of screen bounds"
+          "text": "Calculate waist size and position in Caustic and Multirange Caustic functions"
+        },
+        {
+          "text": "Calculate bounds of stability regions in Stability Map function"
+        },
+        {
+          "text": "Fix: 'Draw narrow version' checkbox was shown for elements which do not provide narrow view"
+        },
+        {
+          "text": "Fix: saved window geometry could make window shown out of screen bounds"
         },
         {
           "text": "Fix: wrong context menu on the last element in elements table"

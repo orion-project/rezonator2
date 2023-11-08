@@ -8,9 +8,8 @@
 
 namespace Z {
 enum WorkPlane { Plane_T, Plane_S };
+inline char planeName(WorkPlane ts) { return ts == Plane_T ? 'T' : 'S'; }
 }
-
-using ValueSi = double;
 
 enum class TripType
 {

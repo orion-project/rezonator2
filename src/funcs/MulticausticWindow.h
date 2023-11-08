@@ -1,6 +1,7 @@
 #ifndef MULTI_CAUSTIC_WINDOW_H
 #define MULTI_CAUSTIC_WINDOW_H
 
+#include "../core/Values.h"
 #include "../funcs/PlotFuncWindowStorable.h"
 #include "../math/MultirangeCausticFunction.h"
 
@@ -14,8 +15,8 @@ public:
     struct FuncOffset
     {
         CausticFunction *func;
-        ValueSi offset;
-        ValueSi position;
+        Z::ValueSi offset;
+        Z::ValueSi position;
     };
 
 public:
@@ -43,7 +44,7 @@ protected:
     Z::Unit getDefaultUnitX() const override;
     Z::Unit getDefaultUnitY() const override;
     Z::Unit getDefaultUnitY(FuncMode mode) const override;
-    SpecPointParams getSpecPointsParams() override;
+    SpecPointParams getSpecPointsParams() const override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;

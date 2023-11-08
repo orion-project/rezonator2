@@ -185,7 +185,7 @@ protected:
     virtual Z::Unit getDefaultUnitX() const { return Z::Units::none(); }
     virtual Z::Unit getDefaultUnitY() const { return Z::Units::none(); }
     virtual Z::Unit getDefaultUnitY(FuncMode mode) const { Q_UNUSED(mode) return getDefaultUnitY(); }
-    virtual SpecPointParams getSpecPointsParams() { return SpecPointParams(); }
+    virtual SpecPointParams getSpecPointsParams() const { return SpecPointParams(); }
 
     /// Adds common variable to all plot parts - axes and title
     void addTextVar(const QString& name, const QString& descr, std::function<QString()> getter);

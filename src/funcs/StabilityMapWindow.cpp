@@ -282,3 +282,10 @@ void StabilityMapWindow::getCursorInfo(const Z::ValuePoint &pos, CursorInfoValue
     values << CursorInfoValue(QStringLiteral("Pt"), res.T);
     values << CursorInfoValue(QStringLiteral("Ps"), res.S);
 }
+
+SpecPointParams StabilityMapWindow::getSpecPointsParams() const
+{
+    return {
+        { StabilityMapFunction::spUnitX, SpecPointParam(getUnitX()) },
+    };
+}

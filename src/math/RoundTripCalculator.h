@@ -28,6 +28,7 @@ public:
     QString error() const { return _error; }
 
     Z::PointTS stability() const { return { calcStability(_mt), calcStability(_ms) }; }
+    double stability(Z::WorkPlane ts) const { return ts == Z::Plane_T ? calcStability(_mt) : calcStability(_ms); }
     Z::PointComplexTS stabilityCplx() const { return { calcStabilityCplx(_mt), calcStabilityCplx(_ms) }; }
     Z::PairTS<bool> isStable() const { return { isStable(_mt), isStable(_ms) }; }
     Z::Enums::StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }

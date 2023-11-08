@@ -278,7 +278,7 @@ Z::Unit MulticausticWindow::getDefaultUnitY(FuncMode mode) const
     return Z::Units::none();
 }
 
-SpecPointParams MulticausticWindow::getSpecPointsParams()
+SpecPointParams MulticausticWindow::getSpecPointsParams() const
 {
     return {
         { CausticFunction::spUnitX, SpecPointParam(getUnitX()) },

@@ -26,6 +26,7 @@ protected:
     QList<BasicMdiChild::MenuItem> viewMenuItems() const override;
     Z::Unit getDefaultUnitX() const override;
     void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const override;
+    SpecPointParams getSpecPointsParams() const override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;

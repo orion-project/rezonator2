@@ -193,7 +193,7 @@ Z::Unit CausticWindow::getDefaultUnitY(FuncMode mode) const
     return Z::Units::none();
 }
 
-SpecPointParams CausticWindow::getSpecPointsParams()
+SpecPointParams CausticWindow::getSpecPointsParams() const
 {
     return {
         { CausticFunction::spUnitX, SpecPointParam(getUnitX()) },
