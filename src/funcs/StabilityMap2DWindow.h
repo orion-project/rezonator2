@@ -33,7 +33,7 @@ protected:
     void updateGraphs() override;
     Z::Unit getDefaultUnitX() const override;
     Z::Unit getDefaultUnitY() const override;
-    void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const override;
+    void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) override;
     QList<BasicMdiChild::MenuItem> editMenuItems() const override { return { _actnCopyGraphData2D }; }
     QList<BasicMdiChild::MenuItem> formatMenuItems() const override { return { _actnFormatColorScale }; }
 

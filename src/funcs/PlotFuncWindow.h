@@ -41,14 +41,20 @@ enum class ElemDeletionReaction {
 
 struct CursorInfoValue
 {
+    enum ValueKind {
+        GENERIC, // no special formatting rules
+        VALUE_X, // format as set_x command
+        VALUE_Y, // format as set_y command
+        SECTION, // format as a kind of title for subsequent values
+    };
     QString name;
     double value;
-    QString note;
-
+    QString note; // a text added after the value of any kind
+    ValueKind kind = GENERIC;
+    CursorInfoValue(ValueKind kind, const QString& name): name(name), kind(kind) {}
+    CursorInfoValue(ValueKind kind, const double& value): value(value), kind(kind) {}
     CursorInfoValue(const QString& name, const double& value): name(name), value(value) {}
     CursorInfoValue(const QString& name, const double& value, const QString& note): name(name), value(value), note(note) {}
-    bool isX() const { return name == QStringLiteral("X"); }
-    bool isY() const { return name == QStringLiteral("Y"); }
 };
 
 using CursorInfoValues = QList<CursorInfoValue>;
@@ -62,6 +68,8 @@ public:
     using ViewSettings = QMap<QString, QVariant>;
     enum ViewPart { VP_LIMITS_Y = 0x01, VP_TITLE_Y = 0x02, VP_UNIT_Y = 0x04, VP_CUSRSOR_POS = 0x08 };
     Q_DECLARE_FLAGS(ViewParts, ViewPart)
+    enum SelectGraphOption { SG_UPDATE_CUSROR = 0x01, SG_UPDATE_SPEC_POINTS = 0x02 };
+    Q_DECLARE_FLAGS(SelectGraphOptions, SelectGraphOption)
 
 public:
     explicit PlotFuncWindow(PlotFunction*);
@@ -108,7 +116,7 @@ public slots:
     void update();
 
 protected slots:
-    virtual void updateNotables();
+    virtual void updateSpecPoints();
     virtual void updateDataGrid();
     virtual void showRoundTrip();
 
@@ -142,6 +150,7 @@ protected:
         *actnCopyGraphDataWithParams, *actnFormatX, *actnFormatY, *actnFormatTitle, *actnFormatLegend,
         *actnToggleTitle, *actnToggleLegend, *actnCopyFormatFromSelection, *actnPasteFormatToSelection,
         *actnCopyPlotFormat, *actnPastePlotFormat, *actnSavePlotFormat, *actnLoadPlotFormat;
+    SelectGraphOptions _selectGraphOptions;
 
     // Stores differences of plot view when function is switched betweeen modes
     // e.g. when the Caustic function switches between W and R.
@@ -158,7 +167,8 @@ protected:
     virtual QList<BasicMdiChild::MenuItem> viewMenuItems() const { return {}; }
     virtual QList<BasicMdiChild::MenuItem> editMenuItems() const { return {}; }
     virtual QList<BasicMdiChild::MenuItem> formatMenuItems() const { return {}; }
-    virtual void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const { Q_UNUSED(pos) Q_UNUSED(values) }
+    virtual void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) { Q_UNUSED(pos) Q_UNUSED(values) }
+    virtual void prepareSpecPoints() {}
 
     QCPGraph* selectedGraph() const;
 
@@ -228,5 +238,6 @@ private:
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(PlotFuncWindow::ViewParts)
+Q_DECLARE_OPERATORS_FOR_FLAGS(PlotFuncWindow::SelectGraphOptions)
 
 #endif // PLOT_FUNC_WINDOW_H

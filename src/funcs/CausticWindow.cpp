@@ -202,12 +202,12 @@ SpecPointParams CausticWindow::getSpecPointsParams() const
     };
 }
 
-void CausticWindow::getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const
+void CausticWindow::getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values)
 {
     if (!function()->ok()) return;
     auto res = function()->calculateAt(pos.X);
     _beamShape->setShape(res);
-    QString valueName = CausticFunction::modeAlias(function()->mode());
+    QString valueName = function()->valueSymbol();
     values << CursorInfoValue(valueName+'t', res.T);
     values << CursorInfoValue(valueName+'s', res.S);
 }

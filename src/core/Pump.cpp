@@ -42,11 +42,11 @@ PumpParams_Waist::PumpParams_Waist()
 {
     _waist = new ParameterTS(Dims::linear(),
                              QStringLiteral("w_0"),
-                             QStringLiteral("ω<sub>0</sub>"),
+                             QStringLiteral("w<sub>0</sub>"),
                              qApp->translate("Pump param", "Waist radius"));
     _distance = new ParameterTS(Dims::linear(),
                                 QStringLiteral("z_w"),
-                                QStringLiteral("z<sub>ω</sub>"),
+                                QStringLiteral("z<sub>w</sub>"),
                                 qApp->translate("Pump param", "Distance to waist"));
     _MI = new ParameterTS(Dims::none(),
                           QStringLiteral("MI"),
@@ -65,7 +65,7 @@ PumpParams_Front::PumpParams_Front()
 {
     _beamRadius = new ParameterTS(Dims::linear(),
                                   QStringLiteral("w"),
-                                  QStringLiteral("ω"),
+                                  QStringLiteral("w"),
                                   qApp->translate("Pump param", "Beam radius"));
     _frontRadius = new ParameterTS(Dims::linear(),
                                    QStringLiteral("R"),

@@ -21,6 +21,11 @@ public:
 protected:
     // Implementation of PlotFuncWindow
     void calculate() override;
+    void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) override;
+    void prepareSpecPoints() override;
+
+private:
+    PumpParams* _lastSelectedPump = nullptr;
 };
 
 #endif // MULTI_BEAM_CAUSTIC_WINDOW_H

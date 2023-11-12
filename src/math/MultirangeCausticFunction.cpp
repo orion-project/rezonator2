@@ -24,6 +24,11 @@ void MultirangeCausticFunction::setMode(CausticFunction::Mode mode)
         func->setMode(mode);
 }
 
+QString MultirangeCausticFunction::valueSymbol() const
+{
+    return _funcs.first()->valueSymbol();
+}
+
 // TODO ensure if all subfunctions have the same _argumentUnit
 void MultirangeCausticFunction::setArgs(const QVector<Z::Variable>& args)
 {
@@ -51,7 +56,7 @@ void MultirangeCausticFunction::setArgs(const QVector<Z::Variable>& args)
     _funcs = funcs;
 }
 
-void MultirangeCausticFunction::calculate()
+void MultirangeCausticFunction::calculate(CalculationMode calcMode)
 {
     setError(QString());
     int disabledCount = 0;
@@ -62,7 +67,7 @@ void MultirangeCausticFunction::calculate()
             disabledCount++;
             continue;
         }
-        func->calculate();
+        func->calculate(calcMode);
         if (!func->ok())
         {
             setError(func->errorText());
@@ -109,6 +114,11 @@ void MultirangeCausticFunction::setPump(PumpParams* pump)
         func->setPump(pump);
 }
 
+PumpParams* MultirangeCausticFunction::pump() const
+{
+    return _funcs.first()->pump();
+}
+
 Z::PointTS MultirangeCausticFunction::calculateAt(const Z::Value &arg)
 {
     double remainingL = arg.toSi();
@@ -138,7 +148,7 @@ QString MultirangeCausticFunction::calculateSpecPoints(const SpecPointParams& pa
             continue;
         SpecPointParams funcParams = params;
         funcParams[CausticFunction::spOffset] = SpecPointParam(offset);
-        stream << "<p><span class='elem'>" << func->arg()->element->displayLabelTitle() << "</span>"
+        stream << "<p><span class='title'>" << func->arg()->element->displayLabelTitle() << "</span>"
                << func->calculateSpecPoints(funcParams);
         if (i < _funcs.size()-1)
             stream << "<hr>";

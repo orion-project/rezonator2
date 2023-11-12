@@ -20,7 +20,7 @@ public:
     const QVector<double>& resultsT() const { return _resultsT; }
     const QVector<double>& resultsS() const { return _resultsS; }
 
-    void calculate() override;
+    void calculate(CalculationMode calcMode = CALC_PLOT) override;
     bool hasOptions() const override { return true; }
     bool hasDataTable() const override { return false; }
     void loadPrefs() override;

@@ -3,7 +3,7 @@
 #include "RoundTripCalculator.h"
 #include "../app/CustomPrefs.h"
 
-void StabilityMap2DFunction::calculate()
+void StabilityMap2DFunction::calculate(CalculationMode calcMode)
 {
     if (!checkArg(&_paramX)) return;
     if (!checkArg(&_paramY)) return;
@@ -18,6 +18,8 @@ void StabilityMap2DFunction::calculate()
 
     if (!prepareCalculator(_paramX.element)) return;
     _calc->setStabilityCalcMode(stabilityCalcMode());
+
+    if (calcMode != CALC_PLOT) return;
 
     int nx = _rangeX.points();
     int ny = _rangeY.points();

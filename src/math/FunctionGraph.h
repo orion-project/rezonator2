@@ -37,6 +37,7 @@ public:
 public:
     FunctionGraph(QCPL::Plot* plot, Z::WorkPlane workPlane, std::function<GraphUnits()> getUnits);
 
+    QString id;
     QString legendName;
 
     void clear();

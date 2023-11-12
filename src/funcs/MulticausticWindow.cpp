@@ -1,12 +1,17 @@
 #include "MulticausticWindow.h"
 
+#include "../core/Format.h"
 #include "../funcs/InfoFuncWindow.h"
 #include "../funcs/MultiCausticParamsDlg.h"
 #include "../io/JsonUtils.h"
 #include "../math/FunctionGraph.h"
 #include "../math/PlotFuncRoundTripFunction.h"
 
+#include "widgets/OriValueEdit.h"
+#include "helpers/OriDialogs.h"
+
 #include "qcpl_cursor.h"
+#include "qcpl_cursor_panel.h"
 #include "qcpl_plot.h"
 
 MulticausticWindow::MulticausticWindow(MultirangeCausticFunction* function) : PlotFuncWindowStorable(function)
@@ -41,6 +46,9 @@ MulticausticWindow::MulticausticWindow(MultirangeCausticFunction* function) : Pl
     _actnElemBoundMarkers->setCheckable(true);
     _actnElemBoundMarkers->setChecked(true);
     connect(_actnElemBoundMarkers, &QAction::toggled, this, &MulticausticWindow::toggleElementBoundMarkers);
+
+    connect(_cursorPanel, &QCPL::CursorPanel::customCommandInvoked,
+            this, &MulticausticWindow::handleCursorPanelCommand);
 }
 
 bool MulticausticWindow::configureInternal()
@@ -300,4 +308,37 @@ void MulticausticWindow::restoreView(FuncMode mode)
     if (_storedView.contains(mode))
         vs = _storedView[mode];
     restoreViewParts(vs, VP_LIMITS_Y | VP_TITLE_Y | VP_UNIT_Y | VP_CUSRSOR_POS);
+}
+
+void MulticausticWindow::getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values)
+{
+    if (!function()->ok()) return;
+    auto funcOffset = findFuncOffset(pos.X);
+    if (funcOffset.func)
+    {
+        auto unitX = getUnitX();
+        for (int i = 0; i < values.size(); i++)
+            if (values.at(i).kind == CursorInfoValue::VALUE_X)
+            {
+                values[i].note = QStringLiteral("(%1 @ %2)").arg(
+                    funcOffset.func->arg()->element->displayLabel(),
+                    _cursorPanel->formatLink("offset", Z::format(unitX->fromSi(funcOffset.offset))));
+                break;
+            }
+    }
+}
+
+void MulticausticWindow::handleCursorPanelCommand(const QString& cmd)
+{
+    if (cmd != "offset") return;
+    auto unitX = getUnitX();
+    auto p = _cursor->position();
+    auto funcOffset = findFuncOffset({p.x(), unitX});
+    if (!funcOffset.func) return;
+    Ori::Widgets::ValueEdit editor(unitX->fromSi(funcOffset.offset));
+    if (Ori::Dlg::Dialog(&editor, false)
+            .withHorizontalPrompt(tr("<b>Offset inside %1:</b>").arg(funcOffset.func->arg()->element->displayLabel()))
+            .withTitle(tr("Cursor Position"))
+            .exec())
+        _cursor->setPositionX(unitX->fromSi(funcOffset.position) + editor.value());
 }

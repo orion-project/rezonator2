@@ -13,7 +13,7 @@ public:
 protected:
     // Implementation of PlotFuncWindow
     QWidget* makeOptionsPanel() override;
-    void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const override;
+    void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) override;
     QList<BasicMdiChild::MenuItem> viewMenuItems() const override;
 
     // Implementation of PlotFuncWindowStorable
@@ -22,8 +22,6 @@ protected:
 
 private:
     class BeamShapeExtension *_beamShape;
-
-    void handleCursorPanelCommand(const QString& cmd);
 };
 
 #endif // MULTIRANGE_CAUSTIC_WINDOW_H

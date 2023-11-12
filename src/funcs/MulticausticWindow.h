@@ -45,6 +45,7 @@ protected:
     Z::Unit getDefaultUnitY() const override;
     Z::Unit getDefaultUnitY(FuncMode mode) const override;
     SpecPointParams getSpecPointsParams() const override;
+    void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values);
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;
@@ -60,6 +61,8 @@ private:
     void toggleElementBoundMarkers(bool on);
     void updateElementBoundMarkers();
     QCPItemStraightLine* makeElemBoundMarker() const;
+
+    void handleCursorPanelCommand(const QString& cmd);
 };
 
 #endif // MULTI_CAUSTIC_WINDOW_H

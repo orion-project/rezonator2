@@ -15,8 +15,8 @@ class CausticFunction : public PlotFunction
 
 public:
     enum Mode { BeamRadius, FrontRadius, HalfAngle, };
-    enum SpecPointParam { spUnitX, spUnitW, spUnitR, spOffset };
     Q_ENUM(Mode)
+    enum SpecPointParam { spUnitX, spUnitW, spUnitR, spOffset };
 
     FUNC_ALIAS("Caustic")
     FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Caustic"))
@@ -27,20 +27,22 @@ public:
 
     // Only needs for SP schemas
     void setPump(PumpParams* pump) { _pump = pump; }
+    PumpParams* pump() const { return _pump; }
 
+    void calculate(CalculationMode calcMode = CALC_PLOT) override;
     Z::PointTS calculateAt(const Z::Value& arg) override;
-
-    void calculate() override;
     bool hasOptions() const override { return true; }
     bool hasSpecPoints() const override { return true; }
     QString calculateSpecPoints(const SpecPointParams& params) override;
+
+    QString valueSymbol() const;
+    QString beamsizeSymbol() const;
 
     Mode mode() const { return _mode; }
     void setMode(Mode mode) { _mode = mode; }
 
     static QString modeAlias(Mode mode);
     static QString modeDisplayName(Mode mode);
-
 private:
     /// Wich type of result the function should compute.
     Mode _mode = Mode::BeamRadius;

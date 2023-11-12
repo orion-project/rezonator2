@@ -416,7 +416,7 @@ QString StabilityMap2DWindow::writeWindowSpecific(QJsonObject& root)
     return QString();
 }
 
-void StabilityMap2DWindow::getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const
+void StabilityMap2DWindow::getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values)
 {
     if (!function()->ok()) return;
     auto res = function()->calculateAtXY(pos.X, pos.Y);

@@ -6,7 +6,7 @@
 
 #include <QApplication>
 
-void StabilityMapFunction::calculate()
+void StabilityMapFunction::calculate(CalculationMode calcMode)
 {
     _approxStabBounds.T.clear();
     _approxStabBounds.S.clear();
@@ -22,6 +22,8 @@ void StabilityMapFunction::calculate()
     if (!prepareResults(_plotRange)) return;
     if (!prepareCalculator(elem)) return;
     _calc->setStabilityCalcMode(stabilityCalcMode());
+
+    if (calcMode != CALC_PLOT) return;
 
     std::optional<double> prevX;
     Z::PairTS<std::optional<ApproxBound>> startBound;
@@ -45,8 +47,8 @@ void StabilityMapFunction::calculate()
         addResultPoint(x, _calc->stability());
 
         auto isStable = _calc->isStable();
-        checkStabBound(Z::Plane_T, x, isStable);
-        checkStabBound(Z::Plane_S, x, isStable);
+        checkStabBound(Z::T, x, isStable);
+        checkStabBound(Z::S, x, isStable);
 
         prevX = x;
     }
@@ -77,7 +79,7 @@ Z::PointTS StabilityMapFunction::calculateAt(const Z::Value& v)
     return _calc->stability();
 }
 
-QVector<Z::RangeSi> StabilityMapFunction::calcStabilityBounds(Z::WorkPlane ts) const
+QVector<Z::RangeSi> StabilityMapFunction::findStabilityBounds(Z::WorkPlane ts) const
 {
     auto elem = arg()->element;
     auto param = arg()->parameter;
@@ -97,11 +99,13 @@ QVector<Z::RangeSi> StabilityMapFunction::calcStabilityBounds(Z::WorkPlane ts) c
             param->setValue({x0, _plotRange.unit()});
             _calc->multMatrix();
             p0 = _calc->stability(ts);
-            if (p1 * p0 < 0) x2 = x0; else x1 = x0, p1 = p0;
+            if (p1 * p0 < 0) x2 = x0;
+            else x1 = x0, p1 = p0;
             x0 = (x1 + x2) / 2.0, iter++;
         }
         if (iter == maxIters) {
-            qWarning() << "StabilityMapFunction::calcStabilityBounds: failed to solve bound after" << iter << "iterations";
+            qWarning() << "StabilityMapFunction::calcStabilityBounds: "
+                       << "failed to solve bound after" << iter << "iterations";
             return {};
         }
         return x1;
@@ -135,37 +139,37 @@ QVector<Z::RangeSi> StabilityMapFunction::calcStabilityBounds(Z::WorkPlane ts) c
 
 QString StabilityMapFunction::calculateSpecPoints(const SpecPointParams& params)
 {
-    Z::Unit unitX = params.value(spUnitX).unit();
-    #define FMT_SI(v) Z::Value::fromSi(v, unitX).displayStr()
-
-    Z::PairTS<QVector<Z::RangeSi>> stabBounds = {
-        calcStabilityBounds(Z::Plane_T),
-        calcStabilityBounds(Z::Plane_S)
-    };
+    if (!ok()) return QString();
 
     QString report;
     QTextStream stream(&report);
+    stream << "<p class='title'>" << qApp->tr("Stability regions");
 
-    auto reportTS = [&](Z::WorkPlane ts){
+    Z::Unit unitX = params.value(spUnitX).unit();
+
+    auto stabBounds = Z::PairTS(findStabilityBounds(Z::T), findStabilityBounds(Z::S));
+
+    auto fmtSi = [unitX](Z::ValueSi v) { return Z::Value::fromSi(v, unitX).displayStr(); };
+
+    auto reportTS = [&](Z::WorkPlane ts) {
         stream << "<p><span class='plane'>" << Z::planeName(ts) << ":</span><br>";
-        if (stabBounds[ts].isEmpty())
+        if (stabBounds[ts].isEmpty()) {
             stream << "<span class='error'>"
                    << qApp->tr("Stability regions not found in variation range") << "</span>";
-        else {
-            int index = 1;
-            for (auto bounds: stabBounds[ts]) {
-                stream << "<span class='position'>" << index << "-beg:</span> " << FMT_SI(bounds.start) << "<br>"
-                       << "<span class='position'>" << index << "-end:</span> " << FMT_SI(bounds.stop) << "<br><br>";
-                index++;
-            }
+            return;
+        }
+        int index = 1;
+        for (auto bounds: stabBounds[ts]) {
+            stream << "<span class='position'>" << index << "-beg:</span> " << fmtSi(bounds.start) << "<br>"
+                   << "<span class='position'>" << index << "-end:</span> " << fmtSi(bounds.stop) << "<br><br>";
+            index++;
         }
     };
 
-    reportTS(Z::Plane_T);
-    reportTS(Z::Plane_S);
+    reportTS(Z::T);
+    reportTS(Z::S);
     if (AppSettings::instance().isDevMode)
         // Ori::Gui::applyTextBrowserStyleSheet should be called on the target browser
         stream << "<p><a href='do://edit-css'>Edit styles</a>";
-    #undef FMT_SI
     return report;
 }

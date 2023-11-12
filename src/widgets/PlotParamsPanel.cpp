@@ -37,7 +37,7 @@ PlotParamsPanel::PlotParamsPanel(PlotParamsPanelCtorOptions options, QWidget *pa
     if (options.hasInfoPanel)
         _infoPanelIndex = initPanel(tr("Special Points"), ":/toolbar/points",
             /* makeWidget: */ makeSpecPointsView,
-            /* onActivate: */ [](PlotParamsPanel* self){ emit self->updateNotables(); });
+            /* onActivate: */ [](PlotParamsPanel* self){ emit self->updateSpecPoints(); });
 
     if (options.hasDataGrid)
         _dataGridIndex = initPanel(tr("Data Table"), ":/toolbar/table",

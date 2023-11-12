@@ -1,7 +1,7 @@
 #ifndef MULTI_CAUSTIC_FUNCTION_H
 #define MULTI_CAUSTIC_FUNCTION_H
 
-#include "CausticFunction.h"
+#include "../math/CausticFunction.h"
 
 class CausticFunction;
 
@@ -15,7 +15,7 @@ public:
     MultirangeCausticFunction(Schema *schema) : PlotFunction(schema) {}
     ~MultirangeCausticFunction() override;
 
-    void calculate() override;
+    void calculate(CalculationMode calcMode = CALC_PLOT) override;
     bool hasOptions() const override { return true; }
     bool hasSpecPoints() const override { return true; }
     int resultCount(Z::WorkPlane plane) const override;
@@ -24,6 +24,7 @@ public:
 
     // Only needs for SP schemas
     void setPump(PumpParams* pump);
+    PumpParams* pump() const;
 
     QVector<Z::Variable> args() const;
     void setArgs(const QVector<Z::Variable>& args);
@@ -32,6 +33,8 @@ public:
 
     CausticFunction::Mode mode() const;
     void setMode(CausticFunction::Mode mode);
+
+    QString valueSymbol() const;
 
     Z::PointTS calculateAt(const Z::Value&arg) override;
 

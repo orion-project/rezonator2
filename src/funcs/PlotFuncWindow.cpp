@@ -271,7 +271,7 @@ void PlotFuncWindow::createContent()
     opts.hasDataGrid = function()->hasDataTable();
     opts.hasOptionsPanel = function()->hasOptions();
     _leftPanel = new PlotParamsPanel(opts);
-    connect(_leftPanel, &PlotParamsPanel::updateNotables, this, &PlotFuncWindow::updateNotables);
+    connect(_leftPanel, &PlotParamsPanel::updateSpecPoints, this, &PlotFuncWindow::updateSpecPoints);
     connect(_leftPanel, &PlotParamsPanel::updateDataGrid, this, &PlotFuncWindow::updateDataGrid);
     connect(_leftPanel, &PlotParamsPanel::optionsPanelRequired, this, &PlotFuncWindow::optionsPanelRequired);
 
@@ -438,7 +438,7 @@ void PlotFuncWindow::showModeTS()
     actnShowS->setVisible(!flipped);
 }
 
-void PlotFuncWindow::updateNotables()
+void PlotFuncWindow::updateSpecPoints()
 {
     if (_frozen)
     {
@@ -446,7 +446,10 @@ void PlotFuncWindow::updateNotables()
         return;
     }
     if (_leftPanel->infoPanel() && _leftPanel->infoPanel()->isVisible())
+    {
+        prepareSpecPoints();
         _leftPanel->infoPanel()->setHtml(_function->calculateSpecPoints(getSpecPointsParams()));
+    }
 }
 
 void PlotFuncWindow::updateStatusUnits()
@@ -482,24 +485,28 @@ void PlotFuncWindow::updateCursorInfo()
     auto unitY = getUnitY();
     CursorInfoValues values;
     auto p = _cursor->position();
-    values << CursorInfoValue(QStringLiteral("X"), unitX->toSi(p.x()));
-    values << CursorInfoValue(QStringLiteral("Y"), unitY->toSi(p.y()));
+    values << CursorInfoValue(CursorInfoValue::VALUE_X, unitX->toSi(p.x()));
+    values << CursorInfoValue(CursorInfoValue::VALUE_Y, unitY->toSi(p.y()));
     getCursorInfo({Z::Value(p.x(), unitX), Z::Value(p.y(), unitY)}, values);
-    QStringList info;
-    foreach (const CursorInfoValue& v, values)
+    QString str;
+    QTextStream info(&str);
+    for (int i = 0; i < values.size(); i++)
     {
-        QString line;
-        if (v.isX())
-            line = _cursorPanel->formatLinkX(Z::format(p.x()));
-        else if (v.isY())
-            line = _cursorPanel->formatLinkY(Z::format(p.y()));
+        const CursorInfoValue& v = values.at(i);
+        if (v.kind == CursorInfoValue::VALUE_X)
+            info << _cursorPanel->formatLinkX(Z::format(p.x()));
+        else if (v.kind == CursorInfoValue::VALUE_Y)
+            info << _cursorPanel->formatLinkY(Z::format(p.y()));
+        else if (v.kind == CursorInfoValue::SECTION)
+            info << "<b>" << v.name << ":</b> ";
         else
-            line = QStringLiteral("%1 = %2").arg(v.name, Z::format(unitY->fromSi(v.value)));
+            info << v.name << " = " << Z::format(unitY->fromSi(v.value));
         if (!v.note.isEmpty())
-            line += ' ' + v.note;
-        info << line;
+            info << ' ' << v.note;
+        if (v.kind != CursorInfoValue::SECTION and i < values.size()-1)
+            info << "; ";
     }
-    _cursorPanel->setText(info.join(QStringLiteral("; ")));
+    _cursorPanel->setText(str);
 }
 
 void PlotFuncWindow::updateWithParams()
@@ -533,7 +540,8 @@ void PlotFuncWindow::update()
 
     _plot->updateTexts();
     updateStatusUnits();
-    updateNotables();
+    updateSpecPoints();
+    updateDataGrid();
     afterUpdate();
 
     _plot->replot();
@@ -573,6 +581,10 @@ void PlotFuncWindow::updateGraphs()
 void PlotFuncWindow::graphSelected(QCPGraph *graph)
 {
     updateDataGrid();
+    if (_selectGraphOptions.testFlag(SG_UPDATE_CUSROR))
+        updateCursorInfo();
+    if (_selectGraphOptions.testFlag(SG_UPDATE_SPEC_POINTS))
+        updateSpecPoints();
 
     if (graph)
         _statusBar->setText(STATUS_POINTS, tr("Points: %1").arg(graph->data()->size()));
@@ -757,7 +769,7 @@ void PlotFuncWindow::optionChanged(AppSettingsOptions option)
     {
         _cursorPanel->setNumberPrecision(AppSettings::instance().numberPrecisionData, false);
         updateCursorInfo();
-        updateNotables();
+        updateSpecPoints();
     }
 }
 

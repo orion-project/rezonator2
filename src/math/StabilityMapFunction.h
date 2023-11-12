@@ -15,20 +15,20 @@ public:
 
     StabilityMapFunction(Schema *schema) : PlotFunction(schema) {}
 
-    void calculate() override;
+    void calculate(CalculationMode calcMode = CALC_PLOT) override;
     bool hasOptions() const override { return true; }
     bool hasSpecPoints() const override { return true; }
     void loadPrefs() override;
     QString calculateSpecPoints(const SpecPointParams& params) override;
-
     Z::PointTS calculateAt(const Z::Value& v) override;
-    QVector<Z::RangeSi> calcStabilityBounds(Z::WorkPlane ts) const;
+
+    QVector<Z::RangeSi> findStabilityBounds(Z::WorkPlane ts) const;
 
     Z::Enums::StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }
     void setStabilityCalcMode(Z::Enums::StabilityCalcMode mode) { _stabilityCalcMode = mode; }
 
 private:
-    Z::Enums::StabilityCalcMode _stabilityCalcMode = Z::Enums::StabilityCalcMode::Normal;
+    Z::Enums::StabilityCalcMode _stabilityCalcMode = Z::Enums::StabilityCalcMode::Squared;
 
     Z::PlottingRange _plotRange;
 

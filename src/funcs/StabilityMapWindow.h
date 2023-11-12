@@ -25,7 +25,7 @@ protected:
     void afterUpdate() override;
     QList<BasicMdiChild::MenuItem> viewMenuItems() const override;
     Z::Unit getDefaultUnitX() const override;
-    void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const override;
+    void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) override;
     SpecPointParams getSpecPointsParams() const override;
 
     // Implementation of PlotFuncWindowStorable

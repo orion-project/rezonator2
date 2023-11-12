@@ -17,7 +17,7 @@ public:
 
     BeamVariationFunction(Schema *schema) : PlotFunction (schema) {}
 
-    void calculate() override;
+    void calculate(CalculationMode calcMode = CALC_PLOT) override;
 
     Z::PointTS calculateAt(const Z::Value& v) override;
 

@@ -26,7 +26,7 @@ protected:
     bool configureInternal() override;
     Z::Unit getDefaultUnitX() const override;
     Z::Unit getDefaultUnitY() const override;
-    void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const override;
+    void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) override;
     QList<BasicMdiChild::MenuItem> viewMenuItems() const override;
 
     // Implementation of PlotFuncWindowStorable

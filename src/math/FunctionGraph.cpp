@@ -70,7 +70,7 @@ QCPL::Graph* FunctionGraph::getOrMakeSegment(int index)
         {
             segment->addToLegend();
             if (legendName.isEmpty())
-                segment->setName(_workPlane == Z::WorkPlane::Plane_T ? QStringLiteral("T") : QStringLiteral("S"));
+                segment->setName(Z::planeName(_workPlane));
             else segment->setName(legendName);
         }
         _segments.append(segment);
@@ -112,7 +112,7 @@ void FunctionGraph::setColor(const QString& color)
 {
     QColor clr(color);
     if (!clr.isValid())
-        clr = _workPlane == Z::Plane_T ? Qt::darkGreen : Qt::red;
+        clr = _workPlane == Z::T ? Qt::darkGreen : Qt::red;
     setPen(QPen(clr));
 }
 
@@ -170,8 +170,8 @@ FunctionGraph::ExportData FunctionGraph::exportData(ExportParams params) const
 
 FunctionGraphSet::FunctionGraphSet(QCPL::Plot* plot, std::function<GraphUnits()> getUnits): _plot(plot), _getUnits(getUnits)
 {
-    _graphT = new FunctionGraph(plot, Z::Plane_T, getUnits);
-    _graphS = new FunctionGraph(plot, Z::Plane_S, getUnits);
+    _graphT = new FunctionGraph(plot, Z::T, getUnits);
+    _graphS = new FunctionGraph(plot, Z::S, getUnits);
     _graphT->setPen(QPen(Qt::darkGreen));
     _graphS->setPen(QPen(Qt::red));
 }
@@ -217,10 +217,11 @@ void FunctionGraphSet::update(const QList<PlotFunction*>& functions)
 
 void FunctionGraphSet::update(const QString& id, Z::WorkPlane workPlane, const QList<PlotFunction*>& functions, const QString &color)
 {
-    QString key = id + (workPlane == Z::Plane_T ? "_t" : "_s");
+    QString key = id + Z::planeSuffix(workPlane);
     if (!_graphs.contains(key))
     {
         auto graph = new FunctionGraph(_plot, workPlane, _getUnits);
+        graph->id = id;
         graph->legendName = key;
         graph->setColor(color);
         _graphs.insert(key, graph);

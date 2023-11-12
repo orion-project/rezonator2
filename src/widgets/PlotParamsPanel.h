@@ -48,7 +48,7 @@ public:
 
 signals:
     void updateDataGrid();
-    void updateNotables();
+    void updateSpecPoints();
     QWidget* optionsPanelRequired();
 
 private slots:

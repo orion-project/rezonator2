@@ -20,7 +20,7 @@
           "text": "Table windows can be stored in schema file"
         },
         {
-          "text": "Calculate waist size and position in Caustic and Multirange Caustic functions"
+          "text": "Calculate waist size and position in Caustic, MR-Caustic, MB-Caustic functions"
         },
         {
           "text": "Calculate bounds of stability regions in Stability Map function"

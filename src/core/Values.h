@@ -25,8 +25,8 @@ struct PairTS
 
     void set(const TValue& t, const TValue& s) { T = t, S = s; }
 
-    const TValue& operator[](Z::WorkPlane ts) const { return ts == Z::Plane_T ? T : S; }
-    TValue& operator[](Z::WorkPlane ts) { return ts == Z::Plane_T ? T : S; }
+    const TValue& operator[](Z::WorkPlane ts) const { return ts == Z::T ? T : S; }
+    TValue& operator[](Z::WorkPlane ts) { return ts == Z::T ? T : S; }
 
     QString str() const;
 };

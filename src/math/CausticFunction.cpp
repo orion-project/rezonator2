@@ -20,7 +20,7 @@ Z::VariableRange CausticFunction::givenRange()
     return range;
 }
 
-void CausticFunction::calculate()
+void CausticFunction::calculate(CalculationMode calcMode)
 {
     if (!checkArgElem()) return;
 
@@ -42,6 +42,8 @@ void CausticFunction::calculate()
             ? prepareResonator()
             : prepareSinglePass(elem);
     if (!isPrepared) return;
+
+    if (calcMode != CALC_PLOT) return;
 
     auto calcBeamParams = isResonator
             ? &CausticFunction::calculateResonator
@@ -182,6 +184,25 @@ QString CausticFunction::modeDisplayName(Mode mode)
     return QString();
 }
 
+QString CausticFunction::valueSymbol() const
+{
+    switch (_mode)
+    {
+    case CausticFunction::Mode::BeamRadius:
+        return beamsizeSymbol();
+    case CausticFunction::Mode::FrontRadius:
+        return QStringLiteral("R");
+    case CausticFunction::Mode::HalfAngle:
+        return QStringLiteral("V");
+    }
+    return QString();
+}
+
+QString CausticFunction::beamsizeSymbol() const
+{
+    return (_schema->isResonator() or _pumpCalc->isGauss()) ? QStringLiteral("w") : QStringLiteral("y");
+}
+
 QString CausticFunction::calculateSpecPoints(const SpecPointParams &params)
 {
     if (!ok()) return QString();
@@ -229,97 +250,108 @@ QString CausticFunction::calculateSpecPoints(const SpecPointParams &params)
     Z::PointTS waistW(0, 0), waistX, waistZ0, waistVs;
     if (isGauss)
     {
-        const double epsX = 1e-7;
-        const double infR = 1/epsX;
-        const int maxCount = 1000;
-    #define SOLVE_WAIST(TS, Mts) \
-        if (qAbs(startR.TS) >= infR) { \
-            waistW.TS = startW.TS, waistX.TS = startX; \
-        } else if (qAbs(stopR.TS) >= infR) { \
-            waistW.TS = stopW.TS, waistX.TS = stopX; \
-        } else if (startR.TS * stopR.TS < 0) { \
-            int count = 0; \
-            double x1 = startX, x2 = stopX, x0 = (x1 + x2) / 2.0, r1 = startR.TS, r0; \
-            while (qAbs(x2-x1) > epsX and count < maxCount) { \
-                elem->setSubRangeSI(x0); _calc->multMatrix(); \
+        auto solve = [&](Z::WorkPlane ts){
+            const double epsX = 1e-7;
+            const double infR = 1/epsX;
+            const int maxIters = 100;
+            if (qAbs(startR[ts]) >= infR) {
+                waistW[ts] = startW[ts], waistX[ts] = startX;
+                return;
+            }
+            if (qAbs(stopR[ts]) >= infR) {
+                waistW[ts] = stopW[ts], waistX[ts] = stopX;
+                return;
+            }
+            if (startR[ts] * stopR[ts] > 0) {
+                return;
+            }
+            int iter = 0;
+            double x1 = startX, r1 = startR[ts];
+            double x2 = stopX;
+            double x0 = (x1 + x2) / 2.0, r0;
+            while (qAbs(x2-x1) > epsX and iter < maxIters) {
+                elem->setSubRangeSI(x0);
+                _calc->multMatrix();
                 r0 = isResonator \
-                    ? _beamCalc->frontRadius(_calc->Mts(), _ior) \
-                    : _pumpCalc->calcT(_calc->Mts(), _ior).frontRadius; \
-                if (r1 * r0 < 0) x2 = x0; else x1 = x0, r1 = r0; \
-                x0 = (x1 + x2) / 2.0; count++; \
-            } \
-            if (count == maxCount) \
-                qWarning() << "CausticFunction::calculateSpecPoints: failed to solve waist after" << count << "iterations"; \
-            else { \
-                waistX.TS = x0; \
-                waistW.TS = isResonator \
-                    ? _beamCalc->beamRadius(_calc->Mts(), _ior) \
-                    : _pumpCalc->calcT(_calc->Mts(), _ior).beamRadius; \
-            } \
-        } \
-        if (waistW.TS > 0) { \
-            GaussCalculator gauss; \
-            gauss.setMI(isResonator ? 1 : _pumpCalc->MI().TS); \
-            gauss.setLambda(schema()->wavelenSi() / _ior); \
-            gauss.setLock(GaussCalculator::Lock::Waist); \
-            gauss.setW0(waistW.TS); \
-            gauss.calc(); \
-            waistZ0.TS = gauss.z0(); \
-            waistVs.TS = gauss.Vs(); \
-        }
-        SOLVE_WAIST(T, Mt)
-        SOLVE_WAIST(S, Ms)
+                      ? _beamCalc->frontRadius(_calc->M(ts), _ior)
+                      : _pumpCalc->calcT(_calc->M(ts), _ior).frontRadius;
+                if (r1 * r0 < 0) x2 = x0;
+                else x1 = x0, r1 = r0;
+                x0 = (x1 + x2) / 2.0;
+                iter++;
+            }
+            if (iter == maxIters) {
+                qWarning() << "CausticFunction::calculateSpecPoints: "
+                           << "failed to solve waist after" << iter << "iterations";
+                return;
+            }
+            waistX[ts] = x0;
+            waistW[ts] = isResonator
+                  ? _beamCalc->beamRadius(_calc->M(ts), _ior)
+                  : _pumpCalc->calcT(_calc->M(ts), _ior).beamRadius;
+            GaussCalculator gauss;
+            gauss.setMI(isResonator ? 1 : _pumpCalc->MI()[ts]);
+            gauss.setLambda(schema()->wavelenSi() / _ior);
+            gauss.setLock(GaussCalculator::Lock::Waist);
+            gauss.setW0(waistW[ts]);
+            gauss.calc();
+            waistZ0[ts] = gauss.z0();
+            waistVs[ts] = gauss.Vs();
+        };
+
+        solve(Z::T);
+        solve(Z::S);
     }
+
+    auto fmtSi = [](Z::ValueSi v, Z::Unit u){ return Z::Value::fromSi(v, u).displayStr(); };
 
     Z::Unit unitX = params.value(spUnitX).unit();
     Z::Unit unitW = params.value(spUnitW).unit();
     Z::Unit unitR = params.value(spUnitR).unit();
     double offset = params.value(spOffset).value();
-    #define FMT_SI(v, u) Z::Value::fromSi(v, u).displayStr()
-    QString stopPos = FMT_SI(stopX, unitX);
+    QString stopPos = fmtSi(stopX, unitX);
     QString startOffset, stopOffset;
     if (offset > 0)
     {
-        startOffset = " (" % FMT_SI(offset, unitX) % ')';
-        stopOffset = " (" % FMT_SI(offset + stopX, unitX) % ')';
+        startOffset = " (" % fmtSi(offset, unitX) % ')';
+        stopOffset = " (" % fmtSi(offset + stopX, unitX) % ')';
     }
     QString report;
     QTextStream stream(&report);
-    QChar beamsizeName = isGauss ? 'w' : 'y';
-    #define REPORT_TS(TS) \
-        stream << "<p><span class='plane'>" << #TS << ":</span><br>" \
-               << "<span class='param'>" << beamsizeName << ":</span> " << FMT_SI(startW.TS, unitW) \
-               << " <span class='position'>@ 0" << startOffset << "</span><br>"; \
-        if (isGauss) { \
-            stream << "<span class='param'>R:</span> " << FMT_SI(startR.TS, unitR) \
-                   << " <span class='position'>@ 0" << startOffset << "</span><br>"; \
-        } else { \
-            stream << "<span class='param'>V:</span> " << Z::format(startR.TS) \
-                   << " (" << Z::format(startR.TS * 180 / M_PI) << "&deg;)<br>"; \
-        } \
-        if (waistW.TS > 0) { \
-            stream << "<span class='waist'>w<sub>0</sub> = " << FMT_SI(waistW.TS, unitW) \
-                   << " @ " << FMT_SI(waistX.TS, unitX); \
-            if (offset > 0) \
-                stream << " (" << FMT_SI(waistX.TS + offset, unitX) << ')'; \
-            stream << "</span><br>" \
-                   << "<span class='waist'>Z<sub>0</sub> = " << FMT_SI(waistZ0.TS, unitX) << "</span><br>" \
-                   << "<span class='waist'>V<sub>s</sub> = " << Z::format(waistVs.TS) \
-                   << " (" << Z::format(waistVs.TS * 180 / M_PI) << "&deg;)</span><br>"; \
-        } \
-        stream << "<span class='param'>" << beamsizeName << ":</span> " << FMT_SI(stopW.TS, unitW) \
-               << " <span class='position'>@ " << stopPos << stopOffset << "</span>"; \
-        if (isGauss) { \
-            stream << "<br><span class='param'>R:</span> " << FMT_SI(stopR.TS, unitR) \
-                   << " <span class='position'>@ " << stopPos << stopOffset << "</span>"; \
-        } // for ray vectors start and stop angles are the same, no reason to show twice
-    REPORT_TS(T)
-    REPORT_TS(S)
+    QString beamsizeName = beamsizeSymbol();
+
+    auto reportTS = [&](Z::WorkPlane ts) {
+        stream << "<p><span class='plane'>" << Z::planeName(ts) << ":</span><br>"
+               << "<span class='param'>" << beamsizeName << ":</span> " << fmtSi(startW[ts], unitW)
+               << " <span class='position'>@ 0" << startOffset << "</span><br>";
+        if (isGauss)
+            stream << "<span class='param'>R:</span> " << fmtSi(startR[ts], unitR)
+                   << " <span class='position'>@ 0" << startOffset << "</span><br>";
+        else stream << "<span class='param'>V:</span> " << Z::format(startR[ts])
+                    << " (" << Z::format(startR[ts] * 180 / M_PI) << "&deg;)<br>";
+
+        if (waistW[ts] > 0) {
+            stream << "<span class='waist'>w<sub>0</sub> = " << fmtSi(waistW[ts], unitW)
+                   << " @ " << fmtSi(waistX[ts], unitX);
+            if (offset > 0)
+                stream << " (" << fmtSi(waistX[ts] + offset, unitX) << ')';
+            stream << "</span><br>"
+                   << "<span class='waist'>Z<sub>0</sub> = " << fmtSi(waistZ0[ts], unitX) << "</span><br>"
+                   << "<span class='waist'>V<sub>s</sub> = " << Z::format(waistVs[ts])
+                   << " (" << Z::format(waistVs[ts] * 180 / M_PI) << "&deg;)</span><br>";
+        }
+        stream << "<span class='param'>" << beamsizeName << ":</span> " << fmtSi(stopW[ts], unitW)
+               << " <span class='position'>@ " << stopPos << stopOffset << "</span>";
+        if (isGauss)
+            stream << "<br><span class='param'>R:</span> " << fmtSi(stopR[ts], unitR)
+                   << " <span class='position'>@ " << stopPos << stopOffset << "</span>";
+        // for ray vectors start and stop angles are the same, no reason to show twice
+    };
+
+    reportTS(Z::T);
+    reportTS(Z::S);
     if (AppSettings::instance().isDevMode)
         // Ori::Gui::applyTextBrowserStyleSheet should be called on the target browser
         stream << "<p><a href='do://edit-css'>Edit styles</a>";
-    #undef SOLVE_WAIST
-    #undef REPORT_TS
-    #undef FMT_SI
     return report;
 }

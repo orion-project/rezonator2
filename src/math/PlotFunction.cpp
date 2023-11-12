@@ -182,8 +182,8 @@ const PlotFuncResultSet* PlotFunction::results(Z::WorkPlane plane) const
 {
     switch (plane)
     {
-    case Z::Plane_T: return &_results.T;
-    case Z::Plane_S: return &_results.S;
+    case Z::T: return &_results.T;
+    case Z::S: return &_results.S;
     }
     qCritical() << "Unknown Z::WorkPlane" << int(plane);
     return nullptr;

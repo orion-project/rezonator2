@@ -177,7 +177,7 @@ QString BeamVariationWindow::writeFunction(QJsonObject& root)
     return QString();
 }
 
-void BeamVariationWindow::getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) const
+void BeamVariationWindow::getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values)
 {
     if (!function()->ok()) return;
     auto res = function()->calculateAt(pos.X);

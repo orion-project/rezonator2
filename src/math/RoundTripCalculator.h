@@ -28,7 +28,7 @@ public:
     QString error() const { return _error; }
 
     Z::PointTS stability() const { return { calcStability(_mt), calcStability(_ms) }; }
-    double stability(Z::WorkPlane ts) const { return ts == Z::Plane_T ? calcStability(_mt) : calcStability(_ms); }
+    inline double stability(Z::WorkPlane ts) const { return ts == Z::T ? calcStability(_mt) : calcStability(_ms); }
     Z::PointComplexTS stabilityCplx() const { return { calcStabilityCplx(_mt), calcStabilityCplx(_ms) }; }
     Z::PairTS<bool> isStable() const { return { isStable(_mt), isStable(_ms) }; }
     Z::Enums::StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }
@@ -42,6 +42,7 @@ public:
     inline const Z::Matrix* pMs() const { return &_ms; }
     inline const Z::MatrixArray& matrsT() const { return _matrsT; }
     inline const Z::MatrixArray& matrsS() const { return _matrsS; }
+    inline const Z::Matrix& M(Z::WorkPlane ts) { return ts == Z::T ? _mt : _ms; }
 
     QList<Element*> roundTrip() const;
     QString roundTripStr() const;

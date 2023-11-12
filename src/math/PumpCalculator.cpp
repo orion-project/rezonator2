@@ -221,7 +221,7 @@ bool PumpCalculator::isGauss() const
 
 PointTS PumpCalculator::MI() const
 {
-    return {_implT->MI, _implS->MI};
+    return { _implT->MI, _implS->MI };
 }
 
 Z::PointTS PumpCalculator::beamRadius(const Z::Matrix& mt, const Z::Matrix& ms, double ior) const

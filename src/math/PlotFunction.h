@@ -72,12 +72,14 @@ using SpecPointParams = QMap<int, SpecPointParam>;
 class PlotFunction : public FunctionBase
 {
 public:
+    enum CalculationMode { CALC_PLOT, CALC_PREPARE };
+
     PlotFunction(Schema *schema);
     ~PlotFunction();
 
     virtual bool checkArguments();
 
-    virtual void calculate() {}
+    virtual void calculate(CalculationMode calcMode = CALC_PLOT) { Q_UNUSED(calcMode) }
     virtual Z::PairTS<double> calculateAt(const Z::Value& arg) { Q_UNUSED(arg) return Z::PairTS<double>(); }
 
     /// Defines if function can calculate notable values. See @ref calculateSpecPoints().

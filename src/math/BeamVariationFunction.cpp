@@ -6,7 +6,7 @@
 #include "RoundTripCalculator.h"
 #include "../core/Schema.h"
 
-void BeamVariationFunction::calculate()
+void BeamVariationFunction::calculate(CalculationMode calcMode)
 {
     if (!checkArguments()) return;
 
@@ -21,6 +21,8 @@ void BeamVariationFunction::calculate()
     auto range = arg()->range.plottingRange();
     if (!prepareResults(range)) return;
     if (!prepareCalculator(_pos.element, true)) return;
+
+    if (calcMode != CALC_PLOT) return;
 
     auto rangeElem = Z::Utils::asRange(_pos.element);
     if (rangeElem)

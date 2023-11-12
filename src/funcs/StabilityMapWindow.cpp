@@ -275,7 +275,7 @@ Z::Unit StabilityMapWindow::getDefaultUnitX() const
     return function()->arg()->range.start.unit();
 }
 
-void StabilityMapWindow::getCursorInfo(const Z::ValuePoint &pos, CursorInfoValues &values) const
+void StabilityMapWindow::getCursorInfo(const Z::ValuePoint &pos, CursorInfoValues &values)
 {
     if (!function()->ok()) return;
     auto res = function()->calculateAt(pos.X);
