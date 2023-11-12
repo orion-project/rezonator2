@@ -1,12 +1,11 @@
-#include "testing/OriTestBase.h"
-#include "TestUtils.h"
+#include "../app/AppSettings.h"
 #include "../core/Schema.h"
-#include "../core/Elements.h"
 #include "../io/SchemaReaderJson.h"
-#include "../funcs/BeamParamsAtElemsFunction.h"
-#include "../AppSettings.h"
+#include "../math/BeamParamsAtElemsFunction.h"
+#include "../tests/TestUtils.h"
 
 #include "core/OriTemplates.h"
+#include "testing/OriTestBase.h"
 
 #define READ_TEST_FILE(file_name)\
     Schema schema;\
@@ -66,8 +65,11 @@ TEST_METHOD(interfaces_sw)
     READ_TEST_FILE("calc_beamdata_interfaces.rez")
     schema.setTripType(TripType::SW);
     BeamParamsAtElemsFunction func(&schema);
-    func.calcMediumEnds = true;
-    func.calcEmptySpaces = true;
+    TableFunction::Params params;
+    params.calcMediumEnds = true;
+    params.calcEmptySpaces = true;
+    params.calcSpaceMids = true;
+    func.setParams(params);
     CALC_FUNC(ResultsCount(25))
 
     // normal interface
@@ -92,8 +94,11 @@ TEST_CASE_METHOD(interfaces_sp_rr, TripType tripType)
     READ_TEST_FILE("calc_beamdata_interfaces.rez")
     schema.setTripType(tripType);
     BeamParamsAtElemsFunction func(&schema);
-    func.calcMediumEnds = true;
-    func.calcEmptySpaces = true;
+    TableFunction::Params params;
+    params.calcMediumEnds = true;
+    params.calcEmptySpaces = true;
+    params.calcSpaceMids = true;
+    func.setParams(params);
     CALC_FUNC(ResultsCount(27))
 
     // normal interface
@@ -120,7 +125,10 @@ TEST_CASE_METHOD(must_respect_medium_ior__sw__mirrors_at_ends, QString fileName)
     READ_TEST_FILE(fileName)
     schema.setTripType(TripType::SW);
     BeamParamsAtElemsFunction func(&schema);
-    func.calcMediumEnds = true;
+    TableFunction::Params params;
+    params.calcMediumEnds = true;
+    params.calcSpaceMids = true;
+    func.setParams(params);
     CALC_FUNC(ResultsCount(5))
 
     // First two results must be the same - left end mirror and origin of medium
@@ -141,7 +149,10 @@ TEST_CASE_METHOD(must_respect_medium_ior__sp__mirrors_at_ends, QString fileName)
     READ_TEST_FILE(fileName)
     schema.setTripType(TripType::SP);
     BeamParamsAtElemsFunction func(&schema);
-    func.calcMediumEnds = true;
+    TableFunction::Params params;
+    params.calcMediumEnds = true;
+    params.calcSpaceMids = true;
+    func.setParams(params);
     CALC_FUNC(ResultsCount(7))
 
     // First two results must be the same - left end mirror and origin of medium
@@ -162,8 +173,10 @@ TEST_CASE_METHOD(must_respect_medium_ior__sw__elem_in_middle, QString fileName)
     READ_TEST_FILE(fileName)
     schema.setTripType(TripType::SW);
     BeamParamsAtElemsFunction func(&schema);
-    func.calcMediumEnds = true;
-    func.calcEmptySpaces = false;
+    TableFunction::Params params;
+    params.calcMediumEnds = true;
+    params.calcSpaceMids = true;
+    func.setParams(params);
     CALC_FUNC(ResultsCount(14))
 
     // The end of left-half medium must match left side of element
@@ -180,8 +193,10 @@ TEST_CASE_METHOD(must_respect_medium_ior__sp_rr__elem_in_middle, QString fileNam
     READ_TEST_FILE(fileName)
     schema.setTripType(tripType);
     BeamParamsAtElemsFunction func(&schema);
-    func.calcMediumEnds = true;
-    func.calcEmptySpaces = false;
+    TableFunction::Params params;
+    params.calcMediumEnds = true;
+    params.calcSpaceMids = true;
+    func.setParams(params);
     CALC_FUNC(ResultsCount(16))
 
     // The end of left-half medium must match left side of element

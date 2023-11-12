@@ -56,35 +56,18 @@ macx: ICON = img/icon/main_2.icns
 # Sources
 
 RESOURCES += \
-    src/images.qrc
+    src/app.qrc
 
 HEADERS += \
-    src/AdjustmentWindow.h \
-    src/AppSettings.h \
-    src/CalcManager.h \
-    src/CalculatorWindow.h \
-    src/CustomElemsManager.h \
-    src/CustomElemsWindow.h \
-    src/CustomPrefs.h \
-    src/ElemFormulaWindow.h \
-    src/ElementPropsDialog.h \
-    src/ElementsCatalogDialog.h \
-    src/GrinLensWindow.h \
-    src/HelpSystem.h \
-    src/IrisWindow.h \
-    src/LensmakerWindow.h \
-    src/MemoWindow.h \
-    src/MessageBus.h \
-    src/ProjectOperations.h \
-    src/ProjectWindow.h \
-    src/ProtocolWindow.h \
-    src/PumpParamsDialog.h \
-    src/PumpWindow.h \
-    src/RezonatorDialog.h \
-    src/SchemaParamsWindow.h \
-    src/SchemaViewWindow.h \
-    src/SchemaWindows.h \
-    src/WindowsManager.h \
+    src/app/Appearance.h \
+    src/app/AppSettings.h \
+    src/app/CalcManager.h \
+    src/app/CommonData.h \
+    src/app/CustomElemsManager.h \
+    src/app/CustomPrefs.h \
+    src/app/HelpSystem.h \
+    src/app/MessageBus.h \
+    src/app/ProjectOperations.h \
     src/core/Beam.h \
     src/core/CommonTypes.h \
     src/core/Complex.h \
@@ -103,51 +86,66 @@ HEADERS += \
     src/core/Report.h \
     src/core/Schema.h \
     src/core/Units.h \
+    src/core/Utils.h \
     src/core/Values.h \
     src/core/Variable.h \
-    src/funcs/BeamParamsAtElemsFunction.h \
-    src/funcs/CausticFunction.h \
-    src/funcs/FormatInfo.h \
-    src/funcs/FunctionBase.h \
-    src/funcs/FunctionGraph.h \
-    src/funcs/FunctionUtils.h \
-    src/funcs/GaussCalculator.h \
-    src/funcs/GrinCalculator.h \
-    src/funcs/InfoFunctions.h \
-    src/funcs/LensCalculator.h \
-    src/funcs/MultibeamCausticFunction.h \
-    src/funcs/MultirangeCausticFunction.h \
-    src/funcs/PlotFuncRoundTripFunction.h \
-    src/funcs/PlotFunction.h \
-    src/funcs/PumpCalculator.h \
-    src/funcs/RoundTripCalculator.h \
-    src/funcs/StabilityMap2DFunction.h \
-    src/funcs/StabilityMapFunction.h \
-    src/funcs/TableFunction.h \
-    src/funcs_window/BeamShapeExtension.h \
-    src/funcs_window/CausticWindow.h \
-    src/funcs_window/FuncWindowHelpers.h \
-    src/funcs_window/InfoFuncWindow.h \
-    src/funcs_window/MultiCausticParamsDlg.h \
-    src/funcs_window/MultibeamCausticWindow.h \
-    src/funcs_window/MulticausticWindow.h \
-    src/funcs_window/MultirangeCausticWindow.h \
-    src/funcs_window/PlotFuncWindow.h \
-    src/funcs_window/PlotFuncWindowStorable.h \
-    src/funcs_window/StabilityMap2DWindow.h \
-    src/funcs_window/StabilityMapWindow.h \
-    src/funcs_window/TableFuncWindow.h \
+    src/funcs/BeamParamsAtElemsWindow.h \
+    src/funcs/BeamShapeExtension.h \
+    src/funcs/BeamVariationWindow.h \
+    src/funcs/CausticOptionsPanel.h \
+    src/funcs/CausticWindow.h \
+    src/funcs/FuncOptionsPanel.h \
+    src/funcs/FuncWindowHelpers.h \
+    src/funcs/InfoFuncWindow.h \
+    src/funcs/MultibeamCausticWindow.h \
+    src/funcs/MultiCausticParamsDlg.h \
+    src/funcs/MulticausticWindow.h \
+    src/funcs/MultirangeCausticWindow.h \
+    src/funcs/PlotFuncWindow.h \
+    src/funcs/PlotFuncWindowStorable.h \
+    src/funcs/StabilityMap2DWindow.h \
+    src/funcs/StabilityMapWindow.h \
+    src/funcs/TableFuncWindow.h \
+    src/math/AbcdBeamCalculator.h \
+    src/math/BeamParamsAtElemsFunction.h \
+    src/math/BeamVariationFunction.h \
+    src/math/CausticFunction.h \
+    src/math/FormatInfo.h \
+    src/math/FunctionBase.h \
+    src/math/FunctionGraph.h \
+    src/math/FunctionUtils.h \
+    src/math/GaussCalculator.h \
+    src/math/GrinCalculator.h \
+    src/math/InfoFunctions.h \
+    src/math/LensCalculator.h \
+    src/math/MultibeamCausticFunction.h \
+    src/math/MultirangeCausticFunction.h \
+    src/math/PlotFuncRoundTripFunction.h \
+    src/math/PlotFunction.h \
+    src/math/PumpCalculator.h \
+    src/math/RoundTripCalculator.h \
+    src/math/StabilityMap2DFunction.h \
+    src/math/StabilityMapFunction.h \
+    src/math/TableFunction.h \
+    src/io/Clipboard.h \
+    src/io/CommonUtils.h \
     src/io/ISchemaWindowStorable.h \
+    src/io/JsonUtils.h \
     src/io/SchemaReaderIni.h \
     src/io/SchemaReaderJson.h \
     src/io/SchemaWriterJson.h \
+    src/tests/TestSchemaListener.h \
     src/tests/TestSuite.h \
     src/tests/TestUtils.h \
-    src/Appearance.h \
+    src/tools/CalculatorWindow.h \
+    src/tools/GaussCalculatorWindow.h \
+    src/tools/GrinLensWindow.h \
+    src/tools/IrisWindow.h \
+    src/tools/LensmakerWindow.h \
+    src/widgets/ElementsTable.h \
+    src/widgets/ElementTypesListView.h \
     src/widgets/ElemFormulaEditor.h \
     src/widgets/ElemSelectorWidget.h \
-    src/widgets/ElementTypesListView.h \
-    src/widgets/ElementsTable.h \
     src/widgets/FormulaEditor.h \
     src/widgets/FrozenStateButton.h \
     src/widgets/GraphicsView.h \
@@ -155,8 +153,10 @@ HEADERS += \
     src/widgets/ParamEditorEx.h \
     src/widgets/ParamsEditor.h \
     src/widgets/ParamsListWidget.h \
+    src/widgets/ParamsTreeWidget.h \
     src/widgets/PlotHelpers.h \
     src/widgets/PlotParamsPanel.h \
+    src/widgets/PlotUtils.h \
     src/widgets/PopupMessage.h \
     src/widgets/RichTextItemDelegate.h \
     src/widgets/SchemaElemsTable.h \
@@ -171,53 +171,37 @@ HEADERS += \
     src/widgets/UnitWidgets.h \
     src/widgets/ValueEditor.h \
     src/widgets/ValuesEditorTS.h \
-    src/widgets/WidgetResult.h \
-    src/tests/TestSchemaListener.h \
-    src/GaussCalculatorWindow.h \
     src/widgets/VariableRangeEditor.h \
-    src/funcs_window/CausticOptionsPanel.h \
-    src/funcs_window/FuncOptionsPanel.h \
-    src/StartWindow.h \
-    src/CommonData.h \
-    src/AppSettingsDialog.h \
-    src/SchemaPropsDialog.h \
-    src/io/JsonUtils.h \
-    src/io/CommonUtils.h \
-    src/io/Clipboard.h \
-    src/core/Utils.h \
-    src/widgets/PlotUtils.h \
-    src/funcs/BeamVariationFunction.h \
-    src/funcs_window/BeamVariationWindow.h \
-    src/funcs/AbcdBeamCalculator.h \
-    src/widgets/ParamsTreeWidget.h
+    src/widgets/WidgetResult.h \
+    src/windows/AdjustmentWindow.h \
+    src/windows/AppSettingsDialog.h \
+    src/windows/CustomElemsWindow.h \
+    src/windows/ElementPropsDialog.h \
+    src/windows/ElementsCatalogDialog.h \
+    src/windows/ElemFormulaWindow.h \
+    src/windows/MemoWindow.h \
+    src/windows/ProjectWindow.h \
+    src/windows/ProtocolWindow.h \
+    src/windows/PumpParamsDialog.h \
+    src/windows/PumpWindow.h \
+    src/windows/RezonatorDialog.h \
+    src/windows/SchemaParamsWindow.h \
+    src/windows/SchemaPropsDialog.h \
+    src/windows/SchemaViewWindow.h \
+    src/windows/SchemaWindows.h \
+    src/windows/StartWindow.h \
+    src/windows/WindowsManager.h
 	
 SOURCES += \
-    src/AdjustmentWindow.cpp \
-    src/AppSettings.cpp \
-    src/CalcManager.cpp \
-    src/CalculatorWindow.cpp \
-    src/CustomElemsManager.cpp \
-    src/CustomElemsWindow.cpp \
-    src/CustomPrefs.cpp \
-    src/ElemFormulaWindow.cpp \
-    src/ElementPropsDialog.cpp \
-    src/ElementsCatalogDialog.cpp \
-    src/GrinLensWindow.cpp \
-    src/HelpSystem.cpp \
-    src/IrisWindow.cpp \
-    src/LensmakerWindow.cpp \
-    src/MemoWindow.cpp \
-    src/MessageBus.cpp \
-    src/ProjectOperations.cpp \
-    src/ProjectWindow.cpp \
-    src/ProtocolWindow.cpp \
-    src/PumpParamsDialog.cpp \
-    src/PumpWindow.cpp \
-    src/RezonatorDialog.cpp \
-    src/SchemaParamsWindow.cpp \
-    src/SchemaViewWindow.cpp \
-    src/SchemaWindows.cpp \
-    src/WindowsManager.cpp \
+    src/app/Appearance.cpp \
+    src/app/AppSettings.cpp \
+    src/app/CalcManager.cpp \
+    src/app/CommonData.cpp \
+    src/app/CustomElemsManager.cpp \
+    src/app/CustomPrefs.cpp \
+    src/app/HelpSystem.cpp \
+    src/app/MessageBus.cpp \
+    src/app/ProjectOperations.cpp \
     src/core/Beam.cpp \
     src/core/CommonTypes.cpp \
     src/core/Complex.cpp \
@@ -236,51 +220,62 @@ SOURCES += \
     src/core/Report.cpp \
     src/core/Schema.cpp \
     src/core/Units.cpp \
+    src/core/Utils.cpp \
     src/core/Values.cpp \
     src/core/Variable.cpp \
-    src/funcs/BeamParamsAtElemsFunction.cpp \
-    src/funcs/CausticFunction.cpp \
-    src/funcs/FormatInfo.cpp \
-    src/funcs/FunctionBase.cpp \
-    src/funcs/FunctionGraph.cpp \
-    src/funcs/FunctionUtils.cpp \
-    src/funcs/GaussCalculator.cpp \
-    src/funcs/GrinCalculator.cpp \
-    src/funcs/InfoFunctions.cpp \
-    src/funcs/MultibeamCausticFunction.cpp \
-    src/funcs/MultirangeCausticFunction.cpp \
-    src/funcs/PlotFuncRoundTripFunction.cpp \
-    src/funcs/PlotFunction.cpp \
-    src/funcs/PumpCalculator.cpp \
-    src/funcs/RoundTripCalculator.cpp \
-    src/funcs/StabilityMap2DFunction.cpp \
-    src/funcs/StabilityMapFunction.cpp \
-    src/funcs/TableFunction.cpp \
-    src/funcs_window/BeamShapeExtension.cpp \
-    src/funcs_window/CausticWindow.cpp \
-    src/funcs_window/FuncWindowHelpers.cpp \
-    src/funcs_window/InfoFuncWindow.cpp \
-    src/funcs_window/MultiCausticParamsDlg.cpp \
-    src/funcs_window/MultibeamCausticWindow.cpp \
-    src/funcs_window/MulticausticWindow.cpp \
-    src/funcs_window/MultirangeCausticWindow.cpp \
-    src/funcs_window/PlotFuncWindow.cpp \
-    src/funcs_window/PlotFuncWindowStorable.cpp \
-    src/funcs_window/StabilityMap2DWindow.cpp \
-    src/funcs_window/StabilityMapWindow.cpp \
-    src/funcs_window/TableFuncWindow.cpp \
+    src/funcs/BeamParamsAtElemsWindow.cpp \
+    src/funcs/BeamShapeExtension.cpp \
+    src/funcs/BeamVariationWindow.cpp \
+    src/funcs/CausticWindow.cpp \
+    src/funcs/FuncOptionsPanel.cpp \
+    src/funcs/FuncWindowHelpers.cpp \
+    src/funcs/InfoFuncWindow.cpp \
+    src/funcs/MultibeamCausticWindow.cpp \
+    src/funcs/MultiCausticParamsDlg.cpp \
+    src/funcs/MulticausticWindow.cpp \
+    src/funcs/MultirangeCausticWindow.cpp \
+    src/funcs/PlotFuncWindow.cpp \
+    src/funcs/PlotFuncWindowStorable.cpp \
+    src/funcs/StabilityMap2DWindow.cpp \
+    src/funcs/StabilityMapWindow.cpp \
+    src/funcs/TableFuncWindow.cpp \
+    src/math/AbcdBeamCalculator.cpp \
+    src/math/BeamParamsAtElemsFunction.cpp \
+    src/math/BeamVariationFunction.cpp \
+    src/math/CausticFunction.cpp \
+    src/math/FormatInfo.cpp \
+    src/math/FunctionBase.cpp \
+    src/math/FunctionGraph.cpp \
+    src/math/FunctionUtils.cpp \
+    src/math/GaussCalculator.cpp \
+    src/math/GrinCalculator.cpp \
+    src/math/InfoFunctions.cpp \
+    src/math/MultibeamCausticFunction.cpp \
+    src/math/MultirangeCausticFunction.cpp \
+    src/math/PlotFuncRoundTripFunction.cpp \
+    src/math/PlotFunction.cpp \
+    src/math/PumpCalculator.cpp \
+    src/math/RoundTripCalculator.cpp \
+    src/math/StabilityMap2DFunction.cpp \
+    src/math/StabilityMapFunction.cpp \
+    src/math/TableFunction.cpp \
+    src/io/Clipboard.cpp \
+    src/io/CommonUtils.cpp \
+    src/io/ISchemaWindowStorable.cpp \
+    src/io/JsonUtils.cpp \
     src/io/SchemaReaderIni.cpp \
     src/io/SchemaReaderJson.cpp \
     src/io/SchemaWriterJson.cpp \
     src/main.cpp \
     src/tests/test_AbcdBeamCalculator.cpp \
-    src/tests/test_ElemSelectorWidget.cpp \
     src/tests/test_Element.cpp \
     src/tests/test_ElementFilter.cpp \
     src/tests/test_ElementFormula.cpp \
     src/tests/test_Elements.cpp \
     src/tests/test_ElementsImages.cpp \
+    src/tests/test_ElemSelectorWidget.cpp \
     src/tests/test_Formula.cpp \
+    src/tests/test_GaussCalculator.cpp \
     src/tests/test_GrinCalculator.cpp \
     src/tests/test_InfoFunctions.cpp \
     src/tests/test_LuaHelper.cpp \
@@ -290,21 +285,28 @@ SOURCES += \
     src/tests/test_ParamsEditor.cpp \
     src/tests/test_PlotFunctions.cpp \
     src/tests/test_ProjectOperations.cpp \
+    src/tests/test_PumpCalculator.cpp \
+    src/tests/test_PumpWindow.cpp \
     src/tests/test_Report.cpp \
     src/tests/test_RoundTripCalculator.cpp \
     src/tests/test_Schema.cpp \
     src/tests/test_SchemaReaderIni.cpp \
+    src/tests/test_SchemaReaderJson.cpp \
     src/tests/test_TableFunction.cpp \
     src/tests/test_TestUtils.cpp \
-    src/tests/test_UnitWidgets.cpp \
     src/tests/test_Units.cpp \
+    src/tests/test_UnitWidgets.cpp \
     src/tests/test_Utils.cpp \
     src/tests/test_Values.cpp \
-    src/Appearance.cpp \
+    src/tools/CalculatorWindow.cpp \
+    src/tools/GaussCalculatorWindow.cpp \
+    src/tools/GrinLensWindow.cpp \
+    src/tools/IrisWindow.cpp \
+    src/tools/LensmakerWindow.cpp \
+    src/widgets/ElementsTable.cpp \
+    src/widgets/ElementTypesListView.cpp \
     src/widgets/ElemFormulaEditor.cpp \
     src/widgets/ElemSelectorWidget.cpp \
-    src/widgets/ElementTypesListView.cpp \
-    src/widgets/ElementsTable.cpp \
     src/widgets/FormulaEditor.cpp \
     src/widgets/FrozenStateButton.cpp \
     src/widgets/GraphicsView.cpp \
@@ -312,8 +314,10 @@ SOURCES += \
     src/widgets/ParamEditorEx.cpp \
     src/widgets/ParamsEditor.cpp \
     src/widgets/ParamsListWidget.cpp \
+    src/widgets/ParamsTreeWidget.cpp \
     src/widgets/PlotHelpers.cpp \
     src/widgets/PlotParamsPanel.cpp \
+    src/widgets/PlotUtils.cpp \
     src/widgets/PopupMessage.cpp \
     src/widgets/RichTextItemDelegate.cpp \
     src/widgets/SchemaElemsTable.cpp \
@@ -322,30 +326,27 @@ SOURCES += \
     src/widgets/UnitWidgets.cpp \
     src/widgets/ValueEditor.cpp \
     src/widgets/ValuesEditorTS.cpp \
-    src/widgets/WidgetResult.cpp \
-    src/tests/test_GaussCalculator.cpp \
-    src/tests/test_PumpCalculator.cpp \
-    src/tests/test_SchemaReaderJson.cpp \
-    src/tests/test_PumpWindow.cpp \
-    src/GaussCalculatorWindow.cpp \
     src/widgets/VariableRangeEditor.cpp \
-    src/funcs_window/FuncOptionsPanel.cpp \
-    src/io/ISchemaWindowStorable.cpp \
-    src/StartWindow.cpp \
-    src/CommonData.cpp \
-    src/AppSettingsDialog.cpp \
-    src/SchemaPropsDialog.cpp \
-    src/io/JsonUtils.cpp \
-    src/io/CommonUtils.cpp \
-    src/io/Clipboard.cpp \
-    src/core/Utils.cpp \
-    src/widgets/PlotUtils.cpp \
-    src/funcs/BeamVariationFunction.cpp \
-    src/funcs_window/BeamVariationWindow.cpp \
-    src/funcs/AbcdBeamCalculator.cpp \
-    src/widgets/ParamsTreeWidget.cpp
+    src/widgets/WidgetResult.cpp \
+    src/windows/AdjustmentWindow.cpp \
+    src/windows/AppSettingsDialog.cpp \
+    src/windows/CustomElemsWindow.cpp \
+    src/windows/ElementPropsDialog.cpp \
+    src/windows/ElementsCatalogDialog.cpp \
+    src/windows/ElemFormulaWindow.cpp \
+    src/windows/MemoWindow.cpp \
+    src/windows/ProjectWindow.cpp \
+    src/windows/ProtocolWindow.cpp \
+    src/windows/PumpParamsDialog.cpp \
+    src/windows/PumpWindow.cpp \
+    src/windows/RezonatorDialog.cpp \
+    src/windows/SchemaParamsWindow.cpp \
+    src/windows/SchemaPropsDialog.cpp \
+    src/windows/SchemaViewWindow.cpp \
+    src/windows/SchemaWindows.cpp \
+    src/windows/StartWindow.cpp \
+    src/windows/WindowsManager.cpp
 
 DISTFILES += \
     release/history.json \
-    src/StartWindow.qss \
     tips/tips.json

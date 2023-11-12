@@ -1,5 +1,6 @@
-#include "testing/OriTestBase.h"
 #include "../widgets/ParamsEditor.h"
+
+#include "testing/OriTestBase.h"
 
 namespace Z {
 namespace Tests {

@@ -1,10 +1,10 @@
 #include "SchemaLayout.h"
 #include "SchemaLayoutDefs.h"
 
-#include "../Appearance.h"
+#include "../app/Appearance.h"
 #include "../core/Elements.h"
 #include "../core/ElementFormula.h"
-#include "../funcs/FormatInfo.h"
+#include "../math/FormatInfo.h"
 
 namespace ElementLayoutProps {
 

@@ -1,6 +1,6 @@
 #include "Format.h"
 
-#include "../AppSettings.h"
+#include "../app/AppSettings.h"
 
 namespace Z {
 

@@ -1,6 +1,6 @@
 #include "../core/Schema.h"
 #include "../io/SchemaReaderJson.h"
-#include "TestUtils.h"
+#include "../tests/TestUtils.h"
 
 #include <QApplication>
 #include <QFile>

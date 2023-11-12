@@ -6,7 +6,7 @@ See [code style rules](code-style.md) for naming convetion.
 
 ### Add function implementation class
 
-- Function classes are under `src/funcs`.
+- Function classes are under `src/math`.
 - Derive the new class from `PlotFunction` base class.
 - Describe the function using `FUNC_ALIAS` and `FUNC_NAME` macros and overriding `iconPath()` method. 
 
@@ -28,7 +28,7 @@ public:
 
 ### Add new function window
 
-- Function windows are under `src/funcs_window`.
+- Function windows are under `src/funcs`.
 - Window class name should be the same as the function class name but with `Window` suffix instead of `Function`.
 - Derive the new class from `PlotFuncWindowStorable` base class.
 - Create the function and pass it into the parent constructor.
@@ -37,7 +37,7 @@ public:
 #### CalcSomethingWindow.h
 ```cpp
 #include "PlotFuncWindowStorable.h"
-#include "../funcs/CalcSomethingFunction.h"
+#include "../math/CalcSomethingFunction.h"
 
 class CalcSomethingWindow : public PlotFuncWindowStorable
 {
@@ -66,7 +66,7 @@ CalcSomethingWindow::CalcSomethingWindow(Schema *schema)
 
 #### CalcManager.cpp
 ```cpp
-#include "funcs_window/CalcSomethingWindow.h"
+#include "funcs/CalcSomethingWindow.h"
 
 CalcManager::CalcManager(...)
 {

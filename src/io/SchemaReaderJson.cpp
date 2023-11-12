@@ -3,11 +3,11 @@
 #include "CommonUtils.h"
 #include "JsonUtils.h"
 #include "ISchemaWindowStorable.h"
+#include "../app/AppSettings.h"
 #include "../core/Schema.h"
 #include "../core/ElementsCatalog.h"
 #include "../core/ElementFormula.h"
-#include "../AppSettings.h"
-#include "../WindowsManager.h"
+#include "../windows/WindowsManager.h"
 
 #include <QBuffer>
 #include <QDebug>

@@ -280,6 +280,7 @@ public:
 
     PumpsList* pumps() { return &_pumps; }
     PumpParams* activePump();
+    PumpParams* findPump(const QString& label);
 
     void moveElementUp(Element* elem);
     void moveElementDown(Element* elem);

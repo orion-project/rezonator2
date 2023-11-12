@@ -1,8 +1,8 @@
 #include "PlotHelpers.h"
 
-#include "../AppSettings.h"
-#include "../CustomPrefs.h"
-#include "../funcs/FunctionGraph.h"
+#include "../app/AppSettings.h"
+#include "../app/CustomPrefs.h"
+#include "../math/FunctionGraph.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"

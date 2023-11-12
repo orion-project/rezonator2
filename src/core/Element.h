@@ -300,7 +300,7 @@ public:
 
         /// Propagating beam calculators incapsulate input beam parameters
         /// and can compute output beam parameters from ray matrix.
-        PumpCalculator *pumpCalcT, *pumpCalcS;
+        PumpCalculator *pumpCalc;
 
         /// Schema wevelength in meters.
         double schemaWavelenSi;

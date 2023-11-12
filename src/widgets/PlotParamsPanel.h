@@ -1,9 +1,9 @@
 #ifndef PLOT_PARAMS_PANEL_H
 #define PLOT_PARAMS_PANEL_H
 
-#include <QStackedWidget>
+#include "../app/AppSettings.h"
 
-#include "../AppSettings.h"
+#include <QStackedWidget>
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -48,7 +48,7 @@ public:
 
 signals:
     void updateDataGrid();
-    void updateNotables();
+    void updateSpecPoints();
     QWidget* optionsPanelRequired();
 
 private slots:

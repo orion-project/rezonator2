@@ -1,11 +1,11 @@
 #include "SchemaWriterJson.h"
 
-#include "CommonUtils.h"
-#include "JsonUtils.h"
-#include "ISchemaWindowStorable.h"
 #include "../core/Schema.h"
 #include "../core/ElementFormula.h"
-#include "../WindowsManager.h"
+#include "../io/CommonUtils.h"
+#include "../io/JsonUtils.h"
+#include "../io/ISchemaWindowStorable.h"
+#include "../windows/WindowsManager.h"
 
 #include <QApplication>
 #include <QBuffer>

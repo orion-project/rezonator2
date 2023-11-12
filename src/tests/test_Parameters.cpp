@@ -1,6 +1,7 @@
-#include "testing/OriTestBase.h"
 #include "../core/Parameters.h"
-#include "TestUtils.h"
+#include "../tests/TestUtils.h"
+
+#include "testing/OriTestBase.h"
 
 namespace Z {
 namespace Tests {

@@ -1,6 +1,7 @@
 #include "PlotParamsPanel.h"
 
 #include "PlotHelpers.h"
+#include "../app/Appearance.h"
 
 #include "qcpl_graph_grid.h"
 
@@ -20,13 +21,23 @@ static QWidget* makeGraphDataGrid(PlotParamsPanel*)
     return grid;
 }
 
+static QWidget* makeSpecPointsView(PlotParamsPanel*)
+{
+    auto browser = new QTextBrowser;
+    browser->setOpenLinks(false);
+    browser->setOpenExternalLinks(false);
+    browser->setFont(Z::Gui::CodeEditorFont().get());
+    Z::Gui::applyTextBrowserStyleSheet(browser, ":/style/spec-points");
+    return browser;
+}
+
 PlotParamsPanel::PlotParamsPanel(PlotParamsPanelCtorOptions options, QWidget *parent) :
     QStackedWidget(parent), _splitter(options.splitter)
 {
     if (options.hasInfoPanel)
         _infoPanelIndex = initPanel(tr("Special Points"), ":/toolbar/points",
-            /* makeWidget: */ [](PlotParamsPanel*)->QWidget*{ return new QTextBrowser; },
-            /* onActivate: */ [](PlotParamsPanel* self){ emit self->updateNotables(); });
+            /* makeWidget: */ makeSpecPointsView,
+            /* onActivate: */ [](PlotParamsPanel* self){ emit self->updateSpecPoints(); });
 
     if (options.hasDataGrid)
         _dataGridIndex = initPanel(tr("Data Table"), ":/toolbar/table",

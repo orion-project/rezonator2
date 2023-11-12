@@ -1,7 +1,7 @@
 #include "ValuesEditorTS.h"
 
 #include "UnitWidgets.h"
-#include "../Appearance.h"
+#include "../app/Appearance.h"
 #include "widgets/OriValueEdit.h"
 #include "helpers/OriLayouts.h"
 
@@ -116,15 +116,15 @@ void ValueEditorTS::editorKeyPressed(int key)
 {
     switch (key)
     {
-    case Qt::Key_Up: emit goingFocusPrev(sender() == _editorT ? Z::Plane_T : Z::Plane_S); break;
-    case Qt::Key_Down: emit goingFocusNext(sender() == _editorT ? Z::Plane_T : Z::Plane_S); break;
+    case Qt::Key_Up: emit goingFocusPrev(sender() == _editorT ? Z::T : Z::S); break;
+    case Qt::Key_Down: emit goingFocusNext(sender() == _editorT ? Z::T : Z::S); break;
     default:;
     }
 }
 
 void ValueEditorTS::setFocus(Z::WorkPlane plane)
 {
-    auto editor = plane == Z::Plane_T ? _editorT : _editorS;
+    auto editor = plane == Z::T ? _editorT : _editorS;
     editor->setFocus();
     editor->selectAll();
 }

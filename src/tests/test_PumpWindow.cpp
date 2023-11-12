@@ -1,5 +1,5 @@
-#include "TestSchemaListener.h"
-#include "../PumpWindow.h"
+#include "../tests/TestSchemaListener.h"
+#include "../windows/PumpWindow.h"
 
 #include "helpers/OriDialogs.h"
 

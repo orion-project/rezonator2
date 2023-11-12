@@ -321,6 +321,14 @@ PumpParams* Schema::activePump()
     return nullptr;
 }
 
+PumpParams* Schema::findPump(const QString& label)
+{
+    foreach (PumpParams *pump, _pumps)
+        if (pump->label() == label)
+            return pump;
+    return nullptr;
+}
+
 void Schema::removeParamLinks(Element* elem)
 {
     for (auto param: elem->params())

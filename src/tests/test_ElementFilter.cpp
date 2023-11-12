@@ -1,6 +1,7 @@
-#include "testing/OriTestBase.h"
 #include "../core/Elements.h"
 #include "../core/ElementFilter.h"
+
+#include "testing/OriTestBase.h"
 
 #include <QSharedPointer>
 
