@@ -80,6 +80,7 @@ public:
     bool edit(Ori::Optional<int> currentPageId = Ori::Optional<int>());
 
     QSize toolbarIconSize() const;
+    QPen elemBoundMarkersPen() const;
 
 private:
     AppSettings() {}

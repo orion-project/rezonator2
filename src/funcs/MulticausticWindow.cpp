@@ -6,12 +6,14 @@
 #include "../io/JsonUtils.h"
 #include "../math/FunctionGraph.h"
 #include "../math/PlotFuncRoundTripFunction.h"
+#include "../widgets/PlotHelpers.h"
 
-#include "widgets/OriValueEdit.h"
 #include "helpers/OriDialogs.h"
+#include "widgets/OriValueEdit.h"
 
 #include "qcpl_cursor.h"
 #include "qcpl_cursor_panel.h"
+#include "qcpl_io_json.h"
 #include "qcpl_plot.h"
 
 MulticausticWindow::MulticausticWindow(MultirangeCausticFunction* function) : PlotFuncWindowStorable(function)
@@ -47,6 +49,9 @@ MulticausticWindow::MulticausticWindow(MultirangeCausticFunction* function) : Pl
     _actnElemBoundMarkers->setChecked(true);
     connect(_actnElemBoundMarkers, &QAction::toggled, this, &MulticausticWindow::toggleElementBoundMarkers);
 
+    _actnElemBoundMarkersFormat = new QAction(tr("Element bound markers..."), this);
+    connect(_actnElemBoundMarkersFormat, &QAction::triggered, this, &MulticausticWindow::formatElementBoundMarkers);
+
     connect(_cursorPanel, &QCPL::CursorPanel::customCommandInvoked,
             this, &MulticausticWindow::handleCursorPanelCommand);
 }
@@ -70,10 +75,39 @@ void MulticausticWindow::toggleElementBoundMarkers(bool on)
     schema()->events().raise(SchemaEvents::Changed, "MultirangeCausticWindow: toggleElementBoundMarkers");
 }
 
+void MulticausticWindow::formatElementBoundMarkers()
+{
+    auto oldPen = elemBoundMarkersPen();
+    PlotHelpers::FormatPenDlgProps props;
+    props.title = tr("Element bound markers");
+    props.onApply = [this](const QPen& pen){
+        _elemBoundMarkersPen = pen;
+        foreach (auto line, _elemBoundMarkers)
+            line->setPen(pen);
+        _plot->replot();
+    };
+    props.onReset = [this](){
+        _elemBoundMarkersPen.reset();
+        foreach (auto line, _elemBoundMarkers)
+            line->setPen(elemBoundMarkersPen());
+        _plot->replot();
+    };
+    if (PlotHelpers::formatPenDlg(elemBoundMarkersPen(), props))
+        if (elemBoundMarkersPen() != oldPen)
+            schema()->markModified("MulticausticWindow::formatElementBoundMarkers");
+}
+
+QPen MulticausticWindow::elemBoundMarkersPen() const
+{
+    return _elemBoundMarkersPen.has_value()
+        ? _elemBoundMarkersPen.value()
+        : AppSettings::instance().elemBoundMarkersPen();
+}
+
 QCPItemStraightLine* MulticausticWindow::makeElemBoundMarker() const
 {
     QCPItemStraightLine *line = new QCPItemStraightLine(plot());
-    line->setPen(QPen(Qt::magenta, 1, Qt::DashLine)); // TODO make configurable
+    line->setPen(elemBoundMarkersPen());
     line->setSelectable(false);
     line->setLayer("elem_bounds");
     return line;
@@ -119,6 +153,11 @@ QList<BasicMdiChild::MenuItem> MulticausticWindow::viewMenuItems() const
     return { _actnElemBoundMarkers };
 }
 
+QList<BasicMdiChild::MenuItem> MulticausticWindow::formatMenuItems() const
+{
+    return { _actnElemBoundMarkersFormat };
+}
+
 ElemDeletionReaction MulticausticWindow::reactElemDeletion(const Elements& elems)
 {
     int deletingArgsCount = 0;
@@ -160,12 +199,17 @@ QString MulticausticWindow::writeFunction(QJsonObject& root)
 QString MulticausticWindow::readWindowSpecific(const QJsonObject& root)
 {
     _actnElemBoundMarkers->setChecked(root["elem_bound_markers"].toBool(true));
+    if (root.contains("elem_bound_markers_pen"))
+        _elemBoundMarkersPen = QCPL::readPen(root["elem_bound_markers_pen"].toObject(),
+                                             AppSettings::instance().elemBoundMarkersPen());
     return QString();
 }
 
 QString MulticausticWindow::writeWindowSpecific(QJsonObject& root)
 {
     root["elem_bound_markers"] = _actnElemBoundMarkers->isChecked();
+    if (_elemBoundMarkersPen.has_value())
+        root["elem_bound_markers_pen"] = QCPL::writePen(_elemBoundMarkersPen.value());
     return QString();
 }
 

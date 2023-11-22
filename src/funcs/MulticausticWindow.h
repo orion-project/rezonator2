@@ -5,6 +5,8 @@
 #include "../funcs/PlotFuncWindowStorable.h"
 #include "../math/MultirangeCausticFunction.h"
 
+#include <QPen>
+
 class QCPItemStraightLine;
 
 class MulticausticWindow : public PlotFuncWindowStorable
@@ -38,6 +40,7 @@ protected:
     bool configureInternal() override;
     void afterUpdate() override;
     QList<BasicMdiChild::MenuItem> viewMenuItems() const override;
+    QList<BasicMdiChild::MenuItem> formatMenuItems() const override;
     void updateGraphs() override;
     ElemDeletionReaction reactElemDeletion(const Elements&) override;
     void showRoundTrip() override;
@@ -45,7 +48,7 @@ protected:
     Z::Unit getDefaultUnitY() const override;
     Z::Unit getDefaultUnitY(FuncMode mode) const override;
     SpecPointParams getSpecPointsParams() const override;
-    void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values);
+    void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;
@@ -56,11 +59,14 @@ protected:
     FuncOffset findFuncOffset(const Z::Value& x) const;
 private:
     QList<QCPItemStraightLine*> _elemBoundMarkers;
-    QAction* _actnElemBoundMarkers;
+    QAction *_actnElemBoundMarkers, *_actnElemBoundMarkersFormat;
+    std::optional<QPen> _elemBoundMarkersPen;
 
     void toggleElementBoundMarkers(bool on);
+    void formatElementBoundMarkers();
     void updateElementBoundMarkers();
     QCPItemStraightLine* makeElemBoundMarker() const;
+    QPen elemBoundMarkersPen() const;
 
     void handleCursorPanelCommand(const QString& cmd);
 };

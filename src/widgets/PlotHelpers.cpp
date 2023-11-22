@@ -10,6 +10,7 @@
 
 #include "qcpl_plot.h"
 #include "qcpl_cursor.h"
+#include "qcpl_format_editors.h"
 
 #include <QLabel>
 #include <QCheckBox>
@@ -252,6 +253,31 @@ void exportGraphsData(FunctionGraphSet* graphs, QCPGraph* selectedGraph)
 
         exportGraphsData(graphs, selectedGraph, params);
     }
+}
+
+bool formatPenDlg(const QPen& pen, const FormatPenDlgProps& props)
+{
+    QDialog dlg(qApp->activeWindow());
+    dlg.setWindowTitle(props.title);
+
+    auto editor = new QCPL::PenEditorWidget;
+    editor->setValue(pen);
+
+    auto buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    buttons->connect(buttons, &QDialogButtonBox::accepted, &dlg, [&dlg, props, editor](){
+        props.onApply(editor->value());
+        dlg.accept();
+    });
+    buttons->connect(buttons, &QDialogButtonBox::rejected, &dlg, [&dlg](){
+        dlg.reject();
+    });
+    auto resetBtn = buttons->addButton(dlg.tr("Reset"), QDialogButtonBox::ResetRole);
+    resetBtn->connect(resetBtn, &QPushButton::pressed, &dlg, [&dlg, props](){
+        props.onReset();
+        dlg.reject();
+    });
+    LayoutV({editor, SpaceV(2), buttons}).useFor(&dlg);
+    return dlg.exec() == QDialog::Accepted;
 }
 
 } // namespace PlotHelpers

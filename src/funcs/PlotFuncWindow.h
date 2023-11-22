@@ -88,7 +88,6 @@ public:
     bool configure();
 
     // inherits from BasicMdiChild
-    //QList<QMenu*> menus() override { return {menuPlot, menuLimits, menuFormat}; }
     QList<QMenu*> menus() override;
     QList<BasicMdiChild::MenuItem> menuItems_View() override;
     QList<BasicMdiChild::MenuItem> menuItems_Edit() override;

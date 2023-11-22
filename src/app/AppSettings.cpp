@@ -2,6 +2,8 @@
 
 #include "tools/OriSettings.h"
 
+#include <QPen>
+
 #ifndef DLG_APP_CONFIG
 #define DLG_APP_CONFIG
 namespace Z {
@@ -175,4 +177,9 @@ QSize AppSettings::toolbarIconSize() const
     return smallToolbarImages ?
         QSize(toolbarIconSizeSmall, toolbarIconSizeSmall) :
         QSize(toolbarIconSizeBig, toolbarIconSizeBig);
+}
+
+QPen AppSettings::elemBoundMarkersPen() const
+{
+    return QPen(Qt::magenta, 1, Qt::DashLine);
 }
