@@ -5,6 +5,7 @@
 #include "../windows/SchemaWindows.h"
 
 #include <QToolButton>
+#include <QPen>
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -148,8 +149,10 @@ protected:
         *actnCopyGraphData, *actnCopyGraphDataCurSegment, *actnCopyGraphDataAllSegments, *actnCopyPlotImage,
         *actnCopyGraphDataWithParams, *actnFormatX, *actnFormatY, *actnFormatTitle, *actnFormatLegend,
         *actnToggleTitle, *actnToggleLegend, *actnCopyFormatFromSelection, *actnPasteFormatToSelection,
-        *actnCopyPlotFormat, *actnPastePlotFormat, *actnSavePlotFormat, *actnLoadPlotFormat;
+        *actnCopyPlotFormat, *actnPastePlotFormat, *actnSavePlotFormat, *actnLoadPlotFormat,
+        *actnFormatCursor;
     SelectGraphOptions _selectGraphOptions;
+    std::optional<QPen> _cursorPen;
 
     // Stores differences of plot view when function is switched betweeen modes
     // e.g. when the Caustic function switches between W and R.
@@ -167,9 +170,14 @@ protected:
     virtual QList<BasicMdiChild::MenuItem> editMenuItems() const { return {}; }
     virtual QList<BasicMdiChild::MenuItem> formatMenuItems() const { return {}; }
     virtual void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) { Q_UNUSED(pos) Q_UNUSED(values) }
+    virtual Z::Unit getDefaultUnitX() const { return Z::Units::none(); }
+    virtual Z::Unit getDefaultUnitY() const { return Z::Units::none(); }
+    virtual Z::Unit getDefaultUnitY(FuncMode mode) const { Q_UNUSED(mode) return getDefaultUnitY(); }
     virtual void prepareSpecPoints() {}
+    virtual SpecPointParams getSpecPointsParams() const { return SpecPointParams(); }
 
     QCPGraph* selectedGraph() const;
+    QPen cursorPen() const;
 
     void createActions();
     void createMenuBar();
@@ -182,6 +190,7 @@ protected:
     void updateModeTS();
     void updateGraphs(Z::WorkPlane);
     void updateStatusUnits();
+    void updatePlotItemToggleActions();
 
     void showStatusError(const QString &message);
     void clearStatusInfo();
@@ -191,15 +200,9 @@ protected:
     Z::Unit getUnitX() const;
     Z::Unit getUnitY() const;
     Z::Unit getUnitY(FuncMode mode) const;
-    virtual Z::Unit getDefaultUnitX() const { return Z::Units::none(); }
-    virtual Z::Unit getDefaultUnitY() const { return Z::Units::none(); }
-    virtual Z::Unit getDefaultUnitY(FuncMode mode) const { Q_UNUSED(mode) return getDefaultUnitY(); }
-    virtual SpecPointParams getSpecPointsParams() const { return SpecPointParams(); }
 
     /// Adds common variable to all plot parts - axes and title
     void addTextVar(const QString& name, const QString& descr, std::function<QString()> getter);
-
-    void updatePlotItemToggleActions();
 private slots:
     void activateModeT();
     void activateModeS();
@@ -222,6 +225,7 @@ private slots:
     void toggleLegend();
     void savePlotFormat();
     void loadPlotFormat();
+    void cursorFormatDlg();
 
     QWidget* optionsPanelRequired();
 

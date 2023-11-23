@@ -81,6 +81,8 @@ public:
 
     QSize toolbarIconSize() const;
     QPen elemBoundMarkersPen() const;
+    QPen stabBoundMarkerPen() const;
+    QPen cursorPen() const;
 
 private:
     AppSettings() {}

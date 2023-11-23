@@ -5,8 +5,6 @@
 #include "../funcs/PlotFuncWindowStorable.h"
 #include "../math/MultirangeCausticFunction.h"
 
-#include <QPen>
-
 class QCPItemStraightLine;
 
 class MulticausticWindow : public PlotFuncWindowStorable

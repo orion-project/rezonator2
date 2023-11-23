@@ -3,6 +3,7 @@
 #include "../core/Report.h"
 #include "../io/CommonUtils.h"
 
+#include "qcpl_cursor.h"
 #include "qcpl_cursor_panel.h"
 #include "qcpl_io_json.h"
 #include "qcpl_plot.h"
@@ -85,6 +86,11 @@ QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root, Z::Re
     // Restore cursor state
     _cursorPanel->setEnabled(root["cursor_enabled"].toBool(true));
     _cursorPanel->setMode(Z::IO::Utils::enumFromStr(root["cursor_mode"].toString(), QCPL::CursorPanel::Both));
+    if (root.contains("cursor_pen"))
+    {
+        _cursorPen = QCPL::readPen(root["cursor_pen"].toObject(), _cursor->pen());
+        _cursor->setPen(_cursorPen.value());
+    }
     requestCenterCursor();
 
     // Restore plot limits
@@ -143,6 +149,8 @@ QString PlotFuncWindowStorable::writeWindowGeneral(QJsonObject& root) const
     // Store cursor state
     root["cursor_enabled"] = _cursorPanel->enabled();
     root["cursor_mode"] = Z::IO::Utils::enumToStr(_cursorPanel->mode());
+    if (_cursorPen.has_value())
+        root["cursor_pen"] = QCPL::writePen(_cursorPen.value());
 
     // Store plot limits
     auto limitsX = _plot->limitsX();

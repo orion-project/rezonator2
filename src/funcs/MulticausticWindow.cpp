@@ -44,12 +44,12 @@ MulticausticWindow::MulticausticWindow(MultirangeCausticFunction* function) : Pl
     _plot->setDefaultTextX("{elem_labels} {(unit)}");
     _plot->setFormatterTextX(_plot->defaultTextX());
 
-    _actnElemBoundMarkers = new QAction(tr("Element bound markers"), this);
+    _actnElemBoundMarkers = new QAction(tr("Element Bound Markers"), this);
     _actnElemBoundMarkers->setCheckable(true);
     _actnElemBoundMarkers->setChecked(true);
     connect(_actnElemBoundMarkers, &QAction::toggled, this, &MulticausticWindow::toggleElementBoundMarkers);
 
-    _actnElemBoundMarkersFormat = new QAction(tr("Element bound markers..."), this);
+    _actnElemBoundMarkersFormat = new QAction(tr("Element Bound Markers Format..."), this);
     connect(_actnElemBoundMarkersFormat, &QAction::triggered, this, &MulticausticWindow::formatElementBoundMarkers);
 
     connect(_cursorPanel, &QCPL::CursorPanel::customCommandInvoked,
@@ -77,9 +77,8 @@ void MulticausticWindow::toggleElementBoundMarkers(bool on)
 
 void MulticausticWindow::formatElementBoundMarkers()
 {
-    auto oldPen = elemBoundMarkersPen();
     PlotHelpers::FormatPenDlgProps props;
-    props.title = tr("Element bound markers");
+    props.title = tr("Element Bound Markers");
     props.onApply = [this](const QPen& pen){
         _elemBoundMarkersPen = pen;
         foreach (auto line, _elemBoundMarkers)
@@ -93,8 +92,7 @@ void MulticausticWindow::formatElementBoundMarkers()
         _plot->replot();
     };
     if (PlotHelpers::formatPenDlg(elemBoundMarkersPen(), props))
-        if (elemBoundMarkersPen() != oldPen)
-            schema()->markModified("MulticausticWindow::formatElementBoundMarkers");
+        schema()->markModified("MulticausticWindow::formatElementBoundMarkers");
 }
 
 QPen MulticausticWindow::elemBoundMarkersPen() const

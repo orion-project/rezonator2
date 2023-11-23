@@ -94,12 +94,15 @@ void PlotFuncWindow::createActions()
     actnSetTextY = action(tr("Y-axis Text..."), _plot, SLOT(axisTextDlgY()));
     actnSetTextT = action(tr("Title Text..."), _plot, SLOT(titleTextDlg()));
 
+    // These actions also used in context menus, so we add the "Format" word for clearity
+    // even though it's not necessary for subcommands of the "Format" menu
     actnFormatTitle = action(tr("Title Format..."), _plot, SLOT(titleFormatDlg()));
     actnFormatLegend = action(tr("Legend Format..."), _plot, SLOT(legendFormatDlg()));
     actnFormatX = action(tr("X-axis Format..."), _plot, SLOT(axisFormatDlgX()));
     actnFormatY = action(tr("Y-axis Format..."), _plot, SLOT(axisFormatDlgY()));
     actnSavePlotFormat = action(tr("Save Plot Format..."), this, SLOT(savePlotFormat()));
     actnLoadPlotFormat = action(tr("Load Plot Format..."), this, SLOT(loadPlotFormat()));
+    actnFormatCursor = action(tr("Cursor Lines Format..."), this, SLOT(cursorFormatDlg()));
 
     actnCopyGraphData = action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
     actnCopyGraphDataCurSegment = action(tr("Copy Graph Data (this segment)"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
@@ -151,6 +154,7 @@ QList<QMenu*> PlotFuncWindow::menus()
     menuFormat->addAction(actnFormatLegend);
     menuFormat->addAction(actnFormatX);
     menuFormat->addAction(actnFormatY);
+    menuFormat->addAction(actnFormatCursor);
     for (auto& item : formatMenuItems())
         item.addTo(menuFormat);
     menuFormat->addSeparator();
@@ -310,6 +314,7 @@ void PlotFuncWindow::createContent()
     _plot->setFormatterTextT(_plot->defaultTextT());
 
     _cursor = new QCPL::Cursor(_plot);
+    _cursor->setPen(AppSettings::instance().cursorPen());
     connect(_cursor, &QCPL::Cursor::positionChanged, this, &PlotFuncWindow::updateCursorInfo);
     _plot->serviceGraphs().append(_cursor);
     auto axesLayer = _plot->layer("axes");
@@ -951,4 +956,27 @@ void PlotFuncWindow::loadPlotFormat()
         foreach (auto err, report)
             Z::Protocol(Z::Protocol::Warning) << err.message;
     }
+}
+
+QPen PlotFuncWindow::cursorPen() const
+{
+    return _cursorPen.has_value() ? _cursorPen.value() : AppSettings::instance().cursorPen();
+}
+
+void PlotFuncWindow::cursorFormatDlg()
+{
+    PlotHelpers::FormatPenDlgProps props;
+    props.title = tr("Cursor Lines");
+    props.onApply = [this](const QPen& pen){
+        _cursorPen = pen;
+        _cursor->setPen(pen);
+        _plot->replot();
+    };
+    props.onReset = [this](){
+        _cursorPen.reset();
+        _cursor->setPen(cursorPen());
+        _plot->replot();
+    };
+    if (PlotHelpers::formatPenDlg(cursorPen(), props))
+        schema()->markModified("PlotFuncWindow::cursorFormatDlg");
 }

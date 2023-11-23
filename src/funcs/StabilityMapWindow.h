@@ -24,6 +24,7 @@ protected:
     bool configureInternal() override;
     void afterUpdate() override;
     QList<BasicMdiChild::MenuItem> viewMenuItems() const override;
+    QList<BasicMdiChild::MenuItem> formatMenuItems() const override;
     Z::Unit getDefaultUnitX() const override;
     void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) override;
     SpecPointParams getSpecPointsParams() const override;
@@ -35,12 +36,14 @@ protected:
     QString writeWindowSpecific(QJsonObject& root) override;
 
 private:
-    QAction *_actnStabilityAutolimits, *_actnStabBoundMarkers;
+    QAction *_actnStabilityAutolimits, *_actnStabBoundMarkers, *_actnStabBoundMarkersFormat;
     QCPItemStraightLine *_stabBoundMarkerLow, *_stabBoundMarkerTop;
+    std::optional<QPen> _stabBoundMarkerPen;
 
     void updateStabBoundMarkers();
     void toggleStabBoundMarkers(bool on);
-
+    void formatStabBoundMarkers();
+    QPen stabBoundMarkerPen() const;
     QCPItemStraightLine* makeStabBoundMarker() const;
 
     void autolimitsStability();

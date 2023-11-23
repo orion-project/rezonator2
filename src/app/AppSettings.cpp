@@ -183,3 +183,14 @@ QPen AppSettings::elemBoundMarkersPen() const
 {
     return QPen(Qt::magenta, 1, Qt::DashLine);
 }
+
+QPen AppSettings::stabBoundMarkerPen() const
+{
+    return QPen(Qt::magenta, 1, Qt::DashLine);
+}
+
+QPen AppSettings::cursorPen() const
+{
+    return QPen(QColor::fromRgb(80, 80, 255));
+}
+

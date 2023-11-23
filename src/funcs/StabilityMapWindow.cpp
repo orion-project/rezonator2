@@ -5,12 +5,14 @@
 #include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
 #include "../widgets/ElemSelectorWidget.h"
+#include "../widgets/PlotHelpers.h"
 #include "../widgets/VariableRangeEditor.h"
 
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 
 #include "qcpl_plot.h"
+#include "qcpl_io_json.h"
 
 #include <QAction>
 
@@ -160,10 +162,13 @@ StabilityMapWindow::StabilityMapWindow(Schema *schema) :
     _actnStabilityAutolimits->setIcon(QIcon(":/toolbar/limits_stab"));
     connect(_actnStabilityAutolimits, &QAction::triggered, this, &StabilityMapWindow::autolimitsStability);
 
-    _actnStabBoundMarkers = new QAction(tr("Stability boundary markers"), this);
+    _actnStabBoundMarkers = new QAction(tr("Stability Boundary Markers"), this);
     _actnStabBoundMarkers->setCheckable(true);
     _actnStabBoundMarkers->setChecked(true);
     connect(_actnStabBoundMarkers, &QAction::toggled, this, &StabilityMapWindow::toggleStabBoundMarkers);
+
+    _actnStabBoundMarkersFormat = new QAction(tr("Stability Boundary Markers Format..."), this);
+    connect(_actnStabBoundMarkersFormat, &QAction::triggered, this, &StabilityMapWindow::formatStabBoundMarkers);
 
     menuLimits->addSeparator();
     menuLimits->addAction(_actnStabilityAutolimits);
@@ -222,12 +227,20 @@ QString StabilityMapWindow::writeFunction(QJsonObject& root)
 QString StabilityMapWindow::readWindowSpecific(const QJsonObject& root)
 {
     _actnStabBoundMarkers->setChecked(root["stab_bound_markers"].toBool(true));
+    if (root.contains("stab_bound_markers_pen"))
+    {
+        _stabBoundMarkerPen = QCPL::readPen(root["stab_bound_markers_pen"].toObject(), _stabBoundMarkerLow->pen());
+        _stabBoundMarkerLow->setPen(_stabBoundMarkerPen.value());
+        _stabBoundMarkerTop->setPen(_stabBoundMarkerPen.value());
+    }
     return QString();
 }
 
 QString StabilityMapWindow::writeWindowSpecific(QJsonObject& root)
 {
     root["stab_bound_markers"] = _actnStabBoundMarkers->isChecked();
+    if (_stabBoundMarkerPen.has_value())
+        root["stab_bound_markers_pen"] = QCPL::writePen(_stabBoundMarkerPen.value());
     return QString();
 }
 
@@ -249,10 +262,17 @@ void StabilityMapWindow::updateStabBoundMarkers()
     _stabBoundMarkerLow->setVisible(_actnStabBoundMarkers->isChecked());
 }
 
+QPen StabilityMapWindow::stabBoundMarkerPen() const
+{
+    return _stabBoundMarkerPen.has_value()
+        ? _stabBoundMarkerPen.value()
+        : AppSettings::instance().stabBoundMarkerPen();
+}
+
 QCPItemStraightLine* StabilityMapWindow::makeStabBoundMarker() const
 {
     QCPItemStraightLine *line = new QCPItemStraightLine(plot());
-    line->setPen(QPen(Qt::magenta, 1, Qt::DashLine)); // TODO make configurable
+    line->setPen(stabBoundMarkerPen());
     line->setSelectable(false);
     return line;
 }
@@ -260,6 +280,31 @@ QCPItemStraightLine* StabilityMapWindow::makeStabBoundMarker() const
 QList<BasicMdiChild::MenuItem> StabilityMapWindow::viewMenuItems() const
 {
     return { _actnStabBoundMarkers };
+}
+
+QList<BasicMdiChild::MenuItem> StabilityMapWindow::formatMenuItems() const
+{
+    return { _actnStabBoundMarkersFormat };
+}
+
+void StabilityMapWindow::formatStabBoundMarkers()
+{
+    PlotHelpers::FormatPenDlgProps props;
+    props.title = tr("Stability Boundary Markers");
+    props.onApply = [this](const QPen& pen){
+        _stabBoundMarkerPen = pen;
+        _stabBoundMarkerLow->setPen(pen);
+        _stabBoundMarkerTop->setPen(pen);
+        _plot->replot();
+    };
+    props.onReset = [this](){
+        _stabBoundMarkerPen.reset();
+        _stabBoundMarkerLow->setPen(stabBoundMarkerPen());
+        _stabBoundMarkerTop->setPen(stabBoundMarkerPen());
+        _plot->replot();
+    };
+    if (PlotHelpers::formatPenDlg(stabBoundMarkerPen(), props))
+        schema()->markModified("StabilityMapWindow::formatStabBoundMarkers");
 }
 
 void StabilityMapWindow::toggleStabBoundMarkers(bool on)

@@ -257,10 +257,14 @@ void exportGraphsData(FunctionGraphSet* graphs, QCPGraph* selectedGraph)
 
 bool formatPenDlg(const QPen& pen, const FormatPenDlgProps& props)
 {
+    QPen oldPen = pen;
+
     QDialog dlg(qApp->activeWindow());
     dlg.setWindowTitle(props.title);
 
-    auto editor = new QCPL::PenEditorWidget;
+    QCPL::PenEditorWidgetOptions opts;
+    opts.enableNoPen = false;
+    auto editor = new QCPL::PenEditorWidget(opts);
     editor->setValue(pen);
 
     auto buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
@@ -274,10 +278,12 @@ bool formatPenDlg(const QPen& pen, const FormatPenDlgProps& props)
     auto resetBtn = buttons->addButton(dlg.tr("Reset"), QDialogButtonBox::ResetRole);
     resetBtn->connect(resetBtn, &QPushButton::pressed, &dlg, [&dlg, props](){
         props.onReset();
-        dlg.reject();
+        dlg.accept();
     });
     LayoutV({editor, SpaceV(2), buttons}).useFor(&dlg);
-    return dlg.exec() == QDialog::Accepted;
+    if (dlg.exec() == QDialog::Accepted)
+        return editor->value() != oldPen;
+    return false;
 }
 
 } // namespace PlotHelpers
