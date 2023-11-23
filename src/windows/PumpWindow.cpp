@@ -211,6 +211,14 @@ void PumpsTable::pumpChanged(Schema*, PumpParams *pump)
     adjustColumns();
 }
 
+void PumpsTable::pumpCustomized(Schema*, PumpParams *pump)
+{
+    auto row = findRow(pump);
+    if (row < 0) return;
+    populateRow(reinterpret_cast<PumpParams*>(pump), row);
+    adjustColumns();
+}
+
 void PumpsTable::pumpDeleting(Schema*, PumpParams *pump)
 {
     auto row = findRow(pump);
@@ -518,9 +526,6 @@ void PumpWindow::setPumpColor()
     QColor newColor = QColorDialog::getColor(QColor(pump->color()), this, tr("Select pump line color"));
     if (!newColor.isValid()) return;
     pump->setColor(newColor.name());
-    // TODO: maybe it worth to introduce an additional event just for replotting without recalculation
-    schema()->events().raise(SchemaEvents::PumpChanged, pump, "PumpWindow: pump color changed");
-    if (pump->isActive() and schema()->tripType() == TripType::SP)
-        schema()->events().raise(SchemaEvents::RecalRequred, "PumpWindow: pump color changed");
+    schema()->events().raise(SchemaEvents::PumpCustomized, pump, "PumpWindow::setPumpColor");
     showStatusInfo();
 }

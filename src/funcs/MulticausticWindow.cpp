@@ -72,13 +72,13 @@ void MulticausticWindow::toggleElementBoundMarkers(bool on)
     foreach (auto marker, _elemBoundMarkers)
         marker->setVisible(on);
     plot()->replot();
-    schema()->events().raise(SchemaEvents::Changed, "MultirangeCausticWindow: toggleElementBoundMarkers");
+    schema()->markModified("MulticausticWindow::toggleElementBoundMarkers");
 }
 
 void MulticausticWindow::formatElementBoundMarkers()
 {
     PlotHelpers::FormatPenDlgProps props;
-    props.title = tr("Element Bound Markers");
+    props.title = tr("Element Bound Markers Format");
     props.onApply = [this](const QPen& pen){
         _elemBoundMarkersPen = pen;
         foreach (auto line, _elemBoundMarkers)

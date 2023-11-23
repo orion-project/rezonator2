@@ -28,6 +28,7 @@ class StatusBar;
 }}
 
 class FrozenStateButton;
+class FunctionGraph;
 class FunctionGraphSet;
 class PlotFunction;
 class PlotFuncWindow;
@@ -150,9 +151,9 @@ protected:
         *actnCopyGraphDataWithParams, *actnFormatX, *actnFormatY, *actnFormatTitle, *actnFormatLegend,
         *actnToggleTitle, *actnToggleLegend, *actnCopyFormatFromSelection, *actnPasteFormatToSelection,
         *actnCopyPlotFormat, *actnPastePlotFormat, *actnSavePlotFormat, *actnLoadPlotFormat,
-        *actnFormatCursor;
+        *actnFormatCursor, *actnFormatGraphT, *actnFormatGraphS, *actnFormatGraph;
     SelectGraphOptions _selectGraphOptions;
-    std::optional<QPen> _cursorPen;
+    std::optional<QPen> _cursorPen, _graphPenT, _graphPenS;
 
     // Stores differences of plot view when function is switched betweeen modes
     // e.g. when the Caustic function switches between W and R.
@@ -175,9 +176,12 @@ protected:
     virtual Z::Unit getDefaultUnitY(FuncMode mode) const { Q_UNUSED(mode) return getDefaultUnitY(); }
     virtual void prepareSpecPoints() {}
     virtual SpecPointParams getSpecPointsParams() const { return SpecPointParams(); }
+    virtual void afterGraphFormatted(FunctionGraph*) {}
 
     QCPGraph* selectedGraph() const;
     QPen cursorPen() const;
+    QPen graphPenT() const;
+    QPen graphPenS() const;
 
     void createActions();
     void createMenuBar();
@@ -226,6 +230,9 @@ private slots:
     void savePlotFormat();
     void loadPlotFormat();
     void cursorFormatDlg();
+    void graphFormatDlgT();
+    void graphFormatDlgS();
+    void graphFormatDlg();
 
     QWidget* optionsPanelRequired();
 

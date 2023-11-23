@@ -2,6 +2,7 @@
 
 #include "../core/Report.h"
 #include "../io/CommonUtils.h"
+#include "../math/FunctionGraph.h"
 
 #include "qcpl_cursor.h"
 #include "qcpl_cursor_panel.h"
@@ -117,6 +118,16 @@ QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root, Z::Re
     for (auto& msg : qcpl_report)
         if (!msg.ok() && msg.code != QCPL::JsonError::NoData)
             report->warning(msg.message);
+    if (root.contains("pen_t"))
+    {
+        _graphPenT = QCPL::readPen(root["pen_t"].toObject(), _graphs->T()->pen());
+        _graphs->T()->setPen(_graphPenT.value());
+    }
+    if (root.contains("pen_s"))
+    {
+        _graphPenS = QCPL::readPen(root["pen_s"].toObject(), _graphs->S()->pen());
+        _graphs->S()->setPen(_graphPenS.value());
+    }
 
     // Restore view states
     auto viewsJson = root["stored_views"].toObject();
@@ -166,6 +177,10 @@ QString PlotFuncWindowStorable::writeWindowGeneral(QJsonObject& root) const
     root["t_title"] = _plot->formatterTextT();
 
     root["format"] = QCPL::writePlot(_plot);
+    if (_graphPenT.has_value())
+        root["pen_t"] = QCPL::writePen(_graphPenT.value());
+    if (_graphPenS.has_value())
+        root["pen_s"] = QCPL::writePen(_graphPenS.value());
 
     // Store view states
     QJsonObject viewsJson;

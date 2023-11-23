@@ -83,6 +83,8 @@ public:
     QPen elemBoundMarkersPen() const;
     QPen stabBoundMarkerPen() const;
     QPen cursorPen() const;
+    QPen graphPenT() const;
+    QPen graphPenS() const;
 
 private:
     AppSettings() {}

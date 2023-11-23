@@ -103,6 +103,9 @@ void PlotFuncWindow::createActions()
     actnSavePlotFormat = action(tr("Save Plot Format..."), this, SLOT(savePlotFormat()));
     actnLoadPlotFormat = action(tr("Load Plot Format..."), this, SLOT(loadPlotFormat()));
     actnFormatCursor = action(tr("Cursor Lines Format..."), this, SLOT(cursorFormatDlg()));
+    actnFormatGraphT = action(tr("T-line Format..."), this, SLOT(graphFormatDlgT()));
+    actnFormatGraphS = action(tr("S-line Format..."), this, SLOT(graphFormatDlgS()));
+    actnFormatGraph = action(tr("Line Format..."), this, SLOT(graphFormatDlg()));
 
     actnCopyGraphData = action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
     actnCopyGraphDataCurSegment = action(tr("Copy Graph Data (this segment)"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
@@ -154,6 +157,8 @@ QList<QMenu*> PlotFuncWindow::menus()
     menuFormat->addAction(actnFormatLegend);
     menuFormat->addAction(actnFormatX);
     menuFormat->addAction(actnFormatY);
+    menuFormat->addAction(actnFormatGraphT);
+    menuFormat->addAction(actnFormatGraphS);
     menuFormat->addAction(actnFormatCursor);
     for (auto& item : formatMenuItems())
         item.addTo(menuFormat);
@@ -217,6 +222,7 @@ void PlotFuncWindow::createContextMenus()
     menuTitle->addAction(QIcon(":/toolbar/paste_fmt"), tr("Paste Title Format"), this, [this](){ pasteTitleFormat(); });
 
     auto menuGraph = new QMenu(this);
+    menuGraph->addAction(actnFormatGraph);
     menuGraph->addAction(actnCopyGraphData);
     menuGraph->addAction(actnCopyGraphDataCurSegment);
     menuGraph->addAction(actnCopyGraphDataAllSegments);
@@ -335,6 +341,8 @@ void PlotFuncWindow::createContent()
     setContent(_splitter);
 
     _graphs = new FunctionGraphSet(_plot, [this]{ return GraphUnits {getUnitX(), getUnitY()}; });
+    _graphs->T()->setPen(AppSettings::instance().graphPenT());
+    _graphs->S()->setPen(AppSettings::instance().graphPenS());
 }
 
 void PlotFuncWindow::createStatusBar()
@@ -963,10 +971,20 @@ QPen PlotFuncWindow::cursorPen() const
     return _cursorPen.has_value() ? _cursorPen.value() : AppSettings::instance().cursorPen();
 }
 
+QPen PlotFuncWindow::graphPenT() const
+{
+    return _graphPenT.has_value() ? _graphPenT.value() : AppSettings::instance().graphPenT();
+}
+
+QPen PlotFuncWindow::graphPenS() const
+{
+    return _graphPenS.has_value() ? _graphPenS.value() : AppSettings::instance().graphPenS();
+}
+
 void PlotFuncWindow::cursorFormatDlg()
 {
     PlotHelpers::FormatPenDlgProps props;
-    props.title = tr("Cursor Lines");
+    props.title = tr("Cursor Lines Format");
     props.onApply = [this](const QPen& pen){
         _cursorPen = pen;
         _cursor->setPen(pen);
@@ -979,4 +997,64 @@ void PlotFuncWindow::cursorFormatDlg()
     };
     if (PlotHelpers::formatPenDlg(cursorPen(), props))
         schema()->markModified("PlotFuncWindow::cursorFormatDlg");
+}
+
+void PlotFuncWindow::graphFormatDlgT()
+{
+    PlotHelpers::FormatPenDlgProps props;
+    props.title = tr("T-Line Format");
+    props.onApply = [this](const QPen& pen){
+        _graphPenT = pen;
+        _graphs->T()->setPen(pen);
+        _plot->replot();
+    };
+    props.onReset = [this](){
+        _graphPenT.reset();
+        _graphs->T()->setPen(graphPenT());
+        _plot->replot();
+    };
+    if (PlotHelpers::formatPenDlg(graphPenT(), props))
+        schema()->markModified("PlotFuncWindow::graphFormatDlgT");
+}
+
+void PlotFuncWindow::graphFormatDlgS()
+{
+    PlotHelpers::FormatPenDlgProps props;
+    props.title = tr("S-Line Format");
+    props.onApply = [this](const QPen& pen){
+        _graphPenS = pen;
+        _graphs->S()->setPen(pen);
+        _plot->replot();
+    };
+    props.onReset = [this](){
+        _graphPenS.reset();
+        _graphs->S()->setPen(graphPenS());
+        _plot->replot();
+    };
+    if (PlotHelpers::formatPenDlg(graphPenS(), props))
+        schema()->markModified("PlotFuncWindow::graphFormatDlgT");
+}
+
+void PlotFuncWindow::graphFormatDlg()
+{
+    auto g = _plot->selectedGraph();
+    if (_graphs->T()->contains(g))
+        graphFormatDlgT();
+    else if (_graphs->S()->contains(g))
+        graphFormatDlgS();
+
+    auto graph = _graphs->findBy(g);
+    if (!graph) return;
+
+    PlotHelpers::FormatPenDlgProps props;
+    props.title = tr("Line Format");
+    props.onApply = [this, graph](const QPen& pen){
+        graph->setPen(pen);
+        _plot->replot();
+    };
+    if (PlotHelpers::formatPenDlg(graph->pen(), props))
+    {
+        schema()->markModified("PlotFuncWindow::graphFormatDlg");
+        afterGraphFormatted(graph);
+    }
 }

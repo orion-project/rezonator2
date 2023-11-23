@@ -43,6 +43,7 @@ public:
     void schemaLoaded(Schema*) override;
     void pumpCreated(Schema*, PumpParams*) override;
     void pumpChanged(Schema*, PumpParams*) override;
+    void pumpCustomized(Schema*, PumpParams*) override;
     void pumpDeleting(Schema*, PumpParams*) override;
 
 signals:

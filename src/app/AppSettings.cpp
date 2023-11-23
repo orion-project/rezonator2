@@ -194,3 +194,12 @@ QPen AppSettings::cursorPen() const
     return QPen(QColor::fromRgb(80, 80, 255));
 }
 
+QPen AppSettings::graphPenT() const
+{
+    return QPen(Qt::darkGreen);
+}
+
+QPen AppSettings::graphPenS() const
+{
+    return QPen(Qt::red);
+}

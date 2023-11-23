@@ -47,12 +47,13 @@ public:
     int segmentsCount() const { return _segments.size(); }
     void setFlipped(bool on) { _isFlipped = on; }
     void setVisible(bool on) { _isVisible = on; }
-    void setPen(const QPen& pen) { _linePen = pen; }
-    void setColor(const QString& color);
+    void setPen(const QPen& pen);
+    QPen pen() const { return _linePen; }
     bool contains(QCPGraph* graph) const;
     bool isEmpty() const { return _segments.isEmpty(); }
     QString str() const;
     ExportData exportData(ExportParams params) const;
+    Z::WorkPlane workPlane() const { return _workPlane; }
 
 private:
     QCPL::Plot* _plot;
@@ -102,6 +103,7 @@ public:
     const MultiGraph& multiGraphs() const { return _graphs; }
 
     FunctionGraph* findBy(QCPGraph* graph) const;
+    FunctionGraph* findBy(const QString& id, Z::WorkPlane workPlane) const;
 
     QString str() const;
     ExportData exportData(ExportParams params) const;

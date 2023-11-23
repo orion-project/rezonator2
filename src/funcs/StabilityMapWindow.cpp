@@ -290,7 +290,7 @@ QList<BasicMdiChild::MenuItem> StabilityMapWindow::formatMenuItems() const
 void StabilityMapWindow::formatStabBoundMarkers()
 {
     PlotHelpers::FormatPenDlgProps props;
-    props.title = tr("Stability Boundary Markers");
+    props.title = tr("Stability Boundary Markers Format");
     props.onApply = [this](const QPen& pen){
         _stabBoundMarkerPen = pen;
         _stabBoundMarkerLow->setPen(pen);

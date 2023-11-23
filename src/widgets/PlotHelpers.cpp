@@ -275,11 +275,14 @@ bool formatPenDlg(const QPen& pen, const FormatPenDlgProps& props)
     buttons->connect(buttons, &QDialogButtonBox::rejected, &dlg, [&dlg](){
         dlg.reject();
     });
-    auto resetBtn = buttons->addButton(dlg.tr("Reset"), QDialogButtonBox::ResetRole);
-    resetBtn->connect(resetBtn, &QPushButton::pressed, &dlg, [&dlg, props](){
-        props.onReset();
-        dlg.accept();
-    });
+    if (props.onReset)
+    {
+        auto resetBtn = buttons->addButton(dlg.tr("Reset"), QDialogButtonBox::ResetRole);
+        resetBtn->connect(resetBtn, &QPushButton::pressed, &dlg, [&dlg, props](){
+            props.onReset();
+            dlg.accept();
+        });
+    }
     LayoutV({editor, SpaceV(2), buttons}).useFor(&dlg);
     if (dlg.exec() == QDialog::Accepted)
         return editor->value() != oldPen;

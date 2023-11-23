@@ -108,12 +108,11 @@ void FunctionGraph::trimToCount(int count)
     }
 }
 
-void FunctionGraph::setColor(const QString& color)
+void FunctionGraph::setPen(const QPen& pen)
 {
-    QColor clr(color);
-    if (!clr.isValid())
-        clr = _workPlane == Z::T ? Qt::darkGreen : Qt::red;
-    setPen(QPen(clr));
+    _linePen = pen;
+    foreach (auto segment, _segments)
+        segment->setPen(pen);
 }
 
 bool FunctionGraph::contains(QCPGraph* graph) const
@@ -172,8 +171,6 @@ FunctionGraphSet::FunctionGraphSet(QCPL::Plot* plot, std::function<GraphUnits()>
 {
     _graphT = new FunctionGraph(plot, Z::T, getUnits);
     _graphS = new FunctionGraph(plot, Z::S, getUnits);
-    _graphT->setPen(QPen(Qt::darkGreen));
-    _graphS->setPen(QPen(Qt::red));
 }
 
 FunctionGraphSet::~FunctionGraphSet()
@@ -223,12 +220,18 @@ void FunctionGraphSet::update(const QString& id, Z::WorkPlane workPlane, const Q
         auto graph = new FunctionGraph(_plot, workPlane, _getUnits);
         graph->id = id;
         graph->legendName = key;
-        graph->setColor(color);
         _graphs.insert(key, graph);
     }
-    else
-        _graphs[key]->setColor(color);
+    auto pen = _graphs[key]->pen();
+    pen.setColor(color);
+    _graphs[key]->setPen(pen);
     _graphs[key]->update(functions);
+}
+
+FunctionGraph* FunctionGraphSet::findBy(const QString& id, Z::WorkPlane workPlane) const
+{
+    QString key = id + Z::planeSuffix(workPlane);
+    return _graphs.contains(key) ? _graphs[key] : nullptr;
 }
 
 FunctionGraph* FunctionGraphSet::findBy(QCPGraph* graph) const
