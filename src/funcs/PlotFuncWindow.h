@@ -7,6 +7,10 @@
 #include <QToolButton>
 #include <QPen>
 
+#ifdef Q_OS_LINUX
+#include <optional>
+#endif
+
 QT_BEGIN_NAMESPACE
 class QAction;
 class QLabel;

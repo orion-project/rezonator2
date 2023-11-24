@@ -3,7 +3,7 @@
 #include "LuaHelper.h"
 
 #include <QApplication>
-#include <QRegularExpression.h>
+#include <QRegularExpression>
 
 namespace Z {
 
@@ -15,7 +15,7 @@ Formula::Formula(Parameter* target): _target(target)
 Formula::~Formula()
 {
     _target->setValueDriver(ParamValueDriver::None);
-    for (Z::Parameter* dep : _deps)
+    foreach (Z::Parameter* dep, _deps)
         dep->removeListener(this);
 }
 
@@ -42,7 +42,7 @@ void Formula::calculate()
         return;
     }
 
-    for (auto dep : _deps)
+    foreach (auto dep, _deps)
         lua.setGlobalVar(dep->alias(), dep->value().toSi());
 
     auto res = lua.calculate(_code);
@@ -122,7 +122,7 @@ void Formulas::free(Parameter *p)
 
 void Formulas::clear()
 {
-    qDeleteAll(_items.values());
+    qDeleteAll(_items);
     _items.clear();
 }
 
@@ -150,8 +150,8 @@ bool Formulas::ifDependsOn(Parameter *whichParam, Parameter *onParam) const
 Parameters Formulas::dependentParams(Parameter *whichParam) const
 {
     Parameters result;
-    for (Formula *formula : _items.values())
-        for (Parameter *param : formula->deps())
+    foreach (Formula *formula, _items.values())
+        foreach (Parameter *param, formula->deps())
             if (param == whichParam)
             {
                 if (!result.contains(formula->target()))

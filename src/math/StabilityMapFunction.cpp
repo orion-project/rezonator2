@@ -6,6 +6,10 @@
 
 #include <QApplication>
 
+#ifdef Q_OS_LINUX
+#include <optional>
+#endif
+
 void StabilityMapFunction::calculate(CalculationMode calcMode)
 {
     _approxStabBounds.T.clear();
