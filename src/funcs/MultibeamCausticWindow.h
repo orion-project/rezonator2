@@ -16,7 +16,7 @@ public:
     void pumpCreated(Schema*, PumpParams*) override { update(); }
     void pumpChanged(Schema*, PumpParams* p) override;
     void pumpCustomized(Schema*, PumpParams* p) override;
-    void pumpDeleting(Schema*, PumpParams*) override { update(); }
+    void pumpDeleting(Schema*, PumpParams*) override;
     void pumpDeleted(Schema*, PumpParams*) override { update(); }
 
 protected:
@@ -24,11 +24,16 @@ protected:
     void calculate() override;
     void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) override;
     void prepareSpecPoints() override;
-    void afterGraphFormatted(FunctionGraph*) override;
+    void formatMultiGraph(FunctionGraph*) override;
+
+    // Implementation of PlotFuncWindowStorable
+    QString readWindowSpecific(const QJsonObject& root) override;
+    QString writeWindowSpecific(QJsonObject& root) override;
 
 private:
     PumpParams* _lastSelectedPump = nullptr;
-    bool _skipRecoloring = false;
+    bool _selfSentEvent = false;
+    QMap<PumpParams*, QPen> _graphPens;
 
     Z::WorkPlane workPlane() const;
 };

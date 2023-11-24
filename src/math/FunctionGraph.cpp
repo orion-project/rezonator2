@@ -212,26 +212,20 @@ void FunctionGraphSet::update(const QList<PlotFunction*>& functions)
     _graphS->update(functions);
 }
 
-void FunctionGraphSet::update(const QString& id, Z::WorkPlane workPlane, const QList<PlotFunction*>& functions, const QString &color)
+FunctionGraph* FunctionGraphSet::addMultiGraph(qintptr id, const QString& legendName,
+    Z::WorkPlane workPlane, const QList<PlotFunction*>& functions)
 {
-    QString key = id + Z::planeSuffix(workPlane);
-    if (!_graphs.contains(key))
-    {
-        auto graph = new FunctionGraph(_plot, workPlane, _getUnits);
-        graph->id = id;
-        graph->legendName = key;
-        _graphs.insert(key, graph);
-    }
-    auto pen = _graphs[key]->pen();
-    pen.setColor(color);
-    _graphs[key]->setPen(pen);
-    _graphs[key]->update(functions);
+    auto graph = new FunctionGraph(_plot, workPlane, _getUnits);
+    graph->id = id;
+    graph->legendName = legendName + Z::planeSuffix(workPlane);
+    _graphs.insert(id, graph);
+    graph->update(functions);
+    return graph;
 }
 
-FunctionGraph* FunctionGraphSet::findBy(const QString& id, Z::WorkPlane workPlane) const
+FunctionGraph* FunctionGraphSet::getBy(qintptr id) const
 {
-    QString key = id + Z::planeSuffix(workPlane);
-    return _graphs.contains(key) ? _graphs[key] : nullptr;
+    return _graphs.contains(id) ? _graphs[id] : nullptr;
 }
 
 FunctionGraph* FunctionGraphSet::findBy(QCPGraph* graph) const
@@ -307,8 +301,6 @@ FunctionGraphSet::ExportData FunctionGraphSet::exportData(ExportParams params) c
     {
         int segmentIdx = -1;
         if (params.segment) {
-            // We don't know on which line the selected segment is,
-            // but we want to export respective segments from all lines
             auto it = _graphs.constBegin();
             while (it != _graphs.constEnd()) {
                 int i = it.value()->segments().indexOf(params.segment);
@@ -323,15 +315,14 @@ FunctionGraphSet::ExportData FunctionGraphSet::exportData(ExportParams params) c
         auto it = _graphs.constBegin();
         while (it != _graphs.constEnd())
         {
-            if (!params.graph || it.value()->segments().contains(params.graph))
-                addColumn(it.key(), it.value()->exportData(FunctionGraph::ExportParams{.segmentIdx = segmentIdx}));
+            auto graph = it.value();
+            if (!params.graph || graph->segments().contains(params.graph))
+                addColumn(graph->legendName, graph->exportData(FunctionGraph::ExportParams{.segmentIdx = segmentIdx}));
             it++;
         }
     }
     else
     {
-        // We don't know on which T or S line the selected segment is,
-        // but we want to export respective segments from both lines
         int segmentIdx = _graphT->segments().indexOf(params.segment);
         if (segmentIdx == -1)
             segmentIdx = _graphS->segments().indexOf(params.segment);

@@ -328,7 +328,7 @@ void ProjectOperations::createDefaultPump(Schema *schema)
 
 bool ProjectOperations::editPumpDlg(PumpParams* pump)
 {
-    return PumpParamsDialog::editPump(pump);
+    return PumpParamsDialog::editPump(pump, schema()->pumps());
 }
 
 void ProjectOperations::setupPump()

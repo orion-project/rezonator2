@@ -84,10 +84,10 @@ void PumpsTable::adjustColumns()
     resizeColumnToContents(COL_PARAMS);
 }
 
-void PumpsTable::doubleClicked(QTableWidgetItem*)
+void PumpsTable::doubleClicked(QTableWidgetItem* item)
 {
     PumpParams* pump = selected();
-    if (pump) emit doubleClicked(pump);
+    if (pump) emit pumpDoubleClicked(pump, item->column());
 }
 
 void PumpsTable::showContextMenu(const QPoint& pos)
@@ -258,7 +258,7 @@ PumpWindow::PumpWindow(Schema *owner) : SchemaMdiChild(owner)
     createStatusBar();
 
     _table->setContextMenu(_contextMenu);
-    connect(_table, SIGNAL(doubleClicked(PumpParams*)), this, SLOT(editPump()));
+    connect(_table, SIGNAL(pumpDoubleClicked(PumpParams*, int)), this, SLOT(pumpDoubleClicked(PumpParams*, int)));
     schema()->registerListener(_table);
 
     showStatusInfo();
@@ -324,7 +324,7 @@ PumpParams* PumpWindow::makeNewPumpDlg()
     if (!pump) return nullptr;
     if (AppSettings::instance().pumpAutoLabel)
         Z::Utils::generateLabel(schema(), pump);
-    if (!PumpParamsDialog::editPump(pump))
+    if (!editPumpDlg(pump))
     {
         delete pump;
         return nullptr;
@@ -334,12 +334,19 @@ PumpParams* PumpWindow::makeNewPumpDlg()
 
 bool PumpWindow::editPumpDlg(PumpParams* pump)
 {
-    return PumpParamsDialog::editPump(pump);
+    return PumpParamsDialog::editPump(pump, schema()->pumps());
 }
 
 PumpParams* PumpWindow::selectedPump() const
 {
     return _table->selected();
+}
+
+void PumpWindow::pumpDoubleClicked(PumpParams*, int col)
+{
+    if (col == PumpsTable::COL_COLOR)
+        setPumpColor();
+    else editPump();
 }
 
 void PumpWindow::addNewPump(PumpParams* pump)

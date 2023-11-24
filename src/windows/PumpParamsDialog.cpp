@@ -95,9 +95,12 @@ PumpParams* PumpParamsDialog::makeNewPump()
     return nullptr;
 }
 
-bool PumpParamsDialog::editPump(PumpParams *params)
+bool PumpParamsDialog::editPump(PumpParams *params, QList<PumpParams*> *allPumps)
 {
     auto dlg = new PumpParamsDialog(params);
+    foreach (auto p, *allPumps)
+        if (p != params)
+            dlg->_existingLabels << p->label();
     return dlg->exec() == QDialog::Accepted;
 }
 
@@ -157,7 +160,20 @@ void PumpParamsDialog::showEvent(QShowEvent *event)
 
 void PumpParamsDialog::collect()
 {
-    _params->setLabel(_editorLabel->text().trimmed());
+    QString label = _editorLabel->text().trimmed();
+    if (label.isEmpty())
+    {
+        Ori::Dlg::warning(tr("Input beam label can not be empty"));
+        _editorLabel->setFocus();
+        return;
+    }
+    if (_existingLabels.contains(label))
+    {
+        Ori::Dlg::warning(tr("Input beam with label <b>%1</b> already exists").arg(label));
+        _editorLabel->setFocus();
+        return;
+    }
+    _params->setLabel(label);
     _params->setTitle(_editorTitle->text().trimmed());
     _paramsEditor->collect();
     accept();

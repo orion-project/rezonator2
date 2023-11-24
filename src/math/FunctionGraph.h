@@ -37,7 +37,7 @@ public:
 public:
     FunctionGraph(QCPL::Plot* plot, Z::WorkPlane workPlane, std::function<GraphUnits()> getUnits);
 
-    QString id;
+    qintptr id;
     QString legendName;
 
     void clear();
@@ -69,7 +69,7 @@ private:
     void trimToCount(int count);
 };
 
-using MultiGraph = QMap<QString, FunctionGraph*>;
+using MultiGraph = QMap<qintptr, FunctionGraph*>;
 
 class FunctionGraphSet
 {
@@ -96,14 +96,16 @@ public:
     void clear();
     void update(PlotFunction* function);
     void update(const QList<PlotFunction*>& functions);
-    void update(const QString& id, Z::WorkPlane workPlane, const QList<PlotFunction*>& functions, const QString& color);
+
+    FunctionGraph* addMultiGraph(qintptr id, const QString& legendName,
+        Z::WorkPlane workPlane, const QList<PlotFunction*>& functions);
 
     FunctionGraph* T() { return _graphT; }
     FunctionGraph* S() { return _graphS; }
     const MultiGraph& multiGraphs() const { return _graphs; }
 
     FunctionGraph* findBy(QCPGraph* graph) const;
-    FunctionGraph* findBy(const QString& id, Z::WorkPlane workPlane) const;
+    FunctionGraph* getBy(qintptr id) const;
 
     QString str() const;
     ExportData exportData(ExportParams params) const;

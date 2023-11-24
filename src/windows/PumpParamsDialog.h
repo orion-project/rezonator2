@@ -18,7 +18,7 @@ public:
     explicit PumpParamsDialog(PumpParams *params, QWidget *parent = nullptr);
 
     static PumpParams *makeNewPump();
-    static bool editPump(PumpParams *params);
+    static bool editPump(PumpParams *params, QList<PumpParams*> *allPumps);
 
 public slots:
     void collect() override;
@@ -32,6 +32,7 @@ private:
     ParamsEditorTS *_paramsEditor;
     QLineEdit *_editorLabel;
     QLineEdit *_editorTitle;
+    QStringList _existingLabels;
 };
 
 #endif // PUMP_PARAMS_DIALOG_H

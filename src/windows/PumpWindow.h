@@ -28,6 +28,8 @@ class PumpsTable : public QTableWidget, public SchemaListener
     Q_OBJECT
 
 public:
+    enum { COL_COLOR, COL_IMAGE, COL_ACTIVE, COL_LABEL, COL_PARAMS, COL_TITLE, COL_COUNT };
+
     PumpsTable(Schema *schema, QWidget *parent = nullptr);
 
     void setContextMenu(QMenu *menu) { _contextMenu = menu; }
@@ -47,15 +49,13 @@ public:
     void pumpDeleting(Schema*, PumpParams*) override;
 
 signals:
-    void doubleClicked(PumpParams*);
+    void pumpDoubleClicked(PumpParams*, int);
 
 private slots:
     void doubleClicked(class QTableWidgetItem*);
     void showContextMenu(const QPoint&);
 
 private:
-    enum { COL_COLOR, COL_IMAGE, COL_ACTIVE, COL_LABEL, COL_PARAMS, COL_TITLE, COL_COUNT };
-
     Schema *_schema;
     QMenu *_contextMenu = nullptr;
 
@@ -111,6 +111,7 @@ public slots:
     void copy() override;
     void paste() override;
     void setPumpColor();
+    void pumpDoubleClicked(PumpParams*, int);
 
 protected:
     explicit PumpWindow(Schema*owner);

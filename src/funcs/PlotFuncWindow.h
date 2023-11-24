@@ -176,7 +176,7 @@ protected:
     virtual Z::Unit getDefaultUnitY(FuncMode mode) const { Q_UNUSED(mode) return getDefaultUnitY(); }
     virtual void prepareSpecPoints() {}
     virtual SpecPointParams getSpecPointsParams() const { return SpecPointParams(); }
-    virtual void afterGraphFormatted(FunctionGraph*) {}
+    virtual void formatMultiGraph(FunctionGraph*) {}
 
     QCPGraph* selectedGraph() const;
     QPen cursorPen() const;

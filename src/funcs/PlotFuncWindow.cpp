@@ -1042,19 +1042,6 @@ void PlotFuncWindow::graphFormatDlg()
         graphFormatDlgT();
     else if (_graphs->S()->contains(g))
         graphFormatDlgS();
-
-    auto graph = _graphs->findBy(g);
-    if (!graph) return;
-
-    PlotHelpers::FormatPenDlgProps props;
-    props.title = tr("Line Format");
-    props.onApply = [this, graph](const QPen& pen){
-        graph->setPen(pen);
-        _plot->replot();
-    };
-    if (PlotHelpers::formatPenDlg(graph->pen(), props))
-    {
-        schema()->markModified("PlotFuncWindow::graphFormatDlg");
-        afterGraphFormatted(graph);
-    }
+    else if (auto graph = _graphs->findBy(g); graph)
+        formatMultiGraph(graph);
 }
