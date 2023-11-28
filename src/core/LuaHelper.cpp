@@ -145,7 +145,7 @@ Z::Result<double> Lua::calculate(const QString& formula)
 {
     Q_ASSERT(_lua);
 
-    static QRegExp resultVar(RESULT_VAR "\\s*=");
+    static QRegularExpression resultVar(RESULT_VAR "\\s*=");
     QString code = formula;
     int pos = code.indexOf(resultVar);
     if (pos < 0) code = (RESULT_VAR "=") + code;

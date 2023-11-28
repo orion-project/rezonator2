@@ -3,11 +3,11 @@
 #include "CommonUtils.h"
 #include "JsonUtils.h"
 #include "ISchemaWindowStorable.h"
+#include "../app/AppSettings.h"
 #include "../core/Schema.h"
 #include "../core/ElementsCatalog.h"
 #include "../core/ElementFormula.h"
-#include "../AppSettings.h"
-#include "../WindowsManager.h"
+#include "../windows/WindowsManager.h"
 
 #include <QBuffer>
 #include <QDebug>
@@ -207,7 +207,7 @@ void SchemaReaderJson::readParamLink(const QJsonObject& root)
     if (!targetParam)
         return _report.warning(QString(
             "Unable to load link: parameter '%1' not found in elemenet #%2")
-                .arg(targetParamAlias).arg(targetElem->displayLabel()));
+                .arg(targetParamAlias, targetElem->displayLabel()));
 
     auto sourceParamAlias = root["source_param"].toString();
     auto sourceParam = _schema->customParams()->byAlias(sourceParamAlias);
@@ -372,7 +372,10 @@ Element* readElement(const QJsonObject& root, Z::Report* report)
     elem->setLabel(root["label"].toString());
     elem->setTitle(root["title"].toString());
     elem->layoutOptions.showLabel = root["layout_show_label"].toBool(elem->layoutOptions.showLabel);
-    elem->layoutOptions.drawNarrow = root["layout_draw_narrow"].toBool(elem->layoutOptions.drawNarrow);
+    elem->layoutOptions.drawAlt = root[root.contains("layout_draw_narrow")
+                                           ? "layout_draw_narrow" // before 2.0.13
+                                           : "layout_draw_alt" // since 2.0.13
+        ].toBool(elem->layoutOptions.drawAlt);
     elem->setDisabled(root["is_disabled"].toBool());
     if (formulaElem)
     {
@@ -384,7 +387,7 @@ Element* readElement(const QJsonObject& root, Z::Report* report)
     if (paramsJson)
     {
         if (formulaElem)
-            for (auto alias : paramsJson.obj().keys())
+            for (auto& alias : paramsJson.obj().keys())
             {
                 auto paramJson = paramsJson.obj()[alias].toObject();
                 auto descr = paramJson["descr"].toString();
@@ -395,7 +398,7 @@ Element* readElement(const QJsonObject& root, Z::Report* report)
                 {
                     dim = Z::Dims::none();
                     report->warning(QString("Reading element '%1': unknown dimension of parameter %2: %3")
-                                    .arg(elem->displayLabel()).arg(alias).arg(dimStr));
+                                    .arg(elem->displayLabel(), alias, dimStr));
                 }
                 formulaElem->addParam(new Z::Parameter(dim, alias, alias, alias, descr), order);
             }
@@ -463,7 +466,7 @@ PumpParams* readPump(const QJsonObject& root, Z::Report* report)
 
         auto res = readParamValueTS(paramJson.obj(), param);
         if (!res.isEmpty())
-            report->warning(QString("Reading pump %1: %2").arg(pump->label()).arg(res));
+            report->warning(QString("Reading pump %1: %2").arg(pump->label(), res));
     }
 
     return pump;

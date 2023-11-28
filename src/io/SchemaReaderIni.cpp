@@ -1,9 +1,9 @@
 #include "SchemaReaderIni.h"
 
+#include "../app/AppSettings.h"
 #include "../core/Schema.h"
 #include "../core/Elements.h"
 #include "../core/ElementsCatalog.h"
-#include "../AppSettings.h"
 
 #include <QFile>
 #include <QPointer>
@@ -356,7 +356,7 @@ void SchemaReaderIni::readElements()
         if (section.startsWith("Element"))
         {
             bool ok;
-            int index = section.right(section.count()-7).toInt(&ok);
+            int index = section.right(section.length()-7).toInt(&ok);
             if (ok && index > maxElemIndex) maxElemIndex = index;
         }
     for (int index = 0; index <= maxElemIndex; index++)

@@ -1,8 +1,10 @@
 #ifndef VALUES_H
 #define VALUES_H
 
-#include "Complex.h"
-#include "Units.h"
+#include "../core/CommonTypes.h"
+#include "../core/Complex.h"
+#include "../core/Units.h"
+
 #include "core/OriFloatingPoint.h"
 
 namespace Z {
@@ -23,6 +25,9 @@ struct PairTS
 
     void set(const TValue& t, const TValue& s) { T = t, S = s; }
 
+    const TValue& operator[](Z::WorkPlane ts) const { return ts == Z::T ? T : S; }
+    TValue& operator[](Z::WorkPlane ts) { return ts == Z::T ? T : S; }
+
     QString str() const;
 };
 
@@ -37,6 +42,13 @@ struct DoublePoint
     double Y = 0;
 
     QString str() const;
+};
+
+using ValueSi = double;
+struct RangeSi
+{
+    ValueSi start;
+    ValueSi stop;
 };
 
 //------------------------------------------------------------------------------
@@ -82,10 +94,17 @@ public:
     bool operator <= (const double& v) const { return toSi() <= v; }
 
     static Value parse(const QString& valueStr);
+    static Value fromSi(const double& valueSi, Unit unit) { return Value(unit->fromSi(valueSi), unit); }
 
 private:
     double _value;
     Unit _unit;
+};
+
+struct ValuePoint
+{
+    Value X;
+    Value Y;
 };
 
 } // namespace Z

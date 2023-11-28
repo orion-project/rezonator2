@@ -37,7 +37,11 @@ Value Value::parse(const QString& valueStr)
         if (valueStr.at(i).isLetter())
             break;
     bool ok = false;
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
+    double value = QStringView(valueStr).left(i).toDouble(&ok);
+#else
     double value = QStringRef(&valueStr, 0, i).toDouble(&ok);
+#endif
     if (!ok) return Value();
     auto unitStr = valueStr.right(valueStr.length()-i);
     auto unit = unitStr.isEmpty() ? none(): findByAlias(unitStr);

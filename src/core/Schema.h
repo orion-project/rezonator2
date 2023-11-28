@@ -61,6 +61,7 @@ public:
     virtual void customParamDeleted(Schema*, Z::Parameter*) {}
     virtual void pumpCreated(Schema*, PumpParams*) {}
     virtual void pumpChanged(Schema*, PumpParams*) {}
+    virtual void pumpCustomized(Schema*, PumpParams*) {}
     virtual void pumpDeleting(Schema*, PumpParams*) {}
     virtual void pumpDeleted(Schema*, PumpParams*) {}
     virtual void recalcRequired(Schema*) {}
@@ -134,6 +135,7 @@ public:
 
         PumpCreated,   ///< New pump was created
         PumpChanged,   ///< Pump parameters were changed
+        PumpCustomized,///< Pump color was changed
         PumpDeleting,  ///< Pump is about to be deleted
         PumpDeleted,   ///< Pump was deleted
 
@@ -280,6 +282,7 @@ public:
 
     PumpsList* pumps() { return &_pumps; }
     PumpParams* activePump();
+    PumpParams* findPump(const QString& label);
 
     void moveElementUp(Element* elem);
     void moveElementDown(Element* elem);

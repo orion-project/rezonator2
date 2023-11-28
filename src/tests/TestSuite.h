@@ -33,6 +33,8 @@ USE_GROUP(ElementSelectorWidgetTests)              // test_ElemSelectorWidget.cp
 USE_GROUP(PumpWindowTests)                         // test_PumpWindow.cpp
 USE_GROUP(LuaHelperTests)                          // test_LuaHelper.cpp
 USE_GROUP(ProjectOperationsTests)                  // test_ProjectOperations.cpp
+USE_GROUP(FormulaTests)                            // test_Formula.cpp
+USE_GROUP(UtilsTests)                              // test_Utils.cpp
 
 TEST_SUITE(
     ADD_GROUP(Ori::Tests::All),
@@ -65,6 +67,8 @@ TEST_SUITE(
     ADD_GROUP(PumpWindowTests),
     ADD_GROUP(LuaHelperTests),
     ADD_GROUP(ProjectOperationsTests),
+    ADD_GROUP(FormulaTests),
+    ADD_GROUP(UtilsTests),
 )
 
 } // namespace Tests

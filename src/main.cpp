@@ -1,14 +1,14 @@
-#include "CommonData.h"
-#include "CalculatorWindow.h"
-#include "CustomElemsWindow.h"
-#include "GaussCalculatorWindow.h"
-#include "GrinLensWindow.h"
-#include "LensmakerWindow.h"
-#include "ProjectOperations.h"
-#include "ProjectWindow.h"
-#include "StartWindow.h"
+#include "app/CommonData.h"
+#include "app/ProjectOperations.h"
 #include "core/Format.h"
 #include "tests/TestSuite.h"
+#include "tools/CalculatorWindow.h"
+#include "tools/GaussCalculatorWindow.h"
+#include "tools/GrinLensWindow.h"
+#include "tools/LensmakerWindow.h"
+#include "windows/CustomElemsWindow.h"
+#include "windows/ProjectWindow.h"
+#include "windows/StartWindow.h"
 
 #include "helpers/OriTheme.h"
 #include "helpers/OriTools.h"
@@ -26,8 +26,10 @@
 
 int main(int argc, char* argv[])
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);
+#endif
     QApplication app(argc, argv);
     app.setApplicationName("reZonator");
     app.setOrganizationName("orion-project.org");
@@ -113,6 +115,11 @@ int main(int argc, char* argv[])
             LensmakerWindow::showWindow();
             return app.exec();
         }
+//        else if (toolName == "iris")
+//        {
+//            IrisWindow::showWindow();
+//            return app.exec();
+//        }
         else
         {
         #ifdef Q_OS_WIN

@@ -1,9 +1,10 @@
-#include "testing/OriTestBase.h"
-#include "TestUtils.h"
 #include "../core/Elements.h"
 #include "../core/ElementFilter.h"
 #include "../core/Schema.h"
+#include "../tests/TestUtils.h"
 #include "../widgets/ElemSelectorWidget.h"
+
+#include "testing/OriTestBase.h"
 
 #include <memory>
 

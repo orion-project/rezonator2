@@ -1,5 +1,6 @@
 libs/lua-*
 libs/*.tar.gz
+libs/build-*
 bin/test/_tmp*
 bin/rezonator
 bin/rezonator.app
@@ -30,3 +31,5 @@ moc_*
 qrc_*
 Makefile
 .qmake.stash
+*.drawio.bkp
+*.drawio.dtmp

@@ -1,5 +1,6 @@
+#include "../math/GrinCalculator.h"
+
 #include "testing/OriTestBase.h"
-#include "../funcs/GrinCalculator.h"
 
 #include <cmath>
 

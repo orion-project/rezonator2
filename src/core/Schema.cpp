@@ -132,6 +132,7 @@ void SchemaEvents::notify(SchemaListener* listener, SchemaEvents::Event event, v
     case CustomParamDeleted: listener->customParamDeleted(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
     case PumpCreated: listener->pumpCreated(_schema, reinterpret_cast<PumpParams*>(param)); break;
     case PumpChanged: listener->pumpChanged(_schema, reinterpret_cast<PumpParams*>(param)); break;
+    case PumpCustomized: listener->pumpCustomized(_schema, reinterpret_cast<PumpParams*>(param)); break;
     case PumpDeleting: listener->pumpDeleting(_schema, reinterpret_cast<PumpParams*>(param)); break;
     case PumpDeleted: listener->pumpDeleted(_schema, reinterpret_cast<PumpParams*>(param)); break;
     case RecalRequred: listener->recalcRequired(_schema); break;
@@ -317,6 +318,14 @@ PumpParams* Schema::activePump()
 {
     foreach (PumpParams *pump, _pumps)
         if (pump->isActive())
+            return pump;
+    return nullptr;
+}
+
+PumpParams* Schema::findPump(const QString& label)
+{
+    foreach (PumpParams *pump, _pumps)
+        if (pump->label() == label)
             return pump;
     return nullptr;
 }

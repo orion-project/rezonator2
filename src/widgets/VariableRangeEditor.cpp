@@ -1,7 +1,7 @@
 #include "VariableRangeEditor.h"
 
 #include "ValueEditor.h"
-#include "../Appearance.h"
+#include "../app/Appearance.h"
 #include "../core/Element.h"
 #include "../core/Variable.h"
 
@@ -36,7 +36,7 @@ struct PointsEditor
         editor->setFont(Z::Gui::ValueFont().get());
 
         layout = new QHBoxLayout;
-        layout->setMargin(0);
+        layout->setContentsMargins(0, 0, 0, 0);
         layout->setSpacing(0);
         layout->addWidget(editor);
         layout->addSpacing(Ori::Gui::borderWidth() + Z::Gui::unitsSelectorWidth());

@@ -9,11 +9,11 @@ The latest 5.* is supported (it is 5.15.2 currently).
 
 ### Qt quirks
 
-#### [Ubuntu] Platform plugin
+**[Ubuntu] Platform plugin**
 
 If QtCreator refuses to run on Ubuntu because of
 
-```
+```log
 qt.qpa.plugin: Could not load the Qt platform plugin "xcb" in "" even though it was found.
 ```
 
@@ -25,11 +25,11 @@ sudo apt-get install --reinstall libxcb-xinerama0
 
 I use 16.04 for builds and this works.
 
-#### [Ubuntu] GL lib
+**[Ubuntu] GL lib**
 
 First time when building on Ubuntu it says
 
-```
+```log
 ../Qt/5.15.2/gcc_64/include/QtGui/qopengl.h:141:22: fatal error: GL/gl.h: No such file or directory
 ```
 
@@ -39,15 +39,19 @@ additional dev libs must be installed:
 sudo apt-get install build-essential libgl1-mesa-dev
 ```
 
-#### [macOS] Latest Qt for Sierra
+These also mentioned in QCustomPlot [instructions](https://www.qcustomplot.com/index.php/tutorials/settingup) so probably will be needed:
+
+```bash
+sudo apt-get install mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev
+```
+
+**[macOS] Latest Qt for Sierra**
 
 Version Qt 5.12.10 is the latest of 5.* LTSs availablbe for Sierra (10.12).
 QtCreator 4.10.2 is the latest as well and must be downloaded and installed manually.
 Also 5.12.10 kit must be registered manually in that "obsolete" QtCreator.
 
-## Build steps
-
-### Clone git repository
+## Clone git repository
 
 ```bash
 git clone https://github.com/orion-project/rezonator2
@@ -58,42 +62,47 @@ git submodule update
 
 Note that submodules are in 'detached head' state by default.
 
-### Prepare third-party libraries
+## Prepare third-party libraries
 
-#### Linux/MacOS
+### Linux/MacOS
 
 ```bash
-chmod +x ./scripts/prepare_deps.sh
 ./scripts/prepare_deps.sh
 ```
 
-#### Windows
+### Windows
 
 Windows does not provide default command line tools like `wget`, `tar` or `make`, so you have to prepare dependencies using tools you have installed following [these instructions](prepare-deps-win.md).
 
-
-## Build
-
-Where it is possible, commands are the same for different OS, with some exceptions. E.g. Windows doesn't have `sudo` command, and you have to run `cmd` as Administrator instead. 
-
-### Application
-
-#### Linux/MacOS
+[QCustomPlot](https://www.qcustomplot.com) is used via wrapper [repository](https://github.com/orion-project/custom-plot-lab) (in submodule). The library source file `qcustomplot.cpp` is so large that it even fails to build in debug mode (`x86_64-w64-mingw32/bin/as.exe: debug\qcustomplot.o: too many sections (33061) Fatal error: debug\qcustomplot.o: file too big`). So if the debug mode is needed, you have to use QCustomPlot as shared library. Build the library:
 
 ```bash
-./scripts/build_release.sh
+cd libs\custom-plot-lab\qcustomplot
+qmake
+mingw32-make release
 ```
-#### Windows
+
+Then enable option `qcustomplotlab_shared` in `rezonator.pro` and rebuild the app in debug mode.
+
+## Dev build
+
+Use *Qt Creator IDE* to do dev builds. Just open project file `rezonator.pro` in the IDE and configure it to use some of the installed Qt-kits. Any of modern Qt 5.15.2+ kits should suit.
+
+Target file is `bin/rezonator` (Linux), `bin/rezonator.app` (MacOS), or `bin\rezonator.exe` (Windows). 
+
+## Release build
 
 ```bash
+# Linux/MacOS
+./scripts/build_release.sh
+
+# Windows
 scripts\build_release.bat
 ```
 
-Ensure that Qt bin directory is in your `PATH` to make above scripts working. On Windows, you have to put MinGW `bin` directory into the `PATH` too.
+Ensure that Qt bin directory is in your `PATH` to make the above scripts working. On Windows you have to put MinGW `bin` directory `<qt-root>\<qt-version>\mingw*\bin` into the `PATH` too. The scripts do the full rebuild and it takes a while.
 
-Note that above scripts do the full rebuild and it takes a while. Use *Qt Creator IDE* to do dev builds. Just open project file `rezonator.pro` in the IDE and configure it to use some of the installed Qt-kits. Any of modern Qt 5.8+ kits should suit.
-
-### Source code documentation
+## Source code documentation
 
 ```bash
 sudo apt install doxygen
@@ -102,9 +111,6 @@ mkdir -p out/src-doc
 doxygen
 ```
 
-### User manual
+## User manual
 
 See [building documentation](../help/README.md).
-
-## Run
-Target file is `bin/rezonator` (Linux), `bin/rezonator.app` (MacOS), or `bin\rezonator.exe` (Windows). 

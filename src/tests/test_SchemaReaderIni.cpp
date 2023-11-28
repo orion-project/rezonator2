@@ -1,7 +1,7 @@
 #include "../core/Elements.h"
 #include "../core/Schema.h"
 #include "../io/SchemaReaderIni.h"
-#include "TestUtils.h"
+#include "../tests/TestUtils.h"
 
 #include <QApplication>
 #include <QFile>

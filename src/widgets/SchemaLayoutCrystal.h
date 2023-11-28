@@ -2,6 +2,8 @@
 #define SCHEMA_LAYOUT_CRYSTAL_H
 
 #include "SchemaLayout.h"
+#include "SchemaLayoutDefs.h"
+#include "../core/Elements.h"
 
 #include <QtMath>
 
@@ -9,12 +11,9 @@ using namespace ElementLayoutProps;
 
 //------------------------------------------------------------------------------
 namespace CrystalElementLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
-    DECLARE_ELEMENT_LAYOUT_END
+    LAYOUT_BEGIN
 
-    ELEMENT_LAYOUT_INIT {}
-
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         qreal cline = HH * qTan(qDegreesToRadians(_slopeAngle));
 
         QPainterPath path;
@@ -45,15 +44,16 @@ namespace CrystalElementLayout {
         painter->setPen(getGlassPen());
         painter->drawPath(path);
     }
+
+    LAYOUT_END
 }
 
 //------------------------------------------------------------------------------
 namespace ElemTiltedCrystalLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
+    LAYOUT_BEGIN
         QSharedPointer<CrystalElementLayout::Layout> layout;
-    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_LAYOUT_INIT {
+    INIT {
         HW = 15; HH = 40;
         auto crystal = dynamic_cast<ElemTiltedCrystal*>(_element);
         if (!crystal) return;
@@ -63,40 +63,46 @@ namespace ElemTiltedCrystalLayout {
         layout->init();
     }
 
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         if (layout) layout->paint(painter, nullptr, nullptr);
     }
+
+    LAYOUT_END
 }
 
 //------------------------------------------------------------------------------
 namespace ElemTiltedPlateLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
-    DECLARE_ELEMENT_LAYOUT_END
+    LAYOUT_BEGIN
 
-    ELEMENT_LAYOUT_INIT {
-        HW = _element->layoutOptions.drawNarrow ? 7 : 15;
+    INIT {
+        HW = _element->layoutOptions.drawAlt ? 7 : 15;
         HH = 40;
         auto plate = dynamic_cast<ElemTiltedPlate*>(_element);
         if (!plate) return;
         setSlope(plate->alpha());
     }
 
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         painter->setPen(getGlassPen());
         painter->setBrush(getGlassBrush());
         slopePainter(painter);
         painter->drawRect(boundingRect());
     }
+
+    LAYOUT_END
+
+    OPTIONS_BEGIN
+        HAS_ALT_VERSION
+    OPTIONS_END
 }
 
 //------------------------------------------------------------------------------
 namespace ElemBrewsterCrystalLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
+    LAYOUT_BEGIN
         QSharedPointer<CrystalElementLayout::Layout> layout;
-    DECLARE_ELEMENT_LAYOUT_END
 
-    ELEMENT_LAYOUT_INIT {
-        HW = _element->layoutOptions.drawNarrow ? 20 : 30;
+    INIT {
+        HW = _element->layoutOptions.drawAlt ? 20 : 30;
         HH = 30;
         layout.reset(new CrystalElementLayout::Layout(nullptr));
         layout->setHalfSize(HW, HH);
@@ -105,28 +111,39 @@ namespace ElemBrewsterCrystalLayout {
         layout->init();
     }
 
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         if (layout) layout->paint(painter, nullptr, nullptr);
     }
+
+    LAYOUT_END
+
+    OPTIONS_BEGIN
+        HAS_ALT_VERSION
+    OPTIONS_END
 }
 
 //------------------------------------------------------------------------------
 namespace ElemBrewsterPlateLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
-    DECLARE_ELEMENT_LAYOUT_END
+    LAYOUT_BEGIN
 
-    ELEMENT_LAYOUT_INIT {
-        HW = _element->layoutOptions.drawNarrow ? 7 : 15;
+    INIT {
+        HW = _element->layoutOptions.drawAlt ? 7 : 15;
         HH = 40;
         _slopeAngle = 40; _slope = SlopePlus;
     }
 
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         painter->setPen(getGlassPen());
         painter->setBrush(getGlassBrush());
         slopePainter(painter);
         painter->drawRect(boundingRect());
     }
+
+    LAYOUT_END
+
+    OPTIONS_BEGIN
+        HAS_ALT_VERSION
+    OPTIONS_END
 }
 
 #endif // SCHEMA_LAYOUT_CRYSTAL_H

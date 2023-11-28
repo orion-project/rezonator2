@@ -1,8 +1,8 @@
 #include "PlotHelpers.h"
 
-#include "../AppSettings.h"
-#include "../CustomPrefs.h"
-#include "../funcs/FunctionGraph.h"
+#include "../app/AppSettings.h"
+#include "../app/CustomPrefs.h"
+#include "../math/FunctionGraph.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
@@ -10,6 +10,7 @@
 
 #include "qcpl_plot.h"
 #include "qcpl_cursor.h"
+#include "qcpl_format_editors.h"
 
 #include <QLabel>
 #include <QCheckBox>
@@ -200,7 +201,7 @@ void exportGraphsData(FunctionGraphSet* graphs, QCPGraph* selectedGraph)
     OptionsGroup::Params p2;
     p2.title = qApp->translate("exportGraphsData", "Line Segment");
     p2.horizontal = true;
-    auto segment = new OptionsGroup();
+    auto segment = new OptionsGroup(p2);
     segment->addOption(ExportGraphsParams::SEGMENT_ALL, qApp->translate("exportGraphsData", "All"));
     segment->addOption(ExportGraphsParams::SEGMENT_SELECTED, qApp->translate("exportGraphsData", "Selected"));
     segment->setDisabled(!selectedGraph);
@@ -252,6 +253,40 @@ void exportGraphsData(FunctionGraphSet* graphs, QCPGraph* selectedGraph)
 
         exportGraphsData(graphs, selectedGraph, params);
     }
+}
+
+bool formatPenDlg(const QPen& pen, const FormatPenDlgProps& props)
+{
+    QPen oldPen = pen;
+
+    QDialog dlg(qApp->activeWindow());
+    dlg.setWindowTitle(props.title);
+
+    QCPL::PenEditorWidgetOptions opts;
+    opts.enableNoPen = false;
+    auto editor = new QCPL::PenEditorWidget(opts);
+    editor->setValue(pen);
+
+    auto buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    buttons->connect(buttons, &QDialogButtonBox::accepted, &dlg, [&dlg, props, editor](){
+        props.onApply(editor->value());
+        dlg.accept();
+    });
+    buttons->connect(buttons, &QDialogButtonBox::rejected, &dlg, [&dlg](){
+        dlg.reject();
+    });
+    if (props.onReset)
+    {
+        auto resetBtn = buttons->addButton(dlg.tr("Reset"), QDialogButtonBox::ResetRole);
+        resetBtn->connect(resetBtn, &QPushButton::pressed, &dlg, [&dlg, props](){
+            props.onReset();
+            dlg.accept();
+        });
+    }
+    LayoutV({editor, SpaceV(2), buttons}).useFor(&dlg);
+    if (dlg.exec() == QDialog::Accepted)
+        return editor->value() != oldPen;
+    return false;
 }
 
 } // namespace PlotHelpers

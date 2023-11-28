@@ -2,6 +2,7 @@
 #define Z_TEST_UTILS_H
 
 #include "../core/Values.h"
+
 #include "testing/OriTestBase.h"
 
 #include <QDebug>

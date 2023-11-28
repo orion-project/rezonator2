@@ -2,7 +2,7 @@
 
 #include "ParamsListWidget.h"
 #include "UnitWidgets.h"
-#include "../Appearance.h"
+#include "../app/Appearance.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
@@ -59,7 +59,7 @@ void LinkButton::focusOutEvent(QFocusEvent *e)
 MenuButton::MenuButton(QList<QAction *> actions) : QPushButton()
 {
     setFlat(true);
-    setIcon(QIcon(":/toolbar16/menu"));
+    setIcon(QIcon(":/toolbar/menu"));
     setFixedWidth(24);
 
     _menu = new QMenu(this);
@@ -148,7 +148,7 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
         paramLabel = _param->alias();
 
     auto layout = new QHBoxLayout(this);
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
 
     if (opts.showName)

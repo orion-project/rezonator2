@@ -1,6 +1,7 @@
 #include "PlotParamsPanel.h"
 
 #include "PlotHelpers.h"
+#include "../app/Appearance.h"
 
 #include "qcpl_graph_grid.h"
 
@@ -20,21 +21,31 @@ static QWidget* makeGraphDataGrid(PlotParamsPanel*)
     return grid;
 }
 
+static QWidget* makeSpecPointsView(PlotParamsPanel*)
+{
+    auto browser = new QTextBrowser;
+    browser->setOpenLinks(false);
+    browser->setOpenExternalLinks(false);
+    browser->setFont(Z::Gui::CodeEditorFont().get());
+    Z::Gui::applyTextBrowserStyleSheet(browser, ":/style/spec-points");
+    return browser;
+}
+
 PlotParamsPanel::PlotParamsPanel(PlotParamsPanelCtorOptions options, QWidget *parent) :
     QStackedWidget(parent), _splitter(options.splitter)
 {
     if (options.hasInfoPanel)
-        _infoPanelIndex = initPanel(tr("Show Special Points"), ":/toolbar16/points",
-            /* makeWidget: */ [](PlotParamsPanel*)->QWidget*{ return new QTextBrowser; },
-            /* onActivate: */ [](PlotParamsPanel* self){ emit self->updateNotables(); });
+        _infoPanelIndex = initPanel(tr("Special Points"), ":/toolbar/points",
+            /* makeWidget: */ makeSpecPointsView,
+            /* onActivate: */ [](PlotParamsPanel* self){ emit self->updateSpecPoints(); });
 
     if (options.hasDataGrid)
-        _dataGridIndex = initPanel(tr("Show Data Table"), ":/toolbar16/table",
+        _dataGridIndex = initPanel(tr("Data Table"), ":/toolbar/table",
             /* makeWidget: */ makeGraphDataGrid,
             /* onActivate: */ [](PlotParamsPanel* self){ emit self->updateDataGrid(); });
 
     if (options.hasOptionsPanel)
-        _optionsPanelIndex = initPanel(tr("Show Options"), ":/toolbar16/params",
+        _optionsPanelIndex = initPanel(tr("Function Params"), ":/toolbar/params",
             /* makeWidget: */ [](PlotParamsPanel* self)->QWidget*{ return emit self->optionsPanelRequired(); },
             /* onActivate: */ nullptr);
 
@@ -63,10 +74,12 @@ void PlotParamsPanel::placeIn(QToolBar* toolbar)
         toolbar->addAction(panel.action);
 }
 
-void PlotParamsPanel::fillActions(QList<QAction*>& actions)
+QList<QAction*> PlotParamsPanel::panelToogleActions() const
 {
+    QList<QAction*> actions;
     for (const PanelInfo& panel: _panels)
         actions << panel.action;
+    return actions;
 }
 
 void PlotParamsPanel::showPanel()

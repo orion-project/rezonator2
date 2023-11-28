@@ -1,0 +1,24 @@
+<svg height="256" width="256" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<linearGradient id="a" gradientTransform="matrix(-8.87 0 0 8.87 173.1 41.46)" gradientUnits="userSpaceOnUse" x1="10.04" x2="9.93" y1="5.47" y2="13.93">
+<stop offset="0" stop-color="#dbf6ff"/>
+<stop offset="1" stop-color="#7ddcfd"/>
+</linearGradient>
+<linearGradient id="b" gradientUnits="userSpaceOnUse" x1="124.95" x2="124.95" y1="257.55" y2="-2.55">
+<stop offset="0" stop-color="#8666f8"/>
+<stop offset=".16988418" stop-color="#55baec"/>
+<stop offset=".5" stop-color="#7cf58e"/>
+<stop offset=".76705277" stop-color="#f5a953"/>
+<stop offset="1" stop-color="#ff5353"/>
+</linearGradient>
+<linearGradient id="c" gradientUnits="userSpaceOnUse" x1="21.06" x2="231.33" y1="23.27" y2="235.74">
+<stop offset="0" stop-color="#a4c8f0"/>
+<stop offset="1" stop-color="#737ba6"/>
+</linearGradient>
+<path d="m334.05-233.11v157.3h129.88" fill="none"/>
+<rect fill="url(#b)" height="256" ry="27.36" stroke="url(#c)" stroke-width="5" width="256"/>
+<path d="m41.74 187.71 68.26-123.71h102.51l-64.74 122.53z" fill="#fff" stroke="#fff" stroke-linejoin="round" stroke-width="56.69"/>
+<g id="d" transform="translate(4 16)">
+<path d="m84 75-51.92 96.71h103.84z" fill="url(#a)" fill-rule="evenodd" stroke="#00b4ff" stroke-linejoin="round" stroke-width="13.31"/>
+</g>
+<use transform="matrix(1 0 0 -1 79.42 249.71)" xlink:href="#d"/>
+</svg>

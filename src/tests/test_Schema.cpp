@@ -1,5 +1,5 @@
-#include "TestUtils.h"
-#include "TestSchemaListener.h"
+#include "../tests/TestSchemaListener.h"
+#include "../tests/TestUtils.h"
 
 #include <memory>
 

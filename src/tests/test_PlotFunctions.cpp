@@ -1,13 +1,14 @@
-#include "testing/OriTestBase.h"
-#include "TestUtils.h"
 #include "../core/Schema.h"
 #include "../core/Elements.h"
-#include "../funcs/StabilityMapFunction.h"
-#include "../funcs/StabilityMap2DFunction.h"
-#include "../funcs/CausticFunction.h"
-#include "../funcs/BeamVariationFunction.h"
-#include "../funcs/MultirangeCausticFunction.h"
-#include "../funcs/MultibeamCausticFunction.h"
+#include "../math/StabilityMapFunction.h"
+#include "../math/StabilityMap2DFunction.h"
+#include "../math/CausticFunction.h"
+#include "../math/BeamVariationFunction.h"
+#include "../math/MultirangeCausticFunction.h"
+#include "../math/MultibeamCausticFunction.h"
+#include "../tests/TestUtils.h"
+
+#include "testing/OriTestBase.h"
 
 #include <QTextStream>
 
@@ -59,20 +60,20 @@ static QString arrToStr(const QVector<double> arr)
     ASSERT_IS_TRUE(func.ok())
 
 #define ASSERT_FUNC_RESULT_COUNT(expected_count) \
-    ASSERT_EQ_INT(func.resultCount(Z::WorkPlane::Plane_T), expected_count) \
-    ASSERT_EQ_INT(func.resultCount(Z::WorkPlane::Plane_S), expected_count) \
+    ASSERT_EQ_INT(func.resultCount(Z::T), expected_count) \
+    ASSERT_EQ_INT(func.resultCount(Z::S), expected_count) \
 
 #define ASSERT_FUNC_RESULT(index, plane, expected_x, epsilon_x, expected_y, epsilon_y) {\
-    auto res = func.result(Z::WorkPlane::Plane_ ## plane, index); \
+    auto res = func.result(plane, index); \
     ASSERT_NEAR_DBL_ARR(res.x(), expected_x, epsilon_x) \
     ASSERT_NEAR_DBL_ARR(res.y(), expected_y, epsilon_y) \
 }
 
 #define ASSERT_FUNC_RESULT_TS(index, expected_x, epsilon_x, expected_yt, expected_ys, epsilon_y) {\
-    auto resT = func.result(Z::WorkPlane::Plane_T, index); \
+    auto resT = func.result(Z::T, index); \
     ASSERT_NEAR_DBL_ARR(resT.x(), expected_x, epsilon_x) \
     ASSERT_NEAR_DBL_ARR(resT.y(), expected_yt, epsilon_y) \
-    auto resS = func.result(Z::WorkPlane::Plane_S, index); \
+    auto resS = func.result(Z::S, index); \
     ASSERT_NEAR_DBL_ARR(resS.x(), expected_x, epsilon_x) \
     ASSERT_NEAR_DBL_ARR(resS.y(), expected_ys, epsilon_y) \
 }
@@ -439,8 +440,8 @@ TEST_METHOD(calculate_resonator)
     ARR(_ty, 0.000474270138,0.000435605112,0.000403921206,0.000376397382,0.000351384874,0.000327751355,0.000304562815,0.000280853233,0.000255318847,0.000225580421,0.000185063238)
     ARR(_sx, 0.0254210526,0.0255263158,0.0256315789,0.0257368421,0.0258421053,0.0259473684,0.0260526316,0.0261578947,0.0262631579,0.0263684211,0.0264736842,0.0265789474,0.0266842105,0.0267894737,0.0268947368,0.027)
     ARR(_sy, 0.000930919808,0.000648199425,0.000553511537,0.000496469276,0.000455139959,0.000422142333,0.000394095366,0.000369135562,0.000346075806,0.000324042881,0.000302276294,0.000279962518,0.000255999241,0.000228440335,0.000192404036,0.000117954805)
-    ASSERT_FUNC_RESULT(0, T, _tx, 1e-10, _ty, 1e-12)
-    ASSERT_FUNC_RESULT(0, S, _sx, 1e-10, _sy, 1e-12)
+    ASSERT_FUNC_RESULT(0, Z::T, _tx, 1e-10, _ty, 1e-12)
+    ASSERT_FUNC_RESULT(0, Z::S, _sx, 1e-10, _sy, 1e-12)
 }
 
 TEST_METHOD(calculateAt_resonator)

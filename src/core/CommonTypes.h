@@ -7,7 +7,9 @@
 #include <QObject>
 
 namespace Z {
-enum WorkPlane { Plane_T, Plane_S };
+enum WorkPlane { T, S };
+inline QString planeName(WorkPlane ts) { return ts == T ? QStringLiteral("T") : QStringLiteral("S"); }
+inline QString planeSuffix(WorkPlane ts) { return ts == T ? QStringLiteral("_t") : QStringLiteral("_s"); }
 }
 
 enum class TripType

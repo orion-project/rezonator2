@@ -1,6 +1,7 @@
-#include "testing/OriTestBase.h"
 #include "../widgets/UnitWidgets.h"
-#include "TestUtils.h"
+#include "../tests/TestUtils.h"
+
+#include "testing/OriTestBase.h"
 
 #include <QMenu>
 

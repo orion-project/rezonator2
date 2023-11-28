@@ -1,7 +1,7 @@
 #include "ValuesEditorTS.h"
 
 #include "UnitWidgets.h"
-#include "../Appearance.h"
+#include "../app/Appearance.h"
 #include "widgets/OriValueEdit.h"
 #include "helpers/OriLayouts.h"
 
@@ -20,7 +20,7 @@ QToolButton* makeButton(const QString& tooltip, const QString& icon, QObject* re
     b->setFixedWidth(18);
     b->setToolTip(tooltip);
     b->setFocusPolicy(Qt::NoFocus);
-    b->setIcon(QPixmap(icon));
+    b->setIcon(QIcon(icon));
     b->setStyleSheet(
         "QToolButton{background-color:rgba(0,0,0,0);border:none}"
         "QToolButton:hover{background-color:rgba(0,0,0,30);border:none}");
@@ -62,9 +62,9 @@ ValueEditorTS::ValueEditorTS(const QString& label, const QString& symbol, const 
         _symbol,
         Space(6),
         _editorT,
-        makeButton(tr("Assign T value to S"), ":/toolbar10/ts_t2s", this, SLOT(assignTtoS())),
-        makeButton(tr("Swap values"), ":/toolbar10/ts_swap", this, SLOT(swapValues())),
-        makeButton(tr("Assign S value to T"), ":/toolbar10/ts_s2t", this, SLOT(assignStoT())),
+        makeButton(tr("Assign T value to S"), ":/toolbar/equ_right", this, SLOT(assignTtoS())),
+        makeButton(tr("Swap values"), ":/toolbar/equ_swap", this, SLOT(swapValues())),
+        makeButton(tr("Assign S value to T"), ":/toolbar/equ_left", this, SLOT(assignStoT())),
         _editorS,
         Space(2),
         _unitsSelector,
@@ -116,15 +116,15 @@ void ValueEditorTS::editorKeyPressed(int key)
 {
     switch (key)
     {
-    case Qt::Key_Up: emit goingFocusPrev(sender() == _editorT ? Z::Plane_T : Z::Plane_S); break;
-    case Qt::Key_Down: emit goingFocusNext(sender() == _editorT ? Z::Plane_T : Z::Plane_S); break;
+    case Qt::Key_Up: emit goingFocusPrev(sender() == _editorT ? Z::T : Z::S); break;
+    case Qt::Key_Down: emit goingFocusNext(sender() == _editorT ? Z::T : Z::S); break;
     default:;
     }
 }
 
 void ValueEditorTS::setFocus(Z::WorkPlane plane)
 {
-    auto editor = plane == Z::Plane_T ? _editorT : _editorS;
+    auto editor = plane == Z::T ? _editorT : _editorS;
     editor->setFocus();
     editor->selectAll();
 }
@@ -139,7 +139,7 @@ ValuesEditorTS::ValuesEditorTS() : ValuesEditorTS(QVector<ValueEditorTS*>())
 
 ValuesEditorTS::ValuesEditorTS(const QVector<ValueEditorTS*>& editors) : QVBoxLayout()
 {
-    setMargin(0);
+    setContentsMargins(0, 0, 0, 0);
     setSpacing(0);
 
     _unitSpacer = new QLabel;
@@ -151,13 +151,13 @@ ValuesEditorTS::ValuesEditorTS(const QVector<ValueEditorTS*>& editors) : QVBoxLa
     _headerS->setAlignment(Qt::AlignHCenter);
 
     auto header = new QHBoxLayout;
-    header->setMargin(0);
+    header->setContentsMargins(0, 0, 0, 0);
     header->setSpacing(0);
     header->addStretch();
     header->addWidget(_headerT);
-    header->addWidget(makeButton(tr("Assign all T values to S"), ":/toolbar10/ts_t2s", this, SLOT(assignTtoS())));
-    header->addWidget(makeButton(tr("Swap all values"), ":/toolbar10/ts_swap", this, SLOT(swapValues())));
-    header->addWidget(makeButton(tr("Assign all S values to T"), ":/toolbar10/ts_s2t", this, SLOT(assignStoT())));
+    header->addWidget(makeButton(tr("Assign all T values to S"), ":/toolbar/equ_right", this, SLOT(assignTtoS())));
+    header->addWidget(makeButton(tr("Swap all values"), ":/toolbar/equ_swap", this, SLOT(swapValues())));
+    header->addWidget(makeButton(tr("Assign all S values to T"), ":/toolbar/equ_left", this, SLOT(assignStoT())));
     header->addWidget(_headerS);
     header->addWidget(_unitSpacer);
     addLayout(header);

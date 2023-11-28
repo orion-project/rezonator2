@@ -3,10 +3,10 @@
 #include "ParamEditor.h"
 #include "ParamsEditor.h"
 #include "UnitWidgets.h"
-#include "../Appearance.h"
-#include "../WindowsManager.h"
+#include "../app/Appearance.h"
 #include "../core/ElementFormula.h"
-#include "../funcs/FormatInfo.h"
+#include "../math/FormatInfo.h"
+#include "../windows/WindowsManager.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
@@ -275,7 +275,7 @@ void ElemFormulaEditor::createParameter()
 
     QWidget editor;
     auto layout = new QFormLayout(&editor);
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->addRow(new QLabel(tr("Name")), aliasEditor);
     layout->addRow(new QLabel(tr("Dim")), dimEditor);
 

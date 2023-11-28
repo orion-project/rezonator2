@@ -1,9 +1,10 @@
 #include "SchemaLayout.h"
+#include "SchemaLayoutDefs.h"
 
-#include "../Appearance.h"
-#include "../AppSettings.h"
+#include "../app/Appearance.h"
+#include "../core/Elements.h"
 #include "../core/ElementFormula.h"
-#include "../funcs/FormatInfo.h"
+#include "../math/FormatInfo.h"
 
 namespace ElementLayoutProps {
 
@@ -127,16 +128,23 @@ void ElementLayout::slopePainter(QPainter *painter)
 }
 
 //------------------------------------------------------------------------------
+//                            ElementLayoutOptionsView
+//------------------------------------------------------------------------------
+
+const char* ElementLayoutOptionsView::altVersionOptionTitle() const
+{
+    return QT_TRANSLATE_NOOP("LayoutOptions", "Draw narrow version of element");
+}
+
+//------------------------------------------------------------------------------
 namespace OpticalAxisLayout {
-    DECLARE_ELEMENT_LAYOUT_BEGIN
-    DECLARE_ELEMENT_LAYOUT_END
+    LAYOUT_BEGIN
 
-    ELEMENT_LAYOUT_INIT {
-    }
-
-    ELEMENT_LAYOUT_PAINT {
+    PAINT {
         painter->drawLine(QLineF(-HW, 0, HW, 0));
     }
+
+    LAYOUT_END
 }
 
 //------------------------------------------------------------------------------
@@ -262,15 +270,21 @@ void SchemaLayout::centerView(const QRectF& rect)
 
 namespace ElementLayoutFactory {
 
-static QMap<QString, std::function<ElementLayout*(Element*)>> __factoryMethods;
+static QMap<QString, std::function<ElementLayout*(Element*)>> __layoutFactoryMethods;
+static QMap<QString, std::function<ElementLayoutOptionsView*()>> __optionsFactoryMethods;
 
 template <class TElement, class TLayout> void registerLayout() {
     TElement tmp;
-    __factoryMethods.insert(tmp.type(), [](Element*e) { return new TLayout(e); });
+    __layoutFactoryMethods.insert(tmp.type(), [](Element*e) { return new TLayout(e); });
+}
+
+template <class TElement, class TOptions> void registerLayoutOptions() {
+    TElement tmp;
+    __optionsFactoryMethods.insert(tmp.type(), []() { return new TOptions(); });
 }
 
 ElementLayout* make(Element *elem) {
-    if (__factoryMethods.empty()) {
+    if (__layoutFactoryMethods.empty()) {
         registerLayout<ElemAxiconLens, ElemAxiconLensLayout::Layout>();
         registerLayout<ElemAxiconMirror, ElemAxiconMirrorLayout::Layout>();
         registerLayout<ElemBrewsterCrystal, ElemBrewsterCrystalLayout::Layout>();
@@ -303,9 +317,28 @@ ElementLayout* make(Element *elem) {
         registerLayout<ElemTiltedInterface, ElemTiltedInterfaceLayout::Layout>();
         registerLayout<ElemTiltedPlate, ElemTiltedPlateLayout::Layout>();
     }
-    if (!__factoryMethods.contains(elem->type()))
+    if (!__layoutFactoryMethods.contains(elem->type()))
         return nullptr;
-    return __factoryMethods[elem->type()](elem);
+    return __layoutFactoryMethods[elem->type()](elem);
+}
+
+ElementLayoutOptionsView* getOptions(Element *elem)
+{
+    if (__optionsFactoryMethods.empty())
+    {
+        registerLayoutOptions<ElemBrewsterCrystal, ElemBrewsterCrystalLayout::LayoutOptions>();
+        registerLayoutOptions<ElemBrewsterPlate, ElemBrewsterPlateLayout::LayoutOptions>();
+        registerLayoutOptions<ElemEmptyRange, ElemEmptyRangeLayout::LayoutOptions>();
+        registerLayoutOptions<ElemGrinLens, ElemGrinLensLayout::LayoutOptions>();
+        registerLayoutOptions<ElemGrinMedium, ElemGrinMediumLayout::LayoutOptions>();
+        registerLayoutOptions<ElemMediumRange, ElemMediumRangeLayout::LayoutOptions>();
+        registerLayoutOptions<ElemPlate, ElemPlateLayout::LayoutOptions>();
+        registerLayoutOptions<ElemPoint, ElemPointLayout::LayoutOptions>();
+        registerLayoutOptions<ElemTiltedPlate, ElemTiltedPlateLayout::LayoutOptions>();
+    }
+    if (!__optionsFactoryMethods.contains(elem->type()))
+        return nullptr;
+    return __optionsFactoryMethods[elem->type()]();
 }
 
 } // namespace ElementLayoutFactory

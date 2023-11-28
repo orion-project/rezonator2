@@ -1,0 +1,20 @@
+.title {
+  font-weight: bold;
+}
+.plane {
+  color: blue;
+  font-size: 11pt;
+  font-weight: bold;
+}
+.param {
+  font-weight: bold;
+}
+.position {
+  color: gray;
+}
+.waist {
+  background: #fffacd
+}
+.error {
+  color: red;
+}

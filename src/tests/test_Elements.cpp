@@ -1,9 +1,10 @@
-#include "testing/OriTestBase.h"
 #include "../core/Elements.h"
 #include "../core/ElementsCatalog.h"
 #include "../core/Pump.h"
-#include "../funcs/PumpCalculator.h"
-#include "TestUtils.h"
+#include "../tests/TestUtils.h"
+#include "../math/PumpCalculator.h"
+
+#include "testing/OriTestBase.h"
 
 #include <QSharedPointer>
 
@@ -773,14 +774,10 @@ TEST_METHOD(AxiconMirror)
     pump.angle()->setValue(0);
     pump.distance()->setValue(0);
 
-    auto pumpCalcT = PumpCalculator::T();
-    auto pumpCalcS = PumpCalculator::S();
-    pumpCalcT->init(&pump, 0);
-    pumpCalcS->init(&pump, 0);
+    PumpCalculator pumpCalc(&pump, 0);
     ElementDynamic::CalcParams p;
     Z::Matrix unity;
-    p.pumpCalcT = pumpCalcT.get();
-    p.pumpCalcS = pumpCalcS.get();
+    p.pumpCalc = &pumpCalc;
     p.Mt = &unity;
     p.Ms = &unity;
     elem->calcDynamicMatrix(p);
@@ -804,14 +801,10 @@ TEST_METHOD(AxiconLens)
     pump.angle()->setValue(0);
     pump.distance()->setValue(0);
 
-    auto pumpCalcT = PumpCalculator::T();
-    auto pumpCalcS = PumpCalculator::S();
-    pumpCalcT->init(&pump, 0);
-    pumpCalcS->init(&pump, 0);
+    PumpCalculator pumpCalc(&pump, 0);
     ElementDynamic::CalcParams p;
     Z::Matrix unity;
-    p.pumpCalcT = pumpCalcT.get();
-    p.pumpCalcS = pumpCalcS.get();
+    p.pumpCalc = &pumpCalc;
     p.Mt = &unity;
     p.Ms = &unity;
     elem->calcDynamicMatrix(p);

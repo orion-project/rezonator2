@@ -32,6 +32,15 @@ void toClipboard(QCPGraph* graph);
 void toClipboard(const QVector<QCPGraph*>& graphs);
 void exportGraphsData(FunctionGraphSet* graphs, QCPGraph* selectedGraph);
 
+struct FormatPenDlgProps
+{
+    QString title;
+    std::function<void(const QPen&)> onApply;
+    std::function<void()> onReset;
+};
+
+bool formatPenDlg(const QPen& pen, const FormatPenDlgProps& props);
+
 } // namespace PlotHelpers
 
 #endif // PLOT_HELPERS_H

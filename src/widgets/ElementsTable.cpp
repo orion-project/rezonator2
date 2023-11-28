@@ -1,8 +1,8 @@
 #include "ElementsTable.h"
 
 #include "RichTextItemDelegate.h"
-#include "../Appearance.h"
-#include "../funcs/FormatInfo.h"
+#include "../app/Appearance.h"
+#include "../math/FormatInfo.h"
 
 #include <QAbstractTableModel>
 #include <QHeaderView>
@@ -310,7 +310,7 @@ void ElementsTable::indexDoubleClicked(const QModelIndex &index)
 
 void ElementsTable::showContextMenu(const QPoint& pos)
 {
-    auto menu = (currentRow() < _schema->count() - 1) ? elementContextMenu : lastRowContextMenu;
+    auto menu = (currentRow() < _schema->count()) ? elementContextMenu : lastRowContextMenu;
     if (!menu) return;
     emit beforeContextMenuShown(menu);
     menu->popup(mapToGlobal(pos));

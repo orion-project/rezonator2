@@ -1,6 +1,45 @@
 {
   "history": [
     {
+      "version": "2.0.13-beta9",
+      "date": "2023-11-27",
+      "changes": [
+        {
+          "text": "Switch Windows x64 flavour to Qt 6 for its better HiDPI support"
+        },
+        {
+          "text": "Can change visual settings of plot elements (axes, title, legend) and save them in schema files"
+        },
+        {
+          "text": "Cursor panel can show and set offset inside element under cursor in Multirange caustic window"
+        },
+        {
+          "text": "An option added to the Point element to draw it as plane"
+        },
+        {
+          "text": "Table windows can be stored in schema file"
+        },
+        {
+          "text": "Calculate waist size and position in Caustic, MR-Caustic, MB-Caustic functions"
+        },
+        {
+          "text": "Calculate bounds of stability regions in Stability Map function"
+        },
+        {
+          "text": "Fix: 'Draw narrow version' checkbox was shown for elements which do not provide narrow view"
+        },
+        {
+          "text": "Fix: saved window geometry could make window shown out of screen bounds"
+        },
+        {
+          "text": "Fix: wrong context menu on the last element in elements table"
+        },
+        {
+          "text": "Fix: Beamsize Variation: axicon matrices were not recalculated during variaton"
+        }
+      ]
+    },
+    {
       "version": "2.0.12-beta8",
       "date": "2023-05-03",
       "changes": [

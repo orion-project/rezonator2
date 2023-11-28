@@ -1,7 +1,7 @@
 #include "ElemSelectorWidget.h"
 
 #include "ValueEditor.h"
-#include "../Appearance.h"
+#include "../app/Appearance.h"
 
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
@@ -106,7 +106,7 @@ ElemAndParamSelector::ElemAndParamSelector(
     connect(_elemSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(currentElemChanged(int)));
     connect(_paramSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(currentParamChanged(int)));
 
-    setMargin(0);
+    setContentsMargins(0, 0, 0, 0);
     setColumnStretch(1, 1);
     addWidget(new QLabel(tr("Element")), 0, 0);     addWidget(_elemSelector, 0, 1);
     addWidget(new QLabel(tr("Parameter")), 1, 0);   addWidget(_paramSelector, 1, 1);
@@ -135,20 +135,20 @@ WidgetResult ElemAndParamSelector::verify()
 MultiElementSelectorWidget::MultiElementSelectorWidget(Schema* schema, ElementFilter *filter) : QWidget()
 {
     _elemsSelector = new QListWidget;
-    _elemsSelector->addAction(Ori::Gui::action("", this, SLOT(selectAllElements()), "", Qt::CTRL+Qt::Key_A));
-    _elemsSelector->addAction(Ori::Gui::action("", this, SLOT(deselectAllElements()), "", Qt::CTRL+Qt::Key_D));
-    _elemsSelector->addAction(Ori::Gui::action("", this, SLOT(invertElementsSelection()), "", Qt::CTRL+Qt::Key_I));
+    _elemsSelector->addAction(Ori::Gui::action("", this, SLOT(selectAllElements()), "", Qt::CTRL|Qt::Key_A));
+    _elemsSelector->addAction(Ori::Gui::action("", this, SLOT(deselectAllElements()), "", Qt::CTRL|Qt::Key_D));
+    _elemsSelector->addAction(Ori::Gui::action("", this, SLOT(invertElementsSelection()), "", Qt::CTRL|Qt::Key_I));
     connect(_elemsSelector, &QListWidget::currentItemChanged, this, &MultiElementSelectorWidget::currentItemChanged);
     connect(_elemsSelector, &QListWidget::itemDoubleClicked, this, &MultiElementSelectorWidget::invertCheckState);
-    connect(_elemsSelector, &QListWidget::itemClicked, [&](QListWidgetItem *item){
+    connect(_elemsSelector, &QListWidget::itemClicked, this, [&](QListWidgetItem *item){
         if (!item->isSelected()) _elemsSelector->setCurrentItem(item); });
 
     Ori::Layouts::LayoutH({
         _elemsSelector,
         Ori::Layouts::LayoutV({
-            Ori::Gui::iconToolButton(tr("Select All"), ":/toolbar16/check_all", this, SLOT(selectAllElements())),
-            Ori::Gui::iconToolButton(tr("Select None"), ":/toolbar16/check_none", this, SLOT(deselectAllElements())),
-            Ori::Gui::iconToolButton(tr("Invert Selection"), ":/toolbar16/check_invert", this, SLOT(invertElementsSelection())),
+            Ori::Gui::iconToolButton(tr("Select All"), ":/toolbar/check_all", this, SLOT(selectAllElements())),
+            Ori::Gui::iconToolButton(tr("Select None"), ":/toolbar/check_none", this, SLOT(deselectAllElements())),
+            Ori::Gui::iconToolButton(tr("Invert Selection"), ":/toolbar/check_invert", this, SLOT(invertElementsSelection())),
             Ori::Layouts::Stretch()
         })
     })
