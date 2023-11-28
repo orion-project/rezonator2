@@ -75,15 +75,19 @@ def make_package_for_linux():
   os.makedirs('usr/share/applications')
   os.makedirs('usr/share/icons/hicolor/256x256/apps')
 
+  print_header('Copy project files...')
   copy_file('../../bin/' + PROJECT_EXE, 'usr/bin')
+  copy_file(os.path.join(find_qt_dir(), 'assistant'), 'usr/bin')
+  copy_file('../../bin/rezonator.qch', 'usr/bin')
+  copy_file('../../bin/rezonator.qhc', 'usr/bin')
+  shutil.copytree('../../bin/examples', 'usr/bin/examples')
+  shutil.copytree('../../bin/test_files', 'usr/bin/test_files')
+  copy_file(f'../../release/{PROJECT_NAME}.desktop', 'usr/share/applications')
+  shutil.copyfile('../../img/icon/main_2_256.png', f'usr/share/icons/hicolor/256x256/apps/{PROJECT_NAME}.png')
+
   # There will be error 'Could not determine the path to the executable' otherwise
   execute('chmod +x usr/bin/' + PROJECT_EXE)
-
-  copy_file('../../release/{}.desktop'.format(PROJECT_NAME), 'usr/share/applications')
-  shutil.copyfile('../../img/icon/procyon.iconset/icon_256x256.png', 'usr/share/icons/hicolor/256x256/apps/{}.png'.format(PROJECT_NAME))
-
-  print_header('Copy project files...')
-  shutil.copytree('../../bin/dicts', 'usr/bin/dicts')
+  execute('chmod +x usr/bin/assistant') # just in case
 
   os.chdir('..')
 
@@ -98,12 +102,13 @@ def make_package_for_linux():
   download_file(linuxdeployqt_url, linuxdeployqt, mark_executable = True)
 
   print_header('Create AppImage...')
-  execute((
-    './{} {}/usr/share/applications/{}.desktop ' +
+  execute(f'./{linuxdeployqt} {REDIST_DIR}/usr/bin/assistant ' +
+    '-no-translations -no-copy-copyright-files ' +
+    '-exclude-libs=libqsqlmysql,libqsqlpsql,libqsqlodbc,libqicns,libqico,libqtga,libqtiff,libqwbmp,libqwebp')
+  execute(f'./{linuxdeployqt} {REDIST_DIR}/usr/share/applications/{PROJECT_NAME}.desktop ' +
     '-appimage -no-translations -no-copy-copyright-files ' +
     '-extra-plugins=iconengines,imageformats/libqsvg.so ' +
-    '-exclude-libs=libqsqlmysql,libqsqlpsql,libqsqlodbc,libqicns,libqico,libqtga,libqtiff,libqwbmp,libqwebp'
-  ).format(linuxdeployqt, REDIST_DIR, PROJECT_NAME))
+    '-exclude-libs=libqsqlmysql,libqsqlpsql,libqsqlodbc,libqicns,libqico,libqtga,libqtiff,libqwbmp,libqwebp')
 
   # Seems we can't specify target AppImage name, so find it
   default_appimage_names = glob.glob(PROJECT_NAME + '-x*.AppImage')
@@ -111,7 +116,7 @@ def make_package_for_linux():
     print_error_and_exit('Unable to find created AppImage file')
 
   global package_name
-  package_name = '{}-linux-x{}.AppImage'.format(package_name, get_exe_bits('../bin/' + PROJECT_EXE))
+  package_name = '{}-x86_{}.AppImage'.format(package_name, get_exe_bits('../bin/' + PROJECT_EXE))
   remove_files([package_name])
   os.rename(default_appimage_names[0], package_name)
 
