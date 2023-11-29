@@ -255,40 +255,42 @@ QString CausticFunction::calculateSpecPoints(const SpecPointParams &params)
             const double infR = 1/epsX;
             const int maxIters = 100;
             if (qAbs(startR[ts]) >= infR) {
-                waistW[ts] = startW[ts], waistX[ts] = startX;
+                waistX[ts] = startX;
+                waistW[ts] = startW[ts];
+            }
+            else if (qAbs(stopR[ts]) >= infR) {
+                waistX[ts] = stopX;
+                waistW[ts] = stopW[ts];
+            }
+            else if (startR[ts] * stopR[ts] > 0) {
                 return;
             }
-            if (qAbs(stopR[ts]) >= infR) {
-                waistW[ts] = stopW[ts], waistX[ts] = stopX;
-                return;
+            else {
+                int iter = 0;
+                double x1 = startX, r1 = startR[ts];
+                double x2 = stopX;
+                double x0 = (x1 + x2) / 2.0, r0;
+                while (qAbs(x2-x1) > epsX and iter < maxIters) {
+                    elem->setSubRangeSI(x0);
+                    _calc->multMatrix();
+                    r0 = isResonator \
+                          ? _beamCalc->frontRadius(_calc->M(ts), _ior)
+                          : _pumpCalc->calcT(_calc->M(ts), _ior).frontRadius;
+                    if (r1 * r0 < 0) x2 = x0;
+                    else x1 = x0, r1 = r0;
+                    x0 = (x1 + x2) / 2.0;
+                    iter++;
+                }
+                if (iter == maxIters) {
+                    qWarning() << "CausticFunction::calculateSpecPoints: "
+                               << "failed to solve waist after" << iter << "iterations";
+                    return;
+                }
+                waistX[ts] = x0;
+                waistW[ts] = isResonator
+                      ? _beamCalc->beamRadius(_calc->M(ts), _ior)
+                      : _pumpCalc->calcT(_calc->M(ts), _ior).beamRadius;
             }
-            if (startR[ts] * stopR[ts] > 0) {
-                return;
-            }
-            int iter = 0;
-            double x1 = startX, r1 = startR[ts];
-            double x2 = stopX;
-            double x0 = (x1 + x2) / 2.0, r0;
-            while (qAbs(x2-x1) > epsX and iter < maxIters) {
-                elem->setSubRangeSI(x0);
-                _calc->multMatrix();
-                r0 = isResonator \
-                      ? _beamCalc->frontRadius(_calc->M(ts), _ior)
-                      : _pumpCalc->calcT(_calc->M(ts), _ior).frontRadius;
-                if (r1 * r0 < 0) x2 = x0;
-                else x1 = x0, r1 = r0;
-                x0 = (x1 + x2) / 2.0;
-                iter++;
-            }
-            if (iter == maxIters) {
-                qWarning() << "CausticFunction::calculateSpecPoints: "
-                           << "failed to solve waist after" << iter << "iterations";
-                return;
-            }
-            waistX[ts] = x0;
-            waistW[ts] = isResonator
-                  ? _beamCalc->beamRadius(_calc->M(ts), _ior)
-                  : _pumpCalc->calcT(_calc->M(ts), _ior).beamRadius;
             GaussCalculator gauss;
             gauss.setMI(isResonator ? 1 : _pumpCalc->MI()[ts]);
             gauss.setLambda(schema()->wavelenSi() / _ior);
