@@ -166,9 +166,9 @@ def remove_files_in_dir(dir, filenames):
       os.remove(filepath)
 
 
-def copy_file(source_file_path, target_dir):
+def copy_file(source_file_path, target_dir, target_fn=''):
   (source_dir, filename) = os.path.split(source_file_path)
-  target_file_path = os.path.join(target_dir, filename)
+  target_file_path = os.path.join(target_dir, target_fn if target_fn else filename) 
   shutil.copyfile(source_file_path, target_file_path)
 
 

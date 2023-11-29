@@ -230,8 +230,8 @@ QString StabilityMapWindow::readWindowSpecific(const QJsonObject& root)
     if (root.contains("stab_bound_markers_pen"))
     {
         _stabBoundMarkerPen = QCPL::readPen(root["stab_bound_markers_pen"].toObject(), _stabBoundMarkerLow->pen());
-        _stabBoundMarkerLow->setPen(_stabBoundMarkerPen.value());
-        _stabBoundMarkerTop->setPen(_stabBoundMarkerPen.value());
+        _stabBoundMarkerLow->setPen(*_stabBoundMarkerPen);
+        _stabBoundMarkerTop->setPen(*_stabBoundMarkerPen);
     }
     return QString();
 }

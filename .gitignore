@@ -33,3 +33,5 @@ Makefile
 .qmake.stash
 *.drawio.bkp
 *.drawio.dtmp
+.DS_Store
+

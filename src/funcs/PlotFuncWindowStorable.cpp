@@ -90,7 +90,7 @@ QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root, Z::Re
     if (root.contains("cursor_pen"))
     {
         _cursorPen = QCPL::readPen(root["cursor_pen"].toObject(), _cursor->pen());
-        _cursor->setPen(_cursorPen.value());
+        _cursor->setPen(*_cursorPen);
     }
     requestCenterCursor();
 
@@ -121,12 +121,12 @@ QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root, Z::Re
     if (root.contains("pen_t"))
     {
         _graphPenT = QCPL::readPen(root["pen_t"].toObject(), _graphs->T()->pen());
-        _graphs->T()->setPen(_graphPenT.value());
+        _graphs->T()->setPen(*_graphPenT);
     }
     if (root.contains("pen_s"))
     {
         _graphPenS = QCPL::readPen(root["pen_s"].toObject(), _graphs->S()->pen());
-        _graphs->S()->setPen(_graphPenS.value());
+        _graphs->S()->setPen(*_graphPenS);
     }
 
     // Restore view states
