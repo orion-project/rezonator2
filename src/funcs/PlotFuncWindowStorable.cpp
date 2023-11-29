@@ -160,8 +160,7 @@ QString PlotFuncWindowStorable::writeWindowGeneral(QJsonObject& root) const
     // Store cursor state
     root["cursor_enabled"] = _cursorPanel->enabled();
     root["cursor_mode"] = Z::IO::Utils::enumToStr(_cursorPanel->mode());
-    if (_cursorPen.has_value())
-        root["cursor_pen"] = QCPL::writePen(_cursorPen.value());
+    if (_cursorPen) root["cursor_pen"] = QCPL::writePen(*_cursorPen);
 
     // Store plot limits
     auto limitsX = _plot->limitsX();
@@ -177,10 +176,8 @@ QString PlotFuncWindowStorable::writeWindowGeneral(QJsonObject& root) const
     root["t_title"] = _plot->formatterTextT();
 
     root["format"] = QCPL::writePlot(_plot);
-    if (_graphPenT.has_value())
-        root["pen_t"] = QCPL::writePen(_graphPenT.value());
-    if (_graphPenS.has_value())
-        root["pen_s"] = QCPL::writePen(_graphPenS.value());
+    if (_graphPenT) root["pen_t"] = QCPL::writePen(*_graphPenT);
+    if (_graphPenS) root["pen_s"] = QCPL::writePen(*_graphPenS);
 
     // Store view states
     QJsonObject viewsJson;

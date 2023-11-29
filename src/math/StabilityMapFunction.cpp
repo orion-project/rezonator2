@@ -33,13 +33,13 @@ void StabilityMapFunction::calculate(CalculationMode calcMode)
     Z::PairTS<std::optional<ApproxBound>> startBound;
 
     auto checkStabBound = [&](Z::WorkPlane ts, double x, const Z::PairTS<bool>& isStable) {
-        bool wasStable = startBound[ts].has_value();
+        auto wasStable = bool(startBound[ts]);
         if (not wasStable and isStable[ts]) {
-            if (prevX.has_value())
-                startBound[ts] = {prevX.value(), false};
+            if (prevX)
+                startBound[ts] = {*prevX, false};
             else startBound[ts] = {_plotRange.start(), true};
         } else if (wasStable and not isStable[ts]) {
-            _approxStabBounds[ts].append({startBound[ts].value(), {x, false}});
+            _approxStabBounds[ts].append({*startBound[ts], {x, false}});
             startBound[ts].reset();
         }
     };
@@ -56,10 +56,8 @@ void StabilityMapFunction::calculate(CalculationMode calcMode)
 
         prevX = x;
     }
-    if (startBound.T.has_value())
-        _approxStabBounds.T.append({startBound.T.value(), {_plotRange.stop(), true}});
-    if (startBound.S.has_value())
-        _approxStabBounds.S.append({startBound.S.value(), {_plotRange.stop(), true}});
+    if (startBound.T) _approxStabBounds.T.append({*startBound.T, {_plotRange.stop(), true}});
+    if (startBound.S) _approxStabBounds.S.append({*startBound.S, {_plotRange.stop(), true}});
 
     finishResults();
 }
@@ -135,8 +133,8 @@ QVector<Z::RangeSi> StabilityMapFunction::findStabilityBounds(Z::WorkPlane ts) c
             double x1 = x2 - _plotRange.step();
             stop = solve(x1, x2);
         }
-        if (start.has_value() and stop.has_value())
-            res.append({ start.value(), stop.value() });
+        if (start and stop)
+            res.append({ *start, *stop });
     }
     return res;
 }
@@ -163,7 +161,7 @@ QString StabilityMapFunction::calculateSpecPoints(const SpecPointParams& params)
             return;
         }
         int index = 1;
-        for (auto bounds: stabBounds[ts]) {
+        foreach (auto bounds, stabBounds[ts]) {
             stream << "<span class='position'>" << index << "-beg:</span> " << fmtSi(bounds.start) << "<br>"
                    << "<span class='position'>" << index << "-end:</span> " << fmtSi(bounds.stop) << "<br><br>";
             index++;

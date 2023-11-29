@@ -239,8 +239,8 @@ QString StabilityMapWindow::readWindowSpecific(const QJsonObject& root)
 QString StabilityMapWindow::writeWindowSpecific(QJsonObject& root)
 {
     root["stab_bound_markers"] = _actnStabBoundMarkers->isChecked();
-    if (_stabBoundMarkerPen.has_value())
-        root["stab_bound_markers_pen"] = QCPL::writePen(_stabBoundMarkerPen.value());
+    if (_stabBoundMarkerPen)
+        root["stab_bound_markers_pen"] = QCPL::writePen(*_stabBoundMarkerPen);
     return QString();
 }
 
@@ -264,9 +264,7 @@ void StabilityMapWindow::updateStabBoundMarkers()
 
 QPen StabilityMapWindow::stabBoundMarkerPen() const
 {
-    return _stabBoundMarkerPen.has_value()
-        ? _stabBoundMarkerPen.value()
-        : AppSettings::instance().stabBoundMarkerPen();
+    return _stabBoundMarkerPen ? *_stabBoundMarkerPen : AppSettings::instance().stabBoundMarkerPen();
 }
 
 QCPItemStraightLine* StabilityMapWindow::makeStabBoundMarker() const

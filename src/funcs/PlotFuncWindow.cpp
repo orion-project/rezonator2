@@ -968,17 +968,17 @@ void PlotFuncWindow::loadPlotFormat()
 
 QPen PlotFuncWindow::cursorPen() const
 {
-    return _cursorPen.has_value() ? _cursorPen.value() : AppSettings::instance().cursorPen();
+    return _cursorPen ? *_cursorPen : AppSettings::instance().cursorPen();
 }
 
 QPen PlotFuncWindow::graphPenT() const
 {
-    return _graphPenT.has_value() ? _graphPenT.value() : AppSettings::instance().graphPenT();
+    return _graphPenT ? *_graphPenT : AppSettings::instance().graphPenT();
 }
 
 QPen PlotFuncWindow::graphPenS() const
 {
-    return _graphPenS.has_value() ? _graphPenS.value() : AppSettings::instance().graphPenS();
+    return _graphPenS ? *_graphPenS : AppSettings::instance().graphPenS();
 }
 
 void PlotFuncWindow::cursorFormatDlg()
