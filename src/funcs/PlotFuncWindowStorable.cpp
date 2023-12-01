@@ -90,7 +90,7 @@ QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root, Z::Re
     if (root.contains("cursor_pen"))
     {
         _cursorPen = QCPL::readPen(root["cursor_pen"].toObject(), _cursor->pen());
-        _cursor->setPen(_cursorPen.value());
+        _cursor->setPen(*_cursorPen);
     }
     requestCenterCursor();
 
@@ -121,12 +121,12 @@ QString PlotFuncWindowStorable::readWindowGeneral(const QJsonObject& root, Z::Re
     if (root.contains("pen_t"))
     {
         _graphPenT = QCPL::readPen(root["pen_t"].toObject(), _graphs->T()->pen());
-        _graphs->T()->setPen(_graphPenT.value());
+        _graphs->T()->setPen(*_graphPenT);
     }
     if (root.contains("pen_s"))
     {
         _graphPenS = QCPL::readPen(root["pen_s"].toObject(), _graphs->S()->pen());
-        _graphs->S()->setPen(_graphPenS.value());
+        _graphs->S()->setPen(*_graphPenS);
     }
 
     // Restore view states
@@ -160,8 +160,7 @@ QString PlotFuncWindowStorable::writeWindowGeneral(QJsonObject& root) const
     // Store cursor state
     root["cursor_enabled"] = _cursorPanel->enabled();
     root["cursor_mode"] = Z::IO::Utils::enumToStr(_cursorPanel->mode());
-    if (_cursorPen.has_value())
-        root["cursor_pen"] = QCPL::writePen(_cursorPen.value());
+    if (_cursorPen) root["cursor_pen"] = QCPL::writePen(*_cursorPen);
 
     // Store plot limits
     auto limitsX = _plot->limitsX();
@@ -177,10 +176,8 @@ QString PlotFuncWindowStorable::writeWindowGeneral(QJsonObject& root) const
     root["t_title"] = _plot->formatterTextT();
 
     root["format"] = QCPL::writePlot(_plot);
-    if (_graphPenT.has_value())
-        root["pen_t"] = QCPL::writePen(_graphPenT.value());
-    if (_graphPenS.has_value())
-        root["pen_s"] = QCPL::writePen(_graphPenS.value());
+    if (_graphPenT) root["pen_t"] = QCPL::writePen(*_graphPenT);
+    if (_graphPenS) root["pen_s"] = QCPL::writePen(*_graphPenS);
 
     // Store view states
     QJsonObject viewsJson;

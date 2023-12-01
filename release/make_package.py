@@ -130,10 +130,26 @@ def make_package_for_macos():
   shutil.copytree('../../bin/' + PROJECT_EXE, PROJECT_EXE)
 
   print_header('Run macdeployqt...')
-  execute('macdeployqt {}'.format(PROJECT_EXE))
+  execute('macdeployqt ' + PROJECT_EXE)
 
   print_header('Copy project files...')
-  shutil.copytree('../../bin/dicts', PROJECT_EXE + '/Contents/MacOS/dicts')
+  shutil.copytree('../../bin/examples', PROJECT_EXE + '/Contents/MacOS/examples')
+  shutil.copytree('../../bin/test_files', PROJECT_EXE + '/Contents/MacOS/test_files')
+
+  print_header('Processing Assistant...')
+  shutil.copytree(os.path.join(find_qt_dir(), 'Assistant.app'), 'Assistant.app')
+  execute('macdeployqt Assistant.app -appstore-compliant')
+  print_header('Patching Assistant...')
+  # `macdeployqt` (at least in Qt 5.10) doesn't add this RPATH to assistant exe, 
+  # and as a result when packed to rezonator.app bundle it can't find libraries
+  execute('install_name_tool -add_rpath @loader_path/../Frameworks Assistant.app/Contents/MacOS/Assistant')
+  execute('install_name_tool -delete_rpath @loader_path/../../../../lib Assistant.app/Contents/MacOS/Assistant')
+  print_header('Copy Assistant files to bundle...')
+  copy_file('Assistant.app/Contents/MacOS/Assistant', PROJECT_EXE + '/Contents/MacOS', target_fn='assistant')
+  shutil.copytree('Assistant.app/Contents/Frameworks/QtHelp.framework', PROJECT_EXE + '/Contents/Frameworks/QtHelp.framework')
+  shutil.copytree('Assistant.app/Contents/Frameworks/QtSql.framework', PROJECT_EXE + '/Contents/Frameworks/QtSql.framework')
+  os.mkdir(PROJECT_EXE + '/Contents/PlugIns/sqldrivers')
+  copy_file('Assistant.app/Contents/PlugIns/sqldrivers/libqsqlite.dylib', PROJECT_EXE + '/Contents/PlugIns/sqldrivers')
 
   print_header('Clean some excessive files...')
   remove_files_in_dir(PROJECT_EXE + '/Contents/PlugIns/sqldrivers', [
@@ -145,8 +161,8 @@ def make_package_for_macos():
   global package_name
   package_name = package_name + '.dmg'
   remove_files(['tmp.dmg', '../' + package_name])
-  execute('hdiutil create tmp.dmg -ov -volname {} -fs HFS+ -srcfolder {}'.format(PROJECT_NAME, PROJECT_EXE))
-  execute('hdiutil convert tmp.dmg -format UDZO -o ../{}'.format(package_name))
+  execute(f'hdiutil create tmp.dmg -ov -volname {PROJECT_NAME} -fs HFS+ -srcfolder {PROJECT_EXE}')
+  execute(f'hdiutil convert tmp.dmg -format UDZO -o ../{package_name}')
 
 ########################################################################
 
