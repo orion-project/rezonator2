@@ -27,13 +27,6 @@ Images mainly intended to be displayed in toolbars buttons and push buttons.
 
 They can be `svg` images of any sizes (128x128, 512x512), but they should look fine even at small scales - 16x16, 24x24.
 
-### `./toolbar16`
-Images optimized for 16x16 size only. They are shown in menus or small buttons.
-
-### `./toolbar10`
-Images optimized for 10x10 size only. In some places we need images even smaller than 16x16.
-
-
 ## SVG Optimization
 
 [svgcleaner](https://github.com/RazrFalcon/svgcleaner) used for reducing the size of SVG-files that are built into the application resources. Almost all its settings are by default excepting coordinate precision and indentation.

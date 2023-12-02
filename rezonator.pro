@@ -1,4 +1,4 @@
-QT += core gui widgets printsupport network
+QT += core gui widgets printsupport network help
 
 CONFIG += c++17
 
@@ -179,6 +179,7 @@ HEADERS += \
     src/windows/ElementPropsDialog.h \
     src/windows/ElementsCatalogDialog.h \
     src/windows/ElemFormulaWindow.h \
+    src/windows/HelpWindow.h \
     src/windows/MemoWindow.h \
     src/windows/ProjectWindow.h \
     src/windows/ProtocolWindow.h \
@@ -334,6 +335,7 @@ SOURCES += \
     src/windows/ElementPropsDialog.cpp \
     src/windows/ElementsCatalogDialog.cpp \
     src/windows/ElemFormulaWindow.cpp \
+    src/windows/HelpWindow.cpp \
     src/windows/MemoWindow.cpp \
     src/windows/ProjectWindow.cpp \
     src/windows/ProtocolWindow.cpp \
