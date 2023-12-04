@@ -41,6 +41,7 @@ void CustomElemsWindow::showWindow()
         __instance = new CustomElemsWindow(res.result());
     }
     __instance->show();
+    __instance->raise();
     __instance->activateWindow();
 }
 

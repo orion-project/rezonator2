@@ -130,6 +130,7 @@ void HelpWindow::openWindow()
         __instance = new HelpWindow(res.first);
     }
     __instance->show();
+    __instance->raise();
     __instance->activateWindow();
 }
 

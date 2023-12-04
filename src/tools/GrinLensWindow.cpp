@@ -27,6 +27,7 @@ void GrinLensWindow::showWindow()
     if (!__instance)
         __instance = new GrinLensWindow;
     __instance->show();
+    __instance->raise();
     __instance->activateWindow();
 }
 

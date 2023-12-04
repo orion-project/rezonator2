@@ -399,6 +399,7 @@ void AdjustmentWindow::adjust(Schema* schema, Z::Parameter* param)
         // TODO: restore adjusters
     }
     __instance->show();
+    __instance->raise();
     __instance->activateWindow();
     if (param)
         __instance->addAdjuster(param);
