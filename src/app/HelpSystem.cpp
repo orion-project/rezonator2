@@ -63,7 +63,7 @@ void HelpSystem::showContents()
         return;
     }
 
-    HelpWindow::showContents(_parent);
+    HelpWindow::showContents();
 }
 
 void HelpSystem::showIndex()
@@ -74,7 +74,7 @@ void HelpSystem::showIndex()
         return;
     }
 
-    HelpWindow::showIndex(_parent);
+    HelpWindow::showIndex();
 }
 
 void HelpSystem::showTopic(const QString& topic)
@@ -85,7 +85,7 @@ void HelpSystem::showTopic(const QString& topic)
         return;
     }
 
-    HelpWindow::showTopic(topic, _parent);
+    HelpWindow::showTopic(topic);
 }
 
 void HelpSystem::visitHomePage()

@@ -29,7 +29,6 @@ using namespace Ori::Layouts;
 
 namespace {
 
-QHelpEngine* __engine = nullptr;
 HelpWindow* __instance = nullptr;
 
 bool isHttpUrl(const QUrl &url)
@@ -37,30 +36,29 @@ bool isHttpUrl(const QUrl &url)
     return url.scheme().startsWith(QLatin1String("http"));
 }
 
-int initEngine()
+QPair<QHelpEngine*, int> initEngine()
 {
     QString qhcDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
     if (qhcDir.isEmpty())
-        return 1;
+        return {nullptr, 1};
     if (!QDir().mkpath(qhcDir))
-        return 2;
+        return {nullptr, 2};
     QString docPath = qApp->applicationDirPath() + "/rezonator.qch";
     QString nsName = QHelpEngineCore::namespaceName(docPath);
     if (nsName.isEmpty())
-        return 3;
+        return {nullptr, 3};
     if (nsName != "org.orion-project.rezonator")
-        return 4;
-    __engine = new QHelpEngine(qhcDir + "/rezonator.qhc", qApp);
-    if (__engine->registeredDocumentations().contains(nsName))
-        return 0;
-    if (!__engine->registerDocumentation(docPath))
+        return {nullptr, 4};
+    auto engine = new QHelpEngine(qhcDir + "/rezonator.qhc");
+    if (engine->registeredDocumentations().contains(nsName))
+        return {engine, 0};
+    if (!engine->registerDocumentation(docPath))
     {
-        qWarning() << "Failed to register" << docPath << __engine->error();
-        delete __engine;
-        __engine = nullptr;
-        return 5;
+        qWarning() << "Failed to register" << docPath << engine->error();
+        delete engine;
+        return {nullptr, 5};
     }
-    return 0;
+    return {engine, 0};
 }
 
 } // namespace
@@ -72,7 +70,7 @@ int initEngine()
 class HelpBrowser : public QTextBrowser
 {
 public:
-    HelpBrowser() : QTextBrowser() {}
+    HelpBrowser(QHelpEngine *engine) : QTextBrowser(), _engine(engine) {}
 
 protected:
     void setSource(const QUrl &url)
@@ -91,67 +89,74 @@ protected:
     QVariant loadResource(int type, const QUrl &url) override
     {
         if (url.scheme() == QLatin1String("qthelp"))
-            return __engine->fileData(url);
+            return _engine->fileData(url);
         return QTextBrowser::loadResource(type, url);
     }
+
+private:
+    QHelpEngine *_engine;
 };
 
 //------------------------------------------------------------------------------
 //                               HelpWindow
 //------------------------------------------------------------------------------
 
-void HelpWindow::showContents(QWidget *parent)
+void HelpWindow::showContents()
 {
-    openWindow(parent);
+    openWindow();
     __instance->setSource("index.html");
     __instance->_actnContent->setChecked(true);
 }
 
-void HelpWindow::showIndex(QWidget *parent)
+void HelpWindow::showIndex()
 {
-    openWindow(parent);
+    openWindow();
     __instance->_actnIndex->setChecked(true);
 }
 
-void HelpWindow::showTopic(const QString& topic, QWidget *parent)
+void HelpWindow::showTopic(const QString& topic)
 {
-    openWindow(parent);
+    openWindow();
     __instance->setSource(topic);
 }
 
-void HelpWindow::openWindow(QWidget *parent)
+void HelpWindow::openWindow()
 {
-    if (!__engine)
-        if (int err = initEngine(); err != 0)
-            return Ori::Dlg::error(QString("Failed to initialize help system (code %1)").arg(err));
     if (!__instance)
-        __instance = new HelpWindow(parent);
+    {
+        auto res = initEngine();
+        if (res.second != 0)
+            return Ori::Dlg::error(QString("Failed to initialize help system (code %1)").arg(res.second));
+        __instance = new HelpWindow(res.first);
+    }
     __instance->show();
     __instance->activateWindow();
 }
 
-HelpWindow::HelpWindow(QWidget *parent) : QWidget{parent}
+HelpWindow::HelpWindow(QHelpEngine *engine) : QWidget(), _engine(engine)
 {
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowIcon(QIcon(":/window_icons/help"));
     setWindowTitle(tr("%1 Manual").arg(qApp->applicationName()));
 
+    _engine->setParent(this);
+
     auto statusBar = new QStatusBar;
 
-    _browser = new HelpBrowser;
+    _browser = new HelpBrowser(_engine);
     connect(_browser, QOverload<const QUrl&>::of(&QTextBrowser::highlighted), this, [statusBar](const QUrl& url){
         if (isHttpUrl(url))
             statusBar->showMessage(url.toString());
         else statusBar->clearMessage();
     });
 
-    auto contentWidget = __engine->contentWidget();
+    auto contentWidget = _engine->contentWidget();
     contentWidget->setAnimated(true);
     connect(contentWidget, &QHelpContentWidget::linkActivated, this, [this](const QUrl& url){
         _browser->setSource(url);
     });
     connect(contentWidget, &QHelpContentWidget::pressed, this, [this](const QModelIndex& index){
-        _browser->setSource(__engine->contentModel()->contentItemAt(index)->url());
+        _browser->setSource(_engine->contentModel()->contentItemAt(index)->url());
     });
     connect(_browser, &QTextBrowser::sourceChanged, this, [contentWidget](const QUrl& url){
         auto index = contentWidget->indexOf(url);
@@ -160,7 +165,7 @@ HelpWindow::HelpWindow(QWidget *parent) : QWidget{parent}
         contentWidget->setCurrentIndex(index);
     });
 
-    auto indexWidget = __engine->indexWidget();
+    auto indexWidget = _engine->indexWidget();
     connect(indexWidget, &QHelpIndexWidget::documentActivated, this, [this](const QHelpLink &document){
         _browser->setSource(document.url);
     });
