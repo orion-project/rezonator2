@@ -4,11 +4,13 @@
 
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
+#include "helpers/OriDialogs.h"
 
 #include <QDebug>
 #include <QActionGroup>
 #include <QApplication>
 #include <QDesktopServices>
+#include <QDir>
 #include <QHelpContentWidget>
 #include <QHelpEngine>
 #include <QHelpIndexWidget>
@@ -27,6 +29,7 @@ using namespace Ori::Layouts;
 
 namespace {
 
+QHelpEngine* __engine = nullptr;
 HelpWindow* __instance = nullptr;
 
 bool isHttpUrl(const QUrl &url)
@@ -34,9 +37,30 @@ bool isHttpUrl(const QUrl &url)
     return url.scheme().startsWith(QLatin1String("http"));
 }
 
-bool isHelpUrl(const QUrl &url)
+int initEngine()
 {
-    return url.scheme() == QLatin1String("qthelp");
+    QString qhcDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+    if (qhcDir.isEmpty())
+        return 1;
+    if (!QDir().mkpath(qhcDir))
+        return 2;
+    QString docPath = qApp->applicationDirPath() + "/rezonator.qch";
+    QString nsName = QHelpEngineCore::namespaceName(docPath);
+    if (nsName.isEmpty())
+        return 3;
+    if (nsName != "org.orion-project.rezonator")
+        return 4;
+    __engine = new QHelpEngine(qhcDir + "/rezonator.qhc", qApp);
+    if (__engine->registeredDocumentations().contains(nsName))
+        return 0;
+    if (!__engine->registerDocumentation(docPath))
+    {
+        qWarning() << "Failed to register" << docPath << __engine->error();
+        delete __engine;
+        __engine = nullptr;
+        return 5;
+    }
+    return 0;
 }
 
 } // namespace
@@ -48,7 +72,7 @@ bool isHelpUrl(const QUrl &url)
 class HelpBrowser : public QTextBrowser
 {
 public:
-    HelpBrowser(QHelpEngine *engine) : QTextBrowser(), _engine(engine) {}
+    HelpBrowser() : QTextBrowser() {}
 
 protected:
     void setSource(const QUrl &url)
@@ -64,15 +88,12 @@ protected:
         QTextBrowser::setSource(url);
     }
 
-    QVariant loadResource(int type, const QUrl &name) override
+    QVariant loadResource(int type, const QUrl &url) override
     {
-        if (isHelpUrl(name))
-            return _engine->fileData(name);
-        return QTextBrowser::loadResource(type, name);
+        if (url.scheme() == QLatin1String("qthelp"))
+            return __engine->fileData(url);
+        return QTextBrowser::loadResource(type, url);
     }
-
-private:
-    QHelpEngine *_engine;
 };
 
 //------------------------------------------------------------------------------
@@ -100,6 +121,9 @@ void HelpWindow::showTopic(const QString& topic, QWidget *parent)
 
 void HelpWindow::openWindow(QWidget *parent)
 {
+    if (!__engine)
+        if (int err = initEngine(); err != 0)
+            return Ori::Dlg::error(QString("Failed to initialize help system (code %1)").arg(err));
     if (!__instance)
         __instance = new HelpWindow(parent);
     __instance->show();
@@ -112,23 +136,22 @@ HelpWindow::HelpWindow(QWidget *parent) : QWidget{parent}
     setWindowIcon(QIcon(":/window_icons/help"));
     setWindowTitle(tr("%1 Manual").arg(qApp->applicationName()));
 
-    _engine = new QHelpEngine(qApp->applicationDirPath() + "/rezonator.qhc", this);
-    if (!_engine->setupData())
-        qWarning() << "Unable to initialize help engine" << _engine->error();
-
     auto statusBar = new QStatusBar;
 
-    _browser = new HelpBrowser(_engine);
+    _browser = new HelpBrowser;
     connect(_browser, QOverload<const QUrl&>::of(&QTextBrowser::highlighted), this, [statusBar](const QUrl& url){
         if (isHttpUrl(url))
             statusBar->showMessage(url.toString());
         else statusBar->clearMessage();
     });
 
-    auto contentWidget = _engine->contentWidget();
+    auto contentWidget = __engine->contentWidget();
     contentWidget->setAnimated(true);
+    connect(contentWidget, &QHelpContentWidget::linkActivated, this, [this](const QUrl& url){
+        _browser->setSource(url);
+    });
     connect(contentWidget, &QHelpContentWidget::pressed, this, [this](const QModelIndex& index){
-        _browser->setSource(_engine->contentModel()->contentItemAt(index)->url());
+        _browser->setSource(__engine->contentModel()->contentItemAt(index)->url());
     });
     connect(_browser, &QTextBrowser::sourceChanged, this, [contentWidget](const QUrl& url){
         auto index = contentWidget->indexOf(url);
@@ -137,7 +160,7 @@ HelpWindow::HelpWindow(QWidget *parent) : QWidget{parent}
         contentWidget->setCurrentIndex(index);
     });
 
-    auto indexWidget = _engine->indexWidget();
+    auto indexWidget = __engine->indexWidget();
     connect(indexWidget, &QHelpIndexWidget::documentActivated, this, [this](const QHelpLink &document){
         _browser->setSource(document.url);
     });

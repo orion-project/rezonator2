@@ -43,12 +43,8 @@ def make_package_for_windows():
 
   print_header('Copy project files...')
   copy_file('..\\..\\bin\\' + PROJECT_EXE, '.')
-  copy_file('..\\..\\bin\\rezonator_test.bat', '.')
-  copy_file('..\\..\\bin\\rezonator_test_nogui.bat', '.')
   copy_file('..\\..\\bin\\rezonator.qch', '.')
-  copy_file('..\\..\\bin\\rezonator.qhc', '.')
   shutil.copytree('..\\..\\bin\\examples', 'examples')
-  shutil.copytree('..\\..\\bin\\test_files', 'test_files')
 
   print_header('Pack files to zip...')
   global package_name
@@ -69,9 +65,7 @@ def make_package_for_linux():
   print_header('Copy project files...')
   copy_file('../../bin/' + PROJECT_EXE, 'usr/bin')
   copy_file('../../bin/rezonator.qch', 'usr/bin')
-  copy_file('../../bin/rezonator.qhc', 'usr/bin')
   shutil.copytree('../../bin/examples', 'usr/bin/examples')
-  shutil.copytree('../../bin/test_files', 'usr/bin/test_files')
   copy_file(f'../../release/{PROJECT_NAME}.desktop', 'usr/share/applications')
   shutil.copyfile('../../img/icon/main_2_256.png', f'usr/share/icons/hicolor/256x256/apps/{PROJECT_NAME}.png')
 
@@ -120,7 +114,6 @@ def make_package_for_macos():
 
   print_header('Copy project files...')
   shutil.copytree('../../bin/examples', PROJECT_EXE + '/Contents/MacOS/examples')
-  shutil.copytree('../../bin/test_files', PROJECT_EXE + '/Contents/MacOS/test_files')
 
   print_header('Clean some excessive files...')
   remove_files_in_dir(PROJECT_EXE + '/Contents/PlugIns/sqldrivers', [

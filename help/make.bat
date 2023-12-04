@@ -48,9 +48,8 @@ if %ERRORLEVEL% neq 0 goto :eof
 
 
 echo.
-echo ***** Move built help files to bin dir...
-move %TARGET_DIR%\rezonator.qch %BIN_DIR%
-move %TARGET_DIR%\rezonator.qhc %BIN_DIR%
+echo ***** Copy built help files to bin dir...
+copy %TARGET_DIR%\rezonator.qch %BIN_DIR%
 if %ERRORLEVEL% neq 0 goto :eof
 
 
@@ -59,31 +58,22 @@ echo.
 echo ***** Checking Assistant app...
 for %%G in ("%path:;=" "%") do (
     if exist %%G"\%HELP_TOOL%" (
-	    set HELP_TOOL_DIR=%%G
-		goto :qt_dir_found
-	)
+        set HELP_TOOL_DIR=%%G
+        goto :qt_dir_found
+    )
 )
 echo ERROR: unable to locate %HELP_TOOL% and get Assistant path
 goto :eof
 
 :qt_dir_found
-set ASSISTANT_SOURCE=%HELP_TOOL_DIR%\assistant.exe
-echo Source Assistant path is %ASSISTANT_SOURCE%
-
-set ASSISTANT_TARGET=%BIN_DIR%\assistant.exe
-echo Target Assistant path is %ASSISTANT_TARGET%
-if not exist "%ASSISTANT_TARGET%" (
-    echo Copy Assistant app to bin dir...
-    copy %ASSISTANT_SOURCE% %BIN_DIR%
-) else (
-    echo Already there
-)
+echo Assistant path is %HELP_TOOL_DIR%
 
 
 
 echo.
 echo ***** Running Assistant...
-assistant -collectionFile %BIN_DIR%\rezonator.qhc -style fusion
+cd %HELP_TOOL_DIR%
+assistant -collectionFile %TARGET_DIR%\rezonator.qhc -style fusion
 
 
 echo.

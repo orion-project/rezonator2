@@ -4,7 +4,6 @@
 #include <QWidget>
 
 QT_BEGIN_NAMESPACE
-class QHelpEngine;
 class QSplitter;
 class QTextBrowser;
 QT_END_NAMESPACE
@@ -24,7 +23,6 @@ private:
     explicit HelpWindow(QWidget *parent);
     ~HelpWindow();
 
-    QHelpEngine *_engine;
     QTextBrowser *_browser;
     QSplitter *_splitter;
     QAction *_actnContent, *_actnIndex, *_actnBack, *_actnForward;

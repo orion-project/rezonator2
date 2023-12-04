@@ -32,9 +32,8 @@ build_help_files() {
   ${HELP_TOOL} ${TARGET_DIR}/rezonator.qhcp
   exit_if_fail
 
-  print_header "Move built help files to bin dir..."
-  mv ${TARGET_DIR}/rezonator.qhc ${BIN_DIR}
-  mv ${TARGET_DIR}/rezonator.qch ${BIN_DIR}
+  print_header "Copy built help files to bin dir..."
+  cp ${TARGET_DIR}/rezonator.qch ${BIN_DIR}
   exit_if_fail
 }
 
@@ -48,14 +47,14 @@ prepare_assistant() {
   fi
   echo "Source Assistant path is ${ASSISTANT_SOURCE}"
 
-  ASSISTANT_TARGET=${BIN_DIR}/assistant
+  ASSISTANT_TARGET=${TARGET_DIR}/assistant
   echo "Target Assistant path is ${ASSISTANT_TARGET}"
   if [ -f ${ASSISTANT_TARGET} ]; then
     echo "Already there"
     return
   fi
 
-  echo "Copy Assistant app to bin dir..."
+  echo "Copy Assistant app to target dir..."
   cp ${ASSISTANT_SOURCE} ${ASSISTANT_TARGET}
 
   echo "Modify Asisstant's RPATH to make it runnable on dev system outside of Qt Creator..."
@@ -73,7 +72,7 @@ prepare_assistant() {
     echo "RPATH=${REZONATOR_RPATH}"
     # sudo apt install patchelf
     # Even with `--force-rpath` it sets not `RPATH` but `RUNPATH`, but it's works anyway
-    patchelf --force-rpath --set-rpath "${REZONATOR_RPATH}" ${BIN_DIR}/assistant
+    patchelf --force-rpath --set-rpath "${REZONATOR_RPATH}" ${ASSISTANT_TARGET}
   fi
   exit_if_fail
 }
@@ -81,7 +80,7 @@ prepare_assistant() {
 
 run_assistant() {
   print_header "Running Assistant..."
-  ${ASSISTANT_TARGET} -collectionFile ${BIN_DIR}/rezonator.qhc -style fusion
+  ${ASSISTANT_TARGET} -collectionFile ${TARGET_DIR}/rezonator.qhc -style fusion
 }
 
 
