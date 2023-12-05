@@ -1,7 +1,5 @@
 #include "CommonData.h"
 
-#include "../app/PersistentState.h"
-
 #include "tools/OriSettings.h"
 #include "tools/OriStyler.h"
 #include "tools/OriTranslator.h"
@@ -31,8 +29,6 @@ CommonData::CommonData(QObject *parent) : QObject(parent)
     _mruList = new Ori::MruFileList(this);
     _mruList->setMaxCount(AppSettings::instance().mruSchemaCount);
     _mruList->load(s.settings());
-
-    CustomPrefs::load(s.settings()->fileName());
 }
 
 CommonData::~CommonData()

@@ -58,7 +58,6 @@ private:
     ElemAndParamSelector* _elemSelector;
     ElemOffsetSelectorWidget* _placeSelector;
     GeneralRangeEditor* _rangeEditor;
-    QString _recentKey = "func_beam_variation";
 
     void populate();
 };

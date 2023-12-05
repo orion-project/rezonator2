@@ -64,9 +64,7 @@ void StabilityMapFunction::calculate(CalculationMode calcMode)
 
 void StabilityMapFunction::loadPrefs()
 {
-    _stabilityCalcMode = Z::Enums::fromStr(
-                CustomPrefs::recentStr(QStringLiteral("func_stab_map_mode")),
-                Z::Enums::StabilityCalcMode::Normal);
+    _stabilityCalcMode = RecentData::getEnum("func_stab_map_mode", Z::Enums::StabilityCalcMode::Normal);
 }
 
 Z::PointTS StabilityMapFunction::calculateAt(const Z::Value& v)

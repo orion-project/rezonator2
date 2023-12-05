@@ -24,11 +24,11 @@ Z::Parameter* ParamsListWidget::selectParamDlg(const Z::Parameters *params, cons
     Ori::Dlg::Dialog dlg(&paramsList, false);
     dlg.withTitle(title)
        .withStretchedContent()
-       .withInitialSize(CustomPrefs::recentSize("select_param_dlg_size"))
+       .withInitialSize(RecentData::getSize("select_param_dlg_size"))
        .withOkSignal(SIGNAL(itemDoubleClicked(QListWidgetItem*)));
     if (dlg.exec())
     {
-        CustomPrefs::setRecentSize("select_param_dlg_size", dlg.size());
+        RecentData::setSize("select_param_dlg_size", dlg.size());
         return paramsList.selectedParam();
     }
     return nullptr;

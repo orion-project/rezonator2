@@ -3,6 +3,7 @@
 
 #include "../core/Units.h"
 
+#include <QMetaEnum>
 #include <QJsonObject>
 #include <QSize>
 
@@ -16,25 +17,45 @@ void loadWindowSize(const QJsonObject& root, QWidget* wnd, int defaultW, int def
 
 } // namespace PersistentState
 
-class CustomPrefs
+
+namespace RecentData {
+
+struct PendingSave
 {
-public:
-    CustomPrefs() = delete;
-
-    static void load(const QString& appConfigFile);
-
-    static void setRecentDim(const QString& key, Z::Dim dim);
-    static Z::Dim recentDim(const QString& key);
-    static void setRecentUnit(const QString& key, Z::Unit unit);
-    static Z::Unit recentUnit(const QString& key, Z::Dim dim);
-    static void setRecentDir(const QString& key, const QString& dirOrFile);
-    static QString recentDir(const QString& key, const QString& defaultDir = QString());
-    static void setRecentStr(const QString& key, const QString& value);
-    static QString recentStr(const QString& key, const QString& defaultStr = QString());
-    static void setRecentObj(const QString& key, const QJsonObject& obj);
-    static QJsonObject recentObj(const QString& key);
-    static QSize recentSize(const QString& key, const QSize &defaultSize = QSize());
-    static void setRecentSize(const QString& key, const QSize& size);
+    PendingSave();
+    ~PendingSave();
 };
+
+QString getStr(const char* key, const QString& defaultStr = QString());
+void setStr(const char* key, const QString& value);
+
+QString getDir(const char* key, const QString& defaultDir = QString());
+void setDir(const char* key, const QString& dirOrFile);
+
+QSize getSize(const char* key, const QSize &defaultSize = QSize());
+void setSize(const char* key, const QSize& size);
+
+Z::Dim getDim(const char* key);
+void setDim(const char* key, Z::Dim dim);
+Z::Unit getUnit(const char* key, Z::Dim dim);
+void setUnit(const char* key, Z::Unit unit);
+
+QJsonObject getObj(const char* key);
+void setObj(const char* key, const QJsonObject& obj);
+
+template <typename TEnum> TEnum getEnum(const char* key, TEnum defaultValue)
+{
+    QString str = getStr(key);
+    bool ok;
+    int res = QMetaEnum::fromType<TEnum>().keyToValue(str.toLatin1().data(), &ok);
+    return ok ? TEnum(res) : defaultValue;
+}
+
+template <typename TEnum> void setEnum(const char* key, TEnum value)
+{
+    setStr(key, QMetaEnum::fromType<TEnum>().key(value));
+}
+
+} // namespace RecentData
 
 #endif // CUSTOM_PREFS_H

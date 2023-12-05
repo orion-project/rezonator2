@@ -71,7 +71,6 @@ private:
     Z::Variable* _var;
     ElemAndParamSelector* _elemSelector;
     GeneralRangeEditor* _rangeEditor;
-    QString _recentKey = "func_stab_map";
 
     void populate();
 };

@@ -94,7 +94,7 @@ struct ExportGraphsParams
 
     ExportGraphsParams()
     {
-        auto state = CustomPrefs::recentObj("export_graph_params");
+        auto state = RecentData::getObj("export_graph_params");
         plane = state["plane"].toInt(PLANE_BOTH);
         graph = state["graph"].toInt(GRAPH_ALL);
         segment = state["segment"].toInt(SEGMENT_ALL);
@@ -106,7 +106,7 @@ struct ExportGraphsParams
 
     ~ExportGraphsParams()
     {
-        CustomPrefs::setRecentObj("export_graph_params", {
+        RecentData::setObj("export_graph_params", {
             {"plane", plane},
             {"graph", graph},
             {"segment", segment},

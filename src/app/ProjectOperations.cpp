@@ -72,8 +72,8 @@ void ProjectOperations::newSchemaFile()
 
 QString ProjectOperations::getOpenFileName(QWidget* parent)
 {
-    QString recentPath = CustomPrefs::recentDir("schema_open_path");
-    QString recentFilter = CustomPrefs::recentStr("schema_open_filter");
+    QString recentPath = RecentData::getDir("schema_open_path");
+    QString recentFilter = RecentData::getStr("schema_open_filter");
 
     auto fileName = QFileDialog::getOpenFileName(parent,
                                                  tr("Open schema", "Dialog title"),
@@ -83,8 +83,9 @@ QString ProjectOperations::getOpenFileName(QWidget* parent)
                                                  fileDialogOptions());
     if (fileName.isEmpty()) return QString();
 
-    CustomPrefs::setRecentDir("schema_open_path", fileName);
-    CustomPrefs::setRecentStr("schema_open_filter", recentFilter);
+    RecentData::PendingSave _;
+    RecentData::setDir("schema_open_path", fileName);
+    RecentData::setStr("schema_open_filter", recentFilter);
 
     fileName = Z::IO::Utils::refineFileName(fileName, recentFilter);
 
@@ -94,8 +95,8 @@ QString ProjectOperations::getOpenFileName(QWidget* parent)
 
 QString ProjectOperations::getSaveFileName(QWidget* parent)
 {
-    QString recentPath = CustomPrefs::recentDir("schema_save_path");
-    QString recentFilter = CustomPrefs::recentStr("schema_save_filter");
+    QString recentPath = RecentData::getDir("schema_save_path");
+    QString recentFilter = RecentData::getStr("schema_save_filter");
 
     auto fileName = QFileDialog::getSaveFileName(parent,
                                                  tr("Save Schema", "Dialog title"),
@@ -105,8 +106,9 @@ QString ProjectOperations::getSaveFileName(QWidget* parent)
                                                  fileDialogOptions());
     if (fileName.isEmpty()) return QString();
 
-    CustomPrefs::setRecentDir("schema_save_path", fileName);
-    CustomPrefs::setRecentStr("schema_save_filter", recentFilter);
+    RecentData::PendingSave _;
+    RecentData::setDir("schema_save_path", fileName);
+    RecentData::setStr("schema_save_filter", recentFilter);
 
     fileName = Z::IO::Utils::refineFileName(fileName, recentFilter);
 
@@ -454,11 +456,11 @@ QString ProjectOperations::selectSchemaExample()
     Ori::Dlg::Dialog dlg(&fileList, false);
     dlg.withTitle(tr("Open Example Schema"))
        .withStretchedContent()
-       .withInitialSize(CustomPrefs::recentSize("open_example_dlg_size"))
+       .withInitialSize(RecentData::getSize("open_example_dlg_size"))
        .withOkSignal(SIGNAL(itemDoubleClicked(QListWidgetItem*)));
     if (dlg.exec())
     {
-        CustomPrefs::setRecentSize("open_example_dlg_size", dlg.size());
+        RecentData::setSize("open_example_dlg_size", dlg.size());
         QListWidgetItem *selected = fileList.currentItem();
         if (selected)
             fileName = examplesDir % '/' % selected->text();

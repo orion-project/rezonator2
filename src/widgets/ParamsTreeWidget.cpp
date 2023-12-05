@@ -45,7 +45,7 @@ Z::Parameter* ParamsTreeWidget::selectParamDlg(Options opts)
     Ori::Dlg::Dialog dlg(&paramsTree, false);
     dlg.withTitle(opts.dialogTitle)
        .withStretchedContent()
-       .withInitialSize(CustomPrefs::recentSize("select_param_tree_dlg_size"))
+       .withInitialSize(RecentData::getSize("select_param_tree_dlg_size"))
        .withOkSignal(SIGNAL(paramDoubleClicked(Z::Parameter*)))
        .withOnDlgReady([&](){
             if (!dlg.okButton()) return;
@@ -58,7 +58,7 @@ Z::Parameter* ParamsTreeWidget::selectParamDlg(Options opts)
             Z::HelpSystem::instance()->showTopic(opts.helpTopic);
         });
     bool ok = dlg.exec();
-    CustomPrefs::setRecentSize("select_param_tree_dlg_size", dlg.size());
+    RecentData::setSize("select_param_tree_dlg_size", dlg.size());
     return ok ? paramsTree.selectedParam() : nullptr;
 }
 

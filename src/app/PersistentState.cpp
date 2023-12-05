@@ -76,110 +76,90 @@ void loadWindowSize(const QJsonObject& root, QWidget* wnd, int defaultW, int def
 } // namespace PersistentState
 
 //--------------------------------------------------------------------------------
-//                                   CustomData
+//                               RecentData
 //--------------------------------------------------------------------------------
 
-namespace CustomData {
+namespace RecentData {
 
-static QJsonObject __customData;
-static QString __storagePath;
-
-
-void load(const QString& storagePath)
+class Storage : public QObject
 {
-    __storagePath = storagePath;
-
-    QFile file(__storagePath);
-    if (file.exists())
+public:
+    Storage(const QString& fileName): QObject(), fileName(fileName)
     {
+        QFile file(fileName);
+        if (!file.exists())
+            return;
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         {
-            qWarning() << "Unable to load custom prefs" << __storagePath << file.errorString();
+            qWarning() << "Unable to load recent data" << fileName << file.errorString();
             return;
         }
         QJsonParseError error;
-        __customData = QJsonDocument::fromJson(file.readAll(), &error).object();
+        data = QJsonDocument::fromJson(file.readAll(), &error).object();
         if (error.error != QJsonParseError::NoError)
-            qWarning() << "Unable to load custom prefs" << error.errorString();
+            qWarning() << "Unable to load recent data" << fileName << error.errorString();
     }
-}
 
-void save()
-{
-    QFile file(__storagePath);
-    if (!file.open(QFile::WriteOnly | QFile::Text))
+    void save()
     {
-        qWarning() << "Unable to save custom prefs" << __storagePath << file.errorString();
-        return;
-    }
-    QTextStream(&file) << QJsonDocument(__customData).toJson();
-}
-
-/// Returns key of max counter from counter object
-QString maxCounterKey(const QString& counterObjKey)
-{
-    auto counterObj = __customData[counterObjKey].toObject();
-    int maxCounter = 0;
-    QString maxCounterKey;
-    for (auto& counterKey: counterObj.keys())
-    {
-        int counter = counterObj[counterKey].toInt();
-        if (counter > maxCounter)
+        if (pendingCount > 0)
         {
-            maxCounter = counter;
-            maxCounterKey = counterKey;
+            needSave = true;
+            return;
         }
+
+        QFile file(fileName);
+        if (!file.open(QFile::WriteOnly | QFile::Text))
+        {
+            qWarning() << "Unable to save recent data" << fileName << file.errorString();
+            return;
+        }
+        QTextStream(&file) << QJsonDocument(data).toJson();
+        needSave = false;
     }
-    return maxCounterKey;
-}
 
-/// Increase counter with specific key in counter object
-void increaseCounterKey(const QString& counterObjKey, const QString& counterKey)
+    QJsonObject data;
+    QString fileName;
+    int pendingCount = 0;
+    bool needSave = false;
+};
+
+Q_GLOBAL_STATIC_WITH_ARGS(Storage, __storage, { PersistentState::stateFileName("prefs") });
+
+PendingSave::PendingSave()
 {
-    auto counterObj = __customData[counterObjKey].toObject();
-    counterObj[counterKey] = counterObj[counterKey].toInt() + 1;
-    __customData[counterObjKey] = counterObj;
+    __storage->pendingCount++;
 }
 
-} // namespace CustomData
-
-using namespace CustomData;
-
-//------------------------------------------------------------------------------
-//                                CustomPrefs
-//------------------------------------------------------------------------------
-
-void CustomPrefs::load(const QString &appConfigFile)
+PendingSave::~PendingSave()
 {
-    ::load(appConfigFile.section('.', 0, -2) + ".prefs.json");
+    __storage->pendingCount--;
+    if (__storage->pendingCount <= 0 && __storage->needSave)
+        __storage->save();
 }
 
-void CustomPrefs::setRecentDim(const QString& key, Z::Dim dim)
+QString getStr(const char *key, const QString& defaultStr)
 {
-    __customData[key] = dim->alias();
-    save();
+    QString s = __storage->data[key].toString(defaultStr);
+    return s;
 }
 
-Z::Dim CustomPrefs::recentDim(const QString& key)
+void setStr(const char *key, const QString& value)
 {
-    return Z::Dims::findByAliasOrNone(__customData[key].toString());
+    if (__storage->data[QLatin1String(key)].toString() != value)
+    {
+        __storage->data[QLatin1String(key)] = value;
+        __storage->save();
+    }
 }
 
-void CustomPrefs::setRecentUnit(const QString& key, Z::Unit unit)
+QString getDir(const char *key, const QString& defaultDir)
 {
-    auto unitByDim = __customData[key].toObject();
-    unitByDim[Z::Units::guessDim(unit)->alias()] = unit->alias();
-    __customData[key] = unitByDim;
-    save();
+    QString dir = getStr(key, defaultDir);
+    return (dir.isEmpty() || !QDir(dir).exists()) ? QDir::currentPath() : dir;
 }
 
-Z::Unit CustomPrefs::recentUnit(const QString& key, Z::Dim dim)
-{
-    auto unitByDim = __customData[key].toObject();
-    return dim->unitByAliasOrSi(unitByDim[dim->alias()].toString());
-}
-
-void CustomPrefs::setRecentDir(const QString& key, const QString& dirOrFile)
+void setDir(const char *key, const QString& dirOrFile)
 {
     QString dir;
     // Existing file
@@ -194,58 +174,70 @@ void CustomPrefs::setRecentDir(const QString& key, const QString& dirOrFile)
         if (dir1.exists()) dir = dir1.absolutePath();
     }
     if (!dir.isEmpty())
-        setRecentStr(key, dir);
+        setStr(key, dir);
 }
 
-QString CustomPrefs::recentDir(const QString& key, const QString& defaultDir)
+QSize getSize(const char *key, const QSize& defaultSize)
 {
-    QString dir = recentStr(key, defaultDir);
-    return (dir.isEmpty() || !QDir(dir).exists()) ? QDir::currentPath() : dir;
+    if (!__storage->data.contains(QLatin1String(key)))
+        return defaultSize;
+
+    auto json = __storage->data[QLatin1String(key)].toObject();
+    return {
+        json[QLatin1String("width")].toInt(),
+        json[QLatin1String("height")].toInt(),
+    };
 }
 
-void CustomPrefs::setRecentStr(const QString& key, const QString& value)
+void setSize(const char *key, const QSize& size)
 {
-    if (__customData[key].toString() != value)
+    if (getSize(key) != size)
     {
-        __customData[key] = value;
-        save();
-    }
-}
-
-QString CustomPrefs::recentStr(const QString& key, const QString& defaultStr)
-{
-    return __customData[key].toString(defaultStr);
-}
-
-void CustomPrefs::setRecentObj(const QString& key, const QJsonObject& obj)
-{
-    if (!__customData.contains(key) || __customData[key].toObject() != obj)
-    {
-        __customData[key] = obj;
-        save();
-    }
-}
-
-QJsonObject CustomPrefs::recentObj(const QString &key)
-{
-    return __customData[key].toObject();
-}
-
-QSize CustomPrefs::recentSize(const QString& key, const QSize& defaultSize)
-{
-    if (!__customData.contains(key)) return defaultSize;
-    auto json = __customData[key].toObject();
-    return QSize(json["width"].toInt(), json["height"].toInt());
-}
-
-void CustomPrefs::setRecentSize(const QString& key, const QSize& size)
-{
-    if (recentSize(key) != size)
-    {
-        __customData[key] = QJsonObject({
+        __storage->data[key] = QJsonObject({
             { "width", size.width() },
             { "height", size.height() }
         });
-        save();
+        __storage->save();
     }
 }
+
+Z::Dim getDim(const char *key)
+{
+    return Z::Dims::findByAliasOrNone(__storage->data[QLatin1String(key)].toString());
+}
+
+void setDim(const char *key, Z::Dim dim)
+{
+    __storage->data[QLatin1String(key)] = dim->alias();
+    __storage->save();
+}
+
+Z::Unit getUnit(const char *key, Z::Dim dim)
+{
+    auto unitByDim = __storage->data[QLatin1String(key)].toObject();
+    return dim->unitByAliasOrSi(unitByDim[dim->alias()].toString());
+}
+
+void setUnit(const char *key, Z::Unit unit)
+{
+    auto unitByDim = __storage->data[QLatin1String(key)].toObject();
+    unitByDim[Z::Units::guessDim(unit)->alias()] = unit->alias();
+    __storage->data[QLatin1String(key)] = unitByDim;
+    __storage->save();
+}
+
+void setObj(const char *key, const QJsonObject& obj)
+{
+    if (!__storage->data.contains(QLatin1String(key)) || __storage->data[QLatin1String(key)].toObject() != obj)
+    {
+        __storage->data[QLatin1String(key)] = obj;
+        __storage->save();
+    }
+}
+
+QJsonObject getObj(const char *key)
+{
+    return __storage->data[QLatin1String(key)].toObject();
+}
+
+} // namespace RecentData

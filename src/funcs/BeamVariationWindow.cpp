@@ -42,7 +42,7 @@ void BeamVariationParamsDlg::populate()
 {
     if (!_var->element) // create variable
     {
-        QJsonObject pref = CustomPrefs::recentObj(_recentKey);
+        QJsonObject pref = RecentData::getObj("func_beam_variation");
 
         Z::IO::Json::readVariablePref(pref, _var, _schema);
 
@@ -81,7 +81,7 @@ void BeamVariationParamsDlg::collect()
     QJsonObject pref = Z::IO::Json::writeVariablePref(_var);
     pref["plot_position_label"] = _pos->element->label();
     pref["offset"] = Z::IO::Json::writeValue(_pos->offset);
-    CustomPrefs::setRecentObj(_recentKey, pref);
+    RecentData::setObj("func_beam_variation", pref);
 }
 
 void BeamVariationParamsDlg::guessRange()

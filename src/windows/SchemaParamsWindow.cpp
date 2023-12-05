@@ -7,7 +7,6 @@
 #include "../widgets/ParamEditorEx.h"
 #include "../widgets/UnitWidgets.h"
 #include "../windows/AdjustmentWindow.h"
-#include "../windows/WindowsManager.h"
 
 #include "helpers/OriWidgets.h"
 #include "helpers/OriDialogs.h"
@@ -93,8 +92,8 @@ void SchemaParamsWindow::createToolBar()
 
 void SchemaParamsWindow::createParameter()
 {
-    auto recentDim = CustomPrefs::recentDim("global_param_dim");
-    auto recentUnit = CustomPrefs::recentUnit("global_param_unit", recentDim);
+    auto recentDim = RecentData::getDim("global_param_dim");
+    auto recentUnit = RecentData::getUnit("global_param_unit", recentDim);
 
     auto aliasEditor = new QLineEdit;
     aliasEditor->setFont(Z::Gui::ValueFont().get());
@@ -112,7 +111,7 @@ void SchemaParamsWindow::createParameter()
     connect(dimEditor, &DimComboBox::dimChanged, [&](Z::Dim dim){
         recentUnits[recentDim] = unitEditor->selectedUnit();
         if (!recentUnits.contains(dim))
-            recentUnits[dim] = CustomPrefs::recentUnit("global_param_unit", dim);
+            recentUnits[dim] = RecentData::getUnit("global_param_unit", dim);
         unitEditor->populate(dim);
         unitEditor->setSelectedUnit(recentUnits[dim]);
         recentDim = dim;
@@ -152,8 +151,9 @@ void SchemaParamsWindow::createParameter()
         param->setValue(Z::Value(0, unit));
         schema()->customParams()->append(param);
 
-        CustomPrefs::setRecentDim("global_param_dim", dim);
-        CustomPrefs::setRecentUnit("global_param_unit", unit);
+        RecentData::PendingSave _;
+        RecentData::setDim("global_param_dim", dim);
+        RecentData::setUnit("global_param_unit", unit);
 
         schema()->events().raise(SchemaEvents::CustomParamCreated, param, "Params window: param created");
 
@@ -228,7 +228,7 @@ void SchemaParamsWindow::setParameterValue()
     if (_isSettingValueForNewParam)
     {
         _isSettingValueForNewParam = false;
-        CustomPrefs::setRecentUnit("global_param_unit", param->value().unit());
+        RecentData::setUnit("global_param_unit", param->value().unit());
     }
 }
 
