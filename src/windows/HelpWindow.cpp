@@ -1,7 +1,5 @@
 #include "HelpWindow.h"
 
-#include "../app/CustomPrefs.h"
-
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 #include "helpers/OriDialogs.h"
@@ -227,9 +225,14 @@ HelpWindow::HelpWindow(QHelpEngine *engine) : QWidget(), _engine(engine)
 
     LayoutV({splitterLayout, statusBar}).setSpacing(0).setMargin(0).useFor(this);
 
-    auto obj = CustomPrefs::recentObj("help_window");
-    CustomDataHelpers::restoreWindowSize(obj, this, 800, 600);
-    _splitter->setSizes({obj["panel_w"].toInt(200), obj["browser_w"].toInt(600)});
+    resize({
+        _engine->customValue("window_w", 800).toInt(),
+        _engine->customValue("window_h", 600).toInt(),
+    });
+    _splitter->setSizes({
+        _engine->customValue("panel_w", 200).toInt(),
+        _engine->customValue("browser_w", 600).toInt(),
+    });
 
     QTimer::singleShot(100, this, [contentWidget]{
         contentWidget->expandRecursively(QModelIndex(), 2);
@@ -239,9 +242,10 @@ HelpWindow::HelpWindow(QHelpEngine *engine) : QWidget(), _engine(engine)
 HelpWindow::~HelpWindow()
 {
     auto sizes = _splitter->sizes();
-    QJsonObject obj{{"panel_w", sizes.at(0)}, {"browser_w", sizes.at(1)}};
-    CustomDataHelpers::storeWindowSize(obj, this);
-    CustomPrefs::setRecentObj("help_window", obj);
+    _engine->setCustomValue("panel_w", sizes.at(0));
+    _engine->setCustomValue("browser_w", sizes.at(1));
+    _engine->setCustomValue("window_w", width());
+    _engine->setCustomValue("window_h", height());
 
     __instance = nullptr;
 }
