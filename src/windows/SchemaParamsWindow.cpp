@@ -1,7 +1,7 @@
 #include "SchemaParamsWindow.h"
 
 #include "../app/Appearance.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../app/HelpSystem.h"
 #include "../widgets/SchemaParamsTable.h"
 #include "../widgets/ParamEditorEx.h"

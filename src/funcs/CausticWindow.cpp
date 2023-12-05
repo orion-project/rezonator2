@@ -1,7 +1,7 @@
 #include "CausticWindow.h"
 
 #include "../app/AppSettings.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../funcs/BeamShapeExtension.h"
 #include "../funcs/CausticOptionsPanel.h"
 #include "../io/CommonUtils.h"

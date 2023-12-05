@@ -1,7 +1,7 @@
 #include "PlotHelpers.h"
 
 #include "../app/AppSettings.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../math/FunctionGraph.h"
 
 #include "helpers/OriDialogs.h"

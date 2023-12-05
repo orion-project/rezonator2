@@ -1,6 +1,6 @@
 #include "StabilityMap2DWindow.h"
 
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../core/Report.h"
 #include "../funcs/FuncOptionsPanel.h"
 #include "../io/CommonUtils.h"

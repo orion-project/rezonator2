@@ -1,6 +1,6 @@
 #include "CommonData.h"
 
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 
 #include "tools/OriSettings.h"
 #include "tools/OriStyler.h"

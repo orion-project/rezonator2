@@ -1,6 +1,6 @@
 #include "StabilityMapWindow.h"
 
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../funcs/FuncOptionsPanel.h"
 #include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"

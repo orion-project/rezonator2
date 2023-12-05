@@ -1,7 +1,7 @@
 #include "ParamsListWidget.h"
 
 #include "../app/Appearance.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 
 #include "helpers/OriDialogs.h"
 

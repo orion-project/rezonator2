@@ -1,7 +1,7 @@
 #include "PlotFuncWindow.h"
 
 #include "../app/AppSettings.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../core/Format.h"
 #include "../core/Protocol.h"
 #include "../funcs/InfoFuncWindow.h"

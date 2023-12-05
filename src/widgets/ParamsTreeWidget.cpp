@@ -2,7 +2,7 @@
 
 #include "RichTextItemDelegate.h"
 #include "../app/Appearance.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../app/HelpSystem.h"
 #include "../core/Schema.h"
 #include "../core/ElementFilter.h"

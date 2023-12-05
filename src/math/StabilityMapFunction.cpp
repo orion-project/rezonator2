@@ -1,7 +1,7 @@
 #include "StabilityMapFunction.h"
 
 #include "../app/AppSettings.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../math/RoundTripCalculator.h"
 
 #include <QApplication>

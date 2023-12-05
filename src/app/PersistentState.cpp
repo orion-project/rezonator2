@@ -1,7 +1,8 @@
-#include "CustomPrefs.h"
+#include "PersistentState.h"
 
 #include "tools/OriSettings.h"
 
+#include <QApplication>
 #include <QDebug>
 #include <QDir>
 #include <QJsonDocument>
@@ -11,56 +12,56 @@
 #include <QWidget>
 
 //--------------------------------------------------------------------------------
-//                               CustomDataHelpers
+//                               PersistentState
 //--------------------------------------------------------------------------------
 
-namespace CustomDataHelpers {
+namespace PersistentState {
 
-QString dataFileName(const QString& spec)
+QString stateFileName(const QString& id)
 {
     Ori::Settings s;
-    return s.settings()->fileName().section('.', 0, -2) % '.' % spec % QStringLiteral(".json");
+    return s.settings()->fileName().section('.', 0, -2) % '.' % id % QLatin1String(".json");
 }
 
-QJsonObject loadCustomData(const QString& spec)
+QJsonObject load(const QString& id)
 {
     QJsonObject root;
-    auto fileName = dataFileName(spec);
+    auto fileName = stateFileName(id);
     QFile file(fileName);
     if (file.exists())
     {
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-            qWarning() << spec << "failed to load state" << fileName << file.errorString();
+            qWarning() << id << "failed to load state" << fileName << file.errorString();
         else
         {
             QJsonParseError error;
             root = QJsonDocument::fromJson(file.readAll(), &error).object();
             if (error.error != QJsonParseError::NoError)
-                qWarning() << spec << "failed to load state" << error.errorString();
+                qWarning() << id << "failed to load state" << error.errorString();
         }
     }
     return root;
 }
 
-void saveCustomData(const QJsonObject& root, const QString& spec)
+void save(const QString& id, const QJsonObject& root)
 {
-    auto fileName = dataFileName(spec);
+    auto fileName = stateFileName(id);
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly | QFile::Text))
     {
-        qWarning() << spec << "failed to save state" << fileName << file.errorString();
+        qWarning() << id << "failed to save state" << fileName << file.errorString();
         return;
     }
     QTextStream(&file) << QJsonDocument(root).toJson();
 }
 
-void storeWindowSize(QJsonObject& root, QWidget* wnd)
+void saveWindowSize(QJsonObject& root, QWidget* wnd)
 {
     root["window_width"] = wnd->width();
     root["window_height"] = wnd->height();
 }
 
-void restoreWindowSize(const QJsonObject& root, QWidget* wnd, int defaultW, int defaultH)
+void loadWindowSize(const QJsonObject& root, QWidget* wnd, int defaultW, int defaultH)
 {
     int w = root["window_width"].toInt();
     int h = root["window_height"].toInt();
@@ -72,7 +73,7 @@ void restoreWindowSize(const QJsonObject& root, QWidget* wnd, int defaultW, int 
     wnd->resize(w, h);
 }
 
-} // namespace CustomDataHelpers
+} // namespace PersistentState
 
 //--------------------------------------------------------------------------------
 //                                   CustomData

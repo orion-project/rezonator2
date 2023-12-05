@@ -1,6 +1,6 @@
 #include "BeamVariationWindow.h"
 
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../funcs/BeamShapeExtension.h"
 #include "../io/JsonUtils.h"
 #include "../widgets/ElemSelectorWidget.h"

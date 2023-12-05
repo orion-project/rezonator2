@@ -1,7 +1,7 @@
 #include "LensmakerWindow.h"
 
 #include "../app/Appearance.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../math/LensCalculator.h"
 #include "../io/JsonUtils.h"
 #include "../widgets/GraphicsView.h"
@@ -761,9 +761,8 @@ LensmakerWindow::~LensmakerWindow()
 
 void LensmakerWindow::restoreState()
 {
-    QJsonObject root = CustomDataHelpers::loadCustomData("lens");
-
-    CustomDataHelpers::restoreWindowSize(root, this, 700, 500);
+    QJsonObject root = PersistentState::load("lens");
+    PersistentState::loadWindowSize(root, this, 700, 500);
 
     auto jsonLenses = root["lenses"];
     if (jsonLenses.isArray())
@@ -792,8 +791,6 @@ void LensmakerWindow::storeState()
 {
     QJsonObject root;
 
-    CustomDataHelpers::storeWindowSize(root, this);
-
     QJsonArray jsonLenses;
     for (int i = 0; i < _tabs->count(); i++)
     {
@@ -807,7 +804,8 @@ void LensmakerWindow::storeState()
     root["lenses"] = jsonLenses;
     root["active_lens"] = _tabs->currentIndex();
 
-    CustomDataHelpers::saveCustomData(root, "lens");
+    PersistentState::saveWindowSize(root, this);
+    PersistentState::save("lens", root);
 }
 
 void LensmakerWindow::addLens()

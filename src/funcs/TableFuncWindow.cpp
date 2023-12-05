@@ -1,7 +1,7 @@
 #include "TableFuncWindow.h"
 
 #include "../app/Appearance.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../core/Format.h"
 #include "../funcs/FuncWindowHelpers.h"
 #include "../math/InfoFunctions.h"

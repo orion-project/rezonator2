@@ -6,15 +6,15 @@
 #include <QJsonObject>
 #include <QSize>
 
-namespace CustomDataHelpers {
+namespace PersistentState {
 
-QJsonObject loadCustomData(const QString& spec);
-void saveCustomData(const QJsonObject& root, const QString& spec);
+QJsonObject load(const QString& spec);
+void save(const QString& spec, const QJsonObject& root);
 
-void storeWindowSize(QJsonObject& root, QWidget* wnd);
-void restoreWindowSize(const QJsonObject& root, QWidget* wnd, int defaultW, int defaultH);
+void saveWindowSize(QJsonObject& root, QWidget* wnd);
+void loadWindowSize(const QJsonObject& root, QWidget* wnd, int defaultW, int defaultH);
 
-} // namespace CustomData
+} // namespace PersistentState
 
 class CustomPrefs
 {

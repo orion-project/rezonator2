@@ -3,7 +3,7 @@
 #include "../app/AppSettings.h"
 #include "../app/CalcManager.h"
 #include "../app/CommonData.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../app/HelpSystem.h"
 #include "../core/Schema.h"
 #include "../core/Protocol.h"
