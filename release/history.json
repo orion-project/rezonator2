@@ -1,6 +1,15 @@
 {
   "history": [
     {
+      "version": "2.0.14-beta10",
+      "date": "",
+      "changes": [
+        {
+          "text": "Use internal help viewer instead of external Assistant program"
+        }
+      ]
+    },
+    {
       "version": "2.0.13-beta9",
       "date": "2023-11-30",
       "changes": [

@@ -32,11 +32,9 @@ package_name = PROJECT_NAME + '-' + version_str
 #                             Windows
 
 def make_package_for_windows():
-  qt_dir = find_qt_dir()
-
   print_header('Run windeployqt...')
-  execute(f'windeployqt ..\\..\\bin\\{PROJECT_EXE} --dir . --no-translations --no-system-d3d-compiler --no-opengl-sw')
-  execute(f'windeployqt {os.path.join(qt_dir, "assistant.exe")} --dir . --no-translations --no-system-d3d-compiler --no-opengl-sw')
+  execute(f'windeployqt ..\\..\\bin\\{PROJECT_EXE} --dir . ' +
+          '--no-translations --no-system-d3d-compiler --no-opengl-sw')
 
   print_header('Clean some excessive files...')
   remove_files(['libEGL.dll', 'libGLESV2.dll'])
@@ -45,19 +43,8 @@ def make_package_for_windows():
 
   print_header('Copy project files...')
   copy_file('..\\..\\bin\\' + PROJECT_EXE, '.')
-  copy_file('..\\..\\bin\\rezonator_test.bat', '.')
-  copy_file('..\\..\\bin\\rezonator_test_nogui.bat', '.')
   copy_file('..\\..\\bin\\rezonator.qch', '.')
-  copy_file('..\\..\\bin\\rezonator.qhc', '.')
   shutil.copytree('..\\..\\bin\\examples', 'examples')
-  shutil.copytree('..\\..\\bin\\test_files', 'test_files')
-
-  # Seems sometimes windeployqt does copy these files,
-  # but I definitely had cases when they had not been in the the place...
-  print_header('Copy additional files...')
-  # In Qt 5.15.2 and 6.5.2 windeployqt is fixed and copies all required dlls
-  #copy_files(find_qt_dir(), ['libgcc_s_seh-1.dll', 'libstdc++-6.dll', 'libwinpthread-1.dll'], '.')
-  copy_files(qt_dir, ['assistant.exe'], '.')
 
   print_header('Pack files to zip...')
   global package_name
@@ -77,17 +64,13 @@ def make_package_for_linux():
 
   print_header('Copy project files...')
   copy_file('../../bin/' + PROJECT_EXE, 'usr/bin')
-  copy_file(os.path.join(find_qt_dir(), 'assistant'), 'usr/bin')
   copy_file('../../bin/rezonator.qch', 'usr/bin')
-  copy_file('../../bin/rezonator.qhc', 'usr/bin')
   shutil.copytree('../../bin/examples', 'usr/bin/examples')
-  shutil.copytree('../../bin/test_files', 'usr/bin/test_files')
   copy_file(f'../../release/{PROJECT_NAME}.desktop', 'usr/share/applications')
   shutil.copyfile('../../img/icon/main_2_256.png', f'usr/share/icons/hicolor/256x256/apps/{PROJECT_NAME}.png')
 
   # There will be error 'Could not determine the path to the executable' otherwise
   execute('chmod +x usr/bin/' + PROJECT_EXE)
-  execute('chmod +x usr/bin/assistant') # just in case
 
   os.chdir('..')
 
@@ -102,9 +85,6 @@ def make_package_for_linux():
   download_file(linuxdeployqt_url, linuxdeployqt, mark_executable = True)
 
   print_header('Create AppImage...')
-  execute(f'./{linuxdeployqt} {REDIST_DIR}/usr/bin/assistant ' +
-    '-no-translations -no-copy-copyright-files ' +
-    '-exclude-libs=libqsqlmysql,libqsqlpsql,libqsqlodbc,libqicns,libqico,libqtga,libqtiff,libqwbmp,libqwebp')
   execute(f'./{linuxdeployqt} {REDIST_DIR}/usr/share/applications/{PROJECT_NAME}.desktop ' +
     '-appimage -no-translations -no-copy-copyright-files ' +
     '-extra-plugins=iconengines,imageformats/libqsvg.so ' +
@@ -134,22 +114,6 @@ def make_package_for_macos():
 
   print_header('Copy project files...')
   shutil.copytree('../../bin/examples', PROJECT_EXE + '/Contents/MacOS/examples')
-  shutil.copytree('../../bin/test_files', PROJECT_EXE + '/Contents/MacOS/test_files')
-
-  print_header('Processing Assistant...')
-  shutil.copytree(os.path.join(find_qt_dir(), 'Assistant.app'), 'Assistant.app')
-  execute('macdeployqt Assistant.app -appstore-compliant')
-  print_header('Patching Assistant...')
-  # `macdeployqt` (at least in Qt 5.10) doesn't add this RPATH to assistant exe, 
-  # and as a result when packed to rezonator.app bundle it can't find libraries
-  execute('install_name_tool -add_rpath @loader_path/../Frameworks Assistant.app/Contents/MacOS/Assistant')
-  execute('install_name_tool -delete_rpath @loader_path/../../../../lib Assistant.app/Contents/MacOS/Assistant')
-  print_header('Copy Assistant files to bundle...')
-  copy_file('Assistant.app/Contents/MacOS/Assistant', PROJECT_EXE + '/Contents/MacOS', target_fn='assistant')
-  shutil.copytree('Assistant.app/Contents/Frameworks/QtHelp.framework', PROJECT_EXE + '/Contents/Frameworks/QtHelp.framework')
-  shutil.copytree('Assistant.app/Contents/Frameworks/QtSql.framework', PROJECT_EXE + '/Contents/Frameworks/QtSql.framework')
-  os.mkdir(PROJECT_EXE + '/Contents/PlugIns/sqldrivers')
-  copy_file('Assistant.app/Contents/PlugIns/sqldrivers/libqsqlite.dylib', PROJECT_EXE + '/Contents/PlugIns/sqldrivers')
 
   print_header('Clean some excessive files...')
   remove_files_in_dir(PROJECT_EXE + '/Contents/PlugIns/sqldrivers', [

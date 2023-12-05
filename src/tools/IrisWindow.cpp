@@ -229,6 +229,7 @@ void IrisWindow::showWindow()
     if (!__instance)
         __instance = new IrisWindow;
     __instance->show();
+    __instance->raise();
     __instance->activateWindow();
 }
 

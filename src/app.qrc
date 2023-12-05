@@ -6,6 +6,7 @@
         <file alias="align_center">../img/toolbar/align_center.svg</file>
         <file alias="align_just">../img/toolbar/align_just.svg</file>
         <file alias="back_color">../img/toolbar/back_color.svg</file>
+        <file alias="book">../img/toolbar/book.svg</file>
         <file alias="bug">../img/toolbar/bug.svg</file>
         <file alias="catalog">../img/toolbar/elements.svg</file>
         <file alias="check">../img/toolbar/check.svg</file>
@@ -95,6 +96,8 @@
         <file alias="menu">../img/toolbar/menu.svg</file>
         <file alias="move_up">../img/toolbar/move_up.svg</file>
         <file alias="move_down">../img/toolbar/move_down.svg</file>
+        <file alias="navigate_back">../img/toolbar/navigate_back.svg</file>
+        <file alias="navigate_fwd">../img/toolbar/navigate_fwd.svg</file>
         <file alias="notepad">../img/toolbar/notepad.svg</file>
         <file alias="notepad_1">../img/toolbar/notepad_1.svg</file>
         <file alias="ok">../img/toolbar/ok.svg</file>
@@ -230,6 +233,7 @@
         <file alias="catalog">../img/icon/elements.svg</file>
         <file alias="element">../img/icon/element.svg</file>
         <file alias="gauss_calc">../img/icon/gauss.svg</file>
+        <file alias="help">../img/icon/help_256.svg</file>
         <file alias="iris">../img/icon/iris.svg</file>
         <file alias="lens">../img/icon/lens.svg</file>
         <file alias="main">../img/icon/main_2.svg</file>

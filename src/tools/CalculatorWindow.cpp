@@ -97,6 +97,7 @@ void CalculatorWindow::showWindow()
     if (!__instance)
         __instance = new CalculatorWindow;
     __instance->show();
+    __instance->raise();
     __instance->activateWindow();
 }
 
