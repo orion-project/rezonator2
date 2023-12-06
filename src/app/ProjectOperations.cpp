@@ -370,7 +370,7 @@ bool ProjectOperations::selectTripTypeDlg(TripType* tripType)
     tripTypeLabel->setFont(font);
 
     Ori::Widgets::SelectableTileRadioGroup tripTypeGroup;
-    connect(&tripTypeGroup, &Ori::Widgets::SelectableTileRadioGroup::dataSelected, [&](const QVariant& data){
+    connect(&tripTypeGroup, &Ori::Widgets::SelectableTileRadioGroup::dataSelected, this, [&](const QVariant& data){
         auto tripType = static_cast<TripType>(data.toInt());
         auto info = TripTypes::info(tripType);
         tripTypeLabel->setText(info.fullHeader());

@@ -9,8 +9,8 @@
 
 namespace PersistentState {
 
-QJsonObject load(const QString& spec);
-void save(const QString& spec, const QJsonObject& root);
+QJsonObject load(const char *id);
+void save(const char *id, const QJsonObject& root);
 
 void saveWindowSize(QJsonObject& root, QWidget* wnd);
 void loadWindowSize(const QJsonObject& root, QWidget* wnd, int defaultW, int defaultH);

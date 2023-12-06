@@ -43,6 +43,7 @@ int main(int argc, char* argv[])
     QCommandLineParser parser;
     auto optionHelp = parser.addHelpOption();
     auto optionVersion = parser.addVersionOption();
+    parser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions);
     QCommandLineOption optionTest("test", "Run unit-test session.");
     QCommandLineOption optionTool("tool", "Run a tool: gauss, calc, elems, grin, lens", "name");
     QCommandLineOption optionDevMode("dev"); optionDevMode.setFlags(QCommandLineOption::HiddenFromHelp);

@@ -5,10 +5,12 @@
 #include <QApplication>
 #include <QDebug>
 #include <QDir>
+#include <QFile>
+#include <QFileSystemWatcher>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
-#include <QFile>
+#include <QTimer>
 #include <QWidget>
 
 //--------------------------------------------------------------------------------
@@ -17,13 +19,13 @@
 
 namespace PersistentState {
 
-QString stateFileName(const QString& id)
+QString stateFileName(const char* id)
 {
     Ori::Settings s;
     return s.settings()->fileName().section('.', 0, -2) % '.' % id % QLatin1String(".json");
 }
 
-QJsonObject load(const QString& id)
+QJsonObject load(const char* id)
 {
     QJsonObject root;
     auto fileName = stateFileName(id);
@@ -43,7 +45,7 @@ QJsonObject load(const QString& id)
     return root;
 }
 
-void save(const QString& id, const QJsonObject& root)
+void save(const char *id, const QJsonObject& root)
 {
     auto fileName = stateFileName(id);
     QFile file(fileName);
@@ -86,6 +88,13 @@ class Storage : public QObject
 public:
     Storage(const QString& fileName): QObject(), fileName(fileName)
     {
+        load();
+        auto watcher = new QFileSystemWatcher({fileName}, this);
+        connect(watcher, &QFileSystemWatcher::fileChanged, this, &Storage::onFileChanged);
+    }
+
+    void load()
+    {
         QFile file(fileName);
         if (!file.exists())
             return;
@@ -107,6 +116,8 @@ public:
             needSave = true;
             return;
         }
+        needSave = false;
+        selfSaved = true;
 
         QFile file(fileName);
         if (!file.open(QFile::WriteOnly | QFile::Text))
@@ -115,13 +126,34 @@ public:
             return;
         }
         QTextStream(&file) << QJsonDocument(data).toJson();
-        needSave = false;
+    }
+
+    void onFileChanged()
+    {
+        if (timerStarted)
+            return;
+        timerStarted = true;
+        // There could be several changed signals from the same save operation
+        QTimer::singleShot(200, this, &Storage::onReloadTimeout);
+    }
+
+    void onReloadTimeout()
+    {
+        timerStarted = false;
+        if (selfSaved)
+        {
+            selfSaved = false;
+            return;
+        }
+        load();
     }
 
     QJsonObject data;
     QString fileName;
     int pendingCount = 0;
     bool needSave = false;
+    bool selfSaved = false;
+    bool timerStarted = false;
 };
 
 Q_GLOBAL_STATIC_WITH_ARGS(Storage, __storage, { PersistentState::stateFileName("prefs") });
