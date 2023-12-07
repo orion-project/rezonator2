@@ -10,7 +10,7 @@ namespace {
 class TestProjectOperations : public ProjectOperations
 {
 public:
-    TestProjectOperations(Schema* s) : ProjectOperations(s, nullptr, nullptr) {}
+    TestProjectOperations(Schema* s) : ProjectOperations(s, nullptr, nullptr, nullptr) {}
     PumpParams* editedPump = nullptr;
     bool setupPumpDlgResult = true;
     bool selectTripTypeDlgResult = true;

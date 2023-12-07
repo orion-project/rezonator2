@@ -12,17 +12,28 @@ class PumpParams;
 namespace Z {
     class Report;
 }
-
-struct OpenFileOptions {
-    bool isExample = false;
-};
+namespace Ori {
+    class MruList;
+    class Settings;
+}
 
 class ProjectOperations : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit ProjectOperations(Schema *schema, QWidget *parent, CalcManager *calcManager);
+    struct OpenFileOptions {
+        bool isExample = false;
+        bool addToMru = false;
+    };
+
+    struct SaveFileOptions {
+        bool asCopy = false;
+        bool addToMru = false;
+    };
+
+public:
+    explicit ProjectOperations(Schema *schema, QWidget *parent, CalcManager *calcManager, Ori::MruList* mruList);
     Schema* schema() const { return _schema; }
     bool canClose();
 
@@ -38,12 +49,13 @@ public:
     static Schema* createDefaultSchema(TripType tripType);
     static void createDefaultPump(Schema* schema);
 
+    void openSchemaFile(const QString& fileName, const OpenFileOptions& opts);
+    bool saveSchemaFile(const QString& fileName, const SaveFileOptions& opts);
+
 public slots:
     void newSchemaFile();
     void openSchemaFile();
-    void openSchemaFile(const QString& fileName);
-    void openExampleFile(const QString& fileName);
-    bool saveSchemaFile(const QString& fileName);
+    void openExampleFile();
     bool saveSchemaFile();
     bool saveSchemaFileAs();
     void saveSchemaFileCopy();
@@ -63,11 +75,9 @@ private:
     QWidget* _parent;
     Schema* _schema;
     CalcManager* _calcManager;
-
-    void applyMemoEditors();
+    Ori::MruList* _mruList;
 
     void writeProtocol(const Z::Report& report, const QString &message);
-    void openSchemaFile(const QString& fileName, const OpenFileOptions& opts);
 };
 
 #endif // PROJECT_OPERATIONS_H

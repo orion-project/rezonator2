@@ -2,14 +2,11 @@
 
 #include "../app/Appearance.h"
 #include "../app/AppSettings.h"
-#include "../app/CommonData.h"
 #include "../app/HelpSystem.h"
 #include "../app/ProjectOperations.h"
 #include "../core/CommonTypes.h"
 #include "../tools/CalculatorWindow.h"
 #include "../tools/GaussCalculatorWindow.h"
-#include "../tools/GrinLensWindow.h"
-#include "../tools/IrisWindow.h"
 #include "../tools/LensmakerWindow.h"
 #include "../windows/ProjectWindow.h"
 
@@ -44,19 +41,40 @@
 using namespace Ori::Layouts;
 
 namespace {
-    void adjustTipImagePosition(QLabel* tipImage)
-    {
-        if (!tipImage->isVisible()) return;
 
-        auto parent = qobject_cast<QWidget*>(tipImage->parent());
-        if (!parent) return;
+void adjustTipImagePosition(QLabel* tipImage)
+{
+    if (!tipImage->isVisible()) return;
 
-        auto parentSize = parent->size();
-        auto labelSize = tipImage->size();
-        tipImage->move(parentSize.width() - labelSize.width() - 10,
-                       parentSize.height() - labelSize.height() - 10);
-    }
+    auto parent = qobject_cast<QWidget*>(tipImage->parent());
+    if (!parent) return;
+
+    auto parentSize = parent->size();
+    auto labelSize = tipImage->size();
+    tipImage->move(parentSize.width() - labelSize.width() - 10,
+                   parentSize.height() - labelSize.height() - 10);
 }
+
+QWidget* makeHeader(const QString& title)
+{
+    auto label = new QLabel(title);
+    label->setProperty("role", "header");
+    return label;
+}
+
+template<class Obj, typename Func>
+QWidget* makeButton(const QString& iconPath, const QString& title, Obj* receiver, Func slot)
+{
+    auto button = new QToolButton;
+    button->setIconSize(QSize(24, 24));
+    button->setIcon(QIcon(iconPath));
+    button->setText(title);
+    button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    button->connect(button, &QToolButton::clicked, receiver, std::move(slot));
+    return button;
+}
+
+} // namespace
 
 //------------------------------------------------------------------------------
 //                               CustomCssWidget
@@ -118,41 +136,17 @@ void MruStartItem::mouseReleaseEvent(QMouseEvent* event)
 }
 
 //------------------------------------------------------------------------------
-//                               StartPanel
-//------------------------------------------------------------------------------
-
-StartPanel::StartPanel(const QString& objectName)
-{
-    setProperty("role", "panel");
-    setObjectName(objectName);
-}
-
-QWidget* StartPanel::makeHeader(const QString& title)
-{
-    auto label = new QLabel(title);
-    label->setProperty("role", "header");
-    return label;
-}
-
-QWidget* StartPanel::makeButton(const QString& iconPath, const QString& title, const char* slot)
-{
-    auto button = new QToolButton;
-    button->setIconSize(QSize(24, 24));
-    button->setIcon(QIcon(iconPath));
-    button->setText(title);
-    button->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    if (slot)
-        connect(button, SIGNAL(clicked()), this, slot);
-    return button;
-}
-
-//------------------------------------------------------------------------------
 //                              MruStartPanel
 //------------------------------------------------------------------------------
 
-MruStartPanel::MruStartPanel() : StartPanel("panel_mru")
+MruStartPanel::MruStartPanel(Ori::Settings &settings) : CustomCssWidget()
 {
-    auto items = CommonData::instance()->mruList()->items();
+    setProperty("role", "panel");
+    setObjectName("panel_mru");
+
+    auto mruList = ProjectWindow::createMruList(settings, this);
+
+    auto items = mruList->items();
     if (items.isEmpty())
     {
         makeEmpty();
@@ -215,21 +209,21 @@ void MruStartPanel::makeEmpty()
     }).useFor(this);
 }
 
-void MruStartPanel::openFile(const QString& filePath)
+void MruStartPanel::openFile(const QString& fileName)
 {
-    auto projectWindow = new ProjectWindow(new Schema());
-    projectWindow->show();
-    projectWindow->operations()->openSchemaFile(filePath);
-    CommonData::instance()->mruList()->append(filePath);
-    emit onClose();
+    emit closeRequested();
+    ProjectWindow::openProject(fileName, {.addToMru = true});
 }
 
 //------------------------------------------------------------------------------
 //                             TipsStartPanel
 //------------------------------------------------------------------------------
 
-TipsStartPanel::TipsStartPanel(QLabel *tipImage) : StartPanel("panel_tips")
+TipsStartPanel::TipsStartPanel(QLabel *tipImage) : CustomCssWidget()
 {
+    setProperty("role", "panel");
+    setObjectName("panel_tips");
+
     _tipText = new QLabel;
     _tipText->setObjectName("tip_text");
     _tipText->setWordWrap(true);
@@ -440,16 +434,19 @@ void TipsStartPanel::chooseAndShowTip()
 //                            ActionsStartPanel
 //------------------------------------------------------------------------------
 
-ActionsStartPanel::ActionsStartPanel() : StartPanel("panel_actions")
+ActionsStartPanel::ActionsStartPanel() : CustomCssWidget()
 {
+    setProperty("role", "panel");
+    setObjectName("panel_actions");
+
     LayoutV({
         makeHeader(tr("Open")),
-        makeButton(":/toolbar/schema_open", tr("Open Schema File"), SLOT(openSchemaFile())),
-        makeButton(":/toolbar/schema_sample", tr("Open Example"), SLOT(openSchemaExample())),
+        makeButton(":/toolbar/schema_open", tr("Open Schema File"), this, &ActionsStartPanel::openSchemaFile),
+        makeButton(":/toolbar/schema_sample", tr("Open Example"), this, &ActionsStartPanel::openSchemaExample),
         makeHeader(tr("Create")),
-        makeButton(TripTypes::info(TripType::SW).iconPath(), tr("Standing-Wave Resonator"), SLOT(makeSchemaSW())),
-        makeButton(TripTypes::info(TripType::RR).iconPath(), tr("Ring Resonator"), SLOT(makeSchemaRR())),
-        makeButton(TripTypes::info(TripType::SP).iconPath(), tr("Single-Pass System"), SLOT(makeSchemaSP())),
+        makeButton(TripTypes::info(TripType::SW).iconPath(), tr("Standing-Wave Resonator"), this, &ActionsStartPanel::makeSchemaSW),
+        makeButton(TripTypes::info(TripType::RR).iconPath(), tr("Ring Resonator"), this, &ActionsStartPanel::makeSchemaRR),
+        makeButton(TripTypes::info(TripType::SP).iconPath(), tr("Single-Pass System"), this, &ActionsStartPanel::makeSchemaSP),
         Stretch()
     }).setMargin(10).setSpacing(10).useFor(this);
 };
@@ -458,99 +455,57 @@ void ActionsStartPanel::openSchemaFile()
 {
     auto fileName = ProjectOperations::getOpenFileName(this);
     if (fileName.isEmpty()) return;
-    emit onClose();
-    auto projectWindow = new ProjectWindow(new Schema());
-    projectWindow->show();
-    projectWindow->operations()->openSchemaFile(fileName);
+    emit closeRequested();
+    ProjectWindow::openProject(fileName, {.addToMru = true});
 }
 
 void ActionsStartPanel::openSchemaExample()
 {
     auto fileName = ProjectOperations::selectSchemaExample();
     if (fileName.isEmpty()) return;
-    emit onClose();
-    auto projectWindow = new ProjectWindow(new Schema());
-    projectWindow->show();
-    projectWindow->operations()->openExampleFile(fileName);
-}
-
-namespace {
-void makeNewSchema(TripType tripType)
-{
-    (new ProjectWindow(ProjectOperations::createDefaultSchema(tripType)))->show();
-}
+    emit closeRequested();
+    ProjectWindow::openProject(fileName, {.isExample = true});
 }
 
 void ActionsStartPanel::makeSchemaSW()
 {
-    makeNewSchema(TripType::SW);
-    emit onClose();
+    emit closeRequested();
+    ProjectWindow::createProject(TripType::SW);
 }
 
 void ActionsStartPanel::makeSchemaRR()
 {
-    makeNewSchema(TripType::RR);
-    emit onClose();
+    emit closeRequested();
+    ProjectWindow::createProject(TripType::RR);
 }
 
 void ActionsStartPanel::makeSchemaSP()
 {
-    makeNewSchema(TripType::SP);
-    emit onClose();
+    emit closeRequested();
+    ProjectWindow::createProject(TripType::SP);
 }
 
 //------------------------------------------------------------------------------
 //                               ToolsStartPanel
 //------------------------------------------------------------------------------
 
-ToolsStartPanel::ToolsStartPanel() : StartPanel("panel_tools")
+ToolsStartPanel::ToolsStartPanel() : CustomCssWidget()
 {
+    setProperty("role", "panel");
+    setObjectName("panel_tools");
+
     auto layout = new QVBoxLayout(this);
     layout->setContentsMargins(10, 10, 10, 10);
     layout->setSpacing(10);
     layout->addWidget(makeHeader(tr("Tools")));
-    layout->addWidget(makeButton(":/toolbar/gauss_calculator", tr("Gauss Calculator"), SLOT(showGaussCalculator())));
-    layout->addWidget(makeButton(":/window_icons/calculator", tr("Formula Calculator"), SLOT(showCalculator())));
-    layout->addWidget(makeButton(":/window_icons/lens", tr("Lensmaker"), SLOT(showLensmaker())));
-    //layout->addWidget(makeButton(":/toolbar/iris", tr("Iris"), SLOT(showIris())));
-    layout->addWidget(makeButton(":/toolbar/help", tr("Manual"), SLOT(showManual())));
-    layout->addWidget(makeButton(":/toolbar/update", tr("Check Updates"), SLOT(checkUpdates())));
+    layout->addWidget(makeButton(":/toolbar/gauss_calculator", tr("Gauss Calculator"), this, []{ GaussCalculatorWindow::showWindow(); }));
+    layout->addWidget(makeButton(":/window_icons/calculator", tr("Formula Calculator"), this, []{ CalculatorWindow::showWindow(); }));
+    layout->addWidget(makeButton(":/window_icons/lens", tr("Lensmaker"), this, []{ LensmakerWindow::showWindow(); }));
+    //layout->addWidget(makeButton(":/toolbar/iris", tr("Iris"), this, []{ IrisWindow::showWindow(); }));
+    layout->addWidget(makeButton(":/toolbar/help", tr("Manual"), this, []{ Z::HelpSystem::instance()->showContents(); }));
+    layout->addWidget(makeButton(":/toolbar/update", tr("Check Updates"), this, []{ Z::HelpSystem::instance()->checkUpdates(); }));
+
     layout->addStretch();
-}
-
-void ToolsStartPanel::showGaussCalculator()
-{
-    GaussCalculatorWindow::showWindow();
-}
-
-void ToolsStartPanel::showCalculator()
-{
-    CalculatorWindow::showWindow();
-}
-
-void ToolsStartPanel::showGrinLens()
-{
-    GrinLensWindow::showWindow();
-}
-
-void ToolsStartPanel::checkUpdates()
-{
-    Z::HelpSystem::instance()->checkUpdates();
-}
-
-void ToolsStartPanel::showLensmaker()
-{
-    LensmakerWindow::showWindow();
-}
-
-void ToolsStartPanel::showIris()
-{
-    IrisWindow::showWindow();
-}
-
-void ToolsStartPanel::showManual()
-{
-    Z::HelpSystem::instance()->showContents();
 }
 
 //------------------------------------------------------------------------------
@@ -564,16 +519,18 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
     setWindowTitle(qApp->applicationName());
     Ori::Wnd::setWindowIcon(this, ":/window_icons/main");
 
+    Ori::Settings s;
+
     auto tipImage = new Ori::Widgets::Label;
     tipImage->setObjectName("tip_image");
     tipImage->setCursor(Qt::PointingHandCursor);
     _tipImage = tipImage;
 
     auto actionsPanel = new ActionsStartPanel;
-    connect(actionsPanel, &ActionsStartPanel::onClose, this, &StartWindow::close);
+    connect(actionsPanel, &ActionsStartPanel::closeRequested, this, &StartWindow::close);
 
-    auto mruPanel = new MruStartPanel;
-    connect(mruPanel, &ActionsStartPanel::onClose, this, &StartWindow::close);
+    auto mruPanel = new MruStartPanel(s);
+    connect(mruPanel, &MruStartPanel::closeRequested, this, &StartWindow::close);
 
     auto toolsPanel = new ToolsStartPanel;
 
@@ -614,7 +571,6 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
     // Should be after all widgets to overlay them
     tipImage->setParent(this);
 
-    Ori::Settings s;
     s.beginGroup("View");
     s.restoreWindowGeometry("startWindow", this);
 }

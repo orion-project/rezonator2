@@ -1,5 +1,3 @@
-#include "app/CommonData.h"
-#include "app/ProjectOperations.h"
 #include "core/Format.h"
 #include "tests/TestSuite.h"
 #include "tools/CalculatorWindow.h"
@@ -84,9 +82,6 @@ int main(int argc, char* argv[])
     // to be able to apply custom colors (if they are).
     app.setStyleSheet(Ori::Theme::makeStyleSheet(Ori::Theme::loadRawStyleSheet()));
 
-    // CommonData will be used via its instance pointer
-    CommonData commonData;
-
     // Run a tool if requested
     if (parser.isSet(optionTool))
     {
@@ -139,15 +134,10 @@ int main(int argc, char* argv[])
         auto fileName = args.first();
         if (QFileInfo::exists(fileName))
         {
-            auto projectWindow = new ProjectWindow(new Schema());
-            projectWindow->show();
-            if (parser.isSet(optionExample))
-                projectWindow->operations()->openExampleFile(fileName);
-            else
-            {
-                projectWindow->operations()->openSchemaFile(fileName);
-                CommonData::instance()->addFileToMruList(fileName);
-            }
+            ProjectWindow::openProject(fileName, {
+                .isExample = parser.isSet(optionExample),
+                .addToMru = !parser.isSet(optionExample),
+            });
             return app.exec();
         }
     }
@@ -155,10 +145,7 @@ int main(int argc, char* argv[])
     // Open empty project window if start window is disabled
     if (!AppSettings::instance().showStartWindow)
     {
-        auto tripType = TripTypes::find(AppSettings::instance().defaultTripType);
-        auto schema = ProjectOperations::createDefaultSchema(tripType);
-        auto window = new ProjectWindow(schema);
-        window->show();
+        ProjectWindow::createProject(TripTypes::find(AppSettings::instance().defaultTripType));
         return app.exec();
     }
 
