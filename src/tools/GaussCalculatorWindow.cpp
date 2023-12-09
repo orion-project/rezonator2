@@ -533,7 +533,7 @@ GaussCalculatorWindow::~GaussCalculatorWindow()
 void GaussCalculatorWindow::restoreState()
 {
     QJsonObject root = PersistentState::load("gauss");
-    PersistentState::loadWindowSize(root, this, 750, 400);
+    PersistentState::restoreWindowGeometry(root, this);
     _plotPlusMinusZ->setCheckedId(root["plot_minus_z"].toInt());
     _plotPlusMinusW->setCheckedId(root["plot_minus_w"].toInt());
     _calcModeLock->setCheckedId(root["lock_mode"].toInt());
@@ -559,7 +559,7 @@ void GaussCalculatorWindow::storeState()
     root["plot_z0"] = _plotZ0->isChecked();
     root["x_title"] = _plot->formatterTextX();
     root["y_title"] = _plot->formatterTextY();
-    PersistentState::saveWindowSize(root, this);
+    PersistentState::storeWindowGeometry(root, this);
     PersistentState::save("gauss", root);
 }
 

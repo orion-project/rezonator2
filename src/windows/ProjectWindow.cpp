@@ -71,7 +71,6 @@ ProjectWindow::ProjectWindow(Schema* aSchema) : QMainWindow(), SchemaToolWindow(
     Ori::Wnd::setWindowIcon(this, ":/window_icons/main");
 
     Ori::Settings s;
-    s.beginGroup("View");
     s.restoreWindowGeometry("mainWindow", this);
 
     _mruList = createMruList(s, this);
@@ -119,9 +118,7 @@ ProjectWindow::ProjectWindow(Schema* aSchema) : QMainWindow(), SchemaToolWindow(
 
 ProjectWindow::~ProjectWindow()
 {
-    Ori::Settings s;
-    s.beginGroup("View");
-    s.storeWindowGeometry("mainWindow", this);
+    Ori::Settings().storeWindowGeometry("mainWindow", this);
 }
 
 void ProjectWindow::registerStorableWindows()

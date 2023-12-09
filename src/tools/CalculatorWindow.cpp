@@ -258,7 +258,7 @@ void CalculatorWindow::calculate()
 void CalculatorWindow::restoreState()
 {
     QJsonObject root = PersistentState::load("calc");
-    PersistentState::loadWindowSize(root, this, 600, 400);
+    PersistentState::restoreWindowGeometry(root, this);
 
     // Restore font
     _overrideFont = root["override_font"].toBool();
@@ -333,7 +333,7 @@ void CalculatorWindow::storeState()
     }
     root["vars"] = varsJson;
 
-    PersistentState::saveWindowSize(root, this);
+    PersistentState::storeWindowGeometry(root, this);
     PersistentState::save("calc", root);
 }
 

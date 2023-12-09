@@ -762,7 +762,7 @@ LensmakerWindow::~LensmakerWindow()
 void LensmakerWindow::restoreState()
 {
     QJsonObject root = PersistentState::load("lens");
-    PersistentState::loadWindowSize(root, this, 700, 500);
+    PersistentState::restoreWindowGeometry(root, this);
 
     auto jsonLenses = root["lenses"];
     if (jsonLenses.isArray())
@@ -804,7 +804,7 @@ void LensmakerWindow::storeState()
     root["lenses"] = jsonLenses;
     root["active_lens"] = _tabs->currentIndex();
 
-    PersistentState::saveWindowSize(root, this);
+    PersistentState::storeWindowGeometry(root, this);
     PersistentState::save("lens", root);
 }
 

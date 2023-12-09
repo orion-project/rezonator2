@@ -1,5 +1,6 @@
 #include "PersistentState.h"
 
+#include "helpers/OriWindows.h"
 #include "tools/OriSettings.h"
 
 #include <QApplication>
@@ -57,22 +58,27 @@ void save(const char *id, const QJsonObject& root)
     QTextStream(&file) << QJsonDocument(root).toJson();
 }
 
-void saveWindowSize(QJsonObject& root, QWidget* wnd)
+void storeWindowGeometry(QJsonObject& s, QWidget* w)
 {
-    root["window_width"] = wnd->width();
-    root["window_height"] = wnd->height();
+    auto g = w->geometry();
+    s[QLatin1String("window")] = QJsonObject({
+        { QStringLiteral("left"), g.left() },
+        { QStringLiteral("top"), g.top() },
+        { QStringLiteral("width"), g.width() },
+        { QStringLiteral("height"), g.height() },
+        { QStringLiteral("maximized"), w->isMaximized() },
+    });
 }
 
-void loadWindowSize(const QJsonObject& root, QWidget* wnd, int defaultW, int defaultH)
+void restoreWindowGeometry(const QJsonObject& s, QWidget* w, const QSize& defSize)
 {
-    int w = root["window_width"].toInt();
-    int h = root["window_height"].toInt();
-    if (w == 0 || h == 0)
-    {
-        w = defaultW;
-        h = defaultH;
-    }
-    wnd->resize(w, h);
+    auto o = s[QLatin1String("window")].toObject();
+    Ori::Wnd::setGeometry(w, QRect(
+        o[QLatin1String("left")].toInt(),
+        o[QLatin1String("top")].toInt(),
+        o[QLatin1String("width")].toInt(),
+        o[QLatin1String("height")].toInt()),
+        o[QLatin1String("maximized")].toBool());
 }
 
 } // namespace PersistentState
@@ -226,8 +232,8 @@ void setSize(const char *key, const QSize& size)
     if (getSize(key) != size)
     {
         __storage->data[key] = QJsonObject({
-            { "width", size.width() },
-            { "height", size.height() }
+            { QStringLiteral("width"), size.width() },
+            { QStringLiteral("height"), size.height() }
         });
         __storage->save();
     }

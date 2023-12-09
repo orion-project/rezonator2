@@ -12,8 +12,8 @@ namespace PersistentState {
 QJsonObject load(const char *id);
 void save(const char *id, const QJsonObject& root);
 
-void saveWindowSize(QJsonObject& root, QWidget* wnd);
-void loadWindowSize(const QJsonObject& root, QWidget* wnd, int defaultW, int defaultH);
+void storeWindowGeometry(QJsonObject& s, QWidget* w);
+void restoreWindowGeometry(const QJsonObject& s, QWidget* w, const QSize& defSize = {});
 
 } // namespace PersistentState
 

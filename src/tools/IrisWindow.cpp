@@ -252,12 +252,12 @@ IrisWindow::~IrisWindow()
 void IrisWindow::restoreState()
 {
     QJsonObject root = PersistentState::load("iris");
-    PersistentState::loadWindowSize(root, this, 700, 500);
+    PersistentState::restoreWindowGeometry(root, this);
 }
 
 void IrisWindow::storeState()
 {
     QJsonObject root;
-    PersistentState::saveWindowSize(root, this);
+    PersistentState::storeWindowGeometry(root, this);
     PersistentState::save("iris", root);
 }

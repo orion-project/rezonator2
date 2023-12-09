@@ -107,13 +107,13 @@ void GrinLensWindow::restoreState()
         auto res = Z::IO::Json::readValue(root[p->alias()].toObject(), p->dim());
         if (res.ok()) p->setValue(res.value());
     }
-    PersistentState::loadWindowSize(root, this, 340, 280);
+    PersistentState::restoreWindowGeometry(root, this);
 }
 
 void GrinLensWindow::storeState()
 {
     QJsonObject root;
-    PersistentState::saveWindowSize(root, this);
+    PersistentState::storeWindowGeometry(root, this);
     root["solve_n2"] = _actionCalcN2->isChecked();
     foreach (auto p, _params)
         root[p->alias()] = Z::IO::Json::writeValue(p->value());

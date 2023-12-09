@@ -130,13 +130,13 @@ void CustomElemsWindow::createMenu()
 void CustomElemsWindow::restoreState()
 {
     QJsonObject root = PersistentState::load("elems");
-    PersistentState::loadWindowSize(root, this, 750, 400);
+    PersistentState::restoreWindowGeometry(root, this);
 }
 
 void CustomElemsWindow::storeState()
 {
     QJsonObject root;
-    PersistentState::saveWindowSize(root, this);
+    PersistentState::storeWindowGeometry(root, this);
     PersistentState::save("elems", root);
 }
 

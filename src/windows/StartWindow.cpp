@@ -3,6 +3,7 @@
 #include "../app/Appearance.h"
 #include "../app/AppSettings.h"
 #include "../app/HelpSystem.h"
+#include "../app/PersistentState.h"
 #include "../app/ProjectOperations.h"
 #include "../core/CommonTypes.h"
 #include "../tools/CalculatorWindow.h"
@@ -571,15 +572,12 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
     // Should be after all widgets to overlay them
     tipImage->setParent(this);
 
-    s.beginGroup("View");
     s.restoreWindowGeometry("startWindow", this);
 }
 
 StartWindow::~StartWindow()
 {
-    Ori::Settings s;
-    s.beginGroup("View");
-    s.storeWindowGeometry("startWindow", this);
+    Ori::Settings().storeWindowGeometry("startWindow", this);
 }
 
 void StartWindow::editStyleSheet()
