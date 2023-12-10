@@ -21,6 +21,7 @@
 #include <QToolBar>
 #include <QToolButton>
 #include <QSplitter>
+#include <QStandardPaths>
 #include <QStackedWidget>
 #include <QStatusBar>
 
