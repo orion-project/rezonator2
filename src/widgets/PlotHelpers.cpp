@@ -49,7 +49,7 @@ void rescaleCursor(QCPL::Cursor* cursor, PlotAxis axis, Z::Unit unitFrom, Z::Uni
 QCPL::GraphDataExportSettings makeExportSettings()
 {
     QCPL::GraphDataExportSettings es;
-    auto as = AppSettings::instance();
+    const auto& as = AppSettings::instance();
     es.csv = as.exportAsCsv;
     es.systemLocale = as.exportSystemLocale;
     es.numberPrecision = as.exportNumberPrecision;

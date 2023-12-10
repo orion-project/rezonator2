@@ -6,6 +6,9 @@
       "changes": [
         {
           "text": "Use internal help viewer instead of external Assistant program"
+        },
+        {
+          "text": "Watch config files for sharing data between running instances"
         }
       ]
     },

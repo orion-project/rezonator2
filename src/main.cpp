@@ -75,7 +75,6 @@ int main(int argc, char* argv[])
         return Ori::Testing::run(app, { ADD_SUITE(Z::Tests) });
 
     // Load application settings before any command start
-    AppSettings::instance().load();
     AppSettings::instance().isDevMode = parser.isSet(optionDevMode);
 
     // Call `setStyleSheet` after setting loaded
