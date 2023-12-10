@@ -222,6 +222,31 @@ QPen AppSettings::graphPenS() const
     return QPen(Qt::red);
 }
 
+void AppSettings::setElemBoundMarkersPen(const QPen& pen)
+{
+
+}
+
+void AppSettings::setStabBoundMarkerPen(const QPen& pen)
+{
+
+}
+
+void AppSettings::setCursorPen(const QPen& pen)
+{
+
+}
+
+void AppSettings::setGraphPenT(const QPen& pen)
+{
+
+}
+
+void AppSettings::setGraphPenS(const QPen& pen)
+{
+
+}
+
 QStringList AppSettings::loadMruItems() const
 {
     Ori::Settings s;

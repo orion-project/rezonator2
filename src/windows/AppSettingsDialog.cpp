@@ -4,7 +4,10 @@
 #include "../widgets/UnitWidgets.h"
 
 #include "helpers/OriLayouts.h"
+#include "widgets/OriLabels.h"
 #include "widgets/OriOptionsGroup.h"
+
+#include "qcpl_format_editors.h"
 
 #include <QApplication>
 #include <QBoxLayout>
@@ -16,6 +19,7 @@
 #include <QSpinBox>
 
 using namespace Ori::Layouts;
+using namespace Ori::Widgets;
 
 namespace Z {
 namespace Dlg {
@@ -59,6 +63,7 @@ AppSettingsDialog::AppSettingsDialog(QWidget* parent, Ori::Dlg::PageId currentPa
                     createUnitsPage(),
                     createExportPage(),
                     //createCalcPage(),
+                    createLinesPage(),
                 });
 
     setCurrentPageId(currentPageId);
@@ -100,13 +105,12 @@ QWidget* AppSettingsDialog::createViewPage()
     _numberPrecisionData = new NumberPrecisionSpinBox;
     _showImagUnitAsJ = new QCheckBox(tr("Display imaginary unit as 'j' instead of 'i'"));
     _showImagUnitAtEnd = new QCheckBox(tr("Show imaginary unit after imaginary part"));
-    auto groupFormat = new QGroupBox(tr("Number format"));
-    LayoutV({
+    auto groupFormat = LayoutV({
         LayoutH({
             new QLabel(tr("Number precision for result formatting")), _numberPrecisionData
         }),
         _showImagUnitAsJ, _showImagUnitAtEnd,
-    }).useFor(groupFormat);
+    }).makeGroupBox(tr("Number format"));
 
     page->add({_groupView, groupFormat, page->stretch()});
     return page;
@@ -147,15 +151,14 @@ QWidget* AppSettingsDialog::createUnitsPage()
     infoIcon->setPixmap(QIcon(":/toolbar/info").pixmap(24, 24));
     infoIcon->setFixedWidth(24);
 
-    auto defUnitsGroup = new QGroupBox(tr("Default units"));
-    LayoutV({
+    auto defUnitsGroup = LayoutV({
         unitsLayout,
         Space(12),
         LayoutH({
             LayoutV({infoIcon, Stretch()}),
             infoLabel
         })
-    }).useFor(defUnitsGroup);
+    }).makeGroupBox(tr("Default units"));
 
     page->add({defUnitsGroup, page->stretch()});
     return page;
@@ -195,9 +198,33 @@ QWidget* AppSettingsDialog::createCalcPage()
     return page;
 }
 
+QWidget* AppSettingsDialog::createLinesPage()
+{
+    auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageCalc, tr("Lines"), ":/toolbar/gauss_near_zone");
+    page->setLongTitle(tr("Default Line Formats"));
+
+    _elemBoundMarkersPen = new QCPL::PenEditorWidget;
+    _stabBoundMarkerPen = new QCPL::PenEditorWidget;
+    _cursorPen = new QCPL::PenEditorWidget;
+    _graphPenT = new QCPL::PenEditorWidget;
+    _graphPenS = new QCPL::PenEditorWidget;
+
+    page->add({
+        LayoutV({
+            new LabelSeparator(tr("T-graph Line"), true), _graphPenT, SpaceV(2),
+            new LabelSeparator(tr("S-graph Line"), true), _graphPenS, SpaceV(2),
+            new LabelSeparator(tr("Cursor Line"), true), _cursorPen, SpaceV(2),
+            new LabelSeparator(tr("Element Bound Markers"), true), _elemBoundMarkersPen, SpaceV(2),
+            new LabelSeparator(tr("Stability Boundary Markers"), true), _stabBoundMarkerPen,
+        }).setMargin(0).boxLayout(),
+        page->stretch(),
+    });
+    return page;
+}
+
 void AppSettingsDialog::populate()
 {
-    AppSettings &settings = AppSettings::instance();
+    const AppSettings &settings = AppSettings::instance();
 
     // options
     _groupOptions->setOption("editNewElem", settings.editNewElem);
@@ -234,6 +261,13 @@ void AppSettingsDialog::populate()
     _groupExportData->setOption("exportTransposed", settings.exportTransposed);
     _exportNumberPrecision->setValue(settings.exportNumberPrecision);
     _groupExportPlot->setOption("exportHideCursor", settings.exportHideCursor);
+
+    // graphs
+    _elemBoundMarkersPen->setValue(settings.elemBoundMarkersPen());
+    _stabBoundMarkerPen->setValue(settings.stabBoundMarkerPen());
+    _cursorPen->setValue(settings.cursorPen());
+    _graphPenT->setValue(settings.graphPenT());
+    _graphPenS->setValue(settings.graphPenS());
 }
 
 bool AppSettingsDialog::collect()
@@ -275,6 +309,13 @@ bool AppSettingsDialog::collect()
     settings.exportTransposed = _groupExportData->option("exportTransposed");
     settings.exportNumberPrecision = _exportNumberPrecision->value();
     settings.exportHideCursor = _groupExportPlot->option("exportHideCursor");
+
+    // graphs
+    settings.setElemBoundMarkersPen(_elemBoundMarkersPen->value());
+    settings.setStabBoundMarkerPen(_stabBoundMarkerPen->value());
+    settings.setCursorPen(_cursorPen->value());
+    settings.setGraphPenT(_graphPenT->value());
+    settings.setGraphPenS(_graphPenS->value());
 
     settings.save();
     return true;

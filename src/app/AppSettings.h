@@ -92,6 +92,11 @@ public:
     QPen cursorPen() const;
     QPen graphPenT() const;
     QPen graphPenS() const;
+    void setElemBoundMarkersPen(const QPen& pen);
+    void setStabBoundMarkerPen(const QPen& pen);
+    void setCursorPen(const QPen& pen);
+    void setGraphPenT(const QPen& pen);
+    void setGraphPenS(const QPen& pen);
 
     QStringList loadMruItems() const;
     void saveMruItems(const QStringList& items);

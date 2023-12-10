@@ -15,6 +15,9 @@ namespace Ori {
 namespace Widgets {
     class OptionsGroupV2;
 }}
+namespace QCPL {
+    class PenEditorWidget;
+}
 
 class AppSettingsDialog : public Ori::Dlg::BasicConfigDialog
 {
@@ -40,6 +43,7 @@ private:
     QSpinBox *_exportNumberPrecision;
     QSpinBox *_numberPrecisionData;
     QCheckBox *_showImagUnitAsJ, *_showImagUnitAtEnd;
+    QCPL::PenEditorWidget *_elemBoundMarkersPen, *_stabBoundMarkerPen, *_cursorPen, *_graphPenT, *_graphPenS;
 
     QWidget* createGeneralPage();
     QWidget* createViewPage();
@@ -47,8 +51,7 @@ private:
     QWidget* createUnitsPage();
     QWidget* createExportPage();
     QWidget* createCalcPage();
-    void fillLangsCombo();
-    void fillStylesCombo();
+    QWidget* createLinesPage();
 };
 
 #endif // CONFIG_DLG
