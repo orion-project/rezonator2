@@ -1,7 +1,7 @@
 #include "StabilityMap2DFunction.h"
 
 #include "RoundTripCalculator.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 
 void StabilityMap2DFunction::calculate(CalculationMode calcMode)
 {
@@ -56,9 +56,7 @@ void StabilityMap2DFunction::calculate(CalculationMode calcMode)
 
 void StabilityMap2DFunction::loadPrefs()
 {
-    _stabilityCalcMode = Z::Enums::fromStr(
-                CustomPrefs::recentStr(QStringLiteral("func_stab_2d_map_mode")),
-                Z::Enums::StabilityCalcMode::Normal);
+    _stabilityCalcMode = RecentData::getEnum("func_stab_2d_map_mode", Z::Enums::StabilityCalcMode::Normal);
 }
 
 bool StabilityMap2DFunction::checkArg(Z::Variable* arg)

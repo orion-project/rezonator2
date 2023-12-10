@@ -1,6 +1,6 @@
 #include "IrisWindow.h"
 
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWindows.h"
@@ -251,16 +251,13 @@ IrisWindow::~IrisWindow()
 
 void IrisWindow::restoreState()
 {
-    QJsonObject root = CustomDataHelpers::loadCustomData("iris");
-
-    CustomDataHelpers::restoreWindowSize(root, this, 700, 500);
+    QJsonObject root = PersistentState::load("iris");
+    PersistentState::restoreWindowGeometry(root, this);
 }
 
 void IrisWindow::storeState()
 {
     QJsonObject root;
-
-    CustomDataHelpers::storeWindowSize(root, this);
-
-    CustomDataHelpers::saveCustomData(root, "iris");
+    PersistentState::storeWindowGeometry(root, this);
+    PersistentState::save("iris", root);
 }

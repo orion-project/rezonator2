@@ -95,7 +95,6 @@ protected slots:
 private:
     Schema* _schema;
     VarEditor _editor1, _editor2;
-    QString _recentKey = "func_stab_map_2d";
 
     void makeControls(const QString& title, Schema *schema, VarEditor* editor);
     void guessRange(VarEditor* editor);

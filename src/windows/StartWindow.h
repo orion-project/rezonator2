@@ -10,19 +10,18 @@ class QBoxLayout;
 class QFileInfo;
 class QMovie;
 class QToolBar;
-
 QT_END_NAMESPACE
 
 namespace Ori {
-namespace Widgets {
-class Label;
-} // namespace Widget
-} // namespace Ori
+    namespace Widgets {
+        class Label;
+    }
+}
 
 class CustomCssWidget : public QWidget
 {
 protected:
-    // Paint event should overriden to apply styles heets
+    // Paint event should overriden to apply styles sheets
     void paintEvent(QPaintEvent*) override;
 };
 
@@ -49,37 +48,24 @@ private:
 
 //------------------------------------------------------------------------------
 
-class StartPanel : public CustomCssWidget
-{
-    Q_OBJECT
-
-protected:
-    explicit StartPanel(const QString& objectName);
-
-    QWidget* makeHeader(const QString& title);
-    QWidget* makeButton(const QString& iconPath, const QString& title, const char* slot);
-
-signals:
-    void onClose();
-};
-
-//------------------------------------------------------------------------------
-
-class MruStartPanel : public StartPanel
+class MruStartPanel : public CustomCssWidget
 {
     Q_OBJECT
 
 public:
     explicit MruStartPanel();
 
+signals:
+    void closeRequested();
+
 private:
     void makeEmpty();
-    void openFile(const QString& filePath);
+    void openFile(const QString& fileName);
 };
 
 //------------------------------------------------------------------------------
 
-class TipsStartPanel : public StartPanel
+class TipsStartPanel : public CustomCssWidget
 {
     Q_OBJECT
 
@@ -112,12 +98,15 @@ private:
 
 //------------------------------------------------------------------------------
 
-class ActionsStartPanel : public StartPanel
+class ActionsStartPanel : public CustomCssWidget
 {
     Q_OBJECT
 
 public:
     explicit ActionsStartPanel();
+
+signals:
+    void closeRequested();
 
 private slots:
     void openSchemaFile();
@@ -129,21 +118,12 @@ private slots:
 
 //------------------------------------------------------------------------------
 
-class ToolsStartPanel : public StartPanel
+class ToolsStartPanel : public CustomCssWidget
 {
     Q_OBJECT
 
 public:
     explicit ToolsStartPanel();
-
-private slots:
-    void showGaussCalculator();
-    void showCalculator();
-    void showGrinLens();
-    void checkUpdates();
-    void showLensmaker();
-    void showIris();
-    void showManual();
 };
 
 //------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 #include "StabilityMapWindow.h"
 
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../funcs/FuncOptionsPanel.h"
 #include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
@@ -26,8 +26,8 @@ StabilityParamsDlg::StabilityParamsDlg(Schema *schema, Z::Variable *var)
     setWindowTitle(tr("Variable"));
     setObjectName("StabilityParamsDlg");
 
-    if (!var->element && !_recentKey.isEmpty())
-        Z::IO::Json::readVariablePref(CustomPrefs::recentObj(_recentKey), var, schema);
+    if (!var->element)
+        Z::IO::Json::readVariablePref(RecentData::getObj("func_stab_map"), var, schema);
 
     _elemSelector = new ElemAndParamSelector(schema, ElementFilter::elemsWithVisibleParams(), Z::Utils::defaultParamFilter());
     connect(_elemSelector, SIGNAL(selectionChanged()), this, SLOT(guessRange()));
@@ -72,8 +72,7 @@ void StabilityParamsDlg::collect()
 
     accept();
 
-    if (!_recentKey.isEmpty())
-        CustomPrefs::setRecentObj(_recentKey, Z::IO::Json::writeVariablePref(_var));
+    RecentData::setObj("func_stab_map", Z::IO::Json::writeVariablePref(_var));
 }
 
 void StabilityParamsDlg::guessRange()
@@ -128,7 +127,7 @@ int StabilityMapOptionsPanel::currentFunctionMode() const
 void StabilityMapOptionsPanel::functionModeChanged(int mode)
 {
     auto stabCalcMode = static_cast<Z::Enums::StabilityCalcMode>(mode);
-    CustomPrefs::setRecentStr(QStringLiteral("func_stab_map_mode"), Z::Enums::toStr(stabCalcMode));
+    RecentData::setEnum("func_stab_map_mode", stabCalcMode);
     _window->function()->setStabilityCalcMode(stabCalcMode);
 }
 

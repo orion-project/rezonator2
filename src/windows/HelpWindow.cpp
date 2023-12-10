@@ -1,8 +1,9 @@
 #include "HelpWindow.h"
 
+#include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
-#include "helpers/OriDialogs.h"
+#include "helpers/OriWindows.h"
 
 #include <QDebug>
 #include <QActionGroup>
@@ -20,6 +21,7 @@
 #include <QToolBar>
 #include <QToolButton>
 #include <QSplitter>
+#include <QStandardPaths>
 #include <QStackedWidget>
 #include <QStatusBar>
 
@@ -137,6 +139,7 @@ HelpWindow::HelpWindow(QHelpEngine *engine) : QWidget(), _engine(engine)
     setAttribute(Qt::WA_DeleteOnClose);
     setWindowIcon(QIcon(":/window_icons/help"));
     setWindowTitle(tr("%1 Manual").arg(qApp->applicationName()));
+    setObjectName("HelpWindow");
 
     _engine->setParent(this);
 
@@ -225,16 +228,18 @@ HelpWindow::HelpWindow(QHelpEngine *engine) : QWidget(), _engine(engine)
 
     LayoutV({splitterLayout, statusBar}).setSpacing(0).setMargin(0).useFor(this);
 
-    resize({
-        _engine->customValue("window_w", 800).toInt(),
-        _engine->customValue("window_h", 600).toInt(),
-    });
+    Ori::Wnd::setGeometry(this, QRect(
+        _engine->customValue(QStringLiteral("window_left")).toInt(),
+        _engine->customValue(QStringLiteral("window_top")).toInt(),
+        _engine->customValue(QStringLiteral("window_width")).toInt(),
+        _engine->customValue(QStringLiteral("window_height")).toInt()),
+        _engine->customValue(QStringLiteral("window_maximized")).toBool(), {800, 600});
     _splitter->setSizes({
-        _engine->customValue("panel_w", 200).toInt(),
-        _engine->customValue("browser_w", 600).toInt(),
+        _engine->customValue(QStringLiteral("panel_width"), 200).toInt(),
+        _engine->customValue(QStringLiteral("browser_width"), 600).toInt(),
     });
 
-    QTimer::singleShot(100, this, [contentWidget]{
+    QTimer::singleShot(200, this, [contentWidget]{
         contentWidget->expandRecursively(QModelIndex(), 2);
     });
 }
@@ -242,10 +247,15 @@ HelpWindow::HelpWindow(QHelpEngine *engine) : QWidget(), _engine(engine)
 HelpWindow::~HelpWindow()
 {
     auto sizes = _splitter->sizes();
-    _engine->setCustomValue("panel_w", sizes.at(0));
-    _engine->setCustomValue("browser_w", sizes.at(1));
-    _engine->setCustomValue("window_w", width());
-    _engine->setCustomValue("window_h", height());
+    auto g = geometry();
+    // QVariant(QRect) gets empty values (why?), save by component
+    _engine->setCustomValue(QStringLiteral("window_left"), g.left());
+    _engine->setCustomValue(QStringLiteral("window_top"), g.top());
+    _engine->setCustomValue(QStringLiteral("window_width"), g.width());
+    _engine->setCustomValue(QStringLiteral("window_height"), g.height());
+    _engine->setCustomValue(QStringLiteral("window_maximized"), isMaximized());
+    _engine->setCustomValue(QStringLiteral("panel_width"), sizes.at(0));
+    _engine->setCustomValue(QStringLiteral("browser_width"), sizes.at(1));
 
     __instance = nullptr;
 }

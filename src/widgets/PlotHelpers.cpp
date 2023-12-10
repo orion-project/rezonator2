@@ -1,7 +1,7 @@
 #include "PlotHelpers.h"
 
 #include "../app/AppSettings.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../math/FunctionGraph.h"
 
 #include "helpers/OriDialogs.h"
@@ -49,7 +49,7 @@ void rescaleCursor(QCPL::Cursor* cursor, PlotAxis axis, Z::Unit unitFrom, Z::Uni
 QCPL::GraphDataExportSettings makeExportSettings()
 {
     QCPL::GraphDataExportSettings es;
-    auto as = AppSettings::instance();
+    const auto& as = AppSettings::instance();
     es.csv = as.exportAsCsv;
     es.systemLocale = as.exportSystemLocale;
     es.numberPrecision = as.exportNumberPrecision;
@@ -94,7 +94,7 @@ struct ExportGraphsParams
 
     ExportGraphsParams()
     {
-        auto state = CustomPrefs::recentObj("export_graph_params");
+        auto state = RecentData::getObj("export_graph_params");
         plane = state["plane"].toInt(PLANE_BOTH);
         graph = state["graph"].toInt(GRAPH_ALL);
         segment = state["segment"].toInt(SEGMENT_ALL);
@@ -106,7 +106,7 @@ struct ExportGraphsParams
 
     ~ExportGraphsParams()
     {
-        CustomPrefs::setRecentObj("export_graph_params", {
+        RecentData::setObj("export_graph_params", {
             {"plane", plane},
             {"graph", graph},
             {"segment", segment},

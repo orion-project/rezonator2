@@ -1,7 +1,7 @@
 #include "CustomElemsWindow.h"
 
 #include "../app/CustomElemsManager.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../core/ElementsCatalog.h"
 #include "../io/Clipboard.h"
 #include "../windows/ElementsCatalogDialog.h"
@@ -129,18 +129,15 @@ void CustomElemsWindow::createMenu()
 
 void CustomElemsWindow::restoreState()
 {
-    QJsonObject root = CustomDataHelpers::loadCustomData("elems");
-
-    CustomDataHelpers::restoreWindowSize(root, this, 750, 400);
+    QJsonObject root = PersistentState::load("elems");
+    PersistentState::restoreWindowGeometry(root, this);
 }
 
 void CustomElemsWindow::storeState()
 {
     QJsonObject root;
-    root["window_width"] = width();
-    root["window_height"] = height();
-
-    CustomDataHelpers::saveCustomData(root, "elems");
+    PersistentState::storeWindowGeometry(root, this);
+    PersistentState::save("elems", root);
 }
 
 void CustomElemsWindow::actionElemAdd()

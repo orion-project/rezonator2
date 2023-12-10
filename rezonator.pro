@@ -11,6 +11,8 @@ DESTDIR = $$_PRO_FILE_PWD_/bin
 
 unix: LIBS += -ldl
 
+QMAKE_CXXFLAGS_WARN_ON += -Wno-unknown-pragmas
+
 #------------------------------------------------------------
 # Submodules
 
@@ -62,11 +64,10 @@ HEADERS += \
     src/app/Appearance.h \
     src/app/AppSettings.h \
     src/app/CalcManager.h \
-    src/app/CommonData.h \
     src/app/CustomElemsManager.h \
-    src/app/CustomPrefs.h \
     src/app/HelpSystem.h \
     src/app/MessageBus.h \
+    src/app/PersistentState.h \
     src/app/ProjectOperations.h \
     src/core/Beam.h \
     src/core/CommonTypes.h \
@@ -197,11 +198,10 @@ SOURCES += \
     src/app/Appearance.cpp \
     src/app/AppSettings.cpp \
     src/app/CalcManager.cpp \
-    src/app/CommonData.cpp \
     src/app/CustomElemsManager.cpp \
-    src/app/CustomPrefs.cpp \
     src/app/HelpSystem.cpp \
     src/app/MessageBus.cpp \
+    src/app/PersistentState.cpp \
     src/app/ProjectOperations.cpp \
     src/core/Beam.cpp \
     src/core/CommonTypes.cpp \

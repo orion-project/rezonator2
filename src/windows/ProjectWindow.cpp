@@ -1,16 +1,16 @@
 #include "ProjectWindow.h"
 
 #include "../app/CalcManager.h"
-#include "../app/CommonData.h"
 #include "../app/HelpSystem.h"
 #include "../app/ProjectOperations.h"
+#include "../app/PersistentState.h"
 #include "../core/Format.h"
 #include "../math/RoundTripCalculator.h"
 #include "../tools/CalculatorWindow.h"
 #include "../tools/GaussCalculatorWindow.h"
+#include "../tools/GrinLensWindow.h"
 #include "../tools/IrisWindow.h"
 #include "../tools/LensmakerWindow.h"
-#include "../tools/GrinLensWindow.h"
 #include "AdjustmentWindow.h"
 #include "CustomElemsWindow.h"
 #include "ElemFormulaWindow.h"
@@ -25,7 +25,6 @@
 #include "helpers/OriWidgets.h"
 #include "helpers/OriWindows.h"
 #include "tools/OriMruList.h"
-#include "tools/OriSettings.h"
 #include "widgets/OriMruMenu.h"
 #include "widgets/OriMdiToolBar.h"
 #include "widgets/OriStatusBar.h"
@@ -54,17 +53,27 @@ enum ProjectWindowStatusPanels
 };
 static const ProjectWindowStatusPanels STATUS_PUMP = STATUS_STABIL;
 
+void ProjectWindow::createProject(TripType tripType)
+{
+    (new ProjectWindow(ProjectOperations::createDefaultSchema(tripType)))->show();
+}
+
+void ProjectWindow::openProject(const QString& fileName, const OpenProjectArgs& args)
+{
+    auto wnd = new ProjectWindow(new Schema());
+    wnd->show();
+    wnd->operations()->openSchemaFile(fileName, {.isExample = args.isExample, .addToMru = args.addToMru});
+}
+
 ProjectWindow::ProjectWindow(Schema* aSchema) : QMainWindow(), SchemaToolWindow(aSchema)
 {
     setAttribute(Qt::WA_DeleteOnClose);
     Ori::Wnd::setWindowIcon(this, ":/window_icons/main");
 
-    Ori::Settings s;
-    s.beginGroup("View");
-    s.restoreWindowGeometry("mainWindow", this);
+    _mruList = createMruList(this);
 
     _calculations = new CalcManager(schema(), this);
-    _operations = new ProjectOperations(schema(), this, _calculations);
+    _operations = new ProjectOperations(schema(), this, _calculations, _mruList);
 
     Z::HelpSystem::instance()->setParent(this);
 
@@ -76,7 +85,6 @@ ProjectWindow::ProjectWindow(Schema* aSchema) : QMainWindow(), SchemaToolWindow(
 
     connect(_mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(updateMenuBar()));
     connect(WindowsManager::instancePtr(), SIGNAL(showMdiSubWindow(QWidget*)), _mdiArea, SLOT(appendChild(QWidget*)));
-    connect(CommonData::instance()->mruList(), SIGNAL(clicked(QString)), _operations, SLOT(openSchemaFile(QString)));
     connect(_operations, &ProjectOperations::protocolRequired, this, &ProjectWindow::showProtocolWindow);
 
     createActions();
@@ -102,13 +110,13 @@ ProjectWindow::ProjectWindow(Schema* aSchema) : QMainWindow(), SchemaToolWindow(
     connect(shortcutApply, &QShortcut::activated, this, &ProjectWindow::shortcutEnterActivated);
 
     MessageBus::instance().registerListener(this);
+
+    PersistentState::restoreWindowGeometry("main", this, {1024, 768});
 }
 
 ProjectWindow::~ProjectWindow()
 {
-    Ori::Settings s;
-    s.beginGroup("View");
-    s.storeWindowGeometry("mainWindow", this);
+    PersistentState::storeWindowGeometry("main", this);
 }
 
 void ProjectWindow::registerStorableWindows()
@@ -124,7 +132,7 @@ void ProjectWindow::createActions()
 
     actnFileNew = A_(tr("New"), _operations, SLOT(newSchemaFile()), ":/toolbar/schema_new", QKeySequence::New);
     actnFileOpen = A_(tr("Open..."), _operations, SLOT(openSchemaFile()), ":/toolbar/schema_open", QKeySequence::Open);
-    actnFileOpenExample = A_(tr("Open Example..."), this, SLOT(openSchemaExample()), ":/toolbar/schema_sample");
+    actnFileOpenExample = A_(tr("Open Example..."), _operations, SLOT(openExampleFile()), ":/toolbar/schema_sample");
     actnFileSave = A_(tr("Save"), _operations, SLOT(saveSchemaFile()), ":/toolbar/save", QKeySequence::Save);
     actnFileSaveAs = A_(tr("Save As..."), _operations, SLOT(saveSchemaFileAs()), nullptr, QKeySequence::SaveAs);
     actnFileSaveCopy = A_(tr("Save Copy..."), _operations, SLOT(saveSchemaFileCopy()));
@@ -193,7 +201,7 @@ void ProjectWindow::createMenuBar()
 {
     menuBar()->setNativeMenuBar(AppSettings::instance().useNativeMenuBar);
 
-    _mruMenu = new Ori::Widgets::MruMenu(tr("Recent Files"), CommonData::instance()->mruList(), this);
+    _mruMenu = new Ori::Widgets::MruMenu(tr("Recent Files"), _mruList, this);
 
     menuFile = Ori::Gui::menu(tr("File"), this,
         { actnFileNew, actnFileOpen, actnFileOpenExample, _mruMenu, nullptr, actnFileSave,
@@ -202,7 +210,6 @@ void ProjectWindow::createMenuBar()
 
     menuEdit = new QMenu(tr("Edit"), this);
 
-    //_langsMenu = new Ori::Widgets::LanguagesMenu(CommonData::instance()->translator(), this);
     menuView = new QMenu(tr("View"), this);
 
     menuFunctions = Ori::Gui::menu(tr("Functions"), this,
@@ -262,6 +269,18 @@ void ProjectWindow::createStatusBar()
     _statusBar->addPermanentWidget(versionLabel);
 
     setStatusBar(_statusBar);
+}
+
+Ori::MruList* ProjectWindow::createMruList(QObject* parent)
+{
+    auto mru = new Ori::MruFileList(parent);
+    mru->setAutoSave(false);
+    mru->setItems(AppSettings::instance().loadMruItems());
+    mru->setMaxCount(AppSettings::instance().mruSchemaCount);
+    mru->connect(mru, &Ori::MruList::saveRequired, [mru]{
+        AppSettings::instance().saveMruItems(mru->items());
+    });
+    return mru;
 }
 
 void ProjectWindow::updateTitle()
@@ -449,16 +468,6 @@ void ProjectWindow::settingsChanged()
 {
     SchemaToolWindow::settingsChanged();
     Z::WindowUtils::adjustIconSize(_mdiToolbar);
-}
-
-//------------------------------------------------------------------------------
-//                             File actions
-
-void ProjectWindow::openSchemaExample()
-{
-    auto fileName = ProjectOperations::selectSchemaExample();
-    if (fileName.isEmpty()) return;
-    _operations->openExampleFile(fileName);
 }
 
 //------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 #include "CausticWindow.h"
 
 #include "../app/AppSettings.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../funcs/BeamShapeExtension.h"
 #include "../funcs/CausticOptionsPanel.h"
 #include "../io/CommonUtils.h"
@@ -29,8 +29,8 @@ CausticParamsDlg::CausticParamsDlg(Schema *schema, Z::Variable *var)
     setWindowTitle(tr("Range"));
     setObjectName("CausticParamsDlg");
 
-    if (!var->element and !_recentKey.isEmpty())
-        Z::IO::Json::readVariablePref(CustomPrefs::recentObj(_recentKey), var, schema);
+    if (!var->element)
+        Z::IO::Json::readVariablePref(RecentData::getObj("func_caustic"), var, schema);
 
     std::shared_ptr<ElementFilter> filter(
         ElementFilter::make<ElementFilterIsRange, ElementFilterEnabled>());
@@ -82,8 +82,7 @@ void CausticParamsDlg::collect()
     _var->range = _rangeEditor->range();
     accept();
 
-    if (!_recentKey.isEmpty())
-        CustomPrefs::setRecentObj(_recentKey, Z::IO::Json::writeVariablePref(_var));
+    RecentData::setObj("func_caustic", Z::IO::Json::writeVariablePref(_var));
 }
 
 void CausticParamsDlg::guessRange()

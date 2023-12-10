@@ -19,15 +19,11 @@ class SchemaMdiArea;
 class SchemaViewWindow;
 
 namespace Ori {
-    class Translator;
-    class MruFileList;
-
+    class MruList;
     namespace Widgets {
         class MruMenu;
         class MdiToolBar;
         class StatusBar;
-        class StylesMenu;
-        class LanguagesMenu;
     }
 }
 
@@ -36,6 +32,16 @@ class ProjectWindow : public QMainWindow,
                       public IMessageBusListener
 {
     Q_OBJECT
+
+public:
+    struct OpenProjectArgs
+    {
+        bool isExample = false;
+        bool addToMru = false;
+    };
+
+    static void createProject(TripType tripType);
+    static void openProject(const QString& fileName, const OpenProjectArgs& args);
 
 public:
     ProjectWindow(Schema* aSchema);
@@ -55,6 +61,9 @@ public:
     void messageBusEvent(MessageBusEvent event, const QMap<QString, QVariant>& params) override;
 
     ProjectOperations* operations() { return _operations; }
+
+    // StartWindow needs an equivalent mru-list, so publish the factory method
+    static Ori::MruList* createMruList(QObject* parent);
 
 protected:
     void closeEvent(class QCloseEvent*) override;
@@ -92,9 +101,9 @@ private:
     CalcManager* _calculations;
     SchemaMdiArea *_mdiArea;
 
+    Ori::MruList* _mruList;
     Ori::Widgets::MruMenu* _mruMenu;
     Ori::Widgets::MdiToolBar* _mdiToolbar;
-    //Ori::Widgets::LanguagesMenu* _langsMenu;
     Ori::Widgets::StatusBar* _statusBar;
     SchemaViewWindow* _schemaWindow;
     bool _forceClosing = false;
@@ -129,8 +138,6 @@ private slots:
     void showHelp();
     void showLensmaker();
     void showIris();
-
-    void openSchemaExample();
 
     void flipSchema();
 

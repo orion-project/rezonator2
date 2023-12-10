@@ -2,19 +2,18 @@
 
 #include "tools/OriSettings.h"
 
+#include <QDebug>
+#include <QFileSystemWatcher>
 #include <QPen>
+#include <QTimer>
 
-#ifndef DLG_APP_CONFIG
-#define DLG_APP_CONFIG
 namespace Z {
 namespace Dlg {
     bool editAppSettings(Ori::Optional<int> currentrPageId); // AppSettingDialog.cpp
 }}
-#endif
-
 
 //------------------------------------------------------------------------------
-//                              SettingsListener
+//                             IAppSettingsListener
 //------------------------------------------------------------------------------
 
 IAppSettingsListener::IAppSettingsListener()
@@ -27,9 +26,8 @@ IAppSettingsListener::~IAppSettingsListener()
     AppSettings::instance().unregisterListener(this);
 }
 
-
 //------------------------------------------------------------------------------
-//                               Settings
+//                              AppSettings
 //------------------------------------------------------------------------------
 
 #define LOAD(option, type)\
@@ -41,9 +39,27 @@ IAppSettingsListener::~IAppSettingsListener()
 #define SAVE(option)\
     s.settings()->setValue(QStringLiteral(#option), option)
 
+Q_GLOBAL_STATIC(AppSettings, __instance);
+
+AppSettings& AppSettings::instance()
+{
+    return *__instance;
+}
+
+AppSettings::AppSettings() : QObject()
+{
+    load();
+}
+
 void AppSettings::load()
 {
     Ori::Settings s;
+
+    if (!_watcher)
+    {
+        _watcher = new QFileSystemWatcher({ s.settings()->fileName() }, this);
+        _watcher->connect(_watcher, &QFileSystemWatcher::fileChanged, this, &AppSettings::onFileChanged);
+    }
 
     s.beginGroup("View");
     LOAD_DEF(smallToolbarImages, Bool, false);
@@ -102,6 +118,8 @@ void AppSettings::load()
 
 void AppSettings::save()
 {
+    _selfSaved = true;
+
     Ori::Settings s;
 
     s.beginGroup("View");
@@ -202,4 +220,46 @@ QPen AppSettings::graphPenT() const
 QPen AppSettings::graphPenS() const
 {
     return QPen(Qt::red);
+}
+
+QStringList AppSettings::loadMruItems() const
+{
+    Ori::Settings s;
+    s.beginGroup("States");
+    return s.settings()->value("mru").toStringList();
+}
+
+void AppSettings::saveMruItems(const QStringList& items)
+{
+    _selfSaved = true;
+    Ori::Settings s;
+    s.beginGroup("States");
+    s.settings()->setValue("mru", items);
+}
+
+void AppSettings::onFileChanged()
+{
+    if (_timerStarted)
+        return;
+    _timerStarted = true;
+    // There could be several changed signals from the same save operation
+    QTimer::singleShot(500, this, &AppSettings::onReloadTimeout);
+}
+
+void AppSettings::onReloadTimeout()
+{
+    _timerStarted = false;
+    if (_selfSaved)
+    {
+        _selfSaved = false;
+        return;
+    }
+
+    int old_numberPrecisionData = numberPrecisionData;
+
+    load();
+
+    notify(&IAppSettingsListener::settingsChanged);
+    if (old_numberPrecisionData != numberPrecisionData)
+        notify(&IAppSettingsListener::optionChanged, AppSettingsOptions::numberPrecisionData);
 }

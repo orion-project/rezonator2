@@ -1,7 +1,7 @@
 #include "CalculatorWindow.h"
 
 #include "../app/Appearance.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../core/LuaHelper.h"
 
 #include "helpers/OriDialogs.h"
@@ -257,9 +257,8 @@ void CalculatorWindow::calculate()
 
 void CalculatorWindow::restoreState()
 {
-    QJsonObject root = CustomDataHelpers::loadCustomData("calc");
-
-    CustomDataHelpers::restoreWindowSize(root, this, 600, 400);
+    QJsonObject root = PersistentState::load("calc");
+    PersistentState::restoreWindowGeometry(root, this);
 
     // Restore font
     _overrideFont = root["override_font"].toBool();
@@ -291,7 +290,7 @@ void CalculatorWindow::restoreState()
 
     // Restore session vars
     QJsonObject varsJson = root["vars"].toObject();
-    for (auto key : varsJson.keys())
+    for (auto& key : varsJson.keys())
         _lua->setGlobalVar(key, varsJson[key].toDouble());
     populateVars();
 }
@@ -299,8 +298,6 @@ void CalculatorWindow::restoreState()
 void CalculatorWindow::storeState()
 {
     QJsonObject root;
-
-    CustomDataHelpers::storeWindowSize(root, this);
 
     // Store font
     root["override_font"] = _overrideFont;
@@ -318,7 +315,7 @@ void CalculatorWindow::storeState()
 
     // Store calculation history
     QJsonArray log;
-    for (auto item : _log)
+    for (auto& item : qAsConst(_log))
         log.append(QJsonObject({
             {"code", item.code},
             {"result", item.result}
@@ -336,7 +333,8 @@ void CalculatorWindow::storeState()
     }
     root["vars"] = varsJson;
 
-    CustomDataHelpers::saveCustomData(root, "calc");
+    PersistentState::storeWindowGeometry(root, this);
+    PersistentState::save("calc", root);
 }
 
 void CalculatorWindow::clearLog()

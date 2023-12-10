@@ -2,8 +2,7 @@
 
 #include "../app/AppSettings.h"
 #include "../app/CalcManager.h"
-#include "../app/CommonData.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../app/HelpSystem.h"
 #include "../core/Schema.h"
 #include "../core/Protocol.h"
@@ -17,6 +16,7 @@
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
+#include "tools/OriMruList.h"
 #include "tools/OriWaitCursor.h"
 #include "widgets/OriSelectableTile.h"
 
@@ -60,20 +60,18 @@ static void startAppInstance(QStringList args, const QString& schemaFile = QStri
 
 //------------------------------------------------------------------------------
 
-ProjectOperations::ProjectOperations(Schema *schema, QWidget *parent, CalcManager *calcManager) :
-    QObject(parent), _parent(parent), _schema(schema), _calcManager(calcManager)
+ProjectOperations::ProjectOperations(Schema *schema, QWidget *parent, CalcManager *calcManager, Ori::MruList* mruList) :
+    QObject(parent), _parent(parent), _schema(schema), _calcManager(calcManager), _mruList(mruList)
 {
-}
-
-void ProjectOperations::newSchemaFile()
-{
-    startAppInstance({});
+    connect(_mruList, &Ori::MruList::clicked, this, [this](const QString& fileName){
+        openSchemaFile(fileName, {.addToMru = true});
+    });
 }
 
 QString ProjectOperations::getOpenFileName(QWidget* parent)
 {
-    QString recentPath = CustomPrefs::recentDir("schema_open_path");
-    QString recentFilter = CustomPrefs::recentStr("schema_open_filter");
+    QString recentPath = RecentData::getDir("schema_open_path");
+    QString recentFilter = RecentData::getStr("schema_open_filter");
 
     auto fileName = QFileDialog::getOpenFileName(parent,
                                                  tr("Open schema", "Dialog title"),
@@ -83,19 +81,17 @@ QString ProjectOperations::getOpenFileName(QWidget* parent)
                                                  fileDialogOptions());
     if (fileName.isEmpty()) return QString();
 
-    CustomPrefs::setRecentDir("schema_open_path", fileName);
-    CustomPrefs::setRecentStr("schema_open_filter", recentFilter);
+    RecentData::PendingSave _;
+    RecentData::setDir("schema_open_path", fileName);
+    RecentData::setStr("schema_open_filter", recentFilter);
 
-    fileName = Z::IO::Utils::refineFileName(fileName, recentFilter);
-
-    CommonData::instance()->addFileToMruList(fileName);
-    return fileName;
+    return Z::IO::Utils::refineFileName(fileName, recentFilter);
 }
 
 QString ProjectOperations::getSaveFileName(QWidget* parent)
 {
-    QString recentPath = CustomPrefs::recentDir("schema_save_path");
-    QString recentFilter = CustomPrefs::recentStr("schema_save_filter");
+    QString recentPath = RecentData::getDir("schema_save_path");
+    QString recentFilter = RecentData::getStr("schema_save_filter");
 
     auto fileName = QFileDialog::getSaveFileName(parent,
                                                  tr("Save Schema", "Dialog title"),
@@ -105,32 +101,30 @@ QString ProjectOperations::getSaveFileName(QWidget* parent)
                                                  fileDialogOptions());
     if (fileName.isEmpty()) return QString();
 
-    CustomPrefs::setRecentDir("schema_save_path", fileName);
-    CustomPrefs::setRecentStr("schema_save_filter", recentFilter);
+    RecentData::PendingSave _;
+    RecentData::setDir("schema_save_path", fileName);
+    RecentData::setStr("schema_save_filter", recentFilter);
 
-    fileName = Z::IO::Utils::refineFileName(fileName, recentFilter);
-
-    CommonData::instance()->addFileToMruList(fileName);
-    return fileName;
+    return Z::IO::Utils::refineFileName(fileName, recentFilter);
 }
 
-void ProjectOperations::openExampleFile(const QString& fileName)
+void ProjectOperations::newSchemaFile()
 {
-    OpenFileOptions opts;
-    opts.isExample = true;
-    openSchemaFile(fileName, opts);
+    startAppInstance({});
+}
+
+void ProjectOperations::openExampleFile()
+{
+    auto fileName = selectSchemaExample();
+    if (fileName.isEmpty()) return;
+    openSchemaFile(fileName, {.isExample = true});
 }
 
 void ProjectOperations::openSchemaFile()
 {
     auto fileName = getOpenFileName(_parent);
     if (fileName.isEmpty()) return;
-    openSchemaFile(fileName);
-}
-
-void ProjectOperations::openSchemaFile(const QString& fileName)
-{
-    openSchemaFile(fileName, OpenFileOptions());
+    openSchemaFile(fileName, {.addToMru = true});
 }
 
 void ProjectOperations::openSchemaFile(const QString& fileName, const OpenFileOptions& opts)
@@ -182,6 +176,9 @@ void ProjectOperations::openSchemaFile(const QString& fileName, const OpenFileOp
     schema()->events().enable();
     schema()->events().raise(SchemaEvents::Loaded, "ProjectOperations: schema file loaded");
     schema()->events().raise(SchemaEvents::RecalRequred, "ProjectOperations: schema file loaded");
+
+    if (opts.addToMru)
+        _mruList->append(fileName);
 }
 
 void ProjectOperations::writeProtocol(const Z::Report& report, const QString& message)
@@ -218,23 +215,32 @@ bool ProjectOperations::saveSchemaFile()
         return Ori::Dlg::yes(tr("The schema is in the old format and can not be saved, "
                                 "would you like to save it as a file in the new format?"))
             && saveSchemaFileAs();
-    return saveSchemaFile(fileName);
+    return saveSchemaFile(fileName, {});
 }
 
-void ProjectOperations::applyMemoEditors()
+bool ProjectOperations::saveSchemaFileAs()
 {
+    auto fileName = getSaveFileName(_parent);
+    if (fileName.isEmpty()) return false;
+    return saveSchemaFile(fileName, {.addToMru = true});
+}
+
+void ProjectOperations::saveSchemaFileCopy()
+{
+    auto fileName = getSaveFileName(_parent);
+    if (fileName.isEmpty()) return;
+    saveSchemaFile(fileName, {.asCopy = true, .addToMru = true});
+}
+
+bool ProjectOperations::saveSchemaFile(const QString& fileName, const SaveFileOptions& opts)
+{
+    Z_REPORT("Saving" << fileName)
+
     if (schema()->memo && schema()->memo->editor)
     {
         auto editor = dynamic_cast<ISchemaMemoEditor*>(schema()->memo->editor.data());
         if (editor) editor->saveMemo();
     }
-}
-
-bool ProjectOperations::saveSchemaFile(const QString& fileName)
-{
-    Z_REPORT("Saving" << fileName)
-
-    applyMemoEditors();
 
     SchemaWriterJson writer(schema());
     {
@@ -244,41 +250,18 @@ bool ProjectOperations::saveSchemaFile(const QString& fileName)
     if (!writer.report().isEmpty())
         writeProtocol(writer.report(), tr("There are messages while saving project."));
 
-    if (!writer.report().hasErrors())
+    if (!writer.report().hasErrors() and !opts.asCopy)
     {
         schema()->setFileName(fileName);
         schema()->events().raise(SchemaEvents::Saved, "ProjectOperations: schema file saved");
     }
 
-    return !writer.report().hasErrors();
-}
+    bool ok = !writer.report().hasErrors();
 
-bool ProjectOperations::saveSchemaFileAs()
-{
-    auto fileName = getSaveFileName(_parent);
-    if (fileName.isEmpty()) return false;
-    bool ok = saveSchemaFile(fileName);
-    if (ok)
-        CommonData::instance()->addFileToMruList(fileName);
+    if (ok and opts.addToMru)
+        _mruList->append(fileName);
+
     return ok;
-}
-
-void ProjectOperations::saveSchemaFileCopy()
-{
-    auto fileName = getSaveFileName(_parent);
-    if (fileName.isEmpty()) return;
-
-    Z_REPORT("Saving copy" << fileName)
-
-    Ori::WaitCursor wc;
-
-    applyMemoEditors();
-
-    SchemaWriterJson writer(schema());
-    writer.writeToFile(fileName);
-
-    if (!writer.report().isEmpty())
-        writeProtocol(writer.report(), tr("There are messages while saving copy of project."));
 }
 
 bool ProjectOperations::canClose()
@@ -368,7 +351,7 @@ bool ProjectOperations::selectTripTypeDlg(TripType* tripType)
     tripTypeLabel->setFont(font);
 
     Ori::Widgets::SelectableTileRadioGroup tripTypeGroup;
-    connect(&tripTypeGroup, &Ori::Widgets::SelectableTileRadioGroup::dataSelected, [&](const QVariant& data){
+    connect(&tripTypeGroup, &Ori::Widgets::SelectableTileRadioGroup::dataSelected, this, [&](const QVariant& data){
         auto tripType = static_cast<TripType>(data.toInt());
         auto info = TripTypes::info(tripType);
         tripTypeLabel->setText(info.fullHeader());
@@ -454,11 +437,11 @@ QString ProjectOperations::selectSchemaExample()
     Ori::Dlg::Dialog dlg(&fileList, false);
     dlg.withTitle(tr("Open Example Schema"))
        .withStretchedContent()
-       .withInitialSize(CustomPrefs::recentSize("open_example_dlg_size"))
+       .withInitialSize(RecentData::getSize("open_example_dlg_size"))
        .withOkSignal(SIGNAL(itemDoubleClicked(QListWidgetItem*)));
     if (dlg.exec())
     {
-        CustomPrefs::setRecentSize("open_example_dlg_size", dlg.size());
+        RecentData::setSize("open_example_dlg_size", dlg.size());
         QListWidgetItem *selected = fileList.currentItem();
         if (selected)
             fileName = examplesDir % '/' % selected->text();

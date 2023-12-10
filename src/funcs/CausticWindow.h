@@ -63,7 +63,6 @@ private:
     Z::Variable* _var;
     ElemSelectorWidget* _elemSelector;
     PointsRangeEditor* _rangeEditor;
-    QString _recentKey = "func_caustic";
 
     void populate();
 };

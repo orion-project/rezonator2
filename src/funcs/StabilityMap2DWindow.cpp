@@ -1,6 +1,6 @@
 #include "StabilityMap2DWindow.h"
 
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../core/Report.h"
 #include "../funcs/FuncOptionsPanel.h"
 #include "../io/CommonUtils.h"
@@ -64,7 +64,7 @@ void StabilityMap2DParamsDlg::populate()
 {
     if (!_editor1.var->element || !_editor2.var->element)
     {
-        auto recentObj = CustomPrefs::recentObj(_recentKey);
+        auto recentObj = RecentData::getObj("func_stab_map_2d");
         Z::IO::Json::readVariablePref(recentObj["var1"].toObject(), _editor1.var, _schema);
         Z::IO::Json::readVariablePref(recentObj["var2"].toObject(), _editor2.var, _schema);
     }
@@ -111,7 +111,7 @@ void StabilityMap2DParamsDlg::collect()
 
     accept();
 
-    CustomPrefs::setRecentObj(_recentKey, QJsonObject({
+    RecentData::setObj("func_stab_map_2d", QJsonObject({
         { "var1", Z::IO::Json::writeVariablePref(_editor1.var) },
         { "var2", Z::IO::Json::writeVariablePref(_editor2.var) },
     }));
@@ -169,7 +169,7 @@ int StabilityMap2DOptionsPanel::currentFunctionMode() const
 void StabilityMap2DOptionsPanel::functionModeChanged(int mode)
 {
     auto stabCalcMode = static_cast<Z::Enums::StabilityCalcMode>(mode);
-    CustomPrefs::setRecentStr(QStringLiteral("func_stab_2d_map_mode"), Z::Enums::toStr(stabCalcMode));
+    RecentData::setEnum("func_stab_2d_map_mode", stabCalcMode);
     _window->function()->setStabilityCalcMode(stabCalcMode);
 }
 

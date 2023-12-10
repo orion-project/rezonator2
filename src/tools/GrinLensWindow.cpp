@@ -1,7 +1,7 @@
 #include "GrinLensWindow.h"
 
 #include "../app/Appearance.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../math/GrinCalculator.h"
 #include "../io/JsonUtils.h"
 #include "../widgets/ParamsEditor.h"
@@ -98,7 +98,7 @@ GrinLensWindow::~GrinLensWindow()
 
 void GrinLensWindow::restoreState()
 {
-    QJsonObject root = CustomDataHelpers::loadCustomData("grin");
+    QJsonObject root = PersistentState::load("grin");
     if (root["solve_n2"].toBool(true))
         _actionCalcN2->setChecked(true);
     else _actionCalcF->setChecked(true);
@@ -107,17 +107,17 @@ void GrinLensWindow::restoreState()
         auto res = Z::IO::Json::readValue(root[p->alias()].toObject(), p->dim());
         if (res.ok()) p->setValue(res.value());
     }
-    CustomDataHelpers::restoreWindowSize(root, this, 340, 280);
+    PersistentState::restoreWindowGeometry(root, this);
 }
 
 void GrinLensWindow::storeState()
 {
     QJsonObject root;
-    CustomDataHelpers::storeWindowSize(root, this);
+    PersistentState::storeWindowGeometry(root, this);
     root["solve_n2"] = _actionCalcN2->isChecked();
     foreach (auto p, _params)
         root[p->alias()] = Z::IO::Json::writeValue(p->value());
-    CustomDataHelpers::saveCustomData(root, "grin");
+    PersistentState::save("grin", root);
 }
 
 void GrinLensWindow::calculate(Z::Parameter *p)

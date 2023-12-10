@@ -5,7 +5,12 @@
 
 #include "core/OriTemplates.h"
 
+#include <QObject>
 #include <QSize>
+
+QT_BEGIN_NAMESPACE
+class QFileSystemWatcher;
+QT_END_NAMESPACE
 
 enum class AppSettingsOptions {
     numberPrecisionData
@@ -21,11 +26,13 @@ public:
     virtual void optionChanged(AppSettingsOptions option) { Q_UNUSED(option) }
 };
 
-class AppSettings :
-        public Ori::Singleton<AppSettings>,
-        public Ori::Notifier<IAppSettingsListener>
+class AppSettings : public QObject, public Ori::Notifier<IAppSettingsListener>
 {
 public:
+    AppSettings();
+
+    static AppSettings& instance();
+
     bool editNewElem;         ///< Open element properties dialog after element has been created.
     bool smallToolbarImages;  ///< Use small toolbar images (16x16 instead of 24x24).
     bool showBackground;      ///< Show background image in main window.
@@ -86,13 +93,19 @@ public:
     QPen graphPenT() const;
     QPen graphPenS() const;
 
+    QStringList loadMruItems() const;
+    void saveMruItems(const QStringList& items);
+
 private:
-    AppSettings() {}
-
-    friend class Ori::Singleton<AppSettings>;
-
     int toolbarIconSizeSmall;
     int toolbarIconSizeBig;
+
+    QFileSystemWatcher* _watcher = nullptr;
+    bool _timerStarted = false;
+    bool _selfSaved = false;
+
+    void onFileChanged();
+    void onReloadTimeout();
 };
 
 #endif // APP_SETTINGS_H

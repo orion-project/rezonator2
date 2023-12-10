@@ -11,13 +11,13 @@ inline QString imagUnit(bool useJ)
 
 QString str(const Complex& v)
 {
-    auto s = AppSettings::instancePtr();
+    const auto& s = AppSettings::instance();
     return QString("%1%2%3%4%5")
             .arg(v.real(), 0, 'g', 16)
             .arg(v.imag() < 0 ? '-' : '+')
-            .arg(s->showImagUnitAtEnd ? QString() : imagUnit(s->showImagUnitAsJ))
+            .arg(s.showImagUnitAtEnd ? QString() : imagUnit(s.showImagUnitAsJ))
             .arg(qAbs(v.imag()), 0, 'g', 16)
-            .arg(s->showImagUnitAtEnd ? imagUnit(s->showImagUnitAsJ) : QString());
+            .arg(s.showImagUnitAtEnd ? imagUnit(s.showImagUnitAsJ) : QString());
 }
 
 QString format(const double& v)
@@ -27,13 +27,13 @@ QString format(const double& v)
 
 QString format(const Complex& v)
 {
-    auto s = AppSettings::instancePtr();
+    const auto& s = AppSettings::instance();
     return QString("%1 %2 %3%4%5")
-            .arg(v.real(), 0, 'g', s->numberPrecisionData)
+            .arg(v.real(), 0, 'g', s.numberPrecisionData)
             .arg(v.imag() < 0 ? '-' : '+')
-            .arg(s->showImagUnitAtEnd ? QString() : imagUnit(s->showImagUnitAsJ))
-            .arg(qAbs(v.imag()), 0, 'g', s->numberPrecisionData)
-            .arg(s->showImagUnitAtEnd ? imagUnit(s->showImagUnitAsJ) : QString());
+            .arg(s.showImagUnitAtEnd ? QString() : imagUnit(s.showImagUnitAsJ))
+            .arg(qAbs(v.imag()), 0, 'g', s.numberPrecisionData)
+            .arg(s.showImagUnitAtEnd ? imagUnit(s.showImagUnitAsJ) : QString());
 }
 
 } // namespace Z

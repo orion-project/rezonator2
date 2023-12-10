@@ -1,7 +1,7 @@
 #include "PlotFuncWindow.h"
 
 #include "../app/AppSettings.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../core/Format.h"
 #include "../core/Protocol.h"
 #include "../funcs/InfoFuncWindow.h"
@@ -932,12 +932,12 @@ void PlotFuncWindow::pasteFormatToSelection()
 
 void PlotFuncWindow::savePlotFormat()
 {
-    QString recentPath = CustomPrefs::recentDir("plot_format_path");
+    QString recentPath = RecentData::getDir("plot_format_path");
     auto fileName = QFileDialog::getSaveFileName(
         this, tr("Save Plot Format"), recentPath, tr("JSON files (*.json)\nAll files (*.*)"));
     if (fileName.isEmpty())
         return;
-    CustomPrefs::setRecentDir("plot_format_path", fileName);
+    RecentData::setDir("plot_format_path", fileName);
     QString err = QCPL::saveFormatToFile(fileName, _plot);
     if (!err.isEmpty())
         Ori::Dlg::error(err);
@@ -945,12 +945,12 @@ void PlotFuncWindow::savePlotFormat()
 
 void PlotFuncWindow::loadPlotFormat()
 {
-    QString recentPath = CustomPrefs::recentDir("plot_format_path");
+    QString recentPath = RecentData::getDir("plot_format_path");
     auto fileName = QFileDialog::getOpenFileName(
         this, tr("Load Plot Format"), recentPath, tr("JSON files (*.json)\nAll files (*.*)"));
     if (fileName.isEmpty())
         return;
-    CustomPrefs::setRecentDir("plot_format_path", fileName);
+    RecentData::setDir("plot_format_path", fileName);
     QCPL::JsonReport report;
     auto err = QCPL::loadFormatFromFile(fileName, _plot, &report);
     if (!err.isEmpty())

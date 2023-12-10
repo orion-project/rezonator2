@@ -1,7 +1,7 @@
 #include "TableFuncWindow.h"
 
 #include "../app/Appearance.h"
-#include "../app/CustomPrefs.h"
+#include "../app/PersistentState.h"
 #include "../core/Format.h"
 #include "../funcs/FuncWindowHelpers.h"
 #include "../math/InfoFunctions.h"
@@ -240,9 +240,12 @@ void TableFuncWindow::createActions()
 
     _actnFreeze = toggledAction(tr("Freeze"), this, SLOT(freeze(bool)), ":/toolbar/freeze", Qt::CTRL | Qt::Key_F);
 
-    _actnCalcMediumEnds = toggledAction(tr("Calculate at medium ends"), this, SLOT(toggleCalcMediumEnds(bool)));
-    _actnCalcEmptySpaces = toggledAction(tr("Calculate in empty spaces"), this, SLOT(toggleCalcEmptySpaces(bool)));
-    _actnCalcSpaceMids = toggledAction(tr("Calculate in the middle of ranges"), this, SLOT(toggleCalcSpaceMids(bool)));
+    _actnCalcMediumEnds = toggledAction(tr("Calculate at medium ends"), this, nullptr);
+    _actnCalcEmptySpaces = toggledAction(tr("Calculate in empty spaces"), this, nullptr);
+    _actnCalcSpaceMids = toggledAction(tr("Calculate in the middle of ranges"), this, nullptr);
+    connect(_actnCalcMediumEnds, SIGNAL(triggered(bool)), this, SLOT(toggleCalcMediumEnds(bool)));
+    connect(_actnCalcEmptySpaces, SIGNAL(triggered(bool)), this, SLOT(toggleCalcEmptySpaces(bool)));
+    connect(_actnCalcSpaceMids, SIGNAL(triggered(bool)), this, SLOT(toggleCalcSpaceMids(bool)));
 }
 
 void TableFuncWindow::createMenuBar()
@@ -386,12 +389,12 @@ QJsonObject TableFuncWindow::writeParams(const TableFunction::Params& params)
 
 bool TableFuncWindow::configure()
 {
-    return configureInternal(readParams(CustomPrefs::recentObj("func_beam_params_at_elems")));
+    return configureInternal(readParams(RecentData::getObj("func_beam_params_at_elems")));
 }
 
 bool TableFuncWindow::configureInternal(const TableFunction::Params& params)
 {
-    CustomPrefs::setRecentObj("func_beam_params_at_elems", writeParams(params));
+    RecentData::setObj("func_beam_params_at_elems", writeParams(params));
     schema()->events().raise(SchemaEvents::Changed, "TableFuncWindow: configure");
     _function->setParams(params);
     updateParamsActions();
