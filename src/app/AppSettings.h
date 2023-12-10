@@ -86,6 +86,9 @@ public:
     QPen graphPenT() const;
     QPen graphPenS() const;
 
+    QStringList loadMruItems() const;
+    void saveMruItems(const QStringList& items);
+
 private:
     AppSettings() {}
 

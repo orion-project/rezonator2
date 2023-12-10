@@ -20,7 +20,6 @@ class SchemaViewWindow;
 
 namespace Ori {
     class MruList;
-    class Settings;
     namespace Widgets {
         class MruMenu;
         class MdiToolBar;
@@ -64,7 +63,7 @@ public:
     ProjectOperations* operations() { return _operations; }
 
     // StartWindow needs an equivalent mru-list, so publish the factory method
-    static Ori::MruList* createMruList(Ori::Settings& s, QObject* parent);
+    static Ori::MruList* createMruList(QObject* parent);
 
 protected:
     void closeEvent(class QCloseEvent*) override;

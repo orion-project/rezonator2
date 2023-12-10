@@ -17,7 +17,6 @@
 #include "helpers/OriDialogs.h"
 #include "tools/OriHighlighter.h"
 #include "tools/OriMruList.h"
-#include "tools/OriSettings.h"
 #include "widgets/OriLabels.h"
 #include "widgets/OriFlatToolBar.h"
 
@@ -140,12 +139,12 @@ void MruStartItem::mouseReleaseEvent(QMouseEvent* event)
 //                              MruStartPanel
 //------------------------------------------------------------------------------
 
-MruStartPanel::MruStartPanel(Ori::Settings &settings) : CustomCssWidget()
+MruStartPanel::MruStartPanel() : CustomCssWidget()
 {
     setProperty("role", "panel");
     setObjectName("panel_mru");
 
-    auto mruList = ProjectWindow::createMruList(settings, this);
+    auto mruList = ProjectWindow::createMruList(this);
 
     auto items = mruList->items();
     if (items.isEmpty())
@@ -520,8 +519,6 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
     setWindowTitle(qApp->applicationName());
     Ori::Wnd::setWindowIcon(this, ":/window_icons/main");
 
-    Ori::Settings s;
-
     auto tipImage = new Ori::Widgets::Label;
     tipImage->setObjectName("tip_image");
     tipImage->setCursor(Qt::PointingHandCursor);
@@ -530,7 +527,7 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
     auto actionsPanel = new ActionsStartPanel;
     connect(actionsPanel, &ActionsStartPanel::closeRequested, this, &StartWindow::close);
 
-    auto mruPanel = new MruStartPanel(s);
+    auto mruPanel = new MruStartPanel;
     connect(mruPanel, &MruStartPanel::closeRequested, this, &StartWindow::close);
 
     auto toolsPanel = new ToolsStartPanel;
@@ -572,12 +569,12 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
     // Should be after all widgets to overlay them
     tipImage->setParent(this);
 
-    s.restoreWindowGeometry("startWindow", this);
+    PersistentState::restoreWindowGeometry("start", this, {950, 700});
 }
 
 StartWindow::~StartWindow()
 {
-    Ori::Settings().storeWindowGeometry("startWindow", this);
+    PersistentState::storeWindowGeometry("start", this);
 }
 
 void StartWindow::editStyleSheet()

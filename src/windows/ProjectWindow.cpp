@@ -3,6 +3,7 @@
 #include "../app/CalcManager.h"
 #include "../app/HelpSystem.h"
 #include "../app/ProjectOperations.h"
+#include "../app/PersistentState.h"
 #include "../core/Format.h"
 #include "../math/RoundTripCalculator.h"
 #include "../tools/CalculatorWindow.h"
@@ -24,7 +25,6 @@
 #include "helpers/OriWidgets.h"
 #include "helpers/OriWindows.h"
 #include "tools/OriMruList.h"
-#include "tools/OriSettings.h"
 #include "widgets/OriMruMenu.h"
 #include "widgets/OriMdiToolBar.h"
 #include "widgets/OriStatusBar.h"
@@ -70,11 +70,7 @@ ProjectWindow::ProjectWindow(Schema* aSchema) : QMainWindow(), SchemaToolWindow(
     setAttribute(Qt::WA_DeleteOnClose);
     Ori::Wnd::setWindowIcon(this, ":/window_icons/main");
 
-    Ori::Settings s;
-    s.restoreWindowGeometry("mainWindow", this);
-
-    _mruList = createMruList(s, this);
-    _mruList->setMaxCount(AppSettings::instance().mruSchemaCount);
+    _mruList = createMruList(this);
 
     _calculations = new CalcManager(schema(), this);
     _operations = new ProjectOperations(schema(), this, _calculations, _mruList);
@@ -114,11 +110,13 @@ ProjectWindow::ProjectWindow(Schema* aSchema) : QMainWindow(), SchemaToolWindow(
     connect(shortcutApply, &QShortcut::activated, this, &ProjectWindow::shortcutEnterActivated);
 
     MessageBus::instance().registerListener(this);
+
+    PersistentState::restoreWindowGeometry("main", this, {1024, 768});
 }
 
 ProjectWindow::~ProjectWindow()
 {
-    Ori::Settings().storeWindowGeometry("mainWindow", this);
+    PersistentState::storeWindowGeometry("main", this);
 }
 
 void ProjectWindow::registerStorableWindows()
@@ -273,11 +271,15 @@ void ProjectWindow::createStatusBar()
     setStatusBar(_statusBar);
 }
 
-Ori::MruList* ProjectWindow::createMruList(Ori::Settings& s, QObject* parent)
+Ori::MruList* ProjectWindow::createMruList(QObject* parent)
 {
-    s.beginGroup("States");
     auto mru = new Ori::MruFileList(parent);
-    mru->load(s.settings());
+    mru->setAutoSave(false);
+    mru->setItems(AppSettings::instance().loadMruItems());
+    mru->setMaxCount(AppSettings::instance().mruSchemaCount);
+    mru->connect(mru, &Ori::MruList::saveRequired, [mru]{
+        AppSettings::instance().saveMruItems(mru->items());
+    });
     return mru;
 }
 

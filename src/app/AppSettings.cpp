@@ -203,3 +203,17 @@ QPen AppSettings::graphPenS() const
 {
     return QPen(Qt::red);
 }
+
+QStringList AppSettings::loadMruItems() const
+{
+    Ori::Settings s;
+    s.beginGroup("States");
+    return s.settings()->value("mru").toStringList();
+}
+
+void AppSettings::saveMruItems(const QStringList& items)
+{
+    Ori::Settings s;
+    s.beginGroup("States");
+    s.settings()->setValue("mru", items);
+}

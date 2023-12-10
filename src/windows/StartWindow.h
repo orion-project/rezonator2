@@ -13,7 +13,6 @@ class QToolBar;
 QT_END_NAMESPACE
 
 namespace Ori {
-    class Settings;
     namespace Widgets {
         class Label;
     }
@@ -54,7 +53,7 @@ class MruStartPanel : public CustomCssWidget
     Q_OBJECT
 
 public:
-    explicit MruStartPanel(Ori::Settings& settings);
+    explicit MruStartPanel();
 
 signals:
     void closeRequested();

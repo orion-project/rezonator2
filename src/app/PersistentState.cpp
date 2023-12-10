@@ -58,6 +58,18 @@ void save(const char *id, const QJsonObject& root)
     QTextStream(&file) << QJsonDocument(root).toJson();
 }
 
+void storeWindowGeometry(const char *id, QWidget* w)
+{
+    QJsonObject state;
+    storeWindowGeometry(state, w);
+    save(id, state);
+}
+
+void restoreWindowGeometry(const char *id, QWidget* w, const QSize& defSize)
+{
+    restoreWindowGeometry(load(id), w, defSize);
+}
+
 void storeWindowGeometry(QJsonObject& s, QWidget* w)
 {
     auto g = w->geometry();
@@ -78,7 +90,7 @@ void restoreWindowGeometry(const QJsonObject& s, QWidget* w, const QSize& defSiz
         o[QLatin1String("top")].toInt(),
         o[QLatin1String("width")].toInt(),
         o[QLatin1String("height")].toInt()),
-        o[QLatin1String("maximized")].toBool());
+        o[QLatin1String("maximized")].toBool(), defSize);
 }
 
 } // namespace PersistentState
