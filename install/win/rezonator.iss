@@ -42,11 +42,13 @@ AppPublisher={#AppPublisher}
 AppPublisherURL={#AppURL}
 AppSupportURL={#AppURL}
 AppUpdatesURL={#AppURL}
-;TODO AppMutex=reZonator2Mutex
+SetupMutex=reZonator2_SetupMutex
+CloseApplications=yes
 DefaultDirName={autopf64}\{#AppName}
 DefaultGroupName={#AppName}
 AllowNoIcons=yes
 LicenseFile={#BaseDir}\..\..\LICENSE
+;Output=no
 OutputDir={#BaseDir}\..\install
 OutputBaseFilename="rezonator-{#AppVerFull}"
 Compression=lzma
@@ -56,6 +58,11 @@ ChangesAssociations=yes
 VersionInfoVersion={#AppVerShort}.{#AppVerPatch}.0
 ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
+WizardImageFile=side.bmp
+
+; Windows 10 (1809) is the minimum supported by Qt6
+; https://doc.qt.io/qt-6/supported-platforms.html
+MinVersion=10.0.17763
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -68,7 +75,6 @@ Name: "desktopicon\user"; Description: "{cm:ForCurrentUser}"; GroupDescription: 
 
 [Files]
 Source: "{#BaseDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
-Source: "{#BaseDir}\{#AppExe}"; DestDir: "{localappdata}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\{#AppName}"; Filename: "{app}\{#AppExe}"
