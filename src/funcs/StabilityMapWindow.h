@@ -35,6 +35,9 @@ protected:
     QString readWindowSpecific(const QJsonObject& root) override;
     QString writeWindowSpecific(QJsonObject& root) override;
 
+    // inherited from IAppSettingsListener
+    void optionChanged(AppSettingsOption option) override;
+
 private:
     QAction *_actnStabilityAutolimits, *_actnStabBoundMarkers, *_actnStabBoundMarkersFormat;
     QCPItemStraightLine *_stabBoundMarkerLow, *_stabBoundMarkerTop;

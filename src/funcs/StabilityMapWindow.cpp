@@ -263,7 +263,7 @@ void StabilityMapWindow::updateStabBoundMarkers()
 
 QPen StabilityMapWindow::stabBoundMarkerPen() const
 {
-    return _stabBoundMarkerPen ? *_stabBoundMarkerPen : AppSettings::instance().stabBoundMarkerPen();
+    return _stabBoundMarkerPen ? *_stabBoundMarkerPen : AppSettings::instance().pen(AppSettings::PenStabBound);
 }
 
 QCPItemStraightLine* StabilityMapWindow::makeStabBoundMarker() const
@@ -330,4 +330,16 @@ SpecPointParams StabilityMapWindow::getSpecPointsParams() const
     return {
         { StabilityMapFunction::spUnitX, SpecPointParam(getUnitX()) },
     };
+}
+
+void StabilityMapWindow::optionChanged(AppSettingsOption option)
+{
+    PlotFuncWindow::optionChanged(option);
+
+    if (option == AppSettingsOption::DefaultPenFormat)
+    {
+        _stabBoundMarkerLow->setPen(stabBoundMarkerPen());
+        _stabBoundMarkerTop->setPen(stabBoundMarkerPen());
+        _plot->replot();
+    }
 }

@@ -33,6 +33,9 @@ public:
     void storeView(FuncMode) override;
     void restoreView(FuncMode) override;
 
+    // inherited from IAppSettingsListener
+    void optionChanged(AppSettingsOption option) override;
+
 protected:
     // Implementation of PlotFuncWindow
     bool configureInternal() override;

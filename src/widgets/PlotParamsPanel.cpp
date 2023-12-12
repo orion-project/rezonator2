@@ -129,7 +129,7 @@ void PlotParamsPanel::saveActiveSize()
     for (PanelInfo& panel: _panels)
         if (panel.widget == activePanel)
         {
-            panel.size = _splitter->sizes().first();
+            panel.size = _splitter->sizes().constFirst();
             break;
         }
 }
@@ -157,9 +157,9 @@ void PlotParamsPanel::setOptionsPanelEnabled(bool on)
         panel->setEnabled(on);
 }
 
-void PlotParamsPanel::optionChanged(AppSettingsOptions option)
+void PlotParamsPanel::optionChanged(AppSettingsOption option)
 {
-    if (option == AppSettingsOptions::numberPrecisionData)
+    if (option == AppSettingsOption::NumberPrecisionData)
     {
         auto grid = dataGrid();
         if (grid)

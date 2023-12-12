@@ -60,7 +60,7 @@ signals:
 
 private:
     void makeEmpty();
-    void openFile(const QString& fileName);
+    void openFile(const QString &fileName);
 };
 
 //------------------------------------------------------------------------------

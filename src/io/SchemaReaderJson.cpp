@@ -50,7 +50,10 @@ void SchemaReaderJson::readFromFile(const QString& fileName)
 {
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        qWarning() << "SchemaReaderJson::readFromFile" << fileName << file.errorString();
         return _report.error(QString("Unable to open file for reading: %1").arg(file.errorString()));
+    }
     readFromUtf8(file.readAll());
     file.close();
 }

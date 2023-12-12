@@ -9,6 +9,9 @@
         },
         {
           "text": "Watch config files for sharing data between running instances"
+        },
+        {
+          "text": "Configure default formats for graphs, cursor, and boundary lines"
         }
       ]
     },

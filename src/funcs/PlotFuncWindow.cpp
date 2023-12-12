@@ -320,7 +320,7 @@ void PlotFuncWindow::createContent()
     _plot->setFormatterTextT(_plot->defaultTextT());
 
     _cursor = new QCPL::Cursor(_plot);
-    _cursor->setPen(AppSettings::instance().cursorPen());
+    _cursor->setPen(AppSettings::instance().pen(AppSettings::PenCursor));
     connect(_cursor, &QCPL::Cursor::positionChanged, this, &PlotFuncWindow::updateCursorInfo);
     _plot->serviceGraphs().append(_cursor);
     auto axesLayer = _plot->layer("axes");
@@ -341,8 +341,8 @@ void PlotFuncWindow::createContent()
     setContent(_splitter);
 
     _graphs = new FunctionGraphSet(_plot, [this]{ return GraphUnits {getUnitX(), getUnitY()}; });
-    _graphs->T()->setPen(AppSettings::instance().graphPenT());
-    _graphs->S()->setPen(AppSettings::instance().graphPenS());
+    _graphs->T()->setPen(AppSettings::instance().pen(AppSettings::PenGraphT));
+    _graphs->S()->setPen(AppSettings::instance().pen(AppSettings::PenGraphS));
 }
 
 void PlotFuncWindow::createStatusBar()
@@ -776,13 +776,20 @@ void PlotFuncWindow::setUnitY(Z::Unit unit)
     update();
 }
 
-void PlotFuncWindow::optionChanged(AppSettingsOptions option)
+void PlotFuncWindow::optionChanged(AppSettingsOption option)
 {
-    if (option == AppSettingsOptions::numberPrecisionData)
+    if (option == AppSettingsOption::NumberPrecisionData)
     {
         _cursorPanel->setNumberPrecision(AppSettings::instance().numberPrecisionData, false);
         updateCursorInfo();
         updateSpecPoints();
+    }
+    else if (option == AppSettingsOption::DefaultPenFormat)
+    {
+        _graphs->T()->setPen(graphPenT());
+        _graphs->S()->setPen(graphPenS());
+        _cursor->setPen(cursorPen());
+        _plot->replot();
     }
 }
 
@@ -968,17 +975,17 @@ void PlotFuncWindow::loadPlotFormat()
 
 QPen PlotFuncWindow::cursorPen() const
 {
-    return _cursorPen ? *_cursorPen : AppSettings::instance().cursorPen();
+    return _cursorPen ? *_cursorPen : AppSettings::instance().pen(AppSettings::PenCursor);
 }
 
 QPen PlotFuncWindow::graphPenT() const
 {
-    return _graphPenT ? *_graphPenT : AppSettings::instance().graphPenT();
+    return _graphPenT ? *_graphPenT : AppSettings::instance().pen(AppSettings::PenGraphT);
 }
 
 QPen PlotFuncWindow::graphPenS() const
 {
-    return _graphPenS ? *_graphPenS : AppSettings::instance().graphPenS();
+    return _graphPenS ? *_graphPenS : AppSettings::instance().pen(AppSettings::PenGraphS);
 }
 
 void PlotFuncWindow::cursorFormatDlg()
