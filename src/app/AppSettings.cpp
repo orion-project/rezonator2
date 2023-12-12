@@ -188,19 +188,38 @@ void AppSettings::save()
     SAVE1("defaultUnitAngle", defaultUnitAngle->alias());
 }
 
+struct AppSettingsNotifier
+{
+    AppSettingsNotifier(AppSettings* s, bool changed = false) : settings(s), changed(changed)
+    {
+        numberPrecisionData = s->numberPrecisionData;
+        pens = QMap(s->_pens);
+    }
+
+    ~AppSettingsNotifier()
+    {
+        if (!changed)
+            return;
+
+        settings->notify(&IAppSettingsListener::settingsChanged);
+
+        if (numberPrecisionData != settings->numberPrecisionData)
+            settings->notify(&IAppSettingsListener::optionChanged, AppSettingsOption::NumberPrecisionData);
+        if (pens != settings->_pens)
+            settings->notify(&IAppSettingsListener::optionChanged, AppSettingsOption::DefaultPenFormat);
+    }
+
+    AppSettings *settings;
+    bool changed = false;
+    int numberPrecisionData;
+    QMap<AppSettings::PenKind, QPen> pens;
+};
+
 bool AppSettings::edit(Ori::Optional<int> currentPageId)
 {
-    int old_numberPrecisionData = numberPrecisionData;
-
-    bool result = Z::Dlg::editAppSettings(currentPageId);
-    if (result)
-    {
-        notify(&IAppSettingsListener::settingsChanged);
-
-        if (old_numberPrecisionData != numberPrecisionData)
-            notify(&IAppSettingsListener::optionChanged, AppSettingsOptions::numberPrecisionData);
-    }
-    return result;
+    AppSettingsNotifier notifier(this);
+    notifier.changed = Z::Dlg::editAppSettings(currentPageId);
+    return notifier.changed;
 }
 
 QSize AppSettings::toolbarIconSize() const
@@ -248,11 +267,6 @@ void AppSettings::onReloadTimeout()
         return;
     }
 
-    int old_numberPrecisionData = numberPrecisionData;
-
+    AppSettingsNotifier notifier(this, true);
     load();
-
-    notify(&IAppSettingsListener::settingsChanged);
-    if (old_numberPrecisionData != numberPrecisionData)
-        notify(&IAppSettingsListener::optionChanged, AppSettingsOptions::numberPrecisionData);
 }

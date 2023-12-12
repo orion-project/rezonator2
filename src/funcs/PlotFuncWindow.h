@@ -112,7 +112,7 @@ public:
     virtual ElemDeletionReaction reactElemDeletion(const Elements&);
 
     // inherited from IAppSettingsListener
-    void optionChanged(AppSettingsOptions option) override;
+    void optionChanged(AppSettingsOption option) override;
 
 signals:
     void finishImageBeforeCopy(QPainter*);

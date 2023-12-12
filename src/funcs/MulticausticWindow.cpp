@@ -382,3 +382,15 @@ void MulticausticWindow::handleCursorPanelCommand(const QString& cmd)
             .exec())
         _cursor->setPositionX(unitX->fromSi(funcOffset.position) + editor.value());
 }
+
+void MulticausticWindow::optionChanged(AppSettingsOption option)
+{
+    PlotFuncWindow::optionChanged(option);
+
+    if (option == AppSettingsOption::DefaultPenFormat)
+    {
+        for (auto line: _elemBoundMarkers)
+            line->setPen(elemBoundMarkersPen());
+        _plot->replot();
+    }
+}

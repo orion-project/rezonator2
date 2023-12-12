@@ -14,9 +14,7 @@ QT_BEGIN_NAMESPACE
 class QFileSystemWatcher;
 QT_END_NAMESPACE
 
-enum class AppSettingsOptions {
-    numberPrecisionData
-};
+enum class AppSettingsOption { NumberPrecisionData, DefaultPenFormat };
 
 class IAppSettingsListener
 {
@@ -25,7 +23,7 @@ public:
     virtual ~IAppSettingsListener();
 
     virtual void settingsChanged() {}
-    virtual void optionChanged(AppSettingsOptions option) { Q_UNUSED(option) }
+    virtual void optionChanged(AppSettingsOption option) { Q_UNUSED(option) }
 };
 
 class AppSettings : public QObject, public Ori::Notifier<IAppSettingsListener>
@@ -99,6 +97,8 @@ public:
     void saveMruItems(const QStringList& items);
 
 private:
+    friend struct AppSettingsNotifier;
+
     int toolbarIconSizeSmall;
     int toolbarIconSizeBig;
 

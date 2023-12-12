@@ -776,13 +776,20 @@ void PlotFuncWindow::setUnitY(Z::Unit unit)
     update();
 }
 
-void PlotFuncWindow::optionChanged(AppSettingsOptions option)
+void PlotFuncWindow::optionChanged(AppSettingsOption option)
 {
-    if (option == AppSettingsOptions::numberPrecisionData)
+    if (option == AppSettingsOption::NumberPrecisionData)
     {
         _cursorPanel->setNumberPrecision(AppSettings::instance().numberPrecisionData, false);
         updateCursorInfo();
         updateSpecPoints();
+    }
+    else if (option == AppSettingsOption::DefaultPenFormat)
+    {
+        _graphs->T()->setPen(graphPenT());
+        _graphs->S()->setPen(graphPenS());
+        _cursor->setPen(cursorPen());
+        _plot->replot();
     }
 }
 

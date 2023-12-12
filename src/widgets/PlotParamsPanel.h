@@ -44,7 +44,7 @@ public:
 
     void setOptionsPanelEnabled(bool on);
 
-    void optionChanged(AppSettingsOptions option) override;
+    void optionChanged(AppSettingsOption option) override;
 
 signals:
     void updateDataGrid();

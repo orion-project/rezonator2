@@ -331,3 +331,15 @@ SpecPointParams StabilityMapWindow::getSpecPointsParams() const
         { StabilityMapFunction::spUnitX, SpecPointParam(getUnitX()) },
     };
 }
+
+void StabilityMapWindow::optionChanged(AppSettingsOption option)
+{
+    PlotFuncWindow::optionChanged(option);
+
+    if (option == AppSettingsOption::DefaultPenFormat)
+    {
+        _stabBoundMarkerLow->setPen(stabBoundMarkerPen());
+        _stabBoundMarkerTop->setPen(stabBoundMarkerPen());
+        _plot->replot();
+    }
+}
