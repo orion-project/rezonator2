@@ -211,8 +211,10 @@ void MruStartPanel::makeEmpty()
 
 void MruStartPanel::openFile(const QString& fileName)
 {
-    emit closeRequested();
     ProjectWindow::openProject(fileName, {.addToMru = true});
+
+    // close _after_ work, otherwise signal handler can crash
+    emit closeRequested();
 }
 
 //------------------------------------------------------------------------------
@@ -455,34 +457,42 @@ void ActionsStartPanel::openSchemaFile()
 {
     auto fileName = ProjectOperations::getOpenFileName(this);
     if (fileName.isEmpty()) return;
-    emit closeRequested();
     ProjectWindow::openProject(fileName, {.addToMru = true});
+    emit closeRequested();
 }
 
 void ActionsStartPanel::openSchemaExample()
 {
     auto fileName = ProjectOperations::selectSchemaExample();
     if (fileName.isEmpty()) return;
-    emit closeRequested();
     ProjectWindow::openProject(fileName, {.isExample = true});
+
+    // close _after_ work, otherwise signal handler can crash
+    emit closeRequested();
 }
 
 void ActionsStartPanel::makeSchemaSW()
 {
-    emit closeRequested();
     ProjectWindow::createProject(TripType::SW);
+
+    // close _after_ work, otherwise signal handler can crash
+    emit closeRequested();
 }
 
 void ActionsStartPanel::makeSchemaRR()
 {
-    emit closeRequested();
     ProjectWindow::createProject(TripType::RR);
+
+    // close _after_ work, otherwise signal handler can crash
+    emit closeRequested();
 }
 
 void ActionsStartPanel::makeSchemaSP()
 {
-    emit closeRequested();
     ProjectWindow::createProject(TripType::SP);
+
+    // close _after_ work, otherwise signal handler can crash
+    emit closeRequested();
 }
 
 //------------------------------------------------------------------------------

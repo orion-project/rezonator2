@@ -263,7 +263,7 @@ void StabilityMapWindow::updateStabBoundMarkers()
 
 QPen StabilityMapWindow::stabBoundMarkerPen() const
 {
-    return _stabBoundMarkerPen ? *_stabBoundMarkerPen : AppSettings::instance().stabBoundMarkerPen();
+    return _stabBoundMarkerPen ? *_stabBoundMarkerPen : AppSettings::instance().pen(AppSettings::PenStabBound);
 }
 
 QCPItemStraightLine* StabilityMapWindow::makeStabBoundMarker() const

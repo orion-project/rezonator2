@@ -263,11 +263,11 @@ void AppSettingsDialog::populate()
     _groupExportPlot->setOption("exportHideCursor", settings.exportHideCursor);
 
     // graphs
-    _elemBoundMarkersPen->setValue(settings.elemBoundMarkersPen());
-    _stabBoundMarkerPen->setValue(settings.stabBoundMarkerPen());
-    _cursorPen->setValue(settings.cursorPen());
-    _graphPenT->setValue(settings.graphPenT());
-    _graphPenS->setValue(settings.graphPenS());
+    _elemBoundMarkersPen->setValue(settings.pen(AppSettings::PenElemBound));
+    _stabBoundMarkerPen->setValue(settings.pen(AppSettings::PenStabBound));
+    _cursorPen->setValue(settings.pen(AppSettings::PenCursor));
+    _graphPenT->setValue(settings.pen(AppSettings::PenGraphT));
+    _graphPenS->setValue(settings.pen(AppSettings::PenGraphS));
 }
 
 bool AppSettingsDialog::collect()
@@ -311,11 +311,11 @@ bool AppSettingsDialog::collect()
     settings.exportHideCursor = _groupExportPlot->option("exportHideCursor");
 
     // graphs
-    settings.setElemBoundMarkersPen(_elemBoundMarkersPen->value());
-    settings.setStabBoundMarkerPen(_stabBoundMarkerPen->value());
-    settings.setCursorPen(_cursorPen->value());
-    settings.setGraphPenT(_graphPenT->value());
-    settings.setGraphPenS(_graphPenS->value());
+    settings.setPen(AppSettings::PenElemBound, _elemBoundMarkersPen->value());
+    settings.setPen(AppSettings::PenStabBound, _stabBoundMarkerPen->value());
+    settings.setPen(AppSettings::PenCursor, _cursorPen->value());
+    settings.setPen(AppSettings::PenGraphT, _graphPenT->value());
+    settings.setPen(AppSettings::PenGraphS, _graphPenS->value());
 
     settings.save();
     return true;

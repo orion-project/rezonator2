@@ -97,7 +97,7 @@ void MulticausticWindow::formatElementBoundMarkers()
 
 QPen MulticausticWindow::elemBoundMarkersPen() const
 {
-    return _elemBoundMarkersPen ? *_elemBoundMarkersPen : AppSettings::instance().elemBoundMarkersPen();
+    return _elemBoundMarkersPen ? *_elemBoundMarkersPen : AppSettings::instance().pen(AppSettings::PenElemBound);
 }
 
 QCPItemStraightLine* MulticausticWindow::makeElemBoundMarker() const
@@ -197,7 +197,7 @@ QString MulticausticWindow::readWindowSpecific(const QJsonObject& root)
     _actnElemBoundMarkers->setChecked(root["elem_bound_markers"].toBool(true));
     if (root.contains("elem_bound_markers_pen"))
         _elemBoundMarkersPen = QCPL::readPen(root["elem_bound_markers_pen"].toObject(),
-                                             AppSettings::instance().elemBoundMarkersPen());
+                                             AppSettings::instance().pen(AppSettings::PenElemBound));
     return QString();
 }
 

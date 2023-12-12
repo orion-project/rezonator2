@@ -5,7 +5,9 @@
 
 #include "core/OriTemplates.h"
 
+#include <QMap>
 #include <QObject>
+#include <QPen>
 #include <QSize>
 
 QT_BEGIN_NAMESPACE
@@ -29,6 +31,8 @@ public:
 class AppSettings : public QObject, public Ori::Notifier<IAppSettingsListener>
 {
 public:
+    enum PenKind { PenGraphT, PenGraphS, PenCursor, PenStabBound, PenElemBound };
+
     AppSettings();
 
     static AppSettings& instance();
@@ -87,16 +91,9 @@ public:
     bool edit(Ori::Optional<int> currentPageId = Ori::Optional<int>());
 
     QSize toolbarIconSize() const;
-    QPen elemBoundMarkersPen() const;
-    QPen stabBoundMarkerPen() const;
-    QPen cursorPen() const;
-    QPen graphPenT() const;
-    QPen graphPenS() const;
-    void setElemBoundMarkersPen(const QPen& pen);
-    void setStabBoundMarkerPen(const QPen& pen);
-    void setCursorPen(const QPen& pen);
-    void setGraphPenT(const QPen& pen);
-    void setGraphPenS(const QPen& pen);
+
+    QPen pen(PenKind kind) const { return _pens[kind]; }
+    void setPen(PenKind kind, const QPen& pen);
 
     QStringList loadMruItems() const;
     void saveMruItems(const QStringList& items);
@@ -108,6 +105,7 @@ private:
     QFileSystemWatcher* _watcher = nullptr;
     bool _timerStarted = false;
     bool _selfSaved = false;
+    QMap<PenKind, QPen> _pens;
 
     void onFileChanged();
     void onReloadTimeout();

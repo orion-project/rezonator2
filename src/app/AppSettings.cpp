@@ -39,6 +39,9 @@ IAppSettingsListener::~IAppSettingsListener()
 #define SAVE(option)\
     s.settings()->setValue(QStringLiteral(#option), option)
 
+#define SAVE1(name, option)\
+    s.settings()->setValue(QStringLiteral(name), option)
+
 Q_GLOBAL_STATIC(AppSettings, __instance);
 
 AppSettings& AppSettings::instance()
@@ -93,6 +96,11 @@ void AppSettings::load()
     LOAD_DEF(plotZoomStepPercentX, Double, 1);
     LOAD_DEF(plotZoomStepPercentY, Double, 1);
     LOAD_DEF(plotNumberPrecision, Int, 10);
+    _pens[PenGraphT] = s.settings()->value("penGraphT", QPen(Qt::darkGreen)).value<QPen>();
+    _pens[PenGraphS] = s.settings()->value("penGraphS", QPen(Qt::red)).value<QPen>();
+    _pens[PenCursor] = s.settings()->value("penCursor", QPen(QColor::fromRgb(80, 80, 255))).value<QPen>();
+    _pens[PenStabBound] = s.settings()->value("penStabBound", QPen(Qt::magenta, 1, Qt::DashLine)).value<QPen>();
+    _pens[PenElemBound] = s.settings()->value("penElemBound", QPen(Qt::magenta, 1, Qt::DashLine)).value<QPen>();
 
     s.beginGroup("Layout");
     LOAD_DEF(layoutExportTransparent, Bool, false);
@@ -152,6 +160,11 @@ void AppSettings::save()
     SAVE(plotZoomStepPercentX);
     SAVE(plotZoomStepPercentY);
     SAVE(plotNumberPrecision);
+    SAVE1("penGraphT", _pens[PenGraphT]);
+    SAVE1("penGraphS", _pens[PenGraphS]);
+    SAVE1("penCursor", _pens[PenCursor]);
+    SAVE1("penStabBound", _pens[PenStabBound]);
+    SAVE1("penElemBound", _pens[PenElemBound]);
 
     s.beginGroup("Layout");
     SAVE(layoutExportTransparent);
@@ -170,9 +183,9 @@ void AppSettings::save()
     SAVE(showImagUnitAtEnd);
 
     s.beginGroup("Units");
-    s.settings()->setValue("defaultUnitBeamRadius", defaultUnitBeamRadius->alias());
-    s.settings()->setValue("defaultUnitFrontRadius", defaultUnitFrontRadius->alias());
-    s.settings()->setValue("defaultUnitAngle", defaultUnitAngle->alias());
+    SAVE1("defaultUnitBeamRadius", defaultUnitBeamRadius->alias());
+    SAVE1("defaultUnitFrontRadius", defaultUnitFrontRadius->alias());
+    SAVE1("defaultUnitAngle", defaultUnitAngle->alias());
 }
 
 bool AppSettings::edit(Ori::Optional<int> currentPageId)
@@ -197,54 +210,9 @@ QSize AppSettings::toolbarIconSize() const
         QSize(toolbarIconSizeBig, toolbarIconSizeBig);
 }
 
-QPen AppSettings::elemBoundMarkersPen() const
+void AppSettings::setPen(PenKind kind, const QPen& pen)
 {
-    return QPen(Qt::magenta, 1, Qt::DashLine);
-}
-
-QPen AppSettings::stabBoundMarkerPen() const
-{
-    return QPen(Qt::magenta, 1, Qt::DashLine);
-}
-
-QPen AppSettings::cursorPen() const
-{
-    return QPen(QColor::fromRgb(80, 80, 255));
-}
-
-QPen AppSettings::graphPenT() const
-{
-    return QPen(Qt::darkGreen);
-}
-
-QPen AppSettings::graphPenS() const
-{
-    return QPen(Qt::red);
-}
-
-void AppSettings::setElemBoundMarkersPen(const QPen& pen)
-{
-
-}
-
-void AppSettings::setStabBoundMarkerPen(const QPen& pen)
-{
-
-}
-
-void AppSettings::setCursorPen(const QPen& pen)
-{
-
-}
-
-void AppSettings::setGraphPenT(const QPen& pen)
-{
-
-}
-
-void AppSettings::setGraphPenS(const QPen& pen)
-{
-
+    _pens[kind] = pen;
 }
 
 QStringList AppSettings::loadMruItems() const

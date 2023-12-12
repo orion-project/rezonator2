@@ -47,7 +47,6 @@ static void startAppInstance(QStringList args, const QString& schemaFile = QStri
     args.insert(0, exe);
     if (!schemaFile.isEmpty())
         args << " \"" + schemaFile + "\"";
-    qDebug() << args.join(' ');
     if (!QProcess::startDetached(args.join(' '), {}))
         qWarning() << "Unable to start another instance" << args.join(' ');
 #else
