@@ -3,7 +3,6 @@
 #include "../app/Appearance.h"
 #include "../app/AppSettings.h"
 #include "../app/CustomElemsManager.h"
-#include "../core/Elements.h"
 #include "../core/ElementsCatalog.h"
 #include "../core/Schema.h"
 #include "../math/FormatInfo.h"
@@ -24,19 +23,22 @@
 
 static int __savedTabIndex = 0;
 
-Element* ElementsCatalogDialog::chooseElementSample()
+std::optional<ElementsCatalogDialog::ElementSample> ElementsCatalogDialog::chooseElementSample()
 {
-    ElementsCatalogDialog catalog;
-    if (catalog.exec() != QDialog::Accepted)
-        return nullptr;
+    ElementsCatalogDialog dlg;
+    if (dlg.exec() != QDialog::Accepted)
+        return {};
 
-    auto sample = catalog.selection();
+    ElementsCatalogDialog::ElementSample sample;
+    sample.elem = dlg.selection();
 
-    if (sample->hasOption(Element_CustomSample))
+    if (sample.elem->hasOption(Element_CustomSample))
     {
         // Extract the sample from the library instance
         // to prevent its deletion together with the lib
-        catalog._library->deleteElements({sample}, Arg::RaiseEvents(false), Arg::FreeElem(false));
+        dlg._library->deleteElements({sample.elem}, Arg::RaiseEvents(false), Arg::FreeElem(false));
+        sample.isCustom = true;
+        sample.deleter = QSharedPointer<Element>(sample.elem);
     }
 
     return sample;
@@ -49,7 +51,7 @@ ElementsCatalogDialog::ElementsCatalogDialog(QWidget *parent): RezonatorDialog(D
 
     // category tabs
     _categoryTabs = new QTabWidget;
-    for (auto category : ElementsCatalog::instance().categories())
+    for (auto& category : ElementsCatalog::instance().categories())
         _categoryTabs->addTab(new QWidget, category);
 
     if (AppSettings::instance().showCustomElemLibrary)

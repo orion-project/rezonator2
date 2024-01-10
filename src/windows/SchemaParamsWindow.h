@@ -10,7 +10,7 @@
 */
 namespace SchemaParamsWindowStorable
 {
-const QString windowType("SchemaParams");
+inline QString windowType() { return "SchemaParams"; }
 SchemaWindow* createWindow(Schema* schema);
 }
 
@@ -28,7 +28,7 @@ public:
     QString helpTopic() const override { return "params_window.html"; }
 
     // inherits from ISchemaWindowStorable
-    QString storableType() const override { return SchemaParamsWindowStorable::windowType; }
+    QString storableType() const override { return SchemaParamsWindowStorable::windowType(); }
 
     // inherits from IShortcutListener
     void shortcutEnterPressed() override;

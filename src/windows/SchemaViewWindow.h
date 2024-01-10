@@ -48,7 +48,7 @@ protected:
     void closeEvent(QCloseEvent *event) override { event->ignore(); }
 
 private:
-    QAction *actnElemAdd, *actnElemMoveUp, *actnElemMoveDown, *actnElemProp,
+    QAction *actnElemAdd, *actnElemReplace, *actnElemMoveUp, *actnElemMoveDown, *actnElemProp,
             *actnElemMatr, *actnElemMatrAll, *actnElemDelete, *actnEditCopy, *actnEditPaste,
             *actnAdjuster, *actnSaveCustom, *actnEditFormula, *actnElemDisable;
 
@@ -64,9 +64,11 @@ private:
     void createToolBar();
 
     void editElement(Element* elem);
+    bool confirmDeletion(const Elements& elements, bool onlyIfWarnings);
 
 private slots:
     void actionElemAdd();
+    void actionElemReplace();
     void actionElemMoveUp();
     void actionElemMoveDown();
     void actionElemProp();

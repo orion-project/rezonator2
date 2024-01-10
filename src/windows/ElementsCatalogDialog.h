@@ -24,6 +24,15 @@ class ElementsCatalogDialog : public RezonatorDialog
     Q_OBJECT
 
 public:
+    struct ElementSample
+    {
+        Element* elem;
+        bool isCustom = false;
+    private:
+        QSharedPointer<Element> deleter;
+        friend class ElementsCatalogDialog;
+    };
+
     ElementsCatalogDialog(QWidget* parent = nullptr);
     ~ElementsCatalogDialog() override;
 
@@ -34,7 +43,7 @@ public:
     /// and in this case the result pointer is persistent and not need to be freed.
     /// The sample can be one of the elements stored in the Custom Elements Library,
     /// then the result pointer should be freed manually after usage to prevent memory leaks.
-    static Element* chooseElementSample();
+    static std::optional<ElementSample> chooseElementSample();
 
 protected:
     QSize prefferedSize() const override { return QSize(620, 400); }

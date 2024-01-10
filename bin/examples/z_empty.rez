@@ -205,6 +205,14 @@
     ],
     "formulas": [
     ],
+    "memos": [
+        {
+            "images": {
+                "93d8a436dec14bf8b3f6e127cbf29034": "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"
+            },
+            "text": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\nhr { height: 1px; border-width: 0; }\nli.unchecked::marker { content: \"\\2610\"; }\nli.checked::marker { content: \"\\2612\"; }\n</style></head><body style=\" font-family:'Arial'; font-size:12pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">    <img src=\"93d8a436dec14bf8b3f6e127cbf29034\" /></p>\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"
+        }
+    ],
     "notes": "",
     "param_links": [
     ],
@@ -242,9 +250,217 @@
             "window": {
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
+                "format": {
+                    "axis_x": {
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": true,
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "Segoe UI",
+                            "italic": false,
+                            "size": 9,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 3,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 10,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "Segoe UI",
+                            "italic": false,
+                            "size": 10,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 3,
+                        "title_margin_out": 5,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#c8c8c8",
+                            "style": 1,
+                            "width": 0
+                        }
+                    },
+                    "axis_y": {
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": true,
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "Segoe UI",
+                            "italic": false,
+                            "size": 9,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 5,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 10,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "Segoe UI",
+                            "italic": false,
+                            "size": 10,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 10,
+                        "title_margin_out": 5,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#c8c8c8",
+                            "style": 1,
+                            "width": 0
+                        }
+                    },
+                    "legend": {
+                        "back_color": "#ffffff",
+                        "border": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "font": {
+                            "bold": false,
+                            "family": "Segoe UI",
+                            "italic": false,
+                            "size": 9,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "icon_margin": 7,
+                        "icon_size": {
+                            "height": 18,
+                            "width": 32
+                        },
+                        "location": 34,
+                        "margins": {
+                            "bottom": 12,
+                            "left": 12,
+                            "right": 12,
+                            "top": 12
+                        },
+                        "paddings": {
+                            "bottom": 4,
+                            "left": 7,
+                            "right": 7,
+                            "top": 5
+                        },
+                        "text_color": "#000000",
+                        "version": 1,
+                        "visible": false
+                    },
+                    "title": {
+                        "font": {
+                            "bold": false,
+                            "family": "Segoe UI",
+                            "italic": false,
+                            "size": 14,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "margins": {
+                            "bottom": 10,
+                            "left": 10,
+                            "right": 10,
+                            "top": 10
+                        },
+                        "text_color": "#000000",
+                        "text_flags": 132,
+                        "version": 1,
+                        "visible": false
+                    }
+                },
                 "stab_bound_markers": true,
                 "stored_views": {
                 },
+                "t_title": "",
                 "ts_flipped": true,
                 "ts_mode": "T+S",
                 "x_max": 109.92331600846262,
@@ -388,6 +604,213 @@
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
                 "elem_bound_markers": true,
+                "format": {
+                    "axis_x": {
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": true,
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "Segoe UI",
+                            "italic": false,
+                            "size": 9,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 3,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 10,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "Segoe UI",
+                            "italic": false,
+                            "size": 10,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 3,
+                        "title_margin_out": 5,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#c8c8c8",
+                            "style": 1,
+                            "width": 0
+                        }
+                    },
+                    "axis_y": {
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": true,
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "Segoe UI",
+                            "italic": false,
+                            "size": 9,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 5,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 10,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "Segoe UI",
+                            "italic": false,
+                            "size": 10,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 10,
+                        "title_margin_out": 5,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#c8c8c8",
+                            "style": 1,
+                            "width": 0
+                        }
+                    },
+                    "legend": {
+                        "back_color": "#ffffff",
+                        "border": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "font": {
+                            "bold": false,
+                            "family": "Segoe UI",
+                            "italic": false,
+                            "size": 9,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "icon_margin": 7,
+                        "icon_size": {
+                            "height": 18,
+                            "width": 32
+                        },
+                        "location": 34,
+                        "margins": {
+                            "bottom": 12,
+                            "left": 12,
+                            "right": 12,
+                            "top": 12
+                        },
+                        "paddings": {
+                            "bottom": 4,
+                            "left": 7,
+                            "right": 7,
+                            "top": 5
+                        },
+                        "text_color": "#000000",
+                        "version": 1,
+                        "visible": false
+                    },
+                    "title": {
+                        "font": {
+                            "bold": false,
+                            "family": "Segoe UI",
+                            "italic": false,
+                            "size": 14,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "margins": {
+                            "bottom": 10,
+                            "left": 10,
+                            "right": 10,
+                            "top": 10
+                        },
+                        "text_color": "#000000",
+                        "text_flags": 132,
+                        "version": 1,
+                        "visible": false
+                    }
+                },
                 "stored_views": {
                     "0": {
                         "cursor_x": 763.7069712509713,
@@ -406,6 +829,7 @@
                         "y_unit": "m"
                     }
                 },
+                "t_title": "",
                 "ts_flipped": true,
                 "ts_mode": "T",
                 "x_max": 1539.24,
@@ -446,6 +870,213 @@
             "window": {
                 "cursor_enabled": true,
                 "cursor_mode": "Both",
+                "format": {
+                    "axis_x": {
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": true,
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "Segoe UI",
+                            "italic": false,
+                            "size": 9,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 3,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 10,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "Segoe UI",
+                            "italic": false,
+                            "size": 10,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 3,
+                        "title_margin_out": 5,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#c8c8c8",
+                            "style": 1,
+                            "width": 0
+                        }
+                    },
+                    "axis_y": {
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": true,
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "Segoe UI",
+                            "italic": false,
+                            "size": 9,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 5,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 10,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "Segoe UI",
+                            "italic": false,
+                            "size": 10,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 10,
+                        "title_margin_out": 5,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#c8c8c8",
+                            "style": 1,
+                            "width": 0
+                        }
+                    },
+                    "legend": {
+                        "back_color": "#ffffff",
+                        "border": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "font": {
+                            "bold": false,
+                            "family": "Segoe UI",
+                            "italic": false,
+                            "size": 9,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "icon_margin": 7,
+                        "icon_size": {
+                            "height": 18,
+                            "width": 32
+                        },
+                        "location": 34,
+                        "margins": {
+                            "bottom": 12,
+                            "left": 12,
+                            "right": 12,
+                            "top": 12
+                        },
+                        "paddings": {
+                            "bottom": 4,
+                            "left": 7,
+                            "right": 7,
+                            "top": 5
+                        },
+                        "text_color": "#000000",
+                        "version": 1,
+                        "visible": false
+                    },
+                    "title": {
+                        "font": {
+                            "bold": false,
+                            "family": "Segoe UI",
+                            "italic": false,
+                            "size": 14,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "margins": {
+                            "bottom": 10,
+                            "left": 10,
+                            "right": 10,
+                            "top": 10
+                        },
+                        "text_color": "#000000",
+                        "text_flags": 132,
+                        "version": 1,
+                        "visible": false
+                    }
+                },
                 "stored_views": {
                     "0": {
                         "cursor_x": 299.4715025906736,
@@ -464,6 +1095,7 @@
                         "y_unit": "m"
                     }
                 },
+                "t_title": "",
                 "ts_flipped": true,
                 "ts_mode": "T+S",
                 "x_max": 605.939393939394,
@@ -475,6 +1107,9 @@
                 "y_title": "{func_mode} {(unit)}",
                 "y_unit": "m"
             }
+        },
+        {
+            "type": "MemoWindow"
         }
     ]
 }

@@ -1,7 +1,8 @@
 #ifndef MEMO_WINDOW_H
 #define MEMO_WINDOW_H
 
-#include "SchemaWindows.h"
+#include "../io/ISchemaWindowStorable.h"
+#include "../windows/SchemaWindows.h"
 
 QT_BEGIN_NAMESPACE
 class QActionGroup;
@@ -14,7 +15,20 @@ QT_END_NAMESPACE
 class Schema;
 class MemoTextEdit;
 
+/**
+    Implementation of restoreability for @a MemoWindow.
+    Register it in @a ProjectWindow::registerStorableWindows().
+*/
+namespace MemoWindowStorable
+{
+inline QString windowType() { return "MemoWindow"; }
+SchemaWindow* createWindow(Schema* schema);
+}
+
+//------------------------------------------------------------------------------
+
 class MemoWindow : public SchemaMdiChild,
+                   public ISchemaWindowStorable,
                    public IEditableWindow,
                    public IPrintableWindow,
                    public ISchemaMemoEditor
@@ -50,6 +64,9 @@ public:
 
     // inherits from ISchemaMemoEditor
     void saveMemo() override;
+
+    // inherits from ISchemaWindowStorable
+    QString storableType() const override { return MemoWindowStorable::windowType(); }
 
 protected:
     explicit MemoWindow(Schema *owner);
@@ -88,6 +105,7 @@ private:
         *_actionTextColor, *_actionBackColor, *_actionAlignLeft, *_actionAlignCenter, *_actionAlignRight,
         *_actionAlignJustify, *_actionUndo, *_actionRedo, *_actionCut, *_actionCopy, *_actionPaste,
         *_actionInsertTable, *_actionIndent, *_actionUnindent, *_actionExportPdf;
+    bool _isLoading = true;
 
     void createActions();
     void createMenuBar();

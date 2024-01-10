@@ -213,6 +213,10 @@ struct SchemaMemo
 {
     QString text;
     QMap<QString, QImage> images;
+
+    /// Smart pointer to memo editor window is used for saving memo content
+    /// when the window is still opened. The window saves its text into schema
+    /// when it closes, but opened window can contain unsaved changes.
     QPointer<QWidget> editor;
 };
 

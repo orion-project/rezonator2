@@ -18,7 +18,7 @@ class ElemFormulaEditor;
 */
 namespace ElemFormulaWindowStorable
 {
-const QString windowType("ElemFormulaWindow");
+inline QString windowType() { return "ElemFormulaWindow"; }
 SchemaWindow* createWindow(Schema* schema);
 }
 
@@ -52,7 +52,7 @@ public:
     void elementChanged(Schema*, Element*) override;
 
     // inherits from ISchemaWindowStorable
-    QString storableType() const override { return ElemFormulaWindowStorable::windowType; }
+    QString storableType() const override { return ElemFormulaWindowStorable::windowType(); }
     bool storableRead(const QJsonObject& root, Z::Report* report) override;
     bool storableWrite(QJsonObject& root, Z::Report *report) override;
 

@@ -142,14 +142,10 @@ void CustomElemsWindow::storeState()
 
 void CustomElemsWindow::actionElemAdd()
 {
-    Element *sample = ElementsCatalogDialog::chooseElementSample();
+    auto sample = ElementsCatalogDialog::chooseElementSample();
     if (!sample) return;
 
-    QSharedPointer<Element> sampleDeleter;
-    bool isCustom = sample->hasOption(Element_CustomSample);
-    if (isCustom) sampleDeleter.reset(sample);
-
-    Element *elem = ElementsCatalog::instance().create(sample, isCustom);
+    Element *elem = ElementsCatalog::instance().create(sample->elem, sample->isCustom);
     if (!elem) return;
 
     _library->insertElements({elem}, _table->currentRow(), Arg::RaiseEvents(true));
