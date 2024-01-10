@@ -12,6 +12,9 @@
         },
         {
           "text": "Configure default formats for graphs, cursor, and boundary lines"
+        },
+        {
+          "text": "New command: Replace Element"
         }
       ]
     },

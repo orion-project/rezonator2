@@ -389,6 +389,14 @@ void setElemWavelen(Element* elem, const Z::Value& lambda);
 /// or they can be selected as functions' arguments.
 ParameterFilter* defaultParamFilter();
 
+/// Copyes parameter values from source element to the target one.
+/// Both elements should be of the same type or at least contain the same number of parameters.
+void copyParamValues(const Element* source, Element* target, const char *reason);
+
+/// Copyes parameter values from source element to the target one.
+/// Elements can be of different types, parameters are matched by their name and dimention.
+void copyParamValuesByName(const Element* source, Element* target, const char *reason);
+
 inline QSize elemIconSize() { return QSize(24, 24); }
 inline QString elemIconPath(const QString& elemType) { return ":/elem_icon/" % elemType; }
 inline QString elemIconPath(Element* elem) { return elemIconPath(elem->type()); }

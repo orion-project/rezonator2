@@ -60,6 +60,7 @@ void SchemaViewWindow::createActions()
     #define A_ Ori::Gui::action
 
     actnElemAdd = A_(tr("Append..."), this, SLOT(actionElemAdd()), ":/toolbar/elem_add", Qt::CTRL | Qt::Key_Insert);
+    actnElemReplace = A_(tr("Replace..."), this, SLOT(actionElemReplace()), ":/toolbar/elem_replace");
     actnElemMoveUp = A_(tr("Move Selected Up"), this, SLOT(actionElemMoveUp()), ":/toolbar/elem_move_up");
     actnElemMoveDown = A_(tr("Move Selected Down"), this, SLOT(actionElemMoveDown()), ":/toolbar/elem_move_down");
     actnElemProp = A_(tr("Properties..."), this, SLOT(actionElemProp()), ":/toolbar/elem_prop");
@@ -79,12 +80,12 @@ void SchemaViewWindow::createActions()
 void SchemaViewWindow::createMenuBar()
 {
     menuElement = Ori::Gui::menu(tr("Element"), this,
-        { actnElemAdd, nullptr, actnElemMoveUp, actnElemMoveDown, nullptr, actnElemProp, actnEditFormula,
+        { actnElemAdd, actnElemReplace, nullptr, actnElemMoveUp, actnElemMoveDown, nullptr, actnElemProp, actnEditFormula,
           actnElemMatr, actnElemMatrAll, nullptr, actnElemDisable, nullptr, actnElemDelete, nullptr, actnSaveCustom });
 
     menuContextElement = Ori::Gui::menu(this,
         { actnElemProp, actnEditFormula, actnElemMatr, nullptr, actnAdjuster, nullptr,
-          actnEditCopy, actnEditPaste, nullptr, actnElemDisable, nullptr, actnElemDelete});
+          actnEditCopy, actnEditPaste, nullptr, actnElemDisable, actnElemReplace, nullptr, actnElemDelete});
 
     menuContextLastRow = Ori::Gui::menu(this,
         { actnElemAdd, actnEditPaste });
@@ -92,7 +93,7 @@ void SchemaViewWindow::createMenuBar()
 
 void SchemaViewWindow::createToolBar()
 {
-    populateToolbar({ Ori::Gui::textToolButton(actnElemAdd), nullptr, actnElemMoveUp,
+    populateToolbar({ Ori::Gui::textToolButton(actnElemAdd), actnElemReplace, nullptr, actnElemMoveUp,
                       actnElemMoveDown, nullptr, Ori::Gui::textToolButton(actnElemProp),
                       actnElemMatr, nullptr, actnElemDisable, nullptr, actnElemDelete });
 }
@@ -123,29 +124,61 @@ void SchemaViewWindow::elemDoubleClicked(Element *elem)
 
 void SchemaViewWindow::actionElemAdd()
 {
-    Element *sample = ElementsCatalogDialog::chooseElementSample();
+    auto sample = ElementsCatalogDialog::chooseElementSample();
     if (!sample) return;
 
-    QSharedPointer<Element> sampleDeleter;
-    bool isCustom = sample->hasOption(Element_CustomSample);
-    if (isCustom) sampleDeleter.reset(sample);
-
-    Element* elem = ElementsCatalog::instance().create(sample, isCustom);
+    Element* elem = ElementsCatalog::instance().create(sample->elem, sample->isCustom);
     if (!elem) return;
 
-    if (!isCustom && !Z::Utils::isInterface(elem))
+    if (!sample->isCustom && !Z::Utils::isInterface(elem))
         // For customs, matrix calculated after param values copied from sample
         // For interfaces, matrix calculated after insertion into schema
         elem->calcMatrix("SchemaViewWindow: element added");
 
     if (AppSettings::instance().elemAutoLabel)
-        Z::Utils::generateLabel(schema()->elements(), elem, isCustom ? sample->label() : QString());
+        Z::Utils::generateLabel(schema()->elements(), elem, sample->isCustom ? sample->elem->label() : QString());
 
     schema()->insertElements({elem}, _table->currentRow(), Arg::RaiseEvents(true));
     _table->setCurrentElem(elem);
 
     if (AppSettings::instance().editNewElem)
         editElement(elem);
+}
+
+void SchemaViewWindow::actionElemReplace()
+{
+    auto curElem = _table->currentElem();
+    if (!curElem) return;
+    auto curRow = _table->currentRow();
+
+    auto sample = ElementsCatalogDialog::chooseElementSample();
+    if (!sample) return;
+
+    if (sample->elem->type() == curElem->type())
+    {
+        if (sample->isCustom)
+            Z::Utils::copyParamValues(sample->elem, curElem, "SchemaViewWindow::replaceElement");
+        return;
+    }
+
+    if (not confirmDeletion({curElem}, true)) return;
+
+    Element* elem = ElementsCatalog::instance().create(sample->elem, sample->isCustom);
+    if (!elem) return;
+
+    elem->setLabel(curElem->label());
+    elem->setTitle(curElem->title());
+    Z::Utils::copyParamValuesByName(curElem, elem, "SchemaViewWindow::replaceElement");
+
+    schema()->deleteElements({curElem}, Arg::RaiseEvents(true), Arg::FreeElem(true));
+
+    if (!sample->isCustom && !Z::Utils::isInterface(elem))
+        // For customs, matrix calculated after param values copied from sample
+        // For interfaces, matrix calculated after insertion into schema
+        elem->calcMatrix("SchemaViewWindow: element added");
+
+    schema()->insertElements({elem}, curRow, Arg::RaiseEvents(true));
+    _table->setCurrentElem(elem);
 }
 
 void SchemaViewWindow::actionElemMoveUp()
@@ -174,11 +207,8 @@ void SchemaViewWindow::actionElemProp()
     if (elem) editElement(elem);
 }
 
-void SchemaViewWindow::actionElemDelete()
+bool SchemaViewWindow::confirmDeletion(const Elements &elements, bool onlyIfWarnings)
 {
-    Elements elements = _table->selection();
-    if (elements.isEmpty()) return;
-
     QStringList confirmation;
     confirmation << tr("Deleting elements:") << "";
 
@@ -207,12 +237,22 @@ void SchemaViewWindow::actionElemDelete()
         }
     }
 
-    confirmation << "" <<  tr("Confirm deletion.");
+    if (onlyIfWarnings and not warningAdded)
+        return true;
 
-    if (not Ori::Dlg::ok(confirmation.join("<br>"))) return;
+    confirmation << "" <<  tr("Confirm deletion.");
+    return Ori::Dlg::ok(confirmation.join("<br>"));
+}
+
+void SchemaViewWindow::actionElemDelete()
+{
+    Elements elements = _table->selection();
+    if (elements.isEmpty()) return;
+
+    if (not confirmDeletion(elements, false)) return;
 
     // table selection is not ordered
-    // deleting element will be in order or clicks
+    // deleting element will be in order of clicks
     // we try to select an element after the last clicked/marked for deletion
     auto nextElem = schema()->element(schema()->indexOf(elements.last())+1);
 
