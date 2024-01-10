@@ -17,7 +17,7 @@ class StatusBar;
 */
 namespace PumpWindowStorable
 {
-const QString windowType("PumpsWindow");
+inline QString windowType() { return QStringLiteral("PumpsWindow"); }
 SchemaWindow* createWindow(Schema* schema);
 }
 
@@ -90,7 +90,7 @@ public:
     void schemaLoaded(Schema*) override { showStatusInfo(); }
 
     // inherits from ISchemaWindowStorable
-    QString storableType() const override { return PumpWindowStorable::windowType; }
+    QString storableType() const override { return PumpWindowStorable::windowType(); }
 
     // inherits from EditableWindow
     SupportedCommands supportedCommands() override {

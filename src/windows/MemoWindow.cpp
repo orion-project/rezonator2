@@ -4,7 +4,6 @@
 #include "../widgets/PopupMessage.h"
 
 #include "helpers/OriDialogs.h"
-#include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 
 #include <QAction>
@@ -13,6 +12,7 @@
 #include <QColorDialog>
 #include <QComboBox>
 #include <QDesktopServices>
+#include <QFile>
 #include <QFontComboBox>
 #include <QFormLayout>
 #include <QMenu>
@@ -33,6 +33,20 @@
 #include <QUuid>
 
 //------------------------------------------------------------------------------
+//                             MemoWindowStorable
+//------------------------------------------------------------------------------
+
+namespace MemoWindowStorable
+{
+
+SchemaWindow* createWindow(Schema* schema)
+{
+    return MemoWindow::create(schema);
+}
+
+} // namespace MemoWindowStorable
+
+//------------------------------------------------------------------------------
 //                                MemoTextEdit
 //------------------------------------------------------------------------------
 
@@ -50,8 +64,12 @@ public:
                 it++;
             }
         }
-        if (!memo->text.isEmpty())
-            setHtml(memo->text);
+        // Don't load the document before its signals get connected.
+        // modificationChanged, undoAvailable, redoAvailable signals
+        // are not called if they were connected to non-empty document.
+        // Document will be loaded in the memo window constructor.
+        //if (!memo->text.isEmpty())
+        //    setHtml(memo->text);
     }
 
     bool canInsertFromMimeData(const QMimeData* source) const override
@@ -61,13 +79,19 @@ public:
 
     void insertFromMimeData(const QMimeData* source) override
     {
+        if (source->hasUrls())
+        {
+            for (auto& url : source->urls())
+            {
+                QImage img(url.toLocalFile());
+                if (not img.isNull())
+                    insertImage(img);
+            }
+            return;
+        }
         if (source->hasImage())
         {
-            auto id = QUuid::createUuid().toString(QUuid::Id128);
-            auto img = qvariant_cast<QImage>(source->imageData());
-            document()->addResource(QTextDocument::ImageResource, id, img);
-            textCursor().insertImage(id);
-            _memo->images[id] = img;
+            insertImage(qvariant_cast<QImage>(source->imageData()));
             return;
         }
         QTextEdit::insertFromMimeData(source);
@@ -140,6 +164,14 @@ private:
                 if (not href.isEmpty()) return href;
             }
         return QString();
+    }
+
+    void insertImage(const QImage& img)
+    {
+        auto id = QUuid::createUuid().toString(QUuid::Id128);
+        document()->addResource(QTextDocument::ImageResource, id, img);
+        textCursor().insertImage(id);
+        _memo->images[id] = img;
     }
 };
 
@@ -346,16 +378,17 @@ MemoWindow::MemoWindow(Schema* owner) : SchemaMdiChild(owner)
     connect(_editor->document(), SIGNAL(undoAvailable(bool)), _actionUndo, SLOT(setEnabled(bool)));
     connect(_editor->document(), SIGNAL(redoAvailable(bool)), _actionRedo, SLOT(setEnabled(bool)));
 
+    // Load document content AFTER its signals get connected.
+    // modificationChanged, undoAvailable, redoAvailable signals
+    // are not called if they were connected to non-empty document.
+    if (!schema()->memo->text.isEmpty())
+        _editor->setHtml(schema()->memo->text);
+
     // initial state
     auto f = _editor->font();
     f.setFamily("Arial");
     f.setPointSize(12);
     _editor->setFont(f);
-    _actionCut->setEnabled(false);
-    _actionCopy->setEnabled(false);
-    _actionUndo->setEnabled(false);
-    _actionRedo->setEnabled(false);
-    _editor->setFocus();
 
     fontChanged(_editor->font());
     alignmentChanged(_editor->alignment());
@@ -366,6 +399,15 @@ MemoWindow::MemoWindow(Schema* owner) : SchemaMdiChild(owner)
     auto fmt = cursor.charFormat();
     textColorChanged(fmt.foreground());
     backColorChanged(fmt.background());
+
+    _editor->document()->setModified(false);
+    _editor->document()->clearUndoRedoStacks();
+    _actionCut->setEnabled(false);
+    _actionCopy->setEnabled(false);
+    _actionUndo->setEnabled(false);
+    _actionRedo->setEnabled(false);
+    _editor->setFocus();
+    _isLoading = false;
 }
 
 MemoWindow::~MemoWindow()
@@ -617,7 +659,6 @@ void MemoWindow::modifyIndentation(int amount)
     cursor.endEditBlock();
 }
 
-
 void MemoWindow::cursorPositionChanged()
 {
     alignmentChanged(_editor->alignment());
@@ -706,7 +747,7 @@ void MemoWindow::selectAll() { _editor->selectAll(); }
 
 void MemoWindow::markModified(bool m)
 {
-    if (m)
+    if (m and not _isLoading)
     {
         schema()->events().raise(SchemaEvents::Changed, "memo modified");
         MessageBus::instance().send(MBE_MEMO_ADDED, {});

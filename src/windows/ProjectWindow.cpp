@@ -121,9 +121,10 @@ ProjectWindow::~ProjectWindow()
 
 void ProjectWindow::registerStorableWindows()
 {
-    WindowsManager::registerConstructor(SchemaParamsWindowStorable::windowType, SchemaParamsWindowStorable::createWindow);
-    WindowsManager::registerConstructor(PumpWindowStorable::windowType, PumpWindowStorable::createWindow);
-    WindowsManager::registerConstructor(ElemFormulaWindowStorable::windowType, ElemFormulaWindowStorable::createWindow);
+    WindowsManager::registerConstructor(SchemaParamsWindowStorable::windowType(), SchemaParamsWindowStorable::createWindow);
+    WindowsManager::registerConstructor(PumpWindowStorable::windowType(), PumpWindowStorable::createWindow);
+    WindowsManager::registerConstructor(ElemFormulaWindowStorable::windowType(), ElemFormulaWindowStorable::createWindow);
+    WindowsManager::registerConstructor(MemoWindowStorable::windowType(), MemoWindowStorable::createWindow);
 }
 
 void ProjectWindow::createActions()

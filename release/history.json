@@ -15,6 +15,15 @@
         },
         {
           "text": "New command: Replace Element"
+        },
+        {
+          "text": "Added scheme drawings for some example files"
+        },
+        {
+          "text": "Can use drag-and-drop for pasting image files into memo window"
+        },
+        {
+          "text": "Fix: schema modification flag was not updated after opening non empty memo window and editing; undo-redo actions were not updated too"
         }
       ]
     },
