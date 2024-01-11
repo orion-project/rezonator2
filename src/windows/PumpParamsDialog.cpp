@@ -43,6 +43,7 @@ public:
 
     QSize sizeHint() const override
     {
+        // This is the size of pump drawing images
         return {430, 80};
     }
 };
