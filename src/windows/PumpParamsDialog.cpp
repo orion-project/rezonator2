@@ -32,10 +32,18 @@ public:
 
     void setPumpMode(const PumpMode* pumpMode)
     {
-        if (pumpMode)
-            setPixmap(QPixmap(pumpMode->drawingPath()));
-        else
+        if (!pumpMode)
+        {
             clear();
+            return;
+        }
+        QIcon icon(pumpMode->drawingPath());
+        setPixmap(icon.pixmap(sizeHint()));
+    }
+
+    QSize sizeHint() const override
+    {
+        return {430, 80};
     }
 };
 
@@ -147,6 +155,7 @@ PumpParamsDialog::PumpParamsDialog(PumpParams *params, QWidget *parent)
     mainLayout()->addSpacing(6);
     mainLayout()->addWidget(_paramsEditor);
     mainLayout()->addWidget(drawing);
+    mainLayout()->addStretch();
 
     _editorLabel->setFocus();
 }
