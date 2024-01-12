@@ -134,7 +134,7 @@ Element *ElementsCatalogDialog::selection() const
     return _elementsList->selected();
 }
 
-static QString makeCustomElemPreview(Element* elem)
+void ElementsCatalogDialog::makeCustomElemPreview(Element* elem)
 {
     QString report;
     QTextStream stream(&report);
@@ -154,16 +154,25 @@ static QString makeCustomElemPreview(Element* elem)
     for (const auto param : elem->params())
         stream << f.format(param) << QStringLiteral("<br/>");
 
-    // TODO: drawing is rendered as bitmap in html, doesn't look cool on 4k monitor
-    stream << "<center><img src='" << Z::Utils::elemDrawingPath(elem->type()) << "'/></center>";
+    QString elemType = elem->type();
+    if (!_customPreviews.contains(elemType))
+    {
+        // To have preview properly rendered on 4k displays
+        // we need to load it as icon and then display automatically upscaled pixmap
+        QString path = Z::Utils::elemDrawingPath(elemType);
+        auto pxm = QIcon(path).pixmap(QImage(path).size());
+        _previewHtml->document()->addResource(QTextDocument::ImageResource, elemType, pxm);
+        _customPreviews.insert(elemType);
+    }
+    stream << "<center><img src='" << elemType << "'/></center>";
 
-    return report;
+    _previewHtml->setHtml(report);
 }
 
 void ElementsCatalogDialog::updatePreview(Element* elem)
 {
     if (_categoryTabs->currentIndex() == _customElemsTab)
-        _previewHtml->setHtml(makeCustomElemPreview(elem));
+        makeCustomElemPreview(elem);
     else
         _previewSvg->load(Z::Utils::elemDrawingPath(elem->type()));
 }

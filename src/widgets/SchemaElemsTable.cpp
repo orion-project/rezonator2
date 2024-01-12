@@ -121,7 +121,7 @@ QPixmap elemIcon(const QString& type)
 {
     static QMap<QString, QPixmap> icons;
     if (!icons.contains(type))
-        icons[type] = QPixmap(Z::Utils::elemIconPath(type));
+        icons[type] = QIcon(Z::Utils::elemIconPath(type)).pixmap(Z::Utils::elemIconSize());
     return icons[type];
 }
 
@@ -171,7 +171,7 @@ void SchemaElemsTable::fillPlaceholderRow()
     int row = rowCount() - 1;
 
     QTableWidgetItem *it = new QTableWidgetItem();
-    it->setData(Qt::DecorationRole, QPixmap(":/toolbar/elem_add"));
+    it->setData(Qt::DecorationRole, QIcon(":/toolbar/elem_add").pixmap(Z::Utils::elemIconSize()));
     it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     setItem(row, COL_IMAGE, it);
 

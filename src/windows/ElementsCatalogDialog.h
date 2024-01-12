@@ -3,6 +3,8 @@
 
 #include "RezonatorDialog.h"
 
+#include <QSet>
+
 QT_BEGIN_NAMESPACE
 class QVBoxLayout;
 class QTabWidget;
@@ -57,9 +59,11 @@ private:
     QTextBrowser *_previewHtml = nullptr;
     int _customElemsTab = -1;
     Schema *_library = nullptr;
+    QSet<QString> _customPreviews;
 
     void categorySelected(int index);
     void updatePreview(Element *elem);
+    void makeCustomElemPreview(Element* elem);
 };
 
 #endif // ELEMENT_SELECTOR_H

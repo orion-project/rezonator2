@@ -1,10 +1,10 @@
 <svg height="128" width="200" xmlns="http://www.w3.org/2000/svg">
 <g fill="none" stroke="#000">
-<path d="m104.75 65h52.42" stroke-width="7"/>
+<path d="m105.94 65h51.23" stroke-width="7"/>
 <path d="m97.96 73.75v50.29" stroke-dasharray="4 4"/>
 <path d="m141.07 48.45 18.18 16.73-17.82 16.36" stroke-linecap="round" stroke-width="7"/>
 </g>
-<text font-family="Times New Roman" font-size="14.52" font-style="italic" transform="scale(1.18 .85)" x="44.82" y="58.76"><tspan font-size="52.26" x="44.82" y="58.76">1</tspan></text>
+<path d="m66.64 23.44-8.22 28.61q-.71 2.53-.71 3.65 0 .94.64 1.45.66.48 3.06.66l-.26.94h-13.14l.36-.94q2.09-.05 2.76-.33 1.07-.46 1.61-1.22.84-1.17 1.71-4.21l5.92-20.54q.54-1.86.59-2.14.08-.51.08-1 0-.89-.48-1.4-.48-.51-1.33-.51-.66 0-2.07.31l-.33-.92 8.6-2.4z" transform="scale(1.18 .85)"/>
 <g fill="none" stroke="#000">
 <path d="m75.75 63.13a11.38 11.38 0 1 1 -22.75 0 11.38 11.38 0 1 1 22.75 0z" stroke-width="4.07" transform="matrix(.74 0 0 .74 50.56 18.52)"/>
 <path d="m40.75 65h48.42" stroke-width="7"/>
