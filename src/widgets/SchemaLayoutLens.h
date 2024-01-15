@@ -7,8 +7,6 @@
 
 #include <QtMath>
 
-using namespace ElementLayoutProps;
-
 //------------------------------------------------------------------------------
 namespace CurvedElementLayout {
     enum CurvedForm {

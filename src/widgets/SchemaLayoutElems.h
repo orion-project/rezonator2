@@ -4,8 +4,6 @@
 #include "SchemaLayout.h"
 #include "SchemaLayoutDefs.h"
 
-using namespace ElementLayoutProps;
-
 //------------------------------------------------------------------------------
 namespace ElemEmptyRangeLayout {
     LAYOUT_BEGIN

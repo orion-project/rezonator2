@@ -6,69 +6,6 @@
 #include "../core/ElementFormula.h"
 #include "../math/FormatInfo.h"
 
-namespace ElementLayoutProps {
-
-QBrush getGlassBrush()
-{
-    static QBrush b = QBrush(QPixmap(":/misc/glass_pattern"));
-    return b;
-}
-
-QPen getGlassPen()
-{
-    static QPen p = QPen(Qt::black, 1.5);
-    return p;
-}
-
-QBrush getMirrorBrush()
-{
-    static QBrush b = QBrush(Qt::black, Qt::BDiagPattern);
-    return b;
-}
-
-QPen getMirrorPen()
-{
-    static QPen p = QPen(Qt::black, 3, Qt::SolidLine, Qt::FlatCap);
-    return p;
-}
-
-QPen getPlanePen()
-{
-    static QPen p = QPen(Qt::black, 1, Qt::DashLine);
-    return p;
-}
-
-QBrush getGrinBrush(double sizeF)
-{
-    int size = int(sizeF);
-    static QMap<int, QBrush> brushes;
-    if (!brushes.contains(size))
-    {
-        QLinearGradient g(0, -size, 0, size);
-        g.setColorAt(0, Qt::white);
-        g.setColorAt(0.5, Qt::gray);
-        g.setColorAt(1, Qt::white);
-        brushes[size] = QBrush(g);
-    }
-    return brushes[size];
-}
-
-const QFont& getMarkTSFont()
-{
-    static QFont f = QFont("Arial", 8, QFont::Bold);
-    return f;
-}
-
-const QFont& getLabelFont()
-{
-    static QFont f = Z::Gui::ElemLabelFont().get();
-    return f;
-}
-
-} // namespace ElementLayoutProps
-
-using namespace ElementLayoutProps;
-
 //------------------------------------------------------------------------------
 //                             ElementLayout
 //------------------------------------------------------------------------------
@@ -125,6 +62,57 @@ void ElementLayout::slopePainter(QPainter *painter)
         b.setTransform(t);
         painter->setBrush(b);
     }
+}
+
+QBrush ElementLayout::getGlassBrush() const
+{
+    static QBrush b = QBrush(QPixmap(":/misc/glass_pattern"));
+    return b;
+}
+
+QPen ElementLayout::getGlassPen() const
+{
+    static QPen p = QPen(Qt::black, 1.5);
+    return p;
+}
+
+QBrush ElementLayout::getMirrorBrush() const
+{
+    static QBrush b = QBrush(Qt::black, Qt::BDiagPattern);
+    return b;
+}
+
+QPen ElementLayout::getMirrorPen() const
+{
+    static QPen p = QPen(Qt::black, 3, Qt::SolidLine, Qt::FlatCap);
+    return p;
+}
+
+QPen ElementLayout::getPlanePen() const
+{
+    static QPen p = QPen(Qt::black, 1, Qt::DashLine);
+    return p;
+}
+
+QBrush ElementLayout::getGrinBrush(double sizeF) const
+{
+    int size = int(sizeF);
+    static QMap<int, QBrush> brushes;
+    if (!brushes.contains(size))
+    {
+        QLinearGradient g(0, -size, 0, size);
+        g.setColorAt(0, Qt::white);
+        g.setColorAt(0.5, Qt::gray);
+        g.setColorAt(1, Qt::white);
+        brushes[size] = QBrush(g);
+    }
+    return brushes[size];
+}
+
+const QFont& ElementLayout::getMarkTSFont() const
+{
+    static QFont f = QFont("Arial", 8, QFont::Bold);
+    return f;
 }
 
 //------------------------------------------------------------------------------
@@ -258,6 +246,12 @@ void SchemaLayout::centerView(const QRectF& rect)
     centerOn(r.center());
 }
 
+const QFont& SchemaLayout::getLabelFont() const
+{
+    static QFont f = Z::Gui::ElemLabelFont().get();
+    return f;
+}
+
 //------------------------------------------------------------------------------
 //                             ElementLayoutFactory
 //------------------------------------------------------------------------------
@@ -270,21 +264,23 @@ void SchemaLayout::centerView(const QRectF& rect)
 
 namespace ElementLayoutFactory {
 
-static QMap<QString, std::function<ElementLayout*(Element*)>> __layoutFactoryMethods;
-static QMap<QString, std::function<ElementLayoutOptionsView*()>> __optionsFactoryMethods;
+using LayoutFactory = QMap<QString, std::function<ElementLayout*(Element*)>>;
+using OptionsFactory = QMap<QString, std::function<ElementLayoutOptionsView*()>>;
+Q_GLOBAL_STATIC(LayoutFactory, __layoutFactoryMethods);
+Q_GLOBAL_STATIC(OptionsFactory, __optionsFactoryMethods);
 
 template <class TElement, class TLayout> void registerLayout() {
     TElement tmp;
-    __layoutFactoryMethods.insert(tmp.type(), [](Element*e) { return new TLayout(e); });
+    __layoutFactoryMethods->insert(tmp.type(), [](Element*e) { return new TLayout(e); });
 }
 
 template <class TElement, class TOptions> void registerLayoutOptions() {
     TElement tmp;
-    __optionsFactoryMethods.insert(tmp.type(), []() { return new TOptions(); });
+    __optionsFactoryMethods->insert(tmp.type(), []() { return new TOptions(); });
 }
 
 ElementLayout* make(Element *elem) {
-    if (__layoutFactoryMethods.empty()) {
+    if (__layoutFactoryMethods->empty()) {
         registerLayout<ElemAxiconLens, ElemAxiconLensLayout::Layout>();
         registerLayout<ElemAxiconMirror, ElemAxiconMirrorLayout::Layout>();
         registerLayout<ElemBrewsterCrystal, ElemBrewsterCrystalLayout::Layout>();
@@ -317,14 +313,14 @@ ElementLayout* make(Element *elem) {
         registerLayout<ElemTiltedInterface, ElemTiltedInterfaceLayout::Layout>();
         registerLayout<ElemTiltedPlate, ElemTiltedPlateLayout::Layout>();
     }
-    if (!__layoutFactoryMethods.contains(elem->type()))
+    if (!__layoutFactoryMethods->contains(elem->type()))
         return nullptr;
-    return __layoutFactoryMethods[elem->type()](elem);
+    return __layoutFactoryMethods->value(elem->type())(elem);
 }
 
 ElementLayoutOptionsView* getOptions(Element *elem)
 {
-    if (__optionsFactoryMethods.empty())
+    if (__optionsFactoryMethods->empty())
     {
         registerLayoutOptions<ElemBrewsterCrystal, ElemBrewsterCrystalLayout::LayoutOptions>();
         registerLayoutOptions<ElemBrewsterPlate, ElemBrewsterPlateLayout::LayoutOptions>();
@@ -336,9 +332,9 @@ ElementLayoutOptionsView* getOptions(Element *elem)
         registerLayoutOptions<ElemPoint, ElemPointLayout::LayoutOptions>();
         registerLayoutOptions<ElemTiltedPlate, ElemTiltedPlateLayout::LayoutOptions>();
     }
-    if (!__optionsFactoryMethods.contains(elem->type()))
+    if (!__optionsFactoryMethods->contains(elem->type()))
         return nullptr;
-    return __optionsFactoryMethods[elem->type()]();
+    return __optionsFactoryMethods->value(elem->type())();
 }
 
 } // namespace ElementLayoutFactory
