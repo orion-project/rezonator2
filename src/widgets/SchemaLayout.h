@@ -47,6 +47,14 @@ protected:
     qreal HH;
 
     void slopePainter(QPainter *painter);
+
+    QBrush getGlassBrush() const;
+    QPen getGlassPen() const;
+    QBrush getMirrorBrush() const;
+    QPen getMirrorPen() const;
+    QPen getPlanePen() const;
+    QBrush getGrinBrush(double sizeF) const;
+    const QFont& getMarkTSFont() const;
 };
 
 class ElementLayoutOptionsView
@@ -85,6 +93,7 @@ private:
     void populate();
     void clear();
     void centerView(const QRectF&);
+    const QFont& getLabelFont() const;
 };
 
 
@@ -92,16 +101,5 @@ namespace ElementLayoutFactory {
 ElementLayout* make(Element *elem);
 ElementLayoutOptionsView *getOptions(Element *elem);
 }
-
-namespace ElementLayoutProps {
-QBrush getGlassBrush();
-QPen getGlassPen();
-QBrush getMirrorBrush();
-QPen getMirrorPen();
-QPen getPlanePen();
-QBrush getGrinBrush(double sizeF);
-const QFont& getMarkTSFont();
-const QFont& getLabelFont();
-} // namespace ElementLayoutProps
 
 #endif // SCHEMA_LAYOUT_H

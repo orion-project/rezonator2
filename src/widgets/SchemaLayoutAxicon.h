@@ -5,8 +5,6 @@
 #include "SchemaLayoutDefs.h"
 #include "../core/Elements.h"
 
-using namespace ElementLayoutProps;
-
 //------------------------------------------------------------------------------
 namespace AxiconElementLayout {
     enum AxiconForm {
