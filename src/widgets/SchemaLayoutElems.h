@@ -13,8 +13,14 @@ namespace ElemEmptyRangeLayout {
         HH = 5;
     }
 
+
+
     PAINT {
-        Q_UNUSED(painter)
+        if (_selected)
+        {
+            painter->setPen(getSelectedAxisPen());
+            painter->drawLine(QLineF(-HW, 0, HW, 0));
+        }
     }
 
     LAYOUT_END

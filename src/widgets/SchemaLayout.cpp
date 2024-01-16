@@ -64,49 +64,71 @@ void ElementLayout::slopePainter(QPainter *painter)
     }
 }
 
-QBrush ElementLayout::getGlassBrush() const
+const QPen& ElementLayout::getSelectedAxisPen() const
 {
-    static QBrush b = QBrush(QPixmap(":/misc/glass_pattern"));
-    return b;
-}
-
-QPen ElementLayout::getGlassPen() const
-{
-    static QPen p = QPen(Qt::black, 1.5);
+    //static QPen p(QColor(140, 170, 240), 7, Qt::SolidLine, Qt::FlatCap);
+    static QPen p(QColor(0, 0, 255, 75), 7, Qt::SolidLine, Qt::FlatCap);
     return p;
 }
 
-QBrush ElementLayout::getMirrorBrush() const
+const QBrush& ElementLayout::getGlassBrush() const
 {
-    static QBrush b = QBrush(Qt::black, Qt::BDiagPattern);
-    return b;
+    // Brushes made from vector icons look nice on 4k-display
+    // but they look bad when rendered on the secondary low-dpi display
+    // And they look the same bad when layout images is copied to cliopboard, which is more importan
+    // While upscaled raster images look more or less ok in both cases
+    //static QBrush b1 = QBrush(QIcon(":/misc/glass_pattern").pixmap(24));
+    //static QBrush b2 = QBrush(QIcon(":/misc/glass_pattern_selected").pixmap(24));
+    static QBrush b1 = QBrush(QPixmap(":/misc/glass_pattern"));
+    static QBrush b2 = QBrush(QPixmap(":/misc/glass_pattern_selected"));
+    return _selected ? b2 : b1;
 }
 
-QPen ElementLayout::getMirrorPen() const
+const QPen &ElementLayout::getGlassPen() const
 {
-    static QPen p = QPen(Qt::black, 3, Qt::SolidLine, Qt::FlatCap);
-    return p;
+    static QPen p1 = QPen(Qt::black, 1.5);
+    static QPen p2 = QPen(Qt::blue, 2.5);
+    return _selected ? p2 : p1;
 }
 
-QPen ElementLayout::getPlanePen() const
+const QBrush& ElementLayout::getMirrorBrush() const
 {
-    static QPen p = QPen(Qt::black, 1, Qt::DashLine);
-    return p;
+    static QBrush b1 = QBrush(Qt::black, Qt::BDiagPattern);
+    static QBrush b2 = QBrush(Qt::blue, Qt::BDiagPattern);
+    return _selected ? b2 : b1;
 }
 
-QBrush ElementLayout::getGrinBrush(double sizeF) const
+const QPen &ElementLayout::getMirrorPen() const
+{
+    static QPen p1 = QPen(Qt::black, 3, Qt::SolidLine, Qt::FlatCap);
+    static QPen p2 = QPen(Qt::blue, 3, Qt::SolidLine, Qt::FlatCap);
+    return _selected ? p2 : p1;
+}
+
+const QPen &ElementLayout::getPlanePen() const
+{
+    static QPen p1 = QPen(Qt::black, 1, Qt::DashLine);
+    static QPen p2 = QPen(Qt::blue, 1, Qt::DashLine);
+    return _selected ? p2 : p1;
+}
+
+const QBrush &ElementLayout::getGrinBrush(double sizeF) const
 {
     int size = int(sizeF);
-    static QMap<int, QBrush> brushes;
+    static QMap<int, QPair<QBrush, QBrush>> brushes;
     if (!brushes.contains(size))
     {
-        QLinearGradient g(0, -size, 0, size);
-        g.setColorAt(0, Qt::white);
-        g.setColorAt(0.5, Qt::gray);
-        g.setColorAt(1, Qt::white);
-        brushes[size] = QBrush(g);
+        QLinearGradient g1(0, -size, 0, size);
+        g1.setColorAt(0, Qt::white);
+        g1.setColorAt(0.5, Qt::gray);
+        g1.setColorAt(1, Qt::white);
+        QLinearGradient g2(0, -size, 0, size);
+        g2.setColorAt(0, QColor(225, 230, 255));
+        g2.setColorAt(0.5, QColor(140, 170, 240));
+        g2.setColorAt(1, QColor(225, 230, 255));
+        brushes[size] = { QBrush(g1), QBrush(g2) };
     }
-    return brushes[size];
+    return _selected ? brushes[size].second : brushes[size].first;
 }
 
 const QFont& ElementLayout::getMarkTSFont() const
@@ -202,6 +224,7 @@ void SchemaLayout::addElement(ElementLayout *elem)
     else elem->setPos(0, 0);
 
     _elements.append(elem);
+    _elemLayouts.insert(elem->element(), elem);
     _scene.addItem(elem);
 
     // Add element label
@@ -210,6 +233,8 @@ void SchemaLayout::addElement(ElementLayout *elem)
         label->setZValue(1000 + _elements.count());
         label->setFont(getLabelFont());
         label->setToolTip(elem->toolTip());
+        if (not _defaultLabelColor.isValid())
+            _defaultLabelColor = label->defaultTextColor();
         // Try to position new label avoiding overlapping with previous labels
         QRectF r = label->boundingRect();
         qreal labelX = elem->x() - r.width() / 2.0;
@@ -236,6 +261,7 @@ void SchemaLayout::clear()
     _scene.removeItem(_axis);
     _scene.clear();
     _elemLabels.clear();
+    _elemLayouts.clear();
     _scene.addItem(_axis);
     _elements.clear();
 }
@@ -250,6 +276,24 @@ const QFont& SchemaLayout::getLabelFont() const
 {
     static QFont f = Z::Gui::ElemLabelFont().get();
     return f;
+}
+
+void SchemaLayout::updateSelection(const Elements& selected)
+{
+    setUpdatesEnabled(false);
+
+    for (auto layout : _elements)
+        layout->setSelected(false);
+    for (auto it = _elemLabels.constBegin(); it != _elemLabels.constEnd(); it++)
+        it.value()->setDefaultTextColor(_defaultLabelColor);
+    for (auto elem : selected)
+        if (auto layout = _elemLayouts.value(elem); layout) {
+            layout->setSelected(true);
+            if (auto label = _elemLabels.value(layout); label)
+                label->setDefaultTextColor(_selectedLabelColor);
+        }
+
+    setUpdatesEnabled(true);
 }
 
 //------------------------------------------------------------------------------

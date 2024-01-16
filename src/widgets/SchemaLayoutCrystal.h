@@ -65,6 +65,8 @@ namespace ElemTiltedCrystalLayout {
         if (layout) layout->paint(painter, nullptr, nullptr);
     }
 
+    OVERRIDE_SELECTED(layout)
+
     LAYOUT_END
 }
 
@@ -112,6 +114,8 @@ namespace ElemBrewsterCrystalLayout {
     PAINT {
         if (layout) layout->paint(painter, nullptr, nullptr);
     }
+
+    OVERRIDE_SELECTED(layout)
 
     LAYOUT_END
 

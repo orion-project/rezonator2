@@ -222,6 +222,8 @@ namespace ElemCurveMirrorLayout {
         if (layout) layout->paint(painter, nullptr, nullptr);
     }
 
+    OVERRIDE_SELECTED(layout)
+
     LAYOUT_END
 }
 
@@ -247,6 +249,8 @@ namespace ElemThinLensLayout {
     PAINT {
         if (layout) layout->paint(painter, nullptr, nullptr);
     }
+
+    OVERRIDE_SELECTED(layout)
 
     LAYOUT_END
 }
@@ -276,6 +280,8 @@ namespace ElemCylinderLensTLayout {
         }
     }
 
+    OVERRIDE_SELECTED(layout)
+
     LAYOUT_END
 }
 
@@ -303,6 +309,8 @@ namespace ElemCylinderLensSLayout {
             layout->paintCornerMark(painter, QStringLiteral("S"));
         }
     }
+
+    OVERRIDE_SELECTED(layout)
 
     LAYOUT_END
 }
@@ -336,6 +344,8 @@ namespace ElemThickLensLayout {
         if (layout) layout->paint(painter, nullptr, nullptr);
     }
 
+    OVERRIDE_SELECTED(layout)
+
     LAYOUT_END
 
     OPTIONS_BEGIN
@@ -364,6 +374,8 @@ namespace ElemGaussApertureLensLayout {
     PAINT {
         if (layout) layout->paint(painter, nullptr, nullptr);
     }
+
+    OVERRIDE_SELECTED(layout)
 
     LAYOUT_END
 }

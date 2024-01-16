@@ -1,0 +1,11 @@
+<svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="m0 0h24v24h-24z" fill="#e1e6ff"/>
+<g fill="#cfdaff" stroke="#00f">
+<path d="m2 12 10-10"/>
+<path d="m2 8 4-4"/>
+<path d="m8 10 4-4"/>
+<path d="m12 18 4-4"/>
+<path d="m12 22 10-10"/>
+<path d="m18 20 4-4"/>
+</g>
+</svg>

@@ -261,6 +261,7 @@
     </qresource>
     <qresource prefix="/misc">
         <file alias="glass_pattern">../img/misc/glass_pattern.png</file>
+        <file alias="glass_pattern_selected">../img/misc/glass_pattern_selected.png</file>
         <file alias="glass_pattern_big">../img/misc/glass_pattern_big.png</file>
         <file alias="mdi_background">../img/misc/background.bmp</file>
         <file alias="beampos_left">../img/misc/beampos_left.svg</file>

@@ -7,6 +7,8 @@ class Layout : public ElementLayout { \
         Layout(Element *elem) : ElementLayout(elem) {}
 #define INIT void init() override
 #define PAINT void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override
+#define OVERRIDE_SELECTED(target) \
+    void setSelected(bool on) override { ElementLayout::setSelected(on); target->setSelected(on); }
 #define LAYOUT_END };
 
 #define OPTIONS_BEGIN \
