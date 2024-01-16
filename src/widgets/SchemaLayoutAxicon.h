@@ -175,6 +175,8 @@ namespace ElemAxiconMirrorLayout {
         if (layout) layout->paint(painter, nullptr, nullptr);
     }
 
+    OVERRIDE_SELECTED(layout)
+
     LAYOUT_END
 }
 
@@ -209,6 +211,8 @@ namespace ElemAxiconLensLayout {
     PAINT {
         if (layout) layout->paint(painter, nullptr, nullptr);
     }
+
+    OVERRIDE_SELECTED(layout)
 
     LAYOUT_END
 }

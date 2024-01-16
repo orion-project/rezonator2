@@ -180,6 +180,8 @@ namespace ElemBrewsterInterfaceLayout {
         layout->paint(painter, nullptr, nullptr);
     }
 
+    OVERRIDE_SELECTED(layout)
+
     LAYOUT_END
 }
 
@@ -198,6 +200,8 @@ namespace ElemTiltedInterfaceLayout {
     PAINT {
         layout->paint(painter, nullptr, nullptr);
     }
+
+    OVERRIDE_SELECTED(layout)
 
     LAYOUT_END
 }
