@@ -171,7 +171,7 @@ namespace ElemBrewsterInterfaceLayout {
 
     INIT {
         HW = 30; HH = 40;
-        layout.reset(new PlaneInterfaceElementLayout::Layout(_element, _parent));
+        layout.reset(new PlaneInterfaceElementLayout::Layout(_element, _owner));
         layout->setHalfSize(HW, HH);
         layout->init();
     }
@@ -192,7 +192,7 @@ namespace ElemTiltedInterfaceLayout {
 
     INIT {
         HW = 15; HH = 40;
-        layout.reset(new PlaneInterfaceElementLayout::Layout(_element, _parent));
+        layout.reset(new PlaneInterfaceElementLayout::Layout(_element, _owner));
         layout->setHalfSize(HW, HH);
         layout->init();
     }

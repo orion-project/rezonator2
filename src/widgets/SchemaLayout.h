@@ -1,9 +1,9 @@
 #ifndef SCHEMA_LAYOUT_H
 #define SCHEMA_LAYOUT_H
 
-#include "GraphicsView.h"
 #include "../core/Schema.h"
 
+#include <QGraphicsView>
 #include <QGraphicsItem>
 
 #define Sqr(x) ((x)*(x))
@@ -25,7 +25,7 @@ public:
         SlopeMinus
     };
 
-    ElementLayout(Element* elem, SchemaLayout* parent);
+    ElementLayout(Element* elem, SchemaLayout* owner);
     ~ElementLayout() override;
 
     Element* element() const { return _element; }
@@ -48,13 +48,14 @@ public:
 
 protected:
     Element* _element;
-    SchemaLayout* _parent;
+    SchemaLayout* _owner;
     Slope _slope = SlopeNone;
     qreal _slopeAngle = 15;
     qreal HW;
     qreal HH;
     bool _selected = false;
 
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent*) override;
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent*) override;
     void mousePressEvent(QGraphicsSceneMouseEvent*) override;
 
@@ -75,15 +76,31 @@ protected:
 class ElemLabelItem : public QGraphicsTextItem
 {
 public:
-    ElemLabelItem(Element* elem, SchemaLayout* parent);
+    ElemLabelItem(Element* elem, SchemaLayout* owner);
 
 protected:
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent*) override;
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent*) override;
     void mousePressEvent(QGraphicsSceneMouseEvent*) override;
 
 private:
     Element* _element;
-    SchemaLayout* _parent;
+    SchemaLayout* _owner;
+};
+
+//------------------------------------------------------------------------------
+
+class SchemaScene : public QGraphicsScene
+{
+public:
+    SchemaScene(SchemaLayout* owner);
+
+protected:
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent*) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *e) override;
+
+private:
+    SchemaLayout* _owner;
 };
 
 //------------------------------------------------------------------------------
@@ -100,7 +117,7 @@ public:
 /**
     Graphical representation of a schema.
 */
-class SchemaLayout : public Z::GraphicsView, public SchemaListener
+class SchemaLayout : public QGraphicsView, public SchemaListener
 {
     Q_OBJECT
 
@@ -119,30 +136,36 @@ public:
     void elementChanged(Schema*, Element*) override { populate(); }
     void elementDeleted(Schema*, Element*) override { populate(); }
 
+    QMenu* elementContextMenu;
+    QMenu* paperContextMenu() const { return _paperContextMenu; }
+
 signals:
     void selectedElemsChanged(const Elements&);
+    void elemDoubleClicked(Element*);
 
 private:
     Schema *_schema;
-    QGraphicsScene _scene;
+    SchemaScene *_scene;
     ElementLayout *_axis;
     QVector<ElementLayout*> _elements;
     QMap<Element*, ElementLayout*> _elemLayouts;
     QMap<ElementLayout*, ElemLabelItem*> _elemLabels;
     QColor _defaultLabelColor;
     QColor _selectedLabelColor = Qt::blue;
+    QMenu* _paperContextMenu;
 
     void addElement(ElementLayout *elem);
     void populate();
     void clear();
     void centerView(const QRectF&);
+    void copyImage() const;
     const QFont& getLabelFont() const;
 };
 
 //------------------------------------------------------------------------------
 
 namespace ElementLayoutFactory {
-ElementLayout* make(Element *elem, SchemaLayout *parent);
+ElementLayout* make(Element *elem, SchemaLayout *owner);
 ElementLayoutOptionsView *getOptions(Element *elem);
 }
 

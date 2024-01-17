@@ -6,13 +6,15 @@
 #include "../core/ElementFormula.h"
 #include "../math/FormatInfo.h"
 
-#include <QGraphicsSceneMouseEvent>
+#include <QClipboard>
+#include <QGraphicsSceneEvent>
+#include <QMenu>
 
 //------------------------------------------------------------------------------
 //                             ElementLayout
 //------------------------------------------------------------------------------
 
-ElementLayout::ElementLayout(Element* elem, SchemaLayout* parent): QGraphicsItem(), _element(elem), _parent(parent)
+ElementLayout::ElementLayout(Element* elem, SchemaLayout* owner): QGraphicsItem(), _element(elem), _owner(owner)
 {
 }
 
@@ -138,36 +140,90 @@ const QFont& ElementLayout::getMarkTSFont() const
     return f;
 }
 
+void ElementLayout::contextMenuEvent(QGraphicsSceneContextMenuEvent* e)
+{
+    QGraphicsItem::contextMenuEvent(e);
+    if (_element and _owner->elementContextMenu) {
+        e->accept();
+        _owner->elementContextMenu->popup(e->screenPos());
+    }
+}
+
 void ElementLayout::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e)
 {
     QGraphicsItem::mouseDoubleClickEvent(e);
+    if (_element) {
+        e->accept();
+        emit _owner->elemDoubleClicked(_element);
+    }
 }
 
 void ElementLayout::mousePressEvent(QGraphicsSceneMouseEvent* e)
 {
     QGraphicsItem::mousePressEvent(e);
-    if (_element)
-        _parent->elementClicked(_element, e->modifiers().testFlag(Qt::ControlModifier));
+    if (_element) {
+        e->accept();
+        _owner->elementClicked(_element, e->modifiers().testFlag(Qt::ControlModifier));
+    }
 }
 
 //------------------------------------------------------------------------------
 //                             ElemLabelItem
 //------------------------------------------------------------------------------
 
-ElemLabelItem::ElemLabelItem(Element* elem, SchemaLayout* parent) : QGraphicsTextItem(elem->label()), _element(elem), _parent(parent)
+ElemLabelItem::ElemLabelItem(Element* elem, SchemaLayout* owner) : QGraphicsTextItem(elem->label()), _element(elem), _owner(owner)
 {
+}
+
+void ElemLabelItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* e)
+{
+    QGraphicsItem::contextMenuEvent(e);
+    if (_element and _owner->elementContextMenu) {
+        e->accept();
+        _owner->elementContextMenu->popup(e->screenPos());
+    }
 }
 
 void ElemLabelItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e)
 {
     QGraphicsTextItem::mouseDoubleClickEvent(e);
+    if (_element) {
+        e->accept();
+        emit _owner->elemDoubleClicked(_element);
+    }
 }
 
 void ElemLabelItem::mousePressEvent(QGraphicsSceneMouseEvent* e)
 {
     QGraphicsTextItem::mousePressEvent(e);
-    if (_element)
-        _parent->elementClicked(_element, e->modifiers().testFlag(Qt::ControlModifier));
+    if (_element) {
+        e->accept();
+        _owner->elementClicked(_element, e->modifiers().testFlag(Qt::ControlModifier));
+    }
+}
+
+//------------------------------------------------------------------------------
+//                              SchemaScene
+//------------------------------------------------------------------------------
+
+SchemaScene::SchemaScene(SchemaLayout* owner) : QGraphicsScene(owner), _owner(owner) {}
+
+void SchemaScene::contextMenuEvent(QGraphicsSceneContextMenuEvent* e)
+{
+    QGraphicsScene::contextMenuEvent(e);
+    if (not e->isAccepted()) {
+        e->accept();
+        _owner->paperContextMenu()->exec(e->screenPos());
+    }
+}
+
+void SchemaScene::mousePressEvent(QGraphicsSceneMouseEvent *e)
+{
+    QGraphicsScene::mousePressEvent(e);
+    if (not e->isAccepted() and e->button() == Qt::LeftButton) {
+        e->accept();
+        _owner->updateSelection({});
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -180,12 +236,17 @@ const char* ElementLayoutOptionsView::altVersionOptionTitle() const
 }
 
 //------------------------------------------------------------------------------
+//                               OpticalAxisLayout
+//------------------------------------------------------------------------------
+
 namespace OpticalAxisLayout {
     LAYOUT_BEGIN
 
     PAINT {
         painter->drawLine(QLineF(-HW, 0, HW, 0));
     }
+
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent* e) override { e->ignore(); }
 
     LAYOUT_END
 }
@@ -194,14 +255,22 @@ namespace OpticalAxisLayout {
 //                               SchemaLayout
 //------------------------------------------------------------------------------
 
-SchemaLayout::SchemaLayout(Schema *schema, QWidget* parent) : Z::GraphicsView(parent), _schema(schema)
+SchemaLayout::SchemaLayout(Schema *schema, QWidget* parent) : QGraphicsView(parent), _schema(schema)
 {
+    setRenderHint(QPainter::Antialiasing, true);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+
+    _paperContextMenu = new QMenu(this);
+    _paperContextMenu->addAction(QIcon(":/toolbar/copy_img"), tr("Copy Image"), this, &SchemaLayout::copyImage);
+
     _axis = new OpticalAxisLayout::Layout(nullptr, this);
     _axis->setAcceptedMouseButtons(Qt::MouseButtons());
     _axis->setZValue(1000);
-    _scene.addItem(_axis);
 
-    setScene(&_scene);
+    _scene = new SchemaScene(this);
+    _scene->addItem(_axis);
+    setScene(_scene);
 }
 
 SchemaLayout::~SchemaLayout()
@@ -241,9 +310,9 @@ void SchemaLayout::populate()
     _axis->setHalfSize(fullW/2, 5);
     _axis->setX(fullW/2 - firstHW - axisMargin);
 
-    auto r = _scene.itemsBoundingRect();
+    auto r = _scene->itemsBoundingRect();
     r.adjust(-10, -10, 10, 10);
-    _scene.setSceneRect(r);
+    _scene->setSceneRect(r);
     centerView(r);
 
     setUpdatesEnabled(true);
@@ -262,12 +331,12 @@ void SchemaLayout::addElement(ElementLayout *elem)
 
     _elements.append(elem);
     _elemLayouts.insert(elem->element(), elem);
-    _scene.addItem(elem);
+    _scene->addItem(elem);
 
     // Add element label
     if (elem->element()->layoutOptions.showLabel) {
         auto label = new ElemLabelItem(elem->element(), this);
-        _scene.addItem(label);
+        _scene->addItem(label);
         label->setZValue(1000 + _elements.count());
         label->setFont(getLabelFont());
         label->setToolTip(elem->toolTip());
@@ -296,17 +365,17 @@ void SchemaLayout::addElement(ElementLayout *elem)
 
 void SchemaLayout::clear()
 {
-    _scene.removeItem(_axis);
-    _scene.clear();
+    _scene->removeItem(_axis);
+    _scene->clear();
     _elemLabels.clear();
     _elemLayouts.clear();
-    _scene.addItem(_axis);
+    _scene->addItem(_axis);
     _elements.clear();
 }
 
 void SchemaLayout::centerView(const QRectF& rect)
 {
-    QRectF r = rect.isEmpty() ? _scene.itemsBoundingRect(): rect;
+    QRectF r = rect.isEmpty() ? _scene->itemsBoundingRect(): rect;
     centerOn(r.center());
 }
 
@@ -326,7 +395,6 @@ void SchemaLayout::updateSelection(const Elements& selected)
         it.value()->setDefaultTextColor(_defaultLabelColor);
     for (auto elem : selected)
         if (auto layout = _elemLayouts.value(elem); layout) {
-            //qDebug() << "Update selection" << layout->element()->label();
             layout->setSelected(true);
             if (auto label = _elemLabels.value(layout); label)
                 label->setDefaultTextColor(_selectedLabelColor);
@@ -371,6 +439,23 @@ void SchemaLayout::elementClicked(Element* elem, bool multiselect)
     }
     if (changed)
         emit selectedElemsChanged(selected);
+    // Normally updateSelection() is called from elems table as a result of selectedElemsChanged.
+    // But there is a case when we click an empty space in layout and all elements get deselected
+    // then we click the previously selected element again.
+    // For elems table selection is not changed and it does not call updateSelection.
+    updateSelection(selected);
+}
+
+void SchemaLayout::copyImage() const
+{
+    QImage image(scene()->sceneRect().size().toSize(), QImage::Format_RGB888);
+    image.fill(Qt::white);
+
+    QPainter painter(&image);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    scene()->render(&painter);
+
+    qApp->clipboard()->setImage(image);
 }
 
 //------------------------------------------------------------------------------
@@ -392,7 +477,7 @@ Q_GLOBAL_STATIC(OptionsFactory, __optionsFactoryMethods);
 
 template <class TElement, class TLayout> void registerLayout() {
     TElement tmp;
-    __layoutFactoryMethods->insert(tmp.type(), [](Element*e, SchemaLayout*p) { return new TLayout(e, p); });
+    __layoutFactoryMethods->insert(tmp.type(), [](Element*e, SchemaLayout*o) { return new TLayout(e, o); });
 }
 
 template <class TElement, class TOptions> void registerLayoutOptions() {
@@ -400,7 +485,7 @@ template <class TElement, class TOptions> void registerLayoutOptions() {
     __optionsFactoryMethods->insert(tmp.type(), []() { return new TOptions(); });
 }
 
-ElementLayout* make(Element *elem, SchemaLayout *parent) {
+ElementLayout* make(Element *elem, SchemaLayout *owner) {
     if (__layoutFactoryMethods->empty()) {
         registerLayout<ElemAxiconLens, ElemAxiconLensLayout::Layout>();
         registerLayout<ElemAxiconMirror, ElemAxiconMirrorLayout::Layout>();
@@ -436,7 +521,7 @@ ElementLayout* make(Element *elem, SchemaLayout *parent) {
     }
     if (!__layoutFactoryMethods->contains(elem->type()))
         return nullptr;
-    return __layoutFactoryMethods->value(elem->type())(elem, parent);
+    return __layoutFactoryMethods->value(elem->type())(elem, owner);
 }
 
 ElementLayoutOptionsView* getOptions(Element *elem)

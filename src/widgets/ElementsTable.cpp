@@ -315,7 +315,6 @@ void ElementsTable::showContextMenu(const QPoint& pos)
 {
     auto menu = (currentRow() < _schema->count()) ? elementContextMenu : lastRowContextMenu;
     if (!menu) return;
-    emit beforeContextMenuShown(menu);
     menu->popup(mapToGlobal(pos));
 }
 

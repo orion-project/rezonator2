@@ -55,7 +55,7 @@ namespace ElemTiltedCrystalLayout {
         HW = 15; HH = 40;
         auto crystal = dynamic_cast<ElemTiltedCrystal*>(_element);
         if (!crystal) return;
-        layout.reset(new CrystalElementLayout::Layout(nullptr, _parent));
+        layout.reset(new CrystalElementLayout::Layout(nullptr, _owner));
         layout->setSlope(crystal->alpha());
         layout->setHalfSize(HW, HH);
         layout->init();
@@ -104,7 +104,7 @@ namespace ElemBrewsterCrystalLayout {
     INIT {
         HW = _element->layoutOptions.drawAlt ? 20 : 30;
         HH = 30;
-        layout.reset(new CrystalElementLayout::Layout(nullptr, _parent));
+        layout.reset(new CrystalElementLayout::Layout(nullptr, _owner));
         layout->setHalfSize(HW, HH);
         layout->setSlopeAngle(40);
         layout->setSlope(SlopePlus);

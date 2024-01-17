@@ -5,10 +5,13 @@
       "date": "",
       "changes": [
         {
+          "text": "Interactive Layout: can select and edit elements on graphical view"
+        },
+        {
           "text": "Use internal help viewer instead of external Assistant program"
         },
         {
-          "text": "Watch config files for sharing data between running instances"
+          "text": "Watch config files for sharing settings between running instances"
         },
         {
           "text": "Configure default formats for graphs, cursor, and boundary lines"

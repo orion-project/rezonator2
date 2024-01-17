@@ -36,7 +36,6 @@ signals:
     void currentElemChanged(Element*);
     void selectedElemsChanged(const Elements&);
     void elemDoubleClicked(Element*);
-    void beforeContextMenuShown(QMenu* menu);
 
 private slots:
      void currentRowChanged(const QModelIndex &current, const QModelIndex &);

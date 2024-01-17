@@ -42,11 +42,12 @@ SchemaViewWindow::SchemaViewWindow(Schema *owner, CalcManager *calcs) : SchemaMd
 
     connect(_table, &ElementsTable::elemDoubleClicked, this, &SchemaViewWindow::elemDoubleClicked);
     connect(_table, &ElementsTable::currentElemChanged, this, &SchemaViewWindow::currentElemChanged);
-    connect(_table, &ElementsTable::beforeContextMenuShown, this, &SchemaViewWindow::contextMenuAboutToShow);
     connect(_table, &ElementsTable::selectedElemsChanged, _layout, &SchemaLayout::updateSelection);
     connect(_layout, &SchemaLayout::selectedElemsChanged, _table, &ElementsTable::selectElems);
+    connect(_layout, &SchemaLayout::elemDoubleClicked, this, &SchemaViewWindow::elemDoubleClicked);
     _table->elementContextMenu = menuContextElement;
     _table->lastRowContextMenu = menuContextLastRow;
+    _layout->elementContextMenu = menuContextElement;
     _layout->getSelection = [this]{ return _table->selection(); };
 }
 
@@ -89,6 +90,7 @@ void SchemaViewWindow::createMenuBar()
     menuContextElement = Ori::Gui::menu(this,
         { actnElemProp, actnEditFormula, actnElemMatr, nullptr, actnAdjuster, nullptr,
           actnEditCopy, actnEditPaste, nullptr, actnElemDisable, actnElemReplace, nullptr, actnElemDelete});
+    connect(menuContextElement, &QMenu::aboutToShow, this, &SchemaViewWindow::elemsContextMenuAboutToShow);
 
     menuContextLastRow = Ori::Gui::menu(this,
         { actnElemAdd, actnEditPaste });
@@ -350,10 +352,8 @@ void SchemaViewWindow::currentElemChanged(Element* elem)
     actnEditFormula->setVisible(isFormula);
 }
 
-void SchemaViewWindow::contextMenuAboutToShow(QMenu* menu)
+void SchemaViewWindow::elemsContextMenuAboutToShow()
 {
-    if (menu != menuContextElement) return;
-
     if (menuAdjuster)
     {
         delete menuAdjuster;
