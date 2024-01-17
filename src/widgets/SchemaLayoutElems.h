@@ -10,10 +10,8 @@ namespace ElemEmptyRangeLayout {
 
     INIT {
         HW = _element->layoutOptions.drawAlt ? 15 : 50;
-        HH = 5;
+        HH = 20;
     }
-
-
 
     PAINT {
         if (_selected)

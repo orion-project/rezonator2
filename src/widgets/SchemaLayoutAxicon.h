@@ -152,7 +152,7 @@ namespace ElemAxiconMirrorLayout {
         HW = 12; HH = 40;
         auto mirror = dynamic_cast<ElemAxiconMirror*>(_element);
         if (!mirror || !_element->owner()) return;
-        layout.reset(new AxiconElementLayout::Layout(nullptr));
+        layout.reset(new AxiconElementLayout::Layout(nullptr, _parent));
         layout->setHalfSize(HW, HH);
         layout->setSlope(mirror->alpha());
         auto pos = _element->owner()->position(_element);
@@ -189,7 +189,7 @@ namespace ElemAxiconLensLayout {
         HW = 12; HH = 40;
         auto mirror = dynamic_cast<ElemAxiconLens*>(_element);
         if (!mirror || !_element->owner()) return;
-        layout.reset(new AxiconElementLayout::Layout(nullptr));
+        layout.reset(new AxiconElementLayout::Layout(nullptr, _parent));
         layout->setHalfSize(HW, HH);
         layout->setSlope(mirror->alpha());
         auto pos = _element->owner()->position(_element);

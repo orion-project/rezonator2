@@ -44,8 +44,10 @@ SchemaViewWindow::SchemaViewWindow(Schema *owner, CalcManager *calcs) : SchemaMd
     connect(_table, &ElementsTable::currentElemChanged, this, &SchemaViewWindow::currentElemChanged);
     connect(_table, &ElementsTable::beforeContextMenuShown, this, &SchemaViewWindow::contextMenuAboutToShow);
     connect(_table, &ElementsTable::selectedElemsChanged, _layout, &SchemaLayout::updateSelection);
+    connect(_layout, &SchemaLayout::selectedElemsChanged, _table, &ElementsTable::selectElems);
     _table->elementContextMenu = menuContextElement;
     _table->lastRowContextMenu = menuContextLastRow;
+    _layout->getSelection = [this]{ return _table->selection(); };
 }
 
 SchemaViewWindow::~SchemaViewWindow()

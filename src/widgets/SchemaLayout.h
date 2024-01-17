@@ -8,6 +8,10 @@
 
 #define Sqr(x) ((x)*(x))
 
+class SchemaLayout;
+
+//------------------------------------------------------------------------------
+
 /**
     Graphical representation of single element.
 */
@@ -21,10 +25,12 @@ public:
         SlopeMinus
     };
 
-    ElementLayout(Element* elem);
+    ElementLayout(Element* elem, SchemaLayout* parent);
     ~ElementLayout() override;
 
     Element* element() const { return _element; }
+
+    bool isSelected() const { return _selected; }
     virtual void setSelected(bool on) { _selected = on; }
 
     virtual void init() {}
@@ -42,11 +48,15 @@ public:
 
 protected:
     Element* _element;
+    SchemaLayout* _parent;
     Slope _slope = SlopeNone;
     qreal _slopeAngle = 15;
     qreal HW;
     qreal HH;
     bool _selected = false;
+
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent*) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent*) override;
 
     void slopePainter(QPainter *painter);
 
@@ -60,12 +70,32 @@ protected:
     const QFont& getMarkTSFont() const;
 };
 
+//------------------------------------------------------------------------------
+
+class ElemLabelItem : public QGraphicsTextItem
+{
+public:
+    ElemLabelItem(Element* elem, SchemaLayout* parent);
+
+protected:
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent*) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent*) override;
+
+private:
+    Element* _element;
+    SchemaLayout* _parent;
+};
+
+//------------------------------------------------------------------------------
+
 class ElementLayoutOptionsView
 {
 public:
     virtual bool hasAltVersion() const { return false; }
     virtual const char *altVersionOptionTitle() const;
 };
+
+//------------------------------------------------------------------------------
 
 /**
     Graphical representation of a schema.
@@ -79,6 +109,8 @@ public:
     ~SchemaLayout() override;
 
     void updateSelection(const Elements& selected);
+    std::function<Elements()> getSelection;
+    void elementClicked(Element* elem, bool multiselect);
 
     // inherits from SchemaListener
     void schemaLoaded(Schema*) override { populate(); }
@@ -87,13 +119,16 @@ public:
     void elementChanged(Schema*, Element*) override { populate(); }
     void elementDeleted(Schema*, Element*) override { populate(); }
 
+signals:
+    void selectedElemsChanged(const Elements&);
+
 private:
     Schema *_schema;
     QGraphicsScene _scene;
     ElementLayout *_axis;
     QVector<ElementLayout*> _elements;
     QMap<Element*, ElementLayout*> _elemLayouts;
-    QMap<ElementLayout*, QGraphicsTextItem*> _elemLabels;
+    QMap<ElementLayout*, ElemLabelItem*> _elemLabels;
     QColor _defaultLabelColor;
     QColor _selectedLabelColor = Qt::blue;
 
@@ -104,9 +139,10 @@ private:
     const QFont& getLabelFont() const;
 };
 
+//------------------------------------------------------------------------------
 
 namespace ElementLayoutFactory {
-ElementLayout* make(Element *elem);
+ElementLayout* make(Element *elem, SchemaLayout *parent);
 ElementLayoutOptionsView *getOptions(Element *elem);
 }
 
