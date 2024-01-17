@@ -4,7 +4,7 @@
 #define LAYOUT_BEGIN \
 class Layout : public ElementLayout { \
         public: \
-        Layout(Element *elem, SchemaLayout* parent) : ElementLayout(elem, parent) {}
+        Layout(Element *elem, SchemaLayout* owner) : ElementLayout(elem, owner) {}
 #define INIT void init() override
 #define PAINT void paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*) override
 #define OVERRIDE_SELECTED(target) \

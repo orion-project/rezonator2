@@ -78,7 +78,7 @@ private slots:
     void actionElemDisable();
     void elemDoubleClicked(Element*);
     void currentElemChanged(Element* elem);
-    void contextMenuAboutToShow(QMenu* menu);
+    void elemsContextMenuAboutToShow();
     void adjustParam();
 };
 

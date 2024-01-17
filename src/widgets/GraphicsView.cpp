@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QClipboard>
+#include <QDebug>
 #include <QMenu>
 #include <QWheelEvent>
 
