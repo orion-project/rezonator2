@@ -50,7 +50,7 @@ TEST_METHOD(layouts)
     for (auto elem : ElementsCatalog::instance().elements())
     {
         TEST_LOG(elem->type())
-        QSharedPointer<ElementLayout> layout(ElementLayoutFactory::make(elem));
+        QSharedPointer<ElementLayout> layout(ElementLayoutFactory::make(elem, nullptr));
         if (!layout)
         {
             TEST_LOG("    no layout")

@@ -199,7 +199,7 @@ namespace ElemCurveMirrorLayout {
         HW = 10; HH = 40;
         ElemCurveMirror *mirror = dynamic_cast<ElemCurveMirror*>(_element);
         if (!mirror || !_element->owner()) return;
-        layout.reset(new CurvedElementLayout::Layout(nullptr));
+        layout.reset(new CurvedElementLayout::Layout(nullptr, _parent));
         layout->setHalfSize(HW, HH);
         layout->setSlope(mirror->alpha());
         auto pos = _element->owner()->position(_element);
@@ -237,7 +237,7 @@ namespace ElemThinLensLayout {
         HW = 10; HH = 40;
         auto lens = dynamic_cast<ElemThinLens*>(_element);
         if (!lens) return;
-        layout.reset(new CurvedElementLayout::Layout(nullptr));
+        layout.reset(new CurvedElementLayout::Layout(nullptr, _parent));
         layout->setHalfSize(HW, HH);
         layout->setSlope(lens->alpha());
         layout->paintMode = lens->focus() > 0
@@ -264,7 +264,7 @@ namespace ElemCylinderLensTLayout {
         HW = 10; HH = 40;
         auto lens = dynamic_cast<ElemCylinderLensT*>(_element);
         if (!lens) return;
-        layout.reset(new CurvedElementLayout::Layout(nullptr));
+        layout.reset(new CurvedElementLayout::Layout(nullptr, _parent));
         layout->setHalfSize(HW, HH);
         layout->setSlope(lens->alpha());
         layout->paintMode = lens->focus() > 0
@@ -294,7 +294,7 @@ namespace ElemCylinderLensSLayout {
         HW = 10; HH = 40;
         auto lens = dynamic_cast<ElemCylinderLensS*>(_element);
         if (!lens) return;
-        layout.reset(new CurvedElementLayout::Layout(nullptr));
+        layout.reset(new CurvedElementLayout::Layout(nullptr, _parent));
         layout->setHalfSize(HW, HH);
         layout->setSlope(lens->alpha());
         layout->paintMode = lens->focus() > 0
@@ -325,7 +325,7 @@ namespace ElemThickLensLayout {
         HH = 40;
         auto lens = dynamic_cast<ElemThickLens*>(_element);
         if (!lens) return;
-        layout.reset(new CurvedElementLayout::Layout(nullptr));
+        layout.reset(new CurvedElementLayout::Layout(nullptr, _parent));
         layout->setHalfSize(HW, HH);
         auto R1 = lens->radius1();
         auto R2 = lens->radius2();
@@ -362,7 +362,7 @@ namespace ElemGaussApertureLensLayout {
         HW = 10; HH = 40;
         auto lens = dynamic_cast<ElemGaussApertureLens*>(_element);
         if (!lens) return;
-        layout.reset(new CurvedElementLayout::Layout(nullptr));
+        layout.reset(new CurvedElementLayout::Layout(nullptr, _parent));
         layout->setHalfSize(HW, HH);
         layout->brush = getGrinBrush(HH);
         layout->paintMode = lens->focusT() > 0

@@ -6,11 +6,13 @@
 #include "../core/ElementFormula.h"
 #include "../math/FormatInfo.h"
 
+#include <QGraphicsSceneMouseEvent>
+
 //------------------------------------------------------------------------------
 //                             ElementLayout
 //------------------------------------------------------------------------------
 
-ElementLayout::ElementLayout(Element* elem): QGraphicsItem(), _element(elem)
+ElementLayout::ElementLayout(Element* elem, SchemaLayout* parent): QGraphicsItem(), _element(elem), _parent(parent)
 {
 }
 
@@ -66,7 +68,6 @@ void ElementLayout::slopePainter(QPainter *painter)
 
 const QPen& ElementLayout::getSelectedAxisPen() const
 {
-    //static QPen p(QColor(140, 170, 240), 7, Qt::SolidLine, Qt::FlatCap);
     static QPen p(QColor(0, 0, 255, 75), 7, Qt::SolidLine, Qt::FlatCap);
     return p;
 }
@@ -75,7 +76,7 @@ const QBrush& ElementLayout::getGlassBrush() const
 {
     // Brushes made from vector icons look nice on 4k-display
     // but they look bad when rendered on the secondary low-dpi display
-    // And they look the same bad when layout images is copied to cliopboard, which is more importan
+    // And they look the same bad when layout image is copied to Clipboard, which is more importan
     // While upscaled raster images look more or less ok in both cases
     //static QBrush b1 = QBrush(QIcon(":/misc/glass_pattern").pixmap(24));
     //static QBrush b2 = QBrush(QIcon(":/misc/glass_pattern_selected").pixmap(24));
@@ -137,6 +138,38 @@ const QFont& ElementLayout::getMarkTSFont() const
     return f;
 }
 
+void ElementLayout::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e)
+{
+    QGraphicsItem::mouseDoubleClickEvent(e);
+}
+
+void ElementLayout::mousePressEvent(QGraphicsSceneMouseEvent* e)
+{
+    QGraphicsItem::mousePressEvent(e);
+    if (_element)
+        _parent->elementClicked(_element, e->modifiers().testFlag(Qt::ControlModifier));
+}
+
+//------------------------------------------------------------------------------
+//                             ElemLabelItem
+//------------------------------------------------------------------------------
+
+ElemLabelItem::ElemLabelItem(Element* elem, SchemaLayout* parent) : QGraphicsTextItem(elem->label()), _element(elem), _parent(parent)
+{
+}
+
+void ElemLabelItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e)
+{
+    QGraphicsTextItem::mouseDoubleClickEvent(e);
+}
+
+void ElemLabelItem::mousePressEvent(QGraphicsSceneMouseEvent* e)
+{
+    QGraphicsTextItem::mousePressEvent(e);
+    if (_element)
+        _parent->elementClicked(_element, e->modifiers().testFlag(Qt::ControlModifier));
+}
+
 //------------------------------------------------------------------------------
 //                            ElementLayoutOptionsView
 //------------------------------------------------------------------------------
@@ -163,7 +196,8 @@ namespace OpticalAxisLayout {
 
 SchemaLayout::SchemaLayout(Schema *schema, QWidget* parent) : Z::GraphicsView(parent), _schema(schema)
 {
-    _axis = new OpticalAxisLayout::Layout(nullptr);
+    _axis = new OpticalAxisLayout::Layout(nullptr, this);
+    _axis->setAcceptedMouseButtons(Qt::MouseButtons());
     _axis->setZValue(1000);
     _scene.addItem(_axis);
 
@@ -185,7 +219,7 @@ void SchemaLayout::populate()
     for (int i = 0; i < elems.size(); i++) {
         Element *elem = elems.at(i);
         if (elem->disabled()) continue;
-        auto layout = ElementLayoutFactory::make(elem);
+        auto layout = ElementLayoutFactory::make(elem, this);
         if (layout) {
             layout->makeElemToolTip();
             layout->init();
@@ -213,6 +247,9 @@ void SchemaLayout::populate()
     centerView(r);
 
     setUpdatesEnabled(true);
+
+    if (getSelection)
+        updateSelection(getSelection());
 }
 
 void SchemaLayout::addElement(ElementLayout *elem)
@@ -229,7 +266,8 @@ void SchemaLayout::addElement(ElementLayout *elem)
 
     // Add element label
     if (elem->element()->layoutOptions.showLabel) {
-        QGraphicsTextItem *label = _scene.addText(elem->element()->label());
+        auto label = new ElemLabelItem(elem->element(), this);
+        _scene.addItem(label);
         label->setZValue(1000 + _elements.count());
         label->setFont(getLabelFont());
         label->setToolTip(elem->toolTip());
@@ -282,18 +320,57 @@ void SchemaLayout::updateSelection(const Elements& selected)
 {
     setUpdatesEnabled(false);
 
-    for (auto layout : _elements)
+    for (auto layout : qAsConst(_elements))
         layout->setSelected(false);
     for (auto it = _elemLabels.constBegin(); it != _elemLabels.constEnd(); it++)
         it.value()->setDefaultTextColor(_defaultLabelColor);
     for (auto elem : selected)
         if (auto layout = _elemLayouts.value(elem); layout) {
+            //qDebug() << "Update selection" << layout->element()->label();
             layout->setSelected(true);
             if (auto label = _elemLabels.value(layout); label)
                 label->setDefaultTextColor(_selectedLabelColor);
         }
 
     setUpdatesEnabled(true);
+}
+
+void SchemaLayout::elementClicked(Element* elem, bool multiselect)
+{
+    bool changed = false;
+    Elements selected;
+    if (multiselect)
+    {
+        // In multiselect mode we always change selection
+        // Either some elem selected or deselected
+        changed = true;
+        for (auto layout : qAsConst(_elements)) {
+            if (layout->element() == elem) {
+                // selection state of clicked is toggled
+                if (not layout->isSelected())
+                    selected.append(elem);
+            } else if (layout->isSelected()) {
+                // other elements kept selected
+                selected.append(layout->element());
+            }
+        }
+    }
+    else
+    {
+        for (auto layout : qAsConst(_elements)) {
+            if (layout->element() == elem) {
+                // selection state of clicked is not changed
+                selected.append(elem);
+                if (not layout->isSelected())
+                    changed = true;
+            } else if (layout->isSelected()) {
+                // ether elements deselected
+                changed = true;
+            }
+        }
+    }
+    if (changed)
+        emit selectedElemsChanged(selected);
 }
 
 //------------------------------------------------------------------------------
@@ -308,14 +385,14 @@ void SchemaLayout::updateSelection(const Elements& selected)
 
 namespace ElementLayoutFactory {
 
-using LayoutFactory = QMap<QString, std::function<ElementLayout*(Element*)>>;
+using LayoutFactory = QMap<QString, std::function<ElementLayout*(Element*, SchemaLayout*)>>;
 using OptionsFactory = QMap<QString, std::function<ElementLayoutOptionsView*()>>;
 Q_GLOBAL_STATIC(LayoutFactory, __layoutFactoryMethods);
 Q_GLOBAL_STATIC(OptionsFactory, __optionsFactoryMethods);
 
 template <class TElement, class TLayout> void registerLayout() {
     TElement tmp;
-    __layoutFactoryMethods->insert(tmp.type(), [](Element*e) { return new TLayout(e); });
+    __layoutFactoryMethods->insert(tmp.type(), [](Element*e, SchemaLayout*p) { return new TLayout(e, p); });
 }
 
 template <class TElement, class TOptions> void registerLayoutOptions() {
@@ -323,7 +400,7 @@ template <class TElement, class TOptions> void registerLayoutOptions() {
     __optionsFactoryMethods->insert(tmp.type(), []() { return new TOptions(); });
 }
 
-ElementLayout* make(Element *elem) {
+ElementLayout* make(Element *elem, SchemaLayout *parent) {
     if (__layoutFactoryMethods->empty()) {
         registerLayout<ElemAxiconLens, ElemAxiconLensLayout::Layout>();
         registerLayout<ElemAxiconMirror, ElemAxiconMirrorLayout::Layout>();
@@ -359,7 +436,7 @@ ElementLayout* make(Element *elem) {
     }
     if (!__layoutFactoryMethods->contains(elem->type()))
         return nullptr;
-    return __layoutFactoryMethods->value(elem->type())(elem);
+    return __layoutFactoryMethods->value(elem->type())(elem, parent);
 }
 
 ElementLayoutOptionsView* getOptions(Element *elem)

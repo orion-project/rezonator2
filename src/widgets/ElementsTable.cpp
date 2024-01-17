@@ -270,16 +270,19 @@ Elements ElementsTable::selection() const
 
 void ElementsTable::selectElems(const Elements& elems)
 {
-   int minRow = _schema->count()-1, maxRow = 0;
-   foreach (auto elem, elems) {
-       int row = _schema->indexOf(elem);
-       if (row < minRow) minRow = row;
-       if (row > maxRow) maxRow = row;
-   }
-   selectRow(maxRow); // update current index
-   selectionModel()->select(
-        QItemSelection(_model->index(minRow, 0), _model->index(maxRow, COL_COUNT-1)),
-        QItemSelectionModel::SelectionFlags(QItemSelectionModel::Clear | QItemSelectionModel::Select));
+    int row = -1;
+    QItemSelection selection;
+    for (auto elem : elems) {
+        row = _schema->indexOf(elem);
+        selection.merge(QItemSelection(_model->index(row, 0), _model->index(row, COL_COUNT-1)), QItemSelectionModel::Select);
+    }
+    if (row >= 0) {
+        // update current index to emit currentRowChanged/currentElemChanged
+        // this is used for update action states in SchemaViewWindow
+        selectRow(row);
+        // QItemSelectionModel::Current|QItemSelectionModel::Rows does not emit currentRowChanged
+        selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
+    }
 }
 
 int ElementsTable::currentRow() const
