@@ -31,6 +31,7 @@ void BeamVariationFunction::calculate(CalculationMode calcMode)
     // https://github.com/orion-project/rezonator2/issues/54
     bool recalcSubrange = _pos.element == arg()->element;
     double subrangeSi = 0;
+
     if (rangeElem)
     {
         _ior = rangeElem->ior();
@@ -54,7 +55,7 @@ void BeamVariationFunction::calculate(CalculationMode calcMode)
     for (auto x : range.values())
     {
         param->setValue({x, unitX});
-        if (recalcSubrange)
+        if (rangeElem && recalcSubrange)
             rangeElem->setSubRangeSI(subrangeSi);
 
         if (!isResonator)
