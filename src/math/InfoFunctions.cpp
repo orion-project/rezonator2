@@ -174,7 +174,7 @@ QString InfoFuncMatrixRT::calculateInternal()
         range->setSubRange(_refOffset);
     }
 
-    c.multMatrix();
+    c.multMatrix("InfoFuncMatrixRT::calculateInternal");
 
     QString res = format(&c, _showElems);
 

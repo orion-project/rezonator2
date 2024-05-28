@@ -408,7 +408,7 @@ void TableFunction::calculateAt(CalcElem calcElem, ResultElem resultElem, Option
 
     RoundTripCalculator calc(schema(), calcElem.ref());
     calc.calcRoundTrip(calcElem.range);
-    calc.multMatrix();
+    calc.multMatrix("TableFunction::calculateAt");
 
     const double ior = overrideIor.set ? overrideIor.value : (calcElem.range ? calcElem.range->ior() : 1);
 

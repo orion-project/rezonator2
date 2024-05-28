@@ -25,10 +25,17 @@ void BeamVariationFunction::calculate(CalculationMode calcMode)
     if (calcMode != CALC_PLOT) return;
 
     auto rangeElem = Z::Utils::asRange(_pos.element);
+
+    // If we plot in the same range element which we change
+    // then subrange matrices could change every step
+    // https://github.com/orion-project/rezonator2/issues/54
+    bool recalcSubrange = _pos.element == arg()->element;
+    double subrangeSi = 0;
     if (rangeElem)
     {
-        rangeElem->setSubRangeSI(_pos.offset.toSi());
         _ior = rangeElem->ior();
+        subrangeSi = _pos.offset.toSi();
+        rangeElem->setSubRangeSI(subrangeSi);
     }
 
     bool isResonator = _schema->isResonator();
@@ -47,6 +54,9 @@ void BeamVariationFunction::calculate(CalculationMode calcMode)
     for (auto x : range.values())
     {
         param->setValue({x, unitX});
+        if (recalcSubrange)
+            rangeElem->setSubRangeSI(subrangeSi);
+
         if (!isResonator)
         {
             // Is the variating element located further than a dynamic element
@@ -54,7 +64,7 @@ void BeamVariationFunction::calculate(CalculationMode calcMode)
             // But we calculate dynamic matrices anyway, for simplicity
             FunctionUtils::prepareDynamicElements(_schema, nullptr, _pumpCalc.get());
         }
-        _calc->multMatrix();
+        _calc->multMatrix("BeamVariationFunction::calculate");
         addResultPoint(x, isResonator ? calculateResonator() : calculateSinglePass());
     }
 
@@ -79,7 +89,7 @@ Z::PointTS BeamVariationFunction::calculateAt(const Z::Value& v)
         // But we calculate dynamic matrices anyway, for simplicity
         FunctionUtils::prepareDynamicElements(_schema, nullptr, _pumpCalc.get());
     }
-    _calc->multMatrix();
+    _calc->multMatrix("BeamVariationFunction::calculateAt");
     return isResonator ? calculateResonator() : calculateSinglePass();
 }
 

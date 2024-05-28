@@ -27,6 +27,9 @@
         },
         {
           "text": "Fix: schema modification flag was not updated after opening non empty memo window and editing; undo-redo actions were not updated too"
+        },
+        {
+          "text": "Fix: wrong Beam Variation results when plotting in the same range as being variated (https://github.com/orion-project/rezonator2/issues/54)"
         }
       ]
     },

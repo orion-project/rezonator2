@@ -384,7 +384,7 @@ TEST_METHOD(multMatrix)
     TestRoundTripCalculator c(&schema);
     c.addT({&L3_t, &Cr1_t, &L2_t, &F1_t, &L1_t});
     c.addS({&L3_s, &Cr1_s, &L2_s, &F1_s, &L1_s});
-    c.multMatrix();
+    c.multMatrix("test::multMatrix");
     ASSERT_MATRIX_NEAR(c.Mt(), -1.4379022, 0.1681906, -10.1543000, 0.4922850, 1e-7)
     ASSERT_MATRIX_NEAR(c.Ms(), -1.3899498, 0.1731843, -9.8480800, 0.5075960, 1e-7)
 }
@@ -483,7 +483,7 @@ namespace InterfacedElements {
 
 #define RUN_TEST_DATA(d) \
     d.calc->calcRoundTrip(false); \
-    d.calc->multMatrix(); \
+    d.calc->multMatrix("test::InterfacedElements"); \
     TEST_LOG(d.calc->roundTripStr()); \
     TEST_LOG("Mt = " + d.calc->Mt().str()); \
     TEST_LOG("Ms = " + d.calc->Ms().str());

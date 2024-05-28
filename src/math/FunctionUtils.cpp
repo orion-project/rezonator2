@@ -31,7 +31,7 @@ void prepareDynamicElements(Schema* schema, Element* stopElem, PumpCalculator* p
             auto prevElem = elems.at(i - i);
             RoundTripCalculator calc(schema, prevElem);
             calc.calcRoundTrip();
-            calc.multMatrix();
+            calc.multMatrix("global::prepareDynamicElements");
             ElementDynamic::CalcParams p;
             p.Mt = calc.pMt();
             p.Ms = calc.pMs();

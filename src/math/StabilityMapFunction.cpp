@@ -47,7 +47,7 @@ void StabilityMapFunction::calculate(CalculationMode calcMode)
     for (auto x : _plotRange.values())
     {
         param->setValue({x, _plotRange.unit()});
-        _calc->multMatrix();
+        _calc->multMatrix("StabilityMapFunction::calculate");
         addResultPoint(x, _calc->stability());
 
         auto isStable = _calc->isStable();
@@ -75,7 +75,7 @@ Z::PointTS StabilityMapFunction::calculateAt(const Z::Value& v)
     ElementEventsLocker elemLock(elem);
     Z::ParamValueBackup paramLock(param);
     param->setValue(v);
-    _calc->multMatrix();
+    _calc->multMatrix("StabilityMapFunction::calculateAt");
     return _calc->stability();
 }
 
@@ -91,13 +91,13 @@ QVector<Z::RangeSi> StabilityMapFunction::findStabilityBounds(Z::WorkPlane ts) c
         const double eps = 1e-7;
         const int maxIters = 100;
         param->setValue({x1, _plotRange.unit()});
-        _calc->multMatrix();
+        _calc->multMatrix("StabilityMapFunction::findStabilityBounds");
         double p1 = _calc->stability(ts);
         int iter = 0;
         double p0, x0 = (x1 + x2) / 2.0;
         while (qAbs(p1) > eps and iter < 100) {
             param->setValue({x0, _plotRange.unit()});
-            _calc->multMatrix();
+            _calc->multMatrix("StabilityMapFunction::findStabilityBounds");
             p0 = _calc->stability(ts);
             if (p1 * p0 < 0) x2 = x0;
             else x1 = x0, p1 = p0;
