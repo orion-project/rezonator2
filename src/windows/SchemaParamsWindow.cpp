@@ -64,7 +64,7 @@ SchemaParamsWindow::~SchemaParamsWindow()
 
 void SchemaParamsWindow::createActions()
 {
-    #define A_ Ori::Gui::action
+    #define A_ Ori::Gui::V0::action
 
     _actnParamAdd = A_(tr("Create..."), this, SLOT(createParameter()), ":/toolbar/param_add", Qt::CTRL | Qt::Key_Insert);
     _actnParamDelete = A_(tr("Delete..."), this, SLOT(deleteParameter()), ":/toolbar/param_delete", Qt::CTRL | Qt::Key_Delete);

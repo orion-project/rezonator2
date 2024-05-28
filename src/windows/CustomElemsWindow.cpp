@@ -89,7 +89,7 @@ CustomElemsWindow::~CustomElemsWindow()
 
 void CustomElemsWindow::createActions()
 {
-    #define A_ Ori::Gui::action
+    #define A_ Ori::Gui::V0::action
 
     _actnElemAdd = A_(tr("Append..."), this, SLOT(actionElemAdd()), ":/toolbar/elem_add", Qt::CTRL | Qt::Key_Insert);
     _actnElemMoveUp = A_(tr("Move Selected Up"), this, SLOT(actionElemMoveUp()), ":/toolbar/elem_move_up");

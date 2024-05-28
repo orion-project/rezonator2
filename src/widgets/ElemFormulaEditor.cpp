@@ -108,7 +108,7 @@ ElemFormulaEditor::~ElemFormulaEditor()
 
 void ElemFormulaEditor::createActions()
 {
-    #define A_ Ori::Gui::action
+    #define A_ Ori::Gui::V0::action
 
     _actnSaveChanges = A_(tr("Save Changes"), this, SLOT(saveChanges()), ":/toolbar/elem_arrow_to");
     _actnResetChanges = A_(tr("Reset Changes"), this, SLOT(resetChanges()), ":/toolbar/elem_arrow_from");

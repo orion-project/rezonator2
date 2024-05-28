@@ -639,15 +639,15 @@ QWidget* GaussCalculatorWindow::makeToolbar()
     _plotWR->add(int(PLOT_W), ":/toolbar/plot_w", tr("Plot Beam Radius"));
     _plotWR->add(int(PLOT_R), ":/toolbar/plot_r", tr("Plot Favefront ROC"));
     connect(_plotWR, SIGNAL(checked(int)), this, SLOT(updatePlot()));
-    _plotV = Ori::Gui::toggledAction(tr("Plot Beam Angle"), this, SLOT(updatePlot()), ":/toolbar/plot_v");
-    _plotZ0 = Ori::Gui::toggledAction(tr("Plot Rayleigh Distance"), this, SLOT(updatePlot()), ":/toolbar/plot_z0");
+    _plotV = Ori::Gui::V0::toggledAction(tr("Plot Beam Angle"), this, SLOT(updatePlot()), ":/toolbar/plot_v");
+    _plotZ0 = Ori::Gui::V0::toggledAction(tr("Plot Rayleigh Distance"), this, SLOT(updatePlot()), ":/toolbar/plot_z0");
 
-    auto actnAutolimits = Ori::Gui::action(tr("Fit to Graphs"), _plot, SLOT(autolimits()), ":/toolbar/limits_auto");
-    auto actnTitleX = Ori::Gui::action(tr("X-axis Title..."), _plot, SLOT(axisTextDlgX()), ":/toolbar/title_x");
-    auto actnTitleY = Ori::Gui::action(tr("Y-axis Title..."), _plot, SLOT(axisTextDlgY()), ":/toolbar/title_y");
-    auto actionCopyImg = Ori::Gui::action(tr("Copy Plot Image"), _plot, SLOT(copyPlotImage()), ":/toolbar/copy_img", QKeySequence::Copy);
-    auto actionCopyTbl = Ori::Gui::action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
-    auto actionCalc = Ori::Gui::action(tr("Formula Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
+    auto actnAutolimits = Ori::Gui::V0::action(tr("Fit to Graphs"), _plot, SLOT(autolimits()), ":/toolbar/limits_auto");
+    auto actnTitleX = Ori::Gui::V0::action(tr("X-axis Title..."), _plot, SLOT(axisTextDlgX()), ":/toolbar/title_x");
+    auto actnTitleY = Ori::Gui::V0::action(tr("Y-axis Title..."), _plot, SLOT(axisTextDlgY()), ":/toolbar/title_y");
+    auto actionCopyImg = Ori::Gui::V0::action(tr("Copy Plot Image"), _plot, SLOT(copyPlotImage()), ":/toolbar/copy_img", QKeySequence::Copy);
+    auto actionCopyTbl = Ori::Gui::V0::action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");
+    auto actionCalc = Ori::Gui::V0::action(tr("Formula Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
 
     return Z::Gui::makeToolbar({
         _calcModeLock, nullptr, _calcModeZone, nullptr, _plotPlusMinusZ, _plotPlusMinusW, nullptr,

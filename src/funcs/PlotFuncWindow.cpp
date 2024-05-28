@@ -18,6 +18,7 @@
 #include "helpers/OriWidgets.h"
 #include "widgets/OriFlatToolBar.h"
 #include "widgets/OriStatusBar.h"
+#include "widgets/OriLabels.h"
 
 #include "qcpl_cursor.h"
 #include "qcpl_cursor_panel.h"
@@ -26,7 +27,7 @@
 #include "qcpl_io_json.h"
 #include "qcpl_plot.h"
 
-using namespace Ori::Gui;
+using namespace Ori::Gui::V0;
 
 enum PlotWindowStatusPanels
 {
@@ -75,7 +76,7 @@ void PlotFuncWindow::createActions()
 
     actnShowRoundTrip = action(tr("Show Round-trip"), this, SLOT(showRoundTrip()), ":/toolbar/func_round_trip");
 
-    actnFreeze = toggledAction(tr("Freeze"), this, SLOT(freeze(bool)), ":/toolbar/freeze", Qt::CTRL | Qt::Key_F);
+    actnFreeze = Ori::Gui::V0::toggledAction(tr("Freeze"), this, SLOT(freeze(bool)), ":/toolbar/freeze", Qt::CTRL | Qt::Key_F);
 
     actnAutolimits = action(tr("Fit to Graphs"), _plot, SLOT(autolimits()), ":/toolbar/limits_auto");
     actnAutolimitsX = action(tr("Fit to Graphs Over X"), _plot, SLOT(autolimitsX()), ":/toolbar/limits_auto_x");
@@ -130,7 +131,7 @@ void PlotFuncWindow::createMenuBar()
     connect(_unitsMenuX, &UnitsMenu::unitChanged, this, &PlotFuncWindow::setUnitX);
     connect(_unitsMenuY, &UnitsMenu::unitChanged, this, &PlotFuncWindow::setUnitY);
 
-    menuPlot = menu(tr("Plot", "Menu title"), this, {
+    menuPlot = Ori::Gui::menu(tr("Plot", "Menu title"), this, {
         actnUpdate, actnUpdateParams, actnFreeze, nullptr, actnShowFlippedTS, actnShowT, actnShowS, nullptr,
         actnSetTextT, actnSetTextX, actnSetTextY, _unitsMenuX->menu(), _unitsMenuY->menu(), nullptr, actnShowRoundTrip,
     });
@@ -141,7 +142,7 @@ void PlotFuncWindow::createMenuBar()
         _unitsMenuY->setUnit(getUnitY());
     });
 
-    menuLimits = menu(tr("Limits", "Menu title"), this, {
+    menuLimits = Ori::Gui::menu(tr("Limits", "Menu title"), this, {
         actnAutolimits, actnZoomIn, actnZoomOut, nullptr,
         actnSetLimitsX, actnAutolimitsX, actnZoomInX, actnZoomOutX, nullptr,
         actnSetLimitsY, actnAutolimitsY, actnZoomInY, actnZoomOutY

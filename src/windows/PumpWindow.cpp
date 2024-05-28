@@ -273,7 +273,7 @@ PumpWindow::~PumpWindow()
 
 void PumpWindow::createActions()
 {
-    #define A_ Ori::Gui::action
+    #define A_ Ori::Gui::V0::action
 
     _actnPumpAdd = A_(tr("Create..."), this, SLOT(createPump()), ":/toolbar/pump_add", Qt::CTRL | Qt::Key_Insert);
     _actnPumpDelete = A_(tr("Delete..."), this, SLOT(deletePump()), ":/toolbar/pump_delete", Qt::CTRL | Qt::Key_Delete);

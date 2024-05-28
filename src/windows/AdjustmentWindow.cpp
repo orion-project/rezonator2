@@ -415,11 +415,11 @@ AdjustmentWindow::AdjustmentWindow(Schema *schema, QWidget *parent)
 
     _adjustersWidget = new AdjusterListWidget;
 
-    auto actnAdd = Ori::Gui::action(tr("Add Adjuster"), this, SLOT(addAdjuster()), ":/toolbar/plus");
-    _actnRestore = Ori::Gui::action(tr("Restore Value"), this, SLOT(restoreValue()), ":/toolbar/restore");
-    _actnSettings = Ori::Gui::action(tr("Settings..."), this, SLOT(setupAdjuster()), ":/toolbar/settings");
-    _actnDelete = Ori::Gui::action(tr("Delete"), this, SLOT(deleteAdjuster()), ":/toolbar/delete");
-    auto actnHelp = Ori::Gui::action(tr("Help"), this, SLOT(help()), ":/toolbar/help");
+    auto actnAdd = Ori::Gui::V0::action(tr("Add Adjuster"), this, SLOT(addAdjuster()), ":/toolbar/plus");
+    _actnRestore = Ori::Gui::V0::action(tr("Restore Value"), this, SLOT(restoreValue()), ":/toolbar/restore");
+    _actnSettings = Ori::Gui::V0::action(tr("Settings..."), this, SLOT(setupAdjuster()), ":/toolbar/settings");
+    _actnDelete = Ori::Gui::V0::action(tr("Delete"), this, SLOT(deleteAdjuster()), ":/toolbar/delete");
+    auto actnHelp = Ori::Gui::V0::action(tr("Help"), this, SLOT(help()), ":/toolbar/help");
 
     auto toolbar = Ori::Gui::toolbar({
         Ori::Gui::textToolButton(actnAdd), nullptr, _actnRestore, _actnSettings, _actnDelete, nullptr, actnHelp

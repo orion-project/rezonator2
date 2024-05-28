@@ -417,7 +417,7 @@ MemoWindow::~MemoWindow()
 
 void MemoWindow::createActions()
 {
-    #define A_ Ori::Gui::action
+    #define A_ Ori::Gui::V0::action
 
     _actionUndo = A_(tr("Undo"), _editor, SLOT(undo()), ":/toolbar/undo");
     _actionRedo = A_(tr("Redo"), _editor, SLOT(redo()), ":/toolbar/redo");
