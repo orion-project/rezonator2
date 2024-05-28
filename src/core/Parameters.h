@@ -94,7 +94,7 @@ protected:
 
     void notifyListeners()
     {
-        for (auto listener: _listeners)
+        for (auto listener: std::as_const(_listeners))
             listener->parameterChanged(this);
     }
 

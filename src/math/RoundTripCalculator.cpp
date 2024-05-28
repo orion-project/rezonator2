@@ -191,8 +191,10 @@ void RoundTripCalculator::collectMatricesSP()
     }
 }
 
-void RoundTripCalculator::multMatrix()
+void RoundTripCalculator::multMatrix(const char *reason)
 {
+    Q_UNUSED(reason) // debug parameter
+
     _mt.unity();
     _ms.unity();
     for (int i = 0; i < _matrsT.size(); i++)
@@ -274,7 +276,7 @@ Z::PairTS<bool> isStable(Schema *schema)
     auto elems = schema->activeElements();
     RoundTripCalculator c(schema, elems.isEmpty() ? nullptr : elems.first());
     c.calcRoundTrip();
-    c.multMatrix();
+    c.multMatrix("global::isStable");
     return c.isStable();
 }
 

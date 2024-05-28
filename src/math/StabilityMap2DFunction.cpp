@@ -44,7 +44,7 @@ void StabilityMap2DFunction::calculate(CalculationMode calcMode)
         {
             _paramY.parameter->setValue({valuesY.at(iy), unitY});
 
-            _calc->multMatrix();
+            _calc->multMatrix("StabilityMap2DFunction::calculate");
 
             auto stab = _calc->stability();
             int index = ix * ny + iy;
@@ -84,6 +84,6 @@ Z::PointTS StabilityMap2DFunction::calculateAtXY(const Z::Value& x, const Z::Val
     Z::ParamValueBackup paramLockY(_paramY.parameter);
     _paramX.parameter->setValue(x);
     _paramY.parameter->setValue(y);
-    _calc->multMatrix();
+    _calc->multMatrix("StabilityMap2DFunction::calculateAtXY");
     return _calc->stability();
 }

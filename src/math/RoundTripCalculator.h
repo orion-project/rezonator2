@@ -22,7 +22,7 @@ public:
     RoundTripCalculator(Schema *owner, Element *ref);
 
     void calcRoundTrip(bool splitRange = false);
-    void multMatrix();
+    void multMatrix(const char *reason);
     void reset();
     bool isEmpty() const { return _roundTrip.isEmpty(); }
     QString error() const { return _error; }
@@ -68,6 +68,8 @@ public:
     const QVector<RoundTripElemInfo>& rawRoundTrip() const { return _roundTrip; }
 
     bool splitRange() const { return _splitRange; }
+
+    bool debugFlag = false;
 
 protected:
     /// Array of T-matrices for production (round-trip).

@@ -51,7 +51,7 @@ void CausticFunction::calculate(CalculationMode calcMode)
 
     // Calculate round-trip matrix and check if the caustic can be calculated
     elem->setSubRangeSI(range.values().first());
-    _calc->multMatrix();
+    _calc->multMatrix("CausticFunction::calculate");
     if (isResonator) // Can't be calculated for unstable resonator
     {
         auto stab = _calc->isStable();
@@ -72,7 +72,7 @@ void CausticFunction::calculate(CalculationMode calcMode)
     for (auto x : range.values())
     {
         elem->setSubRangeSI(x);
-        _calc->multMatrix();
+        _calc->multMatrix("CausticFunction::calculate");
 
         if (_writeProtocol)
         {
@@ -150,7 +150,7 @@ Z::PointTS CausticFunction::calculateAt(const Z::Value &arg)
     auto elem = Z::Utils::asRange(this->arg()->element);
     double x = qMin(qMax(argSI, 0.0), elem->axisLengthSI());
     elem->setSubRangeSI(x);
-    _calc->multMatrix();
+    _calc->multMatrix("CausticFunction::calculateAt");
     if (_schema->isResonator())
         return calculateResonator();
     return calculateSinglePass();
@@ -216,7 +216,7 @@ QString CausticFunction::calculateSpecPoints(const SpecPointParams &params)
     Z::PointTS startW, startR, stopW, stopR;
 
     elem->setSubRangeSI(startX);
-    _calc->multMatrix();
+    _calc->multMatrix("CausticFunction::calculateSpecPoints");
     if (isResonator)
     {
         startW = _beamCalc->beamRadius(_calc->Mt(), _calc->Ms(), _ior);
@@ -232,7 +232,7 @@ QString CausticFunction::calculateSpecPoints(const SpecPointParams &params)
     }
 
     elem->setSubRangeSI(stopX);
-    _calc->multMatrix();
+    _calc->multMatrix("CausticFunction::calculateSpecPoints");
     if (isResonator)
     {
         stopW = _beamCalc->beamRadius(_calc->Mt(), _calc->Ms(), _ior);
@@ -272,7 +272,7 @@ QString CausticFunction::calculateSpecPoints(const SpecPointParams &params)
                 double x0 = (x1 + x2) / 2.0, r0;
                 while (qAbs(x2-x1) > epsX and iter < maxIters) {
                     elem->setSubRangeSI(x0);
-                    _calc->multMatrix();
+                    _calc->multMatrix("CausticFunction::calculateSpecPoints");
                     r0 = isResonator \
                           ? _beamCalc->frontRadius(_calc->M(ts), _ior)
                           : _pumpCalc->calcT(_calc->M(ts), _ior).frontRadius;
