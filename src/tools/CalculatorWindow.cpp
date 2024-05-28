@@ -180,7 +180,7 @@ bool CalculatorWindow::reopenLua()
 
 QWidget* CalculatorWindow::makeToolbar()
 {
-#define A_ Ori::Gui::action
+#define A_ Ori::Gui::V0::action
 
     _actnCalc = A_(tr("Calculate"), this, SLOT(calculate()), ":/toolbar/equals", Qt::CTRL | Qt::Key_Return);
     _actnClear = A_(tr("Clear Session"), this, SLOT(clearLog()), ":/toolbar/delete_items");

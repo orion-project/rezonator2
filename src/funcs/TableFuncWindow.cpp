@@ -19,7 +19,7 @@
 #include <QPainter>
 #include <QToolBar>
 
-using namespace Ori::Gui;
+using namespace Ori::Gui::V0;
 
 static const QIcon& resultPosIcon(TableFunction::ResultPosition pos)
 {
@@ -250,9 +250,9 @@ void TableFuncWindow::createActions()
 
 void TableFuncWindow::createMenuBar()
 {
-    _menuTable = menu(tr("Table", "Menu title"), this, {
+    _menuTable = Ori::Gui::menu(tr("Table", "Menu title"), this, {
         _actnUpdate, _actnFreeze, nullptr, _actnShowT, _actnShowS, nullptr,
-            menu(tr("Options"), this, {_actnCalcMediumEnds, _actnCalcEmptySpaces, _actnCalcSpaceMids})
+            Ori::Gui::menu(tr("Options"), this, {_actnCalcMediumEnds, _actnCalcEmptySpaces, _actnCalcSpaceMids})
     });
 }
 
@@ -260,7 +260,7 @@ void TableFuncWindow::createToolBar()
 {
     _buttonFrozenInfo = new FrozenStateButton(tr("Frozen info"), "frozen_info");
     auto buttonParams = new QToolButton;
-    buttonParams->setMenu(menu({_actnCalcMediumEnds, _actnCalcEmptySpaces, _actnCalcSpaceMids}));
+    buttonParams->setMenu(Ori::Gui::menu({_actnCalcMediumEnds, _actnCalcEmptySpaces, _actnCalcSpaceMids}));
     buttonParams->setPopupMode(QToolButton::InstantPopup);
     buttonParams->setIcon(QIcon(":/toolbar/options"));
 

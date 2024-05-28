@@ -61,7 +61,7 @@ SchemaViewWindow::~SchemaViewWindow()
 
 void SchemaViewWindow::createActions()
 {
-    #define A_ Ori::Gui::action
+    #define A_ Ori::Gui::V0::action
 
     actnElemAdd = A_(tr("Append..."), this, SLOT(actionElemAdd()), ":/toolbar/elem_add", Qt::CTRL | Qt::Key_Insert);
     actnElemReplace = A_(tr("Replace..."), this, SLOT(actionElemReplace()), ":/toolbar/elem_replace");

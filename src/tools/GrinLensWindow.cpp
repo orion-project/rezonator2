@@ -70,8 +70,8 @@ GrinLensWindow::GrinLensWindow(QWidget *parent) : QWidget(parent)
     connect(editors, SIGNAL(paramChanged(Z::Parameter*, Z::Value)), this, SLOT(calculate(Z::Parameter*)));
 
     auto group = new QActionGroup(this);
-    _actionCalcF = Ori::Gui::toggledAction(tr("Calc F from n2"), group, nullptr, ":/toolbar/grin_calc_f");
-    _actionCalcN2 = Ori::Gui::toggledAction(tr("Calc n2 from F"), group, nullptr, ":/toolbar/grin_calc_n2");
+    _actionCalcF = Ori::Gui::V0::toggledAction(tr("Calc F from n2"), group, nullptr, ":/toolbar/grin_calc_f");
+    _actionCalcN2 = Ori::Gui::V0::toggledAction(tr("Calc n2 from F"), group, nullptr, ":/toolbar/grin_calc_n2");
 
     auto toolbar = Z::Gui::makeToolbar({ Ori::Gui::textToolButton(_actionCalcF),
                                          Ori::Gui::textToolButton(_actionCalcN2),

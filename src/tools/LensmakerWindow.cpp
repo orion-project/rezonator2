@@ -715,11 +715,11 @@ LensmakerWindow::LensmakerWindow(QWidget *parent) : QWidget(parent)
 {
     Ori::Wnd::initWindow(this, "Lensmaker", ":/window_icons/lens");
 
-    auto actnAddLens = Ori::Gui::action(tr("Add Lens"), this, SLOT(addLens()), ":/toolbar/elem_add", QKeySequence::New);
-    auto actnDelLens = Ori::Gui::action(tr("Remove Lens"), this, SLOT(removeLens()), ":/toolbar/elem_delete");
-    auto actnCopyImage = Ori::Gui::action(tr("Copy Image"), this, SLOT(copyImage()), ":/toolbar/copy_img");
-    auto actnZoomOut = Ori::Gui::action(tr("Zoom Out"), this, SLOT(zoomOut()), ":/toolbar/zoom_out", QKeySequence::ZoomOut);
-    auto actnZoomIn = Ori::Gui::action(tr("Zoom In"), this, SLOT(zoomIn()), ":/toolbar/zoom_in", QKeySequence::ZoomIn);
+    auto actnAddLens = Ori::Gui::V0::action(tr("Add Lens"), this, SLOT(addLens()), ":/toolbar/elem_add", QKeySequence::New);
+    auto actnDelLens = Ori::Gui::V0::action(tr("Remove Lens"), this, SLOT(removeLens()), ":/toolbar/elem_delete");
+    auto actnCopyImage = Ori::Gui::V0::action(tr("Copy Image"), this, SLOT(copyImage()), ":/toolbar/copy_img");
+    auto actnZoomOut = Ori::Gui::V0::action(tr("Zoom Out"), this, SLOT(zoomOut()), ":/toolbar/zoom_out", QKeySequence::ZoomOut);
+    auto actnZoomIn = Ori::Gui::V0::action(tr("Zoom In"), this, SLOT(zoomIn()), ":/toolbar/zoom_in", QKeySequence::ZoomIn);
 
     _visibleParts = new Ori::Widgets::MenuToolButton;
     _visibleParts->multiselect = true;

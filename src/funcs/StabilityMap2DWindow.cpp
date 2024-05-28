@@ -255,7 +255,7 @@ void StabilityMap2DWindow::createActions()
     actnShowS->setChecked(false);
     actnCopyGraphDataWithParams->setVisible(false); // this is only for line graphs
 
-    _actnCopyGraphData2D = Ori::Gui::action(tr("Copy Graph Data"), this, SLOT(copyGraphData2D()), ":/toolbar/copy_table");
+    _actnCopyGraphData2D = Ori::Gui::V0::action(tr("Copy Graph Data"), this, SLOT(copyGraphData2D()), ":/toolbar/copy_table");
 
     _actnStabilityAutolimits = new QAction(tr("Z-axis -> Stability Range", "Plot action"), this);
     _actnStabilityAutolimits->setIcon(QIcon(":/toolbar/limits_stab"));

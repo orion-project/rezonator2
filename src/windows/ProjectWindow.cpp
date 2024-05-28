@@ -129,7 +129,7 @@ void ProjectWindow::registerStorableWindows()
 
 void ProjectWindow::createActions()
 {
-    #define A_ Ori::Gui::action
+    #define A_ Ori::Gui::V0::action
 
     actnFileNew = A_(tr("New"), _operations, SLOT(newSchemaFile()), ":/toolbar/schema_new", QKeySequence::New);
     actnFileOpen = A_(tr("Open..."), _operations, SLOT(openSchemaFile()), ":/toolbar/schema_open", QKeySequence::Open);
