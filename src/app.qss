@@ -1,8 +1,32 @@
+$base-color: #dadbde; /* General window color */
+$border-color: silver; /* Default border color */
+$border-radius: 4px; /* Default border radius */
+$default-border: 1px solid silver; /* Default border */
+$selection-color: steelBlue; 
+$main-font-size: 13px;
+$hover-color: #334682b4;
+$text-color: #222;
+$selected-text-color: white;
+/*$paper-color: #f6f6f7;*/
+$paper-color: white;
+$paper-dark: #eaebee;
+
+QWidget {
+  background-color: $base-color;
+  selection-background-color: $selection-color;
+  color: $text-color;
+}
+
+QLabel {
+  background: transparent;
+}
+
 /************************************
              StartWindow
 ************************************/
 StartWindow QToolButton {
-  border: 1px solid white;
+  background: transparent;
+  border: 1px solid transparent;
   border-radius: 5px;
   padding: 5px;
   font-size: 12px;
@@ -13,15 +37,16 @@ StartWindow QToolButton:focus {
   border-color: #dadbde;
   background-color: #f6f7fa;
 }
+/*  background-color: #fff;*/
 
 StartWindow QToolButton:hover {
-  border-color: silver;
+  border-color: $border-color;
   background-color: qlineargradient(
-    x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #f6f7fa, stop: 1 #dadbde);
+    x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fefefe, stop: 1 #f6f7f9);
 }
 
 StartWindow QToolButton[role=tip_button] {
-  border-color: #dadbde;
+  border-color: $base-color;
   padding: 0px 10px;
   min-height: 18px;
   max-height: 18px;
@@ -32,7 +57,7 @@ StartWindow QToolButton[role=tip_button]:hover {
 }
 
 StartWindow QWidget[role=panel] {
-  background-color: white;
+  background-color: $paper-color;
   border: 1px solid silver;
   border-radius: 5px;
 }
@@ -79,12 +104,14 @@ StartWindow QLabel[role=mru_file_path] {
 }
 
 MruStartItem {
+  background: transparent;
   min-height: 44px;
   max-height: 44px;
+  margin-right: 10px;
 }
 
 MruStartItem:hover {
-  border: 1px solid #dadbde;
+  border: 1px solid $border-color;
   border-radius: 5px;
   background-color: qlineargradient(
     x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fefefe, stop: 1 #f6f7f9);
@@ -92,33 +119,11 @@ MruStartItem:hover {
 
 StartWindow #mru_scroll_area  {
   border-style: none;
-  background-color: white;
+  background-color: transparent;
 }
 
 StartWindow #mru_widget {
-  background-color: white;
-  margin-right: 20px;
-}
-
-StartWindow #mru_scroll_area QScrollBar:vertical {
-  background-color: white;
-  width: 15px;
-  margin-left: 6px;
-}
-
-StartWindow #mru_scroll_area QScrollBar::handle:vertical {
-  border: 1px solid #dadbde;
-  border-radius: 4px;
-  background-color: #f6f7fa;
-  min-height: 20px;
-}
-
-StartWindow #mru_scroll_area QScrollBar::add-line:vertical {
-  height: 0;
-}
-
-StartWindow #mru_scroll_area QScrollBar::sub-line:vertical {
-  height: 0;
+  background-color: transparent;
 }
 
 StartWindow #panel_tips {
@@ -150,4 +155,103 @@ PopupMessage[mode=error] {
 PopupMessage[mode=info] {
   border: 1px solid #C0C0C0;
   background: #DCDCDC;
+}
+
+/************************************
+             Scroll bars
+************************************/
+QAbstractScrollArea::corner {
+  border: none;
+}
+
+QScrollBar:vertical {
+  background-color: $paper-color;
+  width: 10px;
+}
+QScrollBar::handle:vertical {
+  border: $default-border;
+  background-color: #f6f7fa;
+  min-height: 20px;
+}
+QScrollBar::handle:vertical:hover {
+  background-color: $base-color;
+}
+QScrollBar::add-line:vertical {
+  height: 0;
+}
+QScrollBar::sub-line:vertical {
+  height: 0;
+}
+
+QScrollBar:horizontal {
+  background-color: $paper-color;
+  height: 10px;
+}
+QScrollBar::handle:horizontal {
+  border: $default-border;
+  background-color: #f6f7fa;
+  min-width: 20px;
+}
+QScrollBar::handle:horizontal:hover {
+  background-color: $base-color;
+}
+QScrollBar::add-line:horizontal {
+  width: 0;
+}
+QScrollBar::sub-line:horizontal {
+  width: 0;
+}
+
+QTextEdit, QPlainTextEdit, QListView, QTableView, QTreeView, QGraphicsView {
+  background: $paper-color;
+  border: $default-border;
+  padding: 1px;
+}
+
+QLineEdit, QSpinBox {
+  background: $paper-color;
+}
+
+QComboBox {
+  background: $paper-color;
+  selection-color: $selected-text-color;
+}
+QComboBox QAbstractItemView {
+  background: $paper-color;
+  border: $default-border;
+}
+
+QGroupBox {
+  background: $paper-dark;
+  border: $default-border;
+  padding-top: 20px;
+  font-weight: bold;
+}
+QGroupBox::title {
+  subcontrol-origin: padding;
+  margin-left: 6px;
+  margin-top: 3px;
+  color: $selection-color;
+}
+
+QRadioButton, QCheckBox {
+  background: transparent;
+  margin: 3px;
+}
+QRadioButton::indicator {
+  border: $default-border;
+  background: $paper-color;
+  border-radius: 7px;
+}
+QRadioButton::indicator::checked {
+  background: qradialgradient(cx:0.5, cy:0.5, radius: 0.3,
+    fx:0.5, fy:0.5, stop:0 black, stop:0.7 black, stop:1 $paper-color);
+}
+
+QCheckBox::indicator {
+  border: $default-border;
+  background: $paper-color;
+}
+QCheckBox::indicator::checked {
+  image: url(:/style/check);
 }
