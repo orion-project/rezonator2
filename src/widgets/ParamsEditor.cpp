@@ -30,6 +30,7 @@ ParamsEditor::ParamsEditor(const Options opts, QWidget *parent) : QWidget(parent
     if (opts.showInfoPanel)
     {
         _infoPanel = new Ori::Widgets::InfoPanel;
+        _infoPanel->setProperty("role", "info_panel");
         _infoPanel->setMargin(6); // this margin is inside of the frame (it's padding)
         _infoPanel->setSpacing(12);
         mainLayout->addLayout(Ori::Layouts::LayoutV({_infoPanel}).setMargin(3).boxLayout());

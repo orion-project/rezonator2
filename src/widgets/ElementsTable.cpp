@@ -128,7 +128,7 @@ public:
         {
             // it's the "double click to add" row
             if (row == _schema->count())
-                return QColor(0, 0, 0, 40);
+                return Z::Gui::mutedTextColor();
         }
         else if (role == Qt::DisplayRole)
         {

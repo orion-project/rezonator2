@@ -145,14 +145,14 @@ QLabel* makeHeaderLabel(const QString& text)
     f.setPointSize(f.pointSize() + 2);
     f.setBold(true);
     label->setFont(f);
-    label->setStyleSheet("color:SteelBlue");
+    label->setStyleSheet(QString("color:%1").arg(selectionColor().name()));
     return label;
 }
 
 QTabWidget* makeBorderlessTabs()
 {
     auto tabs = new QTabWidget;
-    tabs->setStyleSheet(QStringLiteral("::pane { border-top: 1px solid palette(mid); padding: 3px; top: -2px; } ::tab-bar { left: 5px; }"));
+    tabs->setProperty("look", "borderless");
     return tabs;
 }
 
@@ -173,7 +173,7 @@ void setFocusedBackground(QWidget *w, bool focused)
 {
     QPalette p;
     if (focused)
-        p.setColor(QPalette::Window, Ori::Color::blend(p.color(QPalette::Button), p.color(QPalette::Highlight), 0.2));
+        p.setColor(QPalette::Window, Z::Gui::lightSelectionColor());
     w->setAutoFillBackground(focused);
     w->setPalette(p);
 }

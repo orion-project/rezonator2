@@ -66,6 +66,7 @@ template<class Obj, typename Func>
 QWidget* makeButton(const QString& iconPath, const QString& title, Obj* receiver, Func slot)
 {
     auto button = new QToolButton;
+    button->setProperty("role", "command");
     button->setIconSize(QSize(24, 24));
     button->setIcon(QIcon(iconPath));
     button->setText(title);

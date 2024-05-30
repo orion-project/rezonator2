@@ -102,18 +102,26 @@ void ParamsTreeWidget::addRootItem(Element* elem)
 
     if (items.isEmpty()) return;
 
+    auto makeRootItemText = [](const QString& text){
+        // RichTextItemDelegate (QTextDocument inside it) applyes default system text color for plain text
+        // and ignores QSS overrides. The text gets black on the light system theme, which is ok,
+        // but on the dark system theme it gets white, which contradicts with custom light QSS styles.
+        // Sa have to make dummy HTML, because a manually generated stylesheet is used for HTML.
+        return QStringLiteral("<span>%1</span>").arg(text);
+    };
+
     auto root = new QTreeWidgetItem;
-    root->setBackground(COL_TITLE, QColor(0xE0E0E0));
-    root->setBackground(COL_DESCR, QColor(0xE0E0E0));
+    root->setBackground(COL_TITLE, Z::Gui::darkPaperColor());
+    root->setBackground(COL_DESCR, Z::Gui::darkPaperColor());
     if (elem)
     {
-        root->setText(COL_TITLE, elem->displayLabel());
+        root->setText(COL_TITLE, makeRootItemText(elem->displayLabel()));
         root->setFont(COL_TITLE, Z::Gui::ElemLabelFont().get());
-        root->setText(COL_DESCR, elem->title());
+        root->setText(COL_DESCR, makeRootItemText(elem->title()));
     }
     else
     {
-        root->setText(COL_TITLE, tr("Globals"));
+        root->setText(COL_TITLE, makeRootItemText(tr("Globals")));
         root->setFont(COL_TITLE, Z::Gui::ValueFont().get());
     }
     Q_FOREACH(auto item, items)
@@ -131,7 +139,8 @@ QTreeWidgetItem* ParamsTreeWidget::addParamItem(Z::Parameter* param, bool isElem
     auto item = new QTreeWidgetItem;
     item->setText(COL_TITLE, f.format(param));
     auto descr = isElement ? param->name() : param->description();
-    item->setText(COL_DESCR, "<span style='color:#888888'>" + descr + "</span>");
+    item->setText(COL_DESCR, QStringLiteral("<span style='color:%1'>%2</span>")
+        .arg(Z::Gui::mutedTextColor().name(), descr));
     item->setToolTip(COL_DESCR, descr);
     item->setData(COL_TITLE, Qt::UserRole, ptr2var(param));
     return item;
