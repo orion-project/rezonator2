@@ -5,6 +5,9 @@
       "date": "",
       "changes": [
         {
+          "text": "New custom theme for UI"
+        },
+        {
           "text": "Interactive Layout: can select and edit elements on graphical view"
         },
         {
