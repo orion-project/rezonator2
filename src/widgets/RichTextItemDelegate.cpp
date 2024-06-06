@@ -77,15 +77,27 @@ QTextDocument* RichTextItemDelegate::document(const QStyleOptionViewItem &option
     doc->setDefaultFont(font);
     doc->setTextWidth(-1);
     QString text = index.data(Qt::DisplayRole).toString();
-    if (!isMeasuring && (QStyle::State_Selected & option.state))
+    if (!isMeasuring)
     {
-        // change any explicitly specified color to highlighted text color
-        auto group = QStyle::State_Active & option.state ? QPalette::Active : QPalette::Inactive;
-        auto color = option.palette.color(group, QPalette::HighlightedText);
-        auto colorStyle = QStringLiteral("color:%1").arg(color.name(QColor::HexRgb));
-        static QRegularExpression colorEntry("color: *#[a-fA-F\\d]+"); // only #rrggbb color format is replaced
-        text.replace(colorEntry, colorStyle);
-        text = QStringLiteral("<span style='%1'>%2</span>").arg(colorStyle, text);
+        if (option.state.testFlag(QStyle::State_Selected))
+        {
+            // change any explicitly specified color to highlighted text color
+            auto group = QStyle::State_Active & option.state ? QPalette::Active : QPalette::Inactive;
+            auto color = option.palette.color(group, QPalette::HighlightedText);
+            auto colorStyle = QStringLiteral("color:%1").arg(color.name(QColor::HexRgb));
+            static QRegularExpression colorEntry("color: *#[a-fA-F\\d]+"); // only #rrggbb color format is replaced
+            text.replace(colorEntry, colorStyle);
+            text = QStringLiteral("<span style='%1'>%2</span>").arg(colorStyle, text);
+        }
+        else
+        {
+            // QTextDocument applyes default system text color and can't load QSS overrides.
+            // The text gets black on the light system theme, which is ok,
+            // but on the dark system theme it gets white, which contradicts with custom light QSS styles.
+            // So need a default style to have correctly colored unselected text.
+            static QString styleSheet = QStringLiteral("* {color:%1}").arg(Z::Gui::textColor().name());
+            doc->setDefaultStyleSheet(styleSheet);
+        }
     }
     doc->setHtml(text);
     return doc;

@@ -152,78 +152,35 @@ void HelpSystem::sendBugReport()
 void HelpSystem::showAbout()
 {
     auto w = new QDialog;
+    w->setObjectName("about_dlg");
     w->setAttribute(Qt::WA_DeleteOnClose);
     w->setWindowTitle(tr("About %1").arg(qApp->applicationName()));
 
-    QPixmap bckgnd(":/style/about");
-    w->setMaximumSize(bckgnd.size());
-    w->setMinimumSize(bckgnd.size());
-    w->resize(bckgnd.size());
-
-    auto p = w->palette();
-    p.setBrush(QPalette::Window, QBrush(bckgnd));
-    w->setPalette(p);
-
-    auto f = w->font();
-#ifdef Q_OS_WIN
-    f.setFamily("Consolas");
-#endif
-#ifdef Q_OS_MAC
-    f.setFamily("Monaco"); // Menlo?
-#endif
-#ifdef Q_OS_LINUX
-    f.setFamily("monospace");
-#endif
-
-    auto labelVersion = new QLabel(QString("%1.%2.%3").arg(APP_VER_MAJOR).arg(APP_VER_MINOR).arg(APP_VER_PATCH));
-    f.setPixelSize(50);
-    f.setBold(true);
-    labelVersion->setFont(f);
-    labelVersion->setStyleSheet("color:white");
-
-    f.setPixelSize(34);
-    auto labelCodename = new QLabel(APP_VER_CODENAME);
-    labelCodename->setFont(f);
-    labelCodename->setStyleSheet("color:white");
-
-    f.setBold(false);
-    f.setPixelSize(20);
-    auto labelDate = new QLabel(BUILDDATE);
-    labelDate->setFont(f);
-    labelDate->setStyleSheet("color:white");
-
-    auto labelQt = new Ori::Widgets::Label(QString("Powered by Qt %1").arg(QT_VERSION_STR));
-    connect(labelQt, &Ori::Widgets::Label::clicked, []{ qApp->aboutQt(); });
-    labelQt->setCursor(Qt::PointingHandCursor);
-    labelQt->setStyleSheet("color:white");
-    labelQt->setFont(f);
-
-    auto makeInfo = [f](const QString& text){
-        auto label = new QLabel(text);
-        label->setStyleSheet("color:white");
-        label->setFont(f);
+    auto makeLabel = [](const QString& name, const QString& text){
+        auto label = new Ori::Widgets::Label(text);
+        label->setObjectName(name);
+        label->setProperty("role", "about_dlg");
         return label;
     };
 
-    auto makeLink = [f](const QString& address, const QString& href = QString()) {
-        auto label = new Ori::Widgets::Label(address);
+    auto labelVersion = makeLabel("version_label", QString("%1.%2.%3").arg(APP_VER_MAJOR).arg(APP_VER_MINOR).arg(APP_VER_PATCH));
+    auto labelCodename = makeLabel("codename_label", APP_VER_CODENAME);
+    auto labelDate = makeLabel("date_label", BUILDDATE);
+
+    auto labelQt = makeLabel({}, QString("Powered by Qt %1").arg(QT_VERSION_STR));
+    connect(labelQt, &Ori::Widgets::Label::clicked, []{ qApp->aboutQt(); });
+    labelQt->setCursor(Qt::PointingHandCursor);
+
+    auto labelInfo = makeLabel({}, QString("Chunosov N.I. © 2006-%1").arg(APP_VER_YEAR));
+
+    auto makeLink = [makeLabel](const QString& address, const QString& href = QString()) {
+        auto label = makeLabel({}, address);
         connect(label, &Ori::Widgets::Label::clicked, [address, href]{
             QDesktopServices::openUrl(QUrl(href.isEmpty() ? address : href));
         });
         label->setCursor(Qt::PointingHandCursor);
-        label->setStyleSheet("color:white");
-        label->setFont(f);
         return label;
     };
-
-    f.setPixelSize(9);
-    auto labelDescr = new QLabel(
-        "reZonator is open-source laser resonator calculation tool. "
-        "The program is provided as is with no warranty of any kind, "
-        "including the warranty of design, merchantability and fitness for a particular purpose.");
-    labelDescr->setWordWrap(true);
-    labelDescr->setStyleSheet("color:#88FFFFFF");
-    labelDescr->setFont(f);
 
     LayoutV({
         LayoutH({Stretch(), labelVersion, Space(4)}),
@@ -233,7 +190,7 @@ void HelpSystem::showAbout()
         Stretch(),
         LayoutH({Space(4), labelQt, Stretch()}),
         Space(4),
-        LayoutH({Space(4), makeInfo(QString("Chunosov N.I. © 2006-%1").arg(APP_VER_YEAR)), Stretch()}),
+        LayoutH({Space(4), labelInfo, Stretch()}),
         Space(4),
         LayoutH({Space(4), makeLink(Z::Strs::email(), QString("mailto:%1").arg(Z::Strs::email())), Stretch()}),
         Space(4),

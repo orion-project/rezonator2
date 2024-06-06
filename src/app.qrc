@@ -287,6 +287,7 @@
         <file alias="app">app.qss</file>
         <file alias="about">../img/about/about_1.png</file>
         <file alias="spec-points">styles/spec-points.css</file>
+        <file alias="check">../img/misc/check.svg</file>
     </qresource>
     <qresource prefix="/tips">
         <file alias="list">../tips/tips.json</file>

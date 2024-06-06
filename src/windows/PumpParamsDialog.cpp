@@ -72,6 +72,7 @@ PumpParams* PumpParamsDialog::makeNewPump()
     for (auto mode : Pumps::allModes())
     {
         auto modeItem = new Ori::Widgets::SelectableTile;
+        modeItem->setProperty("look", "borderless");
         modeItem->selectionFollowsFocus = true;
         modeItem->setFrameShape(QFrame::NoFrame);
         modeItem->setPixmap(QIcon(mode->iconPath()).pixmap(32, 32));

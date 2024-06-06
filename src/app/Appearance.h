@@ -1,6 +1,7 @@
 #ifndef APPEARANCE_H
 #define APPEARANCE_H
 
+#include <QColor>
 #include <QFont>
 #include <QMap>
 
@@ -71,6 +72,18 @@ QToolBar* makeToolbar(std::initializer_list<QObject*> items, const QString& help
 inline int unitsSelectorWidth() { return 63; }
 
 inline QString globalParamColorHtml() { return QStringLiteral("#000080"); }
+
+// These are theme colors, have to be in sync with app.qss
+// TODO: Need a way to extract them from there automatically
+inline QColor baseColor() { return QColor(0xdadbde); }
+inline QColor selectionColor() { return QColor("steelBlue"); }
+inline QColor lightSelectionColor() { return QColor(0x9db4c5); }
+inline QColor textColor() { return QColor(0x222222); }
+inline QColor mutedTextColor() { return QColor(0x777788); }
+inline QColor paperColor() { return QColor(0xffffff); }
+inline QColor midPaperColor() { return QColor(0xf6f6f8); }
+inline QColor darkPaperColor() { return QColor(0xeaebee); }
+inline QColor yellowPaperColor() { return QColor(0xffffdc); }
 
 void setFocusedBackground(QWidget *w, bool focused);
 

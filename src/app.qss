@@ -1,45 +1,131 @@
+$base-color: #dadbde;
+$border-color: silver;
+$dark-border-color: gray;
+$light-border-color: #cbcccd;
+$border-radius: 5px;
+$default-border: 1px solid $border-color;
+$dark-border: 1px solid $dark-border-color;
+$light-border: 1px solid $light-border-color;
+$selection-color: steelBlue; 
+$light-selection-color: #9db4c5;
+$text-color: #222;
+$selected-text-color: white;
+$disabled-text-color: #667;
+$muted-text-color: #778;
+$paper-color: white;
+$mid-paper-color: #f6f6f8;
+$dark-paper-color: #eaebee;
+$base-gradient: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 $paper-color, stop:1 $base-color);
+$light-gradient: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #fefefe, stop:1 #f6f7f9);
+
+/************************************
+             Base controls
+************************************/
+QWidget {
+  background-color: $base-color;
+  selection-background-color: $selection-color;
+  color: $text-color;
+}
+QWidget:disabled {
+ color: $disabled-text-color;
+}
+
+QLabel {
+  background: transparent;
+}
+
+QFrame[qcpl_role=dlg_header] {
+  background: $paper-color;
+}
+QTabBar[qcpl_role=dlg_header_tabs] {
+  background: $paper-color;
+}
+
+/************************************
+    Ori::Widgets::SelectableTile
+************************************/
+
+QFrame[ori_role=selectable_tile] {
+  background: $paper-color;
+  border: $default-border;
+  border-radius: $border-radius;
+}
+QFrame[ori_role=selectable_tile][look=borderless] {
+  border-color: transparent;
+  border-radius: 0;
+}
+QFrame[ori_role=selectable_tile_content] {
+  background: $paper-color;
+  border-radius: 3px;
+}
+
+/************************************
+             About dialog
+************************************/
+#about_dlg {
+  background: url(:/style/about);
+  min-width: 600;
+  min-height: 428;
+}
+#about_dlg QLabel[role=about_dlg] {
+  windows:font-family: "Consolas";
+  macos:font-family: "Monaco";
+  linux:font-family: "monospace";
+  color: white;
+  font-size: 20px;
+}
+#about_dlg #version_label {
+  font-size: 50px;
+  font-weight: bold;
+}
+#about_dlg #codename_label {
+  font-size: 34px;
+  font-weight: bold;
+}
+#about_dlg #date_label {
+  font-size: 20px;
+}
+
 /************************************
              StartWindow
 ************************************/
-StartWindow QToolButton {
-  border: 1px solid white;
-  border-radius: 5px;
+StartWindow QToolButton[role=command] {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: $border-radius;
   padding: 5px;
   font-size: 12px;
-  color: #335;
 }
-
-StartWindow QToolButton:focus {
-  border-color: #dadbde;
-  background-color: #f6f7fa;
+StartWindow QToolButton[role=command]:focus {
+  border-color: $base-color;
+  background-color: $dark-paper-color;
 }
-
-StartWindow QToolButton:hover {
-  border-color: silver;
-  background-color: qlineargradient(
-    x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #f6f7fa, stop: 1 #dadbde);
+StartWindow QToolButton[role=command]:hover {
+  border-color: $border-color;
+  background-color: $light-gradient;
 }
-
 StartWindow QToolButton[role=tip_button] {
-  border-color: #dadbde;
+  background: $paper-color;
+  border: 1px solid $base-color;
+  border-radius: 4px;
   padding: 0px 10px;
   min-height: 18px;
   max-height: 18px;
 }
-
 StartWindow QToolButton[role=tip_button]:hover {
-  border-color: silver;
+  background: $base-gradient;
+  border-color: $border-color;
 }
 
 StartWindow QWidget[role=panel] {
-  background-color: white;
-  border: 1px solid silver;
-  border-radius: 5px;
+  background-color: $paper-color;
+  border: $default-border;
+  border-radius: $border-radius;
 }
 
 StartWindow QLabel[role=header] {
   font: bold 16px;
-  color: #557;
+  color: $selection-color;
 }
 
 StartWindow #tip_text {
@@ -48,86 +134,60 @@ StartWindow #tip_text {
   padding-left: 6px;
   padding-right: 6px;
   padding-top: 10px;
-  color: #225
 }
-
 StartWindow #tip_preview {
   margin-right: 5px;
 }
-
 StartWindow #tip_image {
-  background-color: white;
-  border: 1px solid silver;
-  border-radius: 6px;
+  background-color: $paper-color;
+  border: $default-border;
+  border-radius: $border-radius;
   padding-left: 9px;
 }
 
 StartWindow #mru_empty_stub {
   font-size: 12px;
   padding: 10px;
-  color: silver;
+  color: $border-color;
 }
-
 StartWindow QLabel[role=mru_file_name] {
   font: bold 14px;
-  color: #446;
+  color: #335;
 }
-
 StartWindow QLabel[role=mru_file_path] {
   font-size: 11px;
-  color: #779;
+  color: $muted-text-color;
 }
-
 MruStartItem {
+  background: transparent;
   min-height: 44px;
   max-height: 44px;
 }
-
 MruStartItem:hover {
-  border: 1px solid #dadbde;
-  border-radius: 5px;
-  background-color: qlineargradient(
-    x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #fefefe, stop: 1 #f6f7f9);
+  border: $default-border;
+  border-radius: $border-radius;
+  background-color: $light-gradient;
 }
-
 StartWindow #mru_scroll_area  {
   border-style: none;
-  background-color: white;
+  background-color: transparent;
 }
-
 StartWindow #mru_widget {
-  background-color: white;
-  margin-right: 20px;
+  background-color: transparent;
 }
-
-StartWindow #mru_scroll_area QScrollBar:vertical {
-  background-color: white;
-  width: 15px;
-  margin-left: 6px;
-}
-
-StartWindow #mru_scroll_area QScrollBar::handle:vertical {
-  border: 1px solid #dadbde;
-  border-radius: 4px;
-  background-color: #f6f7fa;
-  min-height: 20px;
-}
-
-StartWindow #mru_scroll_area QScrollBar::add-line:vertical {
-  height: 0;
-}
-
-StartWindow #mru_scroll_area QScrollBar::sub-line:vertical {
-  height: 0;
-}
-
 StartWindow #panel_tips {
   min-height: 170px;
   max-height: 170px;
 }
-
 StartWindow #panel_mru {
   min-width: 350px;
+}
+StartWindow #mru_scroll_area QScrollBar:vertical {
+  width: 16px;
+  padding-left: 6px;
+}
+StartWindow #mru_scroll_area QScrollBar::handle:vertical {
+  border-radius: 4px;
 }
 
 /************************************
@@ -150,4 +210,244 @@ PopupMessage[mode=error] {
 PopupMessage[mode=info] {
   border: 1px solid #C0C0C0;
   background: #DCDCDC;
+}
+
+/************************************
+                 Tabs
+************************************/
+QTabWidget::pane {
+  border: $default-border;
+  top: -1px;
+  padding: 3px;
+  border-bottom-left-radius: $border-radius;
+  border-bottom-right-radius: $border-radius;
+}
+
+QTabWidget[look=borderless]::pane {
+  border: none;
+  border-top: $default-border;
+}
+QTabWidget[look=borderless]::tab-bar {
+  left: 6px;
+}
+
+QTabBar::tab {
+  border: $default-border;
+  border-bottom: none;
+  border-top-left-radius: $border-radius;
+  border-top-right-radius: $border-radius;
+  padding: 3px 16px;
+}
+QTabBar::tab:selected {
+  background: $base-gradient;
+  // Qt5 doesn't draw it properly
+  qt6: font-weight: bold;
+  qt6: margin-left: -4px;
+  qt6: margin-right: -4px;
+}
+QTabBar::tab:first:selected {
+  margin-left: 0;
+}
+QTabBar::tab:last:selected {
+  margin-right: 0;
+}
+QTabBar::tab:only-one {
+  margin-left: 0;
+  margin-right: 0;
+}
+QTabBar::tab:!selected {
+  margin-top: 2px;
+  border-color: $border-color;
+  border-bottom: $default-border;
+}
+
+/************************************
+             Scroll bars
+************************************/
+QAbstractScrollArea::corner {
+  border: none;
+}
+
+QScrollBar:vertical {
+  background-color: $paper-color;
+  width: 12px;
+  padding: 1px;
+}
+QScrollBar::handle:vertical {
+  border: $default-border;
+  background-color: $dark-paper-color;
+  min-height: 20px;
+}
+QScrollBar::handle:vertical:hover {
+  background-color: $base-color;
+}
+QScrollBar::add-line:vertical {
+  height: 0;
+}
+QScrollBar::sub-line:vertical {
+  height: 0;
+}
+QScrollBar:horizontal {
+  background-color: $paper-color;
+  height: 12px;
+  padding: 1px;
+}
+QScrollBar::handle:horizontal {
+  border: $default-border;
+  background-color: $dark-paper-color;
+  min-width: 20px;
+}
+QScrollBar::handle:horizontal:hover {
+  background-color: $base-color;
+}
+QScrollBar::add-line:horizontal {
+  width: 0;
+}
+QScrollBar::sub-line:horizontal {
+  width: 0;
+}
+
+/************************************
+              Editors
+************************************/
+QTextEdit, QPlainTextEdit, QListView, QTableView, QTreeView, QGraphicsView {
+  alternate-background-color: $mid-paper-color;
+  background-color: $paper-color;
+  border: $default-border;
+}
+
+QLineEdit, QSpinBox {
+  background: $paper-color;
+}
+
+/************************************
+              Table header
+************************************/
+
+QHeaderView::section {
+  background: $dark-paper-color;
+  border: $default-border;
+  border-left: none;
+  border-top: none;
+}
+QHeaderView::section::vertical {
+  padding-left: 3px;
+}
+QTableView QTableCornerButton::section {
+  border: none;
+  border-bottom: $default-border;
+  border-right: $default-border;
+  background: $dark-paper-color;
+}
+
+/************************************
+             Combo box
+************************************/
+QComboBox {
+  background: $paper-color;
+  selection-color: $selected-text-color;
+}
+QComboBox QAbstractItemView {
+  background: $paper-color;
+  border: $default-border;
+}
+
+/************************************
+              Group box
+************************************/
+QGroupBox {
+  background: $dark-paper-color;
+  border: $default-border;
+  border-radius: $border-radius;
+  padding-top: 20px;
+  font-weight: bold;
+  opacity: 50%;
+}
+QGroupBox::title {
+  background: transparent;
+  subcontrol-origin: padding;
+  margin-left: 3px;
+  margin-top: 3px;
+  spacing: 3px; /* distance from check-box */
+  color: $selection-color;
+}
+QGroupBox QToolBar {
+  background: $dark-paper-color;
+}
+QGroupBox QToolButton {
+  background: $dark-paper-color;
+}
+
+/************************************
+           Check and Radio box
+************************************/
+QRadioButton, QCheckBox {
+  background: transparent;
+  margin: 3px;
+}
+QRadioButton::indicator {
+  border: $default-border;
+  background: $paper-color;
+  border-radius: 7px;
+}
+QRadioButton::indicator::checked {
+  background: qradialgradient(cx:0.5, cy:0.5, radius: 0.3,
+    fx:0.5, fy:0.5, stop:0 black, stop:0.7 black, stop:1 $paper-color);
+}
+
+QCheckBox::indicator {
+  border: $default-border;
+  background: $paper-color;
+}
+QCheckBox::indicator::checked {
+  image: url(:/style/check);
+}
+
+/************************************
+              Tooltip
+************************************/
+QToolTip {
+  windows: border: 1px solid #232335;
+  linux: border: 1px solid #232335;
+//  macos: border: 1px solid #edf3f8;
+  macos: border: 1px solid #232335;
+  background: #434355;
+  color: white;
+  padding: 2px;
+}
+
+/************************************
+               Menu
+************************************/
+QMenuBar::item {
+  border: none;
+  padding: 3px 6px;
+}
+QMenuBar::item:selected {
+  background: $selection-color;
+  color: $selected-text-color;
+}
+QMenu {
+  background: $dark-paper-color;
+  border: $default-border;
+}
+QMenu::item:selected {
+  color: $selected-text-color;
+}
+QMenu::item:disabled {
+  color: #999;
+}
+QMenu::separator {
+  height: 1px;
+  background: $default-border;
+  margin: 3px 6px;
+}
+
+/************************************
+           Specific controls
+************************************/
+QFrame[role=info_panel] {
+  background: $dark-paper-color;
+  border: $light-border;
+  border-radius: $border-radius;
 }

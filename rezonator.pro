@@ -19,6 +19,7 @@ QMAKE_CXXFLAGS_WARN_ON += -Wno-unknown-pragmas
 #--------
 # orion (https://github.com/orion-project/orion-qt)
 ORION = $$_PRO_FILE_PWD_/libs/orion
+DEFINES += ORI_USE_STYLE_SHEETS
 include($$ORION/orion.pri)
 include($$ORION/orion_testing.pri)
 include($$ORION/orion_tests.pri)
