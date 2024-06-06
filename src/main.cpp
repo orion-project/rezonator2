@@ -1,3 +1,4 @@
+#include "app/Appearance.h"
 #include "core/Format.h"
 #include "tests/TestSuite.h"
 #include "tools/CalculatorWindow.h"
@@ -7,6 +8,8 @@
 #include "windows/CustomElemsWindow.h"
 #include "windows/ProjectWindow.h"
 #include "windows/StartWindow.h"
+
+#include "qcpl_colors.h"
 
 #include "helpers/OriTheme.h"
 #include "helpers/OriTools.h"
@@ -80,6 +83,13 @@ int main(int argc, char* argv[])
     // Call `setStyleSheet` after setting loaded
     // to be able to apply custom colors (if they are).
     app.setStyleSheet(Ori::Theme::makeStyleSheet(Ori::Theme::loadRawStyleSheet()));
+    Ori::Theme::setColors({
+        { Ori::Theme::SelectionColor, Z::Gui::selectionColor() },
+        { Ori::Theme::PaperColor, Z::Gui::paperColor() },
+    });
+    QCPL::setGuiColors({
+        { QCPL::HintLabelColor, Z::Gui::mutedTextColor() },
+    });
 
     // Run a tool if requested
     if (parser.isSet(optionTool))

@@ -127,18 +127,7 @@ void InfoFuncWindow::updateFrozenInfo()
 
 void InfoFuncWindow::functionCalculated(FunctionBase*)
 {
-    QPalette p;
-    QColor pageColor = p.color(
-        #ifdef Q_OS_MAC
-            // Tooltips are grey on macs and this looks ugly
-            QPalette::Base
-        #else
-            QPalette::ToolTipBase
-        #endif
-    );
-    if (_function->frozen())
-        pageColor = Ori::Color::blend(pageColor, p.color(QPalette::Window), 0.5);
-
+    QColor pageColor = _function->frozen() ? Z::Gui::midPaperColor() : Z::Gui::yellowPaperColor();
     _editor->setHtml(QStringLiteral("<body bgcolor=%1>%2</body>").arg(pageColor.name(), _function->result()));
 }
 

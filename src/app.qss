@@ -1,7 +1,7 @@
 $base-color: #dadbde;
 $border-color: silver;
 $dark-border-color: gray;
-$light-border-color: #babbbe;
+$light-border-color: #cbcccd;
 $border-radius: 5px;
 $default-border: 1px solid $border-color;
 $dark-border: 1px solid $dark-border-color;
@@ -34,6 +34,58 @@ QLabel {
   background: transparent;
 }
 
+QFrame[qcpl_role=dlg_header] {
+  background: $paper-color;
+}
+QTabBar[qcpl_role=dlg_header_tabs] {
+  background: $paper-color;
+}
+
+/************************************
+    Ori::Widgets::SelectableTile
+************************************/
+
+QFrame[ori_role=selectable_tile] {
+  background: $paper-color;
+  border: $default-border;
+  border-radius: $border-radius;
+}
+QFrame[ori_role=selectable_tile][look=borderless] {
+  border-color: transparent;
+  border-radius: 0;
+}
+QFrame[ori_role=selectable_tile_content] {
+  background: $paper-color;
+  border-radius: 3px;
+}
+
+/************************************
+             About dialog
+************************************/
+#about_dlg {
+  background: url(:/style/about);
+  min-width: 600;
+  min-height: 428;
+}
+#about_dlg QLabel[role=about_dlg] {
+  windows:font-family: "Consolas";
+  macos:font-family: "Monaco";
+  linux:font-family: "monospace";
+  color: white;
+  font-size: 20px;
+}
+#about_dlg #version_label {
+  font-size: 50px;
+  font-weight: bold;
+}
+#about_dlg #codename_label {
+  font-size: 34px;
+  font-weight: bold;
+}
+#about_dlg #date_label {
+  font-size: 20px;
+}
+
 /************************************
              StartWindow
 ************************************/
@@ -44,25 +96,24 @@ StartWindow QToolButton[role=command] {
   padding: 5px;
   font-size: 12px;
 }
-
 StartWindow QToolButton[role=command]:focus {
   border-color: $base-color;
   background-color: $dark-paper-color;
 }
-
 StartWindow QToolButton[role=command]:hover {
   border-color: $border-color;
   background-color: $light-gradient;
 }
-
 StartWindow QToolButton[role=tip_button] {
-  border-color: $base-color;
+  background: $paper-color;
+  border: 1px solid $base-color;
+  border-radius: 4px;
   padding: 0px 10px;
   min-height: 18px;
   max-height: 18px;
 }
-
 StartWindow QToolButton[role=tip_button]:hover {
+  background: $base-gradient;
   border-color: $border-color;
 }
 
@@ -84,11 +135,9 @@ StartWindow #tip_text {
   padding-right: 6px;
   padding-top: 10px;
 }
-
 StartWindow #tip_preview {
   margin-right: 5px;
 }
-
 StartWindow #tip_image {
   background-color: $paper-color;
   border: $default-border;
@@ -101,43 +150,35 @@ StartWindow #mru_empty_stub {
   padding: 10px;
   color: $border-color;
 }
-
 StartWindow QLabel[role=mru_file_name] {
   font: bold 14px;
   color: #335;
 }
-
 StartWindow QLabel[role=mru_file_path] {
   font-size: 11px;
   color: $muted-text-color;
 }
-
 MruStartItem {
   background: transparent;
   min-height: 44px;
   max-height: 44px;
 }
-
 MruStartItem:hover {
   border: $default-border;
   border-radius: $border-radius;
   background-color: $light-gradient;
 }
-
 StartWindow #mru_scroll_area  {
   border-style: none;
   background-color: transparent;
 }
-
 StartWindow #mru_widget {
   background-color: transparent;
 }
-
 StartWindow #panel_tips {
   min-height: 170px;
   max-height: 170px;
 }
-
 StartWindow #panel_mru {
   min-width: 350px;
 }
@@ -199,9 +240,10 @@ QTabBar::tab {
 }
 QTabBar::tab:selected {
   background: $base-gradient;
-  font-weight: bold;
-  margin-left: -4px;
-  margin-right: -4px;
+  // Qt5 doesn't draw it properly
+  qt6: font-weight: bold;
+  qt6: margin-left: -4px;
+  qt6: margin-right: -4px;
 }
 QTabBar::tab:first:selected {
   margin-left: 0;
@@ -329,6 +371,12 @@ QGroupBox::title {
   spacing: 3px; /* distance from check-box */
   color: $selection-color;
 }
+QGroupBox QToolBar {
+  background: $dark-paper-color;
+}
+QGroupBox QToolButton {
+  background: $dark-paper-color;
+}
 
 /************************************
            Check and Radio box
@@ -359,10 +407,12 @@ QCheckBox::indicator::checked {
               Tooltip
 ************************************/
 QToolTip {
-  windows: border: 1px solid DarkSlateGray;
-  linux: border: 1px solid DarkSlateGray;
-  macos: border: 1px solid #edf3f8;
-  background: DarkSlateGray;
+  windows: border: 1px solid #232335;
+  linux: border: 1px solid #232335;
+//  macos: border: 1px solid #edf3f8;
+  macos: border: 1px solid #232335;
+  background: #434355;
+  color: white;
   padding: 2px;
 }
 
