@@ -4,6 +4,7 @@
 #include "FunctionUtils.h"
 #include "PumpCalculator.h"
 #include "RoundTripCalculator.h"
+#include "../core/Perf.h"
 #include "../core/Schema.h"
 
 void BeamVariationFunction::calculate(CalculationMode calcMode)
@@ -52,22 +53,38 @@ void BeamVariationFunction::calculate(CalculationMode calcMode)
     ElementEventsLocker elemLock(elem);
     Z::ParamValueBackup paramLock(param);
 
+    Z_PERF_RESET
+    Z_PERF_BEGIN("BeamVariationFunction")
+
     for (auto x : range.values())
     {
+        Z_PERF_BEGIN("setValue")
         param->setValue({x, unitX});
+        Z_PERF_END
+
+        Z_PERF_BEGIN("recalcSubrange")
         if (rangeElem && recalcSubrange)
             rangeElem->setSubRangeSI(subrangeSi);
+        Z_PERF_END
 
-        if (!isResonator)
-        {
-            // Is the variating element located further than a dynamic element
+        if (!isResonator) {
+            // If the variating element located further than a dynamic element
             // it does not affect the dynamic element matrices
             // But we calculate dynamic matrices anyway, for simplicity
             FunctionUtils::prepareDynamicElements(_schema, nullptr, _pumpCalc.get());
         }
+
+        Z_PERF_BEGIN("multMatrix")
         _calc->multMatrix("BeamVariationFunction::calculate");
+        Z_PERF_END
+
+        Z_PERF_BEGIN("addResultPoint")
         addResultPoint(x, isResonator ? calculateResonator() : calculateSinglePass());
+        Z_PERF_END
     }
+
+    Z_PERF_END
+    Z_PERF_PRINT
 
     finishResults();
 }

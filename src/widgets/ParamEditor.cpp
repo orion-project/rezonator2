@@ -187,7 +187,7 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
     {
         auto menuButton = new MenuButton(opts.menuButtonActions);
         connect(menuButton, &MenuButton::focused, this, &ParamEditor::editorFocused);
-        connect(menuButton, &QPushButton::clicked, [this, menuButton](){
+        connect(menuButton, &QPushButton::clicked, this, [this, menuButton](){
             // When menu is opened, each action has a pointer to the current param editor
             foreach (auto action, menuButton->menu()->actions())
                 action->setData(QVariant::fromValue(this));

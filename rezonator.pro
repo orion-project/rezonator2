@@ -84,6 +84,7 @@ HEADERS += \
     src/core/LuaHelper.h \
     src/core/Math.h \
     src/core/Parameters.h \
+    src/core/Perf.h \
     src/core/Protocol.h \
     src/core/Pump.h \
     src/core/Report.h \
@@ -218,6 +219,7 @@ SOURCES += \
     src/core/LuaHelper.cpp \
     src/core/Math.cpp \
     src/core/Parameters.cpp \
+    src/core/Perf.cpp \
     src/core/Protocol.cpp \
     src/core/Pump.cpp \
     src/core/Report.cpp \

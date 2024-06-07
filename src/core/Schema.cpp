@@ -1,4 +1,5 @@
 #include "Format.h"
+#include "Perf.h"
 #include "Protocol.h"
 #include "Schema.h"
 #include "Utils.h"
@@ -301,7 +302,11 @@ void Schema::deleteElements(const Elements& elems, Arg::RaiseEvents events, Arg:
 
 void Schema::elementChanged(Element *elem)
 {
+    Z_PERF_BEGIN("Schema::elementChanged")
+
     _events.raise(SchemaEvents::ElemChanged, elem, "Schema: elementChanged");
+
+    Z_PERF_END
 }
 
 void Schema::parameterChanged(Z::ParameterBase *param)

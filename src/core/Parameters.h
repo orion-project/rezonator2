@@ -3,6 +3,7 @@
 
 #include <QDebug>
 
+#include "Perf.h"
 #include "Units.h"
 #include "Values.h"
 #include "core/OriFilter.h"
@@ -94,8 +95,12 @@ protected:
 
     void notifyListeners()
     {
+        Z_PERF_BEGIN("ParameterBase::notifyListeners")
+
         for (auto listener: std::as_const(_listeners))
             listener->parameterChanged(this);
+
+        Z_PERF_END
     }
 
 protected:
@@ -287,12 +292,16 @@ public:
 
     void apply() const
     {
+        Z_PERF_BEGIN("ParameterLink::apply")
+
         auto value = _source->value();
         auto res = _target->verify(value);
         if (res.isEmpty())
             _target->setValue(value);
         else
             qWarning() << "Param link" << str() << "Unable to set value to target, verification failed" << res;
+
+        Z_PERF_END
     }
 
     /// Source and target here are named meaning data flow: value is transfered from source to target.
