@@ -152,9 +152,17 @@ ElementSelector::~ElementSelector()
 //                               CustomParamsElem
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(CustomParamsElem, Element)
-friend class Schema;
-DECLARE_ELEMENT_END
+class CustomParamsElem : public Element
+{
+public:
+    const QString type() const override { return "CustomParamsElem"; };
+protected:
+    Element* create() const override {
+        qWarning() << "Do not use CustomParamsElem::create()";
+        return nullptr;
+    }
+    friend class Schema;
+};
 
 //------------------------------------------------------------------------------
 //                                 Schema
