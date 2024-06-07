@@ -19,7 +19,7 @@ public:
     static void showTopic(const QString& topic);
 
 private:
-    static void openWindow();
+    static bool openWindow();
 
     explicit HelpWindow(QHelpEngine *engine);
     ~HelpWindow();

@@ -36,29 +36,50 @@ bool isHttpUrl(const QUrl &url)
     return url.scheme().startsWith(QLatin1String("http"));
 }
 
-QPair<QHelpEngine*, int> initEngine()
+enum HelpError { errOk, errNoCacheDirPath, errCantCreateCacheDir, errNsNotFound, errWrongNsName,
+    errCantRegisterDoc, errQhcSrcNotFound, errCantCopyQhcSrc };
+
+QPair<QHelpEngine*, HelpError> initEngine()
 {
     QString qhcDir = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
     if (qhcDir.isEmpty())
-        return {nullptr, 1};
+        return {nullptr, errNoCacheDirPath};
     if (!QDir().mkpath(qhcDir))
-        return {nullptr, 2};
+        return {nullptr, errCantCreateCacheDir};
+    QString qhcFile = qhcDir + "/rezonator.qhc";
+    // Qt6 can't create QHC file properly, it creates an empty file and then we have:
+    // > Cannot register namespace \"org.orion-project.rezonator\".
+    // So we bundle a QHC file created during help compilation and use it
+    // instead of allowing the help engine to create a new (probably currupted) one
+    if (!QFile::exists(qhcFile) || QFileInfo(qhcFile).size() == 0)
+    {
+        QString qhcSource = qApp->applicationDirPath() + "/rezonator.qhc";
+        if (!QFile::exists(qhcSource))
+            return {nullptr, errQhcSrcNotFound};
+        if (QFile(qhcFile).remove())
+            qDebug() << "An empty QHC file removed";
+        QFile f = QFile(qhcSource);
+        if (!f.copy(qhcFile)) {
+            qWarning() << "Can not copy" << qhcSource << "to" << qhcFile << f.errorString();
+            return {nullptr, errCantCopyQhcSrc};
+        }
+    }
     QString docPath = qApp->applicationDirPath() + "/rezonator.qch";
     QString nsName = QHelpEngineCore::namespaceName(docPath);
     if (nsName.isEmpty())
-        return {nullptr, 3};
+        return {nullptr, errNsNotFound};
     if (nsName != "org.orion-project.rezonator")
-        return {nullptr, 4};
-    auto engine = new QHelpEngine(qhcDir + "/rezonator.qhc");
+        return {nullptr, errWrongNsName};
+    auto engine = new QHelpEngine(qhcFile);
     if (engine->registeredDocumentations().contains(nsName))
-        return {engine, 0};
+        return {engine, errOk};
     if (!engine->registerDocumentation(docPath))
     {
         qWarning() << "Failed to register" << docPath << engine->error();
         delete engine;
-        return {nullptr, 5};
+        return {nullptr, errCantRegisterDoc};
     }
-    return {engine, 0};
+    return {engine, errOk};
 }
 
 } // namespace
@@ -103,35 +124,38 @@ private:
 
 void HelpWindow::showContents()
 {
-    openWindow();
+    if (!openWindow()) return;
     __instance->setSource("index.html");
     __instance->_actnContent->setChecked(true);
 }
 
 void HelpWindow::showIndex()
 {
-    openWindow();
+    if (!openWindow()) return;
     __instance->_actnIndex->setChecked(true);
 }
 
 void HelpWindow::showTopic(const QString& topic)
 {
-    openWindow();
+    if (!openWindow()) return;
     __instance->setSource(topic);
 }
 
-void HelpWindow::openWindow()
+bool HelpWindow::openWindow()
 {
     if (!__instance)
     {
         auto res = initEngine();
-        if (res.second != 0)
-            return Ori::Dlg::error(QString("Failed to initialize help system (code %1)").arg(res.second));
+        if (res.second != 0) {
+            Ori::Dlg::error(QString("Failed to initialize help system (code %1)").arg(res.second));
+            return false;
+        }
         __instance = new HelpWindow(res.first);
     }
     __instance->show();
     __instance->raise();
     __instance->activateWindow();
+    return true;
 }
 
 HelpWindow::HelpWindow(QHelpEngine *engine) : QWidget(), _engine(engine)
@@ -238,6 +262,9 @@ HelpWindow::HelpWindow(QHelpEngine *engine) : QWidget(), _engine(engine)
         _engine->customValue(QStringLiteral("panel_width"), 200).toInt(),
         _engine->customValue(QStringLiteral("browser_width"), 600).toInt(),
     });
+    auto f = _browser->font();
+    f.setPointSize(_engine->customValue(QStringLiteral("font_size"), 12).toInt());
+    _browser->setFont(f);
 
     QTimer::singleShot(200, this, [contentWidget]{
         contentWidget->expandRecursively(QModelIndex(), 2);
@@ -256,6 +283,7 @@ HelpWindow::~HelpWindow()
     _engine->setCustomValue(QStringLiteral("window_maximized"), isMaximized());
     _engine->setCustomValue(QStringLiteral("panel_width"), sizes.at(0));
     _engine->setCustomValue(QStringLiteral("browser_width"), sizes.at(1));
+    _engine->setCustomValue(QStringLiteral("font_size"), _browser->font().pointSize());
 
     __instance = nullptr;
 }
