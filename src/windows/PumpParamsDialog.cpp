@@ -64,6 +64,7 @@ PumpParams* PumpParamsDialog::makeNewPump()
         drawing->setPumpMode(var2ptr<PumpMode*>(data));
     });
 
+    QWidget *selectedTile = nullptr;
     auto modesWidget = new QFrame;
     modesWidget->setFrameShape(QFrame::StyledPanel);
     auto modesLayout = new QHBoxLayout(modesWidget);
@@ -78,6 +79,11 @@ PumpParams* PumpParamsDialog::makeNewPump()
         modeItem->setPixmap(QIcon(mode->iconPath()).pixmap(32, 32));
         modeItem->setTitle(mode->displayName());
         modeItem->setData(ptr2var(mode));
+        if (modesGroup.selectedData().isNull()) {
+            modeItem->setSelected(true);
+            drawing->setPumpMode(mode);
+            selectedTile = modeItem;
+        }
 
         modesGroup.addTile(modeItem);
         modesLayout->addWidget(modeItem);
@@ -97,6 +103,7 @@ PumpParams* PumpParamsDialog::makeNewPump()
             })
             .withOkSignal(&modesGroup, SIGNAL(doubleClicked(QVariant)))
             .withContentToButtonsSpacingFactor(2)
+            .withActiveWidget(selectedTile)
             .exec())
     {
         auto mode = var2ptr<PumpMode*>(modesGroup.selectedData());
