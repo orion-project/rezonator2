@@ -142,8 +142,6 @@ protected:
 private:
     QLabel *_tipImage;
     QToolBar *_toolbar;
-
-    void editStyleSheet();
 };
 
 #endif // START_WINDOW_H

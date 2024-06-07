@@ -3,7 +3,9 @@
 #include "../app/AppSettings.h"
 #include "../app/HelpSystem.h"
 
+#include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
+#include "helpers/OriTheme.h"
 #include "helpers/OriTools.h"
 #include "helpers/OriWidgets.h"
 #include "tools/OriHighlighter.h"
@@ -271,6 +273,39 @@ void applyTextBrowserStyleSheet(QTextBrowser* browser, const QString& cssResourc
         wnd->resize(300, 600);
         wnd->show();
     });
+}
+
+void editAppStyleSheet()
+{
+    auto editor = new QPlainTextEdit;
+    editor->setFont(Z::Gui::CodeEditorFont().get());
+    editor->setPlainText(Ori::Theme::loadRawStyleSheet());
+    Ori::Highlighter::setHighlighter(editor, ":/syntax/qss");
+
+    auto applyButton = new QPushButton("Apply");
+    applyButton->connect(applyButton, &QPushButton::clicked, editor, [editor]{
+        qApp->setStyleSheet(Ori::Theme::makeStyleSheet(editor->toPlainText()));
+    });
+
+    auto saveButton = new QPushButton("Save");
+    saveButton->connect(saveButton, &QPushButton::clicked, editor, [editor]{
+        auto res = Ori::Theme::saveRawStyleSheet(editor->toPlainText());
+        if (!res.isEmpty()) Ori::Dlg::error(res);
+    });
+
+    auto wnd = Ori::Layouts::LayoutV({
+        editor,
+        Ori::Layouts::LayoutH({
+            Ori::Layouts::Stretch(),
+            applyButton,
+            saveButton,
+        }).setMargin(6).setSpacing(6)
+    }).setMargin(3).setSpacing(0).makeWidget();
+    wnd->setAttribute(Qt::WA_DeleteOnClose);
+    wnd->setWindowTitle("Style Sheet Editor");
+    wnd->setWindowIcon(QIcon(":/toolbar/protocol"));
+    wnd->resize(600, 600);
+    wnd->show();
 }
 
 } // namespace Gui

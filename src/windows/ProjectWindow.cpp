@@ -1,5 +1,6 @@
 #include "ProjectWindow.h"
 
+#include "../app/Appearance.h"
 #include "../app/CalcManager.h"
 #include "../app/HelpSystem.h"
 #include "../app/ProjectOperations.h"
@@ -226,6 +227,8 @@ void ProjectWindow::createMenuBar()
         { actnToolsGaussCalc, actnToolsCalc, actnToolsCustomElems, actnToolGrinLens, actnToolLensmaker,
           //actnToolIris
         });
+    if (AppSettings::instance().isDevMode)
+        menuTools->addAction(QIcon(":/toolbar/palette"), tr("Edit App Style Sheet"), this, []{ Z::Gui::editAppStyleSheet(); });
 
     menuWindow = Ori::Gui::menu(tr("Window"), this,
         { actnWndSchema, actnWndParams, actnWndPumps, actnWndProtocol, actnWndMemos, nullptr,

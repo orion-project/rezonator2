@@ -13,9 +13,7 @@
 
 #include "helpers/OriWindows.h"
 #include "helpers/OriLayouts.h"
-#include "helpers/OriTheme.h"
 #include "helpers/OriDialogs.h"
-#include "tools/OriHighlighter.h"
 #include "tools/OriMruList.h"
 #include "widgets/OriLabels.h"
 #include "widgets/OriFlatToolBar.h"
@@ -570,7 +568,7 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
     _toolbar = new Ori::Widgets::FlatToolBar;
     _toolbar->setIconSize({24, 24});
     if (AppSettings::instance().isDevMode)
-        _toolbar->addAction(QIcon(":/toolbar/protocol"), tr("Edit Stylesheet"), this, &StartWindow::editStyleSheet);
+        _toolbar->addAction(QIcon(":/toolbar/palette"), tr("Edit App Style Sheet"), this, []{ Z::Gui::editAppStyleSheet(); });
     _toolbar->addAction(QIcon(":/toolbar/settings"), tr("Settings"), this, []{ AppSettings::instance().edit(); });
     //_toolbar->addAction(QIcon(":/toolbar/help"), tr("Show Manual"), []{ Z::HelpSystem::instance()->showContents(); });
     _toolbar->addAction(QIcon(":/toolbar/info"), tr("About"), []{ Z::HelpSystem::instance()->showAbout(); });
@@ -586,39 +584,6 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
 StartWindow::~StartWindow()
 {
     PersistentState::storeWindowGeometry("start", this);
-}
-
-void StartWindow::editStyleSheet()
-{
-    auto editor = new QPlainTextEdit;
-    editor->setFont(Z::Gui::CodeEditorFont().get());
-    editor->setPlainText(Ori::Theme::loadRawStyleSheet());
-    Ori::Highlighter::setHighlighter(editor, ":/syntax/qss");
-
-    auto applyButton = new QPushButton("Apply");
-    connect(applyButton, &QPushButton::clicked, editor, [editor]{
-        qApp->setStyleSheet(Ori::Theme::makeStyleSheet(editor->toPlainText()));
-    });
-
-    auto saveButton = new QPushButton("Save");
-    connect(saveButton, &QPushButton::clicked, editor, [editor]{
-        auto res = Ori::Theme::saveRawStyleSheet(editor->toPlainText());
-        if (!res.isEmpty()) Ori::Dlg::error(res);
-    });
-
-    auto wnd = LayoutV({
-        editor,
-        LayoutH({
-            Stretch(),
-            applyButton,
-            saveButton,
-        }).setMargin(6).setSpacing(6)
-    }).setMargin(3).setSpacing(0).makeWidget();
-    wnd->setAttribute(Qt::WA_DeleteOnClose);
-    wnd->setWindowTitle("Stylesheet Editor");
-    wnd->setWindowIcon(QIcon(":/toolbar/protocol"));
-    wnd->resize(600, 600);
-    wnd->show();
 }
 
 void StartWindow::resizeEvent(QResizeEvent* event)
