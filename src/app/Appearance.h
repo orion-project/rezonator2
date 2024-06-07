@@ -90,6 +90,7 @@ void setFocusedBackground(QWidget *w, bool focused);
 enum ItemDataRole { DisabledRole = Qt::UserRole+100 };
 
 void applyTextBrowserStyleSheet(QTextBrowser* browser, const QString& cssResourcePath);
+void editAppStyleSheet();
 
 } // namespace Gui
 } // namespace Z

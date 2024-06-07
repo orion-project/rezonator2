@@ -29,6 +29,9 @@ QWidget {
 QWidget:disabled {
  color: $disabled-text-color;
 }
+QWidget:!active {
+  selection-background-color: $light-selection-color;
+}
 
 QLabel {
   background: transparent;
