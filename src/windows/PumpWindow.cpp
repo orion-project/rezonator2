@@ -98,6 +98,8 @@ void PumpsTable::showContextMenu(const QPoint& pos)
 
 PumpParams* PumpsTable::selected() const
 {
+    if (schema()->pumps()->isEmpty())
+        return nullptr;
     return schema()->pumps()->at(currentRow());
 }
 
