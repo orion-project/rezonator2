@@ -1,6 +1,7 @@
 #include "Elements.h"
 
 #include "../core/Format.h"
+#include "../core/Perf.h"
 #include "../math/GrinCalculator.h"
 #include "../math/PumpCalculator.h"
 
@@ -59,18 +60,26 @@ FocalLengthVerifier* globalFocalLengthVerifier()
 
 void ElemEmptyRange::calcMatrixInternal()
 {
+    Z_PERF_BEGIN("ElemEmptyRange::calcMatrixInternal")
+
     _mt.assign(1, lengthSI(), 0, 1);
     _ms = _mt;
     _mt_inv = _mt;
     _ms_inv = _ms;
+
+    Z_PERF_END
 }
 
 void ElemEmptyRange::calcSubmatrices()
 {
+    Z_PERF_BEGIN("ElemEmptyRange::calcSubmatrices")
+
     _mt1.assign(1, _subRangeSI, 0, 1);
     _ms1 = _mt1;
     _mt2.assign(1, lengthSI() - _subRangeSI, 0, 1);
     _ms2 = _mt2;
+
+    Z_PERF_END
 }
 
 //------------------------------------------------------------------------------

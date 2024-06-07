@@ -2,6 +2,7 @@
 
 #include "RichTextItemDelegate.h"
 #include "../app/Appearance.h"
+#include "../core/Perf.h"
 #include "../math/FormatInfo.h"
 
 #include <QHeaderView>
@@ -163,10 +164,14 @@ void SchemaParamsTable::customParamDeleting(Schema*, Z::Parameter* param)
 
 void SchemaParamsTable::parameterChanged(Z::ParameterBase* param)
 {
+    Z_PERF_BEGIN("SchemaParamsTable::parameterChanged")
+
     auto row = findRow(param);
     if (row < 0) return;
     populateRow(reinterpret_cast<Z::Parameter*>(param), row);
     adjustColumns();
+
+    Z_PERF_END
 }
 
 void SchemaParamsTable::customParamEdited(Schema*, Z::Parameter* param)

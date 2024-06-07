@@ -1,5 +1,6 @@
 #include "Element.h"
 
+#include "Perf.h"
 #include "Protocol.h"
 
 #include <QApplication>
@@ -75,13 +76,17 @@ void Element::addParam(Z::Parameter *param, int index)
 
 void Element::parameterChanged(Z::ParameterBase*)
 {
+    Z_PERF_BEGIN("Element::parameterChanged_1")
     if (_calcMatrixLocked)
         _calcMatrixNeeded = true;
     else
         calcMatrix("Element::parameterChanged");
+    Z_PERF_END
 
+    Z_PERF_BEGIN("Element::parameterChanged_2")
     if (!_eventsLocked && _owner)
         _owner->elementChanged(this);
+    Z_PERF_END
 }
 
 void Element::calcMatrix(const char *reason)
