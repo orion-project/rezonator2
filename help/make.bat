@@ -50,6 +50,7 @@ if %ERRORLEVEL% neq 0 goto :eof
 echo.
 echo ***** Copy built help files to bin dir...
 copy %TARGET_DIR%\rezonator.qch %BIN_DIR%
+copy %TARGET_DIR%\rezonator.qhc %BIN_DIR%
 if %ERRORLEVEL% neq 0 goto :eof
 
 
@@ -73,7 +74,7 @@ echo Assistant path is %HELP_TOOL_DIR%
 echo.
 echo ***** Running Assistant...
 cd %HELP_TOOL_DIR%
-assistant -collectionFile %TARGET_DIR%\rezonator.qhc -style fusion
+assistant -collectionFile %BIN_DIR%\rezonator.qhc -style fusion
 
 
 echo.

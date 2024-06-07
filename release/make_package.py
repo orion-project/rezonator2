@@ -44,6 +44,7 @@ def make_package_for_windows():
   print_header('Copy project files...')
   copy_file('..\\..\\bin\\' + PROJECT_EXE, '.')
   copy_file('..\\..\\bin\\rezonator.qch', '.')
+  copy_file('..\\..\\bin\\rezonator.qhc', '.')
   shutil.copytree('..\\..\\bin\\examples', 'examples')
 
   print_header('Pack files to zip...')
@@ -65,6 +66,7 @@ def make_package_for_linux():
   print_header('Copy project files...')
   copy_file('../../bin/' + PROJECT_EXE, 'usr/bin')
   copy_file('../../bin/rezonator.qch', 'usr/bin')
+  copy_file('../../bin/rezonator.qhc', 'usr/bin')
   shutil.copytree('../../bin/examples', 'usr/bin/examples')
   copy_file(f'../../release/{PROJECT_NAME}.desktop', 'usr/share/applications')
   shutil.copyfile('../../img/icon/main_2_256.png', f'usr/share/icons/hicolor/256x256/apps/{PROJECT_NAME}.png')
@@ -107,6 +109,8 @@ def make_package_for_linux():
 def make_package_for_macos():
   print_header('Copy application bundle...')
   remove_dir(PROJECT_EXE)
+  # QCH and QHC help files are already in the bundle dir
+  # This is done during help compilation (see help/make.sh)
   shutil.copytree('../../bin/' + PROJECT_EXE, PROJECT_EXE)
 
   print_header('Run macdeployqt...')

@@ -34,6 +34,7 @@ build_help_files() {
 
   print_header "Copy built help files to bin dir..."
   cp ${TARGET_DIR}/rezonator.qch ${BIN_DIR}
+  cp ${TARGET_DIR}/rezonator.qhc ${BIN_DIR}
   exit_if_fail
 }
 
@@ -80,7 +81,7 @@ prepare_assistant() {
 
 run_assistant() {
   print_header "Running Assistant..."
-  ${ASSISTANT_TARGET} -collectionFile ${TARGET_DIR}/rezonator.qhc -style fusion
+  ${ASSISTANT_TARGET} -collectionFile ${BIN_DIR}/rezonator.qhc -style fusion
 }
 
 

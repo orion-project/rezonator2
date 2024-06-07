@@ -13,6 +13,7 @@ bin/assistant*
 *.exe
 *.log
 *.pyc
+build
 tmp
 out
 __pycache__
