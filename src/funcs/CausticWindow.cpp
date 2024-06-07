@@ -32,10 +32,9 @@ CausticParamsDlg::CausticParamsDlg(Schema *schema, Z::Variable *var)
     if (!var->element)
         Z::IO::Json::readVariablePref(RecentData::getObj("func_caustic"), var, schema);
 
-    std::shared_ptr<ElementFilter> filter(
-        ElementFilter::make<ElementFilterIsRange, ElementFilterEnabled>());
+    ElementFilterPtr filter(ElementFilter::make<ElementFilterIsRange, ElementFilterEnabled>());
 
-    _elemSelector = new ElemSelectorWidget(schema, filter.get());
+    _elemSelector = new ElemSelectorWidget(schema, {.filter = filter});
     connect(_elemSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(guessRange()));
 
     _rangeEditor = new PointsRangeEditor;

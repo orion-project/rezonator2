@@ -148,6 +148,22 @@ ElementSelector::~ElementSelector()
 }
 
 //------------------------------------------------------------------------------
+//                               CustomParamsElem
+//------------------------------------------------------------------------------
+
+class CustomParamsElem : public Element
+{
+public:
+    const QString type() const override { return "CustomParamsElem"; };
+protected:
+    Element* create() const override {
+        qWarning() << "Do not use CustomParamsElem::create()";
+        return nullptr;
+    }
+    friend class Schema;
+};
+
+//------------------------------------------------------------------------------
 //                                 Schema
 //------------------------------------------------------------------------------
 
@@ -156,6 +172,9 @@ Schema::Schema(const QString &alias) : _alias(alias)
     _wavelength = Z::Parameter(Z::Dims::linear(), "lambda", Z::Strs::lambda(), /*qApp->translate("Param", "Wavelength")*/QString());
     _wavelength.setValue(Z::Value(980, Z::Units::nm()));
     _wavelength.addListener(this);
+
+    _customParams = new CustomParamsElem;
+    _customParams->setLabel("Global parameters"); // TODO: localize
 
     _events._schema = this;
     _events.raise(SchemaEvents::Created, "Schema: schema constructor");
@@ -166,8 +185,8 @@ Schema::~Schema()
     _events.raise(SchemaEvents::Deleted, "schema: schema destructor");
 
     qDeleteAll(_items);
-    qDeleteAll(_customParams);
     qDeleteAll(_pumps);
+    delete _customParams;
 
     _formulas.clear();
 
@@ -309,9 +328,19 @@ void Schema::setTripType(TripType value)
 
 Z::Parameters Schema::globalParams() const
 {
-    Z::Parameters list(_customParams);
+    Z::Parameters list(_customParams->params());
     list << const_cast<Z::Parameter*>(&_wavelength);
     return list;
+}
+
+void Schema::addCustomParam(Z::Parameter *param)
+{
+    dynamic_cast<CustomParamsElem*>(_customParams)->_params.append(param);
+}
+
+void Schema::removeCustomParam(Z::Parameter *param)
+{
+    dynamic_cast<CustomParamsElem*>(_customParams)->_params.removeOne(param);
 }
 
 PumpParams* Schema::activePump()

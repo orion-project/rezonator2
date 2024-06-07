@@ -270,8 +270,12 @@ public:
     Element* selectedElement() const { return _selection.element(); }
     Elements selectedElements() const { return _selection.elements(); }
 
-    /// Adiitional params that can be added by user and used in formulas.
-    Z::Parameters* customParams() { return &_customParams; }
+    /// Additional params that can be added by user and used in formulas.
+    const Z::Parameters* customParams() { return &_customParams->params(); }
+    /// Additional params returned as elements for using in elem-and-param selectors
+    const Element* customParamsAsElem() { return _customParams; }
+    void addCustomParam(Z::Parameter*);
+    void removeCustomParam(Z::Parameter*);
 
     /// Linst of all links which bind elements' parameter to custom parameters.
     Z::ParamLinks* paramLinks() { return &_paramLinks; }
@@ -307,7 +311,7 @@ private:
     QString _title, _notes, _alias;
     TripType _tripType = TripType::SW;
     Z::Parameter _wavelength;
-    Z::Parameters _customParams;
+    Element* _customParams;
     Z::ParamLinks _paramLinks;
     Z::Formulas _formulas;
     PumpsList _pumps;

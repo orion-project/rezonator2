@@ -146,10 +146,14 @@ void ParamEditorEx::apply()
     _param->setValue(_tmpParam->value());
 }
 
+void ParamEditorEx::focus()
+{
+    _paramEditor->focus();
+}
+
 void ParamEditorEx::unitChanged(Z::Unit unit)
 {
     // Assign new unit to the param in order to formula can consider it when calculate
     _tmpParam->setValue(Z::Value(_tmpParam->value().value(), unit));
     _formulaEditor->calculate();
 }
-

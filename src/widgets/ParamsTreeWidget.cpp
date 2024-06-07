@@ -5,7 +5,6 @@
 #include "../app/PersistentState.h"
 #include "../app/HelpSystem.h"
 #include "../core/Schema.h"
-#include "../core/ElementFilter.h"
 #include "../core/Utils.h"
 #include "../math/FormatInfo.h"
 

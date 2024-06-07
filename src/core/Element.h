@@ -377,7 +377,7 @@ private:
 namespace Z {
 namespace Utils {
 
-inline bool isRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
+inline bool isRange(const Element *elem) { return dynamic_cast<const ElementRange*>(elem); }
 inline ElementRange* asRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
 inline bool isInterface(Element *elem) { return dynamic_cast<ElementInterface*>(elem); }
 inline ElementInterface* asInterface(Element *elem) { return dynamic_cast<ElementInterface*>(elem); }
@@ -387,7 +387,7 @@ void setElemWavelen(Element* elem, const Z::Value& lambda);
 /// Gives a filter of parameters for regular users' usage.
 /// These are parameters that can be edited in Element properties dialog,
 /// or they can be selected as functions' arguments.
-ParameterFilter* defaultParamFilter();
+ParameterFilterPtr defaultParamFilter();
 
 /// Copyes parameter values from source element to the target one.
 /// Both elements should be of the same type or at least contain the same number of parameters.

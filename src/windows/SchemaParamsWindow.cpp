@@ -149,7 +149,7 @@ void SchemaParamsWindow::createParameter()
         auto param = new Z::Parameter(dim, alias, label, name);
         auto unit = unitEditor->selectedUnit();
         param->setValue(Z::Value(0, unit));
-        schema()->customParams()->append(param);
+        schema()->addCustomParam(param);
 
         RecentData::PendingSave _;
         RecentData::setDim("global_param_dim", dim);
@@ -198,7 +198,7 @@ void SchemaParamsWindow::deleteParameter()
     {
         schema()->events().raise(SchemaEvents::CustomParamDeleting, deletingParam, "Params window: param deleting");
         schema()->formulas()->free(deletingParam);
-        schema()->customParams()->removeOne(deletingParam);
+        schema()->removeCustomParam(deletingParam);
         schema()->events().raise(SchemaEvents::CustomParamDeleted, deletingParam, "Params window: param deleted");
     }
 }
@@ -217,6 +217,7 @@ void SchemaParamsWindow::setParameterValue()
                     Z::HelpSystem::instance()->showTopic("params_window.html#params-window-value");
                 })
                 .withContentToButtonsSpacingFactor(2)
+                .withOnDlgShown([&editor]{ editor.focus(); })
                 .connectOkToContentApply()
                 .exec();
     if (ok)

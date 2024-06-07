@@ -247,10 +247,11 @@ void setElemWavelen(Element* elem, const Z::Value& lambda)
     param->setValue(lambda);
 }
 
-ParameterFilter* defaultParamFilter()
+ParameterFilterPtr defaultParamFilter()
 {
-    static ParameterFilter filter({ new ParameterFilterVisible });
-    return &filter;
+    static ParameterFilterPtr filter = std::make_shared<ParameterFilter>(
+       std::initializer_list<ParameterFilterCondition*> { new ParameterFilterVisible });
+    return filter;
 }
 
 void copyParamValues(const Element* source, Element* target, const char* reason)

@@ -495,7 +495,7 @@ void AdjustmentWindow::addAdjuster()
     opts.dialogTitle = tr("Parameter Selector");
     opts.dialogPrompt = tr("Select a parameter to adjust");
     opts.ignoreList = existedParams;
-    opts.elemFilter = ElementFilter::elemsWithVisibleParams();
+    opts.elemFilter = ElementFilters::elemsWithVisibleParams();
     opts.paramFilter = Z::Utils::defaultParamFilter();
     opts.helpTopic = QStringLiteral("adjust.html#adjust-add");
     auto param = ParamsTreeWidget::selectParamDlg(opts);

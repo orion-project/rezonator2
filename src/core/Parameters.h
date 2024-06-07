@@ -427,6 +427,7 @@ public:
 };
 
 typedef Ori::Filter<Parameter*, ParameterFilterCondition> ParameterFilter;
+typedef std::shared_ptr<const ParameterFilter> ParameterFilterPtr;
 
 //------------------------------------------------------------------------------
 
