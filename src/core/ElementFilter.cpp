@@ -10,30 +10,33 @@ ElementFilter::ElementFilter(std::initializer_list<ElementFilterCondition*> cond
 {
 }
 
-ElementFilter* ElementFilter::elemsWithVisibleParams()
+namespace ElementFilters {
+
+ElementFilterPtr elemsWithVisibleParams()
 {
-    static ElementFilter* filter = ElementFilter::make<ElementFilterHasVisibleParams, ElementFilterEnabled>();
+    static ElementFilterPtr filter(ElementFilter::make<ElementFilterHasVisibleParams, ElementFilterEnabled>());
     return filter;
 }
 
-ElementFilter* ElementFilter::enabledElements()
+ElementFilterPtr enabledElements()
 {
-    static ElementFilter* filter = ElementFilter::make<ElementFilterEnabled>();
+    static ElementFilterPtr filter(ElementFilter::make<ElementFilterEnabled>());
     return filter;
 }
 
+} // namespace ElementFilters
 
-bool ElementFilterEnabled::check(Element *elem)
+bool ElementFilterEnabled::check(const Element *elem)
 {
     return !elem->disabled();
 }
 
-bool ElementFilterHasParams::check(Element *elem)
+bool ElementFilterHasParams::check(const Element *elem)
 {
     return elem->hasParams();
 }
 
-bool ElementFilterHasVisibleParams::check(Element *elem)
+bool ElementFilterHasVisibleParams::check(const Element *elem)
 {
     int count = 0;
     for (Z::Parameter* param : elem->params())
@@ -41,7 +44,7 @@ bool ElementFilterHasVisibleParams::check(Element *elem)
     return count > 0;
 }
 
-bool ElementFilterIsRange::check(Element *elem)
+bool ElementFilterIsRange::check(const Element *elem)
 {
     return Z::Utils::isRange(elem);
 }

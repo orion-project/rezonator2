@@ -20,10 +20,14 @@ BeamVariationParamsDlg::BeamVariationParamsDlg(Schema *schema, Z::Variable *var,
     setWindowTitle(tr("Variable"));
     setObjectName("BeamVariationParamsDlg");
 
-    _elemSelector = new ElemAndParamSelector(schema, ElementFilter::elemsWithVisibleParams(), Z::Utils::defaultParamFilter());
+    _elemSelector = new ElemAndParamSelector(schema, {
+        .elemFilter = ElementFilters::elemsWithVisibleParams(),
+        .paramFilter = Z::Utils::defaultParamFilter(),
+        .includeGlobalParams = true,
+    });
     connect(_elemSelector, SIGNAL(selectionChanged()), this, SLOT(guessRange()));
 
-    _placeSelector = new ElemOffsetSelectorWidget(schema, ElementFilter::enabledElements());
+    _placeSelector = new ElemOffsetSelectorWidget(schema, ElementFilters::enabledElements());
 
     _rangeEditor = new GeneralRangeEditor;
 

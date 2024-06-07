@@ -5,7 +5,6 @@
 
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
-#include "widgets/OriValueEdit.h"
 
 #include <QLabel>
 #include <QListWidget>
@@ -15,13 +14,16 @@
 //                              ElemSelectorWidget
 //------------------------------------------------------------------------------
 
-ElemSelectorWidget::ElemSelectorWidget(Schema* schema, ElementFilter *filter) : QComboBox(), _filter(filter)
+ElemSelectorWidget::ElemSelectorWidget(Schema* schema, const Options &opts) : QComboBox()
 {
     setFont(Z::Gui::ValueFont().get());
 
     foreach (auto elem, schema->elements())
-        if (!filter || filter->check(elem))
+        if (!opts.filter || opts.filter->check(elem))
             _elements.append(elem);
+
+    if (opts.includeGlobalParams && !schema->customParamsAsElem()->params().isEmpty())
+        _elements.append(const_cast<Element*>(schema->customParamsAsElem()));
 
     foreach (auto elem, _elements)
         addItem(elem->displayLabelTitle());
@@ -48,7 +50,7 @@ WidgetResult ElemSelectorWidget::verify()
 //                             ParamsSelectorWidget
 //------------------------------------------------------------------------------
 
-ParamSelectorWidget::ParamSelectorWidget(Z::ParameterFilter* filter) : QComboBox(), _filter(filter)
+ParamSelectorWidget::ParamSelectorWidget(Z::ParameterFilterPtr filter) : QComboBox(), _filter(filter)
 {
     setFont(Z::Gui::ValueFont().get());
 }
@@ -66,11 +68,12 @@ void ParamSelectorWidget::populate(Element *elem)
 
     foreach (auto param, _parameters)
     {
-        auto name = param->name();
         // Don't use param->label() because combo box items do not support HTML formatting (e.g. n<sub>0</sub>)
-        auto display = name.isEmpty()
-            ? QStringLiteral("%1 = %2").arg(param->alias(), param->value().displayStr())
-            : QStringLiteral("%1 (%2) = %3").arg(param->alias(), name, param->value().displayStr());
+        auto alias = param->alias();
+        auto name = param->name();
+        auto display = name.isEmpty() || name == alias
+            ? QStringLiteral("%1 = %2").arg(alias, param->value().displayStr())
+            : QStringLiteral("%1 (%2) = %3").arg(alias, name, param->value().displayStr());
         addItem(display);
     }
 }
@@ -96,12 +99,14 @@ WidgetResult ParamSelectorWidget::verify()
 //                             ElemAndParamSelector
 //------------------------------------------------------------------------------
 
-ElemAndParamSelector::ElemAndParamSelector(
-    Schema *schema, ElementFilter *elemFilter, Z::ParameterFilter* paramFilter)
-    : QGridLayout()
+ElemAndParamSelector::ElemAndParamSelector(Schema *schema, const Options &opts) : QGridLayout()
 {
-    _elemSelector = new ElemSelectorWidget(schema, elemFilter);
-    _paramSelector = new ParamSelectorWidget(paramFilter);
+    _elemSelector = new ElemSelectorWidget(schema, {
+        .filter = opts.elemFilter,
+        .includeGlobalParams = opts.includeGlobalParams,
+    });
+
+    _paramSelector = new ParamSelectorWidget(opts.paramFilter);
     _paramSelector->populate(_elemSelector->selectedElement());
 
     connect(_elemSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(currentElemChanged(int)));
@@ -133,7 +138,7 @@ WidgetResult ElemAndParamSelector::verify()
 //                           MultiElementSelectorWidget
 //------------------------------------------------------------------------------
 
-MultiElementSelectorWidget::MultiElementSelectorWidget(Schema* schema, ElementFilter *filter) : QWidget()
+MultiElementSelectorWidget::MultiElementSelectorWidget(Schema* schema, ElementFilterPtr filter) : QWidget()
 {
     _elemsSelector = new QListWidget;
     _elemsSelector->addAction(Ori::Gui::V0::action("", this, SLOT(selectAllElements()), "", Qt::CTRL|Qt::Key_A));
@@ -159,7 +164,7 @@ MultiElementSelectorWidget::MultiElementSelectorWidget(Schema* schema, ElementFi
     populate(schema, filter);
 }
 
-void MultiElementSelectorWidget::populate(Schema* schema, ElementFilter *filter)
+void MultiElementSelectorWidget::populate(Schema* schema, ElementFilterPtr filter)
 {
     for (auto elem : schema->elements())
     {
@@ -241,9 +246,9 @@ void MultiElementSelectorWidget::setCurrentRow(int index)
 //                         ElementOffsetSelectorWidget
 //------------------------------------------------------------------------------
 
-ElemOffsetSelectorWidget::ElemOffsetSelectorWidget(Schema* schema, ElementFilter* filter)
+ElemOffsetSelectorWidget::ElemOffsetSelectorWidget(Schema* schema, ElementFilterPtr filter)
 {
-    _elemSelector = new ElemSelectorWidget(schema, filter);
+    _elemSelector = new ElemSelectorWidget(schema, { .filter = filter });
     connect(_elemSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(currentElemChanged(int)));
 
     _lengthTitle = new QLabel(tr("Length"));

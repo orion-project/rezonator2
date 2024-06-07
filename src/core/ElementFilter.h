@@ -3,16 +3,18 @@
 
 #include "core/OriFilter.h"
 
+#include <memory>
+
 class Element;
 
 class ElementFilterCondition
 {
 public:
     virtual ~ElementFilterCondition();
-    virtual bool check(Element*) = 0;
+    virtual bool check(const Element*) = 0;
 };
 
-class ElementFilter : public Ori::Filter<Element*, ElementFilterCondition>
+class ElementFilter : public Ori::Filter<const Element*, ElementFilterCondition>
 {
 public:
     ElementFilter(std::initializer_list<ElementFilterCondition*> conditions);
@@ -22,17 +24,22 @@ public:
     {
         return new ElementFilter({ new TCondition... });
     }
-
-    // Filter presets
-    static ElementFilter* elemsWithVisibleParams(); // includes ElementFilterEnabled
-    static ElementFilter* enabledElements();
 };
+
+using ElementFilterPtr = std::shared_ptr<const ElementFilter>;
+
+namespace ElementFilters
+{
+    // Filter presets
+    ElementFilterPtr elemsWithVisibleParams(); // includes ElementFilterEnabled
+    ElementFilterPtr enabledElements();
+}
 
 #define DECLARE_ELEM_FILTER(class_name)\
     class class_name: public ElementFilterCondition\
     {\
     public:\
-        virtual bool check(Element* elem) override;\
+        virtual bool check(const Element* elem) override;\
     };
 
 DECLARE_ELEM_FILTER(ElementFilterEnabled)

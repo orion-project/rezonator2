@@ -23,8 +23,10 @@ public:
     explicit ParamEditorEx(Z::Parameter* param, Z::Formulas* formulas, Z::Parameters *globalParams, QWidget *parent = nullptr);
     ~ParamEditorEx();
 
+
 public slots:
     void apply();
+    void focus();
 
 private:
     Z::Parameter *_param, *_tmpParam;

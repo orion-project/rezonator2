@@ -68,8 +68,8 @@ MenuButton::MenuButton(QList<QAction *> actions) : QPushButton()
             _menu->addAction(action);
         else _menu->addSeparator();
 
-    connect(_menu, &QMenu::aboutToShow, [this](){ _isMenuOpened = true; });
-    connect(_menu, &QMenu::aboutToHide, [this](){ _isMenuOpened = false; });
+    connect(_menu, &QMenu::aboutToShow, this, [this](){ _isMenuOpened = true; });
+    connect(_menu, &QMenu::aboutToHide, this, [this](){ _isMenuOpened = false; });
 }
 
 void MenuButton::focusInEvent(QFocusEvent *e)
@@ -90,7 +90,7 @@ void MenuButton::focusOutEvent(QFocusEvent *e)
 //------------------------------------------------------------------------------
 
 namespace {
-int countSuitableGlobalParams(Z::Parameters* globalParams, Z::Parameter* param)
+int countSuitableGlobalParams(const Z::Parameters* globalParams, const Z::Parameter* param)
 {
     auto dim = param->dim();
     int count = 0;
@@ -107,7 +107,7 @@ int countSuitableGlobalParams(Z::Parameters* globalParams, Z::Parameter* param)
     return count;
 }
 
-Z::Parameters getSuitableGlobalParams(Z::Parameters* globalParams, Z::Parameter* param)
+Z::Parameters getSuitableGlobalParams(const Z::Parameters* globalParams, const Z::Parameter* param)
 {
     auto dim = param->dim();
     Z::Parameters params;
@@ -175,6 +175,8 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
     }
 
     _valueEditor = new ValueEdit;
+    setFocusProxy(_valueEditor);
+    setFocusPolicy(Qt::StrongFocus);
 
     _unitsSelector = new UnitComboBox(_param->dim(), opts.units);
     layout->addWidget(_valueEditor);

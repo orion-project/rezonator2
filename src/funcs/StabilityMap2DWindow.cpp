@@ -42,10 +42,13 @@ StabilityMap2DParamsDlg::StabilityMap2DParamsDlg(Schema *schema, Z::Variable *va
 
 void StabilityMap2DParamsDlg::makeControls(const QString &title, Schema* schema, VarEditor* editor)
 {
-    QSharedPointer<ElementFilter> elemFilter(
+    ElementFilterPtr elemFilter(
         ElementFilter::make<ElementFilterHasVisibleParams, ElementFilterEnabled>());
 
-    editor->elemSelector = new ElemAndParamSelector(schema, elemFilter.data(), Z::Utils::defaultParamFilter());
+    editor->elemSelector = new ElemAndParamSelector(schema, {
+        .elemFilter = elemFilter,
+        .paramFilter = Z::Utils::defaultParamFilter(),
+    });
     connect(editor->elemSelector, &ElemAndParamSelector::selectionChanged, this, [this, editor]{ this->guessRange(editor); });
 
     editor->rangeEditor = new GeneralRangeEditor;

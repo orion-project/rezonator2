@@ -72,7 +72,7 @@ public:
 
         /// Global params are used to link target parameter to.
         /// Must be set when @a allowLinking is enabled.
-        Z::Parameters* globalParams = nullptr;
+        const Z::Parameters* globalParams = nullptr;
 
         /// Container for links to global parameters.
         /// Must be set when @a allowLinking is enabled.
@@ -153,7 +153,7 @@ protected:
 private:
     Z::Parameter* _param;
     Z::Parameter* _linkSource = nullptr;
-    Z::Parameters* _globalParams;
+    const Z::Parameters* _globalParams;
     Z::ParamLinks* _paramLinks;
     Ori::Widgets::ValueEdit* _valueEditor;
     UnitComboBox* _unitsSelector;

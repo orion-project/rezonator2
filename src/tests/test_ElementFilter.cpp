@@ -59,7 +59,7 @@ TEST_GROUP("Element Filter",
    ADD_TEST(ElementFilterEnabled_check),
    ADD_TEST(ElementFilterHasParams_check),
    ADD_TEST(ElementFilterHasVisibleParams_check),
-   ADD_TEST(ElementFilterIsRange_check)
+   ADD_TEST(ElementFilterIsRange_check),
 )
 
 } // namespace ElementFilterTests

@@ -158,7 +158,7 @@ void SchemaReaderJson::readCustomParam(const QJsonObject& root, const QString &a
     if (!res.isEmpty())
         _report.warning(QString("Reading custom parameter '%1': %2").arg(param->alias(), res));
 
-    _schema->customParams()->append(param);
+    _schema->addCustomParam(param);
 }
 
 void SchemaReaderJson::readPumps(const QJsonObject& root)

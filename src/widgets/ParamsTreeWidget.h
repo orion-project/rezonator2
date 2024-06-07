@@ -4,6 +4,7 @@
 #include <QWidget>
 
 #include "../core/Parameters.h"
+#include "../core/ElementFilter.h"
 
 QT_BEGIN_NAMESPACE
 class QTreeWidget;
@@ -12,7 +13,6 @@ QT_END_NAMESPACE
 
 class Schema;
 class Element;
-class ElementFilter;
 
 class ParamsTreeWidget : public QWidget
 {
@@ -22,8 +22,8 @@ public:
     struct Options
     {
         Schema* schema;
-        ElementFilter *elemFilter = nullptr;
-        Z::ParameterFilter* paramFilter = nullptr;
+        ElementFilterPtr elemFilter;
+        Z::ParameterFilterPtr paramFilter;
         bool showGlobalParams = true;
         QString dialogTitle;
         QString dialogPrompt;
