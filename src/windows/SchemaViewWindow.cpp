@@ -378,7 +378,8 @@ void SchemaViewWindow::elemsContextMenuAboutToShow()
         menuAdjuster->setIcon(QIcon(":/toolbar/adjust"));
         for (auto param : params)
         {
-            auto action = menuAdjuster->addAction(param->label(), this, &SchemaViewWindow::adjustParam);
+            // Don't use param->label() because menus do not support HTML formatting (e.g. n<sub>0</sub>)
+            auto action = menuAdjuster->addAction(param->alias(), this, &SchemaViewWindow::adjustParam);
             action->setData(ptr2var(param));
         }
         menuContextElement->insertMenu(actnAdjuster, menuAdjuster);

@@ -67,9 +67,10 @@ void ParamSelectorWidget::populate(Element *elem)
     foreach (auto param, _parameters)
     {
         auto name = param->name();
+        // Don't use param->label() because combo box items do not support HTML formatting (e.g. n<sub>0</sub>)
         auto display = name.isEmpty()
-            ? QStringLiteral("%1 = %2").arg(param->label(), param->value().displayStr())
-            : QStringLiteral("%1 (%2) = %3").arg(param->label(), name, param->value().displayStr());
+            ? QStringLiteral("%1 = %2").arg(param->alias(), param->value().displayStr())
+            : QStringLiteral("%1 (%2) = %3").arg(param->alias(), name, param->value().displayStr());
         addItem(display);
     }
 }
