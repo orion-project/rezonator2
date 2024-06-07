@@ -8,6 +8,7 @@ CONFIG += c++17
 TARGET = rezonator
 TEMPLATE = app
 DESTDIR = $$_PRO_FILE_PWD_/bin
+QMAKE_TARGET_BUNDLE_PREFIX = org.orion-project
 
 unix: LIBS += -ldl
 
