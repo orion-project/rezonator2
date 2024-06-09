@@ -1,8 +1,8 @@
 {
   "history": [
     {
-      "version": "2.0.14-beta10",
-      "date": "",
+      "version": "2.0.14-rc1",
+      "date": "2024-06-09",
       "changes": [
         {
           "text": "New custom theme for UI"
