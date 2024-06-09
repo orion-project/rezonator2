@@ -14,6 +14,7 @@ USE_GROUP(ParametersTests)                         // test_Parameters.cpp
 USE_GROUP(ParamEditorTests)                        // test_ParamEditor.cpp
 USE_GROUP(ParamsEditorTests)                       // test_ParamsEditor.cpp
 USE_GROUP(ElementTests)                            // test_Element.cpp
+USE_GROUP(ElementEventsLockerTests)                // test_ElementEventsLocker.cpp
 USE_GROUP(ElementsTests)                           // test_Elements.cpp
 USE_GROUP(ElementFormulaTests)                     // test_ElementFormula.cpp
 USE_GROUP(ElementFilterTests)                      // test_ElementFilter.cpp
@@ -48,6 +49,7 @@ TEST_SUITE(
     ADD_GROUP(ParamEditorTests),
     ADD_GROUP(ParamsEditorTests),
     ADD_GROUP(ElementTests),
+    ADD_GROUP(ElementEventsLockerTests),
     ADD_GROUP(ElementsTests),
     ADD_GROUP(ElementFormulaTests),
     ADD_GROUP(ElementFilterTests),

@@ -331,18 +331,14 @@ protected:
 class ElementEventsLocker
 {
 public:
-    ElementEventsLocker(Element* elem): _elem(elem)
-    {
-        _elem->_eventsLocked = true;
-    }
-
-    ~ElementEventsLocker()
-    {
-        _elem->_eventsLocked = false;
-    }
+    ElementEventsLocker(Element *elem);
+    ElementEventsLocker(Z::Parameter *param);
+    ~ElementEventsLocker();
 
 private:
-    Element *_elem;
+    Elements _elems;
+
+    void collectElems(Z::Parameter *param);
 };
 
 //------------------------------------------------------------------------------

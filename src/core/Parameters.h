@@ -76,6 +76,7 @@ public:
 
     void addListener(ParameterListener* listener) { _listeners.append(listener); }
     void removeListener(ParameterListener* listener) { _listeners.removeAll(listener); }
+    const QVector<ParameterListener*>& listeners() const { return _listeners; }
 
 protected:
     ParameterBase() {}
