@@ -152,17 +152,9 @@ ElementSelector::~ElementSelector()
 //                               CustomParamsElem
 //------------------------------------------------------------------------------
 
-class CustomParamsElem : public Element
-{
-public:
-    const QString type() const override { return "CustomParamsElem"; };
-protected:
-    Element* create() const override {
-        qWarning() << "Do not use CustomParamsElem::create()";
-        return nullptr;
-    }
-    friend class Schema;
-};
+DECLARE_ELEMENT(CustomParamsElem, Element)
+friend class Schema;
+DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 //                                 Schema
@@ -175,6 +167,7 @@ Schema::Schema(const QString &alias) : _alias(alias)
     _wavelength.addListener(this);
 
     _customParams = new CustomParamsElem;
+    _customParams->setOwner(this);
     _customParams->setLabel("Global parameters"); // TODO: localize
 
     _events._schema = this;
@@ -479,7 +472,6 @@ ElementOwner::Position Schema::position(Element* elem) const
     if (index == elems.size()-1) return PositionAtRight;
     return PositionInMidle;
 }
-
 
 //------------------------------------------------------------------------------
 //                                Z::Utils

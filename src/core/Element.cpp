@@ -1,5 +1,6 @@
 #include "Element.h"
 
+#include "Formula.h"
 #include "Perf.h"
 #include "Protocol.h"
 
@@ -220,6 +221,46 @@ void ElementDynamic::calcMatrixInternal()
     _ms_inv.unity();
     _mt_dyn.unity();
     _ms_dyn.unity();
+}
+
+//------------------------------------------------------------------------------
+//                               ElementEventsLocker
+//------------------------------------------------------------------------------
+
+ElementEventsLocker::ElementEventsLocker(Element* elem)
+{
+    _elems << elem;
+    elem->_eventsLocked = true;
+}
+
+ElementEventsLocker::ElementEventsLocker(Z::Parameter* param)
+{
+    collectElems(param);
+}
+
+ElementEventsLocker::~ElementEventsLocker()
+{
+    for (auto elem : _elems)
+        elem->_eventsLocked = false;
+}
+
+void ElementEventsLocker::collectElems(Z::Parameter *param)
+{
+    for (auto listener : param->listeners()) {
+        if (auto elem = dynamic_cast<Element*>(listener); elem) {
+            _elems << elem;
+            elem->_eventsLocked = true;
+        }
+        else if (auto link = dynamic_cast<Z::ParamLink*>(listener); link) {
+            for (auto listener : link->target()->listeners())
+                if (auto elem = dynamic_cast<Element*>(listener); elem) {
+                    _elems << elem;
+                    elem->_eventsLocked = true;
+                }
+        } else if (auto formula = dynamic_cast<Z::Formula*>(listener); formula) {
+            collectElems(formula->target());
+        }
+    }
 }
 
 //------------------------------------------------------------------------------

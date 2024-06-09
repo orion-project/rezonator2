@@ -47,10 +47,9 @@ void BeamVariationFunction::calculate(CalculationMode calcMode)
     if (!prepared) return;
 
     auto param = arg()->parameter;
-    auto elem = arg()->element;
     auto unitX = range.unit();
 
-    ElementEventsLocker elemLock(elem);
+    ElementEventsLocker elemLock(param);
     Z::ParamValueBackup paramLock(param);
 
     Z_PERF_RESET
