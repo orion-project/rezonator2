@@ -11,9 +11,6 @@
           "text": "Interactive Layout: can select and edit elements on graphical view"
         },
         {
-          "text": "Use internal help viewer instead of external Assistant program"
-        },
-        {
           "text": "Watch config files for sharing settings between running instances"
         },
         {
@@ -33,6 +30,9 @@
         },
         {
           "text": "Fix: wrong Beam Variation results when plotting in the same range as being variated (https://github.com/orion-project/rezonator2/issues/54)"
+        },
+        {
+          "text": "Fix: typos in help file"
         }
       ]
     },

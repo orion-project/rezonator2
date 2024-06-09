@@ -67,14 +67,23 @@ echo ERROR: unable to locate %HELP_TOOL% and get Assistant path
 goto :eof
 
 :qt_dir_found
-echo Assistant path is %HELP_TOOL_DIR%
+set ASSISTANT_SOURCE=%HELP_TOOL_DIR%\assistant.exe
+echo Source Assistant path is %ASSISTANT_SOURCE%
+
+set ASSISTANT_TARGET=%BIN_DIR%\assistant.exe
+echo Target Assistant path is %ASSISTANT_TARGET%
+if not exist "%ASSISTANT_TARGET%" (
+    echo Copy Assistant app to bin dir...
+    copy %ASSISTANT_SOURCE% %BIN_DIR%
+) else (
+    echo Already there
+)
 
 
 
 echo.
 echo ***** Running Assistant...
-cd %HELP_TOOL_DIR%
-assistant -collectionFile %BIN_DIR%\rezonator.qhc -style fusion
+%BIN_DIR%\assistant -collectionFile %BIN_DIR%\rezonator.qhc -style fusion
 
 
 echo.

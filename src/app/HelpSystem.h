@@ -33,13 +33,21 @@ public slots:
     void checkUpdates();
     void showAbout();
 
+private slots:
+    void assistantFinished(int exitCode);
+    void readStdout();
+    void readStderr();
+
 private:
     HelpSystem();
 
     QWidget* _parent = nullptr;
+    QProcess* _assistant = nullptr;
     QNetworkAccessManager* _updateChecker = nullptr;
     QNetworkReply* _updateReply = nullptr;
 
+    bool startAssistant();
+    void closeAssistant();
     void versionReceived(QByteArray versionData) const;
 };
 

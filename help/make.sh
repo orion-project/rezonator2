@@ -48,14 +48,14 @@ prepare_assistant() {
   fi
   echo "Source Assistant path is ${ASSISTANT_SOURCE}"
 
-  ASSISTANT_TARGET=${TARGET_DIR}/assistant
+  ASSISTANT_TARGET=${BIN_DIR}/assistant
   echo "Target Assistant path is ${ASSISTANT_TARGET}"
   if [ -f ${ASSISTANT_TARGET} ]; then
     echo "Already there"
     return
   fi
 
-  echo "Copy Assistant app to target dir..."
+  echo "Copy Assistant app to bin dir..."
   cp ${ASSISTANT_SOURCE} ${ASSISTANT_TARGET}
 
   echo "Modify Asisstant's RPATH to make it runnable on dev system outside of Qt Creator..."
