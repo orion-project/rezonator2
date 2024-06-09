@@ -2,6 +2,7 @@
 
 #include "../app/AppSettings.h"
 #include "../core/Format.h"
+#include "../core/Protocol.h"
 #include "../windows/HelpWindow.h"
 
 #include "core/OriVersion.h"
@@ -14,9 +15,11 @@
 #include <QDebug>
 #include <QDesktopServices>
 #include <QDialog>
+#include <QFile>
 #include <QLabel>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QProcess>
 #include <QStyle>
 #include <QUrl>
 
@@ -62,7 +65,15 @@ void HelpSystem::showContents()
         QDesktopServices::openUrl(QUrl(Z::Strs::homepage() + "/help/index.html"));
         return;
     }
-
+    if (startAssistant())
+    {
+        QByteArray commands;
+        commands.append("show contents;");
+        commands.append("expandToc 3;");
+        commands.append("setSource qthelp://org.orion-project.rezonator/doc/index.html\n");
+        _assistant->write(commands);
+        return;
+    }
     HelpWindow::showContents();
 }
 
@@ -73,7 +84,12 @@ void HelpSystem::showIndex()
         QDesktopServices::openUrl(QUrl(Z::Strs::homepage() + "/help/genindex.html"));
         return;
     }
-
+    if (startAssistant())
+    {
+        QByteArray commands;
+        commands.append("show index\n");
+        _assistant->write(commands);
+    }
     HelpWindow::showIndex();
 }
 
@@ -84,8 +100,103 @@ void HelpSystem::showTopic(const QString& topic)
         QDesktopServices::openUrl(QUrl(Z::Strs::homepage() + "/help/" + topic));
         return;
     }
-
+    if (startAssistant())
+    {
+        QByteArray commands;
+        commands.append("setSource qthelp://org.orion-project.rezonator/doc/");
+        commands.append(topic.toLocal8Bit());
+        commands.append('\n');
+        _assistant->write(commands);
+    }
     HelpWindow::showTopic(topic);
+}
+
+bool HelpSystem::startAssistant()
+{
+    if (_assistant)
+    {
+        if (_assistant->state() == QProcess::Running) return true;
+
+        delete _assistant;
+        _assistant = nullptr;
+    }
+
+    QString appDir = qApp->applicationDirPath();
+    QString helpFile = appDir + "/rezonator.qhc";
+#ifdef Q_OS_WIN
+    QString assistantFile = appDir + "/assistant.exe";
+#else
+    QString assistantFile = appDir + "/assistant";
+#endif
+    Z_INFO("Help file:" << helpFile);
+    Z_INFO("Help viewer:" << assistantFile);
+
+    if (!QFile::exists(assistantFile))
+    {
+        Z_ERROR("Help viewer not found");
+        Ori::Dlg::error("Help viewer not found");
+        return false;
+    }
+
+    if (!QFile::exists(helpFile))
+    {
+        Z_ERROR("Help file not found");
+        Ori::Dlg::error("Help file not found");
+        return false;
+    }
+
+    QProcess *process = new QProcess(this);
+    process->start(assistantFile, {
+                       "-collectionFile", helpFile,
+                       "-style", qApp->style()->objectName(),
+                       "-enableRemoteControl"
+                   });
+    if (!process->waitForStarted(5000))
+    {
+        Z_ERROR("Failed to start help viewer" << process->errorString());
+        Ori::Dlg::error("Failed to start help viewer");
+        delete process;
+        return false;
+    }
+    Z_INFO("Help viewer PID:" << process->processId());
+    connect(process, SIGNAL(finished(int)), this, SLOT(assistantFinished(int)));
+    connect(process, &QProcess::readyReadStandardOutput, this, &HelpSystem::readStdout);
+    connect(process, &QProcess::readyReadStandardError, this, &HelpSystem::readStderr);
+    connect(qApp, &QApplication::aboutToQuit, this, &HelpSystem::closeAssistant);
+    _assistant = process;
+    return true;
+}
+
+void HelpSystem::readStdout()
+{
+    Z_INFO("Help viewer stdout:" << QString::fromLocal8Bit(_assistant->readAllStandardOutput()));
+}
+
+void HelpSystem::readStderr()
+{
+    Z_INFO("Help viewer stderr:" << QString::fromLocal8Bit(_assistant->readAllStandardError()));
+}
+
+void HelpSystem::assistantFinished(int exitCode)
+{
+    Z_INFO("Help viewer finished, exit code" << exitCode);
+    if (_assistant)
+    {
+        _assistant->deleteLater();
+        _assistant = nullptr;
+    }
+}
+
+void HelpSystem::closeAssistant()
+{
+    if (!_assistant) return;
+    if (_assistant->state() == QProcess::Running)
+    {
+        _assistant->terminate();
+        _assistant->waitForFinished(5000);
+    }
+    delete _assistant;
+    _assistant = nullptr;
 }
 
 void HelpSystem::visitHomePage()
