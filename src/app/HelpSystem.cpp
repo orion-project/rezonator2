@@ -89,6 +89,7 @@ void HelpSystem::showIndex()
         QByteArray commands;
         commands.append("show index\n");
         _assistant->write(commands);
+        return;
     }
     HelpWindow::showIndex();
 }
@@ -107,6 +108,7 @@ void HelpSystem::showTopic(const QString& topic)
         commands.append(topic.toLocal8Bit());
         commands.append('\n');
         _assistant->write(commands);
+        return;
     }
     HelpWindow::showTopic(topic);
 }
