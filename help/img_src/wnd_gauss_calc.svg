@@ -2,21 +2,24 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="297mm"
    height="210mm"
    viewBox="0 0 297 210"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="wnd_gauss_calc.svg">
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="wnd_gauss_calc.svg"
+   inkscape:export-filename="..\img\wnd_gauss_calc_w.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs2">
     <marker
@@ -217,10 +220,10 @@
        inkscape:collect="always"
        style="color-interpolation-filters:sRGB"
        id="filter866"
-       x="-0.041906441"
-       width="1.0838129"
-       y="-0.11341651"
-       height="1.226833">
+       x="-0.067626671"
+       width="1.1352533"
+       y="-0.46771318"
+       height="1.9354264">
       <feGaussianBlur
          inkscape:collect="always"
          stdDeviation="0.97347768"
@@ -261,10 +264,10 @@
        inkscape:collect="always"
        style="color-interpolation-filters:sRGB"
        id="filter866-8"
-       x="-0.041906442"
-       width="1.083813"
-       y="-0.11341651"
-       height="1.226833">
+       x="-0.041801551"
+       width="1.0836031"
+       y="-0.12248608"
+       height="1.2449722">
       <feGaussianBlur
          inkscape:collect="always"
          stdDeviation="0.97347768"
@@ -278,18 +281,21 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="476.39527"
-     inkscape:cy="380.70535"
+     inkscape:zoom="2"
+     inkscape:cx="470"
+     inkscape:cy="366.5"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer4"
+     inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1017"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
+     inkscape:window-width="3840"
+     inkscape:window-height="2054"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
      inkscape:window-maximized="1"
-     inkscape:snap-global="false" />
+     inkscape:snap-global="false"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -306,7 +312,7 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="screen_w"
-     style="display:none"
+     style="display:inline"
      sodipodi:insensitive="true">
     <image
        transform="translate(0,-87.000001)"
@@ -326,7 +332,8 @@
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="screen r"
-     style="display:inline">
+     style="display:none"
+     sodipodi:insensitive="true">
     <image
        y="25.755507"
        x="40.708038"
@@ -345,10 +352,9 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-87)"
-     style="display:none"
-     sodipodi:insensitive="true">
+     style="display:inline">
     <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:0.70854271;stroke:none;stroke-width:0.18124044;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter866)"
+       style="opacity:1;fill:#ffffff;fill-opacity:0.708543;stroke:none;stroke-width:0.18124;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter866)"
        id="rect838"
        width="55.751488"
        height="20.599703"
@@ -359,7 +365,7 @@
        inkscape:export-filename="C:\Projects\rezonator2\help\img\wnd_gauss_calc_w.png" />
     <text
        xml:space="preserve"
-       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94810951px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94811px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="111.314"
        y="139.95094"
        id="text828"
@@ -370,24 +376,24 @@
          id="tspan826"
          x="111.314"
          y="139.95094"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93888903px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke-width:0.26458332">Hyper-Gaussian caustic</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke-width:0.264583">Hyper-Gaussian caustic</tspan></text>
     <text
        id="text832"
        y="147.13249"
        x="111.12501"
-       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94810951px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94811px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        xml:space="preserve"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
        inkscape:export-filename="C:\Projects\rezonator2\help\img\wnd_gauss_calc_w.png"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93888903px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke-width:0.26458332"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke-width:0.264583"
          y="147.13249"
          x="111.12501"
          id="tspan830"
          sodipodi:role="line">Equivalent beam caustic</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94810951px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0f0f;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94811px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0f0f;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="111.12501"
        y="153.74709"
        id="text836"
@@ -398,9 +404,9 @@
          id="tspan834"
          x="111.12501"
          y="153.74709"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93888903px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ff0f0f;fill-opacity:1;stroke-width:0.26458332">Gaussian beam caustic</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ff0f0f;fill-opacity:1;stroke-width:0.264583">Gaussian beam caustic</tspan></text>
     <path
-       style="fill:none;stroke:#ff0000;stroke-width:0.5291667;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2Mend)"
+       style="fill:none;stroke:#ff0000;stroke-width:0.529167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow2Mend)"
        d="M 110.19896,139.44063 85.503057,152.5829"
        id="path870"
        inkscape:connector-curvature="0"
@@ -413,12 +419,12 @@
        inkscape:connector-curvature="0"
        id="path1406"
        d="M 110.19896,146.41338 84.567614,160.304"
-       style="fill:none;stroke:#ff0000;stroke-width:0.5291667;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker1410)"
+       style="fill:none;stroke:#ff0000;stroke-width:0.529167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker1410)"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
        inkscape:export-filename="C:\Projects\rezonator2\help\img\wnd_gauss_calc_w.png" />
     <path
-       style="fill:none;stroke:#ff0000;stroke-width:0.5291667;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker1548)"
+       style="fill:none;stroke:#ff0000;stroke-width:0.529167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker1548)"
        d="M 110.19896,153.29259 89.806096,164.28333"
        id="path1544"
        inkscape:connector-curvature="0"
@@ -432,7 +438,7 @@
        height="20.599703"
        width="55.751488"
        id="rect2452"
-       style="opacity:1;fill:#ffffff;fill-opacity:0.70854271;stroke:none;stroke-width:0.18124044;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter866)"
+       style="opacity:1;fill:#ffffff;fill-opacity:0.708543;stroke:none;stroke-width:0.18124;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter866)"
        transform="matrix(1.3374678,0,0,0.73593369,-28.025493,49.297074)"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
@@ -441,19 +447,19 @@
        id="text2446"
        y="198.95302"
        x="99.407761"
-       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94810951px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94811px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        xml:space="preserve"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
        inkscape:export-filename="C:\Projects\rezonator2\help\img\wnd_gauss_calc_w.png"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93888903px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke-width:0.26458332"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke-width:0.264583"
          y="198.95302"
          x="99.407761"
          id="tspan2444"
          sodipodi:role="line">Gaussian Railegh distance</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94810951px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94811px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="84.59108"
        y="192.07394"
        id="text2450"
@@ -464,18 +470,18 @@
          id="tspan2448"
          x="84.59108"
          y="192.07394"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93888903px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke-width:0.26458332">Hyper-Gaussian Railegh distance</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke-width:0.264583">Hyper-Gaussian Railegh distance</tspan></text>
     <path
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
        id="path2460"
        d="m 159.82384,190.77975 8.8436,0.0105"
-       style="fill:none;stroke:#ff0000;stroke-width:0.5291667;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker2464)"
+       style="fill:none;stroke:#ff0000;stroke-width:0.529167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker2464)"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
        inkscape:export-filename="C:\Projects\rezonator2\help\img\wnd_gauss_calc_w.png" />
     <path
-       style="fill:none;stroke:#ff0000;stroke-width:0.5291667;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker3244)"
+       style="fill:none;stroke:#ff0000;stroke-width:0.529167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker3244)"
        d="m 159.82384,197.65896 50.1186,0.0105"
        id="path3240"
        inkscape:connector-curvature="0"
@@ -485,7 +491,7 @@
        inkscape:export-filename="C:\Projects\rezonator2\help\img\wnd_gauss_calc_w.png" />
     <rect
        transform="matrix(1.229421,0,0,0.98483934,73.117725,-15.901643)"
-       style="opacity:1;fill:#ffffff;fill-opacity:0.37688443;stroke:none;stroke-width:0.18124044;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter866)"
+       style="opacity:1;fill:#ffffff;fill-opacity:0.376884;stroke:none;stroke-width:0.18124;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter866)"
        id="rect3736"
        width="34.547707"
        height="4.9952545"
@@ -498,18 +504,18 @@
        id="text3734"
        y="173.12318"
        x="200.21188"
-       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94810951px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94811px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        xml:space="preserve"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
        inkscape:export-filename="C:\Projects\rezonator2\help\img\wnd_gauss_calc_w.png"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93888903px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke-width:0.26458332"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke-width:0.264583"
          y="173.12318"
          x="200.21188"
          id="tspan3732"
-         sodipodi:role="line">Diveregence angle</tspan></text>
+         sodipodi:role="line">Divergence angle</tspan></text>
     <path
-       style="fill:none;stroke:#ff0000;stroke-width:0.5291667;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker3748)"
+       style="fill:none;stroke:#ff0000;stroke-width:0.529167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker3748)"
        d="m 199.63802,173.91897 -9.78786,8.31107"
        id="path3744"
        inkscape:connector-curvature="0"
@@ -522,7 +528,7 @@
        inkscape:connector-curvature="0"
        id="path4434"
        d="m 199.63802,169.6204 -9.78786,-8.31107"
-       style="fill:none;stroke:#ff0000;stroke-width:0.5291667;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker4438)"
+       style="fill:none;stroke:#ff0000;stroke-width:0.529167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker4438)"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"
        inkscape:export-filename="C:\Projects\rezonator2\help\img\wnd_gauss_calc_w.png" />
@@ -531,14 +537,15 @@
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="annotations_r"
-     style="display:inline">
+     style="display:none"
+     sodipodi:insensitive="true">
     <rect
        y="184.1162"
        x="82.444038"
        height="19.074383"
        width="55.89138"
        id="rect2452-0"
-       style="display:inline;opacity:1;fill:#ffffff;fill-opacity:0.70854271;stroke:none;stroke-width:0.18124044;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter866-8)"
+       style="display:inline;opacity:1;fill:#ffffff;fill-opacity:0.708543;stroke:none;stroke-width:0.18124;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter866-8)"
        transform="matrix(1.3374678,0,0,0.7359337,59.478216,-48.191518)"
        inkscape:export-filename="C:\Projects\rezonator2\help\img\wnd_gauss_calc_r.png"
        inkscape:export-xdpi="96"
@@ -547,19 +554,19 @@
        id="text2446-5"
        y="99.407928"
        x="183.75827"
-       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94810951px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94811px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        xml:space="preserve"
        inkscape:export-filename="C:\Projects\rezonator2\help\img\wnd_gauss_calc_r.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93888903px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#0000ff;fill-opacity:1;stroke-width:0.26458332"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#0000ff;fill-opacity:1;stroke-width:0.264583"
          y="99.407928"
          x="183.75827"
          id="tspan2444-4"
          sodipodi:role="line">Gaussian Rayleigh distance</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94810951px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94811px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="168.9418"
        y="92.528854"
        id="text2450-6"
@@ -570,18 +577,18 @@
          id="tspan2448-9"
          x="168.9418"
          y="92.528854"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93888903px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#0000ff;fill-opacity:1;stroke-width:0.26458332">Hyper-Gaussian Rayleigh distance</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#0000ff;fill-opacity:1;stroke-width:0.264583">Hyper-Gaussian Rayleigh distance</tspan></text>
     <path
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
        id="path2460-8"
        d="m 167.93778,91.23466 -7.78527,0.0105"
-       style="display:inline;fill:none;stroke:#0000ff;stroke-width:0.52916676;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker2464-2)"
+       style="display:inline;fill:none;stroke:#0000ff;stroke-width:0.529167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker2464-2)"
        inkscape:export-filename="C:\Projects\rezonator2\help\img\wnd_gauss_calc_r.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
     <path
-       style="display:inline;fill:none;stroke:#0000ff;stroke-width:0.52916676;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker3244-7)"
+       style="display:inline;fill:none;stroke:#0000ff;stroke-width:0.529167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker3244-7)"
        d="m 189.2734,100.75968 c 0.055,3.10518 0.20996,8.679 -8.4866,8.74175"
        id="path3240-7"
        inkscape:connector-curvature="0"
@@ -591,7 +598,7 @@
        inkscape:export-ydpi="96" />
     <rect
        transform="matrix(1.3374678,0,0,0.7359337,-42.29802,-80.18368)"
-       style="display:inline;opacity:1;fill:#ffffff;fill-opacity:0.70854271;stroke:none;stroke-width:0.18124044;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter866-8)"
+       style="display:inline;opacity:1;fill:#ffffff;fill-opacity:0.708543;stroke:none;stroke-width:0.18124;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter866-8)"
        id="rect10605"
        width="55.89138"
        height="19.074383"
@@ -602,7 +609,7 @@
        inkscape:export-ydpi="96" />
     <text
        xml:space="preserve"
-       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94810951px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94811px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="83.558167"
        y="67.576263"
        id="text9576"
@@ -613,24 +620,24 @@
          id="tspan9574"
          x="83.558167"
          y="67.576263"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93888903px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#0000ff;fill-opacity:1;stroke-width:0.26458332">Gaussian wavewront ROC</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#0000ff;fill-opacity:1;stroke-width:0.264583">Gaussian wavefront ROC</tspan></text>
     <text
        id="text9580"
        y="60.477901"
        x="68.982689"
-       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94810951px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.94811px;line-height:1.25;font-family:'Times New Roman';-inkscape-font-specification:'Times New Roman, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        xml:space="preserve"
        inkscape:export-filename="C:\Projects\rezonator2\help\img\wnd_gauss_calc_r.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93888903px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#0000ff;fill-opacity:1;stroke-width:0.26458332"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93889px;font-family:Arial;-inkscape-font-specification:'Arial, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#0000ff;fill-opacity:1;stroke-width:0.264583"
          y="60.477901"
          x="68.982689"
          id="tspan9578"
-         sodipodi:role="line">Hyper-Gaussian wavewront ROC</tspan></text>
+         sodipodi:role="line">Hyper-Gaussian wavefront ROC</tspan></text>
     <path
-       style="display:inline;fill:none;stroke:#0000ff;stroke-width:0.52916676;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker9592)"
-       d="m 143.0761,58.675389 5.6686,0.0105"
+       style="display:inline;fill:none;stroke:#0000ff;stroke-width:0.529167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker9592)"
+       d="m 141.4886,58.675389 7.2561,0.0105"
        id="path9588"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
@@ -641,13 +648,13 @@
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
        id="path10152"
-       d="m 143.0761,65.819143 24.18943,0.0105"
-       style="display:inline;fill:none;stroke:#0000ff;stroke-width:0.52916676;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker10156)"
+       d="m 141.4886,65.819143 25.77693,0.0105"
+       style="display:inline;fill:none;stroke:#0000ff;stroke-width:0.529167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker10156)"
        inkscape:export-filename="C:\Projects\rezonator2\help\img\wnd_gauss_calc_r.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
     <path
-       style="display:inline;fill:none;stroke:#0000ff;stroke-width:0.52916676;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker10617)"
+       style="display:inline;fill:none;stroke:#0000ff;stroke-width:0.529167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker10617)"
        d="m 85.302104,69.589107 -0.0105,35.831093"
        id="path10613"
        inkscape:connector-curvature="0"
@@ -660,7 +667,7 @@
        inkscape:connector-curvature="0"
        id="path11669"
        d="m 70.485428,62.70994 -0.0105,43.23942"
-       style="display:inline;fill:none;stroke:#0000ff;stroke-width:0.52916676;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker11673)"
+       style="display:inline;fill:none;stroke:#0000ff;stroke-width:0.529167;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker11673)"
        inkscape:export-filename="C:\Projects\rezonator2\help\img\wnd_gauss_calc_r.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
