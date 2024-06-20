@@ -1,5 +1,6 @@
 // Setting the Application Icon (http://doc.qt.io/qt-5/appicon.html)
-IDI_ICON1 ICON DISCARDABLE "../img/icon/main_2.ico"
+IDI_ICON1 ICON "../img/icon/main_2.ico"
+IDI_ICON2 ICON "../img/icon/document.ico"
 
 #include "../release/version.rc"
 
