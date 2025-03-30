@@ -165,6 +165,10 @@ void AdjusterWidget::editorFocused(bool focus)
     _isFocused = focus;
     Z::Gui::setFocusedBackground(this, focus);
     if (focus) emit focused();
+    else {
+        _currentValue = _valueEditor->value();
+        changeValue();
+    }
 }
 
 void AdjusterWidget::editorKeyPressed(int key)
@@ -193,11 +197,13 @@ void AdjusterWidget::editorKeyPressed(int key)
         adjustDivide();
         break;
     case Qt::Key_Asterisk:
-    case Qt::Key_8:
         adjustMult();
         break;
-
-    // TODO: process action hotkeys
+    case Qt::Key_Enter:
+    case Qt::Key_Return:
+        _currentValue = _valueEditor->value();
+        changeValue();
+        break;
     }
 }
 
