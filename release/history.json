@@ -5,7 +5,7 @@
       "date": "",
       "changes": [
         {
-          "text": "Fix: special points for SP-schemas show T waist size for S plane"
+          "text": "Fix: special points for SP-schemas show T waist size for S plane (https://github.com/orion-project/rezonator2/issues/67)"
         },
         {
           "text": "Fix: apply ajuster value by Enter (https://github.com/orion-project/rezonator2/issues/63)"
