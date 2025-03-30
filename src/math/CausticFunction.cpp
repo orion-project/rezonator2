@@ -275,7 +275,7 @@ QString CausticFunction::calculateSpecPoints(const SpecPointParams &params)
                     _calc->multMatrix("CausticFunction::calculateSpecPoints");
                     r0 = isResonator \
                           ? _beamCalc->frontRadius(_calc->M(ts), _ior)
-                          : _pumpCalc->calcT(_calc->M(ts), _ior).frontRadius;
+                          : _pumpCalc->calc(ts, _calc->M(ts), _ior).frontRadius;
                     if (r1 * r0 < 0) x2 = x0;
                     else x1 = x0, r1 = r0;
                     x0 = (x1 + x2) / 2.0;
@@ -289,7 +289,7 @@ QString CausticFunction::calculateSpecPoints(const SpecPointParams &params)
                 waistX[ts] = x0;
                 waistW[ts] = isResonator
                       ? _beamCalc->beamRadius(_calc->M(ts), _ior)
-                      : _pumpCalc->calcT(_calc->M(ts), _ior).beamRadius;
+                      : _pumpCalc->calc(ts, _calc->M(ts), _ior).beamRadius;
             }
             GaussCalculator gauss;
             gauss.setMI(isResonator ? 1 : _pumpCalc->MI()[ts]);
