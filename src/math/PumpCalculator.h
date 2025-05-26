@@ -23,6 +23,7 @@ public:
     PumpCalculator(PumpParams* pump, double lambdaSI, bool writeProtocol = false);
     ~PumpCalculator();
 
+    BeamResult calc(Z::WorkPlane ts, const Z::Matrix& m, double ior) const { return calc(ts == Z::WorkPlane::T ? _implT : _implS, m, ior); }
     BeamResult calcT(const Z::Matrix& m, double ior) const { return calc(_implT, m, ior); }
     BeamResult calcS(const Z::Matrix& m, double ior) const { return calc(_implS, m, ior); }
 

@@ -1,6 +1,18 @@
 {
   "history": [
     {
+      "version": "2.0.15-rc2",
+      "date": "",
+      "changes": [
+        {
+          "text": "Fix: special points for SP-schemas show T waist size for S plane (https://github.com/orion-project/rezonator2/issues/67)"
+        },
+        {
+          "text": "Fix: apply ajuster value by Enter (https://github.com/orion-project/rezonator2/issues/63)"
+        }
+      ]
+    },
+    {
       "version": "2.0.14-rc1",
       "date": "2024-06-09",
       "changes": [
