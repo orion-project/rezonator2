@@ -11,22 +11,38 @@ namespace Tests {
 class TestSchemaListener : public SchemaListener
 {
 public:
+    void schemaChanged(Schema*s) { store(SchemaEvents::Changed, s); }
+
     void schemaCreated(Schema*s) { store(SchemaEvents::Created, s); }
     void schemaDeleted(Schema*s) { store(SchemaEvents::Deleted, s); }
-    void schemaChanged(Schema*s) { store(SchemaEvents::Changed, s); }
     void schemaSaved(Schema*s) { store(SchemaEvents::Saved, s); }
     void schemaLoading(Schema*s) { store(SchemaEvents::Loading, s); }
     void schemaLoaded(Schema*s) { store(SchemaEvents::Loaded, s); }
+    void schemaRebuilt(Schema*s) { store(SchemaEvents::Rebuilt, s); }
+
     void elementCreated(Schema*s, Element*e) { store(SchemaEvents::ElemCreated, s, e); }
+    void elementChanged(Schema*s, Element*e) { store(SchemaEvents::ElemChanged, s, e); }
     void elementDeleting(Schema*s, Element*e) { store(SchemaEvents::ElemDeleting, s, e); }
     void elementDeleted(Schema*s, Element*e) { store(SchemaEvents::ElemDeleted, s, e); }
-    void elementChanged(Schema*s, Element*e) { store(SchemaEvents::ElemChanged, s, e); }
+
+    void elementsDeleting(Schema*s) { store(SchemaEvents::ElemsDeleting, s); }
+    void elementsDeleted(Schema*s) { store(SchemaEvents::ElemsDeleted, s); }
+
     void schemaParamsChanged(Schema*s) { store(SchemaEvents::ParamsChanged, s); }
     void schemaLambdaChanged(Schema*s) { store(SchemaEvents::LambdaChanged, s); }
+
+    void customParamCreated(Schema*s, Z::Parameter*p) { store(SchemaEvents::CustomParamCreated, s, p); }
+    void customParamEdited(Schema*s, Z::Parameter*p) { store(SchemaEvents::CustomParamEdited, s, p); }
+    void customParamChanged(Schema*s, Z::Parameter*p) { store(SchemaEvents::CustomParamChanged, s, p); }
+    void customParamDeleting(Schema*s, Z::Parameter*p) { store(SchemaEvents::CustomParamDeleting, s, p); }
+    void customParamDeleted(Schema*s, Z::Parameter*p) { store(SchemaEvents::CustomParamDeleted, s, p); }
+
     void pumpCreated(Schema*s, PumpParams*p) { store(SchemaEvents::PumpCreated, s, p); }
     void pumpChanged(Schema*s, PumpParams*p) { store(SchemaEvents::PumpChanged, s, p); }
+    void pumpCustomized(Schema*s, PumpParams*p) { store(SchemaEvents::PumpCustomized, s, p); }
     void pumpDeleting(Schema*s, PumpParams*p) { store(SchemaEvents::PumpDeleting, s, p); }
     void pumpDeleted(Schema*s, PumpParams*p) { store(SchemaEvents::PumpDeleted, s, p); }
+
     void recalcRequired(Schema*s) { store(SchemaEvents::RecalRequred, s); }
 
 public:

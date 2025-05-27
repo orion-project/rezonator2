@@ -39,31 +39,39 @@ class SchemaListener
 {
 public:
     virtual ~SchemaListener();
+
+    virtual void schemaChanged(Schema*) {}
+
     virtual void schemaCreated(Schema*) {}
     virtual void schemaDeleted(Schema*) {}
-    virtual void schemaChanged(Schema*) {}
     virtual void schemaSaved(Schema*) {}
     virtual void schemaLoading(Schema*) {}
     virtual void schemaLoaded(Schema*) {}
     virtual void schemaRebuilt(Schema*) {}
+
     virtual void elementCreated(Schema*, Element*) {}
     virtual void elementChanged(Schema*, Element*) {}
     virtual void elementDeleting(Schema*, Element*) {}
     virtual void elementDeleted(Schema*, Element*) {}
+
     virtual void elementsDeleting(Schema*) {}
     virtual void elementsDeleted(Schema*) {}
+
     virtual void schemaParamsChanged(Schema*) {}
     virtual void schemaLambdaChanged(Schema*) {}
+
     virtual void customParamCreated(Schema*, Z::Parameter*) {}
     virtual void customParamEdited(Schema*, Z::Parameter*) {}
     virtual void customParamChanged(Schema*, Z::Parameter*) {}
     virtual void customParamDeleting(Schema*, Z::Parameter*) {}
     virtual void customParamDeleted(Schema*, Z::Parameter*) {}
+
     virtual void pumpCreated(Schema*, PumpParams*) {}
     virtual void pumpChanged(Schema*, PumpParams*) {}
     virtual void pumpCustomized(Schema*, PumpParams*) {}
     virtual void pumpDeleting(Schema*, PumpParams*) {}
     virtual void pumpDeleted(Schema*, PumpParams*) {}
+
     virtual void recalcRequired(Schema*) {}
 };
 
@@ -73,7 +81,7 @@ class SchemaState
 {
 public:
     enum State { None, New, Loading, Modified };
-    static const int Current = -1;
+    static constexpr std::optional<State> Current = {};
 
     State current() const { return _current; }
 
@@ -108,10 +116,18 @@ public:
     /// Event types that can be sent to schema listeners.
     enum Event
     {
+        Changed,       ///< A generic event when something has been changed.
+                       ///< Can be called after another changing event, 
+                       ///< if the such is configured (@a SchemaEvents::propsOf()).
+                       ///< Note that it can be raised many times caused by other events
+                       ///< (ElemChanged, CustomParamChanged, etc) so there should not be
+                       ///< a hard work done in a handler of this event, only something simple
+                       ///< like UI updates. When a change requires recalulation, there is
+                       ///< the dedicated event RecalRequred that must be raised explicitly
+                       ///< in critical points (e.g. @a AdjusterWidget::changeValue())
+
         Created,       ///< Schema just was created, called from the constructor
         Deleted,       ///< Schema was deleted, called from destructor
-        Changed,       ///< The general event when something was changed,
-                       ///< can be called after another changing event if it configured.
         Saved,         ///< Schema was saved
         Loading,       ///< Schema is turned into Loading state
         Loaded,        ///< Loading is completed
@@ -121,6 +137,7 @@ public:
         ElemChanged,   ///< Element's params changed
         ElemDeleting,  ///< Element is being deleted from schema (per element event)
         ElemDeleted,   ///< Element was deleted from schema (per element event)
+
         ElemsDeleting, ///< Elements will be deleted from schema (group event)
         ElemsDeleted,  ///< Elements was deleted from schema (group event)
 
@@ -159,8 +176,13 @@ private:
     struct EventProps
     {
         QString name;
-        bool shouldRaiseChanged; ///< Should also raise event 'changed'
-        SchemaState::State nextState; ///< New state which schema obtains with this event
+        
+        /// Should also raise event 'changed'
+        bool shouldRaiseChanged;
+        
+        /// New state which schema obtains with this event.
+        /// If not set, then state is not changed
+        std::optional<SchemaState::State> nextState;
     };
     static const EventProps& propsOf(Event event);
 
