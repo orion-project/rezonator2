@@ -18,9 +18,27 @@ namespace PumpWindowTests {
     ASSERT_IS_TRUE(listener.checkEvents({__VA_ARGS__})) \
 }
 
-TEST_METHOD(activate_ori_dlg_mock) { Q_UNUSED(test); Ori::Dlg::Mock::setActive(true); }
-TEST_METHOD(deactivate_ori_dlg_mock) { Q_UNUSED(test); Ori::Dlg::Mock::setActive(false); }
-TEST_METHOD(reset_ori_dlg_resut) { Q_UNUSED(test); Ori::Dlg::Mock::resetLastDialog(); }
+TEST_METHOD(activate_ori_dlg_mock) {
+    Q_UNUSED(test);
+    QMetaObject::invokeMethod(qApp, []{
+        Ori::Dlg::Mock::setActive(true);
+    });
+}
+
+TEST_METHOD(deactivate_ori_dlg_mock) {
+    Q_UNUSED(test);
+    QMetaObject::invokeMethod(qApp, []{
+        Ori::Dlg::Mock::setActive(false);
+    });
+}
+
+TEST_METHOD(reset_ori_dlg_resut)
+{
+    Q_UNUSED(test);
+    QMetaObject::invokeMethod(qApp, []{
+        Ori::Dlg::Mock::resetLastDialog();
+    });
+}
 
 //------------------------------------------------------------------------------
 
@@ -310,19 +328,19 @@ TEST_METHOD(activatePump__must_not_recalc_non_SP_schema)
 TEST_GROUP("PumpWindow",
     BEFORE_ALL(activate_ori_dlg_mock),
     BEFORE_EACH(reset_ori_dlg_resut),
-    ADD_TEST(createPump__first_pump_must_be_active),
-    ADD_TEST(createPump__must_raise_event),
-    ADD_TEST(editPump__must_do_nothing_when_dialog_canceled),
-    ADD_TEST(editPump__must_raise_events),
-    ADD_TEST(editPump__must_recalc_SP_schema_when_pump_is_active),
-    ADD_TEST(editPump__must_not_recalc_non_SP_schema),
-    ADD_TEST(deletePump__must_not_delete_the_only_pump_from_SP_schema),
-    ADD_TEST(deletePump__can_delete_the_only_pump_from_non_SP_schema),
-    ADD_TEST(deletePump__must_do_nothing_when_not_confirmed),
-    ADD_TEST(deletePump__must_activate_the_first_pump_when_active_pump_was_deleted),
-    ADD_TEST(activatePump__must_do_nothing_when_pump_is_already_active),
-    ADD_TEST(activatePump__must_deactivate_previous_active_pump),
-    ADD_TEST(activatePump__must_not_recalc_non_SP_schema),
+    ADD_GUI_TEST(createPump__first_pump_must_be_active),
+    ADD_GUI_TEST(createPump__must_raise_event),
+    ADD_GUI_TEST(editPump__must_do_nothing_when_dialog_canceled),
+    ADD_GUI_TEST(editPump__must_raise_events),
+    ADD_GUI_TEST(editPump__must_recalc_SP_schema_when_pump_is_active),
+    ADD_GUI_TEST(editPump__must_not_recalc_non_SP_schema),
+    ADD_GUI_TEST(deletePump__must_not_delete_the_only_pump_from_SP_schema),
+    ADD_GUI_TEST(deletePump__can_delete_the_only_pump_from_non_SP_schema),
+    ADD_GUI_TEST(deletePump__must_do_nothing_when_not_confirmed),
+    ADD_GUI_TEST(deletePump__must_activate_the_first_pump_when_active_pump_was_deleted),
+    ADD_GUI_TEST(activatePump__must_do_nothing_when_pump_is_already_active),
+    ADD_GUI_TEST(activatePump__must_deactivate_previous_active_pump),
+    ADD_GUI_TEST(activatePump__must_not_recalc_non_SP_schema),
     AFTER_ALL(deactivate_ori_dlg_mock),
 )
 

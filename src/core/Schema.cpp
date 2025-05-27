@@ -203,11 +203,12 @@ Schema::~Schema()
 {
     _events.raise(SchemaEvents::Deleted, "Schema: schema destructor");
 
+    // Formulas use params, clear them before params
+    _formulas.clear();
+
     qDeleteAll(_items);
     qDeleteAll(_pumps);
     delete _customParams;
-
-    _formulas.clear();
 
     if (memo) delete memo;
 }

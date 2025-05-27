@@ -116,9 +116,9 @@ TEST_METHOD(must_raise_events_when_custom_param_changed_2)
 //------------------------------------------------------------------------------
 
 TEST_GROUP("Adjuster",
-    ADD_TEST(must_raise_events_when_elem_param_chenged),
-    ADD_TEST(must_raise_events_when_custom_param_changed_1),
-    ADD_TEST(must_raise_events_when_custom_param_changed_2),
+    ADD_GUI_TEST(must_raise_events_when_elem_param_chenged),
+    ADD_GUI_TEST(must_raise_events_when_custom_param_changed_1),
+    ADD_GUI_TEST(must_raise_events_when_custom_param_changed_2),
 )
 
 } // namespace AdjusterTests

@@ -122,13 +122,13 @@ TEST_METHOD(can_set_selected_elem_and_current_index)
 }
 
 TEST_GROUP("ElemSelectorWidget",
-    ADD_TEST(constructor::appends_all_elements_when_no_filter),
-    ADD_TEST(constructor::must_use_filter),
-    ADD_TEST(constructor::must_use_filter_for_custom_params),
-    ADD_TEST(constructor::must_respect_filter),
-    ADD_TEST(constructor::must_respect_filter_for_custom_params),
-    ADD_TEST(must_initially_select_the_first),
-    ADD_TEST(can_set_selected_elem_and_current_index),
+    ADD_GUI_TEST(constructor::appends_all_elements_when_no_filter),
+    ADD_GUI_TEST(constructor::must_use_filter),
+    ADD_GUI_TEST(constructor::must_use_filter_for_custom_params),
+    ADD_GUI_TEST(constructor::must_respect_filter),
+    ADD_GUI_TEST(constructor::must_respect_filter_for_custom_params),
+    ADD_GUI_TEST(must_initially_select_the_first),
+    ADD_GUI_TEST(can_set_selected_elem_and_current_index),
 )
 
 } // namespace ElemSelectorWidgetTests
@@ -242,13 +242,13 @@ TEST_METHOD(with_elem_having_no_params)
 } // namespace repopulate
 
 TEST_GROUP("ParamSelectorWidget",
-    ADD_TEST(populate::appends_all_elements_when_no_filter),
-    ADD_TEST(populate::must_use_filter),
-    ADD_TEST(populate::must_respect_filter),
-    ADD_TEST(must_select_the_first_when_populated),
-    ADD_TEST(can_set_selected_param_and_current_index),
-    ADD_TEST(repopulate::with_null),
-    ADD_TEST(repopulate::with_elem_having_no_params),
+    ADD_GUI_TEST(populate::appends_all_elements_when_no_filter),
+    ADD_GUI_TEST(populate::must_use_filter),
+    ADD_GUI_TEST(populate::must_respect_filter),
+    ADD_GUI_TEST(must_select_the_first_when_populated),
+    ADD_GUI_TEST(can_set_selected_param_and_current_index),
+    ADD_GUI_TEST(repopulate::with_null),
+    ADD_GUI_TEST(repopulate::with_elem_having_no_params),
 )
 
 } // namespace ParamSelectorWidgetTests
@@ -274,8 +274,8 @@ TEST_METHOD(must_populate_params_when_selected_element_changes)
 }
 
 TEST_GROUP("ElemAndParamSelector",
-    ADD_TEST(must_initially_select_the_first),
-    ADD_TEST(must_populate_params_when_selected_element_changes),
+    ADD_GUI_TEST(must_initially_select_the_first),
+    ADD_GUI_TEST(must_populate_params_when_selected_element_changes),
 )
 
 } // namespace ElemAndParamSelectorTests
