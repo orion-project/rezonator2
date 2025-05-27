@@ -296,6 +296,8 @@ void ParamEditor::apply()
         qWarning() << "Parameter value should be verified before applying";
         return;
     }
+    
+    Z::ParamLink *newLink = nullptr;
 
     if (_paramLinks)
     {
@@ -313,7 +315,7 @@ void ParamEditor::apply()
             {
                 _paramLinks->removeOne(oldLink);
                 delete oldLink;
-                auto newLink = new Z::ParamLink(_linkSource, _param);
+                newLink = new Z::ParamLink(_linkSource, _param);
                 _paramLinks->append(newLink);
             }
             // Else link has not been changed
@@ -321,14 +323,18 @@ void ParamEditor::apply()
         // New link has been added
         else if (_linkSource)
         {
-            auto newLink = new Z::ParamLink(_linkSource, _param);
+            newLink = new Z::ParamLink(_linkSource, _param);
             _paramLinks->append(newLink);
         }
     }
 
-    _paramChangedHandlerEnabled = false;
-    _param->setValue(value);
-    _paramChangedHandlerEnabled = true;
+    if (newLink)
+        newLink->apply();
+    else {
+        _paramChangedHandlerEnabled = false;
+        _param->setValue(value);
+        _paramChangedHandlerEnabled = true;
+    }
 }
 
 void ParamEditor::focus()

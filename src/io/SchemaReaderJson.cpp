@@ -218,7 +218,7 @@ void SchemaReaderJson::readParamLink(const QJsonObject& root)
         return _report.warning(QString(
             "Unable to load link: parameter '%1' not found in custom params").arg(sourceParamAlias));
 
-    _schema->paramLinks()->append(new Z::ParamLink(sourceParam, targetParam));
+    _schema->addParamLink(sourceParam, targetParam);
 }
 
 void SchemaReaderJson::readFormulas(const QJsonObject& root)

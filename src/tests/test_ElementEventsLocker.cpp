@@ -54,7 +54,7 @@ TEST_METHOD(schema_modified_when_link_added_and_not_locked)
 
     auto p0 = new Z::Parameter(Z::Dims::linear(), "");
     schema.addCustomParam(p0);
-    schema.paramLinks()->append(new ParamLink(p0, elem->params().byIndex(0)));
+    schema.addParamLink(p0, elem->params().byIndex(0));
 
     ASSERT_IS_TRUE(schema.modified());
     ASSERT_SCHEMA_STATE(STATE(Modified))
@@ -69,7 +69,7 @@ TEST_METHOD(schema_not_modified_when_link_added_and_locked)
     
     auto p0 = new Z::Parameter(Z::Dims::linear(), "");
     schema.addCustomParam(p0);
-    schema.paramLinks()->append(new ParamLink(p0, elem->params().byIndex(0)));
+    schema.addParamLink(p0, elem->params().byIndex(0));
 
     ASSERT_IS_FALSE(schema.modified());
     ASSERT_SCHEMA_STATE(STATE(New))
@@ -84,7 +84,7 @@ TEST_METHOD(schema_modified_when_linked_parameter_changed_and_not_locked)
     {
         ElementEventsLocker locker(elem);
         schema.addCustomParam(p0);
-        schema.paramLinks()->append(new ParamLink(p0, elem->params().byIndex(0)));
+        schema.addParamLink(p0, elem->params().byIndex(0));
     }
 
     p0->setValue(1_m);
@@ -102,7 +102,7 @@ TEST_METHOD(schema_not_modified_when_linked_parameter_changed_and_locked)
     {
         ElementEventsLocker locker(elem);
         schema.addCustomParam(p0);
-        schema.paramLinks()->append(new ParamLink(p0, elem->params().byIndex(0)));
+        schema.addParamLink(p0, elem->params().byIndex(0));
     }
 
     ElementEventsLocker locker(p0);

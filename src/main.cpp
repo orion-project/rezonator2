@@ -75,10 +75,8 @@ int main(int argc, char* argv[])
         Ori::Debug::installMessageHandler();
 
     // Run test session if requested
-    if (parser.isSet(optionTest)) {
-        Z::Protocol::isDebugEnabled = true;
+    if (parser.isSet(optionTest))
         return Ori::Testing::run(app, { ADD_SUITE(Z::Tests) });
-    }
 
     // Load application settings before any command start
     AppSettings::instance().isDevMode = parser.isSet(optionDevMode);

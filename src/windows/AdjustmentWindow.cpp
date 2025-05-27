@@ -451,7 +451,7 @@ AdjustmentWindow::~AdjustmentWindow()
 
 AdjusterWidget* AdjustmentWindow::focusedAdjuster()
 {
-    for (auto adjuster : _adjusters)
+    for (auto adjuster : std::as_const(_adjusters))
         if (adjuster.widget->isFocused())
             return adjuster.widget;
     return nullptr;

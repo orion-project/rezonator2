@@ -113,12 +113,34 @@ TEST_METHOD(must_raise_events_when_custom_param_changed_2)
         )
 }
 
+TEST_METHOD(must_be_disabled_when_param_is_linked_to_custom)
+{
+    Schema schema;
+    auto e1 = new TestElement;
+    schema.insertElements({ e1 }, 0, Arg::RaiseEvents(false));
+    
+    AdjusterTester adjuster(&schema, e1->param("p1"));
+    ASSERT_IS_FALSE(adjuster.target->isReadOnly());
+    
+    auto p0 = new Z::Parameter(Z::Dims::linear(), "");
+    schema.addCustomParam(p0);
+    schema.addParamLink(p0, e1->param("p1"));
+    ASSERT_IS_TRUE(adjuster.target->isReadOnly());
+}
+
+TEST_METHOD(must_be_disabled_when_custom_param_is_driven_by_formula)
+{
+
+}
+
 //------------------------------------------------------------------------------
 
 TEST_GROUP("Adjuster",
     ADD_GUI_TEST(must_raise_events_when_elem_param_chenged),
     ADD_GUI_TEST(must_raise_events_when_custom_param_changed_1),
     ADD_GUI_TEST(must_raise_events_when_custom_param_changed_2),
+    ADD_GUI_TEST(must_be_disabled_when_param_is_linked_to_custom),
+    ADD_GUI_TEST(must_be_disabled_when_custom_param_is_driven_by_formula),
 )
 
 } // namespace AdjusterTests

@@ -111,6 +111,9 @@ TEST_METHOD(ParameterLink_constructor_destructor)
     auto lnk = new ParamLink(&src, &tgt);
     ASSERT_EQ_INT(tgt.valueDriver(), ParamValueDriver::Link)
     ASSERT_IS_TRUE(src.listeners().contains(lnk));
+    ASSERT_EQ_DBL(tgt.value().value(), 1);
+    
+    lnk->apply();
     ASSERT_EQ_DBL(tgt.value().value(), 2);
     
     src.setValue(3);

@@ -277,7 +277,11 @@ public:
     {
         _source->addListener(this);
         _target->setValueDriver(ParamValueDriver::Link);
-        apply();
+        // Link should not be applied in constructor
+        // because it causes the target parameter setValue() and then parameterChanged() event
+        // Target parameter parameterChanged handlers could expect that the parameter is linked
+        // and try to find the link in a link list. So apply() should be called explicitly
+        // after the link is added to the link list (see Schema::addParamLink())
     }
 
     virtual ~ParameterLink()
@@ -290,20 +294,6 @@ public:
     {
         if (param == _source) apply();
     }
-
-    /// Source and target here are named meaning data flow: value is transfered from source to target.
-    /// But arrow is drawn meaning 'target parameter is linked to source parameter'.
-    QString str() const { return _source->alias() % " <-- " % _target->alias(); }
-
-    TParam* source() const { return _source; }
-    TParam* target() const { return _target; }
-
-    void setOption(ParameterLinkOption option) { _options |= option; }
-    bool hasOption(ParameterLinkOption option) const { return _options & option; }
-
-private:
-    TParam *_source, *_target;
-    int _options = 0;
 
     void apply() const
     {
@@ -318,6 +308,21 @@ private:
 
         Z_PERF_END
     }
+
+    /// Source and target here are named meaning data flow: value is transfered from source to target.
+    /// But arrow is drawn meaning 'target parameter is linked to source parameter'.
+    QString str() const { return _source->alias() % " <-- " % _target->alias(); }
+
+    TParam* source() const { return _source; }
+    TParam* target() const { return _target; }
+
+    void setOptions(int options) { _options = options; }
+    //void setOption(ParameterLinkOption option) { _options |= option; }
+    bool hasOption(ParameterLinkOption option) const { return _options & option; }
+
+private:
+    TParam *_source, *_target;
+    int _options = 0;
 };
 
 //------------------------------------------------------------------------------
