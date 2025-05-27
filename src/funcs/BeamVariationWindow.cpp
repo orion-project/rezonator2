@@ -23,7 +23,7 @@ BeamVariationParamsDlg::BeamVariationParamsDlg(Schema *schema, Z::Variable *var,
     _elemSelector = new ElemAndParamSelector(schema, {
         .elemFilter = ElementFilters::elemsWithVisibleParams(),
         .paramFilter = Z::Utils::defaultParamFilter(),
-        .includeGlobalParams = true,
+        .includeCustomParams = true,
     });
     connect(_elemSelector, SIGNAL(selectionChanged()), this, SLOT(guessRange()));
 

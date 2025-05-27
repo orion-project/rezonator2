@@ -18,15 +18,16 @@ ElemSelectorWidget::ElemSelectorWidget(Schema* schema, const Options &opts) : QC
 {
     setFont(Z::Gui::ValueFont().get());
 
-    foreach (auto elem, schema->elements())
-        if (!opts.filter || opts.filter->check(elem))
+    Elements elems(schema->elements());
+
+    if (opts.includeCustomParams && !schema->customParamsAsElem()->params().isEmpty())
+        elems.append(const_cast<Element*>(schema->customParamsAsElem()));
+
+    for (auto elem : std::as_const(elems))
+        if (!opts.filter || opts.filter->check(elem)) {
             _elements.append(elem);
-
-    if (opts.includeGlobalParams && !schema->customParamsAsElem()->params().isEmpty())
-        _elements.append(const_cast<Element*>(schema->customParamsAsElem()));
-
-    foreach (auto elem, _elements)
-        addItem(elem->displayLabelTitle());
+            addItem(elem->displayLabelTitle());
+        }
 }
 
 Element* ElemSelectorWidget::selectedElement() const
@@ -103,7 +104,7 @@ ElemAndParamSelector::ElemAndParamSelector(Schema *schema, const Options &opts) 
 {
     _elemSelector = new ElemSelectorWidget(schema, {
         .filter = opts.elemFilter,
-        .includeGlobalParams = opts.includeGlobalParams,
+        .includeCustomParams = opts.includeCustomParams,
     });
 
     _paramSelector = new ParamSelectorWidget(opts.paramFilter);

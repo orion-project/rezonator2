@@ -1,12 +1,9 @@
 #include "../core/Elements.h"
 #include "../core/ElementFilter.h"
 #include "../core/Schema.h"
-#include "../tests/TestUtils.h"
 #include "../widgets/ElemSelectorWidget.h"
 
 #include "testing/OriTestBase.h"
-
-#include <memory>
 
 namespace Z {
 namespace Tests {
@@ -55,6 +52,18 @@ TEST_METHOD(must_use_filter)
     auto condition = new TestElemFilter<true>();
     ElementFilterPtr f(new ElementFilter({condition}));
     ElemSelectorWidget target(&schema, {.filter = f});
+    ASSERT_PTR_LIST(condition->checkedElems, schema.elements())
+    ASSERT_PTR_LIST(target.elements(), schema.elements())
+    ASSERT_EQ_INT(target.count(), schema.count())
+}
+
+TEST_METHOD(must_use_filter_for_custom_params)
+{
+    TEST_SCHEMA(schema)
+    schema.addCustomParam(new Z::Parameter(Z::Dims::none(), ""));
+    auto condition = new TestElemFilter<true>();
+    ElementFilterPtr f(new ElementFilter({condition}));
+    ElemSelectorWidget target(&schema, {.filter = f, .includeCustomParams = true});
     Elements elems(schema.elements());
     elems << const_cast<Element*>(schema.customParamsAsElem());
     ASSERT_PTR_LIST(condition->checkedElems, elems)
@@ -66,8 +75,21 @@ TEST_METHOD(must_respect_filter)
 {
     TEST_SCHEMA(schema)
     auto condition = new TestElemFilter<false>();
+    schema.addCustomParam(new Z::Parameter(Z::Dims::none(), ""));
     ElementFilterPtr f(new ElementFilter({condition}));
     ElemSelectorWidget target(&schema, {.filter = f});
+    ASSERT_PTR_LIST(condition->checkedElems, schema.elements())
+    ASSERT_EQ_INT(target.elements().size(), 0)
+    ASSERT_EQ_INT(target.count(), 0)
+}
+
+TEST_METHOD(must_respect_filter_for_custom_params)
+{
+    TEST_SCHEMA(schema)
+    auto condition = new TestElemFilter<false>();
+    schema.addCustomParam(new Z::Parameter(Z::Dims::none(), ""));
+    ElementFilterPtr f(new ElementFilter({condition}));
+    ElemSelectorWidget target(&schema, {.filter = f, .includeCustomParams = true});
     Elements elems(schema.elements());
     elems << const_cast<Element*>(schema.customParamsAsElem());
     ASSERT_PTR_LIST(condition->checkedElems, elems)
@@ -102,7 +124,9 @@ TEST_METHOD(can_set_selected_elem_and_current_index)
 TEST_GROUP("ElemSelectorWidget",
     ADD_TEST(constructor::appends_all_elements_when_no_filter),
     ADD_TEST(constructor::must_use_filter),
+    ADD_TEST(constructor::must_use_filter_for_custom_params),
     ADD_TEST(constructor::must_respect_filter),
+    ADD_TEST(constructor::must_respect_filter_for_custom_params),
     ADD_TEST(must_initially_select_the_first),
     ADD_TEST(can_set_selected_elem_and_current_index),
 )

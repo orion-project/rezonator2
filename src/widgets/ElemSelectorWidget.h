@@ -27,7 +27,7 @@ public:
     struct Options
     {
         ElementFilterPtr filter;
-        bool includeGlobalParams = false;
+        bool includeCustomParams = false;
     };
 
     explicit ElemSelectorWidget(Schema* schema, const Options &opts);
@@ -81,7 +81,7 @@ public:
     {
         ElementFilterPtr elemFilter;
         Z::ParameterFilterPtr paramFilter;
-        bool includeGlobalParams = false;
+        bool includeCustomParams = false;
     };
 
     explicit ElemAndParamSelector(Schema* schema, const Options &opts);

@@ -315,7 +315,7 @@ void CalculatorWindow::storeState()
 
     // Store calculation history
     QJsonArray log;
-    for (auto& item : qAsConst(_log))
+    for (auto& item : std::as_const(_log))
         log.append(QJsonObject({
             {"code", item.code},
             {"result", item.result}
