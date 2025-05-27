@@ -100,6 +100,30 @@ TEST_METHOD(Parameters_byPointer)
 
 //------------------------------------------------------------------------------
 
+TEST_METHOD(ParameterLink_constructor_destructor)
+{
+    Z::Parameter tgt;
+    tgt.setValue(1);
+    
+    Z::Parameter src;
+    src.setValue(2);
+    
+    auto lnk = new ParameterLink(&src, &tgt);
+    ASSERT_EQ_INT(tgt.valueDriver(), ParamValueDriver::Link)
+    ASSERT_IS_TRUE(src.listeners().contains(lnk));
+    ASSERT_EQ_DBL(tgt.value().value(), 2);
+    
+    src.setValue(3);
+    ASSERT_EQ_DBL(tgt.value().value(), 3);
+    
+    delete lnk;
+    ASSERT_EQ_INT(tgt.valueDriver(), ParamValueDriver::None)
+    ASSERT_IS_FALSE(src.listeners().contains(lnk));
+    ASSERT_EQ_DBL(tgt.value().value(), src.value().value());
+}
+
+//------------------------------------------------------------------------------
+
 namespace ParameterFilterTests {
 
 TEST_METHOD(ParameterFilterVisible_check)
@@ -129,6 +153,7 @@ TEST_GROUP("Parameters",
     ADD_TEST(Parameters_byAlias),
     ADD_TEST(Parameters_byIndex),
     ADD_TEST(Parameters_byPointer),
+    ADD_TEST(ParameterLink_constructor_destructor),
     ADD_GROUP(ParameterFilterTests),
 )
 

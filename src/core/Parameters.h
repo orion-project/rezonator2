@@ -291,20 +291,6 @@ public:
         if (param == _source) apply();
     }
 
-    void apply() const
-    {
-        Z_PERF_BEGIN("ParameterLink::apply")
-
-        auto value = _source->value();
-        auto res = _target->verify(value);
-        if (res.isEmpty())
-            _target->setValue(value);
-        else
-            qWarning() << "Param link" << str() << "Unable to set value to target, verification failed" << res;
-
-        Z_PERF_END
-    }
-
     /// Source and target here are named meaning data flow: value is transfered from source to target.
     /// But arrow is drawn meaning 'target parameter is linked to source parameter'.
     QString str() const { return _source->alias() % " <-- " % _target->alias(); }
@@ -318,6 +304,20 @@ public:
 private:
     TParam *_source, *_target;
     int _options = 0;
+
+    void apply() const
+    {
+        Z_PERF_BEGIN("ParameterLink::apply")
+
+        auto value = _source->value();
+        auto res = _target->verify(value);
+        if (res.isEmpty())
+            _target->setValue(value);
+        else
+            qWarning() << "Param link" << str() << "Unable to set value to target, verification failed" << res;
+
+        Z_PERF_END
+    }
 };
 
 //------------------------------------------------------------------------------
