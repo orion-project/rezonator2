@@ -117,6 +117,8 @@ private:
 
     void setCurrentValue(double value);
     double currentValue() const;
+    
+    friend class AdjusterTester;
 };
 
 

@@ -36,6 +36,7 @@ USE_GROUP(LuaHelperTests)                          // test_LuaHelper.cpp
 USE_GROUP(ProjectOperationsTests)                  // test_ProjectOperations.cpp
 USE_GROUP(FormulaTests)                            // test_Formula.cpp
 USE_GROUP(UtilsTests)                              // test_Utils.cpp
+USE_GROUP(AdjusterTests)                           // test_Adjuster.cpp
 
 TEST_SUITE(
     ADD_GROUP(Ori::Tests::All),
@@ -71,6 +72,7 @@ TEST_SUITE(
     ADD_GROUP(ProjectOperationsTests),
     ADD_GROUP(FormulaTests),
     ADD_GROUP(UtilsTests),
+    ADD_GROUP(AdjusterTests),
 )
 
 } // namespace Tests

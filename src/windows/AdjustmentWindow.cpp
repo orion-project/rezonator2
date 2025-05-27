@@ -10,7 +10,6 @@
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
-#include "widgets/OriFlatToolBar.h"
 #include "widgets/OriValueEdit.h"
 
 #include <QApplication>
@@ -22,6 +21,7 @@
 #include <QMenu>
 #include <QPushButton>
 #include <QTimer>
+#include <QToolBar>
 
 using namespace Ori::Layouts;
 
@@ -255,6 +255,7 @@ void AdjusterWidget::setCurrentValue(double value)
     _valueEditor->setValue(value);
     if (!_changeValueTimer)
     {
+        // Swallow several quick adjuster button clicks into single changeValue
         _changeValueTimer = new QTimer(this);
         _changeValueTimer->setInterval(__changeValueIntervalMs);
         connect(_changeValueTimer, &QTimer::timeout, this, &AdjusterWidget::changeValue);
@@ -315,10 +316,9 @@ void AdjusterWidget::changeValue()
         _isValueChanging = true;
         _param->setValue(_currentValue);
         _isValueChanging = false;
-
+        
         if (_elem)
         {
-            _schema->events().raise(SchemaEvents::ElemChanged, _elem, "AdjusterWidget: elem param adjusted");
             _schema->events().raise(SchemaEvents::RecalRequred, "AdjusterWidget: elem param adjusted");
         }
         else

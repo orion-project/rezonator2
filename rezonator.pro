@@ -273,8 +273,9 @@ SOURCES += \
     src/io/SchemaWriterJson.cpp \
     src/main.cpp \
     src/tests/test_AbcdBeamCalculator.cpp \
+    src/tests/test_Adjuster.cpp \
     src/tests/test_Element.cpp \
-    src/tests/test_ElementEventsLocked.cpp \
+    src/tests/test_ElementEventsLocker.cpp \
     src/tests/test_ElementFilter.cpp \
     src/tests/test_ElementFormula.cpp \
     src/tests/test_Elements.cpp \
