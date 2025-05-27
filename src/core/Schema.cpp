@@ -482,6 +482,13 @@ ElementOwner::Position Schema::position(Element* elem) const
     return PositionInMidle;
 }
 
+Z::ParamLink* Schema::addParamLink(Z::Parameter *source, Z::Parameter *target)
+{
+    auto link = new Z::ParamLink(source, target);
+    _paramLinks.append(link);
+    return link;
+}
+
 //------------------------------------------------------------------------------
 //                                Z::Utils
 //------------------------------------------------------------------------------

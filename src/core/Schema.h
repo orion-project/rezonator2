@@ -280,6 +280,7 @@ public:
 
     /// Linst of all links which bind elements' parameter to custom parameters.
     Z::ParamLinks* paramLinks() { return &_paramLinks; }
+    Z::ParamLink* addParamLink(Z::Parameter *source, Z::Parameter *target);
 
     /// List of all formulas operated on schema parameters.
     Z::Formulas* formulas() { return &_formulas; }
