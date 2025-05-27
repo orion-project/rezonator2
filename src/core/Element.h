@@ -142,6 +142,7 @@ public:
 
     const Z::Parameters& params() const { return _params; }
     bool hasParams() const { return !_params.isEmpty(); }
+    Z::Parameter* param(const QString &alias) { return _params.byAlias(alias); }
 
     /// Label of element. Label is short indentificator
     /// for element or its name (like variable name). E.g.: "M1", "L_f", etc.

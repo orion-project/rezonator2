@@ -9,7 +9,9 @@ namespace ParamsEditorTests {
 //------------------------------------------------------------------------------
 
 namespace {
-const QString PARAM_DESTRUCTED("param was deleted ");
+
+#define PARAM_DESTRUCTED QString("param was deleted ")
+
 class TestParam : public Z::Parameter
 {
 public:

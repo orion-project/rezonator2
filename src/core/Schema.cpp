@@ -175,8 +175,9 @@ Schema::Schema(const QString &alias) : _alias(alias)
     _wavelength.addListener(this);
 
     _customParams = new CustomParamsElem;
-    _customParams->setOwner(this);
+    // Do setLabel before setOwner to avoid unnecessary events
     _customParams->setLabel("Global parameters"); // TODO: localize
+    _customParams->setOwner(this);
 
     _events._schema = this;
     _events.raise(SchemaEvents::Created, "Schema: schema constructor");
@@ -184,7 +185,7 @@ Schema::Schema(const QString &alias) : _alias(alias)
 
 Schema::~Schema()
 {
-    _events.raise(SchemaEvents::Deleted, "schema: schema destructor");
+    _events.raise(SchemaEvents::Deleted, "Schema: schema destructor");
 
     qDeleteAll(_items);
     qDeleteAll(_pumps);

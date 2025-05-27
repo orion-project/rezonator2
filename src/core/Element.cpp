@@ -240,7 +240,7 @@ ElementEventsLocker::ElementEventsLocker(Z::Parameter* param)
 
 ElementEventsLocker::~ElementEventsLocker()
 {
-    for (auto elem : _elems)
+    for (auto elem : std::as_const(_elems))
         elem->_eventsLocked = false;
 }
 

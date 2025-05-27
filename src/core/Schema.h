@@ -254,6 +254,7 @@ public:
     int activeCount() const;
     Elements activeElements() const;
     Element* element(int index) const;
+    Element* element(const QString& label) const { return elementByLabel(label); }
     Element* elementById(int id) const;
     Element* elementByLabel(const QString& label) const;
     int indexOf(Element *elem) const override { return _items.indexOf(elem); }
@@ -287,6 +288,7 @@ public:
     /// It contains custom params and some of the built-in parameters.
     /// This list is not stored in a schema and collect parameters at each call.
     Z::Parameters globalParams() const;
+    Z::Parameter* param(const QString &alias) { return _customParams->params().byAlias(alias); }
 
     PumpsList* pumps() { return &_pumps; }
     PumpParams* activePump();
