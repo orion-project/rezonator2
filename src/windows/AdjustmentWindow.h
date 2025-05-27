@@ -109,6 +109,7 @@ private:
     bool _isFocused = false;
     bool _isReadOnly = false;
     QTimer* _changeValueTimer = nullptr;
+    QLabel* _lockLabel;
 
     void editorFocused(bool focus);
     void editorKeyPressed(int key);

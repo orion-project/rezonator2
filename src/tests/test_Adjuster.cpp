@@ -130,7 +130,20 @@ TEST_METHOD(must_be_disabled_when_param_is_linked_to_custom)
 
 TEST_METHOD(must_be_disabled_when_custom_param_is_driven_by_formula)
 {
+    Schema schema;
+    auto p0 = new Z::Parameter(Z::Dims::linear(), "");
+    schema.addCustomParam(p0);
 
+    AdjusterTester adjuster(&schema, p0);
+    ASSERT_IS_FALSE(adjuster.target->isReadOnly());
+    
+    auto f = new Z::Formula(p0);
+    schema.formulas()->put(f);
+    f->setCode("2+2");
+    f->calculate();
+    ASSERT_IS_TRUE(f->ok());
+    
+    ASSERT_IS_TRUE(adjuster.target->isReadOnly());
 }
 
 //------------------------------------------------------------------------------

@@ -125,12 +125,18 @@ AdjusterWidget::AdjusterWidget(Schema* schema, Z::Parameter *param, QWidget *par
     connect(_buttonMinus, &AdjusterButton::focused, this, &AdjusterWidget::editorFocused);
     connect(_buttonMult, &AdjusterButton::focused, this, &AdjusterWidget::editorFocused);
     connect(_buttonDivide, &AdjusterButton::focused, this, &AdjusterWidget::editorFocused);
+    
+    _lockLabel = new QLabel;
+    _lockLabel->setPixmap(QIcon(":/toolbar/lock_on").pixmap(20));
+    _lockLabel->setContentsMargins(0, 0, 12, 0);
+    _lockLabel->setVisible(false);
 
     LayoutH({
         _labelName,
         Space(3),
         _labelUnit,
         Space(12),
+        _lockLabel,
         _buttonDivide,
         _buttonMinus,
         _valueEditor,
@@ -234,7 +240,15 @@ void AdjusterWidget::populate()
             .arg(Z::Gui::html(Z::Gui::ElemLabelFont()), _elem->displayLabel(), labelStr);
 
     _labelName->setText(labelStr);
-    _isReadOnly = f.isReadOnly();
+    
+    QString readonlyReason;
+    if (_elem) {
+        if (_schema->paramLinks()->byTarget(_param))
+            readonlyReason = tr("Can not be changed because this value is linked to a global parameter");
+    }
+    else if (_schema->formulas()->get(_param))
+        readonlyReason = tr("Can not be changed because this value is provided by a formula");
+    _isReadOnly = !readonlyReason.isEmpty();
 
     _buttonMult->setEnabled(not _isReadOnly);
     _buttonPlus->setEnabled(not _isReadOnly);
@@ -242,6 +256,8 @@ void AdjusterWidget::populate()
     _buttonDivide->setEnabled(not _isReadOnly);
     _valueEditor->setReadOnly(_isReadOnly);
     _valueEditor->setFont(Z::Gui::ValueFont().readOnly(_isReadOnly).get());
+    _lockLabel->setVisible(_isReadOnly);
+    _lockLabel->setToolTip(readonlyReason);
 }
 
 double AdjusterWidget::currentValue() const
