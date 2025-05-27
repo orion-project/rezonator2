@@ -1,6 +1,8 @@
 #include "Protocol.h"
 
+#include <QApplication>
 #include <QPlainTextEdit>
+#include <QThread>
 
 namespace Z {
 
@@ -16,8 +18,17 @@ void Protocol::setView(QPlainTextEdit* view)
 
 void Protocol::writeToHtmlLog()
 {
-    if (__logView)
-        __logView->appendHtml(messageFormat().arg(sanitizedHtml()));
+    if (!__logView) return;
+    
+    QString msg = messageFormat().arg(sanitizedHtml());
+    
+    if (QThread::currentThread() != qApp->instance()->thread()) {
+        QMetaObject::invokeMethod(qApp, [msg]{
+            __logView->appendHtml(msg);
+        });
+    } else {
+        __logView->appendHtml(msg);
+    }
 }
 
 QString Protocol::sanitizedHtml() const

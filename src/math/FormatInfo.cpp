@@ -255,7 +255,7 @@ QString FormatParam::format(Z::Parameter* param)
     }
 
     // weird, but the space after span is important!
-    // without it vertical alignment calculated improperly sometimes
+    // without it the vertical alignment is calculated improperly sometimes
     parts << QStringLiteral("</span> ");
 
     return parts.join(QString());
