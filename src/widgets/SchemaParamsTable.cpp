@@ -5,54 +5,231 @@
 #include "../core/Perf.h"
 #include "../math/FormatInfo.h"
 
+#include <QAbstractTableModel>
 #include <QHeaderView>
 #include <QMenu>
 
-SchemaParamsTable::SchemaParamsTable(Schema *schema, QWidget *parent) : QTableWidget(0, COL_COUNT, parent), _schema(schema)
+namespace {
+
+enum { COL_IMAGE, COL_ALIAS, COL_VALUE, COL_ANNOTATION, COL_COUNT };
+
+} // namespace
+
+//------------------------------------------------------------------------------
+//                             SchemaParamsTableModel
+//------------------------------------------------------------------------------
+
+class SchemaParamsTableModel : public QAbstractTableModel, public SchemaListener, public Z::ParameterListener
+{
+public:
+    SchemaParamsTableModel(Schema* schema, QTableView* view): QAbstractTableModel(nullptr), _schema(schema), _view(view)
+    {
+        _schema->registerListener(this);
+    }
+    
+    ~SchemaParamsTableModel()
+    {
+        for (const auto p: *(_schema->customParams()))
+            p->removeListener(this);
+        _schema->unregisterListener(this);
+    }
+
+    int rowCount(const QModelIndex&) const override { return _schema->customParams()->size(); }
+    int columnCount(const QModelIndex&) const override { return COL_COUNT; }
+
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override
+    {
+        if (role == Qt::DisplayRole)
+        {
+            switch (orientation)
+            {
+            case Qt::Vertical:
+                return section + 1;
+            case Qt::Horizontal:
+                switch (section)
+                {
+                case COL_IMAGE: return tr("Typ");
+                case COL_ALIAS: return tr("Name");
+                case COL_VALUE: return tr("Value");
+                case COL_ANNOTATION: return tr("Annotation");
+                }
+            }
+        }
+        return QVariant();
+    }
+    
+    QVariant data(const QModelIndex &index, int role) const override
+    {
+        if (!index.isValid()) return QVariant();
+        int col = index.column();
+        int row = index.row();
+        auto param = _schema->customParams()->byIndex(row);
+        if (!param)
+            return QVariant();
+        if (role == Qt::DecorationRole)
+        {
+            if (col == COL_IMAGE)
+            {
+                if (param->valueDriver() == Z::ParamValueDriver::Formula)
+                    return _iconFormula;
+                return _iconParam;
+            }
+        }
+        else if (role == Qt::ToolTipRole)
+        {
+            if (col == COL_IMAGE)
+            {
+                if (param->valueDriver() == Z::ParamValueDriver::Formula)
+                    return tr("Formula driven parameter");
+                return tr("Simple parameter");
+            }
+        }
+        else if (role == Qt::FontRole)
+        {
+            if (col == COL_VALUE)
+            {
+                return Z::Gui::ValueFont().readOnly(param->valueDriver() == Z::ParamValueDriver::Formula).get();
+            }
+        }
+        else if (role == Qt::TextAlignmentRole)
+        {
+            if (col == COL_ALIAS)
+                return Qt::AlignCenter;
+        }
+        else if (role == Qt::TextAlignmentRole)
+        {
+        }
+        else if (role == Qt::DisplayRole)
+        {
+            switch (col) {
+            case COL_ALIAS: {
+                Z::Format::FormatParam f;
+                f.schema = _schema;
+                f.isElement = false;
+                return f.format(param);
+            }
+            case COL_VALUE: return param->value().displayStr();
+            case COL_ANNOTATION: return param->description();
+            }
+        }
+        return QVariant();
+    }
+    
+    void schemaLoaded(Schema*) override
+    {
+        emit layoutChanged();
+
+        for (const auto p: *(_schema->customParams()))
+            p->addListener(this);
+    }
+    
+    void customParamCreated(Schema*, Z::Parameter* param) override
+    {
+        int row = findRow(param);
+        beginInsertRows(QModelIndex(), row, row);
+        endInsertRows();
+        adjustColumns();
+        param->addListener(this);
+    }
+    
+    void customParamDeleting(Schema*, Z::Parameter*) override
+    {
+        beginResetModel();
+    }
+    
+    void customParamDeleted(Schema*, Z::Parameter*) override
+    {
+        endResetModel();
+        adjustColumns();
+    }
+    
+    void customParamEdited(Schema*, Z::Parameter* param) override
+    {
+        updateParamRow(param);
+    }
+    
+    void parameterChanged(Z::ParameterBase* param) override
+    {
+        updateParamRow(param);
+    }
+    
+private:
+    Schema* _schema;
+    QTableView* _view;
+    QPixmap _iconParam = QIcon(":/toolbar/parameter").pixmap(Z::Utils::elemIconSize());
+    QPixmap _iconFormula = QIcon(":/toolbar/param_formula").pixmap(Z::Utils::elemIconSize());
+
+    void updateParamRow(Z::ParameterBase* param)
+    {
+        Z_PERF_BEGIN("SchemaParamsTableModel::updateParamRow")
+
+        int row = findRow(param);
+        emit dataChanged(index(row, 0), index(row, COL_COUNT));
+        adjustColumns();
+    
+        Z_PERF_END
+    }
+    
+    int findRow(Z::ParameterBase* param) const
+    {
+        return _schema->customParams()->indexOf((Z::Parameter*)param);
+    }
+
+    void adjustColumns()
+    {
+        _view->resizeColumnToContents(COL_ALIAS);
+        _view->resizeColumnToContents(COL_VALUE);
+    }
+};
+
+//------------------------------------------------------------------------------
+//                             SchemaParamsTable
+//------------------------------------------------------------------------------
+
+SchemaParamsTable::SchemaParamsTable(Schema *schema, QWidget *parent) : QTableView(parent), _schema(schema)
 {
     int aliasOffsetY = 0;
 #if defined(Q_OS_MAC)
-    aliasOffsetY = -1;
+    aliasOffsetY = 2;
+#elif defined(Q_OS_LINUX)
+    aliasOffsetY = 1;
+#elif defined(Q_OS_WIN)
+    aliasOffsetY = 2;
 #endif
-    // TODO check windows
-
+    
+    _model = new SchemaParamsTableModel(schema, this);
+    
+    setModel(_model);
+    
+    auto iconSize = Z::Utils::elemIconSize();
+    
     setWordWrap(false);
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setItemDelegateForColumn(COL_ALIAS, new RichTextItemDelegate(aliasOffsetY, this));
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     horizontalHeader()->setSectionResizeMode(COL_IMAGE, QHeaderView::Fixed);
-    horizontalHeader()->setMinimumSectionSize(_iconSize+6);
-    horizontalHeader()->resizeSection(COL_IMAGE, _iconSize+6);
+    horizontalHeader()->setMinimumSectionSize(iconSize.width()+6);
+    horizontalHeader()->resizeSection(COL_IMAGE, iconSize.width()+6);
     horizontalHeader()->setSectionResizeMode(COL_ALIAS, QHeaderView::ResizeToContents);
     horizontalHeader()->setSectionResizeMode(COL_VALUE, QHeaderView::ResizeToContents);
     horizontalHeader()->setSectionResizeMode(COL_ANNOTATION, QHeaderView::Stretch);
     horizontalHeader()->setHighlightSections(false);
-    setHorizontalHeaderLabels({ tr("Typ"), tr("Name"), tr("Value"), tr("Annotation") });
 
-    connect(this, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(doubleClicked(QTableWidgetItem*)));
-    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
-
-    populate();
+    connect(this, &SchemaParamsTable::doubleClicked, this, &SchemaParamsTable::indexDoubleClicked);
+    connect(this, &SchemaParamsTable::customContextMenuRequested, this, &SchemaParamsTable::showContextMenu);
 }
 
-SchemaParamsTable::~SchemaParamsTable()
+int SchemaParamsTable::currentRow() const
 {
-    for (auto p: *(schema()->customParams()))
-        p->removeListener(this);
+    return selectionModel()->currentIndex().row();
 }
 
-void SchemaParamsTable::adjustColumns()
+void SchemaParamsTable::indexDoubleClicked(const QModelIndex &index)
 {
-    resizeColumnToContents(COL_ALIAS);
-    resizeColumnToContents(COL_VALUE);
-}
-
-void SchemaParamsTable::doubleClicked(QTableWidgetItem*)
-{
-    Z::Parameter* param = selected();
+    Z::Parameter* param = _schema->customParams()->byIndex(index.row());
     if (param)
-        emit doubleClicked(param);
+        emit paramDoubleClicked(param);
 }
 
 void SchemaParamsTable::showContextMenu(const QPoint& pos)
@@ -68,119 +245,5 @@ Z::Parameter* SchemaParamsTable::selected() const
 
 void SchemaParamsTable::setSelected(Z::Parameter *param)
 {
-    setCurrentCell(_schema->customParams()->indexOf(param), 0);
+    selectRow(_schema->customParams()->indexOf(param));
 }
-
-void SchemaParamsTable::populate()
-{
-    clearContents();
-    setRowCount(schema()->customParams()->size());
-    for (int row = 0; row < schema()->customParams()->size(); row++)
-    {
-        auto param = schema()->customParams()->byIndex(row);
-        param->addListener(this);
-        createRow(row);
-        populateRow(param, row);
-    }
-    adjustColumns();
-}
-
-void SchemaParamsTable::createRow(int row)
-{
-    QTableWidgetItem *it = new QTableWidgetItem();
-    it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    setItem(row, COL_IMAGE, it);
-
-    it = new QTableWidgetItem();
-    it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    it->setTextAlignment(Qt::AlignHCenter | Qt::AlignCenter);
-    setItem(row, COL_ALIAS, it);
-
-    it = new QTableWidgetItem();
-    it->setTextAlignment(Qt::AlignHCenter | Qt::AlignCenter);
-    it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    setItem(row, COL_VALUE, it);
-
-    it = new QTableWidgetItem();
-    it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    setItem(row, COL_ANNOTATION, it);
-}
-
-void SchemaParamsTable::populateRow(Z::Parameter *param, int row)
-{
-    // Parameter alias and formula
-    Z::Format::FormatParam f;
-    f.schema = schema();
-    f.isElement = false;
-    item(row, COL_ALIAS)->setText(f.format(param));
-
-    // Parameter icon
-    auto it = item(row, COL_IMAGE);
-    QString iconPath, toolTip;
-    if (param->valueDriver() == Z::ParamValueDriver::Formula)
-    {
-        iconPath = ":/toolbar/param_formula";
-        toolTip = tr("Formula driven parameter");
-    }
-    else
-    {
-        iconPath = ":/toolbar/parameter";
-        toolTip = tr("Simple parameter");
-    }
-    it->setData(Qt::DecorationRole, QIcon(iconPath).pixmap(_iconSize, _iconSize));
-    it->setToolTip(toolTip);
-
-    // Parameter value
-    it = item(row, COL_VALUE);
-    it->setFont(Z::Gui::ValueFont().readOnly(param->valueDriver() == Z::ParamValueDriver::Formula).get());
-    it->setText(" " % param->value().displayStr() % " ");
-
-    // Parameter annotation
-    item(row, COL_ANNOTATION)->setText("  " % param->description());
-}
-
-void SchemaParamsTable::schemaLoaded(Schema*)
-{
-    populate();
-}
-
-void SchemaParamsTable::customParamCreated(Schema*, Z::Parameter* param)
-{
-    int row = rowCount();
-    setRowCount(row+1);
-    createRow(row);
-    populateRow(param, row);
-    setSelected(param);
-    param->addListener(this);
-}
-
-void SchemaParamsTable::customParamDeleting(Schema*, Z::Parameter* param)
-{
-    auto row = findRow(param);
-    if (row < 0) return;
-    removeRow(row);
-    adjustColumns();
-}
-
-void SchemaParamsTable::parameterChanged(Z::ParameterBase* param)
-{
-    Z_PERF_BEGIN("SchemaParamsTable::parameterChanged")
-
-    auto row = findRow(param);
-    if (row < 0) return;
-    populateRow(reinterpret_cast<Z::Parameter*>(param), row);
-    adjustColumns();
-
-    Z_PERF_END
-}
-
-void SchemaParamsTable::customParamEdited(Schema*, Z::Parameter* param)
-{
-    parameterChanged(param);
-}
-
-int SchemaParamsTable::findRow(Z::ParameterBase *param)
-{
-    return schema()->customParams()->indexOf(dynamic_cast<Z::Parameter*>(param));
-}
-

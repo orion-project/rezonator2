@@ -11,21 +11,30 @@ Simple performance tracker.
 
 Below is an example output for plotting of beam variation with 100 points
 when changing a global parameter. It can bee seen that calculation is slow
-because of lot of calls of parameterChanged handlers:
+because of lot of calls of parameterChanged handlers and the most of time 
+is spent in SchemaParamsTable::parameterChanged so it needs to be optimized.
 
-BeamVariationFunction: 847_ms [1]
-    setValue: 846_ms [100]
-        ParameterBase::notifyListeners: 845_ms [100]
-            ParameterLink::apply: 452_ms [100]
-                ParameterBase::notifyListeners: 452_ms [100]
-                    Element::parameterChanged_1: 0_ms [100]
-                        ElemEmptyRange::calcMatrixInternal: 0_ms [100]
-                    Element::parameterChanged_2: 452_ms [100]
-                        Schema::elementChanged: 452_ms [100]
-            SchemaParamsTable::parameterChanged: 393_ms [200]
-    recalcSubrange: 0_ms [100]
-    multMatrix: 0_ms [100]
-    addResultPoint: 1_ms [100]
+In square brackets is the number of calls.
+
+BeamVariationFunction: 824_ms [1]"
+    setValue: 824_ms [100]"
+        ParameterBase::notifyListeners: 824_ms [100]"
+            ParameterBase::notifyListeners: 420_ms [100]"
+                ParameterLink::apply: 0_ms [100]"
+                    ParameterBase::notifyListeners: 0_ms [300]"
+                        Element::parameterChanged_1: 0_ms [300]"
+                            ElemEmptyRange::calcMatrixInternal: 0_ms [100]"
+                        Element::parameterChanged_2: 0_ms [300]"
+                SchemaParamsTable::parameterChanged: 419_ms [200]"
+            ParameterLink::apply: 0_ms [200]"
+                ParameterBase::notifyListeners: 0_ms [300]"
+                    Element::parameterChanged_1: 0_ms [300]"
+                        ElemEmptyRange::calcMatrixInternal: 0_ms [100]"
+                    Element::parameterChanged_2: 0_ms [300]"
+            SchemaParamsTable::parameterChanged: 387_ms [200]"
+    recalcSubrange: 0_ms [100]"
+    multMatrix: 0_ms [100]"
+    addResultPoint: 0_ms [100]"
 
 */
 
