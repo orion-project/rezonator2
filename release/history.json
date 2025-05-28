@@ -5,6 +5,9 @@
       "date": "",
       "changes": [
         {
+          "text": "Can use global parameters as arguments for the Beamsize Variation function"
+        },
+        {
           "text": "Fix: special points for SP-schemas show T waist size for S plane (https://github.com/orion-project/rezonator2/issues/67)"
         },
         {

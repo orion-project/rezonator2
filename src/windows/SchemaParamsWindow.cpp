@@ -51,15 +51,12 @@ SchemaParamsWindow::SchemaParamsWindow(Schema *owner) : SchemaMdiChild(owner)
     createToolBar();
 
     _table->setContextMenu(_contextMenu);
-    connect(_table, SIGNAL(doubleClicked(Z::Parameter*)), this, SLOT(setParameterValue()));
-    schema()->registerListener(_table);
+    connect(_table, &SchemaParamsTable::paramDoubleClicked, this, &SchemaParamsWindow::setParameterValue);
 }
 
 SchemaParamsWindow::~SchemaParamsWindow()
 {
     _instance = nullptr;
-
-    schema()->unregisterListener(_table);
 }
 
 void SchemaParamsWindow::createActions()
@@ -108,7 +105,7 @@ void SchemaParamsWindow::createParameter()
 
     auto dimEditor = new DimComboBox;
     dimEditor->setSelectedDim(recentDim);
-    connect(dimEditor, &DimComboBox::dimChanged, [&](Z::Dim dim){
+    connect(dimEditor, &DimComboBox::dimChanged, unitEditor, [&](Z::Dim dim){
         recentUnits[recentDim] = unitEditor->selectedUnit();
         if (!recentUnits.contains(dim))
             recentUnits[dim] = RecentData::getUnit("global_param_unit", dim);
@@ -149,7 +146,7 @@ void SchemaParamsWindow::createParameter()
         auto param = new Z::Parameter(dim, alias, label, name);
         auto unit = unitEditor->selectedUnit();
         param->setValue(Z::Value(0, unit));
-        schema()->customParams()->append(param);
+        schema()->addCustomParam(param);
 
         RecentData::PendingSave _;
         RecentData::setDim("global_param_dim", dim);
@@ -172,7 +169,7 @@ void SchemaParamsWindow::deleteParameter()
     if (!dependentParams.isEmpty())
     {
         QStringList dependentAliases;
-        for (Z::Parameter *param : dependentParams)
+        for (Z::Parameter *param : std::as_const(dependentParams))
             dependentAliases << "<b>" % param->alias() % "</b>";
         return Ori::Dlg::info(
             tr("Can't delete paremeter <b>%1</b> because there are global parameters depending on it:<br><br>%2")
@@ -198,7 +195,7 @@ void SchemaParamsWindow::deleteParameter()
     {
         schema()->events().raise(SchemaEvents::CustomParamDeleting, deletingParam, "Params window: param deleting");
         schema()->formulas()->free(deletingParam);
-        schema()->customParams()->removeOne(deletingParam);
+        schema()->removeCustomParam(deletingParam);
         schema()->events().raise(SchemaEvents::CustomParamDeleted, deletingParam, "Params window: param deleted");
     }
 }
@@ -217,6 +214,7 @@ void SchemaParamsWindow::setParameterValue()
                     Z::HelpSystem::instance()->showTopic("params_window.html#params-window-value");
                 })
                 .withContentToButtonsSpacingFactor(2)
+                .withOnDlgShown([&editor]{ editor.focus(); })
                 .connectOkToContentApply()
                 .exec();
     if (ok)

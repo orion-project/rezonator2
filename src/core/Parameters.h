@@ -3,6 +3,7 @@
 
 #include <QDebug>
 
+#include "Perf.h"
 #include "Units.h"
 #include "Values.h"
 #include "core/OriFilter.h"
@@ -75,6 +76,7 @@ public:
 
     void addListener(ParameterListener* listener) { _listeners.append(listener); }
     void removeListener(ParameterListener* listener) { _listeners.removeAll(listener); }
+    const QVector<ParameterListener*>& listeners() const { return _listeners; }
 
 protected:
     ParameterBase() {}
@@ -94,8 +96,12 @@ protected:
 
     void notifyListeners()
     {
+        Z_PERF_BEGIN("ParameterBase::notifyListeners")
+
         for (auto listener: std::as_const(_listeners))
             listener->parameterChanged(this);
+
+        Z_PERF_END
     }
 
 protected:
@@ -271,7 +277,11 @@ public:
     {
         _source->addListener(this);
         _target->setValueDriver(ParamValueDriver::Link);
-        apply();
+        // Link should not be applied in constructor
+        // because it causes the target parameter setValue() and then parameterChanged() event
+        // Target parameter parameterChanged handlers could expect that the parameter is linked
+        // and try to find the link in a link list. So apply() should be called explicitly
+        // after the link is added to the link list (see Schema::addParamLink())
     }
 
     virtual ~ParameterLink()
@@ -287,12 +297,16 @@ public:
 
     void apply() const
     {
+        Z_PERF_BEGIN("ParameterLink::apply")
+
         auto value = _source->value();
         auto res = _target->verify(value);
         if (res.isEmpty())
             _target->setValue(value);
         else
             qWarning() << "Param link" << str() << "Unable to set value to target, verification failed" << res;
+
+        Z_PERF_END
     }
 
     /// Source and target here are named meaning data flow: value is transfered from source to target.
@@ -302,7 +316,8 @@ public:
     TParam* source() const { return _source; }
     TParam* target() const { return _target; }
 
-    void setOption(ParameterLinkOption option) { _options |= option; }
+    void setOptions(int options) { _options = options; }
+    //void setOption(ParameterLinkOption option) { _options |= option; }
     bool hasOption(ParameterLinkOption option) const { return _options & option; }
 
 private:
@@ -427,6 +442,7 @@ public:
 };
 
 typedef Ori::Filter<Parameter*, ParameterFilterCondition> ParameterFilter;
+typedef std::shared_ptr<const ParameterFilter> ParameterFilterPtr;
 
 //------------------------------------------------------------------------------
 

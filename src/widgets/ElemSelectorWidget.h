@@ -24,7 +24,13 @@ class ElemSelectorWidget : public QComboBox
     Q_OBJECT
 
 public:
-    explicit ElemSelectorWidget(Schema* schema, ElementFilter* filter = nullptr);
+    struct Options
+    {
+        ElementFilterPtr filter;
+        bool includeCustomParams = false;
+    };
+
+    explicit ElemSelectorWidget(Schema* schema, const Options &opts);
 
     Element* selectedElement() const;
     void setSelectedElement(Element *elem);
@@ -35,7 +41,6 @@ public:
 
 private:
     Elements _elements;
-    ElementFilter* _filter;
 };
 
 
@@ -47,7 +52,7 @@ class ParamSelectorWidget : public QComboBox
     Q_OBJECT
 
 public:
-    explicit ParamSelectorWidget(Z::ParameterFilter* filter = nullptr);
+    explicit ParamSelectorWidget(Z::ParameterFilterPtr filter = {});
 
     void populate(Element*);
 
@@ -60,7 +65,7 @@ public:
 
 private:
     Z::Parameters _parameters;
-    Z::ParameterFilter* _filter;
+    Z::ParameterFilterPtr _filter;
 };
 
 
@@ -72,8 +77,14 @@ class ElemAndParamSelector : public QGridLayout
     Q_OBJECT
 
 public:
-    explicit ElemAndParamSelector(Schema* schema,
-        ElementFilter *elemFilter = nullptr, Z::ParameterFilter* paramFilter = nullptr);
+    struct Options
+    {
+        ElementFilterPtr elemFilter;
+        Z::ParameterFilterPtr paramFilter;
+        bool includeCustomParams = false;
+    };
+
+    explicit ElemAndParamSelector(Schema* schema, const Options &opts);
 
     Element* selectedElement() const { return _elemSelector->selectedElement(); }
     void setSelectedElement(Element *elem) { _elemSelector->setSelectedElement(elem); }
@@ -107,7 +118,7 @@ class MultiElementSelectorWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit MultiElementSelectorWidget(Schema* schema, ElementFilter *filter = nullptr);
+    explicit MultiElementSelectorWidget(Schema* schema, ElementFilterPtr filter);
 
     Elements allElements() const;
     Elements selectedElements() const;
@@ -127,7 +138,7 @@ private:
     QListWidget* _elemsSelector;
     QMap<Element*, QListWidgetItem*> _itemsMap;
 
-    void populate(Schema* schema, ElementFilter *filter);
+    void populate(Schema* schema, ElementFilterPtr filter);
     void currentItemChanged(QListWidgetItem *currentElement, QListWidgetItem *previous);
     void invertCheckState(QListWidgetItem *item);
     Element* element(QListWidgetItem *item) const;
@@ -139,7 +150,7 @@ class ElemOffsetSelectorWidget : public QGridLayout
     Q_OBJECT
 
 public:
-    explicit ElemOffsetSelectorWidget(Schema* schema, ElementFilter* filter = nullptr);
+    explicit ElemOffsetSelectorWidget(Schema* schema, ElementFilterPtr filter);
 
     Element* selectedElement() const { return _elemSelector->selectedElement(); }
     void setSelectedElement(Element *elem) { _elemSelector->setSelectedElement(elem); }

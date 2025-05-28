@@ -15,6 +15,7 @@ class Protocol
 {
 public:
     static bool isEnabled;
+    static bool isDebugEnabled;
     static void setView(QPlainTextEdit* view);
 
     enum RecordType { Report, Info, Note, Error, Warning };
@@ -46,12 +47,12 @@ private:
 } // namespace Z
 
 #define Z_REPORT(p) { \
-    /*qDebug() << p;*/ \
+    if (Z::Protocol::isDebugEnabled) { qDebug() << p; } \
     if (Z::Protocol::isEnabled) { Z::Protocol(Z::Protocol::Report) << p; } \
 }
 
 #define Z_INFO(p) {\
-    /*qInfo() << p;*/ \
+    if (Z::Protocol::isDebugEnabled) { qInfo() << p; } \
     if (Z::Protocol::isEnabled) { Z::Protocol(Z::Protocol::Info) << p; } \
 }
 

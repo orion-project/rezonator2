@@ -68,8 +68,8 @@ MenuButton::MenuButton(QList<QAction *> actions) : QPushButton()
             _menu->addAction(action);
         else _menu->addSeparator();
 
-    connect(_menu, &QMenu::aboutToShow, [this](){ _isMenuOpened = true; });
-    connect(_menu, &QMenu::aboutToHide, [this](){ _isMenuOpened = false; });
+    connect(_menu, &QMenu::aboutToShow, this, [this](){ _isMenuOpened = true; });
+    connect(_menu, &QMenu::aboutToHide, this, [this](){ _isMenuOpened = false; });
 }
 
 void MenuButton::focusInEvent(QFocusEvent *e)
@@ -90,7 +90,7 @@ void MenuButton::focusOutEvent(QFocusEvent *e)
 //------------------------------------------------------------------------------
 
 namespace {
-int countSuitableGlobalParams(Z::Parameters* globalParams, Z::Parameter* param)
+int countSuitableGlobalParams(const Z::Parameters* globalParams, const Z::Parameter* param)
 {
     auto dim = param->dim();
     int count = 0;
@@ -107,7 +107,7 @@ int countSuitableGlobalParams(Z::Parameters* globalParams, Z::Parameter* param)
     return count;
 }
 
-Z::Parameters getSuitableGlobalParams(Z::Parameters* globalParams, Z::Parameter* param)
+Z::Parameters getSuitableGlobalParams(const Z::Parameters* globalParams, const Z::Parameter* param)
 {
     auto dim = param->dim();
     Z::Parameters params;
@@ -175,6 +175,8 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
     }
 
     _valueEditor = new ValueEdit;
+    setFocusProxy(_valueEditor);
+    setFocusPolicy(Qt::StrongFocus);
 
     _unitsSelector = new UnitComboBox(_param->dim(), opts.units);
     layout->addWidget(_valueEditor);
@@ -185,7 +187,7 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
     {
         auto menuButton = new MenuButton(opts.menuButtonActions);
         connect(menuButton, &MenuButton::focused, this, &ParamEditor::editorFocused);
-        connect(menuButton, &QPushButton::clicked, [this, menuButton](){
+        connect(menuButton, &QPushButton::clicked, this, [this, menuButton](){
             // When menu is opened, each action has a pointer to the current param editor
             foreach (auto action, menuButton->menu()->actions())
                 action->setData(QVariant::fromValue(this));
@@ -294,6 +296,8 @@ void ParamEditor::apply()
         qWarning() << "Parameter value should be verified before applying";
         return;
     }
+    
+    Z::ParamLink *newLink = nullptr;
 
     if (_paramLinks)
     {
@@ -311,7 +315,7 @@ void ParamEditor::apply()
             {
                 _paramLinks->removeOne(oldLink);
                 delete oldLink;
-                auto newLink = new Z::ParamLink(_linkSource, _param);
+                newLink = new Z::ParamLink(_linkSource, _param);
                 _paramLinks->append(newLink);
             }
             // Else link has not been changed
@@ -319,14 +323,18 @@ void ParamEditor::apply()
         // New link has been added
         else if (_linkSource)
         {
-            auto newLink = new Z::ParamLink(_linkSource, _param);
+            newLink = new Z::ParamLink(_linkSource, _param);
             _paramLinks->append(newLink);
         }
     }
 
-    _paramChangedHandlerEnabled = false;
-    _param->setValue(value);
-    _paramChangedHandlerEnabled = true;
+    if (newLink)
+        newLink->apply();
+    else {
+        _paramChangedHandlerEnabled = false;
+        _param->setValue(value);
+        _paramChangedHandlerEnabled = true;
+    }
 }
 
 void ParamEditor::focus()

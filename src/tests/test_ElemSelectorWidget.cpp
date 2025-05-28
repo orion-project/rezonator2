@@ -1,12 +1,9 @@
 #include "../core/Elements.h"
 #include "../core/ElementFilter.h"
 #include "../core/Schema.h"
-#include "../tests/TestUtils.h"
 #include "../widgets/ElemSelectorWidget.h"
 
 #include "testing/OriTestBase.h"
-
-#include <memory>
 
 namespace Z {
 namespace Tests {
@@ -35,8 +32,8 @@ namespace ElemSelectorWidgetTests {
 template<bool Result> class TestElemFilter : public ElementFilterCondition
 {
 public:
-    QVector<Element*> checkedElems;
-    bool check(Element *elem) override { checkedElems.append(elem); return Result; }
+    QVector<const Element*> checkedElems;
+    bool check(const Element *elem) override { checkedElems.append(elem); return Result; }
 };
 
 namespace constructor {
@@ -44,7 +41,7 @@ namespace constructor {
 TEST_METHOD(appends_all_elements_when_no_filter)
 {
     TEST_SCHEMA(schema)
-    ElemSelectorWidget target(&schema, nullptr);
+    ElemSelectorWidget target(&schema, {});
     ASSERT_PTR_LIST(target.elements(), schema.elements())
     ASSERT_EQ_INT(target.count(), schema.count())
 }
@@ -53,20 +50,49 @@ TEST_METHOD(must_use_filter)
 {
     TEST_SCHEMA(schema)
     auto condition = new TestElemFilter<true>();
-    std::shared_ptr<ElementFilter> f(new ElementFilter({condition}));
-    ElemSelectorWidget target(&schema, f.get());
+    ElementFilterPtr f(new ElementFilter({condition}));
+    ElemSelectorWidget target(&schema, {.filter = f});
     ASSERT_PTR_LIST(condition->checkedElems, schema.elements())
     ASSERT_PTR_LIST(target.elements(), schema.elements())
     ASSERT_EQ_INT(target.count(), schema.count())
+}
+
+TEST_METHOD(must_use_filter_for_custom_params)
+{
+    TEST_SCHEMA(schema)
+    schema.addCustomParam(new Z::Parameter(Z::Dims::none(), ""));
+    auto condition = new TestElemFilter<true>();
+    ElementFilterPtr f(new ElementFilter({condition}));
+    ElemSelectorWidget target(&schema, {.filter = f, .includeCustomParams = true});
+    Elements elems(schema.elements());
+    elems << const_cast<Element*>(schema.customParamsAsElem());
+    ASSERT_PTR_LIST(condition->checkedElems, elems)
+    ASSERT_PTR_LIST(target.elements(), elems)
+    ASSERT_EQ_INT(target.count(), schema.count()+1)
 }
 
 TEST_METHOD(must_respect_filter)
 {
     TEST_SCHEMA(schema)
     auto condition = new TestElemFilter<false>();
-    std::shared_ptr<ElementFilter> f(new ElementFilter({condition}));
-    ElemSelectorWidget target(&schema, f.get());
+    schema.addCustomParam(new Z::Parameter(Z::Dims::none(), ""));
+    ElementFilterPtr f(new ElementFilter({condition}));
+    ElemSelectorWidget target(&schema, {.filter = f});
     ASSERT_PTR_LIST(condition->checkedElems, schema.elements())
+    ASSERT_EQ_INT(target.elements().size(), 0)
+    ASSERT_EQ_INT(target.count(), 0)
+}
+
+TEST_METHOD(must_respect_filter_for_custom_params)
+{
+    TEST_SCHEMA(schema)
+    auto condition = new TestElemFilter<false>();
+    schema.addCustomParam(new Z::Parameter(Z::Dims::none(), ""));
+    ElementFilterPtr f(new ElementFilter({condition}));
+    ElemSelectorWidget target(&schema, {.filter = f, .includeCustomParams = true});
+    Elements elems(schema.elements());
+    elems << const_cast<Element*>(schema.customParamsAsElem());
+    ASSERT_PTR_LIST(condition->checkedElems, elems)
     ASSERT_EQ_INT(target.elements().size(), 0)
     ASSERT_EQ_INT(target.count(), 0)
 }
@@ -76,7 +102,7 @@ TEST_METHOD(must_respect_filter)
 TEST_METHOD(must_initially_select_the_first)
 {
     TEST_SCHEMA(schema)
-    ElemSelectorWidget target(&schema);
+    ElemSelectorWidget target(&schema, {});
     ASSERT_EQ_INT(target.currentIndex(), 0)
     ASSERT_EQ_PTR(target.selectedElement(), schema.elements().first())
 }
@@ -84,7 +110,7 @@ TEST_METHOD(must_initially_select_the_first)
 TEST_METHOD(can_set_selected_elem_and_current_index)
 {
     TEST_SCHEMA(schema)
-    ElemSelectorWidget target(&schema);
+    ElemSelectorWidget target(&schema, {});
 
     target.setSelectedElement(schema.element(1));
     ASSERT_EQ_INT(target.currentIndex(), 1)
@@ -96,11 +122,13 @@ TEST_METHOD(can_set_selected_elem_and_current_index)
 }
 
 TEST_GROUP("ElemSelectorWidget",
-    ADD_TEST(constructor::appends_all_elements_when_no_filter),
-    ADD_TEST(constructor::must_use_filter),
-    ADD_TEST(constructor::must_respect_filter),
-    ADD_TEST(must_initially_select_the_first),
-    ADD_TEST(can_set_selected_elem_and_current_index),
+    ADD_GUI_TEST(constructor::appends_all_elements_when_no_filter),
+    ADD_GUI_TEST(constructor::must_use_filter),
+    ADD_GUI_TEST(constructor::must_use_filter_for_custom_params),
+    ADD_GUI_TEST(constructor::must_respect_filter),
+    ADD_GUI_TEST(constructor::must_respect_filter_for_custom_params),
+    ADD_GUI_TEST(must_initially_select_the_first),
+    ADD_GUI_TEST(can_set_selected_elem_and_current_index),
 )
 
 } // namespace ElemSelectorWidgetTests
@@ -135,8 +163,9 @@ TEST_METHOD(appends_all_elements_when_no_filter)
 TEST_METHOD(must_use_filter)
 {
     auto condition = new TestParamFilter<true>();
+    Z::ParameterFilterPtr filter(new Z::ParameterFilter({condition}));
     ElemMatrix elem;
-    ParamSelectorWidget target(new Z::ParameterFilter({condition}));
+    ParamSelectorWidget target(filter);
     target.populate(&elem);
     ASSERT_PTR_LIST(condition->checkedParams, elem.params())
     ASSERT_PTR_LIST(target.parameters(), elem.params())
@@ -146,8 +175,9 @@ TEST_METHOD(must_use_filter)
 TEST_METHOD(must_respect_filter)
 {
     auto condition = new TestParamFilter<false>();
+    Z::ParameterFilterPtr filter(new Z::ParameterFilter({condition}));
     ElemMatrix elem;
-    ParamSelectorWidget target(new Z::ParameterFilter({condition}));
+    ParamSelectorWidget target(filter);
     target.populate(&elem);
     ASSERT_PTR_LIST(condition->checkedParams, elem.params())
     ASSERT_EQ_INT(target.parameters().size(), 0)
@@ -212,13 +242,13 @@ TEST_METHOD(with_elem_having_no_params)
 } // namespace repopulate
 
 TEST_GROUP("ParamSelectorWidget",
-    ADD_TEST(populate::appends_all_elements_when_no_filter),
-    ADD_TEST(populate::must_use_filter),
-    ADD_TEST(populate::must_respect_filter),
-    ADD_TEST(must_select_the_first_when_populated),
-    ADD_TEST(can_set_selected_param_and_current_index),
-    ADD_TEST(repopulate::with_null),
-    ADD_TEST(repopulate::with_elem_having_no_params),
+    ADD_GUI_TEST(populate::appends_all_elements_when_no_filter),
+    ADD_GUI_TEST(populate::must_use_filter),
+    ADD_GUI_TEST(populate::must_respect_filter),
+    ADD_GUI_TEST(must_select_the_first_when_populated),
+    ADD_GUI_TEST(can_set_selected_param_and_current_index),
+    ADD_GUI_TEST(repopulate::with_null),
+    ADD_GUI_TEST(repopulate::with_elem_having_no_params),
 )
 
 } // namespace ParamSelectorWidgetTests
@@ -230,7 +260,7 @@ namespace ElemAndParamSelectorTests {
 TEST_METHOD(must_initially_select_the_first)
 {
     TEST_SCHEMA(schema)
-    ElemAndParamSelector target(&schema);
+    ElemAndParamSelector target(&schema, {});
     ASSERT_EQ_PTR(target.selectedElement(), schema.elements().first())
     ASSERT_EQ_PTR(target.selectedParameter(), schema.elements().first()->params().first())
 }
@@ -238,14 +268,14 @@ TEST_METHOD(must_initially_select_the_first)
 TEST_METHOD(must_populate_params_when_selected_element_changes)
 {
     TEST_SCHEMA(schema)
-    ElemAndParamSelector target(&schema);
+    ElemAndParamSelector target(&schema, {});
     target.setSelectedElement(schema.elements().at(2));
     ASSERT_PTR_LIST(target.paramSelector()->parameters(), schema.elements().at(2)->params())
 }
 
 TEST_GROUP("ElemAndParamSelector",
-    ADD_TEST(must_initially_select_the_first),
-    ADD_TEST(must_populate_params_when_selected_element_changes),
+    ADD_GUI_TEST(must_initially_select_the_first),
+    ADD_GUI_TEST(must_populate_params_when_selected_element_changes),
 )
 
 } // namespace ElemAndParamSelectorTests

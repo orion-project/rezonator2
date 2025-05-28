@@ -1,8 +1,6 @@
 #include "../tests/TestSchemaListener.h"
 #include "../tests/TestUtils.h"
 
-#include <memory>
-
 namespace Z {
 namespace Tests {
 namespace SchemaTests {
@@ -86,7 +84,7 @@ TEST_METHOD(destructor__must_delete_custom_params)
     param->test = test;
 
     auto schema = new Schema;
-    schema->customParams()->append(param);
+    schema->addCustomParam(param);
     delete schema;
 
     ASSERT_EQ_DATA("custom param was deleted", true)
@@ -476,16 +474,28 @@ TEST_METHOD(deleteElements__must_raise_events)
 
     schema.deleteElements({elems}, Arg::RaiseEvents(true), Arg::FreeElem(true));
     ASSERT_SCHEMA_STATE(STATE(Modified))
-    ASSERT_LISTENER(elems[2], EVENT(ElemDeleting),
-                              EVENT(ElemDeleting),
-                              EVENT(ElemDeleting),
-                              EVENT(ElemDeleted), EVENT(Changed),
-                              EVENT(ElemDeleted), EVENT(Changed),
-                              EVENT(ElemDeleted), EVENT(Changed),
-                              EVENT(RecalRequred))
-    ASSERT_LISTENER_EVENT_PARAMS(elems[0], elems[1], elems[2],
-                                 elems[0], nullptr, elems[1], nullptr, elems[2], nullptr,
-                                 nullptr)
+    ASSERT_LISTENER(elems[2],
+        EVENT(ElemsDeleting),
+        EVENT(ElemDeleting),
+        EVENT(ElemDeleting),
+        EVENT(ElemDeleting),
+        EVENT(ElemDeleted), EVENT(Changed),
+        EVENT(ElemDeleted), EVENT(Changed),
+        EVENT(ElemDeleted), EVENT(Changed),
+        EVENT(ElemsDeleted),
+        EVENT(RecalRequred)
+        )
+    ASSERT_LISTENER_EVENT_PARAMS(
+        nullptr,
+        elems[0],
+        elems[1],
+        elems[2],
+        elems[0], nullptr,
+        elems[1], nullptr,
+        elems[2], nullptr,
+        nullptr,
+        nullptr
+        )
 }
 
 TEST_METHOD(deleteElements__must_not_raise_events_when_they_disabled_by_param)

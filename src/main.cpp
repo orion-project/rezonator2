@@ -1,5 +1,6 @@
 #include "app/Appearance.h"
 #include "core/Format.h"
+#include "core/Protocol.h"
 #include "tests/TestSuite.h"
 #include "tools/CalculatorWindow.h"
 #include "tools/GaussCalculatorWindow.h"
@@ -79,6 +80,8 @@ int main(int argc, char* argv[])
 
     // Load application settings before any command start
     AppSettings::instance().isDevMode = parser.isSet(optionDevMode);
+    
+    Z::Protocol::isDebugEnabled = parser.isSet(optionDevMode);
 
     // Call `setStyleSheet` after setting loaded
     // to be able to apply custom colors (if they are).

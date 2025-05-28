@@ -1,5 +1,7 @@
 #include "Element.h"
 
+#include "Formula.h"
+#include "Perf.h"
 #include "Protocol.h"
 
 #include <QApplication>
@@ -75,13 +77,17 @@ void Element::addParam(Z::Parameter *param, int index)
 
 void Element::parameterChanged(Z::ParameterBase*)
 {
+    Z_PERF_BEGIN("Element::parameterChanged_1")
     if (_calcMatrixLocked)
         _calcMatrixNeeded = true;
     else
         calcMatrix("Element::parameterChanged");
+    Z_PERF_END
 
+    Z_PERF_BEGIN("Element::parameterChanged_2")
     if (!_eventsLocked && _owner)
         _owner->elementChanged(this);
+    Z_PERF_END
 }
 
 void Element::calcMatrix(const char *reason)
@@ -218,6 +224,46 @@ void ElementDynamic::calcMatrixInternal()
 }
 
 //------------------------------------------------------------------------------
+//                               ElementEventsLocker
+//------------------------------------------------------------------------------
+
+ElementEventsLocker::ElementEventsLocker(Element* elem)
+{
+    _elems << elem;
+    elem->_eventsLocked = true;
+}
+
+ElementEventsLocker::ElementEventsLocker(Z::Parameter* param)
+{
+    collectElems(param);
+}
+
+ElementEventsLocker::~ElementEventsLocker()
+{
+    for (auto elem : std::as_const(_elems))
+        elem->_eventsLocked = false;
+}
+
+void ElementEventsLocker::collectElems(Z::Parameter *param)
+{
+    for (auto listener : param->listeners()) {
+        if (auto elem = dynamic_cast<Element*>(listener); elem) {
+            _elems << elem;
+            elem->_eventsLocked = true;
+        }
+        else if (auto link = dynamic_cast<Z::ParamLink*>(listener); link) {
+            for (auto listener : link->target()->listeners())
+                if (auto elem = dynamic_cast<Element*>(listener); elem) {
+                    _elems << elem;
+                    elem->_eventsLocked = true;
+                }
+        } else if (auto formula = dynamic_cast<Z::Formula*>(listener); formula) {
+            collectElems(formula->target());
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
 //                                Z::Utils
 //------------------------------------------------------------------------------
 
@@ -247,10 +293,11 @@ void setElemWavelen(Element* elem, const Z::Value& lambda)
     param->setValue(lambda);
 }
 
-ParameterFilter* defaultParamFilter()
+ParameterFilterPtr defaultParamFilter()
 {
-    static ParameterFilter filter({ new ParameterFilterVisible });
-    return &filter;
+    static ParameterFilterPtr filter = std::make_shared<ParameterFilter>(
+       std::initializer_list<ParameterFilterCondition*> { new ParameterFilterVisible });
+    return filter;
 }
 
 void copyParamValues(const Element* source, Element* target, const char* reason)

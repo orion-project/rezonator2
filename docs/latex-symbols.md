@@ -2,6 +2,10 @@
 
 https://oeis.org/wiki/List_of_LaTeX_mathematical_symbols
 
+## Symbols
+
+`\infty` $$ \infty $$
+
 ## Relation operators
 
 `\equiv` $$ \equiv $$
@@ -270,4 +274,15 @@ $$
 [\, \cfrac {n_1}{n_2} ]\,
 \big[\, \cfrac {n_1}{n_2} \big]\,
 \bigg[\, \cfrac {n_1}{n_2} \bigg]\,
+$$
+
+
+## Integrals
+
+```latex
+\int_a^b
+```
+
+$$
+\int_{-\infty}^{\infty}
 $$

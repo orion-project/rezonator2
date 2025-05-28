@@ -14,6 +14,7 @@ USE_GROUP(ParametersTests)                         // test_Parameters.cpp
 USE_GROUP(ParamEditorTests)                        // test_ParamEditor.cpp
 USE_GROUP(ParamsEditorTests)                       // test_ParamsEditor.cpp
 USE_GROUP(ElementTests)                            // test_Element.cpp
+USE_GROUP(ElementEventsLockerTests)                // test_ElementEventsLocker.cpp
 USE_GROUP(ElementsTests)                           // test_Elements.cpp
 USE_GROUP(ElementFormulaTests)                     // test_ElementFormula.cpp
 USE_GROUP(ElementFilterTests)                      // test_ElementFilter.cpp
@@ -35,6 +36,7 @@ USE_GROUP(LuaHelperTests)                          // test_LuaHelper.cpp
 USE_GROUP(ProjectOperationsTests)                  // test_ProjectOperations.cpp
 USE_GROUP(FormulaTests)                            // test_Formula.cpp
 USE_GROUP(UtilsTests)                              // test_Utils.cpp
+USE_GROUP(AdjusterTests)                           // test_Adjuster.cpp
 
 TEST_SUITE(
     ADD_GROUP(Ori::Tests::All),
@@ -48,6 +50,7 @@ TEST_SUITE(
     ADD_GROUP(ParamEditorTests),
     ADD_GROUP(ParamsEditorTests),
     ADD_GROUP(ElementTests),
+    ADD_GROUP(ElementEventsLockerTests),
     ADD_GROUP(ElementsTests),
     ADD_GROUP(ElementFormulaTests),
     ADD_GROUP(ElementFilterTests),
@@ -69,6 +72,7 @@ TEST_SUITE(
     ADD_GROUP(ProjectOperationsTests),
     ADD_GROUP(FormulaTests),
     ADD_GROUP(UtilsTests),
+    ADD_GROUP(AdjusterTests),
 )
 
 } // namespace Tests

@@ -389,7 +389,7 @@ void SchemaLayout::updateSelection(const Elements& selected)
 {
     setUpdatesEnabled(false);
 
-    for (auto layout : qAsConst(_elements))
+    for (auto layout : std::as_const(_elements))
         layout->setSelected(false);
     for (auto it = _elemLabels.constBegin(); it != _elemLabels.constEnd(); it++)
         it.value()->setDefaultTextColor(_defaultLabelColor);
@@ -412,7 +412,7 @@ void SchemaLayout::elementClicked(Element* elem, bool multiselect)
         // In multiselect mode we always change selection
         // Either some elem selected or deselected
         changed = true;
-        for (auto layout : qAsConst(_elements)) {
+        for (auto layout : std::as_const(_elements)) {
             if (layout->element() == elem) {
                 // selection state of clicked is toggled
                 if (not layout->isSelected())
@@ -425,7 +425,7 @@ void SchemaLayout::elementClicked(Element* elem, bool multiselect)
     }
     else
     {
-        for (auto layout : qAsConst(_elements)) {
+        for (auto layout : std::as_const(_elements)) {
             if (layout->element() == elem) {
                 // selection state of clicked is not changed
                 selected.append(elem);

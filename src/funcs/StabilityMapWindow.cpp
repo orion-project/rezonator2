@@ -29,7 +29,10 @@ StabilityParamsDlg::StabilityParamsDlg(Schema *schema, Z::Variable *var)
     if (!var->element)
         Z::IO::Json::readVariablePref(RecentData::getObj("func_stab_map"), var, schema);
 
-    _elemSelector = new ElemAndParamSelector(schema, ElementFilter::elemsWithVisibleParams(), Z::Utils::defaultParamFilter());
+    _elemSelector = new ElemAndParamSelector(schema, {
+        .elemFilter = ElementFilters::elemsWithVisibleParams(),
+        .paramFilter = Z::Utils::defaultParamFilter(),
+    });
     connect(_elemSelector, SIGNAL(selectionChanged()), this, SLOT(guessRange()));
 
     _rangeEditor = new GeneralRangeEditor;

@@ -9,7 +9,9 @@ namespace ParamsEditorTests {
 //------------------------------------------------------------------------------
 
 namespace {
-const QString PARAM_DESTRUCTED("param was deleted ");
+
+#define PARAM_DESTRUCTED QString("param was deleted ")
+
 class TestParam : public Z::Parameter
 {
 public:
@@ -67,9 +69,9 @@ TEST_METHOD(destructor__must_delete_params_when_own)
 //------------------------------------------------------------------------------
 
 TEST_GROUP("ParamsEditor",
-    ADD_TEST(ctor__must_register_listeners),
-    ADD_TEST(destructor__must_unregister_listeners_when_no_own),
-    ADD_TEST(destructor__must_delete_params_when_own),
+    ADD_GUI_TEST(ctor__must_register_listeners),
+    ADD_GUI_TEST(destructor__must_unregister_listeners_when_no_own),
+    ADD_GUI_TEST(destructor__must_delete_params_when_own),
 )
 
 } // namespace ParamEditorTests

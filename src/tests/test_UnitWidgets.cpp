@@ -106,8 +106,8 @@ TEST_METHOD(must_select_dim)
 }
 
 TEST_GROUP("DimComboBox",
-    ADD_TEST(must_contain_all_dims),
-    ADD_TEST(must_select_dim),
+    ADD_GUI_TEST(must_contain_all_dims),
+    ADD_GUI_TEST(must_select_dim),
 )
 
 } // namespace DimComboBoxTests

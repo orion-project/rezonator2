@@ -1,4 +1,5 @@
 #include "Format.h"
+#include "Perf.h"
 #include "Protocol.h"
 #include "Schema.h"
 #include "Utils.h"
@@ -37,7 +38,7 @@ void SchemaState::set(State state)
 //------------------------------------------------------------------------------
 
 #define INIT_EVENT(event, raise_changed, next_state)\
-    {event, EventProps{QString(# event), raise_changed, static_cast<SchemaState::State>(next_state)}}
+    {event, EventProps{QString(# event), raise_changed, next_state}}
 
 void SchemaEvents::raise(Event event, void *param, const char* reason) const
 {
@@ -50,9 +51,9 @@ void SchemaEvents::raise(Event event, void *param, const char* reason) const
     const EventProps& eventProps = propsOf(event);
     Z_REPORT(QStringLiteral("%1SchemaEvent: %2, reason=[%3]").arg(alias, eventProps.name, reason))
 
-    if (int(eventProps.nextState) != SchemaState::Current)
+    if (eventProps.nextState)
     {
-        _schema->state().set(eventProps.nextState);
+        _schema->state().set(*eventProps.nextState);
         Z_REPORT(QStringLiteral("%1%2").arg(alias, _schema->state().str()))
     }
 
@@ -77,30 +78,38 @@ const SchemaEvents::EventProps& SchemaEvents::propsOf(Event event)
         //                           | Should also | New state which
         //                           | raise event | schema obtains
         //                           | 'Changed'   | with this event
+        INIT_EVENT(Changed,            false,        SchemaState::Modified ),
+
         INIT_EVENT(Created,            false,        SchemaState::New      ),
         INIT_EVENT(Deleted,            false,        SchemaState::Current  ),
-        INIT_EVENT(Changed,            false,        SchemaState::Modified ),
         INIT_EVENT(Saved,              true,         SchemaState::None     ),
         INIT_EVENT(Loading,            false,        SchemaState::Loading  ),
         INIT_EVENT(Loaded,             true,         SchemaState::None     ),
         INIT_EVENT(Rebuilt,            true,         SchemaState::Modified ),
+
         INIT_EVENT(ElemCreated,        true,         SchemaState::Modified ),
         INIT_EVENT(ElemChanged,        true,         SchemaState::Modified ),
         INIT_EVENT(ElemDeleting,       false,        SchemaState::Current  ),
         INIT_EVENT(ElemDeleted,        true,         SchemaState::Modified ),
+
         INIT_EVENT(ElemsDeleting,      false,        SchemaState::Current  ),
         INIT_EVENT(ElemsDeleted,       false,        SchemaState::Current  ),
+
         INIT_EVENT(ParamsChanged,      true,         SchemaState::Modified ),
         INIT_EVENT(LambdaChanged,      true,         SchemaState::Modified ),
+
         INIT_EVENT(CustomParamCreated, true,         SchemaState::Modified ),
         INIT_EVENT(CustomParamEdited,  true,         SchemaState::Modified ),
         INIT_EVENT(CustomParamChanged, true,         SchemaState::Modified ),
         INIT_EVENT(CustomParamDeleted, true,         SchemaState::Modified ),
         INIT_EVENT(CustomParamDeleting,true,         SchemaState::Current  ),
+
         INIT_EVENT(PumpCreated,        true,         SchemaState::Modified ),
         INIT_EVENT(PumpChanged,        true,         SchemaState::Modified ),
+        INIT_EVENT(PumpCustomized,     true,         SchemaState::Modified ),
         INIT_EVENT(PumpDeleted,        true,         SchemaState::Modified ),
         INIT_EVENT(PumpDeleting,       false,        SchemaState::Current  ),
+
         INIT_EVENT(RecalRequred,       false,        SchemaState::Current  ),
     });
     return _props[event];
@@ -110,31 +119,38 @@ void SchemaEvents::notify(SchemaListener* listener, SchemaEvents::Event event, v
 {
     switch (event)
     {
+    case Changed: listener->schemaChanged(_schema); break;
+
     case Created: listener->schemaCreated(_schema); break;
     case Deleted: listener->schemaDeleted(_schema); break;
-    case Changed: listener->schemaChanged(_schema); break;
     case Saved: listener->schemaSaved(_schema); break;
     case Loading: listener->schemaLoading(_schema); break;
     case Loaded: listener->schemaLoaded(_schema); break;
     case Rebuilt: listener->schemaRebuilt(_schema); break;
+
     case ElemCreated: listener->elementCreated(_schema, reinterpret_cast<Element*>(param)); break;
     case ElemChanged: listener->elementChanged(_schema, reinterpret_cast<Element*>(param)); break;
     case ElemDeleting: listener->elementDeleting(_schema, reinterpret_cast<Element*>(param)); break;
     case ElemDeleted: listener->elementDeleted(_schema, reinterpret_cast<Element*>(param)); break;
+
     case ElemsDeleting: listener->elementsDeleting(_schema); break;
     case ElemsDeleted: listener->elementsDeleted(_schema); break;
+
     case ParamsChanged: listener->schemaParamsChanged(_schema); break;
     case LambdaChanged: listener->schemaLambdaChanged(_schema); break;
+
     case CustomParamCreated: listener->customParamCreated(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
     case CustomParamEdited: listener->customParamEdited(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
     case CustomParamChanged: listener->customParamChanged(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
     case CustomParamDeleting: listener->customParamDeleting(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
     case CustomParamDeleted: listener->customParamDeleted(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
+
     case PumpCreated: listener->pumpCreated(_schema, reinterpret_cast<PumpParams*>(param)); break;
     case PumpChanged: listener->pumpChanged(_schema, reinterpret_cast<PumpParams*>(param)); break;
     case PumpCustomized: listener->pumpCustomized(_schema, reinterpret_cast<PumpParams*>(param)); break;
     case PumpDeleting: listener->pumpDeleting(_schema, reinterpret_cast<PumpParams*>(param)); break;
     case PumpDeleted: listener->pumpDeleted(_schema, reinterpret_cast<PumpParams*>(param)); break;
+
     case RecalRequred: listener->recalcRequired(_schema); break;
     }
 }
@@ -148,6 +164,22 @@ ElementSelector::~ElementSelector()
 }
 
 //------------------------------------------------------------------------------
+//                               CustomParamsElem
+//------------------------------------------------------------------------------
+
+class CustomParamsElem : public Element
+{
+public:
+    const QString type() const override { return "CustomParamsElem"; };
+protected:
+    Element* create() const override {
+        qWarning() << "Do not use CustomParamsElem::create()";
+        return nullptr;
+    }
+    friend class Schema;
+};
+
+//------------------------------------------------------------------------------
 //                                 Schema
 //------------------------------------------------------------------------------
 
@@ -157,19 +189,26 @@ Schema::Schema(const QString &alias) : _alias(alias)
     _wavelength.setValue(Z::Value(980, Z::Units::nm()));
     _wavelength.addListener(this);
 
+    _customParams = new CustomParamsElem;
+    // Do setLabel before setOwner to avoid unnecessary events
+    // TODO: The label will be used in elem-and-param selectors, so should be localized
+    _customParams->setLabel("Global parameters");
+    _customParams->setOwner(this);
+
     _events._schema = this;
     _events.raise(SchemaEvents::Created, "Schema: schema constructor");
 }
 
 Schema::~Schema()
 {
-    _events.raise(SchemaEvents::Deleted, "schema: schema destructor");
+    _events.raise(SchemaEvents::Deleted, "Schema: schema destructor");
+
+    // Formulas use params, clear them before params
+    _formulas.clear();
 
     qDeleteAll(_items);
-    qDeleteAll(_customParams);
     qDeleteAll(_pumps);
-
-    _formulas.clear();
+    delete _customParams;
 
     if (memo) delete memo;
 }
@@ -282,7 +321,11 @@ void Schema::deleteElements(const Elements& elems, Arg::RaiseEvents events, Arg:
 
 void Schema::elementChanged(Element *elem)
 {
+    Z_PERF_BEGIN("Schema::elementChanged")
+
     _events.raise(SchemaEvents::ElemChanged, elem, "Schema: elementChanged");
+
+    Z_PERF_END
 }
 
 void Schema::parameterChanged(Z::ParameterBase *param)
@@ -309,9 +352,19 @@ void Schema::setTripType(TripType value)
 
 Z::Parameters Schema::globalParams() const
 {
-    Z::Parameters list(_customParams);
+    Z::Parameters list(_customParams->params());
     list << const_cast<Z::Parameter*>(&_wavelength);
     return list;
+}
+
+void Schema::addCustomParam(Z::Parameter *param)
+{
+    dynamic_cast<CustomParamsElem*>(_customParams)->_params.append(param);
+}
+
+void Schema::removeCustomParam(Z::Parameter *param)
+{
+    dynamic_cast<CustomParamsElem*>(_customParams)->_params.removeOne(param);
 }
 
 PumpParams* Schema::activePump()
@@ -372,9 +425,7 @@ void Schema::relinkInterfaces()
         else left = dynamic_cast<ElementRange*>(elems.at(i-1));
         if (left)
         {
-            auto link = new Z::ParamLink(left->paramIor(), iface->paramIor1());
-            link->setOption(Z::ParamLink_NonStorable);
-            _paramLinks.append(link);
+            addParamLink(left->paramIor(), iface->paramIor1(), Z::ParamLink_NonStorable);
         }
         else
             iface->paramIor1()->setValue(1);
@@ -387,9 +438,7 @@ void Schema::relinkInterfaces()
         else right = dynamic_cast<ElementRange*>(elems.at(i+1));
         if (right)
         {
-            auto link = new Z::ParamLink(right->paramIor(), iface->paramIor2());
-            link->setOption(Z::ParamLink_NonStorable);
-            _paramLinks.append(link);
+            addParamLink(right->paramIor(), iface->paramIor2(), Z::ParamLink_NonStorable);
         }
         else
             iface->paramIor2()->setValue(1);
@@ -446,6 +495,15 @@ ElementOwner::Position Schema::position(Element* elem) const
     return PositionInMidle;
 }
 
+Z::ParamLink* Schema::addParamLink(Z::Parameter *source, Z::Parameter *target, int options)
+{
+    auto link = new Z::ParamLink(source, target);
+    if (options > 0)
+        link->setOptions(options);
+    _paramLinks.append(link);
+    link->apply();
+    return link;
+}
 
 //------------------------------------------------------------------------------
 //                                Z::Utils

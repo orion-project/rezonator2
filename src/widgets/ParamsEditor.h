@@ -30,7 +30,7 @@ public:
         const Z::Parameters *params;
 
         /// Global parameters to which tagets can be linked.
-        Z::Parameters *globalParams = nullptr;
+        const Z::Parameters *globalParams = nullptr;
 
         /// Container for links to global parameters.
         Z::ParamLinks *paramLinks = nullptr;
