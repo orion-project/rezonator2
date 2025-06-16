@@ -11,6 +11,9 @@ L2 = L - L1
 R1 = -0.09             # -->(//  R < 0
 R2 = 0.15              # //)-->  R > 0
 
+#R1 = float('inf')
+#R2 = float('inf')
+
 print('----------------------------------')
 print_res('Optical path', L * n)
 print_res('Subrange', L1)
