@@ -485,6 +485,19 @@ QVector<TableFunction::ColumnDef> TableFunction::columns() const
     return {beamRadius, frontRadius, halfAngle};
 }
 
+QString TableFunction::columnTitle(int colIndex) const
+{
+    switch (colIndex) {
+    case COL_BEAMSIZE:
+        return qApp->tr("Beam radius", "Table function column");
+    case COL_WAVEFRONT:
+        return qApp->tr("Wavefront ROC", "Table function column");
+    case COL_ANGLE:
+        return qApp->tr("Half div. angle", "Table function column");
+    }
+    return QString("#%1").arg(colIndex);
+}
+
 int TableFunction::columnCount() const
 {
     return COL_COUNT;

@@ -296,6 +296,14 @@ void TableFuncWindow::createToolBar()
     buttonParams->setPopupMode(QToolButton::InstantPopup);
     buttonParams->setIcon(QIcon(":/toolbar/options"));
 
+    _menuColUnits = new QMenu(this);
+    connect(_menuColUnits, &QMenu::aboutToShow, this, &TableFuncWindow::updateColUnitsMenu);
+
+    auto buttonUnits = new QToolButton;
+    buttonUnits->setPopupMode(QToolButton::InstantPopup);
+    buttonUnits->setMenu(_menuColUnits);
+    buttonUnits->setIcon(QIcon(":/toolbar/caliper"));
+
     auto t = toolbar();
     t->addAction(_actnUpdate);
     t->addSeparator();
@@ -306,6 +314,7 @@ void TableFuncWindow::createToolBar()
     t->addAction(_actnShowS);
     t->addSeparator();
     t->addWidget(buttonParams);
+    t->addWidget(buttonUnits);
 }
 
 void TableFuncWindow::createStatusBar()
@@ -440,6 +449,31 @@ void TableFuncWindow::updateParamsActions()
     _actnCalcMediumEnds->setChecked(params.calcMediumEnds);
     _actnCalcEmptySpaces->setChecked(params.calcEmptySpaces);
     _actnCalcSpaceMids->setChecked(params.calcSpaceMids);
+}
+
+void TableFuncWindow::updateColUnitsMenu()
+{
+    _menuColUnits->clear();
+    const auto cols = _function->columns();
+    for (int i = 0; i < cols.size(); i++) {
+        const auto& col = cols.at(i);
+        if (!_unitMenus.contains(i)) {
+            auto menu = new UnitsMenu(this);
+            connect(menu, &UnitsMenu::unitChanged, this, [i, this](Z::Unit unit){
+                const auto col = _function->columns().at(i);
+                if (col.unit == unit) return;
+                _function->setColumnUnit(i, unit);
+                _function->schema()->markModified("TableFuncWindow: unit changed");
+                _table->updateColumnTitles();
+                _table->updateResults();
+            });
+            _unitMenus.insert(i, menu);
+        }
+        auto menu = _unitMenus[i];
+        menu->setUnit(col.unit);
+        auto actn = _menuColUnits->addMenu(menu->menu());
+        actn->setText(_function->columnTitle(i));
+    }
 }
 
 void TableFuncWindow::toggleCalcMediumEnds(bool calc)

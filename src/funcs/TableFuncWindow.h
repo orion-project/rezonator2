@@ -109,6 +109,8 @@ private slots:
 protected:
     TableFunction *_function;
     QMenu *_menuTable;
+    QMenu *_menuColUnits;
+    QMap<int, UnitsMenu*> _unitMenus;
     QAction *_actnUpdate, *_actnShowT, *_actnShowS, *_actnFreeze, *_actnFrozenInfo,
         *_actnCalcMediumEnds, *_actnCalcEmptySpaces, *_actnCalcSpaceMids;
     FrozenStateButton* _buttonFrozenInfo;
@@ -128,6 +130,7 @@ protected:
     void updateModeTS();
     void updateTable();
     void updateParamsActions();
+    void updateColUnitsMenu();
 
     virtual bool configureInternal(const TableFunction::Params&);
 

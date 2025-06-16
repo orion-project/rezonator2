@@ -102,6 +102,7 @@ public:
 
     virtual QVector<ColumnDef> columns() const;
     virtual int columnCount() const;
+    virtual QString columnTitle(int colIndex) const;
     void setColumnUnit(int colIndex, Z::Unit unit);
     const QMap<int, Z::Unit>& columntUnits() const { return _colUnits; }
 

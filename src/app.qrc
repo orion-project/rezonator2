@@ -8,6 +8,7 @@
         <file alias="back_color">../img/toolbar/back_color.svg</file>
         <file alias="book">../img/toolbar/book.svg</file>
         <file alias="bug">../img/toolbar/bug.svg</file>
+        <file alias="caliper">../img/toolbar/caliper.svg</file>
         <file alias="catalog">../img/toolbar/elements.svg</file>
         <file alias="check">../img/toolbar/check.svg</file>
         <file alias="check_all">../img/toolbar/check_all.svg</file>
