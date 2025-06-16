@@ -11,6 +11,13 @@
 
 #include <QDebug>
 
+namespace {
+
+// TODO: Extract into BeamdataAtElems func
+enum TableFunctionColumns { COL_BEAMSIZE, COL_WAVEFRONT, COL_ANGLE, COL_COUNT };
+
+}
+
 const TableFunction::ResultPositionInfo& TableFunction::resultPositionInfo(TableFunction::ResultPosition pos)
 {
 #define I_(pos, ascii, tooltip, icon_path)\
@@ -463,17 +470,40 @@ QVector<TableFunction::ColumnDef> TableFunction::columns() const
     ColumnDef beamRadius;
     beamRadius.titleT = "Wt";
     beamRadius.titleS = "Ws";
-    beamRadius.unit = AppSettings::instance().defaultUnitBeamRadius;
+    beamRadius.unit = _colUnits.value(COL_BEAMSIZE, AppSettings::instance().defaultUnitBeamRadius);
 
     ColumnDef frontRadius;
     frontRadius.titleT = "Rt";
     frontRadius.titleS = "Rs";
-    frontRadius.unit = AppSettings::instance().defaultUnitFrontRadius;
+    frontRadius.unit = _colUnits.value(COL_WAVEFRONT, AppSettings::instance().defaultUnitFrontRadius);
 
     ColumnDef halfAngle;
     halfAngle.titleT = "Vt";
     halfAngle.titleS = "Vs";
-    halfAngle.unit = AppSettings::instance().defaultUnitAngle;
+    halfAngle.unit = _colUnits.value(COL_ANGLE, AppSettings::instance().defaultUnitAngle);
 
     return {beamRadius, frontRadius, halfAngle};
+}
+
+QString TableFunction::columnTitle(int colIndex) const
+{
+    switch (colIndex) {
+    case COL_BEAMSIZE:
+        return qApp->tr("Beam radius", "Table function column");
+    case COL_WAVEFRONT:
+        return qApp->tr("Wavefront ROC", "Table function column");
+    case COL_ANGLE:
+        return qApp->tr("Half div. angle", "Table function column");
+    }
+    return QString("#%1").arg(colIndex);
+}
+
+int TableFunction::columnCount() const
+{
+    return COL_COUNT;
+}
+
+void TableFunction::setColumnUnit(int colIndex, Z::Unit unit)
+{
+    _colUnits[colIndex] = unit;
 }

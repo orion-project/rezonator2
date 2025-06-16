@@ -6,6 +6,7 @@
 #include "../funcs/FuncWindowHelpers.h"
 #include "../math/InfoFunctions.h"
 #include "../widgets/FrozenStateButton.h"
+#include "../widgets/UnitWidgets.h"
 
 #include "helpers/OriWidgets.h"
 #include "helpers/OriLayouts.h"
@@ -68,23 +69,26 @@ enum FixedCols {
     FIXED_COLS_COUNT
 };
 
-TableFuncResultTable::TableFuncResultTable(const QVector<TableFunction::ColumnDef> &columns) : QTableWidget(), _columns(columns)
+TableFuncResultTable::TableFuncResultTable(TableFunction *func) : QTableWidget(), _function(func)
 {
     setWordWrap(false);
-    setColumnCount(FIXED_COLS_COUNT + _columns.size());
+    setColumnCount(FIXED_COLS_COUNT + _function->columnCount());
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionMode(QAbstractItemView::ContiguousSelection);
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
     setItemDelegateForColumn(COL_POSITION, new TableFuncPositionColumnItemDelegate(this));
 
-    connect(this, &QTableWidget::customContextMenuRequested, this, &TableFuncResultTable::showContextMenu);
+    connect(this, &QTableWidget::customContextMenuRequested, this, &TableFuncResultTable::showTableContextMenu);
+    connect(horizontalHeader(), &QTableWidget::customContextMenuRequested, this, &TableFuncResultTable::showHeaderContextMenu);
+    
 }
 
 void TableFuncResultTable::updateColumnTitles()
 {
     QStringList titles;
     titles << tr("Position");
-    for (auto& col : _columns)
+    for (auto& col : _function->columns())
     {
         QString title;
         if (showT and showS)
@@ -104,8 +108,10 @@ void TableFuncResultTable::updateColumnTitles()
     setHorizontalHeaderLabels(titles);
 }
 
-void TableFuncResultTable::update(const QVector<TableFunction::Result>& results)
+void TableFuncResultTable::updateResults()
 {
+    const QVector<TableFunction::Result>& results = _function->results();
+
     if (results.isEmpty())
     {
         clearContents();
@@ -130,9 +136,10 @@ void TableFuncResultTable::update(const QVector<TableFunction::Result>& results)
         it->setData(Qt::UserRole, int(res.position));
         it->setToolTip(TableFunction::resultPositionInfo(res.position).tooltip);
 
+        const auto columns = _function->columns();
         for (int index = 0; index < res.values.size(); index++)
         {
-            const auto& column = _columns.at(index);
+            const auto& column = columns.at(index);
             const auto& value = res.values.at(index);
             double valueT = column.unit->fromSi(value.T);
             double valueS = column.unit->fromSi(value.S);
@@ -162,7 +169,7 @@ void TableFuncResultTable::update(const QVector<TableFunction::Result>& results)
     }
 }
 
-void TableFuncResultTable::showContextMenu(const QPoint& pos)
+void TableFuncResultTable::showTableContextMenu(const QPoint& pos)
 {
     if (!_contextMenu)
     {
@@ -172,6 +179,31 @@ void TableFuncResultTable::showContextMenu(const QPoint& pos)
         _contextMenu->addAction(tr("Select All"), this, &QTableWidget::selectAll);
     }
     _contextMenu->popup(mapToGlobal(pos));
+}
+
+void TableFuncResultTable::showHeaderContextMenu(const QPoint& pos)
+{
+    // The first table column is "Position", not a result
+    int colIndex = horizontalHeader()->logicalIndexAt(pos) - 1;
+    if (colIndex < 0 || colIndex >= _function->columnCount()) return;
+    if (!_unitsMenu) {
+        _unitsMenu = new UnitsMenu(this);
+        connect(_unitsMenu, &UnitsMenu::unitChanged, this, [this](Z::Unit unit){
+            int colIndex = _unitsMenu->property("colIndex").toInt();
+            if (colIndex < 0 || colIndex >= _function->columnCount()) return;
+            auto oldUnit = _unitsMenu->property("oldUnit").toString();
+            if (oldUnit == unit->alias()) return;
+            _function->schema()->markModified("TableFuncResultTable: unit changed");
+            _function->setColumnUnit(colIndex, unit);
+            updateColumnTitles();
+            updateResults();
+        });
+    }
+    auto unit = _function->columns().at(colIndex).unit;
+    _unitsMenu->setUnit(unit);
+    _unitsMenu->setProperty("oldUnit", unit->alias());
+    _unitsMenu->setProperty("colIndex", colIndex);
+    _unitsMenu->menu()->popup(mapToGlobal(pos));
 }
 
 void TableFuncResultTable::copy()
@@ -264,6 +296,14 @@ void TableFuncWindow::createToolBar()
     buttonParams->setPopupMode(QToolButton::InstantPopup);
     buttonParams->setIcon(QIcon(":/toolbar/options"));
 
+    _menuColUnits = new QMenu(this);
+    connect(_menuColUnits, &QMenu::aboutToShow, this, &TableFuncWindow::updateColUnitsMenu);
+
+    auto buttonUnits = new QToolButton;
+    buttonUnits->setPopupMode(QToolButton::InstantPopup);
+    buttonUnits->setMenu(_menuColUnits);
+    buttonUnits->setIcon(QIcon(":/toolbar/caliper"));
+
     auto t = toolbar();
     t->addAction(_actnUpdate);
     t->addSeparator();
@@ -274,6 +314,7 @@ void TableFuncWindow::createToolBar()
     t->addAction(_actnShowS);
     t->addSeparator();
     t->addWidget(buttonParams);
+    t->addWidget(buttonUnits);
 }
 
 void TableFuncWindow::createStatusBar()
@@ -284,7 +325,7 @@ void TableFuncWindow::createStatusBar()
 
 void TableFuncWindow::createContent()
 {
-    _table = new TableFuncResultTable(_function->columns());
+    _table = new TableFuncResultTable(_function);
     _table->updateColumnTitles();
 
     _errorView = new QTextBrowser();
@@ -366,7 +407,7 @@ void TableFuncWindow::freeze(bool frozen)
 
 void TableFuncWindow::updateTable()
 {
-    _table->update(_function->results());
+    _table->updateResults();
 }
 
 TableFunction::Params TableFuncWindow::readParams(const QJsonObject& obj)
@@ -410,6 +451,31 @@ void TableFuncWindow::updateParamsActions()
     _actnCalcSpaceMids->setChecked(params.calcSpaceMids);
 }
 
+void TableFuncWindow::updateColUnitsMenu()
+{
+    _menuColUnits->clear();
+    const auto cols = _function->columns();
+    for (int i = 0; i < cols.size(); i++) {
+        const auto& col = cols.at(i);
+        if (!_unitMenus.contains(i)) {
+            auto menu = new UnitsMenu(this);
+            connect(menu, &UnitsMenu::unitChanged, this, [i, this](Z::Unit unit){
+                const auto col = _function->columns().at(i);
+                if (col.unit == unit) return;
+                _function->setColumnUnit(i, unit);
+                _function->schema()->markModified("TableFuncWindow: unit changed");
+                _table->updateColumnTitles();
+                _table->updateResults();
+            });
+            _unitMenus.insert(i, menu);
+        }
+        auto menu = _unitMenus[i];
+        menu->setUnit(col.unit);
+        auto actn = _menuColUnits->addMenu(menu->menu());
+        actn->setText(_function->columnTitle(i));
+    }
+}
+
 void TableFuncWindow::toggleCalcMediumEnds(bool calc)
 {
     auto params = _function->params();
@@ -435,6 +501,29 @@ bool TableFuncWindow::storableRead(const QJsonObject& root, Z::Report*)
 {
     _function->setParams(readParams(root["function"].toObject()));
     updateParamsActions();
+    
+    if (auto colsJson = root["columns"].toObject(); !colsJson.isEmpty()) {
+        for (auto it = colsJson.constBegin(); it != colsJson.constEnd(); it++) {
+            bool ok = false;
+            auto colIndex = it.key().toInt(&ok);
+            if (!ok) {
+                qWarning() << Q_FUNC_INFO << "Unsupported key" << it.key() << "Column index expected";
+                continue;
+            }
+            auto colJson = it.value().toObject();
+            if (colJson.isEmpty()) {
+                qWarning() << Q_FUNC_INFO << "Wrong value of key" << it.key() << "Object expected";
+                continue;
+            }
+            auto unitAlias = colJson["unit"].toString();
+            auto unit = Z::Units::findByAlias(unitAlias);
+            if (!unit) {
+                qWarning() << Q_FUNC_INFO << "Unknown unit for column" << it.key() << unitAlias;
+                continue;
+            }
+            _function->setColumnUnit(colIndex, unit);
+        }
+    }
 
     auto modeTS = root["window"].toObject()["ts_mode"].toString();
     bool modeT = true, modeS = true;
@@ -450,6 +539,16 @@ bool TableFuncWindow::storableRead(const QJsonObject& root, Z::Report*)
 bool TableFuncWindow::storableWrite(QJsonObject& root, Z::Report*)
 {
     root["function"] = writeParams(_function->params());
+
+    if (const auto &colUnits = _function->columntUnits(); !colUnits.isEmpty()) {
+        QJsonObject colsJson;
+        for (auto it = colUnits.constBegin(); it != colUnits.constEnd(); it++) {
+            QJsonObject colJson;
+            colJson["unit"] = it.value()->alias();
+            colsJson[QString::number(it.key())] = colJson;
+        }
+        root["columns"] = colsJson;
+    }
 
     bool modeT = _actnShowT->isChecked();
     bool modeS = _actnShowS->isChecked();

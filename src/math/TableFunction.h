@@ -101,6 +101,10 @@ public:
     virtual void calculate();
 
     virtual QVector<ColumnDef> columns() const;
+    virtual int columnCount() const;
+    virtual QString columnTitle(int colIndex) const;
+    void setColumnUnit(int colIndex, Z::Unit unit);
+    const QMap<int, Z::Unit>& columntUnits() const { return _colUnits; }
 
     const QVector<Result>& results() const { return _results; }
 
@@ -112,6 +116,7 @@ protected:
     std::shared_ptr<PumpCalculator> _pumpCalc;
     std::shared_ptr<AbcdBeamCalculator> _beamCalc;
     QList<Element*> _activeElements; // valid only during calculate() call
+    QMap<int, Z::Unit> _colUnits;
     Params _params;
 
     bool prepareSinglePass();
