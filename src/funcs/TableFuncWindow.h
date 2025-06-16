@@ -20,6 +20,7 @@ class StatusBar;
 
 class FrozenStateButton;
 class TableFunction;
+class UnitsMenu;
 
 //------------------------------------------------------------------------------
 
@@ -44,21 +45,23 @@ class TableFuncResultTable: public QTableWidget
     Q_OBJECT
 
 public:
-    TableFuncResultTable(const QVector<TableFunction::ColumnDef>& columns);
+    TableFuncResultTable(TableFunction *func);
 
     bool showT = true;
     bool showS = true;
 
     void updateColumnTitles();
-    void update(const QVector<TableFunction::Result>& results);
+    void updateResults();
 
     void copy();
 
 private:
-    QVector<TableFunction::ColumnDef> _columns;
+    TableFunction *_function;
     QMenu *_contextMenu = nullptr;
+    UnitsMenu *_unitsMenu = nullptr;
 
-    void showContextMenu(const QPoint& pos);
+    void showTableContextMenu(const QPoint& pos);
+    void showHeaderContextMenu(const QPoint& pos);
 };
 
 //------------------------------------------------------------------------------
