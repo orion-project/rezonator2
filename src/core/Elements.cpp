@@ -602,11 +602,13 @@ ElemThickLens::ElemThickLens() : ElementRange()
     _radius1 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R1"), QStringLiteral("R<sub>1</sub>"),
                                 qApp->translate("Param", "Left radius of curvature"),
                                 qApp->translate("Param", "Negative value means left-bulged surface, "
-                                                         "positive value means right-bulged surface."));
+                                                         "positive value means right-bulged surface. "
+                                                         "Set to zero to get the flat surface."));
     _radius2 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R2"), QStringLiteral("R<sub>2</sub>"),
                                 qApp->translate("Param", "Right radius of curvature"),
                                 qApp->translate("Param", "Negative value means left-bulged surface, "
-                                                         "positive value means right-bulged surface."));
+                                                         "positive value means right-bulged surface. "
+                                                         "Set to zero to get the flat surface."));
 
     _radius1->setValue(-100_mm);
     _radius2->setValue(100_mm);
@@ -614,8 +616,8 @@ ElemThickLens::ElemThickLens() : ElementRange()
     addParam(_radius1);
     addParam(_radius2);
 
-    _radius1->setVerifier(globalCurvatureRadiusVerifier());
-    _radius2->setVerifier(globalCurvatureRadiusVerifier());
+    // _radius1->setVerifier(globalCurvatureRadiusVerifier());
+    // _radius2->setVerifier(globalCurvatureRadiusVerifier());
 
     setOption(Element_Asymmetrical);
 }
@@ -626,24 +628,55 @@ void ElemThickLens::calcMatrixInternal()
     const double n = ior();
     const double R1 = radius1();
     const double R2 = radius2();
-
-    const double A = 1 + (L/R1)*(n-1)/n;
-    const double B = L/n;
-    const double C = (n-1)*(1/R1 - 1/R2) - L/R1/R2*(n-1)*(n-1)/n;
-    const double D = 1 - (L/R2)*(n-1)/n;
-
-    _mt.assign(A, B, C, D);
-    _ms = _mt;
-
     const double R1_inv = -R2;
     const double R2_inv = -R1;
+    const bool flat1 = Double(R1).isZero();
+    const bool flat2 = Double(R2).isZero();
+    
+    double A, B, C, D, A_inv, B_inv, C_inv, D_inv;
+    
+    B_inv = B = L/n;
 
-    const double A_inv = 1 + (L/R1_inv)*(n-1)/n;
-    const double B_inv = L/n;
-    const double C_inv = (n-1)*(1/R1_inv - 1/R2_inv) - L/R1_inv/R2_inv*(n-1)*(n-1)/n;
-    const double D_inv = 1 - (L/R2_inv)*(n-1)/n;
+    if (flat1 && flat2)
+    {
+        A_inv = A = 1;
+        C_inv =  C = 0;
+        D_inv = D = 1;
+    }
+    else if (flat1)
+    {
+        A = 1;
+        C = -(n-1)/R2;
+        D = 1 - L/R2*(n-1)/n;
 
+        A_inv = 1 + L/R1_inv*(n-1)/n;
+        C_inv = (n-1)/R1_inv;
+        D_inv = 1;
+    }
+    else if (flat2)
+    {
+        A = 1 + L/R1*(n-1)/n;
+        C = (n-1)/R1;
+        D = 1;
+
+        A_inv = 1;
+        C_inv = -(n-1)/R2_inv;
+        D_inv = 1 - L/R2_inv*(n-1)/n;
+    }
+    else
+    {
+        A = 1 + (L/R1)*(n-1)/n;
+        C = (n-1)*(1/R1 - 1/R2) - L/R1/R2*(n-1)*(n-1)/n;
+        D = 1 - (L/R2)*(n-1)/n;
+
+        A_inv = 1 + (L/R1_inv)*(n-1)/n;
+        C_inv = (n-1)*(1/R1_inv - 1/R2_inv) - L/R1_inv/R2_inv*(n-1)*(n-1)/n;
+        D_inv = 1 - (L/R2_inv)*(n-1)/n;
+    }
+
+    _mt.assign(A, B, C, D);
     _mt_inv.assign(A_inv, B_inv, C_inv, D_inv);
+    _ms = _mt;
     _ms_inv = _mt_inv;
 }
 
@@ -654,13 +687,67 @@ void ElemThickLens::calcSubmatrices()
     const double L2 = lengthSI() - L1;
     const double R1 = radius1();
     const double R2 = radius2();
+    const bool flat1 = Double(R1).isZero();
+    const bool flat2 = Double(R2).isZero();
+    
+    double A1, B1, C1, D1, A2, B2, C2, D2;
+    
+    if (flat1 && flat2)
+    {
+        A1 = 1;
+        B1 = L1/n;
+        C1 = 0;
+        D1 = 1/n;
+        
+        A2 = 1;
+        B2 = L2;
+        C2 = 0;
+        D2 = n;
+    }
+    else if (flat1)
+    {
+        A1 = 1;
+        B1 = L1/n;
+        C1 = 0;
+        D1 = 1/n;
 
-    //  --> (:: -->  half lengh * input to medium
-    _mt1.assign(1 + L1*(n-1)/R1/n, L1/n, (n-1)/R1/n, 1/n);
+        //  --> ::) -->  output from media * half length
+        A2 = 1;
+        B2 = L2;
+        C2 = (1-n)/R2;
+        D2 = L2*(1-n)/R2 + n;
+    }
+    else if (flat2)
+    {
+        //  --> (:: -->  half lengh * input to medium
+        A1 = 1 + L1*(n-1)/R1/n;
+        B1 = L1/n;
+        C1 = (n-1)/R1/n;
+        D1 = 1/n;
+
+        A2 = 1;
+        B2 = L2;
+        C2 = 0;
+        D2 = n;
+    }
+    else
+    {
+        //  --> (:: -->  half lengh * input to medium
+        A1 = 1 + L1*(n-1)/R1/n;
+        B1 = L1/n;
+        C1 = (n-1)/R1/n;
+        D1 = 1/n;
+        
+        //  --> ::) -->  output from media * half length
+        A2 = 1;
+        B2 = L2;
+        C2 = (1-n)/R2;
+        D2 = L2*(1-n)/R2 + n;
+    }
+
+    _mt1.assign(A1, B1, C1, D1);
+    _mt2.assign(A2, B2, C2, D2);
     _ms1 = _mt1;
-
-    //  --> ::) -->  output from media * half length
-    _mt2.assign(1, L2, (1-n)/R2, L2*(1-n)/R2 + n);
     _ms2 = _mt2;
 }
 

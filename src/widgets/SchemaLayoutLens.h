@@ -11,6 +11,7 @@
 namespace CurvedElementLayout {
     enum CurvedForm {
         FormUnknown,
+        Plate,              //      ||
         ConvexLens,         //      ()
         ConcaveLens,        //      )(
         ConvexConcaveLens,  //      ((
@@ -44,6 +45,10 @@ namespace CurvedElementLayout {
 
         switch (paintMode) {
         case FormUnknown:
+            break;
+            
+        case Plate:
+        path.addRect(boundingRect());
             break;
 
         case ConvexLens: // ()
@@ -327,9 +332,21 @@ namespace ElemThickLensLayout {
         if (!lens) return;
         layout.reset(new CurvedElementLayout::Layout(nullptr, _owner));
         layout->setHalfSize(HW, HH);
-        auto R1 = lens->radius1();
-        auto R2 = lens->radius2();
-        if (R1 < 0 && R2 > 0) // ()
+        const double R1 = lens->radius1();
+        const double R2 = lens->radius2();
+        const bool flat1 = Double(R1).isZero();
+        const bool flat2 = Double(R2).isZero();
+        if (flat1 && flat2)
+            layout->paintMode = CurvedElementLayout::Plate;
+        else if (flat1 && R2 > 0) // |)
+            layout->paintMode = CurvedElementLayout::PlanoConvexLens;
+        else if (flat1 && R2 < 0) // |(
+            layout->paintMode = CurvedElementLayout::PlanoConcaveLens;
+        else if (flat2 && R1 > 0) // )|
+            layout->paintMode = CurvedElementLayout::ConcavePlanoLens;
+        else if (flat2 && R1 < 0) // (|
+            layout->paintMode = CurvedElementLayout::ConvexPlanoLens;
+        else if (R1 < 0 && R2 > 0) // ()
             layout->paintMode = CurvedElementLayout::ConvexLens;
         else if (R1 > 0 && R2 < 0) // )(
             layout->paintMode = CurvedElementLayout::ConcaveLens;
