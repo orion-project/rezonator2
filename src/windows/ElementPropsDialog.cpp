@@ -146,8 +146,8 @@ void ElementPropsDialog::collect()
         return;
     }
 
-    ElementEventsLocker eventsLocker(_element);
-    ElementMatrixLocker matrixLocker(_element, "ElementPropsDialog: apply params");
+    ElementEventsLocker eventsLocker(_element, "ElementPropsDialog::collect");
+    ElementMatrixLocker matrixLocker(_element, "ElementPropsDialog::collect");
 
     _element->setLabel(_editorLabel->text());
     _element->setTitle(_editorTitle->text());

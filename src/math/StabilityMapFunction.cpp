@@ -19,8 +19,8 @@ void StabilityMapFunction::calculate(CalculationMode calcMode)
 
     auto elem = arg()->element;
     auto param = arg()->parameter;
-    ElementEventsLocker elemLock(elem);
-    Z::ParamValueBackup paramLock(param);
+    ElementEventsLocker elemLock(elem, "StabilityMapFunction::calculate");
+    Z::ParamValueBackup paramLock(param, "StabilityMapFunction::calculate");
 
     _plotRange = arg()->range.plottingRange();
     if (!prepareResults(_plotRange)) return;
@@ -72,8 +72,8 @@ Z::PointTS StabilityMapFunction::calculateAt(const Z::Value& v)
     _calc->setStabilityCalcMode(stabilityCalcMode());
     auto elem = arg()->element;
     auto param = arg()->parameter;
-    ElementEventsLocker elemLock(elem);
-    Z::ParamValueBackup paramLock(param);
+    ElementEventsLocker elemLock(elem, "StabilityMapFunction::calculateAt");
+    Z::ParamValueBackup paramLock(param, "StabilityMapFunction::calculateAt");
     param->setValue(v);
     _calc->multMatrix("StabilityMapFunction::calculateAt");
     return _calc->stability();
@@ -83,8 +83,8 @@ QVector<Z::RangeSi> StabilityMapFunction::findStabilityBounds(Z::WorkPlane ts) c
 {
     auto elem = arg()->element;
     auto param = arg()->parameter;
-    ElementEventsLocker elemLock(elem);
-    Z::ParamValueBackup paramLock(param);
+    ElementEventsLocker elemLock(elem, "StabilityMapFunction::findStabilityBounds");
+    Z::ParamValueBackup paramLock(param, "StabilityMapFunction::findStabilityBounds");
     _calc->setStabilityCalcMode(Z::Enums::StabilityCalcMode::Squared);
 
     auto solve = [&](double x1, double x2) -> std::optional<double> {

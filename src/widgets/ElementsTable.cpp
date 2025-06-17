@@ -167,13 +167,13 @@ public:
 
     void schemaRebuilt(Schema*) override
     {
-        emit dataChanged(index(0, 0), index(_schema->count(), COL_COUNT));
+        emit dataChanged(index(0, 0), index(_schema->count(), COL_COUNT-1));
     }
 
     void elementChanged(Schema*, Element* elem) override
     {
         int row = _schema->indexOf(elem);
-        emit dataChanged(index(row, 0), index(row, COL_COUNT));
+        emit dataChanged(index(row, 0), index(row, COL_COUNT-1));
         adjustColumns();
     }
 

@@ -49,8 +49,8 @@ void BeamVariationFunction::calculate(CalculationMode calcMode)
     auto param = arg()->parameter;
     auto unitX = range.unit();
 
-    ElementEventsLocker elemLock(param);
-    Z::ParamValueBackup paramLock(param);
+    ElementEventsLocker elemLock(param, "BeamVariationFunction::calculate");
+    Z::ParamValueBackup paramLock(param, "BeamVariationFunction::calculate");
 
     Z_PERF_RESET
     Z_PERF_BEGIN("BeamVariationFunction")
@@ -90,10 +90,9 @@ void BeamVariationFunction::calculate(CalculationMode calcMode)
 
 Z::PointTS BeamVariationFunction::calculateAt(const Z::Value& v)
 {
-    auto elem = arg()->element;
     auto param = arg()->parameter;
-    ElementEventsLocker elemLock(elem);
-    Z::ParamValueBackup paramLock(param);
+    ElementEventsLocker elemLock(param, "BeamVariationFunction::calculateAt");
+    Z::ParamValueBackup paramLock(param, "BeamVariationFunction::calculateAt");
     auto rangeElem = Z::Utils::asRange(_pos.element);
     if (rangeElem)
         rangeElem->setSubRangeSI(_pos.offset.toSi());

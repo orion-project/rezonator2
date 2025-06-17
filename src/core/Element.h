@@ -53,7 +53,7 @@ public:
     enum Position {PositionInvalid, PositionAtLeft, PositionInMidle, PositionAtRight};
 public:
     virtual ~ElementOwner();
-    virtual void elementChanged(Element*) {}
+    virtual void elementChanged(Element*, const QString &reason) { Q_UNUSED(reason) }
     virtual int indexOf(Element*) const { return -1; }
     virtual int count() const { return 0; }
     virtual Position position(Element*) const { return PositionInvalid; }
@@ -332,12 +332,13 @@ protected:
 class ElementEventsLocker
 {
 public:
-    ElementEventsLocker(Element *elem);
-    ElementEventsLocker(Z::Parameter *param);
+    ElementEventsLocker(Element *elem, const char *reason);
+    ElementEventsLocker(Z::Parameter *param, const char *reason);
     ~ElementEventsLocker();
 
 private:
     Elements _elems;
+    const char *_reason;
 
     void collectElems(Z::Parameter *param);
 };
@@ -398,6 +399,8 @@ inline QSize elemIconSize() { return QSize(24, 24); }
 inline QString elemIconPath(const QString& elemType) { return ":/elem_icon/" % elemType; }
 inline QString elemIconPath(Element* elem) { return elemIconPath(elem->type()); }
 inline QString elemDrawingPath(const QString& elemType) { return ":/elem_drawing/" % elemType; }
+
+QString displayStr(const Elements &elems);
 
 } // namespace Utils
 } // namespace Z

@@ -164,7 +164,7 @@ private:
         Z_PERF_BEGIN("SchemaParamsTableModel::updateParamRow")
 
         int row = findRow(param);
-        emit dataChanged(index(row, 0), index(row, COL_COUNT));
+        emit dataChanged(index(row, 0), index(row, COL_COUNT-1));
         adjustColumns();
     
         Z_PERF_END

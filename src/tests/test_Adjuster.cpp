@@ -56,7 +56,7 @@ TEST_METHOD(must_raise_events_when_custom_param_changed_1)
     schema.insertElements({ e1 }, 0, Arg::RaiseEvents(false));
     schema.addCustomParam(p0);
     {
-        ElementEventsLocker locker(e1);
+        ElementEventsLocker locker(e1, "");
         schema.addParamLink(p0, e1->param("p1"));
     }
     
@@ -87,8 +87,8 @@ TEST_METHOD(must_raise_events_when_custom_param_changed_2)
     schema.insertElements({ e1, e2 }, 0, Arg::RaiseEvents(false));
     schema.addCustomParam(p0);
     {
-        ElementEventsLocker locker1(e1);
-        ElementEventsLocker locker2(e2);
+        ElementEventsLocker locker1(e1, "");
+        ElementEventsLocker locker2(e2, "");
         schema.addParamLink(p0, e1->param("p1"));
         schema.addParamLink(p0, e2->param("p1"));
     }

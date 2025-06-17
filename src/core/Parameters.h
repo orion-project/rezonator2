@@ -452,18 +452,13 @@ typedef std::shared_ptr<const ParameterFilter> ParameterFilterPtr;
 class ParamValueBackup
 {
 public:
-    ParamValueBackup(Parameter* param): _param(param), _backup(param->value())
-    {
-    }
-
-    ~ParamValueBackup()
-    {
-        _param->setValue(_backup);
-    }
+    ParamValueBackup(Parameter* param, const char *reason);
+    ~ParamValueBackup();
 
 private:
     Parameter* _param;
     Value _backup;
+    const char *_reason;
 };
 
 //------------------------------------------------------------------------------

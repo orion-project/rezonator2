@@ -75,7 +75,7 @@ void Element::addParam(Z::Parameter *param, int index)
     else _params.insert(index, param);
 }
 
-void Element::parameterChanged(Z::ParameterBase*)
+void Element::parameterChanged(Z::ParameterBase *p)
 {
     Z_PERF_BEGIN("Element::parameterChanged_1")
     if (_calcMatrixLocked)
@@ -86,7 +86,7 @@ void Element::parameterChanged(Z::ParameterBase*)
 
     Z_PERF_BEGIN("Element::parameterChanged_2")
     if (!_eventsLocked && _owner)
-        _owner->elementChanged(this);
+        _owner->elementChanged(this, QStringLiteral("Element::parameterChanged(%1)").arg(p->alias()));
     Z_PERF_END
 }
 
@@ -109,21 +109,21 @@ void Element::setLabel(const QString& value)
 {
     _label = value;
     if (!_eventsLocked && _owner)
-        _owner->elementChanged(this);
+        _owner->elementChanged(this, "Element::setLabel");
 }
 
 void Element::setTitle(const QString& value)
 {
     _title = value;
     if (!_eventsLocked && _owner)
-        _owner->elementChanged(this);
+        _owner->elementChanged(this, "Element::setTitle");
 }
 
 void Element::setDisabled(bool value)
 {
     _disabled = value;
     if (!_eventsLocked && _owner)
-        _owner->elementChanged(this);
+        _owner->elementChanged(this, "Element::setDisabled");
 }
 
 //------------------------------------------------------------------------------
@@ -227,19 +227,22 @@ void ElementDynamic::calcMatrixInternal()
 //                               ElementEventsLocker
 //------------------------------------------------------------------------------
 
-ElementEventsLocker::ElementEventsLocker(Element* elem)
+ElementEventsLocker::ElementEventsLocker(Element* elem, const char *reason): _reason(reason)
 {
     _elems << elem;
     elem->_eventsLocked = true;
+    //qDebug() << "Lock events" << elem->displayLabel() << reason;
 }
 
-ElementEventsLocker::ElementEventsLocker(Z::Parameter* param)
+ElementEventsLocker::ElementEventsLocker(Z::Parameter* param, const char *reason): _reason(reason)
 {
     collectElems(param);
+    //qDebug() << "Lock events" << Z::Utils::displayStr(_elems) << reason;
 }
 
 ElementEventsLocker::~ElementEventsLocker()
 {
+    //qDebug() << "Unlock events" << Z::Utils::displayStr(_elems) << _reason;
     for (auto elem : std::as_const(_elems))
         elem->_eventsLocked = false;
 }
@@ -325,6 +328,14 @@ void copyParamValuesByName(const Element* source, Element* target, const char* r
         if (p1 and p1->dim() == p->dim())
             p1->setValue(p->value());
     }
+}
+
+QString displayStr(const Elements &elems)
+{
+    QStringList s;
+    for (const auto &elem : elems)
+        s << elem->displayLabel();
+    return s.join(',');
 }
 
 } // namespace Utils

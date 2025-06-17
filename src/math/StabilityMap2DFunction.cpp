@@ -8,10 +8,10 @@ void StabilityMap2DFunction::calculate(CalculationMode calcMode)
     if (!checkArg(&_paramX)) return;
     if (!checkArg(&_paramY)) return;
 
-    ElementEventsLocker elemLockX(_paramX.element);
-    ElementEventsLocker elemLockY(_paramY.element);
-    Z::ParamValueBackup paramLockX(_paramX.parameter);
-    Z::ParamValueBackup paramLockY(_paramY.parameter);
+    ElementEventsLocker elemLockX(_paramX.element, "StabilityMap2DFunction::calculate");
+    ElementEventsLocker elemLockY(_paramY.element, "StabilityMap2DFunction::calculate");
+    Z::ParamValueBackup paramLockX(_paramX.parameter, "StabilityMap2DFunction::calculate");
+    Z::ParamValueBackup paramLockY(_paramY.parameter, "StabilityMap2DFunction::calculate");
 
     _rangeX = _paramX.range.plottingRange();
     _rangeY = _paramY.range.plottingRange();
@@ -78,10 +78,10 @@ bool StabilityMap2DFunction::checkArg(Z::Variable* arg)
 
 Z::PointTS StabilityMap2DFunction::calculateAtXY(const Z::Value& x, const Z::Value& y)
 {
-    ElementEventsLocker elemLockX(_paramX.element);
-    ElementEventsLocker elemLockY(_paramY.element);
-    Z::ParamValueBackup paramLockX(_paramX.parameter);
-    Z::ParamValueBackup paramLockY(_paramY.parameter);
+    ElementEventsLocker elemLockX(_paramX.element, "StabilityMap2DFunction::calculateAtXY");
+    ElementEventsLocker elemLockY(_paramY.element, "StabilityMap2DFunction::calculateAtXY");
+    Z::ParamValueBackup paramLockX(_paramX.parameter, "StabilityMap2DFunction::calculateAtXY");
+    Z::ParamValueBackup paramLockY(_paramY.parameter, "StabilityMap2DFunction::calculateAtXY");
     _paramX.parameter->setValue(x);
     _paramY.parameter->setValue(y);
     _calc->multMatrix("StabilityMap2DFunction::calculateAtXY");

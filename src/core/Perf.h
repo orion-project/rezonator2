@@ -1,7 +1,7 @@
 #ifndef PERF_H
 #define PERF_H
 
-#define Z_PERF_ENABLED
+//#define Z_PERF_ENABLED
 
 #ifdef Z_PERF_ENABLED
 

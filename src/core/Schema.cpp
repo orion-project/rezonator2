@@ -319,11 +319,12 @@ void Schema::deleteElements(const Elements& elems, Arg::RaiseEvents events, Arg:
     }
 }
 
-void Schema::elementChanged(Element *elem)
+void Schema::elementChanged(Element *elem, const QString &reason)
 {
     Z_PERF_BEGIN("Schema::elementChanged")
 
-    _events.raise(SchemaEvents::ElemChanged, elem, "Schema: elementChanged");
+    auto reasonEx = QStringLiteral("%1, elem(%2)").arg(reason, elem->displayLabel()).toStdString();
+    _events.raise(SchemaEvents::ElemChanged, elem, reasonEx.c_str());
 
     Z_PERF_END
 }
@@ -409,7 +410,7 @@ void Schema::relinkInterfaces()
         ElementInterface *iface = dynamic_cast<ElementInterface*>(elems.at(i));
         if (!iface) continue;
 
-        ElementEventsLocker eventLocker(iface);
+        ElementEventsLocker eventLocker(iface, "Schema::relinkInterfaces");
         ElementMatrixLocker matrixLocker(iface, "Schema::relinkInterfaces");
 
         removeParamLinks(iface);

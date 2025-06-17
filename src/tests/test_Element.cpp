@@ -45,7 +45,7 @@ class TestElemOwner : public ElementOwner
 public:
     bool changed = false;
     Element *element = nullptr;
-    void elementChanged(Element *e) override { element = e; changed = true; }
+    void elementChanged(Element *e, const QString&) override { element = e; changed = true; }
 };
 }
 
@@ -113,7 +113,7 @@ TEST_METHOD(Element_unlock_does_not_calculates_matrix)
     TestElement elem;
 
     {
-        ElementEventsLocker locker(&elem);
+        ElementEventsLocker locker(&elem, "");
         ASSERT_MATRIX_NOT_CALCULATED(elem)
     }
 
@@ -125,7 +125,7 @@ TEST_METHOD(Element_unlock_does_not_raise_events)
     ELEMENT_AND_OWNER
 
     {
-        ElementEventsLocker locker(&elem);
+        ElementEventsLocker locker(&elem, "");
         ASSERT_OWNER_NOT_NOTIFYED
     }
 
@@ -151,7 +151,7 @@ TEST_METHOD(Element_setDisabled_must_raise_event)
     ELEMENT_AND_OWNER
 
     {
-        ElementEventsLocker locker(&elem);
+        ElementEventsLocker locker(&elem, "");
         elem.setDisabled(true);
         ASSERT_OWNER_NOT_NOTIFYED
     }
@@ -176,7 +176,7 @@ TEST_METHOD(Element_setTitle_must_raise_event)
     ELEMENT_AND_OWNER
 
     {
-        ElementEventsLocker locker(&elem);
+        ElementEventsLocker locker(&elem, "");
         elem.setTitle("test");
         ASSERT_OWNER_NOT_NOTIFYED
     }
@@ -201,7 +201,7 @@ TEST_METHOD(Element_setLabel_must_raise_event)
     ELEMENT_AND_OWNER
 
     {
-        ElementEventsLocker locker(&elem);
+        ElementEventsLocker locker(&elem, "");
         elem.setLabel("test");
         ASSERT_OWNER_NOT_NOTIFYED
     }
@@ -222,7 +222,7 @@ TEST_METHOD(ElementOwner_setParam_must_recalculate_matrix)
 TEST_METHOD(ElementOwner_setParam_must_recalculate_matrix_when_locked)
 {
     TestElement elem;
-    ElementEventsLocker locker(&elem);
+    ElementEventsLocker locker(&elem, "");
     elem.params()[0]->setValue(100_mkm);
     ASSERT_MATRIX_CALCULATED(elem)
 }
@@ -232,7 +232,7 @@ TEST_METHOD(ElementOwner_setParam_must_raise_event)
     ELEMENT_AND_OWNER
 
     {
-        ElementEventsLocker locker(&elem);
+        ElementEventsLocker locker(&elem, "");
         elem.params()[0]->setValue(100_mkm);
         ASSERT_OWNER_NOT_NOTIFYED
     }

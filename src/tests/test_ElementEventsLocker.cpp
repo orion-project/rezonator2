@@ -40,7 +40,7 @@ TEST_METHOD(schema_not_modified_when_locked)
 {
     SCHEMA_AND_LISTENER_AND_ELEM
 
-    ElementEventsLocker locker(elem);
+    ElementEventsLocker locker(elem, "");
 
     elem->params().byIndex(0)->setValue(1_m);
     ASSERT_IS_FALSE(schema.modified());
@@ -65,7 +65,7 @@ TEST_METHOD(schema_not_modified_when_link_added_and_locked)
 {
     SCHEMA_AND_LISTENER_AND_ELEM
 
-    ElementEventsLocker locker(elem);
+    ElementEventsLocker locker(elem, "");
     
     auto p0 = new Z::Parameter(Z::Dims::linear(), "");
     schema.addCustomParam(p0);
@@ -82,7 +82,7 @@ TEST_METHOD(schema_modified_when_linked_parameter_changed_and_not_locked)
 
     auto p0 = new Z::Parameter(Z::Dims::linear(), "");
     {
-        ElementEventsLocker locker(elem);
+        ElementEventsLocker locker(elem, "");
         schema.addCustomParam(p0);
         schema.addParamLink(p0, elem->params().byIndex(0));
     }
@@ -100,12 +100,12 @@ TEST_METHOD(schema_not_modified_when_linked_parameter_changed_and_locked)
     auto p0 = new Z::Parameter(Z::Dims::linear(), "");
 
     {
-        ElementEventsLocker locker(elem);
+        ElementEventsLocker locker(elem, "");
         schema.addCustomParam(p0);
         schema.addParamLink(p0, elem->params().byIndex(0));
     }
 
-    ElementEventsLocker locker(p0);
+    ElementEventsLocker locker(p0, "");
 
     p0->setValue(1_m);
     ASSERT_IS_FALSE(schema.modified());
@@ -122,7 +122,7 @@ TEST_METHOD(schema_modified_when_formula_parameter_changed_and_not_locked)
     auto p2 = new Z::Parameter(Z::Dims::linear(), "p2");
 
     {
-        ElementEventsLocker locker(elem);
+        ElementEventsLocker locker(elem, "");
         schema.addCustomParam(p0);
         schema.addCustomParam(p1);
         schema.addCustomParam(p2);
@@ -150,7 +150,7 @@ TEST_METHOD(schema_not_modified_when_formula_parameter_changed_and_locked)
     auto p2 = new Z::Parameter(Z::Dims::linear(), "p2");
 
     {
-        ElementEventsLocker locker(elem);
+        ElementEventsLocker locker(elem, "");
         schema.addCustomParam(p0);
         schema.addCustomParam(p1);
         schema.addCustomParam(p2);
@@ -163,14 +163,14 @@ TEST_METHOD(schema_not_modified_when_formula_parameter_changed_and_locked)
         schema.formulas()->put(f);
     }
     {
-        ElementEventsLocker locker(p1);
+        ElementEventsLocker locker(p1, "");
         p1->setValue(1_m);
         ASSERT_IS_FALSE(schema.modified());
         ASSERT_SCHEMA_STATE(STATE(New))
         ASSERT_LISTENER_NO_EVENTS
     }
     {
-        ElementEventsLocker locker(p2);
+        ElementEventsLocker locker(p2, "");
         p2->setValue(2_m);
         ASSERT_IS_FALSE(schema.modified());
         ASSERT_SCHEMA_STATE(STATE(New))
