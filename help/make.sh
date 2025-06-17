@@ -58,7 +58,7 @@ prepare_assistant() {
   echo "Copy Assistant app to bin dir..."
   cp ${ASSISTANT_SOURCE} ${ASSISTANT_TARGET}
 
-  echo "Modify Asisstant's RPATH to make it runnable on dev system outside of Qt Creator..."
+  echo "Modify Assistant's RPATH to make it runnable on dev system outside of Qt Creator..."
   if [ ${IS_MACOS} ]; then
     # There are two LC_RPATH sections in rezonator exe and only one has absolute path
     # example of line: "         path /Users/user/Qt/5.10.0/clang_64/lib (offset 12)"
@@ -71,9 +71,17 @@ prepare_assistant() {
     # Example of line: "  RPATH                /home/user/Qt/5.10.0/gcc_64/lib"
     REZONATOR_RPATH="$(objdump -x ${BIN_DIR}/rezonator | grep RPATH | sed -e 's/^\s*RPATH\s*//')"
     echo "RPATH=${REZONATOR_RPATH}"
-    # sudo apt install patchelf
-    # Even with `--force-rpath` it sets not `RPATH` but `RUNPATH`, but it's works anyway
-    patchelf --force-rpath --set-rpath "${REZONATOR_RPATH}" ${ASSISTANT_TARGET}
+    if [[ -z "$REZONATOR_RPATH" ]]; then
+      REZONATOR_RPATH="$(objdump -x ${BIN_DIR}/rezonator | grep RUNPATH | sed -e 's/^\s*RUNPATH\s*//')"
+      echo "RUNPATH=${REZONATOR_RPATH}"
+    fi
+    if [[ -z "$REZONATOR_RPATH" ]]; then
+      echo "Can not extract RPATH from rezonator exe, unable to run Assistant" 
+    else
+      # sudo apt install patchelf
+      # Even with `--force-rpath` it sets not `RPATH` but `RUNPATH`, but it's works anyway
+      patchelf --force-rpath --set-rpath "${REZONATOR_RPATH}" ${ASSISTANT_TARGET}
+    fi
   fi
   exit_if_fail
 }
