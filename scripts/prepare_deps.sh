@@ -22,7 +22,7 @@ function prepare_lua() {
 
   LUA_DIR=lua-5.3.4
   LUA_PACKAGE=lua-5.3.4.tar.gz
-  LUA_URL=http://www.lua.org/ftp/${LUA_PACKAGE}
+  LUA_URL=https://www.lua.org/ftp/${LUA_PACKAGE}
 
   if [ -f ${LIBS_DIR}/${LUA_PACKAGE} ]; then
     rm ${LIBS_DIR}/${LUA_PACKAGE}

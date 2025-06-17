@@ -139,9 +139,9 @@ def make_package_for_macos():
   execute('install_name_tool -delete_rpath @loader_path/../../../../lib Assistant.app/Contents/MacOS/Assistant')
   print_header('Copy Assistant files to bundle...')
   copy_file('Assistant.app/Contents/MacOS/Assistant', PROJECT_EXE + '/Contents/MacOS', target_fn='assistant')
-  shutil.copytree('Assistant.app/Contents/Frameworks/QtHelp.framework', PROJECT_EXE + '/Contents/Frameworks/QtHelp.framework')
-  shutil.copytree('Assistant.app/Contents/Frameworks/QtSql.framework', PROJECT_EXE + '/Contents/Frameworks/QtSql.framework')
-  os.mkdir(PROJECT_EXE + '/Contents/PlugIns/sqldrivers')
+  copy_dir('Assistant.app/Contents/Frameworks/QtHelp.framework', PROJECT_EXE + '/Contents/Frameworks/QtHelp.framework')
+  copy_dir('Assistant.app/Contents/Frameworks/QtSql.framework', PROJECT_EXE + '/Contents/Frameworks/QtSql.framework')
+  make_dir(PROJECT_EXE + '/Contents/PlugIns/sqldrivers')
   copy_file('Assistant.app/Contents/PlugIns/sqldrivers/libqsqlite.dylib', PROJECT_EXE + '/Contents/PlugIns/sqldrivers')
 
   print_header('Clean some excessive files...')
@@ -151,11 +151,35 @@ def make_package_for_macos():
     'libqico.dylib', 'libqtga.dylib', 'libqtiff.dylib', 'libqwbmp.dylib', 'libqwebp.dylib'])
 
   print_header('Pack application bundle to dmg...')
+  os.chdir('..')
   global package_name
-  package_name = package_name + '.dmg'
-  remove_files(['tmp.dmg', '../' + package_name])
-  execute(f'hdiutil create tmp.dmg -ov -volname {PROJECT_NAME} -fs HFS+ -srcfolder {PROJECT_EXE}')
-  execute(f'hdiutil convert tmp.dmg -format UDZO -o ../{package_name}')
+  installer_img = 'installer.dmg'
+  if not os.path.isfile(installer_img):
+    print('Installer image does not exist, creating...')
+    execute(f'hdiutil create {installer_img} -size 100m -format UDRW -ov -volname {package_name} -fs HFS+ -srcfolder {REDIST_DIR}')
+    execute(f'hdiutil attach {installer_img}')
+    execute('sleep 1')
+    execute(f'open /Volumes/{package_name}/')
+    execute(f'ln -s /Applications /Volumes/{package_name}/Applications')
+    copy_file(f'../img/install_macos.png', f'/Volumes/{package_name}', '.bg.png')
+    remove_dir(f'/Volumes/{package_name}/Assistant.app')
+    printc('\nInstaller created', Colors.OKGREEN)
+    print('It should be opened now, configure its visual appearance, then unmount and rerun this command')
+    print('Note: use Cmd+J to show a folder setup window')
+    print('Note: use Cmd+Shift+. to show hidden files and select a background image')
+    print('')
+    exit(0)
+  else:
+    print('Installer image found, updating content...')
+  execute(f'hdiutil attach {installer_img}')
+  execute('sleep 1')
+  remove_dir(f'/Volumes/{package_name}/{PROJECT_EXE}')
+  shutil.copytree(f'{REDIST_DIR}/{PROJECT_EXE}', f'/Volumes/{package_name}/{PROJECT_EXE}')
+  execute(f'hdiutil detach /Volumes/{package_name}/')
+  execute('sleep 1')
+
+  print('Compressing...')
+  execute(f'hdiutil convert {installer_img} -ov -format UDZO -o {package_name}.dmg')
 
 ########################################################################
 

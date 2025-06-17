@@ -159,6 +159,7 @@ def remove_files(filenames):
     if os.path.exists(filename):
       os.remove(filename)
 
+
 def remove_files_in_dir(dir, filenames):
   for filename in filenames:
     filepath = os.path.join(dir, filename)
@@ -175,6 +176,16 @@ def copy_file(source_file_path, target_dir, target_fn=''):
 def copy_files(source_dir, filenames, target_dir):
   for filename in filenames:
     copy_file(os.path.join(source_dir, filename), target_dir)
+
+
+def copy_dir(source_dir, target_dir):
+  if not os.path.exists(target_dir):
+    shutil.copytree(source_dir, target_dir)
+
+
+def make_dir(target_dir):
+  if not os.path.exists(target_dir):
+    os.mkdir(target_dir)
 
 
 def remove_dir(dirname):
