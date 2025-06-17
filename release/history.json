@@ -2,7 +2,7 @@
   "history": [
     {
       "version": "2.0.15-rc2",
-      "date": "",
+      "date": "2025-06-17",
       "changes": [
         {
           "text": "Can use global parameters as arguments for the Beamsize Variation function"

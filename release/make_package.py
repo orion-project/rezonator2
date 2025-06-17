@@ -51,6 +51,11 @@ def make_package_for_windows():
   copy_file('..\\..\\bin\\rezonator.qhc', '.')
   shutil.copytree('..\\..\\bin\\examples', 'examples')
   copy_files(qt_dir, ['assistant.exe'], '.')
+  # It seems there is some bug in windeployqt.exe on Qt 5.15.2
+  # (or something changed in the env becasue it worked on another machine before)
+  # it doesn't copy libwinpthread and copies other libs from some wrong place, so the app crashes
+  # Copy them manually, just to be sure
+  copy_files(qt_dir, ['libstdc++-6.dll', 'libgcc_s_dw2-1.dll', 'libwinpthread-1.dll'], '.', skip_non_exitent=True)
 
   print_header('Pack files to zip...')
   global package_name

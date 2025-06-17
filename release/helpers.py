@@ -173,9 +173,12 @@ def copy_file(source_file_path, target_dir, target_fn=''):
   shutil.copyfile(source_file_path, target_file_path)
 
 
-def copy_files(source_dir, filenames, target_dir):
+def copy_files(source_dir, filenames, target_dir, **kwargs):
   for filename in filenames:
-    copy_file(os.path.join(source_dir, filename), target_dir)
+    source_file = os.path.join(source_dir, filename)
+    if kwargs.get('skip_non_exitent') and not os.path.exists(source_file):
+      continue
+    copy_file(source_file, target_dir)
 
 
 def copy_dir(source_dir, target_dir):
