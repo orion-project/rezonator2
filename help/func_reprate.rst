@@ -30,4 +30,4 @@ Here 0.0048074 is the length of the path of light in the plate (in meters). It d
     
 .. seealso::
 
-    :doc:`info_window`
+    :doc:`wnd_info`

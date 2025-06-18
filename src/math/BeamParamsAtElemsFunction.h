@@ -9,6 +9,7 @@ public:
     FUNC_ALIAS("BeamParamsAtElems")
     FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Beam Data"))
     FUNC_ICON(":/toolbar/func_beamdata")
+    FUNC_HELP("func_beamdata.html")
 
     BeamParamsAtElemsFunction(Schema *schema);
 

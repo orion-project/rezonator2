@@ -298,6 +298,7 @@ void TableFuncWindow::createToolBar()
     buttonParams->setMenu(Ori::Gui::menu({_actnCalcMediumEnds, _actnCalcEmptySpaces, _actnCalcSpaceMids}));
     buttonParams->setPopupMode(QToolButton::InstantPopup);
     buttonParams->setIcon(QIcon(":/toolbar/options"));
+    buttonParams->setToolTip(tr("Options"));
 
     _menuColUnits = new QMenu(this);
     connect(_menuColUnits, &QMenu::aboutToShow, this, &TableFuncWindow::updateColUnitsMenu);
@@ -306,6 +307,7 @@ void TableFuncWindow::createToolBar()
     buttonUnits->setPopupMode(QToolButton::InstantPopup);
     buttonUnits->setMenu(_menuColUnits);
     buttonUnits->setIcon(QIcon(":/toolbar/caliper"));
+    buttonUnits->setToolTip(tr("Units of measurement"));
 
     auto t = toolbar();
     t->addAction(_actnUpdate);
