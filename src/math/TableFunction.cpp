@@ -4,19 +4,11 @@
 #include "FunctionUtils.h"
 #include "PumpCalculator.h"
 #include "RoundTripCalculator.h"
-#include "../app/AppSettings.h"
 #include "../core/Schema.h"
 #include "../core/Elements.h"
 #include "../core/ElementsCatalog.h"
 
 #include <QDebug>
-
-namespace {
-
-// TODO: Extract into BeamdataAtElems func
-enum TableFunctionColumns { COL_BEAMSIZE, COL_WAVEFRONT, COL_ANGLE, COL_COUNT };
-
-}
 
 const TableFunction::ResultPositionInfo& TableFunction::resultPositionInfo(TableFunction::ResultPosition pos)
 {
@@ -245,7 +237,12 @@ QString TableFunction::calculateAtElem(Element *elem, int index, AlwaysTwoSides 
             return calculateInMiddle(elem, prevElem, nextElem, alwaysTwoSides);
         if (!prevElem)
         {
-            calculatePumpBeforeSchema(elem, ResultPosition::LEFT);
+            Result res;
+            res.element = elem;
+            res.position = ResultPosition::LEFT;
+            res.values = calculatePumpBeforeSchema();
+            _results << res;
+
             // We can calculate beam after the first elem like if beam was in a medium
             // but the schema is invalid anyway - beamsize will show step-change
             // at the first elem when the second is medium, which is not physically correct.
@@ -279,9 +276,14 @@ QString TableFunction::calculateAtInterface(ElementInterface* iface, int index)
     {
         switch (schema()->tripType())
         {
-        case TripType::SP:
-            calculatePumpBeforeSchema(iface, ResultPosition::IFACE_LEFT);
+        case TripType::SP: {
+            Result res;
+            res.element = iface;
+            res.position = ResultPosition::IFACE_LEFT;
+            res.values = calculatePumpBeforeSchema();
+            _results << res;
             break; // Don't return!
+        }
 
         case TripType::SW:
             return QString(
@@ -343,9 +345,14 @@ QString TableFunction::calculateAtCrystal(ElementRange* range, int index)
     {
         switch (schema()->tripType())
         {
-        case TripType::SP:
-            calculatePumpBeforeSchema(range, ResultPosition::LEFT_OUTSIDE);
+        case TripType::SP: {
+            Result res;
+            res.element = range;
+            res.position = ResultPosition::LEFT_OUTSIDE;
+            res.values = calculatePumpBeforeSchema();
+            _results << res;
             break; // Don't return!
+        }
 
         case TripType::SW:
             return QString(
@@ -426,81 +433,6 @@ void TableFunction::calculateAt(CalcElem calcElem, ResultElem resultElem, Option
             ? calculateResonator(&calc, ior)
             : calculateSinglePass(&calc, ior);
     _results << res;
-}
-
-void TableFunction::calculatePumpBeforeSchema(Element* elem, ResultPosition resultPos)
-{
-    Z::Matrix unity;
-    BeamResult beamT = _pumpCalc->calcT(unity, 1);
-    BeamResult beamS = _pumpCalc->calcS(unity, 1);
-
-    Result res;
-    res.element = elem;
-    res.position = resultPos;
-    res.values = {
-        { beamT.beamRadius, beamS.beamRadius },
-        { beamT.frontRadius, beamS.frontRadius },
-        { beamT.halfAngle, beamS.halfAngle },
-    };
-    _results << res;
-}
-
-QVector<Z::PointTS> TableFunction::calculateSinglePass(RoundTripCalculator* calc, double ior) const
-{
-    BeamResult beamT = _pumpCalc->calcT(calc->Mt(), ior);
-    BeamResult beamS = _pumpCalc->calcS(calc->Ms(), ior);
-    return {
-        { beamT.beamRadius, beamS.beamRadius },
-        { beamT.frontRadius, beamS.frontRadius },
-        { beamT.halfAngle, beamS.halfAngle },
-    };
-}
-
-QVector<Z::PointTS> TableFunction::calculateResonator(RoundTripCalculator *calc, double ior) const
-{
-    return {
-        _beamCalc->beamRadius(calc->Mt(), calc->Ms(), ior),
-        _beamCalc->frontRadius(calc->Mt(), calc->Ms(), ior),
-        _beamCalc->halfAngle(calc->Mt(), calc->Ms(), ior),
-    };
-}
-
-QVector<TableFunction::ColumnDef> TableFunction::columns() const
-{
-    ColumnDef beamRadius;
-    beamRadius.titleT = "Wt";
-    beamRadius.titleS = "Ws";
-    beamRadius.unit = _colUnits.value(COL_BEAMSIZE, AppSettings::instance().defaultUnitBeamRadius);
-
-    ColumnDef frontRadius;
-    frontRadius.titleT = "Rt";
-    frontRadius.titleS = "Rs";
-    frontRadius.unit = _colUnits.value(COL_WAVEFRONT, AppSettings::instance().defaultUnitFrontRadius);
-
-    ColumnDef halfAngle;
-    halfAngle.titleT = "Vt";
-    halfAngle.titleS = "Vs";
-    halfAngle.unit = _colUnits.value(COL_ANGLE, AppSettings::instance().defaultUnitAngle);
-
-    return {beamRadius, frontRadius, halfAngle};
-}
-
-QString TableFunction::columnTitle(int colIndex) const
-{
-    switch (colIndex) {
-    case COL_BEAMSIZE:
-        return qApp->tr("Beam radius", "Table function column");
-    case COL_WAVEFRONT:
-        return qApp->tr("Wavefront ROC", "Table function column");
-    case COL_ANGLE:
-        return qApp->tr("Half div. angle", "Table function column");
-    }
-    return QString("#%1").arg(colIndex);
-}
-
-int TableFunction::columnCount() const
-{
-    return COL_COUNT;
 }
 
 void TableFunction::setColumnUnit(int colIndex, Z::Unit unit)
