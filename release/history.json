@@ -6,6 +6,9 @@
       "changes": [
         {
           "text": "Ignore disabled elements and respect order in Multiply Selected functions"
+        },
+        {
+          "text": "Calculate aperture ratio in Beam Parameters at Elements table function"
         }
       ]
     },

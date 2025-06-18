@@ -17,9 +17,12 @@ public:
     QString columnTitle(const ColumnId &id) const override;
 
 protected:
-    QVector<Z::PointTS> calculatePumpBeforeSchema() override;
-    QVector<Z::PointTS> calculateSinglePass(RoundTripCalculator* calc, double ior) const override;
-    QVector<Z::PointTS> calculateResonator(RoundTripCalculator* calc, double ior) const override;
+    QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) override;
+    QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) const override;
+    QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* calc, double ior) const override;
+    
+private:
+    Z::PointTS calcApertureRatio(const Z::PointTS &beamRadius, Element *elem) const;
 };
 
 #endif // BEAM_PARAMS_AT_ELEMS_FUNCTION_H

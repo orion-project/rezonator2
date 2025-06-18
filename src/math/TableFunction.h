@@ -14,7 +14,7 @@ class TableFunction : public FunctionBase
 {
 public:
     typedef Ori::Optional<double> OptionalIor;
-    BOOL_PARAM(AlwaysTwoSides)
+    BOOL_PARAM(IsTwoSides)
 
     struct Params
     {
@@ -124,16 +124,16 @@ protected:
     bool prepareResonator();
     Element* prevElement(int index);
     Element* nextElement(int index);
-    QString calculateAtElem(Element* elem, int index, AlwaysTwoSides alwaysTwoSides);
+    QString calculateAtElem(Element* elem, int index, IsTwoSides twoSides);
     QString calculateAtInterface(ElementInterface* iface, int index);
     QString calculateAtCrystal(ElementRange* range, int index);
     QString calculateAtPlane(Element* elem, int index);
-    QString calculateInMiddle(Element* elem, Element *prevElem, Element *nextElem, AlwaysTwoSides alwaysTwoSides);
+    QString calculateInMiddle(Element* elem, Element *prevElem, Element *nextElem, IsTwoSides twoSides);
     void calculateAt(CalcElem calcElem, ResultElem resultElem, OptionalIor overrideIor = OptionalIor());
 
-    virtual QVector<Z::PointTS> calculatePumpBeforeSchema() = 0;
-    virtual QVector<Z::PointTS> calculateSinglePass(RoundTripCalculator* calc, double ior) const = 0;
-    virtual QVector<Z::PointTS> calculateResonator(RoundTripCalculator* calc, double ior) const = 0;
+    virtual QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) = 0;
+    virtual QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) const = 0;
+    virtual QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* calc, double ior) const = 0;
     
 private:
     QVector<Result> _results;

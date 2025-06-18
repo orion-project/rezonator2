@@ -145,7 +145,9 @@ void TableFuncResultTable::updateResults()
             double valueS = column.unit->fromSi(value.S);
 
             QString valueStr;
-            if (showT and showS)
+            if (qIsNaN(valueT) || qIsNaN(valueS))
+                valueStr = QStringLiteral("N/A");
+            else if (showT and showS)
                 valueStr = QStringLiteral("%1 %2 %3 ")
                         .arg(Z::format(valueT))
                         .arg(Z::Strs::multX())
@@ -185,23 +187,25 @@ void TableFuncResultTable::showHeaderContextMenu(const QPoint& pos)
 {
     // The first table column is "Position", not a result
     int colIndex = horizontalHeader()->logicalIndexAt(pos) - 1;
-    if (colIndex < 0 || colIndex >= _function->columnCount()) return;
+    const auto cols = _function->columns();
+    if (colIndex < 0 || colIndex >= cols.size()) return;
+    const auto& col = cols.at(colIndex);
+    if (col.unit == Z::Units::none()) return;
     if (!_unitsMenu) {
         _unitsMenu = new UnitsMenu(this);
         connect(_unitsMenu, &UnitsMenu::unitChanged, this, [this](Z::Unit unit){
-            int colIndex = _unitsMenu->property("colIndex").toInt();
-            if (colIndex < 0 || colIndex >= _function->columnCount()) return;
-            const auto cols = _function->columns();
-            const auto& col = cols.at(colIndex);
-            if (col.unit == unit) return;
+            auto colId = _unitsMenu->property("colId").toString();
+            auto oldUnit = _unitsMenu->property("oldUnit").toString();
+            if (oldUnit == unit->alias()) return;
             _function->schema()->markModified("TableFuncResultTable: unit changed");
-            _function->setColumnUnit(col.id, unit);
+            _function->setColumnUnit(colId, unit);
             updateColumnTitles();
             updateResults();
         });
     }
-    _unitsMenu->setUnit(_function->columns().at(colIndex).unit);
-    _unitsMenu->setProperty("colIndex", colIndex);
+    _unitsMenu->setUnit(col.unit);
+    _unitsMenu->setProperty("colId", col.id);
+    _unitsMenu->setProperty("oldUnit", col.unit->alias());
     _unitsMenu->menu()->popup(mapToGlobal(pos));
 }
 
@@ -456,6 +460,7 @@ void TableFuncWindow::updateColUnitsMenu()
     const auto cols = _function->columns();
     for (int i = 0; i < cols.size(); i++) {
         const auto& col = cols.at(i);
+        if (col.unit == Z::Units::none()) continue;
         if (!_unitMenus.contains(i)) {
             auto menu = new UnitsMenu(this);
             connect(menu, &UnitsMenu::unitChanged, this, [i, this](Z::Unit unit){

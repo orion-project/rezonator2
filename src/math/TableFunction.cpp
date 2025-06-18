@@ -100,7 +100,7 @@ void TableFunction::calculate()
 
         if (elem->hasOption(Element_ChangesWavefront))
         {
-            CHECK_ERR(calculateAtElem(elem, i, AlwaysTwoSides(true)));
+            CHECK_ERR(calculateAtElem(elem, i, IsTwoSides(true)));
             continue;
         }
 
@@ -114,7 +114,7 @@ void TableFunction::calculate()
         auto range = Z::Utils::asRange(elem);
         if (!range)
         {
-            CHECK_ERR(calculateAtElem(elem, i, AlwaysTwoSides(false)))
+            CHECK_ERR(calculateAtElem(elem, i, IsTwoSides(false)))
             continue;
         }
 
@@ -192,7 +192,7 @@ Element* TableFunction::nextElement(int index)
     return nullptr;
 }
 
-QString TableFunction::calculateAtElem(Element *elem, int index, AlwaysTwoSides alwaysTwoSides)
+QString TableFunction::calculateAtElem(Element *elem, int index, IsTwoSides twoSides)
 {
     auto prevElem = prevElement(index);
     auto nextElem = nextElement(index);
@@ -200,7 +200,7 @@ QString TableFunction::calculateAtElem(Element *elem, int index, AlwaysTwoSides 
     switch (schema()->tripType()) {
     case TripType::SW:
         if (prevElem && nextElem)
-            return calculateInMiddle(elem, prevElem, nextElem, alwaysTwoSides);
+            return calculateInMiddle(elem, prevElem, nextElem, twoSides);
         else if (prevElem || nextElem)
         {
             // It's the left end mirror (probably attached to a medium)
@@ -228,19 +228,19 @@ QString TableFunction::calculateAtElem(Element *elem, int index, AlwaysTwoSides 
     case TripType::RR:
         // In ring systems we always are somewhere in a middle
         if (prevElem && nextElem)
-            return calculateInMiddle(elem, prevElem, nextElem, alwaysTwoSides);
+            return calculateInMiddle(elem, prevElem, nextElem, twoSides);
         return "Too few elements";
 
     case TripType::SP:
         // In middle of schema
         if (prevElem && nextElem)
-            return calculateInMiddle(elem, prevElem, nextElem, alwaysTwoSides);
+            return calculateInMiddle(elem, prevElem, nextElem, twoSides);
         if (!prevElem)
         {
             Result res;
             res.element = elem;
             res.position = ResultPosition::LEFT;
-            res.values = calculatePumpBeforeSchema();
+            res.values = calculatePumpBeforeSchema(elem);
             _results << res;
 
             // We can calculate beam after the first elem like if beam was in a medium
@@ -280,7 +280,7 @@ QString TableFunction::calculateAtInterface(ElementInterface* iface, int index)
             Result res;
             res.element = iface;
             res.position = ResultPosition::IFACE_LEFT;
-            res.values = calculatePumpBeforeSchema();
+            res.values = calculatePumpBeforeSchema(iface);
             _results << res;
             break; // Don't return!
         }
@@ -349,7 +349,7 @@ QString TableFunction::calculateAtCrystal(ElementRange* range, int index)
             Result res;
             res.element = range;
             res.position = ResultPosition::LEFT_OUTSIDE;
-            res.values = calculatePumpBeforeSchema();
+            res.values = calculatePumpBeforeSchema(range);
             _results << res;
             break; // Don't return!
         }
@@ -372,7 +372,7 @@ QString TableFunction::calculateAtCrystal(ElementRange* range, int index)
     return "";
 }
 
-QString TableFunction::calculateInMiddle(Element* elem, Element* prevElem, Element* nextElem, AlwaysTwoSides alwaysTwoSides)
+QString TableFunction::calculateInMiddle(Element* elem, Element* prevElem, Element* nextElem, IsTwoSides twoSides)
 {
     // In this method the elem is guaranteed to be not at the ends of a schema
     // for SW and SP systems, for RR any element is always in a 'middle'
@@ -396,7 +396,7 @@ QString TableFunction::calculateInMiddle(Element* elem, Element* prevElem, Eleme
         return "";
     }
 
-    if (alwaysTwoSides)
+    if (twoSides)
     {
         auto prevRange = Z::Utils::asRange(prevElem);
         auto calcElem = prevRange ? CalcElem::RangeEnd(prevRange) : CalcElem(prevElem);
@@ -430,8 +430,8 @@ void TableFunction::calculateAt(CalcElem calcElem, ResultElem resultElem, Option
     res.element = resultElem.elem;
     res.position = resultElem.pos;
     res.values = schema()->isResonator()
-            ? calculateResonator(&calc, ior)
-            : calculateSinglePass(&calc, ior);
+            ? calculateResonator(resultElem.elem, &calc, ior)
+            : calculateSinglePass(resultElem.elem, &calc, ior);
     _results << res;
 }
 
