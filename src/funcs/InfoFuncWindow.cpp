@@ -90,9 +90,12 @@ void InfoFuncWindow::createToolbar()
 
     if (!_function->actions().empty())
     {
+        QToolButton *actionsButton = nullptr;
         foreach (const InfoFuncAction& a, _function->actions())
         {
-            auto actn = new QAction(QIcon(a.icon), a.title, this);
+            auto actn = new QAction(a.title, this);
+            if (!a.icon.isEmpty())
+                actn->setIcon(QIcon(a.icon));
             if (a.isChecked)
             {
                 actn->setCheckable(true);
@@ -105,8 +108,19 @@ void InfoFuncWindow::createToolbar()
                 }
             }
             connect(actn, &QAction::triggered, a.triggered);
-            toolbar->addAction(actn);
+            if (a.showInMenu) {
+                if (!actionsButton) {
+                    actionsButton = new QToolButton;
+                    actionsButton->setPopupMode(QToolButton::InstantPopup);
+                    actionsButton->setIcon(QIcon(":/toolbar/options"));
+                }
+                actionsButton->addAction(actn);
+            } else {
+                toolbar->addAction(actn);
+            }
         }
+        if (actionsButton)
+            toolbar->addWidget(actionsButton);
         toolbar->addSeparator();
     }
 

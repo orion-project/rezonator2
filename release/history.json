@@ -1,6 +1,15 @@
 {
   "history": [
     {
+      "version": "2.0.16-rc3",
+      "date": "",
+      "changes": [
+        {
+          "text": "Ignore disabled elements and respect order in Multiply Selected functions"
+        }
+      ]
+    },
+    {
       "version": "2.0.15-rc2",
       "date": "2025-06-17",
       "changes": [

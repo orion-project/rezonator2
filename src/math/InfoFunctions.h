@@ -36,22 +36,18 @@ protected:
 
 //------------------------------------------------------------------------------
 
-class InfoFuncMatrixMultFwd : public InfoFuncMatrices
+class InfoFuncMatrixMult : public InfoFuncMatrices
 {
 public:
-    InfoFuncMatrixMultFwd(Schema*, const Elements&);
+    InfoFuncMatrixMult(Schema*, const Elements&);
     QString calculateInternal() override;
-    FUNC_HELP("func_mult_fwd.html")
+    FUNC_HELP("func_matrix_mult.html")
     FUNC_NAME(qApp->translate("Func", "Matrix Product"))
 private:
     bool _useInvMatrs = false;
-};
-
-class InfoFuncMatrixMultBkwd : public InfoFuncMatrixMultFwd
-{
-public:
-    InfoFuncMatrixMultBkwd(Schema*, const Elements&);
-    FUNC_HELP("func_mult_bkwd.html")
+    bool _useSelectionOrder = false;
+    bool _useReverseOrder = false;
+    bool _useDisabledElems = false;
 };
 
 //------------------------------------------------------------------------------

@@ -82,7 +82,7 @@ private:
             *actnEditPaste, *actnEditSelectAll;
 
     QAction *actnFuncRoundTrip, *actnFuncStabMap, *actnFuncStabMap2d,
-            *actnFuncRepRate, *actnFuncMultFwd, *actnFuncMultBkwd,
+            *actnFuncRepRate, *actnFuncMatrixMult,
             *actnFuncCaustic, *actnFuncMultirangeCaustic, *actnFuncBeamVariation,
             *actnFuncMultibeamCaustic, *actnFuncBeamParamsAtElems;
 
