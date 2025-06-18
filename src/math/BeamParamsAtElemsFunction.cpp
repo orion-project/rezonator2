@@ -7,11 +7,10 @@
 
 #include <QApplication>
 
-namespace {
-
-enum Columns { COL_BEAMSIZE, COL_WAVEFRONT, COL_ANGLE, COL_COUNT };
-
-}
+#define COL_BEAMSIZE QStringLiteral("beamsize")
+#define COL_WAVEFRONT QStringLiteral("wavefront")
+#define COL_ANGLE QStringLiteral("angle")
+#define COL_COUNT 3
 
 BeamParamsAtElemsFunction::BeamParamsAtElemsFunction(Schema *schema) : TableFunction(schema)
 {
@@ -20,34 +19,35 @@ BeamParamsAtElemsFunction::BeamParamsAtElemsFunction(Schema *schema) : TableFunc
 QVector<TableFunction::ColumnDef> BeamParamsAtElemsFunction::columns() const
 {
     ColumnDef beamRadius;
-    beamRadius.titleT = "Wt";
-    beamRadius.titleS = "Ws";
+    beamRadius.id = COL_BEAMSIZE;
+    beamRadius.titleT = QStringLiteral("Wt");
+    beamRadius.titleS = QStringLiteral("Ws");
     beamRadius.unit = _colUnits.value(COL_BEAMSIZE, AppSettings::instance().defaultUnitBeamRadius);
 
     ColumnDef frontRadius;
-    frontRadius.titleT = "Rt";
-    frontRadius.titleS = "Rs";
+    frontRadius.id = COL_WAVEFRONT;
+    frontRadius.titleT = QStringLiteral("Rt");
+    frontRadius.titleS = QStringLiteral("Rs");
     frontRadius.unit = _colUnits.value(COL_WAVEFRONT, AppSettings::instance().defaultUnitFrontRadius);
 
     ColumnDef halfAngle;
-    halfAngle.titleT = "Vt";
-    halfAngle.titleS = "Vs";
+    halfAngle.id = COL_ANGLE;
+    halfAngle.titleT = QStringLiteral("Vt");
+    halfAngle.titleS = QStringLiteral("Vs");
     halfAngle.unit = _colUnits.value(COL_ANGLE, AppSettings::instance().defaultUnitAngle);
 
     return {beamRadius, frontRadius, halfAngle};
 }
 
-QString BeamParamsAtElemsFunction::columnTitle(int colIndex) const
+QString BeamParamsAtElemsFunction::columnTitle(const ColumnId &id) const
 {
-    switch (colIndex) {
-    case COL_BEAMSIZE:
+    if (id == COL_BEAMSIZE)
         return qApp->tr("Beam radius", "Table function column");
-    case COL_WAVEFRONT:
+    if (id == COL_WAVEFRONT)
         return qApp->tr("Wavefront ROC", "Table function column");
-    case COL_ANGLE:
+    if (id == COL_ANGLE)
         return qApp->tr("Half div. angle", "Table function column");
-    }
-    return QString("#%1").arg(colIndex);
+    return id;
 }
 
 int BeamParamsAtElemsFunction::columnCount() const

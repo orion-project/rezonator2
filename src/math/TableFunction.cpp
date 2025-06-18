@@ -435,7 +435,7 @@ void TableFunction::calculateAt(CalcElem calcElem, ResultElem resultElem, Option
     _results << res;
 }
 
-void TableFunction::setColumnUnit(int colIndex, Z::Unit unit)
+void TableFunction::setColumnUnit(const ColumnId &id, Z::Unit unit)
 {
-    _colUnits[colIndex] = unit;
+    _colUnits[id] = unit;
 }

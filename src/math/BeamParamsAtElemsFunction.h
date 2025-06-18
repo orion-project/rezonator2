@@ -14,7 +14,7 @@ public:
 
     QVector<TableFunction::ColumnDef> columns() const override;
     int columnCount() const override;
-    QString columnTitle(int colIndex) const override;
+    QString columnTitle(const ColumnId &id) const override;
 
 protected:
     QVector<Z::PointTS> calculatePumpBeforeSchema() override;

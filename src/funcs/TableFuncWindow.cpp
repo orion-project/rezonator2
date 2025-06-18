@@ -191,17 +191,16 @@ void TableFuncResultTable::showHeaderContextMenu(const QPoint& pos)
         connect(_unitsMenu, &UnitsMenu::unitChanged, this, [this](Z::Unit unit){
             int colIndex = _unitsMenu->property("colIndex").toInt();
             if (colIndex < 0 || colIndex >= _function->columnCount()) return;
-            auto oldUnit = _unitsMenu->property("oldUnit").toString();
-            if (oldUnit == unit->alias()) return;
+            const auto cols = _function->columns();
+            const auto& col = cols.at(colIndex);
+            if (col.unit == unit) return;
             _function->schema()->markModified("TableFuncResultTable: unit changed");
-            _function->setColumnUnit(colIndex, unit);
+            _function->setColumnUnit(col.id, unit);
             updateColumnTitles();
             updateResults();
         });
     }
-    auto unit = _function->columns().at(colIndex).unit;
-    _unitsMenu->setUnit(unit);
-    _unitsMenu->setProperty("oldUnit", unit->alias());
+    _unitsMenu->setUnit(_function->columns().at(colIndex).unit);
     _unitsMenu->setProperty("colIndex", colIndex);
     _unitsMenu->menu()->popup(mapToGlobal(pos));
 }
@@ -462,7 +461,7 @@ void TableFuncWindow::updateColUnitsMenu()
             connect(menu, &UnitsMenu::unitChanged, this, [i, this](Z::Unit unit){
                 const auto col = _function->columns().at(i);
                 if (col.unit == unit) return;
-                _function->setColumnUnit(i, unit);
+                _function->setColumnUnit(col.id, unit);
                 _function->schema()->markModified("TableFuncWindow: unit changed");
                 _table->updateColumnTitles();
                 _table->updateResults();
@@ -472,7 +471,7 @@ void TableFuncWindow::updateColUnitsMenu()
         auto menu = _unitMenus[i];
         menu->setUnit(col.unit);
         auto actn = _menuColUnits->addMenu(menu->menu());
-        actn->setText(_function->columnTitle(i));
+        actn->setText(_function->columnTitle(col.id));
     }
 }
 
@@ -504,12 +503,7 @@ bool TableFuncWindow::storableRead(const QJsonObject& root, Z::Report*)
     
     if (auto colsJson = root["columns"].toObject(); !colsJson.isEmpty()) {
         for (auto it = colsJson.constBegin(); it != colsJson.constEnd(); it++) {
-            bool ok = false;
-            auto colIndex = it.key().toInt(&ok);
-            if (!ok) {
-                qWarning() << Q_FUNC_INFO << "Unsupported key" << it.key() << "Column index expected";
-                continue;
-            }
+            auto colId = it.key();
             auto colJson = it.value().toObject();
             if (colJson.isEmpty()) {
                 qWarning() << Q_FUNC_INFO << "Wrong value of key" << it.key() << "Object expected";
@@ -521,7 +515,7 @@ bool TableFuncWindow::storableRead(const QJsonObject& root, Z::Report*)
                 qWarning() << Q_FUNC_INFO << "Unknown unit for column" << it.key() << unitAlias;
                 continue;
             }
-            _function->setColumnUnit(colIndex, unit);
+            _function->setColumnUnit(colId, unit);
         }
     }
 
@@ -543,9 +537,9 @@ bool TableFuncWindow::storableWrite(QJsonObject& root, Z::Report*)
     if (const auto &colUnits = _function->columntUnits(); !colUnits.isEmpty()) {
         QJsonObject colsJson;
         for (auto it = colUnits.constBegin(); it != colUnits.constEnd(); it++) {
-            QJsonObject colJson;
-            colJson["unit"] = it.value()->alias();
-            colsJson[QString::number(it.key())] = colJson;
+            colsJson[it.key()] = QJsonObject({
+                { "unit", it.value()->alias() },
+            });
         }
         root["columns"] = colsJson;
     }

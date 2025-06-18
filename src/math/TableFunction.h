@@ -25,9 +25,12 @@ public:
         bool calcEmptySpaces = false;
         bool calcSpaceMids = false;
     };
+    
+    using ColumnId = QString;
 
     struct ColumnDef
     {
+        ColumnId id;
         QString titleT, titleS;
         Z::Unit unit = Z::Units::none();
     };
@@ -100,10 +103,10 @@ public:
 
     virtual QVector<ColumnDef> columns() const = 0;
     virtual int columnCount() const = 0;
-    virtual QString columnTitle(int colIndex) const = 0;
+    virtual QString columnTitle(const ColumnId &id) const = 0;
 
-    void setColumnUnit(int colIndex, Z::Unit unit);
-    const QMap<int, Z::Unit>& columntUnits() const { return _colUnits; }
+    void setColumnUnit(const ColumnId &id, Z::Unit unit);
+    const QMap<ColumnId, Z::Unit>& columntUnits() const { return _colUnits; }
 
     const QVector<Result>& results() const { return _results; }
 
@@ -114,7 +117,7 @@ protected:
     std::shared_ptr<PumpCalculator> _pumpCalc;
     std::shared_ptr<AbcdBeamCalculator> _beamCalc;
     QList<Element*> _activeElements; // valid only during calculate() call
-    QMap<int, Z::Unit> _colUnits;
+    QMap<ColumnId, Z::Unit> _colUnits;
     Params _params;
 
     bool prepareSinglePass();
