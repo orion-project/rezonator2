@@ -66,10 +66,10 @@ QString InfoFuncMatrices::calculateInternal()
 }
 
 //------------------------------------------------------------------------------
-//                             InfoFuncMatrixMultFwd
+//                             InfoFuncMatrixMult
 //------------------------------------------------------------------------------
 
-InfoFuncMatrixMultFwd::InfoFuncMatrixMultFwd(Schema *schema, const Elements& elems)
+InfoFuncMatrixMult::InfoFuncMatrixMult(Schema *schema, const Elements& elems)
     : InfoFuncMatrices(schema, elems)
 {
     {
@@ -106,7 +106,7 @@ InfoFuncMatrixMultFwd::InfoFuncMatrixMultFwd(Schema *schema, const Elements& ele
     }
 }
 
-QString InfoFuncMatrixMultFwd::calculateInternal()
+QString InfoFuncMatrixMult::calculateInternal()
 {
     // _elements are in the selection order
 
@@ -149,19 +149,6 @@ QString InfoFuncMatrixMultFwd::calculateInternal()
         report += Z::Format::Py::roundTrip(elems2);
 
     return report;
-}
-
-//------------------------------------------------------------------------------
-//                             InfoFuncMatrixMultBkwd
-//------------------------------------------------------------------------------
-
-InfoFuncMatrixMultBkwd::InfoFuncMatrixMultBkwd(Schema *schema, const Elements& elems)
-    : InfoFuncMatrixMultFwd(schema, elems)
-{
-    Elements reversed;
-    reversed.reserve(_elements.size());
-    std::reverse_copy(_elements.begin(), _elements.end(), std::back_inserter(reversed));
-    _elements = reversed;
 }
 
 //------------------------------------------------------------------------------

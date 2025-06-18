@@ -61,16 +61,10 @@ void CalcManager::funcRoundTrip()
     showInfoFunc(new InfoFuncMatrixRT(schema(), schema()->selectedElement()));
 }
 
-void CalcManager::funcMultFwd()
+void CalcManager::funcMatrixMult()
 {
     RETURN_IF_SCHEMA_EMPTY
-    showInfoFunc(new InfoFuncMatrixMultFwd(schema(), schema()->selectedElements()));
-}
-
-void CalcManager::funcMultBkwd()
-{
-    RETURN_IF_SCHEMA_EMPTY
-    showInfoFunc(new InfoFuncMatrixMultBkwd(schema(), schema()->selectedElements()));
+    showInfoFunc(new InfoFuncMatrixMult(schema(), schema()->selectedElements()));
 }
 
 void CalcManager::funcStabMap()

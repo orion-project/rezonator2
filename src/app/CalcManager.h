@@ -22,8 +22,7 @@ public:
 public slots:
     void funcSummary();
     void funcRoundTrip();
-    void funcMultFwd();
-    void funcMultBkwd();
+    void funcMatrixMult();
     void funcStabMap();
     void funcStabMap2d();
     void funcRepRate();
