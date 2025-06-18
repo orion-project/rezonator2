@@ -41,7 +41,7 @@ class InfoFuncMatrixMult : public InfoFuncMatrices
 public:
     InfoFuncMatrixMult(Schema*, const Elements&);
     QString calculateInternal() override;
-    FUNC_HELP("func_mult_fwd.html")
+    FUNC_HELP("func_matrix_mult.html")
     FUNC_NAME(qApp->translate("Func", "Matrix Product"))
 private:
     bool _useInvMatrs = false;

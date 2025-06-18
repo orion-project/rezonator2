@@ -29,8 +29,6 @@ set SCRIPT_DIR=%~dp0
 set SOURCE_DIR=%SCRIPT_DIR%
 set TARGET_DIR=%SCRIPT_DIR%\..\out\help
 set BIN_DIR=%SCRIPT_DIR%\..\bin
-@REM It doesn't mater what Qt version to use, it's only for help testing
-set REDIST_DIR=%SCRIPT_DIR%\..\out\redist-6.9.0
 
 
 echo.
@@ -56,16 +54,16 @@ if %ERRORLEVEL% neq 0 goto :eof
 
 
 
-@REM echo.
-@REM echo ***** Checking Assistant app...
-@REM for %%G in ("%path:;=" "%") do (
-@REM     if exist %%G"\%HELP_TOOL%" (
-@REM         set HELP_TOOL_DIR=%%G
-@REM         goto :qt_dir_found
-@REM     )
-@REM )
-@REM echo ERROR: unable to locate %HELP_TOOL% and get Assistant path
-@REM goto :eof
+echo.
+echo ***** Checking Assistant app...
+for %%G in ("%path:;=" "%") do (
+    if exist %%G"\%HELP_TOOL%" (
+        set HELP_TOOL_DIR=%%G
+        goto :qt_dir_found
+    )
+)
+echo ERROR: unable to locate %HELP_TOOL% and get Assistant path
+goto :eof
 
 @REM :qt_dir_found
 @REM set ASSISTANT_SOURCE=%HELP_TOOL_DIR%\assistant.exe
@@ -85,7 +83,8 @@ if %ERRORLEVEL% neq 0 goto :eof
 echo.
 echo ***** Running Assistant...
 @REM %BIN_DIR%\assistant -collectionFile %BIN_DIR%\rezonator.qhc -style fusion
-%REDIST_DIR%\assistant -collectionFile %BIN_DIR%\rezonator.qhc -style fusion
+cd %HELP_TOOL_DIR%
+assistant.exe -collectionFile %BIN_DIR%\rezonator.qhc -style fusion
 
 
 echo.
