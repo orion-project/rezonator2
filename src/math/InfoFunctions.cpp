@@ -72,38 +72,81 @@ QString InfoFuncMatrices::calculateInternal()
 InfoFuncMatrixMultFwd::InfoFuncMatrixMultFwd(Schema *schema, const Elements& elems)
     : InfoFuncMatrices(schema, elems)
 {
-    InfoFuncAction a1;
-    a1.title = qApp->translate("InfoFuncMatrixMultFwd", "Use forward proparation matrices");
-    a1.icon = ":/toolbar/dir_forward";
-    a1.checkGroup = 1;
-    a1.triggered = [this](){ _useInvMatrs = false; calculate(); };
-    a1.isChecked = [this](){ return !_useInvMatrs; };
-
-    InfoFuncAction a2;
-    a2.title = qApp->translate("InfoFuncMatrixMultFwd", "Use back proparation matrices");
-    a2.icon = ":/toolbar/dir_backward";
-    a2.checkGroup = 1;
-    a2.triggered = [this](){ _useInvMatrs = true; calculate(); };
-    a2.isChecked = [this](){ return _useInvMatrs; };
-
-    _actions << a1 << a2;
+    {
+        InfoFuncAction a;
+        a.title = qApp->translate("InfoFuncMatrixMultFwd", "Multiply in order of selection");
+        a.showInMenu = true;
+        a.triggered = [this](){ _useSelectionOrder = !_useSelectionOrder; calculate(); };
+        a.isChecked = [this](){ return _useSelectionOrder; };
+        _actions << a;
+    }
+    {
+        InfoFuncAction a;
+        a.title = qApp->translate("InfoFuncMatrixMultFwd", "Multiply in reverse order");
+        a.showInMenu = true;
+        a.triggered = [this](){ _useReverseOrder = !_useReverseOrder; calculate(); };
+        a.isChecked = [this](){ return _useReverseOrder; };
+        _actions << a;
+    }
+    {
+        InfoFuncAction a;
+        a.title = qApp->translate("InfoFuncMatrixMultFwd", "Use back proparation matrices");
+        a.showInMenu = true;
+        a.triggered = [this](){ _useInvMatrs = !_useInvMatrs; calculate(); };
+        a.isChecked = [this](){ return _useInvMatrs; };
+        _actions << a;
+    }
+    {
+        InfoFuncAction a;
+        a.title = qApp->translate("InfoFuncMatrixMultFwd", "Use disabled elements");
+        a.showInMenu = true;
+        a.triggered = [this](){ _useDisabledElems = !_useDisabledElems; calculate(); };
+        a.isChecked = [this](){ return _useDisabledElems; };
+        _actions << a;
+    }
 }
 
 QString InfoFuncMatrixMultFwd::calculateInternal()
 {
-    Z::Matrix mt, ms;
+    // _elements are in the selection order
 
-    foreach (auto elem, _elements)
+    Elements elems0;
+    if (!_useSelectionOrder) {
+        for (const auto elem : _schema->elements()) {
+            if (_elements.contains(elem))
+                elems0 << elem;
+        }
+    } else {
+        elems0 = _elements;
+    }
+    Elements elems1;
+    if (_useReverseOrder) {
+        elems1.reserve(elems0.size());
+        std::reverse_copy(elems0.begin(), elems0.end(), std::back_inserter(elems1));
+    } else {
+        elems1 = elems0;
+    }
+    Elements elems2;
+    if (!_useDisabledElems) {
+        for (const auto elem : std::as_const(elems1))
+            if (!elem->disabled())
+                elems2 << elem;
+    } else {
+        elems2 = elems1;
+    }
+    
+    Z::Matrix mt, ms;
+    for (const auto elem : std::as_const(elems2))
     {
         mt *= _useInvMatrs ? elem->Mt_inv() : elem->Mt() ;
         ms *= _useInvMatrs ? elem->Ms_inv() : elem->Ms();
     }
 
     QString report = QStringLiteral("%1:<p>%2")
-        .arg(Z::Format::roundTrip(_elements, true), Z::Format::matrices(mt, ms));
+        .arg(Z::Format::roundTrip(elems2, true), Z::Format::matrices(mt, ms));
 
     if (AppSettings::instance().showPythonMatrices)
-        report += Z::Format::Py::roundTrip(_elements);
+        report += Z::Format::Py::roundTrip(elems2);
 
     return report;
 }

@@ -45,6 +45,9 @@ public:
     FUNC_NAME(qApp->translate("Func", "Matrix Product"))
 private:
     bool _useInvMatrs = false;
+    bool _useSelectionOrder = false;
+    bool _useReverseOrder = false;
+    bool _useDisabledElems = false;
 };
 
 class InfoFuncMatrixMultBkwd : public InfoFuncMatrixMultFwd
