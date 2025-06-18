@@ -214,7 +214,7 @@ void ProjectWindow::createMenuBar()
     menuView = new QMenu(tr("View"), this);
 
     menuFunctions = Ori::Gui::menu(tr("Functions"), this,
-        { actnFuncRoundTrip, actnFuncMatrixMult, actnFuncMultBkwd, nullptr,
+        { actnFuncRoundTrip, actnFuncMatrixMult, nullptr,
           actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamVariation, nullptr,
           actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic,
           actnFuncBeamParamsAtElems, nullptr, actnFuncRepRate });
