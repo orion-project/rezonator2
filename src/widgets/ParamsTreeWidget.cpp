@@ -93,7 +93,7 @@ void ParamsTreeWidget::populate()
 void ParamsTreeWidget::addRootItem(Element* elem)
 {
     QVector<QTreeWidgetItem*> items;
-    auto params = elem ? elem->params() : _opts.schema->globalParams();
+    auto params = elem ? elem->params() : _opts.schema->availableDependencySources();
     for (auto param : params)
         if (!_opts.ignoreList.contains(param))
             if (!_opts.paramFilter || _opts.paramFilter->check(param))

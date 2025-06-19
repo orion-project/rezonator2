@@ -60,12 +60,12 @@ TEST_METHOD(must_use_filter)
 TEST_METHOD(must_use_filter_for_custom_params)
 {
     TEST_SCHEMA(schema)
-    schema.addCustomParam(new Z::Parameter(Z::Dims::none(), ""));
+    schema.addGlobalParam(new Z::Parameter(Z::Dims::none(), ""));
     auto condition = new TestElemFilter<true>();
     ElementFilterPtr f(new ElementFilter({condition}));
     ElemSelectorWidget target(&schema, {.filter = f, .includeCustomParams = true});
     Elements elems(schema.elements());
-    elems << const_cast<Element*>(schema.customParamsAsElem());
+    elems << const_cast<Element*>(schema.globalParamsAsElem());
     ASSERT_PTR_LIST(condition->checkedElems, elems)
     ASSERT_PTR_LIST(target.elements(), elems)
     ASSERT_EQ_INT(target.count(), schema.count()+1)
@@ -75,7 +75,7 @@ TEST_METHOD(must_respect_filter)
 {
     TEST_SCHEMA(schema)
     auto condition = new TestElemFilter<false>();
-    schema.addCustomParam(new Z::Parameter(Z::Dims::none(), ""));
+    schema.addGlobalParam(new Z::Parameter(Z::Dims::none(), ""));
     ElementFilterPtr f(new ElementFilter({condition}));
     ElemSelectorWidget target(&schema, {.filter = f});
     ASSERT_PTR_LIST(condition->checkedElems, schema.elements())
@@ -87,11 +87,11 @@ TEST_METHOD(must_respect_filter_for_custom_params)
 {
     TEST_SCHEMA(schema)
     auto condition = new TestElemFilter<false>();
-    schema.addCustomParam(new Z::Parameter(Z::Dims::none(), ""));
+    schema.addGlobalParam(new Z::Parameter(Z::Dims::none(), ""));
     ElementFilterPtr f(new ElementFilter({condition}));
     ElemSelectorWidget target(&schema, {.filter = f, .includeCustomParams = true});
     Elements elems(schema.elements());
-    elems << const_cast<Element*>(schema.customParamsAsElem());
+    elems << const_cast<Element*>(schema.globalParamsAsElem());
     ASSERT_PTR_LIST(condition->checkedElems, elems)
     ASSERT_EQ_INT(target.elements().size(), 0)
     ASSERT_EQ_INT(target.count(), 0)

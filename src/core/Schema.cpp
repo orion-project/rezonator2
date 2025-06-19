@@ -98,11 +98,11 @@ const SchemaEvents::EventProps& SchemaEvents::propsOf(Event event)
         INIT_EVENT(ParamsChanged,      true,         SchemaState::Modified ),
         INIT_EVENT(LambdaChanged,      true,         SchemaState::Modified ),
 
-        INIT_EVENT(CustomParamCreated, true,         SchemaState::Modified ),
-        INIT_EVENT(CustomParamEdited,  true,         SchemaState::Modified ),
-        INIT_EVENT(CustomParamChanged, true,         SchemaState::Modified ),
-        INIT_EVENT(CustomParamDeleted, true,         SchemaState::Modified ),
-        INIT_EVENT(CustomParamDeleting,true,         SchemaState::Current  ),
+        INIT_EVENT(GlobalParamCreated, true,         SchemaState::Modified ),
+        INIT_EVENT(GlobalParamEdited,  true,         SchemaState::Modified ),
+        INIT_EVENT(GlobalParamChanged, true,         SchemaState::Modified ),
+        INIT_EVENT(GlobalParamDeleted, true,         SchemaState::Modified ),
+        INIT_EVENT(GlobalParamDeleting,true,         SchemaState::Current  ),
 
         INIT_EVENT(PumpCreated,        true,         SchemaState::Modified ),
         INIT_EVENT(PumpChanged,        true,         SchemaState::Modified ),
@@ -139,11 +139,11 @@ void SchemaEvents::notify(SchemaListener* listener, SchemaEvents::Event event, v
     case ParamsChanged: listener->schemaParamsChanged(_schema); break;
     case LambdaChanged: listener->schemaLambdaChanged(_schema); break;
 
-    case CustomParamCreated: listener->customParamCreated(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
-    case CustomParamEdited: listener->customParamEdited(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
-    case CustomParamChanged: listener->customParamChanged(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
-    case CustomParamDeleting: listener->customParamDeleting(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
-    case CustomParamDeleted: listener->customParamDeleted(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
+    case GlobalParamCreated: listener->globalParamCreated(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
+    case GlobalParamEdited: listener->globalParamEdited(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
+    case GlobalParamChanged: listener->globalParamChanged(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
+    case GlobalParamDeleting: listener->globalParamDeleting(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
+    case GlobalParamDeleted: listener->globalParamDeleted(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
 
     case PumpCreated: listener->pumpCreated(_schema, reinterpret_cast<PumpParams*>(param)); break;
     case PumpChanged: listener->pumpChanged(_schema, reinterpret_cast<PumpParams*>(param)); break;
@@ -164,16 +164,16 @@ ElementSelector::~ElementSelector()
 }
 
 //------------------------------------------------------------------------------
-//                               CustomParamsElem
+//                               GlobalParamsElem
 //------------------------------------------------------------------------------
 
-class CustomParamsElem : public Element
+class GlobalParamsElem : public Element
 {
 public:
-    const QString type() const override { return "CustomParamsElem"; };
+    const QString type() const override { return "GlobalParamsElem"; };
 protected:
     Element* create() const override {
-        qWarning() << "Do not use CustomParamsElem::create()";
+        qWarning() << "Do not use GlobalParamsElem::create()";
         return nullptr;
     }
     friend class Schema;
@@ -189,11 +189,11 @@ Schema::Schema(const QString &alias) : _alias(alias)
     _wavelength.setValue(Z::Value(980, Z::Units::nm()));
     _wavelength.addListener(this);
 
-    _customParams = new CustomParamsElem;
+    _globalParams = new GlobalParamsElem;
     // Do setLabel before setOwner to avoid unnecessary events
     // TODO: The label will be used in elem-and-param selectors, so should be localized
-    _customParams->setLabel("Global parameters");
-    _customParams->setOwner(this);
+    _globalParams->setLabel("Global parameters");
+    _globalParams->setOwner(this);
 
     _events._schema = this;
     _events.raise(SchemaEvents::Created, "Schema: schema constructor");
@@ -208,7 +208,7 @@ Schema::~Schema()
 
     qDeleteAll(_items);
     qDeleteAll(_pumps);
-    delete _customParams;
+    delete _globalParams;
 
     if (memo) delete memo;
 }
@@ -351,21 +351,21 @@ void Schema::setTripType(TripType value)
     _events.raise(SchemaEvents::RecalRequred, "Schema: setTripType");
 }
 
-Z::Parameters Schema::globalParams() const
+Z::Parameters Schema::availableDependencySources() const
 {
-    Z::Parameters list(_customParams->params());
+    Z::Parameters list(_globalParams->params());
     list << const_cast<Z::Parameter*>(&_wavelength);
     return list;
 }
 
-void Schema::addCustomParam(Z::Parameter *param)
+void Schema::addGlobalParam(Z::Parameter *param)
 {
-    dynamic_cast<CustomParamsElem*>(_customParams)->_params.append(param);
+    dynamic_cast<GlobalParamsElem*>(_globalParams)->_params.append(param);
 }
 
-void Schema::removeCustomParam(Z::Parameter *param)
+void Schema::removeGlobalParam(Z::Parameter *param)
 {
-    dynamic_cast<CustomParamsElem*>(_customParams)->_params.removeOne(param);
+    dynamic_cast<GlobalParamsElem*>(_globalParams)->_params.removeOne(param);
 }
 
 PumpParams* Schema::activePump()

@@ -111,7 +111,7 @@ QJsonObject writeVariable(const Variable *var, Schema *schema)
 QString readVariable(const QJsonObject& json, Variable* var, Schema *schema)
 {
     int elemIndex = json["element_index"].toInt(-1);
-    Element* elem = elemIndex == -1 ? const_cast<Element*>(schema->customParamsAsElem())
+    Element* elem = elemIndex == -1 ? const_cast<Element*>(schema->globalParamsAsElem())
                                     : schema->element(elemIndex);
     if (!elem)
         return QString("There is no element with index %1").arg(elemIndex);

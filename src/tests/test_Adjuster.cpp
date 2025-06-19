@@ -54,7 +54,7 @@ TEST_METHOD(must_raise_events_when_custom_param_changed_1)
     auto e1 = new TestElement;
     auto p0 = new Z::Parameter(Z::Dims::linear(), "");
     schema.insertElements({ e1 }, 0, Arg::RaiseEvents(false));
-    schema.addCustomParam(p0);
+    schema.addGlobalParam(p0);
     {
         ElementEventsLocker locker(e1, "");
         schema.addParamLink(p0, e1->param("p1"));
@@ -70,7 +70,7 @@ TEST_METHOD(must_raise_events_when_custom_param_changed_1)
         EVENT(ElemChanged),
         EVENT(Changed),
 
-        EVENT(CustomParamChanged),
+        EVENT(GlobalParamChanged),
         EVENT(Changed),
 
         EVENT(RecalRequred)
@@ -85,7 +85,7 @@ TEST_METHOD(must_raise_events_when_custom_param_changed_2)
     auto e2 = new TestElement;
     auto p0 = new Z::Parameter(Z::Dims::linear(), "");
     schema.insertElements({ e1, e2 }, 0, Arg::RaiseEvents(false));
-    schema.addCustomParam(p0);
+    schema.addGlobalParam(p0);
     {
         ElementEventsLocker locker1(e1, "");
         ElementEventsLocker locker2(e2, "");
@@ -106,7 +106,7 @@ TEST_METHOD(must_raise_events_when_custom_param_changed_2)
         EVENT(ElemChanged), // e2 changed
         EVENT(Changed),
 
-        EVENT(CustomParamChanged),
+        EVENT(GlobalParamChanged),
         EVENT(Changed),
 
         EVENT(RecalRequred)
@@ -123,7 +123,7 @@ TEST_METHOD(must_be_disabled_when_param_is_linked_to_custom)
     ASSERT_IS_FALSE(adjuster.target->isReadOnly());
     
     auto p0 = new Z::Parameter(Z::Dims::linear(), "");
-    schema.addCustomParam(p0);
+    schema.addGlobalParam(p0);
     schema.addParamLink(p0, e1->param("p1"));
     ASSERT_IS_TRUE(adjuster.target->isReadOnly());
 }
@@ -132,7 +132,7 @@ TEST_METHOD(must_be_disabled_when_custom_param_is_driven_by_formula)
 {
     Schema schema;
     auto p0 = new Z::Parameter(Z::Dims::linear(), "");
-    schema.addCustomParam(p0);
+    schema.addGlobalParam(p0);
 
     AdjusterTester adjuster(&schema, p0);
     ASSERT_IS_FALSE(adjuster.target->isReadOnly());

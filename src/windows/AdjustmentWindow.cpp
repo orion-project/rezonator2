@@ -339,7 +339,7 @@ void AdjusterWidget::changeValue()
         }
         else
         {
-            _schema->events().raise(SchemaEvents::CustomParamChanged, _param, "AdjusterWidget: custom param adjusted");
+            _schema->events().raise(SchemaEvents::GlobalParamChanged, _param, "AdjusterWidget: custom param adjusted");
             _schema->events().raise(SchemaEvents::RecalRequred, "AdjusterWidget: custom param adjusted");
         }
     }
@@ -479,7 +479,7 @@ void AdjustmentWindow::elementDeleting(Schema*, Element* elem)
         deleteAdjuster(param);
 }
 
-void AdjustmentWindow::customParamDeleting(Schema*, Z::Parameter* param)
+void AdjustmentWindow::globalParamDeleting(Schema*, Z::Parameter* param)
 {
     deleteAdjuster(param);
 }

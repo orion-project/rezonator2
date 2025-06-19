@@ -79,7 +79,7 @@ void SchemaReaderJson::readFromUtf8(const QByteArray& data)
                 .arg(version.str(), Z::IO::Utils::currentVersion().str()));
 
     readGeneral(root);
-    readCustomParams(root);
+    readGlobalParams(root);
     readPumps(root);
     readElements(root);
     readParamLinks(root);
@@ -120,8 +120,10 @@ void SchemaReaderJson::readGeneral(const QJsonObject& root)
     }
 }
 
-void SchemaReaderJson::readCustomParams(const QJsonObject& root)
+void SchemaReaderJson::readGlobalParams(const QJsonObject& root)
 {
+    // Global parameters stored in the "custom_params" key for backward compatibility
+    // Custom parameters used in elements stored in the "elem_custom_params" key
     JsonValue paramsJson(root, "custom_params", &_report);
     if (paramsJson)
     {
@@ -130,19 +132,19 @@ void SchemaReaderJson::readCustomParams(const QJsonObject& root)
             JsonValue paramJson(paramsJson, paramAlias, &_report);
             if (paramJson)
             {
-                readCustomParam(paramJson.obj(), paramAlias);
+                readGlobalParam(paramJson.obj(), paramAlias);
             }
         }
     }
 }
 
-void SchemaReaderJson::readCustomParam(const QJsonObject& root, const QString &alias)
+void SchemaReaderJson::readGlobalParam(const QJsonObject& root, const QString &alias)
 {
     auto dimStr = root["dim"].toString();
     Z::Dim dim = Z::Dims::findByAlias(dimStr);
     if (!dim)
         return _report.warning(QString(
-            "Unknown dimension '%1' of custom parameter '%2'").arg(dimStr, alias));
+            "Unknown dimension '%1' of global parameter '%2'").arg(dimStr, alias));
 
     auto param = new Z::Parameter(
         dim,
@@ -156,9 +158,9 @@ void SchemaReaderJson::readCustomParam(const QJsonObject& root, const QString &a
 
     auto res = readParamValue(root, param);
     if (!res.isEmpty())
-        _report.warning(QString("Reading custom parameter '%1': %2").arg(param->alias(), res));
+        _report.warning(QString("Reading global parameter '%1': %2").arg(param->alias(), res));
 
-    _schema->addCustomParam(param);
+    _schema->addGlobalParam(param);
 }
 
 void SchemaReaderJson::readPumps(const QJsonObject& root)
@@ -213,7 +215,7 @@ void SchemaReaderJson::readParamLink(const QJsonObject& root)
                 .arg(targetParamAlias, targetElem->displayLabel()));
 
     auto sourceParamAlias = root["source_param"].toString();
-    auto sourceParam = _schema->customParams()->byAlias(sourceParamAlias);
+    auto sourceParam = _schema->globalParams()->byAlias(sourceParamAlias);
     if (!sourceParam)
         return _report.warning(QString(
             "Unable to load link: parameter '%1' not found in custom params").arg(sourceParamAlias));
@@ -232,7 +234,7 @@ void SchemaReaderJson::readFormulas(const QJsonObject& root)
 void SchemaReaderJson::readFormula(const QJsonObject& root)
 {
     auto targetAlias = root["target_param"].toString();
-    auto targetParam = _schema->customParams()->byAlias(targetAlias);
+    auto targetParam = _schema->globalParams()->byAlias(targetAlias);
     if (!targetParam)
         return _report.warning(QString(
             "Unable to find target parameter '%1' for formula, formula skipped").arg(targetAlias));
@@ -240,7 +242,7 @@ void SchemaReaderJson::readFormula(const QJsonObject& root)
     auto formula = new Z::Formula(targetParam);
     formula->setCode(root["code"].toString());
 
-    auto globalParams = _schema->globalParams();
+    auto globalParams = _schema->availableDependencySources();
     JsonValue depsJson(root, "param_deps", &_report);
     if (depsJson)
         for (auto it = depsJson.array().begin(); it != depsJson.array().end(); it++)

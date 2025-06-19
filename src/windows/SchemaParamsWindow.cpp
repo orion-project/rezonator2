@@ -125,7 +125,7 @@ void SchemaParamsWindow::createParameter()
         auto alias = aliasEditor->text().trimmed();
         if (alias.isEmpty())
             return tr("Parameter name can't be empty");
-        if (schema()->customParams()->byAlias(alias))
+        if (schema()->globalParams()->byAlias(alias))
             return tr("Parameter <b>%1</b> already exists").arg(alias);
         if (!Z::FormulaUtils::isValidVariableName(alias))
             return tr("Parameter name <b>%1</b> is invalid").arg(alias);
@@ -146,13 +146,13 @@ void SchemaParamsWindow::createParameter()
         auto param = new Z::Parameter(dim, alias, label, name);
         auto unit = unitEditor->selectedUnit();
         param->setValue(Z::Value(0, unit));
-        schema()->addCustomParam(param);
+        schema()->addGlobalParam(param);
 
         RecentData::PendingSave _;
         RecentData::setDim("global_param_dim", dim);
         RecentData::setUnit("global_param_unit", unit);
 
-        schema()->events().raise(SchemaEvents::CustomParamCreated, param, "Params window: param created");
+        schema()->events().raise(SchemaEvents::GlobalParamCreated, param, "Params window: param created");
 
         _isSettingValueForNewParam = true;
         QTimer::singleShot(100, this, [&](){ setParameterValue(); });
@@ -193,10 +193,10 @@ void SchemaParamsWindow::deleteParameter()
 
     if (Ori::Dlg::yes(tr("Delete parameter<b>%1</b>?").arg(deletingParam->alias())))
     {
-        schema()->events().raise(SchemaEvents::CustomParamDeleting, deletingParam, "Params window: param deleting");
+        schema()->events().raise(SchemaEvents::GlobalParamDeleting, deletingParam, "Params window: param deleting");
         schema()->formulas()->free(deletingParam);
-        schema()->removeCustomParam(deletingParam);
-        schema()->events().raise(SchemaEvents::CustomParamDeleted, deletingParam, "Params window: param deleted");
+        schema()->removeGlobalParam(deletingParam);
+        schema()->events().raise(SchemaEvents::GlobalParamDeleted, deletingParam, "Params window: param deleted");
     }
 }
 
@@ -205,7 +205,7 @@ void SchemaParamsWindow::setParameterValue()
     auto param = _table->selected();
     if (!param) return;
 
-    auto globalParams = schema()->globalParams();
+    auto globalParams = schema()->availableDependencySources();
     ParamEditorEx editor(param, schema()->formulas(), &globalParams);
     bool ok = Ori::Dlg::Dialog(&editor, false)
                 .withTitle(tr("Set Value"))
@@ -219,7 +219,7 @@ void SchemaParamsWindow::setParameterValue()
                 .exec();
     if (ok)
     {
-        schema()->events().raise(SchemaEvents::CustomParamChanged, param, "Params window: param value set");
+        schema()->events().raise(SchemaEvents::GlobalParamChanged, param, "Params window: param value set");
         schema()->events().raise(SchemaEvents::RecalRequred, "Params window: param value set");
     }
 
@@ -240,7 +240,7 @@ void SchemaParamsWindow::annotateParameter()
     if (ok)
     {
         param->setDescription(descr);
-        schema()->events().raise(SchemaEvents::CustomParamEdited, param, "Params window: param annotated");
+        schema()->events().raise(SchemaEvents::GlobalParamEdited, param, "Params window: param annotated");
     }
 }
 

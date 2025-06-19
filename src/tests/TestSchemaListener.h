@@ -31,11 +31,11 @@ public:
     void schemaParamsChanged(Schema*s) { store(SchemaEvents::ParamsChanged, s); }
     void schemaLambdaChanged(Schema*s) { store(SchemaEvents::LambdaChanged, s); }
 
-    void customParamCreated(Schema*s, Z::Parameter*p) { store(SchemaEvents::CustomParamCreated, s, p); }
-    void customParamEdited(Schema*s, Z::Parameter*p) { store(SchemaEvents::CustomParamEdited, s, p); }
-    void customParamChanged(Schema*s, Z::Parameter*p) { store(SchemaEvents::CustomParamChanged, s, p); }
-    void customParamDeleting(Schema*s, Z::Parameter*p) { store(SchemaEvents::CustomParamDeleting, s, p); }
-    void customParamDeleted(Schema*s, Z::Parameter*p) { store(SchemaEvents::CustomParamDeleted, s, p); }
+    void globalParamCreated(Schema*s, Z::Parameter*p) { store(SchemaEvents::GlobalParamCreated, s, p); }
+    void globalParamEdited(Schema*s, Z::Parameter*p) { store(SchemaEvents::GlobalParamEdited, s, p); }
+    void globalParamChanged(Schema*s, Z::Parameter*p) { store(SchemaEvents::GlobalParamChanged, s, p); }
+    void globalParamDeleting(Schema*s, Z::Parameter*p) { store(SchemaEvents::GlobalParamDeleting, s, p); }
+    void globalParamDeleted(Schema*s, Z::Parameter*p) { store(SchemaEvents::GlobalParamDeleted, s, p); }
 
     void pumpCreated(Schema*s, PumpParams*p) { store(SchemaEvents::PumpCreated, s, p); }
     void pumpChanged(Schema*s, PumpParams*p) { store(SchemaEvents::PumpChanged, s, p); }
