@@ -325,7 +325,7 @@ void copyParamValuesByName(const Element* source, Element* target, const char* r
     for (auto p : source->params())
     {
         auto p1 = targetParams.value(p->alias());
-        if (p1 and p1->dim() == p->dim())
+        if (p1 && p1->dim() == p->dim())
             p1->setValue(p->value());
     }
 }

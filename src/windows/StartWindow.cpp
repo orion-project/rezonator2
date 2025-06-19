@@ -360,7 +360,7 @@ void TipsStartPanel::showTip(const QJsonObject &tip)
             previewFile = imageFile;
         QString previewPath = tipImagesPath + previewFile;
         auto preview = QPixmap(previewPath);
-        if (preview.width() != TIP_IMG_PREVIEW_W or
+        if (preview.width() != TIP_IMG_PREVIEW_W ||
             preview.height() != TIP_IMG_PREVIEW_H)
             preview = preview.scaled(TIP_IMG_PREVIEW_W,
                                      TIP_IMG_PREVIEW_H,

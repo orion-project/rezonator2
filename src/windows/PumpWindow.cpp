@@ -376,7 +376,7 @@ void PumpWindow::editPump()
     if (!pump) return;
     if (!editPumpDlg(pump)) return;
     schema()->events().raise(SchemaEvents::PumpChanged, pump, "PumpWindow: pump params changed");
-    if (pump->isActive() and schema()->tripType() == TripType::SP)
+    if (pump->isActive() && schema()->tripType() == TripType::SP)
         schema()->events().raise(SchemaEvents::RecalRequred, "PumpWindow: pump params changed");
     showStatusInfo();
 }

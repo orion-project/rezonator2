@@ -169,7 +169,7 @@ void MultiElementSelectorWidget::populate(Schema* schema, ElementFilterPtr filte
 {
     for (auto elem : schema->elements())
     {
-        if (filter and !filter->check(elem)) continue;
+        if (filter && !filter->check(elem)) continue;
 
         auto item = new QListWidgetItem(elem->displayLabelTitle());
         item->setIcon(QIcon(Z::Utils::elemIconPath(elem)));

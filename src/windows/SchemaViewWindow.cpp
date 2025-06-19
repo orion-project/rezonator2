@@ -166,7 +166,7 @@ void SchemaViewWindow::actionElemReplace()
         return;
     }
 
-    if (not confirmDeletion({curElem}, true)) return;
+    if (!confirmDeletion({curElem}, true)) return;
 
     Element* elem = ElementsCatalog::instance().create(sample->elem, sample->isCustom);
     if (!elem) return;
@@ -242,7 +242,7 @@ bool SchemaViewWindow::confirmDeletion(const Elements &elements, bool onlyIfWarn
         }
     }
 
-    if (onlyIfWarnings and not warningAdded)
+    if (onlyIfWarnings && !warningAdded)
         return true;
 
     confirmation << "" <<  tr("Confirm deletion.");
@@ -254,7 +254,7 @@ void SchemaViewWindow::actionElemDelete()
     Elements elements = _table->selection();
     if (elements.isEmpty()) return;
 
-    if (not confirmDeletion(elements, false)) return;
+    if (!confirmDeletion(elements, false)) return;
 
     // table selection is not ordered
     // deleting element will be in order of clicks

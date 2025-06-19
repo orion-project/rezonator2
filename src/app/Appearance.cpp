@@ -192,7 +192,7 @@ void applyTextBrowserStyleSheet(QTextBrowser* browser, const QString& cssResourc
     if (!AppSettings::instance().isDevMode) return;
 
     browser->connect(browser, &QTextBrowser::anchorClicked, browser, [cssResourcePath, browser](const QUrl& url){
-        if (url.scheme() != "do" or url.host() != "edit-css") return;
+        if (url.scheme() != "do" || url.host() != "edit-css") return;
 
         auto parts = cssResourcePath.split('/');
         if (parts.size() != 3)
@@ -216,13 +216,13 @@ void applyTextBrowserStyleSheet(QTextBrowser* browser, const QString& cssResourc
         while (!xml.atEnd()) {
             if (xml.readNext() == QXmlStreamReader::StartElement)
             {
-                if (prefixFound and xml.name() == QLatin1String("file") and xml.attributes().value("alias") == alias)
+                if (prefixFound && xml.name() == QLatin1String("file") && xml.attributes().value("alias") == alias)
                 {
                     QFileInfo fi(qApp->applicationDirPath() + "/../src/" + xml.readElementText());
                     styleFile = fi.absoluteFilePath();
                     break;
                 }
-                else if (xml.name() == QLatin1String("qresource") and xml.attributes().value("prefix") == prefix)
+                else if (xml.name() == QLatin1String("qresource") && xml.attributes().value("prefix") == prefix)
                     prefixFound = true;
             }
             if (xml.hasError()) {

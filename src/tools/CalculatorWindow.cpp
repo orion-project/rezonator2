@@ -47,7 +47,7 @@ CalculatorSettingsDlg::CalculatorSettingsDlg() : RezonatorDialog(RezonatorDialog
     _fontSampleLabel->setStyleSheet("background-color:white;padding:6px");
     _fontSampleLabel->setFrameShape(QFrame::StyledPanel);
     auto f = Z::Gui::CodeEditorFont().get();
-    if (!__instance->_overrideFontName.isEmpty() and __instance->_overrideFontSize > 0)
+    if (!__instance->_overrideFontName.isEmpty() && __instance->_overrideFontSize > 0)
     {
         f.setFamily(__instance->_overrideFontName);
         f.setPointSize(__instance->_overrideFontSize);
@@ -269,12 +269,12 @@ void CalculatorWindow::restoreState()
     // Restore splitters
     int logH = root["log_height"].toInt();
     int editorH = root["editor_height"].toInt();
-    if (logH > 0 and editorH > 0)
+    if (logH > 0 && editorH > 0)
         _mainSplitter->setSizes({logH, editorH});
 
     int logW = root["log_width"].toInt();
     int varsW = root["vars_width"].toInt();
-    if (logW > 0 and varsW > 0)
+    if (logW > 0 && varsW > 0)
         _sessionSplitter->setSizes({logW, varsW});
 
     // Restore calculation history

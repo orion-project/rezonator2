@@ -3,6 +3,8 @@
 
 #include "RezonatorDialog.h"
 
+#include <optional>
+
 #include <QSet>
 
 QT_BEGIN_NAMESPACE

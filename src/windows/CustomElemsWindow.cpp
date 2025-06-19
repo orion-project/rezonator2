@@ -198,7 +198,7 @@ void CustomElemsWindow::actionElemDelete()
     for (int i = 0; i < elements.size(); i++)
         confirmation << QString("<b>%1</b>").arg(elements[i]->displayLabelTitle());
 
-    if (not Ori::Dlg::ok(confirmation.join("<br>"))) return;
+    if (!Ori::Dlg::ok(confirmation.join("<br>"))) return;
 
     _library->deleteElements(elements, Arg::RaiseEvents(true), Arg::FreeElem(true));
 

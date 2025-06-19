@@ -241,7 +241,7 @@ QMap<QString, double> Lua::getGlobalVars()
     {                          // -2 is index of table
         auto keyType = lua_type(_lua, -2);
         auto valueType = lua_type(_lua, -1);
-        if (keyType == LUA_TSTRING and valueType == LUA_TNUMBER)
+        if (keyType == LUA_TSTRING && valueType == LUA_TNUMBER)
         {
             auto namePtr = lua_tostring(_lua, -2);
             if (namePtr)

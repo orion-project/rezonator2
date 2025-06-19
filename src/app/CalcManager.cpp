@@ -145,7 +145,7 @@ template <class TFunction> void CalcManager::showPlotFunc()
     if (!wnd) return;
 
     auto plotWnd = dynamic_cast<PlotFuncWindow*>(wnd);
-    if (!plotWnd or !plotWnd->configure())
+    if (!plotWnd || !plotWnd->configure())
     {
         delete wnd;
         return;

@@ -285,7 +285,7 @@ void Schema::deleteElements(const Elements& elems, Arg::RaiseEvents events, Arg:
 {
     Elements ownedElems;
     foreach (auto elem, elems)
-        if (_items.contains(elem) and not ownedElems.contains(elem))
+        if (_items.contains(elem) && !ownedElems.contains(elem))
             ownedElems << elem;
     if (ownedElems.isEmpty()) return;
 

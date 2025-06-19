@@ -91,7 +91,7 @@ void TableFuncResultTable::updateColumnTitles()
     for (auto& col : _function->columns())
     {
         QString title;
-        if (showT and showS)
+        if (showT && showS)
             title = QStringLiteral("%1 %2 %3 ").arg(col.titleT).arg(Z::Strs::multX()).arg(col.titleS);
         else if (showT)
             title = col.titleT;
@@ -147,7 +147,7 @@ void TableFuncResultTable::updateResults()
             QString valueStr;
             if (qIsNaN(valueT) || qIsNaN(valueS))
                 valueStr = QStringLiteral("N/A");
-            else if (showT and showS)
+            else if (showT && showS)
                 valueStr = QStringLiteral("%1 %2 %3 ")
                         .arg(Z::format(valueT))
                         .arg(Z::Strs::multX())
@@ -406,7 +406,7 @@ void TableFuncWindow::freeze(bool frozen)
         summary.calculate();
         _buttonFrozenInfo->setInfo(summary.result());
     }
-    if (!_frozen and _needRecalc)
+    if (!_frozen && _needRecalc)
         update();
 }
 

@@ -95,7 +95,7 @@ QString saveToLibrary(Element* elem)
 
     QBoxLayout *infoLayout = nullptr;
     auto schema = dynamic_cast<Schema*>(elem->owner());
-    if (schema and hasLinksForElement(schema, elem))
+    if (schema && hasLinksForElement(schema, elem))
     {
         auto infoPanel = new Ori::Widgets::InfoPanel;
         infoPanel->setInfo(qApp->tr("Some of the source element parameters are linked to the global parameters. "

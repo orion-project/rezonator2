@@ -6,6 +6,12 @@
 #include <QString>
 
 #define SQR(a) ((a)*(a))
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+#ifndef M_1_PI
+#define M_1_PI 0.31830988618379067154
+#endif
 
 namespace Z {
 

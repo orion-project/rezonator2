@@ -41,7 +41,7 @@ ParamsEditor::ParamsEditor(const Options opts, QWidget *parent) : QWidget(parent
 
 void ParamsEditor::populateEditors()
 {
-    if (not _editors.isEmpty())
+    if (!_editors.isEmpty())
     {
         qWarning() << "ParamsEditor::populateEditors: already populated, use removeEditors first";
         return;

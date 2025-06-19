@@ -104,7 +104,7 @@ void BeamShapeWidget::setShape(const Z::PointTS &shape)
 {
     Double w(shape.T);
     Double h(shape.S);
-    if (w.is(0) or w.isNan() or w.isInfinity() or h.is(0) or h.isNan() or h.isInfinity())
+    if (w.is(0) || w.isNan() || w.isInfinity() || h.is(0) || h.isNan() || h.isInfinity())
         _ratio = -1;
     else
         _ratio = qAbs(shape.T) / qAbs(shape.S);
@@ -248,10 +248,10 @@ void BeamShapeWidget::updateSite(const QPoint &pos)
     const int y1 = p.y() + RESIZE_BORDER;
     const int x2 = p.x() + width() - RESIZE_BORDER;
     const int y2 = p.y() + height() - RESIZE_BORDER;
-         if (y > y2 and x < x1) { _site = BOTTOM_LEFT; setCursor(Qt::SizeBDiagCursor); }
-    else if (y > y2 and x > x2) { _site = BOTTOM_RIGHT; setCursor(Qt::SizeFDiagCursor); }
-    else if (y < y1 and x < x1) { _site = TOP_LEFT; setCursor(Qt::SizeFDiagCursor); }
-    else if (y < y1 and x > x2) { _site = TOP_RIGHT; setCursor(Qt::SizeBDiagCursor); }
+         if (y > y2 && x < x1) { _site = BOTTOM_LEFT; setCursor(Qt::SizeBDiagCursor); }
+    else if (y > y2 && x > x2) { _site = BOTTOM_RIGHT; setCursor(Qt::SizeFDiagCursor); }
+    else if (y < y1 && x < x1) { _site = TOP_LEFT; setCursor(Qt::SizeFDiagCursor); }
+    else if (y < y1 && x > x2) { _site = TOP_RIGHT; setCursor(Qt::SizeBDiagCursor); }
     else if (x < x1) { _site = LEFT; setCursor(Qt::SizeHorCursor); }
     else if (x > x2) { _site = RIGHT; setCursor(Qt::SizeHorCursor); }
     else if (y < y1) { _site = TOP; setCursor(Qt::SizeVerCursor); }
@@ -279,7 +279,7 @@ void BeamShapeWidget::parentSizeChanged()
     if (Y < 0) { newH = H + Y; newY = 0; }
     if (newW < MIN_W) newW = MIN_W;
     if (newH < MIN_H) newH = MIN_H;
-    if (newX != X or newY != Y or newW != W or newH != H)
+    if (newX != X || newY != Y || newW != W || newH != H)
         setGeometry(newX, newY, newW, newH);
 }
 

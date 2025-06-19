@@ -396,7 +396,7 @@ void SchemaReaderIni::readElement(const QString &section)
     {
         auto paramAlias = param->alias();
 
-        if (grinLens and param == grinLens->paramIor())
+        if (grinLens && param == grinLens->paramIor())
             paramAlias = "n0";
 
         bool ok;
@@ -423,11 +423,11 @@ void SchemaReaderIni::readElement(const QString &section)
         }
 
         // Gradiens are stored in linear units in old schemas, but they are in 1/m2 in new ones
-        if (grinLens and (param == grinLens->paramIor2t() or param == grinLens->paramIor2s()))
+        if (grinLens && (param == grinLens->paramIor2t() || param == grinLens->paramIor2s()))
             tmp /= _linearUnit->toSi(1) * _linearUnit->toSi(1);
 
         // C factors are stored in linear units in old schemas, but they are in 1/m in new ones
-        if (matrixElem and (param == matrixElem->paramCt() or param == matrixElem->paramCs()))
+        if (matrixElem && (param == matrixElem->paramCt() || param == matrixElem->paramCs()))
             tmp /= _linearUnit->toSi(1);
 
         Z::Value value(tmp, unit);

@@ -249,7 +249,7 @@ bool ProjectOperations::saveSchemaFile(const QString& fileName, const SaveFileOp
     if (!writer.report().isEmpty())
         writeProtocol(writer.report(), tr("There are messages while saving project."));
 
-    if (!writer.report().hasErrors() and !opts.asCopy)
+    if (!writer.report().hasErrors() && !opts.asCopy)
     {
         schema()->setFileName(fileName);
         schema()->events().raise(SchemaEvents::Saved, "ProjectOperations: schema file saved");
@@ -257,7 +257,7 @@ bool ProjectOperations::saveSchemaFile(const QString& fileName, const SaveFileOp
 
     bool ok = !writer.report().hasErrors();
 
-    if (ok and opts.addToMru)
+    if (ok && opts.addToMru)
         _mruList->append(fileName);
 
     return ok;

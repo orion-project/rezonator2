@@ -204,7 +204,7 @@ QString FormatParam::format(Z::Parameter* param)
         {
             auto formula = schema->formulas()->get(param);
             _isReadOnly = formula;
-            if (formula and not formula->deps().isEmpty())
+            if (formula && !formula->deps().isEmpty())
                 driverStr = formula->displayStr();
         }
 

@@ -4,6 +4,8 @@
 #include "Math.h"
 #include "Parameters.h"
 
+#include <optional>
+
 #include <QSize>
 
 #define DECLARE_ELEMENT(class_name, base_class)\

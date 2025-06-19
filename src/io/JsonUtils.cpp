@@ -167,7 +167,7 @@ JsonValue::JsonValue(const QJsonObject& root, const QString& key, Z::Report* rep
     _path = "/" + key;
     initObj(root, key);
 
-    if (!_msg.isEmpty() and report)
+    if (!_msg.isEmpty() && report)
         report->warning(_msg);
 }
 
@@ -176,7 +176,7 @@ JsonValue::JsonValue(const JsonValue& root, const QString& key, Z::Report* repor
     _path = root._path % '/' % key;
     initObj(root.obj(), key);
 
-    if (!_msg.isEmpty() and report)
+    if (!_msg.isEmpty() && report)
         report->warning(_msg);
 }
 

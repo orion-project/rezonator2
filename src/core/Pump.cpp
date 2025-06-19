@@ -196,6 +196,6 @@ QString Pumps::labelPrefix()
 
 bool Pumps::isGeometric(const PumpParams* p)
 {
-    return dynamic_cast<const PumpParams_RayVector*>(p) or
+    return dynamic_cast<const PumpParams_RayVector*>(p) ||
            dynamic_cast<const PumpParams_TwoSections*>(p);
 }

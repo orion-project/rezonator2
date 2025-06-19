@@ -122,7 +122,7 @@ void GrinLensWindow::storeState()
 
 void GrinLensWindow::calculate(Z::Parameter *p)
 {
-    if (p == _length or p == _ior) {
+    if (p == _length || p == _ior) {
         if (_actionCalcF->isChecked()) {
             calculateF();
         } else {

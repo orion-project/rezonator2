@@ -50,8 +50,8 @@ void UnitComboBox::populateInternal(Z::Dim dim, const QVector<Z::Unit>& units)
             addItem(unit->name(), QVariant::fromValue(unit));
     }
 
-    _isEmptyOrSingleItem = count() < 2 or
-        (dim == Z::Dims::fixed() and !canSelectFixedUnit);
+    _isEmptyOrSingleItem = count() < 2 ||
+        (dim == Z::Dims::fixed() && !canSelectFixedUnit);
 
     _enableChangeEvent = true;
     setEnabled(true);

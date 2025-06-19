@@ -183,7 +183,7 @@ void ElemFormulaEditor::editorChanged()
 
 void ElemFormulaEditor::saveChanges()
 {
-    if (not _isChanged) return;
+    if (!_isChanged) return;
     applyValues();
     _sourceElem->assign(_workingCopy);
     _isChanged = false;
@@ -192,8 +192,8 @@ void ElemFormulaEditor::saveChanges()
 
 void ElemFormulaEditor::resetChanges()
 {
-    if (not _isChanged) return;
-    if (not Ori::Dlg::yes(tr("Element <b>%1</b>: all changes "
+    if (!_isChanged) return;
+    if (!Ori::Dlg::yes(tr("Element <b>%1</b>: all changes "
         "made in this editor window will be lost. Continue?")
         .arg(_sourceElem->displayLabel()))) return;
     _paramsEditor->removeEditors();
@@ -335,7 +335,7 @@ void ElemFormulaEditor::deleteParameter()
 
 void ElemFormulaEditor::updateParamsEditorVisibility()
 {
-    if (not _workingCopy->hasParams())
+    if (!_workingCopy->hasParams())
     {
         _stubNoParams->setVisible(true);
         _paramsEditor->setVisible(false);

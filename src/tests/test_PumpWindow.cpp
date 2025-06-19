@@ -5,7 +5,9 @@
 
 #include <QMessageBox>
 
+#ifndef Q_CC_MSVC
 #pragma GCC diagnostic ignored "-Wpadded"
+#endif
 
 namespace Z {
 namespace Tests {

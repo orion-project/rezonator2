@@ -3,6 +3,10 @@
 #include <math.h>
 #include <QApplication>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 inline QString translateUnits(const char* s)
 {
 // Qt5 supposes source code is UTF8 but Qt4 thinks it is ASCII

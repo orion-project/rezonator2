@@ -154,7 +154,7 @@ AdjusterWidget::~AdjusterWidget()
 
 void AdjusterWidget::parameterChanged(Z::ParameterBase*)
 {
-    if (not _isValueChanging)
+    if (!_isValueChanging)
         _sourceValue = _param->value();
 
     populate();
@@ -250,10 +250,10 @@ void AdjusterWidget::populate()
         readonlyReason = tr("Can not be changed because this value is provided by a formula");
     _isReadOnly = !readonlyReason.isEmpty();
 
-    _buttonMult->setEnabled(not _isReadOnly);
-    _buttonPlus->setEnabled(not _isReadOnly);
-    _buttonMinus->setEnabled(not _isReadOnly);
-    _buttonDivide->setEnabled(not _isReadOnly);
+    _buttonMult->setEnabled(!_isReadOnly);
+    _buttonPlus->setEnabled(!_isReadOnly);
+    _buttonMinus->setEnabled(!_isReadOnly);
+    _buttonDivide->setEnabled(!_isReadOnly);
     _valueEditor->setReadOnly(_isReadOnly);
     _valueEditor->setFont(Z::Gui::ValueFont().readOnly(_isReadOnly).get());
     _lockLabel->setVisible(_isReadOnly);
@@ -262,7 +262,7 @@ void AdjusterWidget::populate()
 
 double AdjusterWidget::currentValue() const
 {
-    return (_changeValueTimer and _changeValueTimer->isActive() ? _currentValue : _param->value()).value();
+    return (_changeValueTimer && _changeValueTimer->isActive() ? _currentValue : _param->value()).value();
 }
 
 void AdjusterWidget::setCurrentValue(double value)
@@ -282,25 +282,25 @@ void AdjusterWidget::setCurrentValue(double value)
 
 void AdjusterWidget::adjustPlus()
 {
-    if (not _isFocused) focus();
+    if (!_isFocused) focus();
     setCurrentValue(currentValue() + _settings.increment);
 }
 
 void AdjusterWidget::adjustMinus()
 {
-    if (not _isFocused) focus();
+    if (!_isFocused) focus();
     setCurrentValue(currentValue() - _settings.increment);
 }
 
 void AdjusterWidget::adjustMult()
 {
-    if (not _isFocused) focus();
+    if (!_isFocused) focus();
     setCurrentValue(currentValue() * _settings.multiplier);
 }
 
 void AdjusterWidget::adjustDivide()
 {
-    if (not _isFocused) focus();
+    if (!_isFocused) focus();
     setCurrentValue(currentValue() / _settings.multiplier);
 }
 
@@ -534,7 +534,7 @@ void AdjustmentWindow::deleteAdjuster(Z::Parameter* param)
     if (deletingWidget)
     {
         deletingWidget->deleteLater();
-        if (not _adjusters.isEmpty())
+        if (!_adjusters.isEmpty())
             _adjusters.first().widget->focus();
     }
 }
@@ -552,7 +552,7 @@ void AdjustmentWindow::deleteAdjuster()
         }
 
     deletingWidget->deleteLater();
-    if (not _adjusters.isEmpty())
+    if (!_adjusters.isEmpty())
         _adjusters.first().widget->focus();
 }
 
@@ -603,7 +603,7 @@ void AdjustmentWindow::updateActions()
     _actnDelete->setEnabled(_adjusters.count() > 0);
 
     auto adjuster = focusedAdjuster();
-    _actnRestore->setEnabled(adjuster and not adjuster->isReadOnly());
+    _actnRestore->setEnabled(adjuster && !adjuster->isReadOnly());
 }
 
 void AdjustmentWindow::help()

@@ -16,12 +16,12 @@ namespace AbcdBeamCalculatorTests {
 
 #define ASSERT_IS_STABLE(m) {\
     double p = (m.A.real() + m.D.real()) / 2; \
-    ASSERT_IS_TRUE(p >= -1 and p <= 1) \
+    ASSERT_IS_TRUE(p >= -1 && p <= 1) \
 }
 
 #define ASSERT_IS_UNSTABLE(m) {\
     double p = (m.A.real() + m.D.real()) / 2; \
-    ASSERT_IS_TRUE(p < -1 or p > 1) \
+    ASSERT_IS_TRUE(p < -1 || p > 1) \
 }
 
 //------------------------------------------------------------------------------

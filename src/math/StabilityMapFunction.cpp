@@ -34,11 +34,11 @@ void StabilityMapFunction::calculate(CalculationMode calcMode)
 
     auto checkStabBound = [&](Z::WorkPlane ts, double x, const Z::PairTS<bool>& isStable) {
         auto wasStable = bool(startBound[ts]);
-        if (not wasStable and isStable[ts]) {
+        if (!wasStable && isStable[ts]) {
             if (prevX)
                 startBound[ts] = {*prevX, false};
             else startBound[ts] = {_plotRange.start(), true};
-        } else if (wasStable and not isStable[ts]) {
+        } else if (wasStable && !isStable[ts]) {
             _approxStabBounds[ts].append({*startBound[ts], {x, false}});
             startBound[ts].reset();
         }
@@ -95,7 +95,7 @@ QVector<Z::RangeSi> StabilityMapFunction::findStabilityBounds(Z::WorkPlane ts) c
         double p1 = _calc->stability(ts);
         int iter = 0;
         double p0, x0 = (x1 + x2) / 2.0;
-        while (qAbs(p1) > eps and iter < 100) {
+        while (qAbs(p1) > eps && iter < 100) {
             param->setValue({x0, _plotRange.unit()});
             _calc->multMatrix("StabilityMapFunction::findStabilityBounds");
             p0 = _calc->stability(ts);
@@ -131,7 +131,7 @@ QVector<Z::RangeSi> StabilityMapFunction::findStabilityBounds(Z::WorkPlane ts) c
             double x1 = x2 - _plotRange.step();
             stop = solve(x1, x2);
         }
-        if (start and stop)
+        if (start && stop)
             res.append({ *start, *stop });
     }
     return res;

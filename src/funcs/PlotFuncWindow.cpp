@@ -517,7 +517,7 @@ void PlotFuncWindow::updateCursorInfo()
             info << v.name << " = " << Z::format(unitY->fromSi(v.value));
         if (!v.note.isEmpty())
             info << ' ' << v.note;
-        if (v.kind != CursorInfoValue::SECTION and i < values.size()-1)
+        if (v.kind != CursorInfoValue::SECTION && i < values.size()-1)
             info << "; ";
     }
     _cursorPanel->setText(str);
@@ -624,7 +624,7 @@ void PlotFuncWindow::freeze(bool frozen)
         _buttonFrozenInfo->setInfo(summary.result());
     }
     _leftPanel->setOptionsPanelEnabled(!_frozen);
-    if (!_frozen and _needRecalc)
+    if (!_frozen && _needRecalc)
         update();
 }
 

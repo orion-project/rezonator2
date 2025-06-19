@@ -104,7 +104,7 @@ QWidget* ElementPropsDialog::initPageOptions()
 
     _layoutDrawAlt = new QCheckBox();
     auto opts = ElementLayoutFactory::getOptions(_element);
-    if (opts and opts->hasAltVersion())
+    if (opts && opts->hasAltVersion())
         _layoutDrawAlt->setText(tr(opts->altVersionOptionTitle(), "LayoutOptions"));
     else
         _layoutDrawAlt->setVisible(false);

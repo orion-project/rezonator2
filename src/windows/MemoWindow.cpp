@@ -84,7 +84,7 @@ public:
             for (auto& url : source->urls())
             {
                 QImage img(url.toLocalFile());
-                if (not img.isNull())
+                if (!img.isNull())
                     insertImage(img);
             }
             return;
@@ -113,7 +113,7 @@ protected:
 
     void mouseReleaseEvent(QMouseEvent *e) override
     {
-        if (not _clickedHref.isEmpty())
+        if (!_clickedHref.isEmpty())
         {
             QDesktopServices::openUrl(_clickedHref);
             PopupMessage::info(tr("Opened in your default browser\n\n%1").arg(_clickedHref));
@@ -129,10 +129,10 @@ protected:
             return QTextEdit::event(event);
 
         auto helpEvent = dynamic_cast<QHelpEvent*>(event);
-        if (not helpEvent) return false;
+        if (!helpEvent) return false;
 
         auto href = hyperlinkAt(helpEvent->pos());
-        if (not href.isEmpty())
+        if (!href.isEmpty())
         {
             auto tooltip = QStringLiteral("<p style='white-space:pre'>%1<p>%2")
                     .arg(href, tr("<b>Ctrl + Click</b> to open"));
@@ -161,7 +161,7 @@ private:
                 cursorPos < format.start + format.length)
             {
                 auto href = format.format.anchorHref();
-                if (not href.isEmpty()) return href;
+                if (!href.isEmpty()) return href;
             }
         return QString();
     }
@@ -747,7 +747,7 @@ void MemoWindow::selectAll() { _editor->selectAll(); }
 
 void MemoWindow::markModified(bool m)
 {
-    if (m and not _isLoading)
+    if (m && !_isLoading)
     {
         schema()->events().raise(SchemaEvents::Changed, "memo modified");
         MessageBus::instance().send(MBE_MEMO_ADDED, {});

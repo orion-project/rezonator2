@@ -142,7 +142,7 @@ void ElementsCatalogDialog::makeCustomElemPreview(Element* elem)
            << elem->typeName();
 
     QString customLabel = elem->label();
-    if (not customLabel.isEmpty())
+    if (!customLabel.isEmpty())
         stream << QStringLiteral(" (") << customLabel << ')';
 
     stream << QStringLiteral("</span></b><p>");

@@ -98,7 +98,7 @@ int countSuitableGlobalParams(const Z::Parameters* globalParams, const Z::Parame
         if (p->dim() == dim)
         {
             // Parameters of fixed dim can only be linked unit-to-unit
-            if (dim == Z::Dims::fixed() and
+            if (dim == Z::Dims::fixed() &&
                 p->value().unit() != param->value().unit())
                 continue;
 
@@ -115,7 +115,7 @@ Z::Parameters getSuitableGlobalParams(const Z::Parameters* globalParams, const Z
         if (p->dim() == dim)
         {
             // Parameters of fixed dim can only be linked unit-to-unit
-            if (dim == Z::Dims::fixed() and
+            if (dim == Z::Dims::fixed() &&
                 p->value().unit() != param->value().unit())
                 continue;
 
@@ -162,7 +162,7 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
     _labelLabel->setFont(Z::Gui::ParamLabelFont().get());
     layout->addWidget(_labelLabel);
 
-    if (opts.allowLinking and countSuitableGlobalParams(_globalParams, _param))
+    if (opts.allowLinking && countSuitableGlobalParams(_globalParams, _param))
     {
         _labelLabel->setText(paramLabel);
         _linkButton = new LinkButton;

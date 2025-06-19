@@ -143,7 +143,7 @@ const QFont& ElementLayout::getMarkTSFont() const
 void ElementLayout::contextMenuEvent(QGraphicsSceneContextMenuEvent* e)
 {
     QGraphicsItem::contextMenuEvent(e);
-    if (_element and _owner->elementContextMenu) {
+    if (_element && _owner->elementContextMenu) {
         e->accept();
         _owner->elementContextMenu->popup(e->screenPos());
     }
@@ -178,7 +178,7 @@ ElemLabelItem::ElemLabelItem(Element* elem, SchemaLayout* owner) : QGraphicsText
 void ElemLabelItem::contextMenuEvent(QGraphicsSceneContextMenuEvent* e)
 {
     QGraphicsItem::contextMenuEvent(e);
-    if (_element and _owner->elementContextMenu) {
+    if (_element && _owner->elementContextMenu) {
         e->accept();
         _owner->elementContextMenu->popup(e->screenPos());
     }
@@ -211,7 +211,7 @@ SchemaScene::SchemaScene(SchemaLayout* owner) : QGraphicsScene(owner), _owner(ow
 void SchemaScene::contextMenuEvent(QGraphicsSceneContextMenuEvent* e)
 {
     QGraphicsScene::contextMenuEvent(e);
-    if (not e->isAccepted()) {
+    if (!e->isAccepted()) {
         e->accept();
         _owner->paperContextMenu()->exec(e->screenPos());
     }
@@ -220,7 +220,7 @@ void SchemaScene::contextMenuEvent(QGraphicsSceneContextMenuEvent* e)
 void SchemaScene::mousePressEvent(QGraphicsSceneMouseEvent *e)
 {
     QGraphicsScene::mousePressEvent(e);
-    if (not e->isAccepted() and e->button() == Qt::LeftButton) {
+    if (!e->isAccepted() && e->button() == Qt::LeftButton) {
         e->accept();
         _owner->updateSelection({});
     }
@@ -340,7 +340,7 @@ void SchemaLayout::addElement(ElementLayout *elem)
         label->setZValue(1000 + _elements.count());
         label->setFont(getLabelFont());
         label->setToolTip(elem->toolTip());
-        if (not _defaultLabelColor.isValid())
+        if (!_defaultLabelColor.isValid())
             _defaultLabelColor = label->defaultTextColor();
         // Try to position new label avoiding overlapping with previous labels
         QRectF r = label->boundingRect();
@@ -349,7 +349,7 @@ void SchemaLayout::addElement(ElementLayout *elem)
         qreal minY = labelY;
         for (int prevIndex = _elements.size()-2; prevIndex >= 0; prevIndex--) {
             auto elemLayout = _elements.at(prevIndex);
-            if (not elemLayout->element()->layoutOptions.showLabel) continue;
+            if (!elemLayout->element()->layoutOptions.showLabel) continue;
             auto prevLabel = _elemLabels[elemLayout];
             auto prevRect = prevLabel->boundingRect();
             if (labelX <= prevLabel->x() + prevRect.width() &&
@@ -415,7 +415,7 @@ void SchemaLayout::elementClicked(Element* elem, bool multiselect)
         for (auto layout : std::as_const(_elements)) {
             if (layout->element() == elem) {
                 // selection state of clicked is toggled
-                if (not layout->isSelected())
+                if (!layout->isSelected())
                     selected.append(elem);
             } else if (layout->isSelected()) {
                 // other elements kept selected
@@ -429,7 +429,7 @@ void SchemaLayout::elementClicked(Element* elem, bool multiselect)
             if (layout->element() == elem) {
                 // selection state of clicked is not changed
                 selected.append(elem);
-                if (not layout->isSelected())
+                if (!layout->isSelected())
                     changed = true;
             } else if (layout->isSelected()) {
                 // ether elements deselected

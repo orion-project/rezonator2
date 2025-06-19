@@ -1,6 +1,19 @@
 QT += core gui widgets printsupport network help
 
-CONFIG += c++17
+win32-msvc* {
+    # MSVC is more strict about c++ features
+    # GCC understands some c++20 features (e.g. aggregate initialization)
+    # even in c++17 mode, while MSVC doesn't
+    CONFIG += c++20
+    # CONFIG seem's not fully working, need to pass the flag explicitly
+    QMAKE_CXXFLAGS += /std:c++20
+} else {
+    # For GCC try to support older versions, like 8.4
+    # So stick to the earlier standard
+    CONFIG += c++17
+    
+    QMAKE_CXXFLAGS_WARN_ON += -Wno-unknown-pragmas
+}
 
 #------------------------------------------------------------
 # Definition of output
@@ -11,8 +24,6 @@ DESTDIR = $$_PRO_FILE_PWD_/bin
 QMAKE_TARGET_BUNDLE_PREFIX = org.orion-project
 
 unix: LIBS += -ldl
-
-QMAKE_CXXFLAGS_WARN_ON += -Wno-unknown-pragmas
 
 #------------------------------------------------------------
 # Submodules

@@ -68,7 +68,7 @@ GrinResult solve_n2(const double& L, const double& n0, const double& F)
     while (abs(y_mid) > 1e-8) {
         x_mid = (x_prev + x_next) / 2.0;
         y_mid = equation(x_mid);
-        if (y_next > 0 and y_mid < 0) {
+        if (y_next > 0 && y_mid < 0) {
             x_prev = x_mid;
         } else {
             x_next = x_mid;

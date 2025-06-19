@@ -55,14 +55,14 @@ void CausticFunction::calculate(CalculationMode calcMode)
     if (isResonator) // Can't be calculated for unstable resonator
     {
         auto stab = _calc->isStable();
-        if (not stab.T and not stab.S)
+        if (!stab.T && !stab.S)
         {
             setError(qApp->translate("Calc error", "System is unstable, can't calculate caustic"));
             return;
         }
     }
     // Caustic can't be calculated for SP-system with geometric pump and complex matrices
-    else if (Pumps::isGeometric(_pump) and (not _calc->Mt().isReal() or not _calc->Ms().isReal()))
+    else if (Pumps::isGeometric(_pump) && (!_calc->Mt().isReal() || !_calc->Ms().isReal()))
     {
         setError(qApp->translate("Calc error", "Geometric pump can't be used with complex matrices"));
         return;
@@ -200,7 +200,7 @@ QString CausticFunction::valueSymbol() const
 
 QString CausticFunction::beamsizeSymbol() const
 {
-    return (_schema->isResonator() or _pumpCalc->isGauss()) ? QStringLiteral("w") : QStringLiteral("y");
+    return (_schema->isResonator() || _pumpCalc->isGauss()) ? QStringLiteral("w") : QStringLiteral("y");
 }
 
 QString CausticFunction::calculateSpecPoints(const SpecPointParams &params)
@@ -208,7 +208,7 @@ QString CausticFunction::calculateSpecPoints(const SpecPointParams &params)
     if (!ok()) return QString();
 
     bool isResonator = _schema->isResonator();
-    bool isGauss = isResonator or _pumpCalc->isGauss();
+    bool isGauss = isResonator || _pumpCalc->isGauss();
     auto elem = Z::Utils::asRange(arg()->element);
     auto range = givenRange();
     double startX = range.start.toSi();
@@ -270,7 +270,7 @@ QString CausticFunction::calculateSpecPoints(const SpecPointParams &params)
                 double x1 = startX, r1 = startR[ts];
                 double x2 = stopX;
                 double x0 = (x1 + x2) / 2.0, r0;
-                while (qAbs(x2-x1) > epsX and iter < maxIters) {
+                while (qAbs(x2-x1) > epsX && iter < maxIters) {
                     elem->setSubRangeSI(x0);
                     _calc->multMatrix("CausticFunction::calculateSpecPoints");
                     r0 = isResonator \

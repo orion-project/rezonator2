@@ -1,6 +1,6 @@
 #include "GaussCalculator.h"
 
-#include <complex>
+#include "../core/Math.h"
 
 #include "core/OriFloatingPoint.h"
 
