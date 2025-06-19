@@ -194,6 +194,7 @@ HEADERS += \
     src/windows/ElementPropsDialog.h \
     src/windows/ElementsCatalogDialog.h \
     src/windows/ElemFormulaWindow.h \
+    src/windows/FuncEditorWindow.h \
     src/windows/HelpWindow.h \
     src/windows/MemoWindow.h \
     src/windows/ProjectWindow.h \
@@ -352,6 +353,7 @@ SOURCES += \
     src/windows/ElementPropsDialog.cpp \
     src/windows/ElementsCatalogDialog.cpp \
     src/windows/ElemFormulaWindow.cpp \
+    src/windows/FuncEditorWindow.cpp \
     src/windows/HelpWindow.cpp \
     src/windows/MemoWindow.cpp \
     src/windows/ProjectWindow.cpp \
