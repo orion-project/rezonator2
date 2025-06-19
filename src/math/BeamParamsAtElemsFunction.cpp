@@ -11,7 +11,7 @@
 #define COL_APER_RATIO QStringLiteral("aper")
 #define COL_WAVEFRONT QStringLiteral("wavefront")
 #define COL_ANGLE QStringLiteral("angle")
-#define COL_COUNT 4
+#define COL_COUNT 3
 
 BeamParamsAtElemsFunction::BeamParamsAtElemsFunction(Schema *schema) : TableFunction(schema)
 {
@@ -25,11 +25,11 @@ QVector<TableFunction::ColumnDef> BeamParamsAtElemsFunction::columns() const
     beamRadius.titleS = QStringLiteral("Ws");
     beamRadius.unit = _colUnits.value(COL_BEAMSIZE, AppSettings::instance().defaultUnitBeamRadius);
 
-    ColumnDef aperRatio;
-    aperRatio.id = COL_APER_RATIO;
-    aperRatio.titleT = QStringLiteral("At");
-    aperRatio.titleS = QStringLiteral("As");
-    aperRatio.unit = Z::Units::none();
+    // ColumnDef aperRatio;
+    // aperRatio.id = COL_APER_RATIO;
+    // aperRatio.titleT = QStringLiteral("At");
+    // aperRatio.titleS = QStringLiteral("As");
+    // aperRatio.unit = Z::Units::none();
 
     ColumnDef frontRadius;
     frontRadius.id = COL_WAVEFRONT;
@@ -43,7 +43,7 @@ QVector<TableFunction::ColumnDef> BeamParamsAtElemsFunction::columns() const
     halfAngle.titleS = QStringLiteral("Vs");
     halfAngle.unit = _colUnits.value(COL_ANGLE, AppSettings::instance().defaultUnitAngle);
 
-    return { beamRadius, aperRatio, frontRadius, halfAngle };
+    return { beamRadius, /*aperRatio,*/ frontRadius, halfAngle };
 }
 
 QString BeamParamsAtElemsFunction::columnTitle(const ColumnId &id) const
@@ -66,6 +66,8 @@ int BeamParamsAtElemsFunction::columnCount() const
 
 QVector<Z::PointTS> BeamParamsAtElemsFunction::calculatePumpBeforeSchema(Element *elem)
 {
+    Q_UNUSED(elem)
+
     Z::Matrix unity;
     BeamResult beamT = _pumpCalc->calcT(unity, 1);
     BeamResult beamS = _pumpCalc->calcS(unity, 1);
@@ -73,32 +75,36 @@ QVector<Z::PointTS> BeamParamsAtElemsFunction::calculatePumpBeforeSchema(Element
     Z::PointTS beamRadius(beamT.beamRadius, beamS.beamRadius);
     Z::PointTS frontRadius(beamT.frontRadius, beamS.frontRadius);
     Z::PointTS halfAngle(beamT.halfAngle, beamS.halfAngle);
-    Z::PointTS aperRatio = calcApertureRatio(beamRadius, elem);
+    //Z::PointTS aperRatio = calcApertureRatio(beamRadius, elem);
 
-    return { beamRadius, aperRatio, frontRadius, halfAngle };
+    return { beamRadius, /*aperRatio,*/ frontRadius, halfAngle };
 }
 
 QVector<Z::PointTS> BeamParamsAtElemsFunction::calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) const
 {
+    Q_UNUSED(elem)
+
     BeamResult beamT = _pumpCalc->calcT(calc->Mt(), ior);
     BeamResult beamS = _pumpCalc->calcS(calc->Ms(), ior);
 
     Z::PointTS beamRadius(beamT.beamRadius, beamS.beamRadius);
     Z::PointTS frontRadius(beamT.frontRadius, beamS.frontRadius);
     Z::PointTS halfAngle(beamT.halfAngle, beamS.halfAngle);
-    Z::PointTS aperRatio = calcApertureRatio(beamRadius, elem);
+    //Z::PointTS aperRatio = calcApertureRatio(beamRadius, elem);
 
-    return { beamRadius, aperRatio, frontRadius, halfAngle };
+    return { beamRadius, /*aperRatio,*/ frontRadius, halfAngle };
 }
 
 QVector<Z::PointTS> BeamParamsAtElemsFunction::calculateResonator(Element *elem, RoundTripCalculator *calc, double ior) const
 {
+    Q_UNUSED(elem)
+    
     Z::PointTS beamRadius = _beamCalc->beamRadius(calc->Mt(), calc->Ms(), ior);
     Z::PointTS frontRadius = _beamCalc->frontRadius(calc->Mt(), calc->Ms(), ior);
     Z::PointTS halfAngle = _beamCalc->halfAngle(calc->Mt(), calc->Ms(), ior);
-    Z::PointTS aperRatio = calcApertureRatio(beamRadius, elem);
+    //Z::PointTS aperRatio = calcApertureRatio(beamRadius, elem);
     
-    return { beamRadius, aperRatio, frontRadius, halfAngle };
+    return { beamRadius, /*aperRatio,*/ frontRadius, halfAngle };
 }
 
 Z::PointTS BeamParamsAtElemsFunction::calcApertureRatio(const Z::PointTS &beamRadius, Element *elem) const

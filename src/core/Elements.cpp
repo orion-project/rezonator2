@@ -152,17 +152,17 @@ ElemCurveMirror::ElemCurveMirror()
     _alpha = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Alpha"), Z::Strs::alpha(),
                               qApp->translate("Param", "Angle of incidence"),
                               qApp->translate("Param", "Zero angle is normal incidence."));
-    _aper = new Z::Parameter(Z::Dims::linear(), QStringLiteral("D"), QStringLiteral("D"),
-                               qApp->translate("Param", "Aperture"),
-                               qApp->translate("Param", "Element transverse dimension (diameter)."));
+    // _aper = new Z::Parameter(Z::Dims::linear(), QStringLiteral("D"), QStringLiteral("D"),
+    //                            qApp->translate("Param", "Aperture"),
+    //                            qApp->translate("Param", "Element transverse dimension (diameter)."));
 
     _radius->setValue(100_mm);
     _alpha->setValue(0_deg);
-    _aper->setValue(10_mm);
+    //_aper->setValue(10_mm);
 
     addParam(_radius);
     addParam(_alpha);
-    addParam(_aper);
+    //addParam(_aper);
 
     setOption(Element_ChangesWavefront);
 
