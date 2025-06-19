@@ -4,6 +4,8 @@
 #include "../io/ISchemaWindowStorable.h"
 #include "../windows/SchemaWindows.h"
 
+#include <QtCore/QProcess>
+
 /**
     Implementation of restoreability for CustomFunctionWindow.
     Register it in ProjectWindow::registerStorableWindows().
@@ -36,6 +38,9 @@ public:
 
 private slots:
     void checkFunction();
+    void handlePythonOutput();
+    void handlePythonError();
+    void handlePythonFinished(int exitCode, QProcess::ExitStatus exitStatus);
 
 private:
     explicit FuncEditorWindow(Schema*);
@@ -44,6 +49,11 @@ private:
     QPlainTextEdit* _log;
     QAction* _actnCheck;
     QMenu* _windowMenu;
+    QProcess* _pythonProcess;
+    QString _tempScriptPath;
+    
+    QString getPythonInterpreterPath() const;
+    void cleanupTempFiles();
     
     void createActions();
     void createMenuBar();
