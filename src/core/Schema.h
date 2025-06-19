@@ -60,11 +60,11 @@ public:
     virtual void schemaParamsChanged(Schema*) {}
     virtual void schemaLambdaChanged(Schema*) {}
 
-    virtual void customParamCreated(Schema*, Z::Parameter*) {}
-    virtual void customParamEdited(Schema*, Z::Parameter*) {}
-    virtual void customParamChanged(Schema*, Z::Parameter*) {}
-    virtual void customParamDeleting(Schema*, Z::Parameter*) {}
-    virtual void customParamDeleted(Schema*, Z::Parameter*) {}
+    virtual void globalParamCreated(Schema*, Z::Parameter*) {}
+    virtual void globalParamEdited(Schema*, Z::Parameter*) {}
+    virtual void globalParamChanged(Schema*, Z::Parameter*) {}
+    virtual void globalParamDeleting(Schema*, Z::Parameter*) {}
+    virtual void globalParamDeleted(Schema*, Z::Parameter*) {}
 
     virtual void pumpCreated(Schema*, PumpParams*) {}
     virtual void pumpChanged(Schema*, PumpParams*) {}
@@ -144,11 +144,11 @@ public:
         ParamsChanged, ///< Some schema parameter was changed (e.g. TripType)
         LambdaChanged, ///< Schema wavelength was changed
 
-        CustomParamCreated, ///< New custom parameter was created
-        CustomParamEdited,  ///< Custom parameter was edited (e.g. description changed, but not value)
-        CustomParamChanged, ///< Value of custom parameter was changed
-        CustomParamDeleting,///< Custom param is about to be deleted
-        CustomParamDeleted, ///< Custom parameter was deleted
+        GlobalParamCreated, ///< New global parameter was created
+        GlobalParamEdited,  ///< Global parameter was edited (e.g. description changed, but not value)
+        GlobalParamChanged, ///< Value of global parameter was changed
+        GlobalParamDeleting,///< Global param is about to be deleted
+        GlobalParamDeleted, ///< Global parameter was deleted
 
         PumpCreated,   ///< New pump was created
         PumpChanged,   ///< Pump parameters were changed
@@ -294,11 +294,11 @@ public:
     Elements selectedElements() const { return _selection.elements(); }
 
     /// Additional params that can be added by user and used in formulas.
-    const Z::Parameters* customParams() { return &_customParams->params(); }
+    const Z::Parameters* globalParams() { return &_globalParams->params(); }
     /// Additional params returned as elements for using in elem-and-param selectors
-    const Element* customParamsAsElem() { return _customParams; }
-    void addCustomParam(Z::Parameter*);
-    void removeCustomParam(Z::Parameter*);
+    const Element* globalParamsAsElem() { return _globalParams; }
+    void addGlobalParam(Z::Parameter*);
+    void removeGlobalParam(Z::Parameter*);
 
     /// Linst of all links which bind elements' parameter to custom parameters.
     Z::ParamLinks* paramLinks() { return &_paramLinks; }
@@ -310,8 +310,9 @@ public:
     /// Returns a list of global params that can be used as link sources or formula dependencies.
     /// It contains custom params and some of the built-in parameters.
     /// This list is not stored in a schema and collect parameters at each call.
-    Z::Parameters globalParams() const;
-    Z::Parameter* param(const QString &alias) { return _customParams->params().byAlias(alias); }
+    Z::Parameters availableDependencySources() const;
+    
+    Z::Parameter* param(const QString &alias) { return _globalParams->params().byAlias(alias); }
 
     PumpsList* pumps() { return &_pumps; }
     PumpParams* activePump();
@@ -336,7 +337,7 @@ private:
     QString _title, _notes, _alias;
     TripType _tripType = TripType::SW;
     Z::Parameter _wavelength;
-    Element* _customParams;
+    Element* _globalParams;
     Z::ParamLinks _paramLinks;
     Z::Formulas _formulas;
     PumpsList _pumps;

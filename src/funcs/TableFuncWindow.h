@@ -80,6 +80,7 @@ public:
 
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return QList<QMenu*>() << _menuTable; }
+    QString helpTopic() const override { return _function->helpTopic(); }
 
     // Implementation of SchemaListener
     void recalcRequired(Schema*) override { update(); }

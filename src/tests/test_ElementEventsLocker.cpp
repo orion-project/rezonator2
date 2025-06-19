@@ -53,7 +53,7 @@ TEST_METHOD(schema_modified_when_link_added_and_not_locked)
     SCHEMA_AND_LISTENER_AND_ELEM
 
     auto p0 = new Z::Parameter(Z::Dims::linear(), "");
-    schema.addCustomParam(p0);
+    schema.addGlobalParam(p0);
     schema.addParamLink(p0, elem->params().byIndex(0));
 
     ASSERT_IS_TRUE(schema.modified());
@@ -68,7 +68,7 @@ TEST_METHOD(schema_not_modified_when_link_added_and_locked)
     ElementEventsLocker locker(elem, "");
     
     auto p0 = new Z::Parameter(Z::Dims::linear(), "");
-    schema.addCustomParam(p0);
+    schema.addGlobalParam(p0);
     schema.addParamLink(p0, elem->params().byIndex(0));
 
     ASSERT_IS_FALSE(schema.modified());
@@ -83,7 +83,7 @@ TEST_METHOD(schema_modified_when_linked_parameter_changed_and_not_locked)
     auto p0 = new Z::Parameter(Z::Dims::linear(), "");
     {
         ElementEventsLocker locker(elem, "");
-        schema.addCustomParam(p0);
+        schema.addGlobalParam(p0);
         schema.addParamLink(p0, elem->params().byIndex(0));
     }
 
@@ -101,7 +101,7 @@ TEST_METHOD(schema_not_modified_when_linked_parameter_changed_and_locked)
 
     {
         ElementEventsLocker locker(elem, "");
-        schema.addCustomParam(p0);
+        schema.addGlobalParam(p0);
         schema.addParamLink(p0, elem->params().byIndex(0));
     }
 
@@ -123,9 +123,9 @@ TEST_METHOD(schema_modified_when_formula_parameter_changed_and_not_locked)
 
     {
         ElementEventsLocker locker(elem, "");
-        schema.addCustomParam(p0);
-        schema.addCustomParam(p1);
-        schema.addCustomParam(p2);
+        schema.addGlobalParam(p0);
+        schema.addGlobalParam(p1);
+        schema.addGlobalParam(p2);
         schema.addParamLink(p0, elem->params().byIndex(0));
         
         auto f = new Z::Formula(p0);
@@ -151,9 +151,9 @@ TEST_METHOD(schema_not_modified_when_formula_parameter_changed_and_locked)
 
     {
         ElementEventsLocker locker(elem, "");
-        schema.addCustomParam(p0);
-        schema.addCustomParam(p1);
-        schema.addCustomParam(p2);
+        schema.addGlobalParam(p0);
+        schema.addGlobalParam(p1);
+        schema.addGlobalParam(p2);
         schema.addParamLink(p0, elem->params().byIndex(0));
 
         auto f = new Z::Formula(p0);

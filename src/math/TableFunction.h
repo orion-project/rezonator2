@@ -10,13 +10,11 @@
 class AbcdBeamCalculator;
 class Schema;
 
-// TODO: currently, this is BeamParamsAtElemsFunction function, not a general solution
-
 class TableFunction : public FunctionBase
 {
 public:
     typedef Ori::Optional<double> OptionalIor;
-    BOOL_PARAM(AlwaysTwoSides)
+    BOOL_PARAM(IsTwoSides)
 
     struct Params
     {
@@ -27,9 +25,12 @@ public:
         bool calcEmptySpaces = false;
         bool calcSpaceMids = false;
     };
+    
+    using ColumnId = QString;
 
     struct ColumnDef
     {
+        ColumnId id;
         QString titleT, titleS;
         Z::Unit unit = Z::Units::none();
     };
@@ -100,11 +101,12 @@ public:
 
     virtual void calculate();
 
-    virtual QVector<ColumnDef> columns() const;
-    virtual int columnCount() const;
-    virtual QString columnTitle(int colIndex) const;
-    void setColumnUnit(int colIndex, Z::Unit unit);
-    const QMap<int, Z::Unit>& columntUnits() const { return _colUnits; }
+    virtual QVector<ColumnDef> columns() const = 0;
+    virtual int columnCount() const = 0;
+    virtual QString columnTitle(const ColumnId &id) const = 0;
+
+    void setColumnUnit(const ColumnId &id, Z::Unit unit);
+    const QMap<ColumnId, Z::Unit>& columntUnits() const { return _colUnits; }
 
     const QVector<Result>& results() const { return _results; }
 
@@ -112,26 +114,29 @@ public:
     void setParams(const Params& params);
 
 protected:
-    QVector<Result> _results;
     std::shared_ptr<PumpCalculator> _pumpCalc;
     std::shared_ptr<AbcdBeamCalculator> _beamCalc;
     QList<Element*> _activeElements; // valid only during calculate() call
-    QMap<int, Z::Unit> _colUnits;
+    QMap<ColumnId, Z::Unit> _colUnits;
     Params _params;
 
     bool prepareSinglePass();
     bool prepareResonator();
     Element* prevElement(int index);
     Element* nextElement(int index);
-    QString calculateAtElem(Element* elem, int index, AlwaysTwoSides alwaysTwoSides);
+    QString calculateAtElem(Element* elem, int index, IsTwoSides twoSides);
     QString calculateAtInterface(ElementInterface* iface, int index);
     QString calculateAtCrystal(ElementRange* range, int index);
     QString calculateAtPlane(Element* elem, int index);
-    QString calculateInMiddle(Element* elem, Element *prevElem, Element *nextElem, AlwaysTwoSides alwaysTwoSides);
+    QString calculateInMiddle(Element* elem, Element *prevElem, Element *nextElem, IsTwoSides twoSides);
     void calculateAt(CalcElem calcElem, ResultElem resultElem, OptionalIor overrideIor = OptionalIor());
-    void calculatePumpBeforeSchema(Element* elem, ResultPosition resultPos);
-    QVector<Z::PointTS> calculateSinglePass(RoundTripCalculator* calc, double ior) const;
-    QVector<Z::PointTS> calculateResonator(RoundTripCalculator* calc, double ior) const;
+
+    virtual QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) = 0;
+    virtual QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) const = 0;
+    virtual QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* calc, double ior) const = 0;
+    
+private:
+    QVector<Result> _results;
 };
 
 #endif // TABLEFUNCTION_H

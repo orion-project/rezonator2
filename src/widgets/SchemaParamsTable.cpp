@@ -29,12 +29,12 @@ public:
     
     ~SchemaParamsTableModel()
     {
-        for (const auto p: *(_schema->customParams()))
+        for (const auto p: *(_schema->globalParams()))
             p->removeListener(this);
         _schema->unregisterListener(this);
     }
 
-    int rowCount(const QModelIndex&) const override { return _schema->customParams()->size(); }
+    int rowCount(const QModelIndex&) const override { return _schema->globalParams()->size(); }
     int columnCount(const QModelIndex&) const override { return COL_COUNT; }
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override
@@ -63,7 +63,7 @@ public:
         if (!index.isValid()) return QVariant();
         int col = index.column();
         int row = index.row();
-        auto param = _schema->customParams()->byIndex(row);
+        auto param = _schema->globalParams()->byIndex(row);
         if (!param)
             return QVariant();
         if (role == Qt::DecorationRole)
@@ -119,11 +119,11 @@ public:
     {
         emit layoutChanged();
 
-        for (const auto p: *(_schema->customParams()))
+        for (const auto p: *(_schema->globalParams()))
             p->addListener(this);
     }
     
-    void customParamCreated(Schema*, Z::Parameter* param) override
+    void globalParamCreated(Schema*, Z::Parameter* param) override
     {
         int row = findRow(param);
         beginInsertRows(QModelIndex(), row, row);
@@ -132,18 +132,18 @@ public:
         param->addListener(this);
     }
     
-    void customParamDeleting(Schema*, Z::Parameter*) override
+    void globalParamDeleting(Schema*, Z::Parameter*) override
     {
         beginResetModel();
     }
     
-    void customParamDeleted(Schema*, Z::Parameter*) override
+    void globalParamDeleted(Schema*, Z::Parameter*) override
     {
         endResetModel();
         adjustColumns();
     }
     
-    void customParamEdited(Schema*, Z::Parameter* param) override
+    void globalParamEdited(Schema*, Z::Parameter* param) override
     {
         updateParamRow(param);
     }
@@ -172,7 +172,7 @@ private:
     
     int findRow(Z::ParameterBase* param) const
     {
-        return _schema->customParams()->indexOf((Z::Parameter*)param);
+        return _schema->globalParams()->indexOf((Z::Parameter*)param);
     }
 
     void adjustColumns()
@@ -227,7 +227,7 @@ int SchemaParamsTable::currentRow() const
 
 void SchemaParamsTable::indexDoubleClicked(const QModelIndex &index)
 {
-    Z::Parameter* param = _schema->customParams()->byIndex(index.row());
+    Z::Parameter* param = _schema->globalParams()->byIndex(index.row());
     if (param)
         emit paramDoubleClicked(param);
 }
@@ -240,10 +240,10 @@ void SchemaParamsTable::showContextMenu(const QPoint& pos)
 
 Z::Parameter* SchemaParamsTable::selected() const
 {
-    return schema()->customParams()->byIndex(currentRow());
+    return schema()->globalParams()->byIndex(currentRow());
 }
 
 void SchemaParamsTable::setSelected(Z::Parameter *param)
 {
-    selectRow(_schema->customParams()->indexOf(param));
+    selectRow(_schema->globalParams()->indexOf(param));
 }

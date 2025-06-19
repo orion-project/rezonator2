@@ -65,7 +65,7 @@ for %%G in ("%path:;=" "%") do (
 echo ERROR: unable to locate %HELP_TOOL% and get Assistant path
 goto :eof
 
-@REM :qt_dir_found
+:qt_dir_found
 @REM set ASSISTANT_SOURCE=%HELP_TOOL_DIR%\assistant.exe
 @REM echo Source Assistant path is %ASSISTANT_SOURCE%
 

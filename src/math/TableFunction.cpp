@@ -4,19 +4,11 @@
 #include "FunctionUtils.h"
 #include "PumpCalculator.h"
 #include "RoundTripCalculator.h"
-#include "../app/AppSettings.h"
 #include "../core/Schema.h"
 #include "../core/Elements.h"
 #include "../core/ElementsCatalog.h"
 
 #include <QDebug>
-
-namespace {
-
-// TODO: Extract into BeamdataAtElems func
-enum TableFunctionColumns { COL_BEAMSIZE, COL_WAVEFRONT, COL_ANGLE, COL_COUNT };
-
-}
 
 const TableFunction::ResultPositionInfo& TableFunction::resultPositionInfo(TableFunction::ResultPosition pos)
 {
@@ -108,7 +100,7 @@ void TableFunction::calculate()
 
         if (elem->hasOption(Element_ChangesWavefront))
         {
-            CHECK_ERR(calculateAtElem(elem, i, AlwaysTwoSides(true)));
+            CHECK_ERR(calculateAtElem(elem, i, IsTwoSides(true)));
             continue;
         }
 
@@ -122,7 +114,7 @@ void TableFunction::calculate()
         auto range = Z::Utils::asRange(elem);
         if (!range)
         {
-            CHECK_ERR(calculateAtElem(elem, i, AlwaysTwoSides(false)))
+            CHECK_ERR(calculateAtElem(elem, i, IsTwoSides(false)))
             continue;
         }
 
@@ -200,7 +192,7 @@ Element* TableFunction::nextElement(int index)
     return nullptr;
 }
 
-QString TableFunction::calculateAtElem(Element *elem, int index, AlwaysTwoSides alwaysTwoSides)
+QString TableFunction::calculateAtElem(Element *elem, int index, IsTwoSides twoSides)
 {
     auto prevElem = prevElement(index);
     auto nextElem = nextElement(index);
@@ -208,7 +200,7 @@ QString TableFunction::calculateAtElem(Element *elem, int index, AlwaysTwoSides 
     switch (schema()->tripType()) {
     case TripType::SW:
         if (prevElem && nextElem)
-            return calculateInMiddle(elem, prevElem, nextElem, alwaysTwoSides);
+            return calculateInMiddle(elem, prevElem, nextElem, twoSides);
         else if (prevElem || nextElem)
         {
             // It's the left end mirror (probably attached to a medium)
@@ -236,16 +228,21 @@ QString TableFunction::calculateAtElem(Element *elem, int index, AlwaysTwoSides 
     case TripType::RR:
         // In ring systems we always are somewhere in a middle
         if (prevElem && nextElem)
-            return calculateInMiddle(elem, prevElem, nextElem, alwaysTwoSides);
+            return calculateInMiddle(elem, prevElem, nextElem, twoSides);
         return "Too few elements";
 
     case TripType::SP:
         // In middle of schema
         if (prevElem && nextElem)
-            return calculateInMiddle(elem, prevElem, nextElem, alwaysTwoSides);
+            return calculateInMiddle(elem, prevElem, nextElem, twoSides);
         if (!prevElem)
         {
-            calculatePumpBeforeSchema(elem, ResultPosition::LEFT);
+            Result res;
+            res.element = elem;
+            res.position = ResultPosition::LEFT;
+            res.values = calculatePumpBeforeSchema(elem);
+            _results << res;
+
             // We can calculate beam after the first elem like if beam was in a medium
             // but the schema is invalid anyway - beamsize will show step-change
             // at the first elem when the second is medium, which is not physically correct.
@@ -279,9 +276,14 @@ QString TableFunction::calculateAtInterface(ElementInterface* iface, int index)
     {
         switch (schema()->tripType())
         {
-        case TripType::SP:
-            calculatePumpBeforeSchema(iface, ResultPosition::IFACE_LEFT);
+        case TripType::SP: {
+            Result res;
+            res.element = iface;
+            res.position = ResultPosition::IFACE_LEFT;
+            res.values = calculatePumpBeforeSchema(iface);
+            _results << res;
             break; // Don't return!
+        }
 
         case TripType::SW:
             return QString(
@@ -343,9 +345,14 @@ QString TableFunction::calculateAtCrystal(ElementRange* range, int index)
     {
         switch (schema()->tripType())
         {
-        case TripType::SP:
-            calculatePumpBeforeSchema(range, ResultPosition::LEFT_OUTSIDE);
+        case TripType::SP: {
+            Result res;
+            res.element = range;
+            res.position = ResultPosition::LEFT_OUTSIDE;
+            res.values = calculatePumpBeforeSchema(range);
+            _results << res;
             break; // Don't return!
+        }
 
         case TripType::SW:
             return QString(
@@ -365,7 +372,7 @@ QString TableFunction::calculateAtCrystal(ElementRange* range, int index)
     return "";
 }
 
-QString TableFunction::calculateInMiddle(Element* elem, Element* prevElem, Element* nextElem, AlwaysTwoSides alwaysTwoSides)
+QString TableFunction::calculateInMiddle(Element* elem, Element* prevElem, Element* nextElem, IsTwoSides twoSides)
 {
     // In this method the elem is guaranteed to be not at the ends of a schema
     // for SW and SP systems, for RR any element is always in a 'middle'
@@ -389,7 +396,7 @@ QString TableFunction::calculateInMiddle(Element* elem, Element* prevElem, Eleme
         return "";
     }
 
-    if (alwaysTwoSides)
+    if (twoSides)
     {
         auto prevRange = Z::Utils::asRange(prevElem);
         auto calcElem = prevRange ? CalcElem::RangeEnd(prevRange) : CalcElem(prevElem);
@@ -423,87 +430,12 @@ void TableFunction::calculateAt(CalcElem calcElem, ResultElem resultElem, Option
     res.element = resultElem.elem;
     res.position = resultElem.pos;
     res.values = schema()->isResonator()
-            ? calculateResonator(&calc, ior)
-            : calculateSinglePass(&calc, ior);
+            ? calculateResonator(resultElem.elem, &calc, ior)
+            : calculateSinglePass(resultElem.elem, &calc, ior);
     _results << res;
 }
 
-void TableFunction::calculatePumpBeforeSchema(Element* elem, ResultPosition resultPos)
+void TableFunction::setColumnUnit(const ColumnId &id, Z::Unit unit)
 {
-    Z::Matrix unity;
-    BeamResult beamT = _pumpCalc->calcT(unity, 1);
-    BeamResult beamS = _pumpCalc->calcS(unity, 1);
-
-    Result res;
-    res.element = elem;
-    res.position = resultPos;
-    res.values = {
-        { beamT.beamRadius, beamS.beamRadius },
-        { beamT.frontRadius, beamS.frontRadius },
-        { beamT.halfAngle, beamS.halfAngle },
-    };
-    _results << res;
-}
-
-QVector<Z::PointTS> TableFunction::calculateSinglePass(RoundTripCalculator* calc, double ior) const
-{
-    BeamResult beamT = _pumpCalc->calcT(calc->Mt(), ior);
-    BeamResult beamS = _pumpCalc->calcS(calc->Ms(), ior);
-    return {
-        { beamT.beamRadius, beamS.beamRadius },
-        { beamT.frontRadius, beamS.frontRadius },
-        { beamT.halfAngle, beamS.halfAngle },
-    };
-}
-
-QVector<Z::PointTS> TableFunction::calculateResonator(RoundTripCalculator *calc, double ior) const
-{
-    return {
-        _beamCalc->beamRadius(calc->Mt(), calc->Ms(), ior),
-        _beamCalc->frontRadius(calc->Mt(), calc->Ms(), ior),
-        _beamCalc->halfAngle(calc->Mt(), calc->Ms(), ior),
-    };
-}
-
-QVector<TableFunction::ColumnDef> TableFunction::columns() const
-{
-    ColumnDef beamRadius;
-    beamRadius.titleT = "Wt";
-    beamRadius.titleS = "Ws";
-    beamRadius.unit = _colUnits.value(COL_BEAMSIZE, AppSettings::instance().defaultUnitBeamRadius);
-
-    ColumnDef frontRadius;
-    frontRadius.titleT = "Rt";
-    frontRadius.titleS = "Rs";
-    frontRadius.unit = _colUnits.value(COL_WAVEFRONT, AppSettings::instance().defaultUnitFrontRadius);
-
-    ColumnDef halfAngle;
-    halfAngle.titleT = "Vt";
-    halfAngle.titleS = "Vs";
-    halfAngle.unit = _colUnits.value(COL_ANGLE, AppSettings::instance().defaultUnitAngle);
-
-    return {beamRadius, frontRadius, halfAngle};
-}
-
-QString TableFunction::columnTitle(int colIndex) const
-{
-    switch (colIndex) {
-    case COL_BEAMSIZE:
-        return qApp->tr("Beam radius", "Table function column");
-    case COL_WAVEFRONT:
-        return qApp->tr("Wavefront ROC", "Table function column");
-    case COL_ANGLE:
-        return qApp->tr("Half div. angle", "Table function column");
-    }
-    return QString("#%1").arg(colIndex);
-}
-
-int TableFunction::columnCount() const
-{
-    return COL_COUNT;
-}
-
-void TableFunction::setColumnUnit(int colIndex, Z::Unit unit)
-{
-    _colUnits[colIndex] = unit;
+    _colUnits[id] = unit;
 }

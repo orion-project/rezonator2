@@ -84,7 +84,7 @@ TEST_METHOD(destructor__must_delete_custom_params)
     param->test = test;
 
     auto schema = new Schema;
-    schema->addCustomParam(param);
+    schema->addGlobalParam(param);
     delete schema;
 
     ASSERT_EQ_DATA("custom param was deleted", true)

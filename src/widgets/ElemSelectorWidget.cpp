@@ -20,8 +20,8 @@ ElemSelectorWidget::ElemSelectorWidget(Schema* schema, const Options &opts) : QC
 
     Elements elems(schema->elements());
 
-    if (opts.includeCustomParams && !schema->customParamsAsElem()->params().isEmpty())
-        elems.append(const_cast<Element*>(schema->customParamsAsElem()));
+    if (opts.includeCustomParams && !schema->globalParamsAsElem()->params().isEmpty())
+        elems.append(const_cast<Element*>(schema->globalParamsAsElem()));
 
     for (auto elem : std::as_const(elems))
         if (!opts.filter || opts.filter->check(elem)) {

@@ -113,6 +113,7 @@ void InfoFuncWindow::createToolbar()
                     actionsButton = new QToolButton;
                     actionsButton->setPopupMode(QToolButton::InstantPopup);
                     actionsButton->setIcon(QIcon(":/toolbar/options"));
+                    actionsButton->setToolTip(tr("Options"));
                 }
                 actionsButton->addAction(actn);
             } else {

@@ -145,7 +145,9 @@ void TableFuncResultTable::updateResults()
             double valueS = column.unit->fromSi(value.S);
 
             QString valueStr;
-            if (showT and showS)
+            if (qIsNaN(valueT) || qIsNaN(valueS))
+                valueStr = QStringLiteral("N/A");
+            else if (showT and showS)
                 valueStr = QStringLiteral("%1 %2 %3 ")
                         .arg(Z::format(valueT))
                         .arg(Z::Strs::multX())
@@ -185,24 +187,25 @@ void TableFuncResultTable::showHeaderContextMenu(const QPoint& pos)
 {
     // The first table column is "Position", not a result
     int colIndex = horizontalHeader()->logicalIndexAt(pos) - 1;
-    if (colIndex < 0 || colIndex >= _function->columnCount()) return;
+    const auto cols = _function->columns();
+    if (colIndex < 0 || colIndex >= cols.size()) return;
+    const auto& col = cols.at(colIndex);
+    if (col.unit == Z::Units::none()) return;
     if (!_unitsMenu) {
         _unitsMenu = new UnitsMenu(this);
         connect(_unitsMenu, &UnitsMenu::unitChanged, this, [this](Z::Unit unit){
-            int colIndex = _unitsMenu->property("colIndex").toInt();
-            if (colIndex < 0 || colIndex >= _function->columnCount()) return;
+            auto colId = _unitsMenu->property("colId").toString();
             auto oldUnit = _unitsMenu->property("oldUnit").toString();
             if (oldUnit == unit->alias()) return;
             _function->schema()->markModified("TableFuncResultTable: unit changed");
-            _function->setColumnUnit(colIndex, unit);
+            _function->setColumnUnit(colId, unit);
             updateColumnTitles();
             updateResults();
         });
     }
-    auto unit = _function->columns().at(colIndex).unit;
-    _unitsMenu->setUnit(unit);
-    _unitsMenu->setProperty("oldUnit", unit->alias());
-    _unitsMenu->setProperty("colIndex", colIndex);
+    _unitsMenu->setUnit(col.unit);
+    _unitsMenu->setProperty("colId", col.id);
+    _unitsMenu->setProperty("oldUnit", col.unit->alias());
     _unitsMenu->menu()->popup(mapToGlobal(pos));
 }
 
@@ -295,6 +298,7 @@ void TableFuncWindow::createToolBar()
     buttonParams->setMenu(Ori::Gui::menu({_actnCalcMediumEnds, _actnCalcEmptySpaces, _actnCalcSpaceMids}));
     buttonParams->setPopupMode(QToolButton::InstantPopup);
     buttonParams->setIcon(QIcon(":/toolbar/options"));
+    buttonParams->setToolTip(tr("Options"));
 
     _menuColUnits = new QMenu(this);
     connect(_menuColUnits, &QMenu::aboutToShow, this, &TableFuncWindow::updateColUnitsMenu);
@@ -303,6 +307,7 @@ void TableFuncWindow::createToolBar()
     buttonUnits->setPopupMode(QToolButton::InstantPopup);
     buttonUnits->setMenu(_menuColUnits);
     buttonUnits->setIcon(QIcon(":/toolbar/caliper"));
+    buttonUnits->setToolTip(tr("Units of measurement"));
 
     auto t = toolbar();
     t->addAction(_actnUpdate);
@@ -457,12 +462,13 @@ void TableFuncWindow::updateColUnitsMenu()
     const auto cols = _function->columns();
     for (int i = 0; i < cols.size(); i++) {
         const auto& col = cols.at(i);
+        if (col.unit == Z::Units::none()) continue;
         if (!_unitMenus.contains(i)) {
             auto menu = new UnitsMenu(this);
             connect(menu, &UnitsMenu::unitChanged, this, [i, this](Z::Unit unit){
                 const auto col = _function->columns().at(i);
                 if (col.unit == unit) return;
-                _function->setColumnUnit(i, unit);
+                _function->setColumnUnit(col.id, unit);
                 _function->schema()->markModified("TableFuncWindow: unit changed");
                 _table->updateColumnTitles();
                 _table->updateResults();
@@ -472,7 +478,7 @@ void TableFuncWindow::updateColUnitsMenu()
         auto menu = _unitMenus[i];
         menu->setUnit(col.unit);
         auto actn = _menuColUnits->addMenu(menu->menu());
-        actn->setText(_function->columnTitle(i));
+        actn->setText(_function->columnTitle(col.id));
     }
 }
 
@@ -504,12 +510,7 @@ bool TableFuncWindow::storableRead(const QJsonObject& root, Z::Report*)
     
     if (auto colsJson = root["columns"].toObject(); !colsJson.isEmpty()) {
         for (auto it = colsJson.constBegin(); it != colsJson.constEnd(); it++) {
-            bool ok = false;
-            auto colIndex = it.key().toInt(&ok);
-            if (!ok) {
-                qWarning() << Q_FUNC_INFO << "Unsupported key" << it.key() << "Column index expected";
-                continue;
-            }
+            auto colId = it.key();
             auto colJson = it.value().toObject();
             if (colJson.isEmpty()) {
                 qWarning() << Q_FUNC_INFO << "Wrong value of key" << it.key() << "Object expected";
@@ -521,7 +522,7 @@ bool TableFuncWindow::storableRead(const QJsonObject& root, Z::Report*)
                 qWarning() << Q_FUNC_INFO << "Unknown unit for column" << it.key() << unitAlias;
                 continue;
             }
-            _function->setColumnUnit(colIndex, unit);
+            _function->setColumnUnit(colId, unit);
         }
     }
 
@@ -543,9 +544,9 @@ bool TableFuncWindow::storableWrite(QJsonObject& root, Z::Report*)
     if (const auto &colUnits = _function->columntUnits(); !colUnits.isEmpty()) {
         QJsonObject colsJson;
         for (auto it = colUnits.constBegin(); it != colUnits.constEnd(); it++) {
-            QJsonObject colJson;
-            colJson["unit"] = it.value()->alias();
-            colsJson[QString::number(it.key())] = colJson;
+            colsJson[it.key()] = QJsonObject({
+                { "unit", it.value()->alias() },
+            });
         }
         root["columns"] = colsJson;
     }

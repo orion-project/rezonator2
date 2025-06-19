@@ -184,7 +184,7 @@ ElementPropsDialog_List::ElementPropsDialog_List(Element *elem, QWidget *parent)
 
     ParamsEditor::Options opts(&elem->params());
     opts.filter.reset(new Z::ParameterFilter({new Z::ParameterFilterVisible()}));
-    opts.globalParams = schema ? schema->customParams() : nullptr;
+    opts.globalParams = schema ? schema->globalParams() : nullptr;
     opts.paramLinks = schema ? schema->paramLinks() : nullptr;
 
     _editors = new ParamsEditor(opts);
