@@ -31,7 +31,7 @@ Half div. angle (Vt × Vs)
 Half of the spread angle in the far-field zone. The displayed measurement units can be changed via the context menu of the column header or by the "Units of measurement" toolbar button.
 
 .. note::
-  There may be several rows in the table corresponding to the same element. These rows are marked with different icons. See :doc:`wnd_table_symbols` for details.
+  There may be several rows in the table corresponding to the same element. These rows are marked with different icons. See :doc:`table_symbols` for details.
 
 .. seeAlso::
-  :doc:`wnd_table`, :doc:`func_caustic`
+  :doc:`table_window`, :doc:`func_caustic`

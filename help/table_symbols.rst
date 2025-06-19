@@ -25,4 +25,4 @@ When you invoke the :menuSelection:`Copy` command via the :menuSelection:`Edit` 
 
 .. seeAlso::
 
-    :doc:`wnd_table`
+    :doc:`table_window`

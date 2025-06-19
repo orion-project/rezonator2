@@ -58,4 +58,4 @@ Calculate function in the middle of :doc:`matrix/ElemEmptyRange` and :doc:`matri
 
 .. seeAlso::
 
-    :doc:`wnd_table_symbols`, :doc:`wnd_plot`, :doc:`wnd_info`
+    :doc:`table_symbols`, :doc:`plot_window`, :doc:`info_window`

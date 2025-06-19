@@ -10,8 +10,8 @@ A function is a procedure or an operations sequence yielding some data related t
    :maxdepth: 1
    :caption: Function windows:
 
-   wnd_table
-   wnd_table_symbols
+   table_window
+   table_symbols
    func_freeze
 
 .. toctree::
