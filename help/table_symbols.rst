@@ -3,7 +3,7 @@ Symbols in Table Window
 
 There are cases when several values of the same parameter correspond to one element in the table.
 
-  .. image:: img/wnd_table_symbols_1.png
+  .. image:: img/table_symbols_1.png
 
 For example:
 
@@ -15,13 +15,13 @@ For example:
 
 Certain elements have more than one corresponding row in the data table for these cases. Every such row is marked with a special icon.
 
-  .. image:: img/wnd_table_symbols_2.png
+  .. image:: img/table_symbols_crystal.png
 
-  .. image:: img/wnd_table_symbols_3.png
+  .. image:: img/table_symbols_mirror.png
 
 When you invoke the :menuSelection:`Copy` command via the :menuSelection:`Edit` menu or context menu of the table, the content of selected cells is copied into the clipboard as text. Row icons are also copied in the text form.
 
-  .. image:: img/wnd_table_symbols_4.png
+  .. image:: img/table_symbols_copy.png
 
 .. seeAlso::
 

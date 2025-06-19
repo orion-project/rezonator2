@@ -40,7 +40,7 @@ The command toggles visibility of results for the sagittal (S) plane.
 
 Calculate function in :doc:`matrix/ElemMediaRange` elements. This is a debug option. In general, it's important to know beam parameters at interfaces surrounding the medium.
 
-  .. image:: img/wnd_table_calc_medium_ends.png
+  .. image:: img/table_calc_medium_ends.png
 
 
 :menuSelection:`Table --> Options --> Calculate in empty spaces`
@@ -48,7 +48,7 @@ Calculate function in :doc:`matrix/ElemMediaRange` elements. This is a debug opt
 
 Calculate function values in :doc:`matrix/ElemEmptyRange` elements. This is a debug option. In a common case, an empty space separates some ‘rigid’ elements: lenses, crystals, etc. The function value on those elements will be the same as the values on the adjoined ends of the neighboring empty space.
 
-  .. image:: img/wnd_table_calc_empty_spaces.png
+  .. image:: img/table_calc_empty_spaces.png
 
 
 :menuSelection:`Table --> Options --> Calculate in the middle of ranges`
