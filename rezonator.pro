@@ -52,6 +52,9 @@ include($$_PRO_FILE_PWD_/libs/custom-plot-lab/custom-plot-lab.pri)
 # lua
 include($$_PRO_FILE_PWD_/libs/lua.pri)
 
+INCLUDEPATH += "C:\Program Files\Python313\include"
+LIBS += -L"C:\Program Files\Python313\libs" -lpython313
+
 #------------------------------------------------------------
 # Version information
 
@@ -98,6 +101,9 @@ HEADERS += \
     src/core/Perf.h \
     src/core/Protocol.h \
     src/core/Pump.h \
+    src/core/PyHelper.h \
+    src/core/PyModuleGlobal.h \
+    src/core/PyModuleSchema.h \
     src/core/Report.h \
     src/core/Schema.h \
     src/core/Units.h \
@@ -234,6 +240,7 @@ SOURCES += \
     src/core/Perf.cpp \
     src/core/Protocol.cpp \
     src/core/Pump.cpp \
+    src/core/PyHelper.cpp \
     src/core/Report.cpp \
     src/core/Schema.cpp \
     src/core/Units.cpp \

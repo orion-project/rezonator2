@@ -144,6 +144,7 @@
         <file alias="schema_summary">../img/toolbar/schema_summary.svg</file>
         <file alias="schema">../img/toolbar/go_to_schema.svg</file>
         <file alias="star">../img/toolbar/star.svg</file>
+        <file alias="start">../img/toolbar/start.svg</file>
         <file alias="stop">../img/toolbar/stop.svg</file>
         <file alias="table">../img/toolbar/table.svg</file>
         <file alias="text_color">../img/toolbar/text_color.svg</file>

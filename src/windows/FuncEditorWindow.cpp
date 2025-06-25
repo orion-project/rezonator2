@@ -1,18 +1,15 @@
 #include "FuncEditorWindow.h"
 
 #include "../app/Appearance.h"
+#include "../core/PyHelper.h"
 
 #include "helpers/OriWidgets.h"
-#include "helpers/OriDialogs.h"
 
 #include <QAction>
-#include <QDir>
-#include <QFile>
 #include <QJsonObject>
 #include <QPlainTextEdit>
 #include <QSplitter>
-#include <QTemporaryFile>
-#include <QTextStream>
+#include <QTextBlock>
 #include <QToolButton>
 #include <QVBoxLayout>
 
@@ -33,163 +30,112 @@ FuncEditorWindow* FuncEditorWindow::create(Schema* owner)
     return new FuncEditorWindow(owner);
 }
 
-FuncEditorWindow::FuncEditorWindow(Schema *owner) : SchemaMdiChild(owner), _pythonProcess(nullptr)
+FuncEditorWindow::FuncEditorWindow(Schema *owner) : SchemaMdiChild(owner)
 {
     setTitleAndIcon(tr("Custom Function"), ":/toolbar/protocol");
+
+    _editor = new QPlainTextEdit;
+    _editor->setFont(Z::Gui::CodeEditorFont().get());
+    _editor->setPlaceholderText(tr("Enter function code here..."));
+
+    _log = new QPlainTextEdit;
+    _log->setFont(Z::Gui::CodeEditorFont().get());
+    _log->setReadOnly(true);
+    _log->setUndoRedoEnabled(false);
+    _log->setPlaceholderText(tr("Execution log will appear here..."));
 
     createActions();
     createMenuBar();
     createToolBar();
-    createContent();
+
+    connect(_editor, &QPlainTextEdit::copyAvailable, _actionCut, &QAction::setEnabled);
+    connect(_editor, &QPlainTextEdit::copyAvailable, _actionCopy, &QAction::setEnabled);
+    connect(_editor->document(), &QTextDocument::modificationChanged, this, &FuncEditorWindow::markModified);
+    connect(_editor->document(), &QTextDocument::undoAvailable, _actionUndo, &QAction::setEnabled);
+    connect(_editor->document(), &QTextDocument::redoAvailable, _actionRedo, &QAction::setEnabled);
+
+    setContent(Ori::Gui::splitterV(_editor, _log, 200, 100));
 }
 
 FuncEditorWindow::~FuncEditorWindow()
 {
-    cleanupTempFiles();
-    
-    if (_pythonProcess)
-    {
-        if (_pythonProcess->state() != QProcess::NotRunning)
-        {
-            _pythonProcess->terminate();
-            _pythonProcess->waitForFinished(1000);
-        }
-        delete _pythonProcess;
-    }
-}
-
-void FuncEditorWindow::createContent()
-{
-    _editor = new QPlainTextEdit;
-    _editor->setFont(Z::Gui::CodeEditorFont().get());
-    _editor->setPlaceholderText(tr("Enter function code here..."));
-    
-    _log = new QPlainTextEdit;
-    _log->setFont(Z::Gui::CodeEditorFont().get());
-    _log->setReadOnly(true);
-    _log->setPlaceholderText(tr("Execution log will appear here..."));
-    
-    setContent(Ori::Gui::splitterV(_editor, _log, 200, 100));
 }
 
 void FuncEditorWindow::createActions()
 {
     #define A_ Ori::Gui::action
 
-    _actnCheck = A_(tr("Check"), this, &FuncEditorWindow::checkFunction, ":/toolbar/check", Qt::Key_F9);
+    _actionUndo = A_(tr("Undo"), _editor, &QPlainTextEdit::undo, ":/toolbar/undo");
+    _actionRedo = A_(tr("Redo"), _editor, &QPlainTextEdit::redo, ":/toolbar/redo");
+    _actionCut = A_(tr("Cut"), _editor, &QPlainTextEdit::cut, ":/toolbar/cut");
+    _actionCopy = A_(tr("Copy"), _editor, &QPlainTextEdit::copy, ":/toolbar/copy");
+    _actionPaste = A_(tr("Paste"), _editor, &QPlainTextEdit::paste, ":/toolbar/paste");
+
+    _actnRun = A_(tr("Run"), this, &FuncEditorWindow::run, ":/toolbar/start", Qt::Key_F9);
         
     #undef A_
 }
 
 void FuncEditorWindow::createMenuBar()
 {
-    _windowMenu = Ori::Gui::menu(tr("Function"), this, { _actnCheck });
+    _windowMenu = Ori::Gui::menu(tr("Function"), this, { _actnRun });
 }
 
 void FuncEditorWindow::createToolBar()
 {
-    populateToolbar({ Ori::Gui::textToolButton(_actnCheck) });
+    populateToolbar({
+        Ori::Gui::textToolButton(_actnRun), nullptr,
+        _actionUndo, _actionRedo, nullptr,
+        _actionCut, _actionCopy, _actionPaste, nullptr,
+    });
 }
 
-void FuncEditorWindow::checkFunction()
-{
-    // Clear the log
-    _log->clear();
-    _log->appendPlainText(tr("Running Python code..."));
-    
-    // Get the code from the editor
-    QString code = _editor->toPlainText();
-    if (code.trimmed().isEmpty())
-    {
-        _log->appendPlainText(tr("Error: No code to execute."));
-        return;
-    }
-    
-    // Create a temporary file for the Python script
-    cleanupTempFiles();
-    
-    QTemporaryFile tempFile;
-    tempFile.setAutoRemove(false);
-    if (!tempFile.open())
-    {
-        _log->appendPlainText(tr("Error: Could not create temporary file."));
-        return;
-    }
-    
-    _tempScriptPath = tempFile.fileName();
-    
-    // Write the code to the temporary file
-    QTextStream out(&tempFile);
-    out << code;
-    tempFile.close();
-    
-    // Get the Python interpreter path
-    QString pythonPath = getPythonInterpreterPath();
-    if (pythonPath.isEmpty())
-    {
-        _log->appendPlainText(tr("Error: Python interpreter not found."));
-        return;
-    }
-    
-    // Create a new process if needed
-    if (!_pythonProcess)
-    {
-        _pythonProcess = new QProcess(this);
-        connect(_pythonProcess, &QProcess::readyReadStandardOutput, this, &FuncEditorWindow::handlePythonOutput);
-        connect(_pythonProcess, &QProcess::readyReadStandardError, this, &FuncEditorWindow::handlePythonError);
-        connect(_pythonProcess, qOverload<int, QProcess::ExitStatus>(&QProcess::finished), this, &FuncEditorWindow::handlePythonFinished);
-    }
-    
-    // Run the Python script
-    _pythonProcess->start(pythonPath, QStringList() << _tempScriptPath);
-}
+bool FuncEditorWindow::canUndo() { return _actionUndo->isEnabled(); }
+bool FuncEditorWindow::canRedo() { return _actionRedo->isEnabled(); }
+bool FuncEditorWindow::canCut() { return _actionCut->isEnabled(); }
+bool FuncEditorWindow::canCopy() { return _actionCopy->isEnabled(); }
+bool FuncEditorWindow::canPaste() { return _editor->canPaste(); }
+void FuncEditorWindow::undo() { _actionUndo->trigger(); }
+void FuncEditorWindow::redo() { _actionRedo->trigger(); }
+void FuncEditorWindow::cut() { _actionCut->trigger(); }
+void FuncEditorWindow::copy() { _actionCopy->trigger(); }
+void FuncEditorWindow::paste() { _actionPaste->trigger(); }
+void FuncEditorWindow::selectAll() { _editor->selectAll(); }
 
-void FuncEditorWindow::handlePythonOutput()
+void FuncEditorWindow::markModified(bool m)
 {
-    if (_pythonProcess)
+    if (m)
     {
-        QByteArray output = _pythonProcess->readAllStandardOutput();
-        _log->appendPlainText(QString::fromUtf8(output));
+        schema()->events().raise(SchemaEvents::Changed, "cunstom func modified");
     }
 }
 
-void FuncEditorWindow::handlePythonError()
+void FuncEditorWindow::logInfo(const QString &msg)
 {
-    if (_pythonProcess)
-    {
-        QByteArray error = _pythonProcess->readAllStandardError();
-        _log->appendPlainText(QString::fromUtf8(error));
-    }
+    _log->appendPlainText(msg);
+
+    QTextCursor cursor = _log->textCursor();
+    cursor.movePosition(QTextCursor::End);
+    _log->setTextCursor(cursor);
+    _log->ensureCursorVisible();
 }
 
-void FuncEditorWindow::handlePythonFinished(int exitCode, QProcess::ExitStatus exitStatus)
+void FuncEditorWindow::logError(const QString &msg)
 {
-    if (exitStatus == QProcess::CrashExit)
-    {
-        _log->appendPlainText(tr("Error: Python process crashed."));
-    }
-    else if (exitCode != 0)
-    {
-        _log->appendPlainText(tr("Error: Python process exited with code %1.").arg(exitCode));
-    }
-    else
-    {
-        _log->appendPlainText(tr("Python code executed successfully."));
-    }
-}
-
-QString FuncEditorWindow::getPythonInterpreterPath() const
-{
-    return "C:/Program Files/Python313/python.exe";
-}
-
-void FuncEditorWindow::cleanupTempFiles()
-{
-    if (!_tempScriptPath.isEmpty())
-    {
-        QFile::remove(_tempScriptPath);
-        _tempScriptPath.clear();
-    }
+    _log->appendPlainText(msg);
+    
+    // Get the last paragraph (the one we just added)
+    QTextCursor cursor = _log->textCursor();
+    cursor.movePosition(QTextCursor::End);
+    cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::KeepAnchor);
+    
+    QTextCharFormat format;
+    format.setForeground(Qt::red);
+    cursor.mergeCharFormat(format);
+    
+    // Scroll to the end
+    _log->setTextCursor(cursor);
+    _log->ensureCursorVisible();
 }
 
 bool FuncEditorWindow::storableRead(const QJsonObject& root, Z::Report*)
@@ -202,4 +148,21 @@ bool FuncEditorWindow::storableWrite(QJsonObject& root, Z::Report*)
 {
     root["code"] = _editor->toPlainText();
     return true;
+}
+
+void FuncEditorWindow::run()
+{
+    _log->clear();
+
+    PyHelper py;
+    py.log.info = [this](const QString& msg){
+        _log->appendPlainText(msg);
+    };
+    py.log.error = [this](const QString& msg){
+        logError(msg);
+    };
+    //py.foo3(schema());
+    
+    QString code = _editor->toPlainText();
+    py.foo4(schema(), code);
 }
