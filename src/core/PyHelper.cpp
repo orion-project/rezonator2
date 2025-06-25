@@ -2,60 +2,12 @@
 #include "Python.h"
 
 #include "PyHelper.h"
+#include "PyModuleSchema.h"
+#include "PyModuleGlobal.h"
 
 #include <QDebug>
 
 PyHelper::PyHelper() {}
-
-void PyHelper::foo()
-{
-    PyStatus status;
-    PyConfig config;
-    PyConfig_InitPythonConfig(&config);
-    
-    status = PyConfig_SetBytesString(&config, &config.program_name, "rezonator");
-    if (PyStatus_Exception(status)) {
-        goto exception;
-    }
-    
-    qDebug() << "PyConfig.program_name" << config.program_name;
-    qDebug() << "PyConfig.pythonpath_env" << config.pythonpath_env;
-    qDebug() << "PyConfig.home" << config.home;
-    qDebug() << "PyConfig.stdlib_dir" << config.stdlib_dir;
-    qDebug() << "PyConfig.executable" << config.executable;
-    qDebug() << "PyConfig.base_executable" << config.base_executable;
-    qDebug() << "PyConfig.prefix" << config.prefix;
-    qDebug() << "PyConfig.base_prefix" << config.base_prefix;
-    qDebug() << "PyConfig.exec_prefix" << config.exec_prefix;
-    qDebug() << "PyConfig.base_exec_prefix" << config.base_exec_prefix;
-    qDebug() << "PyConfig.run_command" << config.run_command;
-    qDebug() << "PyConfig.run_module" << config.run_module;
-    qDebug() << "PyConfig.run_filename" << config.run_filename;
-    qDebug() << "PyConfig.sys_path_0" << config.sys_path_0;
-    
-    status = Py_InitializeFromConfig(&config);
-    if (PyStatus_Exception(status)) {
-        goto exception;
-    }
-    PyConfig_Clear(&config);
-    
-    PyRun_SimpleString("from time import time,ctime\n"
-                       "print('Today is', ctime(time()))\n");
-    
-    if (Py_FinalizeEx() < 0) {
-        qDebug() << "Failed to finalize Python";
-    }
-    
-    qDebug() << "Runned";
-    return;
-    
-exception:
-    PyConfig_Clear(&config);
-    Py_ExitStatusException(status);
-}
-
-#include "PyModuleSchema.h"
-#include "PyModuleGlobal.h"
 
 struct PyRunner
 {
@@ -82,7 +34,7 @@ struct PyRunner
         if (Py_FinalizeEx() < 0) {
             qWarning() << "Failed to finalize Python interpreter";
         } else {
-            qWarning() << "Python interpreter finalized";
+            //qWarning() << "Python interpreter finalized";
         }
     }
     
@@ -157,25 +109,27 @@ struct PyRunner
     QVector<PyObject*> refs;
 };
 
-void PyHelper::foo4(Schema *schema, const QString &code)
+void PyHelper::run(Schema *schema, const QString &code, const QString &moduleName)
 {
     PyModuleSchema::schema = schema;
     PyModuleGlobal::printFunc = log.info;
     
     PyRunner runner;
 
-    const char *funcName = "show_lambda";
+    const char *funcName = "calc";
 
-    auto codeBytes = code.toUtf8();
+    auto bCode = code.toUtf8();
+    auto bModuleName = moduleName.toUtf8();
+    auto bFileName = moduleName.toUtf8();
     
-    PyObject *pCompiled = Py_CompileString(codeBytes.constData(), "customfunc.py", Py_file_input);
+    PyObject *pCompiled = Py_CompileString(bCode.constData(), bFileName.constData(), Py_file_input);
     if (!pCompiled) {
         runner.handleError("Failed to compile py code", log);
         return;
     }
     runner.refs << pCompiled;
     
-    PyObject *pModule = PyImport_ExecCodeModule("customcode", pCompiled);
+    PyObject *pModule = PyImport_ExecCodeModule(bModuleName.constData(), pCompiled);
     if (!pModule) {
         runner.handleError("Failed to create py module", log);
         return;
@@ -207,6 +161,4 @@ void PyHelper::foo4(Schema *schema, const QString &code)
         return;
     }
     runner.refs << pValue;
-
-    qDebug() << "Result of call" << PyFloat_AsDouble(pValue);
 }

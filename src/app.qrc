@@ -312,5 +312,6 @@
     <qresource prefix="/syntax">
         <file alias="css">../libs/orion/syntax/css.ohl</file>
         <file alias="qss">../libs/orion/syntax/qss.ohl</file>
+        <file alias="py">../libs/orion/syntax/python.ohl</file>
     </qresource>
 </RCC>

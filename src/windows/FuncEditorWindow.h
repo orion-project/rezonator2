@@ -6,6 +6,10 @@
 
 class QPlainTextEdit;
 
+namespace Ori::Widgets {
+class CodeEditor;
+}
+
 /**
     Implementation of restoreability for FuncEditorWindow.
     Register it in ProjectWindow::registerStorableWindows().
@@ -52,21 +56,26 @@ public:
 private:
     explicit FuncEditorWindow(Schema*);
 
-    QPlainTextEdit* _editor;
+    Ori::Widgets::CodeEditor* _editor;
     QPlainTextEdit* _log;
-    QAction *_actionUndo, *_actionRedo, *_actionCut, *_actionCopy, *_actionPaste, *_actnRun;
+    QAction *_actnRun, *_actnClearLog;
     QMenu* _windowMenu;
     
     void createActions();
     void createMenuBar();
     void createToolBar();
+    
+    void editCopy();
+    void toggleShowWhitespaces();
 
     void run();
+    void clearLog();
 
     void markModified(bool m);
 
     void logInfo(const QString &msg);
     void logError(const QString &msg);
+    void logScrollToEnd();
 };
 
 #endif // FUNC_EDITOR_WINDOW_H

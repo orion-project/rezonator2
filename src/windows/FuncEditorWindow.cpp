@@ -4,6 +4,8 @@
 #include "../core/PyHelper.h"
 
 #include "helpers/OriWidgets.h"
+#include "tools/OriHighlighter.h"
+#include "widgets/OriCodeEditor.h"
 
 #include <QAction>
 #include <QJsonObject>
@@ -12,6 +14,8 @@
 #include <QTextBlock>
 #include <QToolButton>
 #include <QVBoxLayout>
+
+#define CUSTOM_MODULE QStringLiteral("customfunc")
 
 namespace FuncEditorWindowStorable
 {
@@ -32,11 +36,14 @@ FuncEditorWindow* FuncEditorWindow::create(Schema* owner)
 
 FuncEditorWindow::FuncEditorWindow(Schema *owner) : SchemaMdiChild(owner)
 {
-    setTitleAndIcon(tr("Custom Function"), ":/toolbar/protocol");
+    setTitleAndIcon(tr("Custom Function Code"), ":/toolbar/protocol");
 
-    _editor = new QPlainTextEdit;
+    _editor = new Ori::Widgets::CodeEditor;
     _editor->setFont(Z::Gui::CodeEditorFont().get());
     _editor->setPlaceholderText(tr("Enter function code here..."));
+    _editor->setShowWhitespaces(true);
+    _editor->setTabStopDistance(24);
+    Ori::Highlighter::setHighlighter(_editor, ":/syntax/py");
 
     _log = new QPlainTextEdit;
     _log->setFont(Z::Gui::CodeEditorFont().get());
@@ -48,11 +55,7 @@ FuncEditorWindow::FuncEditorWindow(Schema *owner) : SchemaMdiChild(owner)
     createMenuBar();
     createToolBar();
 
-    connect(_editor, &QPlainTextEdit::copyAvailable, _actionCut, &QAction::setEnabled);
-    connect(_editor, &QPlainTextEdit::copyAvailable, _actionCopy, &QAction::setEnabled);
     connect(_editor->document(), &QTextDocument::modificationChanged, this, &FuncEditorWindow::markModified);
-    connect(_editor->document(), &QTextDocument::undoAvailable, _actionUndo, &QAction::setEnabled);
-    connect(_editor->document(), &QTextDocument::redoAvailable, _actionRedo, &QAction::setEnabled);
 
     setContent(Ori::Gui::splitterV(_editor, _log, 200, 100));
 }
@@ -65,42 +68,35 @@ void FuncEditorWindow::createActions()
 {
     #define A_ Ori::Gui::action
 
-    _actionUndo = A_(tr("Undo"), _editor, &QPlainTextEdit::undo, ":/toolbar/undo");
-    _actionRedo = A_(tr("Redo"), _editor, &QPlainTextEdit::redo, ":/toolbar/redo");
-    _actionCut = A_(tr("Cut"), _editor, &QPlainTextEdit::cut, ":/toolbar/cut");
-    _actionCopy = A_(tr("Copy"), _editor, &QPlainTextEdit::copy, ":/toolbar/copy");
-    _actionPaste = A_(tr("Paste"), _editor, &QPlainTextEdit::paste, ":/toolbar/paste");
-
     _actnRun = A_(tr("Run"), this, &FuncEditorWindow::run, ":/toolbar/start", Qt::Key_F9);
-        
+    _actnClearLog = A_(tr("Clear Log"), this, &FuncEditorWindow::clearLog, ":/toolbar/clear_log");
+    
     #undef A_
 }
 
 void FuncEditorWindow::createMenuBar()
 {
-    _windowMenu = Ori::Gui::menu(tr("Function"), this, { _actnRun });
+    _windowMenu = Ori::Gui::menu(tr("Code"), this, { _actnRun, nullptr, _actnClearLog });
 }
 
 void FuncEditorWindow::createToolBar()
 {
     populateToolbar({
-        Ori::Gui::textToolButton(_actnRun), nullptr,
-        _actionUndo, _actionRedo, nullptr,
-        _actionCut, _actionCopy, _actionPaste, nullptr,
+        Ori::Gui::textToolButton(_actnRun), nullptr, _actnClearLog
     });
 }
 
-bool FuncEditorWindow::canUndo() { return _actionUndo->isEnabled(); }
-bool FuncEditorWindow::canRedo() { return _actionRedo->isEnabled(); }
-bool FuncEditorWindow::canCut() { return _actionCut->isEnabled(); }
-bool FuncEditorWindow::canCopy() { return _actionCopy->isEnabled(); }
-bool FuncEditorWindow::canPaste() { return _editor->canPaste(); }
-void FuncEditorWindow::undo() { _actionUndo->trigger(); }
-void FuncEditorWindow::redo() { _actionRedo->trigger(); }
-void FuncEditorWindow::cut() { _actionCut->trigger(); }
-void FuncEditorWindow::copy() { _actionCopy->trigger(); }
-void FuncEditorWindow::paste() { _actionPaste->trigger(); }
-void FuncEditorWindow::selectAll() { _editor->selectAll(); }
+bool FuncEditorWindow::canUndo() { return _editor->hasFocus() && _editor->document()->isUndoAvailable(); }
+bool FuncEditorWindow::canRedo() { return _editor->hasFocus() && _editor->document()->isRedoAvailable(); }
+bool FuncEditorWindow::canCut() { return _editor->hasFocus(); }
+bool FuncEditorWindow::canCopy() { return true; }
+bool FuncEditorWindow::canPaste() { return _editor->hasFocus() && _editor->canPaste(); }
+void FuncEditorWindow::undo() { if (_editor->hasFocus()) _editor->undo(); }
+void FuncEditorWindow::redo() { if (_editor->hasFocus()) _editor->redo(); }
+void FuncEditorWindow::cut() { if (_editor->hasFocus()) _editor->cut(); }
+void FuncEditorWindow::copy() { if (_log->hasFocus()) _log->copy(); else _editor->copy(); }
+void FuncEditorWindow::paste() { if (_editor->hasFocus()) _editor->paste(); }
+void FuncEditorWindow::selectAll() { if (_log->hasFocus()) _log->selectAll(); else _editor->selectAll(); }
 
 void FuncEditorWindow::markModified(bool m)
 {
@@ -114,26 +110,55 @@ void FuncEditorWindow::logInfo(const QString &msg)
 {
     _log->appendPlainText(msg);
 
+    // Format the last paragraph
     QTextCursor cursor = _log->textCursor();
     cursor.movePosition(QTextCursor::End);
-    _log->setTextCursor(cursor);
-    _log->ensureCursorVisible();
+    cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::KeepAnchor);
+    QTextCharFormat format;
+    format.setForeground(QColor(0xff222244));
+    cursor.mergeCharFormat(format);
+    
+    logScrollToEnd();
 }
 
 void FuncEditorWindow::logError(const QString &msg)
 {
+    // Parse python error of the form:
+    //
+    // ERROR: Failed to compile py code
+    // File "customfunc.py", line 7
+    //	p1 = sche ma.param("P1")
+    //	          ^^
+    // SyntaxError: invalid syntax
+    //
+    QStringList lines = msg.split('\n', Qt::SkipEmptyParts);
+    for (const QString &line : std::as_const(lines)) {
+        static QRegularExpression r(R"(File \"(.+)\",\s+line\s+(\d+))");
+        auto m = r.match(line);
+        if (!m.hasMatch()) continue;
+        if (m.captured(1) != CUSTOM_MODULE) continue;
+        int lineNo = m.captured(2).toInt();
+        _editor->setLineHints({{ lineNo, lines.last() }});
+        break;
+    }
+
     _log->appendPlainText(msg);
     
-    // Get the last paragraph (the one we just added)
+    // Format the last paragraph
     QTextCursor cursor = _log->textCursor();
     cursor.movePosition(QTextCursor::End);
     cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::KeepAnchor);
-    
     QTextCharFormat format;
     format.setForeground(Qt::red);
     cursor.mergeCharFormat(format);
     
-    // Scroll to the end
+    logScrollToEnd();
+}
+
+void FuncEditorWindow::logScrollToEnd()
+{
+    auto cursor = _log->textCursor();
+    cursor.movePosition(QTextCursor::End);
     _log->setTextCursor(cursor);
     _log->ensureCursorVisible();
 }
@@ -150,19 +175,21 @@ bool FuncEditorWindow::storableWrite(QJsonObject& root, Z::Report*)
     return true;
 }
 
-void FuncEditorWindow::run()
+void FuncEditorWindow::clearLog()
 {
     _log->clear();
+    _editor->setLineHints({});
+}
+
+void FuncEditorWindow::run()
+{
+    clearLog();
 
     PyHelper py;
-    py.log.info = [this](const QString& msg){
-        _log->appendPlainText(msg);
-    };
-    py.log.error = [this](const QString& msg){
-        logError(msg);
-    };
-    //py.foo3(schema());
+    py.log.info = [this](const QString& msg){ logInfo(msg); };
+    py.log.error = [this](const QString& msg){ logError(msg); };
     
     QString code = _editor->toPlainText();
-    py.foo4(schema(), code);
+    py.run(schema(), code, CUSTOM_MODULE);
 }
+

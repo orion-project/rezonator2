@@ -16,15 +16,10 @@ public:
         std::function<void(const QString&)> info;
         std::function<void(const QString&)> error;
     };
-    
-    void foo();
-    void foo1();
-    void foo2();
-    void foo3(Schema *schema);
-    void foo4(Schema *schema, const QString &code);
-    
     Logger log;
-
+    
+    void run(Schema *schema, const QString &code, const QString &moduleName);
+    
 private:
     void handleError();
 };
