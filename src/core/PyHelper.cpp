@@ -1,4 +1,3 @@
-#define PY_SSIZE_T_CLEAN
 #include "Python.h"
 
 #include "PyHelper.h"
@@ -131,7 +130,7 @@ void PyHelper::run(Schema *schema, const QString &code, const QString &moduleNam
     
     PyObject *pModule = PyImport_ExecCodeModule(bModuleName.constData(), pCompiled);
     if (!pModule) {
-        runner.handleError("Failed to create py module", log);
+        runner.handleError("Failed to execute py module", log);
         return;
     }
     runner.refs << pModule;
