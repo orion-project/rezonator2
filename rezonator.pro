@@ -101,9 +101,9 @@ HEADERS += \
     src/core/Perf.h \
     src/core/Protocol.h \
     src/core/Pump.h \
-    src/core/PyHelper.h \
     src/core/PyModuleGlobal.h \
     src/core/PyModuleSchema.h \
+    src/core/PyRunner.h \
     src/core/PyUtils.h \
     src/core/Report.h \
     src/core/Schema.h \
@@ -241,7 +241,7 @@ SOURCES += \
     src/core/Perf.cpp \
     src/core/Protocol.cpp \
     src/core/Pump.cpp \
-    src/core/PyHelper.cpp \
+    src/core/PyRunner.cpp \
     src/core/Report.cpp \
     src/core/Schema.cpp \
     src/core/Units.cpp \

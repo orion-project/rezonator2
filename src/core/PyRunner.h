@@ -1,16 +1,18 @@
-#ifndef PYHELPER_H
-#define PYHELPER_H
+#ifndef PYRUNNER_H
+#define PYRUNNER_H
 
 #include <QString>
+#include <QVector>
 
 #include <functional>
 
 class Schema;
 
-class PyHelper
+class PyRunner
 {
 public:
-    PyHelper();
+    PyRunner();
+    ~PyRunner();
     
     // input
     std::function<void(const QString&)> logInfo;
@@ -26,7 +28,9 @@ public:
     void run();
     
 private:
-    void handleError();
+    void handleError(const QString& msg);
+    
+    QVector<void*> _refs;
 };
 
-#endif // PYHELPER_H
+#endif // PYRUNNER_H

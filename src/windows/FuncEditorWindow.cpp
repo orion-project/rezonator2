@@ -1,8 +1,9 @@
 #include "FuncEditorWindow.h"
 
 #include "../app/Appearance.h"
-#include "../core/PyHelper.h"
+#include "../core/PyRunner.h"
 
+#include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
 #include "tools/OriHighlighter.h"
 #include "widgets/OriCodeEditor.h"
@@ -14,8 +15,6 @@
 #include <QTextBlock>
 #include <QToolButton>
 #include <QVBoxLayout>
-
-#define CUSTOM_MODULE QStringLiteral("customfunc")
 
 namespace FuncEditorWindowStorable
 {
@@ -56,6 +55,8 @@ FuncEditorWindow::FuncEditorWindow(Schema *owner) : SchemaMdiChild(owner)
     connect(_editor->document(), &QTextDocument::modificationChanged, this, &FuncEditorWindow::markModified);
 
     setContent(Ori::Gui::splitterV(_editor, _log, 200, 100));
+
+    _moduleName = "rezonator_customfunc";
 }
 
 FuncEditorWindow::~FuncEditorWindow()
@@ -84,6 +85,15 @@ void FuncEditorWindow::createToolBar()
     });
 }
 
+void FuncEditorWindow::closeEvent(QCloseEvent* ce)
+{
+    if (_editor->toPlainText().trimmed().isEmpty() ||
+        Ori::Dlg::ok(tr("Function code will be lost if you close the window")))
+        SchemaMdiChild::closeEvent(ce);
+    else
+        ce->ignore();
+}
+
 bool FuncEditorWindow::canUndo() { return _editor->hasFocus() && _editor->document()->isUndoAvailable(); }
 bool FuncEditorWindow::canRedo() { return _editor->hasFocus() && _editor->document()->isRedoAvailable(); }
 bool FuncEditorWindow::canCut() { return _editor->hasFocus(); }
@@ -98,10 +108,7 @@ void FuncEditorWindow::selectAll() { if (_log->hasFocus()) _log->selectAll(); el
 
 void FuncEditorWindow::markModified(bool m)
 {
-    if (m)
-    {
-        schema()->events().raise(SchemaEvents::Changed, "cunstom func modified");
-    }
+    if (m) schema()->events().raise(SchemaEvents::Changed, "cunstom func modified");
 }
 
 void FuncEditorWindow::logInfo(const QString &msg)
@@ -134,7 +141,7 @@ void FuncEditorWindow::logError(const QString &msg)
         static QRegularExpression r(R"(File \"(.+)\",\s+line\s+(\d+))");
         auto m = r.match(line);
         if (!m.hasMatch()) continue;
-        if (m.captured(1) != CUSTOM_MODULE) continue;
+        if (m.captured(1) != _moduleName) continue;
         int lineNo = m.captured(2).toInt();
         _editor->setLineHints({{ lineNo, lines.last() }});
         break;
@@ -189,12 +196,12 @@ void FuncEditorWindow::run()
 {
     clearLog();
 
-    PyHelper py;
+    PyRunner py;
     py.logInfo = [this](const QString& msg){ logInfo(msg); };
     py.logError = [this](const QString& msg){ logError(msg); };
     py.schema = schema();
     py.code = _editor->toPlainText();
-    py.moduleName = CUSTOM_MODULE;
+    py.moduleName = _moduleName;
     py.funcName = "calc";
     
     py.run();

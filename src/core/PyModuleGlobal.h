@@ -60,16 +60,13 @@ PyObject* print(PyObject* Py_UNUSED(self), PyObject* args, PyObject *kwargs)
     Py_RETURN_NONE;
 }
 
-PyObject* format(PyObject* Py_UNUSED(self), PyObject* args)
+PyObject* format(PyObject* Py_UNUSED(self), PyObject* arg)
 {
-    auto pArg = PyTuple_GetItem(args, 0);
-    if (!pArg)
-        return nullptr;
-    if (!PyFloat_Check(pArg)) {
+    if (!PyFloat_Check(arg)) {
         PyErr_SetString(PyExc_TypeError, "unsupported argument type, float expected");
         return nullptr;
     }
-    auto v = PyFloat_AsDouble(pArg);
+    auto v = PyFloat_AsDouble(arg);
     auto s = Z::format(v).toUtf8();
     return PyUnicode_FromString(s.constData());
 }
@@ -97,7 +94,7 @@ int on_exec(PyObject *module)
 }
 
 PyMethodDef methods[] = {
-    { "format", (PyCFunction)Methods::format, METH_VARARGS | METH_KEYWORDS, "Format value into user display string" },
+    { "format", (PyCFunction)Methods::format, METH_O, "Format value into user display string" },
     { "print", (PyCFunction)Methods::print, METH_VARARGS | METH_KEYWORDS, "Print message" },
     { NULL, NULL, 0, NULL }
 };

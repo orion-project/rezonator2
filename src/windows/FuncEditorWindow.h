@@ -53,6 +53,9 @@ public:
     bool storableRead(const QJsonObject& root, Z::Report*) override;
     bool storableWrite(QJsonObject& root, Z::Report*) override;
 
+protected:
+    void closeEvent(QCloseEvent* ce) override;
+
 private:
     explicit FuncEditorWindow(Schema*);
 
@@ -60,6 +63,7 @@ private:
     QPlainTextEdit* _log;
     QAction *_actnRun, *_actnClearLog;
     QMenu* _windowMenu;
+    QString _moduleName;
     QString _funcTitle;
     
     void createActions();

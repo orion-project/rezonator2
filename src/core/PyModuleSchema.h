@@ -121,22 +121,19 @@ PyObject* param(PyObject* Py_UNUSED(self), PyObject* args)
     return PyFloat_FromDouble(p->value().toSi());
 }
 
-PyObject* elem(PyObject* Py_UNUSED(self), PyObject* args)
+PyObject* elem(PyObject* Py_UNUSED(self), PyObject* arg)
 {
     CHECK_SCHEMA
-    auto pArg = PyTuple_GetItem(args, 0);
-    if (!pArg)
-        return nullptr;
     ::Element *elem = nullptr;
-    if (PyLong_Check(pArg)) {
-        auto index = PyLong_AsInt(pArg);
+    if (PyLong_Check(arg)) {
+        auto index = PyLong_AsInt(arg);
         elem = schema->element(index);
         if (!elem) {
             PyErr_SetString(PyExc_IndexError, "element not found");
             return nullptr;
         }
-    } else if (PyUnicode_Check(pArg)) {
-        auto label = QString::fromUtf8(PyUnicode_AsUTF8(pArg));
+    } else if (PyUnicode_Check(arg)) {
+        auto label = QString::fromUtf8(PyUnicode_AsUTF8(arg));
         elem = schema->element(label);
         if (!elem) {
             PyErr_SetString(PyExc_KeyError, "element not found");
@@ -199,7 +196,7 @@ int on_exec(PyObject *module)
 }
 
 PyMethodDef methods[] = {
-    { "elem", Methods::elem, METH_VARARGS, "Return element by label or index" },
+    { "elem", Methods::elem, METH_O, "Return element by label or index" },
     { "elem_count", Methods::elem_count, METH_NOARGS, "Return number of elements in schema" },
     { "is_sp", Methods::is_sp, METH_NOARGS, "If schema is single pass system" },
     { "is_sw", Methods::is_sw, METH_NOARGS, "If schema is standing wave rezonator" },
