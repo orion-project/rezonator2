@@ -60,6 +60,7 @@ private:
     QPlainTextEdit* _log;
     QAction *_actnRun, *_actnClearLog;
     QMenu* _windowMenu;
+    QString _funcTitle;
     
     void createActions();
     void createMenuBar();

@@ -1,0 +1,158 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 1040
+        }
+    },
+    "custom_params": {
+        "P1": {
+            "descr": "",
+            "dim": "linear",
+            "unit": "mm",
+            "value": 10
+        }
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "M_out",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+            },
+            "title": "output mirror",
+            "type": "ElemFlatMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 400
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "folding range",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M_foc",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 10.000000000000004
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 50
+                }
+            },
+            "title": "dichroic mirror",
+            "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L_foc",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 24.6
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "focusing range",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "Cr",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 1.6
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 2
+                }
+            },
+            "title": "brewster crystal",
+            "type": "ElemBrewsterPlate"
+        },
+        {
+            "is_disabled": false,
+            "label": "L_cr",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 29.9
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M_back",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "Alpha": {
+                    "unit": "deg",
+                    "value": 0
+                },
+                "R": {
+                    "unit": "mm",
+                    "value": 30
+                }
+            },
+            "title": "output range",
+            "type": "ElemCurveMirror"
+        }
+    ],
+    "formulas": [
+    ],
+    "notes": "",
+    "param_links": [
+    ],
+    "pumps": [
+    ],
+    "schema_version": "2.0",
+    "title": "",
+    "trip_type": "SW",
+    "windows": [
+        {
+            "code": "import rezonator as Z\nimport schema\n\ndef calc():\n\t'''Various demos'''\n\n\t# Global constants\n\tZ.print(f'PI = {Z.PI}, C = {Z.C}m/s')\n\n\t# Schema parameteres\n\twl = schema.wavelength()\n\tp1 = schema.param(\"P1\")\n\tZ.print(f'Wavelen = {wl*1e9}nm, P1 = {p1}')\n",
+            "title": "Various demos",
+            "type": "FuncEditor"
+        },
+        {
+            "code": "import rezonator as Z\nimport schema\n\ndef calc():\n\t'''Repetition rate'''\n\n\ttotal_len = 0\n\n\tfor i in range(schema.elem_count()):\n\t\telem = schema.elem(i)\n\t\telem_len = elem.optical_length()\n\t\tif not elem_len:\n\t\t\t# Is not a range\n\t\t\tcontinue\n\t\t# Element indexes are zero-based\n\t\t# But elements are numbered from 1 in the table, so +1\n\t\tZ.print('Elem', i+1, ':', elem.label(), '=', Z.format(elem_len), 'm')\n\t\ttotal_len += elem_len\n\n\tZ.print('Total length: ', Z.format(total_len), 'm', spaced=False)\n\n\t# Effective length is doubled in standing-wave rezonatos\n\tif schema.is_sw():\n\t\ttotal_len *= 2\n\n\trep_rate = Z.C / total_len\n\tZ.print('Repetition rate: ', Z.format(rep_rate/1e6), 'MHz', spaced=False)\n",
+            "title": "Repetition rate",
+            "type": "FuncEditor"
+        }
+    ]
+}

@@ -12,13 +12,18 @@ class PyHelper
 public:
     PyHelper();
     
-    struct Logger {
-        std::function<void(const QString&)> info;
-        std::function<void(const QString&)> error;
-    };
-    Logger log;
+    // input
+    std::function<void(const QString&)> logInfo;
+    std::function<void(const QString&)> logError;
+    Schema *schema;
+    QString code;
+    QString moduleName;
+    QString funcName;
     
-    void run(Schema *schema, const QString &code, const QString &moduleName);
+    // output
+    QString funcTitle;
+    
+    void run();
     
 private:
     void handleError();

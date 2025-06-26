@@ -1,5 +1,4 @@
-#include "Python.h"
-
+#include "PyUtils.h"
 #include "PyHelper.h"
 #include "PyModuleSchema.h"
 #include "PyModuleGlobal.h"
@@ -37,19 +36,19 @@ struct PyRunner
         }
     }
     
-    void handleError(const QString& msg, PyHelper::Logger &log)
+    void handleError(const QString& msg, std::function<void(const QString&)> print)
     {
-        log.error("ERROR: " + msg);
+        print("ERROR: " + msg);
         auto exc = PyErr_GetRaisedException();
         if (!exc) {
-            log.error("No exception");
+            print("No exception");
             return;
         }
         refs << exc;
             
         auto traceback = PyImport_ImportModule("traceback");
         if (!traceback) {
-            log.error("Unable to import traceback module");
+            print("Unable to import traceback module");
             PyErr_Print();
             return;
         }
@@ -57,7 +56,7 @@ struct PyRunner
         
         auto format = PyObject_GetAttrString(traceback, "format_exception");
         if (!format) {
-            log.error("Unable to import traceback.format_exception");
+            print("Unable to import traceback.format_exception");
             PyErr_Print();
             return;
         }
@@ -65,21 +64,21 @@ struct PyRunner
         
         auto args = PyTuple_New(1);
         if (!args) {
-            log.error("Failed to init args for format_exception");
+            print("Failed to init args for format_exception");
             PyErr_Print();
             return;
         }
         refs << args;
                         
         if (PyTuple_SetItem(args, 0, exc) < 0) {
-            log.error("Failed to set format_exception arg");
+            print("Failed to set format_exception arg");
             PyErr_Print();
             return;
         }
 
         auto items = PyObject_CallObject(format, args);
         if (!items) {
-            log.error("Failed to call format_exception");
+            print("Failed to call format_exception");
             PyErr_Print();
             return;
         }
@@ -87,7 +86,7 @@ struct PyRunner
 
         auto iter = PyObject_GetIter(items);
         if (!iter) {
-            log.error("Failed to get iterator for exception lines");
+            print("Failed to get iterator for exception lines");
             PyErr_Print();
             return;
         }
@@ -102,61 +101,70 @@ struct PyRunner
             Py_DECREF(item);
             item = PyIter_Next(iter);
         }
-        log.error(lines.join(""));
+        print(lines.join(""));
     }
     
     QVector<PyObject*> refs;
 };
 
-void PyHelper::run(Schema *schema, const QString &code, const QString &moduleName)
+void PyHelper::run()
 {
     PyModuleSchema::schema = schema;
-    PyModuleGlobal::printFunc = log.info;
+    PyModuleGlobal::printFunc = logInfo;
     
     PyRunner runner;
-
-    const char *funcName = "calc";
 
     auto bCode = code.toUtf8();
     auto bModuleName = moduleName.toUtf8();
     auto bFileName = moduleName.toUtf8();
+    auto bFuncName = funcName.toUtf8();
     
-    PyObject *pCompiled = Py_CompileString(bCode.constData(), bFileName.constData(), Py_file_input);
+    auto pCompiled = Py_CompileString(bCode.constData(), bFileName.constData(), Py_file_input);
     if (!pCompiled) {
-        runner.handleError("Failed to compile py code", log);
+        runner.handleError("Failed to compile py code", logError);
         return;
     }
     runner.refs << pCompiled;
     
-    PyObject *pModule = PyImport_ExecCodeModule(bModuleName.constData(), pCompiled);
+    auto pModule = PyImport_ExecCodeModule(bModuleName.constData(), pCompiled);
     if (!pModule) {
-        runner.handleError("Failed to execute py module", log);
+        runner.handleError("Failed to execute py module", logError);
         return;
     }
     runner.refs << pModule;
     
-    PyObject *pFunc = PyObject_GetAttrString(pModule, funcName);
+    auto pFunc = PyObject_GetAttrString(pModule, bFuncName.constData());
     if (!pFunc) {
-        runner.handleError(QString("Failed to get function: ") + funcName, log);
+        runner.handleError(QString("Failed to get function: ") + funcName, logError);
         return;
     }
     runner.refs << pFunc;
     
     if (!PyCallable_Check(pFunc)) {
-        runner.handleError(QString("The object is not callable: ") + funcName, log);
+        runner.handleError(QString("The object is not callable: ") + funcName, logError);
         return;
     }
+    auto pDoc = PyObject_GetAttrString(pFunc, "__doc__");
+    if (pDoc) {
+        if (PyUnicode_Check(pDoc)) {
+            auto doc = QString::fromUtf8(PyUnicode_AsUTF8(pDoc));
+            auto lines = doc.split('\n', Qt::SkipEmptyParts);
+            if (!lines.empty())
+                funcTitle = lines.first();
+        } 
+        Py_DECREF(pDoc);
+    }
     
-    PyObject *pArgs = PyTuple_New(0);
+    auto pArgs = PyTuple_New(0);
     if (!pArgs) {
-        runner.handleError(QString("Failed to initialize function agrs: ") + funcName, log);
+        runner.handleError(QString("Failed to initialize function agrs: ") + funcName, logError);
         return;
     }
     runner.refs << pArgs;
     
-    PyObject *pValue = PyObject_CallObject(pFunc, pArgs);
+    auto pValue = PyObject_CallObject(pFunc, pArgs);
     if (!pValue) {
-        runner.handleError(QString("Failed to call function: ") + funcName, log);
+        runner.handleError(QString("Failed to call function: ") + funcName, logError);
         return;
     }
     runner.refs << pValue;

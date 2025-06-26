@@ -40,7 +40,6 @@ FuncEditorWindow::FuncEditorWindow(Schema *owner) : SchemaMdiChild(owner)
 
     _editor = new Ori::Widgets::CodeEditor;
     _editor->setFont(Z::Gui::CodeEditorFont().get());
-    _editor->setPlaceholderText(tr("Enter function code here..."));
     _editor->setShowWhitespaces(true);
     _editor->setTabStopDistance(24);
     Ori::Highlighter::setHighlighter(_editor, ":/syntax/py");
@@ -49,7 +48,6 @@ FuncEditorWindow::FuncEditorWindow(Schema *owner) : SchemaMdiChild(owner)
     _log->setFont(Z::Gui::CodeEditorFont().get());
     _log->setReadOnly(true);
     _log->setUndoRedoEnabled(false);
-    _log->setPlaceholderText(tr("Execution log will appear here..."));
 
     createActions();
     createMenuBar();
@@ -166,12 +164,18 @@ void FuncEditorWindow::logScrollToEnd()
 bool FuncEditorWindow::storableRead(const QJsonObject& root, Z::Report*)
 {
     _editor->setPlainText(root["code"].toString());
+    _funcTitle = root["title"].toString();
+    
+    if (!_funcTitle.isEmpty())
+        setWindowTitle(_funcTitle);
+    
     return true;
 }
 
 bool FuncEditorWindow::storableWrite(QJsonObject& root, Z::Report*)
 {
     root["code"] = _editor->toPlainText();
+    root["title"] = _funcTitle;
     return true;
 }
 
@@ -186,10 +190,17 @@ void FuncEditorWindow::run()
     clearLog();
 
     PyHelper py;
-    py.log.info = [this](const QString& msg){ logInfo(msg); };
-    py.log.error = [this](const QString& msg){ logError(msg); };
+    py.logInfo = [this](const QString& msg){ logInfo(msg); };
+    py.logError = [this](const QString& msg){ logError(msg); };
+    py.schema = schema();
+    py.code = _editor->toPlainText();
+    py.moduleName = CUSTOM_MODULE;
+    py.funcName = "calc";
     
-    QString code = _editor->toPlainText();
-    py.run(schema(), code, CUSTOM_MODULE);
+    py.run();
+    
+    if (py.funcTitle != _funcTitle) {
+        _funcTitle = py.funcTitle;
+        setWindowTitle(_funcTitle);
+    }
 }
-
