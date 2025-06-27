@@ -33,6 +33,7 @@ public slots:
     void funcShowAllMatrices();
     void funcBeamVariation();
     void funcBeamParamsAtElems();
+    void funcCustomTable();
 
 private:
     QWidget* _parent;
