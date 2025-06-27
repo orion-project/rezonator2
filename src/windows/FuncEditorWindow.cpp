@@ -32,7 +32,7 @@ FuncEditorWindow::FuncEditorWindow(Schema *owner) : CodeEditorWindow(owner)
 void FuncEditorWindow::closeEvent(QCloseEvent* ce)
 {
     if (_editor->toPlainText().trimmed().isEmpty() ||
-        Ori::Dlg::ok(tr("Function code will be lost if you close the window")))
+        Ori::Dlg::ok(tr("Custom function code will be lost if you close the window")))
         SchemaMdiChild::closeEvent(ce);
     else
         ce->ignore();

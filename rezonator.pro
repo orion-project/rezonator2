@@ -130,6 +130,7 @@ HEADERS += \
     src/funcs/BeamVariationWindow.h \
     src/funcs/CausticOptionsPanel.h \
     src/funcs/CausticWindow.h \
+    src/funcs/CustomTableCodeWindow.h \
     src/funcs/CustomTableFuncWindow.h \
     src/funcs/FuncOptionsPanel.h \
     src/funcs/FuncWindowHelpers.h \
@@ -269,6 +270,7 @@ SOURCES += \
     src/funcs/BeamShapeExtension.cpp \
     src/funcs/BeamVariationWindow.cpp \
     src/funcs/CausticWindow.cpp \
+    src/funcs/CustomTableCodeWindow.cpp \
     src/funcs/CustomTableFuncWindow.cpp \
     src/funcs/FuncOptionsPanel.cpp \
     src/funcs/FuncWindowHelpers.cpp \

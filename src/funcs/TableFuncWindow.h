@@ -112,6 +112,8 @@ protected:
     QMenu *_menuTable;
     
     virtual bool configureInternal(const TableFunction::Params&);
+    virtual void beforeUpdate() {}
+    virtual void afterUpdate() {}
     
 private:
     QMenu *_menuColUnits;

@@ -88,13 +88,19 @@ QVector<Z::PointTS> CustomTableFunction::calculateResonator(Element *elem, Round
 
 bool CustomTableFunction::prepare()
 {
+    _errorLog.clear();
+    _errorLine = 0;
+
     PyRunner py;
     py.schema = schema();
     py.code = _code;
     py.funcNames = { "describe_columns" };
+    py.printFunc = _printFunc;
     
     if (!py.load()) {
         setError(py.errorText());
+        _errorLog = py.errorLog;
+        _errorLine = py.errorLine;
         return false;
     }
     

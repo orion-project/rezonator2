@@ -4,7 +4,7 @@
 #include "../funcs/TableFuncWindow.h"
 #include "../math/CustomTableFunction.h"
 
-class CodeEditorWindow;
+class CustomTableCodeWindow;
 
 class CustomTableFuncWindow final : public TableFuncWindow
 {
@@ -19,9 +19,15 @@ public:
     bool storableRead(const QJsonObject& root, Z::Report*) override;
     bool storableWrite(QJsonObject& root, Z::Report*) override;
     
+protected:
+    void closeEvent(QCloseEvent* ce) override;
+
+    void beforeUpdate() override;
+    void afterUpdate() override;
+    
 private:
     QAction *_actnShowCode;
-    QPointer<CodeEditorWindow> _codeWindow;
+    QPointer<CustomTableCodeWindow> _codeWindow;
 
     void showCode();
 };

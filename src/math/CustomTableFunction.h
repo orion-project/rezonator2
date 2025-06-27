@@ -21,6 +21,11 @@ public:
     void setCode(const QString &code) { _code = code; }
     
     bool prepare() override;
+    
+    QStringList errorLog() const { return _errorLog; }
+    int errorLine() const { return _errorLine; }
+    
+    void setPrintFunc(std::function<void(const QString&)> printFunc) { _printFunc = printFunc; }
 
 protected:
     QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) override;
@@ -29,6 +34,9 @@ protected:
     
 private:
     QString _code;
+    QStringList _errorLog;
+    int _errorLine;
+    std::function<void(const QString&)> _printFunc;
 };
 
 #endif // CUSTOM_TABLE_FUNCTION_H

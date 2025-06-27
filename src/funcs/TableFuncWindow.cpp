@@ -341,6 +341,8 @@ void TableFuncWindow::createContent()
 
 void TableFuncWindow::update()
 {
+    beforeUpdate();
+
     if (_frozen)
     {
         _needRecalc = true;
@@ -362,6 +364,8 @@ void TableFuncWindow::update()
         _table->setVisible(true);
         updateTable();
     }
+    
+    afterUpdate();
 }
 
 void TableFuncWindow::activateModeT()

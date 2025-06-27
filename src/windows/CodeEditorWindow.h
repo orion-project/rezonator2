@@ -37,12 +37,13 @@ public:
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return { _windowMenu }; }
     
+    void clearLog();
+    
 protected:
     Ori::Widgets::CodeEditor* _editor;
     QString _funcTitle;
     QString _defaultTitle;
 
-    void clearLog();
     void logInfo(const QString &msg, bool scrollToEnd = true);
     void logError(const QString &msg, bool scrollToEnd = true);
     void logError(const QStringList &log, int errorLine);
