@@ -247,6 +247,9 @@ public:
     IPrintableWindow* activePrintableChild() const;
 
     void settingsChanged() override;
+    
+    bool hasChild(QWidget*);
+    bool hasChild(BasicMdiChild*);
 
 public slots:
     void appendChild(QWidget*);

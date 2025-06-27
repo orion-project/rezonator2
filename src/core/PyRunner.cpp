@@ -1,3 +1,15 @@
+#ifndef Z_USE_PYTHON
+
+#include "PyRunner.h"
+
+PyRunner::PyRunner() {}
+PyRunner::~PyRunner() {}
+bool PyRunner::load() { logError("Not emplemented"); return false; }
+bool PyRunner::run(const QString&) { return false; }
+
+#else
+
+// Includes Python.h, should be first:
 #include "PyUtils.h"
 #include "PyRunner.h"
 #include "PyModuleSchema.h"
@@ -193,3 +205,5 @@ void PyRunner::handleError(const QString& msg)
     }
     logError(lines.join(""));
 }
+
+#endif // USE_PYTHON

@@ -642,5 +642,13 @@ void ProjectWindow::messageBusEvent(MessageBusEvent event, const QMap<QString, Q
     case MBE_MEMO_REMOVED:
         actnWndMemos->setIcon(QIcon(":/toolbar/notepad"));
         break;
+    case MBE_MDI_CHILD_REQUESTED:
+        if (auto wnd = params.value("wnd").value<QWidget*>(); wnd) {
+            if (_mdiArea->hasChild(wnd))
+                _mdiArea->activateChild(wnd);
+            else
+                _mdiArea->appendChild(wnd);
+        }
+        break;    
     }
 }

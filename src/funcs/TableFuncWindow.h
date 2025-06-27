@@ -110,6 +110,10 @@ private slots:
 protected:
     TableFunction *_function;
     QMenu *_menuTable;
+    
+    virtual bool configureInternal(const TableFunction::Params&);
+    
+private:
     QMenu *_menuColUnits;
     QMap<int, UnitsMenu*> _unitMenus;
     QAction *_actnUpdate, *_actnShowT, *_actnShowS, *_actnFreeze, *_actnFrozenInfo,
@@ -132,8 +136,6 @@ protected:
     void updateTable();
     void updateParamsActions();
     void updateColUnitsMenu();
-
-    virtual bool configureInternal(const TableFunction::Params&);
 
     static TableFunction::Params readParams(const QJsonObject& obj);
     static QJsonObject writeParams(const TableFunction::Params& params);

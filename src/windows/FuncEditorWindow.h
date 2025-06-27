@@ -1,14 +1,8 @@
 #ifndef FUNC_EDITOR_WINDOW_H
 #define FUNC_EDITOR_WINDOW_H
 
+#include "CodeEditorWindow.h"
 #include "../io/ISchemaWindowStorable.h"
-#include "../windows/SchemaWindows.h"
-
-class QPlainTextEdit;
-
-namespace Ori::Widgets {
-class CodeEditor;
-}
 
 /**
     Implementation of restoreability for FuncEditorWindow.
@@ -20,33 +14,15 @@ inline QString windowType() { return "FuncEditor"; }
 SchemaWindow* createWindow(Schema* schema);
 }
 
-class FuncEditorWindow : public SchemaMdiChild, public ISchemaWindowStorable, public IEditableWindow
+class FuncEditorWindow : public CodeEditorWindow, public ISchemaWindowStorable
 {
     Q_OBJECT
 
 public:
     static FuncEditorWindow* create(Schema*);
 
-    ~FuncEditorWindow() override;
-
     // inherits from BasicMdiChild
-    QList<QMenu*> menus() override { return { _windowMenu }; }
     QString helpTopic() const override { return ""; } // TODO: Add help topic
-
-    // inherits from IEditableWindow
-    SupportedCommands supportedCommands() override {
-        return EditCmd_Undo | EditCmd_Redo | EditCmd_Cut | EditCmd_Copy | EditCmd_Paste | EditCmd_SelectAll; }
-    bool canUndo() override;
-    bool canRedo() override;
-    bool canCut() override;
-    bool canCopy() override;
-    bool canPaste() override;
-    void undo() override;
-    void redo() override;
-    void cut() override;
-    void copy() override;
-    void paste() override;
-    void selectAll() override;
 
     // inherits from ISchemaWindowStorable
     QString storableType() const override { return FuncEditorWindowStorable::windowType(); }
@@ -55,34 +31,12 @@ public:
 
 protected:
     void closeEvent(QCloseEvent* ce) override;
+    
+    void runCode() override;
 
 private:
     explicit FuncEditorWindow(Schema*);
 
-    Ori::Widgets::CodeEditor* _editor;
-    QPlainTextEdit* _log;
-    QAction *_actnRun, *_actnClearLog;
-    QMenu* _windowMenu;
-    QString _moduleName;
-    QString _funcTitle;
-    QString _defaultTitle;
-    
-    void createActions();
-    void createMenuBar();
-    void createToolBar();
-    
-    void editCopy();
-    void toggleShowWhitespaces();
-
-    void run();
-    void clearLog();
-
-    void markModified(bool m);
-    void updateWindowTitle();
-
-    void logInfo(const QString &msg);
-    void logError(const QString &msg);
-    void logScrollToEnd();
 };
 
 #endif // FUNC_EDITOR_WINDOW_H

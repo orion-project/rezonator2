@@ -6,6 +6,7 @@
 enum MessageBusEvent {
     MBE_MEMO_ADDED,
     MBE_MEMO_REMOVED,
+    MBE_MDI_CHILD_REQUESTED,
 };
 
 class IMessageBusListener

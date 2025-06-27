@@ -8,7 +8,7 @@ class CustomTableFunction : public TableFunction
 public:
     FUNC_ALIAS("CustomTable")
     FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Custom Table"))
-    FUNC_ICON(":/toolbar/table")
+    FUNC_ICON(":/toolbar/table_py")
     FUNC_HELP("func_custom_table.html")
     
     CustomTableFunction(Schema *schema);
@@ -16,11 +16,17 @@ public:
     QVector<TableFunction::ColumnDef> columns() const override;
     int columnCount() const override;
     QString columnTitle(const ColumnId &id) const override;
+    
+    QString code() const { return _code; }
+    void setCode(const QString &code) { _code = code; }
 
 protected:
     QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) override;
     QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) const override;
     QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* calc, double ior) const override;
+    
+private:
+    QString _code;
 };
 
 #endif // CUSTOM_TABLE_FUNCTION_H

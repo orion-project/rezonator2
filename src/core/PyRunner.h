@@ -1,5 +1,5 @@
-#ifndef PYRUNNER_H
-#define PYRUNNER_H
+#ifndef PY_RUNNER_H
+#define PY_RUNNER_H
 
 #include <QMap>
 #include <QString>
@@ -36,4 +36,4 @@ private:
     QMap<QString, void*> _funcRefs;
 };
 
-#endif // PYRUNNER_H
+#endif // PY_RUNNER_H

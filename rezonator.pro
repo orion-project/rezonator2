@@ -59,6 +59,7 @@ win32 {
 # https://github.com/astral-sh/python-build-standalne/releases/download/20250610/cpython-3.13.4+20250610-x86_64-pc-windows-msvc-install_only_stripped.tar.gz
 INCLUDEPATH += $$_PRO_FILE_PWD_/libs/python313/include
 LIBS += -L$$_PRO_FILE_PWD_/libs/python313/libs -lpython313
+DEFINES += Z_USE_PYTHON
 }
 else {
 # TODO: it can't be linked this way, there is no *.a lib file in the package
@@ -129,7 +130,7 @@ HEADERS += \
     src/funcs/BeamVariationWindow.h \
     src/funcs/CausticOptionsPanel.h \
     src/funcs/CausticWindow.h \
-    src/funcs/CustomTableWindow.h \
+    src/funcs/CustomTableFuncWindow.h \
     src/funcs/FuncOptionsPanel.h \
     src/funcs/FuncWindowHelpers.h \
     src/funcs/InfoFuncWindow.h \
@@ -212,6 +213,7 @@ HEADERS += \
     src/widgets/WidgetResult.h \
     src/windows/AdjustmentWindow.h \
     src/windows/AppSettingsDialog.h \
+    src/windows/CodeEditorWindow.h \
     src/windows/CustomElemsWindow.h \
     src/windows/ElementPropsDialog.h \
     src/windows/ElementsCatalogDialog.h \
@@ -267,7 +269,7 @@ SOURCES += \
     src/funcs/BeamShapeExtension.cpp \
     src/funcs/BeamVariationWindow.cpp \
     src/funcs/CausticWindow.cpp \
-    src/funcs/CustomTableWindow.cpp \
+    src/funcs/CustomTableFuncWindow.cpp \
     src/funcs/FuncOptionsPanel.cpp \
     src/funcs/FuncWindowHelpers.cpp \
     src/funcs/InfoFuncWindow.cpp \
@@ -374,6 +376,7 @@ SOURCES += \
     src/widgets/WidgetResult.cpp \
     src/windows/AdjustmentWindow.cpp \
     src/windows/AppSettingsDialog.cpp \
+    src/windows/CodeEditorWindow.cpp \
     src/windows/CustomElemsWindow.cpp \
     src/windows/ElementPropsDialog.cpp \
     src/windows/ElementsCatalogDialog.cpp \

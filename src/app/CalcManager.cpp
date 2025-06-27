@@ -3,7 +3,7 @@
 #include "../core/Protocol.h"
 #include "../funcs/BeamVariationWindow.h"
 #include "../funcs/CausticWindow.h"
-#include "../funcs/CustomTableWindow.h"
+#include "../funcs/CustomTableFuncWindow.h"
 #include "../funcs/InfoFuncWindow.h"
 #include "../funcs/PlotFuncWindow.h"
 #include "../funcs/MultibeamCausticWindow.h"
@@ -50,7 +50,7 @@ CalcManager::CalcManager(Schema *schema, QWidget *parent) :
     registerWindowConstructor<MultibeamCausticWindow, MultibeamCausticFunction>();
     registerWindowConstructor<BeamVariationWindow, BeamVariationFunction>();
     registerWindowConstructor<BeamParamsAtElemsWindow, BeamParamsAtElemsFunction>();
-    registerWindowConstructor<CustomTableWindow, CustomTableFunction>();
+    registerWindowConstructor<CustomTableFuncWindow, CustomTableFunction>();
 }
 
 void CalcManager::funcSummary()
