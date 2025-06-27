@@ -52,8 +52,21 @@ include($$_PRO_FILE_PWD_/libs/custom-plot-lab/custom-plot-lab.pri)
 # lua
 include($$_PRO_FILE_PWD_/libs/lua.pri)
 
+#--------
+# python
+
+win32 {
+# https://github.com/astral-sh/python-build-standalne/releases/download/20250610/cpython-3.13.4+20250610-x86_64-pc-windows-msvc-install_only_stripped.tar.gz
 INCLUDEPATH += $$_PRO_FILE_PWD_/libs/python313/include
 LIBS += -L$$_PRO_FILE_PWD_/libs/python313/libs -lpython313
+}
+else {
+# TODO: it can't be linked this way, there is no *.a lib file in the package
+# https://github.com/astral-sh/python-build-standalone/releases/download/20250610/cpython-3.13.4+20250610-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz
+# https://github.com/astral-sh/python-build-standalone/releases/download/20250610/cpython-3.13.4+20250610-x86_64-apple-darwin-install_only_stripped.tar.gz
+INCLUDEPATH += $$_PRO_FILE_PWD_/libs/python313/include/python3.13
+LIBS += -L$$_PRO_FILE_PWD_/libs/python313/lib -llibpython3
+}
 
 #------------------------------------------------------------
 # Version information

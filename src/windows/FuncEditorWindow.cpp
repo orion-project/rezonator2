@@ -2,6 +2,7 @@
 
 #include "../app/Appearance.h"
 #include "../core/PyRunner.h"
+#include "../funcs/FuncWindowHelpers.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
@@ -35,7 +36,9 @@ FuncEditorWindow* FuncEditorWindow::create(Schema* owner)
 
 FuncEditorWindow::FuncEditorWindow(Schema *owner) : SchemaMdiChild(owner)
 {
-    setTitleAndIcon(tr("Custom Function Code"), ":/toolbar/protocol");
+    _defaultTitle = FuncWindowHelpers::makeWindowTitle("code", tr("Custom Code"));
+    updateWindowTitle();
+    setWindowIcon(QIcon(":/toolbar/protocol"));
 
     _editor = new Ori::Widgets::CodeEditor;
     _editor->setFont(Z::Gui::CodeEditorFont().get());
@@ -173,8 +176,7 @@ bool FuncEditorWindow::storableRead(const QJsonObject& root, Z::Report*)
     _editor->setPlainText(root["code"].toString());
     _funcTitle = root["title"].toString();
     
-    if (!_funcTitle.isEmpty())
-        setWindowTitle(_funcTitle);
+    updateWindowTitle();
     
     return true;
 }
@@ -195,6 +197,8 @@ void FuncEditorWindow::clearLog()
 void FuncEditorWindow::run()
 {
     clearLog();
+    
+    QString funcName("calc");
 
     PyRunner py;
     py.logInfo = [this](const QString& msg){ logInfo(msg); };
@@ -202,12 +206,21 @@ void FuncEditorWindow::run()
     py.schema = schema();
     py.code = _editor->toPlainText();
     py.moduleName = _moduleName;
-    py.funcName = "calc";
+    py.funcNames = { funcName };
     
-    py.run();
-    
-    if (py.funcTitle != _funcTitle) {
-        _funcTitle = py.funcTitle;
-        setWindowTitle(_funcTitle);
+    if (!py.load())
+        return;
+        
+    if (py.funcTitles[funcName] != _funcTitle) {
+        _funcTitle = py.funcTitles[funcName];
+        updateWindowTitle();
     }
+
+    if (!py.run(funcName))
+        return;
+}
+
+void FuncEditorWindow::updateWindowTitle()
+{
+    setWindowTitle(_funcTitle.isEmpty() ? _defaultTitle : _funcTitle);
 }

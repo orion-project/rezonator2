@@ -65,6 +65,7 @@ private:
     QMenu* _windowMenu;
     QString _moduleName;
     QString _funcTitle;
+    QString _defaultTitle;
     
     void createActions();
     void createMenuBar();
@@ -77,6 +78,7 @@ private:
     void clearLog();
 
     void markModified(bool m);
+    void updateWindowTitle();
 
     void logInfo(const QString &msg);
     void logError(const QString &msg);

@@ -26,7 +26,21 @@ PyRunner::~PyRunner()
     }
 }
 
-void PyRunner::run()
+struct TmpRefs
+{
+    ~TmpRefs()
+    {
+        for (int i = refs.size()-1; i>= 0; i--) {
+            Py_DECREF(refs.at(i));
+        }
+    }
+    
+    void operator << (PyObject *ref) { refs << ref; }
+
+    QVector<PyObject*> refs;
+};
+
+bool PyRunner::load()
 {
     PyModuleSchema::schema = schema;
     PyModuleGlobal::printFunc = logInfo;
@@ -34,68 +48,93 @@ void PyRunner::run()
     auto bCode = code.toUtf8();
     auto bModuleName = moduleName.toUtf8();
     auto bFileName = moduleName.toUtf8();
-    auto bFuncName = funcName.toUtf8();
+    
+    TmpRefs refs;
     
     auto pCompiled = Py_CompileString(bCode.constData(), bFileName.constData(), Py_file_input);
     if (!pCompiled) {
         handleError("Failed to compile py code");
-        return;
+        return false;
     }
-    _refs << pCompiled;
+    refs << pCompiled;
     
     auto pModule = PyImport_ExecCodeModule(bModuleName.constData(), pCompiled);
     if (!pModule) {
         handleError("Failed to execute py module");
-        return;
+        return false;
     }
-    _refs << pModule;
+    refs << pModule;
     
-    auto pFunc = PyObject_GetAttrString(pModule, bFuncName.constData());
-    if (!pFunc) {
-        handleError(QString("Failed to get function: ") + funcName);
-        return;
-    }
-    _refs << pFunc;
+    for (const QString &funcName : std::as_const(funcNames)) {
+        auto bFuncName = funcName.toUtf8();
     
-    if (!PyCallable_Check(pFunc)) {
-        handleError(QString("The object is not callable: ") + funcName);
-        return;
+        auto pFunc = PyObject_GetAttrString(pModule, bFuncName.constData());
+        if (!pFunc) {
+            handleError(QString("Failed to get function: ") + funcName);
+            return false;
+        }
+        _refs << pFunc;
+
+        if (!PyCallable_Check(pFunc)) {
+            handleError(QString("The object is not callable: ") + funcName);
+            return false;
+        }
+        _funcRefs.insert(funcName, pFunc);
+
+        auto pDoc = PyObject_GetAttrString(pFunc, "__doc__");
+        if (pDoc) {
+            refs << pDoc;
+
+            if (PyUnicode_Check(pDoc)) {
+                auto doc = QString::fromUtf8(PyUnicode_AsUTF8(pDoc));
+                auto lines = doc.split('\n', Qt::SkipEmptyParts);
+                if (!lines.empty())
+                    funcTitles.insert(funcName, lines.first());
+            } 
+        }
     }
-    auto pDoc = PyObject_GetAttrString(pFunc, "__doc__");
-    if (pDoc) {
-        if (PyUnicode_Check(pDoc)) {
-            auto doc = QString::fromUtf8(PyUnicode_AsUTF8(pDoc));
-            auto lines = doc.split('\n', Qt::SkipEmptyParts);
-            if (!lines.empty())
-                funcTitle = lines.first();
-        } 
-        Py_DECREF(pDoc);
+
+    return true;
+}
+
+bool PyRunner::run(const QString &funcName)
+{
+    if (!_funcRefs.contains(funcName)) {
+        logError("ERROR: function not found: " + funcName);
+        return false;
     }
+    auto pFunc = (PyObject*)_funcRefs[funcName];
     
+    TmpRefs refs;
+
     auto pArgs = PyTuple_New(0);
     if (!pArgs) {
         handleError(QString("Failed to initialize function agrs: ") + funcName);
-        return;
+        return false;
     }
-    _refs << pArgs;
+    refs << pArgs;
     
     auto pValue = PyObject_CallObject(pFunc, pArgs);
     if (!pValue) {
         handleError(QString("Failed to call function: ") + funcName);
-        return;
+        return false;
     }
-    _refs << pValue;
+    refs << pValue;
+
+    return true;
 }
 
 void PyRunner::handleError(const QString& msg)
 {
+    TmpRefs refs;
+
     logError("ERROR: " + msg);
     auto exc = PyErr_GetRaisedException();
     if (!exc) {
         logError("No exception");
         return;
     }
-    _refs << exc;
+    refs << exc;
         
     auto traceback = PyImport_ImportModule("traceback");
     if (!traceback) {
@@ -103,7 +142,7 @@ void PyRunner::handleError(const QString& msg)
         PyErr_Print();
         return;
     }
-    _refs << traceback;
+    refs << traceback;
     
     auto format = PyObject_GetAttrString(traceback, "format_exception");
     if (!format) {
@@ -111,7 +150,7 @@ void PyRunner::handleError(const QString& msg)
         PyErr_Print();
         return;
     }
-    _refs << format;
+    refs << format;
     
     auto args = PyTuple_New(1);
     if (!args) {
@@ -119,7 +158,7 @@ void PyRunner::handleError(const QString& msg)
         PyErr_Print();
         return;
     }
-    _refs << args;
+    refs << args;
                     
     if (PyTuple_SetItem(args, 0, exc) < 0) {
         logError("Failed to set format_exception arg");
@@ -133,7 +172,7 @@ void PyRunner::handleError(const QString& msg)
         PyErr_Print();
         return;
     }
-    _refs << items;
+    refs << items;
 
     auto iter = PyObject_GetIter(items);
     if (!iter) {
@@ -141,7 +180,7 @@ void PyRunner::handleError(const QString& msg)
         PyErr_Print();
         return;
     }
-    _refs << iter;
+    refs << iter;
     
     QStringList lines;
     auto item = PyIter_Next(iter);
@@ -149,7 +188,7 @@ void PyRunner::handleError(const QString& msg)
         if (PyUnicode_Check(item))
             lines << QString::fromUtf8(PyUnicode_AsUTF8(item));
         else lines << "Wrong item in exception lines, string expected\n";
-        Py_DECREF(item);
+        refs << item;
         item = PyIter_Next(iter);
     }
     logError(lines.join(""));

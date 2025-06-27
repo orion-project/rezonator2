@@ -1,6 +1,7 @@
 #ifndef PYRUNNER_H
 #define PYRUNNER_H
 
+#include <QMap>
 #include <QString>
 #include <QVector>
 
@@ -20,17 +21,19 @@ public:
     Schema *schema;
     QString code;
     QString moduleName;
-    QString funcName;
+    QVector<QString> funcNames;
     
     // output
-    QString funcTitle;
+    QMap<QString, QString> funcTitles;
     
-    void run();
+    bool load();
+    bool run(const QString &funcName);
     
 private:
     void handleError(const QString& msg);
     
     QVector<void*> _refs;
+    QMap<QString, void*> _funcRefs;
 };
 
 #endif // PYRUNNER_H
