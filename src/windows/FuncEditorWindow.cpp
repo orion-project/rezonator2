@@ -60,21 +60,23 @@ void FuncEditorWindow::runCode()
     QString funcName("calc");
 
     PyRunner py;
-    py.logInfo = [this](const QString& msg){ logInfo(msg); };
-    py.logError = [this](const QString& msg){ logError(msg); };
     py.schema = schema();
     py.code = _editor->toPlainText();
-    py.moduleName = _moduleName;
     py.funcNames = { funcName };
+    py.printFunc = [this](const QString& s){ logInfo(s); };
     
-    if (!py.load())
+    if (!py.load()) {
+        logError(py.errorLog, py.errorLine);
         return;
-        
+    }
+    
     if (py.funcTitles[funcName] != _funcTitle) {
         _funcTitle = py.funcTitles[funcName];
         updateWindowTitle();
     }
 
-    if (!py.run(funcName))
+    if (!py.run(funcName)) {
+        logError(py.errorLog, py.errorLine);
         return;
+    }
 }

@@ -4,6 +4,7 @@
 #include "PumpCalculator.h"
 #include "RoundTripCalculator.h"
 #include "../app/AppSettings.h"
+#include "../core/PyRunner.h"
 
 #include <QApplication>
 
@@ -68,42 +69,34 @@ QVector<Z::PointTS> CustomTableFunction::calculatePumpBeforeSchema(Element *elem
 {
     Q_UNUSED(elem)
 
-    Z::Matrix unity;
-    BeamResult beamT = _pumpCalc->calcT(unity, 1);
-    BeamResult beamS = _pumpCalc->calcS(unity, 1);
-
-    Z::PointTS beamRadius(beamT.beamRadius, beamS.beamRadius);
-    Z::PointTS frontRadius(beamT.frontRadius, beamS.frontRadius);
-    Z::PointTS halfAngle(beamT.halfAngle, beamS.halfAngle);
-    //Z::PointTS aperRatio = calcApertureRatio(beamRadius, elem);
-
-    return { beamRadius, /*aperRatio,*/ frontRadius, halfAngle };
+    return {};
 }
 
 QVector<Z::PointTS> CustomTableFunction::calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) const
 {
     Q_UNUSED(elem)
 
-    BeamResult beamT = _pumpCalc->calcT(calc->Mt(), ior);
-    BeamResult beamS = _pumpCalc->calcS(calc->Ms(), ior);
-
-    Z::PointTS beamRadius(beamT.beamRadius, beamS.beamRadius);
-    Z::PointTS frontRadius(beamT.frontRadius, beamS.frontRadius);
-    Z::PointTS halfAngle(beamT.halfAngle, beamS.halfAngle);
-    //Z::PointTS aperRatio = calcApertureRatio(beamRadius, elem);
-
-    return { beamRadius, /*aperRatio,*/ frontRadius, halfAngle };
+    return {};
 }
 
 QVector<Z::PointTS> CustomTableFunction::calculateResonator(Element *elem, RoundTripCalculator *calc, double ior) const
 {
     Q_UNUSED(elem)
     
-    Z::PointTS beamRadius = _beamCalc->beamRadius(calc->Mt(), calc->Ms(), ior);
-    Z::PointTS frontRadius = _beamCalc->frontRadius(calc->Mt(), calc->Ms(), ior);
-    Z::PointTS halfAngle = _beamCalc->halfAngle(calc->Mt(), calc->Ms(), ior);
-    //Z::PointTS aperRatio = calcApertureRatio(beamRadius, elem);
-    
-    return { beamRadius, /*aperRatio,*/ frontRadius, halfAngle };
+    return {};
 }
 
+bool CustomTableFunction::prepare()
+{
+    PyRunner py;
+    py.schema = schema();
+    py.code = _code;
+    py.funcNames = { "describe_columns" };
+    
+    if (!py.load()) {
+        setError(py.errorText());
+        return false;
+    }
+    
+    return true;
+}

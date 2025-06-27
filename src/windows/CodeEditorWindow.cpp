@@ -14,7 +14,6 @@ CodeEditorWindow::CodeEditorWindow(Schema *owner, const QString &title) : Schema
 {
     setWindowIcon(QIcon(":/toolbar/python_framed"));
 
-    _moduleName = "rezonator_customfunc";
     _defaultTitle = !title.isEmpty() ? title : FuncWindowHelpers::makeWindowTitle("code", tr("Custom Code"));
 
     _editor = new Ori::Widgets::CodeEditor;
@@ -28,6 +27,7 @@ CodeEditorWindow::CodeEditorWindow(Schema *owner, const QString &title) : Schema
     _log->setFont(Z::Gui::CodeEditorFont().get());
     _log->setReadOnly(true);
     _log->setUndoRedoEnabled(false);
+    _log->setTabStopDistance(24);
     
     createActions();
     createMenuBar();
@@ -91,7 +91,7 @@ void CodeEditorWindow::setCode(const QString &code)
     _isChanging = false;
 }
 
-void CodeEditorWindow::logInfo(const QString &msg)
+void CodeEditorWindow::logInfo(const QString &msg, bool scrollToEnd)
 {
     _log->appendPlainText(msg);
 
@@ -103,30 +103,12 @@ void CodeEditorWindow::logInfo(const QString &msg)
     format.setForeground(QColor(0xff222244));
     cursor.mergeCharFormat(format);
     
-    logScrollToEnd();
+    if (scrollToEnd)
+        logScrollToEnd();
 }
 
-void CodeEditorWindow::logError(const QString &msg)
+void CodeEditorWindow::logError(const QString &msg, bool scrollToEnd)
 {
-    // Parse python error of the form:
-    //
-    // ERROR: Failed to compile py code
-    // File "customfunc.py", line 7
-    //	p1 = sche ma.param("P1")
-    //	          ^^
-    // SyntaxError: invalid syntax
-    //
-    QStringList lines = msg.split('\n', Qt::SkipEmptyParts);
-    for (const QString &line : std::as_const(lines)) {
-        static QRegularExpression r(R"(File \"(.+)\",\s+line\s+(\d+))");
-        auto m = r.match(line);
-        if (!m.hasMatch()) continue;
-        if (m.captured(1) != _moduleName) continue;
-        int lineNo = m.captured(2).toInt();
-        _editor->setLineHints({{ lineNo, lines.last() }});
-        break;
-    }
-
     _log->appendPlainText(msg);
     
     // Format the last paragraph
@@ -137,7 +119,20 @@ void CodeEditorWindow::logError(const QString &msg)
     format.setForeground(Qt::red);
     cursor.mergeCharFormat(format);
     
+    if (scrollToEnd)
+        logScrollToEnd();
+}
+
+void CodeEditorWindow::logError(const QStringList &log, int errorLine)
+{
+    if (log.isEmpty()) return;
+
+    for (const auto &line : log)
+        logError(line, false);
     logScrollToEnd();
+    
+    if (errorLine > 0)
+        _editor->setLineHints({{ errorLine, log.last() }});
 }
 
 void CodeEditorWindow::logScrollToEnd()

@@ -19,6 +19,8 @@ public:
     
     QString code() const { return _code; }
     void setCode(const QString &code) { _code = code; }
+    
+    bool prepare() override;
 
 protected:
     QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) override;

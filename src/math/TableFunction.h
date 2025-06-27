@@ -131,6 +131,7 @@ protected:
     QString calculateInMiddle(Element* elem, Element *prevElem, Element *nextElem, IsTwoSides twoSides);
     void calculateAt(CalcElem calcElem, ResultElem resultElem, OptionalIor overrideIor = OptionalIor());
 
+    virtual bool prepare() { return true; }
     virtual QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) = 0;
     virtual QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) const = 0;
     virtual QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* calc, double ior) const = 0;

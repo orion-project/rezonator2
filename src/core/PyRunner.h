@@ -16,18 +16,23 @@ public:
     ~PyRunner();
     
     // input
-    std::function<void(const QString&)> logInfo;
-    std::function<void(const QString&)> logError;
-    Schema *schema;
+    Schema *schema = nullptr;
     QString code;
-    QString moduleName;
+    /// Top level functions, expected to exists in the code module
     QVector<QString> funcNames;
+    /// Implementation of Z.print() function
+    std::function<void(const QString&)> printFunc;
     
     // output
+    int errorLine = 0;
+    QStringList errorLog;
+    /// Function display names extracted from docstrings
     QMap<QString, QString> funcTitles;
     
     bool load();
     bool run(const QString &funcName);
+    
+    QString errorText() const;
     
 private:
     void handleError(const QString& msg);

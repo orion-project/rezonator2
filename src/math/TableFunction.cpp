@@ -76,9 +76,11 @@ void TableFunction::calculate()
 {
     _results.clear();
     _errorText.clear();
-
-    bool isResonator = _schema->isResonator();
-    bool isPrepared = isResonator
+    
+    if (!prepare())
+        return;
+    
+    bool isPrepared = _schema->isResonator()
            ? prepareResonator()
            : prepareSinglePass();
     if (!isPrepared) return;

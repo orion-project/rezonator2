@@ -39,13 +39,13 @@ public:
     
 protected:
     Ori::Widgets::CodeEditor* _editor;
-    QString _moduleName;
     QString _funcTitle;
     QString _defaultTitle;
 
     void clearLog();
-    void logInfo(const QString &msg);
-    void logError(const QString &msg);
+    void logInfo(const QString &msg, bool scrollToEnd = true);
+    void logError(const QString &msg, bool scrollToEnd = true);
+    void logError(const QStringList &log, int errorLine);
     void logScrollToEnd();
     
     virtual void runCode();

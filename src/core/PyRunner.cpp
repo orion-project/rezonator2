@@ -16,6 +16,9 @@ bool PyRunner::run(const QString&) { return false; }
 #include "PyModuleGlobal.h"
 
 #include <QDebug>
+#include <QRegularExpression>
+
+#define MODULE_NAME "rezonator_customfunc"
 
 PyRunner::PyRunner()
 {
@@ -36,6 +39,9 @@ PyRunner::~PyRunner()
     for (int i = _refs.size()-1; i>= 0; i--) {
         Py_DECREF((PyObject*)_refs.at(i));
     }
+
+    PyModuleSchema::schema = nullptr;
+    PyModuleGlobal::printFunc = nullptr;
 }
 
 struct TmpRefs
@@ -55,24 +61,22 @@ struct TmpRefs
 bool PyRunner::load()
 {
     PyModuleSchema::schema = schema;
-    PyModuleGlobal::printFunc = logInfo;
+    PyModuleGlobal::printFunc = printFunc ? printFunc : [](const QString &s){ qDebug() << s; };
     
     auto bCode = code.toUtf8();
-    auto bModuleName = moduleName.toUtf8();
-    auto bFileName = moduleName.toUtf8();
     
     TmpRefs refs;
     
-    auto pCompiled = Py_CompileString(bCode.constData(), bFileName.constData(), Py_file_input);
+    auto pCompiled = Py_CompileString(bCode.constData(), MODULE_NAME, Py_file_input);
     if (!pCompiled) {
-        handleError("Failed to compile py code");
+        handleError("Failed to compile code");
         return false;
     }
     refs << pCompiled;
     
-    auto pModule = PyImport_ExecCodeModule(bModuleName.constData(), pCompiled);
+    auto pModule = PyImport_ExecCodeModule(MODULE_NAME, pCompiled);
     if (!pModule) {
-        handleError("Failed to execute py module");
+        handleError("Failed to execute module");
         return false;
     }
     refs << pModule;
@@ -82,13 +86,13 @@ bool PyRunner::load()
     
         auto pFunc = PyObject_GetAttrString(pModule, bFuncName.constData());
         if (!pFunc) {
-            handleError(QString("Failed to get function: ") + funcName);
+            handleError("Failed to get function " + funcName);
             return false;
         }
         _refs << pFunc;
 
         if (!PyCallable_Check(pFunc)) {
-            handleError(QString("The object is not callable: ") + funcName);
+            handleError("The object is not callable: " + funcName);
             return false;
         }
         _funcRefs.insert(funcName, pFunc);
@@ -105,14 +109,14 @@ bool PyRunner::load()
             } 
         }
     }
-
+    
     return true;
 }
 
 bool PyRunner::run(const QString &funcName)
 {
     if (!_funcRefs.contains(funcName)) {
-        logError("ERROR: function not found: " + funcName);
+        errorLog << "Function not found: " + funcName;
         return false;
     }
     auto pFunc = (PyObject*)_funcRefs[funcName];
@@ -121,14 +125,14 @@ bool PyRunner::run(const QString &funcName)
 
     auto pArgs = PyTuple_New(0);
     if (!pArgs) {
-        handleError(QString("Failed to initialize function agrs: ") + funcName);
+        handleError("Failed to allocate agrs for function " + funcName);
         return false;
     }
     refs << pArgs;
     
     auto pValue = PyObject_CallObject(pFunc, pArgs);
     if (!pValue) {
-        handleError(QString("Failed to call function: ") + funcName);
+        handleError("Failed to call function " + funcName);
         return false;
     }
     refs << pValue;
@@ -140,17 +144,16 @@ void PyRunner::handleError(const QString& msg)
 {
     TmpRefs refs;
 
-    logError("ERROR: " + msg);
+    errorLog << msg;
     auto exc = PyErr_GetRaisedException();
     if (!exc) {
-        logError("No exception");
         return;
     }
     refs << exc;
         
     auto traceback = PyImport_ImportModule("traceback");
     if (!traceback) {
-        logError("Unable to import traceback module");
+        errorLog << "Unable to import traceback module";
         PyErr_Print();
         return;
     }
@@ -158,7 +161,7 @@ void PyRunner::handleError(const QString& msg)
     
     auto format = PyObject_GetAttrString(traceback, "format_exception");
     if (!format) {
-        logError("Unable to import traceback.format_exception");
+        errorLog << "Unable to import traceback.format_exception";
         PyErr_Print();
         return;
     }
@@ -166,21 +169,21 @@ void PyRunner::handleError(const QString& msg)
     
     auto args = PyTuple_New(1);
     if (!args) {
-        logError("Failed to init args for format_exception");
+        errorLog << "Failed to allocate args for format_exception";
         PyErr_Print();
         return;
     }
     refs << args;
                     
     if (PyTuple_SetItem(args, 0, exc) < 0) {
-        logError("Failed to set format_exception arg");
+        errorLog << "Failed to init args for format_exception";
         PyErr_Print();
         return;
     }
 
     auto items = PyObject_CallObject(format, args);
     if (!items) {
-        logError("Failed to call format_exception");
+        errorLog << "Failed to call format_exception";
         PyErr_Print();
         return;
     }
@@ -188,22 +191,33 @@ void PyRunner::handleError(const QString& msg)
 
     auto iter = PyObject_GetIter(items);
     if (!iter) {
-        logError("Failed to get iterator for exception lines");
+        errorLog << "Failed to get iterator for exception lines";
         PyErr_Print();
         return;
     }
     refs << iter;
     
-    QStringList lines;
     auto item = PyIter_Next(iter);
     while (item) {
-        if (PyUnicode_Check(item))
-            lines << QString::fromUtf8(PyUnicode_AsUTF8(item));
-        else lines << "Wrong item in exception lines, string expected\n";
+        QString line = QString::fromUtf8(PyUnicode_AsUTF8(item));
+        while (line.endsWith('\n') || line.endsWith('\r'))
+            line.truncate(line.length()-1);
+        if (!line.isEmpty()) {
+            errorLog << line;
+            if (errorLine == 0) {
+                static QRegularExpression r(R"(File \"(.+)\",\s+line\s+(\d+))");
+                if (auto m = r.match(line); m.hasMatch() && m.captured(1) == MODULE_NAME)
+                    errorLine = m.captured(2).toInt();
+            }
+        }
         refs << item;
         item = PyIter_Next(iter);
     }
-    logError(lines.join(""));
 }
+
+QString PyRunner::errorText() const
+{
+    return errorLog.isEmpty() ? QString() : errorLog.first();
+};
 
 #endif // USE_PYTHON
