@@ -1,6 +1,5 @@
 #include "FuncEditorWindow.h"
 
-
 #include "../core/PyRunner.h"
 
 #include "helpers/OriDialogs.h"
@@ -41,7 +40,7 @@ void FuncEditorWindow::closeEvent(QCloseEvent* ce)
 bool FuncEditorWindow::storableRead(const QJsonObject& root, Z::Report*)
 {
     _editor->setPlainText(root["code"].toString());
-    _funcTitle = root["title"].toString();
+    _customTitle = root["title"].toString();
     
     updateWindowTitle();
     
@@ -51,7 +50,7 @@ bool FuncEditorWindow::storableRead(const QJsonObject& root, Z::Report*)
 bool FuncEditorWindow::storableWrite(QJsonObject& root, Z::Report*)
 {
     root["code"] = _editor->toPlainText();
-    root["title"] = _funcTitle;
+    root["title"] = _customTitle;
     return true;
 }
 
@@ -70,8 +69,8 @@ void FuncEditorWindow::runCode()
         return;
     }
     
-    if (py.funcTitles[funcName] != _funcTitle) {
-        _funcTitle = py.funcTitles[funcName];
+    if (py.codeTitle != _customTitle) {
+        _customTitle = py.codeTitle;
         updateWindowTitle();
     }
 

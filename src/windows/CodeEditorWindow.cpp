@@ -162,5 +162,5 @@ void CodeEditorWindow::runCode()
 
 void CodeEditorWindow::updateWindowTitle()
 {
-    setWindowTitle(_funcTitle.isEmpty() ? _defaultTitle : _funcTitle);
+    setWindowTitle(_customTitle.isEmpty() ? _defaultTitle : _customTitle);
 }

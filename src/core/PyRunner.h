@@ -24,10 +24,10 @@ public:
     std::function<void(const QString&)> printFunc;
     
     // output
+    /// A display name extracted from module docstring
+    QString codeTitle;
     int errorLine = 0;
     QStringList errorLog;
-    /// Function display names extracted from docstrings
-    QMap<QString, QString> funcTitles;
     
     bool load();
     bool run(const QString &funcName);

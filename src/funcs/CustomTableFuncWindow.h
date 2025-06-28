@@ -28,6 +28,7 @@ protected:
 private:
     QAction *_actnShowCode;
     QPointer<CustomTableCodeWindow> _codeWindow;
+    QString _defaultWindowTitle;
 
     void showCode();
 };

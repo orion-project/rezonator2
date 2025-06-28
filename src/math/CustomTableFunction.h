@@ -26,6 +26,8 @@ public:
     int errorLine() const { return _errorLine; }
     
     void setPrintFunc(std::function<void(const QString&)> printFunc) { _printFunc = printFunc; }
+    
+    QString customTitle() const { return _customTitle; }
 
 protected:
     QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) override;
@@ -34,6 +36,7 @@ protected:
     
 private:
     QString _code;
+    QString _customTitle;
     QStringList _errorLog;
     int _errorLine;
     std::function<void(const QString&)> _printFunc;

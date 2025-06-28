@@ -15,6 +15,8 @@
 
 CustomTableFuncWindow::CustomTableFuncWindow(Schema* schema): TableFuncWindow(new CustomTableFunction(schema))
 {
+    _defaultWindowTitle = windowTitle();
+
     _actnShowCode = A_(tr("Show Code"), this, &CustomTableFuncWindow::showCode, ":/toolbar/python_framed");
     
     _menuTable->addSeparator();
@@ -64,7 +66,12 @@ void CustomTableFuncWindow::beforeUpdate()
 
 void CustomTableFuncWindow::afterUpdate()
 {
-    if (_codeWindow) _codeWindow->showResult();
+    QString customTitle = function()->customTitle();
+    setWindowTitle(customTitle.isEmpty() ? _defaultWindowTitle : customTitle);
+    if (_codeWindow) {
+        _codeWindow->showResult();
+        _codeWindow->setWindowTitle(windowTitle());
+    }
 }
 
 void CustomTableFuncWindow::showCode()

@@ -41,7 +41,7 @@ public:
     
 protected:
     Ori::Widgets::CodeEditor* _editor;
-    QString _funcTitle;
+    QString _customTitle;
     QString _defaultTitle;
 
     void logInfo(const QString &msg, bool scrollToEnd = true);

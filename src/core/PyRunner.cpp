@@ -67,6 +67,26 @@ bool PyRunner::load()
     
     TmpRefs refs;
     
+    auto pOldModule = PyImport_ImportModule(MODULE_NAME);
+    if (!pOldModule) {
+        if (PyErr_ExceptionMatches(PyExc_ModuleNotFoundError)) {
+            // This is expected, clean the exception
+            refs << PyErr_GetRaisedException();
+        } else {
+            handleError("Failed to find existing module");
+            return false;
+        }
+    } else {
+        refs << pOldModule;
+        // Python doesn't replace the whole module when reimport its code
+        // It replaces only attributes that exists in new code
+        // If new code doesn't contain doc, the old doc still be returned
+        if (PyObject_SetAttrString(pOldModule, "__doc__", Py_None) < 0) {
+            handleError("Failed to clean existing module");
+            return false;
+        }
+    }
+    
     auto pCompiled = Py_CompileString(bCode.constData(), MODULE_NAME, Py_file_input);
     if (!pCompiled) {
         handleError("Failed to compile code");
@@ -80,6 +100,18 @@ bool PyRunner::load()
         return false;
     }
     refs << pModule;
+    
+    auto pDoc = PyObject_GetAttrString(pModule, "__doc__");
+    if (pDoc) {
+        refs << pDoc;
+
+        if (PyUnicode_Check(pDoc)) {
+            auto doc = QString::fromUtf8(PyUnicode_AsUTF8(pDoc));
+            auto lines = doc.split('\n', Qt::SkipEmptyParts);
+            if (!lines.empty())
+                codeTitle = lines.first();
+        } 
+    }
     
     for (const QString &funcName : std::as_const(funcNames)) {
         auto bFuncName = funcName.toUtf8();
@@ -96,18 +128,6 @@ bool PyRunner::load()
             return false;
         }
         _funcRefs.insert(funcName, pFunc);
-
-        auto pDoc = PyObject_GetAttrString(pFunc, "__doc__");
-        if (pDoc) {
-            refs << pDoc;
-
-            if (PyUnicode_Check(pDoc)) {
-                auto doc = QString::fromUtf8(PyUnicode_AsUTF8(pDoc));
-                auto lines = doc.split('\n', Qt::SkipEmptyParts);
-                if (!lines.empty())
-                    funcTitles.insert(funcName, lines.first());
-            } 
-        }
     }
     
     return true;

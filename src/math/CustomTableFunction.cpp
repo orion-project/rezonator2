@@ -96,7 +96,7 @@ bool CustomTableFunction::prepare()
     py.code = _code;
     py.funcNames = { "describe_columns" };
     py.printFunc = _printFunc;
-    
+
     if (!py.load()) {
         setError(py.errorText());
         _errorLog = py.errorLog;
@@ -104,5 +104,7 @@ bool CustomTableFunction::prepare()
         return false;
     }
     
+    _customTitle = py.codeTitle;
+
     return true;
 }
