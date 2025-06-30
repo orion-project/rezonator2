@@ -19,7 +19,7 @@ CodeEditorWindow::CodeEditorWindow(Schema *owner, const QString &title) : Schema
     _editor = new Ori::Widgets::CodeEditor;
     _editor->setFont(Z::Gui::CodeEditorFont().get());
     _editor->setShowWhitespaces(true);
-    _editor->setTabStopDistance(24);
+    _editor->setTabSpaceCount(2);
     Ori::Highlighter::setHighlighter(_editor, ":/syntax/py");
     connect(_editor->document(), &QTextDocument::modificationChanged, this, &CodeEditorWindow::markModified);
 

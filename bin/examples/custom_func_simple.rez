@@ -145,12 +145,12 @@
     "trip_type": "SW",
     "windows": [
         {
-            "code": "'''Various demos'''\n\nimport rezonator as Z\nimport schema\n\ndef calc():\n\t# Global constants\n\tZ.print(f'PI = {Z.PI}, C = {Z.C}m/s')\n\n\t# Schema parameteres\n\twl = schema.wavelength()\n\tp1 = schema.param(\"P1\")\n\tZ.print(f'Wavelen = {wl*1e9}nm, P1 = {p1}')\n",
+            "code": "'''Various demos'''\n\nimport rezonator as Z\nimport schema\n\ndef calc():\n  # Global constants\n  Z.print(f'PI = {Z.PI}, C = {Z.C}m/s')\n\n  # Schema parameteres\n  wl = schema.wavelength()\n  p1 = schema.param(\"P1\")\n  Z.print(f'Wavelen = {wl*1e9}nm, P1 = {p1}')\n",
             "title": "Various demos",
             "type": "FuncEditor"
         },
         {
-            "code": "'''Repetition rate'''\n\nimport rezonator as Z\nimport schema\n\ndef calc():\n\ttotal_len = 0\n\n\tfor i in range(schema.elem_count()):\n\t\telem = schema.elem(i)\n\t\telem_len = elem.optical_length()\n\t\tif not elem_len:\n\t\t\t# Is not a range\n\t\t\tcontinue\n\t\t# Element indexes are zero-based\n\t\t# But elements are numbered from 1 in the table, so +1\n\t\tZ.print('Elem', i+1, ':', elem.label(), '=', Z.format(elem_len), 'm')\n\t\ttotal_len += elem_len\n\n\tZ.print('Total length: ', Z.format(total_len), 'm', spaced=False)\n\n\t# Effective length is doubled in standing-wave rezonatos\n\tif schema.is_sw():\n\t\ttotal_len *= 2\n\n\trep_rate = Z.C / total_len\n\tZ.print('Repetition rate: ', Z.format(rep_rate/1e6), 'MHz', spaced=False)\n",
+            "code": "'''Repetition rate'''\n\nimport rezonator as Z\nimport schema\n\ndef calc():\n  total_len = 0\n\n  for i in range(schema.elem_count()):\n    elem = schema.elem(i)\n    elem_len = elem.optical_length()\n    if not elem_len:\n      # Is not a range\n      continue\n    # Element indexes are zero-based\n    # But elements are numbered from 1 in the table, so +1\n    Z.print('Elem', i+1, ':', elem.label(), '=', Z.format(elem_len), 'm')\n    total_len += elem_len\n\n  Z.print('Total length: ', Z.format(total_len), 'm', spaced=False)\n\n  # Effective length is doubled in standing-wave rezonatos\n  if schema.is_sw():\n    total_len *= 2\n\n  rep_rate = Z.C / total_len\n  Z.print('Repetition rate: ', Z.format(rep_rate/1e6), 'MHz', spaced=False)\n",
             "title": "Repetition rate",
             "type": "FuncEditor"
         }
