@@ -15,6 +15,8 @@ bool PyRunner::run(const QString&) { return false; }
 #include "PyModuleSchema.h"
 #include "PyModuleGlobal.h"
 
+#include "Units.h"
+
 #include <QDebug>
 #include <QRegularExpression>
 
@@ -133,11 +135,11 @@ bool PyRunner::load()
     return true;
 }
 
-bool PyRunner::run(const QString &funcName)
+PyRunner::FuncResult PyRunner::run(const QString &funcName, const RecordSpec &resultSpec)
 {
     if (!_funcRefs.contains(funcName)) {
         errorLog << "Function not found: " + funcName;
-        return false;
+        return {};
     }
     auto pFunc = (PyObject*)_funcRefs[funcName];
     
@@ -145,26 +147,85 @@ bool PyRunner::run(const QString &funcName)
 
     auto pArgs = PyTuple_New(0);
     if (!pArgs) {
-        handleError("Failed to allocate agrs for function " + funcName);
-        return false;
+        handleError("Failed to allocate agrs", funcName);
+        return {};
     }
     refs << pArgs;
     
-    auto pValue = PyObject_CallObject(pFunc, pArgs);
-    if (!pValue) {
-        handleError("Failed to call function " + funcName);
-        return false;
+    auto pResult = PyObject_CallObject(pFunc, pArgs);
+    if (!pResult) {
+        handleError("Failed to call function", funcName);
+        return {};
     }
-    refs << pValue;
+    refs << pResult;
+    
+    Records result;
 
-    return true;
+    if (resultSpec.isEmpty())
+        return result;
+    
+    if (!PyList_Check(pResult)) {
+        handleError("Bad result type, list expected", funcName);
+        return {};
+    }
+    
+    auto resultCount = PyList_Size(pResult);
+    for (auto i = 0; i < resultCount; i++) {
+        auto pItem = PyList_GetItem(pResult, i);
+        if (!pItem) {
+            handleError(QString("Unable to get result[%1]").arg(i), funcName);
+            return {};
+        }
+        if (!PyDict_Check(pItem)) {
+            handleError(QString("result[%1]: bad type, dict expected").arg(i), funcName);
+            return {};
+        }
+        Record rec;
+        for (auto f = resultSpec.cbegin(); f != resultSpec.cend(); f++) {
+            const char *k = f.key();
+            #define CHECK_(cond, msg) \
+                if (!cond) { \
+                    handleError(QString("result[%1]['%2']: %3").arg(i).arg(k, msg), funcName); \
+                    return {}; \
+                }
+            CHECK_(PyDict_ContainsString(pItem, k), "field not found");
+            auto pField = PyDict_GetItemString(pItem, k);
+            CHECK_(pField, "failed to get field");
+            switch (f.value()) {
+            case ftDouble:
+                CHECK_(PyFloat_Check(pField), "float expected");
+                rec[k] = PyFloat_AsDouble(pField);
+                break;
+            case ftString:
+                CHECK_(PyUnicode_Check(pField), "string expected");
+                rec[k] = QString::fromUtf8(PyUnicode_AsUTF8(pField));
+                break;
+            case ftUnitDim: {
+                CHECK_(PyLong_Check(pField), "dimension expected");
+                auto dims = Z::Dims::dims();
+                int dim = PyLong_AsInt(pField);
+                CHECK_((dim >= 0 && dim < dims.size()), "bad dimension");
+                rec[k] = QVariant::fromValue(dims.at(dim));
+                break;
+            }
+            }
+            #undef CHECK_
+        }
+        result << rec;
+    }
+
+    return result;
 }
 
-void PyRunner::handleError(const QString& msg)
+void PyRunner::handleError(const QString& msg, const QString &funcName)
 {
     TmpRefs refs;
 
-    errorLog << msg;
+    if (funcName.isEmpty())
+        errorLog << msg;
+    else
+        errorLog << msg + QString(" (function: %1)").arg(funcName);
+    
     auto exc = PyErr_GetRaisedException();
     if (!exc) {
         return;
@@ -219,6 +280,7 @@ void PyRunner::handleError(const QString& msg)
     
     auto item = PyIter_Next(iter);
     while (item) {
+        refs << item;
         QString line = QString::fromUtf8(PyUnicode_AsUTF8(item));
         while (line.endsWith('\n') || line.endsWith('\r'))
             line.truncate(line.length()-1);
@@ -230,7 +292,6 @@ void PyRunner::handleError(const QString& msg)
                     errorLine = m.captured(2).toInt();
             }
         }
-        refs << item;
         item = PyIter_Next(iter);
     }
 }

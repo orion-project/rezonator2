@@ -74,7 +74,7 @@ void FuncEditorWindow::runCode()
         updateWindowTitle();
     }
 
-    if (!py.run(funcName)) {
+    if (!py.run(funcName, {})) {
         logError(py.errorLog, py.errorLine);
         return;
     }

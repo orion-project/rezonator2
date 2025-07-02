@@ -105,6 +105,24 @@ bool CustomTableFunction::prepare()
     }
     
     _customTitle = py.codeTitle;
+    
+    auto res = py.run("describe_columns", {
+        { "label", PyRunner::ftString },
+        { "title", PyRunner::ftString },
+        { "dim", PyRunner::ftUnitDim }
+    });
+    if (!res) {
+        setError(py.errorText());
+        _errorLog = py.errorLog;
+        _errorLine = py.errorLine;
+        return false;
+    }
+    
+    for (const auto &col : std::as_const(*res)) {
+        qDebug() << col["label"].toString();
+        qDebug() << col["title"].toString();
+        qDebug() << col["dim"].value<Z::Dim>()->alias();
+    }
 
     return true;
 }

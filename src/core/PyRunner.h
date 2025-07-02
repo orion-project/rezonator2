@@ -3,6 +3,7 @@
 
 #include <QMap>
 #include <QString>
+#include <QVariant>
 #include <QVector>
 
 #include <functional>
@@ -29,13 +30,18 @@ public:
     int errorLine = 0;
     QStringList errorLog;
     
+    using Record = QHash<const char*, QVariant>;
+    using Records = QVector<Record>;
+    using FuncResult = std::optional<Records>;
+    enum FieldType { ftDouble, ftString, ftUnitDim };
+    using RecordSpec = QHash<const char*, FieldType>;
+
     bool load();
-    bool run(const QString &funcName);
-    
+    FuncResult run(const QString &funcName, const RecordSpec &resultSpec);
     QString errorText() const;
     
 private:
-    void handleError(const QString& msg);
+    void handleError(const QString& msg, const QString &funcName = QString());
     
     QVector<void*> _refs;
     QMap<QString, void*> _funcRefs;

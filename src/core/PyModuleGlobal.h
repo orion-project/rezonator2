@@ -5,6 +5,7 @@
 
 #include "Format.h"
 #include "Math.h"
+#include "Units.h"
 
 #include <functional>
 
@@ -88,6 +89,11 @@ int on_exec(PyObject *module)
 {
     ADD_MODULE_CONST_FLOAT("C", Z::Const::LightSpeed)
     ADD_MODULE_CONST_FLOAT("PI", Z::Const::Pi)
+
+    auto dims = Z::Dims::dims();
+    if (PyModule_AddIntConstant(module, "DIM_NONE", dims.indexOf(Z::Dims::none())) < 0) STOP_MODULE_INIT
+    if (PyModule_AddIntConstant(module, "DIM_LINEAR", dims.indexOf(Z::Dims::linear())) < 0) STOP_MODULE_INIT
+    if (PyModule_AddIntConstant(module, "DIM_ANGULAR", dims.indexOf(Z::Dims::angular())) < 0) STOP_MODULE_INIT
 
     qDebug() << "rezonator module executed";
     return 0;
