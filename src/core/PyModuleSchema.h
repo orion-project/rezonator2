@@ -25,7 +25,7 @@ PyObject *SchemaError = nullptr;
 struct Element {
     PyObject_HEAD
     ::Element *elem = nullptr;
-    int number;
+    int number = 42;
 };
 
 PyObject* Element_new(PyTypeObject *Py_UNUSED(type), PyObject *Py_UNUSED(args), PyObject *Py_UNUSED(kwargs))
@@ -36,8 +36,24 @@ PyObject* Element_new(PyTypeObject *Py_UNUSED(type), PyObject *Py_UNUSED(args), 
 
 void Element_dealloc(Element *self)
 {
-    //qDebug() << "Dealloc";
+    qDebug() << "Dealloc";
     Py_TYPE(self)->tp_free((PyObject*)self);
+}
+
+PyObject* Element_axis_length(Element *self, PyObject *Py_UNUSED(args))
+{
+    CHECK_ELEM
+    if (auto range = Z::Utils::asRange(self->elem); range)
+        return PyFloat_FromDouble(range->axisLengthSI());
+    Py_RETURN_NONE;
+}
+
+PyObject* Element_ior(Element *self, PyObject *Py_UNUSED(args))
+{
+    CHECK_ELEM
+    if (auto range = Z::Utils::asRange(self->elem); range)
+        return PyFloat_FromDouble(range->ior());
+    Py_RETURN_NONE;
 }
 
 PyObject* Element_label(Element *self, PyObject *Py_UNUSED(args))
@@ -64,9 +80,16 @@ PyObject* Element_optical_length(Element *self, PyObject *Py_UNUSED(args))
 }
 
 PyMethodDef Element_methods[] = {
-    { "label", (PyCFunction)Element_label, METH_NOARGS, "Return element label" },
-    { "length", (PyCFunction)Element_length, METH_NOARGS, "Return element length (in m) or null if element is not a range" },
-    { "optical_length", (PyCFunction)Element_optical_length, METH_NOARGS, "Return element optical length (in m) or null if element is not a range" },
+    { "axis_length", (PyCFunction)Element_axis_length, METH_NOARGS,
+        "Return elemen's axis length (in m) or none if element is not a range" },
+    { "ior", (PyCFunction)Element_ior, METH_NOARGS,
+        "Return element's refraction index or none if it's not supported in the element" },
+    { "label", (PyCFunction)Element_label, METH_NOARGS,
+        "Return element's label" },
+    { "length", (PyCFunction)Element_length, METH_NOARGS,
+        "Return element's length parameter (in m) or none if element is not a range" },
+    { "optical_length", (PyCFunction)Element_optical_length, METH_NOARGS,
+        "Return element's optical length (in m) or none if element is not a range" },
     { NULL }
 };
 
@@ -87,6 +110,20 @@ PyTypeObject ElementType = {
     .tp_members = Element_members,
     .tp_new = Element_new,
 };
+
+PyObject* makeElement(::Element *elem)
+{
+    if (!ElementType.tp_alloc) {
+        PyErr_SetString(PyExc_TypeError, "type Element is not initialized, add 'import schema'");
+        return nullptr;
+    }
+    auto pElem = (Element*)ElementType.tp_alloc(&ElementType, 0);
+    if (pElem) {
+        pElem->elem = elem;
+        pElem->number = 42;
+    }
+    return (PyObject*)pElem;
+}
 
 //------------------------------------------------------------------------------
 //                                 Schema
@@ -127,7 +164,9 @@ PyObject* elem(PyObject* Py_UNUSED(self), PyObject* arg)
     ::Element *elem = nullptr;
     if (PyLong_Check(arg)) {
         auto index = PyLong_AsInt(arg);
-        elem = schema->element(index);
+        // For python code elemens are numbered 1-based
+        // as they are shown in the elements table
+        elem = schema->element(index-1);
         if (!elem) {
             PyErr_SetString(PyExc_IndexError, "element not found");
             return nullptr;
@@ -143,12 +182,7 @@ PyObject* elem(PyObject* Py_UNUSED(self), PyObject* arg)
         PyErr_SetString(PyExc_TypeError, "unsupported type of argument");
         return nullptr;
     }
-    auto pElem = (Element*)ElementType.tp_alloc(&ElementType, 0);
-    if (pElem) {
-        pElem->elem = elem;
-        pElem->number = 42;
-    }
-    return (PyObject*)pElem;
+    return makeElement(elem);
 }
 
 PyObject* elem_count(PyObject *Py_UNUSED(self), PyObject *Py_UNUSED(args))
@@ -196,7 +230,7 @@ int on_exec(PyObject *module)
 }
 
 PyMethodDef methods[] = {
-    { "elem", Methods::elem, METH_O, "Return element by label or index" },
+    { "elem", Methods::elem, METH_O, "Return element by label or number" },
     { "elem_count", Methods::elem_count, METH_NOARGS, "Return number of elements in schema" },
     { "is_sp", Methods::is_sp, METH_NOARGS, "If schema is single pass system" },
     { "is_sw", Methods::is_sw, METH_NOARGS, "If schema is standing wave rezonator" },

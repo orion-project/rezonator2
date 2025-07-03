@@ -25,22 +25,30 @@ bool PyRunner::run(const QString&) { return false; }
 PyRunner::PyRunner()
 {
     static bool inited = false;
-    if (!inited) {
-        if (PyImport_AppendInittab(PyModuleSchema::name, &PyModuleSchema::init) == -1)
-            qWarning() << "Unable to register py module" << PyModuleSchema::name;
-        if (PyImport_AppendInittab(PyModuleGlobal::name, &PyModuleGlobal::init) == -1)
-            qWarning() << "Unable to register py module" << PyModuleGlobal::name;
-        qDebug() << "Python" << Py_GetVersion();
-        Py_Initialize();
-        inited = true;
-    }
+    if (inited) return;
+
+    if (PyImport_AppendInittab(PyModuleSchema::name, &PyModuleSchema::init) == -1)
+        qWarning() << "Unable to register py module" << PyModuleSchema::name;
+    if (PyImport_AppendInittab(PyModuleGlobal::name, &PyModuleGlobal::init) == -1)
+        qWarning() << "Unable to register py module" << PyModuleGlobal::name;
+
+    qDebug() << "Python" << Py_GetVersion();
+    Py_Initialize();
+    
+    // Import common modules first time to initialize their types (Element, etc.)
+    // Don't release returned refs, they safely can exists the whole app lifetime
+    if (!PyImport_ImportModule(PyModuleSchema::name))
+        qCritical() << "Unable to initialize module" << PyModuleSchema::name;
+    if (!PyImport_ImportModule(PyModuleGlobal::name))
+        qCritical() << "Unable to initialize module" << PyModuleGlobal::name;
+
+    inited = true;
 }
 
 PyRunner::~PyRunner()
 {
-    for (int i = _refs.size()-1; i>= 0; i--) {
+    for (int i = _refs.size()-1; i>= 0; i--)
         Py_DECREF((PyObject*)_refs.at(i));
-    }
 
     PyModuleSchema::schema = nullptr;
     PyModuleGlobal::printFunc = nullptr;
@@ -50,9 +58,8 @@ struct TmpRefs
 {
     ~TmpRefs()
     {
-        for (int i = refs.size()-1; i>= 0; i--) {
+        for (int i = refs.size()-1; i>= 0; i--)
             Py_DECREF(refs.at(i));
-        }
     }
     
     void operator << (PyObject *ref) { refs << ref; }
@@ -80,9 +87,9 @@ bool PyRunner::load()
         }
     } else {
         refs << pOldModule;
-        // Python doesn't replace the whole module when reimport its code
-        // It replaces only attributes that exists in new code
-        // If new code doesn't contain doc, the old doc still be returned
+        // Python doesn't replace the whole module when reimports its code
+        // It replaces only attributes that exist in the new code
+        // If the new code doesn't contain docstring, the old doc is returned
         if (PyObject_SetAttrString(pOldModule, "__doc__", Py_None) < 0) {
             handleError("Failed to clean existing module");
             return false;
@@ -135,7 +142,7 @@ bool PyRunner::load()
     return true;
 }
 
-PyRunner::FuncResult PyRunner::run(const QString &funcName, const RecordSpec &resultSpec)
+PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, const ResultSpec &resultSpec)
 {
     if (!_funcRefs.contains(funcName)) {
         errorLog << "Function not found: " + funcName;
@@ -145,12 +152,33 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const RecordSpec &re
     
     TmpRefs refs;
 
-    auto pArgs = PyTuple_New(0);
+    auto pArgs = PyTuple_New(args.size());
     if (!pArgs) {
         handleError("Failed to allocate agrs", funcName);
         return {};
     }
     refs << pArgs;
+   
+    for (int i = 0; i < args.size(); i++) {
+        auto argType = args.at(i).first;
+        auto argValue = args.at(i).second;
+        PyObject *pArg = nullptr;
+        switch (argType) {
+        case atElement:
+            pArg = PyModuleSchema::makeElement(reinterpret_cast<Element*>(argValue));
+            break;
+        }
+        if (pArg) {
+            //refs << pArg;
+            if (PyTuple_SetItem(pArgs, i, pArg) < 0) {
+                handleError(QString("Failed to set argument %1").arg(i), funcName);
+                return {};
+            }
+        } else {
+            handleError("Required argument is not provided");
+            return {};
+        }
+    }
     
     auto pResult = PyObject_CallObject(pFunc, pArgs);
     if (!pResult) {

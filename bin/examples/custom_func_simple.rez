@@ -145,12 +145,12 @@
     "trip_type": "SW",
     "windows": [
         {
-            "code": "'''Various demos'''\n\nimport rezonator as Z\nimport schema\n\ndef calc():\n  # Global constants\n  Z.print(f'PI = {Z.PI}, C = {Z.C}m/s')\n\n  # Schema parameteres\n  wl = schema.wavelength()\n  p1 = schema.param(\"P1\")\n  Z.print(f'Wavelen = {wl*1e9}nm, P1 = {p1}')\n",
+            "code": "'''Various demos'''\n\nimport rezonator as Z\nimport schema\n\ndef calculate():\n  # Global constants\n  Z.print('')\n  Z.print(f'PI = {Z.PI}, C = {Z.C}m/s')\n\n  # Schema parameteres\n  Z.print('')\n  wl = schema.wavelength()\n  p1 = schema.param(\"P1\")\n  Z.print(f'Wavelen = {wl*1e9}nm, P1 = {p1}')\n  \n  # Schema element\n  Z.print('')\n  e = show_elem(schema.elem('Cr')) # can get element by label\n  e = show_elem(schema.elem(2)) # can get element by number\n\ndef show_elem(e):\n  Z.print('Element ', e.label(), ':', spaced=False)\n  Z.print('  length:', e.length(), 'm')\n  Z.print('  optical:', e.optical_length(), 'm')\n  Z.print('  axial:', e.axis_length(), 'm')\n  Z.print('  ior:', e.ior())\n",
             "title": "Various demos",
             "type": "FuncEditor"
         },
         {
-            "code": "'''Repetition rate'''\n\nimport rezonator as Z\nimport schema\n\ndef calc():\n  total_len = 0\n\n  for i in range(schema.elem_count()):\n    elem = schema.elem(i)\n    elem_len = elem.optical_length()\n    if not elem_len:\n      # Is not a range\n      continue\n    # Element indexes are zero-based\n    # But elements are numbered from 1 in the table, so +1\n    Z.print('Elem', i+1, ':', elem.label(), '=', Z.format(elem_len), 'm')\n    total_len += elem_len\n\n  Z.print('Total length: ', Z.format(total_len), 'm', spaced=False)\n\n  # Effective length is doubled in standing-wave rezonatos\n  if schema.is_sw():\n    total_len *= 2\n\n  rep_rate = Z.C / total_len\n  Z.print('Repetition rate: ', Z.format(rep_rate/1e6), 'MHz', spaced=False)\n",
+            "code": "'''Repetition rate'''\n\nimport rezonator as Z\nimport schema\n\ndef calculate():\n  total_len = 0\n\n  # schema returns elements as they are numbered in the table (1-based)\n  # but python's range() function returns 0-based indexes, so +1 here\n  for i in range(1, schema.elem_count()+1):\n    elem = schema.elem(i)\n    elem_len = elem.optical_length()\n    if not elem_len:\n      # Is not a range\n      continue\n    Z.print('Elem', i, ':', elem.label(), '=', Z.format(elem_len), 'm')\n    total_len += elem_len\n\n  Z.print('Total length: ', Z.format(total_len), 'm', spaced=False)\n\n  # Effective length is doubled in standing-wave rezonatos\n  if schema.is_sw():\n    total_len *= 2\n\n  rep_rate = Z.C / total_len\n  Z.print('Repetition rate: ', Z.format(rep_rate/1e6), 'MHz', spaced=False)\n",
             "title": "Repetition rate",
             "type": "FuncEditor"
         }

@@ -1,5 +1,5 @@
-#ifndef PY_RUNNER_H
-#define PY_RUNNER_H
+#ifndef CUSTOM_CODE_RUNNER_H
+#define CUSTOM_CODE_RUNNER_H
 
 #include <QMap>
 #include <QString>
@@ -34,10 +34,12 @@ public:
     using Records = QVector<Record>;
     using FuncResult = std::optional<Records>;
     enum FieldType { ftNumber, ftString, ftUnitDim };
-    using RecordSpec = QHash<QString, FieldType>;
+    using ResultSpec = QHash<QString, FieldType>;
+    enum ArgType { atElement };
+    using Args = QVector<QPair<ArgType, void*>>;
 
     bool load();
-    FuncResult run(const QString &funcName, const RecordSpec &resultSpec);
+    FuncResult run(const QString &funcName, const Args &args, const ResultSpec &resultSpec);
     QString errorText() const;
     
 private:
@@ -47,4 +49,4 @@ private:
     QMap<QString, void*> _funcRefs;
 };
 
-#endif // PY_RUNNER_H
+#endif // CUSTOM_CODE_RUNNER_H

@@ -7,6 +7,8 @@
 
 #include <QJsonObject>
 
+#define FUNC_CALC QStringLiteral("calculate")
+
 namespace FuncEditorWindowStorable
 {
     SchemaWindow* createWindow(Schema* schema)
@@ -56,12 +58,10 @@ bool FuncEditorWindow::storableWrite(QJsonObject& root, Z::Report*)
 
 void FuncEditorWindow::runCode()
 {
-    QString funcName("calc");
-
     PyRunner py;
     py.schema = schema();
     py.code = _editor->toPlainText();
-    py.funcNames = { funcName };
+    py.funcNames = { FUNC_CALC };
     py.printFunc = [this](const QString& s){ logInfo(s); };
     
     if (!py.load()) {
@@ -74,7 +74,7 @@ void FuncEditorWindow::runCode()
         updateWindowTitle();
     }
 
-    if (!py.run(funcName, {})) {
+    if (!py.run(FUNC_CALC, {}, {})) {
         logError(py.errorLog, py.errorLine);
         return;
     }

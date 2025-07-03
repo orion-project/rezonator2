@@ -37,17 +37,20 @@ QVector<Z::PointTS> CustomTableFunction::calculateResonator(Element *elem, Round
     Q_UNUSED(calc)
     Q_UNUSED(ior)
     
-    PyRunner::RecordSpec resultSpec;
+    PyRunner::ResultSpec resultSpec;
     for (const auto &col : std::as_const(_columns))
         resultSpec.insert(col.label, PyRunner::ftNumber);
+    PyRunner::Args args {
+        { PyRunner::atElement, elem }
+    };
     
-    auto resT = _runner->run(FUNC_CALC, resultSpec);
+    auto resT = _runner->run(FUNC_CALC, args, resultSpec);
     if (!resT) {
         showError(_runner.get());
         return {};
     }
     
-    auto resS = _runner->run(FUNC_CALC, resultSpec);
+    auto resS = _runner->run(FUNC_CALC, args, resultSpec);
     if (!resS) {
         showError(_runner.get());
         return {};
@@ -79,6 +82,7 @@ void CustomTableFunction::showError(const QString &err)
 
 bool CustomTableFunction::prepare()
 {
+    qDebug() << "prepare";
     _errorLog.clear();
     _errorLine = 0;
     
@@ -95,7 +99,7 @@ bool CustomTableFunction::prepare()
     
     _customTitle = py->codeTitle;
     
-    auto res = py->run(FUNC_COLUMNS, {
+    auto res = py->run(FUNC_COLUMNS, {}, {
         { COL_LABEL, PyRunner::ftString },
         { COL_TITLE, PyRunner::ftString },
         { COL_DIM, PyRunner::ftUnitDim }
