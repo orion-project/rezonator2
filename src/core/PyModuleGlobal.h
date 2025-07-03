@@ -3,6 +3,7 @@
 
 #include "PyUtils.h"
 
+#include "CommonTypes.h"
 #include "Format.h"
 #include "Math.h"
 #include "Units.h"
@@ -74,7 +75,7 @@ PyObject* format(PyObject* Py_UNUSED(self), PyObject* arg)
 
 } // Methods
 
-#define ADD_MODULE_CONST_FLOAT(name, value) { \
+#define CONST_FLOAT(name, value) { \
     auto p = PyFloat_FromDouble(value); \
     if (!p) \
         STOP_MODULE_INIT \
@@ -85,19 +86,28 @@ PyObject* format(PyObject* Py_UNUSED(self), PyObject* arg)
     Py_DECREF(p); \
 }
 
+#define CONST_INT(name, value) \
+    if (PyModule_AddIntConstant(module, name, value) < 0) STOP_MODULE_INIT;
+
 int on_exec(PyObject *module)
 {
-    ADD_MODULE_CONST_FLOAT("C", Z::Const::LightSpeed)
-    ADD_MODULE_CONST_FLOAT("PI", Z::Const::Pi)
+    CONST_FLOAT("C", Z::Const::LightSpeed)
+    CONST_FLOAT("PI", Z::Const::Pi)
 
     auto dims = Z::Dims::dims();
-    if (PyModule_AddIntConstant(module, "DIM_NONE", dims.indexOf(Z::Dims::none())) < 0) STOP_MODULE_INIT
-    if (PyModule_AddIntConstant(module, "DIM_LINEAR", dims.indexOf(Z::Dims::linear())) < 0) STOP_MODULE_INIT
-    if (PyModule_AddIntConstant(module, "DIM_ANGULAR", dims.indexOf(Z::Dims::angular())) < 0) STOP_MODULE_INIT
+    CONST_INT("DIM_NONE", dims.indexOf(Z::Dims::none()))
+    CONST_INT("DIM_LINEAR", dims.indexOf(Z::Dims::linear()))
+    CONST_INT("DIM_ANGULAR", dims.indexOf(Z::Dims::angular()))
+    
+    CONST_INT("PLANE_T", Z::WorkPlane::T)
+    CONST_INT("PLANE_S", Z::WorkPlane::S)
 
     qDebug() << "rezonator module executed";
     return 0;
 }
+
+#undef CONST_FLOAT
+#undef CONST_INT
 
 PyMethodDef methods[] = {
     { "format", (PyCFunction)Methods::format, METH_O, "Format value into user display string" },

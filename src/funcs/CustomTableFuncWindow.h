@@ -23,6 +23,7 @@ protected:
     void closeEvent(QCloseEvent* ce) override;
 
     void beforeUpdate() override;
+    void beforeUpdateTable() override;
     void afterUpdate() override;
     
 private:

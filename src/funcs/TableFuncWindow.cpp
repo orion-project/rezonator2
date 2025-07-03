@@ -153,7 +153,7 @@ void TableFuncResultTable::updateResults()
             if (qIsNaN(valueT) || qIsNaN(valueS))
                 valueStr = QStringLiteral("N/A");
             else if (showT && showS)
-                valueStr = QStringLiteral("%1 %2 %3 ")
+                valueStr = QStringLiteral("%1 %2 %3")
                         .arg(Z::format(valueT))
                         .arg(Z::Strs::multX())
                         .arg(Z::format(valueS));
@@ -423,6 +423,7 @@ void TableFuncWindow::freeze(bool frozen)
 
 void TableFuncWindow::updateTable()
 {
+    beforeUpdateTable();
     _table->updateResults();
 }
 

@@ -116,6 +116,7 @@ protected:
     virtual bool configureInternal(const TableFunction::Params&);
     virtual void beforeUpdate() {}
     virtual void afterUpdate() {}
+    virtual void beforeUpdateTable() {}
     
 private:
     QMenu *_menuColUnits;

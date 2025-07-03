@@ -64,12 +64,16 @@ void CustomTableFuncWindow::beforeUpdate()
     }
 }
 
+void CustomTableFuncWindow::beforeUpdateTable()
+{
+    _table->updateColumnCount();
+    _table->updateColumnLabels();
+}
+
 void CustomTableFuncWindow::afterUpdate()
 {
     QString customTitle = function()->customTitle();
     setWindowTitle(customTitle.isEmpty() ? _defaultWindowTitle : customTitle);
-    _table->updateColumnCount();
-    _table->updateColumnLabels();
     if (_codeWindow) {
         _codeWindow->showResult();
         _codeWindow->setWindowTitle(windowTitle());

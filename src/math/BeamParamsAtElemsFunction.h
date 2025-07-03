@@ -15,8 +15,8 @@ public:
 
 protected:
     QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) override;
-    QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) const override;
-    QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* calc, double ior) const override;
+    QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) override;
+    QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* calc, double ior) override;
     
 private:
     Z::PointTS calcApertureRatio(const Z::PointTS &beamRadius, Element *elem) const;

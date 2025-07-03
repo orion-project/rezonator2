@@ -30,11 +30,11 @@ public:
     int errorLine = 0;
     QStringList errorLog;
     
-    using Record = QHash<const char*, QVariant>;
+    using Record = QHash<QString, QVariant>;
     using Records = QVector<Record>;
     using FuncResult = std::optional<Records>;
-    enum FieldType { ftDouble, ftString, ftUnitDim };
-    using RecordSpec = QHash<const char*, FieldType>;
+    enum FieldType { ftNumber, ftString, ftUnitDim };
+    using RecordSpec = QHash<QString, FieldType>;
 
     bool load();
     FuncResult run(const QString &funcName, const RecordSpec &resultSpec);

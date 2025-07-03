@@ -182,7 +182,8 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const RecordSpec &re
         }
         Record rec;
         for (auto f = resultSpec.cbegin(); f != resultSpec.cend(); f++) {
-            const char *k = f.key();
+            auto keyBytes = f.key().toUtf8();
+            const char *k = keyBytes.constData();
             #define CHECK_(cond, msg) \
                 if (!cond) { \
                     handleError(QString("result[%1]['%2']: %3").arg(i).arg(k, msg), funcName); \
@@ -192,9 +193,12 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const RecordSpec &re
             auto pField = PyDict_GetItemString(pItem, k);
             CHECK_(pField, "failed to get field");
             switch (f.value()) {
-            case ftDouble:
-                CHECK_(PyFloat_Check(pField), "float expected");
-                rec[k] = PyFloat_AsDouble(pField);
+            case ftNumber:
+                if (PyFloat_Check(pField))
+                    rec[k] = PyFloat_AsDouble(pField);
+                else if (PyLong_Check(pField))
+                    rec[k] = double(PyLong_AsInt(pField));
+                else CHECK_(false, "number expected");
                 break;
             case ftString:
                 CHECK_(PyUnicode_Check(pField), "string expected");

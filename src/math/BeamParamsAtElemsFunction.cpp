@@ -49,12 +49,12 @@ QVector<Z::PointTS> BeamParamsAtElemsFunction::calculatePumpBeforeSchema(Element
     return { beamRadius, /*aperRatio,*/ frontRadius, halfAngle };
 }
 
-QVector<Z::PointTS> BeamParamsAtElemsFunction::calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) const
+QVector<Z::PointTS> BeamParamsAtElemsFunction::calculateSinglePass(Element *elem, RoundTripCalculator* rt, double ior)
 {
     Q_UNUSED(elem)
 
-    BeamResult beamT = _pumpCalc->calcT(calc->Mt(), ior);
-    BeamResult beamS = _pumpCalc->calcS(calc->Ms(), ior);
+    BeamResult beamT = _pumpCalc->calcT(rt->Mt(), ior);
+    BeamResult beamS = _pumpCalc->calcS(rt->Ms(), ior);
 
     Z::PointTS beamRadius(beamT.beamRadius, beamS.beamRadius);
     Z::PointTS frontRadius(beamT.frontRadius, beamS.frontRadius);
@@ -64,13 +64,13 @@ QVector<Z::PointTS> BeamParamsAtElemsFunction::calculateSinglePass(Element *elem
     return { beamRadius, /*aperRatio,*/ frontRadius, halfAngle };
 }
 
-QVector<Z::PointTS> BeamParamsAtElemsFunction::calculateResonator(Element *elem, RoundTripCalculator *calc, double ior) const
+QVector<Z::PointTS> BeamParamsAtElemsFunction::calculateResonator(Element *elem, RoundTripCalculator *rt, double ior)
 {
     Q_UNUSED(elem)
     
-    Z::PointTS beamRadius = _beamCalc->beamRadius(calc->Mt(), calc->Ms(), ior);
-    Z::PointTS frontRadius = _beamCalc->frontRadius(calc->Mt(), calc->Ms(), ior);
-    Z::PointTS halfAngle = _beamCalc->halfAngle(calc->Mt(), calc->Ms(), ior);
+    Z::PointTS beamRadius = _beamCalc->beamRadius(rt->Mt(), rt->Ms(), ior);
+    Z::PointTS frontRadius = _beamCalc->frontRadius(rt->Mt(), rt->Ms(), ior);
+    Z::PointTS halfAngle = _beamCalc->halfAngle(rt->Mt(), rt->Ms(), ior);
     //Z::PointTS aperRatio = calcApertureRatio(beamRadius, elem);
     
     return { beamRadius, /*aperRatio,*/ frontRadius, halfAngle };

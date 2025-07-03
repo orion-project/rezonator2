@@ -3,6 +3,8 @@
 
 #include "TableFunction.h"
 
+class PyRunner;
+
 class CustomTableFunction : public TableFunction
 {
 public:
@@ -17,6 +19,7 @@ public:
     void setCode(const QString &code) { _code = code; }
     
     bool prepare() override;
+    void unprepare() override;
     
     QStringList errorLog() const { return _errorLog; }
     int errorLine() const { return _errorLine; }
@@ -27,8 +30,8 @@ public:
 
 protected:
     QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) override;
-    QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) const override;
-    QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* calc, double ior) const override;
+    QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) override;
+    QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* calc, double ior) override;
     
 private:
     QString _code;
@@ -36,6 +39,10 @@ private:
     QStringList _errorLog;
     int _errorLine;
     std::function<void(const QString&)> _printFunc;
+    std::shared_ptr<PyRunner> _runner;
+    
+    void showError(PyRunner *py);
+    void showError(const QString &err);
 };
 
 #endif // CUSTOM_TABLE_FUNCTION_H

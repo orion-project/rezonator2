@@ -37,6 +37,9 @@ public:
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return { _windowMenu }; }
     
+    // inherits from SchemaListener
+    void schemaSaved(Schema*) override;
+    
     void clearLog();
     
 protected:

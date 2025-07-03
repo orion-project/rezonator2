@@ -99,7 +99,7 @@ public:
     /// Icon can be used to display in window title or menus.
     virtual const char* iconPath() const { return ""; }
 
-    virtual void calculate();
+    void calculate();
 
     const QVector<ColumnDef>& columns() { return _columns; }
     Z::Unit columnUnit(const ColumnDef &col) const;
@@ -131,9 +131,10 @@ protected:
     void calculateAt(CalcElem calcElem, ResultElem resultElem, OptionalIor overrideIor = OptionalIor());
 
     virtual bool prepare() { return true; }
+    virtual void unprepare() {}
     virtual QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) = 0;
-    virtual QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) const = 0;
-    virtual QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* calc, double ior) const = 0;
+    virtual QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) = 0;
+    virtual QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* calc, double ior) = 0;
     
 private:
     QVector<Result> _results;

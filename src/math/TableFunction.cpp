@@ -158,6 +158,8 @@ void TableFunction::calculate()
 
     if (!ok())
         _results.clear();
+        
+    unprepare();
 }
 
 Element* TableFunction::prevElement(int index)

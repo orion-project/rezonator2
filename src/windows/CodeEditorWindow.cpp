@@ -77,6 +77,11 @@ void CodeEditorWindow::markModified(bool m)
         schema()->events().raise(SchemaEvents::Changed, "custom code changed");
 }
 
+void CodeEditorWindow::schemaSaved(Schema*)
+{
+    _editor->document()->setModified(false);
+}
+
 QString CodeEditorWindow::code() const
 {
     return _editor->toPlainText();
