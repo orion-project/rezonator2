@@ -13,10 +13,6 @@ public:
     
     CustomTableFunction(Schema *schema);
 
-    QVector<TableFunction::ColumnDef> columns() const override;
-    int columnCount() const override;
-    QString columnTitle(const ColumnId &id) const override;
-    
     QString code() const { return _code; }
     void setCode(const QString &code) { _code = code; }
     

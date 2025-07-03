@@ -1,68 +1,12 @@
 #include "CustomTableFunction.h"
 
-#include "AbcdBeamCalculator.h"
-#include "PumpCalculator.h"
 #include "RoundTripCalculator.h"
-#include "../app/AppSettings.h"
 #include "../core/PyRunner.h"
 
 #include <QApplication>
 
-#define COL_BEAMSIZE QStringLiteral("beamsize")
-#define COL_APER_RATIO QStringLiteral("aper")
-#define COL_WAVEFRONT QStringLiteral("wavefront")
-#define COL_ANGLE QStringLiteral("angle")
-#define COL_COUNT 3
-
 CustomTableFunction::CustomTableFunction(Schema *schema) : TableFunction(schema)
 {
-}
-
-QVector<TableFunction::ColumnDef> CustomTableFunction::columns() const
-{
-    ColumnDef beamRadius;
-    beamRadius.id = COL_BEAMSIZE;
-    beamRadius.titleT = QStringLiteral("Wt");
-    beamRadius.titleS = QStringLiteral("Ws");
-    beamRadius.unit = _colUnits.value(COL_BEAMSIZE, AppSettings::instance().defaultUnitBeamRadius);
-
-    // ColumnDef aperRatio;
-    // aperRatio.id = COL_APER_RATIO;
-    // aperRatio.titleT = QStringLiteral("At");
-    // aperRatio.titleS = QStringLiteral("As");
-    // aperRatio.unit = Z::Units::none();
-
-    ColumnDef frontRadius;
-    frontRadius.id = COL_WAVEFRONT;
-    frontRadius.titleT = QStringLiteral("Rt");
-    frontRadius.titleS = QStringLiteral("Rs");
-    frontRadius.unit = _colUnits.value(COL_WAVEFRONT, AppSettings::instance().defaultUnitFrontRadius);
-
-    ColumnDef halfAngle;
-    halfAngle.id = COL_ANGLE;
-    halfAngle.titleT = QStringLiteral("Vt");
-    halfAngle.titleS = QStringLiteral("Vs");
-    halfAngle.unit = _colUnits.value(COL_ANGLE, AppSettings::instance().defaultUnitAngle);
-
-    return { beamRadius, /*aperRatio,*/ frontRadius, halfAngle };
-}
-
-QString CustomTableFunction::columnTitle(const ColumnId &id) const
-{
-    if (id == COL_BEAMSIZE)
-        return qApp->tr("Beam radius", "Table function column");
-    if (id == COL_BEAMSIZE)
-        return qApp->tr("Aperture ratio", "Table function column");
-    if (id == COL_WAVEFRONT)
-        return qApp->tr("Wavefront ROC", "Table function column");
-    if (id == COL_ANGLE)
-        return qApp->tr("Half div. angle", "Table function column");
-    return id;
-}
-
-int CustomTableFunction::columnCount() const
-{
-    return COL_COUNT;
 }
 
 QVector<Z::PointTS> CustomTableFunction::calculatePumpBeforeSchema(Element *elem)
@@ -75,6 +19,8 @@ QVector<Z::PointTS> CustomTableFunction::calculatePumpBeforeSchema(Element *elem
 QVector<Z::PointTS> CustomTableFunction::calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) const
 {
     Q_UNUSED(elem)
+    Q_UNUSED(calc)
+    Q_UNUSED(ior)
 
     return {};
 }
@@ -82,6 +28,8 @@ QVector<Z::PointTS> CustomTableFunction::calculateSinglePass(Element *elem, Roun
 QVector<Z::PointTS> CustomTableFunction::calculateResonator(Element *elem, RoundTripCalculator *calc, double ior) const
 {
     Q_UNUSED(elem)
+    Q_UNUSED(calc)
+    Q_UNUSED(ior)
     
     return {};
 }
@@ -118,11 +66,23 @@ bool CustomTableFunction::prepare()
         return false;
     }
     
+    QVector <ColumnDef> colDefs;
     for (const auto &col : std::as_const(*res)) {
-        qDebug() << col["label"].toString();
-        qDebug() << col["title"].toString();
-        qDebug() << col["dim"].value<Z::Dim>()->alias();
+        ColumnDef colDef {
+            .label = col["label"].toString(),
+            .title = col["title"].toString(),
+            .dim = col["dim"].value<Z::Dim>(),
+        };
+        for (const auto &d : colDefs)
+            if (d.label == colDef.label) {
+                QString err = "Duplicated column label " + d.label;
+                _errorLog << err;
+                setError(err);
+                return false;
+            }
+        colDefs << colDef;
     }
+    _columns = colDefs;
 
     return true;
 }

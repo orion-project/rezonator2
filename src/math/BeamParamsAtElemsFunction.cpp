@@ -3,65 +3,34 @@
 #include "AbcdBeamCalculator.h"
 #include "PumpCalculator.h"
 #include "RoundTripCalculator.h"
-#include "../app/AppSettings.h"
 
 #include <QApplication>
 
-#define COL_BEAMSIZE QStringLiteral("beamsize")
-#define COL_APER_RATIO QStringLiteral("aper")
-#define COL_WAVEFRONT QStringLiteral("wavefront")
-#define COL_ANGLE QStringLiteral("angle")
-#define COL_COUNT 3
-
 BeamParamsAtElemsFunction::BeamParamsAtElemsFunction(Schema *schema) : TableFunction(schema)
 {
-}
-
-QVector<TableFunction::ColumnDef> BeamParamsAtElemsFunction::columns() const
-{
-    ColumnDef beamRadius;
-    beamRadius.id = COL_BEAMSIZE;
-    beamRadius.titleT = QStringLiteral("Wt");
-    beamRadius.titleS = QStringLiteral("Ws");
-    beamRadius.unit = _colUnits.value(COL_BEAMSIZE, AppSettings::instance().defaultUnitBeamRadius);
-
-    // ColumnDef aperRatio;
-    // aperRatio.id = COL_APER_RATIO;
-    // aperRatio.titleT = QStringLiteral("At");
-    // aperRatio.titleS = QStringLiteral("As");
-    // aperRatio.unit = Z::Units::none();
-
-    ColumnDef frontRadius;
-    frontRadius.id = COL_WAVEFRONT;
-    frontRadius.titleT = QStringLiteral("Rt");
-    frontRadius.titleS = QStringLiteral("Rs");
-    frontRadius.unit = _colUnits.value(COL_WAVEFRONT, AppSettings::instance().defaultUnitFrontRadius);
-
-    ColumnDef halfAngle;
-    halfAngle.id = COL_ANGLE;
-    halfAngle.titleT = QStringLiteral("Vt");
-    halfAngle.titleS = QStringLiteral("Vs");
-    halfAngle.unit = _colUnits.value(COL_ANGLE, AppSettings::instance().defaultUnitAngle);
-
-    return { beamRadius, /*aperRatio,*/ frontRadius, halfAngle };
-}
-
-QString BeamParamsAtElemsFunction::columnTitle(const ColumnId &id) const
-{
-    if (id == COL_BEAMSIZE)
-        return qApp->tr("Beam radius", "Table function column");
-    if (id == COL_BEAMSIZE)
-        return qApp->tr("Aperture ratio", "Table function column");
-    if (id == COL_WAVEFRONT)
-        return qApp->tr("Wavefront ROC", "Table function column");
-    if (id == COL_ANGLE)
-        return qApp->tr("Half div. angle", "Table function column");
-    return id;
-}
-
-int BeamParamsAtElemsFunction::columnCount() const
-{
-    return COL_COUNT;
+    _columns = {
+        ColumnDef {
+            .label = "W",
+            .title = qApp->tr("Beam radius", "Table function column"),
+            .dim = Z::Dims::linear(),
+            .hint = ColumnDef::hintBeamsize,
+        },
+        // ColumnDef {
+        //     .label = "A",
+        //     .title = qApp->tr("Aperture ratio", "Table function column"),
+        // },
+        ColumnDef {
+            .label = "R",
+            .title = qApp->tr("Wavefront ROC", "Table function column"),
+            .dim = Z::Dims::linear(),
+            .hint = ColumnDef::hintWavefront,
+        },
+        ColumnDef {
+            .label = "V",
+            .title = qApp->tr("Half div. angle", "Table function column"),
+            .dim = Z::Dims::angular(),
+        }
+    };
 }
 
 QVector<Z::PointTS> BeamParamsAtElemsFunction::calculatePumpBeforeSchema(Element *elem)

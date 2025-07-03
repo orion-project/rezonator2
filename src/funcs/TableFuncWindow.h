@@ -50,7 +50,8 @@ public:
     bool showT = true;
     bool showS = true;
 
-    void updateColumnTitles();
+    void updateColumnCount();
+    void updateColumnLabels();
     void updateResults();
 
     void copy();
@@ -109,6 +110,7 @@ private slots:
 
 protected:
     TableFunction *_function;
+    TableFuncResultTable *_table;
     QMenu *_menuTable;
     
     virtual bool configureInternal(const TableFunction::Params&);
@@ -122,7 +124,6 @@ private:
         *_actnCalcMediumEnds, *_actnCalcEmptySpaces, *_actnCalcSpaceMids;
     FrozenStateButton* _buttonFrozenInfo;
     Ori::Widgets::StatusBar *_statusBar;
-    TableFuncResultTable *_table;
     QTextBrowser* _errorView;
     bool _frozen = false;
     bool _needRecalc = false;

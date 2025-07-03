@@ -4,6 +4,7 @@
 #include "FunctionUtils.h"
 #include "PumpCalculator.h"
 #include "RoundTripCalculator.h"
+#include "../app/AppSettings.h"
 #include "../core/Schema.h"
 #include "../core/Elements.h"
 #include "../core/ElementsCatalog.h"
@@ -437,7 +438,21 @@ void TableFunction::calculateAt(CalcElem calcElem, ResultElem resultElem, Option
     _results << res;
 }
 
-void TableFunction::setColumnUnit(const ColumnId &id, Z::Unit unit)
+Z::Unit TableFunction::columnUnit(const ColumnDef &col) const
 {
-    _colUnits[id] = unit;
+    if (_colUnits.contains(col.label))
+        return _colUnits[col.label];
+    if (col.dim == Z::Dims::linear()) {
+        if (col.hint == ColumnDef::hintWavefront)
+            return AppSettings::instance().defaultUnitFrontRadius;
+        return AppSettings::instance().defaultUnitBeamRadius;
+    }
+    if (col.dim == Z::Dims::angular())
+        return AppSettings::instance().defaultUnitAngle;
+    return Z::Units::none();
+}
+
+void TableFunction::setColumnUnit(const QString &colLabel, Z::Unit unit)
+{
+    _colUnits[colLabel] = unit;
 }

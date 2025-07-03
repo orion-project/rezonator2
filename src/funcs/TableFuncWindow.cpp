@@ -72,7 +72,6 @@ enum FixedCols {
 TableFuncResultTable::TableFuncResultTable(TableFunction *func) : QTableWidget(), _function(func)
 {
     setWordWrap(false);
-    setColumnCount(FIXED_COLS_COUNT + _function->columnCount());
     setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectionMode(QAbstractItemView::ContiguousSelection);
     horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -81,31 +80,36 @@ TableFuncResultTable::TableFuncResultTable(TableFunction *func) : QTableWidget()
 
     connect(this, &QTableWidget::customContextMenuRequested, this, &TableFuncResultTable::showTableContextMenu);
     connect(horizontalHeader(), &QTableWidget::customContextMenuRequested, this, &TableFuncResultTable::showHeaderContextMenu);
-    
 }
 
-void TableFuncResultTable::updateColumnTitles()
+void TableFuncResultTable::updateColumnCount()
 {
-    QStringList titles;
-    titles << tr("Position");
-    for (auto& col : _function->columns())
+    setColumnCount(FIXED_COLS_COUNT + _function->columns().size());
+}
+
+void TableFuncResultTable::updateColumnLabels()
+{
+    QStringList labels;
+    labels << tr("Position");
+    for (const auto& col : _function->columns())
     {
-        QString title;
+        QString label;
         if (showT && showS)
-            title = QStringLiteral("%1 %2 %3 ").arg(col.titleT).arg(Z::Strs::multX()).arg(col.titleS);
+            label = QStringLiteral("%1t %2 %3s").arg(col.label).arg(Z::Strs::multX()).arg(col.label);
         else if (showT)
-            title = col.titleT;
+            label = col.label + 't';
         else
-            title = col.titleS;
-        if (col.unit != Z::Units::none())
+            label = col.label + 's';
+        auto unit = _function->columnUnit(col);
+        if (unit != Z::Units::none())
         {
-            if (!title.isEmpty())
-                title += QStringLiteral(", ");
-            title += col.unit->name();
+            if (!label.isEmpty())
+                label += QStringLiteral(", ");
+            label += unit->name();
         }
-        titles << title;
+        labels << label;
     }
-    setHorizontalHeaderLabels(titles);
+    setHorizontalHeaderLabels(labels);
 }
 
 void TableFuncResultTable::updateResults()
@@ -136,13 +140,14 @@ void TableFuncResultTable::updateResults()
         it->setData(Qt::UserRole, int(res.position));
         it->setToolTip(TableFunction::resultPositionInfo(res.position).tooltip);
 
-        const auto columns = _function->columns();
+        const auto& columns = _function->columns();
         for (int index = 0; index < res.values.size(); index++)
         {
-            const auto& column = columns.at(index);
+            const auto& col = columns.at(index);
             const auto& value = res.values.at(index);
-            double valueT = column.unit->fromSi(value.T);
-            double valueS = column.unit->fromSi(value.S);
+            const auto unit = _function->columnUnit(col);
+            double valueT = unit->fromSi(value.T);
+            double valueS = unit->fromSi(value.S);
 
             QString valueStr;
             if (qIsNaN(valueT) || qIsNaN(valueS))
@@ -187,25 +192,26 @@ void TableFuncResultTable::showHeaderContextMenu(const QPoint& pos)
 {
     // The first table column is "Position", not a result
     int colIndex = horizontalHeader()->logicalIndexAt(pos) - 1;
-    const auto cols = _function->columns();
+    const auto& cols = _function->columns();
     if (colIndex < 0 || colIndex >= cols.size()) return;
     const auto& col = cols.at(colIndex);
-    if (col.unit == Z::Units::none()) return;
+    if (col.dim == Z::Dims::none()) return;
     if (!_unitsMenu) {
         _unitsMenu = new UnitsMenu(this);
         connect(_unitsMenu, &UnitsMenu::unitChanged, this, [this](Z::Unit unit){
-            auto colId = _unitsMenu->property("colId").toString();
+            auto colLabel = _unitsMenu->property("colLabel").toString();
             auto oldUnit = _unitsMenu->property("oldUnit").toString();
             if (oldUnit == unit->alias()) return;
             _function->schema()->markModified("TableFuncResultTable: unit changed");
-            _function->setColumnUnit(colId, unit);
-            updateColumnTitles();
+            _function->setColumnUnit(colLabel, unit);
+            updateColumnLabels();
             updateResults();
         });
     }
-    _unitsMenu->setUnit(col.unit);
-    _unitsMenu->setProperty("colId", col.id);
-    _unitsMenu->setProperty("oldUnit", col.unit->alias());
+    auto unit = _function->columnUnit(col);
+    _unitsMenu->setUnit(unit);
+    _unitsMenu->setProperty("colLabel", col.label);
+    _unitsMenu->setProperty("oldUnit", unit->alias());
     _unitsMenu->menu()->popup(mapToGlobal(pos));
 }
 
@@ -331,7 +337,8 @@ void TableFuncWindow::createStatusBar()
 void TableFuncWindow::createContent()
 {
     _table = new TableFuncResultTable(_function);
-    _table->updateColumnTitles();
+    _table->updateColumnCount();
+    _table->updateColumnLabels();
 
     _errorView = new QTextBrowser();
     _errorView->setVisible(false);
@@ -396,7 +403,7 @@ void TableFuncWindow::showModeTS()
 {
     _table->showT = _actnShowT->isChecked();
     _table->showS = _actnShowS->isChecked();
-    _table->updateColumnTitles();
+    _table->updateColumnLabels();
 }
 
 void TableFuncWindow::freeze(bool frozen)
@@ -463,26 +470,26 @@ void TableFuncWindow::updateParamsActions()
 void TableFuncWindow::updateColUnitsMenu()
 {
     _menuColUnits->clear();
-    const auto cols = _function->columns();
+    const auto& cols = _function->columns();
     for (int i = 0; i < cols.size(); i++) {
         const auto& col = cols.at(i);
-        if (col.unit == Z::Units::none()) continue;
+        if (col.dim == Z::Dims::none()) continue;
         if (!_unitMenus.contains(i)) {
             auto menu = new UnitsMenu(this);
             connect(menu, &UnitsMenu::unitChanged, this, [i, this](Z::Unit unit){
-                const auto col = _function->columns().at(i);
-                if (col.unit == unit) return;
-                _function->setColumnUnit(col.id, unit);
+                const auto& col = _function->columns().at(i);
+                if (_function->columnUnit(col) == unit) return;
+                _function->setColumnUnit(col.label, unit);
                 _function->schema()->markModified("TableFuncWindow: unit changed");
-                _table->updateColumnTitles();
+                _table->updateColumnLabels();
                 _table->updateResults();
             });
             _unitMenus.insert(i, menu);
         }
         auto menu = _unitMenus[i];
-        menu->setUnit(col.unit);
+        menu->setUnit(_function->columnUnit(col));
         auto actn = _menuColUnits->addMenu(menu->menu());
-        actn->setText(_function->columnTitle(col.id));
+        actn->setText(col.title);
     }
 }
 
