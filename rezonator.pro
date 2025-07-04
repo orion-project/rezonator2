@@ -145,6 +145,7 @@ HEADERS += \
     src/funcs/StabilityMapWindow.h \
     src/funcs/TableFuncWindow.h \
     src/math/AbcdBeamCalculator.h \
+    src/math/BeamCalcWrapper.h \
     src/math/BeamParamsAtElemsFunction.h \
     src/math/BeamVariationFunction.h \
     src/math/CausticFunction.h \
@@ -285,6 +286,7 @@ SOURCES += \
     src/funcs/StabilityMapWindow.cpp \
     src/funcs/TableFuncWindow.cpp \
     src/math/AbcdBeamCalculator.cpp \
+    src/math/BeamCalcWrapper.cpp \
     src/math/BeamParamsAtElemsFunction.cpp \
     src/math/BeamVariationFunction.cpp \
     src/math/CausticFunction.cpp \

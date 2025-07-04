@@ -98,6 +98,9 @@ void TableFunction::calculate()
 
     for (int i = 0; i < _activeElements.size(); i++)
     {
+        if (!ok())
+            break;
+
         auto elem = _activeElements.at(i);
         if (elem->disabled()) continue;
 

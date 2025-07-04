@@ -35,7 +35,7 @@ public:
     using FuncResult = std::optional<Records>;
     enum FieldType { ftNumber, ftString, ftUnitDim };
     using ResultSpec = QHash<QString, FieldType>;
-    enum ArgType { atElement };
+    enum ArgType { atElement, atBeamCalc };
     using Args = QVector<QPair<ArgType, void*>>;
 
     bool load();

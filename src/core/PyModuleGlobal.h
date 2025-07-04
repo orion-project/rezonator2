@@ -12,7 +12,7 @@
 
 #include <QDebug>
 
-namespace PyModuleGlobal {
+namespace PyModules::Global {
 
 const char *name = "rezonator";
 
@@ -43,8 +43,7 @@ PyObject* print(PyObject* Py_UNUSED(self), PyObject* args, PyObject *kwargs)
         else if (Py_IsNone(arg))
             parts << QStringLiteral("None");
         else {
-            auto msg = QString("unsupporter type of argument %1").arg(i).toUtf8();
-            PyErr_SetString(PyExc_TypeError, msg.constData());
+            PyErr_SetQString(PyExc_TypeError, QString("unsupporter type of argument %1").arg(i));
             return nullptr;
         }
     }
@@ -73,21 +72,20 @@ PyObject* format(PyObject* Py_UNUSED(self), PyObject* arg)
     return PyUnicode_FromString(s.constData());
 }
 
-} // Methods
-
-#define CONST_FLOAT(name, value) { \
-    auto p = PyFloat_FromDouble(value); \
-    if (!p) \
-        STOP_MODULE_INIT \
-    if (PyModule_AddObjectRef(module, name, p) < 0) { \
-        Py_DECREF(p); \
-        STOP_MODULE_INIT \
-    } \
-    Py_DECREF(p); \
+PyObject* plane_str(PyObject* Py_UNUSED(self), PyObject* arg)
+{
+    int plane;
+    if (!PyArg_ParseTuple(arg, "i", &plane))
+        return nullptr;
+    if (plane == Z::T)
+        return PyUnicode_FromString("T");
+    if (plane == Z::S)
+        return PyUnicode_FromString("S");
+    PyErr_SetQString(PyExc_KeyError, QString("unknown plane constant %1").arg(plane));
+    return nullptr;
 }
 
-#define CONST_INT(name, value) \
-    if (PyModule_AddIntConstant(module, name, value) < 0) STOP_MODULE_INIT;
+} // Methods
 
 int on_exec(PyObject *module)
 {
@@ -106,11 +104,9 @@ int on_exec(PyObject *module)
     return 0;
 }
 
-#undef CONST_FLOAT
-#undef CONST_INT
-
 PyMethodDef methods[] = {
     { "format", (PyCFunction)Methods::format, METH_O, "Format value into user display string" },
+    { "plane_str", (PyCFunction)Methods::plane_str, METH_VARARGS, "Return work plane name" },
     { "print", (PyCFunction)Methods::print, METH_VARARGS | METH_KEYWORDS, "Print message" },
     { NULL, NULL, 0, NULL }
 };
@@ -134,6 +130,6 @@ PyObject* init()
     return PyModuleDef_Init(&module);
 }
 
-} // namespace PyModuleGlobal
+} // namespace PyModules::Global
 
 #endif // PY_MODULE_GLOBAL_H

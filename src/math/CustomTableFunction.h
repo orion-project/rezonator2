@@ -30,8 +30,8 @@ public:
 
 protected:
     QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) override;
-    QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) override;
-    QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* calc, double ior) override;
+    QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* rt, double ior) override;
+    QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* rt, double ior) override;
     
 private:
     QString _code;

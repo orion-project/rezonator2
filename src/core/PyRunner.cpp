@@ -14,8 +14,8 @@ bool PyRunner::run(const QString&) { return false; }
 #include "PyRunner.h"
 #include "PyModuleSchema.h"
 #include "PyModuleGlobal.h"
-
 #include "Units.h"
+#include "../math/BeamCalcWrapper.h"
 
 #include <QDebug>
 #include <QRegularExpression>
@@ -27,20 +27,20 @@ PyRunner::PyRunner()
     static bool inited = false;
     if (inited) return;
 
-    if (PyImport_AppendInittab(PyModuleSchema::name, &PyModuleSchema::init) == -1)
-        qWarning() << "Unable to register py module" << PyModuleSchema::name;
-    if (PyImport_AppendInittab(PyModuleGlobal::name, &PyModuleGlobal::init) == -1)
-        qWarning() << "Unable to register py module" << PyModuleGlobal::name;
+    if (PyImport_AppendInittab(PyModules::Schema::name, &PyModules::Schema::init) == -1)
+        qWarning() << "Unable to register py module" << PyModules::Schema::name;
+    if (PyImport_AppendInittab(PyModules::Global::name, &PyModules::Global::init) == -1)
+        qWarning() << "Unable to register py module" << PyModules::Global::name;
 
     qDebug() << "Python" << Py_GetVersion();
     Py_Initialize();
     
     // Import common modules first time to initialize their types (Element, etc.)
     // Don't release returned refs, they safely can exists the whole app lifetime
-    if (!PyImport_ImportModule(PyModuleSchema::name))
-        qCritical() << "Unable to initialize module" << PyModuleSchema::name;
-    if (!PyImport_ImportModule(PyModuleGlobal::name))
-        qCritical() << "Unable to initialize module" << PyModuleGlobal::name;
+    // if (!PyImport_ImportModule(PyModules::Schema::name))
+    //     qCritical() << "Unable to initialize module" << PyModules::Schema::name;
+    // if (!PyImport_ImportModule(PyModules::Global::name))
+    //     qCritical() << "Unable to initialize module" << PyModules::Global::name;
 
     inited = true;
 }
@@ -50,8 +50,8 @@ PyRunner::~PyRunner()
     for (int i = _refs.size()-1; i>= 0; i--)
         Py_DECREF((PyObject*)_refs.at(i));
 
-    PyModuleSchema::schema = nullptr;
-    PyModuleGlobal::printFunc = nullptr;
+    PyModules::Schema::schema = nullptr;
+    PyModules::Global::printFunc = nullptr;
 }
 
 struct TmpRefs
@@ -69,8 +69,8 @@ struct TmpRefs
 
 bool PyRunner::load()
 {
-    PyModuleSchema::schema = schema;
-    PyModuleGlobal::printFunc = printFunc ? printFunc : [](const QString &s){ qDebug() << s; };
+    PyModules::Schema::schema = schema;
+    PyModules::Global::printFunc = printFunc ? printFunc : [](const QString &s){ qDebug() << s; };
     
     auto bCode = code.toUtf8();
     
@@ -165,11 +165,13 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, co
         PyObject *pArg = nullptr;
         switch (argType) {
         case atElement:
-            pArg = PyModuleSchema::makeElement(reinterpret_cast<Element*>(argValue));
+            pArg = PyModules::Schema::Element::make(reinterpret_cast<Element*>(argValue));
+            break;
+        case atBeamCalc:
+            pArg = PyModules::Schema::Calculator::make(reinterpret_cast<BeamCalcWrapper*>(argValue));
             break;
         }
         if (pArg) {
-            //refs << pArg;
             if (PyTuple_SetItem(pArgs, i, pArg) < 0) {
                 handleError(QString("Failed to set argument %1").arg(i), funcName);
                 return {};
