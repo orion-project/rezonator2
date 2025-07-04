@@ -38,4 +38,12 @@ void PyErr_SetQString(PyObject *exc, const QString &err)
     PyErr_SetString(exc, msg.constData());
 }
 
+#define ADD_MODULE(module) \
+    if (PyImport_AppendInittab(module::name, &module::init) == -1) \
+        qWarning() << "Unable to register py module" << module::name;
+
+#define INIT_MODULE(module) \
+    if (!PyImport_ImportModule(module::name)) \
+        qCritical() << "Unable to initialize module" << module::name;
+
 #endif // PY_UTILS_H

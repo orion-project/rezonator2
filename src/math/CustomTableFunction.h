@@ -43,6 +43,8 @@ private:
     
     void showError(PyRunner *py);
     void showError(const QString &err);
+    
+    QVector<Z::PointTS> calculateInternal(Element *elem, RoundTripCalculator* rt, double ior);
 };
 
 #endif // CUSTOM_TABLE_FUNCTION_H

@@ -62,6 +62,7 @@ bool TableFunction::prepareSinglePass()
         return false;
     }
 
+    _beamCalc.reset();
     _pumpCalc.reset(new PumpCalculator(pump, schema()->wavelenSi()));
     FunctionUtils::prepareDynamicElements(schema(), nullptr, _pumpCalc.get());
     return true;
@@ -70,6 +71,7 @@ bool TableFunction::prepareSinglePass()
 bool TableFunction::prepareResonator()
 {
     _beamCalc.reset(new AbcdBeamCalculator(schema()->wavelenSi()));
+    _pumpCalc.reset();
     return true;
 }
 

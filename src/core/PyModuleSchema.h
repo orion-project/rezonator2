@@ -113,20 +113,40 @@ struct Calculator {
     PyObject_HEAD
     BeamCalcWrapper *calc;
     Z::WorkPlane plane;
+    double ior;
 };
 
-PyObject* ctor(PyTypeObject *Py_UNUSED(type), PyObject *Py_UNUSED(args), PyObject *Py_UNUSED(kwargs))
+PyObject* ctor(PyTypeObject* Py_UNUSED(type), PyObject* Py_UNUSED(args), PyObject* Py_UNUSED(kwargs))
 {
     PyErr_SetString(SchemaError, "direct creation of Calculator it not allowed, use schema.make_calc()");
     return nullptr;
 }
 
+PyObject* beam_radius(Calculator* self, PyObject* Py_UNUSED(arg))
+{
+    return PyFloat_FromDouble(self->calc->beamRadius());
+}
+
+PyObject* front_radius(Calculator* self, PyObject* Py_UNUSED(arg))
+{
+    return PyFloat_FromDouble(self->calc->frontRadius());
+}
+
+PyObject* half_angle(Calculator* self, PyObject* Py_UNUSED(arg))
+{
+    return PyFloat_FromDouble(self->calc->halfAngle());
+}
+
 PyMethodDef methods[] = {
+    { "beam_radius", (PyCFunction)beam_radius, METH_NOARGS, "Calculate beam radius (in m)" },
+    { "front_radius", (PyCFunction)front_radius, METH_NOARGS, "Calculate wavefront radius (in m)" },
+    { "half_angle", (PyCFunction)half_angle, METH_NOARGS, "Calculate half of divergence angle in the far-field (in rad)" },
     { NULL }
 };
 
 PyMemberDef members[] = {
     { "plane", Py_T_INT, offsetof(Calculator, plane), 0, "Work plane (one of Z.PLANE_T or Z.PLANE_S)" },
+    { "ior", Py_T_DOUBLE, offsetof(Calculator, ior), 0, "Current index of refraction" },
     { NULL }
 };
 
@@ -142,13 +162,14 @@ PyTypeObject type = {
     .tp_new = ctor,
 };
 
-PyObject* make(BeamCalcWrapper *calc)
+PyObject* make(BeamCalcWrapper* calc)
 {
     CHECK_TYPE_READY
     auto obj = type.tp_alloc(&type, 0);
     if (obj) {
         ((Calculator*)obj)->calc = calc;
         ((Calculator*)obj)->plane = calc->plane();
+        ((Calculator*)obj)->ior = calc->ior();
     }
     return obj;
 }

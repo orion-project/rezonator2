@@ -26,21 +26,18 @@ PyRunner::PyRunner()
 {
     static bool inited = false;
     if (inited) return;
-
-    if (PyImport_AppendInittab(PyModules::Schema::name, &PyModules::Schema::init) == -1)
-        qWarning() << "Unable to register py module" << PyModules::Schema::name;
-    if (PyImport_AppendInittab(PyModules::Global::name, &PyModules::Global::init) == -1)
-        qWarning() << "Unable to register py module" << PyModules::Global::name;
-
+    
     qDebug() << "Python" << Py_GetVersion();
+    
+    ADD_MODULE(PyModules::Global)
+    ADD_MODULE(PyModules::Schema)
+
     Py_Initialize();
     
     // Import common modules first time to initialize their types (Element, etc.)
     // Don't release returned refs, they safely can exists the whole app lifetime
-    // if (!PyImport_ImportModule(PyModules::Schema::name))
-    //     qCritical() << "Unable to initialize module" << PyModules::Schema::name;
-    // if (!PyImport_ImportModule(PyModules::Global::name))
-    //     qCritical() << "Unable to initialize module" << PyModules::Global::name;
+    INIT_MODULE(PyModules::Global)
+    INIT_MODULE(PyModules::Schema)
 
     inited = true;
 }
