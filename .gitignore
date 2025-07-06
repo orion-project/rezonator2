@@ -1,6 +1,7 @@
 libs/lua-*
 libs/*.tar.gz
 libs/build-*
+libs/python*
 bin/test/_tmp*
 bin/rezonator
 bin/rezonator.app
@@ -8,11 +9,14 @@ bin/rezonator.exe
 bin/rezonator.qch
 bin/rezonator.qhc
 bin/assistant*
+bin/Lib*
+bin/*.dll
 *.autosave
 *.user*
 *.exe
 *.log
 *.pyc
+*.pdb
 build
 tmp
 out
