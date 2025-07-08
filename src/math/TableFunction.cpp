@@ -4,6 +4,7 @@
 #include "FunctionUtils.h"
 #include "PumpCalculator.h"
 #include "RoundTripCalculator.h"
+#include "../app/AppSettings.h"
 #include "../core/Schema.h"
 #include "../core/Elements.h"
 #include "../core/ElementsCatalog.h"
@@ -61,6 +62,7 @@ bool TableFunction::prepareSinglePass()
         return false;
     }
 
+    _beamCalc.reset();
     _pumpCalc.reset(new PumpCalculator(pump, schema()->wavelenSi()));
     FunctionUtils::prepareDynamicElements(schema(), nullptr, _pumpCalc.get());
     return true;
@@ -69,6 +71,7 @@ bool TableFunction::prepareSinglePass()
 bool TableFunction::prepareResonator()
 {
     _beamCalc.reset(new AbcdBeamCalculator(schema()->wavelenSi()));
+    _pumpCalc.reset();
     return true;
 }
 
@@ -76,9 +79,11 @@ void TableFunction::calculate()
 {
     _results.clear();
     _errorText.clear();
-
-    bool isResonator = _schema->isResonator();
-    bool isPrepared = isResonator
+    
+    if (!prepare())
+        return;
+    
+    bool isPrepared = _schema->isResonator()
            ? prepareResonator()
            : prepareSinglePass();
     if (!isPrepared) return;
@@ -95,6 +100,9 @@ void TableFunction::calculate()
 
     for (int i = 0; i < _activeElements.size(); i++)
     {
+        if (!ok())
+            break;
+
         auto elem = _activeElements.at(i);
         if (elem->disabled()) continue;
 
@@ -155,6 +163,8 @@ void TableFunction::calculate()
 
     if (!ok())
         _results.clear();
+        
+    unprepare();
 }
 
 Element* TableFunction::prevElement(int index)
@@ -435,7 +445,21 @@ void TableFunction::calculateAt(CalcElem calcElem, ResultElem resultElem, Option
     _results << res;
 }
 
-void TableFunction::setColumnUnit(const ColumnId &id, Z::Unit unit)
+Z::Unit TableFunction::columnUnit(const ColumnDef &col) const
 {
-    _colUnits[id] = unit;
+    if (_colUnits.contains(col.label))
+        return _colUnits[col.label];
+    if (col.dim == Z::Dims::linear()) {
+        if (col.hint == ColumnDef::hintWavefront)
+            return AppSettings::instance().defaultUnitFrontRadius;
+        return AppSettings::instance().defaultUnitBeamRadius;
+    }
+    if (col.dim == Z::Dims::angular())
+        return AppSettings::instance().defaultUnitAngle;
+    return Z::Units::none();
+}
+
+void TableFunction::setColumnUnit(const QString &colLabel, Z::Unit unit)
+{
+    _colUnits[colLabel] = unit;
 }

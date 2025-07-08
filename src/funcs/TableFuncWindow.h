@@ -50,7 +50,8 @@ public:
     bool showT = true;
     bool showS = true;
 
-    void updateColumnTitles();
+    void updateColumnCount();
+    void updateColumnLabels();
     void updateResults();
 
     void copy();
@@ -109,14 +110,21 @@ private slots:
 
 protected:
     TableFunction *_function;
+    TableFuncResultTable *_table;
     QMenu *_menuTable;
+    
+    virtual bool configureInternal(const TableFunction::Params&);
+    virtual void beforeUpdate() {}
+    virtual void afterUpdate() {}
+    virtual void beforeUpdateTable() {}
+    
+private:
     QMenu *_menuColUnits;
     QMap<int, UnitsMenu*> _unitMenus;
     QAction *_actnUpdate, *_actnShowT, *_actnShowS, *_actnFreeze, *_actnFrozenInfo,
         *_actnCalcMediumEnds, *_actnCalcEmptySpaces, *_actnCalcSpaceMids;
     FrozenStateButton* _buttonFrozenInfo;
     Ori::Widgets::StatusBar *_statusBar;
-    TableFuncResultTable *_table;
     QTextBrowser* _errorView;
     bool _frozen = false;
     bool _needRecalc = false;
@@ -132,8 +140,6 @@ protected:
     void updateTable();
     void updateParamsActions();
     void updateColUnitsMenu();
-
-    virtual bool configureInternal(const TableFunction::Params&);
 
     static TableFunction::Params readParams(const QJsonObject& obj);
     static QJsonObject writeParams(const TableFunction::Params& params);

@@ -25,9 +25,19 @@ QString format(const Complex& v);
 
 namespace Strs {
 
+#ifdef Q_CC_MSVC
+// Qt Docs says:
+// > Some compilers have bugs encoding strings containing characters outside the US-ASCII character set
+// > Make sure you prefix your string with u in those cases
+// u"" doesn't work either...
+inline QString lambda() { return QString("λ"); }
+inline QString alpha() { return QString("α"); }
+inline QString theta() { return QString("θ"); }
+#else
 inline QString lambda() { return QStringLiteral("λ"); }
 inline QString alpha() { return QStringLiteral("α"); }
 inline QString theta() { return QStringLiteral("θ"); }
+#endif
 
 inline QString homepage() { return "http://rezonator.orion-project.org"; }
 inline QString versionFileUrl() { return "http://rezonator.orion-project.org/files/version.xml"; }

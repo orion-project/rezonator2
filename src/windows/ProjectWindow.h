@@ -84,7 +84,8 @@ private:
     QAction *actnFuncRoundTrip, *actnFuncStabMap, *actnFuncStabMap2d,
             *actnFuncRepRate, *actnFuncMatrixMult,
             *actnFuncCaustic, *actnFuncMultirangeCaustic, *actnFuncBeamVariation,
-            *actnFuncMultibeamCaustic, *actnFuncBeamParamsAtElems;
+            *actnFuncMultibeamCaustic, *actnFuncBeamParamsAtElems,
+            *actnFuncCustomInfo, *actnFuncCustomTable;
 
     QAction  *actnToolsGaussCalc, *actnToolsCustomElems, *actnSettings,
              *actnToolFlipSchema, *actnToolsCalc, *actnToolAdjust,
@@ -138,6 +139,7 @@ private slots:
     void showHelp();
     void showLensmaker();
     void showIris();
+    void showFuncEditor();
 
     void flipSchema();
 

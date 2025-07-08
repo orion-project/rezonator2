@@ -8,6 +8,7 @@ class FunctionBase;
 namespace FuncWindowHelpers {
 
 QString makeWindowTitle(FunctionBase* func);
+QString makeWindowTitle(const QString &funcAlias, const QString &funcName);
 
 } // namespace FuncWindowHelpers
 

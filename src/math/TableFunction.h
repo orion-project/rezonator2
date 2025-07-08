@@ -26,13 +26,13 @@ public:
         bool calcSpaceMids = false;
     };
     
-    using ColumnId = QString;
-
     struct ColumnDef
     {
-        ColumnId id;
-        QString titleT, titleS;
-        Z::Unit unit = Z::Units::none();
+        QString label;
+        QString title;
+        Z::Dim dim = Z::Dims::none();
+        enum Hint { hintNone, hintBeamsize, hintWavefront };
+        Hint hint = hintNone;
     };
 
     enum class ResultPosition
@@ -99,14 +99,12 @@ public:
     /// Icon can be used to display in window title or menus.
     virtual const char* iconPath() const { return ""; }
 
-    virtual void calculate();
+    void calculate();
 
-    virtual QVector<ColumnDef> columns() const = 0;
-    virtual int columnCount() const = 0;
-    virtual QString columnTitle(const ColumnId &id) const = 0;
-
-    void setColumnUnit(const ColumnId &id, Z::Unit unit);
-    const QMap<ColumnId, Z::Unit>& columntUnits() const { return _colUnits; }
+    const QVector<ColumnDef>& columns() { return _columns; }
+    Z::Unit columnUnit(const ColumnDef &col) const;
+    void setColumnUnit(const QString &colLabel, Z::Unit unit);
+    const QMap<QString, Z::Unit>& columntUnits() const { return _colUnits; }
 
     const QVector<Result>& results() const { return _results; }
 
@@ -117,7 +115,8 @@ protected:
     std::shared_ptr<PumpCalculator> _pumpCalc;
     std::shared_ptr<AbcdBeamCalculator> _beamCalc;
     QList<Element*> _activeElements; // valid only during calculate() call
-    QMap<ColumnId, Z::Unit> _colUnits;
+    QVector<ColumnDef> _columns;
+    QMap<QString, Z::Unit> _colUnits;
     Params _params;
 
     bool prepareSinglePass();
@@ -131,9 +130,11 @@ protected:
     QString calculateInMiddle(Element* elem, Element *prevElem, Element *nextElem, IsTwoSides twoSides);
     void calculateAt(CalcElem calcElem, ResultElem resultElem, OptionalIor overrideIor = OptionalIor());
 
+    virtual bool prepare() { return true; }
+    virtual void unprepare() {}
     virtual QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) = 0;
-    virtual QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) const = 0;
-    virtual QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* calc, double ior) const = 0;
+    virtual QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) = 0;
+    virtual QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* calc, double ior) = 0;
     
 private:
     QVector<Result> _results;

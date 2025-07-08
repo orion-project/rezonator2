@@ -39,4 +39,4 @@ Makefile
 *.drawio.bkp
 *.drawio.dtmp
 .DS_Store
-
+*.pdb

@@ -15,6 +15,7 @@
 #include "AdjustmentWindow.h"
 #include "CustomElemsWindow.h"
 #include "ElemFormulaWindow.h"
+#include "FuncEditorWindow.h"
 #include "MemoWindow.h"
 #include "ProtocolWindow.h"
 #include "PumpWindow.h"
@@ -126,6 +127,7 @@ void ProjectWindow::registerStorableWindows()
     WindowsManager::registerConstructor(PumpWindowStorable::windowType(), PumpWindowStorable::createWindow);
     WindowsManager::registerConstructor(ElemFormulaWindowStorable::windowType(), ElemFormulaWindowStorable::createWindow);
     WindowsManager::registerConstructor(MemoWindowStorable::windowType(), MemoWindowStorable::createWindow);
+    WindowsManager::registerConstructor(FuncEditorWindowStorable::windowType(), FuncEditorWindowStorable::createWindow);
 }
 
 void ProjectWindow::createActions()
@@ -164,6 +166,8 @@ void ProjectWindow::createActions()
     actnFuncMultibeamCaustic = A_(tr("Multibeam Caustic..."), _calculations, SLOT(funcMultibeamCaustic()), ":/toolbar/func_multi_beam_caustic");
     actnFuncBeamVariation = A_(tr("Beamsize Variation..."), _calculations, SLOT(funcBeamVariation()), ":/toolbar/func_beam_variation");
     actnFuncBeamParamsAtElems = A_(tr("Beam Parameters at Elemens"), _calculations, SLOT(funcBeamParamsAtElems()), ":/toolbar/func_beamdata");
+    actnFuncCustomInfo = A_(tr("Create Custom Info Function"), this, SLOT(showFuncEditor()));
+    actnFuncCustomTable = A_(tr("Create Custom Table Function"), _calculations, SLOT(funcCustomTable()));
 
     actnToolsCustomElems = A_(tr("Custom Elements Library"), this, SLOT(showCustomElems()), ":/toolbar/catalog");
     actnToolsGaussCalc = A_(tr("Gaussian Beam Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
@@ -217,7 +221,8 @@ void ProjectWindow::createMenuBar()
         { actnFuncRoundTrip, actnFuncMatrixMult, nullptr,
           actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamVariation, nullptr,
           actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic,
-          actnFuncBeamParamsAtElems, nullptr, actnFuncRepRate });
+          actnFuncBeamParamsAtElems, nullptr, actnFuncRepRate, nullptr,
+          actnFuncCustomInfo, actnFuncCustomTable });
 
     menuUtils = Ori::Gui::menu(tr("Utils", "Menu title"), this,
         { actnToolFlipSchema, nullptr, actnToolAdjust });
@@ -351,9 +356,11 @@ void ProjectWindow::updateMenuBar()
     if (viewActionsCount > 0)
         menuBar->addMenu(menuView);
     menuBar->addMenu(menuFunctions);
-    if (child)
-        for (QMenu* menu : child->menus())
+    if (child) {
+        const auto menus = child->menus();
+        for (QMenu* menu : std::as_const(menus)) 
             menuBar->addMenu(menu);
+    }
     menuBar->addMenu(menuUtils);
     menuBar->addMenu(menuTools);
     menuBar->addMenu(menuWindow);
@@ -550,6 +557,12 @@ void ProjectWindow::showMemosWindow()
     _mdiArea->appendChild(MemoWindow::create(schema()));
 }
 
+void ProjectWindow::showFuncEditor()
+{
+    _mdiArea->appendChild(FuncEditorWindow::create(schema()));
+    schema()->markModified("Custom func added");
+}
+
 //------------------------------------------------------------------------------
 //                               Help actions
 
@@ -629,5 +642,13 @@ void ProjectWindow::messageBusEvent(MessageBusEvent event, const QMap<QString, Q
     case MBE_MEMO_REMOVED:
         actnWndMemos->setIcon(QIcon(":/toolbar/notepad"));
         break;
+    case MBE_MDI_CHILD_REQUESTED:
+        if (auto wnd = params.value("wnd").value<QWidget*>(); wnd) {
+            if (_mdiArea->hasChild(wnd))
+                _mdiArea->activateChild(wnd);
+            else
+                _mdiArea->appendChild(wnd);
+        }
+        break;    
     }
 }

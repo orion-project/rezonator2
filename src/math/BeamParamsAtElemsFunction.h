@@ -13,14 +13,10 @@ public:
 
     BeamParamsAtElemsFunction(Schema *schema);
 
-    QVector<TableFunction::ColumnDef> columns() const override;
-    int columnCount() const override;
-    QString columnTitle(const ColumnId &id) const override;
-
 protected:
     QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) override;
-    QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) const override;
-    QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* calc, double ior) const override;
+    QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) override;
+    QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* calc, double ior) override;
     
 private:
     Z::PointTS calcApertureRatio(const Z::PointTS &beamRadius, Element *elem) const;

@@ -3,6 +3,7 @@
 #include "../core/Protocol.h"
 #include "../funcs/BeamVariationWindow.h"
 #include "../funcs/CausticWindow.h"
+#include "../funcs/CustomTableFuncWindow.h"
 #include "../funcs/InfoFuncWindow.h"
 #include "../funcs/PlotFuncWindow.h"
 #include "../funcs/MultibeamCausticWindow.h"
@@ -12,6 +13,7 @@
 #include "../funcs/BeamParamsAtElemsWindow.h"
 #include "../math/BeamVariationFunction.h"
 #include "../math/CausticFunction.h"
+#include "../math/CustomTableFunction.h"
 #include "../math/InfoFunctions.h"
 #include "../math/BeamParamsAtElemsFunction.h"
 #include "../math/MultibeamCausticFunction.h"
@@ -48,6 +50,7 @@ CalcManager::CalcManager(Schema *schema, QWidget *parent) :
     registerWindowConstructor<MultibeamCausticWindow, MultibeamCausticFunction>();
     registerWindowConstructor<BeamVariationWindow, BeamVariationFunction>();
     registerWindowConstructor<BeamParamsAtElemsWindow, BeamParamsAtElemsFunction>();
+    registerWindowConstructor<CustomTableFuncWindow, CustomTableFunction>();
 }
 
 void CalcManager::funcSummary()
@@ -106,6 +109,11 @@ void CalcManager::funcBeamVariation()
 void CalcManager::funcBeamParamsAtElems()
 {
     showTableFunc<BeamParamsAtElemsFunction>();
+}
+
+void CalcManager::funcCustomTable()
+{
+    showTableFunc<CustomTableFunction>();
 }
 
 void CalcManager::funcShowMatrices()

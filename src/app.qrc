@@ -133,6 +133,8 @@
         <file alias="pump_edit">../img/toolbar/pump_props.svg</file>
         <file alias="pump_on">../img/toolbar/pump_on.svg</file>
         <file alias="pumps">../img/toolbar/pumps.svg</file>
+        <file alias="python">../img/toolbar/python.svg</file>
+        <file alias="python_framed">../img/toolbar/python_framed.svg</file>
         <file alias="redo">../img/toolbar/redo.svg</file>
         <file alias="ref_offset">../img/toolbar/ref_offset.svg</file>
         <file alias="restore">../img/toolbar/restore.svg</file>
@@ -144,8 +146,10 @@
         <file alias="schema_summary">../img/toolbar/schema_summary.svg</file>
         <file alias="schema">../img/toolbar/go_to_schema.svg</file>
         <file alias="star">../img/toolbar/star.svg</file>
+        <file alias="start">../img/toolbar/start.svg</file>
         <file alias="stop">../img/toolbar/stop.svg</file>
         <file alias="table">../img/toolbar/table.svg</file>
+        <file alias="table_py">../img/toolbar/table_py.svg</file>
         <file alias="text_color">../img/toolbar/text_color.svg</file>
         <file alias="title_x">../img/toolbar/title_x.svg</file>
         <file alias="title_y">../img/toolbar/title_y.svg</file>
@@ -311,5 +315,6 @@
     <qresource prefix="/syntax">
         <file alias="css">../libs/orion/syntax/css.ohl</file>
         <file alias="qss">../libs/orion/syntax/qss.ohl</file>
+        <file alias="py">../libs/orion/syntax/python.ohl</file>
     </qresource>
 </RCC>

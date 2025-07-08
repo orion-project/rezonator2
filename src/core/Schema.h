@@ -228,6 +228,8 @@ private:
 class ISchemaMemoEditor
 {
 public:
+    /// Save the current editor content to schema properties.
+    /// The method is called before schema saving in order not to lose the latest editing.
     virtual void saveMemo() = 0;
 };
 

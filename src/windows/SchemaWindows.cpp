@@ -201,6 +201,16 @@ SchemaMdiArea::SchemaMdiArea(QWidget *parent): QMdiArea(parent)
     updateBackground();
 }
 
+bool SchemaMdiArea::hasChild(QWidget* window)
+{
+    return hasChild(qobject_cast<BasicMdiChild*>(window));
+}
+
+bool SchemaMdiArea::hasChild(BasicMdiChild* window)
+{
+    return window && subWindowList().contains(window);
+}
+
 BasicMdiChild* SchemaMdiArea::activeChild() const
 {
     return dynamic_cast<BasicMdiChild*>(activeSubWindow());
@@ -242,7 +252,6 @@ void SchemaMdiArea::appendChild(BasicMdiChild* window)
 #endif
     }
 }
-
 
 void SchemaMdiArea::activateChild()
 {

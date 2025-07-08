@@ -52,6 +52,23 @@ include($$_PRO_FILE_PWD_/libs/custom-plot-lab/custom-plot-lab.pri)
 # lua
 include($$_PRO_FILE_PWD_/libs/lua.pri)
 
+#--------
+# python
+
+win32 {
+# https://github.com/astral-sh/python-build-standalne/releases/download/20250610/cpython-3.13.4+20250610-x86_64-pc-windows-msvc-install_only_stripped.tar.gz
+INCLUDEPATH += $$_PRO_FILE_PWD_/libs/python313/include
+LIBS += -L$$_PRO_FILE_PWD_/libs/python313/libs -lpython313
+DEFINES += Z_USE_PYTHON
+}
+else {
+# TODO: it can't be linked this way, there is no *.a lib file in the package
+# https://github.com/astral-sh/python-build-standalone/releases/download/20250610/cpython-3.13.4+20250610-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz
+# https://github.com/astral-sh/python-build-standalone/releases/download/20250610/cpython-3.13.4+20250610-x86_64-apple-darwin-install_only_stripped.tar.gz
+INCLUDEPATH += $$_PRO_FILE_PWD_/libs/python313/include/python3.13
+LIBS += -L$$_PRO_FILE_PWD_/libs/python313/lib -llibpython3
+}
+
 #------------------------------------------------------------
 # Version information
 
@@ -98,6 +115,10 @@ HEADERS += \
     src/core/Perf.h \
     src/core/Protocol.h \
     src/core/Pump.h \
+    src/core/PyModuleGlobal.h \
+    src/core/PyModuleSchema.h \
+    src/core/PyRunner.h \
+    src/core/PyUtils.h \
     src/core/Report.h \
     src/core/Schema.h \
     src/core/Units.h \
@@ -109,6 +130,8 @@ HEADERS += \
     src/funcs/BeamVariationWindow.h \
     src/funcs/CausticOptionsPanel.h \
     src/funcs/CausticWindow.h \
+    src/funcs/CustomTableCodeWindow.h \
+    src/funcs/CustomTableFuncWindow.h \
     src/funcs/FuncOptionsPanel.h \
     src/funcs/FuncWindowHelpers.h \
     src/funcs/InfoFuncWindow.h \
@@ -122,9 +145,11 @@ HEADERS += \
     src/funcs/StabilityMapWindow.h \
     src/funcs/TableFuncWindow.h \
     src/math/AbcdBeamCalculator.h \
+    src/math/BeamCalcWrapper.h \
     src/math/BeamParamsAtElemsFunction.h \
     src/math/BeamVariationFunction.h \
     src/math/CausticFunction.h \
+    src/math/CustomTableFunction.h \
     src/math/FormatInfo.h \
     src/math/FunctionBase.h \
     src/math/FunctionGraph.h \
@@ -190,10 +215,12 @@ HEADERS += \
     src/widgets/WidgetResult.h \
     src/windows/AdjustmentWindow.h \
     src/windows/AppSettingsDialog.h \
+    src/windows/CodeEditorWindow.h \
     src/windows/CustomElemsWindow.h \
     src/windows/ElementPropsDialog.h \
     src/windows/ElementsCatalogDialog.h \
     src/windows/ElemFormulaWindow.h \
+    src/windows/FuncEditorWindow.h \
     src/windows/HelpWindow.h \
     src/windows/MemoWindow.h \
     src/windows/ProjectWindow.h \
@@ -233,6 +260,7 @@ SOURCES += \
     src/core/Perf.cpp \
     src/core/Protocol.cpp \
     src/core/Pump.cpp \
+    src/core/PyRunner.cpp \
     src/core/Report.cpp \
     src/core/Schema.cpp \
     src/core/Units.cpp \
@@ -243,6 +271,8 @@ SOURCES += \
     src/funcs/BeamShapeExtension.cpp \
     src/funcs/BeamVariationWindow.cpp \
     src/funcs/CausticWindow.cpp \
+    src/funcs/CustomTableCodeWindow.cpp \
+    src/funcs/CustomTableFuncWindow.cpp \
     src/funcs/FuncOptionsPanel.cpp \
     src/funcs/FuncWindowHelpers.cpp \
     src/funcs/InfoFuncWindow.cpp \
@@ -256,9 +286,11 @@ SOURCES += \
     src/funcs/StabilityMapWindow.cpp \
     src/funcs/TableFuncWindow.cpp \
     src/math/AbcdBeamCalculator.cpp \
+    src/math/BeamCalcWrapper.cpp \
     src/math/BeamParamsAtElemsFunction.cpp \
     src/math/BeamVariationFunction.cpp \
     src/math/CausticFunction.cpp \
+    src/math/CustomTableFunction.cpp \
     src/math/FormatInfo.cpp \
     src/math/FunctionBase.cpp \
     src/math/FunctionGraph.cpp \
@@ -348,10 +380,12 @@ SOURCES += \
     src/widgets/WidgetResult.cpp \
     src/windows/AdjustmentWindow.cpp \
     src/windows/AppSettingsDialog.cpp \
+    src/windows/CodeEditorWindow.cpp \
     src/windows/CustomElemsWindow.cpp \
     src/windows/ElementPropsDialog.cpp \
     src/windows/ElementsCatalogDialog.cpp \
     src/windows/ElemFormulaWindow.cpp \
+    src/windows/FuncEditorWindow.cpp \
     src/windows/HelpWindow.cpp \
     src/windows/MemoWindow.cpp \
     src/windows/ProjectWindow.cpp \
