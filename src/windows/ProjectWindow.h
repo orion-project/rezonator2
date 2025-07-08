@@ -84,8 +84,11 @@ private:
     QAction *actnFuncRoundTrip, *actnFuncStabMap, *actnFuncStabMap2d,
             *actnFuncRepRate, *actnFuncMatrixMult,
             *actnFuncCaustic, *actnFuncMultirangeCaustic, *actnFuncBeamVariation,
-            *actnFuncMultibeamCaustic, *actnFuncBeamParamsAtElems,
-            *actnFuncCustomInfo, *actnFuncCustomTable;
+            *actnFuncMultibeamCaustic, *actnFuncBeamParamsAtElems;
+
+#ifdef Z_USE_PYTHON
+    QAction *actnFuncCustomInfo, *actnFuncCustomTable;
+#endif
 
     QAction  *actnToolsGaussCalc, *actnToolsCustomElems, *actnSettings,
              *actnToolFlipSchema, *actnToolsCalc, *actnToolAdjust,

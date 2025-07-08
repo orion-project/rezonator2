@@ -166,8 +166,10 @@ void ProjectWindow::createActions()
     actnFuncMultibeamCaustic = A_(tr("Multibeam Caustic..."), _calculations, SLOT(funcMultibeamCaustic()), ":/toolbar/func_multi_beam_caustic");
     actnFuncBeamVariation = A_(tr("Beamsize Variation..."), _calculations, SLOT(funcBeamVariation()), ":/toolbar/func_beam_variation");
     actnFuncBeamParamsAtElems = A_(tr("Beam Parameters at Elemens"), _calculations, SLOT(funcBeamParamsAtElems()), ":/toolbar/func_beamdata");
+#ifdef Z_USE_PYTHON
     actnFuncCustomInfo = A_(tr("Create Custom Info Function"), this, SLOT(showFuncEditor()));
     actnFuncCustomTable = A_(tr("Create Custom Table Function"), _calculations, SLOT(funcCustomTable()));
+#endif
 
     actnToolsCustomElems = A_(tr("Custom Elements Library"), this, SLOT(showCustomElems()), ":/toolbar/catalog");
     actnToolsGaussCalc = A_(tr("Gaussian Beam Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
@@ -222,7 +224,10 @@ void ProjectWindow::createMenuBar()
           actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamVariation, nullptr,
           actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic,
           actnFuncBeamParamsAtElems, nullptr, actnFuncRepRate, nullptr,
-          actnFuncCustomInfo, actnFuncCustomTable });
+        #ifdef Z_USE_PYTHON
+          actnFuncCustomInfo, actnFuncCustomTable
+        #endif
+        });
 
     menuUtils = Ori::Gui::menu(tr("Utils", "Menu title"), this,
         { actnToolFlipSchema, nullptr, actnToolAdjust });

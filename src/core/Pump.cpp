@@ -50,7 +50,7 @@ PumpParams_Waist::PumpParams_Waist()
                                 qApp->translate("Pump param", "Distance to waist"));
     _MI = new ParameterTS(Dims::none(),
                           QStringLiteral("MI"),
-                          QStringLiteral("M²"),
+                          QStringLiteral("M<sup>2</sup>"),
                           qApp->translate("Pump param", "Beam quality"));
     addParam(_waist, 100, mkm());
     addParam(_distance, 100, mm());
@@ -73,7 +73,7 @@ PumpParams_Front::PumpParams_Front()
                                    qApp->translate("Pump param", "Wavefront ROC"));
     _MI = new ParameterTS(Dims::none(),
                           QStringLiteral("MI"),
-                          QStringLiteral("M²"),
+                          QStringLiteral("M<sup>2</sup>"),
                           qApp->translate("Pump param", "Beam quality"));
     addParam(_beamRadius, 1000, mkm());
     addParam(_frontRadius, 100, mm());
@@ -142,7 +142,7 @@ PumpParams_Complex::PumpParams_Complex()
                             qApp->translate("Pump param", "Imaginary part"));
     _MI = new ParameterTS(Dims::none(),
                           QStringLiteral("MI"),
-                          QStringLiteral("M²"),
+                          QStringLiteral("M<sup>2</sup>"),
                           qApp->translate("Pump param", "Beam quality"));
 
     // q = [100um - i*32.057um] corresponds to

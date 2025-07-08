@@ -4,8 +4,8 @@
 
 PyRunner::PyRunner() {}
 PyRunner::~PyRunner() {}
-bool PyRunner::load() { logError("Not emplemented"); return false; }
-bool PyRunner::run(const QString&) { return false; }
+bool PyRunner::load() { errorLog << "Not emplemented"; return false; }
+PyRunner::FuncResult PyRunner::run(const QString&, const Args&, const ResultSpec&) { return {}; }
 
 #else
 
@@ -327,9 +327,9 @@ void PyRunner::handleError(const QString& msg, const QString &funcName)
     }
 }
 
+#endif // USE_PYTHON
+
 QString PyRunner::errorText() const
 {
     return errorLog.isEmpty() ? QString() : errorLog.first();
 };
-
-#endif // USE_PYTHON

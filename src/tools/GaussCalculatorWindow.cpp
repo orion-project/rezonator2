@@ -582,7 +582,7 @@ void GaussCalculatorWindow::makeParams(QGridLayout *paramsLayout)
 
     using namespace Z::Dims;
     _lambda = addParam(linear(), QStringLiteral("lambda"), QStringLiteral("λ"), 980_nm);
-    _MI = addParam(none(), QStringLiteral("MI"), QStringLiteral("M²"), 1);
+    _MI = addParam(none(), QStringLiteral("MI"), QStringLiteral("M<sup>2</sup>"), 1);
     _w0 = addParam(linear(), QStringLiteral("w0"), QStringLiteral("w<sub>0</sub>"), 100_mkm);
     _z = addParam(linear(), QStringLiteral("z"), QStringLiteral("z"), 100_mm);
     _z0 = addParam(linear(), QStringLiteral("z0"), QStringLiteral("z<sub>0</sub>"), 0_mm);
