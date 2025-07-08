@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=rezonator
-Comment=Laser resonator calculation tool
+Comment=Laser resonator calculator tool
 Exec=rezonator
 Icon=rezonator
 Categories=Science;

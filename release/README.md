@@ -2,13 +2,13 @@
 
 This directory contains some stuff used during preparation of release version of the application and making redistributable packages.
 
-Commands for running scripts suppose that current dir is the project directory containing `rezonator.pro` file. On Linux and MacOS you have to mark scripts as executables to be able to run them:
+Commands for running scripts suppose that current dir is the project root directory. On Linux and MacOS you have to mark scripts as executables to be able to run them:
 
 ```bash
-chmod +x make_*.py
+chmod +x ./release/make_*.py
 ```
 
-**Version format**
+## Version format
 
 ```
 MAJOR . MINOR . PATCH [-CODENAME]
@@ -17,31 +17,19 @@ MAJOR . MINOR . PATCH [-CODENAME]
 See [Semantic Versioning](https://semver.org)
 
 
-**Prepare new release**
+## Prepare new release
 
-- Decide a version numbers for the new release. Increase at least one of `MAJOR`, `MINOR` or `MICRO` numbers when creating a new release. Update version info that will be built into the application (current version is stored in `version.txt` file):
-
-```bash
- ./release/make_version.py 2.0.2-alpha2
-```
-
-* Put version number and release date and release info in the `history.json` file.
-
-* Push updated version info to be able to build package having the same version on other platforms:
+Decide on version numbers for the new release. Current version is stored in the `version.txt` file. Increase at least one of `MAJOR`, `MINOR`, or `PATCH` numbers when creating a new release. Update version info and make a new release tag:
 
 ```bash
- git commit -am 'Version info updated 2.0.2-alpha2'
- git push
-```
-
-* Make a new release tag
-
-```bash
+git commit -am 'Version info updated 2.0.2-alpha2'
 git tag -a v2.0.2-alpha2 -m 'Short version description'
 git push origin v2.0.2-alpha2
 ```
 
-* Build package
+Put the version number, release date, and release changelog into the `./release/history.json` file.
+
+### Build package
 
 ```bash
 ./release/make_release.py

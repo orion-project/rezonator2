@@ -53,12 +53,12 @@ inline QString appName() { return "<span style='color:navy'>re<span style='color
 
 inline QString appVersion()
 {
-    return QString("%1.%2.%3-%4").arg(APP_VER_MAJOR).arg(APP_VER_MINOR).arg(APP_VER_PATCH).arg(APP_VER_CODENAME);
+    return QString("%1.%2.%3").arg(APP_VER_MAJOR).arg(APP_VER_MINOR).arg(APP_VER_PATCH);
 }
 
 inline QString appVersionYear() { return QString::number(APP_VER_YEAR); }
 
-inline QString appVersionDate() { return QString("%1 %2").arg(BUILDDATE).arg(BUILDTIME); }
+inline QString appVersionDate() { return QString("%1").arg(BUILDDATE); }
 
 } // namespace Strs
 } // namespace Z
