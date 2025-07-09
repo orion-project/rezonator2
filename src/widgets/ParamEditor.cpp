@@ -3,17 +3,95 @@
 #include "ParamsListWidget.h"
 #include "UnitWidgets.h"
 #include "../app/Appearance.h"
+#include "../core/Format.h"
+#include "../math/tinyexpr.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
-#include "widgets/OriValueEdit.h"
 
 #include <QDebug>
 #include <QHBoxLayout>
+#include <QKeyEvent>
 #include <QLabel>
 #include <QMenu>
 
-using Ori::Widgets::ValueEdit;
+//------------------------------------------------------------------------------
+//                                ValueEdit
+//------------------------------------------------------------------------------
+
+ValueEdit::ValueEdit() : QLineEdit()
+{
+    setProperty("role", "value-editor");
+    setAlignment(Qt::AlignRight);
+    setSizePolicy(QSizePolicy::Preferred, sizePolicy().verticalPolicy());
+    connect(this, &QLineEdit::textChanged, this, &ValueEdit::onTextEdited);
+    connect(this, &QLineEdit::textEdited, this, &ValueEdit::onTextEdited);
+}
+
+QString ValueEdit::expr() const
+{
+    return text().trimmed();
+}
+
+void ValueEdit::setExpr(const QString &expr)
+{
+    setText(expr);
+}
+
+void ValueEdit::focusInEvent(QFocusEvent *e)
+{
+    QLineEdit::focusInEvent(e);
+    emit focused(true);
+}
+
+void ValueEdit::focusOutEvent(QFocusEvent *e)
+{
+    QLineEdit::focusOutEvent(e);
+    emit focused(false);
+}
+
+void ValueEdit::keyPressEvent(QKeyEvent *e)
+{
+    QLineEdit::keyPressEvent(e);
+    emit keyPressed(e->key());
+}
+
+void ValueEdit::onTextEdited(const QString& text)
+{
+    processInput(text);
+
+    if (_ok)
+        emit valueEdited(_value);
+}
+
+void ValueEdit::processInput(const QString& text)
+{
+    // TODO: refine built-in functions and constants
+    // TODO: don't parse "1,2" as "2" (why parse lists?)
+    // TODO: add the ** operator for pow() unstead of ^
+    static double inf = 1.0/0.0;
+    static const int varCount = 3;
+    static te_variable vars[varCount] = {{"inf", &inf}, {"Inf", &inf}, {"INF", &inf}};
+    
+    bool ok = true;
+    auto expr = text.toStdString();
+    te_expr *c = te_compile(expr.c_str(), vars, varCount, nullptr);
+    if (c) {
+        _value = te_eval(c);
+        ok = !qIsNaN(_value);
+        setToolTip(Z::format(_value));
+        te_free(c);
+    } else {
+        ok = false;
+        setToolTip("");
+    }
+    if (ok != _ok) {
+        _ok = ok;
+        setProperty("status", _ok ? "ok" : "invalid");
+        style()->unpolish(this);
+        style()->polish(this);
+    }
+}
 
 //------------------------------------------------------------------------------
 //                              LinkButton
@@ -244,7 +322,8 @@ void ParamEditor::populate()
 
 void ParamEditor::showValue(Z::Parameter *param)
 {
-    _valueEditor->setValue(param->value().value());
+    QString expr = param->expr();
+    _valueEditor->setExpr(expr.isEmpty() ? QString::number(param->value().value()): expr);
     _unitsSelector->setSelectedUnit(param->value().unit());
 }
 
@@ -273,7 +352,7 @@ Z::Value ParamEditor::getValue() const
 QString ParamEditor::verify() const
 {
     if (!_valueEditor->ok())
-        return tr("Ivalid number format");
+        return tr("Ivalid value expression");
 
     Z::Value value = getValue();
 
@@ -283,6 +362,8 @@ QString ParamEditor::verify() const
 void ParamEditor::apply()
 {
     if (!_valueEditor->ok()) return;
+
+    _param->setExpr(_valueEditor->expr());
 
     Z::Value value = getValue();
 

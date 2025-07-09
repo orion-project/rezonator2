@@ -255,9 +255,13 @@ public:
     {
         return ValuedParameter<TValue>::displayLabel() % " = " % ValuedParameter<TValue>::_value.displayStr();
     }
+    
+    QString expr() const { return _expr; }
+    void setExpr(const QString &expr) { _expr = expr; }
 
 private:
     Dim _dim = Dims::none();
+    QString _expr;
 };
 
 //------------------------------------------------------------------------------

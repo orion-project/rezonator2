@@ -186,6 +186,7 @@ set(PROJECT_SOURCES
     src/math/StabilityMap2DFunction.h src/math/StabilityMap2DFunction.cpp
     src/math/StabilityMapFunction.h src/math/StabilityMapFunction.cpp
     src/math/TableFunction.h src/math/TableFunction.cpp
+    src/math/tinyexpr.h src/math/tinyexpr.c
     src/tests/test_AbcdBeamCalculator.cpp
     src/tests/test_Adjuster.cpp
     src/tests/test_Element.cpp
