@@ -61,13 +61,13 @@ SchemaParamsWindow::~SchemaParamsWindow()
 
 void SchemaParamsWindow::createActions()
 {
-    #define A_ Ori::Gui::V0::action
+    #define A_ Ori::Gui::action
 
-    _actnParamAdd = A_(tr("Create..."), this, SLOT(createParameter()), ":/toolbar/param_add", Qt::CTRL | Qt::Key_Insert);
-    _actnParamDelete = A_(tr("Delete..."), this, SLOT(deleteParameter()), ":/toolbar/param_delete", Qt::CTRL | Qt::Key_Delete);
-    _actnParamSet = A_(tr("Set..."), this, SLOT(setParameterValue()), ":/toolbar/param_set");
-    _actnParamDescr = A_(tr("Annotate..."), this, SLOT(annotateParameter()), ":/toolbar/param_annotate", Qt::CTRL | Qt::Key_Return);
-    _actnParamAdjust = A_(tr("Adjust"), this, SLOT(adjustParameter()), ":/toolbar/adjust");
+    _actnParamAdd = A_(tr("Create..."), this, &SchemaParamsWindow::createParameter, ":/toolbar/param_add", Qt::CTRL | Qt::Key_Insert);
+    _actnParamDelete = A_(tr("Delete..."), this, &SchemaParamsWindow::deleteParameter, ":/toolbar/param_delete", Qt::CTRL | Qt::Key_Delete);
+    _actnParamSet = A_(tr("Set..."), this, &SchemaParamsWindow::setParameterValue, ":/toolbar/param_set");
+    _actnParamDescr = A_(tr("Annotate..."), this, &SchemaParamsWindow::annotateParameter, ":/toolbar/param_annotate", Qt::CTRL | Qt::Key_Return);
+    _actnParamAdjust = A_(tr("Adjust"), this, &SchemaParamsWindow::adjustParameter, ":/toolbar/adjust");
 
     #undef A_
 }
@@ -155,7 +155,11 @@ void SchemaParamsWindow::createParameter()
         schema()->events().raise(SchemaEvents::GlobalParamCreated, param, "Params window: param created");
 
         _isSettingValueForNewParam = true;
-        QTimer::singleShot(100, this, [&](){ setParameterValue(); });
+        
+        QTimer::singleShot(100, this, [this, param](){
+            _table->setSelected(param);
+            setParameterValue();
+        });
     }
 }
 

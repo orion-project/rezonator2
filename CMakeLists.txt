@@ -38,6 +38,13 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Disable MSVC warnings about non-standard STL extensions globally
+if(MSVC)
+    add_compile_definitions(_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING)
+    add_compile_options(/wd4043)  # Disable STL4043 warning about stdext::checked_array_iterator
+endif()
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Help Network PrintSupport Svg Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Help Network PrintSupport Svg Widgets)

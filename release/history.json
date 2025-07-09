@@ -1,7 +1,7 @@
 {
   "history": [
     {
-      "version": "2.0.16-rc3",
+      "version": "2.0.16",
       "date": "",
       "changes": [
         {
@@ -12,6 +12,9 @@
         },
         {
           "text": "New help topics in the manual: Beam parameters at elements function, Table window."
+        },
+        {
+          "text": "Fix: after parameter creation, the previous parameter is edited (https://github.com/orion-project/rezonator2/issues/78)"
         },
         {
           "text": "Switch to CMake"

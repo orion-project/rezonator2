@@ -93,11 +93,8 @@ public:
         }
         else if (role == Qt::TextAlignmentRole)
         {
-            if (col == COL_ALIAS)
+            if (col == COL_VALUE)
                 return Qt::AlignCenter;
-        }
-        else if (role == Qt::TextAlignmentRole)
-        {
         }
         else if (role == Qt::DisplayRole)
         {
