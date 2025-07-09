@@ -12,6 +12,9 @@
         },
         {
           "text": "New help topics in the manual: Beam parameters at elements function, Table window."
+        },
+        {
+          "text": "Switch to CMake"
         }
       ]
     },

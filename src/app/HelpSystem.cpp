@@ -277,14 +277,13 @@ void HelpSystem::showAbout()
     };
 
     auto labelVersion = makeLabel("version_label", QString("%1.%2.%3").arg(APP_VER_MAJOR).arg(APP_VER_MINOR).arg(APP_VER_PATCH));
-    auto labelCodename = makeLabel("codename_label", APP_VER_CODENAME);
     auto labelDate = makeLabel("date_label", BUILDDATE);
 
     auto labelQt = makeLabel({}, QString("Powered by Qt %1").arg(QT_VERSION_STR));
     connect(labelQt, &Ori::Widgets::Label::clicked, []{ qApp->aboutQt(); });
     labelQt->setCursor(Qt::PointingHandCursor);
 
-    auto labelInfo = makeLabel({}, QString("Chunosov N.I. © 2006-%1").arg(APP_VER_YEAR));
+    auto labelInfo = makeLabel({}, QString("Chunosov N.I. © %1-%2").arg(APP_VER_YEAR_0).arg(APP_VER_YEAR));
 
     auto makeLink = [makeLabel](const QString& address, const QString& href = QString()) {
         auto label = makeLabel({}, address);
@@ -296,21 +295,14 @@ void HelpSystem::showAbout()
     };
 
     LayoutV({
-        LayoutH({Stretch(), labelVersion, Space(4)}),
-        LayoutH({Stretch(), labelCodename, Space(4)}),
-        Space(4),
-        LayoutH({Stretch(), labelDate, Space(4)}),
+        LayoutH({Stretch(), labelVersion}),
+        LayoutH({Stretch(), labelDate}),
         Stretch(),
-        LayoutH({Space(4), labelQt, Stretch()}),
-        Space(4),
-        LayoutH({Space(4), labelInfo, Stretch()}),
-        Space(4),
-        LayoutH({Space(4), makeLink(Z::Strs::email(), QString("mailto:%1").arg(Z::Strs::email())), Stretch()}),
-        Space(4),
-        LayoutH({Space(4), makeLink(Z::Strs::homepage()), Stretch()}),
-        Space(4),
-        LayoutH({Space(4), makeLink(Z::Strs::sourcepage()), Stretch()}),
-        Space(4),
+        labelQt,
+        labelInfo,
+        makeLink(Z::Strs::email(), QString("mailto:%1").arg(Z::Strs::email())),
+        makeLink(Z::Strs::homepage()),
+        makeLink(Z::Strs::sourcepage()),
     }).setMargin(12).setSpacing(0).useFor(w);
 
     w->exec();

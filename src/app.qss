@@ -76,17 +76,19 @@ QFrame[ori_role=selectable_tile_content] {
   linux:font-family: "monospace";
   color: white;
   font-size: 20px;
+  margin-bottom: 4px;
 }
 #about_dlg #version_label {
-  font-size: 50px;
+  font-size: 45px;
   font-weight: bold;
-}
-#about_dlg #codename_label {
-  font-size: 34px;
-  font-weight: bold;
+  margin-top: 155px;
+  margin-bottom: 0px;
 }
 #about_dlg #date_label {
   font-size: 20px;
+  margin-right: 8px;
+  margin-top: 0px;
+  color: silver;
 }
 
 /************************************
@@ -414,8 +416,8 @@ QToolTip {
   linux: border: 1px solid #232335;
 //  macos: border: 1px solid #edf3f8;
   macos: border: 1px solid #232335;
-  background: #434355;
-  color: white;
+  background: #efefef;
+  color: #333;
   padding: 2px;
 }
 

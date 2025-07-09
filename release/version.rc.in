@@ -1,0 +1,30 @@
+1 TYPELIB "version.rc"
+
+1 VERSIONINFO
+PRODUCTVERSION 	@APP_VER_MAJOR@, @APP_VER_MINOR@, @APP_VER_PATCH@, 0
+FILEVERSION    	@APP_VER_MAJOR@, @APP_VER_MINOR@, @APP_VER_PATCH@, 0
+FILEOS         	0x4L
+FILETYPE       	0x2L
+FILESUBTYPE     0x0L
+FILEFLAGS       0x0L
+FILEFLAGSMASK   0x3fL
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904e4"
+        BEGIN
+            VALUE "CompanyName",      "orion-project.org"
+            VALUE "FileDescription",  "@PROJECT_NAME@"
+            VALUE "FileVersion",      "@APP_VER_MAJOR@.@APP_VER_MINOR@.@APP_VER_PATCH@.0"
+            VALUE "InternalName",     "@PROJECT_NAME@"
+            VALUE "LegalCopyright",   "Chunosov N.I. (c) @APP_VER_YEAR_0@-@APP_VER_YEAR@"
+            VALUE "OriginalFilename", "@PROJECT_NAME@.exe"
+            VALUE "ProductName",      "@PROJECT_NAME@"
+            VALUE "ProductVersion",   "@APP_VER_MAJOR@.@APP_VER_MINOR@.@APP_VER_PATCH@"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252 /* English */
+    END
+END
