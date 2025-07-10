@@ -388,8 +388,6 @@ void ParamEditor::apply()
 {
     if (!_valueEditor->ok()) return;
 
-    _param->setExpr(_valueEditor->expr());
-
     Z::Value value = getValue();
 
     if(_checkChanges && value == _param->value())
@@ -439,6 +437,7 @@ void ParamEditor::apply()
     else {
         _paramChangedHandlerEnabled = false;
         _param->setValue(value);
+        _param->setExpr(_valueEditor->expr());
         _paramChangedHandlerEnabled = true;
     }
 }

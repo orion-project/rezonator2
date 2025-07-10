@@ -144,8 +144,8 @@ void ParamEditorEx::apply()
         }
         _paramEditor->apply();
     }
-    _param->setExpr(_tmpParam->expr());
     _param->setValue(_tmpParam->value());
+    _param->setExpr(_tmpParam->expr());
 }
 
 void ParamEditorEx::focus()

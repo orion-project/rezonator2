@@ -374,10 +374,8 @@ QList<Element*> readElements(const QJsonObject& root, Z::Report* report)
                 if (auto lens = dynamic_cast<ElemThickLens*>(elem); lens) {
                     for (const auto *r : {"R1", "R2"}) {
                         if (auto p = lens->param(r); p) {
-                            if (p->value().isZero()) {
+                            if (p->value().isZero())
                                 p->setValue(Z::Value::inf(p->value().unit()));
-                                p->setExpr("Inf");
-                            }
                         } else {
                             report->warning(QString("Parameter %1 is expected in element #%2 but not found").arg(r).arg(i));
                         }

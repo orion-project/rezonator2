@@ -55,7 +55,6 @@ void Formula::calculate()
 
     auto unit = _target->value().unit();
     auto value = unit->fromSi(res.value());
-    _target->setExpr(QString());
     _target->setValue(Value(value, unit));
     _status.clear();
 }
