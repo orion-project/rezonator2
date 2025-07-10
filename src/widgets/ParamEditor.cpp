@@ -69,7 +69,7 @@ void ValueEdit::processInput(const QString& text)
     // TODO: refine built-in functions and constants
     // TODO: don't parse "1,2" as "2" (why parse lists?)
     // TODO: add the ** operator for pow() unstead of ^
-    static double inf = 1.0/0.0;
+    static double inf = qInf();
     static const int varCount = 3;
     static te_variable vars[varCount] = {{"inf", &inf}, {"Inf", &inf}, {"INF", &inf}};
     

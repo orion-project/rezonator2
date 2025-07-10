@@ -4,8 +4,12 @@
 #include "../core/CommonTypes.h"
 #include "../core/Values.h"
 
+#include "core/OriVersion.h"
+
 #include <QJsonObject>
 #include <QJsonArray>
+
+#define JSON_KEY_VERSION QStringLiteral("schema_version")
 
 class Schema;
 class Element;
@@ -18,6 +22,8 @@ class Report;
 
 namespace IO {
 namespace Json {
+
+inline Ori::Version currentVersion() { return Ori::Version(2, 1); }
 
 void writeUnit(QJsonObject& json, Unit unit);
 Result<Unit> readUnit(const QJsonObject& json, Dim dim);

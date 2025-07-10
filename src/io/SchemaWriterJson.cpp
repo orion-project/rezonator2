@@ -2,7 +2,6 @@
 
 #include "../core/Schema.h"
 #include "../core/ElementFormula.h"
-#include "../io/CommonUtils.h"
 #include "../io/JsonUtils.h"
 #include "../io/ISchemaWindowStorable.h"
 #include "../windows/WindowsManager.h"
@@ -34,7 +33,7 @@ void SchemaWriterJson::writeToFile(const QString &fileName)
 QString SchemaWriterJson::writeToString()
 {
     QJsonObject root;
-    root["schema_version"] = Z::IO::Utils::currentVersion().str();
+    root[JSON_KEY_VERSION] = Z::IO::Json::currentVersion().str();
 
     writeGeneral(root);
     writeCustomParams(root);

@@ -1,8 +1,11 @@
 #include "Clipboard.h"
 
 #include "../core/Report.h"
+#include "../io/JsonUtils.h"
 #include "SchemaWriterJson.h"
 #include "SchemaReaderJson.h"
+
+#include "helpers/OriDialogs.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -15,13 +18,14 @@ namespace Z {
 namespace IO {
 namespace Clipboard {
 
-const QString Z_CLIPBOARD_MIME_TYPE = "application/x-rezonator2-mime";
-const QString Z_CLIPBOARD_DATA_ELEMENTS = Z_CLIPBOARD_MIME_TYPE + ";value=elements";
-const QString Z_CLIPBOARD_DATA_PUMPS = Z_CLIPBOARD_MIME_TYPE + ";value=pumps";
+#define Z_CLIPBOARD_MIME_TYPE "application/x-rezonator2-mime"
+#define Z_CLIPBOARD_DATA_ELEMENTS Z_CLIPBOARD_MIME_TYPE";value=elements"
+#define Z_CLIPBOARD_DATA_PUMPS Z_CLIPBOARD_MIME_TYPE";value=pumps"
 
 void setClipboardData(QJsonObject& root, const QString& dataType)
 {
     root["data_type"] = dataType;
+    root[JSON_KEY_VERSION] = Z::IO::Json::currentVersion().str();
 
     QString text = QJsonDocument(root).toJson();
 
@@ -60,7 +64,19 @@ QJsonObject getClipboradData(const QString& expectedType)
     {
         qDebug() << "There is no data of appropriate type in Clipboard"
                  << "Expected type:" << expectedType
-                 << "Actual type:" << dataType;
+                 << "Given type:" << dataType;
+        return {};
+    }
+    
+    Ori::Version version(root[JSON_KEY_VERSION].toString());
+    if (version > Z::IO::Json::currentVersion())
+    {
+        qDebug() << "Data version is not supported"
+                 << "Expected max version:" << Z::IO::Json::currentVersion().str()
+                 << "Given version:" << version.str();
+                 
+        Ori::Dlg::info(qApp->tr("Clipboard contains data in a newer format, can not paste"));
+        
         return {};
     }
 

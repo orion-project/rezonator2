@@ -107,6 +107,9 @@ TEST_METHOD(convert_lens_roc)
     ASSERT_IS_NOT_NULL(r2);
     ASSERT_IS_TRUE(qIsInf(r1->value().value()));
     ASSERT_IS_TRUE(qIsInf(r2->value().value()));
+    // Units are not broken after changing value
+    ASSERT_EQ_PTR(r1->value().unit(), Z::Units::mm());
+    ASSERT_EQ_PTR(r2->value().unit(), Z::Units::m());
 }
 
 //------------------------------------------------------------------------------
