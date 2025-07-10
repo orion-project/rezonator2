@@ -361,24 +361,21 @@ QList<Element*> readElements(const QJsonObject& root, Z::Report* report)
         }
     
     Ori::Version version(root[JSON_KEY_VERSION].toString());
-    if (version.isValid())
+    if (version <= Ori::Version(2, 0))
     {
-        if (version <= Ori::Version(2, 0))
-        {
-            // Up to 2.0: 0 used instead of Inf for thick lens ROC
-            // Since 2.1: Inf is used
-            // Here we don't care if the parameter is linked to a global param
-            // because there is no direct way to say the global param means "ROC"
-            for (int i = 0; i < elems.size(); i++) {
-                auto elem = elems.at(i);
-                if (auto lens = dynamic_cast<ElemThickLens*>(elem); lens) {
-                    for (const auto *r : {"R1", "R2"}) {
-                        if (auto p = lens->param(r); p) {
-                            if (p->value().isZero())
-                                p->setValue(Z::Value::inf(p->value().unit()));
-                        } else {
-                            report->warning(QString("Parameter %1 is expected in element #%2 but not found").arg(r).arg(i));
-                        }
+        // Up to 2.0: 0 used instead of Inf for thick lens ROC
+        // Since 2.1: Inf is used
+        // Here we don't care if the parameter is linked to a global param
+        // because there is no direct way to say the global param means "ROC"
+        for (int i = 0; i < elems.size(); i++) {
+            auto elem = elems.at(i);
+            if (auto lens = dynamic_cast<ElemThickLens*>(elem); lens) {
+                for (const auto *r : {"R1", "R2"}) {
+                    if (auto p = lens->param(r); p) {
+                        if (p->value().isZero())
+                            p->setValue(Z::Value::inf(p->value().unit()));
+                    } else {
+                        report->warning(QString("Parameter %1 is expected in element #%2 but not found").arg(r).arg(i));
                     }
                 }
             }
