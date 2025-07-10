@@ -96,6 +96,21 @@ TEST_METHOD(read_pumps_InvComplex)
 
 //------------------------------------------------------------------------------
 
+TEST_METHOD(convert_lens_roc)
+{
+    Schema schema;\
+    READ_AND_ASSERT("migrate_20_to_21.rez")
+    auto elem = schema.elementByLabel("F1");
+    auto r1 = elem->param("R1");
+    auto r2 = elem->param("R2");
+    ASSERT_IS_NOT_NULL(r1);
+    ASSERT_IS_NOT_NULL(r2);
+    ASSERT_IS_TRUE(qIsInf(r1->value().value()));
+    ASSERT_IS_TRUE(qIsInf(r2->value().value()));
+}
+
+//------------------------------------------------------------------------------
+
 TEST_GROUP("SchemaReaderJson",
     ADD_TEST(read_pumps),
     ADD_TEST(read_pumps_Waist),
@@ -104,6 +119,7 @@ TEST_GROUP("SchemaReaderJson",
     ADD_TEST(read_pumps_TwoSections),
     ADD_TEST(read_pumps_Complex),
     ADD_TEST(read_pumps_InvComplex),
+    ADD_TEST(convert_lens_roc),
 )
 
 } // namespace SchemaReaderJsonTests
