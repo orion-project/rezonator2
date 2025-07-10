@@ -19,9 +19,9 @@ Lens parameters:
 
 `D` - Lens diameter. It doesn't affect any calculations and only serves the drawing purposes.
 
-|R1| - Radius of curvature of the left surface. Negative value means right-bulged surface, positive value means left-bulged surface. Use zero for planar faces.
+|R1| - Radius of curvature of the left surface. Negative value means right-bulged surface, positive value means left-bulged surface. Use Inf for planar faces.
 
-|R2| - Radius of curvature of the right surface. Negative value means right-bulged surface, positive value means left-bulged surface. Use zero for planar faces.
+|R2| - Radius of curvature of the right surface. Negative value means right-bulged surface, positive value means left-bulged surface. Use Inf for planar faces.
 
 `n` - Index of refraction of lens material. The tool only calculate lenses in air.
 
