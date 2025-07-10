@@ -1,6 +1,8 @@
 #include "Values.h"
 #include "Format.h"
 
+#include "core/OriFloatingPoint.h"
+
 #include <QDebug>
 
 namespace Z {
@@ -47,6 +49,21 @@ Value Value::parse(const QString& valueStr)
     auto unit = unitStr.isEmpty() ? none(): findByAlias(unitStr);
     if (!unit) return Value();
     return Value(value, unit);
+}
+
+Value Value::inf(Unit unit)
+{
+    return Value(qInf(), unit);
+}
+
+bool Value::isZero() const
+{
+    return Double(_value).isZero();
+}
+
+bool Value::isInf() const
+{
+    return qIsInf(_value);
 }
 
 //------------------------------------------------------------------------------

@@ -71,7 +71,7 @@ void FormulaEditor::addParam()
 {
     Z::Parameters availableParams;
     if (_globalParams)
-        for (auto param : *_globalParams)
+        for (auto param : std::as_const(*_globalParams))
             if (param != _targetParam)
                 if (!_formula->deps().byPointer(param))
                     availableParams.append(param);

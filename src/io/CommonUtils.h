@@ -1,15 +1,12 @@
 #ifndef Z_IO_UTILS_H
 #define Z_IO_UTILS_H
 
-#include "core/OriVersion.h"
-
 #include <QMetaEnum>
 
 namespace Z {
 namespace IO {
 namespace Utils {
 
-inline Ori::Version currentVersion() { return Ori::Version(2, 0); }
 bool isOldSchema(const QString& fileName);
 QString filtersForOpen();
 QString filtersForSave();

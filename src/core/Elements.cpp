@@ -32,14 +32,14 @@ public:
 
 QString CurvatureRadiusVerifier::verify(const Z::Value& value) const
 {
-    if (Double(value.value()).is(0))
+    if (Double(value.value()).isZero())
         return qApp->translate("Param", "Curvature radius can not be zero.");
     return QString();
 }
 
 QString FocalLengthVerifier::verify(const Z::Value& value) const
 {
-    if (Double(value.value()).is(0))
+    if (Double(value.value()).isZero())
         return qApp->translate("Param", "Focal length can not be zero.");
     return QString();
 }
@@ -608,12 +608,12 @@ ElemThickLens::ElemThickLens() : ElementRange()
                                 qApp->translate("Param", "Left radius of curvature"),
                                 qApp->translate("Param", "Negative value means left-bulged surface, "
                                                          "positive value means right-bulged surface. "
-                                                         "Set to zero to get the flat surface."));
+                                                         "Set to Inf to get the flat surface."));
     _radius2 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R2"), QStringLiteral("R<sub>2</sub>"),
                                 qApp->translate("Param", "Right radius of curvature"),
                                 qApp->translate("Param", "Negative value means left-bulged surface, "
                                                          "positive value means right-bulged surface. "
-                                                         "Set to zero to get the flat surface."));
+                                                         "Set to Inf to get the flat surface."));
 
     _radius1->setValue(-100_mm);
     _radius2->setValue(100_mm);
@@ -621,8 +621,8 @@ ElemThickLens::ElemThickLens() : ElementRange()
     addParam(_radius1);
     addParam(_radius2);
 
-    // _radius1->setVerifier(globalCurvatureRadiusVerifier());
-    // _radius2->setVerifier(globalCurvatureRadiusVerifier());
+    _radius1->setVerifier(globalCurvatureRadiusVerifier());
+    _radius2->setVerifier(globalCurvatureRadiusVerifier());
 
     setOption(Element_Asymmetrical);
 }
@@ -635,8 +635,8 @@ void ElemThickLens::calcMatrixInternal()
     const double R2 = radius2();
     const double R1_inv = -R2;
     const double R2_inv = -R1;
-    const bool flat1 = Double(R1).isZero();
-    const bool flat2 = Double(R2).isZero();
+    const bool flat1 = qIsInf(R1);
+    const bool flat2 = qIsInf(R2);
     
     double A, B, C, D, A_inv, B_inv, C_inv, D_inv;
     
@@ -692,8 +692,8 @@ void ElemThickLens::calcSubmatrices()
     const double L2 = lengthSI() - L1;
     const double R1 = radius1();
     const double R2 = radius2();
-    const bool flat1 = Double(R1).isZero();
-    const bool flat2 = Double(R2).isZero();
+    const bool flat1 = qIsInf(R1);
+    const bool flat2 = qIsInf(R2);
     
     double A1, B1, C1, D1, A2, B2, C2, D2;
     

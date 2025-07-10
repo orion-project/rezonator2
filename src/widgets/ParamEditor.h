@@ -1,6 +1,7 @@
 #ifndef PARAM_EDITOR_H
 #define PARAM_EDITOR_H
 
+#include <QLineEdit>
 #include <QToolButton>
 #include <QPushButton>
 
@@ -10,11 +11,42 @@ QT_BEGIN_NAMESPACE
 class QLabel;
 QT_END_NAMESPACE
 
-namespace Ori {
-namespace Widgets {
-    class ValueEdit;
-}}
 class UnitComboBox;
+
+class ValueEdit : public QLineEdit
+{
+    Q_OBJECT
+
+public:
+    ValueEdit();
+    
+    double value() const { return _value; }
+    void setValue(double v);
+    bool ok() const { return _ok; }
+    QString expr() const;
+    void setExpr(const QString &expr);
+
+signals:
+    void focused(bool focus);
+    void keyPressed(int key);
+    void valueEdited(double value);
+
+protected:
+    void focusInEvent(QFocusEvent *e) override;
+    void focusOutEvent(QFocusEvent *e) override;
+    void keyPressEvent(QKeyEvent *e) override;
+
+private:
+    double _value = qQNaN();
+    bool _ok = true;
+    bool _skipProcessing = false;
+    int _numberPrecision = 6;
+
+    void onTextEdited(const QString& text);
+    void processInput(const QString& text);
+    
+    void indicateValidation();
+};
 
 
 // QPushButton looks ugly on "macintosh" style, it looses its standard view
@@ -155,7 +187,7 @@ private:
     Z::Parameter* _linkSource = nullptr;
     const Z::Parameters* _globalParams;
     Z::ParamLinks* _paramLinks;
-    Ori::Widgets::ValueEdit* _valueEditor;
+    ValueEdit* _valueEditor;
     UnitComboBox* _unitsSelector;
     QLabel* _labelName = nullptr;
     QLabel* _labelLabel = nullptr;
@@ -166,7 +198,7 @@ private:
     bool _checkChanges;
 
     void linkToGlobalParameter();
-    void showValue(Z::Parameter *param);
+    void showValue(Z::Parameter *param, bool ignoreExpr);
     void setIsLinked(bool on);
     void editorKeyPressed(int key);
     void unitChangedRaw(Z::Unit unit);

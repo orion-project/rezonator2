@@ -334,8 +334,8 @@ namespace ElemThickLensLayout {
         layout->setHalfSize(HW, HH);
         const double R1 = lens->radius1();
         const double R2 = lens->radius2();
-        const bool flat1 = Double(R1).isZero();
-        const bool flat2 = Double(R2).isZero();
+        const bool flat1 = qIsInf(R1);
+        const bool flat2 = qIsInf(R2);
         if (flat1 && flat2)
             layout->paintMode = CurvedElementLayout::Plate;
         else if (flat1 && R2 > 0) // |)

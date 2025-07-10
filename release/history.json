@@ -5,10 +5,13 @@
       "date": "",
       "changes": [
         {
-          "text": "Ignore disabled elements and respect order in Multiply Selected functions"
+          "text": "Advanced parameter editor with expression evaluator"
         },
         {
-          "text": "Calculate aperture ratio in Beam Parameters at Elements table function"
+          "text": "Use Inf instead of zero for flat surfaces for thick lens element (https://github.com/orion-project/rezonator2/issues/75)"
+        },
+        {
+          "text": "Ignore disabled elements and respect order in Multiply Selected functions"
         },
         {
           "text": "New help topics in the manual: Beam parameters at elements function, Table window."
@@ -17,7 +20,7 @@
           "text": "Fix: after parameter creation, the previous parameter is edited (https://github.com/orion-project/rezonator2/issues/78)"
         },
         {
-          "text": "Switch to CMake"
+          "text": "Switch to CMake, switch to MSVC for Windows"
         }
       ]
     },

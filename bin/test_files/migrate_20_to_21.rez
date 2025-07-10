@@ -1,0 +1,48 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 980
+        }
+    },
+    "custom_params": {},
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "F1",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 50
+                },
+                "R1": {
+                    "expr": "0",
+                    "unit": "mm",
+                    "value": 0
+                },
+                "R2": {
+                    "expr": "0",
+                    "unit": "m",
+                    "value": 0
+                },
+                "n": {
+                    "expr": "1",
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemThickLens"
+        }
+    ],
+    "formulas": [],
+    "notes": "",
+    "param_links": [],
+    "pumps": [],
+    "schema_version": "2.0",
+    "title": "",
+    "trip_type": "SP",
+    "windows": []
+}

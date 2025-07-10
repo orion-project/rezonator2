@@ -150,14 +150,17 @@ bool Formulas::ifDependsOn(Parameter *whichParam, Parameter *onParam) const
 Parameters Formulas::dependentParams(Parameter *whichParam) const
 {
     Parameters result;
-    foreach (Formula *formula, _items.values())
-        foreach (Parameter *param, formula->deps())
+    for (auto it = _items.cbegin(); it != _items.cend(); it++) {
+        auto formula = it.value();
+        auto deps = formula->deps();
+        for (auto param : std::as_const(deps))
             if (param == whichParam)
             {
                 if (!result.contains(formula->target()))
                     result << formula->target();
                 break;
             }
+    }
     return result;
 }
 
