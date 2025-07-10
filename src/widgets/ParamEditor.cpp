@@ -28,6 +28,23 @@ ValueEdit::ValueEdit() : QLineEdit()
     connect(this, &QLineEdit::textEdited, this, &ValueEdit::onTextEdited);
 }
 
+void ValueEdit::setValue(double v)
+{
+    _skipProcessing = true;
+    
+    _value = v;
+    _ok = !qIsNaN(_value);
+    indicateValidation();
+    
+    QLocale loc(QLocale::C);
+    QString s = loc.toString(_value, 'g', _numberPrecision);
+    // thousand separator for C-locale is comma, need not it
+    s = s.replace(loc.groupSeparator(), QString());
+    setText(s);
+
+    _skipProcessing = false;
+}
+
 QString ValueEdit::expr() const
 {
     return text().trimmed();
@@ -66,6 +83,8 @@ void ValueEdit::onTextEdited(const QString& text)
 
 void ValueEdit::processInput(const QString& text)
 {
+    if (_skipProcessing) return;
+
     // TODO: refine built-in functions and constants
     // TODO: don't parse "1,2" as "2" (why parse lists?)
     // TODO: add the ** operator for pow() unstead of ^
@@ -87,10 +106,15 @@ void ValueEdit::processInput(const QString& text)
     }
     if (ok != _ok) {
         _ok = ok;
-        setProperty("status", _ok ? "ok" : "invalid");
-        style()->unpolish(this);
-        style()->polish(this);
+        indicateValidation();
     }
+}
+
+void ValueEdit::indicateValidation()
+{
+    setProperty("status", _ok ? "ok" : "invalid");
+    style()->unpolish(this);
+    style()->polish(this);
 }
 
 //------------------------------------------------------------------------------
@@ -317,13 +341,15 @@ void ParamEditor::parameterChanged(Z::ParameterBase*)
 
 void ParamEditor::populate()
 {
-    showValue(_param);
+    showValue(_param, false);
 }
 
-void ParamEditor::showValue(Z::Parameter *param)
+void ParamEditor::showValue(Z::Parameter *param, bool ignoreExpr)
 {
     QString expr = param->expr();
-    _valueEditor->setExpr(expr.isEmpty() ? QString::number(param->value().value()): expr);
+    if (expr.isEmpty() || ignoreExpr)
+        _valueEditor->setValue(param->value().value());
+    else _valueEditor->setExpr(expr);
     _unitsSelector->setSelectedUnit(param->value().unit());
 }
 
@@ -340,7 +366,6 @@ void ParamEditor::setReadonly(bool valueOn, bool unitOn)
         return;
     }
     _valueEditor->setReadOnly(valueOn);
-    _valueEditor->setFont(Z::Gui::ValueFont().readOnly(valueOn).get());
     _unitsSelector->setEnabled(!unitOn);
 }
 
@@ -471,7 +496,7 @@ void ParamEditor::linkToGlobalParameter()
     _linkSource = selected != ParamsListWidget::noneParam() ? selected : nullptr;
     _linkButton->showLinkSource(_linkSource);
     setIsLinked(_linkSource);
-    showValue(_linkSource ? _linkSource : _param);
+    showValue(_linkSource ? _linkSource : _param, _linkSource);
 }
 
 void ParamEditor::unitChangedRaw(Z::Unit unit)

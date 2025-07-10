@@ -328,6 +328,17 @@ QLineEdit, QSpinBox {
   background: $paper-color;
 }
 
+QLineEdit[role=value-editor] {
+  windows:font-size: 10pt;
+  macos:font-size: 14pt;
+  linux:font-size: 10pt;
+}
+
+QLineEdit[role=value-editor]:read-only {
+  font-style: italic;
+  background-color: $dark-paper-color;
+}
+
 QLineEdit[role=value-editor][status=invalid] {
   border: $invalid-border;
   border-radius: 3px;

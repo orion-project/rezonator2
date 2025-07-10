@@ -34,10 +34,30 @@ void writeUnit(QJsonObject& json, Unit unit)
     json["unit"] = unit->alias();
 }
 
+QJsonValue doubleToJson(double v)
+{
+    if (qIsInf(v))
+        return v < 0 ? QStringLiteral("-inf") : QStringLiteral("inf");
+    return v;
+}
+
+double jsonToDouble(const QJsonValue &v)
+{
+    if (v.isDouble())
+        return v.toDouble();
+    if (v.isString()) {
+        if (v.toString().compare(QStringLiteral("inf"), Qt::CaseInsensitive) == 0)
+            return qInf();
+        if (v.toString().compare(QStringLiteral("-inf"), Qt::CaseInsensitive) == 0)
+            return -qInf();
+    }
+    return qQNaN();
+}
+
 QJsonObject writeValue(const Value& value)
 {
     QJsonObject json({
-        { "value", value.value() },
+        { "value", doubleToJson(value.value()) },
     });
     writeUnit(json, value.unit());
     return json;
@@ -45,7 +65,7 @@ QJsonObject writeValue(const Value& value)
 
 Result<Value> readValue(const QJsonObject& json, Dim dim)
 {
-    auto value = json["value"].toDouble();
+    auto value = jsonToDouble(json["value"]);
     auto unit = readUnit(json, dim);
     if (!unit.ok())
         return Result<Value>::fail(unit.error());
@@ -55,8 +75,8 @@ Result<Value> readValue(const QJsonObject& json, Dim dim)
 QJsonObject writeValueTS(const ValueTS& value)
 {
     QJsonObject json({
-        { "value_t", value.rawValueT() },
-        { "value_s", value.rawValueS() },
+        { "value_t", doubleToJson(value.rawValueT()) },
+        { "value_s", doubleToJson(value.rawValueS()) },
     });
     writeUnit(json, value.unit());
     return json;
@@ -64,8 +84,8 @@ QJsonObject writeValueTS(const ValueTS& value)
 
 Result<ValueTS> readValueTS(const QJsonObject& json, Dim dim)
 {
-    auto valueT = json["value_t"].toDouble();
-    auto valueS = json["value_s"].toDouble();
+    auto valueT = jsonToDouble(json["value_t"]);
+    auto valueS = jsonToDouble(json["value_s"]);
     auto unit = readUnit(json, dim);
     if (!unit.ok())
         return Result<ValueTS>::fail(unit.error());

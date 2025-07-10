@@ -36,7 +36,7 @@ QString SchemaWriterJson::writeToString()
     root[JSON_KEY_VERSION] = Z::IO::Json::currentVersion().str();
 
     writeGeneral(root);
-    writeCustomParams(root);
+    writeGlobalParams(root);
     writePumps(root, *_schema->pumps());
     writeElements(root, _schema->elements());
     writeParamLinks(root);
@@ -59,7 +59,7 @@ void SchemaWriterJson::writeGeneral(QJsonObject& root)
     });
 }
 
-void SchemaWriterJson::writeCustomParams(QJsonObject& root)
+void SchemaWriterJson::writeGlobalParams(QJsonObject& root)
 {
     QJsonObject customParams;
     foreach (Z::Parameter *p, *_schema->globalParams())
@@ -68,6 +68,7 @@ void SchemaWriterJson::writeCustomParams(QJsonObject& root)
             { "dim", p->dim()->alias() },
             { "value", p->value().value() },
             { "unit", p->value().unit()->alias() },
+            { "expr", p->expr() },
         });
     root["custom_params"] = customParams;
 }
@@ -219,6 +220,7 @@ void writeElement(QJsonObject& root, Element *elem)
             paramJson["descr"] = p->description();
             paramJson["order"] = i;
         }
+        paramJson["expr"] = p->expr();
         paramsJson[p->alias()] = paramJson;
     }
     root["params"] = paramsJson;
@@ -250,7 +252,8 @@ void writePump(QJsonObject &root, PumpParams *pump)
     root["color"] = pump->color();
     root["is_active"] = pump->isActive();
     QJsonObject paramsJson;
-    for (Z::ParameterTS* p : *pump->params())
+    const auto pumpParams = *pump->params();
+    for (Z::ParameterTS* p : std::as_const(pumpParams))
         paramsJson[p->alias()] = writeValueTS(p->value());
     root["params"] = paramsJson;
 }

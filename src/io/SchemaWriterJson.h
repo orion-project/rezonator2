@@ -27,7 +27,7 @@ private:
     Z::Report _report;
 
     void writeGeneral(QJsonObject& root);
-    void writeCustomParams(QJsonObject& root);
+    void writeGlobalParams(QJsonObject& root);
     void writeParamLinks(QJsonObject& root);
     void writeFormulas(QJsonObject& root);
     void writeWindows(QJsonObject& root);

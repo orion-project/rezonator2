@@ -306,7 +306,10 @@ public:
         auto value = _source->value();
         auto res = _target->verify(value);
         if (res.isEmpty())
+        {
+            _target->setExpr(QString());
             _target->setValue(value);
+        }
         else
             qWarning() << "Param link" << str() << "Unable to set value to target, verification failed" << res;
 

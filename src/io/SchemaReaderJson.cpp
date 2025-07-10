@@ -160,6 +160,8 @@ void SchemaReaderJson::readGlobalParam(const QJsonObject& root, const QString &a
     auto res = readParamValue(root, param);
     if (!res.isEmpty())
         _report.warning(QString("Reading global parameter '%1': %2").arg(param->alias(), res));
+        
+    param->setExpr(root["expr"].toString());
 
     _schema->addGlobalParam(param);
 }
@@ -372,8 +374,10 @@ QList<Element*> readElements(const QJsonObject& root, Z::Report* report)
                 if (auto lens = dynamic_cast<ElemThickLens*>(elem); lens) {
                     for (const auto *r : {"R1", "R2"}) {
                         if (auto p = lens->param(r); p) {
-                            if (p->value().isZero())
+                            if (p->value().isZero()) {
                                 p->setValue(Z::Value::inf(p->value().unit()));
+                                p->setExpr("Inf");
+                            }
                         } else {
                             report->warning(QString("Parameter %1 is expected in element #%2 but not found").arg(r).arg(i));
                         }
@@ -440,9 +444,11 @@ Element* readElement(const QJsonObject& root, Z::Report* report)
             JsonValue paramJson(paramsJson, param->alias(), report);
             if (paramJson)
             {
-                auto res = readParamValue(paramJson.obj(), param);
+                auto paramObj = paramJson.obj();
+                auto res = readParamValue(paramObj, param);
                 if (!res.isEmpty())
                     report->warning(QString("Reading element '%1': %2").arg(elem->displayLabel(), res));
+                param->setExpr(paramObj["expr"].toString());
             }
         }
     }
