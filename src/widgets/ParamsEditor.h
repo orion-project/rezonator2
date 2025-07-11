@@ -63,6 +63,10 @@ public:
         /// Used to avoid unnecessary `parameterChanged` events.
         bool checkChanges = false;
 
+        /// Use expression parser.
+        /// If not set, only numeric value can be edited.
+        bool useExpression = false;
+
         Options(const Z::Parameters *p = nullptr) : params(p) {}
     };
 

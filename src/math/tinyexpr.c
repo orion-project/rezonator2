@@ -289,9 +289,16 @@ void next_token(state *s) {
                 switch (s->next++[0]) {
                     case '+': s->type = TOK_INFIX; s->function = add; break;
                     case '-': s->type = TOK_INFIX; s->function = sub; break;
-                    case '*': s->type = TOK_INFIX; s->function = mul; break;
+                    case '*': s->type = TOK_INFIX;
+                      if (s->next[0] == '*') {
+                        s->next++;
+                        s->function = pow;
+                      } else {
+                        s->function = mul;
+                      }
+                      break;
                     case '/': s->type = TOK_INFIX; s->function = divide; break;
-                    case '^': s->type = TOK_INFIX; s->function = pow; break;
+                    //case '^': s->type = TOK_INFIX; s->function = pow; break;
                     case '%': s->type = TOK_INFIX; s->function = fmod; break;
                     case '(': s->type = TOK_OPEN; break;
                     case ')': s->type = TOK_CLOSE; break;

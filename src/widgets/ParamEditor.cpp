@@ -8,6 +8,7 @@
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
+#include "widgets/OriValueEdit.h"
 
 #include <QDebug>
 #include <QHBoxLayout>
@@ -19,103 +20,72 @@
 //                                ValueEdit
 //------------------------------------------------------------------------------
 
-ValueEdit::ValueEdit() : QLineEdit()
+class ValueEdit : public Ori::Widgets::ValueEdit
 {
-    setProperty("role", "value-editor");
-    setAlignment(Qt::AlignRight);
-    setSizePolicy(QSizePolicy::Preferred, sizePolicy().verticalPolicy());
-    connect(this, &QLineEdit::textChanged, this, &ValueEdit::onTextEdited);
-    connect(this, &QLineEdit::textEdited, this, &ValueEdit::onTextEdited);
-}
+public:
+    ValueEdit(bool useExpression) : Ori::Widgets::ValueEdit(), _useExpression(useExpression)
+    {
+        setProperty("role", "value-editor");
 
-void ValueEdit::setValue(double v)
-{
-    _skipProcessing = true;
-    
-    _value = v;
-    _ok = !qIsNaN(_value);
-    indicateValidation();
-    
-    QLocale loc(QLocale::C);
-    QString s = loc.toString(_value, 'g', _numberPrecision);
-    // thousand separator for C-locale is comma, need not it
-    s = s.replace(loc.groupSeparator(), QString());
-    setText(s);
-
-    _skipProcessing = false;
-}
-
-QString ValueEdit::expr() const
-{
-    return text().trimmed();
-}
-
-void ValueEdit::setExpr(const QString &expr)
-{
-    setText(expr);
-}
-
-void ValueEdit::focusInEvent(QFocusEvent *e)
-{
-    QLineEdit::focusInEvent(e);
-    emit focused(true);
-}
-
-void ValueEdit::focusOutEvent(QFocusEvent *e)
-{
-    QLineEdit::focusOutEvent(e);
-    emit focused(false);
-}
-
-void ValueEdit::keyPressEvent(QKeyEvent *e)
-{
-    QLineEdit::keyPressEvent(e);
-    emit keyPressed(e->key());
-}
-
-void ValueEdit::onTextEdited(const QString& text)
-{
-    processInput(text);
-
-    if (_ok)
-        emit valueEdited(_value);
-}
-
-void ValueEdit::processInput(const QString& text)
-{
-    if (_skipProcessing) return;
-
-    // TODO: refine built-in functions and constants
-    // TODO: don't parse "1,2" as "2" (why parse lists?)
-    // TODO: add the ** operator for pow() unstead of ^
-    static double inf = qInf();
-    static const int varCount = 3;
-    static te_variable vars[varCount] = {{"inf", &inf}, {"Inf", &inf}, {"INF", &inf}};
-    
-    bool ok = true;
-    auto expr = text.toStdString();
-    te_expr *c = te_compile(expr.c_str(), vars, varCount, nullptr);
-    if (c) {
-        _value = te_eval(c);
-        ok = !qIsNaN(_value);
-        setToolTip(Z::format(_value));
-        te_free(c);
-    } else {
-        ok = false;
-        setToolTip("");
+        if (_useExpression)
+            setValidator(nullptr);
     }
-    if (ok != _ok) {
-        _ok = ok;
-        indicateValidation();
-    }
-}
 
-void ValueEdit::indicateValidation()
-{
-    setProperty("status", _ok ? "ok" : "invalid");
-    style()->unpolish(this);
-    style()->polish(this);
-}
+    QString expr() const
+    {
+        return text().trimmed();
+    }
+    
+    void setExpr(const QString &expr)
+    {
+        setText(expr);
+    }
+    
+    bool skipProcessing = false;
+
+protected:
+    bool _useExpression = false;
+
+    void processInput(const QString& text) override
+    {
+        if (!_useExpression) {
+            Ori::Widgets::ValueEdit::processInput(text);
+            return;
+        }
+    
+        if (skipProcessing) return;
+    
+        // TODO: refine built-in functions and constants
+        // TODO: don't parse "1,2" as "2" (why parse lists?)
+        static double inf = qInf();
+        static const int varCount = 3;
+        static te_variable vars[varCount] = {{"inf", &inf}, {"Inf", &inf}, {"INF", &inf}};
+        
+        bool ok = true;
+        auto expr = text.toStdString();
+        te_expr *c = te_compile(expr.c_str(), vars, varCount, nullptr);
+        if (c) {
+            _value = te_eval(c);
+            ok = !qIsNaN(_value);
+            setToolTip(Z::format(_value));
+            te_free(c);
+        } else {
+            ok = false;
+            setToolTip("");
+        }
+        if (ok != _ok) {
+            _ok = ok;
+            indicateValidation(ok);
+        }
+    }
+    
+    void indicateValidation(bool ok) override
+    {
+        setProperty("status", ok ? "ok" : "invalid");
+        style()->unpolish(this);
+        style()->polish(this);
+    }
+};
 
 //------------------------------------------------------------------------------
 //                              LinkButton
@@ -276,7 +246,8 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
         layout->addSpacing(def_spacing);
     }
 
-    _valueEditor = new ValueEdit;
+    _useExpression = opts.useExpression;
+    _valueEditor = new ValueEdit(_useExpression);
     setFocusProxy(_valueEditor);
     setFocusPolicy(Qt::StrongFocus);
 
@@ -347,9 +318,11 @@ void ParamEditor::populate()
 void ParamEditor::showValue(Z::Parameter *param, bool ignoreExpr)
 {
     QString expr = param->expr();
-    if (expr.isEmpty() || ignoreExpr)
+    if (!_useExpression || expr.isEmpty() || ignoreExpr) {
+        _valueEditor->skipProcessing = true;
         _valueEditor->setValue(param->value().value());
-    else _valueEditor->setExpr(expr);
+        _valueEditor->skipProcessing = false;
+    } else _valueEditor->setExpr(expr);
     _unitsSelector->setSelectedUnit(param->value().unit());
 }
 

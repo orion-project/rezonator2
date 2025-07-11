@@ -59,15 +59,6 @@ void ParamsEditor::removeEditors()
 
 ParamEditor *ParamsEditor::addEditor(Z::Parameter* param, const QVector<Z::Unit> &units)
 {
-    // TODO: explain why this check is needed
-    // TODO: why we pass the whole params list in _options,
-    // TODO: but then we seems adding editors explicitly (one by one?)
-    if (_options.params && !_options.params->contains(param))
-    {
-        qWarning() << "ParamsEditor::addEditor: invalid param, it is not in the parameters list";
-        return nullptr;
-    }
-
     if (_options.filter && !_options.filter->check(param))
         return nullptr;
 
@@ -78,6 +69,7 @@ ParamEditor *ParamsEditor::addEditor(Z::Parameter* param, const QVector<Z::Unit>
     o.menuButtonActions = _options.menuButtonActions;
     o.ownParam = _options.ownParams;
     o.checkChanges = _options.checkChanges;
+    o.useExpression = _options.useExpression;
     o.units = units;
     if (_options.makeAuxControl)
         o.auxControl = _options.makeAuxControl(param);

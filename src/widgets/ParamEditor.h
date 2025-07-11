@@ -11,43 +11,8 @@ QT_BEGIN_NAMESPACE
 class QLabel;
 QT_END_NAMESPACE
 
+class ValueEdit;
 class UnitComboBox;
-
-class ValueEdit : public QLineEdit
-{
-    Q_OBJECT
-
-public:
-    ValueEdit();
-    
-    double value() const { return _value; }
-    void setValue(double v);
-    bool ok() const { return _ok; }
-    QString expr() const;
-    void setExpr(const QString &expr);
-
-signals:
-    void focused(bool focus);
-    void keyPressed(int key);
-    void valueEdited(double value);
-
-protected:
-    void focusInEvent(QFocusEvent *e) override;
-    void focusOutEvent(QFocusEvent *e) override;
-    void keyPressEvent(QKeyEvent *e) override;
-
-private:
-    double _value = qQNaN();
-    bool _ok = true;
-    bool _skipProcessing = false;
-    int _numberPrecision = 6;
-
-    void onTextEdited(const QString& text);
-    void processInput(const QString& text);
-    
-    void indicateValidation();
-};
-
 
 // QPushButton looks ugly on "macintosh" style, it looses its standard view
 // and can't calcutale its size propely (even fixed size).
@@ -129,6 +94,10 @@ public:
         /// When `Apply` is called, check if parameter value is really changed.
         /// Used to avoid unnecessary `parameterChanged` events.
         bool checkChanges = false;
+        
+        /// Use expression parser.
+        /// If not set, only numeric value can be edited.
+        bool useExpression = false;
 
         /// Use only these units for unit selector
         /// instead of all those available for the parameter dimension.
@@ -196,6 +165,7 @@ private:
     bool _paramChangedHandlerEnabled = true;
     bool _ownParam;
     bool _checkChanges;
+    bool _useExpression;
 
     void linkToGlobalParameter();
     void showValue(Z::Parameter *param, bool ignoreExpr);

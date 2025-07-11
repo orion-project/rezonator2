@@ -406,6 +406,7 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     opts.ownParams = true;
     opts.checkChanges = true;
     opts.applyMode = ParamsEditor::Options::ApplyEnter;
+    opts.useExpression = true;
     auto paramsEditor = new ParamsEditor(opts);
     QVector<Z::Unit> reasonableUnits{Z::Units::mm(), Z::Units::cm(), Z::Units::m()};
     paramsEditor->addEditor(_D, {Z::Units::mm(), Z::Units::cm()});
@@ -613,7 +614,9 @@ void LensmakerWidget::storeValues(QJsonObject& root)
     root["show_vertex"] = bool(_visibleParts & PART_VERTEX);
 
     foreach(Z::Parameter *p, _params) {
-        root["param_"+p->alias()] = Z::IO::Json::writeValue(p->value());
+        auto paramJson = Z::IO::Json::writeValue(p->value());
+        paramJson["expr"] = p->expr();
+        root["param_"+p->alias()] = paramJson;
     }
     foreach(Z::Parameter *p, _results) {
         if (p->dim() == Z::Dims::none())
@@ -644,13 +647,15 @@ void LensmakerWidget::restoreValues(QJsonObject& root)
 
     foreach(Z::Parameter *p, _params)
     {
-        auto res = Z::IO::Json::readValue(root["param_"+p->alias()].toObject(), p->dim());
+        auto paramJson = root["param_"+p->alias()].toObject();
+        auto res = Z::IO::Json::readValue(paramJson, p->dim());
         if (res.ok()) {
             auto v = res.value();
             // Convert from storage format <= v2.0.15
             if ((p->alias() == "R1" || p->alias() == "R2") && v.isZero())
                 v = Z::Value::inf(v.unit());
             p->setValue(v);
+            p->setExpr(paramJson["expr"].toString());
         }
     }
     foreach(Z::Parameter *p, _results) {
