@@ -157,6 +157,7 @@ public:
     void setValue(const TValue& value)
     {
         _value = value;
+        _expr = QString();
         notifyListeners();
     }
 
@@ -164,6 +165,7 @@ public:
     void setRawValue(const TValue& value)
     {
         _value = value;
+        _expr = QString();
     }
 
     /// Verify parameter value.
@@ -180,6 +182,10 @@ public:
     ParamValueDriver valueDriver() const { return _valueDriver; }
     void setValueDriver(ParamValueDriver driver) { _valueDriver = driver; }
 
+    /// An expression used in editor to produce parameter value
+    QString expr() const { return _expr; }
+    void setExpr(const QString &expr) { _expr = expr; }
+
 protected:
     ValuedParameter() : ParameterBase() {}
 
@@ -193,6 +199,7 @@ protected:
 
 protected:
     TValue _value;
+    QString _expr;
     ValueVerifierBase<TValue> *_verifier = nullptr;
     ParamValueDriver _valueDriver = ParamValueDriver::None;
 };
@@ -255,7 +262,7 @@ public:
     {
         return ValuedParameter<TValue>::displayLabel() % " = " % ValuedParameter<TValue>::_value.displayStr();
     }
-
+    
 private:
     Dim _dim = Dims::none();
 };
@@ -457,7 +464,8 @@ public:
 
 private:
     Parameter* _param;
-    Value _backup;
+    Value _value;
+    QString _expr;
     const char *_reason;
 };
 

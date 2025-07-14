@@ -3,6 +3,8 @@
 #include "ParamsListWidget.h"
 #include "UnitWidgets.h"
 #include "../app/Appearance.h"
+#include "../core/Format.h"
+#include "../math/tinyexpr.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
@@ -10,10 +12,80 @@
 
 #include <QDebug>
 #include <QHBoxLayout>
+#include <QKeyEvent>
 #include <QLabel>
 #include <QMenu>
 
-using Ori::Widgets::ValueEdit;
+//------------------------------------------------------------------------------
+//                                ValueEdit
+//------------------------------------------------------------------------------
+
+class ValueEdit : public Ori::Widgets::ValueEdit
+{
+public:
+    ValueEdit(bool useExpression) : Ori::Widgets::ValueEdit(), _useExpression(useExpression)
+    {
+        setProperty("role", "value-editor");
+
+        if (_useExpression)
+            setValidator(nullptr);
+    }
+
+    QString expr() const
+    {
+        return text().trimmed();
+    }
+    
+    void setExpr(const QString &expr)
+    {
+        setText(expr);
+    }
+    
+    bool skipProcessing = false;
+
+protected:
+    bool _useExpression = false;
+
+    void processInput(const QString& text) override
+    {
+        if (!_useExpression) {
+            Ori::Widgets::ValueEdit::processInput(text);
+            return;
+        }
+    
+        if (skipProcessing) return;
+    
+        // TODO: refine built-in functions and constants
+        // TODO: don't parse "1,2" as "2" (why parse lists?)
+        static double inf = qInf();
+        static const int varCount = 3;
+        static te_variable vars[varCount] = {{"inf", &inf}, {"Inf", &inf}, {"INF", &inf}};
+        
+        bool ok = true;
+        auto expr = text.toStdString();
+        te_expr *c = te_compile(expr.c_str(), vars, varCount, nullptr);
+        if (c) {
+            _value = te_eval(c);
+            ok = !qIsNaN(_value);
+            setToolTip(Z::format(_value));
+            te_free(c);
+        } else {
+            ok = false;
+            setToolTip("");
+        }
+        if (ok != _ok) {
+            _ok = ok;
+            indicateValidation(ok);
+        }
+    }
+    
+    void indicateValidation(bool ok) override
+    {
+        setProperty("status", ok ? "ok" : "invalid");
+        style()->unpolish(this);
+        style()->polish(this);
+    }
+};
 
 //------------------------------------------------------------------------------
 //                              LinkButton
@@ -174,7 +246,8 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
         layout->addSpacing(def_spacing);
     }
 
-    _valueEditor = new ValueEdit;
+    _useExpression = opts.useExpression;
+    _valueEditor = new ValueEdit(_useExpression);
     setFocusProxy(_valueEditor);
     setFocusPolicy(Qt::StrongFocus);
 
@@ -239,12 +312,17 @@ void ParamEditor::parameterChanged(Z::ParameterBase*)
 
 void ParamEditor::populate()
 {
-    showValue(_param);
+    showValue(_param, false);
 }
 
-void ParamEditor::showValue(Z::Parameter *param)
+void ParamEditor::showValue(Z::Parameter *param, bool ignoreExpr)
 {
-    _valueEditor->setValue(param->value().value());
+    QString expr = param->expr();
+    if (!_useExpression || expr.isEmpty() || ignoreExpr) {
+        _valueEditor->skipProcessing = true;
+        _valueEditor->setValue(param->value().value());
+        _valueEditor->skipProcessing = false;
+    } else _valueEditor->setExpr(expr);
     _unitsSelector->setSelectedUnit(param->value().unit());
 }
 
@@ -261,7 +339,6 @@ void ParamEditor::setReadonly(bool valueOn, bool unitOn)
         return;
     }
     _valueEditor->setReadOnly(valueOn);
-    _valueEditor->setFont(Z::Gui::ValueFont().readOnly(valueOn).get());
     _unitsSelector->setEnabled(!unitOn);
 }
 
@@ -273,7 +350,7 @@ Z::Value ParamEditor::getValue() const
 QString ParamEditor::verify() const
 {
     if (!_valueEditor->ok())
-        return tr("Ivalid number format");
+        return tr("Ivalid value expression");
 
     Z::Value value = getValue();
 
@@ -333,6 +410,7 @@ void ParamEditor::apply()
     else {
         _paramChangedHandlerEnabled = false;
         _param->setValue(value);
+        _param->setExpr(_valueEditor->expr());
         _paramChangedHandlerEnabled = true;
     }
 }
@@ -390,7 +468,7 @@ void ParamEditor::linkToGlobalParameter()
     _linkSource = selected != ParamsListWidget::noneParam() ? selected : nullptr;
     _linkButton->showLinkSource(_linkSource);
     setIsLinked(_linkSource);
-    showValue(_linkSource ? _linkSource : _param);
+    showValue(_linkSource ? _linkSource : _param, _linkSource);
 }
 
 void ParamEditor::unitChangedRaw(Z::Unit unit)

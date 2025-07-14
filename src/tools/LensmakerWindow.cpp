@@ -8,7 +8,6 @@
 #include "../widgets/ParamsEditor.h"
 #include "../widgets/ParamEditor.h"
 
-#include "core/OriFloatingPoint.h"
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
@@ -132,8 +131,8 @@ class LensItem : public QGraphicsItem
 public:
     CurvedForm getForm() const
     {
-        bool plane1 = Double(R1).is(0);
-        bool plane2 = Double(R2).is(0);
+        bool plane1 = qIsInf(R1);
+        bool plane2 = qIsInf(R2);
         if (plane1 && plane2) return Plane;
         if (plane1) return (R2 < 0) ? PlanoConvex : PlanoConcave;
         if (plane2) return (R1 < 0) ? ConcavePlano : ConvexPlano;
@@ -151,11 +150,11 @@ public:
         const double d1 = r1*2.0; // left diameter of curvature
         const double d2 = r2*2.0; // right diameter of curvature
         double s1 = 0, a1 = 0, s2 = 0, a2 = 0;
-        if (!Double(R1).is(0)) {
+        if (!qIsInf(R1)) {
             s1 = r1 - qSqrt(Sqr(r1) - Sqr(h)); // left arc sagitta
             a1 = qRadiansToDegrees(qAsin(h/r1)); // left arc half-angle
         }
-        if (!Double(R2).is(0)) {
+        if (!qIsInf(R2)) {
             s2 = r2 - qSqrt(Sqr(r2) - Sqr(h)); // right arc sagitta
             a2 = qRadiansToDegrees(qAsin(h/r2)); // right arc half-angle
         }
@@ -370,12 +369,12 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
                           tr("Left ROC"),
                           tr("Negative value means right-bulged surface, "
                              "positive value means left-bulged surface. "
-                             "Set to zero to get planar face."));
+                             "Set to Inf to get planar face."));
     _R2 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R2"), QStringLiteral("R<sub>2</sub>"),
                           tr("Right ROC"),
                           tr("Negative value means right-bulged surface, "
                              "positive value means left-bulged surface. "
-                             "Set to zero to get planar face."));
+                             "Set to Inf to get planar face."));
     _IOR = new Z::Parameter(Z::Dims::none(), QStringLiteral("n"), QStringLiteral("n"),
                           tr("Index of refraction"), tr("Index of refraction of the lens material."));
     _T = new Z::Parameter(Z::Dims::linear(), QStringLiteral("T"), QStringLiteral("T"),
@@ -407,6 +406,7 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     opts.ownParams = true;
     opts.checkChanges = true;
     opts.applyMode = ParamsEditor::Options::ApplyEnter;
+    opts.useExpression = true;
     auto paramsEditor = new ParamsEditor(opts);
     QVector<Z::Unit> reasonableUnits{Z::Units::mm(), Z::Units::cm(), Z::Units::m()};
     paramsEditor->addEditor(_D, {Z::Units::mm(), Z::Units::cm()});
@@ -614,7 +614,9 @@ void LensmakerWidget::storeValues(QJsonObject& root)
     root["show_vertex"] = bool(_visibleParts & PART_VERTEX);
 
     foreach(Z::Parameter *p, _params) {
-        root["param_"+p->alias()] = Z::IO::Json::writeValue(p->value());
+        auto paramJson = Z::IO::Json::writeValue(p->value());
+        paramJson["expr"] = p->expr();
+        root["param_"+p->alias()] = paramJson;
     }
     foreach(Z::Parameter *p, _results) {
         if (p->dim() == Z::Dims::none())
@@ -645,9 +647,16 @@ void LensmakerWidget::restoreValues(QJsonObject& root)
 
     foreach(Z::Parameter *p, _params)
     {
-        auto res = Z::IO::Json::readValue(root["param_"+p->alias()].toObject(), p->dim());
-        if (res.ok())
-            p->setValue(res.value());
+        auto paramJson = root["param_"+p->alias()].toObject();
+        auto res = Z::IO::Json::readValue(paramJson, p->dim());
+        if (res.ok()) {
+            auto v = res.value();
+            // Convert from storage format <= v2.0.15
+            if ((p->alias() == "R1" || p->alias() == "R2") && v.isZero())
+                v = Z::Value::inf(v.unit());
+            p->setValue(v);
+            p->setExpr(paramJson["expr"].toString());
+        }
     }
     foreach(Z::Parameter *p, _results) {
         if (p->dim() == Z::Dims::none())

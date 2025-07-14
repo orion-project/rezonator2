@@ -316,7 +316,7 @@ void SchemaViewWindow::paste()
     if (AppSettings::instance().elemAutoLabelPasted)
     {
         Elements allElems(schema()->elements());
-        for (auto elem : pastedElems)
+        for (auto elem : std::as_const(pastedElems))
         {
             Z::Utils::generateLabel(allElems, elem);
             allElems << elem;
@@ -376,7 +376,7 @@ void SchemaViewWindow::elemsContextMenuAboutToShow()
     {
         menuAdjuster = new QMenu(tr("Add Adjuster"));
         menuAdjuster->setIcon(QIcon(":/toolbar/adjust"));
-        for (auto param : params)
+        for (auto param : std::as_const(params))
         {
             // Don't use param->label() because menus do not support HTML formatting (e.g. n<sub>0</sub>)
             auto action = menuAdjuster->addAction(param->alias(), this, &SchemaViewWindow::adjustParam);

@@ -95,6 +95,10 @@ public:
 
     static Value parse(const QString& valueStr);
     static Value fromSi(const double& valueSi, Unit unit) { return Value(unit->fromSi(valueSi), unit); }
+    static Value inf(Unit unit);
+    
+    bool isZero() const;
+    bool isInf() const;
 
 private:
     double _value;
@@ -119,8 +123,8 @@ struct ValuePoint
 // Should be in global namespace for convenience.
 
 #define Z_VALUE_LITERAL(unit)\
-    inline Z::Value operator "" _##unit(long double value) { return Z::Value(double(value), Z::Units::unit()); }\
-    inline Z::Value operator "" _##unit(unsigned long long value) { return Z::Value(double(value), Z::Units::unit()); }
+    inline Z::Value operator ""_##unit(long double value) { return Z::Value(double(value), Z::Units::unit()); }\
+    inline Z::Value operator ""_##unit(unsigned long long value) { return Z::Value(double(value), Z::Units::unit()); }
 
 Z_VALUE_LITERAL(Ao)
 Z_VALUE_LITERAL(nm)

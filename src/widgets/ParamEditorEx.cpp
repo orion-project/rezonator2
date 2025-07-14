@@ -19,6 +19,7 @@ ParamEditorEx::ParamEditorEx(Z::Parameter *param, Z::Formulas *formulas, Z::Para
 {
     _tmpParam = new Z::Parameter(param->dim(), param->alias());
     _tmpParam->setValue(param->value());
+    _tmpParam->setExpr(param->expr());
 
     _formula = _formulas->get(_param);
     _hasFormula = _formula;
@@ -32,7 +33,7 @@ ParamEditorEx::ParamEditorEx(Z::Parameter *param, Z::Formulas *formulas, Z::Para
     menuButton->setFlat(true);
     menuButton->setIcon(QIcon(":/toolbar/menu"));
     menuButton->setFixedWidth(24);
-    connect(menuButton, &QPushButton::clicked, [this, menu, menuButton](){
+    connect(menuButton, &QPushButton::clicked, this, [this, menu, menuButton](){
         this->_paramEditor->editorFocused(true);
         // button->setMenu() crashes the app on MacOS when button is clicked, so show manually
         menu->popup(menuButton->mapToGlobal(menuButton->rect().bottomLeft()));
@@ -40,6 +41,7 @@ ParamEditorEx::ParamEditorEx(Z::Parameter *param, Z::Formulas *formulas, Z::Para
 
     ParamEditor::Options opts(_tmpParam);
     opts.auxControl = menuButton;
+    opts.useExpression = true;
 
     _paramEditor = new ParamEditor(opts);
 
@@ -144,6 +146,7 @@ void ParamEditorEx::apply()
         _paramEditor->apply();
     }
     _param->setValue(_tmpParam->value());
+    _param->setExpr(_tmpParam->expr());
 }
 
 void ParamEditorEx::focus()

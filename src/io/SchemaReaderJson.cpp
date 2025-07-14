@@ -1,10 +1,10 @@
 #include "SchemaReaderJson.h"
 
-#include "CommonUtils.h"
 #include "JsonUtils.h"
 #include "ISchemaWindowStorable.h"
 #include "../app/AppSettings.h"
 #include "../core/Schema.h"
+#include "../core/Elements.h"
 #include "../core/ElementsCatalog.h"
 #include "../core/ElementFormula.h"
 #include "../windows/WindowsManager.h"
@@ -72,11 +72,11 @@ void SchemaReaderJson::readFromUtf8(const QByteArray& data)
 
     QJsonObject root = doc.object();
 
-    Ori::Version version(root["schema_version"].toString());
-    if (version > Z::IO::Utils::currentVersion())
+    Ori::Version version(root[JSON_KEY_VERSION].toString());
+    if (version > Z::IO::Json::currentVersion())
         return _report.error(QString(
             "File version %1 is not supported, max supported version: %2")
-                .arg(version.str(), Z::IO::Utils::currentVersion().str()));
+                .arg(version.str(), Z::IO::Json::currentVersion().str()));
 
     readGeneral(root);
     readGlobalParams(root);
@@ -127,7 +127,8 @@ void SchemaReaderJson::readGlobalParams(const QJsonObject& root)
     JsonValue paramsJson(root, "custom_params", &_report);
     if (paramsJson)
     {
-        for (const QString& paramAlias : paramsJson.obj().keys())
+        const auto paramAliases = paramsJson.obj().keys();
+        for (const QString& paramAlias : std::as_const(paramAliases))
         {
             JsonValue paramJson(paramsJson, paramAlias, &_report);
             if (paramJson)
@@ -159,6 +160,8 @@ void SchemaReaderJson::readGlobalParam(const QJsonObject& root, const QString &a
     auto res = readParamValue(root, param);
     if (!res.isEmpty())
         _report.warning(QString("Reading global parameter '%1': %2").arg(param->alias(), res));
+        
+    param->setExpr(root["expr"].toString());
 
     _schema->addGlobalParam(param);
 }
@@ -181,7 +184,7 @@ void SchemaReaderJson::readPumps(const QJsonObject& root)
         else return;
     }
 
-    for (auto pump : pumps)
+    for (auto pump : std::as_const(pumps))
         _schema->pumps()->append(pump);
 }
 
@@ -356,6 +359,29 @@ QList<Element*> readElements(const QJsonObject& root, Z::Report* report)
             auto elem = readElement((*it).toObject(), report);
             if (elem) elems << elem;
         }
+    
+    Ori::Version version(root[JSON_KEY_VERSION].toString());
+    if (version <= Ori::Version(2, 0))
+    {
+        // Up to 2.0: 0 used instead of Inf for thick lens ROC
+        // Since 2.1: Inf is used
+        // Here we don't care if the parameter is linked to a global param
+        // because there is no direct way to say the global param means "ROC"
+        for (int i = 0; i < elems.size(); i++) {
+            auto elem = elems.at(i);
+            if (auto lens = dynamic_cast<ElemThickLens*>(elem); lens) {
+                for (const auto *r : {"R1", "R2"}) {
+                    if (auto p = lens->param(r); p) {
+                        if (p->value().isZero())
+                            p->setValue(Z::Value::inf(p->value().unit()));
+                    } else {
+                        report->warning(QString("Parameter %1 is expected in element #%2 but not found").arg(r).arg(i));
+                    }
+                }
+            }
+        }
+    }
+    
     return elems;
 }
 
@@ -413,9 +439,11 @@ Element* readElement(const QJsonObject& root, Z::Report* report)
             JsonValue paramJson(paramsJson, param->alias(), report);
             if (paramJson)
             {
-                auto res = readParamValue(paramJson.obj(), param);
+                auto paramObj = paramJson.obj();
+                auto res = readParamValue(paramObj, param);
                 if (!res.isEmpty())
                     report->warning(QString("Reading element '%1': %2").arg(elem->displayLabel(), res));
+                param->setExpr(paramObj["expr"].toString());
             }
         }
     }
@@ -464,7 +492,8 @@ PumpParams* readPump(const QJsonObject& root, Z::Report* report)
         return nullptr;
     }
 
-    for (Z::ParameterTS *param : *pump->params())
+    const auto pumpParams = *pump->params();
+    for (Z::ParameterTS *param : std::as_const(pumpParams))
     {
         JsonValue paramJson(paramsJson, param->alias(), report);
         if (!paramJson) continue;

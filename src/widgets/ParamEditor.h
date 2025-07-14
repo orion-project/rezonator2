@@ -1,6 +1,7 @@
 #ifndef PARAM_EDITOR_H
 #define PARAM_EDITOR_H
 
+#include <QLineEdit>
 #include <QToolButton>
 #include <QPushButton>
 
@@ -10,12 +11,8 @@ QT_BEGIN_NAMESPACE
 class QLabel;
 QT_END_NAMESPACE
 
-namespace Ori {
-namespace Widgets {
-    class ValueEdit;
-}}
+class ValueEdit;
 class UnitComboBox;
-
 
 // QPushButton looks ugly on "macintosh" style, it looses its standard view
 // and can't calcutale its size propely (even fixed size).
@@ -97,6 +94,10 @@ public:
         /// When `Apply` is called, check if parameter value is really changed.
         /// Used to avoid unnecessary `parameterChanged` events.
         bool checkChanges = false;
+        
+        /// Use expression parser.
+        /// If not set, only numeric value can be edited.
+        bool useExpression = false;
 
         /// Use only these units for unit selector
         /// instead of all those available for the parameter dimension.
@@ -155,7 +156,7 @@ private:
     Z::Parameter* _linkSource = nullptr;
     const Z::Parameters* _globalParams;
     Z::ParamLinks* _paramLinks;
-    Ori::Widgets::ValueEdit* _valueEditor;
+    ValueEdit* _valueEditor;
     UnitComboBox* _unitsSelector;
     QLabel* _labelName = nullptr;
     QLabel* _labelLabel = nullptr;
@@ -164,9 +165,10 @@ private:
     bool _paramChangedHandlerEnabled = true;
     bool _ownParam;
     bool _checkChanges;
+    bool _useExpression;
 
     void linkToGlobalParameter();
-    void showValue(Z::Parameter *param);
+    void showValue(Z::Parameter *param, bool ignoreExpr);
     void setIsLinked(bool on);
     void editorKeyPressed(int key);
     void unitChangedRaw(Z::Unit unit);

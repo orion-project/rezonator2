@@ -2,10 +2,12 @@ $base-color: #dadbde;
 $border-color: silver;
 $dark-border-color: gray;
 $light-border-color: #cbcccd;
+$invalid-border-color: #e87e7e;
 $border-radius: 5px;
 $default-border: 1px solid $border-color;
 $dark-border: 1px solid $dark-border-color;
 $light-border: 1px solid $light-border-color;
+$invalid-border: 1px solid $invalid-border-color;
 $selection-color: steelBlue; 
 $light-selection-color: #9db4c5;
 $text-color: #222;
@@ -15,6 +17,7 @@ $muted-text-color: #778;
 $paper-color: white;
 $mid-paper-color: #f6f6f8;
 $dark-paper-color: #eaebee;
+$invalid-paper-color: #ffb5b5;
 $base-gradient: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 $paper-color, stop:1 $base-color);
 $light-gradient: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #fefefe, stop:1 #f6f7f9);
 
@@ -209,8 +212,8 @@ PopupMessage[mode=affirm] {
   background: #b5fbb5;
 }
 PopupMessage[mode=error] {
-  border: 1px solid #e87e7e;
-  background: #ffb5b5;
+  border: $invalid-border;
+  background: $invalid-paper-color;
 }
 PopupMessage[mode=info] {
   border: 1px solid #C0C0C0;
@@ -323,6 +326,23 @@ QTextEdit, QPlainTextEdit, QListView, QTableView, QTreeView, QGraphicsView {
 
 QLineEdit, QSpinBox {
   background: $paper-color;
+}
+
+QLineEdit[role=value-editor] {
+  windows:font-size: 10pt;
+  macos:font-size: 14pt;
+  linux:font-size: 10pt;
+}
+
+QLineEdit[role=value-editor]:read-only {
+  font-style: italic;
+  background-color: $dark-paper-color;
+}
+
+QLineEdit[role=value-editor][status=invalid] {
+  border: $invalid-border;
+  border-radius: 3px;
+  background-color: $invalid-paper-color;
 }
 
 /************************************
