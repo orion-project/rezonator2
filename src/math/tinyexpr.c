@@ -161,31 +161,53 @@ static double npr(double n, double r) {return ncr(n, r) * fac(r);}
 #pragma function (floor)
 #endif
 
+static double cot(double arg) { return 1.0 / tan(arg); }
+static double acot(double arg) { return atan(1.0 / arg); }
+static double coth(double arg) { return 1.0 / tanh(arg); }
+
+static double sec(double arg) { return 1.0 / cos(arg); }
+static double sech(double arg) { return 1.0 / cosh(arg); }
+static double csc(double arg) { return 1.0 / sin(arg); }
+static double csch(double arg) { return 1.0 / sinh(arg); }
+
+static double deg2rad(double arg) { return arg * 3.14159265358979323846 / 180.0; }
+static double rad2deg(double arg) { return arg * 180.0 / 3.14159265358979323846; }
+
 static const te_variable functions[] = {
     /* must be in alphabetical order */
     {"abs", fabs,     TE_FUNCTION1 | TE_FLAG_PURE, 0},
     {"acos", acos,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
+    {"acot", acot, TE_FUNCTION1 | TE_FLAG_PURE, 0},
     {"asin", asin,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
     {"atan", atan,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
     {"atan2", atan2,  TE_FUNCTION2 | TE_FLAG_PURE, 0},
     {"ceil", ceil,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
+    {"csc", csc, TE_FUNCTION1 | TE_FLAG_PURE, 0},
+    {"csch", csch, TE_FUNCTION1 | TE_FLAG_PURE, 0},
     {"cos", cos,      TE_FUNCTION1 | TE_FLAG_PURE, 0},
     {"cosh", cosh,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
-    {"e", e,          TE_FUNCTION0 | TE_FLAG_PURE, 0},
+    {"cot", cot, TE_FUNCTION1 | TE_FLAG_PURE, 0},
+    {"coth", coth, TE_FUNCTION1 | TE_FLAG_PURE, 0},
+    {"deg2rad", deg2rad, TE_FUNCTION1 | TE_FLAG_PURE, 0},
+    // {"e", e,          TE_FUNCTION0 | TE_FLAG_PURE, 0},
     {"exp", exp,      TE_FUNCTION1 | TE_FLAG_PURE, 0},
     {"fac", fac,      TE_FUNCTION1 | TE_FLAG_PURE, 0},
     {"floor", floor,  TE_FUNCTION1 | TE_FLAG_PURE, 0},
+    {"lg", log10, TE_FUNCTION1 | TE_FLAG_PURE, 0},
     {"ln", log,       TE_FUNCTION1 | TE_FLAG_PURE, 0},
-#ifdef TE_NAT_LOG
-    {"log", log,      TE_FUNCTION1 | TE_FLAG_PURE, 0},
-#else
-    {"log", log10,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
-#endif
+// #ifdef TE_NAT_LOG
+//     {"log", log,      TE_FUNCTION1 | TE_FLAG_PURE, 0},
+// #else
+//     {"log", log10,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
+// #endif
     {"log10", log10,  TE_FUNCTION1 | TE_FLAG_PURE, 0},
-    {"ncr", ncr,      TE_FUNCTION2 | TE_FLAG_PURE, 0},
-    {"npr", npr,      TE_FUNCTION2 | TE_FLAG_PURE, 0},
+    // {"ncr", ncr,      TE_FUNCTION2 | TE_FLAG_PURE, 0},
+    // {"npr", npr,      TE_FUNCTION2 | TE_FLAG_PURE, 0},
     {"pi", pi,        TE_FUNCTION0 | TE_FLAG_PURE, 0},
     {"pow", pow,      TE_FUNCTION2 | TE_FLAG_PURE, 0},
+    {"rad2deg", rad2deg, TE_FUNCTION1 | TE_FLAG_PURE, 0},
+    {"sec", sec, TE_FUNCTION1 | TE_FLAG_PURE, 0},
+    {"sech", sech, TE_FUNCTION1 | TE_FLAG_PURE, 0},
     {"sin", sin,      TE_FUNCTION1 | TE_FLAG_PURE, 0},
     {"sinh", sinh,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
     {"sqrt", sqrt,    TE_FUNCTION1 | TE_FLAG_PURE, 0},
@@ -289,16 +311,19 @@ void next_token(state *s) {
                 switch (s->next++[0]) {
                     case '+': s->type = TOK_INFIX; s->function = add; break;
                     case '-': s->type = TOK_INFIX; s->function = sub; break;
-                    case '*': s->type = TOK_INFIX;
-                      if (s->next[0] == '*') {
-                        s->next++;
-                        s->function = pow;
-                      } else {
-                        s->function = mul;
-                      }
-                      break;
+                    case '*': s->type = TOK_INFIX; s->function = mul; break;
+                    // case '*': s->type = TOK_INFIX;
+                    //   // Add an additional pow operator ** as in Python (coming)
+                    //   // Keep the existing ^ operator for compatibility with Lua
+                    //   if (s->next[0] == '*') {
+                    //     s->next++;
+                    //     s->function = pow;
+                    //   } else {
+                    //     s->function = mul;
+                    //   }
+                    //   break;
                     case '/': s->type = TOK_INFIX; s->function = divide; break;
-                    //case '^': s->type = TOK_INFIX; s->function = pow; break;
+                    case '^': s->type = TOK_INFIX; s->function = pow; break;
                     case '%': s->type = TOK_INFIX; s->function = fmod; break;
                     case '(': s->type = TOK_OPEN; break;
                     case ')': s->type = TOK_CLOSE; break;

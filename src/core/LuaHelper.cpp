@@ -138,6 +138,9 @@ QString Lua::open()
 
     luaL_openlibs(_lua);
     registerGlobalFuncs(_lua);
+    setGlobalVar("inf", qInf());
+    setGlobalVar("Inf", qInf());
+    setGlobalVar("INF", qInf());
     return QString();
 }
 

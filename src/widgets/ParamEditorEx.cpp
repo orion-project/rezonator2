@@ -41,6 +41,7 @@ ParamEditorEx::ParamEditorEx(Z::Parameter *param, Z::Formulas *formulas, Z::Para
 
     ParamEditor::Options opts(_tmpParam);
     opts.auxControl = menuButton;
+    opts.useExpression = true;
 
     _paramEditor = new ParamEditor(opts);
 
