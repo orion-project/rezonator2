@@ -118,9 +118,9 @@ print('SphericalInterface\n')
 # ../help/matrix/ElemSphericalInterface.png
 n1 = 1.7
 n2 = 3.8
-R = 0.9
-M = make_abcd(1, 0, (n2-n1)/R/n2, n1/n2)
-M_inv = make_abcd(1, 0, (n1-n2)/-R/n1, n2/n1)
+R = -0.9
+M = make_abcd(1, 0, (n1-n2)/R/n2, n1/n2)
+M_inv = make_abcd(1, 0, (n2-n1)/-R/n1, n2/n1)
 print_abcd('M', M)
 print_abcd('M_inv', M_inv)
 

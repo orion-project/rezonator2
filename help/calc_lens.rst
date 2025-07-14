@@ -28,10 +28,7 @@ Lens parameters:
 `T` - Lens thickness along optical axis. It's the distance between points `V` and `V'`.
 
 .. note::
-  Physically a planar surface have infinite radius of curvature. And one actually sometimes could see the Inf value in result fields. But here it is just a matter of convenience - it is easier to type 0 than Inf or something. And since a lens face can't really have zero ROC, the 0 value can be used for something practical.
-
-.. note::
-  Note that here the `standard sign convention <https://en.wikipedia.org/wiki/Radius_of_curvature_(optics)>`_ for optical surfaces is applied. While elements :doc:`matrix/ElemThickLens` and :doc:`matrix/ElemSphericalInterface` use an opposite sign convention that is for historical reason and will be changed to match the standard.
+  The `standard sign convention <https://en.wikipedia.org/wiki/Radius_of_curvature_(optics)>`_ for optical surfaces is used.
 
 Calculated results:
 -------------------

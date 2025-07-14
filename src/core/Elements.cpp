@@ -574,8 +574,9 @@ ElemSphericalInterface::ElemSphericalInterface() : ElementInterface()
 {
     _radius = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R"), QStringLiteral("R"),
                                qApp->translate("Param", "Radius of curvature"),
-                               qApp->translate("Param", "Negative value means left-bulged surface, "
-                                                        "positive value means right-bulged surface."));
+                               qApp->translate("Param", "Negative value means right-bulged surface, "
+                                                        "positive value means left-bulged surface. "
+                                                        "Set to Inf to get the flat surface."));
     _radius->setValue(100_mm);
 
     addParam(_radius);
@@ -588,11 +589,17 @@ void ElemSphericalInterface::calcMatrixInternal()
     const double n1 = ior1();
     const double n2 = ior2();
     const double R = radius();
+    const bool flat = qIsInf(R);
 
-    _mt.assign(1, 0, (n2-n1)/R/n2, n1/n2);
+    if (flat) {
+        _mt.assign(1, 0, 0, n1/n2);
+        _mt_inv.assign(1, 0, 0, n2/n1);
+    } else {
+        _mt.assign(1, 0, (n1-n2)/R/n2, n1/n2);
+        _mt_inv.assign(1, 0, (n2-n1)/(-R)/n1, n2/n1);
+    }
+    
     _ms = _mt;
-
-    _mt_inv.assign(1, 0, (n1-n2)/(-R)/n1, n2/n1);
     _ms_inv = _mt_inv;
 }
 
@@ -606,17 +613,17 @@ ElemThickLens::ElemThickLens() : ElementRange()
 
     _radius1 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R1"), QStringLiteral("R<sub>1</sub>"),
                                 qApp->translate("Param", "Left radius of curvature"),
-                                qApp->translate("Param", "Negative value means left-bulged surface, "
-                                                         "positive value means right-bulged surface. "
+                                qApp->translate("Param", "Negative value means right-bulged surface, "
+                                                         "positive value means left-bulged surface. "
                                                          "Set to Inf to get the flat surface."));
     _radius2 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R2"), QStringLiteral("R<sub>2</sub>"),
                                 qApp->translate("Param", "Right radius of curvature"),
-                                qApp->translate("Param", "Negative value means left-bulged surface, "
-                                                         "positive value means right-bulged surface. "
+                                qApp->translate("Param", "Negative value means right-bulged surface, "
+                                                         "positive value means left-bulged surface. "
                                                          "Set to Inf to get the flat surface."));
 
-    _radius1->setValue(-100_mm);
-    _radius2->setValue(100_mm);
+    _radius1->setValue(100_mm);
+    _radius2->setValue(-100_mm);
 
     addParam(_radius1);
     addParam(_radius2);
@@ -651,32 +658,32 @@ void ElemThickLens::calcMatrixInternal()
     else if (flat1)
     {
         A = 1;
-        C = -(n-1)/R2;
-        D = 1 - L/R2*(n-1)/n;
+        C = (n-1)/R2;
+        D = 1 + L/R2*(n-1)/n;
 
-        A_inv = 1 + L/R1_inv*(n-1)/n;
-        C_inv = (n-1)/R1_inv;
+        A_inv = 1 - L/R1_inv*(n-1)/n;
+        C_inv = -(n-1)/R1_inv;
         D_inv = 1;
     }
     else if (flat2)
     {
-        A = 1 + L/R1*(n-1)/n;
-        C = (n-1)/R1;
+        A = 1 - L/R1*(n-1)/n;
+        C = -(n-1)/R1;
         D = 1;
 
         A_inv = 1;
-        C_inv = -(n-1)/R2_inv;
-        D_inv = 1 - L/R2_inv*(n-1)/n;
+        C_inv = (n-1)/R2_inv;
+        D_inv = 1 + L/R2_inv*(n-1)/n;
     }
     else
     {
-        A = 1 + (L/R1)*(n-1)/n;
-        C = (n-1)*(1/R1 - 1/R2) - L/R1/R2*(n-1)*(n-1)/n;
-        D = 1 - (L/R2)*(n-1)/n;
+        A = 1 - (L/R1)*(n-1)/n;
+        C = (n-1)*(1/R2 - 1/R1) - L/R1/R2*(n-1)*(n-1)/n;
+        D = 1 + (L/R2)*(n-1)/n;
 
-        A_inv = 1 + (L/R1_inv)*(n-1)/n;
-        C_inv = (n-1)*(1/R1_inv - 1/R2_inv) - L/R1_inv/R2_inv*(n-1)*(n-1)/n;
-        D_inv = 1 - (L/R2_inv)*(n-1)/n;
+        A_inv = 1 - (L/R1_inv)*(n-1)/n;
+        C_inv = (n-1)*(1/R2_inv - 1/R1_inv) - L/R1_inv/R2_inv*(n-1)*(n-1)/n;
+        D_inv = 1 + (L/R2_inv)*(n-1)/n;
     }
 
     _mt.assign(A, B, C, D);
@@ -719,15 +726,15 @@ void ElemThickLens::calcSubmatrices()
         //  --> ::) -->  output from media * half length
         A2 = 1;
         B2 = L2;
-        C2 = (1-n)/R2;
-        D2 = L2*(1-n)/R2 + n;
+        C2 = (n-1)/R2;
+        D2 = L2*(n-1)/R2 + n;
     }
     else if (flat2)
     {
         //  --> (:: -->  half lengh * input to medium
-        A1 = 1 + L1*(n-1)/R1/n;
+        A1 = 1 - L1*(n-1)/R1/n;
         B1 = L1/n;
-        C1 = (n-1)/R1/n;
+        C1 = -(n-1)/R1/n;
         D1 = 1/n;
 
         A2 = 1;
@@ -738,16 +745,16 @@ void ElemThickLens::calcSubmatrices()
     else
     {
         //  --> (:: -->  half lengh * input to medium
-        A1 = 1 + L1*(n-1)/R1/n;
+        A1 = 1 - L1*(n-1)/R1/n;
         B1 = L1/n;
-        C1 = (n-1)/R1/n;
+        C1 = -(n-1)/R1/n;
         D1 = 1/n;
         
         //  --> ::) -->  output from media * half length
         A2 = 1;
         B2 = L2;
-        C2 = (1-n)/R2;
-        D2 = L2*(1-n)/R2 + n;
+        C2 = (n-1)/R2;
+        D2 = L2*(n-1)/R2 + n;
     }
 
     _mt1.assign(A1, B1, C1, D1);

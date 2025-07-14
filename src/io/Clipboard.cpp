@@ -18,7 +18,7 @@ namespace Z {
 namespace IO {
 namespace Clipboard {
 
-#define Z_CLIPBOARD_MIME_TYPE "application/x-rezonator2-mime"
+#define Z_CLIPBOARD_MIME_TYPE "application/x-rezonator2.1-mime"
 #define Z_CLIPBOARD_DATA_ELEMENTS Z_CLIPBOARD_MIME_TYPE";value=elements"
 #define Z_CLIPBOARD_DATA_PUMPS Z_CLIPBOARD_MIME_TYPE";value=pumps"
 

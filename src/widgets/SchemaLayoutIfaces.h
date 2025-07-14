@@ -213,6 +213,7 @@ namespace ElemSphericalInterfaceLayout {
         QRectF _surface;
         qreal _startAngle;
         qreal _sweepAngle;
+        bool _flat;
 
     QBrush getBrush() const {
         if (_placement.options & IfacePosition::OptionGrin)
@@ -223,11 +224,16 @@ namespace ElemSphericalInterfaceLayout {
     INIT {
         HW = 15; HH = 40;
         _placement = getIfacePosition(_element);
-        auto intf = dynamic_cast<ElemSphericalInterface*>(_element);
         const qreal ROC = 100;
         const qreal sagitta = ROC - qSqrt(Sqr(ROC) - Sqr(HH));
         const qreal startAngle = qRadiansToDegrees(qAsin(HH / ROC));
-        if (intf && intf->radius() < 0) {
+        auto intf = dynamic_cast<ElemSphericalInterface*>(_element);
+        if (!intf) return;
+        const double R = intf->radius();
+        _flat = qIsInf(R);
+        if (_flat) {
+            HW = 1.5;
+        } else if (R > 0) {
             _surface = QRectF(-sagitta, -ROC, 2*ROC, 2*ROC);
             _startAngle = 180 - startAngle;
             _sweepAngle = 2*startAngle;
@@ -242,55 +248,73 @@ namespace ElemSphericalInterfaceLayout {
     PAINT {
         switch (_placement.placement) {
         case IfacePosition::BetweenRanges:
-            painter->setPen(getPlanePen());
-            painter->drawArc(_surface, int(_startAngle)*16, int(_sweepAngle)*16);
+            if (_flat) {
+                painter->setPen(getPlanePen());
+                painter->drawLine(QLineF(0, -HH, 0, HH));
+            } else {
+                painter->setPen(getPlanePen());
+                painter->drawArc(_surface, int(_startAngle)*16, int(_sweepAngle)*16);
+            }
             break;
 
         case IfacePosition::BetweenMedia:
-            painter->fillRect(boundingRect(), getBrush());
-            painter->setPen(getGlassPen());
-            painter->drawLine(QLineF(-HW, -HH, HW, -HH));
-            painter->drawLine(QLineF(-HW, HH, HW, HH));
-            painter->drawArc(_surface, int(_startAngle)*16, int(_sweepAngle)*16);
+            if (_flat) {
+                painter->setPen(getGlassPen());
+                painter->drawLine(QLineF(0, -HH, 0, HH));
+            } else {
+                painter->fillRect(boundingRect(), getBrush());
+                painter->setPen(getGlassPen());
+                painter->drawLine(QLineF(-HW, -HH, HW, -HH));
+                painter->drawLine(QLineF(-HW, HH, HW, HH));
+                painter->drawArc(_surface, int(_startAngle)*16, int(_sweepAngle)*16);
+            }
             break;
 
-        case IfacePosition::AfterMedium: {
-            QPainterPath path;
-            path.moveTo(-HW, -HH);
-            path.lineTo(0, -HH);
-            path.arcTo(_surface, _startAngle, _sweepAngle);
-            path.lineTo(-HW, HH);
-            path.closeSubpath();
-            painter->fillPath(path, getBrush());
-
-            painter->setPen(getGlassPen());
-            QPainterPath path1;
-            path1.moveTo(-HW, -HH);
-            path1.lineTo(0, -HH);
-            path1.arcTo(_surface, _startAngle, _sweepAngle);
-            path1.lineTo(-HW, HH);
-            painter->drawPath(path1);
+        case IfacePosition::AfterMedium:
+            if (_flat) {
+                painter->setPen(getGlassPen());
+                painter->drawLine(QLineF(0, -HH, 0, HH));
+            } else {
+                QPainterPath path;
+                path.moveTo(-HW, -HH);
+                path.lineTo(0, -HH);
+                path.arcTo(_surface, _startAngle, _sweepAngle);
+                path.lineTo(-HW, HH);
+                path.closeSubpath();
+                painter->fillPath(path, getBrush());
+    
+                painter->setPen(getGlassPen());
+                QPainterPath path1;
+                path1.moveTo(-HW, -HH);
+                path1.lineTo(0, -HH);
+                path1.arcTo(_surface, _startAngle, _sweepAngle);
+                path1.lineTo(-HW, HH);
+                painter->drawPath(path1);
+            }
             break;
-        }
 
-        case IfacePosition::BeforeMedium: {
-            QPainterPath path;
-            path.moveTo(HW, -HH);
-            path.lineTo(0, -HH);
-            path.arcTo(_surface, _startAngle, _sweepAngle);
-            path.lineTo(HW, HH);
-            path.closeSubpath();
-            painter->fillPath(path, getBrush());
-
-            painter->setPen(getGlassPen());
-            QPainterPath path1;
-            path1.moveTo(HW, -HH);
-            path1.lineTo(0, -HH);
-            path1.arcTo(_surface, _startAngle, _sweepAngle);
-            path1.lineTo(HW, HH);
-            painter->drawPath(path1);
+        case IfacePosition::BeforeMedium:
+            if (_flat) {
+                painter->setPen(getGlassPen());
+                painter->drawLine(QLineF(0, -HH, 0, HH));
+            } else {
+                QPainterPath path;
+                path.moveTo(HW, -HH);
+                path.lineTo(0, -HH);
+                path.arcTo(_surface, _startAngle, _sweepAngle);
+                path.lineTo(HW, HH);
+                path.closeSubpath();
+                painter->fillPath(path, getBrush());
+    
+                painter->setPen(getGlassPen());
+                QPainterPath path1;
+                path1.moveTo(HW, -HH);
+                path1.lineTo(0, -HH);
+                path1.arcTo(_surface, _startAngle, _sweepAngle);
+                path1.lineTo(HW, HH);
+                painter->drawPath(path1);
+            }
             break;
-        }
         }
     }
 
