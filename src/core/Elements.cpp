@@ -574,8 +574,9 @@ ElemSphericalInterface::ElemSphericalInterface() : ElementInterface()
 {
     _radius = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R"), QStringLiteral("R"),
                                qApp->translate("Param", "Radius of curvature"),
-                               qApp->translate("Param", "Negative value means left-bulged surface, "
-                                                        "positive value means right-bulged surface."));
+                               qApp->translate("Param", "Negative value means right-bulged surface, "
+                                                        "positive value means left-bulged surface. "
+                                                        "Set to Inf to get the flat surface."));
     _radius->setValue(100_mm);
 
     addParam(_radius);
@@ -588,11 +589,17 @@ void ElemSphericalInterface::calcMatrixInternal()
     const double n1 = ior1();
     const double n2 = ior2();
     const double R = radius();
+    const bool flat = qIsInf(R);
 
-    _mt.assign(1, 0, (n1-n2)/R/n2, n1/n2);
+    if (flat) {
+        _mt.assign(1, 0, 0, n1/n2);
+        _mt_inv.assign(1, 0, 0, n2/n1);
+    } else {
+        _mt.assign(1, 0, (n1-n2)/R/n2, n1/n2);
+        _mt_inv.assign(1, 0, (n2-n1)/(-R)/n1, n2/n1);
+    }
+    
     _ms = _mt;
-
-    _mt_inv.assign(1, 0, (n2-n1)/(-R)/n1, n2/n1);
     _ms_inv = _mt_inv;
 }
 
@@ -606,13 +613,13 @@ ElemThickLens::ElemThickLens() : ElementRange()
 
     _radius1 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R1"), QStringLiteral("R<sub>1</sub>"),
                                 qApp->translate("Param", "Left radius of curvature"),
-                                qApp->translate("Param", "Negative value means left-bulged surface, "
-                                                         "positive value means right-bulged surface. "
+                                qApp->translate("Param", "Negative value means right-bulged surface, "
+                                                         "positive value means left-bulged surface. "
                                                          "Set to Inf to get the flat surface."));
     _radius2 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R2"), QStringLiteral("R<sub>2</sub>"),
                                 qApp->translate("Param", "Right radius of curvature"),
-                                qApp->translate("Param", "Negative value means left-bulged surface, "
-                                                         "positive value means right-bulged surface. "
+                                qApp->translate("Param", "Negative value means right-bulged surface, "
+                                                         "positive value means left-bulged surface. "
                                                          "Set to Inf to get the flat surface."));
 
     _radius1->setValue(100_mm);

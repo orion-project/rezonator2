@@ -841,6 +841,19 @@ TEST_METHOD(SphericalInterface)
     ASSERT_MATRIX(s_inv, 1.0000000, 0.0000000, 1.3725490, 2.2352941)
 }
 
+TEST_METHOD(SphericalInterface_flat)
+{
+    ELEM(SphericalInterface, 3)
+    SET_PARAM(n1, 1.7, none)
+    SET_PARAM(n2, 3.8, none)
+    SET_PARAM(R, qInf(), cm)
+
+    ASSERT_MATRIX(t, 1.0000000, 0.0000000, -0.0000000, 0.4473684)
+    ASSERT_MATRIX(s, 1.0000000, 0.0000000, -0.0000000, 0.4473684)
+    ASSERT_MATRIX(t_inv, 1.0000000, 0.0000000, -0.0000000, 2.2352941)
+    ASSERT_MATRIX(s_inv, 1.0000000, 0.0000000, -0.0000000, 2.2352941)
+}
+
 // Calculation: $PROJECT/calc/Elements.py
 TEST_METHOD(AxiconMirror)
 {
@@ -930,6 +943,7 @@ TEST_GROUP("Elements",
            ADD_TEST(BrewsterInterface),
            ADD_TEST(TiltedInterface),
            ADD_TEST(SphericalInterface),
+           ADD_TEST(SphericalInterface_flat),
            ADD_TEST(AxiconMirror),
            ADD_TEST(AxiconLens),
            )
