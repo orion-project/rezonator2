@@ -1,9 +1,12 @@
 {
   "history": [
     {
-      "version": "2.0.16",
+      "version": "2.1.0",
       "date": "",
       "changes": [
+        {
+          "text": "Standard sign convention for ROC of Thick Lens and Spherical Interface elements (https://github.com/orion-project/rezonator2/issues/76)"
+        },
         {
           "text": "Advanced parameter editor with expression evaluator"
         },

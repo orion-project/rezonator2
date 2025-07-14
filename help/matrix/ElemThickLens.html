@@ -23,16 +23,16 @@
           <div style="margin-top:100px">
             \[
             M = \begin{bmatrix}
-                1 + \cfrac {L}{R_1} \cfrac {n-1}{n} & \cfrac L n \\
-                (n-1) \bigg( \cfrac{1}{R_1} - \cfrac{1}{R_2} \bigg) - \cfrac{L}{R_1 R_2} \cfrac{(n-1)^2}{n} & 1 - \cfrac{L}{R_2} \cfrac {n-1}{n}
+                1 - \cfrac {L}{R_1} \cfrac {n-1}{n} & \cfrac L n \\
+                (n-1) \bigg( \cfrac{1}{R_2} - \cfrac{1}{R_1} \bigg) - \cfrac{L}{R_1 R_2} \cfrac{(n-1)^2}{n} & 1 + \cfrac{L}{R_2} \cfrac {n-1}{n}
                 \end{bmatrix}
             \]
           </div>
           <div style="margin-top:190px">
             \[
             M_{LF} = \begin{bmatrix}
-                1 + h \cfrac{n-1}{R_1 n} & \cfrac h n \\
-                \cfrac{n-1}{R_1 n} & \cfrac 1 n
+                1 - \cfrac{h}{R_1} \cfrac{n-1}{n} & \cfrac h n \\
+                -\cfrac{1}{R_1} \cfrac{n-1}{n} & \cfrac 1 n
                 \end{bmatrix}
             \]
           </div>
@@ -40,7 +40,7 @@
             \[
             M_{RT} = \begin{bmatrix}
                 1 & h \\
-                \cfrac{1-n}{R_2} & h \cfrac{1-n}{R_2} + n
+                \cfrac{n-1}{R_2} & h \cfrac{n-1}{R_2} + n
                 \end{bmatrix}
             \]
           </div>

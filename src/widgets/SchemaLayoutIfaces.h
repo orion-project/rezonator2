@@ -227,7 +227,7 @@ namespace ElemSphericalInterfaceLayout {
         const qreal ROC = 100;
         const qreal sagitta = ROC - qSqrt(Sqr(ROC) - Sqr(HH));
         const qreal startAngle = qRadiansToDegrees(qAsin(HH / ROC));
-        if (intf && intf->radius() < 0) {
+        if (intf && intf->radius() > 0) {
             _surface = QRectF(-sagitta, -ROC, 2*ROC, 2*ROC);
             _startAngle = 180 - startAngle;
             _sweepAngle = 2*startAngle;

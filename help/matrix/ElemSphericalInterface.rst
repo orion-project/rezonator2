@@ -13,11 +13,9 @@ An interface can be concave or convex depending on the sign of the radius of cur
   .. image:: ElemSphericalInterface.png
 
 .. note::
-
-  Note that a sign convention applied here contradicts the `standard sign convention <https://en.wikipedia.org/wiki/Radius_of_curvature_(optics)>`_ for optical surfaces. This is for historical reasons and will be changed to match standards. Compare that the :doc:`../calc_lens` tool already uses the conventional approach.
+  Since |rezonator| 2.1 the `standard sign convention <https://en.wikipedia.org/wiki/Radius_of_curvature_(optics)>`_ is used for the interface ROC. Older files are converted automatically when opened. In the older app versions, you will not be able to load files saved in 2.1 or paste elements via Clipboard. 
 
 .. warning::
-
   The left and the right adjacent elements of an interface element should be either :doc:`ElemEmptyRange` or :doc:`ElemMediaRange`. |rezonator| doesn't complain if they are not, but you can get incorrect results.
     
 .. seealso::

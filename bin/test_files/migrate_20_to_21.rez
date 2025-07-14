@@ -5,7 +5,8 @@
             "value": 980
         }
     },
-    "custom_params": {},
+    "custom_params": {
+    },
     "elements": [
         {
             "is_disabled": false,
@@ -18,31 +19,180 @@
                     "value": 50
                 },
                 "R1": {
-                    "expr": "0",
                     "unit": "mm",
                     "value": 0
                 },
                 "R2": {
-                    "expr": "0",
                     "unit": "m",
                     "value": 0
                 },
                 "n": {
-                    "expr": "1",
                     "unit": "none",
                     "value": 1
                 }
             },
             "title": "",
             "type": "ElemThickLens"
+        },
+        {
+            "is_disabled": false,
+            "label": "d1",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "F2",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "R1": {
+                    "unit": "cm",
+                    "value": -10
+                },
+                "R2": {
+                    "unit": "m",
+                    "value": 1
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemThickLens"
+        },
+        {
+            "is_disabled": false,
+            "label": "d2",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "s1",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "R": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemSphericalInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "d3",
+            "layout_draw_alt": true,
+            "layout_show_label": false,
+            "params": {
+                "L": {
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemMediumRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "s2",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "R": {
+                    "unit": "cm",
+                    "value": -10
+                },
+                "n1": {
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemSphericalInterface"
         }
     ],
-    "formulas": [],
+    "formulas": [
+    ],
     "notes": "",
-    "param_links": [],
-    "pumps": [],
+    "param_links": [
+    ],
+    "pumps": [
+        {
+            "color": "#555555",
+            "is_active": false,
+            "label": "",
+            "mode": "Waist",
+            "params": {
+                "MI": {
+                    "unit": "none",
+                    "value_s": 1,
+                    "value_t": 1
+                },
+                "w_0": {
+                    "unit": "mkm",
+                    "value_s": 100,
+                    "value_t": 100
+                },
+                "z_w": {
+                    "unit": "mm",
+                    "value_s": 100,
+                    "value_t": 100
+                }
+            },
+            "title": ""
+        }
+    ],
     "schema_version": "2.0",
     "title": "",
     "trip_type": "SP",
-    "windows": []
+    "windows": [
+    ]
 }

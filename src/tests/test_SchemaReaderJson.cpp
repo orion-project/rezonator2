@@ -96,9 +96,9 @@ TEST_METHOD(read_pumps_InvComplex)
 
 //------------------------------------------------------------------------------
 
-TEST_METHOD(convert_lens_roc)
+TEST_METHOD(convert_lens_roc_inf)
 {
-    Schema schema;\
+    Schema schema;
     READ_AND_ASSERT("migrate_20_to_21.rez")
     auto elem = schema.elementByLabel("F1");
     auto r1 = elem->param("R1");
@@ -112,6 +112,39 @@ TEST_METHOD(convert_lens_roc)
     ASSERT_EQ_PTR(r2->value().unit(), Z::Units::m());
 }
 
+TEST_METHOD(convert_lens_roc_sign)
+{
+    Schema schema;
+    READ_AND_ASSERT("migrate_20_to_21.rez")
+    auto elem = schema.elementByLabel("F2");
+    auto r1 = elem->param("R1");
+    auto r2 = elem->param("R2");
+    ASSERT_IS_NOT_NULL(r1);
+    ASSERT_IS_NOT_NULL(r2);
+    ASSERT_IS_TRUE(r1->value().value() > 0);
+    ASSERT_IS_TRUE(r2->value().value() < 0);
+    // Units are not broken after changing value
+    ASSERT_EQ_PTR(r1->value().unit(), Z::Units::cm());
+    ASSERT_EQ_PTR(r2->value().unit(), Z::Units::m());
+}
+
+TEST_METHOD(convert_intf_roc_sign)
+{
+    Schema schema;
+    READ_AND_ASSERT("migrate_20_to_21.rez")
+    auto e1 = schema.elementByLabel("s1");
+    auto r1 = e1->param("R");
+    ASSERT_IS_NOT_NULL(r1);
+    ASSERT_IS_TRUE(r1->value().value() < 0);
+    auto e2 = schema.elementByLabel("s2");
+    auto r2 = e2->param("R");
+    ASSERT_IS_NOT_NULL(r2);
+    ASSERT_IS_TRUE(r2->value().value() > 0);
+    // Units are not broken after changing value
+    ASSERT_EQ_PTR(r1->value().unit(), Z::Units::mm());
+    ASSERT_EQ_PTR(r2->value().unit(), Z::Units::cm());
+}
+
 //------------------------------------------------------------------------------
 
 TEST_GROUP("SchemaReaderJson",
@@ -122,7 +155,9 @@ TEST_GROUP("SchemaReaderJson",
     ADD_TEST(read_pumps_TwoSections),
     ADD_TEST(read_pumps_Complex),
     ADD_TEST(read_pumps_InvComplex),
-    ADD_TEST(convert_lens_roc),
+    ADD_TEST(convert_lens_roc_inf),
+    ADD_TEST(convert_lens_roc_sign),
+    ADD_TEST(convert_intf_roc_sign),
 )
 
 } // namespace SchemaReaderJsonTests
