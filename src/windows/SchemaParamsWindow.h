@@ -37,7 +37,7 @@ private slots:
     void createParameter();
     void deleteParameter();
     void setParameterValue();
-    void annotateParameter();
+    void editParameter();
     void adjustParameter();
 
 private:

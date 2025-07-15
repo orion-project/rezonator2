@@ -40,6 +40,7 @@ public:
 
     /// Storable name of parameter.
     const QString& alias() const { return _alias; }
+    void setAlias(const QString& value) { _alias = value; }
 
     /// Label of parameter. E.g.: `L`, `alpha`, `n<sub>0</sub>`.
     /// Can contains some html tags (subscript or superscript).
@@ -48,6 +49,7 @@ public:
 
     /// Name of parameter. E.g.: Length, Inclination angle, etc.
     const QString& name() const { return _name; }
+    void setName(const QString& value) { _name = value; }
 
     /// Description of paramter. Short help string.
     const QString& description() const { return _description; }
@@ -250,6 +252,7 @@ public:
 
     /// Measurement units of parameter.
     Dim dim() const { return _dim; }
+    void setDim(Z::Dim value) { _dim = value; }
 
     /// Returns simple string representation of parameter.
     QString str() const override

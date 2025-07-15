@@ -5,6 +5,9 @@
       "date": "",
       "changes": [
         {
+          "text": "Can rename global parameter (https://github.com/orion-project/rezonator2/issues/79)"
+        },
+        {
           "text": "Standard sign convention for ROC of Thick Lens and Spherical Interface elements (https://github.com/orion-project/rezonator2/issues/76)"
         },
         {

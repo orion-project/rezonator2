@@ -10,10 +10,9 @@
 
 #include "helpers/OriWidgets.h"
 #include "helpers/OriDialogs.h"
+#include "helpers/OriLayouts.h"
 
 #include <QAction>
-#include <QFormLayout>
-#include <QLabel>
 #include <QLineEdit>
 #include <QTimer>
 #include <QToolButton>
@@ -66,7 +65,7 @@ void SchemaParamsWindow::createActions()
     _actnParamAdd = A_(tr("Create..."), this, &SchemaParamsWindow::createParameter, ":/toolbar/param_add", Qt::CTRL | Qt::Key_Insert);
     _actnParamDelete = A_(tr("Delete..."), this, &SchemaParamsWindow::deleteParameter, ":/toolbar/param_delete", Qt::CTRL | Qt::Key_Delete);
     _actnParamSet = A_(tr("Set..."), this, &SchemaParamsWindow::setParameterValue, ":/toolbar/param_prop");
-    _actnParamEdit = A_(tr("Edit..."), this, &SchemaParamsWindow::annotateParameter, ":/toolbar/param_edit", Qt::CTRL | Qt::Key_Return);
+    _actnParamEdit = A_(tr("Edit..."), this, &SchemaParamsWindow::editParameter, ":/toolbar/param_edit", Qt::CTRL | Qt::Key_Return);
     _actnParamAdjust = A_(tr("Adjust"), this, &SchemaParamsWindow::adjustParameter, ":/toolbar/adjust");
 
     #undef A_
@@ -87,80 +86,96 @@ void SchemaParamsWindow::createToolBar()
         Ori::Gui::textToolButton(_actnParamSet), _actnParamEdit, nullptr, _actnParamDelete });
 }
 
+struct GlobalParamEditor
+{
+    GlobalParamEditor(Schema *schema, Z::Parameter *param = nullptr): schema(schema), param(param)
+    {
+        aliasEditor = new QLineEdit;
+        aliasEditor->setFont(Z::Gui::ValueFont().get());
+    
+        dimEditor = new DimComboBox;
+        
+        descrEditor = new QLineEdit;
+        descrEditor->setFont(Z::Gui::ValueFont().get());
+        
+        if (param) {
+            aliasEditor->setText(param->alias());
+            dimEditor->setSelectedDim(param->dim());
+            descrEditor->setText(param->description());
+        } else {
+            recentDim = RecentData::getDim("global_param_dim");
+            dimEditor->setSelectedDim(recentDim);
+        }
+
+        editor = Ori::Layouts::LayoutV({
+            qApp->tr("Name"), aliasEditor, Ori::Layouts::Space(9),
+            qApp->tr("Dimension"), dimEditor, Ori::Layouts::Space(9),
+            qApp->tr("Description"), descrEditor, Ori::Layouts::Space(9),
+        }).setSpacing(3).setMargin(0).makeWidgetAuto();
+    }
+    
+    void show(const QString &title, std::function<void()> apply)
+    {
+        auto verifyFunc = [this](){
+            auto alias = aliasEditor->text().trimmed();
+            if (alias.isEmpty())
+                return qApp->tr("Parameter name can't be empty");
+            if (auto p = schema->globalParams()->byAlias(alias); p != param)
+                return qApp->tr("Parameter <b>%1</b> already exists").arg(alias);
+            if (!Z::FormulaUtils::isValidVariableName(alias))
+                return qApp->tr("Parameter name <b>%1</b> is invalid").arg(alias);
+            return QString();
+        };
+        
+        if (Ori::Dlg::Dialog(editor)
+            .withTitle(title)
+            .withIconPath(":/window_icons/parameter")
+            .withContentToButtonsSpacingFactor(3)
+            .withVerification(verifyFunc)
+            .exec())
+        {
+            apply();
+        }
+    }
+    
+    QString alias() const { return aliasEditor->text().trimmed(); }
+    QString descr() const { return descrEditor->text().trimmed(); }
+    Z::Dim dim() const { return dimEditor->selectedDim(); }
+    
+    Schema *schema;
+    Z::Parameter *param;
+    QLineEdit *aliasEditor;
+    DimComboBox *dimEditor;
+    QLineEdit *descrEditor;
+    Z::Dim recentDim = nullptr;
+    QSharedPointer<QWidget> editor;
+};
+
 void SchemaParamsWindow::createParameter()
 {
-    auto recentDim = RecentData::getDim("global_param_dim");
-    auto recentUnit = RecentData::getUnit("global_param_unit", recentDim);
-
-    auto aliasEditor = new QLineEdit;
-    aliasEditor->setFont(Z::Gui::ValueFont().get());
-
-    auto unitEditor = new UnitComboBox;
-    unitEditor->canSelectFixedUnit = true;
-    unitEditor->setFixedWidth(QWIDGETSIZE_MAX);
-    unitEditor->populate(recentDim);
-    unitEditor->setSelectedUnit(recentUnit);
-
-    QHash<Z::Dim, Z::Unit> recentUnits;
-
-    auto dimEditor = new DimComboBox;
-    dimEditor->setSelectedDim(recentDim);
-    connect(dimEditor, &DimComboBox::dimChanged, unitEditor, [&](Z::Dim dim){
-        recentUnits[recentDim] = unitEditor->selectedUnit();
-        if (!recentUnits.contains(dim))
-            recentUnits[dim] = RecentData::getUnit("global_param_unit", dim);
-        unitEditor->populate(dim);
-        unitEditor->setSelectedUnit(recentUnits[dim]);
-        recentDim = dim;
-    });
-
-    QWidget editor;
-    auto layout = new QFormLayout(&editor);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->addRow(new QLabel(tr("Name")), aliasEditor);
-    layout->addRow(new QLabel(tr("Dim")), dimEditor);
-    layout->addRow(new QLabel(tr("Unit")), unitEditor);
-
-    auto verifyFunc = [&](){
-        auto alias = aliasEditor->text().trimmed();
-        if (alias.isEmpty())
-            return tr("Parameter name can't be empty");
-        if (schema()->globalParams()->byAlias(alias))
-            return tr("Parameter <b>%1</b> already exists").arg(alias);
-        if (!Z::FormulaUtils::isValidVariableName(alias))
-            return tr("Parameter name <b>%1</b> is invalid").arg(alias);
-        return QString();
-    };
-
-    if (Ori::Dlg::Dialog(&editor, false)
-                .withTitle(tr("Create Parameter"))
-                .withIconPath(":/window_icons/parameter")
-                .withContentToButtonsSpacingFactor(3)
-                .withVerification(verifyFunc)
-                .exec())
-    {
-        auto dim = dimEditor->selectedDim();
-        auto alias = aliasEditor->text().trimmed();
+    GlobalParamEditor editor(schema());
+    editor.show(tr("Create Parameter"), [&editor, this]{
+        auto dim = editor.dim();
+        auto alias = editor.alias();
         auto label = alias;
         auto name = alias;
-        auto param = new Z::Parameter(dim, alias, label, name);
-        auto unit = unitEditor->selectedUnit();
+        auto descr = editor.descr();
+        auto param = new Z::Parameter(dim, alias, label, name, descr);
+        auto unit = RecentData::getUnit("global_param_unit", dim);
         param->setValue(Z::Value(0, unit));
         schema()->addGlobalParam(param);
 
-        RecentData::PendingSave _;
-        RecentData::setDim("global_param_dim", dim);
-        RecentData::setUnit("global_param_unit", unit);
+        if (dim != editor.recentDim)
+            RecentData::setDim("global_param_dim", dim);
 
         schema()->events().raise(SchemaEvents::GlobalParamCreated, param, "Params window: param created");
-
-        _isSettingValueForNewParam = true;
         
         QTimer::singleShot(100, this, [this, param](){
+            _isSettingValueForNewParam = true;
             _table->setSelected(param);
             setParameterValue();
         });
-    }
+    });
 }
 
 void SchemaParamsWindow::deleteParameter()
@@ -234,18 +249,44 @@ void SchemaParamsWindow::setParameterValue()
     }
 }
 
-void SchemaParamsWindow::annotateParameter()
+void SchemaParamsWindow::editParameter()
 {
     auto param = _table->selected();
     if (!param) return;
 
-    bool ok;
-    QString descr = Ori::Dlg::inputText(tr("Annotation:"), param->description(), &ok);
-    if (ok)
-    {
-        param->setDescription(descr);
-        schema()->events().raise(SchemaEvents::GlobalParamEdited, param, "Params window: param annotated");
-    }
+    GlobalParamEditor editor(schema(), param);
+    editor.show(tr("Edit Parameter"), [&editor, param, this]{
+        bool edited = false;
+        bool changed = false;
+        auto alias = editor.alias();
+        auto descr = editor.descr();
+        auto dim = editor.dim();
+        if (param->alias() != alias) {
+            param->setAlias(alias);
+            param->setLabel(alias);
+            param->setName(alias);
+            // TODO: update formulas
+            edited = true;
+        }
+        if (param->description() != descr) {
+            param->setDescription(descr);
+            edited = true;
+        }
+        if (param->dim() != dim) {
+            auto unit = RecentData::getUnit("global_param_unit", dim);
+            auto value = unit->fromSi(param->value().toSi());
+            param->setDim(dim);
+            param->setValue(Z::Value(value, unit));
+            edited = true;
+            changed = true;
+        }
+        if (edited)
+            schema()->events().raise(SchemaEvents::GlobalParamEdited, param, "Params window: param edited");
+        if (changed) {
+            schema()->events().raise(SchemaEvents::GlobalParamChanged, param, "Params window: param value set");
+            schema()->events().raise(SchemaEvents::RecalRequred, "Params window: param value set");
+        }
+    });
 }
 
 void SchemaParamsWindow::adjustParameter()

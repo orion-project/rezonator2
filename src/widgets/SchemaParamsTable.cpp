@@ -51,7 +51,7 @@ public:
                 case COL_IMAGE: return tr("Typ");
                 case COL_ALIAS: return tr("Name");
                 case COL_VALUE: return tr("Value");
-                case COL_ANNOTATION: return tr("Annotation");
+                case COL_ANNOTATION: return tr("Description");
                 }
             }
         }
