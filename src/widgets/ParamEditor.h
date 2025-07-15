@@ -168,7 +168,7 @@ private:
     bool _useExpression;
 
     void linkToGlobalParameter();
-    void showValue(Z::Parameter *param, bool ignoreExpr);
+    void showValue(Z::Parameter *param);
     void setIsLinked(bool on);
     void editorKeyPressed(int key);
     void unitChangedRaw(Z::Unit unit);

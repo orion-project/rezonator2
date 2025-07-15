@@ -3,6 +3,8 @@
 
 #include "testing/OriTestBase.h"
 
+#include <QtMath>
+
 namespace Z {
 namespace Tests {
 namespace ParametersTests {
@@ -125,6 +127,21 @@ TEST_METHOD(ParameterLink_constructor_destructor)
     ASSERT_EQ_DBL(tgt.value().value(), src.value().value());
 }
 
+TEST_METHOD(ParameterLink_apply_si_when_dim_mismatch)
+{
+    Z::Parameter tgt(Z::Dims::linear(), "");
+    tgt.setValue(1_cm);
+    
+    Z::Parameter src(Z::Dims::angular(), "");
+    src.setValue(1_deg);
+    
+    ParamLink lnk(&src, &tgt);
+    lnk.apply();
+    
+    ASSERT_EQ_DBL(tgt.value().toSi(), qDegreesToRadians(1.0));
+    ASSERT_EQ_UNIT(tgt.value().unit(), Z::Units::cm());
+}
+
 //------------------------------------------------------------------------------
 
 namespace ParameterFilterTests {
@@ -157,6 +174,7 @@ TEST_GROUP("Parameters",
     ADD_TEST(Parameters_byIndex),
     ADD_TEST(Parameters_byPointer),
     ADD_TEST(ParameterLink_constructor_destructor),
+    ADD_TEST(ParameterLink_apply_si_when_dim_mismatch),
     ADD_GROUP(ParameterFilterTests),
 )
 

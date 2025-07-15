@@ -161,41 +161,41 @@ void MenuButton::focusOutEvent(QFocusEvent *e)
 
 //------------------------------------------------------------------------------
 
-namespace {
-int countSuitableGlobalParams(const Z::Parameters* globalParams, const Z::Parameter* param)
-{
-    auto dim = param->dim();
-    int count = 0;
-    foreach (auto p, *globalParams)
-        if (p->dim() == dim)
-        {
-            // Parameters of fixed dim can only be linked unit-to-unit
-            if (dim == Z::Dims::fixed() &&
-                p->value().unit() != param->value().unit())
-                continue;
+// namespace {
+// int countSuitableGlobalParams(const Z::Parameters* globalParams, const Z::Parameter* param)
+// {
+//     auto dim = param->dim();
+//     int count = 0;
+//     foreach (auto p, *globalParams)
+//         //if (p->dim() == dim) don't care about dimension match
+//         {
+//             // Parameters of fixed dim can only be linked unit-to-unit
+//             if (dim == Z::Dims::fixed() &&
+//                 p->value().unit() != param->value().unit())
+//                 continue;
 
-            count++;
-        }
-    return count;
-}
+//             count++;
+//         }
+//     return count;
+// }
 
-Z::Parameters getSuitableGlobalParams(const Z::Parameters* globalParams, const Z::Parameter* param)
-{
-    auto dim = param->dim();
-    Z::Parameters params;
-    foreach (auto p, *globalParams)
-        if (p->dim() == dim)
-        {
-            // Parameters of fixed dim can only be linked unit-to-unit
-            if (dim == Z::Dims::fixed() &&
-                p->value().unit() != param->value().unit())
-                continue;
+// Z::Parameters getSuitableGlobalParams(const Z::Parameters* globalParams, const Z::Parameter* param)
+// {
+//     auto dim = param->dim();
+//     Z::Parameters params;
+//     foreach (auto p, *globalParams)
+//         //if (p->dim() == dim)
+//         {
+//             // Parameters of fixed dim can only be linked unit-to-unit
+//             if (dim == Z::Dims::fixed() &&
+//                 p->value().unit() != param->value().unit())
+//                 continue;
 
-            params.append(p);
-        }
-    return params;
-}
-}
+//             params.append(p);
+//         }
+//     return params;
+// }
+// }
 
 //------------------------------------------------------------------------------
 //                              ParamEditor
@@ -234,7 +234,8 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
     _labelLabel->setFont(Z::Gui::ParamLabelFont().get());
     layout->addWidget(_labelLabel);
 
-    if (opts.allowLinking && countSuitableGlobalParams(_globalParams, _param))
+    //if (opts.allowLinking && countSuitableGlobalParams(_globalParams, _param))
+    if (opts.allowLinking && !_globalParams->isEmpty())
     {
         _labelLabel->setText(paramLabel);
         _linkButton = new LinkButton;
@@ -312,13 +313,13 @@ void ParamEditor::parameterChanged(Z::ParameterBase*)
 
 void ParamEditor::populate()
 {
-    showValue(_param, false);
+    showValue(_param);
 }
 
-void ParamEditor::showValue(Z::Parameter *param, bool ignoreExpr)
+void ParamEditor::showValue(Z::Parameter *param)
 {
     QString expr = param->expr();
-    if (!_useExpression || expr.isEmpty() || ignoreExpr) {
+    if (!_useExpression || expr.isEmpty()) {
         _valueEditor->skipProcessing = true;
         _valueEditor->setValue(param->value().value());
         _valueEditor->skipProcessing = false;
@@ -455,7 +456,8 @@ void ParamEditor::linkToGlobalParameter()
 {
     focus();
 
-    Z::Parameters availableParams = getSuitableGlobalParams(_globalParams, _param);
+    //Z::Parameters availableParams = getSuitableGlobalParams(_globalParams, _param);
+    Z::Parameters availableParams(*_globalParams);
     if (availableParams.isEmpty())
         return Ori::Dlg::info(tr("There are no suitable parameters to link to"));
 
@@ -468,7 +470,10 @@ void ParamEditor::linkToGlobalParameter()
     _linkSource = selected != ParamsListWidget::noneParam() ? selected : nullptr;
     _linkButton->showLinkSource(_linkSource);
     setIsLinked(_linkSource);
-    showValue(_linkSource ? _linkSource : _param, _linkSource);
+    if (_linkSource) {
+        // editor will be updated on parameterChanged
+        Z::ParamLink(_linkSource, _param).apply();
+    } else showValue(_param);
 }
 
 void ParamEditor::unitChangedRaw(Z::Unit unit)

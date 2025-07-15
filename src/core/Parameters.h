@@ -306,7 +306,15 @@ public:
     {
         Z_PERF_BEGIN("ParameterLink::apply")
 
-        auto value = _source->value();
+        Value value;
+        if (_source->dim() != _target->dim()) {
+            auto sourceValue = _source->value().toSi();
+            auto targetUnit = _target->value().unit();
+            auto targetValue = targetUnit->fromSi(sourceValue);
+            value = Z::Value(targetValue, targetUnit);
+        } else {
+            value = _source->value();
+        }
         auto res = _target->verify(value);
         if (res.isEmpty())
             _target->setValue(value);
