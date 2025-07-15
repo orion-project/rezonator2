@@ -47,7 +47,7 @@ private:
 
     class SchemaParamsTable* _table;
 
-    QAction *_actnParamAdd, *_actnParamDelete, *_actnParamSet, *_actnParamDescr,
+    QAction *_actnParamAdd, *_actnParamDelete, *_actnParamSet, *_actnParamEdit,
             *_actnParamAdjust;
     QMenu *_windowMenu, *_contextMenu;
     bool _isSettingValueForNewParam = false;

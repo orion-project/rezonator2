@@ -111,7 +111,9 @@
         <file alias="param_add">../img/toolbar/parameter_add.svg</file>
         <file alias="param_annotate">../img/toolbar/parameter_label.svg</file>
         <file alias="param_delete">../img/toolbar/parameter_delete.svg</file>
+        <file alias="param_edit">../img/toolbar/parameter_edit.svg</file>
         <file alias="param_formula">../img/toolbar/parameter_gear.svg</file>
+        <file alias="param_prop">../img/toolbar/parameter_prop.svg</file>
         <file alias="param_set">../img/toolbar/parameter_set.svg</file>
         <file alias="parameter">../img/toolbar/parameter.svg</file>
         <file alias="paste">../img/toolbar/paste.svg</file>

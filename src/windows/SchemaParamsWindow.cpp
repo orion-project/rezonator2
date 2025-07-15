@@ -65,8 +65,8 @@ void SchemaParamsWindow::createActions()
 
     _actnParamAdd = A_(tr("Create..."), this, &SchemaParamsWindow::createParameter, ":/toolbar/param_add", Qt::CTRL | Qt::Key_Insert);
     _actnParamDelete = A_(tr("Delete..."), this, &SchemaParamsWindow::deleteParameter, ":/toolbar/param_delete", Qt::CTRL | Qt::Key_Delete);
-    _actnParamSet = A_(tr("Set..."), this, &SchemaParamsWindow::setParameterValue, ":/toolbar/param_set");
-    _actnParamDescr = A_(tr("Annotate..."), this, &SchemaParamsWindow::annotateParameter, ":/toolbar/param_annotate", Qt::CTRL | Qt::Key_Return);
+    _actnParamSet = A_(tr("Set..."), this, &SchemaParamsWindow::setParameterValue, ":/toolbar/param_prop");
+    _actnParamEdit = A_(tr("Edit..."), this, &SchemaParamsWindow::annotateParameter, ":/toolbar/param_edit", Qt::CTRL | Qt::Key_Return);
     _actnParamAdjust = A_(tr("Adjust"), this, &SchemaParamsWindow::adjustParameter, ":/toolbar/adjust");
 
     #undef A_
@@ -75,16 +75,16 @@ void SchemaParamsWindow::createActions()
 void SchemaParamsWindow::createMenuBar()
 {
     _windowMenu = Ori::Gui::menu(tr("Parameter"), this,
-        { _actnParamAdd, nullptr, _actnParamSet, _actnParamDescr, nullptr, _actnParamAdjust, nullptr, _actnParamDelete });
+        { _actnParamAdd, _actnParamSet, _actnParamEdit, nullptr, _actnParamAdjust, nullptr, _actnParamDelete });
 
     _contextMenu = Ori::Gui::menu(this,
-        { _actnParamSet, _actnParamDescr, nullptr, _actnParamAdjust, nullptr, _actnParamDelete });
+        { _actnParamSet, _actnParamEdit, nullptr, _actnParamAdjust, nullptr, _actnParamDelete });
 }
 
 void SchemaParamsWindow::createToolBar()
 {
-    populateToolbar({ Ori::Gui::textToolButton(_actnParamAdd), nullptr,
-        Ori::Gui::textToolButton(_actnParamSet), _actnParamDescr, nullptr, _actnParamDelete });
+    populateToolbar({ Ori::Gui::textToolButton(_actnParamAdd),
+        Ori::Gui::textToolButton(_actnParamSet), _actnParamEdit, nullptr, _actnParamDelete });
 }
 
 void SchemaParamsWindow::createParameter()
