@@ -34,6 +34,10 @@ public:
     void assignDeps(const Formula *formula);
 
     void parameterChanged(ParameterBase*) override { calculate(); }
+    
+    /// Put a new parameter name into the formula code if it depend on the param.
+    /// Returns true if the parameter is found in the formula code.
+    bool renameDependency(Parameter *param, const QString &newName);
 
     QString displayStr() const;
 
@@ -64,6 +68,10 @@ public:
 
     /// Returns list of parameter which depends on specified parameter.
     Parameters dependentParams(Parameter *whichParam) const;
+    
+    /// Put a new parameter name into formulas code if they depend on it.
+    /// Returns true if the parameter is found in the code of a formula.
+    bool renameDependency(Parameter *param, const QString &newName);
 
 private:
     QMap<Parameter*, Formula*> _items;

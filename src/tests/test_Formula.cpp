@@ -93,6 +93,28 @@ TEST_METHOD(calculate_with_units)
     ASSERT_EQ_ZVALUE(p.value(), 1.505_m);
 }
 
+TEST_CASE_METHOD(renameDependency, QString code, QString expectedCode, bool expectedFound)
+{
+    Z::Parameter tgt;
+    Z::Formula f(&tgt);
+    Z::Parameter dep("a_1");
+    f.addDep(&dep);
+    f.setCode(code);
+    bool ok = f.renameDependency(&dep, "a_2");
+    if (expectedFound)
+        ASSERT_IS_TRUE(ok)
+    else
+        ASSERT_IS_FALSE(ok)
+    ASSERT_EQ_STR(f.code(), expectedCode)
+}
+
+TEST_CASE(renameDependency_none, renameDependency, "a+b+c", "a+b+c", false)
+TEST_CASE(renameDependency_beg, renameDependency, "a_1+b+c", "a_2+b+c", true)
+TEST_CASE(renameDependency_mid, renameDependency, "b+ a_1 +c", "b+ a_2 +c", true)
+TEST_CASE(renameDependency_end, renameDependency, "b+c +a_1", "b+c +a_2", true)
+TEST_CASE(renameDependency_several, renameDependency, "a=a_1 ans=a+b + a_1^2 + c", "a=a_2 ans=a+b + a_2^2 + c", true)
+TEST_CASE(renameDependency_func, renameDependency, "a=sin(a_1) ans=a-abs(-a_1)", "a=sin(a_2) ans=a-abs(-a_2)", true)
+
 //------------------------------------------------------------------------------
 
 TEST_GROUP("Formula",
@@ -101,6 +123,12 @@ TEST_GROUP("Formula",
     ADD_TEST(calculate_with_deps),
     ADD_TEST(destructor_must_unlisten_deps),
     ADD_TEST(calculate_with_units),
+    ADD_TEST(renameDependency_none),
+    ADD_TEST(renameDependency_beg),
+    ADD_TEST(renameDependency_mid),
+    ADD_TEST(renameDependency_end),
+    ADD_TEST(renameDependency_several),
+    ADD_TEST(renameDependency_func),
 )
 
 } // namespace FormulaTests

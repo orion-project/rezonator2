@@ -87,6 +87,33 @@ QString Formula::displayStr() const
     return QStringLiteral("f(%1)").arg(params.join(QStringLiteral(", ")));
 }
 
+bool Formula::renameDependency(Parameter *param, const QString &newName)
+{
+    if (!_deps.contains(param))
+        return false;
+    QString newCode;
+    QTextStream s(&newCode);
+    int prevOffset = 0;
+    bool depFound = false;
+    static QRegularExpression r("[a-zA-Z_][a-zA-Z_0-9]*");
+    auto it = r.globalMatch(_code);
+    while (it.hasNext()) {
+        auto m = it.next();
+        if (m.captured() == param->alias()) {
+            s << _code.mid(prevOffset, m.capturedStart()-prevOffset);
+            s << newName;
+            prevOffset = m.capturedEnd();
+            depFound = true;
+        }
+    }
+    if (depFound) {
+        if (prevOffset < _code.length())
+            s << _code.mid(prevOffset);
+        _code = newCode;
+    }
+    return depFound;
+}
+
 //------------------------------------------------------------------------------
 
 void Formulas::put(Formula* f)
@@ -162,6 +189,17 @@ Parameters Formulas::dependentParams(Parameter *whichParam) const
             }
     }
     return result;
+}
+
+bool Formulas::renameDependency(Parameter *param, const QString &newName)
+{
+    bool depFound = false;
+    for (auto it = _items.cbegin(); it != _items.cend(); it++) {
+        auto formula = it.value();
+        if (formula->renameDependency(param, newName))
+            depFound = true;
+    }
+    return depFound;
 }
 
 //------------------------------------------------------------------------------

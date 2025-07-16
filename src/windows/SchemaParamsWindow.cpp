@@ -120,7 +120,7 @@ struct GlobalParamEditor
             auto alias = aliasEditor->text().trimmed();
             if (alias.isEmpty())
                 return qApp->tr("Parameter name can't be empty");
-            if (auto p = schema->globalParams()->byAlias(alias); p != param)
+            if (auto p = schema->globalParams()->byAlias(alias); p && param && p != param)
                 return qApp->tr("Parameter <b>%1</b> already exists").arg(alias);
             if (!Z::FormulaUtils::isValidVariableName(alias))
                 return qApp->tr("Parameter name <b>%1</b> is invalid").arg(alias);
@@ -261,11 +261,16 @@ void SchemaParamsWindow::editParameter()
         auto alias = editor.alias();
         auto descr = editor.descr();
         auto dim = editor.dim();
+        Z::Value newValue;
         if (param->alias() != alias) {
+            if (schema()->formulas()->renameDependency(param, alias)) {
+                // do recalc to put formulas in error state if rename failed
+                newValue = param->value();
+                changed = true;
+            }
             param->setAlias(alias);
             param->setLabel(alias);
             param->setName(alias);
-            // TODO: update formulas
             edited = true;
         }
         if (param->description() != descr) {
@@ -275,14 +280,15 @@ void SchemaParamsWindow::editParameter()
         if (param->dim() != dim) {
             auto unit = RecentData::getUnit("global_param_unit", dim);
             auto value = unit->fromSi(param->value().toSi());
+            newValue = Z::Value(value, unit);
             param->setDim(dim);
-            param->setValue(Z::Value(value, unit));
             edited = true;
             changed = true;
         }
         if (edited)
             schema()->events().raise(SchemaEvents::GlobalParamEdited, param, "Params window: param edited");
         if (changed) {
+            param->setValue(newValue);
             schema()->events().raise(SchemaEvents::GlobalParamChanged, param, "Params window: param value set");
             schema()->events().raise(SchemaEvents::RecalRequred, "Params window: param value set");
         }
