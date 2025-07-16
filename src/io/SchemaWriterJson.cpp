@@ -69,6 +69,7 @@ void SchemaWriterJson::writeGlobalParams(QJsonObject& root)
             { "value", p->value().value() },
             { "unit", p->value().unit()->alias() },
             { "expr", p->expr() },
+            { "error", p->error() },
         });
     root["custom_params"] = customParams;
 }
@@ -221,6 +222,7 @@ void writeElement(QJsonObject& root, Element *elem)
             paramJson["order"] = i;
         }
         paramJson["expr"] = p->expr();
+        paramJson["error"] = p->error();
         paramsJson[p->alias()] = paramJson;
     }
     root["params"] = paramsJson;

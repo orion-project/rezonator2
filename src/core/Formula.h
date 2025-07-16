@@ -26,14 +26,16 @@ public:
     const QString& code() const { return _code; }
     void setCode(const QString& code) { _code = code; }
 
-    bool ok() const { return _status.isEmpty(); }
-    const QString& status() const { return _status; }
+    bool ok() const { return _error.isEmpty(); }
+    const QString& error() const { return _error; }
+    void setError(const QString &error);
 
     void addDep(Parameter* param);
     void removeDep(Parameter* param);
     void assignDeps(const Formula *formula);
 
     void parameterChanged(ParameterBase*) override { calculate(); }
+    void parameterFailed(ParameterBase*) override { calculate(); }
     
     /// Put a new parameter name into the formula code if it depend on the param.
     /// Returns true if the parameter is found in the formula code.
@@ -45,7 +47,7 @@ private:
     Parameter* _target;
     Parameters _deps;
     QString _code;
-    QString _status;
+    QString _error;
 };
 
 //------------------------------------------------------------------------------

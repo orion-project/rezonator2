@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="256" height="256" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <radialGradient id="a-0" cx="11.6" cy="3.47" r="10.1" gradientTransform="matrix(-12.7 0 0 -8.75 301 136)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#df8888" offset="0"/>
+   <stop stop-color="#ca2828" offset="1"/>
+  </radialGradient>
+  <linearGradient id="b-8" x1="13.6" x2="13.7" y1="22.4" y2="1.53" gradientTransform="matrix(9.09 0 0 9.09 46.9 46.9)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#7b2c2c" offset="0"/>
+   <stop stop-color="#d83b3b" offset="1"/>
+  </linearGradient>
+ </defs>
+ <linearGradient id="a">
+  <stop stop-color="#725236" offset="0"/>
+  <stop stop-color="#826044" offset="1"/>
+ </linearGradient>
+ <linearGradient id="b" x1="180" x2="76.7" y1="200" y2="143" gradientTransform="matrix(.933 0 0 .933 -57.9 -73.7)" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+ <linearGradient id="c" x1="118" x2="70.9" y1="110" y2="106" gradientTransform="matrix(.938 0 0 .839 -58.3 -61.4)" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+ <linearGradient id="d" x1="20.9" x2="61.5" y1="86.8" y2="86" gradientUnits="userSpaceOnUse">
+  <stop stop-color="#fff" offset="0"/>
+  <stop stop-color="#fff" stop-opacity="0" offset="1"/>
+ </linearGradient>
+ <path d="m7.45 69.1v-61.2l52.5 21.8z" fill="#b29175" fill-rule="evenodd" stroke="url(#c)" stroke-width="5"/>
+ <circle cx="61.5" cy="85.1" r="55" fill="#b08e71" stroke="url(#b)" stroke-width="6"/>
+ <path d="m245 152a95.5 95.5 0 0 1-191 0 95.5 95.5 0 1 1 191 0z" fill="none" stroke="#fff" stroke-width="9.09"/>
+ <path d="m53.9 129c-48.9-9.01-45-73.7-7.76-85" fill="none" stroke="url(#d)" stroke-linecap="round" stroke-opacity=".468" stroke-width="15"/>
+ <path d="m251 156a95.5 95.5 0 0 1-191 0 95.5 95.5 0 1 1 191 0z" fill="url(#a-0)" stroke="url(#b-8)" stroke-width="9.09"/>
+ <g transform="matrix(6.43 -6.43 6.43 6.43 1.72 146)" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="4">
+  <path d="m10.8 13.2 5.12-5.12"/>
+  <path d="m7.17 16.8-0.296 0.296"/>
+ </g>
+</svg>

@@ -20,77 +20,132 @@ TEST_METHOD(isValidVariableName)
 
 TEST_METHOD(calculate)
 {
-    Z::Parameter p;
-    Z::Formula f(&p);
+    Z::Parameter tgt;
+    Z::Formula f(&tgt);
     f.setCode("2+2");
     f.calculate();
     ASSERT_IS_TRUE(f.ok());
-    ASSERT_EQ_DBL(p.value().value(), 4);
-    ASSERT_EQ_INT(p.valueDriver(), ParamValueDriver::Formula);
+    ASSERT_EQ_DBL(tgt.value().value(), 4);
+    ASSERT_EQ_INT(tgt.valueDriver(), ParamValueDriver::Formula);
 }
 
 TEST_METHOD(calculate_with_deps)
 {
-    Z::Parameter p;
-    Z::Parameter p1(Z::Dims::none(), "p1");
-    Z::Parameter p2(Z::Dims::none(), "p2");
-    p1.setValue(2);
-    p2.setValue(3);
+    Z::Parameter tgt;
+    Z::Parameter dep1(Z::Dims::none(), "p1");
+    Z::Parameter dep2(Z::Dims::none(), "p2");
+    dep1.setValue(2);
+    dep2.setValue(3);
 
-    Z::Formula f(&p);
-    f.addDep(&p1);
-    f.addDep(&p2);
+    Z::Formula f(&tgt);
+    f.addDep(&dep1);
+    f.addDep(&dep2);
     f.setCode("p1+p2");
     f.calculate();
     ASSERT_IS_TRUE(f.ok());
-    ASSERT_EQ_DBL(p.value().value(), 5);
+    ASSERT_EQ_DBL(tgt.value().value(), 5);
     
-    ASSERT_IS_TRUE(p1.listeners().contains(&f));
-    ASSERT_IS_TRUE(p2.listeners().contains(&f));
+    ASSERT_IS_TRUE(dep1.listeners().contains(&f));
+    ASSERT_IS_TRUE(dep2.listeners().contains(&f));
     
-    p1.setValue(3);
-    ASSERT_EQ_DBL(p.value().value(), 6);
+    dep1.setValue(3);
+    ASSERT_EQ_DBL(tgt.value().value(), 6);
 
-    p2.setValue(4);
-    ASSERT_EQ_DBL(p.value().value(), 7);
+    dep2.setValue(4);
+    ASSERT_EQ_DBL(tgt.value().value(), 7);
 }
 
 TEST_METHOD(destructor_must_unlisten_deps)
 {
-    Z::Parameter p;
-    Z::Parameter p1(Z::Dims::none(), "p1");
-    Z::Parameter p2(Z::Dims::none(), "p2");
+    Z::Parameter tgt;
+    Z::Parameter dep1(Z::Dims::none(), "p1");
+    Z::Parameter dep2(Z::Dims::none(), "p2");
     
-    auto f = new Z::Formula(&p);
-    f->addDep(&p1);
-    f->addDep(&p2);
+    auto f = new Z::Formula(&tgt);
+    f->addDep(&dep1);
+    f->addDep(&dep2);
     f->setCode("p1+p2");
     f->calculate();
     ASSERT_IS_TRUE(f->ok());
     delete f;
     
-    ASSERT_IS_FALSE(p1.listeners().contains(f));
-    ASSERT_IS_FALSE(p2.listeners().contains(f));
-    ASSERT_EQ_INT(p.valueDriver(), ParamValueDriver::None);
+    ASSERT_IS_FALSE(dep1.listeners().contains(f));
+    ASSERT_IS_FALSE(dep2.listeners().contains(f));
+    ASSERT_EQ_INT(tgt.valueDriver(), ParamValueDriver::None);
 }
 
 TEST_METHOD(calculate_with_units)
 {
-    Z::Parameter p(Z::Dims::linear(), "");
-    Z::Parameter p1(Z::Dims::linear(), "p1");
-    Z::Parameter p2(Z::Dims::linear(), "p2");
-    p.setValue(1_m);
-    p1.setValue(150_cm);
-    p2.setValue(5_mm);
+    Z::Parameter tgt(Z::Dims::linear(), "");
+    Z::Parameter dep1(Z::Dims::linear(), "p1");
+    Z::Parameter dep2(Z::Dims::linear(), "p2");
+    tgt.setValue(1_m);
+    dep1.setValue(150_cm);
+    dep2.setValue(5_mm);
 
-    Z::Formula f(&p);
-    f.addDep(&p1);
-    f.addDep(&p2);
+    Z::Formula f(&tgt);
+    f.addDep(&dep1);
+    f.addDep(&dep2);
     f.setCode("p1+p2");
     f.calculate();
 
     ASSERT_IS_TRUE(f.ok());
-    ASSERT_EQ_ZVALUE(p.value(), 1.505_m);
+    ASSERT_EQ_ZVALUE(tgt.value(), 1.505_m);
+}
+
+TEST_METHOD(calculate_sets_error_when_empty)
+{
+    Z::Parameter tgt;
+    Z::Formula f(&tgt);
+
+    ASSERT_IS_TRUE(f.ok())
+    ASSERT_IS_FALSE(tgt.failed())
+
+    f.calculate();
+    ASSERT_IS_FALSE(f.ok())
+    ASSERT_IS_TRUE(tgt.failed())
+    ASSERT_IS_TRUE(tgt.error().contains("empty"))
+}
+
+TEST_METHOD(calculate_sets_error_when_bad_code)
+{
+    Z::Parameter tgt;
+    Z::Formula f(&tgt);
+
+    ASSERT_IS_TRUE(f.ok())
+    ASSERT_IS_FALSE(tgt.failed())
+
+    f.setCode("2+p1");
+    f.calculate();
+
+    ASSERT_IS_FALSE(f.ok())
+    ASSERT_IS_TRUE(tgt.failed())
+}
+
+TEST_METHOD(calculate_sets_error_when_dep_failed)
+{
+    Z::Parameter tgt;
+    Z::Parameter dep("p1");
+    Z::Formula f(&tgt);
+    f.addDep(&dep);
+
+    ASSERT_IS_TRUE(f.ok())
+    ASSERT_IS_FALSE(tgt.failed())
+
+    f.setCode("2+p1");
+    f.calculate();
+    ASSERT_IS_TRUE(f.ok())
+    ASSERT_IS_FALSE(tgt.failed())
+    
+    dep.setValue(1);
+    ASSERT_IS_TRUE(f.ok())
+    ASSERT_IS_FALSE(tgt.failed())
+
+    dep.setError("dep-error");
+    ASSERT_IS_FALSE(f.ok())
+    ASSERT_IS_TRUE(tgt.failed())
+    ASSERT_IS_TRUE(tgt.error().contains("p1"))
+    ASSERT_IS_TRUE(tgt.error().contains("dep-error"))
 }
 
 TEST_CASE_METHOD(renameDependency, QString code, QString expectedCode, bool expectedFound)
@@ -123,6 +178,9 @@ TEST_GROUP("Formula",
     ADD_TEST(calculate_with_deps),
     ADD_TEST(destructor_must_unlisten_deps),
     ADD_TEST(calculate_with_units),
+    ADD_TEST(calculate_sets_error_when_empty),
+    ADD_TEST(calculate_sets_error_when_bad_code),
+    ADD_TEST(calculate_sets_error_when_dep_failed),
     ADD_TEST(renameDependency_none),
     ADD_TEST(renameDependency_beg),
     ADD_TEST(renameDependency_mid),

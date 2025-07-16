@@ -41,30 +41,77 @@ TEST_METHOD(Parameter_setValue_getValue)
     ASSERT_EQ_ZVALUE(p.value(), 3.14_mm)
 }
 
+TEST_METHOD(Parameter_setValue_resets_expr)
+{
+    Z::Parameter p;
+    p.setExpr("2+2");
+    ASSERT_EQ_STR(p.expr(), "2+2");
+    p.setValue(0);
+    ASSERT_IS_TRUE(p.expr().isEmpty());
+}
+
+TEST_METHOD(Parameter_setValue_resets_error)
+{
+    Z::Parameter p;
+    p.setError("error");
+    ASSERT_EQ_STR(p.error(), "error");
+    p.setValue(0);
+    ASSERT_IS_TRUE(p.error().isEmpty());
+}
+
+class TestParamVerifier : public Z::ValueVerifier
+{
+public:
+    bool on = true;
+    bool enabled() const override { return on; }
+    QString verify(const Z::Value& value) const override {
+        if (value.isZero()) return "not allowed";
+        return QString();
+    }
+};
+
+TEST_METHOD(Parameter_verify)
+{
+    Z::Parameter p;
+    ASSERT_IS_TRUE(p.verify(0).isEmpty())
+    ASSERT_IS_TRUE(p.verify(1).isEmpty())
+    TestParamVerifier v;
+    p.setVerifier(&v);
+    ASSERT_IS_FALSE(p.verify(0).isEmpty())
+    ASSERT_IS_TRUE(p.verify(1).isEmpty())
+    v.on = false;
+    ASSERT_IS_TRUE(p.verify(0).isEmpty())
+    ASSERT_IS_TRUE(p.verify(1).isEmpty())
+}
+
 //------------------------------------------------------------------------------
 
-namespace {
 class TestParamListener : public Z::ParameterListener
 {
 public:
-    QString changedParam;
-
-    void parameterChanged(Z::ParameterBase *p) override
-    {
-        changedParam = p->name();
-    }
+    QString changedParam, failedParam;
+    void parameterChanged(Z::ParameterBase *p) override { changedParam = p->alias(); }
+    void parameterFailed(Z::ParameterBase *p) override { failedParam = p->alias(); }
 };
-}
 
 TEST_METHOD(ParameterListener_parameterChanged)
 {
     TestParamListener listener;
-    Z::Parameter p(Z::Dims::linear(), "", "param1", "");
+    Z::Parameter p("p1");
     p.addListener(&listener);
-
-    listener.changedParam.clear();
     p.setValue(100_mm);
-    ASSERT_EQ_STR(listener.changedParam, p.name())
+    ASSERT_EQ_STR(listener.changedParam, p.alias())
+    ASSERT_IS_TRUE(listener.failedParam.isEmpty())
+}
+
+TEST_METHOD(ParameterListener_parameterFailed)
+{
+    TestParamListener listener;
+    Z::Parameter p("p1");
+    p.addListener(&listener);
+    p.setError("error");
+    ASSERT_IS_TRUE(listener.changedParam.isEmpty())
+    ASSERT_EQ_STR(listener.failedParam, p.alias())
 }
 
 //------------------------------------------------------------------------------
@@ -142,6 +189,39 @@ TEST_METHOD(ParameterLink_apply_si_when_dim_mismatch)
     ASSERT_EQ_UNIT(tgt.value().unit(), Z::Units::cm());
 }
 
+TEST_METHOD(ParameterLink_apply_error_when_source_failed)
+{
+    Z::Parameter tgt;
+    Z::Parameter src("src-param");
+    ParamLink lnk(&src, &tgt);
+    
+    ASSERT_IS_FALSE(tgt.failed())
+    
+    src.setError("src-error");
+    ASSERT_IS_TRUE(tgt.failed())
+    ASSERT_IS_TRUE(tgt.error().contains("src-param"))
+    ASSERT_IS_TRUE(tgt.error().contains("src-error"))
+}
+
+TEST_METHOD(ParameterLink_apply_error_when_verification_failed)
+{
+    Z::Parameter tgt;
+    TestParamVerifier v;
+    tgt.setVerifier(&v);
+
+    Z::Parameter src("src-param");
+
+    ParamLink lnk(&src, &tgt);
+
+    src.setValue(1);
+    ASSERT_IS_FALSE(tgt.failed())
+
+    src.setValue(0);
+    ASSERT_IS_TRUE(tgt.failed())
+    ASSERT_IS_TRUE(tgt.error().contains("src-param"))
+    ASSERT_IS_TRUE(tgt.error().contains(src.value().displayStr()))
+}
+
 //------------------------------------------------------------------------------
 
 namespace ParameterFilterTests {
@@ -169,12 +249,18 @@ TEST_GROUP("Parameters",
     ADD_TEST(Parameter_ctor_default),
     ADD_TEST(Parameter_ctor_params),
     ADD_TEST(Parameter_setValue_getValue),
+    ADD_TEST(Parameter_setValue_resets_expr),
+    ADD_TEST(Parameter_setValue_resets_error),
+    ADD_TEST(Parameter_verify),
     ADD_TEST(ParameterListener_parameterChanged),
+    ADD_TEST(ParameterListener_parameterFailed),
     ADD_TEST(Parameters_byAlias),
     ADD_TEST(Parameters_byIndex),
     ADD_TEST(Parameters_byPointer),
     ADD_TEST(ParameterLink_constructor_destructor),
     ADD_TEST(ParameterLink_apply_si_when_dim_mismatch),
+    ADD_TEST(ParameterLink_apply_error_when_source_failed),
+    ADD_TEST(ParameterLink_apply_error_when_verification_failed),
     ADD_GROUP(ParameterFilterTests),
 )
 

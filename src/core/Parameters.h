@@ -1,12 +1,13 @@
 #ifndef Z_PARAMETERS_H
 #define Z_PARAMETERS_H
 
-#include <QDebug>
-
 #include "Perf.h"
 #include "Units.h"
 #include "Values.h"
 #include "core/OriFilter.h"
+
+#include <QApplication>
+#include <QDebug>
 
 namespace Z {
 
@@ -25,6 +26,9 @@ public:
 
     /// Method is called when a new value has been assigned for a parameter.
     virtual void parameterChanged(ParameterBase*) {}
+    
+    /// Method is called when an error has been set for a parameter
+    virtual void parameterFailed(ParameterBase*) {}
 };
 
 //------------------------------------------------------------------------------
@@ -96,12 +100,22 @@ protected:
         _category(category),
         _visible(visible) {}
 
-    void notifyListeners()
+    void notifyListeners_value()
     {
-        Z_PERF_BEGIN("ParameterBase::notifyListeners")
+        Z_PERF_BEGIN("ParameterBase::notifyListeners_value")
 
         for (auto listener: std::as_const(_listeners))
             listener->parameterChanged(this);
+
+        Z_PERF_END
+    }
+
+    void notifyListeners_error()
+    {
+        Z_PERF_BEGIN("ParameterBase::notifyListeners_error")
+
+        for (auto listener: std::as_const(_listeners))
+            listener->parameterFailed(this);
 
         Z_PERF_END
     }
@@ -159,8 +173,9 @@ public:
     void setValue(const TValue& value)
     {
         _value = value;
-        _expr = QString();
-        notifyListeners();
+        _expr.clear();
+        _error.clear();
+        notifyListeners_value();
     }
 
     /// Set parameter value without notification.
@@ -168,6 +183,14 @@ public:
     {
         _value = value;
         _expr = QString();
+    }
+    
+    bool failed() const { return !_error.isEmpty(); }
+    QString error() const { return _error; }
+    void setError(const QString &error)
+    {
+        _error = error;
+        notifyListeners_error();
     }
 
     /// Verify parameter value.
@@ -202,6 +225,7 @@ protected:
 protected:
     TValue _value;
     QString _expr;
+    QString _error;
     ValueVerifierBase<TValue> *_verifier = nullptr;
     ParamValueDriver _valueDriver = ParamValueDriver::None;
 };
@@ -304,10 +328,21 @@ public:
     {
         if (param == _source) apply();
     }
+    
+    void parameterFailed(ParameterBase *param) override
+    {
+        if (param == _source) apply();
+    }
 
     void apply() const
     {
         Z_PERF_BEGIN("ParameterLink::apply")
+
+        if (_source->failed()) {
+            _target->setError(qApp->tr("Source parameter %1 failed: %2")
+                .arg(_source->displayLabel(), _source->error()));
+            return;
+        }
 
         Value value;
         if (_source->dim() != _target->dim()) {
@@ -321,8 +356,11 @@ public:
         auto res = _target->verify(value);
         if (res.isEmpty())
             _target->setValue(value);
-        else
+        else {
+            _target->setError(qApp->tr("Source parameter %1 has value %2 which is not allowed")
+                .arg(_source->displayLabel(), _source->value().displayStr()));
             qWarning() << "Param link" << str() << "Unable to set value to target, verification failed" << res;
+        }
 
         Z_PERF_END
     }

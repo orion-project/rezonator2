@@ -25,38 +25,50 @@ bool Formula::prepare(Parameters& availableDeps)
     return false;
 }
 
+void Formula::setError(const QString &error)
+{
+    _error = error;
+    _target->setError(_error);
+    Z_ERROR(QString("Bad formula for param '%1': %2").arg(_target->alias(), _error))
+}
+
 void Formula::calculate()
 {
     if (_code.isEmpty())
     {
-        _status = qApp->translate("Formula", "Formula is empty");
-        Z_ERROR(QString("Bad formula for param '%1': %2").arg(_target->alias(), _status))
+        setError(qApp->translate("Formula", "Formula is empty"));
         return;
     }
+    
+    for (auto dep : std::as_const(_deps))
+        if (dep->failed()) {
+            setError(qApp->translate("Formula", "Dependency parameter %1 failed: %2")
+                .arg(dep->displayLabel(), dep->error()));
+            return;
+        }
 
     Z::Lua lua;
-    _status = lua.open();
-    if (!_status.isEmpty())
+    QString err = lua.open();
+    if (!err.isEmpty())
     {
-        Z_ERROR(QString("Bad formula for param '%1': %2").arg(_target->alias(), _status))
+        setError(err);
         return;
     }
 
-    foreach (auto dep, _deps)
+    for (auto dep : std::as_const(_deps))
         lua.setGlobalVar(dep->alias(), dep->value().toSi());
 
     auto res = lua.calculate(_code);
     if (!res.ok())
     {
-        _status = res.error();
-        Z_ERROR(QString("Bad formula for param '%1': %2").arg(_target->alias(), _status))
+        setError(res.error());
         return;
     }
 
     auto unit = _target->value().unit();
     auto value = unit->fromSi(res.value());
     _target->setValue(Value(value, unit));
-    _status.clear();
+    _error.clear();
 }
 
 void Formula::addDep(Parameter* param)

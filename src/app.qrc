@@ -35,6 +35,7 @@
         <file alias="elem_arrow_to">../img/toolbar/elem_arrow_to.svg</file>
         <file alias="elem_delete">../img/toolbar/elem_delete.svg</file>
         <file alias="elem_disable">../img/toolbar/elem_disable.svg</file>
+        <file alias="elem_error">../img/toolbar/elem_error.svg</file>
         <file alias="elem_move_up">../img/toolbar/elem_move_up.svg</file>
         <file alias="elem_move_down">../img/toolbar/elem_move_down.svg</file>
         <file alias="elem_matr">../img/toolbar/elem_matr.svg</file>
@@ -112,6 +113,7 @@
         <file alias="param_annotate">../img/toolbar/parameter_label.svg</file>
         <file alias="param_delete">../img/toolbar/parameter_delete.svg</file>
         <file alias="param_edit">../img/toolbar/parameter_edit.svg</file>
+        <file alias="param_error">../img/toolbar/parameter_error.svg</file>
         <file alias="param_formula">../img/toolbar/parameter_gear.svg</file>
         <file alias="param_prop">../img/toolbar/parameter_prop.svg</file>
         <file alias="param_set">../img/toolbar/parameter_set.svg</file>
