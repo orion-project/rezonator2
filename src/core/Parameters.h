@@ -4,7 +4,9 @@
 #include "Perf.h"
 #include "Units.h"
 #include "Values.h"
+
 #include "core/OriFilter.h"
+#include "core/OriResult.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -190,7 +192,8 @@ public:
     void setError(const QString &error)
     {
         _error = error;
-        notifyListeners_error();
+        if (!_error.isEmpty())
+            notifyListeners_error();
     }
 
     /// Verify parameter value.
@@ -338,31 +341,36 @@ public:
     {
         Z_PERF_BEGIN("ParameterLink::apply")
 
-        if (_source->failed()) {
-            _target->setError(qApp->tr("Source parameter %1 failed: %2")
-                .arg(_source->displayLabel(), _source->error()));
-            return;
-        }
-
-        Value value;
-        if (_source->dim() != _target->dim()) {
-            auto sourceValue = _source->value().toSi();
-            auto targetUnit = _target->value().unit();
-            auto targetValue = targetUnit->fromSi(sourceValue);
-            value = Z::Value(targetValue, targetUnit);
+        auto res = getTargetValue(_source, _target);
+        if (res.ok()) {
+            _target->setValue(res.result());
         } else {
-            value = _source->value();
-        }
-        auto res = _target->verify(value);
-        if (res.isEmpty())
-            _target->setValue(value);
-        else {
-            _target->setError(qApp->tr("Source parameter %1 has value %2 which is not allowed")
-                .arg(_source->displayLabel(), _source->value().displayStr()));
-            qWarning() << "Param link" << str() << "Unable to set value to target, verification failed" << res;
+            _target->setError(res.error());
+            qWarning() << "Param link" << str() << "Unable to set value to target, verification failed" << res.error();
         }
 
         Z_PERF_END
+    }
+    
+    static Ori::Result<Value> getTargetValue(TParam *source, TParam *target)
+    {
+        if (source->failed())
+            return Ori::Result<Value>::fail(qApp->tr("Source parameter %1 failed: %2")
+                .arg(source->displayLabel(), source->error()));
+        Value value;
+        if (source->dim() != target->dim()) {
+            auto sourceValue = source->value().toSi();
+            auto targetUnit = target->value().unit();
+            auto targetValue = targetUnit->fromSi(sourceValue);
+            value = Value(targetValue, targetUnit);
+        } else {
+            value = source->value();
+        }
+        auto res = target->verify(value);
+        if (!res.isEmpty())
+            return Ori::Result<Value>::fail(qApp->tr("Source parameter %1 has value %2 which is not allowed")
+                .arg(source->displayLabel(), source->value().displayStr()));
+        return Ori::Result<Value>::ok(value);
     }
 
     /// Source and target here are named meaning data flow: value is transfered from source to target.
@@ -515,6 +523,7 @@ private:
     Parameter* _param;
     Value _value;
     QString _expr;
+    QString _error;
     const char *_reason;
 };
 

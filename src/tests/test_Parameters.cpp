@@ -114,6 +114,16 @@ TEST_METHOD(ParameterListener_parameterFailed)
     ASSERT_EQ_STR(listener.failedParam, p.alias())
 }
 
+TEST_METHOD(ParameterListener_parameterFailed_no_event_when_reset_error)
+{
+    TestParamListener listener;
+    Z::Parameter p("p1");
+    p.addListener(&listener);
+    p.setError("");
+    ASSERT_IS_TRUE(listener.changedParam.isEmpty())
+    ASSERT_IS_TRUE(listener.failedParam.isEmpty())
+}
+
 //------------------------------------------------------------------------------
 
 TEST_METHOD(Parameters_byAlias)
@@ -254,6 +264,7 @@ TEST_GROUP("Parameters",
     ADD_TEST(Parameter_verify),
     ADD_TEST(ParameterListener_parameterChanged),
     ADD_TEST(ParameterListener_parameterFailed),
+    ADD_TEST(ParameterListener_parameterFailed_no_event_when_reset_error),
     ADD_TEST(Parameters_byAlias),
     ADD_TEST(Parameters_byIndex),
     ADD_TEST(Parameters_byPointer),

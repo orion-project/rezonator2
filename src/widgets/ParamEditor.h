@@ -124,6 +124,7 @@ public:
 
     // Implements Z::ParameterListener
     void parameterChanged(Z::ParameterBase*) override;
+    void parameterFailed(Z::ParameterBase*) override;
 
     void editorFocused(bool focus);
 
@@ -166,9 +167,10 @@ private:
     bool _ownParam;
     bool _checkChanges;
     bool _useExpression;
+    QString _oldError;
 
     void linkToGlobalParameter();
-    void showValue(Z::Parameter *param);
+    void showValue(Z::Parameter *param, bool ignoreExpr);
     void setIsLinked(bool on);
     void editorKeyPressed(int key);
     void unitChangedRaw(Z::Unit unit);
