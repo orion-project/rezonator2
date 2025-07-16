@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="256" height="256" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="linearGradient11" x1="8.91" x2="21.9" y1="10.8" y2="19.7" gradientTransform="matrix(11.4,0,0,11.4,-12,-13)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#ffc57d" offset="0"/>
+   <stop stop-color="#ff940f" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient9" x1="20.2" x2="10" y1="22.2" y2="8.22" gradientTransform="matrix(11.4,0,0,11.4,-12,-13)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#c67000" offset="0"/>
+   <stop stop-color="#ff9514" offset="1"/>
+  </linearGradient>
+ </defs>
+ <linearGradient id="a">
+  <stop stop-color="#725236" offset="0"/>
+  <stop stop-color="#826044" offset="1"/>
+ </linearGradient>
+ <linearGradient id="b" x1="180" x2="76.7" y1="200" y2="143" gradientTransform="matrix(.933 0 0 .933 -57.9 -73.7)" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+ <linearGradient id="c" x1="118" x2="70.9" y1="110" y2="106" gradientTransform="matrix(.938 0 0 .839 -58.3 -61.4)" gradientUnits="userSpaceOnUse" xlink:href="#a"/>
+ <linearGradient id="d" x1="20.9" x2="61.5" y1="86.8" y2="86" gradientUnits="userSpaceOnUse">
+  <stop stop-color="#fff" offset="0"/>
+  <stop stop-color="#fff" stop-opacity="0" offset="1"/>
+ </linearGradient>
+ <path d="m7.45 69.1v-61.2l52.5 21.8z" fill="#b29175" fill-rule="evenodd" stroke="url(#c)" stroke-width="5"/>
+ <circle cx="61.5" cy="85.1" r="55" fill="#b08e71" stroke="url(#b)" stroke-width="6"/>
+ <g stroke-linecap="round">
+  <path d="m53.9 129c-48.9-9.01-45-73.7-7.76-85" fill="none" stroke="url(#d)" stroke-opacity=".468" stroke-width="15"/>
+  <path d="m121 68.8-51.7 51.7v73.1l51.7 51.7h73.1l51.7-51.7v-73.1l-51.7-51.7z" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="18.6"/>
+  <path d="m124 72.5-50.1 50.1v70.8l50.1 50.1h70.8l50.1-50.1v-70.8l-50.1-50.1z" fill="url(#linearGradient11)" stroke="url(#linearGradient9)" stroke-linejoin="round" stroke-width="9"/>
+  <g transform="matrix(6.73 -6.73 6.73 6.73 -2.46 135)" stroke-width="3.01">
+   <path d="m8.31 14.3 4.68-6.02 2.67 2.67-6.02 4.68z" fill="none"/>
+   <path d="m8.98 13.7 3.63-4.97c1.71-2.3 4.96 0.946 2.67 2.67l-4.97 3.63c-1.07 0.794-2.08-0.398-1.34-1.34z" fill="#fff"/>
+   <ellipse transform="rotate(45)" cx="17" cy="7.57" rx="1.89" ry="1.89" fill="#fff"/>
+  </g>
+ </g>
+</svg>

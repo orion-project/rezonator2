@@ -117,6 +117,7 @@
         <file alias="param_formula">../img/toolbar/parameter_gear.svg</file>
         <file alias="param_prop">../img/toolbar/parameter_prop.svg</file>
         <file alias="param_set">../img/toolbar/parameter_set.svg</file>
+        <file alias="param_warn">../img/toolbar/parameter_warn.svg</file>
         <file alias="parameter">../img/toolbar/parameter.svg</file>
         <file alias="paste">../img/toolbar/paste.svg</file>
         <file alias="paste_fmt">../img/toolbar/paste_format.svg</file>
@@ -161,6 +162,7 @@
         <file alias="undo">../img/toolbar/undo.svg</file>
         <file alias="update_params">../img/toolbar/update_params.svg</file>
         <file alias="update">../img/toolbar/update.svg</file>
+        <file alias="warning">../img/toolbar/warning.svg</file>
         <file alias="wavelength">../img/toolbar/wavelength.svg</file>
         <file alias="windows_close">../img/toolbar/windows_close.svg</file>
         <file alias="zoom_in">../img/toolbar/zoom_in.svg</file>

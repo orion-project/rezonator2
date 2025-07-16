@@ -189,6 +189,9 @@ public:
     
     virtual std::optional<Z::Value> aperture() const { return {}; }
 
+    bool failed() const;
+    QString failReason() const;
+
     ElementLayoutOptions layoutOptions;
 
 protected:
@@ -208,6 +211,7 @@ protected:
     void addParam(Z::Parameter* param, int index = -1);
 
     void parameterChanged(Z::ParameterBase*) override;
+    void parameterFailed(Z::ParameterBase*) override;
 
     bool _calcMatrixLocked = false;
     bool _calcMatrixNeeded = false;

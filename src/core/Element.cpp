@@ -90,6 +90,12 @@ void Element::parameterChanged(Z::ParameterBase *p)
     Z_PERF_END
 }
 
+void Element::parameterFailed(Z::ParameterBase *p)
+{
+    if (!_eventsLocked && _owner)
+        _owner->elementChanged(this, QStringLiteral("Element::parameterFailed(%1)").arg(p->alias()));
+}
+
 void Element::calcMatrix(const char *reason)
 {
     Q_UNUSED(reason)
@@ -124,6 +130,22 @@ void Element::setDisabled(bool value)
     _disabled = value;
     if (!_eventsLocked && _owner)
         _owner->elementChanged(this, "Element::setDisabled");
+}
+
+bool Element::failed() const
+{
+    for (auto p : std::as_const(_params))
+        if (p->failed())
+            return true;
+    return false;
+}
+
+QString Element::failReason() const
+{
+    for (auto p : std::as_const(_params))
+        if (p->failed())
+            return qApp->tr("Parameter %1 failed: %2").arg(p->displayLabel(), p->error());
+    return QString();
 }
 
 //------------------------------------------------------------------------------

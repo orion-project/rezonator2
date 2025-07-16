@@ -401,11 +401,12 @@ void ParamEditor::apply()
         return;
     }
     
+    Z::ParamLink *oldLink = nullptr;
     Z::ParamLink *newLink = nullptr;
 
     if (_paramLinks)
     {
-        auto oldLink = _paramLinks->byTarget(_param);
+        oldLink = _paramLinks->byTarget(_param);
         if (oldLink)
         {
             // Link has been removed
@@ -434,7 +435,7 @@ void ParamEditor::apply()
 
     if (newLink)
         newLink->apply();
-    else {
+    else if (!oldLink) {
         _paramChangedHandlerEnabled = false;
         _param->setValue(value);
         _param->setExpr(_valueEditor->expr());
