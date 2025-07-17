@@ -162,7 +162,7 @@ public:
 private:
     Schema* _schema;
     QTableView* _view;
-    QPixmap _iconParam = QIcon(":/toolbar/parameter").pixmap(Z::Utils::elemIconSize());
+    QPixmap _iconParam = QIcon(":/toolbar/param_manual").pixmap(Z::Utils::elemIconSize());
     QPixmap _iconFormula = QIcon(":/toolbar/param_formula").pixmap(Z::Utils::elemIconSize());
     QPixmap _iconError = QIcon(":/toolbar/param_warn").pixmap(Z::Utils::elemIconSize());
 

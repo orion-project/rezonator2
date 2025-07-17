@@ -414,12 +414,14 @@ void ParamEditor::apply()
             {
                 _paramLinks->removeOne(oldLink);
                 delete oldLink;
+                oldLink = nullptr;
             }
             // Link has been changed
             else if (oldLink->source() != _linkSource)
             {
                 _paramLinks->removeOne(oldLink);
                 delete oldLink;
+                oldLink = nullptr;
                 newLink = new Z::ParamLink(_linkSource, _param);
                 _paramLinks->append(newLink);
             }

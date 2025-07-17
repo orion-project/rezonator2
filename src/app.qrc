@@ -115,6 +115,7 @@
         <file alias="param_edit">../img/toolbar/parameter_edit.svg</file>
         <file alias="param_error">../img/toolbar/parameter_error.svg</file>
         <file alias="param_formula">../img/toolbar/parameter_gear.svg</file>
+        <file alias="param_manual">../img/toolbar/parameter_nut.svg</file>
         <file alias="param_prop">../img/toolbar/parameter_prop.svg</file>
         <file alias="param_set">../img/toolbar/parameter_set.svg</file>
         <file alias="param_warn">../img/toolbar/parameter_warn.svg</file>
