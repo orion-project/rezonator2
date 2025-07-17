@@ -98,6 +98,8 @@ public:
                 auto elem = _schema->element(row);
                 if (elem && elem->disabled())
                     return _disabledIcon;
+                if (elem && elem->failed())
+                    return _errorIcon;
             }
         }
         else if (role == Qt::ToolTipRole)
@@ -112,6 +114,8 @@ public:
                 auto elem = _schema->element(row);
                 if (elem && elem->disabled())
                     return tr("Element disabled");
+                if (elem && elem->failed())
+                    return elem->failReason();
             }
         }
         else if (role == Qt::FontRole)
@@ -207,6 +211,7 @@ private:
     QTableView* _view;
     QPixmap _addElemIcon = QIcon(":/toolbar/elem_add").pixmap(Z::Utils::elemIconSize());
     QPixmap _disabledIcon = QIcon(":/toolbar/stop").pixmap(Z::Utils::elemIconSize());
+    QPixmap _errorIcon = QIcon(":/toolbar/warning").pixmap(Z::Utils::elemIconSize());
 };
 
 //------------------------------------------------------------------------------

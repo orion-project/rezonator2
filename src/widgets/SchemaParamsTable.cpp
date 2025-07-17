@@ -51,7 +51,7 @@ public:
                 case COL_IMAGE: return tr("Typ");
                 case COL_ALIAS: return tr("Name");
                 case COL_VALUE: return tr("Value");
-                case COL_ANNOTATION: return tr("Annotation");
+                case COL_ANNOTATION: return tr("Description");
                 }
             }
         }
@@ -70,6 +70,8 @@ public:
         {
             if (col == COL_IMAGE)
             {
+                if (param->failed())
+                    return _iconError;
                 if (param->valueDriver() == Z::ParamValueDriver::Formula)
                     return _iconFormula;
                 return _iconParam;
@@ -79,6 +81,8 @@ public:
         {
             if (col == COL_IMAGE)
             {
+                if (param->failed())
+                    return param->error();
                 if (param->valueDriver() == Z::ParamValueDriver::Formula)
                     return tr("Formula driven parameter");
                 return tr("Simple parameter");
@@ -150,11 +154,17 @@ public:
         updateParamRow(param);
     }
     
+    void parameterFailed(Z::ParameterBase* param) override
+    {
+        updateParamRow(param);
+    }
+    
 private:
     Schema* _schema;
     QTableView* _view;
-    QPixmap _iconParam = QIcon(":/toolbar/parameter").pixmap(Z::Utils::elemIconSize());
+    QPixmap _iconParam = QIcon(":/toolbar/param_manual").pixmap(Z::Utils::elemIconSize());
     QPixmap _iconFormula = QIcon(":/toolbar/param_formula").pixmap(Z::Utils::elemIconSize());
+    QPixmap _iconError = QIcon(":/toolbar/param_warn").pixmap(Z::Utils::elemIconSize());
 
     void updateParamRow(Z::ParameterBase* param)
     {

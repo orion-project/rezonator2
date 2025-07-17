@@ -162,6 +162,7 @@ void SchemaReaderJson::readGlobalParam(const QJsonObject& root, const QString &a
         _report.warning(QString("Reading global parameter '%1': %2").arg(param->alias(), res));
         
     param->setExpr(root["expr"].toString());
+    param->setError(root["error"].toString());
 
     _schema->addGlobalParam(param);
 }
@@ -455,6 +456,7 @@ Element* readElement(const QJsonObject& root, Z::Report* report)
                 if (!res.isEmpty())
                     report->warning(QString("Reading element '%1': %2").arg(elem->displayLabel(), res));
                 param->setExpr(paramObj["expr"].toString());
+                param->setError(paramObj["error"].toString());
             }
         }
     }

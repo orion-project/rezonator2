@@ -135,6 +135,7 @@ void ParamEditorEx::apply()
         }
         _formula->setCode(_tmpFormula->code());
         _formula->assignDeps(_tmpFormula);
+        _formula->calculate();
     }
     else
     {
@@ -144,9 +145,10 @@ void ParamEditorEx::apply()
             _formula = nullptr;
         }
         _paramEditor->apply();
+        _param->setValue(_tmpParam->value());
+        _param->setExpr(_tmpParam->expr());
+        _param->setError(_tmpParam->error());
     }
-    _param->setValue(_tmpParam->value());
-    _param->setExpr(_tmpParam->expr());
 }
 
 void ParamEditorEx::focus()

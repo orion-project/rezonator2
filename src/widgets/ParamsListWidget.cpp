@@ -52,10 +52,12 @@ void ParamsListWidget::addParamItem(Z::Parameter* param, bool select)
     QListWidgetItem *item;
     if (param == noneParam())
         item = new QListWidgetItem(QIcon(":/toolbar/param_delete"), param->alias());
+    else if (param->failed())
+        item = new QListWidgetItem(QIcon(":/toolbar/param_warn"), param->displayStr());
     else if (param->valueDriver() == Z::ParamValueDriver::Formula)
         item = new QListWidgetItem(QIcon(":/toolbar/param_formula"), param->displayStr());
     else
-        item = new QListWidgetItem(QIcon(":/toolbar/parameter"), param->displayStr());
+        item = new QListWidgetItem(QIcon(":/toolbar/param_manual"), param->displayStr());
     item->setData(Qt::UserRole, QVariant::fromValue<void*>(reinterpret_cast<void*>(param)));
     if (param->valueDriver() != Z::ParamValueDriver::None)
     {

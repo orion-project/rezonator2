@@ -124,7 +124,7 @@ void FormulaEditor::calculate()
     }
     else
     {
-        _statusLabel->setText(_formula->status());
+        _statusLabel->setText(_formula->error());
         _statusLabel->setStyleSheet("QLabel{background:LightCoral;padding:3px}");
         setTabIcon(_tabIndexCode, QIcon(":/toolbar/error"));
     }

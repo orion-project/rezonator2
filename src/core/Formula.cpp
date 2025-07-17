@@ -25,38 +25,50 @@ bool Formula::prepare(Parameters& availableDeps)
     return false;
 }
 
+void Formula::setError(const QString &error)
+{
+    _error = error;
+    _target->setError(_error);
+    Z_ERROR(QString("Bad formula for param '%1': %2").arg(_target->alias(), _error))
+}
+
 void Formula::calculate()
 {
     if (_code.isEmpty())
     {
-        _status = qApp->translate("Formula", "Formula is empty");
-        Z_ERROR(QString("Bad formula for param '%1': %2").arg(_target->alias(), _status))
+        setError(qApp->translate("Formula", "Formula is empty"));
         return;
     }
+    
+    for (auto dep : std::as_const(_deps))
+        if (dep->failed()) {
+            setError(qApp->translate("Formula", "Dependency parameter %1 failed: %2")
+                .arg(dep->displayLabel(), dep->error()));
+            return;
+        }
 
     Z::Lua lua;
-    _status = lua.open();
-    if (!_status.isEmpty())
+    QString err = lua.open();
+    if (!err.isEmpty())
     {
-        Z_ERROR(QString("Bad formula for param '%1': %2").arg(_target->alias(), _status))
+        setError(err);
         return;
     }
 
-    foreach (auto dep, _deps)
+    for (auto dep : std::as_const(_deps))
         lua.setGlobalVar(dep->alias(), dep->value().toSi());
 
     auto res = lua.calculate(_code);
     if (!res.ok())
     {
-        _status = res.error();
-        Z_ERROR(QString("Bad formula for param '%1': %2").arg(_target->alias(), _status))
+        setError(res.error());
         return;
     }
 
     auto unit = _target->value().unit();
     auto value = unit->fromSi(res.value());
     _target->setValue(Value(value, unit));
-    _status.clear();
+    _error.clear();
 }
 
 void Formula::addDep(Parameter* param)
@@ -85,6 +97,33 @@ QString Formula::displayStr() const
     for (auto dep : _deps)
         params << dep->displayLabel();
     return QStringLiteral("f(%1)").arg(params.join(QStringLiteral(", ")));
+}
+
+bool Formula::renameDependency(Parameter *param, const QString &newName)
+{
+    if (!_deps.contains(param))
+        return false;
+    QString newCode;
+    QTextStream s(&newCode);
+    int prevOffset = 0;
+    bool depFound = false;
+    static QRegularExpression r("[a-zA-Z_][a-zA-Z_0-9]*");
+    auto it = r.globalMatch(_code);
+    while (it.hasNext()) {
+        auto m = it.next();
+        if (m.captured() == param->alias()) {
+            s << _code.mid(prevOffset, m.capturedStart()-prevOffset);
+            s << newName;
+            prevOffset = m.capturedEnd();
+            depFound = true;
+        }
+    }
+    if (depFound) {
+        if (prevOffset < _code.length())
+            s << _code.mid(prevOffset);
+        _code = newCode;
+    }
+    return depFound;
 }
 
 //------------------------------------------------------------------------------
@@ -162,6 +201,17 @@ Parameters Formulas::dependentParams(Parameter *whichParam) const
             }
     }
     return result;
+}
+
+bool Formulas::renameDependency(Parameter *param, const QString &newName)
+{
+    bool depFound = false;
+    for (auto it = _items.cbegin(); it != _items.cend(); it++) {
+        auto formula = it.value();
+        if (formula->renameDependency(param, newName))
+            depFound = true;
+    }
+    return depFound;
 }
 
 //------------------------------------------------------------------------------

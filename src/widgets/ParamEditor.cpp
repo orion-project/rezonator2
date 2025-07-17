@@ -41,6 +41,13 @@ public:
         setText(expr);
     }
     
+    void indicateValidation(bool ok) override
+    {
+        setProperty("status", ok ? "ok" : "invalid");
+        style()->unpolish(this);
+        style()->polish(this);
+    }
+
     bool skipProcessing = false;
 
 protected:
@@ -55,8 +62,6 @@ protected:
     
         if (skipProcessing) return;
     
-        // TODO: refine built-in functions and constants
-        // TODO: don't parse "1,2" as "2" (why parse lists?)
         static double inf = qInf();
         static const int varCount = 3;
         static te_variable vars[varCount] = {{"inf", &inf}, {"Inf", &inf}, {"INF", &inf}};
@@ -77,13 +82,6 @@ protected:
             _ok = ok;
             indicateValidation(ok);
         }
-    }
-    
-    void indicateValidation(bool ok) override
-    {
-        setProperty("status", ok ? "ok" : "invalid");
-        style()->unpolish(this);
-        style()->polish(this);
     }
 };
 
@@ -161,41 +159,41 @@ void MenuButton::focusOutEvent(QFocusEvent *e)
 
 //------------------------------------------------------------------------------
 
-namespace {
-int countSuitableGlobalParams(const Z::Parameters* globalParams, const Z::Parameter* param)
-{
-    auto dim = param->dim();
-    int count = 0;
-    foreach (auto p, *globalParams)
-        if (p->dim() == dim)
-        {
-            // Parameters of fixed dim can only be linked unit-to-unit
-            if (dim == Z::Dims::fixed() &&
-                p->value().unit() != param->value().unit())
-                continue;
+// namespace {
+// int countSuitableGlobalParams(const Z::Parameters* globalParams, const Z::Parameter* param)
+// {
+//     auto dim = param->dim();
+//     int count = 0;
+//     foreach (auto p, *globalParams)
+//         //if (p->dim() == dim) don't care about dimension match
+//         {
+//             // Parameters of fixed dim can only be linked unit-to-unit
+//             if (dim == Z::Dims::fixed() &&
+//                 p->value().unit() != param->value().unit())
+//                 continue;
 
-            count++;
-        }
-    return count;
-}
+//             count++;
+//         }
+//     return count;
+// }
 
-Z::Parameters getSuitableGlobalParams(const Z::Parameters* globalParams, const Z::Parameter* param)
-{
-    auto dim = param->dim();
-    Z::Parameters params;
-    foreach (auto p, *globalParams)
-        if (p->dim() == dim)
-        {
-            // Parameters of fixed dim can only be linked unit-to-unit
-            if (dim == Z::Dims::fixed() &&
-                p->value().unit() != param->value().unit())
-                continue;
+// Z::Parameters getSuitableGlobalParams(const Z::Parameters* globalParams, const Z::Parameter* param)
+// {
+//     auto dim = param->dim();
+//     Z::Parameters params;
+//     foreach (auto p, *globalParams)
+//         //if (p->dim() == dim)
+//         {
+//             // Parameters of fixed dim can only be linked unit-to-unit
+//             if (dim == Z::Dims::fixed() &&
+//                 p->value().unit() != param->value().unit())
+//                 continue;
 
-            params.append(p);
-        }
-    return params;
-}
-}
+//             params.append(p);
+//         }
+//     return params;
+// }
+// }
 
 //------------------------------------------------------------------------------
 //                              ParamEditor
@@ -206,6 +204,7 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
     _ownParam(opts.ownParam), _checkChanges(opts.checkChanges)
 {
     _param->addListener(this);
+    _oldError = _param->error();
 
     if (_paramLinks)
     {
@@ -234,7 +233,8 @@ ParamEditor::ParamEditor(Options opts) : QWidget(),
     _labelLabel->setFont(Z::Gui::ParamLabelFont().get());
     layout->addWidget(_labelLabel);
 
-    if (opts.allowLinking && countSuitableGlobalParams(_globalParams, _param))
+    //if (opts.allowLinking && countSuitableGlobalParams(_globalParams, _param))
+    if (opts.allowLinking && !_globalParams->isEmpty())
     {
         _labelLabel->setText(paramLabel);
         _linkButton = new LinkButton;
@@ -310,20 +310,47 @@ void ParamEditor::parameterChanged(Z::ParameterBase*)
     if (_paramChangedHandlerEnabled) populate();
 }
 
+void ParamEditor::parameterFailed(Z::ParameterBase*)
+{
+    if (_paramChangedHandlerEnabled) populate();
+}
+
 void ParamEditor::populate()
 {
+    _oldError = _param->error();
     showValue(_param, false);
 }
 
 void ParamEditor::showValue(Z::Parameter *param, bool ignoreExpr)
 {
     QString expr = param->expr();
+    Z::Value value = param->value();
+    QString error;
+    if (param == _linkSource) {
+        // When we just added a link, it's not applyed yet,
+        // but we want to show the value as it would be after apply
+        auto res = Z::ParamLink::getTargetValue(_linkSource, _param);
+        if (res.ok())
+            value = res.result();
+        else {
+            value = _param->value();
+            error = res.error();
+        }
+    }
     if (!_useExpression || expr.isEmpty() || ignoreExpr) {
         _valueEditor->skipProcessing = true;
-        _valueEditor->setValue(param->value().value());
+        _valueEditor->setValue(value.value());
         _valueEditor->skipProcessing = false;
-    } else _valueEditor->setExpr(expr);
-    _unitsSelector->setSelectedUnit(param->value().unit());
+    } else
+        _valueEditor->setExpr(expr);
+    _unitsSelector->setSelectedUnit(value.unit());
+    if (error.isEmpty() && !_oldError.isEmpty())
+        error = _oldError;
+    if (!error.isEmpty()) {
+        _valueEditor->setToolTip(error);
+        _valueEditor->indicateValidation(false);
+    } else
+        _valueEditor->indicateValidation(true);
 }
 
 void ParamEditor::setIsLinked(bool on)
@@ -374,11 +401,12 @@ void ParamEditor::apply()
         return;
     }
     
+    Z::ParamLink *oldLink = nullptr;
     Z::ParamLink *newLink = nullptr;
 
     if (_paramLinks)
     {
-        auto oldLink = _paramLinks->byTarget(_param);
+        oldLink = _paramLinks->byTarget(_param);
         if (oldLink)
         {
             // Link has been removed
@@ -386,12 +414,14 @@ void ParamEditor::apply()
             {
                 _paramLinks->removeOne(oldLink);
                 delete oldLink;
+                oldLink = nullptr;
             }
             // Link has been changed
             else if (oldLink->source() != _linkSource)
             {
                 _paramLinks->removeOne(oldLink);
                 delete oldLink;
+                oldLink = nullptr;
                 newLink = new Z::ParamLink(_linkSource, _param);
                 _paramLinks->append(newLink);
             }
@@ -407,7 +437,7 @@ void ParamEditor::apply()
 
     if (newLink)
         newLink->apply();
-    else {
+    else if (!oldLink) {
         _paramChangedHandlerEnabled = false;
         _param->setValue(value);
         _param->setExpr(_valueEditor->expr());
@@ -455,7 +485,8 @@ void ParamEditor::linkToGlobalParameter()
 {
     focus();
 
-    Z::Parameters availableParams = getSuitableGlobalParams(_globalParams, _param);
+    //Z::Parameters availableParams = getSuitableGlobalParams(_globalParams, _param);
+    Z::Parameters availableParams(*_globalParams);
     if (availableParams.isEmpty())
         return Ori::Dlg::info(tr("There are no suitable parameters to link to"));
 
@@ -468,7 +499,11 @@ void ParamEditor::linkToGlobalParameter()
     _linkSource = selected != ParamsListWidget::noneParam() ? selected : nullptr;
     _linkButton->showLinkSource(_linkSource);
     setIsLinked(_linkSource);
-    showValue(_linkSource ? _linkSource : _param, _linkSource);
+    // The param error in this editor could be only from failed link
+    // If we unlinked, the error can be safely cleaned to show a state that will be after apply()
+    // If we link again, a new error will be calculated in showValue()
+    _oldError.clear();
+    showValue(_linkSource ? _linkSource : _param, _linkSource != nullptr);
 }
 
 void ParamEditor::unitChangedRaw(Z::Unit unit)
