@@ -3,6 +3,7 @@
 #include "LuaHelper.h"
 
 #include <QApplication>
+#include <QHash>
 #include <QRegularExpression>
 
 namespace Z {
@@ -99,7 +100,13 @@ QString Formula::displayStr() const
     return QStringLiteral("f(%1)").arg(params.join(QStringLiteral(", ")));
 }
 
-bool Formula::renameDependency(Parameter *param, const QString &newName)
+static QRegularExpression varNameRegex()
+{
+    static QRegularExpression r("[a-zA-Z_][a-zA-Z_0-9]*");
+    return r;
+}
+
+bool Formula::renameDep(Parameter *param, const QString &newName)
 {
     if (!_deps.contains(param))
         return false;
@@ -107,8 +114,7 @@ bool Formula::renameDependency(Parameter *param, const QString &newName)
     QTextStream s(&newCode);
     int prevOffset = 0;
     bool depFound = false;
-    static QRegularExpression r("[a-zA-Z_][a-zA-Z_0-9]*");
-    auto it = r.globalMatch(_code);
+    auto it = varNameRegex().globalMatch(_code);
     while (it.hasNext()) {
         auto m = it.next();
         if (m.captured() == param->alias()) {
@@ -124,6 +130,42 @@ bool Formula::renameDependency(Parameter *param, const QString &newName)
         _code = newCode;
     }
     return depFound;
+}
+
+QString Formula::findDeps(const Parameters &globalParams, std::function<bool(Parameter*,const QString&)> dependsOn)
+{
+    QHash<QString, Parameter*> newDeps;
+    auto it = varNameRegex().globalMatch(_code);
+    while (it.hasNext()) {
+        auto m = it.next();
+        QString var = m.captured();
+        if (newDeps.contains(var))
+            continue;
+        for (auto p : std::as_const(globalParams))
+            if (p->alias() == var) {
+                if (p->alias() == _target->alias())
+                    return qApp->tr("A parameter can't reference itself");
+                if (dependsOn && dependsOn(p, _target->alias()))
+                    return qApp->tr("Parameter %1 can't be used because it'd make circular dependency").arg(p->alias());
+                newDeps.insert(var, p);
+                break;
+            }
+    }
+    Parameters oldDeps(_deps);
+    for (auto p : std::as_const(oldDeps))
+        if (!newDeps.contains(p->alias()))
+            removeDep(p);
+    for (auto it = newDeps.cbegin(); it != newDeps.cend(); it++) {
+        bool alreadyExists = false;
+        for (auto p : std::as_const(_deps))
+            if (p->alias() == it.key()) {
+                alreadyExists = true;
+                break;
+            }
+        if (!alreadyExists)
+            addDep(it.value());
+    }
+    return {};
 }
 
 //------------------------------------------------------------------------------
@@ -165,7 +207,7 @@ void Formulas::clear()
     _items.clear();
 }
 
-bool Formulas::ifDependsOn(Parameter *whichParam, Parameter *onParam) const
+bool Formulas::dependsOn(Parameter *whichParam, const QString &onParam) const
 {
     if (!_items.contains(whichParam))
         return false;
@@ -176,10 +218,10 @@ bool Formulas::ifDependsOn(Parameter *whichParam, Parameter *onParam) const
 
     for (auto param : formula->deps())
     {
-        if (param == onParam)
+        if (param->alias() == onParam)
             return true;
 
-        if (ifDependsOn(param, onParam))
+        if (dependsOn(param, onParam))
             return true;
     }
 
@@ -208,7 +250,7 @@ bool Formulas::renameDependency(Parameter *param, const QString &newName)
     bool depFound = false;
     for (auto it = _items.cbegin(); it != _items.cend(); it++) {
         auto formula = it.value();
-        if (formula->renameDependency(param, newName))
+        if (formula->renameDep(param, newName))
             depFound = true;
     }
     return depFound;

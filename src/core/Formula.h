@@ -34,13 +34,17 @@ public:
     void removeDep(Parameter* param);
     void assignDeps(const Formula *formula);
 
+    /// Put a new parameter name into the formula code if it depend on the param.
+    /// Returns true if the parameter is found in the formula code.
+    bool renameDep(Parameter *param, const QString &newName);
+    
+    /// Scan function code for names and update dependencies list
+    QString findDeps(const Parameters &globalParams, std::function<bool(Parameter*,const QString&)> isDependOn);
+
     void parameterChanged(ParameterBase*) override { calculate(); }
     void parameterFailed(ParameterBase*) override { calculate(); }
     
-    /// Put a new parameter name into the formula code if it depend on the param.
-    /// Returns true if the parameter is found in the formula code.
-    bool renameDependency(Parameter *param, const QString &newName);
-
+    
     QString displayStr() const;
 
 private:
@@ -66,9 +70,13 @@ public:
     QMap<Parameter*, Formula*>& items() { return _items; }
 
     /// Checks if `whichParam` depends on `onParam`.
-    bool ifDependsOn(Parameter *whichParam, Parameter *onParam) const;
+    /// The onParam is passed as alias rather than pointer
+    /// because of the function is used in parameter formula editor
+    /// which works with a copy of the parameter, so its pointer would not match.
+    bool dependsOn(Parameter *whichParam, const QString &onParam) const;
 
-    /// Returns list of parameter which depends on specified parameter.
+    /// Returns list of parameter which directly depends on the specified parameter.
+    /// param* <--- formula* <--- wichParams
     Parameters dependentParams(Parameter *whichParam) const;
     
     /// Put a new parameter name into formulas code if they depend on it.
