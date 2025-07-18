@@ -132,7 +132,7 @@ bool Formula::renameDep(Parameter *param, const QString &newName)
     return depFound;
 }
 
-void Formula::findDeps(const Parameters &globalParams)
+QString Formula::findDeps(const Parameters &globalParams, std::function<bool(Parameter*,const QString&)> dependsOn)
 {
     QHash<QString, Parameter*> newDeps;
     auto it = varNameRegex().globalMatch(_code);
@@ -143,6 +143,10 @@ void Formula::findDeps(const Parameters &globalParams)
             continue;
         for (auto p : std::as_const(globalParams))
             if (p->alias() == var) {
+                if (p->alias() == _target->alias())
+                    return qApp->tr("A parameter can't reference itself");
+                if (dependsOn && dependsOn(p, _target->alias()))
+                    return qApp->tr("Parameter %1 can't be used because it'd make circular dependency").arg(p->alias());
                 newDeps.insert(var, p);
                 break;
             }
@@ -161,6 +165,7 @@ void Formula::findDeps(const Parameters &globalParams)
         if (!alreadyExists)
             addDep(it.value());
     }
+    return {};
 }
 
 //------------------------------------------------------------------------------
@@ -202,7 +207,7 @@ void Formulas::clear()
     _items.clear();
 }
 
-bool Formulas::ifDependsOn(Parameter *whichParam, Parameter *onParam) const
+bool Formulas::dependsOn(Parameter *whichParam, const QString &onParam) const
 {
     if (!_items.contains(whichParam))
         return false;
@@ -213,10 +218,10 @@ bool Formulas::ifDependsOn(Parameter *whichParam, Parameter *onParam) const
 
     for (auto param : formula->deps())
     {
-        if (param == onParam)
+        if (param->alias() == onParam)
             return true;
 
-        if (ifDependsOn(param, onParam))
+        if (dependsOn(param, onParam))
             return true;
     }
 

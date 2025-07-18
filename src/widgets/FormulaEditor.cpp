@@ -43,9 +43,22 @@ void FormulaEditor::setFocus()
 
 void FormulaEditor::calculate()
 {
+    auto isDependOn = [this](Z::Parameter *which, const QString &on) {
+        return _formulas ? _formulas->dependsOn(which, on) : false;
+    };
+
     _formula->setCode(_codeEditor->toPlainText());
-    _formula->findDeps(*_globalParams);
+    if (auto err =_formula->findDeps(*_globalParams, isDependOn); !err.isEmpty()) {
+        _formula->setError(err);
+        showStatus();
+        return;
+    }
     _formula->calculate();
+    showStatus();
+}
+
+void FormulaEditor::showStatus()
+{
     if (_formula->ok())
     {
         _statusLabel->setText("OK");

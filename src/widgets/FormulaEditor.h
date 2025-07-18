@@ -47,6 +47,8 @@ private:
     QTextEdit *_codeEditor;
     QLabel *_statusLabel;
     QTimer *_recalcTimer;
+    
+    void showStatus();
 };
 
 #endif // FORMULA_EDITOR_H
