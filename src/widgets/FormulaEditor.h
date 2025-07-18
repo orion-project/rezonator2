@@ -10,9 +10,7 @@ class QLabel;
 class QTextEdit;
 QT_END_NAMESPACE
 
-class ParamsListWidget;
-
-class FormulaEditor : public QTabWidget
+class FormulaEditor : public QWidget
 {
     Q_OBJECT
 
@@ -49,15 +47,6 @@ private:
     QTextEdit *_codeEditor;
     QLabel *_statusLabel;
     QTimer *_recalcTimer;
-    ParamsListWidget *_paramsList;
-    int _tabIndexCode, _tabIndexParams;
-
-    QWidget* makeEditorTab();
-    QWidget* makeParamsTab();
-
-    void addParam();
-    void removeParam();
-    void showParamsCount();
 };
 
 #endif // FORMULA_EDITOR_H
