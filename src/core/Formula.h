@@ -34,13 +34,17 @@ public:
     void removeDep(Parameter* param);
     void assignDeps(const Formula *formula);
 
+    /// Put a new parameter name into the formula code if it depend on the param.
+    /// Returns true if the parameter is found in the formula code.
+    bool renameDep(Parameter *param, const QString &newName);
+    
+    /// Scan function code for names and update dependencies list
+    void findDeps(const Parameters &globalParams);
+
     void parameterChanged(ParameterBase*) override { calculate(); }
     void parameterFailed(ParameterBase*) override { calculate(); }
     
-    /// Put a new parameter name into the formula code if it depend on the param.
-    /// Returns true if the parameter is found in the formula code.
-    bool renameDependency(Parameter *param, const QString &newName);
-
+    
     QString displayStr() const;
 
 private:

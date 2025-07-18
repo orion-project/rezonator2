@@ -148,14 +148,14 @@ TEST_METHOD(calculate_sets_error_when_dep_failed)
     ASSERT_IS_TRUE(tgt.error().contains("dep-error"))
 }
 
-TEST_CASE_METHOD(renameDependency, QString code, QString expectedCode, bool expectedFound)
+TEST_CASE_METHOD(renameDep, QString code, QString expectedCode, bool expectedFound)
 {
     Z::Parameter tgt;
     Z::Formula f(&tgt);
     Z::Parameter dep("a_1");
     f.addDep(&dep);
     f.setCode(code);
-    bool ok = f.renameDependency(&dep, "a_2");
+    bool ok = f.renameDep(&dep, "a_2");
     if (expectedFound)
         ASSERT_IS_TRUE(ok)
     else
@@ -163,12 +163,46 @@ TEST_CASE_METHOD(renameDependency, QString code, QString expectedCode, bool expe
     ASSERT_EQ_STR(f.code(), expectedCode)
 }
 
-TEST_CASE(renameDependency_none, renameDependency, "a+b+c", "a+b+c", false)
-TEST_CASE(renameDependency_beg, renameDependency, "a_1+b+c", "a_2+b+c", true)
-TEST_CASE(renameDependency_mid, renameDependency, "b+ a_1 +c", "b+ a_2 +c", true)
-TEST_CASE(renameDependency_end, renameDependency, "b+c +a_1", "b+c +a_2", true)
-TEST_CASE(renameDependency_several, renameDependency, "a=a_1 ans=a+b + a_1^2 + c", "a=a_2 ans=a+b + a_2^2 + c", true)
-TEST_CASE(renameDependency_func, renameDependency, "a=sin(a_1) ans=a-abs(-a_1)", "a=sin(a_2) ans=a-abs(-a_2)", true)
+TEST_CASE(renameDep_none, renameDep, "a+b+c", "a+b+c", false)
+TEST_CASE(renameDep_beg, renameDep, "a_1+b+c", "a_2+b+c", true)
+TEST_CASE(renameDep_mid, renameDep, "b+ a_1 +c", "b+ a_2 +c", true)
+TEST_CASE(renameDep_end, renameDep, "b+c +a_1", "b+c +a_2", true)
+TEST_CASE(renameDep_several, renameDep, "a=a_1 ans=a+b + a_1^2 + c", "a=a_2 ans=a+b + a_2^2 + c", true)
+TEST_CASE(renameDep_func, renameDep, "a=sin(a_1) ans=a-abs(-a_1)", "a=sin(a_2) ans=a-abs(-a_2)", true)
+
+TEST_CASE_METHOD(findDeps, QString code, QStringList expectedDeps)
+{
+    Parameter pa("a");
+    Parameter pb("b");
+    Parameter pc("c");
+    Parameter pd("d");
+    Parameters globals { &pa, &pb, &pc, &pd };
+    
+    Parameter tgt;
+    Formula f(&tgt);
+    f.addDep(&pa);
+    f.addDep(&pb);
+    f.setCode(code);
+    f.findDeps(globals);
+    QStringList foundDeps;
+    for (auto d : f.deps())
+        foundDeps << d->alias();
+    ASSERT_EQ_INT(foundDeps.size(), expectedDeps.size())
+    for (auto d : f.deps())
+        ASSERT_IS_TRUE(expectedDeps.contains(d->alias()))
+    for (const QString &d : expectedDeps) {
+        ASSERT_IS_TRUE(foundDeps.contains(d))
+    }
+}
+
+TEST_CASE(findDeps_keep_old, findDeps, "a+b", {"a", "b"})
+TEST_CASE(findDeps_keep_non_existent, findDeps, "a+b+e", {"a", "b"})
+TEST_CASE(findDeps_remove_one, findDeps, "a+2", {"a"})
+TEST_CASE(findDeps_remove_all, findDeps, "2+2", {})
+TEST_CASE(findDeps_add_one, findDeps, "a+b+c", {"a", "b", "c"});
+TEST_CASE(findDeps_add_several, findDeps, "a+b+c+d", {"a", "b", "c", "d"});
+TEST_CASE(findDeps_replace_one, findDeps, "a+c", {"a", "c"});
+TEST_CASE(findDeps_replace_several, findDeps, "c+d", {"c", "d"});
 
 //------------------------------------------------------------------------------
 
@@ -181,12 +215,20 @@ TEST_GROUP("Formula",
     ADD_TEST(calculate_sets_error_when_empty),
     ADD_TEST(calculate_sets_error_when_bad_code),
     ADD_TEST(calculate_sets_error_when_dep_failed),
-    ADD_TEST(renameDependency_none),
-    ADD_TEST(renameDependency_beg),
-    ADD_TEST(renameDependency_mid),
-    ADD_TEST(renameDependency_end),
-    ADD_TEST(renameDependency_several),
-    ADD_TEST(renameDependency_func),
+    ADD_TEST(renameDep_none),
+    ADD_TEST(renameDep_beg),
+    ADD_TEST(renameDep_mid),
+    ADD_TEST(renameDep_end),
+    ADD_TEST(renameDep_several),
+    ADD_TEST(renameDep_func),
+    ADD_TEST(findDeps_keep_old),
+    ADD_TEST(findDeps_keep_non_existent),
+    ADD_TEST(findDeps_remove_one),
+    ADD_TEST(findDeps_remove_all),
+    ADD_TEST(findDeps_add_one),
+    ADD_TEST(findDeps_add_several),
+    ADD_TEST(findDeps_replace_one),
+    ADD_TEST(findDeps_replace_several),
 )
 
 } // namespace FormulaTests

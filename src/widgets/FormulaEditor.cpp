@@ -115,6 +115,7 @@ void FormulaEditor::setFocus()
 void FormulaEditor::calculate()
 {
     _formula->setCode(_codeEditor->toPlainText());
+    _formula->findDeps(*_globalParams);
     _formula->calculate();
     if (_formula->ok())
     {
