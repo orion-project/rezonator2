@@ -2,10 +2,37 @@
 
 ## Prepare build environment
 
-QtCreator must be installed and runnable.
-Automatic project configuration is not supported.
-So before running build scripts open the project in QtCreator and configure it for using particular Qt kit.
-The latest 5.* is supported (it is 5.15.2 currently).
+### Qt
+
+[Qt for Open Source](https://www.qt.io/download-open-source) must be installed. The target Qt version for all platforms is 5.15.2 currently. For Windows select the "MSVC 2019 64-bit" flavour. QtCreator is the default IDE used for the project.
+
+### Visual Studio
+
+Microsoft C++ compiler is used on Windows, so [Visual Studio Community 2022](https://visualstudio.microsoft.com/en/vs/community/) must be installed separately. The only required target is the "Desktop development with C++".
+
+Visual Studio can also be used as the IDE for Qt projects with the [Qt Visual Studio Tools](https://doc.qt.io/qtvstools-2) extension. In VS go to "Extensions -> Manage Extensions", search for the extension and install it, then go to "Extensions -> Qt VS Tools -> Qt Versions" and register a Qt installation path.
+
+### CMake
+
+CMake is automatically available by default when Qt is installed.
+
+### vcpkg
+
+[vcpkg](https://vcpkg.io/) is an open source package manager for C++. It must be installed in a directory separated from the project for preparing third party dependencies, such as Python:
+
+```bash
+git clone https://github.com/microsoft/vcpkg.git
+```
+
+Then run `bootstrap-vcpkg.sh` or `bootstrap-vcpkg.bat` depending on the platform, add the vcpkg directory to the `PATH`, and create the `VCPKG_ROOT` variable containing the installation path.
+
+Download and compile dependencies in the project directory:
+
+```bash
+vcpkg install
+```
+
+Windows: copy `vcpkg_installed\x64-windows\tools\python3\Lib` to `bin` (TODO: automate this).
 
 ### Qt quirks
 

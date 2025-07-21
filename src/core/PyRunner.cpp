@@ -216,7 +216,10 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, co
                     handleError(QString("result[%1]['%2']: %3").arg(i).arg(k, msg), funcName); \
                     return {}; \
                 }
-            CHECK_(PyDict_ContainsString(pItem, k), "field not found");
+            auto pKey = PyUnicode_FromString(k);
+            CHECK_(pKey, "failed to convert key to PyObject");
+            refs << pKey;
+            CHECK_(PyDict_Contains(pItem, pKey), "field not found");
             auto pField = PyDict_GetItemString(pItem, k);
             CHECK_(pField, "failed to get field");
             switch (f.value()) {
@@ -224,7 +227,7 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, co
                 if (PyFloat_Check(pField))
                     rec[k] = PyFloat_AsDouble(pField);
                 else if (PyLong_Check(pField))
-                    rec[k] = double(PyLong_AsInt(pField));
+                    rec[k] = double(PyLong_AsLong(pField));
                 else CHECK_(false, "number expected");
                 break;
             case ftString:
@@ -234,7 +237,7 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, co
             case ftUnitDim: {
                 CHECK_(PyLong_Check(pField), "dimension expected");
                 auto dims = Z::Dims::dims();
-                int dim = PyLong_AsInt(pField);
+                int dim = PyLong_AsLong(pField);
                 CHECK_((dim >= 0 && dim < dims.size()), "bad dimension");
                 rec[k] = QVariant::fromValue(dims.at(dim));
                 break;
