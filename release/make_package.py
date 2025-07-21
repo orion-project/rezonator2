@@ -41,16 +41,16 @@ def make_package_for_windows():
           '--no-translations --no-system-d3d-compiler --no-opengl-sw')
 
   print_header('Clean some excessive files...')
-  remove_files(['libEGL.dll', 'libGLESV2.dll'])
+  remove_files(['libEGL.dll', 'libGLESV2.dll', 'vc_redist.x64.exe'])
   remove_files_in_dir('sqldrivers', ['qsqlmysql.dll', 'qsqlodbc.dll', 'qsqlpsql.dll'])
   remove_files_in_dir('imageformats', ['qicns.dll', 'qtga.dll', 'qtiff.dll', 'qwbmp.dll', 'qwebp.dll'])
 
   print_header('Copy project files...')
-  copy_file('..\\..\\bin\\' + PROJECT_EXE, '.')
-  copy_file('..\\..\\bin\\rezonator.qch', '.')
-  copy_file('..\\..\\bin\\rezonator.qhc', '.')
+  copy_files('..\\..\\bin', [PROJECT_EXE, 'rezonator.qch', 'rezonator.qhc', 'python312.dll', 'zlib1.dll'], '.')
+  shutil.copytree('..\\..\\bin\\Lib', 'Lib')
   shutil.copytree('..\\..\\bin\\examples', 'examples')
   copy_files(qt_dir, ['assistant.exe'], '.')
+  
   # It seems there is some bug in windeployqt.exe on Qt 5.15.2
   # (or something changed in the env becasue it worked on another machine before)
   # it doesn't copy libwinpthread and copies other libs from some wrong place, so the app crashes
