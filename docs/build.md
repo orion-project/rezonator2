@@ -14,7 +14,7 @@ Visual Studio can also be used as the IDE for Qt projects with the [Qt Visual St
 
 ### CMake
 
-CMake is automatically available by default when Qt is installed.
+CMake could be installed separately or as part of Qt installation.
 
 ### vcpkg
 
@@ -32,15 +32,13 @@ Download and compile dependencies in the project directory:
 vcpkg install
 ```
 
-#### macOS
+**Ubuntu:** at least 22 (jammy) is required to be able to build Python.
 
-Additional packages need to be added via `brew install`, vcpkg will show them.
+When configuring project in QtCreator, add additional option in the CMake Initial Configuration tab and reconfigure. It must pointing to the installed vcpkg toolchain file location, e.g.:
 
-It seems QtCreator doesn't see the VCPKG_ROOT variable when runs CMake, even though it's set in the profile and terminal shows it. Have to set it separately in the "Base environment for the CMake" in the QtCreator project configuration.
-
-#### Windows
-
-Copy `vcpkg_installed\x64-windows\tools\python3\Lib` to `bin` (TODO: automate this).
+```
+-DCMAKE_TOOLCHAIN_FILE:FILEPATH=/home/user/vcpkg/scripts/buildsystems/vcpkg.cmake
+```
 
 ### Qt quirks
 
@@ -58,7 +56,7 @@ try to run
 sudo apt-get install --reinstall libxcb-xinerama0
 ```
 
-I use 16.04 for builds and this works.
+I use 16.04 for builds and this works. (UPD: Ubuntu 22.04 used since reZonator-2.1)
 
 **[Ubuntu] GL lib**
 

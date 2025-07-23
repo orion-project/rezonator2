@@ -7,6 +7,9 @@
 #include <QVector>
 
 #include <functional>
+#ifdef Q_OS_LINUX
+#include <optional>
+#endif
 
 class Schema;
 

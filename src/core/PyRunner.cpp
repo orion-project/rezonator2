@@ -45,6 +45,9 @@ PyRunner::PyRunner()
 #ifdef Q_OS_MAC
         homeDir = qApp->applicationDirPath() + "/../../../../vcpkg_installed/x64-osx";
 #endif
+#ifdef Q_OS_LINUX
+        homeDir = qApp->applicationDirPath() + "/../vcpkg_installed/x64-linux";
+#endif
     }
 
     std::wstring homePath = homeDir.toStdWString();

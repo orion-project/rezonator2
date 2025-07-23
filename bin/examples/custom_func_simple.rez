@@ -9,6 +9,8 @@
         "P1": {
             "descr": "",
             "dim": "linear",
+            "error": "",
+            "expr": "",
             "unit": "mm",
             "value": 10
         }
@@ -31,10 +33,14 @@
             "layout_show_label": true,
             "params": {
                 "L": {
+                    "error": "",
+                    "expr": "",
                     "unit": "mm",
                     "value": 400
                 },
                 "n": {
+                    "error": "",
+                    "expr": "",
                     "unit": "none",
                     "value": 1
                 }
@@ -49,10 +55,14 @@
             "layout_show_label": true,
             "params": {
                 "Alpha": {
+                    "error": "",
+                    "expr": "",
                     "unit": "deg",
                     "value": 10.000000000000004
                 },
                 "R": {
+                    "error": "",
+                    "expr": "",
                     "unit": "mm",
                     "value": 50
                 }
@@ -67,10 +77,14 @@
             "layout_show_label": true,
             "params": {
                 "L": {
+                    "error": "",
+                    "expr": "",
                     "unit": "mm",
                     "value": 24.6
                 },
                 "n": {
+                    "error": "",
+                    "expr": "",
                     "unit": "none",
                     "value": 1
                 }
@@ -85,10 +99,14 @@
             "layout_show_label": true,
             "params": {
                 "L": {
+                    "error": "",
+                    "expr": "",
                     "unit": "mm",
                     "value": 1.6
                 },
                 "n": {
+                    "error": "",
+                    "expr": "",
                     "unit": "none",
                     "value": 2
                 }
@@ -103,10 +121,14 @@
             "layout_show_label": true,
             "params": {
                 "L": {
+                    "error": "",
+                    "expr": "",
                     "unit": "mm",
                     "value": 29.9
                 },
                 "n": {
+                    "error": "",
+                    "expr": "",
                     "unit": "none",
                     "value": 1
                 }
@@ -121,10 +143,14 @@
             "layout_show_label": true,
             "params": {
                 "Alpha": {
+                    "error": "",
+                    "expr": "",
                     "unit": "deg",
                     "value": 0
                 },
                 "R": {
+                    "error": "",
+                    "expr": "",
                     "unit": "mm",
                     "value": 30
                 }
@@ -140,12 +166,12 @@
     ],
     "pumps": [
     ],
-    "schema_version": "2.0",
+    "schema_version": "2.1",
     "title": "",
     "trip_type": "SW",
     "windows": [
         {
-            "code": "'''Various demos'''\n\nimport rezonator as Z\nimport schema\n\ndef calculate():\n  # Global constants\n  Z.print('')\n  Z.print(f'PI = {Z.PI}, C = {Z.C}m/s')\n\n  # Schema parameteres\n  Z.print('')\n  wl = schema.wavelength()\n  p1 = schema.param(\"P1\")\n  Z.print(f'Wavelen = {wl*1e9}nm, P1 = {p1}')\n  \n  # Schema element\n  Z.print('')\n  e = show_elem(schema.elem('Cr')) # can get element by label\n  e = show_elem(schema.elem(2)) # can get element by number\n\ndef show_elem(e):\n  Z.print('Element ', e.label, ':', spaced=False)\n  Z.print('  length:', e.length, 'm')\n  Z.print('  optical:', e.optical_length, 'm')\n  Z.print('  axial:', e.axis_length, 'm')\n  Z.print('  ior:', e.ior)\n",
+            "code": "'''Various demos'''\n\nimport rezonator as Z\nimport schema\nimport sys\n\ndef calculate():\n  for p in sys.path:\n    Z.print('Module path:', p)\n  \n  # Global constants\n  Z.print('')\n  Z.print(f'PI = {Z.PI}, C = {Z.C}m/s')\n\n  # Schema parameteres\n  Z.print('')\n  wl = schema.wavelength()\n  p1 = schema.param(\"P1\")\n  Z.print(f'Wavelen = {wl*1e9}nm, P1 = {p1}')\n  \n  # Schema element\n  Z.print('')\n  e = show_elem(schema.elem('Cr')) # can get element by label\n  e = show_elem(schema.elem(2)) # can get element by number\n\ndef show_elem(e):\n  Z.print('Element ', e.label, ':', spaced=False)\n  Z.print('  length:', e.length, 'm')\n  Z.print('  optical:', e.optical_length, 'm')\n  Z.print('  axial:', e.axis_length, 'm')\n  Z.print('  ior:', e.ior)\n",
             "title": "Various demos",
             "type": "FuncEditor"
         },
