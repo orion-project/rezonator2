@@ -103,9 +103,9 @@ def check_qt_path(cmd = 'qmake -v', print_stdout = True, check_return_code = Tru
     if IS_WINDOWS:
       return 'set PATH=C:\\Qt\\5.15.2\\msvc2019_64\\bin;%PATH%'
     if IS_LINUX:
-      return 'export PATH=/home/user/Qt/5.10.0/gcc_64/bin:$PATH'
+      return 'export PATH=/home/user/Qt/5.15.2/gcc_64/bin:$PATH'
     if IS_MACOS:
-      return 'export PATH=/Users/user/Qt/5.10.0/clang_64/bin:$PATH'
+      return 'export PATH=/Users/user/Qt/5.15.2/clang_64/bin:$PATH'
 
   try:
     execute(cmd,

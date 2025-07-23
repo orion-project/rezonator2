@@ -18,6 +18,7 @@ PyRunner::FuncResult PyRunner::run(const QString&, const Args&, const ResultSpec
 #include "../math/BeamCalcWrapper.h"
 
 #include <QDebug>
+#include <QDir>
 #include <QRegularExpression>
 
 #define MODULE_NAME "rezonator_customfunc"
@@ -26,19 +27,61 @@ PyRunner::PyRunner()
 {
     static bool inited = false;
     if (inited) return;
-    
+
+    // Skip to error if initialization failed
+    static QString initError;
+    if (!initError.isEmpty()) {
+        errorLog << initError;
+        return;
+    }
+
     qDebug() << "Python" << Py_GetVersion();
-    
+
+    PyConfig config;
+    PyConfig_InitIsolatedConfig(&config);
+
+    QString homeDir = qApp->applicationDirPath() + "/python";
+    if (!QDir(homeDir).exists()) {
+#ifdef Q_OS_MAC
+        homeDir = qApp->applicationDirPath() + "/../../../../vcpkg_installed/x64-osx";
+#endif
+    }
+
+    std::wstring homePath = homeDir.toStdWString();
+    config.home = (wchar_t*)PyMem_RawCalloc(homePath.size(), sizeof(wchar_t));
+    if (!config.home) {
+        qCritical() << "Unable to allocate memory for PYTHONHOME";
+        initError = "Unable to allocate memory for PYTHONHOME";
+        errorLog << initError;
+        PyConfig_Clear(&config);
+        return;
+    }
+    memcpy(config.home, homePath.c_str(), homePath.size() * sizeof(wchar_t));
+
     ADD_MODULE(PyModules::Global)
     ADD_MODULE(PyModules::Schema)
 
-    Py_Initialize();
-    
+    qDebug() << "PYTHONHOME" << QString::fromStdWString(std::wstring(config.home));
+
+    PyStatus status = Py_InitializeFromConfig(&config);
+    if (PyStatus_Exception(status)) {
+        qCritical() << "Failed to initialize Python:" << status.func << status.err_msg;
+        initError = QString("Failed to initialize Python: %1").arg(status.err_msg);
+        errorLog << initError;
+        PyConfig_Clear(&config);
+        return;
+    }
+
+    if (config.module_search_paths_set == 1)
+        for (int i = 0; i < config.module_search_paths.length; i++)
+            qDebug() << "Module path:" << QString::fromStdWString(std::wstring(config.module_search_paths.items[i]));
+
     // Import common modules first time to initialize their types (Element, etc.)
     // Don't release returned refs, they safely can exists the whole app lifetime
     INIT_MODULE(PyModules::Global)
     INIT_MODULE(PyModules::Schema)
 
+    PyConfig_Clear(&config);
     inited = true;
 }
 
@@ -66,6 +109,8 @@ struct TmpRefs
 
 bool PyRunner::load()
 {
+    if (!errorLog.isEmpty()) return false;
+
     PyModules::Schema::schema = schema;
     PyModules::Global::printFunc = printFunc ? printFunc : [](const QString &s){ qDebug() << s; };
     
@@ -141,6 +186,8 @@ bool PyRunner::load()
 
 PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, const ResultSpec &resultSpec)
 {
+    if (!errorLog.isEmpty()) return {};
+
     if (!_funcRefs.contains(funcName)) {
         errorLog << "Function not found: " + funcName;
         return {};

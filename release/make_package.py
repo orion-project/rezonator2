@@ -123,16 +123,35 @@ def make_package_for_linux():
 
 def make_package_for_macos():
   print_header('Copy application bundle...')
-  remove_dir(PROJECT_EXE)
+  remove_dir('image')
+  image_exe = 'image/' + PROJECT_EXE
+  
   # Assitant, QCH and QHC help files are already in the bundle dir
   # This is done during help compilation (see help/make.sh)
-  shutil.copytree('../../bin/' + PROJECT_EXE, PROJECT_EXE)
+  shutil.copytree('../../bin/' + PROJECT_EXE, image_exe)
 
   print_header('Run macdeployqt...')
-  execute('macdeployqt ' + PROJECT_EXE)
+  execute('macdeployqt ' + image_exe)
 
   print_header('Copy project files...')
-  shutil.copytree('../../bin/examples', PROJECT_EXE + '/Contents/MacOS/examples')
+  shutil.copytree('../../bin/examples', image_exe + '/Contents/MacOS/examples')
+  shutil.copytree('../../vcpkg_installed/x64-osx/lib/python3.12', image_exe + '/Contents/MacOS/python/lib/python3.12')
+  # Remove some libs that are obviously not required for embedded calculations
+  # TODO: do the opposite - copy only absolute minimum
+  remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/__pycache__')
+  remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/__phello__')
+  remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/lib-dynload')
+  remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/asyncio')
+  remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/lib2to3')
+  remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/multiprocessing')
+  remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/pydoc_data')
+  remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/tkinter')
+  remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/turtledemo')
+  remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/unittest')
+  remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/xml')
+  remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/xmlrpc')
+  remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/idlelib')
+  remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/logging')
 
   print_header('Processing Assistant...')
   shutil.copytree(os.path.join(find_qt_dir(), 'Assistant.app'), 'Assistant.app')
@@ -143,44 +162,45 @@ def make_package_for_macos():
   execute('install_name_tool -add_rpath @loader_path/../Frameworks Assistant.app/Contents/MacOS/Assistant')
   execute('install_name_tool -delete_rpath @loader_path/../../../../lib Assistant.app/Contents/MacOS/Assistant')
   print_header('Copy Assistant files to bundle...')
-  copy_file('Assistant.app/Contents/MacOS/Assistant', PROJECT_EXE + '/Contents/MacOS', target_fn='assistant')
-  copy_dir('Assistant.app/Contents/Frameworks/QtHelp.framework', PROJECT_EXE + '/Contents/Frameworks/QtHelp.framework')
-  copy_dir('Assistant.app/Contents/Frameworks/QtSql.framework', PROJECT_EXE + '/Contents/Frameworks/QtSql.framework')
-  make_dir(PROJECT_EXE + '/Contents/PlugIns/sqldrivers')
-  copy_file('Assistant.app/Contents/PlugIns/sqldrivers/libqsqlite.dylib', PROJECT_EXE + '/Contents/PlugIns/sqldrivers')
+  copy_file('Assistant.app/Contents/MacOS/Assistant', image_exe + '/Contents/MacOS', target_fn='assistant')
+  copy_dir('Assistant.app/Contents/Frameworks/QtHelp.framework', image_exe + '/Contents/Frameworks/QtHelp.framework')
+  copy_dir('Assistant.app/Contents/Frameworks/QtSql.framework', image_exe + '/Contents/Frameworks/QtSql.framework')
+  make_dir(image_exe + '/Contents/PlugIns/sqldrivers')
+  copy_file('Assistant.app/Contents/PlugIns/sqldrivers/libqsqlite.dylib', image_exe + '/Contents/PlugIns/sqldrivers')
 
   print_header('Clean some excessive files...')
-  remove_files_in_dir(PROJECT_EXE + '/Contents/PlugIns/sqldrivers', [
+  remove_files_in_dir(image_exe + '/Contents/PlugIns/sqldrivers', [
     'libqsqlmysql.dylib', 'libqsqlpsql.dylib'])
-  remove_files_in_dir(PROJECT_EXE + '/Contents/PlugIns/imageformats', [
+  remove_files_in_dir(image_exe + '/Contents/PlugIns/imageformats', [
     'libqico.dylib', 'libqtga.dylib', 'libqtiff.dylib', 'libqwbmp.dylib', 'libqwebp.dylib'])
 
   print_header('Pack application bundle to dmg...')
   os.chdir('..')
-  global package_name
   installer_img = 'installer.dmg'
+  installer_volume = f'/Volumes/{PROJECT_NAME}'
   if not os.path.isfile(installer_img):
     print('Installer image does not exist, creating...')
-    execute(f'hdiutil create {installer_img} -size 100m -format UDRW -ov -volname {package_name} -fs HFS+ -srcfolder {REDIST_DIR}')
+    # Can't use package_name as volname because then it needs to be recreated and adjusted every release
+    execute(f'hdiutil create {installer_img} -size 200m -format UDRW -ov -volname {PROJECT_NAME} -fs HFS+ -srcfolder {REDIST_DIR}/image')
     execute(f'hdiutil attach {installer_img}')
     execute('sleep 1')
-    execute(f'open /Volumes/{package_name}/')
-    execute(f'ln -s /Applications /Volumes/{package_name}/Applications')
-    copy_file(f'../img/install_macos.png', f'/Volumes/{package_name}', '.bg.png')
-    remove_dir(f'/Volumes/{package_name}/Assistant.app')
+    execute(f'open {installer_volume}/')
+    execute(f'ln -s /Applications {installer_volume}/Applications')
+    copy_file(f'../img/install_macos.png', installer_volume, '.bg.png')
     printc('\nInstaller created', Colors.OKGREEN)
-    print('It should be opened now, configure its visual appearance, then unmount and rerun this command')
+    print('It should be already mounted and opened now, configure its visual appearance, then unmount and rerun this command')
     print('Note: use Cmd+J to show a folder setup window')
     print('Note: use Cmd+Shift+. to show hidden files and select a background image')
     print('')
     exit(0)
   else:
     print('Installer image found, updating content...')
+  
   execute(f'hdiutil attach {installer_img}')
   execute('sleep 1')
-  remove_dir(f'/Volumes/{package_name}/{PROJECT_EXE}')
-  shutil.copytree(f'{REDIST_DIR}/{PROJECT_EXE}', f'/Volumes/{package_name}/{PROJECT_EXE}')
-  execute(f'hdiutil detach /Volumes/{package_name}/')
+  remove_dir(f'{installer_volume}/{PROJECT_EXE}')
+  shutil.copytree(f'{REDIST_DIR}/{image_exe}', f'{installer_volume}/{PROJECT_EXE}')
+  execute(f'hdiutil detach {installer_volume}/')
   execute('sleep 1')
 
   print('Compressing...')

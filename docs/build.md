@@ -32,7 +32,15 @@ Download and compile dependencies in the project directory:
 vcpkg install
 ```
 
-Windows: copy `vcpkg_installed\x64-windows\tools\python3\Lib` to `bin` (TODO: automate this).
+#### macOS
+
+Additional packages need to be added via `brew install`, vcpkg will show them.
+
+It seems QtCreator doesn't see the VCPKG_ROOT variable when runs CMake, even though it's set in the profile and terminal shows it. Have to set it separately in the "Base environment for the CMake" in the QtCreator project configuration.
+
+#### Windows
+
+Copy `vcpkg_installed\x64-windows\tools\python3\Lib` to `bin` (TODO: automate this).
 
 ### Qt quirks
 
