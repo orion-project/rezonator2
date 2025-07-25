@@ -40,17 +40,20 @@ PyRunner::PyRunner()
     PyConfig config;
     PyConfig_InitIsolatedConfig(&config);
 
-    QString homeDir = qApp->applicationDirPath() + "/python";
-    if (!QDir(homeDir).exists()) {
+    QDir homeDir(qApp->applicationDirPath() + "/python");
+    if (!homeDir.exists()) {
 #ifdef Q_OS_MAC
-        homeDir = qApp->applicationDirPath() + "/../../../../vcpkg_installed/x64-osx";
+        homeDir = QDir(qApp->applicationDirPath() + "/../../../../vcpkg_installed/x64-osx");
 #endif
 #ifdef Q_OS_LINUX
-        homeDir = qApp->applicationDirPath() + "/../vcpkg_installed/x64-linux";
+        homeDir = QDir(qApp->applicationDirPath() + "/../vcpkg_installed/x64-linux");
+#endif
+#ifdef Q_OS_WINDOWS
+        //homeDir = QDir(qApp->applicationDirPath() + "/../vcpkg_installed/x64-windows/tools/python3");
 #endif
     }
 
-    std::wstring homePath = homeDir.toStdWString();
+    std::wstring homePath = homeDir.absolutePath().toStdWString();
     config.home = (wchar_t*)PyMem_RawCalloc(homePath.size(), sizeof(wchar_t));
     if (!config.home) {
         qCritical() << "Unable to allocate memory for PYTHONHOME";
@@ -64,8 +67,6 @@ PyRunner::PyRunner()
     ADD_MODULE(PyModules::Global)
     ADD_MODULE(PyModules::Schema)
 
-    qDebug() << "PYTHONHOME" << QString::fromStdWString(std::wstring(config.home));
-
     PyStatus status = Py_InitializeFromConfig(&config);
     if (PyStatus_Exception(status)) {
         qCritical() << "Failed to initialize Python:" << status.func << status.err_msg;
@@ -75,9 +76,10 @@ PyRunner::PyRunner()
         return;
     }
 
+    qDebug() << "PYTHONHOME" << QString::fromStdWString(std::wstring(config.home));
     if (config.module_search_paths_set == 1)
         for (int i = 0; i < config.module_search_paths.length; i++)
-            qDebug() << "Module path:" << QString::fromStdWString(std::wstring(config.module_search_paths.items[i]));
+            qDebug() << "PYTHONPATH" << QString::fromStdWString(std::wstring(config.module_search_paths.items[i]));
 
     // Import common modules first time to initialize their types (Element, etc.)
     // Don't release returned refs, they safely can exists the whole app lifetime
