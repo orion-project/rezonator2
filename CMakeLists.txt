@@ -50,61 +50,12 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Help Network PrintSupport Svg 
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Help Network PrintSupport Svg Widgets)
 
 # Add Python
-find_package(Python3 COMPONENTS Development REQUIRED)
-message(STATUS "Python3_FOUND: ${Python3_FOUND}")
-message(STATUS "Python3_VERSION: ${Python3_VERSION}")
-message(STATUS "Python3_INCLUDE_DIRS: ${Python3_INCLUDE_DIRS}")
-message(STATUS "Python3_LIBRARIES: ${Python3_LIBRARIES}")
-message(STATUS "Python3_LIBRARY_DIRS: ${Python3_LIBRARY_DIRS}")
-
-# Add Lua library
-set(LUA_SOURCES
-    libs/lua-5.3.4/src/lapi.c
-    libs/lua-5.3.4/src/lauxlib.c
-    libs/lua-5.3.4/src/lbaselib.c
-    libs/lua-5.3.4/src/lbitlib.c
-    libs/lua-5.3.4/src/lcode.c
-    libs/lua-5.3.4/src/lcorolib.c
-    libs/lua-5.3.4/src/lctype.c
-    libs/lua-5.3.4/src/ldblib.c
-    libs/lua-5.3.4/src/ldebug.c
-    libs/lua-5.3.4/src/ldo.c
-    libs/lua-5.3.4/src/ldump.c
-    libs/lua-5.3.4/src/lfunc.c
-    libs/lua-5.3.4/src/lgc.c
-    libs/lua-5.3.4/src/linit.c
-    libs/lua-5.3.4/src/liolib.c
-    libs/lua-5.3.4/src/llex.c
-    libs/lua-5.3.4/src/lmathlib.c
-    libs/lua-5.3.4/src/lmem.c
-    libs/lua-5.3.4/src/loadlib.c
-    libs/lua-5.3.4/src/lobject.c
-    libs/lua-5.3.4/src/lopcodes.c
-    libs/lua-5.3.4/src/loslib.c
-    libs/lua-5.3.4/src/lparser.c
-    libs/lua-5.3.4/src/lstate.c
-    libs/lua-5.3.4/src/lstring.c
-    libs/lua-5.3.4/src/lstrlib.c
-    libs/lua-5.3.4/src/ltable.c
-    libs/lua-5.3.4/src/ltablib.c
-    libs/lua-5.3.4/src/ltm.c
-    libs/lua-5.3.4/src/lundump.c
-    libs/lua-5.3.4/src/lutf8lib.c
-    libs/lua-5.3.4/src/lvm.c
-    libs/lua-5.3.4/src/lzio.c
-)
-
-add_library(lua STATIC ${LUA_SOURCES})
-target_include_directories(lua PUBLIC libs/lua-5.3.4/src)
-
-# # Set Lua platform-specific definitions
-# if(UNIX AND NOT APPLE)
-#     target_compile_definitions(lua PRIVATE LUA_USE_LINUX)
-# elseif(APPLE)
-#     target_compile_definitions(lua PRIVATE LUA_USE_MACOSX)
-# elseif(WIN32)
-#     target_compile_definitions(lua PRIVATE LUA_USE_WINDOWS)
-# endif()
+# find_package(Python3 COMPONENTS Development REQUIRED)
+# message(STATUS "Python3_FOUND: ${Python3_FOUND}")
+# message(STATUS "Python3_VERSION: ${Python3_VERSION}")
+# message(STATUS "Python3_INCLUDE_DIRS: ${Python3_INCLUDE_DIRS}")
+# message(STATUS "Python3_LIBRARIES: ${Python3_LIBRARIES}")
+# message(STATUS "Python3_LIBRARY_DIRS: ${Python3_LIBRARY_DIRS}")
 
 set(PROJECT_SOURCES
     ${CMAKE_CURRENT_BINARY_DIR}/version.rc
@@ -315,6 +266,10 @@ else()
     )
 endif()
 
+# Add Lua library
+find_package(Lua REQUIRED)
+target_include_directories(${PROJECT_NAME} PRIVATE ${LUA_INCLUDE_DIR})
+
 target_link_libraries(${PROJECT_NAME} PRIVATE
     orion
     custom-plot-lab
@@ -324,13 +279,14 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt::PrintSupport
     Qt::Svg
     Qt::Widgets
-    Python3::Python
+    #Python3::Python
+    ${LUA_LIBRARIES}
 )
-if(APPLE)
-    # Required when linking Python on macos
-    find_library(CORE_FOUNDATION_LIBRARY CoreFoundation)
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${CORE_FOUNDATION_LIBRARY})
-endif()
+# if(APPLE)
+#     # Required when linking Python on macos
+#     find_library(CORE_FOUNDATION_LIBRARY CoreFoundation)
+#     target_link_libraries(${PROJECT_NAME} PRIVATE ${CORE_FOUNDATION_LIBRARY})
+# endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER org.orion-project.rezonator
@@ -353,7 +309,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     APP_VER_YEAR_0=${APP_VER_YEAR_0}
     QT_USE_QSTRINGBUILDER
     ORI_USE_STYLE_SHEETS
-    Z_USE_PYTHON
+    #Z_USE_PYTHON
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)
