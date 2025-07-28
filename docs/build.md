@@ -95,17 +95,10 @@ git submodule update
 
 Note that submodules are in 'detached head' state by default.
 
+<!--
 ## Prepare third-party libraries
 
-### Linux/MacOS
-
-```bash
-./scripts/prepare_deps.sh
-```
-
 ### Windows
-
-Windows does not provide default command line tools like `wget`, `tar` or `make`, so you have to prepare dependencies using tools you have installed following [these instructions](prepare-deps-win.md).
 
 [QCustomPlot](https://www.qcustomplot.com) is used via wrapper [repository](https://github.com/orion-project/custom-plot-lab) (in submodule). The library source file `qcustomplot.cpp` is so large that it even fails to build in debug mode (`x86_64-w64-mingw32/bin/as.exe: debug\qcustomplot.o: too many sections (33061) Fatal error: debug\qcustomplot.o: file too big`). So if the debug mode is needed, you have to use QCustomPlot as shared library. Build the library:
 
@@ -116,13 +109,15 @@ mingw32-make release
 ```
 
 Then enable option `qcustomplotlab_shared` in `rezonator.pro` and rebuild the app in debug mode.
+-->
 
 ## Dev build
 
-Use *Qt Creator IDE* to do dev builds. Just open project file `rezonator.pro` in the IDE and configure it to use some of the installed Qt-kits. Any of modern Qt 5.15.2+ kits should suit.
+Use *Qt Creator IDE* to do dev builds. Just open project file `CMakeLists.txt` in the IDE and configure it to use some of the installed Qt-kits. Any of modern Qt 5.15.2+ kits should suit.
 
 Target file is `bin/rezonator` (Linux), `bin/rezonator.app` (MacOS), or `bin\rezonator.exe` (Windows). 
 
+<!--
 ## Release build
 
 ```bash
@@ -134,6 +129,7 @@ scripts\build_release.bat
 ```
 
 Ensure that Qt bin directory is in your `PATH` to make the above scripts working. On Windows you have to put MinGW `bin` directory `<qt-root>\<qt-version>\mingw*\bin` into the `PATH` too. The scripts do the full rebuild and it takes a while.
+-->
 
 ## Source code documentation
 
