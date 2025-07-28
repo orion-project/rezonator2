@@ -2,10 +2,43 @@
 
 ## Prepare build environment
 
-QtCreator must be installed and runnable.
-Automatic project configuration is not supported.
-So before running build scripts open the project in QtCreator and configure it for using particular Qt kit.
-The latest 5.* is supported (it is 5.15.2 currently).
+### Qt
+
+[Qt for Open Source](https://www.qt.io/download-open-source) must be installed. The target Qt version for all platforms is 5.15.2 currently. For Windows select the "MSVC 2019 64-bit" flavour. QtCreator is the default IDE used for the project.
+
+### Visual Studio
+
+Microsoft C++ compiler is used on Windows, so [Visual Studio Community 2022](https://visualstudio.microsoft.com/en/vs/community/) must be installed separately. The only required target is the "Desktop development with C++".
+
+Visual Studio can also be used as the IDE for Qt projects with the [Qt Visual Studio Tools](https://doc.qt.io/qtvstools-2) extension. In VS go to "Extensions -> Manage Extensions", search for the extension and install it, then go to "Extensions -> Qt VS Tools -> Qt Versions" and register a Qt installation path.
+
+### CMake
+
+CMake could be installed separately or as part of Qt installation.
+
+### vcpkg
+
+[vcpkg](https://vcpkg.io/) is an open source package manager for C++. It must be installed in a directory separated from the project for preparing third party dependencies, such as Python:
+
+```bash
+git clone https://github.com/microsoft/vcpkg.git
+```
+
+Then run `bootstrap-vcpkg.sh` or `bootstrap-vcpkg.bat` depending on the platform, add the vcpkg directory to the `PATH`, and create the `VCPKG_ROOT` variable containing the installation path.
+
+Download and compile dependencies in the project directory:
+
+```bash
+vcpkg install
+```
+
+**Ubuntu:** at least 22 (jammy) is required to be able to build Python.
+
+When configuring project in QtCreator, add additional option in the CMake Initial Configuration tab and reconfigure. It must pointing to the installed vcpkg toolchain file location, e.g.:
+
+```
+-DCMAKE_TOOLCHAIN_FILE:FILEPATH=/home/user/vcpkg/scripts/buildsystems/vcpkg.cmake
+```
 
 ### Qt quirks
 
@@ -23,7 +56,7 @@ try to run
 sudo apt-get install --reinstall libxcb-xinerama0
 ```
 
-I use 16.04 for builds and this works.
+I use 16.04 for builds and this works. (UPD: Ubuntu 22.04 used since reZonator-2.1)
 
 **[Ubuntu] GL lib**
 

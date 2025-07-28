@@ -6,7 +6,6 @@ print('Python ' + sys.version + '\n')
 import os
 import subprocess
 import platform
-import requests
 import shutil
 import struct
 import errno
@@ -28,7 +27,7 @@ else:
 
 
 PROJECT_NAME = 'rezonator'
-PROJECT_FILE = 'rezonator.pro'
+PROJECT_FILE = 'CMakeLists.txt'
 if IS_WINDOWS: PROJECT_EXE = 'rezonator.exe'
 if IS_LINUX: PROJECT_EXE = 'rezonator'
 if IS_MACOS: PROJECT_EXE = 'rezonator.app'
@@ -102,11 +101,11 @@ def check_qt_path(cmd = 'qmake -v', print_stdout = True, check_return_code = Tru
 
   def get_qt_path_example():
     if IS_WINDOWS:
-      return 'set PATH=c:\\Qt\\5.12.0\\mingw73_64\\bin;%PATH%'
+      return 'set PATH=C:\\Qt\\5.15.2\\msvc2019_64\\bin;%PATH%'
     if IS_LINUX:
-      return 'export PATH=/home/user/Qt/5.10.0/gcc_64/bin:$PATH'
+      return 'export PATH=/home/user/Qt/5.15.2/gcc_64/bin:$PATH'
     if IS_MACOS:
-      return 'export PATH=/Users/user/Qt/5.10.0/clang_64/bin:$PATH'
+      return 'export PATH=/Users/user/Qt/5.15.2/clang_64/bin:$PATH'
 
   try:
     execute(cmd,
@@ -246,6 +245,8 @@ def zip_dir(dir_name, zip_name):
 
 
 def download_file(url, filename, mark_executable = False):
+  import requests
+  
   if os.path.exists(filename):
     print('Already there')
     return

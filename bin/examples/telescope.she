@@ -1,6 +1,7 @@
 [PREFERENCES]
 Version=1.1
-HasTitle=0
+Title=Telescopic beam expander example
+HasTitle=1
 Notes=
 Units\Linear=mm
 Units\Beamsize=mkm

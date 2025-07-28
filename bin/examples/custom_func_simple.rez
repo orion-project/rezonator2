@@ -9,6 +9,8 @@
         "P1": {
             "descr": "",
             "dim": "linear",
+            "error": "",
+            "expr": "",
             "unit": "mm",
             "value": 10
         }
@@ -31,10 +33,14 @@
             "layout_show_label": true,
             "params": {
                 "L": {
+                    "error": "",
+                    "expr": "",
                     "unit": "mm",
                     "value": 400
                 },
                 "n": {
+                    "error": "",
+                    "expr": "",
                     "unit": "none",
                     "value": 1
                 }
@@ -49,10 +55,14 @@
             "layout_show_label": true,
             "params": {
                 "Alpha": {
+                    "error": "",
+                    "expr": "",
                     "unit": "deg",
                     "value": 10.000000000000004
                 },
                 "R": {
+                    "error": "",
+                    "expr": "",
                     "unit": "mm",
                     "value": 50
                 }
@@ -67,10 +77,14 @@
             "layout_show_label": true,
             "params": {
                 "L": {
+                    "error": "",
+                    "expr": "",
                     "unit": "mm",
                     "value": 24.6
                 },
                 "n": {
+                    "error": "",
+                    "expr": "",
                     "unit": "none",
                     "value": 1
                 }
@@ -85,10 +99,14 @@
             "layout_show_label": true,
             "params": {
                 "L": {
+                    "error": "",
+                    "expr": "",
                     "unit": "mm",
                     "value": 1.6
                 },
                 "n": {
+                    "error": "",
+                    "expr": "",
                     "unit": "none",
                     "value": 2
                 }
@@ -103,10 +121,14 @@
             "layout_show_label": true,
             "params": {
                 "L": {
+                    "error": "",
+                    "expr": "",
                     "unit": "mm",
                     "value": 29.9
                 },
                 "n": {
+                    "error": "",
+                    "expr": "",
                     "unit": "none",
                     "value": 1
                 }
@@ -121,10 +143,14 @@
             "layout_show_label": true,
             "params": {
                 "Alpha": {
+                    "error": "",
+                    "expr": "",
                     "unit": "deg",
                     "value": 0
                 },
                 "R": {
+                    "error": "",
+                    "expr": "",
                     "unit": "mm",
                     "value": 30
                 }
@@ -140,18 +166,28 @@
     ],
     "pumps": [
     ],
-    "schema_version": "2.0",
+    "schema_version": "2.1",
     "title": "",
     "trip_type": "SW",
     "windows": [
         {
-            "code": "'''Various demos'''\n\nimport rezonator as Z\nimport schema\n\ndef calculate():\n  # Global constants\n  Z.print('')\n  Z.print(f'PI = {Z.PI}, C = {Z.C}m/s')\n\n  # Schema parameteres\n  Z.print('')\n  wl = schema.wavelength()\n  p1 = schema.param(\"P1\")\n  Z.print(f'Wavelen = {wl*1e9}nm, P1 = {p1}')\n  \n  # Schema element\n  Z.print('')\n  e = show_elem(schema.elem('Cr')) # can get element by label\n  e = show_elem(schema.elem(2)) # can get element by number\n\ndef show_elem(e):\n  Z.print('Element ', e.label, ':', spaced=False)\n  Z.print('  length:', e.length, 'm')\n  Z.print('  optical:', e.optical_length, 'm')\n  Z.print('  axial:', e.axis_length, 'm')\n  Z.print('  ior:', e.ior)\n",
-            "title": "Various demos",
+            "code": "'''reZonator demos'''\n\nimport rezonator as Z\nimport schema\n\ndef calculate():\n  Z.print('**** Global constants')\n  Z.print(f'PI = {Z.PI}, C = {Z.C}m/s')\n\n  Z.print('\\n**** Schema parameteres')\n  wl = schema.wavelength()\n  p1 = schema.param(\"P1\")\n  Z.print(f'Wavelen = {wl*1e9}nm, P1 = {p1}')\n  \n  Z.print('\\n**** Schema element')\n  e = show_elem(schema.elem('Cr')) # can get element by label\n  e = show_elem(schema.elem(2)) # can get element by number\n\ndef show_elem(e):\n  Z.print('Element ', e.label, ':', spaced=False)\n  Z.print('  length:', e.length, 'm')\n  Z.print('  optical:', e.optical_length, 'm')\n  Z.print('  axial:', e.axis_length, 'm')\n  Z.print('  ior:', e.ior)\n",
+            "title": "reZonator demos",
             "type": "FuncEditor"
         },
         {
             "code": "'''Repetition rate'''\n\nimport rezonator as Z\nimport schema\n\ndef calculate():\n  total_len = 0\n\n  # schema returns elements as they are numbered in the table (1-based)\n  # but python's range() function returns 0-based indexes, so +1 here\n  for i in range(1, schema.elem_count()+1):\n    elem = schema.elem(i)\n    elem_len = elem.optical_length\n    if not elem_len:\n      # Is not a range\n      continue\n    Z.print('Elem', i, ':', elem.label, '=', Z.format(elem_len), 'm')\n    total_len += elem_len\n\n  Z.print('Total length: ', Z.format(total_len), 'm', spaced=False)\n\n  # Effective length is doubled in standing-wave rezonatos\n  if schema.is_sw():\n    total_len *= 2\n\n  rep_rate = Z.C / total_len\n  Z.print('Repetition rate: ', Z.format(rep_rate/1e6), 'MHz', spaced=False)\n",
             "title": "Repetition rate",
+            "type": "FuncEditor"
+        },
+        {
+            "code": "'''File IO demos'''\n\nimport rezonator as Z\nimport configparser\nimport csv\nimport json\nimport os\nimport tempfile\nfrom pathlib import Path\n\ndef calculate():\n  Z.print('**** Current dirtectory')\n  Z.print(os.getcwd())\n  Z.print(f'{Path.cwd()}')\n  \n  Z.print('\\n**** Read-write text file')\n  with open('examples/telescope.she', 'rt') as f:\n    with tempfile.NamedTemporaryFile('wt') as tmp:\n      for line in f:\n        tmp.write(line)\n      Z.print('Temp file written:', tmp.name)\n  \n  Z.print('\\n**** Read INI file')\n  old_schema = configparser.ConfigParser()\n  old_schema.read('examples/telescope.she')\n  Z.print('Version:', old_schema['PREFERENCES']['Version'])\n  Z.print('Title:', old_schema['PREFERENCES']['Title'])\n  \n  Z.print('\\n**** JSON string')\n  json_str = json.dumps({'a': 'A', 'b': 2})\n  Z.print(json_str)\n  json_obj = json.loads(json_str)\n  Z.print('a=', json_obj['a'], ', b=', json_obj['b'], spaced=False)\n  \n  Z.print('\\n**** Read JSON file')\n  with open(os.path.join('examples', 'singlet_thick.rez')) as f:\n    schema = json.load(f)\n    Z.print('Version:', schema['schema_version'])\n    Z.print('Title:', schema['title'])\n\n  Z.print('\\n**** Read CSV file')\n  with open('examples/ior.csv', 'r') as f:\n    reader = csv.DictReader(f)\n    for row in reader:\n      Z.print(row['Material'], row['IOR'])\n",
+            "title": "File IO demos",
+            "type": "FuncEditor"
+        },
+        {
+            "code": "'''Generic coding'''\n\nimport rezonator as Z\nimport copy\nimport math\nimport platform\nimport pickle\nimport random\nimport statistics\nimport sys\nimport uuid\nfrom decimal import Decimal\nfrom typing import Dict\n\ndef calculate():\n  Z.print('**** System info')\n  Z.print('Python', platform.python_version(),\n    'on', platform.system(), platform.version())\n  for p in sys.path:\n    Z.print('Module path:', p)\n\n  x = [1, 2, 3, 4, 5, 6, 7, 8, 9]\n  y = [1, 2, 3, 1, 2, 3, 1, 2, 3]\n  Z.print('\\n**** Math')\n  Z.print('pi/2:', math.pi/2)\n  Z.print('sin:', math.sin(math.pi/2))\n  Z.print('cos:', math.cos(math.pi/2))\n  Z.print('mean', statistics.mean(x))\n  Z.print('median', statistics.median(x))\n  Z.print('covariance', statistics.covariance(x, y))\n  Z.print('correlation', statistics.correlation(x, y))\n  Z.print('random', random.randint(1, 10))\n  Z.print('random', random.random())\n  Z.print('random', random.uniform(5, 10))\n  Z.print('random', random.choice(x))\n  Z.print('decimal', str(Decimal('1.33') + Decimal('1.27')))\n  Z.print('decimal', str(Decimal(3).sqrt()))\n\n  Z.print('\\n**** Classes')\n  m1 = Message('Hello world!')\n  m1.print()\n  m2 = Message(42)\n  m2.print()\n  m3 = copy.copy(m1)\n  m3.print()\n  m4 = copy.deepcopy(m2)\n  m4.print()\n  \n  Z.print('\\n**** Functions')\n  print_typed_dict({'a': 'A', 'b': 2})\n\n  Z.print('\\n**** Pickle')\n  pm1 = pickle.dumps(m1)\n  pm2 = pickle.dumps(m2)\n  Z.print('Pickled:', f'{pm1}', f'{pm2}')\n  upm1 = pickle.loads(pm1)\n  upm2 = pickle.loads(pm2)\n  Z.print('Unpickled:', upm1.msg, upm2.msg)\n  \n  Z.print('\\n**** UUID')\n  uuid1 = uuid.uuid1()\n  uuid3 = uuid.uuid3(uuid.NAMESPACE_DNS, 'orion-project.org')\n  uuid4 = uuid.uuid4()\n  uuid5 = uuid.uuid5(uuid.NAMESPACE_DNS, 'python.org')\n  Z.print(f'{uuid1}')\n  Z.print(f'{uuid3}')\n  Z.print(f'{uuid4}')\n  Z.print(f'{uuid5}')\n  id1 = uuid.UUID('{00010203-0405-0607-0809-0a0b0c0d0e0f}')\n  id2 = uuid.UUID(bytes=id1.bytes)\n  Z.print(str(id1), str(id2))\n\n# Class with typing\n# (Python itself doesn't check for types)\nclass Message:\n  def __init__(self, msg: str) -> None:\n    self.msg = msg\n    \n  def print(self):\n    Z.print(self.msg)\n\n\n# Function with typing\n# (Python itself doesn't check for types)\ndef print_typed_dict(d: Dict[str, str]) -> None:\n  for k in d:\n    Z.print(k, '=', d[k])\n",
+            "title": "Generic coding",
             "type": "FuncEditor"
         }
     ]

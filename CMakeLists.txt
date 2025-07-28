@@ -49,6 +49,14 @@ endif()
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Help Network PrintSupport Svg Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Help Network PrintSupport Svg Widgets)
 
+# Add Python
+find_package(Python3 COMPONENTS Development REQUIRED)
+message(STATUS "Python3_FOUND: ${Python3_FOUND}")
+message(STATUS "Python3_VERSION: ${Python3_VERSION}")
+message(STATUS "Python3_INCLUDE_DIRS: ${Python3_INCLUDE_DIRS}")
+message(STATUS "Python3_LIBRARIES: ${Python3_LIBRARIES}")
+message(STATUS "Python3_LIBRARY_DIRS: ${Python3_LIBRARY_DIRS}")
+
 # Add Lua library
 set(LUA_SOURCES
     libs/lua-5.3.4/src/lapi.c
@@ -316,7 +324,13 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt::PrintSupport
     Qt::Svg
     Qt::Widgets
+    Python3::Python
 )
+if(APPLE)
+    # Required when linking Python on macos
+    find_library(CORE_FOUNDATION_LIBRARY CoreFoundation)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${CORE_FOUNDATION_LIBRARY})
+endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER org.orion-project.rezonator
@@ -339,6 +353,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     APP_VER_YEAR_0=${APP_VER_YEAR_0}
     QT_USE_QSTRINGBUILDER
     ORI_USE_STYLE_SHEETS
+    Z_USE_PYTHON
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)

@@ -213,7 +213,7 @@ PyObject* elem(PyObject* Py_UNUSED(self), PyObject* arg)
     CHECK_SCHEMA
     ::Element *elem = nullptr;
     if (PyLong_Check(arg)) {
-        auto index = PyLong_AsInt(arg);
+        auto index = PyLong_AsLong(arg);
         // For python code elemens are numbered 1-based
         // as they are shown in the elements table
         elem = schema->element(index-1);

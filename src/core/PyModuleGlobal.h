@@ -37,7 +37,7 @@ PyObject* print(PyObject* Py_UNUSED(self), PyObject* args, PyObject *kwargs)
         if (PyUnicode_Check(arg))
             parts << QString::fromUtf8(PyUnicode_AsUTF8(arg));
         else if (PyLong_Check(arg))
-            parts << QString::number(PyLong_AsInt(arg));
+            parts << QString::number(PyLong_AsLong(arg));
         else if (PyFloat_Check(arg))
             parts << QString::number(PyFloat_AsDouble(arg), 'g', 12);
         else if (Py_IsNone(arg))
