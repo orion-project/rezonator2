@@ -15,6 +15,7 @@
 #include <QKeyEvent>
 #include <QLabel>
 #include <QMenu>
+#include <QRegularExpression>
 
 //------------------------------------------------------------------------------
 //                                ValueEdit
@@ -61,23 +62,43 @@ protected:
         }
     
         if (skipProcessing) return;
-    
-        static double inf = qInf();
-        static const int varCount = 3;
-        static te_variable vars[varCount] = {{"inf", &inf}, {"Inf", &inf}, {"INF", &inf}};
         
         bool ok = true;
-        auto expr = text.toStdString();
-        te_expr *c = te_compile(expr.c_str(), vars, varCount, nullptr);
-        if (c) {
-            _value = te_eval(c);
-            ok = !qIsNaN(_value);
-            setToolTip(Z::format(_value));
-            te_free(c);
-        } else {
-            ok = false;
-            setToolTip("");
+        
+        if (text.contains(',')) {
+            // Since now we allow any text to be typed,
+            // check for numbers with comma decimal separator (European format)
+            // This catches patterns like "1.125,5e3" or "1,5" that might
+            // look like valid numbers but are not valid in C-locale format
+            static QRegularExpression r(R"(^\s*[+-]?\d*\.?\d*,\d+([eE][+-]?\d+)?\s*$)");
+            if (r.match(text.trimmed()).hasMatch()) {
+                ok = false;
+            }
         }
+        
+        if (ok) {
+            double num = text.toDouble(&ok);
+            if (ok) {
+                _value = num;
+                setToolTip("");
+            } else {
+                static double inf = qInf();
+                static const int varCount = 3;
+                static te_variable vars[varCount] = {{"inf", &inf}, {"Inf", &inf}, {"INF", &inf}};
+                auto expr = text.toStdString();
+                auto c = te_compile(expr.c_str(), vars, varCount, nullptr);
+                if (c) {
+                    _value = te_eval(c);
+                    ok = !qIsNaN(_value);
+                    setToolTip(Z::format(_value));
+                    te_free(c);
+                } else {
+                    ok = false;
+                    setToolTip("");
+                }
+            }
+        }
+    
         if (ok != _ok) {
             _ok = ok;
             indicateValidation(ok);
