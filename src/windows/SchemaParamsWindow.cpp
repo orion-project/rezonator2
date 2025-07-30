@@ -210,7 +210,7 @@ void SchemaParamsWindow::deleteParameter()
                     .arg(deletingParam->alias(), dependentParams.join("<br>")));
     }
 
-    if (Ori::Dlg::yes(tr("Delete parameter<b>%1</b>?").arg(deletingParam->alias())))
+    if (Ori::Dlg::yes(tr("Delete parameter <b>%1</b>?").arg(deletingParam->alias())))
     {
         schema()->events().raise(SchemaEvents::GlobalParamDeleting, deletingParam, "Params window: param deleting");
         schema()->formulas()->free(deletingParam);

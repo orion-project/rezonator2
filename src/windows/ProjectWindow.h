@@ -150,6 +150,9 @@ private slots:
     /// This method is automatically called when mdiArea changes active widget.
     void updateMenuBar();
 
+    void devResizeWindow();
+    void devMaximizeMdiChild();
+
     void addEditAction(QAction* action, IEditableWindow* wnd, IEditableWindow::SupportedCommand cmd);
 };
 

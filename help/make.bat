@@ -18,7 +18,7 @@ if %ERRORLEVEL% neq 0 (
         echo.
         echo ERROR: %HELP_TOOL% or !HELP_TOOL! not found in PATH
         echo Find Qt installation and update your PATH like:
-        echo set PATH=c:\Qt\5.12.0\mingw73_64\bin;%%PATH%%
+        echo set PATH=C:\Qt\5.15.2\msvc2019_64\bin;%%PATH%%
         goto :eof
     )
 )

@@ -35,12 +35,14 @@
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDir>
+#include <QFormLayout>
 #include <QLabel>
 #include <QMenu>
 #include <QMenuBar>
 #include <QTimer>
 #include <QToolButton>
 #include <QShortcut>
+#include <QSpinBox>
 
 enum ProjectWindowStatusPanels
 {
@@ -344,21 +346,28 @@ void ProjectWindow::updateMenuBar()
 
     // Update View menu
     menuView->clear();
-    int viewActionsCount = 0;
+    bool hasViewActions = false;
     if (child)
         for (auto& item : child->menuItems_View())
         {
             item.addTo(menuView);
-            viewActionsCount++;
+            hasViewActions = true;
         }
     //menuView->addMenu(_langsMenu); TODO: move to settings
-
+    if (AppSettings::instance().isDevMode) {
+        menuView->addSeparator();
+        menuView->addAction("Resize project window...", this, &ProjectWindow::devResizeWindow);
+        menuView->addAction("Maximize current MDI-child window...", this, &ProjectWindow::devMaximizeMdiChild);
+        menuView->addAction("Show project window geometry in console", this, [this]{ qDebug() << geometry(); });
+        hasViewActions = true;
+    } 
+    
     // Update menu bar
     QMenuBar* menuBar = this->menuBar();
     menuBar->clear();
     menuBar->addMenu(menuFile);
     menuBar->addMenu(menuEdit);
-    if (viewActionsCount > 0)
+    if (hasViewActions)
         menuBar->addMenu(menuView);
     menuBar->addMenu(menuFunctions);
     if (child) {
@@ -656,4 +665,23 @@ void ProjectWindow::messageBusEvent(MessageBusEvent event, const QMap<QString, Q
         }
         break;    
     }
+}
+
+void ProjectWindow::devResizeWindow()
+{
+    auto edW = Ori::Gui::spinBox(100, 5000, width());
+    auto edH = Ori::Gui::spinBox(100, 5000, height());
+    QWidget w;
+    auto layout = new QFormLayout(&w);
+    layout->addRow("Width", edW);
+    layout->addRow("Height", edH);
+    if (Ori::Dlg::Dialog(&w, false).exec())
+        resize(edW->value(), edH->value());
+}
+
+void ProjectWindow::devMaximizeMdiChild()
+{
+    BasicMdiChild* child = _mdiArea->activeChild();
+    if (!child) return;
+    child->setGeometry(0, 0, _mdiArea->width(), _mdiArea->height());
 }
