@@ -78,11 +78,13 @@ void AppSettings::load()
     LOAD_DEF(elemAutoLabelPasted, Bool, true);
     LOAD_DEF(pumpAutoLabel, Bool, true);
     LOAD(defaultTripType, String);
-    LOAD_DEF(showStartWindow, Bool, true);
+    //LOAD_DEF(showStartWindow, Bool, true);
+    showStartWindow = true;
     LOAD_DEF(mruSchemaCount, Int, 16);
     LOAD_DEF(adjusterIncrement, Double, 1.0);
     LOAD_DEF(adjusterMultiplier, Double, 1.1);
-    LOAD_DEF(showCustomElemLibrary, Bool, true);
+    //LOAD_DEF(showCustomElemLibrary, Bool, true);
+    showCustomElemLibrary = true;
     LOAD_DEF(showPythonMatrices, Bool, false);
     LOAD_DEF(skipFuncWindowsLoading, Bool, false);
     LOAD_DEF(useOnlineHelp, Bool, false);

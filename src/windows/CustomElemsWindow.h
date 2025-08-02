@@ -31,6 +31,7 @@ private slots:
     void actionElemDelete();
     void copy();
     void paste();
+    void showHelp();
 
 private:
     Schema *_library;
@@ -38,7 +39,7 @@ private:
     SchemaElemsTable *_table;
     QToolBar *_toolbar;
     QAction *_actnElemAdd, *_actnElemMoveUp, *_actnElemMoveDown, *_actnElemProp,
-            *_actnElemDelete, *_actnEditCopy, *_actnEditPaste;
+            *_actnElemDelete, *_actnEditCopy, *_actnEditPaste, *_actnShowHelp;
     QMenu *_menuContextElement, *_menuContextLastRow;
     QFileSystemWatcher *_watcher;
     bool _isLibrarySaving = false;

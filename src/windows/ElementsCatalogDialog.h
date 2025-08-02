@@ -51,6 +51,8 @@ public:
 
 protected:
     QSize prefferedSize() const override { return QSize(620, 400); }
+    
+    QString helpTopic() const override { return "catalog.html"; }
 
 private:
     ElementTypesListView *_elementsList;

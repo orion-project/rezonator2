@@ -1,6 +1,7 @@
 #include "CustomElemsWindow.h"
 
 #include "../app/CustomElemsManager.h"
+#include "../app/HelpSystem.h"
 #include "../app/PersistentState.h"
 #include "../core/ElementsCatalog.h"
 #include "../io/Clipboard.h"
@@ -101,6 +102,8 @@ void CustomElemsWindow::createActions()
     // TODO: share edit shortcuts between actions on different tabs (when those will be)
     _actnEditCopy = A_(tr("Copy", "Edit action"), this, SLOT(copy()), ":/toolbar/copy", QKeySequence::Copy);
     _actnEditPaste = A_(tr("Paste", "Edit action"), this, SLOT(paste()), ":/toolbar/paste", QKeySequence::Paste);
+    
+    _actnShowHelp = A_(tr("Help"), this, SLOT(showHelp()), ":/toolbar/help", QKeySequence::HelpContents);
 
     #undef A_
 }
@@ -113,7 +116,8 @@ void CustomElemsWindow::createToolbar()
     Ori::Gui::populate(_toolbar,
         { Ori::Gui::textToolButton(_actnElemAdd), nullptr, _actnElemMoveUp,
           _actnElemMoveDown, nullptr, _actnEditCopy, _actnEditPaste, nullptr,
-          Ori::Gui::textToolButton(_actnElemProp), nullptr, _actnElemDelete });
+          Ori::Gui::textToolButton(_actnElemProp), nullptr, _actnElemDelete,
+          nullptr, _actnShowHelp });
 }
 
 void CustomElemsWindow::createMenu()
@@ -319,4 +323,9 @@ void CustomElemsWindow::libraryFileChanged(const QString&)
     _library->deleteElements(_library->elements(), Arg::RaiseEvents(false), Arg::FreeElem(true));
     _library->insertElements({reloadedElems}, -1, Arg::RaiseEvents(false));
     _table->populate();
+}
+
+void CustomElemsWindow::showHelp()
+{
+    Z::HelpSystem::instance()->showTopic("elem_library.html");
 }

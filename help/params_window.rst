@@ -10,7 +10,7 @@ Params Window
 
 A schema project can store a number of parameters independent from elements, so they called "global parameters." Their values can be assigned directly or can depend on other parameters and be expressed via formula (see below).
 
-Global parameters can be used for providing values for element parameters, and this gives an ability to make interconnected and driven elements in the schema. Then you can change a value of some global parameter, and this instantly affects several elements at once.
+Global parameters can be used for providing values for :ref:`element parameters <elem_props_link>`, and this gives an ability to make interconnected and driven elements in the schema. Then you can change a value of some global parameter, and this instantly affects several elements at once.
 
   .. image:: img/params_window.png
 
@@ -36,7 +36,7 @@ Edit Parameter
 
 When editing a parameter, it’s possible to change its name. Then the name is automatically updated in elements and formulas that use this parameter.
 
-It’s also possible to change the parameter dimension. In this case it is up to the user's responsibility if the parameter is used in the wrong context. For example, if you change the dimension of the F0 parameter to be “Angular,” then the lens elements having their focal ranges linked to the F0 probably will take incorrect values. When units mismatch, the parameter value is assigned via SI conversion. For example, providing that the focal range linked to the F0 is displayed in cm, changing F0 from “Linear” to “Angular,” we will get transformations like `10deg --> 0.1745rad --> 0.1745m --> 17.45cm`. 
+It’s also possible to change the parameter dimension. In this case it is up to the user's responsibility if the parameter is used in the wrong context. For example, if you change the dimension of the F0 parameter to be “Angular,” then the lens elements having their focal ranges linked to the F0 probably will take incorrect values. When dimensions mismatch, the parameter value is assigned via SI conversion. For example, providing that the focal range linked to the F0 is displayed in cm, changing F0 from “Linear” to “Angular,” we will get transformations like `10deg --> 0.1745rad --> 0.1745m --> 17.45cm`. 
 
 Description is just a short human-readable description of the parameter, and its changing only affects what’s displayed in the table.
 

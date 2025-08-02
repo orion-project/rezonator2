@@ -29,8 +29,10 @@ Each time you modify any schema properties or elements' parameters, |rezonator| 
    :caption: Table of Contents:
 
    trip_type
+   schema_elems
    input_beam
    pumps_window
    pump_mode
    params_window
+   layout
    adjust

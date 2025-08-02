@@ -159,6 +159,7 @@ private:
     void clear();
     void centerView(const QRectF&);
     void copyImage() const;
+    void showHelp() const;
     const QFont& getLabelFont() const;
 };
 

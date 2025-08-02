@@ -19,4 +19,8 @@ You don't have to assign matrices for elements manually. Instead, you can provid
    :maxdepth: 1
    :caption: Table of Contents:
 
+   elem_opers
    elem_matrs
+   elem_props
+   elem_library
+   catalog

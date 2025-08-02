@@ -44,7 +44,7 @@ std::optional<ElementsCatalogDialog::ElementSample> ElementsCatalogDialog::choos
     return sample;
 }
 
-ElementsCatalogDialog::ElementsCatalogDialog(QWidget *parent): RezonatorDialog(DontDeleteOnClose, parent)
+ElementsCatalogDialog::ElementsCatalogDialog(QWidget *parent): RezonatorDialog(DontDeleteOnClose | UseHelpButton, parent)
 {
     setTitleAndIcon(tr("Elements Catalog"), ":/window_icons/catalog");
     setObjectName("ElementsCatalogDialog");

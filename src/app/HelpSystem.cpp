@@ -124,16 +124,21 @@ bool HelpSystem::startAssistant()
     }
 
     QString appDir = qApp->applicationDirPath();
+    
     QString helpFile = appDir + "/rezonator.qhc";
-#ifdef Q_OS_WIN
-    QString assistantFile = appDir + "/assistant.exe";
-#else
-    QString assistantFile = appDir + "/assistant";
-#endif
     Z_INFO("Help file:" << helpFile);
-    Z_INFO("Help viewer:" << assistantFile);
 
-    if (!QFile::exists(assistantFile))
+#ifdef Q_OS_WIN
+    QString assistantExe = appDir + "/assistant.exe";
+#else
+    QString assistantExe = appDir + "/assistant";
+#endif
+    QFile assistantLink(appDir + "/assistant.txt");
+    if (assistantLink.exists() && assistantLink.open(QIODevice::ReadOnly))
+        assistantExe = QString::fromLocal8Bit(assistantLink.readAll()).trimmed();
+    Z_INFO("Help viewer:" << assistantExe);
+
+    if (!QFile::exists(assistantExe))
     {
         Z_ERROR("Help viewer not found");
         Ori::Dlg::error("Help viewer not found");
@@ -146,9 +151,9 @@ bool HelpSystem::startAssistant()
         Ori::Dlg::error("Help file not found");
         return false;
     }
-
+    
     QProcess *process = new QProcess(this);
-    process->start(assistantFile, {
+    process->start(assistantExe, {
                        "-collectionFile", helpFile,
                        "-style", qApp->style()->objectName(),
                        "-enableRemoteControl"

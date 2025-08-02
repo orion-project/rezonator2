@@ -2,6 +2,7 @@
 #include "SchemaLayoutDefs.h"
 
 #include "../app/Appearance.h"
+#include "../app/HelpSystem.h"
 #include "../core/Elements.h"
 #include "../core/ElementFormula.h"
 #include "../math/FormatInfo.h"
@@ -263,6 +264,8 @@ SchemaLayout::SchemaLayout(Schema *schema, QWidget* parent) : QGraphicsView(pare
 
     _paperContextMenu = new QMenu(this);
     _paperContextMenu->addAction(QIcon(":/toolbar/copy_img"), tr("Copy Image"), this, &SchemaLayout::copyImage);
+    _paperContextMenu->addSeparator();
+    _paperContextMenu->addAction(QIcon(":/toolbar/help"), tr("Help"), this, &SchemaLayout::showHelp);
 
     _axis = new OpticalAxisLayout::Layout(nullptr, this);
     _axis->setAcceptedMouseButtons(Qt::MouseButtons());
@@ -456,6 +459,11 @@ void SchemaLayout::copyImage() const
     scene()->render(&painter);
 
     qApp->clipboard()->setImage(image);
+}
+
+void SchemaLayout::showHelp() const
+{
+    Z::HelpSystem::instance()->showTopic("layout.html");
 }
 
 //------------------------------------------------------------------------------

@@ -13,6 +13,7 @@ reZonator2 Documentation
    elements
    functions
    tools
+   app_settings
    handbook
 
 

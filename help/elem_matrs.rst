@@ -1,3 +1,4 @@
+.. _elem_matrs:
 .. index:: single: matrices
 
 Elements Matrices
