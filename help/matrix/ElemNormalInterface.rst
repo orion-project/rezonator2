@@ -1,3 +1,4 @@
+.. _ElemNormalInterface:
 .. index:: single: normal interface
 
 Normal Interface

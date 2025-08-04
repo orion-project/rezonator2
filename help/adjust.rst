@@ -1,3 +1,4 @@
+.. _adjust:
 .. index:: single: adjustment
 
 Schema Adjustment

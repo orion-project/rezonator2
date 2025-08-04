@@ -42,6 +42,11 @@ The *stop icon* shows that the element is :ref:`blocked <elem_props_lock>`. If a
   .. image:: img/elems_table_locked.png
 
 
+Context Menu
+------------
+
+The context menu of the elements list includes :ref:`some commands <elem_opers>` for elements.
+
 .. seeAlso::
 
   :doc:`layout`

@@ -7,6 +7,8 @@ Element Properties: Options
 
   .. image:: img/elem_props_options.png
 
+.. --------------------------------------------------------------------------
+
 .. _elem_props_lock:
 
 Ignore in calculation (disable element)
@@ -16,16 +18,24 @@ When a flag is set, the element is ignored during round-trip calculation, and it
 
   .. image:: img/elems_table_locked.png
 
-TODO: lock-unlock command in the element list
+Additionally, this flag can be quickly toggled via the :ref:`separate command <elem_toggle_lock>` in the :doc:`schema_window`.
+
+.. --------------------------------------------------------------------------
+
+.. _elem_props_show_label:
 
 Show element label on layout
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The option defines whether to show the element label on the :doc:`layout`. This is a cosmetic option allowing you to make a better view for layouts containing some type of element like :ref:`interfaces <matrix/ElemNormalInterface>` or :ref:`points <matrix/ElemPoint>`.
+The option defines whether to show the element label on the :doc:`layout`. This is a cosmetic option allowing you to make a better view for layouts containing some type of element like :ref:`interfaces <ElemNormalInterface>` or :ref:`points <ElemPoint>`.
 
 For example, here is a layout of the “singlet_thick_intf” example with hidden labels for :doc:`matrix/ElemSphericalInterface` elements representing lens surfaces:
 
   .. image:: img/layout_hide_labels.png
+
+.. --------------------------------------------------------------------------
+
+.. _elem_props_draw_narrow:
 
 Draw narrow version of element
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,6 +45,8 @@ Some element types, like :doc:`matrix/ElemEmptyRange` or :doc:`matrix/ElemTilted
 For example, here is a layout of the “z_crystal” example, where the :param:`L3` is displayed in the narrow mode, which reflects the fact that it's significantly shorter than the :param:`L2` range:
 
   .. image:: img/layout_narrow_elem.png
+
+.. --------------------------------------------------------------------------
 
 .. seeAlso::
 

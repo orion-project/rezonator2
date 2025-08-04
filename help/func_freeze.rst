@@ -1,3 +1,4 @@
+.. _func_freeze:
 .. index:: single: freezing
 
 Function Freezing

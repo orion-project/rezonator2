@@ -1,3 +1,4 @@
+.. _ElemPoint:
 .. index:: single: point element
 
 Point Element
@@ -11,7 +12,7 @@ For example, one can use this element as a separator between two adjacent range 
 
     .. image:: ElemPoint_example.png
     
-.. seealso::
+.. seeAlso::
 
     :doc:`../elem_matrs`, :doc:`../catalog`, :doc:`../elem_props`
     

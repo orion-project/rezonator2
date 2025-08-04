@@ -42,6 +42,7 @@ public:
 
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return { _windowMenu }; }
+    QString helpTopic() const override { return "memo_window.html"; }
 
     // inherits from IEditableWindow
     SupportedCommands supportedCommands() override {

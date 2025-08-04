@@ -4,7 +4,7 @@
 Schema
 ******
 
-An optical system under investigation is called *schema* in terms of |rezonator|. The schema consists of several optical components, ranges between them, and some helper objects. They all are called :doc:`elements <elements>`.
+An optical system under investigation is called a *schema* in terms of |rezonator|. The schema consists of several optical components, ranges between them, and some helper objects. They all are called :doc:`elements <elements>`.
 
 Schemas are saved in files with the extension ``.REZ``.
 
@@ -18,21 +18,21 @@ A resonator can be a *standing wave resonator (SW)* or *ring resonator (RR)*. Wi
 
   .. image:: img/sketch_sw_rr.png
 
-You can change the type of schema through the :doc:`Trip-type dialog <trip_type>` at any time. The status bar of the project window displays an icon denoting selected schema type. The icon pointed as :guipart:`1` on the screenshot below.
+You can change the type of schema through the :doc:`Trip-type dialog <trip_type>` at any time. The status bar of the project window displays an icon denoting selected schema type. The icon is pointed to as :GUIPart:`1` on the screenshot below.
 
-Each time you modify any schema properties or elements' parameters, |rezonator| computes a value of stability parameter (for SW and RR). When schema stability gets broken, then the stability icon (shown as :guipart:`2` on the screenshot below) gets highlighted in red color. Calculation of beam properties for unstable resonators is not supported.
+Each time you modify any schema properties or elements' parameters, |rezonator| computes a value of stability parameter (for SW and RR). When schema stability gets broken, then the stability icon (shown as :GUIPart:`2` on the screenshot below) gets highlighted in red color. Calculation of beam properties for unstable resonators is not supported.
 
   .. image:: img/status_bar_1.png
   
-.. toctree::
-   :maxdepth: 1
+.. tocTree::
+   :maxDepth: 1
    :caption: Table of Contents:
 
-   trip_type
-   schema_elems
-   input_beam
+   schema_window
    pumps_window
-   pump_mode
    params_window
-   layout
+   memo_window
+   trip_type
+   input_beam
+   pump_mode
    adjust

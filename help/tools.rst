@@ -4,8 +4,8 @@
 Tools
 *****
 
-.. toctree::
-   :maxdepth: 1
+.. tocTree::
+   :maxDepth: 1
    :caption: Table of Contents:
 
    calc_formula
@@ -13,6 +13,6 @@ Tools
    calc_grin
    calc_lens
 
-.. seealso::
+.. seeAlso::
 
     :doc:`functions`

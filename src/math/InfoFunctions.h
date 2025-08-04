@@ -16,7 +16,8 @@ public:
     InfoFuncMatrix(Schema*, Element*);
     QString calculateInternal() override;
     FunctionState elementDeleting(Element *elem) override;
-    FUNC_NAME(qApp->translate("Func", "Element's Matrices"))
+    FUNC_HELP("func_matrix.html")
+    FUNC_NAME(qApp->translate("Func", "Element Matrices"))
 private:
     Element* _element;
 };
@@ -29,7 +30,8 @@ public:
     InfoFuncMatrices(Schema*, const Elements&);
     QString calculateInternal() override;
     FunctionState elementDeleting(Element*) override;
-    FUNC_NAME(qApp->translate("Func", "Elements' Matrices"))
+    FUNC_HELP("func_matrix.html")
+    FUNC_NAME(qApp->translate("Func", "Element Matrices"))
 protected:
     Elements _elements;
 };
