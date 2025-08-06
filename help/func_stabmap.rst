@@ -54,10 +54,10 @@ Values are displayed in the units of measurements of the plot's X-axis. When tho
 Additional Commands of Plot Window
 ----------------------------------
 
+.. _func_stabmap_stab_lines:
+
 Toggle Stability Boundary Markers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. _func_stabmap_stab_lines:
 
 :menuSelection:`View --> Stability Boundary Markers`
 

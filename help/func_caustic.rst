@@ -27,6 +27,8 @@ The “Plottable length” value in the dialog shows the longest geometrical pat
 Additional Parameters
 ---------------------
 
+.. _func_caustic_aux_params:
+
 :menuSelection:`View --> Function Params`
 
 In the tab you can select what should be plotted - beam radius or wavefront curvature radius. The plot remembers different units of measurement for each plotting mode.
@@ -39,6 +41,8 @@ If there is a waist inside the element, the graph of beam radius usually require
 
     .. image:: img/func_caustic_r_2.png
 
+.. _func_caustic_spec_points:
+
 Special Points
 --------------
 
@@ -48,6 +52,8 @@ The function calculates the beam radius at the beginning and end of the plotting
 
   .. image:: img/func_caustic_spec_points.png
 
+
+.. _func_caustic_aux_cmds:
 
 Additional Commands of Plot Window
 ----------------------------------
@@ -67,4 +73,4 @@ The beam shape image can be copied separately from the whole plot; use its conte
 
 .. seeAlso::
 
-    :doc:`func_freeze`, :doc:`func_rt_plot`, :doc:`func_caustic_mr`, :doc:`func_caustic_mb`
+    :doc:`plot_window`, :doc:`func_caustic_mr`, :doc:`func_caustic_mb`

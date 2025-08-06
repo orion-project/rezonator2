@@ -44,12 +44,12 @@ MulticausticWindow::MulticausticWindow(MultirangeCausticFunction* function) : Pl
     _plot->setDefaultTextX("{elem_labels} {(unit)}");
     _plot->setFormatterTextX(_plot->defaultTextX());
 
-    _actnElemBoundMarkers = new QAction(tr("Element Bound Markers"), this);
+    _actnElemBoundMarkers = new QAction(tr("Element Edge Markers"), this);
     _actnElemBoundMarkers->setCheckable(true);
     _actnElemBoundMarkers->setChecked(true);
     connect(_actnElemBoundMarkers, &QAction::toggled, this, &MulticausticWindow::toggleElementBoundMarkers);
 
-    _actnElemBoundMarkersFormat = new QAction(tr("Element Bound Markers Format..."), this);
+    _actnElemBoundMarkersFormat = new QAction(tr("Element Edge Markers Format..."), this);
     connect(_actnElemBoundMarkersFormat, &QAction::triggered, this, &MulticausticWindow::formatElementBoundMarkers);
 
     connect(_cursorPanel, &QCPL::CursorPanel::customCommandInvoked,
@@ -78,7 +78,7 @@ void MulticausticWindow::toggleElementBoundMarkers(bool on)
 void MulticausticWindow::formatElementBoundMarkers()
 {
     PlotHelpers::FormatPenDlgProps props;
-    props.title = tr("Element Bound Markers Format");
+    props.title = tr("Element Edge Markers Format");
     props.onApply = [this](const QPen& pen){
         _elemBoundMarkersPen = pen;
         foreach (auto line, _elemBoundMarkers)

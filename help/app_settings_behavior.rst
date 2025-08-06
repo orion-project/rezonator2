@@ -32,6 +32,8 @@ If the option is set, then new :ref:`labels <elem_props_label>` will be automati
 
 .. --------------------------------------------------------------------------
 
+.. _app_settings_gen_labels_pump:
+
 Generate labels for new pumps
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -71,6 +73,4 @@ It's been `reported <https://github.com/orion-project/rezonator2/issues/9>`_ tha
 
 .. seeAlso::
   
-  :doc:`app_settings`
-
-  :doc:`app_settings_lines`
+  :doc:`app_settings`, :doc:`app_settings_lines`

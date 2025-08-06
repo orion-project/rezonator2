@@ -215,7 +215,7 @@ QWidget* AppSettingsDialog::createLinesPage()
             new LabelSeparator(tr("S-graph Line"), true), _graphPenS, SpaceV(2),
             new LabelSeparator(tr("Cursor Line"), true), _cursorPen, SpaceV(2),
             new LabelSeparator(tr("Stability Boundary Markers"), true), _stabBoundMarkerPen, SpaceV(2),
-            new LabelSeparator(tr("Element Bound Markers"), true), _elemBoundMarkersPen,
+            new LabelSeparator(tr("Element Edge Markers"), true), _elemBoundMarkersPen,
         }).setMargin(0).boxLayout(),
         page->stretch(),
     });
