@@ -1,10 +1,10 @@
-.. index:: single: intermode beats frequency (function)
-.. index:: single: repetition rate
+.. index:: single: intermode beat frequency (function)
+.. index:: single: repetition rate (function)
 
-Intermode Beats Frequency
-=========================
+Repetition Rate
+===============
 
-:menuSelection:`Functions --> Intermode Beats Frequency` 
+:menuSelection:`Functions --> Repetition Rate` 
 
 The function computes the intermode beat frequency of the resonator.
 

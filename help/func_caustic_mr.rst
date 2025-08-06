@@ -1,3 +1,4 @@
+.. _func_caustic:
 .. index:: single: multirange caustic (function)
 
 Multirange Caustic

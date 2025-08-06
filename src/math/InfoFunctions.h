@@ -81,7 +81,7 @@ public:
     InfoFuncRepetitionRate(Schema *schema) : InfoFunction(schema) {}
     QString calculateInternal() override;
     FUNC_HELP("func_reprate.html")
-    FUNC_NAME(qApp->translate("Func", "Intermode Beats Frequency"))
+    FUNC_NAME(qApp->translate("Func", "Repetition Rate"))
     double repetitonRate() const { return _repetitonRate; }
 private:
     double _repetitonRate;

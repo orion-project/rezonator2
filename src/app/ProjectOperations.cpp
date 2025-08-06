@@ -429,7 +429,8 @@ QString ProjectOperations::selectSchemaExample()
     fileList.setIconSize(QSize(24, 24));
 #endif
     for (auto& fileName : exampleFiles)
-        fileList.addItem(new QListWidgetItem(QIcon(":/window_icons/schema"), fileName));
+        if (fileName.endsWith(Z::IO::Utils::suffix()) || fileName.endsWith(Z::IO::Utils::suffixOld()))
+            fileList.addItem(new QListWidgetItem(QIcon(":/window_icons/schema"), fileName));
 
     QString fileName;
 

@@ -11,3 +11,4 @@ Application Settings
    :caption: Table of Contents:
 
    app_settings_behavior
+   app_settings_lines

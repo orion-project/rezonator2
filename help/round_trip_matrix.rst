@@ -1,3 +1,4 @@
+.. _round_trip:
 .. index:: single: calculation of round-trip matrix
 .. index:: single: matrix of round-trip
 .. index:: single: round-trip

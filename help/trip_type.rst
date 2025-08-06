@@ -1,9 +1,10 @@
+.. _trip_type:
 .. index:: single: round-trip type
 
 Round-trip Type
 ===============
 
-:menuselection:`File --> Change Trip Type`
+:menuSelection:`File --> Change Trip Type`
 
 The command also can be invoked by double-clicking on the round-trip type icon in the status bar.
 
@@ -46,6 +47,6 @@ To set the input beam parameters, you can use the command :doc:`Setup Input Beam
 
 |para|
 
-.. seealso::
+.. seeAlso::
 
     :doc:`round_trip_matrix`

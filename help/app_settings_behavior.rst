@@ -68,3 +68,9 @@ Open documentation online instead of from local file
 It's been `reported <https://github.com/orion-project/rezonator2/issues/9>`_ that the local documentation sometimes fails to show. If this happens, the `online manual <http://rezonator.orion-project.org/help>`_ can be used instead.
 
 .. --------------------------------------------------------------------------
+
+.. seeAlso::
+  
+  :doc:`app_settings`
+
+  :doc:`app_settings_lines`

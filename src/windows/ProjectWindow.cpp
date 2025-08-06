@@ -33,6 +33,7 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QClipboard>
 #include <QCloseEvent>
 #include <QDir>
 #include <QFormLayout>
@@ -162,7 +163,7 @@ void ProjectWindow::createActions()
     actnFuncMatrixMult = A_(tr("Multiply Selected"), _calculations, SLOT(funcMatrixMult()));
     actnFuncStabMap = A_(tr("Stability Map..."), _calculations, SLOT(funcStabMap()), ":/toolbar/func_stab_map");
     actnFuncStabMap2d = A_(tr("2D Stability Map..."), _calculations, SLOT(funcStabMap2d()), ":/toolbar/func_stab_map_2d");
-    actnFuncRepRate = A_(tr("Intermode Beats Frequency"), _calculations, SLOT(funcRepRate()), ":/toolbar/func_reprate");
+    actnFuncRepRate = A_(tr("Repetition Rate"), _calculations, SLOT(funcRepRate()), ":/toolbar/func_reprate");
     actnFuncCaustic = A_(tr("Caustic..."), _calculations, SLOT(funcCaustic()), ":/toolbar/func_caustic");
     actnFuncMultirangeCaustic = A_(tr("Multirange Caustic..."), _calculations, SLOT(funcMultirangeCaustic()), ":/toolbar/func_multi_caustic");
     actnFuncMultibeamCaustic = A_(tr("Multibeam Caustic..."), _calculations, SLOT(funcMultibeamCaustic()), ":/toolbar/func_multi_beam_caustic");
@@ -357,8 +358,11 @@ void ProjectWindow::updateMenuBar()
     if (AppSettings::instance().isDevMode) {
         menuView->addSeparator();
         menuView->addAction("Resize project window...", this, &ProjectWindow::devResizeWindow);
-        menuView->addAction("Maximize current MDI-child window...", this, &ProjectWindow::devMaximizeMdiChild);
-        menuView->addAction("Show project window geometry in console", this, [this]{ qDebug() << geometry(); });
+        menuView->addAction("Show project window geometry...", this, &ProjectWindow::devShowWindowSize);
+        menuView->addAction("Resize current MDI-child...", this, &ProjectWindow::devResizeMdiChild);
+        menuView->addAction("Maximize current MDI-child", this, &ProjectWindow::devMaximizeMdiChild);
+        menuView->addAction("Copy current MDI-child as image", this, &ProjectWindow::devCopyImgMdiChild);
+        menuView->addAction("Show current MDI-child geometry...", this, &ProjectWindow::devShowMdiChildSize);
         hasViewActions = true;
     } 
     
@@ -667,16 +671,41 @@ void ProjectWindow::messageBusEvent(MessageBusEvent event, const QMap<QString, Q
     }
 }
 
-void ProjectWindow::devResizeWindow()
+static std::optional<QSize> requestSizeDlg(int curW, int curH)
 {
-    auto edW = Ori::Gui::spinBox(100, 5000, width());
-    auto edH = Ori::Gui::spinBox(100, 5000, height());
+    auto edW = Ori::Gui::spinBox(100, 5000, curW);
+    auto edH = Ori::Gui::spinBox(100, 5000, curH);
     QWidget w;
     auto layout = new QFormLayout(&w);
     layout->addRow("Width", edW);
     layout->addRow("Height", edH);
     if (Ori::Dlg::Dialog(&w, false).exec())
-        resize(edW->value(), edH->value());
+        return QSize(edW->value(), edH->value());
+    return {};
+}
+
+static void showSizeDlg(const QRect &g)
+{
+    Ori::Dlg::info(QString("Pos: %1 x %2\nSize: %3 x %4").arg(g.left()).arg(g.top()).arg(g.width()).arg(g.height()));
+}
+
+void ProjectWindow::devResizeWindow()
+{
+    auto res = requestSizeDlg(width(), height());
+    if (res) resize(res->width(), res->height());
+}
+
+void ProjectWindow::devShowWindowSize()
+{
+    showSizeDlg(geometry());
+}
+
+void ProjectWindow::devResizeMdiChild()
+{
+    BasicMdiChild* child = _mdiArea->activeChild();
+    if (!child) return;
+    auto res = requestSizeDlg(child->width(), child->height());
+    if (res) child->resize(res->width(), res->height());
 }
 
 void ProjectWindow::devMaximizeMdiChild()
@@ -684,4 +713,18 @@ void ProjectWindow::devMaximizeMdiChild()
     BasicMdiChild* child = _mdiArea->activeChild();
     if (!child) return;
     child->setGeometry(0, 0, _mdiArea->width(), _mdiArea->height());
+}
+
+void ProjectWindow::devShowMdiChildSize()
+{
+    BasicMdiChild* child = _mdiArea->activeChild();
+    if (!child) return;
+    showSizeDlg(child->geometry());
+}
+
+void ProjectWindow::devCopyImgMdiChild()
+{
+    BasicMdiChild* child = _mdiArea->activeChild();
+    if (!child) return;
+    qApp->clipboard()->setPixmap(child->grab());
 }

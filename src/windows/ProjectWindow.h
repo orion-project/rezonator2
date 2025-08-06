@@ -151,7 +151,11 @@ private slots:
     void updateMenuBar();
 
     void devResizeWindow();
+    void devShowWindowSize();
+    void devResizeMdiChild();
     void devMaximizeMdiChild();
+    void devCopyImgMdiChild();
+    void devShowMdiChildSize();
 
     void addEditAction(QAction* action, IEditableWindow* wnd, IEditableWindow::SupportedCommand cmd);
 };
