@@ -9,9 +9,9 @@ Function Windows
 
    plot_window
    table_window
-   table_symbols
    info_window
    func_freeze
+   table_symbols
 
 Results of calculations of any :ref:`functions <functions>` are presented in so-called function windows. All functions and their windows are divided into several types based on the view of obtained results. Function types are :ref:`plot <plot_window>`, :ref:`table <table_window>`, and :ref:`information <info_window>`.
 

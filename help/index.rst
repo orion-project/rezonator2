@@ -6,13 +6,15 @@ reZonator2 Documentation
 ########################
 
 .. tocTree::
-   :maxDepth: 1
+   :maxDepth: 2
    :caption: Table of Contents:
 
+   intro
    schema
    elements
    functions
    func_windows
+   utils
    tools
    app_settings
    handbook

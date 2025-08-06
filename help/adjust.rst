@@ -4,7 +4,7 @@
 Adjustment
 ==========
 
-:menuSelection:`Tool --> Adjustment`
+:menuSelection:`Utils --> Adjustment`
 
 :menuSelection:`Element context menu --> Add Adjuster --> [Parameter name]`
 
