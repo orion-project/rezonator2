@@ -159,7 +159,7 @@ void ProjectWindow::createActions()
     actnEditPaste = A_(tr("Paste"), _mdiArea, SLOT(editableChild_Paste()), ":/toolbar/paste", QKeySequence::Paste);
     actnEditSelectAll = A_(tr("Select All"), _mdiArea, SLOT(editableChild_SelectAll()), nullptr, QKeySequence::SelectAll);
 
-    actnFuncRoundTrip = A_(tr("Round-trip Matrix"), _calculations, SLOT(funcRoundTrip()), ":/toolbar/func_round_trip");
+    actnFuncRoundTrip = A_(tr("Round-Trip Matrix"), _calculations, SLOT(funcRoundTrip()), ":/toolbar/func_round_trip");
     actnFuncMatrixMult = A_(tr("Multiply Selected"), _calculations, SLOT(funcMatrixMult()));
     actnFuncStabMap = A_(tr("Stability Map..."), _calculations, SLOT(funcStabMap()), ":/toolbar/func_stab_map");
     actnFuncStabMap2d = A_(tr("2D Stability Map..."), _calculations, SLOT(funcStabMap2d()), ":/toolbar/func_stab_map_2d");

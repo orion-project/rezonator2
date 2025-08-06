@@ -1,10 +1,10 @@
 .. _info_window:
 .. index:: single: info window
 
-Information Functions
-=====================
+Information Windows
+===================
 
-Results of calculations of certain functions are one or several values. Such functions are called information functions. They usually do not require any parameters. Examples are functions :doc:`func_rt`, :doc:`func_reprate`. 
+Results of calculations of certain functions are one or several values. Such functions are called information functions. They usually do not require any parameters. Examples are functions like :doc:`func_rt`, :doc:`func_reprate`. 
 
 Results of information functions are represented in a textual form in small popup windows.
 
@@ -73,7 +73,7 @@ The command shows a help topic associated with the current function.
 Additional Commands
 ~~~~~~~~~~~~~~~~~~~
 
-Some functions (e.g. :doc:`func_rt`) can add more buttons to the toolbar that are specific to that type of function. They are described in the particular function help topic.
+Some functions (e.g., :doc:`func_rt`) can add more buttons to the toolbar that are specific to that type of function. They are described in the particular function help topic.
 
 .. --------------------------------------------------------------------------
 

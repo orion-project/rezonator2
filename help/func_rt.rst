@@ -1,9 +1,9 @@
 .. index:: single: round-trip matrix (function)
 
-Round-trip Matrix
+Round-Trip Matrix
 =================
 
-:menuSelection:`Functions --> Round-trip Matrix` 
+:menuSelection:`Functions --> Round-Trip Matrix` 
 
 The function calculates the :doc:`round-trip matrix<round_trip_matrix>` of the schema and displays it in a special window. An element selected in the elements list is treated as a reference. Multiplication of the elements' matrices starts from the reference element. 
 

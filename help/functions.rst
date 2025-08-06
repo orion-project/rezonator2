@@ -7,15 +7,6 @@ Functions
 
 A function is a procedure or an operations sequence yielding some data related to a schema. Unlike tools, functions do not modify the schema anyhow. 
 
-.. tocTree::
-   :maxDepth: 1
-   :caption: Function windows:
-
-   info_window
-   plot_window
-   table_window
-   table_symbols
-   func_freeze
 
 .. tocTree::
    :maxDepth: 1
@@ -36,4 +27,4 @@ A function is a procedure or an operations sequence yielding some data related t
 
 .. seeAlso::
 
-   :doc:`tools`
+   :doc:`tools`, :doc:`func_windows`

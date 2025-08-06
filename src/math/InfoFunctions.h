@@ -61,7 +61,7 @@ public:
     QString calculateInternal() override;
     FunctionState elementDeleting(Element*) override;
     FUNC_HELP("func_rt.html")
-    FUNC_NAME(qApp->translate("Func", "Round-trip Matrix"))
+    FUNC_NAME(qApp->translate("Func", "Round-Trip Matrix"))
 
     static QString format(RoundTripCalculator *c, bool showElems);
     static QString formatStability(char plane, const Z::Complex& v);

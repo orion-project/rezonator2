@@ -5,9 +5,9 @@ Stability Map
 
 :menuSelection:`Functions --> Stability Map`
 
-The function plots stability parameter of schema as function of single variable P(X), where X is parameter value of one of schema elements. 
+The function plots the stability parameter of the schema as a function of a single variable, P(X), where X is the parameter value of one of the schema elements.
 
-The function works only on :ref:`resonators <trip_type>` because of idea of stability is not applicable to single-pass systems. 
+The function works only on :ref:`resonators <trip_type>` because the idea of stability is not applicable to single-pass systems.
 
 Parameters
 ----------
@@ -17,12 +17,12 @@ Parameters
 Element, Parameter
 ~~~~~~~~~~~~~~~~~~
 
-Element and its parameter to vary. Value of this parameter will be marked along the horizontal axis of the stability map plot.
+Element and its parameter to vary. The value of this parameter will be marked along the horizontal axis of the stability map plot.
 
 Variation
 ~~~~~~~~~
 
-The fields allowing to specify starting and ending values of selected parameter (plot range) and a number of points in resulting graphs. The points number can be input directly in the "Number of points" field. Instead, it is possible to specify a distance between points (plotting step) in the field "With step". 
+The fields allow specifying starting and ending values of the selected parameter (plot range) and a number of points in resulting graphs. The points number can be input directly in the “Number of points” field. Instead, it is possible to specify a distance between points (plotting step) in the field “With step”.
 
 
 Additional Parameters
@@ -54,15 +54,24 @@ Values are displayed in the units of measurements of the plot's X-axis. When tho
 Additional Commands of Plot Window
 ----------------------------------
 
+Toggle Stability Boundary Markers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. _func_stabmap_stab_lines:
 
 :menuSelection:`View --> Stability Boundary Markers`
 
 The command toggles the visibility of stability boundary markers on the plot. They are two horizontal lines at levels (-1 and 1) or (0 and 1), depending on the mode of the stability parameter calculation (see above). The values of the variable parameter at which graphs lie between the boundary lines determine the stability interval.
 
+Stability Boundary Markers Format
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 :menuSelection:`Format --> Stability Boundary Markers Format...`
 
 The command changes the appearance of stability boundary markers for the current function window. A default appearance which is applied to all newly opened function windows, is controlled via :ref:`application settings <app_settings_lines>`.
+
+Fit Y-Axis to Stability Range
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 :menuSelection:`Limits --> Y-Axis -> Stability Range`
 
