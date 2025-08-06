@@ -81,7 +81,7 @@ Elements having length
 .. |M4_1| replace::  M4\ :sub:`1`
 .. |M4_2| replace::  M4\ :sub:`2`
 
-Some functions can analyze elements over their length, :ref:`caustic <func_caustic>` functions, for example. The reference (being analyzed) element is divided into two sub-elements for such functions. The first sub-element is a part of the original element from its left edge till the current point (in which the beam size is calculated, for example). The second sub-element is a part of the original element from the current point till the right edge. Each sub-element characterizes by its ray matrix pair.
+Some functions can analyze elements over their length, :ref:`caustic <func_caustic>` functions, for example. The reference (being analyzed) element is divided into two sub-elements for such functions. The first sub-element is a part of the original element from its left edge till the current point (in which the beam radius is calculated, for example). The second sub-element is a part of the original element from the current point till the right edge. Each sub-element characterizes by its ray matrix pair.
 
 
 
@@ -145,6 +145,6 @@ Sample result (M4 is the reference element):
 
 |para|
 
-.. seealso::
+.. seeAlso::
 
     :doc:`elem_matrs`

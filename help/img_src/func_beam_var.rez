@@ -1,0 +1,637 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 1000
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "M_back",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "Alpha": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "deg",
+                    "value": 5.000000000000002
+                },
+                "R": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "mm",
+                    "value": 30
+                }
+            },
+            "title": "Back mirror",
+            "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L_foc",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "error": "",
+                    "expr": "56",
+                    "unit": "mm",
+                    "value": 56
+                },
+                "n": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "Focusing range",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M_foc",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "Alpha": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "deg",
+                    "value": 5.000000000000002
+                },
+                "R": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "mm",
+                    "value": 50
+                }
+            },
+            "title": "Focusing mirror",
+            "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "mm",
+                    "value": 420
+                },
+                "n": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "Folding range",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M_out",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+            },
+            "title": "Output mirror",
+            "type": "ElemFlatMirror"
+        }
+    ],
+    "formulas": [
+    ],
+    "memos": [
+        {
+            "images": {
+                "922fbd9b90614f57a2f2561794fd06b5": "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"
+            },
+            "text": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'Arial'; font-size:12pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">    <img src=\"922fbd9b90614f57a2f2561794fd06b5\" /></p>\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"
+        }
+    ],
+    "notes": "",
+    "param_links": [
+    ],
+    "pumps": [
+    ],
+    "schema_version": "2.1",
+    "title": "",
+    "trip_type": "SW",
+    "windows": [
+        {
+            "function": {
+                "arg": {
+                    "element_index": 1,
+                    "param": "L",
+                    "range": {
+                        "points": 1000,
+                        "start": {
+                            "unit": "mm",
+                            "value": 20
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 40
+                        },
+                        "use_step": false
+                    }
+                },
+                "stab_calc_mode": "Squared"
+            },
+            "type": "StabMap",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "format": {
+                    "axis_x": {
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": true,
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 3,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 10,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 10,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 3,
+                        "title_margin_out": 5,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#c8c8c8",
+                            "style": 1,
+                            "width": 0
+                        }
+                    },
+                    "axis_y": {
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": true,
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 5,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 10,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 10,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 10,
+                        "title_margin_out": 5,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#c8c8c8",
+                            "style": 1,
+                            "width": 0
+                        }
+                    },
+                    "legend": {
+                        "back_color": "#ffffff",
+                        "border": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "icon_margin": 7,
+                        "icon_size": {
+                            "height": 18,
+                            "width": 32
+                        },
+                        "location": 34,
+                        "margins": {
+                            "bottom": 12,
+                            "left": 12,
+                            "right": 12,
+                            "top": 12
+                        },
+                        "paddings": {
+                            "bottom": 4,
+                            "left": 7,
+                            "right": 7,
+                            "top": 5
+                        },
+                        "text_color": "#000000",
+                        "version": 1,
+                        "visible": false
+                    },
+                    "title": {
+                        "font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 14,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "margins": {
+                            "bottom": 10,
+                            "left": 10,
+                            "right": 10,
+                            "top": 10
+                        },
+                        "text_color": "#000000",
+                        "text_flags": 132,
+                        "version": 1,
+                        "visible": false
+                    }
+                },
+                "stab_bound_markers": true,
+                "stored_views": {
+                },
+                "t_title": "{func_name}",
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 26.84699060512589,
+                "x_min": 24.75048934669585,
+                "x_title": "{elem}, {elem_param} {(unit)}",
+                "x_unit": "mm",
+                "y_max": 1.05,
+                "y_min": -0.05,
+                "y_title": "Stability parameter {stab_mode}",
+                "y_unit": "none"
+            }
+        },
+        {
+            "function": {
+                "arg": {
+                    "element_index": 1,
+                    "param": "L",
+                    "range": {
+                        "points": 1000,
+                        "start": {
+                            "unit": "mm",
+                            "value": 20
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 40
+                        },
+                        "use_step": false
+                    }
+                },
+                "pos": {
+                    "element_index": 3,
+                    "offset": {
+                        "unit": "mm",
+                        "value": 400
+                    }
+                }
+            },
+            "type": "BeamVariation",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "format": {
+                    "axis_x": {
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": true,
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 3,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 10,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 10,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 3,
+                        "title_margin_out": 5,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#c8c8c8",
+                            "style": 1,
+                            "width": 0
+                        }
+                    },
+                    "axis_y": {
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": true,
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 5,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 10,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 10,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 10,
+                        "title_margin_out": 5,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#c8c8c8",
+                            "style": 1,
+                            "width": 0
+                        }
+                    },
+                    "legend": {
+                        "back_color": "#ffffff",
+                        "border": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "icon_margin": 7,
+                        "icon_size": {
+                            "height": 18,
+                            "width": 32
+                        },
+                        "location": 34,
+                        "margins": {
+                            "bottom": 12,
+                            "left": 12,
+                            "right": 12,
+                            "top": 12
+                        },
+                        "paddings": {
+                            "bottom": 4,
+                            "left": 7,
+                            "right": 7,
+                            "top": 5
+                        },
+                        "text_color": "#000000",
+                        "version": 1,
+                        "visible": false
+                    },
+                    "title": {
+                        "font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 14,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "margins": {
+                            "bottom": 10,
+                            "left": 10,
+                            "right": 10,
+                            "top": 10
+                        },
+                        "text_color": "#000000",
+                        "text_flags": 132,
+                        "version": 1,
+                        "visible": false
+                    }
+                },
+                "stored_views": {
+                },
+                "t_title": "{func_name}",
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 26.682828282828325,
+                "x_min": 25.03434343434347,
+                "x_title": "{elem}, {elem_param} {(unit)}",
+                "x_unit": "mm",
+                "y_max": 0.6611080750432075,
+                "y_min": 0.09377635352200091,
+                "y_title": "Beam radius at {place} {(unit)}",
+                "y_unit": "mm"
+            }
+        }
+    ]
+}

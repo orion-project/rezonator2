@@ -18,7 +18,7 @@ The beam radius at the element. The displayed measurement units can be changed v
 .. TODO: Aperture ratio (At × As)
 .. TODO: ~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. TODO: The ratio of the element's aperture to the beam size at the element: `A = (D/2) / w` where `D` is the element's aperture diameter.
+.. TODO: The ratio of the element's aperture to the beam radius at the element: `A = (D/2) / w` where `D` is the element's aperture diameter.
 
 Wavefront ROC (Rt × Rs)
 ~~~~~~~~~~~~~~~~~~~~~~~

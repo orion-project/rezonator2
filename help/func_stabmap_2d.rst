@@ -41,6 +41,11 @@ The tab defines a method of stability parameter calculation.
 
 Where A and D are system :ref:`round-trip matrix <round_trip>` components. In the first case, the system is stable when the parameter value is in the range from -1 to 1. In the second case, the system is stable when the parameter value is in the range from 0 to 1. Use the :menuSelection:`Limits --> Z-Axis -> Stability Range` menu command or the respective button on the function's window toolbar to visually fit the heatmap colors into these ranges.
 
+Special Points
+--------------
+
+The function does not calculate any special points.
+
 Additional Commands of Plot Window
 ----------------------------------
 
