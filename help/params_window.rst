@@ -14,6 +14,7 @@ Global parameters can be used for providing values for :ref:`element parameters 
 
   .. image:: img/params_window.png
 
+.. --------------------------------------------------------------------------
 
 .. _params_window_create:
 
@@ -26,6 +27,7 @@ When creating a new parameter, one should specify its Name, Dimension, and Descr
 
   .. image:: img/params_window_create.png
 
+.. --------------------------------------------------------------------------
 
 .. _params_window_edit:
 
@@ -42,6 +44,7 @@ Description is just a short human-readable description of the parameter, and its
 
   .. image:: img/params_window_edit.png
 
+.. --------------------------------------------------------------------------
 
 .. _params_window_value:
 
@@ -59,6 +62,7 @@ Parameter value can also be given via simple expression. The expression can cont
 
   .. image:: img/params_window_set_expr.png
 
+.. --------------------------------------------------------------------------
 
 .. _params_window_formula:
 
@@ -79,6 +83,7 @@ Formula can depend on values of other parameters. Just type the name of another 
 
 When a parameter is driven by a formula, it is marked by the “gear” icon in the table, and the list of dependencies is shown in the “Name” column. E.g. :param:`L1 = f(L0, F0)` means that a value for parameter :param:`L1` is somehow calculated from values of parameters :param:`L0` and :param:`F0`, which are also here in the table.
 
+.. --------------------------------------------------------------------------
 
 .. _params_window_adjust:
 

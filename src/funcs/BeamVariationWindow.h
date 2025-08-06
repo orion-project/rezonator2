@@ -45,6 +45,9 @@ class BeamVariationParamsDlg : public RezonatorDialog
 public:
     explicit BeamVariationParamsDlg(Schema*, Z::Variable*, Z::PlotPosition *pos);
 
+protected:
+    QString helpTopic() const override { return BeamVariationFunction::help_topic(); }
+
 protected slots:
     void collect() override;
 

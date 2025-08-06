@@ -1,7 +1,7 @@
 .. _trip_type:
 .. index:: single: round-trip type
 
-Round-trip Type
+Round-Trip Type
 ===============
 
 :menuSelection:`File --> Change Trip Type`
@@ -17,7 +17,7 @@ The command also can be invoked by double-clicking on the round-trip type icon i
 SW, Standing wave system
 ------------------------
  
-A product of elements' matrices is calculated over system double pass (round-trip), a beam passes through each element twice (excluding boundary elements). 
+A product of elements' matrices is calculated over system double pass (round-trip); a beam passes through each element twice (excluding boundary elements). 
 
   .. image:: img/round_trip_sw.png
 

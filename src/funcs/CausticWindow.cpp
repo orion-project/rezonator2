@@ -24,7 +24,7 @@
 //------------------------------------------------------------------------------
 
 CausticParamsDlg::CausticParamsDlg(Schema *schema, Z::Variable *var)
-    : RezonatorDialog(DontDeleteOnClose), _var(var)
+    : RezonatorDialog(DontDeleteOnClose | UseHelpButton), _var(var)
 {
     setWindowTitle(tr("Range"));
     setObjectName("CausticParamsDlg");

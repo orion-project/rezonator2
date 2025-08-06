@@ -12,6 +12,8 @@ public:
     FUNC_ALIAS("StabMap")
     FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Stability Map"))
     FUNC_ICON(":/toolbar/func_stab_map")
+    FUNC_HELP(help_topic())
+    static QString help_topic() { return "func_stabmap.html"; }
 
     StabilityMapFunction(Schema *schema) : PlotFunction(schema) {}
 

@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------
 
 StabilityMap2DParamsDlg::StabilityMap2DParamsDlg(Schema *schema, Z::Variable *var1, Z::Variable *var2)
-    : RezonatorDialog(DontDeleteOnClose), _schema(schema)
+    : RezonatorDialog(DontDeleteOnClose | UseHelpButton), _schema(schema)
 {
     setWindowTitle(tr("2D Stability Map Parameters"));
     setObjectName("StabilityMap2DPropsDlg");

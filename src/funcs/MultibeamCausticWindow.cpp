@@ -62,6 +62,14 @@ void MultibeamCausticWindow::pumpCustomized(Schema*, PumpParams* p)
 void MultibeamCausticWindow::pumpDeleting(Schema*, PumpParams* p)
 {
     _graphPens.remove(p);
+    if (_lastSelectedPump == p)
+        _lastSelectedPump = nullptr;
+}
+
+void MultibeamCausticWindow::pumpDeleted(Schema*, PumpParams*)
+{
+    if (!_lastSelectedPump)
+        _lastSelectedPump = schema()->activePump();
     update();
 }
 

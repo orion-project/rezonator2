@@ -14,6 +14,8 @@ public:
     FUNC_ALIAS("BeamVariation")
     FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Beam Variation"))
     FUNC_ICON(":/toolbar/func_beam_variation")
+    FUNC_HELP(help_topic())
+    static QString help_topic() { return "func_beam_var.html"; }
 
     BeamVariationFunction(Schema *schema) : PlotFunction (schema) {}
 

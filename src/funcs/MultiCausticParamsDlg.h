@@ -20,9 +20,12 @@ class MultiCausticParamsDlg : public RezonatorDialog
     Q_OBJECT
 
 public:
-    explicit MultiCausticParamsDlg(Schema*, const QVector<Z::Variable>&);
+    explicit MultiCausticParamsDlg(Schema*, const QVector<Z::Variable>&, const QString &helpTopic);
 
     const QVector<Z::Variable>& result() const { return _result; }
+
+protected:
+    QString helpTopic() const override { return _helpTopic; }
 
 protected slots:
     void collect() override;
@@ -33,6 +36,7 @@ private:
     PointsRangeEditor* _rangeEditor;
     QMap<Element*, Z::VariableRange> _elemRanges;
     QCheckBox *_sameSettings;
+    QString _helpTopic;
 
     void populate(const QVector<Z::Variable>& vars);
 

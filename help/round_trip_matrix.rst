@@ -3,7 +3,7 @@
 .. index:: single: matrix of round-trip
 .. index:: single: round-trip
 
-Calculation of Round-trip Matrix 
+Calculation of Round-Trip Matrix 
 ================================
 
 The :doc:`ray-matrix <elem_matrs>` formalism supposes the elements' matrices are multiplied one-by-one in the direction opposite to the beam :ref:`propagation direction <propagation_dir>`.
@@ -11,7 +11,7 @@ The :doc:`ray-matrix <elem_matrs>` formalism supposes the elements' matrices are
 General elements
 ----------------
 
-Each element characterizes by a pair of ray matrices. One matrix is for the tangential (T) plane, and the other is for the sagittal (S) plane. Round-trip matrices are calculated independently for both planes.
+Each element is characterized by a pair of ray matrices. One matrix is for the tangential (T) plane, and the other is for the sagittal (S) plane. Round-trip matrices are calculated independently for both planes.
 
 
 
@@ -81,7 +81,7 @@ Elements having length
 .. |M4_1| replace::  M4\ :sub:`1`
 .. |M4_2| replace::  M4\ :sub:`2`
 
-Some functions can analyze elements over their length, :ref:`caustic <func_caustic>` functions, for example. The reference (being analyzed) element is divided into two sub-elements for such functions. The first sub-element is a part of the original element from its left edge till the current point (in which the beam radius is calculated, for example). The second sub-element is a part of the original element from the current point till the right edge. Each sub-element characterizes by its ray matrix pair.
+Some functions can analyze elements over their length, :ref:`caustic <func_caustic>` functions, for example. The reference (being analyzed) element is divided into two sub-elements for such functions. The first sub-element is a part of the original element from its left edge till the current point (in which the beam radius is calculated, for example). The second sub-element is a part of the original element from the current point till the right edge. Each sub-element is characterized by its ray matrix pair.
 
 
 

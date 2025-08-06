@@ -64,6 +64,9 @@ class StabilityParamsDlg : public RezonatorDialog
 public:
     explicit StabilityParamsDlg(Schema*, Z::Variable*);
 
+protected:
+    QString helpTopic() const override { return StabilityMapFunction::help_topic(); }
+
 protected slots:
     void collect() override;
 

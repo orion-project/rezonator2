@@ -58,7 +58,7 @@ MulticausticWindow::MulticausticWindow(MultirangeCausticFunction* function) : Pl
 
 bool MulticausticWindow::configureInternal()
 {
-    MultiCausticParamsDlg dlg(schema(), function()->args());
+    MultiCausticParamsDlg dlg(schema(), function()->args(), function()->helpTopic());
     if (dlg.run())
     {
         function()->setArgs(dlg.result());
@@ -389,7 +389,7 @@ void MulticausticWindow::optionChanged(AppSettingsOption option)
 
     if (option == AppSettingsOption::DefaultPenFormat)
     {
-        for (auto line: _elemBoundMarkers)
+        for (auto line: std::as_const(_elemBoundMarkers))
             line->setPen(elemBoundMarkersPen());
         _plot->replot();
     }

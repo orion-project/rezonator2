@@ -15,7 +15,7 @@
 //------------------------------------------------------------------------------
 
 BeamVariationParamsDlg::BeamVariationParamsDlg(Schema *schema, Z::Variable *var, Z::PlotPosition *pos)
-    : RezonatorDialog(DontDeleteOnClose), _schema(schema), _var(var), _pos(pos)
+    : RezonatorDialog(DontDeleteOnClose | UseHelpButton), _schema(schema), _var(var), _pos(pos)
 {
     setWindowTitle(tr("Variable"));
     setObjectName("BeamVariationParamsDlg");

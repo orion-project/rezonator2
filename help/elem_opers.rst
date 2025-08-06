@@ -60,6 +60,8 @@ The command shows the ray matrix of one or several selected elements. Matrices a
 
 .. --------------------------------------------------------------------------
 
+.. _elem_opers_add_adjuster:
+
 Add Adjuster
 ------------
 
@@ -127,10 +129,6 @@ Save to Custom Library
 :menuSelection:`Element --> Save to Custom Library...`
 
 Save the selected element as a preset into the :doc:`elem_library`. Current element parameter values are used for the preset. If some parameters are linked to :ref:`global parameters <params_window>`, only the parameter value is stored in the library, not the link. Because global parameters are related to the current schema but the library is not.
-
-.. --------------------------------------------------------------------------
-
-
 
 .. --------------------------------------------------------------------------
 

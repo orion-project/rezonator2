@@ -56,7 +56,7 @@ we can calculate radius and ROC of self-consistent beam in resonator:
     .. image:: img/gauss_q_r_w.png
 
 Beam Properties in Terms of Matrix Components
--------------------------------------------
+---------------------------------------------
 
 ROC of self-consistent beam:
 
@@ -83,6 +83,6 @@ Half-divergence in far-field zone:
 
 These formulas are given just for information. They do not suit when matrix components are complex numbers, so the application actually doesn't use them and calculates beam properties from self-consistent `q` parameter directly.
 
-.. seealso::
+.. seeAlso::
 
     :doc:`gauss`

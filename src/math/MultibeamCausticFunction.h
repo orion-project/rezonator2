@@ -9,6 +9,7 @@ public:
     FUNC_ALIAS("MultibeamCaustic")
     FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "MB-Caustic"))
     FUNC_ICON(":/toolbar/func_multi_beam_caustic")
+    FUNC_HELP("func_caustic_mb.html")
 
     MultibeamCausticFunction(Schema *schema);
 

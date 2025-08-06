@@ -17,7 +17,7 @@ public:
     void pumpChanged(Schema*, PumpParams* p) override;
     void pumpCustomized(Schema*, PumpParams* p) override;
     void pumpDeleting(Schema*, PumpParams*) override;
-    void pumpDeleted(Schema*, PumpParams*) override { update(); }
+    void pumpDeleted(Schema*, PumpParams*) override;
 
 protected:
     // Implementation of PlotFuncWindow

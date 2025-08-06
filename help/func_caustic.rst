@@ -1,3 +1,4 @@
+.. _func_caustic:
 .. index:: single: caustic (function)
 
 Caustic

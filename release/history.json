@@ -26,10 +26,13 @@
           "text": "Ignore disabled elements and respect order in Multiply Selected functions"
         },
         {
-          "text": "New help topics in the manual: Beam parameters at elements function, Table window."
+          "text": "Finish help topics"
         },
         {
           "text": "Fix: after parameter creation, the previous parameter is edited (https://github.com/orion-project/rezonator2/issues/78)"
+        },
+        {
+          "text": "Fix: crash when deleting a pump that is selected in Multibeam Caustic window"
         },
         {
           "text": "Switch to CMake, switch to MSVC for Windows"

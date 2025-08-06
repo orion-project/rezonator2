@@ -53,6 +53,9 @@ class CausticParamsDlg : public RezonatorDialog
 public:
     explicit CausticParamsDlg(Schema*, Z::Variable*);
 
+protected:
+    QString helpTopic() const override { return CausticFunction::help_topic(); }
+
 protected slots:
     void collect() override;
 

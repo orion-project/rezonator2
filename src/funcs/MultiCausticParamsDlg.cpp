@@ -9,11 +9,13 @@
 #include <QCheckBox>
 #include <QGroupBox>
 
-MultiCausticParamsDlg::MultiCausticParamsDlg(Schema *schema, const QVector<Z::Variable>& vars)
-    : RezonatorDialog(DontDeleteOnClose)
+MultiCausticParamsDlg::MultiCausticParamsDlg(Schema *schema, const QVector<Z::Variable>& vars, const QString &helpTopic)
+    : RezonatorDialog(DontDeleteOnClose | UseHelpButton)
 {
     setWindowTitle(tr("Ranges"));
     setObjectName("MultiCausticParamsDlg");
+    
+    _helpTopic = helpTopic;
 
     ElementFilterPtr elemFilter(ElementFilter::make<ElementFilterIsRange>());
 
@@ -38,7 +40,8 @@ MultiCausticParamsDlg::MultiCausticParamsDlg(Schema *schema, const QVector<Z::Va
 
 void MultiCausticParamsDlg::populate(const QVector<Z::Variable>& vars)
 {
-    for (auto elem : _elemsSelector->allElements())
+    auto elems = _elemsSelector->allElements();
+    for (auto elem : std::as_const(elems))
     {
         bool hasRange = false;
 
@@ -79,7 +82,7 @@ void MultiCausticParamsDlg::collect()
     }
 
     _result.clear();
-    for (auto elem : selectedElems)
+    for (auto elem : std::as_const(selectedElems))
     {
         Z::Variable var;
         var.element = elem;

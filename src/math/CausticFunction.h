@@ -20,8 +20,9 @@ public:
 
     FUNC_ALIAS("Caustic")
     FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Caustic"))
-    FUNC_HELP("func_caustic.html")
     FUNC_ICON(":/toolbar/func_caustic")
+    FUNC_HELP(help_topic())
+    static QString help_topic() { return "func_caustic.html"; }
 
     CausticFunction(Schema *schema) : PlotFunction(schema) {}
 

@@ -8,11 +8,11 @@ The flat mirror has a unity matrix and does not affect the propagating beam. It 
 
     .. image:: ElemFlatMirror.png
     
-The flat mirror changes its representation on the :doc:`layout <layout>` when it does not locate at the end of the resonator. Similar to :doc:`ElemPoint`, you can use it as a helper element, e.g., as a separator between two adjacent range elements having different semantics. 
+The flat mirror changes its representation on the :ref:`layout <layout>` when it does not locate at the end of the resonator. Similar to :doc:`ElemPoint`, you can use it as a helper element, e.g., as a separator between two adjacent range elements having different semantics. 
 
     .. image:: ElemFlatMirror_example.png
     
-.. seealso::
+.. seeAlso::
 
     :doc:`../elem_matrs`, :doc:`../catalog`, :doc:`../elem_props`
     

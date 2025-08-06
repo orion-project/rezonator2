@@ -139,7 +139,7 @@
     "pumps": [
         {
             "color": "#555555",
-            "is_active": false,
+            "is_active": true,
             "label": "P1",
             "mode": "RayVector",
             "params": {
@@ -160,30 +160,6 @@
                 }
             },
             "title": "Geometric pump"
-        },
-        {
-            "color": "#555555",
-            "is_active": true,
-            "label": "P2",
-            "mode": "Waist",
-            "params": {
-                "MI": {
-                    "unit": "none",
-                    "value_s": 1,
-                    "value_t": 1
-                },
-                "w_0": {
-                    "unit": "mkm",
-                    "value_s": 120,
-                    "value_t": 100
-                },
-                "z_w": {
-                    "unit": "mm",
-                    "value_s": 0,
-                    "value_t": 0
-                }
-            },
-            "title": "Gaussian pump"
         }
     ],
     "schema_version": "2.1",
