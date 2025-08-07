@@ -2,6 +2,7 @@
 
 #include "../app/AppSettings.h"
 #include "../app/CalcManager.h"
+#include "../app/HelpSystem.h"
 #include "../app/PersistentState.h"
 #include "../app/HelpSystem.h"
 #include "../core/Schema.h"
@@ -337,6 +338,7 @@ void ProjectOperations::setupWavelength()
             .withTitle(schema()->wavelength().name())
             .withIconPath(":/window_icons/wavelength")
             .withHorizontalPrompt(tr("Enter new wavelength:"))
+            .withOnHelp([]{ Z::HelpSystem::topic("wavelen.html"); })
             .connectOkToContentApply()
             .exec();
 }

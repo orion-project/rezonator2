@@ -3,9 +3,9 @@
 Input Beam
 ==========
 
-:menuselection:`File --> Setup Input Beam (F9)`
+:menuSelection:`File --> Setup Input Beam (F9)`
 
-:menuselection:`Windows --> Pumps --> Pump --> Edit (Enter)`
+:menuSelection:`Windows --> Pumps --> Pump --> Edit (Enter)`
 
 The dialog allows to set up the input beam parameter for SP schemas. The input beam is also called a *pump*.
 
@@ -15,9 +15,6 @@ The command also invoked for the active pump by double-clicking on the pump type
 
   .. image:: img/setup_input_beam.png 
 
+.. seeAlso::
 
-|para|
-
-.. seealso::
-
-    :doc:`pump_mode`, :doc:`pumps_window`
+  :doc:`pump_mode`, :doc:`pumps_window`

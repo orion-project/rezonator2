@@ -54,6 +54,9 @@ Show T-plane
 
 The command toggles visibility of results for the tangential (T) plane. 
 
+  .. note::
+    One of the result sets (for T or S plane) always stays visible. It means if one of the sets is hidden and you try to hide the other one, then the first becomes visible. 
+
 .. --------------------------------------------------------------------------
 
 Show S-plane
@@ -63,8 +66,8 @@ Show S-plane
 
 The command toggles visibility of results for the sagittal (S) plane. 
 
-  .. note:: One of the result sets (for T or S plane) always stays visible. It means if one of the sets is hidden and you try to hide the other one, then the first becomes visible. 
-
+  .. note::
+    One of the result sets (for T or S plane) always stays visible. It means if one of the sets is hidden and you try to hide the other one, then the first becomes visible. 
 
 .. --------------------------------------------------------------------------
 

@@ -24,6 +24,7 @@ public:
     void setParent(QWidget* parent) { _parent = parent; }
 
     void showTopic(const QString& topic);
+    static void topic(const QString& topic) { instance()->showTopic(topic); }
 
 public slots:
     void showContents();

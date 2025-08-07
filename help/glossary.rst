@@ -12,7 +12,7 @@ Stability parameter is a value showing if a system can support stable laser oper
 * `P = (A + D) / 2`
 * `P = 1 — ((A + D) / 2)` :sup:`2`
 
-where A and D are system round-trip matrix components. In the first case the system is stable when the parameter value is in range from -1 to 1. In the second case the system is stable when the parameter value is in the range from 0 to 1.
+where A and D are system :ref:`round-trip matrix <round_trip>` components. In the first case the system is stable when the parameter value is in range from -1 to 1. In the second case the system is stable when the parameter value is in the range from 0 to 1.
 
 
 

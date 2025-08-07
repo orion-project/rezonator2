@@ -35,3 +35,4 @@ Each time you modify any schema properties or elements' parameters, |rezonator| 
    trip_type
    input_beam
    pump_mode
+   wavelen
