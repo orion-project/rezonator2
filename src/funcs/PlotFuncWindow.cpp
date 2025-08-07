@@ -1,6 +1,7 @@
 #include "PlotFuncWindow.h"
 
 #include "../app/AppSettings.h"
+#include "../app/HelpSystem.h"
 #include "../app/PersistentState.h"
 #include "../core/Format.h"
 #include "../core/Protocol.h"
@@ -327,11 +328,15 @@ void PlotFuncWindow::createContent()
     auto axesLayer = _plot->layer("axes");
     if (axesLayer) _cursor->setLayer(axesLayer);
 
+    auto actnShowCursorHelp = Ori::Gui::action(tr("Help"), this, []{
+        Z::HelpSystem::instance()->showTopic("plot_cursor.html");
+    }, ":/toolbar/help");
+
     _cursorMenu = new QMenu(tr("Cursor"), this);
     _cursorPanel = new QCPL::CursorPanel(_cursor);
     _cursorPanel->setAutoUpdateInfo(false);
     _cursorPanel->setNumberPrecision(AppSettings::instance().numberPrecisionData, false);
-    _cursorPanel->placeIn(toolbar);
+    _cursorPanel->placeIn(toolbar, { actnShowCursorHelp });
     _cursorPanel->fillMenu(_cursorMenu);
 
     _splitter->addWidget(_leftPanel);

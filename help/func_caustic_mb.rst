@@ -26,7 +26,7 @@ Special Points
 
 :menuSelection:`View --> Special Points`
 
-The function calculates the same values as the :ref:`caustic <func_caustic_spec_points>` function does, but for each element separately. Values are calculated only of one input beam corresponding to a graph that is currently selected on the plot. Click a graph line to select it. 
+The function calculates the same values as the :ref:`caustic <func_caustic_spec_points>` function does, but for each element separately. Values are calculated only of one input beam corresponding to a graph that is currently selected on the plot. Click a graph line to select it. A label of the currently processing input beam is displayed in the special points tab and also in the :ref:`cursor <cursor>` panel.
 
   .. image:: img/func_caustic_mb_spec_points.png
 

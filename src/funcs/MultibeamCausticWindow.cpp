@@ -145,13 +145,16 @@ void MultibeamCausticWindow::prepareSpecPoints()
             _lastSelectedPump = (PumpParams*)(funcGraph->id);
     if (!_lastSelectedPump)
         _lastSelectedPump = schema()->activePump();
-    function()->setPump(_lastSelectedPump);
-    function()->calculate(PlotFunction::CALC_PREPARE);
+    if (_lastSelectedPump) {
+        function()->setPump(_lastSelectedPump);
+        function()->calculate(PlotFunction::CALC_PREPARE);
+    }
 }
 
 void MultibeamCausticWindow::getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values)
 {
     prepareSpecPoints();
+    if (!_lastSelectedPump) return;
     if (!function()->ok()) return;
     auto res = function()->calculateAt(pos.X);
     //_beamShape->setShape(res);

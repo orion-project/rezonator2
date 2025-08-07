@@ -45,7 +45,7 @@ Show Beam Shape
 
 :menuSelection:`View --> Beam Shape`
 
-The function can schematically render the beam cross section at the cursor position to visualize beam astigmatism.
+The function can schematically render the beam cross section at the :ref:`cursor <cursor>` position to visualize beam astigmatism.
 
 The beam shape panel can be moved over the plot by the mouse. It can also be resized when you click the mouse near its border shown as a thin dotted line when the mouse is above the panel.
 
