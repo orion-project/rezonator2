@@ -66,9 +66,9 @@ void PlotFuncWindow::createActions()
     actnUpdateParams = action(tr("Update With Params..."), this,
         SLOT(updateWithParams()), ":/toolbar/update_params", Qt::CTRL | Qt::Key_F5);
 
-    actnShowT = action(tr("Show T-plane"), this, SLOT(activateModeT()), ":/toolbar/plot_t");
-    actnShowS = action(tr("Show S-plane"), this, SLOT(activateModeS()), ":/toolbar/plot_s");
-    actnShowFlippedTS = action(tr("TS-flipped Mode"), this, SLOT(activateModeFlippedTS()), ":/toolbar/plot_ts");
+    actnShowT = action(tr("Show T-Plane"), this, SLOT(activateModeT()), ":/toolbar/plot_t");
+    actnShowS = action(tr("Show S-Plane"), this, SLOT(activateModeS()), ":/toolbar/plot_s");
+    actnShowFlippedTS = action(tr("TS-Flipped Mode"), this, SLOT(activateModeFlippedTS()), ":/toolbar/plot_ts");
     actnShowT->setCheckable(true);
     actnShowS->setCheckable(true);
     actnShowFlippedTS->setCheckable(true);
@@ -83,30 +83,30 @@ void PlotFuncWindow::createActions()
     actnAutolimitsX = action(tr("Fit to Graphs Over X"), _plot, SLOT(autolimitsX()), ":/toolbar/limits_auto_x");
     actnAutolimitsY = action(tr("Fit to Graphs Over Y"), _plot, SLOT(autolimitsY()), ":/toolbar/limits_auto_y");
 
-    actnZoomIn = action(tr("Zoom-in"), _plot, SLOT(zoomIn()), ":/toolbar/limits_zoom_in");
-    actnZoomOut = action(tr("Zoom-out"), _plot, SLOT(zoomOut()), ":/toolbar/limits_zoom_out");
-    actnZoomInX = action(tr("Zoom-in Over X"), _plot, SLOT(zoomInX()), ":/toolbar/limits_zoom_in_x");
-    actnZoomOutX = action(tr("Zoom-out Over X"), _plot, SLOT(zoomOutX()), ":/toolbar/limits_zoom_out_x");
-    actnZoomInY = action(tr("Zoom-in Over Y"), _plot, SLOT(zoomInY()), ":/toolbar/limits_zoom_in_y");
-    actnZoomOutY = action(tr("Zoom-out Over Y"), _plot, SLOT(zoomOutY()), ":/toolbar/limits_zoom_out_y");
+    actnZoomIn = action(tr("Zoom-In"), _plot, SLOT(zoomIn()), ":/toolbar/limits_zoom_in");
+    actnZoomOut = action(tr("Zoom-Out"), _plot, SLOT(zoomOut()), ":/toolbar/limits_zoom_out");
+    actnZoomInX = action(tr("Zoom-In Over X"), _plot, SLOT(zoomInX()), ":/toolbar/limits_zoom_in_x");
+    actnZoomOutX = action(tr("Zoom-Out Over X"), _plot, SLOT(zoomOutX()), ":/toolbar/limits_zoom_out_x");
+    actnZoomInY = action(tr("Zoom-In Over Y"), _plot, SLOT(zoomInY()), ":/toolbar/limits_zoom_in_y");
+    actnZoomOutY = action(tr("Zoom-Out Over Y"), _plot, SLOT(zoomOutY()), ":/toolbar/limits_zoom_out_y");
 
-    actnSetLimitsX = action(tr("X-axis Limits..."), _plot, SLOT(limitsDlgX()));
-    actnSetLimitsY = action(tr("Y-axis Limits..."), _plot, SLOT(limitsDlgY()));
-    actnSetTextX = action(tr("X-axis Text..."), _plot, SLOT(axisTextDlgX()));
-    actnSetTextY = action(tr("Y-axis Text..."), _plot, SLOT(axisTextDlgY()));
+    actnSetLimitsX = action(tr("X-Axis Limits..."), _plot, SLOT(limitsDlgX()));
+    actnSetLimitsY = action(tr("Y-Axis Limits..."), _plot, SLOT(limitsDlgY()));
+    actnSetTextX = action(tr("X-Axis Text..."), _plot, SLOT(axisTextDlgX()));
+    actnSetTextY = action(tr("Y-Axis Text..."), _plot, SLOT(axisTextDlgY()));
     actnSetTextT = action(tr("Title Text..."), _plot, SLOT(titleTextDlg()));
 
     // These actions also used in context menus, so we add the "Format" word for clearity
     // even though it's not necessary for subcommands of the "Format" menu
     actnFormatTitle = action(tr("Title Format..."), _plot, SLOT(titleFormatDlg()));
     actnFormatLegend = action(tr("Legend Format..."), _plot, SLOT(legendFormatDlg()));
-    actnFormatX = action(tr("X-axis Format..."), _plot, SLOT(axisFormatDlgX()));
-    actnFormatY = action(tr("Y-axis Format..."), _plot, SLOT(axisFormatDlgY()));
+    actnFormatX = action(tr("X-Axis Format..."), _plot, SLOT(axisFormatDlgX()));
+    actnFormatY = action(tr("Y-Axis Format..."), _plot, SLOT(axisFormatDlgY()));
     actnSavePlotFormat = action(tr("Save Plot Format..."), this, SLOT(savePlotFormat()));
     actnLoadPlotFormat = action(tr("Load Plot Format..."), this, SLOT(loadPlotFormat()));
     actnFormatCursor = action(tr("Cursor Lines Format..."), this, SLOT(cursorFormatDlg()));
-    actnFormatGraphT = action(tr("T-line Format..."), this, SLOT(graphFormatDlgT()));
-    actnFormatGraphS = action(tr("S-line Format..."), this, SLOT(graphFormatDlgS()));
+    actnFormatGraphT = action(tr("T-Line Format..."), this, SLOT(graphFormatDlgT()));
+    actnFormatGraphS = action(tr("S-Line Format..."), this, SLOT(graphFormatDlgS()));
     actnFormatGraph = action(tr("Line Format..."), this, SLOT(graphFormatDlg()));
 
     actnCopyGraphData = action(tr("Copy Graph Data"), this, SLOT(copyGraphData()), ":/toolbar/copy_table");

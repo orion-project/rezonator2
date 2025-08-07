@@ -71,4 +71,4 @@ The command changes the appearance of element edge markers for the current funct
 
 .. seeAlso::
   
-  :doc:`plot_window`, :doc:`func_caustic`, :doc:`func_caustic_mb`
+  :doc:`plot_window`, :doc:`plot_opers`, :doc:`func_caustic`, :doc:`func_caustic_mb`

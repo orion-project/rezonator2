@@ -65,4 +65,4 @@ The command adjusts the color scale so that it corresponds to stability boundary
 
 .. seeAlso::
   
-  :doc:`plot_window`, :doc:`func_stabmap`
+  :doc:`plot_window`, :doc:`plot_opers`, :doc:`func_stabmap`

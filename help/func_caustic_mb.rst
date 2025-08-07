@@ -37,4 +37,4 @@ The function has the same commands as the :ref:`caustic <func_caustic_mr_aux_cmd
 
 .. seeAlso::
   
-  :doc:`plot_window`, :doc:`func_caustic`, :doc:`func_caustic_mr`
+  :doc:`plot_window`, :doc:`plot_opers`, :doc:`func_caustic`, :doc:`func_caustic_mr`

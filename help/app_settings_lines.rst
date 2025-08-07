@@ -17,4 +17,4 @@ Changes in the formats of stability boundary lines, cursor lines, and element ma
 
 .. seeAlso::
   
-  :doc:`plot_window`, :doc:`app_settings`, :doc:`app_settings_behavior`
+  :doc:`app_settings`, :doc:`plot_window`

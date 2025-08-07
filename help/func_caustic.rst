@@ -74,4 +74,4 @@ The beam shape image can be copied separately from the whole plot; use its conte
 
 .. seeAlso::
 
-    :doc:`plot_window`, :doc:`func_caustic_mr`, :doc:`func_caustic_mb`
+    :doc:`plot_window`, :doc:`plot_opers`, :doc:`func_caustic_mr`, :doc:`func_caustic_mb`

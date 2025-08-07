@@ -16,12 +16,18 @@ Plot (1)
 
 It is the main part of the plot window showing graphs. It is can show various parts: coordinate axes, coordinate grids, legend, title, cursor, stability boundary lines (for :doc:`stability map <func_stabmap>`), element edge lines (for :doc:`multicaustic <func_caustic_mr>`). Click a plot part to select it. The selected part is highlighted with a color and thicker line and has its own context menu. Also, the values of the selected graph are shown in the data table.
 
+.. --------------------------------------------------------------------------
+
+.. _plot_window_data_table:
+
 Data Table (2)
 ~~~~~~~~~~~~~~
 
 :menuSelection:`View --> Data Table`
 
-The table demonstrates a bulk of values that was used to plot the selected graph. The table can be useful if you need to copy a part of values; use the table's context menu. The table is not editable.
+The table demonstrates a bulk of values that was used to plot the selected graph. The table can be useful if you need to copy a part of values; use the table's context menu. The table is not editable. Precision of displayed values is controlled by the :ref:`application settings <app_settings_format_precision>`.
+
+.. --------------------------------------------------------------------------
 
 Additional Parameters (3)
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -30,12 +36,18 @@ Additional Parameters (3)
 
 Some functions, like :doc:`func_caustic`, have an additional set of parameters controlling what should be displayed on the plot. These parameters are described in a particular function documentation in the section "Additional Parameters".
 
+.. --------------------------------------------------------------------------
+
+.. _plot_window_spec_points:
+
 Special Points (4)
 ~~~~~~~~~~~~~~~~~~
 
 :menuSelection:`View --> Special Points`
 
-The panel displays a set of values that are somehow notable for the current function. Special points are calculated automatically when this panel is visible and the function is recalculated. What is displayed in the panel is described in a particular function documentation in the section "Special Points".
+The panel displays a set of values that are somehow notable for the current function. Special points are calculated automatically when this panel is visible and the function is recalculated. What is displayed in the panel is described in a particular function documentation in the section "Special Points". Precision of displayed values is controlled by the :ref:`application settings <app_settings_format_precision>`.
+
+.. --------------------------------------------------------------------------
 
 Cursor (5)
 ~~~~~~~~~~
@@ -43,6 +55,8 @@ Cursor (5)
 :menuSelection:`View --> Cursor`
 
 The cursor is one or two crossing lines that can be dragged by the mouse. The cursor panel shows coordinates of the cross point of the cursor and the function values (in T and S planes) calculated at the point under the cursor. See :doc:`plot_cursor`.
+
+.. --------------------------------------------------------------------------
 
 Status Bar (6)
 ~~~~~~~~~~~~~~
@@ -55,4 +69,4 @@ The status bar displays:
 
 .. seeAlso::
 
-  :doc:`table_window`, :doc:`info_window`
+  :doc:`plot_opers`, :doc:`table_window`, :doc:`info_window`

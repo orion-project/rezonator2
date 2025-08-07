@@ -11,4 +11,6 @@ Application Settings
    :caption: Table of Contents:
 
    app_settings_behavior
+   app_settings_intf
+   app_settings_export
    app_settings_lines

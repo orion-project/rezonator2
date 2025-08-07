@@ -29,6 +29,9 @@ public:
     // inherited from BasicConfigDialog
     virtual void populate() override;
     virtual bool collect() override;
+    
+protected:
+    QString helpTopic() const override { return "app_settings.html"; }
 
 private:
     Ori::Widgets::OptionsGroupV2 *_groupOptions;

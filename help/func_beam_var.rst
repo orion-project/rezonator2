@@ -55,4 +55,4 @@ The beam shape image can be copied separately from the whole plot; use its conte
 
 .. seeAlso::
   
-  :doc:`plot_window`, :doc:`func_stabmap`, :doc:`func_caustic`
+  :doc:`plot_window`, :doc:`plot_opers`, :doc:`func_stabmap`, :doc:`func_caustic`

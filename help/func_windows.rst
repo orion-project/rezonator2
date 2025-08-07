@@ -8,8 +8,10 @@ Function Windows
    :maxDepth: 1
 
    plot_window
+   plot_opers
    plot_cursor
    table_window
+   table_opers
    table_symbols
    info_window
    func_freeze

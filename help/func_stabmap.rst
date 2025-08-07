@@ -79,4 +79,4 @@ The command adjusts vertical axis limits so that they correspond to stability ma
 
 .. seeAlso::
   
-  :doc:`plot_window`, :doc:`func_stabmap_2d`
+  :doc:`plot_window`, :doc:`plot_opers`, :doc:`func_stabmap_2d`

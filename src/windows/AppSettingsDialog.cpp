@@ -1,6 +1,7 @@
 #include "AppSettingsDialog.h"
 
 #include "../app/AppSettings.h"
+#include "../app/HelpSystem.h"
 #include "../widgets/UnitWidgets.h"
 
 #include "helpers/OriLayouts.h"
@@ -67,11 +68,15 @@ AppSettingsDialog::AppSettingsDialog(QWidget* parent, Ori::Dlg::PageId currentPa
                 });
 
     setCurrentPageId(currentPageId);
+    
+    connect(this, &Ori::Dlg::BasicConfigDialog::helpRequested, this, [](const QString &topic){
+        Z::HelpSystem::instance()->showTopic(topic);
+    });
 }
 
 QWidget* AppSettingsDialog::createGeneralPage()
 {
-    auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageGeneral, tr("Behavior"), ":/config_pages/general");
+    auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageGeneral, tr("Behavior"), ":/config_pages/general", "app_settings_behavior.html");
 
     _groupOptions = new Ori::Widgets::OptionsGroupV2(tr("Options"), {
         {"editNewElem", tr("Edit just created element")},
@@ -92,7 +97,7 @@ QWidget* AppSettingsDialog::createGeneralPage()
 
 QWidget* AppSettingsDialog::createViewPage()
 {
-    auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageView, tr("Interface"), ":/config_pages/view");
+    auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageView, tr("Interface"), ":/config_pages/view", "app_settings_intf.html");
 
     // group box "Options"
     _groupView = new Ori::Widgets::OptionsGroupV2(tr("Options"), {
@@ -166,7 +171,7 @@ QWidget* AppSettingsDialog::createUnitsPage()
 
 QWidget* AppSettingsDialog::createExportPage()
 {
-    auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageExport, tr("Export"), ":/toolbar/save");
+    auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageExport, tr("Export"), ":/toolbar/save", "app_settings_export.html");
 
     _groupExportData = new Ori::Widgets::OptionsGroupV2(tr("Graph data export options"), {
         {"exportAsCsv", tr("Use CSV format (otherwise, use plain text format)")},
@@ -200,7 +205,7 @@ QWidget* AppSettingsDialog::createCalcPage()
 
 QWidget* AppSettingsDialog::createLinesPage()
 {
-    auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageCalc, tr("Lines"), ":/toolbar/gauss_near_zone");
+    auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageCalc, tr("Lines"), ":/toolbar/gauss_near_zone", "app_settings_lines.html");
     page->setLongTitle(tr("Default Line Formats"));
 
     _elemBoundMarkersPen = new QCPL::PenEditorWidget;

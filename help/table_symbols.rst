@@ -1,5 +1,5 @@
-Symbols in Table Window
-=======================
+Table Symbols
+=============
 
 There are cases when several values of the same parameter correspond to one element in the table.
 
@@ -19,7 +19,7 @@ Certain elements have more than one corresponding row in the data table for thes
 
   .. image:: img/table_symbols_mirror.png
 
-When you invoke the :menuSelection:`Copy` command via the :menuSelection:`Edit` menu or context menu of the table, the content of selected cells is copied into the clipboard as text. Row icons are also copied in the text form.
+When you invoke the :ref:`Copy <table_opers_copy>` command via the :menuSelection:`Edit` menu or context menu of the table, the content of selected cells is copied into the clipboard as text. Row icons are also copied in the text form.
 
   .. image:: img/table_symbols_copy.png
 
