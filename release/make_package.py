@@ -46,8 +46,9 @@ def make_package_for_windows():
   remove_files_in_dir('imageformats', ['qicns.dll', 'qtga.dll', 'qtiff.dll', 'qwbmp.dll', 'qwebp.dll'])
 
   print_header('Copy project files...')
-  copy_files('..\\..\\bin', [PROJECT_EXE, 'rezonator.qch', 'rezonator.qhc', 'python312.dll', 'zlib1.dll'], '.')
-  shutil.copytree('..\\..\\bin\\Lib', 'Lib')
+  copy_files('..\\..\\bin', [PROJECT_EXE, 'rezonator.qch', 'rezonator.qhc', 'lua.dll'], '.')
+  #copy_files('..\\..\\bin', [PROJECT_EXE, 'rezonator.qch', 'rezonator.qhc', 'python312.dll', 'zlib1.dll'], '.')
+  #shutil.copytree('..\\..\\bin\\Lib', 'Lib')
   shutil.copytree('..\\..\\bin\\examples', 'examples')
   copy_files(qt_dir, ['assistant.exe'], '.')
   
