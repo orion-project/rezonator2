@@ -497,6 +497,7 @@ void ElemMatrix1::calcMatrixInternal()
 
 ElemPoint::ElemPoint() : Element()
 {
+    setOption(Element_Unity);
 }
 
 //------------------------------------------------------------------------------

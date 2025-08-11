@@ -90,6 +90,11 @@ enum ElementOption {
     /// and passes new lambda value to all elements having this option set.
     /// The element must provide parameter "Lambda" for accepting wavelength.
     Element_RequiresWavelength = 0x08,
+    
+    /// This is a helper elemnt with unity matrix (like Point)
+    /// It does nothing besides of marking some position in the schema
+    /// or splitting two ranges
+    Element_Unity,
 };
 
 struct ElementLayoutOptions {

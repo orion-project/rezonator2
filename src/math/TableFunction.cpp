@@ -111,6 +111,11 @@ void TableFunction::calculate()
             CHECK_ERR(calculateAtElem(elem, i, IsTwoSides(true)));
             continue;
         }
+        
+        if (elem->hasOption(Element_Unity)) {
+            CHECK_ERR(calculateAtElem(elem, i, IsTwoSides(false)));
+            continue;
+        }
 
         auto iface = Z::Utils::asInterface(elem);
         if (iface)
@@ -247,11 +252,14 @@ QString TableFunction::calculateAtElem(Element *elem, int index, IsTwoSides twoS
             return calculateInMiddle(elem, prevElem, nextElem, twoSides);
         if (!prevElem)
         {
-            Result res;
-            res.element = elem;
-            res.position = ResultPosition::LEFT;
-            res.values = calculatePumpBeforeSchema(elem);
-            _results << res;
+            if (twoSides)
+            {
+                Result res;
+                res.element = elem;
+                res.position = ResultPosition::LEFT;
+                res.values = calculatePumpBeforeSchema(elem);
+                _results << res;
+            }
 
             // We can calculate beam after the first elem like if beam was in a medium
             // but the schema is invalid anyway - beamsize will show step-change
@@ -259,20 +267,25 @@ QString TableFunction::calculateAtElem(Element *elem, int index, IsTwoSides twoS
             // But at least this calculation is consistent with those for SW schema.
             auto nextMedium = Z::Utils::asMedium(nextElem);
             auto overrideIor = nextMedium ? OptionalIor(nextMedium->ior()) : OptionalIor();
-            calculateAt(CalcElem(elem), ResultElem(elem, ResultPosition::RIGHT), overrideIor);
+            auto resultPosition = twoSides ? ResultPosition::RIGHT : ResultPosition::ELEMENT;
+            calculateAt(CalcElem(elem), ResultElem(elem, resultPosition), overrideIor);
             return "";
         }
         if (!nextElem)
         {
-            // We can calculate beam before the last elem like if beam was in a medium
-            // but the schema is invalid anyway - beamsize will show step-change
-            // at the last elem if pre-last is medium, which is not physically correct.
-            // But at least this calculation is consistent with those for SW schema.
-            auto prevMedium = Z::Utils::asMedium(prevElem);
-            auto overrideIor = prevMedium ? OptionalIor(prevMedium->ior()) : OptionalIor();
-            calculateAt(CalcElem(prevElem), ResultElem(elem, ResultPosition::LEFT), overrideIor);
+            if (twoSides) 
+            {
+                // We can calculate beam before the last elem like if beam was in a medium
+                // but the schema is invalid anyway - beamsize will show step-change
+                // at the last elem if pre-last is medium, which is not physically correct.
+                // But at least this calculation is consistent with those for SW schema.
+                auto prevMedium = Z::Utils::asMedium(prevElem);
+                auto overrideIor = prevMedium ? OptionalIor(prevMedium->ior()) : OptionalIor();
+                calculateAt(CalcElem(prevElem), ResultElem(elem, ResultPosition::LEFT), overrideIor);
+            }
             // Calculate pump params after the last element
-            calculateAt(CalcElem(elem), ResultElem(elem, ResultPosition::RIGHT));
+            auto resultPosition = twoSides ? ResultPosition::RIGHT : ResultPosition::ELEMENT;
+            calculateAt(CalcElem(elem), ResultElem(elem, resultPosition));
             return "";
         }
     }
