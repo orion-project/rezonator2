@@ -2,7 +2,7 @@
   "history": [
     {
       "version": "2.1.0",
-      "date": "",
+      "date": "2025-08-11",
       "changes": [
         {
           "text": "Automatically find dependent parameters for formulas"
@@ -21,6 +21,9 @@
         },
         {
           "text": "Use Inf instead of zero for flat surfaces for thick lens element (https://github.com/orion-project/rezonator2/issues/75)"
+        },
+        {
+          "text": "Don't show beam parameters before and after the point, only at (https://github.com/orion-project/rezonator2/issues/77)"
         },
         {
           "text": "Ignore disabled elements and respect order in Multiply Selected functions"
