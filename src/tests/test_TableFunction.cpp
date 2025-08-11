@@ -144,29 +144,31 @@ TEST_CASE(must_respect_medium_ior__sw__curved_ends__thermo, must_respect_medium_
 TEST_CASE(must_respect_medium_ior__sw__curved_left_flat_right, must_respect_medium_ior__sw__mirrors_at_ends, "calc_beamdata_elems_and_media__2_1.rez")
 TEST_CASE(must_respect_medium_ior__sw__curved_right_flat_left, must_respect_medium_ior__sw__mirrors_at_ends, "calc_beamdata_elems_and_media__2_2.rez")
 
-TEST_CASE_METHOD(must_respect_medium_ior__sp__mirrors_at_ends, QString fileName)
-{
-    READ_TEST_FILE(fileName)
-    schema.setTripType(TripType::SP);
-    BeamParamsAtElemsFunction func(&schema);
-    TableFunction::Params params;
-    params.calcMediumEnds = true;
-    params.calcSpaceMids = true;
-    func.setParams(params);
-    CALC_FUNC(ResultsCount(7))
+// Why these tests? Such kind of schema is not valid for SP
+// There should be interfaces at the medium ends, not mirrors
+// TEST_CASE_METHOD(must_respect_medium_ior__sp__mirrors_at_ends, QString fileName)
+// {
+//     READ_TEST_FILE(fileName)
+//     schema.setTripType(TripType::SP);
+//     BeamParamsAtElemsFunction func(&schema);
+//     TableFunction::Params params;
+//     params.calcMediumEnds = true;
+//     params.calcSpaceMids = true;
+//     func.setParams(params);
+//     CALC_FUNC(ResultsCount(7))
 
-    // First two results must be the same - left end mirror and origin of medium
-    ASSERT_TABLE_RES(1, 2, IgnoreSign(false))
+//     // First two results must be the same - left end mirror and origin of medium
+//     ASSERT_TABLE_RES(1, 2, IgnoreSign(false))
 
-    // Last two results must be the same - right end mirror and ending of medium
-    // It's ok that signs are different here because beam direction changes
-    ASSERT_TABLE_RES(4, 5, IgnoreSign(true))
-}
-TEST_CASE(must_respect_medium_ior__sp__curved_ends__simple, must_respect_medium_ior__sp__mirrors_at_ends, "calc_beamdata_elems_and_media__1_1.rez")
-TEST_CASE(must_respect_medium_ior__sp__curved_ends__grin, must_respect_medium_ior__sp__mirrors_at_ends, "calc_beamdata_elems_and_media__1_2.rez")
-TEST_CASE(must_respect_medium_ior__sp__curved_ends__thermo, must_respect_medium_ior__sp__mirrors_at_ends, "calc_beamdata_elems_and_media__1_3.rez")
-TEST_CASE(must_respect_medium_ior__sp__curved_left_flat_right, must_respect_medium_ior__sp__mirrors_at_ends, "calc_beamdata_elems_and_media__2_1.rez")
-TEST_CASE(must_respect_medium_ior__sp__curved_right_flat_left, must_respect_medium_ior__sp__mirrors_at_ends, "calc_beamdata_elems_and_media__2_2.rez")
+//     // Last two results must be the same - right end mirror and ending of medium
+//     // It's ok that signs are different here because beam direction changes
+//     ASSERT_TABLE_RES(4, 5, IgnoreSign(true))
+// }
+// TEST_CASE(must_respect_medium_ior__sp__curved_ends__simple, must_respect_medium_ior__sp__mirrors_at_ends, "calc_beamdata_elems_and_media__1_1.rez")
+// TEST_CASE(must_respect_medium_ior__sp__curved_ends__grin, must_respect_medium_ior__sp__mirrors_at_ends, "calc_beamdata_elems_and_media__1_2.rez")
+// TEST_CASE(must_respect_medium_ior__sp__curved_ends__thermo, must_respect_medium_ior__sp__mirrors_at_ends, "calc_beamdata_elems_and_media__1_3.rez")
+// TEST_CASE(must_respect_medium_ior__sp__curved_left_flat_right, must_respect_medium_ior__sp__mirrors_at_ends, "calc_beamdata_elems_and_media__2_1.rez")
+// TEST_CASE(must_respect_medium_ior__sp__curved_right_flat_left, must_respect_medium_ior__sp__mirrors_at_ends, "calc_beamdata_elems_and_media__2_2.rez")
 
 TEST_CASE_METHOD(must_respect_medium_ior__sw__elem_in_middle, QString fileName)
 {
@@ -220,11 +222,11 @@ TEST_GROUP("BeamParamsAtElemsFunction",
            ADD_TEST(must_respect_medium_ior__sw__curved_ends__thermo),
            ADD_TEST(must_respect_medium_ior__sw__curved_left_flat_right),
            ADD_TEST(must_respect_medium_ior__sw__curved_right_flat_left),
-           ADD_TEST(must_respect_medium_ior__sp__curved_ends__simple),
-           ADD_TEST(must_respect_medium_ior__sp__curved_ends__grin),
-           ADD_TEST(must_respect_medium_ior__sp__curved_ends__thermo),
-           ADD_TEST(must_respect_medium_ior__sp__curved_left_flat_right),
-           ADD_TEST(must_respect_medium_ior__sp__curved_right_flat_left),
+           // ADD_TEST(must_respect_medium_ior__sp__curved_ends__simple),
+           // ADD_TEST(must_respect_medium_ior__sp__curved_ends__grin),
+           // ADD_TEST(must_respect_medium_ior__sp__curved_ends__thermo),
+           // ADD_TEST(must_respect_medium_ior__sp__curved_left_flat_right),
+           // ADD_TEST(must_respect_medium_ior__sp__curved_right_flat_left),
            ADD_TEST(must_respect_medium_ior__sw__flat_in_middle),
            ADD_TEST(must_respect_medium_ior__sw__lens_in_middle),
            ADD_TEST(must_respect_medium_ior__sp__flat_in_middle),
