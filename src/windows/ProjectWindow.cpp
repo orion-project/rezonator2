@@ -197,7 +197,8 @@ void ProjectWindow::createActions()
     actnWndCascade = A_(tr("Cascade"), _mdiArea, SLOT(cascadeSubWindows()));
 
     auto help = Z::HelpSystem::instance();
-    actnHelpContent = A_(tr("Contents"), this, SLOT(showHelp()), ":/toolbar/help", QKeySequence::HelpContents);
+    // QKeySequence::HelpContents is empty on macos, it's F1 on other platforms
+    actnHelpContent = A_(tr("Contents"), this, SLOT(showHelp()), ":/toolbar/help", Qt::Key_F1);
     actnHelpIndex = A_(tr("Index"), help, SLOT(showIndex()));
     actnHelpBugReport = A_(tr("Send Bug Report"), help, SLOT(sendBugReport()), ":/toolbar/bug");
     actnHelpUpdates = A_(tr("Check for Updates"), help, SLOT(checkUpdates()), ":/toolbar/update");

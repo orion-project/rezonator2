@@ -35,7 +35,7 @@ if [[ -z ${QMAKE_VER} ]]; then
   if [ ${IS_LINUX} ]; then
     echo -e "${COLOR_BOLD}export PATH=/home/user/Qt/5.15.2/gcc_64/bin:\$PATH${COLOR_RESET}"
   else
-    echo -e "${COLOR_BOLD}export PATH=/Users/user/Qt/5.12.10/clang_64/bin:\$PATH${COLOR_RESET}"
+    echo -e "${COLOR_BOLD}export PATH=/Users/user/Qt/5.15.2/clang_64/bin:\$PATH${COLOR_RESET}"
   fi
   echo "and run this script again."
   echo
