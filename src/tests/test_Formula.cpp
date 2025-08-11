@@ -151,8 +151,9 @@ TEST_METHOD(calculate_sets_error_when_dep_failed)
 TEST_CASE_METHOD(renameDep, QString code, QString expectedCode, bool expectedFound)
 {
     Z::Parameter tgt;
-    Z::Formula f(&tgt);
     Z::Parameter dep("a_1");
+    // Init formula in last turn, so it frees before params
+    Z::Formula f(&tgt);
     f.addDep(&dep);
     f.setCode(code);
     bool ok = f.renameDep(&dep, "a_2");

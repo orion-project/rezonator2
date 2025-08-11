@@ -4,7 +4,7 @@ echo "Build application manual."
 
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-. ${SCRIPT_DIR}/../scripts/helpers.sh
+. ${SCRIPT_DIR}/helpers.sh
 cd ${SCRIPT_DIR}/..
 
 
