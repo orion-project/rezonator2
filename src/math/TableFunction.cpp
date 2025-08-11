@@ -406,8 +406,13 @@ QString TableFunction::calculateInMiddle(Element* elem, Element* prevElem, Eleme
     if ((prevMedium && !nextMedium) || (!prevMedium && nextMedium))
         return QString(
             "Invalid schema: Position of element %1 is incorrect, "
-            "only interface element types can be placed at the edge of medium: %2").arg(
-            elem->displayLabel(), ElementsCatalog::instance().getInterfaceTypeNames().join(", "));
+            "only interface element types can be placed at the edge of medium: %2. "
+            "Actual type of element %1: %3. "
+            "Actual type at left (%4): %5. Actual type at right (%6): %7.").arg(
+            elem->displayLabel(), ElementsCatalog::instance().getInterfaceTypeNames().join(", "),
+            elem->typeName(),
+            prevElem ? prevElem->displayLabel() : "null", prevElem ? prevElem->typeName() : "null",
+            nextElem ? nextElem->displayLabel() : "null", nextElem ? nextElem->typeName() : "null");
 
     // Position between two media doesn't guarantee that schema is valid
     // but at least it CAN BE valid (especially if both media have the same IOR)
