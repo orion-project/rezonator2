@@ -26,6 +26,18 @@ QString stateFileName(const char* id)
     return s.settings()->fileName().section('.', 0, -2) % '.' % id % QLatin1String(".json");
 }
 
+bool createStateDir(const QString &stateFileName)
+{
+    QDir dir = QFileInfo(stateFileName).dir();
+    if (!dir.exists()) {
+        if (!dir.mkpath(dir.path())) {
+            qWarning() << "Failed to create settings directory" << dir.path();
+            return false;
+        }
+    }
+    return true;
+}
+
 QJsonObject load(const char* id)
 {
     QJsonObject root;
@@ -49,6 +61,8 @@ QJsonObject load(const char* id)
 void save(const char *id, const QJsonObject& root)
 {
     auto fileName = stateFileName(id);
+    if (!createStateDir(fileName))
+        return;
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly | QFile::Text))
     {
@@ -137,6 +151,8 @@ public:
         needSave = false;
         selfSaved = true;
 
+        if (!PersistentState::createStateDir(fileName))
+            return;
         QFile file(fileName);
         if (!file.open(QFile::WriteOnly | QFile::Text))
         {

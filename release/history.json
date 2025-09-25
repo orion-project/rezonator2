@@ -6,6 +6,9 @@
       "changes": [
         {
           "text": "Fix: don't open file if it's already opened in the current window"
+        },
+        {
+          "text": "Fix: auto create user settings directory on clean system"
         }
       ]
     },
