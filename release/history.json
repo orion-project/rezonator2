@@ -1,6 +1,15 @@
 {
   "history": [
     {
+      "version": "2.1.1",
+      "date": "",
+      "changes": [
+        {
+          "text": "Fix: don't open file if it's already opened in the current window"
+        }
+      ]
+    },
+    {
       "version": "2.1.0",
       "date": "2025-08-11",
       "changes": [
@@ -59,7 +68,7 @@
           "text": "Fix: special points for SP-schemas show T waist size for S plane (https://github.com/orion-project/rezonator2/issues/67)"
         },
         {
-          "text": "Fix: apply ajuster value by Enter (https://github.com/orion-project/rezonator2/issues/63)"
+          "text": "Fix: apply adjuster value by Enter (https://github.com/orion-project/rezonator2/issues/63)"
         }
       ]
     },

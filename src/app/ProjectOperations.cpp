@@ -121,6 +121,12 @@ void ProjectOperations::openSchemaFile()
 
 void ProjectOperations::openSchemaFile(const QString& fileName, const OpenFileOptions& opts)
 {
+    if (schema()->fileName() == fileName)
+    {
+        Z_REPORT("Already opened in the current window" << fileName)
+        return;
+    }
+
     if (!schema()->state().isNew())
     {
         QStringList args;
