@@ -1,3 +1,4 @@
+.. _elem_empty_range:
 .. index:: single: space
 .. index:: single: empty space
 

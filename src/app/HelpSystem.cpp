@@ -94,8 +94,12 @@ void HelpSystem::showIndex()
     HelpWindow::showIndex();
 }
 
-void HelpSystem::showTopic(const QString& topic)
+void HelpSystem::showTopic(const QString& helpTopic)
 {
+    QString topic = helpTopic;
+    if (!topic.endsWith(".html", Qt::CaseInsensitive))
+        topic += ".html";
+
     if (AppSettings::instance().useOnlineHelp)
     {
         QDesktopServices::openUrl(QUrl(Z::Strs::homepage() + "/help/" + topic));

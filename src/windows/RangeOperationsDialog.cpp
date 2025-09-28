@@ -1,5 +1,6 @@
 #include "RangeOperationsDialog.h"
 
+#include "../app/HelpSystem.h"
 #include "../core/Schema.h"
 
 #include "helpers/OriDialogs.h"
@@ -159,6 +160,7 @@ bool SplitRangeDlg::exec()
 {
     return Ori::Dlg::Dialog(this, false)
         .withTitle(tr("Split Range"))
+        .withOnHelp([]{ Z::HelpSystem::topic("elem_opers_split_range"); })
         .withActiveWidget(_slider)
         .exec();
 }

@@ -1,3 +1,4 @@
+.. _elem_brewster_crystal:
 .. index:: single: brewster crystal
 
 Brewster Plane-parallel Crystal
