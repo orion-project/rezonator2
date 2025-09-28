@@ -287,8 +287,8 @@ public:
     SchemaEvents& events() { return _events; }
     SchemaState& state() { return _state; }
     bool modified() const { return _state.current() == SchemaState::Modified; }
-
-    void insertElements(const Elements& elems, int index, Arg::RaiseEvents events);
+    
+    void insertElements(const Elements& elems, int beforeIndex, Arg::RaiseEvents events);
     void deleteElements(const Elements& elems, Arg::RaiseEvents events, Arg::FreeElem free);
 
     SchemaSelection& selection() { return _selection; }
@@ -365,6 +365,10 @@ namespace Utils {
 /// Makes an automatic label for the given element.
 /// Automatical label consist of a prefix like `M`, `L`, etc. and index.
 void generateLabel(const Elements& elements, Element* elem, const QString& labelPrefix = QString());
+
+/// Makes an automatic label with the given prefix
+/// respecting all existing elements with the same prefix.
+QString generateLabel(Schema* schema, const QString& prefix);
 
 /// Makes an automatic label for the given pump: `P1`, `P2`, etc.
 void generateLabel(Schema* schema, PumpParams* pump);

@@ -232,6 +232,7 @@ set(PROJECT_SOURCES
     src/windows/ProtocolWindow.h src/windows/ProtocolWindow.cpp
     src/windows/PumpParamsDialog.h src/windows/PumpParamsDialog.cpp
     src/windows/PumpWindow.h src/windows/PumpWindow.cpp
+    src/windows/RangeOperationsDialog.h src/windows/RangeOperationsDialog.cpp
     src/windows/RezonatorDialog.h src/windows/RezonatorDialog.cpp
     src/windows/SchemaParamsWindow.h src/windows/SchemaParamsWindow.cpp
     src/windows/SchemaPropsDialog.h src/windows/SchemaPropsDialog.cpp

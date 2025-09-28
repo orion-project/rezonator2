@@ -13,10 +13,11 @@
 #include "../windows/ElemFormulaWindow.h"
 #include "../windows/ElementsCatalogDialog.h"
 #include "../windows/ElementPropsDialog.h"
+#include "../windows/RangeOperationsDialog.h"
 #include "../windows/WindowsManager.h"
 
-#include "helpers/OriWidgets.h"
 #include "helpers/OriDialogs.h"
+#include "helpers/OriWidgets.h"
 
 #include <QAction>
 #include <QMenu>
@@ -77,6 +78,7 @@ void SchemaViewWindow::createActions()
     actnSaveCustom = A_(tr("Save to Custom Library..."), this, SLOT(actionSaveCustom()), ":/toolbar/star");
     actnEditFormula = A_(tr("Edit Formula"), this, SLOT(actionEditFormula()), ":/toolbar/edit_formula");
     actnElemDisable = A_(tr("Disable/Enable"), this, SLOT(actionElemDisable()), ":/toolbar/switch_disabled");
+    actnRangeSplit = A_(tr("Split Range..."), this, SLOT(actionRangeSplit()), ":/toolbar/knife");
 
     #undef A_
 }
@@ -84,12 +86,17 @@ void SchemaViewWindow::createActions()
 void SchemaViewWindow::createMenuBar()
 {
     menuElement = Ori::Gui::menu(tr("Element"), this,
-        { actnElemAdd, actnElemReplace, nullptr, actnElemMoveUp, actnElemMoveDown, nullptr, actnElemProp, actnEditFormula,
+        { actnElemAdd, actnElemReplace, actnRangeSplit, nullptr, 
+          actnElemMoveUp, actnElemMoveDown, nullptr, actnElemProp, actnEditFormula,
           actnElemMatr, actnElemMatrAll, nullptr, actnElemDisable, nullptr, actnElemDelete, nullptr, actnSaveCustom });
+
+    actnContextMenuSeparator1 = new QAction(this);
+    actnContextMenuSeparator1->setSeparator(true);
 
     menuContextElement = Ori::Gui::menu(this,
         { actnElemProp, actnEditFormula, actnElemMatr, nullptr, actnAdjuster, nullptr,
-          actnEditCopy, actnEditPaste, nullptr, actnElemDisable, actnElemReplace, nullptr, actnElemDelete});
+          actnEditCopy, actnEditPaste, nullptr, actnElemDisable, actnElemReplace, 
+          actnContextMenuSeparator1, actnElemDelete});
     connect(menuContextElement, &QMenu::aboutToShow, this, &SchemaViewWindow::elemsContextMenuAboutToShow);
 
     menuContextLastRow = Ori::Gui::menu(this,
@@ -98,7 +105,7 @@ void SchemaViewWindow::createMenuBar()
 
 void SchemaViewWindow::createToolBar()
 {
-    populateToolbar({ Ori::Gui::textToolButton(actnElemAdd), actnElemReplace, nullptr, actnElemMoveUp,
+    populateToolbar({ Ori::Gui::textToolButton(actnElemAdd), actnElemReplace, actnRangeSplit, nullptr, actnElemMoveUp,
                       actnElemMoveDown, nullptr, Ori::Gui::textToolButton(actnElemProp),
                       actnElemMatr, nullptr, actnElemDisable, nullptr, actnElemDelete });
 }
@@ -294,6 +301,33 @@ void SchemaViewWindow::actionElemDisable()
     schema()->events().raise(SchemaEvents::RecalRequred, "SchemaViewWindow: toggle disabled");
 }
 
+void SchemaViewWindow::actionRangeSplit()
+{
+    ElementRange* oldElem = Z::Utils::asRange(_table->currentElem());
+    if (!oldElem) return;
+    
+    SplitRangeDlg dlg(schema(), oldElem);
+    if (!dlg.exec()) return;
+    
+    if (dlg.oldLabel() != oldElem->label())
+        oldElem->setLabel(dlg.oldLabel());
+    if (dlg.oldValue() != oldElem->paramLength()->value())
+        oldElem->paramLength()->setValue(dlg.oldValue());
+    
+    auto newElem = (ElementRange*)ElementsCatalog::instance().create(oldElem->type());
+    newElem->setLabel(dlg.newLabel());
+    newElem->paramLength()->setValue(dlg.newValue());
+    
+    int beforeIndex = schema()->indexOf(oldElem);
+    if (dlg.insertAfter())
+        beforeIndex += 1;
+    
+    // relinkInterfaces and RecalRequred event are in insertElements()
+    schema()->insertElements({newElem}, beforeIndex, Arg::RaiseEvents(true));
+    
+    _table->setCurrentElem(newElem);
+}
+
 //------------------------------------------------------------------------------
 
 bool SchemaViewWindow::canCopy()
@@ -347,6 +381,9 @@ void SchemaViewWindow::currentElemChanged(Element* elem)
     actnSaveCustom->setEnabled(hasElem);
     actnElemDisable->setEnabled(hasElem);
 
+    bool isRange = Z::Utils::isRange(elem);
+    actnRangeSplit->setEnabled(isRange);
+
     bool isFormula = dynamic_cast<ElemFormula*>(elem);
     actnEditFormula->setEnabled(isFormula);
     actnEditFormula->setVisible(isFormula);
@@ -384,6 +421,10 @@ void SchemaViewWindow::elemsContextMenuAboutToShow()
         }
         menuContextElement->insertMenu(actnAdjuster, menuAdjuster);
     }
+
+    menuContextElement->removeAction(actnRangeSplit);
+    if (Z::Utils::isRange(elem))
+        menuContextElement->insertAction(actnContextMenuSeparator1, actnRangeSplit);
 }
 
 void SchemaViewWindow::adjustParam()

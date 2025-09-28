@@ -81,6 +81,7 @@
         <file alias="indent_dec">../img/toolbar/indent_dec.svg</file>
         <file alias="indent_inc">../img/toolbar/indent_inc.svg</file>
         <file alias="iris">../img/toolbar/iris.svg</file>
+        <file alias="knife">../img/toolbar/knife.svg</file>
         <file alias="label">../img/toolbar/label.svg</file>
         <file alias="limits_auto_x">../img/toolbar/limits_auto_x.svg</file>
         <file alias="limits_auto_y">../img/toolbar/limits_auto_y.svg</file>
@@ -98,8 +99,10 @@
         <file alias="math_mult">../img/toolbar/math_mult.svg</file>
         <file alias="math_plus">../img/toolbar/math_plus.svg</file>
         <file alias="menu">../img/toolbar/menu.svg</file>
-        <file alias="move_up">../img/toolbar/move_up.svg</file>
         <file alias="move_down">../img/toolbar/move_down.svg</file>
+        <file alias="move_left">../img/toolbar/move_left.svg</file> 
+        <file alias="move_right">../img/toolbar/move_right.svg</file> 
+        <file alias="move_up">../img/toolbar/move_up.svg</file> 
         <file alias="navigate_back">../img/toolbar/navigate_back.svg</file>
         <file alias="navigate_fwd">../img/toolbar/navigate_fwd.svg</file>
         <file alias="notepad">../img/toolbar/notepad.svg</file>

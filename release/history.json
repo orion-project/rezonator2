@@ -5,6 +5,9 @@
       "date": "",
       "changes": [
         {
+          "text": "New command: Element -> Split Range"
+        },
+        {
           "text": "Fix: don't open file if it's already opened in the current window"
         },
         {
