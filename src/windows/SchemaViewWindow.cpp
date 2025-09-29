@@ -44,6 +44,7 @@ SchemaViewWindow::SchemaViewWindow(Schema *owner, CalcManager *calcs) : SchemaMd
 
     connect(_table, &ElementsTable::elemDoubleClicked, this, &SchemaViewWindow::elemDoubleClicked);
     connect(_table, &ElementsTable::currentElemChanged, this, &SchemaViewWindow::currentElemChanged);
+    connect(_table, &ElementsTable::selectedElemsChanged, this, &SchemaViewWindow::selectionChanged);
     connect(_table, &ElementsTable::selectedElemsChanged, _layout, &SchemaLayout::updateSelection);
     connect(_layout, &SchemaLayout::selectedElemsChanged, _table, &ElementsTable::selectElems);
     connect(_layout, &SchemaLayout::elemDoubleClicked, this, &SchemaViewWindow::elemDoubleClicked);
@@ -79,10 +80,12 @@ void SchemaViewWindow::createActions()
     actnSaveCustom = A_(tr("Save to Custom Library..."), this, SLOT(actionSaveCustom()), ":/toolbar/star");
     actnEditFormula = A_(tr("Edit Formula"), this, SLOT(actionEditFormula()), ":/toolbar/edit_formula");
     actnElemDisable = A_(tr("Disable/Enable"), this, SLOT(actionElemDisable()), ":/toolbar/switch_disabled");
-    actnRangeInsert = A_(tr("Insert Into Range..."), this, SLOT(actionRangeInsert()), ":/toolbar/elem_insert");
-    actnRangeSplit = A_(tr("Split Range..."), this, SLOT(actionRangeSplit()), ":/toolbar/elem_split");
-    actnCtxRangeInsert = A_(tr("Insert Into Range..."), this, SLOT(actionRangeInsert()), ":/toolbar/elem_insert");
-    actnCtxRangeSplit = A_(tr("Split Range..."), this, SLOT(actionRangeSplit()), ":/toolbar/elem_split");
+    actnRangeInsert = A_(tr("Insert Into..."), this, SLOT(actionRangeInsert()), ":/toolbar/elem_insert");
+    actnRangeSplit = A_(tr("Split..."), this, SLOT(actionRangeSplit()), ":/toolbar/elem_split");
+    actnRangeMerge = A_(tr("Merge..."), this, SLOT(actionRangeMerge()), ":/toolbar/elem_merge");
+    actnCtxRangeInsert = A_(tr("Insert Into..."), this, SLOT(actionRangeInsert()), ":/toolbar/elem_insert");
+    actnCtxRangeSplit = A_(tr("Split..."), this, SLOT(actionRangeSplit()), ":/toolbar/elem_split");
+    actnCtxRangeMerge = A_(tr("Merge..."), this, SLOT(actionRangeMerge()), ":/toolbar/elem_merge");
 
     #undef A_
 }
@@ -90,14 +93,14 @@ void SchemaViewWindow::createActions()
 void SchemaViewWindow::createMenuBar()
 {
     menuElement = Ori::Gui::menu(tr("Element"), this,
-        { actnElemAdd, actnElemReplace, actnRangeInsert, actnRangeSplit, nullptr, 
+        { actnElemAdd, actnElemReplace, actnRangeInsert, actnRangeSplit, actnRangeMerge, nullptr, 
           actnElemMoveUp, actnElemMoveDown, nullptr, actnElemProp, actnEditFormula,
           actnElemMatr, actnElemMatrAll, nullptr, actnElemDisable, nullptr, actnElemDelete, nullptr, actnSaveCustom });
 
     menuContextElement = Ori::Gui::menu(this,
         { actnElemProp, actnEditFormula, actnElemMatr, nullptr, actnAdjuster, nullptr,
           actnEditCopy, actnEditPaste, nullptr, actnElemDisable, actnElemReplace,
-          actnCtxRangeInsert, actnCtxRangeSplit,
+          actnCtxRangeInsert, actnCtxRangeSplit, actnCtxRangeMerge,
           nullptr, actnElemDelete});
     connect(menuContextElement, &QMenu::aboutToShow, this, &SchemaViewWindow::elemsContextMenuAboutToShow);
 
@@ -108,7 +111,7 @@ void SchemaViewWindow::createMenuBar()
 void SchemaViewWindow::createToolBar()
 {
     populateToolbar({
-        Ori::Gui::textToolButton(actnElemAdd), actnElemReplace, actnRangeInsert, actnRangeSplit, nullptr,
+        Ori::Gui::textToolButton(actnElemAdd), actnElemReplace, actnRangeInsert, actnRangeSplit, actnRangeMerge, nullptr,
         actnElemMoveUp, actnElemMoveDown, nullptr, Ori::Gui::textToolButton(actnElemProp),
         actnElemMatr, nullptr, actnElemDisable, nullptr, actnElemDelete });
 }
@@ -309,7 +312,7 @@ void SchemaViewWindow::actionRangeInsert()
     ElementRange* oldRange = Z::Utils::asRange(_table->currentElem());
     if (!oldRange) return;
     
-    auto sample = ElementsCatalogDialog::chooseElementSample(tr("Insert Into Range"), "elem_opers_insert_into_range");
+    auto sample = ElementsCatalogDialog::chooseElementSample(tr("Insert Into"), "elem_opers_insert_into");
     if (!sample) return;
 
     auto halfLen = oldRange->paramLength()->value() / 2.0;
@@ -364,6 +367,27 @@ void SchemaViewWindow::actionRangeSplit()
     schema()->events().raise(SchemaEvents::RecalRequred, "SchemaViewWindow: split range");
     
     _table->setCurrentElem(newRange);
+}
+
+void SchemaViewWindow::actionRangeMerge()
+{
+    auto selected = _table->selection();
+    if (selected.length() != 2) return;
+    auto elem1 = Z::Utils::asRange(selected.at(0));
+    auto elem2 = Z::Utils::asRange(selected.at(1));
+    if (!elem1 || !elem2) return;
+    
+    MergeRangesDlg dlg(elem1, elem2);
+    if (!dlg.exec()) return;
+    
+    auto v1 = elem1->paramLength()->value();
+    auto v2 = elem2->paramLength()->value();
+    auto v0 = Z::Value::fromSi(v1.toSi() + v2.toSi(), v1.unit());
+    elem1->paramLength()->setValue(v0);
+    
+    schema()->deleteElements({elem2}, Arg::RaiseEvents(true), Arg::FreeElem(true));
+    
+    _table->setCurrentElem(elem1);
 }
 
 //------------------------------------------------------------------------------
@@ -430,6 +454,26 @@ void SchemaViewWindow::currentElemChanged(Element* elem)
     bool isFormula = dynamic_cast<ElemFormula*>(elem);
     actnEditFormula->setEnabled(isFormula);
     actnEditFormula->setVisible(isFormula);
+}
+
+static bool canMergeRanges(Schema *schema, const Elements& selected)
+{
+    if (selected.length() != 2) return false;
+    auto elem1 = selected.at(0);
+    auto elem2 = selected.at(1);
+    if (elem1->type() != elem2->type()) return false;
+    if (!Z::Utils::isRange(elem1)) return false;
+    auto index1 = schema->indexOf(elem1);
+    auto index2 = schema->indexOf(elem2);
+    return qAbs(index1 - index2) == 1;
+}
+
+void SchemaViewWindow::selectionChanged(const Elements& selected)
+{
+    bool canMerge = canMergeRanges(schema(), selected);
+    actnRangeMerge->setEnabled(canMerge);
+    actnCtxRangeMerge->setEnabled(canMerge);
+    actnCtxRangeMerge->setVisible(canMerge);
 }
 
 void SchemaViewWindow::elemsContextMenuAboutToShow()

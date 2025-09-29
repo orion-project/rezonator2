@@ -1,13 +1,14 @@
-.. _elem_opers_split_range:
+.. _elem_opers_split:
+.. index:: single: split element (command)
 
-Split Range
-===========
+Split
+=====
 
-:menuSelection:`Element --> Split Range...`
+:menuSelection:`Element --> Split...`
 
 The command is active for any element having the Length parameter, such as :ref:`elem_empty_range` or :ref:`elem_brewster_crystal`. It allows for splitting the element into two elements of the same type having the summary length equivalent to the length of the original element. Actually, only one new element is inserted, which takes a part of the length of the original element, and the length of the original element is reduced accordingly.
 
-    .. image:: img/elem_opers_split_range_drawing.png
+    .. image:: img/elem_opers_split_drawing.png
 
 This command is a kind of script providing a convenient and simpler way instead of inserting a new element using the :doc:`elem_opers_append` command and adjusting parameters of both the old and new elements via the :doc:`elem_opers_props` command. Later, both elements can be edited independently.
 
@@ -19,8 +20,8 @@ There is a tiny double-arrow button between label editors. The button defines if
 
 If the "Insert point between ranges" option is checked, then a :ref:`elem_point` is automatically created between the original and new elements. The label for the point element is generated automatically and can be edited manually.
 
-    .. image:: img/elem_opers_split_range.png
+    .. image:: img/elem_opers_split.png
 
 .. seeAlso::
 
-    :doc:`elem_opers`, :doc:`elem_opers_insert_into_range`
+    :doc:`elem_opers`, :doc:`elem_opers_insert_into`, :doc:`elem_opers_merge`

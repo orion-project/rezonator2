@@ -1,4 +1,5 @@
 .. _elem_opers_copy:
+.. index:: single: copy element (command)
 
 Copy
 ====

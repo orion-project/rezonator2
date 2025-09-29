@@ -6,6 +6,7 @@
 #include <QWidget>
 
 class QCheckBox;
+class QLabel;
 class QLineEdit;
 class QSlider;
 namespace Ori::Widgets {
@@ -33,11 +34,6 @@ public:
     
 private:
     const Z::Parameter *srcParam;
-    const double sliderMax = 100.0;
-    const int elemIconSize = 40;
-    const int symbolIconSize = 24;
-    const int editorWidth = 80;
-    
     QSlider *_slider;
     QLineEdit *_rangeLabel1, *_rangeLabel2, *_pointLabel;
     Ori::Widgets::ValueEdit *_editParam1, *_editParam2;
@@ -50,14 +46,16 @@ private:
     void onSwapButtonClicked();
     void onParamValueEdited();
     void onInsertLabelToggled();
+};
 
-    template<typename TEditor> TEditor* makeEditor()
-    {
-        auto e = new TEditor;
-        e->setFixedWidth(editorWidth);
-        e->setProperty("role", "value-editor");
-        return e;
-    }
+class MergeRangesDlg : public QWidget
+{
+    Q_OBJECT
+    
+public:
+    explicit MergeRangesDlg(ElementRange* elem1, ElementRange* elem2);
+    
+    bool exec();
 };
 
 #endif // RANGE_OPERATIONS_DIALOG_H

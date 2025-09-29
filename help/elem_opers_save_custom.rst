@@ -1,5 +1,6 @@
 .. _elem_opers_save_custom:
 .. _elem_save_custom_lib:
+.. index:: single: save element (command)
 
 Save to Custom Library
 ----------------------

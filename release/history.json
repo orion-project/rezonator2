@@ -5,7 +5,7 @@
       "date": "",
       "changes": [
         {
-          "text": "New commands for elements: Insert Into Range, Split Range"
+          "text": "New commands for elements: Insert Into, Split, Merge"
         },
         {
           "text": "Fix: don't open file if it's already opened in the current window"

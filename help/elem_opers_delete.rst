@@ -1,4 +1,5 @@
 .. _elem_opers_delete:
+.. index:: single: delete element (command)
 
 Delete
 ======

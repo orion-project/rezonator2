@@ -1,4 +1,5 @@
 .. _elem_opers_paste:
+.. index:: single: paste element (command)
 
 Paste
 =====

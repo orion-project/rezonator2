@@ -16,38 +16,66 @@
 #include <QPushButton>
 #include <QSlider>
 
+#define SLIDER_MAX 100.0
+#define ELEM_ICON_SIZE 40
+#define SYMBOL_ICON_SIZE 24
+#define EDITOR_WIDTH 80
+#define GRID_SPACING_H 4
+#define GRID_SPACING_V 16
+
+namespace {
+
+template<typename TEditor> TEditor* makeEditor(bool readOnly = false)
+{
+    auto e = new TEditor;
+    e->setFixedWidth(EDITOR_WIDTH);
+    e->setProperty("role", "value-editor");
+    e->setReadOnly(readOnly);
+    return e;
+}
+#define makeLineEdit makeEditor<QLineEdit>
+#define makeValueEdit makeEditor<Ori::Widgets::ValueEdit>
+
+QLabel* makeGridLabel(const QString &text = {})
+{
+    auto l = new QLabel(text);
+    l->setFixedWidth(2*SYMBOL_ICON_SIZE);
+    return l;
+}
+
+} // namespace
+
+//------------------------------------------------------------------------------
+//                               SplitRangeDlg
+//------------------------------------------------------------------------------
+
 SplitRangeDlg::SplitRangeDlg(Schema *schema, ElementRange* srcElem) : QWidget(), srcParam(srcElem->paramLength())
 {
     _slider = new QSlider;
     _slider->setOrientation(Qt::Horizontal);
     _slider->setMinimum(0);
-    _slider->setMaximum(sliderMax);
-    _slider->setValue(sliderMax/2);
-    _slider->setPageStep(sliderMax/10);
+    _slider->setMaximum(SLIDER_MAX);
+    _slider->setValue(SLIDER_MAX/2);
+    _slider->setPageStep(SLIDER_MAX/10);
     connect(_slider, &QSlider::valueChanged, this, &SplitRangeDlg::onSliderValueChanged);
 
-    auto rangeLabel = makeEditor<QLineEdit>();
+    auto rangeLabel = makeLineEdit(true);
     rangeLabel->setText(srcElem->label());
-    rangeLabel->setReadOnly(true);
 
-    _rangeLabel1 = makeEditor<QLineEdit>();
+    _rangeLabel1 = makeLineEdit();
     _rangeLabel1->setText(srcElem->label());
 
-    _rangeLabel2 = makeEditor<QLineEdit>();
+    _rangeLabel2 = makeLineEdit();
     _rangeLabel2->setText(Z::Utils::generateLabel(schema, srcElem->labelPrefix()));
 
-    auto rangeParam = makeEditor<Ori::Widgets::ValueEdit>();
+    auto rangeParam = makeValueEdit(true);
     rangeParam->setValue(srcParam->value().value());
-    rangeParam->setReadOnly(true);
     
-    auto unitLabel = new QLabel(srcParam->value().unit()->name());
-    unitLabel->setFixedWidth(2*symbolIconSize);
+    auto unitLabel = makeGridLabel(srcParam->value().unit()->name());
+    auto spacerLabel = makeGridLabel();
 
-    auto spacerLabel = new QLabel;
-    spacerLabel->setFixedWidth(2*symbolIconSize);
-
-    _editParam1 = makeEditor<Ori::Widgets::ValueEdit>();
-    _editParam2 = makeEditor<Ori::Widgets::ValueEdit>();
+    _editParam1 = makeValueEdit();
+    _editParam2 = makeValueEdit();
     connect(_editParam1, &Ori::Widgets::ValueEdit::valueEdited, this, &SplitRangeDlg::onParamValueEdited);
     connect(_editParam2, &Ori::Widgets::ValueEdit::valueEdited, this, &SplitRangeDlg::onParamValueEdited);
 
@@ -65,15 +93,15 @@ SplitRangeDlg::SplitRangeDlg(Schema *schema, ElementRange* srcElem) : QWidget(),
     _pointLabel->setText(Z::Utils::generateLabel(schema, ElemPoint().labelPrefix()));
 
     auto l = new QGridLayout;
-    l->setHorizontalSpacing(4);
-    l->setVerticalSpacing(16);
+    l->setHorizontalSpacing(GRID_SPACING_H);
+    l->setVerticalSpacing(GRID_SPACING_V);
     int row = 0;
     const auto elemIconPath = Z::Utils::elemIconPath(srcElem->type());
-    l->addWidget(Ori::Widgets::iconLabel(elemIconPath, elemIconSize), row, 0);
-    l->addWidget(Ori::Widgets::iconLabel(":/toolbar/move_right", symbolIconSize), row, 1);
-    l->addWidget(Ori::Widgets::iconLabel(elemIconPath, elemIconSize), row, 2);
-    l->addWidget(Ori::Widgets::iconLabel(":/toolbar/plus", symbolIconSize), row, 3);
-    l->addWidget(Ori::Widgets::iconLabel(elemIconPath, elemIconSize), row, 4);
+    l->addWidget(Ori::Widgets::iconLabel(elemIconPath, ELEM_ICON_SIZE), row, 0);
+    l->addWidget(Ori::Widgets::iconLabel(":/toolbar/move_right", SYMBOL_ICON_SIZE), row, 1);
+    l->addWidget(Ori::Widgets::iconLabel(elemIconPath, ELEM_ICON_SIZE), row, 2);
+    l->addWidget(Ori::Widgets::iconLabel(":/toolbar/plus", SYMBOL_ICON_SIZE), row, 3);
+    l->addWidget(Ori::Widgets::iconLabel(elemIconPath, ELEM_ICON_SIZE), row, 4);
     row++;
     l->addWidget(rangeLabel, row, 0);
     l->addWidget(_rangeLabel1, row, 2);
@@ -100,7 +128,7 @@ void SplitRangeDlg::onSliderValueChanged()
 {
     if (_skipSlider) return;
     const auto srcValue = srcParam->value().value();
-    const auto v = srcValue * double(_slider->value())/sliderMax;
+    const auto v = srcValue * double(_slider->value())/SLIDER_MAX;
     _editParam1->setValue(v);
     _editParam2->setValue(srcValue - v);
 }
@@ -110,7 +138,7 @@ void SplitRangeDlg::onSwapButtonClicked()
     _insertAfter = !_insertAfter;
 
     _skipSlider = true;
-    _slider->setValue(sliderMax - _slider->value());
+    _slider->setValue(SLIDER_MAX - _slider->value());
     _skipSlider = false;
  
     auto value2 = _editParam2->value();
@@ -124,7 +152,6 @@ void SplitRangeDlg::onSwapButtonClicked()
 
 void SplitRangeDlg::onParamValueEdited()
 {
-    qDebug() << "value edited";
     _skipSlider = true;
     auto edit = (Ori::Widgets::ValueEdit*)sender();
     auto value = edit->value();
@@ -144,7 +171,7 @@ void SplitRangeDlg::onParamValueEdited()
         _editParam1->setValue(otherValue);
         otherValue = _insertAfter ? otherValue : value;
     }
-    _slider->setValue(qRound(otherValue / max * sliderMax));
+    _slider->setValue(qRound(otherValue / max * SLIDER_MAX));
     _skipSlider = false;
 }
 
@@ -187,7 +214,66 @@ bool SplitRangeDlg::exec()
 {
     return Ori::Dlg::Dialog(this, false)
         .withTitle(tr("Split Range"))
-        .withOnHelp([]{ Z::HelpSystem::topic("elem_opers_split_range"); })
+        .withOnHelp([]{ Z::HelpSystem::topic("elem_opers_split"); })
         .withActiveWidget(_slider)
+        .exec();
+}
+
+//------------------------------------------------------------------------------
+//                               MergeRangesDlg
+//------------------------------------------------------------------------------
+
+MergeRangesDlg::MergeRangesDlg(ElementRange* elem1, ElementRange* elem2) : QWidget()
+{
+    auto srcLabel1 = makeLineEdit(true);
+    auto srcLabel2 = makeLineEdit(true);
+    auto tgtLabel = makeLineEdit(true);
+    
+    auto srcParam1 = makeValueEdit(true);
+    auto srcParam2 = makeValueEdit(true);
+    auto tgtParam = makeValueEdit(true);
+
+    auto unitLabel = makeGridLabel();
+    auto spacerLabel = makeGridLabel();
+
+    auto l = new QGridLayout(this);
+    l->setHorizontalSpacing(GRID_SPACING_H);
+    l->setVerticalSpacing(GRID_SPACING_V);
+    int row = 0;
+    const auto elemIconPath = Z::Utils::elemIconPath(elem1->type());
+    l->addWidget(Ori::Widgets::iconLabel(elemIconPath, ELEM_ICON_SIZE), row, 0);
+    l->addWidget(Ori::Widgets::iconLabel(":/toolbar/plus", SYMBOL_ICON_SIZE), row, 1);
+    l->addWidget(Ori::Widgets::iconLabel(elemIconPath, ELEM_ICON_SIZE), row, 2);
+    l->addWidget(Ori::Widgets::iconLabel(":/toolbar/move_right", SYMBOL_ICON_SIZE), row, 3);
+    l->addWidget(Ori::Widgets::iconLabel(elemIconPath, ELEM_ICON_SIZE), row, 4);
+    row++;
+    l->addWidget(srcLabel1, row, 0);
+    l->addWidget(srcLabel2, row, 2);
+    l->addWidget(tgtLabel, row, 4);
+    row++;
+    l->addWidget(srcParam1, row, 0);
+    l->addWidget(unitLabel, row, 1);
+    l->addWidget(srcParam2, row, 2);
+    l->addWidget(spacerLabel, row, 3);
+    l->addWidget(tgtParam, row, 4);
+
+    srcLabel1->setText(elem1->label());
+    srcLabel2->setText(elem2->label());
+    tgtLabel->setText(elem1->label());
+    auto v1 = elem1->paramLength()->value();
+    auto v2 = elem2->paramLength()->value();
+    auto unit = v1.unit();
+    unitLabel->setText(unit->name());
+    srcParam1->setValue(v1.value());
+    srcParam2->setValue(v2.toUnit(unit).value());
+    tgtParam->setValue(Z::Value::fromSi(v1.toSi() + v2.toSi(), unit).value());
+}
+
+bool MergeRangesDlg::exec()
+{
+    return Ori::Dlg::Dialog(this, false)
+        .withTitle(tr("Merge Ranges"))
+        .withOnHelp([]{ Z::HelpSystem::topic("elem_opers_merge"); })
+        .withContentToButtonsSpacingFactor(2)
         .exec();
 }

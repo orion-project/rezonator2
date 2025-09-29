@@ -53,7 +53,8 @@ private:
     QAction *actnElemAdd, *actnElemReplace, *actnElemMoveUp, *actnElemMoveDown, *actnElemProp,
             *actnElemMatr, *actnElemMatrAll, *actnElemDelete, *actnEditCopy, *actnEditPaste,
             *actnAdjuster, *actnSaveCustom, *actnEditFormula, *actnElemDisable,
-            *actnRangeInsert, *actnRangeSplit, *actnCtxRangeInsert, *actnCtxRangeSplit;
+            *actnRangeInsert, *actnRangeSplit, *actnRangeMerge,
+            *actnCtxRangeInsert, *actnCtxRangeSplit, *actnCtxRangeMerge;
 
     QMenu *menuElement, *menuContextElement, *menuContextLastRow;
     QMenu *menuAdjuster = nullptr;
@@ -81,11 +82,16 @@ private slots:
     void actionElemDisable();
     void actionRangeInsert();
     void actionRangeSplit();
+    void actionRangeMerge();
+    
+private:
     void elemDoubleClicked(Element*);
     void currentElemChanged(Element* elem);
+    void selectionChanged(const Elements& selected);
     void elemsContextMenuAboutToShow();
     void adjustParam();
-    void appendElement(ElementsCatalogDialog::ElementSample sample, int beforeIndex, std::function<void(Element*)> prepareNewElement = {});
+    void appendElement(ElementsCatalogDialog::ElementSample sample,
+        int beforeIndex, std::function<void(Element*)> prepareNewElement = {});
 };
 
 #endif // SCHEMA_WINDOW_H

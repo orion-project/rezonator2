@@ -1,4 +1,5 @@
 .. _elem_opers_replace:
+.. index:: single: replace element (command)
 
 Replace
 =======

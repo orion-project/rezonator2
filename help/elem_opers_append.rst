@@ -1,4 +1,5 @@
 .. _elem_opers_append:
+.. index:: single: append element (command)
 
 Append
 ======

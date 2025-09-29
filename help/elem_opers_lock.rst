@@ -1,5 +1,8 @@
 .. _elem_opers_lock:
 .. _elem_toggle_lock:
+.. index:: single: disable element (command)
+.. index:: single: enable element (command)
+.. index:: single: lock element (command)
 
 Disable/Enable
 ==============

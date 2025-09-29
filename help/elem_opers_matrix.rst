@@ -1,5 +1,7 @@
 .. _elem_opers_matrix:
 .. _elem_show_matrix:
+.. index:: single: matrix (command)
+.. index:: single: show matrix (command)
 
 Show Matrix
 ===========

@@ -1,4 +1,6 @@
 .. _elem_opers_props:
+.. index:: single: properties (command)
+.. index:: single: element properties (command)
 
 Properties
 ==========

@@ -1,4 +1,5 @@
 .. _elem_opers_move:
+.. index:: single: move element (command)
 
 Move Selected
 =============
