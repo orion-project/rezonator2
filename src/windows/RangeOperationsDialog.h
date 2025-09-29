@@ -5,6 +5,7 @@
 
 #include <QWidget>
 
+class QCheckBox;
 class QLineEdit;
 class QSlider;
 namespace Ori::Widgets {
@@ -24,9 +25,11 @@ public:
     
     QString oldLabel() const;
     QString newLabel() const;
+    QString pointLabel() const;
     Z::Value oldValue() const;
     Z::Value newValue() const;
     bool insertAfter() const { return _insertAfter; }
+    bool insertPoint() const;
     
 private:
     const Z::Parameter *srcParam;
@@ -36,15 +39,17 @@ private:
     const int editorWidth = 80;
     
     QSlider *_slider;
-    QLineEdit *_editLabel1, *_editLabel2;
+    QLineEdit *_rangeLabel1, *_rangeLabel2, *_pointLabel;
     Ori::Widgets::ValueEdit *_editParam1, *_editParam2;
     QSharedPointer<QWidget> _content;
+    QCheckBox *_insertPoint;
     bool _insertAfter = true;
     bool _skipSlider = false;
     
     void onSliderValueChanged();
     void onSwapButtonClicked();
     void onParamValueEdited();
+    void onInsertLabelToggled();
 
     template<typename TEditor> TEditor* makeEditor()
     {

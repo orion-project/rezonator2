@@ -19,6 +19,8 @@ The length of the source element is shared proportionally between the original a
 
 There is a tiny double-arrow button between label editors. The button defines if the new element should be placed before or after the original element. By default, the new element is inserted after the original one. Click the button to swap the elements.
 
+If the "Insert point between ranges" option is checked, then a :ref:`elem_point` is automatically created between the original and new elements. The label for the point element is generated automatically and can be edited manually.
+
     .. image:: img/elem_opers_split_range.png
 
 .. seeAlso::

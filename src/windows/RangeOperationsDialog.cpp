@@ -2,11 +2,14 @@
 
 #include "../app/HelpSystem.h"
 #include "../core/Schema.h"
+#include "../core/Elements.h"
 
 #include "helpers/OriDialogs.h"
+#include "helpers/OriLayouts.h"
 #include "widgets/OriLabels.h"
 #include "widgets/OriValueEdit.h"
 
+#include <QCheckBox>
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -23,25 +26,25 @@ SplitRangeDlg::SplitRangeDlg(Schema *schema, ElementRange* srcElem) : QWidget(),
     _slider->setPageStep(sliderMax/10);
     connect(_slider, &QSlider::valueChanged, this, &SplitRangeDlg::onSliderValueChanged);
 
-    auto editLabel = makeEditor<QLineEdit>();
-    editLabel->setText(srcElem->label());
-    editLabel->setReadOnly(true);
+    auto rangeLabel = makeEditor<QLineEdit>();
+    rangeLabel->setText(srcElem->label());
+    rangeLabel->setReadOnly(true);
 
-    _editLabel1 = makeEditor<QLineEdit>();
-    _editLabel1->setText(srcElem->label());
+    _rangeLabel1 = makeEditor<QLineEdit>();
+    _rangeLabel1->setText(srcElem->label());
 
-    _editLabel2 = makeEditor<QLineEdit>();
-    _editLabel2->setText(Z::Utils::generateLabel(schema, srcElem->labelPrefix()));
+    _rangeLabel2 = makeEditor<QLineEdit>();
+    _rangeLabel2->setText(Z::Utils::generateLabel(schema, srcElem->labelPrefix()));
 
-    auto editParam = makeEditor<Ori::Widgets::ValueEdit>();
-    editParam->setValue(srcParam->value().value());
-    editParam->setReadOnly(true);
+    auto rangeParam = makeEditor<Ori::Widgets::ValueEdit>();
+    rangeParam->setValue(srcParam->value().value());
+    rangeParam->setReadOnly(true);
     
-    auto labelUnit = new QLabel(srcParam->value().unit()->name());
-    labelUnit->setFixedWidth(2*symbolIconSize);
+    auto unitLabel = new QLabel(srcParam->value().unit()->name());
+    unitLabel->setFixedWidth(2*symbolIconSize);
 
-    auto labelSpacer = new QLabel;
-    labelSpacer->setFixedWidth(2*symbolIconSize);
+    auto spacerLabel = new QLabel;
+    spacerLabel->setFixedWidth(2*symbolIconSize);
 
     _editParam1 = makeEditor<Ori::Widgets::ValueEdit>();
     _editParam2 = makeEditor<Ori::Widgets::ValueEdit>();
@@ -53,6 +56,13 @@ SplitRangeDlg::SplitRangeDlg(Schema *schema, ElementRange* srcElem) : QWidget(),
     buttonSwap->setToolTip(tr("Swap elements"));
     buttonSwap->setIcon(QIcon(":/toolbar/equ_swap"));
     connect(buttonSwap, &QPushButton::clicked, this, &SplitRangeDlg::onSwapButtonClicked);
+    
+    _insertPoint = new QCheckBox(tr("Insert point between ranges"));
+    connect(_insertPoint, &QCheckBox::stateChanged, this, &SplitRangeDlg::onInsertLabelToggled);
+    
+    _pointLabel = makeEditor<QLineEdit>();
+    _pointLabel->setEnabled(false);
+    _pointLabel->setText(Z::Utils::generateLabel(schema, ElemPoint().labelPrefix()));
 
     auto l = new QGridLayout;
     l->setHorizontalSpacing(4);
@@ -65,21 +75,23 @@ SplitRangeDlg::SplitRangeDlg(Schema *schema, ElementRange* srcElem) : QWidget(),
     l->addWidget(Ori::Widgets::iconLabel(":/toolbar/plus", symbolIconSize), row, 3);
     l->addWidget(Ori::Widgets::iconLabel(elemIconPath, elemIconSize), row, 4);
     row++;
-    l->addWidget(editLabel, row, 0);
-    l->addWidget(_editLabel1, row, 2);
+    l->addWidget(rangeLabel, row, 0);
+    l->addWidget(_rangeLabel1, row, 2);
     l->addWidget(buttonSwap, row, 3);
-    l->addWidget(_editLabel2, row, 4);
+    l->addWidget(_rangeLabel2, row, 4);
     row++;
-    l->addWidget(editParam, row, 0);
-    l->addWidget(labelUnit, row, 1);
+    l->addWidget(rangeParam, row, 0);
+    l->addWidget(unitLabel, row, 1);
     l->addWidget(_editParam1, row, 2);
-    l->addWidget(labelSpacer, row, 3);
+    l->addWidget(spacerLabel, row, 3);
     l->addWidget(_editParam2, row, 4);
     
     auto mainLayout = new QVBoxLayout(this);
     mainLayout->addLayout(l);
     mainLayout->addSpacing(12);
     mainLayout->addWidget(_slider);
+    mainLayout->addSpacing(12);
+    mainLayout->addLayout(Ori::Layouts::LayoutH({_insertPoint, _pointLabel}).boxLayout());
     
     onSliderValueChanged();
 }
@@ -105,9 +117,9 @@ void SplitRangeDlg::onSwapButtonClicked()
     _editParam2->setValue(_editParam1->value());
     _editParam1->setValue(value2);
  
-    auto label2 = _editLabel2->text();
-    _editLabel2->setText(_editLabel1->text());
-    _editLabel1->setText(label2);
+    auto label2 = _rangeLabel2->text();
+    _rangeLabel2->setText(_rangeLabel1->text());
+    _rangeLabel1->setText(label2);
 }
 
 void SplitRangeDlg::onParamValueEdited()
@@ -136,14 +148,19 @@ void SplitRangeDlg::onParamValueEdited()
     _skipSlider = false;
 }
 
+void SplitRangeDlg::onInsertLabelToggled()
+{
+    _pointLabel->setEnabled(_insertPoint->isChecked());
+}
+
 QString SplitRangeDlg::oldLabel() const
 {
-    return (_insertAfter ? _editLabel1 : _editLabel2)->text().trimmed();
+    return (_insertAfter ? _rangeLabel1 : _rangeLabel2)->text().trimmed();
 }
 
 QString SplitRangeDlg::newLabel() const
 {
-    return (_insertAfter ? _editLabel2 : _editLabel1)->text().trimmed();
+    return (_insertAfter ? _rangeLabel2 : _rangeLabel1)->text().trimmed();
 }
 
 Z::Value SplitRangeDlg::oldValue() const
@@ -154,6 +171,16 @@ Z::Value SplitRangeDlg::oldValue() const
 Z::Value SplitRangeDlg::newValue() const
 {
     return Z::Value((_insertAfter ? _editParam2 : _editParam1)->value(), srcParam->value().unit());
+}
+
+bool SplitRangeDlg::insertPoint() const
+{
+    return _insertPoint->isChecked();
+}
+
+QString SplitRangeDlg::pointLabel() const
+{
+    return _pointLabel->text().trimmed();
 }
 
 bool SplitRangeDlg::exec()

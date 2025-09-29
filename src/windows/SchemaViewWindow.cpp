@@ -2,6 +2,7 @@
 
 #include "../app/CalcManager.h"
 #include "../app/CustomElemsManager.h"
+#include "../core/Elements.h"
 #include "../core/ElementsCatalog.h"
 #include "../core/ElementFormula.h"
 #include "../core/Utils.h"
@@ -321,9 +322,20 @@ void SchemaViewWindow::actionRangeSplit()
     int beforeIndex = schema()->indexOf(oldElem);
     if (dlg.insertAfter())
         beforeIndex += 1;
+        
+    // relinkInterfaces is in insertElements()
+    schema()->insertElements({newElem}, beforeIndex, Arg::RaiseEvents(false));
+    schema()->events().raise(SchemaEvents::ElemCreated, newElem, "SchemaViewWindow: split range");
     
-    // relinkInterfaces and RecalRequred event are in insertElements()
-    schema()->insertElements({newElem}, beforeIndex, Arg::RaiseEvents(true));
+    if (dlg.insertPoint()) {
+        auto point = new ElemPoint;
+        point->setLabel(dlg.pointLabel());
+        beforeIndex = schema()->indexOf(dlg.insertAfter() ? newElem : oldElem);
+        schema()->insertElements({point}, beforeIndex, Arg::RaiseEvents(false));
+        schema()->events().raise(SchemaEvents::ElemCreated, point, "SchemaViewWindow: split range");
+    }
+    
+    schema()->events().raise(SchemaEvents::RecalRequred, "SchemaViewWindow: split range");
     
     _table->setCurrentElem(newElem);
 }
