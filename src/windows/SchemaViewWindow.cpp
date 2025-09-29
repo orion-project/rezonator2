@@ -137,7 +137,7 @@ void SchemaViewWindow::elemDoubleClicked(Element *elem)
 
 void SchemaViewWindow::actionElemAdd()
 {
-    auto sample = ElementsCatalogDialog::chooseElementSample();
+    auto sample = ElementsCatalogDialog::chooseElementSample(tr("Append Element"), "elem_opers_append");
     if (!sample) return;
 
     Element* elem = ElementsCatalog::instance().create(sample->elem, sample->isCustom);
@@ -164,7 +164,7 @@ void SchemaViewWindow::actionElemReplace()
     if (!curElem) return;
     auto curRow = _table->currentRow();
 
-    auto sample = ElementsCatalogDialog::chooseElementSample();
+    auto sample = ElementsCatalogDialog::chooseElementSample(tr("Replace Element"), "elem_opers_replace");
     if (!sample) return;
 
     if (sample->elem->type() == curElem->type())
