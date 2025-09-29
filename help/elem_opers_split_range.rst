@@ -5,8 +5,6 @@ Split Range
 
 :menuSelection:`Element --> Split Range...`
 
-:menuSelection:`Context menu --> Split Range...`
-
 The command is active for any element having the Length parameter, such as :ref:`elem_empty_range` or :ref:`elem_brewster_crystal`. It allows for splitting the element into two elements of the same type having the summary length equivalent to the length of the original element. Actually, only one new element is inserted, which takes a part of the length of the original element, and the length of the original element is reduced accordingly.
 
     .. image:: img/elem_opers_split_range_drawing.png
@@ -25,4 +23,4 @@ If the "Insert point between ranges" option is checked, then a :ref:`elem_point`
 
 .. seeAlso::
 
-    :doc:`elem_opers`
+    :doc:`elem_opers`, :doc:`elem_opers_insert_into_range`

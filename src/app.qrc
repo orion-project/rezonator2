@@ -36,11 +36,13 @@
         <file alias="elem_delete">../img/toolbar/elem_delete.svg</file>
         <file alias="elem_disable">../img/toolbar/elem_disable.svg</file>
         <file alias="elem_error">../img/toolbar/elem_error.svg</file>
+        <file alias="elem_insert">../img/toolbar/elem_insert.svg</file>
         <file alias="elem_move_up">../img/toolbar/elem_move_up.svg</file>
         <file alias="elem_move_down">../img/toolbar/elem_move_down.svg</file>
         <file alias="elem_matr">../img/toolbar/elem_matr.svg</file>
         <file alias="elem_prop">../img/toolbar/elem_prop.svg</file>
         <file alias="elem_replace">../img/toolbar/elem_replace.svg</file>
+        <file alias="elem_split">../img/toolbar/elem_split.svg</file>
         <file alias="equals">../img/toolbar/equals.svg</file>
         <file alias="equ_left">../img/toolbar/equ_left.svg</file>
         <file alias="equ_right">../img/toolbar/equ_right.svg</file>

@@ -3,6 +3,7 @@
 
 #include "../core/Schema.h"
 #include "../core/Element.h"
+#include "../windows/ElementsCatalogDialog.h"
 #include "../windows/SchemaWindows.h"
 
 #include <QCloseEvent>
@@ -52,7 +53,7 @@ private:
     QAction *actnElemAdd, *actnElemReplace, *actnElemMoveUp, *actnElemMoveDown, *actnElemProp,
             *actnElemMatr, *actnElemMatrAll, *actnElemDelete, *actnEditCopy, *actnEditPaste,
             *actnAdjuster, *actnSaveCustom, *actnEditFormula, *actnElemDisable,
-            *actnContextMenuSeparator1, *actnRangeSplit;
+            *actnRangeInsert, *actnRangeSplit, *actnCtxRangeInsert, *actnCtxRangeSplit;
 
     QMenu *menuElement, *menuContextElement, *menuContextLastRow;
     QMenu *menuAdjuster = nullptr;
@@ -78,11 +79,13 @@ private slots:
     void actionSaveCustom();
     void actionEditFormula();
     void actionElemDisable();
+    void actionRangeInsert();
     void actionRangeSplit();
     void elemDoubleClicked(Element*);
     void currentElemChanged(Element* elem);
     void elemsContextMenuAboutToShow();
     void adjustParam();
+    void appendElement(ElementsCatalogDialog::ElementSample sample, int beforeIndex, std::function<void(Element*)> prepareNewElement = {});
 };
 
 #endif // SCHEMA_WINDOW_H

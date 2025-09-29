@@ -79,7 +79,10 @@ void SchemaViewWindow::createActions()
     actnSaveCustom = A_(tr("Save to Custom Library..."), this, SLOT(actionSaveCustom()), ":/toolbar/star");
     actnEditFormula = A_(tr("Edit Formula"), this, SLOT(actionEditFormula()), ":/toolbar/edit_formula");
     actnElemDisable = A_(tr("Disable/Enable"), this, SLOT(actionElemDisable()), ":/toolbar/switch_disabled");
-    actnRangeSplit = A_(tr("Split Range..."), this, SLOT(actionRangeSplit()), ":/toolbar/knife");
+    actnRangeInsert = A_(tr("Insert Into Range..."), this, SLOT(actionRangeInsert()), ":/toolbar/elem_insert");
+    actnRangeSplit = A_(tr("Split Range..."), this, SLOT(actionRangeSplit()), ":/toolbar/elem_split");
+    actnCtxRangeInsert = A_(tr("Insert Into Range..."), this, SLOT(actionRangeInsert()), ":/toolbar/elem_insert");
+    actnCtxRangeSplit = A_(tr("Split Range..."), this, SLOT(actionRangeSplit()), ":/toolbar/elem_split");
 
     #undef A_
 }
@@ -87,17 +90,15 @@ void SchemaViewWindow::createActions()
 void SchemaViewWindow::createMenuBar()
 {
     menuElement = Ori::Gui::menu(tr("Element"), this,
-        { actnElemAdd, actnElemReplace, actnRangeSplit, nullptr, 
+        { actnElemAdd, actnElemReplace, actnRangeInsert, actnRangeSplit, nullptr, 
           actnElemMoveUp, actnElemMoveDown, nullptr, actnElemProp, actnEditFormula,
           actnElemMatr, actnElemMatrAll, nullptr, actnElemDisable, nullptr, actnElemDelete, nullptr, actnSaveCustom });
 
-    actnContextMenuSeparator1 = new QAction(this);
-    actnContextMenuSeparator1->setSeparator(true);
-
     menuContextElement = Ori::Gui::menu(this,
         { actnElemProp, actnEditFormula, actnElemMatr, nullptr, actnAdjuster, nullptr,
-          actnEditCopy, actnEditPaste, nullptr, actnElemDisable, actnElemReplace, 
-          actnContextMenuSeparator1, actnElemDelete});
+          actnEditCopy, actnEditPaste, nullptr, actnElemDisable, actnElemReplace,
+          actnCtxRangeInsert, actnCtxRangeSplit,
+          nullptr, actnElemDelete});
     connect(menuContextElement, &QMenu::aboutToShow, this, &SchemaViewWindow::elemsContextMenuAboutToShow);
 
     menuContextLastRow = Ori::Gui::menu(this,
@@ -106,9 +107,10 @@ void SchemaViewWindow::createMenuBar()
 
 void SchemaViewWindow::createToolBar()
 {
-    populateToolbar({ Ori::Gui::textToolButton(actnElemAdd), actnElemReplace, actnRangeSplit, nullptr, actnElemMoveUp,
-                      actnElemMoveDown, nullptr, Ori::Gui::textToolButton(actnElemProp),
-                      actnElemMatr, nullptr, actnElemDisable, nullptr, actnElemDelete });
+    populateToolbar({
+        Ori::Gui::textToolButton(actnElemAdd), actnElemReplace, actnRangeInsert, actnRangeSplit, nullptr,
+        actnElemMoveUp, actnElemMoveDown, nullptr, Ori::Gui::textToolButton(actnElemProp),
+        actnElemMatr, nullptr, actnElemDisable, nullptr, actnElemDelete });
 }
 
 void SchemaViewWindow::editElement(Element* elem)
@@ -135,27 +137,36 @@ void SchemaViewWindow::elemDoubleClicked(Element *elem)
 //------------------------------------------------------------------------------
 //                             Element actions
 
-void SchemaViewWindow::actionElemAdd()
+void SchemaViewWindow::appendElement(ElementsCatalogDialog::ElementSample sample, int beforeIndex, std::function<void(Element*)> prepareNewElement)
 {
-    auto sample = ElementsCatalogDialog::chooseElementSample(tr("Append Element"), "elem_opers_append");
-    if (!sample) return;
-
-    Element* elem = ElementsCatalog::instance().create(sample->elem, sample->isCustom);
+    Element* elem = ElementsCatalog::instance().create(sample.elem, sample.isCustom);
     if (!elem) return;
+    
+    if (prepareNewElement)
+        prepareNewElement(elem);
 
-    if (!sample->isCustom && !Z::Utils::isInterface(elem))
+    if (!sample.isCustom && !Z::Utils::isInterface(elem))
         // For customs, matrix calculated after param values copied from sample
         // For interfaces, matrix calculated after insertion into schema
         elem->calcMatrix("SchemaViewWindow: element added");
 
     if (AppSettings::instance().elemAutoLabel)
-        Z::Utils::generateLabel(schema()->elements(), elem, sample->isCustom ? sample->elem->label() : QString());
+        Z::Utils::generateLabel(schema()->elements(), elem, sample.isCustom ? sample.elem->label() : QString());
 
-    schema()->insertElements({elem}, _table->currentRow(), Arg::RaiseEvents(true));
+    // relinkInterfaces and RecalRequred are in insertElements()
+    schema()->insertElements({elem}, beforeIndex, Arg::RaiseEvents(true));
     _table->setCurrentElem(elem);
 
     if (AppSettings::instance().editNewElem)
         editElement(elem);
+}
+
+void SchemaViewWindow::actionElemAdd()
+{
+    auto sample = ElementsCatalogDialog::chooseElementSample(tr("Append Element"), "elem_opers_append");
+    if (!sample) return;
+
+    appendElement(*sample, _table->currentRow());
 }
 
 void SchemaViewWindow::actionElemReplace()
@@ -176,22 +187,13 @@ void SchemaViewWindow::actionElemReplace()
 
     if (!confirmDeletion({curElem}, true)) return;
 
-    Element* elem = ElementsCatalog::instance().create(sample->elem, sample->isCustom);
-    if (!elem) return;
-
-    elem->setLabel(curElem->label());
-    elem->setTitle(curElem->title());
-    Z::Utils::copyParamValuesByName(curElem, elem, "SchemaViewWindow::replaceElement");
-
-    schema()->deleteElements({curElem}, Arg::RaiseEvents(true), Arg::FreeElem(true));
-
-    if (!sample->isCustom && !Z::Utils::isInterface(elem))
-        // For customs, matrix calculated after param values copied from sample
-        // For interfaces, matrix calculated after insertion into schema
-        elem->calcMatrix("SchemaViewWindow: element added");
-
-    schema()->insertElements({elem}, curRow, Arg::RaiseEvents(true));
-    _table->setCurrentElem(elem);
+    appendElement(*sample, curRow, [this, curElem](Element *elem){
+        elem->setLabel(curElem->label());
+        elem->setTitle(curElem->title());
+        Z::Utils::copyParamValuesByName(curElem, elem, "SchemaViewWindow::replaceElement");
+    
+        schema()->deleteElements({curElem}, Arg::RaiseEvents(true), Arg::FreeElem(true));
+    });
 }
 
 void SchemaViewWindow::actionElemMoveUp()
@@ -302,42 +304,66 @@ void SchemaViewWindow::actionElemDisable()
     schema()->events().raise(SchemaEvents::RecalRequred, "SchemaViewWindow: toggle disabled");
 }
 
+void SchemaViewWindow::actionRangeInsert()
+{
+    ElementRange* oldRange = Z::Utils::asRange(_table->currentElem());
+    if (!oldRange) return;
+    
+    auto sample = ElementsCatalogDialog::chooseElementSample(tr("Insert Into Range"), "elem_opers_insert_into_range");
+    if (!sample) return;
+
+    auto halfLen = oldRange->paramLength()->value() / 2.0;
+    oldRange->paramLength()->setValue(halfLen);
+
+    auto newRange = (ElementRange*)ElementsCatalog::instance().create(oldRange->type());
+    if (AppSettings::instance().elemAutoLabel)
+        newRange->setLabel(Z::Utils::generateLabel(schema(), oldRange->labelPrefix()));
+    newRange->paramLength()->setValue(halfLen);
+
+    // relinkInterfaces is in insertElements()
+    // skip RecalRequred, it will be at insertion of the next element
+    schema()->insertElements({newRange}, schema()->indexOf(oldRange)+1, Arg::RaiseEvents(false));
+    schema()->events().raise(SchemaEvents::ElemCreated, newRange, "SchemaViewWindow: split range");
+    
+    appendElement(*sample, schema()->indexOf(newRange));
+}
+
 void SchemaViewWindow::actionRangeSplit()
 {
-    ElementRange* oldElem = Z::Utils::asRange(_table->currentElem());
-    if (!oldElem) return;
+    ElementRange* oldRange = Z::Utils::asRange(_table->currentElem());
+    if (!oldRange) return;
     
-    SplitRangeDlg dlg(schema(), oldElem);
+    SplitRangeDlg dlg(schema(), oldRange);
     if (!dlg.exec()) return;
     
-    if (dlg.oldLabel() != oldElem->label())
-        oldElem->setLabel(dlg.oldLabel());
-    if (dlg.oldValue() != oldElem->paramLength()->value())
-        oldElem->paramLength()->setValue(dlg.oldValue());
+    if (dlg.oldLabel() != oldRange->label())
+        oldRange->setLabel(dlg.oldLabel());
+    if (dlg.oldValue() != oldRange->paramLength()->value())
+        oldRange->paramLength()->setValue(dlg.oldValue());
     
-    auto newElem = (ElementRange*)ElementsCatalog::instance().create(oldElem->type());
-    newElem->setLabel(dlg.newLabel());
-    newElem->paramLength()->setValue(dlg.newValue());
+    auto newRange = (ElementRange*)ElementsCatalog::instance().create(oldRange->type());
+    newRange->setLabel(dlg.newLabel());
+    newRange->paramLength()->setValue(dlg.newValue());
     
-    int beforeIndex = schema()->indexOf(oldElem);
+    int beforeIndex = schema()->indexOf(oldRange);
     if (dlg.insertAfter())
         beforeIndex += 1;
         
     // relinkInterfaces is in insertElements()
-    schema()->insertElements({newElem}, beforeIndex, Arg::RaiseEvents(false));
-    schema()->events().raise(SchemaEvents::ElemCreated, newElem, "SchemaViewWindow: split range");
+    schema()->insertElements({newRange}, beforeIndex, Arg::RaiseEvents(false));
+    schema()->events().raise(SchemaEvents::ElemCreated, newRange, "SchemaViewWindow: split range");
     
     if (dlg.insertPoint()) {
         auto point = new ElemPoint;
         point->setLabel(dlg.pointLabel());
-        beforeIndex = schema()->indexOf(dlg.insertAfter() ? newElem : oldElem);
+        beforeIndex = schema()->indexOf(dlg.insertAfter() ? newRange : oldRange);
         schema()->insertElements({point}, beforeIndex, Arg::RaiseEvents(false));
         schema()->events().raise(SchemaEvents::ElemCreated, point, "SchemaViewWindow: split range");
     }
     
     schema()->events().raise(SchemaEvents::RecalRequred, "SchemaViewWindow: split range");
     
-    _table->setCurrentElem(newElem);
+    _table->setCurrentElem(newRange);
 }
 
 //------------------------------------------------------------------------------
@@ -394,7 +420,12 @@ void SchemaViewWindow::currentElemChanged(Element* elem)
     actnElemDisable->setEnabled(hasElem);
 
     bool isRange = Z::Utils::isRange(elem);
+    actnRangeInsert->setEnabled(isRange);
     actnRangeSplit->setEnabled(isRange);
+    actnCtxRangeInsert->setEnabled(isRange);
+    actnCtxRangeSplit->setEnabled(isRange);
+    actnCtxRangeInsert->setVisible(isRange);
+    actnCtxRangeSplit->setVisible(isRange);
 
     bool isFormula = dynamic_cast<ElemFormula*>(elem);
     actnEditFormula->setEnabled(isFormula);
@@ -412,6 +443,8 @@ void SchemaViewWindow::elemsContextMenuAboutToShow()
 
     auto elem = _table->selected();
     if (!elem) return;
+
+    qDebug() << "about to show" << Z::Utils::isRange(elem);
 
     auto params = Z::Utils::defaultParamFilter()->filter(elem->params());
     if (params.isEmpty()) return;
@@ -433,10 +466,6 @@ void SchemaViewWindow::elemsContextMenuAboutToShow()
         }
         menuContextElement->insertMenu(actnAdjuster, menuAdjuster);
     }
-
-    menuContextElement->removeAction(actnRangeSplit);
-    if (Z::Utils::isRange(elem))
-        menuContextElement->insertAction(actnContextMenuSeparator1, actnRangeSplit);
 }
 
 void SchemaViewWindow::adjustParam()
