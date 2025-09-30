@@ -10,7 +10,7 @@ The command is active for any element having the Length parameter, such as :ref:
 
     .. image:: img/elem_opers_split_drawing.png
 
-This command is a kind of script providing a convenient and simpler way instead of inserting a new element using the :doc:`elem_opers_append` command and adjusting parameters of both the old and new elements via the :doc:`elem_opers_props` command. Later, both elements can be edited independently.
+This command is a kind of script providing a convenient and simpler way instead of inserting a new element using the :doc:`elem_opers_append` command and adjusting parameters of both the old and new elements via the :doc:`elem_opers_props` command. Later, both elements can be edited independently. Alternatively, both elements can be changes simultaneously using the :doc:`elem_opers_slide` command.
 
 The parameters dialog of the command allows for setting a :ref:`label <elem_props_label>` for the new element. By default, the label is generated automatically but can be changed manually. The label of the original element can also be changed if needed.
 
@@ -24,4 +24,4 @@ If the "Insert point between ranges" option is checked, then a :ref:`elem_point`
 
 .. seeAlso::
 
-    :doc:`elem_opers`, :doc:`elem_opers_insert_into`, :doc:`elem_opers_merge`
+    :doc:`elem_opers`, :doc:`elem_opers_insert_into`, :doc:`elem_opers_merge`, :doc:`elem_opers_slide`

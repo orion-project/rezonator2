@@ -53,8 +53,8 @@ private:
     QAction *actnElemAdd, *actnElemReplace, *actnElemMoveUp, *actnElemMoveDown, *actnElemProp,
             *actnElemMatr, *actnElemMatrAll, *actnElemDelete, *actnEditCopy, *actnEditPaste,
             *actnAdjuster, *actnSaveCustom, *actnEditFormula, *actnElemDisable,
-            *actnRangeInsert, *actnRangeSplit, *actnRangeMerge,
-            *actnCtxRangeInsert, *actnCtxRangeSplit, *actnCtxRangeMerge;
+            *actnRangeInsert, *actnRangeSplit, *actnRangeMerge, *actnRangeSlide,
+            *actnCtxRangeInsert, *actnCtxRangeSplit, *actnCtxRangeMerge, *actnCtxRangeSlide;
 
     QMenu *menuElement, *menuContextElement, *menuContextLastRow;
     QMenu *menuAdjuster = nullptr;
@@ -83,13 +83,14 @@ private slots:
     void actionRangeInsert();
     void actionRangeSplit();
     void actionRangeMerge();
+    void actionRangeSlide();
+    void adjustParam();
     
 private:
     void elemDoubleClicked(Element*);
     void currentElemChanged(Element* elem);
     void selectionChanged(const Elements& selected);
     void elemsContextMenuAboutToShow();
-    void adjustParam();
     void appendElement(ElementsCatalogDialog::ElementSample sample,
         int beforeIndex, std::function<void(Element*)> prepareNewElement = {});
 };

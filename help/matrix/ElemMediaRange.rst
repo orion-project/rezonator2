@@ -1,3 +1,6 @@
+.. _ElemMediumRange:
+.. _elem_medium_range:
+
 Space Filled With Medium
 ========================
 

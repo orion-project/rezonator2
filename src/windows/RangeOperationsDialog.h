@@ -9,9 +9,11 @@ class QCheckBox;
 class QLabel;
 class QLineEdit;
 class QSlider;
+
 namespace Ori::Widgets {
 class ValueEdit;
 }
+
 class ElementRange;
 class Schema;
 
@@ -33,7 +35,8 @@ public:
     bool insertPoint() const;
     
 private:
-    const Z::Parameter *srcParam;
+    const Z::Parameter *_srcParam;
+    const double _sliderMax = 100;
     QSlider *_slider;
     QLineEdit *_rangeLabel1, *_rangeLabel2, *_pointLabel;
     Ori::Widgets::ValueEdit *_editParam1, *_editParam2;
@@ -48,6 +51,7 @@ private:
     void onInsertLabelToggled();
 };
 
+
 class MergeRangesDlg : public QWidget
 {
     Q_OBJECT
@@ -56,6 +60,29 @@ public:
     explicit MergeRangesDlg(ElementRange* elem1, ElementRange* elem2);
     
     bool exec();
+};
+
+
+class SlideRangesDlg : public QWidget
+{
+    Q_OBJECT
+    
+public:
+    explicit SlideRangesDlg(ElementRange* elem1, ElementRange* elem2);
+    
+    bool exec();
+    
+private:
+    const Z::Parameter *_param1, *_param2;
+    const double _sliderMax = 1000;
+    double _valueSum;
+    QSlider *_slider;
+    Ori::Widgets::ValueEdit *_editParam1, *_editParam2;
+    bool _skipSlider = false;
+
+    void onSliderValueChanged();
+    void onSwapButtonClicked();
+    void onParamValueEdited();
 };
 
 #endif // RANGE_OPERATIONS_DIALOG_H

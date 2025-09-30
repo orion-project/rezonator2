@@ -43,6 +43,7 @@
         <file alias="elem_matr">../img/toolbar/elem_matr.svg</file>
         <file alias="elem_prop">../img/toolbar/elem_prop.svg</file>
         <file alias="elem_replace">../img/toolbar/elem_replace.svg</file>
+        <file alias="elem_slide">../img/toolbar/elem_slide.svg</file>
         <file alias="elem_split">../img/toolbar/elem_split.svg</file>
         <file alias="equals">../img/toolbar/equals.svg</file>
         <file alias="equ_left">../img/toolbar/equ_left.svg</file>
@@ -104,6 +105,7 @@
         <file alias="menu">../img/toolbar/menu.svg</file>
         <file alias="move_down">../img/toolbar/move_down.svg</file>
         <file alias="move_left">../img/toolbar/move_left.svg</file> 
+        <file alias="move_left_right">../img/toolbar/move_left_right.svg</file> 
         <file alias="move_right">../img/toolbar/move_right.svg</file> 
         <file alias="move_up">../img/toolbar/move_up.svg</file> 
         <file alias="navigate_back">../img/toolbar/navigate_back.svg</file>

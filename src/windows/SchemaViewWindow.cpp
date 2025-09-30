@@ -83,24 +83,26 @@ void SchemaViewWindow::createActions()
     actnRangeInsert = A_(tr("Insert Into..."), this, SLOT(actionRangeInsert()), ":/toolbar/elem_insert");
     actnRangeSplit = A_(tr("Split..."), this, SLOT(actionRangeSplit()), ":/toolbar/elem_split");
     actnRangeMerge = A_(tr("Merge..."), this, SLOT(actionRangeMerge()), ":/toolbar/elem_merge");
+    actnRangeSlide = A_(tr("Slide..."), this, SLOT(actionRangeSlide()), ":/toolbar/elem_slide");
     actnCtxRangeInsert = A_(tr("Insert Into..."), this, SLOT(actionRangeInsert()), ":/toolbar/elem_insert");
     actnCtxRangeSplit = A_(tr("Split..."), this, SLOT(actionRangeSplit()), ":/toolbar/elem_split");
     actnCtxRangeMerge = A_(tr("Merge..."), this, SLOT(actionRangeMerge()), ":/toolbar/elem_merge");
-
+    actnCtxRangeSlide = A_(tr("Slide..."), this, SLOT(actionRangeSlide()), ":/toolbar/elem_slide");
+ 
     #undef A_
 }
 
 void SchemaViewWindow::createMenuBar()
 {
     menuElement = Ori::Gui::menu(tr("Element"), this,
-        { actnElemAdd, actnElemReplace, actnRangeInsert, actnRangeSplit, actnRangeMerge, nullptr, 
+        { actnElemAdd, actnElemReplace, actnRangeInsert, actnRangeSplit, actnRangeMerge, actnRangeSlide, nullptr, 
           actnElemMoveUp, actnElemMoveDown, nullptr, actnElemProp, actnEditFormula,
           actnElemMatr, actnElemMatrAll, nullptr, actnElemDisable, nullptr, actnElemDelete, nullptr, actnSaveCustom });
 
     menuContextElement = Ori::Gui::menu(this,
         { actnElemProp, actnEditFormula, actnElemMatr, nullptr, actnAdjuster, nullptr,
           actnEditCopy, actnEditPaste, nullptr, actnElemDisable, actnElemReplace,
-          actnCtxRangeInsert, actnCtxRangeSplit, actnCtxRangeMerge,
+          actnCtxRangeInsert, actnCtxRangeSplit, actnCtxRangeMerge, actnCtxRangeSlide,
           nullptr, actnElemDelete});
     connect(menuContextElement, &QMenu::aboutToShow, this, &SchemaViewWindow::elemsContextMenuAboutToShow);
 
@@ -111,7 +113,8 @@ void SchemaViewWindow::createMenuBar()
 void SchemaViewWindow::createToolBar()
 {
     populateToolbar({
-        Ori::Gui::textToolButton(actnElemAdd), actnElemReplace, actnRangeInsert, actnRangeSplit, actnRangeMerge, nullptr,
+        Ori::Gui::textToolButton(actnElemAdd), actnElemReplace,
+        actnRangeInsert, actnRangeSplit, actnRangeMerge, actnRangeSlide, nullptr,
         actnElemMoveUp, actnElemMoveDown, nullptr, Ori::Gui::textToolButton(actnElemProp),
         actnElemMatr, nullptr, actnElemDisable, nullptr, actnElemDelete });
 }
@@ -326,7 +329,7 @@ void SchemaViewWindow::actionRangeInsert()
     // relinkInterfaces is in insertElements()
     // skip RecalRequred, it will be at insertion of the next element
     schema()->insertElements({newRange}, schema()->indexOf(oldRange)+1, Arg::RaiseEvents(false));
-    schema()->events().raise(SchemaEvents::ElemCreated, newRange, "SchemaViewWindow: split range");
+    schema()->events().raise(SchemaEvents::ElemCreated, newRange, "SchemaViewWindow: insert into");
     
     appendElement(*sample, schema()->indexOf(newRange));
 }
@@ -354,17 +357,17 @@ void SchemaViewWindow::actionRangeSplit()
         
     // relinkInterfaces is in insertElements()
     schema()->insertElements({newRange}, beforeIndex, Arg::RaiseEvents(false));
-    schema()->events().raise(SchemaEvents::ElemCreated, newRange, "SchemaViewWindow: split range");
+    schema()->events().raise(SchemaEvents::ElemCreated, newRange, "SchemaViewWindow: split");
     
     if (dlg.insertPoint()) {
         auto point = new ElemPoint;
         point->setLabel(dlg.pointLabel());
         beforeIndex = schema()->indexOf(dlg.insertAfter() ? newRange : oldRange);
         schema()->insertElements({point}, beforeIndex, Arg::RaiseEvents(false));
-        schema()->events().raise(SchemaEvents::ElemCreated, point, "SchemaViewWindow: split range");
+        schema()->events().raise(SchemaEvents::ElemCreated, point, "SchemaViewWindow: split");
     }
     
-    schema()->events().raise(SchemaEvents::RecalRequred, "SchemaViewWindow: split range");
+    schema()->events().raise(SchemaEvents::RecalRequred, "SchemaViewWindow: split");
     
     _table->setCurrentElem(newRange);
 }
@@ -388,6 +391,26 @@ void SchemaViewWindow::actionRangeMerge()
     schema()->deleteElements({elem2}, Arg::RaiseEvents(true), Arg::FreeElem(true));
     
     _table->setCurrentElem(elem1);
+}
+
+void SchemaViewWindow::actionRangeSlide()
+{
+    auto selected = _table->selection();
+    ElementRange *elem1, *elem2;
+    if (selected.length() == 1) {
+        int index = schema()->indexOf(selected.first());
+        elem1 = Z::Utils::asRange(schema()->element(index - 1));
+        elem2 = Z::Utils::asRange(schema()->element(index + 1));
+    } else if (selected.length() == 2) {
+        elem1 = Z::Utils::asRange(selected.first());
+        elem2 = Z::Utils::asRange(selected.last());
+        if (schema()->indexOf(elem1) > schema()->indexOf(elem2))
+            std::swap(elem1, elem2);
+    } else return;
+    if (!elem1 || !elem2) return;
+        
+    SlideRangesDlg dlg(elem1, elem2);
+    if (!dlg.exec()) return;
 }
 
 //------------------------------------------------------------------------------
@@ -459,8 +482,8 @@ void SchemaViewWindow::currentElemChanged(Element* elem)
 static bool canMergeRanges(Schema *schema, const Elements& selected)
 {
     if (selected.length() != 2) return false;
-    auto elem1 = selected.at(0);
-    auto elem2 = selected.at(1);
+    auto elem1 = selected.first();
+    auto elem2 = selected.last();
     if (elem1->type() != elem2->type()) return false;
     if (!Z::Utils::isRange(elem1)) return false;
     auto index1 = schema->indexOf(elem1);
@@ -468,12 +491,33 @@ static bool canMergeRanges(Schema *schema, const Elements& selected)
     return qAbs(index1 - index2) == 1;
 }
 
+static bool canSlideRanges(Schema *schema, const Elements& selected)
+{
+    Element *elem1 = nullptr;
+    Element *elem2 = nullptr;
+    if (selected.length() == 1) {
+        int index = schema->indexOf(selected.first());
+        elem1 = schema->element(index-1);
+        elem2 = schema->element(index+1);
+    } else if (selected.length() == 2) {
+        elem1 = selected.first();
+        elem2 = selected.last();
+    }
+    if (!elem1 || !elem2) return false;
+    if (elem1->type() != elem2->type()) return false;
+    return Z::Utils::isRange(elem1);
+}
+
 void SchemaViewWindow::selectionChanged(const Elements& selected)
 {
     bool canMerge = canMergeRanges(schema(), selected);
+    bool canSlide = canSlideRanges(schema(), selected);
     actnRangeMerge->setEnabled(canMerge);
     actnCtxRangeMerge->setEnabled(canMerge);
     actnCtxRangeMerge->setVisible(canMerge);
+    actnRangeSlide->setEnabled(canSlide);
+    actnCtxRangeSlide->setEnabled(canSlide);
+    actnCtxRangeSlide->setVisible(canSlide);
 }
 
 void SchemaViewWindow::elemsContextMenuAboutToShow()
@@ -487,8 +531,6 @@ void SchemaViewWindow::elemsContextMenuAboutToShow()
 
     auto elem = _table->selected();
     if (!elem) return;
-
-    qDebug() << "about to show" << Z::Utils::isRange(elem);
 
     auto params = Z::Utils::defaultParamFilter()->filter(elem->params());
     if (params.isEmpty()) return;

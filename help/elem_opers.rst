@@ -13,6 +13,7 @@ If the schema window is active, the :menuSelection:`Element` item appears in the
   elem_opers_insert_into
   elem_opers_split
   elem_opers_merge
+  elem_opers_slide
   elem_opers_move
   elem_opers_props
   elem_opers_matrix
