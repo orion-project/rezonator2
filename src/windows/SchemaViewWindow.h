@@ -3,6 +3,7 @@
 
 #include "../core/Schema.h"
 #include "../core/Element.h"
+#include "../windows/ElementsCatalogDialog.h"
 #include "../windows/SchemaWindows.h"
 
 #include <QCloseEvent>
@@ -51,7 +52,9 @@ protected:
 private:
     QAction *actnElemAdd, *actnElemReplace, *actnElemMoveUp, *actnElemMoveDown, *actnElemProp,
             *actnElemMatr, *actnElemMatrAll, *actnElemDelete, *actnEditCopy, *actnEditPaste,
-            *actnAdjuster, *actnSaveCustom, *actnEditFormula, *actnElemDisable;
+            *actnAdjuster, *actnSaveCustom, *actnEditFormula, *actnElemDisable,
+            *actnRangeInsert, *actnRangeSplit, *actnRangeMerge, *actnRangeSlide,
+            *actnCtxRangeInsert, *actnCtxRangeSplit, *actnCtxRangeMerge, *actnCtxRangeSlide;
 
     QMenu *menuElement, *menuContextElement, *menuContextLastRow;
     QMenu *menuAdjuster = nullptr;
@@ -77,10 +80,19 @@ private slots:
     void actionSaveCustom();
     void actionEditFormula();
     void actionElemDisable();
+    void actionRangeInsert();
+    void actionRangeSplit();
+    void actionRangeMerge();
+    void actionRangeSlide();
+    void adjustParam();
+    
+private:
     void elemDoubleClicked(Element*);
     void currentElemChanged(Element* elem);
+    void selectionChanged(const Elements& selected);
     void elemsContextMenuAboutToShow();
-    void adjustParam();
+    void appendElement(ElementsCatalogDialog::ElementSample sample,
+        int beforeIndex, std::function<void(Element*)> prepareNewElement = {});
 };
 
 #endif // SCHEMA_WINDOW_H

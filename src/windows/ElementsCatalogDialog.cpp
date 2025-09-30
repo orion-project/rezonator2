@@ -23,9 +23,15 @@
 
 static int __savedTabIndex = 0;
 
-std::optional<ElementsCatalogDialog::ElementSample> ElementsCatalogDialog::chooseElementSample()
+std::optional<ElementsCatalogDialog::ElementSample> ElementsCatalogDialog::chooseElementSample(const QString &dlgTitle, const QString &helpTopic)
 {
     ElementsCatalogDialog dlg;
+    
+    if (!dlgTitle.isEmpty())
+        dlg.setWindowTitle(dlgTitle);
+    if (!helpTopic.isEmpty())
+        dlg.setHelpTopic(helpTopic);
+    
     if (dlg.exec() != QDialog::Accepted)
         return {};
 

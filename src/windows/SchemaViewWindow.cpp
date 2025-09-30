@@ -2,6 +2,7 @@
 
 #include "../app/CalcManager.h"
 #include "../app/CustomElemsManager.h"
+#include "../core/Elements.h"
 #include "../core/ElementsCatalog.h"
 #include "../core/ElementFormula.h"
 #include "../core/Utils.h"
@@ -13,10 +14,11 @@
 #include "../windows/ElemFormulaWindow.h"
 #include "../windows/ElementsCatalogDialog.h"
 #include "../windows/ElementPropsDialog.h"
+#include "../windows/RangeOperationsDialog.h"
 #include "../windows/WindowsManager.h"
 
-#include "helpers/OriWidgets.h"
 #include "helpers/OriDialogs.h"
+#include "helpers/OriWidgets.h"
 
 #include <QAction>
 #include <QMenu>
@@ -42,6 +44,7 @@ SchemaViewWindow::SchemaViewWindow(Schema *owner, CalcManager *calcs) : SchemaMd
 
     connect(_table, &ElementsTable::elemDoubleClicked, this, &SchemaViewWindow::elemDoubleClicked);
     connect(_table, &ElementsTable::currentElemChanged, this, &SchemaViewWindow::currentElemChanged);
+    connect(_table, &ElementsTable::selectedElemsChanged, this, &SchemaViewWindow::selectionChanged);
     connect(_table, &ElementsTable::selectedElemsChanged, _layout, &SchemaLayout::updateSelection);
     connect(_layout, &SchemaLayout::selectedElemsChanged, _table, &ElementsTable::selectElems);
     connect(_layout, &SchemaLayout::elemDoubleClicked, this, &SchemaViewWindow::elemDoubleClicked);
@@ -77,19 +80,30 @@ void SchemaViewWindow::createActions()
     actnSaveCustom = A_(tr("Save to Custom Library..."), this, SLOT(actionSaveCustom()), ":/toolbar/star");
     actnEditFormula = A_(tr("Edit Formula"), this, SLOT(actionEditFormula()), ":/toolbar/edit_formula");
     actnElemDisable = A_(tr("Disable/Enable"), this, SLOT(actionElemDisable()), ":/toolbar/switch_disabled");
-
+    actnRangeInsert = A_(tr("Insert Into..."), this, SLOT(actionRangeInsert()), ":/toolbar/elem_insert");
+    actnRangeSplit = A_(tr("Split..."), this, SLOT(actionRangeSplit()), ":/toolbar/elem_split");
+    actnRangeMerge = A_(tr("Merge..."), this, SLOT(actionRangeMerge()), ":/toolbar/elem_merge");
+    actnRangeSlide = A_(tr("Slide..."), this, SLOT(actionRangeSlide()), ":/toolbar/elem_slide");
+    actnCtxRangeInsert = A_(tr("Insert Into..."), this, SLOT(actionRangeInsert()), ":/toolbar/elem_insert");
+    actnCtxRangeSplit = A_(tr("Split..."), this, SLOT(actionRangeSplit()), ":/toolbar/elem_split");
+    actnCtxRangeMerge = A_(tr("Merge..."), this, SLOT(actionRangeMerge()), ":/toolbar/elem_merge");
+    actnCtxRangeSlide = A_(tr("Slide..."), this, SLOT(actionRangeSlide()), ":/toolbar/elem_slide");
+ 
     #undef A_
 }
 
 void SchemaViewWindow::createMenuBar()
 {
     menuElement = Ori::Gui::menu(tr("Element"), this,
-        { actnElemAdd, actnElemReplace, nullptr, actnElemMoveUp, actnElemMoveDown, nullptr, actnElemProp, actnEditFormula,
+        { actnElemAdd, actnElemReplace, actnRangeInsert, actnRangeSplit, actnRangeMerge, actnRangeSlide, nullptr, 
+          actnElemMoveUp, actnElemMoveDown, nullptr, actnElemProp, actnEditFormula,
           actnElemMatr, actnElemMatrAll, nullptr, actnElemDisable, nullptr, actnElemDelete, nullptr, actnSaveCustom });
 
     menuContextElement = Ori::Gui::menu(this,
         { actnElemProp, actnEditFormula, actnElemMatr, nullptr, actnAdjuster, nullptr,
-          actnEditCopy, actnEditPaste, nullptr, actnElemDisable, actnElemReplace, nullptr, actnElemDelete});
+          actnEditCopy, actnEditPaste, nullptr, actnElemDisable, actnElemReplace,
+          actnCtxRangeInsert, actnCtxRangeSplit, actnCtxRangeMerge, actnCtxRangeSlide,
+          nullptr, actnElemDelete});
     connect(menuContextElement, &QMenu::aboutToShow, this, &SchemaViewWindow::elemsContextMenuAboutToShow);
 
     menuContextLastRow = Ori::Gui::menu(this,
@@ -98,9 +112,11 @@ void SchemaViewWindow::createMenuBar()
 
 void SchemaViewWindow::createToolBar()
 {
-    populateToolbar({ Ori::Gui::textToolButton(actnElemAdd), actnElemReplace, nullptr, actnElemMoveUp,
-                      actnElemMoveDown, nullptr, Ori::Gui::textToolButton(actnElemProp),
-                      actnElemMatr, nullptr, actnElemDisable, nullptr, actnElemDelete });
+    populateToolbar({
+        Ori::Gui::textToolButton(actnElemAdd), actnElemReplace,
+        actnRangeInsert, actnRangeSplit, actnRangeMerge, actnRangeSlide, nullptr,
+        actnElemMoveUp, actnElemMoveDown, nullptr, Ori::Gui::textToolButton(actnElemProp),
+        actnElemMatr, nullptr, actnElemDisable, nullptr, actnElemDelete });
 }
 
 void SchemaViewWindow::editElement(Element* elem)
@@ -127,27 +143,36 @@ void SchemaViewWindow::elemDoubleClicked(Element *elem)
 //------------------------------------------------------------------------------
 //                             Element actions
 
-void SchemaViewWindow::actionElemAdd()
+void SchemaViewWindow::appendElement(ElementsCatalogDialog::ElementSample sample, int beforeIndex, std::function<void(Element*)> prepareNewElement)
 {
-    auto sample = ElementsCatalogDialog::chooseElementSample();
-    if (!sample) return;
-
-    Element* elem = ElementsCatalog::instance().create(sample->elem, sample->isCustom);
+    Element* elem = ElementsCatalog::instance().create(sample.elem, sample.isCustom);
     if (!elem) return;
+    
+    if (prepareNewElement)
+        prepareNewElement(elem);
 
-    if (!sample->isCustom && !Z::Utils::isInterface(elem))
+    if (!sample.isCustom && !Z::Utils::isInterface(elem))
         // For customs, matrix calculated after param values copied from sample
         // For interfaces, matrix calculated after insertion into schema
         elem->calcMatrix("SchemaViewWindow: element added");
 
     if (AppSettings::instance().elemAutoLabel)
-        Z::Utils::generateLabel(schema()->elements(), elem, sample->isCustom ? sample->elem->label() : QString());
+        Z::Utils::generateLabel(schema()->elements(), elem, sample.isCustom ? sample.elem->label() : QString());
 
-    schema()->insertElements({elem}, _table->currentRow(), Arg::RaiseEvents(true));
+    // relinkInterfaces and RecalRequred are in insertElements()
+    schema()->insertElements({elem}, beforeIndex, Arg::RaiseEvents(true));
     _table->setCurrentElem(elem);
 
     if (AppSettings::instance().editNewElem)
         editElement(elem);
+}
+
+void SchemaViewWindow::actionElemAdd()
+{
+    auto sample = ElementsCatalogDialog::chooseElementSample(tr("Append Element"), "elem_opers_append");
+    if (!sample) return;
+
+    appendElement(*sample, _table->currentRow());
 }
 
 void SchemaViewWindow::actionElemReplace()
@@ -156,7 +181,7 @@ void SchemaViewWindow::actionElemReplace()
     if (!curElem) return;
     auto curRow = _table->currentRow();
 
-    auto sample = ElementsCatalogDialog::chooseElementSample();
+    auto sample = ElementsCatalogDialog::chooseElementSample(tr("Replace Element"), "elem_opers_replace");
     if (!sample) return;
 
     if (sample->elem->type() == curElem->type())
@@ -168,22 +193,13 @@ void SchemaViewWindow::actionElemReplace()
 
     if (!confirmDeletion({curElem}, true)) return;
 
-    Element* elem = ElementsCatalog::instance().create(sample->elem, sample->isCustom);
-    if (!elem) return;
-
-    elem->setLabel(curElem->label());
-    elem->setTitle(curElem->title());
-    Z::Utils::copyParamValuesByName(curElem, elem, "SchemaViewWindow::replaceElement");
-
-    schema()->deleteElements({curElem}, Arg::RaiseEvents(true), Arg::FreeElem(true));
-
-    if (!sample->isCustom && !Z::Utils::isInterface(elem))
-        // For customs, matrix calculated after param values copied from sample
-        // For interfaces, matrix calculated after insertion into schema
-        elem->calcMatrix("SchemaViewWindow: element added");
-
-    schema()->insertElements({elem}, curRow, Arg::RaiseEvents(true));
-    _table->setCurrentElem(elem);
+    appendElement(*sample, curRow, [this, curElem](Element *elem){
+        elem->setLabel(curElem->label());
+        elem->setTitle(curElem->title());
+        Z::Utils::copyParamValuesByName(curElem, elem, "SchemaViewWindow::replaceElement");
+    
+        schema()->deleteElements({curElem}, Arg::RaiseEvents(true), Arg::FreeElem(true));
+    });
 }
 
 void SchemaViewWindow::actionElemMoveUp()
@@ -294,6 +310,109 @@ void SchemaViewWindow::actionElemDisable()
     schema()->events().raise(SchemaEvents::RecalRequred, "SchemaViewWindow: toggle disabled");
 }
 
+void SchemaViewWindow::actionRangeInsert()
+{
+    ElementRange* oldRange = Z::Utils::asRange(_table->currentElem());
+    if (!oldRange) return;
+    
+    auto sample = ElementsCatalogDialog::chooseElementSample(tr("Insert Into"), "elem_opers_insert_into");
+    if (!sample) return;
+
+    auto halfLen = oldRange->paramLength()->value() / 2.0;
+    oldRange->paramLength()->setValue(halfLen);
+
+    auto newRange = (ElementRange*)ElementsCatalog::instance().create(oldRange->type());
+    if (AppSettings::instance().elemAutoLabel)
+        newRange->setLabel(Z::Utils::generateLabel(schema(), oldRange->labelPrefix()));
+    newRange->paramLength()->setValue(halfLen);
+
+    // relinkInterfaces is in insertElements()
+    // skip RecalRequred, it will be at insertion of the next element
+    schema()->insertElements({newRange}, schema()->indexOf(oldRange)+1, Arg::RaiseEvents(false));
+    schema()->events().raise(SchemaEvents::ElemCreated, newRange, "SchemaViewWindow: insert into");
+    
+    appendElement(*sample, schema()->indexOf(newRange));
+}
+
+void SchemaViewWindow::actionRangeSplit()
+{
+    ElementRange* oldRange = Z::Utils::asRange(_table->currentElem());
+    if (!oldRange) return;
+    
+    SplitRangeDlg dlg(schema(), oldRange);
+    if (!dlg.exec()) return;
+    
+    if (dlg.oldLabel() != oldRange->label())
+        oldRange->setLabel(dlg.oldLabel());
+    if (dlg.oldValue() != oldRange->paramLength()->value())
+        oldRange->paramLength()->setValue(dlg.oldValue());
+    
+    auto newRange = (ElementRange*)ElementsCatalog::instance().create(oldRange->type());
+    newRange->setLabel(dlg.newLabel());
+    newRange->paramLength()->setValue(dlg.newValue());
+    
+    int beforeIndex = schema()->indexOf(oldRange);
+    if (dlg.insertAfter())
+        beforeIndex += 1;
+        
+    // relinkInterfaces is in insertElements()
+    schema()->insertElements({newRange}, beforeIndex, Arg::RaiseEvents(false));
+    schema()->events().raise(SchemaEvents::ElemCreated, newRange, "SchemaViewWindow: split");
+    
+    if (dlg.insertPoint()) {
+        auto point = new ElemPoint;
+        point->setLabel(dlg.pointLabel());
+        beforeIndex = schema()->indexOf(dlg.insertAfter() ? newRange : oldRange);
+        schema()->insertElements({point}, beforeIndex, Arg::RaiseEvents(false));
+        schema()->events().raise(SchemaEvents::ElemCreated, point, "SchemaViewWindow: split");
+    }
+    
+    schema()->events().raise(SchemaEvents::RecalRequred, "SchemaViewWindow: split");
+    
+    _table->setCurrentElem(newRange);
+}
+
+void SchemaViewWindow::actionRangeMerge()
+{
+    auto selected = _table->selection();
+    if (selected.length() != 2) return;
+    auto elem1 = Z::Utils::asRange(selected.at(0));
+    auto elem2 = Z::Utils::asRange(selected.at(1));
+    if (!elem1 || !elem2) return;
+    
+    MergeRangesDlg dlg(elem1, elem2);
+    if (!dlg.exec()) return;
+    
+    auto v1 = elem1->paramLength()->value();
+    auto v2 = elem2->paramLength()->value();
+    auto v0 = Z::Value::fromSi(v1.toSi() + v2.toSi(), v1.unit());
+    elem1->paramLength()->setValue(v0);
+    
+    schema()->deleteElements({elem2}, Arg::RaiseEvents(true), Arg::FreeElem(true));
+    
+    _table->setCurrentElem(elem1);
+}
+
+void SchemaViewWindow::actionRangeSlide()
+{
+    auto selected = _table->selection();
+    ElementRange *elem1, *elem2;
+    if (selected.length() == 1) {
+        int index = schema()->indexOf(selected.first());
+        elem1 = Z::Utils::asRange(schema()->element(index - 1));
+        elem2 = Z::Utils::asRange(schema()->element(index + 1));
+    } else if (selected.length() == 2) {
+        elem1 = Z::Utils::asRange(selected.first());
+        elem2 = Z::Utils::asRange(selected.last());
+        if (schema()->indexOf(elem1) > schema()->indexOf(elem2))
+            std::swap(elem1, elem2);
+    } else return;
+    if (!elem1 || !elem2) return;
+        
+    SlideRangesDlg dlg(elem1, elem2);
+    if (!dlg.exec()) return;
+}
+
 //------------------------------------------------------------------------------
 
 bool SchemaViewWindow::canCopy()
@@ -347,9 +466,58 @@ void SchemaViewWindow::currentElemChanged(Element* elem)
     actnSaveCustom->setEnabled(hasElem);
     actnElemDisable->setEnabled(hasElem);
 
+    bool isRange = Z::Utils::isRange(elem);
+    actnRangeInsert->setEnabled(isRange);
+    actnRangeSplit->setEnabled(isRange);
+    actnCtxRangeInsert->setEnabled(isRange);
+    actnCtxRangeSplit->setEnabled(isRange);
+    actnCtxRangeInsert->setVisible(isRange);
+    actnCtxRangeSplit->setVisible(isRange);
+
     bool isFormula = dynamic_cast<ElemFormula*>(elem);
     actnEditFormula->setEnabled(isFormula);
     actnEditFormula->setVisible(isFormula);
+}
+
+static bool canMergeRanges(Schema *schema, const Elements& selected)
+{
+    if (selected.length() != 2) return false;
+    auto elem1 = selected.first();
+    auto elem2 = selected.last();
+    if (elem1->type() != elem2->type()) return false;
+    if (!Z::Utils::isRange(elem1)) return false;
+    auto index1 = schema->indexOf(elem1);
+    auto index2 = schema->indexOf(elem2);
+    return qAbs(index1 - index2) == 1;
+}
+
+static bool canSlideRanges(Schema *schema, const Elements& selected)
+{
+    Element *elem1 = nullptr;
+    Element *elem2 = nullptr;
+    if (selected.length() == 1) {
+        int index = schema->indexOf(selected.first());
+        elem1 = schema->element(index-1);
+        elem2 = schema->element(index+1);
+    } else if (selected.length() == 2) {
+        elem1 = selected.first();
+        elem2 = selected.last();
+    }
+    if (!elem1 || !elem2) return false;
+    if (elem1->type() != elem2->type()) return false;
+    return Z::Utils::isRange(elem1);
+}
+
+void SchemaViewWindow::selectionChanged(const Elements& selected)
+{
+    bool canMerge = canMergeRanges(schema(), selected);
+    bool canSlide = canSlideRanges(schema(), selected);
+    actnRangeMerge->setEnabled(canMerge);
+    actnCtxRangeMerge->setEnabled(canMerge);
+    actnCtxRangeMerge->setVisible(canMerge);
+    actnRangeSlide->setEnabled(canSlide);
+    actnCtxRangeSlide->setEnabled(canSlide);
+    actnCtxRangeSlide->setVisible(canSlide);
 }
 
 void SchemaViewWindow::elemsContextMenuAboutToShow()

@@ -1,4 +1,5 @@
 .. _ElemPoint:
+.. _elem_point:
 .. index:: single: point element
 
 Point Element

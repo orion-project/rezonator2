@@ -252,11 +252,11 @@ Element* Schema::elementByLabel(const QString& label) const
     return nullptr;
 }
 
-void Schema::insertElements(const Elements& elems, int index, Arg::RaiseEvents events)
+void Schema::insertElements(const Elements& elems, int beforeIndex, Arg::RaiseEvents events)
 {
     if (elems.isEmpty()) return;
 
-    bool insert = isValid(index);
+    bool insert = isValid(beforeIndex);
     for (int i = 0; i < elems.size(); i++)
     {
         auto elem = elems.at(i);
@@ -264,7 +264,7 @@ void Schema::insertElements(const Elements& elems, int index, Arg::RaiseEvents e
             Z::Utils::setElemWavelen(elem, _wavelength.value());
 
         if (insert)
-            _items.insert(index + i, elem);
+            _items.insert(beforeIndex + i, elem);
         else
             _items.append(elem);
 
@@ -521,6 +521,14 @@ void generateLabel(const Elements& elements, Element* elem, const QString &label
             labels << e->label();
     QString prefix = labelPrefix.isEmpty() ? elem->labelPrefix() : labelPrefix;
     elem->setLabel(generateLabel(prefix, labels));
+}
+
+QString generateLabel(Schema* schema, const QString& prefix)
+{
+    QStringList labels;
+    foreach (const auto e, schema->elements())
+        labels << e->label();
+    return generateLabel(prefix, labels);
 }
 
 void generateLabel(Schema* schema, PumpParams* pump)

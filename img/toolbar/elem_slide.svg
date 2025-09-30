@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24" height="24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="d-0" x1="5.16" x2="5.16" y1="18.8" y2="10.8" gradientTransform="rotate(90 9.98 22.8)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#00b4ff" offset="0"/>
+   <stop stop-color="#797ac2" offset="1"/>
+  </linearGradient>
+ </defs>
+ <filter id="a" x="-.137" y="-.11" width="1.27" height="1.22">
+  <feGaussianBlur stdDeviation=".33319131"/>
+ </filter>
+ <linearGradient id="b">
+  <stop stop-color="#0e0f55" offset="0"/>
+  <stop stop-color="#6a6de8" offset="1"/>
+ </linearGradient>
+ <linearGradient id="c" x1=".746" x2="8.31" y1="12" y2="12" gradientUnits="userSpaceOnUse" xlink:href="#b"/>
+ <linearGradient id="d" x1="3.42" x2="23.2" y1="12.2" y2="12.2" gradientUnits="userSpaceOnUse">
+  <stop stop-color="#0e0f55" offset="0"/>
+  <stop stop-color="#a5a6f1" offset="1"/>
+ </linearGradient>
+ <linearGradient id="e" x1="2.21" x2="18.6" y1="9.89" y2="9.89" gradientUnits="userSpaceOnUse" xlink:href="#b"/>
+ <g transform="matrix(.614 0 0 .556 7.54 .444)">
+  <path d="m8.31 23h-1.81c-2.76 0-5.76-4.93-5.76-11 0-6.07 2.99-11 5.76-11h1.81z" fill="url(#c)"/>
+  <path transform="matrix(.64 0 0 1.13 -.0349 -1.79)" d="m22.5 12.2a9.16 9.16 0 1 1-18.3 0 9.16 9.16 0 1 1 18.3 0z" fill="#7fe1ff" stroke="url(#d)" stroke-width="1.5"/>
+  <path transform="matrix(.587 0 0 1.06 1.46 -2.05)" d="m20.2 13.9a7.36 7.36 0 1 1-14.7 0 7.36 7.36 0 1 1 14.7 0z" fill="#42a5c9"/>
+  <path transform="matrix(.312 -.589 .321 .572 1.87 7.01)" d="m10.7 6.12a5.05 1.79 0 1 1-10.1 0 5.05 1.79 0 1 1 10.1 0z" fill="#fff"/>
+  <path transform="matrix(.455 -.785 .418 .811 -2.86 13.2)" d="m21.3 14.3a7.14 5.95 0 1 1-14.3 0 7.14 5.95 0 1 1 14.3 0z" fill="#7fe1ff"/>
+  <path transform="matrix(.665 0 0 1.23 1.55 -.193)" d="m18.3 9.89a7.92 7.92 0 1 1-15.8 0 7.92 7.92 0 1 1 15.8 0z" fill="none" opacity=".657" stroke="url(#e)" stroke-width=".5"/>
+  <path d="m12.7 12.4a1.3 4.58 25 1 1-4.26 7.93 1.3 4.58 25 1 1 4.26-7.93z" fill="#fff" stroke-width=".813"/>
+ </g>
+ <path id="path7-8" d="m17 24 6-6-6-6v3h-4v6h4z" fill="url(#d-0)" fill-rule="evenodd"/>
+ <use transform="matrix(-1,0,0,1,24,0)" xlink:href="#path7-8"/>
+</svg>

@@ -47,12 +47,14 @@ public:
     /// and in this case the result pointer is persistent and not need to be freed.
     /// The sample can be one of the elements stored in the Custom Elements Library,
     /// then the result pointer should be freed manually after usage to prevent memory leaks.
-    static std::optional<ElementSample> chooseElementSample();
+    static std::optional<ElementSample> chooseElementSample(const QString &dlgTitle = {}, const QString &helpTopic = {});
+    
+    void setHelpTopic(const QString &topic) { _helpTopic = topic; }
 
 protected:
     QSize prefferedSize() const override { return QSize(620, 400); }
     
-    QString helpTopic() const override { return "catalog.html"; }
+    QString helpTopic() const override { return _helpTopic; }
 
 private:
     ElementTypesListView *_elementsList;
@@ -64,6 +66,7 @@ private:
     int _customElemsTab = -1;
     Schema *_library = nullptr;
     QSet<QString> _customPreviews;
+    QString _helpTopic = "catalog.html";
 
     void categorySelected(int index);
     void updatePreview(Element *elem);

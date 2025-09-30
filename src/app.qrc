@@ -36,11 +36,15 @@
         <file alias="elem_delete">../img/toolbar/elem_delete.svg</file>
         <file alias="elem_disable">../img/toolbar/elem_disable.svg</file>
         <file alias="elem_error">../img/toolbar/elem_error.svg</file>
+        <file alias="elem_insert">../img/toolbar/elem_insert.svg</file>
+        <file alias="elem_merge">../img/toolbar/elem_merge.svg</file>
         <file alias="elem_move_up">../img/toolbar/elem_move_up.svg</file>
         <file alias="elem_move_down">../img/toolbar/elem_move_down.svg</file>
         <file alias="elem_matr">../img/toolbar/elem_matr.svg</file>
         <file alias="elem_prop">../img/toolbar/elem_prop.svg</file>
         <file alias="elem_replace">../img/toolbar/elem_replace.svg</file>
+        <file alias="elem_slide">../img/toolbar/elem_slide.svg</file>
+        <file alias="elem_split">../img/toolbar/elem_split.svg</file>
         <file alias="equals">../img/toolbar/equals.svg</file>
         <file alias="equ_left">../img/toolbar/equ_left.svg</file>
         <file alias="equ_right">../img/toolbar/equ_right.svg</file>
@@ -81,6 +85,7 @@
         <file alias="indent_dec">../img/toolbar/indent_dec.svg</file>
         <file alias="indent_inc">../img/toolbar/indent_inc.svg</file>
         <file alias="iris">../img/toolbar/iris.svg</file>
+        <file alias="knife">../img/toolbar/knife.svg</file>
         <file alias="label">../img/toolbar/label.svg</file>
         <file alias="limits_auto_x">../img/toolbar/limits_auto_x.svg</file>
         <file alias="limits_auto_y">../img/toolbar/limits_auto_y.svg</file>
@@ -98,8 +103,11 @@
         <file alias="math_mult">../img/toolbar/math_mult.svg</file>
         <file alias="math_plus">../img/toolbar/math_plus.svg</file>
         <file alias="menu">../img/toolbar/menu.svg</file>
-        <file alias="move_up">../img/toolbar/move_up.svg</file>
         <file alias="move_down">../img/toolbar/move_down.svg</file>
+        <file alias="move_left">../img/toolbar/move_left.svg</file> 
+        <file alias="move_left_right">../img/toolbar/move_left_right.svg</file> 
+        <file alias="move_right">../img/toolbar/move_right.svg</file> 
+        <file alias="move_up">../img/toolbar/move_up.svg</file> 
         <file alias="navigate_back">../img/toolbar/navigate_back.svg</file>
         <file alias="navigate_fwd">../img/toolbar/navigate_fwd.svg</file>
         <file alias="notepad">../img/toolbar/notepad.svg</file>
