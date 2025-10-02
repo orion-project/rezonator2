@@ -9,7 +9,7 @@
 #include <QDebug>
 #include <QLabel>
 #include <QMouseEvent>
-#include <QTextDocument>
+#include <QTextEdit>
 #include <QToolButton>
 #include <QVBoxLayout>
 
@@ -95,8 +95,9 @@ void FrozenStatePopup::setInfo(const QString& info)
 
 void FrozenStatePopup::buttonCopyClick()
 {
-    QTextDocument doc;
-    doc.setHtml(textInfo->text());
-    QApplication::clipboard()->setText(doc.toPlainText());
+    QTextEdit ed;
+    ed.setHtml(textInfo->text());
+    ed.selectAll();
+    ed.copy();
     close();
 }

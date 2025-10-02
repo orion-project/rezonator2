@@ -21,6 +21,9 @@
         },
         {
           "text": "Fix: stored memo content could produce unparsable json file"
+        },
+        {
+          "text": "Fix: accidentally change of format when selecting text in memo editor"
         }
       ]
     },

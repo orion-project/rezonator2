@@ -572,6 +572,8 @@ void MemoWindow::textStrikeout()
 
 void MemoWindow::textFamily(const QString &f)
 {
+    if (_isFormatShowing) return;
+
     QTextCharFormat fmt;
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 13, 0))
     fmt.setFontFamilies({f});
@@ -583,6 +585,8 @@ void MemoWindow::textFamily(const QString &f)
 
 void MemoWindow::textSize(const QString &p)
 {
+    if (_isFormatShowing) return;
+
     qreal pointSize = p.toFloat();
     if (p.toFloat() > 0)
     {
@@ -688,12 +692,14 @@ void MemoWindow::currentCharFormatChanged(const QTextCharFormat &format)
 
 void MemoWindow::fontChanged(const QFont &f)
 {
+    _isFormatShowing = true;
     _comboFont->setCurrentIndex(_comboFont->findText(QFontInfo(f).family()));
     _comboSize->setCurrentIndex(_comboSize->findText(QString::number(f.pointSize())));
     _actionBold->setChecked(f.bold());
     _actionItalic->setChecked(f.italic());
     _actionUnderline->setChecked(f.underline());
     _actionStrikeout->setChecked(f.strikeOut());
+    _isFormatShowing = false;
 }
 
 void MemoWindow::textColorChanged(const QBrush &b)

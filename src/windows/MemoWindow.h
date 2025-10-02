@@ -109,6 +109,7 @@ private:
         *_actionAlignJustify, *_actionUndo, *_actionRedo, *_actionCut, *_actionCopy, *_actionPaste, *_actionPasteText,
         *_actionInsertTable, *_actionIndent, *_actionUnindent, *_actionExportPdf;
     bool _isLoading = true;
+    bool _isFormatShowing = false;
 
     void createActions();
     void createMenuBar();
