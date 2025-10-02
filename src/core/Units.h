@@ -52,6 +52,7 @@ namespace Z {
 namespace Units {
 
 DECLARE_UNIT(none)
+DECLARE_UNIT(percent)
 
 DECLARE_UNIT(Ao)
 DECLARE_UNIT(nm)

@@ -10,7 +10,7 @@ namespace Z {
 namespace Tests {
 namespace SchemaReaderIniTests {
 
-#define READ_AND_ASSERT(file_name)\
+#define INI_READ_AND_ASSERT(file_name)\
     TEST_FILE(fullFileName, file_name)\
     SchemaReaderIni reader(&schema);\
     reader.readFromFile(fullFileName);\
@@ -68,7 +68,7 @@ TEST_METHOD(read_invalid_lambda)
 {
     Schema schema;
     schema.wavelength().setValue(640_nm);
-    READ_AND_ASSERT("invalid_lambda.she")
+    INI_READ_AND_ASSERT("invalid_lambda.she")
     ASSERT_IS_TRUE(reader.report().hasWarnings())
     schema.wavelength().setValue(640_nm); // value unchanged
 }
@@ -76,7 +76,7 @@ TEST_METHOD(read_invalid_lambda)
 TEST_METHOD(read_invalid_elem_type)
 {
     Schema schema;
-    READ_AND_ASSERT("invalid_elem_type.she")
+    INI_READ_AND_ASSERT("invalid_elem_type.she")
     ASSERT_IS_TRUE(reader.report().hasWarnings())
     ASSERT_IS_TRUE(schema.count() == 0)
 }
@@ -84,7 +84,7 @@ TEST_METHOD(read_invalid_elem_type)
 TEST_METHOD(read_invalid_elem_section)
 {
     Schema schema;
-    READ_AND_ASSERT("invalid_elem_section.she")
+    INI_READ_AND_ASSERT("invalid_elem_section.she")
     ASSERT_IS_TRUE(reader.report().hasWarnings())
     ASSERT_EQ_INT(schema.elements().count(), 2)
 }
@@ -92,7 +92,7 @@ TEST_METHOD(read_invalid_elem_section)
 TEST_METHOD(read_invalid_elem_param)
 {
     Schema schema;
-    READ_AND_ASSERT("invalid_elem_param.she")
+    INI_READ_AND_ASSERT("invalid_elem_param.she")
     ASSERT_IS_TRUE(reader.report().hasWarnings())
     ASSERT_EQ_INT(schema.elements().count(), 1)
 }
@@ -102,7 +102,7 @@ TEST_METHOD(read_invalid_elem_param)
 TEST_METHOD(read_general)
 {
     Schema schema;
-    READ_AND_ASSERT("no_elems.she")
+    INI_READ_AND_ASSERT("no_elems.she")
     ASSERT_IS_TRUE(schema.count() == 0)
 
     //TODO? ASSERT_EQ_STR(schema.title(), "Empty schema")
@@ -120,7 +120,7 @@ TEST_CASE_METHOD(read_schema, const QString& fileName,
     Z::Unit none = Z::Units::none();
 
     Schema schema;
-    READ_AND_ASSERT(fileName)
+    INI_READ_AND_ASSERT(fileName)
 
     TEST_LOG(schema.wavelength().str())
     ASSERT_EQ_ZVALUE(schema.wavelength().value(), Z::Value(1064, expectedLambdaUnit))
@@ -223,7 +223,7 @@ TEST_CASE(read_schema_1_2, read_schema, "all_elems_ver-1-2.she", Z::Units::mkm()
 
 #define ASSERT_PUMP(file_name, mode, param1, value1T, value1S, unit1, param2, value2T, value2S, unit2, param3, value3T, value3S, unit3)\
     Schema schema;\
-    READ_AND_ASSERT(file_name)\
+    INI_READ_AND_ASSERT(file_name)\
     ASSERT_IS_NOT_NULL(schema.activePump())\
     auto pump = dynamic_cast<PumpParams_##mode*>(schema.activePump());\
     ASSERT_IS_NOT_NULL(pump)\

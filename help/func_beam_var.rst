@@ -22,10 +22,15 @@ Variation
 
 The fields allow specifying starting and ending values of the selected parameter (plot range) and a number of points in resulting graphs. The points number can be input directly in the “Number of points” field. Instead, it is possible to specify a distance between points (plotting step) in the field “With step”.
 
-Plot positions
-~~~~~~~~~~~~~~
+Plot position
+~~~~~~~~~~~~~
 
-An element to calculate beam radius at. If the element has length (a :ref:`elem_brewster_crystal`, for example), you can also specify an offset from the left edge of the element to calculate beam radius within it. If you set the offset value larger than the element’s length, it will be truncated to the length. The offset value can be negative; then it gets subtracted from the element’s length. So the negative offset is the distance from the right edge of the element.
+An element to calculate beam radius at. If the element has length (a :ref:`elem_brewster_crystal`, for example), you can also specify an offset from the left edge of the element to calculate beam radius within it. If you set the offset value larger than the element’s length, it will be truncated to the length.
+
+The offset can be given as a relative value. To do so, select the percent sign from the unit drop-down. Then, the value 50%, for example, will mean "half of the element length" and will be calculated automatically when the function is updated.
+
+The offset value can be negative; then it gets subtracted from the element’s length. So the negative offset is the distance from the right edge of the element.
+
 
 Additional Parameters
 ---------------------

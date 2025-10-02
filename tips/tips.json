@@ -64,5 +64,9 @@
     "lensmaker": {
         "text": "You can visualize simple lens designs and estimate lens shapes and focus positions using the <b>Lensmaker</b> tool.",
         "image": "tool_lensmaker.png"
+    },
+    "beam_variation_offset": {
+        "text": "In the Beamsize Variation function, you can specify an <b>offset</b> inside an element where the beam size should be calculated. The offset can be given as a negative value, the it will be measured from the right side of the element. It event can be given as a relative value and will be calculated automatically!",
+        "image": "beam_variation_offset.png"
     }
 }

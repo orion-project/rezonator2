@@ -37,6 +37,8 @@ void BeamVariationFunction::calculate(CalculationMode calcMode)
     {
         _ior = rangeElem->ior();
         subrangeSi = _pos.offset.toSi();
+        if (_pos.offset.unit() == UNIT(percent))
+            subrangeSi *= rangeElem->axisLengthSI() / 100.0;
         if (subrangeSi < 0)
             subrangeSi += rangeElem->axisLengthSI();
         rangeElem->setSubRangeSI(subrangeSi);
@@ -98,6 +100,8 @@ Z::PointTS BeamVariationFunction::calculateAt(const Z::Value& v)
     auto rangeElem = Z::Utils::asRange(_pos.element);
     if (rangeElem) {
         auto offset = _pos.offset.toSi();
+        if (_pos.offset.unit() == UNIT(percent))
+            offset *= rangeElem->axisLengthSI() / 100.0;
         if (offset < 0)
             offset += rangeElem->axisLengthSI();
         rangeElem->setSubRangeSI(offset);

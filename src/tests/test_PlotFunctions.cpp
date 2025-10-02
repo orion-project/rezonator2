@@ -506,6 +506,8 @@ TEST_CASE_METHOD(calculateAt_offset, Z::Value offset)
         func.calculate();
         ASSERT_FUNC_OK
         auto p = offset;
+        if (p.unit() == UNIT(percent))
+            p = g1->axisLen() * p.value() / 100.0;
         if (p < 0)
             p += g1->axisLen();
         causticResult = func.calculateAt(p);
@@ -517,6 +519,8 @@ TEST_CASE(calculateAt_offset_positive_small, calculateAt_offset, 5_mm);
 TEST_CASE(calculateAts_offset_positive_large, calculateAt_offset, 105_mm);
 TEST_CASE(calculateAt_offset_negative_small, calculateAt_offset, -5_mm);
 TEST_CASE(calculateAt_offset_negative_large, calculateAt_offset, -105_mm);
+TEST_CASE(calculateAt_offset_positive_percent, calculateAt_offset, 5_percent);
+TEST_CASE(calculateAt_offset_negative_percent, calculateAt_offset, -5_percent);
 
 TEST_GROUP("BeamVariationFunction",
            ADD_TEST(calculate_resonator),
@@ -527,6 +531,8 @@ TEST_GROUP("BeamVariationFunction",
            ADD_TEST(calculateAts_offset_positive_large),
            ADD_TEST(calculateAt_offset_negative_small),
            ADD_TEST(calculateAt_offset_negative_large),
+           ADD_TEST(calculateAt_offset_positive_percent),
+           ADD_TEST(calculateAt_offset_negative_percent),
            )
 } // namespace BeamVariation
 

@@ -25,6 +25,8 @@ public:
     Z::Unit selectedUnit() const;
     void setSelectedUnit(Z::Unit unit);
 
+    void addUnit(Z::Unit unit);
+
     void setEnabled(bool on);
 
     /// If the user can select a unit from Z::Dims::fixed() dimension.

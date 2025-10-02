@@ -259,6 +259,7 @@ ElemOffsetSelectorWidget::ElemOffsetSelectorWidget(Schema* schema, ElementFilter
 
     _offsetTitle = new QLabel(tr("Offset"));
     _offsetEditor = new ValueEditor;
+    _offsetEditor->allowPercent = true;
     currentElemChanged(-1);
 
     setColumnStretch(1, 1);
@@ -293,7 +294,9 @@ Z::Value ElemOffsetSelectorWidget::offset() const
 
 void ElemOffsetSelectorWidget::setOffset(const Z::Value& offset)
 {
-    _offsetEditor->setValue(offset);
+    // the value here can be given in percent
+    // so the dim could not be guessed inside editor and should be passed explicitly
+    _offsetEditor->setValue(offset, Z::Dims::linear());
 }
 
 WidgetResult ElemOffsetSelectorWidget::verify()
@@ -308,7 +311,10 @@ WidgetResult ElemOffsetSelectorWidget::verify()
     auto length = range->axisLengthSI();
     auto offset = this->offset();
     
-    if (qAbs(offset.toSi()) > length) 
+    if (offset.unit() == UNIT(percent)) {
+        if (qAbs(offset) > 100)
+            _offsetEditor->setValue(Z::Value(offset < 0 ? -100 : 100, UNIT(percent)));
+    } else if (qAbs(offset.toSi()) > length) 
         _offsetEditor->setValue(Z::Value::fromSi(offset.value() < 0 ? -length : length, offset.unit()));
 
     return WidgetResult::ok();

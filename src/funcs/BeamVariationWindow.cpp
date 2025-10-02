@@ -121,9 +121,14 @@ BeamVariationWindow::BeamVariationWindow(Schema *schema)
 
     _plot->addTextVarY("{place}", tr("Target element (with offset)"), [this]{
         auto pos = function()->pos();
-        if (Z::Utils::isRange(pos->element))
+        auto range = Z::Utils::asRange(pos->element);
+        if (range) {
+            auto offset = pos->offset;
+            if (offset.unit() == UNIT(percent))
+                offset = range->axisLen() * offset.value() / 100.0;
             return QStringLiteral("%1 %2%3").arg(pos->element->label())
-                .arg(pos->offset < 0 ? '-' : '+').arg(pos->offset.abs().displayStr());
+                .arg(offset < 0 ? '-' : '+').arg(offset.abs().displayStr());
+        }
         return pos->element->label();
     });
 

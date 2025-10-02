@@ -5,7 +5,7 @@
       "date": "",
       "changes": [
         {
-          "text": "Can use negative offset in Beamsize Variation"
+          "text": "Can use negative and percent offset in Beamsize Variation"
         },
         {
           "text": "New commands for elements: Insert Into, Split, Merge, Slide"

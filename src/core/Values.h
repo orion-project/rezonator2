@@ -144,6 +144,7 @@ Z_VALUE_LITERAL(cm)
 Z_VALUE_LITERAL(m)
 
 Z_VALUE_LITERAL(deg)
+Z_VALUE_LITERAL(percent)
 
 namespace Z {
 

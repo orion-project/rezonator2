@@ -19,8 +19,10 @@ class ValueEditor : public QWidget
 public:
     explicit ValueEditor(QWidget *parent = nullptr);
 
-    void setValue(const Z::Value& value);
+    void setValue(const Z::Value& value, Z::Dim dim = nullptr);
     Z::Value value() const;
+    
+    bool allowPercent = false;
 
 signals:
     void valueChanged();

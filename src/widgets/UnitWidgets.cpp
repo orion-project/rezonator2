@@ -57,6 +57,18 @@ void UnitComboBox::populateInternal(Z::Dim dim, const QVector<Z::Unit>& units)
     setEnabled(true);
 }
 
+void UnitComboBox::addUnit(Z::Unit unit)
+{
+    _enableChangeEvent = false;
+
+    addItem(unit->name(), QVariant::fromValue(unit));
+    
+    _isEmptyOrSingleItem = count() < 2;
+
+    _enableChangeEvent = true;
+    setEnabled(true);
+}
+
 Z::Unit UnitComboBox::selectedUnit() const
 {
     return unitAt(currentIndex());

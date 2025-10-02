@@ -87,6 +87,7 @@ Unit _Dim_::unitByAliasOrSi(const QString& alias) const
 namespace Units {
 
 DEFINE_UNIT(none, "", v, v, none)
+DEFINE_UNIT(percent, "%", v, v, percent)
 
 DEFINE_UNIT(m, QT_TRANSLATE_NOOP_UTF8("Units", "m"), v, v, m) // SI-unit must be first
 DEFINE_UNIT(Ao, QT_TRANSLATE_NOOP_UTF8("Units", "Å"), v * 1e-10, v * 1e+10, m)
@@ -208,6 +209,8 @@ Unit findByAlias(const QString& alias, Unit defaultUnit)
         Unit unit = dim->unitByAlias(alias);
         if (unit) return unit;
     }
+    if (alias == percent()->alias())
+        return percent();
     return defaultUnit;
 }
 

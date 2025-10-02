@@ -16,16 +16,18 @@ ValueEditor::ValueEditor(QWidget *parent) : QWidget(parent)
     _valueEditor->setFont(Z::Gui::ValueFont().get());
     _valueEditor->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
 
-    connect(_valueEditor, &QLineEdit::textEdited, [this]{emit this->valueChanged();});
+    connect(_valueEditor, &QLineEdit::textEdited, this, [this]{emit this->valueChanged();});
 
     connect(_unitsSelector, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-        [this]{emit this->valueChanged();});
+        this, [this]{emit this->valueChanged();});
 }
 
-void ValueEditor::setValue(const Z::Value& value)
+void ValueEditor::setValue(const Z::Value& value, Z::Dim dim)
 {
     _valueEditor->setValue(value.value());
-    _unitsSelector->populate(Z::Units::guessDim(value.unit()));
+    _unitsSelector->populate(dim ? dim : Z::Units::guessDim(value.unit()));
+    if (allowPercent)
+        _unitsSelector->addUnit(Z::Units::percent());
     _unitsSelector->setSelectedUnit(value.unit());
 }
 

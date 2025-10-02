@@ -12,7 +12,7 @@ Result<Unit> readUnit(const QJsonObject& json, Dim dim)
 {
     auto unitStr = json["unit"].toString();
     Unit unit;
-    if (dim)
+    if (dim && unitStr != UNIT(percent)->alias())
     {
         unit = dim->unitByAlias(unitStr);
         if (!unit)
