@@ -479,18 +479,25 @@ TEST_CASE_METHOD(calculateAt_offset, Z::Value offset)
     ASSERT_IS_NOT_NULL(d1)
     ASSERT_IS_NOT_NULL(g1)
     
+    auto d1_len = d1->paramLength()->value();
+    
+    double variationPlotResT, variationPlotResS;
     Z::PointTS variationResult;
     Z::PointTS causticResult;
     {
         BeamVariationFunction func(&schema);
         func.arg()->element = d1;
         func.arg()->parameter = d1->paramLength();
-        func.arg()->range = Z::VariableRange::withPoints(25_mm, 35_mm, 10);
+        func.arg()->range = Z::VariableRange::withPoints(d1_len - 1_mm, d1_len + 1_mm, 3);
         func.pos()->element = g1;
         func.pos()->offset = offset;
         func.calculate();
         ASSERT_FUNC_OK
-        variationResult = func.calculateAt(d1->paramLength()->value());
+        variationResult = func.calculateAt(d1_len);
+        variationPlotResT = func.result(Z::T, 0).y().at(1);
+        variationPlotResS = func.result(Z::S, 0).y().at(1);
+        // Check that plot also correctly applies the offset
+        ASSERT_NEAR_TS(variationResult, variationPlotResT, variationPlotResS, 1e-10)
     }
     {
         CausticFunction func(&schema);
@@ -500,7 +507,7 @@ TEST_CASE_METHOD(calculateAt_offset, Z::Value offset)
         ASSERT_FUNC_OK
         auto p = offset;
         if (p < 0)
-            p = Z::Value::fromSi(p.toSi() + g1->axisLengthSI(), p.unit());
+            p += g1->axisLen();
         causticResult = func.calculateAt(p);
     }
     ASSERT_NEAR_TS(variationResult, causticResult.T, causticResult.S, 1e-10)

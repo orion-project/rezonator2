@@ -123,7 +123,7 @@ BeamVariationWindow::BeamVariationWindow(Schema *schema)
         auto pos = function()->pos();
         if (Z::Utils::isRange(pos->element))
             return QStringLiteral("%1 %2%3").arg(pos->element->label())
-                .arg(pos->offset.value() > 0 ? '+' : '-').arg(pos->offset.abs().displayStr());
+                .arg(pos->offset < 0 ? '-' : '+').arg(pos->offset.abs().displayStr());
         return pos->element->label();
     });
 

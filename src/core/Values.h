@@ -78,6 +78,10 @@ public:
     Value& operator = (const Value& v) { _value = v._value; _unit = v._unit; return *this; }
     Value& operator = (const double& v) { _value = v; return *this; }
     Value operator - () const { return Value(-_value, _unit); }
+    Value operator - (const Value &v) const { return fromSi(toSi() - v.toSi(), _unit); }
+    Value operator - (const double& v) const { return fromSi(toSi() - v, _unit); }
+    Value operator + (const Value &v) const { return fromSi(toSi() + v.toSi(), _unit); }
+    Value operator + (const double& v) const { return fromSi(toSi() + v, _unit); }
     Value operator * (const double& v) const { return Value(_value * v, _unit); }
     Value operator / (const double& v) const { return Value(_value / v, _unit); }
     bool operator == (const Value& v) const { return Double(toSi()).is(v.toSi()); }
@@ -92,6 +96,10 @@ public:
     bool operator < (const double& v) const { return toSi() < v; }
     bool operator <= (const Value& v) const { return toSi() <= v.toSi(); }
     bool operator <= (const double& v) const { return toSi() <= v; }
+    void operator -= (const Value& v) { _value = _unit->fromSi(toSi() - v.toSi()); }
+    void operator -= (const double& v) { _value = _unit->fromSi(toSi() - v); }
+    void operator += (const Value& v) { _value = _unit->fromSi(toSi() + v.toSi()); }
+    void operator += (const double& v) { _value = _unit->fromSi(toSi() + v); }
 
     static Value parse(const QString& valueStr);
     static Value fromSi(const double& valueSi, Unit unit) { return Value(unit->fromSi(valueSi), unit); }
