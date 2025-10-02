@@ -21,6 +21,8 @@ public:
     void readFromUtf8(const QByteArray& data);
 
     const Z::Report& report() const { return _report; }
+    
+    bool skipFuncWindows = false;
 
 private:
     Schema *_schema;

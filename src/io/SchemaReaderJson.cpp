@@ -86,7 +86,7 @@ void SchemaReaderJson::readFromUtf8(const QByteArray& data)
     readFormulas(root);
     readMemos(root);
 
-    if (!AppSettings::instance().skipFuncWindowsLoading)
+    if (!skipFuncWindows && !AppSettings::instance().skipFuncWindowsLoading)
         readWindows(root);
 }
 

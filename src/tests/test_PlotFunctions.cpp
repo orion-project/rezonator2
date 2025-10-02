@@ -1,5 +1,6 @@
 #include "../core/Schema.h"
 #include "../core/Elements.h"
+#include "../io/SchemaReaderJson.h"
 #include "../math/StabilityMapFunction.h"
 #include "../math/StabilityMap2DFunction.h"
 #include "../math/CausticFunction.h"
@@ -129,7 +130,7 @@ struct TestSchema
             schema->pumps()->append(p1);
         }
     }
-
+    
     ~TestSchema()
     {
         delete schema;
@@ -468,11 +469,57 @@ TEST_METHOD(calculateAt_SP)
     ASSERT_NEAR_TS(func.calculateAt(0.0255_m), 0.00516049459, 0.0061643707, 1e-11)
 }
 
+TEST_CASE_METHOD(calculateAt_offset, Z::Value offset)
+{
+    Schema schema;
+    READ_AND_ASSERT("func_beamsize_variation_axial_len.rez")
+    
+    auto d1 = Z::Utils::asRange(schema.element("d1"));
+    auto g1 = Z::Utils::asRange(schema.element("G1"));
+    ASSERT_IS_NOT_NULL(d1)
+    ASSERT_IS_NOT_NULL(g1)
+    
+    Z::PointTS variationResult;
+    Z::PointTS causticResult;
+    {
+        BeamVariationFunction func(&schema);
+        func.arg()->element = d1;
+        func.arg()->parameter = d1->paramLength();
+        func.arg()->range = Z::VariableRange::withPoints(25_mm, 35_mm, 10);
+        func.pos()->element = g1;
+        func.pos()->offset = offset;
+        func.calculate();
+        ASSERT_FUNC_OK
+        variationResult = func.calculateAt(d1->paramLength()->value());
+    }
+    {
+        CausticFunction func(&schema);
+        func.arg()->element = g1;
+        func.arg()->range = Z::VariableRange::withPoints(0_mm, 0_mm, 10);
+        func.calculate();
+        ASSERT_FUNC_OK
+        auto p = offset;
+        if (p < 0)
+            p = Z::Value::fromSi(p.toSi() + g1->axisLengthSI(), p.unit());
+        causticResult = func.calculateAt(p);
+    }
+    ASSERT_NEAR_TS(variationResult, causticResult.T, causticResult.S, 1e-10)
+}
+// large offset should be longer than G1 length (100mm) but less than its axial length (~110mm)
+TEST_CASE(calculateAt_offset_positive_small, calculateAt_offset, 5_mm);
+TEST_CASE(calculateAts_offset_positive_large, calculateAt_offset, 105_mm);
+TEST_CASE(calculateAt_offset_negative_small, calculateAt_offset, -5_mm);
+TEST_CASE(calculateAt_offset_negative_large, calculateAt_offset, -105_mm);
+
 TEST_GROUP("BeamVariationFunction",
            ADD_TEST(calculate_resonator),
            ADD_TEST(calculateAt_resonator),
            ADD_TEST(calculate_SP),
            ADD_TEST(calculateAt_SP),
+           ADD_TEST(calculateAt_offset_positive_small),
+           ADD_TEST(calculateAts_offset_positive_large),
+           ADD_TEST(calculateAt_offset_negative_small),
+           ADD_TEST(calculateAt_offset_negative_large),
            )
 } // namespace BeamVariation
 

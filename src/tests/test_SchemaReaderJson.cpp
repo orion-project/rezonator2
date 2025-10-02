@@ -9,13 +9,6 @@ namespace Z {
 namespace Tests {
 namespace SchemaReaderJsonTests {
 
-#define READ_AND_ASSERT(file_name)\
-    TEST_FILE(fullFileName, file_name)\
-    SchemaReaderJson reader(&schema);\
-    reader.readFromFile(fullFileName);\
-    LOG_SCHEMA_READER(reader)\
-    ASSERT_IS_FALSE(reader.report().hasErrors())
-
 //------------------------------------------------------------------------------
 
 #define READ_PUMPS\
