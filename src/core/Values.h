@@ -99,6 +99,8 @@ public:
     
     bool isZero() const;
     bool isInf() const;
+    
+    Value abs() const { return Value(qAbs(_value), _unit); }
 
 private:
     double _value;

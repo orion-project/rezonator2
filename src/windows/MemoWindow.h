@@ -42,6 +42,7 @@ public:
 
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return { _windowMenu }; }
+    QList<BasicMdiChild::MenuItem> menuItems_Edit() override;
     QString helpTopic() const override { return "memo_window.html"; }
 
     // inherits from IEditableWindow
@@ -92,6 +93,7 @@ private slots:
     void indent();
     void unindent();
     void exportPdf();
+    void pasteText();
 
 private:
     static MemoWindow* _instance;
@@ -104,7 +106,7 @@ private:
     QToolButton *_alignButton;
     QAction *_actionBold, *_actionUnderline, *_actionItalic, *_actionStrikeout,
         *_actionTextColor, *_actionBackColor, *_actionAlignLeft, *_actionAlignCenter, *_actionAlignRight,
-        *_actionAlignJustify, *_actionUndo, *_actionRedo, *_actionCut, *_actionCopy, *_actionPaste,
+        *_actionAlignJustify, *_actionUndo, *_actionRedo, *_actionCut, *_actionCopy, *_actionPaste, *_actionPasteText,
         *_actionInsertTable, *_actionIndent, *_actionUnindent, *_actionExportPdf;
     bool _isLoading = true;
 

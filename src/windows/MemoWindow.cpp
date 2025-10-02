@@ -53,6 +53,8 @@ SchemaWindow* createWindow(Schema* schema)
 class MemoTextEdit : public QTextEdit
 {
 public:
+    bool pasteFormat = true;
+
     MemoTextEdit(SchemaMemo* memo) : QTextEdit(), _memo(memo)
     {
         if (!memo->images.isEmpty())
@@ -93,6 +95,13 @@ public:
         {
             insertImage(qvariant_cast<QImage>(source->imageData()));
             return;
+        }
+        if (source->hasText())
+        {
+            if (!pasteFormat) {
+                insertPlainText(source->text());
+                return;
+            }
         }
         QTextEdit::insertFromMimeData(source);
     }
@@ -424,6 +433,7 @@ void MemoWindow::createActions()
     _actionCut = A_(tr("Cut"), _editor, SLOT(cut()), ":/toolbar/cut");
     _actionCopy = A_(tr("Copy"), _editor, SLOT(copy()), ":/toolbar/copy");
     _actionPaste = A_(tr("Paste"), _editor, SLOT(paste()), ":/toolbar/paste");
+    _actionPasteText = A_(tr("Paste Without Formatting"), this, SLOT(pasteText()), ":/toolbar/paste", Qt::ControlModifier|Qt::ShiftModifier|Qt::Key_V);
 
     _actionBold = A_(tr("Bold"), this, SLOT(textBold()), ":/toolbar/font_bold", QKeySequence::Bold);
     _actionItalic = A_(tr("Italic"), this, SLOT(textItalic()), ":/toolbar/font_italic", QKeySequence::Italic);
@@ -491,6 +501,11 @@ void MemoWindow::createToolBar()
         _actionBold, _actionItalic, _actionUnderline, _actionStrikeout, nullptr,
         _actionIndent, _actionUnindent, nullptr, _actionTextColor, _actionBackColor, _alignButton,
     });
+}
+
+QList<BasicMdiChild::MenuItem> MemoWindow::menuItems_Edit()
+{
+    return { _actionPasteText };
 }
 
 void MemoWindow::closeEvent(class QCloseEvent* e)
@@ -799,4 +814,11 @@ void MemoWindow::exportPdf()
     printer.setOutputFileName(fileName);
 
     _editor->document()->print(&printer);
+}
+
+void MemoWindow::pasteText()
+{
+    _editor->pasteFormat = false;
+    _editor->paste();
+    _editor->pasteFormat = true;
 }

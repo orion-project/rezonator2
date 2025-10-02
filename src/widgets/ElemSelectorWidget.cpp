@@ -305,16 +305,11 @@ WidgetResult ElemOffsetSelectorWidget::verify()
     auto range = Z::Utils::asRange(elem);
     if (!range) return WidgetResult::ok();
 
-    auto length = range->paramLength()->value();
+    auto length = range->axisLengthSI();
     auto offset = this->offset();
-
-    if (offset < 0)
-        return WidgetResult::fail(_offsetEditor,
-            tr("The offset value cannot be less than zero."));
-
-    if (offset > length)
-        return WidgetResult::fail(_offsetEditor,
-            tr("The offset cannot be greater than element length."));
+    
+    if (qAbs(offset.toSi()) > length) 
+        _offsetEditor->setValue(Z::Value::fromSi(offset.value() < 0 ? -length : length, offset.unit()));
 
     return WidgetResult::ok();
 }

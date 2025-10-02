@@ -411,6 +411,11 @@ void SchemaViewWindow::actionRangeSlide()
         
     SlideRangesDlg dlg(elem1, elem2);
     if (!dlg.exec()) return;
+    
+    elem1->paramLength()->setValue(dlg.value1());
+    elem2->paramLength()->setValue(dlg.value2());
+    
+    schema()->events().raise(SchemaEvents::RecalRequred, "SchemaViewWindow: slide");
 }
 
 //------------------------------------------------------------------------------
@@ -456,6 +461,7 @@ void SchemaViewWindow::selectAll()
 void SchemaViewWindow::currentElemChanged(Element* elem)
 {
     bool hasElem = elem;
+    actnElemReplace->setEnabled(hasElem);
     actnElemProp->setEnabled(hasElem);
     actnElemMatr->setEnabled(hasElem);
     actnElemMatrAll->setEnabled(hasElem);

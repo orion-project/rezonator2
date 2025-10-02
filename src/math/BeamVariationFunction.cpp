@@ -37,6 +37,8 @@ void BeamVariationFunction::calculate(CalculationMode calcMode)
     {
         _ior = rangeElem->ior();
         subrangeSi = _pos.offset.toSi();
+        if (subrangeSi < 0)
+            subrangeSi += rangeElem->axisLengthSI();
         rangeElem->setSubRangeSI(subrangeSi);
     }
 
@@ -94,8 +96,12 @@ Z::PointTS BeamVariationFunction::calculateAt(const Z::Value& v)
     ElementEventsLocker elemLock(param, "BeamVariationFunction::calculateAt");
     Z::ParamValueBackup paramLock(param, "BeamVariationFunction::calculateAt");
     auto rangeElem = Z::Utils::asRange(_pos.element);
-    if (rangeElem)
-        rangeElem->setSubRangeSI(_pos.offset.toSi());
+    if (rangeElem) {
+        auto offset = _pos.offset.toSi();
+        if (offset < 0)
+            offset += rangeElem->axisLengthSI();
+        rangeElem->setSubRangeSI(offset);
+    }
     param->setValue(v);
     bool isResonator = _schema->isResonator();
     if (!isResonator)

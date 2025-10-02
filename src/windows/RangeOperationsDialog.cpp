@@ -399,6 +399,16 @@ void SlideRangesDlg::onParamValueEdited()
     _skipSlider = false;
 }
 
+Z::Value SlideRangesDlg::value1() const
+{
+    return Z::Value(_editParam1->value(), _param1->value().unit());
+}
+
+Z::Value SlideRangesDlg::value2() const
+{
+    return Z::Value(_editParam2->value(), _param1->value().unit()).toUnit(_param2->value().unit());
+}
+
 bool SlideRangesDlg::exec()
 {
     return Ori::Dlg::Dialog(this, false)

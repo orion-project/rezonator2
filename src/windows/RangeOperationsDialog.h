@@ -71,6 +71,9 @@ public:
     explicit SlideRangesDlg(ElementRange* elem1, ElementRange* elem2);
     
     bool exec();
+
+    Z::Value value1() const;
+    Z::Value value2() const;
     
 private:
     const Z::Parameter *_param1, *_param2;

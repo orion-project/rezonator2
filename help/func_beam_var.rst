@@ -25,7 +25,7 @@ The fields allow specifying starting and ending values of the selected parameter
 Plot positions
 ~~~~~~~~~~~~~~
 
-An element to calculate beam radius at. If the element has length (a crystal, for example) you can also specify an offset from the left edge of the element to calculate beam radius within it. If you set the offset value larger than the element's length it will be truncated to the length. 
+An element to calculate beam radius at. If the element has length (a :ref:`elem_brewster_crystal`, for example), you can also specify an offset from the left edge of the element to calculate beam radius within it. If you set the offset value larger than the element’s length, it will be truncated to the length. The offset value can be negative; then it gets subtracted from the element’s length. So the negative offset is the distance from the right edge of the element.
 
 Additional Parameters
 ---------------------

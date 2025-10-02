@@ -5,7 +5,13 @@
       "date": "",
       "changes": [
         {
+          "text": "Can use negative offset in Beamsize Variation"
+        },
+        {
           "text": "New commands for elements: Insert Into, Split, Merge, Slide"
+        },
+        {
+          "text": "New command for memo editor: Paste Without Formatting"
         },
         {
           "text": "Fix: don't open file if it's already opened in the current window"
