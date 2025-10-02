@@ -325,7 +325,21 @@ void SchemaReaderJson::readMemos(const QJsonObject& root)
 
 void SchemaReaderJson::readMemo(const QJsonObject& root)
 {
-    auto text = root["text"].toString();
+    QString text;
+    if (root.contains("text")) {
+        text = root["text"].toString();
+    } else {
+        text = root["content"].toString();
+        if (!text.isEmpty()) {
+            auto res = QByteArray::fromBase64Encoding(text.toLatin1());
+            if (res)
+                text = QString::fromUtf8(res.decoded);
+            else {
+                _report.warning("Failed to decode memo content from base64");
+                return;
+            }
+        }
+    }
     if (text.isEmpty()) return;
 
     _schema->memo = new SchemaMemo;

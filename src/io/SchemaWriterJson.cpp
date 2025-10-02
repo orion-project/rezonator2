@@ -171,7 +171,7 @@ void SchemaWriterJson::writeMemos(QJsonObject& root)
 
     QJsonArray memosJson;
     QJsonObject memoJson;
-    memoJson["text"] = _schema->memo->text;
+    memoJson["content"] = QString::fromLatin1(_schema->memo->text.toUtf8().toBase64());
     memoJson["images"] = imagesIson;
     memosJson.append(memoJson);
 
