@@ -34,6 +34,8 @@ public:
     bool insertAfter() const { return _insertAfter; }
     bool insertPoint() const;
     
+    static QString helpTopic() { return "elem_opers_split"; }
+    
 private:
     const Z::Parameter *_srcParam;
     const double _sliderMax = 100;
@@ -60,6 +62,8 @@ public:
     explicit MergeRangesDlg(ElementRange* elem1, ElementRange* elem2);
     
     bool exec();
+    
+    static QString helpTopic() { return "elem_opers_merge"; }
 };
 
 
@@ -74,6 +78,8 @@ public:
 
     Z::Value value1() const;
     Z::Value value2() const;
+    
+    static QString helpTopic() { return "elem_opers_slide"; }
     
 private:
     const Z::Parameter *_param1, *_param2;

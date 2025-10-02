@@ -12,6 +12,9 @@ When an element selected is located between similar elements having the Length p
 
 Actually, it changes the length of both surrounding elements so that one of them becomes longer and the other one gets shorter by the same value. So that it's not necessary to select an element located between two spaces. Instead, you can select two arbitrary spaces and redistribute their lengths.
 
+    .. note::
+        The command changes the length of both elements. So it can not be executed when any of the lengths is not directly editable because it's controlled by a :ref:`global parameter <params_window>`.
+
 A slider shows the summary length, and its knob can be dragged to redistribute the length between both elements. Alternatively, the length of an element can be edited manually; the length of the second element is recalculated accordingly.
 
     .. image:: img/elem_opers_slide.png

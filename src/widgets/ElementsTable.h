@@ -45,6 +45,7 @@ private slots:
 private:
     Schema* _schema;
     ElementsTableModel* _model;
+    Element* _curElem = nullptr;
 };
 
 #endif // ELEMENTS_TABLE_H

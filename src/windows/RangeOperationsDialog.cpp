@@ -214,7 +214,7 @@ bool SplitRangeDlg::exec()
 {
     return Ori::Dlg::Dialog(this, false)
         .withTitle(tr("Split"))
-        .withOnHelp([]{ Z::HelpSystem::topic("elem_opers_split"); })
+        .withOnHelp([]{ Z::HelpSystem::topic(helpTopic()); })
         .withActiveWidget(_slider)
         .exec();
 }
@@ -273,7 +273,7 @@ bool MergeRangesDlg::exec()
 {
     return Ori::Dlg::Dialog(this, false)
         .withTitle(tr("Merge"))
-        .withOnHelp([]{ Z::HelpSystem::topic("elem_opers_merge"); })
+        .withOnHelp([]{ Z::HelpSystem::topic(helpTopic()); })
         .withContentToButtonsSpacingFactor(2)
         .exec();
 }
@@ -413,7 +413,7 @@ bool SlideRangesDlg::exec()
 {
     return Ori::Dlg::Dialog(this, false)
         .withTitle(tr("Slide"))
-        .withOnHelp([]{ Z::HelpSystem::topic("elem_opers_slide"); })
+        .withOnHelp([]{ Z::HelpSystem::topic(helpTopic()); })
         .withContentToButtonsSpacingFactor(2)
         .withActiveWidget(_slider)
         .exec();

@@ -15,7 +15,7 @@ Parameters
 Element, Parameter
 ~~~~~~~~~~~~~~~~~~
 
-Element and its parameter to vary. The value of this parameter will be marked along the horizontal axis of the stability map plot.
+An element and its parameter or a :ref:`global parameter <params_window>` to vary. The value of this parameter will be marked along the horizontal axis of the stability map plot.
 
 Variation
 ~~~~~~~~~

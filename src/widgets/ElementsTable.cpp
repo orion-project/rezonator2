@@ -308,7 +308,8 @@ void ElementsTable::setCurrentElem(Element* elem)
 
 void ElementsTable::currentRowChanged(const QModelIndex &current, const QModelIndex&)
 {
-    emit currentElemChanged(_schema->element(current.row()));
+    _curElem = _schema->element(current.row());
+    emit currentElemChanged(_curElem);
 }
 
 void ElementsTable::indexDoubleClicked(const QModelIndex &index)
@@ -326,5 +327,17 @@ void ElementsTable::showContextMenu(const QPoint& pos)
 void ElementsTable::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
 {
     QTableView::selectionChanged(selected, deselected);
+
+    // The table receives currentRowChanged and sends currentElemChanged when there is no elems yet, 
+    // because it has the "Add new elem" row by default.
+    // When elems added and we select the first row, the currentRow is not changed (it stays 0), 
+    // and we don't send currentElemChanged, even though actually elem is changed from null to elems(0).
+    // So send explicitly if something has been selected:
+    auto curElem = _schema->element(selectionModel()->currentIndex().row());
+    if (_curElem != curElem) {
+        _curElem = curElem;
+        emit currentElemChanged(_curElem);
+    }
+
     emit selectedElemsChanged(selection());
 }

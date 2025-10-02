@@ -12,6 +12,9 @@ The command is active for any element having the Length parameter, such as :ref:
 
 This command is a kind of script providing a convenient and simpler way instead of inserting a new element using the :doc:`elem_opers_append` command and adjusting parameters of both the old and new elements via the :doc:`elem_opers_props` command. Later, both elements can be edited independently. Alternatively, both elements can be changes simultaneously using the :doc:`elem_opers_slide` command.
 
+    .. note::
+        The command changes the length of the original element. So it can not be executed when the length is not directly editable because it's controlled by a :ref:`global parameter <params_window>`.
+
 The parameters dialog of the command allows for setting a :ref:`label <elem_props_label>` for the new element. By default, the label is generated automatically but can be changed manually. The label of the original element can also be changed if needed.
 
 The length of the source element is shared proportionally between the original and new elements. The proportion can be changed by moving the slider or manual editing.

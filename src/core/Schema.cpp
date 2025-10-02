@@ -192,7 +192,7 @@ Schema::Schema(const QString &alias) : _alias(alias)
     _globalParams = new GlobalParamsElem;
     // Do setLabel before setOwner to avoid unnecessary events
     // TODO: The label will be used in elem-and-param selectors, so should be localized
-    _globalParams->setLabel("Global parameters");
+    _globalParams->setLabel("Global parameter");
     _globalParams->setOwner(this);
 
     _events._schema = this;

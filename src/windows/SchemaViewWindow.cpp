@@ -2,6 +2,7 @@
 
 #include "../app/CalcManager.h"
 #include "../app/CustomElemsManager.h"
+#include "../app/HelpSystem.h"
 #include "../core/Elements.h"
 #include "../core/ElementsCatalog.h"
 #include "../core/ElementFormula.h"
@@ -22,6 +23,7 @@
 
 #include <QAction>
 #include <QMenu>
+#include <QMessageBox>
 #include <QSplitter>
 #include <QToolButton>
 
@@ -310,12 +312,27 @@ void SchemaViewWindow::actionElemDisable()
     schema()->events().raise(SchemaEvents::RecalRequred, "SchemaViewWindow: toggle disabled");
 }
 
+static void rejectDlg(const QString &msg, const QString &helpTopic)
+{
+    auto res = QMessageBox::information(qApp->activeWindow(), qApp->applicationName(), msg, QMessageBox::Ok|QMessageBox::Help, QMessageBox::Ok);
+    if (res == QMessageBox::Help)
+        Z::HelpSystem::topic(helpTopic);
+}
+
 void SchemaViewWindow::actionRangeInsert()
 {
     ElementRange* oldRange = Z::Utils::asRange(_table->currentElem());
     if (!oldRange) return;
     
-    auto sample = ElementsCatalogDialog::chooseElementSample(tr("Insert Into"), "elem_opers_insert_into");
+    const QString helpTopic("elem_opers_insert_into");
+
+    if (schema()->paramLinks()->byTarget(oldRange->paramLength())) {
+        rejectDlg(tr("Can not split the element because its length "
+            "is controlled by a global parameter"), helpTopic);
+        return;
+    }
+    
+    auto sample = ElementsCatalogDialog::chooseElementSample(tr("Insert Into"), helpTopic);
     if (!sample) return;
 
     auto halfLen = oldRange->paramLength()->value() / 2.0;
@@ -338,6 +355,12 @@ void SchemaViewWindow::actionRangeSplit()
 {
     ElementRange* oldRange = Z::Utils::asRange(_table->currentElem());
     if (!oldRange) return;
+    
+    if (schema()->paramLinks()->byTarget(oldRange->paramLength())) {
+        rejectDlg(tr("Can not split the element because its length "
+            "is controlled by a global parameter"), SplitRangeDlg::helpTopic());
+        return;
+    }
     
     SplitRangeDlg dlg(schema(), oldRange);
     if (!dlg.exec()) return;
@@ -380,13 +403,18 @@ void SchemaViewWindow::actionRangeMerge()
     auto elem2 = Z::Utils::asRange(selected.at(1));
     if (!elem1 || !elem2) return;
     
+    if (schema()->paramLinks()->byTarget(elem1->paramLength())) {
+        rejectDlg(tr("Can not merge because the length of the target "
+            "element is controlled by a global parameter"), MergeRangesDlg::helpTopic());
+        return;
+    }
+    
     MergeRangesDlg dlg(elem1, elem2);
     if (!dlg.exec()) return;
     
     auto v1 = elem1->paramLength()->value();
     auto v2 = elem2->paramLength()->value();
-    auto v0 = Z::Value::fromSi(v1.toSi() + v2.toSi(), v1.unit());
-    elem1->paramLength()->setValue(v0);
+    elem1->paramLength()->setValue(v1 + v2);
     
     schema()->deleteElements({elem2}, Arg::RaiseEvents(true), Arg::FreeElem(true));
     
@@ -408,6 +436,16 @@ void SchemaViewWindow::actionRangeSlide()
             std::swap(elem1, elem2);
     } else return;
     if (!elem1 || !elem2) return;
+    
+    if (schema()->paramLinks()->byTarget(elem1->paramLength()) || schema()->paramLinks()->byTarget(elem2->paramLength())) {
+        QString msg;
+        if (selected.length() == 1)
+            msg = tr("Can not slide the element because the length "
+                "of one of its neighbours is controlled by a global parameter");
+        else msg = tr("Can not change the element because its length is controlled by a global parameter"); 
+        rejectDlg(msg, SlideRangesDlg::helpTopic());
+        return;
+    }
         
     SlideRangesDlg dlg(elem1, elem2);
     if (!dlg.exec()) return;

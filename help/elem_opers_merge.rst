@@ -10,6 +10,9 @@ The command does the opposite of what the :doc:`elem_opers_split` command does. 
 
     .. image:: img/elem_opers_merge_drawing.png
 
+    .. note::
+        The command changes the length of the remaining element. So it can not be executed when the length is not directly editable because it's controlled by a :ref:`global parameter <params_window>`.
+
 .. seeAlso::
 
     :doc:`elem_opers`, :doc:`elem_opers_split`, :doc:`elem_opers_insert_into`
