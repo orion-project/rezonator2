@@ -14,29 +14,21 @@ Despite the number of good [examples](https://www.scilab.org), in the profession
 
 ## Features
 
-- **Optical systems**
-reZonator supports different [optical system types](http://rezonator.orion-project.org/help/trip_type.html) — standing wave laser cavities and running wave (ring) resonators, as well as conventional single-pass systems, e.g., pump roads or beam expanders. The M² beam quality factor also is taken into account for single-pass systems.
+- **Optical systems:** reZonator supports different [optical system types](http://rezonator.orion-project.org/help/trip_type.html) — standing wave laser cavities and running wave (ring) resonators, as well as conventional single-pass systems, e.g., pump roads or beam expanders. The M² beam quality factor also is taken into account for single-pass systems.
 
-- **Optical elements**
-Programs' [elements catalog](http://rezonator.orion-project.org/help/elements.html) contains many essential optical elements — ranges, lenses, mirrors, crystals, and many more. The ABCD ray matrix algorithm is used for simulation of optical elements, so you also can define your own element by providing its matrix. *⚡️Coming soon:* Fully custom elements where you can provide formulas for computing matrices from parameters.
+- **Optical elements:** programs' [elements catalog](http://rezonator.orion-project.org/help/elements.html) contains many essential optical elements — ranges, lenses, mirrors, crystals, and many more. The ABCD ray matrix algorithm is used for simulation of optical elements, so you also can define your own element by providing its matrix. *⚡️Coming soon:* Fully custom elements where you can provide formulas for computing matrices from parameters.
 
-- **Unrestricted design**
-The app doesn't calculate any particular optical geometry. Instead, it is possible to construct an arbitrary optical system from proposed or user-defined optical elements. reZonator automatically creates a [rendition](http://rezonator.orion-project.org/help/layout.html) of the system under investigation — almost as if you could sketch it on a paper sheet or your drawing board.
+- **Unrestricted design:** the app doesn't calculate any particular optical geometry. Instead, it is possible to construct an arbitrary optical system from proposed or user-defined optical elements. reZonator automatically creates a [rendition](http://rezonator.orion-project.org/help/layout.html) of the system under investigation — almost as if you could sketch it on a paper sheet or your drawing board.
 
-- **Stability maps**
-For advanced system optimization, reZonator can compute cavity stability maps against values of [one](http://rezonator.orion-project.org/help/func_stabmap.html) or [two](http://rezonator.orion-project.org/help/func_stabmap_2d.html) parameters of any element. Also, automatic computation of stability boundaries is provided.
+- **Stability maps:** for advanced system optimization, reZonator can compute cavity stability maps against values of [one](http://rezonator.orion-project.org/help/func_stabmap.html) or [two](http://rezonator.orion-project.org/help/func_stabmap_2d.html) parameters of any element. Also, automatic computation of stability boundaries is provided.
 
-- **Wavefront calculation**
-reZonator can plot the size and the wavefront curvature radius of the Gaussian beam over [one](http://rezonator.orion-project.org/help/func_caustic.html) or a [few](http://rezonator.orion-project.org/help/func_caustic_mr.html) elements, astigmatism also taken into account. It is possible to compute beam size at any position inside the system. Automatic determination of the position and size of the waist at an element where it is, calculation of the radius of diffractive divergence, and other parameters of the [Gaussian beam](http://rezonator.orion-project.org/help/calc_gauss.html) are provided.
+- **Wavefront calculation:** reZonator can plot the size and the wavefront curvature radius of the Gaussian beam over [one](http://rezonator.orion-project.org/help/func_caustic.html) or a [few](http://rezonator.orion-project.org/help/func_caustic_mr.html) elements, astigmatism also taken into account. It is possible to compute beam size at any position inside the system. Automatic determination of the position and size of the waist at an element where it is, calculation of the radius of diffractive divergence, and other parameters of the [Gaussian beam](http://rezonator.orion-project.org/help/calc_gauss.html) are provided.
 
-- **Tuning and adjustment**
-The [adjustment]((http://rezonator.orion-project.org/help/adjust.html)) tool allows you to gradually change any parameter of any element — just like you rotate a screw of some mirror mount or a translating stage. Any results are instantly recalculated while the parameter value is changed.
+- **Tuning:** the [adjustment]((http://rezonator.orion-project.org/help/adjust.html)) tool allows you to gradually change any parameter of any element — just like you rotate a screw of some mirror mount or a translating stage. Any results are instantly recalculated while the parameter value is changed.
 
-- **Global parameters and formulas**
-[Global parameters](http://rezonator.orion-project.org/help/params_window.html) can interconnect different elements; parameter values given by custom formulas allow you to construct a dynamic and parameterized system.
+- **Parametric design:** [global parameters](http://rezonator.orion-project.org/help/params_window.html) can interconnect different elements; parameter values given by custom formulas allow you to construct a dynamic and parameterized system.
 
-- **and more**
-Other convenient and useful tools and functions are also available: [repetition rate](http://rezonator.orion-project.org/help/func_reprate.html), [beam parameters](http://rezonator.orion-project.org/help/func_beamdata.html) at all elements, misalignments of elements (*coming soon*), [“freezing”](http://rezonator.orion-project.org/help/func_freeze.html) results, full plot format customization, copying results to the clipboard, and more…
+- **And more:** other convenient and useful tools and functions are also available: [repetition rate](http://rezonator.orion-project.org/help/func_reprate.html), [beam parameters](http://rezonator.orion-project.org/help/func_beamdata.html) at all elements, misalignments of elements (*coming soon*), [“freezing”](http://rezonator.orion-project.org/help/func_freeze.html) results, full plot format customization, copying results to the clipboard, and more…
 
 ##
 
