@@ -5,6 +5,9 @@
       "date": "",
       "changes": [
         {
+          "text": "Can use global parameter as an argument for stability functions"
+        },
+        {
           "text": "Can use negative and percent offset in Beamsize Variation"
         },
         {

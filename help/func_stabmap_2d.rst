@@ -19,7 +19,7 @@ Parameters
 Variable 1 (X) / Variable 2 (Y)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-These are elements’ parameters to be varied along the horizontal or vertical axis of the stability map respectively.
+These are elements’ parameters or a :ref:`global parameters <params_window>` to be varied along the horizontal or vertical axis of the stability map respectively.
 
 Variation
 ~~~~~~~~~

@@ -1,11 +1,11 @@
 #include "BeamVariationFunction.h"
 
-#include "AbcdBeamCalculator.h"
-#include "FunctionUtils.h"
-#include "PumpCalculator.h"
-#include "RoundTripCalculator.h"
 #include "../core/Perf.h"
 #include "../core/Schema.h"
+#include "../math/AbcdBeamCalculator.h"
+#include "../math/FunctionUtils.h"
+#include "../math/PumpCalculator.h"
+#include "../math/RoundTripCalculator.h"
 
 void BeamVariationFunction::calculate(CalculationMode calcMode)
 {

@@ -48,6 +48,7 @@ void StabilityMap2DParamsDlg::makeControls(const QString &title, Schema* schema,
     editor->elemSelector = new ElemAndParamSelector(schema, {
         .elemFilter = elemFilter,
         .paramFilter = Z::Utils::defaultParamFilter(),
+        .includeCustomParams = true,
     });
     connect(editor->elemSelector, &ElemAndParamSelector::selectionChanged, this, [this, editor]{ this->guessRange(editor); });
 

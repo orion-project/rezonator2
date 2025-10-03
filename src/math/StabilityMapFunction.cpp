@@ -2,6 +2,7 @@
 
 #include "../app/AppSettings.h"
 #include "../app/PersistentState.h"
+#include "../core/Schema.h"
 #include "../math/RoundTripCalculator.h"
 
 #include <QApplication>
@@ -19,7 +20,16 @@ void StabilityMapFunction::calculate(CalculationMode calcMode)
 
     auto elem = arg()->element;
     auto param = arg()->parameter;
-    ElementEventsLocker elemLock(elem, "StabilityMapFunction::calculate");
+    if (elem == _schema->globalParamsAsElem()) {
+        // Use any non-locked element as the reference for round-trip
+        auto activeElems = _schema->activeElements();
+        if (activeElems.isEmpty()) {
+            setError(qApp->translate("Calc error", "No active elements in the schema"));
+            return;
+        }
+        elem = activeElems.first();
+    }
+    ElementEventsLocker elemLock(param, "StabilityMapFunction::calculate");
     Z::ParamValueBackup paramLock(param, "StabilityMapFunction::calculate");
 
     _plotRange = arg()->range.plottingRange();
@@ -70,9 +80,8 @@ void StabilityMapFunction::loadPrefs()
 Z::PointTS StabilityMapFunction::calculateAt(const Z::Value& v)
 {
     _calc->setStabilityCalcMode(stabilityCalcMode());
-    auto elem = arg()->element;
     auto param = arg()->parameter;
-    ElementEventsLocker elemLock(elem, "StabilityMapFunction::calculateAt");
+    ElementEventsLocker elemLock(param, "StabilityMapFunction::calculateAt");
     Z::ParamValueBackup paramLock(param, "StabilityMapFunction::calculateAt");
     param->setValue(v);
     _calc->multMatrix("StabilityMapFunction::calculateAt");
@@ -81,9 +90,8 @@ Z::PointTS StabilityMapFunction::calculateAt(const Z::Value& v)
 
 QVector<Z::RangeSi> StabilityMapFunction::findStabilityBounds(Z::WorkPlane ts) const
 {
-    auto elem = arg()->element;
     auto param = arg()->parameter;
-    ElementEventsLocker elemLock(elem, "StabilityMapFunction::findStabilityBounds");
+    ElementEventsLocker elemLock(param, "StabilityMapFunction::findStabilityBounds");
     Z::ParamValueBackup paramLock(param, "StabilityMapFunction::findStabilityBounds");
     _calc->setStabilityCalcMode(Z::Enums::StabilityCalcMode::Squared);
 

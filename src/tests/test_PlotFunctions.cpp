@@ -177,9 +177,9 @@ namespace StabilityMap {
 TEST_METHOD(calculate_normal)
 {
     TEST_STAB_MAP_FUNC(Z::Enums::StabilityCalcMode::Normal)
-    ARR(_x, 0.024,0.028,0.032,0.036,0.04,0.044,0.048,0.052,0.056,0.06)
-    ARR(_t, -1.86736957,3.13668409,6.74389975,8.9542774,9.76781706,9.18451871,7.20438235,3.827408,-0.946404361,-7.11705472)
-    ARR(_s, -2.86711956,2.09741941,5.76059464,8.12240613,9.18285387,8.94193787,7.39965813,4.55601464,0.411007405,-5.03536357)
+    ARR(_x, 0.024,0.028,0.032,0.036,0.04,0.044,0.048,0.052,0.056,0.06) \
+    ARR(_t, -1.86736957,3.13668409,6.74389975,8.9542774,9.76781706,9.18451871,7.20438235,3.827408,-0.946404361,-7.11705472) \
+    ARR(_s, -2.86711956,2.09741941,5.76059464,8.12240613,9.18285387,8.94193787,7.39965813,4.55601464,0.411007405,-5.03536357) \
     ASSERT_FUNC_RESULT_TS(0, _x, 1e-7, _t, _s, 1e-7)
 }
 
@@ -200,10 +200,65 @@ TEST_METHOD(calculateAt)
     ASSERT_NEAR_TS(func.calculateAt(7_cm), -820.10025, -591.667213, 1e-6)
 }
 
+TEST_METHOD(calculate_with_global_param)
+{
+    TEST_SCHEMA(TripType::SW)
+    
+    auto p0 = new Z::Parameter(Z::Dims::linear(), "p0");
+    s.schema->addGlobalParam(p0);
+    s.schema->addParamLink(p0, s.elem_L_foc->paramLength());
+    
+    StabilityMapFunction func(s.schema);
+    func.setStabilityCalcMode(Z::Enums::StabilityCalcMode::Normal);
+    func.arg()->element = (Element*)s.schema->globalParamsAsElem();
+    func.arg()->parameter = p0;
+    func.arg()->range = Z::VariableRange::withPoints(24_mm, 60_mm, 10);
+    func.calculate();
+    ASSERT_FUNC_OK
+    ASSERT_FUNC_RESULT_COUNT(1)
+
+    ARR(_x, 0.024,0.028,0.032,0.036,0.04,0.044,0.048,0.052,0.056,0.06)
+    ARR(_t, -1.86736957,3.13668409,6.74389975,8.9542774,9.76781706,9.18451871,7.20438235,3.827408,-0.946404361,-7.11705472)
+    ARR(_s, -2.86711956,2.09741941,5.76059464,8.12240613,9.18285387,8.94193787,7.39965813,4.55601464,0.411007405,-5.03536357)
+    ASSERT_FUNC_RESULT_TS(0, _x, 1e-7, _t, _s, 1e-7)
+}
+
+TEST_METHOD(calculate_with_global_param_formula)
+{
+    TEST_SCHEMA(TripType::SW)
+    
+    auto p0 = new Z::Parameter(Z::Dims::linear(), "p0");
+    auto p1 = new Z::Parameter(Z::Dims::linear(), "p1");
+    s.schema->addGlobalParam(p0);
+    s.schema->addGlobalParam(p1);
+    s.schema->addParamLink(p0, s.elem_L_foc->paramLength());
+    
+    auto f = new Z::Formula(p0);
+    f->setCode("p1/2");
+    f->addDep(p1);
+    s.schema->formulas()->put(f);
+    
+    StabilityMapFunction func(s.schema);
+    func.setStabilityCalcMode(Z::Enums::StabilityCalcMode::Squared);
+    func.arg()->element = (Element*)s.schema->globalParamsAsElem();
+    func.arg()->parameter = p1;
+    func.arg()->range = Z::VariableRange::withPoints(48_mm, 120_mm, 10);
+    func.calculate();
+    ASSERT_FUNC_OK
+    ASSERT_FUNC_RESULT_COUNT(1)
+
+    ARR(_x, 2*0.024,2*0.028,2*0.032,2*0.036,2*0.04,2*0.044,2*0.048,2*0.052,2*0.056,2*0.06)
+    ARR(_t, -2.48706913,-8.83878707,-44.4801838,-79.1790838,-94.41025,-83.3553839,-50.9031251,-13.649052,0.104318786,-49.6524679)
+    ARR(_s, -7.22037459,-3.39916819,-32.1844507,-64.9734814,-83.3248053,-78.9582529,-53.7549404,-19.7572694,0.831072913,-24.3548863)
+    ASSERT_FUNC_RESULT_TS(0, _x, 1e-7, _t, _s, 1e-7)
+}
+
 TEST_GROUP("StabilityMapFunction",
            ADD_TEST(calculate_normal),
            ADD_TEST(calculate_squared),
            ADD_TEST(calculateAt),
+           ADD_TEST(calculate_with_global_param),
+           ADD_TEST(calculate_with_global_param_formula),
            )
 } // namespace StabilityMap
 
@@ -223,36 +278,39 @@ namespace StabilityMap2D {
     func.paramY()->range = Z::VariableRange::withPoints(0_mm, 500_mm, 10); \
     func.calculate(); \
     ASSERT_FUNC_OK
+    
+#define ASSERT_STAB_MAP_2D_NORMAL \
+    ARR(_t, \
+        1,-7.23085841,-15.4617168,-23.6925752,-31.9234337,-40.1542921,-48.3851505,-56.6160089,-64.8468673,-73.0777257, \
+        -0.310597896,-3.90621853,-7.50183916,-11.0974598,-14.6930804,-18.2887011,-21.8843217,-25.4799423,-29.075563,-32.6711836, \
+        -0.95004822,-1.42487798,-1.89970773,-2.37453749,-2.84936725,-3.324197,-3.79902676,-4.27385651,-4.74868627,-5.22351603, \
+        -0.91835097,0.213163249,1.34467747,2.47619169,3.6077059,4.73922012,5.87073434,7.00224856,8.13376278,9.265277, \
+        -0.215506147,1.00790514,2.23131643,3.45472773,4.67813902,5.90155031,7.1249616,8.34837289,9.57178418,10.7951955, \
+        1.15848625,0.959347709,0.76020917,0.56107063,0.36193209,0.162793551,-0.0363449891,-0.235483529,-0.434622069,-0.633760608, \
+        3.20362622,0.0674909454,-3.06864433,-6.2047796,-9.34091487,-12.4770501,-15.6131854,-18.7493207,-21.885456,-25.0215912, \
+        5.91991376,-1.66766515,-9.25524406,-16.842823,-24.4304019,-32.0179808,-39.6055597,-47.1931386,-54.7807175,-62.3682964, \
+        9.30734888,-4.24612057,-17.79959,-31.3530595,-44.9065289,-58.4599984,-72.0134678,-85.5669373,-99.1204067,-112.673876, \
+        13.3659316,-7.66787532,-28.7016822,-49.7354891,-70.769296,-91.8031029,-112.83691,-133.870717,-154.904524,-175.93833 \
+    ) \
+    ARR(_s, \
+        1,-7.06653334,-15.1330667,-23.1996,-31.2661334,-39.3326667,-47.3992,-55.4657334,-63.5322667,-71.5988001, \
+        -0.290323866,-3.91811887,-7.54591387,-11.1737089,-14.8015039,-18.4292989,-22.0570939,-25.6848889,-29.3126839,-32.9404789, \
+        -0.934682126,-1.53740976,-2.14013739,-2.74286502,-3.34559266,-3.94832029,-4.55104792,-5.15377555,-5.75650318,-6.35923082, \
+        -0.933074782,0.0755939866,1.08426276,2.09293152,3.10160029,4.11026906,5.11893783,6.1276066,7.13627537,8.14494414, \
+        -0.285501834,0.920892368,2.12728657,3.33368077,4.54007497,5.74646918,6.95286338,8.15925758,9.36565178,10.572046, \
+        1.00803672,0.998485386,0.988934053,0.97938272,0.969831387,0.960280054,0.950728721,0.941177388,0.931626054,0.922074721, \
+        2.94754088,0.308373041,-2.3307948,-4.96996263,-7.60913047,-10.2482983,-12.8874661,-15.526634,-18.1658018,-20.8049697, \
+        5.53301064,-1.14944467,-7.83189998,-14.5143553,-21.1968106,-27.8792659,-34.5617212,-41.2441765,-47.9266318,-54.6090871, \
+        8.76444601,-3.37496774,-15.5143815,-27.6537952,-39.793209,-51.9326227,-64.0720365,-76.2114502,-88.350864,-100.490278, \
+        12.641847,-6.36819618,-25.3782393,-44.3882825,-63.3983256,-82.4083688,-101.418412,-120.428455,-139.438498,-158.448541 \
+    ) \
+    ASSERT_NEAR_DBL_ARR(func.resultsT(), _t, 1e-4) \
+    ASSERT_NEAR_DBL_ARR(func.resultsS(), _s, 1e-4) \
 
 TEST_METHOD(calculate_normal)
 {
     TEST_STAB_MAP_2D_FUNC(Z::Enums::StabilityCalcMode::Normal)
-    ARR(_t,
-        1,-7.23085841,-15.4617168,-23.6925752,-31.9234337,-40.1542921,-48.3851505,-56.6160089,-64.8468673,-73.0777257,
-        -0.310597896,-3.90621853,-7.50183916,-11.0974598,-14.6930804,-18.2887011,-21.8843217,-25.4799423,-29.075563,-32.6711836,
-        -0.95004822,-1.42487798,-1.89970773,-2.37453749,-2.84936725,-3.324197,-3.79902676,-4.27385651,-4.74868627,-5.22351603,
-        -0.91835097,0.213163249,1.34467747,2.47619169,3.6077059,4.73922012,5.87073434,7.00224856,8.13376278,9.265277,
-        -0.215506147,1.00790514,2.23131643,3.45472773,4.67813902,5.90155031,7.1249616,8.34837289,9.57178418,10.7951955,
-        1.15848625,0.959347709,0.76020917,0.56107063,0.36193209,0.162793551,-0.0363449891,-0.235483529,-0.434622069,-0.633760608,
-        3.20362622,0.0674909454,-3.06864433,-6.2047796,-9.34091487,-12.4770501,-15.6131854,-18.7493207,-21.885456,-25.0215912,
-        5.91991376,-1.66766515,-9.25524406,-16.842823,-24.4304019,-32.0179808,-39.6055597,-47.1931386,-54.7807175,-62.3682964,
-        9.30734888,-4.24612057,-17.79959,-31.3530595,-44.9065289,-58.4599984,-72.0134678,-85.5669373,-99.1204067,-112.673876,
-        13.3659316,-7.66787532,-28.7016822,-49.7354891,-70.769296,-91.8031029,-112.83691,-133.870717,-154.904524,-175.93833
-    )
-    ARR(_s,
-        1,-7.06653334,-15.1330667,-23.1996,-31.2661334,-39.3326667,-47.3992,-55.4657334,-63.5322667,-71.5988001,
-        -0.290323866,-3.91811887,-7.54591387,-11.1737089,-14.8015039,-18.4292989,-22.0570939,-25.6848889,-29.3126839,-32.9404789,
-        -0.934682126,-1.53740976,-2.14013739,-2.74286502,-3.34559266,-3.94832029,-4.55104792,-5.15377555,-5.75650318,-6.35923082,
-        -0.933074782,0.0755939866,1.08426276,2.09293152,3.10160029,4.11026906,5.11893783,6.1276066,7.13627537,8.14494414,
-        -0.285501834,0.920892368,2.12728657,3.33368077,4.54007497,5.74646918,6.95286338,8.15925758,9.36565178,10.572046,
-        1.00803672,0.998485386,0.988934053,0.97938272,0.969831387,0.960280054,0.950728721,0.941177388,0.931626054,0.922074721,
-        2.94754088,0.308373041,-2.3307948,-4.96996263,-7.60913047,-10.2482983,-12.8874661,-15.526634,-18.1658018,-20.8049697,
-        5.53301064,-1.14944467,-7.83189998,-14.5143553,-21.1968106,-27.8792659,-34.5617212,-41.2441765,-47.9266318,-54.6090871,
-        8.76444601,-3.37496774,-15.5143815,-27.6537952,-39.793209,-51.9326227,-64.0720365,-76.2114502,-88.350864,-100.490278,
-        12.641847,-6.36819618,-25.3782393,-44.3882825,-63.3983256,-82.4083688,-101.418412,-120.428455,-139.438498,-158.448541
-    )
-    ASSERT_NEAR_DBL_ARR(func.resultsT(), _t, 1e-4)
-    ASSERT_NEAR_DBL_ARR(func.resultsS(), _s, 1e-4)
+    ASSERT_STAB_MAP_2D_NORMAL
 }
 
 TEST_METHOD(calculate_squared)
@@ -295,10 +353,74 @@ TEST_METHOD(calculateAt)
     ASSERT_NEAR_TS(func.calculateAtXY(12_cm, 30_cm), -184.537358, -167.424983, 1e-6)
 }
 
+TEST_METHOD(calculate_with_global_param)
+{
+    TEST_SCHEMA(TripType::SW)
+    auto p1 = new Z::Parameter(Z::Dims::linear(), "p1");
+    auto p2 = new Z::Parameter(Z::Dims::linear(), "p2");
+    s.schema->addGlobalParam(p1);
+    s.schema->addGlobalParam(p2);
+    s.schema->addParamLink(p1, s.elem_L_foc->paramLength());
+    s.schema->addParamLink(p2, s.elem_L->paramLength());
+    
+    StabilityMap2DFunction func(s.schema);
+    func.setStabilityCalcMode(Z::Enums::StabilityCalcMode::Normal);
+    func.paramX()->element = (Element*)s.schema->globalParamsAsElem();
+    func.paramX()->parameter = p1;
+    func.paramX()->range = Z::VariableRange::withPoints(0_mm, 100_mm, 10);
+    func.paramY()->element = (Element*)s.schema->globalParamsAsElem();
+    func.paramY()->parameter = p2;
+    func.paramY()->range = Z::VariableRange::withPoints(0_mm, 500_mm, 10);
+    func.calculate();
+    ASSERT_FUNC_OK
+
+    ASSERT_STAB_MAP_2D_NORMAL
+}
+
+TEST_METHOD(calculate_with_global_param_formula)
+{
+    TEST_SCHEMA(TripType::SW)
+    auto p1 = new Z::Parameter(Z::Dims::linear(), "p1");
+    auto p2 = new Z::Parameter(Z::Dims::linear(), "p2");
+    auto p11 = new Z::Parameter(Z::Dims::linear(), "p11");
+    auto p22 = new Z::Parameter(Z::Dims::linear(), "p22");
+    s.schema->addGlobalParam(p1);
+    s.schema->addGlobalParam(p2);
+    s.schema->addGlobalParam(p11);
+    s.schema->addGlobalParam(p22);
+    s.schema->addParamLink(p1, s.elem_L_foc->paramLength());
+    s.schema->addParamLink(p2, s.elem_L->paramLength());
+    
+    auto f1 = new Z::Formula(p1);
+    f1->setCode("p11/2");
+    f1->addDep(p11);
+    s.schema->formulas()->put(f1);
+
+    auto f2 = new Z::Formula(p2);
+    f2->setCode("p22/2");
+    f2->addDep(p22);
+    s.schema->formulas()->put(f2);
+
+    StabilityMap2DFunction func(s.schema);
+    func.setStabilityCalcMode(Z::Enums::StabilityCalcMode::Normal);
+    func.paramX()->element = (Element*)s.schema->globalParamsAsElem();
+    func.paramX()->parameter = p11;
+    func.paramX()->range = Z::VariableRange::withPoints(0_mm, 200_mm, 10);
+    func.paramY()->element = (Element*)s.schema->globalParamsAsElem();
+    func.paramY()->parameter = p22;
+    func.paramY()->range = Z::VariableRange::withPoints(0_mm, 1000_mm, 10);
+    func.calculate();
+    ASSERT_FUNC_OK
+
+    ASSERT_STAB_MAP_2D_NORMAL
+}
+
 TEST_GROUP("StabilityMap2DFunction",
            ADD_TEST(calculate_normal),
            ADD_TEST(calculate_squared),
            ADD_TEST(calculateAt),
+           ADD_TEST(calculate_with_global_param),
+           ADD_TEST(calculate_with_global_param_formula),
            )
 } // namespace StabilityMap2
 
@@ -503,7 +625,7 @@ TEST_CASE_METHOD(calculateAt_offset, Z::Value offset)
         CausticFunction func(&schema);
         func.arg()->element = g1;
         func.arg()->range = Z::VariableRange::withPoints(0_mm, 0_mm, 10);
-        func.calculate();
+        func.calculate(PlotFunction::CALC_PREPARE);
         ASSERT_FUNC_OK
         auto p = offset;
         if (p.unit() == UNIT(percent))

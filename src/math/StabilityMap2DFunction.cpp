@@ -1,22 +1,34 @@
 #include "StabilityMap2DFunction.h"
 
-#include "RoundTripCalculator.h"
 #include "../app/PersistentState.h"
+#include "../core/Schema.h"
+#include "../math/RoundTripCalculator.h"
 
 void StabilityMap2DFunction::calculate(CalculationMode calcMode)
 {
     if (!checkArg(&_paramX)) return;
     if (!checkArg(&_paramY)) return;
 
-    ElementEventsLocker elemLockX(_paramX.element, "StabilityMap2DFunction::calculate");
-    ElementEventsLocker elemLockY(_paramY.element, "StabilityMap2DFunction::calculate");
+    ElementEventsLocker elemLockX(_paramX.parameter, "StabilityMap2DFunction::calculate");
+    ElementEventsLocker elemLockY(_paramY.parameter, "StabilityMap2DFunction::calculate");
     Z::ParamValueBackup paramLockX(_paramX.parameter, "StabilityMap2DFunction::calculate");
     Z::ParamValueBackup paramLockY(_paramY.parameter, "StabilityMap2DFunction::calculate");
 
     _rangeX = _paramX.range.plottingRange();
     _rangeY = _paramY.range.plottingRange();
+    
+    auto ref = _paramX.element;
+    if (ref == _schema->globalParamsAsElem()) {
+        // Use any non-locked element as the reference for round-trip
+        auto activeElems = _schema->activeElements();
+        if (activeElems.isEmpty()) {
+            setError(qApp->translate("Calc error", "No active elements in the schema"));
+            return;
+        }
+        ref = activeElems.first();
+    }
 
-    if (!prepareCalculator(_paramX.element)) return;
+    if (!prepareCalculator(ref)) return;
     _calc->setStabilityCalcMode(stabilityCalcMode());
 
     if (calcMode != CALC_PLOT) return;
@@ -78,8 +90,8 @@ bool StabilityMap2DFunction::checkArg(Z::Variable* arg)
 
 Z::PointTS StabilityMap2DFunction::calculateAtXY(const Z::Value& x, const Z::Value& y)
 {
-    ElementEventsLocker elemLockX(_paramX.element, "StabilityMap2DFunction::calculateAtXY");
-    ElementEventsLocker elemLockY(_paramY.element, "StabilityMap2DFunction::calculateAtXY");
+    ElementEventsLocker elemLockX(_paramX.parameter, "StabilityMap2DFunction::calculateAtXY");
+    ElementEventsLocker elemLockY(_paramY.parameter, "StabilityMap2DFunction::calculateAtXY");
     Z::ParamValueBackup paramLockX(_paramX.parameter, "StabilityMap2DFunction::calculateAtXY");
     Z::ParamValueBackup paramLockY(_paramY.parameter, "StabilityMap2DFunction::calculateAtXY");
     _paramX.parameter->setValue(x);

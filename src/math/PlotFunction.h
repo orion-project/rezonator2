@@ -68,11 +68,16 @@ using SpecPointParams = QMap<int, SpecPointParam>;
 /**
     Base class for all plotting functions.
     Plotting function is a function presenting its calculation results in graphical form.
+    Alternatively, they can be used for calculation of a single result, see @a calculateAt.
 */
 class PlotFunction : public FunctionBase
 {
 public:
-    enum CalculationMode { CALC_PLOT, CALC_PREPARE };
+    /// A mode for the calculate() method
+    enum CalculationMode {
+        CALC_PLOT,   /// Do full calculation, produce a plot result
+        CALC_PREPARE /// Do only preparation, the calculateAt() for getting a single result
+    };
 
     PlotFunction(Schema *schema);
     ~PlotFunction();
