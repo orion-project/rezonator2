@@ -30,6 +30,9 @@
         },
         {
           "text": "Fix: in 2D Stability Map, stability values in cursor line are rescaled to Y-axis units"
+        },
+        {
+          "text": "Fix: in 2D Stability Map, autolimits commands account cursor lines as regular graph"
         }
       ]
     },

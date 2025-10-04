@@ -243,7 +243,6 @@ void StabilityMap2DWindow::createContent()
     _autolimiter->setPen(QPen(Qt::transparent));
     _autolimiter->setSelectable(QCP::stNone);
     _plot->serviceGraphs().append(_autolimiter);
-    _plot->excludeServiceGraphsFromAutolimiting = false;
 
     // Make sure the axis rect and color scale synchronize their bottom and top margins:
     QCPMarginGroup *marginGroup = new QCPMarginGroup(_plot);

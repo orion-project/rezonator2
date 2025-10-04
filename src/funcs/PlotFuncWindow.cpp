@@ -323,6 +323,7 @@ void PlotFuncWindow::createContent()
 
     _cursor = new QCPL::Cursor(_plot);
     _cursor->setPen(AppSettings::instance().pen(AppSettings::PenCursor));
+    _cursor->setProperty(PROP_GRAPH_SKIP_AUTOLIMITS, true);
     connect(_cursor, &QCPL::Cursor::positionChanged, this, &PlotFuncWindow::updateCursorInfo);
     _plot->serviceGraphs().append(_cursor);
     auto axesLayer = _plot->layer("axes");
