@@ -244,10 +244,15 @@ void StabilityMap2DWindow::createContent()
     _autolimiter->setSelectable(QCP::stNone);
     _plot->serviceGraphs().append(_autolimiter);
 
+    // DISABLED: this breaks X-axis formatting. The bottom margin of X-axis can be increased
+    // and color scale is automatically updated, but it can't be decreased.
+    // Even though _axis->setPadding() is properly applied, the color scale spoils
+    // the drawing somehow and both of them are still drawn with bigger margin.
+    //
     // Make sure the axis rect and color scale synchronize their bottom and top margins:
-    QCPMarginGroup *marginGroup = new QCPMarginGroup(_plot);
-    _plot->axisRect()->setMarginGroup(QCP::msBottom|QCP::msTop, marginGroup);
-    _colorScale->setMarginGroup(QCP::msBottom|QCP::msTop, marginGroup);
+    // QCPMarginGroup *marginGroup = new QCPMarginGroup(_plot);
+    // _plot->axisRect()->setMarginGroup(QCP::msBottom|QCP::msTop, marginGroup);
+    // _colorScale->setMarginGroup(QCP::msBottom|QCP::msTop, marginGroup);
 }
 
 void StabilityMap2DWindow::createActions()

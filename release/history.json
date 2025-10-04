@@ -33,6 +33,9 @@
         },
         {
           "text": "Fix: in 2D Stability Map, autolimits commands account cursor lines as regular graph"
+        },
+        {
+          "text": "Fix: in 2D Stability Map, bottom margin can not be decreased after is was increased"
         }
       ]
     },
