@@ -36,6 +36,9 @@
         },
         {
           "text": "Fix: in 2D Stability Map, bottom margin can not be decreased after is was increased"
+        },
+        {
+          "text": "Fix: crash after changing a global parameter if parameter window was closed before"
         }
       ]
     },

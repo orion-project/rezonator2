@@ -227,6 +227,11 @@ SchemaParamsTable::SchemaParamsTable(Schema *schema, QWidget *parent) : QTableVi
     connect(this, &SchemaParamsTable::customContextMenuRequested, this, &SchemaParamsTable::showContextMenu);
 }
 
+SchemaParamsTable::~SchemaParamsTable()
+{
+    delete _model;
+}
+
 int SchemaParamsTable::currentRow() const
 {
     return selectionModel()->currentIndex().row();

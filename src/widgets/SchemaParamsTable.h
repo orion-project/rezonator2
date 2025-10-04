@@ -13,6 +13,7 @@ class SchemaParamsTable : public QTableView
 
 public:
     SchemaParamsTable(Schema *schema, QWidget *parent = nullptr);
+    ~SchemaParamsTable();
 
     void setContextMenu(QMenu *menu) { _contextMenu = menu; }
 
