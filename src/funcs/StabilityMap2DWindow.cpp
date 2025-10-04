@@ -424,8 +424,8 @@ void StabilityMap2DWindow::getCursorInfo(const Z::ValuePoint& pos, CursorInfoVal
 {
     if (!function()->ok()) return;
     auto res = function()->calculateAtXY(pos.X, pos.Y);
-    values << CursorInfoValue(QStringLiteral("Pt"), res.T);
-    values << CursorInfoValue(QStringLiteral("Ps"), res.S);
+    values << CursorInfoValue(CursorInfoValue::RAW, QStringLiteral("Pt"), res.T);
+    values << CursorInfoValue(CursorInfoValue::RAW, QStringLiteral("Ps"), res.S);
 }
 
 void StabilityMap2DWindow::copyGraphData2D()

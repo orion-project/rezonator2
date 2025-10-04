@@ -51,6 +51,7 @@ struct CursorInfoValue
         GENERIC, // no special formatting rules
         VALUE_X, // format as set_x command
         VALUE_Y, // format as set_y command
+        RAW,     // don't convert value to Y units
         SECTION, // format as a kind of title for subsequent values
     };
     QString name;
@@ -59,6 +60,7 @@ struct CursorInfoValue
     ValueKind kind = GENERIC;
     CursorInfoValue(ValueKind kind, const QString& name): name(name), kind(kind) {}
     CursorInfoValue(ValueKind kind, const double& value): value(value), kind(kind) {}
+    CursorInfoValue(ValueKind kind, const QString& name, const double& value): name(name), kind(kind), value(value) {}
     CursorInfoValue(const QString& name, const double& value): name(name), value(value) {}
     CursorInfoValue(const QString& name, const double& value, const QString& note): name(name), value(value), note(note) {}
 };

@@ -518,6 +518,8 @@ void PlotFuncWindow::updateCursorInfo()
             info << _cursorPanel->formatLinkY(Z::format(p.y()));
         else if (v.kind == CursorInfoValue::SECTION)
             info << "<b>" << v.name << ":</b> ";
+        else if (v.kind == CursorInfoValue::RAW)
+            info << v.name << " = " << Z::format(v.value);
         else
             info << v.name << " = " << Z::format(unitY->fromSi(v.value));
         if (!v.note.isEmpty())
