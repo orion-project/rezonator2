@@ -46,8 +46,8 @@ if(MSVC)
     add_compile_options(/wd4043)  # Disable STL4043 warning about stdext::checked_array_iterator
 endif()
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Help Network PrintSupport Svg Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Help Network PrintSupport Svg Widgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Help PrintSupport Svg Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Help PrintSupport Svg Widgets)
 
 # Add Python
 # find_package(Python3 COMPONENTS Development REQUIRED)
@@ -276,7 +276,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     custom-plot-lab
     lua
     Qt::Help
-    Qt::Network
     Qt::PrintSupport
     Qt::Svg
     Qt::Widgets

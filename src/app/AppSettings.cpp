@@ -2,7 +2,6 @@
 
 #include "tools/OriSettings.h"
 
-#include <QDateTime>
 #include <QDebug>
 #include <QFileSystemWatcher>
 #include <QPen>

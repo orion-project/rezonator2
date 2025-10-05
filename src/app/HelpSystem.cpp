@@ -8,6 +8,7 @@
 #include "core/OriVersion.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriDialogs.h"
+#include "tools/OriUpdater.h"
 #include "widgets/OriLabels.h"
 
 #include <QAction>
@@ -17,12 +18,7 @@
 #include <QDialog>
 #include <QFile>
 #include <QFormLayout>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
 #include <QLabel>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
 #include <QProcess>
 #include <QPushButton>
 #include <QRegularExpression>
@@ -223,148 +219,25 @@ void HelpSystem::visitHomePage()
     QDesktopServices::openUrl(QUrl(Z::Strs::homePageUrl()));
 }
 
-void HelpSystem::checkUpdates(bool silent)
+class UpdateStatusStore : public Ori::IUpdateStatusStore
 {
-    _checkUpdatesSilent = silent;
-    if (_updateChecker)
-    {
-        qDebug() << "Check is already in progress";
-        return;
-    }
-    _updateChecker = new QNetworkAccessManager(this);
-    _updateReply = _updateChecker->get(QNetworkRequest(QUrl(Z::Strs::versionFileUrl())));
-    connect(_updateReply, &QNetworkReply::finished, this, [this](){
-        if (!_updateReply) return;
-        auto data = _updateReply->readAll();
-        _updateReply->deleteLater();
-        _updateReply = nullptr;
-        versionReceived(data);
-    });
-    connect(_updateReply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::errorOccurred), this, [this](QNetworkReply::NetworkError){
-        auto errorMsg =_updateReply->errorString();
-        finishUpdater();
-        qWarning() << "Failed to get version information" << errorMsg;
-        if (!_checkUpdatesSilent)
-            Ori::Dlg::error(tr("Failed to get version information"));
-    });
-}
-
-static Ori::Version getCurrentVersion()
-{
-    return Ori::Version(APP_VER_MAJOR, APP_VER_MINOR, APP_VER_PATCH);
-    //return Ori::Version(2, 0, 0);
-}
-
-void HelpSystem::versionReceived(QByteArray data)
-{
-    Ori::Version serverVersion(QString::fromLatin1(data));
-    Ori::Version currentVersion = getCurrentVersion();
-    if (currentVersion >= serverVersion) {
-        Ori::Dlg::info(tr("<p>You are using version %1"
-                          "<p>Version on the server is %2"
-                          "<p>You are using the most recent version of %3")
-                       .arg(Z::Strs::appVersion(), serverVersion.str(3), Z::Strs::appName()));
-        return;
-    }
-
-    _updateReply = _updateChecker->get(QNetworkRequest(QUrl(Z::Strs::historyFileUrl())));
-    connect(_updateReply, &QNetworkReply::finished, this, [this](){
-        if (!_updateReply) return;
-        auto data = _updateReply->readAll();
-        finishUpdater();
-        historyReceived(data);
-    });
-    connect(_updateReply, QOverload<QNetworkReply::NetworkError>::of(&QNetworkReply::errorOccurred), this, [this](QNetworkReply::NetworkError){
-        auto errorMsg =_updateReply->errorString();
-        finishUpdater();
-        qWarning() << "Failed to get history information" << errorMsg;
-        if (!_checkUpdatesSilent)
-            Ori::Dlg::error(tr("Failed to get history information"));
-    });
-}
-
-struct Release
-{
-    Ori::Version ver;
-    QDate date;
-    QStringList changes;
+    void saveChecked() override { AppSettings::instance().saveUpdateChecked(); }
 };
 
-void HelpSystem::historyReceived(QByteArray data)
+void HelpSystem::checkUpdates(bool silent)
 {
-    QJsonParseError err;
-    auto doc = QJsonDocument::fromJson(data, &err);
-    if (doc.isNull()) {
-        qWarning() << "Failed to parse version history" << err.errorString();
-        if (!_checkUpdatesSilent)
-            Ori::Dlg::error(tr("Failed to parse version history"));
-        return;
+    if (!_updateChecker)
+    {
+        _updateChecker = new Ori::UpdateChecker({
+            .currentVersion = Ori::Version(APP_VER_MAJOR, APP_VER_MINOR, APP_VER_PATCH),
+            .versionFileUrl = "http://rezonator.orion-project.org/files/version.xml",
+            .historyFileUrl = "http://rezonator.orion-project.org/history.json",
+            .githubUsername = "orion-project",
+            .githubProject = "rezonator2",
+            .statusStore = std::shared_ptr<Ori::IUpdateStatusStore>(new UpdateStatusStore),
+        });
     }
-    if (!doc["history"].isArray()) {
-        qWarning() << "Unexpected data format, json array expected";
-        if (!_checkUpdatesSilent)
-            Ori::Dlg::error(tr("Server returned data in an unexpected format"));
-        return;
-    }
-    auto arr = doc["history"].toArray();
-    QList<Release> releases;
-    Ori::Version currentVersion = getCurrentVersion();
-    for (auto it = arr.cbegin(); it != arr.cend(); it++) {
-        auto obj = it->toObject();
-        Ori::Version version(obj["version"].toString());
-        if (version <= currentVersion)
-            break;
-        Release release {
-            .ver = version,
-            .date = QDate::fromString(obj["date"].toString(), Qt::ISODate),
-        };
-        auto changes = obj["changes"].toArray();
-        for (auto ch = changes.cbegin(); ch != changes.cend(); ch++) {
-            release.changes << ch->toObject()["text"].toString();
-        }
-        releases << release;
-    }
-    qDebug() << "Update available" << currentVersion.str(3) << "->" << releases.first().ver.str(3);
-    
-    QString report;
-    QTextStream stream(&report);
-    static QRegularExpression bugRef("https:\\/\\/github.com\\/orion-project\\/rezonator2\\/issues\\/(\\d+)");
-    for (auto r = releases.constBegin(); r != releases.constEnd(); r++) {
-        stream << "<h3>" << r->ver.str(3) << " (" << QLocale::system().toString(r->date, QLocale::ShortFormat) << ")</h3>";
-        for (QString ch : r->changes) {
-            auto m = bugRef.match(ch);
-            if (m.hasMatch())
-                ch.replace(m.capturedStart(), m.capturedLength(),
-                    QString("<a href='%1'>#%2</a>").arg(m.captured(), m.captured(1)));
-            stream << "&bull;&nbsp;&nbsp;" << ch << "<br/>";
-        }
-    }
-
-    auto label = new QLabel(tr("A new version is available"));
-    label->setAlignment(Qt::AlignHCenter);
-
-    auto layout = new QFormLayout;
-    layout->addRow(tr("Current version:"), new QLabel("<b>" + currentVersion.str(3) + "</b>"));
-    layout->addRow(tr("New version:"), new QLabel("<b>" + releases.first().ver.str(3) + "</b>"));
-
-    auto button = new QPushButton("      " + tr("Open download page") + "      ");
-    connect(button, &QPushButton::clicked, this, []{ QDesktopServices::openUrl(Z::Strs::releasesUrl()); });
-
-    auto browser = new QTextBrowser;
-    browser->setOpenExternalLinks(true);
-    browser->setHtml(report);
-
-    auto w = new QDialog;
-    w->setAttribute(Qt::WA_DeleteOnClose);
-    LayoutV({
-        label,
-        layout,
-        new QLabel(tr("Changelog:")),
-        browser,
-        LayoutH({Stretch(), button, Stretch()}),
-    }).useFor(w);
-    w->resize(500, 400);
-    w->exec();
+    _updateChecker->check(silent);
 }
 
 void HelpSystem::sendBugReport()
@@ -416,15 +289,6 @@ void HelpSystem::showAbout()
     }).setMargin(12).setSpacing(0).useFor(w);
 
     w->exec();
-}
-
-void HelpSystem::finishUpdater()
-{
-    _updateReply->deleteLater();
-    _updateReply = nullptr;
-    _updateChecker->deleteLater();
-    _updateChecker = nullptr;
-    AppSettings::instance().saveUpdateChecked();
 }
 
 void HelpSystem::checkUpdatesAuto()

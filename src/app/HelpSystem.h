@@ -2,6 +2,7 @@
 #define Z_HELP_SYSTEM_H
 
 #include <QObject>
+#include <QPointer>
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -9,6 +10,10 @@ class QNetworkAccessManager;
 class QNetworkReply;
 class QProcess;
 QT_END_NAMESPACE
+
+namespace Ori {
+class UpdateChecker;
+}
 
 namespace Z {
 
@@ -45,9 +50,7 @@ private:
 
     QWidget* _parent = nullptr;
     QProcess* _assistant = nullptr;
-    QNetworkAccessManager* _updateChecker = nullptr;
-    QNetworkReply* _updateReply = nullptr;
-    bool _checkUpdatesSilent = false;
+    QPointer<Ori::UpdateChecker> _updateChecker;
 
     bool startAssistant();
     void closeAssistant();
