@@ -336,7 +336,7 @@ public:
     {
         if (param == _source) apply();
     }
-
+    
     void apply() const
     {
         Z_PERF_BEGIN("ParameterLink::apply")
@@ -380,6 +380,7 @@ public:
     TParam* source() const { return _source; }
     TParam* target() const { return _target; }
 
+    int options() const { return _options; }
     void setOptions(int options) { _options = options; }
     //void setOption(ParameterLinkOption option) { _options |= option; }
     bool hasOption(ParameterLinkOption option) const { return _options & option; }

@@ -476,6 +476,20 @@ TEST_METHOD(ThickLens_flat1_flat2)
     ASSERT_MATRIX(s2, 1.0000000, 0.0080000, -0.0000000, 1.5000000)
 }
 
+TEST_METHOD(ThickLens_flip)
+{
+    ELEM(ThickLens, 4)
+    SET_PARAM(L, 10, mm)
+    SET_PARAM(n, 1.5, none)
+    SET_PARAM(R1, 9, cm)
+    SET_PARAM(R2, -150, mm)
+    
+    elem->flip();
+    
+    ASSERT_PARAM_VALUE(elem, R1, 150_mm)
+    ASSERT_PARAM_VALUE(elem, R2, Z::Value(-9, UNIT(cm)))
+}
+
 
 // Calculation: $PROJECT/calc/ElemGrinLens.py
 TEST_METHOD(GrinLens)
@@ -854,6 +868,18 @@ TEST_METHOD(SphericalInterface_flat)
     ASSERT_MATRIX(s_inv, 1.0000000, 0.0000000, -0.0000000, 2.2352941)
 }
 
+TEST_METHOD(SphericalInterface_flip)
+{
+    ELEM(SphericalInterface, 3)
+    SET_PARAM(n1, 1.7, none)
+    SET_PARAM(n2, 3.8, none)
+    SET_PARAM(R, -90, cm)
+    
+    elem->flip();
+    
+    ASSERT_PARAM_VALUE(elem, R, 90_cm)
+}
+
 // Calculation: $PROJECT/calc/Elements.py
 TEST_METHOD(AxiconMirror)
 {
@@ -939,11 +965,13 @@ TEST_GROUP("Elements",
            ADD_TEST(ThickLens_flat1),
            ADD_TEST(ThickLens_flat2),
            ADD_TEST(ThickLens_flat1_flat2),
+           ADD_TEST(ThickLens_flip),
            ADD_TEST(NormalInterface),
            ADD_TEST(BrewsterInterface),
            ADD_TEST(TiltedInterface),
            ADD_TEST(SphericalInterface),
            ADD_TEST(SphericalInterface_flat),
+           ADD_TEST(SphericalInterface_flip),
            ADD_TEST(AxiconMirror),
            ADD_TEST(AxiconLens),
            )

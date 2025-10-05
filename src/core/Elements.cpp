@@ -604,6 +604,13 @@ void ElemSphericalInterface::calcMatrixInternal()
     _ms_inv = _mt_inv;
 }
 
+QList<QPair<Z::Parameter*, Z::Parameter*>> ElemSphericalInterface::flip()
+{
+    if (_radius->valueDriver() != Z::ParamValueDriver::Link)
+        _radius->setValue(-_radius->value());
+    return {};
+}
+
 //------------------------------------------------------------------------------
 //                             ElemThickLens
 //------------------------------------------------------------------------------
@@ -762,6 +769,14 @@ void ElemThickLens::calcSubmatrices()
     _mt2.assign(A2, B2, C2, D2);
     _ms1 = _mt1;
     _ms2 = _mt2;
+}
+
+QList<QPair<Z::Parameter*, Z::Parameter*>> ElemThickLens::flip()
+{
+    auto r2 = _radius2->value();
+    _radius2->setValue(-_radius1->value());
+    _radius1->setValue(-r2);
+    return {{ _radius1, _radius2 }};
 }
 
 //------------------------------------------------------------------------------

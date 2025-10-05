@@ -477,6 +477,31 @@ void Schema::flip()
 {
     int size = _items.size();
     if (size < 2) return;
+    for (int i = 0; i < size; i++) {
+        auto elem = _items.at(i);
+        ElementMatrixLocker _(elem, "flip");
+        auto flippedParams = elem->flip();
+        for (auto p : std::as_const(flippedParams)) {
+            auto link1 = _paramLinks.byTarget(p.first);
+            auto link2 = _paramLinks.byTarget(p.second);
+            auto src1 = link1 ? link1->source() : nullptr;
+            auto src2 = link2 ? link2->source() : nullptr;
+            auto opt1 = link1 ? link1->options() : 0;
+            auto opt2 = link2 ? link2->options() : 0;
+            if (link1) {
+                _paramLinks.removeAll(link1);
+                delete link1;
+            }
+            if (link2) {
+                _paramLinks.removeAll(link2);
+                delete link2;
+            }
+            if (src1)
+                addParamLink(src1, p.second, opt1);
+            if (src2)
+                addParamLink(src2, p.first, opt2);
+        }
+    }
     for (int i = 0; i < size / 2; i++)
         swapItems(_items, i, size - 1 - i);
     relinkInterfaces();

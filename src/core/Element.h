@@ -199,6 +199,8 @@ public:
 
     bool failed() const;
     QString failReason() const;
+    
+    virtual QList<QPair<Z::Parameter*, Z::Parameter*>> flip() { return {}; }
 
     ElementLayoutOptions layoutOptions;
 

@@ -207,6 +207,7 @@ DECLARE_ELEMENT(ElemSphericalInterface, ElementInterface)
     DEFAULT_LABEL("s")
     CALC_MATRIX
     double radius() const { return _radius->value().toSi(); }
+    QList<QPair<Z::Parameter*, Z::Parameter*>> flip() override;
 private:
     Z::Parameter *_radius;
 DECLARE_ELEMENT_END
@@ -221,6 +222,7 @@ DECLARE_ELEMENT(ElemThickLens, ElementRange)
     SUB_RANGE
     double radius1() const { return _radius1->value().toSi(); }
     double radius2() const { return _radius2->value().toSi(); }
+    QList<QPair<Z::Parameter*, Z::Parameter*>> flip() override;
 private:
     Z::Parameter *_radius1, *_radius2;
 DECLARE_ELEMENT_END

@@ -17,6 +17,9 @@
           "text": "New command for memo editor: Paste Without Formatting"
         },
         {
+          "text": "Flip elements when flipping schema"
+        },
+        {
           "text": "Fix: file opens in a new window even if it's already opened in the current window"
         },
         {
