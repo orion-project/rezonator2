@@ -12,7 +12,7 @@ QString Enums::displayStr(StabilityCalcMode mode)
     case Normal:
         return QStringLiteral("(A + D)/2");
     case Squared:
-        return QStringLiteral("1 - ((A + D)/2)²");
+        return QString("1 - ((A + D)/2)²");
     }
     return QString();
 }
