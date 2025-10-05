@@ -2,6 +2,7 @@
 
 #include "tools/OriSettings.h"
 
+#include <QDateTime>
 #include <QDebug>
 #include <QFileSystemWatcher>
 #include <QPen>
@@ -124,6 +125,20 @@ void AppSettings::load()
     defaultUnitBeamRadius = Z::Units::findByAlias(s.settings()->value("defaultUnitBeamRadius").toString(), Z::Units::mkm());
     defaultUnitFrontRadius = Z::Units::findByAlias(s.settings()->value("defaultUnitFrontRadius").toString(), Z::Units::m());
     defaultUnitAngle = Z::Units::findByAlias(s.settings()->value("defaultUnitAngle").toString(), Z::Units::deg());
+
+    s.beginGroup("Update");
+    updateCheckInterval = UpdateCheckInterval(s.value("checkInterval", int(UpdateCheckInterval::Weekly)).toInt());
+    updateLastCheckDate = QDate::fromString(s.value("lastCheckDate").toString(), Qt::ISODate);
+    updateCheckDelayMs = qMax(300, s.value("checkDelayMs", 300).toInt());
+}
+
+void AppSettings::saveUpdateChecked()
+{
+    updateLastCheckDate = QDate::currentDate();
+
+    Ori::Settings s;
+    s.beginGroup("Update");
+    s.setValue("lastCheckDate", updateLastCheckDate.toString(Qt::ISODate));
 }
 
 void AppSettings::save()
@@ -188,6 +203,8 @@ void AppSettings::save()
     SAVE1("defaultUnitBeamRadius", defaultUnitBeamRadius->alias());
     SAVE1("defaultUnitFrontRadius", defaultUnitFrontRadius->alias());
     SAVE1("defaultUnitAngle", defaultUnitAngle->alias());
+
+    s.beginGroup("Update"); s.setValue("checkInterval", int(updateCheckInterval));
 }
 
 struct AppSettingsNotifier

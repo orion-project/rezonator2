@@ -579,6 +579,8 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
     tipImage->setParent(this);
 
     PersistentState::restoreWindowGeometry("start", this, {950, 700});
+    
+    Z::HelpSystem::instance()->checkUpdatesAuto();
 }
 
 StartWindow::~StartWindow()

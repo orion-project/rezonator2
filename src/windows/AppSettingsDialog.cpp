@@ -5,6 +5,7 @@
 #include "../widgets/UnitWidgets.h"
 
 #include "helpers/OriLayouts.h"
+#include "helpers/OriWidgets.h"
 #include "widgets/OriLabels.h"
 #include "widgets/OriOptionsGroup.h"
 
@@ -13,6 +14,7 @@
 #include <QApplication>
 #include <QBoxLayout>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QDebug>
 #include <QFormLayout>
 #include <QLabel>
@@ -52,13 +54,14 @@ public:
 
 AppSettingsDialog::AppSettingsDialog(QWidget* parent, Ori::Dlg::PageId currentPageId) : Ori::Dlg::BasicConfigDialog(parent)
 {
-    pageListIconSize = QSize(48, 48);
+    pageListIconSize = QSize(40, 40);
 
     setObjectName("AppSettingsDialog");
     setTitleAndIcon(tr("Application Settings"), ":/window_icons/options");
 
     createPages({
                     createGeneralPage(),
+                    createGeneralPage2(),
                     createViewPage(),
                     //createLayoutPage(), the only settings "transparent background" is not applicable to clipboard export (at least on Windows)
                     createUnitsPage(),
@@ -76,7 +79,7 @@ AppSettingsDialog::AppSettingsDialog(QWidget* parent, Ori::Dlg::PageId currentPa
 
 QWidget* AppSettingsDialog::createGeneralPage()
 {
-    auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageGeneral, tr("Behavior"), ":/config_pages/general", "app_settings_behavior.html");
+    auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageGeneral, tr("Behavior 1"), ":/toolbar/options", "app_settings_behavior.html");
 
     _groupOptions = new Ori::Widgets::OptionsGroupV2(tr("Options"), {
         {"editNewElem", tr("Edit just created element")},
@@ -92,6 +95,25 @@ QWidget* AppSettingsDialog::createGeneralPage()
     });
 
     page->add({_groupOptions, page->stretch()});
+    return page;
+}
+
+QWidget* AppSettingsDialog::createGeneralPage2()
+{
+    auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageGeneral2, tr("Behavior 2"), ":/config_pages/general");
+    
+    _updateCheckInterval = new QComboBox; 
+    _updateCheckInterval->addItem(tr("None"), int(UpdateCheckInterval::None));
+    _updateCheckInterval->addItem(tr("Daily"), int(UpdateCheckInterval::Daily));
+    _updateCheckInterval->addItem(tr("Weekly"), int(UpdateCheckInterval::Weekly));
+    _updateCheckInterval->addItem(tr("Monthly"), int(UpdateCheckInterval::Monthly));
+    
+    auto groupUpdates = LayoutV({
+        tr("Automatically check for updates"),
+        _updateCheckInterval,
+    }).makeGroupBox(tr("Updates"));
+    
+    page->add({groupUpdates, page->stretch()});
     return page;
 }
 
@@ -236,12 +258,14 @@ void AppSettingsDialog::populate()
     _groupOptions->setOption("elemAutoLabel", settings.elemAutoLabel);
     _groupOptions->setOption("elemAutoLabelPasted", settings.elemAutoLabelPasted);
     _groupOptions->setOption("pumpAutoLabel", settings.pumpAutoLabel);
-    _groupOptions->setOption("showStartWindow", settings.showStartWindow);
+    //_groupOptions->setOption("showStartWindow", settings.showStartWindow);
     _groupOptions->setOption("showProtocolAtStart", settings.showProtocolAtStart);
-    _groupOptions->setOption("showCustomElemLibrary", settings.showCustomElemLibrary);
+    //_groupOptions->setOption("showCustomElemLibrary", settings.showCustomElemLibrary);
     _groupOptions->setOption("showPythonMatrices", settings.showPythonMatrices);
     _groupOptions->setOption("skipFuncWindowsLoading", settings.skipFuncWindowsLoading);
     _groupOptions->setOption("useOnlineHelp", settings.useOnlineHelp);
+    
+    Ori::Gui::setSelectedId(_updateCheckInterval, (int)settings.updateCheckInterval);
 
     // view
     _groupView->setOption("smallToolbarImages", settings.smallToolbarImages);
@@ -284,12 +308,15 @@ bool AppSettingsDialog::collect()
     settings.elemAutoLabel = _groupOptions->option("elemAutoLabel");
     settings.elemAutoLabelPasted = _groupOptions->option("elemAutoLabelPasted");
     settings.pumpAutoLabel = _groupOptions->option("pumpAutoLabel");
-    settings.showStartWindow = _groupOptions->option("showStartWindow");
+    //settings.showStartWindow = _groupOptions->option("showStartWindow");
     settings.showProtocolAtStart = _groupOptions->option("showProtocolAtStart");
-    settings.showCustomElemLibrary = _groupOptions->option("showCustomElemLibrary");
+    //settings.showCustomElemLibrary = _groupOptions->option("showCustomElemLibrary");
     settings.showPythonMatrices = _groupOptions->option("showPythonMatrices");
     settings.skipFuncWindowsLoading = _groupOptions->option("skipFuncWindowsLoading");
     settings.useOnlineHelp = _groupOptions->option("useOnlineHelp");
+    
+    settings.updateCheckInterval = (UpdateCheckInterval)Ori::Gui::getSelectedId(
+        _updateCheckInterval, (int)UpdateCheckInterval::Weekly);
 
     // view
     settings.smallToolbarImages = _groupView->option("smallToolbarImages");

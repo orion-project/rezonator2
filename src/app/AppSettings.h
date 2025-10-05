@@ -5,6 +5,7 @@
 
 #include "core/OriTemplates.h"
 
+#include <QDate>
 #include <QMap>
 #include <QObject>
 #include <QPen>
@@ -15,6 +16,7 @@ class QFileSystemWatcher;
 QT_END_NAMESPACE
 
 enum class AppSettingsOption { NumberPrecisionData, DefaultPenFormat };
+enum class UpdateCheckInterval { None, Daily, Weekly, Monthly };
 
 class IAppSettingsListener
 {
@@ -75,6 +77,10 @@ public:
     int numberPrecisionData; ///< Number precision for value formatting (graph data, etc).
     bool showImagUnitAsJ;
     bool showImagUnitAtEnd;
+    
+    UpdateCheckInterval updateCheckInterval = UpdateCheckInterval::Weekly;
+    QDate updateLastCheckDate;
+    int updateCheckDelayMs = 300;
 
     Z::Unit defaultUnitFrontRadius = Z::Units::none();
     Z::Unit defaultUnitBeamRadius = Z::Units::none();
@@ -84,8 +90,9 @@ public:
 
     void load();
     void save();
+    void saveUpdateChecked();
 
-    enum { PageGeneral, PageView, PageLayout, PageUnits, PageExport, PageCalc };
+    enum { PageGeneral, PageGeneral2, PageView, PageLayout, PageUnits, PageExport, PageCalc };
     bool edit(Ori::Optional<int> currentPageId = Ori::Optional<int>());
 
     QSize toolbarIconSize() const;

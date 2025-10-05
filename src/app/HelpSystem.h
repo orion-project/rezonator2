@@ -31,7 +31,8 @@ public slots:
     void showIndex();
     void visitHomePage();
     void sendBugReport();
-    void checkUpdates();
+    void checkUpdates(bool silent = false);
+    void checkUpdatesAuto();
     void showAbout();
 
 private slots:
@@ -46,10 +47,13 @@ private:
     QProcess* _assistant = nullptr;
     QNetworkAccessManager* _updateChecker = nullptr;
     QNetworkReply* _updateReply = nullptr;
+    bool _checkUpdatesSilent = false;
 
     bool startAssistant();
     void closeAssistant();
-    void versionReceived(QByteArray versionData) const;
+    void versionReceived(QByteArray data);
+    void historyReceived(QByteArray data);
+    void finishUpdater();
 };
 
 } // namespace Z

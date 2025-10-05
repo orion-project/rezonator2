@@ -39,10 +39,12 @@ inline QString alpha() { return QStringLiteral("α"); }
 inline QString theta() { return QStringLiteral("θ"); }
 #endif
 
-inline QString homepage() { return "http://rezonator.orion-project.org"; }
+inline QString homePageUrl() { return "http://rezonator.orion-project.org"; }
 inline QString versionFileUrl() { return "http://rezonator.orion-project.org/files/version.xml"; }
-inline QString downloadPage() { return "http://rezonator.orion-project.org/index.php?page=dload"; }
-inline QString sourcepage() { return "https://github.com/orion-project/rezonator2"; }
+inline QString historyFileUrl() { return "http://rezonator.orion-project.org/history.json"; }
+inline QString releasesUrl() { return "https://github.com/orion-project/rezonator2/releases"; }
+inline QString sourcesUrl() { return "https://github.com/orion-project/rezonator2"; }
+inline QString issuesUrl() { return "https://github.com/orion-project/rezonator2/issues"; }
 inline QString newIssueUrl() { return "https://github.com/orion-project/rezonator2/issues/new"; }
 inline QString email() { return "rezonator@orion-project.org"; }
 

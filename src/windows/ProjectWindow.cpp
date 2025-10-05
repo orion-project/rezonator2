@@ -117,6 +117,8 @@ ProjectWindow::ProjectWindow(Schema* aSchema) : QMainWindow(), SchemaToolWindow(
     MessageBus::instance().registerListener(this);
 
     PersistentState::restoreWindowGeometry("main", this, {1024, 768});
+    
+    Z::HelpSystem::instance()->checkUpdatesAuto();
 }
 
 ProjectWindow::~ProjectWindow()

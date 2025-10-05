@@ -47,8 +47,10 @@ private:
     QSpinBox *_numberPrecisionData;
     QCheckBox *_showImagUnitAsJ, *_showImagUnitAtEnd;
     QCPL::PenEditorWidget *_elemBoundMarkersPen, *_stabBoundMarkerPen, *_cursorPen, *_graphPenT, *_graphPenS;
+    QComboBox *_updateCheckInterval;
 
     QWidget* createGeneralPage();
+    QWidget* createGeneralPage2();
     QWidget* createViewPage();
     QWidget* createLayoutPage();
     QWidget* createUnitsPage();
