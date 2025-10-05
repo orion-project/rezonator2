@@ -176,7 +176,7 @@ protected:
         qWarning() << "Do not use GlobalParamsElem::create()";
         return nullptr;
     }
-    friend class Schema;
+    //friend class Schema;
 };
 
 //------------------------------------------------------------------------------
@@ -319,12 +319,15 @@ void Schema::deleteElements(const Elements& elems, Arg::RaiseEvents events, Arg:
     }
 }
 
-void Schema::elementChanged(Element *elem, const QString &reason)
+void Schema::elementChanged(Element *elem, Z::ParameterBase *param, const QString &reason)
 {
     Z_PERF_BEGIN("Schema::elementChanged")
 
     auto reasonEx = QStringLiteral("%1, elem(%2)").arg(reason, elem->displayLabel()).toStdString();
-    _events.raise(SchemaEvents::ElemChanged, elem, reasonEx.c_str());
+    if (_globalParams->hasParam((Z::Parameter*)param))
+        _events.raise(SchemaEvents::GlobalParamChanged, param, reasonEx.c_str());
+    else
+        _events.raise(SchemaEvents::ElemChanged, elem, reasonEx.c_str());
 
     Z_PERF_END
 }
@@ -360,12 +363,12 @@ Z::Parameters Schema::availableDependencySources() const
 
 void Schema::addGlobalParam(Z::Parameter *param)
 {
-    dynamic_cast<GlobalParamsElem*>(_globalParams)->_params.append(param);
+    _globalParams->addParam(param);
 }
 
 void Schema::removeGlobalParam(Z::Parameter *param)
 {
-    dynamic_cast<GlobalParamsElem*>(_globalParams)->_params.removeOne(param);
+    _globalParams->removeParam(param);
 }
 
 PumpParams* Schema::activePump()

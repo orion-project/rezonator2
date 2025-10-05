@@ -238,7 +238,6 @@ void SchemaParamsWindow::setParameterValue()
                 .exec();
     if (ok)
     {
-        schema()->events().raise(SchemaEvents::GlobalParamChanged, param, "Params window: param value set");
         schema()->events().raise(SchemaEvents::RecalRequred, "Params window: param value set");
     }
 
@@ -289,7 +288,6 @@ void SchemaParamsWindow::editParameter()
             schema()->events().raise(SchemaEvents::GlobalParamEdited, param, "Params window: param edited");
         if (changed) {
             param->setValue(newValue);
-            schema()->events().raise(SchemaEvents::GlobalParamChanged, param, "Params window: param value set");
             schema()->events().raise(SchemaEvents::RecalRequred, "Params window: param value set");
         }
     });

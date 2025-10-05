@@ -332,16 +332,8 @@ void AdjusterWidget::changeValue()
         _isValueChanging = true;
         _param->setValue(_currentValue);
         _isValueChanging = false;
-        
-        if (_elem)
-        {
-            _schema->events().raise(SchemaEvents::RecalRequred, "AdjusterWidget: elem param adjusted");
-        }
-        else
-        {
-            _schema->events().raise(SchemaEvents::GlobalParamChanged, _param, "AdjusterWidget: custom param adjusted");
-            _schema->events().raise(SchemaEvents::RecalRequred, "AdjusterWidget: custom param adjusted");
-        }
+        _schema->events().raise(SchemaEvents::RecalRequred, 
+            _elem ? "AdjusterWidget: elem param adjusted" : "AdjusterWidget: global param adjusted");
     }
     else
     {

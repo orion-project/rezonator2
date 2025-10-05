@@ -47,7 +47,7 @@ class TestElemOwner : public ElementOwner
 public:
     bool changed = false;
     Element *element = nullptr;
-    void elementChanged(Element *e, const QString&) override { element = e; changed = true; }
+    void elementChanged(Element *e, Z::ParameterBase *p, const QString&) override { element = e; changed = true; }
 };
 }
 

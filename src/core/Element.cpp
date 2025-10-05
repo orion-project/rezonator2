@@ -75,6 +75,12 @@ void Element::addParam(Z::Parameter *param, int index)
     else _params.insert(index, param);
 }
 
+void Element::removeParam(Z::Parameter *param)
+{
+    param->removeListener(this);
+    _params.removeOne(param);
+}
+
 void Element::parameterChanged(Z::ParameterBase *p)
 {
     Z_PERF_BEGIN("Element::parameterChanged_1")
@@ -86,14 +92,14 @@ void Element::parameterChanged(Z::ParameterBase *p)
 
     Z_PERF_BEGIN("Element::parameterChanged_2")
     if (!_eventsLocked && _owner)
-        _owner->elementChanged(this, QStringLiteral("Element::parameterChanged(%1)").arg(p->alias()));
+        _owner->elementChanged(this, p, QStringLiteral("Element::parameterChanged(%1)").arg(p->alias()));
     Z_PERF_END
 }
 
 void Element::parameterFailed(Z::ParameterBase *p)
 {
     if (!_eventsLocked && _owner)
-        _owner->elementChanged(this, QStringLiteral("Element::parameterFailed(%1)").arg(p->alias()));
+        _owner->elementChanged(this, p, QStringLiteral("Element::parameterFailed(%1)").arg(p->alias()));
 }
 
 void Element::calcMatrix(const char *reason)
@@ -115,21 +121,21 @@ void Element::setLabel(const QString& value)
 {
     _label = value;
     if (!_eventsLocked && _owner)
-        _owner->elementChanged(this, "Element::setLabel");
+        _owner->elementChanged(this, nullptr, "Element::setLabel");
 }
 
 void Element::setTitle(const QString& value)
 {
     _title = value;
     if (!_eventsLocked && _owner)
-        _owner->elementChanged(this, "Element::setTitle");
+        _owner->elementChanged(this, nullptr, "Element::setTitle");
 }
 
 void Element::setDisabled(bool value)
 {
     _disabled = value;
     if (!_eventsLocked && _owner)
-        _owner->elementChanged(this, "Element::setDisabled");
+        _owner->elementChanged(this, nullptr, "Element::setDisabled");
 }
 
 bool Element::failed() const

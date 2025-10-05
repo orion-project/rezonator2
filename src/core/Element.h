@@ -55,7 +55,7 @@ public:
     enum Position {PositionInvalid, PositionAtLeft, PositionInMidle, PositionAtRight};
 public:
     virtual ~ElementOwner();
-    virtual void elementChanged(Element*, const QString &reason) { Q_UNUSED(reason) }
+    virtual void elementChanged(Element*, Z::ParameterBase*, const QString &reason) { Q_UNUSED(reason) }
     virtual int indexOf(Element*) const { return -1; }
     virtual int count() const { return 0; }
     virtual Position position(Element*) const { return PositionInvalid; }
@@ -149,7 +149,10 @@ public:
 
     const Z::Parameters& params() const { return _params; }
     bool hasParams() const { return !_params.isEmpty(); }
+    bool hasParam(Z::Parameter* param) const { return _params.contains(param); }
     Z::Parameter* param(const QString &alias) { return _params.byAlias(alias); }
+    void addParam(Z::Parameter* param, int index = -1);
+    void removeParam(Z::Parameter* param);
 
     /// Label of element. Label is short indentificator
     /// for element or its name (like variable name). E.g.: "M1", "L_f", etc.
@@ -191,7 +194,7 @@ public:
 
     void setOption(ElementOption option) { _options |= option; }
     bool hasOption(ElementOption option) const { return _options & option; }
-    
+
     virtual std::optional<Z::Value> aperture() const { return {}; }
 
     bool failed() const;
@@ -212,8 +215,6 @@ protected:
     int _options = 0;
 
     virtual void calcMatrixInternal();
-
-    void addParam(Z::Parameter* param, int index = -1);
 
     void parameterChanged(Z::ParameterBase*) override;
     void parameterFailed(Z::ParameterBase*) override;

@@ -67,10 +67,10 @@ TEST_METHOD(must_raise_events_when_custom_param_changed_1)
     
     ASSERT_SCHEMA_STATE(STATE(Modified))
     ASSERT_LISTENER_EVENTS(
-        EVENT(ElemChanged),
+        EVENT(GlobalParamChanged),
         EVENT(Changed),
 
-        EVENT(GlobalParamChanged),
+        EVENT(ElemChanged),
         EVENT(Changed),
 
         EVENT(RecalRequred)
@@ -100,13 +100,13 @@ TEST_METHOD(must_raise_events_when_custom_param_changed_2)
 
     ASSERT_SCHEMA_STATE(STATE(Modified))
     ASSERT_LISTENER_EVENTS(
+        EVENT(GlobalParamChanged),
+        EVENT(Changed),
+
         EVENT(ElemChanged), // e1 changed
         EVENT(Changed),
 
         EVENT(ElemChanged), // e2 changed
-        EVENT(Changed),
-
-        EVENT(GlobalParamChanged),
         EVENT(Changed),
 
         EVENT(RecalRequred)

@@ -90,7 +90,7 @@ TEST_METHOD(schema_modified_when_linked_parameter_changed_and_not_locked)
     p0->setValue(1_m);
     ASSERT_IS_TRUE(schema.modified());
     ASSERT_SCHEMA_STATE(STATE(Modified))
-    ASSERT_LISTENER_EVENTS(EVENT(ElemChanged), EVENT(Changed))
+    ASSERT_LISTENER_EVENTS(EVENT(GlobalParamChanged), EVENT(Changed), EVENT(ElemChanged), EVENT(Changed))
 }
 
 TEST_METHOD(schema_not_modified_when_linked_parameter_changed_and_locked)
@@ -138,7 +138,13 @@ TEST_METHOD(schema_modified_when_formula_parameter_changed_and_not_locked)
     p1->setValue(1_m);
     ASSERT_IS_TRUE(schema.modified());
     ASSERT_SCHEMA_STATE(STATE(Modified))
-    ASSERT_LISTENER_EVENTS(EVENT(ElemChanged), EVENT(Changed))
+    ASSERT_LISTENER_EVENTS(
+        EVENT(GlobalParamChanged), // p1
+        EVENT(Changed),
+        EVENT(GlobalParamChanged), // p0
+        EVENT(Changed),
+        EVENT(ElemChanged),
+        EVENT(Changed))
 }
 
 TEST_METHOD(schema_not_modified_when_formula_parameter_changed_and_locked)

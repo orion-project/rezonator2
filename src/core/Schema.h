@@ -345,7 +345,7 @@ private:
     PumpsList _pumps;
 
     // inherits from ElementOwner
-    void elementChanged(Element *elem, const QString &reason) override;
+    void elementChanged(Element *elem, Z::ParameterBase *param, const QString &reason) override;
 
     // inherits from ParameterListener
     void parameterChanged(Z::ParameterBase *param) override;

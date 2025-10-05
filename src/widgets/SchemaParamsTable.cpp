@@ -19,7 +19,7 @@ enum { COL_IMAGE, COL_ALIAS, COL_VALUE, COL_ANNOTATION, COL_COUNT };
 //                             SchemaParamsTableModel
 //------------------------------------------------------------------------------
 
-class SchemaParamsTableModel : public QAbstractTableModel, public SchemaListener, public Z::ParameterListener
+class SchemaParamsTableModel : public QAbstractTableModel, public SchemaListener
 {
 public:
     SchemaParamsTableModel(Schema* schema, QTableView* view): QAbstractTableModel(nullptr), _schema(schema), _view(view)
@@ -29,8 +29,6 @@ public:
     
     ~SchemaParamsTableModel()
     {
-        for (const auto p: *(_schema->globalParams()))
-            p->removeListener(this);
         _schema->unregisterListener(this);
     }
 
@@ -119,9 +117,6 @@ public:
     void schemaLoaded(Schema*) override
     {
         emit layoutChanged();
-
-        for (const auto p: *(_schema->globalParams()))
-            p->addListener(this);
     }
     
     void globalParamCreated(Schema*, Z::Parameter* param) override
@@ -130,7 +125,6 @@ public:
         beginInsertRows(QModelIndex(), row, row);
         endInsertRows();
         adjustColumns();
-        param->addListener(this);
     }
     
     void globalParamDeleting(Schema*, Z::Parameter*) override
@@ -149,12 +143,7 @@ public:
         updateParamRow(param);
     }
     
-    void parameterChanged(Z::ParameterBase* param) override
-    {
-        updateParamRow(param);
-    }
-    
-    void parameterFailed(Z::ParameterBase* param) override
+    void globalParamChanged(Schema*, Z::Parameter* param) override
     {
         updateParamRow(param);
     }
