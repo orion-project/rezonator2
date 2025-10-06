@@ -2,7 +2,7 @@
   "history": [
     {
       "version": "2.1.1",
-      "date": "",
+      "date": "2025-10-06",
       "changes": [
         {
           "text": "Can use global parameter as an argument for stability functions"
@@ -18,6 +18,9 @@
         },
         {
           "text": "Flip elements when flipping schema"
+        },
+        {
+          "text": "Show new version changelog, automatically check for updates"
         },
         {
           "text": "Fix: file opens in a new window even if it's already opened in the current window"
