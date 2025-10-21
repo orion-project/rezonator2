@@ -1,5 +1,7 @@
 #include "Parameters.h"
 
+#include <QRegularExpression>
+
 namespace Z {
 
 ParameterListener::~ParameterListener() {}
@@ -25,5 +27,20 @@ ParamValueBackup::~ParamValueBackup()
     _param->setExpr(_expr);
     _param->setError(_error);
 }
+
+//------------------------------------------------------------------------------
+//                               namespace Param
+//------------------------------------------------------------------------------
+
+namespace Param {
+
+bool isValidAlias(const QString& s)
+{
+    static QRegularExpression r("^[a-zA-Z_][a-zA-Z_0-9]*$");
+    return r.match(s).hasMatch();
+}
+
+} // namespace Param
+
 
 } // namespace Z

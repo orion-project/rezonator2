@@ -476,3 +476,18 @@ QFrame[role=info_panel] {
   border: $light-border;
   border-radius: $border-radius;
 }
+
+#elem_props_create_param_button {
+  background: $base-color;
+  border: $default-border;
+  border-radius: 3px;
+  padding-top: 1px;
+  width: 30px;
+  height: 16px;
+}
+#elem_props_create_param_button:hover {
+  background: $dark-paper-color;
+}
+#elem_props_create_param_button::menu-indicator {
+  width: 0;
+}

@@ -13,6 +13,7 @@ QT_END_NAMESPACE
 
 class ValueEdit;
 class UnitComboBox;
+class DimComboBox;
 
 // QPushButton looks ugly on "macintosh" style, it looses its standard view
 // and can't calcutale its size propely (even fixed size).
@@ -174,6 +175,35 @@ private:
     void setIsLinked(bool on);
     void editorKeyPressed(int key);
     void unitChangedRaw(Z::Unit unit);
+};
+
+
+class ParamSpecEditor : public QWidget
+{
+    Q_OBJECT
+    
+public:
+    struct Options
+    {
+        QString recentKeyPrefix;
+        const Z::Parameters *existedParams = nullptr;
+    };
+
+    ParamSpecEditor(Z::Parameter *param, const Options &opts);
+    
+    bool exec(const QString &title);
+    
+    QString alias() const;
+    QString descr() const;
+    Z::Dim dim() const;
+    
+private:
+    Options _opts;
+    Z::Parameter *_param;
+    QLineEdit *_aliasEditor;
+    DimComboBox *_dimEditor;
+    QLineEdit *_descrEditor;
+    Z::Dim _recentDim = nullptr;
 };
 
 #endif // PARAM_EDITOR_H

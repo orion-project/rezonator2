@@ -3,6 +3,7 @@
 #include "../app/Appearance.h"
 #include "../core/Element.h"
 #include "../core/Schema.h"
+#include "../widgets/ParamEditor.h"
 #include "../widgets/ParamsEditor.h"
 #include "../widgets/SchemaLayout.h"
 
@@ -15,7 +16,9 @@
 #include <QIcon>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMenu>
 #include <QMessageBox>
+#include <QPushButton>
 #include <QTabWidget>
 
 //------------------------------------------------------------------------------
@@ -66,10 +69,27 @@ ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : Rezonat
     layoutCommon->addRow(tr("Label:"), _editorLabel);
     layoutCommon->addRow(tr("Title:"), _editorTitle);
 
+    auto menuCreateParam = new QMenu(this);
+    // TODO: populate presets
+    menuCreateParam->addSeparator();
+    auto actnCreateParam = menuCreateParam->addAction(tr("Create New..."));
+    connect(actnCreateParam, &QAction::triggered, this, &ElementPropsDialog::createParam);
+
+    _butCreateParam = new QPushButton;
+    _butCreateParam->setToolTip(tr("Add parameter"));
+    _butCreateParam->setIcon(QIcon(":/toolbar/plus"));
+    _butCreateParam->setIconSize({14, 14});
+    _butCreateParam->setObjectName("elem_props_create_param_button");
+    _butCreateParam->setMenu(menuCreateParam);
+
     // parameters tab-set
     _tabs = new QTabWidget;
     _tabs->addTab(initPageOptions(), tr("Options"));
     _tabs->addTab(initPageOutline(), tr("Outline"));
+    _tabs->setCornerWidget(_butCreateParam);
+    connect(_tabs, &QTabWidget::currentChanged, this, [this](int tabIndex){
+        _butCreateParam->setVisible(tabIndex == 0);
+    });
 
     mainLayout()->addLayout(layoutCommon);
     mainLayout()->addSpacing(6);
@@ -80,6 +100,7 @@ ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : Rezonat
 
 ElementPropsDialog::~ElementPropsDialog()
 {
+    qDeleteAll(_newParams);
     __savedTabIndex = _tabs->currentIndex();
 }
 
@@ -154,6 +175,8 @@ void ElementPropsDialog::collect()
     _element->setDisabled(_elemDisabled->isChecked());
     _element->layoutOptions.showLabel = _layoutShowLabel->isChecked();
     _element->layoutOptions.drawAlt = _layoutDrawAlt->isChecked();
+    while (!_newParams.isEmpty())
+        _element->addParam(_newParams.takeFirst());
 
     collectParams();
     accept();
@@ -163,6 +186,24 @@ void ElementPropsDialog::collect()
 QString ElementPropsDialog::helpTopic() const
 {
    return "matrix/" % _element->type() % ".html";
+}
+
+void ElementPropsDialog::createParam()
+{
+    ParamSpecEditor editor(nullptr, {
+        .existedParams = &_element->params()
+    });
+    if (!editor.exec(tr("Create Parameter")))
+        return;
+
+    auto dim = editor.dim();
+    auto alias = editor.alias();
+    auto label = alias;
+    auto name = alias;
+    auto descr = editor.descr();
+    auto param = new Z::Parameter(dim, alias, label, name, descr);
+    param->setOption(Z::ParamOption::Custom);
+    _newParams << param;
 }
 
 //------------------------------------------------------------------------------

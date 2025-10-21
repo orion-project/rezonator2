@@ -3,10 +3,12 @@
 #include "ParamsListWidget.h"
 #include "UnitWidgets.h"
 #include "../app/Appearance.h"
+#include "../app/PersistentState.h"
 #include "../core/Format.h"
 #include "../math/tinyexpr.h"
 
 #include "helpers/OriDialogs.h"
+#include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
 #include "widgets/OriValueEdit.h"
 
@@ -534,3 +536,68 @@ void ParamEditor::unitChangedRaw(Z::Unit unit)
 
     emit unitChanged(unit);
 }
+
+//------------------------------------------------------------------------------
+//                              ParamSpecEditor
+//------------------------------------------------------------------------------
+
+ParamSpecEditor::ParamSpecEditor(Z::Parameter *param, const Options &opts) : QWidget(), _param(param), _opts(opts)
+{
+    _aliasEditor = new QLineEdit;
+    _aliasEditor->setFont(Z::Gui::ValueFont().get());
+
+    _dimEditor = new DimComboBox;
+    
+    _descrEditor = new QLineEdit;
+    _descrEditor->setFont(Z::Gui::ValueFont().get());
+    
+    if (param) {
+        _aliasEditor->setText(param->alias());
+        _dimEditor->setSelectedDim(param->dim());
+        _descrEditor->setText(param->description());
+    } else if (!_opts.recentKeyPrefix.isEmpty()) {
+        auto key = (_opts.recentKeyPrefix + "_dim").toLatin1();
+        _recentDim = RecentData::getDim(key.constData());
+        _dimEditor->setSelectedDim(_recentDim);
+    }
+
+    Ori::Layouts::LayoutV({
+        tr("Name"), _aliasEditor, Ori::Layouts::Space(9),
+        tr("Dimension"), _dimEditor, Ori::Layouts::Space(9),
+        tr("Description"), _descrEditor, Ori::Layouts::Space(9),
+    }).setSpacing(3).setMargin(0).useFor(this);
+}
+
+QString ParamSpecEditor::alias() const { return _aliasEditor->text().trimmed(); }
+QString ParamSpecEditor::descr() const { return _descrEditor->text().trimmed(); }
+Z::Dim ParamSpecEditor::dim() const { return _dimEditor->selectedDim(); }
+
+bool ParamSpecEditor::exec(const QString &title)
+{
+    auto verifyFunc = [this](){
+        auto alias = _aliasEditor->text().trimmed();
+        if (alias.isEmpty())
+            return qApp->tr("Parameter name can't be empty");
+        if (_opts.existedParams)
+            if (auto p = _opts.existedParams->byAlias(alias); p && _param && p != _param)
+                return qApp->tr("Parameter <b>%1</b> already exists").arg(alias);
+        if (!Z::Param::isValidAlias(alias))
+            return qApp->tr("Parameter name <b>%1</b> is invalid").arg(alias);
+        return QString();
+    };
+    bool ok = Ori::Dlg::Dialog(this, false)
+        .withTitle(title)
+        .withIconPath(":/window_icons/parameter")
+        .withContentToButtonsSpacingFactor(3)
+        .withVerification(verifyFunc)
+        .exec();
+    if (ok)
+    {
+        if (!_opts.recentKeyPrefix.isEmpty() && dim() != _recentDim) {
+            auto key = (_opts.recentKeyPrefix + "_dim").toLatin1();
+            RecentData::setDim(key.constData(), dim());
+        }
+    }
+    return ok;
+}
+

@@ -47,9 +47,13 @@ private:
     QCheckBox *_layoutShowLabel;
     QCheckBox *_layoutDrawAlt;
     QCheckBox *_elemDisabled;
+    QPushButton *_butCreateParam;
+    QList<Z::Parameter*> _newParams;
 
     QWidget* initPageOptions();
     QWidget* initPageOutline();
+    
+    void createParam();
 };
 
 //------------------------------------------------------------------------------
