@@ -88,7 +88,7 @@ void SchemaParamsWindow::createParameter()
 {
     ParamSpecEditor editor(nullptr, {
         .recentKeyPrefix = "global_param",
-        .existedParams = schema()->globalParams(),
+        .existedParams = schema()->globalParamsAsElem()->params(),
     });
     if (!editor.exec(tr("Create Parameter")))
         return;
@@ -188,7 +188,7 @@ void SchemaParamsWindow::editParameter()
     if (!param) return;
 
     ParamSpecEditor editor(param, {
-        .existedParams = schema()->globalParams()
+        .existedParams = schema()->globalParamsAsElem()->params()
     });
     if (!editor.exec(tr("Edit Parameter")))
         return;

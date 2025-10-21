@@ -1,6 +1,15 @@
 {
   "history": [
     {
+      "version": "2.1.2",
+      "date": "",
+      "changes": [
+        {
+          "text": "Fix: can create global parameter with duplicated name"
+        }
+      ]
+    },
+    {
       "version": "2.1.1",
       "date": "2025-10-06",
       "changes": [

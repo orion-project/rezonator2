@@ -3,9 +3,12 @@
 
 #include "RezonatorDialog.h"
 
+#include "../core/Parameters.h"
+
 QT_BEGIN_NAMESPACE
 class QCheckBox;
 class QLineEdit;
+class QStackedWidget;
 class QTabWidget;
 QT_END_NAMESPACE
 
@@ -32,17 +35,16 @@ protected:
     void showEvent(QShowEvent*) override;
     QSize prefferedSize() const override { return QSize(300, 400); }
 
-    virtual void populateParams() {}
-    virtual void collectParams() {}
     virtual QString verifyParams() const { return QString(); }
 
+    // inherited from RezonatorDialog
     QString helpTopic() const override;
-
-    void setPageParams(QWidget* pageParams);
 
 private:
     Element *_element;
     QTabWidget *_tabs;
+    QStackedWidget *_pageParams;
+    ParamsEditor *_editorParams;
     QLineEdit *_editorLabel, *_editorTitle;
     QCheckBox *_layoutShowLabel;
     QCheckBox *_layoutDrawAlt;
@@ -50,10 +52,11 @@ private:
     QPushButton *_butCreateParam;
     QList<Z::Parameter*> _newParams;
 
+    QWidget* initPageParams();
     QWidget* initPageOptions();
     QWidget* initPageOutline();
     
-    void createParam();
+    void createCustomParam();
 };
 
 //------------------------------------------------------------------------------
@@ -65,42 +68,5 @@ class ElementPropsDialog_None : public ElementPropsDialog
 public:
     explicit ElementPropsDialog_None(Element *elem, QWidget *parent = nullptr);
 };
-
-//------------------------------------------------------------------------------
-
-class ElementPropsDialog_List : public ElementPropsDialog
-{
-    Q_OBJECT
-
-public:
-    explicit ElementPropsDialog_List(Element *elem, QWidget *parent = nullptr);
-
-protected:
-    void populateParams() override;
-    void collectParams() override;
-    virtual QString verifyParams() const override;
-
-private:
-    ParamsEditor* _editors;
-};
-
-//------------------------------------------------------------------------------
-
-class ElementPropsDialog_Abcd : public ElementPropsDialog
-{
-    Q_OBJECT
-
-public:
-    explicit ElementPropsDialog_Abcd(Element *elem, QWidget *parent = nullptr);
-
-protected:
-    void populateParams() override;
-    void collectParams() override;
-
-private:
-    ParamsEditorAbcd *_editorMt, *_editorMs;
-};
-
-//------------------------------------------------------------------------------
 
 #endif // ELEMENT_PROP_DLG_H

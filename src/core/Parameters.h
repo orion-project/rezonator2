@@ -13,8 +13,6 @@
 
 namespace Z {
 
-enum class ParamsEditorKind { None, List, ABCD };
-
 class ParameterBase;
 
 //------------------------------------------------------------------------------

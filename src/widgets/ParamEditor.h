@@ -186,7 +186,7 @@ public:
     struct Options
     {
         QString recentKeyPrefix;
-        const Z::Parameters *existedParams = nullptr;
+        Z::Parameters existedParams;
     };
 
     ParamSpecEditor(Z::Parameter *param, const Options &opts);

@@ -578,9 +578,8 @@ bool ParamSpecEditor::exec(const QString &title)
         auto alias = _aliasEditor->text().trimmed();
         if (alias.isEmpty())
             return qApp->tr("Parameter name can't be empty");
-        if (_opts.existedParams)
-            if (auto p = _opts.existedParams->byAlias(alias); p && _param && p != _param)
-                return qApp->tr("Parameter <b>%1</b> already exists").arg(alias);
+        if (auto p = _opts.existedParams.byAlias(alias); p && p != _param)
+            return qApp->tr("Parameter <b>%1</b> already exists").arg(alias);
         if (!Z::Param::isValidAlias(alias))
             return qApp->tr("Parameter name <b>%1</b> is invalid").arg(alias);
         return QString();
@@ -600,4 +599,3 @@ bool ParamSpecEditor::exec(const QString &title)
     }
     return ok;
 }
-

@@ -1,6 +1,7 @@
 #include "ElementPropsDialog.h"
 
 #include "../app/Appearance.h"
+#include "../app/PersistentState.h"
 #include "../core/Element.h"
 #include "../core/Schema.h"
 #include "../widgets/ParamEditor.h"
@@ -19,7 +20,9 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QStackedWidget>
 #include <QTabWidget>
+#include <QTimer>
 
 //------------------------------------------------------------------------------
 //                             ElementPropsDialog
@@ -31,24 +34,7 @@ int __savedTabIndex = 0;
 
 bool ElementPropsDialog::editElement(Element *elem, QWidget *parent)
 {
-    ElementPropsDialog *dlg = nullptr;
-    switch (elem->paramsEditorKind())
-    {
-    case Z::ParamsEditorKind::None:
-        dlg = new ElementPropsDialog_None(elem, parent);
-        break;
-
-    case Z::ParamsEditorKind::List:
-        if (Z::Utils::defaultParamFilter()->count(elem->params()) == 0)
-            dlg = new ElementPropsDialog_None(elem, parent);
-        else
-            dlg = new ElementPropsDialog_List(elem, parent);
-        break;
-
-    case Z::ParamsEditorKind::ABCD:
-        dlg = new ElementPropsDialog_Abcd(elem, parent);
-        break;
-    }
+    auto dlg = new ElementPropsDialog(elem, parent);
     return dlg && dlg->exec() == QDialog::Accepted;
 }
 
@@ -69,21 +55,9 @@ ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : Rezonat
     layoutCommon->addRow(tr("Label:"), _editorLabel);
     layoutCommon->addRow(tr("Title:"), _editorTitle);
 
-    auto menuCreateParam = new QMenu(this);
-    // TODO: populate presets
-    menuCreateParam->addSeparator();
-    auto actnCreateParam = menuCreateParam->addAction(tr("Create New..."));
-    connect(actnCreateParam, &QAction::triggered, this, &ElementPropsDialog::createParam);
-
-    _butCreateParam = new QPushButton;
-    _butCreateParam->setToolTip(tr("Add parameter"));
-    _butCreateParam->setIcon(QIcon(":/toolbar/plus"));
-    _butCreateParam->setIconSize({14, 14});
-    _butCreateParam->setObjectName("elem_props_create_param_button");
-    _butCreateParam->setMenu(menuCreateParam);
-
     // parameters tab-set
     _tabs = new QTabWidget;
+    _tabs->addTab(initPageParams(), tr("Parameters"));
     _tabs->addTab(initPageOptions(), tr("Options"));
     _tabs->addTab(initPageOutline(), tr("Outline"));
     _tabs->setCornerWidget(_butCreateParam);
@@ -94,8 +68,6 @@ ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : Rezonat
     mainLayout()->addLayout(layoutCommon);
     mainLayout()->addSpacing(6);
     mainLayout()->addWidget(_tabs);
-
-    _editorLabel->setFocus();
 }
 
 ElementPropsDialog::~ElementPropsDialog()
@@ -109,13 +81,47 @@ void ElementPropsDialog::showEvent(QShowEvent* event)
     RezonatorDialog::showEvent(event);
 
     _tabs->setCurrentIndex(__savedTabIndex);
+    
+    if (_tabs->currentIndex() == 0)
+        _editorParams->focus();
+    else
+        _editorLabel->setFocus();
 
     populate();
 }
 
-void ElementPropsDialog::setPageParams(QWidget* pageParams)
+QWidget* ElementPropsDialog::initPageParams()
 {
-    _tabs->insertTab(0, pageParams, tr("Parameters"));
+    auto menuCreateParam = new QMenu(this);
+    // TODO: populate presets
+    menuCreateParam->addSeparator();
+    auto actnCreateParam = menuCreateParam->addAction(tr("Create New..."));
+    connect(actnCreateParam, &QAction::triggered, this, &ElementPropsDialog::createCustomParam);
+
+    _butCreateParam = new QPushButton;
+    _butCreateParam->setToolTip(tr("Add parameter"));
+    _butCreateParam->setIcon(QIcon(":/toolbar/plus"));
+    _butCreateParam->setIconSize({14, 14});
+    _butCreateParam->setObjectName("elem_props_create_param_button");
+    _butCreateParam->setMenu(menuCreateParam);
+
+    auto schema = dynamic_cast<Schema*>(_element->owner());
+    ParamsEditor::Options opts(&_element->params());
+    opts.filter.reset(new Z::ParameterFilter({new Z::ParameterFilterVisible()}));
+    opts.globalParams = schema ? schema->globalParams() : nullptr;
+    opts.paramLinks = schema ? schema->paramLinks() : nullptr;
+    opts.useExpression = true;
+    _editorParams = new ParamsEditor(opts);
+    
+    auto labelEmpty = new QLabel(tr("Element has no editable parameters"));
+    labelEmpty->setMargin(6);
+    labelEmpty->setAlignment(Qt::AlignCenter);
+    
+    _pageParams = new QStackedWidget;
+    _pageParams->addWidget(labelEmpty);
+    _pageParams->addWidget(_editorParams);
+    
+    return _pageParams;
 }
 
 QWidget* ElementPropsDialog::initPageOptions()
@@ -152,13 +158,13 @@ void ElementPropsDialog::populate()
     _elemDisabled->setChecked(_element->disabled());
     _layoutShowLabel->setChecked(_element->layoutOptions.showLabel);
     _layoutDrawAlt->setChecked(_element->layoutOptions.drawAlt);
-
-    populateParams();
+    _editorParams->populateValues();
+    _pageParams->setCurrentIndex(_editorParams->editors().isEmpty() ? 0 : 1);
 }
 
 void ElementPropsDialog::collect()
 {
-    auto res = verifyParams();
+    auto res = _editorParams->verify();
     if (!res.isEmpty())
     {
         _tabs->setCurrentIndex(0);
@@ -175,10 +181,20 @@ void ElementPropsDialog::collect()
     _element->setDisabled(_elemDisabled->isChecked());
     _element->layoutOptions.showLabel = _layoutShowLabel->isChecked();
     _element->layoutOptions.drawAlt = _layoutDrawAlt->isChecked();
-    while (!_newParams.isEmpty())
-        _element->addParam(_newParams.takeFirst());
+    
+    for (auto p : std::as_const(_newParams))
+        _element->addParam(p);
 
-    collectParams();
+    _editorParams->applyValues();
+        
+    RecentData::PendingSave _;
+    for (auto p : std::as_const(_newParams)) {
+        auto key = ("custom_param_" + p->alias() + "_unit").toLatin1();
+        RecentData::setUnit(key.constData(), p->value().unit());
+    }
+
+    _newParams.clear();
+    
     accept();
     close();
 }
@@ -188,10 +204,11 @@ QString ElementPropsDialog::helpTopic() const
    return "matrix/" % _element->type() % ".html";
 }
 
-void ElementPropsDialog::createParam()
+void ElementPropsDialog::createCustomParam()
 {
     ParamSpecEditor editor(nullptr, {
-        .existedParams = &_element->params()
+        .recentKeyPrefix = "custom_param",
+        .existedParams = _element->params() + _newParams
     });
     if (!editor.exec(tr("Create Parameter")))
         return;
@@ -199,78 +216,18 @@ void ElementPropsDialog::createParam()
     auto dim = editor.dim();
     auto alias = editor.alias();
     auto label = alias;
-    auto name = alias;
-    auto descr = editor.descr();
-    auto param = new Z::Parameter(dim, alias, label, name, descr);
+    auto name = editor.descr();
+    // Here we use descr in place of name because users will hardly write 
+    // a long description similiar to what built-in parameters have.
+    // Instead they will likely write a short info, e.g. "Aperture diameter"
+    // which actually is the Name in Z::Parameter terms
+    auto param = new Z::Parameter(dim, alias, label, name);
+    auto unitKey = ("custom_param_" + alias + "_unit").toLatin1();
+    auto unit = RecentData::getUnit(unitKey.constData(), dim);
+    param->setValue(Z::Value(0, unit));
     param->setOption(Z::ParamOption::Custom);
     _newParams << param;
-}
-
-//------------------------------------------------------------------------------
-
-ElementPropsDialog_None::ElementPropsDialog_None(Element *elem, QWidget *parent) : ElementPropsDialog(elem, parent)
-{
-    auto label = new QLabel(tr("Element has no editable parameters"));
-    label->setMargin(6);
-    label->setAlignment(Qt::AlignCenter);
-
-    setPageParams(label);
-}
-
-//------------------------------------------------------------------------------
-
-ElementPropsDialog_List::ElementPropsDialog_List(Element *elem, QWidget *parent) : ElementPropsDialog(elem, parent)
-{
-    auto schema = dynamic_cast<Schema*>(elem->owner());
-
-    ParamsEditor::Options opts(&elem->params());
-    opts.filter.reset(new Z::ParameterFilter({new Z::ParameterFilterVisible()}));
-    opts.globalParams = schema ? schema->globalParams() : nullptr;
-    opts.paramLinks = schema ? schema->paramLinks() : nullptr;
-    opts.useExpression = true;
-
-    _editors = new ParamsEditor(opts);
-
-    setPageParams(_editors);
-
-    _editors->focus();
-}
-
-void ElementPropsDialog_List::populateParams()
-{
-    _editors->populateValues();
-}
-
-void ElementPropsDialog_List::collectParams()
-{
-    _editors->applyValues();
-}
-
-QString ElementPropsDialog_List::verifyParams() const
-{
-    return _editors->verify();
-}
-
-//------------------------------------------------------------------------------
-
-ElementPropsDialog_Abcd::ElementPropsDialog_Abcd(Element *elem, QWidget *parent) : ElementPropsDialog(elem, parent)
-{
-    setPageParams(Ori::Layouts::LayoutV({
-        _editorMt = new ParamsEditorAbcd(QString("T"), elem->params().mid(0, 4)),
-        _editorMs = new ParamsEditorAbcd(QString("S"), elem->params().mid(4, 4))
-    }).makeWidget());
-
-    _editorMt->focus();
-}
-
-void ElementPropsDialog_Abcd::populateParams()
-{
-    _editorMt->populate();
-    _editorMs->populate();
-}
-
-void ElementPropsDialog_Abcd::collectParams()
-{
-    _editorMt->apply();
-    _editorMs->apply();
+    _pageParams->setCurrentIndex(1);
+    auto paramEditor = _editorParams->addEditor(param);
+    QTimer::singleShot(100, this, [paramEditor](){ paramEditor->focus(); });
 }
