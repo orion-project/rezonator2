@@ -439,27 +439,26 @@ Element* readElement(const QJsonObject& root, Z::Report* report)
         formulaElem->setHasMatricesTS(root["has_matrices_ts"].toBool());
         formulaElem->setFormula(root["formula"].toString());
     }
+    
+    auto paramSpecsJson = root["param_specs"];
+    if (paramSpecsJson.isArray())
+    {
+        auto arr = paramSpecsJson.toArray();
+        for (auto it = arr.cbegin(); it != arr.cend(); it++)
+        {
+            auto res = readParamSpec(it->toObject());
+            if (!res.ok()) 
+            {
+                report->warning(QString("Reading element '%1': %2").arg(elem->displayLabel(), res.error()));
+                continue;
+            }
+            elem->addParam(res.value());
+        }
+    }
 
     JsonValue paramsJson(root, "params", report);
     if (paramsJson)
     {
-        if (formulaElem)
-            for (auto& alias : paramsJson.obj().keys())
-            {
-                auto paramJson = paramsJson.obj()[alias].toObject();
-                auto descr = paramJson["descr"].toString();
-                auto dimStr = paramJson["dim"].toString();
-                auto order = paramJson["order"].toInt(-1);
-                auto dim = Z::Dims::findByAlias(dimStr);
-                if (!dim)
-                {
-                    dim = Z::Dims::none();
-                    report->warning(QString("Reading element '%1': unknown dimension of parameter %2: %3")
-                                    .arg(elem->displayLabel(), alias, dimStr));
-                }
-                formulaElem->addParam(new Z::Parameter(dim, alias, alias, alias, descr), order);
-            }
-
         for (Z::Parameter *param : elem->params())
         {
             JsonValue paramJson(paramsJson, param->alias(), report);

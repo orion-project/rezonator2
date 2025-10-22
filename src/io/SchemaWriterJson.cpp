@@ -209,18 +209,19 @@ void writeElement(QJsonObject& root, Element *elem)
         root["has_matrices_ts"] = formulaElem->hasMatricesTS();
         root["formula"] = formulaElem->formula();
     }
+    
+    QJsonArray paramSpecsJson;
+    const auto& params = elem->params();
+    for (auto p : std::as_const(params))
+        if (formulaElem || p->hasOption(Z::ParamOption::Custom))
+            paramSpecsJson.append(writeParamSpec(p));
+    if (!paramSpecsJson.isEmpty())
+        root["param_specs"] = paramSpecsJson;
 
     QJsonObject paramsJson;
-    for (int i = 0; i < elem->params().size(); i++)
+    for (auto p : std::as_const(params))
     {
-        Z::Parameter* p = elem->params().at(i);
         auto paramJson = writeValue(p->value());
-        if (formulaElem)
-        {
-            paramJson["dim"] = p->dim()->alias();
-            paramJson["descr"] = p->description();
-            paramJson["order"] = i;
-        }
         paramJson["expr"] = p->expr();
         paramJson["error"] = p->error();
         paramsJson[p->alias()] = paramJson;

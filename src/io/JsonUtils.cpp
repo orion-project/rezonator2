@@ -34,6 +34,20 @@ void writeUnit(QJsonObject& json, Unit unit)
     json["unit"] = unit->alias();
 }
 
+Result<Dim> readDim(const QJsonObject& json)
+{
+    auto dimStr = json["dim"].toString();
+    auto dim = Dims::findByAlias(dimStr);
+    if (!dim)
+        return Result<Dim>::fail(QString("Unknown unit dimension: %1").arg(dimStr));
+    return Result<Dim>::success(dim);
+}
+
+void writeDim(QJsonObject& json, Dim dim)
+{
+    json["dim"] = dim->alias();
+}
+
 QJsonValue doubleToJson(double v)
 {
     if (qIsInf(v))
@@ -90,6 +104,38 @@ Result<ValueTS> readValueTS(const QJsonObject& json, Dim dim)
     if (!unit.ok())
         return Result<ValueTS>::fail(unit.error());
     return Result<ValueTS>::success(ValueTS(valueT, valueS, unit.value()));
+}
+
+QJsonObject writeParamSpec(Parameter *p)
+{
+    auto json = QJsonObject{
+        { "alias", p->alias() },
+        { "label", p->label() },
+        { "name", p->name() },
+        { "descr", p->description(), },
+        { "custom", p->hasOption(ParamOption::Custom) },
+    };
+    writeDim(json, p->dim());
+    return json;
+}
+
+Result<Parameter*> readParamSpec(const QJsonObject& json)
+{
+    auto dim = readDim(json);
+    if (!dim.ok())
+        return Result<Parameter*>::fail(dim.error());
+    auto alias = json["alias"].toString();
+    if (alias.isEmpty())
+        return Result<Parameter*>::fail("Parameter alias is empty");
+    auto label = json["label"].toString();
+    if (label.isEmpty())
+        label = alias;
+    auto name = json["name"].toString();
+    if (name.isEmpty())
+        name = alias;
+    auto descr = json["descr"].toString();
+    auto param = new Parameter(dim.value(), alias, label, name, descr);
+    return Result<Parameter*>::success(param);
 }
 
 QJsonObject writeVariableRange(const VariableRange& range)

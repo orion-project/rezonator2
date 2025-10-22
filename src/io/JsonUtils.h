@@ -3,6 +3,7 @@
 
 #include "../core/CommonTypes.h"
 #include "../core/Values.h"
+#include "../core/Parameters.h"
 
 #include "core/OriVersion.h"
 
@@ -27,11 +28,15 @@ inline Ori::Version currentVersion() { return Ori::Version(2, 1); }
 
 void writeUnit(QJsonObject& json, Unit unit);
 Result<Unit> readUnit(const QJsonObject& json, Dim dim);
+void writeDim(QJsonObject& json, Dim dim);
+Result<Dim> readDim(const QJsonObject& json);
 
 QJsonObject writeValue(const Value& value);
 Result<Value> readValue(const QJsonObject& json, Dim dim = nullptr);
 QJsonObject writeValueTS(const ValueTS& value);
 Result<ValueTS> readValueTS(const QJsonObject& json, Dim dim = nullptr);
+QJsonObject writeParamSpec(Parameter *p);
+Result<Parameter*> readParamSpec(const QJsonObject& json);
 
 QJsonObject writeVariableRange(const VariableRange& range);
 QString readVariableRange(const QJsonObject& json, VariableRange& range, Dim dim = nullptr);
