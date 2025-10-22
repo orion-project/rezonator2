@@ -10,6 +10,7 @@ class QCheckBox;
 class QLineEdit;
 class QStackedWidget;
 class QTabWidget;
+class QToolButton;
 QT_END_NAMESPACE
 
 class Element;
@@ -49,14 +50,19 @@ private:
     QCheckBox *_layoutShowLabel;
     QCheckBox *_layoutDrawAlt;
     QCheckBox *_elemDisabled;
-    QPushButton *_butCreateParam;
-    QList<Z::Parameter*> _newParams;
+    QToolButton *_butParamsMenu;
+    QList<Z::Parameter*> _newParams, _removedParams;
+    QAction *_actnEditParam, *_actnRemoveParam;
 
     QWidget* initPageParams();
     QWidget* initPageOptions();
     QWidget* initPageOutline();
     
     void createCustomParam();
+    void editCustomParam();
+    void removeCustomParam();
+    void updatePageParams();
+    void updateParamActions();
 };
 
 //------------------------------------------------------------------------------

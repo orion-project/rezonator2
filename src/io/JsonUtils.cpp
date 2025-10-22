@@ -135,6 +135,8 @@ Result<Parameter*> readParamSpec(const QJsonObject& json)
         name = alias;
     auto descr = json["descr"].toString();
     auto param = new Parameter(dim.value(), alias, label, name, descr);
+    if (json["custom"].toBool())
+        param->setOption(ParamOption::Custom);
     return Result<Parameter*>::success(param);
 }
 

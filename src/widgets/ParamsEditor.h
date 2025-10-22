@@ -83,6 +83,7 @@ public:
     void moveEditorUp(Z::Parameter* param);
     void moveEditorDown(Z::Parameter* param);
     void addSeparator(const QString& title = QString(), bool flat = true);
+    ParamEditor* selectedEditor();
 
     void focus();
     void focus(Z::Parameter *param);

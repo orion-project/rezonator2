@@ -113,7 +113,7 @@ public:
     Z::Parameter* parameter() const { return _param; }
 
     /// Returns value of the editor.
-    /// This is NOT a value of the edited parameter, at least till `apply()` will be called.
+    /// This is NOT a value of the edited parameter, at least till `apply()` is called.
     Z::Value getValue() const;
 
     QString verify() const;

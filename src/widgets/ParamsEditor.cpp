@@ -311,6 +311,14 @@ void ParamsEditor::moveEditorDown(Z::Parameter* param)
     }
 }
 
+ParamEditor* ParamsEditor::selectedEditor()
+{
+    for (auto ed : std::as_const(_editors))
+        if (ed->hasFocus())
+            return ed;
+    return nullptr;
+}
+
 //------------------------------------------------------------------------------
 //                               ParamsEditorTS
 //------------------------------------------------------------------------------

@@ -8,8 +8,9 @@
 #include "../widgets/ParamsEditor.h"
 #include "../widgets/SchemaLayout.h"
 
-#include "widgets/OriSvgView.h"
 #include "helpers/OriLayouts.h"
+#include "helpers/OriDialogs.h"
+#include "widgets/OriSvgView.h"
 
 #include <QApplication>
 #include <QCheckBox>
@@ -19,9 +20,9 @@
 #include <QLineEdit>
 #include <QMenu>
 #include <QMessageBox>
-#include <QPushButton>
 #include <QStackedWidget>
 #include <QTabWidget>
+#include <QToolButton>
 #include <QTimer>
 
 //------------------------------------------------------------------------------
@@ -60,9 +61,9 @@ ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : Rezonat
     _tabs->addTab(initPageParams(), tr("Parameters"));
     _tabs->addTab(initPageOptions(), tr("Options"));
     _tabs->addTab(initPageOutline(), tr("Outline"));
-    _tabs->setCornerWidget(_butCreateParam);
+    _tabs->setCornerWidget(_butParamsMenu);
     connect(_tabs, &QTabWidget::currentChanged, this, [this](int tabIndex){
-        _butCreateParam->setVisible(tabIndex == 0);
+        _butParamsMenu->setVisible(tabIndex == 0);
     });
 
     mainLayout()->addLayout(layoutCommon);
@@ -72,7 +73,13 @@ ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : Rezonat
 
 ElementPropsDialog::~ElementPropsDialog()
 {
+    // Explicitly delete editors before deleteing _newParams
+    // Otherwise param editors will be deleted after
+    // and will crash on listener unsubscribing
+    _editorParams->removeEditors();
+
     qDeleteAll(_newParams);
+    qDeleteAll(_removedParams);
     __savedTabIndex = _tabs->currentIndex();
 }
 
@@ -92,18 +99,24 @@ void ElementPropsDialog::showEvent(QShowEvent* event)
 
 QWidget* ElementPropsDialog::initPageParams()
 {
-    auto menuCreateParam = new QMenu(this);
+    auto menuParams = new QMenu(this);
+    connect(menuParams, &QMenu::aboutToShow, this, &ElementPropsDialog::updateParamActions);
     // TODO: populate presets
-    menuCreateParam->addSeparator();
-    auto actnCreateParam = menuCreateParam->addAction(tr("Create New..."));
+    menuParams->addSeparator();
+    _actnEditParam = menuParams->addAction(QIcon(":/toolbar/wrench"), tr("Edit Parameter..."));
+    _actnRemoveParam = menuParams->addAction(QIcon(":/toolbar/delete"), tr("Remove Parameter"));
+    auto actnCreateParam = menuParams->addAction(QIcon(":/toolbar/plus"), tr("Add Parameter..."));
+    connect(_actnEditParam, &QAction::triggered, this, &ElementPropsDialog::editCustomParam);
+    connect(_actnRemoveParam, &QAction::triggered, this, &ElementPropsDialog::removeCustomParam);
     connect(actnCreateParam, &QAction::triggered, this, &ElementPropsDialog::createCustomParam);
 
-    _butCreateParam = new QPushButton;
-    _butCreateParam->setToolTip(tr("Add parameter"));
-    _butCreateParam->setIcon(QIcon(":/toolbar/plus"));
-    _butCreateParam->setIconSize({14, 14});
-    _butCreateParam->setObjectName("elem_props_create_param_button");
-    _butCreateParam->setMenu(menuCreateParam);
+    _butParamsMenu = new QToolButton;
+    _butParamsMenu->setToolTip(tr("Add parameter"));
+    _butParamsMenu->setIcon(QIcon(":/toolbar/menu"));
+    _butParamsMenu->setIconSize({14, 14});
+    _butParamsMenu->setObjectName("elem_props_create_param_button");
+    _butParamsMenu->setMenu(menuParams);
+    _butParamsMenu->setPopupMode(QToolButton::InstantPopup);
 
     auto schema = dynamic_cast<Schema*>(_element->owner());
     ParamsEditor::Options opts(&_element->params());
@@ -159,7 +172,7 @@ void ElementPropsDialog::populate()
     _layoutShowLabel->setChecked(_element->layoutOptions.showLabel);
     _layoutDrawAlt->setChecked(_element->layoutOptions.drawAlt);
     _editorParams->populateValues();
-    _pageParams->setCurrentIndex(_editorParams->editors().isEmpty() ? 0 : 1);
+    updatePageParams();
 }
 
 void ElementPropsDialog::collect()
@@ -184,6 +197,8 @@ void ElementPropsDialog::collect()
     
     for (auto p : std::as_const(_newParams))
         _element->addParam(p);
+    for (auto p: std::as_const(_removedParams))
+        _element->removeParam(p);
 
     _editorParams->applyValues();
         
@@ -204,6 +219,11 @@ QString ElementPropsDialog::helpTopic() const
    return "matrix/" % _element->type() % ".html";
 }
 
+void ElementPropsDialog::updatePageParams()
+{
+    _pageParams->setCurrentIndex(_editorParams->editors().isEmpty() ? 0 : 1);
+}
+
 void ElementPropsDialog::createCustomParam()
 {
     ParamSpecEditor editor(nullptr, {
@@ -217,6 +237,8 @@ void ElementPropsDialog::createCustomParam()
     auto alias = editor.alias();
     auto label = alias;
     auto name = editor.descr();
+    if (name.isEmpty())
+        name = label;
     // Here we use descr in place of name because users will hardly write 
     // a long description similiar to what built-in parameters have.
     // Instead they will likely write a short info, e.g. "Aperture diameter"
@@ -227,7 +249,65 @@ void ElementPropsDialog::createCustomParam()
     param->setValue(Z::Value(0, unit));
     param->setOption(Z::ParamOption::Custom);
     _newParams << param;
-    _pageParams->setCurrentIndex(1);
+    updatePageParams();
     auto paramEditor = _editorParams->addEditor(param);
     QTimer::singleShot(100, this, [paramEditor](){ paramEditor->focus(); });
+}
+
+void ElementPropsDialog::editCustomParam()
+{
+    auto paramEditor = _editorParams->selectedEditor();
+    if (!paramEditor)
+        return;
+    auto param = paramEditor->parameter();
+    if (!param->hasOption(Z::ParamOption::Custom))
+        return;
+
+    ParamSpecEditor editor(param, {
+        .existedParams = _element->params() + _newParams
+    });
+    if (!editor.exec(tr("Edit Parameter")))
+        return;
+
+    qDebug() << "param changed";
+}
+
+void ElementPropsDialog::removeCustomParam()
+{
+    auto editor = _editorParams->selectedEditor();
+    if (!editor)
+        return;
+    auto param = editor->parameter();
+    if (!param->hasOption(Z::ParamOption::Custom))
+        return;
+    if (!Ori::Dlg::yes(tr("Remove parameter <b>%1</b> ?").arg(param->alias())))
+        return;
+
+    _editorParams->removeEditor(param);
+    updatePageParams();
+    
+    bool newParamRemoved = false;
+    for (int i = 0; i < _newParams.size(); i++)
+        if (_newParams.at(i)->alias() == param->alias())
+        {
+            newParamRemoved = true;
+            delete _newParams.at(i);
+            _newParams.removeAt(i);
+            break;
+        }
+    if (!newParamRemoved)
+        _removedParams << param;
+
+    if (!_editorParams->editors().isEmpty())
+        QTimer::singleShot(100, this, [this]{ _editorParams->editors().first()->focus(); });
+}
+
+void ElementPropsDialog::updateParamActions()
+{
+    auto editor = _editorParams->selectedEditor();
+    bool isCustom = editor && editor->parameter()->hasOption(Z::ParamOption::Custom);
+    _actnEditParam->setEnabled(isCustom);
+    _actnEditParam->setVisible(isCustom);
+    _actnRemoveParam->setEnabled(isCustom);
+    _actnRemoveParam->setVisible(isCustom);
 }

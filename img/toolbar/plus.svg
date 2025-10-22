@@ -1,10 +1,11 @@
-<svg height="256" width="256" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <linearGradient id="a" gradientTransform="matrix(6.967514 6.9710392 -7.0436144 7.0471779 131.63705 -84.585398)" gradientUnits="userSpaceOnUse" x1="8" x2="20" y1="19" y2="8">
-    <stop offset="0" stop-color="#3282cd"/>
-    <stop offset="1" stop-color="#8ec0e0"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24" height="24" version="1.1" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="linearGradient21" x1="-.255" x2="-3.12" y1="15.4" y2="15.4" gradientTransform="matrix(6.97 6.97 -7.04 7.05 132 -84.6)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#3282cd" offset="0"/>
+   <stop stop-color="#8ec0e0" offset="1"/>
   </linearGradient>
-  <g stroke-linejoin="round">
-    <path d="m151.38122 151.45207 81.99427.11424v-61.583924h-81.99427v-82.0357876l-61.495729.000003v82.0357846l-81.8801186.000005-.2282999 61.583889h82.1084185v81.97866h61.495729z" fill="url(#a)" fill-rule="evenodd" stroke="#324c6b" stroke-width="10"/>
-    <path d="m22.881634 104.98057h71.744996c10.24931 0 10.24931-10.254491 10.24931-10.254491v-71.78129" fill="none" stroke="#fff" stroke-linecap="round" stroke-opacity=".486842" stroke-width="15"/>
-  </g>
+ </defs>
+ <path d="m8.5 0.5v8h-8v7h8v8h7v-8h8v-7h-8v-8z" fill="url(#linearGradient21)" stroke="#324c6b" stroke-linejoin="round"/>
+ <path d="m2 10h8v-8" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-opacity=".486" stroke-width="1.5"/>
 </svg>
