@@ -27,7 +27,7 @@ public:
     struct Options
     {
         /// Target editing parameters.
-        const Z::Parameters *params;
+        Z::Parameters params;
 
         /// Global parameters to which tagets can be linked.
         const Z::Parameters *globalParams = nullptr;
@@ -67,7 +67,7 @@ public:
         /// If not set, only numeric value can be edited.
         bool useExpression = false;
 
-        Options(const Z::Parameters *p = nullptr) : params(p) {}
+        Options(const Z::Parameters &p) : params(p) {}
     };
 
 public:

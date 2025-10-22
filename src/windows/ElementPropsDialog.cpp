@@ -119,7 +119,7 @@ QWidget* ElementPropsDialog::initPageParams()
     _butParamsMenu->setPopupMode(QToolButton::InstantPopup);
 
     auto schema = dynamic_cast<Schema*>(_element->owner());
-    ParamsEditor::Options opts(&_element->params());
+    ParamsEditor::Options opts(_element->params());
     opts.filter.reset(new Z::ParameterFilter({new Z::ParameterFilterVisible()}));
     opts.globalParams = schema ? schema->globalParams() : nullptr;
     opts.paramLinks = schema ? schema->paramLinks() : nullptr;

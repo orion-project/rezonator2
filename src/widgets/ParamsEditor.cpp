@@ -46,9 +46,8 @@ void ParamsEditor::populateEditors()
         qWarning() << "ParamsEditor::populateEditors: already populated, use removeEditors first";
         return;
     }
-    if (_options.params)
-        for (Z::Parameter* param : *_options.params)
-            addEditor(param);
+    for (auto param : _options.params)
+        addEditor(param);
 }
 
 void ParamsEditor::removeEditors()
