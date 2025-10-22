@@ -187,6 +187,7 @@ public:
     {
         QString recentKeyPrefix;
         Z::Parameters existedParams;
+        bool allowNameEditor = false;
     };
 
     ParamSpecEditor(Z::Parameter *param, const Options &opts);
@@ -194,6 +195,8 @@ public:
     bool exec(const QString &title);
     
     QString alias() const;
+    QString label() const;
+    QString name() const;
     QString descr() const;
     Z::Dim dim() const;
     
@@ -201,6 +204,7 @@ private:
     Options _opts;
     Z::Parameter *_param;
     QLineEdit *_aliasEditor;
+    QLineEdit *_nameEditor = nullptr;
     DimComboBox *_dimEditor;
     QLineEdit *_descrEditor;
     Z::Dim _recentDim = nullptr;

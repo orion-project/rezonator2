@@ -226,26 +226,17 @@ void ElementPropsDialog::updatePageParams()
 
 void ElementPropsDialog::createCustomParam()
 {
-    ParamSpecEditor editor(nullptr, {
+    ParamSpecEditor ed(nullptr, {
         .recentKeyPrefix = "custom_param",
-        .existedParams = _element->params() + _newParams
+        .existedParams = _element->params() + _newParams,
+        .allowNameEditor = true,
     });
-    if (!editor.exec(tr("Create Parameter")))
+    if (!ed.exec(tr("Create Parameter")))
         return;
 
-    auto dim = editor.dim();
-    auto alias = editor.alias();
-    auto label = alias;
-    auto name = editor.descr();
-    if (name.isEmpty())
-        name = label;
-    // Here we use descr in place of name because users will hardly write 
-    // a long description similiar to what built-in parameters have.
-    // Instead they will likely write a short info, e.g. "Aperture diameter"
-    // which actually is the Name in Z::Parameter terms
-    auto param = new Z::Parameter(dim, alias, label, name);
-    auto unitKey = ("custom_param_" + alias + "_unit").toLatin1();
-    auto unit = RecentData::getUnit(unitKey.constData(), dim);
+    auto param = new Z::Parameter(ed.dim(), ed.alias(), ed.label(), ed.name(), ed.descr());
+    auto unitKey = ("custom_param_" + param->alias() + "_unit").toLatin1();
+    auto unit = RecentData::getUnit(unitKey.constData(), param->dim());
     param->setValue(Z::Value(0, unit));
     param->setOption(Z::ParamOption::Custom);
     _newParams << param;
@@ -264,7 +255,8 @@ void ElementPropsDialog::editCustomParam()
         return;
 
     ParamSpecEditor editor(param, {
-        .existedParams = _element->params() + _newParams
+        .existedParams = _element->params() + _newParams,
+        .allowNameEditor = true,
     });
     if (!editor.exec(tr("Edit Parameter")))
         return;

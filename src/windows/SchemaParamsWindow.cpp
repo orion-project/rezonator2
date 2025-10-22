@@ -86,20 +86,15 @@ void SchemaParamsWindow::createToolBar()
 
 void SchemaParamsWindow::createParameter()
 {
-    ParamSpecEditor editor(nullptr, {
+    ParamSpecEditor ed(nullptr, {
         .recentKeyPrefix = "global_param",
         .existedParams = schema()->globalParamsAsElem()->params(),
     });
-    if (!editor.exec(tr("Create Parameter")))
+    if (!ed.exec(tr("Create Parameter")))
         return;
 
-    auto dim = editor.dim();
-    auto alias = editor.alias();
-    auto label = alias;
-    auto name = alias;
-    auto descr = editor.descr();
-    auto param = new Z::Parameter(dim, alias, label, name, descr);
-    auto unit = RecentData::getUnit("global_param_unit", dim);
+    auto param = new Z::Parameter(ed.dim(), ed.alias(), ed.label(), ed.name(), ed.descr());
+    auto unit = RecentData::getUnit("global_param_unit", param->dim());
     param->setValue(Z::Value(0, unit));
     schema()->addGlobalParam(param);
 
@@ -195,7 +190,7 @@ void SchemaParamsWindow::editParameter()
 
     bool edited = false;
     bool changed = false;
-    auto alias = editor.alias();
+    auto alias = editor.label();
     auto descr = editor.descr();
     auto dim = editor.dim();
     Z::Value newValue;

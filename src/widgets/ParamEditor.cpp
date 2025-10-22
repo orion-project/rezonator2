@@ -13,7 +13,7 @@
 #include "widgets/OriValueEdit.h"
 
 #include <QDebug>
-#include <QHBoxLayout>
+#include <QBoxLayout>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QMenu>
@@ -546,6 +546,11 @@ ParamSpecEditor::ParamSpecEditor(Z::Parameter *param, const Options &opts) : QWi
     _aliasEditor = new QLineEdit;
     _aliasEditor->setFont(Z::Gui::ValueFont().get());
 
+    if (opts.allowNameEditor) {
+        _nameEditor = new QLineEdit;
+        _nameEditor->setFont(Z::Gui::ValueFont().get());
+    }
+
     _dimEditor = new DimComboBox;
     
     _descrEditor = new QLineEdit;
@@ -553,6 +558,8 @@ ParamSpecEditor::ParamSpecEditor(Z::Parameter *param, const Options &opts) : QWi
     
     if (param) {
         _aliasEditor->setText(param->alias());
+        if (_nameEditor)
+            _nameEditor->setText(param->name());
         _dimEditor->setSelectedDim(param->dim());
         _descrEditor->setText(param->description());
     } else if (!_opts.recentKeyPrefix.isEmpty()) {
@@ -560,28 +567,53 @@ ParamSpecEditor::ParamSpecEditor(Z::Parameter *param, const Options &opts) : QWi
         _recentDim = RecentData::getDim(key.constData());
         _dimEditor->setSelectedDim(_recentDim);
     }
+    
+    auto layout = new QVBoxLayout(this);
+    layout->setMargin(0);
+    layout->setSpacing(3);
+    
+    layout->addWidget(new QLabel(tr("Label")));
+    layout->addWidget(_aliasEditor);
+    layout->addSpacing(6);
+    
+    if (_nameEditor) {
+        layout->addWidget(new QLabel(tr("Name")));
+        layout->addWidget(_nameEditor);
+        layout->addSpacing(6);
+    }
+    
+    layout->addWidget(new QLabel(tr("Dimension")));
+    layout->addWidget(_dimEditor);
+    layout->addSpacing(6);
 
-    Ori::Layouts::LayoutV({
-        tr("Name"), _aliasEditor, Ori::Layouts::Space(9),
-        tr("Dimension"), _dimEditor, Ori::Layouts::Space(9),
-        tr("Description"), _descrEditor, Ori::Layouts::Space(9),
-    }).setSpacing(3).setMargin(0).useFor(this);
+    layout->addWidget(new QLabel(tr("Description")));
+    layout->addWidget(_descrEditor);
+    layout->addSpacing(6);
 }
 
 QString ParamSpecEditor::alias() const { return _aliasEditor->text().trimmed(); }
+QString ParamSpecEditor::label() const { return _aliasEditor->text().trimmed(); }
 QString ParamSpecEditor::descr() const { return _descrEditor->text().trimmed(); }
 Z::Dim ParamSpecEditor::dim() const { return _dimEditor->selectedDim(); }
+
+QString ParamSpecEditor::name() const
+{
+    if (!_nameEditor)
+        return alias();
+    auto name = _nameEditor->text().trimmed();
+    return name.isEmpty() ? alias() : name;
+}
 
 bool ParamSpecEditor::exec(const QString &title)
 {
     auto verifyFunc = [this](){
         auto alias = _aliasEditor->text().trimmed();
         if (alias.isEmpty())
-            return qApp->tr("Parameter name can't be empty");
+            return qApp->tr("Parameter label can't be empty");
         if (auto p = _opts.existedParams.byAlias(alias); p && p != _param)
             return qApp->tr("Parameter <b>%1</b> already exists").arg(alias);
         if (!Z::Param::isValidAlias(alias))
-            return qApp->tr("Parameter name <b>%1</b> is invalid").arg(alias);
+            return qApp->tr("Parameter label <b>%1</b> is invalid").arg(alias);
         return QString();
     };
     bool ok = Ori::Dlg::Dialog(this, false)
