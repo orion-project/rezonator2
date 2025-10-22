@@ -3,6 +3,7 @@
 
 #include "RezonatorDialog.h"
 
+#include "../core/Element.h"
 #include "../core/Parameters.h"
 
 QT_BEGIN_NAMESPACE
@@ -31,6 +32,7 @@ public:
 
 public slots:
     void collect() override;
+    void reject() override;
 
 protected:
     void showEvent(QShowEvent*) override;
@@ -51,8 +53,11 @@ private:
     QCheckBox *_layoutDrawAlt;
     QCheckBox *_elemDisabled;
     QToolButton *_butParamsMenu;
-    QList<Z::Parameter*> _newParams, _removedParams;
+    Z::Parameters _newParams, _removedParams, _redimedParams;
+    QMap<Z::Parameter*, Z::Parameter> _backupParams;
     QAction *_actnEditParam, *_actnRemoveParam;
+    std::shared_ptr<ElementEventsLocker> _eventsLocker;
+    std::shared_ptr<ElementMatrixLocker> _matrixLocker;
 
     QWidget* initPageParams();
     QWidget* initPageOptions();
@@ -63,6 +68,8 @@ private:
     void removeCustomParam();
     void updatePageParams();
     void updateParamActions();
+    
+    Z::Parameters existedParams() const;
 };
 
 //------------------------------------------------------------------------------

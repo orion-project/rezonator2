@@ -83,7 +83,7 @@ public:
     void addListener(ParameterListener* listener) { _listeners.append(listener); }
     void removeListener(ParameterListener* listener) { _listeners.removeAll(listener); }
     const QVector<ParameterListener*>& listeners() const { return _listeners; }
-
+    
 protected:
     ParameterBase() {}
 
@@ -300,6 +300,24 @@ public:
     QString displayStr() const override
     {
         return ValuedParameter<TValue>::displayLabel() % " = " % ValuedParameter<TValue>::_value.displayStr();
+    }
+    
+    void copyFrom(const PhysicalParameter<TValue> *other)
+    {
+        this->_dim = other->_dim;
+        this->_value = other->_value;
+        this->_expr = other->_expr;
+        this->_error = other->_error;
+        this->_options = other->_options;
+        this->_verifier = other->_verifier;
+        this->_valueDriver = other->_valueDriver;
+        this->_alias = other->_alias;
+        this->_label = other->_label;
+        this->_name = other->_name;
+        this->_description = other->_description;
+        this->_category = other->_category;
+        this->_visible = other->_visible;
+        // Do not assign listeners
     }
     
 private:
