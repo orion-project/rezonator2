@@ -28,10 +28,14 @@ protected:
     Z::Unit getDefaultUnitY() const override;
     void getCursorInfo(const Z::ValuePoint& pos, CursorInfoValues& values) override;
     QList<BasicMdiChild::MenuItem> viewMenuItems() const override;
+    ElemDeletionReaction reactElemDeletion(const Elements&) override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;
     QString writeFunction(QJsonObject& root) override;
+
+    // Implementation of SchemaListener
+    void elementDeleting(Schema*, Element*) override;
 
 private:
     BeamShapeExtension* _beamShape;

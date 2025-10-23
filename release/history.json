@@ -6,6 +6,9 @@
       "changes": [
         {
           "text": "Fix: can create global parameter with duplicated name"
+        },
+        {
+          "text": "Fix: crash when element is deleted that is the plot position of Beamsize Variation"
         }
       ]
     },
