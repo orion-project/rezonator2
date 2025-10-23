@@ -9,6 +9,7 @@
 QT_BEGIN_NAMESPACE
 class QCheckBox;
 class QLineEdit;
+class QMenu;
 class QStackedWidget;
 class QTabWidget;
 class QToolButton;
@@ -53,9 +54,11 @@ private:
     QCheckBox *_layoutDrawAlt;
     QCheckBox *_elemDisabled;
     QToolButton *_butParamsMenu;
-    Z::Parameters _newParams, _removedParams, _redimedParams;
+    QMenu *_menuParams;
+    Z::Parameters _newParams, _removedParams, _redimedParams, _paramPresets;
     QMap<Z::Parameter*, Z::Parameter> _backupParams;
-    QAction *_actnEditParam, *_actnRemoveParam;
+    QAction *_actnCreateParam, *_actnEditParam, *_actnRemoveParam,
+        *_actnRestorePresets, *_actnParamsHelp;
     std::shared_ptr<ElementEventsLocker> _eventsLocker;
     std::shared_ptr<ElementMatrixLocker> _matrixLocker;
 
@@ -66,10 +69,15 @@ private:
     void createCustomParam();
     void editCustomParam();
     void removeCustomParam();
+    void restoreParamPresets();
+    void showParamsHelp();
     void updatePageParams();
-    void updateParamActions();
+    void updateParamsMenu();
     
     Z::Parameters existedParams() const;
+    void addCustomParam(Z::Parameter*);
+    void resetParamPresets();
+    QAction* makePresetAction(Z::Parameter*);
 };
 
 //------------------------------------------------------------------------------

@@ -221,6 +221,8 @@ public:
     
     bool hasOption(ParamOption opt) const { return _options & (int)opt; }
     void setOption(ParamOption opt) { _options |= (int)opt; }
+    int options() const { return _options; }
+    void setOptions(int opts) { _options = opts; }
 
 protected:
     ValuedParameter() : ParameterBase() {}

@@ -103,6 +103,7 @@
         <file alias="math_mult">../img/toolbar/math_mult.svg</file>
         <file alias="math_plus">../img/toolbar/math_plus.svg</file>
         <file alias="menu">../img/toolbar/menu.svg</file>
+        <file alias="menu_sm">../img/toolbar/menu_sm.svg</file>
         <file alias="move_down">../img/toolbar/move_down.svg</file>
         <file alias="move_left">../img/toolbar/move_left.svg</file> 
         <file alias="move_left_right">../img/toolbar/move_left_right.svg</file> 

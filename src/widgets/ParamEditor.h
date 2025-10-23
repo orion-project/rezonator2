@@ -8,6 +8,7 @@
 #include "../core/Parameters.h"
 
 QT_BEGIN_NAMESPACE
+class QCheckBox;
 class QLabel;
 QT_END_NAMESPACE
 
@@ -188,8 +189,10 @@ public:
         QString recentKeyPrefix;
         Z::Parameters existedParams;
         bool allowNameEditor = false;
+        bool allowSavePreset = false;
     };
 
+public:
     ParamSpecEditor(Z::Parameter *param, const Options &opts);
     
     bool exec(const QString &title);
@@ -199,7 +202,8 @@ public:
     QString name() const;
     QString descr() const;
     Z::Dim dim() const;
-    
+    bool needSavePreset() const;
+   
 private:
     Options _opts;
     Z::Parameter *_param;
@@ -207,7 +211,19 @@ private:
     QLineEdit *_nameEditor = nullptr;
     DimComboBox *_dimEditor;
     QLineEdit *_descrEditor;
+    QCheckBox *_needSavePreset = nullptr;
     Z::Dim _recentDim = nullptr;
 };
+
+namespace ParamPresets
+{
+    const Z::Parameters& getBuiltin();
+    Z::Parameters getAll();
+    void save(Z::Parameter*);
+    void remove(Z::Parameter*);
+    void update(Z::Parameter*, Z::Parameter*);
+    void restore();
+    Z::Parameter* makeParam(Z::Parameter*);
+}
 
 #endif // PARAM_EDITOR_H
