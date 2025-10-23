@@ -712,9 +712,9 @@ void PlotFuncWindow::restoreViewParts(const ViewSettings &vs, ViewParts parts)
 
 ElemDeletionReaction PlotFuncWindow::reactElemDeletion(const Elements& elems)
 {
-    return elems.contains(function()->arg()->element)
-            ? ElemDeletionReaction::Close
-            : ElemDeletionReaction::None;
+    return function()->dependsOn().check(elems)
+        ? ElemDeletionReaction::Close
+        : ElemDeletionReaction::None;
 }
 
 void PlotFuncWindow::elementDeleting(Schema*, Element* elem)
@@ -722,7 +722,19 @@ void PlotFuncWindow::elementDeleting(Schema*, Element* elem)
     // TODO:NEXT-VER: see InfoFuncWindow::elementDeleting() and implement similar behaviour.
     // Current behaviour is ok for now as full FunctionBase::Dead processing
     // requires an ability of saving of frozen data.
-    if (function()->arg()->element == elem)
+    if (function()->dependsOn().check(elem))
+        disableAndClose();
+}
+
+void PlotFuncWindow::globalParamDeleting(Schema*, Z::Parameter *param)
+{
+    if (function()->dependsOn().check(param))
+        disableAndClose();
+}
+
+void PlotFuncWindow::customParamDeleting(Z::Parameter *param)
+{
+    if (function()->dependsOn().check(param))
         disableAndClose();
 }
 

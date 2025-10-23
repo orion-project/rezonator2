@@ -148,23 +148,6 @@ bool BeamVariationWindow::configureInternal()
     return BeamVariationParamsDlg(schema(), function()->arg(), function()->pos()).run();
 }
 
-ElemDeletionReaction BeamVariationWindow::reactElemDeletion(const Elements &elems)
-{
-    if (elems.contains(function()->pos()->element))
-        return ElemDeletionReaction::Close;
-    return PlotFuncWindowStorable::reactElemDeletion(elems);
-}
-
-void BeamVariationWindow::elementDeleting(Schema *schema, Element *elem)
-{
-    if (function()->pos()->element == elem)
-    {
-        disableAndClose();
-        return;
-    }
-    PlotFuncWindowStorable::elementDeleting(schema, elem);
-}
-
 Z::Unit BeamVariationWindow::getDefaultUnitX() const
 {
     return function()->arg()->range.start.unit();

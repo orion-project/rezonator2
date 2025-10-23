@@ -5,10 +5,16 @@
       "date": "",
       "changes": [
         {
+          "text": "Can add custom parameters for any element"
+        },
+        {
           "text": "Fix: can create global parameter with duplicated name"
         },
         {
-          "text": "Fix: crash when element is deleted that is the plot position of Beamsize Variation"
+          "text": "Fix: crash when element is deleted that is a plot position of Beamsize Variation"
+        },
+        {
+          "text": "Fix: crash when global parameter is deleted that is an argument of stability function"
         }
       ]
     },

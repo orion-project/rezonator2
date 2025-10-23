@@ -99,3 +99,11 @@ Z::PointTS StabilityMap2DFunction::calculateAtXY(const Z::Value& x, const Z::Val
     _calc->multMatrix("StabilityMap2DFunction::calculateAtXY");
     return _calc->stability();
 }
+
+PlotFuncDeps StabilityMap2DFunction::dependsOn() const
+{
+    return PlotFuncDeps {
+        .elems = { _paramX.element, _paramY.element },
+        .params = { _paramX.parameter, _paramY.parameter },
+    };
+}

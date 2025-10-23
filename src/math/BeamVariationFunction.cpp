@@ -149,3 +149,10 @@ Z::PointTS BeamVariationFunction::calculateResonator() const
 {
     return _beamCalc->beamRadius(_calc->Mt(), _calc->Ms(), _ior);
 }
+
+PlotFuncDeps BeamVariationFunction::dependsOn() const
+{
+    auto deps = PlotFunction::dependsOn();
+    deps.elems << _pos.element;
+    return deps;
+}
