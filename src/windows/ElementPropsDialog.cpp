@@ -193,6 +193,8 @@ void ElementPropsDialog::collect()
         QMessageBox::warning(this, qApp->applicationName(), res);
         return;
     }
+    
+    auto schema = dynamic_cast<Schema*>(_element->owner()); 
 
     _element->setLabel(_editorLabel->text());
     _element->setTitle(_editorTitle->text());
@@ -201,13 +203,26 @@ void ElementPropsDialog::collect()
     _element->layoutOptions.drawAlt = _layoutDrawAlt->isChecked();
     
     for (auto p : std::as_const(_newParams))
-        _element->addParam(p);
-    for (auto p: std::as_const(_removedParams))
     {
-        auto schema = dynamic_cast<Schema*>(_element->owner()); 
+        _element->addParam(p);
+        if (schema)
+            schema->events().raise(SchemaEvents::CustomParamCreated, p, "ElementPropsDialog");
+    }
+    for (auto p : std::as_const(_removedParams))
+    {
         auto link = schema ? schema->paramLinks()->byTarget(p) : nullptr;
-        if (link) schema->paramLinks()->removeOne(link);
+        if (link)
+            schema->paramLinks()->removeOne(link);
+        if (schema)
+            schema->events().raise(SchemaEvents::CustomParamDeleting, p, "ElementPropsDialog");
         _element->removeParam(p);
+        if (schema)
+            schema->events().raise(SchemaEvents::CustomParamDeleted, p, "ElementPropsDialog");
+    }
+    for (auto p : std::as_const(_editedParams))
+    {
+        if (schema)
+            schema->events().raise(SchemaEvents::CustomParamEdited, p, "ElementPropsDialog");
     }
 
     _editorParams->applyValues();
@@ -309,11 +324,16 @@ void ElementPropsDialog::editCustomParam()
     auto dimEdited = dim != param->dim();
     auto edited = aliasEdited || labelEdited || nameEdited || descrEdited || dimEdited;
         
-    if (edited && !_newParams.contains(param) && !_backupParams.contains(param))
+    if (edited && !_newParams.contains(param))
     {
-        Z::Parameter backup;
-        backup.copyFrom(param);
-        _backupParams[param] = backup;
+        _editedParams << param;
+
+        if (!_backupParams.contains(param))
+        {
+            Z::Parameter backup;
+            backup.copyFrom(param);
+            _backupParams[param] = backup;
+        }
     }
 
     if (aliasEdited)
@@ -381,6 +401,7 @@ void ElementPropsDialog::removeCustomParam()
         _backupParams.remove(param);
     }
     _redimedParams.removeAll(param);
+    _editedParams.removeAll(param);
 
     if (!_editorParams->editors().isEmpty())
         QTimer::singleShot(100, this, [this]{ _editorParams->editors().first()->focus(); });

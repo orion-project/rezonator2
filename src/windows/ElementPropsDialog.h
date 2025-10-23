@@ -55,7 +55,7 @@ private:
     QCheckBox *_elemDisabled;
     QToolButton *_butParamsMenu;
     QMenu *_menuParams;
-    Z::Parameters _newParams, _removedParams, _redimedParams, _paramPresets;
+    Z::Parameters _newParams, _removedParams, _editedParams, _redimedParams, _paramPresets;
     QMap<Z::Parameter*, Z::Parameter> _backupParams;
     QAction *_actnCreateParam, *_actnEditParam, *_actnRemoveParam,
         *_actnRestorePresets, *_actnParamsHelp;
