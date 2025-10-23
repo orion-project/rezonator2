@@ -83,7 +83,6 @@ ElementPropsDialog::~ElementPropsDialog()
     _editorParams->removeEditors();
 
     qDeleteAll(_newParams);
-    qDeleteAll(_removedParams);
 
     resetParamPresets();    
     
@@ -215,7 +214,7 @@ void ElementPropsDialog::collect()
             schema->paramLinks()->removeOne(link);
         if (schema)
             schema->events().raise(SchemaEvents::CustomParamDeleting, p, "ElementPropsDialog");
-        _element->removeParam(p);
+        _element->removeParam(p, true);
         if (schema)
             schema->events().raise(SchemaEvents::CustomParamDeleted, p, "ElementPropsDialog");
     }
@@ -241,8 +240,6 @@ void ElementPropsDialog::reject()
     for (auto it = _backupParams.cbegin(); it != _backupParams.cend(); it++)
         it.key()->copyFrom(&it.value());
         
-    _removedParams.clear();
-
     RezonatorDialog::reject();
 }
 

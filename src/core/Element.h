@@ -149,7 +149,7 @@ public:
     bool hasParam(Z::Parameter* param) const { return _params.contains(param); }
     Z::Parameter* param(const QString &alias) { return _params.byAlias(alias); }
     void addParam(Z::Parameter* param, int index = -1);
-    void removeParam(Z::Parameter* param);
+    void removeParam(Z::Parameter* param, bool free);
 
     /// Label of element. Label is short indentificator
     /// for element or its name (like variable name). E.g.: "M1", "L_f", etc.

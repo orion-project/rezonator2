@@ -310,7 +310,7 @@ public:
     /// Additional params returned as elements for using in elem-and-param selectors
     const Element* globalParamsAsElem() { return _globalParams; }
     void addGlobalParam(Z::Parameter*);
-    void removeGlobalParam(Z::Parameter*);
+    void removeGlobalParam(Z::Parameter*, bool free);
 
     /// Linst of all links which bind elements' parameter to custom parameters.
     Z::ParamLinks* paramLinks() { return &_paramLinks; }

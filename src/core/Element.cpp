@@ -75,10 +75,11 @@ void Element::addParam(Z::Parameter *param, int index)
     else _params.insert(index, param);
 }
 
-void Element::removeParam(Z::Parameter *param)
+void Element::removeParam(Z::Parameter *param, bool free)
 {
     param->removeListener(this);
     _params.removeOne(param);
+    if (free) delete param;
 }
 
 void Element::parameterChanged(Z::ParameterBase *p)

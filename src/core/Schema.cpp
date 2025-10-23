@@ -379,9 +379,9 @@ void Schema::addGlobalParam(Z::Parameter *param)
     _globalParams->addParam(param);
 }
 
-void Schema::removeGlobalParam(Z::Parameter *param)
+void Schema::removeGlobalParam(Z::Parameter *param, bool free)
 {
-    _globalParams->removeParam(param);
+    _globalParams->removeParam(param, free);
 }
 
 PumpParams* Schema::activePump()

@@ -68,6 +68,8 @@ public:
     explicit AdjusterWidget(Schema* schema, Z::Parameter* param, QWidget *parent = nullptr);
     ~AdjusterWidget() override;
 
+    void destroyLater();
+
     void parameterChanged(Z::ParameterBase*) override;
 
     bool isFocused() const { return _isFocused; }
@@ -152,6 +154,7 @@ public:
     // Implementation of SchemaListener
     void elementDeleting(Schema*, Element*) override;
     void globalParamDeleting(Schema*, Z::Parameter*) override;
+    void customParamDeleting(Z::Parameter*) override;
 
     // Implementation of IShortcutListener
     void shortcutEnterPressed() override;

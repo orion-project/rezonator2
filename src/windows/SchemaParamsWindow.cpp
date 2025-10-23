@@ -143,7 +143,7 @@ void SchemaParamsWindow::deleteParameter()
     {
         schema()->events().raise(SchemaEvents::GlobalParamDeleting, deletingParam, "Params window: param deleting");
         schema()->formulas()->free(deletingParam);
-        schema()->removeGlobalParam(deletingParam);
+        schema()->removeGlobalParam(deletingParam, true);
         schema()->events().raise(SchemaEvents::GlobalParamDeleted, deletingParam, "Params window: param deleted");
     }
 }
