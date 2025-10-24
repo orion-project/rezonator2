@@ -83,6 +83,28 @@ int PlotFuncResultSet::allPointsCount() const
 }
 
 //------------------------------------------------------------------------------
+//                                 PlotFuncDeps
+//------------------------------------------------------------------------------
+
+bool PlotFuncDeps::check(Z::Parameter *param) const
+{
+    return params.contains(param);
+}
+
+bool PlotFuncDeps::check(Element *elem) const
+{
+    return elems.contains(elem);
+}
+
+bool PlotFuncDeps::check(const Elements &elems) const
+{
+    for (auto elem : elems)
+        if (this->elems.contains(elem))
+            return true;
+    return false;
+}
+
+//------------------------------------------------------------------------------
 //                                 PlotFunction
 //------------------------------------------------------------------------------
 
@@ -189,3 +211,10 @@ const PlotFuncResultSet* PlotFunction::results(Z::WorkPlane plane) const
     return nullptr;
 }
 
+PlotFuncDeps PlotFunction::dependsOn() const
+{
+    return PlotFuncDeps {
+        .elems = { _arg.element },
+        .params = { _arg.parameter },
+    };
+}

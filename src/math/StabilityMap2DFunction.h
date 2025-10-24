@@ -26,11 +26,13 @@ public:
     bool hasOptions() const override { return true; }
     bool hasDataTable() const override { return false; }
     void loadPrefs() override;
+    PlotFuncDeps dependsOn() const override;
 
     Z::PointTS calculateAtXY(const Z::Value& x, const Z::Value& y);
 
     Z::Enums::StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }
     void setStabilityCalcMode(Z::Enums::StabilityCalcMode mode) { _stabilityCalcMode = mode; }
+    
 
 private:
     Z::Variable _paramX, _paramY;

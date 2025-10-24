@@ -53,7 +53,7 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
     createActions();
     createToolbar(fullToolbar);
 
-    ParamsEditor::Options opts(&_workingCopy->params());
+    ParamsEditor::Options opts(_workingCopy->params());
     opts.menuButtonActions = {_actnParamDescr, nullptr, _actnParamMoveUp, _actnParamMoveDown, nullptr, _actnParamDelete};
     _paramsEditor = new ParamsEditor(opts);
     connect(_paramsEditor, &ParamsEditor::paramChanged, this, &ElemFormulaEditor::editorChanged);

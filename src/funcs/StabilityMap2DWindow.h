@@ -29,7 +29,6 @@ protected:
     // Implementation of PlotFuncWindow
     QWidget* makeOptionsPanel() override;
     bool configureInternal() override;
-    ElemDeletionReaction reactElemDeletion(const Elements&) override;
     void updateGraphs() override;
     Z::Unit getDefaultUnitX() const override;
     Z::Unit getDefaultUnitY() const override;
@@ -42,9 +41,6 @@ protected:
     QString writeFunction(QJsonObject& root) override;
     QString readWindowSpecific(const QJsonObject& root) override;
     QString writeWindowSpecific(QJsonObject& root) override;
-
-    // Implementation of SchemaListener
-    void elementDeleting(Schema*, Element*) override;
 
 private slots:
     void copyGraphData2D();

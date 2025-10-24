@@ -402,7 +402,7 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     _F1->setValue(0_mm); _results.append(_F1);
     _F2->setValue(0_mm); _results.append(_F2);
 
-    ParamsEditor::Options opts(nullptr);
+    ParamsEditor::Options opts({});
     opts.ownParams = true;
     opts.checkChanges = true;
     opts.applyMode = ParamsEditor::Options::ApplyEnter;

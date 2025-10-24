@@ -66,6 +66,11 @@ public:
     virtual void globalParamDeleting(Schema*, Z::Parameter*) {}
     virtual void globalParamDeleted(Schema*, Z::Parameter*) {}
 
+    virtual void customParamCreated(Z::Parameter*) {}
+    virtual void customParamEdited(Z::Parameter*) {}
+    virtual void customParamDeleting(Z::Parameter*) {}
+    virtual void customParamDeleted(Z::Parameter*) {}
+
     virtual void pumpCreated(Schema*, PumpParams*) {}
     virtual void pumpChanged(Schema*, PumpParams*) {}
     virtual void pumpCustomized(Schema*, PumpParams*) {}
@@ -149,6 +154,11 @@ public:
         GlobalParamChanged, ///< Value of global parameter was changed
         GlobalParamDeleting,///< Global param is about to be deleted
         GlobalParamDeleted, ///< Global parameter was deleted
+
+        CustomParamCreated, ///< New custom element parameter was created
+        CustomParamEdited,  ///< Custom element parameter was edited (e.g. description changed, but not value)
+        CustomParamDeleting,///< Custom element param is about to be deleted
+        CustomParamDeleted, ///< Custom element parameter was deleted
 
         PumpCreated,   ///< New pump was created
         PumpChanged,   ///< Pump parameters were changed
@@ -300,7 +310,7 @@ public:
     /// Additional params returned as elements for using in elem-and-param selectors
     const Element* globalParamsAsElem() { return _globalParams; }
     void addGlobalParam(Z::Parameter*);
-    void removeGlobalParam(Z::Parameter*);
+    void removeGlobalParam(Z::Parameter*, bool free);
 
     /// Linst of all links which bind elements' parameter to custom parameters.
     Z::ParamLinks* paramLinks() { return &_paramLinks; }

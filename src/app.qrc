@@ -103,6 +103,7 @@
         <file alias="math_mult">../img/toolbar/math_mult.svg</file>
         <file alias="math_plus">../img/toolbar/math_plus.svg</file>
         <file alias="menu">../img/toolbar/menu.svg</file>
+        <file alias="menu_sm">../img/toolbar/menu_sm.svg</file>
         <file alias="move_down">../img/toolbar/move_down.svg</file>
         <file alias="move_left">../img/toolbar/move_left.svg</file> 
         <file alias="move_left_right">../img/toolbar/move_left_right.svg</file> 
@@ -174,6 +175,7 @@
         <file alias="warning">../img/toolbar/warning.svg</file>
         <file alias="wavelength">../img/toolbar/wavelength.svg</file>
         <file alias="windows_close">../img/toolbar/windows_close.svg</file>
+        <file alias="wrench">../img/toolbar/wrench.svg</file>
         <file alias="zoom_in">../img/toolbar/zoom_in.svg</file>
         <file alias="zoom_out">../img/toolbar/zoom_out.svg</file>
     </qresource>

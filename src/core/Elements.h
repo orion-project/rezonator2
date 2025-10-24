@@ -38,7 +38,6 @@ DECLARE_ELEMENT(ElemFlatMirror, Element)
     ElemFlatMirror();
     TYPE_NAME(qApp->translate("Elements", "Flat mirror"))
     DEFAULT_LABEL("M")
-    PARAMS_EDITOR(None)
 DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
@@ -168,7 +167,6 @@ DECLARE_ELEMENT(ElemPoint, Element)
     ElemPoint();
     TYPE_NAME(qApp->translate("Elements", "Point"))
     DEFAULT_LABEL("P")
-    PARAMS_EDITOR(None)
 DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------

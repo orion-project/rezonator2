@@ -149,7 +149,15 @@ AdjusterWidget::AdjusterWidget(Schema* schema, Z::Parameter *param, QWidget *par
 
 AdjusterWidget::~AdjusterWidget()
 {
+    if (_param)
+        _param->removeListener(this);
+}
+
+void AdjusterWidget::destroyLater()
+{
     _param->removeListener(this);
+    _param = nullptr;
+    deleteLater();
 }
 
 void AdjusterWidget::parameterChanged(Z::ParameterBase*)
@@ -476,6 +484,11 @@ void AdjustmentWindow::globalParamDeleting(Schema*, Z::Parameter* param)
     deleteAdjuster(param);
 }
 
+void AdjustmentWindow::customParamDeleting(Z::Parameter* param)
+{
+    deleteAdjuster(param);
+}
+
 void AdjustmentWindow::addAdjuster(Z::Parameter* param)
 {
     foreach (const auto& adj, _adjusters)
@@ -525,7 +538,7 @@ void AdjustmentWindow::deleteAdjuster(Z::Parameter* param)
 
     if (deletingWidget)
     {
-        deletingWidget->deleteLater();
+        deletingWidget->destroyLater();
         if (!_adjusters.isEmpty())
             _adjusters.first().widget->focus();
     }

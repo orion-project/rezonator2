@@ -3,15 +3,18 @@
 #include "ParamsListWidget.h"
 #include "UnitWidgets.h"
 #include "../app/Appearance.h"
+#include "../app/PersistentState.h"
 #include "../core/Format.h"
+#include "../io/JsonUtils.h"
 #include "../math/tinyexpr.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
 #include "widgets/OriValueEdit.h"
 
+#include <QBoxLayout>
+#include <QCheckBox>
 #include <QDebug>
-#include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QMenu>
@@ -534,3 +537,228 @@ void ParamEditor::unitChangedRaw(Z::Unit unit)
 
     emit unitChanged(unit);
 }
+
+//------------------------------------------------------------------------------
+//                              ParamSpecEditor
+//------------------------------------------------------------------------------
+
+ParamSpecEditor::ParamSpecEditor(Z::Parameter *param, const Options &opts) : QWidget(), _param(param), _opts(opts)
+{
+    _aliasEditor = new QLineEdit;
+    _aliasEditor->setFont(Z::Gui::ValueFont().get());
+
+    if (opts.allowNameEditor) {
+        _nameEditor = new QLineEdit;
+        _nameEditor->setFont(Z::Gui::ValueFont().get());
+    }
+
+    _dimEditor = new DimComboBox;
+    
+    _descrEditor = new QLineEdit;
+    _descrEditor->setFont(Z::Gui::ValueFont().get());
+    
+    if (opts.allowSavePreset)
+        _needSavePreset = new QCheckBox(tr("Save as preset"));
+    
+    if (param) {
+        _aliasEditor->setText(param->alias());
+        if (_nameEditor)
+            _nameEditor->setText(param->name());
+        _dimEditor->setSelectedDim(param->dim());
+        _descrEditor->setText(param->description());
+    } else if (!_opts.recentKeyPrefix.isEmpty()) {
+        auto key = (_opts.recentKeyPrefix + "_dim").toLatin1();
+        _recentDim = RecentData::getDim(key.constData());
+        _dimEditor->setSelectedDim(_recentDim);
+    }
+    
+    auto layout = new QVBoxLayout(this);
+    layout->setMargin(0);
+    layout->setSpacing(3);
+    
+    layout->addWidget(new QLabel(tr("Label")));
+    layout->addWidget(_aliasEditor);
+    layout->addSpacing(6);
+    
+    if (_nameEditor) {
+        layout->addWidget(new QLabel(tr("Name")));
+        layout->addWidget(_nameEditor);
+        layout->addSpacing(6);
+    }
+    
+    layout->addWidget(new QLabel(tr("Dimension")));
+    layout->addWidget(_dimEditor);
+    layout->addSpacing(6);
+
+    layout->addWidget(new QLabel(tr("Description")));
+    layout->addWidget(_descrEditor);
+    layout->addSpacing(6);
+    
+    if (_needSavePreset)
+        layout->addWidget(_needSavePreset);
+}
+
+QString ParamSpecEditor::alias() const { return _aliasEditor->text().trimmed(); }
+QString ParamSpecEditor::label() const { return _aliasEditor->text().trimmed(); }
+QString ParamSpecEditor::descr() const { return _descrEditor->text().trimmed(); }
+Z::Dim ParamSpecEditor::dim() const { return _dimEditor->selectedDim(); }
+bool ParamSpecEditor::needSavePreset() const { return _needSavePreset->isChecked(); }
+
+QString ParamSpecEditor::name() const
+{
+    if (!_nameEditor)
+        return alias();
+    auto name = _nameEditor->text().trimmed();
+    return name.isEmpty() ? alias() : name;
+}
+
+bool ParamSpecEditor::exec(const QString &title)
+{
+    auto verifyFunc = [this](){
+        auto alias = _aliasEditor->text().trimmed();
+        if (alias.isEmpty())
+            return qApp->tr("Parameter label can't be empty");
+        if (auto p = _opts.existedParams.byAlias(alias); p && p != _param)
+            return qApp->tr("Parameter <b>%1</b> already exists").arg(alias);
+        if (!Z::Param::isValidAlias(alias))
+            return qApp->tr("Parameter label <b>%1</b> is invalid").arg(alias);
+        return QString();
+    };
+    bool ok = Ori::Dlg::Dialog(this, false)
+        .withTitle(title)
+        .withIconPath(":/window_icons/parameter")
+        .withContentToButtonsSpacingFactor(3)
+        .withVerification(verifyFunc)
+        .exec();
+    if (ok)
+    {
+        if (!_opts.recentKeyPrefix.isEmpty() && dim() != _recentDim) {
+            auto key = (_opts.recentKeyPrefix + "_dim").toLatin1();
+            RecentData::setDim(key.constData(), dim());
+        }
+    }
+    return ok;
+}
+
+//------------------------------------------------------------------------------
+//                              ParamSpecEditor
+//------------------------------------------------------------------------------
+
+namespace ParamPresets {
+
+const Z::Parameters& getBuiltin()
+{
+    static Z::Parameters presets;
+    if (presets.isEmpty())
+        presets = {
+            new Z::Parameter(Z::Dims::linear(), QStringLiteral("D"), QStringLiteral("D"),
+                qApp->translate("Param", "Aperture diameter"),
+                qApp->translate("Param", "Element transverse size for loss estimation.")),
+            new Z::Parameter(Z::Dims::linear(), QStringLiteral("dYt"), QStringLiteral("dYt"),
+                qApp->translate("Param", "Axial misalignment T"),
+                qApp->translate("Param", "Offset of element center from beam axis in T-plane.")),
+            new Z::Parameter(Z::Dims::angular(), QStringLiteral("dVt"), QStringLiteral("dVt"),
+                qApp->translate("Param", "Angular misalignment T"),
+                qApp->translate("Param", "Tilt of element axis from beam axis in T-plane.")),
+            new Z::Parameter(Z::Dims::linear(), QStringLiteral("dYs"), QStringLiteral("dYs"),
+                qApp->translate("Param", "Axial misalignment S"),
+                qApp->translate("Param", "Offset of element center from beam axis in S-plane.")),
+            new Z::Parameter(Z::Dims::angular(), QStringLiteral("dVs"), QStringLiteral("dVs"),
+                qApp->translate("Param", "Angular misalignment S"),
+                qApp->translate("Param", "Tilt of element axis from beam axis in S-plane.")),
+        };
+    return presets;
+}
+
+#define MAKE_INDEX(p, i) ((p->options() & 0xFFFF) | (i << 16))
+#define GET_INDEX(p) (p->options() >> 16)
+#define REMOVE_INDEX(p) (p->options() & 0xFFFF)
+
+Z::Parameters getAll()
+{
+    Z::Parameters presets;
+    auto root = PersistentState::load("presets");
+    
+    auto builtin = getBuiltin();
+    auto hidden = root["hidden"].toObject();
+    for (auto p : std::as_const(builtin))
+        if (!hidden[p->alias()].toBool())
+            presets << p;
+    
+    auto arr = root["custom_params"].toArray();
+    for (int i = 0; i < arr.size(); i++)
+    {
+        auto res = Z::IO::Json::readParamSpec(arr.at(i).toObject());
+        if (!res.ok())
+        {
+            qWarning() << "Failed to load custom param preset" << res.error();
+            continue;
+        }
+        auto preset = res.value();
+        preset->setOptions(MAKE_INDEX(preset, i));
+        presets << preset;
+    }
+    return presets;
+}
+
+void save(Z::Parameter *preset)
+{
+    auto root = PersistentState::load("presets");
+    auto arr = root["custom_params"].toArray();
+    arr.append(Z::IO::Json::writeParamSpec(preset));
+    root["custom_params"] = arr;
+    PersistentState::save("presets", root);
+}
+
+void remove(Z::Parameter *preset)
+{
+    auto root = PersistentState::load("presets");
+    if (getBuiltin().contains(preset))
+    {
+        auto hidden = root["hidden"].toObject();
+        hidden[preset->alias()] = true;
+        root["hidden"] = hidden;
+    }
+    else
+    {
+        auto arr = root["custom_params"].toArray();
+        int index = GET_INDEX(preset);
+        if (index >= 0 && index < arr.size())
+        {
+            arr.removeAt(index);
+            root["custom_params"] = arr;
+        }
+    }
+    PersistentState::save("presets", root);
+}
+
+void update(Z::Parameter *preset, Z::Parameter *update)
+{
+    auto root = PersistentState::load("presets");
+    auto arr = root["custom_params"].toArray();
+    int index = GET_INDEX(preset);
+    if (index >= 0 && index < arr.size())
+    {
+        arr[index] = Z::IO::Json::writeParamSpec(update);
+        root["custom_params"] = arr;
+        PersistentState::save("presets", root);
+    }
+}
+
+void restore()
+{
+    auto root = PersistentState::load("presets");
+    root["hidden"] = QJsonObject();
+    root["custom_params"] = QJsonArray();
+    PersistentState::save("presets", root);
+}
+
+Z::Parameter* makeParam(Z::Parameter *preset)
+{
+    auto param = new Z::Parameter;
+    param->copyFrom(preset);
+    param->setOptions(REMOVE_INDEX(preset));
+    return param;
+}
+
+} // namespace ParamPresets

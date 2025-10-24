@@ -13,8 +13,6 @@
 
 namespace Z {
 
-enum class ParamsEditorKind { None, List, ABCD };
-
 class ParameterBase;
 
 //------------------------------------------------------------------------------
@@ -85,7 +83,7 @@ public:
     void addListener(ParameterListener* listener) { _listeners.append(listener); }
     void removeListener(ParameterListener* listener) { _listeners.removeAll(listener); }
     const QVector<ParameterListener*>& listeners() const { return _listeners; }
-
+    
 protected:
     ParameterBase() {}
 
@@ -161,6 +159,13 @@ enum class ParamValueDriver
 
 //------------------------------------------------------------------------------
 
+enum class ParamOption
+{
+    Custom = 0x01, ///< Parameter is created by user
+};
+
+//------------------------------------------------------------------------------
+
 /**
     Base class template for parameters having value.
 */
@@ -213,6 +218,11 @@ public:
     /// An expression used in editor to produce parameter value
     QString expr() const { return _expr; }
     void setExpr(const QString &expr) { _expr = expr; }
+    
+    bool hasOption(ParamOption opt) const { return _options & (int)opt; }
+    void setOption(ParamOption opt) { _options |= (int)opt; }
+    int options() const { return _options; }
+    void setOptions(int opts) { _options = opts; }
 
 protected:
     ValuedParameter() : ParameterBase() {}
@@ -229,6 +239,7 @@ protected:
     TValue _value;
     QString _expr;
     QString _error;
+    int _options = 0;
     ValueVerifierBase<TValue> *_verifier = nullptr;
     ParamValueDriver _valueDriver = ParamValueDriver::None;
 };
@@ -291,6 +302,24 @@ public:
     QString displayStr() const override
     {
         return ValuedParameter<TValue>::displayLabel() % " = " % ValuedParameter<TValue>::_value.displayStr();
+    }
+    
+    void copyFrom(const PhysicalParameter<TValue> *other)
+    {
+        this->_dim = other->_dim;
+        this->_value = other->_value;
+        this->_expr = other->_expr;
+        this->_error = other->_error;
+        this->_options = other->_options;
+        this->_verifier = other->_verifier;
+        this->_valueDriver = other->_valueDriver;
+        this->_alias = other->_alias;
+        this->_label = other->_label;
+        this->_name = other->_name;
+        this->_description = other->_description;
+        this->_category = other->_category;
+        this->_visible = other->_visible;
+        // Do not assign listeners
     }
     
 private:
@@ -536,6 +565,10 @@ inline void setSi(Z::Parameter* param, const double& value) {
     auto unit = param->value().unit();
     param->setValue({unit->fromSi(value), unit});
 }
+
+/// Checks if string is a valid parameter alias.
+/// Validity criteria are same as for C++ variable names.
+bool isValidAlias(const QString& s);
 
 } // namespace Param
 

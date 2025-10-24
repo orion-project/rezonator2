@@ -1,6 +1,24 @@
 {
   "history": [
     {
+      "version": "2.1.2",
+      "date": "",
+      "changes": [
+        {
+          "text": "Can add custom parameters for any element"
+        },
+        {
+          "text": "Fix: can create global parameter with duplicated name"
+        },
+        {
+          "text": "Fix: crash when element is deleted that is a plot position of Beamsize Variation"
+        },
+        {
+          "text": "Fix: crash when global parameter is deleted that is an argument of stability function"
+        }
+      ]
+    },
+    {
       "version": "2.1.1",
       "date": "2025-10-06",
       "changes": [

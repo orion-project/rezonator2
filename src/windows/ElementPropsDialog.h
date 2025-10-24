@@ -3,10 +3,16 @@
 
 #include "RezonatorDialog.h"
 
+#include "../core/Element.h"
+#include "../core/Parameters.h"
+
 QT_BEGIN_NAMESPACE
 class QCheckBox;
 class QLineEdit;
+class QMenu;
+class QStackedWidget;
 class QTabWidget;
+class QToolButton;
 QT_END_NAMESPACE
 
 class Element;
@@ -27,29 +33,51 @@ public:
 
 public slots:
     void collect() override;
+    void reject() override;
 
 protected:
     void showEvent(QShowEvent*) override;
     QSize prefferedSize() const override { return QSize(300, 400); }
 
-    virtual void populateParams() {}
-    virtual void collectParams() {}
     virtual QString verifyParams() const { return QString(); }
 
+    // inherited from RezonatorDialog
     QString helpTopic() const override;
-
-    void setPageParams(QWidget* pageParams);
 
 private:
     Element *_element;
     QTabWidget *_tabs;
+    QStackedWidget *_pageParams;
+    ParamsEditor *_editorParams;
     QLineEdit *_editorLabel, *_editorTitle;
     QCheckBox *_layoutShowLabel;
     QCheckBox *_layoutDrawAlt;
     QCheckBox *_elemDisabled;
+    QToolButton *_butParamsMenu;
+    QMenu *_menuParams;
+    Z::Parameters _newParams, _removedParams, _editedParams, _redimedParams, _paramPresets;
+    QMap<Z::Parameter*, Z::Parameter> _backupParams;
+    QAction *_actnCreateParam, *_actnEditParam, *_actnRemoveParam,
+        *_actnRestorePresets, *_actnParamsHelp;
+    std::shared_ptr<ElementEventsLocker> _eventsLocker;
+    std::shared_ptr<ElementMatrixLocker> _matrixLocker;
 
+    QWidget* initPageParams();
     QWidget* initPageOptions();
     QWidget* initPageOutline();
+    
+    void createCustomParam();
+    void editCustomParam();
+    void removeCustomParam();
+    void restoreParamPresets();
+    void showParamsHelp();
+    void updatePageParams();
+    void updateParamsMenu();
+    
+    Z::Parameters existedParams() const;
+    void addCustomParam(Z::Parameter*);
+    void resetParamPresets();
+    QAction* makePresetAction(Z::Parameter*);
 };
 
 //------------------------------------------------------------------------------
@@ -61,42 +89,5 @@ class ElementPropsDialog_None : public ElementPropsDialog
 public:
     explicit ElementPropsDialog_None(Element *elem, QWidget *parent = nullptr);
 };
-
-//------------------------------------------------------------------------------
-
-class ElementPropsDialog_List : public ElementPropsDialog
-{
-    Q_OBJECT
-
-public:
-    explicit ElementPropsDialog_List(Element *elem, QWidget *parent = nullptr);
-
-protected:
-    void populateParams() override;
-    void collectParams() override;
-    virtual QString verifyParams() const override;
-
-private:
-    ParamsEditor* _editors;
-};
-
-//------------------------------------------------------------------------------
-
-class ElementPropsDialog_Abcd : public ElementPropsDialog
-{
-    Q_OBJECT
-
-public:
-    explicit ElementPropsDialog_Abcd(Element *elem, QWidget *parent = nullptr);
-
-protected:
-    void populateParams() override;
-    void collectParams() override;
-
-private:
-    ParamsEditorAbcd *_editorMt, *_editorMs;
-};
-
-//------------------------------------------------------------------------------
 
 #endif // ELEMENT_PROP_DLG_H

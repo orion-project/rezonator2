@@ -8,7 +8,8 @@
 #include <QDialogButtonBox>
 #include <QIcon>
 
-static QMap<QString, QByteArray> __savedGeometry_RezonatorDialog;
+typedef QMap<QString, QByteArray> SavegRezonatorDialogGeometry;
+Q_GLOBAL_STATIC(SavegRezonatorDialogGeometry, __savedGeometry_RezonatorDialog);
 
 RezonatorDialog::RezonatorDialog(Options options, QWidget* parent) : QDialog(parent? parent: qApp->activeWindow())
 {
@@ -43,7 +44,7 @@ RezonatorDialog::~RezonatorDialog()
 {
     auto name = objectName();
     if (!name.isEmpty())
-        __savedGeometry_RezonatorDialog[name] = saveGeometry();
+        __savedGeometry_RezonatorDialog->insert(name, saveGeometry());
 }
 
 void RezonatorDialog::setTitleAndIcon(const QString& title, const char* iconPath)
@@ -62,8 +63,8 @@ void RezonatorDialog::showEvent(QShowEvent *event)
     QDialog::showEvent(event);
 
     auto name = objectName();
-    if (__savedGeometry_RezonatorDialog.contains(name))
-        restoreGeometry(__savedGeometry_RezonatorDialog[name]);
+    if (__savedGeometry_RezonatorDialog->contains(name))
+        restoreGeometry(__savedGeometry_RezonatorDialog->value(name));
     else if (!prefferedSize().isEmpty())
         resize(prefferedSize());
 }

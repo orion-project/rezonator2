@@ -102,7 +102,15 @@ const SchemaEvents::EventProps& SchemaEvents::propsOf(Event event)
         INIT_EVENT(GlobalParamEdited,  true,         SchemaState::Modified ),
         INIT_EVENT(GlobalParamChanged, true,         SchemaState::Modified ),
         INIT_EVENT(GlobalParamDeleted, true,         SchemaState::Modified ),
-        INIT_EVENT(GlobalParamDeleting,true,         SchemaState::Current  ),
+        INIT_EVENT(GlobalParamDeleting,false,        SchemaState::Current  ),
+
+        // no need to modify schema after operations with custom params
+        // because they all happen in the element props dialog 
+        // and there will be ElemChanged after the dialog accepted
+        INIT_EVENT(CustomParamCreated, false,        SchemaState::Current ),
+        INIT_EVENT(CustomParamEdited,  false,        SchemaState::Current ),
+        INIT_EVENT(CustomParamDeleted, false,        SchemaState::Current ),
+        INIT_EVENT(CustomParamDeleting,false,        SchemaState::Current  ),
 
         INIT_EVENT(PumpCreated,        true,         SchemaState::Modified ),
         INIT_EVENT(PumpChanged,        true,         SchemaState::Modified ),
@@ -144,6 +152,11 @@ void SchemaEvents::notify(SchemaListener* listener, SchemaEvents::Event event, v
     case GlobalParamChanged: listener->globalParamChanged(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
     case GlobalParamDeleting: listener->globalParamDeleting(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
     case GlobalParamDeleted: listener->globalParamDeleted(_schema, reinterpret_cast<Z::Parameter*>(param)); break;
+
+    case CustomParamCreated: listener->customParamCreated(reinterpret_cast<Z::Parameter*>(param)); break;
+    case CustomParamEdited: listener->customParamEdited(reinterpret_cast<Z::Parameter*>(param)); break;
+    case CustomParamDeleting: listener->customParamDeleting(reinterpret_cast<Z::Parameter*>(param)); break;
+    case CustomParamDeleted: listener->customParamDeleted(reinterpret_cast<Z::Parameter*>(param)); break;
 
     case PumpCreated: listener->pumpCreated(_schema, reinterpret_cast<PumpParams*>(param)); break;
     case PumpChanged: listener->pumpChanged(_schema, reinterpret_cast<PumpParams*>(param)); break;
@@ -366,9 +379,9 @@ void Schema::addGlobalParam(Z::Parameter *param)
     _globalParams->addParam(param);
 }
 
-void Schema::removeGlobalParam(Z::Parameter *param)
+void Schema::removeGlobalParam(Z::Parameter *param, bool free)
 {
-    _globalParams->removeParam(param);
+    _globalParams->removeParam(param, free);
 }
 
 PumpParams* Schema::activePump()

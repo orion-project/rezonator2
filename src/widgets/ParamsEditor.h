@@ -27,7 +27,7 @@ public:
     struct Options
     {
         /// Target editing parameters.
-        const Z::Parameters *params;
+        Z::Parameters params;
 
         /// Global parameters to which tagets can be linked.
         const Z::Parameters *globalParams = nullptr;
@@ -67,7 +67,7 @@ public:
         /// If not set, only numeric value can be edited.
         bool useExpression = false;
 
-        Options(const Z::Parameters *p = nullptr) : params(p) {}
+        Options(const Z::Parameters &p) : params(p) {}
     };
 
 public:
@@ -77,12 +77,13 @@ public:
     void populateEditors();
     void populateValues();
 
-    ParamEditor* addEditor(Z::Parameter* param, const QVector<Z::Unit>& units = {});
+    ParamEditor* addEditor(Z::Parameter* param, const QVector<Z::Unit>& units = {}, int index = -1);
     void removeEditor(Z::Parameter* param);
     void populateEditor(Z::Parameter* param);
     void moveEditorUp(Z::Parameter* param);
     void moveEditorDown(Z::Parameter* param);
     void addSeparator(const QString& title = QString(), bool flat = true);
+    ParamEditor* selectedEditor();
 
     void focus();
     void focus(Z::Parameter *param);

@@ -48,6 +48,16 @@ struct PlotFuncResultSet
     int allPointsCount() const;
 };
 
+struct PlotFuncDeps
+{
+    Elements elems;
+    Z::Parameters params;
+    
+    bool check(Z::Parameter*) const;
+    bool check(Element*) const;
+    bool check(const Elements&) const;
+};
+
 struct SpecPointParam
 {
 public:
@@ -126,6 +136,8 @@ public:
 
     /// Load custom preferences - recently used modes etc.
     virtual void loadPrefs() {}
+    
+    virtual PlotFuncDeps dependsOn() const;
 
     RoundTripCalculator* roundTripCalculator() const { return _calc; }
 

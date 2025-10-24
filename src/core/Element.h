@@ -27,9 +27,6 @@
     const QString typeName() const override { static QString _name_ = name; return _name_; }\
     static const QString _typeName_() { static QString _name_ = name; return _name_; }
 
-#define PARAMS_EDITOR(editor)\
-    Z::ParamsEditorKind paramsEditorKind() const override { return Z::ParamsEditorKind::editor; }
-
 #define CALC_MATRIX\
     void calcMatrixInternal() override;
 
@@ -152,7 +149,7 @@ public:
     bool hasParam(Z::Parameter* param) const { return _params.contains(param); }
     Z::Parameter* param(const QString &alias) { return _params.byAlias(alias); }
     void addParam(Z::Parameter* param, int index = -1);
-    void removeParam(Z::Parameter* param);
+    void removeParam(Z::Parameter* param, bool free);
 
     /// Label of element. Label is short indentificator
     /// for element or its name (like variable name). E.g.: "M1", "L_f", etc.
@@ -185,9 +182,6 @@ public:
     const Z::Matrix& Ms_inv() const { return _ms_inv; }
     const Z::Matrix* pMt_inv() const { return &_mt_inv; }
     const Z::Matrix* pMs_inv() const { return &_ms_inv; }
-
-    /// Preferable parameter editor kind for this element.
-    virtual Z::ParamsEditorKind paramsEditorKind() const { return Z::ParamsEditorKind::List; }
 
     bool disabled() const { return _disabled; }
     void setDisabled(bool value);

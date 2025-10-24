@@ -304,21 +304,6 @@ bool StabilityMap2DWindow::configureInternal()
     return StabilityMap2DParamsDlg(schema(), function()->paramX(), function()->paramY()).run();
 }
 
-ElemDeletionReaction StabilityMap2DWindow::reactElemDeletion(const Elements& elems)
-{
-    if (elems.contains(function()->paramX()->element) ||
-        elems.contains(function()->paramY()->element))
-        return ElemDeletionReaction::Close;
-    return ElemDeletionReaction::None;
-}
-
-void StabilityMap2DWindow::elementDeleting(Schema*, Element* elem)
-{
-    if (function()->paramX()->element == elem ||
-        function()->paramY()->element == elem)
-        disableAndClose();
-}
-
 void StabilityMap2DWindow::updateGraphs()
 {
     auto f = function();

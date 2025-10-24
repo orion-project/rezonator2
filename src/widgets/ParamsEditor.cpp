@@ -46,9 +46,8 @@ void ParamsEditor::populateEditors()
         qWarning() << "ParamsEditor::populateEditors: already populated, use removeEditors first";
         return;
     }
-    if (_options.params)
-        for (Z::Parameter* param : *_options.params)
-            addEditor(param);
+    for (auto param : _options.params)
+        addEditor(param);
 }
 
 void ParamsEditor::removeEditors()
@@ -57,7 +56,7 @@ void ParamsEditor::removeEditors()
     _editors.clear();
 }
 
-ParamEditor *ParamsEditor::addEditor(Z::Parameter* param, const QVector<Z::Unit> &units)
+ParamEditor *ParamsEditor::addEditor(Z::Parameter* param, const QVector<Z::Unit> &units, int index)
 {
     if (_options.filter && !_options.filter->check(param))
         return nullptr;
@@ -82,8 +81,14 @@ ParamEditor *ParamsEditor::addEditor(Z::Parameter* param, const QVector<Z::Unit>
     connect(editor, &ParamEditor::unitChanged, this, &ParamsEditor::paramUnitChanged);
     connect(editor, &ParamEditor::enterPressed, this, &ParamsEditor::paramEnterPressed);
 
-    _editors.append(editor);
-    _paramsLayout->addWidget(editor);
+    if (index < 0) {
+        _editors.append(editor);
+        _paramsLayout->addWidget(editor);
+    }
+    else {
+        _editors.insert(index, editor);
+        _paramsLayout->insertWidget(index, editor);
+    }
 
     return editor;
 }
@@ -309,6 +314,14 @@ void ParamsEditor::moveEditorDown(Z::Parameter* param)
             break;
         }
     }
+}
+
+ParamEditor* ParamsEditor::selectedEditor()
+{
+    for (auto ed : std::as_const(_editors))
+        if (ed->hasFocus())
+            return ed;
+    return nullptr;
 }
 
 //------------------------------------------------------------------------------
