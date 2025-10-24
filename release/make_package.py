@@ -27,6 +27,68 @@ os.chdir(REDIST_DIR)
 
 package_name = PROJECT_NAME + '-' + version_str
 
+# Python modules to exclude from standard library (not needed for math calculations)
+PYTHON_EXCLUDE_PATTERNS = (
+  '__pycache__',     # Bytecode cache
+  '*.pyc',           # Compiled Python files
+  '__phello__',      # Test module
+  'test',            # Test suite
+  'tests',           # Additional tests
+  # GUI libraries
+  'tkinter', 'turtledemo', 'idlelib', 'turtle.py',
+  # Development/conversion tools
+  'lib2to3', 'unittest', 'pydoc_data', 'distutils', 'ensurepip', 'venv',
+  # Debugging/profiling
+  'pdb.py', 'profile.py', 'cProfile.py', 'pstats.py', 'trace.py', 
+  'timeit.py', 'tabnanny.py', 'symbol.py', 'pickletools.py',
+  # Async/concurrency
+  'asyncio', 'multiprocessing', 'concurrent', 'queue.py',
+  # Network protocols
+  'xmlrpc', 'wsgiref', 'email', 'html', 'http', 'urllib',
+  'webbrowser.py', 'socketserver.py', 'ftplib.py', 'poplib.py', 
+  'smtplib.py', 'telnetlib.py', 'imaplib.py', 'nntplib.py',
+  'cgi.py', 'cgitb.py', 'socket.py', 'ssl.py', 'ipaddress.py',
+  # Database
+  'sqlite3', 'dbm',
+  # Audio/Video
+  'wave.py', 'audioop.py', 'sndhdr.py', 'sunau.py', 'aifc.py', 
+  'chunk.py', 'colorsys.py',
+  # File formats
+  'tomllib', 'plistlib.py', 'netrc.py', 'mailbox.py', 'mailcap.py',
+  'mimetypes.py', 'uu.py', 'binhex.py', 'quopri.py', 'base64.py',
+  # XML processing
+  'xml',
+  # Terminal/system
+  'ctypes', 'curses', 'cmd.py', 'readline.py', 'rlcompleter.py',
+  'getpass.py', 'getopt.py', 'pty.py', 'tty.py', 'pipes.py', 'sched.py',
+  # System utilities
+  'importlib', 'logging', 'msilib', 'zoneinfo',
+  # Compression & Archives
+  'zipfile', 'tarfile.py', 'gzip.py', 'bz2.py', 'lzma.py', 'zipapp.py',
+  # Command-line & Argument Parsing
+  'argparse.py', 'optparse.py',
+  # Compilation & Bytecode
+  'py_compile.py', 'compileall.py',
+  # File Operations
+  'glob.py', 'pathlib.py', 'filecmp.py', 'fileinput.py',
+  # Security & Cryptography
+  'secrets.py', 'hmac.py', 'crypt.py',
+  # Development & Debugging
+  'doctest.py', 'pprint.py', 'inspect.py', 'dis.py', 
+  'ast.py', 'code.py', 'codeop.py', 'pydoc.py', 'pyclbr.py',
+  # Internationalization
+  'locale.py', 'gettext.py',
+  # System & Process
+  'selectors.py',
+  # Code Analysis
+  'modulefinder.py', 'symtable.py',
+  # Text Processing
+  'stringprep.py', 'difflib.py',
+  # Miscellaneous
+  'calendar.py', 'antigravity.py', 'this.py', '__hello__.py',
+  'bdb.py', 'graphlib.py', 'imghdr.py', 'runpy.py', 'shlex.py',
+  'tracemalloc.py', 'xdrlib.py'
+)
 
 ########################################################################
 #                             Windows
@@ -37,7 +99,7 @@ def make_package_for_windows():
   print_header('Run windeployqt...')
   execute(f'windeployqt ..\\..\\bin\\{PROJECT_EXE} --dir . ' +
           '--no-translations --no-system-d3d-compiler --no-opengl-sw')
-  execute(f'windeployqt {os.path.join(qt_dir, "assistant.exe")} --dir . ' +
+  execute(f'windeployqt {qt_dir + "\\assistant.exe"} --dir . ' +
           '--no-translations --no-system-d3d-compiler --no-opengl-sw')
 
   print_header('Clean some excessive files...')
@@ -46,11 +108,17 @@ def make_package_for_windows():
   remove_files_in_dir('imageformats', ['qicns.dll', 'qtga.dll', 'qtiff.dll', 'qwbmp.dll', 'qwebp.dll'])
 
   print_header('Copy project files...')
-  copy_files('..\\..\\bin', [PROJECT_EXE, 'rezonator.qch', 'rezonator.qhc', 'lua.dll'], '.')
-  #copy_files('..\\..\\bin', [PROJECT_EXE, 'rezonator.qch', 'rezonator.qhc', 'python312.dll', 'zlib1.dll'], '.')
-  #shutil.copytree('..\\..\\bin\\Lib', 'Lib')
+  copy_files('..\\..\\bin', [PROJECT_EXE, 'rezonator.qch', 'rezonator.qhc', 'lua.dll', \
+                             'python312.dll', 'zlib1.dll'], '.')
   shutil.copytree('..\\..\\bin\\examples', 'examples')
   copy_files(qt_dir, ['assistant.exe'], '.')
+  
+  print_header('Copy Python files...')
+  python_src = '..\\..\\vcpkg_installed\\x64-windows\\tools\\python3'
+  shutil.copytree(python_src + '\\Lib', 'python\\Lib', ignore=shutil.ignore_patterns(*PYTHON_EXCLUDE_PATTERNS))
+  shutil.make_archive('python312', 'zip', 'python\\Lib')
+  # copy_files(python_src + '\\DLLs', [], 'python\\DLLs', skip_non_exitent=True, create_dir=True)
+  shutil.rmtree('python')
   
   # It seems there is some bug in windeployqt.exe on Qt 5.15.2
   # (or something changed in the env becasue it worked on another machine before)
@@ -61,7 +129,7 @@ def make_package_for_windows():
   print_header('Pack files to zip...')
   global package_name
   package_name = '{}-win-x{}.zip'.format(package_name, get_exe_bits(PROJECT_EXE))
-  zip_dir('.', '..\\' + package_name)
+  #zip_dir('.', '..\\' + package_name)
 
 
 ########################################################################
@@ -76,12 +144,20 @@ def make_package_for_linux():
 
   print_header('Copy project files...')
   copy_file('../../bin/' + PROJECT_EXE, 'usr/bin')
-  copy_file(os.path.join(find_qt_dir(), 'assistant'), 'usr/bin')
+  copy_file(find_qt_dir() + '/assistant', 'usr/bin')
   copy_file('../../bin/rezonator.qch', 'usr/bin')
   copy_file('../../bin/rezonator.qhc', 'usr/bin')
   shutil.copytree('../../bin/examples', 'usr/bin/examples')
   copy_file(f'../../release/{PROJECT_NAME}.desktop', 'usr/share/applications')
   shutil.copyfile('../../img/icon/main_2_256.png', f'usr/share/icons/hicolor/256x256/apps/{PROJECT_NAME}.png')
+  
+  print_header('Copy Python files...')
+  python_src = '../../vcpkg_installed/x64-linux'
+  python_dst = 'usr/bin/python'
+  python_lib = python_dst + '/Lib'
+  shutil.copytree(python_src + '/lib/python3.12', python_lib, ignore=shutil.ignore_patterns(*PYTHON_EXCLUDE_PATTERNS))
+  #shutil.make_archive(python_dst + '/python312', 'zip', python_lib)
+  #shutil.rmtree(python_lib)
 
   # There will be error 'Could not determine the path to the executable' otherwise
   execute('chmod +x usr/bin/' + PROJECT_EXE)
@@ -136,26 +212,17 @@ def make_package_for_macos():
 
   print_header('Copy project files...')
   shutil.copytree('../../bin/examples', image_exe + '/Contents/MacOS/examples')
-  # shutil.copytree('../../vcpkg_installed/x64-osx/lib/python3.12', image_exe + '/Contents/MacOS/python/lib/python3.12')
-  # # Remove some libs that are obviously not required for embedded calculations
-  # # TODO: do the opposite - copy only absolute minimum
-  # remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/__pycache__')
-  # remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/__phello__')
-  # remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/lib-dynload')
-  # remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/asyncio')
-  # remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/lib2to3')
-  # remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/multiprocessing')
-  # remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/pydoc_data')
-  # remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/tkinter')
-  # remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/turtledemo')
-  # remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/unittest')
-  # remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/xml')
-  # remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/xmlrpc')
-  # remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/idlelib')
-  # remove_dir(image_exe + '/Contents/MacOS/python/lib/python3.12/logging')
+  
+  print_header('Copy Python files...')
+  python_src = '../../vcpkg_installed/x64-osx'
+  python_dst = image_exe + '/Contents/MacOS/python'
+  python_lib = python_dst + '/Lib'
+  shutil.copytree(python_src + '/lib/python3.12', python_lib, ignore=shutil.ignore_patterns(*PYTHON_EXCLUDE_PATTERNS))
+  #shutil.make_archive(python_dst + '/python312', 'zip', python_lib)
+  #shutil.rmtree(python_lib)
 
   print_header('Processing Assistant...')
-  shutil.copytree(os.path.join(find_qt_dir(), 'Assistant.app'), 'Assistant.app')
+  shutil.copytree(find_qt_dir() + '/Assistant.app', 'Assistant.app')
   execute('macdeployqt Assistant.app -appstore-compliant')
   print_header('Patching Assistant...')
   # `macdeployqt` (at least in Qt 5.10) doesn't add this RPATH to assistant exe, 

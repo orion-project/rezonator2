@@ -50,12 +50,13 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Help PrintSupport Svg Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Help PrintSupport Svg Widgets)
 
 # Add Python
-# find_package(Python3 COMPONENTS Development REQUIRED)
-# message(STATUS "Python3_FOUND: ${Python3_FOUND}")
-# message(STATUS "Python3_VERSION: ${Python3_VERSION}")
-# message(STATUS "Python3_INCLUDE_DIRS: ${Python3_INCLUDE_DIRS}")
-# message(STATUS "Python3_LIBRARIES: ${Python3_LIBRARIES}")
-# message(STATUS "Python3_LIBRARY_DIRS: ${Python3_LIBRARY_DIRS}")
+set(Python3_FIND_REGISTRY NEVER)
+find_package(Python3 COMPONENTS Development REQUIRED)
+message(STATUS "Python3_FOUND: ${Python3_FOUND}")
+message(STATUS "Python3_VERSION: ${Python3_VERSION}")
+message(STATUS "Python3_INCLUDE_DIRS: ${Python3_INCLUDE_DIRS}")
+message(STATUS "Python3_LIBRARIES: ${Python3_LIBRARIES}")
+message(STATUS "Python3_LIBRARY_DIRS: ${Python3_LIBRARY_DIRS}")
 
 set(PROJECT_SOURCES
     ${CMAKE_CURRENT_BINARY_DIR}/version.rc
@@ -280,7 +281,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt::PrintSupport
     Qt::Svg
     Qt::Widgets
-    #Python3::Python
+    Python3::Python
     ${LUA_LIBRARIES}
 )
 # if(APPLE)
@@ -310,7 +311,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     APP_VER_YEAR_0=${APP_VER_YEAR_0}
     QT_USE_QSTRINGBUILDER
     ORI_USE_STYLE_SHEETS
-    #Z_USE_PYTHON
+    Z_USE_PYTHON
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)
