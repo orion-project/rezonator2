@@ -161,13 +161,13 @@
     ],
     "formulas": [
     ],
-    "notes": "",
+    "notes": "Shows basic code snippets for making custom functions.\n\n- Custom functions\n- User scripts\n- Python\n\n",
     "param_links": [
     ],
     "pumps": [
     ],
     "schema_version": "2.1",
-    "title": "",
+    "title": "Custom functions basics",
     "trip_type": "SW",
     "windows": [
         {
