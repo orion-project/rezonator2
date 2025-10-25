@@ -39,13 +39,16 @@ ExamplesDialog::ExamplesDialog(): QSplitter()
         p { margin-top: 10px; }
     )");
     
+    _filterEdit = new QLineEdit;
+    _filterEdit->setPlaceholderText(qApp->tr("Filter examples..."));
+    _filterEdit->setClearButtonEnabled(true);
+    connect(_filterEdit, &QLineEdit::textChanged, this, &ExamplesDialog::applyFilter);
+    
     auto leftPanel = new QWidget;
     auto leftLayout = new QVBoxLayout(leftPanel);
     leftLayout->setMargin(0);
     
-    auto filterEdit = new QLineEdit;
-    
-    leftLayout->addWidget(filterEdit);
+    leftLayout->addWidget(_filterEdit);
     leftLayout->addWidget(_fileList);
     if (AppSettings::instance().isDevMode)
     {
@@ -194,6 +197,44 @@ QString ExamplesDialog::loadExampleDescr(const QString& fileName)
     return text;
 }
 
+void ExamplesDialog::applyFilter()
+{
+    QString filterText = _filterEdit->text().trimmed();
+    
+    // Count alphabetic characters in filter text
+    int alphaCount = 0;
+    for (const QChar& ch : std::as_const(filterText))
+        if (ch.isLetter())
+            alphaCount++;
+    
+    for (int i = 0; i < _fileList->count(); ++i)
+    {
+        auto item = _fileList->item(i);
+        if (filterText.isEmpty())
+        {
+            item->setHidden(false);
+            continue;
+        }
+        if (alphaCount < 3)
+        {
+            item->setHidden(true);
+            continue;
+        }
+        auto fileName = item->text();
+        if (!_plainTextDescrs.contains(fileName))
+        {
+            // Strip markdown formatting that is not visible in rendered view
+            auto plainText = _descrs.value(fileName);
+            plainText.replace(QRegularExpression("^\\s*#{1,6}\\s*", QRegularExpression::MultilineOption), ""); // Headers
+            plainText.replace(QRegularExpression("^\\s*[-*+]\\s+", QRegularExpression::MultilineOption), ""); // Unordered lists
+            plainText.replace(QRegularExpression("^\\s*\\d+\\.\\s+", QRegularExpression::MultilineOption), ""); // Ordered lists
+            _plainTextDescrs[fileName] = plainText;
+        }
+        bool matches = _plainTextDescrs.value(fileName).contains(filterText, Qt::CaseInsensitive);
+        item->setHidden(!matches);
+    }
+}
+
 void ExamplesDialog::editExampleDescr()
 {
     auto item = _fileList->currentItem();
@@ -244,4 +285,3 @@ void ExamplesDialog::editExampleDescr()
         }
     }
 }
-
