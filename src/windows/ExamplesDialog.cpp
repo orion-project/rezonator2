@@ -2,6 +2,7 @@
 
 #include "../app/AppSettings.h"
 #include "../app/PersistentState.h"
+#include "../core/CommonTypes.h"
 #include "../io/CommonUtils.h"
 
 #include "helpers/OriDialogs.h"
@@ -15,20 +16,15 @@
 #include <QListWidget>
 #include <QPlainTextEdit>
 #include <QPushButton>
-#include <QTextBrowser>
 #include <QSplitter>
-
-#define LOG_ID "ExamplesDialog"
+#include <QTextBrowser>
+#include <QTimer>
 
 ExamplesDialog::ExamplesDialog(): QSplitter()
 {
     _examplesDir = qApp->applicationDirPath() % "/examples";
 
     _fileList = new QListWidget;
-#ifdef Q_OS_WIN
-    // Default icon size looks OK on Ubuntu and MacOS but it is too small on Windows
-    _fileList->setIconSize(QSize(24, 24));
-#endif
     connect(_fileList, &QListWidget::itemDoubleClicked, this, &ExamplesDialog::accepted);
     connect(_fileList, &QListWidget::currentItemChanged, this, &ExamplesDialog::showCurrentExample);
 
@@ -64,6 +60,8 @@ ExamplesDialog::ExamplesDialog(): QSplitter()
     setSizes({250, 500});
     
     loadExamples();
+
+    QTimer::singleShot(0, this, [this]{ _fileList->setFocus(); });
 }
 
 QString ExamplesDialog::selectedFile() const
@@ -96,12 +94,11 @@ void ExamplesDialog::showCurrentExample()
     if (!item) return;
 
     _preview->setMarkdown(_descrs.value(item->text()));
-    // Workaround for applying stylesheet for markdown
-    //_preview->setHtml(_preview->toHtml());
     
     // setMarkdown() ignores default stylesheet
     // As a workaround, we clean some markdown's styles we don't like
     // and re-set the same content as html, then the default stylesheet gets applied
+    // (but even then it's unable to change header font size)
     QString text = _preview->toHtml();
     static QVector<QPair<QRegularExpression, QString>> patterns = {
         // { QRegularExpression("\\<h1.+?\\>"), "<h1>" },
@@ -134,29 +131,49 @@ void ExamplesDialog::loadExamples()
     {
         if (!fileName.endsWith(Z::IO::Utils::suffix()))
             continue;
-        _fileList->addItem(new QListWidgetItem(QIcon(":/window_icons/schema"), fileName));
-        auto fileDate = QFileInfo(_examplesDir + '/' + fileName).lastModified().toMSecsSinceEpoch();
+        auto fileDate = QFileInfo(_examplesDir + '/' + fileName).lastModified().toSecsSinceEpoch();
         qint64 cacheDate = 0;
-        QString text;
+        Info info;
         if (root.contains(fileName))
         {
             auto fileJson = root[fileName].toObject();
-            cacheDate = fileJson["date"].toInt(0);
-            text = fileJson["text"].toString();
+            cacheDate = fileJson["date"].toInt();
+            info.descr = fileJson["text"].toString();
+            info.tripType = fileJson["trip_type"].toString();
         }
         if (fileDate > cacheDate)
         {
-            text = loadExampleDescr(fileName);
-            if (!text.isEmpty())
-            {
-                root[fileName] = QJsonObject{
-                    { "date", fileDate },
-                    { "text", text },
-                };
-                changed = true;
-            }
+            info = loadExampleInfo(fileName);
+            root[fileName] = QJsonObject{
+                { "date", fileDate },
+                { "text", info.descr },
+                { "trip_type", info.tripType }
+            };
+            qDebug() << "Example updated" << fileName;
+            changed = true;
         }
-        _descrs[fileName] = text;
+        _descrs[fileName] = info.descr;
+
+        QString icon(":/window_icons/schema");
+        bool ttFound;
+        auto tt = TripTypes::find(info.tripType, &ttFound);
+        if (ttFound)
+            icon = TripTypes::info(tt).windowIconPath();
+        _fileList->addItem(new QListWidgetItem(QIcon(icon), fileName));
+    }
+
+    QStringList removedFiles;
+    for (auto it = root.constBegin(); it != root.constEnd(); it++)
+        if (!exampleFiles.contains(it.key()))
+            removedFiles << it.key();
+    if (!removedFiles.isEmpty())
+    {
+        changed = true;
+        for (const auto &fileName : std::as_const(removedFiles))
+        {
+            qDebug() << "Example removed" << fileName;
+            root.remove(fileName);
+        }
     }
     
     if (changed)
@@ -168,7 +185,7 @@ QJsonObject ExamplesDialog::loadExampleFile(const QString& fileName)
     QFile file(_examplesDir + '/' + fileName);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        qWarning() << LOG_ID << "Failed to load file" << fileName << file.errorString();
+        qWarning() << "Failed to load file" << fileName << file.errorString();
         return {};
     }
     auto bytes = file.readAll();
@@ -177,13 +194,13 @@ QJsonObject ExamplesDialog::loadExampleFile(const QString& fileName)
     QJsonDocument doc = QJsonDocument::fromJson(bytes, &error);
     if (doc.isNull())
     {
-        qWarning() << LOG_ID << "Filed to parse file" << fileName << error.errorString();
+        qWarning() << "Filed to parse file" << fileName << error.errorString();
         return {};
     }
     return doc.object();
 }
 
-QString ExamplesDialog::loadExampleDescr(const QString& fileName)
+ExamplesDialog::Info ExamplesDialog::loadExampleInfo(const QString& fileName)
 {
     auto root = loadExampleFile(fileName);
     if (root.isEmpty()) return {};
@@ -194,7 +211,10 @@ QString ExamplesDialog::loadExampleDescr(const QString& fileName)
     auto descr = root["notes"].toString();
     if (!descr.isEmpty())
         text += descr;
-    return text;
+    return {
+        .descr = text,
+        .tripType = root["trip_type"].toString()
+    };
 }
 
 void ExamplesDialog::applyFilter()
@@ -221,6 +241,11 @@ void ExamplesDialog::applyFilter()
             continue;
         }
         auto fileName = item->text();
+        if (fileName.contains(filterText, Qt::CaseInsensitive))
+        {
+            item->setHidden(false);
+            continue;
+        }
         if (!_plainTextDescrs.contains(fileName))
         {
             // Strip markdown formatting that is not visible in rendered view
@@ -279,7 +304,7 @@ void ExamplesDialog::editExampleDescr()
             QTextStream stream(&file);
             stream << doc.toJson();
             file.close();
-            qDebug() << "Updated" << fileName;
+            qDebug() << "Saved" << fileName;
             loadExamples();
             showCurrentExample();
         }

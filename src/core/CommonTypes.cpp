@@ -26,12 +26,14 @@ struct TripTypeInfoPrivate {
     const char* toolTip;
     const char* fullHeader;
     QString iconPath;
+    QString windowIconPath;
 };
 
 QString TripTypeInfo::alias() const { return _info->alias; }
 QString TripTypeInfo::toolTip() const { return qApp->tr(_info->toolTip); }
 QString TripTypeInfo::fullHeader() const { return qApp->tr(_info->fullHeader); }
 QString TripTypeInfo::iconPath() const { return _info->iconPath; }
+QString TripTypeInfo::windowIconPath() const { return _info->windowIconPath; }
 
 //------------------------------------------------------------------------------
 
@@ -40,7 +42,8 @@ const TripTypeInfo& TripTypes::SW() {
         "SW",
         "Standing wave system (SW)",
         "SW - Standing wave system",
-        ":/icons/trip_type_sw"
+        ":/icons/trip_type_sw",
+        ":/window_icons/schema_sw",
     };
     static TripTypeInfo t(&p);
     return t;
@@ -51,7 +54,8 @@ const TripTypeInfo& TripTypes::RR() {
         "RR",
         "Ring resonator (RR)",
         "RR - Ring resonator",
-        ":/icons/trip_type_rr"
+        ":/icons/trip_type_rr",
+        ":/window_icons/schema_rr",
     };
     static TripTypeInfo t(&p);
     return t;
@@ -62,7 +66,8 @@ const TripTypeInfo& TripTypes::SP() {
         "SP",
         "Single pass system (SP)",
         "SP - Single-pass system",
-        ":/icons/trip_type_sp"
+        ":/icons/trip_type_sp",
+        ":/window_icons/schema_sp",
     };
     static TripTypeInfo t(&p);
     return t;

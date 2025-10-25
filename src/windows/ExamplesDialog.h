@@ -29,11 +29,17 @@ private:
     QHash<QString, QString> _descrs;
     QHash<QString, QString> _plainTextDescrs;
     
+    struct Info
+    {
+        QString descr;
+        QString tripType;
+    };
+    
     void loadExamples();
     void showCurrentExample();
     void applyFilter();
     QJsonObject loadExampleFile(const QString& fileName);
-    QString loadExampleDescr(const QString& fileName);
+    Info loadExampleInfo(const QString& fileName);
     void editExampleDescr();
 };
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="256" height="256" version="1.1" xmlns="http://www.w3.org/2000/svg">
+ <linearGradient id="a" x1="21.1" x2="231" y1="23.3" y2="236" gradientUnits="userSpaceOnUse">
+  <stop stop-color="#fdffff" offset="0"/>
+  <stop stop-color="#cfcfff" offset="1"/>
+ </linearGradient>
+ <linearGradient id="b" x1="21.1" x2="231" y1="23.3" y2="236" gradientUnits="userSpaceOnUse">
+  <stop stop-color="#a4c8f0" offset="0"/>
+  <stop stop-color="#737ba6" offset="1"/>
+ </linearGradient>
+ <rect x="2.5" y="2.5" width="251" height="251" ry="26.8" fill="url(#a)" stroke="url(#b)" stroke-width="5"/>
+ <g transform="matrix(.0547 0 0 .0547 30.9 166)" fill="#001851" fill-rule="evenodd" stroke-width="1.3">
+  <path d="m817-2215c-725 6.98-794 1326-799 1902 99.2-301 283-1006 571-1e3 441 8.13 1288 2150 1964 2147 746-2.92 985-1508 977-1904-146 480-393 1e3 -679 1e3 -411-1.02-1380-2153-2033-2147zm892 1286c379 446 776 1434 1289 1123-465 913-946-163-1273-647-284-420-764-1429-1305-1112 445-926 968 258 1290 636z"/>
+  <path d="m269-1400c22.9 5.03 566 0 566 0l1491 2054h474l377-554-509-20.1-1611-2089-486 5.03z" fill-opacity=".392"/>
+ </g>
+</svg>
