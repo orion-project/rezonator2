@@ -97,25 +97,25 @@
     ],
     "formulas": [
     ],
-    "notes": "Example schema containing single focusing lens and two variants of input beam - gaussian and ray vector - having similar parameter but different 'nature'.",
+    "notes": "An example schema containing a single focusing thin lens and two variants of input beam - *Gaussian* and *Ray vector* - having similar parameters but different 'nature'.",
     "param_links": [
     ],
     "pumps": [
         {
-            "color": "#555555",
+            "color": "#ffaa00",
             "is_active": false,
             "label": "P1",
             "mode": "RayVector",
             "params": {
                 "V": {
-                    "unit": "mrad",
-                    "value_s": 0.016,
-                    "value_t": 0.02
+                    "unit": "deg",
+                    "value_s": 0.17,
+                    "value_t": 0.17
                 },
                 "y": {
                     "unit": "mm",
-                    "value_s": 12,
-                    "value_t": 10
+                    "value_s": 0.2,
+                    "value_t": 0.1
                 },
                 "z_y": {
                     "unit": "cm",
@@ -126,7 +126,7 @@
             "title": "Geometric pump"
         },
         {
-            "color": "#555555",
+            "color": "#aa00ff",
             "is_active": true,
             "label": "P2",
             "mode": "Waist",
@@ -138,8 +138,8 @@
                 },
                 "w_0": {
                     "unit": "mm",
-                    "value_s": 12,
-                    "value_t": 10
+                    "value_s": 0.2,
+                    "value_t": 0.1
                 },
                 "z_w": {
                     "unit": "mm",
@@ -151,7 +151,7 @@
         }
     ],
     "schema_version": "2.1",
-    "title": "singlet",
+    "title": "Singlet",
     "trip_type": "SP",
     "windows": [
         {
@@ -213,6 +213,7 @@
                             "width": 0
                         },
                         "grid_visible": true,
+                        "id": "7a1fd4bacae6428ca28da06a59a21f77",
                         "labels_color": "#000000",
                         "labels_font": {
                             "bold": false,
@@ -287,6 +288,7 @@
                             "width": 0
                         },
                         "grid_visible": true,
+                        "id": "aab7045095444ce0866309b1b24c123f",
                         "labels_color": "#000000",
                         "labels_font": {
                             "bold": false,
@@ -455,6 +457,281 @@
             "type": "BeamParamsAtElems",
             "window": {
                 "ts_mode": "T+S"
+            }
+        },
+        {
+            "function": {
+                "args": [
+                    {
+                        "element_index": 1,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "cm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "cm",
+                                "value": 0.05
+                            },
+                            "stop": {
+                                "unit": "cm",
+                                "value": 5
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 3,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "cm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "cm",
+                                "value": 0.07
+                            },
+                            "stop": {
+                                "unit": "cm",
+                                "value": 7.000000000000001
+                            },
+                            "use_step": false
+                        }
+                    }
+                ]
+            },
+            "type": "MultibeamCaustic",
+            "window": {
+                "cursor_enabled": false,
+                "cursor_mode": "Both",
+                "format": {
+                    "axis_x": {
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": true,
+                        "id": "6483c480dbea44cea65a0ae34ab8ca2b",
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 3,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 10,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 10,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 3,
+                        "title_margin_out": 5,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#c8c8c8",
+                            "style": 1,
+                            "width": 0
+                        }
+                    },
+                    "axis_y": {
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": true,
+                        "id": "f4b946f1f3054e2d93d8f4a5eba752c0",
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 5,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 10,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 10,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 10,
+                        "title_margin_out": 5,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#c8c8c8",
+                            "style": 1,
+                            "width": 0
+                        }
+                    },
+                    "legend": {
+                        "back_color": "#ffffff",
+                        "border": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "icon_margin": 7,
+                        "icon_size": {
+                            "height": 18,
+                            "width": 32
+                        },
+                        "location": 34,
+                        "margins": {
+                            "bottom": 12,
+                            "left": 12,
+                            "right": 12,
+                            "top": 12
+                        },
+                        "paddings": {
+                            "bottom": 4,
+                            "left": 7,
+                            "right": 7,
+                            "top": 5
+                        },
+                        "text_color": "#000000",
+                        "version": 1,
+                        "visible": false
+                    },
+                    "title": {
+                        "font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 14,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "margins": {
+                            "bottom": 10,
+                            "left": 10,
+                            "right": 10,
+                            "top": 10
+                        },
+                        "text_color": "#000000",
+                        "text_flags": 132,
+                        "version": 1,
+                        "visible": false
+                    }
+                },
+                "graph_pens": {
+                },
+                "stored_views": {
+                },
+                "t_title": "{func_name}",
+                "ts_flipped": false,
+                "ts_mode": "T",
+                "x_max": 12.120000000000001,
+                "x_min": -0.12000000000000002,
+                "x_title": "{elem_labels} {(unit)}",
+                "x_unit": "cm",
+                "y_max": 0.25596625255232025,
+                "y_min": 0.08847439763067083,
+                "y_title": "Beam Radius {(unit)}",
+                "y_unit": "mm"
             }
         }
     ]

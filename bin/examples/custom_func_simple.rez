@@ -161,13 +161,13 @@
     ],
     "formulas": [
     ],
-    "notes": "",
+    "notes": "The example shows basic code snippets for making custom functions as user-coded scripts in Python.",
     "param_links": [
     ],
     "pumps": [
     ],
     "schema_version": "2.1",
-    "title": "",
+    "title": "Custom functions basics",
     "trip_type": "SW",
     "windows": [
         {

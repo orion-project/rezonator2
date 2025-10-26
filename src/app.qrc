@@ -265,6 +265,9 @@
         <file alias="parameter">../img/icon/parameter.svg</file>
         <file alias="pump">../img/icon/pump.svg</file>
         <file alias="schema">../img/icon/schema.svg</file>
+        <file alias="schema_sw">../img/icon/schema_sw.svg</file>
+        <file alias="schema_sp">../img/icon/schema_sp.svg</file>
+        <file alias="schema_rr">../img/icon/schema_rr.svg</file>
         <file alias="wavelength">../img/icon/wavelength.svg</file>
     </qresource>
     <qresource prefix="/icons">

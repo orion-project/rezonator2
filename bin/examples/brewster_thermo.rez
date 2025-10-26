@@ -203,13 +203,13 @@
             "text": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'Arial'; font-size:12pt; font-weight:400; font-style:normal;\">\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Stability in T with TM1 enabled</p>\n<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><img src=\"ec19ee60f550413f8d135cd978ac8e09\" /></p>\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"
         }
     ],
-    "notes": "",
+    "notes": "The example shows an effect of thermo lensing in a non-linear gain medium and how it affects the stability.\n\nSelect both elements `CR1` and `TM1` and click *Element->Disable/Enable* to quickly switch between thermo- and normal medium.",
     "param_links": [
     ],
     "pumps": [
     ],
     "schema_version": "2.0",
-    "title": "",
+    "title": "Thermo lensing in gain medim",
     "trip_type": "SW",
     "windows": [
         {

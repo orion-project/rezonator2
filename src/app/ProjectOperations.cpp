@@ -12,6 +12,7 @@
 #include "../io/SchemaWriterJson.h"
 #include "../io/CommonUtils.h"
 #include "../widgets/ParamEditor.h"
+#include "../windows/ExamplesDialog.h"
 #include "../windows/PumpParamsDialog.h"
 #include "../windows/SchemaPropsDialog.h"
 
@@ -27,7 +28,6 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QTextStream>
-#include <QListWidget>
 
 using namespace Ori::Layouts;
 
@@ -162,8 +162,6 @@ void ProjectOperations::openSchemaFile(const QString& fileName, const OpenFileOp
 
     if (opts.isExample)
     {
-        QFileInfo fileInfo(fileName);
-        schema()->setTitle(fileInfo.completeBaseName());
         // Don't set file name as we don't want to overwrite examples,
         // and we don't want to show unexpected paths
         // somewhere in /tmp if the program is launched from AppImage
@@ -412,42 +410,7 @@ void ProjectOperations::setupTripType()
 
 QString ProjectOperations::selectSchemaExample()
 {
-    QString examplesDir = qApp->applicationDirPath() % "/examples";
-    QStringList exampleFiles = QDir(examplesDir).entryList(QDir::Files, QDir::Name);
-#ifdef Q_OS_MAC
-    if (exampleFiles.isEmpty())
-    {
-        // Look near the application bundle, it is for development mode
-        examplesDir = qApp->applicationDirPath() % "/../../../examples";
-        examplesDir = QDir(examplesDir).absolutePath();
-        exampleFiles = QDir(examplesDir).entryList(QDir::Files, QDir::Name);
-    }
-#endif
-    QListWidget fileList;
-#ifdef Q_OS_WIN
-    // Default icon size looks OK on Ubuntu and MacOS but it is too small on Windows
-    fileList.setIconSize(QSize(24, 24));
-#endif
-    for (auto& fileName : exampleFiles)
-        if (fileName.endsWith(Z::IO::Utils::suffix()) || fileName.endsWith(Z::IO::Utils::suffixOld()))
-            fileList.addItem(new QListWidgetItem(QIcon(":/window_icons/schema"), fileName));
-
-    QString fileName;
-
-    Ori::Dlg::Dialog dlg(&fileList, false);
-    dlg.withTitle(tr("Open Example Schema"))
-       .withStretchedContent()
-       .withInitialSize(RecentData::getSize("open_example_dlg_size"))
-       .withOkSignal(SIGNAL(itemDoubleClicked(QListWidgetItem*)));
-    if (dlg.exec())
-    {
-        RecentData::setSize("open_example_dlg_size", dlg.size());
-        QListWidgetItem *selected = fileList.currentItem();
-        if (selected)
-            fileName = examplesDir % '/' % selected->text();
-    }
-
-    return fileName;
+    return ExamplesDialog::exec();
 }
 
 void ProjectOperations::editSchemaProps()
