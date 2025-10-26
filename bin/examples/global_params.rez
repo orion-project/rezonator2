@@ -132,7 +132,7 @@
             "target_param": "dL"
         }
     ],
-    "notes": "",
+    "notes": "General example of how to interconnect elements via global parameters.",
     "param_links": [
         {
             "source_param": "L0",
@@ -187,7 +187,7 @@
         }
     ],
     "schema_version": "2.0",
-    "title": "",
+    "title": "Global parameters",
     "trip_type": "SP",
     "windows": [
         {

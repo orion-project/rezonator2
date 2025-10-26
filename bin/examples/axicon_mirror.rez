@@ -77,7 +77,7 @@
     ],
     "formulas": [
     ],
-    "notes": "Shows a single axicon mirror and several input beams.\n\n- Axicon mirror\n- Multibeam caustic\n- Complex element",
+    "notes": "The example shows how a single axicon mirror (a mirror that has a conical surface) changes the beam radius; several input beams configured.",
     "param_links": [
     ],
     "pumps": [

@@ -34,7 +34,7 @@
             "is_disabled": false,
             "label": "s1",
             "layout_draw_alt": false,
-            "layout_show_label": false,
+            "layout_show_label": true,
             "params": {
                 "R": {
                     "error": "",
@@ -66,9 +66,9 @@
             "params": {
                 "L": {
                     "error": "",
-                    "expr": "10",
-                    "unit": "mm",
-                    "value": 10
+                    "expr": "5",
+                    "unit": "cm",
+                    "value": 5
                 },
                 "n": {
                     "error": "",
@@ -84,7 +84,7 @@
             "is_disabled": false,
             "label": "s2",
             "layout_draw_alt": false,
-            "layout_show_label": false,
+            "layout_show_label": true,
             "params": {
                 "R": {
                     "error": "",
@@ -133,7 +133,7 @@
     ],
     "formulas": [
     ],
-    "notes": "Example schema containing single focusing lens and two variants of input beam - gaussian and ray vector - having similar parameter but different 'nature'.",
+    "notes": "An alternative variant of a thck lens combined from spherical interfaces and a space having IOR.",
     "param_links": [
     ],
     "pumps": [
@@ -144,14 +144,14 @@
             "mode": "RayVector",
             "params": {
                 "V": {
-                    "unit": "mrad",
-                    "value_s": 0.016,
-                    "value_t": 0.02
+                    "unit": "deg",
+                    "value_s": 0.17,
+                    "value_t": 0.17
                 },
                 "y": {
                     "unit": "mm",
-                    "value_s": 12,
-                    "value_t": 10
+                    "value_s": 0.2,
+                    "value_t": 0.1
                 },
                 "z_y": {
                     "unit": "cm",
@@ -174,8 +174,8 @@
                 },
                 "w_0": {
                     "unit": "mm",
-                    "value_s": 12,
-                    "value_t": 10
+                    "value_s": 0.2,
+                    "value_t": 0.1
                 },
                 "z_w": {
                     "unit": "mm",
@@ -187,7 +187,7 @@
         }
     ],
     "schema_version": "2.1",
-    "title": "singlet_thick_intf",
+    "title": "Composed thick lens",
     "trip_type": "SP",
     "windows": [
         {
@@ -227,8 +227,8 @@
                                 "value": 0.05
                             },
                             "stop": {
-                                "unit": "mm",
-                                "value": 10
+                                "unit": "cm",
+                                "value": 5
                             },
                             "use_step": false
                         }
@@ -258,7 +258,7 @@
             },
             "type": "MultirangeCaustic",
             "window": {
-                "cursor_enabled": true,
+                "cursor_enabled": false,
                 "cursor_mode": "Both",
                 "elem_bound_markers": true,
                 "format": {
@@ -269,6 +269,7 @@
                             "width": 0
                         },
                         "grid_visible": true,
+                        "id": "8375ba4196714230887af7959176fe0d",
                         "labels_color": "#000000",
                         "labels_font": {
                             "bold": false,
@@ -343,6 +344,7 @@
                             "width": 0
                         },
                         "grid_visible": true,
+                        "id": "2366b69f316143d98825ad3e8afe1647",
                         "labels_color": "#000000",
                         "labels_font": {
                             "bold": false,
@@ -473,12 +475,12 @@
                 "t_title": "",
                 "ts_flipped": false,
                 "ts_mode": "T+S",
-                "x_max": 13.13,
-                "x_min": -0.13,
+                "x_max": 17.17,
+                "x_min": -0.17,
                 "x_title": "{elem_labels} {(unit)}",
                 "x_unit": "cm",
-                "y_max": 13.818957390655939,
-                "y_min": -0.5901051499496285,
+                "y_max": 0.22641121276874415,
+                "y_min": 0.03079325399931461,
                 "y_title": "{func_mode} {(unit)}",
                 "y_unit": "mm"
             }

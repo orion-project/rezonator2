@@ -69,7 +69,7 @@
     ],
     "formulas": [
     ],
-    "notes": "",
+    "notes": "The example shows how a thin non-linear optical element consisting of a soft-aperture that has a quadratic transversely varying loss changes the transmitted beam radius.",
     "param_links": [
     ],
     "pumps": [
@@ -99,7 +99,7 @@
         }
     ],
     "schema_version": "2.0",
-    "title": "",
+    "title": "Gaussian aperture",
     "trip_type": "SP",
     "windows": [
         {

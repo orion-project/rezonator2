@@ -83,7 +83,7 @@
     ],
     "formulas": [
     ],
-    "notes": "Shows a single axicon lens and several input beams.\n\n- Axicon lens\n- Multibeam caustic\n- Complex element",
+    "notes": "The example shows how a single axicon lens (a lens that has a conical surface) changes the beam radius; several input beams configured.",
     "param_links": [
     ],
     "pumps": [

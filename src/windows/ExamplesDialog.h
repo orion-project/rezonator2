@@ -41,6 +41,7 @@ private:
     QJsonObject loadExampleFile(const QString& fileName);
     Info loadExampleInfo(const QString& fileName);
     void editExampleDescr();
+    QString examplePath(const QString &fileName, const QString &ext = {}) const;
 };
 
 #endif // EXAMPLES_DIALOG_H

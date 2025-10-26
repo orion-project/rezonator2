@@ -84,7 +84,7 @@
             "target_param": "R0"
         }
     ],
-    "notes": "",
+    "notes": "An example of a standard 2-mirror resonator with equal mirrors. Symmetry is provided by the single global parameter controlling both mirrors, which, in its turn, takes its value from a formula.\n\nThis is a simple example of the usage of global parameters and formulas.",
     "param_links": [
         {
             "source_param": "R0",
@@ -100,7 +100,7 @@
     "pumps": [
     ],
     "schema_version": "2.0",
-    "title": "",
+    "title": "Symmetrical 2-mirror resonator",
     "trip_type": "SW",
     "windows": [
         {

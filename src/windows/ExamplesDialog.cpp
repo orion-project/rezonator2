@@ -64,11 +64,23 @@ ExamplesDialog::ExamplesDialog(): QSplitter()
     QTimer::singleShot(0, this, [this]{ _fileList->setFocus(); });
 }
 
+QString ExamplesDialog::examplePath(const QString &fileName, const QString &ext) const
+{
+    QString path = _examplesDir + '/' + fileName;
+    if (!ext.isEmpty())
+    {
+        int pos = path.lastIndexOf('.');
+        if (pos > 0)
+            path = path.left(pos+1) + ext;
+    }
+    return path;
+}
+
 QString ExamplesDialog::selectedFile() const
 {
     auto selected = _fileList->currentItem();
     if (selected)
-        return _examplesDir + '/' % selected->text();
+        return examplePath(selected->text());
     return {};
 }
 
@@ -93,7 +105,20 @@ void ExamplesDialog::showCurrentExample()
     auto item = _fileList->currentItem();
     if (!item) return;
 
-    _preview->setMarkdown(_descrs.value(item->text()));
+    auto fileName = item->text();
+    auto descr = _descrs.value(fileName);
+    
+    auto imageFile = examplePath(fileName, "svg");
+    if (!QFile::exists(imageFile))
+    {
+        imageFile = examplePath(fileName, "png");
+        if (!QFile::exists(imageFile))
+            imageFile.clear();
+    }
+    if (!imageFile.isEmpty())
+        descr += QString("\n\n![image](%1)").arg(imageFile);
+
+    _preview->setMarkdown(descr);
     
     // setMarkdown() ignores default stylesheet
     // As a workaround, we clean some markdown's styles we don't like
@@ -113,6 +138,8 @@ void ExamplesDialog::showCurrentExample()
 
 void ExamplesDialog::loadExamples()
 {
+    _fileList->clear();
+
     QStringList exampleFiles = QDir(_examplesDir).entryList(QDir::Files, QDir::Name);
 #ifdef Q_OS_MAC
     if (exampleFiles.isEmpty())
@@ -131,7 +158,7 @@ void ExamplesDialog::loadExamples()
     {
         if (!fileName.endsWith(Z::IO::Utils::suffix()))
             continue;
-        auto fileDate = QFileInfo(_examplesDir + '/' + fileName).lastModified().toSecsSinceEpoch();
+        auto fileDate = QFileInfo(examplePath(fileName)).lastModified().toSecsSinceEpoch();
         qint64 cacheDate = 0;
         Info info;
         if (root.contains(fileName))
@@ -182,7 +209,7 @@ void ExamplesDialog::loadExamples()
 
 QJsonObject ExamplesDialog::loadExampleFile(const QString& fileName)
 {
-    QFile file(_examplesDir + '/' + fileName);
+    QFile file(examplePath(fileName));
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         qWarning() << "Failed to load file" << fileName << file.errorString();
@@ -295,7 +322,7 @@ void ExamplesDialog::editExampleDescr()
         if (changed)
         {
             QJsonDocument doc(root);
-            QFile file(_examplesDir + '/' + fileName);
+            QFile file(examplePath(fileName));
             if (!file.open(QFile::WriteOnly | QFile::Text | QFile::ExistingOnly))
             {
                 qWarning() << "Unable to open file for writing" << fileName << file.errorString();
@@ -306,7 +333,13 @@ void ExamplesDialog::editExampleDescr()
             file.close();
             qDebug() << "Saved" << fileName;
             loadExamples();
-            showCurrentExample();
+            for (int i = 0; i < _fileList->count(); i++)
+                if (_fileList->item(i)->text() == fileName)
+                {
+                    _fileList->setCurrentRow(i);
+                    showCurrentExample();
+                    break;
+                }
         }
     }
 }

@@ -2,6 +2,7 @@
 
 #include "../app/Appearance.h"
 #include "../app/PersistentState.h"
+#include "../core/Format.h"
 #include "../math/GaussCalculator.h"
 #include "../tools/CalculatorWindow.h"
 #include "../widgets/ParamEditor.h"
@@ -581,7 +582,7 @@ void GaussCalculatorWindow::makeParams(QGridLayout *paramsLayout)
     };
 
     using namespace Z::Dims;
-    _lambda = addParam(linear(), QStringLiteral("lambda"), QStringLiteral("λ"), 980_nm);
+    _lambda = addParam(linear(), QStringLiteral("lambda"), Z::Strs::lambda(), 980_nm);
     _MI = addParam(none(), QStringLiteral("MI"), QStringLiteral("M<sup>2</sup>"), 1);
     _w0 = addParam(linear(), QStringLiteral("w0"), QStringLiteral("w<sub>0</sub>"), 100_mkm);
     _z = addParam(linear(), QStringLiteral("z"), QStringLiteral("z"), 100_mm);

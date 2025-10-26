@@ -10,9 +10,9 @@
             "descr": "Distance between M1 and medium",
             "dim": "linear",
             "error": "",
-            "expr": "1000",
+            "expr": "100",
             "unit": "mm",
-            "value": 1000
+            "value": 100
         },
         "D3": {
             "descr": "",
@@ -21,6 +21,14 @@
             "expr": "",
             "unit": "mm",
             "value": 50
+        },
+        "D4": {
+            "descr": "",
+            "dim": "linear",
+            "error": "",
+            "expr": "80",
+            "unit": "mm",
+            "value": 80
         }
     },
     "elements": [
@@ -32,15 +40,15 @@
             "params": {
                 "Alpha": {
                     "error": "",
-                    "expr": "",
+                    "expr": "0",
                     "unit": "deg",
                     "value": 0
                 },
                 "R": {
                     "error": "",
-                    "expr": "",
+                    "expr": "100",
                     "unit": "mm",
-                    "value": 1000
+                    "value": 100
                 }
             },
             "title": "",
@@ -56,7 +64,7 @@
                     "error": "",
                     "expr": "",
                     "unit": "mm",
-                    "value": 1000
+                    "value": 100
                 },
                 "n": {
                     "error": "",
@@ -98,13 +106,13 @@
             "params": {
                 "L": {
                     "error": "",
-                    "expr": "",
+                    "expr": "3",
                     "unit": "mm",
-                    "value": 200
+                    "value": 3
                 },
                 "n": {
                     "error": "",
-                    "expr": "",
+                    "expr": "1.5",
                     "unit": "none",
                     "value": 1.5
                 }
@@ -164,19 +172,51 @@
             "params": {
                 "Alpha": {
                     "error": "",
-                    "expr": "",
+                    "expr": "0",
                     "unit": "deg",
                     "value": 0
                 },
                 "R": {
                     "error": "",
-                    "expr": "",
+                    "expr": "100",
                     "unit": "mm",
-                    "value": 1000
+                    "value": 100
                 }
             },
             "title": "",
             "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "d4",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "mm",
+                    "value": 80
+                },
+                "n": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M4",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+            },
+            "title": "",
+            "type": "ElemFlatMirror"
         }
     ],
     "formulas": [
@@ -188,7 +228,7 @@
             }
         }
     ],
-    "notes": "",
+    "notes": "The example shows that global parameter can be used as variable arguments for plotting functions.",
     "param_links": [
         {
             "source_param": "D1",
@@ -198,6 +238,11 @@
         {
             "source_param": "D3",
             "target_elem": 5,
+            "target_param": "L"
+        },
+        {
+            "source_param": "D4",
+            "target_elem": 7,
             "target_param": "L"
         }
     ],
@@ -228,7 +273,7 @@
         }
     ],
     "schema_version": "2.1",
-    "title": "",
+    "title": "Global parameters as function arguments",
     "trip_type": "SW",
     "windows": [
         {
@@ -240,10 +285,10 @@
                     "element_index": -1,
                     "param": "D1",
                     "range": {
-                        "points": 100,
+                        "points": 1000,
                         "start": {
                             "unit": "mm",
-                            "value": 900
+                            "value": 0
                         },
                         "step": {
                             "unit": "mm",
@@ -251,7 +296,7 @@
                         },
                         "stop": {
                             "unit": "mm",
-                            "value": 1100
+                            "value": 150
                         },
                         "use_step": false
                     }
@@ -477,12 +522,12 @@
                 "t_title": "Diagram 1\n(use global parameter)",
                 "ts_flipped": false,
                 "ts_mode": "T+S",
-                "x_max": 1102,
-                "x_min": 898,
+                "x_max": 151.5,
+                "x_min": -1.5,
                 "x_title": "{elem}, {elem_param} {(unit)}",
                 "x_unit": "mm",
-                "y_max": 0.30872043209876543,
-                "y_min": 0.014197469135802786,
+                "y_max": 1.05,
+                "y_min": -0.05,
                 "y_title": "Stability parameter {stab_mode}",
                 "y_unit": "none"
             }
@@ -752,7 +797,7 @@
                         "points": 100,
                         "start": {
                             "unit": "mm",
-                            "value": 900
+                            "value": 0
                         },
                         "step": {
                             "unit": "mm",
@@ -760,19 +805,19 @@
                         },
                         "stop": {
                             "unit": "mm",
-                            "value": 1100
+                            "value": 200
                         },
                         "use_step": false
                     }
                 },
                 "arg_y": {
-                    "element_index": 5,
+                    "element_index": 7,
                     "param": "L",
                     "range": {
                         "points": 100,
                         "start": {
                             "unit": "mm",
-                            "value": 40
+                            "value": 0
                         },
                         "step": {
                             "unit": "mm",
@@ -780,7 +825,7 @@
                         },
                         "stop": {
                             "unit": "mm",
-                            "value": 60
+                            "value": 100
                         },
                         "use_step": false
                     }
@@ -1120,12 +1165,12 @@
                 "t_title": "Diagram 3\n(use element parameters)",
                 "ts_flipped": false,
                 "ts_mode": "T",
-                "x_max": 1100,
-                "x_min": 900,
+                "x_max": 200,
+                "x_min": 0,
                 "x_title": "{elem}, {elem_param} {(unit)}",
                 "x_unit": "mm",
-                "y_max": 60,
-                "y_min": 40,
+                "y_max": 100,
+                "y_min": 0,
                 "y_title": "{elem}, {elem_param} {(unit)}",
                 "y_unit": "mm",
                 "z_max": 1.05,
@@ -1142,7 +1187,7 @@
                         "points": 100,
                         "start": {
                             "unit": "mm",
-                            "value": 900
+                            "value": 0
                         },
                         "step": {
                             "unit": "mm",
@@ -1150,19 +1195,19 @@
                         },
                         "stop": {
                             "unit": "mm",
-                            "value": 1100
+                            "value": 200
                         },
                         "use_step": false
                     }
                 },
                 "arg_y": {
                     "element_index": -1,
-                    "param": "D3",
+                    "param": "D4",
                     "range": {
                         "points": 100,
                         "start": {
                             "unit": "mm",
-                            "value": 40
+                            "value": 0
                         },
                         "step": {
                             "unit": "mm",
@@ -1170,7 +1215,7 @@
                         },
                         "stop": {
                             "unit": "mm",
-                            "value": 60
+                            "value": 100
                         },
                         "use_step": false
                     }
@@ -1510,12 +1555,12 @@
                 "t_title": "Diagram 4\n(use global parameter)",
                 "ts_flipped": false,
                 "ts_mode": "T",
-                "x_max": 1100,
-                "x_min": 900,
+                "x_max": 200,
+                "x_min": 0,
                 "x_title": "{elem}, {elem_param} {(unit)}",
                 "x_unit": "mm",
-                "y_max": 60,
-                "y_min": 40,
+                "y_max": 100,
+                "y_min": 0,
                 "y_title": "{elem}, {elem_param} {(unit)}",
                 "y_unit": "mm",
                 "z_max": 1.05,

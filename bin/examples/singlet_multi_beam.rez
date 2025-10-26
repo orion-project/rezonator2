@@ -65,7 +65,7 @@
     ],
     "formulas": [
     ],
-    "notes": "Example schema containing single focusing lens and several input beams.",
+    "notes": "An example schema containing a single focusing thin lens and several input beams.",
     "param_links": [
     ],
     "pumps": [
@@ -167,7 +167,7 @@
         }
     ],
     "schema_version": "2.0",
-    "title": "Single Lens",
+    "title": "Singlet with several beams",
     "trip_type": "SP",
     "windows": [
         {
