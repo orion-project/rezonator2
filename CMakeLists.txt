@@ -225,6 +225,7 @@ set(PROJECT_SOURCES
     src/windows/ElementPropsDialog.h src/windows/ElementPropsDialog.cpp
     src/windows/ElementsCatalogDialog.h src/windows/ElementsCatalogDialog.cpp
     src/windows/ElemFormulaWindow.h src/windows/ElemFormulaWindow.cpp
+    src/windows/ExamplesDialog.h src/windows/ExamplesDialog.cpp
     src/windows/FuncEditorWindow.h src/windows/FuncEditorWindow.cpp
     src/windows/HelpWindow.h src/windows/HelpWindow.cpp
     src/windows/MemoWindow.h src/windows/MemoWindow.cpp
@@ -261,15 +262,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${LIB_RESOURCES}
     )
 else()
-    find_package(Qt5 REQUIRED COMPONENTS Widgets)
-
     add_executable(${PROJECT_NAME}
         ${PROJECT_SOURCES}
         ${LIB_RESOURCES}
-        src/windows/ExamplesDialog.h src/windows/ExamplesDialog.cpp
     )
-
-target_link_libraries(rezonator PRIVATE Qt5::Widgets)
 endif()
 
 # Add Lua library
