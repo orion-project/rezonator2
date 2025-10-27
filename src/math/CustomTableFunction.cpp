@@ -41,7 +41,7 @@ QVector<Z::PointTS> CustomTableFunction::calculateInternal(Element *elem, RoundT
     BeamCalcWrapper calcT(Z::T, _pumpCalc.get(), _beamCalc.get(), rt, ior);
     auto resT = _runner->run(FUNC_CALC, {
         { PyRunner::atElement, elem },
-        { PyRunner::atBeamCalc, &calcT }
+        { PyRunner::atRoundTrip, &calcT }
     }, resultSpec);
     if (!resT) {
         showError(_runner.get());
@@ -51,7 +51,7 @@ QVector<Z::PointTS> CustomTableFunction::calculateInternal(Element *elem, RoundT
     BeamCalcWrapper calcS(Z::S, _pumpCalc.get(), _beamCalc.get(), rt, ior);
     auto resS = _runner->run(FUNC_CALC, {
         { PyRunner::atElement, elem },
-        { PyRunner::atBeamCalc, &calcS }
+        { PyRunner::atRoundTrip, &calcS }
     }, resultSpec);
     if (!resS) {
         showError(_runner.get());

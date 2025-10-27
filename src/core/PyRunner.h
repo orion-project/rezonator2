@@ -38,11 +38,15 @@ public:
     using FuncResult = std::optional<Records>;
     enum FieldType { ftNumber, ftString, ftUnitDim };
     using ResultSpec = QHash<QString, FieldType>;
-    enum ArgType { atElement, atBeamCalc };
+    enum ArgType { atElement, atRoundTrip };
     using Args = QVector<QPair<ArgType, void*>>;
 
     bool load();
+    
+    /// Call a function defined in python code, e.g. `calculate`
+    /// Arguments are given in generic form and converted into a proper python type before calling
     FuncResult run(const QString &funcName, const Args &args, const ResultSpec &resultSpec);
+
     QString errorText() const;
     
 private:

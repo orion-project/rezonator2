@@ -216,8 +216,8 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, co
         case atElement:
             pArg = PyModules::Schema::Element::make(reinterpret_cast<Element*>(argValue));
             break;
-        case atBeamCalc:
-            pArg = PyModules::Schema::Calculator::make(reinterpret_cast<BeamCalcWrapper*>(argValue));
+        case atRoundTrip:
+            pArg = PyModules::Schema::RoundTrip::make(reinterpret_cast<BeamCalcWrapper*>(argValue));
             break;
         }
         if (pArg) {

@@ -56,7 +56,7 @@ PyObject* axis_length(Element *self, PyObject *Py_UNUSED(args))
     Py_RETURN_NONE;
 }
 
-PyObject* optical_length(Element *self, PyObject *Py_UNUSED(args))
+PyObject* optical_path(Element *self, PyObject *Py_UNUSED(args))
 {
     if (auto range = Z::Utils::asRange(self->elem); range)
         return PyFloat_FromDouble(range->opticalPathSI());
@@ -74,7 +74,7 @@ PyGetSetDef getset[] = {
     GETTER(label, "Return element's label"),
     GETTER(length, "Return element's length parameter (in m) or none if element is not a range"),
     GETTER(axis_length, "Return elemen's axis length (in m) or none if element is not a range"),
-    GETTER(optical_length, "Return element's optical length (in m) or none if element is not a range"),
+    GETTER(optical_path, "Return element's optical path (in m) or none if element is not a range"),
     GETTER(ior, "Return element's refraction index or none if it's not supported in the element"),
     { NULL }
 };
@@ -104,12 +104,12 @@ PyObject* make(::Element *elem)
 } // namespace Element 
 
 //------------------------------------------------------------------------------
-//                               Calculator
+//                               RoundTrip
 //------------------------------------------------------------------------------
 
-namespace Calculator {
+namespace RoundTrip {
 
-struct Calculator {
+struct RoundTrip {
     PyObject_HEAD
     BeamCalcWrapper *calc;
     Z::WorkPlane plane;
@@ -118,21 +118,21 @@ struct Calculator {
 
 PyObject* ctor(PyTypeObject* Py_UNUSED(type), PyObject* Py_UNUSED(args), PyObject* Py_UNUSED(kwargs))
 {
-    PyErr_SetString(SchemaError, "direct creation of Calculator it not allowed, use schema.make_calc()");
+    PyErr_SetString(SchemaError, "direct creation of RoundTrip objects is not allowed, use schema.round_trip()");
     return nullptr;
 }
 
-PyObject* beam_radius(Calculator* self, PyObject* Py_UNUSED(arg))
+PyObject* beam_radius(RoundTrip* self, PyObject* Py_UNUSED(arg))
 {
     return PyFloat_FromDouble(self->calc->beamRadius());
 }
 
-PyObject* front_radius(Calculator* self, PyObject* Py_UNUSED(arg))
+PyObject* front_radius(RoundTrip* self, PyObject* Py_UNUSED(arg))
 {
     return PyFloat_FromDouble(self->calc->frontRadius());
 }
 
-PyObject* half_angle(Calculator* self, PyObject* Py_UNUSED(arg))
+PyObject* half_angle(RoundTrip* self, PyObject* Py_UNUSED(arg))
 {
     return PyFloat_FromDouble(self->calc->halfAngle());
 }
@@ -145,18 +145,18 @@ PyMethodDef methods[] = {
 };
 
 PyMemberDef members[] = {
-    { "plane", Py_T_INT, offsetof(Calculator, plane), 0, "Work plane (one of Z.PLANE_T or Z.PLANE_S)" },
-    { "ior", Py_T_DOUBLE, offsetof(Calculator, ior), 0, "Current index of refraction" },
+    { "plane", Py_T_INT, offsetof(RoundTrip, plane), 0, "Work plane (one of Z.PLANE_T or Z.PLANE_S)" },
+    { "ior", Py_T_DOUBLE, offsetof(RoundTrip, ior), 0, "Current index of refraction" },
     { NULL }
 };
 
 PyTypeObject type = {
     .ob_base = PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = "schema.Calculator",
-    .tp_basicsize = sizeof(Calculator),
+    .tp_name = "schema.RoundTrip",
+    .tp_basicsize = sizeof(RoundTrip),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_doc = PyDoc_STR("Beam calculator"),
+    .tp_doc = PyDoc_STR("Round trip calculator"),
     .tp_methods = methods,
     .tp_members = members,
     .tp_new = ctor,
@@ -167,14 +167,14 @@ PyObject* make(BeamCalcWrapper* calc)
     CHECK_TYPE_READY
     auto obj = type.tp_alloc(&type, 0);
     if (obj) {
-        ((Calculator*)obj)->calc = calc;
-        ((Calculator*)obj)->plane = calc->plane();
-        ((Calculator*)obj)->ior = calc->ior();
+        ((RoundTrip*)obj)->calc = calc;
+        ((RoundTrip*)obj)->plane = calc->plane();
+        ((RoundTrip*)obj)->ior = calc->ior();
     }
     return obj;
 }
 
-} // namespace BeamCalc
+} // namespace RoundTrip
 
 //------------------------------------------------------------------------------
 //                                 Schema
@@ -259,6 +259,58 @@ PyObject* is_rr(PyObject *Py_UNUSED(self), PyObject *Py_UNUSED(args))
     return PyBool_FromLong(schema->isRR());
 }
 
+PyObject* round_trip(PyObject *Py_UNUSED(self), PyObject *Py_UNUSED(args), PyObject *kwargs)
+{
+    CHECK_SCHEMA
+    if (schema->activeCount() == 0) {
+        PyErr_SetString(PyExc_KeyError, "there are no active elements in the schema");
+        return nullptr;
+    }
+    auto splitRange = false;
+    auto workPlane = Z::WorkPlane::T;
+    ::Element *refElem = nullptr;
+    if (auto arg = PyDict_GetItemString(kwargs, "ref"); arg) {
+        if (PyLong_Check(arg)) {
+            auto index = PyLong_AsLong(arg);
+            // For python code elemens are numbered 1-based
+            // as they are shown in the elements table
+            refElem = schema->element(index-1);
+        } else if (PyUnicode_Check(arg)) {
+            auto label = QString::fromUtf8(PyUnicode_AsUTF8(arg));
+            refElem = schema->element(label);
+        } else {
+            PyErr_SetString(PyExc_TypeError, "wrong type of the \"ref\" arg, integer or string expected");
+        }
+        if (!refElem) {
+            PyErr_SetString(PyExc_KeyError, "reference element not found");
+            return nullptr;
+        }
+    }
+    if (auto arg = PyDict_GetItemString(kwargs, "plane"); arg) {
+        if (!PyLong_Check(arg)) {
+            PyErr_SetString(PyExc_TypeError, "wrong type of the \"plane\" arg, integer expected");
+            return nullptr;
+        }
+        auto plane = PyLong_AsLong(arg);
+        if (plane != Z::WorkPlane::T && plane != Z::WorkPlane::S) {
+            PyErr_SetString(PyExc_TypeError, "unexpected value of the \"plane\" arg, "
+                "expected one of rezonator.PLANE_T or rezonator.PLANE_S");
+            return nullptr;
+        }
+        workPlane = (Z::WorkPlane)plane;
+    }
+    if (auto arg = PyDict_GetItemString(kwargs, "split_range"); arg) {
+        if (!PyBool_Check(arg)) {
+            PyErr_SetString(PyExc_TypeError, "wrong type of the \"split_range\" arg, bool expected");
+            return nullptr;
+        }
+        splitRange = Py_IsTrue(arg);
+    }
+    if (!refElem)
+        refElem = schema->elements().last();
+    Py_RETURN_NONE;
+}
+
 } // Methods
 
 #define ADD_TYPE(name) \
@@ -272,7 +324,7 @@ int on_exec(PyObject *module)
         STOP_MODULE_INIT
     
     ADD_TYPE(Element)
-    ADD_TYPE(Calculator)
+    ADD_TYPE(RoundTrip)
 
     qDebug() << "schema module executed";
     return 0;
@@ -288,6 +340,7 @@ PyMethodDef methods[] = {
     { "is_rr", Methods::is_rr, METH_NOARGS, "If schema is ring rezonator" },
     { "param", Methods::param, METH_O, "Return value of global parameter (in SI units)." },
     { "wavelength", Methods::wavelength, METH_NOARGS, "Return current wavelength (in m)." },
+    { "round_trip", (PyCFunction)Methods::round_trip, METH_VARARGS | METH_KEYWORDS, "Return a RoundTrip object that can be used for all basic calculations." },
     { NULL, NULL, 0, NULL }
 };
 
