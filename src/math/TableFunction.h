@@ -7,7 +7,7 @@
 
 #include "core/OriTemplates.h"
 
-class AbcdBeamCalculator;
+class AbcdCalculator;
 class Schema;
 
 class TableFunction : public FunctionBase
@@ -113,7 +113,7 @@ public:
 
 protected:
     std::shared_ptr<PumpCalculator> _pumpCalc;
-    std::shared_ptr<AbcdBeamCalculator> _beamCalc;
+    std::shared_ptr<AbcdCalculator> _abcdCalc;
     QList<Element*> _activeElements; // valid only during calculate() call
     QVector<ColumnDef> _columns;
     QMap<QString, Z::Unit> _colUnits;

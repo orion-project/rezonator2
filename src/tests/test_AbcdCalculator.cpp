@@ -1,5 +1,5 @@
 #include "../core/Math.h"
-#include "../math/AbcdBeamCalculator.h"
+#include "../math/AbcdCalculator.h"
 #include "../tests/TestUtils.h"
 
 #include "testing/OriTestBase.h"
@@ -9,10 +9,10 @@
 
 namespace Z {
 namespace Tests {
-namespace AbcdBeamCalculatorTests {
+namespace AbcdCalculatorTests {
 
 #define CALCULATOR \
-    AbcdBeamCalculator calc(1e-6);
+    AbcdCalculator calc(1e-6);
 
 #define ASSERT_IS_STABLE(m) {\
     double p = (m.A.real() + m.D.real()) / 2; \
@@ -95,17 +95,17 @@ TEST_METHOD(real_calc_ts)
 
 //------------------------------------------------------------------------------
 
-TEST_GROUP("AbcdBeamCalculator",
-           ADD_TEST(real_beamRadius__must_return_nan_when_unstable),
-           ADD_TEST(real_beamRadius),
-           ADD_TEST(real_frontRadius__can_return_inf),
-           ADD_TEST(real_frontRadius),
-           ADD_TEST(real_halfAngle__must_return_nan_when_unstable),
-           ADD_TEST(real_halfAngle),
-           ADD_TEST(real_calc_ts),
-           // TODO: add tests for calculation inside a medium
-           )
+TEST_GROUP("AbcdCalculator",
+    ADD_TEST(real_beamRadius__must_return_nan_when_unstable),
+    ADD_TEST(real_beamRadius),
+    ADD_TEST(real_frontRadius__can_return_inf),
+    ADD_TEST(real_frontRadius),
+    ADD_TEST(real_halfAngle__must_return_nan_when_unstable),
+    ADD_TEST(real_halfAngle),
+    ADD_TEST(real_calc_ts),
+    // TODO: add tests for calculation inside a medium
+)
 
-} // namespace AbcdBeamCalculatorTests
+} // namespace AbcdCalculatorTests
 } // namespace Tests
 } // namespace Z

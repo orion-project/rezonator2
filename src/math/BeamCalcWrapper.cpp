@@ -1,11 +1,11 @@
 #include "BeamCalcWrapper.h"
 
-#include "AbcdBeamCalculator.h"
+#include "AbcdCalculator.h"
 #include "PumpCalculator.h"
 #include "RoundTripCalculator.h"
 
 BeamCalcWrapper::BeamCalcWrapper(Z::WorkPlane ts, PumpCalculator *pump, 
-    AbcdBeamCalculator *abcd, RoundTripCalculator* rt, double ior) 
+    AbcdCalculator *abcd, RoundTripCalculator* rt, double ior) 
     : _ts(ts), _pump(pump), _abcd(abcd), _rt(rt), _ior(ior)
 {
 }

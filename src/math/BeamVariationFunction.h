@@ -6,7 +6,7 @@
 #include <memory>
 
 class PumpCalculator;
-class AbcdBeamCalculator;
+class AbcdCalculator;
 
 class BeamVariationFunction : public PlotFunction
 {
@@ -32,7 +32,7 @@ protected:
     double _ior = 0;
 
     std::shared_ptr<PumpCalculator> _pumpCalc;
-    std::shared_ptr<AbcdBeamCalculator> _beamCalc;
+    std::shared_ptr<AbcdCalculator> _beamCalc;
 
     bool prepareSinglePass();
     bool prepareResonator();

@@ -5,7 +5,7 @@
 
 #include <memory>
 
-class AbcdBeamCalculator;
+class AbcdCalculator;
 class PumpCalculator;
 class PumpParams;
 
@@ -53,7 +53,7 @@ private:
 
     PumpParams* _pump = nullptr;
     std::shared_ptr<PumpCalculator> _pumpCalc;
-    std::shared_ptr<AbcdBeamCalculator> _beamCalc;
+    std::shared_ptr<AbcdCalculator> _beamCalc;
     bool _writeProtocol = false;
 
     bool prepareSinglePass(Element *ref);

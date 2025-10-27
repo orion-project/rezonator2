@@ -1,6 +1,6 @@
 #include "TableFunction.h"
 
-#include "AbcdBeamCalculator.h"
+#include "AbcdCalculator.h"
 #include "FunctionUtils.h"
 #include "PumpCalculator.h"
 #include "RoundTripCalculator.h"
@@ -62,7 +62,7 @@ bool TableFunction::prepareSinglePass()
         return false;
     }
 
-    _beamCalc.reset();
+    _abcdCalc.reset();
     _pumpCalc.reset(new PumpCalculator(pump, schema()->wavelenSi()));
     FunctionUtils::prepareDynamicElements(schema(), nullptr, _pumpCalc.get());
     return true;
@@ -70,7 +70,7 @@ bool TableFunction::prepareSinglePass()
 
 bool TableFunction::prepareResonator()
 {
-    _beamCalc.reset(new AbcdBeamCalculator(schema()->wavelenSi()));
+    _abcdCalc.reset(new AbcdCalculator(schema()->wavelenSi()));
     _pumpCalc.reset();
     return true;
 }

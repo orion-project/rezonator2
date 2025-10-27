@@ -1,6 +1,6 @@
 #include "BeamParamsAtElemsFunction.h"
 
-#include "AbcdBeamCalculator.h"
+#include "AbcdCalculator.h"
 #include "PumpCalculator.h"
 #include "RoundTripCalculator.h"
 
@@ -68,9 +68,9 @@ QVector<Z::PointTS> BeamParamsAtElemsFunction::calculateResonator(Element *elem,
 {
     Q_UNUSED(elem)
     
-    Z::PointTS beamRadius = _beamCalc->beamRadius(rt->Mt(), rt->Ms(), ior);
-    Z::PointTS frontRadius = _beamCalc->frontRadius(rt->Mt(), rt->Ms(), ior);
-    Z::PointTS halfAngle = _beamCalc->halfAngle(rt->Mt(), rt->Ms(), ior);
+    Z::PointTS beamRadius = _abcdCalc->beamRadius(rt->Mt(), rt->Ms(), ior);
+    Z::PointTS frontRadius = _abcdCalc->frontRadius(rt->Mt(), rt->Ms(), ior);
+    Z::PointTS halfAngle = _abcdCalc->halfAngle(rt->Mt(), rt->Ms(), ior);
     //Z::PointTS aperRatio = calcApertureRatio(beamRadius, elem);
     
     return { beamRadius, /*aperRatio,*/ frontRadius, halfAngle };

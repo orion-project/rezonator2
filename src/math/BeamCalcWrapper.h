@@ -3,7 +3,7 @@
 
 #include "../core/CommonTypes.h"
 
-class AbcdBeamCalculator;
+class AbcdCalculator;
 class PumpCalculator;
 class RoundTripCalculator;
 
@@ -11,7 +11,7 @@ class BeamCalcWrapper
 {
 public:
     BeamCalcWrapper(Z::WorkPlane ts, PumpCalculator* pump,
-        AbcdBeamCalculator* abcd, RoundTripCalculator* rt, double ior);
+        AbcdCalculator* abcd, RoundTripCalculator* rt, double ior);
     
     Z::WorkPlane plane() const { return _ts; }
     double ior() const { return _ior; }
@@ -23,7 +23,7 @@ public:
 private:
     Z::WorkPlane _ts;
     PumpCalculator *_pump;
-    AbcdBeamCalculator *_abcd;
+    AbcdCalculator *_abcd;
     RoundTripCalculator *_rt;
     double _ior;
 };

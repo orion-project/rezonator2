@@ -1,10 +1,10 @@
-#include "AbcdBeamCalculator.h"
+#include "AbcdCalculator.h"
 
 #include "../core/Math.h"
 
 #include <QDebug>
 
-AbcdBeamCalculator::AbcdBeamCalculator(double lambdaSI)
+AbcdCalculator::AbcdCalculator(double lambdaSI)
 {
     _wavelenSI = qAbs(lambdaSI);
 }
@@ -15,7 +15,7 @@ AbcdBeamCalculator::AbcdBeamCalculator(double lambdaSI)
     if (g.real() > 1.0) return Double::nan(); \
     auto q = ((m.D - m.A) / 2.0 + Z::Complex(0, 1) * sqrt(1.0 - g)) / m.B
 
-double AbcdBeamCalculator::beamRadius(const Z::Matrix& m, double ior) const
+double AbcdCalculator::beamRadius(const Z::Matrix& m, double ior) const
 {
     CALC_Q;
     return sqrt(_wavelenSI/qAbs(ior) * M_1_PI / qAbs(q.imag()));
@@ -24,7 +24,7 @@ double AbcdBeamCalculator::beamRadius(const Z::Matrix& m, double ior) const
     //return Z::isReal(w) ? w.real() : (Z::isImag(w) ? w.imag() : Double::nan());
 }
 
-double AbcdBeamCalculator::frontRadius(const Z::Matrix& m, double ior) const
+double AbcdCalculator::frontRadius(const Z::Matrix& m, double ior) const
 {
     Q_UNUSED(ior)
     CALC_Q;
@@ -34,7 +34,7 @@ double AbcdBeamCalculator::frontRadius(const Z::Matrix& m, double ior) const
     //return Z::isReal(r) ? r.real() : Double::nan();
 }
 
-double AbcdBeamCalculator::halfAngle(const Z::Matrix& m, double ior) const
+double AbcdCalculator::halfAngle(const Z::Matrix& m, double ior) const
 {
     CALC_Q;
     auto l = _wavelenSI/qAbs(ior);
@@ -47,17 +47,17 @@ double AbcdBeamCalculator::halfAngle(const Z::Matrix& m, double ior) const
     //return Z::isReal(v) ? v.real() : (Z::isImag(v) ? v.imag() : Double::nan());
 }
 
-Z::PointTS AbcdBeamCalculator::beamRadius(const Z::Matrix& mt, const Z::Matrix& ms, double ior) const
+Z::PointTS AbcdCalculator::beamRadius(const Z::Matrix& mt, const Z::Matrix& ms, double ior) const
 {
     return { beamRadius(mt, ior), beamRadius(ms, ior) };
 }
 
-Z::PointTS AbcdBeamCalculator::frontRadius(const Z::Matrix &mt, const Z::Matrix& ms, double ior) const
+Z::PointTS AbcdCalculator::frontRadius(const Z::Matrix &mt, const Z::Matrix& ms, double ior) const
 {
     return { frontRadius(mt, ior), frontRadius(ms, ior) };
 }
 
-Z::PointTS AbcdBeamCalculator::halfAngle(const Z::Matrix &mt, const Z::Matrix& ms, double ior) const
+Z::PointTS AbcdCalculator::halfAngle(const Z::Matrix &mt, const Z::Matrix& ms, double ior) const
 {
     return { halfAngle(mt, ior), halfAngle(ms, ior) };
 }

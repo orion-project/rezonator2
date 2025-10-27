@@ -123,7 +123,7 @@ set(PROJECT_SOURCES
     src/io/SchemaReaderIni.h src/io/SchemaReaderIni.cpp
     src/io/SchemaReaderJson.h src/io/SchemaReaderJson.cpp
     src/io/SchemaWriterJson.h src/io/SchemaWriterJson.cpp
-    src/math/AbcdBeamCalculator.h src/math/AbcdBeamCalculator.cpp
+    src/math/AbcdCalculator.h src/math/AbcdCalculator.cpp
     src/math/BeamCalcWrapper.h src/math/BeamCalcWrapper.cpp
     src/math/BeamParamsAtElemsFunction.h src/math/BeamParamsAtElemsFunction.cpp
     src/math/BeamVariationFunction.h src/math/BeamVariationFunction.cpp
@@ -148,7 +148,7 @@ set(PROJECT_SOURCES
     src/math/StabilityMapFunction.h src/math/StabilityMapFunction.cpp
     src/math/TableFunction.h src/math/TableFunction.cpp
     src/math/tinyexpr.h src/math/tinyexpr.c
-    src/tests/test_AbcdBeamCalculator.cpp
+    src/tests/test_AbcdCalculator.cpp
     src/tests/test_Adjuster.cpp
     src/tests/test_Element.cpp
     src/tests/test_ElementEventsLocker.cpp

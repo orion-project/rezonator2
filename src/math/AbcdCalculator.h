@@ -1,5 +1,5 @@
-#ifndef ABCD_BEAM_CALCULATOR_H
-#define ABCD_BEAM_CALCULATOR_H
+#ifndef ABCD_CALCULATOR_H
+#define ABCD_CALCULATOR_H
 
 #include "../core/Values.h"
 
@@ -7,10 +7,13 @@ namespace Z {
 class Matrix;
 } // namespace Z
 
-class AbcdBeamCalculator
+/**
+    Calculates self-consistent beam parameters from round-trip matrix.
+*/
+class AbcdCalculator
 {
 public:
-    AbcdBeamCalculator(double lambdaSI);
+    AbcdCalculator(double lambdaSI);
 
     double beamRadius(const Z::Matrix& m, double ior) const;
     double frontRadius(const Z::Matrix &m, double ior) const;
@@ -23,4 +26,4 @@ private:
     double _wavelenSI;
 };
 
-#endif // ABCD_BEAM_CALCULATOR_H
+#endif // ABCD_CALCULATOR_H
