@@ -15,7 +15,7 @@ PyRunner::FuncResult PyRunner::run(const QString&, const Args&, const ResultSpec
 #include "PyModuleSchema.h"
 #include "PyModuleGlobal.h"
 #include "Units.h"
-#include "../math/BeamCalcWrapper.h"
+#include "../math/BeamCalculator.h"
 
 #include <QDebug>
 #include <QDir>
@@ -217,7 +217,7 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, co
             pArg = PyModules::Schema::Element::make(reinterpret_cast<Element*>(argValue));
             break;
         case atRoundTrip:
-            pArg = PyModules::Schema::RoundTrip::make(reinterpret_cast<BeamCalcWrapper*>(argValue));
+            pArg = PyModules::Schema::RoundTrip::make(reinterpret_cast<BeamCalculator*>(argValue));
             break;
         }
         if (pArg) {

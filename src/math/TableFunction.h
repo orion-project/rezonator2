@@ -7,7 +7,7 @@
 
 #include "core/OriTemplates.h"
 
-class AbcdCalculator;
+class BeamCalculator;
 class Schema;
 
 class TableFunction : public FunctionBase
@@ -112,15 +112,14 @@ public:
     void setParams(const Params& params);
 
 protected:
-    std::shared_ptr<PumpCalculator> _pumpCalc;
-    std::shared_ptr<AbcdCalculator> _abcdCalc;
-    QList<Element*> _activeElements; // valid only during calculate() call
+    // These are valid only during calculate() call
+    std::shared_ptr<BeamCalculator> _beamCalc;
+    QList<Element*> _activeElements;
+
     QVector<ColumnDef> _columns;
     QMap<QString, Z::Unit> _colUnits;
     Params _params;
 
-    bool prepareSinglePass();
-    bool prepareResonator();
     Element* prevElement(int index);
     Element* nextElement(int index);
     QString calculateAtElem(Element* elem, int index, IsTwoSides twoSides);
@@ -132,9 +131,8 @@ protected:
 
     virtual bool prepare() { return true; }
     virtual void unprepare() {}
-    virtual QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) = 0;
-    virtual QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) = 0;
-    virtual QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* calc, double ior) = 0;
+    virtual QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) { return {}; };
+    virtual QVector<Z::PointTS> calculateInternal(Element *elem, double ior) = 0;
     
 private:
     QVector<Result> _results;

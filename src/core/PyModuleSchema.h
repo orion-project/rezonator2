@@ -3,7 +3,7 @@
 
 #include "PyUtils.h"
 #include "Schema.h"
-#include "../math/BeamCalcWrapper.h"
+#include "../math/BeamCalculator.h"
 
 namespace PyModules::Schema {
 
@@ -111,7 +111,7 @@ namespace RoundTrip {
 
 struct RoundTrip {
     PyObject_HEAD
-    BeamCalcWrapper *calc;
+    BeamCalculator *calc;
     Z::WorkPlane plane;
     double ior;
 };
@@ -162,7 +162,7 @@ PyTypeObject type = {
     .tp_new = ctor,
 };
 
-PyObject* make(BeamCalcWrapper* calc)
+PyObject* make(BeamCalculator* calc)
 {
     CHECK_TYPE_READY
     auto obj = type.tp_alloc(&type, 0);

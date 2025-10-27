@@ -124,7 +124,7 @@ set(PROJECT_SOURCES
     src/io/SchemaReaderJson.h src/io/SchemaReaderJson.cpp
     src/io/SchemaWriterJson.h src/io/SchemaWriterJson.cpp
     src/math/AbcdCalculator.h src/math/AbcdCalculator.cpp
-    src/math/BeamCalcWrapper.h src/math/BeamCalcWrapper.cpp
+    src/math/BeamCalculator.h src/math/BeamCalculator.cpp
     src/math/BeamParamsAtElemsFunction.h src/math/BeamParamsAtElemsFunction.cpp
     src/math/BeamVariationFunction.h src/math/BeamVariationFunction.cpp
     src/math/CausticFunction.h src/math/CausticFunction.cpp

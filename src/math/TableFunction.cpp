@@ -1,8 +1,7 @@
 #include "TableFunction.h"
 
-#include "AbcdCalculator.h"
+#include "BeamCalculator.h"
 #include "FunctionUtils.h"
-#include "PumpCalculator.h"
 #include "RoundTripCalculator.h"
 #include "../app/AppSettings.h"
 #include "../core/Schema.h"
@@ -51,30 +50,6 @@ void TableFunction::setParams(const Params& params)
     _params = params;
 }
 
-bool TableFunction::prepareSinglePass()
-{
-    auto pump = _schema->activePump();
-    if (!pump)
-    {
-        setError(qApp->translate("Calc error",
-                                 "There is no active pump in the schema. "
-                                 "Use 'Pumps' window to create a new pump or activate one of the existing ones."));
-        return false;
-    }
-
-    _abcdCalc.reset();
-    _pumpCalc.reset(new PumpCalculator(pump, schema()->wavelenSi()));
-    FunctionUtils::prepareDynamicElements(schema(), nullptr, _pumpCalc.get());
-    return true;
-}
-
-bool TableFunction::prepareResonator()
-{
-    _abcdCalc.reset(new AbcdCalculator(schema()->wavelenSi()));
-    _pumpCalc.reset();
-    return true;
-}
-
 void TableFunction::calculate()
 {
     _results.clear();
@@ -83,10 +58,12 @@ void TableFunction::calculate()
     if (!prepare())
         return;
     
-    bool isPrepared = _schema->isResonator()
-           ? prepareResonator()
-           : prepareSinglePass();
-    if (!isPrepared) return;
+    _beamCalc.reset(new BeamCalculator(schema()));
+    if (!_beamCalc->ok())
+    {
+        setError(_beamCalc->error());
+        return;
+    }
 
     #define CHECK_ERR(f) {\
         QString res = f;\
@@ -448,18 +425,14 @@ void TableFunction::calculateAt(CalcElem calcElem, ResultElem resultElem, Option
             calcElem.range->setSubRangeSI(calcElem.subrange);
     }
 
-    RoundTripCalculator calc(schema(), calcElem.ref());
-    calc.calcRoundTrip(calcElem.range);
-    calc.multMatrix("TableFunction::calculateAt");
+    _beamCalc->calcRoundTrip(calcElem.ref(), calcElem.range, "TableFunction::calculateAt");
 
     const double ior = overrideIor.set ? overrideIor.value : (calcElem.range ? calcElem.range->ior() : 1);
 
     Result res;
     res.element = resultElem.elem;
     res.position = resultElem.pos;
-    res.values = schema()->isResonator()
-            ? calculateResonator(resultElem.elem, &calc, ior)
-            : calculateSinglePass(resultElem.elem, &calc, ior);
+    res.values = calculateInternal(resultElem.elem, ior);
     _results << res;
 }
 

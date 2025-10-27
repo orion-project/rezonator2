@@ -29,9 +29,7 @@ public:
     QString customTitle() const { return _customTitle; }
 
 protected:
-    QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) override;
-    QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* rt, double ior) override;
-    QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* rt, double ior) override;
+    QVector<Z::PointTS> calculateInternal(Element *elem, double ior) override;
     
 private:
     QString _code;
@@ -44,7 +42,6 @@ private:
     void showError(PyRunner *py);
     void showError(const QString &err);
     
-    QVector<Z::PointTS> calculateInternal(Element *elem, RoundTripCalculator* rt, double ior);
 };
 
 #endif // CUSTOM_TABLE_FUNCTION_H

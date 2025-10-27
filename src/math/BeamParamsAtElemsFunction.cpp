@@ -1,8 +1,6 @@
 #include "BeamParamsAtElemsFunction.h"
 
-#include "AbcdCalculator.h"
-#include "PumpCalculator.h"
-#include "RoundTripCalculator.h"
+#include "BeamCalculator.h"
 
 #include <QApplication>
 
@@ -15,10 +13,6 @@ BeamParamsAtElemsFunction::BeamParamsAtElemsFunction(Schema *schema) : TableFunc
             .dim = Z::Dims::linear(),
             .hint = ColumnDef::hintBeamsize,
         },
-        // ColumnDef {
-        //     .label = "A",
-        //     .title = qApp->tr("Aperture ratio", "Table function column"),
-        // },
         ColumnDef {
             .label = "R",
             .title = qApp->tr("Wavefront ROC", "Table function column"),
@@ -36,51 +30,21 @@ BeamParamsAtElemsFunction::BeamParamsAtElemsFunction(Schema *schema) : TableFunc
 QVector<Z::PointTS> BeamParamsAtElemsFunction::calculatePumpBeforeSchema(Element *elem)
 {
     Q_UNUSED(elem)
-
     Z::Matrix unity;
-    BeamResult beamT = _pumpCalc->calcT(unity, 1);
-    BeamResult beamS = _pumpCalc->calcS(unity, 1);
-
-    Z::PointTS beamRadius(beamT.beamRadius, beamS.beamRadius);
-    Z::PointTS frontRadius(beamT.frontRadius, beamS.frontRadius);
-    Z::PointTS halfAngle(beamT.halfAngle, beamS.halfAngle);
-    //Z::PointTS aperRatio = calcApertureRatio(beamRadius, elem);
-
-    return { beamRadius, /*aperRatio,*/ frontRadius, halfAngle };
+    BeamResult beamT = _beamCalc->pumpCalc().calcT(unity, 1);
+    BeamResult beamS = _beamCalc->pumpCalc().calcS(unity, 1);
+    return {
+        Z::PointTS(beamT.beamRadius, beamS.beamRadius),
+        Z::PointTS(beamT.frontRadius, beamS.frontRadius),
+        Z::PointTS(beamT.halfAngle, beamS.halfAngle),
+    };
 }
 
-QVector<Z::PointTS> BeamParamsAtElemsFunction::calculateSinglePass(Element *elem, RoundTripCalculator* rt, double ior)
+QVector<Z::PointTS> BeamParamsAtElemsFunction::calculateInternal(Element *elem, double ior)
 {
-    Q_UNUSED(elem)
-
-    BeamResult beamT = _pumpCalc->calcT(rt->Mt(), ior);
-    BeamResult beamS = _pumpCalc->calcS(rt->Ms(), ior);
-
-    Z::PointTS beamRadius(beamT.beamRadius, beamS.beamRadius);
-    Z::PointTS frontRadius(beamT.frontRadius, beamS.frontRadius);
-    Z::PointTS halfAngle(beamT.halfAngle, beamS.halfAngle);
-    //Z::PointTS aperRatio = calcApertureRatio(beamRadius, elem);
-
-    return { beamRadius, /*aperRatio,*/ frontRadius, halfAngle };
-}
-
-QVector<Z::PointTS> BeamParamsAtElemsFunction::calculateResonator(Element *elem, RoundTripCalculator *rt, double ior)
-{
-    Q_UNUSED(elem)
-    
-    Z::PointTS beamRadius = _abcdCalc->beamRadius(rt->Mt(), rt->Ms(), ior);
-    Z::PointTS frontRadius = _abcdCalc->frontRadius(rt->Mt(), rt->Ms(), ior);
-    Z::PointTS halfAngle = _abcdCalc->halfAngle(rt->Mt(), rt->Ms(), ior);
-    //Z::PointTS aperRatio = calcApertureRatio(beamRadius, elem);
-    
-    return { beamRadius, /*aperRatio,*/ frontRadius, halfAngle };
-}
-
-Z::PointTS BeamParamsAtElemsFunction::calcApertureRatio(const Z::PointTS &beamRadius, Element *elem) const
-{
-    auto aper = elem->aperture();
-    if (!aper)
-        return { qQNaN(), qQNaN() };
-    const double aperR = aper->toSi() / 2.0;
-    return { aperR / beamRadius.T, aperR / beamRadius.S };
+    return {
+        Z::PointTS(_beamCalc->beamRadius(Z::T, ior), _beamCalc->beamRadius(Z::S, ior)),
+        Z::PointTS(_beamCalc->frontRadius(Z::T, ior), _beamCalc->frontRadius(Z::S, ior)),
+        Z::PointTS(_beamCalc->halfAngle(Z::T, ior), _beamCalc->halfAngle(Z::S, ior)),
+    };
 }
