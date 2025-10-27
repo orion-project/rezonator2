@@ -15,8 +15,8 @@ public:
     BeamParamsAtElemsFunction(Schema *schema);
 
 protected:
-    QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) override;
-    QVector<Z::PointTS> calculateInternal(Element *elem, double ior) override;
+    QVector<Z::PointTS> calculatePumpBeforeSchema() override;
+    QVector<Z::PointTS> calculateInternal(const ResultElem &resultElem) override;
     
 private:
     Z::PointTS calcApertureRatio(const Z::PointTS &beamRadius, Element *elem) const;

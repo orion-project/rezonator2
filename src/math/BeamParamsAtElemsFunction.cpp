@@ -27,12 +27,11 @@ BeamParamsAtElemsFunction::BeamParamsAtElemsFunction(Schema *schema) : TableFunc
     };
 }
 
-QVector<Z::PointTS> BeamParamsAtElemsFunction::calculatePumpBeforeSchema(Element *elem)
+QVector<Z::PointTS> BeamParamsAtElemsFunction::calculatePumpBeforeSchema()
 {
-    Q_UNUSED(elem)
     Z::Matrix unity;
-    BeamResult beamT = _beamCalc->pumpCalc().calcT(unity, 1);
-    BeamResult beamS = _beamCalc->pumpCalc().calcS(unity, 1);
+    BeamResult beamT = _beamCalc->pumpCalc()->calcT(unity, 1);
+    BeamResult beamS = _beamCalc->pumpCalc()->calcS(unity, 1);
     return {
         Z::PointTS(beamT.beamRadius, beamS.beamRadius),
         Z::PointTS(beamT.frontRadius, beamS.frontRadius),
@@ -40,11 +39,23 @@ QVector<Z::PointTS> BeamParamsAtElemsFunction::calculatePumpBeforeSchema(Element
     };
 }
 
-QVector<Z::PointTS> BeamParamsAtElemsFunction::calculateInternal(Element *elem, double ior)
+QVector<Z::PointTS> BeamParamsAtElemsFunction::calculateInternal(const ResultElem &resultElem)
 {
+    Q_UNUSED(resultElem);
+
+    _beamCalc->setPlane(Z::T);
+    auto beamRadiusT = _beamCalc->beamRadius();
+    auto frontRadiusT = _beamCalc->frontRadius();
+    auto halfAngleT = _beamCalc->halfAngle();
+
+    _beamCalc->setPlane(Z::S);
+    auto beamRadiusS = _beamCalc->beamRadius();
+    auto frontRadiusS = _beamCalc->frontRadius();
+    auto halfAngleS = _beamCalc->halfAngle();
+
     return {
-        Z::PointTS(_beamCalc->beamRadius(Z::T, ior), _beamCalc->beamRadius(Z::S, ior)),
-        Z::PointTS(_beamCalc->frontRadius(Z::T, ior), _beamCalc->frontRadius(Z::S, ior)),
-        Z::PointTS(_beamCalc->halfAngle(Z::T, ior), _beamCalc->halfAngle(Z::S, ior)),
+        Z::PointTS(beamRadiusT, beamRadiusS),
+        Z::PointTS(frontRadiusT, frontRadiusS),
+        Z::PointTS(halfAngleT, halfAngleS),
     };
 }

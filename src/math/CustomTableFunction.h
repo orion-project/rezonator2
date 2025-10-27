@@ -29,7 +29,7 @@ public:
     QString customTitle() const { return _customTitle; }
 
 protected:
-    QVector<Z::PointTS> calculateInternal(Element *elem, double ior) override;
+    QVector<Z::PointTS> calculateInternal(const ResultElem &resultElem) override;
     
 private:
     QString _code;

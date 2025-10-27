@@ -16,16 +16,15 @@ CustomTableFunction::CustomTableFunction(Schema *schema) : TableFunction(schema)
 {
 }
 
-QVector<Z::PointTS> CustomTableFunction::calculateInternal(Element *elem, double ior)
+QVector<Z::PointTS> CustomTableFunction::calculateInternal(const ResultElem &resultElem)
 {
     PyRunner::ResultSpec resultSpec;
     for (const auto &col : std::as_const(_columns))
         resultSpec.insert(col.label, PyRunner::ftNumber);
     
     _beamCalc->setPlane(Z::T);
-    _beamCalc->setIor(ior);
     auto resT = _runner->run(FUNC_CALC, {
-        { PyRunner::atElement, elem },
+        { PyRunner::atElement, resultElem.elem },
         { PyRunner::atRoundTrip, _beamCalc.get() }
     }, resultSpec);
     if (!resT) {
@@ -34,9 +33,8 @@ QVector<Z::PointTS> CustomTableFunction::calculateInternal(Element *elem, double
     }
     
     _beamCalc->setPlane(Z::S);
-    _beamCalc->setIor(ior);
     auto resS = _runner->run(FUNC_CALC, {
-        { PyRunner::atElement, elem },
+        { PyRunner::atElement, resultElem.elem },
         { PyRunner::atRoundTrip, _beamCalc.get() }
     }, resultSpec);
     if (!resS) {

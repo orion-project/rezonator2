@@ -13,7 +13,7 @@ class Schema;
 class TableFunction : public FunctionBase
 {
 public:
-    typedef Ori::Optional<double> OptionalIor;
+    typedef std::optional<double> OptionalIor;
     BOOL_PARAM(IsTwoSides)
 
     struct Params
@@ -127,12 +127,12 @@ protected:
     QString calculateAtCrystal(ElementRange* range, int index);
     QString calculateAtPlane(Element* elem, int index);
     QString calculateInMiddle(Element* elem, Element *prevElem, Element *nextElem, IsTwoSides twoSides);
-    void calculateAt(CalcElem calcElem, ResultElem resultElem, OptionalIor overrideIor = OptionalIor());
+    void calculateAt(const CalcElem &calcElem, const ResultElem &resultElem, OptionalIor overrideIor = {});
 
     virtual bool prepare() { return true; }
     virtual void unprepare() {}
-    virtual QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) { return {}; };
-    virtual QVector<Z::PointTS> calculateInternal(Element *elem, double ior) = 0;
+    virtual QVector<Z::PointTS> calculatePumpBeforeSchema() { return {}; };
+    virtual QVector<Z::PointTS> calculateInternal(const ResultElem &resultElem) = 0;
     
 private:
     QVector<Result> _results;

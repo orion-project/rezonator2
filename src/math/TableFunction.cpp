@@ -234,7 +234,7 @@ QString TableFunction::calculateAtElem(Element *elem, int index, IsTwoSides twoS
                 Result res;
                 res.element = elem;
                 res.position = ResultPosition::LEFT;
-                res.values = calculatePumpBeforeSchema(elem);
+                res.values = calculatePumpBeforeSchema();
                 _results << res;
             }
 
@@ -280,7 +280,7 @@ QString TableFunction::calculateAtInterface(ElementInterface* iface, int index)
             Result res;
             res.element = iface;
             res.position = ResultPosition::IFACE_LEFT;
-            res.values = calculatePumpBeforeSchema(iface);
+            res.values = calculatePumpBeforeSchema();
             _results << res;
             break; // Don't return!
         }
@@ -349,7 +349,7 @@ QString TableFunction::calculateAtCrystal(ElementRange* range, int index)
             Result res;
             res.element = range;
             res.position = ResultPosition::LEFT_OUTSIDE;
-            res.values = calculatePumpBeforeSchema(range);
+            res.values = calculatePumpBeforeSchema();
             _results << res;
             break; // Don't return!
         }
@@ -413,7 +413,7 @@ QString TableFunction::calculateInMiddle(Element* elem, Element* prevElem, Eleme
     return "";
 }
 
-void TableFunction::calculateAt(CalcElem calcElem, ResultElem resultElem, OptionalIor overrideIor)
+void TableFunction::calculateAt(const CalcElem &calcElem, const ResultElem &resultElem, OptionalIor overrideIor)
 {
     if (calcElem.range)
     {
@@ -424,15 +424,14 @@ void TableFunction::calculateAt(CalcElem calcElem, ResultElem resultElem, Option
         else
             calcElem.range->setSubRangeSI(calcElem.subrange);
     }
-
+    
     _beamCalc->calcRoundTrip(calcElem.ref(), calcElem.range, "TableFunction::calculateAt");
-
-    const double ior = overrideIor.set ? overrideIor.value : (calcElem.range ? calcElem.range->ior() : 1);
+    _beamCalc->setIor(overrideIor ? *overrideIor : (calcElem.range ? calcElem.range->ior() : 1));
 
     Result res;
     res.element = resultElem.elem;
     res.position = resultElem.pos;
-    res.values = calculateInternal(resultElem.elem, ior);
+    res.values = calculateInternal(resultElem);
     _results << res;
 }
 
