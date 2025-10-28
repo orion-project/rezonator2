@@ -17,13 +17,23 @@ namespace FuncEditorWindowStorable
     }
 } // namespace FuncEditorWindowStorable
 
+static QString codeTemplateFile(const QString &templateName)
+{
+    return qApp->applicationDirPath() + "/functions/" + templateName + ".py";
+}
+
 //------------------------------------------------------------------------------
 //                              FuncEditorWindow
 //------------------------------------------------------------------------------
 
-FuncEditorWindow* FuncEditorWindow::create(Schema* owner)
+FuncEditorWindow* FuncEditorWindow::create(Schema* owner, const QString &codeTemplate)
 {
-    return new FuncEditorWindow(owner);
+    auto w = new FuncEditorWindow(owner);
+    
+    if (!codeTemplate.isEmpty())
+        w->_editor->loadCode(codeTemplateFile(codeTemplate));
+        
+    return w;
 }
 
 FuncEditorWindow::FuncEditorWindow(Schema *owner) : CodeEditorWindow(owner)

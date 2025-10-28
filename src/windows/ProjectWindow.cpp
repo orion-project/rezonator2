@@ -172,8 +172,8 @@ void ProjectWindow::createActions()
     actnFuncBeamVariation = A_(tr("Beamsize Variation..."), _calculations, SLOT(funcBeamVariation()), ":/toolbar/func_beam_variation");
     actnFuncBeamParamsAtElems = A_(tr("Beam Parameters at Elemens"), _calculations, SLOT(funcBeamParamsAtElems()), ":/toolbar/func_beamdata");
 #ifdef Z_USE_PYTHON
-    actnFuncCustomInfo = A_(tr("Create Custom Info Function"), this, SLOT(showFuncEditor()));
-    actnFuncCustomTable = A_(tr("Create Custom Table Function"), _calculations, SLOT(funcCustomTable()));
+    actnFuncCustomCode = A_(tr("Open Custom Code Window"), this, SLOT(showFuncEditor()), ":/toolbar/python_framed");
+    actnFuncCustomTable = A_(tr("Create Custom Table Function"), _calculations, SLOT(funcCustomTable()), ":/toolbar/table_py");
 #endif
 
     actnToolsCustomElems = A_(tr("Custom Elements Library"), this, SLOT(showCustomElems()), ":/toolbar/catalog");
@@ -231,7 +231,7 @@ void ProjectWindow::createMenuBar()
           actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic,
           actnFuncBeamParamsAtElems, nullptr, actnFuncRepRate, nullptr,
         #ifdef Z_USE_PYTHON
-          actnFuncCustomInfo, actnFuncCustomTable
+          actnFuncCustomCode, actnFuncCustomTable
         #endif
         });
 
@@ -580,7 +580,7 @@ void ProjectWindow::showMemosWindow()
 
 void ProjectWindow::showFuncEditor()
 {
-    _mdiArea->appendChild(FuncEditorWindow::create(schema()));
+    _mdiArea->appendChild(FuncEditorWindow::create(schema(), "_generic_empty"));
     schema()->markModified("Custom func added");
 }
 

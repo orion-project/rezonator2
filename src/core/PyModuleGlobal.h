@@ -89,6 +89,12 @@ PyObject* plane_str(PyObject* Py_UNUSED(self), PyObject* arg)
     return nullptr;
 }
 
+PyObject* version(PyObject* Py_UNUSED(self), PyObject* Py_UNUSED(args))
+{
+    auto ver = Z::Strs::appVersion().toUtf8();
+    return PyUnicode_FromString(ver.constData());
+}
+
 } // Methods
 
 int on_exec(PyObject *module)
@@ -112,6 +118,7 @@ PyMethodDef methods[] = {
     { "format", (PyCFunction)Methods::format, METH_O, "Format value into user display string" },
     { "plane_str", (PyCFunction)Methods::plane_str, METH_VARARGS, "Return work plane name" },
     { "print", (PyCFunction)Methods::print, METH_VARARGS | METH_KEYWORDS, "Print message" },
+    { "version", (PyCFunction)Methods::version, METH_NOARGS, "Return application version" },
     { NULL, NULL, 0, NULL }
 };
 
