@@ -9,7 +9,7 @@ bin/rezonator.exe
 bin/rezonator.qch
 bin/rezonator.qhc
 bin/assistant*
-bin/Lib*
+bin/python*
 bin/*.dll
 *.autosave
 *.user*

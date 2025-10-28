@@ -18,6 +18,9 @@
         },
         {
           "text": "Fix: crash when global parameter is deleted that is an argument of stability function"
+        },
+        {
+          "text": "Fix: texts entered by user (labels, etc.) can produce unparsable json file"
         }
       ]
     },

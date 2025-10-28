@@ -18,7 +18,6 @@ public:
     SchemaWriterJson(Schema *schema) : _schema(schema) {}
 
     void writeToFile(const QString& fileName);
-    QString writeToString();
 
     const Z::Report& report() const { return _report; }
 

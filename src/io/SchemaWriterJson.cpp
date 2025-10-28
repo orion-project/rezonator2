@@ -20,18 +20,6 @@ using namespace Z::IO::Json;
 
 void SchemaWriterJson::writeToFile(const QString &fileName)
 {
-    auto text = writeToString();
-    QFile file(fileName);
-    if (!file.open(QFile::WriteOnly | QFile::Text))
-        return _report.error(qApp->translate("IO",
-            "Unable to open file for writing: %1").arg(file.errorString()));
-    QTextStream stream(&file);
-    stream << text;
-    file.close();
-}
-
-QString SchemaWriterJson::writeToString()
-{
     QJsonObject root;
     root[JSON_KEY_VERSION] = Z::IO::Json::currentVersion().str();
 
@@ -44,8 +32,13 @@ QString SchemaWriterJson::writeToString()
     writeWindows(root);
     writeMemos(root);
 
-    QJsonDocument doc(root);
-    return doc.toJson();
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly | QFile::Text))
+        return _report.error(qApp->translate("IO",
+            "Unable to open file for writing: %1").arg(file.errorString()));
+    
+    file.write(QJsonDocument(root).toJson());
+    file.close();
 }
 
 void SchemaWriterJson::writeGeneral(QJsonObject& root)

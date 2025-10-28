@@ -321,15 +321,13 @@ void ExamplesDialog::editExampleDescr()
         }
         if (changed)
         {
-            QJsonDocument doc(root);
             QFile file(examplePath(fileName));
             if (!file.open(QFile::WriteOnly | QFile::Text | QFile::ExistingOnly))
             {
                 qWarning() << "Unable to open file for writing" << fileName << file.errorString();
                 return;
             }
-            QTextStream stream(&file);
-            stream << doc.toJson();
+            file.write(QJsonDocument(root).toJson());
             file.close();
             qDebug() << "Saved" << fileName;
             loadExamples();
