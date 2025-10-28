@@ -84,3 +84,22 @@ double BeamCalculator::halfAngle()
     }
     return qQNaN();
 }
+
+Z::Matrix BeamCalculator::matrix() const
+{
+    return _rt ? _rt->M(_ts) : Z::Matrix();
+}
+
+double BeamCalculator::stability_normal() const
+{
+    if (!_rt)
+        return qQNaN();
+    return _rt->stability(_ts, Z::Enums::StabilityCalcMode::Normal);
+}
+
+double BeamCalculator::stability_squared() const
+{
+    if (!_rt)
+        return qQNaN();
+    return _rt->stability(_ts, Z::Enums::StabilityCalcMode::Squared);
+}

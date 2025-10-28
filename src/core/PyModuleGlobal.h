@@ -35,16 +35,20 @@ PyObject* print(PyObject* Py_UNUSED(self), PyObject* args, PyObject *kwargs)
         if (!arg)
             return nullptr;
         if (PyUnicode_Check(arg))
+            // __repr__ gives a string surrounded with quotes here,
+            // which is undesirable so do manually
             parts << QString::fromUtf8(PyUnicode_AsUTF8(arg));
-        else if (PyLong_Check(arg))
-            parts << QString::number(PyLong_AsLong(arg));
-        else if (PyFloat_Check(arg))
-            parts << QString::number(PyFloat_AsDouble(arg), 'g', 12);
-        else if (Py_IsNone(arg))
-            parts << QStringLiteral("None");
-        else {
-            PyErr_SetQString(PyExc_TypeError, QString("unsupporter type of argument %1").arg(i));
-            return nullptr;
+        else
+        {
+            // Try to get string representation using __repr__
+            auto repr = PyObject_Repr(arg);
+            if (repr) {
+                parts << QString::fromUtf8(PyUnicode_AsUTF8(repr));
+                Py_DECREF(repr);
+            } else {
+                PyErr_SetQString(PyExc_TypeError, QString("unsupported type of argument %1").arg(i));
+                return nullptr;
+            }
         }
     }
     bool spaced = true;

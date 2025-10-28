@@ -139,6 +139,89 @@ PyObject* make(::Element *elem)
 } // namespace Element 
 
 //------------------------------------------------------------------------------
+//                                 Matrix
+//------------------------------------------------------------------------------
+
+namespace Matrix {
+
+struct Matrix {
+    PyObject_HEAD
+    Z::Matrix matrix;
+};
+
+PyObject* ctor(PyTypeObject* Py_UNUSED(type), PyObject* Py_UNUSED(args), PyObject* Py_UNUSED(kwargs))
+{
+    PyErr_SetString(SchemaError, "direct creation of Matrix objects is not allowed");
+    return nullptr;
+}
+
+PyObject* A(Matrix *self, PyObject *Py_UNUSED(args))
+{
+    if (Z::isReal(self->matrix.A))
+        return PyFloat_FromDouble(self->matrix.A.real());
+    return PyComplex_FromDoubles(self->matrix.A.real(), self->matrix.A.imag());
+}
+
+PyObject* B(Matrix *self, PyObject *Py_UNUSED(args))
+{
+    if (Z::isReal(self->matrix.B))
+        return PyFloat_FromDouble(self->matrix.B.real());
+    return PyComplex_FromDoubles(self->matrix.B.real(), self->matrix.B.imag());
+}
+
+PyObject* C(Matrix *self, PyObject *Py_UNUSED(args))
+{
+    if (Z::isReal(self->matrix.C))
+        return PyFloat_FromDouble(self->matrix.C.real());
+    return PyComplex_FromDoubles(self->matrix.C.real(), self->matrix.C.imag());
+}
+
+PyObject* D(Matrix *self, PyObject *Py_UNUSED(args))
+{
+    if (Z::isReal(self->matrix.D))
+        return PyFloat_FromDouble(self->matrix.D.real());
+    return PyComplex_FromDoubles(self->matrix.D.real(), self->matrix.D.imag());
+}
+
+PyObject* str_repr(Matrix *self)
+{
+    auto s = self->matrix.str().toUtf8();
+    return PyUnicode_FromString(s.constData());
+}
+
+PyGetSetDef getset[] = {
+    GETTER(A, "Matrix element A"),
+    GETTER(B, "Matrix element B"),
+    GETTER(C, "Matrix element C"),
+    GETTER(D, "Matrix element D"),
+    { NULL }
+};
+
+PyTypeObject type = {
+    .ob_base = PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "schema.Matrix",
+    .tp_basicsize = sizeof(Matrix),
+    .tp_itemsize = 0,
+    .tp_repr = (reprfunc)str_repr,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_doc = PyDoc_STR("ABCD ray matrix"),
+    .tp_getset = getset,
+    .tp_new = ctor,
+};
+
+PyObject* make(const Z::Matrix& matrix)
+{
+    CHECK_TYPE_READY
+    auto obj = type.tp_alloc(&type, 0);
+    if (obj) {
+        ((Matrix*)obj)->matrix = matrix;
+    }
+    return obj;
+}
+
+} // namespace Matrix
+
+//------------------------------------------------------------------------------
 //                               RoundTrip
 //------------------------------------------------------------------------------
 
@@ -188,6 +271,27 @@ PyObject* half_angle(RoundTrip* self, PyObject* Py_UNUSED(arg))
     return PyFloat_FromDouble(self->calc->halfAngle());
 }
 
+PyObject* matrix(RoundTrip* self, PyObject* Py_UNUSED(args))
+{
+    return Matrix::make(self->calc->matrix());
+}
+
+PyObject* stabil_nor(RoundTrip* self, PyObject* Py_UNUSED(args))
+{
+    auto s = self->calc->stability_normal();
+    if (qIsNaN(s))
+        Py_RETURN_NONE;
+    return PyFloat_FromDouble(s);
+}
+
+PyObject* stabil_sqr(RoundTrip* self, PyObject* Py_UNUSED(args))
+{
+    auto s = self->calc->stability_squared();
+    if (qIsNaN(s))
+        Py_RETURN_NONE;
+    return PyFloat_FromDouble(s);
+}
+
 PyMethodDef methods[] = {
     { "beam_radius", (PyCFunction)beam_radius, METH_NOARGS, "Calculate beam radius (in m)" },
     { "front_radius", (PyCFunction)front_radius, METH_NOARGS, "Calculate wavefront radius (in m)" },
@@ -204,6 +308,9 @@ PyMethodDef methods[] = {
 PyGetSetDef getset[] = {
     GETTER(plane, "Work plane (one of Z.PLANE_T or Z.PLANE_S)"),
     GETTER(ior, "Current index of refraction used for beam parameters calculation"),
+    GETTER(matrix, "Round-trip matrix"),
+    GETTER(stabil_nor, "Stability parameter (normal mode): P = (A + D)/2"),
+    GETTER(stabil_sqr, "Stability parameter (squared mode): P = 1 - ((A + D)/2)^2"),
     { NULL }
 };
 
@@ -361,6 +468,7 @@ int on_exec(PyObject *module)
         STOP_MODULE_INIT
     
     ADD_TYPE(Element)
+    ADD_TYPE(Matrix)
     ADD_TYPE(RoundTrip)
 
     qDebug() << "schema module executed";
@@ -403,4 +511,7 @@ PyObject* init()
 
 } // namespace PyModules::Schema
 
+#undef CHECK_
+#undef CHECK_I
+#undef CHECK_SCHEMA
 #endif // PY_MODULE_SCHEMA_H

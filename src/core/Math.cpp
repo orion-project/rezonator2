@@ -42,7 +42,11 @@ void Matrix::operator *= (const Matrix *m)
 
 QString Matrix::str() const
 {
-    return QString("[A=%1; B=%2; C=%3; D=%4]").arg(Z::str(A), Z::str(B), Z::str(C), Z::str(D));
+    QString a = Z::isReal(A) ? Z::str(A.real()) : Z::str(A);
+    QString b = Z::isReal(B) ? Z::str(B.real()) : Z::str(B);
+    QString c = Z::isReal(C) ? Z::str(C.real()) : Z::str(C);
+    QString d = Z::isReal(D) ? Z::str(D.real()) : Z::str(D);
+    return QString("[A=%1; B=%2; C=%3; D=%4]").arg(a, b, c, d);
 }
 
 Complex Matrix::multComplexBeam(const Complex& c) const

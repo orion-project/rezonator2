@@ -28,7 +28,10 @@ public:
     bool ok() const { return _error.isEmpty(); }
     QString error() const { return _error; }
     
-    const PumpCalculator* pumpCalc() const { return _pump; };
+    Z::Matrix matrix() const;
+    double stability_normal() const;
+    double stability_squared() const;
+    PumpCalculator* pumpCalc() const { return _pump; };
     
 private:
     Schema *_schema;
