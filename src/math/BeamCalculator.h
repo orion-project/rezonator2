@@ -32,6 +32,7 @@ public:
     
 private:
     Schema *_schema;
+    Element *_ref;
     QString _error;
     Z::WorkPlane _ts = Z::T;
     PumpCalculator *_pump = nullptr;

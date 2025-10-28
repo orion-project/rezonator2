@@ -150,6 +150,7 @@ set(PROJECT_SOURCES
     src/math/tinyexpr.h src/math/tinyexpr.c
     src/tests/test_AbcdCalculator.cpp
     src/tests/test_Adjuster.cpp
+    src/tests/test_BeamCalculator.cpp
     src/tests/test_Element.cpp
     src/tests/test_ElementEventsLocker.cpp
     src/tests/test_ElementFilter.cpp
@@ -158,6 +159,7 @@ set(PROJECT_SOURCES
     src/tests/test_ElementsImages.cpp
     src/tests/test_ElemSelectorWidget.cpp
     src/tests/test_Formula.cpp
+    src/tests/test_FunctionUtils.cpp
     src/tests/test_GaussCalculator.cpp
     src/tests/test_GrinCalculator.cpp
     src/tests/test_InfoFunctions.cpp

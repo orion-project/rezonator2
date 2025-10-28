@@ -171,7 +171,7 @@
     "trip_type": "SW",
     "windows": [
         {
-            "code": "'''reZonator demos'''\n\nimport rezonator as Z\nimport schema\n\ndef calculate():\n  Z.print('**** Global constants')\n  Z.print(f'PI = {Z.PI}, C = {Z.C}m/s')\n\n  Z.print('\\n**** Schema parameteres')\n  wl = schema.wavelength()\n  p1 = schema.param(\"P1\")\n  Z.print(f'Wavelen = {wl*1e9}nm, P1 = {p1}')\n  \n  Z.print('\\n**** Schema element')\n  e = show_elem(schema.elem('Cr')) # can get element by label\n  e = show_elem(schema.elem(2)) # can get element by number\n\ndef show_elem(e):\n  Z.print('Element ', e.label, ':', spaced=False)\n  Z.print('  length:', e.length, 'm')\n  Z.print('  optical:', e.optical_length, 'm')\n  Z.print('  axial:', e.axis_length, 'm')\n  Z.print('  ior:', e.ior)\n",
+            "code": "'''reZonator demos'''\n\nimport rezonator as Z\nimport schema\n\ndef calculate():\n  Z.print('**** Global constants')\n  Z.print(f'PI = {Z.PI}, C = {Z.C}m/s')\n\n  Z.print('\\n**** Schema parameteres')\n  wl = schema.wavelength()\n  p1 = schema.param(\"P1\")\n  Z.print(f'Wavelen = {wl*1e9}nm, P1 = {p1}')\n  \n  Z.print('\\n**** Schema element')\n  e = show_elem(schema.elem('Cr')) # can get element by label\n  e = show_elem(schema.elem(2)) # can get element by number\n\ndef show_elem(e):\n  Z.print('Element ', e.label, ':', spaced=False)\n  Z.print('  length:', e.length, 'm')\n  Z.print('  optical:', e.optical_path, 'm')\n  Z.print('  axial:', e.axial_length, 'm')\n  Z.print('  ior:', e.ior)\n",
             "title": "reZonator demos",
             "type": "FuncEditor"
         },
@@ -191,7 +191,7 @@
             "type": "FuncEditor"
         },
         {
-            "code": "'''\nRound-trip matrix\n\nA custom implementation of the standard builtin function \"Round-Trip Matrix\"\n'''\n\nimport rezonator as Z\nimport schema\n\ndef calculate():\n  ref_index = 7\n  ref_elem = schema.elem(ref_index)\n  Z.print('Ref:', ref_elem.label)\n  \n  if ref_elem.length is not None:\n    ref_elem.set_offset(ref_elem.length/2.0)\n    Z.print('Offset inside:', ref_elem.offset, 'm')\n\n  rt_t = schema.round_trip(ref=ref_index, split_range=True, plane=Z.PLANE_T)\n  rt_s = schema.round_trip(ref=ref_index, split_range=True, plane=Z.PLANE_S)\n  Z.print('Mt:', rt_t.matrix())\n  Z.print('Ms:', rt_s.matrix())\n  Z.print('Pt (normal):', rt_t.stabil_nor())\n  Z.print('Ps (normal):', rt_s.stabil_nor())\n  Z.print('Pt (squared):', rt_t.stabil_sqr())\n  Z.print('Ps (squared):', rt_s.stabil_sqr())\n  ",
+            "code": "'''\nRound-trip matrix\n\nA custom implementation of the standard builtin function \"Round-Trip Matrix\"\n'''\n\nimport rezonator as Z\nimport schema\n\ndef calculate():\n  ref_index = 4\n  ref_elem = schema.elem(ref_index)\n  Z.print('Ref:', ref_elem.label)\n  \n  if ref_elem.length is not None:\n    ref_elem.offset = ref_elem.length / 2.0\n    Z.print('Offset inside:', ref_elem.offset * 1000, 'mm')\n\n  rt_t = schema.round_trip(ref=ref_index, split_range=True, plane=Z.PLANE_T)\n  rt_s = schema.round_trip(ref=ref_index, split_range=True, plane=Z.PLANE_S)\n  Z.print('Mt:', rt_t.matrix)\n  Z.print('Ms:', rt_s.matrix)\n  Z.print('Pt (normal):', rt_t.stabil_nor)\n  Z.print('Ps (normal):', rt_s.stabil_nor)\n  Z.print('Pt (squared):', rt_t.stabil_sqr)\n  Z.print('Ps (squared):', rt_s.stabil_sqr)\n  ",
             "title": "Round-trip matrix",
             "type": "FuncEditor"
         }

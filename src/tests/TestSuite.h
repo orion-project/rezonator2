@@ -27,6 +27,8 @@ USE_GROUP(GaussCalculatorTests)                    // test_GaussCalculator.cpp
 USE_GROUP(GrinCalculatorTests)                     // test_GrinCalculator.cpp
 USE_GROUP(PumpCalculatorTests)                     // test_PumpCalculator.cpp
 USE_GROUP(AbcdCalculatorTests)                     // test_AbcdCalculator.cpp
+USE_GROUP(BeamCalculatorTests)                     // test_BeamCalculator.cpp
+USE_GROUP(FunctionUtilsTests)                      // test_FunctionUtils.cpp
 USE_GROUP(InfoFunctionsTests)                      // test_InfoFunctions.cpp
 USE_GROUP(PlotFunctionsTests)                      // test_PlotFunctions.cpp
 USE_GROUP(TableFunctionTests)                      // test_TableFunction.cpp
@@ -63,6 +65,8 @@ TEST_SUITE(
     ADD_GROUP(GrinCalculatorTests),
     ADD_GROUP(PumpCalculatorTests),
     ADD_GROUP(AbcdCalculatorTests),
+    ADD_GROUP(BeamCalculatorTests),
+    ADD_GROUP(FunctionUtilsTests),
     ADD_GROUP(InfoFunctionsTests),
     ADD_GROUP(PlotFunctionsTests),
     ADD_GROUP(TableFunctionTests),

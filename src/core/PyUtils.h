@@ -25,6 +25,7 @@
     if (PyModule_AddIntConstant(module, name, value) < 0) STOP_MODULE_INIT;
 
 #define GETTER(name, docstr) { #name, (getter)name, nullptr, docstr }
+#define GETSET(name, docstr) { #name, (getter)name, (setter)set_##name, docstr }
 
 #define CHECK_TYPE_READY \
     if (!type.tp_alloc) { \

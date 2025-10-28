@@ -34,6 +34,7 @@ BeamCalculator::~BeamCalculator()
 void BeamCalculator::calcRoundTrip(Element *ref, bool splitRange, const char *reason)
 {
     if (_rt) delete _rt;
+    _ref = ref;
     _rt = new RoundTripCalculator(_schema, ref);
     _rt->calcRoundTrip(splitRange);
     _rt->multMatrix(reason);
