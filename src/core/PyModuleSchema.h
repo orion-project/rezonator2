@@ -91,6 +91,17 @@ PyObject* offset(Element *self, PyObject *Py_UNUSED(args))
     Py_RETURN_NONE;
 }
 
+PyObject* index(Element *self, PyObject *Py_UNUSED(args))
+{
+    CHECK_SCHEMA
+    auto idx = schema->elements().indexOf(self->elem);
+    if (idx < 0)
+        Py_RETURN_NONE;
+    // For python code elements are numbered 1-based
+    // as they are shown in the elements table
+    return PyLong_FromLong(idx + 1);
+}
+
 int set_offset(Element *self, PyObject *arg, void *closure)
 {
     auto range = Z::Utils::asRange(self->elem);
@@ -107,6 +118,7 @@ int set_offset(Element *self, PyObject *arg, void *closure)
 
 PyGetSetDef getset[] = {
     GETTER(label, "Element's label"),
+    GETTER(index, "Element's index in schema (1-based) or none if not found"),
     GETTER(length, "Length parameter (in m) or none if element is not a range"),
     GETTER(axial_length, "Axial length (in m) or none if element is not a range"),
     GETTER(optical_path, "Optical path (in m) or none if element is not a range"),
@@ -258,26 +270,46 @@ PyObject* ior(RoundTrip *self, PyObject *Py_UNUSED(args))
 
 PyObject* beam_radius(RoundTrip* self, PyObject* Py_UNUSED(arg))
 {
+    // We do calculate round-trip matrix before each call for some beam parameter (size, ROC, angle)
+    // Often this is unnecessary work and such cases are optimized in c++ core (table and plot funcs)
+    // but custom Python code is not for fastest computations but rather for convenience
+    // This excessive multiplications allows for code like
+    //
+    //     rt = schema.round_trip(ref=elem)
+    //
+    //     elem.offset = 0
+    //     w1 = rt.beam_size()
+    //
+    //     elem.offset = elem.length/2
+    //     w2 = rt.beam_size()
+    //
+    // without, we'd have to re-create round-trip after each offse change
+    //
+    self->calc->multMatrix("py.schema.beam_radius()");
     return PyFloat_FromDouble(self->calc->beamRadius());
 }
 
 PyObject* front_radius(RoundTrip* self, PyObject* Py_UNUSED(arg))
 {
+    self->calc->multMatrix("py.schema.front_radius()");
     return PyFloat_FromDouble(self->calc->frontRadius());
 }
 
 PyObject* half_angle(RoundTrip* self, PyObject* Py_UNUSED(arg))
 {
+    self->calc->multMatrix("py.schema.half_angle()");
     return PyFloat_FromDouble(self->calc->halfAngle());
 }
 
 PyObject* matrix(RoundTrip* self, PyObject* Py_UNUSED(args))
 {
+    self->calc->multMatrix("py.schema.matrix()");
     return Matrix::make(self->calc->matrix());
 }
 
 PyObject* stabil_nor(RoundTrip* self, PyObject* Py_UNUSED(args))
 {
+    self->calc->multMatrix("py.schema.stabil_nor()");
     auto s = self->calc->stability_normal();
     if (qIsNaN(s))
         Py_RETURN_NONE;
@@ -286,6 +318,7 @@ PyObject* stabil_nor(RoundTrip* self, PyObject* Py_UNUSED(args))
 
 PyObject* stabil_sqr(RoundTrip* self, PyObject* Py_UNUSED(args))
 {
+    self->calc->multMatrix("py.schema.stabil_sqr()");
     auto s = self->calc->stability_squared();
     if (qIsNaN(s))
         Py_RETURN_NONE;
@@ -427,8 +460,12 @@ PyObject* round_trip(PyObject *Py_UNUSED(self), PyObject *Py_UNUSED(args), PyObj
             auto label = QString::fromUtf8(PyUnicode_AsUTF8(arg));
             refElem = schema->element(label);
             CHECK_(refElem, KeyError, "reference element not found")
+        } else if (PyObject_TypeCheck(arg, &Element::type)) {
+            refElem = ((Element::Element*)arg)->elem;
+            CHECK_(refElem, ValueError, "element reference is null")
+            CHECK_(schema->elements().contains(refElem), ValueError, "reference element not found")
         } else {
-            CHECK_(false, TypeError, "wrong type of the 'ref' arg, integer or string expected");
+            CHECK_(false, TypeError, "wrong type of the 'ref' arg, integer, string, or Element expected");
         }
     }
     if (auto arg = PyDict_GetItemString(kwargs, "plane"); arg) {
@@ -438,8 +475,8 @@ PyObject* round_trip(PyObject *Py_UNUSED(self), PyObject *Py_UNUSED(args), PyObj
             "unexpected value of the 'plane' arg, expected one of Z.PLANE_T or Z.PLANE_S")
         workPlane = (Z::WorkPlane)plane;
     }
-    if (auto arg = PyDict_GetItemString(kwargs, "split_range"); arg) {
-        CHECK_(PyBool_Check(arg), TypeError, "wrong type of the 'split_range' arg, bool expected")
+    if (auto arg = PyDict_GetItemString(kwargs, "inside"); arg) {
+        CHECK_(PyBool_Check(arg), TypeError, "wrong type of the 'inside' arg, bool expected")
         splitRange = Py_IsTrue(arg);
     }
     if (!refElem)

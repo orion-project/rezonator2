@@ -21,6 +21,7 @@ public:
     double ior() const { return _ior; }
     void setIor(double ior) { _ior = ior; }
 
+    void multMatrix(const char *reason);
     double beamRadius();
     double frontRadius();
     double halfAngle();

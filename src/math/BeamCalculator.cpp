@@ -40,14 +40,24 @@ void BeamCalculator::calcRoundTrip(Element *ref, bool splitRange, const char *re
     _rt->multMatrix(reason);
 }
 
+void BeamCalculator::multMatrix(const char *reason)
+{
+    if (!_rt) {
+        qWarning() << "BeamCalculator: round-trip is not calculated";
+        return;
+    }
+    _rt->multMatrix(reason);
+}
+
+#define CHECK_RT \
+    if (!_rt) { \
+        return qQNaN(); \
+        qWarning() << "BeamCalculator: round-trip is not calculated"; \
+    }
+
 double BeamCalculator::beamRadius()
 {
-    if (!_rt)
-        return qQNaN();
-    if (_pump) {
-        BeamResult r = _pump->calc(_ts, _rt->M(_ts), _ior);
-        return r.beamRadius;
-    }
+    CHECK_RT
     if (_abcd) {
         Z::PointTS r = _abcd->beamRadius(_rt->Mt(), _rt->Ms(), _ior);
         return r[_ts];
@@ -57,8 +67,7 @@ double BeamCalculator::beamRadius()
 
 double BeamCalculator::frontRadius()
 {
-    if (!_rt)
-        return qQNaN();
+    CHECK_RT
     if (_pump) {
         BeamResult r = _pump->calc(_ts, _rt->M(_ts), _ior);
         return r.frontRadius;
@@ -72,8 +81,7 @@ double BeamCalculator::frontRadius()
 
 double BeamCalculator::halfAngle()
 {
-    if (!_rt)
-        return qQNaN();
+    CHECK_RT
     if (_pump) {
         BeamResult r = _pump->calc(_ts, _rt->M(_ts), _ior);
         return r.halfAngle;
@@ -87,19 +95,21 @@ double BeamCalculator::halfAngle()
 
 Z::Matrix BeamCalculator::matrix() const
 {
-    return _rt ? _rt->M(_ts) : Z::Matrix();
+    if (!_rt) {
+        qWarning() << "BeamCalculator: round-trip is not calculated";
+        return Z::Matrix();
+    }
+    return _rt->M(_ts);
 }
 
 double BeamCalculator::stability_normal() const
 {
-    if (!_rt)
-        return qQNaN();
+    CHECK_RT
     return _rt->stability(_ts, Z::Enums::StabilityCalcMode::Normal);
 }
 
 double BeamCalculator::stability_squared() const
 {
-    if (!_rt)
-        return qQNaN();
+    CHECK_RT
     return _rt->stability(_ts, Z::Enums::StabilityCalcMode::Squared);
 }

@@ -38,6 +38,8 @@ PyObject* print(PyObject* Py_UNUSED(self), PyObject* args, PyObject *kwargs)
             // __repr__ gives a string surrounded with quotes here,
             // which is undesirable so do manually
             parts << QString::fromUtf8(PyUnicode_AsUTF8(arg));
+        else if (PyFloat_Check(arg))
+            parts << Z::format(PyFloat_AsDouble(arg));
         else
         {
             // Try to get string representation using __repr__
@@ -67,11 +69,15 @@ PyObject* print(PyObject* Py_UNUSED(self), PyObject* args, PyObject *kwargs)
 
 PyObject* format(PyObject* Py_UNUSED(self), PyObject* arg)
 {
-    if (!PyFloat_Check(arg)) {
-        PyErr_SetString(PyExc_TypeError, "unsupported argument type, float expected");
+    double v;
+    if (PyFloat_Check(arg))
+        v = PyFloat_AsDouble(arg);
+    else if (PyLong_Check(arg))
+        v = PyLong_AsLong(arg);
+    else {
+        PyErr_SetString(PyExc_TypeError, "unsupported argument type, number expected");
         return nullptr;
     }
-    auto v = PyFloat_AsDouble(arg);
     auto s = Z::format(v).toUtf8();
     return PyUnicode_FromString(s.constData());
 }
