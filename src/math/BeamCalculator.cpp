@@ -49,6 +49,20 @@ void BeamCalculator::multMatrix(const char *reason)
     _rt->multMatrix(reason);
 }
 
+BeamResult BeamCalculator::calc()
+{
+    if (!_rt) {
+        return { qQNaN(), qQNaN(), qQNaN() };
+        qWarning() << "BeamCalculator: round-trip is not calculated";
+    }
+    if (_pump)
+        return _pump->calc(_ts, _rt->M(_ts), _ior);
+    if (_abcd)
+        return _abcd->calc(_rt->M(_ts), _ior);
+    qWarning() << "BeamCalculator::calc: neither pump or abcd calc inited";
+    return { qQNaN(), qQNaN(), qQNaN() };
+}
+    
 #define CHECK_RT \
     if (!_rt) { \
         return qQNaN(); \
@@ -58,38 +72,33 @@ void BeamCalculator::multMatrix(const char *reason)
 double BeamCalculator::beamRadius()
 {
     CHECK_RT
-    if (_abcd) {
-        Z::PointTS r = _abcd->beamRadius(_rt->Mt(), _rt->Ms(), _ior);
-        return r[_ts];
-    }
+    if (_pump)
+        return _pump->calc(_ts, _rt->M(_ts), _ior).beamRadius;
+    if (_abcd)
+        return _abcd->beamRadius(_rt->M(_ts), _ior);
+    qWarning() << "BeamCalculator::beamRadius: neither pump or abcd calc inited";
     return qQNaN();
 }
 
 double BeamCalculator::frontRadius()
 {
     CHECK_RT
-    if (_pump) {
-        BeamResult r = _pump->calc(_ts, _rt->M(_ts), _ior);
-        return r.frontRadius;
-    }
-    if (_abcd) {
-        Z::PointTS r = _abcd->frontRadius(_rt->Mt(), _rt->Ms(), _ior);
-        return r[_ts];
-    }
+    if (_pump)
+        return _pump->calc(_ts, _rt->M(_ts), _ior).frontRadius;
+    if (_abcd)
+        return _abcd->frontRadius(_rt->M(_ts), _ior);
+    qWarning() << "BeamCalculator::frontRadius: neither pump or abcd calc inited";
     return qQNaN();
 }
 
 double BeamCalculator::halfAngle()
 {
     CHECK_RT
-    if (_pump) {
-        BeamResult r = _pump->calc(_ts, _rt->M(_ts), _ior);
-        return r.halfAngle;
-    }
-    if (_abcd) {
-        Z::PointTS r = _abcd->halfAngle(_rt->Mt(), _rt->Ms(), _ior);
-        return r[_ts];
-    }
+    if (_pump)
+        return _pump->calc(_ts, _rt->M(_ts), _ior).halfAngle;
+    if (_abcd)
+        return _abcd->halfAngle(_rt->M(_ts), _ior);
+    qWarning() << "BeamCalculator::halfAngle: neither pump or abcd calc inited";
     return qQNaN();
 }
 

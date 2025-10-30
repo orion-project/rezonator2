@@ -206,4 +206,11 @@ private:
 
 } // namespace Z
 
+struct BeamResult
+{
+    double beamRadius; ///< Beam radius.
+    double frontRadius; ///< Wavefront ROC.
+    double halfAngle; ///< Half of divergence angle.
+};
+
 #endif // VALUES_H

@@ -47,6 +47,15 @@ double AbcdCalculator::halfAngle(const Z::Matrix& m, double ior) const
     //return Z::isReal(v) ? v.real() : (Z::isImag(v) ? v.imag() : Double::nan());
 }
 
+BeamResult AbcdCalculator::calc(const Z::Matrix &m, double ior) const
+{
+    return {
+        .beamRadius = beamRadius(m, ior),
+        .frontRadius = frontRadius(m, ior),
+        .halfAngle = halfAngle(m, ior),
+    };
+}
+
 Z::PointTS AbcdCalculator::beamRadius(const Z::Matrix& mt, const Z::Matrix& ms, double ior) const
 {
     return { beamRadius(mt, ior), beamRadius(ms, ior) };

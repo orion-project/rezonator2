@@ -44,18 +44,14 @@ QVector<Z::PointTS> BeamParamsAtElemsFunction::calculateInternal(const ResultEle
     Q_UNUSED(resultElem);
 
     _beamCalc->setPlane(Z::T);
-    auto beamRadiusT = _beamCalc->beamRadius();
-    auto frontRadiusT = _beamCalc->frontRadius();
-    auto halfAngleT = _beamCalc->halfAngle();
+    BeamResult beamT = _beamCalc->calc();
 
     _beamCalc->setPlane(Z::S);
-    auto beamRadiusS = _beamCalc->beamRadius();
-    auto frontRadiusS = _beamCalc->frontRadius();
-    auto halfAngleS = _beamCalc->halfAngle();
+    BeamResult beamS = _beamCalc->calc();
 
     return {
-        Z::PointTS(beamRadiusT, beamRadiusS),
-        Z::PointTS(frontRadiusT, frontRadiusS),
-        Z::PointTS(halfAngleT, halfAngleS),
+        Z::PointTS(beamT.beamRadius, beamS.beamRadius),
+        Z::PointTS(beamT.frontRadius, beamS.frontRadius),
+        Z::PointTS(beamT.halfAngle, beamS.halfAngle),
     };
 }

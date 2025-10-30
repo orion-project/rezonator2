@@ -301,6 +301,13 @@ PyObject* half_angle(RoundTrip* self, PyObject* Py_UNUSED(arg))
     return PyFloat_FromDouble(self->calc->halfAngle());
 }
 
+PyObject* beam(RoundTrip* self, PyObject* Py_UNUSED(arg))
+{
+    self->calc->multMatrix("py.schema.beam()");
+    auto result = self->calc->calc();
+    return Py_BuildValue("(ddd)", result.beamRadius, result.frontRadius, result.halfAngle);
+}
+
 PyObject* matrix(RoundTrip* self, PyObject* Py_UNUSED(args))
 {
     self->calc->multMatrix("py.schema.matrix()");
@@ -329,6 +336,7 @@ PyMethodDef methods[] = {
     { "beam_radius", (PyCFunction)beam_radius, METH_NOARGS, "Calculate beam radius (in m)" },
     { "front_radius", (PyCFunction)front_radius, METH_NOARGS, "Calculate wavefront radius (in m)" },
     { "half_angle", (PyCFunction)half_angle, METH_NOARGS, "Calculate half of divergence angle in the far-field (in rad)" },
+    { "beam", (PyCFunction)beam, METH_NOARGS, "Calculate beam parameters and return as tuple (beam_radius, front_radius, half_angle) in m, m, rad" },
     { NULL }
 };
 

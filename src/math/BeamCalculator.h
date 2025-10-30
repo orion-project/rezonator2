@@ -25,6 +25,7 @@ public:
     double beamRadius();
     double frontRadius();
     double halfAngle();
+    BeamResult calc();
     
     bool ok() const { return _error.isEmpty(); }
     QString error() const { return _error; }

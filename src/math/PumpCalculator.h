@@ -10,13 +10,6 @@ namespace Z {
 class Matrix;
 }
 
-struct BeamResult
-{
-    double beamRadius; ///< Beam rdius.
-    double frontRadius; ///< Wavefront ROC.
-    double halfAngle; ///< Half of divergence angle.
-};
-
 class PumpCalculator final
 {
 public:
