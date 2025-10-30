@@ -34,10 +34,11 @@ public:
     double stability_normal() const;
     double stability_squared() const;
     PumpCalculator* pumpCalc() const { return _pump; };
+    Element* ref() const { return _ref; }
     
 private:
     Schema *_schema;
-    Element *_ref;
+    Element *_ref = nullptr;
     QString _error;
     Z::WorkPlane _ts = Z::T;
     PumpCalculator *_pump = nullptr;

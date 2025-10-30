@@ -35,8 +35,9 @@ protected:
     void runCode() override;
 
 private:
-    explicit FuncEditorWindow(Schema*);
+    QString _moduleName;
 
+    explicit FuncEditorWindow(Schema*);
 };
 
 #endif // FUNC_EDITOR_WINDOW_H

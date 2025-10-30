@@ -24,6 +24,9 @@ public:
     QString code;
     /// Top level functions, expected to exists in the code module
     QVector<QString> funcNames;
+    /// A name of python module should be dfferent for different custom functions
+    /// Otherwise they will see objects defined in another custom functions
+    QString moduleName;
     /// Implementation of Z.print() function
     std::function<void(const QString&)> printFunc;
     
@@ -49,10 +52,16 @@ public:
 
     QString errorText() const;
     
+    struct TmpRef
+    {
+        QString id;
+        void *ref;
+    };
+
 private:
     void handleError(const QString& msg, const QString &funcName = QString());
     
-    QVector<void*> _refs;
+    QVector<TmpRef> _refs;
     QMap<QString, void*> _funcRefs;
 };
 

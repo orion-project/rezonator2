@@ -6,14 +6,17 @@
 
 #include <QApplication>
 
-#define FUNC_COLUMNS QStringLiteral("describe_columns")
+#define FUNC_COLUMNS QStringLiteral("columns")
 #define FUNC_CALC QStringLiteral("calculate")
 #define COL_LABEL QStringLiteral("label")
 #define COL_TITLE QStringLiteral("title")
 #define COL_DIM QStringLiteral("dim")
 
+static int __funcCount = 0;
+
 CustomTableFunction::CustomTableFunction(Schema *schema) : TableFunction(schema)
 {
+    _moduleName = QString("customtable%1").arg(++__funcCount);
 }
 
 QVector<Z::PointTS> CustomTableFunction::calculateInternal(const ResultElem &resultElem)
@@ -74,7 +77,8 @@ bool CustomTableFunction::prepare()
     std::shared_ptr<PyRunner> py(new PyRunner);
     py->schema = schema();
     py->code = _code;
-    py->funcNames = { FUNC_COLUMNS, "calculate" };
+    py->moduleName = _moduleName;
+    py->funcNames = { FUNC_COLUMNS, FUNC_CALC };
     py->printFunc = _printFunc;
 
     if (!py->load()) {

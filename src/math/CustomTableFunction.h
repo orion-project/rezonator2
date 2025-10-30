@@ -21,12 +21,12 @@ public:
     bool prepare() override;
     void unprepare() override;
     
+    QString customTitle() const { return _customTitle; }
+    QString moduleName() const { return _moduleName; }
     QStringList errorLog() const { return _errorLog; }
     int errorLine() const { return _errorLine; }
     
     void setPrintFunc(std::function<void(const QString&)> printFunc) { _printFunc = printFunc; }
-    
-    QString customTitle() const { return _customTitle; }
 
 protected:
     QVector<Z::PointTS> calculateInternal(const ResultElem &resultElem) override;
@@ -34,6 +34,7 @@ protected:
 private:
     QString _code;
     QString _customTitle;
+    QString _moduleName;
     QStringList _errorLog;
     int _errorLine;
     std::function<void(const QString&)> _printFunc;

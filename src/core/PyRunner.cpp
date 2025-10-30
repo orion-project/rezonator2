@@ -21,8 +21,6 @@ PyRunner::FuncResult PyRunner::run(const QString&, const Args&, const ResultSpec
 #include <QDir>
 #include <QRegularExpression>
 
-#define MODULE_NAME "rezonator_customfunc"
-
 PyRunner::PyRunner()
 {
     static bool inited = false;
@@ -93,7 +91,13 @@ PyRunner::PyRunner()
 PyRunner::~PyRunner()
 {
     for (int i = _refs.size()-1; i>= 0; i--)
-        Py_DECREF((PyObject*)_refs.at(i));
+    {
+        const auto &r = _refs.at(i);
+        if (Py_REFCNT(r.ref) <= 0)
+            qCritical() << "Try to decref object which is already freed: PyRunner :" << r.id << Py_REFCNT(r.ref);
+        else
+            Py_DECREF(r.ref);
+    }
 
     PyModules::Schema::schema = nullptr;
     PyModules::Global::printFunc = nullptr;
@@ -101,39 +105,73 @@ PyRunner::~PyRunner()
 
 struct TmpRefs
 {
+    TmpRefs(const char *func): func(func) {}
     ~TmpRefs()
     {
         for (int i = refs.size()-1; i>= 0; i--)
-            Py_DECREF(refs.at(i));
+        {
+            const auto &r = refs.at(i);
+            if (Py_REFCNT(r.ref) <= 0)
+                qCritical() << "Try to decref object which is already freed:" << func << ':' << r.id << Py_REFCNT(r.ref);
+            else
+                Py_DECREF(r.ref);
+        }
     }
     
-    void operator << (PyObject *ref) { refs << ref; }
+    void operator << (const PyRunner::TmpRef &ref)
+    {
+        //qDebug() << "Add tmp ref:" << func << ':' << ref.id << Py_REFCNT(ref.ref);
+        refs << ref;
+    }
+    
+    void operator >> (PyObject *ref)
+    {
+        for (int i = 0; i < refs.size(); i++)
+            if (refs.at(i).ref == ref)
+            {
+                //qDebug() << "Rem tmp ref:" << func << ':' << refs.at(i).id << Py_REFCNT(ref);
+                refs.removeAt(i);
+                break;
+            }
+    }
 
-    QVector<PyObject*> refs;
+    const char *func;
+    QVector<PyRunner::TmpRef> refs;
 };
+
+#define TMP_REF(ref) TmpRef{#ref, ref}
 
 bool PyRunner::load()
 {
+    qDebug() << "PyRunner::load BEG" << moduleName;
     if (!errorLog.isEmpty()) return false;
+    
+    if (moduleName.isEmpty()) {
+        handleError("Custom module name is not provided");
+        return false;
+    }
 
     PyModules::Schema::schema = schema;
     PyModules::Global::printFunc = printFunc ? printFunc : [](const QString &s){ qDebug() << s; };
     
     auto bCode = code.toUtf8();
+    auto bModuleName = moduleName.toUtf8();
+    auto szModuleName = bModuleName.constData();
     
-    TmpRefs refs;
+    TmpRefs refs("PyRunner::load");
     
-    auto pOldModule = PyImport_ImportModule(MODULE_NAME);
+    auto pOldModule = PyImport_ImportModule(szModuleName);
     if (!pOldModule) {
         if (PyErr_ExceptionMatches(PyExc_ModuleNotFoundError)) {
             // This is expected, clean the exception
-            refs << PyErr_GetRaisedException();
+            refs << TmpRef{"ModuleNotFoundError", PyErr_GetRaisedException()};
         } else {
             handleError("Failed to find existing module");
             return false;
         }
     } else {
-        refs << pOldModule;
+        qDebug() << "old module found" << pOldModule->ob_refcnt;
+        refs << TMP_REF(pOldModule);
         // Python doesn't replace the whole module when reimports its code
         // It replaces only attributes that exist in the new code
         // If the new code doesn't contain docstring, the old doc is returned
@@ -143,23 +181,23 @@ bool PyRunner::load()
         }
     }
     
-    auto pCompiled = Py_CompileString(bCode.constData(), MODULE_NAME, Py_file_input);
+    auto pCompiled = Py_CompileString(bCode.constData(), szModuleName, Py_file_input);
     if (!pCompiled) {
         handleError("Failed to compile code");
         return false;
     }
-    refs << pCompiled;
+    refs << TMP_REF(pCompiled);
     
-    auto pModule = PyImport_ExecCodeModule(MODULE_NAME, pCompiled);
+    auto pModule = PyImport_ExecCodeModule(szModuleName, pCompiled);
     if (!pModule) {
         handleError("Failed to execute module");
         return false;
     }
-    refs << pModule;
+    refs << TMP_REF(pModule);
     
     auto pDoc = PyObject_GetAttrString(pModule, "__doc__");
     if (pDoc) {
-        refs << pDoc;
+        refs << TMP_REF(pDoc);
 
         if (PyUnicode_Check(pDoc)) {
             auto doc = QString::fromUtf8(PyUnicode_AsUTF8(pDoc));
@@ -177,7 +215,7 @@ bool PyRunner::load()
             handleError("Failed to get function " + funcName);
             return false;
         }
-        _refs << pFunc;
+        _refs << TmpRef{funcName, pFunc};
 
         if (!PyCallable_Check(pFunc)) {
             handleError("The object is not callable: " + funcName);
@@ -186,6 +224,7 @@ bool PyRunner::load()
         _funcRefs.insert(funcName, pFunc);
     }
     
+    qDebug() << "PyRunner::load END";
     return true;
 }
 
@@ -199,14 +238,14 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, co
     }
     auto pFunc = (PyObject*)_funcRefs[funcName];
     
-    TmpRefs refs;
+    TmpRefs refs("PyRunner::run");
 
     auto pArgs = PyTuple_New(args.size());
     if (!pArgs) {
         handleError("Failed to allocate agrs", funcName);
         return {};
     }
-    refs << pArgs;
+    refs << TMP_REF(pArgs);
    
     for (int i = 0; i < args.size(); i++) {
         auto argType = args.at(i).first;
@@ -217,7 +256,7 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, co
             pArg = PyModules::Schema::Element::make(reinterpret_cast<Element*>(argValue));
             break;
         case atRoundTrip:
-            pArg = PyModules::Schema::RoundTrip::make(reinterpret_cast<BeamCalculator*>(argValue));
+            pArg = PyModules::Schema::RoundTrip::make(reinterpret_cast<BeamCalculator*>(argValue), false);
             break;
         }
         if (pArg) {
@@ -236,7 +275,7 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, co
         handleError("Failed to call function", funcName);
         return {};
     }
-    refs << pResult;
+    refs << TMP_REF(pResult);
     
     Records result;
 
@@ -270,7 +309,7 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, co
                 }
             auto pKey = PyUnicode_FromString(k);
             CHECK_(pKey, "failed to convert key to PyObject");
-            refs << pKey;
+            refs << TMP_REF(pKey);
             CHECK_(PyDict_Contains(pItem, pKey), "field not found");
             auto pField = PyDict_GetItemString(pItem, k);
             CHECK_(pField, "failed to get field");
@@ -305,7 +344,7 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, co
 
 void PyRunner::handleError(const QString& msg, const QString &funcName)
 {
-    TmpRefs refs;
+    TmpRefs refs("PyRunner::handleError");
 
     if (funcName.isEmpty())
         errorLog << msg;
@@ -316,7 +355,7 @@ void PyRunner::handleError(const QString& msg, const QString &funcName)
     if (!exc) {
         return;
     }
-    refs << exc;
+    refs << TMP_REF(exc);
         
     auto traceback = PyImport_ImportModule("traceback");
     if (!traceback) {
@@ -324,7 +363,7 @@ void PyRunner::handleError(const QString& msg, const QString &funcName)
         PyErr_Print();
         return;
     }
-    refs << traceback;
+    refs << TMP_REF(traceback);
     
     auto format = PyObject_GetAttrString(traceback, "format_exception");
     if (!format) {
@@ -332,7 +371,7 @@ void PyRunner::handleError(const QString& msg, const QString &funcName)
         PyErr_Print();
         return;
     }
-    refs << format;
+    refs << TMP_REF(format);
     
     auto args = PyTuple_New(1);
     if (!args) {
@@ -340,13 +379,14 @@ void PyRunner::handleError(const QString& msg, const QString &funcName)
         PyErr_Print();
         return;
     }
-    refs << args;
+    refs << TMP_REF(args);
                     
     if (PyTuple_SetItem(args, 0, exc) < 0) {
         errorLog << "Failed to init args for format_exception";
         PyErr_Print();
         return;
     }
+    refs >> exc; // args now handles the ref
 
     auto items = PyObject_CallObject(format, args);
     if (!items) {
@@ -354,7 +394,7 @@ void PyRunner::handleError(const QString& msg, const QString &funcName)
         PyErr_Print();
         return;
     }
-    refs << items;
+    refs << TMP_REF(items);
 
     auto iter = PyObject_GetIter(items);
     if (!iter) {
@@ -362,11 +402,11 @@ void PyRunner::handleError(const QString& msg, const QString &funcName)
         PyErr_Print();
         return;
     }
-    refs << iter;
-    
+    refs << TMP_REF(iter);
+
     auto item = PyIter_Next(iter);
     while (item) {
-        refs << item;
+        refs << TMP_REF(item);
         QString line = QString::fromUtf8(PyUnicode_AsUTF8(item));
         while (line.endsWith('\n') || line.endsWith('\r'))
             line.truncate(line.length()-1);
@@ -374,7 +414,7 @@ void PyRunner::handleError(const QString& msg, const QString &funcName)
             errorLog << line;
             if (errorLine == 0) {
                 static QRegularExpression r(R"(File \"(.+)\",\s+line\s+(\d+))");
-                if (auto m = r.match(line); m.hasMatch() && m.captured(1) == MODULE_NAME)
+                if (auto m = r.match(line); m.hasMatch() && m.captured(1) == moduleName)
                     errorLine = m.captured(2).toInt();
             }
         }

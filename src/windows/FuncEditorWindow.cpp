@@ -17,10 +17,7 @@ namespace FuncEditorWindowStorable
     }
 } // namespace FuncEditorWindowStorable
 
-static QString codeTemplateFile(const QString &templateName)
-{
-    return qApp->applicationDirPath() + "/functions/" + templateName + ".py";
-}
+static int __funcCount = 0;
 
 //------------------------------------------------------------------------------
 //                              FuncEditorWindow
@@ -29,15 +26,16 @@ static QString codeTemplateFile(const QString &templateName)
 FuncEditorWindow* FuncEditorWindow::create(Schema* owner, const QString &codeTemplate)
 {
     auto w = new FuncEditorWindow(owner);
-    
+
     if (!codeTemplate.isEmpty())
-        w->_editor->loadCode(codeTemplateFile(codeTemplate));
+        w->_editor->loadCode(CodeUtils::codeTemplateFile(codeTemplate));
         
     return w;
 }
 
 FuncEditorWindow::FuncEditorWindow(Schema *owner) : CodeEditorWindow(owner)
 {
+    _moduleName = QString("customcode%1").arg(++__funcCount);
 }
 
 void FuncEditorWindow::closeEvent(QCloseEvent* ce)
@@ -72,6 +70,7 @@ void FuncEditorWindow::runCode()
     py.schema = schema();
     py.code = _editor->toPlainText();
     py.funcNames = { FUNC_CALC };
+    py.moduleName = _moduleName;
     py.printFunc = [this](const QString& s){ logInfo(s); };
     
     if (!py.load()) {

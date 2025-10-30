@@ -241,7 +241,8 @@ namespace RoundTrip {
 
 struct RoundTrip {
     PyObject_HEAD
-    BeamCalculator *calc;
+    BeamCalculator* calc;
+    bool ownCalc;
 };
 
 PyObject* ctor(PyTypeObject* Py_UNUSED(type), PyObject* Py_UNUSED(args), PyObject* Py_UNUSED(kwargs))
@@ -252,7 +253,8 @@ PyObject* ctor(PyTypeObject* Py_UNUSED(type), PyObject* Py_UNUSED(args), PyObjec
 
 void dtor(RoundTrip *self)
 {
-    delete self->calc;
+    if (self->ownCalc)
+        delete self->calc;
     Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
@@ -266,6 +268,13 @@ PyObject* ior(RoundTrip *self, PyObject *Py_UNUSED(args))
 {
     return PyFloat_FromDouble(self->calc->ior());
     Py_RETURN_NONE;
+}
+
+PyObject* ref(RoundTrip *self, PyObject *Py_UNUSED(args))
+{
+    if (!self->calc->ref())
+        Py_RETURN_NONE;
+    return Element::make(self->calc->ref());
 }
 
 PyObject* beam_radius(RoundTrip* self, PyObject* Py_UNUSED(arg))
@@ -347,6 +356,7 @@ PyMethodDef methods[] = {
 // };
 
 PyGetSetDef getset[] = {
+    GETTER(ref, "Reference element of the round-trip"),
     GETTER(plane, "Work plane (one of Z.PLANE_T or Z.PLANE_S)"),
     GETTER(ior, "Current index of refraction used for beam parameters calculation"),
     GETTER(matrix, "Round-trip matrix"),
@@ -369,12 +379,13 @@ PyTypeObject type = {
     .tp_new = ctor,
 };
 
-PyObject* make(BeamCalculator* calc)
+PyObject* make(BeamCalculator* calc, bool ownCalc)
 {
     CHECK_TYPE_READY
     auto obj = type.tp_alloc(&type, 0);
     if (obj) {
         ((RoundTrip*)obj)->calc = calc;
+        ((RoundTrip*)obj)->ownCalc = ownCalc;
     }
     return obj;
 }
@@ -492,12 +503,13 @@ PyObject* round_trip(PyObject *Py_UNUSED(self), PyObject *Py_UNUSED(args), PyObj
     auto beamCalc = new BeamCalculator(schema);
     if (!beamCalc->ok()) {
         PyErr_SetQString(PyExc_AssertionError, beamCalc->error());
+        delete beamCalc;
         return nullptr;
     }
     beamCalc->calcRoundTrip(refElem, splitRange, "py.schema.round_trip()");
     beamCalc->setPlane(workPlane);
     beamCalc->setIor(FunctionUtils::ior(schema, refElem, splitRange));
-    return RoundTrip::make(beamCalc);
+    return RoundTrip::make(beamCalc, true);
 }
 
 } // Methods
