@@ -35,6 +35,8 @@ public:
         Hint hint = hintNone;
     };
 
+    /// Detailed indicator of a position where the beam parameters are calculated.
+    /// These values are excessive and mostly serve an illustrative purpose.
     enum class ResultPosition
     {
         ELEMENT,       //   ()
@@ -48,12 +50,24 @@ public:
         IFACE_LEFT,    // ->|
         IFACE_RIGHT,   //   |->
     };
+    
+    /// A position indicator which is necessary and sufficient
+    /// to make a decision about how to calculate round-trip
+    enum class ResultPositionAbs
+    {
+        LEFT,  // LEFT, LEFT_OUTSIDE, IFACE_LEFT
+        BEG,   // LEFT_INSIDE
+        MID,   // MIDDLE
+        END,   // RIGHT_INSIDE
+        RIGHT, // ELEMENT, RIGHT, RIGHT_OUTSIDE, IFACE_RIGHT
+    };
 
     struct ResultPositionInfo
     {
         QString ascii;
         QString tooltip;
-        QString icon_path;
+        QString iconPath;
+        ResultPositionAbs absPos;
     };
 
     static const ResultPositionInfo& resultPositionInfo(ResultPosition pos);

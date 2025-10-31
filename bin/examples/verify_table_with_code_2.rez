@@ -1,0 +1,1303 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 980
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "M1",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+            },
+            "title": "",
+            "type": "ElemFlatMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "d1",
+            "layout_draw_alt": true,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "error": "",
+                    "expr": "3",
+                    "unit": "mm",
+                    "value": 3
+                },
+                "n": {
+                    "error": "",
+                    "expr": "1.5",
+                    "unit": "none",
+                    "value": 1.5
+                }
+            },
+            "title": "",
+            "type": "ElemMediumRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "s1",
+            "layout_draw_alt": false,
+            "layout_show_label": false,
+            "params": {
+                "n1": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 1.5
+                },
+                "n2": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemNormalInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "d2",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "error": "",
+                    "expr": "50",
+                    "unit": "mm",
+                    "value": 50
+                },
+                "n": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": true,
+            "label": "F1",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "Alpha": {
+                    "error": "",
+                    "expr": "0",
+                    "unit": "deg",
+                    "value": 0
+                },
+                "F": {
+                    "error": "",
+                    "expr": "100",
+                    "unit": "mm",
+                    "value": 100
+                }
+            },
+            "title": "",
+            "type": "ElemThinLens"
+        },
+        {
+            "is_disabled": false,
+            "label": "G1",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "Alpha": {
+                    "error": "",
+                    "expr": "20",
+                    "unit": "deg",
+                    "value": 20
+                },
+                "L": {
+                    "error": "",
+                    "expr": "4",
+                    "unit": "mm",
+                    "value": 4
+                },
+                "n": {
+                    "error": "",
+                    "expr": "2",
+                    "unit": "none",
+                    "value": 2
+                }
+            },
+            "title": "",
+            "type": "ElemTiltedPlate"
+        },
+        {
+            "is_disabled": false,
+            "label": "d3",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "error": "",
+                    "expr": "23",
+                    "unit": "mm",
+                    "value": 23
+                },
+                "n": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M2",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "Alpha": {
+                    "error": "",
+                    "expr": "10",
+                    "unit": "deg",
+                    "value": 10
+                },
+                "R": {
+                    "error": "",
+                    "expr": "200",
+                    "unit": "mm",
+                    "value": 200
+                }
+            },
+            "title": "",
+            "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "d4",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "error": "",
+                    "expr": "100",
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "s2",
+            "layout_draw_alt": false,
+            "layout_show_label": false,
+            "params": {
+                "R": {
+                    "error": "",
+                    "expr": "500",
+                    "unit": "mm",
+                    "value": 500
+                },
+                "n1": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 1
+                },
+                "n2": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 2
+                }
+            },
+            "title": "",
+            "type": "ElemSphericalInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "TM1",
+            "layout_draw_alt": true,
+            "layout_show_label": true,
+            "params": {
+                "F": {
+                    "error": "",
+                    "expr": "1",
+                    "unit": "m",
+                    "value": 1
+                },
+                "L": {
+                    "error": "",
+                    "expr": "100",
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "error": "",
+                    "expr": "2",
+                    "unit": "none",
+                    "value": 2
+                }
+            },
+            "title": "",
+            "type": "ElemThermoMedium"
+        },
+        {
+            "is_disabled": false,
+            "label": "M3",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+            },
+            "title": "",
+            "type": "ElemFlatMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "GM1",
+            "layout_draw_alt": true,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "error": "",
+                    "expr": "100",
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "error": "",
+                    "expr": "2",
+                    "unit": "none",
+                    "value": 2
+                },
+                "n2s": {
+                    "error": "",
+                    "expr": "2",
+                    "unit": "inv_m2",
+                    "value": 2
+                },
+                "n2t": {
+                    "error": "",
+                    "expr": "2",
+                    "unit": "inv_m2",
+                    "value": 2
+                }
+            },
+            "title": "",
+            "type": "ElemGrinMedium"
+        },
+        {
+            "is_disabled": false,
+            "label": "s3",
+            "layout_draw_alt": false,
+            "layout_show_label": false,
+            "params": {
+                "n1": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 2
+                },
+                "n2": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemBrewsterInterface"
+        },
+        {
+            "is_disabled": false,
+            "label": "d5",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "error": "",
+                    "expr": "100",
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "GA1",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "Lambda": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "nm",
+                    "value": 980
+                },
+                "alpha2s": {
+                    "error": "",
+                    "expr": "1e5",
+                    "unit": "inv_m2",
+                    "value": 100000
+                },
+                "alpha2t": {
+                    "error": "",
+                    "expr": "1e5",
+                    "unit": "inv_m2",
+                    "value": 100000
+                }
+            },
+            "title": "",
+            "type": "ElemGaussAperture"
+        },
+        {
+            "is_disabled": false,
+            "label": "d6",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "error": "",
+                    "expr": "100",
+                    "unit": "mm",
+                    "value": 100
+                },
+                "n": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M4",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+            },
+            "title": "",
+            "type": "ElemFlatMirror"
+        }
+    ],
+    "formulas": [
+    ],
+    "notes": "Calculates the same beam data as the 'Beam Parameters at Elements' function does but using a custom Table function. This allows for cross-verification of built-in functions and the Python interface for user scripts.",
+    "param_links": [
+    ],
+    "pumps": [
+        {
+            "color": "#555555",
+            "is_active": true,
+            "label": "P1",
+            "mode": "Waist",
+            "params": {
+                "MI": {
+                    "unit": "none",
+                    "value_s": 1,
+                    "value_t": 1
+                },
+                "w_0": {
+                    "unit": "mkm",
+                    "value_s": 100,
+                    "value_t": 100
+                },
+                "z_w": {
+                    "unit": "mm",
+                    "value_s": 100,
+                    "value_t": 100
+                }
+            },
+            "title": ""
+        }
+    ],
+    "schema_version": "2.1",
+    "title": "Beam data via custom function",
+    "trip_type": "SW",
+    "windows": [
+        {
+            "columns": {
+                "R": {
+                    "unit": "cm"
+                },
+                "V": {
+                    "unit": "mrad"
+                },
+                "W": {
+                    "unit": "mkm"
+                }
+            },
+            "function": {
+                "calcEmptySpaces": true,
+                "calcMediumEnds": true,
+                "calcSpaceMids": true
+            },
+            "type": "BeamParamsAtElems",
+            "window": {
+                "ts_mode": "T"
+            }
+        },
+        {
+            "function": {
+                "args": [
+                    {
+                        "element_index": 1,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 0.03
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 3
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 3,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 0.3
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 50
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 5,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 0.0405980383085392
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 4.0598038308539195
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 6,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 0.4
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 23
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 8,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 100
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 10,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 100
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 12,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 100
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 14,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 100
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 16,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 1
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 100
+                            },
+                            "use_step": false
+                        }
+                    }
+                ],
+                "mode": "BeamRadius"
+            },
+            "type": "MultirangeCaustic",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "elem_bound_markers": true,
+                "format": {
+                    "axis_x": {
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": true,
+                        "id": "a8f2ac4729074b249b32f5eb563257d3",
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 3,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 10,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 10,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 3,
+                        "title_margin_out": 5,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#c8c8c8",
+                            "style": 1,
+                            "width": 0
+                        }
+                    },
+                    "axis_y": {
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": true,
+                        "id": "aa5fd3db3c034de88fcfac180a5ee618",
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 5,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 10,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 10,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 10,
+                        "title_margin_out": 5,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#c8c8c8",
+                            "style": 1,
+                            "width": 0
+                        }
+                    },
+                    "legend": {
+                        "back_color": "#ffffff",
+                        "border": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "icon_margin": 7,
+                        "icon_size": {
+                            "height": 18,
+                            "width": 32
+                        },
+                        "location": 34,
+                        "margins": {
+                            "bottom": 12,
+                            "left": 12,
+                            "right": 12,
+                            "top": 12
+                        },
+                        "paddings": {
+                            "bottom": 4,
+                            "left": 7,
+                            "right": 7,
+                            "top": 5
+                        },
+                        "text_color": "#000000",
+                        "version": 1,
+                        "visible": false
+                    },
+                    "title": {
+                        "font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 14,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "margins": {
+                            "bottom": 10,
+                            "left": 10,
+                            "right": 10,
+                            "top": 10
+                        },
+                        "text_color": "#000000",
+                        "text_flags": 132,
+                        "version": 1,
+                        "visible": false
+                    }
+                },
+                "stored_views": {
+                },
+                "t_title": "{func_name}",
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 585.8604018691624,
+                "x_min": -5.8005980383085385,
+                "x_title": "{elem_labels} {(unit)}",
+                "x_unit": "mm",
+                "y_max": 0.8662892426627835,
+                "y_min": -0.002145361020978745,
+                "y_title": "{func_mode} {(unit)}",
+                "y_unit": "mm"
+            }
+        },
+        {
+            "function": {
+                "arg_x": {
+                    "element_index": 3,
+                    "param": "L",
+                    "range": {
+                        "points": 100,
+                        "start": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 100
+                        },
+                        "use_step": false
+                    }
+                },
+                "arg_y": {
+                    "element_index": 6,
+                    "param": "L",
+                    "range": {
+                        "points": 100,
+                        "start": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "step": {
+                            "unit": "mm",
+                            "value": 0
+                        },
+                        "stop": {
+                            "unit": "mm",
+                            "value": 100
+                        },
+                        "use_step": false
+                    }
+                },
+                "stab_calc_mode": "Normal"
+            },
+            "type": "StabMap2D",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "format": {
+                    "axis_x": {
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": true,
+                        "id": "da90110716c14f8698fa8cb88be9141d",
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 3,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 10,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 10,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 3,
+                        "title_margin_out": 5,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#c8c8c8",
+                            "style": 1,
+                            "width": 0
+                        }
+                    },
+                    "axis_y": {
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": true,
+                        "id": "109b76eff304487ea838ca8f082d7b9a",
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 5,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 10,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 10,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 10,
+                        "title_margin_out": 5,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#c8c8c8",
+                            "style": 1,
+                            "width": 0
+                        }
+                    },
+                    "color_scale": {
+                        "color_bar_gradient": {
+                            "color_interpolation": 0,
+                            "color_stops": [
+                                {
+                                    "color": "#000064",
+                                    "stop": 0
+                                },
+                                {
+                                    "color": "#0032ff",
+                                    "stop": 0.15
+                                },
+                                {
+                                    "color": "#00ffff",
+                                    "stop": 0.35
+                                },
+                                {
+                                    "color": "#ffff00",
+                                    "stop": 0.65
+                                },
+                                {
+                                    "color": "#ff1e00",
+                                    "stop": 0.85
+                                },
+                                {
+                                    "color": "#640000",
+                                    "stop": 1
+                                }
+                            ],
+                            "level_count": 350,
+                            "nan_color": "#000000",
+                            "nan_handling": 0,
+                            "periodic": false
+                        },
+                        "color_bar_margins": {
+                            "bottom": 6,
+                            "left": 0,
+                            "right": 0,
+                            "top": 6
+                        },
+                        "color_bar_width": 20,
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": false,
+                        "id": "",
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 7,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 6,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 12,
+                        "title_margin_out": 0,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#000000",
+                            "style": 0,
+                            "width": 1
+                        }
+                    },
+                    "legend": {
+                        "back_color": "#ffffff",
+                        "border": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "icon_margin": 7,
+                        "icon_size": {
+                            "height": 18,
+                            "width": 32
+                        },
+                        "location": 34,
+                        "margins": {
+                            "bottom": 12,
+                            "left": 12,
+                            "right": 12,
+                            "top": 12
+                        },
+                        "paddings": {
+                            "bottom": 4,
+                            "left": 7,
+                            "right": 7,
+                            "top": 5
+                        },
+                        "text_color": "#000000",
+                        "version": 1,
+                        "visible": false
+                    },
+                    "title": {
+                        "font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 14,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "margins": {
+                            "bottom": 10,
+                            "left": 10,
+                            "right": 10,
+                            "top": 10
+                        },
+                        "text_color": "#000000",
+                        "text_flags": 132,
+                        "version": 1,
+                        "visible": false
+                    }
+                },
+                "stored_views": {
+                },
+                "t_title": "{func_name}",
+                "ts_flipped": false,
+                "ts_mode": "S",
+                "x_max": 100,
+                "x_min": 0,
+                "x_title": "{elem}, {elem_param} {(unit)}",
+                "x_unit": "mm",
+                "y_max": 100,
+                "y_min": 0,
+                "y_title": "{elem}, {elem_param} {(unit)}",
+                "y_unit": "mm",
+                "z_max": 1.05,
+                "z_min": -1.05,
+                "z_title": ""
+            }
+        },
+        {
+            "code": "'''\nBeam data (code)\n'''\nimport rezonator as Z\nimport schema\n\ndef columns():\n  return [\n    # Return the same columns as the built-in\n    # function 'Beam Parameters at Elements' has\n    { 'label': 'W', 'title': 'W', 'dim': Z.DIM_LINEAR },\n    { 'label': 'R', 'title': 'R', 'dim': Z.DIM_LINEAR },\n    { 'label': 'V', 'title': 'V', 'dim': Z.DIM_ANGULAR },\n    # Plus additional columns for the same values\n    # but calculated a bit differently (see below)\n    { 'label': 'W1', 'title': 'W1', 'dim': Z.DIM_LINEAR },\n    { 'label': 'R1', 'title': 'R1', 'dim': Z.DIM_LINEAR },\n    { 'label': 'V1', 'title': 'V1', 'dim': Z.DIM_ANGULAR },\n  ]\n\ndef calculate(elem, pos, rt):\n  # This function is automatically called for each element,\n  # or several times for the same element with different 'pos'\n  # depending on the options selected in the table window.\n  # Round-trip is also prepared by the table winwdow\n  # with correct reference element for each position.\n  # In such a simple form without any additional work,\n  # the custom function will do the same as what\n  # the built-in function 'Beam Parameters at Elements' does.\n  (w, r, v) = rt.beam()\n  \n  # Additionally, let's calculate the same values but building\n  # a round-trip right here in place. This allows for\n  # additional verification for the target element and\n  # result position are passed properly.\n  # POS_LEFT, POS_BEG, POS_MID, POS_END, POS_RIGHT -\n  # these constants are automatically visible in the code.\n  if pos == POS_LEFT:\n    # Calculate rigth before the element.\n    # In this case a round-trip reference should be the previous element\n    rt1 = schema.round_trip(ref=elem.prev, plane=rt.plane)\n    (w1, r1, v1) = rt1.beam()\n  elif pos == POS_BEG:\n    # The target element has a length\n    # and we calculate at the very start and inside of it.\n    # Here we don't care if the element has IOR or not\n    # this will be automatically respected by the 'round_trip' method\n    rt1 = schema.round_trip(ref=elem, plane=rt.plane, inside=True)\n    elem.offset = 0\n    (w1, r1, v1) = rt1.beam()\n  elif pos == POS_MID:\n    # The target element has a length\n    # and we calculate in the middle and inside of it.\n    rt1 = schema.round_trip(ref=elem, plane=rt.plane, inside=True)\n    elem.offset = elem.axial_length/2\n    (w1, r1, v1) = rt1.beam()\n  elif pos == POS_END:\n    # The target element has a length\n    # and we calculate at the very end and inside of it.\n    rt1 = schema.round_trip(ref=elem, plane=rt.plane, inside=True)\n    elem.offset = elem.axial_length\n    (w1, r1, v1) = rt1.beam()\n  else:\n    # Calculate right after the element taking it as a whole.\n    rt1 = schema.round_trip(ref=elem, plane=rt.plane)\n    (w1, r1, v1) = rt1.beam()\n  \n  # Returned dict should have keys matching the labels\n  # returned by the 'columns' function\n  return {\n    'W': w,\n    'R': r,\n    'V': v,\n    'W1': w1,\n    'R1': r1,\n    'V1': v1,\n  }\n",
+            "columns": {
+                "R": {
+                    "unit": "cm"
+                },
+                "R1": {
+                    "unit": "cm"
+                },
+                "V": {
+                    "unit": "mrad"
+                },
+                "V1": {
+                    "unit": "mrad"
+                },
+                "W": {
+                    "unit": "mkm"
+                },
+                "W1": {
+                    "unit": "mkm"
+                }
+            },
+            "function": {
+                "calcEmptySpaces": true,
+                "calcMediumEnds": true,
+                "calcSpaceMids": true
+            },
+            "type": "CustomTable",
+            "window": {
+                "ts_mode": "T"
+            }
+        }
+    ]
+}

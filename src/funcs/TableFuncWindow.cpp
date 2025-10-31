@@ -26,7 +26,7 @@ static const QIcon& resultPosIcon(TableFunction::ResultPosition pos)
 {
     static QMap<TableFunction::ResultPosition, QIcon> icons;
     if (!icons.contains(pos))
-        icons[pos] = QIcon(TableFunction::resultPositionInfo(pos).icon_path);
+        icons[pos] = QIcon(TableFunction::resultPositionInfo(pos).iconPath);
     return icons[pos];
 }
 

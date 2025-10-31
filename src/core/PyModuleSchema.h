@@ -44,6 +44,8 @@ struct Element {
     ::Element *elem;
 };
 
+PyObject* make(::Element *elem);
+
 PyObject* ctor(PyTypeObject *Py_UNUSED(type), PyObject *Py_UNUSED(args), PyObject *Py_UNUSED(kwargs))
 {
     PyErr_SetString(SchemaError, "creation of elements from Python code is forbidden");
@@ -102,6 +104,29 @@ PyObject* index(Element *self, PyObject *Py_UNUSED(args))
     return PyLong_FromLong(idx + 1);
 }
 
+PyObject* prev(Element *self, PyObject *Py_UNUSED(args))
+{
+    CHECK_SCHEMA
+    auto prevElem = FunctionUtils::prevElem(schema, self->elem);
+    if (!prevElem)
+        Py_RETURN_NONE;
+    return make(prevElem);
+}
+
+PyObject* next(Element *self, PyObject *Py_UNUSED(args))
+{
+    CHECK_SCHEMA
+    auto nextElem = FunctionUtils::nextElem(schema, self->elem);
+    if (!nextElem)
+        Py_RETURN_NONE;
+    return make(nextElem);
+}
+
+PyObject* disabled(Element *self, PyObject *Py_UNUSED(args))
+{
+    return PyBool_FromLong(self->elem->disabled());
+}
+
 int set_offset(Element *self, PyObject *arg, void *closure)
 {
     auto range = Z::Utils::asRange(self->elem);
@@ -124,6 +149,9 @@ PyGetSetDef getset[] = {
     GETTER(optical_path, "Optical path (in m) or none if element is not a range"),
     GETTER(ior, "Refraction index or none if it's not supported in the element"),
     GETSET(offset, "Offset inside the element or none if element is not a range"),
+    GETTER(prev, "Previous element respecting round-trip rules for different schema kinds (SW, SP, RR)"),
+    GETTER(next, "Next element respecting round-trip rules for different schema kinds (SW, SP, RR)"),
+    GETTER(disabled, "Whether the element is disabled"),
     { NULL }
 };
 

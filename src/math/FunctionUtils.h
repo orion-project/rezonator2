@@ -12,7 +12,12 @@ namespace FunctionUtils {
 /// Disabled elements will never be passed as stopElem
 void prepareDynamicElements(Schema* schema, Element* stopElem, PumpCalculator* pumpCalc);
 
+/// Returns an element which is the previous to the given one
+/// respecting round-trip rules for different schema kinds (SW, SP, RR)
 Element* prevElem(Schema *schema, Element *elem);
+
+/// Returns an element which is the next to the given one
+/// respecting round-trip rules for different schema kinds (SW, SP, RR)
 Element* nextElem(Schema *schema, Element *elem);
 
 /// Returns IOR that should be used for calculation of the beamsize

@@ -141,9 +141,8 @@ struct TmpRefs
 
 #define TMP_REF(ref) TmpRef{#ref, ref}
 
-bool PyRunner::load()
+bool PyRunner::load(const ModuleProps &props)
 {
-    qDebug() << "PyRunner::load BEG" << moduleName;
     if (!errorLog.isEmpty()) return false;
     
     if (moduleName.isEmpty()) {
@@ -170,7 +169,6 @@ bool PyRunner::load()
             return false;
         }
     } else {
-        qDebug() << "old module found" << pOldModule->ob_refcnt;
         refs << TMP_REF(pOldModule);
         // Python doesn't replace the whole module when reimports its code
         // It replaces only attributes that exist in the new code
@@ -194,6 +192,13 @@ bool PyRunner::load()
         return false;
     }
     refs << TMP_REF(pModule);
+    
+    for (auto it = props.consts.cbegin(); it != props.consts.cend(); it++) {
+        if (PyModule_AddIntConstant(pModule, it.key(), it.value()) < 0) {
+            handleError(QString("Failed to add module constant %1=%2").arg(it.key()).arg(it.value()));
+            return false;
+        }
+    }
     
     auto pDoc = PyObject_GetAttrString(pModule, "__doc__");
     if (pDoc) {
@@ -224,7 +229,6 @@ bool PyRunner::load()
         _funcRefs.insert(funcName, pFunc);
     }
     
-    qDebug() << "PyRunner::load END";
     return true;
 }
 
@@ -253,10 +257,13 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, co
         PyObject *pArg = nullptr;
         switch (argType) {
         case atElement:
-            pArg = PyModules::Schema::Element::make(reinterpret_cast<Element*>(argValue));
+            pArg = PyModules::Schema::Element::make((Element*)(argValue.value<void*>()));
             break;
         case atRoundTrip:
-            pArg = PyModules::Schema::RoundTrip::make(reinterpret_cast<BeamCalculator*>(argValue), false);
+            pArg = PyModules::Schema::RoundTrip::make((BeamCalculator*)(argValue.value<void*>()), false);
+            break;
+        case atInt:
+            pArg = PyLong_FromLong(argValue.toInt());
             break;
         }
         if (pArg) {
@@ -282,18 +289,27 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, co
     if (resultSpec.isEmpty())
         return result;
     
-    if (!PyList_Check(pResult)) {
-        handleError("Bad result type, list expected", funcName);
+    QVector<PyObject*> resultItems;
+    
+    if (PyDict_Check(pResult)) {
+        resultItems << pResult;
+    } else if (PyList_Check(pResult)) {
+        auto resultCount = PyList_Size(pResult);
+        for (auto i = 0; i < resultCount; i++) {
+            auto pItem = PyList_GetItem(pResult, i);
+            if (!pItem) {
+                handleError(QString("Unable to get result[%1]").arg(i), funcName);
+                return {};
+            }
+            resultItems << pItem;
+        }
+    } else {
+        handleError("Bad result type, dict or list expected", funcName);
         return {};
     }
     
-    auto resultCount = PyList_Size(pResult);
-    for (auto i = 0; i < resultCount; i++) {
-        auto pItem = PyList_GetItem(pResult, i);
-        if (!pItem) {
-            handleError(QString("Unable to get result[%1]").arg(i), funcName);
-            return {};
-        }
+    for (int i = 0; i < resultItems.size(); i++) {
+        auto pItem = resultItems.at(i);
         if (!PyDict_Check(pItem)) {
             handleError(QString("result[%1]: bad type, dict expected").arg(i), funcName);
             return {};

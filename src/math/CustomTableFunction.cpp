@@ -24,22 +24,22 @@ QVector<Z::PointTS> CustomTableFunction::calculateInternal(const ResultElem &res
     PyRunner::ResultSpec resultSpec;
     for (const auto &col : std::as_const(_columns))
         resultSpec.insert(col.label, PyRunner::ftNumber);
+        
+    PyRunner::Args args {
+        { PyRunner::atElement, QVariant::fromValue((void*)resultElem.elem) },
+        { PyRunner::atInt, (int)resultPositionInfo(resultElem.pos).absPos },
+        { PyRunner::atRoundTrip, QVariant::fromValue((void*)_beamCalc.get()) }
+    };
     
     _beamCalc->setPlane(Z::T);
-    auto resT = _runner->run(FUNC_CALC, {
-        { PyRunner::atElement, resultElem.elem },
-        { PyRunner::atRoundTrip, _beamCalc.get() }
-    }, resultSpec);
+    auto resT = _runner->run(FUNC_CALC, args, resultSpec);
     if (!resT) {
         showError(_runner.get());
         return {};
     }
     
     _beamCalc->setPlane(Z::S);
-    auto resS = _runner->run(FUNC_CALC, {
-        { PyRunner::atElement, resultElem.elem },
-        { PyRunner::atRoundTrip, _beamCalc.get() }
-    }, resultSpec);
+    auto resS = _runner->run(FUNC_CALC, args, resultSpec);
     if (!resS) {
         showError(_runner.get());
         return {};
@@ -81,7 +81,17 @@ bool CustomTableFunction::prepare()
     py->funcNames = { FUNC_COLUMNS, FUNC_CALC };
     py->printFunc = _printFunc;
 
-    if (!py->load()) {
+    static PyRunner::ModuleProps props {
+        .consts = {
+            { "POS_LEFT", (int)ResultPositionAbs::LEFT },
+            { "POS_BEG", (int)ResultPositionAbs::BEG },
+            { "POS_MID", (int)ResultPositionAbs::MID },
+            { "POS_END", (int)ResultPositionAbs::END },
+            { "POS_RIGHT", (int)ResultPositionAbs::RIGHT },
+        }
+    };
+
+    if (!py->load(props)) {
         showError(py.get());
         return false;
     }

@@ -12,20 +12,20 @@
 
 const TableFunction::ResultPositionInfo& TableFunction::resultPositionInfo(TableFunction::ResultPosition pos)
 {
-#define I_(pos, ascii, tooltip, icon_path)\
-    {TableFunction::ResultPosition::pos, {QString(ascii), QString(tooltip), QString(icon_path)}}
+#define I_(pos, absPos, ascii, tooltip, iconPath)\
+    {ResultPosition::pos, {QString(ascii), QString(tooltip), QString(iconPath), ResultPositionAbs::absPos}}
 
     static QMap<TableFunction::ResultPosition, TableFunction::ResultPositionInfo> info = {
-        I_(ELEMENT,       "",          "",                          ""),
-        I_(LEFT,          "->()",      "At the left of element",    ":/misc/beampos_left"),
-        I_(RIGHT,         "  ()->",    "At the right of element",   ":/misc/beampos_right"),
-        I_(LEFT_OUTSIDE,  "->[   ]",   "At the left edge outside",  ":/misc/beampos_left_out"),
-        I_(LEFT_INSIDE,   "  [-> ]",   "At the left edge inside",   ":/misc/beampos_left_in"),
-        I_(MIDDLE,        "  [ + ]",   "In the middle of element",  ":/misc/beampos_middle"),
-        I_(RIGHT_INSIDE,  "  [ ->]",   "At the right edge inside",  ":/misc/beampos_right_in"),
-        I_(RIGHT_OUTSIDE, "  [   ]->", "At the right edge outside", ":/misc/beampos_right_out"),
-        I_(IFACE_LEFT,    "->|",       "At the left of interface",  ":/misc/beampos_iface_left"),
-        I_(IFACE_RIGHT,   "  |->",     "At the right of interface", ":/misc/beampos_iface_right"),
+        I_(ELEMENT,       RIGHT, "",          "",                          ""),
+        I_(LEFT,          LEFT,  "->()",      "At the left of element",    ":/misc/beampos_left"),
+        I_(RIGHT,         RIGHT, "  ()->",    "At the right of element",   ":/misc/beampos_right"),
+        I_(LEFT_OUTSIDE,  LEFT,  "->[   ]",   "At the left edge outside",  ":/misc/beampos_left_out"),
+        I_(LEFT_INSIDE,   BEG,   "  [-> ]",   "At the left edge inside",   ":/misc/beampos_left_in"),
+        I_(MIDDLE,        MID,   "  [ + ]",   "In the middle of element",  ":/misc/beampos_middle"),
+        I_(RIGHT_INSIDE,  END,   "  [ ->]",   "At the right edge inside",  ":/misc/beampos_right_in"),
+        I_(RIGHT_OUTSIDE, RIGHT, "  [   ]->", "At the right edge outside", ":/misc/beampos_right_out"),
+        I_(IFACE_LEFT,    LEFT,  "->|",       "At the left of interface",  ":/misc/beampos_iface_left"),
+        I_(IFACE_RIGHT,   RIGHT, "  |->",     "At the right of interface", ":/misc/beampos_iface_right"),
     };
     return info[pos];
 #undef I_
