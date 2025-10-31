@@ -127,6 +127,15 @@ PyObject* disabled(Element *self, PyObject *Py_UNUSED(args))
     return PyBool_FromLong(self->elem->disabled());
 }
 
+PyObject* param(Element *self, PyObject *arg)
+{
+    CHECK_(PyUnicode_Check(arg), TypeError, "unsupported argument type, string expected")
+    auto alias = QString::fromUtf8(PyUnicode_AsUTF8(arg));
+    auto param = self->elem->param(alias);
+    CHECK_(param, KeyError, "parameter not found")
+    return PyFloat_FromDouble(param->value().toSi());
+}
+
 int set_offset(Element *self, PyObject *arg, void *closure)
 {
     auto range = Z::Utils::asRange(self->elem);
@@ -140,6 +149,11 @@ int set_offset(Element *self, PyObject *arg, void *closure)
     range->setSubRangeSI(v);
     return 0;
 }
+
+PyMethodDef methods[] = {
+    { "param", (PyCFunction)param, METH_O, "Return element's parameter value (in SI units) by alias" },
+    { NULL }
+};
 
 PyGetSetDef getset[] = {
     GETTER(label, "Element's label"),
@@ -162,6 +176,7 @@ PyTypeObject type = {
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
     .tp_doc = PyDoc_STR("Optical element"),
+    .tp_methods = methods,
     .tp_getset = getset,
     .tp_new = ctor,
 };

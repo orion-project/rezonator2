@@ -246,33 +246,26 @@ ExamplesDialog::Info ExamplesDialog::loadExampleInfo(const QString& fileName)
 
 void ExamplesDialog::applyFilter()
 {
-    QString filterText = _filterEdit->text().trimmed();
+    QStringList rawTerms = _filterEdit->text().split(' ', Qt::SkipEmptyParts);
+    QStringList searchTerms;
     
-    // Count alphabetic characters in filter text
-    int alphaCount = 0;
-    for (const QChar& ch : std::as_const(filterText))
-        if (ch.isLetter())
-            alphaCount++;
+    for (const auto& term : std::as_const(rawTerms))
+        if (term.size() >= 2)
+            searchTerms << term;
     
     for (int i = 0; i < _fileList->count(); ++i)
     {
         auto item = _fileList->item(i);
-        if (filterText.isEmpty())
+
+        if (searchTerms.isEmpty())
         {
             item->setHidden(false);
             continue;
         }
-        if (alphaCount < 3)
-        {
-            item->setHidden(true);
-            continue;
-        }
+        
         auto fileName = item->text();
-        if (fileName.contains(filterText, Qt::CaseInsensitive))
-        {
-            item->setHidden(false);
-            continue;
-        }
+        
+        // Prepare plain text description if not cached
         if (!_plainTextDescrs.contains(fileName))
         {
             // Strip markdown formatting that is not visible in rendered view
@@ -282,8 +275,22 @@ void ExamplesDialog::applyFilter()
             plainText.replace(QRegularExpression("^\\s*\\d+\\.\\s+", QRegularExpression::MultilineOption), ""); // Ordered lists
             _plainTextDescrs[fileName] = plainText;
         }
-        bool matches = _plainTextDescrs.value(fileName).contains(filterText, Qt::CaseInsensitive);
-        item->setHidden(!matches);
+        auto plainTextDescr = _plainTextDescrs.value(fileName);
+        
+        // Check if ALL search terms match (AND logic)
+        bool allTermsMatch = true;
+        for (const QString& term : std::as_const(searchTerms))
+        {
+            bool hasMatch = fileName.contains(term, Qt::CaseInsensitive) || 
+                plainTextDescr.contains(term, Qt::CaseInsensitive);
+            if (!hasMatch)
+            {
+                allTermsMatch = false;
+                break;
+            }
+        }
+        
+        item->setHidden(!allTermsMatch);
     }
 }
 
