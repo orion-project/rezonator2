@@ -31,6 +31,9 @@ public:
     QString error() const { return _error; }
     
     Z::Matrix matrix() const;
+    std::optional<Z::Matrix> matrix(int index) const;
+    Element* elem(int index) const;
+    int matrixCount() const;
     double stability_normal() const;
     double stability_squared() const;
     PumpCalculator* pumpCalc() const { return _pump; };

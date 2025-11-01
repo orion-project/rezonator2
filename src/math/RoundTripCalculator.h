@@ -49,7 +49,7 @@ public:
     QString roundTripStr() const;
 
     // Returns info array of the same length as matrsT/matrsS
-    QList<MatrixInfo> matrixInfo() const { return _matrixInfo; }
+    const QList<MatrixInfo>& matrixInfo() const { return _matrixInfo; }
 
     struct RoundTripElemInfo
     {

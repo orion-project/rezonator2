@@ -127,13 +127,18 @@ PyObject* disabled(Element *self, PyObject *Py_UNUSED(args))
     return PyBool_FromLong(self->elem->disabled());
 }
 
-PyObject* param(Element *self, PyObject *arg)
+PyObject* param(Element *self, PyObject *args)
 {
-    CHECK_(PyUnicode_Check(arg), TypeError, "unsupported argument type, string expected")
-    auto alias = QString::fromUtf8(PyUnicode_AsUTF8(arg));
-    auto param = self->elem->param(alias);
-    if (!param)
+    char *alias;
+    double def = qQNaN();
+    if (!PyArg_ParseTuple(args, "s|d", &alias, &def))
+        return nullptr;
+    auto param = self->elem->param(QString::fromUtf8(alias));
+    if (!param) {
+        if (!qIsNaN(def))
+            return PyFloat_FromDouble(def);
         Py_RETURN_NONE;
+    }
     return PyFloat_FromDouble(param->value().toSi());
 }
 
@@ -152,7 +157,7 @@ int set_offset(Element *self, PyObject *arg, void *closure)
 }
 
 PyMethodDef methods[] = {
-    { "param", (PyCFunction)param, METH_O, "Return element's parameter value (in SI units) by alias" },
+    { "param", (PyCFunction)param, METH_VARARGS, "Return element's parameter value (in SI units) by alias" },
     { NULL }
 };
 
@@ -195,6 +200,151 @@ PyObject* make(::Element *elem)
 } // namespace Element 
 
 //------------------------------------------------------------------------------
+//                                 RayVector
+//------------------------------------------------------------------------------
+
+namespace RayVector {
+
+struct RayVector {
+    PyObject_HEAD
+    Z::RayVector vector;
+};
+
+PyObject* make(const Z::RayVector& vector);
+PyTypeObject* __class__();
+
+PyObject* ctor(PyTypeObject* Py_UNUSED(type), PyObject* args, PyObject* Py_UNUSED(kwargs))
+{
+    double y = 0, v = 0;
+    if (!PyArg_ParseTuple(args, "|dd", &y, &v))
+        return nullptr;
+    return make(Z::RayVector(y, v));
+}
+
+PyObject* Y(RayVector *self, PyObject *Py_UNUSED(args))
+{
+    return PyFloat_FromDouble(self->vector.Y);
+}
+
+PyObject* V(RayVector *self, PyObject *Py_UNUSED(args))
+{
+    return PyFloat_FromDouble(self->vector.V);
+}
+
+int set_Y(RayVector *self, PyObject *arg, void *Py_UNUSED(closure))
+{
+    double v = 0;
+    if (PyFloat_Check(arg))
+        v = PyFloat_AsDouble(arg);
+    else if (PyLong_Check(arg))
+        v = PyLong_AsLong(arg);
+    else CHECK_I(false, TypeError, "unsupported argument type, number expected")
+    self->vector.Y = v;
+    return 0;
+}
+
+int set_V(RayVector *self, PyObject *arg, void *Py_UNUSED(closure))
+{
+    double v = 0;
+    if (PyFloat_Check(arg))
+        v = PyFloat_AsDouble(arg);
+    else if (PyLong_Check(arg))
+        v = PyLong_AsLong(arg);
+    else CHECK_I(false, TypeError, "unsupported argument type, number expected")
+    self->vector.V = v;
+    return 0;
+}
+
+PyObject* __repr__(RayVector *self)
+{
+    auto s = self->vector.str().toUtf8();
+    return PyUnicode_FromString(s.constData());
+}
+
+PyObject* __add__(PyObject *left, PyObject *right)
+{
+    CHECK_(PyObject_TypeCheck(left, __class__()), TypeError, "left operand must be a RayVector")
+    CHECK_(PyObject_TypeCheck(right, __class__()), TypeError, "right operand must be a RayVector")
+    auto v1 = ((RayVector*)left);
+    auto v2 = ((RayVector*)right);
+    Z::RayVector result(v1->vector.Y + v2->vector.Y, v1->vector.V + v2->vector.V);
+    return make(result);
+}
+
+PyObject* __iadd__(PyObject *left, PyObject *right)
+{
+    CHECK_(PyObject_TypeCheck(left, __class__()), TypeError, "left operand must be a RayVector")
+    CHECK_(PyObject_TypeCheck(right, __class__()), TypeError, "right operand must be a RayVector")
+    auto v1 = ((RayVector*)left);
+    auto v2 = ((RayVector*)right);
+    Z::RayVector result(v1->vector.Y + v2->vector.Y, v1->vector.V + v2->vector.V);
+    return make(result);
+}
+
+PyNumberMethods number_methods = {
+    .nb_add = __add__,
+    .nb_inplace_add = __iadd__,
+};
+
+Py_ssize_t __len__(RayVector *Py_UNUSED(self))
+{
+    return 2;
+}
+
+PyObject* __getitem__(RayVector *self, Py_ssize_t index)
+{
+    switch(index) {
+        case 0: return Y(self, nullptr);
+        case 1: return V(self, nullptr);
+        default:
+            PyErr_SetString(PyExc_IndexError, "RayVector index out of range (valid indices: 0-1)");
+            return nullptr;
+    }
+}
+
+PySequenceMethods sequence_methods = {
+    .sq_length = (lenfunc)__len__,
+    .sq_item = (ssizeargfunc)__getitem__,
+};
+
+PyGetSetDef getset[] = {
+    GETSET(Y, "Ray vector Y coordinate"),
+    GETSET(V, "Ray vector V (angle) coordinate"),
+    { NULL }
+};
+
+PyTypeObject type = {
+    .ob_base = PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "schema.RayVector",
+    .tp_basicsize = sizeof(RayVector),
+    .tp_itemsize = 0,
+    .tp_repr = (reprfunc)__repr__,
+    .tp_as_number = &number_methods,
+    .tp_as_sequence = &sequence_methods,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_doc = PyDoc_STR("Ray vector (Y, V)"),
+    .tp_getset = getset,
+    .tp_new = ctor,
+};
+
+PyTypeObject* __class__()
+{
+    return &type;
+}
+
+PyObject* make(const Z::RayVector& vector)
+{
+    CHECK_TYPE_READY
+    auto obj = type.tp_alloc(&type, 0);
+    if (obj) {
+        ((RayVector*)obj)->vector = vector;
+    }
+    return obj;
+}
+
+} // namespace RayVector
+
+//------------------------------------------------------------------------------
 //                                 Matrix
 //------------------------------------------------------------------------------
 
@@ -205,10 +355,15 @@ struct Matrix {
     Z::Matrix matrix;
 };
 
-PyObject* ctor(PyTypeObject* Py_UNUSED(type), PyObject* Py_UNUSED(args), PyObject* Py_UNUSED(kwargs))
+PyObject* make(const Z::Matrix& matrix);
+PyTypeObject* __class__();
+
+PyObject* ctor(PyTypeObject* Py_UNUSED(type), PyObject* args, PyObject* Py_UNUSED(kwargs))
 {
-    PyErr_SetString(SchemaError, "direct creation of Matrix objects is not allowed");
-    return nullptr;
+    double a = 1, b = 0, c = 0, d = 1;
+    if (!PyArg_ParseTuple(args, "|dddd", &a, &b, &c, &d))
+        return nullptr;
+    return make(Z::Matrix(a, b, c, d));
 }
 
 PyObject* A(Matrix *self, PyObject *Py_UNUSED(args))
@@ -239,11 +394,71 @@ PyObject* D(Matrix *self, PyObject *Py_UNUSED(args))
     return PyComplex_FromDoubles(self->matrix.D.real(), self->matrix.D.imag());
 }
 
-PyObject* str_repr(Matrix *self)
+PyObject* __repr__(Matrix *self)
 {
     auto s = self->matrix.str().toUtf8();
     return PyUnicode_FromString(s.constData());
 }
+
+PyObject* __mul__(PyObject *left, PyObject *right)
+{
+    CHECK_(PyObject_TypeCheck(left, __class__()), TypeError, "left operand must be a Matrix")
+    
+    if (PyObject_TypeCheck(right, __class__())) {
+        auto m1 = ((Matrix*)left);
+        auto m2 = ((Matrix*)right);
+        auto result = m1->matrix * m2->matrix;
+        return make(result);
+    }
+    
+    if (PyObject_TypeCheck(right, &RayVector::type)) {
+        auto m = (Matrix*)left;
+        auto v = (RayVector::RayVector*)right;
+        Z::RayVector result(v->vector, m->matrix);
+        return RayVector::make(result);
+    }
+    
+    PyErr_SetString(PyExc_TypeError, "right operand must be a Matrix or RayVector");
+    return nullptr;
+}
+
+PyObject* __imul__(PyObject *left, PyObject *right)
+{
+    CHECK_(PyObject_TypeCheck(left, __class__()), TypeError, "left operand must be a Matrix")
+    CHECK_(PyObject_TypeCheck(right, __class__()), TypeError, "right operand must be a Matrix")
+    auto m1 = ((Matrix*)left);
+    auto m2 = ((Matrix*)right);
+    m1->matrix *= m2->matrix;
+    return make(m1->matrix);
+}
+
+PyNumberMethods number_methods = {
+    .nb_multiply = __mul__,
+    .nb_inplace_multiply = __imul__,
+};
+
+Py_ssize_t __len__(Matrix *Py_UNUSED(self))
+{
+    return 4;
+}
+
+PyObject* __getitem__(Matrix *self, Py_ssize_t index)
+{
+    switch(index) {
+        case 0: return A(self, nullptr);
+        case 1: return B(self, nullptr);
+        case 2: return C(self, nullptr);
+        case 3: return D(self, nullptr);
+        default:
+            PyErr_SetString(PyExc_IndexError, "Matrix index out of range (valid indices: 0-3)");
+            return nullptr;
+    }
+}
+
+PySequenceMethods sequence_methods = {
+    .sq_length = (lenfunc)__len__,
+    .sq_item = (ssizeargfunc)__getitem__,
+};
 
 PyGetSetDef getset[] = {
     GETTER(A, "Matrix element A"),
@@ -258,12 +473,19 @@ PyTypeObject type = {
     .tp_name = "schema.Matrix",
     .tp_basicsize = sizeof(Matrix),
     .tp_itemsize = 0,
-    .tp_repr = (reprfunc)str_repr,
+    .tp_repr = (reprfunc)__repr__,
+    .tp_as_number = &number_methods,
+    .tp_as_sequence = &sequence_methods,
     .tp_flags = Py_TPFLAGS_DEFAULT,
     .tp_doc = PyDoc_STR("ABCD ray matrix"),
     .tp_getset = getset,
     .tp_new = ctor,
 };
+
+PyTypeObject* __class__()
+{
+    return &type;
+}
 
 PyObject* make(const Z::Matrix& matrix)
 {
@@ -361,10 +583,31 @@ PyObject* beam(RoundTrip* self, PyObject* Py_UNUSED(arg))
     return Py_BuildValue("(ddd)", result.beamRadius, result.frontRadius, result.halfAngle);
 }
 
-PyObject* matrix(RoundTrip* self, PyObject* Py_UNUSED(args))
+PyObject* elem(RoundTrip* self, PyObject* arg)
 {
+    CHECK_(PyLong_Check(arg), TypeError, "invalid parameter, integer expected")
+    auto elem = self->calc->elem(PyLong_AsLong(arg));
+    CHECK_(elem, IndexError, "invalid elem index")
+    return Element::make(elem);
+}
+
+PyObject* matrix(RoundTrip* self, PyObject* args)
+{
+    int index = -1;
+    if (!PyArg_ParseTuple(args, "|i", &index))
+        return nullptr;
+    if (index >= 0) {
+        auto m = self->calc->matrix(index);
+        CHECK_(m, IndexError, "invalid matrix index")
+        return Matrix::make(m.value());
+    }
     self->calc->multMatrix("py.schema.matrix()");
     return Matrix::make(self->calc->matrix());
+}
+
+PyObject* matrix_count(RoundTrip* self, PyObject* Py_UNUSED(arg))
+{
+    return PyLong_FromLong(self->calc->matrixCount());
 }
 
 PyObject* stabil_nor(RoundTrip* self, PyObject* Py_UNUSED(args))
@@ -390,6 +633,8 @@ PyMethodDef methods[] = {
     { "front_radius", (PyCFunction)front_radius, METH_NOARGS, "Calculate wavefront radius (in m)" },
     { "half_angle", (PyCFunction)half_angle, METH_NOARGS, "Calculate half of divergence angle in the far-field (in rad)" },
     { "beam", (PyCFunction)beam, METH_NOARGS, "Calculate beam parameters and return as tuple (beam_radius, front_radius, half_angle) in m, m, rad" },
+    { "matrix", (PyCFunction)matrix, METH_VARARGS, "Call without arguments for round-trip matrix, or with integer index to get matrix by index" },
+    { "elem", (PyCFunction)elem, METH_O, "Return an element owning the index-th matrix of the round-trip" },
     { NULL }
 };
 
@@ -403,7 +648,7 @@ PyGetSetDef getset[] = {
     GETTER(ref, "Reference element of the round-trip"),
     GETTER(plane, "Work plane (one of Z.PLANE_T or Z.PLANE_S)"),
     GETTER(ior, "Current index of refraction used for beam parameters calculation"),
-    GETTER(matrix, "Round-trip matrix"),
+    GETTER(matrix_count, "Number of matrices in the round-trip"),
     GETTER(stabil_nor, "Stability parameter (normal mode): P = (A + D)/2"),
     GETTER(stabil_sqr, "Stability parameter (squared mode): P = 1 - ((A + D)/2)^2"),
     { NULL }
@@ -512,35 +757,37 @@ PyObject* round_trip(PyObject *Py_UNUSED(self), PyObject *Py_UNUSED(args), PyObj
     auto splitRange = false;
     auto workPlane = Z::WorkPlane::T;
     ::Element *refElem = nullptr;
-    if (auto arg = PyDict_GetItemString(kwargs, "ref"); arg) {
-        if (PyLong_Check(arg)) {
-            auto index = PyLong_AsLong(arg);
-            // For python code elemens are numbered 1-based
-            // as they are shown in the elements table
-            refElem = schema->element(index-1);
-            CHECK_(refElem, IndexError, "reference element not found")
-        } else if (PyUnicode_Check(arg)) {
-            auto label = QString::fromUtf8(PyUnicode_AsUTF8(arg));
-            refElem = schema->element(label);
-            CHECK_(refElem, KeyError, "reference element not found")
-        } else if (PyObject_TypeCheck(arg, &Element::type)) {
-            refElem = ((Element::Element*)arg)->elem;
-            CHECK_(refElem, ValueError, "element reference is null")
-            CHECK_(schema->elements().contains(refElem), ValueError, "reference element not found")
-        } else {
-            CHECK_(false, TypeError, "wrong type of the 'ref' arg, integer, string, or Element expected");
+    if (kwargs) {
+        if (auto arg = PyDict_GetItemString(kwargs, "ref"); arg) {
+            if (PyLong_Check(arg)) {
+                auto index = PyLong_AsLong(arg);
+                // For python code elemens are numbered 1-based
+                // as they are shown in the elements table
+                refElem = schema->element(index-1);
+                CHECK_(refElem, IndexError, "reference element not found")
+            } else if (PyUnicode_Check(arg)) {
+                auto label = QString::fromUtf8(PyUnicode_AsUTF8(arg));
+                refElem = schema->element(label);
+                CHECK_(refElem, KeyError, "reference element not found")
+            } else if (PyObject_TypeCheck(arg, &Element::type)) {
+                refElem = ((Element::Element*)arg)->elem;
+                CHECK_(refElem, ValueError, "element reference is null")
+                CHECK_(schema->elements().contains(refElem), ValueError, "reference element not found")
+            } else {
+                CHECK_(false, TypeError, "wrong type of the 'ref' arg, integer, string, or Element expected");
+            }
         }
-    }
-    if (auto arg = PyDict_GetItemString(kwargs, "plane"); arg) {
-        CHECK_(PyLong_Check(arg), TypeError, "wrong type of the 'plane' arg, integer expected")
-        auto plane = PyLong_AsLong(arg);
-        CHECK_(plane == Z::WorkPlane::T || plane == Z::WorkPlane::S, ValueError, 
-            "unexpected value of the 'plane' arg, expected one of Z.PLANE_T or Z.PLANE_S")
-        workPlane = (Z::WorkPlane)plane;
-    }
-    if (auto arg = PyDict_GetItemString(kwargs, "inside"); arg) {
-        CHECK_(PyBool_Check(arg), TypeError, "wrong type of the 'inside' arg, bool expected")
-        splitRange = Py_IsTrue(arg);
+        if (auto arg = PyDict_GetItemString(kwargs, "plane"); arg) {
+            CHECK_(PyLong_Check(arg), TypeError, "wrong type of the 'plane' arg, integer expected")
+            auto plane = PyLong_AsLong(arg);
+            CHECK_(plane == Z::WorkPlane::T || plane == Z::WorkPlane::S, ValueError, 
+                "unexpected value of the 'plane' arg, expected one of Z.PLANE_T or Z.PLANE_S")
+            workPlane = (Z::WorkPlane)plane;
+        }
+        if (auto arg = PyDict_GetItemString(kwargs, "inside"); arg) {
+            CHECK_(PyBool_Check(arg), TypeError, "wrong type of the 'inside' arg, bool expected")
+            splitRange = Py_IsTrue(arg);
+        }
     }
     if (!refElem)
         refElem = schema->elements().last();
@@ -570,6 +817,7 @@ int on_exec(PyObject *module)
     
     ADD_TYPE(Element)
     ADD_TYPE(Matrix)
+    ADD_TYPE(RayVector)
     ADD_TYPE(RoundTrip)
 
     qDebug() << "schema module executed";
