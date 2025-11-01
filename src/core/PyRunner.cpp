@@ -276,18 +276,27 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, co
             return {};
         }
     }
+
+    Records result;
     
     auto pResult = PyObject_CallObject(pFunc, pArgs);
     if (!pResult) {
         handleError("Failed to call function", funcName);
         return {};
     }
+    if (Py_IsNone(pResult)) {
+        // None is a valid result even for functions having resultSpec.
+        // It should show that the function is not applicable for particular conditions
+        // but it doesn't fail, just silently skip
+        return result;
+    }
     refs << TMP_REF(pResult);
     
-    Records result;
-
-    if (resultSpec.isEmpty())
+    if (resultSpec.isEmpty()) {
+        qWarning() << "Function" << funcName << "returns something but "
+            "it's not specified how to parse it, probably the function is not expected to return";
         return result;
+    }
     
     QVector<PyObject*> resultItems;
     

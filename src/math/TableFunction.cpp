@@ -432,7 +432,11 @@ void TableFunction::calculateAt(const CalcElem &calcElem, const ResultElem &resu
     res.element = resultElem.elem;
     res.position = resultElem.pos;
     res.values = calculateInternal(resultElem);
-    _results << res;
+    // Empty values mean the function does not support calcultation
+    // at the current element or at the current result position
+    // We just do not show this row in the table
+    if (!res.values.isEmpty())
+        _results << res;
 }
 
 Z::Unit TableFunction::columnUnit(const ColumnDef &col) const

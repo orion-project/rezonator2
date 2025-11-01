@@ -45,6 +45,11 @@ QVector<Z::PointTS> CustomTableFunction::calculateInternal(const ResultElem &res
         return {};
     }
     
+    if (resT->isEmpty() && resS->isEmpty()) {
+        // The function is not applicable for particular elem and position
+        return {};
+    }
+    
     QVector<Z::PointTS> res;
     for (const auto &col : std::as_const(_columns)) {
         res << Z::PointTS(

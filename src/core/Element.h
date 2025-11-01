@@ -189,8 +189,6 @@ public:
     void setOption(ElementOption option) { _options |= option; }
     bool hasOption(ElementOption option) const { return _options & option; }
 
-    virtual std::optional<Z::Value> aperture() const { return {}; }
-
     bool failed() const;
     QString failReason() const;
     

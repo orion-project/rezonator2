@@ -50,7 +50,6 @@ DECLARE_ELEMENT(ElemCurveMirror, Element)
     //CHECK_PARAM
     double radius() const { return _radius->value().toSi(); }
     double alpha() const { return _alpha->value().toSi(); }
-    //std::optional<Z::Value> aperture() const override { return _aper->value(); }
 private:
     Z::Parameter *_radius, *_alpha, *_aper;
 DECLARE_ELEMENT_END

@@ -132,7 +132,8 @@ PyObject* param(Element *self, PyObject *arg)
     CHECK_(PyUnicode_Check(arg), TypeError, "unsupported argument type, string expected")
     auto alias = QString::fromUtf8(PyUnicode_AsUTF8(arg));
     auto param = self->elem->param(alias);
-    CHECK_(param, KeyError, "parameter not found")
+    if (!param)
+        Py_RETURN_NONE;
     return PyFloat_FromDouble(param->value().toSi());
 }
 
