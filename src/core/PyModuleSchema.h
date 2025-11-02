@@ -500,6 +500,231 @@ PyObject* make(const Z::Matrix& matrix)
 } // namespace Matrix
 
 //------------------------------------------------------------------------------
+//                                 Matrix3
+//------------------------------------------------------------------------------
+
+namespace Matrix3 {
+
+struct Matrix3 {
+    PyObject_HEAD
+    double A, B, E;
+    double C, D, F;
+    double G, H;
+    // Third row is always (G, H, 1)
+};
+
+PyObject* make(double a, double b, double e, double c, double d, double f, double g, double h);
+PyTypeObject* __class__();
+
+PyObject* ctor(PyTypeObject* Py_UNUSED(type), PyObject* args, PyObject* Py_UNUSED(kwargs))
+{
+    PyObject* matrixObj = nullptr;
+    
+    // Try to parse as Matrix object
+    if (PyArg_ParseTuple(args, "O", &matrixObj)) {
+        if (PyObject_TypeCheck(matrixObj, &Matrix::type)) {
+            auto m = ((Matrix::Matrix*)matrixObj);
+            // Initialize from Matrix: copy A, B, C, D and set E, F, G, H to 0
+            double a = Z::isReal(m->matrix.A) ? m->matrix.A.real() : m->matrix.A.real();
+            double b = Z::isReal(m->matrix.B) ? m->matrix.B.real() : m->matrix.B.real();
+            double c = Z::isReal(m->matrix.C) ? m->matrix.C.real() : m->matrix.C.real();
+            double d = Z::isReal(m->matrix.D) ? m->matrix.D.real() : m->matrix.D.real();
+            return make(a, b, 0, c, d, 0, 0, 0);
+        }
+    }
+    
+    // Reset error from failed parse
+    PyErr_Clear();
+    
+    // Create identity matrix (default constructor)
+    return make(1, 0, 0, 0, 1, 0, 0, 0);
+}
+
+#define M_GET(x) \
+    PyObject* x(Matrix3 *self, PyObject *Py_UNUSED(args)) { \
+        return PyFloat_FromDouble(self->x); \
+    }
+
+#define M_SET(x) \
+    int set_##x(Matrix3 *self, PyObject *arg) { \
+        double v = 0; \
+        if (PyFloat_Check(arg)) \
+            v = PyFloat_AsDouble(arg); \
+        else if (PyLong_Check(arg)) \
+            v = PyLong_AsLong(arg); \
+        else CHECK_I(false, TypeError, "unsupported argument type, number expected") \
+        self->x = v; \
+        return 0; \
+    }
+
+M_GET(A)
+M_GET(B)
+M_GET(C)
+M_GET(D)
+M_GET(E)
+M_GET(F)
+M_GET(G)
+M_GET(H)
+
+M_SET(E)
+M_SET(F)
+M_SET(G)
+M_SET(H)
+
+#undef M_GET
+#undef M_SET
+
+PyObject* __repr__(Matrix3 *self)
+{
+    QString s = QString("Matrix3((%1, %2, %3), (%4, %5, %6), (%7, %8, 1))")
+        .arg(self->A).arg(self->B).arg(self->E)
+        .arg(self->C).arg(self->D).arg(self->F)
+        .arg(self->G).arg(self->H);
+    auto utf8 = s.toUtf8();
+    return PyUnicode_FromString(utf8.constData());
+}
+
+PyObject* __mul__(PyObject *left, PyObject *right)
+{
+    CHECK_(PyObject_TypeCheck(left, __class__()), TypeError, "left operand must be a Matrix3")
+    CHECK_(PyObject_TypeCheck(right, __class__()), TypeError, "right operand must be a Matrix3")
+    
+    auto m1 = (Matrix3*)left;
+    auto m2 = (Matrix3*)right;
+    
+    // Matrix multiplication: result = m1 * m2
+    // Row 1: (A, B, E) * matrix2
+    double a = m1->A * m2->A + m1->B * m2->C + m1->E * m2->G;
+    double b = m1->A * m2->B + m1->B * m2->D + m1->E * m2->H;
+    double e = m1->A * m2->E + m1->B * m2->F + m1->E * 1.0;
+    
+    // Row 2: (C, D, F) * matrix2
+    double c = m1->C * m2->A + m1->D * m2->C + m1->F * m2->G;
+    double d = m1->C * m2->B + m1->D * m2->D + m1->F * m2->H;
+    double f = m1->C * m2->E + m1->D * m2->F + m1->F * 1.0;
+    
+    // Row 3: (G, H, 1) * matrix2
+    double g = m1->G * m2->A + m1->H * m2->C + 1.0 * m2->G;
+    double h = m1->G * m2->B + m1->H * m2->D + 1.0 * m2->H;
+    // Last element would be: m1->G * m2->E + m1->H * m2->F + 1.0 * 1.0, but we keep it as 1
+    
+    return make(a, b, e, c, d, f, g, h);
+}
+
+PyObject* __imul__(PyObject *left, PyObject *right)
+{
+    CHECK_(PyObject_TypeCheck(left, __class__()), TypeError, "left operand must be a Matrix3")
+    CHECK_(PyObject_TypeCheck(right, __class__()), TypeError, "right operand must be a Matrix3")
+    
+    auto m1 = (Matrix3*)left;
+    auto m2 = (Matrix3*)right;
+    
+    // Save original values
+    double a1 = m1->A, b1 = m1->B, e1 = m1->E;
+    double c1 = m1->C, d1 = m1->D, f1 = m1->F;
+    double g1 = m1->G, h1 = m1->H;
+    
+    // Multiply and store in-place
+    m1->A = a1 * m2->A + b1 * m2->C + e1 * m2->G;
+    m1->B = a1 * m2->B + b1 * m2->D + e1 * m2->H;
+    m1->E = a1 * m2->E + b1 * m2->F + e1 * 1.0;
+    
+    m1->C = c1 * m2->A + d1 * m2->C + f1 * m2->G;
+    m1->D = c1 * m2->B + d1 * m2->D + f1 * m2->H;
+    m1->F = c1 * m2->E + d1 * m2->F + f1 * 1.0;
+    
+    m1->G = g1 * m2->A + h1 * m2->C + 1.0 * m2->G;
+    m1->H = g1 * m2->B + h1 * m2->D + 1.0 * m2->H;
+    
+    Py_INCREF(left);
+    return left;
+}
+
+PyNumberMethods number_methods = {
+    .nb_multiply = __mul__,
+    .nb_inplace_multiply = __imul__,
+};
+
+Py_ssize_t __len__(Matrix3 *Py_UNUSED(self))
+{
+    return 9;
+}
+
+PyObject* __getitem__(Matrix3 *self, Py_ssize_t index)
+{
+    switch(index) {
+        case 0: return A(self, nullptr);
+        case 1: return B(self, nullptr);
+        case 2: return E(self, nullptr);
+        case 3: return C(self, nullptr);
+        case 4: return D(self, nullptr);
+        case 5: return F(self, nullptr);
+        case 6: return G(self, nullptr);
+        case 7: return H(self, nullptr);
+        case 8: return PyFloat_FromDouble(1.0);
+        default:
+            PyErr_SetString(PyExc_IndexError, "Matrix3 index out of range (valid indices: 0-8)");
+            return nullptr;
+    }
+}
+
+PySequenceMethods sequence_methods = {
+    .sq_length = (lenfunc)__len__,
+    .sq_item = (ssizeargfunc)__getitem__,
+};
+
+PyGetSetDef getset[] = {
+    GETTER(A, "Matrix element A (row 1, col 1)"),
+    GETTER(B, "Matrix element B (row 1, col 2)"),
+    GETSET(E, "Matrix element E (row 1, col 3)"),
+    GETTER(C, "Matrix element C (row 2, col 1)"),
+    GETTER(D, "Matrix element D (row 2, col 2)"),
+    GETSET(F, "Matrix element F (row 2, col 3)"),
+    GETSET(G, "Matrix element G (row 3, col 1)"),
+    GETSET(H, "Matrix element H (row 3, col 2)"),
+    { NULL }
+};
+
+PyTypeObject type = {
+    .ob_base = PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "schema.Matrix3",
+    .tp_basicsize = sizeof(Matrix3),
+    .tp_itemsize = 0,
+    .tp_repr = (reprfunc)__repr__,
+    .tp_as_number = &number_methods,
+    .tp_as_sequence = &sequence_methods,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_doc = PyDoc_STR("3x3 matrix for misalignment calculations"),
+    .tp_getset = getset,
+    .tp_new = ctor,
+};
+
+PyTypeObject* __class__()
+{
+    return &type;
+}
+
+PyObject* make(double a, double b, double e, double c, double d, double f, double g, double h)
+{
+    CHECK_TYPE_READY
+    auto obj = type.tp_alloc(&type, 0);
+    if (obj) {
+        auto m = (Matrix3*)obj;
+        m->A = a;
+        m->B = b;
+        m->E = e;
+        m->C = c;
+        m->D = d;
+        m->F = f;
+        m->G = g;
+        m->H = h;
+    }
+    return obj;
+}
+
+} // namespace Matrix3
+
+//------------------------------------------------------------------------------
 //                               RoundTrip
 //------------------------------------------------------------------------------
 
@@ -817,6 +1042,7 @@ int on_exec(PyObject *module)
     
     ADD_TYPE(Element)
     ADD_TYPE(Matrix)
+    ADD_TYPE(Matrix3)
     ADD_TYPE(RayVector)
     ADD_TYPE(RoundTrip)
 

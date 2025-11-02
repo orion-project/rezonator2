@@ -1,0 +1,162 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 1000
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "M_back",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "Alpha": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "deg",
+                    "value": 0
+                },
+                "R": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "mm",
+                    "value": 30
+                }
+            },
+            "title": "Back mirror",
+            "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L_foc",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "mm",
+                    "value": 57
+                },
+                "n": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "Focusing range",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M_foc",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "param_specs": [
+                {
+                    "alias": "dYt",
+                    "custom": true,
+                    "descr": "Offset of element center from beam axis in T-plane.",
+                    "dim": "linear",
+                    "label": "dYt",
+                    "name": "Axial misalignment T"
+                },
+                {
+                    "alias": "dVt",
+                    "custom": true,
+                    "descr": "Tilt of element axis from beam axis in T-plane.",
+                    "dim": "angular",
+                    "label": "dVt",
+                    "name": "Angular misalignment T"
+                }
+            ],
+            "params": {
+                "Alpha": {
+                    "error": "",
+                    "expr": "7",
+                    "unit": "deg",
+                    "value": 7
+                },
+                "R": {
+                    "error": "",
+                    "expr": "50",
+                    "unit": "mm",
+                    "value": 50
+                },
+                "dVt": {
+                    "error": "",
+                    "expr": "0.2",
+                    "unit": "deg",
+                    "value": 0.2
+                },
+                "dYt": {
+                    "error": "",
+                    "expr": "0.2",
+                    "unit": "mm",
+                    "value": 0.2
+                }
+            },
+            "title": "Focusing mirror",
+            "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "mm",
+                    "value": 300
+                },
+                "n": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "Folding range",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M_out",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+            },
+            "title": "Output mirror",
+            "type": "ElemFlatMirror"
+        }
+    ],
+    "formulas": [
+    ],
+    "notes": "The example shows how to calculate an effective misalignment and position of the effective optical axis of a resonator having slightly tilted and displaced elements. Custom functions coded in Python are demonstrated. Misalignments of elements are set via custom parameters.",
+    "param_links": [
+    ],
+    "pumps": [
+    ],
+    "schema_version": "2.1",
+    "title": "Misaligned resonator",
+    "trip_type": "SW",
+    "windows": [
+        {
+            "code": "'''\nEffective misalignment (alt)\n\nCalculation the effective misalignment of the whole system\nand the position of the effective optical axis of the resonator.\nThe analytical solution for multiplication of ABCD matrices\nby element misalignment vectors\nis used instead of extended ABCDEF ray matrices.\nIn particular, this solution is shown in the book\n\"A. Gerrard and J. M. Burch,\nIntroduction to Matrix Methods in Optics\", Appendix II.\nHowever it's more straightforward just to construct\nABCDEF matrices and multiply them, so there is no big reason\nto directly use this solution. We just show it for generality\nand to have additional verification for algorithms.\n'''\nfrom math import degrees as deg\nimport rezonator as Z\nimport schema\nfrom schema import Matrix, RayVector\n\ndef calculate():\n  rt = schema.round_trip(ref='M_out')\n  M = rt.matrix()\n\n  # RayVector is an additional reZonator's helper class\n  # containing two components and having an ability\n  # to be multiplyed by ray matrices.\n  YV = RayVector()\n  for i in range(rt.matrix_count):\n    # Temp matrix for calculation of misalighnments\n    # after i-th element in the round-trip.\n    m = Matrix()\n    for j in range(i):\n      m *= rt.matrix(j)\n    elem = rt.elem(i)\n    YV += m * RayVector(\n      # Element's method `param` returns a parameter value in SI units.\n      # The second argument is a default value in SI units\n      # used when the parameter is not found.\n      # This variant is convenient for using with custom parameters\n      # that can be added optionally to only some desired elements.\n      elem.param('dYt', 0),\n      elem.param('dVt', 0))\n\n  Z.print('Effective misalignment at', rt.ref.label)\n  Y, V = YV\n  Z.print(Y*1000, 'mm', deg(V), '°')\n  \n  Z.print('Position of effective optical axis at', rt.ref.label)\n  A, B, C, D = M\n  Y0 = ((1 - D)*Y + B*V) / (2 - A - D)\n  V0 = (C*Y + (1 - A)*V) / (2 - A - D)\n  Z.print(Y0*1000, 'mm', deg(V0), '°')\n",
+            "title": "Effective misalignment (alt)",
+            "type": "FuncEditor"
+        },
+        {
+            "code": "'''\nEffective misalignment\n\nCalculate the effective misalignment of the whole system\nand the position of the effective optical axis of the resonator\nusing extended ray matrices of size 3×3 (ABCDEF method).\n'''\nfrom math import degrees as deg\nimport rezonator as Z\nimport schema\nfrom schema import Matrix3\n\ndef calculate():\n  rt = schema.round_trip(ref='M_out')\n  \n  # Matrix3 is a helper class for extended ray matrix.\n  # It can be constructed from a conventional ABCD matrix\n  # and additional components assigned manually.\n  M = Matrix3()\n  for i in range(rt.matrix_count):\n    m = Matrix3(rt.matrix(i))\n    elem = rt.elem(i)\n    # Additional matrix components are assigned from\n    # particular element's misalignments.\n    # Element's method `param` returns a parameter value in SI units.\n    # The second argument is a default value in SI units\n    # used when the parameter is not found.\n    # This variant is convenient for using with custom parameters\n    # that can be added optionally to only some desired elements.\n    m.E = elem.param('dYt', 0)\n    m.F = elem.param('dVt', 0)\n    # Multiply ABCDEF matrices in the same order\n    # as the initial ABCD matrices are stored\n    # in the automatically prepared round-trip\n    M *= m\n  \n  Z.print('Effective misalignment at', rt.ref.label)\n  E = M.E\n  F = M.F\n  Z.print(E*1000, 'mm', deg(F), '°')\n  \n  Z.print('Position of effective optical axis at', rt.ref.label)\n  A, B, C, D = rt.matrix()\n  E0 = ((1 - D)*E + B*F) / (2 - A - D)\n  F0 = (C*E + (1 - A)*F) / (2 - A - D)\n  Z.print(E0*1000, 'mm', deg(F0), '°')\n",
+            "title": "Effective misalignment",
+            "type": "FuncEditor"
+        }
+    ]
+}
