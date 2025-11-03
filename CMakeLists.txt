@@ -87,6 +87,11 @@ set(PROJECT_SOURCES
     src/core/Perf.h src/core/Perf.cpp
     src/core/Protocol.h src/core/Protocol.cpp
     src/core/Pump.h src/core/Pump.cpp
+    src/core/PyClassMatrix.h
+    src/core/PyClassRayVector.h
+    src/core/PyClassMatrix3.h
+    src/core/PyClassElement.h
+    src/core/PyClassRoundTrip.h
     src/core/PyModuleGlobal.h
     src/core/PyModuleSchema.h
     src/core/PyRunner.h src/core/PyRunner.cpp

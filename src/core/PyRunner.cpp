@@ -4,7 +4,7 @@
 
 PyRunner::PyRunner() {}
 PyRunner::~PyRunner() {}
-bool PyRunner::load() { errorLog << "Not emplemented"; return false; }
+bool PyRunner::load(const ModuleProps&) { errorLog << "Not emplemented"; return false; }
 PyRunner::FuncResult PyRunner::run(const QString&, const Args&, const ResultSpec&) { return {}; }
 
 #else
@@ -12,8 +12,8 @@ PyRunner::FuncResult PyRunner::run(const QString&, const Args&, const ResultSpec
 // Includes Python.h, should be first:
 #include "PyUtils.h"
 #include "PyRunner.h"
-#include "PyModuleSchema.h"
 #include "PyModuleGlobal.h"
+#include "PyModuleSchema.h"
 #include "Units.h"
 #include "../math/BeamCalculator.h"
 
@@ -62,8 +62,8 @@ PyRunner::PyRunner()
     }
     memcpy(config.home, homePath.c_str(), homePath.size() * sizeof(wchar_t));
 
-    ADD_MODULE(PyModules::Global)
-    ADD_MODULE(PyModules::Schema)
+    ADD_MODULE(PyModule::Global)
+    ADD_MODULE(PyModule::Schema)
 
     PyStatus status = Py_InitializeFromConfig(&config);
     if (PyStatus_Exception(status)) {
@@ -81,8 +81,8 @@ PyRunner::PyRunner()
 
     // Import common modules first time to initialize their types (Element, etc.)
     // Don't release returned refs, they safely can exists the whole app lifetime
-    INIT_MODULE(PyModules::Global)
-    INIT_MODULE(PyModules::Schema)
+    INIT_MODULE(PyModule::Global)
+    INIT_MODULE(PyModule::Schema)
 
     PyConfig_Clear(&config);
     inited = true;
@@ -99,8 +99,8 @@ PyRunner::~PyRunner()
             Py_DECREF(r.ref);
     }
 
-    PyModules::Schema::schema = nullptr;
-    PyModules::Global::printFunc = nullptr;
+    PyGlobal::schema = nullptr;
+    PyGlobal::printFunc = nullptr;
 }
 
 struct TmpRefs
@@ -150,8 +150,8 @@ bool PyRunner::load(const ModuleProps &props)
         return false;
     }
 
-    PyModules::Schema::schema = schema;
-    PyModules::Global::printFunc = printFunc ? printFunc : [](const QString &s){ qDebug() << s; };
+    PyGlobal::schema = schema;
+    PyGlobal::printFunc = printFunc ? printFunc : [](const QString &s){ qDebug() << s; };
     
     auto bCode = code.toUtf8();
     auto bModuleName = moduleName.toUtf8();
@@ -165,7 +165,7 @@ bool PyRunner::load(const ModuleProps &props)
             // This is expected, clean the exception
             refs << TmpRef{"ModuleNotFoundError", PyErr_GetRaisedException()};
         } else {
-            handleError("Failed to find existing module");
+            handleError("Failed to find existing custom module");
             return false;
         }
     } else {
@@ -174,21 +174,21 @@ bool PyRunner::load(const ModuleProps &props)
         // It replaces only attributes that exist in the new code
         // If the new code doesn't contain docstring, the old doc is returned
         if (PyObject_SetAttrString(pOldModule, "__doc__", Py_None) < 0) {
-            handleError("Failed to clean existing module");
+            handleError("Failed to clean existing custom module");
             return false;
         }
     }
     
     auto pCompiled = Py_CompileString(bCode.constData(), szModuleName, Py_file_input);
     if (!pCompiled) {
-        handleError("Failed to compile code");
+        handleError("Failed to compile custom code");
         return false;
     }
     refs << TMP_REF(pCompiled);
     
     auto pModule = PyImport_ExecCodeModule(szModuleName, pCompiled);
     if (!pModule) {
-        handleError("Failed to execute module");
+        handleError("Failed to execute custom module");
         return false;
     }
     refs << TMP_REF(pModule);
@@ -257,10 +257,10 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, co
         PyObject *pArg = nullptr;
         switch (argType) {
         case atElement:
-            pArg = PyModules::Schema::Element::make((Element*)(argValue.value<void*>()));
+            pArg = PyClass::Element::make((Element*)(argValue.value<void*>()));
             break;
         case atRoundTrip:
-            pArg = PyModules::Schema::RoundTrip::make((BeamCalculator*)(argValue.value<void*>()), false);
+            pArg = PyClass::RoundTrip::make((BeamCalculator*)(argValue.value<void*>()), false);
             break;
         case atInt:
             pArg = PyLong_FromLong(argValue.toInt());
@@ -327,39 +327,39 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, co
         for (auto f = resultSpec.cbegin(); f != resultSpec.cend(); f++) {
             auto keyBytes = f.key().toUtf8();
             const char *k = keyBytes.constData();
-            #define CHECK_(cond, msg) \
+            #define CHECK_E(cond, msg) \
                 if (!cond) { \
                     handleError(QString("result[%1]['%2']: %3").arg(i).arg(k, msg), funcName); \
                     return {}; \
                 }
             auto pKey = PyUnicode_FromString(k);
-            CHECK_(pKey, "failed to convert key to PyObject");
+            CHECK_E(pKey, "failed to convert key to PyObject");
             refs << TMP_REF(pKey);
-            CHECK_(PyDict_Contains(pItem, pKey), "field not found");
+            CHECK_E(PyDict_Contains(pItem, pKey), "field not found");
             auto pField = PyDict_GetItemString(pItem, k);
-            CHECK_(pField, "failed to get field");
+            CHECK_E(pField, "failed to get field");
             switch (f.value()) {
             case ftNumber:
                 if (PyFloat_Check(pField))
                     rec[k] = PyFloat_AsDouble(pField);
                 else if (PyLong_Check(pField))
                     rec[k] = double(PyLong_AsLong(pField));
-                else CHECK_(false, "number expected");
+                else CHECK_E(false, "number expected");
                 break;
             case ftString:
-                CHECK_(PyUnicode_Check(pField), "string expected");
+                CHECK_E(PyUnicode_Check(pField), "string expected");
                 rec[k] = QString::fromUtf8(PyUnicode_AsUTF8(pField));
                 break;
             case ftUnitDim: {
-                CHECK_(PyLong_Check(pField), "dimension expected");
+                CHECK_E(PyLong_Check(pField), "dimension expected");
                 auto dims = Z::Dims::dims();
                 int dim = PyLong_AsLong(pField);
-                CHECK_((dim >= 0 && dim < dims.size()), "bad dimension");
+                CHECK_E((dim >= 0 && dim < dims.size()), "bad dimension");
                 rec[k] = QVariant::fromValue(dims.at(dim));
                 break;
             }
             }
-            #undef CHECK_
+            #undef CHECK_E
         }
         result << rec;
     }

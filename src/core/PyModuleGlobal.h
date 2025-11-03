@@ -2,27 +2,22 @@
 #define PY_MODULE_GLOBAL_H
 
 #include "PyUtils.h"
+#include "PyClassElement.h"
+#include "PyClassMatrix3.h"
+#include "PyClassRoundTrip.h"
 
 #include "CommonTypes.h"
 #include "Format.h"
 #include "Math.h"
 #include "Units.h"
 
-#include <functional>
+namespace PyModule::Global {
 
-#include <QDebug>
-
-namespace PyModules::Global {
-
-const char *name = "rezonator";
-
-std::function<void(const QString&)> printFunc;
-
-namespace Methods {
+const char *moduleName = "rezonator";
 
 PyObject* print(PyObject* Py_UNUSED(self), PyObject* args, PyObject *kwargs)
 {
-    if (!printFunc) {
+    if (!PyGlobal::printFunc) {
         PyErr_SetString(PyExc_NotImplementedError, "rezonator.print is not defined");
         return nullptr;
     }
@@ -63,7 +58,7 @@ PyObject* print(PyObject* Py_UNUSED(self), PyObject* args, PyObject *kwargs)
             spaced = Py_IsTrue(pSpaced);
         }
     }
-    printFunc(spaced ? parts.join(' ') : parts.join(QString()));
+    PyGlobal::printFunc(spaced ? parts.join(' ') : parts.join(QString()));
     Py_RETURN_NONE;
 }
 
@@ -101,8 +96,6 @@ PyObject* version(PyObject* Py_UNUSED(self), PyObject* Py_UNUSED(args))
     return PyUnicode_FromString(ver.constData());
 }
 
-} // Methods
-
 int on_exec(PyObject *module)
 {
     CONST_FLOAT("C", Z::Const::LightSpeed)
@@ -116,15 +109,21 @@ int on_exec(PyObject *module)
     CONST_INT("PLANE_T", Z::WorkPlane::T)
     CONST_INT("PLANE_S", Z::WorkPlane::S)
 
-    qDebug() << "rezonator module executed";
+    ADD_TYPE(Element)
+    ADD_TYPE(Matrix)
+    ADD_TYPE(Matrix3)
+    ADD_TYPE(RayVector)
+    ADD_TYPE(RoundTrip)
+
+    qDebug() << "Module executed:" << moduleName;
     return 0;
 }
 
 PyMethodDef methods[] = {
-    { "format", (PyCFunction)Methods::format, METH_O, "Format value into user display string" },
-    { "plane_str", (PyCFunction)Methods::plane_str, METH_VARARGS, "Return work plane name" },
-    { "print", (PyCFunction)Methods::print, METH_VARARGS | METH_KEYWORDS, "Print message" },
-    { "version", (PyCFunction)Methods::version, METH_NOARGS, "Return application version" },
+    { "format", format, METH_O, "Format value into user display string" },
+    { "plane_str", plane_str, METH_VARARGS, "Return work plane name" },
+    { "print", (PyCFunction)print, METH_VARARGS | METH_KEYWORDS, "Print message" },
+    { "version", version, METH_NOARGS, "Return application version" },
     { NULL, NULL, 0, NULL }
 };
 
@@ -136,7 +135,7 @@ PyModuleDef_Slot slotes[] = {
 
 PyModuleDef module = {
     .m_base = PyModuleDef_HEAD_INIT,
-    .m_name = name,
+    .m_name = moduleName,
     .m_size = 0,
     .m_methods = methods,
     .m_slots = slotes,
@@ -147,6 +146,6 @@ PyObject* init()
     return PyModuleDef_Init(&module);
 }
 
-} // namespace PyModules::Global
+} // namespace PyModule::Global
 
 #endif // PY_MODULE_GLOBAL_H
