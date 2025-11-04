@@ -98,6 +98,7 @@ void CodeEditorWindow::setCode(const QString &code)
 
 void CodeEditorWindow::logInfo(const QString &msg, bool scrollToEnd)
 {
+    qDebug() << msg;
     _log->appendPlainText(msg);
 
     // Format the last paragraph

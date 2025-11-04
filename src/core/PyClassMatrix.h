@@ -26,33 +26,36 @@ PyObject* ctor(PyTypeObject* Py_UNUSED(type), PyObject* args, PyObject* Py_UNUSE
     return make(Z::Matrix(a, b, c, d));
 }
 
-PyObject* A(Self *self, PyObject *Py_UNUSED(args))
-{
-    if (Z::isReal(self->matrix.A))
-        return PyFloat_FromDouble(self->matrix.A.real());
-    return PyComplex_FromDoubles(self->matrix.A.real(), self->matrix.A.imag());
-}
+#define M_GET(x) \
+    PyObject* x(Self *self, PyObject *Py_UNUSED(args)) { \
+        if (Z::isReal(self->matrix.x)) \
+            return PyFloat_FromDouble(self->matrix.x.real()); \
+        return PyComplex_FromDoubles(self->matrix.x.real(), self->matrix.x.imag()); \
+    }
 
-PyObject* B(Self *self, PyObject *Py_UNUSED(args))
-{
-    if (Z::isReal(self->matrix.B))
-        return PyFloat_FromDouble(self->matrix.B.real());
-    return PyComplex_FromDoubles(self->matrix.B.real(), self->matrix.B.imag());
-}
+#define M_SET(x) \
+    int set_##x(Self *self, PyObject *arg) { \
+        if (PyComplex_Check(arg)) { \
+            auto c = PyComplex_AsCComplex(arg); \
+            self->matrix.x = Z::Complex(c.real, c.imag); \
+        } else if (PyFloat_Check(arg)) { \
+            self->matrix.x = PyFloat_AsDouble(arg); \
+        } else if (PyLong_Check(arg)) { \
+            self->matrix.x = PyLong_AsLong(arg); \
+        } else { \
+            CHECK_I(false, TypeError, "unsupported argument type, number expected") \
+        } \
+        return 0; \
+    }
 
-PyObject* C(Self *self, PyObject *Py_UNUSED(args))
-{
-    if (Z::isReal(self->matrix.C))
-        return PyFloat_FromDouble(self->matrix.C.real());
-    return PyComplex_FromDoubles(self->matrix.C.real(), self->matrix.C.imag());
-}
+M_GET(A) M_GET(B)
+M_GET(C) M_GET(D)
 
-PyObject* D(Self *self, PyObject *Py_UNUSED(args))
-{
-    if (Z::isReal(self->matrix.D))
-        return PyFloat_FromDouble(self->matrix.D.real());
-    return PyComplex_FromDoubles(self->matrix.D.real(), self->matrix.D.imag());
-}
+M_SET(A) M_SET(B)
+M_SET(C) M_SET(D)
+
+#undef M_GET
+#undef M_SET
 
 PyObject* __repr__(Self *self)
 {
@@ -123,17 +126,14 @@ PyTypeObject* type()
     };
     
     static PyGetSetDef getset[] = {
-        GETTER(A, "Matrix element A"),
-        GETTER(B, "Matrix element B"),
-        GETTER(C, "Matrix element C"),
-        GETTER(D, "Matrix element D"),
+        GETSET(A, "Matrix element A"),
+        GETSET(B, "Matrix element B"),
+        GETSET(C, "Matrix element C"),
+        GETSET(D, "Matrix element D"),
         { NULL }
     };
     
     static QByteArray typeName = QString("%1.Matrix").arg(moduleName).toUtf8();
-    
-    static bool first = true;
-    if (first) { qDebug() << "Register Matrix:" << typeName; first = false; }
     
     static PyTypeObject type = {
         .ob_base = PyVarObject_HEAD_INIT(NULL, 0)

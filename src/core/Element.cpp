@@ -296,6 +296,22 @@ void ElementEventsLocker::collectElems(Z::Parameter *param)
 }
 
 //------------------------------------------------------------------------------
+//                                ElementParamsBackup
+//------------------------------------------------------------------------------
+
+ElementParamsBackup::ElementParamsBackup(Element *elem, const char *reason) : _elem(elem), _reason(reason)
+{
+    //qDebug() << "Backup elem params" << elem->displayLabel() << reason;
+    for (auto p : elem->params())
+        _backup.insert(p, std::shared_ptr<Z::ParamValueBackup>(new Z::ParamValueBackup(p, reason)));
+}
+
+ElementParamsBackup::~ElementParamsBackup()
+{
+    //qDebug() << "Restore elem params" << _elem->displayLabel() << _reason;
+}
+
+//------------------------------------------------------------------------------
 //                                Z::Utils
 //------------------------------------------------------------------------------
 

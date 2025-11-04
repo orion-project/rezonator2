@@ -364,6 +364,20 @@ private:
 
 //------------------------------------------------------------------------------
 
+class ElementParamsBackup
+{
+public:
+    ElementParamsBackup(Element *elem, const char *reason);
+    ~ElementParamsBackup();
+
+private:
+    Element *_elem;
+    QHash<Z::Parameter*, std::shared_ptr<Z::ParamValueBackup>> _backup;
+    const char *_reason;
+};
+
+//------------------------------------------------------------------------------
+
 class ElementMatrixLocker
 {
 public:
