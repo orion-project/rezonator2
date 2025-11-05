@@ -204,6 +204,36 @@ void RoundTripCalculator::multMatrix(const char *reason)
     }
 }
 
+Z::PointTS RoundTripCalculator::stability() const
+{
+    return {
+        calcStability(_mt, _stabilityCalcMode),
+        calcStability(_ms, _stabilityCalcMode)
+    };
+}
+
+double RoundTripCalculator::stability(Z::WorkPlane ts) const
+{
+    return ts == Z::T
+        ? calcStability(_mt, _stabilityCalcMode)
+        : calcStability(_ms, _stabilityCalcMode);
+}
+
+double RoundTripCalculator::stability(Z::WorkPlane ts, Z::Enums::StabilityCalcMode mode) const
+{
+    return ts == Z::T
+        ? calcStability(_mt, mode)
+        : calcStability(_ms, mode);
+}
+
+Z::PointComplexTS RoundTripCalculator::stabilityCplx() const
+{
+    return {
+        calcStabilityCplx(_mt, _stabilityCalcMode),
+        calcStabilityCplx(_ms, _stabilityCalcMode)
+    };
+}
+
 bool RoundTripCalculator::isStable(const Z::Matrix& m) const
 {
     // The most generic stability condition suitable for all-complex matrices
@@ -228,16 +258,15 @@ bool RoundTripCalculator::isStable(const Z::Matrix& m) const
     return (half_of_A_plus_D > -1) && (half_of_A_plus_D < 1);
 }
 
-double RoundTripCalculator::calcStability(const Z::Matrix& m) const
+double RoundTripCalculator::calcStability(const Z::Matrix& m, Z::Enums::StabilityCalcMode mode) const
 {
-    // See RoundTripCalculator::isStable()
-    return calcStabilityCplx(m).real();
+    return calcStabilityCplx(m, mode).real();
 }
 
-Z::Complex RoundTripCalculator::calcStabilityCplx(const Z::Matrix &m) const
+Z::Complex RoundTripCalculator::calcStabilityCplx(const Z::Matrix &m, Z::Enums::StabilityCalcMode mode) const
 {
     auto half_of_A_plus_D = (m.A + m.D) * 0.5;
-    switch (_stabilityCalcMode)
+    switch (mode)
     {
     case Z::Enums::StabilityCalcMode::Normal:
         return half_of_A_plus_D;
@@ -245,7 +274,7 @@ Z::Complex RoundTripCalculator::calcStabilityCplx(const Z::Matrix &m) const
     case Z::Enums::StabilityCalcMode::Squared:
         return Z::Complex(1, 0) - half_of_A_plus_D * half_of_A_plus_D;
     }
-    qWarning() << "Unsupported stability calculation mode" << _stabilityCalcMode;
+    qWarning() << "Unsupported stability calculation mode" << mode;
     return Z::Complex(0, 0);
 }
 

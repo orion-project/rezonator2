@@ -268,8 +268,8 @@ void ElementPropsDialog::addCustomParam(Z::Parameter *param)
     param->setValue(Z::Value(0, unit));
     param->setOption(Z::ParamOption::Custom);
     _newParams << param;
-    updatePageParams();
     auto paramEditor = _editorParams->addEditor(param);
+    updatePageParams();
     QTimer::singleShot(100, this, [paramEditor](){ paramEditor->focus(); });
 }
 

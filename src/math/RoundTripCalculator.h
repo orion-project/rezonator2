@@ -27,28 +27,29 @@ public:
     bool isEmpty() const { return _roundTrip.isEmpty(); }
     QString error() const { return _error; }
 
-    Z::PointTS stability() const { return { calcStability(_mt), calcStability(_ms) }; }
-    inline double stability(Z::WorkPlane ts) const { return ts == Z::T ? calcStability(_mt) : calcStability(_ms); }
-    Z::PointComplexTS stabilityCplx() const { return { calcStabilityCplx(_mt), calcStabilityCplx(_ms) }; }
+    Z::PointTS stability() const;
+    double stability(Z::WorkPlane ts) const;
+    double stability(Z::WorkPlane ts, Z::Enums::StabilityCalcMode mode) const;
+    Z::PointComplexTS stabilityCplx() const;
     Z::PairTS<bool> isStable() const { return { isStable(_mt), isStable(_ms) }; }
     Z::Enums::StabilityCalcMode stabilityCalcMode() const { return _stabilityCalcMode; }
     void setStabilityCalcMode(Z::Enums::StabilityCalcMode mode) { _stabilityCalcMode = mode; }
 
-    inline Element* reference() const { return _reference; }
-    inline Schema* owner() const { return _schema; }
-    inline const Z::Matrix& Mt() const { return _mt; }
-    inline const Z::Matrix& Ms() const { return _ms; }
-    inline const Z::Matrix* pMt() const { return &_mt; }
-    inline const Z::Matrix* pMs() const { return &_ms; }
-    inline const Z::MatrixArray& matrsT() const { return _matrsT; }
-    inline const Z::MatrixArray& matrsS() const { return _matrsS; }
-    inline const Z::Matrix& M(Z::WorkPlane ts) { return ts == Z::T ? _mt : _ms; }
+    Element* reference() const { return _reference; }
+    Schema* owner() const { return _schema; }
+    const Z::Matrix& Mt() const { return _mt; }
+    const Z::Matrix& Ms() const { return _ms; }
+    const Z::Matrix* pMt() const { return &_mt; }
+    const Z::Matrix* pMs() const { return &_ms; }
+    const Z::MatrixArray& matrsT() const { return _matrsT; }
+    const Z::MatrixArray& matrsS() const { return _matrsS; }
+    const Z::Matrix& M(Z::WorkPlane ts) { return ts == Z::T ? _mt : _ms; }
 
     QList<Element*> roundTrip() const;
     QString roundTripStr() const;
 
     // Returns info array of the same length as matrsT/matrsS
-    QList<MatrixInfo> matrixInfo() const { return _matrixInfo; }
+    const QList<MatrixInfo>& matrixInfo() const { return _matrixInfo; }
 
     struct RoundTripElemInfo
     {
@@ -108,8 +109,8 @@ private:
     void collectMatrices();
     void collectMatricesSP();
 
-    double calcStability(const Z::Matrix &m) const;
-    Z::Complex calcStabilityCplx(const Z::Matrix &m) const;
+    double calcStability(const Z::Matrix &m, Z::Enums::StabilityCalcMode mode) const;
+    Z::Complex calcStabilityCplx(const Z::Matrix &m, Z::Enums::StabilityCalcMode mode) const;
     bool isStable(const Z::Matrix &m) const;
 };
 

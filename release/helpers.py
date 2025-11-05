@@ -173,6 +173,8 @@ def copy_file(source_file_path, target_dir, target_fn=''):
 
 
 def copy_files(source_dir, filenames, target_dir, **kwargs):
+  if kwargs.get('create_dir') and not os.path.exists(target_dir):
+    os.makedirs(target_dir, exist_ok=True)
   for filename in filenames:
     source_file = os.path.join(source_dir, filename)
     if kwargs.get('skip_non_exitent') and not os.path.exists(source_file):

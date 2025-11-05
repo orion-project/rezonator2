@@ -50,12 +50,13 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Help PrintSupport Svg Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Help PrintSupport Svg Widgets)
 
 # Add Python
-# find_package(Python3 COMPONENTS Development REQUIRED)
-# message(STATUS "Python3_FOUND: ${Python3_FOUND}")
-# message(STATUS "Python3_VERSION: ${Python3_VERSION}")
-# message(STATUS "Python3_INCLUDE_DIRS: ${Python3_INCLUDE_DIRS}")
-# message(STATUS "Python3_LIBRARIES: ${Python3_LIBRARIES}")
-# message(STATUS "Python3_LIBRARY_DIRS: ${Python3_LIBRARY_DIRS}")
+set(Python3_FIND_REGISTRY NEVER)
+find_package(Python3 COMPONENTS Development REQUIRED)
+message(STATUS "Python3_FOUND: ${Python3_FOUND}")
+message(STATUS "Python3_VERSION: ${Python3_VERSION}")
+message(STATUS "Python3_INCLUDE_DIRS: ${Python3_INCLUDE_DIRS}")
+message(STATUS "Python3_LIBRARIES: ${Python3_LIBRARIES}")
+message(STATUS "Python3_LIBRARY_DIRS: ${Python3_LIBRARY_DIRS}")
 
 set(PROJECT_SOURCES
     ${CMAKE_CURRENT_BINARY_DIR}/version.rc
@@ -86,6 +87,11 @@ set(PROJECT_SOURCES
     src/core/Perf.h src/core/Perf.cpp
     src/core/Protocol.h src/core/Protocol.cpp
     src/core/Pump.h src/core/Pump.cpp
+    src/core/PyClassMatrix.h
+    src/core/PyClassRayVector.h
+    src/core/PyClassMatrix3.h
+    src/core/PyClassElement.h
+    src/core/PyClassRoundTrip.h
     src/core/PyModuleGlobal.h
     src/core/PyModuleSchema.h
     src/core/PyRunner.h src/core/PyRunner.cpp
@@ -122,11 +128,12 @@ set(PROJECT_SOURCES
     src/io/SchemaReaderIni.h src/io/SchemaReaderIni.cpp
     src/io/SchemaReaderJson.h src/io/SchemaReaderJson.cpp
     src/io/SchemaWriterJson.h src/io/SchemaWriterJson.cpp
-    src/math/AbcdBeamCalculator.h src/math/AbcdBeamCalculator.cpp
-    src/math/BeamCalcWrapper.h src/math/BeamCalcWrapper.cpp
+    src/math/AbcdCalculator.h src/math/AbcdCalculator.cpp
+    src/math/BeamCalculator.h src/math/BeamCalculator.cpp
     src/math/BeamParamsAtElemsFunction.h src/math/BeamParamsAtElemsFunction.cpp
     src/math/BeamVariationFunction.h src/math/BeamVariationFunction.cpp
     src/math/CausticFunction.h src/math/CausticFunction.cpp
+    src/math/CustomInfoFunction.h src/math/CustomInfoFunction.cpp
     src/math/CustomTableFunction.h src/math/CustomTableFunction.cpp
     src/math/FormatInfo.h src/math/FormatInfo.cpp
     src/math/FunctionBase.h src/math/FunctionBase.cpp
@@ -146,8 +153,9 @@ set(PROJECT_SOURCES
     src/math/StabilityMapFunction.h src/math/StabilityMapFunction.cpp
     src/math/TableFunction.h src/math/TableFunction.cpp
     src/math/tinyexpr.h src/math/tinyexpr.c
-    src/tests/test_AbcdBeamCalculator.cpp
+    src/tests/test_AbcdCalculator.cpp
     src/tests/test_Adjuster.cpp
+    src/tests/test_BeamCalculator.cpp
     src/tests/test_Element.cpp
     src/tests/test_ElementEventsLocker.cpp
     src/tests/test_ElementFilter.cpp
@@ -156,6 +164,7 @@ set(PROJECT_SOURCES
     src/tests/test_ElementsImages.cpp
     src/tests/test_ElemSelectorWidget.cpp
     src/tests/test_Formula.cpp
+    src/tests/test_FunctionUtils.cpp
     src/tests/test_GaussCalculator.cpp
     src/tests/test_GrinCalculator.cpp
     src/tests/test_InfoFunctions.cpp
@@ -280,7 +289,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt::PrintSupport
     Qt::Svg
     Qt::Widgets
-    #Python3::Python
+    Python3::Python
     ${LUA_LIBRARIES}
 )
 # if(APPLE)
@@ -310,7 +319,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     APP_VER_YEAR_0=${APP_VER_YEAR_0}
     QT_USE_QSTRINGBUILDER
     ORI_USE_STYLE_SHEETS
-    #Z_USE_PYTHON
+    Z_USE_PYTHON
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)

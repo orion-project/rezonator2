@@ -1,60 +1,52 @@
 #include "CustomTableFunction.h"
 
-#include "BeamCalcWrapper.h"
+#include "BeamCalculator.h"
 #include "RoundTripCalculator.h"
 #include "../core/PyRunner.h"
 
 #include <QApplication>
 
-#define FUNC_COLUMNS QStringLiteral("describe_columns")
+#define FUNC_COLUMNS QStringLiteral("columns")
 #define FUNC_CALC QStringLiteral("calculate")
 #define COL_LABEL QStringLiteral("label")
 #define COL_TITLE QStringLiteral("title")
 #define COL_DIM QStringLiteral("dim")
 
+static int __funcCount = 0;
+
 CustomTableFunction::CustomTableFunction(Schema *schema) : TableFunction(schema)
 {
+    _moduleName = QString("customtable%1").arg(++__funcCount);
 }
 
-QVector<Z::PointTS> CustomTableFunction::calculatePumpBeforeSchema(Element *elem)
-{
-    RoundTripCalculator rt(schema(), nullptr);
-    return calculateInternal(elem, &rt, 1);
-}
-
-QVector<Z::PointTS> CustomTableFunction::calculateSinglePass(Element *elem, RoundTripCalculator* rt, double ior)
-{
-    return calculateInternal(elem, rt, ior);
-}
-
-QVector<Z::PointTS> CustomTableFunction::calculateResonator(Element *elem, RoundTripCalculator *rt, double ior)
-{
-    return calculateInternal(elem, rt, ior);
-}
-
-QVector<Z::PointTS> CustomTableFunction::calculateInternal(Element *elem, RoundTripCalculator* rt, double ior)
+QVector<Z::PointTS> CustomTableFunction::calculateInternal(const ResultElem &resultElem)
 {
     PyRunner::ResultSpec resultSpec;
     for (const auto &col : std::as_const(_columns))
         resultSpec.insert(col.label, PyRunner::ftNumber);
+        
+    PyRunner::Args args {
+        { PyRunner::atElement, QVariant::fromValue((void*)resultElem.elem) },
+        { PyRunner::atInt, (int)resultPositionInfo(resultElem.pos).absPos },
+        { PyRunner::atRoundTrip, QVariant::fromValue((void*)_beamCalc.get()) }
+    };
     
-    BeamCalcWrapper calcT(Z::T, _pumpCalc.get(), _beamCalc.get(), rt, ior);
-    auto resT = _runner->run(FUNC_CALC, {
-        { PyRunner::atElement, elem },
-        { PyRunner::atBeamCalc, &calcT }
-    }, resultSpec);
+    _beamCalc->setPlane(Z::T);
+    auto resT = _runner->run(FUNC_CALC, args, resultSpec);
     if (!resT) {
         showError(_runner.get());
         return {};
     }
     
-    BeamCalcWrapper calcS(Z::S, _pumpCalc.get(), _beamCalc.get(), rt, ior);
-    auto resS = _runner->run(FUNC_CALC, {
-        { PyRunner::atElement, elem },
-        { PyRunner::atBeamCalc, &calcS }
-    }, resultSpec);
+    _beamCalc->setPlane(Z::S);
+    auto resS = _runner->run(FUNC_CALC, args, resultSpec);
     if (!resS) {
         showError(_runner.get());
+        return {};
+    }
+    
+    if (resT->isEmpty() && resS->isEmpty()) {
+        // The function is not applicable for particular elem and position
         return {};
     }
     
@@ -90,10 +82,21 @@ bool CustomTableFunction::prepare()
     std::shared_ptr<PyRunner> py(new PyRunner);
     py->schema = schema();
     py->code = _code;
-    py->funcNames = { FUNC_COLUMNS, "calculate" };
+    py->moduleName = _moduleName;
+    py->funcNames = { FUNC_COLUMNS, FUNC_CALC };
     py->printFunc = _printFunc;
 
-    if (!py->load()) {
+    static PyRunner::ModuleProps props {
+        .consts = {
+            { "POS_LEFT", (int)ResultPositionAbs::LEFT },
+            { "POS_BEG", (int)ResultPositionAbs::BEG },
+            { "POS_MID", (int)ResultPositionAbs::MID },
+            { "POS_END", (int)ResultPositionAbs::END },
+            { "POS_RIGHT", (int)ResultPositionAbs::RIGHT },
+        }
+    };
+
+    if (!py->load(props)) {
         showError(py.get());
         return false;
     }

@@ -26,7 +26,7 @@ static const QIcon& resultPosIcon(TableFunction::ResultPosition pos)
 {
     static QMap<TableFunction::ResultPosition, QIcon> icons;
     if (!icons.contains(pos))
-        icons[pos] = QIcon(TableFunction::resultPositionInfo(pos).icon_path);
+        icons[pos] = QIcon(TableFunction::resultPositionInfo(pos).iconPath);
     return icons[pos];
 }
 
@@ -150,17 +150,16 @@ void TableFuncResultTable::updateResults()
             double valueS = unit->fromSi(value.S);
 
             QString valueStr;
-            if (qIsNaN(valueT) || qIsNaN(valueS))
-                valueStr = QStringLiteral("N/A");
-            else if (showT && showS)
-                valueStr = QStringLiteral("%1 %2 %3")
-                        .arg(Z::format(valueT))
-                        .arg(Z::Strs::multX())
-                        .arg(Z::format(valueS));
+            if (showT && showS)
+            {
+                QString valueStrT = qIsNaN(valueT) ? QStringLiteral("N/A") : Z::format(valueT);
+                QString valueStrS = qIsNaN(valueS) ? QStringLiteral("N/A") : Z::format(valueS);
+                valueStr = QStringLiteral("%1 %2 %3").arg(valueStrT, Z::Strs::multX(), valueStrS);
+            }
             else if (showT)
-                valueStr = Z::format(valueT);
+                valueStr = qIsNaN(valueT) ? QStringLiteral("N/A") : Z::format(valueT);
             else
-                valueStr = Z::format(valueS);
+                valueStr = qIsNaN(valueS) ? QStringLiteral("N/A") : Z::format(valueS);
 
             it = item(row, FIXED_COLS_COUNT + index);
             if (!it)

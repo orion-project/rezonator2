@@ -17,6 +17,7 @@ bin/*.dll
 *.log
 *.pyc
 *.pdb
+*.ilk
 build
 tmp
 out

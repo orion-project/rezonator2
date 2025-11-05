@@ -66,7 +66,11 @@
         "image": "tool_lensmaker.png"
     },
     "beam_variation_offset": {
-        "text": "In the Beamsize Variation function, you can specify an <b>offset</b> inside an element where the beam size should be calculated. The offset can be given as a negative value, the it will be measured from the right side of the element. It event can be given as a relative value and will be calculated automatically!",
+        "text": "In the Beamsize Variation function, you can specify an <b>offset</b> inside an element where the beam size should be calculated. The offset can be given as a negative value; then it will be measured from the right side of the element. It even can be given as a relative value and will be calculated automatically!",
         "image": "beam_variation_offset.png"
+    },
+    "cursor_shows_elem": {
+        "text": "In a long caustic plot, it could be hard to distinguish to which element a particular graph part corresponds. Place the <b>cursor</b> in a graph part, and the cursor panel will show a label of the element you are looking at. It also shows the offset in the element alongside the total offset from the plot start.",
+        "image": "cursor_shows_elem.svg"
     }
 }

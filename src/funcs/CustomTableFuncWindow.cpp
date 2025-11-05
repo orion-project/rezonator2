@@ -39,6 +39,13 @@ void CustomTableFuncWindow::closeEvent(QCloseEvent* ce)
         ce->ignore();
 }
 
+bool CustomTableFuncWindow::configureInternal(const TableFunction::Params& params)
+{
+    function()->setCode(CodeUtils::loadCodeTemplate("_table_empty"));
+
+    return TableFuncWindow::configureInternal(params);
+}
+
 bool CustomTableFuncWindow::storableRead(const QJsonObject &root, Z::Report *report)
 {
     function()->setCode(root["code"].toString());

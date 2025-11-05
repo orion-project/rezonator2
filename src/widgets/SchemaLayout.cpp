@@ -541,6 +541,7 @@ ElementLayoutOptionsView* getOptions(Element *elem)
         registerLayoutOptions<ElemEmptyRange, ElemEmptyRangeLayout::LayoutOptions>();
         registerLayoutOptions<ElemGrinLens, ElemGrinLensLayout::LayoutOptions>();
         registerLayoutOptions<ElemGrinMedium, ElemGrinMediumLayout::LayoutOptions>();
+        registerLayoutOptions<ElemThermoMedium, ElemGrinMediumLayout::LayoutOptions>();
         registerLayoutOptions<ElemMediumRange, ElemMediumRangeLayout::LayoutOptions>();
         registerLayoutOptions<ElemPlate, ElemPlateLayout::LayoutOptions>();
         registerLayoutOptions<ElemPoint, ElemPointLayout::LayoutOptions>();

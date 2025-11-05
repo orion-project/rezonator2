@@ -206,4 +206,14 @@ private:
 
 } // namespace Z
 
+struct BeamResult
+{
+    double beamRadius; ///< Beam radius.
+    double frontRadius; ///< Wavefront ROC.
+    double halfAngle; ///< Half of divergence angle.
+    static BeamResult nan() {
+        return { qQNaN(), qQNaN(), qQNaN() };
+    }
+};
+
 #endif // VALUES_H

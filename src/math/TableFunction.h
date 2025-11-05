@@ -7,13 +7,13 @@
 
 #include "core/OriTemplates.h"
 
-class AbcdBeamCalculator;
+class BeamCalculator;
 class Schema;
 
 class TableFunction : public FunctionBase
 {
 public:
-    typedef Ori::Optional<double> OptionalIor;
+    typedef std::optional<double> OptionalIor;
     BOOL_PARAM(IsTwoSides)
 
     struct Params
@@ -35,6 +35,8 @@ public:
         Hint hint = hintNone;
     };
 
+    /// Detailed indicator of a position where the beam parameters are calculated.
+    /// These values are excessive and mostly serve an illustrative purpose.
     enum class ResultPosition
     {
         ELEMENT,       //   ()
@@ -48,12 +50,24 @@ public:
         IFACE_LEFT,    // ->|
         IFACE_RIGHT,   //   |->
     };
+    
+    /// A position indicator which is necessary and sufficient
+    /// to make a decision about how to calculate round-trip
+    enum class ResultPositionAbs
+    {
+        LEFT,  // LEFT, LEFT_OUTSIDE, IFACE_LEFT
+        BEG,   // LEFT_INSIDE
+        MID,   // MIDDLE
+        END,   // RIGHT_INSIDE
+        RIGHT, // ELEMENT, RIGHT, RIGHT_OUTSIDE, IFACE_RIGHT
+    };
 
     struct ResultPositionInfo
     {
         QString ascii;
         QString tooltip;
-        QString icon_path;
+        QString iconPath;
+        ResultPositionAbs absPos;
     };
 
     static const ResultPositionInfo& resultPositionInfo(ResultPosition pos);
@@ -112,15 +126,14 @@ public:
     void setParams(const Params& params);
 
 protected:
-    std::shared_ptr<PumpCalculator> _pumpCalc;
-    std::shared_ptr<AbcdBeamCalculator> _beamCalc;
-    QList<Element*> _activeElements; // valid only during calculate() call
+    // These are valid only during calculate() call
+    std::shared_ptr<BeamCalculator> _beamCalc;
+    QList<Element*> _activeElements;
+
     QVector<ColumnDef> _columns;
     QMap<QString, Z::Unit> _colUnits;
     Params _params;
 
-    bool prepareSinglePass();
-    bool prepareResonator();
     Element* prevElement(int index);
     Element* nextElement(int index);
     QString calculateAtElem(Element* elem, int index, IsTwoSides twoSides);
@@ -128,13 +141,12 @@ protected:
     QString calculateAtCrystal(ElementRange* range, int index);
     QString calculateAtPlane(Element* elem, int index);
     QString calculateInMiddle(Element* elem, Element *prevElem, Element *nextElem, IsTwoSides twoSides);
-    void calculateAt(CalcElem calcElem, ResultElem resultElem, OptionalIor overrideIor = OptionalIor());
+    void calculateAt(const CalcElem &calcElem, const ResultElem &resultElem, OptionalIor overrideIor = {});
 
     virtual bool prepare() { return true; }
     virtual void unprepare() {}
-    virtual QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) = 0;
-    virtual QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* calc, double ior) = 0;
-    virtual QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* calc, double ior) = 0;
+    virtual QVector<Z::PointTS> calculatePumpBeforeSchema() { return {}; };
+    virtual QVector<Z::PointTS> calculateInternal(const ResultElem &resultElem) = 0;
     
 private:
     QVector<Result> _results;

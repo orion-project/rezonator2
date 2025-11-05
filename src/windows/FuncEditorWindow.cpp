@@ -17,17 +17,25 @@ namespace FuncEditorWindowStorable
     }
 } // namespace FuncEditorWindowStorable
 
+static int __funcCount = 0;
+
 //------------------------------------------------------------------------------
 //                              FuncEditorWindow
 //------------------------------------------------------------------------------
 
-FuncEditorWindow* FuncEditorWindow::create(Schema* owner)
+FuncEditorWindow* FuncEditorWindow::create(Schema* owner, const QString &codeTemplate)
 {
-    return new FuncEditorWindow(owner);
+    auto w = new FuncEditorWindow(owner);
+
+    if (!codeTemplate.isEmpty())
+        w->_editor->loadCode(CodeUtils::codeTemplateFile(codeTemplate));
+        
+    return w;
 }
 
 FuncEditorWindow::FuncEditorWindow(Schema *owner) : CodeEditorWindow(owner)
 {
+    _moduleName = QString("customcode%1").arg(++__funcCount);
 }
 
 void FuncEditorWindow::closeEvent(QCloseEvent* ce)
@@ -62,6 +70,7 @@ void FuncEditorWindow::runCode()
     py.schema = schema();
     py.code = _editor->toPlainText();
     py.funcNames = { FUNC_CALC };
+    py.moduleName = _moduleName;
     py.printFunc = [this](const QString& s){ logInfo(s); };
     
     if (!py.load()) {

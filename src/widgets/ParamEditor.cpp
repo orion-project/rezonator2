@@ -651,8 +651,8 @@ const Z::Parameters& getBuiltin()
     static Z::Parameters presets;
     if (presets.isEmpty())
         presets = {
-            new Z::Parameter(Z::Dims::linear(), QStringLiteral("D"), QStringLiteral("D"),
-                qApp->translate("Param", "Aperture diameter"),
+            new Z::Parameter(Z::Dims::linear(), QStringLiteral("A"), QStringLiteral("A"),
+                qApp->translate("Param", "Aperture width"),
                 qApp->translate("Param", "Element transverse size for loss estimation.")),
             new Z::Parameter(Z::Dims::linear(), QStringLiteral("dYt"), QStringLiteral("dYt"),
                 qApp->translate("Param", "Axial misalignment T"),

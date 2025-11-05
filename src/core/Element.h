@@ -189,8 +189,6 @@ public:
     void setOption(ElementOption option) { _options |= option; }
     bool hasOption(ElementOption option) const { return _options & option; }
 
-    virtual std::optional<Z::Value> aperture() const { return {}; }
-
     bool failed() const;
     QString failReason() const;
     
@@ -259,9 +257,20 @@ public:
     double lengthSI() const { return _length->value().toSi(); }
     double ior() const { return _ior->value().value(); }
 
+    /// Unlike crystals or rods (e.g. ElemBrewsterCrystal, ElemTiltedCrystal),
+    /// in tilted plates (e.g. ElemBrewsterPlate, ElemTiltedPlate),
+    /// a value of the Length parameter is different
+    /// from the beam's path it travels inside the plate.
+    /// The function should account the plate's angle
+    /// and return a geometrical distance between the beam's
+    /// input and output points at the plate's edges.
     virtual double axisLengthSI() const { return lengthSI(); }
-    virtual double opticalPathSI() const { return axisLengthSI()* ior(); }
+
+    /// Returns element's axial length (@a axisLengthSI())
+    /// as a Z::Value with unit that is used for the Length parameter.
     Z::Value axisLen() const;
+    
+    virtual double opticalPathSI() const { return axisLengthSI()* ior(); }
 
 protected:
     ElementRange();
@@ -351,6 +360,20 @@ private:
     const char *_reason;
 
     void collectElems(Z::Parameter *param);
+};
+
+//------------------------------------------------------------------------------
+
+class ElementParamsBackup
+{
+public:
+    ElementParamsBackup(Element *elem, const char *reason);
+    ~ElementParamsBackup();
+
+private:
+    Element *_elem;
+    QHash<Z::Parameter*, std::shared_ptr<Z::ParamValueBackup>> _backup;
+    const char *_reason;
 };
 
 //------------------------------------------------------------------------------

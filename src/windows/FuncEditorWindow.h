@@ -19,7 +19,7 @@ class FuncEditorWindow : public CodeEditorWindow, public ISchemaWindowStorable
     Q_OBJECT
 
 public:
-    static FuncEditorWindow* create(Schema*);
+    static FuncEditorWindow* create(Schema*, const QString &codeTemplate = {});
 
     // inherits from BasicMdiChild
     QString helpTopic() const override { return ""; } // TODO: Add help topic
@@ -35,8 +35,9 @@ protected:
     void runCode() override;
 
 private:
-    explicit FuncEditorWindow(Schema*);
+    QString _moduleName;
 
+    explicit FuncEditorWindow(Schema*);
 };
 
 #endif // FUNC_EDITOR_WINDOW_H

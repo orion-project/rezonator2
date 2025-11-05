@@ -15,6 +15,9 @@ public:
     
     CustomTableFunction* function() const { return dynamic_cast<CustomTableFunction*>(_function); }
 
+    // implementation of TableFuncWindow
+    bool configureInternal(const TableFunction::Params& params) override;
+
     // implementation of ISchemaWindowStorable
     bool storableRead(const QJsonObject& root, Z::Report*) override;
     bool storableWrite(QJsonObject& root, Z::Report*) override;

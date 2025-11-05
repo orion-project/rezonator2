@@ -98,6 +98,7 @@ void CodeEditorWindow::setCode(const QString &code)
 
 void CodeEditorWindow::logInfo(const QString &msg, bool scrollToEnd)
 {
+    qDebug() << msg;
     _log->appendPlainText(msg);
 
     // Format the last paragraph
@@ -169,3 +170,29 @@ void CodeEditorWindow::updateWindowTitle()
 {
     setWindowTitle(_customTitle.isEmpty() ? _defaultTitle : _customTitle);
 }
+
+//------------------------------------------------------------------------------
+//                                 CodeUtils
+//------------------------------------------------------------------------------
+
+namespace CodeUtils
+{
+
+QString codeTemplateFile(const QString &templateName)
+{
+    return qApp->applicationDirPath() + "/functions/" + templateName + ".py";
+}
+
+QString loadCodeTemplate(const QString &templateName)
+{
+    QString fileName = codeTemplateFile(templateName);
+    QFile f(fileName);
+    if (!f.open(QIODevice::ReadOnly|QIODevice::Text)) {
+        qWarning() << "Failed to open" << fileName << f.errorString();
+        return {};
+    }
+    return QString::fromUtf8(f.readAll());
+}
+
+} // namespace CodeUtils
+

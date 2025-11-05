@@ -2,27 +2,22 @@
 #define PY_MODULE_GLOBAL_H
 
 #include "PyUtils.h"
+#include "PyClassElement.h"
+#include "PyClassMatrix3.h"
+#include "PyClassRoundTrip.h"
 
 #include "CommonTypes.h"
 #include "Format.h"
 #include "Math.h"
 #include "Units.h"
 
-#include <functional>
+namespace PyModule::Global {
 
-#include <QDebug>
-
-namespace PyModules::Global {
-
-const char *name = "rezonator";
-
-std::function<void(const QString&)> printFunc;
-
-namespace Methods {
+const char *moduleName = "rezonator";
 
 PyObject* print(PyObject* Py_UNUSED(self), PyObject* args, PyObject *kwargs)
 {
-    if (!printFunc) {
+    if (!PyGlobal::printFunc) {
         PyErr_SetString(PyExc_NotImplementedError, "rezonator.print is not defined");
         return nullptr;
     }
@@ -35,16 +30,22 @@ PyObject* print(PyObject* Py_UNUSED(self), PyObject* args, PyObject *kwargs)
         if (!arg)
             return nullptr;
         if (PyUnicode_Check(arg))
+            // __repr__ gives a string surrounded with quotes here,
+            // which is undesirable so do manually
             parts << QString::fromUtf8(PyUnicode_AsUTF8(arg));
-        else if (PyLong_Check(arg))
-            parts << QString::number(PyLong_AsLong(arg));
         else if (PyFloat_Check(arg))
-            parts << QString::number(PyFloat_AsDouble(arg), 'g', 12);
-        else if (Py_IsNone(arg))
-            parts << QStringLiteral("None");
-        else {
-            PyErr_SetQString(PyExc_TypeError, QString("unsupporter type of argument %1").arg(i));
-            return nullptr;
+            parts << Z::format(PyFloat_AsDouble(arg));
+        else
+        {
+            // Try to get string representation using __repr__
+            auto repr = PyObject_Repr(arg);
+            if (repr) {
+                parts << QString::fromUtf8(PyUnicode_AsUTF8(repr));
+                Py_DECREF(repr);
+            } else {
+                PyErr_SetQString(PyExc_TypeError, QString("unsupported type of argument %1").arg(i));
+                return nullptr;
+            }
         }
     }
     bool spaced = true;
@@ -57,17 +58,13 @@ PyObject* print(PyObject* Py_UNUSED(self), PyObject* args, PyObject *kwargs)
             spaced = Py_IsTrue(pSpaced);
         }
     }
-    printFunc(spaced ? parts.join(' ') : parts.join(QString()));
+    PyGlobal::printFunc(spaced ? parts.join(' ') : parts.join(QString()));
     Py_RETURN_NONE;
 }
 
 PyObject* format(PyObject* Py_UNUSED(self), PyObject* arg)
 {
-    if (!PyFloat_Check(arg)) {
-        PyErr_SetString(PyExc_TypeError, "unsupported argument type, float expected");
-        return nullptr;
-    }
-    auto v = PyFloat_AsDouble(arg);
+    DOUBLE_ARG(arg, v)
     auto s = Z::format(v).toUtf8();
     return PyUnicode_FromString(s.constData());
 }
@@ -85,7 +82,11 @@ PyObject* plane_str(PyObject* Py_UNUSED(self), PyObject* arg)
     return nullptr;
 }
 
-} // Methods
+PyObject* version(PyObject* Py_UNUSED(self), PyObject* Py_UNUSED(args))
+{
+    auto ver = Z::Strs::appVersion().toUtf8();
+    return PyUnicode_FromString(ver.constData());
+}
 
 int on_exec(PyObject *module)
 {
@@ -100,14 +101,21 @@ int on_exec(PyObject *module)
     CONST_INT("PLANE_T", Z::WorkPlane::T)
     CONST_INT("PLANE_S", Z::WorkPlane::S)
 
-    qDebug() << "rezonator module executed";
+    ADD_TYPE(Element)
+    ADD_TYPE(Matrix)
+    ADD_TYPE(Matrix3)
+    ADD_TYPE(RayVector)
+    ADD_TYPE(RoundTrip)
+
+    qDebug() << "Module executed:" << moduleName;
     return 0;
 }
 
 PyMethodDef methods[] = {
-    { "format", (PyCFunction)Methods::format, METH_O, "Format value into user display string" },
-    { "plane_str", (PyCFunction)Methods::plane_str, METH_VARARGS, "Return work plane name" },
-    { "print", (PyCFunction)Methods::print, METH_VARARGS | METH_KEYWORDS, "Print message" },
+    { "format", format, METH_O, "Format value into user display string" },
+    { "plane_str", plane_str, METH_VARARGS, "Return work plane name" },
+    { "print", (PyCFunction)print, METH_VARARGS | METH_KEYWORDS, "Print message" },
+    { "version", version, METH_NOARGS, "Return application version" },
     { NULL, NULL, 0, NULL }
 };
 
@@ -119,7 +127,7 @@ PyModuleDef_Slot slotes[] = {
 
 PyModuleDef module = {
     .m_base = PyModuleDef_HEAD_INIT,
-    .m_name = name,
+    .m_name = moduleName,
     .m_size = 0,
     .m_methods = methods,
     .m_slots = slotes,
@@ -130,6 +138,6 @@ PyObject* init()
     return PyModuleDef_Init(&module);
 }
 
-} // namespace PyModules::Global
+} // namespace PyModule::Global
 
 #endif // PY_MODULE_GLOBAL_H

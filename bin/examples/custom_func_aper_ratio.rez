@@ -1,0 +1,587 @@
+{
+    "builtin_params": {
+        "lambda": {
+            "unit": "nm",
+            "value": 1040
+        }
+    },
+    "custom_params": {
+    },
+    "elements": [
+        {
+            "is_disabled": false,
+            "label": "M_out",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "param_specs": [
+                {
+                    "alias": "A",
+                    "custom": true,
+                    "descr": "Element transverse clean semi-diameter for loss estimation.",
+                    "dim": "linear",
+                    "label": "A",
+                    "name": "Aperture width"
+                }
+            ],
+            "params": {
+                "A": {
+                    "error": "",
+                    "expr": "2",
+                    "unit": "mm",
+                    "value": 2
+                }
+            },
+            "title": "output mirror",
+            "type": "ElemFlatMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "mm",
+                    "value": 400
+                },
+                "n": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "folding range",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M_foc",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "param_specs": [
+                {
+                    "alias": "A",
+                    "custom": true,
+                    "descr": "Element transverse clean semi-diameter for loss estimation.",
+                    "dim": "linear",
+                    "label": "A",
+                    "name": "Aperture width"
+                }
+            ],
+            "params": {
+                "A": {
+                    "error": "",
+                    "expr": "2",
+                    "unit": "mm",
+                    "value": 2
+                },
+                "Alpha": {
+                    "error": "",
+                    "expr": "10",
+                    "unit": "deg",
+                    "value": 10.000000000000004
+                },
+                "R": {
+                    "error": "",
+                    "expr": "50",
+                    "unit": "mm",
+                    "value": 50
+                }
+            },
+            "title": "dichroic mirror",
+            "type": "ElemCurveMirror"
+        },
+        {
+            "is_disabled": false,
+            "label": "L_foc",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "mm",
+                    "value": 24.6
+                },
+                "n": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "focusing range",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "Cr",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "param_specs": [
+                {
+                    "alias": "A1",
+                    "custom": true,
+                    "descr": "Left aperture radius",
+                    "dim": "linear",
+                    "label": "A1",
+                    "name": "Left aperture"
+                },
+                {
+                    "alias": "A2",
+                    "custom": true,
+                    "descr": "Right aperture radius",
+                    "dim": "linear",
+                    "label": "A2",
+                    "name": "Right aperture"
+                }
+            ],
+            "params": {
+                "A1": {
+                    "error": "",
+                    "expr": "1.8",
+                    "unit": "mm",
+                    "value": 1.8
+                },
+                "A2": {
+                    "error": "",
+                    "expr": "1.5",
+                    "unit": "mm",
+                    "value": 1.5
+                },
+                "L": {
+                    "error": "",
+                    "expr": "1.6",
+                    "unit": "mm",
+                    "value": 1.6
+                },
+                "n": {
+                    "error": "",
+                    "expr": "2",
+                    "unit": "none",
+                    "value": 2
+                }
+            },
+            "title": "brewster crystal",
+            "type": "ElemBrewsterPlate"
+        },
+        {
+            "is_disabled": false,
+            "label": "L_cr",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "params": {
+                "L": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "mm",
+                    "value": 29.9
+                },
+                "n": {
+                    "error": "",
+                    "expr": "",
+                    "unit": "none",
+                    "value": 1
+                }
+            },
+            "title": "",
+            "type": "ElemEmptyRange"
+        },
+        {
+            "is_disabled": false,
+            "label": "M_back",
+            "layout_draw_alt": false,
+            "layout_show_label": true,
+            "param_specs": [
+                {
+                    "alias": "A",
+                    "custom": true,
+                    "descr": "Element transverse clean semi-diameter for loss estimation.",
+                    "dim": "linear",
+                    "label": "A",
+                    "name": "Aperture width"
+                }
+            ],
+            "params": {
+                "A": {
+                    "error": "",
+                    "expr": "2",
+                    "unit": "mm",
+                    "value": 2
+                },
+                "Alpha": {
+                    "error": "",
+                    "expr": "0",
+                    "unit": "deg",
+                    "value": 0
+                },
+                "R": {
+                    "error": "",
+                    "expr": "30",
+                    "unit": "mm",
+                    "value": 30
+                }
+            },
+            "title": "",
+            "type": "ElemCurveMirror"
+        }
+    ],
+    "formulas": [
+    ],
+    "memos": [
+        {
+            "content": "PCFET0NUWVBFIEhUTUwgUFVCTElDICItLy9XM0MvL0RURCBIVE1MIDQuMC8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9UUi9SRUMtaHRtbDQwL3N0cmljdC5kdGQiPgo8aHRtbD48aGVhZD48bWV0YSBuYW1lPSJxcmljaHRleHQiIGNvbnRlbnQ9IjEiIC8+PHN0eWxlIHR5cGU9InRleHQvY3NzIj4KcCwgbGkgeyB3aGl0ZS1zcGFjZTogcHJlLXdyYXA7IH0KPC9zdHlsZT48L2hlYWQ+PGJvZHkgc3R5bGU9IiBmb250LWZhbWlseTonQXJpYWwnOyBmb250LXNpemU6MTJwdDsgZm9udC13ZWlnaHQ6NDAwOyBmb250LXN0eWxlOm5vcm1hbDsiPgo8cCBzdHlsZT0iIG1hcmdpbi10b3A6MHB4OyBtYXJnaW4tYm90dG9tOjBweDsgbWFyZ2luLWxlZnQ6MHB4OyBtYXJnaW4tcmlnaHQ6MHB4OyAtcXQtYmxvY2staW5kZW50OjA7IHRleHQtaW5kZW50OjBweDsiPiAgICA8aW1nIHNyYz0iYzY3OThmMTExYzI3NDg0NmE3MGMzNDUzNWFmMTQ0NmMiIC8+PC9wPgo8cCBzdHlsZT0iLXF0LXBhcmFncmFwaC10eXBlOmVtcHR5OyBtYXJnaW4tdG9wOjBweDsgbWFyZ2luLWJvdHRvbTowcHg7IG1hcmdpbi1sZWZ0OjBweDsgbWFyZ2luLXJpZ2h0OjBweDsgLXF0LWJsb2NrLWluZGVudDowOyB0ZXh0LWluZGVudDowcHg7Ij48YnIgLz48L3A+PC9ib2R5PjwvaHRtbD4=",
+            "images": {
+                "c6798f111c274846a70c34535af1446c": "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"
+            }
+        }
+    ],
+    "notes": "An example of usage of custom element parameters and making a new custom table function that uses Python code to calculate the aperture-to-beam-size ratio at elements as an indicator of possible beam clipping risk.",
+    "param_links": [
+    ],
+    "pumps": [
+    ],
+    "schema_version": "2.1",
+    "title": "Aperture ratio at elements",
+    "trip_type": "SW",
+    "windows": [
+        {
+            "type": "MemoWindow"
+        },
+        {
+            "function": {
+                "args": [
+                    {
+                        "element_index": 1,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 4
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 400
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 3,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 0.24600000000000002
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 24.6
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 4,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 0.01788854381999832
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 1.788854381999832
+                            },
+                            "use_step": false
+                        }
+                    },
+                    {
+                        "element_index": 5,
+                        "param": "L",
+                        "range": {
+                            "points": 100,
+                            "start": {
+                                "unit": "mm",
+                                "value": 0
+                            },
+                            "step": {
+                                "unit": "mm",
+                                "value": 0.299
+                            },
+                            "stop": {
+                                "unit": "mm",
+                                "value": 29.9
+                            },
+                            "use_step": false
+                        }
+                    }
+                ],
+                "mode": "BeamRadius"
+            },
+            "type": "MultirangeCaustic",
+            "window": {
+                "cursor_enabled": true,
+                "cursor_mode": "Both",
+                "elem_bound_markers": true,
+                "format": {
+                    "axis_x": {
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": true,
+                        "id": "4f24a9b883f645b68b938bdac35962c3",
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 3,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 10,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 10,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 3,
+                        "title_margin_out": 5,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#c8c8c8",
+                            "style": 1,
+                            "width": 0
+                        }
+                    },
+                    "axis_y": {
+                        "grid_pen": {
+                            "color": "#c8c8c8",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "grid_visible": true,
+                        "id": "36399d4e8beb48a8beada15ece499131",
+                        "labels_color": "#000000",
+                        "labels_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "labels_inside": false,
+                        "labels_margin": 5,
+                        "labels_rotation": 0,
+                        "labels_visible": true,
+                        "number_format": "gb",
+                        "number_precision": 10,
+                        "offset": 0,
+                        "pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "reversed": false,
+                        "scale_log": false,
+                        "subgrid_pen": {
+                            "color": "#dcdcdc",
+                            "style": 3,
+                            "width": 0
+                        },
+                        "subgrid_visible": false,
+                        "subtick_len_in": 2,
+                        "subtick_len_out": 0,
+                        "subtick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "subtick_visible": true,
+                        "tick_count": 5,
+                        "tick_len_in": 5,
+                        "tick_len_out": 0,
+                        "tick_offset": 0,
+                        "tick_pen": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "tick_strategy": 0,
+                        "tick_visible": true,
+                        "title_color": "#000000",
+                        "title_font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 10,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "title_margin_in": 10,
+                        "title_margin_out": 5,
+                        "version": 1,
+                        "visible": true,
+                        "zero_pen": {
+                            "color": "#c8c8c8",
+                            "style": 1,
+                            "width": 0
+                        }
+                    },
+                    "legend": {
+                        "back_color": "#ffffff",
+                        "border": {
+                            "color": "#000000",
+                            "style": 1,
+                            "width": 0
+                        },
+                        "font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 8,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "icon_margin": 7,
+                        "icon_size": {
+                            "height": 18,
+                            "width": 32
+                        },
+                        "location": 34,
+                        "margins": {
+                            "bottom": 12,
+                            "left": 12,
+                            "right": 12,
+                            "top": 12
+                        },
+                        "paddings": {
+                            "bottom": 4,
+                            "left": 7,
+                            "right": 7,
+                            "top": 5
+                        },
+                        "text_color": "#000000",
+                        "version": 1,
+                        "visible": false
+                    },
+                    "title": {
+                        "font": {
+                            "bold": false,
+                            "family": "MS Shell Dlg 2",
+                            "italic": false,
+                            "size": 14,
+                            "strikeout": false,
+                            "underline": false
+                        },
+                        "margins": {
+                            "bottom": 10,
+                            "left": 10,
+                            "right": 10,
+                            "top": 10
+                        },
+                        "text_color": "#000000",
+                        "text_flags": 132,
+                        "version": 1,
+                        "visible": false
+                    }
+                },
+                "stored_views": {
+                },
+                "t_title": "{func_name}",
+                "ts_flipped": false,
+                "ts_mode": "T+S",
+                "x_max": 460.85174292581985,
+                "x_min": -4.562888543819999,
+                "x_title": "{elem_labels} {(unit)}",
+                "x_unit": "mm",
+                "y_max": 1.613711908036651,
+                "y_min": -0.07007510631862997,
+                "y_title": "{func_mode} {(unit)}",
+                "y_unit": "mm"
+            }
+        },
+        {
+            "code": "'''\nAperture ratio\n'''\nimport rezonator as Z\nimport schema\n\ndef columns():\n  '''\n  Return table columns that will be displayed in the function window.\n  '''\n  return [\n    {\n      'label': 'W',\n      'title': 'Beam radius',\n      'dim': Z.DIM_LINEAR\n    },\n    {\n      'label': 'AR',\n      'title': 'Aperture ratio',\n      'dim': Z.DIM_NONE\n    },\n    {\n      'label': 'AR2',\n      'title': 'Square ratio',\n      'dim': Z.DIM_NONE\n    },\n  ]\n\ndef calculate(elem, pos, rt):\n  # This function is automatically called for each element,\n  # or several times for the same element with different 'pos'\n  # depending on the options selected in the table window.\n  \n  def calc_ratio(aper):\n    w = rt.beam_radius()\n    # Here we treat the aperture size as radius\n    # to be consistent with what is calculated for beam is radius.\n    # But this is totally up to custom logic.\n    ar = aper / w\n    ar2 = ar**2\n    return { 'W': w, 'AR': ar, 'AR2': ar2 }\n  \n  # We are only interested in elements having an aperture parameter.\n  # It can be any parameter into which we include the meaning of an 'aperture'.\n  # Here it's custom parameter created from built-in preset named A (aperture).\n  aper = elem.param('A')\n  if aper is not None:\n    # POS_RIGHT means we calculate at the right outside of the element,\n    # which also means AFTER or AT the element, considering it as one piece,\n    # and its matrix included into the round-trip.\n    if pos == POS_RIGHT:\n      return calc_ratio(aper)\n  \n  # For crystal here we take two different apertures - on its left and right faces. \n  # Not so it has a big sense in reality; it just demonstrates usage of custom\n  # parameters and so the 'aperture' can be any of them that we call such.\n  if elem.length is not None:\n    if pos == POS_LEFT:\n      aper = elem.param('A1')\n      if aper is not None:\n        return calc_ratio(aper)\n    if pos == POS_RIGHT:\n      aper = elem.param('A2')\n      if aper is not None:\n        return calc_ratio(aper)\n\n  return None",
+            "columns": {
+                "W": {
+                    "unit": "mkm"
+                }
+            },
+            "function": {
+                "calcEmptySpaces": false,
+                "calcMediumEnds": false,
+                "calcSpaceMids": false
+            },
+            "type": "CustomTable",
+            "window": {
+                "ts_mode": "T"
+            }
+        }
+    ]
+}

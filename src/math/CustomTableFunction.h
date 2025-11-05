@@ -21,21 +21,20 @@ public:
     bool prepare() override;
     void unprepare() override;
     
+    QString customTitle() const { return _customTitle; }
+    QString moduleName() const { return _moduleName; }
     QStringList errorLog() const { return _errorLog; }
     int errorLine() const { return _errorLine; }
     
     void setPrintFunc(std::function<void(const QString&)> printFunc) { _printFunc = printFunc; }
-    
-    QString customTitle() const { return _customTitle; }
 
 protected:
-    QVector<Z::PointTS> calculatePumpBeforeSchema(Element *elem) override;
-    QVector<Z::PointTS> calculateSinglePass(Element *elem, RoundTripCalculator* rt, double ior) override;
-    QVector<Z::PointTS> calculateResonator(Element *elem, RoundTripCalculator* rt, double ior) override;
+    QVector<Z::PointTS> calculateInternal(const ResultElem &resultElem) override;
     
 private:
     QString _code;
     QString _customTitle;
+    QString _moduleName;
     QStringList _errorLog;
     int _errorLine;
     std::function<void(const QString&)> _printFunc;
@@ -44,7 +43,6 @@ private:
     void showError(PyRunner *py);
     void showError(const QString &err);
     
-    QVector<Z::PointTS> calculateInternal(Element *elem, RoundTripCalculator* rt, double ior);
 };
 
 #endif // CUSTOM_TABLE_FUNCTION_H

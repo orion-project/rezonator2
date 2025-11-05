@@ -153,7 +153,7 @@ MruStartPanel::MruStartPanel() : CustomCssWidget()
     }
 
     QVector<QFileInfo> files;
-    for (const QString& item : items)
+    for (const QString& item : std::as_const(items))
     {
         QFileInfo file(item);
         if (file.exists()) files << file;
@@ -360,6 +360,8 @@ void TipsStartPanel::showTip(const QJsonObject &tip)
             previewFile = imageFile;
         QString previewPath = tipImagesPath + previewFile;
         auto preview = QPixmap(previewPath);
+        if (preview.isNull())
+            qWarning() << "Tip image not found" << previewPath;
         if (preview.width() != TIP_IMG_PREVIEW_W ||
             preview.height() != TIP_IMG_PREVIEW_H)
             preview = preview.scaled(TIP_IMG_PREVIEW_W,
@@ -393,14 +395,22 @@ void TipsStartPanel::enlargePreview()
             connect(_movie, &QMovie::started, this, &TipsStartPanel::handleMovieStarted);
         }
         _movie->setFileName(_imagePath);
-        _tipImage->setMovie(_movie);
-        _movie->start();
+        if (_movie->isValid())
+        {
+            _tipImage->setMovie(_movie);
+            _movie->start();
+        }
+        else qWarning() << "Tip image not found" << _imagePath;
     }
     else
     {
         QPixmap pixmap(_imagePath);
-        _tipImage->setPixmap(pixmap);
-        showTipImage(pixmap);
+        if (!pixmap.isNull())
+        {
+            _tipImage->setPixmap(pixmap);
+            showTipImage(pixmap);
+        }
+        else qWarning() << "Tip image not found" << _imagePath;
     }
 }
 

@@ -1,8 +1,7 @@
 #include "TableFunction.h"
 
-#include "AbcdBeamCalculator.h"
+#include "BeamCalculator.h"
 #include "FunctionUtils.h"
-#include "PumpCalculator.h"
 #include "RoundTripCalculator.h"
 #include "../app/AppSettings.h"
 #include "../core/Schema.h"
@@ -13,20 +12,20 @@
 
 const TableFunction::ResultPositionInfo& TableFunction::resultPositionInfo(TableFunction::ResultPosition pos)
 {
-#define I_(pos, ascii, tooltip, icon_path)\
-    {TableFunction::ResultPosition::pos, {QString(ascii), QString(tooltip), QString(icon_path)}}
+#define I_(pos, absPos, ascii, tooltip, iconPath)\
+    {ResultPosition::pos, {QString(ascii), QString(tooltip), QString(iconPath), ResultPositionAbs::absPos}}
 
     static QMap<TableFunction::ResultPosition, TableFunction::ResultPositionInfo> info = {
-        I_(ELEMENT,       "",          "",                          ""),
-        I_(LEFT,          "->()",      "At the left of element",    ":/misc/beampos_left"),
-        I_(RIGHT,         "  ()->",    "At the right of element",   ":/misc/beampos_right"),
-        I_(LEFT_OUTSIDE,  "->[   ]",   "At the left edge outside",  ":/misc/beampos_left_out"),
-        I_(LEFT_INSIDE,   "  [-> ]",   "At the left edge inside",   ":/misc/beampos_left_in"),
-        I_(MIDDLE,        "  [ + ]",   "In the middle of element",  ":/misc/beampos_middle"),
-        I_(RIGHT_INSIDE,  "  [ ->]",   "At the right edge inside",  ":/misc/beampos_right_in"),
-        I_(RIGHT_OUTSIDE, "  [   ]->", "At the right edge outside", ":/misc/beampos_right_out"),
-        I_(IFACE_LEFT,    "->|",       "At the left of interface",  ":/misc/beampos_iface_left"),
-        I_(IFACE_RIGHT,   "  |->",     "At the right of interface", ":/misc/beampos_iface_right"),
+        I_(ELEMENT,       RIGHT, "",          "",                          ""),
+        I_(LEFT,          LEFT,  "->()",      "At the left of element",    ":/misc/beampos_left"),
+        I_(RIGHT,         RIGHT, "  ()->",    "At the right of element",   ":/misc/beampos_right"),
+        I_(LEFT_OUTSIDE,  LEFT,  "->[   ]",   "At the left edge outside",  ":/misc/beampos_left_out"),
+        I_(LEFT_INSIDE,   BEG,   "  [-> ]",   "At the left edge inside",   ":/misc/beampos_left_in"),
+        I_(MIDDLE,        MID,   "  [ + ]",   "In the middle of element",  ":/misc/beampos_middle"),
+        I_(RIGHT_INSIDE,  END,   "  [ ->]",   "At the right edge inside",  ":/misc/beampos_right_in"),
+        I_(RIGHT_OUTSIDE, RIGHT, "  [   ]->", "At the right edge outside", ":/misc/beampos_right_out"),
+        I_(IFACE_LEFT,    LEFT,  "->|",       "At the left of interface",  ":/misc/beampos_iface_left"),
+        I_(IFACE_RIGHT,   RIGHT, "  |->",     "At the right of interface", ":/misc/beampos_iface_right"),
     };
     return info[pos];
 #undef I_
@@ -51,30 +50,6 @@ void TableFunction::setParams(const Params& params)
     _params = params;
 }
 
-bool TableFunction::prepareSinglePass()
-{
-    auto pump = _schema->activePump();
-    if (!pump)
-    {
-        setError(qApp->translate("Calc error",
-                                 "There is no active pump in the schema. "
-                                 "Use 'Pumps' window to create a new pump or activate one of the existing ones."));
-        return false;
-    }
-
-    _beamCalc.reset();
-    _pumpCalc.reset(new PumpCalculator(pump, schema()->wavelenSi()));
-    FunctionUtils::prepareDynamicElements(schema(), nullptr, _pumpCalc.get());
-    return true;
-}
-
-bool TableFunction::prepareResonator()
-{
-    _beamCalc.reset(new AbcdBeamCalculator(schema()->wavelenSi()));
-    _pumpCalc.reset();
-    return true;
-}
-
 void TableFunction::calculate()
 {
     _results.clear();
@@ -83,10 +58,12 @@ void TableFunction::calculate()
     if (!prepare())
         return;
     
-    bool isPrepared = _schema->isResonator()
-           ? prepareResonator()
-           : prepareSinglePass();
-    if (!isPrepared) return;
+    _beamCalc.reset(new BeamCalculator(schema()));
+    if (!_beamCalc->ok())
+    {
+        setError(_beamCalc->error());
+        return;
+    }
 
     #define CHECK_ERR(f) {\
         QString res = f;\
@@ -257,7 +234,7 @@ QString TableFunction::calculateAtElem(Element *elem, int index, IsTwoSides twoS
                 Result res;
                 res.element = elem;
                 res.position = ResultPosition::LEFT;
-                res.values = calculatePumpBeforeSchema(elem);
+                res.values = calculatePumpBeforeSchema();
                 _results << res;
             }
 
@@ -303,7 +280,7 @@ QString TableFunction::calculateAtInterface(ElementInterface* iface, int index)
             Result res;
             res.element = iface;
             res.position = ResultPosition::IFACE_LEFT;
-            res.values = calculatePumpBeforeSchema(iface);
+            res.values = calculatePumpBeforeSchema();
             _results << res;
             break; // Don't return!
         }
@@ -372,7 +349,7 @@ QString TableFunction::calculateAtCrystal(ElementRange* range, int index)
             Result res;
             res.element = range;
             res.position = ResultPosition::LEFT_OUTSIDE;
-            res.values = calculatePumpBeforeSchema(range);
+            res.values = calculatePumpBeforeSchema();
             _results << res;
             break; // Don't return!
         }
@@ -436,7 +413,7 @@ QString TableFunction::calculateInMiddle(Element* elem, Element* prevElem, Eleme
     return "";
 }
 
-void TableFunction::calculateAt(CalcElem calcElem, ResultElem resultElem, OptionalIor overrideIor)
+void TableFunction::calculateAt(const CalcElem &calcElem, const ResultElem &resultElem, OptionalIor overrideIor)
 {
     if (calcElem.range)
     {
@@ -447,20 +424,19 @@ void TableFunction::calculateAt(CalcElem calcElem, ResultElem resultElem, Option
         else
             calcElem.range->setSubRangeSI(calcElem.subrange);
     }
-
-    RoundTripCalculator calc(schema(), calcElem.ref());
-    calc.calcRoundTrip(calcElem.range);
-    calc.multMatrix("TableFunction::calculateAt");
-
-    const double ior = overrideIor.set ? overrideIor.value : (calcElem.range ? calcElem.range->ior() : 1);
+    
+    _beamCalc->calcRoundTrip(calcElem.ref(), calcElem.range, "TableFunction::calculateAt");
+    _beamCalc->setIor(overrideIor ? *overrideIor : (calcElem.range ? calcElem.range->ior() : 1));
 
     Result res;
     res.element = resultElem.elem;
     res.position = resultElem.pos;
-    res.values = schema()->isResonator()
-            ? calculateResonator(resultElem.elem, &calc, ior)
-            : calculateSinglePass(resultElem.elem, &calc, ior);
-    _results << res;
+    res.values = calculateInternal(resultElem);
+    // Empty values mean the function does not support calcultation
+    // at the current element or at the current result position
+    // We just do not show this row in the table
+    if (!res.values.isEmpty())
+        _results << res;
 }
 
 Z::Unit TableFunction::columnUnit(const ColumnDef &col) const

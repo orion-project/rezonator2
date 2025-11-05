@@ -172,7 +172,10 @@ void ParamsEditor::paramFocused()
         if (editor == sender())
         {
             auto p = editor->parameter();
-            _infoPanel->setInfo(p->name(), p->description());
+            QString descr = p->description();
+            if (p->label() != p->alias())
+                descr += QString("<p>Python: <code>elem.param('%2')</code>").arg(p->alias());
+            _infoPanel->setInfo(p->name(), descr);
             return;
         }
 }

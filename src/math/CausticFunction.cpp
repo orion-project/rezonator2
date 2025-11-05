@@ -3,7 +3,7 @@
 #include "../app/AppSettings.h"
 #include "../core/Protocol.h"
 #include "../core/Schema.h"
-#include "../math/AbcdBeamCalculator.h"
+#include "../math/AbcdCalculator.h"
 #include "../math/FunctionUtils.h"
 #include "../math/GaussCalculator.h"
 #include "../math/PumpCalculator.h"
@@ -116,7 +116,7 @@ bool CausticFunction::prepareSinglePass(Element* ref)
 
 bool CausticFunction::prepareResonator()
 {
-    _beamCalc.reset(new AbcdBeamCalculator(schema()->wavelenSi()));
+    _beamCalc.reset(new AbcdCalculator(schema()->wavelenSi()));
     return true;
 }
 
