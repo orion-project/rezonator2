@@ -92,6 +92,17 @@ std::function<void(const QString&)> printFunc;
         PyErr_SetString(PyExc_##type, msg); \
         return -1; \
     }
+    
+#define DOUBLE_ARG(arg, var) \
+    double var; \
+    if (PyFloat_Check(arg)) \
+        var = PyFloat_AsDouble(arg); \
+    else if (PyLong_Check(arg)) \
+        var = PyLong_AsLong(arg); \
+    else { \
+        PyErr_SetString(PyExc_TypeError, "unsupported argument type, number expected"); \
+        return nullptr; \
+    }
 
 void PyErr_SetQString(PyObject *exc, const QString &err)
 {

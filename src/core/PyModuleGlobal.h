@@ -64,15 +64,7 @@ PyObject* print(PyObject* Py_UNUSED(self), PyObject* args, PyObject *kwargs)
 
 PyObject* format(PyObject* Py_UNUSED(self), PyObject* arg)
 {
-    double v;
-    if (PyFloat_Check(arg))
-        v = PyFloat_AsDouble(arg);
-    else if (PyLong_Check(arg))
-        v = PyLong_AsLong(arg);
-    else {
-        PyErr_SetString(PyExc_TypeError, "unsupported argument type, number expected");
-        return nullptr;
-    }
+    DOUBLE_ARG(arg, v)
     auto s = Z::format(v).toUtf8();
     return PyUnicode_FromString(s.constData());
 }

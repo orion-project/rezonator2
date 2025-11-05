@@ -74,7 +74,7 @@ PyObject* offset(Self *self, PyObject *Py_UNUSED(args))
     Py_RETURN_NONE;
 }
 
-int set_offset(Self *self, PyObject *arg, void *closure)
+int set_offset(Self *self, PyObject *arg)
 {
     auto range = Z::Utils::asRange(self->elem);
     CHECK_I(range, AssertionError, "element does not have length parameter")
@@ -161,7 +161,7 @@ PyObject* lock(Self *self, PyObject *Py_UNUSED(args))
 
 PyObject* unlock(Self *self, PyObject *Py_UNUSED(args))
 {
-    //qDebug() << "Unock" << self->elem->label();
+    //qDebug() << "Unlock" << self->elem->label();
     self->backup.reset();
     self->locker.reset();
     Py_RETURN_NONE;
