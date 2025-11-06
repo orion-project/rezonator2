@@ -3,6 +3,7 @@
 #include "../core/Protocol.h"
 #include "../funcs/BeamVariationWindow.h"
 #include "../funcs/CausticWindow.h"
+#include "../funcs/CustomPlotFuncWindow.h"
 #include "../funcs/CustomTableFuncWindow.h"
 #include "../funcs/InfoFuncWindow.h"
 #include "../funcs/PlotFuncWindow.h"
@@ -13,6 +14,7 @@
 #include "../funcs/BeamParamsAtElemsWindow.h"
 #include "../math/BeamVariationFunction.h"
 #include "../math/CausticFunction.h"
+#include "../math/CustomPlotFunction.h"
 #include "../math/CustomTableFunction.h"
 #include "../math/InfoFunctions.h"
 #include "../math/BeamParamsAtElemsFunction.h"
@@ -22,6 +24,8 @@
 #include "../math/StabilityMap2DFunction.h"
 #include "../math/BeamParamsAtElemsFunction.h"
 #include "../windows/WindowsManager.h"
+
+#include "widgets/OriPopupMessage.h"
 
 template <class TWindow> SchemaWindow* windowConstructor(Schema* schema)
 {
@@ -36,6 +40,7 @@ template <class TWindow, class TFunction> void registerWindowConstructor()
 #define RETURN_IF_SCHEMA_EMPTY \
     if (schema()->activeCount() == 0) \
     { \
+        Ori::Gui::PopupMessage::hint(tr("Schema is empty")); \
         Z_INFO("There are no active elements in the schema"); \
         return; \
     }
@@ -51,6 +56,7 @@ CalcManager::CalcManager(Schema *schema, QWidget *parent) :
     registerWindowConstructor<BeamVariationWindow, BeamVariationFunction>();
     registerWindowConstructor<BeamParamsAtElemsWindow, BeamParamsAtElemsFunction>();
     registerWindowConstructor<CustomTableFuncWindow, CustomTableFunction>();
+    registerWindowConstructor<CustomPlotFuncWindow, CustomPlotFunction>();
 }
 
 void CalcManager::funcSummary()
@@ -114,6 +120,11 @@ void CalcManager::funcBeamParamsAtElems()
 void CalcManager::funcCustomTable()
 {
     showTableFunc<CustomTableFunction>();
+}
+
+void CalcManager::funcCustomPlot()
+{
+    showPlotFunc<CustomPlotFunction>();
 }
 
 void CalcManager::funcShowMatrices()

@@ -34,6 +34,7 @@ public slots:
     void funcBeamVariation();
     void funcBeamParamsAtElems();
     void funcCustomTable();
+    void funcCustomPlot();
 
 private:
     QWidget* _parent;

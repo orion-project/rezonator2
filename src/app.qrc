@@ -131,6 +131,7 @@
         <file alias="parameter">../img/toolbar/parameter.svg</file>
         <file alias="paste">../img/toolbar/paste.svg</file>
         <file alias="paste_fmt">../img/toolbar/paste_format.svg</file>
+        <file alias="plot_py">../img/toolbar/plot_py.svg</file>
         <file alias="plot_r">../img/toolbar/plot_r.svg</file>
         <file alias="plot_s">../img/toolbar/plot_s.svg</file>
         <file alias="plot_t">../img/toolbar/plot_t.svg</file>

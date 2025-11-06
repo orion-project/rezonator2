@@ -173,6 +173,7 @@ protected:
     virtual void calculate();
     virtual bool configureInternal() { return true; }
     virtual void updateGraphs();
+    virtual void beforeUpdate() {}
     virtual void afterUpdate() {}
     virtual QWidget* makeOptionsPanel() { return nullptr; }
     virtual QList<BasicMdiChild::MenuItem> viewMenuItems() const { return {}; }

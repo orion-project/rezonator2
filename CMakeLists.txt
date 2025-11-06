@@ -107,6 +107,8 @@ set(PROJECT_SOURCES
     src/funcs/BeamVariationWindow.h src/funcs/BeamVariationWindow.cpp
     src/funcs/CausticOptionsPanel.h
     src/funcs/CausticWindow.h src/funcs/CausticWindow.cpp
+    src/funcs/CustomPlotCodeWindow.h src/funcs/CustomPlotCodeWindow.cpp
+    src/funcs/CustomPlotFuncWindow.h src/funcs/CustomPlotFuncWindow.cpp
     src/funcs/CustomTableCodeWindow.h src/funcs/CustomTableCodeWindow.cpp
     src/funcs/CustomTableFuncWindow.h src/funcs/CustomTableFuncWindow.cpp
     src/funcs/FuncOptionsPanel.h src/funcs/FuncOptionsPanel.cpp
@@ -134,6 +136,7 @@ set(PROJECT_SOURCES
     src/math/BeamVariationFunction.h src/math/BeamVariationFunction.cpp
     src/math/CausticFunction.h src/math/CausticFunction.cpp
     src/math/CustomInfoFunction.h src/math/CustomInfoFunction.cpp
+    src/math/CustomPlotFunction.h src/math/CustomPlotFunction.cpp
     src/math/CustomTableFunction.h src/math/CustomTableFunction.cpp
     src/math/FormatInfo.h src/math/FormatInfo.cpp
     src/math/FunctionBase.h src/math/FunctionBase.cpp

@@ -538,6 +538,8 @@ void PlotFuncWindow::updateWithParams()
 
 void PlotFuncWindow::update()
 {
+    beforeUpdate();
+    
     if (_frozen)
     {
         _needRecalc = true;
