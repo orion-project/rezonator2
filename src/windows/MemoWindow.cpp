@@ -1,10 +1,10 @@
 #include "MemoWindow.h"
 
 #include "../app/MessageBus.h"
-#include "../widgets/PopupMessage.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriWidgets.h"
+#include "widgets/OriPopupMessage.h"
 
 #include <QAction>
 #include <QActionGroup>
@@ -125,7 +125,7 @@ protected:
         if (!_clickedHref.isEmpty())
         {
             QDesktopServices::openUrl(_clickedHref);
-            PopupMessage::info(tr("Opened in your default browser\n\n%1").arg(_clickedHref));
+            Ori::Gui::PopupMessage::hint(tr("Opened in your default browser\n\n%1").arg(_clickedHref));
             _clickedHref.clear();
         }
         QTextEdit::mouseReleaseEvent(e);
