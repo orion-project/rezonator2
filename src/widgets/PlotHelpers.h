@@ -1,12 +1,6 @@
 #ifndef PLOT_HELPERS_H
 #define PLOT_HELPERS_H
 
-/**
-    Helper functions to interconnect plot with rezonator data types.
-    They should not be used inside of Plot class.
-    @sa PlotUtils.
-*/
-
 #include "../core/Units.h"
 
 #include "qcpl_export.h"
@@ -41,6 +35,38 @@ struct FormatPenDlgProps
 
 bool formatPenDlg(const QPen& pen, const FormatPenDlgProps& props);
 
+// Multi-graph helpers
+void applyGraphPen(QCPL::Plot* plot, const QString &name, const QPen &pen);
+int graphCount(QCPL::Plot* plot, const QString &name);
+QVector<QCPGraph*> graphs(QCPL::Plot* plot, const QString &name);
+
 } // namespace PlotHelpers
+
+struct PlotCursorInfo
+{
+    enum ItemKind {
+        SIMPLE, // no special formatting rules
+        CURSOR_X, // format as set_x command
+        CURSOR_Y, // format as set_y command
+        VALUE_SI, // should value from SI to Y-units
+        SECTION, // format as a kind of title for subsequent values
+    };
+
+    struct Item
+    {
+        QString name;
+        double value;
+        QString note; // a text added after the value of any kind
+        ItemKind kind = SIMPLE;
+        Item(ItemKind kind, const double& value): value(value), kind(kind) {}
+    };
+    
+    QList<Item> items;
+    Z::Unit unitY = Z::Units::none();
+    
+    QString format() const;
+    
+    void operator << (const Item &it) { items << it; }
+};
 
 #endif // PLOT_HELPERS_H

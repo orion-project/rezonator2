@@ -17,6 +17,7 @@
 #include "CustomElemsWindow.h"
 #include "ElemFormulaWindow.h"
 #include "MemoWindow.h"
+#include "PlotWindow.h"
 #include "ProtocolWindow.h"
 #include "PumpWindow.h"
 #include "SchemaParamsWindow.h"
@@ -128,11 +129,17 @@ ProjectWindow::~ProjectWindow()
 
 void ProjectWindow::registerStorableWindows()
 {
-    WindowsManager::registerConstructor(SchemaParamsWindowStorable::windowType(), SchemaParamsWindowStorable::createWindow);
-    WindowsManager::registerConstructor(PumpWindowStorable::windowType(), PumpWindowStorable::createWindow);
-    WindowsManager::registerConstructor(ElemFormulaWindowStorable::windowType(), ElemFormulaWindowStorable::createWindow);
-    WindowsManager::registerConstructor(MemoWindowStorable::windowType(), MemoWindowStorable::createWindow);
-    WindowsManager::registerConstructor(CustomCodeWindowStorable::windowType(), CustomCodeWindowStorable::createWindow);
+    #define W_(wnd) \
+        WindowsManager::registerConstructor(wnd##Storable::windowType(), wnd##Storable::createWindow)
+
+    W_(CustomCodeWindow);
+    W_(ElemFormulaWindow);
+    W_(MemoWindow);
+    W_(SchemaParamsWindow);
+    W_(PlotWindow);
+    W_(PumpWindow);
+
+    #undef W_
 }
 
 void ProjectWindow::createActions()
@@ -171,8 +178,9 @@ void ProjectWindow::createActions()
     actnFuncMultibeamCaustic = A_(tr("Multibeam Caustic..."), _calculations, SLOT(funcMultibeamCaustic()), ":/toolbar/func_multi_beam_caustic");
     actnFuncBeamVariation = A_(tr("Beamsize Variation..."), _calculations, SLOT(funcBeamVariation()), ":/toolbar/func_beam_variation");
     actnFuncBeamParamsAtElems = A_(tr("Beam Parameters at Elemens"), _calculations, SLOT(funcBeamParamsAtElems()), ":/toolbar/func_beamdata");
+    actnFuncGenericPlot = A_(tr("New Generic Plot Window"), this, SLOT(newGenericPlotWindow()), ":/toolbar/gauss_far_zone");
 #ifdef Z_USE_PYTHON
-    actnFuncCustomCode = A_(tr("Open Custom Code Window"), this, SLOT(showFuncEditor()), ":/toolbar/python_framed");
+    actnFuncCustomCode = A_(tr("New Custom Code Window"), this, SLOT(newCustomCodeWindow()), ":/toolbar/python_framed");
     actnFuncCustomTable = A_(tr("Create Custom Table Function"), _calculations, SLOT(funcCustomTable()), ":/toolbar/table_py");
 #endif
 
@@ -230,6 +238,7 @@ void ProjectWindow::createMenuBar()
           actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamVariation, nullptr,
           actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic,
           actnFuncBeamParamsAtElems, nullptr, actnFuncRepRate, nullptr,
+          actnFuncGenericPlot, nullptr,
         #ifdef Z_USE_PYTHON
           actnFuncCustomCode, actnFuncCustomTable
         #endif
@@ -578,10 +587,16 @@ void ProjectWindow::showMemosWindow()
     _mdiArea->appendChild(MemoWindow::create(schema()));
 }
 
-void ProjectWindow::showFuncEditor()
+void ProjectWindow::newCustomCodeWindow()
 {
     _mdiArea->appendChild(CustomCodeWindow::create(schema(), "_generic_empty"));
     schema()->markModified("Custom code added");
+}
+
+void ProjectWindow::newGenericPlotWindow()
+{
+    _mdiArea->appendChild(PlotWindow::create(schema()));
+    schema()->markModified("Generic plot added");
 }
 
 //------------------------------------------------------------------------------

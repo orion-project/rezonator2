@@ -84,7 +84,7 @@ private:
     QAction *actnFuncRoundTrip, *actnFuncStabMap, *actnFuncStabMap2d,
             *actnFuncRepRate, *actnFuncMatrixMult,
             *actnFuncCaustic, *actnFuncMultirangeCaustic, *actnFuncBeamVariation,
-            *actnFuncMultibeamCaustic, *actnFuncBeamParamsAtElems;
+            *actnFuncMultibeamCaustic, *actnFuncBeamParamsAtElems, *actnFuncGenericPlot;
 
 #ifdef Z_USE_PYTHON
     QAction *actnFuncCustomCode, *actnFuncCustomTable;
@@ -142,7 +142,8 @@ private slots:
     void showHelp();
     void showLensmaker();
     void showIris();
-    void showFuncEditor();
+    void newCustomCodeWindow();
+    void newGenericPlotWindow();
 
     void flipSchema();
 

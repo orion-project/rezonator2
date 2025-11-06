@@ -2,6 +2,7 @@
 
 #include "../app/AppSettings.h"
 #include "../app/PersistentState.h"
+#include "../core/Format.h"
 #include "../math/FunctionGraph.h"
 
 #include "helpers/OriDialogs.h"
@@ -10,6 +11,7 @@
 
 #include "qcpl_plot.h"
 #include "qcpl_cursor.h"
+#include "qcpl_cursor_panel.h"
 #include "qcpl_format_editors.h"
 
 #include <QLabel>
@@ -46,6 +48,10 @@ void rescaleCursor(QCPL::Cursor* cursor, PlotAxis axis, Z::Unit unitFrom, Z::Uni
         cursor->setPositionY(pos, false);
 }
 
+//------------------------------------------------------------------------------
+//                                Export
+//------------------------------------------------------------------------------
+
 QCPL::GraphDataExportSettings makeExportSettings()
 {
     QCPL::GraphDataExportSettings es;
@@ -68,6 +74,7 @@ void toClipboard(QCPGraph* graph)
 
 void toClipboard(const QVector<QCPGraph*>& graphs)
 {
+    if (graphs.empty()) return;
     auto settings = makeExportSettings();
     settings.mergePoints = true;
     QCPL::GraphDataExporter exporter(settings);
@@ -255,6 +262,10 @@ void exportGraphsData(FunctionGraphSet* graphs, QCPGraph* selectedGraph)
     }
 }
 
+//------------------------------------------------------------------------------
+//                               Format
+//------------------------------------------------------------------------------
+
 bool formatPenDlg(const QPen& pen, const FormatPenDlgProps& props)
 {
     QPen oldPen = pen;
@@ -289,4 +300,79 @@ bool formatPenDlg(const QPen& pen, const FormatPenDlgProps& props)
     return false;
 }
 
+//------------------------------------------------------------------------------
+//                            Multi-graph helpers
+//------------------------------------------------------------------------------
+
+void applyGraphPen(QCPL::Plot* plot, const QString &name, const QPen &pen)
+{
+    for (int i = 0; i < plot->graphCount(); i++)
+    {
+        auto g = plot->graph(i);
+        if (g->name() == name)
+            g->setPen(pen);
+    }
+}
+
+int graphCount(QCPL::Plot* plot, const QString &name)
+{
+    int count = 0;
+    for (int i = 0; i < plot->graphCount(); i++)
+    {
+        auto g = plot->graph(i);
+        if (g->name() == name)
+            count++;
+    }
+    return count;
+}
+
+QVector<QCPGraph*> graphs(QCPL::Plot* plot, const QString &name)
+{
+    QVector<QCPGraph*> res;
+    for (int i = 0; i < plot->graphCount(); i++)
+    {
+        auto g = plot->graph(i);
+        if (g->name() == name)
+            res << g;
+    }
+    return res;
+}
+
 } // namespace PlotHelpers
+
+//------------------------------------------------------------------------------
+//                               PlotCursorInfo
+//------------------------------------------------------------------------------
+
+QString PlotCursorInfo::format() const
+{
+    QString str;
+    QTextStream info(&str);
+    for (int i = 0; i < items.size(); i++)
+    {
+        const auto& it = items.at(i);
+        switch (it.kind)
+        {
+        case SIMPLE:
+            info << it.name << " = " << Z::format(it.value);
+            break;
+        case CURSOR_X:
+            info << QCPL::CursorPanel::formatLinkX(Z::format(it.value));
+            break;
+        case CURSOR_Y:
+            info << QCPL::CursorPanel::formatLinkY(Z::format(it.value));
+            break;
+        case VALUE_SI:
+            info << it.name << " = " << Z::format(unitY->fromSi(it.value));
+            break;
+        case SECTION:
+            info << "<b>" << it.name << ":</b> ";
+            break;
+        }
+        if (!it.note.isEmpty())
+            info << ' ' << it.note;
+        if (it.kind != SECTION && i < items.size()-1)
+            info << "; ";
+    }
+    return str;
+}

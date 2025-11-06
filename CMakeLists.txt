@@ -210,7 +210,6 @@ set(PROJECT_SOURCES
     src/widgets/ParamsTreeWidget.h src/widgets/ParamsTreeWidget.cpp
     src/widgets/PlotHelpers.h src/widgets/PlotHelpers.cpp
     src/widgets/PlotParamsPanel.h src/widgets/PlotParamsPanel.cpp
-    src/widgets/PlotUtils.h src/widgets/PlotUtils.cpp
     src/widgets/PopupMessage.h src/widgets/PopupMessage.cpp
     src/widgets/RichTextItemDelegate.h src/widgets/RichTextItemDelegate.cpp
     src/widgets/SchemaElemsTable.h src/widgets/SchemaElemsTable.cpp
@@ -238,6 +237,8 @@ set(PROJECT_SOURCES
     src/windows/ExamplesDialog.h src/windows/ExamplesDialog.cpp
     src/windows/HelpWindow.h src/windows/HelpWindow.cpp
     src/windows/MemoWindow.h src/windows/MemoWindow.cpp
+    src/windows/PlotWindow.h src/windows/PlotWindow.cpp
+    src/windows/PlotBaseWindow.h src/windows/PlotBaseWindow.cpp
     src/windows/ProjectWindow.h src/windows/ProjectWindow.cpp
     src/windows/ProtocolWindow.h src/windows/ProtocolWindow.cpp
     src/windows/PumpParamsDialog.h src/windows/PumpParamsDialog.cpp
