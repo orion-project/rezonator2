@@ -17,6 +17,8 @@ public:
 
     // Implementation of PlotFuncWindow
     bool configureInternal() override;
+    Z::Unit getDefaultUnitX() const override;
+    Z::Unit getDefaultUnitY() const override;
 
     // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;

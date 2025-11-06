@@ -1,5 +1,7 @@
 '''
 Custom table
+
+↑ This is a function name that is displayed in function window headers.
 '''
 import rezonator as Z
 import schema

@@ -320,7 +320,7 @@ Z::Unit MulticausticWindow::getDefaultUnitY(FuncMode mode) const
     switch (mode)
     {
     case CausticFunction::BeamRadius: return AppSettings::instance().defaultUnitBeamRadius;
-    case CausticFunction::FrontRadius: return AppSettings::instance().defaultUnitFrontRadius;
+    case CausticFunction::FrontRadius: return AppSettings::instance().defaultUnitLinear;
     case CausticFunction::HalfAngle: return AppSettings::instance().defaultUnitAngle;
     }
     return Z::Units::none();

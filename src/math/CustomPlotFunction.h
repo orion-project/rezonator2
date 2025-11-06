@@ -9,7 +9,7 @@ class CustomPlotFunction : public PlotFunction
 {
 public:
     FUNC_ALIAS("CustomPlot")
-    FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Custom Plot"))
+    QString name() const override;
     FUNC_ICON(":/toolbar/plot_py")
     FUNC_HELP("func_custom_plot.html")
     
@@ -27,6 +27,9 @@ public:
 
     // Inherited from PlotFunction
     void calculate(CalculationMode calcMode = CALC_PLOT) override;
+    
+    Z::Dim dimX() const { return _dimX; }
+    Z::Dim dimY() const { return _dimY; }
 
 private:
     QString _code;
@@ -36,6 +39,7 @@ private:
     int _errorLine;
     std::function<void(const QString&)> _printFunc;
     std::shared_ptr<PyRunner> _runner;
+    Z::Dim _dimX, _dimY;
     
     bool prepare();
     void unprepare();

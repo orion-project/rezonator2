@@ -82,9 +82,9 @@ public:
     QDate updateLastCheckDate;
     int updateCheckDelayMs = 300;
 
-    Z::Unit defaultUnitFrontRadius = Z::Units::none();
-    Z::Unit defaultUnitBeamRadius = Z::Units::none();
-    Z::Unit defaultUnitAngle = Z::Units::none();
+    Z::Unit defaultUnitBeamRadius = Z::Units::mkm();
+    Z::Unit defaultUnitLinear = Z::Units::m();
+    Z::Unit defaultUnitAngle = Z::Units::deg();
 
     bool isDevMode = false;
 

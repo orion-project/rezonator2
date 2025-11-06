@@ -90,3 +90,22 @@ void CustomPlotFuncWindow::showCode()
     }
     MessageBus::instance().send(MBE_MDI_CHILD_REQUESTED, {{ "wnd", QVariant::fromValue(_codeWindow.data()) }});
 }
+
+static Z::Unit getDefaultUnit(Z::Dim dim)
+{
+    if (dim == Z::Dims::linear())
+        return AppSettings::instance().defaultUnitLinear;
+    if (dim == Z::Dims::angular())
+        return AppSettings::instance().defaultUnitAngle;
+    return Z::Units::none();
+}
+
+Z::Unit CustomPlotFuncWindow::getDefaultUnitX() const
+{
+    return getDefaultUnit(function()->dimX());
+}
+
+Z::Unit CustomPlotFuncWindow::getDefaultUnitY() const
+{
+    return getDefaultUnit(function()->dimY());
+}

@@ -31,7 +31,7 @@ public:
         QString label;
         QString title;
         Z::Dim dim = Z::Dims::none();
-        enum Hint { hintNone, hintBeamsize, hintWavefront };
+        enum Hint { hintNone, hintBeamsize };
         Hint hint = hintNone;
     };
 

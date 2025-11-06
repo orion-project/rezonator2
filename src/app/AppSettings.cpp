@@ -122,7 +122,7 @@ void AppSettings::load()
 
     s.beginGroup("Units");
     defaultUnitBeamRadius = Z::Units::findByAlias(s.settings()->value("defaultUnitBeamRadius").toString(), Z::Units::mkm());
-    defaultUnitFrontRadius = Z::Units::findByAlias(s.settings()->value("defaultUnitFrontRadius").toString(), Z::Units::m());
+    defaultUnitLinear = Z::Units::findByAlias(s.settings()->value("defaultUnitLinear").toString(), Z::Units::m());
     defaultUnitAngle = Z::Units::findByAlias(s.settings()->value("defaultUnitAngle").toString(), Z::Units::deg());
 
     s.beginGroup("Update");
@@ -200,7 +200,7 @@ void AppSettings::save()
 
     s.beginGroup("Units");
     SAVE1("defaultUnitBeamRadius", defaultUnitBeamRadius->alias());
-    SAVE1("defaultUnitFrontRadius", defaultUnitFrontRadius->alias());
+    SAVE1("defaultUnitLinear", defaultUnitLinear->alias());
     SAVE1("defaultUnitAngle", defaultUnitAngle->alias());
 
     s.beginGroup("Update"); s.setValue("checkInterval", int(updateCheckInterval));
