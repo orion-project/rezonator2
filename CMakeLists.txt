@@ -230,12 +230,12 @@ set(PROJECT_SOURCES
     src/windows/AdjustmentWindow.h src/windows/AdjustmentWindow.cpp
     src/windows/AppSettingsDialog.h src/windows/AppSettingsDialog.cpp
     src/windows/CodeEditorWindow.h src/windows/CodeEditorWindow.cpp
+    src/windows/CustomCodeWindow.h src/windows/CustomCodeWindow.cpp
     src/windows/CustomElemsWindow.h src/windows/CustomElemsWindow.cpp
     src/windows/ElementPropsDialog.h src/windows/ElementPropsDialog.cpp
     src/windows/ElementsCatalogDialog.h src/windows/ElementsCatalogDialog.cpp
     src/windows/ElemFormulaWindow.h src/windows/ElemFormulaWindow.cpp
     src/windows/ExamplesDialog.h src/windows/ExamplesDialog.cpp
-    src/windows/FuncEditorWindow.h src/windows/FuncEditorWindow.cpp
     src/windows/HelpWindow.h src/windows/HelpWindow.cpp
     src/windows/MemoWindow.h src/windows/MemoWindow.cpp
     src/windows/ProjectWindow.h src/windows/ProjectWindow.cpp

@@ -9,6 +9,11 @@ namespace Ori::Widgets {
 class CodeEditor;
 }
 
+/**
+    Generic window for code editors without code running functionality.
+    Intended only as a base class for function code editors
+    @sa CustomCodeWindow, @sa CustomTableCodeWindow, @sa CustomPlotCodeWindow
+*/
 class CodeEditorWindow: public SchemaMdiChild, public IEditableWindow
 {
     Q_OBJECT

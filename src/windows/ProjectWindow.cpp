@@ -13,9 +13,9 @@
 #include "../tools/IrisWindow.h"
 #include "../tools/LensmakerWindow.h"
 #include "AdjustmentWindow.h"
+#include "CustomCodeWindow.h"
 #include "CustomElemsWindow.h"
 #include "ElemFormulaWindow.h"
-#include "FuncEditorWindow.h"
 #include "MemoWindow.h"
 #include "ProtocolWindow.h"
 #include "PumpWindow.h"
@@ -132,7 +132,7 @@ void ProjectWindow::registerStorableWindows()
     WindowsManager::registerConstructor(PumpWindowStorable::windowType(), PumpWindowStorable::createWindow);
     WindowsManager::registerConstructor(ElemFormulaWindowStorable::windowType(), ElemFormulaWindowStorable::createWindow);
     WindowsManager::registerConstructor(MemoWindowStorable::windowType(), MemoWindowStorable::createWindow);
-    WindowsManager::registerConstructor(FuncEditorWindowStorable::windowType(), FuncEditorWindowStorable::createWindow);
+    WindowsManager::registerConstructor(CustomCodeWindowStorable::windowType(), CustomCodeWindowStorable::createWindow);
 }
 
 void ProjectWindow::createActions()
@@ -580,8 +580,8 @@ void ProjectWindow::showMemosWindow()
 
 void ProjectWindow::showFuncEditor()
 {
-    _mdiArea->appendChild(FuncEditorWindow::create(schema(), "_generic_empty"));
-    schema()->markModified("Custom func added");
+    _mdiArea->appendChild(CustomCodeWindow::create(schema(), "_generic_empty"));
+    schema()->markModified("Custom code added");
 }
 
 //------------------------------------------------------------------------------

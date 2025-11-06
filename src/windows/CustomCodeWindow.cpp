@@ -1,4 +1,4 @@
-#include "FuncEditorWindow.h"
+#include "CustomCodeWindow.h"
 
 #include "../core/PyRunner.h"
 
@@ -9,23 +9,23 @@
 
 #define FUNC_CALC QStringLiteral("calculate")
 
-namespace FuncEditorWindowStorable
+namespace CustomCodeWindowStorable
 {
     SchemaWindow* createWindow(Schema* schema)
     {
-        return FuncEditorWindow::create(schema);
+        return CustomCodeWindow::create(schema);
     }
-} // namespace FuncEditorWindowStorable
+} // namespace CustomCodeWindowStorable
 
 static int __funcCount = 0;
 
 //------------------------------------------------------------------------------
-//                              FuncEditorWindow
+//                              CustomCodeWindow
 //------------------------------------------------------------------------------
 
-FuncEditorWindow* FuncEditorWindow::create(Schema* owner, const QString &codeTemplate)
+CustomCodeWindow* CustomCodeWindow::create(Schema* owner, const QString &codeTemplate)
 {
-    auto w = new FuncEditorWindow(owner);
+    auto w = new CustomCodeWindow(owner);
 
     if (!codeTemplate.isEmpty())
         w->_editor->loadCode(CodeUtils::codeTemplateFile(codeTemplate));
@@ -33,12 +33,12 @@ FuncEditorWindow* FuncEditorWindow::create(Schema* owner, const QString &codeTem
     return w;
 }
 
-FuncEditorWindow::FuncEditorWindow(Schema *owner) : CodeEditorWindow(owner)
+CustomCodeWindow::CustomCodeWindow(Schema *owner) : CodeEditorWindow(owner)
 {
     _moduleName = QString("customcode%1").arg(++__funcCount);
 }
 
-void FuncEditorWindow::closeEvent(QCloseEvent* ce)
+void CustomCodeWindow::closeEvent(QCloseEvent* ce)
 {
     if (_editor->toPlainText().trimmed().isEmpty() ||
         Ori::Dlg::ok(tr("Custom function code will be lost if you close the window")))
@@ -47,7 +47,7 @@ void FuncEditorWindow::closeEvent(QCloseEvent* ce)
         ce->ignore();
 }
 
-bool FuncEditorWindow::storableRead(const QJsonObject& root, Z::Report*)
+bool CustomCodeWindow::storableRead(const QJsonObject& root, Z::Report*)
 {
     _editor->setPlainText(root["code"].toString());
     _customTitle = root["title"].toString();
@@ -57,14 +57,14 @@ bool FuncEditorWindow::storableRead(const QJsonObject& root, Z::Report*)
     return true;
 }
 
-bool FuncEditorWindow::storableWrite(QJsonObject& root, Z::Report*)
+bool CustomCodeWindow::storableWrite(QJsonObject& root, Z::Report*)
 {
     root["code"] = _editor->toPlainText();
     root["title"] = _customTitle;
     return true;
 }
 
-void FuncEditorWindow::runCode()
+void CustomCodeWindow::runCode()
 {
     PyRunner py;
     py.schema = schema();
