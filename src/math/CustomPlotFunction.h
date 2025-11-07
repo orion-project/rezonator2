@@ -39,9 +39,10 @@ private:
     Z::Dim _dimX, _dimY;
 
     // Inherited from PlotFunctionV2
+    bool prepare() override;
+    void unprepare() override;
     void calculateInternal() override;
     
-    bool loadCode();
     void showError(PyRunner *py);
     void showError(const QString &err);
 };

@@ -304,14 +304,18 @@ bool formatPenDlg(const QPen& pen, const FormatPenDlgProps& props)
 //                            Multi-graph helpers
 //------------------------------------------------------------------------------
 
-void applyGraphPen(QCPL::Plot* plot, const QString &name, const QPen &pen)
+int applyGraphPen(QCPL::Plot* plot, const QString &name, const QPen &pen)
 {
+    int count = 0;
     for (int i = 0; i < plot->graphCount(); i++)
     {
         auto g = plot->graph(i);
-        if (g->name() == name)
+        if (g->name() == name) {
             g->setPen(pen);
+            count++;
+        }
     }
+    return count;
 }
 
 int graphCount(QCPL::Plot* plot, const QString &name)

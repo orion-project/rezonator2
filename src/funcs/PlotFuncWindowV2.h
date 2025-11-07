@@ -34,16 +34,19 @@ public:
     /// Edits function parameters through dialog.
     bool configure();
 
-    // inherits from BasicMdiChild
+    // Inherited from BasicMdiChild
     QString helpTopic() const override { return _function->helpTopic(); }
 
-    // implementation of ISchemaWindowStorable
+    // Inherited from IAppSettingsListener
+    void optionChanged(AppSettingsOption option) override;
+
+    // Implementation of ISchemaWindowStorable
     QString storableType() const override { return _function->alias(); }
     bool storableRead(const QJsonObject& root, Z::Report* report) override;
     bool storableWrite(QJsonObject& root, Z::Report* report) override;
 
     // Implementation of SchemaListener
-    void recalcRequired(Schema*) override { qDebug() << "recalc required"; update(); }
+    void recalcRequired(Schema*) override { update(); }
     void elementDeleting(Schema*, Element*) override;
     void globalParamDeleting(Schema*, Z::Parameter*) override;
     void customParamDeleting(Z::Parameter*) override;
@@ -66,6 +69,9 @@ protected:
     QAction *actnUpdate, *actnFreeze, *actnFrozenInfo;
     QHash<QString, QPen> _graphPens;
     QList<QCPGraph*> _graphs;
+    
+    // Inherited from PlotBaseWindow
+    void graphFormatted(QCPGraph*) override;
 
     virtual bool configureInternal() { return true; }
     virtual void beforeUpdate() {}

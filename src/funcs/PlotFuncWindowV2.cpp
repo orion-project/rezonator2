@@ -75,7 +75,14 @@ void PlotFuncWindowV2::createMenuBar()
         _unitsMenuX->setUnit(getUnitX());
         _unitsMenuY->setUnit(getUnitY());
     });
-    _plot->menuAxisX->insertMenu(_contextMenuBeginX, _unitsMenuX->menu());
+    connect(_plot->menuAxisX, &QMenu::aboutToShow, this, [this](){
+        _unitsMenuX->menu()->setTitle(tr("Unit"));
+        _unitsMenuX->setUnit(getUnitX());
+    });
+    connect(_plot->menuAxisY, &QMenu::aboutToShow, this, [this](){
+        _unitsMenuY->menu()->setTitle(tr("Unit"));
+        _unitsMenuY->setUnit(getUnitY());
+    });    _plot->menuAxisX->insertMenu(_contextMenuBeginX, _unitsMenuX->menu());
     _plot->menuAxisY->insertMenu(_contextMenuBeginY, _unitsMenuY->menu());
 
     // Begin of the Plot menu
@@ -146,8 +153,6 @@ bool PlotFuncWindowV2::configure()
 
 void PlotFuncWindowV2::update()
 {
-    qDebug() << "update";
-
     beforeUpdate();
 
     if (_frozen)
@@ -156,11 +161,12 @@ void PlotFuncWindowV2::update()
         return;
     }
 
+    clearGraphs();
+
     _function->calculate();
     if (!_function->ok())
     {
         showStatusError(_function->errorText());
-        clearGraphs();
     }
     else
     {
@@ -190,13 +196,6 @@ void PlotFuncWindowV2::update()
     _plot->replot();
 }
 
-void PlotFuncWindowV2::clearGraphs()
-{
-    for (auto g : std::as_const(_graphs))
-        _plot->removeGraph(g);
-    _graphs.clear();
-}
-
 void PlotFuncWindowV2::showStatusError(const QString& message)
 {
     _statusBar->setText(STATUS_INFO, message);
@@ -218,9 +217,38 @@ void PlotFuncWindowV2::updateStatusUnits()
         unitY == Z::Units::none() ? QStringLiteral("n/a") : unitY->name()));
 }
 
+void PlotFuncWindowV2::clearGraphs()
+{
+    for (auto g : std::as_const(_graphs))
+        _plot->removeGraph(g);
+    _graphs.clear();
+}
+
 void PlotFuncWindowV2::updateGraphs()
 {
-    //_graphs->update(_function);
+    auto unitX = getUnitX();
+    auto unitY = getUnitY();
+    QSet<QString> legend;
+    for (const auto &line : function()->lines())
+    {
+        const auto id = line.id();
+        const auto &xs = line.x();
+        const auto &ys = line.y();
+        if (xs.size() != ys.size()) {
+            qWarning() << "Line" << id << "X len does not match Y";
+            continue;
+        }
+        auto g = _plot->addGraph();
+        for (int i = 0; i < xs.size(); i++)
+            g->addData(unitX->fromSi(xs[i]), unitY->fromSi(ys[i]));
+        g->setName(id);
+        g->setPen(graphPen(id));
+        if (!legend.contains(id)) {
+            g->addToLegend();
+            legend << id;
+        }
+        _graphs << g;
+    }
 }
 
 void PlotFuncWindowV2::freeze(bool frozen)
@@ -228,15 +256,46 @@ void PlotFuncWindowV2::freeze(bool frozen)
     _frozen = frozen;
     actnUpdate->setEnabled(!_frozen);
     actnFrozenInfo->setVisible(_frozen);
+    _unitsMenuX->setEnabled(!_frozen);
+    _unitsMenuY->setEnabled(!_frozen);
+    _leftPanel->setOptionsPanelEnabled(!_frozen);
     if (_frozen)
     {
         InfoFuncSummary summary(schema());
         summary.calculate();
         _buttonFrozenInfo->setInfo(summary.result());
     }
-    _leftPanel->setOptionsPanelEnabled(!_frozen);
     if (!_frozen && _needRecalc)
         update();
+}
+
+void PlotFuncWindowV2::optionChanged(AppSettingsOption option)
+{
+    PlotBaseWindow::optionChanged(option);
+    if (option == AppSettingsOption::DefaultPenFormat)
+    {
+        int changed = 0; // update only if format is not user-overridden
+        if (auto id = Z::planeName(Z::T); !_graphPens.contains(id))
+            changed += PlotHelpers::applyGraphPen(_plot, id, graphPen(id));
+        if (auto id = Z::planeName(Z::S); !_graphPens.contains(id))
+            changed += PlotHelpers::applyGraphPen(_plot, id, graphPen(id));
+        if (changed)
+            _plot->replot();
+    }
+}
+
+void PlotFuncWindowV2::graphFormatted(QCPGraph *g)
+{
+    if (auto id = Z::planeName(Z::T); g->name() == id) {
+        if (g->pen() == AppSettings::instance().pen(AppSettings::PenGraphT))
+            _graphPens.remove(id);
+        else _graphPens[id] = g->pen();
+    }
+    if (auto id = Z::planeName(Z::S); g->name() == id) {
+        if (g->pen() == AppSettings::instance().pen(AppSettings::PenGraphS))
+            _graphPens.remove(id);
+        else _graphPens[id] = g->pen();
+    }
 }
 
 bool PlotFuncWindowV2::shouldCloseIfDelete(const Elements& elems)

@@ -485,18 +485,24 @@ void PlotBaseWindow::graphFormatDlg()
     auto g = _plot->selectedGraph();
     if (!g) return;
 
+    QString id = g->name();
     QPen oldPen = g->pen();
     
     PlotHelpers::FormatPenDlgProps props;
-    props.title = tr("Format Line - %1").arg(g->name());
-    props.onApply = [this, g](const QPen& pen){
-        PlotHelpers::applyGraphPen(_plot, g->name(), pen);
+    props.title = tr("Format Line - %1").arg(id);
+    props.onApply = [this, id](const QPen& pen){
+        PlotHelpers::applyGraphPen(_plot, id, pen);
         _plot->replot();
     };
-    props.onReset = [this, g, oldPen](){
-        PlotHelpers::applyGraphPen(_plot, g->name(), oldPen);
-        _plot->replot();
-    };
+    if (id == Z::planeName(Z::T) || id == Z::planeName(Z::S)) {
+        props.onReset = [this, id, oldPen](){
+            auto defPen = id == Z::planeName(Z::T)
+                ? AppSettings::instance().pen(AppSettings::PenGraphT)
+                : AppSettings::instance().pen(AppSettings::PenGraphS);
+            PlotHelpers::applyGraphPen(_plot, id, defPen);
+            _plot->replot();
+        };
+    }
     if (PlotHelpers::formatPenDlg(oldPen, props)) {
         graphFormatted(g);
         schema()->markModified("PlotBaseWindow::graphFormatDlgT");

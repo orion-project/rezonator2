@@ -17,18 +17,23 @@
 class PlotFunctionV2 : public FunctionBase
 {
 public:
-    struct Line
+    /// Result of calculation of a plot function
+    class Line
     {
     public:
-        Line(const QString &id): _id(id) {}
         QString id() const { return _id; }
         const QVector<double>& x() const { return _x; }
         const QVector<double>& y() const { return _y; }
         int size() const { return _x.size(); }
-        void append(double x, double y) { _x.append(x); _y.append(y); }
+
     private:
         QString _id;
         QVector<double> _x, _y;
+
+        Line(const QString &id): _id(id) {}
+        void append(double x, double y) { _x.append(x); _y.append(y); }
+
+        friend class PlotFunctionV2;
     };
 
 public:
@@ -37,14 +42,28 @@ public:
     void calculate();
     
     virtual PlotFuncDeps dependsOn() const { return {}; }
+    
+    /// Results of calculation of a plot function.
+    /// Functions can provide several results.
+    /// For example, the "Beamsize variation" function can have breaks
+    /// at such argument values when the system in unstable,
+    /// and the function produces several not connected lines.
+    /// Line breaks are made automatically by @sa PlotFunctionV2::addPoint()
+    /// when Y-value becomes NaN or Infinity,
+    /// or can be triggererd manually by @sa PlotFunctionV2::endLine()
+    const QVector<Line>& lines() const { return _lines; }
 
 protected:
-    QVector<Line> _lines;
-    QHash<QString, int> _lineIndex;
-    
+    virtual bool prepare() { return true; }
+    virtual void unprepare() {}
     virtual void calculateInternal() {}
 
     void addPoint(const QString &id, double x, double y);
+    void endLine(const QString &id);
+    
+private:
+    QVector<Line> _lines;
+    QHash<QString, int> _lineIndex;
 };
 
 #endif // PLOT_FUNCTION_V2_H

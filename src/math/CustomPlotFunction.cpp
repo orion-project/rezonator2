@@ -6,6 +6,9 @@
 #define FUNC_CALC QStringLiteral("calculate")
 #define PROP_X_DIM QStringLiteral("x_dim")
 #define PROP_Y_DIM QStringLiteral("y_dim")
+#define RES_LABEL QStringLiteral("label")
+#define RES_X QStringLiteral("x")
+#define RES_Y QStringLiteral("y")
 
 static int __funcCount = 0;
 
@@ -34,7 +37,7 @@ void CustomPlotFunction::showError(const QString &err)
     _errorLog << err;
 }
 
-bool CustomPlotFunction::loadCode()
+bool CustomPlotFunction::prepare()
 {
     _errorLog.clear();
     _errorLine = 0;
@@ -73,12 +76,37 @@ bool CustomPlotFunction::loadCode()
     return true;
 }
 
+void CustomPlotFunction::unprepare()
+{
+    _runner.reset();
+}
+
 void CustomPlotFunction::calculateInternal()
 {
-    if (!loadCode())
+    auto res = _runner->run(FUNC_CALC, {}, {
+        { RES_LABEL, PyRunner::ftString },
+        { RES_X, PyRunner::ftNumberArray },
+        { RES_Y, PyRunner::ftNumberArray },
+    });
+    if (!res) {
+        showError(_runner.get());
         return;
-
-    // TODO: calc
-
-    _runner.reset();
+    }
+    
+    // It's safe to get fields by [] because PyRunner ensures that
+    // all fields mentioned in result-spec are present in the result
+    for (const auto& line: std::as_const(res.value()))
+    {
+        auto id = line[RES_LABEL].toString();
+        auto x = line[RES_X].value<QVector<double>>();
+        auto y = line[RES_Y].value<QVector<double>>();
+        if (x.size() != y.size()) {
+            showError("Lengths of X and Y arrays do not match");
+            return;
+        }
+        int cnt = x.size();
+        for (int i = 0; i < cnt; i++)
+            addPoint(id, x.at(i), y.at(i));
+        endLine(id);
+    }
 }

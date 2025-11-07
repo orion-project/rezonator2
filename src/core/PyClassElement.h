@@ -20,12 +20,6 @@ struct Self
     std::shared_ptr<ElementParamsBackup> backup;
 };
 
-PyObject* ctor(PyTypeObject *Py_UNUSED(type), PyObject *Py_UNUSED(args), PyObject *Py_UNUSED(kwargs))
-{
-    PyErr_SetString(PyGlobal::SchemaError, "creation of elements from Python code is forbidden");
-    return nullptr;
-}
-
 void dtor(Self *self)
 {
     self->backup.reset();
@@ -199,11 +193,10 @@ PyTypeObject* type()
         .tp_basicsize = sizeof(Self),
         .tp_itemsize = 0,
         .tp_dealloc = (destructor)dtor,
-        .tp_flags = Py_TPFLAGS_DEFAULT,
+        .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_DISALLOW_INSTANTIATION,
         .tp_doc = PyDoc_STR("Optical element"),
         .tp_methods = methods,
         .tp_getset = getset,
-        .tp_new = ctor,
     };
 
     return &type;

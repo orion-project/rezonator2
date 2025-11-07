@@ -13,7 +13,15 @@ void PlotFunctionV2::calculate()
     _lineIndex.clear();
     _errorText.clear();
 
+    if (!prepare())
+        return;
+        
     calculateInternal();
+    
+    unprepare();
+    
+    if (!ok())
+        return;
     
     int totalPoints = 0;
     QHash<QString, int> points;
@@ -50,4 +58,9 @@ void PlotFunctionV2::addPoint(const QString &id, double x, double y)
         Z_INFO(id << "new line segment started at" << x)
     }
     _lines[index].append(x, y);
+}
+
+void PlotFunctionV2::endLine(const QString &id)
+{
+    _lineIndex.remove(id);
 }

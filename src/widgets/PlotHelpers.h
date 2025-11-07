@@ -36,7 +36,7 @@ struct FormatPenDlgProps
 bool formatPenDlg(const QPen& pen, const FormatPenDlgProps& props);
 
 // Multi-graph helpers
-void applyGraphPen(QCPL::Plot* plot, const QString &name, const QPen &pen);
+int applyGraphPen(QCPL::Plot* plot, const QString &name, const QPen &pen);
 int graphCount(QCPL::Plot* plot, const QString &name);
 QVector<QCPGraph*> graphs(QCPL::Plot* plot, const QString &name);
 
