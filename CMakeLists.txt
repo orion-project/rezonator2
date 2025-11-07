@@ -150,6 +150,8 @@ set(PROJECT_SOURCES
     src/math/MultirangeCausticFunction.h src/math/MultirangeCausticFunction.cpp
     src/math/PlotFuncRoundTripFunction.h src/math/PlotFuncRoundTripFunction.cpp
     src/math/PlotFunction.h src/math/PlotFunction.cpp
+    src/math/PlotFunctionV2.h src/math/PlotFunctionV2.cpp
+    src/math/PlotFunctionUtils.h
     src/math/PumpCalculator.h src/math/PumpCalculator.cpp
     src/math/RoundTripCalculator.h src/math/RoundTripCalculator.cpp
     src/math/StabilityMap2DFunction.h src/math/StabilityMap2DFunction.cpp

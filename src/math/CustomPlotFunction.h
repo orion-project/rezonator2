@@ -1,11 +1,11 @@
 #ifndef CUSTOM_PLOT_FUNCTION_H
 #define CUSTOM_PLOT_FUNCTION_H
 
-#include "PlotFunction.h"
+#include "PlotFunctionV2.h"
 
 class PyRunner;
 
-class CustomPlotFunction : public PlotFunction
+class CustomPlotFunction : public PlotFunctionV2
 {
 public:
     FUNC_ALIAS("CustomPlot")
@@ -25,9 +25,6 @@ public:
     
     void setPrintFunc(std::function<void(const QString&)> printFunc) { _printFunc = printFunc; }
 
-    // Inherited from PlotFunction
-    void calculate(CalculationMode calcMode = CALC_PLOT) override;
-    
     Z::Dim dimX() const { return _dimX; }
     Z::Dim dimY() const { return _dimY; }
 
@@ -40,9 +37,11 @@ private:
     std::function<void(const QString&)> _printFunc;
     std::shared_ptr<PyRunner> _runner;
     Z::Dim _dimX, _dimY;
+
+    // Inherited from PlotFunctionV2
+    void calculateInternal() override;
     
-    bool prepare();
-    void unprepare();
+    bool loadCode();
     void showError(PyRunner *py);
     void showError(const QString &err);
 };

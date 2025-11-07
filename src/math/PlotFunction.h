@@ -1,27 +1,13 @@
 #ifndef PLOT_FUNCTION_H
 #define PLOT_FUNCTION_H
 
-#include <QVector>
-
 #include "FunctionBase.h"
+#include "PlotFunctionUtils.h"
 #include "../core/Variable.h"
 #include "../core/CommonTypes.h"
 
 class RoundTripCalculator;
 class Schema;
-
-class FunctionRange
-{
-public:
-    double min = 0;
-    double max = 0;
-    bool empty = true;
-    void reset() { empty = true; min = max = 0; }
-    void set(const double& v1, const double& v2) { empty = false; min = v1; max = v2; }
-    bool has(const double& v) const { return !empty && v >= min && v <= max; }
-    void fit(const double& v);
-    QString str() const;
-};
 
 struct PlotFuncResult
 {
@@ -46,16 +32,6 @@ struct PlotFuncResultSet
     void reset();
     void addPoint(double x, double y);
     int allPointsCount() const;
-};
-
-struct PlotFuncDeps
-{
-    Elements elems;
-    Z::Parameters params;
-    
-    bool check(Z::Parameter*) const;
-    bool check(Element*) const;
-    bool check(const Elements&) const;
 };
 
 struct SpecPointParam
@@ -100,10 +76,6 @@ public:
     /// Defines if function can calculate notable values. See @ref calculateSpecPoints().
     virtual bool hasSpecPoints() const { return false; }
 
-    /// Returns a path to function icon.
-    /// Icon can be used to display in window title or menus.
-    virtual const char* iconPath() const { return ""; }
-
     /// Calculate some notable values.
     /// E.g. for stability maps these values are stability boundaries,
     /// for caustic these are waist radius and position.
@@ -132,7 +104,6 @@ public:
 
     Z::Variable* arg() { return &_arg; }
     const Z::Variable* arg() const { return &_arg; }
-    const FunctionRange& range() const { return _range; }
 
     /// Load custom preferences - recently used modes etc.
     virtual void loadPrefs() {}
@@ -145,7 +116,6 @@ protected:
     Z::Variable _arg;
     RoundTripCalculator* _calc = nullptr;
     Z::PairTS<PlotFuncResultSet> _results;
-    FunctionRange _range;
     Z::Value _backupValue;
 
     bool prepareResults(Z::PlottingRange range);

@@ -9,7 +9,7 @@
 
 static int __funcCount = 0;
 
-CustomPlotFunction::CustomPlotFunction(Schema *schema) : PlotFunction(schema)
+CustomPlotFunction::CustomPlotFunction(Schema *schema) : PlotFunctionV2(schema)
 {
     _moduleName = QString("customplot%1").arg(++__funcCount);
 }
@@ -34,7 +34,7 @@ void CustomPlotFunction::showError(const QString &err)
     _errorLog << err;
 }
 
-bool CustomPlotFunction::prepare()
+bool CustomPlotFunction::loadCode()
 {
     _errorLog.clear();
     _errorLine = 0;
@@ -73,17 +73,12 @@ bool CustomPlotFunction::prepare()
     return true;
 }
 
-void CustomPlotFunction::unprepare()
+void CustomPlotFunction::calculateInternal()
 {
-    _runner.reset();
-}
-
-void CustomPlotFunction::calculate(CalculationMode calcMode)
-{
-    if (!prepare())
+    if (!loadCode())
         return;
 
     // TODO: calc
 
-    unprepare();
+    _runner.reset();
 }
