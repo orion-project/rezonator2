@@ -55,6 +55,9 @@ using SpecPointParams = QMap<int, SpecPointParam>;
     Base class for all plotting functions.
     Plotting function is a function presenting its calculation results in graphical form.
     Alternatively, they can be used for calculation of a single result, see @a calculateAt.
+    
+    @sa PlotFuncWindow and PlotFunction should be considered obsolete
+    and all new plot functions should be implemented via @sa PlotFunctionV2 and @sa PlotFuncWindowV2.
 */
 class PlotFunction : public FunctionBase
 {

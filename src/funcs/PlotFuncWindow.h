@@ -67,6 +67,12 @@ struct CursorInfoValue
 
 using CursorInfoValues = QList<CursorInfoValue>;
 
+/**
+    A function window displaying results of calculation of @sa PlotFunction.
+
+    PlotFuncWindow and @sa PlotFunction should be considered obsolete
+    and all new plot functions should be implemented via @sa PlotFunctionV2 and @sa PlotFuncWindowV2.
+*/
 class PlotFuncWindow : public SchemaMdiChild
 {
     Q_OBJECT

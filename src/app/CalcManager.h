@@ -42,6 +42,7 @@ private:
 
     void showInfoFunc(InfoFunction* func);
     template <class TWindow> void showPlotFunc();
+    template <class TWindow> void showPlotFuncV2();
     template <class TFunction> void showTableFunc();
 };
 

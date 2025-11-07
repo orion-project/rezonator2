@@ -119,6 +119,7 @@ set(PROJECT_SOURCES
     src/funcs/MulticausticWindow.h src/funcs/MulticausticWindow.cpp
     src/funcs/MultirangeCausticWindow.h src/funcs/MultirangeCausticWindow.cpp
     src/funcs/PlotFuncWindow.h src/funcs/PlotFuncWindow.cpp
+    src/funcs/PlotFuncWindowV2.h src/funcs/PlotFuncWindowV2.cpp
     src/funcs/PlotFuncWindowStorable.h src/funcs/PlotFuncWindowStorable.cpp
     src/funcs/StabilityMap2DWindow.h src/funcs/StabilityMap2DWindow.cpp
     src/funcs/StabilityMapWindow.h src/funcs/StabilityMapWindow.cpp

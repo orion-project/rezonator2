@@ -2,10 +2,17 @@
 #define PLOT_FUNCTION_V2_H
 
 #include "FunctionBase.h"
+#include "PlotFunctionUtils.h"
 
 /**
     Base class for plotting functions.
+    Plotting function is a function presenting its calculation results in graphical form.
+    Alternatively, they can be used for calculation of a single result, see @a calculateAt.
+
     This is a simplifield version of @sa PlotFunction storing results as a plain list.
+    
+    @sa PlotFuncWindow and @sa PlotFunction should be considered obsolete
+    and all new plot functions should be implemented via PlotFunctionV2 and @sa PlotFuncWindowV2.
 */
 class PlotFunctionV2 : public FunctionBase
 {
@@ -28,6 +35,8 @@ public:
     PlotFunctionV2(Schema *schema);
 
     void calculate();
+    
+    virtual PlotFuncDeps dependsOn() const { return {}; }
 
 protected:
     QVector<Line> _lines;

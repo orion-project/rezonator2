@@ -1,12 +1,12 @@
 #ifndef CUSTOM_PLOT_FUNC_WINDOW_H
 #define CUSTOM_PLOT_FUNC_WINDOW_H
 
-#include "../funcs/PlotFuncWindowStorable.h"
+#include "../funcs/PlotFuncWindowV2.h"
 #include "../math/CustomPlotFunction.h"
 
 class CustomPlotCodeWindow;
 
-class CustomPlotFuncWindow final : public PlotFuncWindowStorable
+class CustomPlotFuncWindow final : public PlotFuncWindowV2
 {
     Q_OBJECT
 
@@ -15,12 +15,10 @@ public:
     
     CustomPlotFunction* function() const { return dynamic_cast<CustomPlotFunction*>(_function); }
 
-    // Implementation of PlotFuncWindow
+    // Implementation of PlotFuncWindowV2
     bool configureInternal() override;
     Z::Unit getDefaultUnitX() const override;
     Z::Unit getDefaultUnitY() const override;
-
-    // Implementation of PlotFuncWindowStorable
     QString readFunction(const QJsonObject& root) override;
     QString writeFunction(QJsonObject& root) override;
     

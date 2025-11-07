@@ -7,6 +7,7 @@
 #include "../funcs/CustomTableFuncWindow.h"
 #include "../funcs/InfoFuncWindow.h"
 #include "../funcs/PlotFuncWindow.h"
+#include "../funcs/PlotFuncWindowV2.h"
 #include "../funcs/MultibeamCausticWindow.h"
 #include "../funcs/MultirangeCausticWindow.h"
 #include "../funcs/StabilityMapWindow.h"
@@ -124,7 +125,7 @@ void CalcManager::funcCustomTable()
 
 void CalcManager::funcCustomPlot()
 {
-    showPlotFunc<CustomPlotFunction>();
+    showPlotFuncV2<CustomPlotFunction>();
 }
 
 void CalcManager::funcShowMatrices()
@@ -164,13 +165,50 @@ template <class TFunction> void CalcManager::showPlotFunc()
     if (!wnd) return;
 
     auto plotWnd = dynamic_cast<PlotFuncWindow*>(wnd);
-    if (!plotWnd || !plotWnd->configure())
+    if (!plotWnd)
+    {
+        qWarning() << "Bad window class for function" << TFunction::_alias_();
+        delete wnd;
+        return;
+    }
+    
+    if (!plotWnd->configure())
     {
         delete wnd;
         return;
     }
 
     plotWnd->function()->loadPrefs();
+    WindowsManager::instance().show(wnd);
+    plotWnd->requestAutolimits();
+    plotWnd->requestCenterCursor();
+    plotWnd->update();
+}
+
+template <class TFunction> void CalcManager::showPlotFuncV2()
+{
+    RETURN_IF_SCHEMA_EMPTY
+
+    auto ctor = WindowsManager::getConstructor(TFunction::_alias_());
+    if (!ctor) return;
+
+    auto wnd = ctor(schema());
+    if (!wnd) return;
+
+    auto plotWnd = dynamic_cast<PlotFuncWindowV2*>(wnd);
+    if (!plotWnd)
+    {
+        qWarning() << "Bad window class for function" << TFunction::_alias_();
+        delete wnd;
+        return;
+    }
+    
+    if (!plotWnd->configure())
+    {
+        delete wnd;
+        return;
+    }
+
     WindowsManager::instance().show(wnd);
     plotWnd->requestAutolimits();
     plotWnd->requestCenterCursor();

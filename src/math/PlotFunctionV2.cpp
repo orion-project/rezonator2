@@ -24,7 +24,7 @@ void PlotFunctionV2::calculate()
     for (auto it = points.cbegin(); it != points.cend(); it++)
         Z_INFO("Total points count:" << it.key() << "=" << it.value());
     if (totalPoints == 0)
-        setError(qApp->translate("Calc error", "No one valid point is calculated"));
+        setError(qApp->translate("Calc error", "No one valid point was calculated"));
 }
 
 void PlotFunctionV2::addPoint(const QString &id, double x, double y)

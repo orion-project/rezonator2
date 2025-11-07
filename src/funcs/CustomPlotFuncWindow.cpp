@@ -13,7 +13,7 @@
 
 #define A_ Ori::Gui::action
 
-CustomPlotFuncWindow::CustomPlotFuncWindow(Schema* schema): PlotFuncWindowStorable(new CustomPlotFunction(schema))
+CustomPlotFuncWindow::CustomPlotFuncWindow(Schema* schema): PlotFuncWindowV2(new CustomPlotFunction(schema))
 {
     _defaultWindowTitle = windowTitle();
 
