@@ -5,7 +5,7 @@
       "date": "",
       "changes": [
         {
-          "text": "Can create custom functions in Python: generic code, table function"
+          "text": "Can create custom functions in Python: generic code, table function, plot function"
         },
         {
           "text": "Can add custom parameters for any element"

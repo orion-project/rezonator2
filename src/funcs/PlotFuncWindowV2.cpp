@@ -286,16 +286,20 @@ void PlotFuncWindowV2::optionChanged(AppSettingsOption option)
 
 void PlotFuncWindowV2::graphFormatted(QCPGraph *g)
 {
-    if (auto id = Z::planeName(Z::T); g->name() == id) {
+    if (auto id = Z::planeName(Z::T); g->name() == id)
+    {
         if (g->pen() == AppSettings::instance().pen(AppSettings::PenGraphT))
             _graphPens.remove(id);
         else _graphPens[id] = g->pen();
     }
-    if (auto id = Z::planeName(Z::S); g->name() == id) {
+    else if (auto id = Z::planeName(Z::S); g->name() == id)
+    {
         if (g->pen() == AppSettings::instance().pen(AppSettings::PenGraphS))
             _graphPens.remove(id);
         else _graphPens[id] = g->pen();
     }
+    else
+        _graphPens[g->name()] = g->pen();
 }
 
 bool PlotFuncWindowV2::shouldCloseIfDelete(const Elements& elems)
@@ -481,21 +485,12 @@ QString PlotFuncWindowV2::readWindowGeneral(const QJsonObject& root, Z::Report *
     for (auto& msg : qcpl_report)
         if (!msg.ok() && msg.code != QCPL::JsonError::NoData)
             report->warning(msg.message);
-    if (root.contains("pen_t"))
-    {
-        auto id = Z::planeName(Z::T);
-        auto def = graphPen(id);
-        auto pen = QCPL::readPen(root["pen_t"].toObject(), def);
-        if (pen != def) _graphPens[id] = pen;
-    }
-    if (root.contains("pen_s"))
-    {
-        auto id = Z::planeName(Z::S);
-        auto def = graphPen(id);
-        auto pen = QCPL::readPen(root["pen_s"].toObject(), def);
-        if (pen != def) _graphPens[id] = pen;
-    }
-    // TODO: read other non-TS line formats
+
+    auto jsonPens = root["graphs"].toObject();
+    for (auto it = jsonPens.constBegin(); it != jsonPens.constEnd(); it++) {
+        qDebug() << "Read pen" << it.key() << QCPL::readPen(it.value().toObject(), QPen(Qt::black));
+        _graphPens[it.key()] = QCPL::readPen(it.value().toObject(), QPen(Qt::black));
+        }
 
     return QString();
 }
@@ -522,11 +517,10 @@ QString PlotFuncWindowV2::writeWindowGeneral(QJsonObject& root) const
 
     // Store plot format
     root["format"] = QCPL::writePlot(_plot);
-    if (auto id = Z::planeName(Z::T); _graphPens.contains(id))
-        root["pen_t"] = QCPL::writePen(_graphPens[id]);
-    if (auto id = Z::planeName(Z::S); _graphPens.contains(id))
-        root["pen_s"] = QCPL::writePen(_graphPens[id]);
-    // TODO: write other non-TS line formats
+    QJsonObject jsonPens;
+    for (auto it = _graphPens.cbegin(); it != _graphPens.cend(); it++)
+        jsonPens[it.key()] = QCPL::writePen(it.value());
+    root["graphs"] = jsonPens;
 
     return QString();
 }
