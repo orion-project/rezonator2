@@ -487,10 +487,8 @@ QString PlotFuncWindowV2::readWindowGeneral(const QJsonObject& root, Z::Report *
             report->warning(msg.message);
 
     auto jsonPens = root["graphs"].toObject();
-    for (auto it = jsonPens.constBegin(); it != jsonPens.constEnd(); it++) {
-        qDebug() << "Read pen" << it.key() << QCPL::readPen(it.value().toObject(), QPen(Qt::black));
+    for (auto it = jsonPens.constBegin(); it != jsonPens.constEnd(); it++)
         _graphPens[it.key()] = QCPL::readPen(it.value().toObject(), QPen(Qt::black));
-        }
 
     return QString();
 }

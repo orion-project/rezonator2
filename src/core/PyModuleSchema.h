@@ -99,15 +99,26 @@ PyObject* round_trip(PyObject *Py_UNUSED(self), PyObject *Py_UNUSED(args), PyObj
                 CHECK_(refElem, ValueError, "element reference is null")
                 CHECK_(SCHEMA->elements().contains(refElem), ValueError, "reference element not found")
             } else {
-                CHECK_(false, TypeError, "wrong type of the 'ref' arg, integer, string, or Element expected");
+                CHECK_(false, TypeError, "wrong type of the 'ref' arg, integer or string or Element expected");
             }
         }
         if (auto arg = PyDict_GetItemString(kwargs, "plane"); arg) {
-            CHECK_(PyLong_Check(arg), TypeError, "wrong type of the 'plane' arg, integer expected")
-            auto plane = PyLong_AsLong(arg);
-            CHECK_(plane == Z::WorkPlane::T || plane == Z::WorkPlane::S, ValueError, 
-                "unexpected value of the 'plane' arg, expected one of Z.PLANE_T or Z.PLANE_S")
-            workPlane = (Z::WorkPlane)plane;
+            if (PyUnicode_Check(arg)) {
+                auto plane = QString::fromUtf8(PyUnicode_AsUTF8(arg)).toUpper();
+                if (plane == Z::planeName(Z::T))
+                    workPlane = Z::T;
+                else if (plane == Z::planeName(Z::S))
+                    workPlane = Z::S;
+                else
+                    CHECK_(false, ValueError, "wrong work plane name, T or S expected")
+            } else if (PyLong_Check(arg)) {
+                auto plane = PyLong_AsLong(arg);
+                CHECK_(plane == Z::WorkPlane::T || plane == Z::WorkPlane::S, ValueError, 
+                    "unexpected value of the 'plane' arg, expected one of Z.PLANE_T or Z.PLANE_S")
+                workPlane = (Z::WorkPlane)plane;
+            } else {
+                CHECK_(false, TypeError, "wrong type of the 'plane' arg, string or integer expected")
+            }
         }
         if (auto arg = PyDict_GetItemString(kwargs, "inside"); arg) {
             CHECK_(PyBool_Check(arg), TypeError, "wrong type of the 'inside' arg, bool expected")

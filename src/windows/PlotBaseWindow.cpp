@@ -270,7 +270,7 @@ QList<BasicMdiChild::MenuItem> PlotBaseWindow::menuItems_View()
 QList<BasicMdiChild::MenuItem> PlotBaseWindow::menuItems_Edit()
 {
     return editMenuItems()
-            << actnCopyGraphDataWithParams
+            // TODO: << actnCopyGraphDataWithParams
             << actnCopyPlotImage
             << BasicMdiChild::MenuItem()
             // TODO: "Copy/Paste Format" should operate in selected part

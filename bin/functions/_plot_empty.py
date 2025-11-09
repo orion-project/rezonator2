@@ -20,4 +20,19 @@ def figure():
   }
 
 def calculate():
-  pass
+  return [
+  # Return a list of lines.
+  # Labels can be arbitrary, they are displayed in legend.
+  # There can be several lines with the same label,
+  # they are considered as parts of a single multi-segment graph.
+    {
+     'label': 'T',
+     'x': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+     'y': [4, 3, 2, 1, 0, 0, 1, 2, 3, 4]
+    },
+    {
+     'label': 'S',
+     'x': [0.0, 1.0, 2.0, 3.0, 4.0,  5.0, 6.0, 7.0, 8.0, 9.0],
+     'y': [4.5, 3.4, 2.3, 1.2, 0.1, -0.1, 1.1, 2.2, 3.3, 4.4]
+    }
+  ]
