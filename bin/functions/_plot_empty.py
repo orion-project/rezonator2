@@ -1,8 +1,8 @@
 '''
 Custom plot
 
-↑ This is a function name that is displayed in function window headers
-and in the plot title.
+↑ This is a function name that is displayed in function window headers.
+In the plot title, it is substituted instead of the {func_name} variable.
 '''
 import rezonator as Z
 import schema
@@ -22,8 +22,8 @@ def figure():
 def calculate():
   return [
   # Return a list of lines.
-  # Labels can be arbitrary, they are displayed in legend.
-  # There can be several lines with the same label,
+  # Labels can be arbitrary; they are displayed in the legend.
+  # There can be several lines with the same label;
   # they are considered as parts of a single multi-segment graph.
     {
      'label': 'T',

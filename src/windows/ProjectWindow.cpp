@@ -242,7 +242,7 @@ void ProjectWindow::createMenuBar()
           actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamVariation, nullptr,
           actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic,
           actnFuncBeamParamsAtElems, nullptr, actnFuncRepRate, nullptr,
-          actnFuncGenericPlot, nullptr,
+          //actnFuncGenericPlot, nullptr,
         #ifdef Z_USE_PYTHON
           actnFuncCustomCode, actnFuncCustomTable, actnFuncCustomPlot
         #endif
