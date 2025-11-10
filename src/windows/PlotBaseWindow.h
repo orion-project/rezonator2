@@ -19,8 +19,17 @@ class StatusBar;
 }
 
 struct PlotCursorInfo;
-
 class PlotParamsPanel;
+
+struct PlotWindowConfig
+{
+    int statusPanelCount = 1;
+    int statusPanelPoints = 0;
+    bool leftPanelHasDataTable = true;
+    bool leftPanelHasOptions = false;
+    bool leftPanelHasSpecPoints = false;
+    bool selectedGraphUpdatesCursor = false;
+};
 
 /**
     Base window providing plotting widgent and basic commands for plot manipulation.
@@ -44,19 +53,7 @@ signals:
     void finishImageBeforeCopy(QPainter*);
     
 protected:
-    struct WndConfig
-    {
-        int statusPanelCount;
-        int statusPanelPoints;
-        bool leftPanelHasSpecPoints;
-        bool leftPanelHasDataTable;
-        bool leftPanelHasOptions;
-        bool selectedGraphUpdatesCursor;
-        
-        WndConfig();
-    };
-
-    WndConfig _config;
+    PlotWindowConfig _config;
     QCPL::Plot* _plot;
     QSplitter* _splitter;
     PlotParamsPanel* _leftPanel;
@@ -74,11 +71,14 @@ protected:
         *actnCopyGraphData, *actnCopyGraphDataCurSegment, *actnCopyGraphDataAllSegments,
         *actnCopyGraphDataWithParams, *actnCopyPlotImage, *actnCopyPlotFormat, *actnPastePlotFormat,
         *actnToggleTitle, *actnToggleLegend;
+    QAction *_contextMenuBeginX, *_contextMenuBeginY;
+    
     std::optional<QPen> _cursorPen;
     
-    explicit PlotBaseWindow(Schema*, const WndConfig &config = {});
+    explicit PlotBaseWindow(Schema*, const PlotWindowConfig &config = {});
 
     virtual void graphSelected(QCPGraph*);
+    virtual void graphFormatted(QCPGraph*) {}
     virtual void fillCursorInfo(PlotCursorInfo&) {}
     virtual QList<BasicMdiChild::MenuItem> viewMenuItems() const { return {}; }
     virtual QList<BasicMdiChild::MenuItem> editMenuItems() const { return {}; }

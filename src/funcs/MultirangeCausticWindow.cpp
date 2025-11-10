@@ -14,7 +14,7 @@ MultirangeCausticWindow::MultirangeCausticWindow(Schema *schema): MulticausticWi
 {
     _beamShape = new BeamShapeExtension(this);
 
-    _plot->addTextVarY("{func_mode}", tr("Function mode"), [this]{
+    _plot->putTextVarY("{func_mode}", tr("Function mode"), [this]{
         return CausticFunction::modeDisplayName(function()->mode()); });
 
     _plot->setDefaultTextY("{func_mode} {(unit)}");

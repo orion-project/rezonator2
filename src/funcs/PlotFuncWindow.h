@@ -67,6 +67,12 @@ struct CursorInfoValue
 
 using CursorInfoValues = QList<CursorInfoValue>;
 
+/**
+    A function window displaying results of calculation of @sa PlotFunction.
+
+    PlotFuncWindow and @sa PlotFunction should be considered obsolete
+    and all new plot functions should be implemented via @sa PlotFunctionV2 and @sa PlotFuncWindowV2.
+*/
 class PlotFuncWindow : public SchemaMdiChild
 {
     Q_OBJECT
@@ -173,6 +179,7 @@ protected:
     virtual void calculate();
     virtual bool configureInternal() { return true; }
     virtual void updateGraphs();
+    virtual void beforeUpdate() {}
     virtual void afterUpdate() {}
     virtual QWidget* makeOptionsPanel() { return nullptr; }
     virtual QList<BasicMdiChild::MenuItem> viewMenuItems() const { return {}; }
@@ -212,9 +219,7 @@ protected:
     Z::Unit getUnitX() const;
     Z::Unit getUnitY() const;
     Z::Unit getUnitY(FuncMode mode) const;
-
-    /// Adds common variable to all plot parts - axes and title
-    void addTextVar(const QString& name, const QString& descr, std::function<QString()> getter);
+    
 private slots:
     void activateModeT();
     void activateModeS();

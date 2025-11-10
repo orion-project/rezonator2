@@ -444,9 +444,9 @@ Z::Unit TableFunction::columnUnit(const ColumnDef &col) const
     if (_colUnits.contains(col.label))
         return _colUnits[col.label];
     if (col.dim == Z::Dims::linear()) {
-        if (col.hint == ColumnDef::hintWavefront)
-            return AppSettings::instance().defaultUnitFrontRadius;
-        return AppSettings::instance().defaultUnitBeamRadius;
+        if (col.hint == ColumnDef::hintBeamsize)
+            return AppSettings::instance().defaultUnitBeamRadius;
+        return AppSettings::instance().defaultUnitLinear;
     }
     if (col.dim == Z::Dims::angular())
         return AppSettings::instance().defaultUnitAngle;

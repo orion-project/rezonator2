@@ -54,6 +54,10 @@ public:
     /// Function alias is used for saving/restoring of function windows.
     virtual QString alias() const { return QString(); }
 
+    /// Returns a path to function icon.
+    /// Icon can be used to display in window title or menus.
+    virtual const char* iconPath() const { return ""; }
+
     virtual QString helpTopic() const { return QString(); }
 
     bool ok() const { return _errorText.isEmpty(); }

@@ -485,13 +485,13 @@ GaussCalculatorWindow::GaussCalculatorWindow(QWidget *parent) : QWidget(parent)
     _plot->legend->setVisible(false);
     _plot->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    _plot->addTextVarX("{unit}", tr("Unit of measurement"), [this]{ return _z->value().unit()->name(); });
+    _plot->putTextVarX("{unit}", tr("Unit of measurement"), [this]{ return _z->value().unit()->name(); });
     _plot->setDefaultTextX(tr("Axial distance, {unit}"));
     _plot->setFormatterTextX(_plot->defaultTextX());
 
-    _plot->addTextVarY("{unit}", tr("Unit of measurement"), [this]{
+    _plot->putTextVarY("{unit}", tr("Unit of measurement"), [this]{
         return (_plotWR->checkedId() == 0 ? _w : _R )->value().unit()->name(); });
-    _plot->addTextVarY("{mode}", tr("Function mode"), [this]{
+    _plot->putTextVarY("{mode}", tr("Function mode"), [this]{
         return _plotWR->checkedId() == 0 ? tr("Beam radius") : tr("Radius of curvatue"); });
     _plot->setDefaultTextY("{mode}, {unit}");
     _plot->setFormatterTextY(_plot->defaultTextY());

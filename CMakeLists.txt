@@ -107,6 +107,8 @@ set(PROJECT_SOURCES
     src/funcs/BeamVariationWindow.h src/funcs/BeamVariationWindow.cpp
     src/funcs/CausticOptionsPanel.h
     src/funcs/CausticWindow.h src/funcs/CausticWindow.cpp
+    src/funcs/CustomPlotCodeWindow.h src/funcs/CustomPlotCodeWindow.cpp
+    src/funcs/CustomPlotFuncWindow.h src/funcs/CustomPlotFuncWindow.cpp
     src/funcs/CustomTableCodeWindow.h src/funcs/CustomTableCodeWindow.cpp
     src/funcs/CustomTableFuncWindow.h src/funcs/CustomTableFuncWindow.cpp
     src/funcs/FuncOptionsPanel.h src/funcs/FuncOptionsPanel.cpp
@@ -117,6 +119,7 @@ set(PROJECT_SOURCES
     src/funcs/MulticausticWindow.h src/funcs/MulticausticWindow.cpp
     src/funcs/MultirangeCausticWindow.h src/funcs/MultirangeCausticWindow.cpp
     src/funcs/PlotFuncWindow.h src/funcs/PlotFuncWindow.cpp
+    src/funcs/PlotFuncWindowV2.h src/funcs/PlotFuncWindowV2.cpp
     src/funcs/PlotFuncWindowStorable.h src/funcs/PlotFuncWindowStorable.cpp
     src/funcs/StabilityMap2DWindow.h src/funcs/StabilityMap2DWindow.cpp
     src/funcs/StabilityMapWindow.h src/funcs/StabilityMapWindow.cpp
@@ -134,6 +137,7 @@ set(PROJECT_SOURCES
     src/math/BeamVariationFunction.h src/math/BeamVariationFunction.cpp
     src/math/CausticFunction.h src/math/CausticFunction.cpp
     src/math/CustomInfoFunction.h src/math/CustomInfoFunction.cpp
+    src/math/CustomPlotFunction.h src/math/CustomPlotFunction.cpp
     src/math/CustomTableFunction.h src/math/CustomTableFunction.cpp
     src/math/FormatInfo.h src/math/FormatInfo.cpp
     src/math/FunctionBase.h src/math/FunctionBase.cpp
@@ -147,6 +151,8 @@ set(PROJECT_SOURCES
     src/math/MultirangeCausticFunction.h src/math/MultirangeCausticFunction.cpp
     src/math/PlotFuncRoundTripFunction.h src/math/PlotFuncRoundTripFunction.cpp
     src/math/PlotFunction.h src/math/PlotFunction.cpp
+    src/math/PlotFunctionV2.h src/math/PlotFunctionV2.cpp
+    src/math/PlotFunctionUtils.h
     src/math/PumpCalculator.h src/math/PumpCalculator.cpp
     src/math/RoundTripCalculator.h src/math/RoundTripCalculator.cpp
     src/math/StabilityMap2DFunction.h src/math/StabilityMap2DFunction.cpp
@@ -210,7 +216,6 @@ set(PROJECT_SOURCES
     src/widgets/ParamsTreeWidget.h src/widgets/ParamsTreeWidget.cpp
     src/widgets/PlotHelpers.h src/widgets/PlotHelpers.cpp
     src/widgets/PlotParamsPanel.h src/widgets/PlotParamsPanel.cpp
-    src/widgets/PopupMessage.h src/widgets/PopupMessage.cpp
     src/widgets/RichTextItemDelegate.h src/widgets/RichTextItemDelegate.cpp
     src/widgets/SchemaElemsTable.h src/widgets/SchemaElemsTable.cpp
     src/widgets/SchemaLayout.h src/widgets/SchemaLayout.cpp

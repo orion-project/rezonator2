@@ -30,6 +30,7 @@
 #include "tools/OriMruList.h"
 #include "widgets/OriMruMenu.h"
 #include "widgets/OriMdiToolBar.h"
+#include "widgets/OriPopupMessage.h"
 #include "widgets/OriStatusBar.h"
 
 #include <QAction>
@@ -115,6 +116,8 @@ ProjectWindow::ProjectWindow(Schema* aSchema) : QMainWindow(), SchemaToolWindow(
     auto shortcutApply = new QShortcut(Qt::Key_Return, this);
     connect(shortcutApply, &QShortcut::activated, this, &ProjectWindow::shortcutEnterActivated);
 
+    Ori::Gui::PopupMessage::setTarget(this);
+
     MessageBus::instance().registerListener(this);
 
     PersistentState::restoreWindowGeometry("main", this, {1024, 768});
@@ -182,6 +185,7 @@ void ProjectWindow::createActions()
 #ifdef Z_USE_PYTHON
     actnFuncCustomCode = A_(tr("New Custom Code Window"), this, SLOT(newCustomCodeWindow()), ":/toolbar/python_framed");
     actnFuncCustomTable = A_(tr("Create Custom Table Function"), _calculations, SLOT(funcCustomTable()), ":/toolbar/table_py");
+    actnFuncCustomPlot = A_(tr("Create Custom Plot Function"), _calculations, SLOT(funcCustomPlot()), ":/toolbar/plot_py");
 #endif
 
     actnToolsCustomElems = A_(tr("Custom Elements Library"), this, SLOT(showCustomElems()), ":/toolbar/catalog");
@@ -238,9 +242,9 @@ void ProjectWindow::createMenuBar()
           actnFuncStabMap, actnFuncStabMap2d, actnFuncBeamVariation, nullptr,
           actnFuncCaustic, actnFuncMultirangeCaustic, actnFuncMultibeamCaustic,
           actnFuncBeamParamsAtElems, nullptr, actnFuncRepRate, nullptr,
-          actnFuncGenericPlot, nullptr,
+          //actnFuncGenericPlot, nullptr,
         #ifdef Z_USE_PYTHON
-          actnFuncCustomCode, actnFuncCustomTable
+          actnFuncCustomCode, actnFuncCustomTable, actnFuncCustomPlot
         #endif
         });
 

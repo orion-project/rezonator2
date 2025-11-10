@@ -20,21 +20,21 @@ MulticausticWindow::MulticausticWindow(MultirangeCausticFunction* function) : Pl
 {
     _plot->addLayer("elem_bounds", _plot->layer("main"), QCustomPlot::limBelow);
 
-    _plot->addTextVarX("{elems}", tr("Element labels and titles"), [this]{
+    _plot->putTextVarX("{elems}", tr("Element labels and titles"), [this]{
         QStringList strs;
         foreach (const auto& arg, this->function()->args())
             if (!arg.element->disabled())
                 strs << arg.element->displayLabelTitle();
         return strs.join(QStringLiteral(", "));
     });
-    _plot->addTextVarX("{elem_labels}", tr("Element labels"), [this]{
+    _plot->putTextVarX("{elem_labels}", tr("Element labels"), [this]{
         QStringList strs;
         foreach (const auto& arg, this->function()->args())
             if (!arg.element->disabled())
                 strs << arg.element->displayLabel();
         return strs.join(QStringLiteral(", "));
     });
-    _plot->addTextVarX("{elem_titles}", tr("Element titles"), [this]{
+    _plot->putTextVarX("{elem_titles}", tr("Element titles"), [this]{
         QStringList strs;
         foreach (const auto& arg, this->function()->args())
             if (!arg.element->disabled())
@@ -320,7 +320,7 @@ Z::Unit MulticausticWindow::getDefaultUnitY(FuncMode mode) const
     switch (mode)
     {
     case CausticFunction::BeamRadius: return AppSettings::instance().defaultUnitBeamRadius;
-    case CausticFunction::FrontRadius: return AppSettings::instance().defaultUnitFrontRadius;
+    case CausticFunction::FrontRadius: return AppSettings::instance().defaultUnitLinear;
     case CausticFunction::HalfAngle: return AppSettings::instance().defaultUnitAngle;
     }
     return Z::Units::none();

@@ -196,24 +196,24 @@ void StabilityMap2DWindow::createContent()
     _plot->useSafeMargins = false;
 
     auto getStabParam = [this]{ return Z::Enums::displayStr(function()->stabilityCalcMode()); };
-    _plot->addTextVarT("{stab_mode}", tr("Stability parameter mode"), getStabParam);
+    _plot->putTextVarT("{stab_mode}", tr("Stability parameter mode"), getStabParam);
 
-    _plot->addTextVarX("{elem}", tr("Variable element label and title"), [this]{
+    _plot->putTextVarX("{elem}", tr("Variable element label and title"), [this]{
         return function()->paramX()->element->displayLabelTitle(); });
-    _plot->addTextVarX("{elem_label}", tr("Variable element label"), [this]{
+    _plot->putTextVarX("{elem_label}", tr("Variable element label"), [this]{
         return function()->paramX()->element->label(); });
-    _plot->addTextVarX("{elem_title}", tr("Variable element title"), [this]{
+    _plot->putTextVarX("{elem_title}", tr("Variable element title"), [this]{
         return function()->paramX()->element->title(); });
-    _plot->addTextVarX("{elem_param}", tr("Variable element parameter"), [this]{
+    _plot->putTextVarX("{elem_param}", tr("Variable element parameter"), [this]{
         return function()->paramX()->parameter->name(); });
 
-    _plot->addTextVarY("{elem}", tr("Variable element label and title"), [this]{
+    _plot->putTextVarY("{elem}", tr("Variable element label and title"), [this]{
         return function()->paramY()->element->displayLabelTitle(); });
-    _plot->addTextVarY("{elem_label}", tr("Variable element label"), [this]{
+    _plot->putTextVarY("{elem_label}", tr("Variable element label"), [this]{
         return function()->paramY()->element->label(); });
-    _plot->addTextVarY("{elem_title}", tr("Variable element title"), [this]{
+    _plot->putTextVarY("{elem_title}", tr("Variable element title"), [this]{
         return function()->paramY()->element->title(); });
-    _plot->addTextVarY("{elem_param}", tr("Variable element parameter"), [this]{
+    _plot->putTextVarY("{elem_param}", tr("Variable element parameter"), [this]{
         return function()->paramY()->parameter->name(); });
 
     _plot->setDefaultTextX("{elem}, {elem_param} {(unit)}");
@@ -228,8 +228,8 @@ void StabilityMap2DWindow::createContent()
     auto plotArea = _plot->axisRectRC();
     _plot->plotLayout()->addElement(plotArea.row, plotArea.col + 1, _colorScale);
     _plot->addFormatter(colorAxis, new QCPL::AxisTextFormatter(_colorScale->axis()));
-    _plot->addTextVar(colorAxis, "{func_name}", tr("Function name"), [this]{ return function()->name(); });
-    _plot->addTextVar(colorAxis, "{stab_mode}", tr("Stability parameter mode"), getStabParam);
+    _plot->putTextVar(colorAxis, "{func_name}", tr("Function name"), [this]{ return function()->name(); });
+    _plot->putTextVar(colorAxis, "{stab_mode}", tr("Stability parameter mode"), getStabParam);
     _plot->setDefaultText(colorAxis, tr("Stability parameter {stab_mode}"));
 
     _graph = new QCPColorMap(_plot->xAxis, _plot->yAxis);

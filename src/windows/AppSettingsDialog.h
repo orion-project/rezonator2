@@ -41,7 +41,7 @@ private:
     Ori::Widgets::OptionsGroupV2 *_groupExportPlot;
     Ori::Widgets::OptionsGroupV2 *_groupCalcOpts;
     UnitComboBox *_defaultUnitBeamRadius;
-    UnitComboBox *_defaultUnitFrontRadius;
+    UnitComboBox *_defaultUnitLinear;
     UnitComboBox *_defaultUnitAngle;
     QSpinBox *_exportNumberPrecision;
     QSpinBox *_numberPrecisionData;

@@ -17,7 +17,6 @@ BeamParamsAtElemsFunction::BeamParamsAtElemsFunction(Schema *schema) : TableFunc
             .label = "R",
             .title = qApp->tr("Wavefront ROC", "Table function column"),
             .dim = Z::Dims::linear(),
-            .hint = ColumnDef::hintWavefront,
         },
         ColumnDef {
             .label = "V",

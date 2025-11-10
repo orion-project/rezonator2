@@ -161,14 +161,14 @@ QWidget* AppSettingsDialog::createUnitsPage()
     auto page = new Ori::Dlg::BasicConfigPage(AppSettings::PageUnits, tr("Units"), ":/config_pages/units");
 
     _defaultUnitBeamRadius = new UnitComboBox(Z::Dims::linear());
-    _defaultUnitFrontRadius = new UnitComboBox(Z::Dims::linear());
+    _defaultUnitLinear = new UnitComboBox(Z::Dims::linear());
     _defaultUnitAngle = new UnitComboBox(Z::Dims::angular());
 
     auto unitsLayout = new QFormLayout;
     unitsLayout->setHorizontalSpacing(12);
     unitsLayout->addRow(tr("Beam radus"), _defaultUnitBeamRadius);
-    unitsLayout->addRow(tr("Wavefront radius"), _defaultUnitFrontRadius);
-    unitsLayout->addRow(tr("Beam angle"), _defaultUnitAngle);
+    unitsLayout->addRow(tr("Linear values"), _defaultUnitLinear);
+    unitsLayout->addRow(tr("Angular values"), _defaultUnitAngle);
 
     auto infoLabel = new QLabel(tr(
         "These units used for the presentation of function results "
@@ -281,7 +281,7 @@ void AppSettingsDialog::populate()
 
     // units
     _defaultUnitBeamRadius->setSelectedUnit(settings.defaultUnitBeamRadius);
-    _defaultUnitFrontRadius->setSelectedUnit(settings.defaultUnitFrontRadius);
+    _defaultUnitLinear->setSelectedUnit(settings.defaultUnitLinear);
     _defaultUnitAngle->setSelectedUnit(settings.defaultUnitAngle);
 
     // export
@@ -332,7 +332,7 @@ bool AppSettingsDialog::collect()
 
     // units
     settings.defaultUnitBeamRadius = _defaultUnitBeamRadius->selectedUnit();
-    settings.defaultUnitFrontRadius = _defaultUnitFrontRadius->selectedUnit();
+    settings.defaultUnitLinear = _defaultUnitLinear->selectedUnit();
     settings.defaultUnitAngle = _defaultUnitAngle->selectedUnit();
 
     // export

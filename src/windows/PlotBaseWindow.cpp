@@ -17,17 +17,9 @@
 #include "qcpl_io_json.h"
 #include "qcpl_plot.h"
 
-PlotBaseWindow::WndConfig::WndConfig()
-{
-    statusPanelCount = 1;
-    statusPanelPoints = 0;
-    leftPanelHasSpecPoints = false;
-    leftPanelHasDataTable = true;
-    leftPanelHasOptions = false;
-    selectedGraphUpdatesCursor = false;
-}
+#define A_ Ori::Gui::V0::action
 
-PlotBaseWindow::PlotBaseWindow(Schema* schema, const WndConfig &config): SchemaMdiChild(schema), _config(config)
+PlotBaseWindow::PlotBaseWindow(Schema* schema, const PlotWindowConfig &config): SchemaMdiChild(schema), _config(config)
 {
     createContent();
     createActions();
@@ -41,8 +33,6 @@ PlotBaseWindow::PlotBaseWindow(Schema* schema, const WndConfig &config): SchemaM
 
 void PlotBaseWindow::createActions()
 {
-    #define A_ Ori::Gui::V0::action
-
     actnAutolimits = A_(tr("Fit to Graphs"), _plot, SLOT(autolimits()), ":/toolbar/limits_auto");
     actnAutolimitsX = A_(tr("Fit to Graphs Over X"), _plot, SLOT(autolimitsX()), ":/toolbar/limits_auto_x");
     actnAutolimitsY = A_(tr("Fit to Graphs Over Y"), _plot, SLOT(autolimitsY()), ":/toolbar/limits_auto_y");
@@ -83,8 +73,21 @@ void PlotBaseWindow::createActions()
     actnToggleLegend = A_(tr("Plot Legend"), this, SLOT(toggleLegend()));
     actnToggleTitle->setCheckable(true);
     actnToggleLegend->setCheckable(true);
-        
-    #undef A_
+}
+
+void PlotBaseWindow::createMenuBar()
+{
+    menuPlot = Ori::Gui::menu(tr("Plot", "Menu title"), this, {
+        actnSetTextT, actnSetTextX, actnSetTextY, nullptr,
+    });
+
+    menuLimits = Ori::Gui::menu(tr("Limits", "Menu title"), this, {
+        actnAutolimits, actnZoomIn, actnZoomOut, nullptr,
+        actnSetLimitsX, actnAutolimitsX, actnZoomInX, actnZoomOutX, nullptr,
+        actnSetLimitsY, actnAutolimitsY, actnZoomInY, actnZoomOutY, nullptr,
+    });
+
+    menuFormat = new QMenu(tr("Format", "Menu title"), this);
 }
 
 void PlotBaseWindow::createToolBar()
@@ -111,6 +114,7 @@ void PlotBaseWindow::createContextMenus()
     labelX->setMargin(6);
     titleX->setDefaultWidget(labelX);
     menuX->addAction(titleX);
+    _contextMenuBeginX =
     menuX->addAction(tr("Limits..."), _plot, &QCPL::Plot::limitsDlgX);
     menuX->addAction(tr("Text..."), _plot, &QCPL::Plot::axisTextDlgX);
     menuX->addAction(tr("Format..."), _plot, &QCPL::Plot::axisFormatDlgX);
@@ -125,6 +129,7 @@ void PlotBaseWindow::createContextMenus()
     labelY->setMargin(6);
     titleY->setDefaultWidget(labelY);
     menuY->addAction(titleY);
+    _contextMenuBeginY =
     menuY->addAction(tr("Limits..."), _plot, &QCPL::Plot::limitsDlgY);
     menuY->addAction(tr("Text..."), _plot, &QCPL::Plot::axisTextDlgY);
     menuY->addAction(tr("Format..."), _plot, &QCPL::Plot::axisFormatDlgY);
@@ -168,21 +173,6 @@ void PlotBaseWindow::createContextMenus()
     _plot->menuPlot = menuPlot;
     _plot->menuLegend = menuLegend;
     _plot->menuTitle = menuTitle;
-}
-
-void PlotBaseWindow::createMenuBar()
-{
-    menuPlot = Ori::Gui::menu(tr("Plot", "Menu title"), this, {
-        actnSetTextT, actnSetTextX, actnSetTextY, nullptr,
-    });
-
-    menuLimits = Ori::Gui::menu(tr("Limits", "Menu title"), this, {
-        actnAutolimits, actnZoomIn, actnZoomOut, nullptr,
-        actnSetLimitsX, actnAutolimitsX, actnZoomInX, actnZoomOutX, nullptr,
-        actnSetLimitsY, actnAutolimitsY, actnZoomInY, actnZoomOutY, nullptr,
-    });
-
-    menuFormat = new QMenu(tr("Format", "Menu title"), this);
 }
 
 void PlotBaseWindow::createStatusBar()
@@ -280,7 +270,7 @@ QList<BasicMdiChild::MenuItem> PlotBaseWindow::menuItems_View()
 QList<BasicMdiChild::MenuItem> PlotBaseWindow::menuItems_Edit()
 {
     return editMenuItems()
-            << actnCopyGraphDataWithParams
+            // TODO: << actnCopyGraphDataWithParams
             << actnCopyPlotImage
             << BasicMdiChild::MenuItem()
             // TODO: "Copy/Paste Format" should operate in selected part
@@ -295,6 +285,11 @@ void PlotBaseWindow::optionChanged(AppSettingsOption option)
     {
         _cursorPanel->setNumberPrecision(AppSettings::instance().numberPrecisionData, false);
         updateCursorInfo();
+    }
+    else if (option == AppSettingsOption::DefaultPenFormat)
+    {
+        _cursor->setPen(cursorPen());
+        _plot->replot();
     }
 }
 
@@ -490,20 +485,28 @@ void PlotBaseWindow::graphFormatDlg()
     auto g = _plot->selectedGraph();
     if (!g) return;
 
+    QString id = g->name();
     QPen oldPen = g->pen();
     
     PlotHelpers::FormatPenDlgProps props;
-    props.title = tr("Format Line - %1").arg(g->name());
-    props.onApply = [this, g](const QPen& pen){
-        PlotHelpers::applyGraphPen(_plot, g->name(), pen);
+    props.title = tr("Format Line - %1").arg(id);
+    props.onApply = [this, id](const QPen& pen){
+        PlotHelpers::applyGraphPen(_plot, id, pen);
         _plot->replot();
     };
-    props.onReset = [this, g, oldPen](){
-        PlotHelpers::applyGraphPen(_plot, g->name(), oldPen);
-        _plot->replot();
-    };
-    if (PlotHelpers::formatPenDlg(oldPen, props))
+    if (id == Z::planeName(Z::T) || id == Z::planeName(Z::S)) {
+        props.onReset = [this, id, oldPen](){
+            auto defPen = id == Z::planeName(Z::T)
+                ? AppSettings::instance().pen(AppSettings::PenGraphT)
+                : AppSettings::instance().pen(AppSettings::PenGraphS);
+            PlotHelpers::applyGraphPen(_plot, id, defPen);
+            _plot->replot();
+        };
+    }
+    if (PlotHelpers::formatPenDlg(oldPen, props)) {
+        graphFormatted(g);
         schema()->markModified("PlotBaseWindow::graphFormatDlgT");
+    }
 }
 
 void PlotBaseWindow::graphsMenuAboutToShow()

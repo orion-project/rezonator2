@@ -110,16 +110,16 @@ BeamVariationWindow::BeamVariationWindow(Schema *schema)
 {
     _beamShape = new BeamShapeExtension(this);
 
-    _plot->addTextVarX("{elem}", tr("Variable element label and title"), [this]{
+    _plot->putTextVarX("{elem}", tr("Variable element label and title"), [this]{
         return function()->arg()->element->displayLabelTitle(); });
-    _plot->addTextVarX("{elem_label}", tr("Variable element label"), [this]{
+    _plot->putTextVarX("{elem_label}", tr("Variable element label"), [this]{
         return function()->arg()->element->label(); });
-    _plot->addTextVarX("{elem_title}", tr("Variable element title"), [this]{
+    _plot->putTextVarX("{elem_title}", tr("Variable element title"), [this]{
         return function()->arg()->element->title(); });
-    _plot->addTextVarX("{elem_param}", tr("Variable element parameter"), [this]{
+    _plot->putTextVarX("{elem_param}", tr("Variable element parameter"), [this]{
         return function()->arg()->parameter->name(); });
 
-    _plot->addTextVarY("{place}", tr("Target element (with offset)"), [this]{
+    _plot->putTextVarY("{place}", tr("Target element (with offset)"), [this]{
         auto pos = function()->pos();
         auto range = Z::Utils::asRange(pos->element);
         if (range) {

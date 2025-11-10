@@ -4,29 +4,6 @@
 #include "../core/Protocol.h"
 
 //------------------------------------------------------------------------------
-//                                FunctionRange
-//------------------------------------------------------------------------------
-
-void FunctionRange::fit(const double& v)
-{
-    if (empty)
-    {
-        min = max = v;
-        empty = false;
-    }
-    else
-    {
-        if (v < min) min = v;
-        else if (v > max) max = v;
-    }
-}
-
-QString FunctionRange::str() const
-{
-    return QString("[empty: %1; min: %2; max: %3]").arg(Z::str(empty), Z::str(min), Z::str(max));
-}
-
-//------------------------------------------------------------------------------
 //                              PlotFuncResultSet
 //------------------------------------------------------------------------------
 
@@ -162,7 +139,6 @@ bool PlotFunction::prepareResults(Z::PlottingRange range)
         clearResults();
         return false;
     }
-    _range.set(range.start(), range.stop());
     clearResults();
     return true;
 }

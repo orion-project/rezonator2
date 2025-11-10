@@ -200,25 +200,30 @@ StartWindow #mru_scroll_area QScrollBar::handle:vertical {
 }
 
 /************************************
-             PopupMessage
+         Ori::Gui::PopupMessage
 ************************************/
-PopupMessage {
-  border-radius: 6px;
+#OriPopupMessage {
+  border-radius: 4px;
 }
-PopupMessage QLabel {
-  margin: 10px;
+#OriPopupMessage QLabel {
+  font-size: 10pt;
+  margin: 15px;
 }
-PopupMessage[mode=affirm] {
+#OriPopupMessage[mode=warning] {
+  border: 1px solid #f3af8f;
+  background: #ffdcbc;
+}
+#OriPopupMessage[mode=affirm] {
   border: 1px solid #7ee87e;
   background: #b5fbb5;
 }
-PopupMessage[mode=error] {
-  border: $invalid-border;
-  background: $invalid-paper-color;
+#OriPopupMessage[mode=error] {
+  border: 1px solid #e87e7e;
+  background: #ffb5b5;
 }
-PopupMessage[mode=info] {
-  border: 1px solid #C0C0C0;
-  background: #DCDCDC;
+#OriPopupMessage[mode=hint] {
+  border: 1px solid #e5c300;
+  background: #ffec7c;
 }
 
 /************************************

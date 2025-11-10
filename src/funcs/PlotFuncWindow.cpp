@@ -308,14 +308,14 @@ void PlotFuncWindow::createContent()
         return QString();
     };
 
-    addTextVar("{func_name}", tr("Function name"), [this]{ return function()->name(); });
+    _plot->putTextVar("{func_name}", tr("Function name"), [this]{ return function()->name(); });
 
-    _plot->addTextVarX("{unit}", tr("Unit of measurement"), [this]{ return getUnitX()->name(); });
-    _plot->addTextVarX("{(unit)}", tr("Unit of measurement (in brackets)"), [this]{
+    _plot->putTextVarX("{unit}", tr("Unit of measurement"), [this]{ return getUnitX()->name(); });
+    _plot->putTextVarX("{(unit)}", tr("Unit of measurement (in brackets)"), [this]{
         auto unit = getUnitX(); return unit == Z::Units::none() ? QString() : QStringLiteral("(%1)").arg(unit->name()); });
 
-    _plot->addTextVarY("{unit}", tr("Unit of measurement"), [this]{ return getUnitY()->name(); });
-    _plot->addTextVarY("{(unit)}", tr("Unit of measurement (in brackets)"), [this]{
+    _plot->putTextVarY("{unit}", tr("Unit of measurement"), [this]{ return getUnitY()->name(); });
+    _plot->putTextVarY("{(unit)}", tr("Unit of measurement (in brackets)"), [this]{
         auto unit = getUnitY(); return unit == Z::Units::none() ? QString() : QStringLiteral("(%1)").arg(unit->name()); });
 
     _plot->setDefaultTextT(QStringLiteral("{func_name}"));
@@ -538,6 +538,8 @@ void PlotFuncWindow::updateWithParams()
 
 void PlotFuncWindow::update()
 {
+    beforeUpdate();
+    
     if (_frozen)
     {
         _needRecalc = true;
@@ -865,13 +867,6 @@ void PlotFuncWindow::legendFormatDlg()
         schema()->markModified("PlotFuncWindow::formatLegend");
         updatePlotItemToggleActions();
     }
-}
-
-void PlotFuncWindow::addTextVar(const QString& name, const QString& descr, std::function<QString()> getter)
-{
-    _plot->addTextVarT(name, descr, getter);
-    _plot->addTextVarX(name, descr, getter);
-    _plot->addTextVarY(name, descr, getter);
 }
 
 void PlotFuncWindow::copyPlotFormat()

@@ -87,7 +87,7 @@ private:
             *actnFuncMultibeamCaustic, *actnFuncBeamParamsAtElems, *actnFuncGenericPlot;
 
 #ifdef Z_USE_PYTHON
-    QAction *actnFuncCustomCode, *actnFuncCustomTable;
+    QAction *actnFuncCustomCode, *actnFuncCustomTable, *actnFuncCustomPlot;
 #endif
 
     QAction  *actnToolsGaussCalc, *actnToolsCustomElems, *actnSettings,

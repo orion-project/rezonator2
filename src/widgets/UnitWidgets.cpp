@@ -169,6 +169,11 @@ UnitsMenu::~UnitsMenu()
     delete _menu;
 }
 
+void UnitsMenu::setEnabled(bool on)
+{
+    _menu->setEnabled(on);
+}
+
 void UnitsMenu::setUnit(Z::Unit unit)
 {
     if (_unit == unit) return;

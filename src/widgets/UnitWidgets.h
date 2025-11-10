@@ -94,6 +94,7 @@ public:
     QMenu* menu() const { return _menu; }
 
     void setUnit(Z::Unit unit);
+    void setEnabled(bool on);
 
 signals:
     void unitChanged(Z::Unit unit);
