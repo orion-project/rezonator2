@@ -335,9 +335,20 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, co
             auto pKey = PyUnicode_FromString(k);
             CHECK_E(pKey, "failed to convert key to PyObject");
             refs << TMP_REF(pKey);
-            CHECK_E(PyDict_Contains(pItem, pKey), "field not found");
-            auto pField = PyDict_GetItemString(pItem, k);
-            CHECK_E(pField, "failed to get field");
+            PyObject *pField = nullptr;
+            if (PyDict_Contains(pItem, pKey)) {
+                pField = PyDict_GetItemString(pItem, k);
+                CHECK_E(pField, "failed to get field");
+                if (pField == Py_None)
+                    pField = nullptr;
+            }
+            if (!pField) {
+                if (f.value() == ftStringOptional) {
+                    rec[k] = QString();
+                    continue;
+                }
+                CHECK_E(false, "field not found");
+            }
             switch (f.value()) {
             case ftNumber:
                 if (PyFloat_Check(pField))
@@ -364,6 +375,7 @@ PyRunner::FuncResult PyRunner::run(const QString &funcName, const Args &args, co
                 break;
             }
             case ftString:
+            case ftStringOptional:
                 CHECK_E(PyUnicode_Check(pField), "string expected");
                 rec[k] = QString::fromUtf8(PyUnicode_AsUTF8(pField));
                 break;

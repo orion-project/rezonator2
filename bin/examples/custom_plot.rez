@@ -399,7 +399,7 @@
         },
         {
             "function": {
-                "code": "'''\nCaustic (py)\n\n↑ This is a function name that is displayed in function window headers\nand in the plot title.\n'''\nimport rezonator as Z\nimport schema\n\ndef figure():\n  '''\n  This function is automatically called by the function window\n  to configure the plot properties.\n  '''\n  return {\n    # A value dimension used when choosing a measurement unit for the axis X.\n    'x_dim': Z.DIM_LINEAR,\n    # A value dimension used when choosing a measurement unit for the axis Y.\n    'y_dim': Z.DIM_LINEAR,\n  }\n\ndef calculate():\n  elem = None\n  \n  # Find the first element thas has a Length\n  for i in range(schema.elem_count()):\n    # Unlike standard python arrays, elements are indexed from 1\n    # for consistency with how they are numbered in the elements table\n    el = schema.elem(i+1)\n    if el.length is not None:\n      elem = el\n      break;\n  if not elem:\n    raise Exception('No suitable lement')\n  \n  Z.print('Calc caustic at', elem.label)\n  (xt, yt) = calc_plane(elem, 't', 100)\n  (xs, ys) = calc_plane(elem, 's', 100)\n  return [\n  # Return a list of lines.\n  # Labels can be arbitrary, they are displayed in legend.\n  # There can be several lines with the same label,\n  # they are considered as parts of a single multi-segment graph.\n  # 'T' and 'S' are standard labels for Tangential and Saggital planes\n  # For such lines the standard graph formats are used\n  # though they can be overridden with a user format.\n    { 'label': 'T', 'x': xt, 'y': yt },\n    { 'label': 'S', 'x': xs, 'y': ys }\n  ]\n  \ndef calc_plane(elem, plane, point_count):\n  '''\n  Calculate beam radius inside a given element\n  for a given work plane - T or Z.\n  '''\n  rt = schema.round_trip(ref=elem, inside=True, plane=plane)\n  step = elem.axial_length/(point_count-1)\n  x, y = [], []\n  for i in range(point_count):\n    offset = step*i\n    elem.offset = offset\n    x.append(offset)\n    y.append(rt.beam_radius())\n  return (x, y)\n"
+                "code": "'''\nCaustic (py)\n\n↑ This is a function name that is displayed in function window headers.\nIn the plot title, it is substituted instead of the {func_name} variable.\n'''\nimport rezonator as Z\nimport schema\n\n# Find an element that has a length; it will be a function argument.\n# Do this step in the global scope before any function is called\n# to be able to use the element in the X-axis title (see figure() below).\n\nelem = None\nfor i in range(schema.elem_count()):\n  # Unlike standard Python arrays, elements are indexed from 1\n  # for consistency with how they are numbered in the elements table.\n  el = schema.elem(i+1)\n  if el.length is not None:\n    elem = el\n    break;\nif not elem:\n  raise Exception('No suitable lement')\n\ndef figure():\n  '''\n  This function is automatically called by the function window\n  to configure the plot properties.\n  '''\n  return {\n    # Value dimension used when choosing a measurement unit for the axis X.\n    'x_dim': Z.DIM_LINEAR,\n    # Default title for X-axis\n    # which is substituted instead of the {default_title} variable.\n    'x_title': f'{elem.label if elem else None}',\n\n    # Value dimension used when choosing a measurement unit for the axis Y.\n    'y_dim': Z.DIM_LINEAR,\n    # Default title for Y-axis\n    # which is substituted instead of the {default_title} variable.\n    'y_title': 'Beam radius',\n  }\n\ndef calculate():\n  Z.print('Calc caustic at', elem.label)\n  (xt, yt) = calc_plane('t', 100)\n  (xs, ys) = calc_plane('s', 100)\n  return [\n  # Return a list of lines.\n  # Labels can be arbitrary; they are displayed in the legend.\n  # There can be several lines with the same label;\n  # they are considered as parts of a single multi-segment graph.\n  # 'T' and 'S' are standard labels for tangential and sagittal planes.\n  # For such lines, the standard graph formats are used,\n  # though they can be overridden with a user format.\n    { 'label': 'T', 'x': xt, 'y': yt },\n    { 'label': 'S', 'x': xs, 'y': ys }\n  ]\n  \ndef calc_plane(plane, point_count):\n  '''\n  Calculate beam radius inside a given element\n  for a given work plane - T or Z.\n  '''\n  rt = schema.round_trip(ref=elem, inside=True, plane=plane)\n  step = elem.axial_length/(point_count-1)\n  x, y = [], []\n  for i in range(point_count):\n    offset = step*i\n    elem.offset = offset\n    x.append(offset)\n    y.append(rt.beam_radius())\n  return (x, y)\n"
             },
             "type": "CustomPlot",
             "window": {
@@ -611,7 +611,7 @@
                         "text_color": "#000000",
                         "text_flags": 132,
                         "version": 1,
-                        "visible": false
+                        "visible": true
                     }
                 },
                 "graphs": {
@@ -619,11 +619,11 @@
                 "t_title": "{func_name}",
                 "x_max": 56.56,
                 "x_min": -0.56,
-                "x_title": "",
+                "x_title": "{default_title}, {(unit)}",
                 "x_unit": "mm",
                 "y_max": 0.06929877110076942,
-                "y_min": -0.0017712012586628672,
-                "y_title": "Beam radius {(unit)}",
+                "y_min": -0.0017712012586628678,
+                "y_title": "{default_title}, {(unit)}",
                 "y_unit": "cm"
             }
         }

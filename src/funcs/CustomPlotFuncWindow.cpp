@@ -11,6 +11,8 @@
 #include <QMenu>
 #include <QToolBar>
 
+#include <qcpl_plot.h>
+
 #define A_ Ori::Gui::action
 
 CustomPlotFuncWindow::CustomPlotFuncWindow(Schema* schema): PlotFuncWindowV2(new CustomPlotFunction(schema))
@@ -24,6 +26,14 @@ CustomPlotFuncWindow::CustomPlotFuncWindow(Schema* schema): PlotFuncWindowV2(new
     
     toolbar()->addSeparator();
     toolbar()->addAction(_actnShowCode);
+    
+    _plot->putTextVarX("{default_title}", tr("Default axis title"), [this]{ return function()->titleX(); });
+    _plot->putTextVarY("{default_title}", tr("Default axis title"), [this]{ return function()->titleY(); });
+
+    _plot->setDefaultTextX("{default_title}, {(unit)}");
+    _plot->setFormatterTextX(_plot->defaultTextX());
+    _plot->setDefaultTextY("{default_title}, {(unit)}");
+    _plot->setFormatterTextY(_plot->defaultTextY());
 }
 
 void CustomPlotFuncWindow::closeEvent(QCloseEvent* ce)

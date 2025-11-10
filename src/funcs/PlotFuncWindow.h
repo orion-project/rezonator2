@@ -219,9 +219,7 @@ protected:
     Z::Unit getUnitX() const;
     Z::Unit getUnitY() const;
     Z::Unit getUnitY(FuncMode mode) const;
-
-    /// Adds common variable to all plot parts - axes and title
-    void addTextVar(const QString& name, const QString& descr, std::function<QString()> getter);
+    
 private slots:
     void activateModeT();
     void activateModeS();

@@ -6,6 +6,8 @@
 #define FUNC_CALC QStringLiteral("calculate")
 #define PROP_X_DIM QStringLiteral("x_dim")
 #define PROP_Y_DIM QStringLiteral("y_dim")
+#define PROP_X_TITLE QStringLiteral("x_title")
+#define PROP_Y_TITLE QStringLiteral("y_title")
 #define RES_LABEL QStringLiteral("label")
 #define RES_X QStringLiteral("x")
 #define RES_Y QStringLiteral("y")
@@ -58,7 +60,9 @@ bool CustomPlotFunction::prepare()
     
     auto res = py->run(FUNC_FIGURE, {}, {
         { PROP_X_DIM, PyRunner::ftUnitDim },
+        { PROP_X_TITLE, PyRunner::ftStringOptional },
         { PROP_Y_DIM, PyRunner::ftUnitDim },
+        { PROP_Y_TITLE, PyRunner::ftStringOptional },
     });
     if (!res) {
         showError(py.get());
@@ -71,6 +75,8 @@ bool CustomPlotFunction::prepare()
     auto fig = res->first();
     _dimX = fig[PROP_X_DIM].value<Z::Dim>();
     _dimY = fig[PROP_Y_DIM].value<Z::Dim>();
+    _titleX = fig[PROP_X_TITLE].toString(),
+    _titleY = fig[PROP_Y_TITLE].toString(),
     
     _runner = py;
     return true;

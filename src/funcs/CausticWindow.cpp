@@ -108,13 +108,13 @@ CausticWindow::CausticWindow(Schema *schema) : PlotFuncWindowStorable(new Causti
 {
     _beamShape = new BeamShapeExtension(this);
 
-    addTextVar("{func_mode}", tr("Function mode"), [this]{ return CausticFunction::modeDisplayName(function()->mode()); });
+    _plot->putTextVar("{func_mode}", tr("Function mode"), [this]{ return CausticFunction::modeDisplayName(function()->mode()); });
 
-    _plot->addTextVarX("{elem}", tr("Element label and title"), [this]{
+    _plot->putTextVarX("{elem}", tr("Element label and title"), [this]{
         return function()->arg()->element->displayLabelTitle(); });
-    _plot->addTextVarX("{elem_label}", tr("Element label"), [this]{
+    _plot->putTextVarX("{elem_label}", tr("Element label"), [this]{
         return function()->arg()->element->label(); });
-    _plot->addTextVarX("{elem_title}", tr("Element title"), [this]{
+    _plot->putTextVarX("{elem_title}", tr("Element title"), [this]{
         return function()->arg()->element->title(); });
 
     _plot->setDefaultTextX("{elem} {(unit)}");

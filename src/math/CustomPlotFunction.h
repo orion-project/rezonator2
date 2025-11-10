@@ -27,6 +27,8 @@ public:
 
     Z::Dim dimX() const { return _dimX; }
     Z::Dim dimY() const { return _dimY; }
+    QString titleX() const { return _titleX; }
+    QString titleY() const { return _titleY; }
 
 private:
     QString _code;
@@ -37,6 +39,7 @@ private:
     std::function<void(const QString&)> _printFunc;
     std::shared_ptr<PyRunner> _runner;
     Z::Dim _dimX, _dimY;
+    QString _titleX, _titleY;
 
     // Inherited from PlotFunctionV2
     bool prepare() override;

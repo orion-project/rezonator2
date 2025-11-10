@@ -117,14 +117,14 @@ void PlotFuncWindowV2::createContent()
         return QString();
     };
 
-    _plot->addTextVar("{func_name}", tr("Function name"), [this]{ return function()->name(); });
+    _plot->putTextVar("{func_name}", tr("Function name"), [this]{ return function()->name(); });
 
-    _plot->addTextVarX("{unit}", tr("Unit of measurement"), [this]{ return getUnitX()->name(); });
-    _plot->addTextVarX("{(unit)}", tr("Unit of measurement (in brackets)"), [this]{
+    _plot->putTextVarX("{unit}", tr("Unit of measurement"), [this]{ return getUnitX()->name(); });
+    _plot->putTextVarX("{(unit)}", tr("Unit of measurement (in brackets)"), [this]{
         auto unit = getUnitX(); return unit == Z::Units::none() ? QString() : QStringLiteral("(%1)").arg(unit->name()); });
 
-    _plot->addTextVarY("{unit}", tr("Unit of measurement"), [this]{ return getUnitY()->name(); });
-    _plot->addTextVarY("{(unit)}", tr("Unit of measurement (in brackets)"), [this]{
+    _plot->putTextVarY("{unit}", tr("Unit of measurement"), [this]{ return getUnitY()->name(); });
+    _plot->putTextVarY("{(unit)}", tr("Unit of measurement (in brackets)"), [this]{
         auto unit = getUnitY(); return unit == Z::Units::none() ? QString() : QStringLiteral("(%1)").arg(unit->name()); });
 
     _plot->setDefaultTextT(QStringLiteral("{func_name}"));
