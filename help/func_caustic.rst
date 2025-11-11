@@ -23,7 +23,7 @@ Plot accuracy
 
 Fields allow you to set a number of points in the resulting graph. A points count can be input directly in the “Number of points” field. Instead, it is possible to specify a distance between points (plotting step) in the field “With step”.
 
-The “Plottable length” value in the dialog shows the longest geometrical path a beam can travel in the element. This becomes a plot’s horizontal range. For some elements (e.g., :doc:`matrix/ElemBrewsterPlate`) the plottable length is greater than the element length because there is an angle between the optical axis and the direction the length is measured along.
+The “Plottable length” value in the dialog shows the longest :ref:`geometrical path <axial_length>` a beam can travel in the element. This becomes a plot’s horizontal range. For some elements (e.g., :doc:`matrix/ElemBrewsterPlate`) the plottable length is greater than the element length because there is an angle between the optical axis and the direction the length is measured along.
 
 Additional Parameters
 ---------------------

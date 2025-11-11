@@ -25,7 +25,8 @@ PyObject* param(PyObject* Py_UNUSED(self), PyObject* args)
     if (!PyArg_Parse(args, "s", &alias))
         return nullptr;
     auto p = SCHEMA->param(alias);
-    CHECK_(p, KeyError, "parameter not found")
+    if (!p)
+        Py_RETURN_NONE;
     return PyFloat_FromDouble(p->value().toSi());
 }
 

@@ -89,6 +89,14 @@ html_show_copyright = False
 
 html_static_path = ['styles']
 
+# Use Sphinx's default Pygments style (can be changed to 'friendly', 'colorful', 'monokai', etc.)
+pygments_style = 'default'
+
+# Add custom CSS file for reZonator-specific styles
+html_css_files = [
+    'custom.css',
+]
+
 #------------------------------------------------
 
 about_text = get_file_text('about.html')

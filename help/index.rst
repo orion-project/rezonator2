@@ -18,6 +18,7 @@ reZonator2 Documentation
    tools
    app_settings
    handbook
+   py_api
 
 
 .. only:: builder_html

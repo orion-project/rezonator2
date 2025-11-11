@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="linearGradient1132" x1="75.6" x2="75.8" y1="49" y2="146" gradientTransform="matrix(.808 .19 -.229 .973 78 -7.59)" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#eafaff" offset="0"/>
+   <stop stop-color="#4bcffc" offset=".5"/>
+   <stop stop-color="#eafaff" offset="1"/>
+  </linearGradient>
+ </defs>
+ <g transform="translate(0,44)" fill="none" stroke="#000">
+  <path d="m104 122-46.7-10.8m41.6 14.1 5.76-3.15-3.97-4.65m-39.7-1.16-3.85-5.18 5.64-2.62m-7.86 6.5 7.54-32.3m49.8 12-7.5 32.1"/>
+ </g>
+ <path d="m82.4 44.3 49.6 11.7-22.2 94.4-49.6-11.7z" fill="url(#linearGradient1132)" stroke="#00b4ff" stroke-width="3"/>
+ <g fill="none">
+  <path d="m167 54.2 18.4-2.47-6.19 18.4" stroke="#f00" stroke-linecap="round" stroke-width="5"/>
+  <text x="37.656567" y="178.44443" font-family="'Segoe Print'" font-size="18.7px" stroke="#ff0000" stroke-linecap="round" stroke-linejoin="round" stroke-width="5" xml:space="preserve"><tspan x="37.656567" y="178.44443" fill="#000000" font-family="'Times New Roman'" font-size="18.7px" font-style="italic" stroke="none">Length</tspan></text>
+  <g transform="rotate(-13.2 -17.8 34.9)" stroke="#000">
+   <path d="m116 71.1-47.4-11.1m42.4 14.5 5.76-3.15-3.97-4.65m-40.5-1.34-3.85-5.18 5.64-2.62m-19.7 57.1 13.5-57.6m50.6 12.2-13.5 57.4"/>
+  </g>
+  <text x="53.434498" y="29.841364" font-family="'Segoe Print'" font-size="18.7px" stroke="#ff0000" stroke-linecap="round" stroke-linejoin="round" stroke-width="5" xml:space="preserve"><tspan x="53.434498" y="29.841364" fill="#000000" font-family="'Times New Roman'" font-size="18.7px" font-style="italic" stroke="none">Axial length</tspan></text>
+  <path d="m180 56.4-57 40.6h-51.9l-52.4 33.3" stroke="#f00" stroke-linecap="round" stroke-width="5"/>
+ </g>
+</svg>

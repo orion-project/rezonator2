@@ -14,7 +14,7 @@ CodeEditorWindow::CodeEditorWindow(Schema *owner, const QString &title) : Schema
 {
     setWindowIcon(QIcon(":/toolbar/python_framed"));
 
-    _defaultTitle = !title.isEmpty() ? title : FuncWindowHelpers::makeWindowTitle("code", tr("Custom Code"));
+    _defaultTitle = !title.isEmpty() ? title : FuncWindowHelpers::makeWindowTitle("code", tr("Custom Script"));
 
     _editor = new Ori::Widgets::CodeEditor;
     _editor->setFont(Z::Gui::CodeEditorFont().get());

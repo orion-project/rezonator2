@@ -1,0 +1,85 @@
+/*
+  reZonator custom styles
+  Application-specific styling for the documentation
+*/
+
+h2 {
+    margin-top: 3em;
+}
+
+h3 {
+    margin-top: 2em;
+}
+
+span.menuselection, span.guilabel, kbd {
+    color: maroon;
+    font-family: Consolas,"Courier New",Monaco,monospace;
+}
+
+span.elem-param {
+    color: #555;
+    font-weight: bold;
+}
+
+span.param {
+    color: #555;
+    font-weight: bold;
+}
+
+span.math-var {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 1.2em;
+}
+
+span.app-name {
+    color: navy;
+}
+
+span.app-name-z {
+    color: red;
+}
+
+div.highlight {
+    margin-left: 40px;
+}
+
+pre {
+    font-family: "Cascadia Code","Cascadia Mono",Consolas,"Courier New",Monaco,monospace;
+    color: #116;
+}
+
+span.pre {
+    font-family: "Cascadia Code","Cascadia Mono",Consolas,"Courier New",Monaco,monospace;
+    color: #116;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+code {
+    background-color: #f5f5f9;
+}
+
+span.guipart {
+    font-weight: bold;
+    background-color: #e5e5e9;
+}
+
+.seealso .admonition-title {
+  margin-top: 2em;
+  font-size: 16px;
+}
+
+/*
+Override Pygments background color.
+Qt Assistant displays colored background in multiline text with gaps between lines, which looks ugly.
+*/
+.highlight {
+    background: none;
+}
+
+/* Other examples of Pygments customization
+Comment color:   .highlight .c { color: #your-color; }
+Keyword color:   .highlight .k { color: #your-color; }
+String color:    .highlight .s { color: #your-color; }
+*/

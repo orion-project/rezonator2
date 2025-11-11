@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   height="200"
+   width="200"
+   version="1.1"
+   id="svg25"
+   sodipodi:docname="axial_len.svg"
+   inkscape:version="1.4 (86a8ad7, 2024-10-11)"
+   inkscape:export-filename="..\img\axial_len.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs25">
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#a-0"
+       id="linearGradient1132"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.80792105,0.19016725,-0.2291172,0.97339885,78.016336,-7.586865)"
+       x1="75.629997"
+       y1="48.970001"
+       x2="75.767685"
+       y2="145.68456" />
+    <linearGradient
+       id="a-0"
+       gradientTransform="matrix(0.83,0,0,1,71.33,4)"
+       gradientUnits="userSpaceOnUse"
+       x1="75.629997"
+       x2="75.629997"
+       y1="48.970001"
+       y2="206.71001">
+      <stop
+         offset="0"
+         stop-color="#f0f0f0"
+         id="stop986"
+         style="stop-color:#eafaff;stop-opacity:1" />
+      <stop
+         offset=".5"
+         stop-color="#6a6a6a"
+         id="stop988"
+         style="stop-color:#4bcffc;stop-opacity:1" />
+      <stop
+         offset="1"
+         stop-color="#f0f0f0"
+         id="stop990"
+         style="stop-color:#eafaff;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     id="namedview25"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="true"
+     inkscape:zoom="6.1875"
+     inkscape:cx="72.969697"
+     inkscape:cy="107.15152"
+     inkscape:window-width="3840"
+     inkscape:window-height="2054"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg25">
+    <inkscape:grid
+       id="grid26"
+       units="px"
+       originx="0"
+       originy="0"
+       spacingx="1"
+       spacingy="1"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="5"
+       enabled="true"
+       visible="true" />
+  </sodipodi:namedview>
+  <g
+     fill="none"
+     stroke="#000000"
+     id="g23"
+     transform="translate(0,44)">
+    <path
+       id="path22"
+       d="M 104.3616,121.8119 57.68,110.98 m 41.62899,14.14515 5.76,-3.15 -3.97,-4.65 M 61.38,116.17 l -3.85,-5.18 5.64,-2.62 m -7.86,6.5 7.54,-32.3 m 49.81899,12.02 -7.5,32.1" />
+  </g>
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:url(#linearGradient1132);stroke:#00b4ff;stroke-width:3;stroke-opacity:1"
+     id="path993"
+     d="M 82.414894,44.301204 132.05823,55.98618 109.83387,150.40587 60.190527,138.7209 Z"
+     sodipodi:nodetypes="ccccc" />
+  <path
+     d="m 166.74,54.25 18.38,-2.47 -6.19,18.4"
+     stroke-linecap="round"
+     stroke-width="7"
+     id="path4"
+     style="fill:none;stroke:#ff0000;stroke-width:5;stroke-dasharray:none;stroke-opacity:1" />
+  <text
+     xml:space="preserve"
+     style="font-size:18.6667px;font-family:'Segoe Print';-inkscape-font-specification:'Segoe Print, Normal';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:none;stroke:#ff0000;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+     x="43.797981"
+     y="177.63634"
+     id="text26"><tspan
+       sodipodi:role="line"
+       id="tspan26"
+       x="43.797981"
+       y="177.63634"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.6667px;font-family:'T-FLEX Type B';-inkscape-font-specification:'T-FLEX Type B';fill:#000000;fill-opacity:1;stroke:none">Length</tspan></text>
+  <g
+     fill="none"
+     stroke="#000000"
+     id="g26"
+     transform="rotate(-13.227122,-17.815694,34.866421)">
+    <path
+       id="path26"
+       d="M 115.87786,71.050595 68.460576,59.905289 m 42.353304,14.506936 5.76,-3.15 -3.97,-4.65 m -40.485969,-1.335426 -3.85,-5.18 5.64,-2.62 M 54.165411,114.60097 67.70382,57.002318 m 50.55138,12.192148 -13.49176,57.400204"
+       sodipodi:nodetypes="cccccccccccc" />
+  </g>
+  <text
+     xml:space="preserve"
+     style="font-size:18.6667px;font-family:'Segoe Print';-inkscape-font-specification:'Segoe Print, Normal';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:none;stroke:#ff0000;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
+     x="54.889042"
+     y="30.002979"
+     id="text27"><tspan
+       sodipodi:role="line"
+       id="tspan27"
+       x="54.889042"
+       y="30.002979"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:18.6667px;font-family:'T-FLEX Type B';-inkscape-font-specification:'T-FLEX Type B Italic';fill:#000000;fill-opacity:1;stroke:none">Axial length</tspan></text>
+  <path
+     d="m 180.23,56.37 -57,40.59 h -51.9 l -52.41,33.32"
+     stroke-linecap="round"
+     stroke-width="7"
+     id="path3"
+     style="fill:none;stroke:#ff0000;stroke-width:5;stroke-dasharray:none;stroke-opacity:1" />
+</svg>
