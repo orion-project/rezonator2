@@ -11,7 +11,7 @@ public:
     FUNC_ALIAS("CustomPlot")
     QString name() const override;
     FUNC_ICON(":/toolbar/plot_py")
-    FUNC_HELP("func_custom_plot.html")
+    QString helpTopic() const override;
     
     CustomPlotFunction(Schema *schema);
 
@@ -34,6 +34,7 @@ private:
     QString _code;
     QString _customTitle;
     QString _moduleName;
+    std::optional<QString> _helpTopic;
     QStringList _errorLog;
     int _errorLine;
     std::function<void(const QString&)> _printFunc;

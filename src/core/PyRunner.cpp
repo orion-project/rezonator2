@@ -228,6 +228,22 @@ bool PyRunner::load(const ModuleProps &props)
         }
         _funcRefs.insert(funcName, pFunc);
     }
+
+    for (const QString &funcName : std::as_const(funcNamesOptional)) {
+        auto bFuncName = funcName.toUtf8();
+    
+        auto pFunc = PyObject_GetAttrString(pModule, bFuncName.constData());
+        if (!pFunc) {
+            continue;
+        }
+        _refs << TmpRef{funcName, pFunc};
+
+        if (!PyCallable_Check(pFunc)) {
+            handleError("The object is not callable: " + funcName);
+            return false;
+        }
+        _funcRefs.insert(funcName, pFunc);
+    }
     
     return true;
 }

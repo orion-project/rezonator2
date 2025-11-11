@@ -6,25 +6,23 @@ reZonator2 Documentation
 ########################
 
 .. tocTree::
-   :maxDepth: 2
-   :caption: Table of Contents:
+  :maxDepth: 2
+  :caption: Table of Contents:
 
-   intro
-   schema
-   elements
-   functions
-   func_windows
-   utils
-   tools
-   app_settings
-   handbook
-   py_api
-
+  intro
+  schema
+  elements
+  functions
+  func_windows
+  utils
+  tools
+  app_settings
+  handbook
 
 .. only:: builder_html
 
-    Indices and tables
-    ==================
+  Indices and tables
+  ==================
 
-    * :ref:`genindex`
-    * :ref:`search`
+  * :ref:`genindex`
+  * :ref:`search`

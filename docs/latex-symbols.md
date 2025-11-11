@@ -6,6 +6,12 @@ https://oeis.org/wiki/List_of_LaTeX_mathematical_symbols
 
 `\infty` $$ \infty $$
 
+`\times` $$ \times $$
+
+## Formulas
+
+`\cfrac` $$ \cfrac {a+1}{b+1} $$
+
 ## Relation operators
 
 `\equiv` $$ \equiv $$
@@ -103,6 +109,18 @@ No space: $$ a b $$
 `\,` - a thin space: $$ a \, b $$
 
 `\!` - a negative thin space:  $$ a \! b $$
+
+`\quad` - a space equal to the current font size: $$ a \quad b $$
+
+`\qquad` - a space equal to two `\quad`: $$ a \qquad b $$
+
+`\hspace{length}` - inserts a horizontal space of a specified length:
+$$ a \hspace{1cm} b $$
+$$ a \hspace{10pt} b $$
+$$ a \hspace{200px} b $$
+
+`\\` - create a new line, `\\[length]` - create a new line with spacing between lines:
+$$ a \\[20pt] b $$
 
 ## Greek alphabet
 

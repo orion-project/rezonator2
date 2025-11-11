@@ -1,5 +1,6 @@
 #include "CustomPlotFunction.h"
 
+#include "CustomFuncUtils.h"
 #include "../core/PyRunner.h"
 
 #define FUNC_FIGURE QStringLiteral("figure")
@@ -11,6 +12,7 @@
 #define RES_LABEL QStringLiteral("label")
 #define RES_X QStringLiteral("x")
 #define RES_Y QStringLiteral("y")
+#define HELP_TOPIC "custom_plot"
 
 static int __funcCount = 0;
 
@@ -49,6 +51,7 @@ bool CustomPlotFunction::prepare()
     py->code = _code;
     py->moduleName = _moduleName;
     py->funcNames = { FUNC_FIGURE, FUNC_CALC };
+    py->funcNamesOptional = { CustomFuncUtils::funcNameMeta() };
     py->printFunc = _printFunc;
     
     if (!py->load()) {
@@ -75,9 +78,12 @@ bool CustomPlotFunction::prepare()
     auto fig = res->first();
     _dimX = fig[PROP_X_DIM].value<Z::Dim>();
     _dimY = fig[PROP_Y_DIM].value<Z::Dim>();
-    _titleX = fig[PROP_X_TITLE].toString(),
-    _titleY = fig[PROP_Y_TITLE].toString(),
+    _titleX = fig[PROP_X_TITLE].toString();
+    _titleY = fig[PROP_Y_TITLE].toString();
     
+    if (!_helpTopic)
+        _helpTopic = CustomFuncUtils::helpTopic(py.get(), HELP_TOPIC);
+        
     _runner = py;
     return true;
 }
@@ -115,4 +121,11 @@ void CustomPlotFunction::calculateInternal()
             addPoint(id, x.at(i), y.at(i));
         endLine(id);
     }
+}
+
+QString CustomPlotFunction::helpTopic() const
+{
+    if (_helpTopic)
+        return *_helpTopic;
+    return CustomFuncUtils::helpTopic(schema(), _code, _moduleName, HELP_TOPIC);
 }
