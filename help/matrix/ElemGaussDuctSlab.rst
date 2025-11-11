@@ -12,7 +12,10 @@ The coefficient `α` is the loss factor per unit length.
 The element has the same matrices as the :doc:`ElemGrinLens` has, with the only difference that the parameter `γ` is a complex value (see page 791 formula 43 in the Siegman book).
 
     .. image:: ElemGaussDuctSlab.png
-    
-.. seealso::
 
-    :doc:`ElemGaussDuctMedium`, :doc:`../elem_matrs`, :doc:`../catalog`, :doc:`../elem_props`
+.. seeAlso::
+
+    - :doc:`ElemGaussDuctMedium`
+    - :doc:`../elem_matrs`
+    - :doc:`../catalog`
+    - :doc:`../elem_props`

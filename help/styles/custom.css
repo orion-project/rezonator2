@@ -65,9 +65,19 @@ span.guipart {
     background-color: #e5e5e9;
 }
 
+/* Make seeAlso looking as H2 in Assistant */
 .seealso .admonition-title {
   margin-top: 2em;
   font-size: 16px;
+}
+
+/* Make TOC list item looking as normal list item */
+.toctree-l1 {
+  margin-top: 1em;
+}
+
+.toctree-l2 {
+  margin-top: 0.5em;
 }
 
 /*

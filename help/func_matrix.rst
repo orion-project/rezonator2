@@ -17,4 +17,4 @@ In addition to the user-friendly table view, the window can show matrices as Pyt
 
 .. seeAlso::
 
-    :doc:`info_window`
+    - :doc:`info_window`

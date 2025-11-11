@@ -5,4 +5,4 @@ Custom Table Function
 
 .. seeAlso::
 
-  :doc:`py_api`
+  - :doc:`py_api`

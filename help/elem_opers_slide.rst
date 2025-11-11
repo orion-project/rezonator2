@@ -21,4 +21,6 @@ A slider shows the summary length, and its knob can be dragged to redistribute t
 
 .. seeAlso::
 
-    :doc:`elem_opers`, :doc:`elem_opers_split`, :doc:`elem_opers_insert_into`
+    - :doc:`elem_opers`
+    - :doc:`elem_opers_split`
+    - :doc:`elem_opers_insert_into`

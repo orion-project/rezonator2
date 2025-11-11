@@ -10,4 +10,5 @@ The command copies the currently selected element into the clipboard in an inter
 
 .. seeAlso::
 
-    :doc:`elem_opers`, :doc:`elem_opers_paste`
+    - :doc:`elem_opers`
+    - :doc:`elem_opers_paste`

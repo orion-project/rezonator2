@@ -43,4 +43,7 @@ Performance
 
 .. seeAlso::
 
-  :doc:`functions`, :doc:`custom_script`, :doc:`custom_table`, :doc:`custom_plot`
+  - :doc:`functions`
+  - :doc:`custom_script`
+  - :doc:`custom_table`
+  - :doc:`custom_plot`

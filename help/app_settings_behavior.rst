@@ -72,5 +72,5 @@ It's been `reported <https://github.com/orion-project/rezonator2/issues/9>`_ tha
 .. --------------------------------------------------------------------------
 
 .. seeAlso::
-  
-  :doc:`app_settings`
+
+  - :doc:`app_settings`

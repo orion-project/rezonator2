@@ -3,7 +3,7 @@
 Calculation of Beam Parameters in Resonators
 ============================================
 
-The description is given according to the book "Lasers" by A.E. Siegman, see chapter 21 "Generalized paraxial resonator theory". 
+The description is given according to the book "Lasers" by A.E. Siegman, see chapter 21 "Generalized paraxial resonator theory".
 
 For the analysis, we need to select a reference plane to calculate :doc:`the round trip matrix<round_trip_matrix>` against. In general, an element chosen as a parameter of a particular function is the reference plane.
 
@@ -14,7 +14,7 @@ Having the round-trip matrix we can write an expression for transformation of :r
 Because we consider a stable resonator, the output parameter is the same as the input one, so the beam is self-consistent, and it reproduces itself after full round-trip through the resonator:
 
     .. image:: img/abcd_q_in_out.png
-    
+
 |para|
 
     .. image:: img/abcd_q.png
@@ -85,4 +85,4 @@ These formulas are given just for information. They do not suit when matrix comp
 
 .. seeAlso::
 
-    :doc:`gauss`
+    - :doc:`gauss`

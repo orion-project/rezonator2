@@ -139,4 +139,6 @@ Example:
 
 .. seeAlso::
 
-  :doc:`py_api`, :doc:`elem_props`, :ref:`Example - Basic Element Manipulation <py_example_basic_elem_manipulation>`
+  - :doc:`py_api`
+  - :doc:`elem_props`
+  - :ref:`Example - Basic Element Manipulation <py_example_basic_elem_manipulation>`

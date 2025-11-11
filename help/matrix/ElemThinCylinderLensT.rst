@@ -8,7 +8,8 @@ The tangential cylindrical lens acts just like a general :doc:`thin lens <ElemTh
 
     .. image:: ElemThinCylinderLensT.png
 
-.. seealso::
+.. seeAlso::
 
-    :doc:`../elem_matrs`, :doc:`../catalog`, :doc:`../elem_props`
-    
+    - :doc:`../elem_matrs`
+    - :doc:`../catalog`
+    - :doc:`../elem_props`

@@ -5,7 +5,7 @@ Element Properties: Parameters
 
 :menuSelection:`Element --> Properties --> Parameters`
 
-Most of the elements have a list of parameters. Each parameter allows setting some physical characteristics of the element — the length, refraction index, and so on. This list is different for each element type. The description of the parameter is displayed in the bottom part of the list when a parameter is highlighted. The value of the parameter is given by a number and unit of measurement. 
+Most of the elements have a list of parameters. Each parameter allows setting some physical characteristics of the element — the length, refraction index, and so on. This list is different for each element type. The description of the parameter is displayed in the bottom part of the list when a parameter is highlighted. The value of the parameter is given by a number and unit of measurement.
 
   .. image:: img/elem_props_params.png
 
@@ -29,10 +29,10 @@ If the linked global parameter becomes an invalid, e.g., because its :ref:`formu
   .. image:: img/elems_table_invalid.png
 
 .. note::
-  In this case it is up to the user's responsibility if a global parameter is used in the wrong context. For example, if you link the element's parameter :param:`L` (which is linear) to a global parameter having the angular dimension, the :param:`L` will probably get an unexpected value. When dimensions mismatch, the parameter value is assigned via SI conversion. For example, providing that the :param:`L` is displayed in cm, then linking it to an angular global parameter will get transformations like `10deg --> 0.1745rad --> 0.1745m --> 17.45cm`. 
+  In this case it is up to the user's responsibility if a global parameter is used in the wrong context. For example, if you link the element's parameter :param:`L` (which is linear) to a global parameter having the angular dimension, the :param:`L` will probably get an unexpected value. When dimensions mismatch, the parameter value is assigned via SI conversion. For example, providing that the :param:`L` is displayed in cm, then linking it to an angular global parameter will get transformations like `10deg --> 0.1745rad --> 0.1745m --> 17.45cm`.
 
 .. seeAlso::
 
-    :doc:`elem_props`,
-    :ref:`Element Properties: Options <elem_props_options>`,
-    :ref:`Element Properties: Outline <elem_props_outline>`
+    - :doc:`elem_props`
+    - :ref:`Element Properties: Options <elem_props_options>`
+    - :ref:`Element Properties: Outline <elem_props_outline>`

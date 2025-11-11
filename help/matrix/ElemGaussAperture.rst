@@ -11,8 +11,10 @@ This is a thin optical element consisting of a "soft-aperture" which has a quadr
 The coefficient `α` is the total loss factor through an aperture.
 
     .. image:: ElemGaussAperture.png
-    
-.. seealso::
 
-    :doc:`ElemGaussApertureLens`, :doc:`../elem_matrs`, :doc:`../catalog`, :doc:`../elem_props`
-    
+.. seeAlso::
+
+    - :doc:`ElemGaussApertureLens`
+    - :doc:`../elem_matrs`
+    - :doc:`../catalog`
+    - :doc:`../elem_props`

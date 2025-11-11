@@ -183,4 +183,7 @@ Example:
 
 .. seeAlso::
 
-  :doc:`py_api`, :doc:`py_global`, :ref:`Example - Basic Schema Access <py_example_basic_schema_access>`, :ref:`Example - Basic Element Manipulation <py_example_basic_elem_manipulation>`
+  - :doc:`py_api`
+  - :doc:`py_global`
+  - :ref:`Example - Basic Schema Access <py_example_basic_schema_access>`
+  - :ref:`Example - Basic Element Manipulation <py_example_basic_elem_manipulation>`

@@ -54,7 +54,7 @@ Color Scale Format
 
 :menuSelection:`Format --> Color Scale Format`
 
-The command opens a dialog for changing the format of the color scale. 
+The command opens a dialog for changing the format of the color scale.
 
 Fit Z-Axis to Stability Range
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -64,5 +64,7 @@ Fit Z-Axis to Stability Range
 The command adjusts the color scale so that it corresponds to stability boundary values: (-1 to 1) or (0 to 1) depending on the mode of stability parameter calculation (see above).
 
 .. seeAlso::
-  
-  :doc:`plot_window`, :doc:`plot_opers`, :doc:`func_stabmap`
+
+  - :doc:`plot_window`
+  - :doc:`plot_opers`
+  - :doc:`func_stabmap`

@@ -8,16 +8,17 @@ The tilted plane-parallel plate is characterized by its thick `L`, index of refr
 Full element
 
     .. image:: ElemTiltedPlate.png
-    
+
 Left half-pass
 
     .. image:: ElemTiltedPlate_left.png
-    
+
 Right half-pass
 
     .. image:: ElemTiltedPlate_right.png
-    
-.. seealso::
 
-    :doc:`../elem_matrs`, :doc:`../catalog`, :doc:`../elem_props`
-    
+.. seeAlso::
+
+    - :doc:`../elem_matrs`
+    - :doc:`../catalog`
+    - :doc:`../elem_props`

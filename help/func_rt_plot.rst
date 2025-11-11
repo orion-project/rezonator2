@@ -1,7 +1,7 @@
 Round-trip for Plot
 ===================
 
-:menuSelection:`Plot --> Show Round-trip` 
+:menuSelection:`Plot --> Show Round-trip`
 
 It's a special kind of the :doc:`func_rt` function showing a round-trip used for calculation of a particular value of a plot function. It takes the last :ref:`cursor <cursor>` position as the calculation target so you can check what matrices were used for getting the values shown in the cursor line.
 
@@ -20,4 +20,4 @@ The :doc:`func_caustic_mr` function uses several inner :doc:`func_caustic` funct
 
 .. seeAlso::
 
-    :doc:`func_rt`
+    - :doc:`func_rt`

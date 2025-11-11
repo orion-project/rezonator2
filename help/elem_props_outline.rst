@@ -11,7 +11,7 @@ It’s a diagrammatic representation of an element that contains its parameter l
 
 .. seeAlso::
 
-    :doc:`elem_matrs`,
-    :doc:`elem_props`,
-    :ref:`Element Properties: Parameters <elem_props_params>`,
-    :ref:`Element Properties: Options <elem_props_options>`
+    - :doc:`elem_matrs`
+    - :doc:`elem_props`
+    - :ref:`Element Properties: Parameters <elem_props_params>`
+    - :ref:`Element Properties: Options <elem_props_options>`

@@ -17,4 +17,5 @@ The command toggles the :ref:`enabled flag <elem_props_lock>` of one or several 
 
 .. seeAlso::
 
-    :doc:`elem_opers`, :doc:`elem_opers_delete`
+    - :doc:`elem_opers`
+    - :doc:`elem_opers_delete`

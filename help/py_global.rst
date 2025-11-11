@@ -148,4 +148,5 @@ Example:
 
 .. seeAlso::
 
-  :doc:`py_api`, :doc:`py_schema`
+  - :doc:`py_api`
+  - :doc:`py_schema`

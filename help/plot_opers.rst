@@ -106,10 +106,10 @@ Show T-Plane
 
 :menuSelection:`Plot --> Show T-plane`
 
-The command toggles visibility of graphs for the tangential (T) plane. 
+The command toggles visibility of graphs for the tangential (T) plane.
 
   .. note::
-    One of the graphs (for T or S plane) always stays visible. It means if one of the graphs is hidden and you try to hide the other one, then the first becomes visible. 
+    One of the graphs (for T or S plane) always stays visible. It means if one of the graphs is hidden and you try to hide the other one, then the first becomes visible.
 
 .. --------------------------------------------------------------------------
 
@@ -118,10 +118,10 @@ Show S-Plane
 
 :menuSelection:`Plot --> Show S-plane`
 
-The command toggles visibility of graphs for the sagittal (S) plane. 
+The command toggles visibility of graphs for the sagittal (S) plane.
 
   .. note::
-    One of the graphs (for T or S plane) always stays visible. It means if one of the graphs is hidden and you try to hide the other one, then the first becomes visible. 
+    One of the graphs (for T or S plane) always stays visible. It means if one of the graphs is hidden and you try to hide the other one, then the first becomes visible.
 
 .. --------------------------------------------------------------------------
 
@@ -206,5 +206,5 @@ The command exports graph values into the clipboard using default :ref:`export s
 .. --------------------------------------------------------------------------
 
 .. seeAlso::
-  
-  :doc:`plot_window`
+
+  - :doc:`plot_window`

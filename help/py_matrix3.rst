@@ -79,4 +79,6 @@ Example
 
 .. seeAlso::
 
-  :doc:`py_api`, :doc:`py_matrix`, :doc:`py_ray_vector`
+  - :doc:`py_api`
+  - :doc:`py_matrix`
+  - :doc:`py_ray_vector`

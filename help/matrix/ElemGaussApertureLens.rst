@@ -11,8 +11,10 @@ This a combination of a :doc:`ElemThinLens` or a :doc:`ElemCurveMirror` with :do
 The coefficient `α` is the total loss factor through an aperture.
 
     .. image:: ElemGaussApertureLens.png
-    
-.. seealso::
 
-    :doc:`ElemGaussAperture`, :doc:`../elem_matrs`, :doc:`../catalog`, :doc:`../elem_props`
-    
+.. seeAlso::
+
+    - :doc:`ElemGaussAperture`
+    - :doc:`../elem_matrs`
+    - :doc:`../catalog`
+    - :doc:`../elem_props`

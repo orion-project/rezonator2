@@ -5,4 +5,4 @@ Custom Scripts
 
 .. seeAlso::
 
-  :doc:`py_api`
+  - :doc:`py_api`

@@ -10,4 +10,5 @@ The command deletes one or several elements that are currently selected in the :
 
 .. seeAlso::
 
-    :doc:`elem_opers`, :doc:`elem_opers_lock`
+    - :doc:`elem_opers`
+    - :doc:`elem_opers_lock`

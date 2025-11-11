@@ -10,4 +10,7 @@ Results of calculations of certain functions are represented as a data table in 
 
 .. seeAlso::
 
-    :doc:`table_opers`, :doc:`table_symbols`, :doc:`plot_window`, :doc:`info_window`
+    - :doc:`table_opers`
+    - :doc:`table_symbols`
+    - :doc:`plot_window`
+    - :doc:`info_window`

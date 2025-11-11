@@ -75,8 +75,10 @@ Fit Y-Axis to Stability Range
 
 :menuSelection:`Limits --> Y-Axis -> Stability Range`
 
-The command adjusts vertical axis limits so that they correspond to stability marker lines positions. 
+The command adjusts vertical axis limits so that they correspond to stability marker lines positions.
 
 .. seeAlso::
-  
-  :doc:`plot_window`, :doc:`plot_opers`, :doc:`func_stabmap_2d`
+
+  - :doc:`plot_window`
+  - :doc:`plot_opers`
+  - :doc:`func_stabmap_2d`

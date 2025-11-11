@@ -14,4 +14,4 @@ Move the selected element up or down over the list.
 
 .. seeAlso::
 
-    :doc:`elem_opers`
+    - :doc:`elem_opers`

@@ -20,4 +20,6 @@ There could also be the "Custom library" tab in the Catalog dialog showing a lis
 
 .. seeAlso::
 
-    :doc:`elem_matrs`, :doc:`elem_props`, :doc:`elem_library`
+    - :doc:`elem_matrs`
+    - :doc:`elem_props`
+    - :doc:`elem_library`

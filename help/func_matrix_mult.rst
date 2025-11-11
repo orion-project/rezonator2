@@ -19,4 +19,4 @@ This function is for debug and test purposes mostly, so it doesn't care about th
 
 .. seeAlso::
 
-    :doc:`func_rt`
+    - :doc:`func_rt`

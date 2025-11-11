@@ -3,7 +3,7 @@
 .. index:: single: matrix of round-trip
 .. index:: single: round-trip
 
-Calculation of Round-Trip Matrix 
+Calculation of Round-Trip Matrix
 ================================
 
 The :doc:`ray-matrix <elem_matrs>` formalism supposes the elements' matrices are multiplied one-by-one in the direction opposite to the beam :ref:`propagation direction <propagation_dir>`.
@@ -26,10 +26,10 @@ If the schema is the :ref:`standing wave resonator<schema_kind_sw>`, then elemen
 
 - from the first element to the last one,
 
-- from the last element to an element next to the reference. 
+- from the last element to an element next to the reference.
 
 |para|
-    
+
     .. image:: img/round_trip_sw_1.png
 
 Sample result (M4 is the reference element):
@@ -43,7 +43,7 @@ Sample result (M4 is the reference element):
 RR
 ^^
 
-If the schema is the :ref:`ring resonator<schema_kind_rr>`, then elements' matrices are multiplied in the next way: 
+If the schema is the :ref:`ring resonator<schema_kind_rr>`, then elements' matrices are multiplied in the next way:
 
 - from the reference element to the first element of the schema,
 
@@ -52,13 +52,13 @@ If the schema is the :ref:`ring resonator<schema_kind_rr>`, then elements' matri
 |para|
 
     .. image:: img/round_trip_rr_1.png
-    
+
 Sample result (M4 is the reference element):
 
     M0 = M4 × M3 × M2 × M1 × M7 × M6 × M5
-    
 
-   
+
+
 .. _calc_round_trip_sp:
 
 SP
@@ -67,10 +67,10 @@ SP
 If the schema is the :ref:`single-pass system<schema_kind_sp>`, then ray passes it from the first element to the last one. Therefore, matrices are multiplied in the reverse order (from the last element to the first one).
 
     .. image:: img/round_trip_sp_1.png
-    
+
 Sample result (M4 is the reference element):
 
-    M0 = M4 × M3 × M2 × M1 
+    M0 = M4 × M3 × M2 × M1
 
 
 .. _calc_round_trip_subrange:
@@ -101,19 +101,19 @@ If the schema is the :ref:`standing wave resonator<schema_kind_sw>`, then elemen
 |para|
 
     .. image:: img/round_trip_sw_2.png
-    
+
 Sample result (M4 is the reference element):
 
 	M0 = |M4_1| × M3 × M2 × M1 × M2 × M3 × M4 × M5 × M6 × M7 × M6 × M5 × |M4_2|
-    
-    
-    
+
+
+
 .. _calc_round_trip_rr_1:
 
 RR
 ^^
 
-If the schema is the :ref:`ring resonator <schema_kind_rr>`, then elements' matrices are multiplied in the next way: 
+If the schema is the :ref:`ring resonator <schema_kind_rr>`, then elements' matrices are multiplied in the next way:
 
 - from the left reference element to the first element of the schema,
 
@@ -122,7 +122,7 @@ If the schema is the :ref:`ring resonator <schema_kind_rr>`, then elements' matr
 |para|
 
     .. image:: img/round_trip_rr_2.png
-    
+
 Sample result (M4 is the reference element):
 
     M0 = |M4_1| × M3 × M2 × M1 × M7 × M6 × M5 × |M4_2|
@@ -137,8 +137,8 @@ SP
 If the schema is the :ref:`single-pass system <schema_kind_sp>`, then matrices from the left reference sub-element to the first element are multiplied.
 
     .. image:: img/round_trip_sp_2.png
-    
-Sample result (M4 is the reference element): 
+
+Sample result (M4 is the reference element):
 
     M0 = |M4_1| × M3 × M2 × M1
 
@@ -147,4 +147,4 @@ Sample result (M4 is the reference element):
 
 .. seeAlso::
 
-    :doc:`elem_matrs`
+    - :doc:`elem_matrs`

@@ -96,4 +96,7 @@ Example
 
 .. seeAlso::
 
-    :doc:`py_api`, :doc:`py_matrix3`, :doc:`py_ray_vector`, :ref:`Example - Basic Ray Tracing <py_example_basic_ray_tracing>`
+    - :doc:`py_api`
+    - :doc:`py_matrix3`
+    - :doc:`py_ray_vector`
+    - :ref:`Example - Basic Ray Tracing <py_example_basic_ray_tracing>`

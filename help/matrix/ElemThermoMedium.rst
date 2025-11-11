@@ -15,10 +15,10 @@ The element is cylindrically symmetrical and doesn't imply differences between t
     .. image:: ../../img/elem/ElemThermoMedium.svg
 
 
-.. seealso::
+.. seeAlso::
 
-    :doc:`./ElemThermoLens`,
-    :doc:`../elem_matrs`,
-    :doc:`../catalog`,
-    :doc:`../elem_props`,
-    `Gradient-index optics in Wikipedia <https://en.wikipedia.org/wiki/Gradient-index_optics>`_
+    - :doc:`./ElemThermoLens`
+    - :doc:`../elem_matrs`
+    - :doc:`../catalog`
+    - :doc:`../elem_props`
+    - `Gradient-index optics in Wikipedia <https://en.wikipedia.org/wiki/Gradient-index_optics>`_
