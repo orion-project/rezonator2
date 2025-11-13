@@ -37,4 +37,4 @@ Element lengths are not displayed to scale on the layout. They all have fixed le
 
 .. seeAlso::
 
-  :doc:`schema_elems`
+  - :doc:`schema_elems`

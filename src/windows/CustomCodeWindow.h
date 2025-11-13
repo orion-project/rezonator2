@@ -26,7 +26,7 @@ public:
     static CustomCodeWindow* create(Schema*, const QString &codeTemplate = {});
 
     // inherits from BasicMdiChild
-    QString helpTopic() const override { return "func_custom_code.html"; }
+    QString helpTopic() const override;
 
     // inherits from ISchemaWindowStorable
     QString storableType() const override { return CustomCodeWindowStorable::windowType(); }
@@ -40,6 +40,7 @@ protected:
 
 private:
     QString _moduleName;
+    std::optional<QString> _helpTopic;
 
     explicit CustomCodeWindow(Schema*);
 };

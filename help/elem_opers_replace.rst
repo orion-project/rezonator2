@@ -12,4 +12,5 @@ The command opens the :doc:`catalog` to choose a type for the currently selected
 
 .. seeAlso::
 
-    :doc:`elem_opers`, :doc:`elem_opers_append`
+    - :doc:`elem_opers`
+    - :doc:`elem_opers_append`

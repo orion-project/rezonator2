@@ -166,6 +166,11 @@ void ProjectOperations::openSchemaFile(const QString& fileName, const OpenFileOp
         // and we don't want to show unexpected paths
         // somewhere in /tmp if the program is launched from AppImage
         // or somewhere inside of application bundle if we are on MacOS
+        
+        // Also reset title and note because they are a description of the example
+        // and should not be mentioned in user files
+        schema()->setTitle({});
+        schema()->setNotes({});
     }
     else
         schema()->setFileName(fileName);

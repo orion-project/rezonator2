@@ -27,4 +27,7 @@ If the "Insert point between ranges" option is checked, then a :ref:`elem_point`
 
 .. seeAlso::
 
-    :doc:`elem_opers`, :doc:`elem_opers_insert_into`, :doc:`elem_opers_merge`, :doc:`elem_opers_slide`
+    - :doc:`elem_opers`
+    - :doc:`elem_opers_insert_into`
+    - :doc:`elem_opers_merge`
+    - :doc:`elem_opers_slide`

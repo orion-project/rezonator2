@@ -4,7 +4,7 @@
 Information Windows
 ===================
 
-Results of calculations of certain functions are one or several values. Such functions are called information functions. They usually do not require any parameters. Examples are functions like :doc:`func_rt`, :doc:`func_reprate`. 
+Results of calculations of certain functions are one or several values. Such functions are called information functions. They usually do not require any parameters. Examples are functions like :doc:`func_rt`, :doc:`func_reprate`.
 
 Results of information functions are represented in a textual form in small popup windows.
 
@@ -34,7 +34,7 @@ Freeze
 
 :menuSelection:`Ctrl+F`
 
-The command freezes the current information window. See :doc:`func_freeze` for details. 
+The command freezes the current information window. See :doc:`func_freeze` for details.
 
 .. --------------------------------------------------------------------------
 
@@ -79,4 +79,6 @@ Some functions (e.g., :doc:`func_rt`) can add more buttons to the toolbar that a
 
 .. seeAlso::
 
-  :doc:`functions`, :doc:`plot_window`, :doc:`table_window`
+  - :doc:`functions`
+  - :doc:`plot_window`
+  - :doc:`table_window`

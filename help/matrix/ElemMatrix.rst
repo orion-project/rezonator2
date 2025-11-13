@@ -7,4 +7,6 @@ The matrix element is an element whose matrices are set by the user directly.
 
 .. seeAlso::
 
-    :doc:`../elem_matrs`, :doc:`../catalog`, :doc:`../elem_props`
+    - :doc:`../elem_matrs`
+    - :doc:`../catalog`
+    - :doc:`../elem_props`

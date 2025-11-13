@@ -26,4 +26,4 @@ If the schema window is active, the :menuSelection:`Element` item appears in the
 
 .. seeAlso::
 
-  :doc:`schema_window`
+  - :doc:`schema_window`

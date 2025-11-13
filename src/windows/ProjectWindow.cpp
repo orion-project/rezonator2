@@ -183,7 +183,7 @@ void ProjectWindow::createActions()
     actnFuncBeamParamsAtElems = A_(tr("Beam Parameters at Elemens"), _calculations, SLOT(funcBeamParamsAtElems()), ":/toolbar/func_beamdata");
     actnFuncGenericPlot = A_(tr("New Generic Plot Window"), this, SLOT(newGenericPlotWindow()), ":/toolbar/gauss_far_zone");
 #ifdef Z_USE_PYTHON
-    actnFuncCustomCode = A_(tr("New Custom Code Window"), this, SLOT(newCustomCodeWindow()), ":/toolbar/python_framed");
+    actnFuncCustomCode = A_(tr("New Custom Script Window"), this, SLOT(newCustomCodeWindow()), ":/toolbar/python_framed");
     actnFuncCustomTable = A_(tr("Create Custom Table Function"), _calculations, SLOT(funcCustomTable()), ":/toolbar/table_py");
     actnFuncCustomPlot = A_(tr("Create Custom Plot Function"), _calculations, SLOT(funcCustomPlot()), ":/toolbar/plot_py");
 #endif

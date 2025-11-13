@@ -61,12 +61,14 @@ The cursor is one or two crossing lines that can be dragged by the mouse. The cu
 Status Bar (6)
 ~~~~~~~~~~~~~~
 
-The status bar displays: 
+The status bar displays:
 
 - Units of measurement for X and Y axes. Right-click the label to change units. Or use the context menu of the respective axis.
 - Number of points in the selected graph. Click a graph on the plot to select it.
-- Additional information or context messages depending on a particular function type. 
+- Additional information or context messages depending on a particular function type.
 
 .. seeAlso::
 
-  :doc:`plot_opers`, :doc:`table_window`, :doc:`info_window`
+  - :doc:`plot_opers`
+  - :doc:`table_window`
+  - :doc:`info_window`

@@ -12,4 +12,5 @@ The command opens the :doc:`catalog` to choose a type for a new element. The new
 
 .. seeAlso::
 
-    :doc:`elem_opers`, :doc:`elem_opers_replace`
+    - :doc:`elem_opers`
+    - :doc:`elem_opers_replace`

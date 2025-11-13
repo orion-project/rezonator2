@@ -3,13 +3,13 @@
 Round-Trip Matrix
 =================
 
-:menuSelection:`Functions --> Round-Trip Matrix` 
+:menuSelection:`Functions --> Round-Trip Matrix`
 
-The function calculates the :doc:`round-trip matrix<round_trip_matrix>` of the schema and displays it in a special window. An element selected in the elements list is treated as a reference. Multiplication of the elements' matrices starts from the reference element. 
+The function calculates the :doc:`round-trip matrix<round_trip_matrix>` of the schema and displays it in a special window. An element selected in the elements list is treated as a reference. Multiplication of the elements' matrices starts from the reference element.
 
     .. image:: img/func_rt_1.png
 
-If the schema is a resonator (not a single-pass system) then the :ref:`stability parameter<stability_param>` of the schema is also calculated. 
+If the schema is a resonator (not a single-pass system) then the :ref:`stability parameter<stability_param>` of the schema is also calculated.
 
 In the upper line the list of elements is shown in that sequence as their matrices are multiplied. You can click each element's label to open a separate :ref:`information window <func_matrix>` displaying the element's matrices.
 
@@ -42,4 +42,7 @@ The "Axial length" value in the dialog shows the maximal possible offset, and it
 
 .. seeAlso::
 
-    :doc:`info_window`, :doc:`func_rt_plot`, :doc:`round_trip_matrix`, :doc:`func_freeze`
+    - :doc:`info_window`
+    - :doc:`func_rt_plot`
+    - :doc:`round_trip_matrix`
+    - :doc:`func_freeze`

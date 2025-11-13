@@ -14,7 +14,7 @@ When you change the schema :doc:`trip-type<trip_type>` to SP, the first pump is 
 
 When the window is closed, the parameters of the active pump can be quickly accessed via the menu command :menuSelection:`File --> Setup Input Beam`, or by double-clicking at the Pump icon in the status bar:
 
-  .. image:: img/setup_input_beam.png 
+  .. image:: img/setup_input_beam.png
 
 Commands
 --------
@@ -83,4 +83,5 @@ The command deletes the currently selected pump. If the deleting pump is active,
 
 .. seeAlso::
 
-    :doc:`input_beam`, :doc:`pump_mode`
+    - :doc:`input_beam`
+    - :doc:`pump_mode`

@@ -34,4 +34,7 @@ Half of the spread angle in the far-field zone. The displayed measurement units 
   There may be several rows in the table corresponding to the same element. These rows are marked with different icons. See :doc:`table_symbols` for details.
 
 .. seeAlso::
-  :doc:`table_window`, :doc:`table_opers`, :doc:`func_caustic`
+
+  - :doc:`table_window`
+  - :doc:`table_opers`
+  - :doc:`func_caustic`

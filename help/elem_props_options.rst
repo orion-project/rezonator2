@@ -50,6 +50,6 @@ For example, here is a layout of the “z_crystal” example, where the :param:`
 
 .. seeAlso::
 
-    :doc:`elem_props`,
-    :ref:`Element Properties: Parameters <elem_props_params>`,
-    :ref:`Element Properties: Outline <elem_props_outline>`
+    - :doc:`elem_props`
+    - :ref:`Element Properties: Parameters <elem_props_params>`
+    - :ref:`Element Properties: Outline <elem_props_outline>`

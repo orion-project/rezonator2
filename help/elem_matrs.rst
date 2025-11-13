@@ -21,7 +21,7 @@ Interface elements have no index of refraction. Instead, they take indexes of ad
 
 
 .. tocTree::
-   
+
    matrix/ElemAxiconLens
    matrix/ElemAxiconMirror
    matrix/ElemBrewsterCrystal
@@ -52,7 +52,8 @@ Interface elements have no index of refraction. Instead, they take indexes of ad
    matrix/ElemTiltedInterface
    matrix/ElemTiltedPlate
 
-   
+
 .. seeAlso::
 
-    :doc:`../catalog`, :doc:`../elem_props`
+    - :doc:`../catalog`
+    - :doc:`../elem_props`

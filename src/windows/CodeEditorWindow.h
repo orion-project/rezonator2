@@ -63,7 +63,7 @@ protected:
     
 private:
     QPlainTextEdit* _log;
-    QAction *_actnRun, *_actnClearLog;
+    QAction *_actnRun, *_actnClearLog, *_actnSaveCustom;
     QMenu* _windowMenu;
     bool _isChanging = false;
 
@@ -74,6 +74,7 @@ private:
     void run();
 
     void markModified(bool m);
+    void saveToLibrary();
 };
 
 namespace CodeUtils

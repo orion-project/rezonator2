@@ -13,9 +13,12 @@ public:
     ~CustomTableCodeWindow();
     
     void showResult();
+
+    // inherits from BasicMdiChild
+    QString helpTopic() const override { return _function->helpTopic(); }
     
 protected:
-    void runCode();
+    void runCode() override;
     
 private:
     CustomTableFunction *_function;

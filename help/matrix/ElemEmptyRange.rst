@@ -11,6 +11,8 @@ Matrices for tangential and sagittal planes are the same.
 
     .. image:: ElemEmptyRange.png
 
-.. seealso::
+.. seeAlso::
 
-    :doc:`../elem_matrs`, :doc:`../catalog`, :doc:`../elem_props`
+    - :doc:`../elem_matrs`
+    - :doc:`../catalog`
+    - :doc:`../elem_props`

@@ -22,8 +22,10 @@ public:
     // input
     Schema *schema = nullptr;
     QString code;
-    /// Top level functions, expected to exists in the code module
+    /// Top level functions expected to exists in the code module
     QVector<QString> funcNames;
+    /// Top level functions that may exist in the code module but not necessary
+    QVector<QString> funcNamesOptional;
     /// A name of python module should be dfferent for different custom functions
     /// Otherwise they will see objects defined in another custom functions
     QString moduleName;
@@ -70,6 +72,8 @@ public:
         QString id;
         void *ref;
     };
+    
+    bool hasFunction(const QString &name) const { return _funcRefs.contains(name); }
 
 private:
     void handleError(const QString& msg, const QString &funcName = QString());

@@ -26,7 +26,7 @@ A string describing magnitudes of all element's parameters. If some parameters a
 Title
 ~~~~~
 
-A name or a :ref:`short description <elem_props_title>` of an element 
+A name or a :ref:`short description <elem_props_title>` of an element
 
 Marker
 ~~~~~~
@@ -37,7 +37,7 @@ The *exclamation icon* shows that some parameter of the element is in inconsiste
 
   .. image:: img/elems_table_invalid.png
 
-The *stop icon* shows that the element is :ref:`blocked <elem_props_lock>`. If an element is blocked then it is not taken into account in round-trip calculation and it can not be chosen as function parameter. 
+The *stop icon* shows that the element is :ref:`blocked <elem_props_lock>`. If an element is blocked then it is not taken into account in round-trip calculation and it can not be chosen as function parameter.
 
   .. image:: img/elems_table_locked.png
 
@@ -49,4 +49,4 @@ The context menu of the elements list includes :ref:`some commands <elem_opers>`
 
 .. seeAlso::
 
-  :doc:`layout`
+  - :doc:`layout`

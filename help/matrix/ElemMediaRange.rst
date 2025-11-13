@@ -9,7 +9,9 @@ This element is a distance between two reference planes in a medium with an inde
 Unlike :doc:`ElemPlate`, this element doesn't imply any interfaces. To get proper results, you should put appropriate interface elements at both sides of the medium.
 
     .. image:: ElemMediaRange.png
-    
-.. seealso::
 
-    :doc:`../elem_matrs`, :doc:`../catalog`, :doc:`../elem_props`
+.. seeAlso::
+
+    - :doc:`../elem_matrs`
+    - :doc:`../catalog`
+    - :doc:`../elem_props`

@@ -1,6 +1,7 @@
 #include "CustomTableFunction.h"
 
 #include "BeamCalculator.h"
+#include "CustomFuncUtils.h"
 #include "RoundTripCalculator.h"
 #include "../core/PyRunner.h"
 
@@ -11,6 +12,7 @@
 #define COL_LABEL QStringLiteral("label")
 #define COL_TITLE QStringLiteral("title")
 #define COL_DIM QStringLiteral("dim")
+#define HELP_TOPIC "custom_table"
 
 static int __funcCount = 0;
 
@@ -84,6 +86,7 @@ bool CustomTableFunction::prepare()
     py->code = _code;
     py->moduleName = _moduleName;
     py->funcNames = { FUNC_COLUMNS, FUNC_CALC };
+    py->funcNamesOptional = { CustomFuncUtils::funcNameMeta() };
     py->printFunc = _printFunc;
 
     static PyRunner::ModuleProps props {
@@ -129,6 +132,9 @@ bool CustomTableFunction::prepare()
     }
     _columns = columns;
 
+    if (!_helpTopic)
+        _helpTopic = CustomFuncUtils::helpTopic(py.get(), HELP_TOPIC);
+
     _runner = py;
     return true;
 }
@@ -136,4 +142,11 @@ bool CustomTableFunction::prepare()
 void CustomTableFunction::unprepare()
 {
     _runner.reset();
+}
+
+QString CustomTableFunction::helpTopic() const
+{
+    if (_helpTopic)
+        return *_helpTopic;
+    return CustomFuncUtils::helpTopic(schema(), _code, _moduleName, HELP_TOPIC);
 }

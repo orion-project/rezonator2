@@ -14,7 +14,7 @@ CodeEditorWindow::CodeEditorWindow(Schema *owner, const QString &title) : Schema
 {
     setWindowIcon(QIcon(":/toolbar/python_framed"));
 
-    _defaultTitle = !title.isEmpty() ? title : FuncWindowHelpers::makeWindowTitle("code", tr("Custom Code"));
+    _defaultTitle = !title.isEmpty() ? title : FuncWindowHelpers::makeWindowTitle("code", tr("Custom Script"));
 
     _editor = new Ori::Widgets::CodeEditor;
     _editor->setFont(Z::Gui::CodeEditorFont().get());
@@ -43,19 +43,20 @@ void CodeEditorWindow::createActions()
 
     _actnRun = A_(tr("Run"), this, &CodeEditorWindow::run, ":/toolbar/start", Qt::Key_F9);
     _actnClearLog = A_(tr("Clear Log"), this, &CodeEditorWindow::clearLog, ":/toolbar/clear_log");
+    _actnSaveCustom = A_(tr("Save to Custom Library..."), this, &CodeEditorWindow::saveToLibrary, ":/toolbar/book_save");
     
     #undef A_
 }
 
 void CodeEditorWindow::createMenuBar()
 {
-    _windowMenu = Ori::Gui::menu(tr("Code"), this, { _actnRun, nullptr, _actnClearLog });
+    _windowMenu = Ori::Gui::menu(tr("Script"), this, { _actnRun, nullptr, _actnClearLog, nullptr, _actnSaveCustom });
 }
 
 void CodeEditorWindow::createToolBar()
 {
     populateToolbar({
-        Ori::Gui::textToolButton(_actnRun), nullptr, _actnClearLog
+        Ori::Gui::textToolButton(_actnRun), nullptr, _actnClearLog, nullptr, _actnSaveCustom
     });
 }
 
@@ -132,6 +133,8 @@ void CodeEditorWindow::logError(const QString &msg, bool scrollToEnd)
 void CodeEditorWindow::logError(const QStringList &log, int errorLine)
 {
     if (log.isEmpty()) return;
+    
+    qDebug() << "Script error at line" << errorLine << ':' << log;
 
     for (const auto &line : log)
         logError(line, false);
@@ -169,6 +172,11 @@ void CodeEditorWindow::runCode()
 void CodeEditorWindow::updateWindowTitle()
 {
     setWindowTitle(_customTitle.isEmpty() ? _defaultTitle : _customTitle);
+}
+
+void CodeEditorWindow::saveToLibrary()
+{
+
 }
 
 //------------------------------------------------------------------------------

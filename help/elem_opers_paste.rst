@@ -14,4 +14,5 @@ Element presets can also be pasted from the :doc:`elem_library`.
 
 .. seeAlso::
 
-    :doc:`elem_opers`, :doc:`elem_opers_copy`
+    - :doc:`elem_opers`
+    - :doc:`elem_opers_copy`

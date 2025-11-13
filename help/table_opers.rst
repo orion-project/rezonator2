@@ -38,6 +38,8 @@ The command calculates the function again. The command is inaccessible if the cu
 
 .. --------------------------------------------------------------------------
 
+.. _table_opers_freeze:
+
 Freeze
 ~~~~~~
 
@@ -47,15 +49,17 @@ The command freezes the current table window. See :doc:`func_freeze` for details
 
 .. --------------------------------------------------------------------------
 
+.. _table_opers_show_t:
+
 Show T-plane
 ~~~~~~~~~~~~
 
 :menuSelection:`Table --> Show T-plane`
 
-The command toggles visibility of results for the tangential (T) plane. 
+The command toggles visibility of results for the tangential (T) plane.
 
   .. note::
-    One of the result sets (for T or S plane) always stays visible. It means if one of the sets is hidden and you try to hide the other one, then the first becomes visible. 
+    One of the result sets (for T or S plane) always stays visible. It means if one of the sets is hidden and you try to hide the other one, then the first becomes visible.
 
 .. --------------------------------------------------------------------------
 
@@ -64,12 +68,14 @@ Show S-plane
 
 :menuSelection:`Table --> Show S-plane`
 
-The command toggles visibility of results for the sagittal (S) plane. 
+The command toggles visibility of results for the sagittal (S) plane.
 
   .. note::
-    One of the result sets (for T or S plane) always stays visible. It means if one of the sets is hidden and you try to hide the other one, then the first becomes visible. 
+    One of the result sets (for T or S plane) always stays visible. It means if one of the sets is hidden and you try to hide the other one, then the first becomes visible.
 
 .. --------------------------------------------------------------------------
+
+.. _table_opers_calc_at_medium_ends:
 
 Calculate at medium ends
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -102,7 +108,18 @@ Calculate in the middle of ranges
 Calculate function in the middle of :doc:`matrix/ElemEmptyRange` and :doc:`matrix/ElemMediaRange` elements. This is a debug option.
 
 .. --------------------------------------------------------------------------
+.. --------------------------------------------------------------------------
+
+Toolbar
+-------
+
+.. _table_opers_units:
+
+The toolbar contains a button with the caliper icon that shows a popup menu where you can select a unit of measurement that should be used for formatting values in each column. Alternatively, the same menu can be invoked by the right click in the column header.
+
+.. --------------------------------------------------------------------------
 
 .. seeAlso::
 
-  :doc:`table_window`, :doc:`table_symbols`
+  - :doc:`table_window`
+  - :doc:`table_symbols`

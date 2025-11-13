@@ -36,5 +36,8 @@ Additional Commands of Plot Window
 The function has the same commands as the :ref:`caustic <func_caustic_mr_aux_cmds>` function has.
 
 .. seeAlso::
-  
-  :doc:`plot_window`, :doc:`plot_opers`, :doc:`func_caustic`, :doc:`func_caustic_mr`
+
+  - :doc:`plot_window`
+  - :doc:`plot_opers`
+  - :doc:`func_caustic`
+  - :doc:`func_caustic_mr`

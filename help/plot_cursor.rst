@@ -31,7 +31,7 @@ You can quickly toggle visibility of the cursor using the button :menuSelection:
 Positioning
 -----------
 
-Besides of dragging it by the mouse, you can precisely set the position of the cursor. To do it, double-click X or Y coordinates in the cursor panel, type the desired value in the dialog, and press the Enter key. 
+Besides of dragging it by the mouse, you can precisely set the position of the cursor. To do it, double-click X or Y coordinates in the cursor panel, type the desired value in the dialog, and press the Enter key.
 
   .. image:: img/plot_cursor_set_pos.png
 
@@ -51,4 +51,4 @@ The default appearance of the cursor lines is governed by :ref:`program preferen
 
 .. seeAlso::
 
-  :doc:`plot_window`
+  - :doc:`plot_window`

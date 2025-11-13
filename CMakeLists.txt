@@ -136,6 +136,7 @@ set(PROJECT_SOURCES
     src/math/BeamParamsAtElemsFunction.h src/math/BeamParamsAtElemsFunction.cpp
     src/math/BeamVariationFunction.h src/math/BeamVariationFunction.cpp
     src/math/CausticFunction.h src/math/CausticFunction.cpp
+    src/math/CustomFuncUtils.h src/math/CustomFuncUtils.cpp
     src/math/CustomInfoFunction.h src/math/CustomInfoFunction.cpp
     src/math/CustomPlotFunction.h src/math/CustomPlotFunction.cpp
     src/math/CustomTableFunction.h src/math/CustomTableFunction.cpp

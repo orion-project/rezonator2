@@ -17,4 +17,6 @@ The command is equivalent to the :doc:`elem_opers_split` command but allows you 
 
 .. seeAlso::
 
-    :doc:`elem_opers`, :doc:`elem_opers_split`, :doc:`elem_opers_merge`
+    - :doc:`elem_opers`
+    - :doc:`elem_opers_split`
+    - :doc:`elem_opers_merge`

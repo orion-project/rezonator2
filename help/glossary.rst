@@ -1,5 +1,19 @@
 Glossary
 ========
+.. ##################################################################
+
+.. _axial_len:
+.. _axial_length:
+.. index:: single: axial length
+
+Axial length
+------------
+
+Axial length is a geometrical distance that a beam travels inside an element. For most cases it is the same as the element’s Length parameter values. But there are some elements (e.g., :doc:`matrix/ElemTiltedPlate`) for which they are different because their length is measured from edge to edge normally, but the beam passes at an angle to that direction and covers a larger distance.
+
+    .. image:: img/axial_len.png
+
+.. ##################################################################
 
 .. _stability_param:
 .. index:: single: stability parameter
@@ -7,15 +21,14 @@ Glossary
 Stability Parameter
 -------------------
 
-Stability parameter is a value showing if a system can support stable laser operation. It can be calculated in two ways: 
+Stability parameter is a value showing if a system can support stable laser operation. It can be calculated in two ways:
 
 * `P = (A + D) / 2`
 * `P = 1 — ((A + D) / 2)` :sup:`2`
 
 where A and D are system :ref:`round-trip matrix <round_trip>` components. In the first case the system is stable when the parameter value is in range from -1 to 1. In the second case the system is stable when the parameter value is in the range from 0 to 1.
 
-
-
+.. ##################################################################
 
 .. _propagation_dir:
 .. index:: single: propagation direction
@@ -27,14 +40,13 @@ Propagation Direction
 
     .. image:: img/propagation_sp.png
 
-For :ref:`resonators <schema_kind_rr>`, it is just the chosen primary direction. In :ref:`standing-wave resonator <schema_kind_sw>`, the beam reflects from the rightmost element and does round-trip returning to the leftmost one. 
+For :ref:`resonators <schema_kind_rr>`, it is just the chosen primary direction. In :ref:`standing-wave resonator <schema_kind_sw>`, the beam reflects from the rightmost element and does round-trip returning to the leftmost one.
 
     .. image:: img/propagation_res.png
 
 When the :doc:`round-trip matrix <round_trip_matrix>` is calculated, elements' matrices are multiplied starting from some reference element and in the direction opposite to beam propagation, as the ray-matrix approach supposes.
 
-
-
+.. ##################################################################
 
 .. _ray_vector:
 .. index:: single: ray vector
@@ -52,9 +64,10 @@ When a beam traverses an optical system, parameters of the output beam can be ex
 
 |rezonator| can compute ray vector propagation in :ref:`single-pass <schema_kind_sp>` schemas, see :ref:`Pump mode: Ray vector <pump_mode_vector>`.
 
+.. ##################################################################
 
-
-
+.. _work_plane:
+.. _work_planes:
 .. _working_planes:
 .. index:: single: tangential plane
 .. index:: single: sagittal plane
@@ -70,6 +83,6 @@ The tangential plane is the plane containing all the resonator's elements (the p
 
 **Sagittal Plane, S-plane**
 
-The sagittal plane is the plane containing the element's optical axis and perpendicular to the tangential plane. 
+The sagittal plane is the plane containing the element's optical axis and perpendicular to the tangential plane.
 
     .. image:: img/planes_ts.png

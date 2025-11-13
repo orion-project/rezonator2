@@ -1,6 +1,7 @@
 #include "CustomCodeWindow.h"
 
 #include "../core/PyRunner.h"
+#include "../math/CustomFuncUtils.h"
 
 #include "helpers/OriDialogs.h"
 #include "widgets/OriCodeEditor.h"
@@ -8,6 +9,7 @@
 #include <QJsonObject>
 
 #define FUNC_CALC QStringLiteral("calculate")
+#define HELP_TOPIC "custom_script"
 
 namespace CustomCodeWindowStorable
 {
@@ -70,6 +72,7 @@ void CustomCodeWindow::runCode()
     py.schema = schema();
     py.code = _editor->toPlainText();
     py.funcNames = { FUNC_CALC };
+    py.funcNamesOptional = { CustomFuncUtils::funcNameMeta() };
     py.moduleName = _moduleName;
     py.printFunc = [this](const QString& s){ logInfo(s); };
     
@@ -82,9 +85,18 @@ void CustomCodeWindow::runCode()
         _customTitle = py.codeTitle;
         updateWindowTitle();
     }
-
     if (!py.run(FUNC_CALC, {}, {})) {
         logError(py.errorLog, py.errorLine);
         return;
     }
+    
+    if (!_helpTopic)
+        _helpTopic = CustomFuncUtils::helpTopic(&py, HELP_TOPIC);
+}
+
+QString CustomCodeWindow::helpTopic() const
+{
+    if (_helpTopic)
+        return *_helpTopic;
+    return CustomFuncUtils::helpTopic(const_cast<CustomCodeWindow*>(this)->schema(), _editor->toPlainText(), _moduleName, HELP_TOPIC);
 }

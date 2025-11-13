@@ -11,7 +11,7 @@ public:
     FUNC_ALIAS("CustomTable")
     FUNC_NAME(QT_TRANSLATE_NOOP("Function Name", "Custom Table"))
     FUNC_ICON(":/toolbar/table_py")
-    FUNC_HELP("func_custom_table.html")
+    QString helpTopic() const override;
     
     CustomTableFunction(Schema *schema);
 
@@ -35,6 +35,7 @@ private:
     QString _code;
     QString _customTitle;
     QString _moduleName;
+    std::optional<QString> _helpTopic;
     QStringList _errorLog;
     int _errorLine;
     std::function<void(const QString&)> _printFunc;
@@ -42,7 +43,6 @@ private:
     
     void showError(PyRunner *py);
     void showError(const QString &err);
-    
 };
 
 #endif // CUSTOM_TABLE_FUNCTION_H

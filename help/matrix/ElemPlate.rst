@@ -10,16 +10,17 @@ Matrices for tangential and sagittal planes are the same.
 Full element
 
     .. image:: ElemPlate.png
-    
+
 Left half-pass
 
     .. image:: ElemPlate_left.png
-    
+
 Right half-pass
 
     .. image:: ElemPlate_right.png
-    
-.. seealso::
 
-    :doc:`../elem_matrs`, :doc:`../catalog`, :doc:`../elem_props`
-    
+.. seeAlso::
+
+    - :doc:`../elem_matrs`
+    - :doc:`../catalog`
+    - :doc:`../elem_props`
