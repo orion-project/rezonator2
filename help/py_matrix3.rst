@@ -8,7 +8,7 @@ Extended 3×3 ray transfer matrix for misalignment calculations.
 Constructor
 -----------
 
-Parameters:
+Arguments:
 
 - ``matrix`` (:doc:`Matrix <py_matrix>`, optional) - 2×2 ABCD matrix to convert
 

@@ -44,9 +44,7 @@ Use :doc:`custom_script` to run the example.
 Basic Schema Access
 -------------------
 
-Use :doc:`custom_script` to run the example.
-
-This example demonstrates how to access basic schema information, global constants, and iterate through elements.
+This example demonstrates how to access basic schema information, global constants, and iterate through elements. Use :doc:`custom_script` to run the example.
 
 .. code-block:: python
 
@@ -115,9 +113,7 @@ Use :doc:`custom_script` to run the example.
 Round Trip and Beam Properties
 ------------------------------
 
-Use :doc:`custom_script` to run the example.
-
-This example shows how to calculate round-trip matrices, stability parameters, and beam properties for both tangential and sagittal planes.
+This example shows how to calculate round-trip matrices, stability parameters, and beam properties for both tangential and sagittal planes. Use :doc:`custom_script` to run the example.
 
 .. code-block:: python
 
@@ -170,14 +166,75 @@ This example shows how to calculate round-trip matrices, stability parameters, a
 
 .. #######################################################################
 
+.. _py_example_aper_ratio:
+
+Apertures Loss Estimation
+-------------------------
+
+An example of usage of custom element parameters to calculate the aperture-to-beam-size ratio at elements as an indicator of possible beam clipping risk. Use :doc:`custom_table` to run the example.
+
+.. code-block:: python
+
+  '''Aperture ratio calculation'''
+  import rezonator as Z
+  import schema
+
+  def columns():
+    '''Define table columns'''
+    return [
+      {
+        'label': 'W',
+        'title': 'Beam radius',
+        'dim': Z.DIM_LINEAR
+      },
+      {
+        'label': 'AR',
+        'title': 'Aperture ratio',
+        'dim': Z.DIM_NONE
+      },
+      {
+        'label': 'AR2',
+        'title': 'Square ratio',
+        'dim': Z.DIM_NONE
+      }
+    ]
+
+  def calculate(elem, pos, rt):
+    '''Calculate aperture ratios for elements with aperture parameter'''
+
+    def calc_ratio(aper):
+      w = rt.beam_radius()
+      # Treat aperture size as radius
+      ar = aper / w
+      ar2 = ar**2
+      return {'W': w, 'AR': ar, 'AR2': ar2}
+
+    # Check for aperture custom parameter
+    aper = elem.param('A')
+    if aper is not None and pos == POS_RIGHT:
+      return calc_ratio(aper)
+
+    # For elements with length, check left and right apertures
+    if elem.length is not None:
+      if pos == POS_LEFT:
+        aper = elem.param('A1')
+        if aper is not None:
+          return calc_ratio(aper)
+      if pos == POS_RIGHT:
+        aper = elem.param('A2')
+        if aper is not None:
+          return calc_ratio(aper)
+
+    return None
+
+.. #######################################################################
+
 .. _py_example_custom_caustic:
 
 Custom Caustic Function
 -----------------------
 
-This example demonstrates creating a custom plot function that calculates beam radius along an element and displays it as a caustic plot.
-
-Use :doc:`custom_plot` to run the example.
+This example demonstrates creating a custom plot function that calculates beam radius along an element and displays it as a caustic plot. Use :doc:`custom_plot` to run the example.
 
 .. code-block:: python
 

@@ -9,7 +9,7 @@ Represents a :ref:`ray vector <ray_vector>` (Y, V) in paraxial optics.
 Constructor
 -----------
 
-Parameters:
+Arguments:
 
 - ``Y`` (float, optional) - Ray position (m)
 - ``V`` (float, optional) - Ray angle (rad)

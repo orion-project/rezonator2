@@ -85,7 +85,6 @@ void CustomCodeWindow::runCode()
         _customTitle = py.codeTitle;
         updateWindowTitle();
     }
-
     if (!py.run(FUNC_CALC, {}, {})) {
         logError(py.errorLog, py.errorLine);
         return;

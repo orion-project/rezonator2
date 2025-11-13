@@ -7,6 +7,7 @@
         <file alias="align_just">../img/toolbar/align_just.svg</file>
         <file alias="back_color">../img/toolbar/back_color.svg</file>
         <file alias="book">../img/toolbar/book.svg</file>
+        <file alias="book_save">../img/toolbar/book_save.svg</file>
         <file alias="bug">../img/toolbar/bug.svg</file>
         <file alias="caliper">../img/toolbar/caliper.svg</file>
         <file alias="catalog">../img/toolbar/elements.svg</file>

@@ -11,6 +11,11 @@ h3 {
     margin-top: 2em;
 }
 
+a.internal {
+  color: #2571b1;
+  text-decoration: none;
+}
+
 span.menuselection, span.guilabel, kbd {
     color: maroon;
     font-family: Consolas,"Courier New",Monaco,monospace;

@@ -15,11 +15,13 @@ Properties
 ``ref`` (:doc:`Element <py_element>`, read-only)
     Reference element of the round-trip
 
+.. _py_method_rt_plane:
+
 ``plane`` (int, read-only)
     :ref:`Work plane <work_plane>` (:ref:`Z.PLANE_T <py_const_plane_t>` or :ref:`Z.PLANE_S <py_const_plane_t>`)
 
 ``ior`` (float, read-only)
-    Current index of refraction
+    Current index of refraction. Index of refraction is assigned automatically depending on what the reference element is. For example, if the element is an :ref:`interface <ElemNormalInterface>`, then the IOR will be taken from a :ref:`medium <ElemMediumRange>` element immediately following the interface.
 
 ``matrix_count`` (int, read-only)
     Number of matrices in the round-trip
@@ -103,7 +105,7 @@ Returns:
 
 Get a matrix from the round trip.
 
-Parameters:
+Arguments:
 
 - ``index`` (int, optional) - Matrix index, or None for total round-trip matrix
 
@@ -125,7 +127,7 @@ Raises:
 
 Get the element owning the specified matrix.
 
-Parameters:
+Arguments:
 
 - ``index`` (int) - Matrix index
 

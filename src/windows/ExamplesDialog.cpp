@@ -61,7 +61,7 @@ ExamplesDialog::ExamplesDialog(): QSplitter()
     
     loadExamples();
 
-    QTimer::singleShot(0, this, [this]{ _fileList->setFocus(); });
+    //QTimer::singleShot(0, this, [this]{ _fileList->setFocus(); });
 }
 
 QString ExamplesDialog::examplePath(const QString &fileName, const QString &ext) const

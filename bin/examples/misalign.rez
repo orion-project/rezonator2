@@ -139,7 +139,7 @@
     ],
     "formulas": [
     ],
-    "notes": "The example shows how to calculate an effective misalignment and position of the effective optical axis of a resonator having slightly tilted and displaced elements. Custom functions coded in Python are demonstrated. Misalignments of elements are set via custom parameters.",
+    "notes": "The example shows how to calculate an effective misalignment and position of the effective optical axis of a resonator having slightly tilted and displaced elements. Custom script, table, and plot functions coded in Python are demonstrated. Misalignments of elements are set via custom parameters.",
     "param_links": [
     ],
     "pumps": [

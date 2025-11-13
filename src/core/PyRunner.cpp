@@ -234,6 +234,7 @@ bool PyRunner::load(const ModuleProps &props)
     
         auto pFunc = PyObject_GetAttrString(pModule, bFuncName.constData());
         if (!pFunc) {
+            PyErr_Clear();
             continue;
         }
         _refs << TmpRef{funcName, pFunc};

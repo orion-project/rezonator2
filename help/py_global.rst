@@ -41,6 +41,7 @@ Constants
 .. ###################################################################
 
 .. index:: single: DIM_NONE (Python)
+.. _py_const_dim_none:
 
 ``Z.DIM_NONE``
   Dimensionless.
@@ -48,6 +49,7 @@ Constants
 .. ###################################################################
 
 .. index:: single: DIM_LINEAR (Python)
+.. _py_const_dim_linear:
 
 ``Z.DIM_LINEAR``
   Linear dimension (length)
@@ -55,6 +57,7 @@ Constants
 .. ###################################################################
 
 .. index:: single: DIM_ANGULAR (Python)
+.. _py_const_dim_angular:
 
 ``Z.DIM_ANGULAR``
   Angular dimension
@@ -67,13 +70,14 @@ Functions
 .. ###################################################################
 
 .. index:: single: print (Python)
+.. _py_module_z_print:
 
 ``print(*args, spaced=True)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Print messages to the function output window.
 
-Parameters:
+Arguments:
 
 - ``*args`` - Values to print (strings, numbers, or objects with ``__repr__``). When an argument is a number, then it is formatted according to :ref:`application settings <app_settings_format_precision>`. To get unformatted output, use the Python's built-in function ``str`` to convert a number into string ignoring application settings.
 - ``spaced`` (bool, optional) - If True (default), separate arguments with spaces
@@ -96,7 +100,7 @@ Example:
 
 Format a numeric value into a user-friendly display string respecting the :ref:`application settings <app_settings_format_precision>`.
 
-Parameters:
+Arguments:
 
 - ``value`` (float) - The numeric value to format
 
@@ -129,7 +133,7 @@ Get the application version string, e.g., "2.1.2".
 
 Convert :ref:`work plane <work_plane>` constant to string name.
 
-Parameters:
+Arguments:
 
 - ``plane`` (int) - Plane constant (``Z.PLANE_T`` or ``Z.PLANE_S``)
 

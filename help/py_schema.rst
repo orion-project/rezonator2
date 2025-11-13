@@ -18,7 +18,7 @@ Functions
 
 Get an element by label or index.
 
-Parameters:
+Arguments:
 
 - ``identifier`` - Element label (str) or 1-based index (int). Unlike regular Python lists, elements in schema are indexed starting from 1 to be consistent with how they are numbered in the :doc:`schema_elems`.
 
@@ -97,7 +97,7 @@ Example:
 
 Get a :doc:`global parameter <params_window>` value by label.
 
-Parameters:
+Arguments:
 
 - ``label`` (str) - Parameter label
 
@@ -149,7 +149,7 @@ Example:
 
 Create a :ref:`round-trip <round_trip>` calculator for beam parameters.
 
-Parameters:
+Arguments:
 
 - ``ref`` - Reference element (:doc:`Element <py_element>`, str label, int index, or None for last element)
 - ``plane`` - :ref:`Work plane <work_plane>` ('T', 'S', :ref:`Z.PLANE_T <py_const_plane_t>`, or :ref:`Z.PLANE_S <py_const_plane_s>`)

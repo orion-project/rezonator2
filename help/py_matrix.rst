@@ -8,7 +8,7 @@ Class: Matrix
 Constructor
 -----------
 
-Parameters:
+Arguments:
 
 - ``A``, ``B``, ``C``, ``D`` (float or complex, optional) - Matrix elements
 

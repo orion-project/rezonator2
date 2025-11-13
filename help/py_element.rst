@@ -48,13 +48,14 @@ Methods
 -------
 
 .. index:: single: param (Python)
+.. _py_method_elem_param:
 
 ``param(label, default=None)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Get element parameter value by label.
+Get element parameter value by label. This method gives access to both predefined and :ref:`custom <custom_params>` parameters of an element.
 
-Parameters:
+Arguments:
 
 - ``label`` (str) - Parameter label
 - ``default`` (float, optional) - Default value if parameter not found
@@ -67,9 +68,9 @@ Example:
 
 .. code-block:: python
 
-    elem = schema.elem('L1')
+    elem = schema.elem('F1')
     f = elem.param('F')  # Get focal length
-    r = elem.param('R', 0.0)  # Get radius, default to 0 if not found
+    r = elem.param('dYt', 0.0)  # Get axial misalignment, default to 0 if not found
 
 .. #######################################################################
 
@@ -81,7 +82,7 @@ Example:
 
 Set element parameter value by label.
 
-Parameters:
+Arguments:
 
 - ``label`` (str) - Parameter label
 - ``value`` (float) - Parameter value in SI units
