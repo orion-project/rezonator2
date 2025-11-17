@@ -58,19 +58,19 @@ For regular development, you should add the function to a real schema via the :g
 Create
 ------
 
-To add a new custom function to the library write a new :doc:`custom_script` or :doc:`custom_table` or :doc:`custom_plot`. Add a docstring with a human-readable name on the first line. Then use :menuSelection:`Save to Custom Library` menu command in the :menuSelection:`Script`, :menuSelection:`Table`, or :menuSelection:`Plot` menu, depending on the function type.
+To add a new custom function to the library, write a new :doc:`custom_script` or :doc:`custom_table` or :doc:`custom_plot`. Add a docstring with a human-readable name on the first line. Then use the :menuSelection:`Save to Custom Library` menu command in the :menuSelection:`Script`, :menuSelection:`Table`, or :menuSelection:`Plot` menu, depending on the function type.
 
 If a function with the same name already exists in the library, you'll be asked whether to replace it. The library supposes that every custom functionality should be named uniquely. If one repeats a name, the one highly likely wants to reimplement the functionality.
 
 Delete
 ------
 
-To remove a custom function from the library fit the :guiLabel:`Delete` button. Deleting a function from the library does not affect any schemas that use it. Existing schemas retain their own copies of the code.
+To remove a custom function from the library, hit the :guiLabel:`Delete` button. Deleting a function from the library does not affect any schemas that use it. Existing schemas retain their own copies of the code.
 
 Import/Export
 -------------
 
-Custom functions are stored as Python files in the user profile directory. Use :guiLabel:`Export` and :guiLabel:`Import` buttons to share and backup. Importing files must be UTF-8 encoded Python files containing a docstring with a function name on the first line and the ``calculate()`` function.
+Custom functions are stored as Python files in the user profile directory. Use the :guiLabel:`Export` and :guiLabel:`Import` buttons to share and backup. Importing files must be UTF-8 encoded Python files containing a docstring with a function name on the first line and the ``calculate()`` function.
 
 .. seeAlso::
 
