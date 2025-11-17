@@ -28,6 +28,7 @@ A function is a procedure or an operations sequence yielding some data related t
   custom_script
   custom_table
   custom_plot
+  custom_func_lib
 
 .. seeAlso::
 

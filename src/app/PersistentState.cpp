@@ -69,7 +69,7 @@ void save(const char *id, const QJsonObject& root)
         qWarning() << id << "failed to save state" << fileName << file.errorString();
         return;
     }
-    QTextStream(&file) << QJsonDocument(root).toJson();
+    file.write(QJsonDocument(root).toJson());
 }
 
 void storeWindowGeometry(const char *id, QWidget* w)
@@ -159,7 +159,7 @@ public:
             qWarning() << "Unable to save recent data" << fileName << file.errorString();
             return;
         }
-        QTextStream(&file) << QJsonDocument(data).toJson();
+        file.write(QJsonDocument(data).toJson());
     }
 
     void onFileChanged()

@@ -67,6 +67,7 @@ set(PROJECT_SOURCES
     src/app/AppSettings.h src/app/AppSettings.cpp
     src/app/CalcManager.h src/app/CalcManager.cpp
     src/app/CustomElemsManager.h src/app/CustomElemsManager.cpp
+    src/app/CustomFuncsLib.h src/app/CustomFuncsLib.cpp
     src/app/HelpSystem.h src/app/HelpSystem.cpp
     src/app/MessageBus.h src/app/MessageBus.cpp
     src/app/PersistentState.h src/app/PersistentState.cpp
@@ -232,11 +233,13 @@ set(PROJECT_SOURCES
     src/widgets/ValuesEditorTS.h src/widgets/ValuesEditorTS.cpp
     src/widgets/VariableRangeEditor.h src/widgets/VariableRangeEditor.cpp
     src/widgets/WidgetResult.h src/widgets/WidgetResult.cpp
+    src/widgets/Widgets.h src/widgets/Widgets.cpp
     src/windows/AdjustmentWindow.h src/windows/AdjustmentWindow.cpp
     src/windows/AppSettingsDialog.h src/windows/AppSettingsDialog.cpp
     src/windows/CodeEditorWindow.h src/windows/CodeEditorWindow.cpp
     src/windows/CustomCodeWindow.h src/windows/CustomCodeWindow.cpp
     src/windows/CustomElemsWindow.h src/windows/CustomElemsWindow.cpp
+    src/windows/CustomFuncsWindow.h src/windows/CustomFuncsWindow.cpp
     src/windows/ElementPropsDialog.h src/windows/ElementPropsDialog.cpp
     src/windows/ElementsCatalogDialog.h src/windows/ElementsCatalogDialog.cpp
     src/windows/ElemFormulaWindow.h src/windows/ElemFormulaWindow.cpp

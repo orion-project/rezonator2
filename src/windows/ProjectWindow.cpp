@@ -15,6 +15,7 @@
 #include "AdjustmentWindow.h"
 #include "CustomCodeWindow.h"
 #include "CustomElemsWindow.h"
+#include "CustomFuncsWindow.h"
 #include "ElemFormulaWindow.h"
 #include "MemoWindow.h"
 #include "PlotWindow.h"
@@ -189,6 +190,7 @@ void ProjectWindow::createActions()
 #endif
 
     actnToolsCustomElems = A_(tr("Custom Elements Library"), this, SLOT(showCustomElems()), ":/toolbar/catalog");
+    actnToolsCustomFuncs = A_(tr("Custom Functions Library"), this, SLOT(showCustomFuncs()), ":/toolbar/book_open");
     actnToolsGaussCalc = A_(tr("Gaussian Beam Calculator"), this, SLOT(showGaussCalculator()), ":/toolbar/gauss_calculator");
     actnToolsCalc = A_(tr("Formula Calculator"), this, SLOT(showCalculator()), ":/window_icons/calculator");
     actnToolFlipSchema = A_(tr("Flip Schema..."), this, SLOT(flipSchema()));
@@ -252,7 +254,7 @@ void ProjectWindow::createMenuBar()
         { actnToolFlipSchema, nullptr, actnToolAdjust });
 
     menuTools = Ori::Gui::menu(tr("Tools", "Menu title"), this,
-        { actnToolsGaussCalc, actnToolsCalc, actnToolsCustomElems, actnToolGrinLens, actnToolLensmaker,
+        { actnToolsGaussCalc, actnToolsCalc, actnToolsCustomElems, actnToolsCustomFuncs, actnToolGrinLens, actnToolLensmaker,
           //actnToolIris
         });
     if (AppSettings::instance().isDevMode)
@@ -520,6 +522,11 @@ void ProjectWindow::settingsChanged()
 void ProjectWindow::showCustomElems()
 {
     CustomElemsWindow::showWindow();
+}
+
+void ProjectWindow::showCustomFuncs()
+{
+    CustomFuncsWindow::showWindow(schema());
 }
 
 void ProjectWindow::showSettings()

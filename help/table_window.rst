@@ -10,12 +10,10 @@ Results of calculations of certain functions are represented as a data table in 
 
 The table window provides features for:
 
-.. - Sorting by columns
 - :ref:`Freezing <table_opers_freeze>` the calculated data
 - :ref:`Choosing<table_opers_units>` different units of measurement for each column
 - :ref:`Viewing <table_opers_show_t>` combined or separate results for T and S planes
 - :ref:`Copying <table_opers_copy>` data to clipboard
-.. - Exporting to files
 
 .. seeAlso::
 

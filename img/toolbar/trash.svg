@@ -1,0 +1,22 @@
+<svg height="24" viewBox="0 0 22.5 22.5" width="24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<linearGradient id="a" gradientTransform="matrix(.94 0 0 .83 3.94 7.24)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="3.49" x2="11.76" y1="11.54" y2="11.54">
+<stop offset="0" stop-color="#f1f5f7"/>
+<stop offset="1" stop-color="#cdd7e3"/>
+</linearGradient>
+<linearGradient id="b" gradientTransform="matrix(.94 0 0 .83 3.94 7.24)" gradientUnits="userSpaceOnUse" x1=".37" x2="14.79" xlink:href="#c" y1="2.82" y2="15.6"/>
+<linearGradient id="c" gradientTransform="matrix(1 0 0 .89 7.24 7.73)" gradientUnits="userSpaceOnUse" x1="13.09" x2="-.52" y1="17.64" y2="-6.4">
+<stop offset="0" stop-color="#a1b4cf"/>
+<stop offset="1" stop-color="#7b8199"/>
+</linearGradient>
+<linearGradient id="d" gradientTransform="matrix(.94 0 0 -.83 3.94 8.69)" gradientUnits="userSpaceOnUse" spreadMethod="pad" x1="2.79" x2="13.79" y1="4.8" y2="4.8">
+<stop offset="0" stop-color="#f1f5f7"/>
+<stop offset="1" stop-color="#d0d7e0"/>
+</linearGradient>
+<linearGradient id="e" gradientTransform="matrix(.94 0 0 -.83 3.94 8.69)" gradientUnits="userSpaceOnUse" x1="-.21" x2="16.74" xlink:href="#c" y1="5.92" y2="2.97"/>
+<g stroke-linecap="round" stroke-linejoin="round" stroke-width=".94">
+<path d="m18.24 7.08-.46 12.14c-.04 1.21-.92 2.79-2.33 2.79l-8.44-.01c-1.26-.07-2.34-1.43-2.34-2.8l-.48-12.12z" fill="url(#a)" fill-rule="evenodd" stroke="url(#b)" stroke-dashoffset="21.44"/>
+<path d="m7 9.3v9.38m2.82-9.38v9.38m2.82-9.38v9.38m2.81-9.38v9.38" fill="#ff6f6f" opacity=".7" stroke="#a1b4cf"/>
+<path d="m19.64 7.06c.01-2.34.01-3.68-2.32-3.76l-12.19.01c-2.35.02-2.35 1.41-2.32 3.75z" fill="url(#d)" fill-rule="evenodd" stroke="url(#e)" stroke-dashoffset="21.44"/>
+<path d="m7.5 2.81c0-1.88.94-2.38 3.82-2.33 2.75.05 3.68.45 3.68 2.33" fill="none" stroke="#7b8199"/>
+</g>
+</svg>

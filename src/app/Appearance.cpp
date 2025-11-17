@@ -308,5 +308,10 @@ void editAppStyleSheet()
     wnd->show();
 }
 
+QSize toolbarIconSize()
+{
+    return AppSettings::instance().smallToolbarImages? QSize(16,16): QSize(24,24);
+}
+
 } // namespace Gui
 } // namespace Z

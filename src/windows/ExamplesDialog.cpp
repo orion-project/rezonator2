@@ -4,6 +4,7 @@
 #include "../app/PersistentState.h"
 #include "../core/CommonTypes.h"
 #include "../io/CommonUtils.h"
+#include "../widgets/Widgets.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
@@ -25,6 +26,7 @@ ExamplesDialog::ExamplesDialog(): QSplitter()
     _examplesDir = qApp->applicationDirPath() % "/examples";
 
     _fileList = new QListWidget;
+    _fileList->setAlternatingRowColors(true);
     connect(_fileList, &QListWidget::itemDoubleClicked, this, &ExamplesDialog::accepted);
     connect(_fileList, &QListWidget::currentItemChanged, this, &ExamplesDialog::showCurrentExample);
 
@@ -35,10 +37,7 @@ ExamplesDialog::ExamplesDialog(): QSplitter()
         p { margin-top: 10px; }
     )");
     
-    _filterEdit = new QLineEdit;
-    _filterEdit->setPlaceholderText(qApp->tr("Filter examples..."));
-    _filterEdit->setClearButtonEnabled(true);
-    connect(_filterEdit, &QLineEdit::textChanged, this, &ExamplesDialog::applyFilter);
+    _filterEdit = Z::Gui::makeFilterEdit(tr("Filter examples..."), this, SLOT(applyFilter()));
     
     auto leftPanel = new QWidget;
     auto leftLayout = new QVBoxLayout(leftPanel);

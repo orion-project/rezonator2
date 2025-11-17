@@ -7,6 +7,7 @@
 #include "tools/GrinLensWindow.h"
 #include "tools/LensmakerWindow.h"
 #include "windows/CustomElemsWindow.h"
+#include "windows/CustomFuncsWindow.h"
 #include "windows/ProjectWindow.h"
 #include "windows/StartWindow.h"
 
@@ -47,7 +48,7 @@ int main(int argc, char* argv[])
     auto optionVersion = parser.addVersionOption();
     parser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions);
     QCommandLineOption optionTest("test", "Run unit-test session.");
-    QCommandLineOption optionTool("tool", "Run a tool: gauss, calc, elems, grin, lens", "name");
+    QCommandLineOption optionTool("tool", "Run a tool: gauss, calc, elems, funcs, grin, lens", "name");
     QCommandLineOption optionDevMode("dev"); optionDevMode.setFlags(QCommandLineOption::HiddenFromHelp);
     QCommandLineOption optionConsole("console"); optionConsole.setFlags(QCommandLineOption::HiddenFromHelp);
     QCommandLineOption optionExample("example"); optionExample.setFlags(QCommandLineOption::HiddenFromHelp);
@@ -111,6 +112,11 @@ int main(int argc, char* argv[])
         else if (toolName == "elems")
         {
             CustomElemsWindow::showWindow();
+            return app.exec();
+        }
+        else if (toolName == "funcs")
+        {
+            CustomFuncsWindow::showWindow();
             return app.exec();
         }
         else if (toolName == "grin")

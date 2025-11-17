@@ -90,7 +90,7 @@ private:
     QAction *actnFuncCustomCode, *actnFuncCustomTable, *actnFuncCustomPlot;
 #endif
 
-    QAction  *actnToolsGaussCalc, *actnToolsCustomElems, *actnSettings,
+    QAction  *actnToolsGaussCalc, *actnToolsCustomElems, *actnToolsCustomFuncs, *actnSettings,
              *actnToolFlipSchema, *actnToolsCalc, *actnToolAdjust,
              *actnToolGrinLens, *actnToolLensmaker, *actnToolIris;
 
@@ -130,6 +130,7 @@ private:
 private slots:
     void showGrinLens();
     void showCustomElems();
+    void showCustomFuncs();
     void showSettings();
     void showProtocolWindow();
     void showSchemaWindow();

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24" height="24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <linearGradient id="linearGradient16" x1="4" x2="12" y1="13" y2="13" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#fdffff" offset="0"/>
+   <stop stop-color="#b2d3fa" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient21" x1="2.4" x2="12" y1="5" y2="20" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#92b1de" offset="0"/>
+   <stop stop-color="#525f96" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient10" x1="12" x2="12" y1="9" y2="15" gradientUnits="userSpaceOnUse">
+   <stop stop-color="#e58c00" offset="0"/>
+   <stop stop-color="#714500" offset="1"/>
+  </linearGradient>
+ </defs>
+ <path d="m0.5 10.5h23v13h-23z" fill="#85d277" stroke="#4daf3c" stroke-linecap="round" stroke-linejoin="round"/>
+ <path id="path15" d="m1.5 6v13c4 0 7.5 1.5 10.5 4.5v-13.5c-3-3-5.5-4-10.5-4z" fill="url(#linearGradient16)" stroke="url(#linearGradient21)" stroke-linecap="round" stroke-linejoin="round"/>
+ <use transform="matrix(-1,0,0,1,24,0)" xlink:href="#path15"/>
+ <path d="m9.5 1.5v9h-5l7.5 7.5 7.5-7.5h-5v-9z" fill="#fc0" fill-rule="evenodd" stroke="url(#linearGradient10)"/>
+</svg>

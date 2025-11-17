@@ -13,7 +13,7 @@ Code Module
 A custom function is a user-defined Python module. The first line of the module docstring will be used as a human-readable function name and displayed in the function window headers. This allows you to give your function a meaningful title.
 
 ``columns()``
-~~~~~~~~~~~~
+~~~~~~~~~~~~~
 
 The code module must provide a ``columns()`` function that defines the structure and properties of the table columns. This function is called before each recalculation, which allows you to dynamically change table structure (such as column titles based on selected elements or parameters) without reopening the window.
 

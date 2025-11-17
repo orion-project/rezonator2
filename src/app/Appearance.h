@@ -92,6 +92,8 @@ enum ItemDataRole { DisabledRole = Qt::UserRole+100 };
 void applyTextBrowserStyleSheet(QTextBrowser* browser, const QString& cssResourcePath);
 void editAppStyleSheet();
 
+QSize toolbarIconSize();
+
 } // namespace Gui
 } // namespace Z
 

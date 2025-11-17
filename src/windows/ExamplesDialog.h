@@ -21,6 +21,9 @@ public:
 signals:
     void accepted();
     
+private slots:
+    void applyFilter();
+    
 private:
     QLineEdit *_filterEdit;
     QListWidget *_fileList;
@@ -37,7 +40,6 @@ private:
     
     void loadExamples();
     void showCurrentExample();
-    void applyFilter();
     QJsonObject loadExampleFile(const QString& fileName);
     Info loadExampleInfo(const QString& fileName);
     void editExampleDescr();

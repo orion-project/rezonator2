@@ -9,6 +9,9 @@ class PyRunner;
 namespace CustomFuncUtils
 {
 
+inline QString funcNameCalculate() { return QStringLiteral("calculate"); }
+inline QString funcNameColumns() { return QStringLiteral("columns"); }
+inline QString funcNameFigure() { return QStringLiteral("figure"); }
 inline QString funcNameMeta() { return QStringLiteral("meta"); }
 inline QString funcResHelp() { return QStringLiteral("help_topic"); }
 

@@ -1,10 +1,11 @@
 #include "CodeEditorWindow.h"
 
 #include "../app/Appearance.h"
+#include "../app/CustomFuncsLib.h"
 #include "../funcs/FuncWindowHelpers.h"
+#include "../widgets/Widgets.h"
 
 #include "helpers/OriWidgets.h"
-#include "tools/OriHighlighter.h"
 #include "widgets/OriCodeEditor.h"
 
 #include <QSplitter>
@@ -16,12 +17,7 @@ CodeEditorWindow::CodeEditorWindow(Schema *owner, const QString &title) : Schema
 
     _defaultTitle = !title.isEmpty() ? title : FuncWindowHelpers::makeWindowTitle("code", tr("Custom Script"));
 
-    _editor = new Ori::Widgets::CodeEditor;
-    _editor->setFont(Z::Gui::CodeEditorFont().get());
-    _editor->setShowWhitespaces(true);
-    _editor->setTabWidth(2);
-    Ori::Highlighter::setHighlighter(_editor, ":/syntax/py");
-    connect(_editor->document(), &QTextDocument::modificationChanged, this, &CodeEditorWindow::markModified);
+    _editor = Z::Gui::makeCodeEditor();
 
     _log = new QPlainTextEdit;
     _log->setFont(Z::Gui::CodeEditorFont().get());
@@ -176,7 +172,7 @@ void CodeEditorWindow::updateWindowTitle()
 
 void CodeEditorWindow::saveToLibrary()
 {
-
+    CustomFuncsLib::put(code());
 }
 
 //------------------------------------------------------------------------------
