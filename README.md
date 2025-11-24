@@ -18,11 +18,15 @@ Despite the number of good [examples](https://www.scilab.org), in the profession
 
 - **Optical elements:** programs' [elements catalog](http://rezonator.orion-project.org/help/elements.html) contains many essential optical elements — ranges, lenses, mirrors, crystals, and many more. The ABCD ray matrix algorithm is used for simulation of optical elements, so you also can define your own element by providing its matrix. *⚡️Coming soon:* Fully custom elements where you can provide formulas for computing matrices from parameters.
 
+- :new: :fire: **Custom parameters** allow you to extend elements with additional user-defined parameters beyond their standard built-in parameters which is useful when you need to track or calculate additional properties specific to your optical system.
+
 - **Unrestricted design:** the app doesn't calculate any particular optical geometry. Instead, it is possible to construct an arbitrary optical system from proposed or user-defined optical elements. reZonator automatically creates a [rendition](http://rezonator.orion-project.org/help/layout.html) of the system under investigation — almost as if you could sketch it on a paper sheet or your drawing board.
 
 - **Stability maps:** for advanced system optimization, reZonator can compute cavity stability maps against values of [one](http://rezonator.orion-project.org/help/func_stabmap.html) or [two](http://rezonator.orion-project.org/help/func_stabmap_2d.html) parameters of any element. Also, automatic computation of stability boundaries is provided.
 
 - **Wavefront calculation:** reZonator can plot the size and the wavefront curvature radius of the Gaussian beam over [one](http://rezonator.orion-project.org/help/func_caustic.html) or a [few](http://rezonator.orion-project.org/help/func_caustic_mr.html) elements, astigmatism also taken into account. It is possible to compute beam size at any position inside the system. Automatic determination of the position and size of the waist at an element where it is, calculation of the radius of diffractive divergence, and other parameters of the [Gaussian beam](http://rezonator.orion-project.org/help/calc_gauss.html) are provided.
+
+- :new: :fire: **Custom functions** provide a powerful way to extend reZonator's capabilities by writing your own Python code to analyze optical schemas, perform specialized calculations, and visualize results in ways that suit your specific needs.
 
 - **Tuning:** the [adjustment]((http://rezonator.orion-project.org/help/adjust.html)) tool allows you to gradually change any parameter of any element — just like you rotate a screw of some mirror mount or a translating stage. Any results are instantly recalculated while the parameter value is changed.
 
