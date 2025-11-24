@@ -110,6 +110,7 @@ Open complete working examples ``custom_plot.rez`` and ``misalign.rez`` availabl
 
   - :doc:`py_api`
   - :doc:`plot_window`
+  - :doc:`custom_funcs`
   - :doc:`custom_script`
   - :doc:`custom_table`
   - :ref:`Example - Custom Caustic Function <py_example_custom_caustic>`

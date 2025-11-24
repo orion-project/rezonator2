@@ -101,6 +101,7 @@ Open complete working examples ``custom_func_aper_ratio.rez`` and ``misalign.rez
 
   - :doc:`py_api`
   - :doc:`table_window`
+  - :doc:`custom_funcs`
   - :doc:`custom_script`
   - :doc:`custom_plot`
   - :ref:`Example - Aperture ratio calculation <py_example_aper_ratio>`

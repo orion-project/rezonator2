@@ -39,3 +39,4 @@ There is an additional set of properties that vary depending on the element type
   elem_props_params
   elem_props_options
   elem_props_outline
+  custom_params

@@ -48,6 +48,7 @@ You can add custom parameters to elements through the :doc:`elem_props` dialog a
 .. seeAlso::
 
   - :doc:`py_api`
+  - :doc:`custom_funcs`
   - :doc:`custom_table`
   - :doc:`custom_plot`
   - :ref:`Example - Basic Ray Tracing<py_example_basic_ray_tracing>`

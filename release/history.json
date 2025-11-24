@@ -1,8 +1,8 @@
 {
   "history": [
     {
-      "version": "2.1.2",
-      "date": "",
+      "version": "2.2.0",
+      "date": "2025-11-24",
       "changes": [
         {
           "text": "Can create custom functions in Python: generic code, table function, plot function"

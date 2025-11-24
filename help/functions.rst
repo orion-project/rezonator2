@@ -25,6 +25,7 @@ A function is a procedure or an operations sequence yielding some data related t
   func_beamdata
   func_reprate
   func_misalign
+  custom_funcs
   custom_script
   custom_table
   custom_plot

@@ -298,6 +298,7 @@ See built-in examples to get more insight of how to use Python API for carrying 
 .. seeAlso::
 
   - :doc:`py_api`
+  - :doc:`custom_funcs`
   - :doc:`custom_script`
   - :doc:`custom_table`
   - :doc:`custom_plot`

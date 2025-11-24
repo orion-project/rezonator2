@@ -1,6 +1,7 @@
 #include "ElementPropsDialog.h"
 
 #include "../app/Appearance.h"
+#include "../app/HelpSystem.h"
 #include "../app/PersistentState.h"
 #include "../core/Element.h"
 #include "../core/Schema.h"
@@ -509,5 +510,5 @@ void ElementPropsDialog::restoreParamPresets()
 
 void ElementPropsDialog::showParamsHelp()
 {
-
+    Z::HelpSystem::topic("custom_params");
 }
