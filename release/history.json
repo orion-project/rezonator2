@@ -2,7 +2,7 @@
   "history": [
     {
       "version": "2.2.1",
-      "date": "2025-12-",
+      "date": "2025-12-20",
       "changes": [
         {
           "text": "Fix: can not change units of parameter driven by formula (https://github.com/orion-project/rezonator2/issues/95)"
