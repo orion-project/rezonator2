@@ -133,6 +133,10 @@ void ParamEditorEx::apply()
             _formula = new Z::Formula(_param);
             _formulas->put(_formula);
         }
+        // Take value from editor to apply changed units
+        // The value itself will be recalculated by formula
+        // in SI-units and then converted into that uits
+        _param->setValue(_tmpParam->value());
         _formula->setCode(_tmpFormula->code());
         _formula->assignDeps(_tmpFormula);
         _formula->calculate();
