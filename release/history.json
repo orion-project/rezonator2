@@ -9,6 +9,9 @@
         },
         {
           "text": "Fix: inf value of global param is not fully saved (https://github.com/orion-project/rezonator2/issues/94)"
+        },
+        {
+          "text": "Fix: caustic is not recalculated when another pump gets activated"
         }
       ]
     },

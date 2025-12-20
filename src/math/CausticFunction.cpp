@@ -100,8 +100,7 @@ void CausticFunction::calculate(CalculationMode calcMode)
 
 bool CausticFunction::prepareSinglePass(Element* ref)
 {
-    if (!_pump)
-        _pump = schema()->activePump();
+    _pump = schema()->activePump();
     if (!_pump)
     {
         setError(qApp->translate("Calc error",
