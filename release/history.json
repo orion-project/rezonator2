@@ -6,6 +6,9 @@
       "changes": [
         {
           "text": "Fix: can not change units of parameter driven by formula (https://github.com/orion-project/rezonator2/issues/95)"
+        },
+        {
+          "text": "Fix: inf value of global param is not fully saved (https://github.com/orion-project/rezonator2/issues/94)"
         }
       ]
     },

@@ -56,14 +56,14 @@ void SchemaWriterJson::writeGlobalParams(QJsonObject& root)
 {
     QJsonObject customParams;
     foreach (Z::Parameter *p, *_schema->globalParams())
-        customParams[p->alias()] = QJsonObject({
-            { "descr", p->description() },
-            { "dim", p->dim()->alias() },
-            { "value", p->value().value() },
-            { "unit", p->value().unit()->alias() },
-            { "expr", p->expr() },
-            { "error", p->error() },
-        });
+    {
+        auto paramJson = writeValue(p->value());
+        paramJson["descr"] = p->description();
+        paramJson["dim"] = p->dim()->alias();
+        paramJson["expr"] = p->expr();
+        paramJson["error"] = p->error();
+        customParams[p->alias()] = paramJson;
+    }
     root["custom_params"] = customParams;
 }
 
