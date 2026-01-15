@@ -332,6 +332,14 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     Z_USE_PYTHON
 )
 
+# Make all symbols available for dynamic linking on Linux.
+# This is required because we have Python statically linked into the app
+# so the app should export Python generic symbols to make them available
+# for standard Python modules loaded from lib-dynload/*.so
+if(UNIX AND NOT APPLE)
+    target_link_options(${PROJECT_NAME} PRIVATE -rdynamic)
+endif()
+
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(${PROJECT_NAME})
 endif()

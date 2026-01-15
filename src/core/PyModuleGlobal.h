@@ -88,6 +88,12 @@ PyObject* version(PyObject* Py_UNUSED(self), PyObject* Py_UNUSED(args))
     return PyUnicode_FromString(ver.constData());
 }
 
+PyObject* exe_dir(PyObject* Py_UNUSED(self), PyObject* Py_UNUSED(args))
+{
+    auto ver = qApp->applicationDirPath().toUtf8();
+    return PyUnicode_FromString(ver.constData());
+}
+
 int on_exec(PyObject *module)
 {
     CONST_FLOAT("C", Z::Const::LightSpeed)
@@ -112,6 +118,7 @@ int on_exec(PyObject *module)
 }
 
 PyMethodDef methods[] = {
+    { "exe_dir", exe_dir, METH_NOARGS, "Return application executable directory" },
     { "format", format, METH_O, "Format value into user display string" },
     { "plane_str", plane_str, METH_VARARGS, "Return work plane name" },
     { "print", (PyCFunction)print, METH_VARARGS | METH_KEYWORDS, "Print message" },

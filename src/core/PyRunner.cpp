@@ -38,20 +38,24 @@ PyRunner::PyRunner()
     PyConfig config;
     PyConfig_InitIsolatedConfig(&config);
 
-    QDir homeDir(qApp->applicationDirPath() + "/python");
-    if (!homeDir.exists()) {
+    // To test the dev env which are closer to the users' one
+    // create a standalone Python std lib nearby the executable
+    // using `release/prepare_python.py`
 #ifdef Q_OS_MAC
+    QDir homeDir(qApp->applicationDirPath() + "/python");
+    if (!homeDir.exists())
         homeDir = QDir(qApp->applicationDirPath() + "/../../../../vcpkg_installed/x64-osx");
 #endif
 #ifdef Q_OS_LINUX
+    QDir homeDir(qApp->applicationDirPath());
+    if (!homeDir.exists())
         homeDir = QDir(qApp->applicationDirPath() + "/../vcpkg_installed/x64-linux");
 #endif
 #ifdef Q_OS_WINDOWS
-        // To make the dev env to be close to the users' one
-        // place python312.zip and python312.dll to the bin dir (nearby the rezonator.exe)
-        //homeDir = QDir(qApp->applicationDirPath() + "/../vcpkg_installed/x64-windows/tools/python3");
+    QDir homeDir(qApp->applicationDirPath() + "/python");
+    if (!homeDir.exists())
+        homeDir = QDir(qApp->applicationDirPath() + "/../vcpkg_installed/x64-windows/tools/python3");
 #endif
-    }
 
     std::wstring homePath = homeDir.absolutePath().toStdWString();
     // +1 byte for zero-terminator. PyMem_RawCalloc initializes memory to zeros

@@ -11,6 +11,7 @@ bin/rezonator.qhc
 bin/assistant*
 bin/python*
 bin/*.dll
+bin/lib
 *.autosave
 *.user*
 *.exe

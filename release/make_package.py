@@ -2,6 +2,7 @@
 
 import glob
 from helpers import *
+from prepare_python import PYTHON_EXCLUDE_PATTERNS, prepare_python_lib
 
 navigate_to_project_dir()
 
@@ -26,69 +27,6 @@ recreate_dir_if_exists(REDIST_DIR)
 os.chdir(REDIST_DIR)
 
 package_name = PROJECT_NAME + '-' + version_str
-
-# Python modules to exclude from standard library (not needed for math calculations)
-PYTHON_EXCLUDE_PATTERNS = (
-  '__pycache__',     # Bytecode cache
-  '*.pyc',           # Compiled Python files
-  '__phello__',      # Test module
-  'test',            # Test suite
-  'tests',           # Additional tests
-  # GUI libraries
-  'tkinter', 'turtledemo', 'idlelib', 'turtle.py',
-  # Development/conversion tools
-  'lib2to3', 'unittest', 'pydoc_data', 'distutils', 'ensurepip', 'venv',
-  # Debugging/profiling
-  'pdb.py', 'profile.py', 'cProfile.py', 'pstats.py', 'trace.py', 
-  'timeit.py', 'tabnanny.py', 'symbol.py', 'pickletools.py',
-  # Async/concurrency
-  'asyncio', 'multiprocessing', 'concurrent', 'queue.py',
-  # Network protocols
-  'xmlrpc', 'wsgiref', 'email', 'html', 'http', 'urllib',
-  'webbrowser.py', 'socketserver.py', 'ftplib.py', 'poplib.py', 
-  'smtplib.py', 'telnetlib.py', 'imaplib.py', 'nntplib.py',
-  'cgi.py', 'cgitb.py', 'socket.py', 'ssl.py', 'ipaddress.py',
-  # Database
-  'sqlite3', 'dbm',
-  # Audio/Video
-  'wave.py', 'audioop.py', 'sndhdr.py', 'sunau.py', 'aifc.py', 
-  'chunk.py', 'colorsys.py',
-  # File formats
-  'tomllib', 'plistlib.py', 'netrc.py', 'mailbox.py', 'mailcap.py',
-  'mimetypes.py', 'uu.py', 'binhex.py', 'quopri.py', 'base64.py',
-  # XML processing
-  'xml',
-  # Terminal/system
-  'ctypes', 'curses', 'cmd.py', 'readline.py', 'rlcompleter.py',
-  'getpass.py', 'getopt.py', 'pty.py', 'tty.py', 'pipes.py', 'sched.py',
-  # System utilities
-  'importlib', 'logging', 'msilib', 'zoneinfo',
-  # Compression & Archives
-  'zipfile', 'tarfile.py', 'gzip.py', 'bz2.py', 'lzma.py', 'zipapp.py',
-  # Command-line & Argument Parsing
-  'argparse.py', 'optparse.py',
-  # Compilation & Bytecode
-  'py_compile.py', 'compileall.py',
-  # File Operations
-  'glob.py', 'pathlib.py', 'filecmp.py', 'fileinput.py',
-  # Security & Cryptography
-  'secrets.py', 'hmac.py', 'crypt.py',
-  # Development & Debugging
-  'doctest.py', 'pprint.py', 'inspect.py', 'dis.py', 
-  'ast.py', 'code.py', 'codeop.py', 'pydoc.py', 'pyclbr.py',
-  # Internationalization
-  'locale.py', 'gettext.py',
-  # System & Process
-  'selectors.py',
-  # Code Analysis
-  'modulefinder.py', 'symtable.py',
-  # Text Processing
-  'stringprep.py', 'difflib.py',
-  # Miscellaneous
-  'calendar.py', 'antigravity.py', 'this.py', '__hello__.py',
-  'bdb.py', 'graphlib.py', 'imghdr.py', 'runpy.py', 'shlex.py',
-  'tracemalloc.py', 'xdrlib.py'
-)
 
 ########################################################################
 #                             Windows
@@ -151,13 +89,7 @@ def make_package_for_linux():
   copy_file(f'../../release/{PROJECT_NAME}.desktop', 'usr/share/applications')
   shutil.copyfile('../../img/icon/main_2_256.png', f'usr/share/icons/hicolor/256x256/apps/{PROJECT_NAME}.png')
   
-  print_header('Copy Python files...')
-  python_src = '../../vcpkg_installed/x64-linux'
-  python_dst = 'usr/bin/python'
-  python_lib = python_dst + '/Lib'
-  shutil.copytree(python_src + '/lib/python3.12', python_lib, ignore=shutil.ignore_patterns(*PYTHON_EXCLUDE_PATTERNS))
-  #shutil.make_archive(python_dst + '/python312', 'zip', python_lib)
-  #shutil.rmtree(python_lib)
+  prepare_python_lib('./usr/bin')
 
   # There will be error 'Could not determine the path to the executable' otherwise
   execute('chmod +x usr/bin/' + PROJECT_EXE)

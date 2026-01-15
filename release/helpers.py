@@ -86,14 +86,20 @@ def execute(cmd, print_stdout = True, return_stdout = False, check_return_code =
     return stdout
 
 
-def navigate_to_project_dir():
-  curdir = os.path.dirname(os.path.realpath(__file__))
-  os.chdir(os.path.join(curdir, '..'))
-  if not os.path.isfile(PROJECT_FILE):
+def get_project_dir():
+  cur_dir = os.path.dirname(os.path.realpath(__file__))
+  prj_dir = os.path.join(cur_dir, '..')
+  prj_file = os.path.join(prj_dir, PROJECT_FILE)
+  if not os.path.isfile(prj_file):
     print_error_and_exit((
       'Project file {} not found in the current directory.\n' +
       'This script should be run from the project directory.'
     ).format(PROJECT_FILE))
+  return os.path.abspath(prj_dir)
+
+
+def navigate_to_project_dir():
+  os.chdir(get_project_dir())
 
 
 def check_qt_path(cmd = 'qmake -v', print_stdout = True, check_return_code = True):
