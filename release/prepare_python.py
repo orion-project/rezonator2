@@ -114,23 +114,29 @@ PYTHON_EXCLUDE_PATTERNS = (
   'tracemalloc.py', 'xdrlib.py'
 )
 
-def _prepare_python_lib_linux(target_dir):
-    target_dir = os.path.join(target_dir, 'lib/python3.12')
-    if os.path.exists(target_dir):
-        print(f"Target directory is already exists: {target_dir}")
-        return
-    print(f"Copy Python std library to {target_dir}")
-    src_dir = os.path.join(get_project_dir(), 'vcpkg_installed/x64-linux/lib/python3.12')
-    print(f"Copy Python std library from {src_dir}")
-    shutil.copytree(src_dir, target_dir, ignore=shutil.ignore_patterns(*PYTHON_EXCLUDE_PATTERNS))
-
-def prepare_python_lib(target_dir):
+def prepare_python_lib(bin_dir):
     print_header('Copy Python files...')
-    target_dir = os.path.abspath(target_dir)
-    if IS_LINUX:
-        _prepare_python_lib_linux(target_dir)
+    if IS_WINDOWS:
+        lib_dir = 'python\\Lib'
+        src_dir = 'vcpkg_installed/x64-windows/tools/python3/Lib'
+    elif IS_LINUX:
+        lib_dir = 'lib/python3.12'
+        src_dir = 'vcpkg_installed/x64-linux/lib/python3.12'
     else:
         raise NotImplementedError("OS is not supported")
+    bin_dir = os.path.abspath(bin_dir)
+    src_dir = os.path.join(get_project_dir(), src_dir)
+    lib_dir = os.path.join(bin_dir, lib_dir)
+    if os.path.exists(lib_dir):
+        print(f"Target directory is already exists: {lib_dir}")
+        return
+    print(f"Source dir: {src_dir}")
+    print(f"Target dir: {lib_dir}")
+    shutil.copytree(src_dir, lib_dir, ignore=shutil.ignore_patterns(*PYTHON_EXCLUDE_PATTERNS))
+    if IS_WINDOWS:
+        print('Pack Python files...')
+        shutil.make_archive(bin_dir + '\\python312', 'zip', lib_dir)
+        shutil.rmtree(bin_dir + '\\python')
 
 if __name__ == '__main__':
     navigate_to_project_dir()

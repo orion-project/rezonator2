@@ -37,7 +37,7 @@ def make_package_for_windows():
   print_header('Run windeployqt...')
   execute(f'windeployqt ..\\..\\bin\\{PROJECT_EXE} --dir . ' +
           '--no-translations --no-system-d3d-compiler --no-opengl-sw')
-  execute(f'windeployqt {qt_dir + "\\assistant.exe"} --dir . ' +
+  execute(f'windeployqt {os.path.join(qt_dir, "assistant.exe")} --dir . ' +
           '--no-translations --no-system-d3d-compiler --no-opengl-sw')
 
   print_header('Clean some excessive files...')
@@ -51,12 +51,7 @@ def make_package_for_windows():
   shutil.copytree('..\\..\\bin\\examples', 'examples')
   copy_files(qt_dir, ['assistant.exe'], '.')
   
-  print_header('Copy Python files...')
-  python_src = '..\\..\\vcpkg_installed\\x64-windows\\tools\\python3'
-  shutil.copytree(python_src + '\\Lib', 'python\\Lib', ignore=shutil.ignore_patterns(*PYTHON_EXCLUDE_PATTERNS))
-  shutil.make_archive('python312', 'zip', 'python\\Lib')
-  # copy_files(python_src + '\\DLLs', [], 'python\\DLLs', skip_non_exitent=True, create_dir=True)
-  shutil.rmtree('python')
+  prepare_python_lib('.')
   
   # It seems there is some bug in windeployqt.exe on Qt 5.15.2
   # (or something changed in the env becasue it worked on another machine before)

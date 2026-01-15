@@ -41,20 +41,25 @@ PyRunner::PyRunner()
     // To test the dev env which are closer to the users' one
     // create a standalone Python std lib nearby the executable
     // using `release/prepare_python.py`
+    QString binDir = qApp->applicationDirPath();
 #ifdef Q_OS_MAC
-    QDir homeDir(qApp->applicationDirPath() + "/python");
+    QDir homeDir(binDir + "/python");
     if (!homeDir.exists())
-        homeDir = QDir(qApp->applicationDirPath() + "/../../../../vcpkg_installed/x64-osx");
+        homeDir = QDir(binDir + "/../../../../vcpkg_installed/x64-osx");
 #endif
 #ifdef Q_OS_LINUX
-    QDir homeDir(qApp->applicationDirPath());
+    // Unpacked modules should be in `{binDir}/lib/python3.12`
+    QDir homeDir(binDir);
     if (!homeDir.exists())
-        homeDir = QDir(qApp->applicationDirPath() + "/../vcpkg_installed/x64-linux");
+        homeDir = QDir(binDir + "/../vcpkg_installed/x64-linux");
 #endif
 #ifdef Q_OS_WINDOWS
-    QDir homeDir(qApp->applicationDirPath() + "/python");
-    if (!homeDir.exists())
-        homeDir = QDir(qApp->applicationDirPath() + "/../vcpkg_installed/x64-windows/tools/python3");
+    // Zip-packed lib is still available via `PYTHONHOME={binDir}/python`
+    // So there either should be unpacked modules in `{binDir}/python/Lib`
+    // or packed modules in `{binDir}/python312.zip`
+    QDir homeDir(binDir + "/python");
+    if (!homeDir.exists() && !QFile::exists(binDir + "/python312.zip"))
+        homeDir = QDir(binDir + "/../vcpkg_installed/x64-windows/tools/python3");
 #endif
 
     std::wstring homePath = homeDir.absolutePath().toStdWString();

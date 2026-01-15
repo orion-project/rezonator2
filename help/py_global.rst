@@ -126,6 +126,32 @@ Get the application version string, e.g., "2.1.2".
 
 .. ###################################################################
 
+.. index:: single: exe_dir (Python)
+
+``exe_dir()``
+~~~~~~~~~~~~~
+
+Get the application executable directory path.
+
+Returns:
+
+- str - Full path to the directory containing the application executable
+
+This function is especially useful on Linux (where the path from which an AppImage is started differs from where it's actually running) and macOS (where resources are packed into app bundles). When accessing built-in application resources like example files, using ``getcwd() + "/examples"`` may fail, while ``Z.exe_dir() + "/examples"`` will work correctly.
+
+Example:
+
+.. code-block:: python
+
+    import rezonator as Z
+    import os
+
+    # Get path to built-in examples
+    examples_dir = os.path.join(Z.exe_dir(), 'examples')
+    Z.print('Examples directory:', examples_dir)
+
+.. ###################################################################
+
 .. index:: single: plane_str (Python)
 
 ``plane_str(plane)``
