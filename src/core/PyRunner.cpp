@@ -50,7 +50,7 @@ PyRunner::PyRunner()
 #ifdef Q_OS_LINUX
     // Unpacked modules should be in `{binDir}/lib/python3.12`
     QDir homeDir(binDir);
-    if (!homeDir.exists())
+    if (!QDir(binDir + "/lib/python3.12").exists())
         homeDir = QDir(binDir + "/../vcpkg_installed/x64-linux");
 #endif
 #ifdef Q_OS_WINDOWS
