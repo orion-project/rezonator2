@@ -5,6 +5,9 @@
       "date": "",
       "changes": [
         {
+          "text": "Fix: PYTHONHOME is not properly zero-terminated (https://github.com/orion-project/rezonator2/issues/96)"
+        },
+        {
           "text": "Fix: editing of custom function text does not set the Modified flag on schema"
         },
         {

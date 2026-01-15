@@ -47,12 +47,15 @@ PyRunner::PyRunner()
         homeDir = QDir(qApp->applicationDirPath() + "/../vcpkg_installed/x64-linux");
 #endif
 #ifdef Q_OS_WINDOWS
+        // To make the dev env to be close to the users' one
+        // place python312.zip and python312.dll to the bin dir (nearby the rezonator.exe)
         //homeDir = QDir(qApp->applicationDirPath() + "/../vcpkg_installed/x64-windows/tools/python3");
 #endif
     }
 
     std::wstring homePath = homeDir.absolutePath().toStdWString();
-    config.home = (wchar_t*)PyMem_RawCalloc(homePath.size(), sizeof(wchar_t));
+    // +1 byte for zero-terminator. PyMem_RawCalloc initializes memory to zeros
+    config.home = (wchar_t*)PyMem_RawCalloc(homePath.size() + 1, sizeof(wchar_t));
     if (!config.home) {
         qCritical() << "Unable to allocate memory for PYTHONHOME";
         initError = "Unable to allocate memory for PYTHONHOME";
