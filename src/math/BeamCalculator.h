@@ -6,6 +6,8 @@
 #include "RoundTripCalculator.h"
 #include "../core/CommonTypes.h"
 
+#include <optional>
+
 class Schema;
 
 class BeamCalculator
