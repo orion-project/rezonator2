@@ -129,7 +129,7 @@ def make_package_for_windows():
   print_header('Pack files to zip...')
   global package_name
   package_name = '{}-win-x{}.zip'.format(package_name, get_exe_bits(PROJECT_EXE))
-  #zip_dir('.', '..\\' + package_name)
+  zip_dir('.', '..\\' + package_name)
 
 
 ########################################################################

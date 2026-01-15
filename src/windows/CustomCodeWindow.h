@@ -43,6 +43,8 @@ private:
     std::optional<QString> _helpTopic;
 
     explicit CustomCodeWindow(Schema*);
+    
+    void modificationChanged(bool modified);
 };
 
 #endif // CUSTOM_CODE_WINDOW_H

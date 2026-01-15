@@ -38,6 +38,8 @@ CustomCodeWindow* CustomCodeWindow::create(Schema* owner, const QString &codeTem
 CustomCodeWindow::CustomCodeWindow(Schema *owner) : CodeEditorWindow(owner)
 {
     _moduleName = QString("customcode%1").arg(++__funcCount);
+    
+    connect(_editor, &QPlainTextEdit::modificationChanged, this, &CustomCodeWindow::modificationChanged);
 }
 
 void CustomCodeWindow::closeEvent(QCloseEvent* ce)
@@ -99,4 +101,10 @@ QString CustomCodeWindow::helpTopic() const
     if (_helpTopic)
         return *_helpTopic;
     return CustomFuncUtils::helpTopic(const_cast<CustomCodeWindow*>(this)->schema(), _editor->toPlainText(), _moduleName, HELP_TOPIC);
+}
+
+void CustomCodeWindow::modificationChanged(bool modified)
+{
+    if (modified && !schema()->modified())
+        schema()->markModified("Custom code changed");
 }

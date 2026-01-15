@@ -1,6 +1,18 @@
 {
   "history": [
     {
+      "version": "2.2.2",
+      "date": "",
+      "changes": [
+        {
+          "text": "Fix: editing of custom function text does not set the Modified flag on schema"
+        },
+        {
+          "text": "Fix: wrong printing of RoundTrip.matrix() method in the custom_func_simple example"
+        }
+      ]
+    },
+    {
       "version": "2.2.1",
       "date": "2025-12-20",
       "changes": [
