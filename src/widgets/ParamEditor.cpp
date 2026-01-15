@@ -573,7 +573,7 @@ ParamSpecEditor::ParamSpecEditor(Z::Parameter *param, const Options &opts) : QWi
     }
     
     auto layout = new QVBoxLayout(this);
-    layout->setMargin(0);
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(3);
     
     layout->addWidget(new QLabel(tr("Label")));

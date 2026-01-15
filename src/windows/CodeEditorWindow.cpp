@@ -8,6 +8,7 @@
 #include "helpers/OriWidgets.h"
 #include "widgets/OriCodeEditor.h"
 
+#include <QFile>
 #include <QSplitter>
 #include <QToolButton>
 

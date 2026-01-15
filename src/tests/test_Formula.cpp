@@ -183,7 +183,7 @@ TEST_CASE_METHOD(findDeps, QString code, QStringList expectedDeps)
     
     
     auto isDependOn = [&ignored, &tgt](Z::Parameter *which, const QString &on) {
-        return which == &ignored && on == &tgt.alias();
+        return which == &ignored && on == tgt.alias();
     };
 
     Formula f(&tgt);

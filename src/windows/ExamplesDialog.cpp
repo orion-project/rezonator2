@@ -41,7 +41,7 @@ ExamplesDialog::ExamplesDialog(): QSplitter()
     
     auto leftPanel = new QWidget;
     auto leftLayout = new QVBoxLayout(leftPanel);
-    leftLayout->setMargin(0);
+    leftLayout->setContentsMargins(0, 0, 0, 0);
     
     leftLayout->addWidget(_filterEdit);
     leftLayout->addWidget(_fileList);
