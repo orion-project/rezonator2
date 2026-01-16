@@ -591,6 +591,8 @@ StartWindow::StartWindow(QWidget *parent) : QWidget(parent)
     PersistentState::restoreWindowGeometry("start", this, {950, 700});
     
     Z::HelpSystem::instance()->checkUpdatesAuto();
+    
+    Z::Gui::applyStylesheet(this);
 }
 
 StartWindow::~StartWindow()

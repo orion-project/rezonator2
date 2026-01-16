@@ -1,5 +1,6 @@
 #include "HelpSystem.h"
 
+#include "../app/Appearance.h"
 #include "../app/AppSettings.h"
 #include "../core/Format.h"
 #include "../core/Protocol.h"
@@ -288,6 +289,7 @@ void HelpSystem::showAbout()
         makeLink(Z::Strs::sourcesUrl()),
     }).setMargin(12).setSpacing(0).useFor(w);
 
+    Z::Gui::applyStylesheet(w);
     w->exec();
 }
 

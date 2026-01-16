@@ -313,5 +313,18 @@ QSize toolbarIconSize()
     return AppSettings::instance().smallToolbarImages? QSize(16,16): QSize(24,24);
 }
 
+void applyStylesheet(QWidget *w)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    // Qt6 (checked 6.9, 6.10) has a bug (or a feature?)
+    // It does not apply styles by role (e.g.: #about_dlg QLabel[role=about_dlg])
+    // if the role was set after the stylesheet has been applied.
+    // Which is always true for any newly opened window or dialog
+    // when globally applied stylesheet is used (via app.setStyleSheet).
+    // So we have to explicitly re-apply stylesheet for such widgets.
+    w->setStyleSheet(qApp->styleSheet());
+#endif
+}
+
 } // namespace Gui
 } // namespace Z

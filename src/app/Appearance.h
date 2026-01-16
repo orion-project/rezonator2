@@ -94,6 +94,8 @@ void editAppStyleSheet();
 
 QSize toolbarIconSize();
 
+void applyStylesheet(QWidget*);
+
 } // namespace Gui
 } // namespace Z
 
