@@ -72,7 +72,7 @@ QFrame[ori_role=selectable_tile_content] {
 #about_dlg {
   background: url(:/style/about);
   min-width: 600;
-  min-height: 428;
+  min-height: 430;
 }
 #about_dlg QLabel[role=about_dlg] {
   windows:font-family: "Consolas";
@@ -85,14 +85,15 @@ QFrame[ori_role=selectable_tile_content] {
 #about_dlg #version_label {
   font-size: 45px;
   font-weight: bold;
-  margin-top: 155px;
-  margin-bottom: 0px;
+  margin-top: 30px;
+  margin-left: 0px;
 }
 #about_dlg #date_label {
   font-size: 20px;
-  margin-right: 8px;
-  margin-top: 0px;
-  color: silver;
+  margin-left: 10px;
+}
+#about_dlg #logo_label {
+  margin-left: 3px;
 }
 
 /************************************

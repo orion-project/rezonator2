@@ -323,7 +323,8 @@
     </qresource>
     <qresource prefix="/style">
         <file alias="app">app.qss</file>
-        <file alias="about">../img/about/about_1.png</file>
+        <file alias="logo">../img/about/logo.svg</file>
+        <file alias="about">../img/about/about_2_back.png</file>
         <file alias="spec-points">styles/spec-points.css</file>
         <file alias="check">../img/misc/check.svg</file>
     </qresource>

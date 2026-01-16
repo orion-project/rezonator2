@@ -259,6 +259,11 @@ void HelpSystem::showAbout()
         label->setProperty("role", "about_dlg");
         return label;
     };
+    
+    auto labelLogo = new QLabel;
+    labelLogo->setPixmap(QIcon(":/style/logo").pixmap(375, 105));
+    labelLogo->setObjectName("logo_label");
+    labelLogo->setProperty("role", "about_dlg");
 
     auto labelVersion = makeLabel("version_label", Z::Strs::appVersion());
     auto labelDate = makeLabel("date_label", BUILDDATE);
@@ -279,8 +284,9 @@ void HelpSystem::showAbout()
     };
 
     LayoutV({
-        LayoutH({Stretch(), labelVersion}),
-        LayoutH({Stretch(), labelDate}),
+        labelLogo,
+        labelVersion,
+        labelDate,
         Stretch(),
         labelQt,
         labelInfo,
