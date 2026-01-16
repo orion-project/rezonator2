@@ -40,7 +40,7 @@ void CodeEditorWindow::createActions()
 
     _actnRun = A_(tr("Run"), this, &CodeEditorWindow::run, ":/toolbar/start", Qt::Key_F9);
     _actnClearLog = A_(tr("Clear Log"), this, &CodeEditorWindow::clearLog, ":/toolbar/clear_log");
-    _actnSaveCustom = A_(tr("Save to Custom Library..."), this, &CodeEditorWindow::saveToLibrary, ":/toolbar/book_save");
+    _actnSaveCustom = A_(tr("Save to Custom Library..."), this, &CodeEditorWindow::saveToLibrary, ":/toolbar/book_arrow_down");
     
     #undef A_
 }

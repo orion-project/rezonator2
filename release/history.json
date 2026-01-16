@@ -5,6 +5,9 @@
       "date": "",
       "changes": [
         {
+          "text": "Can create custom functions in Python on Linux and macOS"
+        },
+        {
           "text": "Fix: PYTHONHOME is not properly zero-terminated (https://github.com/orion-project/rezonator2/issues/96)"
         },
         {
@@ -12,6 +15,9 @@
         },
         {
           "text": "Fix: wrong printing of RoundTrip.matrix() method in the custom_func_simple example"
+        },
+        {
+          "text": "Fix: missed icon for Save to Custom Library command"
         }
       ]
     },
@@ -35,7 +41,7 @@
       "date": "2025-11-24",
       "changes": [
         {
-          "text": "Can create custom functions in Python: generic code, table function, plot function"
+          "text": "Can create custom functions in Python: generic code, table function, plot function (Windows only)"
         },
         {
           "text": "Can add custom parameters for any element"
