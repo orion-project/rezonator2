@@ -6,7 +6,11 @@
 
 It's written by a professional programmer with many years of experience having a classical scientific background. Initially, it was done as a working tool for internal usage. So we know what we want from the tool and implement it as it would be convenient to use. Sure, different people have different understandings of what “convenience” means and different needs for features. So [suggestions and bug reports](https://github.com/orion-project/rezonator2/issues) are welcomed, and especially bug reports 🫣😀
 
+## Download
+
 See project's [Home page](http://rezonator.orion-project.org) or GitHub [Releases](https://github.com/orion-project/rezonator2/releases) page for binary packages for Windows, Linux, and macOS. See [build instructions](./docs/build.md) for building from source code.
+
+**Windows:** If you encounter an error about missing DLL files (such as `MSVCP140.dll`), you may need to install the Microsoft Visual C++ Redistributable packages. Download the latest version from the official [Microsoft page](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist).
 
 ## Motivation
 
@@ -32,7 +36,7 @@ Despite the number of good [examples](https://www.scilab.org), in the profession
 
 - **Parametric design:** [global parameters](http://rezonator.orion-project.org/help/params_window.html) can interconnect different elements; parameter values given by custom formulas allow you to construct a dynamic and parameterized system.
 
-- **And more:** other convenient and useful tools and functions are also available: [repetition rate](http://rezonator.orion-project.org/help/func_reprate.html), [beam parameters](http://rezonator.orion-project.org/help/func_beamdata.html) at all elements, misalignments of elements (*coming soon*), [“freezing”](http://rezonator.orion-project.org/help/func_freeze.html) results, full plot format customization, copying results to the clipboard, and more…
+- **And more:** other convenient and useful tools and functions are also available: [repetition rate](http://rezonator.orion-project.org/help/func_reprate.html), [beam parameters](http://rezonator.orion-project.org/help/func_beamdata.html) at all elements, misalignments of elements (via custom scripts), [“freezing”](http://rezonator.orion-project.org/help/func_freeze.html) results, full plot format customization, copying results to the clipboard, and more…
 
 ##
 
