@@ -111,7 +111,7 @@ def check_qt_path(cmd = 'qmake -v', print_stdout = True, check_return_code = Tru
     if IS_LINUX:
       return 'export PATH=/home/user/Qt/5.15.2/gcc_64/bin:$PATH'
     if IS_MACOS:
-      return 'export PATH=/Users/user/Qt/5.15.2/clang_64/bin:$PATH'
+      return 'export PATH=/Users/user/Qt/6.9.3/macos/bin:$PATH'
 
   try:
     execute(cmd,

@@ -34,11 +34,14 @@ vcpkg install
 
 **Ubuntu:** at least 22 (jammy) is required to be able to build Python.
 
+**macOS:** Qt 6.9.3 should be used to link Python to the app (see details below in the "Quirks" section) 
+
 When configuring project in QtCreator, add additional option in the CMake Initial Configuration tab and reconfigure. It must pointing to the installed vcpkg toolchain file location, e.g.:
 
 ```
 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=/home/user/vcpkg/scripts/buildsystems/vcpkg.cmake
 ```
+
 
 ### Qt quirks
 
@@ -78,11 +81,15 @@ These also mentioned in QCustomPlot [instructions](https://www.qcustomplot.com/i
 sudo apt-get install mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev
 ```
 
-**[macOS] Latest Qt for Sierra**
+**(obsolete) [macOS] Latest Qt for Sierra**
 
 Version Qt 5.12.10 is the latest of 5.* LTSs availablbe for Sierra (10.12).
 QtCreator 4.10.2 is the latest as well and must be downloaded and installed manually.
 Also 5.12.10 kit must be registered manually in that "obsolete" QtCreator.
+
+**[macOS] Latest Qt for Monterey**
+
+To provide wider compatibiliy, version 12 of macOS is used for compiling the app and building a redistributable dmg image. When using Qt 5.15.2, linking of Python libraries fails because of some inconsistence (?) in architecture names between Python and application object modules. So Qt 6.9.3 should be used, it is the latest of 6.* versions supporting macOS 12. The lastest Qt Creator supporting macOS 12 is [17.0.2](https://github.com/qt-creator/qt-creator/releases/tag/v17.0.2), should be installed separately from GitHub. Qt Maintenance Tool installs a newer version which is incompatible.
 
 ## Clone git repository
 

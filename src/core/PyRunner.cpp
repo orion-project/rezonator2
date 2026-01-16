@@ -43,8 +43,8 @@ PyRunner::PyRunner()
     // using `release/prepare_python.py`
     QString binDir = qApp->applicationDirPath();
 #ifdef Q_OS_MAC
-    QDir homeDir(binDir + "/python");
-    if (!homeDir.exists())
+    QDir homeDir(binDir);
+    if (!QDir(binDir + "/lib/python3.12").exists())
         homeDir = QDir(binDir + "/../../../../vcpkg_installed/x64-osx");
 #endif
 #ifdef Q_OS_LINUX

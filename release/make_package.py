@@ -2,7 +2,7 @@
 
 import glob
 from helpers import *
-from prepare_python import PYTHON_EXCLUDE_PATTERNS, prepare_python_lib
+from prepare_python import prepare_python_lib
 
 navigate_to_project_dir()
 
@@ -135,18 +135,12 @@ def make_package_for_macos():
   shutil.copytree('../../bin/' + PROJECT_EXE, image_exe)
 
   print_header('Run macdeployqt...')
-  execute('macdeployqt ' + image_exe)
+  execute('macdeployqt ' + image_exe + ' -appstore-compliant')
 
   print_header('Copy project files...')
   shutil.copytree('../../bin/examples', image_exe + '/Contents/MacOS/examples')
   
-  print_header('Copy Python files...')
-  python_src = '../../vcpkg_installed/x64-osx'
-  python_dst = image_exe + '/Contents/MacOS/python'
-  python_lib = python_dst + '/Lib'
-  shutil.copytree(python_src + '/lib/python3.12', python_lib, ignore=shutil.ignore_patterns(*PYTHON_EXCLUDE_PATTERNS))
-  #shutil.make_archive(python_dst + '/python312', 'zip', python_lib)
-  #shutil.rmtree(python_lib)
+  prepare_python_lib('./image')
 
   print_header('Processing Assistant...')
   shutil.copytree(find_qt_dir() + '/Assistant.app', 'Assistant.app')
@@ -176,7 +170,7 @@ def make_package_for_macos():
   if not os.path.isfile(installer_img):
     print('Installer image does not exist, creating...')
     # Can't use package_name as volname because then it needs to be recreated and adjusted every release
-    execute(f'hdiutil create {installer_img} -size 200m -format UDRW -ov -volname {PROJECT_NAME} -fs HFS+ -srcfolder {REDIST_DIR}/image')
+    execute(f'hdiutil create {installer_img} -size 400m -format UDRW -ov -volname {PROJECT_NAME} -fs HFS+ -srcfolder {REDIST_DIR}/image')
     execute(f'hdiutil attach {installer_img}')
     execute('sleep 1')
     execute(f'open {installer_volume}/')
