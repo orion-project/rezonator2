@@ -100,7 +100,8 @@ enum ElementOption {
     Element_Complex = 0x20,
 };
 
-struct ElementLayoutOptions {
+struct ElementLayoutOptions
+{
     bool showLabel = true;
 
     /// Draw an alternative version of the element.
@@ -109,6 +110,13 @@ struct ElementLayoutOptions {
     /// In general, how the option is processed depends on particular element type.
     /// @sa ElementLayoutOptionsView, @sa ElementLayoutFactory::getOptions()
     bool drawAlt = false;
+};
+
+enum class MatrixKind {
+    T,
+    S,
+    InvT,
+    InvS,
 };
 
 /**
@@ -179,15 +187,18 @@ public:
     QString displayLabelTitle();
 
     void calcMatrix(const char* reason);
+    
+    const Z::Matrix& M(MatrixKind kind) const { return _matrs.at(kind); }
+    const Z::Matrix* pM(MatrixKind kind) const { return &_matrs.at(kind); }
 
     const Z::Matrix& Mt() const { return _mt; }
     const Z::Matrix& Ms() const { return _ms; }
     const Z::Matrix* pMt() const { return &_mt; }
     const Z::Matrix* pMs() const { return &_ms; }
-    const Z::Matrix& Mt_inv() const { return _mt_inv; }
-    const Z::Matrix& Ms_inv() const { return _ms_inv; }
-    const Z::Matrix* pMt_inv() const { return &_mt_inv; }
-    const Z::Matrix* pMs_inv() const { return &_ms_inv; }
+    const Z::Matrix& Mt_inv() const { return M(MatrixKind::InvT); }
+    const Z::Matrix& Ms_inv() const { return M(MatrixKind::InvS); }
+    const Z::Matrix* pMt_inv() const { return pM(MatrixKind::InvT); }
+    const Z::Matrix* pMs_inv() const { return pM(MatrixKind::InvS); }
 
     bool disabled() const { return _disabled; }
     void setDisabled(bool value);
@@ -207,8 +218,8 @@ protected:
 
     ElementOwner* _owner = nullptr; ///< Pointer to an object who owns this element.
     QString _label, _title;
+    std::map<MatrixKind, Z::Matrix> _matrs;
     Z::Matrix _mt, _ms;
-    Z::Matrix _mt_inv, _ms_inv;
     int _id;
     bool _disabled = false;
     Z::Parameters _params;

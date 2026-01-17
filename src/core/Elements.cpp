@@ -64,8 +64,8 @@ void ElemEmptyRange::calcMatrixInternal()
 
     _mt.assign(1, lengthSI(), 0, 1);
     _ms = _mt;
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 
     Z_PERF_END
 }
@@ -95,8 +95,8 @@ void ElemMediumRange::calcMatrixInternal()
 {
     _mt.assign(1, lengthSI(), 0, 1);
     _ms = _mt;
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 void ElemMediumRange::calcSubmatrices()
@@ -120,8 +120,8 @@ void ElemPlate::calcMatrixInternal()
 {
     _mt.assign(1, lengthSI() / ior(), 0, 1);
     _ms = _mt;
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 void ElemPlate::calcSubmatrices()
@@ -168,8 +168,8 @@ void ElemCurveMirror::calcMatrixInternal()
 {
     _mt.assign(1, 0, -2.0 / radius() / cos(alpha()), 1);
     _ms.assign(1, 0, -2.0 / radius() * cos(alpha()), 1);
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -200,8 +200,8 @@ void ElemThinLens::calcMatrixInternal()
 {
     _mt.assign(1.0, 0.0, -1.0 / focus() / cos(alpha()), 1.0);
     _ms.assign(1.0, 0.0, -1.0 / focus() * cos(alpha()), 1.0);
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -212,8 +212,8 @@ void ElemCylinderLensT::calcMatrixInternal()
 {
     _mt.assign(1.0, 0.0, -1.0 / focus() / cos(alpha()), 1.0);
     _ms.unity();
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -224,8 +224,8 @@ void ElemCylinderLensS::calcMatrixInternal()
 {
     _mt.unity();
     _ms.assign(1.0, 0.0, -1.0 / focus() * cos(alpha()), 1.0);
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -253,8 +253,8 @@ void ElemTiltedCrystal::calcMatrixInternal()
 
     _mt.assign(1, L * n * SQR(cos(a)) / (SQR(n) - SQR(sin(a))), 0.0, 1.0);
     _ms.assign(1, L / n, 0, 1);
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 void ElemTiltedCrystal::calcSubmatrices()
@@ -289,8 +289,8 @@ void ElemTiltedPlate::calcMatrixInternal()
 
     _mt.assign(1, L * n*n * (1 - sin_a*sin_a) / sqrt(s*s*s), 0, 1);
     _ms.assign(1, L / sqrt(s), 0, 1);
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 void ElemTiltedPlate::calcSubmatrices()
@@ -333,8 +333,8 @@ void ElemBrewsterCrystal::calcMatrixInternal()
 
     _ms.assign(1, L / n, 0, 1);
     _mt.assign(1, _ms.B / SQR(n), 0, 1);
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 void ElemBrewsterCrystal::calcSubmatrices()
@@ -367,8 +367,8 @@ void ElemBrewsterPlate::calcMatrixInternal()
 
     _ms.assign(1, axisLengthSI() / n, 0, 1);
     _mt.assign(1, _ms.B / SQR(n), 0, 1);
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 void ElemBrewsterPlate::calcSubmatrices()
@@ -443,8 +443,8 @@ void ElemMatrix::calcMatrixInternal()
                _params.at(2)->value().toSi(), _params.at(3)->value().toSi());
     _ms.assign(_params.at(4)->value().toSi(), _params.at(5)->value().toSi(),
                _params.at(6)->value().toSi(), _params.at(7)->value().toSi());
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -482,8 +482,8 @@ void ElemMatrix1::calcMatrixInternal()
     _mt.assign(_params.at(0)->value().toSi(), _params.at(1)->value().toSi(),
                _params.at(2)->value().toSi(), _params.at(3)->value().toSi());
     _ms = _mt;
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -507,8 +507,8 @@ void ElemNormalInterface::calcMatrixInternal()
     _mt.assign(1, 0, 0, n1 / n2);
     _ms = _mt;
 
-    _mt_inv.assign(1, 0, 0, n2 / n1);
-    _ms_inv = _mt_inv;
+    _matrs[MatrixKind::InvT].assign(1, 0, 0, n2 / n1);
+    _matrs[MatrixKind::InvS] = _matrs[MatrixKind::InvT];
 }
 
 //------------------------------------------------------------------------------
@@ -523,8 +523,8 @@ void ElemBrewsterInterface::calcMatrixInternal()
     _mt.assign(n2/n1, 0, 0, (n1/n2)*(n1/n2));
     _ms.assign(1, 0, 0, n1/n2);
 
-    _mt_inv.assign(n1/n2, 0, 0, (n2/n1)*(n2/n1));
-    _ms_inv.assign(1, 0, 0, n2/n1);
+    _matrs[MatrixKind::InvT].assign(n1/n2, 0, 0, (n2/n1)*(n2/n1));
+    _matrs[MatrixKind::InvS].assign(1, 0, 0, n2/n1);
 }
 
 //------------------------------------------------------------------------------
@@ -558,8 +558,8 @@ void ElemTiltedInterface::calcMatrixInternal()
     _mt.assign(cos_b/cos_a, 0, 0, (n1/n2)*(cos_a/cos_b));
     _ms.assign(1, 0, 0, n1/n2);
 
-    _mt_inv.assign(cos_a/cos_b, 0, 0, (n2/n1)*(cos_b/cos_a));
-    _ms_inv.assign(1, 0, 0, n2/n1);
+    _matrs[MatrixKind::InvT].assign(cos_a/cos_b, 0, 0, (n2/n1)*(cos_b/cos_a));
+    _matrs[MatrixKind::InvS].assign(1, 0, 0, n2/n1);
 }
 
 //------------------------------------------------------------------------------
@@ -589,14 +589,14 @@ void ElemSphericalInterface::calcMatrixInternal()
 
     if (flat) {
         _mt.assign(1, 0, 0, n1/n2);
-        _mt_inv.assign(1, 0, 0, n2/n1);
+        _matrs[MatrixKind::InvT].assign(1, 0, 0, n2/n1);
     } else {
         _mt.assign(1, 0, (n1-n2)/R/n2, n1/n2);
-        _mt_inv.assign(1, 0, (n2-n1)/(-R)/n1, n2/n1);
+        _matrs[MatrixKind::InvT].assign(1, 0, (n2-n1)/(-R)/n1, n2/n1);
     }
     
     _ms = _mt;
-    _ms_inv = _mt_inv;
+    _matrs[MatrixKind::InvS] = _matrs[MatrixKind::InvT];
 }
 
 QList<QPair<Z::Parameter*, Z::Parameter*>> ElemSphericalInterface::flip()
@@ -690,9 +690,9 @@ void ElemThickLens::calcMatrixInternal()
     }
 
     _mt.assign(A, B, C, D);
-    _mt_inv.assign(A_inv, B_inv, C_inv, D_inv);
+    _matrs[MatrixKind::InvT].assign(A_inv, B_inv, C_inv, D_inv);
     _ms = _mt;
-    _ms_inv = _mt_inv;
+    _matrs[MatrixKind::InvS] = _matrs[MatrixKind::InvT];
 }
 
 void ElemThickLens::calcSubmatrices()
@@ -828,8 +828,8 @@ void ElemGrinLens::calcMatrixInternal() {
         _ms.assign(cosh(g*L), sinh(g*L)/n0/g, n0*g*sinh(g*L), cosh(g*L));
     } else _ms.assign(1, L/n0, 0, 1);
 
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 void ElemGrinLens::calcSubmatrices() {
@@ -920,8 +920,8 @@ void ElemGrinMedium::calcMatrixInternal() {
         _ms.assign(cosh(g*L), sinh(g*L)/g, g*sinh(g*L), cosh(g*L));
     } else _ms.assign(1, L, 0, 1);
 
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 void ElemGrinMedium::calcSubmatrices() {
@@ -1000,8 +1000,8 @@ void ElemThermoLens::calcMatrixInternal() {
 
     _ms = _mt;
 
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 void ElemThermoLens::calcSubmatrices() {
@@ -1062,8 +1062,8 @@ void ElemThermoMedium::calcMatrixInternal() {
     } else _mt.assign(NaN, NaN, NaN, NaN);
     _ms = _mt;
 
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 void ElemThermoMedium::calcSubmatrices() {
@@ -1196,8 +1196,8 @@ void ElemGaussAperture::calcMatrixInternal()
     _mt.assign(Z::Complex(1, 0), Z::Complex(0, 0), Z::Complex(0, -wl*a2t/_2PI), Z::Complex(1, 0));
     _ms.assign(Z::Complex(1, 0), Z::Complex(0, 0), Z::Complex(0, -wl*a2s/_2PI), Z::Complex(1, 0));
 
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -1261,8 +1261,8 @@ void ElemGaussApertureLens::calcMatrixInternal()
     _mt.assign(Z::Complex(1, 0), Z::Complex(0, 0), Z::Complex(-1.0/ft, -wl*a2t/_2PI), Z::Complex(1, 0));
     _ms.assign(Z::Complex(1, 0), Z::Complex(0, 0), Z::Complex(-1.0/fs, -wl*a2s/_2PI), Z::Complex(1, 0));
 
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -1334,8 +1334,8 @@ void ElemGaussDuctMedium::calcMatrixInternal() {
     const Z::Complex gs = sqrt(Z::Complex(n2s/n0, wl*a2s/n0/_2PI));
     _ms.assign(cos(gs*L), sin(gs*L)/gs, -gs*sin(gs*L), cos(gs*L));
 
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 void ElemGaussDuctMedium::calcSubmatrices() {
@@ -1426,8 +1426,8 @@ void ElemGaussDuctSlab::calcMatrixInternal() {
     const Z::Complex gs = sqrt(Z::Complex(n2s/n0, wl*a2s/n0/_2PI));
     _ms.assign(cos(gs*L), sin(gs*L)/gs/n0, -gs*n0*sin(gs*L), cos(gs*L));
 
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 void ElemGaussDuctSlab::calcSubmatrices() {

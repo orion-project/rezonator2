@@ -22,6 +22,9 @@ Element::Element()
 {
     static int id = 0;
     _id = ++id;
+    
+    _matrs[MatrixKind::InvT] = Z::Matrix();
+    _matrs[MatrixKind::InvS] = Z::Matrix();
 }
 
 Element::~Element()
@@ -114,8 +117,8 @@ void Element::calcMatrixInternal()
 {
     _mt.unity();
     _ms.unity();
-    _mt_inv.unity();
-    _ms_inv.unity();
+    _matrs[MatrixKind::InvT].unity();
+    _matrs[MatrixKind::InvS].unity();
 }
 
 void Element::setLabel(const QString& value)
@@ -247,8 +250,8 @@ void ElementDynamic::calcMatrixInternal()
 {
     _mt.unity();
     _ms.unity();
-    _mt_inv.unity();
-    _ms_inv.unity();
+    _matrs[MatrixKind::InvT].unity();
+    _matrs[MatrixKind::InvS].unity();
     _mt_dyn.unity();
     _ms_dyn.unity();
 }
