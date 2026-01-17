@@ -170,7 +170,8 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemNormalInterface, ElementInterface)
+DECLARE_ELEMENT(ElemNormalInterface, Element)
+    ElemNormalInterface();
     TYPE_NAME(qApp->translate("Elements", "Normal interface"))
     DEFAULT_LABEL("s")
     CALC_MATRIX
@@ -178,7 +179,8 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemBrewsterInterface, ElementInterface)
+DECLARE_ELEMENT(ElemBrewsterInterface, Element)
+    ElemBrewsterInterface();
     TYPE_NAME(qApp->translate("Elements", "Brewster interface"))
     DEFAULT_LABEL("s")
     CALC_MATRIX
@@ -186,7 +188,7 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemTiltedInterface, ElementInterface)
+DECLARE_ELEMENT(ElemTiltedInterface, Element)
     ElemTiltedInterface();
     TYPE_NAME(qApp->translate("Elements", "Tilted interface"))
     DEFAULT_LABEL("s")
@@ -198,7 +200,7 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemSphericalInterface, ElementInterface)
+DECLARE_ELEMENT(ElemSphericalInterface, Element)
     ElemSphericalInterface();
     TYPE_NAME(qApp->translate("Elements", "Spherical interface"))
     DEFAULT_LABEL("s")

@@ -136,7 +136,7 @@ protected:
     Element* prevElement(int index);
     Element* nextElement(int index);
     QString calculateAtElem(Element* elem, int index, IsTwoSides twoSides);
-    QString calculateAtInterface(ElementInterface* iface, int index);
+    QString calculateAtInterface(Element* iface, int index);
     QString calculateAtCrystal(ElementRange* range, int index);
     QString calculateAtPlane(Element* elem, int index);
     QString calculateInMiddle(Element* elem, Element *prevElem, Element *nextElem, IsTwoSides twoSides);

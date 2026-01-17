@@ -44,6 +44,26 @@
     _matrs[MatrixKind::DynT] = Z::Matrix(); \
     _matrs[MatrixKind::DynS] = Z::Matrix();
     
+// IOR parameters can't be directly assigned,
+// their values are taked from neighboub range elements
+// so they are invisible for parameter editors
+#define ELEM_PROLOG_INTERFACE\
+    _kind = ElementKind::Interface; \
+    _ior1 = new Z::Parameter(Z::Dims::none(), \
+                             QStringLiteral("n1"), QStringLiteral("n1"), \
+                             qApp->translate("Param", "Index of refraction (left medium)")); \
+    _ior2 = new Z::Parameter(Z::Dims::none(), \
+                             QStringLiteral("n2"), QStringLiteral("n2"), \
+                             qApp->translate("Param", "Index of refraction (right medium)")); \
+    _ior1->setVisible(false); \
+    _ior2->setVisible(false); \
+    _ior1->setValue(1); \
+    _ior2->setValue(1); \
+    addParam(_ior1); \
+    addParam(_ior2); \
+    setOption(Element_Asymmetrical); \
+    layoutOptions.showLabel = false; \
+    
 
 class Element;
 class PumpCalculator;
@@ -130,6 +150,7 @@ enum class MatrixKind {
 enum class ElementKind {
     Simple, ///< Generic element without particular treatment
     Dynamic, ///< Elements whose matrix depends on beam parameters
+    Interface, ///< Elements whose matrix depend on IOR of neighbour elements
 };
 
 struct DynamicElemCalcParams
@@ -151,6 +172,7 @@ struct DynamicElemCalcParams
 };
 
 struct ElemAsDynamic;
+struct ElemAsInterface;
 
 /**
     Base class for all optical elements.
@@ -249,6 +271,9 @@ public:
     ElementLayoutOptions layoutOptions;
     
     std::optional<ElemAsDynamic> asDynamic();
+    
+    bool isInterface() const { return _kind == ElementKind::Interface; }
+    std::optional<ElemAsInterface> asInterface();
 
 protected:
     Element();
@@ -282,6 +307,16 @@ protected:
     // Support for ElementKind::Dynamic functionality
     virtual void calcDynamicMatrix(const DynamicElemCalcParams& p) { Q_UNUSED(p) }
     friend class ElemAsDynamic;
+    
+    // Support for ElementKind::Interface functionality
+    // Elements representing an interface between two media.
+    // An interface element is characterized by two IORs - `ior1` and `ior2`.
+    // Where `ior1` is IOR of a medium at 'the left' of the interface (medium 1),
+    // and `ior2` is IOR of a medium at 'the right' of the interface (medium 2).
+    Z::Parameter *_ior1, *_ior2;
+    double ior1() const { return _ior1->value().value(); }
+    double ior2() const { return _ior2->value().value(); }
+    friend class ElemAsInterface;
 };
 
 typedef QList<Element*> Elements;
@@ -345,23 +380,17 @@ protected:
 
 //------------------------------------------------------------------------------
 /**
-    The base class for elements representing an interface between two media.
+    Accessor to an element representing an interface between two media.
     An interface element is characterized by two IORs - `ior1` and `ior2`.
     Where `ior1` is IOR of a medium at 'the left' of the interface (medium 1),
     and `ior2` is IOR of a medium at 'the right' of the interface (medium 2).
 */
-class ElementInterface : public Element
+struct ElemAsInterface
 {
-public:
-    Z::Parameter* paramIor1() const { return _ior1; }
-    Z::Parameter* paramIor2() const { return _ior2; }
-    double ior1() const { return _ior1->value().value(); }
-    double ior2() const { return _ior2->value().value(); }
+    Element *elem;
 
-protected:
-    ElementInterface();
-
-    Z::Parameter *_ior1, *_ior2;
+    Z::Parameter* paramIor1() const { return elem->_ior1; }
+    Z::Parameter* paramIor2() const { return elem->_ior2; }
 };
 
 //------------------------------------------------------------------------------
@@ -449,8 +478,6 @@ namespace Utils {
 
 inline bool isRange(const Element *elem) { return dynamic_cast<const ElementRange*>(elem); }
 inline ElementRange* asRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
-inline bool isInterface(Element *elem) { return dynamic_cast<ElementInterface*>(elem); }
-inline ElementInterface* asInterface(Element *elem) { return dynamic_cast<ElementInterface*>(elem); }
 
 void setElemWavelen(Element* elem, const Z::Value& lambda);
 

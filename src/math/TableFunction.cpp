@@ -269,7 +269,7 @@ QString TableFunction::calculateAtElem(Element *elem, int index, IsTwoSides twoS
     return QString("Invalid schema: Unknown trip-type %1.").arg(int(schema()->tripType()));
 }
 
-QString TableFunction::calculateAtInterface(ElementInterface* iface, int index)
+QString TableFunction::calculateAtInterface(Element* iface, int index)
 {
     auto prevElem = prevElement(index);
     if (!prevElem)

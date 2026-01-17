@@ -499,6 +499,11 @@ ElemPoint::ElemPoint() : Element()
 //                             ElemNormalInterface
 //------------------------------------------------------------------------------
 
+ElemNormalInterface::ElemNormalInterface() : Element()
+{
+    ELEM_PROLOG_INTERFACE
+}
+
 void ElemNormalInterface::calcMatrixInternal()
 {
     const double n1 = ior1();
@@ -514,6 +519,11 @@ void ElemNormalInterface::calcMatrixInternal()
 //------------------------------------------------------------------------------
 //                             ElemBrewsterInterface
 //------------------------------------------------------------------------------
+
+ElemBrewsterInterface::ElemBrewsterInterface() : Element()
+{
+    ELEM_PROLOG_INTERFACE
+}
 
 void ElemBrewsterInterface::calcMatrixInternal()
 {
@@ -531,8 +541,10 @@ void ElemBrewsterInterface::calcMatrixInternal()
 //                             ElemTiltedInterface
 //------------------------------------------------------------------------------
 
-ElemTiltedInterface::ElemTiltedInterface() : ElementInterface()
+ElemTiltedInterface::ElemTiltedInterface() : Element()
 {
+    ELEM_PROLOG_INTERFACE
+
     _alpha = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Alpha"), Z::Strs::alpha(),
                               qApp->translate("Param", "Angle of incidence"),
                               qApp->translate("Param", "Zero angle is normal incidence. "
@@ -566,8 +578,10 @@ void ElemTiltedInterface::calcMatrixInternal()
 //                             ElemSphericalInterface
 //------------------------------------------------------------------------------
 
-ElemSphericalInterface::ElemSphericalInterface() : ElementInterface()
+ElemSphericalInterface::ElemSphericalInterface() : Element()
 {
+    ELEM_PROLOG_INTERFACE
+
     _radius = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R"), QStringLiteral("R"),
                                qApp->translate("Param", "Radius of curvature"),
                                qApp->translate("Param", "Negative value means right-bulged surface, "

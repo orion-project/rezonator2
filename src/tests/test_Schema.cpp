@@ -523,7 +523,13 @@ namespace {
 DECLARE_ELEMENT(TestRange, ElementRange)
 DECLARE_ELEMENT_END
 
-DECLARE_ELEMENT(TestInterface, ElementInterface)
+DECLARE_ELEMENT(TestInterface, Element)
+    TestInterface() : Element()
+    {
+        ELEM_PROLOG_INTERFACE
+    }
+    double ior1() const { return _ior1->value().value(); }
+    double ior2() const { return _ior2->value().value(); }
 DECLARE_ELEMENT_END
 }
 

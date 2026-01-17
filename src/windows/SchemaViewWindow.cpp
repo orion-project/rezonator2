@@ -153,7 +153,7 @@ void SchemaViewWindow::appendElement(ElementsCatalogDialog::ElementSample sample
     if (prepareNewElement)
         prepareNewElement(elem);
 
-    if (!sample.isCustom && !Z::Utils::isInterface(elem))
+    if (!sample.isCustom && !elem->isInterface())
         // For customs, matrix calculated after param values copied from sample
         // For interfaces, matrix calculated after insertion into schema
         elem->calcMatrix("SchemaViewWindow: element added");

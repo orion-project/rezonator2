@@ -104,7 +104,7 @@ QStringList ElementsCatalog::getInterfaceTypeNames() const
 {
     QStringList res;
     for (auto elem : _elements)
-        if (Z::Utils::isInterface(elem))
+        if (elem->isInterface())
             res << elem->typeName();
     return res;
 }

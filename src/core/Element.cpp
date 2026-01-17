@@ -165,6 +165,13 @@ std::optional<ElemAsDynamic> Element::asDynamic()
     return {};
 }
 
+std::optional<ElemAsInterface> Element::asInterface()
+{
+    if (_kind == ElementKind::Interface)
+        return ElemAsInterface{ .elem = this };
+    return {};
+}
+
 //------------------------------------------------------------------------------
 //                               ElementRange
 //------------------------------------------------------------------------------
@@ -217,36 +224,6 @@ Z::Value ElementRange::axisLen() const
 {
     auto unit = paramLength()->value().unit();
     return {unit->fromSi(axisLengthSI()), unit};
-}
-
-//------------------------------------------------------------------------------
-//                            ElementInterface
-//------------------------------------------------------------------------------
-
-ElementInterface::ElementInterface()
-{
-    _ior1 = new Z::Parameter(Z::Dims::none(),
-                            QStringLiteral("n1"), QStringLiteral("n1"),
-                            qApp->translate("Param", "Index of refraction (left medium)"));
-    _ior2 = new Z::Parameter(Z::Dims::none(),
-                            QStringLiteral("n2"), QStringLiteral("n2"),
-                            qApp->translate("Param", "Index of refraction (right medium)"));
-
-    // These parameters can't be directly assigned,
-    // their values are taked from neighboub range elements
-    _ior1->setVisible(false);
-    _ior2->setVisible(false);
-
-    _ior1->setValue(1);
-    _ior2->setValue(2);
-
-    addParam(_ior1);
-    addParam(_ior2);
-
-    setOption(Element_Asymmetrical);
-    setOption(Element_ChangesWavefront);
-
-    layoutOptions.showLabel = false;
 }
 
 //------------------------------------------------------------------------------

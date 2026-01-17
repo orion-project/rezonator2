@@ -423,13 +423,13 @@ void Schema::relinkInterfaces()
     int elemCount = elems.size();
     for (int i = 0; i < elemCount; i++)
     {
-        ElementInterface *iface = dynamic_cast<ElementInterface*>(elems.at(i));
+        auto iface = elems.at(i)->asInterface();
         if (!iface) continue;
 
-        ElementEventsLocker eventLocker(iface, "Schema::relinkInterfaces");
-        ElementMatrixLocker matrixLocker(iface, "Schema::relinkInterfaces");
+        ElementEventsLocker eventLocker(iface->elem, "Schema::relinkInterfaces");
+        ElementMatrixLocker matrixLocker(iface->elem, "Schema::relinkInterfaces");
 
-        removeParamLinks(iface);
+        removeParamLinks(iface->elem);
 
         ElementRange *left = nullptr;
         ElementRange *right = nullptr;
