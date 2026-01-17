@@ -39,6 +39,12 @@
 #define AXIS_LEN\
     double axisLengthSI() const override;
 
+#define ELEM_PROLOG_DYNAMIC\
+    _kind = ElementKind::Dynamic; \
+    _matrs[MatrixKind::DynT] = Z::Matrix(); \
+    _matrs[MatrixKind::DynS] = Z::Matrix();
+    
+
 class Element;
 class PumpCalculator;
 
@@ -117,7 +123,34 @@ enum class MatrixKind {
     S,
     InvT,
     InvS,
+    DynT,
+    DynS,
 };
+
+enum class ElementKind {
+    Simple, ///< Generic element without particular treatment
+    Dynamic, ///< Elements whose matrix depends on beam parameters
+};
+
+struct DynamicElemCalcParams
+{
+    /// Matrices of part of the schema
+    /// from the first element up to this element (not including).
+    const Z::Matrix *Mt, *Ms;
+
+    /// Propagating beam calculators incapsulate input beam parameters
+    /// and can compute output beam parameters from ray matrix.
+    PumpCalculator *pumpCalc;
+
+    /// Schema wevelength in meters.
+    double schemaWavelenSi;
+
+    /// We don't care if this IOR differs from IOR of the current element (in the case it has IOR).
+    /// In this case the beam transition between elements is invalid, but it is up to user.
+    double prevElemIor;
+};
+
+struct ElemAsDynamic;
 
 /**
     Base class for all optical elements.
@@ -147,6 +180,8 @@ public:
     void setOwner(ElementOwner *owner);
 
     int id() const { return _id; }
+    
+    ElementKind kind() const { return _kind; }
 
     /// Function returns type of element, e.g. "ElemFlatMirror".
     /// Type is used for internal identification of element class like true class name.
@@ -212,11 +247,14 @@ public:
     virtual QList<QPair<Z::Parameter*, Z::Parameter*>> flip() { return {}; }
 
     ElementLayoutOptions layoutOptions;
+    
+    std::optional<ElemAsDynamic> asDynamic();
 
 protected:
     Element();
 
     ElementOwner* _owner = nullptr; ///< Pointer to an object who owns this element.
+    ElementKind _kind = ElementKind::Simple;
     QString _label, _title;
     std::map<MatrixKind, Z::Matrix> _matrs;
     Z::Matrix _mt, _ms;
@@ -240,6 +278,10 @@ protected:
     /// Support for ElementsCatalog's functionality
     friend class ElementsCatalog;
     virtual Element* create() const = 0;
+
+    // Support for ElementKind::Dynamic functionality
+    virtual void calcDynamicMatrix(const DynamicElemCalcParams& p) { Q_UNUSED(p) }
+    friend class ElemAsDynamic;
 };
 
 typedef QList<Element*> Elements;
@@ -323,41 +365,21 @@ protected:
 };
 
 //------------------------------------------------------------------------------
+
 /**
-    The base class for elements whose matrix depends on beam parameters.
+    Accessor to an element for interpreting it as a Dynamic element.
+    Dynamic element is an elements whose matrix depends on beam parameters.
 */
-class ElementDynamic : public Element
+struct ElemAsDynamic
 {
-public:
-    struct CalcParams
-    {
-        /// Matrices of part of the schema
-        /// from the first element up to this element (not including).
-        const Z::Matrix *Mt, *Ms;
+    Element *elem;
+  
+    void calcDynamicMatrix(const DynamicElemCalcParams& p) { elem->calcDynamicMatrix(p); }
 
-        /// Propagating beam calculators incapsulate input beam parameters
-        /// and can compute output beam parameters from ray matrix.
-        PumpCalculator *pumpCalc;
-
-        /// Schema wevelength in meters.
-        double schemaWavelenSi;
-
-        /// We don't care if this IOR differs from IOR of the current element (in the case it has IOR).
-        /// In this case the beam transition between elements is invalid, but it is up to user.
-        double prevElemIor;
-    };
-
-    virtual void calcDynamicMatrix(const CalcParams& p) { Q_UNUSED(p) }
-
-    const Z::Matrix& Mt_dyn() const { return _mt_dyn; }
-    const Z::Matrix& Ms_dyn() const { return _ms_dyn; }
-    const Z::Matrix* pMt_dyn() const { return &_mt_dyn; }
-    const Z::Matrix* pMs_dyn() const { return &_ms_dyn; }
-
-protected:
-    Z::Matrix _mt_dyn, _ms_dyn;
-
-    void calcMatrixInternal() override;
+    const Z::Matrix& Mt_dyn() const { return elem->M(MatrixKind::DynT); }
+    const Z::Matrix& Ms_dyn() const { return elem->M(MatrixKind::DynS); }
+    const Z::Matrix* pMt_dyn() const { return elem->pM(MatrixKind::DynT); }
+    const Z::Matrix* pMs_dyn() const { return elem->pM(MatrixKind::DynS); }
 };
 
 //------------------------------------------------------------------------------

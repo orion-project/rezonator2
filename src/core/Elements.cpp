@@ -1087,8 +1087,10 @@ void ElemThermoMedium::calcSubmatrices() {
 //                             ElemAxiconMirror
 //------------------------------------------------------------------------------
 
-ElemAxiconMirror::ElemAxiconMirror() : ElementDynamic()
+ElemAxiconMirror::ElemAxiconMirror() : Element()
 {
+    ELEM_PROLOG_DYNAMIC
+
     _theta = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Theta"), Z::Strs::theta(),
                               qApp->translate("Param", "Axicon angle"));
     _alpha = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Alpha"), Z::Strs::alpha(),
@@ -1104,7 +1106,7 @@ ElemAxiconMirror::ElemAxiconMirror() : ElementDynamic()
     setOption(Element_ChangesWavefront);
 }
 
-void ElemAxiconMirror::calcDynamicMatrix(const CalcParams& p)
+void ElemAxiconMirror::calcDynamicMatrix(const DynamicElemCalcParams& p)
 {
     auto beamT = p.pumpCalc->calcT(*p.Mt, p.prevElemIor);
     auto beamS = p.pumpCalc->calcS(*p.Ms, p.prevElemIor);
@@ -1112,16 +1114,18 @@ void ElemAxiconMirror::calcDynamicMatrix(const CalcParams& p)
     auto cosA = cos(alpha());
     auto tmp = 2 * theta();
 
-    _mt_dyn.assign(1, 0, -tmp / qAbs(beamT.beamRadius) / cosA, 1);
-    _ms_dyn.assign(1, 0, -tmp / qAbs(beamS.beamRadius) * cosA, 1);
+    _matrs[MatrixKind::DynT].assign(1, 0, -tmp / qAbs(beamT.beamRadius) / cosA, 1);
+    _matrs[MatrixKind::DynS].assign(1, 0, -tmp / qAbs(beamS.beamRadius) * cosA, 1);
 }
 
 //------------------------------------------------------------------------------
 //                             ElemAxiconLens
 //------------------------------------------------------------------------------
 
-ElemAxiconLens::ElemAxiconLens() : ElementDynamic()
+ElemAxiconLens::ElemAxiconLens() : Element()
 {
+    ELEM_PROLOG_DYNAMIC
+
     _theta = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Theta"), Z::Strs::theta(),
                               qApp->translate("Param", "Axicon angle"));
     _alpha = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Alpha"), Z::Strs::alpha(),
@@ -1142,7 +1146,7 @@ ElemAxiconLens::ElemAxiconLens() : ElementDynamic()
     setOption(Element_ChangesWavefront);
 }
 
-void ElemAxiconLens::calcDynamicMatrix(const CalcParams& p)
+void ElemAxiconLens::calcDynamicMatrix(const DynamicElemCalcParams& p)
 {
     auto beamT = p.pumpCalc->calcT(*p.Mt, p.prevElemIor);
     auto beamS = p.pumpCalc->calcS(*p.Ms, p.prevElemIor);
@@ -1150,8 +1154,8 @@ void ElemAxiconLens::calcDynamicMatrix(const CalcParams& p)
     auto cosA = cos(alpha());
     auto tmp = asin(sin(theta()) * ior()) - theta();
 
-    _mt_dyn.assign(1, 0, -tmp / qAbs(beamT.beamRadius) / cosA, 1);
-    _ms_dyn.assign(1, 0, -tmp / qAbs(beamS.beamRadius) * cosA, 1);
+    _matrs[MatrixKind::DynT].assign(1, 0, -tmp / qAbs(beamT.beamRadius) / cosA, 1);
+    _matrs[MatrixKind::DynS].assign(1, 0, -tmp / qAbs(beamS.beamRadius) * cosA, 1);
 }
 
 //------------------------------------------------------------------------------

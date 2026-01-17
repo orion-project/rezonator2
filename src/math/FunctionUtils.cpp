@@ -12,13 +12,13 @@ void prepareDynamicElements(Schema* schema, Element* stopElem, PumpCalculator* p
     {
         auto elem = elems.at(i);
         if (elem == stopElem) break;
-        auto dynamic = dynamic_cast<ElementDynamic*>(elem);
+        auto dynamic = elem->asDynamic();
         if (!dynamic) continue;
 
         if (i == 0)
         {
             Z::Matrix unity;
-            ElementDynamic::CalcParams p;
+            DynamicElemCalcParams p;
             p.Mt = &unity;
             p.Ms = &unity;
             p.pumpCalc = pumpCalc;
@@ -32,7 +32,7 @@ void prepareDynamicElements(Schema* schema, Element* stopElem, PumpCalculator* p
             RoundTripCalculator calc(schema, prevElem);
             calc.calcRoundTrip();
             calc.multMatrix("global::prepareDynamicElements");
-            ElementDynamic::CalcParams p;
+            DynamicElemCalcParams p;
             p.Mt = calc.pMt();
             p.Ms = calc.pMs();
             p.pumpCalc = pumpCalc;

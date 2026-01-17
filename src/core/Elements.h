@@ -286,11 +286,11 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemAxiconMirror, ElementDynamic)
+DECLARE_ELEMENT(ElemAxiconMirror, Element)
     ElemAxiconMirror();
     TYPE_NAME(qApp->translate("Elements", "Axicon mirror"))
     DEFAULT_LABEL("XM")
-    void calcDynamicMatrix(const CalcParams& p) override;
+    void calcDynamicMatrix(const DynamicElemCalcParams& p) override;
     double theta() const { return _theta->value().toSi(); }
     double alpha() const { return _alpha->value().toSi(); }
 private:
@@ -299,11 +299,11 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemAxiconLens, ElementDynamic)
+DECLARE_ELEMENT(ElemAxiconLens, Element)
     ElemAxiconLens();
     TYPE_NAME(qApp->translate("Elements", "Axicon lens"))
     DEFAULT_LABEL("XL")
-    void calcDynamicMatrix(const CalcParams& p) override;
+    void calcDynamicMatrix(const DynamicElemCalcParams& p) override;
     double theta() const { return _theta->value().toSi(); }
     double alpha() const { return _alpha->value().toSi(); }
     double ior() const { return _ior->value().value(); }

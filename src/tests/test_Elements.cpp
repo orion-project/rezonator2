@@ -24,6 +24,16 @@ namespace ElementsTests {
 #define ASSERT_RAW_PARAM(param, value)\
     ASSERT_NEAR_DBL(elem->param(), value, 1e-7)
 
+#define ASSERT_RAW_MATRIX(m, a, b, c, d)\
+    ASSERT_NEAR_DBL(m.A.real(), a, 1e-7)\
+    ASSERT_NEAR_DBL(m.B.real(), b, 1e-7)\
+    ASSERT_NEAR_DBL(m.C.real(), c, 1e-7)\
+    ASSERT_NEAR_DBL(m.D.real(), d, 1e-7)\
+    ASSERT_EQ_DBL(m.A.imag(), 0)\
+    ASSERT_EQ_DBL(m.B.imag(), 0)\
+    ASSERT_EQ_DBL(m.C.imag(), 0)\
+    ASSERT_EQ_DBL(m.D.imag(), 0)
+
 #define ASSERT_MATRIX(ts, a, b, c, d)\
     ASSERT_NEAR_DBL(elem->M##ts().A.real(), a, 1e-7)\
     ASSERT_NEAR_DBL(elem->M##ts().B.real(), b, 1e-7)\
@@ -893,15 +903,16 @@ TEST_METHOD(AxiconMirror)
     pump.distance()->setValue(0);
 
     PumpCalculator pumpCalc(&pump, 0);
-    ElementDynamic::CalcParams p;
+    DynamicElemCalcParams p;
     Z::Matrix unity;
     p.pumpCalc = &pumpCalc;
     p.Mt = &unity;
     p.Ms = &unity;
-    elem->calcDynamicMatrix(p);
+    auto d = elem->asDynamic();
+    d->calcDynamicMatrix(p);
 
-    ASSERT_MATRIX(t_dyn, 1.0000000, 0.0000000, -17.7799605, 1.0000000)
-    ASSERT_MATRIX(s_dyn, 1.0000000, 0.0000000, -15.7049075, 1.0000000)
+    ASSERT_RAW_MATRIX(d->Mt_dyn(), 1.0000000, 0.0000000, -17.7799605, 1.0000000)
+    ASSERT_RAW_MATRIX(d->Ms_dyn(), 1.0000000, 0.0000000, -15.7049075, 1.0000000)
     ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
     ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }
@@ -920,15 +931,16 @@ TEST_METHOD(AxiconLens)
     pump.distance()->setValue(0);
 
     PumpCalculator pumpCalc(&pump, 0);
-    ElementDynamic::CalcParams p;
+    DynamicElemCalcParams p;
     Z::Matrix unity;
     p.pumpCalc = &pumpCalc;
     p.Mt = &unity;
     p.Ms = &unity;
-    elem->calcDynamicMatrix(p);
+    auto d = elem->asDynamic();
+    d->calcDynamicMatrix(p);
 
-    ASSERT_MATRIX(t_dyn, 1.0000000, 0.0000000, -2.4942520, 1.0000000)
-    ASSERT_MATRIX(s_dyn, 1.0000000, 0.0000000, -2.2317667, 1.0000000)
+    ASSERT_RAW_MATRIX(d->Mt_dyn(), 1.0000000, 0.0000000, -2.4942520, 1.0000000)
+    ASSERT_RAW_MATRIX(d->Ms_dyn(), 1.0000000, 0.0000000, -2.2317667, 1.0000000)
     ASSERT_EQ_MATRIX(elem->Mt_inv(), elem->Mt())
     ASSERT_EQ_MATRIX(elem->Ms_inv(), elem->Ms())
 }

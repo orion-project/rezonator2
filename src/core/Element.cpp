@@ -117,8 +117,8 @@ void Element::calcMatrixInternal()
 {
     _mt.unity();
     _ms.unity();
-    _matrs[MatrixKind::InvT].unity();
-    _matrs[MatrixKind::InvS].unity();
+    for (auto it = _matrs.begin(); it != _matrs.end(); it++)
+        it->second.unity();
 }
 
 void Element::setLabel(const QString& value)
@@ -156,6 +156,13 @@ QString Element::failReason() const
         if (p->failed())
             return qApp->tr("Parameter %1 failed: %2").arg(p->displayLabel(), p->error());
     return QString();
+}
+
+std::optional<ElemAsDynamic> Element::asDynamic()
+{
+    if (_kind == ElementKind::Dynamic)
+        return ElemAsDynamic{ .elem = this };
+    return {};
 }
 
 //------------------------------------------------------------------------------
@@ -240,20 +247,6 @@ ElementInterface::ElementInterface()
     setOption(Element_ChangesWavefront);
 
     layoutOptions.showLabel = false;
-}
-
-//------------------------------------------------------------------------------
-//                                ElementDynamic
-//------------------------------------------------------------------------------
-
-void ElementDynamic::calcMatrixInternal()
-{
-    _mt.unity();
-    _ms.unity();
-    _matrs[MatrixKind::InvT].unity();
-    _matrs[MatrixKind::InvS].unity();
-    _mt_dyn.unity();
-    _ms_dyn.unity();
 }
 
 //------------------------------------------------------------------------------

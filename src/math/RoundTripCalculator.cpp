@@ -176,7 +176,7 @@ void RoundTripCalculator::collectMatricesSP()
     {
         const auto& item = _roundTrip.at(i);
         _matrixInfo << MatrixInfo{.owner = item.element, .kind = MatrixInfo::WHOLE};
-        auto dynamicElem = dynamic_cast<ElementDynamic*>(item.element);
+        auto dynamicElem = item.element->asDynamic();
         if (dynamicElem)
         {
             _matrsT << dynamicElem->pMt_dyn();
