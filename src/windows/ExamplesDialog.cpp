@@ -24,6 +24,13 @@
 ExamplesDialog::ExamplesDialog(): QSplitter()
 {
     _examplesDir = qApp->applicationDirPath() % "/examples";
+#ifdef Q_OS_MAC
+    if (!QDir(_examplesDir).exists())
+    {
+        // Look near the application bundle, it is for development mode
+        _examplesDir = QDir(qApp->applicationDirPath() % "/../../../examples").absolutePath();
+    }
+#endif
 
     _fileList = new QListWidget;
     _fileList->setAlternatingRowColors(true);
@@ -140,15 +147,6 @@ void ExamplesDialog::loadExamples()
     _fileList->clear();
 
     QStringList exampleFiles = QDir(_examplesDir).entryList(QDir::Files, QDir::Name);
-#ifdef Q_OS_MAC
-    if (exampleFiles.isEmpty())
-    {
-        // Look near the application bundle, it is for development mode
-        QString examplesDir = qApp->applicationDirPath() % "/../../../examples";
-        examplesDir = QDir(examplesDir).absolutePath();
-        exampleFiles = QDir(examplesDir).entryList(QDir::Files, QDir::Name);
-    }
-#endif
 
     auto root = PersistentState::load("examples");
     bool changed = false;
