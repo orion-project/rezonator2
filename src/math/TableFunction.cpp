@@ -138,7 +138,7 @@ void TableFunction::calculate()
             continue;
         }
 
-        CHECK_ERR(calculateAtCrystal(range, i))
+        CHECK_ERR(calculateAtCrystal(range->elem, i))
     }
 
     #undef CHECK_ERR
@@ -296,7 +296,7 @@ QString TableFunction::calculateAtInterface(Element* iface, int index)
     }
     else
     {
-        ElementRange* prevRange = Z::Utils::asSpace(prevElem);
+        Element* prevRange = Z::Utils::asSpace(prevElem);
         if (!prevRange) prevRange = Z::Utils::asMedium(prevElem);
         if (!prevRange)
             return QString(
@@ -326,7 +326,7 @@ QString TableFunction::calculateAtInterface(Element* iface, int index)
         }
     }
 
-    ElementRange* nextRange = Z::Utils::asSpace(nextElem);
+    Element* nextRange = Z::Utils::asSpace(nextElem);
     if (!nextRange) nextRange = Z::Utils::asMedium(nextElem);
     if (!nextRange)
         return QString(
@@ -338,7 +338,7 @@ QString TableFunction::calculateAtInterface(Element* iface, int index)
     return "";
 }
 
-QString TableFunction::calculateAtCrystal(ElementRange* range, int index)
+QString TableFunction::calculateAtCrystal(Element* range, int index)
 {
     auto prevElem = prevElement(index);
     if (!prevElem)
@@ -364,11 +364,11 @@ QString TableFunction::calculateAtCrystal(ElementRange* range, int index)
         }
     }
     else
-        calculateAt(CalcElem(prevElem), ResultElem(range, ResultPosition::LEFT_OUTSIDE));
+        calculateAt(CalcElem::Elem(prevElem), ResultElem(range, ResultPosition::LEFT_OUTSIDE));
     calculateAt(CalcElem::RangeBeg(range), ResultElem(range, ResultPosition::LEFT_INSIDE));
     calculateAt(CalcElem::RangeMid(range), ResultElem(range, ResultPosition::MIDDLE));
     calculateAt(CalcElem::RangeEnd(range), ResultElem(range, ResultPosition::RIGHT_INSIDE));
-    calculateAt(CalcElem(range), ResultElem(range, ResultPosition::RIGHT_OUTSIDE));
+    calculateAt(CalcElem::Elem(range), ResultElem(range, ResultPosition::RIGHT_OUTSIDE));
     return "";
 }
 
@@ -403,8 +403,8 @@ QString TableFunction::calculateInMiddle(Element* elem, Element* prevElem, Eleme
 
     if (twoSides)
     {
-        auto prevRange = Z::Utils::asRange(prevElem);
-        auto calcElem = prevRange ? CalcElem::RangeEnd(prevRange) : CalcElem(prevElem);
+        auto prevRange = prevElem->asRange();
+        auto calcElem = prevRange ? CalcElem::RangeEnd(prevRange->elem) : CalcElem(prevElem);
         calculateAt(calcElem, ResultElem(elem, ResultPosition::LEFT));
         calculateAt(CalcElem(elem), ResultElem(elem, ResultPosition::RIGHT));
     }
@@ -415,18 +415,24 @@ QString TableFunction::calculateInMiddle(Element* elem, Element* prevElem, Eleme
 
 void TableFunction::calculateAt(const CalcElem &calcElem, const ResultElem &resultElem, OptionalIor overrideIor)
 {
-    if (calcElem.range)
+    double ior = 1;
+
+    if (calcElem.subrangeOpt != CalcElem::SubrangeOpt::NONE)
     {
+        auto range = calcElem.ref->asRange();
+        ior = range->ior();
         if (calcElem.subrangeOpt == CalcElem::SubrangeOpt::END)
-            calcElem.range->setSubRangeSI(calcElem.range->axisLengthSI());
+            range->setSubRangeSI(range->axisLengthSI());
         else if (calcElem.subrangeOpt == CalcElem::SubrangeOpt::MID)
-            calcElem.range->setSubRangeSI(calcElem.range->axisLengthSI()/2.0);
-        else
-            calcElem.range->setSubRangeSI(calcElem.subrange);
+            range->setSubRangeSI(range->axisLengthSI()/2.0);
+        else if (calcElem.subrangeOpt == CalcElem::SubrangeOpt::BEG)
+            range->setSubRangeSI(0);
+        else if (calcElem.subrange)
+            range->setSubRangeSI(*calcElem.subrange);
     }
     
-    _beamCalc->calcRoundTrip(calcElem.ref(), calcElem.range, "TableFunction::calculateAt");
-    _beamCalc->setIor(overrideIor ? *overrideIor : (calcElem.range ? calcElem.range->ior() : 1));
+    _beamCalc->calcRoundTrip(calcElem.ref, calcElem.ref, "TableFunction::calculateAt");
+    _beamCalc->setIor(overrideIor ? *overrideIor : ior);
 
     Result res;
     res.element = resultElem.elem;

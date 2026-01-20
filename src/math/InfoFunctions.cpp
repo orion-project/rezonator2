@@ -165,7 +165,7 @@ InfoFuncMatrixRT::InfoFuncMatrixRT(Schema *schema, Element *elem)
     a.isChecked = [this](){ return _showElems; };
     _actions << a;
 
-    auto range = Z::Utils::asRange(elem);
+    auto range = elem->asRange();
     if (range)
     {
         InfoFuncAction act;
@@ -185,7 +185,7 @@ FunctionBase::FunctionState InfoFuncMatrixRT::elementDeleting(Element *elem)
 
 QString InfoFuncMatrixRT::calculateInternal()
 {
-    auto range = Z::Utils::asRange(_element);
+    auto range = _element->asRange();
     bool useOffset = range && _useRefOffset;
 
     RoundTripCalculator c(_schema, _element);
@@ -216,7 +216,7 @@ QString InfoFuncMatrixRT::calculateInternal()
 
 void InfoFuncMatrixRT::setRefOffset()
 {
-    auto range = Z::Utils::asRange(_element);
+    auto range = _element->asRange();
 
     auto takeWhole = new QRadioButton(qApp->translate("InfoFuncMatrixRT", "Take whole element"));
     auto useOffset = new QRadioButton(qApp->translate("InfoFuncMatrixRT", "Use offset inside element"));
@@ -256,7 +256,7 @@ QString InfoFuncMatrixRT::format(RoundTripCalculator *c, bool showElems)
 
     if (c->splitRange())
     {
-        auto range = Z::Utils::asRange(c->reference());
+        auto range = c->reference()->asRange();
         if (range)
             stream << " (offset inside: " << range->subRangeLf().displayStr() << ")";
     }
@@ -299,13 +299,13 @@ QString InfoFuncMatrixRT::format(RoundTripCalculator *c, bool showElems)
 
             if (mi.kind == mi.LEFT_HALF)
             {
-                auto range = Z::Utils::asRange(mi.owner);
+                auto range = mi.owner->asRange();
                 if (range)
                     stream << " (left part: " << range->subRangeLf().displayStr() << ")";
             }
             else if (mi.kind == mi.RIGHT_HALF)
             {
-                auto range = Z::Utils::asRange(mi.owner);
+                auto range = mi.owner->asRange();
                 if (range)
                     stream << " (right part: " << range->subRangeRt().displayStr() << ")";
             }
@@ -384,8 +384,8 @@ QString InfoFuncRepetitionRate::calculateInternal()
     QStringList parts;
     for (auto elem : schema()->elements())
     {
-        auto range = Z::Utils::asRange(elem);
-        if (range && !range->disabled())
+        auto range = elem->asRange();
+        if (range && !elem->disabled())
         {
             count++;
             L += range->opticalPathSI();
@@ -397,7 +397,7 @@ QString InfoFuncRepetitionRate::calculateInternal()
                 count++; // when n != 1 then the sum should be printed even if it is the only element
             }
             parts += QString::fromLatin1("<b>%1</b>%2<font color=gray><i>(%3)</i></font>")
-                .arg(Z::format(range->axisLengthSI()), mult_ior, range->displayLabel());
+                .arg(Z::format(range->axisLengthSI()), mult_ior, elem->displayLabel());
         }
     }
 

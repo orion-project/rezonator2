@@ -158,6 +158,13 @@ QString Element::failReason() const
     return QString();
 }
 
+ElemAsRange Element::asRange()
+{
+    if (_kind == ElementKind::Range)
+        return ElemAsRangeImpl{ .elem = this };
+    return {};
+}
+
 std::optional<ElemAsDynamic> Element::asDynamic()
 {
     if (_kind == ElementKind::Dynamic)
@@ -173,30 +180,10 @@ std::optional<ElemAsInterface> Element::asInterface()
 }
 
 //------------------------------------------------------------------------------
-//                               ElementRange
+//                             ElemAsRangeImpl
 //------------------------------------------------------------------------------
 
-ElementRange::ElementRange()
-{
-    _length =  new Z::Parameter(Z::Dims::linear(),
-                                QStringLiteral("L"), QStringLiteral("L"),
-                                qApp->translate("Param", "Length"));
-    _ior = new Z::Parameter(Z::Dims::none(),
-                            QStringLiteral("n"), QStringLiteral("n"),
-                            qApp->translate("Param", "Index of refraction"));
-
-    // It is internal parameter by default,
-    // and should be explicitly revealed by derived elements
-    _ior->setVisible(false);
-
-    _length->setValue(100_mm);
-    _ior->setValue(1);
-
-    addParam(_length);
-    addParam(_ior);
-}
-
-void ElementRange::setSubRange(const Z::Value& value)
+void ElemAsRangeImpl::setSubRange(const Z::Value& value)
 {
     double v = value.toSi();
     if (v < 0) v = 0;
@@ -208,19 +195,19 @@ void ElementRange::setSubRange(const Z::Value& value)
     setSubRangeSI(v);
 }
 
-Z::Value ElementRange::subRangeLf() const
+Z::Value ElemAsRangeImpl::subRangeLf() const
 {
     auto unit = paramLength()->value().unit();
     return {unit->fromSi(subRangeSI()), unit};
 }
 
-Z::Value ElementRange::subRangeRt() const
+Z::Value ElemAsRangeImpl::subRangeRt() const
 {
     auto unit = paramLength()->value().unit();
     return {unit->fromSi(axisLengthSI() - subRangeSI()), unit};
 }
 
-Z::Value ElementRange::axisLen() const
+Z::Value ElemAsRangeImpl::axisLen() const
 {
     auto unit = paramLength()->value().unit();
     return {unit->fromSi(axisLengthSI()), unit};

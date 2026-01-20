@@ -35,42 +35,42 @@ PyObject* label(Self *self, PyObject *Py_UNUSED(args))
 
 PyObject* length(Self *self, PyObject *Py_UNUSED(args))
 {
-    if (auto range = Z::Utils::asRange(self->elem); range)
+    if (auto range = self->elem->asRange(); range)
         return PyFloat_FromDouble(range->lengthSI());
     Py_RETURN_NONE;
 }
 
 PyObject* axial_length(Self *self, PyObject *Py_UNUSED(args))
 {
-    if (auto range = Z::Utils::asRange(self->elem); range)
+    if (auto range = self->elem->asRange(); range)
         return PyFloat_FromDouble(range->axisLengthSI());
     Py_RETURN_NONE;
 }
 
 PyObject* optical_path(Self *self, PyObject *Py_UNUSED(args))
 {
-    if (auto range = Z::Utils::asRange(self->elem); range)
+    if (auto range = self->elem->asRange(); range)
         return PyFloat_FromDouble(range->opticalPathSI());
     Py_RETURN_NONE;
 }
 
 PyObject* ior(Self *self, PyObject *Py_UNUSED(args))
 {
-    if (auto range = Z::Utils::asRange(self->elem); range)
+    if (auto range = self->elem->asRange(); range)
         return PyFloat_FromDouble(range->ior());
     Py_RETURN_NONE;
 }
 
 PyObject* offset(Self *self, PyObject *Py_UNUSED(args))
 {
-    if (auto range = Z::Utils::asRange(self->elem); range)
+    if (auto range = self->elem->asRange(); range)
         return PyFloat_FromDouble(range->subRangeSI());
     Py_RETURN_NONE;
 }
 
 int set_offset(Self *self, PyObject *arg)
 {
-    auto range = Z::Utils::asRange(self->elem);
+    auto range = self->elem->asRange();
     CHECK_I(range, AssertionError, "element does not have length parameter")
     double v = 0;
     if (PyFloat_Check(arg))

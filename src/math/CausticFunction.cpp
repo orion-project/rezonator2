@@ -15,7 +15,7 @@
 Z::VariableRange CausticFunction::givenRange()
 {
     auto range = arg()->range;
-    auto elem = Z::Utils::asRange(arg()->element);
+    auto elem = arg()->element->asRange();
     range.stop = Z::Value(elem->axisLengthSI(), Z::Units::m());
     return range;
 }
@@ -24,7 +24,7 @@ void CausticFunction::calculate(CalculationMode calcMode)
 {
     if (!checkArgElem()) return;
 
-    auto elem = Z::Utils::asRange(arg()->element);
+    auto elem = arg()->element->asRange();
     if (!elem)
     {
         setError("CausticFunction.arg.element is not range");
@@ -35,12 +35,12 @@ void CausticFunction::calculate(CalculationMode calcMode)
 
     auto range = givenRange().plottingRange();
     if (!prepareResults(range)) return;
-    if (!prepareCalculator(elem, true)) return;
+    if (!prepareCalculator(elem->elem, true)) return;
 
     bool isResonator = _schema->isResonator();
     bool isPrepared = isResonator
             ? prepareResonator()
-            : prepareSinglePass(elem);
+            : prepareSinglePass(elem->elem);
     if (!isPrepared) return;
 
     if (calcMode != CALC_PLOT) return;
@@ -146,7 +146,7 @@ Z::PointTS CausticFunction::calculateResonator() const
 Z::PointTS CausticFunction::calculateAt(const Z::Value &arg)
 {
     double argSI = arg.toSi();
-    auto elem = Z::Utils::asRange(this->arg()->element);
+    auto elem = this->arg()->element->asRange();
     double x = qMin(qMax(argSI, 0.0), elem->axisLengthSI());
     elem->setSubRangeSI(x);
     _calc->multMatrix("CausticFunction::calculateAt");
@@ -208,7 +208,7 @@ QString CausticFunction::calculateSpecPoints(const SpecPointParams &params)
 
     bool isResonator = _schema->isResonator();
     bool isGauss = isResonator || _pumpCalc->isGauss();
-    auto elem = Z::Utils::asRange(arg()->element);
+    auto elem = arg()->element->asRange();
     auto range = givenRange();
     double startX = range.start.toSi();
     double stopX = range.stop.toSi();

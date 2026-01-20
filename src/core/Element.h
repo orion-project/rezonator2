@@ -39,6 +39,26 @@
 #define AXIS_LEN\
     double axisLengthSI() const override;
 
+// IOR is internal parameter by default,
+// and should be explicitly revealed by derived elements
+#define ELEM_PROLOG_RANGE\
+    _kind = ElementKind::Range; \
+    _matrs[MatrixKind::T1] = Z::Matrix(); \
+    _matrs[MatrixKind::S1] = Z::Matrix(); \
+    _matrs[MatrixKind::T2] = Z::Matrix(); \
+    _matrs[MatrixKind::S2] = Z::Matrix(); \
+    _length =  new Z::Parameter(Z::Dims::linear(), \
+                                QStringLiteral("L"), QStringLiteral("L"), \
+                                qApp->translate("Param", "Length")); \
+    _ior = new Z::Parameter(Z::Dims::none(), \
+                            QStringLiteral("n"), QStringLiteral("n"), \
+                            qApp->translate("Param", "Index of refraction")); \
+    _length->setValue(100_mm); \
+    _ior->setVisible(false); \
+    _ior->setValue(1); \
+    addParam(_length); \
+    addParam(_ior);
+
 #define ELEM_PROLOG_DYNAMIC\
     _kind = ElementKind::Dynamic; \
     _matrs[MatrixKind::DynT] = Z::Matrix(); \
@@ -145,10 +165,15 @@ enum class MatrixKind {
     InvS,
     DynT,
     DynS,
+    T1,
+    S1,
+    T2,
+    S2,
 };
 
 enum class ElementKind {
     Simple, ///< Generic element without particular treatment
+    Range, ///< Elements having length and optional IOR
     Dynamic, ///< Elements whose matrix depends on beam parameters
     Interface, ///< Elements whose matrix depend on IOR of neighbour elements
 };
@@ -171,6 +196,8 @@ struct DynamicElemCalcParams
     double prevElemIor;
 };
 
+struct ElemAsRangeImpl;
+using ElemAsRange = std::optional<ElemAsRangeImpl>;
 struct ElemAsDynamic;
 struct ElemAsInterface;
 
@@ -270,6 +297,9 @@ public:
 
     ElementLayoutOptions layoutOptions;
     
+    bool isRange() const { return _kind == ElementKind::Range; }
+    ElemAsRange asRange();
+    
     std::optional<ElemAsDynamic> asDynamic();
     
     bool isInterface() const { return _kind == ElementKind::Interface; }
@@ -303,6 +333,23 @@ protected:
     /// Support for ElementsCatalog's functionality
     friend class ElementsCatalog;
     virtual Element* create() const = 0;
+    
+    // Support for ElementKind::Range functionality
+    Z::Parameter *_length, *_ior;
+    double _subRangeSI;
+    double lengthSI() const { return _length->value().toSi(); }
+    double ior() const { return _ior->value().value(); }
+    /// Unlike crystals or rods (e.g. ElemBrewsterCrystal, ElemTiltedCrystal),
+    /// in tilted plates (e.g. ElemBrewsterPlate, ElemTiltedPlate),
+    /// a value of the Length parameter is different
+    /// from the beam's path it travels inside the plate.
+    /// The function should account the plate's angle
+    /// and return a geometrical distance between the beam's
+    /// input and output points at the plate's edges.
+    virtual double axisLengthSI() const { return lengthSI(); }
+    virtual void calcSubmatrices() {}
+    double opticalPathSI() const { return axisLengthSI()* ior(); }
+    friend class ElemAsRangeImpl;
 
     // Support for ElementKind::Dynamic functionality
     virtual void calcDynamicMatrix(const DynamicElemCalcParams& p) { Q_UNUSED(p) }
@@ -326,56 +373,38 @@ Q_DECLARE_METATYPE(Element*);
 
 //------------------------------------------------------------------------------
 /**
-    The base class for elements having length and optional IOR.
+    Accessor for elements having length and optional IOR.
 */
-class ElementRange : public Element
+struct ElemAsRangeImpl
 {
-public:
-    void setSubRangeSI(double value) { _subRangeSI = value; calcSubmatrices(); }
+    Element *elem;
+    
+    void setSubRangeSI(double value) { elem->_subRangeSI = value; elem->calcSubmatrices(); }
     void setSubRange(const Z::Value& value);
-    double subRangeSI() const { return _subRangeSI; }
+    double subRangeSI() const { return elem->_subRangeSI; }
     Z::Value subRangeLf() const;
     Z::Value subRangeRt() const;
 
-    const Z::Matrix& Mt1() const { return _mt1; }
-    const Z::Matrix& Ms1() const { return _ms1; }
-    const Z::Matrix& Mt2() const { return _mt2; }
-    const Z::Matrix& Ms2() const { return _ms2; }
-    const Z::Matrix* pMt1() const { return &_mt1; }
-    const Z::Matrix* pMs1() const { return &_ms1; }
-    const Z::Matrix* pMt2() const { return &_mt2; }
-    const Z::Matrix* pMs2() const { return &_ms2; }
+    const Z::Matrix& Mt1() const { return elem->M(MatrixKind::T1); }
+    const Z::Matrix& Ms1() const { return elem->M(MatrixKind::S1); }
+    const Z::Matrix& Mt2() const { return elem->M(MatrixKind::T2); }
+    const Z::Matrix& Ms2() const { return elem->M(MatrixKind::S2); }
+    const Z::Matrix* pMt1() const { return elem->pM(MatrixKind::T1); }
+    const Z::Matrix* pMs1() const { return elem->pM(MatrixKind::S1); }
+    const Z::Matrix* pMt2() const { return elem->pM(MatrixKind::T2); }
+    const Z::Matrix* pMs2() const { return elem->pM(MatrixKind::S2); }
+    
+    double axisLengthSI() const { return elem->axisLengthSI(); }
+    Z::Parameter* paramLength() const { return elem->_length; }
+    Z::Parameter* paramIor() const { return elem->_ior; }
+    double lengthSI() const { return elem->lengthSI(); }
+    double ior() const { return elem->ior(); }
 
-    Z::Parameter* paramLength() const { return _length; }
-    Z::Parameter* paramIor() const { return _ior; }
-    double lengthSI() const { return _length->value().toSi(); }
-    double ior() const { return _ior->value().value(); }
-
-    /// Unlike crystals or rods (e.g. ElemBrewsterCrystal, ElemTiltedCrystal),
-    /// in tilted plates (e.g. ElemBrewsterPlate, ElemTiltedPlate),
-    /// a value of the Length parameter is different
-    /// from the beam's path it travels inside the plate.
-    /// The function should account the plate's angle
-    /// and return a geometrical distance between the beam's
-    /// input and output points at the plate's edges.
-    virtual double axisLengthSI() const { return lengthSI(); }
-
-    /// Returns element's axial length (@a axisLengthSI())
+    /// Returns element's axial length (@a Element::axisLengthSI())
     /// as a Z::Value with unit that is used for the Length parameter.
     Z::Value axisLen() const;
-    
-    virtual double opticalPathSI() const { return axisLengthSI()* ior(); }
 
-protected:
-    ElementRange();
-
-    Z::Matrix _mt1, _mt2;
-    Z::Matrix _ms1, _ms2;
-    Z::Parameter *_length;
-    Z::Parameter *_ior;
-    double _subRangeSI;
-
-    virtual void calcSubmatrices() {}
+    double opticalPathSI() const { return elem->opticalPathSI(); }
 };
 
 //------------------------------------------------------------------------------
@@ -475,9 +504,6 @@ private:
 
 namespace Z {
 namespace Utils {
-
-inline bool isRange(const Element *elem) { return dynamic_cast<const ElementRange*>(elem); }
-inline ElementRange* asRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
 
 void setElemWavelen(Element* elem, const Z::Value& lambda);
 

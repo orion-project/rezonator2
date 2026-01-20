@@ -76,13 +76,6 @@ struct PlotPosition
     Value offset = 0;
 };
 
-namespace Utils {
-
-/// The function returns the stop value of the range according to axis length of a range element.
-Value getRangeStop(ElementRange *element);
-
-} // namespace Utils
-
 } // namespace Z
 
 #endif // VARIABLE_H

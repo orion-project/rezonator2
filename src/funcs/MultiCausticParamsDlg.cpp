@@ -59,7 +59,7 @@ void MultiCausticParamsDlg::populate(const QVector<Z::Variable>& vars)
         if (!hasRange)
         {
             Z::VariableRange range;
-            range.stop = Z::Utils::getRangeStop(Z::Utils::asRange(elem));
+            range.stop = elem->asRange()->axisLen();
             range.start = Z::Value(0, range.stop.unit());
             range.step = range.stop / 100.0;
             range.useStep = false;
@@ -86,7 +86,7 @@ void MultiCausticParamsDlg::collect()
     {
         Z::Variable var;
         var.element = elem;
-        var.parameter = Z::Utils::asRange(elem)->paramLength();
+        var.parameter = elem->asRange()->paramLength();
         var.range = _elemRanges[elem];
         _result.append(var);
     }

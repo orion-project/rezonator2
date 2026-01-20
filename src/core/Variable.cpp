@@ -102,15 +102,4 @@ QString Variable::str() const
 
 //------------------------------------------------------------------------------
 
-namespace Utils {
-
-Value getRangeStop(ElementRange *element)
-{
-    auto unit = element->paramLength()->value().unit();
-    return Value(unit->fromSi(element->axisLengthSI()), unit);
-}
-
-} // namespace Utils
-
-
 } // namespace Z

@@ -121,7 +121,7 @@ BeamVariationWindow::BeamVariationWindow(Schema *schema)
 
     _plot->putTextVarY("{place}", tr("Target element (with offset)"), [this]{
         auto pos = function()->pos();
-        auto range = Z::Utils::asRange(pos->element);
+        auto range = pos->element->asRange();
         if (range) {
             auto offset = pos->offset;
             if (offset.unit() == UNIT(percent))

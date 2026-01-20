@@ -114,13 +114,13 @@ void RoundTripCalculator::collectMatrices()
     int i = 0;
     int c = _roundTrip.size();
 
-    ElementRange *range = nullptr;
+    ElemAsRange range;
     if (_splitRange)
-        range = Z::Utils::asRange(_reference);
+        range = _reference->asRange();
     // part of the range from current point to the next element
     if (range)
     {
-        _matrixInfo << MatrixInfo{.owner = range, .kind = MatrixInfo::LEFT_HALF};
+        _matrixInfo << MatrixInfo{.owner = range->elem, .kind = MatrixInfo::LEFT_HALF};
         _matrsT << range->pMt1();
         _matrsS << range->pMs1();
         i++;
@@ -149,7 +149,7 @@ void RoundTripCalculator::collectMatrices()
     // remaining part of the range under investigation
     if (range)
     {
-        _matrixInfo << MatrixInfo{.owner = range, .kind = MatrixInfo::RIGHT_HALF};
+        _matrixInfo << MatrixInfo{.owner = range->elem, .kind = MatrixInfo::RIGHT_HALF};
         _matrsT << range->pMt2();
         _matrsS << range->pMs2();
     }
@@ -162,10 +162,10 @@ void RoundTripCalculator::collectMatricesSP()
     // part of range from current point to next element
     if (_splitRange && i < c)
     {
-        auto range = Z::Utils::asRange(_roundTrip.at(i).element);
+        auto range = _roundTrip.at(i).element->asRange();
         if (range)
         {
-            _matrixInfo << MatrixInfo{.owner = range, .kind = MatrixInfo::LEFT_HALF};
+            _matrixInfo << MatrixInfo{.owner = range->elem, .kind = MatrixInfo::LEFT_HALF};
             _matrsT << range->pMt1();
             _matrsS << range->pMs1();
             i++;

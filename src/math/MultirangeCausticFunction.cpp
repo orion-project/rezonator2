@@ -126,8 +126,8 @@ Z::PointTS MultirangeCausticFunction::calculateAt(const Z::Value &arg)
     {
         if (func->arg()->element->disabled())
             continue;
-        auto elem = Z::Utils::asRange(func->arg()->element);
-        double L = elem->axisLengthSI();
+        auto range = func->arg()->element->asRange();
+        double L = range->axisLengthSI();
         double newRemainingL = remainingL - L;
         if (newRemainingL <= 0)
             return func->calculateAt(Z::Value(remainingL, Z::Units::m()));

@@ -11,7 +11,11 @@ namespace RoundTripCalculatorTests {
 
 namespace  {
 DECLARE_ELEMENT(TestElem, Element) DECLARE_ELEMENT_END
-DECLARE_ELEMENT(TestElemRange, ElementRange) DECLARE_ELEMENT_END
+DECLARE_ELEMENT(TestElemRange, Element)
+    TestElemRange(): Element() {
+        ELEM_PROLOG_RANGE
+    }
+DECLARE_ELEMENT_END
 }
 
 static const int EL_COUNT = 4;
@@ -278,42 +282,42 @@ namespace RoundTripEndMatrices_RangeSplit {
 
 TEST_CASE_METHOD(rt_matrs_sw_rr, TripType tripType, int refIndex)
 {
-    ElementRange *refElem = new TestElemRange;
+    Element *refElem = new TestElemRange;
     TestData d(tripType, refIndex, refElem);
 
     d.calc->calcRoundTrip(true);
     ASSERT_EQ_INT(d.calc->matrsT().size(), d.calc->roundTrip().size()+1)
     ASSERT_EQ_INT(d.calc->matrsS().size(), d.calc->roundTrip().size()+1)
-    ASSERT_EQ_PTR(d.calc->matrsT().first(), refElem->pMt1())
-    ASSERT_EQ_PTR(d.calc->matrsS().first(), refElem->pMs1())
-    ASSERT_EQ_PTR(d.calc->matrsT().last(), refElem->pMt2())
-    ASSERT_EQ_PTR(d.calc->matrsS().last(), refElem->pMs2())
+    ASSERT_EQ_PTR(d.calc->matrsT().first(), refElem->asRange()->pMt1())
+    ASSERT_EQ_PTR(d.calc->matrsS().first(), refElem->asRange()->pMs1())
+    ASSERT_EQ_PTR(d.calc->matrsT().last(), refElem->asRange()->pMt2())
+    ASSERT_EQ_PTR(d.calc->matrsS().last(), refElem->asRange()->pMs2())
 }
 
 TEST_CASE_METHOD(rt_matrs_sp, int refIndex)
 {
-    ElementRange *refElem = new TestElemRange;
+    Element *refElem = new TestElemRange;
     TestData d(SP, refIndex, refElem);
 
     d.calc->calcRoundTrip(true);
     ASSERT_EQ_INT(d.calc->matrsT().size(), d.calc->roundTrip().size())
     ASSERT_EQ_INT(d.calc->matrsS().size(), d.calc->roundTrip().size())
-    ASSERT_EQ_PTR(d.calc->matrsT().first(), refElem->pMt1())
-    ASSERT_EQ_PTR(d.calc->matrsS().first(), refElem->pMs1())
+    ASSERT_EQ_PTR(d.calc->matrsT().first(), refElem->asRange()->pMt1())
+    ASSERT_EQ_PTR(d.calc->matrsS().first(), refElem->asRange()->pMs1())
     ASSERT_EQ_PTR(d.calc->matrsT().last(), d.calc->roundTrip().last()->pMt())
     ASSERT_EQ_PTR(d.calc->matrsS().last(), d.calc->roundTrip().last()->pMs())
 }
 
 TEST_CASE_METHOD(rt_matrs_sp_beg, int refIndex)
 {
-    ElementRange *refElem = new TestElemRange;
+    Element *refElem = new TestElemRange;
     TestData d(SP, refIndex, refElem);
 
     d.calc->calcRoundTrip(true);
     ASSERT_EQ_INT(d.calc->matrsT().size(), 1)
     ASSERT_EQ_INT(d.calc->matrsS().size(), 1)
-    ASSERT_EQ_PTR(d.calc->matrsT().first(), refElem->pMt1())
-    ASSERT_EQ_PTR(d.calc->matrsS().first(), refElem->pMs1())
+    ASSERT_EQ_PTR(d.calc->matrsT().first(), refElem->asRange()->pMt1())
+    ASSERT_EQ_PTR(d.calc->matrsS().first(), refElem->asRange()->pMs1())
 }
 
 TEST_CASE(rt_sw_matrs,     rt_matrs_sw_rr, SW, EL_MID)

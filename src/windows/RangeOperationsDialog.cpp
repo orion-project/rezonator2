@@ -51,7 +51,7 @@ QLabel* makeGridLabel(const QString &text = {})
 //                               SplitRangeDlg
 //------------------------------------------------------------------------------
 
-SplitRangeDlg::SplitRangeDlg(Schema *schema, ElementRange* srcElem) : QWidget(), _srcParam(srcElem->paramLength())
+SplitRangeDlg::SplitRangeDlg(Schema *schema, Element *srcElem) : QWidget(), _srcParam(srcElem->asRange()->paramLength())
 {
     _slider = new QSlider;
     _slider->setOrientation(Qt::Horizontal);
@@ -223,7 +223,7 @@ bool SplitRangeDlg::exec()
 //                               MergeRangesDlg
 //------------------------------------------------------------------------------
 
-MergeRangesDlg::MergeRangesDlg(ElementRange* elem1, ElementRange* elem2) : QWidget()
+MergeRangesDlg::MergeRangesDlg(Element *elem1, Element *elem2) : QWidget()
 {
     auto srcLabel1 = makeLineEdit(true);
     auto srcLabel2 = makeLineEdit(true);
@@ -260,8 +260,8 @@ MergeRangesDlg::MergeRangesDlg(ElementRange* elem1, ElementRange* elem2) : QWidg
     srcLabel1->setText(elem1->label());
     srcLabel2->setText(elem2->label());
     tgtLabel->setText(elem1->label());
-    auto v1 = elem1->paramLength()->value();
-    auto v2 = elem2->paramLength()->value();
+    auto v1 = elem1->asRange()->paramLength()->value();
+    auto v2 = elem2->asRange()->paramLength()->value();
     auto unit = v1.unit();
     unitLabel->setText(unit->name());
     srcParam1->setValue(v1.value());
@@ -282,8 +282,8 @@ bool MergeRangesDlg::exec()
 //                               SlideRangesDlg
 //------------------------------------------------------------------------------
 
-SlideRangesDlg::SlideRangesDlg(ElementRange* elem1, ElementRange* elem2) :
-    _param1(elem1->paramLength()), _param2(elem2->paramLength())
+SlideRangesDlg::SlideRangesDlg(Element *elem1, Element *elem2) :
+    _param1(elem1->asRange()->paramLength()), _param2(elem2->asRange()->paramLength())
 {
     auto unit = _param1->value().unit();
     double v1 = _param1->value().value();
