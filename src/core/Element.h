@@ -198,8 +198,10 @@ struct DynamicElemCalcParams
 
 struct ElemAsRangeImpl;
 using ElemAsRange = std::optional<ElemAsRangeImpl>;
-struct ElemAsDynamic;
-struct ElemAsInterface;
+struct ElemAsDynamicImpl;
+using ElemAsDynamic = std::optional<ElemAsDynamicImpl>;
+struct ElemAsInterfaceImpl;
+using ElemAsInterface = std::optional<ElemAsInterfaceImpl>;
 
 /**
     Base class for all optical elements.
@@ -298,12 +300,11 @@ public:
     ElementLayoutOptions layoutOptions;
     
     bool isRange() const { return _kind == ElementKind::Range; }
-    ElemAsRange asRange();
-    
-    std::optional<ElemAsDynamic> asDynamic();
-    
+    bool isDynamic() const { return _kind == ElementKind::Dynamic; }
     bool isInterface() const { return _kind == ElementKind::Interface; }
-    std::optional<ElemAsInterface> asInterface();
+    ElemAsRange asRange();
+    ElemAsDynamic asDynamic();
+    ElemAsInterface asInterface();
 
 protected:
     Element();
@@ -353,7 +354,7 @@ protected:
 
     // Support for ElementKind::Dynamic functionality
     virtual void calcDynamicMatrix(const DynamicElemCalcParams& p) { Q_UNUSED(p) }
-    friend class ElemAsDynamic;
+    friend class ElemAsDynamicImpl;
     
     // Support for ElementKind::Interface functionality
     // Elements representing an interface between two media.
@@ -363,7 +364,7 @@ protected:
     Z::Parameter *_ior1, *_ior2;
     double ior1() const { return _ior1->value().value(); }
     double ior2() const { return _ior2->value().value(); }
-    friend class ElemAsInterface;
+    friend class ElemAsInterfaceImpl;
 };
 
 typedef QList<Element*> Elements;
@@ -414,7 +415,7 @@ struct ElemAsRangeImpl
     Where `ior1` is IOR of a medium at 'the left' of the interface (medium 1),
     and `ior2` is IOR of a medium at 'the right' of the interface (medium 2).
 */
-struct ElemAsInterface
+struct ElemAsInterfaceImpl
 {
     Element *elem;
 
@@ -428,7 +429,7 @@ struct ElemAsInterface
     Accessor to an element for interpreting it as a Dynamic element.
     Dynamic element is an elements whose matrix depends on beam parameters.
 */
-struct ElemAsDynamic
+struct ElemAsDynamicImpl
 {
     Element *elem;
   

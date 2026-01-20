@@ -165,17 +165,17 @@ ElemAsRange Element::asRange()
     return {};
 }
 
-std::optional<ElemAsDynamic> Element::asDynamic()
+ElemAsDynamic Element::asDynamic()
 {
     if (_kind == ElementKind::Dynamic)
-        return ElemAsDynamic{ .elem = this };
+        return ElemAsDynamicImpl{ .elem = this };
     return {};
 }
 
-std::optional<ElemAsInterface> Element::asInterface()
+ElemAsInterface Element::asInterface()
 {
     if (_kind == ElementKind::Interface)
-        return ElemAsInterface{ .elem = this };
+        return ElemAsInterfaceImpl{ .elem = this };
     return {};
 }
 
