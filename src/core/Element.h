@@ -92,6 +92,12 @@ enum ElementOption {
     /// It does nothing besides of marking some position in the schema
     /// or splitting two ranges
     Element_Unity = 0x10,
+    
+    /// Element has complex matrices.
+    /// I'm not sure if complex matrixes are valid for the ABCD-method.
+    /// There is a modified ABCDGH-method for all-complex elements,
+    /// but it requires a lot of work and a bit more literature to adopt it.
+    Element_Complex = 0x20,
 };
 
 struct ElementLayoutOptions {

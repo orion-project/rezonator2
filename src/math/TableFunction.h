@@ -80,6 +80,8 @@ public:
 
         QString str() const;
     };
+    
+    using ElementResult = QHash<ResultPosition, QVector<Z::PointTS>>;
 
     struct CalcElem
     {
@@ -117,6 +119,7 @@ public:
     const QMap<QString, Z::Unit>& columntUnits() const { return _colUnits; }
 
     const QVector<Result>& results() const { return _results; }
+    ElementResult results(Element *elem) const;
 
     Params params() const { return _params; }
     void setParams(const Params& params);

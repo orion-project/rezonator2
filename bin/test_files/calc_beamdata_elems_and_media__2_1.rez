@@ -88,7 +88,7 @@
     ],
     "schema_version": "2.0",
     "title": "",
-    "trip_type": "SP",
+    "trip_type": "SW",
     "windows": [
         {
             "function": {

@@ -1184,6 +1184,7 @@ ElemGaussAperture::ElemGaussAperture() : Element()
 
     setOption(Element_ChangesWavefront);
     setOption(Element_RequiresWavelength);
+    setOption(Element_Complex);
 }
 
 void ElemGaussAperture::calcMatrixInternal()
@@ -1243,6 +1244,7 @@ ElemGaussApertureLens::ElemGaussApertureLens() : Element()
 
     setOption(Element_ChangesWavefront);
     setOption(Element_RequiresWavelength);
+    setOption(Element_Complex);
 
     _focusT->setVerifier(globalFocalLengthVerifier());
     _focusS->setVerifier(globalFocalLengthVerifier());
@@ -1314,6 +1316,7 @@ ElemGaussDuctMedium::ElemGaussDuctMedium() : ElementRange() {
     addParam(_alpha2s);
 
     setOption(Element_RequiresWavelength);
+    setOption(Element_Complex);
 }
 
 void ElemGaussDuctMedium::calcMatrixInternal() {
@@ -1405,6 +1408,7 @@ ElemGaussDuctSlab::ElemGaussDuctSlab() : ElementRange() {
     addParam(_alpha2s);
 
     setOption(Element_RequiresWavelength);
+    setOption(Element_Complex);
 }
 
 void ElemGaussDuctSlab::calcMatrixInternal() {

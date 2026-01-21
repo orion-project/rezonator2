@@ -123,10 +123,19 @@ void TableFuncResultTable::updateResults()
     }
 
     setRowCount(results.size());
+    
+    int elemCount = 0;
+    Element *prevElem = nullptr;
+    static QBrush altColor = QBrush(QColor(0, 0, 0, 10));
 
     for (int row = 0; row < results.size(); row++)
     {
         const auto& res = results.at(row);
+        if (res.element != prevElem)
+        {
+            prevElem = res.element;
+            elemCount++;
+        }
 
         QTableWidgetItem *it = item(row, COL_POSITION);
         if (!it)
@@ -139,6 +148,8 @@ void TableFuncResultTable::updateResults()
         it->setText(res.element->displayLabel());
         it->setData(Qt::UserRole, int(res.position));
         it->setToolTip(TableFunction::resultPositionInfo(res.position).tooltip);
+        if (elemCount % 2 == 0)
+            it->setBackground(altColor);
 
         const auto& columns = _function->columns();
         for (int index = 0; index < res.values.size(); index++)
@@ -168,6 +179,8 @@ void TableFuncResultTable::updateResults()
                 it->setFont(Z::Gui::ValueFont().get());
                 it->setTextAlignment(Qt::AlignHCenter | Qt::AlignCenter);
                 it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+                if (elemCount % 2 == 0)
+                    it->setBackground(altColor);
                 setItem(row, FIXED_COLS_COUNT + index, it);
             }
             it->setText(valueStr);

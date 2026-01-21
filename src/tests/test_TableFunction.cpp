@@ -1,7 +1,9 @@
 #include "../app/AppSettings.h"
 #include "../core/Schema.h"
+#include "../core/Elements.h"
 #include "../io/SchemaReaderJson.h"
 #include "../math/BeamParamsAtElemsFunction.h"
+#include "../math/FunctionUtils.h"
 #include "../tests/TestUtils.h"
 
 #include "core/OriTemplates.h"
@@ -23,7 +25,8 @@
     ASSERT_EQ_STR(func.errorText(), "")\
     ASSERT_IS_TRUE(func.ok())\
     for (const auto& r : func.results()) {TEST_LOG(r.str())}\
-    ASSERT_EQ_INT(func.results().size(), expected_result_count)
+    if (expected_result_count >= 0)\
+        ASSERT_EQ_INT(func.results().size(), expected_result_count)
 
 
 #define ASSERT_TABLE_RES(index1, index2, ignore_sign) {\
@@ -213,6 +216,270 @@ TEST_CASE(must_respect_medium_ior__sp__lens_in_middle, must_respect_medium_ior__
 TEST_CASE(must_respect_medium_ior__rr__flat_in_middle, must_respect_medium_ior__sp_rr__elem_in_middle, "calc_beamdata_elems_and_media__3_1.rez", TripType::RR)
 TEST_CASE(must_respect_medium_ior__rr__lens_in_middle, must_respect_medium_ior__sp_rr__elem_in_middle, "calc_beamdata_elems_and_media__3_2.rez", TripType::RR)
 
+// This test includes `interfaces_*` tests
+TEST_CASE_METHOD(complare_between_elems, QString fileName)
+{
+    READ_TEST_FILE(fileName)
+    BeamParamsAtElemsFunction func(&schema);
+    TableFunction::Params params;
+    params.calcMediumEnds = true;
+    params.calcSpaceMids = false;
+    params.calcEmptySpaces = true;
+    func.setParams(params);
+    CALC_FUNC(ResultsCount(-1))
+    
+    const int valCount = 3;
+    using Pos = TableFunction::ResultPosition;
+    
+    auto areSameResults = [](const Z::PointTS &v1, const Z::PointTS &v2) {
+        const double eps = 1e-7;
+        bool t = false;
+        bool s = false;
+        if (qIsInf(v1.T) && qIsInf(v2.T))
+            t = true;
+        else if (qAbs(qAbs(v1.T) - qAbs(v2.T)) <= eps)
+            t = true;
+        if (qIsInf(v1.S) && qIsInf(v2.S))
+            s = true;
+        else if (qAbs(qAbs(v1.S) - qAbs(v2.S)) <= eps)
+            s = true;
+        return t && s;
+    };
+
+    for (int i = 0; i < schema.count(); i++)
+    {
+        auto elem = schema.element(i);
+        
+        if (elem->disabled())
+        {
+            continue;
+        }
+        if (elem->hasOption(Element_Complex))
+        {
+            // Skip elements like ElemGauss*
+            // I'm not even sure if complex matrixes are valid for the ABCD-method.
+            // There is a modified ABCDGH-method for all-complex elements,
+            // but it requires a lot of work and a bit more literature to adopt it.
+            continue;
+        }
+        
+        auto res = func.results(elem);
+        decltype(res)::value_type leftVals, rightVals;
+
+        bool comparePrev = true;
+        bool compareNext = true;
+
+        bool compareLeftRight = false;
+        bool compareSizeT = true;
+        bool compareSizeS = true;
+        bool compareFrontT = !elem->hasOption(Element_ChangesWavefront);
+        bool compareFrontS = !elem->hasOption(Element_ChangesWavefront);
+        bool compareAngleT = !elem->hasOption(Element_ChangesWavefront);
+        bool compareAngleS = !elem->hasOption(Element_ChangesWavefront);
+        
+        if (auto range = Z::Utils::asRange(elem); range)
+        {
+            if (Z::Utils::isSpace(elem))
+            {
+                // Spaces are not calculated "outside"
+                leftVals = res.value(Pos::LEFT_INSIDE);
+                rightVals = res.value(Pos::RIGHT_INSIDE);
+                // Empty space doesn't change angle in the far-field
+                compareAngleT = true;
+                compareAngleS = true;
+            }
+            else if (auto medium = Z::Utils::asMedium(elem))
+            {
+                // Mediums are not calculated "outside"
+                leftVals = res.value(Pos::LEFT_INSIDE);
+                rightVals = res.value(Pos::RIGHT_INSIDE);
+                // Medium without IOR doesn't change angle in the far-field
+                if (medium->ior() == 1)
+                {
+                    compareAngleT = true;
+                    compareAngleS = true;
+                }
+            }
+            else
+            {
+                leftVals = res.value(Pos::LEFT_OUTSIDE);
+                rightVals = res.value(Pos::RIGHT_OUTSIDE);
+                // Plate without IOR doesn't change angle in the far-field
+                if (range->ior() == 1)
+                {
+                    compareAngleT = true;
+                    compareAngleS = true;
+                }
+            }
+        }
+        else
+        {
+            // These are flat mirrors, plane interfaces, planes etc.
+            // Beam parameter before and after such element must be the same
+            // Parameters after the prev elem must be the same as ones before this elem
+            // Parameters before the next elem must be the same as ones after this elem
+
+            if (Z::Utils::isInterface(elem))
+            {
+                // Interfaces always display "left" and "right"
+                compareLeftRight = true;
+                // Some interfaces change beamsize in T plane
+                if (dynamic_cast<ElemBrewsterInterface*>(elem))
+                    compareSizeT = false;
+                else if (auto intf = dynamic_cast<ElemTiltedInterface*>(elem); intf)
+                {
+                    // Tilted interface without angle works as plane
+                    if (!Double(intf->alpha()).isZero())
+                        compareSizeT = false;
+                }
+                else if (auto intf = dynamic_cast<ElemSphericalInterface*>(elem); intf)
+                {
+                    // Curved interface without radius works as plane
+                    if (Double(intf->radius()).isInfinity())
+                    {
+                        compareFrontT = true;
+                        compareFrontS = true;
+                        compareAngleT = true;
+                        compareAngleS = true;
+                    }
+                }
+                leftVals = res.value(Pos::IFACE_LEFT);
+                rightVals = res.value(Pos::IFACE_RIGHT);
+                if (i == 0)
+                    comparePrev = false;
+                else if (i == schema.count()-1) 
+                    compareNext = false;
+            }
+            else if (i == 0)
+            {
+                // First "thin" element does not display "left" result
+                comparePrev = false;
+                if (schema.tripType() == TripType::SW)
+                    rightVals = res.value(Pos::ELEMENT);
+                else rightVals = res.value(Pos::RIGHT);
+            }
+            else if (i == schema.count()-1)
+            {
+                // Last "thin" element does not display "right" result
+                compareNext = false;
+                if (schema.tripType() == TripType::SW)
+                    leftVals = res.value(Pos::ELEMENT);
+                else leftVals = res.value(Pos::LEFT);
+            }
+            else
+            {
+                compareLeftRight = true;
+                leftVals = res.value(Pos::LEFT);
+                rightVals = res.value(Pos::RIGHT);
+            }
+            // Some element change wavefront only in one plane
+            // so value in another plane should be unchanged
+            if (dynamic_cast<ElemCylinderLensS*>(elem))
+            {
+                compareFrontT = true;
+                compareAngleT = true;
+            }
+            if (dynamic_cast<ElemCylinderLensT*>(elem))
+            {
+                compareFrontS = true;
+                compareAngleS = true;
+            }
+        }
+
+        TEST_LOG(QString("*** Check element %1").arg(elem->label()))
+        
+        if (compareLeftRight)
+        {
+            const auto &sizeLeft = leftVals.at(0);
+            const auto &frontLeft = leftVals.at(1);
+            const auto &angleLeft = leftVals.at(2);
+            const auto &sizeRight = rightVals.at(0);
+            const auto &frontRight = rightVals.at(1);
+            const auto &angleRight = rightVals.at(2);
+            if (compareSizeT) {
+                TEST_LOG(QString("Wt: %1 == %2").arg(sizeLeft.T).arg(sizeRight.T))
+                ASSERT_NEAR_DBL(sizeLeft.T, sizeRight.T, 1e-16)
+            }
+            if (compareSizeS) {
+                TEST_LOG(QString("Ws: %1 == %2").arg(sizeLeft.S).arg(sizeRight.S))
+                ASSERT_NEAR_DBL(sizeLeft.S, sizeRight.S, 1e-16)
+            }
+            if (compareFrontT) {
+                TEST_LOG(QString("Rt: %1 == %2").arg(frontLeft.T).arg(frontRight.T))
+                ASSERT_NEAR_DBL(frontLeft.T, frontRight.T, 1e-16)
+            }
+            if (compareFrontS) {
+                TEST_LOG(QString("Rs: %1 == %2").arg(frontLeft.S).arg(frontRight.S))
+                ASSERT_NEAR_DBL(frontLeft.S, frontRight.S, 1e-16)
+            }
+            if (compareAngleT) {
+                TEST_LOG(QString("Vt: %1 == %2").arg(angleLeft.T).arg(angleRight.T))
+                ASSERT_NEAR_DBL(angleLeft.T, angleRight.T, 1e-16)
+            }
+            if (compareAngleS) {
+                TEST_LOG(QString("Vs: %1 == %2").arg(angleLeft.S).arg(angleRight.S))
+                ASSERT_NEAR_DBL(angleLeft.S, angleRight.S, 1e-16)
+            }
+        }
+        if (comparePrev)
+        {
+            ASSERT_EQ_INT(leftVals.size(), valCount);
+
+            auto prevElem = FunctionUtils::prevElem(&schema, elem);
+            ASSERT_IS_NOT_NULL(prevElem)
+            TEST_LOG(QString("Prev elem: %1").arg(prevElem->label()));
+            auto prevRes = func.results(prevElem);
+            ASSERT_IS_FALSE(prevRes.empty());
+            auto prevPos = Pos::RIGHT;
+            // Spaces and mediums are not calculated "outside"
+            if (Z::Utils::isSpace(prevElem) || Z::Utils::isMedium(prevElem))
+                prevPos = Pos::RIGHT_INSIDE;
+            else if (Z::Utils::isRange(prevElem))
+                prevPos = Pos::RIGHT_OUTSIDE;
+            else if (Z::Utils::isInterface(prevElem))
+                prevPos = Pos::IFACE_RIGHT;
+            else if (schema.indexOf(prevElem) == 0 && schema.tripType() == TripType::SW)
+                prevPos = Pos::ELEMENT;
+            auto prevVals = prevRes.value(prevPos);
+            ASSERT_EQ_INT(prevVals.size(), valCount);
+            ASSERT_EQ_LIST_EX(leftVals, prevVals, areSameResults)
+        }
+        if (compareNext)
+        {
+            ASSERT_EQ_INT(rightVals.size(), valCount);
+
+            auto nextElem = FunctionUtils::nextElem(&schema, elem);
+            TEST_LOG(QString("Next elem: %1").arg(nextElem->label()));
+            ASSERT_IS_NOT_NULL(nextElem)
+            auto nextRes = func.results(nextElem);
+            ASSERT_IS_FALSE(nextRes.empty());
+            auto nextPos = Pos::LEFT;
+            // Spaces and mediums are not calculated "outside"
+            if (Z::Utils::isSpace(nextElem) || Z::Utils::isMedium(nextElem))
+                nextPos = Pos::LEFT_INSIDE;
+            else if (Z::Utils::isRange(nextElem))
+                nextPos = Pos::LEFT_OUTSIDE;
+            else if (Z::Utils::isInterface(nextElem))
+                nextPos = Pos::IFACE_LEFT;
+            else if (schema.indexOf(nextElem) == schema.count()-1 && schema.tripType() == TripType::SW)
+                nextPos = Pos::ELEMENT;
+            auto nextVals = nextRes.value(nextPos);
+            ASSERT_EQ_INT(nextVals.size(), valCount);
+            ASSERT_EQ_LIST_EX(rightVals, nextVals, areSameResults)
+        }
+    }
+}
+
+TEST_CASE(complare_between_elems__sw, complare_between_elems, "calc_beamdata_elems_sw.rez")
+TEST_CASE(complare_between_elems__sp, complare_between_elems, "calc_beamdata_elems_sp.rez")
+TEST_CASE(complare_between_elems__1_1, complare_between_elems, "calc_beamdata_elems_and_media__1_1.rez")
+TEST_CASE(complare_between_elems__1_2, complare_between_elems, "calc_beamdata_elems_and_media__1_2.rez")
+TEST_CASE(complare_between_elems__1_3, complare_between_elems, "calc_beamdata_elems_and_media__1_3.rez")
+TEST_CASE(complare_between_elems__2_1, complare_between_elems, "calc_beamdata_elems_and_media__2_1.rez")
+TEST_CASE(complare_between_elems__2_2, complare_between_elems, "calc_beamdata_elems_and_media__2_2.rez")
+TEST_CASE(complare_between_elems__3_1, complare_between_elems, "calc_beamdata_elems_and_media__3_1.rez")
+TEST_CASE(complare_between_elems__3_2, complare_between_elems, "calc_beamdata_elems_and_media__3_2.rez")
+
 TEST_GROUP("BeamParamsAtElemsFunction",
            ADD_TEST(interfaces_sw),
            ADD_TEST(interfaces_sp),
@@ -233,6 +500,15 @@ TEST_GROUP("BeamParamsAtElemsFunction",
            ADD_TEST(must_respect_medium_ior__sp__lens_in_middle),
            ADD_TEST(must_respect_medium_ior__rr__flat_in_middle),
            ADD_TEST(must_respect_medium_ior__rr__lens_in_middle),
+           ADD_TEST(complare_between_elems__sw),
+           ADD_TEST(complare_between_elems__sp),
+           ADD_TEST(complare_between_elems__1_1),
+           ADD_TEST(complare_between_elems__1_2),
+           ADD_TEST(complare_between_elems__1_3),
+           ADD_TEST(complare_between_elems__2_1),
+           ADD_TEST(complare_between_elems__2_2),
+           ADD_TEST(complare_between_elems__3_1),
+           ADD_TEST(complare_between_elems__3_2),
            )
 }
 

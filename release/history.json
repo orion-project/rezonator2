@@ -5,6 +5,9 @@
       "date": "",
       "changes": [
         {
+          "text": "Alternate element coloring in data tables"
+        },
+        {
           "text": "Can create custom functions in Python on Linux and macOS"
         },
         {

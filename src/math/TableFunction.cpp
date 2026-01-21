@@ -83,6 +83,13 @@ void TableFunction::calculate()
         auto elem = _activeElements.at(i);
         if (elem->disabled()) continue;
 
+        auto iface = Z::Utils::asInterface(elem);
+        if (iface)
+        {
+            CHECK_ERR(calculateAtInterface(iface, i))
+            continue;
+        }
+
         if (elem->hasOption(Element_ChangesWavefront))
         {
             CHECK_ERR(calculateAtElem(elem, i, IsTwoSides(true)));
@@ -91,13 +98,6 @@ void TableFunction::calculate()
         
         if (elem->hasOption(Element_Unity)) {
             CHECK_ERR(calculateAtElem(elem, i, IsTwoSides(false)));
-            continue;
-        }
-
-        auto iface = Z::Utils::asInterface(elem);
-        if (iface)
-        {
-            CHECK_ERR(calculateAtInterface(iface, i))
             continue;
         }
 
@@ -456,4 +456,13 @@ Z::Unit TableFunction::columnUnit(const ColumnDef &col) const
 void TableFunction::setColumnUnit(const QString &colLabel, Z::Unit unit)
 {
     _colUnits[colLabel] = unit;
+}
+
+TableFunction::ElementResult TableFunction::results(Element *elem) const
+{
+    ElementResult res;
+    for (const auto &r : _results)
+        if (r.element == elem)
+            res[r.position] = r.values;
+    return res;
 }

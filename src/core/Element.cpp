@@ -234,6 +234,7 @@ ElementInterface::ElementInterface()
     addParam(_ior2);
 
     setOption(Element_Asymmetrical);
+    setOption(Element_ChangesWavefront);
 
     layoutOptions.showLabel = false;
 }
