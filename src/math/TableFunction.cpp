@@ -82,7 +82,7 @@ void TableFunction::calculate()
 
         auto elem = _activeElements.at(i);
         if (elem->disabled()) continue;
-
+        
         if (auto iface = elem->asInterface(); iface)
         {
             CHECK_ERR(calculateAtInterface(iface->elem, i))
@@ -92,11 +92,6 @@ void TableFunction::calculate()
         if (elem->hasOption(Element_ChangesWavefront))
         {
             CHECK_ERR(calculateAtElem(elem, i, IsTwoSides(true)));
-            continue;
-        }
-        
-        if (elem->hasOption(Element_Unity)) {
-            CHECK_ERR(calculateAtElem(elem, i, IsTwoSides(false)));
             continue;
         }
 
@@ -395,8 +390,17 @@ QString TableFunction::calculateInMiddle(Element* elem, Element* prevElem, Eleme
     // if element's matrix doesn't imply air around the element.
     if (prevMedium && nextMedium)
     {
-        calculateAt(CalcElem::RangeEnd(prevMedium), ResultElem(elem, ResultPosition::LEFT));
-        calculateAt(CalcElem(elem), ResultElem(elem, ResultPosition::RIGHT), OptionalIor(nextMedium->ior()));
+        // Force calculation on both sides when mediums have different IORs
+        // then beam parameters are different beceause of changed wavelength
+        if (twoSides || !SAME_DOUBLE(prevMedium->ior(), nextMedium->ior()))
+        {
+            calculateAt(CalcElem::RangeEnd(prevMedium), ResultElem(elem, ResultPosition::LEFT));
+            calculateAt(CalcElem(elem), ResultElem(elem, ResultPosition::RIGHT), OptionalIor(nextMedium->ior()));
+        }
+        else
+        {
+            calculateAt(CalcElem::RangeEnd(prevMedium), ResultElem(elem, ResultPosition::ELEMENT));
+        }
         return "";
     }
 
@@ -415,9 +419,11 @@ QString TableFunction::calculateInMiddle(Element* elem, Element* prevElem, Eleme
 void TableFunction::calculateAt(const CalcElem &calcElem, const ResultElem &resultElem, OptionalIor overrideIor)
 {
     double ior = 1;
+    bool splitRange = false;
 
     if (calcElem.subrangeOpt != CalcElem::SubrangeOpt::NONE)
     {
+        splitRange = true;
         auto range = calcElem.ref->asRange();
         ior = range->ior();
         if (calcElem.subrangeOpt == CalcElem::SubrangeOpt::END)
@@ -430,7 +436,7 @@ void TableFunction::calculateAt(const CalcElem &calcElem, const ResultElem &resu
             range->setSubRangeSI(*calcElem.subrange);
     }
     
-    _beamCalc->calcRoundTrip(calcElem.ref, calcElem.ref, "TableFunction::calculateAt");
+    _beamCalc->calcRoundTrip(calcElem.ref, splitRange, "TableFunction::calculateAt");
     _beamCalc->setIor(overrideIor ? *overrideIor : ior);
 
     Result res;

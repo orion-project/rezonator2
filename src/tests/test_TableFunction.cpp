@@ -173,9 +173,27 @@ TEST_CASE(must_respect_medium_ior__sw__curved_right_flat_left, must_respect_medi
 // TEST_CASE(must_respect_medium_ior__sp__curved_left_flat_right, must_respect_medium_ior__sp__mirrors_at_ends, "calc_beamdata_elems_and_media__2_1.rez")
 // TEST_CASE(must_respect_medium_ior__sp__curved_right_flat_left, must_respect_medium_ior__sp__mirrors_at_ends, "calc_beamdata_elems_and_media__2_2.rez")
 
-TEST_CASE_METHOD(must_respect_medium_ior__sw__elem_in_middle, QString fileName)
+TEST_METHOD(must_respect_medium_ior__sw__flat_in_middle)
 {
-    READ_TEST_FILE(fileName)
+    READ_TEST_FILE("calc_beamdata_elems_and_media__3_1.rez")
+    schema.setTripType(TripType::SW);
+    BeamParamsAtElemsFunction func(&schema);
+    TableFunction::Params params;
+    params.calcMediumEnds = true;
+    params.calcSpaceMids = true;
+    func.setParams(params);
+    CALC_FUNC(ResultsCount(13))
+
+    // The end of left-half medium must match the flat element
+    ASSERT_TABLE_RES(5, 6, IgnoreSign(false))
+
+    // Flat element must match the start of right-half medium
+    ASSERT_TABLE_RES(6, 7, IgnoreSign(false))
+}
+
+TEST_METHOD(must_respect_medium_ior__sw__lens_in_middle)
+{
+    READ_TEST_FILE("calc_beamdata_elems_and_media__3_2.rez")
     schema.setTripType(TripType::SW);
     BeamParamsAtElemsFunction func(&schema);
     TableFunction::Params params;
@@ -190,10 +208,26 @@ TEST_CASE_METHOD(must_respect_medium_ior__sw__elem_in_middle, QString fileName)
     // Right side of element must match the start of right-half medium
     ASSERT_TABLE_RES(7, 8, IgnoreSign(false))
 }
-TEST_CASE(must_respect_medium_ior__sw__flat_in_middle, must_respect_medium_ior__sw__elem_in_middle, "calc_beamdata_elems_and_media__3_1.rez")
-TEST_CASE(must_respect_medium_ior__sw__lens_in_middle, must_respect_medium_ior__sw__elem_in_middle, "calc_beamdata_elems_and_media__3_2.rez")
 
-TEST_CASE_METHOD(must_respect_medium_ior__sp_rr__elem_in_middle, QString fileName, TripType tripType)
+TEST_CASE_METHOD(must_respect_medium_ior__sp_rr__flat_in_middle, QString fileName, TripType tripType)
+{
+    READ_TEST_FILE(fileName)
+    schema.setTripType(tripType);
+    BeamParamsAtElemsFunction func(&schema);
+    TableFunction::Params params;
+    params.calcMediumEnds = true;
+    params.calcSpaceMids = true;
+    func.setParams(params);
+    CALC_FUNC(ResultsCount(15))
+
+    // The end of left-half medium must match left side of element
+    ASSERT_TABLE_RES(6, 7, IgnoreSign(false))
+
+    // Right side of element must match the start of right-half medium
+    ASSERT_TABLE_RES(7, 8, IgnoreSign(false))
+}
+
+TEST_CASE_METHOD(must_respect_medium_ior__sp_rr__lens_in_middle, QString fileName, TripType tripType)
 {
     READ_TEST_FILE(fileName)
     schema.setTripType(tripType);
@@ -211,10 +245,10 @@ TEST_CASE_METHOD(must_respect_medium_ior__sp_rr__elem_in_middle, QString fileNam
     ASSERT_TABLE_RES(8, 9, IgnoreSign(false))
 }
 
-TEST_CASE(must_respect_medium_ior__sp__flat_in_middle, must_respect_medium_ior__sp_rr__elem_in_middle, "calc_beamdata_elems_and_media__3_1.rez", TripType::SP)
-TEST_CASE(must_respect_medium_ior__sp__lens_in_middle, must_respect_medium_ior__sp_rr__elem_in_middle, "calc_beamdata_elems_and_media__3_2.rez", TripType::SP)
-TEST_CASE(must_respect_medium_ior__rr__flat_in_middle, must_respect_medium_ior__sp_rr__elem_in_middle, "calc_beamdata_elems_and_media__3_1.rez", TripType::RR)
-TEST_CASE(must_respect_medium_ior__rr__lens_in_middle, must_respect_medium_ior__sp_rr__elem_in_middle, "calc_beamdata_elems_and_media__3_2.rez", TripType::RR)
+TEST_CASE(must_respect_medium_ior__sp__flat_in_middle, must_respect_medium_ior__sp_rr__flat_in_middle, "calc_beamdata_elems_and_media__3_1.rez", TripType::SP)
+TEST_CASE(must_respect_medium_ior__sp__lens_in_middle, must_respect_medium_ior__sp_rr__lens_in_middle, "calc_beamdata_elems_and_media__3_2.rez", TripType::SP)
+TEST_CASE(must_respect_medium_ior__rr__flat_in_middle, must_respect_medium_ior__sp_rr__flat_in_middle, "calc_beamdata_elems_and_media__3_1.rez", TripType::RR)
+TEST_CASE(must_respect_medium_ior__rr__lens_in_middle, must_respect_medium_ior__sp_rr__lens_in_middle, "calc_beamdata_elems_and_media__3_2.rez", TripType::RR)
 
 // This test includes `interfaces_*` tests
 TEST_CASE_METHOD(complare_between_elems, QString fileName)
@@ -245,7 +279,7 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
             s = true;
         return t && s;
     };
-
+    
     for (int i = 0; i < schema.count(); i++)
     {
         auto elem = schema.element(i);
@@ -282,8 +316,8 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
             if (Z::Utils::isSpace(elem))
             {
                 // Spaces are not calculated "outside"
-                leftVals = res.at(Pos::LEFT_INSIDE);
-                rightVals = res.at(Pos::RIGHT_INSIDE);
+                leftVals = res.value(Pos::LEFT_INSIDE);
+                rightVals = res.value(Pos::RIGHT_INSIDE);
                 // Empty space doesn't change angle in the far-field
                 compareAngleT = true;
                 compareAngleS = true;
@@ -291,8 +325,8 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
             else if (auto medium = Z::Utils::asMedium(elem))
             {
                 // Mediums are not calculated "outside"
-                leftVals = res.at(Pos::LEFT_INSIDE);
-                rightVals = res.at(Pos::RIGHT_INSIDE);
+                leftVals = res.value(Pos::LEFT_INSIDE);
+                rightVals = res.value(Pos::RIGHT_INSIDE);
                 // Medium without IOR doesn't change angle in the far-field
                 if (medium->ior() == 1)
                 {
@@ -302,8 +336,8 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
             }
             else
             {
-                leftVals = res.at(Pos::LEFT_OUTSIDE);
-                rightVals = res.at(Pos::RIGHT_OUTSIDE);
+                leftVals = res.value(Pos::LEFT_OUTSIDE);
+                rightVals = res.value(Pos::RIGHT_OUTSIDE);
                 // Plate without IOR doesn't change angle in the far-field
                 if (range->ior() == 1)
                 {
@@ -314,11 +348,6 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
         }
         else
         {
-            // These are flat mirrors, plane interfaces, planes etc.
-            // Beam parameter before and after such element must be the same
-            // Parameters after the prev elem must be the same as ones before this elem
-            // Parameters before the next elem must be the same as ones after this elem
-
             if (elem->isInterface())
             {
                 // Interfaces always display "left" and "right"
@@ -343,8 +372,17 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
                         compareAngleS = true;
                     }
                 }
-                leftVals = res.at(Pos::IFACE_LEFT);
-                rightVals = res.at(Pos::IFACE_RIGHT);
+                leftVals = res.value(Pos::IFACE_LEFT);
+                rightVals = res.value(Pos::IFACE_RIGHT);
+                if (i == 0)
+                    comparePrev = false;
+                else if (i == schema.count()-1) 
+                    compareNext = false;
+            }
+            else if (!elem->hasOption(Element_ChangesWavefront))
+            {
+                leftVals = res.value(Pos::ELEMENT);
+                rightVals = res.value(Pos::ELEMENT);
                 if (i == 0)
                     comparePrev = false;
                 else if (i == schema.count()-1) 
@@ -355,22 +393,22 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
                 // First "thin" element does not display "left" result
                 comparePrev = false;
                 if (schema.tripType() == TripType::SW)
-                    rightVals = res.at(Pos::ELEMENT);
-                else rightVals = res.at(Pos::RIGHT);
+                    rightVals = res.value(Pos::ELEMENT);
+                else rightVals = res.value(Pos::RIGHT);
             }
             else if (i == schema.count()-1)
             {
                 // Last "thin" element does not display "right" result
                 compareNext = false;
                 if (schema.tripType() == TripType::SW)
-                    leftVals = res.at(Pos::ELEMENT);
-                else leftVals = res.at(Pos::LEFT);
+                    leftVals = res.value(Pos::ELEMENT);
+                else leftVals = res.value(Pos::LEFT);
             }
             else
             {
                 compareLeftRight = true;
-                leftVals = res.at(Pos::LEFT);
-                rightVals = res.at(Pos::RIGHT);
+                leftVals = res.value(Pos::LEFT);
+                rightVals = res.value(Pos::RIGHT);
             }
             // Some element change wavefront only in one plane
             // so value in another plane should be unchanged
@@ -390,6 +428,9 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
         
         if (compareLeftRight)
         {
+            ASSERT_EQ_INT(leftVals.size(), valCount);
+            ASSERT_EQ_INT(rightVals.size(), valCount);
+
             const auto &sizeLeft = leftVals.at(0);
             const auto &frontLeft = leftVals.at(1);
             const auto &angleLeft = leftVals.at(2);
@@ -438,9 +479,11 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
                 prevPos = Pos::RIGHT_OUTSIDE;
             else if (prevElem->isInterface())
                 prevPos = Pos::IFACE_RIGHT;
+            else if (!prevElem->hasOption(Element_ChangesWavefront))
+                prevPos = Pos::ELEMENT;
             else if (schema.indexOf(prevElem) == 0 && schema.tripType() == TripType::SW)
                 prevPos = Pos::ELEMENT;
-            auto prevVals = prevRes.at(prevPos);
+            auto prevVals = prevRes.value(prevPos);
             ASSERT_EQ_INT(prevVals.size(), valCount);
             ASSERT_EQ_LIST_EX(leftVals, prevVals, areSameResults)
         }
@@ -461,9 +504,11 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
                 nextPos = Pos::LEFT_OUTSIDE;
             else if (nextElem->isInterface())
                 nextPos = Pos::IFACE_LEFT;
+            else if (!nextElem->hasOption(Element_ChangesWavefront))
+                nextPos = Pos::ELEMENT;
             else if (schema.indexOf(nextElem) == schema.count()-1 && schema.tripType() == TripType::SW)
                 nextPos = Pos::ELEMENT;
-            auto nextVals = nextRes.at(nextPos);
+            auto nextVals = nextRes.value(nextPos);
             ASSERT_EQ_INT(nextVals.size(), valCount);
             ASSERT_EQ_LIST_EX(rightVals, nextVals, areSameResults)
         }
@@ -472,6 +517,8 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
 
 TEST_CASE(complare_between_elems__sw, complare_between_elems, "calc_beamdata_elems_sw.rez")
 TEST_CASE(complare_between_elems__sp, complare_between_elems, "calc_beamdata_elems_sp.rez")
+TEST_CASE(complare_between_elems__rr_1, complare_between_elems, "interfaces_brewster_rr.rez")
+TEST_CASE(complare_between_elems__rr_2, complare_between_elems, "interfaces_brewster_rr_elem.rez")
 TEST_CASE(complare_between_elems__1_1, complare_between_elems, "calc_beamdata_elems_and_media__1_1.rez")
 TEST_CASE(complare_between_elems__1_2, complare_between_elems, "calc_beamdata_elems_and_media__1_2.rez")
 TEST_CASE(complare_between_elems__1_3, complare_between_elems, "calc_beamdata_elems_and_media__1_3.rez")
@@ -502,6 +549,8 @@ TEST_GROUP("BeamParamsAtElemsFunction",
            ADD_TEST(must_respect_medium_ior__rr__lens_in_middle),
            ADD_TEST(complare_between_elems__sw),
            ADD_TEST(complare_between_elems__sp),
+           ADD_TEST(complare_between_elems__rr_1),
+           ADD_TEST(complare_between_elems__rr_2),
            ADD_TEST(complare_between_elems__1_1),
            ADD_TEST(complare_between_elems__1_2),
            ADD_TEST(complare_between_elems__1_3),

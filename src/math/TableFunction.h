@@ -81,7 +81,8 @@ public:
         QString str() const;
     };
     
-    using ElementResult = std::unordered_map<ResultPosition, QVector<Z::PointTS>>;
+    // QHash refuses using `enum class` as a key in Qt5, so QMap
+    using ElementResult = QMap<ResultPosition, QVector<Z::PointTS>>;
 
     struct CalcElem
     {

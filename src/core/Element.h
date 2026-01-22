@@ -82,6 +82,7 @@
     addParam(_ior1); \
     addParam(_ior2); \
     setOption(Element_Asymmetrical); \
+    setOption(Element_ChangesWavefront); \
     layoutOptions.showLabel = false; \
     
 
@@ -133,11 +134,6 @@ enum ElementOption {
     /// and passes new lambda value to all elements having this option set.
     /// The element must provide parameter "Lambda" for accepting wavelength.
     Element_RequiresWavelength = 0x08,
-    
-    /// This is a helper element with unity matrix (like Point)
-    /// It does nothing besides of marking some position in the schema
-    /// or splitting two ranges
-    Element_Unity = 0x10,
     
     /// Element has complex matrices.
     /// I'm not sure if complex matrixes are valid for the ABCD-method.

@@ -126,7 +126,8 @@ void TableFuncResultTable::updateResults()
     
     int elemCount = 0;
     Element *prevElem = nullptr;
-    static QBrush altColor = QBrush(QColor(0, 0, 0, 10));
+    const QBrush &altColor1 = palette().brush(QPalette::Base);
+    const QBrush &altColor2 = palette().brush(QPalette::AlternateBase);
 
     for (int row = 0; row < results.size(); row++)
     {
@@ -148,8 +149,7 @@ void TableFuncResultTable::updateResults()
         it->setText(res.element->displayLabel());
         it->setData(Qt::UserRole, int(res.position));
         it->setToolTip(TableFunction::resultPositionInfo(res.position).tooltip);
-        if (elemCount % 2 == 0)
-            it->setBackground(altColor);
+        it->setBackground(elemCount % 2 == 0 ? altColor2 : altColor1);
 
         const auto& columns = _function->columns();
         for (int index = 0; index < res.values.size(); index++)
@@ -179,11 +179,10 @@ void TableFuncResultTable::updateResults()
                 it->setFont(Z::Gui::ValueFont().get());
                 it->setTextAlignment(Qt::AlignHCenter | Qt::AlignCenter);
                 it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-                if (elemCount % 2 == 0)
-                    it->setBackground(altColor);
                 setItem(row, FIXED_COLS_COUNT + index, it);
             }
             it->setText(valueStr);
+            it->setBackground(elemCount % 2 == 0 ? altColor2 : altColor1);
         }
     }
 }
