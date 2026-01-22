@@ -22,6 +22,7 @@
 #include <QFileInfo>
 #include <QCommandLineParser>
 #include <QMessageBox>
+#include <QStyleHints>
 
 #ifndef Q_OS_WIN
 #include <iostream>
@@ -38,6 +39,9 @@ int main(int argc, char* argv[])
     app.setOrganizationName("orion-project.org");
     app.setApplicationVersion(Z::Strs::appVersion());
     app.setStyle("fusion");
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+    app.styleHints()->setColorScheme(Qt::ColorScheme::Light);
+#endif
 
     auto p = app.palette();
     p.setColor(QPalette::AlternateBase, Ori::Color::blend(p.color(QPalette::Button), p.color(QPalette::Highlight), 0.02));

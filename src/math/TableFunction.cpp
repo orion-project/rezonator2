@@ -83,10 +83,9 @@ void TableFunction::calculate()
         auto elem = _activeElements.at(i);
         if (elem->disabled()) continue;
 
-        auto iface = Z::Utils::asInterface(elem);
-        if (iface)
+        if (auto iface = elem->asInterface(); iface)
         {
-            CHECK_ERR(calculateAtInterface(iface, i))
+            CHECK_ERR(calculateAtInterface(iface->elem, i))
             continue;
         }
 
@@ -101,7 +100,7 @@ void TableFunction::calculate()
             continue;
         }
 
-        auto range = Z::Utils::asRange(elem);
+        auto range = elem->asRange();
         if (!range)
         {
             CHECK_ERR(calculateAtElem(elem, i, IsTwoSides(false)))

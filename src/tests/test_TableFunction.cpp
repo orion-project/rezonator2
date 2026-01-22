@@ -277,7 +277,7 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
         bool compareAngleT = !elem->hasOption(Element_ChangesWavefront);
         bool compareAngleS = !elem->hasOption(Element_ChangesWavefront);
         
-        if (auto range = Z::Utils::asRange(elem); range)
+        if (auto range = elem->asRange(); range)
         {
             if (Z::Utils::isSpace(elem))
             {
@@ -319,7 +319,7 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
             // Parameters after the prev elem must be the same as ones before this elem
             // Parameters before the next elem must be the same as ones after this elem
 
-            if (Z::Utils::isInterface(elem))
+            if (elem->isInterface())
             {
                 // Interfaces always display "left" and "right"
                 compareLeftRight = true;
@@ -434,9 +434,9 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
             // Spaces and mediums are not calculated "outside"
             if (Z::Utils::isSpace(prevElem) || Z::Utils::isMedium(prevElem))
                 prevPos = Pos::RIGHT_INSIDE;
-            else if (Z::Utils::isRange(prevElem))
+            else if (prevElem->isRange())
                 prevPos = Pos::RIGHT_OUTSIDE;
-            else if (Z::Utils::isInterface(prevElem))
+            else if (prevElem->isInterface())
                 prevPos = Pos::IFACE_RIGHT;
             else if (schema.indexOf(prevElem) == 0 && schema.tripType() == TripType::SW)
                 prevPos = Pos::ELEMENT;
@@ -457,9 +457,9 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
             // Spaces and mediums are not calculated "outside"
             if (Z::Utils::isSpace(nextElem) || Z::Utils::isMedium(nextElem))
                 nextPos = Pos::LEFT_INSIDE;
-            else if (Z::Utils::isRange(nextElem))
+            else if (nextElem->isRange())
                 nextPos = Pos::LEFT_OUTSIDE;
-            else if (Z::Utils::isInterface(nextElem))
+            else if (nextElem->isInterface())
                 nextPos = Pos::IFACE_LEFT;
             else if (schema.indexOf(nextElem) == schema.count()-1 && schema.tripType() == TripType::SW)
                 nextPos = Pos::ELEMENT;
