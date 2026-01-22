@@ -264,7 +264,7 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
         }
         
         auto res = func.results(elem);
-        decltype(res)::value_type leftVals, rightVals;
+        decltype(res)::mapped_type leftVals, rightVals;
 
         bool comparePrev = true;
         bool compareNext = true;
@@ -282,8 +282,8 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
             if (Z::Utils::isSpace(elem))
             {
                 // Spaces are not calculated "outside"
-                leftVals = res.value(Pos::LEFT_INSIDE);
-                rightVals = res.value(Pos::RIGHT_INSIDE);
+                leftVals = res.at(Pos::LEFT_INSIDE);
+                rightVals = res.at(Pos::RIGHT_INSIDE);
                 // Empty space doesn't change angle in the far-field
                 compareAngleT = true;
                 compareAngleS = true;
@@ -291,8 +291,8 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
             else if (auto medium = Z::Utils::asMedium(elem))
             {
                 // Mediums are not calculated "outside"
-                leftVals = res.value(Pos::LEFT_INSIDE);
-                rightVals = res.value(Pos::RIGHT_INSIDE);
+                leftVals = res.at(Pos::LEFT_INSIDE);
+                rightVals = res.at(Pos::RIGHT_INSIDE);
                 // Medium without IOR doesn't change angle in the far-field
                 if (medium->ior() == 1)
                 {
@@ -302,8 +302,8 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
             }
             else
             {
-                leftVals = res.value(Pos::LEFT_OUTSIDE);
-                rightVals = res.value(Pos::RIGHT_OUTSIDE);
+                leftVals = res.at(Pos::LEFT_OUTSIDE);
+                rightVals = res.at(Pos::RIGHT_OUTSIDE);
                 // Plate without IOR doesn't change angle in the far-field
                 if (range->ior() == 1)
                 {
@@ -343,8 +343,8 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
                         compareAngleS = true;
                     }
                 }
-                leftVals = res.value(Pos::IFACE_LEFT);
-                rightVals = res.value(Pos::IFACE_RIGHT);
+                leftVals = res.at(Pos::IFACE_LEFT);
+                rightVals = res.at(Pos::IFACE_RIGHT);
                 if (i == 0)
                     comparePrev = false;
                 else if (i == schema.count()-1) 
@@ -355,22 +355,22 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
                 // First "thin" element does not display "left" result
                 comparePrev = false;
                 if (schema.tripType() == TripType::SW)
-                    rightVals = res.value(Pos::ELEMENT);
-                else rightVals = res.value(Pos::RIGHT);
+                    rightVals = res.at(Pos::ELEMENT);
+                else rightVals = res.at(Pos::RIGHT);
             }
             else if (i == schema.count()-1)
             {
                 // Last "thin" element does not display "right" result
                 compareNext = false;
                 if (schema.tripType() == TripType::SW)
-                    leftVals = res.value(Pos::ELEMENT);
-                else leftVals = res.value(Pos::LEFT);
+                    leftVals = res.at(Pos::ELEMENT);
+                else leftVals = res.at(Pos::LEFT);
             }
             else
             {
                 compareLeftRight = true;
-                leftVals = res.value(Pos::LEFT);
-                rightVals = res.value(Pos::RIGHT);
+                leftVals = res.at(Pos::LEFT);
+                rightVals = res.at(Pos::RIGHT);
             }
             // Some element change wavefront only in one plane
             // so value in another plane should be unchanged
@@ -440,7 +440,7 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
                 prevPos = Pos::IFACE_RIGHT;
             else if (schema.indexOf(prevElem) == 0 && schema.tripType() == TripType::SW)
                 prevPos = Pos::ELEMENT;
-            auto prevVals = prevRes.value(prevPos);
+            auto prevVals = prevRes.at(prevPos);
             ASSERT_EQ_INT(prevVals.size(), valCount);
             ASSERT_EQ_LIST_EX(leftVals, prevVals, areSameResults)
         }
@@ -463,7 +463,7 @@ TEST_CASE_METHOD(complare_between_elems, QString fileName)
                 nextPos = Pos::IFACE_LEFT;
             else if (schema.indexOf(nextElem) == schema.count()-1 && schema.tripType() == TripType::SW)
                 nextPos = Pos::ELEMENT;
-            auto nextVals = nextRes.value(nextPos);
+            auto nextVals = nextRes.at(nextPos);
             ASSERT_EQ_INT(nextVals.size(), valCount);
             ASSERT_EQ_LIST_EX(rightVals, nextVals, areSameResults)
         }

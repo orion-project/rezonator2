@@ -81,7 +81,7 @@ public:
         QString str() const;
     };
     
-    using ElementResult = QHash<ResultPosition, QVector<Z::PointTS>>;
+    using ElementResult = std::unordered_map<ResultPosition, QVector<Z::PointTS>>;
 
     struct CalcElem
     {
