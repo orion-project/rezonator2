@@ -43,7 +43,7 @@ public:
     using FuncResult = std::optional<Records>;
 
     /// Types of fields in structs that are returned from the py funcs
-    enum FieldType { ftNumber, ftNumberArray, ftString, ftStringOptional, ftUnitDim };
+    enum FieldType { ftNumber, ftNumberArray, ftString, ftStringOptional, ftUnitDim, ftMatrix };
     using ResultSpec = QHash<QString, FieldType>;
 
     /// Types of arguments that are passed to the py funcs

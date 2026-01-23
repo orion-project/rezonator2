@@ -1,146 +1,60 @@
 #include "ElementFormula.h"
 
 #include "Utils.h"
-#include "LuaHelper.h"
+#include "../core/PyRunner.h"
 
 #include <QApplication>
 
-//------------------------------------------------------------------------------
-//                             ElemFormulaImpl
-//------------------------------------------------------------------------------
-
-class ElemFormulaImpl
-{
-public:
-    ElemFormulaImpl(ElemFormula *elem): _elem(elem)
-    {
-    
-    }
-
-    ~ElemFormulaImpl()
-    {
-        if (_lua) delete _lua;
-    }
-    
-    QString error() const { return _error; }
-
-    bool reopenLua()
-    {
-        if (_lua) delete _lua;
-    
-        _lua = new Z::Lua;
-        _error = _lua->open();
-        if (!_error.isEmpty())
-        {
-            delete _lua;
-            _lua = nullptr;
-            return false;
-        }
-        return true;
-    }
-
-    void calc()
-    {
-        if (_elem->_formula.isEmpty())
-        {
-            _error = qApp->translate("ElemFormula", "Formula is empty");
-            setUnity();
-            return;
-        }
-    
-        if (!_lua && !reopenLua())
-        {
-            setUnity();
-            return;
-        }
-    
-        auto vars = _lua->getGlobalVars();
-        for (auto it = vars.cbegin(); it != vars.cend(); it++)
-            _lua->removeGlobalVar(it.key());
-
-        for (auto param : std::as_const(_elem->_params))
-            _lua->setGlobalVar(param->alias(), param->value().toSi());
-    
-        _error = _lua->setCode(_elem->_formula);
-        if (!_error.isEmpty())
-        {
-            setUnity();
-            return;
-        }
-    
-        _error = _lua->execute();
-        if (!_error.isEmpty())
-        {
-            setUnity();
-            return;
-        }
-    
-        double A, B, C, D;
-    
-        auto results = _lua->getGlobalVars();
-        if (!getResult(results, QStringLiteral("At"), A)) return;
-        if (!getResult(results, QStringLiteral("Bt"), B)) return;
-        if (!getResult(results, QStringLiteral("Ct"), C)) return;
-        if (!getResult(results, QStringLiteral("Dt"), D)) return;
-        _elem->_matrs[MatrixKind::T].assign(A, B, C, D);
-        if (!getResult(results, QStringLiteral("As"), A)) return;
-        if (!getResult(results, QStringLiteral("Bs"), B)) return;
-        if (!getResult(results, QStringLiteral("Cs"), C)) return;
-        if (!getResult(results, QStringLiteral("Ds"), D)) return;
-        _elem->_matrs[MatrixKind::S].assign(A, B, C, D);
-    }
-    
-    void setUnity()
-    {
-        _elem->_matrs[MatrixKind::T].unity();
-        _elem->_matrs[MatrixKind::S].unity();
-    }
-
-    bool getResult(const QMap<QString, double>& results, const QString& name, double& result)
-    {
-        if (!results.contains(name))
-        {
-            _error = qApp->translate("ElemFormula", "Formula doesn't contain an expression for '%1' or it is not a number").arg(name);
-            setUnity();
-            return false;
-        }
-        result = results[name];
-        return true;
-    }
-
-private:
-    Z::Lua *_lua = nullptr;
-    ElemFormula *_elem;
-    QString _error;
-};
-
-//------------------------------------------------------------------------------
-//                               ElemFormula
-//------------------------------------------------------------------------------
+#define FUNC_CALC_MATRIX QStringLiteral("calc_matrix")
+#define RES_MT QStringLiteral("Mt")
+#define RES_MS QStringLiteral("Ms")
 
 ElemFormula::ElemFormula()
 {
-    _impl = new ElemFormulaImpl(this);
 }
 
 ElemFormula::~ElemFormula()
 {
-    delete _impl;
-}
-
-QString ElemFormula::error() const
-{
-    return _impl->error();
-}
-
-bool ElemFormula::ok() const
-{
-    return _impl->error().isEmpty();
 }
 
 void ElemFormula::calcMatrixInternal()
 {
-    _impl->calc();
+    PyRunner py;
+    py.code = _formula;
+    py.moduleName = QString("elem_%1").arg(_id);
+    py.funcNames = { FUNC_CALC_MATRIX };
+    //py->printFunc = _printFunc;
+
+    if (!py.load({})) {
+        showError(&py);
+        return;
+    }
+
+    PyRunner::Args args {
+        { PyRunner::atElement, QVariant::fromValue((void*)this) },
+    };
+
+    auto res = py.run(FUNC_CALC_MATRIX, args, {
+        { RES_MT, PyRunner::ftMatrix },
+        { RES_MS, PyRunner::ftMatrix },
+    });
+    if (!res) {
+        showError(&py);
+        return;
+    }
+
+    const auto &matrixMap = res->first();
+    _matrs[MatrixKind::T] = matrixMap[RES_MT].value<Z::Matrix>();
+    _matrs[MatrixKind::S] = matrixMap[RES_MS].value<Z::Matrix>();
+}
+
+void ElemFormula::showError(PyRunner *py)
+{
+    _error = py->errorText();
+    _errorLog = py->errorLog;
+    _errorLine = py->errorLine;
+    for (auto it = _matrs.begin(); it != _matrs.end(); it++)
+        it->second.unity();
 }
 
 void ElemFormula::addParam(Z::Parameter* param, int index)

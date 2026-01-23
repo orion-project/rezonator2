@@ -5,7 +5,7 @@
 
 #include <QApplication>
 
-class ElemFormulaImpl;
+class PyRunner;
 
 DECLARE_ELEMENT(ElemFormula, Element)
     ElemFormula();
@@ -14,8 +14,8 @@ DECLARE_ELEMENT(ElemFormula, Element)
     DEFAULT_LABEL("C")
     CALC_MATRIX
     QString formula() const { return _formula; }
-    QString error() const;
-    bool ok() const;
+    QString error() const { return _error; }
+    bool ok() const { return _error.isEmpty(); }
     void setFormula(const QString& formula) { _formula = formula; }
     void addParam(Z::Parameter* param, int index = -1);
     void removeParam(Z::Parameter* param);
@@ -23,9 +23,11 @@ DECLARE_ELEMENT(ElemFormula, Element)
     void moveParamDown(Z::Parameter* param);
     void assign(const ElemFormula* other);
 private:
-    ElemFormulaImpl *_impl;
-    friend class ElemFormulaImpl;
     QString _formula;
+    QString _error;
+    QStringList _errorLog;
+    int _errorLine;
+    void showError(PyRunner *py);
 DECLARE_ELEMENT_END
 
 #endif // ELEMENT_FORMULA_H

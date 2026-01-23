@@ -82,13 +82,12 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
     _logView->document()->setDefaultStyleSheet(Z::Gui::reportStyleSheet());
 
     auto codeSplitter = Ori::Gui::splitterV(_codeEditor, 80, _logView, 20);
-    auto mainSplitter = Ori::Gui::splitterH(paramsPanel, 10, codeSplitter, 90);
+    auto mainSplitter = Ori::Gui::splitterH(paramsPanel, 5, codeSplitter, 95);
     Ori::Layouts::LayoutV({_toolbar, mainSplitter}).setMargin(0).useFor(this);
 
     // Element should be deleted only after all children, so put at the end
     new ObjectDeleter<Element>(_workingCopy, this);
 
-    qDebug() << "Initial populate";
     populate();
 }
 
@@ -136,7 +135,6 @@ void ElemFormulaEditor::populateWindowMenu(QMenu* menu)
 void ElemFormulaEditor::populate()
 {
     _lockEvents = true;
-    qDebug() << "Populate values";
     _paramsEditor->populateValues();
     _codeEditor->setPlainText(_workingCopy->formula());
     updateParamsEditorVisibility();
@@ -158,10 +156,8 @@ void ElemFormulaEditor::reset()
     if (!Ori::Dlg::yes(tr("Element <b>%1</b>: all changes "
         "made in this editor window will be lost. Continue?")
         .arg(_sourceElem->displayLabel()))) return;
-    qDebug() << "Remove editors";
     _paramsEditor->removeEditors();
     _workingCopy->assign(_sourceElem);
-    qDebug() << "Populate editors";
     _paramsEditor->populateEditors(_workingCopy->params());
     populate();
     _isChanged = false;

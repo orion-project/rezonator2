@@ -473,8 +473,6 @@ Element* readElement(const QJsonObject& root, Z::Report* report)
         }
     }
 
-    // TODO: read misalignments
-
     return elem;
 }
 

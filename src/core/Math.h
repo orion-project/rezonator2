@@ -4,6 +4,7 @@
 #include "Complex.h"
 
 #include <QString>
+#include <QMetaType>
 
 #define SQR(a) ((a)*(a))
 #ifndef M_PI
@@ -98,5 +99,7 @@ public:
 };
 
 } // namespace Z
+
+Q_DECLARE_METATYPE(Z::Matrix)
 
 #endif // MATH_H
