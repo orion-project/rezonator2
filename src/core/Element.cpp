@@ -23,6 +23,8 @@ Element::Element()
     static int id = 0;
     _id = ++id;
     
+    _matrs[MatrixKind::T] = Z::Matrix();
+    _matrs[MatrixKind::S] = Z::Matrix();
     _matrs[MatrixKind::InvT] = Z::Matrix();
     _matrs[MatrixKind::InvS] = Z::Matrix();
 }
@@ -115,8 +117,6 @@ void Element::calcMatrix(const char *reason)
 
 void Element::calcMatrixInternal()
 {
-    _mt.unity();
-    _ms.unity();
     for (auto it = _matrs.begin(); it != _matrs.end(); it++)
         it->second.unity();
 }

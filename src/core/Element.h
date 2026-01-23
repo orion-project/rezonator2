@@ -273,10 +273,10 @@ public:
     const Z::Matrix& M(MatrixKind kind) const { return _matrs.at(kind); }
     const Z::Matrix* pM(MatrixKind kind) const { return &_matrs.at(kind); }
 
-    const Z::Matrix& Mt() const { return _mt; }
-    const Z::Matrix& Ms() const { return _ms; }
-    const Z::Matrix* pMt() const { return &_mt; }
-    const Z::Matrix* pMs() const { return &_ms; }
+    const Z::Matrix& Mt() const { return M(MatrixKind::T); }
+    const Z::Matrix& Ms() const { return M(MatrixKind::S); }
+    const Z::Matrix* pMt() const { return pM(MatrixKind::T); }
+    const Z::Matrix* pMs() const { return pM(MatrixKind::S); }
     const Z::Matrix& Mt_inv() const { return M(MatrixKind::InvT); }
     const Z::Matrix& Ms_inv() const { return M(MatrixKind::InvS); }
     const Z::Matrix* pMt_inv() const { return pM(MatrixKind::InvT); }
@@ -309,7 +309,6 @@ protected:
     ElementKind _kind = ElementKind::Simple;
     QString _label, _title;
     std::map<MatrixKind, Z::Matrix> _matrs;
-    Z::Matrix _mt, _ms;
     int _id;
     bool _disabled = false;
     Z::Parameters _params;

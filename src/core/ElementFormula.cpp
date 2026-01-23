@@ -82,18 +82,18 @@ public:
         if (!getResult(results, QStringLiteral("Bt"), B)) return;
         if (!getResult(results, QStringLiteral("Ct"), C)) return;
         if (!getResult(results, QStringLiteral("Dt"), D)) return;
-        _elem->_mt.assign(A, B, C, D);
+        _elem->_matrs[MatrixKind::T].assign(A, B, C, D);
         if (!getResult(results, QStringLiteral("As"), A)) return;
         if (!getResult(results, QStringLiteral("Bs"), B)) return;
         if (!getResult(results, QStringLiteral("Cs"), C)) return;
         if (!getResult(results, QStringLiteral("Ds"), D)) return;
-        _elem->_ms.assign(A, B, C, D);
+        _elem->_matrs[MatrixKind::S].assign(A, B, C, D);
     }
     
     void setUnity()
     {
-        _elem->_mt.unity();
-        _elem->_ms.unity();
+        _elem->_matrs[MatrixKind::T].unity();
+        _elem->_matrs[MatrixKind::S].unity();
     }
 
     bool getResult(const QMap<QString, double>& results, const QString& name, double& result)

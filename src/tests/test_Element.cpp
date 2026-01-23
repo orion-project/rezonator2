@@ -22,8 +22,8 @@ DECLARE_ELEMENT(TestElement, Element)
 
     bool matrixCalculated = false;
     void calcMatrixInternal() override {
-        _mt.assign(11, 12, 13, 14);
-        _ms.assign(21, 22, 23, 24);
+        _matrs[MatrixKind::T].assign(11, 12, 13, 14);
+        _matrs[MatrixKind::S].assign(21, 22, 23, 24);
         matrixCalculated = true;
     }
 
