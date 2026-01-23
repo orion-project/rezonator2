@@ -8,6 +8,7 @@
 #include "../windows/ElementsCatalogDialog.h"
 #include "../windows/ElementPropsDialog.h"
 #include "../widgets/SchemaElemsTable.h"
+#include "../widgets/Widgets.h"
 #include "../windows/WindowsManager.h"
 
 #include "helpers/OriDialogs.h"
@@ -110,14 +111,14 @@ void CustomElemsWindow::createActions()
 
 void CustomElemsWindow::createToolbar()
 {
-    _toolbar = new Ori::Widgets::FlatToolBar;
-    _toolbar->setIconSize(Z::WindowUtils::toolbarIconSize());
-
-    Ori::Gui::populate(_toolbar,
-        { Ori::Gui::textToolButton(_actnElemAdd), nullptr, _actnElemMoveUp,
-          _actnElemMoveDown, nullptr, _actnEditCopy, _actnEditPaste, nullptr,
-          Ori::Gui::textToolButton(_actnElemProp), nullptr, _actnElemDelete,
-          nullptr, _actnShowHelp });
+    _toolbar = Z::Gui::makeToolBar({
+        Ori::Gui::textToolButton(_actnElemAdd), nullptr,
+        _actnElemMoveUp, _actnElemMoveDown, nullptr,
+        _actnEditCopy, _actnEditPaste, nullptr,
+        Ori::Gui::textToolButton(_actnElemProp), nullptr,
+        _actnElemDelete, nullptr,
+        _actnShowHelp,
+    });
 }
 
 void CustomElemsWindow::createMenu()

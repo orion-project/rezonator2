@@ -1,7 +1,10 @@
 #include "SchemaWindows.h"
-#include "WindowsManager.h"
-#include "widgets/OriFlatToolBar.h"
+
+#include "../app/Appearance.h"
+#include "../windows/WindowsManager.h"
+
 #include "helpers/OriWidgets.h"
+#include "widgets/OriFlatToolBar.h"
 
 #include <QApplication>
 #include <QBoxLayout>
@@ -11,36 +14,6 @@
 #include <QMenu>
 #include <QTimer>
 #include <QToolButton>
-
-namespace Z {
-namespace WindowUtils {
-
-QSize toolbarIconSize()
-{
-    return AppSettings::instance().smallToolbarImages? QSize(16,16): QSize(24,24);
-}
-
-void adjustIconSize(QToolBar* toolbar)
-{
-    adjustIconSize(toolbar, toolbarIconSize());
-}
-
-void adjustIconSize(QToolBar* toolbar, const QSize& iconSize)
-{
-    toolbar->setIconSize(iconSize);
-
-    for (auto a: toolbar->actions())
-    {
-        auto w = toolbar->widgetForAction(a);
-        auto b = qobject_cast<QToolButton*>(w);
-        if (b) b->setIconSize(iconSize);
-    }
-
-    toolbar->adjustSize();
-}
-
-} // namespace WindowUtils
-} // namespace Z
 
 //------------------------------------------------------------------------------
 //                               IEditableWindow
@@ -88,7 +61,7 @@ QToolBar* SchemaToolWindow::makeToolBar(const QString& title, bool flat)
     QToolBar* toolbar = flat? new Ori::Widgets::FlatToolBar(title): new QToolBar(title);
     toolbar->setMovable(false);
     toolbar->setFloatable(false);
-    toolbar->setIconSize(Z::WindowUtils::toolbarIconSize());
+    toolbar->setIconSize(Z::Gui::toolbarIconSize());
     toolbar->setObjectName("toolBar_" % title);
     _toolbars << toolbar;
     return toolbar;
@@ -111,8 +84,8 @@ QToolBar* SchemaToolWindow::makeToolBar(const std::initializer_list<QObject*>& i
 
 void SchemaToolWindow::settingsChanged()
 {
-    for (auto toolbar: _toolbars)
-        Z::WindowUtils::adjustIconSize(toolbar);
+    for (auto toolbar: std::as_const(_toolbars))
+        Z::Gui::adjustIconSize(toolbar);
 }
 
 //------------------------------------------------------------------------------
@@ -143,7 +116,7 @@ BasicMdiChild::BasicMdiChild(InitOptions options) : QMdiSubWindow()
         if (!options.testFlag(initNoToolBar))
         {
             _toolbar = new Ori::Widgets::FlatToolBar;
-            _toolbar->setIconSize(Z::WindowUtils::toolbarIconSize());
+            _toolbar->setIconSize(Z::Gui::toolbarIconSize());
             _layout->addWidget(_toolbar);
         }
     }
@@ -180,7 +153,7 @@ void BasicMdiChild::setContent(QWidget *content, int row)
 void BasicMdiChild::settingsChanged()
 {
     if (_toolbar)
-        Z::WindowUtils::adjustIconSize(_toolbar);
+        Z::Gui::adjustIconSize(_toolbar);
 }
 
 //------------------------------------------------------------------------------
@@ -347,12 +320,12 @@ void SchemaMdiArea::populateWindowMenu()
     // Append actions for windows that are not in menu
     auto actions = menu->actions();
     auto activeWindow = activeSubWindow();
-    for (auto window : subWindows)
+    for (auto window : std::as_const(subWindows))
     {
         if (!window->isVisible()) continue;
 
         bool windowInMenu = false;
-        for (auto action: actions)
+        for (auto action: std::as_const(actions))
             if (action->data().value<void*>() == window)
             {
                 action->setChecked(window == activeWindow);

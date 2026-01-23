@@ -14,18 +14,6 @@ class QVBoxLayout;
 QT_END_NAMESPACE
 
 //------------------------------------------------------------------------------
-
-namespace Z {
-namespace WindowUtils {
-
-QSize toolbarIconSize();
-void adjustIconSize(QToolBar* toolbar);
-void adjustIconSize(QToolBar* toolbar, const QSize& iconSize);
-
-} // namespace WindowUtils
-} // namespace Z
-
-//------------------------------------------------------------------------------
 /**
     Interface of a window which can process editing commands.
     Project window holds editing commands. When an editing command is invoked,

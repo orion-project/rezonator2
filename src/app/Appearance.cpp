@@ -313,6 +313,25 @@ QSize toolbarIconSize()
     return AppSettings::instance().smallToolbarImages? QSize(16,16): QSize(24,24);
 }
 
+void adjustIconSize(QToolBar* toolbar)
+{
+    adjustIconSize(toolbar, toolbarIconSize());
+}
+
+void adjustIconSize(QToolBar* toolbar, const QSize& iconSize)
+{
+    toolbar->setIconSize(iconSize);
+
+    for (auto a: toolbar->actions())
+    {
+        auto w = toolbar->widgetForAction(a);
+        auto b = qobject_cast<QToolButton*>(w);
+        if (b) b->setIconSize(iconSize);
+    }
+
+    toolbar->adjustSize();
+}
+
 void applyStylesheet(QWidget *w)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)

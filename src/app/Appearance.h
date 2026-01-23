@@ -93,6 +93,8 @@ void applyTextBrowserStyleSheet(QTextBrowser* browser, const QString& cssResourc
 void editAppStyleSheet();
 
 QSize toolbarIconSize();
+void adjustIconSize(QToolBar* toolbar);
+void adjustIconSize(QToolBar* toolbar, const QSize& iconSize);
 
 void applyStylesheet(QWidget*);
 

@@ -1,17 +1,17 @@
 #include "ElemFormulaEditor.h"
 
-#include "ParamEditor.h"
-#include "ParamsEditor.h"
-#include "UnitWidgets.h"
 #include "../app/Appearance.h"
 #include "../core/ElementFormula.h"
+#include "../core/Formula.h"
 #include "../math/FormatInfo.h"
-#include "../windows/WindowsManager.h"
+#include "../widgets/ParamEditor.h"
+#include "../widgets/ParamsEditor.h"
+#include "../widgets/UnitWidgets.h"
+#include "../widgets/Widgets.h"
 
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
-#include "widgets/OriFlatToolBar.h"
 
 #include <QCheckBox>
 #include <QFormLayout>
@@ -20,6 +20,7 @@
 #include <QPushButton>
 #include <QSplitter>
 #include <QTimer>
+#include <QToolBar>
 #include <QToolButton>
 #include <QPlainTextEdit>
 
@@ -126,16 +127,11 @@ void ElemFormulaEditor::createActions()
 
 void ElemFormulaEditor::createToolbar(bool full)
 {
-    _toolbar = new Ori::Widgets::FlatToolBar;
-    _toolbar->setIconSize(Z::WindowUtils::toolbarIconSize());
-
-    _toolbar->addAction(_actnSaveChanges);
-    _toolbar->addAction(_actnResetChanges);
-    _toolbar->addSeparator();
-    _toolbar->addAction(_actnParamAdd);
-    _toolbar->addSeparator();
-    _toolbar->addWidget(Ori::Gui::textToolButton(_actnCheckCode));
-
+    _toolbar = Z::Gui::makeToolBar({
+        _actnSaveChanges, _actnResetChanges, 0,
+        _actnParamAdd, 0,
+        Ori::Gui::textToolButton(_actnCheckCode),
+    });
     if (full)
     {
         _toolbar->addAction(_actnClearLog);

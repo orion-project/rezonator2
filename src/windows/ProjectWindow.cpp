@@ -286,7 +286,7 @@ void ProjectWindow::createToolBars()
     _mdiToolbar = new Ori::Widgets::MdiToolBar(tr("Windows"), _mdiArea);
     _mdiToolbar->setMovable(false);
     _mdiToolbar->setFloatable(false);
-    Z::WindowUtils::adjustIconSize(_mdiToolbar);
+    Z::Gui::adjustIconSize(_mdiToolbar);
     addToolBar(Qt::BottomToolBarArea, _mdiToolbar);
 }
 
@@ -513,7 +513,7 @@ void ProjectWindow::closeEvent(QCloseEvent* ce)
 void ProjectWindow::settingsChanged()
 {
     SchemaToolWindow::settingsChanged();
-    Z::WindowUtils::adjustIconSize(_mdiToolbar);
+    Z::Gui::adjustIconSize(_mdiToolbar);
 }
 
 //------------------------------------------------------------------------------
