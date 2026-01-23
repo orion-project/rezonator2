@@ -5,9 +5,7 @@
 
 #include <QApplication>
 
-namespace Z {
-class Lua;
-}
+class ElemFormulaImpl;
 
 DECLARE_ELEMENT(ElemFormula, Element)
     ElemFormula();
@@ -18,8 +16,8 @@ DECLARE_ELEMENT(ElemFormula, Element)
     bool hasMatricesTS() const { return _hasMatricesTS; }
     void setHasMatricesTS(bool on) { _hasMatricesTS = on; }
     QString formula() const { return _formula; }
-    QString error() const { return _error; }
-    bool ok() const { return _error.isEmpty(); }
+    QString error() const;
+    bool ok() const;
     void setFormula(const QString& formula) { _formula = formula; }
     void addParam(Z::Parameter* param, int index = -1);
     void removeParam(Z::Parameter* param);
@@ -28,13 +26,10 @@ DECLARE_ELEMENT(ElemFormula, Element)
     void assign(const ElemFormula* other);
     void reset();
 private:
+    ElemFormulaImpl *_impl;
+    friend class ElemFormulaImpl;
     bool _hasMatricesTS = true;
     QString _formula;
-    QString _error;
-    Z::Lua* _lua = nullptr;
-    bool reopenLua();
-    void setUnity();
-    bool getResult(const QMap<QString, double>& results, const QString& name, double& result);
 DECLARE_ELEMENT_END
 
 #endif // ELEMENT_FORMULA_H

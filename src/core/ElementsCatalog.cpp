@@ -1,4 +1,6 @@
 #include "ElementsCatalog.h"
+
+#include "ElementFormula.h"
 #include "Elements.h"
 
 #include <QApplication>
@@ -19,7 +21,7 @@ ElementsCatalog::ElementsCatalog()
     auto categoryAux = qApp->translate("Elements", "Additional elements");
     registerElement(categoryAux, new ElemMatrix);
     registerElement(categoryAux, new ElemMatrix1);
-    //registerElement(categoryAux, new ElemFormula);
+    registerElement(categoryAux, new ElemFormula);
     registerElement(categoryAux, new ElemPoint);
     registerElement(categoryAux, new ElemThickLens);
     registerElement(categoryAux, new ElemCylinderLensT);
