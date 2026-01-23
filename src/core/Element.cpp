@@ -144,6 +144,8 @@ void Element::setDisabled(bool value)
 
 bool Element::failed() const
 {
+    if (!_error.isEmpty())
+        return true;
     for (auto p : std::as_const(_params))
         if (p->failed())
             return true;
@@ -152,6 +154,8 @@ bool Element::failed() const
 
 QString Element::failReason() const
 {
+    if (!_error.isEmpty())
+        return _error;
     for (auto p : std::as_const(_params))
         if (p->failed())
             return qApp->tr("Parameter %1 failed: %2").arg(p->displayLabel(), p->error());

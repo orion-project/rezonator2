@@ -194,10 +194,10 @@ void ElemFormulaEditor::checkFormula()
 {
     applyWorkingValues();
 
-    if (_workingCopy->ok())
+    if (!_workingCopy->failed())
         _logView->setHtml(Z::Format::matrices(_workingCopy->Mt(), _workingCopy->Ms()));
     else
-        _logView->setHtml(QString("<p style='color:red'>%1").arg(_workingCopy->error()));
+        _logView->setHtml(QString("<p style='color:red'>%1").arg(_workingCopy->failReason()));
 }
 
 void ElemFormulaEditor::clearLog()

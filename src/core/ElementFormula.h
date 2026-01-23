@@ -14,8 +14,6 @@ DECLARE_ELEMENT(ElemFormula, Element)
     DEFAULT_LABEL("C")
     CALC_MATRIX
     QString formula() const { return _formula; }
-    QString error() const { return _error; }
-    bool ok() const { return _error.isEmpty(); }
     void setFormula(const QString& formula) { _formula = formula; }
     void addParam(Z::Parameter* param, int index = -1);
     void removeParam(Z::Parameter* param);
@@ -24,7 +22,6 @@ DECLARE_ELEMENT(ElemFormula, Element)
     void assign(const ElemFormula* other);
 private:
     QString _formula;
-    QString _error;
     QStringList _errorLog;
     int _errorLine;
     void showError(PyRunner *py);

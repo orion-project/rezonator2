@@ -29,8 +29,8 @@ public:
     elem.addParam(p_##name);
 
 #define ASSERT_MATRIX(ts, a, b, c, d)\
-    TEST_LOG(elem.error())\
-    ASSERT_EQ_STR(elem.error(), "")\
+    TEST_LOG(elem.failReason())\
+    ASSERT_IS_FALSE(elem.failed())\
     ASSERT_EQ_DBL(elem.M##ts().A.real(), a)\
     ASSERT_EQ_DBL(elem.M##ts().B.real(), b)\
     ASSERT_EQ_DBL(elem.M##ts().C.real(), c)\
@@ -45,11 +45,11 @@ public:
     elem.calcMatrix("test");
 
 #define ASSERT_ERROR(err) {}\
-    TEST_LOG(elem.error())\
-    ASSERT_IS_FALSE(elem.error().isEmpty())\
+    TEST_LOG(elem.failReason())\
+    ASSERT_IS_TRUE(elem.failed())\
     QString expected_error(err);\
     if (!expected_error.isEmpty())\
-        ASSERT_EQ_STR(elem.error(), expected_error)
+        ASSERT_EQ_STR(elem.failReason(), expected_error)
 
 
 TEST_METHOD(can_calculate_matrix)

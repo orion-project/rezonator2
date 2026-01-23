@@ -313,6 +313,7 @@ protected:
     bool _disabled = false;
     Z::Parameters _params;
     int _options = 0;
+    QString _error;
 
     virtual void calcMatrixInternal();
 
