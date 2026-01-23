@@ -22,6 +22,9 @@ Element::Element()
 {
     static int id = 0;
     _id = ++id;
+    
+    _matrs[MatrixKind::InvT] = Z::Matrix();
+    _matrs[MatrixKind::InvS] = Z::Matrix();
 }
 
 Element::~Element()
@@ -114,8 +117,8 @@ void Element::calcMatrixInternal()
 {
     _mt.unity();
     _ms.unity();
-    _mt_inv.unity();
-    _ms_inv.unity();
+    for (auto it = _matrs.begin(); it != _matrs.end(); it++)
+        it->second.unity();
 }
 
 void Element::setLabel(const QString& value)
@@ -155,31 +158,32 @@ QString Element::failReason() const
     return QString();
 }
 
-//------------------------------------------------------------------------------
-//                               ElementRange
-//------------------------------------------------------------------------------
-
-ElementRange::ElementRange()
+ElemAsRange Element::asRange()
 {
-    _length =  new Z::Parameter(Z::Dims::linear(),
-                                QStringLiteral("L"), QStringLiteral("L"),
-                                qApp->translate("Param", "Length"));
-    _ior = new Z::Parameter(Z::Dims::none(),
-                            QStringLiteral("n"), QStringLiteral("n"),
-                            qApp->translate("Param", "Index of refraction"));
-
-    // It is internal parameter by default,
-    // and should be explicitly revealed by derived elements
-    _ior->setVisible(false);
-
-    _length->setValue(100_mm);
-    _ior->setValue(1);
-
-    addParam(_length);
-    addParam(_ior);
+    if (_kind == ElementKind::Range)
+        return ElemAsRangeImpl{ .elem = this };
+    return {};
 }
 
-void ElementRange::setSubRange(const Z::Value& value)
+ElemAsDynamic Element::asDynamic()
+{
+    if (_kind == ElementKind::Dynamic)
+        return ElemAsDynamicImpl{ .elem = this };
+    return {};
+}
+
+ElemAsInterface Element::asInterface()
+{
+    if (_kind == ElementKind::Interface)
+        return ElemAsInterfaceImpl{ .elem = this };
+    return {};
+}
+
+//------------------------------------------------------------------------------
+//                             ElemAsRangeImpl
+//------------------------------------------------------------------------------
+
+void ElemAsRangeImpl::setSubRange(const Z::Value& value)
 {
     double v = value.toSi();
     if (v < 0) v = 0;
@@ -191,66 +195,22 @@ void ElementRange::setSubRange(const Z::Value& value)
     setSubRangeSI(v);
 }
 
-Z::Value ElementRange::subRangeLf() const
+Z::Value ElemAsRangeImpl::subRangeLf() const
 {
     auto unit = paramLength()->value().unit();
     return {unit->fromSi(subRangeSI()), unit};
 }
 
-Z::Value ElementRange::subRangeRt() const
+Z::Value ElemAsRangeImpl::subRangeRt() const
 {
     auto unit = paramLength()->value().unit();
     return {unit->fromSi(axisLengthSI() - subRangeSI()), unit};
 }
 
-Z::Value ElementRange::axisLen() const
+Z::Value ElemAsRangeImpl::axisLen() const
 {
     auto unit = paramLength()->value().unit();
     return {unit->fromSi(axisLengthSI()), unit};
-}
-
-//------------------------------------------------------------------------------
-//                            ElementInterface
-//------------------------------------------------------------------------------
-
-ElementInterface::ElementInterface()
-{
-    _ior1 = new Z::Parameter(Z::Dims::none(),
-                            QStringLiteral("n1"), QStringLiteral("n1"),
-                            qApp->translate("Param", "Index of refraction (left medium)"));
-    _ior2 = new Z::Parameter(Z::Dims::none(),
-                            QStringLiteral("n2"), QStringLiteral("n2"),
-                            qApp->translate("Param", "Index of refraction (right medium)"));
-
-    // These parameters can't be directly assigned,
-    // their values are taked from neighboub range elements
-    _ior1->setVisible(false);
-    _ior2->setVisible(false);
-
-    _ior1->setValue(1);
-    _ior2->setValue(2);
-
-    addParam(_ior1);
-    addParam(_ior2);
-
-    setOption(Element_Asymmetrical);
-    setOption(Element_ChangesWavefront);
-
-    layoutOptions.showLabel = false;
-}
-
-//------------------------------------------------------------------------------
-//                                ElementDynamic
-//------------------------------------------------------------------------------
-
-void ElementDynamic::calcMatrixInternal()
-{
-    _mt.unity();
-    _ms.unity();
-    _mt_inv.unity();
-    _ms_inv.unity();
-    _mt_dyn.unity();
-    _ms_dyn.unity();
 }
 
 //------------------------------------------------------------------------------

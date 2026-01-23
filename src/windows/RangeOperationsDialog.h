@@ -14,7 +14,7 @@ namespace Ori::Widgets {
 class ValueEdit;
 }
 
-class ElementRange;
+class Element;
 class Schema;
 
 class SplitRangeDlg : public QWidget
@@ -22,7 +22,7 @@ class SplitRangeDlg : public QWidget
     Q_OBJECT
     
 public:
-    explicit SplitRangeDlg(Schema *schema, ElementRange* srcElem);
+    explicit SplitRangeDlg(Schema *schema, Element *srcElem);
     
     bool exec();
     
@@ -59,7 +59,7 @@ class MergeRangesDlg : public QWidget
     Q_OBJECT
     
 public:
-    explicit MergeRangesDlg(ElementRange* elem1, ElementRange* elem2);
+    explicit MergeRangesDlg(Element* elem1, Element* elem2);
     
     bool exec();
     
@@ -72,7 +72,7 @@ class SlideRangesDlg : public QWidget
     Q_OBJECT
     
 public:
-    explicit SlideRangesDlg(ElementRange* elem1, ElementRange* elem2);
+    explicit SlideRangesDlg(Element* elem1, Element* elem2);
     
     bool exec();
 

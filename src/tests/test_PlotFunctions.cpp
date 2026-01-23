@@ -596,10 +596,14 @@ TEST_CASE_METHOD(calculateAt_offset, Z::Value offset)
     Schema schema;
     READ_AND_ASSERT("func_beamsize_variation_axial_len.rez")
     
-    auto d1 = Z::Utils::asRange(schema.element("d1"));
-    auto g1 = Z::Utils::asRange(schema.element("G1"));
-    ASSERT_IS_NOT_NULL(d1)
-    ASSERT_IS_NOT_NULL(g1)
+    auto elem_d1 = schema.element("d1");
+    auto elem_g1 = schema.element("G1");
+    ASSERT_IS_NOT_NULL(elem_d1)
+    ASSERT_IS_NOT_NULL(elem_g1)
+    auto d1 = elem_d1->asRange();
+    auto g1 = elem_g1->asRange();
+    ASSERT_IS_TRUE(d1.has_value())
+    ASSERT_IS_TRUE(g1.has_value())
     
     auto d1_len = d1->paramLength()->value();
     
@@ -608,10 +612,10 @@ TEST_CASE_METHOD(calculateAt_offset, Z::Value offset)
     Z::PointTS causticResult;
     {
         BeamVariationFunction func(&schema);
-        func.arg()->element = d1;
+        func.arg()->element = d1->elem;
         func.arg()->parameter = d1->paramLength();
         func.arg()->range = Z::VariableRange::withPoints(d1_len - 1_mm, d1_len + 1_mm, 3);
-        func.pos()->element = g1;
+        func.pos()->element = g1->elem;
         func.pos()->offset = offset;
         func.calculate();
         ASSERT_FUNC_OK
@@ -623,7 +627,7 @@ TEST_CASE_METHOD(calculateAt_offset, Z::Value offset)
     }
     {
         CausticFunction func(&schema);
-        func.arg()->element = g1;
+        func.arg()->element = g1->elem;
         func.arg()->range = Z::VariableRange::withPoints(0_mm, 0_mm, 10);
         func.calculate(PlotFunction::CALC_PREPARE);
         ASSERT_FUNC_OK

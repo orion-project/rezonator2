@@ -54,9 +54,21 @@ FocalLengthVerifier* globalFocalLengthVerifier()
     static FocalLengthVerifier v; return &v;
 }
 
+#define T1_(a, b, c, d) _matrs[MatrixKind::T1].assign(a, b, c, d)
+#define T2_(a, b, c, d) _matrs[MatrixKind::T2].assign(a, b, c, d)
+#define S1_(a, b, c, d) _matrs[MatrixKind::S1].assign(a, b, c, d)
+#define S2_(a, b, c, d) _matrs[MatrixKind::S2].assign(a, b, c, d)
+#define S1_EQ_T1 _matrs[MatrixKind::S1] = _matrs[MatrixKind::T1]
+#define S2_EQ_T2 _matrs[MatrixKind::S2] = _matrs[MatrixKind::T2]
+
 //------------------------------------------------------------------------------
 //                             ElemEmptyRange
 //------------------------------------------------------------------------------
+
+ElemEmptyRange::ElemEmptyRange() : Element()
+{
+    ELEM_PROLOG_RANGE
+}
 
 void ElemEmptyRange::calcMatrixInternal()
 {
@@ -64,8 +76,8 @@ void ElemEmptyRange::calcMatrixInternal()
 
     _mt.assign(1, lengthSI(), 0, 1);
     _ms = _mt;
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 
     Z_PERF_END
 }
@@ -74,10 +86,10 @@ void ElemEmptyRange::calcSubmatrices()
 {
     Z_PERF_BEGIN("ElemEmptyRange::calcSubmatrices")
 
-    _mt1.assign(1, _subRangeSI, 0, 1);
-    _ms1 = _mt1;
-    _mt2.assign(1, lengthSI() - _subRangeSI, 0, 1);
-    _ms2 = _mt2;
+    T1_(1, _subRangeSI, 0, 1);
+    T2_(1, lengthSI() - _subRangeSI, 0, 1);
+    S1_EQ_T1;
+    S2_EQ_T2;
 
     Z_PERF_END
 }
@@ -86,8 +98,10 @@ void ElemEmptyRange::calcSubmatrices()
 //                             ElemMediaRange
 //------------------------------------------------------------------------------
 
-ElemMediumRange::ElemMediumRange() : ElementRange()
+ElemMediumRange::ElemMediumRange() : Element()
 {
+    ELEM_PROLOG_RANGE
+
     _ior->setVisible(true);
 }
 
@@ -95,24 +109,26 @@ void ElemMediumRange::calcMatrixInternal()
 {
     _mt.assign(1, lengthSI(), 0, 1);
     _ms = _mt;
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 void ElemMediumRange::calcSubmatrices()
 {
-    _mt1.assign(1, _subRangeSI, 0, 1);
-    _ms1 = _mt1;
-    _mt2.assign(1, lengthSI() - _subRangeSI, 0, 1);
-    _ms2 = _mt2;
+    T1_(1, _subRangeSI, 0, 1);
+    T2_(1, lengthSI() - _subRangeSI, 0, 1);
+    S1_EQ_T1;
+    S2_EQ_T2;
 }
 
 //------------------------------------------------------------------------------
 //                                ElemPlate
 //------------------------------------------------------------------------------
 
-ElemPlate::ElemPlate() : ElementRange()
+ElemPlate::ElemPlate() : Element()
 {
+    ELEM_PROLOG_RANGE
+
     _ior->setVisible(true);
 }
 
@@ -120,16 +136,16 @@ void ElemPlate::calcMatrixInternal()
 {
     _mt.assign(1, lengthSI() / ior(), 0, 1);
     _ms = _mt;
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 void ElemPlate::calcSubmatrices()
 {
-    _mt1.assign(1, _subRangeSI / ior(), 0, 1/ior());
-    _ms1 = _mt1;
-    _mt2.assign(1, lengthSI() - _subRangeSI, 0, ior());
-    _ms2 = _mt2;
+    T1_(1, _subRangeSI / ior(), 0, 1/ior());
+    T2_(1, lengthSI() - _subRangeSI, 0, ior());
+    S1_EQ_T1;
+    S2_EQ_T2;
 }
 
 //------------------------------------------------------------------------------
@@ -168,8 +184,8 @@ void ElemCurveMirror::calcMatrixInternal()
 {
     _mt.assign(1, 0, -2.0 / radius() / cos(alpha()), 1);
     _ms.assign(1, 0, -2.0 / radius() * cos(alpha()), 1);
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -200,8 +216,8 @@ void ElemThinLens::calcMatrixInternal()
 {
     _mt.assign(1.0, 0.0, -1.0 / focus() / cos(alpha()), 1.0);
     _ms.assign(1.0, 0.0, -1.0 / focus() * cos(alpha()), 1.0);
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -212,8 +228,8 @@ void ElemCylinderLensT::calcMatrixInternal()
 {
     _mt.assign(1.0, 0.0, -1.0 / focus() / cos(alpha()), 1.0);
     _ms.unity();
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -224,16 +240,18 @@ void ElemCylinderLensS::calcMatrixInternal()
 {
     _mt.unity();
     _ms.assign(1.0, 0.0, -1.0 / focus() * cos(alpha()), 1.0);
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 //------------------------------------------------------------------------------
 //                             ElemTiltedCrystal
 //------------------------------------------------------------------------------
 
-ElemTiltedCrystal::ElemTiltedCrystal() : ElementRange()
+ElemTiltedCrystal::ElemTiltedCrystal() : Element()
 {
+    ELEM_PROLOG_RANGE
+
     _ior->setVisible(true);
 
     _alpha = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Alpha"), Z::Strs::alpha(),
@@ -253,8 +271,8 @@ void ElemTiltedCrystal::calcMatrixInternal()
 
     _mt.assign(1, L * n * SQR(cos(a)) / (SQR(n) - SQR(sin(a))), 0.0, 1.0);
     _ms.assign(1, L / n, 0, 1);
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 void ElemTiltedCrystal::calcSubmatrices()
@@ -268,12 +286,12 @@ void ElemTiltedCrystal::calcSubmatrices()
     const double L2 = lengthSI() - _subRangeSI;
 
     //  --> /:: -->  half lengh * input to medium
-    _mt1.assign(cos_ba, L1/n * cos_ab, 0, 1/n * cos_ab);
-    _ms1.assign(1, L1/n, 0, 1/n);
+    T1_(cos_ba, L1/n * cos_ab, 0, 1/n * cos_ab);
+    S1_(1, L1/n, 0, 1/n);
 
     //  --> ::/ -->  output from media * half length
-    _mt2.assign(cos_ab, L2 * cos_ab, 0, n * cos_ba);
-    _ms2.assign(1, L2, 0, n);
+    T2_(cos_ab, L2 * cos_ab, 0, n * cos_ba);
+    S2_(1, L2, 0, n);
 }
 
 //------------------------------------------------------------------------------
@@ -289,8 +307,8 @@ void ElemTiltedPlate::calcMatrixInternal()
 
     _mt.assign(1, L * n*n * (1 - sin_a*sin_a) / sqrt(s*s*s), 0, 1);
     _ms.assign(1, L / sqrt(s), 0, 1);
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 void ElemTiltedPlate::calcSubmatrices()
@@ -304,12 +322,12 @@ void ElemTiltedPlate::calcSubmatrices()
     const double L2 = axisLengthSI() - _subRangeSI;
 
     //  --> /:: -->  half lengh * input to medium
-    _mt1.assign(cos_ba, L1/n * cos_ab, 0, 1/n * cos_ab);
-    _ms1.assign(1, L1/n, 0, 1/n);
+    T1_(cos_ba, L1/n * cos_ab, 0, 1/n * cos_ab);
+    S1_(1, L1/n, 0, 1/n);
 
     //  --> ::/ -->  output from medium * half length
-    _mt2.assign(cos_ab, L2 * cos_ab, 0, n * cos_ba);
-    _ms2.assign(1, L2, 0, n);
+    T2_(cos_ab, L2 * cos_ab, 0, n * cos_ba);
+    S2_(1, L2, 0, n);
 }
 
 double ElemTiltedPlate::axisLengthSI() const
@@ -321,8 +339,10 @@ double ElemTiltedPlate::axisLengthSI() const
 //                            ElemBrewsterCrystal
 //------------------------------------------------------------------------------
 
-ElemBrewsterCrystal::ElemBrewsterCrystal() : ElementRange()
+ElemBrewsterCrystal::ElemBrewsterCrystal() : Element()
 {
+    ELEM_PROLOG_RANGE
+
     _ior->setVisible(true);
 }
 
@@ -333,8 +353,8 @@ void ElemBrewsterCrystal::calcMatrixInternal()
 
     _ms.assign(1, L / n, 0, 1);
     _mt.assign(1, _ms.B / SQR(n), 0, 1);
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 void ElemBrewsterCrystal::calcSubmatrices()
@@ -344,20 +364,22 @@ void ElemBrewsterCrystal::calcSubmatrices()
     const double L2 = lengthSI() - L1;
 
     //  --> /:: -->  half lengh * input to medium
-    _mt1.assign(n, L1/n/n, 0, 1/n/n);
-    _ms1.assign(1, L1/n,   0, 1/n);
+    T1_(n, L1/n/n, 0, 1/n/n);
+    S1_(1, L1/n,   0, 1/n);
 
     //  --> ::/ -->  output from media * half length
-    _mt2.assign(1/n, L2/n, 0, n*n);
-    _ms2.assign(1, L2, 0, n);
+    T2_(1/n, L2/n, 0, n*n);
+    S2_(1, L2, 0, n);
 }
 
 //------------------------------------------------------------------------------
 //                             ElemBrewsterPlate
 //------------------------------------------------------------------------------
 
-ElemBrewsterPlate::ElemBrewsterPlate() : ElementRange()
+ElemBrewsterPlate::ElemBrewsterPlate() : Element()
 {
+    ELEM_PROLOG_RANGE
+
     _ior->setVisible(true);
 }
 
@@ -367,8 +389,8 @@ void ElemBrewsterPlate::calcMatrixInternal()
 
     _ms.assign(1, axisLengthSI() / n, 0, 1);
     _mt.assign(1, _ms.B / SQR(n), 0, 1);
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 void ElemBrewsterPlate::calcSubmatrices()
@@ -378,12 +400,12 @@ void ElemBrewsterPlate::calcSubmatrices()
     const double n = ior();
 
     //  --> /:: -->  half lengh * input to medium
-    _mt1.assign(n, L1/n/n, 0, 1/n/n);
-    _ms1.assign(1, L1/n, 0, 1/n);
+    T1_(n, L1/n/n, 0, 1/n/n);
+    S1_(1, L1/n, 0, 1/n);
 
     //  --> ::/ -->  output from media * half length
-    _mt2.assign(1/n, L2/n, 0, n*n);
-    _ms2.assign(1, L2, 0, n);
+    T2_(1/n, L2/n, 0, n*n);
+    S2_(1, L2, 0, n);
 }
 
 double ElemBrewsterPlate::axisLengthSI() const
@@ -443,8 +465,8 @@ void ElemMatrix::calcMatrixInternal()
                _params.at(2)->value().toSi(), _params.at(3)->value().toSi());
     _ms.assign(_params.at(4)->value().toSi(), _params.at(5)->value().toSi(),
                _params.at(6)->value().toSi(), _params.at(7)->value().toSi());
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -482,8 +504,8 @@ void ElemMatrix1::calcMatrixInternal()
     _mt.assign(_params.at(0)->value().toSi(), _params.at(1)->value().toSi(),
                _params.at(2)->value().toSi(), _params.at(3)->value().toSi());
     _ms = _mt;
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -492,12 +514,16 @@ void ElemMatrix1::calcMatrixInternal()
 
 ElemPoint::ElemPoint() : Element()
 {
-    setOption(Element_Unity);
 }
 
 //------------------------------------------------------------------------------
 //                             ElemNormalInterface
 //------------------------------------------------------------------------------
+
+ElemNormalInterface::ElemNormalInterface() : Element()
+{
+    ELEM_PROLOG_INTERFACE
+}
 
 void ElemNormalInterface::calcMatrixInternal()
 {
@@ -507,13 +533,18 @@ void ElemNormalInterface::calcMatrixInternal()
     _mt.assign(1, 0, 0, n1 / n2);
     _ms = _mt;
 
-    _mt_inv.assign(1, 0, 0, n2 / n1);
-    _ms_inv = _mt_inv;
+    _matrs[MatrixKind::InvT].assign(1, 0, 0, n2 / n1);
+    _matrs[MatrixKind::InvS] = _matrs[MatrixKind::InvT];
 }
 
 //------------------------------------------------------------------------------
 //                             ElemBrewsterInterface
 //------------------------------------------------------------------------------
+
+ElemBrewsterInterface::ElemBrewsterInterface() : Element()
+{
+    ELEM_PROLOG_INTERFACE
+}
 
 void ElemBrewsterInterface::calcMatrixInternal()
 {
@@ -523,16 +554,18 @@ void ElemBrewsterInterface::calcMatrixInternal()
     _mt.assign(n2/n1, 0, 0, (n1/n2)*(n1/n2));
     _ms.assign(1, 0, 0, n1/n2);
 
-    _mt_inv.assign(n1/n2, 0, 0, (n2/n1)*(n2/n1));
-    _ms_inv.assign(1, 0, 0, n2/n1);
+    _matrs[MatrixKind::InvT].assign(n1/n2, 0, 0, (n2/n1)*(n2/n1));
+    _matrs[MatrixKind::InvS].assign(1, 0, 0, n2/n1);
 }
 
 //------------------------------------------------------------------------------
 //                             ElemTiltedInterface
 //------------------------------------------------------------------------------
 
-ElemTiltedInterface::ElemTiltedInterface() : ElementInterface()
+ElemTiltedInterface::ElemTiltedInterface() : Element()
 {
+    ELEM_PROLOG_INTERFACE
+
     _alpha = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Alpha"), Z::Strs::alpha(),
                               qApp->translate("Param", "Angle of incidence"),
                               qApp->translate("Param", "Zero angle is normal incidence. "
@@ -558,16 +591,18 @@ void ElemTiltedInterface::calcMatrixInternal()
     _mt.assign(cos_b/cos_a, 0, 0, (n1/n2)*(cos_a/cos_b));
     _ms.assign(1, 0, 0, n1/n2);
 
-    _mt_inv.assign(cos_a/cos_b, 0, 0, (n2/n1)*(cos_b/cos_a));
-    _ms_inv.assign(1, 0, 0, n2/n1);
+    _matrs[MatrixKind::InvT].assign(cos_a/cos_b, 0, 0, (n2/n1)*(cos_b/cos_a));
+    _matrs[MatrixKind::InvS].assign(1, 0, 0, n2/n1);
 }
 
 //------------------------------------------------------------------------------
 //                             ElemSphericalInterface
 //------------------------------------------------------------------------------
 
-ElemSphericalInterface::ElemSphericalInterface() : ElementInterface()
+ElemSphericalInterface::ElemSphericalInterface() : Element()
 {
+    ELEM_PROLOG_INTERFACE
+
     _radius = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R"), QStringLiteral("R"),
                                qApp->translate("Param", "Radius of curvature"),
                                qApp->translate("Param", "Negative value means right-bulged surface, "
@@ -589,14 +624,14 @@ void ElemSphericalInterface::calcMatrixInternal()
 
     if (flat) {
         _mt.assign(1, 0, 0, n1/n2);
-        _mt_inv.assign(1, 0, 0, n2/n1);
+        _matrs[MatrixKind::InvT].assign(1, 0, 0, n2/n1);
     } else {
         _mt.assign(1, 0, (n1-n2)/R/n2, n1/n2);
-        _mt_inv.assign(1, 0, (n2-n1)/(-R)/n1, n2/n1);
+        _matrs[MatrixKind::InvT].assign(1, 0, (n2-n1)/(-R)/n1, n2/n1);
     }
     
     _ms = _mt;
-    _ms_inv = _mt_inv;
+    _matrs[MatrixKind::InvS] = _matrs[MatrixKind::InvT];
 }
 
 QList<QPair<Z::Parameter*, Z::Parameter*>> ElemSphericalInterface::flip()
@@ -610,8 +645,10 @@ QList<QPair<Z::Parameter*, Z::Parameter*>> ElemSphericalInterface::flip()
 //                             ElemThickLens
 //------------------------------------------------------------------------------
 
-ElemThickLens::ElemThickLens() : ElementRange()
+ElemThickLens::ElemThickLens() : Element()
 {
+    ELEM_PROLOG_RANGE
+
     _ior->setVisible(true);
 
     _radius1 = new Z::Parameter(Z::Dims::linear(), QStringLiteral("R1"), QStringLiteral("R<sub>1</sub>"),
@@ -690,9 +727,9 @@ void ElemThickLens::calcMatrixInternal()
     }
 
     _mt.assign(A, B, C, D);
-    _mt_inv.assign(A_inv, B_inv, C_inv, D_inv);
+    _matrs[MatrixKind::InvT].assign(A_inv, B_inv, C_inv, D_inv);
     _ms = _mt;
-    _ms_inv = _mt_inv;
+    _matrs[MatrixKind::InvS] = _matrs[MatrixKind::InvT];
 }
 
 void ElemThickLens::calcSubmatrices()
@@ -760,10 +797,10 @@ void ElemThickLens::calcSubmatrices()
         D2 = L2*(n-1)/R2 + n;
     }
 
-    _mt1.assign(A1, B1, C1, D1);
-    _mt2.assign(A2, B2, C2, D2);
-    _ms1 = _mt1;
-    _ms2 = _mt2;
+    T1_(A1, B1, C1, D1);
+    T2_(A2, B2, C2, D2);
+    S1_EQ_T1;
+    S2_EQ_T2;
 }
 
 QList<QPair<Z::Parameter*, Z::Parameter*>> ElemThickLens::flip()
@@ -778,7 +815,10 @@ QList<QPair<Z::Parameter*, Z::Parameter*>> ElemThickLens::flip()
 //                             ElemGrinLens
 //------------------------------------------------------------------------------
 
-ElemGrinLens::ElemGrinLens() : ElementRange() {
+ElemGrinLens::ElemGrinLens() : Element()
+{
+    ELEM_PROLOG_RANGE
+
     _length->setDescription(qApp->translate("Param", "Thickness of the lens."));
 
     _ior->setRawValue(2);
@@ -804,7 +844,8 @@ ElemGrinLens::ElemGrinLens() : ElementRange() {
     addParam(_ior2s);
 }
 
-void ElemGrinLens::calcMatrixInternal() {
+void ElemGrinLens::calcMatrixInternal()
+{
     const double L = qAbs(lengthSI());
     const double n0 = qAbs(ior());
     const double n2t = ior2t();
@@ -828,11 +869,12 @@ void ElemGrinLens::calcMatrixInternal() {
         _ms.assign(cosh(g*L), sinh(g*L)/n0/g, n0*g*sinh(g*L), cosh(g*L));
     } else _ms.assign(1, L/n0, 0, 1);
 
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
-void ElemGrinLens::calcSubmatrices() {
+void ElemGrinLens::calcSubmatrices()
+{
     const double L1 = _subRangeSI;
     const double L2 = qAbs(lengthSI()) - L1;
     const double n0 = qAbs(ior());
@@ -841,28 +883,28 @@ void ElemGrinLens::calcSubmatrices() {
 
     if (n2t > 0) {
         const double g = sqrt(n2t / n0);
-        _mt1.assign(cos(g*L1), sin(g*L1)/n0/g, -g*sin(g*L1), cos(g*L1)/n0);
-        _mt2.assign(cos(g*L2), sin(g*L2)/g, -n0*g*sin(g*L2), n0*cos(g*L2));
+        T1_(cos(g*L1), sin(g*L1)/n0/g, -g*sin(g*L1), cos(g*L1)/n0);
+        T2_(cos(g*L2), sin(g*L2)/g, -n0*g*sin(g*L2), n0*cos(g*L2));
     } else if (n2t < 0) {
         const double g = sqrt(-n2t / n0);
-        _mt1.assign(cosh(g*L1), sinh(g*L1)/n0/g, g*sinh(g*L1), cosh(g*L1)/n0);
-        _mt2.assign(cosh(g*L2), sinh(g*L2)/g, n0*g*sinh(g*L2), n0*cosh(g*L2));
+        T1_(cosh(g*L1), sinh(g*L1)/n0/g, g*sinh(g*L1), cosh(g*L1)/n0);
+        T2_(cosh(g*L2), sinh(g*L2)/g, n0*g*sinh(g*L2), n0*cosh(g*L2));
     } else {
-        _mt1.assign(1, L1/n0, 0, 1/n0);
-        _mt2.assign(1, L2, 0, n0);
+        T1_(1, L1/n0, 0, 1/n0);
+        T2_(1, L2, 0, n0);
     }
 
     if (n2s > 0) {
         const double g = sqrt(n2s / n0);
-        _ms1.assign(cos(g*L1), sin(g*L1)/n0/g, -g*sin(g*L1), cos(g*L1)/n0);
-        _ms2.assign(cos(g*L2), sin(g*L2)/g, -n0*g*sin(g*L2), n0*cos(g*L2));
+        S1_(cos(g*L1), sin(g*L1)/n0/g, -g*sin(g*L1), cos(g*L1)/n0);
+        S2_(cos(g*L2), sin(g*L2)/g, -n0*g*sin(g*L2), n0*cos(g*L2));
     } else if (n2s < 0) {
         const double g = sqrt(-n2s / n0);
-        _ms1.assign(cosh(g*L1), sinh(g*L1)/n0/g, g*sinh(g*L1), cosh(g*L1)/n0);
-        _ms2.assign(cosh(g*L2), sinh(g*L2)/g, n0*g*sinh(g*L2), n0*cosh(g*L2));
+        S1_(cosh(g*L1), sinh(g*L1)/n0/g, g*sinh(g*L1), cosh(g*L1)/n0);
+        S2_(cosh(g*L2), sinh(g*L2)/g, n0*g*sinh(g*L2), n0*cosh(g*L2));
     } else {
-        _ms1.assign(1, L1/n0, 0, 1/n0);
-        _ms2.assign(1, L2, 0, n0);
+        S1_(1, L1/n0, 0, 1/n0);
+        S2_(1, L2, 0, n0);
     }
 }
 
@@ -870,7 +912,8 @@ void ElemGrinLens::calcSubmatrices() {
 //                             ElemGrinMedium
 //------------------------------------------------------------------------------
 
-ElemGrinMedium::ElemGrinMedium() : ElemMediumRange() {
+ElemGrinMedium::ElemGrinMedium() : ElemMediumRange()
+{
     _length->setDescription(qApp->translate("Param", "Thickness of material."));
 
     _ior->setRawValue(2);
@@ -896,7 +939,8 @@ ElemGrinMedium::ElemGrinMedium() : ElemMediumRange() {
     addParam(_ior2s);
 }
 
-void ElemGrinMedium::calcMatrixInternal() {
+void ElemGrinMedium::calcMatrixInternal()
+{
     const double L = qAbs(lengthSI());
     const double n0 = qAbs(ior());
     const double n2t = ior2t();
@@ -920,11 +964,12 @@ void ElemGrinMedium::calcMatrixInternal() {
         _ms.assign(cosh(g*L), sinh(g*L)/g, g*sinh(g*L), cosh(g*L));
     } else _ms.assign(1, L, 0, 1);
 
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
-void ElemGrinMedium::calcSubmatrices() {
+void ElemGrinMedium::calcSubmatrices()
+{
     const double L1 = _subRangeSI;
     const double L2 = qAbs(lengthSI()) - L1;
     const double n0 = qAbs(ior());
@@ -933,28 +978,28 @@ void ElemGrinMedium::calcSubmatrices() {
 
     if (n2t > 0) {
         const double g = sqrt(n2t / n0);
-        _mt1.assign(cos(g*L1), sin(g*L1)/g, -g*sin(g*L1), cos(g*L1));
-        _mt2.assign(cos(g*L2), sin(g*L2)/g, -g*sin(g*L2), cos(g*L2));
+        T1_(cos(g*L1), sin(g*L1)/g, -g*sin(g*L1), cos(g*L1));
+        T2_(cos(g*L2), sin(g*L2)/g, -g*sin(g*L2), cos(g*L2));
     } else if (n2t < 0) {
         const double g = sqrt(-n2t / n0);
-        _mt1.assign(cosh(g*L1), sinh(g*L1)/g, g*sinh(g*L1), cosh(g*L1));
-        _mt2.assign(cosh(g*L2), sinh(g*L2)/g, g*sinh(g*L2), cosh(g*L2));
+        T1_(cosh(g*L1), sinh(g*L1)/g, g*sinh(g*L1), cosh(g*L1));
+        T2_(cosh(g*L2), sinh(g*L2)/g, g*sinh(g*L2), cosh(g*L2));
     } else {
-        _mt1.assign(1, L1, 0, 1);
-        _mt2.assign(1, L2, 0, 1);
+        T1_(1, L1, 0, 1);
+        T2_(1, L2, 0, 1);
     }
 
     if (n2s > 0) {
         const double g = sqrt(n2s / n0);
-        _ms1.assign(cos(g*L1), sin(g*L1)/g, -g*sin(g*L1), cos(g*L1));
-        _ms2.assign(cos(g*L2), sin(g*L2)/g, -g*sin(g*L2), cos(g*L2));
+        S1_(cos(g*L1), sin(g*L1)/g, -g*sin(g*L1), cos(g*L1));
+        S2_(cos(g*L2), sin(g*L2)/g, -g*sin(g*L2), cos(g*L2));
     } else if (n2s < 0) {
         const double g = sqrt(-n2s / n0);
-        _ms1.assign(cosh(g*L1), sinh(g*L1)/g, g*sinh(g*L1), cosh(g*L1));
-        _ms2.assign(cosh(g*L2), sinh(g*L2)/g, g*sinh(g*L2), cosh(g*L2));
+        S1_(cosh(g*L1), sinh(g*L1)/g, g*sinh(g*L1), cosh(g*L1));
+        S2_(cosh(g*L2), sinh(g*L2)/g, g*sinh(g*L2), cosh(g*L2));
     } else {
-        _ms1.assign(1, L1, 0, 1);
-        _ms2.assign(1, L2, 0, 1);
+        S1_(1, L1, 0, 1);
+        S2_(1, L2, 0, 1);
     }
 }
 
@@ -962,7 +1007,10 @@ void ElemGrinMedium::calcSubmatrices() {
 //                             ElemThermoLens
 //------------------------------------------------------------------------------
 
-ElemThermoLens::ElemThermoLens() : ElementRange() {
+ElemThermoLens::ElemThermoLens() : Element()
+{
+    ELEM_PROLOG_RANGE
+
     _length->setDescription(qApp->translate("Param", "Thickness of material."));
     _ior->setRawValue(2);
     _ior->setVisible(true);
@@ -979,7 +1027,8 @@ ElemThermoLens::ElemThermoLens() : ElementRange() {
     addParam(_focus);
 }
 
-void ElemThermoLens::calcMatrixInternal() {
+void ElemThermoLens::calcMatrixInternal()
+{
     const double L = qAbs(lengthSI());
     const double F = focus();
     const double n0 = qAbs(ior());
@@ -1000,32 +1049,34 @@ void ElemThermoLens::calcMatrixInternal() {
 
     _ms = _mt;
 
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
-void ElemThermoLens::calcSubmatrices() {
+void ElemThermoLens::calcSubmatrices()
+{
     const double L1 = _subRangeSI;
     const double L2 = qAbs(lengthSI()) - L1;
     const double n0 = qAbs(ior());
     if (_n2 > 0) {
         const double g = sqrt(_n2 / n0);
-        _mt1.assign(cos(g*L1), sin(g*L1)/n0/g, -g*sin(g*L1), cos(g*L1)/n0);
-        _mt2.assign(cos(g*L2), sin(g*L2)/g, -n0*g*sin(g*L2), n0*cos(g*L2));
+        T1_(cos(g*L1), sin(g*L1)/n0/g, -g*sin(g*L1), cos(g*L1)/n0);
+        T2_(cos(g*L2), sin(g*L2)/g, -n0*g*sin(g*L2), n0*cos(g*L2));
     } else {
         const double g = sqrt(-_n2 / n0);
-        _mt1.assign(cosh(g*L1), sinh(g*L1)/n0/g, g*sinh(g*L1), cosh(g*L1)/n0);
-        _mt2.assign(cosh(g*L2), sinh(g*L2)/g, n0*g*sinh(g*L2), n0*cosh(g*L2));
+        T1_(cosh(g*L1), sinh(g*L1)/n0/g, g*sinh(g*L1), cosh(g*L1)/n0);
+        T2_(cosh(g*L2), sinh(g*L2)/g, n0*g*sinh(g*L2), n0*cosh(g*L2));
     }
-    _ms1 = _mt1;
-    _ms2 = _mt2;
+    S1_EQ_T1;
+    S2_EQ_T2;
 }
 
 //------------------------------------------------------------------------------
 //                             ElemThermoMedium
 //------------------------------------------------------------------------------
 
-ElemThermoMedium::ElemThermoMedium() : ElemMediumRange() {
+ElemThermoMedium::ElemThermoMedium() : ElemMediumRange()
+{
     _length->setDescription(qApp->translate("Param", "Thickness of material."));
     _ior->setRawValue(2);
     _ior->setVisible(true);
@@ -1043,7 +1094,8 @@ ElemThermoMedium::ElemThermoMedium() : ElemMediumRange() {
     addParam(_focus);
 }
 
-void ElemThermoMedium::calcMatrixInternal() {
+void ElemThermoMedium::calcMatrixInternal()
+{
     const double L = qAbs(lengthSI());
     const double n0 = qAbs(ior());
     const double F = focus();
@@ -1062,33 +1114,36 @@ void ElemThermoMedium::calcMatrixInternal() {
     } else _mt.assign(NaN, NaN, NaN, NaN);
     _ms = _mt;
 
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
-void ElemThermoMedium::calcSubmatrices() {
+void ElemThermoMedium::calcSubmatrices()
+{
     const double L1 = _subRangeSI;
     const double L2 = qAbs(lengthSI()) - L1;
     const double n0 = qAbs(ior());
     if (_n2 > 0) {
         const double g = sqrt(_n2 / n0);
-        _mt1.assign(cos(g*L1), sin(g*L1)/g, -g*sin(g*L1), cos(g*L1));
-        _mt2.assign(cos(g*L2), sin(g*L2)/g, -g*sin(g*L2), cos(g*L2));
+        T1_(cos(g*L1), sin(g*L1)/g, -g*sin(g*L1), cos(g*L1));
+        T2_(cos(g*L2), sin(g*L2)/g, -g*sin(g*L2), cos(g*L2));
     } else {
         const double g = sqrt(-_n2 / n0);
-        _mt1.assign(cosh(g*L1), sinh(g*L1)/g, g*sinh(g*L1), cosh(g*L1));
-        _mt2.assign(cosh(g*L2), sinh(g*L2)/g, g*sinh(g*L2), cosh(g*L2));
+        T1_(cosh(g*L1), sinh(g*L1)/g, g*sinh(g*L1), cosh(g*L1));
+        T2_(cosh(g*L2), sinh(g*L2)/g, g*sinh(g*L2), cosh(g*L2));
     }
-    _ms1 = _mt1;
-    _ms2 = _mt2;
+    S1_EQ_T1;
+    S2_EQ_T2;
 }
 
 //------------------------------------------------------------------------------
 //                             ElemAxiconMirror
 //------------------------------------------------------------------------------
 
-ElemAxiconMirror::ElemAxiconMirror() : ElementDynamic()
+ElemAxiconMirror::ElemAxiconMirror() : Element()
 {
+    ELEM_PROLOG_DYNAMIC
+
     _theta = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Theta"), Z::Strs::theta(),
                               qApp->translate("Param", "Axicon angle"));
     _alpha = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Alpha"), Z::Strs::alpha(),
@@ -1104,7 +1159,7 @@ ElemAxiconMirror::ElemAxiconMirror() : ElementDynamic()
     setOption(Element_ChangesWavefront);
 }
 
-void ElemAxiconMirror::calcDynamicMatrix(const CalcParams& p)
+void ElemAxiconMirror::calcDynamicMatrix(const DynamicElemCalcParams& p)
 {
     auto beamT = p.pumpCalc->calcT(*p.Mt, p.prevElemIor);
     auto beamS = p.pumpCalc->calcS(*p.Ms, p.prevElemIor);
@@ -1112,16 +1167,18 @@ void ElemAxiconMirror::calcDynamicMatrix(const CalcParams& p)
     auto cosA = cos(alpha());
     auto tmp = 2 * theta();
 
-    _mt_dyn.assign(1, 0, -tmp / qAbs(beamT.beamRadius) / cosA, 1);
-    _ms_dyn.assign(1, 0, -tmp / qAbs(beamS.beamRadius) * cosA, 1);
+    _matrs[MatrixKind::DynT].assign(1, 0, -tmp / qAbs(beamT.beamRadius) / cosA, 1);
+    _matrs[MatrixKind::DynS].assign(1, 0, -tmp / qAbs(beamS.beamRadius) * cosA, 1);
 }
 
 //------------------------------------------------------------------------------
 //                             ElemAxiconLens
 //------------------------------------------------------------------------------
 
-ElemAxiconLens::ElemAxiconLens() : ElementDynamic()
+ElemAxiconLens::ElemAxiconLens() : Element()
 {
+    ELEM_PROLOG_DYNAMIC
+
     _theta = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Theta"), Z::Strs::theta(),
                               qApp->translate("Param", "Axicon angle"));
     _alpha = new Z::Parameter(Z::Dims::angular(), QStringLiteral("Alpha"), Z::Strs::alpha(),
@@ -1142,7 +1199,7 @@ ElemAxiconLens::ElemAxiconLens() : ElementDynamic()
     setOption(Element_ChangesWavefront);
 }
 
-void ElemAxiconLens::calcDynamicMatrix(const CalcParams& p)
+void ElemAxiconLens::calcDynamicMatrix(const DynamicElemCalcParams& p)
 {
     auto beamT = p.pumpCalc->calcT(*p.Mt, p.prevElemIor);
     auto beamS = p.pumpCalc->calcS(*p.Ms, p.prevElemIor);
@@ -1150,8 +1207,8 @@ void ElemAxiconLens::calcDynamicMatrix(const CalcParams& p)
     auto cosA = cos(alpha());
     auto tmp = asin(sin(theta()) * ior()) - theta();
 
-    _mt_dyn.assign(1, 0, -tmp / qAbs(beamT.beamRadius) / cosA, 1);
-    _ms_dyn.assign(1, 0, -tmp / qAbs(beamS.beamRadius) * cosA, 1);
+    _matrs[MatrixKind::DynT].assign(1, 0, -tmp / qAbs(beamT.beamRadius) / cosA, 1);
+    _matrs[MatrixKind::DynS].assign(1, 0, -tmp / qAbs(beamS.beamRadius) * cosA, 1);
 }
 
 //------------------------------------------------------------------------------
@@ -1196,8 +1253,8 @@ void ElemGaussAperture::calcMatrixInternal()
     _mt.assign(Z::Complex(1, 0), Z::Complex(0, 0), Z::Complex(0, -wl*a2t/_2PI), Z::Complex(1, 0));
     _ms.assign(Z::Complex(1, 0), Z::Complex(0, 0), Z::Complex(0, -wl*a2s/_2PI), Z::Complex(1, 0));
 
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 //------------------------------------------------------------------------------
@@ -1261,15 +1318,18 @@ void ElemGaussApertureLens::calcMatrixInternal()
     _mt.assign(Z::Complex(1, 0), Z::Complex(0, 0), Z::Complex(-1.0/ft, -wl*a2t/_2PI), Z::Complex(1, 0));
     _ms.assign(Z::Complex(1, 0), Z::Complex(0, 0), Z::Complex(-1.0/fs, -wl*a2s/_2PI), Z::Complex(1, 0));
 
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
 //------------------------------------------------------------------------------
 //                             ElemGaussDuctMedium
 //------------------------------------------------------------------------------
 
-ElemGaussDuctMedium::ElemGaussDuctMedium() : ElementRange() {
+ElemGaussDuctMedium::ElemGaussDuctMedium() : Element()
+{
+    ELEM_PROLOG_RANGE
+
     _length->setDescription(qApp->translate("Param", "Thickness of material. "
                                                      "Must be a positive value."));
 
@@ -1319,7 +1379,8 @@ ElemGaussDuctMedium::ElemGaussDuctMedium() : ElementRange() {
     setOption(Element_Complex);
 }
 
-void ElemGaussDuctMedium::calcMatrixInternal() {
+void ElemGaussDuctMedium::calcMatrixInternal()
+{
     const double L = lengthSI();
     const double n0 = ior();
     const double wl = _lambda->value().toSi();
@@ -1334,11 +1395,12 @@ void ElemGaussDuctMedium::calcMatrixInternal() {
     const Z::Complex gs = sqrt(Z::Complex(n2s/n0, wl*a2s/n0/_2PI));
     _ms.assign(cos(gs*L), sin(gs*L)/gs, -gs*sin(gs*L), cos(gs*L));
 
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
-void ElemGaussDuctMedium::calcSubmatrices() {
+void ElemGaussDuctMedium::calcSubmatrices()
+{
     const double L1 = _subRangeSI;
     const double L2 = lengthSI() - L1;
     const double n0 = ior();
@@ -1349,19 +1411,22 @@ void ElemGaussDuctMedium::calcSubmatrices() {
     const double a2s = _alpha2s->value().toSi();
 
     const Z::Complex gt = sqrt(Z::Complex(n2t/n0, lambda*a2t/n0/_2PI));
-    _mt1.assign(cos(gt*L1), sin(gt*L1)/gt, -gt*sin(gt*L1), cos(gt*L1));
-    _mt2.assign(cos(gt*L2), sin(gt*L2)/gt, -gt*sin(gt*L2), cos(gt*L2));
+    T1_(cos(gt*L1), sin(gt*L1)/gt, -gt*sin(gt*L1), cos(gt*L1));
+    T2_(cos(gt*L2), sin(gt*L2)/gt, -gt*sin(gt*L2), cos(gt*L2));
 
     const Z::Complex gs = sqrt(Z::Complex(n2s/n0, lambda*a2s/n0/_2PI));
-    _ms1.assign(cos(gs*L1), sin(gs*L1)/gs, -gs*sin(gs*L1), cos(gs*L1));
-    _ms2.assign(cos(gs*L2), sin(gs*L2)/gs, -gs*sin(gs*L2), cos(gs*L2));
+    S1_(cos(gs*L1), sin(gs*L1)/gs, -gs*sin(gs*L1), cos(gs*L1));
+    S2_(cos(gs*L2), sin(gs*L2)/gs, -gs*sin(gs*L2), cos(gs*L2));
 }
 
 //------------------------------------------------------------------------------
 //                             ElemGaussDuctSlab
 //------------------------------------------------------------------------------
 
-ElemGaussDuctSlab::ElemGaussDuctSlab() : ElementRange() {
+ElemGaussDuctSlab::ElemGaussDuctSlab() : Element()
+{
+    ELEM_PROLOG_RANGE
+
     _length->setDescription(qApp->translate("Param", "Thickness of material. "
                                                      "Must be a positive value."));
 
@@ -1411,7 +1476,8 @@ ElemGaussDuctSlab::ElemGaussDuctSlab() : ElementRange() {
     setOption(Element_Complex);
 }
 
-void ElemGaussDuctSlab::calcMatrixInternal() {
+void ElemGaussDuctSlab::calcMatrixInternal()
+{
     const double L = lengthSI();
     const double n0 = ior();
     const double wl = _lambda->value().toSi();
@@ -1426,11 +1492,12 @@ void ElemGaussDuctSlab::calcMatrixInternal() {
     const Z::Complex gs = sqrt(Z::Complex(n2s/n0, wl*a2s/n0/_2PI));
     _ms.assign(cos(gs*L), sin(gs*L)/gs/n0, -gs*n0*sin(gs*L), cos(gs*L));
 
-    _mt_inv = _mt;
-    _ms_inv = _ms;
+    _matrs[MatrixKind::InvT] = _mt;
+    _matrs[MatrixKind::InvS] = _ms;
 }
 
-void ElemGaussDuctSlab::calcSubmatrices() {
+void ElemGaussDuctSlab::calcSubmatrices()
+{
     const double L1 = _subRangeSI;
     const double L2 = lengthSI() - L1;
     const double n0 = ior();
@@ -1441,10 +1508,10 @@ void ElemGaussDuctSlab::calcSubmatrices() {
     const double a2s = _alpha2s->value().toSi();
 
     const Z::Complex gt = sqrt(Z::Complex(n2t/n0, lambda*a2t/n0/_2PI));
-    _mt1.assign(cos(gt*L1), sin(gt*L1)/gt/n0, -gt*sin(gt*L1), cos(gt*L1)/n0);
-    _mt2.assign(cos(gt*L2), sin(gt*L2)/gt, -gt*n0*sin(gt*L2), cos(gt*L2)*n0);
+    T1_(cos(gt*L1), sin(gt*L1)/gt/n0, -gt*sin(gt*L1), cos(gt*L1)/n0);
+    T2_(cos(gt*L2), sin(gt*L2)/gt, -gt*n0*sin(gt*L2), cos(gt*L2)*n0);
 
     const Z::Complex gs = sqrt(Z::Complex(n2s/n0, lambda*a2s/n0/_2PI));
-    _ms1.assign(cos(gs*L1), sin(gs*L1)/gs/n0, -gs*sin(gs*L1), cos(gs*L1)/n0);
-    _ms2.assign(cos(gs*L2), sin(gs*L2)/gs, -gs*n0*sin(gs*L2), cos(gs*L2)*n0);
+    S1_(cos(gs*L1), sin(gs*L1)/gs/n0, -gs*sin(gs*L1), cos(gs*L1)/n0);
+    S2_(cos(gs*L2), sin(gs*L2)/gs, -gs*n0*sin(gs*L2), cos(gs*L2)*n0);
 }

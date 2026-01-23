@@ -46,5 +46,5 @@ bool ElementFilterHasVisibleParams::check(const Element *elem)
 
 bool ElementFilterIsRange::check(const Element *elem)
 {
-    return Z::Utils::isRange(elem);
+    return elem->isRange();
 }

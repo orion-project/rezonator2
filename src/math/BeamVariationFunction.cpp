@@ -25,7 +25,7 @@ void BeamVariationFunction::calculate(CalculationMode calcMode)
 
     if (calcMode != CALC_PLOT) return;
 
-    auto rangeElem = Z::Utils::asRange(_pos.element);
+    auto rangeElem = _pos.element->asRange();
 
     // If we plot in the same range element which we change
     // then subrange matrices could change every step
@@ -97,7 +97,7 @@ Z::PointTS BeamVariationFunction::calculateAt(const Z::Value& v)
     auto param = arg()->parameter;
     ElementEventsLocker elemLock(param, "BeamVariationFunction::calculateAt");
     Z::ParamValueBackup paramLock(param, "BeamVariationFunction::calculateAt");
-    auto rangeElem = Z::Utils::asRange(_pos.element);
+    auto rangeElem = _pos.element->asRange();
     if (rangeElem) {
         auto offset = _pos.offset.toSi();
         if (_pos.offset.unit() == UNIT(percent))

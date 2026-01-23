@@ -39,6 +39,53 @@
 #define AXIS_LEN\
     double axisLengthSI() const override;
 
+// IOR is internal parameter by default,
+// and should be explicitly revealed by derived elements
+#define ELEM_PROLOG_RANGE\
+    _kind = ElementKind::Range; \
+    _matrs[MatrixKind::T1] = Z::Matrix(); \
+    _matrs[MatrixKind::S1] = Z::Matrix(); \
+    _matrs[MatrixKind::T2] = Z::Matrix(); \
+    _matrs[MatrixKind::S2] = Z::Matrix(); \
+    _length =  new Z::Parameter(Z::Dims::linear(), \
+                                QStringLiteral("L"), QStringLiteral("L"), \
+                                qApp->translate("Param", "Length")); \
+    _ior = new Z::Parameter(Z::Dims::none(), \
+                            QStringLiteral("n"), QStringLiteral("n"), \
+                            qApp->translate("Param", "Index of refraction")); \
+    _length->setValue(100_mm); \
+    _ior->setVisible(false); \
+    _ior->setValue(1); \
+    addParam(_length); \
+    addParam(_ior);
+
+#define ELEM_PROLOG_DYNAMIC\
+    _kind = ElementKind::Dynamic; \
+    _matrs[MatrixKind::DynT] = Z::Matrix(); \
+    _matrs[MatrixKind::DynS] = Z::Matrix();
+    
+// IOR parameters can't be directly assigned,
+// their values are taked from neighboub range elements
+// so they are invisible for parameter editors
+#define ELEM_PROLOG_INTERFACE\
+    _kind = ElementKind::Interface; \
+    _ior1 = new Z::Parameter(Z::Dims::none(), \
+                             QStringLiteral("n1"), QStringLiteral("n1"), \
+                             qApp->translate("Param", "Index of refraction (left medium)")); \
+    _ior2 = new Z::Parameter(Z::Dims::none(), \
+                             QStringLiteral("n2"), QStringLiteral("n2"), \
+                             qApp->translate("Param", "Index of refraction (right medium)")); \
+    _ior1->setVisible(false); \
+    _ior2->setVisible(false); \
+    _ior1->setValue(1); \
+    _ior2->setValue(1); \
+    addParam(_ior1); \
+    addParam(_ior2); \
+    setOption(Element_Asymmetrical); \
+    setOption(Element_ChangesWavefront); \
+    layoutOptions.showLabel = false; \
+    
+
 class Element;
 class PumpCalculator;
 
@@ -88,11 +135,6 @@ enum ElementOption {
     /// The element must provide parameter "Lambda" for accepting wavelength.
     Element_RequiresWavelength = 0x08,
     
-    /// This is a helper element with unity matrix (like Point)
-    /// It does nothing besides of marking some position in the schema
-    /// or splitting two ranges
-    Element_Unity = 0x10,
-    
     /// Element has complex matrices.
     /// I'm not sure if complex matrixes are valid for the ABCD-method.
     /// There is a modified ABCDGH-method for all-complex elements,
@@ -100,7 +142,8 @@ enum ElementOption {
     Element_Complex = 0x20,
 };
 
-struct ElementLayoutOptions {
+struct ElementLayoutOptions
+{
     bool showLabel = true;
 
     /// Draw an alternative version of the element.
@@ -110,6 +153,51 @@ struct ElementLayoutOptions {
     /// @sa ElementLayoutOptionsView, @sa ElementLayoutFactory::getOptions()
     bool drawAlt = false;
 };
+
+enum class MatrixKind {
+    T,
+    S,
+    InvT,
+    InvS,
+    DynT,
+    DynS,
+    T1,
+    S1,
+    T2,
+    S2,
+};
+
+enum class ElementKind {
+    Simple, ///< Generic element without particular treatment
+    Range, ///< Elements having length and optional IOR
+    Dynamic, ///< Elements whose matrix depends on beam parameters
+    Interface, ///< Elements whose matrix depend on IOR of neighbour elements
+};
+
+struct DynamicElemCalcParams
+{
+    /// Matrices of part of the schema
+    /// from the first element up to this element (not including).
+    const Z::Matrix *Mt, *Ms;
+
+    /// Propagating beam calculators incapsulate input beam parameters
+    /// and can compute output beam parameters from ray matrix.
+    PumpCalculator *pumpCalc;
+
+    /// Schema wevelength in meters.
+    double schemaWavelenSi;
+
+    /// We don't care if this IOR differs from IOR of the current element (in the case it has IOR).
+    /// In this case the beam transition between elements is invalid, but it is up to user.
+    double prevElemIor;
+};
+
+struct ElemAsRangeImpl;
+using ElemAsRange = std::optional<ElemAsRangeImpl>;
+struct ElemAsDynamicImpl;
+using ElemAsDynamic = std::optional<ElemAsDynamicImpl>;
+struct ElemAsInterfaceImpl;
+using ElemAsInterface = std::optional<ElemAsInterfaceImpl>;
 
 /**
     Base class for all optical elements.
@@ -139,6 +227,8 @@ public:
     void setOwner(ElementOwner *owner);
 
     int id() const { return _id; }
+    
+    ElementKind kind() const { return _kind; }
 
     /// Function returns type of element, e.g. "ElemFlatMirror".
     /// Type is used for internal identification of element class like true class name.
@@ -179,15 +269,18 @@ public:
     QString displayLabelTitle();
 
     void calcMatrix(const char* reason);
+    
+    const Z::Matrix& M(MatrixKind kind) const { return _matrs.at(kind); }
+    const Z::Matrix* pM(MatrixKind kind) const { return &_matrs.at(kind); }
 
     const Z::Matrix& Mt() const { return _mt; }
     const Z::Matrix& Ms() const { return _ms; }
     const Z::Matrix* pMt() const { return &_mt; }
     const Z::Matrix* pMs() const { return &_ms; }
-    const Z::Matrix& Mt_inv() const { return _mt_inv; }
-    const Z::Matrix& Ms_inv() const { return _ms_inv; }
-    const Z::Matrix* pMt_inv() const { return &_mt_inv; }
-    const Z::Matrix* pMs_inv() const { return &_ms_inv; }
+    const Z::Matrix& Mt_inv() const { return M(MatrixKind::InvT); }
+    const Z::Matrix& Ms_inv() const { return M(MatrixKind::InvS); }
+    const Z::Matrix* pMt_inv() const { return pM(MatrixKind::InvT); }
+    const Z::Matrix* pMs_inv() const { return pM(MatrixKind::InvS); }
 
     bool disabled() const { return _disabled; }
     void setDisabled(bool value);
@@ -201,14 +294,22 @@ public:
     virtual QList<QPair<Z::Parameter*, Z::Parameter*>> flip() { return {}; }
 
     ElementLayoutOptions layoutOptions;
+    
+    bool isRange() const { return _kind == ElementKind::Range; }
+    bool isDynamic() const { return _kind == ElementKind::Dynamic; }
+    bool isInterface() const { return _kind == ElementKind::Interface; }
+    ElemAsRange asRange();
+    ElemAsDynamic asDynamic();
+    ElemAsInterface asInterface();
 
 protected:
     Element();
 
     ElementOwner* _owner = nullptr; ///< Pointer to an object who owns this element.
+    ElementKind _kind = ElementKind::Simple;
     QString _label, _title;
+    std::map<MatrixKind, Z::Matrix> _matrs;
     Z::Matrix _mt, _ms;
-    Z::Matrix _mt_inv, _ms_inv;
     int _id;
     bool _disabled = false;
     Z::Parameters _params;
@@ -229,6 +330,37 @@ protected:
     /// Support for ElementsCatalog's functionality
     friend class ElementsCatalog;
     virtual Element* create() const = 0;
+    
+    // Support for ElementKind::Range functionality
+    Z::Parameter *_length, *_ior;
+    double _subRangeSI;
+    double lengthSI() const { return _length->value().toSi(); }
+    double ior() const { return _ior->value().value(); }
+    /// Unlike crystals or rods (e.g. ElemBrewsterCrystal, ElemTiltedCrystal),
+    /// in tilted plates (e.g. ElemBrewsterPlate, ElemTiltedPlate),
+    /// a value of the Length parameter is different
+    /// from the beam's path it travels inside the plate.
+    /// The function should account the plate's angle
+    /// and return a geometrical distance between the beam's
+    /// input and output points at the plate's edges.
+    virtual double axisLengthSI() const { return lengthSI(); }
+    virtual void calcSubmatrices() {}
+    double opticalPathSI() const { return axisLengthSI()* ior(); }
+    friend class ElemAsRangeImpl;
+
+    // Support for ElementKind::Dynamic functionality
+    virtual void calcDynamicMatrix(const DynamicElemCalcParams& p) { Q_UNUSED(p) }
+    friend class ElemAsDynamicImpl;
+    
+    // Support for ElementKind::Interface functionality
+    // Elements representing an interface between two media.
+    // An interface element is characterized by two IORs - `ior1` and `ior2`.
+    // Where `ior1` is IOR of a medium at 'the left' of the interface (medium 1),
+    // and `ior2` is IOR of a medium at 'the right' of the interface (medium 2).
+    Z::Parameter *_ior1, *_ior2;
+    double ior1() const { return _ior1->value().value(); }
+    double ior2() const { return _ior2->value().value(); }
+    friend class ElemAsInterfaceImpl;
 };
 
 typedef QList<Element*> Elements;
@@ -238,115 +370,71 @@ Q_DECLARE_METATYPE(Element*);
 
 //------------------------------------------------------------------------------
 /**
-    The base class for elements having length and optional IOR.
+    Accessor for elements having length and optional IOR.
 */
-class ElementRange : public Element
+struct ElemAsRangeImpl
 {
-public:
-    void setSubRangeSI(double value) { _subRangeSI = value; calcSubmatrices(); }
+    Element *elem;
+    
+    void setSubRangeSI(double value) { elem->_subRangeSI = value; elem->calcSubmatrices(); }
     void setSubRange(const Z::Value& value);
-    double subRangeSI() const { return _subRangeSI; }
+    double subRangeSI() const { return elem->_subRangeSI; }
     Z::Value subRangeLf() const;
     Z::Value subRangeRt() const;
 
-    const Z::Matrix& Mt1() const { return _mt1; }
-    const Z::Matrix& Ms1() const { return _ms1; }
-    const Z::Matrix& Mt2() const { return _mt2; }
-    const Z::Matrix& Ms2() const { return _ms2; }
-    const Z::Matrix* pMt1() const { return &_mt1; }
-    const Z::Matrix* pMs1() const { return &_ms1; }
-    const Z::Matrix* pMt2() const { return &_mt2; }
-    const Z::Matrix* pMs2() const { return &_ms2; }
+    const Z::Matrix& Mt1() const { return elem->M(MatrixKind::T1); }
+    const Z::Matrix& Ms1() const { return elem->M(MatrixKind::S1); }
+    const Z::Matrix& Mt2() const { return elem->M(MatrixKind::T2); }
+    const Z::Matrix& Ms2() const { return elem->M(MatrixKind::S2); }
+    const Z::Matrix* pMt1() const { return elem->pM(MatrixKind::T1); }
+    const Z::Matrix* pMs1() const { return elem->pM(MatrixKind::S1); }
+    const Z::Matrix* pMt2() const { return elem->pM(MatrixKind::T2); }
+    const Z::Matrix* pMs2() const { return elem->pM(MatrixKind::S2); }
+    
+    double axisLengthSI() const { return elem->axisLengthSI(); }
+    Z::Parameter* paramLength() const { return elem->_length; }
+    Z::Parameter* paramIor() const { return elem->_ior; }
+    double lengthSI() const { return elem->lengthSI(); }
+    double ior() const { return elem->ior(); }
 
-    Z::Parameter* paramLength() const { return _length; }
-    Z::Parameter* paramIor() const { return _ior; }
-    double lengthSI() const { return _length->value().toSi(); }
-    double ior() const { return _ior->value().value(); }
-
-    /// Unlike crystals or rods (e.g. ElemBrewsterCrystal, ElemTiltedCrystal),
-    /// in tilted plates (e.g. ElemBrewsterPlate, ElemTiltedPlate),
-    /// a value of the Length parameter is different
-    /// from the beam's path it travels inside the plate.
-    /// The function should account the plate's angle
-    /// and return a geometrical distance between the beam's
-    /// input and output points at the plate's edges.
-    virtual double axisLengthSI() const { return lengthSI(); }
-
-    /// Returns element's axial length (@a axisLengthSI())
+    /// Returns element's axial length (@a Element::axisLengthSI())
     /// as a Z::Value with unit that is used for the Length parameter.
     Z::Value axisLen() const;
-    
-    virtual double opticalPathSI() const { return axisLengthSI()* ior(); }
 
-protected:
-    ElementRange();
-
-    Z::Matrix _mt1, _mt2;
-    Z::Matrix _ms1, _ms2;
-    Z::Parameter *_length;
-    Z::Parameter *_ior;
-    double _subRangeSI;
-
-    virtual void calcSubmatrices() {}
+    double opticalPathSI() const { return elem->opticalPathSI(); }
 };
 
 //------------------------------------------------------------------------------
 /**
-    The base class for elements representing an interface between two media.
+    Accessor to an element representing an interface between two media.
     An interface element is characterized by two IORs - `ior1` and `ior2`.
     Where `ior1` is IOR of a medium at 'the left' of the interface (medium 1),
     and `ior2` is IOR of a medium at 'the right' of the interface (medium 2).
 */
-class ElementInterface : public Element
+struct ElemAsInterfaceImpl
 {
-public:
-    Z::Parameter* paramIor1() const { return _ior1; }
-    Z::Parameter* paramIor2() const { return _ior2; }
-    double ior1() const { return _ior1->value().value(); }
-    double ior2() const { return _ior2->value().value(); }
+    Element *elem;
 
-protected:
-    ElementInterface();
-
-    Z::Parameter *_ior1, *_ior2;
+    Z::Parameter* paramIor1() const { return elem->_ior1; }
+    Z::Parameter* paramIor2() const { return elem->_ior2; }
 };
 
 //------------------------------------------------------------------------------
+
 /**
-    The base class for elements whose matrix depends on beam parameters.
+    Accessor to an element for interpreting it as a Dynamic element.
+    Dynamic element is an elements whose matrix depends on beam parameters.
 */
-class ElementDynamic : public Element
+struct ElemAsDynamicImpl
 {
-public:
-    struct CalcParams
-    {
-        /// Matrices of part of the schema
-        /// from the first element up to this element (not including).
-        const Z::Matrix *Mt, *Ms;
+    Element *elem;
+  
+    void calcDynamicMatrix(const DynamicElemCalcParams& p) { elem->calcDynamicMatrix(p); }
 
-        /// Propagating beam calculators incapsulate input beam parameters
-        /// and can compute output beam parameters from ray matrix.
-        PumpCalculator *pumpCalc;
-
-        /// Schema wevelength in meters.
-        double schemaWavelenSi;
-
-        /// We don't care if this IOR differs from IOR of the current element (in the case it has IOR).
-        /// In this case the beam transition between elements is invalid, but it is up to user.
-        double prevElemIor;
-    };
-
-    virtual void calcDynamicMatrix(const CalcParams& p) { Q_UNUSED(p) }
-
-    const Z::Matrix& Mt_dyn() const { return _mt_dyn; }
-    const Z::Matrix& Ms_dyn() const { return _ms_dyn; }
-    const Z::Matrix* pMt_dyn() const { return &_mt_dyn; }
-    const Z::Matrix* pMs_dyn() const { return &_ms_dyn; }
-
-protected:
-    Z::Matrix _mt_dyn, _ms_dyn;
-
-    void calcMatrixInternal() override;
+    const Z::Matrix& Mt_dyn() const { return elem->M(MatrixKind::DynT); }
+    const Z::Matrix& Ms_dyn() const { return elem->M(MatrixKind::DynS); }
+    const Z::Matrix* pMt_dyn() const { return elem->pM(MatrixKind::DynT); }
+    const Z::Matrix* pMs_dyn() const { return elem->pM(MatrixKind::DynS); }
 };
 
 //------------------------------------------------------------------------------
@@ -413,11 +501,6 @@ private:
 
 namespace Z {
 namespace Utils {
-
-inline bool isRange(const Element *elem) { return dynamic_cast<const ElementRange*>(elem); }
-inline ElementRange* asRange(Element *elem) { return dynamic_cast<ElementRange*>(elem); }
-inline bool isInterface(Element *elem) { return dynamic_cast<ElementInterface*>(elem); }
-inline ElementInterface* asInterface(Element *elem) { return dynamic_cast<ElementInterface*>(elem); }
 
 void setElemWavelen(Element* elem, const Z::Value& lambda);
 

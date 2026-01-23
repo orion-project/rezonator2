@@ -520,10 +520,21 @@ TEST_METHOD(deleteElements__must_not_raise_events_when_they_disabled_in_schema)
 //------------------------------------------------------------------------------
 
 namespace {
-DECLARE_ELEMENT(TestRange, ElementRange)
+DECLARE_ELEMENT(TestRange, Element)
+    TestRange() : Element()
+    {
+        ELEM_PROLOG_RANGE
+    }
+    Z::Parameter* paramIor() const { return _ior; }
 DECLARE_ELEMENT_END
 
-DECLARE_ELEMENT(TestInterface, ElementInterface)
+DECLARE_ELEMENT(TestInterface, Element)
+    TestInterface() : Element()
+    {
+        ELEM_PROLOG_INTERFACE
+    }
+    double ior1() const { return _ior1->value().value(); }
+    double ior2() const { return _ior2->value().value(); }
 DECLARE_ELEMENT_END
 }
 

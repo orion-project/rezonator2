@@ -12,13 +12,13 @@ void prepareDynamicElements(Schema* schema, Element* stopElem, PumpCalculator* p
     {
         auto elem = elems.at(i);
         if (elem == stopElem) break;
-        auto dynamic = dynamic_cast<ElementDynamic*>(elem);
+        auto dynamic = elem->asDynamic();
         if (!dynamic) continue;
 
         if (i == 0)
         {
             Z::Matrix unity;
-            ElementDynamic::CalcParams p;
+            DynamicElemCalcParams p;
             p.Mt = &unity;
             p.Ms = &unity;
             p.pumpCalc = pumpCalc;
@@ -32,11 +32,12 @@ void prepareDynamicElements(Schema* schema, Element* stopElem, PumpCalculator* p
             RoundTripCalculator calc(schema, prevElem);
             calc.calcRoundTrip();
             calc.multMatrix("global::prepareDynamicElements");
-            ElementDynamic::CalcParams p;
+            DynamicElemCalcParams p;
             p.Mt = calc.pMt();
             p.Ms = calc.pMs();
             p.pumpCalc = pumpCalc;
-            auto medium = dynamic_cast<ElemMediumRange*>(prevElem);
+            // TODO: adjust for custom medium elements
+            auto medium = Z::Utils::asMedium(prevElem);
             p.prevElemIor = medium ? medium->ior() : 1;
             p.schemaWavelenSi = schema->wavelenSi();
             dynamic->calcDynamicMatrix(p);
@@ -100,10 +101,11 @@ Element* nextElem(Schema *schema, Element *elem)
 
 double ior(Schema *schema, Element *elem, bool splitRange)
 {
+    // TODO: adjust for custom medium elements
     if (auto medium = Z::Utils::asMedium(elem); medium)
         return medium->ior();
 
-    if (auto range = Z::Utils::asRange(elem); range)
+    if (auto range = elem->asRange(); range)
         return splitRange ? range->ior() : 1;
     
     if (Z::Utils::isSpace(elem))

@@ -82,11 +82,10 @@ void TableFunction::calculate()
 
         auto elem = _activeElements.at(i);
         if (elem->disabled()) continue;
-
-        auto iface = Z::Utils::asInterface(elem);
-        if (iface)
+        
+        if (auto iface = elem->asInterface(); iface)
         {
-            CHECK_ERR(calculateAtInterface(iface, i))
+            CHECK_ERR(calculateAtInterface(iface->elem, i))
             continue;
         }
 
@@ -95,13 +94,8 @@ void TableFunction::calculate()
             CHECK_ERR(calculateAtElem(elem, i, IsTwoSides(true)));
             continue;
         }
-        
-        if (elem->hasOption(Element_Unity)) {
-            CHECK_ERR(calculateAtElem(elem, i, IsTwoSides(false)));
-            continue;
-        }
 
-        auto range = Z::Utils::asRange(elem);
+        auto range = elem->asRange();
         if (!range)
         {
             CHECK_ERR(calculateAtElem(elem, i, IsTwoSides(false)))
@@ -138,7 +132,7 @@ void TableFunction::calculate()
             continue;
         }
 
-        CHECK_ERR(calculateAtCrystal(range, i))
+        CHECK_ERR(calculateAtCrystal(range->elem, i))
     }
 
     #undef CHECK_ERR
@@ -269,7 +263,7 @@ QString TableFunction::calculateAtElem(Element *elem, int index, IsTwoSides twoS
     return QString("Invalid schema: Unknown trip-type %1.").arg(int(schema()->tripType()));
 }
 
-QString TableFunction::calculateAtInterface(ElementInterface* iface, int index)
+QString TableFunction::calculateAtInterface(Element* iface, int index)
 {
     auto prevElem = prevElement(index);
     if (!prevElem)
@@ -296,7 +290,7 @@ QString TableFunction::calculateAtInterface(ElementInterface* iface, int index)
     }
     else
     {
-        ElementRange* prevRange = Z::Utils::asSpace(prevElem);
+        Element* prevRange = Z::Utils::asSpace(prevElem);
         if (!prevRange) prevRange = Z::Utils::asMedium(prevElem);
         if (!prevRange)
             return QString(
@@ -326,7 +320,7 @@ QString TableFunction::calculateAtInterface(ElementInterface* iface, int index)
         }
     }
 
-    ElementRange* nextRange = Z::Utils::asSpace(nextElem);
+    Element* nextRange = Z::Utils::asSpace(nextElem);
     if (!nextRange) nextRange = Z::Utils::asMedium(nextElem);
     if (!nextRange)
         return QString(
@@ -338,7 +332,7 @@ QString TableFunction::calculateAtInterface(ElementInterface* iface, int index)
     return "";
 }
 
-QString TableFunction::calculateAtCrystal(ElementRange* range, int index)
+QString TableFunction::calculateAtCrystal(Element* range, int index)
 {
     auto prevElem = prevElement(index);
     if (!prevElem)
@@ -364,11 +358,11 @@ QString TableFunction::calculateAtCrystal(ElementRange* range, int index)
         }
     }
     else
-        calculateAt(CalcElem(prevElem), ResultElem(range, ResultPosition::LEFT_OUTSIDE));
+        calculateAt(CalcElem::Elem(prevElem), ResultElem(range, ResultPosition::LEFT_OUTSIDE));
     calculateAt(CalcElem::RangeBeg(range), ResultElem(range, ResultPosition::LEFT_INSIDE));
     calculateAt(CalcElem::RangeMid(range), ResultElem(range, ResultPosition::MIDDLE));
     calculateAt(CalcElem::RangeEnd(range), ResultElem(range, ResultPosition::RIGHT_INSIDE));
-    calculateAt(CalcElem(range), ResultElem(range, ResultPosition::RIGHT_OUTSIDE));
+    calculateAt(CalcElem::Elem(range), ResultElem(range, ResultPosition::RIGHT_OUTSIDE));
     return "";
 }
 
@@ -396,15 +390,24 @@ QString TableFunction::calculateInMiddle(Element* elem, Element* prevElem, Eleme
     // if element's matrix doesn't imply air around the element.
     if (prevMedium && nextMedium)
     {
-        calculateAt(CalcElem::RangeEnd(prevMedium), ResultElem(elem, ResultPosition::LEFT));
-        calculateAt(CalcElem(elem), ResultElem(elem, ResultPosition::RIGHT), OptionalIor(nextMedium->ior()));
+        // Force calculation on both sides when mediums have different IORs
+        // then beam parameters are different beceause of changed wavelength
+        if (twoSides || !SAME_DOUBLE(prevMedium->ior(), nextMedium->ior()))
+        {
+            calculateAt(CalcElem::RangeEnd(prevMedium), ResultElem(elem, ResultPosition::LEFT));
+            calculateAt(CalcElem(elem), ResultElem(elem, ResultPosition::RIGHT), OptionalIor(nextMedium->ior()));
+        }
+        else
+        {
+            calculateAt(CalcElem::RangeEnd(prevMedium), ResultElem(elem, ResultPosition::ELEMENT));
+        }
         return "";
     }
 
     if (twoSides)
     {
-        auto prevRange = Z::Utils::asRange(prevElem);
-        auto calcElem = prevRange ? CalcElem::RangeEnd(prevRange) : CalcElem(prevElem);
+        auto prevRange = prevElem->asRange();
+        auto calcElem = prevRange ? CalcElem::RangeEnd(prevRange->elem) : CalcElem(prevElem);
         calculateAt(calcElem, ResultElem(elem, ResultPosition::LEFT));
         calculateAt(CalcElem(elem), ResultElem(elem, ResultPosition::RIGHT));
     }
@@ -415,18 +418,26 @@ QString TableFunction::calculateInMiddle(Element* elem, Element* prevElem, Eleme
 
 void TableFunction::calculateAt(const CalcElem &calcElem, const ResultElem &resultElem, OptionalIor overrideIor)
 {
-    if (calcElem.range)
+    double ior = 1;
+    bool splitRange = false;
+
+    if (calcElem.subrangeOpt != CalcElem::SubrangeOpt::NONE)
     {
+        splitRange = true;
+        auto range = calcElem.ref->asRange();
+        ior = range->ior();
         if (calcElem.subrangeOpt == CalcElem::SubrangeOpt::END)
-            calcElem.range->setSubRangeSI(calcElem.range->axisLengthSI());
+            range->setSubRangeSI(range->axisLengthSI());
         else if (calcElem.subrangeOpt == CalcElem::SubrangeOpt::MID)
-            calcElem.range->setSubRangeSI(calcElem.range->axisLengthSI()/2.0);
-        else
-            calcElem.range->setSubRangeSI(calcElem.subrange);
+            range->setSubRangeSI(range->axisLengthSI()/2.0);
+        else if (calcElem.subrangeOpt == CalcElem::SubrangeOpt::BEG)
+            range->setSubRangeSI(0);
+        else if (calcElem.subrange)
+            range->setSubRangeSI(*calcElem.subrange);
     }
     
-    _beamCalc->calcRoundTrip(calcElem.ref(), calcElem.range, "TableFunction::calculateAt");
-    _beamCalc->setIor(overrideIor ? *overrideIor : (calcElem.range ? calcElem.range->ior() : 1));
+    _beamCalc->calcRoundTrip(calcElem.ref, splitRange, "TableFunction::calculateAt");
+    _beamCalc->setIor(overrideIor ? *overrideIor : ior);
 
     Result res;
     res.element = resultElem.elem;

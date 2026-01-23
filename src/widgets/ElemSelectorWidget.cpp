@@ -270,11 +270,12 @@ ElemOffsetSelectorWidget::ElemOffsetSelectorWidget(Schema* schema, ElementFilter
 
 void ElemOffsetSelectorWidget::currentElemChanged(int)
 {
-    auto range = Z::Utils::asRange(selectedElement());
-    _lengthTitle->setEnabled(range);
-    _lengthLabel->setEnabled(range);
-    _offsetTitle->setEnabled(range);
-    _offsetEditor->setEnabled(range);
+    auto elem = selectedElement();
+    _lengthTitle->setEnabled(elem);
+    _lengthLabel->setEnabled(elem);
+    _offsetTitle->setEnabled(elem);
+    _offsetEditor->setEnabled(elem);
+    auto range = elem ? elem->asRange() : ElemAsRange();
     if (range)
     {
         _lengthLabel->setText(range->axisLen().displayStr());
@@ -305,7 +306,7 @@ WidgetResult ElemOffsetSelectorWidget::verify()
     if (!elem)
         WidgetResult::fail(_elemSelector, tr("An element must be selected."));
 
-    auto range = Z::Utils::asRange(elem);
+    auto range = elem->asRange();
     if (!range) return WidgetResult::ok();
 
     auto length = range->axisLengthSI();

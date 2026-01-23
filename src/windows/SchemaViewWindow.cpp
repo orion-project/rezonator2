@@ -153,7 +153,7 @@ void SchemaViewWindow::appendElement(ElementsCatalogDialog::ElementSample sample
     if (prepareNewElement)
         prepareNewElement(elem);
 
-    if (!sample.isCustom && !Z::Utils::isInterface(elem))
+    if (!sample.isCustom && !elem->isInterface())
         // For customs, matrix calculated after param values copied from sample
         // For interfaces, matrix calculated after insertion into schema
         elem->calcMatrix("SchemaViewWindow: element added");
@@ -321,7 +321,8 @@ static void rejectDlg(const QString &msg, const QString &helpTopic)
 
 void SchemaViewWindow::actionRangeInsert()
 {
-    ElementRange* oldRange = Z::Utils::asRange(_table->currentElem());
+    auto oldElem = _table->currentElem();
+    auto oldRange = oldElem->asRange();
     if (!oldRange) return;
     
     const QString helpTopic("elem_opers_insert_into");
@@ -338,22 +339,24 @@ void SchemaViewWindow::actionRangeInsert()
     auto halfLen = oldRange->paramLength()->value() / 2.0;
     oldRange->paramLength()->setValue(halfLen);
 
-    auto newRange = (ElementRange*)ElementsCatalog::instance().create(oldRange->type());
+    auto newElem = ElementsCatalog::instance().create(oldElem->type());
+    auto newRange = newElem->asRange();
     if (AppSettings::instance().elemAutoLabel)
-        newRange->setLabel(Z::Utils::generateLabel(schema(), oldRange->labelPrefix()));
+        newElem->setLabel(Z::Utils::generateLabel(schema(), oldElem->labelPrefix()));
     newRange->paramLength()->setValue(halfLen);
 
     // relinkInterfaces is in insertElements()
     // skip RecalRequred, it will be at insertion of the next element
-    schema()->insertElements({newRange}, schema()->indexOf(oldRange)+1, Arg::RaiseEvents(false));
-    schema()->events().raise(SchemaEvents::ElemCreated, newRange, "SchemaViewWindow: insert into");
+    schema()->insertElements({newElem}, schema()->indexOf(oldElem)+1, Arg::RaiseEvents(false));
+    schema()->events().raise(SchemaEvents::ElemCreated, newElem, "SchemaViewWindow: insert into");
     
-    appendElement(*sample, schema()->indexOf(newRange));
+    appendElement(*sample, schema()->indexOf(newElem));
 }
 
 void SchemaViewWindow::actionRangeSplit()
 {
-    ElementRange* oldRange = Z::Utils::asRange(_table->currentElem());
+    auto oldElem = _table->currentElem();
+    auto oldRange = oldElem->asRange();
     if (!oldRange) return;
     
     if (schema()->paramLinks()->byTarget(oldRange->paramLength())) {
@@ -362,48 +365,52 @@ void SchemaViewWindow::actionRangeSplit()
         return;
     }
     
-    SplitRangeDlg dlg(schema(), oldRange);
+    SplitRangeDlg dlg(schema(), oldElem);
     if (!dlg.exec()) return;
     
-    if (dlg.oldLabel() != oldRange->label())
-        oldRange->setLabel(dlg.oldLabel());
+    if (dlg.oldLabel() != oldElem->label())
+        oldElem->setLabel(dlg.oldLabel());
     if (dlg.oldValue() != oldRange->paramLength()->value())
         oldRange->paramLength()->setValue(dlg.oldValue());
     
-    auto newRange = (ElementRange*)ElementsCatalog::instance().create(oldRange->type());
-    newRange->setLabel(dlg.newLabel());
+    auto newElem = ElementsCatalog::instance().create(oldElem->type());
+    auto newRange = newElem->asRange();
+    newElem->setLabel(dlg.newLabel());
     newRange->paramLength()->setValue(dlg.newValue());
     
-    int beforeIndex = schema()->indexOf(oldRange);
+    int beforeIndex = schema()->indexOf(oldElem);
     if (dlg.insertAfter())
         beforeIndex += 1;
         
     // relinkInterfaces is in insertElements()
-    schema()->insertElements({newRange}, beforeIndex, Arg::RaiseEvents(false));
-    schema()->events().raise(SchemaEvents::ElemCreated, newRange, "SchemaViewWindow: split");
+    schema()->insertElements({newElem}, beforeIndex, Arg::RaiseEvents(false));
+    schema()->events().raise(SchemaEvents::ElemCreated, newElem, "SchemaViewWindow: split");
     
     if (dlg.insertPoint()) {
         auto point = new ElemPoint;
         point->setLabel(dlg.pointLabel());
-        beforeIndex = schema()->indexOf(dlg.insertAfter() ? newRange : oldRange);
+        beforeIndex = schema()->indexOf(dlg.insertAfter() ? newElem : oldElem);
         schema()->insertElements({point}, beforeIndex, Arg::RaiseEvents(false));
         schema()->events().raise(SchemaEvents::ElemCreated, point, "SchemaViewWindow: split");
     }
     
     schema()->events().raise(SchemaEvents::RecalRequred, "SchemaViewWindow: split");
     
-    _table->setCurrentElem(newRange);
+    _table->setCurrentElem(newElem);
 }
 
 void SchemaViewWindow::actionRangeMerge()
 {
     auto selected = _table->selection();
     if (selected.length() != 2) return;
-    auto elem1 = Z::Utils::asRange(selected.at(0));
-    auto elem2 = Z::Utils::asRange(selected.at(1));
+    auto elem1 = selected.at(0);
+    auto elem2 = selected.at(1);
     if (!elem1 || !elem2) return;
+    auto range1 = elem1->asRange();
+    auto range2 = elem2->asRange();
+    if (!range1 || !range2) return;
     
-    if (schema()->paramLinks()->byTarget(elem1->paramLength())) {
+    if (schema()->paramLinks()->byTarget(range1->paramLength())) {
         rejectDlg(tr("Can not merge because the length of the target "
             "element is controlled by a global parameter"), MergeRangesDlg::helpTopic());
         return;
@@ -412,9 +419,9 @@ void SchemaViewWindow::actionRangeMerge()
     MergeRangesDlg dlg(elem1, elem2);
     if (!dlg.exec()) return;
     
-    auto v1 = elem1->paramLength()->value();
-    auto v2 = elem2->paramLength()->value();
-    elem1->paramLength()->setValue(v1 + v2);
+    auto v1 = range1->paramLength()->value();
+    auto v2 = range2->paramLength()->value();
+    range1->paramLength()->setValue(v1 + v2);
     
     schema()->deleteElements({elem2}, Arg::RaiseEvents(true), Arg::FreeElem(true));
     
@@ -424,20 +431,23 @@ void SchemaViewWindow::actionRangeMerge()
 void SchemaViewWindow::actionRangeSlide()
 {
     auto selected = _table->selection();
-    ElementRange *elem1, *elem2;
+    Element *elem1, *elem2;
     if (selected.length() == 1) {
         int index = schema()->indexOf(selected.first());
-        elem1 = Z::Utils::asRange(schema()->element(index - 1));
-        elem2 = Z::Utils::asRange(schema()->element(index + 1));
+        elem1 = schema()->element(index - 1);
+        elem2 = schema()->element(index + 1);
+        if (!elem1 || !elem2) return;
     } else if (selected.length() == 2) {
-        elem1 = Z::Utils::asRange(selected.first());
-        elem2 = Z::Utils::asRange(selected.last());
+        elem1 = selected.first();
+        elem2 = selected.last();
         if (schema()->indexOf(elem1) > schema()->indexOf(elem2))
             std::swap(elem1, elem2);
     } else return;
-    if (!elem1 || !elem2) return;
+    auto range1 = elem1->asRange();
+    auto range2 = elem2->asRange();
+    if (!range1 || !range2) return;
     
-    if (schema()->paramLinks()->byTarget(elem1->paramLength()) || schema()->paramLinks()->byTarget(elem2->paramLength())) {
+    if (schema()->paramLinks()->byTarget(range1->paramLength()) || schema()->paramLinks()->byTarget(range2->paramLength())) {
         QString msg;
         if (selected.length() == 1)
             msg = tr("Can not slide the element because the length "
@@ -450,8 +460,8 @@ void SchemaViewWindow::actionRangeSlide()
     SlideRangesDlg dlg(elem1, elem2);
     if (!dlg.exec()) return;
     
-    elem1->paramLength()->setValue(dlg.value1());
-    elem2->paramLength()->setValue(dlg.value2());
+    range1->paramLength()->setValue(dlg.value1());
+    range2->paramLength()->setValue(dlg.value2());
     
     schema()->events().raise(SchemaEvents::RecalRequred, "SchemaViewWindow: slide");
 }
@@ -510,7 +520,7 @@ void SchemaViewWindow::currentElemChanged(Element* elem)
     actnSaveCustom->setEnabled(hasElem);
     actnElemDisable->setEnabled(hasElem);
 
-    bool isRange = Z::Utils::isRange(elem);
+    bool isRange = elem && elem->isRange();
     actnRangeInsert->setEnabled(isRange);
     actnRangeSplit->setEnabled(isRange);
     actnCtxRangeInsert->setEnabled(isRange);
@@ -529,7 +539,7 @@ static bool canMergeRanges(Schema *schema, const Elements& selected)
     auto elem1 = selected.first();
     auto elem2 = selected.last();
     if (elem1->type() != elem2->type()) return false;
-    if (!Z::Utils::isRange(elem1)) return false;
+    if (!elem1->isRange()) return false;
     auto index1 = schema->indexOf(elem1);
     auto index2 = schema->indexOf(elem2);
     return qAbs(index1 - index2) == 1;
@@ -549,7 +559,7 @@ static bool canSlideRanges(Schema *schema, const Elements& selected)
     }
     if (!elem1 || !elem2) return false;
     if (elem1->type() != elem2->type()) return false;
-    return Z::Utils::isRange(elem1);
+    return elem1->isRange();
 }
 
 void SchemaViewWindow::selectionChanged(const Elements& selected)

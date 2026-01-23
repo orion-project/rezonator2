@@ -77,7 +77,7 @@ void CausticParamsDlg::collect()
     if (!res) return res.show(this);
 
     _var->element = _elemSelector->selectedElement();
-    _var->parameter = Z::Utils::asRange(_var->element)->paramLength();
+    _var->parameter = _var->element->asRange()->paramLength();
     _var->range = _rangeEditor->range();
     accept();
 
@@ -89,12 +89,12 @@ void CausticParamsDlg::guessRange()
     auto elem = _elemSelector->selectedElement();
     if (!elem) return;
 
-    auto elemRange = Z::Utils::asRange(elem);
+    auto elemRange = elem->asRange();
     if (!elemRange) return;
 
     // TODO restore or guess step
     Z::VariableRange range;
-    range.stop = Z::Utils::getRangeStop(elemRange);
+    range.stop = elemRange->axisLen();
     range.start = range.stop * 0.0;
     range.step = range.stop / 100.0;
     _rangeEditor->setRange(range);

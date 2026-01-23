@@ -423,23 +423,23 @@ void Schema::relinkInterfaces()
     int elemCount = elems.size();
     for (int i = 0; i < elemCount; i++)
     {
-        ElementInterface *iface = dynamic_cast<ElementInterface*>(elems.at(i));
+        auto iface = elems.at(i)->asInterface();
         if (!iface) continue;
 
-        ElementEventsLocker eventLocker(iface, "Schema::relinkInterfaces");
-        ElementMatrixLocker matrixLocker(iface, "Schema::relinkInterfaces");
+        ElementEventsLocker eventLocker(iface->elem, "Schema::relinkInterfaces");
+        ElementMatrixLocker matrixLocker(iface->elem, "Schema::relinkInterfaces");
 
-        removeParamLinks(iface);
+        removeParamLinks(iface->elem);
 
-        ElementRange *left = nullptr;
-        ElementRange *right = nullptr;
+        ElemAsRange left;
+        ElemAsRange right;
 
         if (i == 0)
         {
             if (tripType() == TripType::RR)
-                left = dynamic_cast<ElementRange*>(elems.at(elemCount-1));
+                left = elems.at(elemCount-1)->asRange();
         }
-        else left = dynamic_cast<ElementRange*>(elems.at(i-1));
+        else left = elems.at(i-1)->asRange();
         if (left)
         {
             addParamLink(left->paramIor(), iface->paramIor1(), Z::ParamLink_NonStorable);
@@ -450,9 +450,9 @@ void Schema::relinkInterfaces()
         if (i == elemCount - 1)
         {
             if (tripType() == TripType::RR)
-                right = dynamic_cast<ElementRange*>(elems.at(0));
+                right = elems.at(0)->asRange();
         }
-        else right = dynamic_cast<ElementRange*>(elems.at(i+1));
+        else right = elems.at(i+1)->asRange();
         if (right)
         {
             addParamLink(right->paramIor(), iface->paramIor2(), Z::ParamLink_NonStorable);

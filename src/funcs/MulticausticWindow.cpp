@@ -242,7 +242,7 @@ void MulticausticWindow::elementChanged(Schema*, Element* elem)
         auto& arg = args[i];
         if (arg.element == elem)
         {
-            auto newStop = Z::Utils::getRangeStop(Z::Utils::asRange(elem));
+            auto newStop = elem->asRange()->axisLen();
             if (newStop != arg.range.stop)
             {
                 arg.range.stop = newStop;

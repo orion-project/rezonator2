@@ -81,24 +81,21 @@ public:
         QString str() const;
     };
     
-    using ElementResult = std::unordered_map<ResultPosition, QVector<Z::PointTS>>;
+    // QHash refuses using `enum class` as a key in Qt5, so QMap
+    using ElementResult = QMap<ResultPosition, QVector<Z::PointTS>>;
 
     struct CalcElem
     {
-        Element* elem = nullptr;
-        ElementRange *range = nullptr;
-        double subrange = 0;
-        enum class SubrangeOpt {NONE, MID, END};
+        Element* ref;
+        std::optional<double> subrange;
+        enum class SubrangeOpt {NONE, BEG, MID, END, ANY};
         SubrangeOpt subrangeOpt = SubrangeOpt::NONE;
-        Element* ref() const { return range ? range : elem; }
-        CalcElem(Element *elem): elem(elem) {}
-        static CalcElem Range(ElementRange *range, double subrange) { return CalcElem(range, subrange); }
-        static CalcElem RangeBeg(ElementRange *range) { return CalcElem(range, 0.0); }
-        static CalcElem RangeMid(ElementRange *range) { return CalcElem(range, SubrangeOpt::MID); }
-        static CalcElem RangeEnd(ElementRange *range) { return CalcElem(range, SubrangeOpt::END); }
-     private:
-        CalcElem(ElementRange *range, double subrange): range(range), subrange(subrange) {}
-        CalcElem(ElementRange *range, SubrangeOpt opt): range(range), subrangeOpt(opt) {}
+        
+        static CalcElem Elem(Element *elem) { return CalcElem{elem, {}, SubrangeOpt::NONE}; }
+        static CalcElem Range(Element *range, double subrange) { return CalcElem(range, subrange, SubrangeOpt::ANY); }
+        static CalcElem RangeBeg(Element *range) { return CalcElem{range, {}, SubrangeOpt::BEG}; }
+        static CalcElem RangeMid(Element *range) { return CalcElem(range, {}, SubrangeOpt::MID); }
+        static CalcElem RangeEnd(Element *range) { return CalcElem(range, {}, SubrangeOpt::END); }
     };
 
     struct ResultElem
@@ -136,8 +133,8 @@ protected:
     Element* prevElement(int index);
     Element* nextElement(int index);
     QString calculateAtElem(Element* elem, int index, IsTwoSides twoSides);
-    QString calculateAtInterface(ElementInterface* iface, int index);
-    QString calculateAtCrystal(ElementRange* range, int index);
+    QString calculateAtInterface(Element* iface, int index);
+    QString calculateAtCrystal(Element* range, int index);
     QString calculateAtPlane(Element* elem, int index);
     QString calculateInMiddle(Element* elem, Element *prevElem, Element *nextElem, IsTwoSides twoSides);
     void calculateAt(const CalcElem &calcElem, const ResultElem &resultElem, OptionalIor overrideIor = {});

@@ -5,26 +5,32 @@
 
 #include <QApplication>
 
-DECLARE_ELEMENT(ElemEmptyRange, ElementRange)
+DECLARE_ELEMENT(ElemEmptyRange, Element)
+    ElemEmptyRange();
     TYPE_NAME(qApp->translate("Elements", "Empty space"))
     DEFAULT_LABEL("d")
     CALC_MATRIX
     SUB_RANGE
+    Z::Parameter* paramLength() const { return _length; }
+    Z::Parameter* paramIor() const { return _ior; }
 DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemMediumRange, ElementRange)
+DECLARE_ELEMENT(ElemMediumRange, Element)
     ElemMediumRange();
     TYPE_NAME(qApp->translate("Elements", "Space filled with medium"))
     DEFAULT_LABEL("d")
     CALC_MATRIX
     SUB_RANGE
+    Z::Parameter* paramLength() const { return _length; }
+    Z::Parameter* paramIor() const { return _ior; }
+    double ior() const { return _ior->value().value(); }
 DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemPlate, ElementRange)
+DECLARE_ELEMENT(ElemPlate, Element)
     ElemPlate();
     TYPE_NAME(qApp->translate("Elements", "Plate of matter"))
     DEFAULT_LABEL("G")
@@ -86,7 +92,7 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemTiltedCrystal, ElementRange)
+DECLARE_ELEMENT(ElemTiltedCrystal, Element)
     ElemTiltedCrystal();
     TYPE_NAME(qApp->translate("Elements", "Tilted plane-parallel crystal"))
     DEFAULT_LABEL("G")
@@ -109,7 +115,7 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemBrewsterCrystal, ElementRange)
+DECLARE_ELEMENT(ElemBrewsterCrystal, Element)
     ElemBrewsterCrystal();
     TYPE_NAME(qApp->translate("Elements", "Brewster plane-parallel crystal"))
     DEFAULT_LABEL("G")
@@ -119,7 +125,7 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemBrewsterPlate, ElementRange)
+DECLARE_ELEMENT(ElemBrewsterPlate, Element)
     ElemBrewsterPlate();
     TYPE_NAME(qApp->translate("Elements", "Brewster plane-parallel plate"))
     DEFAULT_LABEL("G")
@@ -170,7 +176,8 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemNormalInterface, ElementInterface)
+DECLARE_ELEMENT(ElemNormalInterface, Element)
+    ElemNormalInterface();
     TYPE_NAME(qApp->translate("Elements", "Normal interface"))
     DEFAULT_LABEL("s")
     CALC_MATRIX
@@ -178,7 +185,8 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemBrewsterInterface, ElementInterface)
+DECLARE_ELEMENT(ElemBrewsterInterface, Element)
+    ElemBrewsterInterface();
     TYPE_NAME(qApp->translate("Elements", "Brewster interface"))
     DEFAULT_LABEL("s")
     CALC_MATRIX
@@ -186,7 +194,7 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemTiltedInterface, ElementInterface)
+DECLARE_ELEMENT(ElemTiltedInterface, Element)
     ElemTiltedInterface();
     TYPE_NAME(qApp->translate("Elements", "Tilted interface"))
     DEFAULT_LABEL("s")
@@ -198,7 +206,7 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemSphericalInterface, ElementInterface)
+DECLARE_ELEMENT(ElemSphericalInterface, Element)
     ElemSphericalInterface();
     TYPE_NAME(qApp->translate("Elements", "Spherical interface"))
     DEFAULT_LABEL("s")
@@ -211,7 +219,7 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemThickLens, ElementRange)
+DECLARE_ELEMENT(ElemThickLens, Element)
     ElemThickLens();
     TYPE_NAME(qApp->translate("Elements", "Thick lens"))
     DEFAULT_LABEL("F")
@@ -226,7 +234,7 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemGrinLens, ElementRange)
+DECLARE_ELEMENT(ElemGrinLens, Element)
     ElemGrinLens();
     TYPE_NAME(qApp->translate("Elements", "GRIN lens"))
     DEFAULT_LABEL("GL")
@@ -234,6 +242,7 @@ DECLARE_ELEMENT(ElemGrinLens, ElementRange)
     SUB_RANGE
     double ior2t() const { return _ior2t->value().value(); }
     double ior2s() const { return _ior2s->value().value(); }
+    Z::Parameter* paramIor() const { return _ior; }
     Z::Parameter* paramIor2t() const { return _ior2t; }
     Z::Parameter* paramIor2s() const { return _ior2s; }
 protected:
@@ -258,7 +267,7 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemThermoLens, ElementRange)
+DECLARE_ELEMENT(ElemThermoLens, Element)
     ElemThermoLens();
     TYPE_NAME(qApp->translate("Elements", "Thermal lens"))
     DEFAULT_LABEL("TL")
@@ -286,11 +295,11 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemAxiconMirror, ElementDynamic)
+DECLARE_ELEMENT(ElemAxiconMirror, Element)
     ElemAxiconMirror();
     TYPE_NAME(qApp->translate("Elements", "Axicon mirror"))
     DEFAULT_LABEL("XM")
-    void calcDynamicMatrix(const CalcParams& p) override;
+    void calcDynamicMatrix(const DynamicElemCalcParams& p) override;
     double theta() const { return _theta->value().toSi(); }
     double alpha() const { return _alpha->value().toSi(); }
 private:
@@ -299,11 +308,11 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemAxiconLens, ElementDynamic)
+DECLARE_ELEMENT(ElemAxiconLens, Element)
     ElemAxiconLens();
     TYPE_NAME(qApp->translate("Elements", "Axicon lens"))
     DEFAULT_LABEL("XL")
-    void calcDynamicMatrix(const CalcParams& p) override;
+    void calcDynamicMatrix(const DynamicElemCalcParams& p) override;
     double theta() const { return _theta->value().toSi(); }
     double alpha() const { return _alpha->value().toSi(); }
     double ior() const { return _ior->value().value(); }
@@ -336,7 +345,7 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemGaussDuctMedium, ElementRange)
+DECLARE_ELEMENT(ElemGaussDuctMedium, Element)
     ElemGaussDuctMedium();
     TYPE_NAME(qApp->translate("Elements", "Gaussian duct (medium)"))
     DEFAULT_LABEL("GD")
@@ -350,7 +359,7 @@ DECLARE_ELEMENT_END
 
 //------------------------------------------------------------------------------
 
-DECLARE_ELEMENT(ElemGaussDuctSlab, ElementRange)
+DECLARE_ELEMENT(ElemGaussDuctSlab, Element)
     ElemGaussDuctSlab();
     TYPE_NAME(qApp->translate("Elements", "Gaussian duct (slab)"))
     DEFAULT_LABEL("GD")
