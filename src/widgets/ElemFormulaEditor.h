@@ -72,7 +72,6 @@ private:
     QTextEdit *_logView;
     QToolBar *_toolbar;
     QMenu *_menuParam;
-    QCheckBox *_flagHasMatricesTS;
     QWidget *_stubNoParams;
     bool _isChanged = false;
     bool _lockEvents = false;

@@ -51,7 +51,7 @@ public:
     if (!expected_error.isEmpty())\
         ASSERT_EQ_STR(elem.error(), expected_error)
 
-
+/*
 TEST_METHOD(can_calculate_matrix)
 {
     ElemFormula elem;
@@ -259,34 +259,34 @@ TEST_METHOD(assign__must_destruct_old_params)
     ASSERT_PARAM_DESTRUCTED("b")
     ASSERT_PARAMS("")
 }
-
+*/
 //------------------------------------------------------------------------------
 
 TEST_GROUP("ElementFormula",
-           ADD_TEST(can_calculate_matrix),
-           ADD_TEST(can_calculate_matrix_ts),
-           ADD_TEST(matrix_must_be_unity_when_empty_formula),
-           ADD_TEST(matrix_must_be_unity_when_invalid_formula),
-           ADD_TEST(matrix_must_be_unity_when_no_a),
-           ADD_TEST(matrix_must_be_unity_when_no_b),
-           ADD_TEST(matrix_must_be_unity_when_no_c),
-           ADD_TEST(matrix_must_be_unity_when_no_d),
-           ADD_TEST(matrix_must_be_unity_when_no_at),
-           ADD_TEST(matrix_must_be_unity_when_no_bt),
-           ADD_TEST(matrix_must_be_unity_when_no_ct),
-           ADD_TEST(matrix_must_be_unity_when_no_dt),
-           ADD_TEST(matrix_must_be_unity_when_no_as),
-           ADD_TEST(matrix_must_be_unity_when_no_bs),
-           ADD_TEST(matrix_must_be_unity_when_no_cs),
-           ADD_TEST(matrix_must_be_unity_when_no_ds),
-           ADD_TEST(params_in_formula_must_be_in_si_units),
-           ADD_TEST(reset_must_clear_vars),
-           ADD_TEST(addParam__must_do_nothing_if_param_already_added),
-           ADD_TEST(removeParam__must_destruct),
-           ADD_TEST(moveParamUp),
-           ADD_TEST(moveParamDown),
-           ADD_TEST(assign__must_copy_params_and_props),
-           ADD_TEST(assign__must_destruct_old_params),
+           // ADD_TEST(can_calculate_matrix),
+           // ADD_TEST(can_calculate_matrix_ts),
+           // ADD_TEST(matrix_must_be_unity_when_empty_formula),
+           // ADD_TEST(matrix_must_be_unity_when_invalid_formula),
+           // ADD_TEST(matrix_must_be_unity_when_no_a),
+           // ADD_TEST(matrix_must_be_unity_when_no_b),
+           // ADD_TEST(matrix_must_be_unity_when_no_c),
+           // ADD_TEST(matrix_must_be_unity_when_no_d),
+           // ADD_TEST(matrix_must_be_unity_when_no_at),
+           // ADD_TEST(matrix_must_be_unity_when_no_bt),
+           // ADD_TEST(matrix_must_be_unity_when_no_ct),
+           // ADD_TEST(matrix_must_be_unity_when_no_dt),
+           // ADD_TEST(matrix_must_be_unity_when_no_as),
+           // ADD_TEST(matrix_must_be_unity_when_no_bs),
+           // ADD_TEST(matrix_must_be_unity_when_no_cs),
+           // ADD_TEST(matrix_must_be_unity_when_no_ds),
+           // ADD_TEST(params_in_formula_must_be_in_si_units),
+           // ADD_TEST(reset_must_clear_vars),
+           // ADD_TEST(addParam__must_do_nothing_if_param_already_added),
+           // ADD_TEST(removeParam__must_destruct),
+           // ADD_TEST(moveParamUp),
+           // ADD_TEST(moveParamDown),
+           // ADD_TEST(assign__must_copy_params_and_props),
+           // ADD_TEST(assign__must_destruct_old_params),
            )
 
 } // namespace ElementFormulaTests

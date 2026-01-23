@@ -199,7 +199,6 @@ void writeElement(QJsonObject& root, Element *elem)
     root["layout_draw_alt"] = elem->layoutOptions.drawAlt;
     if (formulaElem)
     {
-        root["has_matrices_ts"] = formulaElem->hasMatricesTS();
         root["formula"] = formulaElem->formula();
     }
     

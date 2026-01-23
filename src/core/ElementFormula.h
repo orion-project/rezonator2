@@ -13,8 +13,6 @@ DECLARE_ELEMENT(ElemFormula, Element)
     TYPE_NAME(qApp->translate("Elements", "Formula element"))
     DEFAULT_LABEL("C")
     CALC_MATRIX
-    bool hasMatricesTS() const { return _hasMatricesTS; }
-    void setHasMatricesTS(bool on) { _hasMatricesTS = on; }
     QString formula() const { return _formula; }
     QString error() const;
     bool ok() const;
@@ -28,7 +26,6 @@ DECLARE_ELEMENT(ElemFormula, Element)
 private:
     ElemFormulaImpl *_impl;
     friend class ElemFormulaImpl;
-    bool _hasMatricesTS = true;
     QString _formula;
 DECLARE_ELEMENT_END
 

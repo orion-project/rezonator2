@@ -436,7 +436,6 @@ Element* readElement(const QJsonObject& root, Z::Report* report)
     elem->setDisabled(root["is_disabled"].toBool());
     if (formulaElem)
     {
-        formulaElem->setHasMatricesTS(root["has_matrices_ts"].toBool());
         formulaElem->setFormula(root["formula"].toString());
     }
     

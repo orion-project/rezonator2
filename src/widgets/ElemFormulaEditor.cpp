@@ -65,13 +65,10 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
         Stretch(),
     }).makeWidget();
 
-    _flagHasMatricesTS = new QCheckBox(tr("Different matrices for T and S"));
-    connect(_flagHasMatricesTS, &QCheckBox::stateChanged, this, &ElemFormulaEditor::editorChanged);
-
     auto paramsPanel = LayoutV({
-        Z::Gui::makeHeaderLabel(tr(" Options")),
-        LayoutV({ _flagHasMatricesTS }).setMargin(6),
-        Space(6),
+        // Z::Gui::makeHeaderLabel(tr(" Options")),
+        // LayoutV({}).setMargin(6),
+        // Space(6),
         Z::Gui::makeHeaderLabel(tr(" Parameters")),
         _paramsEditor,
         _stubNoParams,
@@ -155,14 +152,12 @@ void ElemFormulaEditor::populateValues()
     _lockEvents = true;
     _paramsEditor->populateValues();
     _codeEditor->setPlainText(_workingCopy->formula());
-    _flagHasMatricesTS->setChecked(_workingCopy->hasMatricesTS());
     _lockEvents = false;
 }
 
 void ElemFormulaEditor::applyValues()
 {
     _workingCopy->setFormula(_codeEditor->toPlainText());
-    _workingCopy->setHasMatricesTS(_flagHasMatricesTS->isChecked());
     ElementMatrixLocker matrixLocker(_workingCopy, "ElemFormulaEditor::applyValues");
     _paramsEditor->applyValues();
 }

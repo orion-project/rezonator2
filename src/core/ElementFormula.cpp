@@ -83,28 +83,16 @@ public:
         double A, B, C, D;
     
         auto results = _lua->getGlobalVars();
-        if (_elem->_hasMatricesTS)
-        {
-            if (!getResult(results, QStringLiteral("At"), A)) return;
-            if (!getResult(results, QStringLiteral("Bt"), B)) return;
-            if (!getResult(results, QStringLiteral("Ct"), C)) return;
-            if (!getResult(results, QStringLiteral("Dt"), D)) return;
-            _elem->_mt.assign(A, B, C, D);
-            if (!getResult(results, QStringLiteral("As"), A)) return;
-            if (!getResult(results, QStringLiteral("Bs"), B)) return;
-            if (!getResult(results, QStringLiteral("Cs"), C)) return;
-            if (!getResult(results, QStringLiteral("Ds"), D)) return;
-            _elem->_ms.assign(A, B, C, D);
-        }
-        else
-        {
-            if (!getResult(results, QStringLiteral("A"), A)) return;
-            if (!getResult(results, QStringLiteral("B"), B)) return;
-            if (!getResult(results, QStringLiteral("C"), C)) return;
-            if (!getResult(results, QStringLiteral("D"), D)) return;
-            _elem->_mt.assign(A, B, C, D);
-            _elem->_ms.assign(A, B, C, D);
-        }
+        if (!getResult(results, QStringLiteral("At"), A)) return;
+        if (!getResult(results, QStringLiteral("Bt"), B)) return;
+        if (!getResult(results, QStringLiteral("Ct"), C)) return;
+        if (!getResult(results, QStringLiteral("Dt"), D)) return;
+        _elem->_mt.assign(A, B, C, D);
+        if (!getResult(results, QStringLiteral("As"), A)) return;
+        if (!getResult(results, QStringLiteral("Bs"), B)) return;
+        if (!getResult(results, QStringLiteral("Cs"), C)) return;
+        if (!getResult(results, QStringLiteral("Ds"), D)) return;
+        _elem->_ms.assign(A, B, C, D);
     }
     
     void setUnity()
@@ -242,5 +230,4 @@ void ElemFormula::assign(const ElemFormula* other)
         addParam(paramCopy);
     }
     _formula = other->formula();
-    _hasMatricesTS = other->hasMatricesTS();
 }
