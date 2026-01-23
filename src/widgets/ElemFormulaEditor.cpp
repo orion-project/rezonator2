@@ -47,6 +47,7 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
         _workingCopy = new ElemFormula;
         _workingCopy->assign(_sourceElem);
     }
+    _workingCopy->setPrintFunc([this](const QString &s){ Z::Gui::addLogInfo(_logView, s); });
 
     createActions();
     createToolbar();
@@ -192,17 +193,37 @@ void ElemFormulaEditor::resetModifyFlag()
 
 void ElemFormulaEditor::checkFormula()
 {
+    clearLog();
     applyWorkingValues();
 
-    if (!_workingCopy->failed())
-        _logView->setHtml(Z::Format::matrices(_workingCopy->Mt(), _workingCopy->Ms()));
+    if (_workingCopy->failed())
+    {
+        auto log = _workingCopy->errorLog();
+        if (!log.isEmpty())
+        {
+            int errorLine = _workingCopy->errorLine();
+            qDebug() << "Script error at line" << errorLine << ':' << log;
+        
+            for (const auto &line : std::as_const(log))
+                Z::Gui::addLogError(_logView, line, false);
+            Z::Gui::scrollToEnd(_logView);
+            
+            if (errorLine > 0)
+                _codeEditor->setLineHints({{ errorLine, log.last() }});
+        }
+    }
     else
-        _logView->setHtml(QString("<p style='color:red'>%1").arg(_workingCopy->failReason()));
+    {
+        Z::Gui::scrollToEnd(_logView);
+        _logView->insertHtml(Z::Format::matrices(_workingCopy->Mt(), _workingCopy->Ms()));
+        Z::Gui::scrollToEnd(_logView);
+    }
 }
 
 void ElemFormulaEditor::clearLog()
 {
     _logView->clear();
+    _codeEditor->setLineHints({});
 }
 
 void ElemFormulaEditor::showHelp()
@@ -310,7 +331,7 @@ void ElemFormulaEditor::deleteParameter()
         // so it needes to be finished for action handler workflow before the editor can be freed.
         QTimer::singleShot(0, [this, param](){
             _paramsEditor->removeEditor(param);
-            _workingCopy->removeParam(param);
+            _workingCopy->removeParam(param, true);
             updateParamsEditorVisibility();
             paramsChanged();
         });

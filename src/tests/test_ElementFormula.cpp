@@ -141,7 +141,7 @@ TEST_METHOD(removeParam__must_destruct)
     ADD_PARAM(b, 2)
     ASSERT_PARAMS("a, b")
 
-    elem.removeParam(p_a);
+    elem.removeParam(p_a, true);
     ASSERT_PARAM_DESTRUCTED("a")
     ASSERT_PARAMS("b")
 }

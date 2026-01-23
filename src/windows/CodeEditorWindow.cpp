@@ -94,39 +94,6 @@ void CodeEditorWindow::setCode(const QString &code)
     _isChanging = false;
 }
 
-void CodeEditorWindow::logInfo(const QString &msg, bool scrollToEnd)
-{
-    qDebug() << msg;
-    _log->appendPlainText(msg);
-
-    // Format the last paragraph
-    QTextCursor cursor = _log->textCursor();
-    cursor.movePosition(QTextCursor::End);
-    cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::KeepAnchor);
-    QTextCharFormat format;
-    format.setForeground(QColor(0xff222244));
-    cursor.mergeCharFormat(format);
-    
-    if (scrollToEnd)
-        logScrollToEnd();
-}
-
-void CodeEditorWindow::logError(const QString &msg, bool scrollToEnd)
-{
-    _log->appendPlainText(msg);
-    
-    // Format the last paragraph
-    QTextCursor cursor = _log->textCursor();
-    cursor.movePosition(QTextCursor::End);
-    cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::KeepAnchor);
-    QTextCharFormat format;
-    format.setForeground(Qt::red);
-    cursor.mergeCharFormat(format);
-    
-    if (scrollToEnd)
-        logScrollToEnd();
-}
-
 void CodeEditorWindow::logError(const QStringList &log, int errorLine)
 {
     if (log.isEmpty()) return;
@@ -134,19 +101,16 @@ void CodeEditorWindow::logError(const QStringList &log, int errorLine)
     qDebug() << "Script error at line" << errorLine << ':' << log;
 
     for (const auto &line : log)
-        logError(line, false);
-    logScrollToEnd();
+        Z::Gui::addLogError(_log, line, false);
+    Z::Gui::scrollToEnd(_log);
     
     if (errorLine > 0)
         _editor->setLineHints({{ errorLine, log.last() }});
 }
 
-void CodeEditorWindow::logScrollToEnd()
+void CodeEditorWindow::logInfo(const QString &msg)
 {
-    auto cursor = _log->textCursor();
-    cursor.movePosition(QTextCursor::End);
-    _log->setTextCursor(cursor);
-    _log->ensureCursorVisible();
+    Z::Gui::addLogInfo(_log, msg);
 }
 
 void CodeEditorWindow::clearLog()
@@ -163,7 +127,7 @@ void CodeEditorWindow::run()
 
 void CodeEditorWindow::runCode()
 {
-    logError("Code execution is not implemented in this window");
+    Z::Gui::addLogError(_log, "Code execution is not implemented in this window");
 }
 
 void CodeEditorWindow::updateWindowTitle()

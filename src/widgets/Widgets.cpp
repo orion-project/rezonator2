@@ -5,6 +5,7 @@
 #include "widgets/OriFlatToolBar.h"
 #include "tools/OriHighlighter.h"
 
+#include <QDebug>
 #include <QLineEdit>
 
 namespace Z::Gui {
@@ -41,6 +42,58 @@ QLineEdit* makeFilterEdit(const QString &placeholder, QObject *receiver, const c
     a->setShortcut(Qt::Key_F3);
     ed->addAction(a);
     return ed;
+}
+
+template <class TLogView>
+void _scrollToEnd(TLogView *logView)
+{
+    auto cursor = logView->textCursor();
+    cursor.movePosition(QTextCursor::End);
+    logView->setTextCursor(cursor);
+    logView->ensureCursorVisible();
+}
+
+void scrollToEnd(QTextEdit *logView) { _scrollToEnd(logView); }
+void scrollToEnd(QPlainTextEdit *logView) { _scrollToEnd(logView); }
+
+template <class TLogView>
+void _processLastPara(TLogView *logView, bool error, bool scrollToEnd)
+{
+    // Format the last paragraph
+    QTextCursor cursor = logView->textCursor();
+    cursor.movePosition(QTextCursor::End);
+    cursor.movePosition(QTextCursor::StartOfBlock, QTextCursor::KeepAnchor);
+    QTextCharFormat format;
+    format.setForeground(error ? Qt::red : QColor(0xff222244));
+    cursor.mergeCharFormat(format);
+    
+    if (scrollToEnd)
+        _scrollToEnd(logView);
+}
+
+void addLogInfo(QTextEdit *logView, const QString &msg, bool scrollToEnd)
+{
+    qDebug() << msg;
+    logView->append(msg);
+    _processLastPara(logView, false, scrollToEnd);
+}
+
+void addLogInfo(QPlainTextEdit *logView, const QString &msg, bool scrollToEnd)
+{
+    logView->appendPlainText(msg);
+    _processLastPara(logView, false, scrollToEnd);
+}
+
+void addLogError(QTextEdit *logView, const QString &msg, bool scrollToEnd)
+{
+    logView->append(msg);
+    _processLastPara(logView, true, scrollToEnd);
+}
+
+void addLogError(QPlainTextEdit *logView, const QString &msg, bool scrollToEnd)
+{
+    logView->appendPlainText(msg);
+    _processLastPara(logView, true, scrollToEnd);
 }
 
 } // namespace Z::Gui

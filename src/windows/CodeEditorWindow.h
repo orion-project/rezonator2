@@ -52,10 +52,8 @@ protected:
     QString _customTitle;
     QString _defaultTitle;
 
-    void logInfo(const QString &msg, bool scrollToEnd = true);
-    void logError(const QString &msg, bool scrollToEnd = true);
     void logError(const QStringList &log, int errorLine);
-    void logScrollToEnd();
+    void logInfo(const QString &msg);
     
     virtual void runCode();
 

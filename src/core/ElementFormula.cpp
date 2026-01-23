@@ -19,11 +19,15 @@ ElemFormula::~ElemFormula()
 
 void ElemFormula::calcMatrixInternal()
 {
+    _error.clear();
+    _errorLog.clear();
+    _errorLine = 0;
+
     PyRunner py;
     py.code = _formula;
     py.moduleName = QString("elem_%1").arg(_id);
     py.funcNames = { FUNC_CALC_MATRIX };
-    //py->printFunc = _printFunc;
+    py.printFunc = _printFunc;
 
     if (!py.load({})) {
         showError(&py);
@@ -55,31 +59,6 @@ void ElemFormula::showError(PyRunner *py)
     _errorLine = py->errorLine;
     for (auto it = _matrs.begin(); it != _matrs.end(); it++)
         it->second.unity();
-}
-
-void ElemFormula::addParam(Z::Parameter* param, int index)
-{
-    if (_params.indexOf(param) >= 0)
-    {
-        qWarning() << "ElemFormula::addParam: invalid parameter, it's already in the parameters list";
-        return;
-    }
-    Element::addParam(param, index);
-}
-
-void ElemFormula::removeParam(Z::Parameter* param)
-{
-    for (int i = 0; i < _params.size(); i++)
-    {
-        Z::Parameter *p = _params.at(i);
-        if (p == param)
-        {
-            _params.removeAt(i);
-            delete p;
-            return;
-        }
-    }
-    qWarning() << "ElemFormula::removeParam: invalid parameter, it's not in the parameters list";
 }
 
 void ElemFormula::moveParamUp(Z::Parameter* param)
