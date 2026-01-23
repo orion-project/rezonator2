@@ -14,13 +14,13 @@
 //                                ParamsEditor
 //------------------------------------------------------------------------------
 
-ParamsEditor::ParamsEditor(const Options opts, QWidget *parent) : QWidget(parent), _options(opts)
+ParamsEditor::ParamsEditor(const Z::Parameters &params, const Options opts, QWidget *parent) : QWidget(parent), _options(opts)
 {
     // Parameters layout should not be used as the widget's main layout
     // because parameters can be added in runtime and it should be easy to call `addWidget()`
     // and not be bothered that someting other might be at the bottom (e.g. auxControl, _infoPanel).
     _paramsLayout = Ori::Layouts::LayoutV({}).setMargin(0).setSpacing(0).boxLayout();
-    populateEditors();
+    populateEditors(params);
 
     auto mainLayout = Ori::Layouts::LayoutV({ _paramsLayout, Ori::Layouts::Stretch() }).setSpacing(0).setMargin(0).boxLayout();
 
@@ -39,14 +39,14 @@ ParamsEditor::ParamsEditor(const Options opts, QWidget *parent) : QWidget(parent
     setLayout(mainLayout);
 }
 
-void ParamsEditor::populateEditors()
+void ParamsEditor::populateEditors(const Z::Parameters &params)
 {
     if (!_editors.isEmpty())
     {
         qWarning() << "ParamsEditor::populateEditors: already populated, use removeEditors first";
         return;
     }
-    for (auto param : _options.params)
+    for (auto param : params)
         addEditor(param);
 }
 
@@ -173,7 +173,7 @@ void ParamsEditor::paramFocused()
         {
             auto p = editor->parameter();
             QString descr = p->description();
-            if (p->label() != p->alias())
+            if (_options.showPythonCode && p->label() != p->alias())
                 descr += QString("<p>Python: <code>elem.param('%2')</code>").arg(p->alias());
             _infoPanel->setInfo(p->name(), descr);
             return;

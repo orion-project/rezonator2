@@ -402,12 +402,12 @@ LensmakerWidget::LensmakerWidget(QWidget *parent) : QSplitter(parent)
     _F1->setValue(0_mm); _results.append(_F1);
     _F2->setValue(0_mm); _results.append(_F2);
 
-    ParamsEditor::Options opts({});
+    ParamsEditor::Options opts;
     opts.ownParams = true;
     opts.checkChanges = true;
     opts.applyMode = ParamsEditor::Options::ApplyEnter;
     opts.useExpression = true;
-    auto paramsEditor = new ParamsEditor(opts);
+    auto paramsEditor = new ParamsEditor({}, opts);
     QVector<Z::Unit> reasonableUnits{Z::Units::mm(), Z::Units::cm(), Z::Units::m()};
     paramsEditor->addEditor(_D, {Z::Units::mm(), Z::Units::cm()});
     paramsEditor->addEditor(_R1, reasonableUnits);

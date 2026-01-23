@@ -127,12 +127,13 @@ QWidget* ElementPropsDialog::initPageParams()
     _butParamsMenu->setPopupMode(QToolButton::InstantPopup);
 
     auto schema = dynamic_cast<Schema*>(_element->owner());
-    ParamsEditor::Options opts(_element->params());
+    ParamsEditor::Options opts;
     opts.filter.reset(new Z::ParameterFilter({new Z::ParameterFilterVisible()}));
     opts.globalParams = schema ? schema->globalParams() : nullptr;
     opts.paramLinks = schema ? schema->paramLinks() : nullptr;
     opts.useExpression = true;
-    _editorParams = new ParamsEditor(opts);
+    opts.showPythonCode = true;
+    _editorParams = new ParamsEditor(_element->params(), opts);
     
     auto labelEmpty = new QLabel(tr("Element has no editable parameters"));
     labelEmpty->setMargin(6);

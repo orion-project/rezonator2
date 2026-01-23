@@ -62,11 +62,11 @@ GrinLensWindow::GrinLensWindow(QWidget *parent) : QWidget(parent)
     _statusLabel->setWordWrap(true);
     _statusLabel->setStyleSheet("QLabel{background:LightCoral;padding:6px}");
 
-    ParamsEditor::Options opts(_params);
+    ParamsEditor::Options opts;
     opts.applyMode = ParamsEditor::Options::ApplyInstant;
     opts.ownParams = true;
     opts.auxControl = Ori::Layouts::LayoutV({_statusLabel}).setMargin(3).makeWidget();
-    auto editors = new ParamsEditor(opts);
+    auto editors = new ParamsEditor(_params, opts);
     connect(editors, SIGNAL(paramChanged(Z::Parameter*, Z::Value)), this, SLOT(calculate(Z::Parameter*)));
 
     auto group = new QActionGroup(this);

@@ -26,9 +26,6 @@ class ParamsEditor : public QWidget
 public:
     struct Options
     {
-        /// Target editing parameters.
-        Z::Parameters params;
-
         /// Global parameters to which tagets can be linked.
         const Z::Parameters *globalParams = nullptr;
 
@@ -66,15 +63,21 @@ public:
         /// Use expression parser.
         /// If not set, only numeric value can be edited.
         bool useExpression = false;
-
-        Options(const Z::Parameters &p) : params(p) {}
+        
+        /// Add an info text about how this parameter should be referenced in Python code
+        /// This is useful for elements' parameters whose names are displayed in editor
+        /// with non-ascii characters, like "α". Then a code like `elem.param["alpha"]`
+        /// will be helpful for those who writes custom functions using such parameters.
+        bool showPythonCode = false;
+        
+        Options() {}
     };
 
 public:
-    explicit ParamsEditor(const Options opts, QWidget *parent = nullptr);
+    explicit ParamsEditor(const Z::Parameters &params, const Options opts = {}, QWidget *parent = nullptr);
 
     void removeEditors();
-    void populateEditors();
+    void populateEditors(const Z::Parameters &params);
     void populateValues();
 
     ParamEditor* addEditor(Z::Parameter* param, const QVector<Z::Unit>& units = {}, int index = -1);

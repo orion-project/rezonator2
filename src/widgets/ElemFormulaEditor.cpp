@@ -54,9 +54,9 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
     createActions();
     createToolbar(fullToolbar);
 
-    ParamsEditor::Options opts(_workingCopy->params());
+    ParamsEditor::Options opts;
     opts.menuButtonActions = {_actnParamDescr, nullptr, _actnParamMoveUp, _actnParamMoveDown, nullptr, _actnParamDelete};
-    _paramsEditor = new ParamsEditor(opts);
+    _paramsEditor = new ParamsEditor(_workingCopy->params(), opts);
     connect(_paramsEditor, &ParamsEditor::paramChanged, this, &ElemFormulaEditor::editorChanged);
 
     _stubNoParams = LayoutV({
@@ -194,7 +194,7 @@ void ElemFormulaEditor::resetChanges()
         .arg(_sourceElem->displayLabel()))) return;
     _paramsEditor->removeEditors();
     _workingCopy->assign(_sourceElem);
-    _paramsEditor->populateEditors();
+    _paramsEditor->populateEditors(_workingCopy->params());
     populateValues();
     updateParamsEditorVisibility();
     _isChanged = false;
