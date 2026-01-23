@@ -13,6 +13,10 @@ QT_END_NAMESPACE
 class ElemFormula;
 class ParamsEditor;
 
+namespace Ori::Widgets {
+class CodeEditor;
+}
+
 class ElemFormulaEditor : public QWidget
 {
     Q_OBJECT
@@ -64,7 +68,8 @@ private:
     ParamsEditor* _paramsEditor;
     QAction *_actnSaveChanges, *_actnResetChanges, *_actnCheckCode, *_actnClearLog, *_actnShowHelp,
         *_actnParamAdd, *_actnParamDelete, *_actnParamDescr, *_actnParamMoveUp, *_actnParamMoveDown;
-    QTextEdit *_codeEditor, *_logView;
+    Ori::Widgets::CodeEditor *_codeEditor;
+    QTextEdit *_logView;
     QToolBar *_toolbar;
     QMenu *_menuParam;
     QCheckBox *_flagHasMatricesTS;

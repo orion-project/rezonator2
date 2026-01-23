@@ -12,6 +12,7 @@
 #include "helpers/OriDialogs.h"
 #include "helpers/OriLayouts.h"
 #include "helpers/OriWidgets.h"
+#include "widgets/OriCodeEditor.h"
 
 #include <QCheckBox>
 #include <QFormLayout>
@@ -76,10 +77,8 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
         _stubNoParams,
     }).setMargin(0).makeWidget();
 
-    _codeEditor = new QTextEdit;
-    _codeEditor->setAcceptRichText(false);
-    _codeEditor->setFont(Z::Gui::CodeEditorFont().get());
-    connect(_codeEditor, &QTextEdit::textChanged, this, &ElemFormulaEditor::editorChanged);
+    _codeEditor = Z::Gui::makeCodeEditor();
+    connect(_codeEditor, &QPlainTextEdit::modificationChanged, this, &ElemFormulaEditor::editorChanged);
 
     _logView = new QTextEdit;
     _logView->setReadOnly(true);
@@ -109,18 +108,18 @@ ElemFormulaEditor::~ElemFormulaEditor()
 
 void ElemFormulaEditor::createActions()
 {
-    #define A_ Ori::Gui::V0::action
+    #define A_ Ori::Gui::action
 
-    _actnSaveChanges = A_(tr("Save Changes"), this, SLOT(saveChanges()), ":/toolbar/elem_arrow_to");
-    _actnResetChanges = A_(tr("Reset Changes"), this, SLOT(resetChanges()), ":/toolbar/elem_arrow_from");
-    _actnCheckCode = A_(tr("Check Formula"), this, SLOT(checkFormula()), ":/toolbar/check", Qt::CTRL | Qt::Key_B);
-    _actnClearLog = A_(tr("Clear Log"), this, SLOT(clearLog()), ":/toolbar/clear_log");
-    _actnShowHelp = A_(tr("Help"), this, SLOT(showHelp()), ":/toolbar/help");
-    _actnParamAdd = A_(tr("Add Parameter..."), this, SLOT(createParameter()), ":/toolbar/param_add");
-    _actnParamDelete = A_(tr("Delete..."), this, SLOT(deleteParameter()), ":/toolbar/param_delete");
-    _actnParamDescr = A_(tr("Annotate..."), this, SLOT(annotateParameter()), ":/toolbar/param_annotate");
-    _actnParamMoveUp = A_(tr("Move Up"), this, SLOT(moveParameterUp()), ":/toolbar/move_up");
-    _actnParamMoveDown = A_(tr("Move Down"), this, SLOT(moveParameterDown()), ":/toolbar/move_down");
+    _actnSaveChanges = A_(tr("Save Changes"), this, &ElemFormulaEditor::saveChanges, ":/toolbar/elem_arrow_to");
+    _actnResetChanges = A_(tr("Reset Changes"), this, &ElemFormulaEditor::resetChanges, ":/toolbar/elem_arrow_from");
+    _actnCheckCode = A_(tr("Check Formula"), this, &ElemFormulaEditor::checkFormula, ":/toolbar/check", "Ctrl+B");
+    _actnClearLog = A_(tr("Clear Log"), this, &ElemFormulaEditor::clearLog, ":/toolbar/clear_log");
+    _actnShowHelp = A_(tr("Help"), this, &ElemFormulaEditor::showHelp, ":/toolbar/help");
+    _actnParamAdd = A_(tr("Add Parameter..."), this, &ElemFormulaEditor::createParameter, ":/toolbar/param_add");
+    _actnParamDelete = A_(tr("Delete..."), this, &ElemFormulaEditor::deleteParameter, ":/toolbar/param_delete");
+    _actnParamDescr = A_(tr("Annotate..."), this, &ElemFormulaEditor::annotateParameter, ":/toolbar/param_annotate");
+    _actnParamMoveUp = A_(tr("Move Up"), this, &ElemFormulaEditor::moveParameterUp, ":/toolbar/move_up");
+    _actnParamMoveDown = A_(tr("Move Down"), this, &ElemFormulaEditor::moveParameterDown, ":/toolbar/move_down");
 
     #undef A_
 }
