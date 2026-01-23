@@ -55,8 +55,8 @@ void ElemFormulaWindow::createContent(ElemFormula *sourceElem, ElemFormula *work
 {
     setWindowIcon(QIcon(":/elem_icon/ElemFormula"));
 
-    _editor = new ElemFormulaEditor(sourceElem, workingCopy, false);
-    connect(_editor, &ElemFormulaEditor::onChanged, [this](){
+    _editor = new ElemFormulaEditor(sourceElem, workingCopy);
+    connect(_editor, &ElemFormulaEditor::onModify, [this](){
         updateWindowTitle();
         // Mark schema as modified even if `_editor->isChanged` gets `false`.
         // It means the _editor was loaded having the state `changed = true`,
@@ -64,17 +64,16 @@ void ElemFormulaWindow::createContent(ElemFormula *sourceElem, ElemFormula *work
         // from the state in what it was loaded.
         schema()->markModified("ElemFormula edited");
     });
-    connect(_editor, &ElemFormulaEditor::onSaved, [this](){
+    connect(_editor, &ElemFormulaEditor::onApply, [this](){
         updateWindowTitle();
-        schema()->events().raise(SchemaEvents::ElemChanged, _editor->sourceElem(), "ElemFormula saved");
-        schema()->events().raise(SchemaEvents::RecalRequred, "ElemFormula saved");
+        schema()->events().raise(SchemaEvents::ElemChanged, _editor->sourceElem(), "ElemFormula apply");
+        schema()->events().raise(SchemaEvents::RecalRequred, "ElemFormula apply");
     });
 
     _menuFormula = new QMenu(tr("Formula"));
     _editor->populateWindowMenu(_menuFormula);
 
     setContent(_editor);
-    _editor->populateValues();
 }
 
 void ElemFormulaWindow::updateWindowTitle()
@@ -157,7 +156,8 @@ bool ElemFormulaWindow::storableWrite(QJsonObject& root, Z::Report *report)
 
     root["elem_index"] = schema()->indexOf(_editor->sourceElem());
 
-    _editor->applyValues();
+    _editor->applyWorkingValues();
+    _editor->resetModifyFlag();
 
     QJsonObject elemJson;
     Z::IO::Json::writeElement(elemJson, _editor->workingCopy());

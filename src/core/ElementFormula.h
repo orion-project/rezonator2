@@ -22,7 +22,6 @@ DECLARE_ELEMENT(ElemFormula, Element)
     void moveParamUp(Z::Parameter* param);
     void moveParamDown(Z::Parameter* param);
     void assign(const ElemFormula* other);
-    void reset();
 private:
     ElemFormulaImpl *_impl;
     friend class ElemFormulaImpl;

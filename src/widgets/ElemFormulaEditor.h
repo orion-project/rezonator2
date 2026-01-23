@@ -22,7 +22,8 @@ class ElemFormulaEditor : public QWidget
     Q_OBJECT
 
 public:
-    explicit ElemFormulaEditor(ElemFormula* sourceElem, bool fullToolbar);
+    explicit ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *workingCopy);
+
     ~ElemFormulaEditor() override;
 
     bool canCopy();
@@ -38,35 +39,21 @@ public:
 
     bool isChanged() const { return _isChanged; }
     void setIsChanged(bool on) { _isChanged = on; }
-    void populateValues();
-    void applyValues();
+
+    // ElemFormulaWindow calls it before saving schema file
+    void applyWorkingValues();
+    
+    void resetModifyFlag();
 
 signals:
-    void onChanged();
-    void onSaved();
-
-private slots:
-    void saveChanges();
-    void resetChanges();
-    void checkFormula();
-    void clearLog();
-    void showHelp();
-    void createParameter();
-    void deleteParameter();
-    void annotateParameter();
-    void moveParameterUp();
-    void moveParameterDown();
+    void onModify();
+    void onApply();
 
 private:
-    /// This construct should be called only during schema loading
-    /// when working copy of element is loaded from schema file
-    /// instead of being created from the source element
-    explicit ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *workingCopy, bool fullToolbar);
-
     ElemFormula* _sourceElem;
     ElemFormula* _workingCopy;
     ParamsEditor* _paramsEditor;
-    QAction *_actnSaveChanges, *_actnResetChanges, *_actnCheckCode, *_actnClearLog, *_actnShowHelp,
+    QAction *_actnApplyChanges, *_actnResetChanges, *_actnCheckCode, *_actnClearLog, *_actnShowHelp,
         *_actnParamAdd, *_actnParamDelete, *_actnParamDescr, *_actnParamMoveUp, *_actnParamMoveDown;
     Ori::Widgets::CodeEditor *_codeEditor;
     QTextEdit *_logView;
@@ -75,14 +62,23 @@ private:
     QWidget *_stubNoParams;
     bool _isChanged = false;
     bool _lockEvents = false;
-    bool _firstChange = true;
 
     void createActions();
-    void createToolbar(bool full);
-    void editorChanged();
+    void createToolbar();
+    void paramsChanged();
+    void codeModified();
     void updateParamsEditorVisibility();
-
-    friend class ElemFormulaWindow;
+    void populate();
+    void collect();
+    void reset();
+    void checkFormula();
+    void clearLog();
+    void showHelp();
+    void createParameter();
+    void deleteParameter();
+    void annotateParameter();
+    void moveParameterUp();
+    void moveParameterDown();
 };
 
 #endif // ELEM_FORMULA_EDITOR_H

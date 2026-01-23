@@ -26,6 +26,7 @@
 #include <QPlainTextEdit>
 
 using namespace Ori::Layouts;
+using Me = ElemFormulaEditor;
 
 template <class TPayload>
 class ObjectDeleter : public QObject
@@ -38,12 +39,7 @@ private:
 };
 
 
-ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, bool fullToolbar)
-    : ElemFormulaEditor(sourceElem, nullptr, fullToolbar)
-{
-}
-
-ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *workingCopy, bool fullToolbar)
+ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *workingCopy)
     : QWidget(), _sourceElem(sourceElem), _workingCopy(workingCopy)
 {
     if (!_workingCopy)
@@ -53,15 +49,17 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
     }
 
     createActions();
-    createToolbar(fullToolbar);
+    createToolbar();
 
     ParamsEditor::Options opts;
-    opts.menuButtonActions = {_actnParamDescr, nullptr, _actnParamMoveUp, _actnParamMoveDown, nullptr, _actnParamDelete};
+    opts.menuButtonActions = {
+        _actnParamDescr, nullptr, _actnParamMoveUp, _actnParamMoveDown, nullptr, _actnParamDelete
+    };
     _paramsEditor = new ParamsEditor(_workingCopy->params(), opts);
-    connect(_paramsEditor, &ParamsEditor::paramChanged, this, &ElemFormulaEditor::editorChanged);
+    connect(_paramsEditor, &ParamsEditor::paramChanged, this, &Me::paramsChanged);
 
     _stubNoParams = LayoutV({
-        LayoutH({ Stretch(), new QLabel(tr("Element nas no parameters")), Stretch() }),
+        LayoutH({ Stretch(), tr("Element nas no parameters"), Stretch() }),
         Stretch(),
     }).makeWidget();
 
@@ -75,7 +73,7 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
     }).setMargin(0).makeWidget();
 
     _codeEditor = Z::Gui::makeCodeEditor();
-    connect(_codeEditor, &QPlainTextEdit::modificationChanged, this, &ElemFormulaEditor::editorChanged);
+    connect(_codeEditor, &QPlainTextEdit::modificationChanged, this, &Me::codeModified);
 
     _logView = new QTextEdit;
     _logView->setReadOnly(true);
@@ -83,20 +81,15 @@ ElemFormulaEditor::ElemFormulaEditor(ElemFormula* sourceElem, ElemFormula *worki
     _logView->setFont(Z::Gui::CodeEditorFont().get());
     _logView->document()->setDefaultStyleSheet(Z::Gui::reportStyleSheet());
 
-    auto codeSplitter = Ori::Gui::splitterV(_codeEditor, _logView);
-    codeSplitter->setStretchFactor(0, 80);
-    codeSplitter->setStretchFactor(1, 20);
-
-    auto mainSplitter = Ori::Gui::splitterH(paramsPanel, codeSplitter);
-    mainSplitter->setStretchFactor(0, 10);
-    mainSplitter->setStretchFactor(1, 90);
-
+    auto codeSplitter = Ori::Gui::splitterV(_codeEditor, 80, _logView, 20);
+    auto mainSplitter = Ori::Gui::splitterH(paramsPanel, 10, codeSplitter, 90);
     Ori::Layouts::LayoutV({_toolbar, mainSplitter}).setMargin(0).useFor(this);
 
     // Element should be deleted only after all children, so put at the end
     new ObjectDeleter<Element>(_workingCopy, this);
 
-    updateParamsEditorVisibility();
+    qDebug() << "Initial populate";
+    populate();
 }
 
 ElemFormulaEditor::~ElemFormulaEditor()
@@ -106,39 +99,32 @@ ElemFormulaEditor::~ElemFormulaEditor()
 void ElemFormulaEditor::createActions()
 {
     #define A_ Ori::Gui::action
-
-    _actnSaveChanges = A_(tr("Save Changes"), this, &ElemFormulaEditor::saveChanges, ":/toolbar/elem_arrow_to");
-    _actnResetChanges = A_(tr("Reset Changes"), this, &ElemFormulaEditor::resetChanges, ":/toolbar/elem_arrow_from");
-    _actnCheckCode = A_(tr("Check Formula"), this, &ElemFormulaEditor::checkFormula, ":/toolbar/check", "Ctrl+B");
-    _actnClearLog = A_(tr("Clear Log"), this, &ElemFormulaEditor::clearLog, ":/toolbar/clear_log");
-    _actnShowHelp = A_(tr("Help"), this, &ElemFormulaEditor::showHelp, ":/toolbar/help");
-    _actnParamAdd = A_(tr("Add Parameter..."), this, &ElemFormulaEditor::createParameter, ":/toolbar/param_add");
-    _actnParamDelete = A_(tr("Delete..."), this, &ElemFormulaEditor::deleteParameter, ":/toolbar/param_delete");
-    _actnParamDescr = A_(tr("Annotate..."), this, &ElemFormulaEditor::annotateParameter, ":/toolbar/param_annotate");
-    _actnParamMoveUp = A_(tr("Move Up"), this, &ElemFormulaEditor::moveParameterUp, ":/toolbar/move_up");
-    _actnParamMoveDown = A_(tr("Move Down"), this, &ElemFormulaEditor::moveParameterDown, ":/toolbar/move_down");
-
+    _actnApplyChanges = A_(tr("Apply Changes"), this, &Me::collect, ":/toolbar/elem_arrow_to");
+    _actnResetChanges = A_(tr("Reset Changes"), this, &Me::reset, ":/toolbar/elem_arrow_from");
+    _actnCheckCode = A_(tr("Check Formula"), this, &Me::checkFormula, ":/toolbar/check", "Ctrl+B");
+    _actnClearLog = A_(tr("Clear Log"), this, &Me::clearLog, ":/toolbar/clear_log");
+    _actnShowHelp = A_(tr("Help"), this, &Me::showHelp, ":/toolbar/help");
+    _actnParamAdd = A_(tr("Add Parameter..."), this, &Me::createParameter, ":/toolbar/param_add");
+    _actnParamDelete = A_(tr("Delete..."), this, &Me::deleteParameter, ":/toolbar/param_delete");
+    _actnParamDescr = A_(tr("Annotate..."), this, &Me::annotateParameter, ":/toolbar/param_annotate");
+    _actnParamMoveUp = A_(tr("Move Up"), this, &Me::moveParameterUp, ":/toolbar/move_up");
+    _actnParamMoveDown = A_(tr("Move Down"), this, &Me::moveParameterDown, ":/toolbar/move_down");
     #undef A_
 }
 
-void ElemFormulaEditor::createToolbar(bool full)
+void ElemFormulaEditor::createToolbar()
 {
     _toolbar = Z::Gui::makeToolBar({
-        _actnSaveChanges, _actnResetChanges, 0,
+        _actnApplyChanges, _actnResetChanges, 0,
         _actnParamAdd, 0,
-        Ori::Gui::textToolButton(_actnCheckCode),
+        Ori::Gui::textToolButton(_actnCheckCode), _actnClearLog, 0,
+        _actnShowHelp,
     });
-    if (full)
-    {
-        _toolbar->addAction(_actnClearLog);
-        _toolbar->addSeparator();
-        _toolbar->addAction(_actnShowHelp);
-    }
 }
 
 void ElemFormulaEditor::populateWindowMenu(QMenu* menu)
 {
-    menu->addAction(_actnSaveChanges);
+    menu->addAction(_actnApplyChanges);
     menu->addAction(_actnResetChanges);
     menu->addSeparator();
     menu->addAction(_actnCheckCode);
@@ -147,58 +133,70 @@ void ElemFormulaEditor::populateWindowMenu(QMenu* menu)
     menu->addAction(_actnParamAdd);
 }
 
-void ElemFormulaEditor::populateValues()
+void ElemFormulaEditor::populate()
 {
     _lockEvents = true;
+    qDebug() << "Populate values";
     _paramsEditor->populateValues();
     _codeEditor->setPlainText(_workingCopy->formula());
+    updateParamsEditorVisibility();
     _lockEvents = false;
 }
 
-void ElemFormulaEditor::applyValues()
-{
-    _workingCopy->setFormula(_codeEditor->toPlainText());
-    ElementMatrixLocker matrixLocker(_workingCopy, "ElemFormulaEditor::applyValues");
-    _paramsEditor->applyValues();
-}
-
-void ElemFormulaEditor::editorChanged()
-{
-    if (_lockEvents) return;
-    if (_isChanged && !_firstChange) return;
-    _isChanged = true;
-    _firstChange = false;
-    emit onChanged();
-}
-
-void ElemFormulaEditor::saveChanges()
+void ElemFormulaEditor::collect()
 {
     if (!_isChanged) return;
-    applyValues();
+    applyWorkingValues();
     _sourceElem->assign(_workingCopy);
     _isChanged = false;
-    emit onSaved();
+    emit onApply();
 }
 
-void ElemFormulaEditor::resetChanges()
+void ElemFormulaEditor::reset()
 {
     if (!_isChanged) return;
     if (!Ori::Dlg::yes(tr("Element <b>%1</b>: all changes "
         "made in this editor window will be lost. Continue?")
         .arg(_sourceElem->displayLabel()))) return;
+    qDebug() << "Remove editors";
     _paramsEditor->removeEditors();
     _workingCopy->assign(_sourceElem);
+    qDebug() << "Populate editors";
     _paramsEditor->populateEditors(_workingCopy->params());
-    populateValues();
-    updateParamsEditorVisibility();
+    populate();
     _isChanged = false;
-    emit onChanged();
+    emit onModify();
+}
+
+void ElemFormulaEditor::applyWorkingValues()
+{
+    _workingCopy->setFormula(_codeEditor->toPlainText());
+    ElementMatrixLocker matrixLocker(_workingCopy, "ElemFormulaEditor::applyWorkingValues");
+    _paramsEditor->applyValues();
+}
+
+void ElemFormulaEditor::paramsChanged()
+{
+    if (_lockEvents) return;
+    _isChanged = true;
+    emit onModify();
+}
+
+void ElemFormulaEditor::codeModified()
+{
+    if (_lockEvents) return;
+    _isChanged = true;
+    emit onModify();
+}
+
+void ElemFormulaEditor::resetModifyFlag()
+{
+    _codeEditor->document()->setModified(false);
 }
 
 void ElemFormulaEditor::checkFormula()
 {
-    _workingCopy->reset();
-    applyValues();
+    applyWorkingValues();
 
     if (_workingCopy->ok())
         _logView->setHtml(Z::Format::matrices(_workingCopy->Mt(), _workingCopy->Ms()));
@@ -303,7 +301,7 @@ void ElemFormulaEditor::createParameter()
             _stubNoParams->setVisible(false);
             _paramsEditor->setVisible(true);
         }
-        editorChanged();
+        paramsChanged();
     }
 }
 
@@ -318,7 +316,7 @@ void ElemFormulaEditor::deleteParameter()
             _paramsEditor->removeEditor(param);
             _workingCopy->removeParam(param);
             updateParamsEditorVisibility();
-            editorChanged();
+            paramsChanged();
         });
     }
 }
@@ -346,7 +344,7 @@ void ElemFormulaEditor::annotateParameter()
     {
         param->setDescription(newDescr);
         _paramsEditor->focus(param);
-        editorChanged();
+        paramsChanged();
     }
 }
 
@@ -356,7 +354,7 @@ void ElemFormulaEditor::moveParameterUp()
     auto param = _actnParamMoveUp->data().value<ParamEditor*>()->parameter();
     _paramsEditor->moveEditorUp(param);
     _workingCopy->moveParamUp(param);
-    editorChanged();
+    paramsChanged();
 }
 
 void ElemFormulaEditor::moveParameterDown()
@@ -365,5 +363,5 @@ void ElemFormulaEditor::moveParameterDown()
     auto param = _actnParamMoveDown->data().value<ParamEditor*>()->parameter();
     _paramsEditor->moveEditorDown(param);
     _workingCopy->moveParamDown(param);
-    editorChanged();
+    paramsChanged();
 }

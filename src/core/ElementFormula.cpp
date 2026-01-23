@@ -39,15 +39,6 @@ public:
         return true;
     }
 
-    void reset()
-    {
-        if (!_lua) return;
-    
-        auto vars = _lua->getGlobalVars();
-        for (auto it = vars.cbegin(); it != vars.cend(); it++)
-            _lua->removeGlobalVar(it.key());
-    }
-
     void calc()
     {
         if (_elem->_formula.isEmpty())
@@ -63,6 +54,10 @@ public:
             return;
         }
     
+        auto vars = _lua->getGlobalVars();
+        for (auto it = vars.cbegin(); it != vars.cend(); it++)
+            _lua->removeGlobalVar(it.key());
+
         for (auto param : std::as_const(_elem->_params))
             _lua->setGlobalVar(param->alias(), param->value().toSi());
     
@@ -131,11 +126,6 @@ ElemFormula::ElemFormula()
 ElemFormula::~ElemFormula()
 {
     delete _impl;
-}
-
-void ElemFormula::reset()
-{
-    _impl->reset();
 }
 
 QString ElemFormula::error() const

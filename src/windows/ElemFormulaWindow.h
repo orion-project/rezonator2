@@ -59,14 +59,13 @@ public:
 private:
     /// This contructor with one parameter is required to load window from schema file.
     explicit ElemFormulaWindow(Schema *owner);
+    friend class ElemFormulaWindowLoader;
 
     ElemFormulaEditor *_editor;
     QMenu *_menuFormula;
 
     void createContent(ElemFormula* sourceElem, ElemFormula *workingCopy);
     void updateWindowTitle();
-
-    friend class ElemFormulaWindowLoader;
 };
 
 #endif // ELEM_FORMULA_WINDOW_H
