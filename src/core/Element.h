@@ -283,6 +283,8 @@ public:
     const Z::Matrix& Ms_inv() const { return M(MatrixKind::InvS); }
     const Z::Matrix* pMt_inv() const { return pM(MatrixKind::InvT); }
     const Z::Matrix* pMs_inv() const { return pM(MatrixKind::InvS); }
+    
+    bool hasMatrix(MatrixKind kind) const { return _matrs.contains(kind); }
 
     bool disabled() const { return _disabled; }
     void setDisabled(bool value);
@@ -334,7 +336,8 @@ protected:
     virtual Element* create() const = 0;
     
     // Support for ElementKind::Range functionality
-    Z::Parameter *_length, *_ior;
+    Z::Parameter *_length = nullptr;
+    Z::Parameter *_ior = nullptr;
     double _subRangeSI;
     double lengthSI() const { return _length->value().toSi(); }
     double ior() const { return _ior->value().value(); }
@@ -359,7 +362,8 @@ protected:
     // An interface element is characterized by two IORs - `ior1` and `ior2`.
     // Where `ior1` is IOR of a medium at 'the left' of the interface (medium 1),
     // and `ior2` is IOR of a medium at 'the right' of the interface (medium 2).
-    Z::Parameter *_ior1, *_ior2;
+    Z::Parameter *_ior1 = nullptr;
+    Z::Parameter *_ior2 = nullptr;
     double ior1() const { return _ior1->value().value(); }
     double ior2() const { return _ior2->value().value(); }
     friend class ElemAsInterfaceImpl;

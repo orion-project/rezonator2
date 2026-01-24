@@ -379,6 +379,166 @@ TEST_METHOD(Element_moveParamDown)
 
 //------------------------------------------------------------------------------
 
+DECLARE_ELEMENT(TestElementRange, Element)
+    TestElementRange() { ELEM_PROLOG_RANGE }
+DECLARE_ELEMENT_END
+
+DECLARE_ELEMENT(TestElementDynamic, Element)
+    TestElementDynamic() { ELEM_PROLOG_DYNAMIC }
+DECLARE_ELEMENT_END
+
+DECLARE_ELEMENT(TestElementInterface, Element)
+    TestElementInterface() { ELEM_PROLOG_INTERFACE }
+DECLARE_ELEMENT_END
+
+#define ASSERT_BASE_MATRICES\
+    ASSERT_IS_TRUE(elem.hasMatrix(MatrixKind::T))\
+    ASSERT_IS_TRUE(elem.hasMatrix(MatrixKind::S))\
+    ASSERT_IS_TRUE(elem.hasMatrix(MatrixKind::InvT))\
+    ASSERT_IS_TRUE(elem.hasMatrix(MatrixKind::InvS))\
+    ASSERT_EQ_PTR(&elem.Mt(), &elem.M(MatrixKind::T))\
+    ASSERT_EQ_PTR(&elem.Ms(), &elem.M(MatrixKind::S))\
+    ASSERT_EQ_PTR(&elem.Mt_inv(), &elem.M(MatrixKind::InvT))\
+    ASSERT_EQ_PTR(&elem.Ms_inv(), &elem.M(MatrixKind::InvS))\
+    ASSERT_EQ_PTR(elem.pMt(), elem.pM(MatrixKind::T))\
+    ASSERT_EQ_PTR(elem.pMs(), elem.pM(MatrixKind::S))\
+    ASSERT_EQ_PTR(elem.pMt_inv(), elem.pM(MatrixKind::InvT))\
+    ASSERT_EQ_PTR(elem.pMs_inv(), elem.pM(MatrixKind::InvS))
+
+TEST_METHOD(ElementKind__Simple)
+{
+    TestElement elem(true);
+    ASSERT_IS_TRUE(elem.kind() == ElementKind::Simple)
+    ASSERT_BASE_MATRICES
+    ASSERT_IS_FALSE(elem.hasMatrix(MatrixKind::T1))
+    ASSERT_IS_FALSE(elem.hasMatrix(MatrixKind::S1))
+    ASSERT_IS_FALSE(elem.hasMatrix(MatrixKind::T2))
+    ASSERT_IS_FALSE(elem.hasMatrix(MatrixKind::S2))
+    ASSERT_IS_FALSE(elem.hasMatrix(MatrixKind::DynT))
+    ASSERT_IS_FALSE(elem.hasMatrix(MatrixKind::DynS))
+    ASSERT_IS_NULL(elem.param("L"))
+    ASSERT_IS_NULL(elem.param("n"))
+    ASSERT_IS_NULL(elem.param("n1"))
+    ASSERT_IS_NULL(elem.param("n2"))
+    ASSERT_IS_FALSE(elem.isRange())
+    ASSERT_IS_FALSE(elem.asRange().has_value())
+    ASSERT_IS_FALSE(elem.isDynamic())
+    ASSERT_IS_FALSE(elem.asDynamic().has_value())
+    ASSERT_IS_FALSE(elem.isInterface())
+    ASSERT_IS_FALSE(elem.asInterface().has_value())
+}
+
+TEST_METHOD(ElementKind__Range)
+{
+    TestElementRange elem;
+    ASSERT_IS_TRUE(elem.kind() == ElementKind::Range)
+    ASSERT_BASE_MATRICES
+    ASSERT_IS_TRUE(elem.hasMatrix(MatrixKind::T1))
+    ASSERT_IS_TRUE(elem.hasMatrix(MatrixKind::S1))
+    ASSERT_IS_TRUE(elem.hasMatrix(MatrixKind::T2))
+    ASSERT_IS_TRUE(elem.hasMatrix(MatrixKind::S2))
+    ASSERT_IS_FALSE(elem.hasMatrix(MatrixKind::DynT))
+    ASSERT_IS_FALSE(elem.hasMatrix(MatrixKind::DynS))
+    ASSERT_IS_NOT_NULL(elem.param("L"))
+    ASSERT_IS_NOT_NULL(elem.param("n"))
+    ASSERT_IS_NULL(elem.param("n1"))
+    ASSERT_IS_NULL(elem.param("n2"))
+    ASSERT_IS_TRUE(elem.isRange())
+    ASSERT_IS_TRUE(elem.asRange().has_value())
+    ASSERT_IS_FALSE(elem.isDynamic())
+    ASSERT_IS_FALSE(elem.asDynamic().has_value())
+    ASSERT_IS_FALSE(elem.isInterface())
+    ASSERT_IS_FALSE(elem.asInterface().has_value())
+}
+
+TEST_METHOD(ElementKind__Dynamic)
+{
+    TestElementDynamic elem;
+    ASSERT_IS_TRUE(elem.kind() == ElementKind::Dynamic)
+    ASSERT_BASE_MATRICES
+    ASSERT_IS_FALSE(elem.hasMatrix(MatrixKind::T1))
+    ASSERT_IS_FALSE(elem.hasMatrix(MatrixKind::S1))
+    ASSERT_IS_FALSE(elem.hasMatrix(MatrixKind::T2))
+    ASSERT_IS_FALSE(elem.hasMatrix(MatrixKind::S2))
+    ASSERT_IS_TRUE(elem.hasMatrix(MatrixKind::DynT))
+    ASSERT_IS_TRUE(elem.hasMatrix(MatrixKind::DynS))
+    ASSERT_IS_NULL(elem.param("L"))
+    ASSERT_IS_NULL(elem.param("n"))
+    ASSERT_IS_NULL(elem.param("n1"))
+    ASSERT_IS_NULL(elem.param("n2"))
+    ASSERT_IS_FALSE(elem.isRange())
+    ASSERT_IS_FALSE(elem.asRange().has_value())
+    ASSERT_IS_TRUE(elem.isDynamic())
+    ASSERT_IS_TRUE(elem.asDynamic().has_value())
+    ASSERT_IS_FALSE(elem.isInterface())
+    ASSERT_IS_FALSE(elem.asInterface().has_value())
+}
+
+TEST_METHOD(ElementKind__Interface)
+{
+    TestElementInterface elem;
+    ASSERT_IS_TRUE(elem.kind() == ElementKind::Interface)
+    ASSERT_BASE_MATRICES
+    ASSERT_IS_FALSE(elem.hasMatrix(MatrixKind::T1))
+    ASSERT_IS_FALSE(elem.hasMatrix(MatrixKind::S1))
+    ASSERT_IS_FALSE(elem.hasMatrix(MatrixKind::T2))
+    ASSERT_IS_FALSE(elem.hasMatrix(MatrixKind::S2))
+    ASSERT_IS_FALSE(elem.hasMatrix(MatrixKind::DynT))
+    ASSERT_IS_FALSE(elem.hasMatrix(MatrixKind::DynS))
+    ASSERT_IS_NULL(elem.param("L"))
+    ASSERT_IS_NULL(elem.param("n"))
+    ASSERT_IS_NOT_NULL(elem.param("n1"))
+    ASSERT_IS_NOT_NULL(elem.param("n2"))
+    ASSERT_IS_FALSE(elem.isRange())
+    ASSERT_IS_FALSE(elem.asRange().has_value())
+    ASSERT_IS_FALSE(elem.isDynamic())
+    ASSERT_IS_FALSE(elem.asDynamic().has_value())
+    ASSERT_IS_TRUE(elem.isInterface())
+    ASSERT_IS_TRUE(elem.asInterface().has_value())
+}
+
+TEST_METHOD(ElementKind__RangeImpl)
+{
+    TestElementRange elem;
+    auto r = elem.asRange();
+    ASSERT_IS_TRUE(r.has_value())
+    ASSERT_EQ_PTR(r->elem, &elem)
+    ASSERT_EQ_PTR(r->paramLength(), elem.param("L"))
+    ASSERT_EQ_PTR(r->paramIor(), elem.param("n"))
+    ASSERT_EQ_PTR(&r->Mt1(), &elem.M(MatrixKind::T1))
+    ASSERT_EQ_PTR(&r->Mt2(), &elem.M(MatrixKind::T2))
+    ASSERT_EQ_PTR(&r->Ms1(), &elem.M(MatrixKind::S1))
+    ASSERT_EQ_PTR(&r->Ms2(), &elem.M(MatrixKind::S2))
+    ASSERT_EQ_PTR(r->pMt1(), elem.pM(MatrixKind::T1))
+    ASSERT_EQ_PTR(r->pMt2(), elem.pM(MatrixKind::T2))
+    ASSERT_EQ_PTR(r->pMs1(), elem.pM(MatrixKind::S1))
+    ASSERT_EQ_PTR(r->pMs2(), elem.pM(MatrixKind::S2))
+}
+
+TEST_METHOD(ElementKind__DynamicImpl)
+{
+    TestElementDynamic elem;
+    auto d = elem.asDynamic();
+    ASSERT_IS_TRUE(d.has_value())
+    ASSERT_EQ_PTR(d->elem, &elem)
+    ASSERT_EQ_PTR(&d->Mt_dyn(), &elem.M(MatrixKind::DynT))
+    ASSERT_EQ_PTR(&d->Ms_dyn(), &elem.M(MatrixKind::DynS))
+    ASSERT_EQ_PTR(d->pMt_dyn(), elem.pM(MatrixKind::DynT))
+    ASSERT_EQ_PTR(d->pMs_dyn(), elem.pM(MatrixKind::DynS))
+}
+
+TEST_METHOD(ElementKind__InterfaceImpl)
+{
+    TestElementInterface elem;
+    auto i = elem.asInterface();
+    ASSERT_IS_TRUE(i.has_value())
+    ASSERT_EQ_PTR(i->elem, &elem)
+    ASSERT_EQ_PTR(i->paramIor1(), elem.param("n1"))
+    ASSERT_EQ_PTR(i->paramIor2(), elem.param("n2"))
+}
+
+//------------------------------------------------------------------------------
+
 TEST_GROUP("Element",
     ADD_TEST(Element_ctor_generates_id),
 
@@ -410,6 +570,14 @@ TEST_GROUP("Element",
     ADD_TEST(Element_removeParam__does_nothing_if_not_added),
     ADD_TEST(Element_moveParamUp),
     ADD_TEST(Element_moveParamDown),
+    
+    ADD_TEST(ElementKind__Simple),
+    ADD_TEST(ElementKind__Range),
+    ADD_TEST(ElementKind__RangeImpl),
+    ADD_TEST(ElementKind__Dynamic),
+    ADD_TEST(ElementKind__DynamicImpl),
+    ADD_TEST(ElementKind__Interface),
+    ADD_TEST(ElementKind__InterfaceImpl),
 )
 
 } // namespace ElementTests
