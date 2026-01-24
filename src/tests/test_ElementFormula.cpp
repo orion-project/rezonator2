@@ -123,67 +123,6 @@ TEST_METHOD(params_in_formula_must_be_in_si_units)
     ASSERT_EQ_STR(existed_names, expected_names)\
 }
 
-TEST_METHOD(addParam__must_do_nothing_if_param_already_added)
-{
-    ElemFormula elem;
-    ADD_PARAM(a, 1)
-    ADD_PARAM(b, 2)
-    ASSERT_PARAMS("a, b")
-
-    elem.addParam(p_a);
-    ASSERT_PARAMS("a, b")
-}
-
-TEST_METHOD(removeParam__must_destruct)
-{
-    ElemFormula elem;
-    ADD_PARAM(a, 1)
-    ADD_PARAM(b, 2)
-    ASSERT_PARAMS("a, b")
-
-    elem.removeParam(p_a, true);
-    ASSERT_PARAM_DESTRUCTED("a")
-    ASSERT_PARAMS("b")
-}
-
-TEST_METHOD(moveParamUp)
-{
-    ElemFormula elem;
-    ADD_PARAM(a, 1)
-    ADD_PARAM(b, 2)
-    ADD_PARAM(c, 3)
-    ADD_PARAM(d, 4)
-
-    elem.moveParamUp(p_b);
-    ASSERT_PARAMS("b, a, c, d")
-
-    elem.moveParamUp(p_b);
-    ASSERT_PARAMS("a, c, d, b")
-
-    elem.moveParamUp(p_b);
-    ASSERT_PARAMS("a, c, b, d")
-}
-
-TEST_METHOD(moveParamDown)
-{
-    ElemFormula elem;
-    ADD_PARAM(a, 1)
-    ADD_PARAM(b, 2)
-    ADD_PARAM(c, 3)
-    ADD_PARAM(d, 4)
-
-    elem.moveParamDown(p_c);
-    ASSERT_PARAMS("a, b, d, c")
-
-    elem.moveParamDown(p_c);
-    ASSERT_PARAMS("c, a, b, d")
-
-    elem.moveParamDown(p_c);
-    ASSERT_PARAMS("a, c, b, d")
-}
-
-//------------------------------------------------------------------------------
-
 TEST_METHOD(assign__must_copy_params_and_props)
 {
     ElemFormula elem;
@@ -233,10 +172,6 @@ TEST_GROUP("ElementFormula",
            ADD_TEST(matrix_must_be_unity_when_no_cs),
            ADD_TEST(matrix_must_be_unity_when_no_ds),
            ADD_TEST(params_in_formula_must_be_in_si_units),
-           ADD_TEST(addParam__must_do_nothing_if_param_already_added),
-           ADD_TEST(removeParam__must_destruct),
-           ADD_TEST(moveParamUp),
-           ADD_TEST(moveParamDown),
            ADD_TEST(assign__must_copy_params_and_props),
            ADD_TEST(assign__must_destruct_old_params),
            )

@@ -17,8 +17,6 @@ DECLARE_ELEMENT(ElemFormula, Element)
     QString formula() const { return _formula; }
     void setFormula(const QString& formula) { _formula = formula; }
 
-    void moveParamUp(Z::Parameter* param);
-    void moveParamDown(Z::Parameter* param);
     void assign(const ElemFormula* other);
     
     QStringList errorLog() const { return _errorLog; }

@@ -74,6 +74,10 @@ QString Element::displayLabelTitle()
 
 void Element::addParam(Z::Parameter *param, int index)
 {
+    if (_params.contains(param)) {
+        qWarning() << "Element::addParam: parameter already exists";
+        return;
+    }
     param->addListener(this);
     if (index < 0 || index >= _params.size())
         _params.append(param);
@@ -82,9 +86,47 @@ void Element::addParam(Z::Parameter *param, int index)
 
 void Element::removeParam(Z::Parameter *param, bool free)
 {
+    if (!_params.contains(param)) {
+        qWarning() << "Element::removeParam: parameter does not added";
+        return;
+    }
     param->removeListener(this);
     _params.removeOne(param);
     if (free) delete param;
+}
+
+void Element::moveParamUp(Z::Parameter* param)
+{
+    int index = _params.indexOf(param);
+    if (index < 0)
+    {
+        qWarning() << "ElemFormula::moveParamUp: invalid parameter, it's not in the parameters list";
+        return;
+    }
+    if (index == 0)
+    {
+        _params.removeAt(0);
+        _params.append(param);
+    }
+    else
+        _params.swapItemsAt(index, index-1);
+}
+
+void Element::moveParamDown(Z::Parameter* param)
+{
+    int index = _params.indexOf(param);
+    if (index < 0)
+    {
+        qWarning() << "ElemFormula::moveParamDown: invalid parameter, it's not in the parameters list";
+        return;
+    }
+    if (index == _params.size()-1)
+    {
+        _params.removeAt(index);
+        _params.insert(0, param);
+    }
+    else
+        _params.swapItemsAt(index, index+1);
 }
 
 void Element::parameterChanged(Z::ParameterBase *p)

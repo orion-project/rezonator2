@@ -110,12 +110,15 @@ void ElemFormulaEditor::createActions()
     _actnParamMoveUp = A_(tr("Move Up"), this, &Me::moveParameterUp, ":/toolbar/move_up");
     _actnParamMoveDown = A_(tr("Move Down"), this, &Me::moveParameterDown, ":/toolbar/move_down");
     #undef A_
+    
+    _actnApplyChanges->setIconText(tr("Apply"));
+    _actnCheckCode->setIconText(tr("Check"));
 }
 
 void ElemFormulaEditor::createToolbar()
 {
     _toolbar = Z::Gui::makeToolBar({
-        _actnApplyChanges, _actnResetChanges, 0,
+        Ori::Gui::textToolButton(_actnApplyChanges), _actnResetChanges, 0,
         _actnParamAdd, 0,
         Ori::Gui::textToolButton(_actnCheckCode), _actnClearLog, 0,
         _actnShowHelp,

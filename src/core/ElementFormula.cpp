@@ -1,6 +1,5 @@
 #include "ElementFormula.h"
 
-#include "Utils.h"
 #include "../core/PyRunner.h"
 
 #include <QApplication>
@@ -59,40 +58,6 @@ void ElemFormula::showError(PyRunner *py)
     _errorLine = py->errorLine;
     for (auto it = _matrs.begin(); it != _matrs.end(); it++)
         it->second.unity();
-}
-
-void ElemFormula::moveParamUp(Z::Parameter* param)
-{
-    int index = _params.indexOf(param);
-    if (index < 0)
-    {
-        qWarning() << "ElemFormula::moveParamUp: invalid parameter, it's not in the parameters list";
-        return;
-    }
-    if (index == 0)
-    {
-        _params.removeAt(0);
-        _params.append(param);
-    }
-    else
-        swapItems(_params, index, index-1);
-}
-
-void ElemFormula::moveParamDown(Z::Parameter* param)
-{
-    int index = _params.indexOf(param);
-    if (index < 0)
-    {
-        qWarning() << "ElemFormula::moveParamDown: invalid parameter, it's not in the parameters list";
-        return;
-    }
-    if (index == _params.size()-1)
-    {
-        _params.removeAt(index);
-        _params.insert(0, param);
-    }
-    else
-        swapItems(_params, index, index+1);
 }
 
 void ElemFormula::assign(const ElemFormula* other)

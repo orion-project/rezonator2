@@ -246,6 +246,8 @@ public:
     Z::Parameter* param(const QString &alias) { return _params.byAlias(alias); }
     void addParam(Z::Parameter* param, int index = -1);
     void removeParam(Z::Parameter* param, bool free);
+    void moveParamUp(Z::Parameter* param);
+    void moveParamDown(Z::Parameter* param);
 
     /// Label of element. Label is short indentificator
     /// for element or its name (like variable name). E.g.: "M1", "L_f", etc.

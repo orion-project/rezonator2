@@ -13,11 +13,14 @@ namespace ElementTests {
 
 namespace {
 DECLARE_ELEMENT(TestElement, Element)
-    TestElement()
+    TestElement(bool empty = false)
     {
-        auto p = new Z::Parameter(Z::Dims::linear(), "", "",  "");
-        p->setValue(3.14_mkm);
-        addParam(p);
+        if (!empty) 
+        {
+            auto p = new Z::Parameter(Z::Dims::linear(), "", "",  "");
+            p->setValue(3.14_mkm);
+            addParam(p);
+        }
     }
 
     bool matrixCalculated = false;
@@ -245,6 +248,137 @@ TEST_METHOD(ElementOwner_setParam_must_raise_event)
 
 //------------------------------------------------------------------------------
 
+class TestParam : public Z::Parameter
+{
+public:
+    TestParam(Ori::Testing::TestBase *test, const QString& name): Z::Parameter(Z::Dims::none(), name), test(test) {}
+    ~TestParam() override {
+        TEST_LOG("~TestParam() " + alias())
+        SET_TEST_DATA(QString("param destructor %1").arg(alias()), true);
+    }
+    Ori::Testing::TestBase *test;
+};
+
+#define ADD_PARAM(name, value) \
+    auto p_##name = new TestParam(test, #name);\
+    p_##name->setValue(value);\
+    elem.addParam(p_##name);
+
+#define ASSERT_PARAMS(expected_names) {\
+    QStringList strs; \
+    for (auto p : elem.params()) strs << p->alias();\
+    QString existed_names = strs.join(", ");\
+    ASSERT_EQ_STR(existed_names, expected_names)\
+}
+
+TEST_METHOD(Element_addParam__must_insert_at_index)
+{
+    TestElement elem(true);
+
+    ADD_PARAM(a, 1)
+    ADD_PARAM(b, 2)
+    ASSERT_PARAMS("a, b")
+    
+    auto p_c = new TestParam(test, "c");
+    elem.addParam(p_c, 1);
+    ASSERT_PARAMS("a, c, b")
+}
+
+TEST_METHOD(Element_addParam__must_listen_new_param)
+{
+    TestElement elem(true);
+    ASSERT_IS_NULL(elem.changedParam)
+
+    ADD_PARAM(a, 1)
+    ASSERT_IS_NULL(elem.changedParam)
+
+    p_a->setValue(1_mm);
+    ASSERT_EQ_PTR(elem.changedParam, p_a)
+}
+
+TEST_METHOD(Element_addParam__must_do_nothing_if_already_added)
+{
+    TestElement elem(true);
+
+    ADD_PARAM(a, 1)
+    ADD_PARAM(b, 2)
+    ASSERT_PARAMS("a, b")
+
+    elem.addParam(p_a);
+    ASSERT_PARAMS("a, b")
+}
+
+TEST_METHOD(Element_removeParam__must_unlisten)
+{
+    TestElement elem(true);
+    ADD_PARAM(a, 1)
+
+    elem.removeParam(p_a, false);
+    p_a->setValue(2_m);
+    
+    ASSERT_IS_NULL(elem.changedParam)
+    delete p_a;
+}
+
+TEST_METHOD(Element_removeParam__must_destruct)
+{
+    TestElement elem(true);
+
+    ADD_PARAM(a, 1)
+    ADD_PARAM(b, 2)
+    ASSERT_PARAMS("a, b")
+
+    elem.removeParam(p_a, true);
+    ASSERT_IS_TRUE(test->data("param destructor a").toBool())
+    ASSERT_PARAMS("b")
+}
+
+TEST_METHOD(Element_removeParam__does_nothing_if_not_added)
+{
+    TestElement elem(true);
+    std::shared_ptr<Z::Parameter> p_a(new TestParam(test, "a"));
+    elem.removeParam(p_a.get(), true);
+    ASSERT_IS_FALSE(test->data("param destructor a").toBool())
+}
+
+TEST_METHOD(Element_moveParamUp)
+{
+    TestElement elem(true);
+    ADD_PARAM(a, 1)
+    ADD_PARAM(b, 2)
+    ADD_PARAM(c, 3)
+    ADD_PARAM(d, 4)
+
+    elem.moveParamUp(p_b);
+    ASSERT_PARAMS("b, a, c, d")
+
+    elem.moveParamUp(p_b);
+    ASSERT_PARAMS("a, c, d, b")
+
+    elem.moveParamUp(p_b);
+    ASSERT_PARAMS("a, c, b, d")
+}
+
+TEST_METHOD(Element_moveParamDown)
+{
+    TestElement elem(true);
+    ADD_PARAM(a, 1)
+    ADD_PARAM(b, 2)
+    ADD_PARAM(c, 3)
+    ADD_PARAM(d, 4)
+
+    elem.moveParamDown(p_c);
+    ASSERT_PARAMS("a, b, d, c")
+
+    elem.moveParamDown(p_c);
+    ASSERT_PARAMS("c, a, b, d")
+
+    elem.moveParamDown(p_c);
+    ASSERT_PARAMS("a, c, b, d")
+}
+
+//------------------------------------------------------------------------------
+
 TEST_GROUP("Element",
     ADD_TEST(Element_ctor_generates_id),
 
@@ -267,6 +401,15 @@ TEST_GROUP("Element",
     ADD_TEST(ElementOwner_setParam_must_recalculate_matrix),
     ADD_TEST(ElementOwner_setParam_must_recalculate_matrix_when_locked),
     ADD_TEST(ElementOwner_setParam_must_raise_event),
+    
+    ADD_TEST(Element_addParam__must_insert_at_index),
+    ADD_TEST(Element_addParam__must_listen_new_param),
+    ADD_TEST(Element_addParam__must_do_nothing_if_already_added),
+    ADD_TEST(Element_removeParam__must_unlisten),
+    ADD_TEST(Element_removeParam__must_destruct),
+    ADD_TEST(Element_removeParam__does_nothing_if_not_added),
+    ADD_TEST(Element_moveParamUp),
+    ADD_TEST(Element_moveParamDown),
 )
 
 } // namespace ElementTests
