@@ -2,11 +2,11 @@
 
 #include "../app/Appearance.h"
 #include "../app/HelpSystem.h"
-#include "../app/PersistentState.h"
 #include "../core/Element.h"
 #include "../core/Schema.h"
 #include "../widgets/ParamEditor.h"
 #include "../widgets/ParamsEditor.h"
+#include "../widgets/ParamSpecsEditor.h"
 #include "../widgets/SchemaLayout.h"
 
 #include "helpers/OriLayouts.h"
@@ -78,13 +78,6 @@ ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : Rezonat
 
 ElementPropsDialog::~ElementPropsDialog()
 {
-    // Explicitly delete editors before deleteing _newParams
-    // Otherwise param editors will be deleted *after* them
-    // and will crash on listener unsubscribing
-    _editorParams->removeEditors();
-
-    qDeleteAll(_newParams);
-
     resetParamPresets();    
     
     __savedTabIndex = _tabs->currentIndex();
@@ -107,9 +100,9 @@ void ElementPropsDialog::showEvent(QShowEvent* event)
 QWidget* ElementPropsDialog::initPageParams()
 {
     #define A_ Ori::Gui::action
-    _actnCreateParam = A_(tr("Add Parameter..."), this, &ElementPropsDialog::createCustomParam, ":/toolbar/plus");
-    _actnEditParam = A_(tr("Edit Parameter..."), this, &ElementPropsDialog::editCustomParam, ":/toolbar/wrench");
-    _actnRemoveParam = A_(tr("Remove Parameter..."), this, &ElementPropsDialog::removeCustomParam, ":/toolbar/delete");
+    _actnCreateParam = A_(tr("Add Parameter..."), this, [this]{paramSpecsEditor()->createParamDlg();}, ":/toolbar/plus");
+    _actnEditParam = A_(tr("Edit Parameter..."), this, [this]{paramSpecsEditor()->editParamDlg();}, ":/toolbar/wrench");
+    _actnRemoveParam = A_(tr("Remove Parameter..."), this, [this]{paramSpecsEditor()->removeParamDlg();}, ":/toolbar/delete");
     _actnRestorePresets = A_(tr("Restore Default Presets..."), this, &ElementPropsDialog::restoreParamPresets, ":/toolbar/update");
     _actnParamsHelp = A_(tr("Help"), this, &ElementPropsDialog::showParamsHelp, ":/toolbar/help");
     #undef A_
@@ -119,7 +112,7 @@ QWidget* ElementPropsDialog::initPageParams()
     connect(_menuParams, &QMenu::aboutToShow, this, &ElementPropsDialog::updateParamsMenu);
     
     _butParamsMenu = new QToolButton;
-    _butParamsMenu->setToolTip(tr("Add parameter"));
+    _butParamsMenu->setToolTip(tr("Custom parameters"));
     _butParamsMenu->setIcon(QIcon(":/toolbar/menu_sm"));
     _butParamsMenu->setIconSize({14, 14});
     _butParamsMenu->setObjectName("elem_props_create_param_button");
@@ -203,44 +196,16 @@ void ElementPropsDialog::collect()
     _element->layoutOptions.showLabel = _layoutShowLabel->isChecked();
     _element->layoutOptions.drawAlt = _layoutDrawAlt->isChecked();
     
-    for (auto p : std::as_const(_newParams))
-    {
-        _element->addParam(p);
-        if (schema)
-            schema->events().raise(SchemaEvents::ElemParamCreated, p, "ElementPropsDialog");
-    }
-    for (auto p : std::as_const(_removedParams))
-    {
-        auto link = schema ? schema->paramLinks()->byTarget(p) : nullptr;
-        if (link)
-            schema->paramLinks()->removeOne(link);
-        if (schema)
-            schema->events().raise(SchemaEvents::ElemParamDeleting, p, "ElementPropsDialog");
-        _element->removeParam(p, true);
-        if (schema)
-            schema->events().raise(SchemaEvents::ElemParamDeleted, p, "ElementPropsDialog");
-    }
-    for (auto p : std::as_const(_editedParams))
-    {
-        if (schema)
-            schema->events().raise(SchemaEvents::ElemParamEdited, p, "ElementPropsDialog");
-    }
-
-    _editorParams->applyValues();
-        
-    RecentData::PendingSave _;
-    foreach (auto p, _newParams + _redimedParams)
-        RecentData::setUnit("custom_param_unit", p->value().unit());
-
-    _newParams.clear();
+    if (_paramSpecsEditor)
+        _paramSpecsEditor->collect();
     
     accept();
 }
 
 void ElementPropsDialog::reject()
 {
-    for (auto it = _backupParams.cbegin(); it != _backupParams.cend(); it++)
-        it.key()->copyFrom(&it.value());
+    if (_paramSpecsEditor)
+        _paramSpecsEditor->reject();
         
     RezonatorDialog::reject();
 }
@@ -253,157 +218,6 @@ QString ElementPropsDialog::helpTopic() const
 void ElementPropsDialog::updatePageParams()
 {
     _pageParams->setCurrentIndex(_editorParams->editors().isEmpty() ? 0 : 1);
-}
-
-Z::Parameters ElementPropsDialog::existedParams() const
-{
-    Z::Parameters res;
-    for (auto p : _element->params())
-        if (!_removedParams.contains(p))
-            res << p;
-    return res + _newParams;
-}
-
-void ElementPropsDialog::addCustomParam(Z::Parameter *param)
-{
-    auto unit = RecentData::getUnit("custom_param_unit", param->dim());
-    param->setValue(Z::Value(0, unit));
-    param->setOption(Z::ParamOption::Custom);
-    _newParams << param;
-    auto paramEditor = _editorParams->addEditor(param);
-    updatePageParams();
-    QTimer::singleShot(100, this, [paramEditor](){ paramEditor->focus(); });
-}
-
-void ElementPropsDialog::createCustomParam()
-{
-    ParamSpecEditor ed(nullptr, {
-        .recentKeyPrefix = "custom_param",
-        .existedParams = existedParams(),
-        .allowNameEditor = true,
-        .allowSavePreset = true,
-    });
-    if (!ed.exec(tr("Create Parameter")))
-        return;
-    auto param = new Z::Parameter(ed.dim(), ed.alias(), ed.label(), ed.name(), ed.descr());
-    addCustomParam(param);
-    if (ed.needSavePreset())
-    {
-        ParamPresets::save(param);
-        resetParamPresets();
-    }
-}
-
-void ElementPropsDialog::editCustomParam()
-{
-    auto paramEditor = _editorParams->selectedEditor();
-    if (!paramEditor)
-        return;
-    auto param = paramEditor->parameter();
-    if (!param->hasOption(Z::ParamOption::Custom))
-        return;
-
-    ParamSpecEditor editor(param, {
-        .existedParams = existedParams(),
-        .allowNameEditor = true,
-    });
-    if (!editor.exec(tr("Edit Parameter")))
-        return;
-        
-    auto index = _editorParams->editors().indexOf(paramEditor);
-    auto alias = editor.alias();
-    auto aliasEdited = alias != param->alias();
-    auto label = editor.label();
-    auto labelEdited = label != param->label();
-    auto name = editor.name();
-    auto nameEdited = name != param->name();
-    auto descr = editor.descr();
-    auto descrEdited = descr != param->description();
-    auto dim = editor.dim();
-    auto dimEdited = dim != param->dim();
-    auto edited = aliasEdited || labelEdited || nameEdited || descrEdited || dimEdited;
-        
-    if (edited && !_newParams.contains(param))
-    {
-        _editedParams << param;
-
-        if (!_backupParams.contains(param))
-        {
-            Z::Parameter backup;
-            backup.copyFrom(param);
-            _backupParams[param] = backup;
-        }
-    }
-
-    if (aliasEdited)
-        param->setAlias(alias);
-    if (labelEdited)
-        param->setLabel(label);
-    if (nameEdited)
-        param->setName(name);
-    if (descrEdited)
-        param->setDescription(descr);
-    if (dimEdited)
-    {
-        // I's fine to apply param value here
-        // because element events are locked during the whole dialog
-        // and we have backups that will be restored on dlg rejection
-        param->setDim(dim);
-        auto unit = RecentData::getUnit("custom_param_unit", dim);
-        auto value = unit->fromSi(param->value().toSi());
-        // Need to set a value even for param driven by link
-        // to have a proper target unit (recent for the dim) 
-        // for the link when source and target dims mismatch
-        param->setValue(Z::Value(value, unit));
-
-        auto schema = dynamic_cast<Schema*>(_element->owner()); 
-        auto link = schema ? schema->paramLinks()->byTarget(param) : nullptr;
-        if (link) link->apply();
-        
-        if (!_redimedParams.contains(param))
-            _redimedParams << param;
-    }
-    if (aliasEdited || dimEdited)
-    {
-        // ParamEditor is not designed for parameters changing on the fly
-        _editorParams->removeEditor(param);
-        paramEditor = _editorParams->addEditor(param, {}, index);
-        QTimer::singleShot(100, this, [paramEditor](){ paramEditor->focus(); });
-    }
-}
-
-void ElementPropsDialog::removeCustomParam()
-{
-    auto editor = _editorParams->selectedEditor();
-    if (!editor)
-        return;
-    auto param = editor->parameter();
-    if (!param->hasOption(Z::ParamOption::Custom))
-        return;
-    if (!Ori::Dlg::yes(tr("Remove parameter <b>%1</b> ?").arg(param->alias())))
-        return;
-
-    _editorParams->removeEditor(param);
-    updatePageParams();
-    
-    bool newParamRemoved = false;
-    for (int i = 0; i < _newParams.size(); i++)
-        if (_newParams.at(i) == param)
-        {
-            newParamRemoved = true;
-            delete _newParams.at(i);
-            _newParams.removeAt(i);
-            break;
-        }
-    if (!newParamRemoved) {
-        _removedParams << param;
-        _backupParams.remove(param);
-    }
-    _redimedParams.removeAll(param);
-    _editedParams.removeAll(param);
-
-    if (!_editorParams->editors().isEmpty())
-        QTimer::singleShot(100, this, [this]{ _editorParams->editors().first()->focus(); });
 }
 
 void ElementPropsDialog::updateParamsMenu()
@@ -456,7 +270,7 @@ QAction* ElementPropsDialog::makePresetAction(Z::Parameter *preset)
     
     auto actnApply = Ori::Gui::action(title, button, [this, preset]{
         _menuParams->close();
-        addCustomParam(ParamPresets::makeParam(preset));
+        paramSpecsEditor()->addParam(ParamPresets::makeParam(preset));
     });
 
     auto actnEdit = menu->addAction(QIcon(":/toolbar/wrench"), tr("Edit Preset..."), [this, preset]{
@@ -512,4 +326,18 @@ void ElementPropsDialog::restoreParamPresets()
 void ElementPropsDialog::showParamsHelp()
 {
     Z::HelpSystem::topic("custom_params");
+}
+
+ParamSpecsEditor* ElementPropsDialog::paramSpecsEditor()
+{
+    if (!_paramSpecsEditor)
+    {
+        _paramSpecsEditor = new ParamSpecsEditor(_element, _editorParams, true, this);
+        connect(_paramSpecsEditor, &ParamSpecsEditor::onParamCountChange, this, &ElementPropsDialog::updatePageParams);
+        connect(_paramSpecsEditor, &ParamSpecsEditor::onSavePreset, this, [this](Z::Parameter *param){
+            ParamPresets::save(param);
+            resetParamPresets();
+        });
+    }
+    return _paramSpecsEditor;
 }
