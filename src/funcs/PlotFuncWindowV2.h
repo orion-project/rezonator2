@@ -49,7 +49,7 @@ public:
     void recalcRequired(Schema*) override { update(); }
     void elementDeleting(Schema*, Element*) override;
     void globalParamDeleting(Schema*, Z::Parameter*) override;
-    void customParamDeleting(Z::Parameter*) override;
+    void elemParamDeleting(Z::Parameter*) override;
 
     virtual bool shouldCloseIfDelete(const Elements&);
 

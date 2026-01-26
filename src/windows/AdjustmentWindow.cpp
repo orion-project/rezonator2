@@ -484,7 +484,7 @@ void AdjustmentWindow::globalParamDeleting(Schema*, Z::Parameter* param)
     deleteAdjuster(param);
 }
 
-void AdjustmentWindow::customParamDeleting(Z::Parameter* param)
+void AdjustmentWindow::elemParamDeleting(Z::Parameter* param)
 {
     deleteAdjuster(param);
 }

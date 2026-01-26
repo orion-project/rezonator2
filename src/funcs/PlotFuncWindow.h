@@ -111,7 +111,7 @@ public:
     void recalcRequired(Schema*) override { update(); }
     void elementDeleting(Schema*, Element*) override;
     void globalParamDeleting(Schema*, Z::Parameter*) override;
-    void customParamDeleting(Z::Parameter*) override;
+    void elemParamDeleting(Z::Parameter*) override;
 
     // Called from FuncOptionsPanel when function mode changed e.g. when the Caustic function switches between W and R.
     // Responsible window should override these methods and save/restore signifacant view differences in _storedView.

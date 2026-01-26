@@ -207,7 +207,7 @@ void ElementPropsDialog::collect()
     {
         _element->addParam(p);
         if (schema)
-            schema->events().raise(SchemaEvents::CustomParamCreated, p, "ElementPropsDialog");
+            schema->events().raise(SchemaEvents::ElemParamCreated, p, "ElementPropsDialog");
     }
     for (auto p : std::as_const(_removedParams))
     {
@@ -215,15 +215,15 @@ void ElementPropsDialog::collect()
         if (link)
             schema->paramLinks()->removeOne(link);
         if (schema)
-            schema->events().raise(SchemaEvents::CustomParamDeleting, p, "ElementPropsDialog");
+            schema->events().raise(SchemaEvents::ElemParamDeleting, p, "ElementPropsDialog");
         _element->removeParam(p, true);
         if (schema)
-            schema->events().raise(SchemaEvents::CustomParamDeleted, p, "ElementPropsDialog");
+            schema->events().raise(SchemaEvents::ElemParamDeleted, p, "ElementPropsDialog");
     }
     for (auto p : std::as_const(_editedParams))
     {
         if (schema)
-            schema->events().raise(SchemaEvents::CustomParamEdited, p, "ElementPropsDialog");
+            schema->events().raise(SchemaEvents::ElemParamEdited, p, "ElementPropsDialog");
     }
 
     _editorParams->applyValues();

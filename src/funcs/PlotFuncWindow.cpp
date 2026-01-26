@@ -734,7 +734,7 @@ void PlotFuncWindow::globalParamDeleting(Schema*, Z::Parameter *param)
         disableAndClose();
 }
 
-void PlotFuncWindow::customParamDeleting(Z::Parameter *param)
+void PlotFuncWindow::elemParamDeleting(Z::Parameter *param)
 {
     if (function()->dependsOn().check(param))
         disableAndClose();

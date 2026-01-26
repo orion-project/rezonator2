@@ -154,7 +154,7 @@ public:
     // Implementation of SchemaListener
     void elementDeleting(Schema*, Element*) override;
     void globalParamDeleting(Schema*, Z::Parameter*) override;
-    void customParamDeleting(Z::Parameter*) override;
+    void elemParamDeleting(Z::Parameter*) override;
 
     // Implementation of IShortcutListener
     void shortcutEnterPressed() override;
