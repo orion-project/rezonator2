@@ -106,6 +106,7 @@ private:
     QList<ParamEditor*> _editors;
     Ori::Widgets::InfoPanel* _infoPanel = nullptr;
     QBoxLayout* _paramsLayout;
+    QWidget* _emptyStub;
     void adjustEditors();
     void paramValueEdited(double value);
     void paramUnitChanged(Z::Unit unit);
@@ -114,6 +115,7 @@ private:
     void paramUnfocused();
     void focusNextParam();
     void focusPrevParam();
+    void toggleEmptyStub();
 };
 
 //------------------------------------------------------------------------------

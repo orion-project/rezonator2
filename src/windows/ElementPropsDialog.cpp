@@ -128,15 +128,7 @@ QWidget* ElementPropsDialog::initPageParams()
     opts.showPythonCode = true;
     _editorParams = new ParamsEditor(_element->params(), opts);
     
-    auto labelEmpty = new QLabel(tr("Element has no editable parameters"));
-    labelEmpty->setMargin(6);
-    labelEmpty->setAlignment(Qt::AlignCenter);
-    
-    _pageParams = new QStackedWidget;
-    _pageParams->addWidget(labelEmpty);
-    _pageParams->addWidget(_editorParams);
-    
-    return _pageParams;
+    return _editorParams;
 }
 
 QWidget* ElementPropsDialog::initPageOptions()
@@ -174,7 +166,6 @@ void ElementPropsDialog::populate()
     _layoutShowLabel->setChecked(_element->layoutOptions.showLabel);
     _layoutDrawAlt->setChecked(_element->layoutOptions.drawAlt);
     _editorParams->populateValues();
-    updatePageParams();
 }
 
 void ElementPropsDialog::collect()
@@ -188,8 +179,6 @@ void ElementPropsDialog::collect()
         return;
     }
     
-    auto schema = dynamic_cast<Schema*>(_element->owner()); 
-
     _element->setLabel(_editorLabel->text());
     _element->setTitle(_editorTitle->text());
     _element->setDisabled(_elemDisabled->isChecked());
@@ -213,11 +202,6 @@ void ElementPropsDialog::reject()
 QString ElementPropsDialog::helpTopic() const
 {
    return "matrix/" % _element->type() % ".html";
-}
-
-void ElementPropsDialog::updatePageParams()
-{
-    _pageParams->setCurrentIndex(_editorParams->editors().isEmpty() ? 0 : 1);
 }
 
 void ElementPropsDialog::updateParamsMenu()
@@ -333,7 +317,6 @@ ParamSpecsEditor* ElementPropsDialog::paramSpecsEditor()
     if (!_paramSpecsEditor)
     {
         _paramSpecsEditor = new ParamSpecsEditor(_element, _editorParams, true, this);
-        connect(_paramSpecsEditor, &ParamSpecsEditor::onParamCountChange, this, &ElementPropsDialog::updatePageParams);
         connect(_paramSpecsEditor, &ParamSpecsEditor::onSavePreset, this, [this](Z::Parameter *param){
             ParamPresets::save(param);
             resetParamPresets();

@@ -78,7 +78,6 @@ void ParamSpecsEditor::addParam(Z::Parameter *param)
         param->setOption(Z::ParamOption::Custom);
     _newParams << param;
     auto paramEditor = _editorParams->addEditor(param);
-    emit onParamCountChange();
     QTimer::singleShot(100, this, [paramEditor](){ paramEditor->focus(); });
 }
 
@@ -188,7 +187,6 @@ void ParamSpecsEditor::removeParamDlg()
         return;
 
     _editorParams->removeEditor(param);
-    emit onParamCountChange();
     
     bool newParamRemoved = false;
     for (int i = 0; i < _newParams.size(); i++)

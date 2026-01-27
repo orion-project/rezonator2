@@ -16,13 +16,23 @@
 
 ParamsEditor::ParamsEditor(const Z::Parameters &params, const Options opts, QWidget *parent) : QWidget(parent), _options(opts)
 {
+    auto emptyLabel = new QLabel(tr("Element has no editable parameters"));
+    emptyLabel->setMargin(6);
+    emptyLabel->setAlignment(Qt::AlignCenter);
+    _emptyStub = emptyLabel;
+
     // Parameters layout should not be used as the widget's main layout
     // because parameters can be added in runtime and it should be easy to call `addWidget()`
     // and not be bothered that someting other might be at the bottom (e.g. auxControl, _infoPanel).
     _paramsLayout = Ori::Layouts::LayoutV({}).setMargin(0).setSpacing(0).boxLayout();
     populateEditors(params);
 
-    auto mainLayout = Ori::Layouts::LayoutV({ _paramsLayout, Ori::Layouts::Stretch() }).setSpacing(0).setMargin(0).boxLayout();
+    auto mainLayout = Ori::Layouts::LayoutV({
+        _paramsLayout,
+        Ori::Layouts::Stretch(),
+        _emptyStub,
+        Ori::Layouts::Stretch(),
+        }).setSpacing(0).setMargin(0).boxLayout();
 
     if (opts.auxControl)
         mainLayout->addWidget(opts.auxControl);
@@ -37,6 +47,15 @@ ParamsEditor::ParamsEditor(const Z::Parameters &params, const Options opts, QWid
     }
 
     setLayout(mainLayout);
+    toggleEmptyStub();
+}
+
+void ParamsEditor::toggleEmptyStub()
+{
+    bool isEmpty = _paramsLayout->count() == 0;
+    _emptyStub->setVisible(isEmpty);
+    if (_infoPanel)
+        _infoPanel->setVisible(!isEmpty);
 }
 
 void ParamsEditor::populateEditors(const Z::Parameters &params)
@@ -54,6 +73,7 @@ void ParamsEditor::removeEditors()
 {
     qDeleteAll(_editors);
     _editors.clear();
+    toggleEmptyStub();
 }
 
 ParamEditor *ParamsEditor::addEditor(Z::Parameter* param, const QVector<Z::Unit> &units, int index)
@@ -89,6 +109,7 @@ ParamEditor *ParamsEditor::addEditor(Z::Parameter* param, const QVector<Z::Unit>
         _editors.insert(index, editor);
         _paramsLayout->insertWidget(index, editor);
     }
+    toggleEmptyStub();
 
     return editor;
 }
@@ -122,6 +143,7 @@ void ParamsEditor::removeEditor(Z::Parameter* param)
             break;
         }
     }
+    toggleEmptyStub();
 }
 
 void ParamsEditor::populateEditor(Z::Parameter* param)

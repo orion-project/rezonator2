@@ -26,7 +26,6 @@ public:
     void addParam(Z::Parameter *param);
     
 signals:
-    void onParamCountChange();
     void onSavePreset(Z::Parameter *param);
 
 private:

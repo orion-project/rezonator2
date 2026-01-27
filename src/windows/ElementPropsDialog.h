@@ -68,7 +68,6 @@ private:
     
     void restoreParamPresets();
     void showParamsHelp();
-    void updatePageParams();
     void updateParamsMenu();
     
     void resetParamPresets();
