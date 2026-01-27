@@ -210,6 +210,15 @@ signals:
 };
 
 //------------------------------------------------------------------------------
+
+/// Defines what will happen to a window if one an element are deleted.
+enum class ElemDeletionReaction
+{
+    None,   ///< Window doesn't care
+    Close,  ///< Window will be closed
+};
+
+//------------------------------------------------------------------------------
 /**
     Base class for windows presenting schema related data in MDI area of project window.
     For example SchemaViewWindow showing schema elements list or any window presenting
@@ -219,6 +228,9 @@ class SchemaMdiChild : public BasicMdiChild, public SchemaWindow
 {
 public:
     SchemaMdiChild(Schema* schema, InitOptions options = InitOptions());
+    
+    /// Returns what will happen to the window if one or all the elements are deleted.
+    virtual ElemDeletionReaction reactElemDeletion(const Elements&) { return ElemDeletionReaction::None; }
 };
 
 //------------------------------------------------------------------------------

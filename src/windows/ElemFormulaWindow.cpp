@@ -56,7 +56,6 @@ void ElemFormulaWindow::createContent(ElemFormula *elem)
 
     _editor = new ElemFormulaEditor(elem);
     connect(_editor, &ElemFormulaEditor::onModify, [this](){
-        qDebug() << "HANDLER onModify";
         updateWindowTitle();
         // Mark schema as modified even if `_editor->isChanged` gets `false`.
         // This means that the _editor has applyed code to the element
@@ -82,6 +81,13 @@ void ElemFormulaWindow::updateWindowTitle()
         setWindowTitle(tr("%1 (changed)").arg(_editor->element()->displayLabel()));
     else
         setWindowTitle(_editor->element()->displayLabel());
+}
+
+ElemDeletionReaction ElemFormulaWindow::reactElemDeletion(const Elements& elems)
+{
+    if (_editor->isModified() && elems.contains(_editor->element()))
+        return ElemDeletionReaction::Close;
+    return ElemDeletionReaction::None;
 }
 
 void ElemFormulaWindow::elementChanged(Schema*, Element* elem)

@@ -243,20 +243,20 @@ bool SchemaViewWindow::confirmDeletion(const Elements &elements, bool onlyIfWarn
     bool warningAdded = false;
     for (auto window : WindowsManager::instance().schemaWindows(schema()))
     {
-        auto plotWindow = dynamic_cast<PlotFuncWindow*>(window);
-        if (!plotWindow) continue;
-        auto reaction = plotWindow->reactElemDeletion(elements);
+        auto mdiChild = dynamic_cast<SchemaMdiChild*>(window);
+        if (!mdiChild) continue;
+        auto reaction = mdiChild->reactElemDeletion(elements);
         if (reaction == ElemDeletionReaction::Close)
         {
             if (!warningAdded)
             {
                 warningAdded = true;
                 confirmation << ""
-                             << tr("Some of the opened function windows")
+                             << tr("Some of the opened windows")
                              << tr("depend on listed elements and will close:")
                              << "";
             }
-            confirmation << QString("<b>%1</b>").arg(plotWindow->windowTitle());
+            confirmation << QString("<b>%1</b>").arg(mdiChild->windowTitle());
         }
     }
 

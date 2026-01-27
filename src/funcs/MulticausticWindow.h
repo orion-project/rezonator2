@@ -36,6 +36,9 @@ public:
     // inherited from IAppSettingsListener
     void optionChanged(AppSettingsOption option) override;
 
+    // inherits from SchemaMdiChild
+    ElemDeletionReaction reactElemDeletion(const Elements&) override;
+
 protected:
     // Implementation of PlotFuncWindow
     bool configureInternal() override;
@@ -43,7 +46,6 @@ protected:
     QList<BasicMdiChild::MenuItem> viewMenuItems() const override;
     QList<BasicMdiChild::MenuItem> formatMenuItems() const override;
     void updateGraphs() override;
-    ElemDeletionReaction reactElemDeletion(const Elements&) override;
     void showRoundTrip() override;
     Z::Unit getDefaultUnitX() const override;
     Z::Unit getDefaultUnitY() const override;

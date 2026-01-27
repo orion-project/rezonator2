@@ -38,6 +38,9 @@ public:
     // inherits from BasicMdiChild
     QList<QMenu*> menus() override { return { _menuFormula }; }
 
+    // inherits from SchemaMdiChild
+    ElemDeletionReaction reactElemDeletion(const Elements&) override;
+
     // inherits from IEditableWindow
     SupportedCommands supportedCommands() override {
         return EditCmd_Copy | EditCmd_Paste | EditCmd_SelectAll; }
