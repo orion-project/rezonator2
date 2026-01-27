@@ -43,7 +43,7 @@ ElemFormulaWindow::ElemFormulaWindow(Schema *owner, ElemFormula *elem)
 
 void ElemFormulaWindow::closeEvent(QCloseEvent* ce)
 {
-    if (_forceClose | !_editor->isModified() ||
+    if (_forceClose | !_editor->isChanged() ||
         Ori::Dlg::ok(tr("Element code has been changed.\nChanges will be lost if you close the window.")))
         SchemaMdiChild::closeEvent(ce);
     else
@@ -55,7 +55,7 @@ void ElemFormulaWindow::createContent(ElemFormula *elem)
     setWindowIcon(QIcon(":/elem_icon/ElemFormula"));
 
     _editor = new ElemFormulaEditor(elem);
-    connect(_editor, &ElemFormulaEditor::onModify, [this](){
+    connect(_editor, &ElemFormulaEditor::onChange, [this](){
         updateWindowTitle();
         // Mark schema as modified even if `_editor->isChanged` gets `false`.
         // This means that the _editor has applyed code to the element
@@ -77,7 +77,7 @@ void ElemFormulaWindow::createContent(ElemFormula *elem)
 
 void ElemFormulaWindow::updateWindowTitle()
 {
-    if (_editor->isModified())
+    if (_editor->isChanged())
         setWindowTitle(tr("%1 (changed)").arg(_editor->element()->displayLabel()));
     else
         setWindowTitle(_editor->element()->displayLabel());
@@ -85,7 +85,7 @@ void ElemFormulaWindow::updateWindowTitle()
 
 ElemDeletionReaction ElemFormulaWindow::reactElemDeletion(const Elements& elems)
 {
-    if (_editor->isModified() && elems.contains(_editor->element()))
+    if (_editor->isChanged() && elems.contains(_editor->element()))
         return ElemDeletionReaction::Close;
     return ElemDeletionReaction::None;
 }
@@ -161,8 +161,10 @@ bool ElemFormulaWindow::storableWrite(QJsonObject& root, Z::Report *report)
 
     root["elem_index"] = schema()->indexOf(_editor->element());
 
-    if (_editor->isModified())
+    if (_editor->isChanged())
         root["code"] = _editor->code();
+        
+    _editor->resetModifiedFlag();
 
     return true;
 }

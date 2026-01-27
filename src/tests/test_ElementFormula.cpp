@@ -116,49 +116,6 @@ TEST_METHOD(params_in_formula_must_be_in_si_units)
 
 //------------------------------------------------------------------------------
 
-#define ASSERT_PARAMS(expected_names) {\
-    QStringList strs; \
-    for (auto p : elem.params()) strs << p->alias();\
-    QString existed_names = strs.join(", ");\
-    ASSERT_EQ_STR(existed_names, expected_names)\
-}
-
-TEST_METHOD(assign__must_copy_params_and_props)
-{
-    ElemFormula elem;
-    ADD_PARAM(a, 1)
-    ADD_PARAM(b, 2)
-    elem.setFormula("some code");
-
-    ElemFormula elem1;
-    elem1.assign(&elem);
-    ASSERT_EQ_STR(elem1.formula(), elem.formula())
-    ASSERT_EQ_INT(elem1.params().size(), elem.params().size())
-    for (int i = 0; i < elem1.params().size(); i++)
-    {
-        auto p = elem.params().at(i);
-        auto p1 = elem1.params().at(i);
-        ASSERT_EQ_STR(p1->alias(), p->alias())
-        ASSERT_IS_TRUE(p1->value() == p->value())
-    }
-}
-
-TEST_METHOD(assign__must_destruct_old_params)
-{
-    ElemFormula elem;
-    ADD_PARAM(a, 1)
-    ADD_PARAM(b, 2)
-    ASSERT_PARAMS("a, b")
-
-    ElemFormula elem1;
-    elem.assign(&elem1);
-    ASSERT_PARAM_DESTRUCTED("a")
-    ASSERT_PARAM_DESTRUCTED("b")
-    ASSERT_PARAMS("")
-}
-
-//------------------------------------------------------------------------------
-
 TEST_GROUP("ElementFormula",
            ADD_TEST(can_calculate_matrix),
            ADD_TEST(matrix_must_be_unity_when_empty_formula),
@@ -172,8 +129,6 @@ TEST_GROUP("ElementFormula",
            ADD_TEST(matrix_must_be_unity_when_no_cs),
            ADD_TEST(matrix_must_be_unity_when_no_ds),
            ADD_TEST(params_in_formula_must_be_in_si_units),
-           ADD_TEST(assign__must_copy_params_and_props),
-           ADD_TEST(assign__must_destruct_old_params),
            )
 
 } // namespace ElementFormulaTests

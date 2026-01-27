@@ -29,15 +29,16 @@ public:
     void paste();
 
     void populateWindowMenu(QMenu* menu);
+    void resetModifiedFlag();
 
     ElemFormula* element() { return _element; }
 
-    bool isModified() const;
+    bool isChanged() const { return _isChanged; }
     QString code() const;
     void setCode(const QString &code);
 
 signals:
-    void onModify();
+    void onChange();
     void onApply();
     
 private:
@@ -47,6 +48,7 @@ private:
     QTextEdit *_logView;
     QToolBar *_toolbar;
     bool _lockEvents = false;
+    bool _isChanged = false;
 
     void createActions();
     void createToolbar();

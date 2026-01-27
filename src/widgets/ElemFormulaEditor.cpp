@@ -68,9 +68,11 @@ void ElemFormulaEditor::populateWindowMenu(QMenu* menu)
     menu->addAction(_actnClearLog);
 }
 
-bool ElemFormulaEditor::isModified() const
+void ElemFormulaEditor::resetModifiedFlag()
 {
-    return _codeEditor->document()->isModified();
+    _lockEvents = true;
+    _codeEditor->document()->setModified(false);
+    _lockEvents = false;
 }
 
 QString ElemFormulaEditor::code() const
@@ -81,35 +83,38 @@ QString ElemFormulaEditor::code() const
 void ElemFormulaEditor::setCode(const QString &code)
 {
     _lockEvents = true;
+    _isChanged = true;
     _codeEditor->setCode(code);
-    _codeEditor->document()->setModified(true);
     _lockEvents = false;
 }
 
 void ElemFormulaEditor::codeModified()
 {
     if (_lockEvents) return;
-    emit onModify();
+    _isChanged = true;
+    emit onChange();
 }
 
 void ElemFormulaEditor::applyFormula()
 {
     clearLog();
     
-    _element->setFormula(_codeEditor->code());
-    _codeEditor->document()->setModified(false);
-    emit onModify();
-    
-    _element->setPrintFunc([this](const QString &s){ Z::Gui::addLogInfo(_logView, s); });
-    _element->calcMatrix("ElemFormulaEditor::checkFormula");
-    _element->setPrintFunc({});
-
-    if (_element->failed())
+    ElemFormula elem;
+    for (auto param : _element->params())
     {
-        auto log = _element->errorLog();
+        auto paramCopy = new Z::Parameter;
+        paramCopy->copyFrom(param);
+        elem.addParam(paramCopy);
+    }
+    elem.setFormula(_codeEditor->code());
+    elem.setPrintFunc([this](const QString &s){ Z::Gui::addLogInfo(_logView, s); });
+    elem.calcMatrix("ElemFormulaEditor::applyFormula");
+    if (elem.failed())
+    {
+        auto log = elem.errorLog();
         if (!log.isEmpty())
         {
-            int errorLine = _element->errorLine();
+            int errorLine = elem.errorLine();
             qDebug() << "Script error at line" << errorLine << ':' << log;
         
             for (const auto &line : std::as_const(log))
@@ -119,14 +124,18 @@ void ElemFormulaEditor::applyFormula()
             if (errorLine > 0)
                 _codeEditor->setLineHints({{ errorLine, log.last() }});
         }
+        return;
     }
-    else
-    {
-        Z::Gui::scrollToEnd(_logView);
-        _logView->insertHtml(Z::Format::matrices(_element->Mt(), _element->Ms()));
-        Z::Gui::scrollToEnd(_logView);
-        emit onApply();
-    }
+
+    Z::Gui::scrollToEnd(_logView);
+    _logView->insertHtml(Z::Format::matrices(elem.Mt(), elem.Ms()));
+    Z::Gui::scrollToEnd(_logView);
+    
+    _element->assign(&elem);
+    _isChanged = false;
+    resetModifiedFlag();
+    emit onChange();
+    emit onApply();
 }
 
 void ElemFormulaEditor::clearLog()

@@ -19,6 +19,12 @@ DECLARE_ELEMENT(ElemFormula, Element)
 
     void assign(const ElemFormula* other);
     
+    /// Explicitly makes a locked element to recalculate its matrices
+    /// In general it's done in parameter on-change handler
+    /// but formula elem can have no params but still provide matrices
+    /// that must be recalculated on schema loading.
+    void scheduleCalcMatrix() { _calcMatrixNeeded = true; }
+    
     QStringList errorLog() const { return _errorLog; }
     int errorLine() const { return _errorLine; }
 

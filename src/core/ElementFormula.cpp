@@ -62,20 +62,12 @@ void ElemFormula::showError(PyRunner *py)
 
 void ElemFormula::assign(const ElemFormula* other)
 {
-    qDeleteAll(_params);
-    _params.clear();
-
-    for (const auto p : other->params())
-    {
-        auto paramCopy = new Z::Parameter(p->dim(),
-                                          p->alias(),
-                                          p->label(),
-                                          p->name(),
-                                          p->description(),
-                                          p->category(),
-                                          p->visible());
-        paramCopy->setValue(p->value());
-        addParam(paramCopy);
-    }
+    // It's supposed the `assign` is called from formula editor only after successfull code run
+    _error.clear();
+    _errorLog.clear();
+    _errorLine = 0;
     _formula = other->formula();
+    for (auto it = _matrs.cbegin(); it != _matrs.cend(); it++)
+        _matrs[it->first] = it->second;
 }
+
