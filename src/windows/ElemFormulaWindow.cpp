@@ -6,29 +6,22 @@
 #include "../io/SchemaWriterJson.h"
 #include "../widgets/ElemFormulaEditor.h"
 
+#include "helpers/OriDialogs.h"
+
+#include <QCloseEvent>
 #include <QMenu>
+#include <QTimer>
 
 //------------------------------------------------------------------------------
 //                           ElemFormulaWindowStorable
 //------------------------------------------------------------------------------
-
-/// This class is used to reveal private constructor of @a ElemFormulaWindow
-/// which is only should be used during loading.
-class ElemFormulaWindowLoader
-{
-public:
-    static SchemaWindow* createWindow(Schema* schema)
-    {
-        return new ElemFormulaWindow(schema);
-    }
-};
 
 namespace ElemFormulaWindowStorable
 {
 
 SchemaWindow* createWindow(Schema* schema)
 {
-    return ElemFormulaWindowLoader::createWindow(schema);
+    return new ElemFormulaWindow(schema, nullptr);
 }
 
 } // namespace ElemFormulaWindowStorable
@@ -37,37 +30,44 @@ SchemaWindow* createWindow(Schema* schema)
 //                             ElemFormulaWindow
 //------------------------------------------------------------------------------
 
-ElemFormulaWindow::ElemFormulaWindow(Schema *owner)
-    : SchemaMdiChild(owner, InitOptions(initNoDefaultWidget | initNoToolBar))
-{
-    // This constructor is only called during schema loading,
-    // so createContent() is called from storableRead() when the element gets known.
-}
-
 ElemFormulaWindow::ElemFormulaWindow(Schema *owner, ElemFormula *elem)
     : SchemaMdiChild(owner, InitOptions(initNoDefaultWidget | initNoToolBar))
 {
-    createContent(elem, nullptr);
-    updateWindowTitle();
+    if (elem)
+    {
+        createContent(elem);
+        updateWindowTitle();
+    }
+    // Otherwise, content will be created after the window gets loaded from file (see `storableRead()`)
 }
 
-void ElemFormulaWindow::createContent(ElemFormula *sourceElem, ElemFormula *workingCopy)
+void ElemFormulaWindow::closeEvent(QCloseEvent* ce)
+{
+    if (_forceClose | !_editor->isModified() ||
+        Ori::Dlg::ok(tr("Element code has been changed.\nChanges will be lost if you close the window.")))
+        SchemaMdiChild::closeEvent(ce);
+    else
+        ce->ignore();
+}
+
+void ElemFormulaWindow::createContent(ElemFormula *elem)
 {
     setWindowIcon(QIcon(":/elem_icon/ElemFormula"));
 
-    _editor = new ElemFormulaEditor(sourceElem, workingCopy);
+    _editor = new ElemFormulaEditor(elem);
     connect(_editor, &ElemFormulaEditor::onModify, [this](){
+        qDebug() << "HANDLER onModify";
         updateWindowTitle();
         // Mark schema as modified even if `_editor->isChanged` gets `false`.
-        // It means the _editor was loaded having the state `changed = true`,
-        // now it's been reset, and the schema becomes different
-        // from the state in what it was loaded.
-        schema()->markModified("ElemFormula edited");
+        // This means that the _editor has applyed code to the element
+        // so the editor is not in the "modified" state anymore
+        // but the overall schema is "modified" now.
+        schema()->markModified("ElemFormulaEditor::modified");
     });
     connect(_editor, &ElemFormulaEditor::onApply, [this](){
         updateWindowTitle();
-        schema()->events().raise(SchemaEvents::ElemChanged, _editor->sourceElem(), "ElemFormula apply");
-        schema()->events().raise(SchemaEvents::RecalRequred, "ElemFormula apply");
+        schema()->events().raise(SchemaEvents::ElemChanged, _editor->element(), "ElemFormulaEditor::apply");
+        schema()->events().raise(SchemaEvents::RecalRequred, "ElemFormulaEditor::apply");
     });
 
     _menuFormula = new QMenu(tr("Formula"));
@@ -78,16 +78,25 @@ void ElemFormulaWindow::createContent(ElemFormula *sourceElem, ElemFormula *work
 
 void ElemFormulaWindow::updateWindowTitle()
 {
-    if (_editor->isChanged())
-        setWindowTitle(tr("%1 (changed)").arg(_editor->sourceElem()->displayLabel()));
+    if (_editor->isModified())
+        setWindowTitle(tr("%1 (changed)").arg(_editor->element()->displayLabel()));
     else
-        setWindowTitle(_editor->sourceElem()->displayLabel());
+        setWindowTitle(_editor->element()->displayLabel());
 }
 
 void ElemFormulaWindow::elementChanged(Schema*, Element* elem)
 {
-    if (elem == _editor->sourceElem())
+    if (elem == _editor->element())
         updateWindowTitle();
+}
+
+void ElemFormulaWindow::elementDeleting(Schema*, Element* elem)
+{
+    if (elem == _editor->element())
+    {
+        _forceClose = true;
+        QTimer::singleShot(0, this, [this]{close();});
+    }
 }
 
 bool ElemFormulaWindow::canCopy()
@@ -124,28 +133,18 @@ bool ElemFormulaWindow::storableRead(const QJsonObject& root, Z::Report *report)
         report->warning(QString("Invalid element index: %1").arg(elemIndex));
         return false;
     }
-    auto sourceElem = dynamic_cast<ElemFormula*>(elem);
-    if (!sourceElem)
+    auto elemFormula = dynamic_cast<ElemFormula*>(elem);
+    if (!elemFormula)
     {
         report->warning(QString("Element at index %1 is not a formula element").arg(elemIndex));
         return false;
     }
 
-    Z::IO::Json::JsonValue workingElemJson(root, "working_copy", report);
-    if (!workingElemJson) return false;
+    createContent(elemFormula);
 
-    auto workingElem = Z::IO::Json::readElement(workingElemJson.obj(), report);
-    if (!workingElem) return false;
+    if (root.contains("code"))
+        _editor->setCode(root["code"].toString());
 
-    auto workingCopy = dynamic_cast<ElemFormula*>(workingElem);
-    if (!workingCopy)
-    {
-        report->warning(QString("Working copy of element '%1' is not a formula ").arg(sourceElem->displayLabel()));
-        return false;
-    }
-
-    createContent(sourceElem, workingCopy);
-    _editor->setIsChanged(root["is_changed"].toBool());
     updateWindowTitle();
     return true;
 }
@@ -154,15 +153,10 @@ bool ElemFormulaWindow::storableWrite(QJsonObject& root, Z::Report *report)
 {
     Q_UNUSED(report)
 
-    root["elem_index"] = schema()->indexOf(_editor->sourceElem());
+    root["elem_index"] = schema()->indexOf(_editor->element());
 
-    _editor->applyWorkingValues();
-    _editor->resetModifyFlag();
-
-    QJsonObject elemJson;
-    Z::IO::Json::writeElement(elemJson, _editor->workingCopy());
-    root["working_copy"] = elemJson;
-    root["is_changed"] = _editor->isChanged();
+    if (_editor->isModified())
+        root["code"] = _editor->code();
 
     return true;
 }

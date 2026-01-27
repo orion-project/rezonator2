@@ -33,7 +33,6 @@ class ElemFormulaWindow : public SchemaMdiChild,
     Q_OBJECT
 
 public:
-    /// This constructor is used to show the window when user selects the "Edit formula" command.
     explicit ElemFormulaWindow(Schema *owner, ElemFormula *elem);
 
     // inherits from BasicMdiChild
@@ -50,21 +49,22 @@ public:
 
     // inherits from SchemaListener
     void elementChanged(Schema*, Element*) override;
+    void elementDeleting(Schema*, Element*) override;
 
     // inherits from ISchemaWindowStorable
     QString storableType() const override { return ElemFormulaWindowStorable::windowType(); }
     bool storableRead(const QJsonObject& root, Z::Report* report) override;
     bool storableWrite(QJsonObject& root, Z::Report *report) override;
 
-private:
-    /// This contructor with one parameter is required to load window from schema file.
-    explicit ElemFormulaWindow(Schema *owner);
-    friend class ElemFormulaWindowLoader;
+protected:
+    void closeEvent(QCloseEvent* ce) override;
 
+private:
     ElemFormulaEditor *_editor;
     QMenu *_menuFormula;
+    bool _forceClose = false;
 
-    void createContent(ElemFormula* sourceElem, ElemFormula *workingCopy);
+    void createContent(ElemFormula* elem);
     void updateWindowTitle();
 };
 
