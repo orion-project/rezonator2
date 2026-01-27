@@ -291,9 +291,10 @@ void ParamsEditor::paramEnterPressed()
     }
 }
 
-void ParamsEditor::moveEditorUp(Z::Parameter* param)
+bool ParamsEditor::moveEditorUp(Z::Parameter* param)
 {
-    if (_editors.size() < 2) return;
+    if (_editors.size() < 2)
+        return false;
     for (int i = 0; i < _editors.size(); i++)
     {
         ParamEditor *editor = _editors.at(i);
@@ -314,11 +315,13 @@ void ParamsEditor::moveEditorUp(Z::Parameter* param)
             break;
         }
     }
+    return true;
 }
 
-void ParamsEditor::moveEditorDown(Z::Parameter* param)
+bool ParamsEditor::moveEditorDown(Z::Parameter* param)
 {
-    if (_editors.size() < 2) return;
+    if (_editors.size() < 2)
+        return false;
     for (int i = 0; i < _editors.size(); i++)
     {
         ParamEditor *editor = _editors.at(i);
@@ -339,6 +342,7 @@ void ParamsEditor::moveEditorDown(Z::Parameter* param)
             break;
         }
     }
+    return true;
 }
 
 ParamEditor* ParamsEditor::selectedEditor()

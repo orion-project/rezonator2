@@ -129,6 +129,23 @@ void Element::moveParamDown(Z::Parameter* param)
         _params.swapItemsAt(index, index+1);
 }
 
+void Element::reorderParams(const Z::Parameters& params)
+{
+    if (_params.size() != params.size())
+    {
+        qWarning() << Q_FUNC_INFO << "Given parameters list is not of the same size as the current one";
+        return;
+    }
+    for (auto p : std::as_const(params))
+        if (!_params.contains(p))
+        {
+            qWarning() << Q_FUNC_INFO << "GIven parameter does not belog to the current element";
+            return;
+        }
+    for (int i = 0; i < params.size(); i++)
+        _params[i] = params.at(i);
+}
+
 void Element::parameterChanged(Z::ParameterBase *p)
 {
     Z_PERF_BEGIN("Element::parameterChanged_1")

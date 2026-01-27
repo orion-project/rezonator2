@@ -45,6 +45,14 @@ void ParamSpecsEditor::collect()
         if (schema)
             schema->events().raise(SchemaEvents::ElemParamEdited, p, "ParamSpecsEditor");
     }
+    if (_reordered)
+    {
+        Z::Parameters params;
+        for (auto ed : _editorParams->editors())
+            params << ed->parameter();
+        _element->reorderParams(params);
+        _reordered = false;
+    }
 
     _editorParams->applyValues();
         
@@ -100,11 +108,15 @@ void ParamSpecsEditor::createParamDlg()
 void ParamSpecsEditor::editParamDlg()
 {
     auto paramEditor = _editorParams->selectedEditor();
-    if (!paramEditor)
+    if (!paramEditor) {
+        qWarning() << Q_FUNC_INFO << "No selected parameter";
         return;
+    }
     auto param = paramEditor->parameter();
-    if (_customParams && !param->hasOption(Z::ParamOption::Custom))
+    if (_customParams && !param->hasOption(Z::ParamOption::Custom)) {
+        qWarning() << Q_FUNC_INFO << "No selected parameter is not a custom one";
         return;
+    }
 
     ParamSpecEditor editor(param, {
         .existedParams = existedParams(),
@@ -178,11 +190,15 @@ void ParamSpecsEditor::editParamDlg()
 void ParamSpecsEditor::removeParamDlg()
 {
     auto editor = _editorParams->selectedEditor();
-    if (!editor)
+    if (!editor) {
+        qWarning() << Q_FUNC_INFO << "No selected parameter";
         return;
+    }
     auto param = editor->parameter();
-    if (_customParams && !param->hasOption(Z::ParamOption::Custom))
+    if (_customParams && !param->hasOption(Z::ParamOption::Custom)) {
+        qWarning() << Q_FUNC_INFO << "No selected parameter is not a custom one";
         return;
+    }
     if (!Ori::Dlg::yes(tr("Remove parameter <b>%1</b> ?").arg(param->alias())))
         return;
 
@@ -206,4 +222,28 @@ void ParamSpecsEditor::removeParamDlg()
 
     if (!_editorParams->editors().isEmpty())
         QTimer::singleShot(100, this, [this]{ _editorParams->editors().first()->focus(); });
+}
+
+void ParamSpecsEditor::moveParamUp()
+{
+    auto editor = _editorParams->selectedEditor();
+    if (!editor) {
+        qWarning() << Q_FUNC_INFO << "No selected parameter";
+        return;
+    }
+    auto param = editor->parameter();
+    if (_editorParams->moveEditorUp(param))
+        _reordered = true;
+}
+
+void ParamSpecsEditor::moveParamDown()
+{
+    auto editor = _editorParams->selectedEditor();
+    if (!editor) {
+        qWarning() << Q_FUNC_INFO << "No selected parameter";
+        return;
+    }
+    auto param = editor->parameter();
+    if (_editorParams->moveEditorDown(param))
+        _reordered = true;
 }

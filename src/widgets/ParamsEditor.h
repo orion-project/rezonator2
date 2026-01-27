@@ -83,8 +83,8 @@ public:
     ParamEditor* addEditor(Z::Parameter* param, const QVector<Z::Unit>& units = {}, int index = -1);
     void removeEditor(Z::Parameter* param);
     void populateEditor(Z::Parameter* param);
-    void moveEditorUp(Z::Parameter* param);
-    void moveEditorDown(Z::Parameter* param);
+    bool moveEditorUp(Z::Parameter* param);
+    bool moveEditorDown(Z::Parameter* param);
     void addSeparator(const QString& title = QString(), bool flat = true);
     ParamEditor* selectedEditor();
 

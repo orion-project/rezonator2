@@ -55,9 +55,11 @@ private:
     QCheckBox *_layoutDrawAlt;
     QCheckBox *_elemDisabled;
     QToolButton *_butParamsMenu;
-    QMenu *_menuParams;
+    QMenu *_paramsMenu;
+    bool _paramsMenuLoaded = false;
     Z::Parameters _paramPresets;
     QAction *_actnCreateParam, *_actnEditParam, *_actnRemoveParam,
+        *_actnMoveParamUp, *_actnMoveParamDown,
         *_actnRestorePresets, *_actnParamsHelp;
     std::shared_ptr<ElementEventsLocker> _eventsLocker;
     std::shared_ptr<ElementMatrixLocker> _matrixLocker;
@@ -68,9 +70,8 @@ private:
     
     void restoreParamPresets();
     void showParamsHelp();
-    void updateParamsMenu();
-    
-    void resetParamPresets();
+    void paramsMenuAboutToShow();
+    void clearParamsMenu();
     QAction* makePresetAction(Z::Parameter*);
 
     ParamSpecsEditor *_paramSpecsEditor = nullptr;

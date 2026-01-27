@@ -78,7 +78,7 @@ ElementPropsDialog::ElementPropsDialog(Element *elem, QWidget* parent) : Rezonat
 
 ElementPropsDialog::~ElementPropsDialog()
 {
-    resetParamPresets();    
+    clearParamsMenu();    
     
     __savedTabIndex = _tabs->currentIndex();
 }
@@ -103,20 +103,23 @@ QWidget* ElementPropsDialog::initPageParams()
     _actnCreateParam = A_(tr("Add Parameter..."), this, [this]{paramSpecsEditor()->createParamDlg();}, ":/toolbar/plus");
     _actnEditParam = A_(tr("Edit Parameter..."), this, [this]{paramSpecsEditor()->editParamDlg();}, ":/toolbar/wrench");
     _actnRemoveParam = A_(tr("Remove Parameter..."), this, [this]{paramSpecsEditor()->removeParamDlg();}, ":/toolbar/delete");
+    _actnMoveParamUp = A_(tr("Move Up"), this, [this]{paramSpecsEditor()->moveParamUp();}, ":/toolbar/move_up");
+    _actnMoveParamDown = A_(tr("Move Down"), this, [this]{paramSpecsEditor()->moveParamDown();}, ":/toolbar/move_down");
     _actnRestorePresets = A_(tr("Restore Default Presets..."), this, &ElementPropsDialog::restoreParamPresets, ":/toolbar/update");
     _actnParamsHelp = A_(tr("Help"), this, &ElementPropsDialog::showParamsHelp, ":/toolbar/help");
     #undef A_
 
-    _menuParams = new QMenu(this);
-    _menuParams->addAction(_actnEditParam);
-    connect(_menuParams, &QMenu::aboutToShow, this, &ElementPropsDialog::updateParamsMenu);
+    _paramsMenu = new QMenu(this);
+    // There must be something in the menu to make it "popupable"
+    _paramsMenu->addAction(_actnCreateParam);
+    connect(_paramsMenu, &QMenu::aboutToShow, this, &ElementPropsDialog::paramsMenuAboutToShow);
     
     _butParamsMenu = new QToolButton;
     _butParamsMenu->setToolTip(tr("Custom parameters"));
     _butParamsMenu->setIcon(QIcon(":/toolbar/menu_sm"));
     _butParamsMenu->setIconSize({14, 14});
     _butParamsMenu->setObjectName("elem_props_create_param_button");
-    _butParamsMenu->setMenu(_menuParams);
+    _butParamsMenu->setMenu(_paramsMenu);
     _butParamsMenu->setPopupMode(QToolButton::InstantPopup);
 
     auto schema = dynamic_cast<Schema*>(_element->owner());
@@ -204,7 +207,7 @@ QString ElementPropsDialog::helpTopic() const
    return "matrix/" % _element->type() % ".html";
 }
 
-void ElementPropsDialog::updateParamsMenu()
+void ElementPropsDialog::paramsMenuAboutToShow()
 {
     auto editor = _editorParams->selectedEditor();
     bool isCustom = editor && editor->parameter()->hasOption(Z::ParamOption::Custom);
@@ -212,14 +215,21 @@ void ElementPropsDialog::updateParamsMenu()
     _actnEditParam->setVisible(isCustom);
     _actnRemoveParam->setEnabled(isCustom);
     _actnRemoveParam->setVisible(isCustom);
+    _actnMoveParamUp->setEnabled(isCustom);
+    _actnMoveParamUp->setVisible(isCustom);
+    _actnMoveParamDown->setEnabled(isCustom);
+    _actnMoveParamDown->setVisible(isCustom);
     
-    if (!_paramPresets.isEmpty())
+    if (_paramsMenuLoaded)
         return;
-
-    _menuParams->addAction(_actnEditParam);
-    _menuParams->addAction(_actnRemoveParam);
-    _menuParams->addAction(_actnCreateParam);
-    _menuParams->addSeparator();
+   
+    _paramsMenu->addAction(_actnCreateParam);
+    _paramsMenu->addSeparator();
+    _paramsMenu->addAction(_actnEditParam);
+    _paramsMenu->addAction(_actnMoveParamUp);
+    _paramsMenu->addAction(_actnMoveParamDown);
+    _paramsMenu->addAction(_actnRemoveParam);
+    _paramsMenu->addSeparator();
     
     _paramPresets = ParamPresets::getAll();
     auto builtin = ParamPresets::getBuiltin();
@@ -230,13 +240,17 @@ void ElementPropsDialog::updateParamsMenu()
         if (builtin.contains(p))
             builtinVisible++;
         else customVisible++;
-        _menuParams->addAction(makePresetAction(p));
+        _paramsMenu->addAction(makePresetAction(p));
     }
-    _actnRestorePresets->setEnabled(builtinVisible < builtin.size() || customVisible > 0);
+    bool presetsChanged = builtinVisible < builtin.size() || customVisible > 0;
+    _actnRestorePresets->setEnabled(presetsChanged);
+    _actnRestorePresets->setVisible(presetsChanged);
     
-    _menuParams->addSeparator();
-    _menuParams->addAction(_actnRestorePresets);
-    _menuParams->addAction(_actnParamsHelp);
+    _paramsMenu->addSeparator();
+    _paramsMenu->addAction(_actnRestorePresets);
+    _paramsMenu->addAction(_actnParamsHelp);
+
+    _paramsMenuLoaded = true;
 }
 
 QAction* ElementPropsDialog::makePresetAction(Z::Parameter *preset)
@@ -248,12 +262,12 @@ QAction* ElementPropsDialog::makePresetAction(Z::Parameter *preset)
         title = QString("%1 (%2)").arg(name, label);
     else title = label;
 
-    auto action = new QWidgetAction(_menuParams);
+    auto action = new QWidgetAction(_paramsMenu);
     auto button = new QToolButton;
     auto menu = new QMenu(button);
     
     auto actnApply = Ori::Gui::action(title, button, [this, preset]{
-        _menuParams->close();
+        _paramsMenu->close();
         paramSpecsEditor()->addParam(ParamPresets::makeParam(preset));
     });
 
@@ -267,7 +281,7 @@ QAction* ElementPropsDialog::makePresetAction(Z::Parameter *preset)
         Z::Parameter newParam(ed.dim(), ed.alias(), ed.label(), ed.name(), ed.descr());
         newParam.setOption(Z::ParamOption::Custom);
         ParamPresets::update(preset, &newParam);
-        resetParamPresets();
+        clearParamsMenu();
     });
     actnEdit->setEnabled(!ParamPresets::getBuiltin().contains(preset));
 
@@ -275,7 +289,7 @@ QAction* ElementPropsDialog::makePresetAction(Z::Parameter *preset)
         if (!Ori::Dlg::yes(tr("Remove preset <b>%1</b> ?").arg(title)))
             return;
         ParamPresets::remove(preset);
-        resetParamPresets();
+        clearParamsMenu();
     });
     
     button->setDefaultAction(actnApply);
@@ -287,16 +301,17 @@ QAction* ElementPropsDialog::makePresetAction(Z::Parameter *preset)
     return action;
 }
 
-void ElementPropsDialog::resetParamPresets()
+void ElementPropsDialog::clearParamsMenu()
 {
     auto builtin = ParamPresets::getBuiltin();
     for (auto p : std::as_const(_paramPresets))
         if (!builtin.contains(p))
             delete p;
     _paramPresets.clear();
-    _menuParams->clear();
+    _paramsMenu->clear();
     // There must be something in the menu to make it "popupable"
-    _menuParams->addAction(_actnEditParam);
+    _paramsMenu->addAction(_actnCreateParam);
+    _paramsMenuLoaded = false;
 }
 
 void ElementPropsDialog::restoreParamPresets()
@@ -304,7 +319,7 @@ void ElementPropsDialog::restoreParamPresets()
     if (!Ori::Dlg::yes(tr("Restore parameter presets to their defaults?\n\nAll custom presets will be deleted!")))
         return;
     ParamPresets::restore();
-    resetParamPresets();
+    clearParamsMenu();
 }
 
 void ElementPropsDialog::showParamsHelp()
@@ -319,7 +334,7 @@ ParamSpecsEditor* ElementPropsDialog::paramSpecsEditor()
         _paramSpecsEditor = new ParamSpecsEditor(_element, _editorParams, true, this);
         connect(_paramSpecsEditor, &ParamSpecsEditor::onSavePreset, this, [this](Z::Parameter *param){
             ParamPresets::save(param);
-            resetParamPresets();
+            clearParamsMenu();
         });
     }
     return _paramSpecsEditor;

@@ -248,6 +248,10 @@ public:
     void removeParam(Z::Parameter* param, bool free);
     void moveParamUp(Z::Parameter* param);
     void moveParamDown(Z::Parameter* param);
+    /// Put the same parameters in different order.
+    /// It's supposed that the given params array contains the same parameters
+    /// as the element already has - their pointers taken from params editor.
+    void reorderParams(const Z::Parameters& params);
 
     /// Label of element. Label is short indentificator
     /// for element or its name (like variable name). E.g.: "M1", "L_f", etc.

@@ -23,6 +23,8 @@ public:
     void createParamDlg();
     void editParamDlg();
     void removeParamDlg();
+    void moveParamUp();
+    void moveParamDown();
     void addParam(Z::Parameter *param);
     
 signals:
@@ -34,6 +36,7 @@ private:
     Z::Parameters _newParams, _removedParams, _editedParams, _redimedParams;
     QMap<Z::Parameter*, Z::Parameter> _backupParams;
     bool _customParams;
+    bool _reordered = false;
     
     Z::Parameters existedParams() const;
 };
