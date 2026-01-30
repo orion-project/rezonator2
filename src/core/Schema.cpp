@@ -183,7 +183,7 @@ ElementSelector::~ElementSelector()
 class GlobalParamsElem : public Element
 {
 public:
-    const QString type() const override { return "GlobalParamsElem"; };
+    QString type() const override { return QStringLiteral("GlobalParamsElem"); };
 protected:
     Element* create() const override {
         qWarning() << "Do not use GlobalParamsElem::create()";

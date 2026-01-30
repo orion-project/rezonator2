@@ -437,6 +437,7 @@ Element* readElement(const QJsonObject& root, Z::Report* report)
     auto formulaElem = dynamic_cast<ElemFormula*>(elem);
     if (formulaElem)
     {
+        formulaElem->setTypeName(root["type_name"].toString());
         formulaElem->setFormula(root["formula"].toString());
         formulaElem->scheduleCalcMatrix();
     }

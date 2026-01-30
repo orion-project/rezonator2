@@ -199,6 +199,9 @@ void writeElement(QJsonObject& root, Element *elem)
     root["layout_draw_alt"] = elem->layoutOptions.drawAlt;
     if (formulaElem)
     {
+        QString customTypeName = formulaElem->customTypeName();
+        if (!customTypeName.isEmpty())
+            root["type_name"] = customTypeName;
         root["formula"] = formulaElem->formula();
     }
     

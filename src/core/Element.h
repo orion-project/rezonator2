@@ -14,18 +14,18 @@
     protected:\
         Element* create() const override { return new class_name(); }\
     public:\
-        const QString type() const override { return QStringLiteral(# class_name); }\
-        static const QString _type_() { return QStringLiteral(# class_name); }
+        QString type() const override { return QStringLiteral(# class_name); }\
+        static QString _type_() { return QStringLiteral(# class_name); }
 
 
 #define DECLARE_ELEMENT_END };
 
 #define DEFAULT_LABEL(label)\
-    const QString labelPrefix() const override { return QStringLiteral(label); }
+    QString labelPrefix() const override { return QStringLiteral(label); }
 
 #define TYPE_NAME(name)\
-    const QString typeName() const override { static QString _name_ = name; return _name_; }\
-    static const QString _typeName_() { static QString _name_ = name; return _name_; }
+    QString typeName() const override { static QString _name_ = name; return _name_; }\
+    static QString _typeName_() { static QString _name_ = name; return _name_; }
 
 #define CALC_MATRIX\
     void calcMatrixInternal() override;
@@ -232,13 +232,13 @@ public:
 
     /// Function returns type of element, e.g. "ElemFlatMirror".
     /// Type is used for internal identification of element class like true class name.
-    virtual const QString type() const = 0;
+    virtual QString type() const = 0;
 
     /// Function returns "human-friendly" name of element type, e.g. "Flat mirror".
-    virtual const QString typeName() const { return type(); }
+    virtual QString typeName() const { return type(); }
 
     /// Default prefix for generating of automatical labels for elements of this type.
-    virtual const QString labelPrefix() const { return QString(); }
+    virtual QString labelPrefix() const { return QString(); }
 
     const Z::Parameters& params() const { return _params; }
     bool hasParams() const { return !_params.isEmpty(); }

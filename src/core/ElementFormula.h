@@ -3,17 +3,18 @@
 
 #include "Element.h"
 
-#include <QApplication>
-
 class PyRunner;
 
 DECLARE_ELEMENT(ElemFormula, Element)
     ElemFormula();
     ~ElemFormula() override;
-    TYPE_NAME(qApp->translate("Elements", "Formula element"))
     DEFAULT_LABEL("C")
     CALC_MATRIX
 
+    QString typeName() const override;
+    QString customTypeName() const { return _typeName; } // for element saving
+    void setTypeName(const QString &v) { _typeName = v; } // for element loading
+    
     QString formula() const { return _formula; }
     void setFormula(const QString& formula) { _formula = formula; }
 
@@ -30,6 +31,7 @@ DECLARE_ELEMENT(ElemFormula, Element)
 
     void setPrintFunc(std::function<void(const QString&)> printFunc) { _printFunc = printFunc; }
 private:
+    QString _typeName;
     QString _formula;
     QStringList _errorLog;
     int _errorLine;

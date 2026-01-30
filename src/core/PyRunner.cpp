@@ -220,7 +220,7 @@ bool PyRunner::load(const ModuleProps &props)
             auto doc = QString::fromUtf8(PyUnicode_AsUTF8(pDoc));
             auto lines = doc.split('\n', Qt::SkipEmptyParts);
             if (!lines.empty())
-                codeTitle = lines.first();
+                codeTitle = lines.first().trimmed();
         } 
     }
     

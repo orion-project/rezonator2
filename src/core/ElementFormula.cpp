@@ -16,6 +16,13 @@ ElemFormula::~ElemFormula()
 {
 }
 
+QString ElemFormula::typeName() const
+{
+    if (!_typeName.isEmpty())
+        return _typeName;
+    return qApp->translate("Elements", "Formula element");
+}
+
 void ElemFormula::calcMatrixInternal()
 {
     _error.clear();
@@ -32,6 +39,8 @@ void ElemFormula::calcMatrixInternal()
         showError(&py);
         return;
     }
+    
+    _typeName = py.codeTitle;
 
     PyRunner::Args args {
         { PyRunner::atElement, QVariant::fromValue((void*)this) },
@@ -66,6 +75,7 @@ void ElemFormula::assign(const ElemFormula* other)
     _error.clear();
     _errorLog.clear();
     _errorLine = 0;
+    _typeName = other->typeName();
     _formula = other->formula();
     for (auto it = _matrs.cbegin(); it != _matrs.cend(); it++)
         _matrs[it->first] = it->second;
