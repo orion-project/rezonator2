@@ -19,6 +19,7 @@ CodeEditorWindow::CodeEditorWindow(Schema *owner, const QString &title) : Schema
     _defaultTitle = !title.isEmpty() ? title : FuncWindowHelpers::makeWindowTitle("code", tr("Custom Script"));
 
     _editor = Z::Gui::makeCodeEditor();
+    connect(_editor, &QPlainTextEdit::modificationChanged, this, &CodeEditorWindow::markModified);
 
     _log = new QPlainTextEdit;
     _log->setFont(Z::Gui::CodeEditorFont().get());
@@ -71,8 +72,8 @@ void CodeEditorWindow::selectAll() { if (_log->hasFocus()) _log->selectAll(); el
 
 void CodeEditorWindow::markModified(bool m)
 {
-    if (m && !_isChanging)
-        schema()->events().raise(SchemaEvents::Changed, "custom code changed");
+    if (m && !_isChanging && !schema()->modified())
+        schema()->markModified("Custom code changed");
 }
 
 void CodeEditorWindow::schemaSaved(Schema*)
