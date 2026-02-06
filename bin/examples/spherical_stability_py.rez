@@ -120,7 +120,7 @@
             },
             "type": "StabMap",
             "window": {
-                "cursor_enabled": true,
+                "cursor_enabled": false,
                 "cursor_mode": "Both",
                 "format": {
                     "axis_x": {
@@ -349,7 +349,7 @@
         },
         {
             "function": {
-                "code": "'''\nStability Parameter\n\nShow different ways of stability condition calculation.\n'''\nimport rezonator as Z\nimport schema\n\ndef figure():\n  return {\n    'x_dim': Z.DIM_LINEAR,\n    'x_title': 'L',\n    'y_dim': Z.DIM_NONE,\n    'y_title': 'Stability Parameter'\n  }\n\ndef calculate():\n  L = schema.elem('L')\n  L.lock()\n  try:\n    rt = schema.round_trip(ref=L)\n    x, y1, y2, y3, y4 = [], [], [], [], []\n    for l_mm in range(150):\n      l_m = l_mm / 1000\n      L.set_param('L', l_m)\n      x.append(l_m)\n  \n      A, B, C, D = rt.matrix()\n  \n      # The \"classical\" stability parameter given in\n      # H. Kogelnik, T. Li, \"Laser beams and resonators,\"\n      # Applied Optics, Vol.5, No.10, 1550-1567 (1966).\n      y1.append( (A + D) / 2 )             # Stable if  -1..1\n      y2.append( 1 - ((A + D) / 2)**2 )    # Stable if  0..1\n      \n      # An \"alternative\" stability parameters seem to be given in\n      # P. Baues, \"Huygens' principle in inhomogeneous, isotropic media\n      # and a general integral equation applicable to optical resonators,\"\n      # Opto-Electronics 1, 37-44 (1969).\n      y3.append( A * D )          # Stable if  0..1\n      y4.append( A * B * C * D )  # Stable if  <0\n  finally:\n    L.unlock()\n\n  # Stability edges\n  # calculated by the built-in Stability Map function\n  zone1_beg = 0.000\n  zone1_end = 0.050\n  zone2_beg = 0.050\n  zone2_end = 0.100\n\n  # Graphs show that the \"alternative\" stability condition\n  # also gives two stability zones, but both of them fall inside\n  # the first stability zone given by the \"classical\" condition\n  \n  return [\n    # \"Classical\" stability condition (pale dashed curves)\n    { 'label': '(A+D)/2',       'x': x, 'y': y1 },\n    { 'label': '1-[(A+D)/2]²',  'x': x, 'y': y2 },\n    # \"Alternative\" stability condition (vivid solid curves)\n    { 'label': 'AD',            'x': x, 'y': y3 },\n    { 'label': 'ABCD',          'x': x, 'y': y4 },\n    # \"Classical\" stability edges (dashed gray lines)\n    { 'label': 'edge', 'x': [zone1_beg, zone1_beg], 'y': [1, -1] },\n    { 'label': 'edge', 'x': [zone1_end, zone1_end], 'y': [1, -1] },\n    { 'label': 'edge', 'x': [zone2_beg, zone2_beg], 'y': [1, -1] },\n    { 'label': 'edge', 'x': [zone2_end, zone2_end], 'y': [1, -1] },\n  ]"
+                "code": "'''\nStability Parameter\n\nShow different ways of stability condition calculation.\n'''\nimport rezonator as Z\nimport schema\n\ndef figure():\n  return {\n    'x_dim': Z.DIM_LINEAR,\n    'x_title': 'L',\n    'y_dim': Z.DIM_NONE,\n    'y_title': 'Stability Parameter'\n  }\n\ndef calculate():\n  M1 = schema.elem('M1')\n  M2 = schema.elem('M2')\n  L = schema.elem('L')\n  L.lock()\n  try:\n    rt = schema.round_trip(ref=L)\n    x, y1, y2, y3, y4 = [], [], [], [], []\n    for l_mm in range(150):\n      l_m = l_mm / 1000\n      L.set_param('L', l_m)\n      x.append(l_m)\n  \n      A, B, C, D = rt.matrix()\n  \n      # The \"classical\" stability parameter given in\n      # H. Kogelnik, T. Li, \"Laser beams and resonators,\"\n      # Applied Optics, Vol.5, No.10, 1550-1567 (1966).\n      y1.append( (A + D) / 2 )             # Stable if  -1..1\n      y2.append( 1 - ((A + D) / 2)**2 )    # Stable if  0..1\n      \n      #A, B, C, D = M2.matrix() * L.matrix() * M1.matrix()\n      \n      # An \"alternative\" stability parameter seems to be given in (?)\n      # P. Baues, \"Huygens' principle in inhomogeneous, isotropic media\n      # and a general integral equation applicable to optical resonators,\"\n      # Opto-Electronics 1, 37-44 (1969).\n      y3.append( A * D )          # Stable if  0..1\n      y4.append( A * B * C * D )  # Stable if  <0\n  finally:\n    L.unlock()\n\n  # Stability edges\n  # calculated by the built-in Stability Map function\n  zone1_beg = 0.000\n  zone1_end = 0.050\n  zone2_beg = 0.050\n  zone2_end = 0.100\n\n  # Graphs show that the \"alternative\" stability condition\n  # also gives two stability zones, but both of them fall inside\n  # the first stability zone given by the \"classical\" condition\n  \n  return [\n    # \"Classical\" stability condition (pale dashed curves)\n    { 'label': '(A+D)/2',       'x': x, 'y': y1 },\n    { 'label': '1-[(A+D)/2]²',  'x': x, 'y': y2 },\n    # \"Alternative\" stability condition (vivid solid curves)\n    { 'label': 'AD',            'x': x, 'y': y3 },\n    { 'label': 'ABCD',          'x': x, 'y': y4 },\n    # \"Classical\" stability edges (dashed gray lines)\n    { 'label': 'edge', 'x': [zone1_beg, zone1_beg], 'y': [1, -1] },\n    { 'label': 'edge', 'x': [zone1_end, zone1_end], 'y': [1, -1] },\n    { 'label': 'edge', 'x': [zone2_beg, zone2_beg], 'y': [1, -1] },\n    { 'label': 'edge', 'x': [zone2_end, zone2_end], 'y': [1, -1] },\n  ]"
             },
             "type": "CustomPlot",
             "window": {
@@ -633,7 +633,7 @@
             },
             "type": "Caustic",
             "window": {
-                "cursor_enabled": true,
+                "cursor_enabled": false,
                 "cursor_mode": "Both",
                 "format": {
                     "axis_x": {
@@ -853,14 +853,19 @@
                 "x_min": -0.2,
                 "x_title": "{elem} {(unit)}",
                 "x_unit": "mm",
-                "y_max": 0.09774688821556693,
-                "y_min": 0.08343764501809223,
+                "y_max": 90.83536319334338,
+                "y_min": 80.34316267150479,
                 "y_title": "{func_mode} {(unit)}",
-                "y_unit": "mm"
+                "y_unit": "mkm"
             }
         },
         {
             "type": "MemoWindow"
+        },
+        {
+            "code": "'''\nBeam radius at mirrors\n\nSpot sizes on mirrors according to (?)\nP. Baues, \"Huygens' principle in inhomogeneous, isotropic media \nand a general integral equation applicable to optical resonators\", \nOpto-Electronics 1, 37-44 (1969)\n'''\nimport rezonator as Z\nimport schema\nfrom math import pi\n\ndef calculate():\n  M1 = schema.elem('M1').matrix()\n  M2 = schema.elem('M2').matrix()\n  L = schema.elem('L').matrix()\n  A, B, C, D = M2 * L * M1\n  #A, B, C, D = M2 * L * M1 * L\n  wl = schema.wavelength()\n  w_m1 = (-(wl/pi)**2 * (B*D)/(A*C))**(1/4)\n  w_m2 = (-(wl/pi)**2 * (A*B)/(C*D))**(1/4)\n  Z.print('Spot size at M1:', w_m1*1e6, 'mkm')\n  Z.print('Spot size at M2:', w_m2*1e6, 'mkm')",
+            "title": "Beam radius at mirrors",
+            "type": "CustomCode"
         }
     ]
 }

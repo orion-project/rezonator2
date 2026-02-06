@@ -101,6 +101,25 @@ Example:
 
 .. #######################################################################
 
+.. index:: single: matrix (Python)
+.. _py_method_elem_matrix:
+
+``matrix(plane)``
+~~~~~~~~~~~~~~~~~
+
+Return element's matrix in the given plane, or in T plane if the argument is not provided.
+
+Arguments:
+
+- ``plane`` - :ref:`Work plane <work_plane>` ('T', 'S', :ref:`Z.PLANE_T <py_const_plane_t>`, or :ref:`Z.PLANE_S <py_const_plane_s>`)
+
+Raises:
+
+- ``ValueError`` - If invalid plane name
+
+
+.. #######################################################################
+
 .. index:: single: lock (Python)
 .. _py_method_elem_lock:
 

@@ -11,6 +11,9 @@
           "text": "Can create custom functions in Python on Linux and macOS"
         },
         {
+          "text": "New Element.matrix() function in Python API"
+        },
+        {
           "text": "Fix: PYTHONHOME is not properly zero-terminated (https://github.com/orion-project/rezonator2/issues/96)"
         },
         {

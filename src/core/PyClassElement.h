@@ -2,6 +2,7 @@
 #define PY_CLASS_ELEMENT_H
 
 #include "PyUtils.h"
+#include "PyClassMatrix.h"
 #include "Schema.h"
 #include "../math/FunctionUtils.h"
 
@@ -161,6 +162,38 @@ PyObject* unlock(Self *self, PyObject *Py_UNUSED(args))
     Py_RETURN_NONE;
 }
 
+PyObject* matrix(Self *self, PyObject *args)
+{
+    auto workPlane = Z::WorkPlane::T;
+    auto argCount = PyTuple_Size(args);
+    if (argCount < 0)
+        return nullptr;
+    CHECK_(argCount == 1 || argCount == 0, Exception, "wrong arg count, 0 or 1 arg expected")
+    if (argCount == 1) {
+        auto arg = PyTuple_GetItem(args, 0);
+        if (!arg)
+            return nullptr;
+        if (PyUnicode_Check(arg)) {
+            auto plane = QString::fromUtf8(PyUnicode_AsUTF8(arg)).toUpper();
+            if (plane == Z::planeName(Z::T))
+                workPlane = Z::T;
+            else if (plane == Z::planeName(Z::S))
+                workPlane = Z::S;
+            else
+                CHECK_(false, ValueError, "wrong work plane name, T or S expected")
+        } else if (PyLong_Check(arg)) {
+            auto plane = PyLong_AsLong(arg);
+            CHECK_(plane == Z::WorkPlane::T || plane == Z::WorkPlane::S, ValueError, 
+                "unexpected arg, expected one of Z.PLANE_T or Z.PLANE_S")
+            workPlane = (Z::WorkPlane)plane;
+        } else {
+            CHECK_(false, TypeError, "wrong type of arg, string or integer expected")
+        }
+    }
+    auto m = workPlane == Z::WorkPlane::T ? self->elem->Mt() : self->elem->Ms();
+    return PyClass::Matrix::make(m);
+}
+
 PyTypeObject* type()
 {
     static PyMethodDef methods[] = {
@@ -168,6 +201,7 @@ PyTypeObject* type()
         { "set_param", (PyCFunction)set_param, METH_VARARGS, "Set element's parameter value (in SI units) by alias" },
         { "lock", (PyCFunction)lock, METH_NOARGS, "Disable element event and backup parameters values" },
         { "unlock", (PyCFunction)unlock, METH_NOARGS, "Enable element event and restore parameters values" },
+        { "matrix", (PyCFunction)matrix, METH_VARARGS, "Return element matrix in the given plane" },
         { NULL }
     };
     
