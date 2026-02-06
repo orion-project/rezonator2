@@ -15,8 +15,12 @@ def figure():
   return {
     # A value dimension used when choosing a measurement unit for the axis X.
     'x_dim': Z.DIM_LINEAR,
+    # Default title for the axis X
+    'x_title': 'Arbitrary value',
     # A value dimension used when choosing a measurement unit for the axis Y.
     'y_dim': Z.DIM_LINEAR,
+    # Default title for the axis Y
+    'y_title': 'Arbitrary value',
   }
 
 def calculate():

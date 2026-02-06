@@ -55,12 +55,20 @@ we can calculate radius and ROC of self-consistent beam in resonator:
 
     .. image:: img/gauss_q_r_w.png
 
+.. ##################################################################
+
+.. _abcd_beam:
+
 Beam Properties in Terms of Matrix Components
 ---------------------------------------------
+
+.. _abcd_beam_roc:
 
 ROC of self-consistent beam:
 
     .. image:: img/abcd_curvature.png
+
+.. _abcd_beam_size:
 
 Self-consistent beam radius:
 
@@ -73,6 +81,8 @@ Self-consistent beam radius:
 |para|
 
     .. image:: img/abcd_radius_3.png
+
+.. _abcd_beam_angle:
 
 Half-divergence in far-field zone:
 

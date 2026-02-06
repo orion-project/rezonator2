@@ -39,7 +39,7 @@ Use :ref:`Element.lock() <py_method_elem_lock>` and :ref:`Element.unlock() <py_m
 Performance
 ~~~~~~~~~~~
 
-:ref:`Round-trip matrix <round_trip>` calculation is performed before each beam parameter query (e.g., :ref:`RoundTrip.beam_radius() <py_method_rt_beam_radius>`). For multiple queries on the same parameter, store the result into a local variable rather than recalculating.
+:ref:`Round-trip matrix <round_trip>` computation is automatically performed before each beam property calculation (e.g., :ref:`RoundTrip.beam_radius() <py_method_rt_beam_radius>`). This guaranties that the actual elements' parameters are taken into account. For multiple queries on the same property, store the result into a local variable rather than recalculating.
 
 .. seeAlso::
 

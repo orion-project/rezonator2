@@ -37,31 +37,39 @@ Methods
 
 .. ##################################################################
 
+.. index:: single: matrix (Python)
+.. _py_method_rt_matrix:
+
+``matrix(index=None)``
+~~~~~~~~~~~~~~~~~~~~~~
+
+Calculate and return the round-trip matrix at the reference point.
+
+Arguments:
+
+- ``index`` (int, optional) - Matrix index, or None for total round-trip matrix
+
+Returns:
+
+- :doc:`Matrix <py_matrix>` - The requested matrix
+
+Raises:
+
+- ``IndexError`` - If index is invalid
+
+.. ##################################################################
+
 .. index:: single: beam_radius (Python)
 .. _py_method_rt_beam_radius:
 
 ``beam_radius()``
 ~~~~~~~~~~~~~~~~~
 
-Calculate beam radius at the reference point.
+Calculate the round-trip matrix at the reference point and return the :ref:`beam radius <abcd_beam_size>` computed from the matrix components.
 
 Returns:
 
 - float - Beam radius in meters
-
-.. ##################################################################
-
-.. index:: single: beam (Python)
-.. _py_method_rt_beam:
-
-``beam()``
-~~~~~~~~~~
-
-Calculate all beam parameters at the reference point.
-
-Returns:
-
-- tuple(float, float, float) - (beam_radius, front_radius, half_angle) in m, m, rad
 
 .. ##################################################################
 
@@ -71,7 +79,7 @@ Returns:
 ``front_radius()``
 ~~~~~~~~~~~~~~~~~~
 
-Calculate wavefront radius of curvature at the reference point.
+Calculate the round-trip matrix at the reference point and return the :ref:`wavefront radius of curvature <abcd_beam_roc>` computed from the matrix components.
 
 Returns:
 
@@ -85,37 +93,32 @@ Returns:
 ``half_angle()``
 ~~~~~~~~~~~~~~~~
 
-Calculate half of the divergence angle in the far field at the reference point.
+Calculate the round-trip matrix at the reference point and return the :ref:`half of the divergence angle in the far field <abcd_beam_angle>` computed from the matrix components.
+
 
 Returns:
 
 - float - Half angle in radians
 
-.. note::
-
-  :ref:`Round-trip matrix <round_trip>` calculation is performed before each beam parameter query (e.g., ``beam_radius()``). For multiple queries on the same parameter, store the result into a local variable rather than recalculating.
-
 .. ##################################################################
 
-.. index:: single: matrix (Python)
-.. _py_method_rt_matrix:
+.. index:: single: beam (Python)
+.. _py_method_rt_beam:
 
-``matrix(index=None)``
-~~~~~~~~~~~~~~~~~~~~~~
+``beam()``
+~~~~~~~~~~
 
-Get a matrix from the round trip.
-
-Arguments:
-
-- ``index`` (int, optional) - Matrix index, or None for total round-trip matrix
+Calculate the round-trip matrix at the reference point and return :ref:`all beam properties <abcd_beam>` computed from the matrix components.
 
 Returns:
 
-- :doc:`Matrix <py_matrix>` - The requested matrix
+- tuple(float, float, float) - (beam_radius, front_radius, half_angle) in m, m, rad
 
-Raises:
+.. ##################################################################
 
-- ``IndexError`` - If index is invalid
+.. note::
+
+  :ref:`Round-trip matrix <round_trip>` computation is automatically performed before each beam property calculation (e.g., ``beam_radius()``). This guaranties that the actual elements' parameters are taken into account. For multiple queries on the same property, store the result into a local variable rather than recalculating.
 
 .. ##################################################################
 
