@@ -14,6 +14,9 @@
           "text": "New Element.matrix() function in Python API"
         },
         {
+          "text": "Fix: unable to pass positional arguments to Schema.round_trip (https://github.com/orion-project/rezonator2/issues/98)"
+        },
+        {
           "text": "Fix: PYTHONHOME is not properly zero-terminated (https://github.com/orion-project/rezonator2/issues/96)"
         },
         {

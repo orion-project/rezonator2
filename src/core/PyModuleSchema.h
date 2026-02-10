@@ -73,56 +73,91 @@ PyObject* is_rr(PyObject *Py_UNUSED(self), PyObject *Py_UNUSED(args))
     return PyBool_FromLong(SCHEMA->isRR());
 }
 
-PyObject* round_trip(PyObject *Py_UNUSED(self), PyObject *Py_UNUSED(args), PyObject *kwargs)
+PyObject* round_trip(PyObject *Py_UNUSED(self), PyObject *args, PyObject *kwargs)
 {
     CHECK_SCHEMA
     if (SCHEMA->activeCount() == 0) {
         PyErr_SetString(PyExc_KeyError, "there are no active elements in the schema");
         return nullptr;
     }
-    auto splitRange = false;
-    auto workPlane = Z::WorkPlane::T;
+    
+    // For python code elemens are numbered 1-based 
+    // as they are shown in the elements table
+    #define PARSE_ARG_REF \
+        if (PyLong_Check(arg)) { \
+            auto index = PyLong_AsLong(arg); \
+            refElem = SCHEMA->element(index-1); \
+            CHECK_(refElem, IndexError, "reference element not found") \
+        } else if (PyUnicode_Check(arg)) { \
+            auto label = QString::fromUtf8(PyUnicode_AsUTF8(arg)); \
+            refElem = SCHEMA->element(label); \
+            CHECK_(refElem, KeyError, "reference element not found") \
+        } else if (PyObject_TypeCheck(arg, PyClass::Element::type())) { \
+            refElem = ((PyClass::Element::Self*)arg)->elem; \
+            CHECK_(refElem, ValueError, "element reference is null") \
+            CHECK_(SCHEMA->elements().contains(refElem), ValueError, "reference element not found") \
+        } else { \
+            CHECK_(false, TypeError, "wrong type of the 'ref' arg, integer or string or Element expected"); \
+        }
+        
+    #define PARSE_ARG_PLANE \
+        if (PyUnicode_Check(arg)) { \
+            auto plane = QString::fromUtf8(PyUnicode_AsUTF8(arg)).toUpper(); \
+            if (plane == Z::planeName(Z::T)) \
+                workPlane = Z::T; \
+            else if (plane == Z::planeName(Z::S)) \
+                workPlane = Z::S; \
+            else \
+                CHECK_(false, ValueError, "wrong work plane name, T or S expected") \
+        } else if (PyLong_Check(arg)) { \
+            auto plane = PyLong_AsLong(arg); \
+            CHECK_(plane == Z::WorkPlane::T || plane == Z::WorkPlane::S, ValueError, \
+                "unexpected value of the 'plane' arg, expected one of Z.PLANE_T or Z.PLANE_S") \
+            workPlane = (Z::WorkPlane)plane; \
+        } else { \
+            CHECK_(false, TypeError, "wrong type of the 'plane' arg, string or integer expected") \
+        }
+        
+    std::optional<bool> splitRange;
+    std::optional<Z::WorkPlane> workPlane;
     ::Element *refElem = nullptr;
+    if (args) {
+        auto argCount = PyTuple_Size(args);
+        if (argCount < 0)
+            return nullptr;
+        if (argCount > 0) {
+            auto arg = PyTuple_GetItem(args, 0);
+            if (!arg)
+                return nullptr;
+            if (arg != Py_None) {
+                PARSE_ARG_REF
+            }
+        }
+        if (argCount > 1) {
+            auto arg = PyTuple_GetItem(args, 1);
+            if (!arg)
+                return nullptr;
+            PARSE_ARG_PLANE
+        }
+        if (argCount > 2) {
+            auto arg = PyTuple_GetItem(args, 2);
+            if (!arg)
+                return nullptr;
+            splitRange = Py_IsTrue(arg);
+        }
+        CHECK_(argCount <= 3, TypeError, "wrong args count, 0..3 args expected")
+    }
     if (kwargs) {
         if (auto arg = PyDict_GetItemString(kwargs, "ref"); arg) {
-            if (PyLong_Check(arg)) {
-                auto index = PyLong_AsLong(arg);
-                // For python code elemens are numbered 1-based
-                // as they are shown in the elements table
-                refElem = SCHEMA->element(index-1);
-                CHECK_(refElem, IndexError, "reference element not found")
-            } else if (PyUnicode_Check(arg)) {
-                auto label = QString::fromUtf8(PyUnicode_AsUTF8(arg));
-                refElem = SCHEMA->element(label);
-                CHECK_(refElem, KeyError, "reference element not found")
-            } else if (PyObject_TypeCheck(arg, PyClass::Element::type())) {
-                refElem = ((PyClass::Element::Self*)arg)->elem;
-                CHECK_(refElem, ValueError, "element reference is null")
-                CHECK_(SCHEMA->elements().contains(refElem), ValueError, "reference element not found")
-            } else {
-                CHECK_(false, TypeError, "wrong type of the 'ref' arg, integer or string or Element expected");
-            }
+            CHECK_(!refElem, TypeError, "multiple values for argument 'ref'")
+            PARSE_ARG_REF
         }
         if (auto arg = PyDict_GetItemString(kwargs, "plane"); arg) {
-            if (PyUnicode_Check(arg)) {
-                auto plane = QString::fromUtf8(PyUnicode_AsUTF8(arg)).toUpper();
-                if (plane == Z::planeName(Z::T))
-                    workPlane = Z::T;
-                else if (plane == Z::planeName(Z::S))
-                    workPlane = Z::S;
-                else
-                    CHECK_(false, ValueError, "wrong work plane name, T or S expected")
-            } else if (PyLong_Check(arg)) {
-                auto plane = PyLong_AsLong(arg);
-                CHECK_(plane == Z::WorkPlane::T || plane == Z::WorkPlane::S, ValueError, 
-                    "unexpected value of the 'plane' arg, expected one of Z.PLANE_T or Z.PLANE_S")
-                workPlane = (Z::WorkPlane)plane;
-            } else {
-                CHECK_(false, TypeError, "wrong type of the 'plane' arg, string or integer expected")
-            }
+            CHECK_(!workPlane, TypeError, "multiple values for argument 'plane'")
+            PARSE_ARG_PLANE
         }
         if (auto arg = PyDict_GetItemString(kwargs, "inside"); arg) {
-            CHECK_(PyBool_Check(arg), TypeError, "wrong type of the 'inside' arg, bool expected")
+            CHECK_(!splitRange, TypeError, "multiple values for argument 'inside'")
             splitRange = Py_IsTrue(arg);
         }
     }
@@ -134,10 +169,17 @@ PyObject* round_trip(PyObject *Py_UNUSED(self), PyObject *Py_UNUSED(args), PyObj
         delete beamCalc;
         return nullptr;
     }
-    beamCalc->calcRoundTrip(refElem, splitRange, "py.schema.round_trip()");
-    beamCalc->setPlane(workPlane);
-    beamCalc->setIor(FunctionUtils::ior(SCHEMA, refElem, splitRange));
+    if (!workPlane)
+        workPlane = Z::WorkPlane::T;
+    if (!splitRange)
+        splitRange = false;
+    beamCalc->calcRoundTrip(refElem, *splitRange, "py.schema.round_trip()");
+    beamCalc->setPlane(*workPlane);
+    beamCalc->setIor(FunctionUtils::ior(SCHEMA, refElem, *splitRange));
     return PyClass::RoundTrip::make(beamCalc, true);
+    
+    #undef PARSE_ARG_REF
+    #undef PARSE_ARG_PLANE
 }
 
 int on_exec(PyObject *module)

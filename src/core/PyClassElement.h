@@ -168,7 +168,7 @@ PyObject* matrix(Self *self, PyObject *args)
     auto argCount = PyTuple_Size(args);
     if (argCount < 0)
         return nullptr;
-    CHECK_(argCount == 1 || argCount == 0, Exception, "wrong arg count, 0 or 1 arg expected")
+    CHECK_(argCount == 1 || argCount == 0, TypeError, "wrong args count, 0 or 1 arg expected")
     if (argCount == 1) {
         auto arg = PyTuple_GetItem(args, 0);
         if (!arg)
