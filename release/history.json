@@ -5,6 +5,9 @@
       "date": "",
       "changes": [
         {
+          "text": "Added a doc about misalignments calculation"
+        },
+        {
           "text": "Alternate element coloring in data tables"
         },
         {

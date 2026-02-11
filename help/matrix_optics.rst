@@ -7,6 +7,8 @@ The description is given according to the book "Lasers" by A.E. Siegman, see cha
 
 For the analysis, we need to select a reference plane to calculate :doc:`the round trip matrix<round_trip_matrix>` against. In general, an element chosen as a parameter of a particular function is the reference plane.
 
+.. _self_conformed_beam:
+
 Having the round-trip matrix we can write an expression for transformation of :ref:`complex parameter<gauss_complex_param>`:
 
     .. image:: img/gauss_q_abcd.png

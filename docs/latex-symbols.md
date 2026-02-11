@@ -12,6 +12,10 @@ https://oeis.org/wiki/List_of_LaTeX_mathematical_symbols
 
 `\cfrac` $$ \cfrac {a+1}{b+1} $$
 
+`\sum` $$ \sum_{i=i}^{n} $$
+
+`\prod` $$ \prod_{i=i}^{n} $$
+
 ## Relation operators
 
 `\equiv` $$ \equiv $$

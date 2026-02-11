@@ -11,5 +11,6 @@ Handbook
   matrix_optics
   round_trip_matrix
   hyper_gauss
+  misalign
   lua_primer
   py_api
