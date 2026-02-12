@@ -303,9 +303,17 @@ void TableFuncWindow::createActions()
 
 void TableFuncWindow::createMenuBar()
 {
+#ifdef Q_OS_MAC
+    // Standard titles like "Options" or "Preferences" will be automatically
+    // extracted to the "rezonator -> Preferences..." menu item
+    // and will override the application-wide settings entry point.
+    QString menuTitle = tr("Calc Options");
+#else
+    QString menuTitle = tr("Options");
+#endif
     _menuTable = Ori::Gui::menu(tr("Table", "Menu title"), this, {
         _actnUpdate, _actnFreeze, nullptr, _actnShowT, _actnShowS, nullptr,
-            Ori::Gui::menu(tr("Options"), this, {_actnCalcMediumEnds, _actnCalcEmptySpaces, _actnCalcSpaceMids})
+            Ori::Gui::menu(menuTitle, this, {_actnCalcMediumEnds, _actnCalcEmptySpaces, _actnCalcSpaceMids})
     });
 }
 
