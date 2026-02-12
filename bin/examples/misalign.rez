@@ -38,9 +38,9 @@
             "params": {
                 "L": {
                     "error": "",
-                    "expr": "",
+                    "expr": "55.5",
                     "unit": "mm",
-                    "value": 57
+                    "value": 55.5
                 },
                 "n": {
                     "error": "",
@@ -73,6 +73,14 @@
                     "dim": "angular",
                     "label": "dVt",
                     "name": "Angular misalignment T"
+                },
+                {
+                    "alias": "dYs",
+                    "custom": true,
+                    "descr": "Offset of element center from beam axis in S-plane.",
+                    "dim": "linear",
+                    "label": "dYs",
+                    "name": "Axial misalignment S"
                 }
             ],
             "params": {
@@ -93,6 +101,12 @@
                     "expr": "0.2",
                     "unit": "deg",
                     "value": 0.2
+                },
+                "dYs": {
+                    "error": "",
+                    "expr": "0.5",
+                    "unit": "mm",
+                    "value": 0.5
                 },
                 "dYt": {
                     "error": "",
@@ -149,22 +163,31 @@
     "trip_type": "SW",
     "windows": [
         {
-            "code": "'''\nEffective misalignment (alt)\n\nCalculation the effective misalignment of the whole system\nand the position of the effective optical axis of the resonator.\nThe analytical solution for multiplication of ABCD matrices\nby element misalignment vectors\nis used instead of extended ABCDEF ray matrices.\nIn particular, this solution is shown in the book\n\"A. Gerrard and J. M. Burch,\nIntroduction to Matrix Methods in Optics\", Appendix II.\nHowever it's more straightforward just to construct\nABCDEF matrices and multiply them, so there is no big reason\nto directly use this solution. We just show it for generality\nand to have additional verification for algorithms.\n'''\nfrom math import degrees as deg\nimport rezonator as Z\nfrom rezonator import Matrix, RayVector\nimport schema\n\ndef calculate():\n  rt = schema.round_trip(ref='M_out')\n  M = rt.matrix()\n\n  # RayVector is an additional reZonator's helper class\n  # containing two components and having an ability\n  # to be multiplyed by ray matrices.\n  YV = RayVector()\n  for i in range(rt.matrix_count):\n    # Temp matrix for calculation of misalighnments\n    # after i-th element in the round-trip.\n    m = Matrix()\n    for j in range(i):\n      m *= rt.matrix(j)\n    elem = rt.elem(i)\n    YV += m * RayVector(\n      # Element's method `param` returns a parameter value in SI units.\n      # The second argument is a default value in SI units\n      # used when the parameter is not found.\n      # This variant is convenient for using with custom parameters\n      # that can be added optionally to only some desired elements.\n      elem.param('dYt', 0),\n      elem.param('dVt', 0))\n\n  Z.print('Effective misalignment at', rt.ref.label)\n  Y, V = YV\n  Z.print(Y*1000, 'mm', deg(V), '°')\n  \n  Z.print('Position of effective optical axis at', rt.ref.label)\n  A, B, C, D = M\n  Y0 = ((1 - D)*Y + B*V) / (2 - A - D)\n  V0 = (C*Y + (1 - A)*V) / (2 - A - D)\n  Z.print(Y0*1000, 'mm', deg(V0), '°')\n\ndef meta():\n  # Optional data for fine-tuning the function and window behaviour\n  return {\n    'help_topic': 'func_misalign'\n  }",
+            "code": "'''\nEffective misalignment (alt)\n\nCalculation the effective misalignment of the whole system\nand the position of the effective optical axis of the resonator.\nThe analytical solution for multiplication of ABCD matrices\nby element misalignment vectors\nis used instead of extended ABCDEF ray matrices.\nIn particular, this solution is shown in the book\n\"A. Gerrard and J. M. Burch,\nIntroduction to Matrix Methods in Optics\", Appendix II.\nHowever it's more straightforward just to construct\nABCDEF matrices and multiply them, so there is no big reason\nto directly use this solution. We just show it for generality\nand to have additional verification for algorithms.\n'''\nfrom math import degrees\nimport rezonator as Z\nfrom rezonator import Matrix, RayVector\nimport schema\n\ndef deg(v):\n  return str(round(degrees(v), 1)) + '°'\n  \ndef mm(v):\n  return str(round(v*1000, 1)) + 'mm'\n\ndef calculate():\n  rt = schema.round_trip(ref='M_out')\n  ABCD0 = rt.matrix()\n\n  # Total length of all elements\n  L0 = 0\n\n  # RayVector is an additional reZonator's helper class\n  # containing two components and having an ability\n  # to be multiplyed by ray matrices.\n  EF0 = RayVector()\n  for i in range(rt.matrix_count):\n    # Temp matrix for calculation of misalighnments\n    # after i-th element in the round-trip.\n    m = Matrix()\n    for j in range(i):\n      m *= rt.matrix(j)\n    elem = rt.elem(i)\n\n    # Element's method `param` returns a parameter value in SI units.\n    # The second argument is a default value in SI units\n    # used when the parameter is not found.\n    # This variant is convenient for using with custom parameters\n    # that can be added optionally to only some desired elements.\n    dY = elem.param('dYt', 0)\n    dV = elem.param('dVt', 0)\n\n    L = elem.axial_length if elem.axial_length else 0\n    L0 += L\n\n    A, B, C, D = rt.matrix(i)\n    E = (1 - D)*dY + (L - B)*dV\n    F = (0 - C)*dY + (1 - D)*dV\n    EF0 += m * RayVector(E, F)\n\n  A, B, C, D = ABCD0\n  E, F = EF0\n\n  Z.print('Effective misalignment at', rt.ref.label)\n  denom = (1 - A)*(1 - D) + (L0 - B)*C\n  Y_eff = ((1 - D)*E - (L0 - B)*F) / denom\n  V_eff = (C*E + (1 - A)*F) / denom\n  Z.print(mm(Y_eff), '|', deg(V_eff))\n  \n  Z.print('Position of effective optical axis at', rt.ref.label)\n  denom = 2 - A - D\n  Y_eff = ((1 - D)*E + B*F) / denom\n  V_eff = (C*E + (1 - A)*F) / denom\n  Z.print(mm(Y_eff), '|', deg(V_eff))\n\ndef meta():\n  # Optional data for fine-tuning the function and window behaviour\n  return {\n    'help_topic': 'func_misalign'\n  }",
             "title": "Effective misalignment (alt)",
             "type": "CustomCode"
         },
         {
-            "code": "'''\nEffective misalignment\n\nCalculate the effective misalignment of the whole system\nand the position of the effective optical axis of the resonator\nusing extended ray matrices of size 3×3 (ABCDEF method).\n'''\nfrom math import degrees as deg\nimport rezonator as Z\nfrom rezonator import Matrix3\nimport schema\n\ndef calculate():\n  rt = schema.round_trip(ref='M_out')\n  \n  # Matrix3 is a helper class for extended ray matrix.\n  # It can be constructed from a conventional ABCD matrix\n  # and additional components assigned manually.\n  M = Matrix3()\n  for i in range(rt.matrix_count):\n    m = Matrix3(rt.matrix(i))\n    elem = rt.elem(i)\n    # Additional matrix components are assigned from\n    # particular element's misalignments.\n    # Element's method `param` returns a parameter value in SI units.\n    # The second argument is a default value in SI units\n    # used when the parameter is not found.\n    # This variant is convenient for using with custom parameters\n    # that can be added optionally to only some desired elements.\n    m.E = elem.param('dYt', 0)\n    m.F = elem.param('dVt', 0)\n    # Multiply ABCDEF matrices in the same order\n    # as the initial ABCD matrices are stored\n    # in the automatically prepared round-trip\n    M *= m\n  \n  Z.print('Effective misalignment at', rt.ref.label)\n  E = M.E\n  F = M.F\n  Z.print(E*1000, 'mm', deg(F), '°')\n  \n  Z.print('Position of effective optical axis at', rt.ref.label)\n  A, B, C, D = rt.matrix()\n  E0 = ((1 - D)*E + B*F) / (2 - A - D)\n  F0 = (C*E + (1 - A)*F) / (2 - A - D)\n  Z.print(E0*1000, 'mm', deg(F0), '°')\n\ndef meta():\n  # Optional data for fine-tuning the function and window behaviour\n  return {\n    'help_topic': 'func_misalign'\n  }\n",
+            "code": "'''\nEffective misalignment\n\nCalculate the effective misalignment of the whole system\nand the position of the effective optical axis of the resonator\nusing extended ray matrices of size 3×3 (ABCDEF method).\n'''\nfrom math import degrees\nimport rezonator as Z\nfrom rezonator import Matrix3\nimport schema\n\ndef deg(v):\n  return str(round(degrees(v), 1)) + '°'\n  \ndef mm(v):\n  return str(round(v*1000, 1)) + 'mm'\n\ndef calculate():\n  rt = schema.round_trip(ref='M_out')\n  \n  # Total length of all elements\n  L0 = 0\n  \n  # Matrix3 is a helper class for extended ray matrix.\n  # It can be constructed from a conventional ABCD matrix\n  # and additional components assigned manually.\n  M = Matrix3()\n  for i in range(rt.matrix_count):\n    m = Matrix3(rt.matrix(i))\n    elem = rt.elem(i)\n\n    # Element's method `param` returns a parameter value in SI units.\n    # The second argument is a default value in SI units\n    # used when the parameter is not found.\n    # This variant is convenient for using with custom parameters\n    # that can be added optionally to only some desired elements.\n    dY = elem.param('dYt', 0)\n    dV = elem.param('dVt', 0)\n    \n    L = elem.axial_length if elem.axial_length else 0\n    L0 += L\n\n    # Additional matrix components are assigned from\n    # particular element's misalignments.\n    A, B, C, D = rt.matrix(i)\n    m.E = (1 - D)*dY + (L - B)*dV\n    m.F = (0 - C)*dY + (1 - D)*dV\n    \n    # Multiply ABCDEF matrices in the same order\n    # as the initial ABCD matrices are stored\n    # in the automatically prepared round-trip\n    M *= m\n  \n  A, B, E, C, D, F, _, _, _ = M\n\n  Z.print('Effective misalignment at', rt.ref.label)\n  denom = (1 - A)*(1 - D) + (L0 - B)*C\n  Y_eff = ((1 - D)*E - (L0 - B)*F) / denom\n  V_eff = (C*E + (1 - A)*F) / denom\n  Z.print(mm(Y_eff), '|', deg(V_eff))\n  \n  Z.print('Position of effective optical axis at', rt.ref.label)\n  denom = 2 - A - D\n  Y_eff = ((1 - D)*E + B*F) / denom\n  V_eff = (C*E + (1 - A)*F) / denom\n  Z.print(mm(Y_eff), '|', deg(V_eff))\n\ndef meta():\n  # Optional data for fine-tuning the function and window behaviour\n  return {\n    'help_topic': 'func_misalign'\n  }\n",
             "title": "Effective misalignment",
             "type": "CustomCode"
         },
         {
-            "code": "'''\nMisalignments at elements\n'''\nimport rezonator as Z\nfrom rezonator import Matrix3\nimport schema\n\ndef meta():\n  # Optional data for fine-tuning the function and window behaviour\n  return {\n    'help_topic': 'func_misalign'\n  }\n\ndef columns():\n  # This function is automatically called by the table window\n  # to get descriptions of columns that will be displayed.\n  return [\n    # Effective misalignment\n    {'label': 'Y', 'title': 'Displacement', 'dim': Z.DIM_LINEAR },\n    {'label': 'V', 'title': 'Tilt', 'dim': Z.DIM_ANGULAR },\n    # Position of effective optical axis\n    {'label': 'Y0', 'title': 'Axis displacement', 'dim': Z.DIM_LINEAR },\n    {'label': 'V0', 'title': 'Axis tilt', 'dim': Z.DIM_ANGULAR },\n  ]\n  \ndef calculate(elem, pos, rt):\n  M = Matrix3()\n  for i in range(rt.matrix_count):\n    m = Matrix3(rt.matrix(i))\n    elem = rt.elem(i)\n    if rt.plane == Z.PLANE_T:\n      m.E = elem.param('dYt', 0)\n      m.F = elem.param('dVt', 0)\n    else:\n      m.E = elem.param('dYs', 0)\n      m.F = elem.param('dVs', 0)\n    M *= m\n  return {\n    'Y': M.E,\n    'V': M.F,\n    'Y0': ((1 - M.D)*M.E + M.B*M.F) / (2 - M.A - M.D),\n    'V0': (M.C*M.E + (1 - M.A)*M.F) / (2 - M.A - M.D),\n  }\n",
+            "code": "'''\nMisalignments at elements\n'''\nimport rezonator as Z\nfrom rezonator import Matrix3\nimport schema\n\ndef meta():\n  # Optional data for fine-tuning the function and window behaviour\n  return {\n    'help_topic': 'func_misalign'\n  }\n\ndef columns():\n  # This function is automatically called by the table window\n  # to get descriptions of columns that will be displayed.\n  return [\n    # Position of effective optical axis\n    {'label': 'Y_eff_', 'title': 'Axis displacement', 'dim': Z.DIM_LINEAR },\n    {'label': 'V_eff_', 'title': 'Axis tilt', 'dim': Z.DIM_ANGULAR },\n  ]\n  \ndef calculate(elem, pos, rt):\n  M = Matrix3()\n  for i in range(rt.matrix_count):\n    m = Matrix3(rt.matrix(i))\n    elem = rt.elem(i)\n    if rt.plane == Z.PLANE_T:\n      dY = elem.param('dYt', 0)\n      dV = elem.param('dVt', 0)\n    else:\n      dY = elem.param('dYs', 0)\n      dV = elem.param('dVs', 0)\n    L = elem.axial_length if elem.axial_length else 0\n    A, B, C, D = rt.matrix(i)\n    m.E = (1 - D)*dY + (L - B)*dV\n    m.F = (0 - C)*dY + (1 - D)*dV\n    M *= m\n  \n  A, B, E, C, D, F, _, _, _ = M\n  return {\n    'Y_eff_': ((1 - D)*E + B*F) / (2 - A - D),\n    'V_eff_': (C*E + (1 - A)*F) / (2 - A - D),\n  }\n",
             "columns": {
+                "V_eff_": {
+                    "unit": "deg"
+                },
                 "Y": {
                     "unit": "cm"
                 },
                 "Y0": {
+                    "unit": "mm"
+                },
+                "Y_eff": {
+                    "unit": "mm"
+                },
+                "Y_eff_": {
                     "unit": "mm"
                 }
             },
@@ -181,13 +204,13 @@
         {
             "function": {
                 "arg": {
-                    "element_index": 2,
-                    "param": "R",
+                    "element_index": 1,
+                    "param": "L",
                     "range": {
                         "points": 100,
                         "start": {
                             "unit": "mm",
-                            "value": 40
+                            "value": 54
                         },
                         "step": {
                             "unit": "mm",
@@ -195,7 +218,7 @@
                         },
                         "stop": {
                             "unit": "mm",
-                            "value": 120
+                            "value": 58
                         },
                         "use_step": false
                     }
@@ -421,19 +444,19 @@
                 "t_title": "{func_name}",
                 "ts_flipped": false,
                 "ts_mode": "T+S",
-                "x_max": 127.64390594865712,
-                "x_min": 14.702729478068875,
+                "x_max": 58.04,
+                "x_min": 53.96,
                 "x_title": "{elem}, {elem_param} {(unit)}",
                 "x_unit": "mm",
-                "y_max": 1.1621107266435988,
-                "y_min": -0.3603806228373704,
+                "y_max": 1.05,
+                "y_min": -0.05,
                 "y_title": "Stability parameter {stab_mode}",
                 "y_unit": "none"
             }
         },
         {
             "function": {
-                "code": "'''\nMisaligned axis position\n\n↑ This is a function name that is displayed in function window headers.\nIn the plot title, it is substituted instead of the {func_name} variable.\n'''\nimport rezonator as Z\nfrom rezonator import Matrix3\nimport schema\n\n# Specify which elements will be the function arguments.\n# Do this step in the global scope before any function is called\n# to be able to use elements in axes titles (see figure() below).\nelem_var = schema.elem('M_foc')\nelem_at = schema.elem('M_out')\n\ndef figure():\n  '''\n  This function is automatically called by the function window\n  to configure the plot properties.\n  '''\n  return {\n    # A value dimension used when choosing a measurement unit for the axis X.\n    'x_dim': Z.DIM_LINEAR,\n    # Default title for X-axis\n    # which is substituted instead of the {default_title} variable.\n    'x_title': f'ROC of {elem_var.label}',\n    # A value dimension used when choosing a measurement unit for the axis Y.\n    'y_dim': Z.DIM_LINEAR,\n    # Default title for Y-axis\n    # which is substituted instead of the {default_title} variable.\n    'y_title': f'Axis displacement at {elem_at.label}',\n  }\n\ndef calculate():\n  Z.print('Calc axis displacement at', elem_at.label,\n    'when variating', elem_var.label, 'ROC')\n\n  # Plot parameters\n  start = 0.040\n  stop = 0.120\n  point_count = 1000\n  step = (stop - start)/(point_count-1)\n\n  rt = schema.round_trip(ref=elem_at)\n  xx = []\n  yy = []\n  # Lock the element whose parameter is changing during plotting.\n  # This allows us to preserve its original parameter value\n  # and to automatically restore it after plotting.\n  # Also, it disables UI updating and recalculation of built-in functions\n  # when element parameters change.\n  elem_var.lock()\n  try:\n    for i in range(point_count):\n      # Gradually change the varying element parameter\n      # and calculate the graph Y value at each step\n      x = start + step*i\n      elem_var.set_param('R', x)\n\n      # Get the round-trip matrix\n      # after an element's parameter has been assigned a new value\n      # (and therefore the element's matrix has been changed)\n      # to force the round-trip to recompute the matrix production.\n      A, B, C, D = rt.matrix()\n\n      # Skip points where resonator is not stable\n      if rt.stabil_nor <= -1 or rt.stabil_nor >= 1:\n        xx.append(x)\n        yy.append(float('nan'))\n        continue\n\n      tmp = Matrix3()\n      for i in range(rt.matrix_count):\n        m = Matrix3(rt.matrix(i))\n        m.E = rt.elem(i).param('dEt', 0)\n        m.F = rt.elem(i).param('dVt', 0)\n        tmp *= m\n      E = tmp.E\n      F = tmp.F\n\n      E0 = ((1 - D)*E + B*F) / (2 - A - D)\n      #F0 = (C*E + (1 - A)*F) / (2 - A - D)\n      xx.append(x)\n      yy.append(E0)\n  finally:\n    elem_var.unlock()\n  return [\n  # Return a list of lines.\n  # Labels can be arbitrary; they are displayed in the legend.\n  # There can be several lines with the same label;\n  # they are considered as parts of a single multi-segment graph.\n    {\n     'label': 'Axis offset',\n     'x': xx,\n     'y': yy\n    },\n  ]\n  \ndef meta():\n  # Optional data for fine-tuning the function and window behaviour\n  return {\n    'help_topic': 'func_misalign'\n  }\n"
+                "code": "'''\nMisaligned axis position\n\n↑ This is a function name that is displayed in function window headers.\nIn the plot title, it is substituted instead of the {func_name} variable.\n'''\nimport rezonator as Z\nfrom rezonator import Matrix3\nimport schema\n\n# Specify which elements will be the function arguments.\n# Do this step in the global scope before any function is called\n# to be able to use elements in axes titles (see figure() below).\nelem_var = schema.elem('L_foc')\nelem_at = schema.elem('M_out')\n\ndef figure():\n  '''\n  This function is automatically called by the function window\n  to configure the plot properties.\n  '''\n  return {\n    # A value dimension used when choosing a measurement unit for the axis X.\n    'x_dim': Z.DIM_LINEAR,\n    # Default title for X-axis\n    # which is substituted instead of the {default_title} placeholder.\n    'x_title': f'L of {elem_var.label}',\n    # A value dimension used when choosing a measurement unit for the axis Y.\n    'y_dim': Z.DIM_LINEAR,\n    # Default title for Y-axis\n    # which is substituted instead of the {default_title} placeholder.\n    'y_title': f'Axis displacement at {elem_at.label}',\n  }\n\ndef calculate():\n  Z.print('Calc axis displacement at', elem_at.label,\n    'when variating', elem_var.label, 'length')\n\n  # Plot parameters\n  start = 0.054\n  stop = 0.058\n  point_count = 100\n  step = (stop - start)/(point_count-1)\n\n  rt = schema.round_trip(ref=elem_at)\n  xx = []\n  yy = []\n  # Lock the element whose parameter is changing during plotting.\n  # This allows us to preserve its original parameter value\n  # and to automatically restore it after plotting.\n  # Also, it disables UI updating and recalculation of built-in functions\n  # when element parameters change.\n  elem_var.lock()\n  try:\n    for i in range(point_count):\n      # Gradually change the varying element parameter\n      # and calculate the graph Y value at each step\n      x = start + step*i\n      elem_var.set_param('L', x)\n\n      # Get the round-trip matrix\n      # after an element's parameter has been assigned a new value\n      # (and therefore the element's matrix has been changed)\n      # to force the round-trip to recompute the matrix production.\n      rt.matrix()\n\n      # Skip points where resonator is not stable\n      if rt.stabil_nor <= -1 or rt.stabil_nor >= 1:\n        xx.append(x)\n        yy.append(float('nan'))\n        continue\n\n      tmp = Matrix3()\n      for i in range(rt.matrix_count):\n        m = Matrix3(rt.matrix(i))\n        elem = rt.elem(i) \n        dY = elem.param('dYt', 0)\n        dV = elem.param('dVt', 0)\n        L = elem.axial_length if elem.axial_length else 0\n        A, B, C, D = rt.matrix(i)\n        m.E = (1 - D)*dY + (L - B)*dV\n        m.F = (0 - C)*dY + (1 - D)*dV\n        tmp *= m\n\n      A, B, E, C, D, F, _, _, _ = tmp\n      denom = (2 - A - D)\n      Y_eff = ((1 - D)*E + B*F) / denom\n      #V_eff = (C*E + (1 - A)*F) / denom\n      xx.append(x)\n      yy.append(Y_eff)\n  finally:\n    elem_var.unlock()\n  return [\n  # Return a list of lines.\n  # Labels can be arbitrary; they are displayed in the legend.\n  # There can be several lines with the same label;\n  # they are considered as parts of a single multi-segment graph.\n    {\n     'label': 'Axis offset',\n     'x': xx,\n     'y': yy\n    },\n  ]\n  \ndef meta():\n  # Optional data for fine-tuning the function and window behaviour\n  return {\n    'help_topic': 'func_misalign'\n  }\n"
             },
             "type": "CustomPlot",
             "window": {
@@ -656,14 +679,14 @@
                     }
                 },
                 "t_title": "{func_name}",
-                "x_max": 115.44344344344344,
-                "x_min": 49.28128128128128,
+                "x_max": 57.05212121212122,
+                "x_min": 54.82666666666667,
                 "x_title": "{default_title}, {(unit)}",
                 "x_unit": "mm",
-                "y_max": 75533.53389965126,
-                "y_min": -3823.072346041838,
+                "y_max": 149.69210884506538,
+                "y_min": -4.573216746451356,
                 "y_title": "{default_title}, {(unit)}",
-                "y_unit": "mkm"
+                "y_unit": "mm"
             }
         }
     ]
