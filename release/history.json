@@ -2,7 +2,7 @@
   "history": [
     {
       "version": "2.2.2",
-      "date": "",
+      "date": "2026-02-12",
       "changes": [
         {
           "text": "Added a doc about misalignments calculation"
@@ -15,6 +15,9 @@
         },
         {
           "text": "New Element.matrix() function in Python API"
+        },
+        {
+          "text": "Fix: incorrect formulas in the misalign.rez example "
         },
         {
           "text": "Fix: unable to pass positional arguments to Schema.round_trip (https://github.com/orion-project/rezonator2/issues/98)"

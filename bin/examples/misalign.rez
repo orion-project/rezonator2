@@ -38,9 +38,9 @@
             "params": {
                 "L": {
                     "error": "",
-                    "expr": "55.5",
+                    "expr": "56",
                     "unit": "mm",
-                    "value": 55.5
+                    "value": 56
                 },
                 "n": {
                     "error": "",
@@ -73,14 +73,6 @@
                     "dim": "angular",
                     "label": "dVt",
                     "name": "Angular misalignment T"
-                },
-                {
-                    "alias": "dYs",
-                    "custom": true,
-                    "descr": "Offset of element center from beam axis in S-plane.",
-                    "dim": "linear",
-                    "label": "dYs",
-                    "name": "Axial misalignment S"
                 }
             ],
             "params": {
@@ -102,17 +94,11 @@
                     "unit": "deg",
                     "value": 0.2
                 },
-                "dYs": {
-                    "error": "",
-                    "expr": "0.5",
-                    "unit": "mm",
-                    "value": 0.5
-                },
                 "dYt": {
                     "error": "",
-                    "expr": "0.2",
+                    "expr": "0.1",
                     "unit": "mm",
-                    "value": 0.2
+                    "value": 0.1
                 }
             },
             "title": "Focusing mirror",
@@ -173,13 +159,13 @@
             "type": "CustomCode"
         },
         {
-            "code": "'''\nMisalignments at elements\n'''\nimport rezonator as Z\nfrom rezonator import Matrix3\nimport schema\n\ndef meta():\n  # Optional data for fine-tuning the function and window behaviour\n  return {\n    'help_topic': 'func_misalign'\n  }\n\ndef columns():\n  # This function is automatically called by the table window\n  # to get descriptions of columns that will be displayed.\n  return [\n    # Position of effective optical axis\n    {'label': 'Y_eff_', 'title': 'Axis displacement', 'dim': Z.DIM_LINEAR },\n    {'label': 'V_eff_', 'title': 'Axis tilt', 'dim': Z.DIM_ANGULAR },\n  ]\n  \ndef calculate(elem, pos, rt):\n  M = Matrix3()\n  for i in range(rt.matrix_count):\n    m = Matrix3(rt.matrix(i))\n    elem = rt.elem(i)\n    if rt.plane == Z.PLANE_T:\n      dY = elem.param('dYt', 0)\n      dV = elem.param('dVt', 0)\n    else:\n      dY = elem.param('dYs', 0)\n      dV = elem.param('dVs', 0)\n    L = elem.axial_length if elem.axial_length else 0\n    A, B, C, D = rt.matrix(i)\n    m.E = (1 - D)*dY + (L - B)*dV\n    m.F = (0 - C)*dY + (1 - D)*dV\n    M *= m\n  \n  A, B, E, C, D, F, _, _, _ = M\n  return {\n    'Y_eff_': ((1 - D)*E + B*F) / (2 - A - D),\n    'V_eff_': (C*E + (1 - A)*F) / (2 - A - D),\n  }\n",
+            "code": "'''\nMisalignments at elements\n'''\nimport rezonator as Z\nfrom rezonator import Matrix3\nimport schema\n\ndef meta():\n  # Optional data for fine-tuning the function and window behaviour\n  return {\n    'help_topic': 'func_misalign'\n  }\n\ndef columns():\n  # This function is automatically called by the table window\n  # to get descriptions of columns that will be displayed.\n  return [\n    # Position of effective optical axis\n    {'label': 'Y', 'title': 'Axis displacement', 'dim': Z.DIM_LINEAR },\n    {'label': 'V', 'title': 'Axis tilt', 'dim': Z.DIM_ANGULAR },\n  ]\n  \ndef calculate(elem, pos, rt):\n  M = Matrix3()\n  for i in range(rt.matrix_count):\n    m = Matrix3(rt.matrix(i))\n    elem = rt.elem(i)\n    if rt.plane == Z.PLANE_T:\n      dY = elem.param('dYt', 0)\n      dV = elem.param('dVt', 0)\n    else:\n      dY = elem.param('dYs', 0)\n      dV = elem.param('dVs', 0)\n    L = elem.axial_length if elem.axial_length else 0\n    A, B, C, D = rt.matrix(i)\n    m.E = (1 - D)*dY + (L - B)*dV\n    m.F = (0 - C)*dY + (1 - D)*dV\n    M *= m\n  \n  A, B, E, C, D, F, _, _, _ = M\n  return {\n    'Y': ((1 - D)*E + B*F) / (2 - A - D),\n    'V': (C*E + (1 - A)*F) / (2 - A - D),\n  }\n",
             "columns": {
                 "V_eff_": {
                     "unit": "deg"
                 },
                 "Y": {
-                    "unit": "cm"
+                    "unit": "mm"
                 },
                 "Y0": {
                     "unit": "mm"
@@ -460,7 +446,7 @@
             },
             "type": "CustomPlot",
             "window": {
-                "cursor_enabled": true,
+                "cursor_enabled": false,
                 "cursor_mode": "Both",
                 "format": {
                     "axis_x": {
@@ -683,8 +669,8 @@
                 "x_min": 54.82666666666667,
                 "x_title": "{default_title}, {(unit)}",
                 "x_unit": "mm",
-                "y_max": 149.69210884506538,
-                "y_min": -4.573216746451356,
+                "y_max": 17.456309881706883,
+                "y_min": -3.5616099011702715,
                 "y_title": "{default_title}, {(unit)}",
                 "y_unit": "mm"
             }
