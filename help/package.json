@@ -1,6 +1,6 @@
 {
     "dependencies": {
         "mathjax": "3.2.2",
-        "sharp": "0.32.6"
+        "sharp": "0.35.0"
     }
 }
