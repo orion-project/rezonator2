@@ -43,3 +43,7 @@ Despite the number of good [examples](https://www.scilab.org), in the profession
 ##
 
 ![Main Window](./img/main_window_2.1.1.png)
+
+##
+
+[![Star History Chart](https://api.star-history.com/svg?repos=bytebase/star-history&type=Date)](https://star-history.com/#bytebase/star-history&Date)
