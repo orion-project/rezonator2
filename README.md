@@ -46,4 +46,4 @@ Despite the number of good [examples](https://www.scilab.org), in the profession
 
 ##
 
-[![Star History Chart](https://api.star-history.com/svg?repos=bytebase/star-history&type=Date)](https://star-history.com/#bytebase/star-history&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=orion-project/rezonator2&type=Date)](https://star-history.com/#orion-project/rezonator2&Date)
