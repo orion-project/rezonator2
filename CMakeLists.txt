@@ -46,8 +46,8 @@ if(MSVC)
     add_compile_options(/wd4043)  # Disable STL4043 warning about stdext::checked_array_iterator
 endif()
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Help PrintSupport Svg Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Help PrintSupport Svg Widgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Help LinguistTools PrintSupport Svg Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Help LinguistTools PrintSupport Svg Widgets)
 
 # Add Python
 set(Python3_FIND_REGISTRY NEVER)
@@ -287,6 +287,15 @@ else()
     add_executable(${PROJECT_NAME}
         ${PROJECT_SOURCES}
         ${LIB_RESOURCES}
+    )
+endif()
+
+# Interface translations (Qt6 embeds the compiled .qm into the executable
+# under the :/translations resource prefix; see src/main.cpp)
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_add_translations(${PROJECT_NAME}
+        TS_FILES src/translations/rezonator_zh_CN.ts
+        RESOURCE_PREFIX "/translations"
     )
 endif()
 
