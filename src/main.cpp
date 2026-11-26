@@ -19,10 +19,14 @@
 #include "testing/OriTestManager.h"
 
 #include <QApplication>
+#include <QDir>
 #include <QFileInfo>
 #include <QCommandLineParser>
+#include <QLibraryInfo>
+#include <QLocale>
 #include <QMessageBox>
 #include <QStyleHints>
+#include <QTranslator>
 
 #ifndef Q_OS_WIN
 #include <iostream>
@@ -39,7 +43,8 @@ int main(int argc, char* argv[])
     app.setOrganizationName("orion-project.org");
     app.setApplicationVersion(Z::Strs::appVersion());
     app.setStyle("fusion");
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 5, 0))
+    // QStyleHints::setColorScheme was added in Qt 6.5
     app.styleHints()->setColorScheme(Qt::ColorScheme::Light);
 #endif
 
@@ -56,7 +61,8 @@ int main(int argc, char* argv[])
     QCommandLineOption optionDevMode("dev"); optionDevMode.setFlags(QCommandLineOption::HiddenFromHelp);
     QCommandLineOption optionConsole("console"); optionConsole.setFlags(QCommandLineOption::HiddenFromHelp);
     QCommandLineOption optionExample("example"); optionExample.setFlags(QCommandLineOption::HiddenFromHelp);
-    parser.addOptions({optionTest, optionTool, optionDevMode, optionConsole, optionExample});
+    QCommandLineOption optionLang("lang", "Interface language, e.g. zh_CN; 'en' keeps the original English.", "code", "zh_CN");
+    parser.addOptions({optionTest, optionTool, optionDevMode, optionConsole, optionExample, optionLang});
 
     if (!parser.parse(QApplication::arguments()))
     {
@@ -73,6 +79,27 @@ int main(int argc, char* argv[])
         parser.showHelp();
     if (parser.isSet(optionVersion))
         parser.showVersion();
+
+    // Load the interface translation before any window is created.
+    // This localization build defaults to Simplified Chinese (zh_CN);
+    // pass --lang en to keep the original English interface.
+    static QTranslator qtTranslator;
+    static QTranslator appTranslator;
+    const QString uiLang = parser.value(optionLang).replace('-', '_');
+    if (!uiLang.isEmpty() && uiLang != "en" && uiLang != "none")
+    {
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+        const QString qtTranslationsPath = QLibraryInfo::path(QLibraryInfo::TranslationsPath);
+#else
+        const QString qtTranslationsPath = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+#endif
+        if (qtTranslator.load("qtbase_" + uiLang, qtTranslationsPath)
+                || qtTranslator.load("qt_" + uiLang, qtTranslationsPath))
+            app.installTranslator(&qtTranslator);
+        if (appTranslator.load(":/translations/rezonator_" + uiLang + ".qm")
+                || appTranslator.load(QDir(app.applicationDirPath()).filePath("translations/rezonator_" + uiLang + ".qm")))
+            app.installTranslator(&appTranslator);
+    }
 
     // It's only useful on Windows where there is no
     // direct way to use the console for GUI applications.
